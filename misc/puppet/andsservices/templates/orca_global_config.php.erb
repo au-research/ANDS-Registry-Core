@@ -1,0 +1,111 @@
+<?php
+/* SOLR URL */
+$ENV['solr_url'] = "http://localhost:8080/solr/";
+$ENV['harvester_base_url'] = "http://localhost:8080/harvester/";
+
+/* ENABLED MODULES */
+$ENV['ENABLED_MODULES'] = array(
+	'registry',
+	'vocab_service',
+	'mydois',
+#	'abs_sdmx_querytool'
+);
+
+$ENV['vocab_resolving_services'] =  array(
+	'anzsrc-for' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/sissvoc/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
+);
+
+
+// Is this installation configured as a Shib Service Provider 
+// Note: enables AAF login (if Shibboleth 2 is properly configured)
+$ENV['shibboleth_sp'] = false;
+
+
+/* DATABASE CONFIGURATION */
+$eDBCONF = array();
+$eDBCONF['registry']['hostname'] = 'localhost';
+$eDBCONF['registry']['username'] = 'webuser';
+$eDBCONF['registry']['password'] = '<%= scope.lookupvar('andsservices::params::mysql_webuser_password') %>';
+$eDBCONF['registry']['database'] = 'dbs_registry';
+$eDBCONF['registry']['dbdriver'] = 'mysql';
+$eDBCONF['registry']['dbprefix'] = '';
+$eDBCONF['registry']['pconnect'] = TRUE;
+$eDBCONF['registry']['db_debug'] = TRUE;
+$eDBCONF['registry']['cache_on'] = FALSE;
+$eDBCONF['registry']['cachedir'] = '';
+$eDBCONF['registry']['char_set'] = 'utf8';
+$eDBCONF['registry']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['registry']['swap_pre'] = '';
+$eDBCONF['registry']['autoinit'] = TRUE;
+$eDBCONF['registry']['stricton'] = FALSE;
+$eDBCONF['registry']['save_queries'] = FALSE;
+
+$eDBCONF['portal']['hostname'] = 'localhost';
+$eDBCONF['portal']['username'] = 'webuser';
+$eDBCONF['portal']['password'] = '<%= scope.lookupvar('andsservices::params::mysql_webuser_password') %>';
+$eDBCONF['portal']['database'] = 'dbs_portal';
+$eDBCONF['portal']['dbdriver'] = 'mysql';
+$eDBCONF['portal']['dbprefix'] = '';
+$eDBCONF['portal']['pconnect'] = TRUE;
+$eDBCONF['portal']['db_debug'] = TRUE;
+$eDBCONF['portal']['cache_on'] = FALSE;
+$eDBCONF['portal']['cachedir'] = '';
+$eDBCONF['portal']['char_set'] = 'utf8';
+$eDBCONF['portal']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['portal']['swap_pre'] = '';
+$eDBCONF['portal']['autoinit'] = TRUE;
+$eDBCONF['portal']['stricton'] = FALSE;
+$eDBCONF['portal']['save_queries'] = FALSE; 
+
+$eDBCONF['cosi']['hostname'] = 'localhost';
+$eDBCONF['cosi']['username'] = 'webuser';
+$eDBCONF['cosi']['password'] = '<%= scope.lookupvar('andsservices::params::postgres_webuser_password') %>';
+$eDBCONF['cosi']['database'] = 'dbs_cosi';
+$eDBCONF['cosi']['dbdriver'] = 'postgre';
+$eDBCONF['cosi']['dbprefix'] = '';
+$eDBCONF['cosi']['pconnect'] = TRUE;
+$eDBCONF['cosi']['db_debug'] = TRUE;
+$eDBCONF['cosi']['cache_on'] = FALSE;
+$eDBCONF['cosi']['cachedir'] = '';
+$eDBCONF['cosi']['char_set'] = 'utf8';
+$eDBCONF['cosi']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['cosi']['swap_pre'] = '';
+$eDBCONF['cosi']['autoinit'] = FALSE;
+$eDBCONF['cosi']['stricton'] = FALSE;
+$eDBCONF['cosi']['save_queries'] = FALSE; 
+
+
+$eDBCONF['vocabs']['hostname'] = 'localhost';
+$eDBCONF['vocabs']['username'] = 'webuser';
+$eDBCONF['vocabs']['password'] = '<%= scope.lookupvar('andsservices::params::mysql_webuser_password') %>';
+$eDBCONF['vocabs']['database'] = 'dbs_vocabs';
+$eDBCONF['vocabs']['dbdriver'] = 'mysql';
+$eDBCONF['vocabs']['dbprefix'] = '';
+$eDBCONF['vocabs']['pconnect'] = TRUE;
+$eDBCONF['vocabs']['db_debug'] = TRUE;
+$eDBCONF['vocabs']['cache_on'] = FALSE;
+$eDBCONF['vocabs']['cachedir'] = '';
+$eDBCONF['vocabs']['char_set'] = 'utf8';
+$eDBCONF['vocabs']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['vocabs']['swap_pre'] = '';
+$eDBCONF['vocabs']['autoinit'] = TRUE;
+$eDBCONF['vocabs']['stricton'] = FALSE;
+$eDBCONF['vocabs']['save_queries'] = FALSE; 
+
+
+$eDBCONF['dois']['hostname'] = 'localhost';
+$eDBCONF['dois']['username'] = 'webuser';
+$eDBCONF['dois']['password'] = '<%= scope.lookupvar('andsservices::params::postgres_webuser_password') %>';
+$eDBCONF['dois']['database'] = 'dois';
+$eDBCONF['dois']['dbdriver'] = 'postgre';
+$eDBCONF['dois']['dbprefix'] = '';
+$eDBCONF['dois']['pconnect'] = TRUE;
+$eDBCONF['dois']['db_debug'] = TRUE;
+$eDBCONF['dois']['cache_on'] = FALSE;
+$eDBCONF['dois']['cachedir'] = '';
+$eDBCONF['dois']['char_set'] = 'utf8';
+$eDBCONF['dois']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['dois']['swap_pre'] = '';
+$eDBCONF['dois']['autoinit'] = FALSE;
+$eDBCONF['dois']['stricton'] = FALSE;
+$eDBCONF['dois']['save_queries'] = FALSE; 
