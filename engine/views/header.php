@@ -162,14 +162,14 @@ else
               <li class="btn btn-inverse dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Vocabularies <b class="caret"></b></a>
                 <ul class="dropdown-menu pull-right">
-                  <li class=""><?php echo anchor(registry_url('vocab_service/'), 'Browse Vocabularies');?></li>
+                  <li class=""><?php echo anchor(apps_url('vocab_service/'), 'Browse Vocabularies');?></li>
                   <?php if($this->user->loggedIn()):?>
-                    <li class=""><?php echo anchor(registry_url('vocab_service/addVocabulary'), 'Publish');?></li>
+                    <li class=""><?php echo anchor(apps_url('vocab_service/addVocabulary'), 'Publish');?></li>
                   <?php else:?>
-                    <li class=""><?php echo anchor(registry_url('vocab_service/publish'), 'Publish');?></li>
+                    <li class=""><?php echo anchor(apps_url('vocab_service/publish'), 'Publish');?></li>
                   <?php endif;?>
-                  <li class=""><?php echo anchor(registry_url('vocab_service/support'), 'Support');?></li>
-                  <li class=""><?php echo anchor(registry_url('vocab_service/about'), 'About');?></li>
+                  <li class=""><?php echo anchor(apps_url('vocab_service/support'), 'Support');?></li>
+                  <li class=""><?php echo anchor(apps_url('vocab_service/about'), 'About');?></li>
                 </ul>
               </li>
               <?php endif;?>

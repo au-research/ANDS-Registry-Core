@@ -148,7 +148,7 @@ class Auth extends CI_Controller {
 			
 			if (mod_enabled('vocab_service'))
 			{
-				$this->load->model('vocab_service/vocab_services','vocab');
+				$this->load->model('apps/vocab_service/vocab_services','vocab');
 				$data['group_vocabs']=$this->vocab->getGroupVocabs();
 				//$data['owned_vocabs']=$this->vocab->getOwnedVocabs(false);
 				$this->load->model($this->config->item('authentication_class'), 'auth');

@@ -26,7 +26,7 @@ $ENV['ENABLED_MODULES'] = array(
 	'roles',
 	'pids',
 	'registry',
-	'vocab_service',
+	#'vocab_service',
 	'mydois',
 #	'abs_sdmx_querytool'
 );
