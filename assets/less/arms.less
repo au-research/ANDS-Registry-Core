@@ -1,0 +1,232 @@
+/**
+ * Core / Styling / Less
+ * 
+ * 
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @see ands/styles/less
+ * @package ands/styles
+ * 
+ */
+
+//General Purpose Styling
+@import "variables.less";
+@import "general.less";
+@import "mixin.less";
+
+
+//Screen Specific
+@import "data_source.less";
+@import "registry_object.less";
+
+//Overwriting Default bootstrap and ui
+@import "overwrite.less";
+@import "responsive.less";
+
+
+//No idea where to place yet
+
+//an item for data source screen as well as registry object screen
+
+#items{
+	margin:0;
+	padding:0;
+}
+
+.label a
+{
+	color:inherit;
+}
+.pointer{
+	cursor:pointer;
+}
+
+.middle{
+	margin:auto;
+}
+.item{
+	cursor:pointer;
+	position:relative;
+	border:1px solid #ccc;
+	&:hover{
+		border:1px solid @accentColor;
+		
+	}
+	background-color: @bannerColor;
+	.btn-group{
+		display:none;
+		.text-group{
+			padding:4px 10px 4px;
+		}
+	}
+	.tag{
+		font-size:10px;
+		padding:5px 8px;
+		border:1px solid #ccc;
+		.light-gradient();
+		color:black;
+	}
+	.status_DRAFT{
+		border-left:5px solid @status_DRAFT;
+	}
+	.status_PUBLISHED{
+		border-left:5px solid @status_PUBLISHED;
+	}
+	.status_SUBMITTED_FOR_ASSESSMENT{
+		border-left:5px solid @status_SUBMITTED_FOR_ASSESSMENT;
+	}
+	.status_ASSESSMENT_IN_PROGRESS{
+		border-left:5px solid @status_ASSESSMENT_IN_PROGRESS;
+	}
+	.status_APPROVED{
+		border-left:5px solid @status_APPROVED;
+	}
+	.status_MORE_WORK_REQUIRED{
+		border-left:5px solid @status_MORE_WORK_REQUIRED;
+	}
+	.ql_1{
+		background: @ql_1;
+		color:white;
+	}
+	.ql_2{
+		background: @ql_2;
+	}
+	.ql_3{
+		background: @ql_3;
+	}
+	.ql_4{
+		background: @ql_4;
+	}
+}
+
+.thumbnails li{
+	width:33.33%;
+	margin:0;padding:0;
+	.item{
+		.item-snippet{
+			h3{
+				margin:0px;
+			}
+		}
+	}
+}
+
+.lists li{
+	.item{
+		.item-snippet{
+			padding:10px;
+			h3{
+				margin:0px;
+				font-size:18px;
+				.text-shadow();
+			}
+		}
+	}
+}
+
+.selected{
+	background: @softAccentColor;
+	border: 1px solid @accentColor;
+}	
+
+.locationDatePicker{
+	margin-top: 5px;
+	padding-top: 4px;
+}
+
+
+.adminDatePicker{
+	margin-top: 1px;
+	padding-top: 4px;
+}
+
+.ro_box{
+	.sortable{
+		list-style-type: none; margin: 0;
+		width:100%;
+		position:relative;
+		li{
+			position:relative;
+			display:block;
+			min-height:40px;
+			background:white;
+			border-bottom:1px solid #ccc;
+			font-size:0.8em;
+			&:hover{
+				cursor:pointer;
+				
+			}
+			.ro_content{
+				
+			}
+
+			.ro_title{
+				padding:5px;
+				font-size:1.2em;
+			}
+
+			.ro_content{
+				padding:5px 0px;
+				img{
+					height:1.2em;
+				}
+				p{
+					margin-bottom:0;
+				}
+			}
+			.right-menu{
+				position:absolute;
+				top:5px;
+				right:5px;
+			}
+		}
+		li.ui-state-highlight {background:#FEFFD2;}
+		li.ro_selected{
+			background:#d9e7f3;
+		}
+		li.ro_error{
+			border-right:5px solid #e54a4f;
+		}
+		li.active{
+			background: #C1F4E7;
+		}
+	}
+	.stick{width:100%;z-index:9999;}
+	.show_more{
+		position:absolute;right:0;
+		background:white;
+		font-size:1em;
+		padding:3px;
+		border:1px solid #cdcdcd;
+		border-top:0;
+		cursor:pointer;
+	}
+}
+
+
+.dash_news {
+    position:relative;
+}
+.dash_news_overflow {
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorStr='#00ffffff', endColorStr='#ffffffff');
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0)), to(rgba(255, 255, 255, 1.0)));
+    background-image: -moz-linear-gradient(top center, rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 1.0) 95%);
+    bottom: 0;
+    filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorStr='#00ffffff', endColorStr='#ffffffff');
+    height: 100px;
+    position: absolute;
+    width: 100%;
+}
+
+.show_all_dash_news {
+    color: @accentColor;
+    cursor: pointer;
+    width:160px;
+    font-size: 14px;
+    outline: 0;
+    padding: 0.2em 0em;
+    z-index:999;
+    margin:0 0 15px 0;
+    &:hover{
+    	text-decoration:underline;
+    }
+}

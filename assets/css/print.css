@@ -1,0 +1,8 @@
+.print_quality_report span{display:block; font-size:0.9em;}
+.quality_div {page-break-inside: avoid;}
+.print_quality_report .btn-group{display:none;}
+.content-header ul{display:none;}
+#printButton { display:none; }
+#printButtonWarning { display:none; }
+.label { color:black; text-transform: none; box-shadow: none; text-shadow:none; }
+.widget-title { padding-left:12px; }

@@ -1,0 +1,264 @@
+body{
+	font-family: 'Open Sans',Arial,sans-serif;
+	color: @fontColor;
+	font-weight:400;
+	line-height:22px;
+	background: #dddddd;
+	position:relative;
+}
+
+.clear {
+	clear:both;
+}
+.table-small
+{
+	tr th
+	{
+		min-width:100px;
+	}
+	tr td
+	{
+		font-size:0.85em;
+	}
+}
+pre {
+  overflow: auto;
+  word-wrap: normal;
+  white-space: pre;
+  font-size:11px;
+}
+
+#topbar{
+	border-top:4px solid @altAccentColor;
+	font-size:85%;
+	//background:@bannerColor;
+	.ands-background();
+	height:67px;
+	#logged_in_user{
+		text-align:right;
+	}
+	#logo{
+		padding:10px 0px 0px 20px;
+	}
+	padding:0;
+}
+#show_responsive{display:none;}
+
+.ands-background{
+	color:white;
+	background: #333;
+}
+
+#banner{
+	color:white;
+	background: #333;
+	border-bottom:1px solid #ccc;
+	.page-header{
+		margin:0;border-bottom:none;
+		padding-bottom:10px;
+	}
+	padding:10px;
+}
+
+
+#main-content{
+	padding-top:15px;
+}
+
+#view-datasource h3{margin-left:20px;}
+
+h1 small{font-size:16px;}
+h1{.text-shadow}
+
+
+.box{
+	border:1px solid @borderColor;
+	padding:10px;
+	background:@boxBackground;
+	.box-header{
+		margin: -10px -10px 10px -10px;
+		padding:0px 10px;
+		.light-gradient();
+		border-bottom:1px solid @borderColor;
+		.breadcrumbs{
+			font-size:12px;
+			.text-shadow();
+			float:left;
+			line-height:38px;
+			margin:0;padding:0;
+			height:38px;
+			li{
+				list-style:none;
+				display:inline-block;
+				overflow:hide;
+				line-height:38px;
+				background:url('../img/breadcrumb_arrow.png') no-repeat right scroll;
+				a{
+					padding:10px;
+					color:black;
+					&:hover{
+						text-decoration:none;
+					}
+				}
+				a.active{
+					color:@darkGray;
+					font-weight:normal;
+					.ellipsis();
+				}
+				&:last-child{
+					background:none;
+				}
+			}
+		}
+		h1, h2, h3{
+			font-size:22px;
+			float:left;
+			margin:0px;
+			padding:0px;
+		}
+		h2{
+			font-size:20px;
+		}
+		h3{
+			font-size:18px;
+		}
+		.right-widget{
+			float:right;
+			line-height:38px;
+		}
+	}
+	.box-content{
+	}
+	.box-footer{
+		margin:-10px;
+		margin-top:10px;
+		padding:5px;
+		border-top:1px solid @borderColor;
+		.light-gradient();
+		.btn-group{
+			
+		}
+	}
+	.container{
+
+	}
+	margin-bottom:15px;
+}
+
+.box-noStyle{
+	width:50%;
+	padding:10px;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	float:left;
+}
+
+.border-right{
+	border-right:1px solid @borderColor;
+}
+
+.box-error{
+	border:1px solid #b94a48;
+}
+
+.largeTag{
+	font-size:10px;
+	border:1px solid #ccc;
+	padding: 5px 8px;
+	margin:2px 5px;
+	color:black;
+	.light-gradient();
+	.text-shadow();
+	&:hover{
+		text-decoration:none;
+		color:#333;
+		cursor:pointer;
+	}
+}
+
+
+#page-footer{
+	background:#454545;
+	width:100%;
+}
+
+#main-nav{
+	color:white;
+	text-align:right;
+	ul{
+		margin:0;padding:0;
+		list-style-type:none;
+		li{
+			display:inline-block;
+			*display: inline;
+			zoom: 1;
+			&:hover{
+				background:#4f4f4f;
+				a{
+					color:white;
+				}
+				.caret{
+					margin-top:32px;
+					border-top-color: black;
+					border-bottom-color: black;
+				}
+			}
+			a{
+				padding:0 15px;
+				display:block;
+				color:white;
+				line-height:67px;
+				height:67px;
+				font-size:16px;
+				text-decoration:none;
+			}
+			.caret{
+				margin-top:32px;
+				border-top-color: white;
+				border-bottom-color: white;
+			}
+			ul.sub-menu{
+				.ands-background();
+				height:auto;
+				text-align:left;
+				-webkit-border-radius: 0px;
+				-moz-border-radius: 0px;
+				border-radius: 0px;
+				li{
+					padding:0px;
+					display:block;
+					a{
+						padding:10px;
+						display:block;
+						line-height:22px;
+						height:22px;
+						border-bottom:1px solid #444;
+					}
+				}
+			}
+		}
+		height:67px;
+	}
+}
+
+.selection{
+	position: absolute;
+	border: 1px solid #89B;
+	background: #BCE;
+	background-color: #BEC;
+	border-color: #8B9;
+}
+
+
+/*.active{  
+	background: #CEB;
+	border-color: #9B8;
+}*/
+
+.centered{
+	text-align:center;
+}
+.right-aligned{
+	text-align:right;
+}

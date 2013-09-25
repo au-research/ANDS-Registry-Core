@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+  <registryObject group="JBTest">
+    <key>JBTest30</key>
+    <originatingSource>http://test.ands.org.au/home/orca/register_my_data</originatingSource>
+    <collection type="collection">
+      <name type="primary">
+        <namePart>CollectionTest</namePart>
+
+      </name>
+      <relatedObject>
+        <key>10378.3/8085/1018.13348</key>
+        <relation type="describes"/>
+      </relatedObject>
+    </collection>
+  </registryObject>
+</registryObjects>

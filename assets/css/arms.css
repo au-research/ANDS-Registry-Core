@@ -1,0 +1,26 @@
+body{
+	font-family: 'Open Sans',Arial,sans-serif;
+}
+#topbar{
+	border-top:4px solid #0088cc;
+	padding-top:5px;
+	font-size:85%;
+}
+
+#main-nav{
+	padding-top:15px;
+	font-size:15px;
+	float:right;
+}
+
+#topbar{background:#F4F4F4;}
+#banner{
+	background:#F4F4F4;
+	border-bottom:1px solid #ccc;
+}
+.page-header{
+	margin:0;border-bottom:none;
+	padding-bottom:10px;
+}
+
+h1 small{font-size:16px;}

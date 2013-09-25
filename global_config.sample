@@ -1,0 +1,188 @@
+<?php
+/* Information about the environment the system is installed to */
+$ENV['default_base_url'] = "@@base_url"; //(excludes any registry/ or portal/)
+
+$ENV['environment_name'] = ""; // blank will leave the environment default
+$ENV['environment_colour'] = "#0088cc"; // optional, only applies when environment_name is set
+$ENV['deployment_state'] = "development";
+$ENV['importer_benchmark_enabled'] = true; 
+
+/* ERROR HANDLING */
+$ENV['site_admin'] = "Aliza Log";
+$ENV['site_admin_email'] = "<admin @ email>";
+
+
+/* SOLR URL */
+$ENV['solr_url'] = "@@solr_url";
+$ENV['sissvoc_url'] = "@@sissvoc_url";
+$ENV['harvester_base_url'] = "@@harvester_url";
+
+//PIDS
+$ENV['pids_server_base_url'] = "@@pids_url";
+$ENV['pids_server_app_id'] = "@@pids_app_id";
+
+/* ENABLED MODULES */
+$ENV['ENABLED_MODULES'] = array(
+	'roles',
+	'pids',
+	'registry',
+	'vocab_service',
+	'mydois',
+#	'abs_sdmx_querytool'
+);
+
+// Set this to enable DOI query tool support
+// $ENV['gDOIS_SERVICE_BASE_URI'] = "https://mds.datacite.org/";
+// $ENV['gDOIS_DATACENTRE_NAME_PREFIX'] = "";
+// $ENV['gDOIS_DATACENTRE_NAME_MIDDLE'] = "";
+// $ENV['gDOIS_DATACITE_PASSWORD'] = "";
+// $ENV['gDOIS_RESPONSE_SUCCESS'] = "OK";
+$ENV['gPIDS_URL_PREFIX'] = "https://demo.ands.org.au/registry/pids/";
+$ENV['gPIDS_IDENTIFIER_SUFFIX'] = 'https://researchdata.ands.org.au';
+
+$ENV['vocab_resolving_services'] =  array(
+	'anzsrc-seo' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/sissvoc/api/anzsrc-seo/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
+	'anzsrc-for' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/sissvoc/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
+);
+
+
+// Is this installation configured as a Shib Service Provider 
+// Note: enables AAF login (if Shibboleth 2 is properly configured)
+$ENV['shibboleth_sp'] = false;
+
+//ORCID config
+$ENV['gORCID_SERVICE_BASE_URI'] = 'http://sandbox-1.orcid.org/';
+$ENV['gORCID_API_URI'] = 'http://api.sandbox-1.orcid.org/';
+$ENV['gORCID_CLIENT_ID'] = '';
+$ENV['gORCID_CLIENT_SECRET'] = '';
+
+// Session Timeout (how long before the user is automatically logged out)
+$ENV['session_timeout'] = 7200; // 2 hours of inactivity before logout...
+
+ // Will affect the error reporting status
+$ENV['deployment_state'] = "<production or development>";
+
+/* Google Analytics account details */
+$ENV['rda_urchin_id'] = '';
+$ENV['svc_urchin_id'] = '';
+
+/* DATABASE CONFIGURATION */
+$eDBCONF = array();
+$eDBCONF['registry']['hostname'] = 'localhost';
+$eDBCONF['registry']['username'] = 'webuser';
+$eDBCONF['registry']['password'] = '';
+$eDBCONF['registry']['database'] = 'dbs_registry';
+$eDBCONF['registry']['dbdriver'] = 'mysql';
+$eDBCONF['registry']['dbprefix'] = '';
+$eDBCONF['registry']['pconnect'] = FALSE;
+$eDBCONF['registry']['db_debug'] = TRUE;
+$eDBCONF['registry']['cache_on'] = FALSE;
+$eDBCONF['registry']['cachedir'] = '';
+$eDBCONF['registry']['char_set'] = 'utf8';
+$eDBCONF['registry']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['registry']['swap_pre'] = '';
+$eDBCONF['registry']['autoinit'] = TRUE;
+$eDBCONF['registry']['stricton'] = FALSE;
+$eDBCONF['registry']['save_queries'] = FALSE; 
+
+$eDBCONF['roles']['hostname'] = 'localhost';
+$eDBCONF['roles']['username'] = 'webuser';
+$eDBCONF['roles']['password'] = '';
+$eDBCONF['roles']['database'] = 'dbs_roles';
+$eDBCONF['roles']['dbdriver'] = 'mysql';
+$eDBCONF['roles']['dbprefix'] = '';
+$eDBCONF['roles']['pconnect'] = TRUE;
+$eDBCONF['roles']['db_debug'] = TRUE;
+$eDBCONF['roles']['cache_on'] = FALSE;
+$eDBCONF['roles']['cachedir'] = '';
+$eDBCONF['roles']['char_set'] = 'utf8';
+$eDBCONF['roles']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['roles']['swap_pre'] = '';
+$eDBCONF['roles']['autoinit'] = TRUE;
+$eDBCONF['roles']['stricton'] = FALSE;
+$eDBCONF['roles']['save_queries'] = FALSE; 
+
+$eDBCONF['portal']['hostname'] = 'localhost';
+$eDBCONF['portal']['username'] = 'webuser';
+$eDBCONF['portal']['password'] = '';
+$eDBCONF['portal']['database'] = 'dbs_portal';
+$eDBCONF['portal']['dbdriver'] = 'mysql';
+$eDBCONF['portal']['dbprefix'] = '';
+$eDBCONF['portal']['pconnect'] = FALSE;
+$eDBCONF['portal']['db_debug'] = TRUE;
+$eDBCONF['portal']['cache_on'] = FALSE;
+$eDBCONF['portal']['cachedir'] = '';
+$eDBCONF['portal']['char_set'] = 'utf8';
+$eDBCONF['portal']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['portal']['swap_pre'] = '';
+$eDBCONF['portal']['autoinit'] = TRUE;
+$eDBCONF['portal']['stricton'] = FALSE;
+$eDBCONF['portal']['save_queries'] = FALSE; 
+
+$eDBCONF['pids']['hostname'] = 'devl.ands.org.au';
+$eDBCONF['pids']['username'] = 'pidmaster';
+$eDBCONF['pids']['password'] = '';
+$eDBCONF['pids']['database'] = 'pids';
+$eDBCONF['pids']['dbdriver'] = 'postgre';
+$eDBCONF['pids']['dbprefix'] = '';
+$eDBCONF['pids']['pconnect'] = TRUE;
+$eDBCONF['pids']['db_debug'] = TRUE;
+$eDBCONF['pids']['cache_on'] = FALSE;
+$eDBCONF['pids']['cachedir'] = '';
+$eDBCONF['pids']['char_set'] = 'utf8';
+$eDBCONF['pids']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['pids']['swap_pre'] = '';
+$eDBCONF['pids']['autoinit'] = FALSE;
+$eDBCONF['pids']['stricton'] = FALSE;
+$eDBCONF['pids']['save_queries'] = FALSE; 
+
+$eDBCONF['vocabs']['hostname'] = 'localhost';
+$eDBCONF['vocabs']['username'] = 'webuser';
+$eDBCONF['vocabs']['password'] = '';
+$eDBCONF['vocabs']['database'] = 'dbs_vocabs';
+$eDBCONF['vocabs']['dbdriver'] = 'mysql';
+$eDBCONF['vocabs']['dbprefix'] = '';
+$eDBCONF['vocabs']['pconnect'] = FALSE;
+$eDBCONF['vocabs']['db_debug'] = TRUE;
+$eDBCONF['vocabs']['cache_on'] = FALSE;
+$eDBCONF['vocabs']['cachedir'] = '';
+$eDBCONF['vocabs']['char_set'] = 'utf8';
+$eDBCONF['vocabs']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['vocabs']['swap_pre'] = '';
+$eDBCONF['vocabs']['autoinit'] = TRUE;
+$eDBCONF['vocabs']['stricton'] = FALSE;
+$eDBCONF['vocabs']['save_queries'] = FALSE; 
+
+$eDBCONF['statistics']['hostname'] = 'localhost';
+$eDBCONF['statistics']['username'] = 'webuser';
+$eDBCONF['statistics']['password'] = '';
+$eDBCONF['statistics']['database'] = 'dbs_statistics';
+$eDBCONF['statistics']['dbdriver'] = 'mysql';
+$eDBCONF['statistics']['dbprefix'] = '';
+$eDBCONF['statistics']['pconnect'] = FALSE;
+$eDBCONF['statistics']['db_debug'] = TRUE;
+$eDBCONF['statistics']['cache_on'] = FALSE;
+$eDBCONF['statistics']['cachedir'] = '';
+$eDBCONF['statistics']['char_set'] = 'utf8';
+$eDBCONF['statistics']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['statistics']['swap_pre'] = '';
+$eDBCONF['statistics']['autoinit'] = TRUE;
+$eDBCONF['statistics']['stricton'] = FALSE;
+$eDBCONF['statistics']['save_queries'] = FALSE; 
+
+$eDBCONF['dois']['hostname'] = 'ands-dev.anu.edu.au';
+$eDBCONF['dois']['username'] = 'webuser';
+$eDBCONF['dois']['password'] = '';
+$eDBCONF['dois']['database'] = 'dois';
+$eDBCONF['dois']['dbdriver'] = 'postgre';
+$eDBCONF['dois']['dbprefix'] = '';
+$eDBCONF['dois']['pconnect'] = FALSE;
+$eDBCONF['dois']['db_debug'] = TRUE;
+$eDBCONF['dois']['cache_on'] = FALSE;
+$eDBCONF['dois']['cachedir'] = '';
+$eDBCONF['dois']['char_set'] = 'utf8';
+$eDBCONF['dois']['dbcollat'] = 'utf8_general_ci';
+$eDBCONF['dois']['swap_pre'] = '';
+$eDBCONF['dois']['autoinit'] = FALSE;
+$eDBCONF['dois']['stricton'] = FALSE;
+$eDBCONF['dois']['save_queries'] = FALSE; 
