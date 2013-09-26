@@ -3,5 +3,5 @@ global_config.php
 ._*
 .settings
 .htaccess
-arms/src/assets/uploads/
-arms/src/assets/shared/
+assets/uploads/
+assets/shared/

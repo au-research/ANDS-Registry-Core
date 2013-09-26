@@ -21,7 +21,7 @@
 
 <link rel="stylesheet" href="<?php echo asset_url('css/flexslider.css', 'core');?>" type="text/css" media="screen" />
 <link rel="stylesheet" href="<?php echo asset_url('css/ui.dynatree.css', 'core');?>" type="text/css" media="screen" />
-<link rel="stylesheet" type="text/css" href="<?php echo asset_url('applications/registry/vocab_widget/assets/css/vocab_widget.css', 'base_path')?>"  media="screen" />
+<link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget.css')?>"  media="screen" />
 <!-- ANDS Less file and general styling correction-->
 <link href="<?php echo asset_url('less/ands.less', 'core');?>" rel="stylesheet/less" type="text/css">
 

@@ -114,8 +114,19 @@
 		    	<script src="<?php echo asset_url('lib/tinyaccordion/accordion.js', 'base');?>" type="text/javascript"></script>
 		    <?php endif; ?>
 		    <?php if ($lib=='vocab_widget'): ?>
-		    	<script src="<?php echo asset_url('applications/registry/vocab_widget/assets/js/vocab_widget.js', 'base_path')?>" type="text/javascript"></script>
-		    <?php endif; ?>
+		    	<script src="<?php echo apps_url('assets/vocab_widget/js/vocab_widget.js')?>" type="text/javascript"></script>
+		    
+		    <?php elseif($lib=='angular'):?>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angular.min.js', 'base') ?>"></script>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-slugify.js', 'base') ?>"></script>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/sortable.js', 'base') ?>"></script>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/tinymce.js', 'base') ?>"></script>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-sanitize-1.0.1.js', 'base') ?>"></script>
+
+	        <?php elseif($lib=='colorbox'):?>
+	            <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
+	            <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
+	        <?php endif; ?>
 		<?php endforeach;?>
 	<?php endif; ?>
 
