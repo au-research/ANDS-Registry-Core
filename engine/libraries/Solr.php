@@ -8,19 +8,20 @@
  */
 class Solr {
 
-	private $CI;
-	private $solr_url;
-	private $result;
-	private $options;
+    private $CI;
+    private $solr_url;
+    private $result;
+    private $options;
     private $multi_valued_fields;
 
-	/**
-	 * Construction of this class
-	 */
-	function __construct(){
+    /**
+     * Construction of this class
+     */
+    function __construct(){
         $this->CI =& get_instance();
-		$this->CI->load->library('session');
-		$this->init();
+        $this->CI->load->library('session');
+        $this->CI->load->helper('engine_helper');
+        $this->init();
     }
 
     /**
@@ -28,10 +29,10 @@ class Solr {
      * @return [type] [description]
      */
     function init(){
-    	$this->solr_url = $this->CI->config->item('solr_url');
-    	$this->options = array('q'=>'*:*','start'=>'0','indent'=>'on', 'wt'=>'json', 'fl'=>'*', 'rows'=>'10');
+        $this->solr_url = $this->CI->config->item('solr_url');
+        $this->options = array('q'=>'*:*','start'=>'0','indent'=>'on', 'wt'=>'json', 'fl'=>'*', 'rows'=>'10');
         $this->multi_valued_fields = array('facet.field', 'fq');
-    	return true;
+        return true;
     }
 
     /**
@@ -51,7 +52,7 @@ class Solr {
                 }
             }
         }else{
-    	   $this->options[$field] = $value;
+           $this->options[$field] = $value;
         }
     }
 
@@ -101,7 +102,7 @@ class Solr {
      * @param string $value http link for solr url, defaults to be the value in the config
      */
     function setSolrUrl($value){
-    	$this->solr_url = $value;
+        $this->solr_url = $value;
     }
 
 
@@ -110,7 +111,7 @@ class Solr {
      * @return integer
      */
     function getNumFound(){
-    	return (int) $this->result->{'response'}->{'numFound'};
+        return (int) $this->result->{'response'}->{'numFound'};
     }
 
     /**
@@ -118,7 +119,7 @@ class Solr {
      * @return array 
      */
     function getHeader(){
-    	return $this->result->{'responseHeader'};
+        return $this->result->{'responseHeader'};
     }
 
     /**
@@ -126,7 +127,7 @@ class Solr {
      * @return array 
      */
     function getResult(){
-    	return $this->result->{'response'};
+        return $this->result->{'response'};
     }
 
     function getFacet(){
@@ -163,10 +164,10 @@ class Solr {
      * @param  string $term a full text search on this term
      * @return array
      */
-	function search($term){
-		$this->options['q']='+fulltext:'.$term;
-		return $this->executeSearch();
-	}
+    function search($term){
+        $this->options['q']='+fulltext:'.$term;
+        return $this->executeSearch();
+    }
 
     /**
      * Add query condition
@@ -186,6 +187,9 @@ class Solr {
         $this->setOpt('mm', '2'); //minimum should match optional clause
         $this->setOpt('fl', '*, score'); //we'll get the score as well
 
+        //boost
+        $this->setOpt('bq', 'id^1 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
+
         //if there's no query to search, eg. rda browsing
         if (!isset($filters["q"])){
             $this->setOpt('q', '*:*');
@@ -193,14 +197,14 @@ class Solr {
         }
 
         foreach($filters as $key=>$value){
-            $value = rawurldecode($value);
+            if(!is_array($value)) $value = rawurldecode($value);
             switch($key){
                 case 'rq':
                     $this->clearOpt('defType');//returning to the default deftype
                     $this->setOpt('q', $value);
                 break;
                 case 'q': 
-                    $value = escapeSolrValue($value);
+                    $value = $this->escapeSolrValue($value);
                     $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
                 break;
                 case 'p': 
@@ -248,6 +252,21 @@ class Solr {
                     }
                     $this->setOpt('fl', 'id,spatial_coverage_area_sum,spatial_coverage_centres,spatial_coverage_extents,spatial_coverage_polygons');
                     break;
+                case 'boost_key':
+                    if(is_array($value)){
+                        foreach($value as $v){
+                            $this->addQueryCondition(' OR key:("'.$v.'")^100');
+                        }
+                    }else{
+                        $this->addQueryCondition(' OR key:("'.$value.'")^100');
+                    }
+                    break;
+                case 'fl':
+                    $this->setOpt('fl', $value);
+                    break;
+                case 'tag':
+                    $this->setOpt('fq', '+tag:("'.$value.'")');
+                    break;
             }
         }
     }
@@ -270,20 +289,33 @@ class Solr {
         return $fields_string;
     }
 
-	/**
-	 * Execute the search based on the given options
-	 * @return array results
-	 */
-	function executeSearch($as_array = false){
+    /**
+     * Execute the search based on the given options
+     * @return array results
+     */
+    function executeSearch($as_array = false){
         $content = $this->post($this->constructFieldString(), 'select');
-		$json = json_decode($content, $as_array);
-		if($json){
-			$this->result = $json;
-			return $this->result;
-		}else{
-			throw new Exception('SOLR Query failed....ERROR:'.$content.'<br/> QUERY: '.$this->constructFieldString());
-		}
-	}
+        $json = json_decode($content, $as_array);
+        if($json){
+            $this->result = $json;
+            return $this->result;
+        }else{
+            throw new Exception('SOLR Query failed....ERROR:'.$content.'<br/> QUERY: '.$this->constructFieldString());
+        }
+    }
+
+    function escapeSolrValue($string){
+        //$string = urldecode($string);
+        $match = array('\\','&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', ';', '/');
+        $replace = array('\\\\','&', '\\|', '\\!', '\\(', '\\)', '\\{', '\\}', '\\[', '\\]', '\\^', '\\~', '\\*', '\\?', '\\:', '\\;', '\\/');
+        $string = str_replace($match, $replace, $string);
+
+        if(substr_count($string, '"') % 2 != 0){
+            $string = str_replace('"', '\\"', $string);
+        }
+
+        return $string;
+    }
 
     /**
      * Post a set of documents to SOLR

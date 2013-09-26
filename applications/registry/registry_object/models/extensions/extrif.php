@@ -177,6 +177,14 @@ class Extrif_Extension extends ExtensionBase
 				//$extendedMetadata->addChild("extRif:searchBaseScore", 100, EXTRIF_NAMESPACE);
 				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
 				
+				//tags
+				if($this->ro->tag){
+					$tags = explode(';;', $this->ro->tag);
+					foreach($tags as $tag){
+						$extendedMetadata->addChild('extRif:tag', $tag, EXTRIF_NAMESPACE);
+					}
+				}
+				
 				// xxx: spatial extents (sanity checking?)
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s4_end');
 				
