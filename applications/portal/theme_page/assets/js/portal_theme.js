@@ -13,6 +13,7 @@ angular.module('portal_theme',[]).
 		return{
 			search: function(filters){
 				var promise = $http.post(base_url+'search/filter/', {'filters':filters}).then(function(response){
+					console.log(response);
 					return response.data;
 				});
 				return promise;

@@ -1,6 +1,7 @@
 <?php if(isset($page[$region]) && sizeof($page[$region])>0): ?>
 <?php foreach($page[$region] as $f): ?>
 <div style="margin:10px 0">
+	<h2><?php echo $f['title']; ?></h2>
 	<?php if($f['type']=='html'): ?>
 		<?php echo $f['content']; ?>
 	<?php endif; ?>
@@ -42,7 +43,6 @@
 	<?php endif; ?>
 
 	<?php if($f['type']=='facet'): ?>
-		<h2><?php echo $f['title']; ?></h2>
 		<div class="theme_facet" search-id="<?php echo $f['facet']['search_id'] ?>" facet-type="<?php echo $f['facet']['type'] ?>"></div>
 	<?php endif; ?>
 

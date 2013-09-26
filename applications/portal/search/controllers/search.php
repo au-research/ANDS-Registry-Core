@@ -16,17 +16,19 @@ class Search extends MX_Controller {
 	function filter(){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
-		$data = $this->solr_search($this->input->post('filters'), true);
+		$filters = ($this->input->post('filters') ? $this->input->post('filters') : false);
+		if(!$filters){
+			$data = file_get_contents("php://input");
+			$array = json_decode(file_get_contents("php://input"), true);
+			$filters = $array['filters'];
+		}
+		$data = $this->solr_search($filters, true);
 		//return the result to the client
 		echo json_encode($data);
 	}
 
 	function solr_search($filters, $include_facet = true){
 		$this->load->library('solr');
-
-		
-
-		
 
 		//optional facets return, true for rda search
 		if($include_facet){
