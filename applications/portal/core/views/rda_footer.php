@@ -77,6 +77,7 @@
         var default_base_url = "<?php echo $this->config->item('default_base_url');?>";
         var suffix = '#!/';
         var deployment_state = "<?php echo $this->config->item('deployment_state');?>";
+        var rda_service_url = "<?php echo $this->config->item('registry_endpoint'); ?>"
         <!-- urchin code -->
         <?php echo urchin_for($this->config->item('rda_urchin_id')); ?>
         var urchin_id = "<?php echo $this->config->item('rda_urchin_id');?>";

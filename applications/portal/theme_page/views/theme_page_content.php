@@ -57,7 +57,7 @@
 	<?php if($f['type']=='relation'): ?>
 		<div class="relation">
 			<input type="hidden" class="type" value="<?php echo $f['relation']['type']; ?>">
-			<input type="hidden" class="key" value="<?php echo $f['relation']['key']; ?>">
+			<input type="hidden" class="key" value="<?php echo (isset($f['relation']['key']) ? $f['relation']['key'] : ''); ?>">
 		</div>
 	<?php endif; ?>
 </div>

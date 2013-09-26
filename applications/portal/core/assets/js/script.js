@@ -298,3 +298,100 @@ function initExplanations()
 function htmlDecode(value) {
 	return (typeof value === 'undefined') ? '' : $('<div/>').html(value).text();
 }
+
+function generatePreviewTip(element, slug, registry_object_id, relation_type, relation_description, relation_url)
+{
+    var preview_url;
+    if (slug != null)
+    {
+        preview_url = base_url + "preview/" + slug;
+        //alert(preview_url)
+    }
+    else
+    {
+        preview_url = base_url + "preview/?registry_object_id=" + registry_object_id;
+    }
+    /* Prepare the tooltip preview */
+    $('a', element).qtip({
+        content: {
+            text: 'Loading preview...',
+            title: {
+                text: 'Preview',
+                button: 'Close'
+            },
+            ajax: {
+                url: preview_url, 
+                type: 'GET',
+               // data: { "slug": slug, "registry_object_id": registry_object_id },
+                success: function(data, status) {
+                    data = $.parseJSON(data);        
+                    // Clean up any HTML rubbish...                   
+                    var temp = $('<span/>');
+                    temp.html(data.html);
+                    $("div.descriptions", temp).html($("div.descriptions", temp).text());
+                    $("div.descriptions", temp).html($("div.descriptions", temp).directText());
+
+                    if (data.slug){
+                        $('.viewRecord',temp).attr("href", base_url + data.slug);
+                    }
+                    else
+                    {
+                        $('.viewRecord').attr("href",base_url+"view/?id=" + data.registry_object_id);
+                    }
+                    this.set('content.text', temp.html());   
+
+
+
+                    if (data.slug){
+                        $('.viewRecordLink'+data.slug).attr("href",base_url + data.slug);
+                        $('.viewRecord').attr("href", base_url + data.slug);
+                        if(relation_type){
+                            var relDesc = '';
+                            if(relation_description)
+                            {
+                                relDesc = ' <br /><span style="color:#666666"><em>' + relation_description +'</em></span>'
+                            }
+                            var relUrl = '';
+                            if(relation_url)
+                            {
+                                relUrl = ' <a href="' + relation_url +'" target="_blank"><em>(URL)</em></a></span>'
+                            }
+                         $('.previewItemHeader'+data.slug).html(relation_type + relDesc + relUrl);
+                        }                       
+
+                    }else{
+                        $('.viewRecordLink'+data.registry_object_id).attr("href",base_url+"view/?id=" + data.registry_object_id);
+                        if(relation_type){
+                            if(relation_description)
+                            {
+                                relDesc = ' <br /><span style="color:#666666"><em>' + relation_description +'</em></span>'
+                            }
+                            var relUrl = '';
+                            if(relation_url)
+                            {
+                                relUrl = ' <a href="' + relation_url +'" target="_blank"><em>(URL)</em></a></span>'
+                            }                            
+                            $('.previewItemHeader'+data.registry_object_id).html(relation_type + relDesc + relUrl);
+                        }
+                    }                   
+                } 
+            }
+        },
+        position: {
+            my: 'left center',
+            at: 'right center',
+            viewport: $(window)
+        },
+        show: {
+            event: 'click',
+        },
+        hide: {
+            delay: 1000,
+            fixed: true,
+        },
+        style: {
+            classes: 'ui-tooltip-light ui-tooltip-shadow previewPopup',
+            width: 550
+        },
+    }).on('click', function(e){e.preventDefault();return false;});
+}

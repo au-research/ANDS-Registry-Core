@@ -59,11 +59,11 @@ angular.module('portal_theme',[]).
 					if($(this).hasClass('left')){
 						$('.filmstrip', element).animate({
 							scrollLeft: '-=150'
-						}, 500, 'easeOutQuad', check);
+						}, 500, 'easeOutQuad',check);
 					}else{
 						$('.filmstrip', element).animate({
 							scrollLeft: '+=150'
-						}, 500, 'easeOutQuad', check);
+						}, 500, 'easeOutQuad',check);
 					}
 				});
 
@@ -79,10 +79,12 @@ angular.module('portal_theme',[]).
 						$('.left', element).hide();
 					}else $('.left', element).show();
 
-					if(current + $('.filmstrip', element).width() >= totalWidth){
-						$('.right', element).hide();
-					}else{
-						$('.right', element).show();
+					if(totalWidth!=0){
+						if(current + $('.filmstrip', element).width() >= totalWidth){
+							$('.right', element).hide();
+						}else{
+							$('.right', element).show();
+						}
 					}
 				}
 			}
@@ -218,25 +220,27 @@ angular.module('portal_theme',[]).
 			var key = $('input.key', this).val();
 			var type = $('input.type', this).val();
 			searches.getConnections(key).then(function(data){
-				var con = {};
-				con.title = $filter('class_name')(type);
-				con.connections = data.connections[0][type];
-				con.count = data.connections[0][type+'_count'];
-				con.slug = data.slug;
-				con.type = type;
-				if(con.count>5) con.more = true;
-				var template = $('#relation-template').html();
-				var output = Mustache.render(template, con);
-				$(this_block).html(output);
+				if(data.status!='ERROR'){
+					var con = {};
+					con.title = $filter('class_name')(type);
+					con.connections = data.connections[0][type];
+					con.count = data.connections[0][type+'_count'];
+					con.slug = data.slug;
+					con.type = type;
+					if(con.count>5) con.more = true;
+					var template = $('#relation-template').html();
+					var output = Mustache.render(template, con);
+					$(this_block).html(output);
 
-				$('.preview_connection', this_block).each(function(){
-			        if(typeof $('a', this).attr('slug')!=='undefined'){
-			            generatePreviewTip($(this), $('a',this).attr('slug'), null, $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'));
-			        }else if($('a', this).attr('draft_id')!=''){
-			            generatePreviewTip($(this), null, $('a',this).attr('draft_id'), $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'));
-			            $('a', this).prepend(draftText);
-			        }
-			    });
+					$('.preview_connection', this_block).each(function(){
+				        if(typeof $('a', this).attr('slug')!=='undefined'){
+				            generatePreviewTip($(this), $('a',this).attr('slug'), null, $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'));
+				        }else if($('a', this).attr('draft_id')!=''){
+				            generatePreviewTip($(this), null, $('a',this).attr('draft_id'), $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'));
+				            $('a', this).prepend(draftText);
+				        }
+				    });
+				}
 			});
 		});
 	});

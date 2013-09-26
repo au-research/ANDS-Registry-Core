@@ -557,3 +557,45 @@ span.dynatree-node a{
 	display:block;
 	margin: 12px 0px;
 }
+
+/**
+ * Filmscript view
+ */
+.scroller{
+	height:160px;
+	position:relative;
+	.scroll{
+		position:absolute;
+		top:30%;
+		background:transparent;
+		width:48px;
+		height:48px;
+		cursor:pointer;
+		z-index:9999;
+	}
+	.left{
+		left:0;
+		background: transparent url(../images/prev.png) no-repeat;
+	}
+	.right{
+		right:0;
+		background: transparent url(../images/next.png) no-repeat;
+	}
+	.filmstrip{
+		overflow:hidden;
+		ul{
+			max-height:260px;
+			width:1000%;
+			li{
+				list-style-type:none;
+				display:block;
+				float:left;
+				width:200px;
+				max-height:260px;
+				img{
+					
+				}
+			}
+		}
+	}
+}
