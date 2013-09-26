@@ -485,6 +485,52 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		}
 	}
 
+	public function getThemePageIndex(){	
+		$this->output->set_content_type(rda::response_format);
+		$results = array();
+		$this->load->helper('file');
+		$file = read_file('./assets/shared/theme_pages/theme_cms_index.json');
+		$file = json_decode($file, true);
+		$results = $file;
+		// services_spotlight_results_data_source
+		$this->output->set_output(json_encode(array("items"=>$results)));
+	}
+
+	public function getThemePage($slug){
+		$this->output->set_content_type(rda::response_format);
+		$this->load->helper('file');
+		$file = read_file('./assets/shared/theme_pages/'.$slug.'.json');
+		if($file){
+			$this->output->set_output($file);
+		}else{
+			$this->output->set_output('File Not Found');
+		}
+	}
+
+	public function getByList(){
+		$this->load->model('registry_object/registry_objects','ro');
+		$list = $this->input->post('list_ro');
+		if(!$list){
+			$data = file_get_contents('php://input');
+			$array = json_decode($data);
+			$list = $array->list_ro;
+		}
+		$ros = array();
+		foreach($list as $key){
+			$ro = $this->ro->getPublishedByKey($key);
+			if($ro){
+				$ros[] = array(
+					'title'=>$ro->title,
+					'id'=>$ro->id,
+					'key'=>$ro->key,
+					'slug'=>$ro->slug
+				);
+			}
+		}
+		// echo json_encode($ros);
+		$this->output->set_output(json_encode(array('ros'=>$ros)));
+	}
+
 	/* Setup this controller to handle the expected response format */
 	public function __construct()
     {
