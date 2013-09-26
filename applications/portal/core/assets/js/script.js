@@ -262,8 +262,7 @@ window.log = function(){
   }
 };
 
-function initTips(selector)
-{
+function initTips(selector){
 	var qSelector = $('*[tip]');
 	if (selector)
 	{
@@ -281,7 +280,6 @@ function initTips(selector)
 	        classes: 'ui-tooltip-light'
 	    }
 	});
-
 }
 
 /* Not used currently, but would be better than scattered strings... :-( 
