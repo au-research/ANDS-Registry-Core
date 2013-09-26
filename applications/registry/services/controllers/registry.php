@@ -120,6 +120,48 @@ class Registry extends MX_Controller {
 		echo json_encode($data);
 	}
 
+	public function post_solr_search(){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$this->load->library('solr');
+		$this->load->helper('presentation_helper');
+		$filters = $this->input->post('filters');
+
+		//check php input for filters (angularjs ajax)
+		if(!$filters){
+			$data = file_get_contents("php://input");
+			$array = json_decode($data, true);
+			$filters = $array['filters'];
+		}
+		if(!$filters) $filters = array();
+
+		if($filters['include_facet']){
+			$facets = array(
+				'class' => 'Class',
+				'group' => 'Contributed By',
+				'license_class' => 'Licence',
+				'type' => 'Type',
+			);
+			foreach($facets as $facet=>$display){
+				$this->solr->setFacetOpt('field', $facet);
+			}
+			$this->solr->setFacetOpt('mincount','1');
+			$this->solr->setFacetOpt('limit','100');
+			$this->solr->setFacetOpt('sort','count');
+		}
+
+		$data = array();
+		$this->solr->setFilters($filters);
+		$this->solr->executeSearch();
+		$data['result'] = $this->solr->getResult();
+		if($filters['include_facet']) $data['facet'] = $this->solr->getFacet();
+		$data['numFound'] = $this->solr->getNumFound();
+		$data['solr_header'] = $this->solr->getHeader();
+		$data['fieldstrings'] = $this->solr->constructFieldString();
+		$data['timeTaken'] = $data['solr_header']->{'QTime'} / 1000;
+		echo json_encode($data);
+	}
+
 	/*
 	 * get_random_key
 	 * 
