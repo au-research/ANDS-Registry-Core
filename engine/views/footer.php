@@ -102,10 +102,10 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script type="text/javascript" src="<?php echo$base_url;?>assets/lib/dataTable/js/jquery.dataTables.js"></script>
 
         <?php elseif($lib=='abs_sdmx_querytool'):?>
-            <script type="text/javascript" src="<?php echo$base_url;?>assets/js/abs_sdmx_querytool.js"></script>
+            <script type="text/javascript" src="<?php echo apps_url('assets/abs_sdmx_querytool/js/abs_sdmx_querytool.js') ?>"></script>
 
         <?php elseif($lib=='context_menu'):?>
-            <script src="<?php echo$base_url;?>assets/lib/bootstrap-contextmenu.js" type="text/javascript"></script>
+            <script src="<?php echo asset_url('lib/bootstrap-contextmenu.js', 'base'); ?>" type="text/javascript"></script>
 
         <?php elseif($lib=='vocab_widget'):?>
             <link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget.css'); ?>">
@@ -132,6 +132,17 @@ $base_url = str_replace('/apps','/registry',base_url());
 
         <?php elseif($lib=='google_map'):?>
             <script src="https://maps.googleapis.com/maps/api/js?libraries=drawing&amp;sensor=false" type="text/javascript"></script>
+
+        <?php elseif($lib=='angular'):?>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angular.min.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-slugify.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/sortable.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/tinymce.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-sanitize-1.0.1.js', 'base') ?>"></script>
+
+        <?php elseif($lib=='colorbox'):?>
+            <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
+            <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
 
         <?php endif; ?>
 
