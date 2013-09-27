@@ -13,7 +13,6 @@ angular.module('portal_theme',[]).
 		return{
 			search: function(filters){
 				var promise = $http.post(base_url+'search/filter/', {'filters':filters}).then(function(response){
-					console.log(response);
 					return response.data;
 				});
 				return promise;
@@ -119,9 +118,9 @@ angular.module('portal_theme',[]).
 		$('.theme_search').each(function(){
 			var filter = {};
 			filter['q'] = $('.theme_search_query', this).val();
+			if($.trim(filter['q']=='')) delete filter['q'];
 			// filter['id'] = $(this).attr('id');
 			var search_id = $(this).attr('id');
-			filter['fq'] = {};
 			$('.theme_search_fq', this).each(function(){
 				if(filter[$(this).attr('fq-type')]){
 					if(filter[$(this).attr('fq-type')] instanceof Array){
@@ -167,6 +166,20 @@ angular.module('portal_theme',[]).
 				var output = Mustache.render(template, data);
 				$('#'+search_id).html(output).show();
 				if($('.tabs a.current').length==0) $('.tabs a:first-child').addClass('current');
+
+				$('.excerpt').each(function(){
+					// This will unencode the encoded entities, but also hide any random HTML'ed elements
+					$(this).html(htmlDecode(htmlDecode(htmlDecode($(this).html()))));
+					$(this).html($(this).directText());
+
+					var thecontent = $(this).html();
+					var newContent = ellipsis(thecontent, 200);
+					if(thecontent!=newContent){
+						newContent = '<div class="hide" fullExcerpt="true">'+thecontent+'</div>' + newContent + '';
+					}
+
+					$(this).html(newContent);
+				});
 
 				//facets
 				if($('.theme_facet[search-id='+search_id+']').length>0){

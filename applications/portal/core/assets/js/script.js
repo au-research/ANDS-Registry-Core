@@ -393,3 +393,14 @@ function generatePreviewTip(element, slug, registry_object_id, relation_type, re
         },
     }).on('click', function(e){e.preventDefault();return false;});
 }
+
+function ellipsis (string, length){
+	if (string.length <= length){
+		return string;
+	}else{
+		var trimmedString = string.substr(0, length-3);
+		trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" "))) + '&hellip;';
+		// return trimmedString + '<span class="showmore_excerpt"><br /><a href="javascript:void(0);">More &hellip;</a></span>';
+		return trimmedString;
+	}
+}

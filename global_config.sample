@@ -23,12 +23,15 @@ $ENV['pids_server_app_id'] = "@@pids_app_id";
 
 /* ENABLED MODULES */
 $ENV['ENABLED_MODULES'] = array(
-	'roles',
 	'pids',
+	'roles',
 	'registry',
-	#'vocab_service',
+	'identifier',
+	'data_source',
+	'vocab_service',
 	'mydois',
-#	'abs_sdmx_querytool'
+	'abs_sdmx_querytool',
+	'theme_cms'
 );
 
 // Set this to enable DOI query tool support

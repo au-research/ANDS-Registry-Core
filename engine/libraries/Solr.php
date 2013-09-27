@@ -111,7 +111,11 @@ class Solr {
      * @return integer
      */
     function getNumFound(){
-        return (int) $this->result->{'response'}->{'numFound'};
+        if(isset($this->result->{'response'}->{'numFound'})){
+            return (int) $this->result->{'response'}->{'numFound'};
+        }else{
+            return 0;
+        } 
     }
 
     /**
@@ -127,11 +131,17 @@ class Solr {
      * @return array 
      */
     function getResult(){
-        return $this->result->{'response'};
+        if(isset($this->result->{'response'})){
+            return $this->result->{'response'};
+        }else{
+            return false;
+        }
     }
 
     function getFacet(){
-        return $this->result->{'facet_counts'};
+        if(isset($this->result->{'facet_counts'})){
+            return $this->result->{'facet_counts'};
+        }else return false;
     }
 
     /**
@@ -205,7 +215,7 @@ class Solr {
                 break;
                 case 'q': 
                     $value = $this->escapeSolrValue($value);
-                    $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
+                    if(trim($value)!="") $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
                 break;
                 case 'p': 
                     $page = (int)$value;
@@ -266,6 +276,9 @@ class Solr {
                     break;
                 case 'tag':
                     $this->setOpt('fq', '+tag:("'.$value.'")');
+                    break;
+                case 'originating_source':
+                    $this->setOpt('fq', '+originating_source:("'.$value.'")');
                     break;
             }
         }

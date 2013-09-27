@@ -1,7 +1,11 @@
 <?php if(isset($page[$region]) && sizeof($page[$region])>0): ?>
 <?php foreach($page[$region] as $f): ?>
 <div style="margin:10px 0">
-	<h2><?php echo $f['title']; ?></h2>
+	<?php
+		if(isset($f['title']) && trim($f['title'])!=''){
+			echo '<h2>'.$f['title'].'</h2>';
+		}
+	?>
 	<?php if($f['type']=='html'): ?>
 		<?php echo $f['content']; ?>
 	<?php endif; ?>
@@ -34,11 +38,13 @@
 	<?php endif; ?>
 
 	<?php if($f['type']=='search'): ?>
-		<div class="theme_search search-result hide" id="<?php echo $f['search']['id']; ?>">
-			<input type="hidden" value="<?php echo $f['search']['query']; ?>" class="theme_search_query">
+		<div class="theme_search search-result hide" id="<?php echo (isset($f['search']['id'])? $f['search']['id'] : 'NOID'); ?>">
+			<input type="hidden" value="<?php echo (isset($f['search']['query'])? $f['search']['query']: ''); ?>" class="theme_search_query">
+			<?php if(isset($f['search']['fq'])): ?>
 			<?php foreach($f['search']['fq'] as $fq): ?>
 				<input type="hidden" value="<?php echo $fq['value']; ?>" class="theme_search_fq" fq-type="<?php echo $fq['name'] ?>">
 			<?php endforeach; ?>
+			<?php endif; ?>
 		</div>
 	<?php endif; ?>
 

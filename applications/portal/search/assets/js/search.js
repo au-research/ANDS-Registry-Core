@@ -634,17 +634,6 @@ function addDeleteFacet(type, text){
 	$('.facet_subjects ul').prepend(html);
 }
 
-function ellipsis (string, length){
-	if (string.length <= length){
-		return string;
-	}else{
-		var trimmedString = string.substr(0, length-3);
-		trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" "))) + '&hellip;';
-		// return trimmedString + '<span class="showmore_excerpt"><br /><a href="javascript:void(0);">More &hellip;</a></span>';
-		return trimmedString;
-	}
-}
-
 function SidebarToggle(controlDiv, map) {
 	// Set CSS styles for the DIV containing the control
 	// Setting padding to 5 px will offset the control

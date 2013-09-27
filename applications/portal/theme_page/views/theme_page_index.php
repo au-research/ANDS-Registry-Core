@@ -59,8 +59,12 @@
 		    {{/description}}
 		</div>
 	{{/result.docs}}
-	<a href="<?php echo portal_url('search');?>#!/{{filter_query}}">View Full Search</a>
+	<a href="<?php echo portal_url('search');?>#!/{{filter_query}}">View Full Search ({{numFound}} results)</a>
 {{/has_result}}
+
+{{#no_result}}
+	There are no result for this search!
+{{/no_result}}
 </script>
 
 <script type="text/x-mustache" id="facet-template">
