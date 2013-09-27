@@ -3,7 +3,7 @@
 <div style="margin:10px 0">
 	<?php
 		if(isset($f['title']) && trim($f['title'])!=''){
-			echo '<h2>'.$f['title'].'</h2>';
+			echo '<h4>'.$f['title'].'</h4>';
 		}
 	?>
 	<?php if($f['type']=='html'): ?>
