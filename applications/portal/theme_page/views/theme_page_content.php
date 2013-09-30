@@ -3,7 +3,7 @@
 <div style="margin:10px 0">
 	<?php
 		if(isset($f['title']) && trim($f['title'])!=''){
-			echo '<h4>'.$f['title'].'</h4>';
+			echo '<h2>'.$f['title'].'</h2>';
 		}
 	?>
 	<?php if($f['type']=='html'): ?>
@@ -17,7 +17,7 @@
 			<div class="flexslider" carousel style="min-height:0;margin-bottom:60px;">
 				<ul class="slides">
 					<?php foreach($f['gallery'] as $i): ?>
-					<li><a href="<?php echo $i['src'] ?>" rel="<?php echo $f['title'] ?>" colorbox><img src="<?php echo $i['src'];?>" alt="" rel="<?php echo $f['title'] ?>"></a></li>
+					<li><img src="<?php echo $i['src'];?>" alt="" rel="<?php echo $f['title'] ?>"></li>
 					<?php endforeach; ?>
 				</ul>
 			</div>

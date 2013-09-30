@@ -69,7 +69,7 @@
 
 <script type="text/x-mustache" id="facet-template">
 <div class="widget facet_{{facet_type}}">
-	<h3 class="widget_title">{{label}}</h3>
+	<h4 class="widget_title">{{label}}</h4>
 	<ul>
 		{{#values}}
 			<li><a href="<?php echo portal_url('search');?>#!/{{filter_query}}{{facet_type}}={{inc_title}}" class="filter" filter_type="{{facet_type}}" filter_value="{{title}}">{{title}} ({{count}})</a></li>
