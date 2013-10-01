@@ -1258,11 +1258,22 @@ function initIdentifiers() {
 	$.each(identifiers, function(){
 		var type = $('input[name=type]', this).val();
 		if(type=='orcid'){
-			$('input[name=value]', this).addClass('orcid_widget').orcid_widget();
+			var thisField = $(this).parent().parent();
+			$('input[name=value]', this).addClass('orcid_widget').orcid_widget({
+				lookup_class:'lookup-btn btn btn-small',
+				lookup_error_handler: function(data){
+					Core_removeValidationMessage(thisField);
+					Core_addValidationMessage(thisField, 'error', 'A Valid ORCID ID must be provided');
+				},
+				lookup_success_hook: function(){
+					Core_removeValidationMessage(thisField);
+				},
+				auto_close_search: true
+			});
 		}
 		//click all the lookup button
-		$('a.lookup-btn').click();
 	});
+	$('button.lookup-btn').click();
 }
 
 /*

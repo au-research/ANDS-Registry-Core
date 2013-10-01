@@ -186,7 +186,8 @@ else
                     <?php if ($this->user->hasFunction('AUTHENTICATED_USER')): ?>
                         <li class=""><?php echo anchor(registry_url('services/'), 'Registry Web Services');?></li>
                         <li class=""><?php echo anchor(apps_url('location_capture_widget/'), 'Location Capture Widget');?></li>
-                        <li class=""><?php echo anchor(registry_url('vocab_widget/'), 'Vocabulary Service Widget');?></li>
+                        <li class=""><?php echo anchor(apps_url('vocab_widget/'), 'Vocabulary Service Widget');?></li>
+                        <li class=""><?php echo anchor(apps_url('orcid_widget/'), 'ORCID Widget');?></li>
                     <?php endif; ?>
 
                     <?php if ($this->user->hasFunction('PORTAL_STAFF')): ?>
