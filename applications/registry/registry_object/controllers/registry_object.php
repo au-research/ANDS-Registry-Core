@@ -1063,6 +1063,7 @@ class Registry_object extends MX_Controller {
 
 				case 'SUBMITTED_FOR_ASSESSMENT': 
 					if($this->user->hasFunction('REGISTRY_STAFF')) { 
+						$actions[] = 'DRAFT';
 						$actions[] = 'ASSESSMENT_IN_PROGRESS';
 					} 
 				break;

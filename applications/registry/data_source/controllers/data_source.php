@@ -219,7 +219,7 @@ class Data_source extends MX_Controller {
 					if ($this->user->hasFunction('REGISTRY_STAFF'))
 					{
 						$st['ds_count']=$data_source->count_SUBMITTED_FOR_ASSESSMENT;
-						$st['connectTo']='ASSESSMENT_IN_PROGRESS';
+						$st['connectTo']='DRAFT,ASSESSMENT_IN_PROGRESS';
 						array_push($st['menu'], array('action'=>'to_assess', 'display'=>'Asessment In Progress'));
 					}
 					break;
@@ -488,10 +488,10 @@ class Data_source extends MX_Controller {
 					if ($this->user->hasFunction('REGISTRY_STAFF'))
 					{
 						$menu['to_assess'] = 'Assessment In Progress';
+						$menu['to_draft'] = 'Revert to Draft';
 					}
 					if ($this->user->hasFunction('REGISTRY_SUPERUSER'))
 					{
-						$menu['to_draft'] = '* Move to Draft';
 						$menu['edit'] = '* Edit Record';
 						$menu['delete'] = '* Delete Record';
 					}
@@ -507,7 +507,7 @@ class Data_source extends MX_Controller {
 						$menu['to_moreworkrequired'] = 'More Work Required';
 						if ($this->user->hasFunction('REGISTRY_SUPERUSER'))
 						{
-							$menu['to_draft'] = '* Move to Draft';
+							$menu['to_draft'] = '* Revert to Draft';
 							$menu['edit'] = '* Edit Record';
 							$menu['delete'] = '* Delete Record';
 						}
