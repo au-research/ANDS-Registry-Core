@@ -31,13 +31,15 @@ class View extends MX_Controller {
 			catch (SlugNoLongerValidException $e)
 			{
 				header("HTTP/1.1 404 Not Found");
-				$this->load->view('soft404', array('previously_valid_title'=>$e->getMessage()));
+				throw new Exception('Page could not be found - 404');
+				//$this->load->view('soft404', array('previously_valid_title'=>$e->getMessage()));
 				return;
 			}
 			catch (PageNotValidException $e)
 			{			
 				header("HTTP/1.1 404 Not Found");
-				$this->load->view('soft404', array('message'=>$e->getMessage()));
+				throw new Exception('Page could not be found - 404');
+				//$this->load->view('soft404', array('message'=>$e->getMessage()));
 				return;
 			}			
 		}
@@ -51,7 +53,8 @@ class View extends MX_Controller {
 			catch (PageNotValidException $e)
 			{			
 				header("HTTP/1.1 404 Not Found");
-				$this->load->view('soft404', array('message'=>$e->getMessage()));
+				throw new Exception('Page could not be found - 404');
+				//$this->load->view('soft404', array('message'=>$e->getMessage()));
 				return;
 			}						
 		}
@@ -60,7 +63,8 @@ class View extends MX_Controller {
 		if (!isset($extRif['data']) || !$extRif['data'])
 		{
 			header("HTTP/1.1 404 Not Found");				
-			$this->load->view('soft404');
+			throw new Exception('Page could not be found - 404');
+			//$this->load->view('soft404');
 			return;
 		}
 		$this->load->library('stats');
@@ -354,7 +358,8 @@ class View extends MX_Controller {
 			else
 			{
 				header("HTTP/1.1 404 Not Found");	
-				$this->load->view('soft404', array('invalid_key'=>'Supplied key is not valid'));	
+				throw new Exception('Page could not be found - 404');
+				//$this->load->view('soft404', array('invalid_key'=>'Supplied key is not valid'));	
 				return;
 			}
 		}

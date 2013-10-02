@@ -84,11 +84,11 @@ class Registry_fetch extends CI_Model
 				{
 					throw new PageNotValidException($contents['message']);
 				}
-				throw new Exception("Error whilst fetching registry object: " . $contents['message']);
+				throw new ErrorException("Error whilst fetching registry object: " . $contents['message']);
 			}
 			else
 			{
-				throw new Exception("Error whilst fetching registry object: No response from registry when requesting this SLUG");
+				throw new ErrorException("Error whilst fetching registry object: No response from registry when requesting this SLUG");
 			}
 		}
 	}
@@ -125,7 +125,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object connections: " . $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object connections: " . $contents['message']);
 		}
 	}
 
@@ -143,7 +143,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object connections: " . $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object connections: " . $contents['message']);
 		}
 	}
 
@@ -157,7 +157,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object suggested links by slug: " . $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object suggested links by slug: " . $contents['message']);
 		}
 	}
 
@@ -172,7 +172,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object suggested links by ID: " .$url."  ". $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object suggested links by ID: " .$url."  ". $contents['message']);
 		}
 	}
 
@@ -186,7 +186,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object connection graph: " . $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object connection graph: " . $contents['message']);
 		}
 	}
 
@@ -200,7 +200,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object connection graph: " . $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object connection graph: " . $contents['message']);
 		}
 	}
 
