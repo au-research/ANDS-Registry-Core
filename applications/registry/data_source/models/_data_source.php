@@ -902,7 +902,7 @@ class _data_source {
 		{
 			if($this->getAttribute("last_harvest_run_date") != '')
 			{
-				$msg .= NL.'Icremental harvest from: '.date("j F Y, g:i a"	,strtotime($this->getAttribute("last_harvest_run_date")));
+				$msg .= NL.'Incremental harvest from: '.date("j F Y, g:i a"	,strtotime($this->getAttribute("last_harvest_run_date")));
 			}
 		}
 		$status = "SCHEDULED FOR ". $dispDateTime;	
