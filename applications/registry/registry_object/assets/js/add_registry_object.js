@@ -13,7 +13,6 @@ var default_help_link = "http://ands.org.au/guides/cpguide/";
 
 $(function(){
 	$('body').css('background-color', '#454545');
-
 	//mode
 	aro_mode = 'advanced';
 	$('.pane').hide();
@@ -343,6 +342,7 @@ function initEditForm(){
 			var aro_box = $(this).parents('.aro_box');
 			$(aro_box).children('*:not(.aro_box_display)').slideToggle();
 	});
+	var admin = $('#admin');
 	originalKeyValue = $('input[name=key]', admin).val();
 	/*
 	 * Prevents the form from submitting when hit any button
@@ -1039,7 +1039,7 @@ function initRelatedObjects(){
 	//reverse links and contributors page
 	$('.automated_links').remove();
 	$.ajax({
-		url:base_url+'registry_object/getConnections/'+$(ro_id).val(), 
+		url:base_url+'registry_object/getConnections/'+$('#ro_id').val(), 
 		type: 'POST',
 		success: function(data){
 			if(data.connections){
