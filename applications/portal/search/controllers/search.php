@@ -3,7 +3,7 @@
 class Search extends MX_Controller {
 
 	function index(){
-		$data['title']='Research Data Australia - Search';
+		$data['title']='Search - Research Data Australia';
 		$data['scripts'] = array('search','infobox');
 		$data['js_lib'] = array('google_map', 'range_slider','vocab_widget','qtip');
 

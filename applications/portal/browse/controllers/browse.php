@@ -4,7 +4,7 @@ class Browse extends MX_Controller {
 
 	var $image_base_url;
 	public function index(){
-		$data['title']='Research Data Australia - Browse by Subjects';
+		$data['title']='Browse By Subjects - Research Data Australia';
 		$data['scripts'] = array('rdabrowse');
 		$data['js_lib'] = array('vocab_widget');
 		// $data['vocabularies'] = $this->getVocabTree();

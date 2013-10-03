@@ -96,22 +96,22 @@ class Home extends MX_Controller {
 		$data['links'] = $links;
 		$this->load->library('stats');
 		$this->stats->registerPageView();
-
+		$data['title'] = 'Contributors - Research Data Australia';
 		$this->load->view('who_contributes', $data);
 	}
 
 	function about(){
-		$data['title'] = 'Research Data Australia - About';
+		$data['title'] = 'About - Research Data Australia';
 		$this->load->view('about', $data);
 	}
 
 	function disclaimer(){
-		$data['title'] = 'Research Data Australia - Disclaimer';
+		$data['title'] = 'Disclaimer - Research Data Australia';
 		$this->load->view('disclaimer', $data);
 	}
 
 	function contact(){
-		$data['title'] = 'Research Data Australia - Contact Us';
+		$data['title'] = 'Contact Us - Research Data Australia';
 		if($this->input->get('sent')!=''){
 			$this->load->library('user_agent');
 			$data['user_agent']=$this->agent->browser();
