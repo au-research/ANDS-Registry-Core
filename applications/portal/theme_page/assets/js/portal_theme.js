@@ -118,7 +118,7 @@ angular.module('portal_theme',[]).
 		$('.theme_search').each(function(){
 			var filter = {};
 			filter['q'] = $('.theme_search_query', this).val();
-			if($.trim(filter['q']=='')) delete filter['q'];
+			if($.trim(filter['q'])=='') delete filter['q'];
 			// filter['id'] = $(this).attr('id');
 			var search_id = $(this).attr('id');
 			$('.theme_search_fq', this).each(function(){
