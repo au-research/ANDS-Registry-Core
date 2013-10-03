@@ -59,6 +59,9 @@ function ds_acl_enforce($ds_id, $message = ''){
 
 function default_error_handler($errno, $errstr, $errfile, $errline)
 {
+	// Ignore when error_reporting is turned off (sometimes inline with @ symbol)
+	if (error_reporting() === 0) { return true; }
+	
 	// Ignore E_STRICT no email either
 	if ($errno == E_STRICT) { return true; }
 

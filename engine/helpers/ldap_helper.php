@@ -18,7 +18,9 @@ function authenticateWithLDAP($role_id, $passphrase, &$LDAPAttributes, &$userMes
 		
 			if( $ldapconn && $passphrase != '' )
 			{
+				// Suppress warnings when binding to the LDAP server
 				$ldapbind = @ldap_bind($ldapconn, $ldapDN, $passphrase);
+
 				if( $ldapbind )
 				{
 					$validCredentials = true;
