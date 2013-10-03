@@ -91,8 +91,12 @@ class View extends MX_Controller {
 		$data['ro_slug'] = '';
 		$data['ro_id'] = '';
 
-
 		$suggested_links = array();
+		$matches = array();
+		preg_match('/<extRif\:simplifiedTitle>(.*)<\/extRif:simplifiedTitle>/', $extRif['data'], $matches);
+		if(isset($matches[1]) && $matches[1]!=''){
+			$data['title'] = $matches[1].' - Research Data Australia';
+		}
 
 		if ($this->input->get('slug'))
 		{
