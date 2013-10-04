@@ -29,7 +29,7 @@ $base_url = str_replace('/apps','/registry',base_url());
     <!-- Placed at the end of the document so the pages load faster -->
     <script>
 
-      //  localStorage.clear();
+        localStorage.clear();
         var base_url = '<?php echo $base_url;?>';
         var portal_url = '<?php echo portal_url();?>';
         var apps_url = '<?php echo apps_url();?>';
