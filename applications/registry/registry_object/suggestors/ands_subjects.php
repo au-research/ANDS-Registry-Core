@@ -29,7 +29,7 @@ class Suggestor_ands_subjects implements GenericSuggestor
 		{
 			foreach($sxml->{strtolower($registry_object->class)}->subject AS $subject)
 			{
-				$my_subjects[] = '"' . (string) $subject . '" OR';
+				$my_subjects[] = '"' . (string) removeBadValue($subject) . '" OR';
 			}
 		}
 		$subject_search_query = "(" . substr(implode(" subject_value_resolved:", $my_subjects), 0, -3) . ")";
@@ -58,6 +58,8 @@ class Suggestor_ands_subjects implements GenericSuggestor
 		$CI->solr->setOpt("rows", $rows);
 		$result = $CI->solr->executeSearch(true);
 		$suggestions = array();
+
+		var_dump($result);
 
 		if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0)
 		{

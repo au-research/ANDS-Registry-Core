@@ -266,3 +266,9 @@ function escapeSolrValue($string){
 
     return $string;
 }
+
+function removeBadValue($string){
+    $match = array('%','&',);
+    $string = str_replace($match, '', $string);
+    return $string;
+}
