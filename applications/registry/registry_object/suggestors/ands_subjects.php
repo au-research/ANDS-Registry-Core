@@ -59,7 +59,7 @@ class Suggestor_ands_subjects implements GenericSuggestor
 		$result = $CI->solr->executeSearch(true);
 		$suggestions = array();
 
-		var_dump($result);
+		//var_dump($result);
 
 		if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0)
 		{
