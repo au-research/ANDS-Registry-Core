@@ -114,6 +114,8 @@ define('ONE_MONTH', 30*ONE_DAY);
 define('CONTRIBUTOR_PAGE_TEMPLATE', 'contributor');
 define('CONTRIBUTOR_PAGE_KEY_PREFIX', 'a61e9d0d');
 
+define('REGISTRY_APP_PATH', 'applications/registry/');
+
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

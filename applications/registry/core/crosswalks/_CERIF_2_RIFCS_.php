@@ -15,7 +15,7 @@ class CERIF_2_RIFCS extends Crosswalk{
 
 	function __construct(){
 		$this -> rifcs =  simplexml_load_string($this::RIFCS_WRAPPER);
-		require_once(APP_PATH . "core/crosswalks/_CFClasses.php");
+		require_once(REGISTRY_APP_PATH . "core/crosswalks/_CFClasses.php");
 	}
 
 	public function identify()

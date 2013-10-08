@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once(APP_PATH . "services/interfaces/_GenericPortalEndpoint.php");
+require_once(REGISTRY_APP_PATH . "services/interfaces/_GenericPortalEndpoint.php");
 /**
  * RDA Endpoint (allows RDA to query the registry)
  *

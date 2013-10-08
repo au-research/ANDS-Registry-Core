@@ -116,6 +116,7 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script src="<?php echo apps_url('assets/registry_object_search/js/rosearch_widget.js');?>" type="text/javascript"></script>
 
         <?php elseif($lib=='registry_widget'):?>
+            <link href="<?php echo apps_url('assets/registry_widget/css/registry_widget.css');?>" rel="stylesheet" type="text/css">
             <script src="<?php echo apps_url('assets/registry_widget/js/registry_widget.js');?>" type="text/javascript"></script>
 
          <?php elseif($lib=='statistics'):?>

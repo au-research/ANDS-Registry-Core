@@ -273,7 +273,7 @@ function bindSearchRelatedEvents(tt, target){
 			}
 			var class_option = $('#class_related_search_option').val();
 			$.ajax({
-				url:base_url+'registry_object_search/search/'+class_option+ds_option+'?field=title&term='+term+published_option, 
+				url:apps_url+'registry_object_search/search/'+class_option+ds_option+'?field=title&term='+term+published_option, 
 				type: 'GET',
 				success: function(data){
 					var template = $('#related_object_search_result').html();

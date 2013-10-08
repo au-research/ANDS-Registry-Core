@@ -8,12 +8,12 @@ function getCrossWalks()
 	if (count($ENV['crosswalks']) > 0) return $ENV['crosswalks'];
 
 	// Include the interface
-	require_once(APP_PATH . "core/crosswalks/_crosswalk.php");
+	require_once(REGISTRY_APP_PATH . "core/crosswalks/_crosswalk.php");
 
 	// List our crosswalks
 	$CI =& get_instance();
 	$CI->load->helper('directory');
-	$crosswalks = directory_map(APP_PATH . "core/crosswalks");
+	$crosswalks = directory_map(REGISTRY_APP_PATH . "core/crosswalks");
 
 	$cw_objects = array();
 
@@ -26,7 +26,7 @@ function getCrossWalks()
 		$class_name = str_replace(".php","",$cw_class);
 		try
 		{
-			require_once(APP_PATH . "core/crosswalks/" . $cw_class);
+			require_once(REGISTRY_APP_PATH . "core/crosswalks/" . $cw_class);
 			// Add it to our objects array
 			$cw_objects[$class_name] = new $class_name();
 		}

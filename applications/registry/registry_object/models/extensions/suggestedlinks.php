@@ -23,11 +23,11 @@ class Suggestedlinks_Extension extends ExtensionBase
 		if (!$suggestor) { throw new Exception("No suggestor specified..."); }
 
 		// Get the necessary classes
-		require_once(APP_PATH . 'registry_object/suggestors/_suggestor.php');
+		require_once(REGISTRY_APP_PATH . 'registry_object/suggestors/_suggestor.php');
 
-		if (file_exists(APP_PATH . 'registry_object/suggestors/' . $suggestor . '.php'))
+		if (file_exists(REGISTRY_APP_PATH . 'registry_object/suggestors/' . $suggestor . '.php'))
 		{
-			require_once(APP_PATH . 'registry_object/suggestors/' . $suggestor . '.php');
+			require_once(REGISTRY_APP_PATH . 'registry_object/suggestors/' . $suggestor . '.php');
 		}
 		
 		// Try and instantiate the class

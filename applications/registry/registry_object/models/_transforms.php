@@ -22,7 +22,7 @@ class Transforms {
 		if (is_null(self::$qa_transformer))
 		{
 			$rmdQualityTest = new DomDocument();
-			$rmdQualityTest->load(APP_PATH.'registry_object/transforms/quality_report.xsl');
+			$rmdQualityTest->load(REGISTRY_APP_PATH.'registry_object/transforms/quality_report.xsl');
 			$qualityTestproc = new XSLTProcessor();
 			$qualityTestproc->importStyleSheet($rmdQualityTest);
 			self::$qa_transformer =	$qualityTestproc;
@@ -36,7 +36,7 @@ class Transforms {
 		if (is_null(self::$qa_level_transformer))
 		{
 			$rmdQualityTest = new DomDocument();
-			$rmdQualityTest->load(APP_PATH.'registry_object/transforms/level_report.xsl');
+			$rmdQualityTest->load(REGISTRY_APP_PATH.'registry_object/transforms/level_report.xsl');
 			$qualityTestproc = new XSLTProcessor();
 			$qualityTestproc->importStyleSheet($rmdQualityTest);
 			self::$qa_level_transformer =	$qualityTestproc;
@@ -50,7 +50,7 @@ class Transforms {
 		if (is_null(self::$extrif_to_solr_transformer))
 		{
 			$extRifToSOLR = new DomDocument();
-			$extRifToSOLR->load(APP_PATH.'registry_object/transforms/extrif_to_solr.xsl');
+			$extRifToSOLR->load(REGISTRY_APP_PATH.'registry_object/transforms/extrif_to_solr.xsl');
 			$extRifToSOLRproc = new XSLTProcessor();
 			$extRifToSOLRproc->importStyleSheet($extRifToSOLR);
 			self::$extrif_to_solr_transformer =	$extRifToSOLRproc;
@@ -65,7 +65,7 @@ class Transforms {
 		if (is_null(self::$extrif_to_dc_transformer))
 		{
 			$extRifToDC = new DomDocument();
-			$extRifToDC->load(APP_PATH.'registry_object/transforms/extrif_to_dc.xsl');
+			$extRifToDC->load(REGISTRY_APP_PATH.'registry_object/transforms/extrif_to_dc.xsl');
 			$extRifToDCproc = new XSLTProcessor();
 			$extRifToDCproc->importStyleSheet($extRifToDC);
 			self::$extrif_to_dc_transformer =	$extRifToDCproc;
@@ -79,7 +79,7 @@ class Transforms {
 		if (is_null(self::$extrif_to_html_transformer))
 		{
 			$extRifToHtml = new DomDocument();
-			$extRifToHtml->load(APP_PATH.'registry_object/transforms/extrif_to_html.xsl');
+			$extRifToHtml->load(REGISTRY_APP_PATH.'registry_object/transforms/extrif_to_html.xsl');
 			$extRifToHtmlproc = new XSLTProcessor();
 			$extRifToHtmlproc->importStyleSheet($extRifToHtml);
 			self::$extrif_to_html_transformer =	$extRifToHtmlproc;
@@ -93,7 +93,7 @@ class Transforms {
 		if (is_null(self::$extrif_to_form_transformer))
 		{
 			$extRifToForm = new DomDocument();
-			$extRifToForm->load(APP_PATH.'registry_object/transforms/extrif_to_new_form.xsl');
+			$extRifToForm->load(REGISTRY_APP_PATH.'registry_object/transforms/extrif_to_new_form.xsl');
 			$extRifToFormproc = new XSLTProcessor();
 			$extRifToFormproc->importStyleSheet($extRifToForm);
 			self::$extrif_to_form_transformer =	$extRifToFormproc;
@@ -107,7 +107,7 @@ class Transforms {
 		if (is_null(self::$feed_to_rif_transformer))
 		{
 			$getRifFromFeed = new DomDocument();
-			$getRifFromFeed->load(APP_PATH.'registry_object/transforms/extract_rif_from_feed.xsl');
+			$getRifFromFeed->load(REGISTRY_APP_PATH.'registry_object/transforms/extract_rif_from_feed.xsl');
 			$getRifFromFeedproc = new XSLTProcessor();
 			$getRifFromFeedproc->importStyleSheet($getRifFromFeed);
 			self::$feed_to_rif_transformer =	$getRifFromFeedproc;
@@ -121,7 +121,7 @@ class Transforms {
 		if (is_null(self::$form_to_cleanrif_transformer))
 		{
 			$cleanEmtyTags = new DomDocument();
-			$cleanEmtyTags->load(APP_PATH.'registry_object/transforms/clean_empty_tags.xsl');
+			$cleanEmtyTags->load(REGISTRY_APP_PATH.'registry_object/transforms/clean_empty_tags.xsl');
 			$cleanEmtyTagsproc = new XSLTProcessor();
 			$cleanEmtyTagsproc->importStyleSheet($cleanEmtyTags);
 			self::$form_to_cleanrif_transformer =	$cleanEmtyTagsproc;
@@ -136,7 +136,7 @@ class Transforms {
 		if (is_null(self::$clean_ns_transformer))
 		{
 			$cleanNS = new DomDocument();
-			$cleanNS->load(APP_PATH.'registry_object/transforms/clean_ns.xsl');
+			$cleanNS->load(REGISTRY_APP_PATH.'registry_object/transforms/clean_ns.xsl');
 			$cleanNSproc = new XSLTProcessor();
 			$cleanNSproc->importStyleSheet($cleanNS);
 			self::$clean_ns_transformer =	$cleanNSproc;
@@ -150,7 +150,7 @@ class Transforms {
 		if (is_null(self::$extrif_to_dci_transformer))
 		{
 			$dci_xsl = new DomDocument();
-			$dci_xsl->load(APP_PATH.'registry_object/transforms/extrif_to_dci.xsl');
+			$dci_xsl->load(REGISTRY_APP_PATH.'registry_object/transforms/extrif_to_dci.xsl');
 			$dciProc = new XSLTProcessor();
 			$dciProc->importStyleSheet($dci_xsl);
 			self::$extrif_to_dci_transformer = $dciProc;
@@ -164,7 +164,7 @@ class Transforms {
 		if (is_null(self::$extrif_to_orcid_transformer))
 		{
 			$orcid_xsl = new DomDocument();
-			$orcid_xsl->load(APP_PATH.'registry_object/transforms/extrif_to_orcid.xsl');
+			$orcid_xsl->load(REGISTRY_APP_PATH.'registry_object/transforms/extrif_to_orcid.xsl');
 			$orcidProc = new XSLTProcessor();
 			$orcidProc->importStyleSheet($orcid_xsl);
 			self::$extrif_to_orcid_transformer = $orcidProc;

@@ -39,7 +39,7 @@ class Registry_fetch extends CI_Model
 		$xsl = new DomDocument();
 		$document = new DomDocument();
 		$document->loadXML($XML, LIBXML_NOENT);
-		$xsl->load(APP_PATH . 'view/_xsl/'. $xslt_filename);
+		$xsl->load(REGISTRY_APP_PATH . 'view/_xsl/'. $xslt_filename);
 		$proc = new XSLTProcessor();
 		$proc->importStyleSheet($xsl);
 

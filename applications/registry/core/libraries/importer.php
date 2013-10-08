@@ -949,7 +949,7 @@ class Importer {
 
 		// TODO: Does this cache in-memory?
 		libxml_use_internal_errors(true);
-		$validation_status = $doc->schemaValidate(APP_PATH . "registry_object/schema/registryObjects.xsd");
+		$validation_status = $doc->schemaValidate(REGISTRY_APP_PATH . "registry_object/schema/registryObjects.xsd");
 
 		if ($validation_status === TRUE) 
 		{
