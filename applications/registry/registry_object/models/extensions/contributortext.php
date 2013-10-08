@@ -28,7 +28,8 @@ class ContributorText_Extension extends ExtensionBase
 		foreach($classes as $class=>$num){
 			$contributorData['contents'][$class] = $num;
 		}
-		$collectionCount = $contributorData['contents']['collection'];
+		
+		$collectionCount = isset($contributorData['contents']['collection']) ? $contributorData['contents']['collection'] : 0;
 		if($collectionCount==0)
 		{
 			$collectionCount = 'no';
