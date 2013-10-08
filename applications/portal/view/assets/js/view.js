@@ -662,7 +662,9 @@ function generatePreviewTip(element, slug, registry_object_id, relation_type, re
             classes: 'ui-tooltip-light ui-tooltip-shadow previewPopup',
             width: 550
         },
-    }).on('click', function(e){e.preventDefault();return false;});
+    })
+    .on('click', function(e){e.preventDefault();return false;})
+    .on('dblclick', function(e){ e.preventDefault(); window.location = $(this).attr('href'); });
 }
 
 function initDescriptionDisplay()
