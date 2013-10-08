@@ -140,14 +140,14 @@ class Dates_Extension extends ExtensionBase
 			$end = '';
 			if ($date->startDate)
 			{
-				if (!($start = $this->nicifyDate($date->startDate)))
+				if (!($start = $this->nicifyDate($this->getWTCdate($date->startDate))))
 				{
 					$start = $date->startDate;
 				}			
 			}
 			if ($date->endDate)
 			{
-				if (!($end = $this->nicifyDate($date->endDate)))
+				if (!($end = $this->nicifyDate($this->getWTCdate($date->endDate))))
 				{
 					$end = $date->endDate;
 				}			
