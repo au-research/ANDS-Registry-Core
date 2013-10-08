@@ -348,7 +348,7 @@ function loadSubjectBrowse(val){
 		}
 
 		//sqc += '&defType=edismax';
-		$('#subjectfacet div').vocab_widget({mode:'tree', repository:'anzsrc-for', sqc:encodeURIComponent(sqc), endpoint: window.default_base_url + 'registry/vocab_widget/proxy/'})
+		$('#subjectfacet div').vocab_widget({mode:'tree', repository:'anzsrc-for', sqc:encodeURIComponent(sqc), endpoint: window.default_base_url + 'apps/vocab_widget/proxy/'})
 		.on('treeselect.vocab.ands', function(event) {
 			var target = $(event.target);
 			var data = target.data('vocab');
