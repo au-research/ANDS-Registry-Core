@@ -13,7 +13,10 @@ drawRegistryIcon();
 
 // Check if we have a hierarchal connections graph
 initViewPage();
-checkForDuplicateRecords();
+
+// duplicate displays will be postponed 'till next release
+//checkForDuplicateRecords();
+
 initConnectionGraph();
 drawMap();
 initConnections(); 
