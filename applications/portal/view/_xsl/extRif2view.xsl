@@ -1253,8 +1253,8 @@
         </img>
     </xsl:if>
     <xsl:if test="string-length(substring-after(./@licence_type,'CC-'))=0">    
-     <xsl:if test="./@licence_type='Unknown/Other' and .=''"><p class="rights">Unknown</p></xsl:if>
-     <xsl:if test="./@licence_type!='Unknown/Other' and .!='' "><p class="rights"><xsl:value-of select="./@licence_type"/></p></xsl:if>
+     <xsl:if test="./@licence_type='Unknown' and .=''"><p class="rights">Unknown</p></xsl:if>
+     <xsl:if test="./@licence_type!='Unknown' and .!='' "><p class="rights"><xsl:value-of select="./@licence_type"/></p></xsl:if>
      <!--  <xsl:value-of select="./@licence_type"/> -->
  </xsl:if>
  <xsl:if test=". and .!=''"><p class="rights"><xsl:value-of select="."/></p></xsl:if>
