@@ -34,7 +34,7 @@ class Suggestor_ands_duplicates implements GenericSuggestor
 			}
 		}
 		$identifier_search_query = implode(" +identifier_value:", $my_identifiers);
-		$identifier_search_query = " -key:".$registry_object->key.$identifier_search_query;
+		$identifier_search_query = " -slug:".$registry_object->slug.$identifier_search_query;
 
 		$suggestions = $this->getSuggestionsBySolrQuery($identifier_search_query);
 
@@ -67,6 +67,11 @@ class Suggestor_ands_duplicates implements GenericSuggestor
 				"count" => $result['response']['numFound'],
 				"links" => $links,
 				"suggestor" => 'ands_duplicates'
+			);
+		}
+		else{
+			$suggestions = array(
+				"search_query" => $search_query
 			);
 		}
 		return $suggestions;

@@ -13,6 +13,7 @@ drawRegistryIcon();
 
 // Check if we have a hierarchal connections graph
 initViewPage();
+checkForDuplicateRecords();
 initConnectionGraph();
 drawMap();
 initConnections(); 
@@ -173,6 +174,28 @@ function bindPaginationConnection(tt){
 function initInternalSuggestedLinks()
 {
 
+}
+
+function checkForDuplicateRecords(){
+    var suggestor = 'ands_duplicates';
+    var url_suffix = "view/getSuggestedLinks/"+suggestor+"/0/0/?id=" + getRegistryObjectID();
+    $.ajax({
+        url:base_url+url_suffix,
+        dataType:'json',
+        success:function(data){
+            var count = parseInt(data.count);
+            if(count > 0)
+            {
+                var dupLinks = '';
+                $.each(data.links, function(){
+                    dupLinks += "<a href='"+this.url+"'>"+this.group+"</a>";
+                    console.log(dupLinks);
+               
+                });
+                $('#displaytitle').append("<div>duplicate(s):<br/>"+dupLinks+"</div>");
+            }
+        }
+    });
 }
 
 function initDataciteSeeAlso(){
