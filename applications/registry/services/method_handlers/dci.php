@@ -34,6 +34,9 @@ class DCIMethod extends MethodHandler
 		{
 			$CI->solr->setOpt($key, $field);
 		}
+		
+		// Only pull back collections!
+		$CI->solr->setOpt('fq','class:(collection)');
 
 		// Get back a list of IDs for matching registry objects
 		$result = $CI->solr->executeSearch(true);
