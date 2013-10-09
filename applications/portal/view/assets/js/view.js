@@ -188,9 +188,7 @@ function checkForDuplicateRecords(){
             {
                 var dupLinks = '';
                 $.each(data.links, function(){
-                    dupLinks += "<a href='"+this.url+"'>"+this.group+"</a>";
-                    console.log(dupLinks);
-               
+                    dupLinks += "<a href='"+this.url+"'>"+this.group+"</a>";               
                 });
                 $('#displaytitle').append("<div>duplicate(s):<br/>"+dupLinks+"</div>");
             }
