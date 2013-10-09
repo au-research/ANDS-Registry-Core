@@ -180,9 +180,8 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			throw new Exception("Unable to fetch connections for this registry object.");
 		}
 
-		$connections = $registry_object->getConnections($published_only,$type_filter,$limit,$offset);
-
-		// XXX: TODO: some logic to limit to 20 per "class of connection" and offset on request (for pagination)
+		// Include inferred connections from duplicates
+		$connections = $registry_object->getConnections($published_only,$type_filter,$limit,$offset, true);
 
 		// Return this registry object's connections
 		echo json_encode(array("connections"=>$connections, 'class'=>$registry_object->class));
