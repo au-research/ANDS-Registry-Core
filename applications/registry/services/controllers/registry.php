@@ -33,7 +33,7 @@ class Registry extends MX_Controller {
 				formatResponse($response, $format);
 			}catch (Exception $e){
 				$response['status']='ERROR';
-				$response['message']=$e->getMessage;
+				$response['message']=$e->getMessage();
 				formatResponse($response, $format);
 			}
 		}else{
@@ -245,8 +245,8 @@ class Registry extends MX_Controller {
 	 */
 	public function get_datasources_list(){
 		//$this->output->enable_profiler(TRUE);
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
+		// header('Cache-Control: no-cache, must-revalidate');
+		// header('Content-type: application/json');
 
 		$jsonData = array();
 		$jsonData['status'] = 'OK';

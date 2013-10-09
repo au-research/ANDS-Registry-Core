@@ -1,4 +1,5 @@
 applications/apps/
+applications/developer/
 global_config.php
 ._*
 .settings
