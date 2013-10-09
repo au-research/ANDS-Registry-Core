@@ -369,13 +369,15 @@ class Connections_Extension extends ExtensionBase
             { 
             	$matched_ro = $this->_CI->ro->getByID($doc['id']);
             	$matches = $matched_ro->getAllRelatedObjects();
-           
-            	foreach ($matches AS &$match)
-            	{
-            				$match["origin"] = "IDENTIFIER_MATCH";
-            				$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
-            				$my_connections[] = $match;
-            	}
+           		if ($matches && count($matches) > 0)
+           		{
+	            	foreach ($matches AS &$match)
+	            	{
+	            				$match["origin"] = "IDENTIFIER_MATCH";
+	            				$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
+	            				$my_connections[] = $match;
+	            	}
+	            }
             }
         }
 
