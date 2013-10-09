@@ -5,3 +5,5 @@ global_config.php
 .htaccess
 assets/uploads/
 assets/shared/
+.DS_Store
+.gitignore

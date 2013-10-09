@@ -207,6 +207,9 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			case "ands_identifiers":
 				$suggestor = "ands_identifiers";
 			break;
+			case "ands_duplicates":
+				$suggestor = "ands_duplicates";
+			break;
 			case "ands_subjects":
 				$suggestor = "ands_subjects";
 			break;
