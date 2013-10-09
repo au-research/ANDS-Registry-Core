@@ -61,6 +61,10 @@ class Dates_Extension extends ExtensionBase
 			// Assume this is a year:
 			$value = "Jan 1 " . $value;
 		}
+		else if (preg_match("/\d{4}\-\d{2}/", $value) === 1)
+		{
+			$value = $value . "-01";
+		}
 
 		if (($timestamp = strtotime($value)) === false) {
 	    	return false;
