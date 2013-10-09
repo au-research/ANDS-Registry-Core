@@ -469,7 +469,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 	public function getSlugFromKey()
 	{
 		$key = $this->input->get("key");
-
+		
 		$this->db->select("slug,registry_object_id,status")->from("registry_objects")->where("key",$key);
 		$query = $this->db->get();
 

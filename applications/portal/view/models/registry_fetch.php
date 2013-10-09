@@ -295,7 +295,7 @@ function fetchContributorDataById($id)
 
 	function getSlugFromKey($key)
 	{
-		$url = $this->config->item('registry_endpoint') . "getSlugFromKey/?key=" . $key;
+		$url = $this->config->item('registry_endpoint') . "getSlugFromKey/?key=" . rawurlencode($key);
  		$response = json_decode(@file_get_contents($url), true);
  		if (isset($response[0]))
  		{
