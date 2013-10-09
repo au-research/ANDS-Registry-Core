@@ -25,9 +25,11 @@ class Services extends MX_Controller {
 		log_message('debug', 'Request URI: ' . $_SERVER["REQUEST_URI"]);
 		
 		// If no parameters supplied, display the services landing page!
-		if ($api_key == "index")
-		{
+		if ($api_key == "index"){
 			$this->service_list();
+			return;
+		}else if($api_key == "documentation"){
+			$this->documentation($params);
 			return;
 		}
 		else if (in_array($api_key, $this->reserved_pages) && method_exists($this, $api_key))
@@ -87,12 +89,15 @@ class Services extends MX_Controller {
 		restore_error_handler();
 	}
 
-	private function service_list()
-	{
+	private function service_list(){
 		$data['js_lib'] = array('core');
 		$data['scripts'] = array();
 		$data['title'] = 'Web Services';
 		$this->load->view('service_list', $data);
+	}
+
+	private function documentation($doc=''){
+		$this->load->view('documentations/'.$doc[0]);
 	}
 	
 	private function register()
