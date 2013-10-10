@@ -78,11 +78,11 @@ $application_directives = array(
 				"active_application" => "roles",
 				"default_controller" => "role/index"
 			),
-	"identifier" =>
+	"developer" =>
 			array(
-				"base_url" => "%%BASEURL%%/identifier/",
-				"active_application" => "identifier",
-				"default_controller" => "pids/index"
+				"base_url" => "%%BASEURL%%/developer/",
+				"active_application" => "developer",
+				"default_controller" => "documentation/index"
 			)
 );
 $config['application_directives'] = $application_directives;
@@ -478,6 +478,8 @@ else
 	$active_application = "unknown";
 	$base_url = "";
 }
+
+
 
 $config['active_application'] = $active_application;
 
