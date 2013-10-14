@@ -158,7 +158,7 @@ else
                 </li>
               <?php endif; ?>
 
-              <?php if($this->user->hasFunction('PUBLIC')):?>
+              <?php if($this->user->hasFunction('PUBLIC') && mod_enabled('vocab_service')):?>
               <li class="btn btn-inverse dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Vocabularies <b class="caret"></b></a>
                 <ul class="dropdown-menu pull-right">
@@ -174,17 +174,11 @@ else
               </li>
               <?php endif;?>
 
-              
-
-
-              <?php if($this->user->hasFunction('AUTHENTICATED_USER')): ?>
+              <?php if($this->user->hasFunction('AUTHENTICATED_USER')&& mod_enabled('toolbox')): ?>
                 <li class="btn btn-inverse dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <b class="caret"></b></a>
-                  <ul class="dropdown-menu pull-right">
-                    
-
+                  <ul class="dropdown-menu pull-right">                   
                     <?php if ($this->user->hasFunction('AUTHENTICATED_USER')): ?>
-                        <li class=""><?php echo anchor(registry_url('services/'), 'Registry Web Services');?></li>
                         <li class=""><?php echo anchor(apps_url('location_capture_widget/'), 'Location Capture Widget');?></li>
                         <li class=""><?php echo anchor(apps_url('vocab_widget/'), 'Vocabulary Service Widget');?></li>
                         <li class=""><?php echo anchor(apps_url('orcid_widget/'), 'ORCID Widget');?></li>
@@ -194,12 +188,7 @@ else
                         <li class="divider"></li>
                         <li class=""><?php echo anchor(apps_url('spotlight/'), 'Spotlight CMS Editor');?></li>
                         <li class=""><?php echo anchor(apps_url('uploader/'), 'CMS Image Uploader');?></li>
-                    <?php endif; ?>
-
-                    <?php if ($this->user->hasFunction('REGISTRY_STAFF')): ?>
-                        <li class="divider"></li>
-                        <li class=""><?php echo anchor(registry_url('maintenance/registrySummary'), 'Registry Quality Summary');?></li>
-                    <?php endif; ?>       
+                    <?php endif; ?>     
 
                     <?php if (($this->user->hasFunction('PUBLIC')) && mod_enabled('abs_sdmx_querytool')): ?>
                       <li class="divider"></li>
@@ -210,7 +199,7 @@ else
                 </li>
               <?php endif; ?>
 
-              <?php if($this->user->hasFunction('REGISTRY_SUPERUSER')):?>
+              <?php if($this->user->hasFunction('AUTHENTICATED_USER')):?>
               <li class="btn btn-inverse dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Administration <b class="caret"></b></a>
                 <ul class="dropdown-menu pull-right">
@@ -218,8 +207,18 @@ else
                   <?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')): ?>
                       <li class=""><?php echo anchor(registry_url('administration'), 'Administration Panel');?></li>
                       <li class=""><?php echo anchor(registry_url('maintenance'), 'Maintenance Dashboard');?></li>
-                        <li class=""><?php echo anchor(apps_url('statistics'), 'Statistics');?></li>
+                      <?php  if(mod_enabled('statistics')): ?>
+                        <li class=""><?php echo anchor(apps_url('statistics'), 'Statistics');?></li>    
+                      <?php endif; ?>
                   <?php endif; ?>
+                    <?php if ($this->user->hasFunction('REGISTRY_STAFF')): ?>
+                        <li class="divider"></li>
+                        <li class=""><?php echo anchor(registry_url('maintenance/registrySummary'), 'Registry Quality Summary');?></li>
+                    <?php endif; ?>  
+                      <?php if ($this->user->hasFunction('AUTHENTICATED_USER')): ?>
+                        <li class="divider"></li>
+                        <li class=""><?php echo anchor(registry_url('services/'), 'Registry Web Services');?></li>  
+                      <?php endif; ?>  
                 </ul>
               </li>
               <?php endif;?>
