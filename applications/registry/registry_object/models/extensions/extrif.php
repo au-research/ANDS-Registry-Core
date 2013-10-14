@@ -225,8 +225,8 @@ class Extrif_Extension extends ExtensionBase
 				
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s6_end');
 				
-				if($this->ro->getAttribute('group') == 'National Health and Medical Research Council')
-				{
+				/*if($this->ro->getAttribute('group') == 'National Health and Medical Research Council')
+				{*/
 					foreach ($this->ro->getAllRelatedObjects() AS $relatedObject)
 					{
 					//var_dump($relatedObject);
@@ -240,7 +240,7 @@ class Extrif_Extension extends ExtensionBase
 					//$relatedObj->addChild("extRif:related_object_logo", $relatedObject['the_logo'], EXTRIF_NAMESPACE);
 					
 					}
-				}
+			/*	}
 				else
 				{
 					foreach ($this->ro->getRelatedObjects() AS $relatedObject)
@@ -255,7 +255,7 @@ class Extrif_Extension extends ExtensionBase
 						//$relatedObj->addChild("extRif:related_object_logo", $relatedObject['the_logo'], EXTRIF_NAMESPACE);
 					}
 				}
-				
+				*/
 				// Friendlify dates =)
 				$xml = $this->ro->extractDatesForDisplay($xml);
 
