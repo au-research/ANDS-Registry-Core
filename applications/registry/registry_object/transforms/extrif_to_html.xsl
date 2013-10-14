@@ -641,13 +641,13 @@
 		<tr>	
 			<td class="attribute">
 			<xsl:choose>
-			<xsl:when test="following-sibling::ro:namePart">
-			<xsl:text>Name Parts:</xsl:text>
-			</xsl:when>
-			<xsl:when test="preceding-sibling::ro:namePart"/>
-			<xsl:otherwise>
-			<xsl:text>Name Part:</xsl:text>
-			</xsl:otherwise>
+				<xsl:when test="preceding-sibling::ro:namePart"/>
+				<xsl:when test="following-sibling::ro:namePart">
+					<xsl:text>Name Parts:</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>Name Part:</xsl:text>
+				</xsl:otherwise>
 			</xsl:choose>
 			</td>
 			<td>
