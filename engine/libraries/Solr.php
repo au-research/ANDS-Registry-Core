@@ -13,6 +13,7 @@ class Solr {
     private $result;
     private $options;
     private $multi_valued_fields;
+    private $custom_query;
 
     /**
      * Construction of this class
@@ -32,6 +33,7 @@ class Solr {
         $this->solr_url = $this->CI->config->item('solr_url');
         $this->options = array('q'=>'*:*','start'=>'0','indent'=>'on', 'wt'=>'json', 'fl'=>'*', 'rows'=>'10');
         $this->multi_valued_fields = array('facet.field', 'fq');
+        $this->custom_query = false;
         return true;
     }
 
@@ -76,6 +78,22 @@ class Solr {
         if(isset($this->options[$field])){
             return $this->options[$field];
         }else return null;
+    }
+
+    /**
+     * Pass in a custom query to use, ignore all filters
+     * @param string $query 
+     */
+    function setCustomQuery($query){
+        $this->custom_query = $query.'&wt=json';
+    }
+
+    /**
+     * Return the custom query for inspection
+     * @return string custom_query
+     */
+    function getCustomQuery(){
+        return $this->custom_query;
     }
 
     /**
@@ -307,7 +325,11 @@ class Solr {
      * @return array results
      */
     function executeSearch($as_array = false){
-        $content = $this->post($this->constructFieldString(), 'select');
+        if($this->custom_query){
+            $content = $this->post($this->custom_query, 'select');
+        }else {
+            $content = $this->post($this->constructFieldString(), 'select');
+        }
         $json = json_decode($content, $as_array);
         if($json){
             $this->result = $json;
