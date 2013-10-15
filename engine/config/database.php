@@ -50,6 +50,26 @@ $active_record = TRUE;
 
 // Temporary workaround to pull this from the global_config.php
 global $eDBCONF;
+
+foreach($eDBCONF as $groupname=>$value)
+{
+	if(!isset($eDBCONF[$groupname]['hostname'])) $eDBCONF[$groupname]['hostname'] = $eDBCONF['default']['hostname'];
+	if(!isset($eDBCONF[$groupname]['username'])) $eDBCONF[$groupname]['username'] = $eDBCONF['default']['username'];
+	if(!isset($eDBCONF[$groupname]['password'])) $eDBCONF[$groupname]['password'] = $eDBCONF['default']['password'];
+	if(!isset($eDBCONF[$groupname]['dbdriver'])) $eDBCONF[$groupname]['dbdriver'] = $eDBCONF['default']['dbdriver'];
+	if(!isset($eDBCONF[$groupname]['dbprefix'])) $eDBCONF[$groupname]['dbprefix'] = '';
+	if(!isset($eDBCONF[$groupname]['pconnect'])) $eDBCONF[$groupname]['pconnect'] = TRUE;
+	if(!isset($eDBCONF[$groupname]['db_debug'])) $eDBCONF[$groupname]['db_debug'] = TRUE;
+	if(!isset($eDBCONF[$groupname]['cache_on'])) $eDBCONF[$groupname]['cache_on'] = FALSE;
+	if(!isset($eDBCONF[$groupname]['cachedir'])) $eDBCONF[$groupname]['cachedir'] = '';
+	if(!isset($eDBCONF[$groupname]['char_set'])) $eDBCONF[$groupname]['char_set'] = 'utf8';
+	if(!isset($eDBCONF[$groupname]['dbcollat'])) $eDBCONF[$groupname]['dbcollat'] = 'utf8_general_ci';
+	if(!isset($eDBCONF[$groupname]['swap_pre'])) $eDBCONF[$groupname]['swap_pre'] = '';
+	if(!isset($eDBCONF[$groupname]['autoinit'])) $eDBCONF[$groupname]['autoinit'] = TRUE;
+	if(!isset($eDBCONF[$groupname]['stricton'])) $eDBCONF[$groupname]['stricton'] = FALSE;
+	if(!isset($eDBCONF[$groupname]['save_queries'])) $eDBCONF[$groupname]['save_queries'] = FALSE; 
+}
+
 $db = $eDBCONF;
 
 /* End of file database.php */
