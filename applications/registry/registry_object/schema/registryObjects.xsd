@@ -31,7 +31,7 @@
         <xsd:documentation xml:lang="en">
             Change history
             v1.5- 15 October 2013
-                 * add realation to the relatedInfo element
+                 * add relation to the relatedInfo element
                  * change cardinality of identifier in relatedInfo element
             v1.4 - 15 October 2012
                  * add new dates element
