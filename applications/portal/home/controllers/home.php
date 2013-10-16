@@ -28,6 +28,7 @@ class Home extends MX_Controller {
 		//$this->solr->setOpt('fq', 'status:PUBLISHED');
 		$this->solr->setOpt('rows','0');
 		$this->solr->setFacetOpt('field', 'group');
+		$this->solr->setFacetOpt('limit', '200');
 		$this->solr->executeSearch();
 		//groups
 		$groups = $this->solr->getFacetResult('group');
@@ -58,10 +59,12 @@ class Home extends MX_Controller {
 		$this->solr->setFacetOpt('field', 'class');
 		$this->solr->setFacetOpt('field', 'group');
 		$this->solr->setFacetOpt('sort', 'group asc');
+		$this->solr->setFacetOpt('limit', '200');
 		$this->solr->executeSearch();
 
 		//groups
 		$groups = $this->solr->getFacetResult('group');
+
 		$data['groups'] = array();
 		foreach($groups as $group=>$num){
 			if ($num > 0)
