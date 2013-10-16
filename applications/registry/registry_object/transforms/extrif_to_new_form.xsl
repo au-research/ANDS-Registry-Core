@@ -1000,16 +1000,17 @@
 						<input type="text" class="input-xlarge" name="title" placeholder="Title" value="{ro:title/text()}"/>
 					</div>
 				</div>
-
-				<div class="control-group">
-					<label class="control-label" for="title">Identifier: </label>
-					<div class="controls">
-						<span class="inputs_group">
-							<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="{ro:identifier/text()}" required=""/>
-							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Identifier Type" value="{ro:identifier/@type}"/>
-						</span>
-					</div>
+				<xsl:apply-templates select="ro:identifier"/>
+				<div class="separate_line"/>
+				<div class="controls">
+					<button class="btn btn-primary addNew" type="relatedInfo_identifier" add_new_type="relatedInfo_identifier"><i class="icon-plus icon-white"/> Add Identifier </button>
 				</div>
+				<xsl:apply-templates select="ro:relation"/>
+				<div class="separate_line"/>
+				<div class="controls">
+					<button class="btn btn-primary addNew" type="relation" add_new_type="relation"><i class="icon-plus icon-white"/> Add Relation </button>
+				</div>
+
 				<div class="control-group">
 					<xsl:choose>
 						<xsl:when test="ro:format">
@@ -1359,6 +1360,20 @@
 	</xsl:template>
 
 
+	<xsl:template match="ro:relatedInfo/ro:identifier">
+		<div class="aro_box_part">
+		<div class="control-group">
+			<label class="control-label" for="Identifier">Identifier:</label>						
+			<span class="inputs_group">
+				<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="{text()}" required=""/>
+				<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value="{@type}"/>
+			</span>
+			<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
+		</div>
+	</div>
+	</xsl:template>
+
+
 	<xsl:template match="ro:format/ro:identifier">
 		<div class="aro_box_part">
 			<div class="aro_box_part clearfix" type="format_identifier">
@@ -1512,6 +1527,18 @@
 			</div>
 		</div>
 
+		<div class="aro_box_part template" type="relatedInfo_identifier">
+			<div class="control-group">
+				<label class="control-label" for="title">Identifier:</label>						
+				<span class="inputs_group">
+					<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value=""/>
+					<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value=""/>
+				</span>
+				<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
+			</div>
+		</div>
+
+
 
 		<div class="aro_box template" type="relatedObject">
 			<div class="aro_box_display clearfix">
@@ -1576,15 +1603,43 @@
 					</div>
 				</div>
 
-				<div class="control-group">
-					<label class="control-label" for="title">Identifier: </label>
+			<div class="control-group">
+				<label class="control-label" for="title">Identifier: </label>
+				<div class="controls">
+					<span class="inputs_group">
+						<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="" required=""/>
+						<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Identifier Type" value=""/>
+					</span>
+
+				</div>
+				<div class="separate_line"/>
 					<div class="controls">
-						<span class="inputs_group">
-							<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="" required=""/>
-							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Identifier Type" value=""/>
-						</span>
+						<button class="btn btn-primary addNew" type="relatedInfo_identifier" add_new_type="relatedInfo_identifier">
+								<i class="icon-plus icon-white"></i> Add Identifier
+						</button>
+					</div>
+			</div>
+
+			
+
+			<div class="aro_box_part" type="relation">
+				<div class="control-group">
+					<label class="control-label" for="title">Relation: </label>
+					<div class="controls">
+						<input type="text" class="rifcs-type" vocab="{concat('RIFCS',$ro_class,'RelationType')}" name="type" placeholder="Relation Type" value=""/>
+						<input type="text" class="inner_input input-large" name="description" placeholder="Description" value=""/>
+						<input type="text" class="input-small" name="url" valid-type="url" placeholder="URL" value=""/>
+						<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/> </button>
 					</div>
 				</div>
+			</div>
+
+			<div class="separate_line"/>
+			<div class="controls">
+				<button class="btn btn-primary addNew" type="relation" add_new_type="relation"><i class="icon-plus icon-white"/> Add Relation </button>
+			</div>
+
+
 				<div class="control-group">
 					<label class="control-label" for="title">Format: </label>
 					<div class="controls">

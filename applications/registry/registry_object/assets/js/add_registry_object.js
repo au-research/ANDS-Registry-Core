@@ -1395,7 +1395,7 @@ function getRIFCSforTab(tab, hasField){
 		 * The type => the input[name=type] of the box display (heading)
 		 */
 		var this_fragment_type = $(this).attr('type');
-		//log("fragment: " + this_fragment_type);
+		log("fragment: " + this_fragment_type);
 		fragment +='<'+this_fragment_type+'';
 		if(hasField) fragment +=' field_id="' +$(this).attr('field_id')+'"';
 		var valid_fragment_meta = ['type', 'dateFrom', 'dateTo', 'style', 'rightsURI', 'termIdentifier'];//valid input type to be put as attributes
@@ -1443,10 +1443,26 @@ function getRIFCSforTab(tab, hasField){
 						}
 						fragment += '</'+type+'>';
 					}else if(type=='relatedInfo'){//special case for relatedInfo
+						
+						if($('input[name=title]', this).val()!=''){
+							fragment += '<title field_id="' +$(this).attr('field_id')+'">'+htmlEntities($('input[name=title]', this).val())+'</title>';
+						}
 						//identifier is required
-						fragment += '<identifier field_id="' +$(this).attr('field_id')+'" type="'+htmlEntities($('input[name=identifier_type]', this).val())+'">'+htmlEntities($('input[name=identifier]', this).val())+'</identifier>';
-						//title and notes are not required, but useful nonetheless
-						// TO DO: find out where did you go wrong :-)
+						var Identifiers = $('input[name=identifier]', this);
+						if(Identifiers.length > 0)
+						{
+							$.each(Identifiers, function(){
+								var ident = $(this);
+								fragment += '<identifier field_id="' +ident.attr('field_id')+'" type="'+htmlEntities(ident.next('input[name="identifier_type"]').val())+'">'+htmlEntities(ident.val())+'</identifier>';
+							});
+						}else{
+							fragment += '<identifier field_id="' +$(this).attr('field_id')+'" type=""></identifier>';
+						}
+						var relations = $(this).children('.aro_box_part[type=relation]');
+							$.each(relations, function(){
+								var rel = $(this);
+								fragment += '<relation field_id="' +rel.attr('field_id')+'" type="'+htmlEntities($('input[name="type"]',this).val())+'"><description>'+htmlEntities($('input[name="description"]',this).val())+'</description><url>'+htmlEntities($('input[name="url"]',this).val())+'</url></relation>';
+							});
 						var formatIdentifiers = $('input[name=format_identifier]', this);
 						if(formatIdentifiers.length > 0){
 							
@@ -1457,9 +1473,7 @@ function getRIFCSforTab(tab, hasField){
 							});
 							fragment += '</format>';
 						}
-						if($('input[name=title]', this).val()!=''){
-							fragment += '<title field_id="' +$(this).attr('field_id')+'">'+htmlEntities($('input[name=title]', this).val())+'</title>';
-						}
+
 						if($('input[name=notes]', this).val()!=''){
 							fragment += '<notes field_id="' +$(this).attr('field_id')+'">'+htmlEntities($('input[name=notes]', this).val())+'</notes>';
 						}
@@ -1563,7 +1577,6 @@ function getRIFCSforTab(tab, hasField){
 				var subbox_fragment ='';
 				if(subbox_type !== 'spatial')
 					subbox_fragment +='<'+subbox_type+'>';
-
 				var parts = $(this).children('.aro_box_part');
 				if(parts.length>0){
 					$.each(parts, function(){

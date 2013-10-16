@@ -89,6 +89,15 @@
         </xsl:choose>
     </xsl:template>
 
+    <xsl:template match="relation">
+        <xsl:choose>
+            <xsl:when test="@type !='' or description/text() != '' or url/text() != ''">
+                <xsl:copy>
+                    <xsl:apply-templates select="@* | node()" />
+                </xsl:copy>   
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
 
     <xsl:template match="format">
         <xsl:choose>
