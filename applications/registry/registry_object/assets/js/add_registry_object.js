@@ -970,18 +970,48 @@ function initSimpleModeFields()
 
 }
 
+function initRelatedVocabWidget(container, targetClass){
+	var ro_class = $('#ro_class').val();
+	var _mode = 'collection';
+	var _vocab = 'RIFCS'+ ro_class +'To'+ targetClass +'RelationType';
+	initVocabWidgets(container, _mode, _vocab);
+}
 
-function initVocabWidgets(container){
+
+function initVocabWidgets(container, _mode, _vocab){
 	var container_elem;
+	if(typeof _mode === "undefined")
+	{
+		mode = 'narrow';
+	}
+	else{
+		mode = _mode;
+	}
+
 	if(container){
 		container_elem = container;
 	}else container_elem = $(document);
+	
 	$(".rifcs-type", container_elem).each(function(){
-		//log(this, 'bind vocab widget');
 		var elem = $(this);
+
 		var widget = elem.vocab_widget({mode:'advanced'});
-		var vocab = _getVocab(elem.attr('vocab'));
-		elem.on('narrow.vocab.ands', function(event, data) {	
+		var vocab = '';
+		if(typeof _vocab === "undefined")
+		{
+			vocab = elem.attr('vocab');
+		}
+		else{
+			vocab = _vocab;
+		}
+		vocab = _getVocab(vocab);
+
+		elem.off('narrow.vocab.ands');
+		elem.off('collection.vocab.ands');
+		// console.log(container, mode, vocab);
+
+	
+		elem.on(mode+'.vocab.ands', function(event, data) {	
 			var dataArray = Array();
 			if(vocab == 'RIFCSSubjectType')
 			{				
@@ -1012,23 +1042,32 @@ function initVocabWidgets(container){
 			}
 		});
 
+
 		elem.on('error.vocab.ands', function(event, xhr) {
 			log(xhr);
 		});
-		widget.vocab_widget('repository', 'rifcs');
-		widget.vocab_widget('narrow', "http://purl.org/au-research/vocabulary/RIFCS/1.4/" + vocab);		 
+		widget.vocab_widget('repository', 'rifcs15');
+		widget.vocab_widget(mode, "http://purl.org/au-research/vocabulary/RIFCS/1.5/" + vocab);		 
 	});
 }
 
-function initRelatedObjects(){
+function initRelatedObjectsSingle(e) {
+	console.log(e);
+	console.log(typeof e.currentTarget);
+	// if(e.currentTarget)
+}
 
+function initRelatedObjects(){
 	//display current related objects title and status
 	var relatedObjects = [];
 	$('#relatedObjects input[name=key]').each(function(){
 		if($(this).val()!='') relatedObjects.push($(this).val());
 		$(this).attr('value', $(this).val());
 	});
-	$(document).off('blur', '#relatedObjects input[name=key]').on('change', '#relatedObjects input[name=key]', initRelatedObjects)
+	
+	$(document).off('change', '#relatedObjects input[name=key]').on('change', '#relatedObjects input[name=key]', function(e){
+		console.log(e);
+	});
 	$.ajax({
 		url:base_url+'registry_object/fetch_related_object_aro/', 
 		type: 'POST',
@@ -1040,10 +1079,13 @@ function initRelatedObjects(){
 					var theInput = $('#relatedObjects input[value="'+i+'"]');
 					// var box = $(theInput).closest('.aro_box');
 					var box = $(theInput).parent();
+					var roBox = $(theInput).closest('.aro_box');
 					if(v.status!='notfound'){
 						$(box).append('<div class="well related_title"><img class="class_icon" tip="'+v.class+'" style="width:20px;padding-right:10px;" src="'+base_url+'../assets/img/'+v.class+'.png"/><span class="tag status_'+v.status+'">'+v.readable_status+'</span> <a href="'+v.link+'" target="_blank">'+v.title+'</a></div>');
+						initRelatedVocabWidget(roBox, v.class);
 					}else{
 						$(box).append('<div class="well related_title">Registry Object Not Found</div>');
+						initVocabWidgets(roBox);
 					}
 				});
 			}
@@ -1076,10 +1118,10 @@ function initRelatedObjects(){
 
 function _getVocab(vocab)
 {
-	vocab = vocab.replace("collection", "Collection");
-	vocab = vocab.replace("party", "Party");
-	vocab = vocab.replace("service", "Service");
-	vocab = vocab.replace("activity", "Activity");
+	vocab = vocab.replace(/collection/g, "Collection");
+	vocab = vocab.replace(/party/g, "Party");
+	vocab = vocab.replace(/service/g, "Service");
+	vocab = vocab.replace(/activity/g, "Activity");
 	return vocab;
 }
 
