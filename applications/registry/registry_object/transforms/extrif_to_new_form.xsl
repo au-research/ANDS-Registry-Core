@@ -57,6 +57,9 @@
 			<xsl:if test="$ro_class != 'collection'">
 				<li><a href="#existencedates" data-toggle="tab">Existence Dates</a></li>
 			</xsl:if>
+			<xsl:if test="extRif:annotations">
+				<li><a href="#annotations_pane" data-toggle="tab">Annotations</a></li>
+			</xsl:if>
 			<li><a href="#qa" id="savePreview" data-toggle="tab"><i class="icon-white icon-hdd"></i> Save &amp; Validate</a></li>
 		</ul>
 	</div>
@@ -109,6 +112,7 @@
 			<xsl:if test="$ro_class != 'collection'">
 				<xsl:call-template name="ExistenceDatesTab"/>
 			</xsl:if>
+			<xsl:apply-templates select="extRif:annotations"/>
 			<xsl:call-template name="recordQATab">
 				<xsl:with-param name="registry_object_id" select="$registry_object_id"/>
 				<xsl:with-param name="base_url" select="$base_url"/>
@@ -123,6 +127,7 @@
 			<div class="modal-body"/>
 			<div class="modal-footer"> </div>
 		</div>
+		
 	</div>
 
 
@@ -133,6 +138,21 @@
 
 	<xsl:template match="ro:collection | ro:activity | ro:party  | ro:service" mode="getClass">
 		<xsl:value-of select="name()"/>
+	</xsl:template>
+
+
+
+
+	<xsl:template match="extRif:annotations">
+		<div id="annotations_pane" class="pane hide">
+			<fieldset>
+				<legend>Annotations</legend>
+				<div class="separate_line"/>
+				<textarea id="annotations" rows="5" class="input-xxlarge" name="annotations">
+					<xsl:copy-of select="node()"/>
+				</textarea>	
+			</fieldset>
+		</div>		
 	</xsl:template>
 
 	<xsl:template name="simpleDescribeTab" mode="collection">

@@ -547,7 +547,12 @@ function initEditForm(){
 				xml += getRIFCSforTab(this,true);
 			});
 
-			xml+='</'+ro_class+'></registryObject>';
+			xml+='</'+ro_class+'>';
+			if($('#annotations').length > 0)
+			{
+				xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+			}
+			xml+='</registryObject>';
 			$('#myModal .modal-header h3').html('<h3>Save &amp; Validate Registry Object</h3>');
 			$('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(xml)) + '</code></pre>');
 			$('#myModal .modal-footer').html('<button class="btn btn-primary">Download</button>');
@@ -593,7 +598,12 @@ function initEditForm(){
 					xml += getRIFCSforTab(this,false);
 				});
 
-				xml+='</'+ro_class+'></registryObject>';
+				xml+='</'+ro_class+'>';
+				if($('#annotations').length > 0)
+				{
+					xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+				}
+				xml+='</registryObject>';
 
 				/* Keep a backup of the form's RIFCS */
 				$('#myModal .modal-header h3').html('<h3>Take a backup of your Record\'s XML Contents</h3>');
@@ -774,9 +784,13 @@ function validate(){
 		xml += getRIFCSforTab(this,true);
 	});
 
-	xml+='</'+ro_class+'></registryObject>';
+	xml+='</'+ro_class+'>';
+	if($('#annotations').length > 0)
+	{
+		xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+	}
+	xml+='</registryObject>';
 	prettyPrint();
-
 	//validate
 	$.ajax({
 		url:base_url+'registry_object/validate/'+ro_id, 
@@ -884,7 +898,7 @@ function addValidationMessagsdfasdfe_old(tt, type){
 			{
 				field = $($('*[field_id='+field_id+']').find('.controls')[0]);
 				containerfield = field;
-				log(field);
+				//log(field);
 			}						
 			else{
 				field = $('*[field_id='+field_id+']').find('*[name='+tt.sub_field_id+']');
@@ -927,7 +941,7 @@ function setTabInfo(){
 		var count_error = $('.error, .alert-error', this).length;
 		var count_warning = $('.warning, .alert-warning', this).length;
 		var id = $(this).attr('id');
-		if(id != 'qa'){
+		if(id != 'qa' && id != 'annotations_pane'){
 			if(count_info > 0) addValidationTag(id, 'info', count_info, "Some metadata recommendation(s) not yet met<br/><small class='muted'>(Click for more info)</small>");
 			if(count_error > 0) addValidationTag(id, 'important', count_error, "Some field(s) contain errors!<br/><small class='muted'>(Click for more info)</small>");
 			if(count_warning > 0) addValidationTag(id, 'warning', count_warning, "Some metadata requirement(s) not yet met<br/><small class='muted'>(Click for more info)</small>");
