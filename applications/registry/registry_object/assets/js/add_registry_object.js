@@ -289,7 +289,7 @@ function bindSearchRelatedEvents(tt, target){
 						$(target).val($(this).attr('key'));
 						$(target).attr('value', $(this).attr('key'));
 						tt.hide();
-						initRelatedObjects();
+						rebindRelatedObject(target);
 					});
 				}
 			});
@@ -980,11 +980,9 @@ function initRelatedVocabWidget(container, targetClass){
 
 function initVocabWidgets(container, _mode, _vocab){
 	var container_elem;
-	if(typeof _mode === "undefined")
-	{
+	if(typeof _mode === "undefined"){
 		mode = 'narrow';
-	}
-	else{
+	}else{
 		mode = _mode;
 	}
 
@@ -1013,8 +1011,7 @@ function initVocabWidgets(container, _mode, _vocab){
 	
 		elem.on(mode+'.vocab.ands', function(event, data) {	
 			var dataArray = Array();
-			if(vocab == 'RIFCSSubjectType')
-			{				
+			if(vocab == 'RIFCSSubjectType'){				
 				$.each(data.items, function(idx, e) {
 					dataArray.push({value:e.notation, subtext:e.definition});
 				});
@@ -1025,26 +1022,25 @@ function initVocabWidgets(container, _mode, _vocab){
 				
 				initSubjectWidget(elem);
 				elem.typeahead({source:dataArray});
-			}
-			else if(vocab == 'GroupSuggestor')
-			{
+			}else if(vocab == 'GroupSuggestor'){
 				$.getJSON(base_url+'registry_object/getGroupSuggestor', function(data){
 					elem.removeClass('rifcs-type-loading');
 					elem.typeahead({source:data});
 				});
-			}
-			else
-			{
+			}else{
 				$.each(data.items, function(idx, e) {
 					dataArray.push({value:e.label, subtext:e.definition});
 				});
-				elem.typeahead({source:dataArray});
+				if(elem.data('typeahead')){
+					elem.data('typeahead').source = dataArray;
+				}else{
+					elem.typeahead({source:dataArray});
+				}
 			}
 		});
 
-
 		elem.on('error.vocab.ands', function(event, xhr) {
-			log(xhr);
+			console.log(xhr);
 		});
 		widget.vocab_widget('repository', 'rifcs15');
 		widget.vocab_widget(mode, "http://purl.org/au-research/vocabulary/RIFCS/1.5/" + vocab);		 
@@ -1057,6 +1053,32 @@ function initRelatedObjectsSingle(e) {
 	// if(e.currentTarget)
 }
 
+function rebindRelatedObject(target){
+	var key = $(target).val();
+	var relatedObjects = [];
+	relatedObjects.push(key);
+	var box = $(target).closest('.aro_box');
+	$.ajax({
+		url:base_url+'registry_object/fetch_related_object_aro/', 
+		type: 'POST',
+		data: {related:relatedObjects},
+		success: function(data){
+			if(data.result){
+				$('.related_title', box).remove();
+				$.each(data.result, function(i, v){
+					if(v.status!='notfound'){
+						$(target).parent().append('<div class="well related_title"><img class="class_icon" tip="'+v.class+'" style="width:20px;padding-right:10px;" src="'+base_url+'../assets/img/'+v.class+'.png"/><span class="tag status_'+v.status+'">'+v.readable_status+'</span> <a href="'+v.link+'" target="_blank">'+v.title+'</a></div>');
+						initRelatedVocabWidget(box, v.class);
+					}else{
+						$(target).parent().append('<div class="well related_title">Registry Object Not Found</div>');
+						initVocabWidgets(box);
+					}
+				});
+			}
+		}
+	});
+}
+
 function initRelatedObjects(){
 	//display current related objects title and status
 	var relatedObjects = [];
@@ -1064,10 +1086,13 @@ function initRelatedObjects(){
 		if($(this).val()!='') relatedObjects.push($(this).val());
 		$(this).attr('value', $(this).val());
 	});
-	
+
 	$(document).off('change', '#relatedObjects input[name=key]').on('change', '#relatedObjects input[name=key]', function(e){
-		console.log(e);
+		rebindRelatedObject(e.currentTarget);
 	});
+
+	$(document).on('#relatedObjects input[name=key]')
+
 	$.ajax({
 		url:base_url+'registry_object/fetch_related_object_aro/', 
 		type: 'POST',
@@ -1137,21 +1162,7 @@ function initSubjectWidget(elem){
 	// WE MIGHT NEED A WHITE LIST HERE
 
 	if(vocab == 'anzsrc-for' || vocab =='anzsrc-seo'){
-		// var widget = vocab_value.vocab_widget({mode:'advanced',cache: false, repository: vocab});
-		// vocab_value.one('search.vocab.ands', function(event, data) {	
-		// 	var dataArray = Array();
-		// 	$.each(data.items, function(idx, e) {
-		// 		dataArray.push({value:e.notation, subtext:e.label});
-		// 	});
-		// 	vocab_value.typeahead({source:dataArray});
-		// 	vocab_value.data('typeahead').source = dataArray;
-		// }).on('change',function(event, data){
-		// 	widget.vocab_widget('narrow', vocab_value.val());
-		// }).on('narrow.vocab.ands',function(event, data){
-		// 	// log(data);
-		// });
-		// widget.vocab_widget('search', '');
-		// 
+
 		$(vocab_value).qtip({
 			content:{text:'<div class="subject_chooser"></div>'},
 			prerender:true,
