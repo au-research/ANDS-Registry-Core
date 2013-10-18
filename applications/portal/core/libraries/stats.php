@@ -7,7 +7,7 @@ class Stats {
 	
 	private $CI;
 	private $db;
-	private $useStats;
+	private $collectStats;
 
 	/**
 	 * Register a page view and essential information
