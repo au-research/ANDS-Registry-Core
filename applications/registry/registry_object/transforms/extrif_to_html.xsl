@@ -442,8 +442,8 @@
 					<xsl:if test="ro:title">
 			         	<xsl:apply-templates select="ro:title"/>
 					</xsl:if>
-			
 					<xsl:apply-templates select="ro:identifier"/>
+					<xsl:apply-templates select="ro:relation"/>
 					<xsl:if test="ro:format">
 			         	<xsl:apply-templates select="ro:format"/>
 					</xsl:if>
@@ -618,7 +618,7 @@
 			</td>
 			<td>
 				<table class="subtable1">
-					<xsl:apply-templates select="@* | node()"/>
+					<xsl:value-of select="."/>
 				</table>
 			</td>
 		</tr>

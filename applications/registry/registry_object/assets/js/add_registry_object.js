@@ -289,7 +289,7 @@ function bindSearchRelatedEvents(tt, target){
 						$(target).val($(this).attr('key'));
 						$(target).attr('value', $(this).attr('key'));
 						tt.hide();
-						initRelatedObjects();
+						rebindRelatedObject(target);
 					});
 				}
 			});
@@ -547,7 +547,12 @@ function initEditForm(){
 				xml += getRIFCSforTab(this,true);
 			});
 
-			xml+='</'+ro_class+'></registryObject>';
+			xml+='</'+ro_class+'>';
+			if($('#annotations').length > 0)
+			{
+				xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+			}
+			xml+='</registryObject>';
 			$('#myModal .modal-header h3').html('<h3>Save &amp; Validate Registry Object</h3>');
 			$('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(xml)) + '</code></pre>');
 			$('#myModal .modal-footer').html('<button class="btn btn-primary">Download</button>');
@@ -593,7 +598,12 @@ function initEditForm(){
 					xml += getRIFCSforTab(this,false);
 				});
 
-				xml+='</'+ro_class+'></registryObject>';
+				xml+='</'+ro_class+'>';
+				if($('#annotations').length > 0)
+				{
+					xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+				}
+				xml+='</registryObject>';
 
 				/* Keep a backup of the form's RIFCS */
 				$('#myModal .modal-header h3').html('<h3>Take a backup of your Record\'s XML Contents</h3>');
@@ -774,9 +784,13 @@ function validate(){
 		xml += getRIFCSforTab(this,true);
 	});
 
-	xml+='</'+ro_class+'></registryObject>';
+	xml+='</'+ro_class+'>';
+	if($('#annotations').length > 0)
+	{
+		xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+	}
+	xml+='</registryObject>';
 	prettyPrint();
-
 	//validate
 	$.ajax({
 		url:base_url+'registry_object/validate/'+ro_id, 
@@ -884,7 +898,7 @@ function addValidationMessagsdfasdfe_old(tt, type){
 			{
 				field = $($('*[field_id='+field_id+']').find('.controls')[0]);
 				containerfield = field;
-				log(field);
+				//log(field);
 			}						
 			else{
 				field = $('*[field_id='+field_id+']').find('*[name='+tt.sub_field_id+']');
@@ -927,7 +941,7 @@ function setTabInfo(){
 		var count_error = $('.error, .alert-error', this).length;
 		var count_warning = $('.warning, .alert-warning', this).length;
 		var id = $(this).attr('id');
-		if(id != 'qa'){
+		if(id != 'qa' && id != 'annotations_pane'){
 			if(count_info > 0) addValidationTag(id, 'info', count_info, "Some metadata recommendation(s) not yet met<br/><small class='muted'>(Click for more info)</small>");
 			if(count_error > 0) addValidationTag(id, 'important', count_error, "Some field(s) contain errors!<br/><small class='muted'>(Click for more info)</small>");
 			if(count_warning > 0) addValidationTag(id, 'warning', count_warning, "Some metadata requirement(s) not yet met<br/><small class='muted'>(Click for more info)</small>");
@@ -956,21 +970,48 @@ function initSimpleModeFields()
 
 }
 
+function initRelatedVocabWidget(container, targetClass){
+	var ro_class = $('#ro_class').val();
+	var _mode = 'collection';
+	var _vocab = 'RIFCS'+ ro_class +'To'+ targetClass +'RelationType';
+	initVocabWidgets(container, _mode, _vocab);
+}
 
-function initVocabWidgets(container){
+
+function initVocabWidgets(container, _mode, _vocab){
 	var container_elem;
+	if(typeof _mode === "undefined"){
+		mode = 'narrow';
+	}else{
+		mode = _mode;
+	}
+
 	if(container){
 		container_elem = container;
 	}else container_elem = $(document);
+	
 	$(".rifcs-type", container_elem).each(function(){
-		//log(this, 'bind vocab widget');
 		var elem = $(this);
+
 		var widget = elem.vocab_widget({mode:'advanced'});
-		var vocab = _getVocab(elem.attr('vocab'));
-		elem.on('narrow.vocab.ands', function(event, data) {	
+		var vocab = '';
+		if(typeof _vocab === "undefined")
+		{
+			vocab = elem.attr('vocab');
+		}
+		else{
+			vocab = _vocab;
+		}
+		vocab = _getVocab(vocab);
+
+		elem.off('narrow.vocab.ands');
+		elem.off('collection.vocab.ands');
+		// console.log(container, mode, vocab);
+
+	
+		elem.on(mode+'.vocab.ands', function(event, data) {	
 			var dataArray = Array();
-			if(vocab == 'RIFCSSubjectType')
-			{				
+			if(vocab == 'RIFCSSubjectType'){				
 				$.each(data.items, function(idx, e) {
 					dataArray.push({value:e.notation, subtext:e.definition});
 				});
@@ -981,40 +1022,77 @@ function initVocabWidgets(container){
 				
 				initSubjectWidget(elem);
 				elem.typeahead({source:dataArray});
-			}
-			else if(vocab == 'GroupSuggestor')
-			{
+			}else if(vocab == 'GroupSuggestor'){
 				$.getJSON(base_url+'registry_object/getGroupSuggestor', function(data){
 					elem.removeClass('rifcs-type-loading');
 					elem.typeahead({source:data});
 				});
-			}
-			else
-			{
+			}else{
 				$.each(data.items, function(idx, e) {
 					dataArray.push({value:e.label, subtext:e.definition});
 				});
-				elem.typeahead({source:dataArray});
+				if(elem.data('typeahead')){
+					elem.data('typeahead').source = dataArray;
+				}else{
+					elem.typeahead({source:dataArray});
+				}
 			}
 		});
 
 		elem.on('error.vocab.ands', function(event, xhr) {
-			log(xhr);
+			console.log(xhr);
 		});
-		widget.vocab_widget('repository', 'rifcs');
-		widget.vocab_widget('narrow', "http://purl.org/au-research/vocabulary/RIFCS/1.4/" + vocab);		 
+		widget.vocab_widget('repository', 'rifcs15');
+		widget.vocab_widget(mode, "http://purl.org/au-research/vocabulary/RIFCS/1.5/" + vocab);		 
+	});
+}
+
+function initRelatedObjectsSingle(e) {
+	console.log(e);
+	console.log(typeof e.currentTarget);
+	// if(e.currentTarget)
+}
+
+function rebindRelatedObject(target){
+	var key = $(target).val();
+	var relatedObjects = [];
+	relatedObjects.push(key);
+	var box = $(target).closest('.aro_box');
+	$.ajax({
+		url:base_url+'registry_object/fetch_related_object_aro/', 
+		type: 'POST',
+		data: {related:relatedObjects},
+		success: function(data){
+			if(data.result){
+				$('.related_title', box).remove();
+				$.each(data.result, function(i, v){
+					if(v.status!='notfound'){
+						$(target).parent().append('<div class="well related_title"><img class="class_icon" tip="'+v.class+'" style="width:20px;padding-right:10px;" src="'+base_url+'../assets/img/'+v.class+'.png"/><span class="tag status_'+v.status+'">'+v.readable_status+'</span> <a href="'+v.link+'" target="_blank">'+v.title+'</a></div>');
+						initRelatedVocabWidget(box, v.class);
+					}else{
+						$(target).parent().append('<div class="well related_title">Registry Object Not Found</div>');
+						initVocabWidgets(box);
+					}
+				});
+			}
+		}
 	});
 }
 
 function initRelatedObjects(){
-
 	//display current related objects title and status
 	var relatedObjects = [];
 	$('#relatedObjects input[name=key]').each(function(){
 		if($(this).val()!='') relatedObjects.push($(this).val());
 		$(this).attr('value', $(this).val());
 	});
-	$(document).off('blur', '#relatedObjects input[name=key]').on('change', '#relatedObjects input[name=key]', initRelatedObjects)
+
+	$(document).off('change', '#relatedObjects input[name=key]').on('change', '#relatedObjects input[name=key]', function(e){
+		rebindRelatedObject(e.currentTarget);
+	});
+
+	$(document).on('#relatedObjects input[name=key]')
+
 	$.ajax({
 		url:base_url+'registry_object/fetch_related_object_aro/', 
 		type: 'POST',
@@ -1026,10 +1104,13 @@ function initRelatedObjects(){
 					var theInput = $('#relatedObjects input[value="'+i+'"]');
 					// var box = $(theInput).closest('.aro_box');
 					var box = $(theInput).parent();
+					var roBox = $(theInput).closest('.aro_box');
 					if(v.status!='notfound'){
 						$(box).append('<div class="well related_title"><img class="class_icon" tip="'+v.class+'" style="width:20px;padding-right:10px;" src="'+base_url+'../assets/img/'+v.class+'.png"/><span class="tag status_'+v.status+'">'+v.readable_status+'</span> <a href="'+v.link+'" target="_blank">'+v.title+'</a></div>');
+						initRelatedVocabWidget(roBox, v.class);
 					}else{
 						$(box).append('<div class="well related_title">Registry Object Not Found</div>');
+						initVocabWidgets(roBox);
 					}
 				});
 			}
@@ -1062,10 +1143,10 @@ function initRelatedObjects(){
 
 function _getVocab(vocab)
 {
-	vocab = vocab.replace("collection", "Collection");
-	vocab = vocab.replace("party", "Party");
-	vocab = vocab.replace("service", "Service");
-	vocab = vocab.replace("activity", "Activity");
+	vocab = vocab.replace(/collection/g, "Collection");
+	vocab = vocab.replace(/party/g, "Party");
+	vocab = vocab.replace(/service/g, "Service");
+	vocab = vocab.replace(/activity/g, "Activity");
 	return vocab;
 }
 
@@ -1081,21 +1162,7 @@ function initSubjectWidget(elem){
 	// WE MIGHT NEED A WHITE LIST HERE
 
 	if(vocab == 'anzsrc-for' || vocab =='anzsrc-seo'){
-		// var widget = vocab_value.vocab_widget({mode:'advanced',cache: false, repository: vocab});
-		// vocab_value.one('search.vocab.ands', function(event, data) {	
-		// 	var dataArray = Array();
-		// 	$.each(data.items, function(idx, e) {
-		// 		dataArray.push({value:e.notation, subtext:e.label});
-		// 	});
-		// 	vocab_value.typeahead({source:dataArray});
-		// 	vocab_value.data('typeahead').source = dataArray;
-		// }).on('change',function(event, data){
-		// 	widget.vocab_widget('narrow', vocab_value.val());
-		// }).on('narrow.vocab.ands',function(event, data){
-		// 	// log(data);
-		// });
-		// widget.vocab_widget('search', '');
-		// 
+
 		$(vocab_value).qtip({
 			content:{text:'<div class="subject_chooser"></div>'},
 			prerender:true,
@@ -1443,10 +1510,26 @@ function getRIFCSforTab(tab, hasField){
 						}
 						fragment += '</'+type+'>';
 					}else if(type=='relatedInfo'){//special case for relatedInfo
+						
+						if($('input[name=title]', this).val()!=''){
+							fragment += '<title field_id="' +$(this).attr('field_id')+'">'+htmlEntities($('input[name=title]', this).val())+'</title>';
+						}
 						//identifier is required
-						fragment += '<identifier field_id="' +$(this).attr('field_id')+'" type="'+htmlEntities($('input[name=identifier_type]', this).val())+'">'+htmlEntities($('input[name=identifier]', this).val())+'</identifier>';
-						//title and notes are not required, but useful nonetheless
-						// TO DO: find out where did you go wrong :-)
+						var Identifiers = $('input[name=identifier]', this);
+						if(Identifiers.length > 0)
+						{
+							$.each(Identifiers, function(){
+								var ident = $(this);
+								fragment += '<identifier field_id="' +ident.attr('field_id')+'" type="'+htmlEntities(ident.next('input[name="identifier_type"]').val())+'">'+htmlEntities(ident.val())+'</identifier>';
+							});
+						}else{
+							fragment += '<identifier field_id="' +$(this).attr('field_id')+'" type=""></identifier>';
+						}
+						var relations = $(this).children('.aro_box_part[type=relation]');
+							$.each(relations, function(){
+								var rel = $(this);
+								fragment += '<relation field_id="' +rel.attr('field_id')+'" type="'+htmlEntities($('input[name="type"]',this).val())+'"><description>'+htmlEntities($('input[name="description"]',this).val())+'</description><url>'+htmlEntities($('input[name="url"]',this).val())+'</url></relation>';
+							});
 						var formatIdentifiers = $('input[name=format_identifier]', this);
 						if(formatIdentifiers.length > 0){
 							
@@ -1457,9 +1540,7 @@ function getRIFCSforTab(tab, hasField){
 							});
 							fragment += '</format>';
 						}
-						if($('input[name=title]', this).val()!=''){
-							fragment += '<title field_id="' +$(this).attr('field_id')+'">'+htmlEntities($('input[name=title]', this).val())+'</title>';
-						}
+
 						if($('input[name=notes]', this).val()!=''){
 							fragment += '<notes field_id="' +$(this).attr('field_id')+'">'+htmlEntities($('input[name=notes]', this).val())+'</notes>';
 						}
@@ -1563,7 +1644,6 @@ function getRIFCSforTab(tab, hasField){
 				var subbox_fragment ='';
 				if(subbox_type !== 'spatial')
 					subbox_fragment +='<'+subbox_type+'>';
-
 				var parts = $(this).children('.aro_box_part');
 				if(parts.length>0){
 					$.each(parts, function(){

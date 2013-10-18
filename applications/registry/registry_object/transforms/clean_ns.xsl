@@ -19,6 +19,9 @@
                     <xsl:apply-templates select="@group | node()"/>
                 </xsl:element>
             </xsl:when>
+            <xsl:when test="local-name() = 'annotations'">
+                <xsl:copy-of select="."/>
+            </xsl:when>
     		<xsl:otherwise>
             	<xsl:element name="{local-name()}" xmlns="http://ands.org.au/standards/rif-cs/registryObjects">
               		<xsl:apply-templates select="@*|node()"/>
