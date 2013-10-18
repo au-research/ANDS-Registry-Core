@@ -4,7 +4,7 @@ $ENV['default_base_url'] = "@@base_url"; //(excludes any registry/ or portal/)
 
 $ENV['environment_name'] = ""; // blank will leave the environment default
 $ENV['environment_colour'] = "#0088cc"; // optional, only applies when environment_name is set
-$ENV['deployment_state'] = "development";
+
 $ENV['importer_benchmark_enabled'] = true; 
 
 /* ERROR HANDLING */
@@ -45,8 +45,8 @@ $ENV['gPIDS_URL_PREFIX'] = "https://demo.ands.org.au/registry/pids/";
 $ENV['gPIDS_IDENTIFIER_SUFFIX'] = 'https://researchdata.ands.org.au';
 
 $ENV['vocab_resolving_services'] =  array(
-	'anzsrc-seo' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/sissvoc/api/anzsrc-seo/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
-	'anzsrc-for' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/sissvoc/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
+	'anzsrc-seo' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/vocab/api/anzsrc-seo/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
+	'anzsrc-for' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/vocab/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
 );
 
 
