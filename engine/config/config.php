@@ -10,9 +10,10 @@ $config = array_merge($config, $ENV);
 $config[ENGINE_ENABLED_MODULE_LIST] = &$config['ENABLED_MODULES'];
 
 
-$config['authenticators'] = Array(gCOSI_AUTH_METHOD_BUILT_IN => 'Built-in Authentication', gCOSI_AUTH_METHOD_LDAP=>'LDAP', gCOSI_AUTH_METHOD_SHIBBOLETH => 'Australian Access Federation (AAF) credentials');
+$config['authenticators'] = Array(gCOSI_AUTH_METHOD_BUILT_IN => 'Built-in Authentication', gCOSI_AUTH_METHOD_LDAP=>'LDAP');
 if (isset($config['shibboleth_sp']) && $config['shibboleth_sp'])
 {
+	$config['authenticators'][gCOSI_AUTH_METHOD_SHIBBOLETH] = 'Australian Access Federation (AAF) credentials';
 	$config['default_authenticator'] = gCOSI_AUTH_METHOD_SHIBBOLETH;
 }
 else
