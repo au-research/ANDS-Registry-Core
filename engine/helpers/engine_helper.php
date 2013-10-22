@@ -239,6 +239,10 @@ function url_suffix(){
 	return '#!/';
 }
 
+function remove_scheme($url){
+	return str_replace(array("https://","http://"), array("//","//"), $url);
+}
+
 function utc_timezone()
 {
 	date_default_timezone_set('UTC');
