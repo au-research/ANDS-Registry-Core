@@ -30,8 +30,9 @@ $ENV['ENABLED_MODULES'] = array(
 	//'vocab_service',
 	//'mydois',
 	//'pids',
-	//'abs_sdmx_querytool'
-	//'theme_cms'
+	//'abs_sdmx_querytool',
+	//'theme_cms',
+	//'cms',
 );
 
 // Set this to enable DOI query tool support

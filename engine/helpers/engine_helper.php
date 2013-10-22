@@ -205,6 +205,12 @@ function identifier_url($suffix=''){
 	return $CI->config->item('default_base_url') . 'identifier/'. $suffix;
 }
 
+function developer_url($suffix=''){
+	$CI =& get_instance();
+
+	return $CI->config->item('default_base_url') . 'developer/'. $suffix;
+}
+
 function current_protocol()
 {
 	$url = parse_url(site_url());
