@@ -67,6 +67,13 @@ $ENV['session_timeout'] = 7200; // 2 hours of inactivity before logout...
  // Will affect the error reporting status
 $ENV['deployment_state'] = "<production or development>";
 
+// EXAMPLE DATASOURCE DETAILS
+$ENV['example_ds_key'] = 'example_data_source';
+$ENV['example_ds_title'] = 'DataSource Example with 4 Registry Objects';
+
+// portal search and page statistics
+$ENV['collect_stats'] = false;
+
 /* Google Analytics account details */
 $ENV['rda_urchin_id'] = '';
 $ENV['svc_urchin_id'] = '';
