@@ -9,8 +9,25 @@
  * @package ands/datasource
  * 
  */
+try{
+	$news_content = file_get_contents('assets/shared/dashboard_news/dashboard_sample.html');
+}
+catch(Exception $e)
+{
+	$news_content = '<div style="overflow: hidden; height: 1072px;" class="box-content dash_news">No News content is available</div>';
+}
 
-$news_content = file_get_contents('assets/shared/dashboard_news/dashboard_sample.html');
+
+if($this->config->item('environment_name'))
+{
+  $site_title = $this->config->item('environment_name').' Home';
+}
+else
+{
+  $site_title = 'ANDS Online Services Home';
+}
+
+
 ?>
 <?php $this->load->view('header');?>
 <span>
@@ -28,7 +45,7 @@ $news_content = file_get_contents('assets/shared/dashboard_news/dashboard_sample
 		<div class="span7">
 			<div class="box">
 				<div class="box-header clearfix">
-					<h1>ANDS Online Services Home</h1>	
+					<h1><?php echo $site_title; ?></h1>	
 					<a href="<?php echo portal_url();?>" style="margin-top:5px;" class="btn btn-info pull-right" target="_blank">
 					<i class="icon-globe icon icon-white"></i> Visit Research Data Australia</a>
 				</div>
