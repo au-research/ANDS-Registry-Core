@@ -83,10 +83,10 @@ $application_directives = array(
 				"active_application" => "roles",
 				"default_controller" => "role/index"
 			),
-	"developer" =>
+	"developers" =>
 			array(
-				"base_url" => "%%BASEURL%%/developer/",
-				"active_application" => "developer",
+				"base_url" => "%%BASEURL%%/developers/",
+				"active_application" => "developers",
 				"default_controller" => "documentation/index"
 			)
 );

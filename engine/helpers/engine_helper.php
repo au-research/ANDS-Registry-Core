@@ -208,7 +208,7 @@ function identifier_url($suffix=''){
 function developer_url($suffix=''){
 	$CI =& get_instance();
 
-	return $CI->config->item('default_base_url') . 'developer/'. $suffix;
+	return $CI->config->item('default_base_url') . 'developers/'. $suffix;
 }
 
 function current_protocol()
