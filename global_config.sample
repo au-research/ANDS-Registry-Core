@@ -69,7 +69,7 @@ $ENV['ENABLED_MODULES'] = array(
 
 	// These modules require: ANDS-Registry-Contrib to be installed:
 	// 	- 	Vocabulary catalogue module
-	// 			'vocab_service'
+	// 			'vocab_service',
 
 	//  - 	Identifier service modules
 	//			'mydois',
@@ -178,14 +178,6 @@ $eDBCONF['dois']['password'] = '';
 $eDBCONF['dois']['database'] = 'dois';
 $eDBCONF['dois']['dbdriver'] = 'postgre';
 */
-
-
-<<<<<<< HEAD
-// portal search and page statistics
-$ENV['collect_stats'] = false;
-=======
-
->>>>>>> Global Config cleanup
 
 
 /*********************************************************************/
