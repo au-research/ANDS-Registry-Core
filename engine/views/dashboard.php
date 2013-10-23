@@ -9,6 +9,8 @@
  * @package ands/datasource
  * 
  */
+
+$news_content = file_get_contents('assets/shared/dashboard_news/dashboard_sample.html');
 ?>
 <?php $this->load->view('header');?>
 <span>
@@ -30,73 +32,7 @@
 					<a href="<?php echo portal_url();?>" style="margin-top:5px;" class="btn btn-info pull-right" target="_blank">
 					<i class="icon-globe icon icon-white"></i> Visit Research Data Australia</a>
 				</div>
-				<div class="box-content dash_news">
-					<h4>ANDS Online Services News</h4>
-					<p><small><strong>Update - Service Release 10.2</strong></small> <small class="muted"><small>[September 2013]</small></small></p>
-						<p><small>
-							ANDS Online Services R10.2 adds some minor functionality across the Collections Registry and Research Data Australia as well as adding new experimental web services for interfacing with external partners.
-							Highlights of this release include:
-							<ul style="list-style-type:circle;">
-								<li>experimental interface for exporting RIFCS collection records to ORCID</li>
-								<li>improvements to the spotlight rotator in Research Data Australia</li>
-								<li>enhancements to web services (including OAI provider and DCI web service)</li>
-								<li>a new Identify My Data (PIDS) interface</li>
-								<li><a target="_blank" href="https://github.com/au-research/ANDS-Online-Services/wiki/Release-10.2-Changelog">other minor fixes...</a></li>
-							</ul>
-						</small></p>			
-							<p><small>As always, the ANDS Services Support team is here to help! If your question isn't answered by your Client Liaison Officer or the 
-							<a href="http://ands.org.au/resource/ands-faq.html" target="_blank">FAQ page</a>, please contact ANDS Services Support at 
-							<a href="mailto:services@ands.org.au" target="_blank">services@ands.org.au</a>.</small></p>	
-
-					<hr/>
-					<p><small><strong>Update - Service Release 10.1</strong></small> <small class="muted"><small>[July 2013]</small></small></p>
-						<p><small>
-							ANDS Online Services R10.1 addresses some minor issues across the Collections Registry and Research Data Australia.
-							Included in this release:
-							<ul style="list-style-type:circle;">
-								<li>harvest performance has been improved by over 40%</li>
-								<li>enhancements to the Add Registry Object screens (particularly on the Related Objects tab)</li>
-								<li>searching for special characters now possible on RDA</li>
-								<li>fixes to the Registry OAI provider</li>
-								<li>bulk delete operations have been significantly optimised</li>
-								<li><a target="_blank" href="https://github.com/au-research/ANDS-Online-Services/wiki/Release-10.1-Changelog">other minor fixes...</a></li>
-							</ul>
-						</small></p>
-
-						<p><small>
-						Data Publishers who are not part of an organisation that <a target="_blank" href="<?=portal_url('home/contributors')?>">contributes to Research Data Australia</a> 
-						(at the institutional level), will now have access to a fully-featured Publish My Data self-service tool to create and administer their collection metadata. 
-						This functionality will be automatically available for new users when they log into the registry for the first time. 
-						</small></p>					
-
-					<hr/>
-					<p><small><strong>Welcome to ANDS Online Services Release 10!</strong></small> <small class="muted"><small>[May 2013]</small></small></p>
-						<p><small>We are pleased to welcome you to your new ANDS Online Services dashboard. 
-							Release 10 introduces a complete rewrite of the ANDS Registry system, with a focus on performance and improved usability.</small></p>
-
-						<p><small>Most of the software features are unchanged, but you might find them in new areas of the screen. To help you find your 
-							way around, we've created a number of helpful intructions and videos: </small></p>
-
-						<p><small>
-						<ul>
-							<li><a href="http://ands.org.au/resource/sw-release10.html" target="_blank">Release 10 Overview</a></li>
-							<li><a class="youtube" href="http://www.youtube.com/watch?v=R5q4t73aCoo"> Finding your way - ANDS Registry(<em>video</em>)</a></li>
-							<li><a class="youtube" href="http://www.youtube.com/watch?v=AuKMPwNj-ng">ANDS R10 Walkthrough (<em>webinar recording</em>) </a></li>
-							<li><a href="http://ands.org.au/guides/content-providers-guide.html" target="_blank">ANDS Content Providers Guide</a> (<em>web page</em>)</li>
-							<li><a href="http://ands.org.au/resource/ands-faq.html" target="_blank">ANDS Online Services FAQ</a> (<em>web page</em>)</li>
-						</ul>
-						</small></p>
-
-						<p><small>To get started, click on the My Data link at the top of the screen and take a look around! You can always get back to this dashboard by clicking on the ANDS logo (top left).</small></p>
-
-						<p><small>The Publish My Data tool is temporarily unavailable at this time. Please contact ANDS Services Support team if you require assistance with your previously-created Publish My Data records.</small></p>
-
-						<p><small>As always, the ANDS Services Support team is here to help! If your question isn't answered by your Client Liaison Officer or the 
-							<a href="http://ands.org.au/resource/ands-faq.html" target="_blank">FAQ</a>, please contact ANDS Services Support at 
-							<a href="mailto:services@ands.org.au" target="_blank">services@ands.org.au</a>.</small></p>
-
-
-				</div>
+				<?php echo $news_content; ?>
 			</div>
 		</div>
 

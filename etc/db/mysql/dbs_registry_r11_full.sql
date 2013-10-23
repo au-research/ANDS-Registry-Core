@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `dbs_registry` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `dbs_registry`;
+CREATE DATABASE  IF NOT EXISTS `dbs_registry_install_test` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `dbs_registry_install_test`;
 -- MySQL dump 10.13  Distrib 5.5.24, for osx10.5 (i386)
 --
 -- Host: 130.56.60.128    Database: dbs_registry
@@ -35,7 +35,7 @@ CREATE TABLE `data_source_logs` (
   PRIMARY KEY (`id`),
   KEY `fk_data_source` (`data_source_id`),
   CONSTRAINT `fk_log_data_source` FOREIGN KEY (`data_source_id`) REFERENCES `data_sources` (`data_source_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=59071 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,7 +72,7 @@ CREATE TABLE `harvest_requests` (
   KEY `fk_harvest_request_data_source` (`data_source_id`),
   KEY `fk_harvest_data_source` (`data_source_id`),
   CONSTRAINT `fk_harvest_data_source` FOREIGN KEY (`data_source_id`) REFERENCES `data_sources` (`data_source_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2135 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,7 +89,7 @@ CREATE TABLE `data_sources` (
   PRIMARY KEY (`data_source_id`),
   UNIQUE KEY `key_UNIQUE` (`key`),
   UNIQUE KEY `slug_UNIQUE` (`slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,7 +107,7 @@ CREATE TABLE `data_source_attributes` (
   PRIMARY KEY (`id`),
   KEY `fk_data_sources` (`data_source_id`),
   CONSTRAINT `fk_attribute_data_source` FOREIGN KEY (`data_source_id`) REFERENCES `data_sources` (`data_source_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6377 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,7 +146,7 @@ CREATE TABLE `url_mappings` (
   KEY `idx_url_to_registry_object` (`registry_object_id`),
   KEY `fk_url_map_to_registry_object` (`registry_object_id`),
   KEY `slug_INDEX` (`slug`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=130580 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -165,7 +165,7 @@ CREATE TABLE `institutional_pages` (
   KEY `pk_group` (`group`),
   KEY `fk_data_source` (`authorative_data_source_id`),
   CONSTRAINT `fk_institutional_page_data_source` FOREIGN KEY (`authorative_data_source_id`) REFERENCES `data_sources` (`data_source_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,7 +185,7 @@ CREATE TABLE `api_requests` (
   `timestamp` bigint(20) unsigned DEFAULT NULL,
   `note` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1766 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +205,7 @@ CREATE TABLE `registry_object_attributes` (
   KEY `fk_attr_to_registry_object` (`registry_object_id`),
   KEY `idx_reg_attr_val` (`attribute`,`value`(255)) USING HASH,
   CONSTRAINT `fk_attr_to_registry_object` FOREIGN KEY (`registry_object_id`) REFERENCES `registry_objects` (`registry_object_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2176010 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -258,7 +258,7 @@ CREATE TABLE `registry_object_metadata` (
   PRIMARY KEY (`id`),
   KEY `idx_reg_metadata` (`registry_object_id`,`attribute`) USING HASH,
   CONSTRAINT `fk_metadata_to_registry_object` FOREIGN KEY (`registry_object_id`) REFERENCES `registry_objects` (`registry_object_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=504899 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -281,7 +281,7 @@ CREATE TABLE `registry_object_relationships` (
   KEY `idx_related_object_pair` (`registry_object_id`,`related_object_key`),
   KEY `idx_related_object_id` (`registry_object_id`) USING HASH,
   KEY `idx_related_object_key` (`related_object_key`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=3425909 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -304,7 +304,7 @@ CREATE TABLE `record_data` (
   KEY `fk_record_data_registry_object` (`registry_object_id`),
   KEY `registry_object_id_UNIQUE` (`registry_object_id`,`id`),
   CONSTRAINT `fk_record_data_registry_object` FOREIGN KEY (`registry_object_id`) REFERENCES `registry_objects` (`registry_object_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=839806 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -351,7 +351,7 @@ CREATE TABLE `deleted_registry_objects` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `fk_data_source_id_idx` (`data_source_id`),
   CONSTRAINT `fk_data_source_id` FOREIGN KEY (`data_source_id`) REFERENCES `data_sources` (`data_source_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=116180 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -377,7 +377,7 @@ CREATE TABLE `registry_objects` (
   KEY `key_index` (`key`) USING HASH,
   KEY `key_class_index` (`key`,`class`) USING HASH,
   CONSTRAINT `fk_registry_object_data_source` FOREIGN KEY (`data_source_id`) REFERENCES `data_sources` (`data_source_id`) ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=179387 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

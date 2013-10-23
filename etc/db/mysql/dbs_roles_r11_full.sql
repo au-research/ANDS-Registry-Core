@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `dbs_roles` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `dbs_roles`;
+CREATE DATABASE  IF NOT EXISTS `dbs_roles_install_test` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `dbs_roles_install_test`;
 -- MySQL dump 10.13  Distrib 5.5.24, for osx10.5 (i386)
 --
 -- Host: 130.56.60.128    Database: dbs_roles
@@ -33,7 +33,7 @@ CREATE TABLE `authentication_built_in` (
   `modified_when` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_who` varchar(255) NOT NULL DEFAULT 'SYSTEM',
   PRIMARY KEY (`id`,`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -49,7 +49,7 @@ CREATE TABLE `role_relations` (
   `modified_when` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_who` varchar(255) NOT NULL DEFAULT 'SYSTEM',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=143 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -69,13 +69,24 @@ CREATE TABLE `roles` (
   `modified_when` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_login` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`,`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('REGISTRY_SUPERUSER','ROLE_FUNCTIONAL','Superuser');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('REGISTRY_SUPERUSER', 'ROLE_FUNCTIONAL', 'Superuser');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('PUBLIC', 'ROLE_FUNCTIONAL', 'Public');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('COSI_BUILT_IN_USERS', 'ROLE_FUNCTIONAL', 'COSI Built-in Authentication User');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('REGISTRY_STAFF', 'ROLE_FUNCTIONAL', 'Registry Staff Member');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('REGISTRY_USER', 'ROLE_FUNCTIONAL', 'Registry Data Source Admin');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('PIDS_USER', 'ROLE_FUNCTIONAL', 'PIDS Users');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('SPOTLIGHT_CMS_EDITOR', 'ROLE_FUNCTIONAL', 'Spotlight CMS Editor');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('PORTAL_STAFF', 'ROLE_FUNCTIONAL', 'Portal/CMS Staff Member');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('DOI_USER', 'ROLE_FUNCTIONAL', 'DOI Service User');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('DOIS_USER', 'ROLE_FUNCTIONAL', 'DOI User');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('VOCAB_USER', 'ROLE_FUNCTIONAL', 'Vocabulary Catalogue User');
+
 INSERT INTO `roles` (`role_id`, `role_type_id`, `name`, `authentication_service_id`) VALUES ('superuser', 'ROLE_USER', 'Admin User', 'AUTHENTICATION_BUILT_IN');
 
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;

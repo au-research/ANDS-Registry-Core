@@ -5,6 +5,10 @@ global $ENV;
 /* What authencation class should we use to power the login/ACL? */
 $config['authentication_class'] = "role_authentication";
 
+// initial datasource details
+$config['example_ds_key'] = 'example_data_source';
+$config['example_ds_title'] = 'DataSource Example with 4 Registry Objects';
+
 // Merge in the config options from global_config.php
 $config = array_merge($config, $ENV);
 $config[ENGINE_ENABLED_MODULE_LIST] = &$config['ENABLED_MODULES'];
