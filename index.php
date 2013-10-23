@@ -48,6 +48,7 @@ if (defined('ENVIRONMENT'))
 }
 
 // Pull in the global imports
+$eDBCONF = array();
 require_once('./global_config.php');
 /*
  *---------------------------------------------------------------

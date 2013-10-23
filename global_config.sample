@@ -1,103 +1,204 @@
 <?php
-/* Information about the environment the system is installed to */
-$ENV['default_base_url'] = "@@base_url"; //(excludes any registry/ or portal/)
+/*************************************************************************/
+/*
+/*     /\   | \ | |  __ \ / ____| |  __ \          (_)   | |
+/*    /  \  |  \| | |  | | (___   | |__) |___  __ _ _ ___| |_ _ __ _   _
+/*   / /\ \ | . ` | |  | |\___ \  |  _  // _ \/ _` | / __| __| '__| | | |
+/*  / ____ \| |\  | |__| |____) | | | \ \  __/ (_| | \__ \ |_| |  | |_| |
+/* /_/    \_\_| \_|_____/|_____/  |_|  \_\___|\__, |_|___/\__|_|   \__, |
+/*                                             __/ |                __/ |
+/*                                            |___/                |___/
+/*
+/*										    Registry Software Configuration
+/*
+/* 		Release Version :	11
+/*		Contact Person  :	services@ands.org.au
+/*		Help/support    :	http://researchdata.ands.org.au/developers/
+/*
+/*************************************************************************/
 
-$ENV['environment_name'] = ""; // blank will leave the environment default
-$ENV['environment_colour'] = "#0088cc"; // optional, only applies when environment_name is set
+/*************************************************************************/
+/* (SECTION 1) REQUIRED CONFIGURATION OPTIONS
+/*************************************************************************/
 
-$ENV['importer_benchmark_enabled'] = true; 
-
-/* ERROR HANDLING */
-$ENV['site_admin'] = "Aliza Log";
-$ENV['site_admin_email'] = "<admin @ email>";
-
-
-/* SOLR URL */
-$ENV['solr_url'] = "@@solr_url";
-$ENV['sissvoc_url'] = "@@sissvoc_url";
-$ENV['harvester_base_url'] = "@@harvester_url";
-
-//PIDS
-$ENV['pids_server_base_url'] = "@@pids_url";
-$ENV['pids_server_app_id'] = "@@pids_app_id";
-
-/* ENABLED MODULES */
-$ENV['ENABLED_MODULES'] = array(
-	'roles',
-	'registry',
-	//'toolbox',
-	//'statistics',
-	//'vocab_service',
-	//'mydois',
-	//'pids',
-	//'abs_sdmx_querytool',
-	//'theme_cms',
-	//'cms',
-);
-
-// Set this to enable DOI query tool support
-// $ENV['gDOIS_SERVICE_BASE_URI'] = "https://mds.datacite.org/";
-// $ENV['gDOIS_DATACENTRE_NAME_PREFIX'] = "";
-// $ENV['gDOIS_DATACENTRE_NAME_MIDDLE'] = "";
-// $ENV['gDOIS_DATACITE_PASSWORD'] = "";
-// $ENV['gDOIS_RESPONSE_SUCCESS'] = "OK";
-
-$ENV['gPIDS_URL_PREFIX'] = "https://demo.ands.org.au/registry/pids/";
-$ENV['gPIDS_IDENTIFIER_SUFFIX'] = 'https://researchdata.ands.org.au';
-
-$ENV['vocab_resolving_services'] =  array(
-	'anzsrc-seo' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/vocab/api/anzsrc-seo/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
-	'anzsrc-for' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/vocab/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
-);
-
-
-// Is this installation configured as a Shib Service Provider 
-// Note: enables AAF login (if Shibboleth 2 is properly configured)
-$ENV['shibboleth_sp'] = false;
-
-//ORCID config
-$ENV['gORCID_SERVICE_BASE_URI'] = 'http://sandbox-1.orcid.org/';
-$ENV['gORCID_API_URI'] = 'http://api.sandbox-1.orcid.org/';
-$ENV['gORCID_CLIENT_ID'] = '';
-$ENV['gORCID_CLIENT_SECRET'] = '';
-
-// Session Timeout (how long before the user is automatically logged out)
-$ENV['session_timeout'] = 7200; // 2 hours of inactivity before logout...
-
- // Will affect the error reporting status
-$ENV['deployment_state'] = "<production or development>";
-
-// portal search and page statistics
-$ENV['collect_stats'] = false;
-
-/* Google Analytics account details */
-$ENV['rda_urchin_id'] = '';
-$ENV['svc_urchin_id'] = '';
-
-/* DATABASE CONFIGURATION */
-$eDBCONF = array();
-$eDBCONF['default']['hostname'] = 'localhost';
+// Details of your database server (note: advanced settings can be modified in Sect 4)
+$eDBCONF['default']['hostname'] = 'localhost';  // hostname or IP address
 $eDBCONF['default']['username'] = 'webuser';
 $eDBCONF['default']['password'] = '';
 $eDBCONF['default']['dbdriver'] = 'mysql';
 
-$eDBCONF['registry']['database'] = 'dbs_registry';
 
-$eDBCONF['roles']['database'] = 'dbs_roles';
+// The Server Base URL is the URL via which users access the software installation
+// (for example: http://researchdata.your.org.au/myportal/
+$ENV['default_base_url'] = "{CONFIGURE ME}";
 
+
+// The SOLR URL is the URL of the search index core which you have installed
+// (for example: http://example.com:8080/solr/registry1/)
+$ENV['solr_url'] = "{CONFIGURE ME}";
+
+
+// The Environment options change the appearance of the software installation
+// Leaving these blank will remove the name and colour-bar from all registry pages
+$ENV['environment_name'] = "My Registry";
+$ENV['environment_colour'] = "#6EBF21";
+
+
+// Who is the administrator of this domain?  		[OPTIONAL]
+// error reports will be emailed to this address
+$ENV['site_admin'] = "Registry System Administrator";
+$ENV['site_admin_email'] = "admin@example.com"; // Will affect the error reporting status
+$ENV['deployment_state'] = "{CONFIGURE ME}";  // either "production" or "development"
+
+
+/*************************************************************************/
+/* (SECTION 2) ENABLED MODULES
+/*************************************************************************/
+// Use this section to enable/disable software modules as you require.
+
+// Note: Most of the non-default modules require additional configuration
+//       and installation (such as installing additional database or code
+//       packages). Refer to their installation notes for details.
+
+$ENV['ENABLED_MODULES'] = array(
+
+	// Default modules (simply installs the registry, access control and portal)
+		'roles',
+		'registry',
+		'portal',
+
+	// These modules require: ANDS-Registry-Contrib to be installed:
+	// 	- 	Vocabulary catalogue module
+	// 			'vocab_service'
+
+	//  - 	Identifier service modules
+	//			'mydois',
+	//			'pids',
+
+	// 	- 	Content Management System modules
+	//			'theme_cms',
+	//			'cms',
+
+	//	-	Statistics dashboard
+	//			'statistics',
+
+	// These modules require: ANDS-Developer-Portal to be installed:
+	// 	- 	Developer API documentation
+	//			'toolbox',
+
+);
+
+/*************************************************************************/
+/* (SECTION 3) ADDITIONAL REGISTRY CONFIGURATION
+/*************************************************************************/
+// Optional parameters to enable/disable advanced registry functionality
+
+// Replace this with the URL of your OAI-PMH harvester (if you have one)
+// Consider using the ANDS-Harvester (an OAI-PMH compliant Java web app)
+$ENV['harvester_base_url'] = "";
+
+// Replace this with the URL of your vocabulary server (if you have one)
+$ENV['sissvoc_url'] = "http://researchdata.ands.org.au:8080/vocab/";
+
+// You can also use a vocab service resolve subjects based on their types
+$ENV['vocab_resolving_services'] =  array(
+	'anzsrc-seo' => array('resolvingService' => 'http://researchdata.ands.org.au:8080/vocab/api/anzsrc-seo/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
+	'anzsrc-for' => array('resolvingService' => 'http://researchdata.ands.org.au:8080/vocab/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
+);
+
+
+// Session Timeout (how many seconds before the user gets logged out)
+$ENV['session_timeout'] = 7200;
+
+// Is this installation configured as a Shib Service Provider (AAF)
+// Note: enables AAF login (if Shibboleth 2 is properly configured)
+$ENV['shibboleth_sp'] = false;
+
+// Whether to enable advanced benchmarking in data source logs when a
+// registry superuser account performs a harvest on a data source
+$ENV['importer_benchmark_enabled'] = false;
+
+// Enable Google Analytics by configuring your urchin id
+$ENV['rda_urchin_id'] = ''; // enable analytics on portal pages
+$ENV['svc_urchin_id'] = ''; // enable analytics on registry pages
+
+
+/*********************************************************************/
+/* (SECTION 4) OPTIONAL MODULES / EXTRA CONFIGURATION
+/* - only if using additional modules
+/*********************************************************************/
+
+// => PORTAL STATS
+//    - add page and search tracking and autocomplete on portal search
+//    - requires dbs_portal database to be setup and configured (see misc/)
+$ENV['collect_stats'] = false;
 $eDBCONF['portal']['database'] = 'dbs_portal';
 
+/*
+// => VOCABULARY CATALOG
+//    - used by the vocabulary catalogue application
 $eDBCONF['vocabs']['database'] = 'dbs_vocabs';
+*/
 
-$eDBCONF['statistics']['database'] = 'dbs_statistics';
+/*
+// => ORCID PULLBACK
+//    - ANDS-only;
+//    - allows ORCID users to pull back collections into their profile
+$ENV['gORCID_SERVICE_BASE_URI'] = 'http://sandbox-1.orcid.org/';
+$ENV['gORCID_API_URI'] = 'http://api.sandbox-1.orcid.org/';
+$ENV['gORCID_CLIENT_ID'] = '';
+$ENV['gORCID_CLIENT_SECRET'] = '';
+*/
 
+/*
+// => PIDS MANAGEMENT
+//    - ANDS-only;
+//    - allows users to manage and update their ANDS PIDS (or "Handles")
+$ENV['pids_server_base_url'] = "@@pids_url";
+$ENV['pids_server_app_id'] = "@@pids_app_id";
+$ENV['gPIDS_URL_PREFIX'] = "https://demo.ands.org.au/registry/pids/";
+$ENV['gPIDS_IDENTIFIER_SUFFIX'] = 'https://researchdata.ands.org.au';
 $eDBCONF['pids']['hostname'] = 'devl.ands.org.au';
 $eDBCONF['pids']['username'] = 'pidmaster';
 $eDBCONF['pids']['database'] = 'pids';
 $eDBCONF['pids']['dbdriver'] = 'postgre';
+*/
 
-
-$eDBCONF['dois']['hostname'] = 'devl.ands.org.au';
+/*
+//=> DOIS MANAGEMENT
+//    - ANDS-only;
+//    - allows users to manage and update their ANDS DOIS (Cite My Data)
+$ENV['gDOIS_SERVICE_BASE_URI'] = "https://mds.datacite.org/";
+$ENV['gDOIS_DATACENTRE_NAME_PREFIX'] = "";
+$ENV['gDOIS_DATACENTRE_NAME_MIDDLE'] = "";
+$ENV['gDOIS_DATACITE_PASSWORD'] = "";
+$ENV['gDOIS_RESPONSE_SUCCESS'] = "OK";
+$eDBCONF['dois']['hostname'] = '';
 $eDBCONF['dois']['password'] = '';
-$eDBCONF['dois']['database'] = 'archive_dois';
+$eDBCONF['dois']['database'] = 'dois';
 $eDBCONF['dois']['dbdriver'] = 'postgre';
+*/
+
+
+<<<<<<< HEAD
+// portal search and page statistics
+$ENV['collect_stats'] = false;
+=======
+
+>>>>>>> Global Config cleanup
+
+
+/*********************************************************************/
+/* (SECTION 5) ADVANCED DATABASE CONFIGURATION
+/* - only if using non-standard table names or non-mysql DBMS
+/*********************************************************************/
+
+// Name of the database being used for the registry and roles databases
+$eDBCONF['registry']['database'] = 'dbs_registry';
+$eDBCONF['roles']['database'] = 'dbs_roles';
+$eDBCONF['vocabs']['database'] = 'dbs_vocabs';
+$eDBCONF['statistics']['database'] = 'dbs_statistics';
+
+// If not using mysql (check CodeIgniter for valid values)
+$eDBCONF['default']['dbdriver'] = 'mysql';
+
