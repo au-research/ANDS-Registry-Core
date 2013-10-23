@@ -12,7 +12,7 @@ class Auth extends CI_Controller {
 		$this->CI =& get_instance();
 		$data['default_authenticator'] = $this->CI->config->item('default_authenticator');
 		$data['authenticators'] = $this->CI->config->item('authenticators');
-		 
+		$data['redirect'] = '';
 		
 		if ($this->input->post('inputUsername') || $this->input->post('inputPassword') && !$this->user->loggedIn())
 		{
@@ -59,6 +59,7 @@ class Auth extends CI_Controller {
 		$data['js_lib'] = array('core');
 		$data['scripts'] = array();
 		$this->CI =& get_instance();
+		$data['redirect'] = '';
 		$data['default_authenticator'] = $this->CI->config->item('default_authenticator');
 		$data['authenticators'] = $this->CI->config->item('authenticators');
 		if(isset($_SERVER['shib-shared-token'])){
