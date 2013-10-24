@@ -141,6 +141,8 @@ class Auth extends CI_Controller {
 		$data['title'] = 'ANDS Online Services Home';
 		$data['js_lib'] = array('core');
 		$data['scripts'] = array();
+		$data['available_organisations'] = array();
+		$data['group_vocabs'] = array();
 		if($this->user->loggedIn()) 
 		{
 			if(sizeof($this->user->affiliations())>0){
