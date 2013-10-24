@@ -2047,7 +2047,7 @@ public function getContributorGroupsEdit()
 		
 		if($dataSource)
 		{
-			$response['log']. = $dataSource->eraseFromDB();
+			$response['log'] .= $dataSource->eraseFromDB();
 			$response['success'] = true;
 		}
 		else{
