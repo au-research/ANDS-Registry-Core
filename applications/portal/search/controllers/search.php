@@ -3,7 +3,7 @@
 class Search extends MX_Controller {
 
 	function index(){
-		$data['title']='Research Data Australia - Search';
+		$data['title']='Search - Research Data Australia';
 		$data['scripts'] = array('search','infobox');
 		$data['js_lib'] = array('google_map', 'range_slider','vocab_widget','qtip');
 
@@ -16,17 +16,19 @@ class Search extends MX_Controller {
 	function filter(){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
-		$data = $this->solr_search($this->input->post('filters'), true);
+		$filters = ($this->input->post('filters') ? $this->input->post('filters') : false);
+		if(!$filters){
+			$data = file_get_contents("php://input");
+			$array = json_decode(file_get_contents("php://input"), true);
+			$filters = $array['filters'];
+		}
+		$data = $this->solr_search($filters, true);
 		//return the result to the client
 		echo json_encode($data);
 	}
 
 	function solr_search($filters, $include_facet = true){
 		$this->load->library('solr');
-
-		
-
-		
 
 		//optional facets return, true for rda search
 		if($include_facet){
@@ -64,7 +66,7 @@ class Search extends MX_Controller {
 		}
 
 		//if still no result is found, do a fuzzy search, store the old search term and search again
-		if($this->solr->getNumFound()==0){
+		if($this->solr->getNumFound()==0 && trim($filters['q']!='')){
 			$new_search_term_array = explode(' ', escapeSolrValue($filters['q']));
 			$new_search_term='';
 			foreach($new_search_term_array as $c ){

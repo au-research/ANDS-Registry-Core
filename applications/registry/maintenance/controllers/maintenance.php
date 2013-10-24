@@ -22,6 +22,65 @@ class Maintenance extends MX_Controller {
 		$this->load->view("maintenance_index", $data);
 	}
 
+	public function init()
+	{
+		acl_enforce('REGISTRY_STAFF');
+		$this->load->library('importer');
+		$slogTitle =  'Import from URL completed successfully'.NL;	
+		$elogTitle = 'An error occurred whilst importing from the specified URL'.NL;
+		$log = 'IMPORT LOG' . NL;
+		//$log .= 'URI: ' . $this->input->post('url') . NL;
+		$log .= 'Harvest Method: Direct import from URL' . NL;
+		$this->load->model('data_source/data_sources', 'ds');
+
+		$data_source = $this->ds->getByKey($this->config->item('example_ds_key'));
+
+		if (!$this->config->item('example_ds_key'))
+		{
+			echo "Example DataSource Key is required to complete the task" .NL;
+			return;
+		}
+
+		if (!$data_source)
+		{
+			$data_source = $this->ds->create($this->config->item('example_ds_key'), url_title($this->config->item('example_ds_title')));
+			$data_source->setAttribute('title', $this->config->item('example_ds_title'));
+			$data_source->setAttribute('record_owner', 'superuser');
+			$data_source->save();
+			$data_source->updateStats();
+			$data_source = $this->ds->getByKey($this->config->item('example_ds_key'));
+		}
+		
+		$sampleRecordUrls = array('http://services.ands.org.au/documentation/rifcs/1.5/examples/eg-collection-1.xml',
+			'http://services.ands.org.au/documentation/rifcs/1.5/examples/eg-party-1.xml',
+			'http://services.ands.org.au/documentation/rifcs/1.5/examples/eg-service-1.xml',
+			'http://services.ands.org.au/documentation/rifcs/1.5/examples/eg-activity-1.xml');
+
+		$xml = '';
+		foreach($sampleRecordUrls as $recUrl){
+			$xml .= unWrapRegistryObjects(file_get_contents($recUrl));			
+		}
+
+		$this->importer->setXML(wrapRegistryObjects($xml));
+		$this->importer->setDatasource($data_source);
+		$this->importer->commit(false);
+		$this->importer->finishImportTasks();
+		$data_source->updateStats();
+
+		if ($error_log = $this->importer->getErrors())
+		{
+			$log .= $elogTitle.$log.$error_log;
+			$data_source->append_log($log, HARVEST_ERROR ,"HARVEST_ERROR");
+		}
+		//else{
+		$log .= $slogTitle.$log.$this->importer->getMessages();
+		$data_source->append_log($log, HARVEST_INFO,"HARVEST_INFO");
+
+		header('Location: '.registry_url('data_source/manage_records/'.$data_source->id));
+		exit();
+
+	}
+
 	function getStat(){
 		acl_enforce('REGISTRY_STAFF');
 		header('Cache-Control: no-cache, must-revalidate');
@@ -322,6 +381,7 @@ class Maintenance extends MX_Controller {
 		}
 		echo json_encode($data);
 	}
+
 
 	/**
 	 * @ignore

@@ -1044,7 +1044,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        <xsl:apply-templates select="ro:identifier | ro:title | ro:notes | ro:format"/>
+        <xsl:apply-templates select="ro:identifier | ro:relation | ro:title | ro:notes | ro:format"/>
     </xsl:template>
     
     <xsl:template match="ro:relatedInfo/ro:identifier">

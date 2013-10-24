@@ -60,7 +60,7 @@
 	
 }
 </style>
-<input type="hidden" value="<?php echo $ds->id;?>" id="data_source_id"/>
+
 <div id="content" style="margin-left:0px">
 
 
@@ -81,10 +81,7 @@
  					<div class="pull-right">
 						<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://ands.org.au/resource/metadata-content-requirements.html#qualitylevels">Quality Level Definitions</a></span>				  
 					</div>
-
-				<!-- 	<h4><a id="download_report_link" data-default-href="<?=base_url('data_source/charts/getDataSourceQualityChart/'.$ds->id.'/');?>" href="<?=base_url('data_source/charts/getDataSourceQualityChart/'.$ds->id.'/ALL/true');?>" title="Download Excel Report"><img src="<?=asset_url('img/excel.png','base');?>" /></a> 
-						Record Quality Overview <small>(<a id="detailed_report_link" data-default-href="<?=base_url('data_source/quality_report/'.$ds->id);?>" href="<?=base_url('data_source/quality_report/'.$ds->id);?>">view detailed quality report</a>)</small></h4>
-				-->	<div id="quality_status_legend" class="chart-legend">
+					<div id="quality_status_legend" class="chart-legend">
 
 					</div>
 					<?php
@@ -93,13 +90,6 @@
 						echo $datasource['chart_html'];
 					} 
 					?>
-				<!--	<div id="overall_chart_div" style="width:80%; margin:auto; min-height:250px;">
-						<i>Loading data source quality information...</i> 
-					</div> -->
-
-
-
-
 
 				</div>
 			</div>

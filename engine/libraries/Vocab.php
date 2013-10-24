@@ -114,8 +114,12 @@ class Vocab {
 
     function setBroaderSubjects($resolvingService, $uriprefix, $term, $vocabType)
     {
-        $content = $this->post($this->constructBroaderUriString($resolvingService, $uriprefix, $term));
-        $json = json_decode($content, false);
+        $json = false;
+        if(is_array($this->resolvingServices))
+        {
+            $content = $this->post($this->constructBroaderUriString($resolvingService, $uriprefix, $term));
+            $json = json_decode($content, false);
+        }      
         if($json){
             $this->result = $json;
             foreach($json->{'result'}->{'items'} as $item)
@@ -157,7 +161,7 @@ class Vocab {
     function getBroaderSubjects($uriprefix, $term)
     {
         $result = array();
-        if( isset($this->resolvedArray[$uriprefix][$term]) && isset($this->resolvedArray[$uriprefix][$term]['broaderTerms']))
+        if(is_array($this->resolvingServices) && isset($this->resolvedArray[$uriprefix][$term]) && isset($this->resolvedArray[$uriprefix][$term]['broaderTerms']))
         {
             $broaderTerms = $this->resolvedArray[$uriprefix][$term]['broaderTerms'];
             foreach($broaderTerms as $broaderTerm)
@@ -173,15 +177,19 @@ class Vocab {
     }
 
     function getResource($vocab_uri){
-        $curl_uri = $vocab_uri['resolvingService'].'resource.json?uri='.$vocab_uri['uriprefix'];
-        // echo $curl_uri;
-        $ch = curl_init();
-        //set the url, number of POST vars, POST data
-        curl_setopt($ch,CURLOPT_URL,$curl_uri);//post to SOLR
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//return to variable
-        $content = curl_exec($ch);//execute the curl
-        //echo 'json received+<pre>'.$content.'</pre>';
-        curl_close($ch);//close the curl
+        $content = '';
+        if(is_array($this->resolvingServices))
+        {
+            $curl_uri = $vocab_uri['resolvingService'].'resource.json?uri='.$vocab_uri['uriprefix'];
+            // echo $curl_uri;
+            $ch = curl_init();
+            //set the url, number of POST vars, POST data
+            curl_setopt($ch,CURLOPT_URL,$curl_uri);//post to SOLR
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//return to variable
+            $content = curl_exec($ch);//execute the curl
+            //echo 'json received+<pre>'.$content.'</pre>';
+            curl_close($ch);//close the curl
+        }
         return $content;
     }
 
@@ -223,49 +231,57 @@ class Vocab {
 
     //RDA usage
     function getTopLevel($vocab, $filters){
-        header('Cache-Control: no-cache, must-revalidate');
-        header('Content-type: application/json');
-        $content = $this->post($this->constructUriString('resource', $this->resolvingServices[$vocab], ''));
         $tree = array();
-        if($json = json_decode($content, false)){
-            foreach($json->{'result'}->{'primaryTopic'}->{'hasTopConcept'} as $concept){
-                $concept_uri = $concept->{'_about'};
-                $uri['uriprefix']=$concept->{'_about'};
-                $uri['resolvingService']=$this->resolvingServices[$vocab]['resolvingService'];
-                $resolved_concept = json_decode($this->getResource($uri));
-                $notation = $resolved_concept->{'result'}->{'primaryTopic'}->{'notation'};
-                $c['notation'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'notation'};
-                $c['prefLabel'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'prefLabel'}->{'_value'};
-                $c['uri'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'_about'};
-                $c['collectionNum'] = $this->getNumCollections($c['uri'],$filters);
-                if($c['collectionNum'] > 0){
-                    $tree['topConcepts'][] = $c;
+        if(is_array($this->resolvingServices))
+        {
+            header('Cache-Control: no-cache, must-revalidate');
+            header('Content-type: application/json');
+            $content = $this->post($this->constructUriString('resource', $this->resolvingServices[$vocab], ''));
+
+            if($json = json_decode($content, false)){
+                foreach($json->{'result'}->{'primaryTopic'}->{'hasTopConcept'} as $concept){
+                    $concept_uri = $concept->{'_about'};
+                    $uri['uriprefix']=$concept->{'_about'};
+                    $uri['resolvingService']=$this->resolvingServices[$vocab]['resolvingService'];
+                    $resolved_concept = json_decode($this->getResource($uri));
+                    $notation = $resolved_concept->{'result'}->{'primaryTopic'}->{'notation'};
+                    $c['notation'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'notation'};
+                    $c['prefLabel'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'prefLabel'}->{'_value'};
+                    $c['uri'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'_about'};
+                    $c['collectionNum'] = $this->getNumCollections($c['uri'],$filters);
+                    if($c['collectionNum'] > 0){
+                        $tree['topConcepts'][] = $c;
+                    }
                 }
             }
-        }
-       
-        if(isset($tree['topConcepts']) && is_array($tree['topConcepts']))
-        {
-            $sort = array();
-            if(isset($filters['facetsort']) && $filters['facetsort']=='alpha'){ 
-                foreach((array)$tree['topConcepts'] as $key=>$c){
-                    $sort[$key] = $c['prefLabel'];
+           
+            if(isset($tree['topConcepts']) && is_array($tree['topConcepts']))
+            {
+                $sort = array();
+                if(isset($filters['facetsort']) && $filters['facetsort']=='alpha'){ 
+                    foreach((array)$tree['topConcepts'] as $key=>$c){
+                        $sort[$key] = $c['prefLabel'];
+                    }
+                    array_multisort($sort, SORT_ASC, $tree['topConcepts']);
+                }else{
+                    foreach((array)$tree['topConcepts'] as $key=>$c){
+                        $sort[$key] = $c['collectionNum'];
+                    }
+                    array_multisort($sort, SORT_DESC, $tree['topConcepts']);
                 }
-                array_multisort($sort, SORT_ASC, $tree['topConcepts']);
-            }else{
-                foreach((array)$tree['topConcepts'] as $key=>$c){
-                    $sort[$key] = $c['collectionNum'];
-                }
-                array_multisort($sort, SORT_DESC, $tree['topConcepts']);
             }
         }
         return $tree;
     }
 
     function getConceptDetail($vocab, $url){
-        $vocab_uri['resolvingService'] = $this->resolvingServices[$vocab]['resolvingService'];
-        $vocab_uri['uriprefix'] = $url;
-        $content = $this->getResource($vocab_uri);
+        $content = '';
+        if(is_array($this->resolvingServices))
+        {
+            $vocab_uri['resolvingService'] = $this->resolvingServices[$vocab]['resolvingService'];
+            $vocab_uri['uriprefix'] = $url;
+            $content = $this->getResource($vocab_uri);
+        }
         return $content;
     }
 

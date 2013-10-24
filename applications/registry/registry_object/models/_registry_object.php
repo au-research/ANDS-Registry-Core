@@ -27,7 +27,7 @@ class _registry_object extends ExtensionBoilerplate {
 		if (count(self::$extensions) == 0)
 		{
 			$this->_CI->load->helper('directory');
-			$map = directory_map(APP_PATH.'registry_object/models/extensions/');
+			$map = directory_map(REGISTRY_APP_PATH.'registry_object/models/extensions/');
 			include_once('extensions/_base.php');
 			foreach($map AS $file)
 			{

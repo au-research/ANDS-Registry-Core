@@ -28,6 +28,7 @@ class Home extends MX_Controller {
 		//$this->solr->setOpt('fq', 'status:PUBLISHED');
 		$this->solr->setOpt('rows','0');
 		$this->solr->setFacetOpt('field', 'group');
+		$this->solr->setFacetOpt('limit', '200');
 		$this->solr->executeSearch();
 		//groups
 		$groups = $this->solr->getFacetResult('group');
@@ -58,10 +59,12 @@ class Home extends MX_Controller {
 		$this->solr->setFacetOpt('field', 'class');
 		$this->solr->setFacetOpt('field', 'group');
 		$this->solr->setFacetOpt('sort', 'group asc');
+		$this->solr->setFacetOpt('limit', '200');
 		$this->solr->executeSearch();
 
 		//groups
 		$groups = $this->solr->getFacetResult('group');
+
 		$data['groups'] = array();
 		foreach($groups as $group=>$num){
 			if ($num > 0)
@@ -96,22 +99,22 @@ class Home extends MX_Controller {
 		$data['links'] = $links;
 		$this->load->library('stats');
 		$this->stats->registerPageView();
-
+		$data['title'] = 'Contributors - Research Data Australia';
 		$this->load->view('who_contributes', $data);
 	}
 
 	function about(){
-		$data['title'] = 'Research Data Australia - About';
+		$data['title'] = 'About - Research Data Australia';
 		$this->load->view('about', $data);
 	}
 
 	function disclaimer(){
-		$data['title'] = 'Research Data Australia - Disclaimer';
+		$data['title'] = 'Disclaimer - Research Data Australia';
 		$this->load->view('disclaimer', $data);
 	}
 
 	function contact(){
-		$data['title'] = 'Research Data Australia - Contact Us';
+		$data['title'] = 'Contact Us - Research Data Australia';
 		if($this->input->get('sent')!=''){
 			$this->load->library('user_agent');
 			$data['user_agent']=$this->agent->browser();

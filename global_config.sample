@@ -1,188 +1,196 @@
 <?php
-/* Information about the environment the system is installed to */
-$ENV['default_base_url'] = "@@base_url"; //(excludes any registry/ or portal/)
+/*************************************************************************/
+/*
+/*     /\   | \ | |  __ \ / ____| |  __ \          (_)   | |
+/*    /  \  |  \| | |  | | (___   | |__) |___  __ _ _ ___| |_ _ __ _   _
+/*   / /\ \ | . ` | |  | |\___ \  |  _  // _ \/ _` | / __| __| '__| | | |
+/*  / ____ \| |\  | |__| |____) | | | \ \  __/ (_| | \__ \ |_| |  | |_| |
+/* /_/    \_\_| \_|_____/|_____/  |_|  \_\___|\__, |_|___/\__|_|   \__, |
+/*                                             __/ |                __/ |
+/*                                            |___/                |___/
+/*
+/*										    Registry Software Configuration
+/*
+/* 		Release Version :	11
+/*		Contact Person  :	services@ands.org.au
+/*		Help/support    :	http://researchdata.ands.org.au/developers/
+/*
+/*************************************************************************/
 
-$ENV['environment_name'] = ""; // blank will leave the environment default
-$ENV['environment_colour'] = "#0088cc"; // optional, only applies when environment_name is set
-$ENV['deployment_state'] = "development";
-$ENV['importer_benchmark_enabled'] = true; 
+/*************************************************************************/
+/* (SECTION 1) REQUIRED CONFIGURATION OPTIONS
+/*************************************************************************/
 
-/* ERROR HANDLING */
-$ENV['site_admin'] = "Aliza Log";
-$ENV['site_admin_email'] = "<admin @ email>";
+// Details of your database server (note: advanced settings can be modified in Sect 4)
+$eDBCONF['default']['hostname'] = 'localhost';  // hostname or IP address
+$eDBCONF['default']['username'] = 'webuser';
+$eDBCONF['default']['password'] = '';
+$eDBCONF['default']['dbdriver'] = 'mysql';
 
 
-/* SOLR URL */
-$ENV['solr_url'] = "@@solr_url";
-$ENV['sissvoc_url'] = "@@sissvoc_url";
-$ENV['harvester_base_url'] = "@@harvester_url";
+// The Server Base URL is the URL via which users access the software installation
+// (for example: http://researchdata.your.org.au/myportal/
+$ENV['default_base_url'] = "{CONFIGURE ME}";
 
-//PIDS
-$ENV['pids_server_base_url'] = "@@pids_url";
-$ENV['pids_server_app_id'] = "@@pids_app_id";
 
-/* ENABLED MODULES */
+// The SOLR URL is the URL of the search index core which you have installed
+// (for example: http://example.com:8080/solr/registry1/)
+$ENV['solr_url'] = "{CONFIGURE ME}";
+
+
+// The Environment options change the appearance of the software installation
+// Leaving these blank will remove the name and colour-bar from all registry pages
+$ENV['environment_name'] = "My Registry";
+$ENV['environment_colour'] = "#6EBF21";
+
+
+// Who is the administrator of this domain?  		[OPTIONAL]
+// error reports will be emailed to this address
+$ENV['site_admin'] = "Registry System Administrator";
+$ENV['site_admin_email'] = "admin@example.com"; // Will affect the error reporting status
+$ENV['deployment_state'] = "{CONFIGURE ME}";  // either "production" or "development"
+
+
+/*************************************************************************/
+/* (SECTION 2) ENABLED MODULES
+/*************************************************************************/
+// Use this section to enable/disable software modules as you require.
+
+// Note: Most of the non-default modules require additional configuration
+//       and installation (such as installing additional database or code
+//       packages). Refer to their installation notes for details.
+
 $ENV['ENABLED_MODULES'] = array(
-	'roles',
-	'pids',
-	'registry',
-	#'vocab_service',
-	'mydois',
-#	'abs_sdmx_querytool'
+
+	// Default modules (simply installs the registry, access control and portal)
+		'roles',
+		'registry',
+		'portal',
+
+	// These modules require: ANDS-Registry-Contrib to be installed:
+	// 	- 	Vocabulary catalogue module
+	// 			'vocab_service',
+
+	//  - 	Identifier service modules
+	//			'mydois',
+	//			'pids',
+
+	// 	- 	Content Management System modules
+	//			'theme_cms',
+	//			'cms',
+
+	//	-	Statistics dashboard
+	//			'statistics',
+
+	// These modules require: ANDS-Developer-Portal to be installed:
+	// 	- 	Developer API documentation
+	//			'toolbox',
+
 );
 
-// Set this to enable DOI query tool support
-// $ENV['gDOIS_SERVICE_BASE_URI'] = "https://mds.datacite.org/";
-// $ENV['gDOIS_DATACENTRE_NAME_PREFIX'] = "";
-// $ENV['gDOIS_DATACENTRE_NAME_MIDDLE'] = "";
-// $ENV['gDOIS_DATACITE_PASSWORD'] = "";
-// $ENV['gDOIS_RESPONSE_SUCCESS'] = "OK";
-$ENV['gPIDS_URL_PREFIX'] = "https://demo.ands.org.au/registry/pids/";
-$ENV['gPIDS_IDENTIFIER_SUFFIX'] = 'https://researchdata.ands.org.au';
+/*************************************************************************/
+/* (SECTION 3) ADDITIONAL REGISTRY CONFIGURATION
+/*************************************************************************/
+// Optional parameters to enable/disable advanced registry functionality
 
+// Replace this with the URL of your OAI-PMH harvester (if you have one)
+// Consider using the ANDS-Harvester (an OAI-PMH compliant Java web app)
+$ENV['harvester_base_url'] = "";
+
+// Replace this with the URL of your vocabulary server (if you have one)
+$ENV['sissvoc_url'] = "http://researchdata.ands.org.au:8080/vocab/";
+
+// You can also use a vocab service resolve subjects based on their types
 $ENV['vocab_resolving_services'] =  array(
-	'anzsrc-seo' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/sissvoc/api/anzsrc-seo/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
-	'anzsrc-for' => array('resolvingService' => 'http://ands3.anu.edu.au:8080/sissvoc/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
+	'anzsrc-seo' => array('resolvingService' => 'http://researchdata.ands.org.au:8080/vocab/api/anzsrc-seo/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
+	'anzsrc-for' => array('resolvingService' => 'http://researchdata.ands.org.au:8080/vocab/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
 );
 
 
-// Is this installation configured as a Shib Service Provider 
+// Session Timeout (how many seconds before the user gets logged out)
+$ENV['session_timeout'] = 7200;
+
+// Is this installation configured as a Shib Service Provider (AAF)
 // Note: enables AAF login (if Shibboleth 2 is properly configured)
 $ENV['shibboleth_sp'] = false;
 
-//ORCID config
+// Whether to enable advanced benchmarking in data source logs when a
+// registry superuser account performs a harvest on a data source
+$ENV['importer_benchmark_enabled'] = false;
+
+// Enable Google Analytics by configuring your urchin id
+$ENV['rda_urchin_id'] = ''; // enable analytics on portal pages
+$ENV['svc_urchin_id'] = ''; // enable analytics on registry pages
+
+
+/*********************************************************************/
+/* (SECTION 4) OPTIONAL MODULES / EXTRA CONFIGURATION
+/* - only if using additional modules
+/*********************************************************************/
+
+// => PORTAL STATS
+//    - add page and search tracking and autocomplete on portal search
+//    - requires dbs_portal database to be setup and configured (see misc/)
+$ENV['collect_stats'] = false;
+$eDBCONF['portal']['database'] = 'dbs_portal';
+
+/*
+// => VOCABULARY CATALOG
+//    - used by the vocabulary catalogue application
+$eDBCONF['vocabs']['database'] = 'dbs_vocabs';
+*/
+
+/*
+// => ORCID PULLBACK
+//    - ANDS-only;
+//    - allows ORCID users to pull back collections into their profile
 $ENV['gORCID_SERVICE_BASE_URI'] = 'http://sandbox-1.orcid.org/';
 $ENV['gORCID_API_URI'] = 'http://api.sandbox-1.orcid.org/';
 $ENV['gORCID_CLIENT_ID'] = '';
 $ENV['gORCID_CLIENT_SECRET'] = '';
+*/
 
-// Session Timeout (how long before the user is automatically logged out)
-$ENV['session_timeout'] = 7200; // 2 hours of inactivity before logout...
-
- // Will affect the error reporting status
-$ENV['deployment_state'] = "<production or development>";
-
-/* Google Analytics account details */
-$ENV['rda_urchin_id'] = '';
-$ENV['svc_urchin_id'] = '';
-
-/* DATABASE CONFIGURATION */
-$eDBCONF = array();
-$eDBCONF['registry']['hostname'] = 'localhost';
-$eDBCONF['registry']['username'] = 'webuser';
-$eDBCONF['registry']['password'] = '';
-$eDBCONF['registry']['database'] = 'dbs_registry';
-$eDBCONF['registry']['dbdriver'] = 'mysql';
-$eDBCONF['registry']['dbprefix'] = '';
-$eDBCONF['registry']['pconnect'] = FALSE;
-$eDBCONF['registry']['db_debug'] = TRUE;
-$eDBCONF['registry']['cache_on'] = FALSE;
-$eDBCONF['registry']['cachedir'] = '';
-$eDBCONF['registry']['char_set'] = 'utf8';
-$eDBCONF['registry']['dbcollat'] = 'utf8_general_ci';
-$eDBCONF['registry']['swap_pre'] = '';
-$eDBCONF['registry']['autoinit'] = TRUE;
-$eDBCONF['registry']['stricton'] = FALSE;
-$eDBCONF['registry']['save_queries'] = FALSE; 
-
-$eDBCONF['roles']['hostname'] = 'localhost';
-$eDBCONF['roles']['username'] = 'webuser';
-$eDBCONF['roles']['password'] = '';
-$eDBCONF['roles']['database'] = 'dbs_roles';
-$eDBCONF['roles']['dbdriver'] = 'mysql';
-$eDBCONF['roles']['dbprefix'] = '';
-$eDBCONF['roles']['pconnect'] = TRUE;
-$eDBCONF['roles']['db_debug'] = TRUE;
-$eDBCONF['roles']['cache_on'] = FALSE;
-$eDBCONF['roles']['cachedir'] = '';
-$eDBCONF['roles']['char_set'] = 'utf8';
-$eDBCONF['roles']['dbcollat'] = 'utf8_general_ci';
-$eDBCONF['roles']['swap_pre'] = '';
-$eDBCONF['roles']['autoinit'] = TRUE;
-$eDBCONF['roles']['stricton'] = FALSE;
-$eDBCONF['roles']['save_queries'] = FALSE; 
-
-$eDBCONF['portal']['hostname'] = 'localhost';
-$eDBCONF['portal']['username'] = 'webuser';
-$eDBCONF['portal']['password'] = '';
-$eDBCONF['portal']['database'] = 'dbs_portal';
-$eDBCONF['portal']['dbdriver'] = 'mysql';
-$eDBCONF['portal']['dbprefix'] = '';
-$eDBCONF['portal']['pconnect'] = FALSE;
-$eDBCONF['portal']['db_debug'] = TRUE;
-$eDBCONF['portal']['cache_on'] = FALSE;
-$eDBCONF['portal']['cachedir'] = '';
-$eDBCONF['portal']['char_set'] = 'utf8';
-$eDBCONF['portal']['dbcollat'] = 'utf8_general_ci';
-$eDBCONF['portal']['swap_pre'] = '';
-$eDBCONF['portal']['autoinit'] = TRUE;
-$eDBCONF['portal']['stricton'] = FALSE;
-$eDBCONF['portal']['save_queries'] = FALSE; 
-
+/*
+// => PIDS MANAGEMENT
+//    - ANDS-only;
+//    - allows users to manage and update their ANDS PIDS (or "Handles")
+$ENV['pids_server_base_url'] = "@@pids_url";
+$ENV['pids_server_app_id'] = "@@pids_app_id";
+$ENV['gPIDS_URL_PREFIX'] = "https://demo.ands.org.au/registry/pids/";
+$ENV['gPIDS_IDENTIFIER_SUFFIX'] = 'https://researchdata.ands.org.au';
 $eDBCONF['pids']['hostname'] = 'devl.ands.org.au';
 $eDBCONF['pids']['username'] = 'pidmaster';
-$eDBCONF['pids']['password'] = '';
 $eDBCONF['pids']['database'] = 'pids';
 $eDBCONF['pids']['dbdriver'] = 'postgre';
-$eDBCONF['pids']['dbprefix'] = '';
-$eDBCONF['pids']['pconnect'] = TRUE;
-$eDBCONF['pids']['db_debug'] = TRUE;
-$eDBCONF['pids']['cache_on'] = FALSE;
-$eDBCONF['pids']['cachedir'] = '';
-$eDBCONF['pids']['char_set'] = 'utf8';
-$eDBCONF['pids']['dbcollat'] = 'utf8_general_ci';
-$eDBCONF['pids']['swap_pre'] = '';
-$eDBCONF['pids']['autoinit'] = FALSE;
-$eDBCONF['pids']['stricton'] = FALSE;
-$eDBCONF['pids']['save_queries'] = FALSE; 
+*/
 
-$eDBCONF['vocabs']['hostname'] = 'localhost';
-$eDBCONF['vocabs']['username'] = 'webuser';
-$eDBCONF['vocabs']['password'] = '';
-$eDBCONF['vocabs']['database'] = 'dbs_vocabs';
-$eDBCONF['vocabs']['dbdriver'] = 'mysql';
-$eDBCONF['vocabs']['dbprefix'] = '';
-$eDBCONF['vocabs']['pconnect'] = FALSE;
-$eDBCONF['vocabs']['db_debug'] = TRUE;
-$eDBCONF['vocabs']['cache_on'] = FALSE;
-$eDBCONF['vocabs']['cachedir'] = '';
-$eDBCONF['vocabs']['char_set'] = 'utf8';
-$eDBCONF['vocabs']['dbcollat'] = 'utf8_general_ci';
-$eDBCONF['vocabs']['swap_pre'] = '';
-$eDBCONF['vocabs']['autoinit'] = TRUE;
-$eDBCONF['vocabs']['stricton'] = FALSE;
-$eDBCONF['vocabs']['save_queries'] = FALSE; 
-
-$eDBCONF['statistics']['hostname'] = 'localhost';
-$eDBCONF['statistics']['username'] = 'webuser';
-$eDBCONF['statistics']['password'] = '';
-$eDBCONF['statistics']['database'] = 'dbs_statistics';
-$eDBCONF['statistics']['dbdriver'] = 'mysql';
-$eDBCONF['statistics']['dbprefix'] = '';
-$eDBCONF['statistics']['pconnect'] = FALSE;
-$eDBCONF['statistics']['db_debug'] = TRUE;
-$eDBCONF['statistics']['cache_on'] = FALSE;
-$eDBCONF['statistics']['cachedir'] = '';
-$eDBCONF['statistics']['char_set'] = 'utf8';
-$eDBCONF['statistics']['dbcollat'] = 'utf8_general_ci';
-$eDBCONF['statistics']['swap_pre'] = '';
-$eDBCONF['statistics']['autoinit'] = TRUE;
-$eDBCONF['statistics']['stricton'] = FALSE;
-$eDBCONF['statistics']['save_queries'] = FALSE; 
-
-$eDBCONF['dois']['hostname'] = 'ands-dev.anu.edu.au';
-$eDBCONF['dois']['username'] = 'webuser';
+/*
+//=> DOIS MANAGEMENT
+//    - ANDS-only;
+//    - allows users to manage and update their ANDS DOIS (Cite My Data)
+$ENV['gDOIS_SERVICE_BASE_URI'] = "https://mds.datacite.org/";
+$ENV['gDOIS_DATACENTRE_NAME_PREFIX'] = "";
+$ENV['gDOIS_DATACENTRE_NAME_MIDDLE'] = "";
+$ENV['gDOIS_DATACITE_PASSWORD'] = "";
+$ENV['gDOIS_RESPONSE_SUCCESS'] = "OK";
+$eDBCONF['dois']['hostname'] = '';
 $eDBCONF['dois']['password'] = '';
 $eDBCONF['dois']['database'] = 'dois';
 $eDBCONF['dois']['dbdriver'] = 'postgre';
-$eDBCONF['dois']['dbprefix'] = '';
-$eDBCONF['dois']['pconnect'] = FALSE;
-$eDBCONF['dois']['db_debug'] = TRUE;
-$eDBCONF['dois']['cache_on'] = FALSE;
-$eDBCONF['dois']['cachedir'] = '';
-$eDBCONF['dois']['char_set'] = 'utf8';
-$eDBCONF['dois']['dbcollat'] = 'utf8_general_ci';
-$eDBCONF['dois']['swap_pre'] = '';
-$eDBCONF['dois']['autoinit'] = FALSE;
-$eDBCONF['dois']['stricton'] = FALSE;
-$eDBCONF['dois']['save_queries'] = FALSE; 
+*/
+
+
+/*********************************************************************/
+/* (SECTION 5) ADVANCED DATABASE CONFIGURATION
+/* - only if using non-standard table names or non-mysql DBMS
+/*********************************************************************/
+
+// Name of the database being used for the registry and roles databases
+$eDBCONF['registry']['database'] = 'dbs_registry';
+$eDBCONF['roles']['database'] = 'dbs_roles';
+$eDBCONF['vocabs']['database'] = 'dbs_vocabs';
+$eDBCONF['statistics']['database'] = 'dbs_statistics';
+
+// If not using mysql (check CodeIgniter for valid values)
+$eDBCONF['default']['dbdriver'] = 'mysql';
+

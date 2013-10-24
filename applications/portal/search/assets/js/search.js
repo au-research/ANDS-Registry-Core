@@ -348,7 +348,7 @@ function loadSubjectBrowse(val){
 		}
 
 		//sqc += '&defType=edismax';
-		$('#subjectfacet div').vocab_widget({mode:'tree', repository:'anzsrc-for', sqc:encodeURIComponent(sqc), endpoint: window.default_base_url + 'registry/vocab_widget/proxy/'})
+		$('#subjectfacet div').vocab_widget({mode:'tree', repository:'anzsrc-for', sqc:encodeURIComponent(sqc), endpoint: window.default_base_url + 'apps/vocab_widget/proxy/'})
 		.on('treeselect.vocab.ands', function(event) {
 			var target = $(event.target);
 			var data = target.data('vocab');
@@ -632,17 +632,6 @@ function addDeleteFacet(type, text){
 	$('.remove_facet[filter_type='+type+']').parent().remove();
 	var html = '<li><img src="'+base_url+'assets/core/images/delete.png" filter_type="'+type+'" class="remove_facet" /><a href="javascript:;" class="remove_facet" tip="Deselect this search constraint" filter_type="'+type+'">'+text+'</a></li>';
 	$('.facet_subjects ul').prepend(html);
-}
-
-function ellipsis (string, length){
-	if (string.length <= length){
-		return string;
-	}else{
-		var trimmedString = string.substr(0, length-3);
-		trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" "))) + '&hellip;';
-		// return trimmedString + '<span class="showmore_excerpt"><br /><a href="javascript:void(0);">More &hellip;</a></span>';
-		return trimmedString;
-	}
 }
 
 function SidebarToggle(controlDiv, map) {

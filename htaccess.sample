@@ -9,7 +9,7 @@ RewriteCond $1 ^(css|img|js|less|lib|uploads|shared)
 RewriteRule ^assets/(.*?)/(.*)$ assets/$1/$2 [L]
 RewriteRule ^assets/(.*?)/(.*)$ applications/portal/$1/assets/$2 [L]
 
-RewriteCond $1 ^(registry|identifier|roles|apps)
+RewriteCond $1 ^(registry|roles|apps|developer)
 RewriteCond $2 ^(css|img|js|less|lib)
 RewriteRule ^(.*?)/assets/(.*?)/(.*)$ assets/$2/$3 [L]
 

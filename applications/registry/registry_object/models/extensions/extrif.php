@@ -5,7 +5,7 @@ class Extrif_Extension extends ExtensionBase
 	function __construct($ro_pointer)
 	{
 		parent::__construct($ro_pointer);
-		include_once(APP_PATH."registry_object/models/_transforms.php");
+		include_once("applications/registry/registry_object/models/_transforms.php");
 	}		
 	
 	/*
@@ -177,6 +177,14 @@ class Extrif_Extension extends ExtensionBase
 				//$extendedMetadata->addChild("extRif:searchBaseScore", 100, EXTRIF_NAMESPACE);
 				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
 				
+				//tags
+				if($this->ro->tag){
+					$tags = explode(';;', $this->ro->tag);
+					foreach($tags as $tag){
+						$extendedMetadata->addChild('extRif:tag', $tag, EXTRIF_NAMESPACE);
+					}
+				}
+				
 				// xxx: spatial extents (sanity checking?)
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s4_end');
 				
@@ -217,18 +225,37 @@ class Extrif_Extension extends ExtensionBase
 				
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s6_end');
 				
-				foreach ($this->ro->getRelatedObjects() AS $relatedObject)
-				{
+				/*if($this->ro->getAttribute('group') == 'National Health and Medical Research Council')
+				{*/
+					foreach ($this->ro->getAllRelatedObjects() AS $relatedObject)
+					{
+					//var_dump($relatedObject);
 					$relatedObj = $extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
-					$relatedObj->addChild("extRif:related_object_key", $relatedObject['related_object_key'], EXTRIF_NAMESPACE);
-					$relatedObj->addChild("extRif:related_object_id", $relatedObject['related_id'], EXTRIF_NAMESPACE);
+					$relatedObj->addChild("extRif:related_object_key", $relatedObject['key'], EXTRIF_NAMESPACE);
+					$relatedObj->addChild("extRif:related_object_id", $relatedObject['registry_object_id'], EXTRIF_NAMESPACE);
 					$relatedObj->addChild("extRif:related_object_class", $relatedObject['class'], EXTRIF_NAMESPACE);
 					//$relatedObj->addChild("extRif:related_object_type", $relatedObject['related_object_type'], EXTRIF_NAMESPACE);
 					$relatedObj->addChild("extRif:related_object_display_title", $relatedObject['title'], EXTRIF_NAMESPACE);
 					$relatedObj->addChild("extRif:related_object_relation", $relatedObject['relation_type'], EXTRIF_NAMESPACE);
 					//$relatedObj->addChild("extRif:related_object_logo", $relatedObject['the_logo'], EXTRIF_NAMESPACE);
+					
+					}
+			/*	}
+				else
+				{
+					foreach ($this->ro->getRelatedObjects() AS $relatedObject)
+					{
+						$relatedObj = $extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
+						$relatedObj->addChild("extRif:related_object_key", $relatedObject['related_object_key'], EXTRIF_NAMESPACE);
+						$relatedObj->addChild("extRif:related_object_id", $relatedObject['related_id'], EXTRIF_NAMESPACE);
+						$relatedObj->addChild("extRif:related_object_class", $relatedObject['class'], EXTRIF_NAMESPACE);
+						//$relatedObj->addChild("extRif:related_object_type", $relatedObject['related_object_type'], EXTRIF_NAMESPACE);
+						$relatedObj->addChild("extRif:related_object_display_title", $relatedObject['title'], EXTRIF_NAMESPACE);
+						$relatedObj->addChild("extRif:related_object_relation", $relatedObject['relation_type'], EXTRIF_NAMESPACE);
+						//$relatedObj->addChild("extRif:related_object_logo", $relatedObject['the_logo'], EXTRIF_NAMESPACE);
+					}
 				}
-				
+				*/
 				// Friendlify dates =)
 				$xml = $this->ro->extractDatesForDisplay($xml);
 

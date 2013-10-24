@@ -29,7 +29,7 @@ $base_url = str_replace('/apps','/registry',base_url());
     <!-- Placed at the end of the document so the pages load faster -->
     <script>
 
-      //  localStorage.clear();
+        localStorage.clear();
         var base_url = '<?php echo $base_url;?>';
         var portal_url = '<?php echo portal_url();?>';
         var apps_url = '<?php echo apps_url();?>';
@@ -45,11 +45,6 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script src="<?php echo$base_url;?>assets/lib/jquery-1.7.2.min.js"></script>
             <script src="<?php echo$base_url;?>assets/lib/less-1.3.0.min.js" type="text/javascript"></script>
             <script src="<?php echo$base_url;?>assets/lib/jquery-ui-1.8.22.custom.min.js" type="text/javascript"></script>
-            <!--script src="<?php echo$base_url;?>assets/lib/dragdrop/jquery.event.drag-2.2.js"></script>
-            <script src="<?php echo$base_url;?>assets/lib/dragdrop/jquery.event.drag.live-2.2.js"></script>
-            <script src="<?php echo$base_url;?>assets/lib/dragdrop/jquery.event.drop-2.2.js"></script>
-            <script src="<?php echo$base_url;?>assets/lib/dragdrop/jquery.event.drop.live-2.2.js"></script>
-            <script src="<?php echo$base_url;?>assets/lib/jquery.multisortable.js"></script-->
             <script src="<?php echo$base_url;?>assets/lib/jquery.sticky.js"></script>
             <script src="<?php echo$base_url;?>assets/lib/mustache.js"></script>
             <script src="<?php echo$base_url;?>assets/lib/chosen/chosen.jquery.js" type="text/javascript"></script>
@@ -57,10 +52,7 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script src="<?php echo$base_url;?>assets/lib/bootstrap_toggle_button/jquery.toggle.buttons.js" type="text/javascript"></script>
             <script src="<?php echo$base_url;?>assets/lib/qtip2/jquery.qtip.min.js" type="text/javascript"></script>
             <script src="<?php echo$base_url;?>assets/lib/youtubepopup/jquery.youtubepopup.min.js" type="text/javascript"></script>            
-            <!--script src="<?php echo$base_url;?>assets/registry_object_search/js/rosearch_widget.js" type="text/javascript"></script-->
-
         <?php elseif($lib=='graph'):?>
-
             <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="excanvas.js"></script><![endif]-->
             <script language="javascript" type="text/javascript" src="<?php echo$base_url;?>assets/lib/jqplot/jquery.jqplot.min.js"></script>
             <script language="javascript" type="text/javascript" src="<?php echo$base_url;?>assets/lib/jqplot/plugins/jqplot.dateAxisRenderer.min.js"></script>
@@ -102,10 +94,10 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script type="text/javascript" src="<?php echo$base_url;?>assets/lib/dataTable/js/jquery.dataTables.js"></script>
 
         <?php elseif($lib=='abs_sdmx_querytool'):?>
-            <script type="text/javascript" src="<?php echo$base_url;?>assets/js/abs_sdmx_querytool.js"></script>
+            <script type="text/javascript" src="<?php echo apps_url('assets/abs_sdmx_querytool/js/abs_sdmx_querytool.js') ?>"></script>
 
         <?php elseif($lib=='context_menu'):?>
-            <script src="<?php echo$base_url;?>assets/lib/bootstrap-contextmenu.js" type="text/javascript"></script>
+            <script src="<?php echo asset_url('lib/bootstrap-contextmenu.js', 'base'); ?>" type="text/javascript"></script>
 
         <?php elseif($lib=='vocab_widget'):?>
             <link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget.css'); ?>">
@@ -123,6 +115,10 @@ $base_url = str_replace('/apps','/registry',base_url());
             <link href="<?php echo apps_url('assets/registry_object_search/css/rosearch_widget.css');?>" rel="stylesheet" type="text/css">
             <script src="<?php echo apps_url('assets/registry_object_search/js/rosearch_widget.js');?>" type="text/javascript"></script>
 
+        <?php elseif($lib=='registry_widget'):?>
+            <link href="<?php echo apps_url('assets/registry_widget/css/registry_widget.css');?>" rel="stylesheet" type="text/css">
+            <script src="<?php echo apps_url('assets/registry_widget/js/registry_widget.js');?>" type="text/javascript"></script>
+
          <?php elseif($lib=='statistics'):?>
             <script src="<?php echo str_replace('/apps','/applications/apps',base_url());?>statistics/assets/js/statistics.js" type="text/javascript"></script>
 
@@ -132,6 +128,17 @@ $base_url = str_replace('/apps','/registry',base_url());
 
         <?php elseif($lib=='google_map'):?>
             <script src="https://maps.googleapis.com/maps/api/js?libraries=drawing&amp;sensor=false" type="text/javascript"></script>
+
+        <?php elseif($lib=='angular'):?>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angular.min.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-slugify.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/sortable.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/tinymce.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-sanitize-1.0.1.js', 'base') ?>"></script>
+
+        <?php elseif($lib=='colorbox'):?>
+            <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
+            <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
 
         <?php endif; ?>
 

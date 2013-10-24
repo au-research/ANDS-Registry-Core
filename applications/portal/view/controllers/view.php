@@ -95,8 +95,29 @@ class View extends MX_Controller {
 		$data['ro_slug'] = '';
 		$data['ro_id'] = '';
 
-
 		$suggested_links = array();
+		$matches = array();
+		preg_match('/<extRif\:simplifiedTitle>(.*)<\/extRif:simplifiedTitle>/', $extRif['data'], $matches);
+		if(isset($matches[1]) && $matches[1]!=''){
+			$data['title'] = $matches[1].' - Research Data Australia';
+		}
+		$matches = array();
+		preg_match('/<extRif\:the_description>(.*)<\/extRif:the_description>/s', $extRif['data'], $matches);
+		if(isset($matches[0]) && $matches[0]!=''){
+			$data['the_description'] = $matches[0];
+		}
+
+		$matches = array();
+		$data['the_title'] = array();
+		preg_match('/<extRif\:displayTitle>(.*)<\/extRif:displayTitle>/s', $extRif['data'], $matches);
+		if(sizeof($matches) > 0){
+			foreach($matches as $m){
+				$m = strip_tags($m);
+				if(!in_array($m, $data['the_title']) && $m && $m!='') array_push($data['the_title'], $m);
+			}
+			$data['the_title'] = implode(',', $data['the_title']);
+		}
+
 
 		if ($this->input->get('slug'))
 		{

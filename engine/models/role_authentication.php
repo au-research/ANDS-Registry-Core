@@ -62,14 +62,13 @@ class Role_authentication extends CI_Model {
                     'role_type_id'=>'ROLE_USER',
                     'authentication_service_id'=>$method,
                     'enabled'=>DB_TRUE,
-                    'name'=> $_SERVER['displayName'],
-                    'auth_domain' => 'aaf.edu.au'
+                    'name'=> $_SERVER['displayName']
                 );
 
                 if($username == $_SERVER['shib-shared-token']){
                     $this->cosi_db->insert('roles',$data);
                 }
-
+                $this->registerAffiliation($username,'SHIB_AUTHENTICATED','SYSTEM');
                 $result = $this->cosi_db->get_where("roles",    
                                                     array(
                                                         "role_id"=>$username,

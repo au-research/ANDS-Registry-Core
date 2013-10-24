@@ -47,7 +47,7 @@
 				<a href="<?=base_url('home/about');?>">Read more about us...</a>
 			</p>
 			<p class="small">ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program and the Education Investment Fund (EIF) Super Science Initiative.</p>
-			<a href="http://www.innovation.gov.au/" class="gov_logo"><img src="<?php echo asset_url('images/DIICCSRTE-stacked_28Mar2013-white1.png', 'core');?>" alt="" /></a>
+			<a href="http://www.innovation.gov.au/" class="gov_logo"><img src="<?php echo asset_url('images/dept_ind_stacked.png', 'core');?>" alt="" /></a>
 			<a href="http://www.ands.org.au/" class="footer_logo"><img src="<?php echo asset_url('images/footer_logo.jpg', 'core');?>" alt="" /></a>			
 		</div><!-- foot -->		
 	</div><!-- footer -->	
@@ -77,6 +77,7 @@
         var default_base_url = "<?php echo $this->config->item('default_base_url');?>";
         var suffix = '#!/';
         var deployment_state = "<?php echo $this->config->item('deployment_state');?>";
+        var rda_service_url = "<?php echo $this->config->item('registry_endpoint'); ?>"
         <!-- urchin code -->
         <?php echo urchin_for($this->config->item('rda_urchin_id')); ?>
         var urchin_id = "<?php echo $this->config->item('rda_urchin_id');?>";
@@ -114,8 +115,19 @@
 		    	<script src="<?php echo asset_url('lib/tinyaccordion/accordion.js', 'base');?>" type="text/javascript"></script>
 		    <?php endif; ?>
 		    <?php if ($lib=='vocab_widget'): ?>
-		    	<script src="<?php echo asset_url('applications/registry/vocab_widget/assets/js/vocab_widget.js', 'base_path')?>" type="text/javascript"></script>
-		    <?php endif; ?>
+		    	<script src="<?php echo apps_url('assets/vocab_widget/js/vocab_widget.js')?>" type="text/javascript"></script>
+		    
+		    <?php elseif($lib=='angular'):?>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angular.min.js', 'base') ?>"></script>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-slugify.js', 'base') ?>"></script>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/sortable.js', 'base') ?>"></script>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/tinymce.js', 'base') ?>"></script>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-sanitize-1.0.1.js', 'base') ?>"></script>
+
+	        <?php elseif($lib=='colorbox'):?>
+	            <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
+	            <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
+	        <?php endif; ?>
 		<?php endforeach;?>
 	<?php endif; ?>
 

@@ -1,8 +1,10 @@
 applications/apps/
+applications/developers/
 global_config.php
 ._*
 .settings
 .htaccess
 assets/uploads/
-assets/shared/spotlight/spotlight.json
-assets/shared/topics/topics.json
+assets/shared/
+.DS_Store
+.gitignore

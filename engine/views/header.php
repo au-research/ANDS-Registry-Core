@@ -17,6 +17,7 @@ $base_url = str_replace('/apps','',base_url());
 if($this->config->item('environment_name'))
 {
   $environment_name = $this->config->item('environment_name');
+  $logo_title = 'Back to '.$environment_name.' Home';
   $environment_colour = $this->config->item('environment_colour');
   $environment_header_style = " style='border-top: 4px solid " . ($environment_colour ?: "#0088cc") . ";'";
 }
@@ -25,6 +26,16 @@ else
   $environment_name = '';
   $environment_colour = '';
   $environment_header_style = '';
+  $logo_title = 'Back to ANDS Online Services Home';
+}
+
+if($this->config->item('environment_logo'))
+{
+  $environment_logo = $this->config->item('environment_logo');
+}
+else
+{
+  $environment_logo = asset_url('/img/ands_logo_white.png', 'base');
 }
 
 ?>
@@ -100,8 +111,8 @@ else
 <?php if(is_dev() && isset($debugbarRenderer)) echo $debugbarRenderer->render(); ?>
 
     <div id="header" <?=$environment_header_style;?>>
-      <a href="<?php echo registry_url();?>" title="Back to ANDS Online Services Home" tip="Back to ANDS Online Services Home" my="center left" at="center right">
-        <img src="<?php echo$base_url;?>/assets/img/ands_logo_white.png" alt="ANDS Logo White"/> 
+      <a href="<?php echo registry_url();?>" title="<?=$logo_title;?>" tip="<?=$logo_title;?>" my="center left" at="center right">
+        <img src="<?=$environment_logo;?>" alt="ANDS Logo White"/> 
       </a>
       <strong style="color:<?=$environment_colour;?>;"><?=$environment_name;?></strong>
     </div>
@@ -158,7 +169,7 @@ else
                 </li>
               <?php endif; ?>
 
-              <?php if($this->user->hasFunction('PUBLIC')):?>
+              <?php if($this->user->hasFunction('PUBLIC') && mod_enabled('vocab_service')):?>
               <li class="btn btn-inverse dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Vocabularies <b class="caret"></b></a>
                 <ul class="dropdown-menu pull-right">
@@ -174,31 +185,23 @@ else
               </li>
               <?php endif;?>
 
-              
-
-
-              <?php if($this->user->hasFunction('AUTHENTICATED_USER')): ?>
+              <?php if($this->user->hasFunction('AUTHENTICATED_USER')&& ( mod_enabled('toolbox') || mod_enabled('cms') || mod_enabled('spotlight'))): ?>
                 <li class="btn btn-inverse dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <b class="caret"></b></a>
-                  <ul class="dropdown-menu pull-right">
-                    
+                  <ul class="dropdown-menu pull-right">       
 
                     <?php if ($this->user->hasFunction('AUTHENTICATED_USER')): ?>
-                        <li class=""><?php echo anchor(registry_url('services/'), 'Registry Web Services');?></li>
-                        <li class=""><?php echo anchor(apps_url('location_capture_widget/'), 'Location Capture Widget');?></li>
-                        <li class=""><?php echo anchor(registry_url('vocab_widget/'), 'Vocabulary Service Widget');?></li>
+                        <li class=""><?php echo anchor(developer_url(''), '<i class="icon-briefcase icon"></i> Developer Toolbox <sup style="color:red;">new!</sup>');?></li>
+                        <li class=""><?php echo anchor(developer_url('documentation/widgets'), '&nbsp; &raquo; Web Widgets');?></li>
+                        <li class=""><?php echo anchor(developer_url('documentation/services'), '&nbsp; &raquo; Web Services');?></li>
+                        <li class=""><?php echo anchor(developer_url('documentation/registry'), '&nbsp; &raquo; Registry Software');?></li>
                     <?php endif; ?>
 
-                    <?php if ($this->user->hasFunction('PORTAL_STAFF')): ?>
+                    <?php if ($this->user->hasFunction('PORTAL_STAFF') && mod_enabled('cms')): ?>
                         <li class="divider"></li>
-                        <li class=""><?php echo anchor(apps_url('spotlight/'), 'Spotlight CMS Editor');?></li>
-                        <li class=""><?php echo anchor(apps_url('uploader/'), 'CMS Image Uploader');?></li>
-                    <?php endif; ?>
-
-                    <?php if ($this->user->hasFunction('REGISTRY_STAFF')): ?>
-                        <li class="divider"></li>
-                        <li class=""><?php echo anchor(registry_url('maintenance/registrySummary'), 'Registry Quality Summary');?></li>
-                    <?php endif; ?>       
+                        <li class=""><?php echo anchor(apps_url('spotlight/'), '<i class="icon-indent-left icon"></i> Spotlight CMS Editor');?></li>
+                        <li class=""><?php echo anchor(apps_url('uploader/'), '&nbsp; &raquo; CMS Image Uploader');?></li>
+                    <?php endif; ?>     
 
                     <?php if (($this->user->hasFunction('PUBLIC')) && mod_enabled('abs_sdmx_querytool')): ?>
                       <li class="divider"></li>
@@ -209,7 +212,7 @@ else
                 </li>
               <?php endif; ?>
 
-              <?php if($this->user->hasFunction('REGISTRY_SUPERUSER')):?>
+              <?php if($this->user->hasFunction('AUTHENTICATED_USER')):?>
               <li class="btn btn-inverse dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Administration <b class="caret"></b></a>
                 <ul class="dropdown-menu pull-right">
@@ -217,8 +220,18 @@ else
                   <?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')): ?>
                       <li class=""><?php echo anchor(registry_url('administration'), 'Administration Panel');?></li>
                       <li class=""><?php echo anchor(registry_url('maintenance'), 'Maintenance Dashboard');?></li>
-                        <li class=""><?php echo anchor(apps_url('statistics'), 'Statistics');?></li>
+                      <?php  if(mod_enabled('statistics')): ?>
+                        <li class=""><?php echo anchor(apps_url('statistics'), 'Statistics');?></li>    
+                      <?php endif; ?>
                   <?php endif; ?>
+                    <?php if ($this->user->hasFunction('REGISTRY_STAFF')): ?>
+                        <li class="divider"></li>
+                        <li class=""><?php echo anchor(registry_url('maintenance/registrySummary'), 'Registry Quality Summary');?></li>
+                    <?php endif; ?>  
+                      <?php if ($this->user->hasFunction('AUTHENTICATED_USER')): ?>
+                        <li class="divider"></li>
+                        <li class=""><?php echo anchor(registry_url('services/'), 'Registry Web Services');?></li>  
+                      <?php endif; ?>  
                 </ul>
               </li>
               <?php endif;?>

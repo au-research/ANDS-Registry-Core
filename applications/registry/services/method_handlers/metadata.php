@@ -6,7 +6,7 @@ class MetadataMethod extends MethodHandler
 	
 	private $default_params = array(
 		'q' => '*:*',
-		'fl' => 'id,key,slug,display_title,status,class',
+		'fl' => 'id,key,slug,display_title,class',
         'wt' => 'json',
         'indent' => 'on',
         'rows' => 20
@@ -18,13 +18,18 @@ class MetadataMethod extends MethodHandler
    {
    		// Get and handle a comma-seperated list of valid params which we will forward to the indexer
    		$permitted_forwarding_params = explode(',',$this->options['valid_solr_params']);
+
+		// By default, disable row results in facet mode
+		if (isset($this->params['facet']) && !isset($this->params['rows']))
+		{
+			$this->params['rows'] = 0;
+		}
+
    		$forwarded_params = array_intersect_key(array_flip($permitted_forwarding_params), $this->params);
 		
 		$fields = array();
 		foreach ($forwarded_params AS $param_name => $_)
 		{
-
-			//var_dump($param_name);
 			$fields[str_replace("facet_","facet.",$param_name)] = $this->params[$param_name];
 		}
 

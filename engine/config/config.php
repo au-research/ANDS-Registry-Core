@@ -5,14 +5,19 @@ global $ENV;
 /* What authencation class should we use to power the login/ACL? */
 $config['authentication_class'] = "role_authentication";
 
+// initial datasource details
+$config['example_ds_key'] = 'example_data_source';
+$config['example_ds_title'] = 'DataSource Example with 4 Registry Objects';
+
 // Merge in the config options from global_config.php
 $config = array_merge($config, $ENV);
 $config[ENGINE_ENABLED_MODULE_LIST] = &$config['ENABLED_MODULES'];
 
 
-$config['authenticators'] = Array(gCOSI_AUTH_METHOD_BUILT_IN => 'Built-in Authentication', gCOSI_AUTH_METHOD_LDAP=>'LDAP', gCOSI_AUTH_METHOD_SHIBBOLETH => 'Australian Access Federation (AAF) credentials');
+$config['authenticators'] = Array(gCOSI_AUTH_METHOD_BUILT_IN => 'Built-in Authentication', gCOSI_AUTH_METHOD_LDAP=>'LDAP');
 if (isset($config['shibboleth_sp']) && $config['shibboleth_sp'])
 {
+	$config['authenticators'][gCOSI_AUTH_METHOD_SHIBBOLETH] = 'Australian Access Federation (AAF) credentials';
 	$config['default_authenticator'] = gCOSI_AUTH_METHOD_SHIBBOLETH;
 }
 else
@@ -78,11 +83,11 @@ $application_directives = array(
 				"active_application" => "roles",
 				"default_controller" => "role/index"
 			),
-	"identifier" =>
+	"developers" =>
 			array(
-				"base_url" => "%%BASEURL%%/identifier/",
-				"active_application" => "identifier",
-				"default_controller" => "pids/index"
+				"base_url" => "%%BASEURL%%/developers/",
+				"active_application" => "developers",
+				"default_controller" => "documentation/index"
 			)
 );
 $config['application_directives'] = $application_directives;
@@ -478,6 +483,8 @@ else
 	$active_application = "unknown";
 	$base_url = "";
 }
+
+
 
 $config['active_application'] = $active_application;
 

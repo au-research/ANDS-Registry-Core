@@ -396,7 +396,8 @@ date.</xsd:documentation>
 
     <xsd:complexType name="relatedInfoType">
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
-            <xsd:element name="identifier" type="identifierType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="identifier" type="identifierType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="relation" type="relationType" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="title" type="xsd:string" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="notes" type="xsd:string" minOccurs="0" maxOccurs="1"/>
             <xsd:element minOccurs="0" name="format" type="relatedInfoFormatType"/>

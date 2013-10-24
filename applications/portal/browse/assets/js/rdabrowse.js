@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-	$("#vocab-tree").vocab_widget({mode:'tree',repository:'anzsrc-for', endpoint:  window.default_base_url + 'registry/vocab_widget/proxy/'})
+	$("#vocab-tree").vocab_widget({mode:'tree',repository:'anzsrc-for', endpoint:  window.default_base_url + 'apps/vocab_widget/proxy/'})
 	.on('treeselect.vocab.ands', function(event) {
 		var target = $(event.target);
 		$('.tree_current').removeClass('tree_current');

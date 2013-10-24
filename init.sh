@@ -3,6 +3,7 @@
 #htaccess
 rm -rf .htaccess
 cp htaccess.sample .htaccess
+#global_config
 rm -rf global_config.php
 cp global_config.sample global_config.php
 
@@ -11,8 +12,7 @@ function ask_replace {
     printf "$2 ($3): "
 	read v
 	base=${v:-$3}
-	#echo "Setting Application Base ($1) to: $base"
-	sed -i '' s/"$4"/$(echo $base | awk '{gsub(".", "\\\\&");print}')/g $1
+	sed -i s=$4=$base=g $1
 } 
 
 ask_replace .htaccess "Application Path" "/" "@@app_base"

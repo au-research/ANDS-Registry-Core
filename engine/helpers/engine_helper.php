@@ -208,6 +208,12 @@ function identifier_url($suffix=''){
 	return $CI->config->item('default_base_url') . 'identifier/'. $suffix;
 }
 
+function developer_url($suffix=''){
+	$CI =& get_instance();
+
+	return $CI->config->item('default_base_url') . 'developers/'. $suffix;
+}
+
 function current_protocol()
 {
 	$url = parse_url(site_url());
@@ -234,6 +240,10 @@ function secure_base_url(){
 
 function url_suffix(){
 	return '#!/';
+}
+
+function remove_scheme($url){
+	return str_replace(array("https://","http://"), array("//","//"), $url);
 }
 
 function utc_timezone()

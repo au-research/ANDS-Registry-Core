@@ -25,7 +25,7 @@
             <xsl:apply-templates select="ro:key"/>
         </xsl:variable>
         <xsl:choose>
-			<xsl:when test="extRif:extendedMetadata">
+            <xsl:when test="extRif:extendedMetadata">
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:slug"/>
                 <xsl:element name="field">
                     <xsl:attribute name="name">key</xsl:attribute>
@@ -35,7 +35,7 @@
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:status"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:logo"/>
                 <xsl:apply-templates select="ro:originatingSource"/>
-	        	<xsl:apply-templates select="extRif:extendedMetadata/extRif:id"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:id"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:dataSourceID"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:contributor"/>                
                 <!--xsl:apply-templates select="extRif:extendedMetadata/extRif:updateTimestamp"/-->
@@ -45,27 +45,27 @@
                     <xsl:value-of select="@group"/>
                 </xsl:element>
 
-	            <!--xsl:apply-templates select="extRif:extendedMetadata/extRif:reverseLinks"/> 
-	            <xsl:apply-templates select="extRif:extendedMetadata/extRif:searchBaseScore"/>
-	 			<xsl:apply-templates select="extRif:extendedMetadata/extRif:registryDateModified"/-->
+                <!--xsl:apply-templates select="extRif:extendedMetadata/extRif:reverseLinks"/> 
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:searchBaseScore"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:registryDateModified"/-->
 
  
-	            <!--xsl:apply-templates select="extRif:extendedMetadata/extRif:dataSourceKeyHash"/--> 
-	            <xsl:apply-templates select="extRif:extendedMetadata/extRif:displayTitle"/> 
+                <!--xsl:apply-templates select="extRif:extendedMetadata/extRif:dataSourceKeyHash"/--> 
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:displayTitle"/> 
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:listTitle"/> 
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:simplifiedTitle"/> 
 
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:right[@licence_group!='']" mode="licence_group"/>        
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:description" mode="value"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:description" mode="type"/>
-	            <!--xsl:apply-templates select="extRif:extendedMetadata/extRif:flag"/>
-      			<xsl:apply-templates select="extRif:extendedMetadata/extRif:warning_count"/>
-      			<xsl:apply-templates select="extRif:extendedMetadata/extRif:error_count"/>
-     			
-      			<xsl:apply-templates select="extRif:extendedMetadata/extRif:manually_assessed_flag"/>
-      			<xsl:apply-templates select="extRif:extendedMetadata/extRif:gold_status_flag"/>
-      			<xsl:apply-templates select="extRif:extendedMetadata/extRif:quality_level"/>
-      			<xsl:apply-templates select="extRif:extendedMetadata/extRif:feedType"/>   
+                <!--xsl:apply-templates select="extRif:extendedMetadata/extRif:flag"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:warning_count"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:error_count"/>
+                
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:manually_assessed_flag"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:gold_status_flag"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:quality_level"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:feedType"/>   
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:lastModifiedBy"/-->  
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:spatialGeometry"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:temporal"/>
@@ -73,8 +73,9 @@
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:subjects/extRif:subject"/>
 
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:related_object"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:tag"/>
 
-        	</xsl:when>
+            </xsl:when>
         </xsl:choose>  
         <xsl:apply-templates select="ro:collection | ro:party | ro:activity | ro:service"/>
 
@@ -94,8 +95,8 @@
             <xsl:value-of select="."/>
         </xsl:element>       
     </xsl:template>
-	
-	
+    
+    
     <xsl:template match="extRif:id">
         <xsl:element name="field">
             <xsl:attribute name="name">id</xsl:attribute>
@@ -136,10 +137,10 @@
         <xsl:element name="field">
             <xsl:attribute name="name">flag</xsl:attribute>
             <xsl:choose>
-            	<xsl:when test=". = ''">0</xsl:when>
-            	<xsl:otherwise>
-            		<xsl:value-of select="."/>
-            	</xsl:otherwise>
+                <xsl:when test=". = ''">0</xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
             </xsl:choose>
         </xsl:element>       
     </xsl:template>
@@ -148,10 +149,10 @@
         <xsl:element name="field">
             <xsl:attribute name="name">warning_count</xsl:attribute>
             <xsl:choose>
-            	<xsl:when test=". = ''">0</xsl:when>
-            	<xsl:otherwise>
-            		<xsl:value-of select="."/>
-            	</xsl:otherwise>
+                <xsl:when test=". = ''">0</xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
             </xsl:choose>
         </xsl:element>       
     </xsl:template>
@@ -160,10 +161,10 @@
         <xsl:element name="field">
             <xsl:attribute name="name">error_count</xsl:attribute>
             <xsl:choose>
-            	<xsl:when test=". = ''">0</xsl:when>
-            	<xsl:otherwise>
-            		<xsl:value-of select="."/>
-            	</xsl:otherwise>
+                <xsl:when test=". = ''">0</xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
             </xsl:choose>
         </xsl:element>       
     </xsl:template>
@@ -178,11 +179,11 @@
     <xsl:template match="extRif:manually_assessed_flag">
         <xsl:element name="field">
             <xsl:attribute name="name">manually_assessed_flag</xsl:attribute>
-			<xsl:choose>
-            	<xsl:when test=". = ''">0</xsl:when>
-            	<xsl:otherwise>
-            		<xsl:value-of select="."/>
-            	</xsl:otherwise>
+            <xsl:choose>
+                <xsl:when test=". = ''">0</xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
             </xsl:choose>
         </xsl:element>       
     </xsl:template>
@@ -190,11 +191,11 @@
     <xsl:template match="extRif:gold_status_flag">
         <xsl:element name="field">
             <xsl:attribute name="name">gold_status_flag</xsl:attribute>
-			<xsl:choose>
-            	<xsl:when test=". = ''">0</xsl:when>
-            	<xsl:otherwise>
-            		<xsl:value-of select="."/>
-            	</xsl:otherwise>
+            <xsl:choose>
+                <xsl:when test=". = ''">0</xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
             </xsl:choose>
         </xsl:element>       
     </xsl:template>
@@ -203,10 +204,10 @@
         <xsl:element name="field">
             <xsl:attribute name="name">quality_level</xsl:attribute>
             <xsl:choose>
-            	<xsl:when test=". = ''">0</xsl:when>
-            	<xsl:otherwise>
-            		<xsl:value-of select="."/>
-            	</xsl:otherwise>
+                <xsl:when test=". = ''">0</xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
             </xsl:choose>
         </xsl:element>       
     </xsl:template>
@@ -252,7 +253,7 @@
     </xsl:template>
 
 
-	<xsl:template match="extRif:registryDateModified">
+    <xsl:template match="extRif:registryDateModified">
         <xsl:element name="field">
             <xsl:attribute name="name">date_modified</xsl:attribute>
             <xsl:value-of select="."/>
@@ -290,6 +291,13 @@
     <xsl:template match="extRif:displayTitle">
         <xsl:element name="field">
             <xsl:attribute name="name">display_title</xsl:attribute>
+            <xsl:value-of select="."/>
+        </xsl:element>       
+    </xsl:template>
+
+    <xsl:template match="extRif:tag">
+        <xsl:element name="field">
+            <xsl:attribute name="name">tag</xsl:attribute>
             <xsl:value-of select="."/>
         </xsl:element>       
     </xsl:template>
@@ -423,16 +431,16 @@
     
     <!--xsl:template match="ro:coverage/ro:temporal/extRif:date[@type = 'dateFrom'] | ro:coverage/ro:temporal/extRif:date[@type = 'dateTo']">
 
-	        <xsl:element name="field">	            
+            <xsl:element name="field">              
 
-				<xsl:if test="@type = 'dateFrom'">
-					<xsl:attribute name="name">date_from</xsl:attribute>
-				</xsl:if>
-				<xsl:if test="@type = 'dateTo'">
-					<xsl:attribute name="name">date_to</xsl:attribute>
-				</xsl:if>
-	            <xsl:value-of select="."/>           
-	        </xsl:element>     
+                <xsl:if test="@type = 'dateFrom'">
+                    <xsl:attribute name="name">date_from</xsl:attribute>
+                </xsl:if>
+                <xsl:if test="@type = 'dateTo'">
+                    <xsl:attribute name="name">date_to</xsl:attribute>
+                </xsl:if>
+                <xsl:value-of select="."/>           
+            </xsl:element>     
 
     </xsl:template-->
     
@@ -578,7 +586,7 @@
 
     
     <xsl:template match="ro:name"/>
-   		
+        
    
 </xsl:stylesheet>
 

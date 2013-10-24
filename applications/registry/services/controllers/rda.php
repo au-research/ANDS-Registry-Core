@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once(APP_PATH . "services/interfaces/_GenericPortalEndpoint.php");
+require_once(REGISTRY_APP_PATH . "services/interfaces/_GenericPortalEndpoint.php");
 /**
  * RDA Endpoint (allows RDA to query the registry)
  *
@@ -152,9 +152,9 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$connections = array();
 
 		// Some validation on input
-		if (! $this->input->get('slug') && ! $this->input->get('registry_object_id'))
+		if (!($this->input->get('slug') || $this->input->get('registry_object_id') || $this->input->get('registry_object_key')))
 		{ 
-			throw new Exception("Invalid URL SLUG or registry_object_id specified.");
+			throw new Exception("Invalid URL SLUG, registry_object_id or registry_object_key specified.");
 		}
 
 		// Some filter variables
@@ -173,6 +173,9 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		{
 			$registry_object = $this->ro->getByID($this->input->get('registry_object_id'));
 			$published_only = FALSE;
+		}elseif ($this->input->get('registry_object_key')){
+			$registry_object = $this->ro->getPublishedByKey(urldecode($this->input->get('registry_object_key')));
+			$published_only = TRUE;
 		}
 
 		if (!$registry_object)
@@ -184,10 +187,8 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$connections = $registry_object->getConnections($published_only,$type_filter,$limit,$offset, true);
 
 		// Return this registry object's connections
-		echo json_encode(array("connections"=>$connections, 'class'=>$registry_object->class));
+		echo json_encode(array("connections"=>$connections, 'class'=>$registry_object->class, 'slug'=>$registry_object->slug));
 	}
-
-
 
 
 	/**
@@ -204,6 +205,9 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		{
 			case "ands_identifiers":
 				$suggestor = "ands_identifiers";
+			break;
+			case "ands_duplicates":
+				$suggestor = "ands_duplicates";
 			break;
 			case "ands_subjects":
 				$suggestor = "ands_subjects";
@@ -482,6 +486,52 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		{
 			echo json_encode(array());
 		}
+	}
+
+	public function getThemePageIndex(){	
+		$this->output->set_content_type(rda::response_format);
+		$results = array();
+		$this->load->helper('file');
+		$file = read_file('./assets/shared/theme_pages/theme_cms_index.json');
+		$file = json_decode($file, true);
+		$results = $file;
+		// services_spotlight_results_data_source
+		$this->output->set_output(json_encode(array("items"=>$results)));
+	}
+
+	public function getThemePage($slug){
+		$this->output->set_content_type(rda::response_format);
+		$this->load->helper('file');
+		$file = read_file('./assets/shared/theme_pages/'.$slug.'.json');
+		if($file){
+			$this->output->set_output($file);
+		}else{
+			$this->output->set_output('File Not Found');
+		}
+	}
+
+	public function getByList(){
+		$this->load->model('registry_object/registry_objects','ro');
+		$list = $this->input->post('list_ro');
+		if(!$list){
+			$data = file_get_contents('php://input');
+			$array = json_decode($data);
+			$list = $array->list_ro;
+		}
+		$ros = array();
+		foreach($list as $key){
+			$ro = $this->ro->getPublishedByKey($key);
+			if($ro){
+				$ros[] = array(
+					'title'=>$ro->title,
+					'id'=>$ro->id,
+					'key'=>$ro->key,
+					'slug'=>$ro->slug
+				);
+			}
+		}
+		// echo json_encode($ros);
+		$this->output->set_output(json_encode(array('ros'=>$ros)));
 	}
 
 	/* Setup this controller to handle the expected response format */

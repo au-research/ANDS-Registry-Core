@@ -75,7 +75,7 @@ class Transforms_Extension extends ExtensionBase
 			$dom = new DOMDocument();
 			$dom->loadXML($this->ro->getExtRif());
 			$xslt_processor->setParameter('','base_url',portal_url());
-			return html_entity_decode($xslt_processor->transformToXML($dom));
+			return trim($xslt_processor->transformToXML($dom));
 		}catch (Exception $e)
 		{
 			echo "UNABLE TO TRANSFORM" . BR;	

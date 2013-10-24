@@ -225,14 +225,16 @@ class Orcid extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$imported = $this->ro->getByAttribute('imported_by_orcid', $orcid_id);
 		$im = array();
-		foreach($imported as $ro){
-			array_push(
-				$im, array(
-					'id'=>$ro->registry_object_id,
-					'title'=>$ro->title,
-					'slug'=>$ro->slug
-				)
-			);
+		if(sizeof($imported)>0){
+			foreach($imported as $ro){
+				array_push(
+					$im, array(
+						'id'=>$ro->registry_object_id,
+						'title'=>$ro->title,
+						'slug'=>$ro->slug
+					)
+				);
+			}
 		}
 		$data = array();
 		$data['imported'] = $im;
