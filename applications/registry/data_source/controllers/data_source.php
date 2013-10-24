@@ -2031,6 +2031,8 @@ public function getContributorGroupsEdit()
 		$response['success'] = false;
 		$response['error'] = '';
 		$this->load->model("data_source/data_sources","ds");
+		$this->load->library('solr');
+		$response['log'] = $this->solr->clear($ds_id);
 		try{
 			acl_enforce(AUTH_FUNCTION_SUPERUSER);
 		}
@@ -2045,7 +2047,7 @@ public function getContributorGroupsEdit()
 		
 		if($dataSource)
 		{
-			$response['log'] = $dataSource->eraseFromDB();
+			$response['log']. = $dataSource->eraseFromDB();
 			$response['success'] = true;
 		}
 		else{
