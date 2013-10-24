@@ -171,11 +171,11 @@ img, table, td, blockquote, code, pre, textarea, input, video {
 /* you shall not pass */
 div, textarea, table, td, th, code, pre, samp {
 	word-wrap: break-word;
-	-webkit-hyphens: auto;
+/*	-webkit-hyphens: auto;
 	-moz-hyphens: auto;
 	-ms-hyphens: auto;
 	-o-hyphens: auto;
-	hyphens: auto;
+	hyphens: auto;*/
 }
 
 /* pictures */

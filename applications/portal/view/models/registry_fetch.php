@@ -38,7 +38,7 @@ class Registry_fetch extends CI_Model
 	{
 		$xsl = new DomDocument();
 		$document = new DomDocument();
-		$document->loadXML($XML, LIBXML_NOENT);
+		$document->loadXML(str_replace('&', '&amp;' , $XML), LIBXML_NOENT);
 		$xsl->load(APP_PATH . 'view/_xsl/'. $xslt_filename);
 		$proc = new XSLTProcessor();
 		$proc->importStyleSheet($xsl);
@@ -49,7 +49,7 @@ class Registry_fetch extends CI_Model
 		}
 
 		$transformResult = $proc->transformToXML($document);	
-		return $transformResult;
+		return str_replace('&amp;', '&' , $transformResult);
 	}
 
 	
@@ -84,11 +84,11 @@ class Registry_fetch extends CI_Model
 				{
 					throw new PageNotValidException($contents['message']);
 				}
-				throw new Exception("Error whilst fetching registry object: " . $contents['message']);
+				throw new ErrorException("Error whilst fetching registry object: " . $contents['message']);
 			}
 			else
 			{
-				throw new Exception("Error whilst fetching registry object: No response from registry when requesting this SLUG");
+				throw new ErrorException("Error whilst fetching registry object: No response from registry when requesting this SLUG");
 			}
 		}
 	}
@@ -125,7 +125,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object connections: " . $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object connections: " . $contents['message']);
 		}
 	}
 
@@ -143,7 +143,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object connections: " . $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object connections: " . $contents['message']);
 		}
 	}
 
@@ -157,7 +157,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object suggested links by slug: " . $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object suggested links by slug: " . $contents['message']);
 		}
 	}
 
@@ -172,7 +172,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object suggested links by ID: " .$url."  ". $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object suggested links by ID: " .$url."  ". $contents['message']);
 		}
 	}
 
@@ -186,7 +186,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object connection graph: " . $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object connection graph: " . $contents['message']);
 		}
 	}
 
@@ -200,7 +200,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new Exception("Error whilst fetching registry object connection graph: " . $contents['message']);
+			throw new ErrorException("Error whilst fetching registry object connection graph: " . $contents['message']);
 		}
 	}
 
@@ -295,7 +295,7 @@ function fetchContributorDataById($id)
 
 	function getSlugFromKey($key)
 	{
-		$url = $this->config->item('registry_endpoint') . "getSlugFromKey/?key=" . $key;
+		$url = $this->config->item('registry_endpoint') . "getSlugFromKey/?key=" . rawurlencode($key);
  		$response = json_decode(@file_get_contents($url), true);
  		if (isset($response[0]))
  		{

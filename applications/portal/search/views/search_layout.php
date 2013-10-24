@@ -85,12 +85,11 @@ Only records which have coverage of the search region will be displayed.
 {{/fuzzy_result}}
 {{#no_result}}
 	<div class="block-record hide"></div>
-	<p>The search term - <b>{{search_term}}</b> did not return any result.</p>
-	<p>Suggestion:</p>
+	<p>The search term - <b>{{search_term}}</b> did not return any results.</p>
+	<p>Some suggestions for searching in Research Data Australia:</p>
 	<ul>
-		<li>Make sure that all words are spelled correctly.</li>
-		<li>Try different keywords.</li>
-		<li>Try more general keywords.</li>
+		<li>Make sure that all words are spelled correctly</li>
+		<li>Try using different or more general search keywords</li>
 	</ul>
 {{/no_result}}
 {{#has_result}}

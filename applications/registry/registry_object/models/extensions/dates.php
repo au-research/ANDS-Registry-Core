@@ -61,6 +61,10 @@ class Dates_Extension extends ExtensionBase
 			// Assume this is a year:
 			$value = "Jan 1 " . $value;
 		}
+		else if (preg_match("/\d{4}\-\d{2}/", $value) === 1)
+		{
+			$value = $value . "-01";
+		}
 
 		if (($timestamp = strtotime($value)) === false) {
 	    	return false;
@@ -140,14 +144,14 @@ class Dates_Extension extends ExtensionBase
 			$end = '';
 			if ($date->startDate)
 			{
-				if (!($start = $this->nicifyDate($date->startDate)))
+				if (!($start = $this->nicifyDate($this->getWTCdate($date->startDate))))
 				{
 					$start = $date->startDate;
 				}			
 			}
 			if ($date->endDate)
 			{
-				if (!($end = $this->nicifyDate($date->endDate)))
+				if (!($end = $this->nicifyDate($this->getWTCdate($date->endDate))))
 				{
 					$end = $date->endDate;
 				}			

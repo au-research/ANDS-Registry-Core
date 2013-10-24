@@ -33,6 +33,8 @@ class Connections_Extension extends ExtensionBase
 	 * 5) If this record is 'not published', then allow links to other
 	 *    'not published' records. 
 	 *
+	 * 6) If requested (flagged in getConnections()), 
+	 *
 	 * @return 	array ( 
 	 *					array(
 	 *						origin (of inference)
@@ -44,7 +46,7 @@ class Connections_Extension extends ExtensionBase
 	 *					)
 	 *			)
 	 */
-	function getConnections($published_only = true, $specific_type = null, $limit = 100, $offset = 0)
+	function getConnections($published_only = true, $specific_type = null, $limit = 100, $offset = 0, $include_dupe_connections = false)
 	{
 		$unordered_connections = array();
 		$ordered_connections = 	array();
@@ -74,6 +76,13 @@ class Connections_Extension extends ExtensionBase
 
 		/* Step 4 - Contributor */
 		$unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks());
+
+
+		/* Step 5 - Duplicate Record connections */
+		if ( $include_dupe_connections )
+		{
+			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections());
+		}
 
 
 		/* Now sort according to "type" (collection / party_one / party_multi / activity...etc.) */
@@ -141,6 +150,7 @@ class Connections_Extension extends ExtensionBase
 				}
 
 				// Stop the same connected object coming from two different sources
+				// NB: this prevents connections from being duplicated (uniqueness property)
 				if(!isset($ordered_connections[$connection['class']][$connection['registry_object_id']]))
 				{
 					$ordered_connections[$connection['class']][(int)$connection['registry_object_id']] = $connection;
@@ -315,6 +325,64 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
+	function _getDuplicateConnections()
+	{
+		$this->_CI->load->library('solr');
+        $this->_CI->solr->init();
+
+		$my_connections = array();
+		$sxml = $this->ro->getSimpleXML();
+
+		if (!$sxml) return $my_connections;
+
+        if ($sxml->registryObject)
+        {
+            $sxml = $sxml->registryObject;
+        }
+
+        // Identifier matches (if another object has the same identifier)
+        $my_identifiers = array('');
+ 		if($sxml->{strtolower($this->ro->class)}->identifier)
+        {
+ 			foreach($sxml->{strtolower($this->ro->class)}->identifier AS $identifier)
+            {
+                $my_identifiers[] = '"' . (string) $identifier . '"';
+            }
+        }
+
+        // No identifier, do nothing!
+        if (count($my_identifiers) == 0)
+        {
+        	return $my_connections;
+        }
+
+        $identifier_search_query = implode(" +identifier_value:", $my_identifiers);
+        $identifier_search_query = " -key:".$this->ro->key . $identifier_search_query;
+
+        $this->_CI->solr->setOpt("q", $identifier_search_query);
+        $this->_CI->solr->setOpt("fl", "id, class, display_title, slug, key");
+        $result = $this->_CI->solr->executeSearch(true);
+
+        if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0)
+        {
+            foreach($result['response']['docs'] AS $doc)
+            { 
+            	$matched_ro = $this->_CI->ro->getByID($doc['id']);
+            	$matches = $matched_ro->getAllRelatedObjects();
+           		if ($matches && count($matches) > 0)
+           		{
+	            	foreach ($matches AS &$match)
+	            	{
+	            				$match["origin"] = "IDENTIFIER_MATCH";
+	            				$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
+	            				$my_connections[] = $match;
+	            	}
+	            }
+            }
+        }
+
+		return $my_connections;
+	}
 
 	
 }

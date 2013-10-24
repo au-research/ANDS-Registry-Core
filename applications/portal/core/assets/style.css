@@ -291,7 +291,28 @@ p {
 	color:#333;
 }
 
-
+.error_exception
+{
+	width:100%;
+	background-color:#f9fee8;
+}
+.error_exception > .message
+{
+	width:650px;
+	margin:0 auto;
+	padding: 150px 0 0 0;
+	padding-bottom: 300px;
+}
+.error_exception > .message > img
+{
+	float:left;
+}
+.error_exception > .message > div
+{
+	margin-left:50px;
+	width:70%;
+	float:left;
+}
 		
 /***********************************************************************************/
 /*                             Layout & Composition                                */

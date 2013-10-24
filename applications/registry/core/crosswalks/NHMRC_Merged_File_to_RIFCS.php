@@ -102,12 +102,19 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
             $grants[$row['GRANT_ID']]['people'][] = $row['DW_INDIVIDUAL_ID'];
 
             // Link the grant to the person
-            $people[$row['DW_INDIVIDUAL_ID']]['grants'][$row['GRANT_ROLE']] = $row['GRANT_ID'];
+            if (!isset($people[$row['DW_INDIVIDUAL_ID']]['grants'][$row['GRANT_ROLE']]))
+            {
+                $people[$row['DW_INDIVIDUAL_ID']]['grants'][$row['GRANT_ROLE']] = array($row['GRANT_ID']);
+            }
+            else
+            {
+                $people[$row['DW_INDIVIDUAL_ID']]['grants'][$row['GRANT_ROLE']][] = $row['GRANT_ID'];
+            }
 
         }
         $log[] = "[CROSSWALK] Setup mapping in-memory. " . count($this->grants) . " grants, " . count($this->people) . " people";
 
-        $this->renderParties($log);
+        //$this->renderParties($log);
         $this->renderActivities($log);
                     
     	return $this->returnChunks();
@@ -125,6 +132,7 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
 
             $primary_name = $this->normalise_space($activity['GRANT_SIMPLIFIED_TITLE']);
             $alternative_name = $this->normalise_space($activity['GRANT_SCIENTIFIC_TITLE']);
+
 
             // Get the names of our investigators
             $investigators = array();
@@ -173,7 +181,8 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
 
             // Identifier is the same purl as our key
             $registryObject .=      '<identifier type="purl">' . self::NHMRC_GRANT_PREFIX . $activity['GRANT_ID'] . '</identifier>';
-            
+            $registryObject .=      '<identifier type="nhmrc">' . $activity['GRANT_ID'] . '</identifier>';
+                        
             // Only include the alternative name if it is different to the primary
             $registryObject .=      '<name type="primary"><namePart>'.$primary_name.'</namePart></name>' . NL;
             if($primary_name != $alternative_name) {
@@ -250,13 +259,17 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
         {
             // Only create party records for those we know are linked to post-2009 records
             $valid_to_create = false;
-            foreach ($party['grants'] AS $grant_id)
+            foreach ($party['grants'] AS $grant_role => $_)
             {
-                if ($this->grants[$grant_id]['START_YR'] >= self::NHMRC_MIN_GRANT_YR)
+                foreach ($party['grants'][$grant_role] AS $grant_id)
                 {
-                    $valid_to_create = true;
+                    if ($this->grants[$grant_id]['START_YR'] >= self::NHMRC_MIN_GRANT_YR)
+                    {
+                        $valid_to_create = true;
+                    }
                 }
             }
+
             // Skip if we're not valid to create
             if (!$valid_to_create) continue;
 
@@ -274,7 +287,10 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
 
             // Only include the alternative name if it is different to the primary
             $registryObject .=      '<name type="primary">' . NL;
-            $registryObject .=          '<namePart type="title">'.$party['TITLE'].'</namePart>' . NL;
+
+            if ($party['TITLE'])
+                $registryObject .=          '<namePart type="title">'.$party['TITLE'].'</namePart>' . NL;
+
             $registryObject .=          '<namePart type="family">'.$party['LAST_NAME'].'</namePart>' . NL;
             $registryObject .=          '<namePart type="given">'.$party['FIRST_NAME'].'</namePart>' . NL;
             $registryObject .=      '</name>' . NL;
@@ -287,32 +303,42 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
 
                 $registryObject .=      '<description type="full">' . NL;
                 $registryObject .=      'Participant in the following NHMRC Grant(s):' . NL;
-                foreach ($party['grants'] AS $grant_id)
+
+                $description_elt =      '<ul>' . NL;
+                foreach ($party['grants'] AS $grant_role => $_)
                 {
-                    if ($this->grants[$grant_id]['GRANT_SIMPLIFIED_TITLE'])
+                    foreach ($party['grants'][$grant_role] AS $grant_id)
                     {
-                        $registryObject .= ' - ' . $this->normalise_space($this->grants[$grant_id]['GRANT_SIMPLIFIED_TITLE']) . NL;
+                        if ($this->grants[$grant_id]['GRANT_SIMPLIFIED_TITLE'])
+                        {
+                            $description_elt  .= '<li>' . $this->normalise_space($this->grants[$grant_id]['GRANT_SIMPLIFIED_TITLE']) .  '</li>';
+                        }
                     }
                 }
-                $registryObject .=      '</description>' . NL;
+                $description_elt  .=      '</ul>' . NL;
 
+                $registryObject .= htmlentities($description_elt);
+                $registryObject .=      '</description>' . NL;
             }
 
             // Relate to the grant key(s)
-            foreach ($party['grants'] AS $grant_role => $grant_id)
+            foreach ($party['grants'] AS $grant_role => $grant_ids)
             {
-                $registryObject .=      '<relatedObject>' . NL;
-                $registryObject .=         '<key>'. self::NHMRC_GRANT_PREFIX . $grant_id . '</key>' . NL;
-                
-                if( $grant_role == "CIA" )
+                foreach($grant_ids AS $grant_id)
                 {
-                    $registryObject .=         '<relation type="isPrincipalInvestigatorOf" />' . NL;
+                    $registryObject .=      '<relatedObject>' . NL;
+                    $registryObject .=         '<key>'. self::NHMRC_GRANT_PREFIX . $grant_id . '</key>' . NL;
+                    
+                    if( $grant_role == "CIA" )
+                    {
+                        $registryObject .=         '<relation type="isPrincipalInvestigatorOf" />' . NL;
+                    }
+                    else
+                    {
+                        $registryObject .=         '<relation type="isParticipantIn" />' . NL;
+                    }
+                    $registryObject .=      '</relatedObject>' . NL;
                 }
-                else
-                {
-                    $registryObject .=         '<relation type="isParticipantIn" />' . NL;
-                }
-                $registryObject .=      '</relatedObject>' . NL;
             }
 
              // Include the native format

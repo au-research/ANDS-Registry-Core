@@ -524,6 +524,12 @@ class Registry_objects extends CI_Model {
 
 	function getUnEnriched(){
 		$CI =& get_instance();
+
+		$result = $CI->db->select('r.registry_object_id')->from('registry_objects r')
+		->join('record_data d', "d.registry_object_id = r.registry_object_id AND scheme='extrif'", 'left')->where('data IS NULL');
+		return $result->get();
+		/* use LEFT JOIN to palm off this overhead to the DB instead of two queries and a massive WHERE_NOT_IN call!!
+
 		$enrichedResult = $CI->db->select('registry_object_id')->from('record_data')->where('scheme', 'extrif')->get();
 		$enriched = array();
 		foreach($enrichedResult->result() as $e){
@@ -531,6 +537,7 @@ class Registry_objects extends CI_Model {
 		}
 		$result = $CI->db->select('registry_object_id')->from('record_data')->where_not_in('registry_object_id', $enriched);
 		return $result->get();
+		*/
 	}
 
 	function getGroupSuggestor($data_source_ids){

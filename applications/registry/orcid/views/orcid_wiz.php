@@ -71,7 +71,7 @@
 									echo '</li>';
 								}
 							}else{
-								echo "You haven't import any collections";
+								echo "You haven't imported any collections";
 							}
 						?>
 					</ul>
