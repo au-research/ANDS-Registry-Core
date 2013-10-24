@@ -1,5 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `dbs_registry_install_test` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `dbs_registry_install_test`;
+
 -- MySQL dump 10.13  Distrib 5.5.24, for osx10.5 (i386)
 --
 -- Host: 130.56.60.128    Database: dbs_registry

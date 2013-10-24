@@ -1,5 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `dbs_roles_install_test` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `dbs_roles_install_test`;
+
 -- MySQL dump 10.13  Distrib 5.5.24, for osx10.5 (i386)
 --
 -- Host: 130.56.60.128    Database: dbs_roles
@@ -86,9 +85,10 @@ INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('PORTAL_STAFF', 
 INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('DOI_USER', 'ROLE_FUNCTIONAL', 'DOI Service User');
 INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('DOIS_USER', 'ROLE_FUNCTIONAL', 'DOI User');
 INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('VOCAB_USER', 'ROLE_FUNCTIONAL', 'Vocabulary Catalogue User');
-
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('SHIB_AUTHENTICATED', 'ROLE_FUNCTIONAL', 'Shibboleth Authenticated Users');
+INSERT INTO `roles` (`role_id`, `role_type_id`, `name`) VALUES ('TEST_ORGANISATION', 'ROLE_ORGANISATIONAL', 'Test Organisation Role');
 INSERT INTO `roles` (`role_id`, `role_type_id`, `name`, `authentication_service_id`) VALUES ('superuser', 'ROLE_USER', 'Admin User', 'AUTHENTICATION_BUILT_IN');
-
+ 
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -102,6 +102,8 @@ UNLOCK TABLES;
 LOCK TABLES `role_relations` WRITE;
 /*!40000 ALTER TABLE `role_relations` DISABLE KEYS */;
 INSERT INTO `role_relations` (`parent_role_id` , `child_role_id`) VALUES ('REGISTRY_SUPERUSER','superuser');
+INSERT INTO `role_relations` (`parent_role_id` , `child_role_id`) VALUES ('TEST_ORGANISATION','superuser');
+
 /*!40000 ALTER TABLE `role_relations` ENABLE KEYS */;
 UNLOCK TABLES;
 

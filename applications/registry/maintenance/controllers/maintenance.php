@@ -45,7 +45,7 @@ class Maintenance extends MX_Controller {
 		{
 			$data_source = $this->ds->create($this->config->item('example_ds_key'), url_title($this->config->item('example_ds_title')));
 			$data_source->setAttribute('title', $this->config->item('example_ds_title'));
-			$data_source->setAttribute('record_owner', 'SYSTEM');
+			$data_source->setAttribute('record_owner', 'superuser');
 			$data_source->save();
 			$data_source->updateStats();
 			$data_source = $this->ds->getByKey($this->config->item('example_ds_key'));
