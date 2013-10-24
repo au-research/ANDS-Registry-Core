@@ -35,7 +35,7 @@ if($this->config->item('environment_logo'))
 }
 else
 {
-  $environment_logo = base_url('/assets/img/ands_logo_white.png');
+  $environment_logo = asset_url('/img/ands_logo_white.png', 'base');
 }
 
 ?>

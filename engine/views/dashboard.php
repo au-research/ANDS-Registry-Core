@@ -9,13 +9,13 @@
  * @package ands/datasource
  * 
  */
-try{
-	$news_content = file_get_contents('assets/shared/dashboard_news/dashboard_sample.html');
-}
-catch(Exception $e)
-{
-	$news_content = '<div style="overflow: hidden; height: 1072px;" class="box-content dash_news">No News content is available</div>';
-}
+
+	$news_content = @file_get_contents(asset_url('shared/dashboard_news/dashboard.html', 'base'));
+	if(!$news_content)
+		$news_content = @file_get_contents('http://researchdata.ands.org.au/assets/shared/dashboard_news/dashboard.html');
+	if(!$news_content)
+		$news_content = '<div style="overflow: hidden; height: 1072px;" class="box-content dash_news">No News content found for your installation create <br/>file <b>asset/shared/dashboard_news/dashboard.html</b></div>';
+
 
 
 if($this->config->item('environment_name'))
