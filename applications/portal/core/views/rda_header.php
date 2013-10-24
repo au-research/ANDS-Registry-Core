@@ -30,6 +30,13 @@
 
 <link rel="stylesheet" href="<?php echo asset_url('lib/jQRangeSlider/css/iThing.css', 'base');?>" type="text/css" media="screen" > 
 
+	<?php if(isset($the_description)): ?>
+	<meta name="description" content="<?php echo $the_description; ?>"/>
+	<?php endif; ?>
+
+	<?php if(isset($the_title)): ?>
+	<meta name="keywords" content="<?php echo $the_title; ?>"/>
+	<?php endif; ?>
 </head>
 <?php
 if($this->config->item('environment_name'))
