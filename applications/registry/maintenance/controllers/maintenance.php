@@ -275,6 +275,15 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
+	function smartSync()
+	{
+		$this->input->post('ds_id');
+		$sizeLimit = 400;
+		$this->load->model('data_source/data_sources', 'ds');
+		$result = $this->ds->getGroupsBySizeLimit($sizeLimit);
+		echo json_encode($result);
+	}
+
 	function enrichAll(){
 		acl_enforce('REGISTRY_STAFF');
 		$data = array();

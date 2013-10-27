@@ -221,8 +221,28 @@ class Data_sources extends CI_Model {
 		}
 		
 		return $matches;
-	} 	
+	} 
+
+	/** get 2 groups by size
+
+	**/
+
+	function getGroupsBySizeLimit($sizeLimit = 99999999)
+	{
+		$matches = array();
+		$query = $this->db->select('data_source_id, count(*) as count')->from('dbs_registry.registry_objects')->group_by('data_source_id')->order_by('count desc')->get();
+		$matches['small'] = array();
+		$matches['large'] = array();
+		foreach($query->result_array() as $r){
+			if($r['count'] <= $sizeLimit)
+				$matches['small'][] = $r;
+			else
+				$matches['large'][] = $r;
+		}
+		return $matches;
+	}
 	
+
 	/**
 	 * XXX: 
 	 * @return array(_data_source) or NULL
