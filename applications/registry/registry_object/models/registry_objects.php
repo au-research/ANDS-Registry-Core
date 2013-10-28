@@ -341,6 +341,23 @@ class Registry_objects extends CI_Model {
 			return null;
 	}
 
+	function getKeysByDataSourceID($data_source_id, $make_ro=false, $status='All')
+	{
+		$results =  $this->_get(array(array('args' => array('ds_id'=>$data_source_id, 'status'=>$status),
+						    'fn' => function($db, $args) {
+							    $db->select("key")
+								    ->from("registry_objects")
+								    ->where("data_source_id", $args['ds_id']);
+								if($args['status']!='All') $db->where('status', $args['status']);
+							    return $db;
+						    })),
+					$make_ro);
+		if(is_array($results))
+			return $make_ro ? $results : array_map(function($r){return $r['key'];}, $results);
+		else
+			return null;
+	}
+
 	function getOldHarvestedRecordIDsByDataSourceID($data_source_id, $harvest_id, $make_ro=false)
 	{
 		$results =  $this->_get(array(array('args' => array('data_source_id'=>$data_source_id, 'harvest_id'=>$harvest_id),

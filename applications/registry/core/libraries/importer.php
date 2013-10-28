@@ -1051,6 +1051,20 @@ class Importer {
 		return preg_replace('/ xsi:schemaLocation=".*?"/sm','', $string);
 	}
 
+	public function getBenchMarkLogArray(){
+		$result = array();
+		if($this->runBenchMark){
+			$result = array(
+				'totalTime' => $this->CI->benchmark->elapsed_time('enrich_affected_records_start', 'ingest_reindex_end'),
+				'enrichTime' => $this->CI->benchmark->elapsed_time('enrich_affected_records_start', 'enrich_affected_records_end'),
+				'reindexTime' => $this->CI->benchmark->elapsed_time('ingest_reindex_start', 'ingest_reindex_end'),
+				'peakMemoryUsage' => memory_get_peak_usage() .' bytes'
+			);
+			return $result;
+		}
+		return false;
+	}
+
 	public function getBenchMarkLogs()
 	{	
 		if($this->runBenchMark)

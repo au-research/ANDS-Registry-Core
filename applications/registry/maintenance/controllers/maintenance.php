@@ -275,13 +275,75 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	function smartSync()
-	{
-		$this->input->post('ds_id');
-		$sizeLimit = 400;
+	function smartSync($step = 0, $start = 0){
+		$limit = 400;
 		$this->load->model('data_source/data_sources', 'ds');
-		$result = $this->ds->getGroupsBySizeLimit($sizeLimit);
-		echo json_encode($result);
+		$result = array();
+		if($step==0){
+			$result = $this->ds->getGroupsBySizeLimit($limit);
+			echo json_encode($result);	
+		}else if($step==1){
+			$result = $this->ds->getGroupsBySizeLimit($limit);
+			$total = sizeof($result['small']);
+			$current = 1;
+			foreach($result['small'] as $ds){
+				if($current >= $start){
+					echo '<b>'.$ds['data_source_id'].' ('.$current.'/'.$total.')</b> Count: '.$ds['count'].'<br/>';
+					$this->flush_buffers();
+					var_dump($this->smartSyncDS($ds['data_source_id']));
+					echo '<hr/>';
+					$this->flush_buffers();
+				}
+				$current++;
+			}
+		}else if($step==2){
+			$result = $this->ds->getGroupsBySizeLimit($limit);
+			$total = sizeof($result['large']);
+			$current = 1;
+			foreach($result['large'] as $ds){
+				if($current >= $start){
+					echo '<b>'.$ds['data_source_id'].' ('.$current.'/'.$total.')</b> Count: '.$ds['count'].'<br/>';
+					$this->flush_buffers();
+					var_dump($this->smartSyncDS($ds['data_source_id']));
+					echo '<hr/>';
+					$this->flush_buffers();
+				}
+				$current++;
+			}
+		}
+	}
+
+	function smartSyncDS($data_source_id, $print=false, $offset=0){
+		$this->load->library('importer');
+		$this->load->model('data_source/data_sources', 'ds');
+		$this->load->model('registry_object/registry_objects', 'ro');
+
+		//load
+		$ds = $this->ds->getByID($data_source_id);
+		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, PUBLISHED);
+
+		if($offset!=0) $keys = array_slice($keys, $offset);
+
+		if($print){
+			echo 'count: '.sizeof($keys).'<br/>';
+		}
+
+		$this->importer->_reset();
+		$this->importer->runBenchMark = true;
+		$this->importer->setDataSource($ds);
+		$this->importer->addToAffectedList($keys);
+
+		$this->importer->finishImportTasks();
+		if($print){
+			var_dump($this->importer->getBenchMarkLogArray());
+		}else{
+			return $this->importer->getBenchMarkLogArray();
+		}
+	}
+
+	function flush_buffers(){ 
+		ob_flush(); 
+		flush(); 
 	}
 
 	function enrichAll(){
