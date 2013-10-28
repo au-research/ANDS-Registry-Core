@@ -169,7 +169,7 @@ else
 							if(sizeof($group_vocabs)>0){
 								echo '<ul>';
 								foreach($group_vocabs as $g){
-									echo '<li><a href="'.registry_url('vocab_service/#!/view/'.$g->id).'">'.$g->title . "</a></li>";
+									echo '<li><a href="'.apps_url('vocab_service/#!/view/'.$g->id).'">'.$g->title . "</a></li>";
 								}
 								echo '</ul>';
 							}else{
