@@ -198,7 +198,7 @@ function printLoginForm($authenticators, $authenticator , $class, $redirect="")
     {
         print "<div class='".$class."' id='".$authenticator."_LoginForm'>";
         print "<small>Log into the ANDS Online Services Dashboard using your AAF credentials:</small>";
-        print " <img src='".asset_url('img/aaf_logo.gif')."' style='display:block;margin:10px auto;'/>";
+        print " <img src='".asset_url('img/aaf_logo.gif', 'base')."' style='display:block;margin:10px auto;'/>";
         print " <a href='".secure_host_url().gSHIBBOLETH_SESSION_INITIATOR."?target=".secure_base_url()."auth/setUser' class='btn btn-primary btn-block'>Login using ".$authenticators[$authenticator]."</a>";
         print "</div>";
     }
