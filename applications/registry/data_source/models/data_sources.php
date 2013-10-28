@@ -230,7 +230,7 @@ class Data_sources extends CI_Model {
 	function getGroupsBySizeLimit($sizeLimit = 99999999)
 	{
 		$matches = array();
-		$query = $this->db->select('data_source_id, count(*) as count')->from('dbs_registry.registry_objects')->where('status', 'PUBLISHED')->group_by('data_source_id')->order_by('count asc')->get();
+		$query = $this->db->select('data_source_id, count(*) as count')->from('registry_objects')->where('status', 'PUBLISHED')->group_by('data_source_id')->order_by('count asc')->get();
 		$matches['small'] = array();
 		$matches['large'] = array();
 		foreach($query->result_array() as $r){
