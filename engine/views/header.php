@@ -185,29 +185,29 @@ else
               </li>
               <?php endif;?>
 
-              <?php if($this->user->hasFunction('AUTHENTICATED_USER')&& ( mod_enabled('toolbox') || mod_enabled('cms') || mod_enabled('spotlight'))): ?>
+              <?php if(( mod_enabled('toolbox') || mod_enabled('cms') || mod_enabled('spotlight'))): ?>
                 <li class="btn btn-inverse dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <b class="caret"></b></a>
                   <ul class="dropdown-menu pull-right">       
 
-                    <?php if ($this->user->hasFunction('AUTHENTICATED_USER')): ?>
+                 
                         <li class=""><?php echo anchor(developer_url(''), '<i class="icon-briefcase icon"></i> Developer Toolbox <sup style="color:red;">new!</sup>');?></li>
                         <li class=""><?php echo anchor(developer_url('documentation/widgets'), '&nbsp; &raquo; Web Widgets');?></li>
                         <li class=""><?php echo anchor(developer_url('documentation/services'), '&nbsp; &raquo; Web Services');?></li>
                         <li class=""><?php echo anchor(developer_url('documentation/registry'), '&nbsp; &raquo; Registry Software');?></li>
-                    <?php endif; ?>
-
+              
+          
                     <?php if ($this->user->hasFunction('PORTAL_STAFF') && mod_enabled('cms')): ?>
                         <li class="divider"></li>
                         <li class=""><?php echo anchor(apps_url('spotlight/'), '<i class="icon-indent-left icon"></i> Spotlight CMS Editor');?></li>
                         <li class=""><?php echo anchor(apps_url('uploader/'), '&nbsp; &raquo; CMS Image Uploader');?></li>
                     <?php endif; ?>     
 
-                    <?php if (($this->user->hasFunction('PUBLIC')) && mod_enabled('abs_sdmx_querytool')): ?>
+               <!--     <?php if (($this->user->hasFunction('PUBLIC')) && mod_enabled('abs_sdmx_querytool')): ?>
                       <li class="divider"></li>
                       <li class=""><?php echo anchor(apps_url('abs_sdmx_querytool'), 'ABS SDMX Query Tool');?></li>
                     <?php endif; ?>      
-
+                -->
                   </ul>
                 </li>
               <?php endif; ?>
