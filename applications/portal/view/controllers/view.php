@@ -99,12 +99,12 @@ class View extends MX_Controller {
 		$matches = array();
 		preg_match('/<extRif\:simplifiedTitle>(.*)<\/extRif:simplifiedTitle>/', $extRif['data'], $matches);
 		if(isset($matches[1]) && $matches[1]!=''){
-			$data['title'] = $matches[1].' - Research Data Australia';
+			$data['title'] = strip_tags($matches[1]).' - Research Data Australia';
 		}
 		$matches = array();
 		preg_match('/<extRif\:the_description>(.*)<\/extRif:the_description>/s', $extRif['data'], $matches);
-		if(isset($matches[0]) && $matches[0]!=''){
-			$data['the_description'] = $matches[0];
+		if(isset($matches[1]) && $matches[1]!=''){
+			$data['the_description'] = strip_tags($matches[1]);
 		}
 
 		$matches = array();
