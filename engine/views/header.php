@@ -169,7 +169,7 @@ else
                 </li>
               <?php endif; ?>
 
-              <?php if($this->user->hasFunction('PUBLIC') && mod_enabled('vocab_service')):?>
+              <?php if(mod_enabled('vocab_service')):?>
               <li class="btn btn-inverse dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Vocabularies <b class="caret"></b></a>
                 <ul class="dropdown-menu pull-right">
