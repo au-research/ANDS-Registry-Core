@@ -341,7 +341,7 @@ class Connections_Extension extends ExtensionBase
         }
 
         // Identifier matches (if another object has the same identifier)
-        $my_identifiers = array('');
+        $my_identifiers = array();
  		if($sxml->{strtolower($this->ro->class)}->identifier)
         {
  			foreach($sxml->{strtolower($this->ro->class)}->identifier AS $identifier)
@@ -356,9 +356,9 @@ class Connections_Extension extends ExtensionBase
         	return $my_connections;
         }
 
-        $identifier_search_query = implode(" +identifier_value:", $my_identifiers);
-        $identifier_search_query = " -key:(\"".$this->_CI->solr->escapeSolrValue($this->ro->key . $identifier_search_query)."\")";
-
+        $identifier_search_query = " +identifier_value:(" . implode(" OR ", $my_identifiers) . ")";
+        $identifier_search_query = " -key:(\"".$this->_CI->solr->escapeSolrValue($this->ro->key)."\") ". $identifier_search_query;
+  
         $this->_CI->solr->setOpt("q", $identifier_search_query);
         $this->_CI->solr->setOpt("fl", "id, class, display_title, slug, key");
         $result = $this->_CI->solr->executeSearch(true);
