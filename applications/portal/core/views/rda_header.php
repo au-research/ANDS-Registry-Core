@@ -5,11 +5,9 @@
 <!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
 <head>
 <meta charset="UTF-8" />
-<title>
-	<?php
+<title><?php
 		echo (isset($title) ? $title : 'Research Data Australia');
-	?>
-</title>
+	?></title>
 
 <?php if(isset($title)): ?>
 	<meta property="og:title" content="<?php echo $title; ?>"/>

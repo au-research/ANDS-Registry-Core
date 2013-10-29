@@ -104,7 +104,7 @@ class View extends MX_Controller {
 		$matches = array();
 		preg_match('/<extRif\:the_description>(.*)<\/extRif:the_description>/s', $extRif['data'], $matches);
 		if(isset($matches[0]) && $matches[0]!=''){
-			$data['the_description'] = addslashes(strip_tags($matches[0]));
+			$data['the_description'] = htmlentities(strip_tags($matches[0]),ENT_QUOTES | ENT_HTML5);
 		}
 
 		$matches = array();
@@ -115,7 +115,7 @@ class View extends MX_Controller {
 				$m = strip_tags($m);
 				if(!in_array($m, $data['the_title']) && $m && $m!='') array_push($data['the_title'], $m);
 			}
-			$data['the_title'] = implode(',', $data['the_title']);
+			$data['the_title'] = trim(implode(',', $data['the_title']));
 		}
 
 
