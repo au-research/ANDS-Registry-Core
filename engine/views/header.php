@@ -148,7 +148,7 @@ else
                 </li>
               <?php endif; ?>
 
-              <?php if($this->user->hasFunction('AUTHENTICATED_USER') && (mod_enabled('pids') || mod_enabled('mydois'))): ?>
+              <?php if(($this->user->hasFunction('PIDS_USER') || $this->user->hasFunction('DOI_USER')) && (mod_enabled('pids') || mod_enabled('mydois'))): ?>
                 <li class="btn btn-inverse dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Identifiers <b class="caret"></b></a>
                   <ul class="dropdown-menu pull-right">
@@ -212,7 +212,7 @@ else
                 </li>
               <?php endif; ?>
 
-              <?php if($this->user->hasFunction('AUTHENTICATED_USER')):?>
+              <?php if($this->user->hasFunction('REGISTRY_STAFF')):?>
               <li class="btn btn-inverse dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Administration <b class="caret"></b></a>
                 <ul class="dropdown-menu pull-right">
@@ -228,10 +228,6 @@ else
                         <li class="divider"></li>
                         <li class=""><?php echo anchor(registry_url('maintenance/registrySummary'), 'Registry Quality Summary');?></li>
                     <?php endif; ?>  
-                      <?php if ($this->user->hasFunction('AUTHENTICATED_USER')): ?>
-                        <li class="divider"></li>
-                        <li class=""><?php echo anchor(registry_url('services/'), 'Registry Web Services');?></li>  
-                      <?php endif; ?>  
                 </ul>
               </li>
               <?php endif;?>
