@@ -207,10 +207,10 @@
 
     <!-- IDENTIFIERS -->
         <!-- <span class="provided">The identifier value provided to ANDS.</span>-->
-        <field name="identifier_value" type="text_en_splitting" indexed="true" stored="true"
+        <field name="identifier_value" type="string" indexed="true" stored="true"
           multiValued="true"/>
         <!-- <span class="provided">The type of the identifier provided to ANDS.</span>-->
-        <field name="identifier_type" type="text_en_splitting" indexed="true" stored="true"
+        <field name="identifier_type" type="string" indexed="true" stored="true"
           multiValued="true"/>
     
     <!-- SPATIAL COVERAGE -->

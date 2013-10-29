@@ -34,32 +34,42 @@ class GRANTSMethod extends MethodHandler
 			}*/
 			if($param_name == 'institution' && $this->params[$param_name] != '')
 			{
+				$CI->solr->setOpt('fq','+related_object_display_title:'.$this->params[$param_name].'');
+				$gotQuery =true;
+				/*
 				$institution = $this->getWords($this->params[$param_name]);
 				foreach($institution as $word)
 				{
-					$CI->solr->setOpt('fq','+related_object_display_title:'.$word.'');
+					//$CI->solr->setOpt('fq','+related_object_display_title:'.$word.'');
 					$gotQuery =true;
-				}
+				}*/
 				$CI->solr->setOpt('fq','+related_object_relation:"isManagedBy"');				
 			}
 			if($param_name == 'person' && $this->params[$param_name] != '')
 			{
+				$CI->solr->setOpt('fq','+related_object_display_title:'.$this->params[$param_name].'');
+				$gotQuery =true;
+				/*
 				$words = $this->getWords($this->params[$param_name]);
 				foreach($words as $word)
 				{
 					$CI->solr->setOpt('fq','+related_object_display_title:'.$word);
 					$gotQuery =true;
 				}
+				*/
 				$CI->solr->setOpt('fq','+related_object_class:"party"');				
 			}
 			if($param_name == 'principalInvestigator' && $this->params[$param_name] != '')
 			{
+				$CI->solr->setOpt('fq','+related_object_display_title:'.$this->params[$param_name].'');
+				$gotQuery =true;
+				/*
 				$principalInvestigator = $this->getWords($this->params[$param_name]);
 				foreach($principalInvestigator as $word)
 				{
 					$CI->solr->setOpt('fq','+related_object_display_title:'.$word);
 					$gotQuery =true;
-				}
+				}*/
 				$CI->solr->setOpt('fq','+related_object_relation:"isPrincipalInvestigatorOf"');	
 
 			}
