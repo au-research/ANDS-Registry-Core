@@ -346,7 +346,7 @@ class Connections_Extension extends ExtensionBase
         {
  			foreach($sxml->{strtolower($this->ro->class)}->identifier AS $identifier)
             {
-                $my_identifiers[] = '"' . (string) $identifier . '"';
+                $my_identifiers[] = '"' . $this->_CI->solr->escapeSolrValue((string) $identifier) . '"';
             }
         }
 
@@ -357,7 +357,7 @@ class Connections_Extension extends ExtensionBase
         }
 
         $identifier_search_query = implode(" +identifier_value:", $my_identifiers);
-        $identifier_search_query = " -key:".$this->ro->key . $identifier_search_query;
+        $identifier_search_query = " -key:(\"".$this->_CI->solr->escapeSolrValue($this->ro->key . $identifier_search_query)."\")";
 
         $this->_CI->solr->setOpt("q", $identifier_search_query);
         $this->_CI->solr->setOpt("fl", "id, class, display_title, slug, key");
@@ -368,16 +368,19 @@ class Connections_Extension extends ExtensionBase
             foreach($result['response']['docs'] AS $doc)
             { 
             	$matched_ro = $this->_CI->ro->getByID($doc['id']);
-            	$matches = $matched_ro->getAllRelatedObjects();
-           		if ($matches && count($matches) > 0)
-           		{
-	            	foreach ($matches AS &$match)
-	            	{
-	            				$match["origin"] = "IDENTIFIER_MATCH";
-	            				$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
-	            				$my_connections[] = $match;
-	            	}
-	            }
+            	if ($matched_ro)
+            	{
+	            	$matches = $matched_ro->getAllRelatedObjects();
+	           		if ($matches && count($matches) > 0)
+	           		{
+		            	foreach ($matches AS &$match)
+		            	{
+		            				$match["origin"] = "IDENTIFIER_MATCH";
+		            				$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
+		            				$my_connections[] = $match;
+		            	}
+		            }
+		        }
             }
         }
 
