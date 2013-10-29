@@ -34,7 +34,7 @@ class GRANTSMethod extends MethodHandler
 			}*/
 			if($param_name == 'institution' && $this->params[$param_name] != '')
 			{
-				$CI->solr->setOpt('fq','+related_object_display_title:'.$this->params[$param_name].'');
+				$CI->solr->setOpt('fq','+related_object_display_title:"'.$this->params[$param_name].'"');
 				$gotQuery =true;
 				/*
 				$institution = $this->getWords($this->params[$param_name]);
@@ -47,7 +47,7 @@ class GRANTSMethod extends MethodHandler
 			}
 			if($param_name == 'person' && $this->params[$param_name] != '')
 			{
-				$CI->solr->setOpt('fq','+related_object_display_title:'.$this->params[$param_name].'');
+				$CI->solr->setOpt('fq','+related_object_display_title:"'.$this->params[$param_name].'"');
 				$gotQuery =true;
 				/*
 				$words = $this->getWords($this->params[$param_name]);
@@ -61,7 +61,7 @@ class GRANTSMethod extends MethodHandler
 			}
 			if($param_name == 'principalInvestigator' && $this->params[$param_name] != '')
 			{
-				$CI->solr->setOpt('fq','+related_object_display_title:'.$this->params[$param_name].'');
+				$CI->solr->setOpt('fq','+related_object_display_title:"'.$this->params[$param_name].'"');
 				$gotQuery =true;
 				/*
 				$principalInvestigator = $this->getWords($this->params[$param_name]);
