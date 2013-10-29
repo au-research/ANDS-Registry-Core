@@ -375,9 +375,15 @@ class Connections_Extension extends ExtensionBase
 	           		{
 		            	foreach ($matches AS &$match)
 		            	{
-		            				$match["origin"] = "IDENTIFIER_MATCH";
-		            				$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
-		            				$my_connections[] = $match;
+		            		// Don't match contributors 
+		            		if ($match['origin'] == "CONTRIBUTOR") continue; 
+
+		            		// Only match if the shared identifier record has the same class
+		            		if ($matched_ro->class != $this->ro->class) continue;
+
+            				$match["origin"] = "IDENTIFIER_MATCH";
+            				$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
+            				$my_connections[] = $match;
 		            	}
 		            }
 		        }

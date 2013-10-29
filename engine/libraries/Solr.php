@@ -311,10 +311,10 @@ class Solr {
         foreach($this->options as $key=>$value) {
             if(is_array($value)){
                 foreach($value as $v){
-                   $fields_string .= $key.'='.($v).'&';
+                   $fields_string .= $key.'='.rawurlencode($v).'&';
                 }
             }else{
-                $fields_string .= $key.'='.($value).'&';
+                $fields_string .= $key.'='.rawurlencode($value).'&';
             }
         }//build the string
         return $fields_string;
@@ -342,8 +342,8 @@ class Solr {
     function escapeSolrValue($string){
         //$string = urldecode($string);
         // + - && || ! ( ) { } [ ] ^ " ~ * ? : \ /
-        $match = array('\\','&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', ';', '/');
-        $replace = array('\\\\','&', '\\|', '\\!', '\\(', '\\)', '\\{', '\\}', '\\[', '\\]', '\\^', '\\~', '\\*', '\\?', '\\:', '\\;', '\\/');
+        $match = array('\\','&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '/');
+        $replace = array('\\\\','&', '\\|', '\\!', '\\(', '\\)', '\\{', '\\}', '\\[', '\\]', '\\^', '\\~', '\\*', '\\?', '\\:', '\\/');
         $string = str_replace($match, $replace, $string);
 
         if(substr_count($string, '"') % 2 != 0){
