@@ -10,7 +10,7 @@
 	?></title>
 
 <?php if(isset($title)): ?>
-	<meta property="og:title" content="<?php echo $title; ?>"/>
+	<meta property="og:title" content="<?=ellipsis($title, 128);?>"/>
 <?php endif; ?>
 
 <link rel="stylesheet" href="<?php echo asset_url('css/knacss.css', 'core');?>" type="text/css" media="screen" />
@@ -33,8 +33,8 @@
 <link rel="stylesheet" href="<?php echo asset_url('lib/jQRangeSlider/css/iThing.css', 'base');?>" type="text/css" media="screen" > 
 
 <?php if(isset($the_description)): ?>
-<meta name="description" content="<?php echo $the_description; ?>"/>
-<meta property="og:description" content="<?php echo $the_description; ?>"/>
+<meta name="description" content="<?=ellipsis($the_description,512); ?>"/>
+<meta property="og:description" content="<?=ellipsis($the_description,512); ?>"/>
 <?php endif; ?>
 
 <?php if(isset($the_title)): ?>
