@@ -10,6 +10,26 @@ $(function(){
 		});
 	});
 
+    $('#exportExtRif').click(function(){
+        $.getJSON(base_url+'registry_object/get_record/'+$('#ro_id').val(), function(data){
+            console.log(data);
+            $('#myModal .modal-header h3').html('<h3>RIFCS:</h3>');
+            $('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(data.ro.extrif)) + '</code></pre>');
+            prettyPrint();
+            $('#myModal').modal();
+        });
+    });
+
+    $('#exportSOLR').click(function(){
+        $.getJSON(base_url+'registry_object/get_record/'+$('#ro_id').val(), function(data){
+            console.log(data);
+            $('#myModal .modal-header h3').html('<h3>RIFCS:</h3>');
+            $('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(data.ro.solr)) + '</code></pre>');
+            prettyPrint();
+            $('#myModal').modal();
+        });
+    });
+
 	$('#exportNative').click(function(){
 		$.getJSON(base_url+'registry_object/get_native_record/'+$('#ro_id').val(), function(data){
             $('#myModal .modal-header h3').html('<h3>Native Metadata:</h3>');
@@ -91,15 +111,15 @@ $(function(){
         var ro_id = $(this).attr('ro_id');
         var tag = $('input', this).val();
         var tag_html = '<li>'+tag+'<span class="hide"><i class="icon icon-remove"></i></span></li>';
-        $('.tags').append(tag_html);
         $('.notag').hide();
          $.ajax({
             url:base_url+'registry_object/tag/add', 
             type: 'POST',
             data: {ro_id:ro_id,tag:tag},
             success: function(data){
-                // console.log(data);
-                // $('#status_message').html(data.msg);
+                if(data.status=='success'){
+                    $('.tags').append(tag_html);
+                }
             }
         });
     });

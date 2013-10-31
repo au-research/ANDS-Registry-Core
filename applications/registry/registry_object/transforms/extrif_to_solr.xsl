@@ -73,7 +73,7 @@
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:subjects/extRif:subject"/>
 
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:related_object"/>
-                <xsl:apply-templates select="extRif:extendedMetadata/extRif:tag"/>
+                <xsl:apply-templates select="extRif:annotations/extRif:tags/extRif:tag"/>
 
             </xsl:when>
         </xsl:choose>  

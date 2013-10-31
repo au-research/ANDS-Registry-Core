@@ -34,6 +34,8 @@ class Registry_object extends MX_Controller {
 			$data['revision'] = $revision;
 			$data['action_bar'] = array(); // list of status actions which can be performed 
 
+			$data['tags'] = $ro->getTags();
+
 			if($revision!=''){
 				$data['viewing_revision'] = true;
 				$data['rif_html'] = $ro->transformForHtml($revision, $ds->title);
@@ -530,6 +532,7 @@ class Registry_object extends MX_Controller {
 		$ro = $this->ro->getByID($id);
 		$data['xml'] = html_entity_decode($ro->getRif());
 		$data['extrif'] = html_entity_decode($ro->getExtRif());
+		$data['solr'] = html_entity_decode($ro->transformForSOLR());
 		//$data['view'] = $ro->transformForHtml();
 		$data['id'] = $ro->id;
 		$data['title'] = $ro->getAttribute('list_title');
@@ -567,13 +570,6 @@ class Registry_object extends MX_Controller {
 		echo $jsonData;
 	}
 
-	public function get_tag_menu(){
-		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($this->input->post('ro_id'));
-		$data['ro'] = $ro;
-		$this->load->view('tagging_interface', $data);
-	}
-
 	public function tag($action){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
@@ -582,32 +578,25 @@ class Registry_object extends MX_Controller {
 		$ro_id = $this->input->post('ro_id');
 		$tag = $this->input->post('tag');
 		$ro = $this->ro->getByID($ro_id);
-		$separator = ';;';
+
 		if($action=='add' && $tag!=''){
-			if($ro->tag){
-				$tags = explode(';;', $ro->tag);
-				array_push($tags, $tag);
-				$ro->tag = implode(';;', $tags);
-				$ro->save();
-			}else{
-				$ro->tag = $tag;
-				$ro->save();
+			if($ro->addTag($tag)){
+				$jsonData['status'] = 'success';
+			}else {
+				$jsonData['status'] = 'error';
 			}
-			$jsonData['status'] = 'success';
 		}else if($action=='remove'){
-			$tags = explode(';;', $ro->tag);
-			$key = array_search($tag,$tags);
-			if($key!==false){
-			    unset($tags[$key]);
-			}
-			$ro->tag = implode(';;', $tags);
-			$ro->save();
-			$jsonData['status'] = 'success';
+			if($ro->removeTag($tag)){
+				$jsonData['status'] = 'success';
+			}else $jsonData['status'] = 'error';
+		}
+
+		if($e = $ro->sync()!=true){
+			$jsonData['status'] = 'error';
+			$jsonData['msg'] = $e;
 		}
 		echo json_encode($jsonData);
 	}
-
-
 
 	function update($all = false){
 		set_exception_handler('json_exception_handler');

@@ -434,23 +434,15 @@ class Registry_objects extends CI_Model {
 
 	function getByAttributeSQL($key, $value, $data_source_id = ""){
 		$CI =& get_instance();
-		
-		if($key=='tag'){
-			$result = $CI->db->select('ra.registry_object_id')->from('registry_object_attributes ra')->where('attribute', $key)->where('value !=', '');
-			if ($data_source_id)
-			{
-				$result->join('registry_objects r','ra.registry_object_id = r.registry_object_id')->where('data_source_id', $data_source_id);
-			}
-			$result = $result->get();
-		}else{
-			$result = $CI->db->select('ra.registry_object_id')->from('registry_object_attributes ra')->where('attribute', $key)->where('value', $value);
-			if ($data_source_id)
-			{
-				$result->join('registry_objects r','ra.registry_object_id = r.registry_object_id')->where('data_source_id', $data_source_id);
-			}
-			$result = $result->get();
+		if($value=='!='){
+			$result = $CI->db->select('ra.registry_object_id')->from('registry_object_attributes ra')->where('attribute', $key)->where('value !=', $value);
+		}else $result = $CI->db->select('ra.registry_object_id')->from('registry_object_attributes ra')->where('attribute', $key)->where('value', $value);
+		if ($data_source_id){
+			$result->join('registry_objects r','ra.registry_object_id = r.registry_object_id')->where('data_source_id', $data_source_id);
 		}
+		$result = $result->get();
 
+		
 		$res = array();
 		foreach($result->result() as $r){
 			array_push($res, array('registry_object_id'=>$r->registry_object_id));
@@ -468,7 +460,8 @@ class Registry_objects extends CI_Model {
 				if(in_array($key, $white_list) && array_key_exists('data_source_id', $args)){
 					$ff = $this->getByAttributeDatasource($args['data_source_id'], $key, $value, false, false);
 				}else{
-					$ff = $this->getByAttributeSQL($key, $value, $args['data_source_id']);
+					$data_source_id = (isset($args['data_source_id']) ? $args['data_source_id']: false);
+					$ff = $this->getByAttributeSQL($key, $value, $data_source_id);
 					$filtering = true;
 				}
 

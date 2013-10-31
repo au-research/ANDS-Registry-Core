@@ -201,6 +201,10 @@ date_default_timezone_set('Australia/Melbourne');
 				<div class="widget-box">
 					<div class="widget-title">
 						<h5>Revision</h5>
+						<?php if($this->user->hasFunction('REGISTRY_SUPERUSER')): ?>
+						<a href="javascript:;" class="btn btn-small pull-right" style="margin-top:5px; margin-right:5px;" id="exportExtRif"><i class="icon-eject"></i> Show ExtRIF</a>
+						<a href="javascript:;" class="btn btn-small pull-right" style="margin-top:5px; margin-right:5px;" id="exportSOLR"><i class="icon-eject"></i> Show SOLR DOC</a>
+						<?php endif; ?>
 						<a href="javascript:;" class="btn btn-small pull-right" style="margin-top:5px; margin-right:5px;" id="exportRIFCS"><i class="icon-eject"></i> Show RIFCS</a>
 					</div>
 					<div class="widget-content">
@@ -252,7 +256,7 @@ date_default_timezone_set('Australia/Melbourne');
 						<h5>Tags Management</h5>
 					</div>
 					<div class="widget-content">
-						<?php $data['ro'] = $ro; $this->load->view('tagging_interface', $data);?>
+						<?php $data['tags'] = $tags; $this->load->view('tagging_interface', $data);?>
 					</div>
 				</div>
 
