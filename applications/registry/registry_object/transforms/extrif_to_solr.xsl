@@ -299,7 +299,7 @@
         <xsl:element name="field">
             <xsl:attribute name="name">tag</xsl:attribute>
             <xsl:value-of select="."/>
-        </xsl:element>       
+        </xsl:element>
     </xsl:template>
     
     <xsl:template match="extRif:listTitle">

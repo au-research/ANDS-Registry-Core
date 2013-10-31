@@ -13,11 +13,12 @@ class Sync_extension extends ExtensionBase{
 	 */
 	function sync(){
 		try {
+			$this->_CI->load->library('solr');
 			$this->ro->enrich();
 			if($this->ro->status=='PUBLISHED'){
 				$solrXML = $this->ro->transformForSOLR();
-				$this->solr->addDoc("<add>".$solrXML."</add>");
-				$this->solr->commit();
+				$this->_CI->solr->addDoc("<add>".$solrXML."</add>");
+				$this->_CI->solr->commit();
 			}
 		} catch (Exception $e) {
 			return $e;

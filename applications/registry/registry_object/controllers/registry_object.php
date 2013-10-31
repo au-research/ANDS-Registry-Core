@@ -592,7 +592,7 @@ class Registry_object extends MX_Controller {
 		}
 
 		if($e = $ro->sync()!=true){
-			$jsonData['status'] = 'error';
+			$jsonData['status'] = 'error syncing';
 			$jsonData['msg'] = $e;
 		}
 		echo json_encode($jsonData);

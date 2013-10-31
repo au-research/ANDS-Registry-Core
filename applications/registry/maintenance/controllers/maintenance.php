@@ -470,10 +470,17 @@ class Maintenance extends MX_Controller {
 			$data['message'] = '<i class="icon icon-remove"></i> No Registry Object Found!';
 		}else{
 			if($use=='id'){
-				$ro->sync();
+				if($msg = $ro->sync()!=true){
+					$data['status'] = 'error';
+					$data['message'] = $msg;
+				}
+
 			}elseif($use=='keys'){
 				foreach($ro as $r){
-					$r->sync();
+					if($msg = $ro->sync()!=true){
+						$data['status'] = 'error';
+						$data['message'] = $msg;
+					}
 				}
 			}
 			$data['status'] = 'success';
