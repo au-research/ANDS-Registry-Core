@@ -205,6 +205,10 @@ class Solr {
         $this->options['q'].=' '. $condition;
     }
 
+    function addBoostCondition($condition){
+        $this->options['bq'].=' '.$condition;
+    }
+
     function setFilters($filters){
         $page = 1; $start = 0;
         $pp = ( isset($filters['rows']) ? (int) $filters['rows'] : 15 );
@@ -216,7 +220,7 @@ class Solr {
         $this->setOpt('fl', '*, score'); //we'll get the score as well
 
         //boost
-        $this->setOpt('bq', 'id^1 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
+        $this->setOpt('bq', 'id^1 tag^0.9 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
 
         //if there's no query to search, eg. rda browsing
         if (!isset($filters["q"])){
@@ -297,6 +301,9 @@ class Solr {
                     break;
                 case 'originating_source':
                     $this->setOpt('fq', '+originating_source:("'.$value.'")');
+                    break;
+                case 'data_source_key':
+                    $this->setOpt('fq', '+data_source_key:("'.$value.'")');
                     break;
             }
         }

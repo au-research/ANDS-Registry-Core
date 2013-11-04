@@ -702,6 +702,21 @@ class Registry_objects extends CI_Model {
 		return array('deleted_record_keys'=>$deleted_record_keys, 'affected_record_keys'=>$affected_record_keys);
 	}
 
+	public function getTagsByKeys($keys){
+		$tags = array();
+		foreach($keys as $key){
+			$ro = $this->getPublishedByKey($key);
+			if($ro->tag){
+				$ro_tags = $ro->getTags();
+				foreach($ro_tags as $tag){
+					if(!in_array($tag, $tags)) array_push($tags, $tag);
+				}
+			}
+			unset($ro);
+		}
+		return $tags;
+	}
+
 
 	/**
 	 * Deletes a RegistryObject 

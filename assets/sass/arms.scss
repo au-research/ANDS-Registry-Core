@@ -1,0 +1,39 @@
+ul.ro_list{
+	list-style-type: none; margin: 0;
+	width:100%;
+	position:relative;
+	li.ro_item{
+		position:relative;
+		display:block;
+		min-height:70px;
+		background:white;
+		border-bottom:1px solid #ccc;
+		font-size:0.8em;
+		.ro_title{
+			padding:5px 55px 5px 35px;
+			font-size:1.2em;
+		}
+
+		.right_content{
+			position:absolute;
+			top:5px;
+			right:8px;
+		}
+
+		.ro_content{
+			padding:5px 0px;
+			img{
+				height:1.2em;
+			}
+			p{
+				margin-bottom:0;
+			}
+		}
+		.class_icon{
+			position:absolute;
+			top:8px;
+			left:8px;
+			height:1.2em;
+		}
+	}
+}

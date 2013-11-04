@@ -85,6 +85,8 @@ else
 
     <!-- additional styles -->
  
+    <link rel="stylesheet" href="<?php echo asset_url('css/arms.css', 'base'); ?>">
+
     <?php
       if(isset($less)){
         foreach($less as $s){
