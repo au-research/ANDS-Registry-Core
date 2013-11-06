@@ -44,3 +44,16 @@ ul.ro_list li.ro_item .class_icon {
   left: 8px;
   height: 1.2em;
 }
+/* line 38, ../sass/arms.scss */
+ul.ro_list li.ro_item:hover {
+  cursor: pointer;
+}
+/* line 42, ../sass/arms.scss */
+ul.ro_list li.selected {
+  background: #d9e7f3;
+}
+
+/* line 48, ../sass/arms.scss */
+div.tags div.btn-group {
+  margin: 4px;
+}

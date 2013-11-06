@@ -129,16 +129,24 @@ $base_url = str_replace('/apps','/registry',base_url());
         <?php elseif($lib=='google_map'):?>
             <script src="https://maps.googleapis.com/maps/api/js?libraries=drawing&amp;sensor=false" type="text/javascript"></script>
 
+        <?php elseif($lib=='select2'):?>
+            <link href="<?php echo asset_url('lib/select2/select2.css', 'base');?>" rel="stylesheet" type="text/css">
+            <link href="<?php echo asset_url('lib/select2/select2-bootstrap.css', 'base');?>" rel="stylesheet" type="text/css">
+            <script src="<?php echo asset_url('lib/select2/select2.min.js', 'base');?>" type="text/javascript"></script>
+
         <?php elseif($lib=='angular'):?>
             <script type="text/javascript" src="<?php echo asset_url('lib/angular.min.js', 'base') ?>"></script>
             <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-slugify.js', 'base') ?>"></script>
             <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/sortable.js', 'base') ?>"></script>
             <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/tinymce.js', 'base') ?>"></script>
             <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-sanitize-1.0.1.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/select2.js', 'base') ?>"></script>
 
         <?php elseif($lib=='colorbox'):?>
             <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
             <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
+
+        
 
         <?php endif; ?>
 

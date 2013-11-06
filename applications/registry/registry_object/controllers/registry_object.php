@@ -580,21 +580,18 @@ class Registry_object extends MX_Controller {
 		$ro = $this->ro->getByID($ro_id);
 
 		if($action=='add' && $tag!=''){
-			if($ro->addTag($tag)){
+			if($e = $ro->addTag($tag) && $ro->indexTag($tag)){
 				$jsonData['status'] = 'success';
 			}else {
 				$jsonData['status'] = 'error';
+				$jsonData['msg'] = $e;
 			}
 		}else if($action=='remove'){
-			if($ro->removeTag($tag)){
+			if($ro->removeTag($tag) && $ro->sync(false)){
 				$jsonData['status'] = 'success';
 			}else $jsonData['status'] = 'error';
 		}
-
-		if($e = $ro->sync()!=true){
-			$jsonData['status'] = 'error syncing';
-			$jsonData['msg'] = $e;
-		}
+		
 		echo json_encode($jsonData);
 	}
 

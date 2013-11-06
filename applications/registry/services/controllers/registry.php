@@ -120,6 +120,20 @@ class Registry extends MX_Controller {
 		echo json_encode($data);
 	}
 
+	public function test(){
+		// $this->load->model('registry/registry_object/registry_objects', 'ro'); $ro = $this->ro->getByID(60655);$ro->sync();
+		// $this->load->library('solr');
+		// $solrXML = '<doc><field name="id">60655</field><field name="key">minhtest</field><field name="data_source_id">161</field><field name="tag" update="add">minh2</field></doc>';
+		// echo $this->solr->addDoc("<add>".$solrXML."</add>");
+		// echo $this->solr->commit();
+		// echo 'done'. $solrXML;
+
+		// $solrXML = '<doc><field name="id">60655</field><field name="key">minhtest</field><field name="data_source_id">161</field><field name="tag" update="add">another</field></doc>';
+		// echo $this->solr->addDoc("<add>".$solrXML."</add>");
+		// echo $this->solr->commit();
+		// echo 'done'. $solrXML;
+	}
+
 	public function post_solr_search(){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
@@ -144,7 +158,8 @@ class Registry extends MX_Controller {
 				'class' => 'Class',
 				'group' => 'Contributed By',
 				'license_class' => 'Licence',
-				'type' => 'Type'
+				'type' => 'Type',
+				'tag' => 'Tag'
 			);
 			foreach($facets as $facet=>$display){
 				$this->solr->setFacetOpt('field', $facet);
@@ -155,6 +170,7 @@ class Registry extends MX_Controller {
 		}
 
 		if($filters['include_facet_tags']){
+			$this->solr->setOpt('sort', 'update_timestamp desc');
 			$this->solr->setFacetOpt('query', '{!ex=dt key="hasTag"}tag:*');
 			$this->solr->setFacetOpt('mincount','1');
 			$this->solr->setFacetOpt('limit','100');
@@ -174,70 +190,56 @@ class Registry extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	public function get_tags_from_search(){
-		set_exception_handler('json_exception_handler');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		$this->load->library('solr');
-		$this->load->helper('presentation_helper');
-		$filters = $this->input->post('filters');
-
-		//check php input for filters (angularjs ajax)
-		if(!$filters){
-			$data = file_get_contents("php://input");
-			$array = json_decode($data, true);
-			$filters = $array['filters'];
-		}
-		if(!$filters) $filters = array();
-		$filters['rows'] = 200;
-		$data = array();
-		$this->solr->setFilters($filters);
-		$this->solr->addBoostCondition('(tag:*)^1000');
-		$this->solr->executeSearch();
-		$result = $this->solr->getResult();
-
-		$keys = array();
-		foreach($result->{'docs'} as $d){
-			array_push($keys, $d->{'key'});
-		}
-
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$tags = $this->ro->getTagsByKeys($keys);
-		echo json_encode($tags);
-	}
-
-	public function tags($action=''){
+	public function tags($source, $action=''){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		$this->load->library('solr');
 		$this->load->model('registry_object/registry_objects', 'ro');
-		$filters = $this->input->post('filters');
-		$tag = $this->input->post('tag');
-		//check php input for filters (angularjs ajax)
-		if(!$filters){
-			$data = file_get_contents("php://input");
-			$array = json_decode($data, true);
-			$filters = $array['filters'];
-			$tag = $array['tag'];
-		}
-		$filters['rows'] = 200;
-		$this->solr->setFilters($filters);
-		$this->solr->addBoostCondition('(tag:*)^1000');
-		$this->solr->executeSearch();
-		$result = $this->solr->getResult();
+
 		$keys = array();
-		foreach($result->{'docs'} as $d){
-			array_push($keys, $d->{'key'});
+		if($source=='solr'){
+			$filters = $this->input->post('filters');
+			$tag = $this->input->post('tag');
+			if(!$filters){
+				$data = file_get_contents("php://input");
+				$array = json_decode($data, true);
+				$filters = $array['filters'];
+				if(isset($array['tag'])) $tag = $array['tag'];
+			}
+			$this->solr->setFilters($filters);
+			$this->solr->addBoostCondition('(tag:*)^1000');
+			$this->solr->executeSearch();
+			$result = $this->solr->getResult();
+			foreach($result->{'docs'} as $d) array_push($keys, $d->{'key'});
+		}elseif($source == 'keys'){
+			$keys = $this->input->post('keys');
+			$tag = $this->input->post('tag');
+			if(!$keys){
+				$data = file_get_contents("php://input");
+				$array = json_decode($data, true);
+				$keys = $array['keys'];
+				if(isset($array['tag'])) $tag = $array['tag'];
+			}
 		}
-		// var_dump($keys);
-		foreach($keys as $key){
-			$ro = $this->ro->getPublishedByKey($key);
-			if($action=='add') $ro->addTag($tag);
-			if($action=='remove') $ro->removeTag($tag);
-			$ro->sync();
-			unset($ro);
+
+		if($action=='get'){
+			$tags = $this->ro->getTagsByKeys($keys);
+			echo json_encode($tags);
+		}else{
+			foreach($keys as $key){
+				$ro = $this->ro->getPublishedByKey($key);
+				if($action=='add' && $tag) $ro->addTag($tag);
+				if($action=='remove' && $tag) {
+					$ro->removeTag($tag);
+				}
+				unset($ro);
+			}
+			if($action=='add') $this->ro->batchIndexAddTag($keys, $tag);
+			if($action=='remove') $this->ro->batchIndexKeys($keys);
+			echo json_encode($keys);
 		}
+
 	}
 
 	/*
@@ -336,6 +338,7 @@ class Registry extends MX_Controller {
 			$item = array();
 			$item['title'] = $ds->title;
 			$item['id'] = $ds->id;
+			$item['key'] = $ds->key;
 			array_push($items, $item);
 		}
 		

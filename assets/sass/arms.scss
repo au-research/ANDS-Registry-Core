@@ -35,5 +35,17 @@ ul.ro_list{
 			left:8px;
 			height:1.2em;
 		}
+		&:hover{
+			cursor:pointer;
+		}
+	}
+	li.selected{
+		background:#d9e7f3;
+	}
+}
+
+div.tags{
+	div.btn-group{
+		margin:4px;
 	}
 }

@@ -55,6 +55,7 @@ class Relationships_Extension extends ExtensionBase
 		}
 
 		/* Create primary relationships links */
+		$this->_CI->load->model('registry/data_source/data_sources', 'ds');
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
 
 		if ($ds->create_primary_relationships == DB_TRUE && $ds->primary_key_1 && $ds->primary_key_1 != $this->ro->key && !in_array($ds->primary_key_1, $explicit_keys))

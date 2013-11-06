@@ -702,6 +702,11 @@ class Registry_objects extends CI_Model {
 		return array('deleted_record_keys'=>$deleted_record_keys, 'affected_record_keys'=>$affected_record_keys);
 	}
 
+	/**
+	 * get a list of tags based on a set of given keys
+	 * @param  [array] $keys [list of registry object keys to get the tags from]
+	 * @return [array]       [array of resulting tags]
+	 */
 	public function getTagsByKeys($keys){
 		$tags = array();
 		foreach($keys as $key){
@@ -717,6 +722,58 @@ class Registry_objects extends CI_Model {
 		return $tags;
 	}
 
+	/**
+	 * index keys after adding a single tag, this function performs the add tag functionality as well
+	 * @param  [array] $keys [list of registry object keys to add tags and index]
+	 * @param  [string] $tag  [a tag to add, must not be null or empty string]
+	 * @return [void]
+	 */
+	public function batchIndexAddTag($keys, $tag){
+		$_CI =& get_instance();
+		$solrXML = '';
+		$chunkSize = 400; 
+		$arraySize = sizeof($keys);
+		for($i = 0 ; $i < $arraySize ; $i++){
+			$key = $keys[$i];
+			$ro = $this->getPublishedByKey($key);
+			if($ro){
+				$ro->addTag($tag);
+				$solrXML .= '<doc><field name="id">'.$ro->id.'</field><field name="key">'.$ro->key.'</field><field name="data_source_id">'.$ro->data_source_id.'</field><field name="tag" update="add">'.$tag.'</field></doc>';
+				if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1)){
+					$_CI->solr->addDoc("<add>".$solrXML."</add>");
+					$_CI->solr->commit();
+					$solrXML ='';
+				}
+			}
+			unset($ro);
+		}
+	}
+
+	/**
+	 * batch enrich and index a set of keys, required in multiple places, put in for tag deletion
+	 * @param  [array] $keys [list of registry object keys to enrich and index]
+	 * @return [void]       
+	 */
+	public function batchIndexKeys($keys){
+		$_CI =& get_instance();
+		$solrXML = '';
+		$chunkSize = 400;
+		$arraySize = sizeof($keys);
+		for($i=0;$i<$arraySize; $i++){
+			$key = $keys[$i];
+			$ro = $this->getPublishedByKey($key);
+			if($ro){
+				$ro->enrich();
+				$solrXML.= $ro->transformForSOLR();
+				if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1)){
+					$_CI->solr->addDoc("<add>".$solrXML."</add>");
+					$_CI->solr->commit();
+					$solrXML ='';
+				}
+			}
+			unset($ro);
+		}
+	}
 
 	/**
 	 * Deletes a RegistryObject 
