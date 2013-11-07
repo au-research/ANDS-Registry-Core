@@ -51,6 +51,14 @@ angular.module('portal_theme',[]).
 			}
 		}
 	}).
+	directive('limit', function(){
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs){
+				console.log(element);
+			}
+		}
+	}).
 	directive('filmstrip', function(){
 		return {
 			restrict : 'A',
@@ -120,6 +128,7 @@ angular.module('portal_theme',[]).
 			filter['q'] = $('.theme_search_query', this).val();
 			if($.trim(filter['q'])=='') delete filter['q'];
 			// filter['id'] = $(this).attr('id');
+			filter['rows'] = 10; 
 			var search_id = $(this).attr('id');
 			$('.theme_search_fq', this).each(function(){
 				if(filter[$(this).attr('fq-type')]){
@@ -196,7 +205,19 @@ angular.module('portal_theme',[]).
 					var template = $('#facet-template').html();
 					var output = Mustache.render(template, facet_data);
 					$('.theme_facet[search-id='+search_id+']').html(output).show();
+
 				}
+				$('.sidebar ul.facet').each(function(idx, facet){
+					if($('li', facet).length>5){
+					    var $facet = $(facet);
+					    $('li:gt(4)', facet).hide();
+					    $facet.append('<li><a href="javascript:;" class="show-all-facet">Show More...</a></li>');
+					    $('.show-all-facet', facet).click(function(){
+							$(this).parent().siblings().show();
+							$(this).parent().remove();
+					    });
+					}
+				});
 			});
 		});
 

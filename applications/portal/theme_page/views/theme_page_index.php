@@ -32,7 +32,7 @@
 
 <script type="text/x-mustache" id="search-result-template">
 {{#has_result}}
-	<div class="tabs">
+	<div class="tabs hide">
 		<a href="<?php echo portal_url('search'); ?>#!/{{filter_query}}">All</a>
 		{{#tabs}}
 			<a href="<?php echo portal_url('search'); ?>#!/{{filter_query}}class={{inc_title}}" {{#current}}class="current"{{/current}}>{{title}}</a>
@@ -70,7 +70,7 @@
 <script type="text/x-mustache" id="facet-template">
 <div class="widget facet_{{facet_type}}">
 	<h4 class="widget_title">{{label}}</h4>
-	<ul>
+	<ul class="facet">
 		{{#values}}
 			<li><a href="<?php echo portal_url('search');?>#!/{{filter_query}}{{facet_type}}={{inc_title}}" class="filter" filter_type="{{facet_type}}" filter_value="{{title}}">{{title}} ({{count}})</a></li>
 		{{/values}}
