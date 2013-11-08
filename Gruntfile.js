@@ -19,13 +19,14 @@ module.exports = function(grunt){
 			}
 		},
 		concat:{
-			options:{
-				separator: ';'
-			},
 			coreStyles:{
+				options:{separator:''},
 				src:[
 					'<%= yeoman.assets %>/lib/twitter_bootstrap/css/bootstrap.css',
 					'<%= yeoman.assets %>/lib/twitter_bootstrap/css/bootstrap-responsive.css',
+					'<%= yeoman.assets %>/lib/qtip2/jquery.qtip.min.css',
+					'<%= yeoman.assets %>/lib/chosen/chosen.css',
+					'<%= yeoman.assets %>/lib/bootstrap_toggle_button/jquery.toggle.buttons.css',
 					'<%= yeoman.assets %>/lib/unicorn_styles/css/uniform.css',
 					'<%= yeoman.assets %>/lib/unicorn_styles/css/unicorn.main.css',
 					'<%= yeoman.assets %>/lib/unicorn_styles/css/unicorn.grey.css',
@@ -36,6 +37,7 @@ module.exports = function(grunt){
 				dest: '<%= yeoman.assets %>/css/arms.combine.css'
 			},
 			coreScripts:{
+				options:{separator:';'},
 				src:[
 					'<%=yeoman.assets %>/lib/jquery-1.7.2.min.js',
 					'<%=yeoman.assets %>/lib/jquery-ui-1.8.22.custom.min.js',

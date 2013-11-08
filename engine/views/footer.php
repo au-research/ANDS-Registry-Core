@@ -147,11 +147,6 @@ $base_url = str_replace('/apps','/registry',base_url());
         <script src="<?php echo asset_url('js/' . $script);?>.js" defer></script>
     <?php endforeach; endif; ?>
 
-    <?php if (isset($styles)): foreach($styles as $style):?>
-    	<link rel="stylesheet" type="text/css" href="<?php echo asset_url('css/' . $style);?>.css" />
-    <?php endforeach; endif; ?>
-
-
 
 	<!-- Bootstrap javascripts, need to be placed after all else -->
     <script src="<?php echo$base_url;?>assets/lib/twitter_bootstrap/js/bootstrap.js"></script>

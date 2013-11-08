@@ -46,19 +46,12 @@ if($this->config->item('environment_logo')){
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <!-- Styles -->    
-    <link rel="stylesheet" href="<?php echo asset_url('css/arms.combine.css', 'base'); ?>" media="screen">
-    
     <!-- ANDS print stylesheet-->
     <link href="<?php echo$base_url;?>assets/css/print.css" rel="stylesheet/less" type="text/css" media="print">
 
-    <!-- Libraries Styles-->
-    <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/chosen/chosen.css">
-    <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/bootstrap_toggle_button/jquery.toggle.buttons.css">
-    <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/qtip2/jquery.qtip.min.css">
+    <!-- Styles -->    
+    <link rel="stylesheet" href="<?php echo asset_url('css/arms.combine.css', 'base'); ?>" media="screen">
 
-
- 
     <!-- additional styles -->
     <?php
       if(isset($less)){
@@ -67,6 +60,10 @@ if($this->config->item('environment_logo')){
         }
       }
     ?>
+
+    <?php if (isset($styles)): foreach($styles as $style):?>
+      <link rel="stylesheet" type="text/css" href="<?php echo asset_url('css/' . $style);?>.css" />
+    <?php endforeach; endif; ?>
 
     <!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -82,8 +79,6 @@ if($this->config->item('environment_logo')){
   </head>
 
 <body<?php echo(array_search('prettyprint', $js_lib) !== FALSE ? ' onload="prettyPrint();"' : '');?>>
-
-<?php if(is_dev() && isset($debugbarRenderer)) echo $debugbarRenderer->render(); ?>
 
     <div id="header" <?=$environment_header_style;?>>
       <a href="<?php echo registry_url();?>" title="<?=$logo_title;?>" tip="<?=$logo_title;?>" my="center left" at="center right">
