@@ -1,4 +1,7 @@
 $ands_green:#84a07b;
+$ands_orange:eb7700;
+
+
 .sidebar{
 	.search-result{
 		.post{
@@ -21,6 +24,12 @@ $ands_green:#84a07b;
 				outline:none;
 				padding:4px 0;
 				font-size:1em;
+				&:hover{
+					color:$ands_orange !important;
+				}
+			}
+			img.logo{
+				display:none;
 			}
 			&:hover{
 				border:0;

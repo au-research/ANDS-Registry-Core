@@ -28,7 +28,6 @@ $base_url = str_replace('/apps','/registry',base_url());
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script>
-
         localStorage.clear();
         var base_url = '<?php echo $base_url;?>';
         var portal_url = '<?php echo portal_url();?>';
@@ -39,20 +38,12 @@ $base_url = str_replace('/apps','/registry',base_url());
         //urchin code
         <?php echo urchin_for($this->config->item('svc_urchin_id')); ?>
     </script>
-    <?php foreach($js_lib as $lib):?>
 
-        <?php if($lib=='core'):?>
-            <script src="<?php echo$base_url;?>assets/lib/jquery-1.7.2.min.js"></script>
-            <script src="<?php echo$base_url;?>assets/lib/less-1.3.0.min.js" type="text/javascript"></script>
-            <script src="<?php echo$base_url;?>assets/lib/jquery-ui-1.8.22.custom.min.js" type="text/javascript"></script>
-            <script src="<?php echo$base_url;?>assets/lib/jquery.sticky.js"></script>
-            <script src="<?php echo$base_url;?>assets/lib/mustache.js"></script>
-            <script src="<?php echo$base_url;?>assets/lib/chosen/chosen.jquery.js" type="text/javascript"></script>
-            <script src="<?php echo$base_url;?>assets/lib/jquery.ba-hashchange.js" type="text/javascript"></script>
-            <script src="<?php echo$base_url;?>assets/lib/bootstrap_toggle_button/jquery.toggle.buttons.js" type="text/javascript"></script>
-            <script src="<?php echo$base_url;?>assets/lib/qtip2/jquery.qtip.min.js" type="text/javascript"></script>
-            <script src="<?php echo$base_url;?>assets/lib/youtubepopup/jquery.youtubepopup.min.js" type="text/javascript"></script>            
-        <?php elseif($lib=='graph'):?>
+    <script type="text/javascript" src="<?php echo$base_url;?>assets/js/arms.min.js"></script>
+
+    <?php foreach($js_lib as $lib):?>
+            
+        <?php if($lib=='graph'):?>
             <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="excanvas.js"></script><![endif]-->
             <script language="javascript" type="text/javascript" src="<?php echo$base_url;?>assets/lib/jqplot/jquery.jqplot.min.js"></script>
             <script language="javascript" type="text/javascript" src="<?php echo$base_url;?>assets/lib/jqplot/plugins/jqplot.dateAxisRenderer.min.js"></script>
@@ -146,15 +137,9 @@ $base_url = str_replace('/apps','/registry',base_url());
             <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
             <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
 
-        
-
         <?php endif; ?>
 
     <?php endforeach;?>
-
-
-	<!-- ARMS scripts -->
-	<script src="<?php echo$base_url;?>assets/js/scripts.js"></script>
 
 
 	<!-- Module-specific styles and scripts -->

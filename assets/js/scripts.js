@@ -385,34 +385,7 @@ $(document).ready(function(){
 			$('#affiliation_signup').addClass('disabled');
 		}
 	});
-$.fn.YouTubePopup.defaults = {
-    'youtubeId': '',
-    'title': '',
-    'useYouTubeTitle': true,
-    'idAttribute': 'rel',
-    'cssClass': '',
-    'draggable': true,
-    'modal': true,
-    'width': 1280,
-    'height': 960,
-    'hideTitleBar': false,
-    'clickOutsideClose': true,
-    'overlayOpacity': 0.8,
-    'autohide': 2,
-    'autoplay': 1,
-    'color': 'red',
-    'color1': 'FFFFFF',
-    'color2': 'FFFFFF',
-    'controls': 1,
-    'fullscreen': 1,
-    'loop': 0,
-    'hd': 1,
-    'showinfo': 0,
-    'theme': 'light'
-	};
 
-	$("a.youtube").YouTubePopup();
-	$("button.youtube").YouTubePopup({ idAttribute: 'id', color: '#44ff99' });
 });
 
 jQuery.fn.extend({

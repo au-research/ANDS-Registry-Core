@@ -1,12 +1,29 @@
 /* line 1, ../sass/arms.scss */
-ul.ro_list {
+div.tags {
+  background: transparent;
+}
+/* line 3, ../sass/arms.scss */
+div.tags .btn-group {
+  margin: 4px;
+}
+
+/* line 9, ../sass/arms.scss */
+.ro_box .ro_list {
   list-style-type: none;
   margin: 0;
   width: 100%;
   position: relative;
 }
-/* line 5, ../sass/arms.scss */
-ul.ro_list li.ro_item {
+/* line 14, ../sass/arms.scss */
+.ro_box .ro_list li.no_records {
+  padding-top: 12px;
+  font-size: 1em;
+  text-align: center;
+  background-color: #efefef;
+  cursor: default;
+}
+/* line 22, ../sass/arms.scss */
+.ro_box .ro_list li.ro_item {
   position: relative;
   display: block;
   min-height: 70px;
@@ -14,46 +31,82 @@ ul.ro_list li.ro_item {
   border-bottom: 1px solid #ccc;
   font-size: 0.8em;
 }
-/* line 12, ../sass/arms.scss */
-ul.ro_list li.ro_item .ro_title {
+/* line 29, ../sass/arms.scss */
+.ro_box .ro_list li.ro_item:hover {
+  cursor: pointer;
+}
+/* line 32, ../sass/arms.scss */
+.ro_box .ro_list li.ro_item .ro_title {
   padding: 5px 55px 5px 35px;
   font-size: 1.2em;
 }
-/* line 17, ../sass/arms.scss */
-ul.ro_list li.ro_item .right_content {
+/* line 36, ../sass/arms.scss */
+.ro_box .ro_list li.ro_item .right_content {
   position: absolute;
   top: 5px;
   right: 8px;
 }
-/* line 23, ../sass/arms.scss */
-ul.ro_list li.ro_item .ro_content {
+/* line 41, ../sass/arms.scss */
+.ro_box .ro_list li.ro_item .ro_content {
   padding: 5px 0px;
 }
-/* line 25, ../sass/arms.scss */
-ul.ro_list li.ro_item .ro_content img {
+/* line 43, ../sass/arms.scss */
+.ro_box .ro_list li.ro_item .ro_content img {
   height: 1.2em;
 }
-/* line 28, ../sass/arms.scss */
-ul.ro_list li.ro_item .ro_content p {
+/* line 46, ../sass/arms.scss */
+.ro_box .ro_list li.ro_item .ro_content p {
   margin-bottom: 0;
 }
-/* line 32, ../sass/arms.scss */
-ul.ro_list li.ro_item .class_icon {
+/* line 50, ../sass/arms.scss */
+.ro_box .ro_list li.ro_item .right-menu {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+/* line 55, ../sass/arms.scss */
+.ro_box .ro_list li.ro_item .class_icon {
   position: absolute;
   top: 8px;
   left: 8px;
   height: 1.2em;
 }
-/* line 38, ../sass/arms.scss */
-ul.ro_list li.ro_item:hover {
-  cursor: pointer;
+/* line 61, ../sass/arms.scss */
+.ro_box .ro_list li.ro_item .toolbar {
+  position: absolute;
+  right: 8px;
+  bottom: 4px;
+  opacity: 0.2;
 }
-/* line 42, ../sass/arms.scss */
-ul.ro_list li.selected {
+/* line 68, ../sass/arms.scss */
+.ro_box .ro_list li.ui-state-highlight {
+  background: #FEFFD2;
+}
+/* line 69, ../sass/arms.scss */
+.ro_box .ro_list li.ro_selected {
   background: #d9e7f3;
 }
-
-/* line 48, ../sass/arms.scss */
-div.tags div.btn-group {
-  margin: 4px;
+/* line 72, ../sass/arms.scss */
+.ro_box .ro_list li.ro_error {
+  border-right: 5px solid #e54a4f;
+}
+/* line 75, ../sass/arms.scss */
+.ro_box .ro_list li.active {
+  background: #C1F4E7;
+}
+/* line 79, ../sass/arms.scss */
+.ro_box .stick {
+  width: 100%;
+  z-index: 9999;
+}
+/* line 80, ../sass/arms.scss */
+.ro_box .show_more {
+  position: absolute;
+  right: 0;
+  background: white;
+  font-size: 1em;
+  padding: 3px;
+  border: 1px solid #cdcdcd;
+  border-top: 0;
+  cursor: pointer;
 }

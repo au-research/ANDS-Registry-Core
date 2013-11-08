@@ -29,12 +29,9 @@ else
   $logo_title = 'Back to ANDS Online Services Home';
 }
 
-if($this->config->item('environment_logo'))
-{
+if($this->config->item('environment_logo')){
   $environment_logo = $this->config->item('environment_logo');
-}
-else
-{
+}else{
   $environment_logo = asset_url('/img/ands_logo_white.png', 'base');
 }
 
@@ -43,30 +40,15 @@ else
 <html lang="en">
   <head>
 
-    <?php if(is_dev() && isset($debugbarRenderer)):?>
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>/vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/vendor/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/debugbar.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/widgets.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/openhandler.css">
-    <script type="text/javascript" src="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/vendor/jquery-1.8.3.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/debugbar.js"></script>
-    <script type="text/javascript" src="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/widgets.js"></script>
-    <script type="text/javascript" src="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/openhandler.js"></script>
-    <?php endif;?>
-
     <meta charset="UTF-8" />
     <title><?php echo $title; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <!-- Twitter Bootstrap Styles -->
-    <link href="<?php echo$base_url;?>assets/lib/twitter_bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="<?php echo$base_url;?>assets/lib/twitter_bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
-
-
+    <!-- Styles -->    
+    <link rel="stylesheet" href="<?php echo asset_url('css/arms.combine.css', 'base'); ?>" media="screen">
+    
     <!-- ANDS print stylesheet-->
     <link href="<?php echo$base_url;?>assets/css/print.css" rel="stylesheet/less" type="text/css" media="print">
 
@@ -74,19 +56,10 @@ else
     <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/chosen/chosen.css">
     <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/bootstrap_toggle_button/jquery.toggle.buttons.css">
     <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/qtip2/jquery.qtip.min.css">
-    <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/youtubepopup/jquery-ui.css">
-    <!-- unicorn -->
-    <link href="<?php echo$base_url;?>assets/lib/unicorn_styles/css/uniform.css" rel="stylesheet">
-    <link href="<?php echo$base_url;?>assets/lib/unicorn_styles/css/unicorn.main.css" rel="stylesheet">
-    <link href="<?php echo$base_url;?>assets/lib/unicorn_styles/css/unicorn.grey.css" rel="stylesheet">
-    <!-- ANDS Less file and general styling correction-->
-    <link href="<?php echo$base_url;?>assets/css/base.css" rel="stylesheet">
-    <link href="<?php echo$base_url;?>assets/less/arms.less" rel="stylesheet/less" type="text/css">
 
-    <!-- additional styles -->
+
  
-    <link rel="stylesheet" href="<?php echo asset_url('css/arms.css', 'base'); ?>">
-
+    <!-- additional styles -->
     <?php
       if(isset($less)){
         foreach($less as $s){

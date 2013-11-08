@@ -142,7 +142,7 @@
 	</div>
 	<div class="widget-content nopadding">
 		<div class='selected_status hide'></div>
-		<ul class="sortable" connect_to="{{connectTo}}" status="{{name}}">
+		<ul class="sortable ro_list" connect_to="{{connectTo}}" status="{{name}}">
 			{{#items}}
 			<li id="{{id}}" data-toggle="context" data-target="#context-menu-{{status}}" class="status_{{status}} ro_item {{#has_flag}}flagged{{/has_flag}}" status="{{status}}">
 			<div class="ro_item_header">

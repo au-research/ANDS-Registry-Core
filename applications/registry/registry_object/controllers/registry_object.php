@@ -580,7 +580,7 @@ class Registry_object extends MX_Controller {
 		$ro = $this->ro->getByID($ro_id);
 
 		if($action=='add' && $tag!=''){
-			if($e = $ro->addTag($tag) && $ro->indexTag($tag)){
+			if($e = $ro->addTag($tag)){
 				$jsonData['status'] = 'success';
 			}else {
 				$jsonData['status'] = 'error';

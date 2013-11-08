@@ -1,4 +1,4 @@
-/* line 4, ../sass/ands_portal.scss */
+/* line 7, ../sass/ands_portal.scss */
 .sidebar .search-result .post {
   height: auto;
   padding: 0;
@@ -6,15 +6,15 @@
   min-height: 0;
   border: 0;
 }
-/* line 10, ../sass/ands_portal.scss */
+/* line 13, ../sass/ands_portal.scss */
 .sidebar .search-result .post .excerpt {
   display: none;
 }
-/* line 13, ../sass/ands_portal.scss */
+/* line 16, ../sass/ands_portal.scss */
 .sidebar .search-result .post .class_icon {
   display: none;
 }
-/* line 16, ../sass/ands_portal.scss */
+/* line 19, ../sass/ands_portal.scss */
 .sidebar .search-result .post a.title {
   color: #84a07b !important;
   line-height: 1.5;
@@ -24,7 +24,15 @@
   padding: 4px 0;
   font-size: 1em;
 }
-/* line 25, ../sass/ands_portal.scss */
+/* line 27, ../sass/ands_portal.scss */
+.sidebar .search-result .post a.title:hover {
+  color: eb7700 !important;
+}
+/* line 31, ../sass/ands_portal.scss */
+.sidebar .search-result .post img.logo {
+  display: none;
+}
+/* line 34, ../sass/ands_portal.scss */
 .sidebar .search-result .post:hover {
   border: 0;
   margin: 0;

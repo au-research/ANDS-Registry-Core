@@ -50,13 +50,6 @@ class Tags_Extension extends ExtensionBase{
 		}
 		return true;
 	}
-
-	function indexTag($tag){
-		$this->_CI->load->library('solr');
-		$solrXML = '<doc><field name="id">'.$this->ro->id.'</field><field name="key">'.$this->ro->key.'</field><field name="data_source_id">'.$this->ro->data_source_id.'</field><field name="tag" update="add">'.$tag.'</field></doc>';
-		$this->_CI->solr->addDoc("<add>".$solrXML."</add>");
-		$this->_CI->solr->commit();
-	}
 }
 	
 	
