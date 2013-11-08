@@ -367,6 +367,7 @@ class Connections_Extension extends ExtensionBase
         {
             foreach($result['response']['docs'] AS $doc)
             { 
+            	$matches = false;
             	$matched_ro = $this->_CI->ro->getByID($doc['id']);
             	if ($matched_ro)
             	{

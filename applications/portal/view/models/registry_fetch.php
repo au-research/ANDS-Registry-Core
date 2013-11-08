@@ -10,6 +10,7 @@ class Registry_fetch extends CI_Model
 		);
 
 		// Add a level of entity decoding here 
+		//return html_entity_decode($this->_transformByXSL($extrif, 'content_cross_walks/cc.xsl', $xsl_args));
 		return html_entity_decode($this->_transformByXSL($extrif, 'extRif2view.xsl', $xsl_args));
 	}
 
@@ -125,7 +126,8 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			throw new ErrorException("Error whilst fetching registry object connections: " . $contents['message']);
+			var_dump($contents);
+			throw new ErrorException("Error whilst fetching registry object connections: 333" . $url);
 		}
 	}
 

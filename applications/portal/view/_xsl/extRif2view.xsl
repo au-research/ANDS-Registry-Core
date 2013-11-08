@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:ro="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" exclude-result-prefixes="ro extRif">
     <xsl:output method="html" encoding="UTF-8" indent="no" omit-xml-declaration="yes"/>
+    <xsl:include href="annotations/default.xsl"/>
     <xsl:strip-space elements="*"/>
     <xsl:param name="dataSource" select="//extRif:extendedMetadata/extRif:dataSourceKey"/>
     <xsl:param name="dateCreated"/>
@@ -135,7 +136,7 @@
             </div>
 
             <xsl:apply-templates select="ro:collection | ro:activity | ro:party | ro:service"/>
-
+            
         </xsl:template>
 
         <xsl:template match="ro:collection | ro:activity | ro:party | ro:service">
@@ -449,6 +450,9 @@
 <!--  we will now transform the right hand stuff -->
 <div class="sidebar">
 <h3 id="draft_status" class="hide" style="color:#FF6688;">DRAFT PREVIEW</h3>
+
+<xsl:apply-templates select="../extRif:annotations"/>
+
   <xsl:if test="ro:location/ro:address/ro:electronic/@type='url' 
     or ro:rights or ro:location/ro:address/ro:electronic/@type='email' or ro:location/ro:address/ro:physical">     
     <div class="right-box">
