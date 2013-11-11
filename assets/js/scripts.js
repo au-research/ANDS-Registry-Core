@@ -533,14 +533,29 @@ function Core_checkValidField(form, field){
 	var warning = false;
 	if(field.required || $(field).attr('valid-type'))
 	{
+		typeField = $(field).next('input');
+		if(typeField){
+			validType = $(typeField).val();
+		}
+		else{
+			validType = $(field).attr('valid-type');
+		}
+
+
 		if(field.required && $(field).val().length==0){
 			valid = false;
 		}
 		else if($(field).attr('valid-type') && $(field).val().length > 0)
 		{
-			if($(field).attr('type')=='email'){//email validation
-				valid = validateEmail($(field).val());
-
+			if(validType=='email'){//email validation
+				if(validateEmail($(field).val())){
+					valid = true;
+				}else{
+					warning = true;
+				}
+			}
+			else if(validType=='other'){//email validation
+				valid = true;
 			}
 			else if($(field).attr('valid-type')=='date'){//email validation
 				valid = true;//validateDate($(field).val());
@@ -567,7 +582,7 @@ function Core_checkValidField(form, field){
 				// $(field).closest('div.control-group').removeClass('success').removeClass('error').addClass('warning');
 				// $(field).removeClass('success').addClass('warning');
 				// $(field).parent().append('<div class="alert alert-warning validation">Field should be a valid '+$(field).attr('valid-type')+'</div>');				
-				Core_addValidationMessage($(field), 'warning', 'Field should be a valid '+$(field).attr('valid-type'));
+				Core_addValidationMessage($(field), 'warning', 'Field should be a valid '+ validType);
 			}
 			return true;
 		}else{
@@ -576,7 +591,7 @@ function Core_checkValidField(form, field){
 			// $(field).removeClass('success').addClass('error');
 
 			if($(field).attr('valid-type')){
-				Core_addValidationMessage($(field), 'error', 'Field must be a valid '+$(field).attr('valid-type'));
+				Core_addValidationMessage($(field), 'error', 'Field must be a valid '+ validType);
 				// $(field).parent().append('<div class="alert alert-error validation">Field must be a valid '+$(field).attr('valid-type')+'</div>');
 			}else{
 				// $(field).parent().append('<div class="alert alert-error validation">Field value must be entered</div>');

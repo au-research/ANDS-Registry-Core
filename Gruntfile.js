@@ -106,6 +106,7 @@ module.exports = function(grunt){
 		'compass',
 		'less',
 		'concat',
+		'uglify'
 	]);
 
 	grunt.registerTask('core',[
