@@ -401,7 +401,53 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		echo json_encode(array("contributors"=>$contributors));
 	}
 
+	/**
+	 * Get a JSON list of recently updated records grouped by subject area code
+	 */
+	public function getLatestActivityBySubject($period = '7', $vocabulary = 'anzsrc-for')
+	{
+		if (!is_numeric($period)) return false;
+		$this->load->library('solr');
+		$this->load->library('vocab');
+		$this->solr->init();
 
+		$this->solr->setFacetOpt('field','subject_value_resolved');
+		$this->solr->setFacetOpt('mincount','1');
+		$this->solr->setOpt('fq','update_timestamp:[NOW-'.$period.'DAY TO NOW]');
+		$this->solr->executeSearch();
+
+		$activity_counts = array();
+		foreach($this->solr->getFacetResult('subject_value_resolved') AS $subject_label => $count)
+		{
+			$resolved_term = $this->vocab->resolveLabel($subject_label, $vocabulary);
+			if ($resolved_term)
+			{
+				$resolved_term['num_records'] = $count;
+				$activity_counts[] = $resolved_term;
+			}
+		}
+
+		echo json_encode(
+			array(
+				"status" => "success",
+				"info" => "Records updated in the registry for the last $period DAYS",
+				"results" => $activity_counts
+			)
+		);
+
+	}
+
+
+	/**
+	 * Return a tree/hierarchical structure of ancestors and descendent records of 
+	 * a specified record (inferred from the isPartOf/partOf relationships).
+	 *
+	 * If the registry object ID is specified, draft connections will be included.
+	 *
+	 * @param $_GET[slug] "SLUG" of the registry object to retrieve
+	 * @param $_GET[registry_object_id] A specific registry object ID to fetch
+	 * 
+	 */
 	public function getAncestryGraph()
 	{
 		$this->load->model('connectiontree');

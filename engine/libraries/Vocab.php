@@ -28,6 +28,37 @@ class Vocab {
     	return true;
     }
 
+    function resolveLabel($label, $vocabType)
+    {
+        if ($label)
+        {
+            if (isset($this->resolvingServices[$vocabType]['uriprefix']))
+            {
+                $vocab_config =  $this->resolvingServices[$vocabType];
+            }
+            else
+            {
+                throw new Exception("Unrecognised vocabulary: " . $vocabType);
+            }
+            $content = $this->post($this->constructUriString('label', $vocab_config, $label));
+            if ($content)
+            {
+                // Did the vocab service resolve this label to a URI?
+                $service_response = json_decode($content,true);
+                if (isset($service_response['result']['items'][0]))
+                {
+                    $subject = array();
+                    $subject['value'] = $service_response['result']['items'][0]['prefLabel']['_value'];
+                    $subject['about'] = $service_response['result']['items'][0]['_about'];
+                    $subject['notation'] = $service_response['result']['items'][0]['notation'];
+                    return $subject;
+                }
+            }
+        }
+        
+        return false;
+    }
+
 	function resolveSubject($term, $vocabType){
 		
         if($vocabType != '' && is_array($this->resolvingServices) && array_key_exists($vocabType, $this->resolvingServices))
@@ -95,6 +126,8 @@ class Vocab {
             $resourceQueryComp = 'resource.json?uri=';
         }else if($type=='broader'){
             $resourceQueryComp = 'concepts/allBroader.json?uri=';
+        }else if($type=='label'){
+            return $resourceQueryComp = $vocab['resolvingService']. 'concepts.json?anylabel=' . rawurlencode($term);
         }
         return $vocab['resolvingService'].$resourceQueryComp.$vocab['uriprefix'].$term;
     }
