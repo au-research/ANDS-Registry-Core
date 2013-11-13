@@ -166,7 +166,7 @@ class Transforms_Extension extends ExtensionBase
 
 			// Post-process the Grant and Funding info elements
 			$grants = $sxml->xpath('//FundingInfoList[@postproc="1"]');
-			if ($grant = $grants[0]->GrantNumber)
+			if (isset($grants[0]) && $grant = $grants[0]->GrantNumber)
 			{
 				// Remove the "to-process" marker
 				unset($grants[0]["postproc"]);
