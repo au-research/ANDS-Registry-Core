@@ -82,6 +82,9 @@ $ENV['ENABLED_MODULES'] = array(
 	//	-	Statistics dashboard
 	//			'statistics',
 
+	//  -   Twitter announcement app
+	//			'twitter',
+
 	// These modules require: ANDS-Developer-Portal to be installed:
 	// 	- 	Developer API documentation
 	//			'toolbox',
@@ -179,6 +182,15 @@ $eDBCONF['dois']['database'] = 'dois';
 $eDBCONF['dois']['dbdriver'] = 'postgre';
 */
 
+
+/*
+//=> TWITTER API
+//    - enables the /apps/twitter/ module to tweet about updates to the registry
+$ENV['twitter_consumer_key'] = '';
+$ENV['twitter_consumer_secret'] = '';
+$ENV['twitter_oauth_access_token'] = '';
+$ENV['twitter_oauth_access_secret'] = '';
+*/
 
 /*********************************************************************/
 /* (SECTION 5) ADVANCED DATABASE CONFIGURATION
