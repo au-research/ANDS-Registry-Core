@@ -13,8 +13,10 @@ class Transforms_Extension extends ExtensionBase
 	{
 		try{
 			$xslt_processor = Transforms::get_extrif_to_solr_transformer();
+			$xslt_processor->setParameter('','recordCreatedDate', gmdate('Y-m-d\TH:i:s\Z', $this->ro->created));
+			$xslt_processor->setParameter('','recordUpdatedDate', gmdate('Y-m-d\TH:i:s\Z', ($this->ro->updated ? $this->ro->updated : $this->ro->created)));
+			
 			$dom = new DOMDocument();
-
 			$dom->loadXML(str_replace('&', '&amp;' , $this->ro->getExtRif()));
 			if ($add_tags)
 			{

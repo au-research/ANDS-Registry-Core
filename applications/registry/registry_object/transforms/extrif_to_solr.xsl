@@ -5,6 +5,8 @@
     <xsl:output omit-xml-declaration="yes" indent="yes" />
     <xsl:strip-space elements="*"/>
     <xsl:output method="xml" encoding="UTF-8" />
+    <xsl:param name="recordCreatedDate" />
+    <xsl:param name="recordUpdatedDate" />
 
 <xsl:template match="/">
     <xsl:apply-templates/>
@@ -37,7 +39,16 @@
                 <xsl:apply-templates select="ro:originatingSource"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:id"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:dataSourceID"/>
-                <xsl:apply-templates select="extRif:extendedMetadata/extRif:contributor"/>                
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:contributor"/>
+
+                <xsl:element name="field">
+                    <xsl:attribute name="name">record_created_timestamp</xsl:attribute>
+                    <xsl:value-of select="$recordCreatedDate"/>
+                </xsl:element> 
+                <xsl:element name="field">
+                    <xsl:attribute name="name">record_modified_timestamp</xsl:attribute>
+                    <xsl:value-of select="$recordUpdatedDate"/>
+                </xsl:element>    
                 <!--xsl:apply-templates select="extRif:extendedMetadata/extRif:updateTimestamp"/-->
 
                 <xsl:element name="field">
