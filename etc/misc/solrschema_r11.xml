@@ -137,6 +137,12 @@
         <field name="update_timestamp" type="date" indexed="true" stored="true" default="NOW"
           multiValued="false"/>
 
+        <!-- <span class="internal">The logo of the record in the registry (only PUBLISHED records are currently indexed) </span> -->
+        <field name="record_created_timestamp" type="date" indexed="true" stored="true" multiValued="false"/>
+        
+        <!-- <span class="internal">The logo of the record in the registry (only PUBLISHED records are currently indexed) </span> -->
+        <field name="record_modified_timestamp" type="date" indexed="true" stored="true" multiValued="false"/>
+
         <!-- <span class="internal">The internal tag of the record </span> -->
         <field name="tag" type="string" indexed="true" stored="true" multiValued="true"/>
 

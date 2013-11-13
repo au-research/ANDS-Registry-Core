@@ -133,17 +133,22 @@ function  timeAgo($timestamp, $granularity=2, $format='Y-m-d H:i:s'){
         else return date($format, $timestamp); 
 }
 
-
-function ellipsis ($string, $length = 64)
+function ellipsis ($string, $length = 64, $noentities = false)
 {
-	if (strlen($string) <= $length)
-	{
-		return $string;
-	}
-	else
-	{
-		return substr($string,0, $length-3) . "&hellip;";
-	}
+    if (strlen($string) <= $length)
+    {
+        return $string;
+    }
+    else
+    {
+        return substr($string,0, $length-3) . ($noentities ? "..." : "&hellip;");
+    }
+}
+
+function pluralise($word, $count)
+{
+    if ($count == 1) return $word;
+    else return $word . "s";
 }
 
 function readable($text, $singular = false){
