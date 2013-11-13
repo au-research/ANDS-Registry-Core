@@ -176,7 +176,7 @@ class Registry extends MX_Controller {
 			$this->solr->setFacetOpt('limit','100');
 			$this->solr->setFacetOpt('sort','count');
 		}
-
+		if($filters['facet.sort']) $this->solr->setFacetOpt('sort',$filters['facet.sort']);
 		$data = array();
 		$this->solr->setFilters($filters);
 		$this->solr->addBoostCondition('(tag:*)^1000');
@@ -239,7 +239,40 @@ class Registry extends MX_Controller {
 			if($action=='remove') $this->ro->batchIndexKeys($keys);
 			echo json_encode($keys);
 		}
+	}
 
+	public function suggest($what='', $q=''){
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$this->load->library('solr');
+		$items = array();
+		$accepted_facet = array('class', 'type', 'group', 'tag', 'originating_source', 'subject_value_resolved');
+		if(in_array($what, $accepted_facet)){
+			$this->solr->setFacetOpt('field', $what);
+			$this->solr->setFacetOpt('sort','index');
+			$this->solr->executeSearch();
+			$tags = $this->solr->getFacet($what);
+			$tags = $tags->{'facet_fields'}->{$what};
+			for($i=0;$i<sizeof($tags);$i+=2){
+				if($q!=''){
+					if(stristr($tags[$i], $q)) array_push($items, array('value'=>$tags[$i], 'label'=>$tags[$i]));
+				}else{
+					array_push($items, array('value'=>$tags[$i], 'label'=>$tags[$i]));
+				}
+			}
+		}else if($what=='data_source_key'){
+			$this->load->model("data_source/data_sources","ds");
+			$dataSources = $this->ds->getAll(0, 0);
+			foreach($dataSources as $ds){
+				if($q!=''){
+					if(stristr($ds->title, $q)) array_push($items, array('value'=>$ds->key, 'label'=>$ds->title));
+				}else{
+					array_push($items, array('value'=>$ds->key, 'label'=>$ds->title));
+				}
+			}
+		}
+		echo json_encode($items);
 	}
 
 	/*
@@ -304,17 +337,13 @@ class Registry extends MX_Controller {
 		$results['ro_list'] = $query->result_array();
 		if(is_array($results['ro_list']) && count($results['ro_list'] > 0))
 		{
-			foreach ($results['ro_list'] AS &$item)
-			{
+			foreach ($results['ro_list'] AS &$item){
 				$item['status'] = readable($item['status'], true);
 			}
 		}
 		$results = json_encode($results);
 		echo $results;
 	}
-
-
-
 
 	/*
 	 * get_datasources_list

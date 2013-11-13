@@ -247,22 +247,52 @@ class Solr {
                     $this->setOpt('start', $start);
                     break;
                 case 'class': 
-                    if($value!='all') $this->setOpt('fq', '+class:('.$value.')');
+                    if(is_array($value)){
+                        $fq_str = '';
+                        foreach($value as $v) $fq_str .= ' class:('.$v.')'; 
+                        $this->setOpt('fq', $fq_str);
+                    }else{
+                        if($value!='all') $this->setOpt('fq', '+class:('.$value.')');
+                    }
                     break;
                 case 'group': 
-                    if($value!='all') $this->setOpt('fq', '+group:("'.$value.'")');
+                    if(is_array($value)){
+                        $fq_str = '';
+                        foreach($value as $v) $fq_str .= ' group:("'.$v.'")'; 
+                        $this->setOpt('fq', $fq_str);
+                    }else{
+                        $this->setOpt('fq', '+group:("'.$value.'")');
+                    }
                     break;
                 case 'type': 
-                    if($value!='all') $this->setOpt('fq', '+type:("'.$value.'")');
+                    if(is_array($value)){
+                        $fq_str = '';
+                        foreach($value as $v) $fq_str .= ' type:("'.$v.'")'; 
+                        $this->setOpt('fq', $fq_str);
+                    }else{
+                        if($value!='all') $this->setOpt('fq', '+type:("'.$value.'")');
+                    }
                     break;
                 case 'subject_value_resolved': 
-                    $this->setOpt('fq', '+subject_value_resolved:("'.$value.'")');
+                   if(is_array($value)){
+                        $fq_str = '';
+                        foreach($value as $v) $fq_str .= ' subject_value_resolved:("'.$v.'")'; 
+                        $this->setOpt('fq', $fq_str);
+                    }else{
+                        if($value!='all') $this->setOpt('fq', '+subject_value_resolved:("'.$value.'")');
+                    }
                     break;
                 case 's_subject_value_resolved': 
                     $this->setOpt('fq', '+s_subject_value_resolved:("'.$value.'")');
                     break;
                 case 'subject_vocab_uri':
-                    $this->setOpt('fq', '+subject_vocab_uri:("'.$value.'")');
+                    if(is_array($value)){
+                        $fq_str = '';
+                        foreach($value as $v) $fq_str .= ' subject_vocab_uri:("'.$v.'")'; 
+                        $this->setOpt('fq', $fq_str);
+                    }else{
+                        if($value!='all') $this->setOpt('fq', '+subject_vocab_uri:("'.$value.'")');
+                    }
                     break;
                 case 'temporal':
                     $date = explode('-', $value);
@@ -270,7 +300,13 @@ class Solr {
                     $this->setOpt('fq','+latest_year:[* TO '.$date[1].']');
                     break;
                 case 'license_class': 
-                    $this->setOpt('fq','+license_class:("'.$value.'")');
+                    if(is_array($value)){
+                        $fq_str = '';
+                        foreach($value as $v) $fq_str .= ' license_class:("'.$v.'")'; 
+                        $this->setOpt('fq', $fq_str);
+                    }else{
+                        if($value!='all') $this->setOpt('fq', '+license_class:("'.$value.'")');
+                    }
                     break;
                 case 'spatial':
                     $this->setOpt('fq','+spatial_coverage_extents:"Intersects('.$value.')"');
@@ -297,13 +333,31 @@ class Solr {
                     $this->setOpt('fl', $value);
                     break;
                 case 'tag':
-                    $this->setOpt('fq', '+tag:("'.$value.'")');
+                    if(is_array($value)){
+                        $fq_str = '';
+                        foreach($value as $v) $fq_str .= ' tag:("'.$v.'")'; 
+                        $this->setOpt('fq', $fq_str);
+                    }else{
+                        if($value!='all') $this->setOpt('fq', '+tag:("'.$value.'")');
+                    }
                     break;
                 case 'originating_source':
-                    $this->setOpt('fq', '+originating_source:("'.$value.'")');
+                    if(is_array($value)){
+                        $fq_str = '';
+                        foreach($value as $v) $fq_str .= ' originating_source:("'.$v.'")'; 
+                        $this->setOpt('fq', $fq_str);
+                    }else{
+                        if($value!='all') $this->setOpt('fq', '+originating_source:("'.$value.'")');
+                    }
                     break;
                 case 'data_source_key':
-                    $this->setOpt('fq', '+data_source_key:("'.$value.'")');
+                    if(is_array($value)){
+                        $fq_str = '';
+                        foreach($value as $v) $fq_str .= ' data_source_key:("'.$v.'")'; 
+                        $this->setOpt('fq', $fq_str);
+                    }else{
+                        if($value!='all') $this->setOpt('fq', '+data_source_key:("'.$value.'")');
+                    }
                     break;
             }
         }

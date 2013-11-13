@@ -9338,14 +9338,19 @@ div.tags .btn-group {
   margin: 4px;
 }
 
-/* line 9, ../sass/arms.scss */
+/* line 8, ../sass/arms.scss */
+.input-append ul.typeahead, .input-prepend ul.typeahead {
+  font-size: 14px;
+}
+
+/* line 13, ../sass/arms.scss */
 .ro_box .ro_list {
   list-style-type: none;
   margin: 0;
   width: 100%;
   position: relative;
 }
-/* line 14, ../sass/arms.scss */
+/* line 18, ../sass/arms.scss */
 .ro_box .ro_list li.no_records {
   padding-top: 12px;
   font-size: 1em;
@@ -9353,7 +9358,7 @@ div.tags .btn-group {
   background-color: #efefef;
   cursor: default;
 }
-/* line 22, ../sass/arms.scss */
+/* line 26, ../sass/arms.scss */
 .ro_box .ro_list li.ro_item {
   position: relative;
   display: block;
@@ -9362,75 +9367,75 @@ div.tags .btn-group {
   border-bottom: 1px solid #ccc;
   font-size: 0.8em;
 }
-/* line 29, ../sass/arms.scss */
+/* line 33, ../sass/arms.scss */
 .ro_box .ro_list li.ro_item:hover {
   cursor: pointer;
 }
-/* line 32, ../sass/arms.scss */
+/* line 36, ../sass/arms.scss */
 .ro_box .ro_list li.ro_item .ro_title {
   padding: 5px 55px 5px 35px;
   font-size: 1.2em;
 }
-/* line 36, ../sass/arms.scss */
+/* line 40, ../sass/arms.scss */
 .ro_box .ro_list li.ro_item .right_content {
   position: absolute;
   top: 5px;
   right: 8px;
 }
-/* line 41, ../sass/arms.scss */
+/* line 45, ../sass/arms.scss */
 .ro_box .ro_list li.ro_item .ro_content {
   padding: 5px 0px;
 }
-/* line 43, ../sass/arms.scss */
+/* line 47, ../sass/arms.scss */
 .ro_box .ro_list li.ro_item .ro_content img {
   height: 1.2em;
 }
-/* line 46, ../sass/arms.scss */
+/* line 50, ../sass/arms.scss */
 .ro_box .ro_list li.ro_item .ro_content p {
   margin-bottom: 0;
 }
-/* line 50, ../sass/arms.scss */
+/* line 54, ../sass/arms.scss */
 .ro_box .ro_list li.ro_item .right-menu {
   position: absolute;
   top: 5px;
   right: 5px;
 }
-/* line 55, ../sass/arms.scss */
+/* line 59, ../sass/arms.scss */
 .ro_box .ro_list li.ro_item .class_icon {
   position: absolute;
   top: 8px;
   left: 8px;
   height: 1.2em;
 }
-/* line 61, ../sass/arms.scss */
+/* line 65, ../sass/arms.scss */
 .ro_box .ro_list li.ro_item .toolbar {
   position: absolute;
   right: 8px;
   bottom: 4px;
   opacity: 0.2;
 }
-/* line 68, ../sass/arms.scss */
+/* line 72, ../sass/arms.scss */
 .ro_box .ro_list li.ui-state-highlight {
   background: #FEFFD2;
 }
-/* line 69, ../sass/arms.scss */
+/* line 73, ../sass/arms.scss */
 .ro_box .ro_list li.ro_selected {
   background: #d9e7f3;
 }
-/* line 72, ../sass/arms.scss */
+/* line 76, ../sass/arms.scss */
 .ro_box .ro_list li.ro_error {
   border-right: 5px solid #e54a4f;
 }
-/* line 75, ../sass/arms.scss */
+/* line 79, ../sass/arms.scss */
 .ro_box .ro_list li.active {
   background: #C1F4E7;
 }
-/* line 79, ../sass/arms.scss */
+/* line 83, ../sass/arms.scss */
 .ro_box .stick {
   width: 100%;
   z-index: 9999;
 }
-/* line 80, ../sass/arms.scss */
+/* line 84, ../sass/arms.scss */
 .ro_box .show_more {
   position: absolute;
   right: 0;
