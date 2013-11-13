@@ -42,7 +42,7 @@ class XML_Extension extends ExtensionBase
 		}
 	}
 	
-	function getSimpleXML($record_data_id = NULL)
+	function getSimpleXML($record_data_id = NULL, $extRif = false)
 	{
 		if (!is_null($this->_simplexml) && (is_null($record_data_id) || (!is_null($this->_xml) && ($this->_xml->record_data_id == $record_data_id))))
 		{
@@ -51,7 +51,14 @@ class XML_Extension extends ExtensionBase
 		else
 		{
 
-			$xml = $this->getRif($record_data_id);
+			if ($extRif)
+			{
+				$xml = $this->getExtRif($record_data_id);
+			}
+			else
+			{
+				$xml = $this->getRif($record_data_id);
+			}
 			$this->_simplexml = simplexml_load_string($xml);
 
 			$namespaces = $this->_simplexml->getNamespaces(true);

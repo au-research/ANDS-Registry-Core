@@ -3,7 +3,8 @@
 
     <xsl:output omit-xml-declaration="yes" indent="yes"/>
     <xsl:strip-space elements="*"/>
-    <xsl:param name="dateProvided"/>
+    <xsl:param name="dateRequested"/>
+    <xsl:param name="dateHarvested"/>
     <xsl:template match="/">
         <xsl:apply-templates/>
     </xsl:template>
@@ -14,20 +15,21 @@
         <DataRecord>
             <Header>
                 <DateProvided>
-                    <xsl:value-of select="$dateProvided"/>
+		    <xsl:value-of select="$dateRequested"/>
                 </DateProvided>
                 <RepositoryName>
-                    <xsl:choose>
-                        <!--xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:context">
+		    <xsl:value-of select="@group"/>
+		    <!--xsl:choose>
+			<xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:context">
                             <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:context"/>
-                        </xsl:when-->
+			</xsl:when>
                         <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:publisher">
                             <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:publisher"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:value-of select="@group"/>
                         </xsl:otherwise>
-                    </xsl:choose>                  
+		    </xsl:choose-->
                 </RepositoryName>
                 <Owner>
                     <xsl:value-of select="@group"/>
@@ -44,8 +46,8 @@
                             <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor"/>
                         </xsl:when>
                         <!-- use RelatedObjects then -->
-                        <xsl:when test="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'hasPrincipalInvestigator'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'principalInvestigator'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'author'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'coInvestigator']">
-                            <xsl:apply-templates select="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'hasPrincipalInvestigator'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'principalInvestigator'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'author'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'coInvestigator']"/>
+			<xsl:when test="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'hasPrincipalInvestigator'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'principalInvestigator'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'author'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'coInvestigator'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'isOwnedBy'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'hasCollector']">
+			    <xsl:apply-templates select="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'hasPrincipalInvestigator'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'principalInvestigator'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'author'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'coInvestigator'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'isOwnedBy'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'hasCollector']"/>
                         </xsl:when>
                         <!-- otherwise anonymus -->
                         <xsl:otherwise>
@@ -202,10 +204,10 @@
 
             </DescriptorsData>
             
-            <xsl:if test="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'isFundedBy']">
+	    <xsl:if test="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'isOutputOf']">
             <FundingInfo>
-                <FundingInfoList>
-                    <xsl:apply-templates select="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'isFundedBy']" mode="fundingInfo"/>
+		<FundingInfoList postproc="1">
+		    <xsl:apply-templates select="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'isOutputOf']" mode="fundingInfo"/>
                 </FundingInfoList>
             </FundingInfo>
             </xsl:if>
@@ -384,7 +386,7 @@
                     <xsl:value-of select="extRif:related_object_relation"/>
                 </AuthorRole>
                 <ResearcherID>
-                    <xsl:value-of select="extRif:related_object_key"/>
+		    <!--xsl:value-of select="extRif:related_object_key"/-->
                 </ResearcherID>
             </Author>
         </xsl:if>
@@ -394,9 +396,6 @@
         <GrantNumber>
             <xsl:apply-templates select="extRif:related_object_key"/>
         </GrantNumber>
-        <FundingOrganisation>
-            <xsl:apply-templates select="extRif:related_object_display_title"/>
-        </FundingOrganisation>
     </xsl:template>
 
     <xsl:template match="ro:namePart">
@@ -428,7 +427,10 @@
             </xsl:when>
             <xsl:when test="ro:collection/@dateAccessioned">
                 <xsl:value-of select="substring(ro:collection/@dateAccessioned,1,4)"/>
-            </xsl:when>           
+	    </xsl:when>
+	    <xsl:when test="$dateHarvested">
+		<xsl:value-of select="$dateHarvested" />
+	    </xsl:when>
         </xsl:choose>
     </xsl:template>
 
