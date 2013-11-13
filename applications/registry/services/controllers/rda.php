@@ -413,7 +413,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 		$this->solr->setFacetOpt('field','subject_value_resolved');
 		$this->solr->setFacetOpt('mincount','1');
-		$this->solr->setOpt('fq','update_timestamp:[NOW-'.$period.'DAY TO NOW]');
+		$this->solr->setOpt('fq','record_created_timestamp:[NOW-'.$period.'DAY TO NOW]');
 		$this->solr->executeSearch();
 
 		$activity_counts = array();
