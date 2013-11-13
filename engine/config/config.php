@@ -94,7 +94,14 @@ $config['application_directives'] = $application_directives;
 /* If no application is matched, what should we default to? */
 if (PHP_SAPI == 'cli')
 {
-	$default_application = 'registry';
+	if (array_key_exists($_SERVER['argv'][1], $application_directives))
+	{
+		$default_application = $_SERVER['argv'][1];
+	}
+	else
+	{
+		$default_application = 'registry';
+	}
 } 
 else
 {

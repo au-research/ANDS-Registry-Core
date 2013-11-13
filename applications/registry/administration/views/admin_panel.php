@@ -50,7 +50,7 @@
 
 					<? if mod_enabled('twitter'): ?>
 					<p>
-						<a href="<?=apps_url('twitter/tweet/');?>" alt="API Log">
+						<a href="<?=apps_url('twitter/tweet/activityUpdatesBySubject/true');?>" alt="API Log">
 							Run Twitter feed update (Manual Trigger)
 						</a>
 					</p>
