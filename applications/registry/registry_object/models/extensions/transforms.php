@@ -92,7 +92,8 @@ class Transforms_Extension extends ExtensionBase
 			$xslt_processor = Transforms::get_extrif_to_dci_transformer();
 			$dom = new DOMDocument();
 			$dom->loadXML($this->ro->getExtRif());
-			$xslt_processor->setParameter('','dateProvided', date("Y-m-d"));
+			$xslt_processor->setParameter('','dateHarvested', date("Y", $this->ro->created));
+			$xslt_processor->setParameter('','dateRequested', date("Y-m-d"));
 			$xml_output = $xslt_processor->transformToXML($dom);
 
 			$dom = new DOMDocument;
@@ -104,8 +105,8 @@ class Transforms_Extension extends ExtensionBase
 			foreach ($roles AS $i => $role)
 			{
 				// Remove the "to-process" marker
-
 				unset($roles[$i]["postproc"]);
+
 				// Change the value of the relation to be human-readable
 				$role->AuthorRole[0] = format_relationship("collection",(string)$role->AuthorRole[0],'EXPLICIT');
 				
@@ -160,6 +161,45 @@ class Transforms_Extension extends ExtensionBase
 				else
 				{
 					unset($roles[$i]->ResearcherID[0]);
+				}
+			}
+
+			// Post-process the Grant and Funding info elements
+			$grants = $sxml->xpath('//FundingInfoList[@postproc="1"]');
+			if ($grant = $grants[0]->GrantNumber)
+			{
+				// Remove the "to-process" marker
+				unset($grants[0]["postproc"]);
+
+				// Include identifiers and addresses for this author (if they exist in the registry)
+				$grant_object = $this->_CI->ro->getPublishedByKey((string)$grant);
+				if ($grant_object && $grant_object->status == PUBLISHED &&
+					$grant_sxml = $grant_object->getSimpleXML(NULL, TRUE))
+				{
+					// Handle the researcher IDs (using the normalisation_helper.php)
+					$grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc']");
+					$related_party = $grant_sxml->xpath("//extRif:related_object[extRif:related_object_relation = 'isFundedBy']");
+					if (is_array($grant_id))
+					{
+						$grant[0] = implode("\n", array_map('normaliseIdentifier', $grant_id));
+						if ((string) $grant[0] == "")
+						{
+							unset($grants[$i][0]);
+						}
+						elseif (is_array($related_party) && isset($related_party[0]))
+						{
+
+							$grants[0]->addChild("FundingBody",(string)$related_party[0]->children(EXTRIF_NAMESPACE)->related_object_display_title);
+						}
+					}
+					else
+					{
+						unset($grants[0][0]);
+					}
+				}
+				else
+				{
+					//unset($grants[0][0]);
 				}
 			}
 
