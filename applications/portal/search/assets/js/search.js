@@ -124,7 +124,6 @@ function executeSearch(searchData, searchUrl){
 			data: {filters:searchData},
 			dataType:'json',
 			success: function(data){
-				console.log(data);
 				$.each(data.result.docs, function(){
 					// log(this.display_title, this.score, this.id);
 				});
@@ -335,7 +334,6 @@ function loadSubjectBrowse(val){
 		$('#subjectfacet').append($('<div/>'));
 		var sqc = '';
 		if(searchData['q'] && $('.fuzzy-suggest').length==0){
-			console.log($('.fuzzy-suggest').length);
 			sqc += "+fulltext:(" + searchData['q'] + ")";
 		}else if(searchData['q'] && $('.fuzzy-suggest').length >0){
 			sqc +='+fulltext:('+searchData['q']+'~0.7)';

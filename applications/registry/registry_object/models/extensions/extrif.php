@@ -184,9 +184,10 @@ class Extrif_Extension extends ExtensionBase
 				if(count($xml->xpath('extRif:annotations'))){
 					$annotations = $xml->xpath('extRif:annotations')[0];
 				}else $annotations = $xml->addChild("extRif:annotations", NULL, EXTRIF_NAMESPACE);
-
 				if($tags = $this->ro->getTags()){
-					$extRifTags = $annotations->addChild("extRif:tags", NULL, EXTRIF_NAMESPACE);
+					if(count($xml->xpath('extRif:annotations/extRif:tags'))){
+						$extRifTags = $xml->xpath('extRif:annotations/extRif:tags')[0];
+					}else $extRifTags = $annotations->addChild("extRif:tags", NULL, EXTRIF_NAMESPACE);
 					foreach($tags as $tag){
 						$extRifTags->addChild('extRif:tag', $tag, EXTRIF_NAMESPACE);
 					}
