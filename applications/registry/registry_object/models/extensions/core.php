@@ -285,6 +285,8 @@ class Core_extension extends ExtensionBase
 	{
 		$log ='';
 		$this->db->delete('registry_object_relationships', array('registry_object_id'=>$this->id));
+		$this->db->delete('registry_object_identifier_relationships', array('registry_object_id'=>$this->id));
+		$this->db->delete('registry_object_identifiers', array('registry_object_id'=>$this->id));
 		//if($error = $this->db->_error_message())
 		//$log = NL."registry_object_relationships: " .$error;
 		$this->db->delete('registry_object_metadata', array('registry_object_id'=>$this->id));

@@ -60,7 +60,8 @@ class Connections_Extension extends ExtensionBase
 		
 		/* Step 1 - Straightforward link relationships */
 		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks());
-
+		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks(true));
+		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks());
 		/* Step 2 - Internal reverse links */
 		if ($allow_reverse_internal_links)
 		{
@@ -175,6 +176,7 @@ class Connections_Extension extends ExtensionBase
 				}
 			}
 		}
+
 		return array($ordered_connections);
 	}
 
@@ -204,6 +206,9 @@ class Connections_Extension extends ExtensionBase
 
 		/* Step 4 - Contributor */
 		$connections = array_merge($connections, $this->_getContributorLinks($allow_drafts));
+
+		$connections = array_merge($connections, $this->_getIdentifierLinks(true));
+		$connections = array_merge($connections, $this->_getReverseIdentifierLinks());
 
 		return $connections;
 	}
@@ -250,6 +255,45 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
+	function _getIdentifierLinks($allow_unmatched_records = false)
+	{
+		/* Step 1 - Straightforward link relationships */
+		$my_connections = array();
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type')
+				 ->from('registry_object_identifier_relationships rir')
+				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type ',($allow_unmatched_records ? 'left' : ''))
+				 ->join('registry_objects r','ri.registry_object_id = r.registry_object_id',($allow_unmatched_records ? 'left' : ''))			 
+				 ->where('rir.registry_object_id',$this->id)
+				 ->where('r.status','PUBLISHED');
+		$query = $this->db->get();
+
+		foreach ($query->result_array() AS $row)
+		{
+			$row['origin'] = "IDENTIFIER";
+			$my_connections[] = $row;
+		}
+		return $my_connections;
+	}
+
+	function _getReverseIdentifierLinks()
+	{
+		/* Step 1 - Straightforward link relationships */
+		$my_connections = array();
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type')
+				 ->from('registry_object_identifier_relationships rir')
+				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
+				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 
+				 ->where('ri.registry_object_id',$this->id)
+				 ->where('r.status','PUBLISHED');
+		$query = $this->db->get();
+
+		foreach ($query->result_array() AS $row)
+		{
+			$row['origin'] = "IDENTIFIER REVERSE";
+			$my_connections[] = $row;
+		}
+		return $my_connections;
+	}
 
 
 	function _getInternalReverseLinks($allow_unmatched_records = false)

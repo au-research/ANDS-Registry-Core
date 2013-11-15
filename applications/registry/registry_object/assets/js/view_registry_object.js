@@ -234,11 +234,18 @@ function processRelatedObjects()
                 {
                     revStr = "<em> (Automatically generated reverse link) </em>"
                 }
-
+                if(origin=='IDENTIFIER REVERSE')
+                {
+                    revStr = "<em> (Automatically generated reverse link by Identifier) </em>";
+                }
                 if (origin=='EXPLICIT') {
                      $('#rorow').show();
                      showRelated++;
                      $('.resolvedRelated[key_value="'+key+'"]').html(title );
+                }
+                else if (origin=='IDENTIFIER') {
+                    showRelated++;
+                    // probably shouldn't do much with them... they all visible via relatedInfo
                 }
                 else 
                     {

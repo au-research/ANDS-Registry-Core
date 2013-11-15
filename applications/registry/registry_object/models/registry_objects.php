@@ -251,6 +251,25 @@ class Registry_objects extends CI_Model {
 		return is_array($results) ? $results[0] : null;
 	}
 
+	/**
+	 * Returns exactly one registry object by URL slug (or NULL)
+	 *
+	 * @param the registry object identifier
+	 * @param the type of the registry object's identifier
+	 * @return _registry_object id
+	 */
+	function getByIdentifier($identifier, $type)
+	{
+		$query = $this->db->get_where('registry_object_identifiers', array("identifier" => $identifier, "identifier_type"=>identifier));
+		if ($query->num_rows() == 0)
+		{
+			return NULL;
+		}
+		else
+		{
+			return $query->result_array();
+		}
+	}
 
 	/**
 	 * Get a number of registry_objects that match the attribute requirement (or an empty array)
