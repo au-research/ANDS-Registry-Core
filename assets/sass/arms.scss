@@ -5,8 +5,12 @@ div.tags{
 	}
 }
 
-.input-append ul.typeahead, .input-prepend ul.typeahead{
+.input-append ul, .input-prepend ul{
 	font-size:14px;
+}
+
+.rowidget_wrapper{
+	display:inline-block;
 }
 
 .ro_box{

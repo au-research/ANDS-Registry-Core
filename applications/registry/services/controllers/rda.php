@@ -164,8 +164,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 		// Get the RO instance for this registry object so we can fetch its connections
 		$this->load->model('registry_object/registry_objects', 'ro');
-		if ($this->input->get('slug'))
-		{
+		if ($this->input->get('slug')){
 			$registry_object = $this->ro->getBySlug($this->input->get('slug'));
 			$published_only = TRUE;
 		}

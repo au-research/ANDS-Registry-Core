@@ -176,7 +176,7 @@ class Registry extends MX_Controller {
 			$this->solr->setFacetOpt('limit','100');
 			$this->solr->setFacetOpt('sort','count');
 		}
-		if($filters['facet.sort']) $this->solr->setFacetOpt('sort',$filters['facet.sort']);
+		if(isset($filters['facet.sort'])) $this->solr->setFacetOpt('sort',$filters['facet.sort']);
 		$data = array();
 		$this->solr->setFilters($filters);
 		$this->solr->addBoostCondition('(tag:*)^1000');
