@@ -205,7 +205,11 @@ if($this->config->item('environment_logo')){
                     <?php if ($this->user->hasFunction('REGISTRY_STAFF')): ?>
                         <li class="divider"></li>
                         <li class=""><?php echo anchor(registry_url('maintenance/registrySummary'), 'Registry Quality Summary');?></li>
-                    <?php endif; ?>  
+                    <?php endif; ?> 
+                    <?php if($this->user->hasFunction('SUPERUSER')): ?>
+                     <li class="divider"></li>
+                        <li class=""><?php  echo anchor(apps_url('/mydois/list_trusted'),'List Trusted DOI Clients'); ?></li>
+                    <?php endif; ?>                      
                 </ul>
               </li>
               <?php endif;?>
