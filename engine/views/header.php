@@ -173,6 +173,14 @@ if($this->config->item('environment_logo')){
                         <li class=""><?php echo anchor(apps_url('uploader/'), '&nbsp; &raquo; CMS Image Uploader');?></li>
                     <?php endif; ?>     
 
+                    <?php if($this->user->hasFunction('PORTAL_STAFF') && mod_enabled('theme_cms')): ?>
+                      <li class="divider"></li>
+                      <li class=""><?php echo anchor(apps_url('theme_cms/'), '<i class="icon-indent-left icon"></i> Theme CMS Editor'); ?></li>
+                      <?php if(mod_enabled('bulk_tag')): ?>
+                        <li class=""><?php echo anchor(apps_url('theme_cms/bulk_tag'), '&nbsp; &raquo; Bulk Tag'); ?></li>
+                      <?php endif; ?>
+                    <?php endif; ?>
+
                <!--     <?php if (($this->user->hasFunction('PUBLIC')) && mod_enabled('abs_sdmx_querytool')): ?>
                       <li class="divider"></li>
                       <li class=""><?php echo anchor(apps_url('abs_sdmx_querytool'), 'ABS SDMX Query Tool');?></li>

@@ -37,3 +37,28 @@
   border: 0;
   margin: 0;
 }
+
+/* line 42, ../sass/ands_portal.scss */
+div.theme-page-item {
+  border: 1px solid #ccc;
+  margin: 10px;
+  width: 298px;
+  height: 195px;
+  float: left;
+}
+/* line 48, ../sass/ands_portal.scss */
+div.theme-page-item img.cover {
+  height: 150px;
+  overflow: hidden;
+}
+/* line 52, ../sass/ands_portal.scss */
+div.theme-page-item h4.theme-page-title {
+  padding: 10px;
+  overflow: hidden;
+}
+/* line 56, ../sass/ands_portal.scss */
+div.theme-page-item p.theme-page-desc {
+  padding: 10px;
+  height: 100px;
+  overflow: auto;
+}

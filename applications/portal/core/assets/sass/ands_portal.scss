@@ -1,6 +1,6 @@
 $ands_green:#84a07b;
 $ands_orange:eb7700;
-
+$full_width:960;
 
 .sidebar{
 	.search-result{
@@ -36,5 +36,26 @@ $ands_orange:eb7700;
 				margin:0;
 			}
 		}
+	}
+}
+
+div.theme-page-item{
+	border:1px solid #ccc;
+	margin:10px;
+	width:($full_width / 3) - 2px - 20px;
+	height:195px;
+	float:left;
+	img.cover{
+		height:150px;
+		overflow:hidden;
+	}
+	h4.theme-page-title{
+		padding:10px;
+		overflow:hidden;
+	}
+	p.theme-page-desc{
+		padding:10px;
+		height:100px;
+		overflow:auto;
 	}
 }
