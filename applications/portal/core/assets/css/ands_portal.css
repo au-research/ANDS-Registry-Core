@@ -1,4 +1,9 @@
-/* line 7, ../sass/ands_portal.scss */
+/* line 6, ../sass/ands_portal.scss */
+span.darkgrey {
+  color: #7B7E80 !important;
+}
+
+/* line 12, ../sass/ands_portal.scss */
 .sidebar .search-result .post {
   height: auto;
   padding: 0;
@@ -6,15 +11,15 @@
   min-height: 0;
   border: 0;
 }
-/* line 13, ../sass/ands_portal.scss */
+/* line 18, ../sass/ands_portal.scss */
 .sidebar .search-result .post .excerpt {
   display: none;
 }
-/* line 16, ../sass/ands_portal.scss */
+/* line 21, ../sass/ands_portal.scss */
 .sidebar .search-result .post .class_icon {
   display: none;
 }
-/* line 19, ../sass/ands_portal.scss */
+/* line 24, ../sass/ands_portal.scss */
 .sidebar .search-result .post a.title {
   color: #84a07b !important;
   line-height: 1.5;
@@ -24,21 +29,21 @@
   padding: 4px 0;
   font-size: 1em;
 }
-/* line 27, ../sass/ands_portal.scss */
+/* line 32, ../sass/ands_portal.scss */
 .sidebar .search-result .post a.title:hover {
   color: eb7700 !important;
 }
-/* line 31, ../sass/ands_portal.scss */
+/* line 36, ../sass/ands_portal.scss */
 .sidebar .search-result .post img.logo {
   display: none;
 }
-/* line 34, ../sass/ands_portal.scss */
+/* line 39, ../sass/ands_portal.scss */
 .sidebar .search-result .post:hover {
   border: 0;
   margin: 0;
 }
 
-/* line 42, ../sass/ands_portal.scss */
+/* line 47, ../sass/ands_portal.scss */
 div.theme-page-item {
   border: 1px solid #ccc;
   margin: 10px;
@@ -47,17 +52,17 @@ div.theme-page-item {
   float: left;
   overflow: hidden;
 }
-/* line 49, ../sass/ands_portal.scss */
+/* line 54, ../sass/ands_portal.scss */
 div.theme-page-item img.cover {
   height: 150px;
   overflow: hidden;
 }
-/* line 53, ../sass/ands_portal.scss */
+/* line 58, ../sass/ands_portal.scss */
 div.theme-page-item h4.theme-page-title {
   padding: 10px;
   overflow: hidden;
 }
-/* line 57, ../sass/ands_portal.scss */
+/* line 62, ../sass/ands_portal.scss */
 div.theme-page-item p.theme-page-desc {
   padding: 10px;
   height: 100px;
