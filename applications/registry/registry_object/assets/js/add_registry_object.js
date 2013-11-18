@@ -42,6 +42,7 @@ $(function(){
 			if(aro_mode==ADVANCED_MODE){
 				$('.pane').hide();
 				$('#'+active_tab).show();
+
 				$('#advanced-menu a').parent().removeClass('active');
 				$('#advanced-menu a[href=#'+active_tab+']').parent().addClass('active');
 
@@ -56,7 +57,6 @@ $(function(){
 					enableTabNavigation();
 					enableNavigationConfirmation();
 				}
-				
 			}
 			else if(aro_mode==SIMPLE_MODE){
 				$('.pane').hide();
@@ -69,12 +69,14 @@ $(function(){
 			 location.hash = suffix + ADVANCED_MODE + "/" + "admin";
 			 $(window).hashchange();
 		}
+		initVocabWidgets($('#'+active_tab));
 	});
 	$(window).hashchange();//initial hashchange event
 	initEditForm();
 	Core_bindFormValidation($('#edit-form'));
 	setTabInfo();
 	markRequired($('#edit-form'));
+	initVocabWidgets($('#'+active_tab));
 	// === Sidebar navigation === //	
 	$('.submenu > a').click(function(e){
 		e.preventDefault();
@@ -753,12 +755,7 @@ function initEditForm(){
 	
 	// Add some loading text...
 	$('#response_result').html(loadingBoxMessage("Loading your Record..."));
-
-	// And queue the widgets to load in a little while...
-	window.setTimeout(function() { initMapWidget($(document)); }, 500);
-	window.setTimeout(function() { initVocabWidgets($(document)); }, 650);
 	$('#annotations_tab').hide();
-
 }
 
 function validate(){
