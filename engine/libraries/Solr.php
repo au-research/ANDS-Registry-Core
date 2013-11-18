@@ -322,8 +322,10 @@ class Solr {
                     break;
                 case 'boost_key':
                     if(is_array($value)){
+                        $weight = 1000;
                         foreach($value as $v){
-                            $this->addQueryCondition(' OR key:("'.$v.'")^100');
+                            $this->addQueryCondition(' OR key:("'.$v.'")^'.$weight);
+                            $weight = $weight - 10;
                         }
                     }else{
                         $this->addQueryCondition(' OR key:("'.$value.'")^100');

@@ -2,10 +2,10 @@
 <div class="container less_padding" ng-app="portal_theme">
 	<div class="breadcrumb">
 		<?php echo anchor('/', 'Home', array('class'=>'crumb')); ?> / 
-		<?php echo anchor('/theme_page/', 'Theme Pages', array('class'=>'crumb')); ?>
+		<?php echo anchor('/theme_page/', 'Themes', array('class'=>'crumb')); ?>
 	</div>
 	<div class="item-view-inner">
-		<div class="page-title" id="pageTitle"><h1>Theme Pages</h1></div>
+		<div class="page-title" id="pageTitle"><h1>Themes</h1></div>
 		
 		<div class="post clear">
 			<?php foreach($index['items'] as $page): ?>

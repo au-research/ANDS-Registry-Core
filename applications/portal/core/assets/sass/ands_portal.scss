@@ -43,8 +43,9 @@ div.theme-page-item{
 	border:1px solid #ccc;
 	margin:10px;
 	width:($full_width / 3) - 2px - 20px;
-	height:195px;
+	height:208px;
 	float:left;
+	overflow:hidden;
 	img.cover{
 		height:150px;
 		overflow:hidden;
