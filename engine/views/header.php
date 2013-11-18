@@ -209,7 +209,9 @@ if($this->config->item('environment_logo')){
                     <?php if($this->user->hasFunction('SUPERUSER')): ?>
                      <li class="divider"></li>
                         <li class=""><?php  echo anchor(apps_url('/mydois/list_trusted'),'List Trusted DOI Clients'); ?></li>
-                    <?php endif; ?>                      
+                     <li class="divider"></li>
+                        <li class=""><?php  echo anchor(apps_url('/pids/list_trusted'),'List Trusted PIDs Clients'); ?></li>   
+                    <?php endif; ?>              
                 </ul>
               </li>
               <?php endif;?>
