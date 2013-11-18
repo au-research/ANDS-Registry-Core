@@ -24,5 +24,5 @@ CREATE TABLE `registry_object_tags` (
   `key` varchar(255) NOT NULL,
   `tag` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14855 DEFAULT CHARSET=utf8
+);
 
