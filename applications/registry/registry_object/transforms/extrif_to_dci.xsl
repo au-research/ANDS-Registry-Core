@@ -386,7 +386,7 @@
                     <xsl:value-of select="extRif:related_object_relation"/>
                 </AuthorRole>
                 <ResearcherID>
-		    <!--xsl:value-of select="extRif:related_object_key"/-->
+		              <xsl:value-of select="extRif:related_object_key"/>
                 </ResearcherID>
             </Author>
         </xsl:if>
