@@ -57,9 +57,7 @@
 			<xsl:if test="$ro_class != 'collection'">
 				<li><a href="#existencedates" data-toggle="tab">Existence Dates</a></li>
 			</xsl:if>
-			<xsl:if test="extRif:annotations">
-				<li><a href="#annotations_pane" data-toggle="tab">Annotations</a></li>
-			</xsl:if>
+			<li id="annotations_tab"><a href="#annotations_pane" data-toggle="tab">Annotations</a></li>
 			<li><a href="#qa" id="savePreview" data-toggle="tab"><i class="icon-white icon-hdd"></i> Save &amp; Validate</a></li>
 		</ul>
 	</div>

@@ -757,6 +757,7 @@ function initEditForm(){
 	// And queue the widgets to load in a little while...
 	window.setTimeout(function() { initMapWidget($(document)); }, 500);
 	window.setTimeout(function() { initVocabWidgets($(document)); }, 650);
+	$('#annotations_tab').hide();
 
 }
 
@@ -1871,4 +1872,16 @@ $(document).on('click', '#next_tab', function(e){
 $(document).on('click', '#exit_tab', function(e){
 	window.location = $('#breadcrumb a:first').attr("href");
 });
+
+  function testKeyCode(e) {  
+    var keycode;  
+    if (window.event) keycode = window.event.keyCode;  
+    else if (e) keycode = e.which;  
+    var e = e || window.event;  
+    if(keycode==65 && e.altKey){  
+      $('#annotations_tab').toggle();  
+    }  
+  }  
+  
+  document.onkeydown = testKeyCode; 
 
