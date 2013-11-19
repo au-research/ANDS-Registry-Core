@@ -275,7 +275,10 @@ class Connections_Extension extends ExtensionBase
 					$row['class'] = $row['related_info_type'];
 				if($row['title'] == null) 
 					$row['title'] = $row['related_title'];
-				$my_connections[] = $row;
+				if($row['related_title'] != '' or $row['status'] != null)
+				{
+					$my_connections[] = $row;
+				}
 			}
 		}
 		return $my_connections;
