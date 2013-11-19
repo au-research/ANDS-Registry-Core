@@ -633,18 +633,16 @@ function generatePreviewTip(element, slug, registry_object_id, relation_type, re
                     }
                     this.set('content.text', temp.html());   
 
-
-
+                    var relDesc = '';
+                    var relUrl = '';
                     if (data.slug){
                         $('.viewRecordLink'+data.slug).attr("href",base_url + data.slug);
                         $('.viewRecord').attr("href", base_url + data.slug);
                         if(relation_type){
-                            var relDesc = '';
                             if(relation_description)
                             {
                                 relDesc = ' <br /><span style="color:#666666"><em>' + relation_description +'</em></span>'
                             }
-                            var relUrl = '';
                             if(relation_url)
                             {
                                 relUrl = ' <a href="' + relation_url +'" target="_blank"><em>(URL)</em></a></span>'
@@ -659,7 +657,6 @@ function generatePreviewTip(element, slug, registry_object_id, relation_type, re
                             {
                                 relDesc = ' <br /><span style="color:#666666"><em>' + relation_description +'</em></span>'
                             }
-                            var relUrl = '';
                             if(relation_url)
                             {
                                 relUrl = ' <a href="' + relation_url +'" target="_blank"><em>(URL)</em></a></span>'
