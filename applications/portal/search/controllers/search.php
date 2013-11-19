@@ -229,6 +229,7 @@ class Search extends MX_Controller {
 
 		//if still no result is found, do a fuzzy search, store the old search term and search again
 		if($this->solr->getNumFound()==0){
+			if (!isset($filters['q'])) $filters['q'] = '';
 			$new_search_term_array = explode(' ', $filters['q']);
 			$new_search_term='';
 			foreach($new_search_term_array as $c ){
