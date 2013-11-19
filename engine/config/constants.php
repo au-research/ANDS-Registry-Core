@@ -109,6 +109,7 @@ define('DELETED', 'DELETED');
 
 define('ONE_HOUR', 60*60);
 define('ONE_DAY', 60*ONE_HOUR);
+define('ONE_WEEK', 7*ONE_DAY);
 define('ONE_MONTH', 30*ONE_DAY);
 
 define('CONTRIBUTOR_PAGE_TEMPLATE', 'contributor');

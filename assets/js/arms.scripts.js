@@ -2406,7 +2406,7 @@ function logErrorOnScreen(error, target){
 
 $(document).ready(function(){
 
-	if ($('.dash_news').height() > 380) {
+	if ($('.dash_news').height() > 410) {
 		var orig_height = $('.dash_news').height();
 	    $('.dash_news').css({
 	        overflow: 'hidden',
@@ -2420,6 +2420,17 @@ $(document).ready(function(){
 	        	height:orig_height+10
 	        });
 	    });
+	}
+
+	if ($('#recentRecordsDashboard').length)
+	{
+		$.get(base_url+'auth/getRecentlyUpdatedRecords', 
+		function(data)
+		{
+			console.log(data);
+			$('#recentRecordsDashboard').html(data);
+		},
+		'html');
 	}
 
 	$('#main-nav-user-account').qtip({

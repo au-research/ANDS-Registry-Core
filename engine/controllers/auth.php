@@ -163,8 +163,30 @@ class Auth extends CI_Controller {
 			{
 				$db = $this->load->database( 'registry', TRUE );
 				$this->db = $db;
+
 				$this->load->model('data_source/data_sources','ds');
 				$data['data_sources']=$this->ds->getOwnedDataSources();
+
+				$ds_ids = array(); foreach($data['data_sources'] AS $ds) { $ds_ids[] = $ds->id; }
+
+				// Get recently updated records
+				$query = $db->select('ro.registry_object_id, ro.status, ro.title, ra.value AS updated')
+					->from('registry_object_attributes ra')
+					->join('registry_objects ro',
+						'ro.registry_object_id = ra.registry_object_id')
+					->where('ra.attribute','updated')
+					->where('ra.value >=', time() - (ONE_WEEK))
+					->where_in('ro.data_source_id', $ds_ids)
+					->limit(6)->order_by('value','desc');
+				$query = $query->get();
+				$data['recent_records'] = array();
+				if($query->num_rows() > 0)
+				{
+					foreach($query->result() AS $row)
+					{
+						$data['recent_records'][] = $row;
+					}
+				}
 			}
 
 			$this->load->view('dashboard', $data);
@@ -173,6 +195,38 @@ class Auth extends CI_Controller {
 		{
 			redirect('auth/login');
 		}
+	}
+
+	public function getRecentlyUpdatedRecords()
+	{
+		$db = $this->load->database( 'registry', TRUE );
+		$this->db = $db;
+
+		$this->load->model('data_source/data_sources','ds');
+		$data['data_sources']=$this->ds->getOwnedDataSources();
+
+		$ds_ids = array(); foreach($data['data_sources'] AS $ds) { $ds_ids[] = $ds->id; }
+
+		// Get recently updated records
+		$query = $db->select('ro.registry_object_id, ro.status, ro.title, ra.value AS updated')
+			->from('registry_object_attributes ra')
+			->join('registry_objects ro',
+				'ro.registry_object_id = ra.registry_object_id')
+			->where('ra.attribute','updated')
+			->where('ra.value >=', time() - (ONE_WEEK))
+			->where_in('ro.data_source_id', $ds_ids)
+			->limit(6)->order_by('value','desc');
+		$query = $query->get();
+
+		$data['recent_records'] = array();
+		if($query->num_rows() > 0)
+		{
+			foreach($query->result() AS $row)
+			{
+				$data['recent_records'][] = $row;
+			}
+		}
+		$this->load->view('dashboard_records', $data);
 	}
 	
 	public function printData($title, $internal_array)
