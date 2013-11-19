@@ -6,8 +6,8 @@
 	</div>
 	<div class="item-view-inner">
 		<div class="page-title" id="pageTitle"><h1>Themes</h1></div>
-		
 		<div class="post clear">
+			<?php if(sizeof($index['items']) > 0): ?>
 			<?php foreach($index['items'] as $page): ?>
 			<div class="theme-page-item">
 				<?php $img_src = ($page['img_src']?$page['img_src']:'http://placehold.it/350x150&text=No+Cover+Image'); ?>
@@ -15,6 +15,9 @@
 				<h4 class="theme-page-title"><?php echo anchor('theme_page/view/'.$page['slug'], $page['title']); ?></h4>
 			</div>
 			<?php endforeach; ?>
+			<?php else: ?>
+			<b>There are no theme pages set up</b>
+			<?php endif; ?>
 		</div>
 	</div>
 	
