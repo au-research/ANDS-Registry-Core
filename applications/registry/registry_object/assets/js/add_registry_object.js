@@ -617,7 +617,7 @@ function initEditForm(){
 
 				// Add some loading text...
 				$('#response_result').html(loadingBoxMessage("Saving &amp; Validating your Record...<p><br/></p><p><br/></p><p><br/></p><p><br/></p><small class='muted'>Been waiting a while? <a class='show_rifcs btn btn-link btn-mini muted'>Take a backup of your RIFCS XML</a> - just in case!</small>"));
-
+				changeHashTo(aro_mode+'/qa');
 
 				//test validation
 				// $.ajax({
