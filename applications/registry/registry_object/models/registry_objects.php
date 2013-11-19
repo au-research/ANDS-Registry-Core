@@ -271,6 +271,16 @@ class Registry_objects extends CI_Model {
 		}
 	}
 
+	function getByRelatedInfoIdentifier($identifier){
+		$query = $this->db->get_where('registry_object_identifier_relationships', array('related_object_identifier'=>$identifier)) {
+			if ($query->num_rows()) {
+				return NULL;
+			} else {
+				return $query->result_array();
+			}
+		}
+	}
+
 	/**
 	 * Get a number of registry_objects that match the attribute requirement (or an empty array)
 	 *

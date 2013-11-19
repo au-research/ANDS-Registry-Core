@@ -187,8 +187,6 @@ class Orcid extends MX_Controller {
 			}
 		}
 
-		// echo json_encode($suggested_collections);
-
 		//find parties that have the same orcid_id
 		$this->solr->clearOpt('fq');
 		$this->solr->setOpt('fq', '+class:party');
@@ -206,6 +204,16 @@ class Orcid extends MX_Controller {
 					}
 					array_push($already_checked, $d->{'id'});
 					unset($ro);
+				}
+			}
+		}
+
+		//find collection that has a relatedInfo/identifier like the orcid_id
+		$relatedByRelatedInfoIdentifier = $this->ro->getByRelatedInfoIdentifier($orcid_id);
+		if ( is_array($relatedByRelatedInfoIdentifier) && sizeof($relatedByRelatedInfoIdentifier) > 0 ) {
+			foreach ( $relatedByRelatedInfoIdentifier as $ro_id) {
+				if( !in_array($ro_id, $already_checked) ) {
+					array_push($already_checked, $ro_id);
 				}
 			}
 		}

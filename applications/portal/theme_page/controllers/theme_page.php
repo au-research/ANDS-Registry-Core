@@ -12,6 +12,8 @@ class Theme_page extends MX_Controller {
 
 	function view($slug=''){
 		$data['page'] = json_decode($this->fetch_theme_page_by_slug($slug), true);
+		$data['title'] = $data['page']['title'];
+		if(isset($data['page']['desc'])) $data['the_description'] = $data['page']['desc'];
 		$data['scripts'] = array('portal_theme');
 		$data['js_lib'] = array('angular', 'colorbox');
 		$this->load->view('theme_page_index', $data);
