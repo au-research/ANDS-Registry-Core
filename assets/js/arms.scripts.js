@@ -2410,9 +2410,9 @@ $(document).ready(function(){
 		var orig_height = $('.dash_news').height();
 	    $('.dash_news').css({
 	        overflow: 'hidden',
-	        height: '480px'
+	        height: '548px'
 	    }).append($('<div class="dash_news_overflow"></>'));
-	    $('.dash_news').after('<div class="show_all_dash_news">Show All</div>');
+	    $('.dash_news').after('<div class="show_all_dash_news"><small class="muted">Show More News</small></div>');
 	    $('.show_all_dash_news').click(function () {
 	        $(this).remove();
 	        $('.dash_news_overflow').fadeOut();
@@ -2422,12 +2422,12 @@ $(document).ready(function(){
 	    });
 	}
 
+	// dashboard fetches updated record info asynchronously
 	if ($('#recentRecordsDashboard').length)
 	{
 		$.get(base_url+'auth/getRecentlyUpdatedRecords', 
 		function(data)
 		{
-			console.log(data);
 			$('#recentRecordsDashboard').html(data);
 		},
 		'html');
