@@ -982,6 +982,7 @@
 							<input type="text" class="inner_input datepicker"  name="value" placeholder="startDate Value" value="{ro:startDate/text()}"/>
 							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSDateFormat" name="dateFormat" placeholder="startDate dateFormat" value="{ro:startDate/@dateFormat}"/>
 						</span>
+						<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
 					</div>
 				</div>
 			</div>
@@ -994,6 +995,7 @@
 							<input type="text" class="inner_input datepicker" name="value" placeholder="endDate Value" value="{ro:endDate/text()}"/>
 							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSDateFormat" name="dateFormat" placeholder="endDate dateFormat" value="{ro:endDate/@dateFormat}"/>
 						</span>
+						<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
 					</div>
 				</div>
 			</div>
@@ -2004,6 +2006,7 @@
 							<input type="text" class="inner_input datepicker"  name="value" placeholder="startDate Value" value=""/>
 							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSDateFormat" name="dateFormat" placeholder="startDate dateFormat" value=""/>
 						</span>
+						<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
 					</div>
 				</div>
 			</div>
@@ -2016,6 +2019,7 @@
 							<input type="text" class="inner_input datepicker" name="value" placeholder="endDate Value" value=""/>
 							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSDateFormat" name="dateFormat" placeholder="endDate dateFormat" value=""/>
 						</span>
+						<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
 					</div>
 				</div>
 			</div>
