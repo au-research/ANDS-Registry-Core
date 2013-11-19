@@ -285,7 +285,6 @@ class Registry_object extends MX_Controller {
 	}
 
 
-	/* XXX: Leo to fix ... use importer! */
 	public function add_new(){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');

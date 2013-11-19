@@ -196,21 +196,31 @@ function formatTip(tt){
     $('.qa_error').addClass('warning');
 }
 
-function processRelatedObjects()
+function processRelatedObjects(maxRelated)
 {
+    var maxRelatedStepSize = 10;
+    if(typeof maxRelated !== 'undefined')
+    {
+	// This occurs when the "Show More" button is clicked
+	$('#moreRowsNotice').remove();
+	var maxRelated =  maxRelated;
+    }
+    else
+    {
+	// Default number of non-explicit links to show
+	var maxRelated = maxRelatedStepSize;
+    }
+
     $.ajax({
         type: 'GET',
         url: base_url+'registry_object/getConnections/'+$('#registry_object_id').val(),
         dataType: 'json',
         success: function(data){
-             var maxRelated = 0
              var showRelated = 0;
              var moreToShow = '';
-            if(data.connections.length>20)
+
+	    if(data.connections.length<maxRelated)
             {
-                maxRelated = 20;
- 
-            }else{
                  maxRelated = data.connections.length;
             }
 
@@ -281,15 +291,21 @@ function processRelatedObjects()
             if(data.connections.length > showRelated)
             {
                 numToShow = data.connections.length - showRelated;
-                moreToShow = '<table class="subtable">' +                                      
+		moreToShow = '<table class="subtable" id="moreRowsNotice"><a id="moreRelatedObjects" />' +
                             '<tr><td><table class="subtable1">'+
-                            '<tr><td></td><td class="resolvedRelated" > There are '+numToShow+' more related objects</td></tr>'+                                     
+			    '<tr><td></td><td class="resolvedRelated" > There '+ (numToShow == 1 ? "is" : "are") + ' ' + numToShow+' more related object(s) not being displayed - <a href="#moreRelatedObjects" id="relatedObjectShowMore" data-more-length="'+maxRelated+'">show more</a></td></tr>'+
                             '</table></tr></td></table>';
-                $('#related_objects_table').last().append(moreToShow)     
+		$('#related_objects_table').last().append(moreToShow);
+		$('#relatedObjectShowMore').on('click', function()
+		{
+		    processRelatedObjects($(this).data('moreLength') + maxRelatedStepSize);
+		});
             }
                               
         }
                       
     });
+
+
 
 }
