@@ -298,10 +298,35 @@
     </xsl:if>
 
     <!-- DISPLAY RELATED INFO -->
-    <xsl:if test="ro:relatedInfo">
+    <xsl:if test="ro:relatedInfo[@type='publication']">
+        <p><xsl:text>&amp;nbsp;</xsl:text></p>
+        <h4>Related Publications</h4>
+        <xsl:apply-templates select="ro:relatedInfo[@type='publication']"/> 
+    </xsl:if>
+    <xsl:if test="ro:relatedInfo[@type='website']">
+        <p><xsl:text>&amp;nbsp;</xsl:text></p>
+        <h4>Related Websites</h4>
+        <xsl:apply-templates select="ro:relatedInfo[@type='website']"/> 
+    </xsl:if>
+    <xsl:if test="ro:relatedInfo[@type='reuseInformation']">
+        <p><xsl:text>&amp;nbsp;</xsl:text></p>
+        <h4>Reuse Information</h4>
+        <xsl:apply-templates select="ro:relatedInfo[@type='reuseInformation']"/> 
+    </xsl:if>
+    <xsl:if test="ro:relatedInfo[@type='dataQualityInformation']">
+        <p><xsl:text>&amp;nbsp;</xsl:text></p>
+        <h4>Data Quailty Information</h4>
+        <xsl:apply-templates select="ro:relatedInfo[@type='dataQualityInformation']"/> 
+    </xsl:if>
+    <xsl:if test="ro:relatedInfo[@type='metadata']">
+        <p><xsl:text>&amp;nbsp;</xsl:text></p>
+        <h4>Additional Metadata</h4>
+        <xsl:apply-templates select="ro:relatedInfo[@type='metadata']"/> 
+    </xsl:if>
+    <xsl:if test="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity']">
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
         <h4>More Information</h4>
-        <xsl:apply-templates select="ro:relatedInfo"/> 
+        <xsl:apply-templates select="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity']"/> 
     </xsl:if>
 
     

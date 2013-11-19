@@ -63,10 +63,19 @@ class Relationships_Extension extends ExtensionBase
 			
 			$related_info_type = (string)$related_info['type'];
 			$related_info_title = (string)$related_info->title;
+			$relation_type = "";
+			$relation_description = "";
+			$relation_url = "";
 			if($related_info->relation){
-				$relation_type = (string)$related_info->relation[0]['type'];
-				$relation_description = (string)$related_info->relation[0]->description;
-				$relation_url = (string)$related_info->relation[0]->url;
+				foreach($related_info->relation as $r)
+				{
+					$relation_type .= (string)$r['type'].", ";
+					$relation_description .= (string)$r->description.", ";
+					$relation_url .= (string)$r->url.", ";
+				}
+				$relation_type = substr($relation_type, 0, strlen($relation_type)-2);
+				$relation_description = substr($relation_description, 0, strlen($relation_description)-2);
+				$relation_url = substr($relation_url, 0, strlen($relation_url)-2);
 			}
 			if(in_array($related_info_type, $processedTypesArray))
 			{							
@@ -75,7 +84,7 @@ class Relationships_Extension extends ExtensionBase
 					$this->db->insert('registry_object_identifier_relationships', 
 						array(
 							"registry_object_id"=>$this->ro->id, 
-						  	"related_object_identifier"=>(string)$i,
+						  	"related_object_identifier"=>trim((string)$i),
 						  	"related_info_type"=>$related_info_type ,
 						  	"related_object_identifier_type"=>(string)$i['type'],
 						  	"relation_type"=>$relation_type,

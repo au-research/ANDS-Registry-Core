@@ -60,7 +60,7 @@ class Connections_Extension extends ExtensionBase
 		
 		/* Step 1 - Straightforward link relationships */
 		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks());
-		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks(true));
+		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks());
 		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks());
 		/* Step 2 - Internal reverse links */
 		if ($allow_reverse_internal_links)
@@ -139,7 +139,7 @@ class Connections_Extension extends ExtensionBase
 			{
 				$class_valid = true;
 			}
-			$status_valid = (!$published_only || ($connection['status'] == PUBLISHED));
+			$status_valid = (!$published_only || ($connection['status'] == PUBLISHED) || ($connection['origin'] == 'IDENTIFIER') ||  ($connection['origin'] == 'IDENTIFIER REVERSE'));
 			if ($class_valid && $status_valid)
 			{
 
@@ -207,9 +207,8 @@ class Connections_Extension extends ExtensionBase
 		/* Step 4 - Contributor */
 		$connections = array_merge($connections, $this->_getContributorLinks($allow_drafts));
 
-		$connections = array_merge($connections, $this->_getIdentifierLinks(true));
+		$connections = array_merge($connections, $this->_getIdentifierLinks());
 		$connections = array_merge($connections, $this->_getReverseIdentifierLinks());
-
 		return $connections;
 	}
 
@@ -255,22 +254,29 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-	function _getIdentifierLinks($allow_unmatched_records = false)
+	function _getIdentifierLinks()
 	{
 		/* Step 1 - Straightforward link relationships */
 		$my_connections = array();
-		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type')
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url')
 				 ->from('registry_object_identifier_relationships rir')
-				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type ',($allow_unmatched_records ? 'left' : ''))
-				 ->join('registry_objects r','ri.registry_object_id = r.registry_object_id',($allow_unmatched_records ? 'left' : ''))			 
-				 ->where('rir.registry_object_id',$this->id)
-				 ->where('r.status','PUBLISHED');
+				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type','left')
+				 ->join('registry_objects r','r.registry_object_id = ri.registry_object_id','left')			 
+				 ->where('rir.registry_object_id',$this->id);
 		$query = $this->db->get();
 
 		foreach ($query->result_array() AS $row)
 		{
-			$row['origin'] = "IDENTIFIER";
-			$my_connections[] = $row;
+			
+			if($row['status'] == null || $row['status'] == 'PUBLISHED')
+			{
+				$row['origin'] = "IDENTIFIER";
+				if($row['class'] == null) 
+					$row['class'] = $row['related_info_type'];
+				if($row['title'] == null) 
+					$row['title'] = $row['related_title'];
+				$my_connections[] = $row;
+			}
 		}
 		return $my_connections;
 	}
@@ -279,7 +285,7 @@ class Connections_Extension extends ExtensionBase
 	{
 		/* Step 1 - Straightforward link relationships */
 		$my_connections = array();
-		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type')
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
 				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 

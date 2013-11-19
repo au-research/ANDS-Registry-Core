@@ -30,7 +30,13 @@
 								$logo = '<img class="related_logo" src="'.$entry['logo'].'"/>';
 							}
 						}
-						if ($entry['status'] == PUBLISHED){
+						
+						if($entry['registry_object_id'] == null)
+						{
+							$url = $entry['relation_url'];
+							$preview = "";
+						}
+						else if ($entry['status'] == PUBLISHED){
 							$url = base_url() . $entry['slug'];
 							$preview = 'slug='.$entry['slug'];
 						}
