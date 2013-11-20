@@ -53,11 +53,16 @@ div.theme-page-item{
 	overflow:hidden;
 	img.cover{
 		height:150px;
+		width:100%;
 		overflow:hidden;
 	}
 	h4.theme-page-title{
 		padding:10px;
 		overflow:hidden;
+		text-align:center;
+		a{
+			text-align:center;
+		}
 	}
 	p.theme-page-desc{
 		padding:10px;
