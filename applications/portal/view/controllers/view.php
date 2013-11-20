@@ -245,7 +245,6 @@ class View extends MX_Controller {
 		}
 		else if ($this->input->post('roIds')) {
 			$currRoID = null;
-
 			$html = '';
 			foreach($this->input->post('roIds') as $roID)
 			{
@@ -265,14 +264,25 @@ class View extends MX_Controller {
 				}						
 			}			
 		}
+		else if ($this->input->get('identifier_relation_id')) {
+			try
+			{
+				$html = $this->registry->fetchRelatedInfoByIrId($this->input->get('identifier_relation_id'));
+			}
+			catch (SlugNoLongerValidException $e)
+			{
+				die("Registry object Identifier Relationship doesn't exists!)");
+			}
+		}
 		else 
 		{
-			die("Registry object could not be located (no SLUG or ID specified!)");
+			die("Registry object could not be located (no SLUG or ID or identifier_relation_id specified!)");
 		}
 
 		$response = array(
 			"slug" => $this->input->get('slug'),
 			"registry_object_id" => $this->input->get('registry_object_id'),
+			"rel_identifier_id" => $this->input->get('rel_identifier_id'),
 			"html" => "<div class='previewbox'>".$html."</div>"
 		);
 

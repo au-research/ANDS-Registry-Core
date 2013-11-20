@@ -23,6 +23,7 @@
 					{
 						// Link connections to PUBLISHED objects to their SLUG for SEOness...
 						$logo = '';
+						$iirId = '';
 						if(isset($entry['logo'])){
 
 							if (!in_array($entry['logo'], $this->config->item('banned_images')))
@@ -31,10 +32,11 @@
 							}
 						}
 						
-						if($entry['registry_object_id'] == null)
+						if(isset($entry['identifier_relation_id']) && $entry['registry_object_id'] == null)
 						{
 							$url = $entry['relation_url'];
 							$preview = "";
+							$iirId = 'identifier_relation_id='.$entry['identifier_relation_id'];
 						}
 						else if ($entry['status'] == PUBLISHED){
 							$url = base_url() . $entry['slug'];
@@ -72,9 +74,9 @@
 						}
 
 						if(!isset($conn[$entry['class']])){
-							$conn[$entry['class']] = $logo.'<p class="'.$entry['class'].' preview_connection"><a href="'.$url.'" '.$preview.' relation_type="'.$relationship.'" '.$relDesc.' '.$relUrl.'>'.$entry['title'].$suffix.'</a></p>';
+							$conn[$entry['class']] = $logo.'<p class="'.$entry['class'].' preview_connection"><a href="'.$url.'" '.$preview.' relation_type="'.$relationship.'" '.$relDesc.' '.$relUrl.' '.$iirId.'>'.$entry['title'].$suffix.'</a></p>';
 						}else{
-							$conn[$entry['class']] .= $logo.'<p class="'.$entry['class'].' preview_connection"><a href="'.$url.'" '.$preview.' relation_type="'.$relationship.'" '.$relDesc.' '.$relUrl.'>'.$entry['title'].$suffix.'</a></p>';
+							$conn[$entry['class']] .= $logo.'<p class="'.$entry['class'].' preview_connection"><a href="'.$url.'" '.$preview.' relation_type="'.$relationship.'" '.$relDesc.' '.$relUrl.' '.$iirId.'>'.$entry['title'].$suffix.'</a></p>';
 						}
 					}
 				}

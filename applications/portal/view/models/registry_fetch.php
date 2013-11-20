@@ -219,6 +219,19 @@ class Registry_fetch extends CI_Model
 		}
 	}
 
+	function fetchRelatedInfoByIrId($id)
+	{
+		$url = $this->config->item('registry_endpoint') . "getRelatedInfoByIrId/?id=" . $id;
+		$contents = json_decode(@file_get_contents($url), true);
+		if (isset($contents['data']))
+		{
+			return json_encode($contents['data']);
+		}
+		else
+		{
+			throw new ErrorException("Error whilst fetching Related Info page details: " . $contents['message']);
+		}
+	}
 
 	function fetchContributorData($group)
 	{

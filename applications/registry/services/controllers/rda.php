@@ -189,6 +189,28 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		echo json_encode(array("connections"=>$connections, 'class'=>$registry_object->class, 'slug'=>$registry_object->slug));
 	}
 
+	public function getRelatedInfoByIrId()
+	{
+		$result = array();
+		if (!($this->input->get('id')))
+		{ 
+			$result['message'] = "Invalid URL 'id' not specified.";
+		}
+		else{
+			$id = $this->input->get("id");
+			$query = $this->db->get_where('registry_object_identifier_relationships', array('id'=>$id));
+			if ($query->num_rows() > 0)
+			{
+				$result['data'] = $query->result_array();
+				echo json_encode($result);
+			}
+			else
+			{
+				$result['message'] = 'No record found';
+				echo json_encode($result);
+			}
+		}
+	}
 
 	/**
 	 * Fetch a list of suggested links
