@@ -15,6 +15,13 @@ body{min-height:100%;}
 		margin-left:378px;
 	}
 }
+
+.filmstrip, .carousel{
+	.flex-prev{
+		margin-left:auto;
+	}
+}
+
 .container{
 
 }
@@ -569,6 +576,7 @@ span.dynatree-node a{
 .scroller{
 	height:160px;
 	position:relative;
+	overflow:hidden;
 	.scroll{
 		position:absolute;
 		top:30%;
@@ -591,12 +599,13 @@ span.dynatree-node a{
 		ul{
 			max-height:260px;
 			width:1000%;
+			overflow:hidden;
 			li{
 				list-style-type:none;
 				display:block;
 				float:left;
-				width:200px;
-				max-height:260px;
+				height:200px;
+				max-width:260px;
 				img{
 					
 				}

@@ -33,7 +33,10 @@ angular.module('portal_theme',[]).
 		return {
 			restrict: 'AC',
 			link: function(scope, element, attrs){
-				$(element).colorbox(attrs.colorbox);
+				$(element).colorbox({
+					maxWidth:'100%',
+					maxHeight:'100%'
+				});
 			}
 		}
 	}).
@@ -63,38 +66,16 @@ angular.module('portal_theme',[]).
 		return {
 			restrict : 'A',
 			link: function(scope, element, attrs){
-				$('.scroll', element).on('click', function(){
-					if($(this).hasClass('left')){
-						$('.filmstrip', element).animate({
-							scrollLeft: '-=150'
-						}, 500, 'easeOutQuad',check);
-					}else{
-						$('.filmstrip', element).animate({
-							scrollLeft: '+=150'
-						}, 500, 'easeOutQuad',check);
-					}
+				$(element).flexslider({
+					animation:'slide',
+					controlNav: false,
+					directionNav: true,
+					animationLoop: false,
+					itemWidth: 320,
+					itemMargin:2,
+					minItems: 3,
+					maxItems: 10
 				});
-
-				var totalWidth = 0;
-				$('img', element).each(function(){
-					totalWidth += $(this).width();
-				});
-
-				check();
-				function check(){
-					var current = $('.filmstrip', element).scrollLeft();
-					if(current==0){
-						$('.left', element).hide();
-					}else $('.left', element).show();
-
-					if(totalWidth!=0){
-						if(current + $('.filmstrip', element).width() >= totalWidth){
-							$('.right', element).hide();
-						}else{
-							$('.right', element).show();
-						}
-					}
-				}
 			}
 		}
 	}).
@@ -104,8 +85,8 @@ angular.module('portal_theme',[]).
 				case 'collection': return 'Collections';break;
 				case 'activity': return 'Activities';break;
 				case 'party': return 'Parties';break;
-				case 'party_one': return 'Researchers';break;
-				case 'party_multi': return 'Research Groups';break;
+				case 'party_one': return 'People';break;
+				case 'party_multi': return 'Organisations & Groups';break;
 				case 'service': return 'Services';break;
 				default: return text;break;
 			}

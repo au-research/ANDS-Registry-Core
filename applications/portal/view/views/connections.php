@@ -89,21 +89,21 @@
 					$heading = "<h3>Contributed by</h3>";
 					break;
 				case "party":
-					$heading = "<h3>Researchers</h3>";
+					$heading = "<h3>People</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Researchers</a></p>';
+						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' People</a></p>';
 					}
 					break;					
 				case "party_one":
-					$heading = "<h3>Researchers</h3>";
+					$heading = "<h3>People</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Researchers</a></p>';
+						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' People</a></p>';
 					}
 					break;	
 				case "party_multi":
-					$heading = "<h3>Research Groups</h3>";
+					$heading = "<h3>Organisations & Groups</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Research Groups</a></p>';
+						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Organisations & Groups</a></p>';
 					}
 					break;	
 				case "activity":
