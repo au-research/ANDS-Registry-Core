@@ -32,12 +32,12 @@ class nlaPullback extends MX_Controller
 		/* Check that they are parties and queue up the list of NLA identifiers */
 		foreach ($query->result_array() AS $result)
 		{
-			$this->load->model('registry_object/registry_objects', 'ro');
-			$ro = $this->ro->getByID($result['registry_object_id']);
-			if ($ro) // no class checking!
-			{
+			//$this->load->model('registry_object/registry_objects', 'ro');
+			//$ro = $this->ro->getByID($result['registry_object_id']);
+			//if ($ro) // no class checking!
+			//{
 				$pullback_queue[$result['related_object_key']] = $result['related_object_key'];
-			}
+			//}
 		}
 
 
