@@ -267,7 +267,8 @@ class View extends MX_Controller {
 		else if ($this->input->get('identifier_relation_id')) {
 			try
 			{
-				$html = $this->registry->fetchRelatedInfoByIrId($this->input->get('identifier_relation_id'));
+				$data = $this->registry->fetchRelatedInfoByIrId($this->input->get('identifier_relation_id'));
+				$html = $data[0]['connections_preview_div'];
 			}
 			catch (SlugNoLongerValidException $e)
 			{

@@ -64,18 +64,21 @@ class Relationships_Extension extends ExtensionBase
 			$related_info_type = (string)$related_info['type'];
 			$related_info_title = (string)$related_info->title;
 			$relation_type = "";
-			$relation_description = "";
-			$relation_url = "";
+			$related_description = "";
+			$related_url = "";
+			$connections_preview_div = "<h4>".$related_info_title."</h4>";
 			if($related_info->relation){
 				foreach($related_info->relation as $r)
 				{
 					$relation_type .= (string)$r['type'].", ";
-					$relation_description .= (string)$r->description.", ";
-					$relation_url .= (string)$r->url.", ";
+					$relateddescription = (string)$r->description."<br/>";
+					if($related_url == '' && (string)$r->url != ''){
+						$related_url = (string)$r->url;
+					}
+					$urlStr = trim((string)$r->url);
+					$connections_preview_div .= "<p>".(string)$r->description.'<br/><a href="'.$urlStr.'">'.(string)$r->url."</a></p><br/>";
 				}
 				$relation_type = substr($relation_type, 0, strlen($relation_type)-2);
-				$relation_description = substr($relation_description, 0, strlen($relation_description)-2);
-				$relation_url = substr($relation_url, 0, strlen($relation_url)-2);
 			}
 			if(in_array($related_info_type, $processedTypesArray))
 			{							
@@ -89,8 +92,9 @@ class Relationships_Extension extends ExtensionBase
 						  	"related_object_identifier_type"=>(string)$i['type'],
 						  	"relation_type"=>$relation_type,
 						  	"related_title"=>$related_info_title,
-						  	"related_description"=>$relation_description,
-						  	"related_url"=>$relation_url
+						  	"related_description"=>$related_description,
+						  	"related_url"=>$related_url,
+						  	"connections_preview_div"=>$connections_preview_div
 						)
 					);
 				}
