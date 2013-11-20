@@ -198,7 +198,7 @@ function formatTip(tt){
 
 function processRelatedObjects(maxRelated)
 {
-    var maxRelatedStepSize = 10;
+    var maxRelatedStepSize = 2;
     if(typeof maxRelated !== 'undefined')
     {
 	// This occurs when the "Show More" button is clicked
@@ -291,15 +291,15 @@ function processRelatedObjects(maxRelated)
             if(data.connections.length > showRelated)
             {
                 numToShow = data.connections.length - showRelated;
-		moreToShow = '<table class="subtable" id="moreRowsNotice"><a id="moreRelatedObjects" />' +
-                            '<tr><td><table class="subtable1">'+
-			    '<tr><td></td><td class="resolvedRelated" > There '+ (numToShow == 1 ? "is" : "are") + ' ' + numToShow+' more related object(s) not being displayed - <a href="#moreRelatedObjects" id="relatedObjectShowMore" data-more-length="'+maxRelated+'">show more</a></td></tr>'+
-                            '</table></tr></td></table>';
-		$('#related_objects_table').last().append(moreToShow);
-		$('#relatedObjectShowMore').on('click', function()
-		{
-		    processRelatedObjects($(this).data('moreLength') + maxRelatedStepSize);
-		});
+			moreToShow = '<table class="subtable" id="moreRowsNotice"><a id="moreRelatedObjects" />' +
+				    '<tr><td><table class="subtable1">'+
+				    '<tr><td></td><td class="resolvedRelated" > There '+ (numToShow == 1 ? "is" : "are") + ' ' + numToShow + ' more related object(s) not being displayed - <a href="#moreRelatedObjects" id="relatedObjectShowMore" data-more-length="'+Math.min(numToShow,maxRelated)+'">show more</a></td></tr>'+
+				    '</table></tr></td></table>';
+			$('#related_objects_table').last().append(moreToShow);
+			$('#relatedObjectShowMore').on('click', function()
+			{
+			    processRelatedObjects(1 + $(this).data('moreLength') + Math.floor(showRelated / maxRelatedStepSize) * maxRelatedStepSize);
+			});
             }
                               
         }
