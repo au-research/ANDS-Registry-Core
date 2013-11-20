@@ -69,7 +69,6 @@
 
 <script type="text/x-mustache" id="facet-template">
 <div class="widget facet_{{facet_type}}">
-	<h4 class="widget_title">{{label}}</h4>
 	<ul class="facet">
 		{{#values}}
 			<li><a href="<?php echo portal_url('search');?>#!/{{filter_query}}{{facet_type}}={{inc_title}}" class="filter" filter_type="{{facet_type}}" filter_value="{{title}}">{{title}} ({{count}})</a></li>
@@ -89,7 +88,6 @@
 </script>
 
 <script type="text/x-mustache" id="relation-template">
-<h3>{{title}}</h3>
 {{#connections}}
 	<p class="{{class}} preview_connection"><a href="<?php echo portal_url(); ?>{{slug}}" slug="{{slug}}" relation_type="{{relation_type}}" relation_description="{{relation_description}}" relation_url="{{relation_url}}">{{title}}</a></p>
 {{/connections}}
