@@ -50,6 +50,7 @@ angular.module('portal_theme',[]).
 				    slideshowSpeed: 2500,
 				    pauseOnHover:true,
 				    directionNav:false,
+				    itemWidth:260,
 				  });
 			}
 		}
@@ -71,7 +72,7 @@ angular.module('portal_theme',[]).
 					controlNav: false,
 					directionNav: true,
 					animationLoop: false,
-					itemWidth: 320,
+					itemWidth: 260,
 					minItems: 3,
 					maxItems: 10,
 					move: 1
