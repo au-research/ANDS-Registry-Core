@@ -72,9 +72,9 @@ angular.module('portal_theme',[]).
 					directionNav: true,
 					animationLoop: false,
 					itemWidth: 320,
-					itemMargin:2,
 					minItems: 3,
-					maxItems: 10
+					maxItems: 10,
+					move: 1
 				});
 			}
 		}

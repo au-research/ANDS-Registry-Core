@@ -2,8 +2,8 @@
 <?php foreach($page[$region] as $f): ?>
 <div style="margin:10px 0">
 	<?php
-		if(isset($f['title']) && trim($f['title'])!=''){
-			echo '<h2>'.$f['title'].'</h2>';
+		if(isset($f['title']) && trim($f['title'])!='' && isset($f['heading']) && $f['heading']){
+			echo '<'.$f['heading'].'>'.$f['title'].'</'.$f['heading'].'>';
 		}
 	?>
 	<?php if($f['type']=='html'): ?>
