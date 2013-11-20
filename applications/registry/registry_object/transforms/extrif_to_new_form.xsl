@@ -110,6 +110,19 @@
 			<xsl:if test="$ro_class != 'collection'">
 				<xsl:call-template name="ExistenceDatesTab"/>
 			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="extRif:annotations">
+					<xsl:apply-templates select="extRif:annotations"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<div id="annotations_pane" class="pane hide">
+						<fieldset>
+							<legend>Annotations</legend>
+							<textarea id="annotations" rows="5" class="input-xxlarge" name="annotations"></textarea>	
+						</fieldset>
+					</div>
+				</xsl:otherwise>
+			</xsl:choose>
 			<xsl:apply-templates select="extRif:annotations"/>
 			<xsl:call-template name="recordQATab">
 				<xsl:with-param name="registry_object_id" select="$registry_object_id"/>
