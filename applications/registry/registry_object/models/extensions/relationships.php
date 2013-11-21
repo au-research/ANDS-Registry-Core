@@ -80,6 +80,7 @@ class Relationships_Extension extends ExtensionBase
 				}
 				$relation_type = substr($relation_type, 0, strlen($relation_type)-2);
 			}
+
 			if(in_array($related_info_type, $processedTypesArray))
 			{							
 				foreach($related_info->identifier as $i)

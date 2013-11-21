@@ -198,10 +198,13 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		}
 		else{
 			$id = $this->input->get("id");
-			$query = $this->db->get_where('registry_object_identifier_relationships', array('id'=>$id));
-			if ($query->num_rows() > 0)
-			{
-				$result['data'] = $query->result_array();
+			$query = $this->db->get_where('registry_object_identifier_relationships', array('id'=>$id), 1);
+			if ($query->num_rows() > 0){
+				$result_array = $query->result_array();
+				$result['data'] = $result_array;
+				if ($result_array[0]['related_object_identifier_type'] == 'orcid'){
+					$result['data'][0]['connections_preview_div'] = $this->resolveOrcid($result_array[0]['related_object_identifier'], 'html');
+				}
 				echo json_encode($result);
 			}
 			else
@@ -210,6 +213,35 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 				echo json_encode($result);
 			}
 		}
+	}
+
+	function resolveOrcid($orcid, $format = ''){
+		$ch = curl_init();
+		$headers = array('Accept: application/orcid+json');
+		curl_setopt($ch, CURLOPT_URL, "http://pub.orcid.org/".$orcid); # URL to post to
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 ); # return into a variable
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers ); # custom headers, see above
+		$result = curl_exec( $ch ); # run!
+		curl_close($ch);
+
+		if($format=='json'){
+			return $result;
+		}else if($format=='php'){
+			return json_decode($result, true);
+		}else if($format=='html'){
+			$html = '';
+			$result = json_decode($result, true);
+
+			$first_name = $result['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
+			$last_name = $result['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
+			$name = $first_name.' '.$last_name;
+			$bio = $result['orcid-profile']['orcid-bio']['biography']['value'];
+
+			$html .='<h4><a href="http://orcid.org/'.$orcid.'">'.$name.'</a></h4>';
+			$html.= '<p>'.$bio.'</p>';
+			return $html;
+		}
+
 	}
 
 	/**
