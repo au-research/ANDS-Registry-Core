@@ -11,6 +11,7 @@ CREATE TABLE `registry_object_identifier_relationships` (
   `related_title` varchar(255) DEFAULT NULL,
   `related_url` varchar(255) DEFAULT NULL,
   `related_description` varchar(512) DEFAULT NULL,
+  `connections_preview_div` text,
   PRIMARY KEY (`id`)
 );
 
