@@ -238,7 +238,9 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			$bio = $result['orcid-profile']['orcid-bio']['biography']['value'];
 
 			$html .='<h4><a href="http://orcid.org/'.$orcid.'">'.$name.'</a></h4>';
+			$html.='<p><img src="'.asset_url('img/orcid_tagline_small.png', 'base').'"/></p>';
 			$html.= '<p>'.$bio.'</p>';
+			$html.='<a href="http://orcid.org/'.$orcid.'">Orcid Profile</a>';
 			return $html;
 		}
 
