@@ -11,7 +11,7 @@
 			<?php foreach($index['items'] as $page): ?>
 			<div class="theme-page-item">
 				<?php $img_src = ($page['img_src']?$page['img_src']:'http://placehold.it/350x150&text=No+Cover+Image'); ?>
-				<a href="<?php echo portal_url('theme_page/view/'.$page['slug']);?>"><img class="cover"src="<?php echo $img_src;?>" alt=""></a>
+				<a href="<?php echo portal_url('theme/'.$page['slug']);?>"><img class="cover"src="<?php echo $img_src;?>" alt=""></a>
 				<h4 class="theme-page-title"><?php echo anchor('theme_page/view/'.$page['slug'], $page['title']); ?></h4>
 			</div>
 			<?php endforeach; ?>

@@ -69,7 +69,12 @@ $application_directives = array(
 				"base_url" => "%%BASEURL%%/",
 				"active_application" => "portal",
 				"default_controller" => "home/index",
-				"routes" => array("topic/(:any)" => "topic/view_topic/$1","(:any)"=>"core/dispatcher/$1", ),
+				"routes" => array(
+					"topic/(:any)" => "topic/view_topic/$1",
+					"themes" => "theme_page/index",
+					"theme/(:any)" => "theme_page/view/$1",
+					"(:any)"=>"core/dispatcher/$1",
+					),
 			),
 	"apps" =>
 			array(

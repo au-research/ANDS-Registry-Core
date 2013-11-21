@@ -76,7 +76,7 @@ else
 				<li><a href="<?=base_url('search/#!/q=/tab=party');?>">Parties</a></li>
 				<li><a href="<?=base_url('search/#!/q=/tab=activity');?>">Activities</a></li>
 				<li><a href="<?=base_url('search/#!/q=/tab=service');?>">Services</a></li>
-				<li><a href="<?=base_url("theme_page");?>">Themes</a></li>
+				<li><a href="<?=base_url("themes");?>">Themes</a></li>
 			</ul><!-- top_nav -->
 			<div class="clear"></div>
 		</div><!-- head -->
