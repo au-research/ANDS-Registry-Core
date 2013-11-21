@@ -94,7 +94,7 @@ function format_relationship($from_class, $relationship_type, $origin=false){
 	
 	$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
 
-	if($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR'){//reverse
+	if($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER'){//reverse
 		return (isset($allTypesArray[$relationship_type]) ? $allTypesArray[$relationship_type][1] : $relationship_type);
 	}
 	else 
