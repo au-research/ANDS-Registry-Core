@@ -260,7 +260,7 @@ class Transforms_Extension extends ExtensionBase
 		}
 	}
 
-	function cleanRIFCSofEmptyTags($rifcs, $removeFormAttributes='true'){
+	function cleanRIFCSofEmptyTags($rifcs, $removeFormAttributes='true', $throwExceptions = false){
 		try{
 			$xslt_processor = Transforms::get_form_to_cleanrif_transformer();
 			$dom = new DOMDocument();
@@ -271,8 +271,15 @@ class Transforms_Extension extends ExtensionBase
 			return $xslt_processor->transformToXML($dom);
 		}catch (Exception $e)
 		{
-			echo "UNABLE TO TRANSFORM" . BR;
-			echo "<pre>" . nl2br($e->getMessage()) . "</pre>" . BR;
+
+			if($throwExceptions)
+			{
+				throw new Exception("UNABLE TO TRANSFORM" . nl2br($e->getMessage()));
+			}
+			else{
+				echo "UNABLE TO TRANSFORM" . BR;
+				echo "<pre>" . nl2br($e->getMessage()) . "</pre>" . BR;
+			}
 		}
 	}
 

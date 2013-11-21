@@ -168,8 +168,17 @@ class Registry_object extends MX_Controller {
 		$xml = $this->input->post('xml');
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($registry_object_id);
-		$xml = $ro->cleanRIFCSofEmptyTags($xml, 'false');
-		$result = $ro->transformForQA(wrapRegistryObjects($xml));
+
+		try{
+			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'false', true);
+			$result = $ro->transformForQA(wrapRegistryObjects($xml));
+		}
+		catch(Exception $e)
+		{
+			$status = 'error';
+			$error_log = $e->getMessage();
+		}
+
 
 		$this->load->model('data_source/data_sources', 'ds');
 		$ds = $this->ds->getByID($ro->data_source_id);
@@ -231,12 +240,13 @@ class Registry_object extends MX_Controller {
 		$ds = $this->ds->getByID($ro->data_source_id);
 
 		$this->importer->forceDraft();
-		$xml = $ro->cleanRIFCSofEmptyTags($xml);
+		
 		$error_log = '';
 		$status = 'success';
 		//echo wrapRegistryObjects($xml);
 		//exit();
 		try{
+			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
 			$this->importer->setXML(wrapRegistryObjects($xml));
 			$this->importer->setDatasource($ds);
 			$this->importer->commit();
