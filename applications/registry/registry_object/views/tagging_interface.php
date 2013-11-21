@@ -2,7 +2,7 @@
 	<div class="alert alert-info">
 		Tags are shared between published and drafts records
 	</div>
-	<ul class="tags" ro_id="<?php echo $ro->id;?>">
+	<ul class="tags" ro_id="<?php echo $ro->id;?>" ro_key="<?php echo $ro->key; ?>">
 		<?php
 			if($tags){
 				foreach($tags as $t){
@@ -15,7 +15,7 @@
 	</ul>
 </div>
 <hr/>
-<form class="form tag_form" ro_id="<?php echo $ro->id;?>">
+<form class="form tag_form" ro_id="<?php echo $ro->id;?>" ro_key="<?php echo $ro->key; ?>">
 	<div class="input-append">
 		<input type="text" class="span8"/>
 		<button type="submit" class="btn"><i class="icon icon-plus"></i> Add Tag</button>

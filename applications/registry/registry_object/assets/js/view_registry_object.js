@@ -109,17 +109,16 @@ $(function(){
         e.preventDefault();
         e.stopPropagation();
         var ro_id = $(this).attr('ro_id');
+        var ro_key = $(this).attr('ro_key');
         var tag = $('input', this).val();
         var tag_html = '<li>'+tag+'<span class="hide"><i class="icon icon-remove"></i></span></li>';
         $('.notag').hide();
          $.ajax({
-            url:base_url+'registry_object/tag/add', 
+            url:real_base_url+'registry/services/registry/tags/keys/add', 
             type: 'POST',
-            data: {ro_id:ro_id,tag:tag},
+            data: {keys:[ro_key],tag:tag},
             success: function(data){
-                if(data.status=='success'){
-                    $('.tags').append(tag_html);
-                }
+                $('.tags').append(tag_html);
             }
         });
     });
@@ -133,11 +132,12 @@ $(function(){
         click: function(){
             var text = $(this).text();
             var ro_id = $(this).parent().attr('ro_id');
+            var ro_key = $(this).parent().attr('ro_key');
             var li_item = $(this);
             $.ajax({
-                url:base_url+'registry_object/tag/remove', 
+                url:real_base_url+'registry/services/registry/tags/keys/remove', 
                 type: 'POST',
-                data: {ro_id:ro_id,tag:text},
+                data: {keys:[ro_key],tag:text},
                 success: function(data){
                     li_item.remove();
                 }

@@ -188,6 +188,7 @@ class Extrif_Extension extends ExtensionBase
 				
 					if(count($xml->xpath('extRif:annotations/extRif:tags'))){
 						$extRifTags = $xml->xpath('extRif:annotations/extRif:tags')[0];
+						$extRifTags[0]='';//hack to remove the tags
 					}else $extRifTags = $annotations->addChild("extRif:tags", NULL, EXTRIF_NAMESPACE);
 
 					foreach($tags as $tag){
