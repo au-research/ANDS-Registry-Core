@@ -203,12 +203,12 @@ function processRelatedObjects(maxRelated)
     {
 	// This occurs when the "Show More" button is clicked
 	$('#moreRowsNotice').remove();
-	var maxRelated =  maxRelated;
+	   var maxRelated =  maxRelated;
     }
     else
     {
-	// Default number of non-explicit links to show
-	var maxRelated = maxRelatedStepSize;
+	   // Default number of non-explicit links to show
+	   var maxRelated = maxRelatedStepSize;
     }
 
     $.ajax({
@@ -298,7 +298,7 @@ function processRelatedObjects(maxRelated)
         		$('#related_objects_table').last().append(moreToShow);
         		$('#relatedObjectShowMore').on('click', function()
         		{
-        		    processRelatedObjects(1 + $(this).data('moreLength') + Math.floor(showRelated / maxRelatedStepSize) * maxRelatedStepSize);
+			    processRelatedObjects(maxRelatedStepSize + Math.floor(showRelated / maxRelatedStepSize) * maxRelatedStepSize);
         		});
             }
                               
