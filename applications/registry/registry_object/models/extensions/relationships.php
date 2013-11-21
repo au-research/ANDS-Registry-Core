@@ -79,6 +79,7 @@ class Relationships_Extension extends ExtensionBase
 					$connections_preview_div .= "<p>".(string)$r->description.'<br/><a href="'.$urlStr.'">'.(string)$r->url."</a></p><br/>";
 				}
 				$relation_type = substr($relation_type, 0, strlen($relation_type)-2);
+				$connections_preview_div .= '<p>('.$relation_type.')</p>';
 			}
 
 			if(in_array($related_info_type, $processedTypesArray))
