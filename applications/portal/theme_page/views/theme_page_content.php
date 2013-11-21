@@ -16,7 +16,7 @@
 		<div class="flexslider <?php echo $f['gallery_type']; ?>" <?php echo $f['gallery_type']; ?> style="min-height:0;margin-bottom:60px;">
 			<ul class="slides">
 				<?php foreach($f['gallery'] as $i): ?>
-				<li><a href="<?php echo $i['src'] ?>" colorbox rel="<?php echo $f['title']; ?>"><img src="<?php echo $i['src'];?>" alt="" rel="<?php echo $f['title'] ?>"></a></li>
+				<li style="margin-left:20px; margin-right:20px;"><a href="<?php echo $i['src'] ?>" colorbox rel="<?php echo $f['title']; ?>"><img src="<?php echo $i['src'];?>" alt="" rel="<?php echo $f['title'] ?>"></a></li>
 				<?php endforeach; ?>
 			</ul>
 		</div>
