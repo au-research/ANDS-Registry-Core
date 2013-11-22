@@ -115,8 +115,8 @@ class View extends MX_Controller {
 				$m = strip_tags($m);
 				if(!in_array($m, $data['the_title']) && $m && $m!='') array_push($data['the_title'], $m);
 			}
-			$data['the_title'] = trim(implode(',', $data['the_title']));
 		}
+		$data['the_title'] = trim(implode(',', $data['the_title']));
 
 
 		if ($this->input->get('slug'))

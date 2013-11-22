@@ -72,7 +72,13 @@
 						}else{
 							$relUrl = '';
 						}
-						if ($entry['class'] == "party") $entry['class'] = "party_one";
+						if ($entry['class'] == "party") {
+							$entry['class'] = "party_one";
+							if(isset($count['party_one_count'])) {
+								$count['party_one_count']++;
+							}else $count['party_one_count'] = 1;
+						}
+
 						if(!isset($conn[$entry['class']])){
 							$conn[$entry['class']] = $logo.'<p class="'.$entry['class'].' preview_connection"><a href="'.$url.'" '.$preview.' relation_type="'.$relationship.'" '.$relDesc.' '.$relUrl.' '.$iirId.'>'.$entry['title'].$suffix.'</a></p>';
 						}else{
