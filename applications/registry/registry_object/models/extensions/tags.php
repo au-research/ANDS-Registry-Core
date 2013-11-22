@@ -32,7 +32,7 @@ class Tags_Extension extends ExtensionBase{
 	}
 
 	function addTag($tag){
-		if(!$this->ro->hasTag($tag)){
+		if(!$this->ro->hasTag($tag) && trim($tag)!=''){
 			$data = array(
 				'key'=>$this->ro->key,
 				'tag'=>$tag
@@ -40,7 +40,7 @@ class Tags_Extension extends ExtensionBase{
 			$this->db->insert('registry_object_tags', $data);
 			$this->markTag(1);
 			return true;
-		}else return 'Already has the tag: '+$tag;
+		}else return 'Error Adding: '+$tag;
 	}
 
 	function removeTag($tag){
