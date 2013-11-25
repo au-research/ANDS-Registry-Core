@@ -104,7 +104,16 @@ class View extends MX_Controller {
 		$matches = array();
 		preg_match('/<extRif\:the_description>(.*)<\/extRif:the_description>/s', $extRif['data'], $matches);
 		if(isset($matches[0]) && $matches[0]!=''){
-			$data['the_description'] = htmlentities(strip_tags($matches[0]),ENT_QUOTES | ENT_HTML5);
+			// PHP 5.3 compatibility
+			if(defined('ENT_HTML5'))
+			{
+				$ent_mode = ENT_QUOTES | constant('ENT_HTML5');
+			}
+			else
+			{
+				$ent_mode = ENT_QUOTES;
+			}
+			$data['the_description'] = htmlentities(strip_tags($matches[0]), $ent_mode);
 		}
 
 		$matches = array();
