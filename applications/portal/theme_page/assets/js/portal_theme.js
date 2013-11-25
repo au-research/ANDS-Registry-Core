@@ -174,20 +174,20 @@ angular.module('portal_theme',[]).
 
 				//facets
 				if($('.theme_facet[search-id='+search_id+']').length>0){
-					var facet_type = $('.theme_facet[search-id='+search_id+']').attr('facet-type');
-					var facet_data = '';
-					$(data.facet_result).each(function(){
-						if(this.facet_type==facet_type){
-							facet_data = this;
-						}
+					var facets = $('.theme_facet[search-id='+search_id+']');
+					$(facets).each(function(){
+						var facet_type = $(this).attr('facet-type');
+						var facet_data = '';
+						$(data.facet_result).each(function(){
+							if(this.facet_type==facet_type) facet_data = this;
+						});
+						$(facet_data.values).each(function(){
+							this.inc_title = encodeURIComponent(this.title);
+						});
+						var template = $('#facet-template').html();
+						var output = Mustache.render(template, facet_data);
+						$(this).html(output).show();
 					});
-					$(facet_data.values).each(function(){
-						this.inc_title = encodeURIComponent(this.title);
-					});
-					var template = $('#facet-template').html();
-					var output = Mustache.render(template, facet_data);
-					$('.theme_facet[search-id='+search_id+']').html(output).show();
-
 				}
 				$('.sidebar ul.facet').each(function(idx, facet){
 					if($('li', facet).length>5){
