@@ -1753,7 +1753,7 @@
 				<label class="control-label" for="title">Electronic Address: </label>
 				<div class="controls">
 					<span class="inputs_group">
-						<input type="text" class="inner_input" name="value" placeholder="Value" value=""/>
+						<input type="text" class="inner_input" name="value" placeholder="Value" value="" valid-type="url"/>
 						<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSElectronicAddressType" name="type" placeholder="Type" value=""/>
 					</span>
 					<xsl:if test="//ro:service">
