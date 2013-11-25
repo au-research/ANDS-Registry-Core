@@ -104,8 +104,12 @@ function format_relationship($from_class, $relationship_type, $origin=false){
 }
 
 function from_camel_case($str) {
-    $str[0] = strtolower($str[0]);
-    $func = create_function('$c', 'return " " . strtolower($c[1]);');
-    $newStr = preg_replace_callback('/([A-Z])/', $func, $str);
-    return ucfirst($newStr);
+	if(isset($str) && is_array($str))
+	{
+    	$str[0] = strtolower($str[0]);
+    	$func = create_function('$c', 'return " " . strtolower($c[1]);');
+    	$newStr = preg_replace_callback('/([A-Z])/', $func, $str);
+    	return ucfirst($newStr);
+	}
+	else return '';
   }
