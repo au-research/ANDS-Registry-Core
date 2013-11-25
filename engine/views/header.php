@@ -207,10 +207,14 @@ if($this->config->item('environment_logo')){
                         <li class=""><?php echo anchor(registry_url('maintenance/registrySummary'), 'Registry Quality Summary');?></li>
                     <?php endif; ?> 
                     <?php if($this->user->hasFunction('SUPERUSER')): ?>
-                     <li class="divider"></li>
-                        <li class=""><?php  echo anchor(apps_url('/mydois/list_trusted'),'List Trusted DOI Clients'); ?></li>
-                     <li class="divider"></li>
-                        <li class=""><?php  echo anchor(apps_url('/pids/list_trusted'),'List Trusted PIDs Clients'); ?></li>   
+		      <?php if (mod_enabled('mydois')): ?>
+		       <li class="divider"></li>
+			  <li class=""><?php  echo anchor(apps_url('/mydois/list_trusted'),'List Trusted DOI Clients'); ?></li>
+		      <?php endif; ?>
+		      <?php if (mod_enabled('pids')): ?>
+		       <li class="divider"></li>
+			  <li class=""><?php  echo anchor(apps_url('/pids/list_trusted'),'List Trusted PIDs Clients'); ?></li>
+		      <?php endif; ?>
                     <?php endif; ?>              
                 </ul>
               </li>
