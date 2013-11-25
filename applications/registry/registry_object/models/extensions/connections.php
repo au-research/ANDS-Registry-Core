@@ -55,13 +55,13 @@ class Connections_Extension extends ExtensionBase
 		$this->_CI->load->model('data_source/data_sources','ds');
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
 
-		$allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t");
-		$allow_reverse_external_links = ($ds->allow_reverse_external_links == "t");
+		$allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t" || $ds->allow_reverse_internal_links == 1);
+		$allow_reverse_external_links = ($ds->allow_reverse_external_links == "t" || $ds->allow_reverse_external_links == 1);
 		
 		/* Step 1 - Straightforward link relationships */
 		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks());
 		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks());
-		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks());
+		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links));
 		/* Step 2 - Internal reverse links */
 		if ($allow_reverse_internal_links)
 		{
@@ -187,8 +187,8 @@ class Connections_Extension extends ExtensionBase
 		$this->_CI->load->model('data_source/data_sources','ds');
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
 
-		$allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t");
-		$allow_reverse_external_links = ($ds->allow_reverse_external_links == "t");
+		$allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t" || $ds->allow_reverse_internal_links == 1);
+		$allow_reverse_external_links = ($ds->allow_reverse_external_links == "t" || $ds->allow_reverse_external_links == 1);
 
 		$connections = array_merge($connections, $this->_getExplicitLinks($allow_drafts));
 
@@ -208,7 +208,7 @@ class Connections_Extension extends ExtensionBase
 		$connections = array_merge($connections, $this->_getContributorLinks($allow_drafts));
 
 		$connections = array_merge($connections, $this->_getIdentifierLinks());
-		$connections = array_merge($connections, $this->_getReverseIdentifierLinks());
+		$connections = array_merge($connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links));
 		return $connections;
 	}
 
@@ -284,16 +284,43 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-	function _getReverseIdentifierLinks()
+	function _getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links)
 	{
 		/* Step 1 - Straightforward link relationships */
 		$my_connections = array();
-		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id')
+		if($allow_reverse_internal_links && $allow_reverse_external_links)
+		{
+			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
 				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 
 				 ->where('ri.registry_object_id',$this->id)
 				 ->where('r.status','PUBLISHED');
+		}
+		else if($allow_reverse_internal_links)
+		{
+			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id')
+				 ->from('registry_object_identifier_relationships rir')
+				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
+				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 
+				 ->where('ri.registry_object_id',$this->id)
+				 ->where('r.data_source_id',$this->ro->data_source_id)
+				 ->where('r.status','PUBLISHED');
+		}
+		else if($allow_reverse_external_links)
+		{
+			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id')
+				 ->from('registry_object_identifier_relationships rir')
+				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
+				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 
+				 ->where('ri.registry_object_id',$this->id)
+				 ->where('r.data_source_id !=',$this->ro->data_source_id)
+				 ->where('r.status','PUBLISHED');
+		}
+		else{
+			return $my_connections;
+		}
+		
 		$query = $this->db->get();
 
 		foreach ($query->result_array() AS $row)
