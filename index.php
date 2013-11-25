@@ -18,7 +18,12 @@
  * NOTE: If you change these, also change the error_reporting() code below
  *
  */
-	define('ENVIRONMENT', 'development');
+
+// Pull in the global imports
+$eDBCONF = array();
+require_once('./global_config.php');
+
+define('ENVIRONMENT', $ENV['deployment_state']);
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING
@@ -47,9 +52,6 @@ if (defined('ENVIRONMENT'))
 	}
 }
 
-// Pull in the global imports
-$eDBCONF = array();
-require_once('./global_config.php');
 /*
  *---------------------------------------------------------------
  * SYSTEM FOLDER NAME

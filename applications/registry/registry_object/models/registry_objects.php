@@ -251,6 +251,34 @@ class Registry_objects extends CI_Model {
 		return is_array($results) ? $results[0] : null;
 	}
 
+	/**
+	 * Returns exactly one registry object by URL slug (or NULL)
+	 *
+	 * @param the registry object identifier
+	 * @param the type of the registry object's identifier
+	 * @return _registry_object id
+	 */
+	function getByIdentifier($identifier, $type)
+	{
+		$query = $this->db->get_where('registry_object_identifiers', array("identifier"=>$identifier, "identifier_type"=>$type));
+		if ($query->num_rows() == 0)
+		{
+			return NULL;
+		}
+		else
+		{
+			return $query->result_array();
+		}
+	}
+
+	function getByRelatedInfoIdentifier($identifier){
+		$query = $this->db->get_where('registry_object_identifier_relationships', array('related_object_identifier'=>$identifier));
+		if ($query->num_rows()) {
+			return NULL;
+		} else {
+			return $query->result_array();
+		}
+	}
 
 	/**
 	 * Get a number of registry_objects that match the attribute requirement (or an empty array)
@@ -434,23 +462,15 @@ class Registry_objects extends CI_Model {
 
 	function getByAttributeSQL($key, $value, $data_source_id = ""){
 		$CI =& get_instance();
-		
-		if($key=='tag'){
-			$result = $CI->db->select('ra.registry_object_id')->from('registry_object_attributes ra')->where('attribute', $key)->where('value !=', '');
-			if ($data_source_id)
-			{
-				$result->join('registry_objects r','ra.registry_object_id = r.registry_object_id')->where('data_source_id', $data_source_id);
-			}
-			$result = $result->get();
-		}else{
-			$result = $CI->db->select('ra.registry_object_id')->from('registry_object_attributes ra')->where('attribute', $key)->where('value', $value);
-			if ($data_source_id)
-			{
-				$result->join('registry_objects r','ra.registry_object_id = r.registry_object_id')->where('data_source_id', $data_source_id);
-			}
-			$result = $result->get();
+		if($value=='!='){
+			$result = $CI->db->select('ra.registry_object_id')->from('registry_object_attributes ra')->where('attribute', $key)->where('value !=', $value);
+		}else $result = $CI->db->select('ra.registry_object_id')->from('registry_object_attributes ra')->where('attribute', $key)->where('value', $value);
+		if ($data_source_id){
+			$result->join('registry_objects r','ra.registry_object_id = r.registry_object_id')->where('data_source_id', $data_source_id);
 		}
+		$result = $result->get();
 
+		
 		$res = array();
 		foreach($result->result() as $r){
 			array_push($res, array('registry_object_id'=>$r->registry_object_id));
@@ -468,7 +488,8 @@ class Registry_objects extends CI_Model {
 				if(in_array($key, $white_list) && array_key_exists('data_source_id', $args)){
 					$ff = $this->getByAttributeDatasource($args['data_source_id'], $key, $value, false, false);
 				}else{
-					$ff = $this->getByAttributeSQL($key, $value, $args['data_source_id']);
+					$data_source_id = (isset($args['data_source_id']) ? $args['data_source_id']: false);
+					$ff = $this->getByAttributeSQL($key, $value, $data_source_id);
 					$filtering = true;
 				}
 
@@ -709,6 +730,78 @@ class Registry_objects extends CI_Model {
 		return array('deleted_record_keys'=>$deleted_record_keys, 'affected_record_keys'=>$affected_record_keys);
 	}
 
+	/**
+	 * get a list of tags based on a set of given keys
+	 * @param  [array] $keys [list of registry object keys to get the tags from]
+	 * @return [array]       [array of resulting tags]
+	 */
+	public function getTagsByKeys($keys){
+		$tags = array();
+		foreach($keys as $key){
+			$ro = $this->getPublishedByKey($key);
+			if($ro->tag){
+				$ro_tags = $ro->getTags();
+				foreach($ro_tags as $tag){
+					if(!in_array($tag, $tags)) array_push($tags, $tag);
+				}
+			}
+			unset($ro);
+		}
+		return $tags;
+	}
+
+	/**
+	 * index keys after adding a single tag, this function performs the add tag functionality as well
+	 * @param  [array] $keys [list of registry object keys to add tags and index]
+	 * @param  [string] $tag  [a tag to add, must not be null or empty string]
+	 * @return [void]
+	 */
+	public function batchIndexAddTag($keys, $tag){
+		$_CI =& get_instance();
+		$solrXML = '';
+		$chunkSize = 400; 
+		$arraySize = sizeof($keys);
+		for($i = 0 ; $i < $arraySize ; $i++){
+			$key = $keys[$i];
+			$ro = $this->getPublishedByKey($key);
+			if($ro){
+				$ro->addTag($tag);
+				$solrXML .= '<doc><field name="id">'.$ro->id.'</field><field name="key">'.$ro->key.'</field><field name="data_source_id">'.$ro->data_source_id.'</field><field name="tag" update="add">'.$tag.'</field></doc>';
+				if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1)){
+					$_CI->solr->addDoc("<add>".$solrXML."</add>");
+					$_CI->solr->commit();
+					$solrXML ='';
+				}
+			}
+			unset($ro);
+		}
+	}
+
+	/**
+	 * batch enrich and index a set of keys, required in multiple places, put in for tag deletion
+	 * @param  [array] $keys [list of registry object keys to enrich and index]
+	 * @return [void]       
+	 */
+	public function batchIndexKeys($keys){
+		$_CI =& get_instance();
+		$solrXML = '';
+		$chunkSize = 400;
+		$arraySize = sizeof($keys);
+		for($i=0;$i<$arraySize; $i++){
+			$key = $keys[$i];
+			$ro = $this->getPublishedByKey($key);
+			if($ro){
+				$ro->enrich();
+				$solrXML.= $ro->transformForSOLR();
+				if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1)){
+					$_CI->solr->addDoc("<add>".$solrXML."</add>");
+					$_CI->solr->commit();
+					$solrXML ='';
+				}
+			}
+			unset($ro);
+		}
+	}
 
 	/**
 	 * Deletes a RegistryObject 

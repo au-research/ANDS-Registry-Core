@@ -16,6 +16,7 @@ class Quality_Extension extends ExtensionBase
 		$this->_CI->load->model('registry_object/quality_checker', 'qa');
 		
 		// Get and update our quality metadata 
+		$this->ro->processIdentifiers();
 		$this->ro->addRelationships();
 		$relatedClassStr = $this->ro->getRelatedClassesString();
 		

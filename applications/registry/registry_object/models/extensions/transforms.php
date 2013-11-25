@@ -13,8 +13,10 @@ class Transforms_Extension extends ExtensionBase
 	{
 		try{
 			$xslt_processor = Transforms::get_extrif_to_solr_transformer();
+			$xslt_processor->setParameter('','recordCreatedDate', gmdate('Y-m-d\TH:i:s\Z', $this->ro->created));
+			$xslt_processor->setParameter('','recordUpdatedDate', gmdate('Y-m-d\TH:i:s\Z', ($this->ro->updated ? $this->ro->updated : $this->ro->created)));
+			
 			$dom = new DOMDocument();
-
 			$dom->loadXML(str_replace('&', '&amp;' , $this->ro->getExtRif()));
 			if ($add_tags)
 			{
@@ -258,7 +260,7 @@ class Transforms_Extension extends ExtensionBase
 		}
 	}
 
-	function cleanRIFCSofEmptyTags($rifcs, $removeFormAttributes='true'){
+	function cleanRIFCSofEmptyTags($rifcs, $removeFormAttributes='true', $throwExceptions = false){
 		try{
 			$xslt_processor = Transforms::get_form_to_cleanrif_transformer();
 			$dom = new DOMDocument();
@@ -269,8 +271,15 @@ class Transforms_Extension extends ExtensionBase
 			return $xslt_processor->transformToXML($dom);
 		}catch (Exception $e)
 		{
-			echo "UNABLE TO TRANSFORM" . BR;
-			echo "<pre>" . nl2br($e->getMessage()) . "</pre>" . BR;
+
+			if($throwExceptions)
+			{
+				throw new Exception("UNABLE TO TRANSFORM" . nl2br($e->getMessage()));
+			}
+			else{
+				echo "UNABLE TO TRANSFORM" . BR;
+				echo "<pre>" . nl2br($e->getMessage()) . "</pre>" . BR;
+			}
 		}
 	}
 

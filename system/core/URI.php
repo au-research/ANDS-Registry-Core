@@ -235,8 +235,7 @@ class CI_URI {
 	 */
 	private function _parse_cli_args()
 	{
-		$args = array_slice($_SERVER['argv'], 1);
-
+		$args = array_slice($_SERVER['argv'], 2);
 		return $args ? '/' . implode('/', $args) : '';
 	}
 

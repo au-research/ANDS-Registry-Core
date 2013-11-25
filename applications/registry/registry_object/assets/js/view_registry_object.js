@@ -10,6 +10,26 @@ $(function(){
 		});
 	});
 
+    $('#exportExtRif').click(function(){
+        $.getJSON(base_url+'registry_object/get_record/'+$('#ro_id').val(), function(data){
+            console.log(data);
+            $('#myModal .modal-header h3').html('<h3>RIFCS:</h3>');
+            $('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(data.ro.extrif)) + '</code></pre>');
+            prettyPrint();
+            $('#myModal').modal();
+        });
+    });
+
+    $('#exportSOLR').click(function(){
+        $.getJSON(base_url+'registry_object/get_record/'+$('#ro_id').val(), function(data){
+            console.log(data);
+            $('#myModal .modal-header h3').html('<h3>RIFCS:</h3>');
+            $('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(data.ro.solr)) + '</code></pre>');
+            prettyPrint();
+            $('#myModal').modal();
+        });
+    });
+
 	$('#exportNative').click(function(){
 		$.getJSON(base_url+'registry_object/get_native_record/'+$('#ro_id').val(), function(data){
             $('#myModal .modal-header h3').html('<h3>Native Metadata:</h3>');
@@ -89,19 +109,20 @@ $(function(){
         e.preventDefault();
         e.stopPropagation();
         var ro_id = $(this).attr('ro_id');
+        var ro_key = $(this).attr('ro_key');
         var tag = $('input', this).val();
         var tag_html = '<li>'+tag+'<span class="hide"><i class="icon icon-remove"></i></span></li>';
-        $('.tags').append(tag_html);
         $('.notag').hide();
+        if(tag!='' && $.trim(tag)!=''){
          $.ajax({
-            url:base_url+'registry_object/tag/add', 
+            url:real_base_url+'registry/services/registry/tags/keys/add', 
             type: 'POST',
-            data: {ro_id:ro_id,tag:tag},
+            data: {keys:[ro_key],tag:tag},
             success: function(data){
-                // console.log(data);
-                // $('#status_message').html(data.msg);
+                $('.tags').append(tag_html);
             }
-        });
+         });
+        }
     });
     $('.tags li').die().live({
         mouseover: function(){
@@ -113,11 +134,12 @@ $(function(){
         click: function(){
             var text = $(this).text();
             var ro_id = $(this).parent().attr('ro_id');
+            var ro_key = $(this).parent().attr('ro_key');
             var li_item = $(this);
             $.ajax({
-                url:base_url+'registry_object/tag/remove', 
+                url:real_base_url+'registry/services/registry/tags/keys/remove', 
                 type: 'POST',
-                data: {ro_id:ro_id,tag:text},
+                data: {keys:[ro_key],tag:text},
                 success: function(data){
                     li_item.remove();
                 }
@@ -176,21 +198,31 @@ function formatTip(tt){
     $('.qa_error').addClass('warning');
 }
 
-function processRelatedObjects()
+function processRelatedObjects(maxRelated)
 {
+    var maxRelatedStepSize = 10;
+    if(typeof maxRelated !== 'undefined')
+    {
+	// This occurs when the "Show More" button is clicked
+	$('#moreRowsNotice').remove();
+	   var maxRelated =  maxRelated;
+    }
+    else
+    {
+	   // Default number of non-explicit links to show
+	   var maxRelated = maxRelatedStepSize;
+    }
+
     $.ajax({
         type: 'GET',
         url: base_url+'registry_object/getConnections/'+$('#registry_object_id').val(),
         dataType: 'json',
         success: function(data){
-             var maxRelated = 0
              var showRelated = 0;
              var moreToShow = '';
-            if(data.connections.length>20)
+
+	    if(data.connections.length<maxRelated)
             {
-                maxRelated = 20;
- 
-            }else{
                  maxRelated = data.connections.length;
             }
 
@@ -214,11 +246,18 @@ function processRelatedObjects()
                 {
                     revStr = "<em> (Automatically generated reverse link) </em>"
                 }
-
+                if(origin=='IDENTIFIER REVERSE')
+                {
+                    revStr = "<em> (Automatically generated reverse link by Identifier) </em>";
+                }
                 if (origin=='EXPLICIT') {
                      $('#rorow').show();
                      showRelated++;
                      $('.resolvedRelated[key_value="'+key+'"]').html(title );
+                }
+                else if (origin=='IDENTIFIER') {
+                    showRelated++;
+                    // probably shouldn't do much with them... they all visible via relatedInfo
                 }
                 else 
                     {
@@ -254,15 +293,21 @@ function processRelatedObjects()
             if(data.connections.length > showRelated)
             {
                 numToShow = data.connections.length - showRelated;
-                moreToShow = '<table class="subtable">' +                                      
-                            '<tr><td><table class="subtable1">'+
-                            '<tr><td></td><td class="resolvedRelated" > There are '+numToShow+' more related objects</td></tr>'+                                     
-                            '</table></tr></td></table>';
-                $('#related_objects_table').last().append(moreToShow)     
+        		moreToShow = '<table class="subtable" id="moreRowsNotice"><a id="moreRelatedObjects" />' +
+                                    '<tr><td><table class="subtable1">'+
+        			    '<tr><td></td><td class="resolvedRelated" > There '+ (numToShow == 1 ? "is" : "are") + ' ' + numToShow + ' more related object(s) not being displayed - <a href="#moreRelatedObjects" id="relatedObjectShowMore" data-more-length="'+Math.min(numToShow,maxRelated)+'">show more</a></td></tr>'+
+                                    '</table></tr></td></table>';
+        		$('#related_objects_table').last().append(moreToShow);
+        		$('#relatedObjectShowMore').on('click', function()
+        		{
+			    processRelatedObjects(maxRelatedStepSize + Math.floor(showRelated / maxRelatedStepSize) * maxRelatedStepSize);
+        		});
             }
                               
         }
                       
     });
+
+
 
 }

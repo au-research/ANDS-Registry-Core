@@ -104,7 +104,16 @@ class View extends MX_Controller {
 		$matches = array();
 		preg_match('/<extRif\:the_description>(.*)<\/extRif:the_description>/s', $extRif['data'], $matches);
 		if(isset($matches[0]) && $matches[0]!=''){
-			$data['the_description'] = htmlentities(strip_tags($matches[0]),ENT_QUOTES | ENT_HTML5);
+			// PHP 5.3 compatibility
+			if(defined('ENT_HTML5'))
+			{
+				$ent_mode = ENT_QUOTES | constant('ENT_HTML5');
+			}
+			else
+			{
+				$ent_mode = ENT_QUOTES;
+			}
+			$data['the_description'] = htmlentities(strip_tags($matches[0]), $ent_mode);
 		}
 
 		$matches = array();
@@ -115,8 +124,8 @@ class View extends MX_Controller {
 				$m = strip_tags($m);
 				if(!in_array($m, $data['the_title']) && $m && $m!='') array_push($data['the_title'], $m);
 			}
-			$data['the_title'] = trim(implode(',', $data['the_title']));
 		}
+		$data['the_title'] = trim(implode(',', $data['the_title']));
 
 
 		if ($this->input->get('slug'))
@@ -245,7 +254,6 @@ class View extends MX_Controller {
 		}
 		else if ($this->input->post('roIds')) {
 			$currRoID = null;
-
 			$html = '';
 			foreach($this->input->post('roIds') as $roID)
 			{
@@ -265,14 +273,26 @@ class View extends MX_Controller {
 				}						
 			}			
 		}
+		else if ($this->input->get('identifier_relation_id')) {
+			try
+			{
+				$data = $this->registry->fetchRelatedInfoByIrId($this->input->get('identifier_relation_id'));
+				$html = $data[0]['connections_preview_div'];
+			}
+			catch (SlugNoLongerValidException $e)
+			{
+				die("Registry object Identifier Relationship doesn't exists!)");
+			}
+		}
 		else 
 		{
-			die("Registry object could not be located (no SLUG or ID specified!)");
+			die("Registry object could not be located (no SLUG or ID or identifier_relation_id specified!)");
 		}
 
 		$response = array(
 			"slug" => $this->input->get('slug'),
 			"registry_object_id" => $this->input->get('registry_object_id'),
+			"rel_identifier_id" => $this->input->get('rel_identifier_id'),
 			"html" => "<div class='previewbox'>".$html."</div>"
 		);
 

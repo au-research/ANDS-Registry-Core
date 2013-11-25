@@ -43,13 +43,13 @@ function logErrorOnScreen(error, target){
 
 $(document).ready(function(){
 
-	if ($('.dash_news').height() > 380) {
+	if ($('.dash_news').height() > 410) {
 		var orig_height = $('.dash_news').height();
 	    $('.dash_news').css({
 	        overflow: 'hidden',
-	        height: '480px'
+	        height: '548px'
 	    }).append($('<div class="dash_news_overflow"></>'));
-	    $('.dash_news').after('<div class="show_all_dash_news">Show All</div>');
+	    $('.dash_news').after('<div class="show_all_dash_news"><small class="muted">Show More News</small></div>');
 	    $('.show_all_dash_news').click(function () {
 	        $(this).remove();
 	        $('.dash_news_overflow').fadeOut();
@@ -57,6 +57,17 @@ $(document).ready(function(){
 	        	height:orig_height+10
 	        });
 	    });
+	}
+
+	// dashboard fetches updated record info asynchronously
+	if ($('#recentRecordsDashboard').length)
+	{
+		$.get(base_url+'auth/getRecentlyUpdatedRecords', 
+		function(data)
+		{
+			$('#recentRecordsDashboard').html(data);
+		},
+		'html');
 	}
 
 	$('#main-nav-user-account').qtip({
@@ -385,34 +396,7 @@ $(document).ready(function(){
 			$('#affiliation_signup').addClass('disabled');
 		}
 	});
-$.fn.YouTubePopup.defaults = {
-    'youtubeId': '',
-    'title': '',
-    'useYouTubeTitle': true,
-    'idAttribute': 'rel',
-    'cssClass': '',
-    'draggable': true,
-    'modal': true,
-    'width': 1280,
-    'height': 960,
-    'hideTitleBar': false,
-    'clickOutsideClose': true,
-    'overlayOpacity': 0.8,
-    'autohide': 2,
-    'autoplay': 1,
-    'color': 'red',
-    'color1': 'FFFFFF',
-    'color2': 'FFFFFF',
-    'controls': 1,
-    'fullscreen': 1,
-    'loop': 0,
-    'hd': 1,
-    'showinfo': 0,
-    'theme': 'light'
-	};
 
-	$("a.youtube").YouTubePopup();
-	$("button.youtube").YouTubePopup({ idAttribute: 'id', color: '#44ff99' });
 });
 
 jQuery.fn.extend({
@@ -560,14 +544,29 @@ function Core_checkValidField(form, field){
 	var warning = false;
 	if(field.required || $(field).attr('valid-type'))
 	{
+		typeField = $(field).next('input');
+		if(typeField){
+			validType = $(typeField).val();
+		}
+		else{
+			validType = $(field).attr('valid-type');
+		}
+
+
 		if(field.required && $(field).val().length==0){
 			valid = false;
 		}
 		else if($(field).attr('valid-type') && $(field).val().length > 0)
 		{
-			if($(field).attr('type')=='email'){//email validation
-				valid = validateEmail($(field).val());
-
+			if(validType=='email'){//email validation
+				if(validateEmail($(field).val())){
+					valid = true;
+				}else{
+					warning = true;
+				}
+			}
+			else if(validType=='other'){//email validation
+				valid = true;
 			}
 			else if($(field).attr('valid-type')=='date'){//email validation
 				valid = true;//validateDate($(field).val());
@@ -594,7 +593,7 @@ function Core_checkValidField(form, field){
 				// $(field).closest('div.control-group').removeClass('success').removeClass('error').addClass('warning');
 				// $(field).removeClass('success').addClass('warning');
 				// $(field).parent().append('<div class="alert alert-warning validation">Field should be a valid '+$(field).attr('valid-type')+'</div>');				
-				Core_addValidationMessage($(field), 'warning', 'Field should be a valid '+$(field).attr('valid-type'));
+				Core_addValidationMessage($(field), 'warning', 'Field should be a valid '+ validType);
 			}
 			return true;
 		}else{
@@ -603,7 +602,7 @@ function Core_checkValidField(form, field){
 			// $(field).removeClass('success').addClass('error');
 
 			if($(field).attr('valid-type')){
-				Core_addValidationMessage($(field), 'error', 'Field must be a valid '+$(field).attr('valid-type'));
+				Core_addValidationMessage($(field), 'error', 'Field must be a valid '+ validType);
 				// $(field).parent().append('<div class="alert alert-error validation">Field must be a valid '+$(field).attr('valid-type')+'</div>');
 			}else{
 				// $(field).parent().append('<div class="alert alert-error validation">Field value must be entered</div>');

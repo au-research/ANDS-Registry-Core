@@ -57,9 +57,7 @@
 			<xsl:if test="$ro_class != 'collection'">
 				<li><a href="#existencedates" data-toggle="tab">Existence Dates</a></li>
 			</xsl:if>
-			<xsl:if test="extRif:annotations">
-				<li><a href="#annotations_pane" data-toggle="tab">Annotations</a></li>
-			</xsl:if>
+			<li id="annotations_tab"><a href="#annotations_pane" data-toggle="tab">Annotations</a></li>
 			<li><a href="#qa" id="savePreview" data-toggle="tab"><i class="icon-white icon-hdd"></i> Save &amp; Validate</a></li>
 		</ul>
 	</div>
@@ -112,6 +110,19 @@
 			<xsl:if test="$ro_class != 'collection'">
 				<xsl:call-template name="ExistenceDatesTab"/>
 			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="extRif:annotations">
+					<xsl:apply-templates select="extRif:annotations"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<div id="annotations_pane" class="pane hide">
+						<fieldset>
+							<legend>Annotations</legend>
+							<textarea id="annotations" rows="5" class="input-xxlarge" name="annotations"></textarea>	
+						</fieldset>
+					</div>
+				</xsl:otherwise>
+			</xsl:choose>
 			<xsl:apply-templates select="extRif:annotations"/>
 			<xsl:call-template name="recordQATab">
 				<xsl:with-param name="registry_object_id" select="$registry_object_id"/>
@@ -984,6 +995,7 @@
 							<input type="text" class="inner_input datepicker"  name="value" placeholder="startDate Value" value="{ro:startDate/text()}"/>
 							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSDateFormat" name="dateFormat" placeholder="startDate dateFormat" value="{ro:startDate/@dateFormat}"/>
 						</span>
+						<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
 					</div>
 				</div>
 			</div>
@@ -996,6 +1008,7 @@
 							<input type="text" class="inner_input datepicker" name="value" placeholder="endDate Value" value="{ro:endDate/text()}"/>
 							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSDateFormat" name="dateFormat" placeholder="endDate dateFormat" value="{ro:endDate/@dateFormat}"/>
 						</span>
+						<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
 					</div>
 				</div>
 			</div>
@@ -1382,15 +1395,17 @@
 
 	<xsl:template match="ro:relatedInfo/ro:identifier">
 		<div class="aro_box_part">
-		<div class="control-group">
-			<label class="control-label" for="Identifier">Identifier:</label>						
-			<span class="inputs_group">
-				<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="{text()}" required=""/>
-				<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value="{@type}"/>
-			</span>
-			<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
+				<div class="control-group">
+					<div class="controls">
+					<label class="control-label" for="Identifier">Identifier:</label>						
+					<span class="inputs_group">
+						<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="{text()}" required=""/>
+						<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value="{@type}"/>
+					</span>
+					<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
+				</div>
+			</div>
 		</div>
-	</div>
 	</xsl:template>
 
 
@@ -1552,7 +1567,7 @@
 				<label class="control-label" for="title">Identifier:</label>						
 				<span class="inputs_group">
 					<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value=""/>
-					<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value=""/>
+					<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value=""/>
 				</span>
 				<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
 			</div>
@@ -1628,7 +1643,7 @@
 				<div class="controls">
 					<span class="inputs_group">
 						<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="" required=""/>
-						<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Identifier Type" value=""/>
+						<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Identifier Type" value=""/>
 					</span>
 
 				</div>
@@ -1740,7 +1755,7 @@
 				<label class="control-label" for="title">Electronic Address: </label>
 				<div class="controls">
 					<span class="inputs_group">
-						<input type="text" class="inner_input" name="value" placeholder="Value" value=""/>
+						<input type="text" class="inner_input" name="value" placeholder="Value" value="" valid-type="url"/>
 						<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSElectronicAddressType" name="type" placeholder="Type" value=""/>
 					</span>
 					<xsl:if test="//ro:service">
@@ -2006,6 +2021,7 @@
 							<input type="text" class="inner_input datepicker"  name="value" placeholder="startDate Value" value=""/>
 							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSDateFormat" name="dateFormat" placeholder="startDate dateFormat" value=""/>
 						</span>
+						<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
 					</div>
 				</div>
 			</div>
@@ -2018,6 +2034,7 @@
 							<input type="text" class="inner_input datepicker" name="value" placeholder="endDate Value" value=""/>
 							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSDateFormat" name="dateFormat" placeholder="endDate dateFormat" value=""/>
 						</span>
+						<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
 					</div>
 				</div>
 			</div>

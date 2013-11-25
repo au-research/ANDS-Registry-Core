@@ -22,8 +22,43 @@ class Maintenance extends MX_Controller {
 		$this->load->view("maintenance_index", $data);
 	}
 
-	public function init()
-	{
+	public function migrate_tags_to_r11(){
+		acl_enforce('REGISTRY_STAFF');
+		$this->load->model('registry_object/registry_objects', 'ro');
+		$filters = array(
+			'filter'=>array('tag'=>'!=')
+		);
+		$ros = $this->ro->filter_by($filters,100);
+
+		$affected_ros = array();
+		foreach($ros as $ro){
+			if($ro->tag!=='1' && $ro->tag!=='0') array_push($affected_ros, $ro);
+		}
+		if(sizeof($affected_ros)==0){
+			echo 'No legacy tags found!';
+		}else{
+			foreach($affected_ros as $ro){
+				echo '<b>ID</b>: '. $ro->id.' <b>title</b>: '. $ro->title. ' <b>Tag</b>: '. $ro->tag.'<br/>';
+				$tags = explode(';;', $ro->tag);
+				foreach($tags as $tag){
+					$ro->addTag($tag);
+				}
+				$ro->sync();
+				echo 'Tags added correctly!';
+				echo '<hr/>';
+			}
+		}
+	}
+
+	public function syncmenu(){
+		acl_enforce('REGISTRY_STAFF');
+		$data['title'] = 'ARMS SyncMenu';
+		$data['scropts'] = array('syncmenu');
+		$data['js_lib'] = array('core', 'angular');
+		$this->load->view("syncmenu_index", $data);
+	}
+
+	public function init(){
 		acl_enforce('REGISTRY_STAFF');
 		$this->load->library('importer');
 		$slogTitle =  'Import from URL completed successfully'.NL;	
@@ -78,7 +113,6 @@ class Maintenance extends MX_Controller {
 
 		header('Location: '.registry_url('data_source/manage_records/'.$data_source->id));
 		exit();
-
 	}
 
 	function getStat(){
@@ -418,6 +452,7 @@ class Maintenance extends MX_Controller {
 		acl_enforce('REGISTRY_STAFF');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$this->load->library('solr');
@@ -435,16 +470,17 @@ class Maintenance extends MX_Controller {
 			$data['message'] = '<i class="icon icon-remove"></i> No Registry Object Found!';
 		}else{
 			if($use=='id'){
-				$ro->enrich();
-				$solrXML = $ro->transformForSOLR();
-				$this->solr->addDoc("<add>".$solrXML."</add>");
-				$this->solr->commit();
+				if($msg = $ro->sync()!=true){
+					$data['status'] = 'error';
+					$data['message'] = $msg;
+				}
+
 			}elseif($use=='keys'){
 				foreach($ro as $r){
-					$r->enrich();
-					$solrXML = $r->transformForSOLR();
-					$this->solr->addDoc("<add>".$solrXML."</add>");
-					$this->solr->commit();
+					if($msg = $ro->sync()!=true){
+						$data['status'] = 'error';
+						$data['message'] = $msg;
+					}
 				}
 			}
 			$data['status'] = 'success';

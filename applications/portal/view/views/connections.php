@@ -23,6 +23,7 @@
 					{
 						// Link connections to PUBLISHED objects to their SLUG for SEOness...
 						$logo = '';
+						$iirId = '';
 						if(isset($entry['logo'])){
 
 							if (!in_array($entry['logo'], $this->config->item('banned_images')))
@@ -30,7 +31,14 @@
 								$logo = '<img class="related_logo" src="'.$entry['logo'].'"/>';
 							}
 						}
-						if ($entry['status'] == PUBLISHED){
+						
+						if(isset($entry['identifier_relation_id']) && $entry['registry_object_id'] == null)
+						{
+							$url = $entry['relation_url'];
+							$preview = "";
+							$iirId = 'identifier_relation_id='.$entry['identifier_relation_id'];
+						}
+						else if ($entry['status'] == PUBLISHED){
 							$url = base_url() . $entry['slug'];
 							$preview = 'slug='.$entry['slug'];
 						}
@@ -64,11 +72,17 @@
 						}else{
 							$relUrl = '';
 						}
+						if ($entry['class'] == "party") {
+							$entry['class'] = "party_one";
+							if(isset($count['party_one_count'])) {
+								$count['party_one_count']++;
+							}else $count['party_one_count'] = 1;
+						}
 
 						if(!isset($conn[$entry['class']])){
-							$conn[$entry['class']] = $logo.'<p class="'.$entry['class'].' preview_connection"><a href="'.$url.'" '.$preview.' relation_type="'.$relationship.'" '.$relDesc.' '.$relUrl.'>'.$entry['title'].$suffix.'</a></p>';
+							$conn[$entry['class']] = $logo.'<p class="'.$entry['class'].' preview_connection"><a href="'.$url.'" '.$preview.' relation_type="'.$relationship.'" '.$relDesc.' '.$relUrl.' '.$iirId.'>'.$entry['title'].$suffix.'</a></p>';
 						}else{
-							$conn[$entry['class']] .= $logo.'<p class="'.$entry['class'].' preview_connection"><a href="'.$url.'" '.$preview.' relation_type="'.$relationship.'" '.$relDesc.' '.$relUrl.'>'.$entry['title'].$suffix.'</a></p>';
+							$conn[$entry['class']] .= $logo.'<p class="'.$entry['class'].' preview_connection"><a href="'.$url.'" '.$preview.' relation_type="'.$relationship.'" '.$relDesc.' '.$relUrl.' '.$iirId.'>'.$entry['title'].$suffix.'</a></p>';
 						}
 					}
 				}
@@ -83,21 +97,21 @@
 					$heading = "<h3>Contributed by</h3>";
 					break;
 				case "party":
-					$heading = "<h3>Researchers</h3>";
+					$heading = "<h3>People</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Researchers</a></p>';
+						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' People</a></p>';
 					}
 					break;					
 				case "party_one":
-					$heading = "<h3>Researchers</h3>";
+					$heading = "<h3>People</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Researchers</a></p>';
+						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' People</a></p>';
 					}
 					break;	
 				case "party_multi":
-					$heading = "<h3>Research Groups</h3>";
+					$heading = "<h3>Organisations & Groups</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Research Groups</a></p>';
+						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Organisations & Groups</a></p>';
 					}
 					break;	
 				case "activity":

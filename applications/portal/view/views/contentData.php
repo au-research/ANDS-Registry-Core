@@ -66,7 +66,7 @@
 	if ($groupsDiv)
 	{
 		echo '<div class="right-box" id="groupsRightBox">';
-		echo "<h3>Research Groups</h3>";
+		echo "<h3>Organisations & Groups</h3>";
 		echo $groupsDiv;
 		echo "</div>";
 	}

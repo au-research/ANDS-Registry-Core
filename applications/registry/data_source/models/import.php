@@ -145,7 +145,7 @@ class Import extends CI_Model {
 				$ro = $this->ro->getByID($ro_id);
 
 				// add reverse relationships
-				$ro->addRelationships();
+				//$ro->addRelationships();
 				// XXX: re-enrich records which are related to this one
 
 

@@ -29,12 +29,9 @@ else
   $logo_title = 'Back to ANDS Online Services Home';
 }
 
-if($this->config->item('environment_logo'))
-{
+if($this->config->item('environment_logo')){
   $environment_logo = $this->config->item('environment_logo');
-}
-else
-{
+}else{
   $environment_logo = asset_url('/img/ands_logo_white.png', 'base');
 }
 
@@ -43,48 +40,19 @@ else
 <html lang="en">
   <head>
 
-    <?php if(is_dev() && isset($debugbarRenderer)):?>
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>/vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/vendor/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/debugbar.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/widgets.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/openhandler.css">
-    <script type="text/javascript" src="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/vendor/jquery-1.8.3.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/debugbar.js"></script>
-    <script type="text/javascript" src="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/widgets.js"></script>
-    <script type="text/javascript" src="<?php echo base_url(); ?>assets/lib/DebugBar/Resources/openhandler.js"></script>
-    <?php endif;?>
-
     <meta charset="UTF-8" />
     <title><?php echo $title; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <!-- Twitter Bootstrap Styles -->
-    <link href="<?php echo$base_url;?>assets/lib/twitter_bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="<?php echo$base_url;?>assets/lib/twitter_bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
-
-
     <!-- ANDS print stylesheet-->
     <link href="<?php echo$base_url;?>assets/css/print.css" rel="stylesheet/less" type="text/css" media="print">
 
-    <!-- Libraries Styles-->
-    <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/chosen/chosen.css">
-    <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/bootstrap_toggle_button/jquery.toggle.buttons.css">
-    <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/qtip2/jquery.qtip.min.css">
-    <link rel="stylesheet" href="<?php echo$base_url;?>assets/lib/youtubepopup/jquery-ui.css">
-    <!-- unicorn -->
-    <link href="<?php echo$base_url;?>assets/lib/unicorn_styles/css/uniform.css" rel="stylesheet">
-    <link href="<?php echo$base_url;?>assets/lib/unicorn_styles/css/unicorn.main.css" rel="stylesheet">
-    <link href="<?php echo$base_url;?>assets/lib/unicorn_styles/css/unicorn.grey.css" rel="stylesheet">
-    <!-- ANDS Less file and general styling correction-->
-    <link href="<?php echo$base_url;?>assets/css/base.css" rel="stylesheet">
-    <link href="<?php echo$base_url;?>assets/less/arms.less" rel="stylesheet/less" type="text/css">
+    <!-- Styles -->    
+    <link rel="stylesheet" href="<?php echo asset_url('css/arms.combine.css', 'base'); ?>" media="screen">
 
     <!-- additional styles -->
- 
     <?php
       if(isset($less)){
         foreach($less as $s){
@@ -92,6 +60,10 @@ else
         }
       }
     ?>
+
+    <?php if (isset($styles)): foreach($styles as $style):?>
+      <link rel="stylesheet" type="text/css" href="<?php echo asset_url('css/' . $style);?>.css" />
+    <?php endforeach; endif; ?>
 
     <!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -107,8 +79,6 @@ else
   </head>
 
 <body<?php echo(array_search('prettyprint', $js_lib) !== FALSE ? ' onload="prettyPrint();"' : '');?>>
-
-<?php if(is_dev() && isset($debugbarRenderer)) echo $debugbarRenderer->render(); ?>
 
     <div id="header" <?=$environment_header_style;?>>
       <a href="<?php echo registry_url();?>" title="<?=$logo_title;?>" tip="<?=$logo_title;?>" my="center left" at="center right">
@@ -190,18 +160,26 @@ else
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <b class="caret"></b></a>
                   <ul class="dropdown-menu pull-right">       
 
-                 
+		    <?php if( mod_enabled('toolbox') ): ?>
                         <li class=""><?php echo anchor(developer_url(''), '<i class="icon-briefcase icon"></i> Developer Toolbox <sup style="color:red;">new!</sup>');?></li>
                         <li class=""><?php echo anchor(developer_url('documentation/widgets'), '&nbsp; &raquo; Web Widgets');?></li>
                         <li class=""><?php echo anchor(developer_url('documentation/services'), '&nbsp; &raquo; Web Services');?></li>
-                        <li class=""><?php echo anchor(developer_url('documentation/registry'), '&nbsp; &raquo; Registry Software');?></li>
-              
+                        <li class=""><?php echo anchor(developer_url('documentation/registry'), '&nbsp; &raquo; Registry Software');?></li> 
+                        <li class="divider"></li>
+		    <?php endif; ?>
           
                     <?php if ($this->user->hasFunction('PORTAL_STAFF') && mod_enabled('cms')): ?>
-                        <li class="divider"></li>
                         <li class=""><?php echo anchor(apps_url('spotlight/'), '<i class="icon-indent-left icon"></i> Spotlight CMS Editor');?></li>
                         <li class=""><?php echo anchor(apps_url('uploader/'), '&nbsp; &raquo; CMS Image Uploader');?></li>
+                        <li class="divider"></li>
                     <?php endif; ?>     
+
+                    <?php if($this->user->hasFunction('PORTAL_STAFF') && mod_enabled('theme_cms')): ?>
+                      <li class=""><?php echo anchor(apps_url('theme_cms/'), '<i class="icon-indent-left icon"></i> Theme CMS Editor'); ?></li>
+                      <?php if(mod_enabled('bulk_tag')): ?>
+                        <li class=""><?php echo anchor(apps_url('theme_cms/bulk_tag'), '&nbsp; &raquo; Bulk Tag'); ?></li>
+                      <?php endif; ?>
+                    <?php endif; ?>
 
                <!--     <?php if (($this->user->hasFunction('PUBLIC')) && mod_enabled('abs_sdmx_querytool')): ?>
                       <li class="divider"></li>
@@ -227,7 +205,17 @@ else
                     <?php if ($this->user->hasFunction('REGISTRY_STAFF')): ?>
                         <li class="divider"></li>
                         <li class=""><?php echo anchor(registry_url('maintenance/registrySummary'), 'Registry Quality Summary');?></li>
-                    <?php endif; ?>  
+                    <?php endif; ?> 
+                    <?php if($this->user->hasFunction('SUPERUSER')): ?>
+		      <?php if (mod_enabled('mydois')): ?>
+		       <li class="divider"></li>
+			  <li class=""><?php  echo anchor(apps_url('/mydois/list_trusted'),'List Trusted DOI Clients'); ?></li>
+		      <?php endif; ?>
+		      <?php if (mod_enabled('pids')): ?>
+		       <li class="divider"></li>
+			  <li class=""><?php  echo anchor(apps_url('/pids/list_trusted'),'List Trusted PIDs Clients'); ?></li>
+		      <?php endif; ?>
+                    <?php endif; ?>              
                 </ul>
               </li>
               <?php endif;?>

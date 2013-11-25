@@ -2,8 +2,8 @@
 <?php foreach($page[$region] as $f): ?>
 <div style="margin:10px 0">
 	<?php
-		if(isset($f['title']) && trim($f['title'])!=''){
-			echo '<h2>'.$f['title'].'</h2>';
+		if(isset($f['title']) && trim($f['title'])!='' && isset($f['heading']) && $f['heading']){
+			echo '<'.$f['heading'].'>'.$f['title'].'</'.$f['heading'].'>';
 		}
 	?>
 	<?php if($f['type']=='html'): ?>
@@ -13,28 +13,13 @@
 	<?php if($f['type']=='separator'): ?><hr/><?php endif; ?>
 
 	<?php if($f['type']=='gallery'): ?>
-		<?php if($f['gallery_type']=='carousel'): ?>
-			<div class="flexslider" carousel style="min-height:0;margin-bottom:60px;">
-				<ul class="slides">
-					<?php foreach($f['gallery'] as $i): ?>
-					<li><img src="<?php echo $i['src'];?>" alt="" rel="<?php echo $f['title'] ?>"></li>
-					<?php endforeach; ?>
-				</ul>
-			</div>
-		<?php endif; ?>
-		<?php if($f['gallery_type']=='filmstrip'): ?>
-			<div class="scroller" filmstrip>
-				<div class="scroll left"></div>
-				<div class="scroll right"></div>
-				<div class="filmstrip">
-					<ul>
-						<?php foreach($f['gallery'] as $i): ?>
-						<li><a href="<?php echo $i['src'] ?>" rel="<?php echo $f['title'] ?>" colorbox><img src="<?php echo $i['src'];?>" alt="" rel="<?php echo $f['title'] ?>"></a></li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
-			</div>
-		<?php endif; ?>
+		<div class="flexslider <?php echo $f['gallery_type']; ?>" <?php echo $f['gallery_type']; ?> style="min-height:0;margin-bottom:60px;">
+			<ul class="slides">
+				<?php foreach($f['gallery'] as $i): ?>
+				<li <?php if($f['gallery_type']=='carousel'): ?>style="margin-left:20px; margin-right:20px;" <?php endif;?>><a href="<?php echo $i['src'] ?>" colorbox rel="<?php echo $f['title']; ?>"><img src="<?php echo $i['src'];?>" alt="" rel="<?php echo $f['title'] ?>"></a></li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
 	<?php endif; ?>
 
 	<?php if($f['type']=='search'): ?>

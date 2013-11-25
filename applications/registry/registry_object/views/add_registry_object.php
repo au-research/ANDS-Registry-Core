@@ -66,7 +66,7 @@
 <div class="alert alert-error alert-block"><strong>This DRAFT NOT BEEN SAVED due to validation errors in the record</strong><br/> Please refer to the tabs marked with a red error icon to the left of the page. Additional information is provided below:</div>
 <div class="alert well alert-error alert-block"><pre>{{{message}}}</pre></div>
 <div class="alert alert-warning alert-block">
-	As a precaution, if you are unable to resolve the issues with this record, we recommend you down a copy of the <button class="btn btn-warning btn-mini show_rifcs">Record RIFCS <i class="icon-white icon-download-alt"></i></button>
+	As a precaution, if you are unable to resolve the issues with this record, we recommend you download a copy of the <button class="btn btn-warning btn-mini show_rifcs">Record RIFCS <i class="icon-white icon-download-alt"></i></button>
 </div>
 </script>
 

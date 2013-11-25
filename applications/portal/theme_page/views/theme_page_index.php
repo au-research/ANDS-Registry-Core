@@ -1,7 +1,8 @@
 <?php $this->load->view('rda_header');?>
 <div class="container less_padding" ng-app="portal_theme">
 	<div class="breadcrumb">
-		<?php echo anchor('/', 'Home', array('class'=>'crumb')); ?> / 
+		<?php echo anchor('/', 'Home', array('class'=>'crumb')); ?> /&nbsp;
+		<?php echo anchor('/themes', 'Themes', array('class'=>'crumb')) ?> /&nbsp;
 		<?php echo anchor('/theme_page/view/'.$page['slug'], ' '.$page['title'], array('class'=>'crumb')); ?>
 	</div>
 	<div class="main item-view-inner" ng-controller="init">
@@ -32,7 +33,7 @@
 
 <script type="text/x-mustache" id="search-result-template">
 {{#has_result}}
-	<div class="tabs">
+	<div class="tabs hide">
 		<a href="<?php echo portal_url('search'); ?>#!/{{filter_query}}">All</a>
 		{{#tabs}}
 			<a href="<?php echo portal_url('search'); ?>#!/{{filter_query}}class={{inc_title}}" {{#current}}class="current"{{/current}}>{{title}}</a>
@@ -69,8 +70,7 @@
 
 <script type="text/x-mustache" id="facet-template">
 <div class="widget facet_{{facet_type}}">
-	<h4 class="widget_title">{{label}}</h4>
-	<ul>
+	<ul class="facet">
 		{{#values}}
 			<li><a href="<?php echo portal_url('search');?>#!/{{filter_query}}{{facet_type}}={{inc_title}}" class="filter" filter_type="{{facet_type}}" filter_value="{{title}}">{{title}} ({{count}})</a></li>
 		{{/values}}
@@ -89,7 +89,6 @@
 </script>
 
 <script type="text/x-mustache" id="relation-template">
-<h3>{{title}}</h3>
 {{#connections}}
 	<p class="{{class}} preview_connection"><a href="<?php echo portal_url(); ?>{{slug}}" slug="{{slug}}" relation_type="{{relation_type}}" relation_description="{{relation_description}}" relation_url="{{relation_url}}">{{title}}</a></p>
 {{/connections}}

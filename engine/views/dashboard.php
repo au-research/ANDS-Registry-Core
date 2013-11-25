@@ -155,6 +155,16 @@ else
 				</div>
 			</div>
 
+			<div class="box">
+				<div class="box-header clearfix">
+					<h3>Recently updated records</h3>
+				</div>
+				<div class="box-content" id="recentRecordsDashboard">
+					<img src="<?=asset_url('img/ajax-loader.gif','base');?>" alt="Loading recently updated record information" />
+					<small class="muted"> Fetching data from registry...</small>
+				</div>
+			</div>
+
 	<?php
 	}
 	?>

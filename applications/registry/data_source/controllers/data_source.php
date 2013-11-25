@@ -97,7 +97,6 @@ class Data_source extends MX_Controller {
 		}else{
 			throw new Exception("Data Source must be provided");
 		}
-		$data['less']=array('mmr');
 		$data['scripts'] = array('mmr');
 		$data['js_lib'] = array('core');
 		$this->load->view("manage_my_record", $data);

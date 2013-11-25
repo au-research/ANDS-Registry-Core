@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:ro="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" exclude-result-prefixes="ro extRif">
     <xsl:output method="html" encoding="UTF-8" indent="no" omit-xml-declaration="yes"/>
+    <xsl:include href="annotations/default.xsl"/>
     <xsl:strip-space elements="*"/>
     <xsl:param name="dataSource" select="//extRif:extendedMetadata/extRif:dataSourceKey"/>
     <xsl:param name="dateCreated"/>
@@ -135,7 +136,7 @@
             </div>
 
             <xsl:apply-templates select="ro:collection | ro:activity | ro:party | ro:service"/>
-
+            
         </xsl:template>
 
         <xsl:template match="ro:collection | ro:activity | ro:party | ro:service">
@@ -297,10 +298,36 @@
     </xsl:if>
 
     <!-- DISPLAY RELATED INFO -->
-    <xsl:if test="ro:relatedInfo">
+    <xsl:if test="ro:relatedInfo[@type='publication']">
+        <p><xsl:text>&amp;nbsp;</xsl:text></p>
+        <h4>Related Publications</h4>
+        <xsl:apply-templates select="ro:relatedInfo[@type='publication']"/> 
+    </xsl:if>
+    <xsl:if test="ro:relatedInfo[@type='website']">
+        <p><xsl:text>&amp;nbsp;</xsl:text></p>
+        <h4>Related Websites</h4>
+        <xsl:apply-templates select="ro:relatedInfo[@type='website']"/> 
+    </xsl:if>
+    <xsl:if test="ro:relatedInfo[@type='reuseInformation']">
+        <p><xsl:text>&amp;nbsp;</xsl:text></p>
+        <h4>Reuse Information</h4>
+        <xsl:apply-templates select="ro:relatedInfo[@type='reuseInformation']"/> 
+    </xsl:if>
+    <xsl:if test="ro:relatedInfo[@type='dataQualityInformation']">
+        <p><xsl:text>&amp;nbsp;</xsl:text></p>
+        <h4>Data Quailty Information</h4>
+        <xsl:apply-templates select="ro:relatedInfo[@type='dataQualityInformation']"/> 
+    </xsl:if>
+    <xsl:if test="ro:relatedInfo[@type='metadata']">
+        <p><xsl:text>&amp;nbsp;</xsl:text></p>
+        <h4>Additional Metadata</h4>
+        <xsl:apply-templates select="ro:relatedInfo[@type='metadata']"/> 
+    </xsl:if>
+    <xsl:if test="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity'] or ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '')]">
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
         <h4>More Information</h4>
-        <xsl:apply-templates select="ro:relatedInfo"/> 
+        <xsl:apply-templates select="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity']"/>
+        <xsl:apply-templates select="ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '')]"/>
     </xsl:if>
 
     
@@ -449,6 +476,7 @@
 <!--  we will now transform the right hand stuff -->
 <div class="sidebar">
 <h3 id="draft_status" class="hide" style="color:#FF6688;">DRAFT PREVIEW</h3>
+
   <xsl:if test="ro:location/ro:address/ro:electronic/@type='url' 
     or ro:rights or ro:location/ro:address/ro:electronic/@type='email' or ro:location/ro:address/ro:physical">     
     <div class="right-box">
@@ -493,6 +521,8 @@
         </div>      
         <p><br/></p>            
     </xsl:if>
+
+    <xsl:apply-templates select="../extRif:annotations"/>
 
 
     <!-- NEW CONNECTION -->

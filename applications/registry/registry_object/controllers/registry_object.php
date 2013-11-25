@@ -34,6 +34,8 @@ class Registry_object extends MX_Controller {
 			$data['revision'] = $revision;
 			$data['action_bar'] = array(); // list of status actions which can be performed 
 
+			$data['tags'] = $ro->getTags();
+
 			if($revision!=''){
 				$data['viewing_revision'] = true;
 				$data['rif_html'] = $ro->transformForHtml($revision, $ds->title);
@@ -101,7 +103,7 @@ class Registry_object extends MX_Controller {
 	public function add(){
 		$data['title'] = 'Add Registry Objects';
 		$data['scripts'] = array('add_registry_objects');
-		$data['js_lib'] = array('core','prettyprint','orcid_widget');
+		$data['js_lib'] = array('core','prettyprint','orcid_widget', 'vocab_widget');
 		$data['content'] = "ADD NEW";
 
 		$this->load->model("data_source/data_sources","ds");
@@ -148,8 +150,13 @@ class Registry_object extends MX_Controller {
 		{
 			header("Location: " . registry_url('registry_object/edit/' . $ro->id));
 		}
-
-		$data['extrif'] = $ro->getExtRif();
+		$extRif = $ro->getExtRif();
+		if(!$extRif)
+		{
+			$ro->enrich();
+			$extRif = $ro->getExtRif();
+		}
+		$data['extrif'] = $extRif;
 		$data['content'] = $ro->transformCustomForFORM($data['extrif']);
 		$data['ds'] = $ds;
 		
@@ -166,8 +173,17 @@ class Registry_object extends MX_Controller {
 		$xml = $this->input->post('xml');
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($registry_object_id);
-		$xml = $ro->cleanRIFCSofEmptyTags($xml, 'false');
-		$result = $ro->transformForQA(wrapRegistryObjects($xml));
+
+		try{
+			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'false', true);
+			$result = $ro->transformForQA(wrapRegistryObjects($xml));
+		}
+		catch(Exception $e)
+		{
+			$status = 'error';
+			$error_log = $e->getMessage();
+		}
+
 
 		$this->load->model('data_source/data_sources', 'ds');
 		$ds = $this->ds->getByID($ro->data_source_id);
@@ -229,12 +245,13 @@ class Registry_object extends MX_Controller {
 		$ds = $this->ds->getByID($ro->data_source_id);
 
 		$this->importer->forceDraft();
-		$xml = $ro->cleanRIFCSofEmptyTags($xml);
+		
 		$error_log = '';
 		$status = 'success';
 		//echo wrapRegistryObjects($xml);
 		//exit();
 		try{
+			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
 			$this->importer->setXML(wrapRegistryObjects($xml));
 			$this->importer->setDatasource($ds);
 			$this->importer->commit();
@@ -283,7 +300,6 @@ class Registry_object extends MX_Controller {
 	}
 
 
-	/* XXX: Leo to fix ... use importer! */
 	public function add_new(){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -528,8 +544,10 @@ class Registry_object extends MX_Controller {
 	public function get_record($id){
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
+		$ro->enrich();
 		$data['xml'] = html_entity_decode($ro->getRif());
 		$data['extrif'] = html_entity_decode($ro->getExtRif());
+		$data['solr'] = html_entity_decode($ro->transformForSOLR());
 		//$data['view'] = $ro->transformForHtml();
 		$data['id'] = $ro->id;
 		$data['title'] = $ro->getAttribute('list_title');
@@ -567,13 +585,6 @@ class Registry_object extends MX_Controller {
 		echo $jsonData;
 	}
 
-	public function get_tag_menu(){
-		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($this->input->post('ro_id'));
-		$data['ro'] = $ro;
-		$this->load->view('tagging_interface', $data);
-	}
-
 	public function tag($action){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
@@ -582,32 +593,22 @@ class Registry_object extends MX_Controller {
 		$ro_id = $this->input->post('ro_id');
 		$tag = $this->input->post('tag');
 		$ro = $this->ro->getByID($ro_id);
-		$separator = ';;';
+
 		if($action=='add' && $tag!=''){
-			if($ro->tag){
-				$tags = explode(';;', $ro->tag);
-				array_push($tags, $tag);
-				$ro->tag = implode(';;', $tags);
-				$ro->save();
-			}else{
-				$ro->tag = $tag;
-				$ro->save();
+			if($e = $ro->addTag($tag)){
+				$jsonData['status'] = 'success';
+			}else {
+				$jsonData['status'] = 'error';
+				$jsonData['msg'] = $e;
 			}
-			$jsonData['status'] = 'success';
 		}else if($action=='remove'){
-			$tags = explode(';;', $ro->tag);
-			$key = array_search($tag,$tags);
-			if($key!==false){
-			    unset($tags[$key]);
-			}
-			$ro->tag = implode(';;', $tags);
-			$ro->save();
-			$jsonData['status'] = 'success';
+			if($ro->removeTag($tag) && $ro->sync(false)){
+				$jsonData['status'] = 'success';
+			}else $jsonData['status'] = 'error';
 		}
+		
 		echo json_encode($jsonData);
 	}
-
-
 
 	function update($all = false){
 		set_exception_handler('json_exception_handler');

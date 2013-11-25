@@ -178,10 +178,23 @@ class Extrif_Extension extends ExtensionBase
 				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
 				
 				//tags
-				if($this->ro->tag){
-					$tags = explode(';;', $this->ro->tag);
+				
+
+				//ANNOTATIONS
+				if($tags = $this->ro->getTags()){
+					if(count($xml->xpath('extRif:annotations'))){
+						$annotations = $xml->xpath('extRif:annotations');
+						$annotations = $annotations[0];
+					}else $annotations = $xml->addChild("extRif:annotations", NULL, EXTRIF_NAMESPACE);
+				
+					if(count($xml->xpath('extRif:annotations/extRif:tags'))){
+						$extRifTags = $xml->xpath('extRif:annotations/extRif:tags');
+						$extRifTags = $extRifTags[0];
+						$extRifTags[0]='';//hack to remove the tags
+					}else $extRifTags = $annotations->addChild("extRif:tags", NULL, EXTRIF_NAMESPACE);
+
 					foreach($tags as $tag){
-						$extendedMetadata->addChild('extRif:tag', $tag, EXTRIF_NAMESPACE);
+						$extRifTags->addChild('extRif:tag', $tag, EXTRIF_NAMESPACE);
 					}
 				}
 				

@@ -33,7 +33,10 @@ angular.module('portal_theme',[]).
 		return {
 			restrict: 'AC',
 			link: function(scope, element, attrs){
-				$(element).colorbox(attrs.colorbox);
+				$(element).colorbox({
+					maxWidth:'100%',
+					maxHeight:'100%'
+				});
 			}
 		}
 	}).
@@ -47,7 +50,17 @@ angular.module('portal_theme',[]).
 				    slideshowSpeed: 2500,
 				    pauseOnHover:true,
 				    directionNav:false,
+				    itemWidth: 260,
+				    itemMargin: 40,
 				  });
+			}
+		}
+	}).
+	directive('limit', function(){
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs){
+				console.log(element);
 			}
 		}
 	}).
@@ -55,38 +68,15 @@ angular.module('portal_theme',[]).
 		return {
 			restrict : 'A',
 			link: function(scope, element, attrs){
-				$('.scroll', element).on('click', function(){
-					if($(this).hasClass('left')){
-						$('.filmstrip', element).animate({
-							scrollLeft: '-=150'
-						}, 500, 'easeOutQuad',check);
-					}else{
-						$('.filmstrip', element).animate({
-							scrollLeft: '+=150'
-						}, 500, 'easeOutQuad',check);
-					}
+				$(element).flexslider({
+					animation:'slide',
+					controlNav: false,
+					directionNav: true,
+					animationLoop: false,
+					itemWidth: 260,
+					itemMargin: 2,
+					move:1
 				});
-
-				var totalWidth = 0;
-				$('img', element).each(function(){
-					totalWidth += $(this).width();
-				});
-
-				check();
-				function check(){
-					var current = $('.filmstrip', element).scrollLeft();
-					if(current==0){
-						$('.left', element).hide();
-					}else $('.left', element).show();
-
-					if(totalWidth!=0){
-						if(current + $('.filmstrip', element).width() >= totalWidth){
-							$('.right', element).hide();
-						}else{
-							$('.right', element).show();
-						}
-					}
-				}
 			}
 		}
 	}).
@@ -96,8 +86,8 @@ angular.module('portal_theme',[]).
 				case 'collection': return 'Collections';break;
 				case 'activity': return 'Activities';break;
 				case 'party': return 'Parties';break;
-				case 'party_one': return 'Researchers';break;
-				case 'party_multi': return 'Research Groups';break;
+				case 'party_one': return 'People';break;
+				case 'party_multi': return 'Organisations & Groups';break;
 				case 'service': return 'Services';break;
 				default: return text;break;
 			}
@@ -120,6 +110,7 @@ angular.module('portal_theme',[]).
 			filter['q'] = $('.theme_search_query', this).val();
 			if($.trim(filter['q'])=='') delete filter['q'];
 			// filter['id'] = $(this).attr('id');
+			filter['rows'] = 10; 
 			var search_id = $(this).attr('id');
 			$('.theme_search_fq', this).each(function(){
 				if(filter[$(this).attr('fq-type')]){
@@ -183,20 +174,32 @@ angular.module('portal_theme',[]).
 
 				//facets
 				if($('.theme_facet[search-id='+search_id+']').length>0){
-					var facet_type = $('.theme_facet[search-id='+search_id+']').attr('facet-type');
-					var facet_data = '';
-					$(data.facet_result).each(function(){
-						if(this.facet_type==facet_type){
-							facet_data = this;
-						}
+					var facets = $('.theme_facet[search-id='+search_id+']');
+					$(facets).each(function(){
+						var facet_type = $(this).attr('facet-type');
+						var facet_data = '';
+						$(data.facet_result).each(function(){
+							if(this.facet_type==facet_type) facet_data = this;
+						});
+						$(facet_data.values).each(function(){
+							this.inc_title = encodeURIComponent(this.title);
+						});
+						var template = $('#facet-template').html();
+						var output = Mustache.render(template, facet_data);
+						$(this).html(output).show();
 					});
-					$(facet_data.values).each(function(){
-						this.inc_title = encodeURIComponent(this.title);
-					});
-					var template = $('#facet-template').html();
-					var output = Mustache.render(template, facet_data);
-					$('.theme_facet[search-id='+search_id+']').html(output).show();
 				}
+				$('.sidebar ul.facet').each(function(idx, facet){
+					if($('li', facet).length>5){
+					    var $facet = $(facet);
+					    $('li:gt(4)', facet).hide();
+					    $facet.append('<li><a href="javascript:;" class="show-all-facet">Show More...</a></li>');
+					    $('.show-all-facet', facet).click(function(){
+							$(this).parent().siblings().show();
+							$(this).parent().remove();
+					    });
+					}
+				});
 			});
 		});
 

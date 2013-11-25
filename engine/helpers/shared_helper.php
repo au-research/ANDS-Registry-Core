@@ -81,7 +81,7 @@ function format_relationship($from_class, $relationship_type, $origin=false){
 		"hasAssociationWith" =>   array("Associated with", "Associated with"),
 		"hasOutput" => array("Produces","Output of"),
 		"hasPart" => array("Includes","Part of"),
-		"hasParticipant" => array("Undertaken by","Has participant"),
+		"hasParticipant" => array("Undertaken by","Participant in"),
 		"isFundedBy" => array("Funded by","Funds"),
 		"isManagedBy" => array("Managed by","Manages"),
 		"isOwnedBy" => array("Owned by","Owns"),
@@ -94,7 +94,7 @@ function format_relationship($from_class, $relationship_type, $origin=false){
 	
 	$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
 
-	if($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR'){//reverse
+	if($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER'){//reverse
 		return (isset($allTypesArray[$relationship_type]) ? $allTypesArray[$relationship_type][1] : $relationship_type);
 	}
 	else 
@@ -104,8 +104,12 @@ function format_relationship($from_class, $relationship_type, $origin=false){
 }
 
 function from_camel_case($str) {
-    $str[0] = strtolower($str[0]);
-    $func = create_function('$c', 'return " " . strtolower($c[1]);');
-    $newStr = preg_replace_callback('/([A-Z])/', $func, $str);
-    return ucfirst($newStr);
+	if(isset($str) && is_array($str))
+	{
+    	$str[0] = strtolower($str[0]);
+    	$func = create_function('$c', 'return " " . strtolower($c[1]);');
+    	$newStr = preg_replace_callback('/([A-Z])/', $func, $str);
+    	return ucfirst($newStr);
+	}
+	else return '';
   }

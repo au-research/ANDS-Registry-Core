@@ -79,7 +79,7 @@
 							<li <?php echo 'class="'.($ds->count_level_4 > 0 ? '' : 'disabled').'"';?>><a href="javascript:;" class="filter" name="quality_level" value="4">Gold Standard (<?php echo $ds->count_level_4;?>)<span class="icon"></span></a></li>
 							<li class="divider"></li>
 							<li><a href="javascript:;" class="filter" name="flag" value="t">Flagged Records <span class="icon"></span></a></li>
-							<li><a href="javascript:;" class="filter" name="tag" value="">Records with Tags <span class="icon"></span></a></li>
+							<li><a href="javascript:;" class="filter" name="tag" value="1">Records with Tags <span class="icon"></span></a></li>
 							
 						</ul>
 					</div>
@@ -124,7 +124,7 @@
 
 <script type="text/x-mustache" id="mmr_status_template">
 <div class="widget-box ro_box" status="{{name}}">
-	<div class="widget-title stick">
+	<div class="widget-title">
 		<span class="icon selector_menu" status="{{name}}">
 			<span class="count">{{count}}</span>
 			<div class="hide selecting_menu">
@@ -142,7 +142,7 @@
 	</div>
 	<div class="widget-content nopadding">
 		<div class='selected_status hide'></div>
-		<ul class="sortable" connect_to="{{connectTo}}" status="{{name}}">
+		<ul class="sortable ro_list" connect_to="{{connectTo}}" status="{{name}}">
 			{{#items}}
 			<li id="{{id}}" data-toggle="context" data-target="#context-menu-{{status}}" class="status_{{status}} ro_item {{#has_flag}}flagged{{/has_flag}}" status="{{status}}">
 			<div class="ro_item_header">

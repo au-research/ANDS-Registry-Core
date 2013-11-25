@@ -164,8 +164,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 		// Get the RO instance for this registry object so we can fetch its connections
 		$this->load->model('registry_object/registry_objects', 'ro');
-		if ($this->input->get('slug'))
-		{
+		if ($this->input->get('slug')){
 			$registry_object = $this->ro->getBySlug($this->input->get('slug'));
 			$published_only = TRUE;
 		}
@@ -190,6 +189,62 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		echo json_encode(array("connections"=>$connections, 'class'=>$registry_object->class, 'slug'=>$registry_object->slug));
 	}
 
+	public function getRelatedInfoByIrId()
+	{
+		$result = array();
+		if (!($this->input->get('id')))
+		{ 
+			$result['message'] = "Invalid URL 'id' not specified.";
+		}
+		else{
+			$id = $this->input->get("id");
+			$query = $this->db->get_where('registry_object_identifier_relationships', array('id'=>$id), 1);
+			if ($query->num_rows() > 0){
+				$result_array = $query->result_array();
+				$result['data'] = $result_array;
+				if ($result_array[0]['related_object_identifier_type'] == 'orcid'){
+					$result['data'][0]['connections_preview_div'] .= $this->resolveOrcid($result_array[0]['related_object_identifier'], 'html');
+				}
+				echo json_encode($result);
+			}
+			else
+			{
+				$result['message'] = 'No record found';
+				echo json_encode($result);
+			}
+		}
+	}
+
+	function resolveOrcid($orcid, $format = ''){
+		$ch = curl_init();
+		$headers = array('Accept: application/orcid+json');
+		curl_setopt($ch, CURLOPT_URL, "http://pub.orcid.org/".$orcid); # URL to post to
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 ); # return into a variable
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers ); # custom headers, see above
+		$result = curl_exec( $ch ); # run!
+		curl_close($ch);
+
+		if($format=='json'){
+			return $result;
+		}else if($format=='php'){
+			return json_decode($result, true);
+		}else if($format=='html'){
+			$html = '';
+			$result = json_decode($result, true);
+
+			$first_name = $result['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
+			$last_name = $result['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
+			$name = $first_name.' '.$last_name;
+			$bio = $result['orcid-profile']['orcid-bio']['biography']['value'];
+
+			$html .='<h4><a href="http://orcid.org/'.$orcid.'">'.$name.'</a></h4>';
+			//$html.='<p><img src="'.asset_url('img/orcid_tagline_small.png', 'base').'"/></p>';
+			$html.= '<p>'.$bio.'</p>';
+			$html.='<a href="http://orcid.org/'.$orcid.'">View Profile</a><a href="http://orcid.org/'.$orcid.'"><img style="border:none;width:50px;margin-top:-5px;margin-left:5px" src="'.asset_url('img/orcid_tagline_small.png', 'base').'"/></a>';
+			return $html;
+		}
+
+	}
 
 	/**
 	 * Fetch a list of suggested links
@@ -401,7 +456,53 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		echo json_encode(array("contributors"=>$contributors));
 	}
 
+	/**
+	 * Get a JSON list of recently updated records grouped by subject area code
+	 */
+	public function getLatestActivityBySubject($period = '7', $vocabulary = 'anzsrc-for')
+	{
+		if (!is_numeric($period)) return false;
+		$this->load->library('solr');
+		$this->load->library('vocab');
+		$this->solr->init();
 
+		$this->solr->setFacetOpt('field','subject_value_resolved');
+		$this->solr->setFacetOpt('mincount','1');
+		$this->solr->setOpt('fq','record_created_timestamp:[NOW-'.$period.'DAY TO NOW]');
+		$this->solr->executeSearch();
+
+		$activity_counts = array();
+		foreach($this->solr->getFacetResult('subject_value_resolved') AS $subject_label => $count)
+		{
+			$resolved_term = $this->vocab->resolveLabel($subject_label, $vocabulary);
+			if ($resolved_term)
+			{
+				$resolved_term['num_records'] = $count;
+				$activity_counts[] = $resolved_term;
+			}
+		}
+
+		echo json_encode(
+			array(
+				"status" => "success",
+				"info" => "Records updated in the registry for the last $period DAYS",
+				"results" => $activity_counts
+			)
+		);
+
+	}
+
+
+	/**
+	 * Return a tree/hierarchical structure of ancestors and descendent records of 
+	 * a specified record (inferred from the isPartOf/partOf relationships).
+	 *
+	 * If the registry object ID is specified, draft connections will be included.
+	 *
+	 * @param $_GET[slug] "SLUG" of the registry object to retrieve
+	 * @param $_GET[registry_object_id] A specific registry object ID to fetch
+	 * 
+	 */
 	public function getAncestryGraph()
 	{
 		$this->load->model('connectiontree');

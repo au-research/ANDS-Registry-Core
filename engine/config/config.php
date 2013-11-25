@@ -69,7 +69,12 @@ $application_directives = array(
 				"base_url" => "%%BASEURL%%/",
 				"active_application" => "portal",
 				"default_controller" => "home/index",
-				"routes" => array("topic/(:any)" => "topic/view_topic/$1","(:any)"=>"core/dispatcher/$1", ),
+				"routes" => array(
+					"topic/(:any)" => "topic/view_topic/$1",
+					"themes" => "theme_page/index",
+					"theme/(:any)" => "theme_page/view/$1",
+					"(:any)"=>"core/dispatcher/$1",
+					),
 			),
 	"apps" =>
 			array(
@@ -94,7 +99,14 @@ $config['application_directives'] = $application_directives;
 /* If no application is matched, what should we default to? */
 if (PHP_SAPI == 'cli')
 {
-	$default_application = 'registry';
+	if (array_key_exists($_SERVER['argv'][1], $application_directives))
+	{
+		$default_application = $_SERVER['argv'][1];
+	}
+	else
+	{
+		$default_application = 'registry';
+	}
 } 
 else
 {

@@ -27,6 +27,8 @@
 <!-- ANDS Less file and general styling correction-->
 <link href="<?php echo asset_url('less/ands.less', 'core');?>" rel="stylesheet/less" type="text/css">
 
+<link rel="stylesheet" href="<?php echo asset_url('css/ands_portal.css', 'core');?>" type="text/css" media="screen">
+
 <!-- Library files -->
 <link rel="stylesheet" href="<?php echo asset_url('lib/qtip2/jquery.qtip.min.css', 'base');?>" type="text/css">
 
@@ -74,7 +76,7 @@ else
 				<li><a href="<?=base_url('search/#!/q=/tab=party');?>">Parties</a></li>
 				<li><a href="<?=base_url('search/#!/q=/tab=activity');?>">Activities</a></li>
 				<li><a href="<?=base_url('search/#!/q=/tab=service');?>">Services</a></li>
-				<li><a href="<?=base_url("topic");?>">Topics</a></li>
+				<li><a href="<?=base_url("themes");?>">Themes</a></li>
 			</ul><!-- top_nav -->
 			<div class="clear"></div>
 		</div><!-- head -->

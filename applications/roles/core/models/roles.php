@@ -276,6 +276,7 @@ class Roles extends CI_Model {
                 )
             );
         }
+        $this->user->refreshAffiliations($this->user->localIdentifier());
     }
 
     /**

@@ -77,10 +77,14 @@ $ENV['ENABLED_MODULES'] = array(
 
 	// 	- 	Content Management System modules
 	//			'theme_cms',
+	//			'bulk_tag',
 	//			'cms',
 
 	//	-	Statistics dashboard
 	//			'statistics',
+
+	//  -   Twitter announcement app
+	//			'twitter',
 
 	// These modules require: ANDS-Developer-Portal to be installed:
 	// 	- 	Developer API documentation
@@ -173,12 +177,22 @@ $ENV['gDOIS_DATACENTRE_NAME_PREFIX'] = "";
 $ENV['gDOIS_DATACENTRE_NAME_MIDDLE'] = "";
 $ENV['gDOIS_DATACITE_PASSWORD'] = "";
 $ENV['gDOIS_RESPONSE_SUCCESS'] = "OK";
+$ENV['gDOIS_DATACENTRE_PREFIXS'] = array( '10.4225/','10.4226/','10.4227/','10.5072/');
 $eDBCONF['dois']['hostname'] = '';
 $eDBCONF['dois']['password'] = '';
 $eDBCONF['dois']['database'] = 'dois';
 $eDBCONF['dois']['dbdriver'] = 'postgre';
 */
 
+
+/*
+//=> TWITTER API
+//    - enables the /apps/twitter/ module to tweet about updates to the registry
+$ENV['twitter_consumer_key'] = '';
+$ENV['twitter_consumer_secret'] = '';
+$ENV['twitter_oauth_access_token'] = '';
+$ENV['twitter_oauth_access_secret'] = '';
+*/
 
 /*********************************************************************/
 /* (SECTION 5) ADVANCED DATABASE CONFIGURATION
