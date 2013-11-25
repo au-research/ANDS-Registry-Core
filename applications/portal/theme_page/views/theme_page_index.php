@@ -1,7 +1,8 @@
 <?php $this->load->view('rda_header');?>
 <div class="container less_padding" ng-app="portal_theme">
 	<div class="breadcrumb">
-		<?php echo anchor('/', 'Home', array('class'=>'crumb')); ?> / 
+		<?php echo anchor('/', 'Home', array('class'=>'crumb')); ?> /&nbsp;
+		<?php echo anchor('/themes', 'Themes', array('class'=>'crumb')) ?> /&nbsp;
 		<?php echo anchor('/theme_page/view/'.$page['slug'], ' '.$page['title'], array('class'=>'crumb')); ?>
 	</div>
 	<div class="main item-view-inner" ng-controller="init">
