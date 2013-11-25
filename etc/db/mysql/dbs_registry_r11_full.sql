@@ -380,6 +380,32 @@ CREATE TABLE `registry_objects` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+DROP TABLE IF EXISTS `vocab_metadata`;
+DROP TABLE IF EXISTS `harvest_parameter`;
+
+CREATE TABLE `registry_object_identifier_relationships` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `registry_object_id` mediumint(8) unsigned NOT NULL,
+  `related_object_identifier` varchar(255) NOT NULL,
+  `related_info_type` varchar(45) DEFAULT NULL,
+  `related_object_identifier_type` varchar(45) NOT NULL,
+  `relation_type` varchar(45) DEFAULT NULL,
+  `related_title` varchar(255) DEFAULT NULL,
+  `related_url` varchar(255) DEFAULT NULL,
+  `related_description` varchar(512) DEFAULT NULL,
+  `connections_preview_div` text,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `registry_object_identifiers` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `registry_object_id` mediumint(8) unsigned NOT NULL,
+  `identifier` varchar(255) NOT NULL,
+  `identifier_type` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+
 CREATE  TABLE `registry_object_tags` (
   `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `key` VARCHAR(255) NOT NULL ,
