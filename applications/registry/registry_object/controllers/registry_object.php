@@ -150,8 +150,13 @@ class Registry_object extends MX_Controller {
 		{
 			header("Location: " . registry_url('registry_object/edit/' . $ro->id));
 		}
-
-		$data['extrif'] = $ro->getExtRif();
+		$extRif = $ro->getExtRif();
+		if(!$extRif)
+		{
+			$ro->enrich();
+			$extRif = $ro->getExtRif();
+		}
+		$data['extrif'] = $extRif;
 		$data['content'] = $ro->transformCustomForFORM($data['extrif']);
 		$data['ds'] = $ds;
 		

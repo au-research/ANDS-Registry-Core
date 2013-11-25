@@ -203,7 +203,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 				$result_array = $query->result_array();
 				$result['data'] = $result_array;
 				if ($result_array[0]['related_object_identifier_type'] == 'orcid'){
-					$result['data'][0]['connections_preview_div'] = $this->resolveOrcid($result_array[0]['related_object_identifier'], 'html');
+					$result['data'][0]['connections_preview_div'] .= $this->resolveOrcid($result_array[0]['related_object_identifier'], 'html');
 				}
 				echo json_encode($result);
 			}
@@ -238,9 +238,9 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			$bio = $result['orcid-profile']['orcid-bio']['biography']['value'];
 
 			$html .='<h4><a href="http://orcid.org/'.$orcid.'">'.$name.'</a></h4>';
-			$html.='<p><img src="'.asset_url('img/orcid_tagline_small.png', 'base').'"/></p>';
+			//$html.='<p><img src="'.asset_url('img/orcid_tagline_small.png', 'base').'"/></p>';
 			$html.= '<p>'.$bio.'</p>';
-			$html.='<a href="http://orcid.org/'.$orcid.'">Orcid Profile</a>';
+			$html.='<a href="http://orcid.org/'.$orcid.'">View Profile</a><a href="http://orcid.org/'.$orcid.'"><img style="border:none;width:50px;margin-top:-5px;margin-left:5px" src="'.asset_url('img/orcid_tagline_small.png', 'base').'"/></a>';
 			return $html;
 		}
 

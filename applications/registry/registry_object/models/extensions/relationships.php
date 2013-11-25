@@ -62,28 +62,37 @@ class Relationships_Extension extends ExtensionBase
 		{
 			
 			$related_info_type = (string)$related_info['type'];
-			$related_info_title = (string)$related_info->title;
-			$relation_type = "";
-			$related_description = "";
-			$related_url = "";
-			$connections_preview_div = "<h4>".$related_info_title."</h4>";
-			if($related_info->relation){
-				foreach($related_info->relation as $r)
-				{
-					$relation_type .= (string)$r['type'].", ";
-					$relateddescription = (string)$r->description."<br/>";
-					if($related_url == '' && (string)$r->url != ''){
-						$related_url = (string)$r->url;
-					}
-					$urlStr = trim((string)$r->url);
-					$connections_preview_div .= "<p>".(string)$r->description.'<br/><a href="'.$urlStr.'">'.(string)$r->url."</a></p><br/>";
-				}
-				$relation_type = substr($relation_type, 0, strlen($relation_type)-2);
-				$connections_preview_div .= '<p>('.$relation_type.')</p>';
-			}
-
 			if(in_array($related_info_type, $processedTypesArray))
-			{							
+			{
+				$related_info_title = (string)$related_info->title;
+				$relation_type = "";
+				$related_description = "";
+				$related_url = "";
+				$relation_type_disp = "";
+				$connections_preview_div = "";
+				if($related_info->relation){
+					foreach($related_info->relation as $r)
+					{
+						$relation_type .= (string)$r['type'].", ";
+						$relation_type_disp .= format_relationship($this->ro->class, (string)$r['type'], 'IDENTIFIER').", ";
+						$relateddescription = (string)$r->description."<br/>";
+						if($related_url == '' && (string)$r->url != ''){
+							$related_url = (string)$r->url;
+						}
+						$urlStr = trim((string)$r->url);
+						$connections_preview_div .= "<div class='description'><p>".(string)$r->description.'<br/><a href="'.$urlStr.'">'.(string)$r->url."</a></p></div>";
+					}
+					$relation_type = substr($relation_type, 0, strlen($relation_type)-2);
+					$relation_type_disp = substr($relation_type_disp, 0, strlen($relation_type_disp)-2);
+					//$connections_preview_div .= '<p>('.$relation_type.')</p>';
+				}
+				if($related_info->notes){
+					$connections_preview_div .= '<p>Notes: '.(string)$related_info->notes.'</p>';
+				}
+			    $imgUrl = asset_url('img/'.$related_info_type.'.png', 'base');
+			    $classImg = '<img class="icon-heading" src="'.$imgUrl.'" alt="'.$related_info_type.'" style="width:24px; float:right;">';
+				$connections_preview_div = '<div class="previewItemHeader">'.$relation_type_disp.'</div>'.$classImg.'<h4>'.$related_info_title.'</h4><div class="post">'.$connections_preview_div.'</div>';
+								
 				foreach($related_info->identifier as $i)
 				{
 					$this->db->insert('registry_object_identifier_relationships', 
