@@ -124,7 +124,7 @@
 
 <script type="text/x-mustache" id="mmr_status_template">
 <div class="widget-box ro_box" status="{{name}}">
-	<div class="widget-title stick">
+	<div class="widget-title">
 		<span class="icon selector_menu" status="{{name}}">
 			<span class="count">{{count}}</span>
 			<div class="hide selecting_menu">
