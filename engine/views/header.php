@@ -160,12 +160,12 @@ if($this->config->item('environment_logo')){
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <b class="caret"></b></a>
                   <ul class="dropdown-menu pull-right">       
 
-                 
+		    <?php if( mod_enabled('toolbox') ): ?>
                         <li class=""><?php echo anchor(developer_url(''), '<i class="icon-briefcase icon"></i> Developer Toolbox <sup style="color:red;">new!</sup>');?></li>
                         <li class=""><?php echo anchor(developer_url('documentation/widgets'), '&nbsp; &raquo; Web Widgets');?></li>
                         <li class=""><?php echo anchor(developer_url('documentation/services'), '&nbsp; &raquo; Web Services');?></li>
                         <li class=""><?php echo anchor(developer_url('documentation/registry'), '&nbsp; &raquo; Registry Software');?></li>
-              
+		    <?php endif; ?>
           
                     <?php if ($this->user->hasFunction('PORTAL_STAFF') && mod_enabled('cms')): ?>
                         <li class="divider"></li>
