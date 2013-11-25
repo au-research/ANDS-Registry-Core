@@ -275,6 +275,8 @@ class Connections_Extension extends ExtensionBase
 					$row['class'] = $row['related_info_type'];
 				if($row['title'] == null) 
 					$row['title'] = $row['related_title'];
+				if($row['relation_type'] == null || $row['relation_type'] == '')
+					$row['relation_type'] = 'hasAssociationWith';
 				if($row['related_title'] != '' or $row['status'] != null)
 				{
 					$my_connections[] = $row;
@@ -326,6 +328,9 @@ class Connections_Extension extends ExtensionBase
 		foreach ($query->result_array() AS $row)
 		{
 			$row['origin'] = "IDENTIFIER REVERSE";
+			if($row['relation_type'] == null || $row['relation_type'] == ''){
+				$row['relation_type'] = 'hasAssociationWith';
+			}
 			$my_connections[] = $row;
 		}
 		return $my_connections;
