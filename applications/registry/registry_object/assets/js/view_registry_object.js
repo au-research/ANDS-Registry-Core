@@ -113,6 +113,7 @@ $(function(){
         var tag = $('input', this).val();
         var tag_html = '<li>'+tag+'<span class="hide"><i class="icon icon-remove"></i></span></li>';
         $('.notag').hide();
+        if(tag!='' && $.trim(tag)!=''){
          $.ajax({
             url:real_base_url+'registry/services/registry/tags/keys/add', 
             type: 'POST',
@@ -120,7 +121,8 @@ $(function(){
             success: function(data){
                 $('.tags').append(tag_html);
             }
-        });
+         });
+        }
     });
     $('.tags li').die().live({
         mouseover: function(){
