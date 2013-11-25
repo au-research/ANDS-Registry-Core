@@ -823,8 +823,6 @@ function addValidationMessage(tt, type){
 	var field = null;
 	message = $('<div />').html(message).text(); //dispel html from message
 
-	if(type=='error') log(field_id, message);
-
 	if(field_id.match("^tab_mandatoryInformation_")){
 		//on the mandatory tab
 		var tab = field_id.replace('tab_mandatoryInformation_','');
@@ -851,6 +849,8 @@ function addValidationMessage(tt, type){
 			}else{
 				Core_addValidationMessage(target, type, message);
 			}
+		}else{
+			Core_addValidationMessage(target, type, message);
 		}
 		
 		

@@ -1395,15 +1395,17 @@
 
 	<xsl:template match="ro:relatedInfo/ro:identifier">
 		<div class="aro_box_part">
-		<div class="control-group">
-			<label class="control-label" for="Identifier">Identifier:</label>						
-			<span class="inputs_group">
-				<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="{text()}" required=""/>
-				<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value="{@type}"/>
-			</span>
-			<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
+				<div class="control-group">
+					<div class="controls">
+					<label class="control-label" for="Identifier">Identifier:</label>						
+					<span class="inputs_group">
+						<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="{text()}" required=""/>
+						<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value="{@type}"/>
+					</span>
+					<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
+				</div>
+			</div>
 		</div>
-	</div>
 	</xsl:template>
 
 
