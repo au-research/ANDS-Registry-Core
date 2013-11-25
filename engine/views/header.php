@@ -164,17 +164,17 @@ if($this->config->item('environment_logo')){
                         <li class=""><?php echo anchor(developer_url(''), '<i class="icon-briefcase icon"></i> Developer Toolbox <sup style="color:red;">new!</sup>');?></li>
                         <li class=""><?php echo anchor(developer_url('documentation/widgets'), '&nbsp; &raquo; Web Widgets');?></li>
                         <li class=""><?php echo anchor(developer_url('documentation/services'), '&nbsp; &raquo; Web Services');?></li>
-                        <li class=""><?php echo anchor(developer_url('documentation/registry'), '&nbsp; &raquo; Registry Software');?></li>
+                        <li class=""><?php echo anchor(developer_url('documentation/registry'), '&nbsp; &raquo; Registry Software');?></li> 
+                        <li class="divider"></li>
 		    <?php endif; ?>
           
                     <?php if ($this->user->hasFunction('PORTAL_STAFF') && mod_enabled('cms')): ?>
-                        <li class="divider"></li>
                         <li class=""><?php echo anchor(apps_url('spotlight/'), '<i class="icon-indent-left icon"></i> Spotlight CMS Editor');?></li>
                         <li class=""><?php echo anchor(apps_url('uploader/'), '&nbsp; &raquo; CMS Image Uploader');?></li>
+                        <li class="divider"></li>
                     <?php endif; ?>     
 
                     <?php if($this->user->hasFunction('PORTAL_STAFF') && mod_enabled('theme_cms')): ?>
-                      <li class="divider"></li>
                       <li class=""><?php echo anchor(apps_url('theme_cms/'), '<i class="icon-indent-left icon"></i> Theme CMS Editor'); ?></li>
                       <?php if(mod_enabled('bulk_tag')): ?>
                         <li class=""><?php echo anchor(apps_url('theme_cms/bulk_tag'), '&nbsp; &raquo; Bulk Tag'); ?></li>
