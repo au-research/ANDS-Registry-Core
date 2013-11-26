@@ -15,7 +15,7 @@
 	<?php if($f['type']=='separator'): ?><hr/><?php endif; ?>
 
 	<?php if($f['type']=='gallery'): ?>
-		<div class="flexslider <?php echo $f['gallery_type']; ?>" <?php echo $f['gallery_type']; ?> style="min-height:0;margin-bottom:60px;">
+		<div class="flexslider <?php echo $f['gallery_type']; ?>" <?php echo $f['gallery_type']; ?>>
 			<ul class="slides">
 				<?php foreach($f['gallery'] as $i): ?>
 				<li <?php if($f['gallery_type']=='carousel'): ?>style="margin-left:20px; margin-right:20px;" <?php endif;?>><a href="<?php echo $i['src'] ?>" colorbox rel="<?php echo $f['title']; ?>"><img src="<?php echo $i['src'];?>" alt="" rel="<?php echo $f['title'] ?>"></a></li>
