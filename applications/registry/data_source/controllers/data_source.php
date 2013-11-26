@@ -1936,13 +1936,13 @@ public function getContributorGroupsEdit()
 		if($as == 'file')
 		{
 		    $this->load->helper('download');
-		    force_download($dsSlug.'-RIF-CS-Export.xml', wrapRegistryObjects($rifcs));
+		    force_download($dsSlug.'-RIF-CS-Export.xml', wrapRegistryObjects(html_entity_decode($rifcs)));
 		}
 		else
 		{
 		 	header('Cache-Control: no-cache, must-revalidate');
 		 	header('Content-type: application/xml');
-		 	echo wrapRegistryObjects($rifcs);
+		 	echo wrapRegistryObjects(html_entity_decode($rifcs));
 		 }
 	}
 
