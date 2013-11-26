@@ -386,6 +386,10 @@
     <xsl:template match="extRif:related_object">
             <xsl:apply-templates/>       
     </xsl:template> 
+    
+<!-- these are the relatedInfo relations that could not be resolved internally -->
+    <xsl:template match="extRif:related_object[extRif:related_object_id = '']"/>
+
 
     <xsl:template match="extRif:related_object_key">
         <xsl:element name="field">
