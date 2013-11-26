@@ -26,7 +26,7 @@
 
 	<?php if($f['type']=='search'): ?>
 		<div class="theme_search search-result hide" id="<?php echo (isset($f['search']['id'])? $f['search']['id'] : 'NOID'); ?>">
-			<input type="hidden" value="<?php echo (isset($f['search']['query'])? $f['search']['query']: ''); ?>" class="theme_search_query">
+			<input type="hidden" value="<?php echo (isset($f['search']['query'])? urlencode($f['search']['query']): ''); ?>" class="theme_search_query">
 			<?php if(isset($f['search']['fq'])): ?>
 			<?php foreach($f['search']['fq'] as $fq): ?>
 				<input type="hidden" value="<?php echo $fq['value']; ?>" class="theme_search_fq" fq-type="<?php echo $fq['name'] ?>">
