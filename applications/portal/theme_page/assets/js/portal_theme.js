@@ -42,11 +42,11 @@ angular.module('portal_theme',[]).
 	}).
 	directive('carousel', function(){
 		return {
-			restrict: 'AC',
+			restrict: 'A',
 			link: function(scope, element, attrs){
 				$(element).flexslider({
 				    animation: "slide",
-				    controlNav: true,
+				    animationLoop:true,
 				    slideshowSpeed: 2500,
 				    pauseOnHover:true,
 				    directionNav:false,
