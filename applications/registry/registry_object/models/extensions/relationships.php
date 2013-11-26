@@ -80,7 +80,10 @@ class Relationships_Extension extends ExtensionBase
 							$related_url = (string)$r->url;
 						}
 						$urlStr = trim((string)$r->url);
-						$connections_preview_div .= "<div class='description'><p>".(string)$r->description.'<br/><a href="'.$urlStr.'">'.(string)$r->url."</a></p></div>";
+						if((string)$r->description != '' && (string)$r->url != '')
+						{
+							$connections_preview_div .= "<div class='description'><p>".(string)$r->description.'<br/><a href="'.$urlStr.'">'.(string)$r->url."</a></p></div>";
+						}
 					}
 					$relation_type = substr($relation_type, 0, strlen($relation_type)-2);
 					$relation_type_disp = substr($relation_type_disp, 0, strlen($relation_type_disp)-2);
