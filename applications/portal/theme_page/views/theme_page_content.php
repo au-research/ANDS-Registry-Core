@@ -7,7 +7,9 @@
 		}
 	?>
 	<?php if($f['type']=='html'): ?>
-		<?php echo $f['content']; ?>
+		<div class="widget">
+			<?php echo $f['content']; ?>
+		</div>
 	<?php endif; ?>
 
 	<?php if($f['type']=='separator'): ?><hr/><?php endif; ?>
