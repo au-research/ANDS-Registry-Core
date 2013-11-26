@@ -240,7 +240,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			$html .='<h4><a href="http://orcid.org/'.$orcid.'">'.$name.'</a></h4>';
 			//$html.='<p><img src="'.asset_url('img/orcid_tagline_small.png', 'base').'"/></p>';
 			$html.= '<p>'.$bio.'</p>';
-			$html.='<a href="http://orcid.org/'.$orcid.'">View Profile</a><a href="http://orcid.org/'.$orcid.'"><img style="border:none;width:50px;margin-top:-5px;margin-left:5px" src="'.asset_url('img/orcid_tagline_small.png', 'base').'"/></a>';
+			$html.='<a href="http://orcid.org/'.$orcid.'">View profile in</a><a href="http://orcid.org/'.$orcid.'"><img style="border:none;width:50px;margin-top:-5px;margin-left:5px" src="'.asset_url('img/orcid_tagline_small.png', 'base').'"/></a>';
 			return $html;
 		}
 
