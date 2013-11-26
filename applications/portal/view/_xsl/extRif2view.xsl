@@ -323,11 +323,11 @@
         <h4>Additional Metadata</h4>
         <xsl:apply-templates select="ro:relatedInfo[@type='metadata']"/> 
     </xsl:if>
-    <xsl:if test="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity'] or ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '')]">
+    <xsl:if test="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity'] or ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]">
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
         <h4>More Information</h4>
         <xsl:apply-templates select="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity']"/>
-        <xsl:apply-templates select="ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '')]"/>
+        <xsl:apply-templates select="ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]"/>
     </xsl:if>
 
     
