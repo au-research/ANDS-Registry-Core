@@ -58,11 +58,11 @@
 				<li><a href="<?=base_url('home/about');?>">About</a></li>				
 				<li><a href="<?=base_url('home/contact');?>">Contact Us</a></li>
 				<li><a href="<?=base_url('home/disclaimer');?>">Disclaimer</a></li>	
+				<li><a href="<?=developer_url('');?>">Developers</a></li>
 				<li><a href="<?=base_url('search/#!/q=/tab=collection');?>">All Collections</a></li>
 				<li><a href="<?=base_url('search/#!/q=/tab=party');?>">All Parties</a></li>			
 				<li><a href="<?=base_url('search/#!/q=/tab=activity');?>">All Activities</a></li>
 				<li><a href="<?=base_url('search/#!/q=/tab=service');?>">All Services</a></li>				
-				<li><a href="<?=base_url('topic/');?>">All Topics</a></li>
 				<li id="registryViewLink"><a href="<?=registry_url('');?>" target="_blank">(Registry View)</a></li>	
 				<li id="registryLink"><a href="<?=registry_url('');?>" target="_blank">ANDS Online Services</a></li>											
 			</ul>
