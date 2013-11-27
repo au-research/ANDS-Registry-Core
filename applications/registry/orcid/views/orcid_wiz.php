@@ -71,7 +71,7 @@
 									echo '</li>';
 								}
 							}else{
-								echo "YNo collections have been imported";
+								echo "No collections have been imported";
 							}
 						?>
 					</ul>
