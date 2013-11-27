@@ -1004,7 +1004,7 @@
     <a>
       <xsl:attribute name="class">identifier</xsl:attribute>
       <xsl:attribute name="href"> <xsl:value-of select="$theidentifier"/></xsl:attribute>
-      <xsl:attribute name="title"><xsl:text>Resolve this URI</xsl:text></xsl:attribute>            
+      <xsl:attribute name="title"><xsl:text>Resolve this URN</xsl:text></xsl:attribute>            
       <xsl:value-of select="."/>
       <img class="identifier_logo">
             <xsl:attribute name="src"><xsl:value-of select="$base_url"/>

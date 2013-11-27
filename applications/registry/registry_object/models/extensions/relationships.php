@@ -243,6 +243,12 @@ class Relationships_Extension extends ExtensionBase
 		
 		$urlValue = $value;
 		switch ($type){
+			case 'handle':
+				if (strpos($value,'http://hdl.handle.net/') === false){
+    				$urlValue = 'http://hdl.handle.net/'.$value;
+				}
+		        return 'Handle : <a class="identifier" href="'.$urlValue.'" title="Resolve this handle">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/handle_icon.png', 'base_path').'" alt="Handle icon"></a><br/>';
+		        break;
 			case 'purl':
 				if (strpos($value,'http://purl.org/') === false){
     				$urlValue = 'http://purl.org/'.$value;
@@ -268,13 +274,13 @@ class Relationships_Extension extends ExtensionBase
 		    	if (strpos($value,'http://orcid.org/') === false){
     				$urlValue = 'http://orcid.org/'.$value;
 				}
-		        return 'ORCID: <a class="identifier" href="'.$urlValue.'" title="Resolve this Orcid ID">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/orcid_icon.png', 'base_path').'" alt="ORCID icon"></a><br/>';
+		        return 'ORCID: <a class="identifier" href="'.$urlValue.'" title="Resolve this ORCID">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/orcid_icon.png', 'base_path').'" alt="ORCID icon"></a><br/>';
 		        break;
 		    case 'AU-ANL:PEAU':
 		    	if (strpos($value,'http://nla.gov.au/') === false){
     				$urlValue = 'http://nla.gov.au/'.$value;
 				}
-		        return 'NLA: <a class="identifier" href="'.$urlValue.'" title="View the record for this party in Trove<">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/nla_icon.png', 'base_path').'" alt="NLA icon"></a><br/>';
+		        return 'NLA: <a class="identifier" href="'.$urlValue.'" title="View the record for this party in Trove">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/nla_icon.png', 'base_path').'" alt="NLA icon"></a><br/>';
 		        break;
 		    case 'local':
 				return "Local: ".$value."<br/>";
