@@ -29,3 +29,28 @@ CREATE TABLE `registry_object_tags` (
   `tag` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 );
+
+
+/* Optionally, some database index improvements */
+/*
+ALTER TABLE `registry_object_relationships` 
+DROP INDEX `idx_related_object_pair` 
+, ADD INDEX `idx_related_object_pair` USING HASH (`registry_object_id` ASC, `related_object_key` ASC) ;
+
+ALTER TABLE `registry_objects` 
+DROP INDEX `idx_ro_class` 
+, ADD INDEX `idx_ro_class` USING HASH (`class` ASC) 
+, DROP INDEX `fk_registry_object_data_source` 
+, ADD INDEX `fk_registry_object_data_source` USING HASH (`data_source_id` ASC) ;
+
+ALTER TABLE `registry_objects` 
+ADD INDEX `slug_lookup` USING HASH (`slug` ASC) ;
+
+ALTER TABLE `url_mappings` 
+DROP INDEX `slug_UNIQUE` 
+, ADD UNIQUE INDEX `slug_UNIQUE` USING HASH (`slug` ASC) 
+, DROP INDEX `idx_url_to_registry_object` 
+, ADD INDEX `idx_url_to_registry_object` USING HASH (`registry_object_id` ASC) 
+, DROP INDEX `fk_url_map_to_registry_object` 
+, ADD INDEX `fk_url_map_to_registry_object` USING HASH (`slug` ASC, `registry_object_id` ASC) ;
+*/
