@@ -247,7 +247,7 @@ class Orcid extends MX_Controller {
 		$data = array();
 		$data['imported'] = $im;
 
-		if(sizeof($imported)==0) $data['no_result'] = "You haven't import any collections";
+		if(sizeof($imported)==0) $data['no_result'] = "No collections have been imported";
 		echo json_encode($data);
 	}
 }
