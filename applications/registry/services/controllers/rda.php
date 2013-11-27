@@ -235,8 +235,10 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			$first_name = $result['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
 			$last_name = $result['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
 			$name = $first_name.' '.$last_name;
-			$bio = $result['orcid-profile']['orcid-bio']['biography']['value'];
-
+			$bio = "";
+			if(isset($result['orcid-profile']['orcid-bio']['biography'])){
+				$bio = $result['orcid-profile']['orcid-bio']['biography']['value'];
+			}
 			$html .='<h4><a href="http://orcid.org/'.$orcid.'">'.$name.'</a></h4>';
 			//$html.='<p><img src="'.asset_url('img/orcid_tagline_small.png', 'base').'"/></p>';
 			$html.= '<p>'.$bio.'</p>';
