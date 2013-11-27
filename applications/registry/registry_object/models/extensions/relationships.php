@@ -89,12 +89,20 @@ class Relationships_Extension extends ExtensionBase
 					$relation_type_disp = substr($relation_type_disp, 0, strlen($relation_type_disp)-2);
 					//$connections_preview_div .= '<p>('.$relation_type.')</p>';
 				}
+				$identifiers_div = "";
+				$identifier_count = 0;
+				foreach($related_info->identifier as $i)
+				{
+					$identifiers_div .= $this->getResolvedLinkForIdentifier((string)$i['type'],trim((string)$i));  	
+					$identifier_count++;
+				}
+				$identifiers_div = "<h5>Identifier".($identifier_count > 1 ? 's' : '').": </h5>".$identifiers_div;
 				if($related_info->notes){
 					$connections_preview_div .= '<p>Notes: '.(string)$related_info->notes.'</p>';
 				}
 			    $imgUrl = asset_url('img/'.$related_info_type.'.png', 'base');
 			    $classImg = '<img class="icon-heading" src="'.$imgUrl.'" alt="'.$related_info_type.'" style="width:24px; float:right;">';
-				$connections_preview_div = '<div class="previewItemHeader">'.$relation_type_disp.'</div>'.$classImg.'<h4>'.$related_info_title.'</h4><div class="post">'.$connections_preview_div.'</div>';
+				$connections_preview_div = '<div class="previewItemHeader">'.$relation_type_disp.'</div>'.$classImg.'<h4>'.$related_info_title.'</h4><div class="post">'.$identifiers_div."<br/>".$connections_preview_div.'</div>';
 								
 				foreach($related_info->identifier as $i)
 				{
@@ -228,5 +236,59 @@ class Relationships_Extension extends ExtensionBase
 		$classes = "";
 		$list = $this->getRelatedClasses();
 		return implode($list);
+	}
+
+	function getResolvedLinkForIdentifier($type, $value)
+	{
+		
+		$urlValue = $value;
+		switch ($type){
+			case 'handle':
+				if (strpos($value,'http://hdl.handle.net/') === false){
+    				$urlValue = 'http://hdl.handle.net/'.$value;
+				}
+		        return 'Handle : <a class="identifier" href="'.$urlValue.'" title="Resolve this handle">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/handle_icon.png', 'base_path').'" alt="Handle icon"></a><br/>';
+		        break;
+			case 'purl':
+				if (strpos($value,'http://purl.org/') === false){
+    				$urlValue = 'http://purl.org/'.$value;
+				}
+		        return 'PURL : <a class="identifier" href="'.$urlValue.'" title="Resolve this purl identifier">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/external_link.png', 'base_path').'" alt="PURL icon"></a><br/>';
+		        break;
+		    case 'doi':
+		    	if (strpos($value,'http://dx.doi.org/') === false){
+    				$urlValue = 'http://dx.doi.org/'.$value;
+				}
+		        return 'DOI: <a class="identifier" href="'.$urlValue.'" title="Resolve this DOI">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/doi_icon.png', 'base_path').'" alt="DOI icon"></a><br/>';
+		        break;
+		    case 'uri':
+		    	if (strpos($value,'http://') === false && strpos($value,'https://') === false){
+    				$urlValue = 'http://'.$value;
+				}
+		        return 'URI : <a class="identifier" href="'.$urlValue.'" title="Resolve this URI">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/external_link.png', 'base_path').'" alt="URI icon"></a><br/>';
+		        break;
+		    case 'urn':
+		        return 'URN : <a class="identifier" href="'.$value.'" title="Resolve this URN">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/external_link.png', 'base_path').'" alt="URI icon"></a><br/>';
+		        break;
+		    case 'orcid':
+		    	if (strpos($value,'http://orcid.org/') === false){
+    				$urlValue = 'http://orcid.org/'.$value;
+				}
+		        return 'ORCID: <a class="identifier" href="'.$urlValue.'" title="Resolve this ORCID">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/orcid_icon.png', 'base_path').'" alt="ORCID icon"></a><br/>';
+		        break;
+		    case 'AU-ANL:PEAU':
+		    	if (strpos($value,'http://nla.gov.au/') === false){
+    				$urlValue = 'http://nla.gov.au/'.$value;
+				}
+		        return 'NLA: <a class="identifier" href="'.$urlValue.'" title="View the record for this party in Trove">'.$value.'<img class="identifier_logo" src="'.asset_url('assets/core/images/icons/nla_icon.png', 'base_path').'" alt="NLA icon"></a><br/>';
+		        break;
+		    case 'local':
+				return "Local: ".$value."<br/>";
+		        break;
+		    default:
+		       return strtoupper($type).": ".$value."<br/>";
+		}
+
+
 	}
 }
