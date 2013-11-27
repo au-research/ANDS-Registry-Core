@@ -297,7 +297,7 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	function indexAll(){
+	function indexAll($print=false){
 		acl_enforce('REGISTRY_STAFF');
 		$data = array();
 		$data['logs'] = '';
@@ -305,8 +305,17 @@ class Maintenance extends MX_Controller {
 		$data_sources = $this->ds->getAll(0);
 		foreach($data_sources as $ds){
 			$data['logs'] .= $this->indexDS($ds->id, true);
+			if ($print)
+			{
+				echo $data['logs'];
+				$data['logs'] = '';
+				flush();
+			}
 		}
-		echo json_encode($data);
+		if (!$print)
+		{
+			echo json_encode($data);
+		}
 	}
 
 	function smartSync($step = 0, $start = 0){
