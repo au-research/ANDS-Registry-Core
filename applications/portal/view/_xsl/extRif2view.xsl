@@ -702,8 +702,8 @@
       <xsl:apply-templates select="./ro:identifier[@type='handle']" mode = "handle_prefixedLink"/>   
       <xsl:apply-templates select="./ro:identifier[@type='purl']" mode = "purl_prefixedLink"/>
       <xsl:apply-templates select="./ro:identifier[@type='uri']" mode = "uri_prefixedLink"/> 
-      <xsl:apply-templates select="./ro:identifier[not(@type =  'doi' or @type =  'ark' or @type =  'AU-ANL:PEAU' or @type =  'handle' or @type =  'purl' or @type =  'uri' or @type='orcid')]" mode="other_prefixedLink"/>			            	
-
+      <xsl:apply-templates select="./ro:identifier[@type='urn']" mode = "urn_prefixedLink"/> 
+      <xsl:apply-templates select="./ro:identifier[not(@type =  'doi' or @type =  'ark' or @type =  'AU-ANL:PEAU' or @type =  'handle' or @type =  'purl' or @type =  'uri' or @type =  'urn' or  @type='orcid')]" mode="other_prefixedLink"/>			            	
       <!--xsl:if test="./ro:format">
     
         <p> Format
@@ -764,7 +764,7 @@
     <xsl:apply-templates select="." mode="handle_resolveURL" />
   </xsl:variable>
 
-  Handle: 
+  <xsl:text>Handle: </xsl:text>
   <a>
     <xsl:attribute name="class">identifier</xsl:attribute>
     <xsl:attribute name="href"> <xsl:value-of select="$theidentifier"/></xsl:attribute>
@@ -777,6 +777,10 @@
             <xsl:attribute name="alt">Handle icon</xsl:attribute>
       </img>
   </a> 
+  <xsl:if test="following-sibling::ro:identifier">    
+    <xsl:element name="br">
+    </xsl:element>
+  </xsl:if>
 </xsl:template>
 
 
@@ -801,7 +805,7 @@
     <xsl:apply-templates select="." mode="doi_resolveURL" />
   </xsl:variable>
 
-  DOI: 
+  <xsl:text>DOI: </xsl:text>
 
   <xsl:if test="string-length(substring-after(.,'10.'))>0">    
     <a>
@@ -819,7 +823,11 @@
   </xsl:if>
   <xsl:if test="string-length(substring-after(.,'10.'))&lt;1">    
     <a class="identifier"><xsl:value-of select="."/></a>
-  </xsl:if>  
+  </xsl:if>
+  <xsl:if test="following-sibling::ro:identifier">    
+    <xsl:element name="br">
+    </xsl:element>
+  </xsl:if> 
 </xsl:template>
 
 
@@ -842,7 +850,7 @@
     <xsl:apply-templates select="." mode="orcid_resolveURL" />
   </xsl:variable>
 
-  ORCID: 
+  <xsl:text>ORCID: </xsl:text>
  
   <a>
     <xsl:attribute name="class">identifier</xsl:attribute>
@@ -856,7 +864,10 @@
           <xsl:attribute name="alt">ORCID icon</xsl:attribute>
     </img>
   </a>
-
+  <xsl:if test="following-sibling::ro:identifier">    
+    <xsl:element name="br">
+    </xsl:element>
+  </xsl:if>
 </xsl:template>
 
 
@@ -868,7 +879,7 @@
       <xsl:text>http://nla.gov.au/</xsl:text><xsl:value-of select="substring-after(.,'nla.gov.au/')"/>
     </xsl:when>          
     <xsl:otherwise>
-      http://nla.gov.au/<xsl:value-of select="."/>
+      <xsl:text>http://nla.gov.au/</xsl:text><xsl:value-of select="."/>
     </xsl:otherwise>   
   </xsl:choose>
 </xsl:template>
@@ -879,7 +890,7 @@
     <xsl:apply-templates select="." mode="nla_resolveURL" />
   </xsl:variable>
 
-  NLA: 
+  <xsl:text>NLA: </xsl:text>
 
   <xsl:if test="string-length(substring-after(.,'nla.party'))>0">    
     <a>
@@ -897,7 +908,11 @@
   </xsl:if>
   <xsl:if test="string-length(substring-after(.,'nla.party'))&lt;1">    
     <a class="identifier"><xsl:value-of select="."/></a>
-  </xsl:if>  
+  </xsl:if> 
+  <xsl:if test="following-sibling::ro:identifier">    
+    <xsl:element name="br">
+    </xsl:element>
+  </xsl:if> 
 </xsl:template>
 
 
@@ -920,7 +935,7 @@
     <xsl:apply-templates select="." mode="purl_resolveURL" />
   </xsl:variable>
 
-  PURL: 
+  <xsl:text>PURL: </xsl:text>
 
    
     <a>
@@ -935,6 +950,10 @@
             <xsl:attribute name="alt">External Link</xsl:attribute>
       </img>
     </a>
+    <xsl:if test="following-sibling::ro:identifier">    
+      <xsl:element name="br">
+      </xsl:element>
+    </xsl:if>
 </xsl:template>
 
 
@@ -956,7 +975,7 @@
     <xsl:apply-templates select="." mode="uri_resolveURL" />
   </xsl:variable>
 
-  URI: 
+  <xsl:text>URI: </xsl:text> 
 
     <a>
       <xsl:attribute name="class">identifier</xsl:attribute>
@@ -970,6 +989,34 @@
             <xsl:attribute name="alt">External Link</xsl:attribute>
       </img>
     </a>
+    <xsl:if test="following-sibling::ro:identifier">    
+      <xsl:element name="br">
+      </xsl:element>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template match="ro:identifier" mode="urn_prefixedLink">
+
+  <xsl:variable name="theidentifier">         
+    <xsl:apply-templates select="." mode="uri_resolveURL" />
+  </xsl:variable>
+  <xsl:text>URN: </xsl:text> 
+    <a>
+      <xsl:attribute name="class">identifier</xsl:attribute>
+      <xsl:attribute name="href"> <xsl:value-of select="$theidentifier"/></xsl:attribute>
+      <xsl:attribute name="title"><xsl:text>Resolve this URI</xsl:text></xsl:attribute>            
+      <xsl:value-of select="."/>
+      <img class="identifier_logo">
+            <xsl:attribute name="src"><xsl:value-of select="$base_url"/>
+              <xsl:text>assets/core/images/icons/external_link.png</xsl:text>
+            </xsl:attribute>
+            <xsl:attribute name="alt">External Link</xsl:attribute>
+      </img>
+    </a>
+    <xsl:if test="following-sibling::ro:identifier">    
+      <xsl:element name="br">
+      </xsl:element>
+    </xsl:if> 
 </xsl:template>
 
 
@@ -994,13 +1041,17 @@
     <xsl:apply-templates select="." mode="ark_resolveURL" />
   </xsl:variable>
 
-  ARK: 
+  <xsl:text>ARK: </xsl:text> 
 
   <xsl:if test="string-length(substring-after(.,'/ark:/'))>0">    
     <xsl:value-of select="$theidentifier"/>
   </xsl:if>
   <xsl:if test="string-length(substring-after(.,'/ark:/'))&lt;1">    
     <xsl:value-of select="."/>
+  </xsl:if> 
+  <xsl:if test="following-sibling::roidentifier">    
+    <xsl:element name="br">
+    </xsl:element>
   </xsl:if>  
 </xsl:template>
 
@@ -1021,12 +1072,16 @@
          <xsl:value-of select="translate(./@type,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>: <xsl:value-of select="."/>  
      </xsl:when>
      <xsl:when test="./@type='local'">
-         Local: <xsl:value-of select="."/>
+         <xsl:text>Local: </xsl:text><xsl:value-of select="."/>
      </xsl:when>  
      <xsl:otherwise>
        <xsl:value-of select="./@type"/>: <xsl:value-of select="."/>
    </xsl:otherwise>
   </xsl:choose>
+  <xsl:if test="following-sibling::roidentifier">    
+    <xsl:element name="br">
+    </xsl:element>
+  </xsl:if> 
 </xsl:template>
 
 
