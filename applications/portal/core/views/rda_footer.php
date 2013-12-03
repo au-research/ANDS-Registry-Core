@@ -86,8 +86,6 @@
 	<!-- Zoo Scripts Untouched -->
 	<script type="text/javascript" src="<?php echo asset_url('ands_portal.combined.js', 'core'); ?>"></script>
 
-	
-	<script src="<?php echo asset_url('lib/qtip2/jquery.qtip.min.js', 'base');?>" type="text/javascript"></script>
 	 <?php if(isset($js_lib)): ?>
 	    <?php foreach($js_lib as $lib):?>
 	 		<?php if($lib=='googleapi'):?>

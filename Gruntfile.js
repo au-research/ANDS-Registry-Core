@@ -73,6 +73,7 @@ module.exports = function(grunt){
 					'<%=yeoman.assets %>/lib/jquery-1.8.3.min.js',
 					'<%=yeoman.portal_assets %>/js/jquery.flexslider-min.js',
 					'<%=yeoman.assets %>/lib/jquery-ui-1.8.23.custom.min.js',
+					'<%=yeoman.assets %>/lib/qtip2/jquery.qtip.min.js',
 					'<%=yeoman.assets %>/lib/jQRangeSlider/jQAllRangeSliders-withRuler-min.js',
 					'<%=yeoman.assets %>/lib/less-1.3.0.min.js',
 					'<%=yeoman.assets %>/lib/typeahead.min.js',
@@ -152,7 +153,7 @@ module.exports = function(grunt){
 	grunt.registerTask('portal', [
 		'compass:portal',
 		'less:portal',
-		'concat:portalStyles'
+		'concat:portalStyles',
 		'concat:portalScripts'
 	]);
 }
