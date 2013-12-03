@@ -34,7 +34,7 @@ class Search extends MX_Controller {
 		if($include_facet){
 			$facets = array(
 				'class' => 'Class',
-				'group' => 'Contributed By',
+				'group' => 'Contributor',
 				'license_class' => 'Licence',
 				'type' => 'Type',
 			);

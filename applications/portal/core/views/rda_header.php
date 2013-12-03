@@ -13,26 +13,9 @@
 	<meta property="og:title" content="<?=ellipsis($title, 128);?>"/>
 <?php endif; ?>
 
-<link rel="stylesheet" href="<?php echo asset_url('css/knacss.css', 'core');?>" type="text/css" media="screen" />
-
-
-<!-- Zoo Stylesheets Untouched -->
-<link rel="stylesheet" href="<?php echo asset_url('style.css','core');?>" type="text/css"/>
-<link rel="stylesheet" href="<?php echo asset_url('print.css','core');?>" type="text/css" media="print" />
-<link rel="stylesheet" href="<?php echo asset_url('css/ands-theme/jquery-ui-1.10.0.custom.min.css', 'core');?>" type="text/css" media="screen" />
-
-<link rel="stylesheet" href="<?php echo asset_url('css/flexslider.css', 'core');?>" type="text/css" media="screen" />
-<link rel="stylesheet" href="<?php echo asset_url('css/ui.dynatree.css', 'core');?>" type="text/css" media="screen" />
-<link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget.css')?>"  media="screen" />
-<!-- ANDS Less file and general styling correction-->
-<link href="<?php echo asset_url('less/ands.less', 'core');?>" rel="stylesheet/less" type="text/css">
-
-<link rel="stylesheet" href="<?php echo asset_url('css/ands_portal.css', 'core');?>" type="text/css" media="screen">
-
-<!-- Library files -->
-<link rel="stylesheet" href="<?php echo asset_url('lib/qtip2/jquery.qtip.min.css', 'base');?>" type="text/css">
-
-<link rel="stylesheet" href="<?php echo asset_url('lib/jQRangeSlider/css/iThing.css', 'base');?>" type="text/css" media="screen" > 
+	<link rel="stylesheet" href="<?php echo asset_url('ands_portal.combined.css', 'core'); ?>" type="text/css" media="screen">
+	<link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget.css')?>"  media="screen" />
+	<link rel="stylesheet" href="<?php echo asset_url('print.css','core');?>" type="text/css" media="print" />
 
 <?php if(isset($the_description)): ?>
 <meta name="description" content="<?=ellipsis($the_description,512); ?>"/>

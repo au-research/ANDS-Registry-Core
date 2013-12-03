@@ -51,6 +51,36 @@ module.exports = function(grunt){
 					'<%=yeoman.assets %>/js/scripts.js',
 				],
 				dest:'<%=yeoman.assets %>/js/arms.scripts.js'
+			},
+			portalStyles:{
+				options:{separator:''},
+				src:[
+					'<%=yeoman.portal_assets %>/css/knacss.css',
+					'<%=yeoman.portal_assets %>/style.css',
+					'<%=yeoman.portal_assets %>/css/ands-theme/jquery-ui-1.10.0.custom.min.css',
+					'<%=yeoman.portal_assets %>/css/flexslider.css',
+					'<%=yeoman.portal_assets %>/css/ui.dynatree.css',
+					'<%=yeoman.portal_assets %>/css/ands.less.compiled.css',
+					'<%=yeoman.portal_assets %>/css/ands_portal.css',
+					'<%=yeoman.assets %>/lib/qtip2/jquery.qtip.min.css',
+					'<%=yeoman.assets %>/lib/jQRangeSlider/css/iThing.css',
+				],
+				dest: '<%=yeoman.portal_assets %>/ands_portal.combined.css'
+			},
+			portalScripts:{
+				options:{separator:';'},
+				src:[
+					'<%=yeoman.assets %>/lib/jquery-1.8.3.min.js',
+					'<%=yeoman.portal_assets %>/js/jquery.flexslider-min.js',
+					'<%=yeoman.assets %>/lib/jquery-ui-1.8.23.custom.min.js',
+					'<%=yeoman.assets %>/lib/jQRangeSlider/jQAllRangeSliders-withRuler-min.js',
+					'<%=yeoman.assets %>/lib/less-1.3.0.min.js',
+					'<%=yeoman.assets %>/lib/typeahead.min.js',
+					'<%=yeoman.assets %>/lib/mustache.js',
+					'<%=yeoman.assets %>/lib/jquery.ba-hashchange.min.js',
+					'<%=yeoman.portal_assets %>/js/script.js',
+				],
+				dest: '<%=yeoman.portal_assets %>/ands_portal.combined.js'
 			}
 		},
 		uglify:{
@@ -85,6 +115,11 @@ module.exports = function(grunt){
 				files:{
 					"<%= yeoman.assets %>/css/arms.less.compiled.css": "<%= yeoman.assets %>/less/arms.less"
 				}
+			},
+			portal:{
+				files:{
+					"<%= yeoman.portal_assets %>/css/ands.less.compiled.css": "<%= yeoman.portal_assets %>/less/ands.less"
+				}
 			}
 		},
 		watch: {
@@ -115,6 +150,9 @@ module.exports = function(grunt){
 	]);
 
 	grunt.registerTask('portal', [
-		'watch:portal'
+		'compass:portal',
+		'less:portal',
+		'concat:portalStyles'
+		'concat:portalScripts'
 	]);
 }

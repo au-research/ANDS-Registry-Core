@@ -84,14 +84,10 @@
     </script>
 
 	<!-- Zoo Scripts Untouched -->
-	<script type="text/javascript" src="<?php echo asset_url('lib/jquery-1.8.3.min.js', 'base');?>"></script>
-	<script type="text/javascript" src="<?php echo asset_url('js/jquery.flexslider-min.js', 'core');?>"></script>
+	<script type="text/javascript" src="<?php echo asset_url('ands_portal.combined.js', 'core'); ?>"></script>
 
 	
-	<script type="text/javascript" src="<?php echo asset_url('lib/jquery-ui-1.8.23.custom.min.js', 'base');?>"></script>
-	<script type="text/javascript" src="<?php echo asset_url('lib/jQRangeSlider/jQAllRangeSliders-withRuler-min.js', 'base');?>"></script>
 	<script src="<?php echo asset_url('lib/qtip2/jquery.qtip.min.js', 'base');?>" type="text/javascript"></script>
-
 	 <?php if(isset($js_lib)): ?>
 	    <?php foreach($js_lib as $lib):?>
 	 		<?php if($lib=='googleapi'):?>
@@ -130,16 +126,6 @@
 	        <?php endif; ?>
 		<?php endforeach;?>
 	<?php endif; ?>
-
-	<script type="text/javascript" src="<?php echo asset_url('js/script.js', 'core');?>"></script>
-
-	<!-- base libraries -->
-	<script type="text/javascript" src="<?php echo asset_url('lib/less-1.3.0.min.js', 'base');?>" type="text/javascript"></script>
-	<script type="text/javascript" src="<?php echo asset_url('lib/typeahead.min.js', 'base');?>" type="text/javascript"></script>
-	<script type="text/javascript" src="<?php echo asset_url('lib/mustache.js','base');?>"></script>
-	<script type="text/javascript" src="<?php echo asset_url('lib/jquery.ba-hashchange.min.js', 'base');?>"></script> <!-- Monitoring on Hash Change-->
-    
-   
 
 	<!-- Module-specific styles and scripts -->
     <?php if (isset($scripts)): foreach($scripts as $script):?>
