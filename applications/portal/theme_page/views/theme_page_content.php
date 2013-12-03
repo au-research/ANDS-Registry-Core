@@ -7,7 +7,7 @@
 		}
 	?>
 	<?php if($f['type']=='html'): ?>
-		<div class="widget">
+		<div class="widget" style="border-bottom:none;">
 			<?php echo $f['content']; ?>
 		</div>
 	<?php endif; ?>

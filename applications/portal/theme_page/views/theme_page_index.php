@@ -64,12 +64,12 @@
 {{/has_result}}
 
 {{#no_result}}
-	There are no result for this search!
+	
 {{/no_result}}
 </script>
 
 <script type="text/x-mustache" id="facet-template">
-<div class="widget facet_{{facet_type}}">
+<div class="widget facet_{{facet_type}}" style="border-bottom:none;">
 	<ul class="facet">
 		{{#values}}
 			<li><a href="<?php echo portal_url('search');?>#!/{{filter_query}}{{facet_type}}={{inc_title}}" class="filter" filter_type="{{facet_type}}" filter_value="{{title}}">{{title}} ({{count}})</a></li>
@@ -79,7 +79,7 @@
 </script>
 
 <script type="text/x-mustache" id="list_ro-template">
-<div class="widget">
+<div class="widget" style="border-bottom:none;">
 	<ul>
 		{{#ros}}
 			<li class="preview_connection"><a href="<?php echo portal_url();?>{{slug}}" slug="{{slug}}">{{title}}</a></li>
