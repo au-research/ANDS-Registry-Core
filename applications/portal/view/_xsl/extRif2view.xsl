@@ -693,7 +693,16 @@
     <p>
 
       <xsl:if test="./ro:title">
-          <xsl:value-of select="./ro:title"/><br/>
+        <xsl:if test="./@type='publication'">
+          <img class="left_icon" style="margin-top: -2px; height: 20px; width: 20px;">
+            <xsl:attribute name="src"><xsl:value-of select="$base_url"/>
+              <xsl:text>assets/core/images/icons/publications.png</xsl:text>
+            </xsl:attribute>
+            <xsl:attribute name="alt">Publication icon</xsl:attribute>
+          </img>
+          <xsl:text>  </xsl:text>
+        </xsl:if>
+        <xsl:value-of select="./ro:title"/><br/>
       </xsl:if>
       <xsl:apply-templates select="./ro:identifier[@type='doi']" mode = "doi_prefixedLink"/>
       <xsl:apply-templates select="./ro:identifier[@type='orcid']" mode = "orcid_prefixedLink"/>
