@@ -53,10 +53,9 @@
 </div>
 </div><!-- main -->
 <div class="sidebar">
-	<h2>Refine Search</h2>
 	<div id="togglefacetsort" class="facetsortcount" tip="Search option categories (below) are being sorted by the number of matching records"></div>
 	<div class="widget facet_subjects">
-	<h3 class="widget_title">Subjects</h3>
+	<h3 class="widget_title">Refine search by Subjects</h3>
 	<div id="browse-subjects-container">
 		<a href="javascript:;" id="browse-more-subject">Browse More Subjects</a>
 	</div>
@@ -134,7 +133,7 @@ Only records which have coverage of the search region will be displayed.
 <script type="text/x-mustache" id="facet-template">
 {{#facet_result}}
 <div class="widget facet_{{facet_type}}">
-	<h3 class="widget_title">{{label}}</h3>
+	<h3 class="widget_title">Refine search by {{label}}</h3>
 	<ul>
 		{{#values}}
 			<li><a href="javascript:;" class="filter" filter_type="{{facet_type}}" filter_value="{{title}}">{{title}} ({{count}})</a></li>
