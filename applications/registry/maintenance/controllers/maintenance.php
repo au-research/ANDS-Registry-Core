@@ -53,8 +53,8 @@ class Maintenance extends MX_Controller {
 	public function syncmenu(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'ARMS SyncMenu';
-		$data['scropts'] = array('syncmenu');
-		$data['js_lib'] = array('core', 'angular');
+		$data['scripts'] = array('sync_app');
+		$data['js_lib'] = array('core', 'angular', 'dataTables');
 		$this->load->view("syncmenu_index", $data);
 	}
 
@@ -113,6 +113,29 @@ class Maintenance extends MX_Controller {
 
 		header('Location: '.registry_url('data_source/manage_records/'.$data_source->id));
 		exit();
+	}
+
+	function getDataSourceList(){
+		acl_enforce('REGISTRY_STAFF');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$this->load->model("data_source/data_sources","ds");
+		$this->load->model('maintenance_stat', 'mm');
+
+		$dataSources = $this->ds->getAll(0,0);
+		$items = array();
+		foreach($dataSources as $ds){
+			$item = array();
+			$item = array(
+				'id'=>$ds->id,
+				'key'=>$ds->key,
+				'title'=>$ds->title,
+				'total_published'=>(int) $ds->count_PUBLISHED
+			);
+			// $item = array($ds->id, $ds->title, $ds->count_PUBLISHED,'<button class="btn">Sync</button>');
+			array_push($items, $item);
+		}
+		echo json_encode($items);
 	}
 
 	function getStat(){
@@ -356,7 +379,54 @@ class Maintenance extends MX_Controller {
 		}
 	}
 
-	function smartSyncDS($data_source_id, $print=false, $offset=0){
+	function smartAnalyze($data_source_id){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$this->load->model('data_source/data_sources', 'ds');
+		$this->load->model('registry_object/registry_objects', 'ro');
+
+		$ds = $this->ds->getByID($data_source_id);
+		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, PUBLISHED);
+
+		$chunkSize = 50;
+
+		$data = array();
+		$data['total'] = sizeof($keys);
+		$data['chunkSize'] = $chunkSize;
+		$data['numChunk'] = ceil(($chunkSize < $data['total'] ? ($data['total'] / $chunkSize) : 1));
+
+		echo json_encode($data);
+	}
+
+	function smartSyncDS($data_source_id, $chunk_pos){
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$this->load->model('data_source/data_sources', 'ds');
+		$this->load->model('registry_object/registry_objects', 'ro');
+
+		$chunkSize = 50;
+
+		$ds = $this->ds->getByID($data_source_id);
+		$offset = ($chunk_pos-1) * $chunkSize;
+		$limit = $chunkSize;
+		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, PUBLISHED, $offset, $limit);
+
+		
+		$this->load->library('importer');
+		$this->importer->_reset();
+		$this->importer->runBenchMark = true;
+		$this->importer->setDataSource($ds);
+		$this->importer->addToAffectedList($keys);
+		$this->importer->finishImportTasks();
+
+		$data['keys'] = $keys;
+		$data['benchMark'] = $this->importer->getBenchMarkLogArray();
+
+		echo json_encode($data);
+	}
+
+	function smartSyncDS2($data_source_id, $print=false, $offset=0){
 		$this->load->library('importer');
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->load->model('registry_object/registry_objects', 'ro');

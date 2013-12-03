@@ -543,7 +543,12 @@ class Importer {
 			{
 				foreach ($registryObjects AS $ro)
 				{
-					$ro->addRelationships();
+
+					try {
+						$ro->addRelationships();
+					} catch (Exception $e) {
+						throw Exception($e);
+					}
 
 					if($this->runBenchMark)
 					{
@@ -569,7 +574,11 @@ class Importer {
 						$this->CI->benchmark->mark('ro_enrich_start');
 					}
 
-					$ro->enrich($this->runBenchMark);
+					try{
+						$ro->enrich($this->runBenchMark);
+					}catch (Exception $e){
+						throw new Exteption($e);
+					}
 
 					if($this->runBenchMark)
 					{
@@ -1058,7 +1067,8 @@ class Importer {
 				'totalTime' => $this->CI->benchmark->elapsed_time('enrich_affected_records_start', 'ingest_reindex_end'),
 				'enrichTime' => $this->CI->benchmark->elapsed_time('enrich_affected_records_start', 'enrich_affected_records_end'),
 				'reindexTime' => $this->CI->benchmark->elapsed_time('ingest_reindex_start', 'ingest_reindex_end'),
-				'peakMemoryUsage' => memory_get_peak_usage() .' bytes'
+				'peakMemoryUsage' => memory_get_peak_usage() .' bytes',
+				'error'=>$this->getErrors()
 			);
 			return $result;
 		}

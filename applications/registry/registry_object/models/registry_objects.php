@@ -369,14 +369,15 @@ class Registry_objects extends CI_Model {
 			return null;
 	}
 
-	function getKeysByDataSourceID($data_source_id, $make_ro=false, $status='All')
+	function getKeysByDataSourceID($data_source_id, $make_ro=false, $status='All', $offset=0, $limit=99999)
 	{
-		$results =  $this->_get(array(array('args' => array('ds_id'=>$data_source_id, 'status'=>$status),
+		$results =  $this->_get(array(array('args' => array('ds_id'=>$data_source_id, 'status'=>$status, 'offset'=>$offset, 'limit'=>$limit),
 						    'fn' => function($db, $args) {
 							    $db->select("key")
 								    ->from("registry_objects")
 								    ->where("data_source_id", $args['ds_id']);
 								if($args['status']!='All') $db->where('status', $args['status']);
+								$db->limit($args['limit'], $args['offset']);
 							    return $db;
 						    })),
 					$make_ro);
