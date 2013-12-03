@@ -402,7 +402,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 						'visible'=>$partner['visible']
 					);
 					if(isset($partner['new_window']) && $partner['new_window']=='yes') $item['new_window']=$partner['new_window'];
-					if(isset($item['img_attr'])) $item['img_attr']=$partner['img_attr'];
+					if(isset($partner['img_attr'])) $item['img_attr']=$partner['img_attr'];
 					if (isset($partner['url_text']) && $partner['url_text'])
 					{
 						$item['url_text'] = $partner['url_text'];
