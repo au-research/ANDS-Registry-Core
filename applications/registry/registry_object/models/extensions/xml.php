@@ -21,6 +21,15 @@ class XML_Extension extends ExtensionBase
 		$this->db->where(array('registry_object_id'=>$this->ro->id));
 		$this->db->update('record_data', array('current'=>DB_FALSE));
 
+		$this->pruneExtrif();
+	}
+
+
+	/**
+	 *  Clean up all previous versions (set = FALSE, "prune" extRif)
+	 */
+	function pruneExtrif()
+	{
 		$this->db->where(array('registry_object_id'=>$this->ro->id, 'scheme'=>EXTRIF_SCHEME));
 		$this->db->delete('record_data');
 	}
