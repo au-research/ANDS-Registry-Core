@@ -691,17 +691,22 @@
 
 <xsl:template match="ro:relatedInfo">
     <p>
-
       <xsl:if test="./ro:title">
-        <xsl:if test="./@type='publication'">
-          <img class="left_icon" style="margin-top: -2px; height: 20px; width: 20px;">
+
+        <xsl:if test="./@type='publication'">        
+          <img class="publication" style="margin-top: -2px; height: 24px; width: 24px;">
             <xsl:attribute name="src"><xsl:value-of select="$base_url"/>
               <xsl:text>assets/core/images/icons/publications.png</xsl:text>
             </xsl:attribute>
             <xsl:attribute name="alt">Publication icon</xsl:attribute>
+            <xsl:if test="./ro:relation">
+            <xsl:attribute name="title"><xsl:value-of select="./ro:relation/@type"/></xsl:attribute>
+            <xsl:attribute name="object_class"><xsl:value-of select="$objectClass"/></xsl:attribute>
+          </xsl:if>
           </img>
           <xsl:text>  </xsl:text>
         </xsl:if>
+        
         <xsl:value-of select="./ro:title"/><br/>
       </xsl:if>
       <xsl:apply-templates select="./ro:identifier[@type='doi']" mode = "doi_prefixedLink"/>

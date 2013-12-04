@@ -366,6 +366,16 @@ class View extends MX_Controller {
 
 	}
 
+	function getRelationship()
+	{
+
+		$relationship = $this->input->post('relationship');
+		$class = $this->input->post('object_class');
+		$theRel = format_relationship($class, $relationship,'EXPLICIT');
+		return $theRel;
+	}
+
+
 	private function checkCustomTemplate($extRifResponse)
 	{
 		// Check if we have a specific rendering template

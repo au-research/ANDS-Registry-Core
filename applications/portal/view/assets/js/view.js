@@ -52,6 +52,35 @@ function initViewPage()
             });
         }
     })
+
+ 
+    $('.publication').each(function(){
+        if($(this).attr('title')!='') {
+            var theRel = $(this).attr('title');
+            var theClass = $(this).attr('object_class').toLowerCase();
+            $(this).qtip({
+                content: {
+                text: loading_icon,
+                
+                ajax: {
+                    url: base_url+'view/getRelationship',
+                    type: 'POST',
+                    data: {relationship: theRel, object_class: theClass},
+                    loading:true,
+                    success: function(data, status) {                                                              
+                        this.set('content.text', data)                     
+                    }
+                }
+
+                },
+                style: {classes: 'ui-tooltip-light ui-tooltip-shadow seealso-tooltip',width: '250px'},
+                show: 'mouseover',
+                hide: 'mouseout' 
+            }); 
+        }else{
+            $(this).qtip("disable");
+        }
+    });
  //   $('#displaytitle').each(function(){console.log($(this));});
 }
 
