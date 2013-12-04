@@ -402,6 +402,9 @@ class Maintenance extends MX_Controller {
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
+		
+		$this->benchmark->mark('start');
+
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->load->model('registry_object/registry_objects', 'ro');
 
@@ -411,17 +414,71 @@ class Maintenance extends MX_Controller {
 		$offset = ($chunk_pos-1) * $chunkSize;
 		$limit = $chunkSize;
 		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, PUBLISHED, $offset, $limit);
+		$totalEnrichTime = 0; $totalIndexTime = 0;
+		$results = array();
+		foreach($keys as $key){
+			$result = array();
+			$ro = $this->ro->getPublishedByKey($key);
+			$error = array();
+			if($ro){
+				$this->benchmark->mark('enrich_ro_start');
+				//enrich
+				try{
+					$ro->addRelationships();
+				}catch(Exception $e){
+					array_push($error, $e->getMessage());
+				}
 
+				try{
+					$ro->update_quality_metadata();
+				}catch(Exception $e){
+					array_push($error, $e->getMessage());
+				}
+
+				try{
+					$ro->enrich();
+				}catch(Exception $e){
+					array_push($error, $e->getMessage());
+				}
+
+				$this->benchmark->mark('enrich_ro_end');
+
+				//index
+				try{
+					$this->benchmark->mark('index_ro_start');
+					$solrXML = $ro->transformForSOLR();
+					$this->solr->addDoc($solrXML);
+					$this->solr->commit();
+					$this->benchmark->mark('index_ro_end');
+				}catch(Exception $e){
+					array_push($error, $e->getMessage());
+				}
+
+				$totalEnrichTime += $this->benchmark->elapsed_time('enrich_ro_start', 'enrich_ro_end');
+				$totalIndexTime += $this->benchmark->elapsed_time('index_ro_start', 'index_ro_end');
+				$result[$key] = array(
+					'enrichTime' => $this->benchmark->elapsed_time('enrich_ro_start', 'enrich_ro_end'),
+					'indexTime' => $this->benchmark->elapsed_time('index_ro_start', 'index_ro_end'),
+				);
+				
+			}else{
+				$result[$key] = 'Not Found';
+			}
+			if(sizeof($error)>0) $result[$key]['error'] = $error;
+			array_push($results, $result);
+			unset($ro);
+		}
 		
-		$this->load->library('importer');
-		$this->importer->_reset();
-		$this->importer->runBenchMark = true;
-		$this->importer->setDataSource($ds);
-		$this->importer->addToAffectedList($keys);
-		$this->importer->finishImportTasks();
+		$this->benchmark->mark('finish');
 
-		$data['keys'] = $keys;
-		$data['benchMark'] = $this->importer->getBenchMarkLogArray();
+		$data['benchMark'] = array(
+			'chunkSize'=>$chunkSize,
+			'enrichTime'=>$totalEnrichTime,
+			'indexTime'=>$totalIndexTime,
+			'totalTime'=>(float) $this->benchmark->elapsed_time('start', 'finish'),
+			'avgTimePerRecord' => (float) $this->benchmark->elapsed_time('start', 'finish') / $chunkSize
+		);
+		$data['results'] = $results;
 
 		echo json_encode($data);
 	}
