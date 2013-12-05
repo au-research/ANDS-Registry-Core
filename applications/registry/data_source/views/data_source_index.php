@@ -532,7 +532,7 @@
 
 	{{#item}}
 	<div class="content-header">
-		<h1>{{title}}</h1>
+		<h1 style="position:relative;padding-right:80px;max-width:65%;">{{title}}</h1>
 		<ul class="nav nav-pills">
 			<li class="view page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage#!/view/');?>/{{data_source_id}}">Dashboard</a></li>
 			<li class="mmr page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage_records/');?>/{{data_source_id}}">Manage Records</a></li>
@@ -540,7 +540,7 @@
 			<li class="active settings page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage#!/settings/');?>/{{data_source_id}}">Settings</a></li>
 		</ul>
 	</div>
-	<div id="breadcrumb">
+	<div id="breadcrumb"  style="position:relative;clear:both;">
 		<?php echo anchor('/', '<i class="icon-home"></i> Home', array('class'=>'tip-bottom', 'tip'=>'Go to Home'))?>
 		<?php echo anchor('data_source/manage', 'Manage My Data Sources')?>
 		<a href="#!/view/{{data_source_id}}">{{title}} - Dashboard</a>
@@ -852,7 +852,7 @@
 {{#item}}
 <input type="hidden" id="data_source_id_input" value="{{data_source_id}}"/>
 	<div class="content-header">
-		<h1>{{title}}</h1>
+		<h1 style="position:relative;padding-right:80px;max-width:65%;">{{title}}</h1>
 		<ul class="nav nav-pills">
 			<li class="view page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage#!/view/');?>/{{data_source_id}}">Dashboard</a></li>
 			<li class="mmr page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage_records/');?>/{{data_source_id}}">Manage Records</a></li>
@@ -860,7 +860,7 @@
 			<li class="active settings page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage#!/settings/');?>/{{data_source_id}}">Settings</a></li>
 		</ul>
 	</div>
-	<div id="breadcrumb">
+	<div id="breadcrumb"  style="position:relative;clear:both;">
 		<?php echo anchor('/', '<i class="icon-home"></i> Home', array('class'=>'tip-bottom', 'tip'=>'Go to Home'))?>
 		<?php echo anchor('data_source/manage', 'Manage My Data Sources')?>
 		<a href="#!/view/{{data_source_id}}" class="">{{title}} - Dashboard</a>

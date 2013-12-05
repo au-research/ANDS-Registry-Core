@@ -477,11 +477,13 @@ class Data_source extends MX_Controller {
 					}
 					$menu['edit'] = 'Edit Record';
 					$menu['delete'] = 'Delete Record';
+					$menu['preview'] = 'Preview in RDA';
 				break;
 				case 'MORE_WORK_REQUIRED':
 					$menu['to_draft'] = 'Move to Draft';
 					$menu['edit'] = 'Edit Record';
 					$menu['delete'] = 'Delete Record';
+					$menu['preview'] = 'Preview in RDA';
 				break;
 				case 'SUBMITTED_FOR_ASSESSMENT':
 					if ($this->user->hasFunction('REGISTRY_STAFF'))
@@ -494,6 +496,7 @@ class Data_source extends MX_Controller {
 						$menu['edit'] = '* Edit Record';
 						$menu['delete'] = '* Delete Record';
 					}
+					$menu['preview'] = 'Preview in RDA';
 				break;
 				case 'ASSESSMENT_IN_PROGRESS':
 					if ($this->user->hasFunction('REGISTRY_STAFF'))
@@ -510,6 +513,7 @@ class Data_source extends MX_Controller {
 							$menu['edit'] = '* Edit Record';
 							$menu['delete'] = '* Delete Record';
 						}
+						$menu['preview'] = 'Preview in RDA';
 					}
 				break;
 				case 'APPROVED':
@@ -517,6 +521,7 @@ class Data_source extends MX_Controller {
 					$menu['edit'] = 'Edit Record';
 					$menu['to_publish'] = 'Publish';
 					$menu['delete'] = 'Delete Record';
+					$menu['preview'] = 'Preview in RDA';
 					break;
 				case 'PUBLISHED':
 					$menu['to_draft'] = 'Create Draft Copy';
@@ -534,6 +539,7 @@ class Data_source extends MX_Controller {
 					}
 
 					$menu['delete'] = 'Delete Record';
+					$menu['rdaview'] = 'View in RDA';
 				break;
 			}
 			$menu['select_none'] = 'Deselect Record(s)';
@@ -549,7 +555,16 @@ class Data_source extends MX_Controller {
 				if(sizeof($affected_ids)==1 && $action=='view'){
 					$ro = $this->ro->getByID($affected_ids[0]);
 					$href = base_url('registry_object/view/'.$ro->id);
-				}else $href = 'javascript:;';
+				}
+				elseif(sizeof($affected_ids)==1 && $action=='preview'){
+					$ro = $this->ro->getByID($affected_ids[0]);
+					$href = portal_url().'view/?id='.$ro->id;
+				}
+				elseif(sizeof($affected_ids)==1 && $action=='rdaview'){
+					$ro = $this->ro->getByID($affected_ids[0]);
+					$href = portal_url().$ro->slug;
+				}				
+				else $href = 'javascript:;';
 				$html .='<li><a tabindex="-1" href="'.$href.'" class="op" action="'.$action.'" status="'.$status.'">'.$display.'</a></li>';
 			}
 			else
