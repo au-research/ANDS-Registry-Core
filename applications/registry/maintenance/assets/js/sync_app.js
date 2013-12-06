@@ -58,6 +58,7 @@ function indexCtrl($scope, sync_service){
 		if($scope.ct.task=='sync'){
 			sync_service.analyze($scope.ct.ds_id).then(function(data){
 				if(data){
+					$scope.errors = false;
 					$scope.ct.total = data.total;
 					$scope.ct.numChunk = data.numChunk;
 					$scope.ct.status = 'running';
@@ -80,10 +81,13 @@ function indexCtrl($scope, sync_service){
 		if($scope.currentChunk > 0){
 			if($scope.currentChunk <= $scope.ct.numChunk){
 				sync_service.sync_ds($scope.ct.ds_id, $scope.currentChunk).then(function(data){
-					console.log(data);
-					$scope.ct.totalTime += parseFloat(data.benchMark.totalTime);
-					var num = parseFloat($scope.ct.totalTime);
-					$scope.ct.totalTime = num.toFixed(2);
+
+					if(data.errors.length > 0) $scope.errors = data.errors;
+
+					//update totalTime
+					var total = $scope.ct.totalTime + parseFloat(data.benchMark.totalTime)
+					$scope.ct.totalTime = total;
+
 					$scope.currentChunk++;
 					$scope.percent = (($scope.currentChunk-1) * 100 / $scope.ct.numChunk);
 				});

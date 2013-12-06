@@ -398,7 +398,7 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	function smartSyncDS($data_source_id, $chunk_pos){
+	function smartSyncDS($data_source_id=false, $chunk_pos=false){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -410,11 +410,14 @@ class Maintenance extends MX_Controller {
 
 		$chunkSize = 50;
 
+		if(!$data_source_id) throw new Exception ('Data Source ID must be provided as first param');
+		if(!$chunk_pos || $chunk_pos == 0) throw new Exception ('Chunk Position must be provided as second param');
+
 		$ds = $this->ds->getByID($data_source_id);
 		$offset = ($chunk_pos-1) * $chunkSize;
 		$limit = $chunkSize;
 		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, PUBLISHED, $offset, $limit);
-		$totalEnrichTime = 0; $totalIndexTime = 0;
+		$totalEnrichTime = 0; $totalIndexTime = 0; $allErrors = array(); $allSOLRXML = '';
 		$results = array();
 		foreach($keys as $key){
 			$result = array();
@@ -445,29 +448,36 @@ class Maintenance extends MX_Controller {
 
 				//index
 				try{
-					$this->benchmark->mark('index_ro_start');
 					$solrXML = $ro->transformForSOLR();
-					$this->solr->addDoc($solrXML);
-					$this->solr->commit();
-					$this->benchmark->mark('index_ro_end');
+					if($solrXML) $allSOLRXML .= $solrXML;
 				}catch(Exception $e){
 					array_push($error, $e->getMessage());
 				}
 
 				$totalEnrichTime += $this->benchmark->elapsed_time('enrich_ro_start', 'enrich_ro_end');
-				$totalIndexTime += $this->benchmark->elapsed_time('index_ro_start', 'index_ro_end');
 				$result[$key] = array(
 					'enrichTime' => $this->benchmark->elapsed_time('enrich_ro_start', 'enrich_ro_end'),
-					'indexTime' => $this->benchmark->elapsed_time('index_ro_start', 'index_ro_end'),
 				);
 				
 			}else{
 				$result[$key] = 'Not Found';
 			}
-			if(sizeof($error)>0) $result[$key]['error'] = $error;
+			if(sizeof($error)>0) {
+				$result[$key]['error'] = $error;
+				array_push($allErrors, array(
+					'key' => $key,
+					'error_msg'=>$error
+				));
+			}
 			array_push($results, $result);
 			unset($ro);
 		}
+
+		$this->benchmark->mark('index_start');
+		$this->solr->addDoc($allSOLRXML);
+		$this->solr->commit();
+		$this->benchmark->mark('index_end');
+		$totalIndexTime = $this->benchmark->elapsed_time('index_start', 'index_end');
 		
 		$this->benchmark->mark('finish');
 
@@ -478,6 +488,7 @@ class Maintenance extends MX_Controller {
 			'totalTime'=>(float) $this->benchmark->elapsed_time('start', 'finish'),
 			'avgTimePerRecord' => (float) $this->benchmark->elapsed_time('start', 'finish') / $chunkSize
 		);
+		$data['errors'] = $allErrors;
 		$data['results'] = $results;
 
 		echo json_encode($data);

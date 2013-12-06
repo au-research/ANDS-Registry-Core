@@ -31,5 +31,3 @@ class Sync_extension extends ExtensionBase{
 		return true;
 	}
 }
-	
-	
