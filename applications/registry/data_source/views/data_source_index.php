@@ -36,16 +36,18 @@
 					}
 				?>
 			</select>	
-			<div style="float:right;padding-right:400px;"><em>Displaying <?php echo count($dataSources) ?>  of <?php echo count($dataSources) ?>  data sources. Select from the list below or use the drop down list to view other data source(s).</em></div>
+			<?php if(count($dataSources)<16)
+				{
+					$displayCount= count($dataSources);
+				}else{
+					$displayCount= 16;
+				}?>
+			<span class="help-block help-inline"><em>Displaying <?php echo $displayCount ?>  of <?php echo count($dataSources) ?>  data sources. Use the drop down list to view other data source(s).</em></span>
 		</div>
 		<div class="row-fluid">
 			<ul class="lists" id="items"></ul>
 		</div>
-		<!--div class="row-fluid">
-			<div class="span12">
-				<div class="well"><a href="javascript:;" id="load_more" page="1">Show More...</a></div>
-			</div>
-		</div-->
+
 	</div>
 
 	<div class="modal hide fade" id="AddNewDS">
