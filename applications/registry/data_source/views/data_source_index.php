@@ -35,7 +35,8 @@
 						echo '<option value="'.$ds['id'].'">'.$ds['title'].'</option>';
 					}
 				?>
-			</select>
+			</select>	
+			<div style="float:right;padding-right:400px;"><em>Displaying <?php echo count($dataSources) ?>  of <?php echo count($dataSources) ?>  data sources. Select from the list below or use the drop down list to view other data source(s).</em></div>
 		</div>
 		<div class="row-fluid">
 			<ul class="lists" id="items"></ul>
@@ -247,7 +248,7 @@
 
 {{#item}}
 <div class="content-header">
-	<h1 style="position:relative;padding-right:80px;max-width:65%;">{{title}}</h1>
+	<h1>{{title}}</h1>
 	<ul class="nav nav-pills">
 		<li class="active view page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage#!/view/');?>/{{data_source_id}}">Dashboard</a></li>
 		<li class="mmr page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage_records/');?>/{{data_source_id}}">Manage Records</a></li>
@@ -256,7 +257,7 @@
 	</ul>
 </div>
 
-<div id="breadcrumb" style="position:relative;clear:both">
+<div id="breadcrumb">
 	<?php echo anchor('/', '<i class="icon-home"></i> Home', array('class'=>'tip-bottom', 'tip'=>'Go to Home'))?>
 	<?php echo anchor('data_source/manage', 'Manage My Data Sources')?>
 	<a href="javascript:;" class="current">{{title}} - Dashboard</a>
@@ -532,7 +533,7 @@
 
 	{{#item}}
 	<div class="content-header">
-		<h1 style="position:relative;padding-right:80px;max-width:65%;">{{title}}</h1>
+		<h1>{{title}}</h1>
 		<ul class="nav nav-pills">
 			<li class="view page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage#!/view/');?>/{{data_source_id}}">Dashboard</a></li>
 			<li class="mmr page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage_records/');?>/{{data_source_id}}">Manage Records</a></li>
@@ -540,7 +541,7 @@
 			<li class="active settings page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage#!/settings/');?>/{{data_source_id}}">Settings</a></li>
 		</ul>
 	</div>
-	<div id="breadcrumb"  style="position:relative;clear:both;">
+	<div id="breadcrumb">
 		<?php echo anchor('/', '<i class="icon-home"></i> Home', array('class'=>'tip-bottom', 'tip'=>'Go to Home'))?>
 		<?php echo anchor('data_source/manage', 'Manage My Data Sources')?>
 		<a href="#!/view/{{data_source_id}}">{{title}} - Dashboard</a>
@@ -852,7 +853,7 @@
 {{#item}}
 <input type="hidden" id="data_source_id_input" value="{{data_source_id}}"/>
 	<div class="content-header">
-		<h1 style="position:relative;padding-right:80px;max-width:65%;">{{title}}</h1>
+		<h1 >{{title}}</h1>
 		<ul class="nav nav-pills">
 			<li class="view page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage#!/view/');?>/{{data_source_id}}">Dashboard</a></li>
 			<li class="mmr page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage_records/');?>/{{data_source_id}}">Manage Records</a></li>
@@ -860,7 +861,7 @@
 			<li class="active settings page-control" data_source_id="{{data_source_id}}"><a href="<?=base_url('data_source/manage#!/settings/');?>/{{data_source_id}}">Settings</a></li>
 		</ul>
 	</div>
-	<div id="breadcrumb"  style="position:relative;clear:both;">
+	<div id="breadcrumb">
 		<?php echo anchor('/', '<i class="icon-home"></i> Home', array('class'=>'tip-bottom', 'tip'=>'Go to Home'))?>
 		<?php echo anchor('data_source/manage', 'Manage My Data Sources')?>
 		<a href="#!/view/{{data_source_id}}" class="">{{title}} - Dashboard</a>

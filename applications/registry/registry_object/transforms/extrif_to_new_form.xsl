@@ -64,7 +64,7 @@
 
 	<div id="content" style="Manage My Data Sources">
 		<div class="content-header">
-			<h1 style="max-width:80%;">
+			<h1>
 				<img class="class_icon">
 				<xsl:attribute name="tip">
 					<xsl:value-of select="$ro_class"/> 

@@ -8,7 +8,7 @@
 <input type="hidden" value="<?php echo $ds->id;?>" id="data_source_id"/>
 <div id="content" style="margin-left:0px">
 	<div class="content-header">
-		<h1 style="position:relative;padding-right:80px;max-width:65%;"><?php echo $ds->title;?></h1>
+		<h1><?php echo $ds->title;?></h1>
 		<ul class="nav nav-pills">
 			<li class=""><?php echo anchor('data_source/manage#!/view/'.$ds->id,'Dashboard');?></li>
 			<li class="active mmr"><a href="#">Manage Records</a></li>
@@ -17,7 +17,7 @@
 		</ul>
 	</div>
 
-	<div id="breadcrumb"  style="position:relative;clear:both;">
+	<div id="breadcrumb">
 		<div class="pull-right">
 			<span class="label"><i class="icon-question-sign icon-white"></i><a class="youtube" href="http://www.youtube.com/watch?v=cuVQfTyBbNk" style="color:white;" > New to this screen? Take a tour!</a></span>&nbsp;
 			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/MMRHelp/"> Help</a></span>

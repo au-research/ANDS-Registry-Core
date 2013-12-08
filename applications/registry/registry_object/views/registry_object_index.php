@@ -15,7 +15,7 @@ date_default_timezone_set('Australia/Melbourne');
 <div id="content" style="margin-left:0px">
 	<div class="content-header">
 		
-		<h1 style="position:relative;padding-right:80px;max-width:60%;"><?php echo $ro->title;?> <?php if($viewing_revision) echo '<small>('.$revisionInfo.')</small>'?></h1>
+		<h1><?php echo $ro->title;?> <?php if($viewing_revision) echo '<small>('.$revisionInfo.')</small>'?></h1>
 		
 		<input class="hide" type="hidden" value="<?php echo $ro->id;?>" id="ro_id"/>
 		<input class="hide" type="hidden" value="<?=$ds->id;?>" id="data_source_id"/>
@@ -42,7 +42,7 @@ date_default_timezone_set('Australia/Melbourne');
 		?>
 
 	</div>
-	<div id="breadcrumb" style="clear:both;">
+	<div id="breadcrumb">
 		<?php 
 			if ($this->user->hasFunction('REGISTRY_USER') && $this->user->hasAffiliation($ds->record_owner)) 
 			{
