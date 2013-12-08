@@ -548,6 +548,7 @@ class Data_source extends MX_Controller {
 
 
 		$html = '';
+		$target = '';
 		$html .='<ul class="nav nav-tabs nav-stacked">';
 		foreach($menu as $action=>$display){
 			if ($action != "nothing")
@@ -559,13 +560,16 @@ class Data_source extends MX_Controller {
 				elseif(sizeof($affected_ids)==1 && $action=='preview'){
 					$ro = $this->ro->getByID($affected_ids[0]);
 					$href = portal_url().'view/?id='.$ro->id;
+					$target = 'target="_blank"';
+
 				}
 				elseif(sizeof($affected_ids)==1 && $action=='rdaview'){
 					$ro = $this->ro->getByID($affected_ids[0]);
 					$href = portal_url().$ro->slug;
+					$target = 'target="_blank"';					
 				}				
 				else $href = 'javascript:;';
-				$html .='<li><a tabindex="-1" href="'.$href.'" class="op" action="'.$action.'" status="'.$status.'">'.$display.'</a></li>';
+				$html .='<li><a tabindex="-1" href="'.$href.'" class="op" '.$target.' action="'.$action.'" status="'.$status.'">'.$display.'</a></li>';
 			}
 			else
 			{
