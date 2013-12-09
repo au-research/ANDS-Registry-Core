@@ -2907,6 +2907,7 @@ function Core_checkValidField(form, field){
 	var warning = false;
 	if(field.required || $(field).attr('valid-type'))
 	{
+
 		typeField = $(field).next('input');
 		if(typeField){
 			validType = $(typeField).val();
@@ -2916,10 +2917,11 @@ function Core_checkValidField(form, field){
 		}
 
 
+
 		if(field.required && $(field).val().length==0){
 			valid = false;
 		}
-		else if($(field).attr('valid-type') && $(field).val().length > 0)
+		else if(validType && $(field).val().length > 0)
 		{
 			if(validType=='email'){//email validation
 				if(validateEmail($(field).val())){

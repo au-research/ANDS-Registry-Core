@@ -488,8 +488,20 @@ function initEditForm(){
 		assignFieldID(new_dom);
 		initVocabWidgets(new_dom);
 		initMapWidget(new_dom);
-		//Core_bindFormValidation($('form'));
+		//Core_bindFormValidation($('#edit-form'));
+		//
 		
+		$($('input[name=value]', new_dom)).off().on({
+			blur: function(){
+				Core_checkValidField($('#edit-form'), $('input[name=value]', new_dom));
+				Core_checkValidForm($('#edit-form'));
+			},
+			keyup: function(){
+				Core_checkValidField($('#edit-form'), $('input[name=value]', new_dom));
+				Core_checkValidForm($('#edit-form'));
+			}
+		});
+
 		//log(new_dom);
 		//@TODO: check if it's inside a tooltip and perform reposition
 

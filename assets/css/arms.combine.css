@@ -7901,10 +7901,6 @@ a:hover {
     display:block;
     text-shadow: 0 1px 0 #ffffff;
     margin-left: 20px;
-    position:relative;
-    padding-right:80px;
-    max-width:65%;
-
 }
 
 .content-header .btn-group {
@@ -7941,8 +7937,6 @@ a:hover {
 	border-top: 1px solid #d6d6d6;
 	border-bottom: 1px solid #d6d6d6;
 	padding-left: 10px;
-  position:relative;
-  clear:both
 }
 #breadcrumb a {
 	padding: 8px 20px 8px 10px;
