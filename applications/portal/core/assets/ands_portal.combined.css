@@ -2830,9 +2830,21 @@ h6 {
 .contrib {
   border-left: 10px solid #eeeeee;
 }
+#sort-button {
+  height: 32px;
+  width: 18px;
+  position: absolute;
+  right: 0;
+  top: 25px;
+  cursor: pointer;
+  background: transparent url(images/sort.png) no-repeat;
+}
 /***********************************************************************************/
 /*                             Overriding styles for qtip css	for preview popup	               */
 /***********************************************************************************/
+.ui-tooltip-light {
+  min-width: 250px !important;
+}
 .ui-tooltip-light .ui-tooltip-titlebar {
   background-color: #ffffff;
 }
@@ -2845,20 +2857,21 @@ h6 {
   font-weight: 700;
 }
 #togglefacetsort {
-  height: 18px;
-  width: 16px;
+  height: 27px;
+  width: 38px;
   position: absolute;
   right: 0;
   cursor: pointer;
+  background-position: center;
 }
 #togglefacetsort:hover {
   opacity: 0.5;
 }
 .facetsortaz {
-  background: transparent url(../images/az.png) no-repeat;
+  background: #f7f8f9 url(images/az.png) no-repeat;
 }
 .facetsortcount {
-  background: transparent url(../images/count.png) no-repeat;
+  background: #f7f8f9 url(images/count.png) no-repeat;
 }
 /**
  * Fix for Long titles on nested collections

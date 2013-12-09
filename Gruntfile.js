@@ -130,8 +130,8 @@ module.exports = function(grunt){
 				options:{nospawn:true}
 			},
 			portal:{
-				files: ['<%= yeoman.portal_assets %>/sass/{,*/}*.{scss,sass}', '<%= yeoman.assets %>/less/{,*/}*.{less,less}'],
-				tasks: ['compass:portal'],
+				files: ['<%= yeoman.portal_assets %>/sass/{,*/}*.{scss,sass}', '<%= yeoman.portal_assets %>/less/{,*/}*.{less,less}'],
+				tasks: ['compass:portal', 'less:portal', 'concat:portalStyles'],
 				options:{nospawn:true}
 			}
 		}

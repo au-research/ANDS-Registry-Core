@@ -54,6 +54,13 @@
 </div><!-- main -->
 <div class="sidebar">
 	<div id="togglefacetsort" class="facetsortcount" tip="Search option categories (below) are being sorted by the number of matching records"></div>
+	<!-- <div id="sort-button" tip="Search option categories (below) are being sorted by the number of matching records"></div> -->
+	<div id="sort-menu" class="hide">
+		<ul>
+			<li><a href="">Sort alphabetically</a></li>
+			<li><a href="">Sort by count</a></li>
+		</ul>
+	</div>
 	<div class="widget facet_subjects">
 	<h3 class="widget_title">Refine search by Subject</h3>
 	<div id="browse-subjects-container">

@@ -542,6 +542,19 @@ function initSearchPage(){
 	}else{
 		$('#togglefacetsort').removeClass('facetsortaz').addClass('facetsortcount').attr('tip', 'Search option categories (below) are being sorted by the number of matching records');
 	}
+
+	$('#sort-button').qtip({
+		content:$('#sort-menu').html(),
+		show: {
+			event: 'click'
+		},
+		hide:{
+			event: 'unfocus'
+		},
+		style:{
+			classes:'ui-tooltip-light ui-tooltip-shadow'
+		}
+	})
 }
 
 function initExplanations(theType)
