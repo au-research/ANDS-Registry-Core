@@ -227,7 +227,7 @@
 				</td>
 			</tr>
 		</xsl:if>
-			
+
 		<xsl:choose>
 			<xsl:when test="ro:description">
 				<tr>

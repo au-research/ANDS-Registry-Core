@@ -831,6 +831,32 @@ function drawMap(){//drawing the map on the left side
     }
 }
 
+$(document).on('click', '.connection_preview_link', function(e){
+    e.preventDefault();
+    var preview_url = base_url + "preview/?identifier_relation_id=" +  $(this).attr('identifier_relation_id');
+    var thePreDiv = $(this).closest('.ro_preview').find('.ro_preview_description');
+    if(thePreDiv.is(":visible"))
+    {
+        thePreDiv.slideToggle("slow");
+    }
+    else if(!(thePreDiv.is(':empty')))
+    {
+        thePreDiv.slideDown();
+    }
+    else{
+        $.ajax({
+            type: 'GET',
+            url: preview_url,
+            success:function(data){
+                data = $.parseJSON(data);
+                thePreDiv.html(data.html).slideDown();
+            }
+        });
+    }
+    return false;
+})
+
+
 
 function stringToLatLng(str){
     var word = str.split(',');

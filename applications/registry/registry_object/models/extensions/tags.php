@@ -9,8 +9,10 @@ class Tags_Extension extends ExtensionBase{
 	function getTags(){
 		$tags = array();
 		$results = $this->db->select('tag')->from('registry_object_tags')->where('key', $this->ro->key)->get()->result_array();
-		foreach($results as $r){
-			array_push($tags, $r['tag']);
+		if(sizeof($results)>0){
+			foreach($results as $r){
+				array_push($tags, $r['tag']);
+			}
 		}
 		return $tags;
 	}

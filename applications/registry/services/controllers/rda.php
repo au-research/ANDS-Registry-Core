@@ -183,14 +183,16 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		}
 
 		// Include inferred connections from duplicates
+		//getConnections($published_only = true, $specific_type = null, $limit = 100, $offset = 0, $include_dupe_connections = false)
 		$connections = $registry_object->getConnections($published_only,$type_filter,$limit,$offset, true);
-
+//var_dump($connections);
 		// Return this registry object's connections
 		echo json_encode(array("connections"=>$connections, 'class'=>$registry_object->class, 'slug'=>$registry_object->slug));
 	}
 
 	public function getRelatedInfoByIrId()
 	{
+		header('Content-type: application/json');
 		$result = array();
 		if (!($this->input->get('id')))
 		{ 

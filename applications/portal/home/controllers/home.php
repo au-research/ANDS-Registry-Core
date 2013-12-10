@@ -248,4 +248,29 @@ class Home extends MX_Controller {
 
 		echo '<p> </p><p>Thank you for your response. Your message has been delivered successfully</p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p>';
 	}
+
+	public function requestGrantEmail(){
+		$this->load->library('user_agent');
+		$data['user_agent']=$this->agent->browser();
+		$name = $this->input->post('contact-name');
+		$email = $this->input->post('contact-email');
+		$content = 'Grant ID: '.$this->input->post('grant-id').NL;
+		$content .= 'Grant Title: '.$this->input->post('grant-title').NL;	
+		$content .= 'Institution: '.$this->input->post('institution').NL;
+		$content .= 'purl: ('.$this->input->post('purl').')'.NL.NL;
+		$content .= 'Reported by: '.$this->input->post('contact-name').NL;
+		$content .= 'From: '.$this->input->post('contact-company').NL;
+		$content .= 'Contact email: '.$this->input->post('contact-email').NL;
+		
+		$this->load->library('email');
+
+		$this->email->from($email, $name);
+		$this->email->to('leo.monus@anu.edu.au');
+		$this->email->subject('Missing RDA Grant Record '.$this->input->post('grant-id'));
+		$this->email->message($content);
+
+		$this->email->send();
+
+		echo '<p> </p><p>Thank you for your enquiry into grant `'.$this->input->post('grant-id').'`. A ticket has been logged with the ANDS Services Team. You will be notified when the grant becomes available in Research Data Australia. </p>';
+	}
 }

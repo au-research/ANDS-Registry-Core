@@ -1686,6 +1686,7 @@ public function getContributorGroupsEdit()
 				if($errmsg)
 				{
 					$dataSource->append_log($logMsgErr.NL."HARVESTER RESPONDED UNEXPECTEDLY: ".$errmsg, HARVEST_ERROR, "harvester","HARVESTER_ERROR");
+					$gotErrors = true;
 					$done = 'TRUE';			
 				}
 				else

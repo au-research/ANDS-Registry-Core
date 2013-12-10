@@ -116,6 +116,10 @@ class Connections_Extension extends ExtensionBase
 					}
 				}
 			}
+
+			if($connection['class'] == "party" && $connection['registry_object_id'] == null && ($connection['origin'] == 'IDENTIFIER') ||  ($connection['origin'] == 'IDENTIFIER REVERSE')){
+				$connection['class'] = "party_one";
+			}
 			// $connection['description'] = $this->_getDescription($connection['registry_object_id']);
 
 			// Continue on for all types:
@@ -152,15 +156,24 @@ class Connections_Extension extends ExtensionBase
 
 				// Stop the same connected object coming from two different sources
 				// NB: this prevents connections from being duplicated (uniqueness property)
-				if(!isset($ordered_connections[$connection['class']][$connection['registry_object_id']]))
+				if($connection['registry_object_id'] === null && $connection['identifier_relation_id'] !== null)
 				{
-					$ordered_connections[$connection['class']][(int)$connection['registry_object_id']] = $connection;
-					$ordered_connections[$connection['class'] . '_count']++;
+					if(!isset($ordered_connections[$connection['class']][$connection['identifier_relation_id']]))
+					{
+						$ordered_connections[$connection['class']][(int)$connection['identifier_relation_id']] = $connection;
+						$ordered_connections[$connection['class'] . '_count']++;
+					}
+				}
+				else{
+					if(!isset($ordered_connections[$connection['class']][$connection['registry_object_id']]))
+					{
+						$ordered_connections[$connection['class']][(int)$connection['registry_object_id']] = $connection;
+						$ordered_connections[$connection['class'] . '_count']++;
+					}
 				}				
 
 			}
 		}
-
 		/* - Handle the offsetting/limits */
 		if ($limit || $offset)
 		{

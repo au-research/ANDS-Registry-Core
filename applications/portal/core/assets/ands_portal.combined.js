@@ -849,6 +849,21 @@ var Mustache;
 		}
 	});
 
+	$("#grant-query-form").submit(function(e){
+		e.preventDefault(); //STOP default action
+		$.ajax({
+	  		type:"POST",
+	  		url: base_url+"home/requestGrantEmail",
+	  		data: $("#grant-query-form").serialize(),   
+	  			success:function(msg){
+	  				$('#message').html(msg);
+	  			},
+	  			error:function(msg){
+	  				$('#message').html(msg);
+	  			}
+  			});
+	    return false; 
+	});
 
 $(document).on('click', '.sharing_widget', function(){
 	addthis.init();
