@@ -236,6 +236,37 @@
         </xsl:choose>
     </xsl:template>  
 
+
+    <xsl:template match="existenceDates">
+        <xsl:choose>
+            <xsl:when test="startDate/text() != '' or startDate/@dateFormat != '' or endDate/text() != '' or endDate/@dateFormat != ''">
+                <xsl:copy>
+                    <xsl:apply-templates select="@* | node()" />
+                </xsl:copy>   
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="startDate">
+        <xsl:choose>
+            <xsl:when test="text() != '' or @dateFormat != ''">
+                <xsl:copy>
+                    <xsl:apply-templates select="@* | node()" />
+                </xsl:copy>   
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="endDate">
+        <xsl:choose>
+            <xsl:when test="text() != '' or @dateFormat != ''">
+                <xsl:copy>
+                    <xsl:apply-templates select="@* | node()" />
+                </xsl:copy>   
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+
     <xsl:template match="relatedObject[not(key/text()) and relation/@type = '' and not(relation/description/text()) and not(relation/url/text())]"/>
     <xsl:template match="description[(not(@type) or @type='') and not(text())]"/>
     <xsl:template match="spatial[(not(@type) or @type='') and not(text())]"/>
