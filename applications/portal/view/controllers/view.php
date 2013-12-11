@@ -372,7 +372,16 @@ class View extends MX_Controller {
 		$relationship = $this->input->post('relationship');
 		$class = $this->input->post('object_class');
 		$theRel = format_relationship($class, $relationship,'EXPLICIT');
-		return $theRel;
+		if(!$theRel)
+			{
+				$theRel = '';
+				$arr = preg_split('/(?=[A-Z])/',$relationship);
+				foreach($arr as $word)
+				{
+					$theRel .= strtolower($word)." ";
+				}
+			}
+		return ucfirst($theRel);
 	}
 
 
