@@ -1564,16 +1564,17 @@
 
 		<div class="aro_box_part template" type="relatedInfo_identifier">
 			<div class="control-group">
-				<label class="control-label" for="title">Identifier:</label>						
-				<span class="inputs_group">
-					<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value=""/>
-					<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value=""/>
-				</span>
-				<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
+				<label class="control-label" for="title">Identifier: </label>	
+				<div class="controls">					
+					<span class="inputs_group">
+						<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value=""/>
+						<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value=""/>
+					</span>
+					<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
+				</div>
+				
 			</div>
 		</div>
-
-
 
 		<div class="aro_box template" type="relatedObject">
 			<div class="aro_box_display clearfix">
