@@ -55,7 +55,7 @@ function initViewPage()
 
  
     $('.publication').each(function(){
-        if($(this).attr('title')!='') {
+        if($(this).attr('title')!='' && typeof $(this).attr('object_class') != 'undefined') {
             var theRel = $(this).attr('title');
             var theClass = $(this).attr('object_class').toLowerCase();
             $(this).qtip({

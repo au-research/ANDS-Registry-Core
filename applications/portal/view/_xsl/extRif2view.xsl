@@ -242,7 +242,7 @@
       <xsl:when test="ro:citationInfo">
         <div id="citation" style="position:relative;clear:both;">
             <xsl:choose>
-                <xsl:when test="ro:citationInfo/ro:citationMetadata">
+                <xsl:when test="ro:citationInfo/ro:citationMetadata[descendant::text() != '']">
                     <p><xsl:text>&amp;nbsp;</xsl:text></p>
                     <h4>How to Cite this Collection</h4>
                        <!--   <a title="Add this article to your Mendeley library" target="_blank">
@@ -255,7 +255,7 @@
                           <xsl:apply-templates select="ro:citationInfo/ro:citationMetadata"/> 
                         </div>
                     </xsl:when>
-                    <xsl:when test="ro:citationInfo/ro:fullCitation">
+                    <xsl:when test="ro:citationInfo/ro:fullCitation[text() != '']">
                         <p><xsl:text>&amp;nbsp;</xsl:text></p>
                         <h4>How to Cite this Collection</h4>
                         <h5>Full Citation:</h5>
@@ -280,11 +280,11 @@
         </xsl:when>
     </xsl:choose>
     
-    <xsl:if test="ro:identifier">
+    <xsl:if test="ro:identifier[text() != '']">
       <p></p>
       <h4>Identifiers</h4>
       <div id="identifiers">
-        <xsl:for-each select="ro:identifier">
+        <xsl:for-each select="ro:identifier[text() != '']">
           <p>
             <xsl:apply-templates select="current()[@type='doi']" mode="doi_prefixedLink"/>
             <xsl:apply-templates select="current()[@type='ark']" mode="ark_prefixedLink"/>      
@@ -300,30 +300,30 @@
     </xsl:if>
 
     <!-- DISPLAY RELATED INFO -->
-    <xsl:if test="ro:relatedInfo[@type='publication']">
+    <xsl:if test="ro:relatedInfo[@type='publication' and ro:identifier/text() != '']">
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
         <h4>Related Publications</h4>
-        <xsl:apply-templates select="ro:relatedInfo[@type='publication']"/> 
+        <xsl:apply-templates select="ro:relatedInfo[@type='publication' and ro:identifier/text() != '']"/> 
     </xsl:if>
-    <xsl:if test="ro:relatedInfo[@type='website']">
+    <xsl:if test="ro:relatedInfo[@type='website' and ro:identifier/text() != '']">
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
         <h4>Related Websites</h4>
-        <xsl:apply-templates select="ro:relatedInfo[@type='website']"/> 
+        <xsl:apply-templates select="ro:relatedInfo[@type='website' and ro:identifier/text() != '']"/> 
     </xsl:if>
-    <xsl:if test="ro:relatedInfo[@type='reuseInformation']">
+    <xsl:if test="ro:relatedInfo[@type='reuseInformation' and ro:identifier/text() != '']">
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
         <h4>Reuse Information</h4>
-        <xsl:apply-templates select="ro:relatedInfo[@type='reuseInformation']"/> 
+        <xsl:apply-templates select="ro:relatedInfo[@type='reuseInformation' and ro:identifier/text() != '']"/> 
     </xsl:if>
-    <xsl:if test="ro:relatedInfo[@type='dataQualityInformation']">
+    <xsl:if test="ro:relatedInfo[@type='dataQualityInformation' and ro:identifier/text() != '']">
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
         <h4>Data Quailty Information</h4>
-        <xsl:apply-templates select="ro:relatedInfo[@type='dataQualityInformation']"/> 
+        <xsl:apply-templates select="ro:relatedInfo[@type='dataQualityInformation' and ro:identifier/text() != '']"/> 
     </xsl:if>
-    <xsl:if test="ro:relatedInfo[@type='metadata']">
+    <xsl:if test="ro:relatedInfo[@type='metadata' and ro:identifier/text() != '']">
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
         <h4>Additional Metadata</h4>
-        <xsl:apply-templates select="ro:relatedInfo[@type='metadata']"/> 
+        <xsl:apply-templates select="ro:relatedInfo[@type='metadata' and ro:identifier/text() != '']"/> 
     </xsl:if>
     <xsl:if test="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity'] or ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]">
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
@@ -334,7 +334,7 @@
 
     
     <!-- DISPLAY COVERAGE (SPATIAL AND TEMPORAL) -->            
-    <xsl:if test="ro:coverage/ro:spatial or ro:location/ro:spatial">
+    <xsl:if test="ro:coverage/ro:spatial[descendant::text() != ''] or ro:location/ro:spatial[descendant::text() != '']">
         <xsl:variable name="coverageLabel">
             <xsl:choose>
                 <xsl:when test="(ro:coverage/ro:spatial or ro:location[@type='coverage']) and ro:location/ro:spatial">
@@ -343,7 +343,7 @@
                 <xsl:when test="ro:location/ro:spatial">
                     <xsl:text>Location:</xsl:text>
                 </xsl:when>
-                <xsl:when test="ro:coverage/ro:spatial">
+                <xsl:when test="ro:coverage/ro:spatial[descendant::text() != '']">
                     <xsl:text>Spatial Coverage:</xsl:text>
                 </xsl:when>
                 
@@ -392,17 +392,17 @@
     </xsl:if>
 
   <!-- DISPLAY SUBJECTS -->
-  <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject">
+  <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']">
     <div style="position:relative;clear:both">
         <!--<p><b>Subjects:</b>-->
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
         <h4>Subjects</h4>
 
         <!-- ANZSRC SUBJECTS -->
-        <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject/extRif:subject_type ='anzsrc-for'">
+        <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type ='anzsrc-for'">
             <p class="subject_type">Field of Research</p>
             <div class="tags">
-                <xsl:for-each select="../extRif:extendedMetadata/extRif:subjects/extRif:subject">      
+                <xsl:for-each select="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']">      
                     <xsl:sort select="extRif:subject_type"/>
                     <xsl:if test="extRif:subject_type='anzsrc-for'">
                         <xsl:apply-templates select="."/>
@@ -411,10 +411,10 @@
             </div>
         </xsl:if>
 
-        <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject/extRif:subject_type ='anzsrc-seo'">
+        <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type ='anzsrc-seo'">
             <p class="subject_type">Socio-economic Objective</p>
             <div class="tags">
-                <xsl:for-each select="../extRif:extendedMetadata/extRif:subjects/extRif:subject">      
+                <xsl:for-each select="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']">      
                     <xsl:sort select="extRif:subject_type"/>
                     <xsl:if test="extRif:subject_type='anzsrc-seo'">
                         <xsl:apply-templates select="."/>
@@ -424,12 +424,12 @@
         </xsl:if>
 
         <!-- OTHER SUBJECTS -->
-        <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject/extRif:subject_type!='anzsrc-for' and ../extRif:extendedMetadata/extRif:subjects/extRif:subject/extRif:subject_type!='anzsrc-seo'">
+        <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type!='anzsrc-for' and ../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type!='anzsrc-seo'">
             <p>Keywords</p> 
             <div class="tags">
-                <xsl:for-each select="../extRif:extendedMetadata/extRif:subjects/extRif:subject">      
+                <xsl:for-each select="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']">      
                     <xsl:sort select="extRif:subject_type"/>
-                    <xsl:if test="extRif:subject_type!='anzsrc-for'and extRif:subject_type!='anzsrc-seo'">
+                    <xsl:if test="extRif:subject_type!='anzsrc-for' and extRif:subject_type!='anzsrc-seo'">
                         <xsl:apply-templates select="."/>
                     </xsl:if>
                 </xsl:for-each>
@@ -444,10 +444,10 @@
 
 
     <!-- DISPLAY DATES -->
-    <xsl:if test="ro:dates">
+    <xsl:if test="ro:dates[descendant::text() != '']">
         <p><xsl:text>&amp;nbsp;</xsl:text></p>
         <h4>Dates</h4>
-          <xsl:apply-templates select="ro:dates"/>
+          <xsl:apply-templates select="ro:dates[descendant::text() != '']"/>
         <p>&amp;nbsp;</p>
     </xsl:if>           
     
@@ -605,7 +605,7 @@
     </xsl:if>  
 </xsl:template> 
 
-<xsl:template match="ro:name[@type='alternative']">   
+<xsl:template match="ro:name[@type='alternative' and text() != '']">   
     <p class="alt_displayTitle">Also known as: <xsl:apply-templates/></p>
 </xsl:template> 
 
@@ -614,11 +614,11 @@
     <img class="logo" style="max-width:130px;max-height:none;height:auto" src="{.}"/>
 </xsl:template> 
 
-<xsl:template match="ro:name[@type='abbreviated']">   
+<xsl:template match="ro:name[@type='abbreviated' and text() != '']">   
     <p class="abbrev_displayTitle">Also known as: <xsl:apply-templates/></p>
 </xsl:template>
 
-<xsl:template match="ro:namePart">
+<xsl:template match="ro:namePart[text() != '']">
     <xsl:value-of select="."/><xsl:text>, </xsl:text>    
 </xsl:template>
 
@@ -676,7 +676,7 @@
 </xsl:if> 
 </xsl:template>
 
-<xsl:template match="extRif:subject">   
+<xsl:template match="extRif:subject[extRif:subject_value/text() != '']">   
   <xsl:choose>
     <xsl:when test="extRif:subject_type = 'anzsrc-for'">
       <a href="{$base_url}search/#!/subject_vocab_uri={extRif:subject_uri}" vocab_uri="{extRif:subject_uri}" class="subject_vocab_filter" id="{extRif:subject_resolved}" title="{extRif:subject_resolved}">
@@ -1262,14 +1262,14 @@
   <xsl:value-of select="concat(substring($displayName,1,string-length($displayName)-2),' ')"/>     
 </xsl:template> 
 
-<xsl:template match="//ro:citationInfo/ro:citationMetadata/ro:date">
+<xsl:template match="//ro:citationInfo/ro:citationMetadata/ro:date[text() != '']">
     <xsl:if test="position()>1">
         <xsl:text>,</xsl:text>
     </xsl:if>       
     <xsl:value-of select="substring(.,1,4)"/> 
 </xsl:template> 
 
-<xsl:template match="ro:location/ro:address/ro:electronic">
+<xsl:template match="ro:location/ro:address/ro:electronic[text() != '']">
   <xsl:if test="./@type='url'">
       <xsl:variable name="url">
           <xsl:choose>
@@ -1292,7 +1292,7 @@
 </xsl:if>
 </xsl:template>
 
-<xsl:template match="ro:location/ro:address/ro:physical">
+<xsl:template match="ro:location/ro:address/ro:physical[ro:addressPart/text() != '']">
   <p>
      <xsl:choose>
         <xsl:when test = "./ro:addressPart">
@@ -1325,7 +1325,7 @@
 </p>
 </xsl:template>	
 
-<xsl:template match="ro:addressPart">			
+<xsl:template match="ro:addressPart[text() != '']">			
  <xsl:value-of select="." disable-output-escaping="yes"/><br />
 </xsl:template> 
 
@@ -1395,11 +1395,11 @@
 
   <xsl:template match="ro:temporal" mode="date">
     <xsl:choose>
-      <xsl:when test="extRif:friendly_date">
-        <p><xsl:value-of select="extRif:friendly_date" /></p>
+      <xsl:when test="extRif:friendly_date[text() != '']">
+        <p><xsl:value-of select="extRif:friendly_date[text() != '']" /></p>
       </xsl:when>
       <xsl:otherwise>
-       <p><xsl:apply-templates select="ro:date"/></p>
+       <p><xsl:apply-templates select="ro:date[text() != '']"/></p>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -1410,7 +1410,7 @@
 </xsl:if>				
 </xsl:template> 
 
-<xsl:template match="ro:dates">
+<xsl:template match="ro:dates[ro:date/text() != '']">
 
   <xsl:choose>
     <xsl:when test="./extRif:friendly_date">

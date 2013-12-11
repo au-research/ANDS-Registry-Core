@@ -240,7 +240,7 @@ class Home extends MX_Controller {
 		$this->load->library('email');
 
 		$this->email->from($email, $name);
-		$this->email->to('services@ands.org.au');
+		$this->email->to($this->config->item('site_admin_email'));
 		$this->email->subject('RDA Contact Us');
 		$this->email->message($content);
 
@@ -265,7 +265,7 @@ class Home extends MX_Controller {
 		$this->load->library('email');
 
 		$this->email->from($email, $name);
-		$this->email->to('leo.monus@anu.edu.au');
+		$this->email->to($this->config->item('site_admin_email'));
 		$this->email->subject('Missing RDA Grant Record '.$this->input->post('grant-id'));
 		$this->email->message($content);
 
