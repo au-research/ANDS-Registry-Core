@@ -115,7 +115,7 @@ class Maintenance extends MX_Controller {
 		exit();
 	}
 
-	function getDataSourceList(){
+	function getDataSourceList($detailed=false){
 		acl_enforce('REGISTRY_STAFF');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -124,6 +124,17 @@ class Maintenance extends MX_Controller {
 
 		$dataSources = $this->ds->getAll(0,0);
 		$items = array();
+
+		if($detailed){
+			//get all data_source_count
+			$this->load->library('solr');
+			$this->solr->setOpt('q', '*:*');
+			$this->solr->setFacetOpt('field', 'data_source_id');
+			$this->solr->setFacetOpt('limit', '9999');
+			$this->solr->executeSearch();
+			$data_sources_indexed_count = $this->solr->getFacetResult('data_source_id');
+		}
+
 		foreach($dataSources as $ds){
 			$item = array();
 			$item = array(
@@ -132,6 +143,16 @@ class Maintenance extends MX_Controller {
 				'title'=>$ds->title,
 				'total_published'=>(int) $ds->count_PUBLISHED
 			);
+			if($detailed){
+				// $item['totalCountDB'] = $this->mm->getTotalRegistryObjectsCount('db', $ds->id); //kinda bad but ok for now
+				// $item['totalCountDBPUBLISHED'] = $this->mm->getTotalRegistryObjectsCount('db', $ds->id, 'PUBLISHED');
+				if(isset($data_sources_indexed_count[$ds->id])){
+					$item['total_indexed'] = $data_sources_indexed_count[$ds->id];
+				}else{
+					$item['total_indexed'] = 0;
+				}
+				$item['total_missing'] = $item['total_published'] - $item['total_indexed'];
+			}
 			// $item = array($ds->id, $ds->title, $ds->count_PUBLISHED,'<button class="btn">Sync</button>');
 			array_push($items, $item);
 		}
@@ -187,6 +208,36 @@ class Maintenance extends MX_Controller {
 		}
 		$data['dataSources'] = $items;
 		echo json_encode($data);
+	}
+
+	function getDataSourceStat($ds_id){
+		acl_enforce('REGISTRY_STAFF');
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+
+		$this->load->library('solr');
+		$this->solr->setOpt('q', '*:*');
+		$this->solr->setOpt('rows', '0');
+		$this->solr->setFacetOpt('field', 'data_source_id');
+		$this->solr->setFacetOpt('limit', '9999');
+		$this->solr->executeSearch();
+		$data_sources_indexed_count = $this->solr->getFacetResult('data_source_id');
+
+		$this->load->model("data_source/data_sources","ds");
+		$this->load->model('maintenance_stat', 'mm');
+		$ds = $this->ds->getByID($ds_id);
+
+		$result['ds'] = $ds;
+		$result['totalCountDB'] = $this->mm->getTotalRegistryObjectsCount('db', $ds->id); //kinda bad but ok for now
+		$result['totalCountDBPUBLISHED'] = $this->mm->getTotalRegistryObjectsCount('db', $ds->id, 'PUBLISHED');
+		if(isset($data_sources_indexed_count[$ds->id])){
+			$result['totalCountSOLR'] = $data_sources_indexed_count[$ds->id];
+		}else{
+			$result['totalCountSOLR'] = 0;
+		}
+		$result['totalMissing'] =  $result['totalCountDBPUBLISHED'] - $result['totalCountSOLR'];
+		echo json_encode($result);
 	}
 
 	function enrichDS($data_source_id){//TODO: XXX
@@ -379,7 +430,7 @@ class Maintenance extends MX_Controller {
 		}
 	}
 
-	function smartAnalyze($data_source_id){
+	function smartAnalyze($task='sync', $data_source_id){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		$this->load->model('data_source/data_sources', 'ds');
@@ -389,6 +440,7 @@ class Maintenance extends MX_Controller {
 		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, PUBLISHED);
 
 		$chunkSize = 50;
+		if($task=='index') $chunkSize = 200;
 
 		$data = array();
 		$data['total'] = sizeof($keys);
@@ -398,7 +450,7 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	function smartSyncDS($data_source_id=false, $chunk_pos=false){
+	function smartSyncDS($task='sync', $data_source_id=false, $chunk_pos=false){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -409,6 +461,7 @@ class Maintenance extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 
 		$chunkSize = 50;
+		if($task=='index') $chunkSize = 200;
 
 		if(!$data_source_id) throw new Exception ('Data Source ID must be provided as first param');
 		if(!$chunk_pos || $chunk_pos == 0) throw new Exception ('Chunk Position must be provided as second param');
@@ -426,32 +479,39 @@ class Maintenance extends MX_Controller {
 			if($ro){
 				$this->benchmark->mark('enrich_ro_start');
 				//enrich
-				try{
-					$ro->addRelationships();
-				}catch(Exception $e){
-					array_push($error, $e->getMessage());
+				if($task=='sync' || $task=='full_enrich'){
+					try{
+						$ro->addRelationships();
+					}catch(Exception $e){
+						array_push($error, $e->getMessage());
+					}
+
+					try{
+						$ro->update_quality_metadata();
+					}catch(Exception $e){
+						array_push($error, $e->getMessage());
+					}
 				}
 
-				try{
-					$ro->update_quality_metadata();
-				}catch(Exception $e){
-					array_push($error, $e->getMessage());
-				}
-
-				try{
-					$ro->enrich();
-				}catch(Exception $e){
-					array_push($error, $e->getMessage());
+				if($task=='sync' || $task=='full_enrich' || $task=='fast_enrich'){
+					try{
+						$ro->enrich();
+					}catch(Exception $e){
+						array_push($error, $e->getMessage());
+					}
 				}
 
 				$this->benchmark->mark('enrich_ro_end');
 
 				//index
-				try{
-					$solrXML = $ro->transformForSOLR();
-					if($solrXML) $allSOLRXML .= $solrXML;
-				}catch(Exception $e){
-					array_push($error, $e->getMessage());
+				
+				if($task=='sync' || $task=='index'){
+					try{
+						$solrXML = $ro->transformForSOLR();
+						$allSOLRXML .= $solrXML;
+					}catch(Exception $e){
+						array_push($error, $e->getMessage());
+					}
 				}
 
 				$totalEnrichTime += $this->benchmark->elapsed_time('enrich_ro_start', 'enrich_ro_end');
@@ -474,8 +534,13 @@ class Maintenance extends MX_Controller {
 		}
 
 		$this->benchmark->mark('index_start');
-		$this->solr->addDoc($allSOLRXML);
-		$this->solr->commit();
+		if($task=='sync' || $task=='index'){
+			$this->solr->addDoc('<add>'.$allSOLRXML.'</add>');
+			$this->solr->commit();
+		}
+		if($task=='clear'){
+			$this->solr->clear($data_source_id);
+		}
 		$this->benchmark->mark('index_end');
 		$totalIndexTime = $this->benchmark->elapsed_time('index_start', 'index_end');
 		
@@ -606,12 +671,24 @@ class Maintenance extends MX_Controller {
 
 		$use = 'id';
 		$idkey = $this->input->post('idkey');
-		
+		if(!$idkey){
+			$data = file_get_contents("php://input");
+			$array = json_decode($data, true);
+			$idkey = $array['idkey'];
+		}
+
 		$ro = $this->ro->getByID($idkey);
 		if(!$ro) {
 			$ro = $this->ro->getAllByKey($idkey);
 			$use = 'keys';
 		}
+		if(!$ro) {
+			$ro = $this->ro->getBySlug($idkey);
+			$use = 'slug';
+		}
+
+		$data = array();
+
 		if(!$ro) {
 			$data['status']='error';
 			$data['message'] = '<i class="icon icon-remove"></i> No Registry Object Found!';
@@ -622,12 +699,17 @@ class Maintenance extends MX_Controller {
 					$data['message'] = $msg;
 				}
 
-			}elseif($use=='keys'){
+			}else if($use=='keys'){
 				foreach($ro as $r){
 					if($msg = $ro->sync()!=true){
 						$data['status'] = 'error';
 						$data['message'] = $msg;
 					}
+				}
+			}else if($use=='slug'){
+				if($msg = $ro->sync()!=true){
+					$data['status'] = 'error';
+					$data['message'] = $msg;
 				}
 			}
 			$data['status'] = 'success';

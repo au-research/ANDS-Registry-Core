@@ -13,6 +13,43 @@
 	</div>
 	
 	<div class="container-fluid">
+
+		<div class="row-fluid" ng-show="loading_detailed_stat">
+			<div class="span12 center alert alert-info">Loading Detailed Data Sources Stat. Please wait...</div>
+		</div>
+
+		<div class="row-fluid">
+			<div class="span12 center alert alert-info" ng-show="loading_global_stat">Loading Global Stat. Please wait...</div>
+			<div class="span12 center" style="text-align: center;" ng-show="global_stat">
+				<ul class="stat-boxes">
+					<li>
+						<div class="left peity_bar_good"><span>Database</span>Registry Objects</div>
+						<div class="right">
+							<strong>{{global_stat.totalCountDB}}</strong>
+						</div>
+					</li>
+					<li>
+						<div class="left peity_bar_good"><span>Database</span>Published</div>
+						<div class="right">
+							<strong>{{global_stat.totalCountDBPublished}}</strong>
+						</div>
+					</li>
+					<li>
+						<div class="left peity_bar_neutral"><span>SOLR Indexed</span>Registry Objects</div>
+						<div class="right">
+							<strong>{{global_stat.totalCountSOLR}}</strong>
+						</div>
+					</li>
+					<li>
+						<div class="left peity_bar_bad"><span>Missing</span>Registry Objects</div>
+						<div class="right">
+							<strong>{{global_stat.notIndexed}}</strong>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
 		<div class="row-fluid">
 			<div class="span8">
 				<div class="widget-box">
@@ -27,6 +64,8 @@
 									<th>ID</th>
 									<th ng-click="predicate = 'title';reverse=!reverse">Title</th>
 									<th ng-click="predicate = 'total_published';reverse=!reverse">Total Published</th>
+									<th ng-click="predicate = 'total_indexed';reverse=!reverse" ng-show="detailed_stat">Total Indexed</th>
+									<th ng-click="predicate = 'total_missing';reverse=!reverse" ng-show="detailed_stat">Total Missing</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -35,16 +74,19 @@
 									<td>{{ds.id}}</td>
 									<td>{{ds.title}}</td>
 									<td>{{ds.total_published}}</td>
+									<td ng-show="detailed_stat">{{ds.total_indexed}}</td>
+									<td ng-show="detailed_stat">{{ds.total_missing}}</td>
 									<td>
 										<div class="btn-group">
 											<button class="btn btn-default" ng-click="addTask('sync', ds.id)">Sync</button>
-											<!-- <button class="btn dropdown-toggle" data-toggle="dropdown">
+											<button class="btn dropdown-toggle" data-toggle="dropdown">
 												<span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu">
-												<li><a href="">Enrich</a></li>
-												<li><a href="">Index</a></li>
-											</ul> -->
+												<li><a href="" ng-click="addTask('enrich', ds.id)">Enrich</a></li>
+												<li><a href="" ng-click="addTask('index', ds.id)">Index</a></li>
+												<li><a href="" ng-click="addTask('clear', ds.id)">Clear Index</a></li>
+											</ul>
 										</div>
 									</td>
 								</tr>							
@@ -55,6 +97,24 @@
 			</div>
 
 			<div class="span4">
+
+				<div class="widget-box">
+					<div class="widget-content">
+						<form class="form-search pull-left" ng-submit="syncRO()">
+							<div class="input-prepend">
+								<button type="submit" class="btn">Sync</button>
+								<input type="text" class="input-medium search-query" placeholder="Key, ID or Slug" ng-model="subject">
+							</div>
+							<span ng-bind-html="syncROStatus"></span>
+						</form>
+						<div class="clear"></div>
+					</div>
+					<div class="widget-content">
+						<button class="btn btn-default" ng-click="get_global_stat()" ng-show="!loading_global_stat">Load Global Stats</button>
+						<button class="btn btn-default" ng-click="get_detailed_stat()" ng-show="!loading_detailed_stat">Load Detailed Stats</button>
+					</div>
+				</div>
+
 				<div class="widget-box">
 					<div class="widget-title">
 						<h5>Current Operation: {{ct.status}}</h5>
@@ -71,7 +131,7 @@
 								<dt>Status</dt> <dd>{{ct.status}}</dd>
 								<dt>Total</dt> <dd>{{ct.total}}</dd>
 								<dt>Chunking:</dt> <dd>{{currentChunk}}/{{ct.numChunk}}</dd>
-								<dt>Elapsed Time:</dt> <dd>{{totalTime}}</dd>
+								<dt>{{percent | number:2}} %</dt> <dd></dd>
 							</dl>
 						</div>
 						<progress percent="percent" class="progress-striped active"></progress>
@@ -96,6 +156,19 @@
 		</div>
 
 		
+	</div>
+</div>
+
+<div id="view_ds_template" class="hide">
+	<div ng-show="ds">
+		<div class="content-header">
+			<h1>{{ds.ds.attributes.title.value}}</h1>
+		</div>
+		<div id="breadcrumb" style="clear:both;">
+			<?php echo anchor(registry_url('auth/dashboard'), '<i class="icon-home"></i> Home'); ?>
+			<a href="#/">Sync Menu</a>
+			<a href="#/view/">{{ds.ds.attributes.title.value}}</a>
+		</div>
 	</div>
 </div>
 

@@ -30,7 +30,7 @@
 
 <script type="text/x-mustache" id="stat-template">
 <div class="row-fluid">
-	<div class="span12 center" style="text-align: center;">					
+	<div class="span12 center" style="text-align: center;">
 		<ul class="stat-boxes">
 			<li>
 				<div class="left peity_bar_good"><span>Database</span>Registry Objects</div>
