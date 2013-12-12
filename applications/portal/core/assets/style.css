@@ -562,6 +562,9 @@ a.browse_button{
 	background: #f4f5f6
 }
 
+.gm-style-cc div{
+  word-wrap: normal;
+}
 
 /****
  * DataCite About
