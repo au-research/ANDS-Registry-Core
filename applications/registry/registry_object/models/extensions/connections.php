@@ -444,7 +444,10 @@ class Connections_Extension extends ExtensionBase
         {
  			foreach($sxml->{strtolower($this->ro->class)}->identifier AS $identifier)
             {
-                $my_identifiers[] = '"' . $this->_CI->solr->escapeSolrValue((string) $identifier) . '"';
+                if((string)$identifier != '')
+                {
+                	$my_identifiers[] = '"' . $this->_CI->solr->escapeSolrValue((string) $identifier) . '"';
+            	}
             }
         }
 

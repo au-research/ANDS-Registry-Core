@@ -398,10 +398,6 @@ class View extends MX_Controller {
 		}
 	}
 
-public function register_grant_query()
-{
-	echo "thanks you";
-}
 
 	private function handleRedirectFromKeyToSlug($key)
 	{

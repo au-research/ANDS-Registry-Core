@@ -106,19 +106,22 @@ class Relationships_Extension extends ExtensionBase
 								
 				foreach($related_info->identifier as $i)
 				{
-					$this->db->insert('registry_object_identifier_relationships', 
-						array(
-							"registry_object_id"=>$this->ro->id, 
-						  	"related_object_identifier"=>trim((string)$i),
-						  	"related_info_type"=>$related_info_type ,
-						  	"related_object_identifier_type"=>(string)$i['type'],
-						  	"relation_type"=>$relation_type,
-						  	"related_title"=>$related_info_title,
-						  	"related_description"=>$related_description,
-						  	"related_url"=>$related_url,
-						  	"connections_preview_div"=>$connections_preview_div
-						)
-					);
+					if(trim((string)$i) != '')
+					{
+						$this->db->insert('registry_object_identifier_relationships', 
+							array(
+								"registry_object_id"=>$this->ro->id, 
+							  	"related_object_identifier"=>trim((string)$i),
+							  	"related_info_type"=>$related_info_type ,
+							  	"related_object_identifier_type"=>(string)$i['type'],
+							  	"relation_type"=>$relation_type,
+							  	"related_title"=>$related_info_title,
+							  	"related_description"=>$related_description,
+							  	"related_url"=>$related_url,
+							  	"connections_preview_div"=>$connections_preview_div
+							)
+						);
+					}
 				}
 			}			
 		}

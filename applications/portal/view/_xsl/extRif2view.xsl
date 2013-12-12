@@ -200,9 +200,9 @@
         </xsl:choose>   
 
         <!-- DISPLAY ALTERNATE TITLES/NAMES -->
-        <xsl:apply-templates select="ro:name[@type='alternative']"/>
+        <xsl:apply-templates select="ro:name[@type='alternative' and ro:namePart/text() != '']"/>
 
-        <xsl:apply-templates select="ro:name[@type='abbreviated']"/>
+        <xsl:apply-templates select="ro:name[@type='abbreviated' and ro:namePart/text() != '']"/>
 
         <!-- DISPLAY LOGO -->
         <xsl:apply-templates select="../extRif:extendedMetadata/extRif:displayLogo"/>
@@ -605,7 +605,7 @@
     </xsl:if>  
 </xsl:template> 
 
-<xsl:template match="ro:name[@type='alternative' and text() != '']">   
+<xsl:template match="ro:name[@type='alternative']">   
     <p class="alt_displayTitle">Also known as: <xsl:apply-templates/></p>
 </xsl:template> 
 
@@ -614,7 +614,7 @@
     <img class="logo" style="max-width:130px;max-height:none;height:auto" src="{.}"/>
 </xsl:template> 
 
-<xsl:template match="ro:name[@type='abbreviated' and text() != '']">   
+<xsl:template match="ro:name[@type='abbreviated']">   
     <p class="abbrev_displayTitle">Also known as: <xsl:apply-templates/></p>
 </xsl:template>
 

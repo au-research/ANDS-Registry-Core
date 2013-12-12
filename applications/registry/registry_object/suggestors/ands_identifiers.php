@@ -16,7 +16,7 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 		//       we shouldn't use SOLR to get our own information, as 
 		//       this would mean that DRAFT requests fail (drafts NOT 
 		// 		 in SOLR index).
-
+		$suggestions = array();
 		$sxml = $registry_object->getSimpleXML();
 		if ($sxml->registryObject)
 		{
@@ -30,9 +30,18 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 		{
 			foreach($sxml->{strtolower($registry_object->class)}->identifier AS $identifier)
 			{
-				$my_identifiers[] = '"' . (string) $identifier . '"';
+				if((string) $identifier != '')
+				{
+					$my_identifiers[] = '"' . (string) $identifier . '"';
+				}
 			}
 		}
+
+        if (count($my_identifiers) == 0)
+        {
+        	return $suggestions;
+        }
+		
 		$identifier_search_query = implode(" +identifier_value:", $my_identifiers);
 
 		// But exclude already related objects
