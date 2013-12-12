@@ -9451,6 +9451,13 @@ div.tags .btn-group {
   border-top: 0;
   cursor: pointer;
 }
+.content-header h1 {
+  width:75%;
+}
+#breadcrumb{
+  position:relative;
+  clear:both;
+}
 /**
  * Core / Styling / Less
  * 
