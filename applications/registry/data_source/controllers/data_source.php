@@ -123,7 +123,7 @@ class Data_source extends MX_Controller {
 				try{
 					$deletedRecords[$ro['key']][$idx] = array('title'=>$ro['title'],'key'=>$ro['key'],'id'=>$ro['id'],'record_data'=>wrapRegistryObjects($ro['record_data']), 'deleted_date'=>timeAgo($ro['deleted']));
 				}catch(Exception $e){
-					throw Exception($e);
+					throw new Exception($e);
 				}
 				if($idx % 100 == 0){
 					unset($ro);
@@ -2001,7 +2001,7 @@ public function getContributorGroupsEdit()
 						$report[$ro_id] = array('quality_level'=>($ro->quality_level == 4 ? 'Gold Standard' : $ro->quality_level), 'class'=>$ro->class, 'title'=>$ro->title,'status'=>readable($ro->status),'id'=>$ro->id,'report'=>$report_html);
 					}
 				}catch(Exception $e){
-					throw Exception($e);
+					throw new Exception($e);
 				}
 				unset($ro);
 				clean_cycles();
