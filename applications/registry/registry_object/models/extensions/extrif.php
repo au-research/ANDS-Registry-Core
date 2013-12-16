@@ -256,7 +256,7 @@ class Extrif_Extension extends ExtensionBase
 							foreach ($xml->{$this->ro->class}->relatedInfo->identifier AS $identifier)
 							{
 								if((string)$identifier == $relatedObject['related_object_identifier'] && (string)$identifier['type'] == $relatedObject['related_object_identifier_type'])									
-									$identifier->addAttribute("resolved", 'true');
+									$identifier["resolved"] ='true';
 								}
 							}
 						}

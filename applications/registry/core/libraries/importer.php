@@ -547,7 +547,7 @@ class Importer {
 					try {
 						$ro->addRelationships();
 					} catch (Exception $e) {
-						throw Exception($e);
+						throw new Exception($e);
 					}
 
 					if($this->runBenchMark)
