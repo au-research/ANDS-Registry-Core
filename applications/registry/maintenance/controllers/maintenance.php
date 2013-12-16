@@ -437,7 +437,7 @@ class Maintenance extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 
 		$ds = $this->ds->getByID($data_source_id);
-		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, PUBLISHED);
+		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, 'PUBLISHED');
 
 		$chunkSize = 50;
 		if($task=='index') $chunkSize = 200;
@@ -469,7 +469,7 @@ class Maintenance extends MX_Controller {
 		$ds = $this->ds->getByID($data_source_id);
 		$offset = ($chunk_pos-1) * $chunkSize;
 		$limit = $chunkSize;
-		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, PUBLISHED, $offset, $limit);
+		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, 'PUBLISHED', $offset, $limit);
 		$totalEnrichTime = 0; $totalIndexTime = 0; $allErrors = array(); $allSOLRXML = '';
 		$results = array();
 		foreach($keys as $key){
@@ -534,13 +534,16 @@ class Maintenance extends MX_Controller {
 		}
 
 		$this->benchmark->mark('index_start');
+
+		if($task=='clear'){
+			$this->solr->clear($data_source_id);
+		}
+
 		if($task=='sync' || $task=='index'){
 			$this->solr->addDoc('<add>'.$allSOLRXML.'</add>');
 			$this->solr->commit();
 		}
-		if($task=='clear'){
-			$this->solr->clear($data_source_id);
-		}
+		
 		$this->benchmark->mark('index_end');
 		$totalIndexTime = $this->benchmark->elapsed_time('index_start', 'index_end');
 		
