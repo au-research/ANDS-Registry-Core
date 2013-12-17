@@ -1269,8 +1269,10 @@
     <xsl:value-of select="substring(.,1,4)"/> 
 </xsl:template> 
 
-<xsl:template match="ro:location/ro:address/ro:electronic[text() != '']">
+
+<xsl:template match="ro:location/ro:address/ro:electronic">
   <xsl:if test="./@type='url'">
+
       <xsl:variable name="url">
           <xsl:choose>
               <xsl:when test="string-length(.)>30">
@@ -1280,7 +1282,7 @@
                 <xsl:value-of select="."/>
             </xsl:otherwise>
         </xsl:choose>
-    </xsl:variable>	
+    </xsl:variable> 
     <a>
         <xsl:attribute name="href">
             <xsl:value-of select="."/>
