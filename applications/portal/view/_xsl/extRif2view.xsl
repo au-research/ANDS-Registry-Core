@@ -1269,7 +1269,7 @@
     <xsl:value-of select="substring(.,1,4)"/> 
 </xsl:template> 
 
-<xsl:template match="ro:location/ro:address/ro:electronic[text() != '']">
+<xsl:template match="ro:location/ro:address/ro:electronic[ro:value/text() != '']">
   <xsl:if test="./@type='url'">
       <xsl:variable name="url">
           <xsl:choose>
