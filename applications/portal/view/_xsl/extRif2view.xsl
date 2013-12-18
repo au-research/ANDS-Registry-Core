@@ -1270,7 +1270,7 @@
 </xsl:template> 
 
 
-<xsl:template match="ro:location/ro:address/ro:electronic">
+<xsl:template match="ro:location/ro:address/ro:electronic[ro:value/text() != '']">
   <xsl:if test="./@type='url'">
 
       <xsl:variable name="url">
