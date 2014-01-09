@@ -110,7 +110,6 @@ function executeSearch(searchData, searchUrl){
 		        $('#search_notice:not(.hide)').empty().addClass('hide');
 		}
 	        initSearchPage();
-	        $('.sidebar.mapmode_sidebar').hide();
 	}
         else {
 	        $('.container').css({opacity:0.5});
@@ -391,6 +390,7 @@ function initSearchPage(){
 		 },function(){
 		 	clearPolygons();
 		 });
+		 if(!searchData['keepsidebar']) $('.sidebar.mapmode_sidebar').hide();
 	}else{
 		$('#searchmap').hide();
 		$('.container').css({margin:'0 auto',width:'960px',padding:'10px 0 0 0'});
@@ -673,6 +673,9 @@ function SidebarToggle(controlDiv, map) {
 	// Setup the click event listeners: simply set the map to Chicago.
 	google.maps.event.addDomListener(controlUI, 'click', function() {
 		$('.sidebar').toggle();
+		if($('.sidebar').is(':visible')){
+			searchData['keepsidebar'] = 'open';
+		}else delete searchData['keepsidebar'];
 	});
 }
 
