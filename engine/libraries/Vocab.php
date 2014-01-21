@@ -226,23 +226,24 @@ class Vocab {
         return $content;
     }
 
-    function getNumCollections($uri,$filters){
+    function getNumCollections($uri,$filters, $fuzzy = false){
         $CI =& get_instance();
         $CI->load->library('solr');
 
         // var_dump($filters);
-        $CI->solr->clearOpt('fq');
+        $CI->solr->init();
         if($filters){
              $CI->solr->setFilters($filters);
         }
-        
+
         $CI->solr->setOpt('fq', '+subject_vocab_uri:("'.$uri.'")');
 
         // var_dumP($CI->solr->constructFieldString());
         $CI->solr->executeSearch();
 
+        if($CI->solr->getNumFound() > 0) return $CI->solr->getNumFound();
         //if still no result is found, do a fuzzy search, store the old search term and search again
-        if($CI->solr->getNumFound()==0 && isset($filters['q'])){
+        if($CI->solr->getNumFound()==0 && isset($filters['q']) && $fuzzy){
             $new_search_term_array = explode(' ', escapeSolrValue($filters['q']));
             $new_search_term='';
             foreach($new_search_term_array as $c ){
@@ -263,7 +264,7 @@ class Vocab {
 
 
     //RDA usage
-    function getTopLevel($vocab, $filters){
+    function getTopLevel($vocab, $filters, $fuzzy = false){
         $tree = array();
         if(is_array($this->resolvingServices))
         {
@@ -281,7 +282,7 @@ class Vocab {
                     $c['notation'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'notation'};
                     $c['prefLabel'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'prefLabel'}->{'_value'};
                     $c['uri'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'_about'};
-                    $c['collectionNum'] = $this->getNumCollections($c['uri'],$filters);
+                    $c['collectionNum'] = $this->getNumCollections($c['uri'],$filters, $fuzzy);
                     if($c['collectionNum'] > 0){
                         $tree['topConcepts'][] = $c;
                     }

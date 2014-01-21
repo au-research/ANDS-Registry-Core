@@ -130,10 +130,10 @@ class Solr {
      */
     function getNumFound(){
         if(isset($this->result->{'response'}->{'numFound'})){
-            return (int) $this->result->{'response'}->{'numFound'};
+            return ((int) ($this->result->{'response'}->{'numFound'}));
         }else{
             return 0;
-        } 
+        }
     }
 
     /**
@@ -209,6 +209,10 @@ class Solr {
         $this->options['bq'].=' '.$condition;
     }
 
+    function setBrowsingFilter(){
+        $this->setOpt('sort', 'list_title_sort asc');
+    }
+
     function setFilters($filters){
         $page = 1; $start = 0;
         $pp = ( isset($filters['rows']) ? (int) $filters['rows'] : 15 );
@@ -216,17 +220,19 @@ class Solr {
         $this->setOpt('rows', $pp);
         $this->setOpt('defType', 'edismax');
         $this->setOpt('q.alt', '*:*');
-        $this->setOpt('mm', '2'); //minimum should match optional clause
+        $this->setOpt('mm', '4'); //minimum should match optional clause
         $this->setOpt('fl', '*, score'); //we'll get the score as well
 
         //boost
-        $this->setOpt('bq', 'id^1 tag^0.9 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
+        // $this->setOpt('bq', 'id^1 tag^0.9 group^0.8 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
+
+        $this->setOpt('qf', 'title_search^1 description_value^0.9 tag_search^0.8 key^0.8 group_search^0.8 type_search^0.7 class^0.2 fulltext');
+        $this->setOpt('pf', 'title_search^1 description_value^0.9 fulltext^0.01 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
+        $this->setOpt('ps', '2');
+        $this->setOpt('qs', '1');
+        $this->setOpt('tie', '0.2');
 
         //if there's no query to search, eg. rda browsing
-        if (!isset($filters["q"])){
-            $this->setOpt('q', '*:*');
-            $this->setOpt('sort', 'score desc, s_list_title asc');
-        }
 
         foreach($filters as $key=>$value){
             if(!is_array($value)) $value = rawurldecode($value);
@@ -237,7 +243,8 @@ class Solr {
                 break;
                 case 'q': 
                     $value = $this->escapeSolrValue($value);
-                    if(trim($value)!="") $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
+                    // if(trim($value)!="") $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
+                    if(trim($value)!="") $this->setOpt('q', $value);
                 break;
                 case 'p': 
                     $page = (int)$value;

@@ -570,10 +570,14 @@ function initExplanations(theType)
 }
 
 function getTopLevelFacet(){
+	var fuzzy = false;
+	if($('.fuzzy-suggest').length>0){
+		fuzzy = true;
+	}
 	$.ajax({
 		url:base_url+'search/getTopLevel',
 		type: 'POST',
-		data: {filters:searchData},
+		data: {filters:searchData, fuzzy:fuzzy},
 		success: function(data){
 			var template = $('#top-level-template').html();
 			var output = Mustache.render(template, data);

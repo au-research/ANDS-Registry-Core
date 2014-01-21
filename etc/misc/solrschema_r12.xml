@@ -26,10 +26,8 @@
 		<field name="class" type="string" indexed="true" stored="true"/>
 		<field name="status" type="string" indexed="true" stored="true"/>
 		<field name="logo" type="string" indexed="true" stored="true"/>
-
 		<field name="data_source_id" type="string" indexed="true" stored="true" required="true"/>
 		<field name="data_source_key" type="string" indexed="true" stored="true"/>
-
 		<field name="contributor_page" type="string" indexed="true" stored="true"/>
 		<field name="originating_source" type="string" indexed="true" stored="true"/>
 
@@ -37,43 +35,53 @@
 		<field name="record_created_timestamp" type="date" indexed="true" stored="true" multiValued="false"/>
 		<field name="record_modified_timestamp" type="date" indexed="true" stored="true" multiValued="false"/>
 
-		<!-- Searchable Fields -->
 		<field name="tag" type="string" indexed="true" stored="true" multiValued="true"/>
-		<field name="text" type="text_general" indexed="true" stored="false" multiValued="true"/>
-		<field name="fulltext" type="text_general" indexed="true" stored="false" multiValued="true"/>
+		<field name="tag_sort" type="alphaOnlySort" indexed="true" stored="true" multiValued="true"/>
+		<field name="tag_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
+
+		<field name="text" type="text_en_splitting" indexed="true" stored="false" multiValued="true"/>
+		<field name="fulltext" type="text_en_splitting" indexed="true" stored="false" multiValued="true"/>
 		
 		<field name="group" type="string" indexed="true" stored="true"/>
-		<field name="group_sortable" type="alphaOnlySort" indexed="true" stored="false"/>
-		<field name="group_searchable" type="text" indexed="true" stored="false"/>
+		<field name="group_sort" type="alphaOnlySort" indexed="true" stored="false"/>
+		<field name="group_search" type="text_en_splitting" indexed="true" stored="false"/>
 
 		<field name="type" type="string" indexed="true" stored="true"/>
-		<field name="type_sortable" type="alphaOnlySort" indexed="true" stored="false"/>
-		<field name="type_searchable" type="string" indexed="true" stored="false"/>
+		<field name="type_sort" type="alphaOnlySort" indexed="true" stored="false"/>
+		<field name="type_search" type="text_en_splitting" indexed="true" stored="false"/>
 
 		<field name="license_class" type="string" indexed="true" stored="true" multiValued="true"/>
 
 		<field name="title" type="string" indexed="true" stored="true"/>
-		<field name="display_title" type="text_en_splitting" indexed="true" stored="true"/>
-		<field name="list_title" type="text_en_splitting" indexed="true" stored="true"/>
-		<field name="s_list_title" type="alphaOnlySort" indexed="true" stored="false"/>
-		<field name="simplified_title" type="text_en_splitting" indexed="true" stored="true"/>
-		<field name="alt_list_title" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
-		<field name="alt_display_title" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
+		<field name="title_search" type="text_en_splitting" indexed="true" stored="false" multiValued="true"/>
+		<field name="display_title" type="string" indexed="true" stored="true"/>
+		<field name="list_title" type="string" indexed="true" stored="true"/>
+		<field name="list_title_sort" type="alphaOnlySort" indexed="true" stored="false"/>
+		<field name="simplified_title" type="string" indexed="true" stored="true"/>
+		<field name="simplified_title_search" type="text_en_splitting" indexed="true" stored="false"/>
+		<field name="alt_list_title" type="string" indexed="true" stored="true" multiValued="true"/>
+		<field name="alt_display_title" type="string" indexed="true" stored="true" multiValued="true"/>
+		<field name="alt_title_search" type="text_en_splitting" indexed="true" stored="false" multiValued="true"/>
 		
 		<field name="description" type="text_en_splitting" indexed="true" stored="true" multiValued="false"/>
 		<field name="description_value" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
 		<field name="description_type" type="string" indexed="true" stored="true" multiValued="true"/>
 	
 		<field name="subject_value_resolved" type="string" indexed="true" stored="true" multiValued="true"/>
+		<field name="subject_value_resolved_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
 		<field name="s_subject_value_resolved" type="alphaOnlySort" indexed="true" stored="false" multiValued="true"/>
+		<field name="subject_value_resolved_sort" type="alphaOnlySort" indexed="true" stored="false" multiValued="true"/>
 		<field name="subject_value_unresolved" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="subject_type" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="subject_vocab_uri" type="string" indexed="true" stored="true" multiValued="true"/>
 
-		<field name="identifier_value" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
+		<field name="identifier_value" type="string" indexed="true" stored="true" multiValued="true"/>
+		<field name="identifier_value_search" type="text_en_splitting" indexed="true" stored="false" multiValued="true"/>
 		<field name="identifier_type" type="string" indexed="true" stored="true" multiValued="true"/>
 		
+		<field name="spatial_coverage_polygons" type="string" indexed="false" stored="true" multiValued="true"/>
 		<field name="spatial_coverage_extents" type="location_rpt" indexed="true" stored="true" multiValued="true"/>
+		<field name="spatial_coverage_centres" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="spatial_coverage_area_sum" type="sfloat" indexed="true" stored="true" multiValued="false"/>
 		
 		<field name="date_to" type="tdate" indexed="true" stored="true" multiValued="true"/>
@@ -86,12 +94,12 @@
 		<field name="related_object_class" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="related_object_type" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="related_object_display_title" type="string" indexed="true" stored="true" multiValued="true"/>
+		<field name="related_object_display_title_search" type="text_en_splitting" indexed="true" stored="false"/>
 		<field name="related_object_relation" type="string" indexed="true" stored="true" multiValued="true"/>
 
-		
 		<!-- SEARCH SORT VALUES -->
 		<field name="search_base_score" type="sint" indexed="true" stored="true"/>
-				
+		<field name="_version_" type="string" indexed="true" stored="true" multiValued="false"/>
 
 	</fields>
 
@@ -103,10 +111,31 @@
 
 
 	<copyField source="*" dest="fulltext"/>
-	<copyField source="group" dest="s_group"/>
-	<copyField source="type" dest="s_type"/>
-	<copyField source="list_title" dest="s_list_title"/>
+
+	<copyField source="tag" dest="tag_sort"/>
+	<copyField source="tag" dest="tag_search"/>
+
+	<copyField source="group" dest="group_sort"/>
+	<copyField source="group" dest="group_search"/>
+
+	<copyField source="type" dest="type_sort"/>
+	<copyField source="type" dest="type_search"/>
+
+	<copyField source="display_title" dest="title"/>
+	<copyField source="display_title" dest="title_search"/>
+	<copyField source="list_title" dest="title_search"/>
+
+	<copyField source="alt_list_title" dest="alt_title_search"/>
+	<copyField source="alt_display_title" dest="alt_title_search"/>
+
+	<copyField source="list_title" dest="list_title_sort"/>
+	<copyField source="simplified_title" dest="simplified_title_search"/>
+
+	<copyField source="subject_value_resolved" dest="subject_value_resolved_search"/>
 	<copyField source="subject_value_resolved" dest="s_subject_value_resolved"/>
+	<copyField source="subject_value_resolved" dest="subject_value_resolved_sort"/>
+
+	<copyField source="identifier_value" dest="identifier_value_search"/>
 
 	<!-- DEPRECATED: The defaultSearchField is consulted by various query parsers when
 	parsing a query string that isn't explicit about the field.  Machine (non-user)
@@ -114,7 +143,7 @@
 	which takes precedence over this.
 	Note: Un-commenting defaultSearchField will be insufficient if your request handler
 	in solrconfig.xml defines "df", which takes precedence. That would need to be removed.
- <defaultSearchField>text</defaultSearchField> -->
+ <defaultSearchField>fulltext</defaultSearchField> -->
 
 	<!-- DEPRECATED: The defaultOperator (AND|OR) is consulted by various query parsers
 	when parsing a query string to determine if a clause of the query should be marked as

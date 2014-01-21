@@ -47,11 +47,13 @@ class Search extends MX_Controller {
 		}
 
 		//boost
-		$this->solr->setOpt('bq', 'id^1 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
+		// $this->solr->setOpt('bq', 'id^1 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
 		// $this->solr->setOpt('bq', '(*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
 		if($filters){
 			$this->solr->setFilters($filters);
-		}
+		}else{
+        	$this->solr->setBrowsingFilter();
+        }
 
 		$data['search_term'] = (isset($filters['q']) ? $filters['q'] : '');
 
@@ -220,6 +222,8 @@ class Search extends MX_Controller {
 
 		if($filters){
             $this->solr->setFilters($filters);
+        }else{
+        	$this->solr->setBrowsingFilter();
         }
         $this->solr->addQueryCondition('+subject_type:"'.$type.'"');
 		$this->solr->setFacetOpt('pivot', 'subject_type,subject_value_resolved');
@@ -268,6 +272,8 @@ class Search extends MX_Controller {
 	function getTopLevel(){
 		$this->load->library('vocab');
 		$filters = $this->input->post('filters');
-		echo json_encode($this->vocab->getTopLevel('anzsrc-for', $filters));
+		$fuzzy = $this->input->post('fuzzy');
+		$fuzzy = ($fuzzy==='false') ? false : true;
+		echo json_encode($this->vocab->getTopLevel('anzsrc-for', $filters, $fuzzy));
 	}
 }
