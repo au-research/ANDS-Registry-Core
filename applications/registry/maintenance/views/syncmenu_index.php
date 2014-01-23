@@ -124,13 +124,19 @@
 						<div class="btn-group">
 							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Mass Queue <span class="caret"></span></button>
 							<ul class="dropdown-menu">
-								<li class="disabled"><a href="">Small Datasources</a></li>
+								<li class="disabled"><a href="">Small Datasources (&lt; 400)</a></li>
 								<li><a href="" ng-click="massAddTask('sync', 'small')">Sync</a></li>
 								<li><a href="" ng-click="massAddTask('enrich', 'small')">Enrich</a></li>
 								<li><a href="" ng-click="massAddTask('index', 'small')">Index</a></li>
 								<li><a href="" ng-click="massAddTask('clear', 'small')">Clear Index</a></li>
 								<li class="divider"></li>
-								<li class="disabled"><a href="">Big Datasources</a></li>
+								<li class="disabled"><a href="">Medium Datasources (400 - 1000)</a></li>
+								<li><a href="" ng-click="massAddTask('sync', 'medium')">Sync</a></li>
+								<li><a href="" ng-click="massAddTask('enrich', 'medium')">Enrich</a></li>
+								<li><a href="" ng-click="massAddTask('index', 'medium')">Index</a></li>
+								<li><a href="" ng-click="massAddTask('clear', 'medium')">Clear Index</a></li>
+								<li class="divider"></li>
+								<li class="disabled"><a href="">Big Datasources (&gt; 1000)</a></li>
 								<li><a href="" ng-click="massAddTask('sync', 'big')">Sync</a></li>
 								<li><a href="" ng-click="massAddTask('enrich', 'big')">Enrich</a></li>
 								<li><a href="" ng-click="massAddTask('index', 'big')">Index</a></li>

@@ -65,7 +65,9 @@ function indexCtrl($scope, sync_service){
 		$.each($scope.datasources, function(){
 			if(size == 'small' && this.total_published < 400 && this.total_published != 0){
 				$scope.addTask(task, this.id);
-			}else if(size == 'big' && this.total_published >= 400){
+			}else if(size == 'medium' && this.total_published >= 400 && this.total_published <= 1000){
+				$scope.addTask(task, this.id);
+			}else if(size == 'big' && this.total_published > 1000){
 				$scope.addTask(task, this.id);
 			}
 		});
