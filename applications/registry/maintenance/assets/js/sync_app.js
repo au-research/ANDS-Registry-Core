@@ -51,19 +51,42 @@ function indexCtrl($scope, sync_service){
 	$scope.percent = 0;
 	$scope.predicate = 'total_published';
 	$scope.reverse = true;
+	$scope.queue = [];
 
 	$scope.addTask = function(task, ds_id){
-		if($scope.currentChunk == 0){
-			$scope.ct = {currentChunk:0,numChunk:0}
-			$scope.ct = {
-				task:task,
-				ds_id:ds_id
-			};
-			$scope.doTask();
-		}else{
-			alert("There's already a task running!");
+		$scope.queue.push({
+			task: task,
+			ds_id: ds_id,
+			status:'pending'
+		});
+	}
+
+	$scope.massAddTask = function(task, size){
+		$.each($scope.datasources, function(){
+			if(size == 'small' && this.total_published < 400 && this.total_published != 0){
+				$scope.addTask(task, this.id);
+			}else if(size == 'big' && this.total_published >= 400){
+				$scope.addTask(task, this.id);
+			}
+		});
+	}
+
+	$scope.$watch('queue', function(newVal){
+		if($scope.ct.status=='idle' || $scope.ct.status=='done'){
+			$scope.doFirstPending();
 		}
-	};
+	}, true);
+
+	$scope.doFirstPending = function(){
+		$.each($scope.queue, function(){
+			if(this.status=='pending'){
+				$scope.ct = this;
+				$scope.doTask();
+				return false;
+			}
+		});
+	}
+
 
 	$scope.doTask = function(){
 		sync_service.analyze($scope.ct.task, $scope.ct.ds_id).then(function(data){
@@ -93,7 +116,7 @@ function indexCtrl($scope, sync_service){
 		if($scope.currentChunk > 0){
 			if($scope.currentChunk <= $scope.ct.numChunk){
 				sync_service.run_task($scope.ct.task, $scope.ct.ds_id, $scope.currentChunk).then(function(data){
-					if(data.errors.length > 0) $scope.errors = data.errors;
+					if(data.errors && data.errors.length > 0) $scope.errors = data.errors;
 					//update totalTime
 					var total = $scope.ct.totalTime + parseFloat(data.benchMark.totalTime)
 					$scope.ct.totalTime = total;
@@ -105,6 +128,7 @@ function indexCtrl($scope, sync_service){
 				});
 			}else{
 				$scope.ct.status = 'done';
+				$scope.doFirstPending();
 			}
 		}
 	});
@@ -132,6 +156,12 @@ function indexCtrl($scope, sync_service){
 			$scope.detailed_stat = true;
 		});
 	}
+
+
+
+	// $scope.addTask('sync', 32);
+	// $scope.addTask('index', 75);
+	// $scope.addTask('enrich', 86);
 }
 
 function interrogateDS($scope, $routeParams, sync_service){

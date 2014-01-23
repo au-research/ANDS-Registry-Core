@@ -61,7 +61,7 @@
 						<table class="table table-bordered data-table">
 							<thead>
 								<tr>
-									<th>ID</th>
+									<th ng-click="predicate = 'id';reverse=!reverse">ID</th>
 									<th ng-click="predicate = 'title';reverse=!reverse">Title</th>
 									<th ng-click="predicate = 'total_published';reverse=!reverse">Total Published</th>
 									<th ng-click="predicate = 'total_indexed';reverse=!reverse" ng-show="detailed_stat">Total Indexed</th>
@@ -78,15 +78,16 @@
 									<td ng-show="detailed_stat">{{ds.total_missing}}</td>
 									<td>
 										<div class="btn-group">
-											<button class="btn btn-default" ng-click="addTask('sync', ds.id)">Sync</button>
-											<button class="btn dropdown-toggle" data-toggle="dropdown">
-												<span class="caret"></span>
-											</button>
+											<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Queue <span class="caret"></span></button>
 											<ul class="dropdown-menu">
+												<li><a href="" ng-click="addTask('sync', ds.id)">Sync</a></li>
 												<li><a href="" ng-click="addTask('enrich', ds.id)">Enrich</a></li>
 												<li><a href="" ng-click="addTask('index', ds.id)">Index</a></li>
 												<li><a href="" ng-click="addTask('clear', ds.id)">Clear Index</a></li>
 											</ul>
+										</div>
+										<div class="btn-group">
+											
 										</div>
 									</td>
 								</tr>							
@@ -112,6 +113,41 @@
 					<div class="widget-content">
 						<button class="btn btn-default" ng-click="get_global_stat()" ng-show="!loading_global_stat">Load Global Stats</button>
 						<button class="btn btn-default" ng-click="get_detailed_stat()" ng-show="!loading_detailed_stat">Load Detailed Stats</button>
+					</div>
+				</div>
+
+				<div class="widget-box">
+					<div class="widget-title">
+						<h5>Queue</h5>
+					</div>
+					<div class="widget-content">
+						<div class="btn-group">
+							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Mass Queue <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li class="disabled"><a href="">Small Datasources</a></li>
+								<li><a href="" ng-click="massAddTask('sync', 'small')">Sync</a></li>
+								<li><a href="" ng-click="massAddTask('enrich', 'small')">Enrich</a></li>
+								<li><a href="" ng-click="massAddTask('index', 'small')">Index</a></li>
+								<li><a href="" ng-click="massAddTask('clear', 'small')">Clear Index</a></li>
+								<li class="divider"></li>
+								<li class="disabled"><a href="">Big Datasources</a></li>
+								<li><a href="" ng-click="massAddTask('sync', 'big')">Sync</a></li>
+								<li><a href="" ng-click="massAddTask('enrich', 'big')">Enrich</a></li>
+								<li><a href="" ng-click="massAddTask('index', 'big')">Index</a></li>
+								<li><a href="" ng-click="massAddTask('clear', 'big')">Clear Index</a></li>
+							</ul>
+							<button class="btn btn-default" ng-click="queue=[]">Clear Queue</button>
+						</div>
+
+					</div>
+					<div class="widget-content">
+						<ol>
+							<li ng-repeat=" t in queue">{{t.task}} : Data Source: {{t.ds_id}}
+								<span ng-show="t.status=='pending'" class="label">Waiting</span>
+								<span ng-show="t.status=='done'" class="label label-success">Finished</span>
+								<span ng-show="t.status=='running'" class="label label-info">Running</span>
+							</li>
+						</ol>
 					</div>
 				</div>
 
