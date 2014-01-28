@@ -58,9 +58,20 @@ class Registry_fetch extends CI_Model
 
 	function fetchExtrifBySlug($slug)
 	{
-		$url = $this->config->item('registry_endpoint') . "getRegistryObject/?slug=" . $slug;
-		$contents = json_decode(@file_get_contents($url), true);
+		
+		$this->load->driver('cache');
+		$cached = $this->cache->file->get($slug);
+		if(!$cached){ //fresh new
+			//get the contents
+			$url = $this->config->item('registry_endpoint') . "getRegistryObject/?slug=" . $slug;
+			$contents = json_decode(@file_get_contents($url), true);
 
+			//save it to the cache
+			$cached = $contents;
+			$this->cache->file->save($slug, $cached, 10);
+		}else{ //get from slug
+			$contents = $cached;
+		}
 
 		if (isset($contents['data']))
 		{
