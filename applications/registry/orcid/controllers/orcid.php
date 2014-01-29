@@ -12,6 +12,18 @@ class Orcid extends MX_Controller {
 	 * @return view 
 	 */
 	function index(){
+		$this->load->library('Orcid_api', 'orcid');
+		if($access_token = $this->orcid_api->get_access_token()){
+			$bio = $this->orcid_api->get_full();
+			if(!$bio) redirect(registry_url('orcid'));
+			$bio = json_decode($bio, true);
+			$this->wiz($bio);
+		}else{
+			redirect(registry_url('orcid/login'));
+		}
+	}
+
+	function login(){
 		$data['title'] = 'Login to ORCID';
 		$data['js_lib'] = array('core');
 		$data['link'] = $this->config->item('gORCID_SERVICE_BASE_URI').'oauth/authorize?client_id='.$this->config->item('gORCID_CLIENT_ID').'&response_type=code&scope=/orcid-profile/read-limited /orcid-works/create&redirect_uri=';
@@ -28,9 +40,7 @@ class Orcid extends MX_Controller {
 		if($this->input->get('code')){
 			$code = $this->input->get('code');
 			$data = json_decode($this->orcid_api->oauth($code),true);
-			
 			if(isset($data['access_token'])){
-				// var_dump($data);
 				$this->orcid_api->set_access_token($data['access_token']);
 				$this->orcid_api->set_orcid_id($data['orcid']);
 				$bio = $this->orcid_api->get_full();
@@ -45,9 +55,10 @@ class Orcid extends MX_Controller {
 					$bio = $this->orcid_api->get_full();
 					if(!$bio) redirect(registry_url('orcid'));
 					$bio = json_decode($bio, true);
+					
 					$this->wiz($bio);
 				}else{
-					redirect(registry_url('orcid'));
+					redirect(registry_url('orcid/login'));
 				}
 			}
 		}else{
@@ -57,7 +68,7 @@ class Orcid extends MX_Controller {
 				$bio = json_decode($bio, true);
 				$this->wiz($bio);
 			}else{
-				redirect(registry_url('orcid'));
+				redirect(registry_url('orcid/login'));
 			}
 		}
 	}
@@ -203,7 +214,7 @@ class Orcid extends MX_Controller {
 					$ro = $this->ro->getByID($d->{'id'});
 					$ro = $this->ro->getByID($d->{'id'});
 					$connections = $ro->getConnections(true,'collection');
-					if(sizeof($connections[0]['collection']) > 0) {
+					if(isset($connections[0]['collection']) && sizeof($connections[0]['collection']) > 0) {
 						$suggested_collections=array_merge($suggested_collections, $connections[0]['collection']);
 					}
 					array_push($already_checked, $d->{'id'});
