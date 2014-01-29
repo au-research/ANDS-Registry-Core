@@ -140,7 +140,7 @@ class nlaPullback extends MX_Controller
 					{
 						// Get the matching element
 						$data = array_pop($data);
-						if ($data->registryObjects && !empty($data->registryObjects))
+						if (is_object($data) && $data->registryObjects && !empty($data->registryObjects))
 						{
 							return $data->registryObjects->asXML();
 						}
