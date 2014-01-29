@@ -362,12 +362,8 @@ class Maintenance extends MX_Controller {
 		acl_enforce('REGISTRY_STAFF');
 		$data = array();
 		$data['logs'] = '';
-		$this->load->model('data_source/data_sources', 'ds');
-		$dsIds = $this->ds->getAll(0);
-		$data_sources = $this->ds->getAll(0);
-		foreach($data_sources as $ds){
-			$data['logs'] .= $this->clearDS($ds->id, true);
-		}
+		$this->load->library('solr');
+		$data['logs'] .= $this->solr->clear();
 		echo json_encode($data);
 	}
 
