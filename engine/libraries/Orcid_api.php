@@ -14,12 +14,16 @@ class Orcid_api {
     private $access_token = null;
     private $orcid_id = null;
 
+    private $db;
+    private $log_table = 'logs';
+
 	/**
 	 * Construction of this class
 	 */
 	function __construct(){
         $this->CI =& get_instance();
 		$this->CI->load->library('session');
+        $this->db = $this->CI->db;
 		$this->init();
     }
 
@@ -48,6 +52,19 @@ class Orcid_api {
         $url = $this->api_uri.'oauth/token';
         $data = curl_post($url, $post_string, array('Accept: application/json'));
         return $data;
+    }
+
+    function log($orcid_id){
+        $this->db->delete($this->log_table, array('id'=>$orcid_id));
+        $this->db->insert($this->log_table, 
+            array(
+                "id" => $orcid_id, 
+                "date_modified" => time(), 
+                "type" => "orcid_auth", 
+                "msg" => 'orcid authentication for '. $orcid_id
+            )
+        );
+        return $this->db->insert_id();
     }
 
     function set_orcid_id($id){
