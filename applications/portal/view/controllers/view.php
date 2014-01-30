@@ -190,7 +190,11 @@ class View extends MX_Controller {
 
 		// In here, go get the information/precanned text, etc.
 		// we have $this->registry-> which gives us the functions in models/registry_fetch.php
-
+		$matches = array();
+		preg_match('/<extRif\:simplifiedTitle>(.*)<\/extRif:simplifiedTitle>/', $extRif['data'], $matches);
+		if(isset($matches[1]) && $matches[1]!=''){
+			$data['title'] = trim(strip_tags($matches[1])).' - Research Data Australia';
+		}
 
 		if ($this->input->get('slug'))
 		{
