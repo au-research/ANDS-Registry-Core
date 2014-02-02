@@ -226,7 +226,7 @@ class Solr {
         //boost
         // $this->setOpt('bq', 'id^1 tag^0.9 group^0.8 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
 
-        $this->setOpt('qf', 'title_search^1 description_value^0.9 tag_search^0.8 key^0.8 group_search^0.8 type_search^0.7 class^0.2 fulltext');
+        $this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value^0.9 tag_search^0.8 key^0.8 group_search^0.8 type_search^0.7 class^0.2 fulltext');
         $this->setOpt('pf', 'title_search^1 description_value^0.9 fulltext^0.01 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
         $this->setOpt('ps', '2');
         $this->setOpt('qs', '1');
