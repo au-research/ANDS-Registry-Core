@@ -19,19 +19,21 @@
 
 class ARC_to_RIFCS extends Crosswalk
 {
-    static $GRANT_ADMIN_LOOKUP = array();
+    static $GRANT_ADMIN_LOOKUP = array("Commonwealth Scientific and Industrial Research Organisation (CSIRO)" =>  "http://nla.gov.au/nla.party-458251",
+                                        "Australian Institute of Marine Science (AIMS)" => "http://nla.gov.au/nla.party-479444",
+                                        "Australian Antarctic Division (AAD)" => "Contributor:Australian Antarctic Data Centre",
+                                        "Burnet Institute (RO)" => "http://nla.gov.au/nla.party-1477251");
     static $SUBJECTS = array();
 
     const ARC_GROUP = 'Australian Research Council';
     const ARC_ORIGINATING_SOURCE = 'http://www.arc.gov.au/general/searchable_data.htm';
-    const ARC_PREFIX = 'http://purl.org/au-research/grants/arc/completed/';
+    const ARC_PREFIX = 'http://purl.org/au-research/grants/arc/';
     const ARC_NLA_KEY = 'http://nla.gov.au/nla.party-536838';
 
     private $parsed_array = array();
     private $csv_headings = array();
     private $people = array();
     private $grants = array();
-    
 
 	/**
 	 * Identify this crosswalk (give a user-friendly name)
@@ -69,16 +71,17 @@ class ARC_to_RIFCS extends Crosswalk
         $this->csv_headings = array_shift($this->parsed_array);
         $grants = &$this->grants;
         $people = &$this->people;
-
+        $rowCounter = 0;
         // Loop through each row, create an instance in the grants/people arrays
     	while($csv_values = array_shift($this->parsed_array))
         {
             // Map the column headings to each field, to simplify lookup
+            ++$rowCounter;
             $row = $this->mapCSVHeadings($csv_values);
 
-            if (!isset($row['Project ID']))
+            if (!isset($row['Project ID']) || sizeof($this->csv_headings) != sizeof($csv_values))
             {
-                $log[] = "[CROSSWALK] Ignoring blank/invalid row...";
+                $log[] = "[CROSSWALK] Ignoring blank/invalid row @".$rowCounter."...  heading count".sizeof($this->csv_headings) ."rowcount".sizeof($csv_values);
                 continue; //skip blank rows
             }
 
@@ -187,7 +190,21 @@ class ARC_to_RIFCS extends Crosswalk
                 $registryObject .=         '<relation type="isManagedBy" />' . NL;
                 $registryObject .=      '</relatedObject>' . NL;
             }
+            // Include the native format
+            $registryObject .=      '<relatedInfo type="'.NATIVE_HARVEST_FORMAT_TYPE.'">' . NL;
+            $registryObject .=          '<identifier type="internal">'.$this->metadataFormat().'</identifier>' . NL;
+            $registryObject .=          '<notes><![CDATA[' . NL;   
+            // Create the native format (csv) with prepended the column headings, up to DW_INDIVIDUAL_ID
+          
+            $native_values = $activity;
+            foreach($native_values AS $key => &$val)
+            {
+                if (is_array($val)) { foreach ($val AS $subkey => $value) { if (!is_integer($subkey)) { $native_values[$subkey] = $value; } } unset($native_values[$key]); }
+            }
 
+            $registryObject .=              $this->wrapNativeFormat(array($this->csv_headings, $native_values)) . NL;
+            $registryObject .=          ']]></notes>' . NL;
+            $registryObject .=      '</relatedInfo>' . NL;
 
             $registryObject .=    '</activity>' . NL;
             $registryObject .='</registryObject>' . NL;
@@ -237,6 +254,20 @@ class ARC_to_RIFCS extends Crosswalk
         {
             ARC_to_RIFCS::$GRANT_ADMIN_LOOKUP[$name] = $result['response']['docs'][0]['key'];
             return $result['response']['docs'][0]['key'];
+        }
+        elseif(strpos(trim($name),'The') === 0)
+        {           
+            $newName = substr(trim($name),4);
+            $solr_query = '+group:("Australian Research Institutions") AND +display_title:("'.trim($newName).'")';
+            $CI->load->library('solr');
+            $CI->solr->setOpt('q', $solr_query);
+            $result = $CI->solr->executeSearch(true);
+
+            if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0)
+            {
+                ARC_to_RIFCS::$GRANT_ADMIN_LOOKUP[$name] = $result['response']['docs'][0]['key'];
+                return $result['response']['docs'][0]['key'];
+            }        
         }
         else
         {
@@ -372,7 +403,7 @@ class ARC_to_RIFCS extends Crosswalk
         // Bizarrely, PHP doesn't support multiline in getcsv :-/
         foreach($ref AS $idx => $line)
         {
-            $csv = str_getcsv($line, "|", '', '\\');
+            $csv = str_getcsv($line, "|", '"', '\\');
             if (count($csv) > 0)
             {
                 foreach($csv AS &$val)

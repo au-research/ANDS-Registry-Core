@@ -871,7 +871,7 @@ class Importer {
 			// transform might be erroneous if assumed at this point.
 
 			// Throws an exception up if unable to validate in the payload's native schema
-			$this->crosswalk->validate($this->xmlPayload);
+			$this->crosswalk->validate(utf8_encode($this->xmlPayload));
 
 			// Crosswalk will create <registryObjects> with a <relatedInfo> element appended with the native format
 			$this->xmlPayload = $this->crosswalk->payloadToRIFCS($this->xmlPayload, $this->message_log);
