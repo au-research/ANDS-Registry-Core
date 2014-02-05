@@ -5,3 +5,9 @@ CREATE TABLE `logs` (
   `date_modified` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1$$
 
+ALTER TABLE `dbs_registry`.`registry_object_tags` 
+CHANGE COLUMN `id` `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT  , 
+ADD COLUMN `date_created` DATETIME NULL  AFTER `tag` , 
+ADD COLUMN `type` VARCHAR(45) NOT NULL DEFAULT 'public'  AFTER `date_created` , 
+ADD COLUMN `user` VARCHAR(256) NOT NULL  AFTER `type` , 
+ADD COLUMN `user_from` VARCHAR(45) NOT NULL  AFTER `user` ;

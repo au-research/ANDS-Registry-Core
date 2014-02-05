@@ -33,12 +33,26 @@ class Tags_Extension extends ExtensionBase{
 		}
 	}
 
-	function addTag($tag){
+	function addTag($tag, $type='public', $user='', $user_from=''){
 		if(!$this->ro->hasTag($tag) && trim($tag)!=''){
+
+			if($user=='' && $user_from==''){
+				$this->_CI->load->library('user');
+				if($this->_CI->user->isLoggedIn()){
+					$user = $this->_CI->user->name();
+					$user_from = $this->_CI->user->authDomain();
+				}
+			}
+
 			$data = array(
 				'key'=>$this->ro->key,
-				'tag'=>$tag
+				'tag'=>$tag,
+				'date_created' => date('Y-m-d H:i:s',time()),
+				'type'=>$type,
+				'user'=>$user,
+				'user_from'=>$user_from
 			);
+			
 			$this->db->insert('registry_object_tags', $data);
 			$this->markTag(1);
 			return true;
