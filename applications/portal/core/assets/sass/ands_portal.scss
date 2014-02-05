@@ -1,5 +1,6 @@
 $ands_green:#84a07b;
-$ands_orange:eb7700;
+$ands_orange:#eb7700;
+$ands_lite_green:#9bb692;
 $full_width:960;
 
 span.darkgrey
@@ -42,6 +43,27 @@ span.darkgrey
 			}
 		}
 	}
+}
+
+.login_st{
+	margin-left:14px;
+	color:#3f3f3f;
+	font-weight:bold;
+	font-size:0.8em;
+	background:$ands_lite_green;
+	&.exped{
+		color:#f4f5f6;
+	}
+}
+
+div.login_banner{
+	width:100%;
+	background:#f4f5f6;
+	padding:23px 0 53px 0;
+	position:absolute;
+	top:100%;
+	left:0;
+	display:none;
 }
 
 div.theme-page-item{

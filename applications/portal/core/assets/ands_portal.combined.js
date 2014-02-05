@@ -705,30 +705,38 @@ var Mustache;
     	return false;
     });
 
+    $('.login_st').toggle(function(){
+    	$('.login_banner').slideDown();
+    	$(this).addClass('exped');
+    }, function(){
+		$('.login_banner').slideUp('fast');
+		$(this).removeClass('exped');
+    });
+
     $('#ad_st').toggle(function() {
 	//don't init slider until we show the advanced search slidedown
-	$("#slider").editRangeSlider({
-    	    scales: [
-		// Primary scale
-		{
-		    first: function(val){ return val; },
-		    next: function(val){ return val + 50; },
-		    stop: function(val){ return false; },
-		    label: function(val){ return val; }
-		}],
-    	    bounds:{min: 1544, max: 2012},
-    	    defaultValues:{min: 1544, max: 2012},
-    	    valueLabels:"change",
-    	    type:"number",
-    	    arrows:false,
-    	    delayOut:200
-	});
+		$("#slider").editRangeSlider({
+	    	    scales: [
+			// Primary scale
+			{
+			    first: function(val){ return val; },
+			    next: function(val){ return val + 50; },
+			    stop: function(val){ return false; },
+			    label: function(val){ return val; }
+			}],
+	    	    bounds:{min: 1544, max: 2012},
+	    	    defaultValues:{min: 1544, max: 2012},
+	    	    valueLabels:"change",
+	    	    type:"number",
+	    	    arrows:false,
+	    	    delayOut:200
+		});
 
         $('a.adv_note').qtip({
           content: {
 	    title: 'Search notes',
 	    text: $('#adv_note_content')
-	  },
+	  	},
           show: 'mouseover',
           hide: 'mouseout',
           style: {

@@ -73,11 +73,40 @@ else
 			<img src="<?php echo base_url('assets/core/images/delete.png');?>" class="clearAll" tip="Clear current search"/>
 			<a class="browse_button" href="<?php echo base_url('browse');?>">Browse by Subject Area</a>
 			<a href="javascript:;" class="search_map" id="search_map_toggle">Browse by Map Coverage</a>
-			<div class="clear" style="margin-left:312px; padding-bottom:4px;"><a href="#" id="ad_st">Advanced Search</a></div>
+			<div class="clear" style="margin-left:312px; padding-bottom:4px;">
+				<a href="#" id="ad_st">Advanced Search</a>
+				<?php if(config_item('oauth_config')): ?>
+				<?php $logged_in = oauth_loggedin(); ?>
+				<?php if(!$logged_in): ?>
+					<a href="#" class="login_st">Login</a>
+				<?php else:?>
+					<?php
+						$user = oauth_getUser();
+					?>
+					<a href="#" class="login_st"><?php echo $user['profile']->displayName; ?>, logged in via <?php echo $user['service']; ?></a>
+				<?php endif; ?>
+				<?php endif; ?>
+			</div>
 			<!--div class="clear buttons">
 				<a href="#" id="ad_st">Advanced Search</a>
 			</div-->
 		</div><!-- inner -->
+
+		<div class="login_banner">
+			<div class="adv_inner">
+				<?php if(config_item('oauth_config')): ?>
+				<?php if(!$logged_in): ?>
+				<h4>Login</h4>
+				<p><?php echo anchor('auth/login/Facebook/?redirect='.current_url(),'Login With Facebook', array('class'=>'zocial facebook')); ?></p>
+				<p><?php echo anchor('auth/login/Twitter/?redirect='.current_url(),'Login With Twitter', array('class'=>'zocial twitter')); ?></p>
+				<p><?php echo anchor('auth/login/Google/?redirect='.current_url(),'Login With Google', array('class'=>'zocial google')); ?></p>
+				<p><?php echo anchor('auth/login/LinkedIn/?redirect='.current_url(),'Login With LinkedIn', array('class'=>'zocial linkedin')); ?></p>
+				<?php else: ?>
+				<?php echo anchor('auth/logout/?redirect='.current_url(),'Sign Out from '.$user['service'], array('class'=>'zocial '.strtolower($user['service']))); ?>
+				<?php endif; ?>
+				<?php endif; ?>
+			</div>
+		</div>
 
 		<div class="advanced_search">
 		    <div id="adv_note_content" class="hide">
