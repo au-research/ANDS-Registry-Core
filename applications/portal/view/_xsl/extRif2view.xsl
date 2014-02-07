@@ -438,6 +438,19 @@
         
         <!--</p> SUBJECTS WRAPPER--> 
 
+  <xsl:if test="../extRif:annotations/extRif:tags">
+    <p>Tags</p>
+    <div class="tags">
+      <xsl:for-each select="../extRif:annotations/extRif:tags/extRif:tag">
+        <xsl:apply-templates select="."/>
+      </xsl:for-each>
+    </div>
+  </xsl:if>
+
+
+  %%%%ADDTAGFORM%%%%
+    
+
     </div>  
 </xsl:if>
 
@@ -689,6 +702,10 @@
     </a>
     </xsl:otherwise>
   </xsl:choose>
+</xsl:template>
+
+<xsl:template match="extRif:tag">
+  <a href="{$base_url}search/#!/tag={.}"><xsl:value-of select="."/></a>
 </xsl:template>
 
 <xsl:template match="ro:relatedInfo">

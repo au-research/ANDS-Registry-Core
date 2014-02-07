@@ -150,6 +150,9 @@ class View extends MX_Controller {
 		// Render the suggested links
 		$data['suggested_links_contents'] = $suggested_links;
 		$suggestedLinksDiv = $this->load->view('suggested_links', $data, true);
+
+		//render the add tag form
+		$addTagFormDiv = $this->load->view('add_tag_form', null, true);
 		//exit();
 
 		// Generate the view page contents
@@ -164,6 +167,8 @@ class View extends MX_Controller {
 		// well this was really uggly... we should fix it at ingest!
 		$data['registry_object_contents'] = str_replace('%%%%CONNECTIONS%%%%', $connDiv, $data['registry_object_contents']);
 		$data['registry_object_contents'] = str_replace('%%%%ANDS_SUGGESTED_LINKS%%%%', $suggestedLinksDiv, $data['registry_object_contents']);
+		$data['registry_object_contents'] = str_replace('%%%%ADDTAGFORM%%%%', $addTagFormDiv, $data['registry_object_contents']);
+
 
 		$this->load->view('default_view', $data);
 

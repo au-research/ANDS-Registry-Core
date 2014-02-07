@@ -653,7 +653,7 @@ var Mustache;
 	}).on('typeahead:selected', function(){
 		window.location = base_url+'search/#!/q='+encodeURIComponent($('#search_box').val());
 	});
-	$('.twitter-typeahead').attr('style', '');
+	$('.inner .twitter-typeahead').attr('style', '');
 
 	if ($.browser.msie && $.browser.version <= 9.0) {
 		$('#who_contributes li').css({

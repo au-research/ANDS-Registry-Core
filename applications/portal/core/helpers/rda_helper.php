@@ -40,13 +40,42 @@ function oauth_getConnectedService(){
 function oauth_getUser(){
 	$CI =& get_instance();
 	$CI->load->library('HybridAuthLib');
-	$connected = $CI->hybridauthlib->getConnectedProviders();
-	$service = $CI->hybridauthlib->authenticate($connected[0]);
+	try {
+		$connected = $CI->hybridauthlib->getConnectedProviders();
+		$service = $CI->hybridauthlib->authenticate($connected[0]);
+		$data = array(
+			'service' => $connected[0],
+			'profile' =>$service->getUserProfile()
+		);
+		return $data;
+	} catch (Exception $e){
+		$error = 'Unexpected error';
+		switch($e->getCode()){
 
-	$data = array(
-		'service' => $connected[0],
-		'profile' =>$service->getUserProfile()
-	);
+			case 0 : $error = 'Unspecified error.'; break;
+			case 1 : $error = 'Hybriauth configuration error.'; break;
+			case 2 : $error = 'Provider not properly configured.'; break;
+			case 3 : $error = 'Unknown or disabled provider.'; break;
+			case 4 : $error = 'Missing provider application credentials.'; break;
+			case 5 : log_message('debug', 'controllers.HAuth.login: Authentification failed. The user has canceled the authentication or the provider refused the connection.');
+			         //redirect();
+			         if (isset($service)){
+			         	$service->logout();
+			         }
+			         show_error('User has cancelled the authentication or the provider refused the connection.');
+			         break;
+			case 6 : $error = 'User profile request failed. Most likely the user is not connected to the provider and he should to authenticate again.';
+			         break;
+			case 7 : $error = 'User not connected to the provider.';
+			         break;
+		}
 
-	return $data;
+		if (isset($service)){
+			$service->logout();
+		}
+
+		return $error;
+	}
+	
+	
 }

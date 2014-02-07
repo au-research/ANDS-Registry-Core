@@ -646,6 +646,59 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$this->output->set_output(json_encode(array('ros'=>$ros)));
 	}
 
+	public function getTagSuggestion(){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$q = $this->input->get('q');
+
+		$result = array();
+		
+		//get results from tags
+		$this->db->select('tag')->like('tag', $q);
+		$matches = $this->db->get('registry_object_tags');
+		foreach($matches->result() as $match){
+			array_push($result, $match->tag);
+		}
+
+		//get results from anzsrc-for
+		$this->load->library('vocab');
+		$matches = $this->vocab->anyContains($q, 'anzsrc-for');
+		foreach($matches as $match){
+			array_push($result, $match);
+		}
+
+		//get results from anzsrc-seo
+		$this->load->library('vocab');
+		$matches = $this->vocab->anyContains($q, 'anzsrc-seo');
+		foreach($matches as $match){
+			array_push($result, $match);
+		}
+
+		echo json_encode($result);
+	}
+
+	public function addTag(){
+		$key = $this->input->post('key');
+		$tag = $this->input->post('tag');
+		$user = $this->input->post('user');
+		$user_from = $this->input->post('user_from');
+		// echo $user.' from '.$user_from.' adding tag '.$tag.' to '.$key;
+
+		if(!$key || !$tag || !$user || !$user_from){
+			throw new Exception("An error has occured");
+		}
+
+		$this->load->model('registry_object/registry_objects','ro');
+		$ro = $this->ro->getPublishedByKey($key);
+		if($ro){
+			$ro->addTag($tag, 'public', $user, $user_from);
+			$ro->sync();
+			$this->output->set_output(json_encode(array('status'=>'OK')));
+		}else {
+			throw new Exception("Unable to find registry object");
+		}
+	}
+
 	/* Setup this controller to handle the expected response format */
 	public function __construct()
     {

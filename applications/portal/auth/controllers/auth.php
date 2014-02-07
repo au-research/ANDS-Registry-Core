@@ -79,7 +79,6 @@ class Auth extends MX_Controller {
 		}catch(Exception $e){
 			$error = 'Unexpected error';
 			switch($e->getCode()){
-
 				case 0 : $error = 'Unspecified error.'; break;
 				case 1 : $error = 'Hybriauth configuration error.'; break;
 				case 2 : $error = 'Provider not properly configured.'; break;
@@ -92,7 +91,7 @@ class Auth extends MX_Controller {
 				         }
 				         show_error('User has cancelled the authentication or the provider refused the connection.');
 				         break;
-				case 6 : $error = 'User profile request failed. Most likely the user is not connected to the provider and he should to authenticate again.';
+				case 6 : $error = 'User profile request failed. Most likely the user is not connected to the provider authentication needs to be done again.';
 				         break;
 				case 7 : $error = 'User not connected to the provider.';
 				         break;
@@ -101,8 +100,7 @@ class Auth extends MX_Controller {
 			if (isset($service)){
 				$service->logout();
 			}
-
-			show_error('Error authenticating user. '.$e);
+			show_error('Error authenticating user. '.$error);
 		}
 	}
 

@@ -19,6 +19,37 @@ class Theme_page extends MX_Controller {
 		$this->load->view('theme_page_index', $data);
 	}
 
+	function addTag(){
+		$data['key'] = $this->input->post('key');
+		$data['tag'] = $this->input->post('tag');
+		$user_profile = oauth_getUser();
+		$data['user'] = $user_profile['profile']->displayName;
+		$data['user_from'] = $user_profile['service'];
+
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL,$this->config->item('registry_endpoint').'addTag');//post to SOLR
+		curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$content = curl_exec($ch);//execute the curl
+		curl_close($ch);//close the curl
+
+		$this->output->set_status_header(200);
+		$this->output->set_header('Content-type: application/json');
+		echo $content;
+	}
+
+	function suggestTag(){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$search = $this->input->get('q');
+
+		$url = $this->config->item('registry_endpoint'). 'getTagSuggestion/?q='.$search;
+		$contents = @file_get_contents($url);
+		
+		$terms = json_decode($contents);
+		echo json_encode($terms);
+	}
+
 	function listing(){
 		$data['index'] = json_decode($this->getThemePageIndex(), true);
 		// var_dump($data);

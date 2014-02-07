@@ -59,6 +59,30 @@ class Vocab {
         return false;
     }
 
+    function anyContains($term, $vocabType){
+        $result = array();
+        if($term){
+            $curl_uri = $this->resolvingServices[$vocabType]['resolvingService'].'concepts.json?anycontains='.$term;
+            // echo $curl_uri;
+            $ch = curl_init();
+            //set the url, number of POST vars, POST data
+            curl_setopt($ch,CURLOPT_URL,$curl_uri);//post to SOLR
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//return to variable
+            $content = curl_exec($ch);//execute the curl
+            //echo 'json received+<pre>'.$content.'</pre>';
+            curl_close($ch);//close the curl
+
+            $json = json_decode($content, true);
+
+            foreach($json['result']['items'] as $i){
+                if(isset($i['prefLabel'])){
+                    array_push($result, $i['prefLabel']['_value']);
+                }
+            }
+        }
+        return $result;
+    }
+
 	function resolveSubject($term, $vocabType){
 		
         if($vocabType != '' && is_array($this->resolvingServices) && array_key_exists($vocabType, $this->resolvingServices))
