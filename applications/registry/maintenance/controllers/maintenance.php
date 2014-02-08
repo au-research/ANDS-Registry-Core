@@ -13,13 +13,19 @@ class Maintenance extends MX_Controller {
 
 	
 	public function index(){
-		acl_enforce('REGISTRY_STAFF');
-		$data['title'] = 'ARMS Maintenance';
-		$data['small_title'] = '';
-		$data['scripts'] = array('maintenance');
-		$data['js_lib'] = array('core', 'prettyprint', 'dataTables');
+		// acl_enforce('REGISTRY_STAFF');
+		// $data['title'] = 'ARMS Maintenance';
+		// $data['small_title'] = '';
+		// $data['scripts'] = array('maintenance');
+		// $data['js_lib'] = array('core', 'prettyprint', 'dataTables');
 
-		$this->load->view("maintenance_index", $data);
+		// $this->load->view("maintenance_index", $data);
+
+		acl_enforce('REGISTRY_STAFF');
+		$data['title'] = 'ARMS SyncMenu';
+		$data['scripts'] = array('sync_app');
+		$data['js_lib'] = array('core', 'angular', 'dataTables');
+		$this->load->view("syncmenu_index", $data);
 	}
 
 	public function migrate_tags_to_r11(){
