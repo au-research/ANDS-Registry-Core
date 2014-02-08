@@ -657,21 +657,30 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$this->db->select('tag')->like('tag', $q);
 		$matches = $this->db->get('registry_object_tags');
 		foreach($matches->result() as $match){
-			array_push($result, $match->tag);
+			array_push($result, array(
+				'name'=> $match->tag,
+				'source'=>'Public Tags'
+			));
 		}
 
 		//get results from anzsrc-for
 		$this->load->library('vocab');
 		$matches = $this->vocab->anyContains($q, 'anzsrc-for');
 		foreach($matches as $match){
-			array_push($result, $match);
+			array_push($result, array(
+				'name' => $match,
+				'source' => 'ANZSRC-FOR'
+			));
 		}
 
 		//get results from anzsrc-seo
 		$this->load->library('vocab');
 		$matches = $this->vocab->anyContains($q, 'anzsrc-seo');
 		foreach($matches as $match){
-			array_push($result, $match);
+			array_push($result, array(
+				'name' => $match,
+				'source' => 'ANZSRC-SEO'
+			));
 		}
 
 		echo json_encode($result);

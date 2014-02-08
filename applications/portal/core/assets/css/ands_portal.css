@@ -131,3 +131,10 @@ div.theme-page-item p.theme-page-desc {
   cursor: pointer;
   background: #ff9930;
 }
+
+/* line 126, ../sass/ands_portal.scss */
+.suggestion-source {
+  float: right;
+  font-size: 11px;
+  color: #ccc;
+}
