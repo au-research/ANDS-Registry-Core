@@ -862,20 +862,22 @@ function initAddTagForm(){
     // $('.twitter-typeahead').attr('style', 'position:relative !important');
 
     function addTag(key, tag){
-        $('.add_tag_form input, .add_tag_form button').attr('disabled', 'disabled');
-        $.ajax({
-            url:base_url+'theme_page/addTag',
-            type:'POST',
-            data:{key:key,tag:tag},
-            success: function(data){
-                $('.add_tag_form input, .add_tag_form button').removeAttr('disabled');
-                if(data.status=='OK'){
-                    location.reload();
-                }else{
-                    if(data.message) $('.add_tag_form').append('<p>'+data.message+'</p>');
+        if(key && tag && tag != ''){
+            $('.add_tag_form input, .add_tag_form button').attr('disabled', 'disabled');
+            $.ajax({
+                url:base_url+'theme_page/addTag',
+                type:'POST',
+                data:{key:key,tag:tag},
+                success: function(data){
+                    $('.add_tag_form input, .add_tag_form button').removeAttr('disabled');
+                    if(data.status=='OK'){
+                        location.reload();
+                    }else{
+                        if(data.message) $('.add_tag_form').append('<p>'+data.message+'</p>');
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }
 

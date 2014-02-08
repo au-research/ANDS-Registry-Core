@@ -82,8 +82,10 @@ else
 				<?php else:?>
 					<?php
 						$user = oauth_getUser();
+						if($user):
 					?>
 					<a href="#" class="login_st"><?php echo $user['profile']->displayName; ?>, logged in via <?php echo $user['service']; ?></a>
+					<?php endif; ?>
 				<?php endif; ?>
 				<?php endif; ?>
 			</div>

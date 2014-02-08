@@ -1,9 +1,9 @@
-/* line 7, ../sass/ands_portal.scss */
+/* line 8, ../sass/ands_portal.scss */
 span.darkgrey {
   color: #7B7E80 !important;
 }
 
-/* line 13, ../sass/ands_portal.scss */
+/* line 14, ../sass/ands_portal.scss */
 .sidebar .search-result .post {
   height: auto;
   padding: 0;
@@ -11,15 +11,15 @@ span.darkgrey {
   min-height: 0;
   border: 0;
 }
-/* line 19, ../sass/ands_portal.scss */
+/* line 20, ../sass/ands_portal.scss */
 .sidebar .search-result .post .excerpt {
   display: none;
 }
-/* line 22, ../sass/ands_portal.scss */
+/* line 23, ../sass/ands_portal.scss */
 .sidebar .search-result .post .class_icon {
   display: none;
 }
-/* line 25, ../sass/ands_portal.scss */
+/* line 26, ../sass/ands_portal.scss */
 .sidebar .search-result .post a.title {
   color: #84a07b !important;
   line-height: 1.5;
@@ -29,21 +29,21 @@ span.darkgrey {
   padding: 4px 0;
   font-size: 1em;
 }
-/* line 33, ../sass/ands_portal.scss */
+/* line 34, ../sass/ands_portal.scss */
 .sidebar .search-result .post a.title:hover {
   color: #eb7700 !important;
 }
-/* line 37, ../sass/ands_portal.scss */
+/* line 38, ../sass/ands_portal.scss */
 .sidebar .search-result .post img.logo {
   display: none;
 }
-/* line 40, ../sass/ands_portal.scss */
+/* line 41, ../sass/ands_portal.scss */
 .sidebar .search-result .post:hover {
   border: 0;
   margin: 0;
 }
 
-/* line 48, ../sass/ands_portal.scss */
+/* line 49, ../sass/ands_portal.scss */
 .login_st {
   margin-left: 14px;
   color: #3f3f3f;
@@ -51,12 +51,12 @@ span.darkgrey {
   font-size: 0.8em;
   background: #9bb692;
 }
-/* line 54, ../sass/ands_portal.scss */
+/* line 55, ../sass/ands_portal.scss */
 .login_st.exped {
   color: #f4f5f6;
 }
 
-/* line 59, ../sass/ands_portal.scss */
+/* line 60, ../sass/ands_portal.scss */
 div.login_banner {
   width: 100%;
   background: #f4f5f6;
@@ -67,7 +67,7 @@ div.login_banner {
   display: none;
 }
 
-/* line 69, ../sass/ands_portal.scss */
+/* line 70, ../sass/ands_portal.scss */
 div.theme-page-item {
   border: 1px solid #ccc;
   margin: 10px;
@@ -76,25 +76,58 @@ div.theme-page-item {
   float: left;
   overflow: hidden;
 }
-/* line 76, ../sass/ands_portal.scss */
+/* line 77, ../sass/ands_portal.scss */
 div.theme-page-item img.cover {
   height: 150px;
   width: 100%;
   overflow: hidden;
 }
-/* line 81, ../sass/ands_portal.scss */
+/* line 82, ../sass/ands_portal.scss */
 div.theme-page-item h4.theme-page-title {
   padding: 10px;
   overflow: hidden;
   text-align: center;
 }
-/* line 85, ../sass/ands_portal.scss */
+/* line 86, ../sass/ands_portal.scss */
 div.theme-page-item h4.theme-page-title a {
   text-align: center;
 }
-/* line 89, ../sass/ands_portal.scss */
+/* line 90, ../sass/ands_portal.scss */
 div.theme-page-item p.theme-page-desc {
   padding: 10px;
   height: 100px;
   overflow: auto;
+}
+
+/* line 97, ../sass/ands_portal.scss */
+.add_tag_form {
+  background: #f4f5f6;
+  padding: 10px;
+  width: 100%;
+  position: relative;
+  display: block;
+}
+/* line 103, ../sass/ands_portal.scss */
+.add_tag_form input#tag_value {
+  padding: 10px;
+  width: 504px;
+  position: relative;
+  background: white;
+  background: white !important;
+}
+/* line 110, ../sass/ands_portal.scss */
+.add_tag_form button#tag_btn {
+  float: right;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  background: #eb7700;
+  border: none;
+  padding: 11px 15px;
+  display: inline-block;
+}
+/* line 119, ../sass/ands_portal.scss */
+.add_tag_form button#tag_btn:hover {
+  cursor: pointer;
+  background: #ff9930;
 }

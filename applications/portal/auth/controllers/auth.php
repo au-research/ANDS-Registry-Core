@@ -3,18 +3,7 @@
 class Auth extends MX_Controller {
 
 	public function index(){
-		// $this->load->library('HybridAuthLib');
-		// $this->load->library('User');
-		// var_dump($this->user->name());
-		// var_dump($this->hybridauthlib->getConnectedProviders());
-		// echo anchor('auth/login/Twitter','Login With Twitter.').' ';
-		// echo anchor('auth/login/Facebook','Login With Facebook.').' ';
-		// echo anchor('auth/login/Google','Login With Google.').' ';
-		// echo anchor('auth/login/LinkedIn','Login With LinkedIn.').' ';
 		$this->getUser();
-
-		// $this->load->library('User');
-		// echo $this->user->oauth_loggedin();
 	}
 
 
@@ -100,6 +89,8 @@ class Auth extends MX_Controller {
 			if (isset($service)){
 				$service->logout();
 			}
+			$data['error'] = $error;
+			// redirect($redirect);
 			show_error('Error authenticating user. '.$error);
 		}
 	}

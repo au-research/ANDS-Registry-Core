@@ -1,6 +1,7 @@
 $ands_green:#84a07b;
 $ands_orange:#eb7700;
 $ands_lite_green:#9bb692;
+$ands_lite_orange:#ff9930;
 $full_width:960;
 
 span.darkgrey
@@ -90,5 +91,34 @@ div.theme-page-item{
 		padding:10px;
 		height:100px;
 		overflow:auto;
+	}
+}
+
+.add_tag_form{
+	background: #f4f5f6;
+	padding:10px;
+	width:100%;
+	position:relative;
+	display:block;
+	input#tag_value{
+		padding:10px;
+		width:504px;
+		position:relative;
+		background:white;
+		background:white !important;
+	}
+	button#tag_btn{
+		float:right;
+		color:#fff;
+		font-size:16px;
+		font-weight:bold;
+		background:$ands_orange;
+		border:none;
+		padding:11px 15px;
+		display:inline-block;
+		&:hover{
+			cursor:pointer;
+			background:$ands_lite_orange;
+		}
 	}
 }
