@@ -683,6 +683,28 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			));
 		}
 
+		//get results from lcsh
+		$this->load->library('solr');
+		$this->solr->setOpt('q', 'subject_type:lcsh');
+		$this->solr->setOpt('rows', 0);
+		$this->solr->setFacetOpt('pivot', 'subject_type,subject_value_resolved');
+		$this->solr->executeSearch();
+		$facet = $this->solr->getFacet();
+		$facet_pivot = $facet->{'facet_pivot'}->{'subject_type,subject_value_resolved'};
+		foreach($facet_pivot as $p){
+			if($p->{'value'}=='lcsh'){
+				foreach($p->{'pivot'} as $x){
+					similar_text(strtolower($x->{'value'}), strtolower($q), $percent);
+					if($percent > 50){
+						array_push($result, array(
+							'name' => $x->{'value'},
+							'source' => 'LCSH'
+						));
+					}
+				}
+			}
+		}
+
 		echo json_encode($result);
 	}
 
