@@ -185,7 +185,7 @@ class Registry extends MX_Controller {
 		if($filters['include_facet'] || $filters['include_facet_tags']) $data['facet'] = $this->solr->getFacet();
 		$data['numFound'] = $this->solr->getNumFound();
 		$data['solr_header'] = $this->solr->getHeader();
-		$data['fieldstrings'] = $this->solr->constructFieldString();
+		$data['fieldstrings'] = rawurldecode($this->solr->constructFieldString());
 		$data['timeTaken'] = $data['solr_header']->{'QTime'} / 1000;
 		echo json_encode($data);
 	}
@@ -263,7 +263,7 @@ class Registry extends MX_Controller {
 			}
 		}else if($what=='data_source_key'){
 			$this->load->model("data_source/data_sources","ds");
-			$dataSources = $this->ds->getAll(0, 0);
+			$dataSources = $this->ds->getOwnedDataSources();
 			foreach($dataSources as $ds){
 				if($q!=''){
 					if(stristr($ds->title, $q)) array_push($items, array('value'=>$ds->key, 'label'=>$ds->title));

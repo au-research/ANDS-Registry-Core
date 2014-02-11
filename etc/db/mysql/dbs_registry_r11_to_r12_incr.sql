@@ -25,3 +25,5 @@ CREATE  TABLE `dbs_registry`.`theme_pages` (
   `visible` TINYINT NULL ,
   `content` TEXT NULL ,
   PRIMARY KEY (`id`) );
+
+ALTER TABLE `dbs_registry`.`registry_object_relationships` CHANGE COLUMN `id` `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT  ;
