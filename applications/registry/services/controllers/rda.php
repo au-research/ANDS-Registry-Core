@@ -603,20 +603,22 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 	public function getThemePageIndex(){	
 		$this->output->set_content_type(rda::response_format);
 		$results = array();
-		$this->load->helper('file');
-		$file = read_file('./assets/shared/theme_pages/theme_cms_index.json');
-		$file = json_decode($file, true);
-		$results = $file;
-		// services_spotlight_results_data_source
+		$this->load->model('apps/theme_cms/theme_pages');
+		$pages = $this->theme_pages->get();
+		foreach($pages as $p){
+			if($p['visible']){
+				$results[] = $p;
+			}
+		}
 		$this->output->set_output(json_encode(array("items"=>$results)));
 	}
 
 	public function getThemePage($slug){
 		$this->output->set_content_type(rda::response_format);
-		$this->load->helper('file');
-		$file = read_file('./assets/shared/theme_pages/'.$slug.'.json');
+		$this->load->model('apps/theme_cms/theme_pages');
+		$file = $this->theme_pages->get($slug);
 		if($file){
-			$this->output->set_output($file);
+			$this->output->set_output($file[0]['content']);
 		}else{
 			$this->output->set_output('File Not Found');
 		}

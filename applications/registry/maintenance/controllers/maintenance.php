@@ -56,6 +56,38 @@ class Maintenance extends MX_Controller {
 		}
 	}
 
+	public function migrate_themes_to_r12(){
+		acl_enforce('REGISTRY_STAFF');
+		$directory = './assets/shared/theme_pages/';
+		$index_file = 'theme_cms_index.json';
+		$root = scandir($directory, 1);
+		$this->load->helper('file');
+		$result = array();
+		$this->db->empty_table('theme_pages');
+		foreach($root as $value){
+			if($value === '.' || $value === '..') {continue;} 
+			$pieces = explode(".", $value);
+			if(is_file("$directory/$value")) {
+				if($pieces[0].'.json'!=$index_file){
+					$file = json_decode(read_file($directory.$pieces[0].'.json'), true);
+					$theme_page = array(
+						'title' => (isset($file['title'])?$file['title']:'No Title'),
+						'slug' => (isset($file['slug'])?$file['slug']:$pieces[0]),
+						'img_src'=> (isset($file['img_src'])?$file['img_src']:''),
+						'description'=>(isset($file['desc'])?$file['desc']:''),
+						'visible'=>(isset($file['visible'])?$file['visible']:false),
+						'content'=>json_encode($file)
+					);
+					if(isset($file['visible']) && $file['visible']==='true'){
+						$theme_page['visible'] = 1;
+					}else $theme_page['visible'] = 0;
+					$this->db->insert('theme_pages', $theme_page);
+				}
+			} 
+		}
+		echo 'done';
+	}
+
 	public function syncmenu(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'ARMS SyncMenu';
