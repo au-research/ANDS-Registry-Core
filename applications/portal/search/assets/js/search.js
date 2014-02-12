@@ -123,9 +123,9 @@ function executeSearch(searchData, searchUrl){
 			data: {filters:searchData},
 			dataType:'json',
 			success: function(data){
-				$.each(data.result.docs, function(){
+				// $.each(data.result.docs, function(){
 					// log(this.display_title, this.score, this.id);
-				});
+				// });
 
 				var numFound = data.result.numFound;
 			    var numReturned = data.result.docs.length;

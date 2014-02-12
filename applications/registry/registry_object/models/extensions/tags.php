@@ -22,7 +22,9 @@ class Tags_Extension extends ExtensionBase{
 
 	function getTagType($tag){
 		$query = $this->db->select('type')->from('tags')->where('name', $tag)->get()->result_array();
-		return $query[0]['type'];
+		if(sizeof($query) > 0){
+			return $query[0]['type'];
+		}else return false;
 	}
 
 	function isSecret($tag){

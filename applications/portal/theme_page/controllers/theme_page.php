@@ -38,6 +38,21 @@ class Theme_page extends MX_Controller {
 		echo $content;
 	}
 
+	function syncRO(){
+		$data['key'] = $this->input->post('key');
+
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL,$this->config->item('registry_endpoint').'syncRO');//post to SOLR
+		curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$content = curl_exec($ch);//execute the curl
+		curl_close($ch);//close the curl
+
+		$this->output->set_status_header(200);
+		$this->output->set_header('Content-type: application/json');
+		echo $content;
+	}
+
 	function suggestTag($lcsh=false){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');

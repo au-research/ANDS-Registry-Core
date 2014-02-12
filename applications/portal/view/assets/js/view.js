@@ -892,7 +892,8 @@ function initAddTagForm(){
                 success: function(data){
                     $('.add_tag_form input, .add_tag_form button').removeAttr('disabled');
                     if(data.status=='OK'){
-                        location.reload();
+                        $('#tags_container').append('<a href="'+base_url+'search/#!/tag='+tag+'">'+tag+'</a>');
+                        sync();
                     }else{
                         if(data.message) $('.add_tag_form').append('<p>'+data.message+'</p>');
                     }
@@ -900,6 +901,18 @@ function initAddTagForm(){
             });
         }
     }
+}
+
+function sync(){
+    var key = $('#key').text();
+    $.ajax({
+        url:base_url+'theme_page/syncRO',
+        type:'POST',
+        data:{key:key},
+        success: function(data){
+            
+        }
+    });
 }
 
 $(document).on('click', '.connection_preview_link', function(e){

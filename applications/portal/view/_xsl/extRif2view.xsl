@@ -446,7 +446,7 @@
 
  <xsl:if test="../extRif:annotations/extRif:tags">
     <h4>Tags</h4>
-    <div class="tags">
+    <div class="tags" id="tags_container">
       <xsl:for-each select="../extRif:annotations/extRif:tags/extRif:tag">
         <xsl:apply-templates select="."/>
       </xsl:for-each>

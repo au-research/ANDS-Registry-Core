@@ -735,7 +735,6 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 				throw new Exception('The tag '. $tag. ' is reserved. Please choose a different tag');
 			}
 			$ro->addTag($tag, 'public', $user, $user_from);
-			$ro->sync();
 			$this->output->set_output(json_encode(array('status'=>'OK')));
 		}else {
 			throw new Exception("Unable to find registry object");
@@ -744,6 +743,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 	public function syncRO(){
 		$key = $this->input->post('key');
+		$this->load->model('registry_object/registry_objects','ro');
 		$ro = $this->ro->getPublishedByKey($key);
 		if($ro){
 			$ro->sync();
