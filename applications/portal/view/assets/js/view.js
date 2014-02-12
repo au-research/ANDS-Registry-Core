@@ -850,11 +850,12 @@ function initAddTagForm(){
         addTag(key, $('.add_tag_form input#tag_value').val());
     });
 
-    $('.add_tag_form input#tag_value').typeahead({
+    $('.add_tag_form input#tag_value').typeahead([{
         name:'Suggestion',
-        remote: base_url+'theme_page/suggestTag/?q=%QUERY',
+        remote: base_url+'theme_page/suggestTag/false/?q=%QUERY',
         minLength:1,
         limit:5,
+        cache:false,
         valueKey: 'name',
         highlight:true,
         hint:true,
@@ -862,32 +863,24 @@ function initAddTagForm(){
             return '<p class="suggestion-source">'+x.source+'</p><p class="">'+x.name+'</p>';
         },
         'engine':Mustache
-    }).on('typeahead:selected', function(){
-        // window.location = base_url+'search/#!/q='+encodeURIComponent($('#search_box').val());
-    });
-
-    // $('.add_tag_form input#tag_value').typeahead({
+    }
+    // ,{
+    //     name:'Suggestion2',
+    //     remote: base_url+'theme_page/suggestTag/true/?q=%QUERY',
     //     minLength:1,
     //     limit:5,
-    //     highlight:true
-    // },{
-    //     name:'Suggestion',
-    //     source: function(query, process){
-    //         $.ajax({
-    //             url:base_url+'theme_page/suggestTag/?q='+query,
-    //             dataType:'json',
-    //             success: function(result){
-    //                 // var resultList = result.map(function(item){
-    //                 //     var aItem = {name:item.name};
-    //                 //     return JSON.stringify(aItem);
-    //                 // });
-    //                 return process(result);
-    //             }
-    //         });
-    //     }
-    // });
-
-    // $('.twitter-typeahead').attr('style', 'position:relative !important');
+    //     cache:false,
+    //     valueKey: 'name',
+    //     highlight:true,
+    //     hint:true,
+    //     template: function(x){
+    //         return '<p class="suggestion-source">'+x.source+'</p><p class="">'+x.name+'</p>';
+    //     },
+    //     'engine':Mustache
+    // }
+    ]).on('typeahead:selected', function(){
+        // window.location = base_url+'search/#!/q='+encodeURIComponent($('#search_box').val());
+    });
 
     function addTag(key, tag){
         if(key && tag && tag != ''){

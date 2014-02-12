@@ -25,6 +25,13 @@ class Tags_Extension extends ExtensionBase{
 		return $query[0]['type'];
 	}
 
+	function isSecret($tag){
+		$tag_type = $this->ro->getTagType($tag);
+		if($tag_type=='secret'){
+			return true;
+		}else return false;
+	}
+
 	function hasTag($tag){
 		$tags = $this->db->select('*')->from('registry_object_tags')->where('key', $this->ro->key)->where('tag', $tag)->get()->result_array();
 		if(sizeof($tags) > 0){

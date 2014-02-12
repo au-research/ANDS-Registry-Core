@@ -38,12 +38,12 @@ class Theme_page extends MX_Controller {
 		echo $content;
 	}
 
-	function suggestTag(){
+	function suggestTag($lcsh=false){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		$search = $this->input->get('q');
 
-		$url = $this->config->item('registry_endpoint'). 'getTagSuggestion/?q='.$search;
+		$url = $this->config->item('registry_endpoint'). 'getTagSuggestion/'.$lcsh.'/?q='.$search;
 		$contents = @file_get_contents($url);
 		
 		$terms = json_decode($contents);

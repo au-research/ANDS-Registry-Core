@@ -648,64 +648,71 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$this->output->set_output(json_encode(array('ros'=>$ros)));
 	}
 
-	public function getTagSuggestion(){
+	public function getTagSuggestion($lcsh){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		$q = $this->input->get('q');
 
 		$result = array();
-		
-		//get results from tags
-		$this->db->select('tag')->like('tag', $q);
-		$matches = $this->db->get('registry_object_tags');
-		foreach($matches->result() as $match){
-			array_push($result, array(
-				'name'=> $match->tag,
-				'source'=>'Public Tags'
-			));
-		}
 
-		//get results from anzsrc-for
-		$this->load->library('vocab');
-		$matches = $this->vocab->anyContains($q, 'anzsrc-for');
-		foreach($matches as $match){
-			array_push($result, array(
-				'name' => $match,
-				'source' => 'ANZSRC-FOR'
-			));
-		}
+		$lcsh = ($lcsh=='true') ? true : false;
 
-		//get results from anzsrc-seo
-		$this->load->library('vocab');
-		$matches = $this->vocab->anyContains($q, 'anzsrc-seo');
-		foreach($matches as $match){
-			array_push($result, array(
-				'name' => $match,
-				'source' => 'ANZSRC-SEO'
-			));
+		if(!$lcsh){
+
+			//get results from tags
+			$this->db->select('name')->like('name', $q);
+			$matches = $this->db->get_where('tags', array('type'=>'public'));
+			foreach($matches->result() as $match){
+				array_push($result, array(
+					'name'=> $match->name,
+					'source'=>'Public Tags'
+				));
+			}
+
+			//get results from anzsrc-for
+			$this->load->library('vocab');
+			$matches = $this->vocab->anyContains($q, 'anzsrc-for');
+			foreach($matches as $match){
+				array_push($result, array(
+					'name' => $match,
+					'source' => 'ANZSRC-FOR'
+				));
+			}
+
+			//get results from anzsrc-seo
+			$this->load->library('vocab');
+			$matches = $this->vocab->anyContains($q, 'anzsrc-seo');
+			foreach($matches as $match){
+				array_push($result, array(
+					'name' => $match,
+					'source' => 'ANZSRC-SEO'
+				));
+			}
 		}
 
 		//get results from lcsh
-		$this->load->library('solr');
-		$this->solr->setOpt('q', 'subject_type:lcsh');
-		$this->solr->setOpt('rows', 0);
-		$this->solr->setFacetOpt('pivot', 'subject_type,subject_value_resolved');
-		$this->solr->executeSearch();
-		$facet = $this->solr->getFacet();
-		$facet_pivot = $facet->{'facet_pivot'}->{'subject_type,subject_value_resolved'};
-		foreach($facet_pivot as $p){
-			if($p->{'value'}=='lcsh'){
-				foreach($p->{'pivot'} as $x){
-					similar_text(strtolower($x->{'value'}), strtolower($q), $percent);
-					if($percent > 50){
-						array_push($result, array(
-							'name' => $x->{'value'},
-							'source' => 'LCSH'
-						));
-					}
-				}
-			}
-		}
+		// if($lcsh){
+		// 	$this->load->library('solr');
+		// 	$this->solr->setOpt('q', 'subject_type:lcsh');
+		// 	$this->solr->setOpt('rows', 0);
+		// 	$this->solr->setFacetOpt('pivot', 'subject_type,subject_value_resolved');
+		// 	$this->solr->executeSearch();
+		// 	$facet = $this->solr->getFacet();
+		// 	$facet_pivot = $facet->{'facet_pivot'}->{'subject_type,subject_value_resolved'};
+		// 	foreach($facet_pivot as $p){
+		// 		if($p->{'value'}=='lcsh'){
+		// 			foreach($p->{'pivot'} as $x){
+		// 				similar_text(strtolower($x->{'value'}), strtolower($q), $percent);
+		// 				if($percent > 50){
+		// 					array_push($result, array(
+		// 						'name' => $x->{'value'},
+		// 						'source' => 'LCSH'
+		// 					));
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 		echo json_encode($result);
 	}
@@ -724,7 +731,21 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$this->load->model('registry_object/registry_objects','ro');
 		$ro = $this->ro->getPublishedByKey($key);
 		if($ro){
+			if($ro->isSecret($tag)){
+				throw new Exception('The tag '. $tag. ' is reserved. Please choose a different tag');
+			}
 			$ro->addTag($tag, 'public', $user, $user_from);
+			$ro->sync();
+			$this->output->set_output(json_encode(array('status'=>'OK')));
+		}else {
+			throw new Exception("Unable to find registry object");
+		}
+	}
+
+	public function syncRO(){
+		$key = $this->input->post('key');
+		$ro = $this->ro->getPublishedByKey($key);
+		if($ro){
 			$ro->sync();
 			$this->output->set_output(json_encode(array('status'=>'OK')));
 		}else {
