@@ -85,7 +85,22 @@ class Maintenance extends MX_Controller {
 				}
 			} 
 		}
-		echo 'done';
+		echo 'Done';
+	}
+
+	public function migrate_tags_to_r12(){
+		acl_enforce('REGISTRY_STAFF');
+		$this->db->select('distinct(tag), type')->from('registry_object_tags');
+		$tags = $this->db->get();
+		$tags = $tags->result_array();
+		foreach($tags as $t){
+			$tag = array(
+				'name' => $t['tag'],
+				'type' => $t['type']
+			);
+			$this->db->insert('tags', $tag);
+		}
+		echo 'Done';
 	}
 
 	public function syncmenu(){

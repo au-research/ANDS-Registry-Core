@@ -6,7 +6,7 @@
 		<?php
 			if($tags){
 				foreach($tags as $t){
-					echo '<li>'.$t.'<span class="hide"><i class="icon icon-remove"></i></span></li>';
+					echo '<li>'.$t['name'].'<span class="hide"><i class="icon icon-remove"></i></span></li>';
 				}
 			}else{
 				echo '<div class="notag">This record has no tags</div>';

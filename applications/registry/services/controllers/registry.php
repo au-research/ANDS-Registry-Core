@@ -201,25 +201,30 @@ class Registry extends MX_Controller {
 		if($source=='solr'){
 			$filters = $this->input->post('filters');
 			$tag = $this->input->post('tag');
+			$tag_type = $this->input->post('tag_type');
 			if(!$filters){
 				$data = file_get_contents("php://input");
 				$array = json_decode($data, true);
 				$filters = $array['filters'];
 				if(isset($array['tag'])) $tag = $array['tag'];
+				if(isset($array['tag_type'])) $tag_type = $array['tag_type'];
 			}
 			$this->solr->setFilters($filters);
 			$this->solr->addBoostCondition('(tag:*)^1000');
+			$this->solr->setOpt('rows', '2000');
 			$this->solr->executeSearch();
 			$result = $this->solr->getResult();
 			foreach($result->{'docs'} as $d) array_push($keys, $d->{'key'});
 		}elseif($source == 'keys'){
 			$keys = $this->input->post('keys');
 			$tag = $this->input->post('tag');
+			$tag_type = $this->input->post('tag_type');
 			if(!$keys){
 				$data = file_get_contents("php://input");
 				$array = json_decode($data, true);
 				$keys = $array['keys'];
 				if(isset($array['tag'])) $tag = $array['tag'];
+				if(isset($array['tag_type'])) $tag_type = $array['tag_type'];
 			}
 		}
 
@@ -229,16 +234,38 @@ class Registry extends MX_Controller {
 		}else{
 			foreach($keys as $key){
 				$ro = $this->ro->getPublishedByKey($key);
-				if($action=='add' && $tag) $ro->addTag($tag);
+				if($action=='add' && $tag) $ro->addTag($tag, $tag_type);
 				if($action=='remove' && $tag) {
 					$ro->removeTag($tag);
 				}
 				unset($ro);
 			}
-			if($action=='add') $this->ro->batchIndexAddTag($keys, $tag);
+			if($action=='add') $this->ro->batchIndexAddTag($keys, $tag, $tag_type);
 			if($action=='remove') $this->ro->batchIndexKeys($keys);
 			echo json_encode($keys);
 		}
+	}
+
+	public function tags_status(){
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$tags = $this->input->post('tags');
+		$data = file_get_contents("php://input");
+		$array = json_decode($data, true);
+		if(isset($array['tags'])) $tags = $array['tags'];
+		// var_dump($tags);
+		$result = array();
+		foreach($tags['data'] as $tag){
+			// var_dump($tag);
+			$row = $this->db->get_where('tags', array('name'=>$tag['name']));
+			$row = $row->first_row();
+			array_push($result, array(
+				'name' => $tag['name'],
+				'type' => $row->type
+			));
+		}
+		echo json_encode($result);
 	}
 
 	public function suggest($what='', $q=''){

@@ -36,6 +36,7 @@
 		<field name="record_modified_timestamp" type="date" indexed="true" stored="true" multiValued="false"/>
 
 		<field name="tag" type="string" indexed="true" stored="true" multiValued="true"/>
+		<field name="tag_type" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="tag_sort" type="alphaOnlySort" indexed="true" stored="true" multiValued="true"/>
 		<field name="tag_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
 

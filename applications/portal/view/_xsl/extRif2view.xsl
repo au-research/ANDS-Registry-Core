@@ -436,25 +436,23 @@
             </div>
         </xsl:if> 
         
-        <!--</p> SUBJECTS WRAPPER--> 
+ 
+    
 
-  <xsl:if test="../extRif:annotations/extRif:tags">
-    <p>Tags</p>
+    </div>  
+
+
+</xsl:if>
+
+ <xsl:if test="../extRif:annotations/extRif:tags">
+    <h4>Tags</h4>
     <div class="tags">
       <xsl:for-each select="../extRif:annotations/extRif:tags/extRif:tag">
         <xsl:apply-templates select="."/>
       </xsl:for-each>
     </div>
   </xsl:if>
-
-
   %%%%ADDTAGFORM%%%%
-    
-
-    </div>  
-</xsl:if>
-
-
 
     <!-- DISPLAY DATES -->
     <xsl:if test="ro:dates[descendant::text() != '']">
@@ -705,7 +703,11 @@
 </xsl:template>
 
 <xsl:template match="extRif:tag">
-  <a href="{$base_url}search/#!/tag={.}"><xsl:value-of select="."/></a>
+  <xsl:choose>
+    <xsl:when test="@type='public'">
+      <a href="{$base_url}search/#!/tag={.}"><xsl:value-of select="."/></a>
+    </xsl:when>
+  </xsl:choose>
 </xsl:template>
 
 <xsl:template match="ro:relatedInfo">

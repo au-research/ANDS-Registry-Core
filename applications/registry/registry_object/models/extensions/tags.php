@@ -11,10 +11,18 @@ class Tags_Extension extends ExtensionBase{
 		$results = $this->db->select('tag')->from('registry_object_tags')->where('key', $this->ro->key)->get()->result_array();
 		if(sizeof($results)>0){
 			foreach($results as $r){
-				array_push($tags, $r['tag']);
+				array_push($tags, array(
+					'name' => $r['tag'],
+					'type' => $this->ro->getTagType($r['tag']),
+				));
 			}
 		}
 		return $tags;
+	}
+
+	function getTagType($tag){
+		$query = $this->db->select('type')->from('tags')->where('name', $tag)->get()->result_array();
+		return $query[0]['type'];
 	}
 
 	function hasTag($tag){
@@ -48,15 +56,34 @@ class Tags_Extension extends ExtensionBase{
 				'key'=>$this->ro->key,
 				'tag'=>$tag,
 				'date_created' => date('Y-m-d H:i:s',time()),
-				'type'=>$type,
 				'user'=>$user,
 				'user_from'=>$user_from
 			);
-			
-			$this->db->insert('registry_object_tags', $data);
-			$this->markTag(1);
-			return true;
+
+			if($this->ro->addTagDB($tag, $type)){
+				$this->db->insert('registry_object_tags', $data);
+				$this->markTag(1);
+				return true;
+			}else return false;
+	
 		}else return 'Error Adding: '+$tag;
+	}
+
+	function addTagDB($name, $type='public', $theme=''){
+		$query = $this->db->get_where('tags', array('name'=>$name));
+		if($query->num_rows() > 0){
+			return $query->first_row();
+		}else{
+			$this->db->insert('tags', array('name'=>$name, 'type'=>$type, 'theme'=>$theme));
+			return true;
+		}
+	}
+
+	function removeTagDB($name){
+		$query = $this->db->get_where('registry_object_tags', array('tag'=>$name));
+		if($query->num_rows() == 0){
+			$this->db->delete('tags', array('name'=>$name));
+		}
 	}
 
 	function removeTag($tag){
@@ -64,6 +91,7 @@ class Tags_Extension extends ExtensionBase{
 		if(sizeof($this->ro->getTags())==0) {
 			$this->markTag(0);
 		}
+		$this->removeTagDB($tag);
 		return true;
 	}
 }

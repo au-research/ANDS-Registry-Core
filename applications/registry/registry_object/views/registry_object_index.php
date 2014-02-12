@@ -249,7 +249,7 @@ date_default_timezone_set('Australia/Melbourne');
 
 
 				<?php 
-				if ($this->user->hasFunction('REGISTRY_STAFF')):
+				if ($this->user->hasFunction('ORCA_TAG_MANAGER') && $this->user->hasAffiliation($ds->record_owner)):
 				?>
 				<div class="widget-box">
 					<div class="widget-title">

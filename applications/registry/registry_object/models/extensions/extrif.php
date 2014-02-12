@@ -194,7 +194,8 @@ class Extrif_Extension extends ExtensionBase
 					}else $extRifTags = $annotations->addChild("extRif:tags", NULL, EXTRIF_NAMESPACE);
 
 					foreach($tags as $tag){
-						$extRifTags->addChild('extRif:tag', $tag, EXTRIF_NAMESPACE);
+						$tag_tag = $extRifTags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
+						$tag_tag->addAttribute('type', $tag['type']);
 					}
 				}
 				

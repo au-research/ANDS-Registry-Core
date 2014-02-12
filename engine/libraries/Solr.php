@@ -349,10 +349,28 @@ class Solr {
 				case 'tag':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' tag:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' public_tag:("'.$v.'")'; 
 						$this->setOpt('fq', $fq_str);
 					}else{
-						if($value!='all') $this->setOpt('fq', '+tag:("'.$value.'")');
+						if($value!='all') $this->setOpt('fq', '+public_tag:("'.$value.'")');
+					}
+					break;
+				case 'public_tag':
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' public_tag:("'.$v.'")'; 
+						$this->setOpt('fq', $fq_str);
+					}else{
+						if($value!='all') $this->setOpt('fq', '+public_tag:("'.$value.'")');
+					}
+					break;
+				case 'secret_tag':
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' secret_tag:("'.$v.'")'; 
+						$this->setOpt('fq', $fq_str);
+					}else{
+						if($value!='all') $this->setOpt('fq', '+secret_tag:("'.$value.'")');
 					}
 					break;
 				case 'originating_source':
