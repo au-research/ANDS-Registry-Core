@@ -37,38 +37,38 @@ function oauth_getConnectedService(){
 	}else return false;
 }
 
+function oauth_getAccessToken($provider=''){
+	$CI =& get_instance();
+	$CI->load->library('session');
+	if($CI->session->userdata('oauth_access_token')){
+		return $CI->session->userdata('oauth_access_token');
+	}else{
+		$CI->load->library('HybridAuthLib');
+		$service = $CI->hybridauthlib->getAdapter($provider);
+		$access_token = $service->getAccessToken();
+		return $access_token['access_token'];
+	}
+	
+}
+
 function oauth_getUser(){
 	$CI =& get_instance();
 	$CI->load->library('HybridAuthLib');
 	try {
-		$connected = $CI->hybridauthlib->getConnectedProviders();
-		$service = $CI->hybridauthlib->authenticate($connected[0]);
+		$connected = oauth_getConnectedService();
+		$access_token = oauth_getAccessToken($connected);
+
+		// $service = $CI->hybridauthlib->getAdapter($connected[0]);
+		$db = $CI->load->database('portal', TRUE);
+		$query = $db->get_where('users', array('provider'=>$connected, 'access_token'=>$access_token));
+		$profile = $query->first_row();
+
 		$data = array(
-			'service' => $connected[0],
-			'profile' =>$service->getUserProfile()
+			'service' => $connected,
+			'profile' =>json_decode($profile->profile)
 		);
 		return $data;
 	} catch (Exception $e){
-		$error = 'Unexpected error';
-		switch($e->getCode()){
-
-			case 0 : $error = 'Unspecified error.'; break;
-			case 1 : $error = 'Hybriauth configuration error.'; break;
-			case 2 : $error = 'Provider not properly configured.'; break;
-			case 3 : $error = 'Unknown or disabled provider.'; break;
-			case 4 : $error = 'Missing provider application credentials.'; break;
-			case 5 : log_message('debug', 'controllers.HAuth.login: Authentification failed. The user has canceled the authentication or the provider refused the connection.');
-			         //redirect();
-			         if (isset($service)){
-			         	$service->logout();
-			         }
-			         show_error('User has cancelled the authentication or the provider refused the connection.');
-			         break;
-			case 6 : $error = 'User profile request failed. Most likely the user is not connected to the provider and he should to authenticate again.';
-			         break;
-			case 7 : $error = 'User not connected to the provider.';
-			         break;
-		}
 
 		if (isset($service)){
 			$service->logout();

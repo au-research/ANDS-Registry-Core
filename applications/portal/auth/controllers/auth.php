@@ -6,8 +6,6 @@ class Auth extends MX_Controller {
 		$this->getUser();
 	}
 
-
-
 	public function getUser(){
 		$this->output->set_header('Content-type: application/json');
 		$data = array();
@@ -47,6 +45,7 @@ class Auth extends MX_Controller {
 		echo json_encode($data);
 	}
 
+
 	public function login($provider){
 		$redirect = $this->input->get('redirect');
 		if(!$redirect) $redirect = '/';
@@ -58,6 +57,32 @@ class Auth extends MX_Controller {
 				if ($service->isUserConnected()){
 					$user_profile = $service->getUserProfile();
 					$data['user_profile'] = $user_profile;
+					// echo json_encode($data['user_profile']);
+
+					$db = $this->load->database('portal', true);
+					$access_token = $service->getAccessToken();
+					$access_token = $access_token['access_token'];
+
+					$users = $db->get_where('users', array('provider'=>$provider, 'identifier'=>$user_profile->identifier));
+					if($users->num_rows() > 0){
+						$user = $users->first_row();
+						$db->where('id', $user->id);
+						$db->update('users', array('status'=>'logged_in', 'access_token'=>$access_token));
+					}else{
+						$user = array(
+							'identifier' => $user_profile->identifier,
+							'displayName' => $user_profile->displayName,
+							'status' => 'logged_in',
+							'provider' => $provider,
+							'access_token' => $access_token,
+							'profile' => json_encode($user_profile)
+						);
+						$db->insert('users', $user);
+					}
+
+					$this->load->library('session');
+					$this->session->set_userdata('oauth_access_token', $access_token);
+
 					redirect($redirect);
 				}else{
 					show_error('Cannot authenticate user');
@@ -91,20 +116,28 @@ class Auth extends MX_Controller {
 			}
 			$data['error'] = $error;
 			// redirect($redirect);
-			show_error('Error authenticating user. '.$error);
+			show_error('Error authenticating user. '.$e);
 		}
 	}
 
-	public function logout($provider=''){
+	public function logout(){
 		$redirect = $this->input->get('redirect');
 		if(!$redirect) $redirect = '/';
 		$this->load->library('HybridAuthLib');
-		if($provider!=''){
-			$service = $this->hybridauthlib->getAdapter($provider);
-		}else{
-			$this->hybridauthlib->logoutAllProviders();
-			redirect($redirect);
-		}
+		$provider = oauth_getConnectedService();
+		$service = $this->hybridauthlib->getAdapter($provider);
+
+		$this->load->library('session');
+		$access_token = $this->session->userdata('oauth_access_token');
+		
+		$db = $this->load->database('portal', true);
+		$db->where('access_token', $access_token);
+		$db->where('provider', $provider);
+		$db->update('users', array('status'=>'logged_out'));
+
+		$service->logOut();
+		redirect($redirect);
+		
 	}
 
 	public function oauth(){
