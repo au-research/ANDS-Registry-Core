@@ -8,12 +8,12 @@ class Tags_Extension extends ExtensionBase{
 
 	function getTags(){
 		$tags = array();
-		$results = $this->db->select('tag')->from('registry_object_tags')->where('key', $this->ro->key)->get()->result_array();
+		$results = $this->db->select('tag, type')->from('registry_object_tags')->where('key', $this->ro->key)->get()->result_array();
 		if(sizeof($results)>0){
 			foreach($results as $r){
 				array_push($tags, array(
 					'name' => $r['tag'],
-					'type' => $this->ro->getTagType($r['tag']),
+					'type' => $r['type'],
 				));
 			}
 		}
@@ -69,7 +69,10 @@ class Tags_Extension extends ExtensionBase{
 				'user_from'=>$user_from
 			);
 
-			if($this->ro->addTagDB($tag, $type)){
+			if($row = $this->ro->addTagDB($tag, $type)){
+				if($row && $row!==true){
+					$data['type'] = $row->type;
+				}else $data['type'] = $type;
 				$this->db->insert('registry_object_tags', $data);
 				$this->markTag(1);
 				return true;
