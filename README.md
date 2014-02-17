@@ -19,7 +19,7 @@ The ANDS Online Services software codebase is structured in a number of seperate
 - [Community Online Support Forum](http://community.ands.org.au/viewforum.php?f=201)
 
 ### Recent Changelogs
-- [Release 12](https://github.com/au-research/ANDS-Online-Services/wiki/Release12) (March 2014)
+- [Release 12](https://github.com/au-research/ANDS-Online-Services/wiki/Release12) (Mid March 2014)
 - [Release 11.1](https://github.com/au-research/ANDS-Online-Services/wiki/Release11.1changelog) (December 2013)
 - [Release 11](https://github.com/au-research/ANDS-Online-Services/wiki/Release11Changelog) (November 2013)
 - [Release 10.3](https://github.com/au-research/ANDS-Online-Services/wiki/Release-10.3-changelog) (October 2013)
