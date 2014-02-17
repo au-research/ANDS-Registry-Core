@@ -108,43 +108,38 @@ $(function(){
     $('.tag_form').submit(function(e){
         e.preventDefault();
         e.stopPropagation();
-        var ro_id = $(this).attr('ro_id');
         var ro_key = $(this).attr('ro_key');
         var tag = $('input', this).val();
-        var tag_html = '<li>'+tag+'<span class="hide"><i class="icon icon-remove"></i></span></li>';
+        var tag_type = $('#tag_type').text();
         $('.notag').hide();
         if(tag!='' && $.trim(tag)!=''){
          $.ajax({
             url:real_base_url+'registry/services/registry/tags/keys/add', 
             type: 'POST',
-            data: {keys:[ro_key],tag:tag},
+            data: {keys:[ro_key],tag:tag, tag_type:tag_type},
             success: function(data){
-                $('.tags').append(tag_html);
+                location.reload();
             }
          });
         }
     });
-    $('.tags li').die().live({
-        mouseover: function(){
-            $('span', this).show();
-        },
-        mouseout: function(){
-            $('span', this).hide();
-        },
-        click: function(){
-            var text = $(this).text();
-            var ro_id = $(this).parent().attr('ro_id');
-            var ro_key = $(this).parent().attr('ro_key');
-            var li_item = $(this);
-            $.ajax({
-                url:real_base_url+'registry/services/registry/tags/keys/remove', 
-                type: 'POST',
-                data: {keys:[ro_key],tag:text},
-                success: function(data){
-                    li_item.remove();
-                }
-            });                             
-        }
+
+    $(document).on('click', '.tags .btn-remove', function(){
+        var tag = $(this).parent().attr('tag');
+        var ro_key = $(this).parent().attr('ro_key');
+        var li_item = $(this).parent();
+        $.ajax({
+            url:real_base_url+'registry/services/registry/tags/keys/remove', 
+            type: 'POST',
+            data: {keys:[ro_key],tag:tag},
+            success: function(data){
+                li_item.remove();
+            }
+        });
+    }).on('click', '.tag_type_choose', function(e){
+        e.preventDefault();
+        var text = $(this).text();
+        $('#tag_type').html(text);
     });
 
 	formatTip($('#qa_level_results'));

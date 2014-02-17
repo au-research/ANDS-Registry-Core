@@ -14,12 +14,16 @@ class Orcid_api {
     private $access_token = null;
     private $orcid_id = null;
 
+    private $db;
+    private $log_table = 'logs';
+
 	/**
 	 * Construction of this class
 	 */
 	function __construct(){
         $this->CI =& get_instance();
 		$this->CI->load->library('session');
+        $this->db = $this->CI->db;
 		$this->init();
     }
 
@@ -48,6 +52,18 @@ class Orcid_api {
         $url = $this->api_uri.'oauth/token';
         $data = curl_post($url, $post_string, array('Accept: application/json'));
         return $data;
+    }
+
+    function log($orcid_id){
+        $this->db->insert($this->log_table, 
+            array(
+                "type_id" => $orcid_id, 
+                "date_modified" => date('Y-m-d H:i:s',time()), 
+                "type" => "orcid_auth", 
+                "msg" => 'orcid authentication for '. $orcid_id
+            )
+        );
+        return $this->db->insert_id();
     }
 
     function set_orcid_id($id){
@@ -99,7 +115,7 @@ class Orcid_api {
         if(!$this->get_orcid_id() && !$this->get_access_token()){
             return false;
         }else{
-            $url = $this->api_uri.$this->get_orcid_id().'/orcid-profile/';
+            $url = $this->api_uri.'v1.1/'.$this->get_orcid_id().'/orcid-profile/';
             // $context = stream_context_create($opts);
             if($this->get_access_token()) $url.='?access_token='.$this->get_access_token();
             // $result = @file_get_contents($url.'s', true, $context);
@@ -110,7 +126,7 @@ class Orcid_api {
                 return false;
             }else{
                 return $result;
-            }    
+            }
         }
     }
 
@@ -123,10 +139,9 @@ class Orcid_api {
         if(!$this->get_orcid_id() && !$this->get_access_token()){
             return false;
         }
-        $url = $this->api_uri.$this->get_orcid_id().'/orcid-works/';
+        $url = $this->api_uri.'v1.1/'.$this->get_orcid_id().'/orcid-works/';
         $url.='?access_token='.$this->get_access_token();
         $data = curl_post($url, $xml);
-        // return $data;
         if(trim($data)==''){
             return 1;
         }else return $data;

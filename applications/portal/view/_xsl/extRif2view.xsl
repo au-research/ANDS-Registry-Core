@@ -436,12 +436,23 @@
             </div>
         </xsl:if> 
         
-        <!--</p> SUBJECTS WRAPPER--> 
+ 
+    
 
     </div>  
+
+
 </xsl:if>
 
-
+ <xsl:if test="../extRif:annotations/extRif:tags">
+    <h4>Tags</h4>
+    <div class="tags" id="tags_container">
+      <xsl:for-each select="../extRif:annotations/extRif:tags/extRif:tag">
+        <xsl:apply-templates select="."/>
+      </xsl:for-each>
+    </div>
+  </xsl:if>
+  %%%%ADDTAGFORM%%%%
 
     <!-- DISPLAY DATES -->
     <xsl:if test="ro:dates[descendant::text() != '']">
@@ -688,6 +699,14 @@
       <xsl:value-of select="extRif:subject_resolved"/>
     </a>
     </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template match="extRif:tag">
+  <xsl:choose>
+    <xsl:when test="@type='public'">
+      <a href="{$base_url}search/#!/tag={.}"><xsl:value-of select="."/></a>
+    </xsl:when>
   </xsl:choose>
 </xsl:template>
 
@@ -1271,6 +1290,7 @@
 
 <xsl:template match="ro:location/ro:address/ro:electronic[ro:value/text() != '']">
   <xsl:if test="./@type='url'">
+
       <xsl:variable name="url">
           <xsl:choose>
               <xsl:when test="string-length(.)>30">
@@ -1280,7 +1300,7 @@
                 <xsl:value-of select="."/>
             </xsl:otherwise>
         </xsl:choose>
-    </xsl:variable>	
+    </xsl:variable> 
     <a>
         <xsl:attribute name="href">
             <xsl:value-of select="."/>

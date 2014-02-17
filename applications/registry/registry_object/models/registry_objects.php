@@ -757,7 +757,7 @@ class Registry_objects extends CI_Model {
 	 * @param  [string] $tag  [a tag to add, must not be null or empty string]
 	 * @return [void]
 	 */
-	public function batchIndexAddTag($keys, $tag){
+	public function batchIndexAddTag($keys, $tag, $tag_type){
 		$_CI =& get_instance();
 		$solrXML = '';
 		$chunkSize = 400; 
@@ -766,7 +766,7 @@ class Registry_objects extends CI_Model {
 			$key = $keys[$i];
 			$ro = $this->getPublishedByKey($key);
 			if($ro){
-				$ro->addTag($tag);
+				$ro->addTag($tag, $tag_type);
 				$solrXML .= '<doc><field name="id">'.$ro->id.'</field><field name="key">'.$ro->key.'</field><field name="data_source_id">'.$ro->data_source_id.'</field><field name="tag" update="add">'.$tag.'</field></doc>';
 				if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1)){
 					$_CI->solr->addDoc("<add>".$solrXML."</add>");

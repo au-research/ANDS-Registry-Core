@@ -13,13 +13,19 @@ class Maintenance extends MX_Controller {
 
 	
 	public function index(){
-		acl_enforce('REGISTRY_STAFF');
-		$data['title'] = 'ARMS Maintenance';
-		$data['small_title'] = '';
-		$data['scripts'] = array('maintenance');
-		$data['js_lib'] = array('core', 'prettyprint', 'dataTables');
+		// acl_enforce('REGISTRY_STAFF');
+		// $data['title'] = 'ARMS Maintenance';
+		// $data['small_title'] = '';
+		// $data['scripts'] = array('maintenance');
+		// $data['js_lib'] = array('core', 'prettyprint', 'dataTables');
 
-		$this->load->view("maintenance_index", $data);
+		// $this->load->view("maintenance_index", $data);
+
+		acl_enforce('REGISTRY_STAFF');
+		$data['title'] = 'ARMS SyncMenu';
+		$data['scripts'] = array('sync_app');
+		$data['js_lib'] = array('core', 'angular', 'dataTables');
+		$this->load->view("syncmenu_index", $data);
 	}
 
 	public function migrate_tags_to_r11(){
@@ -48,6 +54,53 @@ class Maintenance extends MX_Controller {
 				echo '<hr/>';
 			}
 		}
+	}
+
+	public function migrate_themes_to_r12(){
+		acl_enforce('REGISTRY_STAFF');
+		$directory = './assets/shared/theme_pages/';
+		$index_file = 'theme_cms_index.json';
+		$root = scandir($directory, 1);
+		$this->load->helper('file');
+		$result = array();
+		$this->db->empty_table('theme_pages');
+		foreach($root as $value){
+			if($value === '.' || $value === '..') {continue;} 
+			$pieces = explode(".", $value);
+			if(is_file("$directory/$value")) {
+				if($pieces[0].'.json'!=$index_file){
+					$file = json_decode(read_file($directory.$pieces[0].'.json'), true);
+					$theme_page = array(
+						'title' => (isset($file['title'])?$file['title']:'No Title'),
+						'slug' => (isset($file['slug'])?$file['slug']:$pieces[0]),
+						'img_src'=> (isset($file['img_src'])?$file['img_src']:''),
+						'description'=>(isset($file['desc'])?$file['desc']:''),
+						'visible'=>(isset($file['visible'])?$file['visible']:false),
+						'content'=>json_encode($file)
+					);
+					if(isset($file['visible']) && $file['visible']==='true'){
+						$theme_page['visible'] = 1;
+					}else $theme_page['visible'] = 0;
+					$this->db->insert('theme_pages', $theme_page);
+				}
+			} 
+		}
+		echo 'Done';
+	}
+
+	public function migrate_tags_to_r12(){
+		acl_enforce('REGISTRY_STAFF');
+		$this->db->select('distinct(tag), type')->from('registry_object_tags');
+		$tags = $this->db->get();
+		$tags = $tags->result_array();
+		foreach($tags as $t){
+			$tag = array(
+				'name' => $t['tag'],
+				'type' => $t['type']
+			);
+			$this->db->insert('tags', $tag);
+		}
+		echo 'Done';
 	}
 
 	public function syncmenu(){
@@ -362,12 +415,8 @@ class Maintenance extends MX_Controller {
 		acl_enforce('REGISTRY_STAFF');
 		$data = array();
 		$data['logs'] = '';
-		$this->load->model('data_source/data_sources', 'ds');
-		$dsIds = $this->ds->getAll(0);
-		$data_sources = $this->ds->getAll(0);
-		foreach($data_sources as $ds){
-			$data['logs'] .= $this->clearDS($ds->id, true);
-		}
+		$this->load->library('solr');
+		$data['logs'] .= $this->solr->clear();
 		echo json_encode($data);
 	}
 

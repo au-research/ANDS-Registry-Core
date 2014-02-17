@@ -446,7 +446,7 @@ img.clearAll{
 
 .tt-dropdown-menu {
   width: 422px;
-  top:60% !important;
+  top:100%;
   left:1px;
   padding: 8px 0;
   background-color: #fff;
@@ -563,7 +563,7 @@ a.browse_button{
 }
 
 .gm-style-cc div{
-  word-wrap: normal;
+	word-wrap: normal;
 }
 
 /****

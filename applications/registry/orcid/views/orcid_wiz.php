@@ -83,14 +83,14 @@
 </div>
 
 <script type="text/x-mustache"  id="template">
-{{#docs}}
+{{#result.docs}}
 	<h5><a href="<?php echo portal_url();?>{{slug}}" target="_blank">{{display_title}}</a></h5>
-	<p>{{{description}}}</p>
+	<p>{{&description}}</p>
 	<p>
 		<a class="btn import_to_orcid btn-primary" ro_id="{{id}}"><i class="icon-white icon-plus"></i> Import to ORCID</a>
 	</p>
 	<hr/>
-{{/docs}}
+{{/result.docs}}
 </script>
 
 <script type="text/x-mustache"  id="imported">

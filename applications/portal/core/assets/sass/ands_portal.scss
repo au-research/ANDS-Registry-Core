@@ -1,5 +1,7 @@
 $ands_green:#84a07b;
-$ands_orange:eb7700;
+$ands_orange:#eb7700;
+$ands_lite_green:#9bb692;
+$ands_lite_orange:#ff9930;
 $full_width:960;
 
 span.darkgrey
@@ -44,6 +46,27 @@ span.darkgrey
 	}
 }
 
+.login_st{
+	margin-left:14px;
+	color:#3f3f3f;
+	font-weight:bold;
+	font-size:0.8em;
+	background:$ands_lite_green;
+	&.exped{
+		color:#f4f5f6;
+	}
+}
+
+div.login_banner{
+	width:100%;
+	background:#f4f5f6;
+	padding:23px 0 53px 0;
+	position:absolute;
+	top:100%;
+	left:0;
+	display:none;
+}
+
 div.theme-page-item{
 	border:1px solid #ccc;
 	margin:10px;
@@ -69,4 +92,39 @@ div.theme-page-item{
 		height:100px;
 		overflow:auto;
 	}
+}
+
+.add_tag_form{
+	background: #f4f5f6;
+	padding:10px;
+	width:100%;
+	position:relative;
+	display:block;
+	input#tag_value{
+		padding:10px;
+		width:504px;
+		position:relative;
+		background:white;
+		background:white !important;
+	}
+	button#tag_btn{
+		float:right;
+		color:#fff;
+		font-size:16px;
+		font-weight:bold;
+		background:$ands_orange;
+		border:none;
+		padding:11px 15px;
+		display:inline-block;
+		&:hover{
+			cursor:pointer;
+			background:$ands_lite_orange;
+		}
+	}
+}
+
+.suggestion-source{
+	float:right;
+	font-size:11px;
+	color:#ccc;
 }

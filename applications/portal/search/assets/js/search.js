@@ -110,7 +110,6 @@ function executeSearch(searchData, searchUrl){
 		        $('#search_notice:not(.hide)').empty().addClass('hide');
 		}
 	        initSearchPage();
-	        $('.sidebar.mapmode_sidebar').hide();
 	}
         else {
 	        $('.container').css({opacity:0.5});
@@ -124,9 +123,9 @@ function executeSearch(searchData, searchUrl){
 			data: {filters:searchData},
 			dataType:'json',
 			success: function(data){
-				$.each(data.result.docs, function(){
+				// $.each(data.result.docs, function(){
 					// log(this.display_title, this.score, this.id);
-				});
+				// });
 
 				var numFound = data.result.numFound;
 			    var numReturned = data.result.docs.length;
@@ -391,6 +390,7 @@ function initSearchPage(){
 		 },function(){
 		 	clearPolygons();
 		 });
+		 if(!searchData['keepsidebar']) $('.sidebar.mapmode_sidebar').hide();
 	}else{
 		$('#searchmap').hide();
 		$('.container').css({margin:'0 auto',width:'960px',padding:'10px 0 0 0'});
@@ -570,10 +570,14 @@ function initExplanations(theType)
 }
 
 function getTopLevelFacet(){
+	var fuzzy = false;
+	if($('.fuzzy-suggest').length>0){
+		fuzzy = true;
+	}
 	$.ajax({
 		url:base_url+'search/getTopLevel',
 		type: 'POST',
-		data: {filters:searchData},
+		data: {filters:searchData, fuzzy:fuzzy},
 		success: function(data){
 			var template = $('#top-level-template').html();
 			var output = Mustache.render(template, data);
@@ -673,6 +677,9 @@ function SidebarToggle(controlDiv, map) {
 	// Setup the click event listeners: simply set the map to Chicago.
 	google.maps.event.addDomListener(controlUI, 'click', function() {
 		$('.sidebar').toggle();
+		if($('.sidebar').is(':visible')){
+			searchData['keepsidebar'] = 'open';
+		}else delete searchData['keepsidebar'];
 	});
 }
 

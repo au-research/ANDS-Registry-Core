@@ -12,6 +12,18 @@ class Orcid extends MX_Controller {
 	 * @return view 
 	 */
 	function index(){
+		$this->load->library('Orcid_api', 'orcid');
+		if($access_token = $this->orcid_api->get_access_token()){
+			$bio = $this->orcid_api->get_full();
+			if(!$bio) redirect(registry_url('orcid'));
+			$bio = json_decode($bio, true);
+			$this->wiz($bio);
+		}else{
+			redirect(registry_url('orcid/login'));
+		}
+	}
+
+	function login(){
 		$data['title'] = 'Login to ORCID';
 		$data['js_lib'] = array('core');
 		$data['link'] = $this->config->item('gORCID_SERVICE_BASE_URI').'oauth/authorize?client_id='.$this->config->item('gORCID_CLIENT_ID').'&response_type=code&scope=/orcid-profile/read-limited /orcid-works/create&redirect_uri=';
@@ -28,13 +40,13 @@ class Orcid extends MX_Controller {
 		if($this->input->get('code')){
 			$code = $this->input->get('code');
 			$data = json_decode($this->orcid_api->oauth($code),true);
-			
 			if(isset($data['access_token'])){
-				// var_dump($data);
 				$this->orcid_api->set_access_token($data['access_token']);
 				$this->orcid_api->set_orcid_id($data['orcid']);
 				$bio = $this->orcid_api->get_full();
 				$bio = json_decode($bio, true);
+				$orcid_id = $bio['orcid-profile']['orcid-identifier']['path'];
+				$this->orcid_api->log($orcid_id);
 				$this->wiz($bio);
 			}else{
 
@@ -43,9 +55,10 @@ class Orcid extends MX_Controller {
 					$bio = $this->orcid_api->get_full();
 					if(!$bio) redirect(registry_url('orcid'));
 					$bio = json_decode($bio, true);
+
 					$this->wiz($bio);
 				}else{
-					redirect(registry_url('orcid'));
+					redirect(registry_url('orcid/login'));
 				}
 			}
 		}else{
@@ -55,7 +68,7 @@ class Orcid extends MX_Controller {
 				$bio = json_decode($bio, true);
 				$this->wiz($bio);
 			}else{
-				redirect(registry_url('orcid'));
+				redirect(registry_url('orcid/login'));
 			}
 		}
 	}
@@ -74,9 +87,9 @@ class Orcid extends MX_Controller {
 		$xml = '<?xml version="1.0" encoding="UTF-8"?>
 <orcid-message
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid http://orcid.github.com/ORCID-Parent/schemas/orcid-message/1.0.9/orcid-message-1.0.9.xsd"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.xsd"
     xmlns="http://www.orcid.org/ns/orcid">
-<message-version>1.0.9</message-version>
+<message-version>1.1</message-version>
 <orcid-profile>
   <orcid-activities>
     <orcid-works> 
@@ -147,13 +160,15 @@ class Orcid extends MX_Controller {
 	 * @return view 
 	 */
 	function wiz($bio){
+
+		// var_dump($bio);
+
 		$data['bio'] = $bio['orcid-profile'];
 		$data['title']='Import Your Work';
 		$data['scripts']=array('orcid_wiz');
 		$data['js_lib']=array('core','prettyprint', 'bootstro');
 
-		// echo json_encode($data['bio']);
-		$orcid_id = $data['bio']['orcid']['value'];
+		$orcid_id = $data['bio']['orcid-identifier']['path'];
 		$first_name = $data['bio']['orcid-bio']['personal-details']['given-names']['value'];
 		$last_name = $data['bio']['orcid-bio']['personal-details']['family-name']['value'];
 		$name = $first_name.' '.$last_name;
@@ -199,7 +214,7 @@ class Orcid extends MX_Controller {
 					$ro = $this->ro->getByID($d->{'id'});
 					$ro = $this->ro->getByID($d->{'id'});
 					$connections = $ro->getConnections(true,'collection');
-					if(sizeof($connections[0]['collection']) > 0) {
+					if(isset($connections[0]['collection']) && sizeof($connections[0]['collection']) > 0) {
 						$suggested_collections=array_merge($suggested_collections, $connections[0]['collection']);
 					}
 					array_push($already_checked, $d->{'id'});

@@ -20,6 +20,7 @@ initViewPage();
 initConnectionGraph();
 drawMap();
 initConnections(); 
+initAddTagForm();
 
 // If we're a collection, then hit DataCite for SeeAlso
 if ( $('#class', metadataContainer).html() == "Collection" )
@@ -829,6 +830,89 @@ function drawMap(){//drawing the map on the left side
             });
         }
     }
+}
+
+function initAddTagForm(){
+    var key = $('#key').text();
+    $('.login').click(function(e){
+        e.preventDefault();
+        $('.login_st').click();
+        $('html,body').animate({scrollTop:0},150);
+    });
+
+    $('.add_tag_form input#tag_value').keypress(function(e){
+        if(e.which==13){
+            addTag(key, $(this).val());
+        }
+    });
+
+    $('.add_tag_form #tag_btn').click(function(){
+        addTag(key, $('.add_tag_form input#tag_value').val());
+    });
+
+    $('.add_tag_form input#tag_value').typeahead([{
+        name:'Suggestion',
+        remote: base_url+'theme_page/suggestTag/false/?q=%QUERY',
+        minLength:1,
+        limit:5,
+        cache:false,
+        valueKey: 'name',
+        highlight:true,
+        hint:true,
+        template: function(x){
+            return '<p class="suggestion-source">'+x.source+'</p><p class="">'+x.name+'</p>';
+        },
+        'engine':Mustache
+    }
+    // ,{
+    //     name:'Suggestion2',
+    //     remote: base_url+'theme_page/suggestTag/true/?q=%QUERY',
+    //     minLength:1,
+    //     limit:5,
+    //     cache:false,
+    //     valueKey: 'name',
+    //     highlight:true,
+    //     hint:true,
+    //     template: function(x){
+    //         return '<p class="suggestion-source">'+x.source+'</p><p class="">'+x.name+'</p>';
+    //     },
+    //     'engine':Mustache
+    // }
+    ]).on('typeahead:selected', function(){
+        // window.location = base_url+'search/#!/q='+encodeURIComponent($('#search_box').val());
+    });
+
+    function addTag(key, tag){
+        if(key && tag && tag != ''){
+            $('.add_tag_form input, .add_tag_form button').attr('disabled', 'disabled');
+            $.ajax({
+                url:base_url+'theme_page/addTag',
+                type:'POST',
+                data:{key:key,tag:tag},
+                success: function(data){
+                    $('.add_tag_form input, .add_tag_form button').removeAttr('disabled');
+                    if(data.status=='OK'){
+                        $('#tags_container').append('<a href="'+base_url+'search/#!/tag='+tag+'">'+tag+'</a>');
+                        sync();
+                    }else{
+                        if(data.message) $('.add_tag_form').append('<p>'+data.message+'</p>');
+                    }
+                }
+            });
+        }
+    }
+}
+
+function sync(){
+    var key = $('#key').text();
+    $.ajax({
+        url:base_url+'theme_page/syncRO',
+        type:'POST',
+        data:{key:key},
+        success: function(data){
+            
+        }
+    });
 }
 
 $(document).on('click', '.connection_preview_link', function(e){

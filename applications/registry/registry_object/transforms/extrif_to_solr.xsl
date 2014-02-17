@@ -311,6 +311,10 @@
             <xsl:attribute name="name">tag</xsl:attribute>
             <xsl:value-of select="."/>
         </xsl:element>
+        <xsl:element name="field">
+            <xsl:attribute name="name">tag_type</xsl:attribute>
+            <xsl:value-of select="@type"/>
+        </xsl:element>
     </xsl:template>
     
     <xsl:template match="extRif:listTitle">
