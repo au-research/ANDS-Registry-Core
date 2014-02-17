@@ -19,11 +19,13 @@ The ANDS Online Services software codebase is structured in a number of seperate
 - [Community Online Support Forum](http://community.ands.org.au/viewforum.php?f=201)
 
 ### Recent Changelogs
+- [Release 12](https://github.com/au-research/ANDS-Online-Services/wiki/Release12) (March 2014)
 - [Release 11.1](https://github.com/au-research/ANDS-Online-Services/wiki/Release11.1changelog) (December 2013)
 - [Release 11](https://github.com/au-research/ANDS-Online-Services/wiki/Release11Changelog) (November 2013)
 - [Release 10.3](https://github.com/au-research/ANDS-Online-Services/wiki/Release-10.3-changelog) (October 2013)
 - [Release 10.2](https://github.com/au-research/ANDS-Online-Services/wiki/Release-10.2-changelog) (September 2013)
 - [Release 10.1](https://github.com/au-research/ANDS-Online-Services/wiki/Release-10.1-changelog) (November 2013)
+
 
 ### License Terms
 Unless otherwise specified, all ANDS Online Services software is Copyright 2009 The Australian National University and licensed under the Apache License version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
