@@ -138,3 +138,18 @@ div.theme-page-item p.theme-page-desc {
   font-size: 11px;
   color: #ccc;
 }
+
+/* line 132, ../sass/ands_portal.scss */
+div.theme_page_banner {
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+}
+/* line 135, ../sass/ands_portal.scss */
+div.theme_page_banner div.img_slot {
+  height: 85px;
+  overflow: hidden;
+}
+/* line 139, ../sass/ands_portal.scss */
+div.theme_page_banner div.theme_page_header {
+  padding: 5px;
+}

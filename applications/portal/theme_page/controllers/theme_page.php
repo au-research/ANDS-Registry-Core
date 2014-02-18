@@ -73,6 +73,11 @@ class Theme_page extends MX_Controller {
 		$this->load->view('theme_page_listing', $data);
 	}
 
+	public function getThemePageBanner($slug){
+		$data['page'] = json_decode($this->fetch_theme_page_by_slug($slug));
+		$this->load->view('theme_page_banner', $data);
+	}
+
 	public function fetch_theme_page_by_slug($slug){
 		$url = $this->config->item('registry_endpoint') . "getThemePage/" . $slug;
 		$contents = @file_get_contents($url);

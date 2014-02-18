@@ -128,3 +128,15 @@ div.theme-page-item{
 	font-size:11px;
 	color:#ccc;
 }
+
+div.theme_page_banner{
+	border:1px solid #ccc;
+	margin-bottom:5px;
+	div.img_slot{
+		height:85px;
+		overflow:hidden;
+	}
+	div.theme_page_header{
+		padding:5px;
+	}
+}
