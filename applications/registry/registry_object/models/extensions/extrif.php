@@ -198,6 +198,12 @@ class Extrif_Extension extends ExtensionBase
 						$tag_tag->addAttribute('type', $tag['type']);
 					}
 				}
+
+				if($own_themepages = $this->ro->getThemePages()){
+					foreach($own_themepages as $t){
+						$extendedMetadata->addChild("extRif:theme_page", $t['slug'], EXTRIF_NAMESPACE);
+					}
+				}
 				
 				// xxx: spatial extents (sanity checking?)
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s4_end');
