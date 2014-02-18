@@ -36,6 +36,9 @@ class Registry_object extends MX_Controller {
 
 			$data['tags'] = $ro->getTags();
 
+			$data['own_themepages'] = $ro->getThemePages();
+			$data['themepages'] = $this->ro->getAllThemePages();
+
 			if($revision!=''){
 				$data['viewing_revision'] = true;
 				$data['rif_html'] = $ro->transformForHtml($revision, $ds->title);

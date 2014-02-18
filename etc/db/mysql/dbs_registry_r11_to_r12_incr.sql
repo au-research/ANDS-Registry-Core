@@ -12,6 +12,7 @@ ADD COLUMN `type` VARCHAR(45) NOT NULL DEFAULT 'public'  AFTER `date_created` ,
 ADD COLUMN `user` VARCHAR(256) NOT NULL  AFTER `type` , 
 ADD COLUMN `user_from` VARCHAR(45) NOT NULL  AFTER `user` ;
 
+
 CREATE  TABLE `dbs_registry`.`tags` (
   `name` VARCHAR(256) NOT NULL ,
   `type` VARCHAR(45) NOT NULL DEFAULT 'public' ,
@@ -31,5 +32,6 @@ CREATE  TABLE `dbs_registry`.`theme_pages` (
   `visible` TINYINT NULL ,
   `content` TEXT NULL ,
   PRIMARY KEY (`id`) );
+ALTER TABLE `dbs_registry`.`theme_pages` ADD COLUMN `secret_tag` VARCHAR(256) NULL  AFTER `slug` ;
 
 ALTER TABLE `dbs_registry`.`registry_object_relationships` CHANGE COLUMN `id` `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT  ;

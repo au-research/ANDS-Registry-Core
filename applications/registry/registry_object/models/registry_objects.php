@@ -751,6 +751,13 @@ class Registry_objects extends CI_Model {
 		return $tags;
 	}
 
+	public function getAllThemePages() {
+		$themes = array();
+		$CI =& get_instance();
+		$query = $CI->db->get('theme_pages');
+		return $query->result_array();
+	}
+
 	/**
 	 * index keys after adding a single tag, this function performs the add tag functionality as well
 	 * @param  [array] $keys [list of registry object keys to add tags and index]
