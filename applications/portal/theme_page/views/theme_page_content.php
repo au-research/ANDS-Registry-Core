@@ -1,3 +1,14 @@
+<?php 
+/**
+ * Theme Page Content View
+ * Used for displaying the theme page content in the left and right region
+ * Several contents will be loaded imediately.
+ * Other content will be loaded asynchronously through AJAX. Eg: search results, facet, list_ro, relations
+ * 
+ * @param OBJ page 
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
+ ?>
 <?php if(isset($page[$region]) && sizeof($page[$region])>0): ?>
 <?php foreach($page[$region] as $f): ?>
 <div style="margin:10px 0">
