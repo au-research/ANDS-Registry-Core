@@ -115,19 +115,43 @@ class Home extends MX_Controller {
 
 	function contact(){
 		$data['title'] = 'Contact Us - Research Data Australia';
+		$data['message'] = '';
 		if($this->input->get('sent')!=''){
 			$this->load->library('user_agent');
 			$data['user_agent']=$this->agent->browser();
-			$name = $this->input->post('name');
-			$email = $this->input->post('email');
+
+			/* 
+				check if fields hidden from actual users but avaiable to bots have been filled - if so let's not email 
+			*/
+			$title = $this->input->post('title');
+			$last_name = $this->input->post('last_name');
+			$bogus_email = $this->input->post('email');		
+
+			/*
+				also check that all three fields have been filled out - if not let's not email
+			*/
+			$name = $this->input->post('first_name');
+			$email = $this->input->post('contact_email');
 			$content = $this->input->post('content');
-			$this->load->library('email');
-			$this->email->from($email, $name);
-			$this->email->to('services@ands.org.au');
-			$this->email->subject('RDA Contact Us');
-			$this->email->message($content);
-			$this->email->send();
-			$data['sent'] = true;
+
+			if($title || $last_name || $bogus_email || !$name || !$email || !$content)
+			{
+				$data['sent'] = false;
+				$data['message'] = "Please fill in all required fields.";
+				$this->load->view('contact', $data);
+			}
+			else
+			{
+				$this->load->library('email');
+				$this->email->from($email, $name);
+			//	$this->email->to('services@ands.org.au');
+				$this->email->to('lizwoods.ands@gmail.com');
+				$this->email->subject('RDA Contact Us');
+				$this->email->message($content);
+				$this->email->send();
+				$data['sent'] = true;
+			}
+
 		}else $data['sent'] = false;
 		$this->load->view('contact', $data);
 	}
