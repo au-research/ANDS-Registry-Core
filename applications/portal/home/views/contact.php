@@ -5,10 +5,10 @@
 	<!-- Start Form -->
 
 	<div id="contact-us-form">
-	<p>If you have any questions or queries regarding Research Data Australia or you are interested in contributing, please complete the following form or alternatively email <a href="mailto:services@ands.org.au">services@ands.org.au</a> and we will respond to your request as soon as possible.</p>
+	<p>If you have any questions or queries regarding Research Data Australia or you are interested in contributing, please complete the following form or alternatively email <a href="mailto:<?php echo $contact_email; ?>"><?php echo $contact_email; ?></a> and we will respond to your request as soon as possible.</p>
 	<p></p>
 	<?php if(!$sent):?>
-	<p><?php echo $message ?></p>
+	<p><?php echo $message; ?></p>
 	<form action="?sent=true" method="post">
 		<p class="form-field"><input type="text" placeholder="Title" name="title" size="40" title="please input your name" id="title"/></p>
 		<p class="field"><input type="text" placeholder="Name" name="first_name" size="40" title="please input your name" id="first_name"/></p>

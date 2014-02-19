@@ -116,6 +116,12 @@ class Home extends MX_Controller {
 	function contact(){
 		$data['title'] = 'Contact Us - Research Data Australia';
 		$data['message'] = '';
+		$site_admin_email = $this->config->item('site_admin_email');
+
+		/*
+			Obscure text email address from contact us page to help avoid email scrapers
+		*/
+		$data['contact_email'] = $this->myobfiscate($site_admin_email);
 		if($this->input->get('sent')!=''){
 			$this->load->library('user_agent');
 			$data['user_agent']=$this->agent->browser();
@@ -144,8 +150,7 @@ class Home extends MX_Controller {
 			{
 				$this->load->library('email');
 				$this->email->from($email, $name);
-			//	$this->email->to('services@ands.org.au');
-				$this->email->to('lizwoods.ands@gmail.com');
+				$this->email->to($site_admin_email);
 				$this->email->subject('RDA Contact Us');
 				$this->email->message($content);
 				$this->email->send();
@@ -296,5 +301,15 @@ class Home extends MX_Controller {
 		$this->email->send();
 
 		echo '<p> </p><p>Thank you for your enquiry into grant `'.$this->input->post('grant-id').'`. A ticket has been logged with the ANDS Services Team. You will be notified when the grant becomes available in Research Data Australia. </p>';
+	}
+
+	public function myobfiscate($emailaddress){
+ 		$email= $emailaddress; 
+ 		$obfuscatedEmail = '';               
+ 		$length = strlen($email);                         
+ 		for ($i = 0; $i < $length; $i++){                
+			$obfuscatedEmail .= "&#" . ord($email[$i]).";";
+ 		}
+ 		return $obfuscatedEmail;
 	}
 }
