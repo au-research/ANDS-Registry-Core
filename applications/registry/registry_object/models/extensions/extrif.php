@@ -178,8 +178,6 @@ class Extrif_Extension extends ExtensionBase
 				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
 				
 				//tags
-				
-
 				//ANNOTATIONS
 				if($tags = $this->ro->getTags()){
 					if(count($xml->xpath('extRif:annotations'))){
@@ -199,6 +197,7 @@ class Extrif_Extension extends ExtensionBase
 					}
 				}
 
+				//Theme Page stuff
 				if($own_themepages = $this->ro->getThemePages()){
 					foreach($own_themepages as $t){
 						$extendedMetadata->addChild("extRif:theme_page", $t['slug'], EXTRIF_NAMESPACE);
