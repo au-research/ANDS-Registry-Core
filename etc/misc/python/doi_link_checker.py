@@ -38,10 +38,10 @@ from email.mime.text import MIMEText
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
 context.load_cert_chain(certfile="cert.pem")
-adminEmailAddr = "leo.monus@ands.org.au"
-db_host='130.56.60.128'
-db_user='webuser'
-db_passwd='q7fb94z'
+adminEmailAddr = ""
+db_host=''
+db_user=''
+db_passwd=''
 db='dbs_dois'
 
 
