@@ -36,6 +36,7 @@
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:dataSourceKey"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:status"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:logo"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:matching_identifier_count"/>
                 <xsl:apply-templates select="ro:originatingSource"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:id"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:dataSourceID"/>
@@ -252,6 +253,13 @@
     <xsl:template match="extRif:logo">
         <xsl:element name="field">
             <xsl:attribute name="name">logo</xsl:attribute>
+            <xsl:value-of select="."/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="extRif:matching_identifier_count">
+        <xsl:element name="field">
+            <xsl:attribute name="name">matching_identifier_count</xsl:attribute>
             <xsl:value-of select="."/>
         </xsl:element>
     </xsl:template>

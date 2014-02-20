@@ -177,9 +177,10 @@ class Extrif_Extension extends ExtensionBase
 				//$extendedMetadata->addChild("extRif:searchBaseScore", 100, EXTRIF_NAMESPACE);
 				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
 				
-				//tags
-				
 
+				$extendedMetadata->addChild("extRif:matching_identifier_count", sizeof($this->ro->findMatchingRecords()), EXTRIF_NAMESPACE);
+
+				//tags
 				//ANNOTATIONS
 				if($tags = $this->ro->getTags()){
 					if(count($xml->xpath('extRif:annotations'))){
