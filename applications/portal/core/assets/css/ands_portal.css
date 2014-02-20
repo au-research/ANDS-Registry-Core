@@ -160,3 +160,8 @@ div.theme_page_banner div.theme_page_header {
 div.theme_page_banner div.theme_page_header h4 a {
   font-size: 13px;
 }
+
+/* line 150, ../sass/ands_portal.scss */
+.form-field {
+  display: none;
+}
