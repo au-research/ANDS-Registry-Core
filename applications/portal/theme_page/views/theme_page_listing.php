@@ -1,3 +1,12 @@
+<?php 
+/**
+ * Theme Page Listing View
+ * Used for displaying a list of public theme pages
+ * 
+ * @param ARRAY index 
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
+ ?>
 <?php $this->load->view('rda_header');?>
 <div class="container less_padding" ng-app="portal_theme">
 	<div class="breadcrumb">

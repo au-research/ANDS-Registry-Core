@@ -84,6 +84,7 @@
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:subjects/extRif:subject"/>
 
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:related_object"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:matching_identifier_count"/>
                 <xsl:apply-templates select="extRif:annotations/extRif:tags/extRif:tag"/>
 
             </xsl:when>
@@ -475,7 +476,7 @@
         <xsl:element name="field">
             <xsl:attribute name="name">identifier_value</xsl:attribute>
             <xsl:value-of select="."/>
-        </xsl:element>       
+        </xsl:element>
     </xsl:template>
     
     <xsl:template match="ro:identifier" mode="type">

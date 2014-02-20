@@ -196,6 +196,7 @@ class Registry extends MX_Controller {
 		header('Content-type: application/json');
 		$this->load->library('solr');
 		$this->load->model('registry_object/registry_objects', 'ro');
+		$this->load->model('registry_object/registry_object_tags', 'tags');
 
 		$keys = array();
 		if($source=='solr'){
@@ -229,7 +230,7 @@ class Registry extends MX_Controller {
 		}
 
 		if($action=='get'){
-			$tags = $this->ro->getTagsByKeys($keys);
+			$tags = $this->tags->getTagsByKeys($keys);
 			echo json_encode($tags);
 		}else{
 			foreach($keys as $key){
@@ -240,7 +241,7 @@ class Registry extends MX_Controller {
 				}
 				unset($ro);
 			}
-			if($action=='add') $this->ro->batchIndexAddTag($keys, $tag, $tag_type);
+			if($action=='add') $this->tags->batchIndexAddTag($keys, $tag, $tag_type);
 			if($action=='remove') $this->ro->batchIndexKeys($keys);
 			echo json_encode($keys);
 		}
@@ -254,10 +255,9 @@ class Registry extends MX_Controller {
 		$data = file_get_contents("php://input");
 		$array = json_decode($data, true);
 		if(isset($array['tags'])) $tags = $array['tags'];
-		// var_dump($tags);
 		$result = array();
+		
 		foreach($tags['data'] as $tag){
-			// var_dump($tag);
 			$row = $this->db->get_where('tags', array('name'=>$tag['name']));
 			$row = $row->first_row();
 			array_push($result, array(
@@ -265,7 +265,8 @@ class Registry extends MX_Controller {
 				'type' => $row->type
 			));
 		}
-		echo json_encode($result);
+		
+		echo json_encode(array('status'=>'OK', 'content'=>$result));
 	}
 
 	public function suggest($what='', $q=''){

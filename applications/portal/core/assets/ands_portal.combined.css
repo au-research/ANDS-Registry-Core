@@ -2524,6 +2524,28 @@ div.theme-page-item p.theme-page-desc {
 }
 
 /* line 132, ../sass/ands_portal.scss */
+div.theme_page_banner {
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  overflow: hidden;
+  height: 27px;
+}
+/* line 137, ../sass/ands_portal.scss */
+div.theme_page_banner div.img_slot {
+  width: 50px;
+  float: right;
+  overflow: hidden;
+}
+/* line 142, ../sass/ands_portal.scss */
+div.theme_page_banner div.theme_page_header {
+  padding: 0px 10px;
+}
+/* line 144, ../sass/ands_portal.scss */
+div.theme_page_banner div.theme_page_header h4 a {
+  font-size: 13px;
+}
+
+/* line 150, ../sass/ands_portal.scss */
 .form-field {
   display: none;
 }

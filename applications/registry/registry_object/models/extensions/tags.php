@@ -13,11 +13,37 @@ class Tags_Extension extends ExtensionBase{
 			foreach($results as $r){
 				array_push($tags, array(
 					'name' => $r['tag'],
-					'type' => $r['type'],
+					'type' => $r['type']
+
 				));
 			}
 		}
 		return $tags;
+	}
+
+	function getThemePages(){
+		$tags = $this->ro->getTags();
+		$themes = array();
+		foreach($tags as $tag){
+			if($tag['type']=='secret'){
+				$theme = $this->ro->getThemePageFromTag($tag['name']);
+				if($theme && $theme!=''){
+					array_push($themes, array(
+						'title' => $theme->title,
+						'slug' => $theme->slug,
+						'secret_tag' => $theme->secret_tag
+					));
+				}
+			}
+		}
+		return $themes;
+	}
+
+	function getThemePageFromTag($tag){
+		$query = $this->db->select('*')->from('theme_pages')->where('secret_tag', $tag)->get();
+		if($query->num_rows() > 0){
+			return $query->first_row();
+		}else return false;
 	}
 
 	function getTagType($tag){

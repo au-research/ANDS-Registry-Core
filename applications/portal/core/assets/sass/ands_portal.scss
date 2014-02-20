@@ -129,6 +129,24 @@ div.theme-page-item{
 	color:#ccc;
 }
 
+div.theme_page_banner{
+	border:1px solid #ccc;
+	margin-bottom:5px;
+	overflow:hidden;
+	height:27px;
+	div.img_slot{
+		width:50px;
+		float:right;
+		overflow:hidden;
+	}
+	div.theme_page_header{
+		padding:0px 10px;
+		h4 a{
+			font-size:13px;
+		}
+	}
+}
+
 .form-field{
 	display:none;
 }

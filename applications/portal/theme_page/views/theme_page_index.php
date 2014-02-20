@@ -1,3 +1,16 @@
+<?php 
+/**
+ * Theme Page View
+ * Used for displaying the theme page
+ * Several contents will be loaded imediately.
+ * Other content will be loaded asynchronously through AJAX. Eg: search results, facet, list_ro, relations
+ *
+ * Contains 2 content area, left and right for the purpose of displaying similar type of data in different form
+ * 
+ * @param OBJ page 
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
+ ?>
 <?php $this->load->view('rda_header');?>
 <div class="container less_padding" ng-app="portal_theme">
 	<div class="breadcrumb">
