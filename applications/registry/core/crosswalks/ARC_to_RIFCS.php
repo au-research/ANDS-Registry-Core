@@ -13,7 +13,7 @@
  * to the appropriate collections by related object. 
  *
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author u4187959
  * @created 31/01/2013
  */
 
@@ -161,9 +161,9 @@ class ARC_to_RIFCS extends Crosswalk
             // The string created above
             $registryObject .=      '<description type="full">'.trim($description).'</description>' . NL;
         
-            //$registryObject .=      ($activity['BROAD_RESEARCH_AREA'] ? 
-             //                           '<existenceDates>'.NL.'<startDate dateFormat="W3CDATE">'.$activity['Commencement Year'].'</startDate>'.NL.'</existenceDates>' . NL 
-            //                            : '');
+            $registryObject .=      ($activity['Commencement Year'] ? 
+                                        '<existenceDates>'.NL.'<startDate dateFormat="W3CDTF">'.$activity['Commencement Year'].'</startDate>'.NL.'</existenceDates>' . NL 
+                                        : '');
 
             // Include our subjects
             if(isset($activity['Primary FoR/RFCD']) && trim($activity['Primary FoR/RFCD']) != '')
