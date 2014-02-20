@@ -171,16 +171,14 @@ class Home extends MX_Controller {
 
     	if($ds==''){
 			$fields = array(
-				'q'=>'*:*','version'=>'2.2','start'=>0,'rows'=>100, 'wt'=>'json',
+				'q'=>'*:*','version'=>'2.2','start'=>0,'rows'=>0, 'wt'=>'json',
 				'fl'=>'key'
 			);
 					/*prep*/
 			$fields_string='';
 	    	foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }//build the string
-	    	$fields_string .= '&facet=true&facet.field=data_source_key';
+	    	$fields_string .= '&facet=true&facet.field=data_source_key&facet.limit=1000&facet.mincount=1';
 	    	rtrim($fields_string,'&');
-
-			//echo $solr_url.$fields_string;
 
 			$ch = curl_init();
 	    	//set the url, number of POST vars, POST data
