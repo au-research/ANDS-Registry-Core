@@ -304,6 +304,34 @@ $(document).on('click', '.filter',function(e){
 		delete searchData['facetsort'];
 	}
 	changeHashTo(formatSearch());
+}).on('click', '.load_linkedrecords', function(e){
+	e.stopPropagation();
+	e.preventDefault();
+	var linkedrecords_dom = $(this).next('.linkrecords_container');
+	if(!linkedrecords_dom.is(":empty")){
+		linkedrecords_dom.toggle();
+	}else{
+		$.ajax({
+			url:rda_service_url+'getMatchingIdentifiers/'+$(this).attr('ro_id'),
+			dataType:'json',
+			success: function(data){
+				if(data.status=='OK'){
+					var template = $('#linkedrecords-template').html();
+					var output = Mustache.render(template, data.content);
+					linkedrecords_dom.html(output);
+
+					$.each(data.content, function(){
+						$('.post[ro_id='+this.id+']').hide();
+					});
+				}
+			}
+		})
+	}
+}).on('click', '.overule_link', function(e){
+	e.stopPropagation();
+	e.preventDefault();
+	var url = $(this).attr('href');
+	window.location = url;
 });
 
 function loadSubjectBrowse(val){
@@ -554,7 +582,9 @@ function initSearchPage(){
 		style:{
 			classes:'ui-tooltip-light ui-tooltip-shadow'
 		}
-	})
+	});
+
+	$('.load_linkedrecords:first').click();
 }
 
 function initExplanations(theType)

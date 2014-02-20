@@ -138,3 +138,12 @@ div.theme-page-item p.theme-page-desc {
   font-size: 11px;
   color: #ccc;
 }
+
+/* line 132, ../sass/ands_portal.scss */
+div.linkrecords {
+  margin: 20px 10px;
+}
+/* line 134, ../sass/ands_portal.scss */
+div.linkrecords div.linkrecords_container {
+  margin: 5px 20px;
+}

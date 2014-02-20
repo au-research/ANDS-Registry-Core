@@ -114,15 +114,26 @@ Only records which have coverage of the search region will be displayed.
 			{{/logo}}
 			{{#class}}
 				<img src="<?php echo base_url();?>assets/img/{{class}}.png" class="class_icon icontip_{{class}}" type="{{class}}"/>
-		    {{/class}}
+			{{/class}}
 			{{#list_title}}
 				<a href="<?php echo base_url();?>{{slug}}" class="title">{{list_title}}</a>
+
 			{{/list_title}}
+			{{#matching_identifier_count}}
+				Contributed By: {{group}}
+			{{/matching_identifier_count}}
 			{{#description}}
-				<div class="excerpt">
-				  {{description}}
+			<div class="excerpt">
+			  {{description}}
+			</div>
+			{{/description}}
+
+			{{#matching_identifier_count}}
+				<div class="linkrecords">
+					<a href="javascript:;" class="load_linkedrecords" ro_id="{{id}}">{{matching_identifier_count}} Linked Party Records</a>
+					<div class="linkrecords_container"></div>
 				</div>
-		        {{/description}}
+			{{/matching_identifier_count}}
 		</div>
 	{{/result.docs}}
 	<div class="results_navi">
@@ -154,6 +165,14 @@ Only records which have coverage of the search region will be displayed.
 {{#topConcepts}}
 	<li><a href="javascript:;" class="filter" filter_type="subject_vocab_uri" filter_value="{{uri}}">{{prefLabel}} ({{collectionNum}})</a></li>
 {{/topConcepts}}
+</script>
+
+<script type="text/x-mustache" id="linkedrecords-template">
+<ul>
+{{#.}}
+	<li><a href="<?php echo base_url();?>{{slug}}" class="overule_link">{{title}}</a> - Contributed by {{group}}</li>
+{{/.}}
+</ul>
 </script>
 
 </div>

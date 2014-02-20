@@ -48,17 +48,24 @@ class Identifiers_Extension extends ExtensionBase
 		foreach($identifiers as $i){
 			$solr_query = implode('") OR identifier_value:("', $identifiers);
 		}
-		$solr_query = '(identifier_value:("'.$solr_query.'")) AND -id:'.$this->ro->id ;
+		$solr_query = '(identifier_value:("'.$solr_query.'")) AND -id:'.$this->ro->id. ' AND class:party' ;
 
 		$this->_CI->load->library('solr');
 		$this->_CI->solr->setOpt('q', $solr_query);
-		$this->_CI->solr->setOpt('fl', 'id');
+		$this->_CI->solr->setOpt('fl', '*');
 		$result = $this->_CI->solr->executeSearch(true);
 		
 		$matching_records = array();
 		if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0){
 			foreach($result['response']['docs'] as $d){
-				$matching_records[] = $d['id'];
+				$matching_records[] = array(
+					'id' => $d['id'],
+					'title' => $d['title'],
+					'slug' => $d['slug'],
+					'description' => $d['description'],
+					'data_source_key' => $d['data_source_key'],
+					'group' => $d['group']
+				);
 			}
 		}
 		return $matching_records;
