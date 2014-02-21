@@ -1,5 +1,5 @@
 # this is a configuration file for the python script doi_link_checker.py
-# edit accordingly and save it as config.py
+# edit accordingly and save it as myconfig.py
 # Author u4187959
 
 import ssl
