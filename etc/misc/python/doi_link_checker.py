@@ -33,16 +33,11 @@ import getopt
 import ssl
 import datetime
 import smtplib
+import myconfig
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-context.load_cert_chain(certfile="cert.pem")
-adminEmailAddr = ""
-db_host=''
-db_user=''
-db_passwd=''
-db='dbs_dois'
+
 
 
 #
@@ -65,12 +60,13 @@ def handleErrors(owner_id, message):
 # Inserts a log entry to the given client_id into the database
 #
 #
-def insertMessageLog(conn, owner_id, message):
+def insertMessageLog(owner_id, message):
 
 	cur = conn.cursor()
 	sql = "INSERT INTO activity_log (`client_id`, `message`, `activity`, `result`) values (%s, %s, %s, %s);"
-	cur.execute(sql, (owner_id, message, 'LINKCHECK', 'ERROR'))
+	cur.execute(sql, (owner_id, message, 'LINKCHECK', 'FAILURE'))
 	cur.close()
+	conn.commit()
 
 #
 # sends an email to the given emailAaddr with the message as content
@@ -78,28 +74,31 @@ def insertMessageLog(conn, owner_id, message):
 #
 
 def sendEmail(emailAddr, clientTitle, message):
-
-	mySmtp = smtplib.SMTP('localhost')
-	me = 'services@ands.org.au'
-	msg = MIMEMultipart('alternative')
-	msg['Subject'] = "Broken Links Discovered for Cite My Data Client: " + clientTitle
-	msg['From'] = "DOI LINK CHECKER"
-	msg['To'] = emailAddr
-	text = message
-	html = """\
-	<html>
-	  <head>Cite My Data Broken Links Report</head>
-	  <body>
-	    <p>"""+ message + """</p>
-	  </body>
-	</html>
-	"""
-	part1 = MIMEText(text, 'plain')
-	part2 = MIMEText(html, 'html')
-	msg.attach(part1)
-	msg.attach(part2)
-	mySmtp.sendmail(me, emailAddr, msg.as_string())
-	mySmtp.quit()
+	try:
+		mySmtp = smtplib.SMTP('localhost')
+		me = myconfig.adminEmailAddr
+		msg = MIMEMultipart('alternative')
+		msg['Subject'] = "Broken Links Discovered for Cite My Data Client: " + clientTitle
+		msg['From'] = "DOI LINK CHECKER"
+		msg['To'] = emailAddr
+		text = message
+		html = """\
+		<html>
+		  <head>Cite My Data Broken Links Report</head>
+		  <body>
+		    <p>"""+ message + """</p>
+		  </body>
+		</html>
+		"""
+		part1 = MIMEText(text, 'plain')
+		part2 = MIMEText(html, 'html')
+		msg.attach(part1)
+		msg.attach(part2)
+		mySmtp.sendmail(me, emailAddr, msg.as_string())
+		mySmtp.quit()
+	except:
+		e = sys.exc_info()[1]
+		print("Exception %s" %(e))
 
 #
 #
@@ -114,7 +113,7 @@ def sendEmail(emailAddr, clientTitle, message):
 # either way log an entry to the db for all clients with error in doi link
 
 def processResultLists(client_id=None, admin_email=None):
-	conn = pymysql.connect(host=db_host, unix_socket='/tmp/mysql.sock', user=db_user, passwd=db_passwd, db=db)
+
 	if len(resultList) == 0 and client_id:
 		clientAppId = clientList[client_id][4]
 		clientTitle = clientList[client_id][1]
@@ -123,9 +122,9 @@ def processResultLists(client_id=None, admin_email=None):
 		messageCont = messageCont + '<br/>Broken Links Discovered: 0'
 		messageCont = messageCont + '<br/>Client Name: ' + str(clientTitle)
 		messageCont = messageCont + '<br/>Client App ID: ' + str(clientAppId)
-		insertMessageLog(conn, client_id, messageCont)
+		insertMessageLog(client_id, messageCont)
 		sendEmail(client_email, clientTitle, messageCont)
-
+		print(messageCont)
 	for owner_id, message in resultList.items():
 		clientAppId = clientList[owner_id][4]
 		clientTitle = clientList[owner_id][1]
@@ -135,21 +134,22 @@ def processResultLists(client_id=None, admin_email=None):
 		messageCont = messageCont + '<br/>Client Name: ' + str(clientTitle)
 		messageCont = messageCont + '<br/>Client App ID: ' + str(clientAppId)
 		messageCont = messageCont + '<br/>DOIs with broken links:<br/>' + message
-		insertMessageLog(conn, owner_id, messageCont )
+		insertMessageLog(owner_id, messageCont )
 		if client_id:
 			client_email = admin_email if admin_email else clientList[owner_id][6]
 			sendEmail(client_email, clientTitle, messageCont)
+			print(messageCont)
 		else:
-			admin_email = admin_email if admin_email else adminEmailAddr 
+			admin_email = admin_email if admin_email else myconfig.adminEmailAddr 
 			sendEmail(admin_email, clientTitle, messageCont)
-	conn.commit()
-	conn.close()
+	
+
 
 
 #
 #
 # this was needed because some servers are giving relative path in the Location heading!!
-# not valid... but most browsers hadnling it already
+# not valid... but most browsers handling it already
 #
 
 def constructAbsolutePath(scheme, host, port, path):
@@ -182,7 +182,7 @@ def checkRedirect(url_str, creator, doi_id, counter, redirectCount=0):
 		urlPath = url.path  if url.query == '' else url.path + "?" + url.query
 		if url.scheme.find('https') == 0:
 			port = url.port if url.port else 443
-			reader, writer = yield from asyncio.open_connection(url.hostname, port, ssl=context)
+			reader, writer = yield from asyncio.open_connection(url.hostname, port, ssl=myconfig.context)
 		else:
 			port = url.port if url.port else 80
 			reader, writer = yield from asyncio.open_connection(url.hostname, port)
@@ -247,7 +247,7 @@ def checkURLResource(r, counter):
 		urlPath = url.path  if url.query == '' else url.path + "?" + url.query
 		if url.scheme.find('https') == 0:
 			port = url.port if url.port else 443
-			reader, writer = yield from asyncio.open_connection(url.hostname, port, ssl=context)
+			reader, writer = yield from asyncio.open_connection(url.hostname, port, ssl=myconfig.context)
 		else:
 			port = url.port if url.port else 80
 			reader, writer = yield from asyncio.open_connection(url.hostname, port)
@@ -304,17 +304,15 @@ def checkURLResource(r, counter):
 
 def getDOIlinksSL(client_id=None):
 
-	conn = pymysql.connect(host=db_host, unix_socket='/tmp/mysql.sock', user=db_user, passwd=db_passwd, db=db)
 	cur = conn.cursor()
 	if client_id:
 		cur.execute("SELECT * FROM doi_objects where `client_id`="+ str(client_id) +" and `identifier_type`='DOI' and `status`!='REQUESTED' and `doi_id` LIKE '10.4%';")
 	else:
 		cur.execute("SELECT * FROM doi_objects where `identifier_type`='DOI' and `status`!='REQUESTED' and `doi_id` LIKE '10.4%';")
 	for r in cur:
-		DoiList.append(r)
+		doiList.append(r)
 	cur.close()
-	conn.close()
-	return DoiList
+	return doiList
 
 #
 #
@@ -323,7 +321,7 @@ def getDOIlinksSL(client_id=None):
 #
 
 def getClientList(client_id=None):
-	conn = pymysql.connect(host=db_host, unix_socket='/tmp/mysql.sock', user=db_user, passwd=db_passwd, db=db)
+	
 	cur = conn.cursor()
 	if client_id:
 		cur.execute("SELECT * FROM doi_client where `client_id`="+ str(client_id) +";")
@@ -332,7 +330,7 @@ def getClientList(client_id=None):
 	for r in cur:
 		clientList[r[0]] = r
 	cur.close()
-	conn.close()
+	
 
 #
 #
@@ -343,17 +341,17 @@ def getClientList(client_id=None):
 def runTest(client_id, admin_email):
 	chunk = 100
 	start = 0
-	DoiList = getDOIlinksSL(client_id)
+	doiList = getDOIlinksSL(client_id)
 
-	print("number of links: " + str(len(DoiList)))
+	print("Number of URLs Tested: " + str(len(doiList)))
 
 	loop = asyncio.get_event_loop()
 	asyncio.sleep(50)
-	while len(DoiList) > (int(start * chunk)):
+	while len(doiList) > (int(start * chunk)):
 		taskArray = []
 		for num in range(start*chunk,((start+1)*chunk)-1):		
-			if(len(DoiList) > num):
-				taskArray.append(asyncio.async(checkURLResource(DoiList[num],str(num))))	
+			if(len(doiList) > num):
+				taskArray.append(asyncio.async(checkURLResource(doiList[num],str(num))))	
 		try:	
 			loop.run_until_complete(asyncio.wait(taskArray))
 		except ValueError:
@@ -362,6 +360,13 @@ def runTest(client_id, admin_email):
 	loop.close()
 	processResultLists(client_id, admin_email)
 
+def createConnection():
+	try:
+		return pymysql.connect(host=myconfig.db_host, unix_socket='/tmp/mysql.sock', user=myconfig.db_user, passwd=myconfig.db_passwd, db=myconfig.db)
+	except:
+		e = sys.exc_info()[1]
+		print("Database Exception %s" %(e))
+		sys.exit(0)
 #
 #
 # main(argv)
@@ -389,11 +394,18 @@ def main(argv):
 
 
 resultList = {}
-DoiList = []
+doiList = []
 clientList = {}
 errorCount = {}
-
+conn = createConnection()
 
 if __name__ == "__main__":
-	main(sys.argv[1:])
+	try:
+		main(sys.argv[1:])
+		conn.close()
+	except:
+		e = sys.exc_info()[1]
+		print("Something Bad Has Happened %s" %(e))
+		sys.exit(0)
+
 
