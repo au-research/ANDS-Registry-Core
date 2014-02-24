@@ -42,7 +42,7 @@ function import_to_orcid(ids, button){
 	     	$(button).text('Imported').removeClass('import_to_orcid').addClass('disabled').attr('disabled', true);
 	     	load_imported();
 	     }else{
-	     	log(data.responseText)
+	     	console.log(data)
 	     }
 	   },
 	   error: function(data){
@@ -71,7 +71,6 @@ function do_search(query, page,reload){
 	   async:false,
 	   url:base_url+"services/registry/solr_search/?query="+encodeURIComponent(query)+'&start='+page+'&fq=class:collection',
 	   success:function(data){
-
 	      	var template = $('#template').html();
 			var output = Mustache.render(template, data.result);
 			if(!reload){
