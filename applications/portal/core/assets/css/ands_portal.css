@@ -147,3 +147,8 @@ div.linkrecords {
 div.linkrecords div.linkrecords_container {
   margin: 5px 20px;
 }
+
+/* line 139, ../sass/ands_portal.scss */
+img.linked_records {
+  cursor: pointer;
+}

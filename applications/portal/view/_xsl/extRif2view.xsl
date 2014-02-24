@@ -49,17 +49,18 @@
          <xsl:choose>
         <xsl:when test="//extRif:extendedMetadata/extRif:contributor">
           <xsl:text>  /  </xsl:text>
-            <a class="crumb">
+            <a class="crumb group_crumb">
               <xsl:attribute name="href">
                 <xsl:value-of select="$base_url"/><xsl:value-of select="//extRif:extendedMetadata/extRif:contributor"/>
               </xsl:attribute>
               <xsl:value-of select="$group"/>
             </a>    
+            <img src="{$base_url}assets/core/images/caret.png" alt="" class="linked_records hide"/>
          </xsl:when> 
          <xsl:otherwise>
            <xsl:text>  /  </xsl:text>
-            <a href="{$base_url}search/#!/group={./@group}" class="crumb"><xsl:value-of select="$group"/></a>    
-     
+            <a href="{$base_url}search/#!/group={./@group}" class="crumb group_crumb"><xsl:value-of select="$group"/></a>    
+            <img src="{$base_url}assets/core/images/caret.png" alt="" class="linked_records hide"/>
          </xsl:otherwise>
        </xsl:choose>
     <xsl:text>  /  </xsl:text>
@@ -133,6 +134,7 @@
                 <span id="slug"><xsl:value-of select="//extRif:extendedMetadata/extRif:slug"/></span>
                 <span id="registry_object_id"><xsl:value-of select="//extRif:extendedMetadata/extRif:id"/></span>
                 <span id="class_type"><xsl:value-of select="$objectClassType"/></span>
+                <span id="matching_identifier_count"><xsl:value-of select="//extRif:extendedMetadata/extRif:matching_identifier_count"/></span>
             </div>
 
             <xsl:apply-templates select="ro:collection | ro:activity | ro:party | ro:service"/>
