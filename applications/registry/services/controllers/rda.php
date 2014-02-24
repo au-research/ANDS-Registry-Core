@@ -753,7 +753,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		}
 	}
 
-	public function getMatchingIdentifiers($id){
+	public function getMatchingRecordsOnIdentifiersByID($id){
 		$this->load->model('registry_object/registry_objects','ro');
 		$ro = $this->ro->getByID($id);
 		$content = '';

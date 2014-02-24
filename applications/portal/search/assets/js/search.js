@@ -312,7 +312,7 @@ $(document).on('click', '.filter',function(e){
 		linkedrecords_dom.toggle();
 	}else{
 		$.ajax({
-			url:rda_service_url+'getMatchingIdentifiers/'+$(this).attr('ro_id'),
+			url:rda_service_url+'getMatchingRecordsOnIdentifiersByID/'+$(this).attr('ro_id'),
 			dataType:'json',
 			success: function(data){
 				if(data.status=='OK'){
@@ -327,7 +327,7 @@ $(document).on('click', '.filter',function(e){
 			}
 		})
 	}
-}).on('click', '.overule_link', function(e){
+}).on('click', '.overrule_link', function(e){
 	e.stopPropagation();
 	e.preventDefault();
 	var url = $(this).attr('href');

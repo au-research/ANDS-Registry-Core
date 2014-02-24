@@ -36,41 +36,40 @@ class Identifiers_Extension extends ExtensionBase
 	 */
 	public function findMatchingRecords(){
 		$sxml = $this->ro->getSimpleXML();	
-		$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-		$this->db->where(array('registry_object_id' => $this->ro->id));
-		$this->db->delete('registry_object_identifiers');	
+		$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);	
 		$identifiers = array();
-		$solr_query='';
 		foreach($sxml->xpath('//ro:'.$this->ro->class.'/ro:identifier') AS $identifier) {
 			if((string)$identifier != '') {
 				$identifiers[] = (string) $identifier;
 			}
 		}
-		foreach($identifiers as $i){
-			$solr_query = implode('") OR identifier_value:("', $identifiers);
-		}
-		$solr_query = '(identifier_value:("'.$solr_query.'")) AND -id:'.$this->ro->id. ' AND class:party' ;
 
-		$this->_CI->load->library('solr');
-		$this->_CI->solr->setOpt('q', $solr_query);
-		$this->_CI->solr->setOpt('fl', '*');
-		$result = $this->_CI->solr->executeSearch(true);
-		
 		$matching_records = array();
-		if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0){
-			foreach($result['response']['docs'] as $d){
-				$matching_records[] = array(
-					'id' => $d['id'],
-					'title' => $d['title'],
-					'slug' => $d['slug'],
-					'description' => $d['description'],
-					'data_source_key' => $d['data_source_key'],
-					'group' => $d['group']
-				);
+		if(sizeof($identifiers) > 0){
+			foreach($identifiers as $i){
+				$solr_query = implode('") OR identifier_value:("', $identifiers);
+			}
+			$solr_query = '(identifier_value:("'.$solr_query.'")) AND -id:'.$this->ro->id. ' AND class:party' ;
+
+			$this->_CI->load->library('solr');
+			$this->_CI->solr->setOpt('q', $solr_query);
+			$this->_CI->solr->setOpt('fl', '*');
+			$result = $this->_CI->solr->executeSearch(true);
+			
+			if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0){
+				foreach($result['response']['docs'] as $d){
+					$matching_records[] = array(
+						'id' => $d['id'],
+						'title' => $d['title'],
+						'slug' => $d['slug'],
+						'description' => $d['description'],
+						'data_source_key' => $d['data_source_key'],
+						'group' => $d['group']
+					);
+				}
 			}
 		}
 		return $matching_records;
-		// echo $solr_query;
 	}
 	
 }

@@ -926,7 +926,7 @@ function initLinkedRecords(){
 				content: {
 					text: 'Loading...',
 					ajax: {
-						url: rda_service_url+'getMatchingIdentifiers/'+$('#registry_object_id').text(),
+						url: rda_service_url+'getMatchingRecordsOnIdentifiersByID/'+$('#registry_object_id').text(),
 						contentType:'json',
 						type: 'GET',
 						success: function(data){
