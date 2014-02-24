@@ -141,14 +141,32 @@ div.theme-page-item p.theme-page-desc {
 
 /* line 132, ../sass/ands_portal.scss */
 div.linkrecords {
-  margin: 20px 10px;
+  margin: 10px 10px 20px 40px;
+  font-size: 13px;
 }
-/* line 134, ../sass/ands_portal.scss */
+/* line 135, ../sass/ands_portal.scss */
 div.linkrecords div.linkrecords_container {
   margin: 5px 20px;
 }
+/* line 138, ../sass/ands_portal.scss */
+div.linkrecords div.linkrecords_container li span {
+  color: #999;
+}
 
-/* line 139, ../sass/ands_portal.scss */
+/* line 145, ../sass/ands_portal.scss */
 img.linked_records {
   cursor: pointer;
+}
+
+/* line 150, ../sass/ands_portal.scss */
+ul.linkedrecords-list li {
+  padding: 10px 0;
+}
+/* line 152, ../sass/ands_portal.scss */
+ul.linkedrecords-list li span {
+  display: block;
+}
+/* line 156, ../sass/ands_portal.scss */
+ul.linkedrecords-list li + li {
+  border-top: 1px solid #ccc;
 }

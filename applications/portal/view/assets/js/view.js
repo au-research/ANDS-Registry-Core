@@ -908,9 +908,15 @@ function initLinkedRecords(){
 	var num = $('#matching_identifier_count').text();
 	var num = parseInt(num);
 	if(num > 0){
+		var text = '';
+		if(num==1) {
+			text = '1 Linked Record';
+		}else {
+			text = num + ' Linked Records';
+		}
 		$('.linked_records').show();
 		$('.linked_records').qtip({
-			content: num+' Linked Records',
+			content: text,
 			show: {
 				event: 'mouseover',
 				ready: true
@@ -931,9 +937,9 @@ function initLinkedRecords(){
 						type: 'GET',
 						success: function(data){
 							data = JSON.parse(data);
-							var msg = '<ul>';
+							var msg = '<ul class="linkedrecords-list">';
 							$.each(data.content, function(){
-								msg +='<li><a href="'+base_url+this.slug+'">'+this.title+'</a> - Contributed by '+this.group+'</li>';
+								msg +='<li><a href="'+base_url+this.slug+'">'+this.title+'</a> <span>Contributed by '+this.group+'</span></li>';
 							});
 							this.set('content.text', msg);
 

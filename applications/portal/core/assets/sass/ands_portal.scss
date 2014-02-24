@@ -130,12 +130,30 @@ div.theme-page-item{
 }
 
 div.linkrecords{
-	margin:20px 10px;
+	margin:10px 10px 20px 40px;
+	font-size:13px;
 	div.linkrecords_container{
 		margin:5px 20px;
+		li{
+			span{
+				color:#999;
+			}
+		}
 	}
 }
 
 img.linked_records{
 	cursor:pointer;
+}
+
+ul.linkedrecords-list{
+	li{
+		padding:10px 0;
+		span{
+			display:block;
+		}
+	}
+	li + li{
+		border-top:1px solid #ccc;
+	}
 }

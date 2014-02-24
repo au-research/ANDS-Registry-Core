@@ -178,7 +178,7 @@ class Extrif_Extension extends ExtensionBase
 				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
 				
 				//We only use matching identifier count for party records
-				if($this->ro->class == 'party'){
+				if($this->ro->class == PARTY){
 					$extendedMetadata->addChild("extRif:matching_identifier_count", sizeof($this->ro->findMatchingRecords()), EXTRIF_NAMESPACE);
 				}
 
