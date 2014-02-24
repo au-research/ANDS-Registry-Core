@@ -40,6 +40,7 @@ class Identifiers_Extension extends ExtensionBase
 		$this->db->where(array('registry_object_id' => $this->ro->id));
 		$this->db->delete('registry_object_identifiers');	
 		$identifiers = array();
+		$solr_query='';
 		foreach($sxml->xpath('//ro:'.$this->ro->class.'/ro:identifier') AS $identifier) {
 			if((string)$identifier != '') {
 				$identifiers[] = (string) $identifier;
