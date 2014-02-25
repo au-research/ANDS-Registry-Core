@@ -247,13 +247,6 @@ class Solr {
 		// By default, also bring back the score in results (overridden if fl filter set)
 		$this->setOpt('fl', '*, score'); 
 
-
-		// $this->setOpt('bq', 'id^1 tag^0.9 group^0.8 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
-		// type_search^0.7  class^0.2 . (*:* -group:("Australian Research Council"))^1.1  (*:* -group:("National Health and Medical Research Council"))^1.1
-// alt_title_search^0.9 description_value~5^0.1 fulltext^0.01
-		//  (*:* -group:("Australian Research Council"))^1.1  (*:* -group:("National Health and Medical Research Council"))^1.1
-		// 
-
 		// Remove variations of "Australia" from the search query unless the query contains quotes
 		if ($filters['q'] && substr_count('"', $filters['q']) == 0)
 		{
