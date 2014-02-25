@@ -82,7 +82,7 @@
                     <xsl:when test="ro:collection/@type='federal-statute'">standards-policy</xsl:when>
                     <xsl:when test="ro:collection/@type='federal-testimony'">other</xsl:when>
                     <xsl:when test="ro:collection/@type='film-movie'">artistic-performance</xsl:when>
-                    <xsl:when test="ro:collection/@type='government-publication'"><standards-policy</xsl:when>
+                    <xsl:when test="ro:collection/@type='government-publication'">standards-policy</xsl:when>
                     <xsl:when test="ro:collection/@type='interview'">other</xsl:when>
                     <xsl:when test="ro:collection/@type='journal-article'"><xsl:value-of select="ro:collection/@type"/></xsl:when>
                     <xsl:when test="ro:collection/@type='lecture-speech'"><xsl:value-of select="ro:collection/@type"/></xsl:when>
@@ -144,9 +144,9 @@
                     </year>
                 </publication-date>
             </xsl:if>
-            <xsl:if test="//ro:identifier">
+            <xsl:if test="//ro:identifier[text()!='']">
                 <work-external-identifiers>
-                    <xsl:apply-templates select="//ro:identifier"/>
+                    <xsl:apply-templates select="//ro:identifier[text()!='']"/>
                 </work-external-identifiers>
             </xsl:if>
             <!-- <xsl:variable name="sourceUrl">
