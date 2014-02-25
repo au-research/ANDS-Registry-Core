@@ -218,27 +218,66 @@ class Solr {
 		$this->setOpt('sort', 'list_title_sort asc');
 	}
 
+	// Takes an array of user-defined filters and crunches them into
+	// an ANDS-specific SOLR query (including ranking, field names, etc)
 	function setFilters($filters){
+		// Use SOLR's extended disMax query type - https://wiki.apache.org/solr/ExtendedDisMax
+		// (more forgiving query parsing for user input -- allows syntatically incorrect boolean queries)
+		$this->setOpt('defType', 'edismax');
+
+		// Some pagination variables (defaults to 15 rows if not specified)
 		$page = 1; $start = 0;
 		$pp = ( isset($filters['rows']) ? (int) $filters['rows'] : 15 );
-
 		$this->setOpt('rows', $pp);
-		$this->setOpt('defType', 'edismax');
+
+		// Default query if none specified (fetches all records)
 		$this->setOpt('q.alt', '*:*');
-		$this->setOpt('mm', '4'); //minimum should match optional clause
-		$this->setOpt('fl', '*, score'); //we'll get the score as well
+		
 
-		//boost
+		if (isset($filters['q']))
+		{
+			$this->setOpt('sort', "score desc");
+		} 
+		else
+		{
+			$filters['q'] = "";
+			$this->setOpt('sort', "list_title_sort asc");
+		}
+
+		// By default, also bring back the score in results (overridden if fl filter set)
+		$this->setOpt('fl', '*, score'); 
+
+
 		// $this->setOpt('bq', 'id^1 tag^0.9 group^0.8 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
+		// type_search^0.7  class^0.2 . (*:* -group:("Australian Research Council"))^1.1  (*:* -group:("National Health and Medical Research Council"))^1.1
+// alt_title_search^0.9 description_value~5^0.1 fulltext^0.01
+		//  (*:* -group:("Australian Research Council"))^1.1  (*:* -group:("National Health and Medical Research Council"))^1.1
+		// 
 
-		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value^0.9 tag_search^0.8 key^0.8 group_search^0.8 type_search^0.7 class^0.2 fulltext');
-		$this->setOpt('pf', 'title_search^1 description_value^0.9 fulltext^0.01 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
+		// Remove variations of "Australia" from the search query unless the query contains quotes
+		if ($filters['q'] && substr_count('"', $filters['q']) == 0)
+		{
+			$filters['q'] = preg_replace('/(austral.*?)[\\s\\z]/i',"", $filters['q']);
+		}
+
+		// Filter records that match the search terms (boost according to where the terms match)
+		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.1 fulltext~5^0.00001');
+
+		// Amount of slop applied to phrases in the user's query string filter (1 = 1 word apart)
+		$this->setOpt('qs', '0');
+
+		// Score boosting applied to phrases based on how many parts of the phrase match
+		$this->setOpt('pf', 'title_search^5');
+		$this->setOpt('pf2', 'title_search^20 description_value~5^3');
+		$this->setOpt('pf3', 'title_search^100 description_value~5^5');
+
+		// Default amount of "slop" on phrase queries (applied to pf, pf2, pf3 if not overriden by tilde)
 		$this->setOpt('ps', '2');
-		$this->setOpt('qs', '1');
-		$this->setOpt('tie', '0.2');
 
-		//if there's no query to search, eg. rda browsing
+		// Whether to break equal-scored records using the maximum of individual score components (~0.0) or sum (~1.0)
+		$this->setOpt('tie', '0.1');
 
+		// map each of the user-supplied filters to it's corresponding SOLR parameter
 		foreach($filters as $key=>$value){
 			if(!is_array($value)) $value = rawurldecode($value);
 			switch($key){
@@ -407,6 +446,7 @@ class Solr {
 		}else {
 			$content = $this->post($this->constructFieldString(), 'select');
 		}
+
 		$json = json_decode($content, $as_array);
 		if($json){
 			$this->result = $json;

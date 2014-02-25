@@ -16,6 +16,11 @@ class Transforms_Extension extends ExtensionBase
 			$xslt_processor->setParameter('','recordCreatedDate', gmdate('Y-m-d\TH:i:s\Z', $this->ro->created));
 			$xslt_processor->setParameter('','recordUpdatedDate', gmdate('Y-m-d\TH:i:s\Z', ($this->ro->updated ? $this->ro->updated : $this->ro->created)));
 			
+			if ($this->ro->search_boost)
+			{
+				$xslt_processor->setParameter('','boost', $this->ro->search_boost);
+			}
+
 			$dom = new DOMDocument();
 			$dom->loadXML(str_replace('&', '&amp;' , $this->ro->getExtRif()));
 			if ($add_tags)
