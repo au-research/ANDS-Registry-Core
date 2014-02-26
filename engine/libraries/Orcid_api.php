@@ -54,21 +54,11 @@ class Orcid_api {
         return $data;
     }
 
-<<<<<<< HEAD
-
     function log($orcid_id){
         $this->db->insert($this->log_table, 
             array(
                 "id" => $orcid_id, 
                 "date_modified" => date('Y-m-d H:i:s',time()), 
-=======
-    function log($orcid_id){
-        $this->db->delete($this->log_table, array('id'=>$orcid_id));
-        $this->db->insert($this->log_table, 
-            array(
-                "id" => $orcid_id, 
-                "date_modified" => time(), 
->>>>>>> 6f65b77... orcid logs on authentication
                 "type" => "orcid_auth", 
                 "msg" => 'orcid authentication for '. $orcid_id
             )
