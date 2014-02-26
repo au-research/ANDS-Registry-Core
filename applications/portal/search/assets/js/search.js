@@ -630,6 +630,10 @@ function postSearch(){
 		addDeleteFacet('s_subject_value_resolved', searchData['s_subject_value_resolved']);
 	}
 
+	if(searchData['tag']){
+		addDeleteFacet('tag', searchData['tag']);
+	}
+
 	if(searchData['subject_vocab_uri']){
 		addDeleteFacet('subject_vocab_uri', searchData['subject_vocab_uri_display']);
 		$('.filter[filter_value="'+decodeURIComponent(searchData['subject_vocab_uri'])+'"]').remove();
