@@ -7,6 +7,7 @@
     <xsl:output method="xml" encoding="UTF-8" />
     <xsl:param name="recordCreatedDate" />
     <xsl:param name="recordUpdatedDate" />
+    <xsl:param name="boost" select="1" />
 
 <xsl:template match="/">
     <xsl:apply-templates/>
@@ -18,9 +19,6 @@
 
     <xsl:template match="ro:registryObject">
     
-    <xsl:variable name="boost">
-        <xsl:call-template name="calcBoost"/>
-    </xsl:variable>
 
         <doc boost="{$boost}">
         <xsl:variable name="roKey">
@@ -136,14 +134,6 @@
             <xsl:value-of select="."/>
         </xsl:element>       
     </xsl:template>    
-
-    <xsl:template name="calcBoost">
-        <xsl:choose>
-            <xsl:when test="extRif:extendedMetadata/extRif:slug=extRif:extendedMetadata/extRif:contributor">5</xsl:when>
-            <xsl:otherwise>1</xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
-    
 
     <xsl:template match="extRif:flag">
         <xsl:element name="field">
