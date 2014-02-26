@@ -150,3 +150,22 @@ div.theme_page_banner{
 .form-field{
 	display:none;
 }
+
+.connections_layout_container{
+	background:white;
+	border:1px solid #ccc;
+	div.connections_layout_facet{
+		float:left;
+		width:200px;
+		padding:0 10px;
+		border-right:1px solid #ccc;
+	}
+	div.connections_layout_right{
+		float:left;
+		width:640px;
+		padding:0 10px;
+		div.connections_layout_result{
+			
+		}
+	}
+}

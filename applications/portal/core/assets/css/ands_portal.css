@@ -165,3 +165,22 @@ div.theme_page_banner div.theme_page_header h4 a {
 .form-field {
   display: none;
 }
+
+/* line 154, ../sass/ands_portal.scss */
+.connections_layout_container {
+  background: white;
+  border: 1px solid #ccc;
+}
+/* line 157, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_facet {
+  float: left;
+  width: 200px;
+  padding: 0 10px;
+  border-right: 1px solid #ccc;
+}
+/* line 163, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_right {
+  float: left;
+  width: 640px;
+  padding: 0 10px;
+}

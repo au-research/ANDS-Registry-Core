@@ -90,8 +90,8 @@ class View extends MX_Controller {
 	private function renderDefaultViewPage($extRif)
 	{	
 		$data['title']='Research Data Australia';
-		$data['js_lib'] = array('dynatree','qtip','google_map');
-		$data['scripts'] = array('view');
+		$data['js_lib'] = array('dynatree','qtip','google_map', 'angular');
+		$data['scripts'] = array('view', 'connections');
 		$data['ro_slug'] = '';
 		$data['ro_id'] = '';
 
@@ -348,6 +348,10 @@ class View extends MX_Controller {
 		$data['id'] = $this->input->get('id');
 		$data['connections_contents'] = $connections[0];
 		$this->load->view('connections_all', $data);
+	}
+
+	function getConnectionsOther(){
+		$this->load->view('connections_layout');
 	}
 
 

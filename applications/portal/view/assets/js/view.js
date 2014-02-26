@@ -116,10 +116,26 @@ function initConnections(){
 			$('a', this).prepend(draftText);
 
 		}
-
 	});
 
-	$('.view_all_connection').live('click', function(){
+	$('.view_all_conne22ction').qtip({
+		content: $('#connections_layout_container'),
+		position: {viewport: $(window),my: 'right center',at: 'left center'},
+		show: {
+			event: 'click',
+			ready: false,
+			solo: true
+		},
+		hide: {
+			fixed:true,
+			event:'unfocus',
+		},
+		style: {classes: 'ui-tooltip-light ui-tooltip-shadow previewPopup', width: 850} ,
+		overwrite: true
+	});
+
+	
+	$('.view_all_connec3tion').on('click', function(e){
 		var slug = $(this).attr('ro_slug');
 		var id = $(this).attr('ro_id');
 		var relation_type = $(this).attr('relation_type');
@@ -129,32 +145,10 @@ function initConnections(){
 		if(typeof id != 'undefined' && id != '')
 			var url = base_url+'view/getConnections/?page='+page+'&id='+id+'&relation_type='+relation_type;
 
+		$('.view_all_connection').qtip('destroy');
+
 		$(this).qtip({
-			content: {
-				text: loading_icon,
-				title: {
-					text: 'Connections',
-					button: 'Close'
-				},
-				ajax: {
-					url: url,
-					type: 'POST',
-					data: {ro_id: $(this).attr('ro_id')},
-					loading:true,
-					success: function(data, status) {
-						
-						// Clean up any HTML rubbish...                   
-						var temp = $('<span/>');
-						temp.html(data);
-						$("div.descriptions", temp).html($("div.descriptions", temp).text());
-						$("div.descriptions", temp).html($("div.descriptions", temp).directText());
-
-						this.set('content.text', temp.html());    
-
-						formatConnectionTip(this);
-					}
-				}
-			},
+			content: $('#connections_layout_container'),
 			position: {viewport: $(window),my: 'right center',at: 'left center'},
 			show: {
 				event: 'click',
@@ -165,8 +159,8 @@ function initConnections(){
 				fixed:true,
 				event:'unfocus',
 			},
-			style: {classes: 'ui-tooltip-light ui-tooltip-shadow previewPopup', width: 600} ,
-			overwrite: false
+			style: {classes: 'ui-tooltip-light ui-tooltip-shadow previewPopup', width: 850} ,
+			overwrite: true
 		});
 	});
 }
@@ -179,6 +173,10 @@ $(document).on('click', 'a.suggestor_paging',function(e){
 function formatConnectionTip(tt){
 	var tooltip = $('#ui-tooltip-'+tt.id+'-content');
 	bindPaginationConnection(tooltip);
+
+	function openConnection($scope){
+		$scope.text = 'HEREE';
+	}
 }
 
 function bindPaginationConnection(tt){
