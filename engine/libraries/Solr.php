@@ -254,10 +254,10 @@ class Solr {
 		}
 
 		// Filter records that match the search terms (boost according to where the terms match)
-		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.1 description_value^0.5 fulltext~5^0.00001 fulltext^0.00005');
+		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.01 description_value^0.05 fulltext~5^0.00001');
 
 		// Amount of slop applied to phrases in the user's query string filter (1 = 1 word apart)
-		$this->setOpt('qs', '0');
+		$this->setOpt('qs', '1');
 
 		// Score boosting applied to phrases based on how many parts of the phrase match
 		$this->setOpt('pf', 'title_search^5 description_value^0.5');
