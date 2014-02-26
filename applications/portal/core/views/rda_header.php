@@ -79,11 +79,13 @@ else
 					$logged_in = oauth_loggedin();
 					if($logged_in) {
 						$user = oauth_getUser();
-						if($user){
+						if($user) {
 							echo '<a class="login_st">';
 							echo '<img src="'.$user['profile']->photoURL.'" class="social_profile_pic"/>';
 							echo '</a>';
 						}
+					} else {
+						echo '<a class="login_st"><img class="social_profile_pic" src="'.asset_url('images/social_login.png', 'core').'" /></a>';
 					}
 				}
 			?>
