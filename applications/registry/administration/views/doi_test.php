@@ -33,7 +33,7 @@
 						<thead>
 						<tr>
 							<th>
-								Record Details
+								Record Details for client from ip <?=$app_id?>
 							</th>
 							<th>
 								Last Pulled Back

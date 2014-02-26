@@ -172,18 +172,11 @@ class Administration extends MX_Controller {
 		$this->load->view('orcid_pullback', $data);
 	}
 
-	public function doi_test()
+	function doi_test_autentication()
 	{
-		$data['js_lib'] = array('core');
-		$data['scripts'] = array();
-		$data['title'] = 'Registry Administration - Test DOI Functions';
-		
-		$this->load->config('doi_test');
 
 
-		$this->load->view('doi_test', $data);
 	}
-
 	public function __construct()
 	{
 		parent::__construct();
