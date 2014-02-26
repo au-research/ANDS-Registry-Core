@@ -172,11 +172,6 @@ class Administration extends MX_Controller {
 		$this->load->view('orcid_pullback', $data);
 	}
 
-	function doi_test_autentication()
-	{
-
-
-	}
 	public function __construct()
 	{
 		parent::__construct();
