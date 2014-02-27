@@ -28,23 +28,38 @@ class Search extends MX_Controller {
 	}
 
 	function solr_search($filters, $include_facet = true){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
 		$this->load->library('solr');
 
 		//optional facets return, true for rda search
+		$facets = array();
+
+		
+
 		if($include_facet){
-			$facets = array(
-				'class' => 'Class',
-				'group' => 'Contributor',
-				'license_class' => 'Licence',
-				'type' => 'Type',
-			);
+
+			if(isset($filters['include_facet_subjects'])){
+				$facets['subject_value_resolved'] = 'Subjects';
+			}
+			
+			$facets['class'] = 'Class';
+			$facets['group'] = 'Contributor';
+			$facets['license_class'] = 'License';
+			$facets['type'] = 'Type';
+
 			foreach($facets as $facet=>$display){
 				$this->solr->setFacetOpt('field', $facet);
 			}
+
 			$this->solr->setFacetOpt('mincount','1');
 			$this->solr->setFacetOpt('limit','100');
 			$this->solr->setFacetOpt('sort','count');
 		}
+
+
+
+		
 
 		//boost
 		// $this->solr->setOpt('bq', 'id^1 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');

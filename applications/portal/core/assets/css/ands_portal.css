@@ -165,3 +165,111 @@ div.theme_page_banner div.theme_page_header h4 a {
 .form-field {
   display: none;
 }
+
+/* line 154, ../sass/ands_portal.scss */
+.portal-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: transparent;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+}
+
+/* line 163, ../sass/ands_portal.scss */
+.portal-icon-delete {
+  background-image: url("images/delete.png");
+}
+
+/* line 166, ../sass/ands_portal.scss */
+.portal-icon-collection {
+  background-image: url("images/collection.png");
+}
+
+/* line 167, ../sass/ands_portal.scss */
+.portal-icon-activity {
+  background-image: url("images/activity.png");
+}
+
+/* line 168, ../sass/ands_portal.scss */
+.portal-icon-service {
+  background-image: url("images/service.png");
+}
+
+/* line 169, ../sass/ands_portal.scss */
+.portal-icon-party {
+  background-image: url("images/party.png");
+}
+
+/* line 171, ../sass/ands_portal.scss */
+.connections_layout_container {
+  background: white;
+  border: 1px solid #ccc;
+}
+/* line 174, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_facet {
+  float: left;
+  width: 35%;
+  padding: 0 15px;
+  border-left: 1px solid #ccc;
+  max-height: 620px;
+  overflow: auto;
+}
+/* line 182, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_facet ul li {
+  list-style-type: none;
+  padding: 4px 0;
+}
+/* line 185, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_facet ul li a {
+  color: #84a07b;
+}
+/* line 188, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_facet ul li a:hover {
+  color: #eb7700;
+}
+/* line 195, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_right {
+  float: left;
+  width: 65%;
+  padding: 0 10px;
+}
+/* line 199, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_right div.connections_layout_result {
+  position: relative;
+  padding: 10px;
+  max-height: 620px;
+  overflow: auto;
+}
+/* line 204, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview {
+  width: 100%;
+  margin-left: 0;
+}
+/* line 207, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_header .title {
+  margin-left: 0;
+}
+/* line 210, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_description {
+  font-size: 13px;
+}
+/* line 212, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_description .ro_preview_footer a {
+  color: #84a07b;
+}
+/* line 216, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .relations {
+  color: #9bb692;
+  padding: 0 5px;
+}
+/* line 221, ../sass/ands_portal.scss */
+.connections_layout_container div.connections_layout_right div.connections_layout_result a.load_more {
+  background: #eee;
+  font-weight: bold;
+  color: #84a07b;
+  text-align: center;
+  width: 100%;
+  padding: 15px;
+  display: block;
+}
