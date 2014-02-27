@@ -2427,20 +2427,7 @@ span.darkgrey {
   margin: 0;
 }
 
-/* line 49, ../sass/ands_portal.scss */
-.login_st {
-  margin-left: 14px;
-  color: #3f3f3f;
-  font-weight: bold;
-  font-size: 0.8em;
-  background: #9bb692;
-}
-/* line 55, ../sass/ands_portal.scss */
-.login_st.exped {
-  color: #f4f5f6;
-}
-
-/* line 60, ../sass/ands_portal.scss */
+/* line 51, ../sass/ands_portal.scss */
 div.login_banner {
   width: 100%;
   background: #f4f5f6;
@@ -2451,7 +2438,7 @@ div.login_banner {
   display: none;
 }
 
-/* line 70, ../sass/ands_portal.scss */
+/* line 61, ../sass/ands_portal.scss */
 div.theme-page-item {
   border: 1px solid #ccc;
   margin: 10px;
@@ -2460,30 +2447,30 @@ div.theme-page-item {
   float: left;
   overflow: hidden;
 }
-/* line 77, ../sass/ands_portal.scss */
+/* line 68, ../sass/ands_portal.scss */
 div.theme-page-item img.cover {
   height: 150px;
   width: 100%;
   overflow: hidden;
 }
-/* line 82, ../sass/ands_portal.scss */
+/* line 73, ../sass/ands_portal.scss */
 div.theme-page-item h4.theme-page-title {
   padding: 10px;
   overflow: hidden;
   text-align: center;
 }
-/* line 86, ../sass/ands_portal.scss */
+/* line 77, ../sass/ands_portal.scss */
 div.theme-page-item h4.theme-page-title a {
   text-align: center;
 }
-/* line 90, ../sass/ands_portal.scss */
+/* line 81, ../sass/ands_portal.scss */
 div.theme-page-item p.theme-page-desc {
   padding: 10px;
   height: 100px;
   overflow: auto;
 }
 
-/* line 97, ../sass/ands_portal.scss */
+/* line 88, ../sass/ands_portal.scss */
 .add_tag_form {
   background: #f4f5f6;
   padding: 10px;
@@ -2491,7 +2478,7 @@ div.theme-page-item p.theme-page-desc {
   position: relative;
   display: block;
 }
-/* line 103, ../sass/ands_portal.scss */
+/* line 94, ../sass/ands_portal.scss */
 .add_tag_form input#tag_value {
   padding: 10px;
   width: 504px;
@@ -2499,7 +2486,7 @@ div.theme-page-item p.theme-page-desc {
   background: white;
   background: white !important;
 }
-/* line 110, ../sass/ands_portal.scss */
+/* line 101, ../sass/ands_portal.scss */
 .add_tag_form button#tag_btn {
   float: right;
   color: #fff;
@@ -2510,47 +2497,59 @@ div.theme-page-item p.theme-page-desc {
   padding: 11px 15px;
   display: inline-block;
 }
-/* line 119, ../sass/ands_portal.scss */
+/* line 110, ../sass/ands_portal.scss */
 .add_tag_form button#tag_btn:hover {
   cursor: pointer;
   background: #ff9930;
 }
 
-/* line 126, ../sass/ands_portal.scss */
+/* line 117, ../sass/ands_portal.scss */
 .suggestion-source {
   float: right;
   font-size: 11px;
   color: #ccc;
 }
 
-/* line 132, ../sass/ands_portal.scss */
+/* line 123, ../sass/ands_portal.scss */
 div.theme_page_banner {
   border: 1px solid #ccc;
   margin-bottom: 5px;
   overflow: hidden;
   height: 27px;
 }
-/* line 137, ../sass/ands_portal.scss */
+/* line 128, ../sass/ands_portal.scss */
 div.theme_page_banner div.img_slot {
   width: 50px;
   float: right;
   overflow: hidden;
 }
-/* line 142, ../sass/ands_portal.scss */
+/* line 133, ../sass/ands_portal.scss */
 div.theme_page_banner div.theme_page_header {
   padding: 0px 10px;
 }
-/* line 144, ../sass/ands_portal.scss */
+/* line 135, ../sass/ands_portal.scss */
 div.theme_page_banner div.theme_page_header h4 a {
   font-size: 13px;
 }
 
-/* line 150, ../sass/ands_portal.scss */
+/* line 141, ../sass/ands_portal.scss */
 .form-field {
   display: none;
 }
 
-/* line 154, ../sass/ands_portal.scss */
+/* line 145, ../sass/ands_portal.scss */
+.login_st {
+  cursor: pointer;
+}
+/* line 147, ../sass/ands_portal.scss */
+.login_st .social_profile_pic {
+  margin-top: -5px;
+  margin-left: 10px;
+  height: 42px;
+  max-width: 42px;
+}
+
+/* line 155, ../sass/ands_portal.scss */
 .portal-icon {
   display: inline-block;
   width: 16px;
@@ -2560,37 +2559,37 @@ div.theme_page_banner div.theme_page_header h4 a {
   background-repeat: no-repeat;
 }
 
-/* line 163, ../sass/ands_portal.scss */
+/* line 164, ../sass/ands_portal.scss */
 .portal-icon-delete {
   background-image: url("images/delete.png");
 }
 
-/* line 166, ../sass/ands_portal.scss */
+/* line 167, ../sass/ands_portal.scss */
 .portal-icon-collection {
   background-image: url("images/collection.png");
 }
 
-/* line 167, ../sass/ands_portal.scss */
+/* line 168, ../sass/ands_portal.scss */
 .portal-icon-activity {
   background-image: url("images/activity.png");
 }
 
-/* line 168, ../sass/ands_portal.scss */
+/* line 169, ../sass/ands_portal.scss */
 .portal-icon-service {
   background-image: url("images/service.png");
 }
 
-/* line 169, ../sass/ands_portal.scss */
+/* line 170, ../sass/ands_portal.scss */
 .portal-icon-party {
   background-image: url("images/party.png");
 }
 
-/* line 171, ../sass/ands_portal.scss */
+/* line 172, ../sass/ands_portal.scss */
 .connections_layout_container {
   background: white;
   border: 1px solid #ccc;
 }
-/* line 174, ../sass/ands_portal.scss */
+/* line 175, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_facet {
   float: left;
   width: 35%;
@@ -2599,55 +2598,55 @@ div.theme_page_banner div.theme_page_header h4 a {
   max-height: 620px;
   overflow: auto;
 }
-/* line 182, ../sass/ands_portal.scss */
+/* line 183, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_facet ul li {
   list-style-type: none;
   padding: 4px 0;
 }
-/* line 185, ../sass/ands_portal.scss */
+/* line 186, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_facet ul li a {
   color: #84a07b;
 }
-/* line 188, ../sass/ands_portal.scss */
+/* line 189, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_facet ul li a:hover {
   color: #eb7700;
 }
-/* line 195, ../sass/ands_portal.scss */
+/* line 196, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right {
   float: left;
   width: 65%;
   padding: 0 10px;
 }
-/* line 199, ../sass/ands_portal.scss */
+/* line 200, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result {
   position: relative;
   padding: 10px;
   max-height: 620px;
   overflow: auto;
 }
-/* line 204, ../sass/ands_portal.scss */
+/* line 205, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview {
   width: 100%;
   margin-left: 0;
 }
-/* line 207, ../sass/ands_portal.scss */
+/* line 208, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_header .title {
   margin-left: 0;
 }
-/* line 210, ../sass/ands_portal.scss */
+/* line 211, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_description {
   font-size: 13px;
 }
-/* line 212, ../sass/ands_portal.scss */
+/* line 213, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_description .ro_preview_footer a {
   color: #84a07b;
 }
-/* line 216, ../sass/ands_portal.scss */
+/* line 217, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .relations {
   color: #9bb692;
   padding: 0 5px;
 }
-/* line 221, ../sass/ands_portal.scss */
+/* line 222, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result a.load_more {
   background: #eee;
   font-weight: bold;

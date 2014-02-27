@@ -46,16 +46,7 @@ span.darkgrey
 	}
 }
 
-.login_st{
-	margin-left:14px;
-	color:#3f3f3f;
-	font-weight:bold;
-	font-size:0.8em;
-	background:$ands_lite_green;
-	&.exped{
-		color:#f4f5f6;
-	}
-}
+
 
 div.login_banner{
 	width:100%;
@@ -149,6 +140,16 @@ div.theme_page_banner{
 
 .form-field{
 	display:none;
+}
+
+.login_st{
+	cursor:pointer;
+	.social_profile_pic{
+		margin-top:-5px;
+		margin-left:10px;
+		height:42px;
+		max-width:42px;
+	}
 }
 
 .portal-icon{
