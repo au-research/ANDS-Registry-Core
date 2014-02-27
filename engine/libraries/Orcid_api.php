@@ -57,7 +57,7 @@ class Orcid_api {
     function log($orcid_id){
         $this->db->insert($this->log_table, 
             array(
-                "type_id" => $orcid_id, 
+                "id" => $orcid_id, 
                 "date_modified" => date('Y-m-d H:i:s',time()), 
                 "type" => "orcid_auth", 
                 "msg" => 'orcid authentication for '. $orcid_id
