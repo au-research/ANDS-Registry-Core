@@ -1,4 +1,4 @@
-angular.module('connections',[]).
+angular.module('connections',['portal-filters', 'infinite-scroll']).
 factory('searches', function($http){
 	return{
 		search: function(filters){
@@ -9,51 +9,26 @@ factory('searches', function($http){
 		}
 	}
 }).
-// directive('connectiontip', function($compile, $templateCache, $rootScope){
-// 	return {
-// 		restrict: 'A',
-// 		link: function(scope, el, attr){
-// 			var clone = $compile($templateCache.get('connections_layout_template'))(scope);
-// 			$(el).qtip({
-// 				content: {
-// 					text: function() {
-// 						return scope.$apply(function () {
-// 							return clone;
-// 						});
-// 					}
-// 				},
-// 				position: {viewport: $(window),my: 'right center',at: 'left center'},
-// 				show: {
-// 					event: 'click',
-// 					ready: false,
-// 					solo: true
-// 				},
-// 				hide: {
-// 					fixed:true,
-// 					event:'unfocus',
-// 				},
-// 				events: {
-// 					render : function(){
-// 						console.log(scope);
-// 						$rootScope.$apply();
-// 					}
-// 				},
-// 				style: {classes: 'ui-tooltip-light ui-tooltip-shadow previewPopup', width: 850} ,
-// 				overwrite: true
-// 			});
-// 		}
-// 	}
-// }).
 controller('openConnections', function($scope, searches){
 
 	$scope.results = {};
 	$scope.filters = {};
 	$scope.facet = {};
 	$scope.query = '';
+	$scope.facet_limit = 5;
+	$scope.relations = [];
+	$scope.page = 1;
+	$scope.numFound = 0;
+	$scope.loading = false;
+	$scope.done = false;
+
+	$scope.class_name = $('#class').text();
 
 	$scope.$watch('query', function(){
 		$scope.filters['q'] = $scope.query;
-		$scope.search();
+		if($scope.query!=''){
+			$scope.search();
+		}
 	});
 
 	$scope.open = function($event){
@@ -64,10 +39,7 @@ controller('openConnections', function($scope, searches){
 			c.dialog( "close" );
 		});
 
-		c.dialog({
-			width:900,
-			modal:true
-		});
+		$scope.current_relation = '';
 
 		var relation_type = $($event.target).attr('relation_type');
 		$scope.filters = {};
@@ -80,7 +52,62 @@ controller('openConnections', function($scope, searches){
 				$scope.filters['class'] = 'party';
 				$scope.filters['type'] = 'person';
 		}
+
+		$scope.current_relation = $scope.filters['class'];
+
+		// c.attr('title', $scope.getTitle());
+
+		c.dialog({
+			width:900,
+			modal:true
+		});
+
+		$('#ui-dialog-title-connections_layout_container').html($scope.getTitle());
+
 		$scope.search();
+	}
+
+	$scope.getTitle = function(){
+		if($scope.filters['class']=='collection'){
+			return 'Related Collections';
+		}else if($scope.filters['class']=='activity'){
+			return 'Related Activities';
+		}else if($scope.filters['class']=='service'){
+			return 'Related Services';
+		}else if($scope.filters['class']=='party'){
+			if($scope.filters['type']=='person'){
+				return 'Related Researchers';
+			}else if($scope.filters['type']=='group'){
+				return 'Related Organisations & Groups';
+			}
+		}else{
+			return 'Related Objects';
+		}
+	}
+
+	$scope.$watch('results.docs', function(){
+		var total_found = $('.ro_preview').length;
+		if($scope.numFound <= $scope.results.docs.length){
+			$scope.done = true;
+		}
+	}, true);
+
+	$scope.load_more = function(){
+		if(($('#connections_layout_container').dialog('isOpen')===true) && !$scope.done && !$scope.loading){
+			$scope.loading = true;
+			var ro_id = $('#registry_object_id').text();
+			$scope.page++;
+			$scope.filters['related_object_id'] = ro_id;
+			$scope.filters['include_facet_subjects'] = 1;
+			$scope.filters['p'] = $scope.page;
+			searches.search($scope.filters).then(function(data){
+				$scope.loading = false;
+				$.each(data.result.docs, function(){
+					$scope.results.docs.push(this);
+				});
+				$scope.getRelations();
+			});
+		}
 	}
 
 	$scope.select = function(type, value){
@@ -88,13 +115,40 @@ controller('openConnections', function($scope, searches){
 		$scope.search();
 	}
 
+	$scope.deselect = function(type){
+		delete $scope.filters[type];
+		$scope.search();
+	}
+
+	$scope.infacet = function(type, v){
+		if($scope.filters[type]==v.title){
+			return true;
+		}else return false;
+	}
+
 	$scope.search = function(){
 		var ro_id = $('#registry_object_id').text();
+		$scope.page = 1;
+		$scope.done = false;
 		$scope.filters['related_object_id'] = ro_id;
+		$scope.filters['include_facet_subjects'] = 1;
+		$scope.filters['p'] = $scope.page;
 		searches.search($scope.filters).then(function(data){
+			$scope.numFound = data.numFound;
+			$scope.relations = [];
 			$scope.results = data.result;
 			$scope.facet = data.facet_result;
+			$scope.getRelations();
 		});
 	}
 
+	$scope.getRelations = function(){
+		var ro_id = $('#registry_object_id').text();
+		$.each($scope.results.docs, function(){
+			var ind = this.related_object_id.indexOf(ro_id);
+			var relation = this.related_object_relation[ind];
+			var related_class = this.related_object_class[ind];
+			$scope.relations[this.id] = {related_relation:relation, related_class:related_class};
+		});
+	}
 });
