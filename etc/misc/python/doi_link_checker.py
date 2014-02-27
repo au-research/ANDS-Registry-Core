@@ -60,11 +60,11 @@ def handleErrors(owner_id, message):
 # Inserts a log entry to the given client_id into the database
 #
 #
-def insertMessageLog(owner_id, message):
+def insertMessageLog(owner_id, message, status):
 
 	cur = conn.cursor()
 	sql = "INSERT INTO activity_log (`client_id`, `message`, `activity`, `result`) values (%s, %s, %s, %s);"
-	cur.execute(sql, (owner_id, message, 'LINKCHECK', 'FAILURE'))
+	cur.execute(sql, (owner_id, message, 'LINKCHECK', status))
 	cur.close()
 	conn.commit()
 
@@ -122,7 +122,7 @@ def processResultLists(client_id=None, admin_email=None):
 		messageCont = messageCont + '<br/>Broken Links Discovered: 0'
 		messageCont = messageCont + '<br/>Client Name: ' + str(clientTitle)
 		messageCont = messageCont + '<br/>Client App ID: ' + str(clientAppId)
-		insertMessageLog(client_id, messageCont)
+		insertMessageLog(client_id, messageCont, 'SUCCESS')
 		sendEmail(client_email, clientTitle, messageCont)
 		print(messageCont)
 	for owner_id, message in resultList.items():
@@ -134,7 +134,7 @@ def processResultLists(client_id=None, admin_email=None):
 		messageCont = messageCont + '<br/>Client Name: ' + str(clientTitle)
 		messageCont = messageCont + '<br/>Client App ID: ' + str(clientAppId)
 		messageCont = messageCont + '<br/>DOIs with broken links:<br/>' + message
-		insertMessageLog(owner_id, messageCont )
+		insertMessageLog(owner_id, messageCont , 'FAILURE')
 		if client_id:
 			client_email = admin_email if admin_email else clientList[owner_id][6]
 			sendEmail(client_email, clientTitle, messageCont)
