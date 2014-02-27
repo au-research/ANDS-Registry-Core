@@ -149,9 +149,16 @@ img.linked_records{
 ul.linkedrecords-list{
 	li{
 		padding:10px 0;
-		span{
-			display:block;
+		a{
+			span{
+				display:block;
+				color:#454545;
+			}
+			&:hover span {
+				color:#454545;
+			}
 		}
+		
 	}
 	li + li{
 		border-top:1px solid #ccc;

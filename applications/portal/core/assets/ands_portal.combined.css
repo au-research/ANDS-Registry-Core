@@ -2546,11 +2546,16 @@ img.linked_records {
 ul.linkedrecords-list li {
   padding: 10px 0;
 }
-/* line 152, ../sass/ands_portal.scss */
-ul.linkedrecords-list li span {
+/* line 153, ../sass/ands_portal.scss */
+ul.linkedrecords-list li a span {
   display: block;
+  color: #454545;
 }
-/* line 156, ../sass/ands_portal.scss */
+/* line 157, ../sass/ands_portal.scss */
+ul.linkedrecords-list li a:hover span {
+  color: #454545;
+}
+/* line 163, ../sass/ands_portal.scss */
 ul.linkedrecords-list li + li {
   border-top: 1px solid #ccc;
 }

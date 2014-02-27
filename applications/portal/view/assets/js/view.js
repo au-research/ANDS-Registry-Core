@@ -910,9 +910,9 @@ function initLinkedRecords(){
 	if(num > 0){
 		var text = '';
 		if(num==1) {
-			text = '1 Linked Record';
+			text = 'Also described in 1 other record';
 		}else {
-			text = num + ' Linked Records';
+			text = 'Also described in '+ num + ' other records';
 		}
 		$('.linked_records').show();
 		$('.linked_records').qtip({
@@ -924,7 +924,7 @@ function initLinkedRecords(){
 			hide: 'mouseout',
 			position: {viewport: $(window),my: 'bottom center',at: 'top center'},
 			style: {
-				classes: 'ui-tooltip-light ui-tooltip-shadow'
+				width:200
 			}
 		});
 		$('.linked_records').click(function(){
@@ -937,9 +937,11 @@ function initLinkedRecords(){
 						type: 'GET',
 						success: function(data){
 							data = JSON.parse(data);
-							var msg = '<ul class="linkedrecords-list">';
+							var ro_class = $('#class').text();
+							var msg ='<div>This '+ro_class+' may also be described in</div>';
+							msg += '<ul class="linkedrecords-list">';
 							$.each(data.content, function(){
-								msg +='<li><a href="'+base_url+this.slug+'">'+this.title+'</a> <span>Contributed by '+this.group+'</span></li>';
+								msg +='<li><a href="'+base_url+this.slug+'">'+this.title+' <span>Contributed by '+this.group+'</span> </a></li>';
 							});
 							this.set('content.text', msg);
 
