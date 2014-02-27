@@ -117,6 +117,8 @@
 	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/sortable.js', 'base') ?>"></script>
 	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/tinymce.js', 'base') ?>"></script>
 	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular-sanitize-1.0.1.js', 'base') ?>"></script>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/ng-infinite-scroll.min.js', 'base') ?>"></script>
+	            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/portal-filters.js', 'base') ?>"></script>
 
 	        <?php elseif($lib=='colorbox'):?>
 	            <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
