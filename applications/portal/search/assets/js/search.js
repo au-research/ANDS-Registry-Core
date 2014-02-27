@@ -362,7 +362,7 @@ function loadSubjectBrowse(val){
 function initSearchPage(){
 	getTopLevelFacet();
 
-	if(urchin_id!='' && searchData['q']!=''){
+	if(urchin_id!='' && searchData['q']!='' && searchData['q'] && searchData['q']!==undefined){
 		var pageTracker = _gat._getTracker(urchin_id);
 		pageTracker._initData(); 
 		pageTracker._trackPageview('/search_results.php?q='+searchData['q']); 
