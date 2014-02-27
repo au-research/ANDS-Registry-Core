@@ -1,3 +1,13 @@
+<?php
+/**
+ * Connections layout view, called by connections.php
+ * This is an angularJS enabled template
+ *
+ *
+ * @requires portal-filters for truncate and relationship filters
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
+?>
 <div id="connections_layout_container" class="connections_layout_container hide">
 	
 	<div class="connections_layout_right">
@@ -25,7 +35,6 @@
 	</div>
 
 	<div class="connections_layout_facet">
-
 		<div ng-repeat="f in facet" class="widget facet_group" ng-show="f.facet_type!='class'">
 			<h3 class="widget-title">{{f.label}}</h3>
 			<ul>
@@ -37,5 +46,7 @@
 			</ul>
 		</div>
 	</div>
+
 	<div class="clearfix"></div>
+	
 </div>

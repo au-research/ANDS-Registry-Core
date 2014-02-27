@@ -114,54 +114,7 @@ function initConnections(){
 		}else if($('a', this).attr('draft_id')!=''){
 			generatePreviewTip($(this), null, $('a',this).attr('draft_id'), $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'), null);
 			$('a', this).prepend(draftText);
-
 		}
-	});
-
-	$('.view_all_conne22ction').qtip({
-		content: $('#connections_layout_container'),
-		position: {viewport: $(window),my: 'right center',at: 'left center'},
-		show: {
-			event: 'click',
-			ready: false,
-			solo: true
-		},
-		hide: {
-			fixed:true,
-			event:'unfocus',
-		},
-		style: {classes: 'ui-tooltip-light ui-tooltip-shadow previewPopup', width: 850} ,
-		overwrite: true
-	});
-
-	
-	$('.view_all_connec3tion').on('click', function(e){
-		var slug = $(this).attr('ro_slug');
-		var id = $(this).attr('ro_id');
-		var relation_type = $(this).attr('relation_type');
-		var page = (typeof $(this).attr('page') != 'undefined' ? $(this).attr('page') : 1);
-		if(slug != '')
-			var url = base_url+'view/getConnections/?page='+page+'&slug='+slug+'&relation_type='+relation_type;
-		if(typeof id != 'undefined' && id != '')
-			var url = base_url+'view/getConnections/?page='+page+'&id='+id+'&relation_type='+relation_type;
-
-		$('.view_all_connection').qtip('destroy');
-
-		$(this).qtip({
-			content: $('#connections_layout_container'),
-			position: {viewport: $(window),my: 'right center',at: 'left center'},
-			show: {
-				event: 'click',
-				ready: true,
-				solo: true
-			},
-			hide: {
-				fixed:true,
-				event:'unfocus',
-			},
-			style: {classes: 'ui-tooltip-light ui-tooltip-shadow previewPopup', width: 850} ,
-			overwrite: true
-		});
 	});
 }
 
@@ -173,10 +126,6 @@ $(document).on('click', 'a.suggestor_paging',function(e){
 function formatConnectionTip(tt){
 	var tooltip = $('#ui-tooltip-'+tt.id+'-content');
 	bindPaginationConnection(tooltip);
-
-	function openConnection($scope){
-		$scope.text = 'HEREE';
-	}
 }
 
 function bindPaginationConnection(tt){

@@ -324,6 +324,10 @@ class View extends MX_Controller {
 		}
 	}
 
+	/**
+	 * DEPRECATED in favour of new connections revamp
+	 * @return view
+	 */
 	function getConnections(){
 		$this->load->model('registry_fetch','registry');
 		$limit = 10;
@@ -349,11 +353,6 @@ class View extends MX_Controller {
 		$data['connections_contents'] = $connections[0];
 		$this->load->view('connections_all', $data);
 	}
-
-	function getConnectionsOther(){
-		$this->load->view('connections_layout');
-	}
-
 
 	function getSuggestedLinks($suggestor, $start, $rows)
 	{
