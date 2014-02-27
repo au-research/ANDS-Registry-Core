@@ -56,25 +56,24 @@ function oauth_getUser(){
 	$CI->load->library('HybridAuthLib');
 	try {
 		$connected = oauth_getConnectedService();
+		if(!$connected) return false;
 		$access_token = oauth_getAccessToken($connected);
+		if(!$access_token) return false;
 
 		// $service = $CI->hybridauthlib->getAdapter($connected[0]);
 		$db = $CI->load->database('portal', TRUE);
 		$query = $db->get_where('users', array('provider'=>$connected, 'access_token'=>$access_token));
-		$profile = $query->first_row();
 
+		if($query->num_rows()==0) return false;
+
+		$profile = $query->first_row();
 		$data = array(
 			'service' => $connected,
 			'profile' =>json_decode($profile->profile)
 		);
 		return $data;
 	} catch (Exception $e){
-
-		if (isset($service)){
-			$service->logout();
-		}
-
-		return $error;
+		return false;
 	}
 	
 	
