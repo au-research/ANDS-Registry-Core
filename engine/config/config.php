@@ -80,7 +80,10 @@ $application_directives = array(
 			array(
 				"base_url" => "%%BASEURL%%/apps/",
 				"active_application" => "apps",
-				"default_controller" => "uploader/index"
+				"default_controller" => "uploader/index",
+				"routes" => array(
+                     "mydois/([a-z]+)\.([a-z]+)" => "mydois/$1",
+              	),
 			),
 	"roles" =>
 			array(
