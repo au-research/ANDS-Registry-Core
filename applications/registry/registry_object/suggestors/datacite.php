@@ -34,7 +34,7 @@ class Suggestor_datacite implements GenericSuggestor
 
 		$url = self::DATACITE_SOLR_URL;
 		$urlTail = '&defType=disMax';
-		$urlTail = 'fq=language_facet%3A"English"'; // only English
+		$urlTail = '&fq=language_facet%3A"English"'; // only English
 		$urlTail .= '&qf=resourceTypeGeneral:("Collection","Dataset")^9999';
 		$urlTail .= '%20+resourceTypeGeneral:("Film","Image","Sound","PhysicalObject","InteractiveResource")^5555';
 		$urlTail .= '%20+resourceTypeGeneral:("Model","Software","Service")^1777';
