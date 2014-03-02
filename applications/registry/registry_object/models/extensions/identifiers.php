@@ -64,6 +64,49 @@ class Identifiers_Extension extends ExtensionBase
 		return $matching_records;
 		// echo $solr_query;
 	}
+
+	/**
+	 * SOLR. Find registry objects that share the same identifier
+	 * @return array registry_object_id
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 */
+	public function findMatchingRecords(){
+		$sxml = $this->ro->getSimpleXML();	
+		$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);	
+		$identifiers = array();
+		foreach($sxml->xpath('//ro:'.$this->ro->class.'/ro:identifier') AS $identifier) {
+			if((string)$identifier != '') {
+				$identifiers[] = (string) $identifier;
+			}
+		}
+
+		$matching_records = array();
+		if(sizeof($identifiers) > 0){
+			foreach($identifiers as $i){
+				$solr_query = implode('") OR identifier_value:("', $identifiers);
+			}
+			$solr_query = '(identifier_value:("'.$solr_query.'")) AND -id:'.$this->ro->id. ' AND class:party' ;
+
+			$this->_CI->load->library('solr');
+			$this->_CI->solr->setOpt('q', $solr_query);
+			$this->_CI->solr->setOpt('fl', '*');
+			$result = $this->_CI->solr->executeSearch(true);
+			
+			if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0){
+				foreach($result['response']['docs'] as $d){
+					$matching_records[] = array(
+						'id' => $d['id'],
+						'title' => $d['title'],
+						'slug' => $d['slug'],
+						'description' => $d['description'],
+						'data_source_key' => $d['data_source_key'],
+						'group' => $d['group']
+					);
+				}
+			}
+		}
+		return $matching_records;
+	}
 	
 }
 	

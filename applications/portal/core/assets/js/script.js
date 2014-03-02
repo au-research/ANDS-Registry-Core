@@ -242,13 +242,6 @@ function validateEmail(email)
 
     
 }
-	function getURLParameter(name) 
-	{
-	    return unescape(
-	        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
-	    );
-	}
-
 	function recurseGetText() { 
 		if (this.nodeType == 3)
 		{
@@ -426,4 +419,18 @@ function ellipsis (string, length){
 		// return trimmedString + '<span class="showmore_excerpt"><br /><a href="javascript:void(0);">More &hellip;</a></span>';
 		return trimmedString;
 	}
+}
+
+// These helpers have dependencies outside of document.ready state, so declare them here instead.
+function getURLParameter(name) 
+{
+    return unescape(
+        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+    );
+}
+
+// Check whether parameter is present in URL (including non-value params, i.e. ?isAlive&foo=bar)
+function checkURLParameterExists(name)
+{
+	return (RegExp('(^|\\\\?|&)' + name + '(=.*?|&|$)').exec(location.search))
 }
