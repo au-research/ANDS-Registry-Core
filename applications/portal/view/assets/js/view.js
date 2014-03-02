@@ -22,6 +22,7 @@ drawMap();
 initConnections(); 
 initAddTagForm();
 initLinkedRecords();
+initThemePageLinks();
 
 // If we're a collection, then hit DataCite for SeeAlso
 if ( $('#class', metadataContainer).html() == "Collection" )
@@ -114,60 +115,7 @@ function initConnections(){
 		}else if($('a', this).attr('draft_id')!=''){
 			generatePreviewTip($(this), null, $('a',this).attr('draft_id'), $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'), null);
 			$('a', this).prepend(draftText);
-
 		}
-
-	});
-
-	$('.view_all_connection').live('click', function(){
-		var slug = $(this).attr('ro_slug');
-		var id = $(this).attr('ro_id');
-		var relation_type = $(this).attr('relation_type');
-		var page = (typeof $(this).attr('page') != 'undefined' ? $(this).attr('page') : 1);
-		if(slug != '')
-			var url = base_url+'view/getConnections/?page='+page+'&slug='+slug+'&relation_type='+relation_type;
-		if(typeof id != 'undefined' && id != '')
-			var url = base_url+'view/getConnections/?page='+page+'&id='+id+'&relation_type='+relation_type;
-
-		$(this).qtip({
-			content: {
-				text: loading_icon,
-				title: {
-					text: 'Connections',
-					button: 'Close'
-				},
-				ajax: {
-					url: url,
-					type: 'POST',
-					data: {ro_id: $(this).attr('ro_id')},
-					loading:true,
-					success: function(data, status) {
-						
-						// Clean up any HTML rubbish...                   
-						var temp = $('<span/>');
-						temp.html(data);
-						$("div.descriptions", temp).html($("div.descriptions", temp).text());
-						$("div.descriptions", temp).html($("div.descriptions", temp).directText());
-
-						this.set('content.text', temp.html());    
-
-						formatConnectionTip(this);
-					}
-				}
-			},
-			position: {viewport: $(window),my: 'right center',at: 'left center'},
-			show: {
-				event: 'click',
-				ready: true,
-				solo: true
-			},
-			hide: {
-				fixed:true,
-				event:'unfocus',
-			},
-			style: {classes: 'ui-tooltip-light ui-tooltip-shadow previewPopup', width: 600} ,
-			overwrite: false
-		});
 	});
 }
 
@@ -904,6 +852,7 @@ function initAddTagForm(){
 	}
 }
 
+
 function initLinkedRecords(){
 	var num = $('#matching_identifier_count').text();
 	var num = parseInt(num);
@@ -971,6 +920,23 @@ function initLinkedRecords(){
 			});
 		});
 	}
+}
+
+function initThemePageLinks(){
+
+	$('.theme_page').each(function(){
+		var slug = $(this).attr('slug');
+		var this_div = $(this);
+		$.ajax({
+			url:base_url+ "theme_page/getThemePageBanner/"+slug,
+			success: function(data){
+				console.log(data);
+				this_div.html(data);
+			}
+		});
+	});
+
+
 }
 
 function sync(){

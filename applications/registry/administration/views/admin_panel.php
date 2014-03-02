@@ -62,7 +62,7 @@
 
 					<? if mod_enabled('doi_test'): ?>
 					<p>
-						<a href="<?=base_url('administration/doi_test');?>" alt="DOI test">
+						<a href="<?=apps_url('test_suite/doi_test');?>" alt="DOI test">
 							Test DOI Functions
 						</a>
 					</p>

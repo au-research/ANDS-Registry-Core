@@ -888,18 +888,6 @@ function validateEmail(email)
 
     
 }
-	function getURLParameter(name) 
-	{
-	    return unescape(
-	        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
-	    );
-	}
-
-	function checkURLParameterExists(name)
-	{
-		return (RegExp('(^|\?|&)' + name + '(=.*?|&|$)').exec(location.search))
-	}
-
 	function recurseGetText() { 
 		if (this.nodeType == 3)
 		{

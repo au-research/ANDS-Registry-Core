@@ -46,16 +46,7 @@ span.darkgrey
 	}
 }
 
-.login_st{
-	margin-left:14px;
-	color:#3f3f3f;
-	font-weight:bold;
-	font-size:0.8em;
-	background:$ands_lite_green;
-	&.exped{
-		color:#f4f5f6;
-	}
-}
+
 
 div.login_banner{
 	width:100%;
@@ -141,6 +132,24 @@ div.linkrecords{
 		}
 	}
 }
+div.theme_page_banner{
+	border:1px solid #ccc;
+	margin-bottom:5px;
+	overflow:hidden;
+	height:27px;
+	div.img_slot{
+		width:50px;
+		float:right;
+		overflow:hidden;
+	}
+	div.theme_page_header{
+		padding:0px 10px;
+		h4 a{
+			font-size:13px;
+		}
+	}
+}
+
 
 img.linked_records{
 	cursor:pointer;
@@ -184,5 +193,99 @@ ul.linkedrecords-list{
 	}
 	li + li{
 		border-top:1px solid #ccc;
+	}
+}
+
+.form-field{
+	display:none;
+}
+
+.login_st{
+	cursor:pointer;
+	.social_profile_pic{
+		margin-top:-5px;
+		margin-left:10px;
+		height:42px;
+		max-width:42px;
+	}
+}
+
+.portal-icon{
+	display:inline-block;
+	width:16px;
+	height:16px;
+	background-image:transparent;
+	background-size:16px 16px;
+	background-repeat:no-repeat;
+}
+
+.portal-icon-delete{
+	background-image: url('images/delete.png');
+}
+.portal-icon-collection {background-image: url('images/collection.png');}
+.portal-icon-activity {background-image: url('images/activity.png');}
+.portal-icon-service {background-image: url('images/service.png');}
+.portal-icon-party {background-image: url('images/party.png');}
+
+.connections_layout_container{
+	background:white;
+	border:1px solid #ccc;
+	div.connections_layout_facet{
+		float:left;
+		width:35%;
+		padding:0 15px;
+		border-left:1px solid #ccc;
+		max-height:620px;
+		overflow:auto;
+		ul{
+			li{
+				list-style-type:none;
+				padding:4px 0;
+				a{
+					color:$ands_green;
+
+					&:hover{
+						color:$ands_orange;
+					}
+				}
+			}
+		}
+	}
+	div.connections_layout_right{
+		float:left;
+		width:65%;
+		padding:0 10px;
+		div.connections_layout_result{
+			position:relative;
+			padding:10px;
+			max-height:620px;
+			overflow:auto;
+			.ro_preview{
+				width:100%;
+				margin-left:0;
+				.ro_preview_header .title{
+					margin-left:0;
+				}
+				.ro_preview_description{
+					font-size:13px;
+					.ro_preview_footer a{
+						color:$ands_green;
+					}
+				}
+				.relations{
+					color:$ands_lite_green;
+					padding:0 5px;
+				}
+			}
+			a.load_more{
+				background:#eee;
+				font-weight:bold;
+				color:$ands_green;
+				text-align:center;
+				width:100%;
+				padding:15px;
+				display:block;
+			}
+		}
 	}
 }

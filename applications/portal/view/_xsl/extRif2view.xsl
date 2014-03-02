@@ -496,7 +496,7 @@
     or ro:rights or ro:location/ro:address/ro:electronic/@type='email' or ro:location/ro:address/ro:physical">     
     <div class="right-box">
         
-        
+        <xsl:apply-templates select="//extRif:theme_page"/>
 
         <h2>Access</h2>
         <div class="limitHeight300">
@@ -617,6 +617,12 @@
         </div>
     </xsl:if>  
 </xsl:template> 
+
+<xsl:template match="extRif:theme_page">
+  <div class="theme_page">
+    <xsl:attribute name="slug"><xsl:value-of select="."/></xsl:attribute>
+  </div>
+</xsl:template>
 
 <xsl:template match="ro:name[@type='alternative']">   
     <p class="alt_displayTitle">Also known as: <xsl:apply-templates/></p>

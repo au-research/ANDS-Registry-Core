@@ -1,0 +1,1 @@
+ALTER TABLE `dbs_dois`.`activity_log` CHANGE COLUMN `message` `message`  TEXT;

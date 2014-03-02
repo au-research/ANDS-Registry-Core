@@ -123,9 +123,10 @@ function executeSearch(searchData, searchUrl){
 			data: {filters:searchData},
 			dataType:'json',
 			success: function(data){
-				// $.each(data.result.docs, function(){
-					// log(this.display_title, this.score, this.id);
-				// });
+				/*$.each(data.result.docs, function(){
+					log(this.display_title, this.score, this.id);
+				});
+				log("---------------")*/
 
 				var numFound = data.result.numFound;
 			    var numReturned = data.result.docs.length;
@@ -389,7 +390,7 @@ function loadSubjectBrowse(val){
 function initSearchPage(){
 	getTopLevelFacet();
 
-	if(urchin_id!='' && searchData['q']!=''){
+	if(urchin_id!='' && searchData['q']!='' && searchData['q'] && searchData['q']!==undefined){
 		var pageTracker = _gat._getTracker(urchin_id);
 		pageTracker._initData(); 
 		pageTracker._trackPageview('/search_results.php?q='+searchData['q']); 
@@ -658,6 +659,10 @@ function postSearch(){
 
 	if(searchData['s_subject_value_resolved']){
 		addDeleteFacet('s_subject_value_resolved', searchData['s_subject_value_resolved']);
+	}
+
+	if(searchData['tag']){
+		addDeleteFacet('tag', searchData['tag']);
 	}
 
 	if(searchData['subject_vocab_uri']){

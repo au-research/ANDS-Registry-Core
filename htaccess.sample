@@ -5,6 +5,12 @@ RewriteBase /
 
 RewriteRule ^services/ registry/ [R=301,L]
 
+# ANDS-specific deploy rules (not needed in third-party deployment)
+# RewriteRule ^apps/mydois/doi_(.*?)\.php apps/mydois/$1 [R=301,L,QSA]
+# RewriteRule ^registry/orca/services/oai\.php registry/services/oai [R=301,L,QSA]
+
+
+
 RewriteCond $1 ^(css|img|js|less|lib|uploads|shared)
 RewriteRule ^assets/(.*?)/(.*)$ assets/$1/$2 [L]
 RewriteRule ^assets/(.*?)/(.*)$ applications/portal/$1/assets/$2 [L]

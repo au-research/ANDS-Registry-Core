@@ -124,6 +124,21 @@ $(function(){
         }
     });
 
+    $('.theme_tag_form').submit(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var ro_key = $(this).attr('ro_key');
+        var tag = $('select#secret_tag').val();
+        $.ajax({
+           url:real_base_url+'registry/services/registry/tags/keys/add', 
+           type: 'POST',
+           data: {keys:[ro_key],tag:tag, tag_type:'secret'},
+           success: function(data){
+               location.reload();
+           }
+        });
+    });
+
     $(document).on('click', '.tags .btn-remove', function(){
         var tag = $(this).parent().attr('tag');
         var ro_key = $(this).parent().attr('ro_key');
@@ -133,7 +148,7 @@ $(function(){
             type: 'POST',
             data: {keys:[ro_key],tag:tag},
             success: function(data){
-                li_item.remove();
+                location.reload();
             }
         });
     }).on('click', '.tag_type_choose', function(e){

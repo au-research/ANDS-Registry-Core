@@ -1,5 +1,4 @@
 <?php
-
 class Extrif_Extension extends ExtensionBase
 {
 	function __construct($ro_pointer)
@@ -59,9 +58,13 @@ class Extrif_Extension extends ExtensionBase
 					throw new Exception ('iconv installation/configuration required for simplified title');
 				}
 
+				$is_contributor_page = false;
 				if($contributor)
 				{
 					$extendedMetadata->addChild("extRif:contributor", str_replace('&', '&amp;' , $contributor[0]), EXTRIF_NAMESPACE);
+
+					// also mark whether this is a contributor page (used for boosting later)
+					if ($contributor[0] == $this->ro->slug) { $is_contributor_page = true; }
 				}
 				$theDescription = '';
 				$theDescriptionType = '';
@@ -176,7 +179,7 @@ class Extrif_Extension extends ExtensionBase
 				// XXX: TODO: Search base score, displayLogo
 				//$extendedMetadata->addChild("extRif:searchBaseScore", 100, EXTRIF_NAMESPACE);
 				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
-				
+
 				//We only use matching identifier count for party records
 				if($this->ro->class == PARTY){
 					$extendedMetadata->addChild("extRif:matching_identifier_count", sizeof($this->ro->findMatchingRecords()), EXTRIF_NAMESPACE);
@@ -199,6 +202,13 @@ class Extrif_Extension extends ExtensionBase
 					foreach($tags as $tag){
 						$tag_tag = $extRifTags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
 						$tag_tag->addAttribute('type', $tag['type']);
+					}
+				}
+
+				//Theme Page stuff
+				if($own_themepages = $this->ro->getThemePages()){
+					foreach($own_themepages as $t){
+						$extendedMetadata->addChild("extRif:theme_page", $t['slug'], EXTRIF_NAMESPACE);
 					}
 				}
 				
@@ -244,7 +254,8 @@ class Extrif_Extension extends ExtensionBase
 				
 				/*if($this->ro->getAttribute('group') == 'National Health and Medical Research Council')
 				{*/
-					foreach ($this->ro->getAllRelatedObjects() AS $relatedObject)
+					$allRelatedObjects = $this->ro->getAllRelatedObjects();
+					foreach ($allRelatedObjects AS $relatedObject)
 					{
 					//var_dump($relatedObject);
 						$relatedObj = $extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
@@ -283,6 +294,19 @@ class Extrif_Extension extends ExtensionBase
 				// Friendlify dates =)
 				$xml = $this->ro->extractDatesForDisplay($xml);
 
+
+				/* 
+				Add some logic to boost highly connected records & contributor pages
+				*/
+				if($is_contributor_page)
+				{
+					$this->ro->search_boost = SEARCH_BOOST_CONTRIBUTOR_PAGE;
+				}
+				elseif (count($allRelatedObjects) > 0)
+				{
+					// Give credit to "highly connected" records (but limit to 10)
+					$this->ro->search_boost = min(pow(SEARCH_BOOST_PER_RELATION_EXP,count($allRelatedObjects)), SEARCH_BOOST_RELATION_MAX);
+				}
 
 				/* Names EXTRIF */
 				//$descriptions = $xml->xpath('//'.$this->ro->class.'/description');
