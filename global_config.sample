@@ -194,6 +194,11 @@ $ENV['twitter_oauth_access_token'] = '';
 $ENV['twitter_oauth_access_secret'] = '';
 */
 
+//
+// DOI LINK CHECKER VARIABLES
+$ENV['PYTHON_BIN'] = ""; // will have to point to a python 3.3 or later version
+$ENV['DOI_LINK_CHECKER_SCRPT'] = "<full_path_to_doi_link_checker.py>";
+
 //OAUTH Configuration
 $ENV['oauth_config'] =
 	array(
