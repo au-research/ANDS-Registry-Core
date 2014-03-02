@@ -146,6 +146,25 @@ img.linked_records{
 	cursor:pointer;
 }
 
+.linked_record_tooltip_title{
+	font-weight:bold;
+}
+
+/* qTip popup in lightcream */
+.ui-tooltip-lightcream
+{
+	background-color:rgba(252, 249, 216, 0.60);
+	border-color:#E0DBA3;
+	border-width:1px !important;
+
+	.ui-tooltip-content 
+	{
+		width: 100%;
+		text-align:center;
+	}
+}
+
+
 ul.linkedrecords-list{
 	li{
 		padding:10px 0;
@@ -157,6 +176,9 @@ ul.linkedrecords-list{
 			&:hover span {
 				color:#454545;
 			}
+		}
+		&:hover {
+			background-color:rgba(252, 249, 216, 0.30);
 		}
 		
 	}

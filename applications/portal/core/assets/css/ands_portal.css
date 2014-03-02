@@ -158,20 +158,42 @@ img.linked_records {
   cursor: pointer;
 }
 
-/* line 150, ../sass/ands_portal.scss */
+/* line 149, ../sass/ands_portal.scss */
+.linked_record_tooltip_title {
+  font-weight: bold;
+}
+
+/* qTip popup in lightcream */
+/* line 155, ../sass/ands_portal.scss */
+.ui-tooltip-lightcream {
+  background-color: rgba(252, 249, 216, 0.6);
+  border-color: #E0DBA3;
+  border-width: 1px !important;
+}
+/* line 161, ../sass/ands_portal.scss */
+.ui-tooltip-lightcream .ui-tooltip-content {
+  width: 100%;
+  text-align: center;
+}
+
+/* line 169, ../sass/ands_portal.scss */
 ul.linkedrecords-list li {
   padding: 10px 0;
 }
-/* line 153, ../sass/ands_portal.scss */
+/* line 172, ../sass/ands_portal.scss */
 ul.linkedrecords-list li a span {
   display: block;
   color: #454545;
 }
-/* line 157, ../sass/ands_portal.scss */
+/* line 176, ../sass/ands_portal.scss */
 ul.linkedrecords-list li a:hover span {
   color: #454545;
 }
-/* line 163, ../sass/ands_portal.scss */
+/* line 180, ../sass/ands_portal.scss */
+ul.linkedrecords-list li:hover {
+  background-color: rgba(252, 249, 216, 0.3);
+}
+/* line 185, ../sass/ands_portal.scss */
 ul.linkedrecords-list li + li {
   border-top: 1px solid #ccc;
 }

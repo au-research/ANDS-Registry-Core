@@ -908,25 +908,36 @@ function initLinkedRecords(){
 	var num = $('#matching_identifier_count').text();
 	var num = parseInt(num);
 	if(num > 0){
-		var text = '';
-		if(num==1) {
-			text = 'Also described in 1 other record';
-		}else {
-			text = 'Also described in '+ num + ' other records';
-		}
+		// Show the linked_records caret in group string on RDA
 		$('.linked_records').show();
-		$('.linked_records').qtip({
-			content: text,
-			show: {
-				event: 'mouseover',
-				ready: true
-			},
-			hide: 'mouseout',
-			position: {viewport: $(window),my: 'bottom center',at: 'top center'},
-			style: {
-				width:200
+
+		// If URL param "fl" exists, then we came here from a linked records drop-down
+		// in which case we don't show the tooltip again
+		if (!checkURLParameterExists('fl'))
+		{
+			var text = '';
+			if(num==1) {
+				text = 'May also be described in another record';
+			}else {
+				text = 'Also described in '+ num + ' other records';
 			}
-		});
+			$('.linked_records').qtip({
+				content: text,
+				show: {
+					event: 'mouseover',
+					ready: true
+				},
+				hide: 'mouseout',
+				position: {viewport: $(window),my: 'bottom center',at: 'top center'},
+				style: {
+					classes: 'ui-tooltip-lightcream',
+					def: 'false',
+					width:250
+				},
+			});
+		}
+
+		// When clicked, the caret shows a dropdown of other linked records
 		$('.linked_records').click(function(){
 			$(this).qtip({
 				content: {
@@ -938,10 +949,10 @@ function initLinkedRecords(){
 						success: function(data){
 							data = JSON.parse(data);
 							var ro_class = $('#class').text();
-							var msg ='<div>This '+ro_class+' may also be described in</div>';
+							var msg ='<div class="linked_record_tooltip_title">This '+ro_class.toLowerCase()+' may also be described in:</div>';
 							msg += '<ul class="linkedrecords-list">';
 							$.each(data.content, function(){
-								msg +='<li><a href="'+base_url+this.slug+'">'+this.title+' <span>Contributed by '+this.group+'</span> </a></li>';
+								msg +='<a href="'+base_url+this.slug+'?fl"><li>'+this.title+'<br/><span class="grey">Contributed by '+this.group+'</span></li></a>';
 							});
 							this.set('content.text', msg);
 
