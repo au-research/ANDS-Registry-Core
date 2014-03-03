@@ -16,7 +16,7 @@ class Suggestor_datacite implements GenericSuggestor
 	{
 		$CI =& get_instance();	
 		$q = preg_replace("/[^A-Za-z0-9\- ]/", ' ',$registry_object->titleWithoutCommonWords()); // preg_replace("/[^A-Za-z0-9 ]/", ' ', 
-		$significantsArray = $registry_object->brakeTitleToSignificants(strtolower($q));
+		$significantsArray = $registry_object->splitTitleBySignificance(strtolower($q));
 		$q=rawurlencode($q);
 		$q=str_replace("%5C%22", "\"", $q);//silly encoding
 

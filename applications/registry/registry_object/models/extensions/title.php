@@ -200,7 +200,7 @@ based on their frequency in the description
 a list of significants and non-significant words from the registry would be needed rather than relying on someone's skill on writing a description
 */
 
-	function brakeTitleToSignificants($title)
+	function splitTitleBySignificance($title)
 	{
 		$titleArray = explode(' ', $title);
 		$rankArray = array();
