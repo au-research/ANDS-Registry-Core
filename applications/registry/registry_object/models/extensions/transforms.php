@@ -22,7 +22,7 @@ class Transforms_Extension extends ExtensionBase
 			}
 
 			$dom = new DOMDocument();
-			$dom->loadXML(str_replace('&', '&amp;' , $this->ro->getExtRif()));
+			$dom->loadXML(str_replace('&', '&amp;' , utf8_encode($this->ro->getExtRif())));
 			if ($add_tags)
 			{
 				return "<add>" . $xslt_processor->transformToXML($dom) . "</add>";
