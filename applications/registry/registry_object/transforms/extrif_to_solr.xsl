@@ -34,7 +34,6 @@
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:dataSourceKey"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:status"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:logo"/>
-                <xsl:apply-templates select="extRif:extendedMetadata/extRif:matching_identifier_count"/>
                 <xsl:apply-templates select="ro:originatingSource"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:id"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:dataSourceID"/>
