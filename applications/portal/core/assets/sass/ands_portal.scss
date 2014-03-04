@@ -226,6 +226,8 @@ ul.linkedrecords-list{
 .portal-icon-activity {background-image: url('images/activity.png');}
 .portal-icon-service {background-image: url('images/service.png');}
 .portal-icon-party {background-image: url('images/party.png');}
+.portal-icon-info {background-image:url('images/info.png');}
+.portal-icon-caret {background-image:url('images/caret.png');}
 
 .connections_layout_container{
 	background:white;
@@ -288,4 +290,14 @@ ul.linkedrecords-list{
 			}
 		}
 	}
+}
+
+.user_tags a{
+	background: #c2e3f4;
+}
+
+.login_close{
+	float:right;
+	margin-right:200px;
+	color:#3f3f3f;
 }

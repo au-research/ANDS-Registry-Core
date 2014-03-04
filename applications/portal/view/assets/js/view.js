@@ -785,7 +785,7 @@ function initAddTagForm(){
 	var key = $('#key').text();
 	$('.login').click(function(e){
 		e.preventDefault();
-		$('.login_st').click();
+		$('.login_banner').slideDown();
 		$('html,body').animate({scrollTop:0},150);
 	});
 
