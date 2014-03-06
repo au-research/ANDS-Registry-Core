@@ -191,7 +191,7 @@ class Transforms_Extension extends ExtensionBase
 						$grant[0] = implode("\n", array_map('normaliseIdentifier', $grant_id));
 						if ((string) $grant[0] == "")
 						{
-							unset($grants[$i][0]);
+							unset($grants[0][0]);
 						}
 						elseif (is_array($related_party) && isset($related_party[0]))
 						{
@@ -208,6 +208,11 @@ class Transforms_Extension extends ExtensionBase
 				{
 					//unset($grants[0][0]);
 				}
+			}
+			$blankFundingInfoList = $sxml->xpath('//FundingInfo[not(FundingInfoList)]');
+			if (isset($blankFundingInfoList[0]))
+			{
+				unset($blankFundingInfoList[0][0]);
 			}
 
 
