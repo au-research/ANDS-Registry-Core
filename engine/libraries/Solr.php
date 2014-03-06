@@ -273,11 +273,7 @@ class Solr {
 		// map each of the user-supplied filters to it's corresponding SOLR parameter
 		foreach($filters as $key=>$value){
 			if(!is_array($value)){
-
-				$value = rawurldecode($value);
-				$findArray = array("&", "<", ">");
-				$replaceArray = array("&amp;", "&lt;", "&gt;");
-				$value = str_replace($findArray, $replaceArray, $value);
+				$value = $this->escapeInvalidXmlChars($value);
 			} 
 			switch($key){
 				case 'rq':
@@ -470,6 +466,20 @@ class Solr {
 		}
 
 		return $string;
+	}
+
+
+	/*
+	since we post xml to solr for indexing, all invalid characters are escaped by the xml serializer.
+	so to get a string match we must escape the search query as well.
+	*/
+
+	function escapeInvalidXmlChars($urlComp)
+	{
+		$findArray = array("&", "<", ">");
+		$replaceArray = array("&amp;", "&lt;", "&gt;");
+		$value = rawurldecode($urlComp);
+		return str_replace($findArray, $replaceArray, $value);
 	}
 
 	/**
