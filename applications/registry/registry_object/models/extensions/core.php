@@ -188,8 +188,6 @@ class Core_extension extends ExtensionBase
 		{
 			$this->db->where("registry_object_id", $this->id)->update("registry_objects", $update_batch['core']['update']);
 		}
-
-
 		if (count($update_batch['attr']['update']))
 		{
 			$this->db->where("registry_object_id", $this->id)->update_batch("registry_object_attributes", $update_batch['attr']['update'], 'attribute');
