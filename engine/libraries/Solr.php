@@ -273,9 +273,10 @@ class Solr {
 		// map each of the user-supplied filters to it's corresponding SOLR parameter
 		foreach($filters as $key=>$value){
 			if(!is_array($value)){
+
 				$value = rawurldecode($value);
-				$findArray = array("<",">");
-				$replaceArray = array("&lt;","&gt;");
+				$findArray = array("&", "<", ">");
+				$replaceArray = array("&amp;", "&lt;", "&gt;");
 				$value = str_replace($findArray, $replaceArray, $value);
 			} 
 			switch($key){
