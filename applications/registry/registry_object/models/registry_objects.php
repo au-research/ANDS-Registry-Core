@@ -216,6 +216,19 @@ class Registry_objects extends CI_Model {
 	 */
 	function getByID($id)
 	{
+		// Reduce number of DB calls by avoiding the pipeline
+		// trying to determine the ID (when it was explicitly specified)
+		try 
+		{
+			return new _registry_object($id);
+		}
+		catch (Exception $e)
+		{
+			echo $e;
+			return null;
+		}
+
+		/*
 		$results = $this->_get(array(array('args' => $id,
 						   'fn' => function($db,$id) {
 							   $db->select("registry_object_id")
@@ -226,6 +239,7 @@ class Registry_objects extends CI_Model {
 				       true,
 				       1);
 		return is_array($results) ? $results[0] : null;
+		*/
 	}
 
 

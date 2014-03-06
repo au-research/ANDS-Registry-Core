@@ -2,49 +2,50 @@
 
 class Core_extension extends ExtensionBase
 {
-	
+	// Map of this registry object's current attributes
 	public $attributes = array();		// An array of attributes for this Registry Object
 	
+	// Core attributes are stored in the registry_object table (whereas the other attributes require a join to _attributes)
+	private $core_attrs = array('data_source_id', 'registry_object_id', 'key', 'class', 'title', 'status', 'slug', 'record_owner');
+
+	// Some limits on attributes
 	const MAX_NAME_LEN = 32;
 	const MAX_VALUE_LEN = 255;
-	
+
 	function init($core_attributes_only = FALSE)
 	{
 		// Initialise the core attributes (these are the attributes from the 
 		// registry_objects table as opposed to others in _attributes)
-		$query = $this->db->get_where("registry_objects", array('registry_object_id' => $this->id));
+		$query = $this->db->join("`registry_objects` `ro`", 'ro.registry_object_id = ra.registry_object_id')
+							->get_where("`registry_object_attributes` `ra`", array('ra.registry_object_id' => $this->id));
 		
-		if ($query->num_rows() == 1)
+		if ($query->num_rows() > 0)
 		{
-			$core_attributes = $query->row();	
-			foreach($core_attributes AS $name => $value)
+			foreach ($query->result_array() AS $row)
 			{
-				// _initAttribute has no side-effects (as opposed to setAttribute 
-				// which marks the attribute as dirty)
-				$this->_initAttribute($name, $value, TRUE);
+				// If this is the first pass, initialise the core attributes
+				if (!$this->getAttribute('key'))
+				{
+					foreach($this->core_attrs AS $attribute_name)
+					{
+						$this->_initAttribute($attribute_name, $row[$attribute_name], TRUE);
+					}
+				}
+
+				if (!$core_attributes_only)
+				{
+					// _initAttribute has no side-effects (as opposed to setAttribute 
+					// which marks the attribute as dirty)
+					$this->_initAttribute($row['attribute'], $row['value']);
+				}
 			}
+			$query->free_result();
 		}
 		else 
 		{
 			throw new Exception("Unable to select Registry Object from database");
 		}
 			
-
-		// If we just want more than the core attributes
-		if (!$core_attributes_only)
-		{
-			// Lets get all the rest of the registry object attributes
-			$query = $this->db->get_where("registry_object_attributes", array('registry_object_id' => $this->id));
-			if ($query->num_rows() > 0)
-			{
-				foreach ($query->result() AS $row)
-				{
-					$this->_initAttribute($row->attribute, $row->value);
-				}		
-			}
-			$query->free_result();
-		}
-
 		// Store the status of the registry object when it was first retrieved so
 		// that we can determine whether it has changed when deciding whether to
 		// "upgrade" it from DRAFT to PUBLISHED
