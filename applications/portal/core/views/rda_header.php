@@ -85,7 +85,7 @@ else
 							echo '</a>';
 						}
 					} else {
-						echo '<a class="login_st" tip="Login"><img class="social_profile_pic" src="'.asset_url('images/social_login.png', 'core').'" /></a>';
+						echo '<a class="login_st" tip="Login to Research Data Australia"><img class="social_profile_pic" src="'.asset_url('images/social_login.png', 'core').'" /></a>';
 					}
 				}
 			?>
@@ -102,20 +102,21 @@ else
 				<?php if(config_item('oauth_config')): ?>
 				<?php if(!$logged_in): ?>
 
-				<div style="width:50%;padding:0 15px;float:left">
-					<p>By logging into Research Data Australia, you will have access to additional features including the ability to contribute to the Research Data Australia community by adding tags (keywords) to records.</p>
-					<p>ANDS will not supply or on sell any personal information obtained through your login and use of Research Data Australia. Data collected will only be used in the context of your logged in Research Data Australia session.</p>
+				<div style="width:50%;float:left;padding:0 15px;">
+					<p style="font-weight:normal;">By logging into Research Data Australia, you will have access to additional features including the ability to contribute to the Research Data Australia community by adding tags (keywords) to records.</p>
+					<p style="font-weight:normal;font-size:10px;">ANDS will not supply or on sell any personal information obtained through your login and use of Research Data Australia. Data collected will only be used in the context of your logged in Research Data Australia session.</p>
 				</div>
 				<div>
-				<h4>Login</h4>
 					<p><?php echo anchor('auth/login/Facebook/?redirect='.current_url(),'Login With Facebook', array('class'=>'zocial facebook')); ?></p>
 					<p><?php echo anchor('auth/login/Twitter/?redirect='.current_url(),'Login With Twitter', array('class'=>'zocial twitter')); ?></p>
 					<p><?php echo anchor('auth/login/Google/?redirect='.current_url(),'Login With Google', array('class'=>'zocial google')); ?></p>
 					<p><?php echo anchor('auth/login/LinkedIn/?redirect='.current_url(),'Login With LinkedIn', array('class'=>'zocial linkedin')); ?></p>
 				</div>
+				<div class="clearfix"></div>
+
 				<?php else: ?>
-				<p>Logged in as <b><?php echo $user['profile']->displayName; ?></b></p>
-				<p><?php echo anchor('auth/logout/?redirect='.current_url(),'Sign Out from '.$user['service'], array('class'=>'zocial '.strtolower($user['service']))); ?></p>
+					<p>Logged in as <b><?php echo $user['profile']->displayName; ?></b></p>
+					<p><?php echo anchor('auth/logout/?redirect='.current_url(),'Log Out from '.$user['service'], array('class'=>'zocial '.strtolower($user['service']))); ?></p>
 				<?php endif; ?>
 				<?php endif; ?>
 			</div>
