@@ -3,14 +3,15 @@
 class Core_extension extends ExtensionBase
 {
 	
-	public $attributes = array();		// An array of attributes for this Data Source
+	public $attributes = array();		// An array of attributes for this Registry Object
 	
 	const MAX_NAME_LEN = 32;
 	const MAX_VALUE_LEN = 255;
 	
 	function init($core_attributes_only = FALSE)
 	{
-		/* Initialise the "core" attributes */
+		// Initialise the core attributes (these are the attributes from the 
+		// registry_objects table as opposed to others in _attributes)
 		$query = $this->db->get_where("registry_objects", array('registry_object_id' => $this->id));
 		
 		if ($query->num_rows() == 1)
@@ -18,6 +19,8 @@ class Core_extension extends ExtensionBase
 			$core_attributes = $query->row();	
 			foreach($core_attributes AS $name => $value)
 			{
+				// _initAttribute has no side-effects (as opposed to setAttribute 
+				// which marks the attribute as dirty)
 				$this->_initAttribute($name, $value, TRUE);
 			}
 		}
@@ -26,6 +29,7 @@ class Core_extension extends ExtensionBase
 			throw new Exception("Unable to select Registry Object from database");
 		}
 			
+
 		// If we just want more than the core attributes
 		if (!$core_attributes_only)
 		{
@@ -40,6 +44,10 @@ class Core_extension extends ExtensionBase
 			}
 			$query->free_result();
 		}
+
+		// Store the status of the registry object when it was first retrieved so
+		// that we can determine whether it has changed when deciding whether to
+		// "upgrade" it from DRAFT to PUBLISHED
 		$this->_initAttribute("original_status", $this->attributes['status']->value);
 
 		return $this;
@@ -48,11 +56,7 @@ class Core_extension extends ExtensionBase
 	
 	function setAttribute($name, $value = NULL)
 	{
-		//if (strlen($name) > self::MAX_NAME_LEN || strlen($value) > self::MAX_VALUE_LEN)
-		//{
-		//	throw new Exception("Attribute name exceeds " . self::MAX_NAME_LEN . " chars or value exceeds " . self::MAX_VALUE_LEN . ". Attribute not set (NAME: ".$name." VALUE: ".$value.")"); 
-		//}
-	
+		// truncate attributes that are too long
 		if(strlen($value) > self::MAX_VALUE_LEN)
 			$value = substr($value, 0 ,self::MAX_VALUE_LEN);
 
@@ -116,13 +120,12 @@ class Core_extension extends ExtensionBase
 	
 	function save($change_updated = true)
 	{
-		// A status change triggers special business logic
-		//echo $this->getAttribute("status"). " " .$this->getAttribute("original_status") ;
+		// When saving, trigger special business logic if the record status changed
+
+		// If going from PUBLISHED to DRAFT, create a new draft clone
 		if($this->getAttribute("status") == 'DRAFT' && $this->getAttribute("original_status") == 'PUBLISHED')
 		{
-			//$this->_CI->load->model('registry_objects', 'ro');
 			$draftRecord = $this->_CI->ro->cloneToDraft($this->id);
-
 		}
 		else
 		{
@@ -137,14 +140,15 @@ class Core_extension extends ExtensionBase
 				$this->setAttribute("updated", time());
 			}
 			
+			// Perform the actual SQL updates in batches to improve performance impact of multiple queries
+			$update_batch = $this->_initUpdateBatchArray();
 			foreach($this->attributes AS $attribute)
 			{
 				if ($attribute->dirty)
 				{
 					if ($attribute->core)
-					{				
-						$this->db->where("registry_object_id", $this->id);
-						$this->db->update("registry_objects", array($attribute->name => $attribute->value));
+					{
+						$update_batch['core']['update'][$attribute->name] = $attribute->value;
 						$attribute->dirty = FALSE;						
 					}
 					else
@@ -153,29 +157,61 @@ class Core_extension extends ExtensionBase
 						{
 							if ($attribute->new)
 							{
-								$this->db->insert("registry_object_attributes", array("registry_object_id" => $this->id, "attribute" => $attribute->name, "value"=>$attribute->value));
+								$update_batch['attr']['insert'][] = array("registry_object_id" => $this->id, "attribute" => $attribute->name, "value"=>$attribute->value);
 								$attribute->dirty = FALSE;
 								$attribute->new = FALSE;
 							}
 							else
 							{
-								$this->db->where(array("registry_object_id" => $this->id, "attribute" => $attribute->name));
-								$this->db->update("registry_object_attributes", array("value"=>$attribute->value));
+								$update_batch['attr']['update'][] = array( "attribute" => $attribute->name, "value" => $attribute->value);
 								$attribute->dirty = FALSE;
 							}
 						}
 						else
 						{
-							$this->db->where(array("registry_object_id" => $this->id, "attribute" => $attribute->name));
-							$this->db->delete("registry_object_attributes");
+							$update_batch['attr']['delete'][] = $attribute->name;
 							unset($this->attributes[$attribute->name]);
 						}						
 					}
 				}
 			}
+			$this->_execBatchUpdateQueries($update_batch);
+
 		}
 		return $this;
 	}
+
+	// Execute updates as batch DB queries
+	function _execBatchUpdateQueries($update_batch)
+	{
+		if (count($update_batch['core']['update']))
+		{
+			$this->db->where("registry_object_id", $this->id)->update("registry_objects", $update_batch['core']['update']);
+		}
+
+
+		if (count($update_batch['attr']['update']))
+		{
+			$this->db->where("registry_object_id", $this->id)->update_batch("registry_object_attributes", $update_batch['attr']['update'], 'attribute');
+		}
+		if (count($update_batch['attr']['insert']))
+		{
+			$this->db->insert_batch("registry_object_attributes", $update_batch['attr']['insert']);
+		}
+		if (count($update_batch['attr']['delete']))
+		{
+			$this->db->where("registry_object_id", $this->id)->where_in('attribute', $update_batch['attr']['delete'])->delete('registry_object_attributes');
+		}
+	}
+
+	// Build the initial batch update array
+	function _initUpdateBatchArray()
+	{
+		return array(	'core' =>array('update'=>array()), 
+						'attr'=>array('insert'=>array(), 'update'=>array(), 'delete'=>array())
+		);
+	}
+
 
 	/* Handles the changing of status soas not to cause inconsistencies */
 	function handleStatusChange($target_status)
