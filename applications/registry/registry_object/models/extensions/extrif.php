@@ -322,6 +322,87 @@ class Extrif_Extension extends ExtensionBase
 			}
 		}
 	}
+
+	function updateExtRif(){
+		$this->_CI->load->model('data_source/data_sources','ds');
+
+		$options = array(
+			'single_values' => true,
+			'theme_pages' => false,
+			'tags' => true,
+			'subjects' => true
+		);
+
+		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
+
+		$extRif = $this->ro->getSimpleXML(null, true);
+		$namespaces = $extRif->getNameSpaces();
+		$extRifNameSpace = $namespaces['extRif'];
+
+		$ext = $extRif->children($extRifNameSpace);
+
+		if ($options['single_values']) {
+			$ext->extendedMetadata->slug = $this->ro->slug;
+			$ext->extendedMetadata->dataSourceKey = $ds->key;
+			$ext->extendedMetadata->status = $this->ro->status;
+			$ext->extendedMetadata->id = $this->ro->id;
+			$ext->extendedMetadata->dataSourceTitle = $ds->title;
+			$ext->extendedMetadata->dataSourceID = $this->ro->data_source_id;
+			$ext->extendedMetadata->updateTimestamp = $this->ro->updated;
+			$ext->extendedMetadata->displayTitle = str_replace('&', '&amp;' , $this->ro->title);
+			$ext->extendedMetadata->listTitle = str_replace('&', '&amp;' , $this->ro->list_title);
+			try{
+				$ext->extendedMetadata->simplifiedTitle = iconv('UTF-8', 'ASCII//TRANSLIT', str_replace('&', '&amp;' , $this->ro->list_title));
+			}catch(Exception $e){
+				throw new Exception ('iconv installation/configuration required for simplified title');
+			}
+
+			if($this->ro->class == PARTY){
+				$ext->extendedMetadata->matching_identifier_count = sizeof($this->ro->findMatchingRecords());
+			}
+		}
+
+		if ($options['theme_pages']) {
+			unset($ext->extendedMetadata->theme_page);
+			if($own_themepages = $this->ro->getThemePages()){
+				foreach($own_themepages as $t){
+					$ext->extendedMetadata->theme_page[] = $t['slug'];
+				}
+			}
+		}
+
+		if ($options['tags'] && count($ext->annotations->tags)>0) {
+			if ($tags = $this->ro->getTags()) {
+				unset($ext->annotations->tags);
+				$ext->annotations->addChild('tags');
+				foreach ($tags as $tag){
+					try {
+						$tag_tag = $ext->annotations->tags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
+						$tag_tag->addAttribute('type', $tag['type']);
+					} catch (Exception $e){
+						throw new Exception($e);
+					}
+
+				}
+			}
+		}
+
+		if ($options['subjects']) {
+			if($subjects = $this->ro->processSubjects());
+			unset($ext->extendedMetadata->subjects);
+			$ext->extendedMetadata->addChild('subjects');
+			foreach ($subjects AS $subject) {
+				$subject_node = $ext->extendedMetadata->subjects->addChild("extRif:subject", "", EXTRIF_NAMESPACE);
+				$subject_node->addChild("extRif:subject_value", $subject['value'], EXTRIF_NAMESPACE);
+				$subject_node->addChild("extRif:subject_type", $subject['type'], EXTRIF_NAMESPACE);
+				$subject_node->addChild("extRif:subject_resolved", $subject['resolved'], EXTRIF_NAMESPACE);
+				$subject_node->addChild("extRif:subject_uri", $subject['uri'], EXTRIF_NAMESPACE);
+			}
+		}
+
+		$this->ro->pruneExtrif();
+		$this->ro->updateXML($extRif->asXML(),TRUE,'extrif');
+	}
 	
 	function getLogoUrl($str)
 	{
