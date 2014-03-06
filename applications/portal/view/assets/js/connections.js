@@ -142,7 +142,7 @@ controller('openConnections', function($scope, searches){
 	 */
 	$scope.$watch('results.docs', function(){
 		var total_found = $('.ro_preview').length;
-		if($scope.numFound <= $scope.results.docs.length){
+		if($scope.results && $scope.results.docs && $scope.numFound <= $scope.results.docs.length){
 			$scope.done = true;
 		}
 	}, true);
