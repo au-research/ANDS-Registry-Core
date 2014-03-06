@@ -40,6 +40,11 @@ $('.subject_vocab_filter').click(function(e){
 	window.location = base_url+'search'+suffix+'subject_vocab_uri='+encodeURIComponent($(this).attr('vocab_uri'))+'/subject_vocab_uri_display='+encodeURIComponent($(this).text());
 });
 
+$('.subjectFilter').click(function(e){
+	e.preventDefault();
+	window.location = base_url+'search'+suffix+'s_subject_value_resolved='+encodeURIComponent($(this).attr('id'));
+});
+
 
 function initViewPage()
 {
