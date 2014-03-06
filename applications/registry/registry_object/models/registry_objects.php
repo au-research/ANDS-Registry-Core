@@ -120,7 +120,22 @@ class Registry_objects extends CI_Model {
 			$results = array();
 			foreach ($query->result_array() as $rec)
 			{
-				$results[] = $make_ro ? new _registry_object($rec["registry_object_id"]) : $rec;
+				if ($make_ro)
+				{
+					$cached_object_reference = RegistryObjectReferenceCache::getById($rec["registry_object_id"]);
+					if ($cached_object_reference)
+					{
+						$results[] = $cached_object_reference;
+					}
+					else
+					{
+						$results[] = RegistryObjectReferenceCache::fetchCacheReference(new _registry_object($rec["registry_object_id"]));
+					}
+				}
+				else
+				{
+					$results[] = $rec;
+				}
 			}
 		}
 		if ($query)
@@ -129,21 +144,6 @@ class Registry_objects extends CI_Model {
 		}
 		return $results;
 	}
-
-	
-	// **** DEPRECATED, use getPublishedByKey, etc *****
-	/*function getByKey($key)
-	{
-		$results =  $this->_get(array(array('args' => $key,
-						    'fn' => function($db,$key) {
-							    $db->select("registry_object_id")
-								    ->from("registry_objects")
-								    ->where("key", $key);
-							    return $db;
-						    })));
-		return is_array($results) ? $results : null;
-	}*/
-
 
 	/**
 	 * Returns exactly one PUBLISHED registry object by Key (or NULL)
@@ -220,11 +220,18 @@ class Registry_objects extends CI_Model {
 		// trying to determine the ID (when it was explicitly specified)
 		try 
 		{
-			return new _registry_object($id);
+			$cached_object_reference = RegistryObjectReferenceCache::getById($id);
+			if ($cached_object_reference)
+			{
+				return $cached_object_reference;
+			}
+			else
+			{
+				return RegistryObjectReferenceCache::fetchCacheReference(new _registry_object($id));
+			}
 		}
 		catch (Exception $e)
 		{
-			echo $e;
 			return null;
 		}
 
@@ -956,4 +963,45 @@ class Registry_objects extends CI_Model {
 		include_once("_registry_object.php");
 	}
 
+}
+
+/* Avoid hammering the database if the registry object
+   has been recently accessed from the database */
+class RegistryObjectReferenceCache {
+
+	static $cache_size = 150;
+	static $recent_ids = null;
+	static $registry_object_cache = array();
+	static $false = false;
+
+	function &getByID($id)
+	{
+		if (isset(self::$registry_object_cache[$id]))
+		{
+			return self::$registry_object_cache[$id];
+		}
+		else
+		{
+			return self::$false;
+		}
+	}
+
+	function fetchCacheReference(_registry_object $ro)
+	{
+		// First check the queue is initialised
+		if (!self::$recent_ids) { self::$recent_ids = new SplQueue(); }
+		// Add this RO to the queue
+		self::$recent_ids->enqueue($ro->id);
+
+		// If the cache is overflowing, purge the oldest
+		if (self::$recent_ids->count() > self::$cache_size)
+		{
+			$stale_id = self::$recent_ids->dequeue();
+			unset(self::$registry_object_cache[$stale_id]);
+		}
+
+		// Get the cache reference for this registry object
+		self::$registry_object_cache[$ro->id] = $ro;
+		return self::$registry_object_cache[$ro->id];
+	}
 }
