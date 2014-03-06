@@ -211,19 +211,19 @@ class Transforms_Extension extends ExtensionBase
 			}
 
 
-			/* Post-process the Citations element
+			// Post-process the Citations element
 			$citations = $sxml->xpath('//CitationList[@postproc="1"]');
 			foreach ($citations AS $i => $citations)
 			{
 				// Remove the "to-process" marker
 				unset($citations[$i]["postproc"]);
 
-				$role->ResearcherID[0] = implode("\n", array_map('normaliseIdentifier', $researcher_ids));
+				/*$role->ResearcherID[0] = implode("\n", array_map('normaliseIdentifier', $researcher_ids));
 				if ((string) $role->ResearcherID[0] == "")
 				{
 					unset($roles[$i]->ResearcherID[0]);
-				}
-			}*/
+				}*/
+			}
 
 
 			return trim(removeXMLDeclaration($sxml->asXML())) . NL;
