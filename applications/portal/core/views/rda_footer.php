@@ -47,7 +47,7 @@
 				<a href="<?=base_url('home/about');?>">Read more about us...</a>
 			</p>
 			<p class="small">ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program and the Education Investment Fund (EIF) Super Science Initiative.</p>
-			<a href="http://www.innovation.gov.au/" class="gov_logo"><img src="<?php echo asset_url('images/dept_ind_stacked.png', 'core');?>" alt="" /></a>
+			<a href="http://www.innovation.gov.au/" class="gov_logo"><img src="<?php echo asset_url('images/dept_white.png', 'core');?>" alt="" /></a>
 			<a href="http://www.ands.org.au/" class="footer_logo"><img src="<?php echo asset_url('images/footer_logo.jpg', 'core');?>" alt="" /></a>			
 		</div><!-- foot -->		
 	</div><!-- footer -->	
