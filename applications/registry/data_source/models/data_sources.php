@@ -14,7 +14,6 @@
  */
 
 class Data_sources extends CI_Model {
-		
 
 	/**
 	 * Returns exactly one data source by Key (or NULL)
@@ -24,6 +23,13 @@ class Data_sources extends CI_Model {
 	 */
 	function getByKey($key)
 	{
+		// Return cached _data_source object if the same key
+		$recent = DataSourceReferenceCache::getRecent();
+		if ($recent && $recent->key == $key)
+		{
+			return $recent;
+		}
+
 		$query = $this->db->select("data_source_id")->get_where('data_sources', array('key'=>$key));
 		if ($query->num_rows() == 0)
 		{
@@ -32,7 +38,8 @@ class Data_sources extends CI_Model {
 		else
 		{
 			$id = $query->result_array();
-			return new _data_source($id[0]['data_source_id']);
+			DataSourceReferenceCache::set(new _data_source($id[0]['data_source_id']));
+			return DataSourceReferenceCache::getRecent();
 		}
 	} 	
 	
@@ -44,6 +51,13 @@ class Data_sources extends CI_Model {
 	 */
 	function getByID($id, $as_object = true)
 	{
+		// Return cached _data_source object if the same ID (and we requested $as_object)
+		$recent = DataSourceReferenceCache::getRecent();
+		if ($as_object && $recent && $recent->id == $id)
+		{
+			return $recent;
+		}
+
 		$query = $this->db->select("*")->get_where('data_sources', array('data_source_id'=>$id));
 		if ($query->num_rows() == 0)
 		{
@@ -54,7 +68,8 @@ class Data_sources extends CI_Model {
 			$row = $query->result_array();
 			if ($as_object)
 			{
-				return new _data_source($row[0]['data_source_id']);
+				DataSourceReferenceCache::set(new _data_source($row[0]['data_source_id']));
+				return DataSourceReferenceCache::getRecent();
 			}
 			else
 			{
@@ -271,4 +286,20 @@ class Data_sources extends CI_Model {
 		require_once("_data_source.php");
 	}	
 		
+}
+
+/* Avoid hammering the database if the last accessed
+   data source object is the same as the current one */
+class DataSourceReferenceCache {
+	static $recent = NULL;
+
+	function &getRecent()
+	{
+		// force PHP to return an object reference
+		return self::$recent;
+	}
+	function set($data_source_obj)
+	{
+		self::$recent = $data_source_obj;
+	}
 }
