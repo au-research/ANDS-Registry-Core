@@ -43,6 +43,9 @@ else
 }
 ?>
 <body>
+	<?php if ($versionInfo = codeVersionInfo()):
+		echo '<div class="codeversion"><img src="'. asset_url('images/info.png','core').'" /> '.$versionInfo.'</div>';
+	endif; ?>
 	<div class="header" <?=$environment_header_style;?>>
 		<div class="head">
 			<div class="tagline">
