@@ -254,15 +254,15 @@ class Solr {
 		}
 
 		// Filter records that match the search terms (boost according to where the terms match)
-		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.1 fulltext~5^0.00001');
+		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.01 description_value^0.05 fulltext~5^0.00001');
 
 		// Amount of slop applied to phrases in the user's query string filter (1 = 1 word apart)
-		$this->setOpt('qs', '0');
+		$this->setOpt('qs', '1');
 
 		// Score boosting applied to phrases based on how many parts of the phrase match
-		$this->setOpt('pf', 'title_search^5');
-		$this->setOpt('pf2', 'title_search^20 description_value~5^3');
-		$this->setOpt('pf3', 'title_search^100 description_value~5^5');
+		$this->setOpt('pf', 'title_search^5 description_value^0.5');
+		$this->setOpt('pf2', 'title_search^20 description_value^5 description_value~5^3');
+		$this->setOpt('pf3', 'title_search^100 description_value^25 description_value~5^5');
 
 		// Default amount of "slop" on phrase queries (applied to pf, pf2, pf3 if not overriden by tilde)
 		$this->setOpt('ps', '2');
@@ -272,7 +272,9 @@ class Solr {
 
 		// map each of the user-supplied filters to it's corresponding SOLR parameter
 		foreach($filters as $key=>$value){
-			if(!is_array($value)) $value = rawurldecode($value);
+			if(!is_array($value)){
+				$value = $this->escapeInvalidXmlChars($value);
+			} 
 			switch($key){
 				case 'rq':
 					$this->clearOpt('defType');//returning to the default deftype
@@ -464,6 +466,20 @@ class Solr {
 		}
 
 		return $string;
+	}
+
+
+	/*
+	since we post xml to solr for indexing, all invalid characters are escaped by the xml serializer.
+	so to get a string match we must escape the search query as well.
+	*/
+
+	function escapeInvalidXmlChars($urlComp)
+	{
+		$findArray = array("&", "<", ">");
+		$replaceArray = array("&amp;", "&lt;", "&gt;");
+		$value = rawurldecode($urlComp);
+		return str_replace($findArray, $replaceArray, $value);
 	}
 
 	/**

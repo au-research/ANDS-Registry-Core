@@ -246,6 +246,13 @@
             <xsl:value-of select="."/>
         </xsl:element>
     </xsl:template>
+
+    <xsl:template match="extRif:matching_identifier_count">
+        <xsl:element name="field">
+            <xsl:attribute name="name">matching_identifier_count</xsl:attribute>
+            <xsl:value-of select="."/>
+        </xsl:element>
+    </xsl:template>
     
     <xsl:template match="extRif:searchBaseScore">
         <xsl:element name="field">

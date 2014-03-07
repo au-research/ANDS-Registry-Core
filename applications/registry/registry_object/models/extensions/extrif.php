@@ -179,7 +179,12 @@ class Extrif_Extension extends ExtensionBase
 				// XXX: TODO: Search base score, displayLogo
 				//$extendedMetadata->addChild("extRif:searchBaseScore", 100, EXTRIF_NAMESPACE);
 				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
-				
+
+				//We only use matching identifier count for party records
+				if($this->ro->class == PARTY){
+					$extendedMetadata->addChild("extRif:matching_identifier_count", sizeof($this->ro->findMatchingRecords()), EXTRIF_NAMESPACE);
+				}
+
 				//tags
 				//ANNOTATIONS
 				if($tags = $this->ro->getTags()){

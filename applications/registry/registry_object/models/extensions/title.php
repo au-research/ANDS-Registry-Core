@@ -156,20 +156,94 @@ class Title_Extension extends ExtensionBase
 	{
 		if ($this->ro->title)
 		{
-			/* From L Woods, 2010 */
-			$CommonWords = array (
-				' at ',
-				' the ',
-				' and ',
-				' of ',
-				' in ',
-				' is ',
-				' to ',
-				' a '
-			);
-
-			return str_replace($CommonWords, array_fill(0, count($CommonWords), ' '), $this->ro->title);
+			/* From Joel Benn, 2014 */
+			$title = strtolower(" ".$this->ro->title." ");
+			$CommonWords = array(' a ', ' about ', ' above ', ' above ', ' across ', ' after ', ' afterwards ',
+				' again ', ' against ', ' all ', ' almost ', ' alone ', ' along ', ' already ', ' also ', ' although ',
+				' always ', ' am ', ' among ', ' amongst ', ' amoungst ', ' amount”,  “an ', ' and ', ' another ', ' any ',
+				' anyhow ', ' anyone ', ' anything”,”anyway ', ' anywhere ', ' are ', ' around ', ' as ', ' at ', ' back ',
+				' be ', ' became ', ' because”,”become”,”becomes ', ' becoming ', ' been ', ' before ', ' beforehand ',
+				' behind ', ' being ', ' below ', ' beside ', ' besides ', ' between ', ' beyond ', ' bill ', ' both ',
+				' bottom ', ' but ', ' by ', ' call ', ' can ', ' cannot ', ' cant ', ' co ', ' con ', ' could ', ' couldnt ',
+				' cry ', ' de ', ' describe ', ' detail ', ' do ', ' done ', ' down ', ' due ', ' during ', ' each ', ' eg ',
+				' eight ', ' either ', ' eleven”,”else ', ' elsewhere ', ' empty ', ' enough ', ' etc ', ' even ', ' ever ',
+				' every ', ' everyone ', ' everything ', ' everywhere ', ' except ', ' few ', ' fifteen ', ' fify ', ' fill ',
+				' find ', ' fire ', ' first ', ' five ', ' for ', ' former ', ' formerly ', ' forty ', ' found ', ' four ',
+				' from ', ' front ', ' full ', ' further ', ' get ', ' give ', ' go ', ' had ', ' has ', ' hasnt ', ' have ',
+				' he ', ' hence ', ' her ', ' here ', ' hereafter ', ' hereby ', ' herein ', ' hereupon ', ' hers ', ' herself ',
+				' him ', ' himself ', ' his ', ' how ', ' however ', ' hundred ', ' ie ', ' if ', ' in ', ' inc ', ' indeed ', ' interest ',
+				' into ', ' is ', ' it ', ' its ', ' itself ', ' keep ', ' last ', ' latter ', ' latterly ', ' least ', ' less ', ' ltd ',
+				' made ', ' many ', ' may ', ' me ', ' meanwhile ', ' might ', ' mill ', ' mine ', ' more ', ' moreover ', ' most ',
+				' mostly ', ' move ', ' much ', ' must ', ' my ', ' myself ', ' name ', ' namely ', ' neither ', ' never ',
+				' nevertheless ', ' next ', ' nine ', ' no ', ' nobody ', ' none ', ' noone ', ' nor ', ' not ', ' nothing ',
+				' now ', ' nowhere ', ' of ', ' off ', ' often ', ' on ', ' once ', ' one ', ' only ', ' onto ', ' or ', ' other ',
+				' others ', ' otherwise ', ' our ', ' ours ', ' ourselves ', ' out ', ' over ', ' own”,”part ', ' per ', ' perhaps ',
+				' please ', ' put ', ' rather ', ' re ', ' same ', ' see ', ' seem ', ' seemed ', ' seeming ', ' seems ', ' serious ',
+				' several ', ' she ', ' should ', ' show ', ' side ', ' since ', ' sincere ', ' six ', ' sixty ', ' so ', ' some ',
+				' somehow ', ' someone ', ' something ', ' sometime ', ' sometimes ', ' somewhere ', ' still ', ' such ', ' system ',
+				' take ', ' ten ', ' than ', ' that ', ' the ', ' their ', ' them ', ' themselves ', ' then ', ' thence ', ' there ',
+				' thereafter ', ' thereby ', ' therefore ', ' therein ', ' thereupon ', ' these ', ' they ', ' thickv ', ' thin ',
+				' third ', ' this ', ' those ', ' though ', ' three ', ' through ', ' throughout ', ' thru ', ' thus ', ' to ',
+				' together ', ' too ', ' top ', ' toward ', ' towards ', ' twelve ', ' twenty ', ' two ', ' un ', ' under ',
+				' until ', ' up ', ' upon ', ' us ', ' very ', ' via ', ' was ', ' we ', ' well ', ' were ', ' what ',
+				' whatever ', ' when ', ' whence ', ' whenever ', ' where ', ' whereafter ', ' whereas ', ' whereby ',
+				' wherein ', ' whereupon ', ' wherever ', ' whether ', ' which ', ' while ', ' whither ', ' who ', ' whoever ',
+				' whole ', ' whom ', ' whose ', ' why ', ' will ', ' with ', ' within ', ' without ', ' would ', ' yet ', ' you ',
+				' your ', ' yours ', ' yourself ', ' yourselves ', ' the ', ' data ', ' record ');			
+		return str_replace($CommonWords, array_fill(0, count($CommonWords), ' '), $title);
 		}
+	}
+
+/*
+a very primitive way of braking up title into two list of words
+based on their frequency in the description
+a list of significants and non-significant words from the registry would be needed rather than relying on someone's skill on writing a description
+*/
+
+	function splitTitleBySignificance($title)
+	{
+		$titleArray = explode(' ', $title);
+		$rankArray = array();
+		$rankedQueryArray = array();
+		$desciption = $this->ro->getMetadata('the_description');
+		$minRank = 9999;
+		$maxRank = 0;
+
+		foreach($titleArray as $word)
+		{
+			if(strlen($word) > 2){
+				preg_match_all("/".$word."/i", $desciption, $foundArray);
+				
+				$rank = sizeof($foundArray[0]);
+				
+				if($minRank > $rank) 
+					$minRank = $rank;
+
+				if($maxRank < $rank) 
+					$maxRank = $rank;
+
+    			$rankArray[$word] = $rank;
+    		}
+		}
+
+		$mid = (($maxRank - $minRank +1) / 2);
+		foreach($rankArray as $word=>$rank)
+		{
+			if($mid >= $rank)
+			{
+				if(isset($rankedQueryArray[0]))
+					$rankedQueryArray[0] .= ',"'.$word.'"';
+				else
+					$rankedQueryArray[0] = '"'.$word.'"';
+			}				
+			else{
+				if(isset($rankedQueryArray[1]))
+					$rankedQueryArray[1] .= ',"'.$word.'"';
+				else
+					$rankedQueryArray[1] = '"'.$word.'"';
+			}
+		}
+		return $rankedQueryArray;
 	}
 		
 }

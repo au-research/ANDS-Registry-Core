@@ -21,6 +21,7 @@ initConnectionGraph();
 drawMap();
 initConnections(); 
 initAddTagForm();
+initLinkedRecords();
 initThemePageLinks();
 
 // If we're a collection, then hit DataCite for SeeAlso
@@ -37,6 +38,11 @@ if (!isPublished()) { $('#draft_status').removeClass("hide"); }
 $('.subject_vocab_filter').click(function(e){
 	e.preventDefault();
 	window.location = base_url+'search'+suffix+'subject_vocab_uri='+encodeURIComponent($(this).attr('vocab_uri'))+'/subject_vocab_uri_display='+encodeURIComponent($(this).text());
+});
+
+$('.subjectFilter').click(function(e){
+	e.preventDefault();
+	window.location = base_url+'search'+suffix+'s_subject_value_resolved='+encodeURIComponent($(this).attr('id'));
 });
 
 
@@ -784,7 +790,7 @@ function initAddTagForm(){
 	var key = $('#key').text();
 	$('.login').click(function(e){
 		e.preventDefault();
-		$('.login_st').click();
+		$('.login_banner').slideDown();
 		$('html,body').animate({scrollTop:0},150);
 	});
 
@@ -851,6 +857,76 @@ function initAddTagForm(){
 	}
 }
 
+
+function initLinkedRecords(){
+	var num = $('#matching_identifier_count').text();
+	var num = parseInt(num);
+	if(num > 0){
+		// Show the linked_records caret in group string on RDA
+		$('.linked_records').show();
+
+		// If URL param "fl" exists, then we came here from a linked records drop-down
+		// in which case we don't show the tooltip again
+		if (!checkURLParameterExists('fl'))
+		{
+			var text = '';
+			if(num==1) {
+				text = 'May also be described in another record';
+			}else {
+				text = 'Also described in '+ num + ' other records';
+			}
+			$('.linked_records').qtip({
+				content: text,
+				show: {
+					event: 'mouseover',
+					ready: true
+				},
+				hide: 'mouseout',
+				position: {viewport: $(window),my: 'bottom center',at: 'top center'},
+				style: {
+					classes: 'ui-tooltip-lightcream',
+					def: 'false',
+					width:250
+				},
+			});
+		}
+
+		// When clicked, the caret shows a dropdown of other linked records
+		$('.linked_records').click(function(){
+			$(this).qtip({
+				content: {
+					text: 'Loading...',
+					ajax: {
+						url: rda_service_url+'getMatchingRecordsOnIdentifiersByID/'+$('#registry_object_id').text(),
+						contentType:'json',
+						type: 'GET',
+						success: function(data){
+							data = JSON.parse(data);
+							var ro_class = $('#class').text();
+							var msg ='<div class="linked_record_tooltip_title">This '+ro_class.toLowerCase()+' may also be described in:</div>';
+							msg += '<ul class="linkedrecords-list">';
+							$.each(data.content, function(){
+								msg +='<a href="'+base_url+this.slug+'?fl"><li>'+this.title+'<br/><span class="grey">Contributed by '+this.group+'</span></li></a>';
+							});
+							this.set('content.text', msg);
+
+						}
+					}
+				},
+				show: {
+					event: 'click',
+					ready:true
+				},
+				hide: 'unfocus',
+				position: {viewport: $(window),my: 'top center',at: 'bottom center'},
+				style: {
+					classes: 'ui-tooltip-light ui-tooltip-shadow'
+				}
+			});
+		});
+	}
+}
+
 function initThemePageLinks(){
 
 	$('.theme_page').each(function(){
@@ -864,6 +940,7 @@ function initThemePageLinks(){
 			}
 		});
 	});
+
 
 }
 

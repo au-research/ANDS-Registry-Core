@@ -163,6 +163,10 @@ class Importer {
 				{
 					$payload = mb_convert_encoding($payload,"UTF-8"); 
 				}
+				else
+				{
+					die('php mbstring must be installed.');
+				}
 				$continueIngest = true;				
 				// Build a SimpleXML object from the converted data
 				// We will throw an exception here if the payload isn't well-formed XML (which, by now, it should be)

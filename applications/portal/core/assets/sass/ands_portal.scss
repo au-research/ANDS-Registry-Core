@@ -95,7 +95,6 @@ div.theme-page-item{
 		padding:10px;
 		width:504px;
 		position:relative;
-		background:white;
 		background:white !important;
 	}
 	button#tag_btn{
@@ -120,6 +119,18 @@ div.theme-page-item{
 	color:#ccc;
 }
 
+div.linkrecords{
+	margin:10px 10px 20px 40px;
+	font-size:13px;
+	div.linkrecords_container{
+		margin:5px 20px;
+		li{
+			span{
+				color:#999;
+			}
+		}
+	}
+}
 div.theme_page_banner{
 	border:1px solid #ccc;
 	margin-bottom:5px;
@@ -138,6 +149,52 @@ div.theme_page_banner{
 	}
 }
 
+
+img.linked_records{
+	cursor:pointer;
+}
+
+.linked_record_tooltip_title{
+	font-weight:bold;
+}
+
+/* qTip popup in lightcream */
+.ui-tooltip-lightcream
+{
+	background-color:rgba(252, 249, 216, 0.60);
+	border-color:#E0DBA3;
+	border-width:1px !important;
+
+	.ui-tooltip-content 
+	{
+		width: 100%;
+		text-align:center;
+	}
+}
+
+
+ul.linkedrecords-list{
+	li{
+		padding:10px 0;
+		a{
+			span{
+				display:block;
+				color:#454545;
+			}
+			&:hover span {
+				color:#454545;
+			}
+		}
+		&:hover {
+			background-color:rgba(252, 249, 216, 0.30);
+		}
+		
+	}
+	li + li{
+		border-top:1px solid #ccc;
+	}
+}
+
 .form-field{
 	display:none;
 }
@@ -149,6 +206,7 @@ div.theme_page_banner{
 		margin-left:10px;
 		height:42px;
 		max-width:42px;
+        border:2px solid $ands_green;
 	}
 }
 
@@ -168,6 +226,8 @@ div.theme_page_banner{
 .portal-icon-activity {background-image: url('images/activity.png');}
 .portal-icon-service {background-image: url('images/service.png');}
 .portal-icon-party {background-image: url('images/party.png');}
+.portal-icon-info {background-image:url('images/info.png');}
+.portal-icon-caret {background-image:url('images/caret.png');}
 
 .connections_layout_container{
 	background:white;
@@ -230,4 +290,14 @@ div.theme_page_banner{
 			}
 		}
 	}
+}
+
+.user_tags a{
+	background: #c2e3f4;
+}
+
+.login_close{
+	float:right;
+	margin-right:200px;
+	color:#3f3f3f;
 }
