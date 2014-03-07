@@ -3145,10 +3145,9 @@ div.theme-page-item p.theme-page-desc {
   padding: 10px;
   width: 504px;
   position: relative;
-  background: white;
   background: white !important;
 }
-/* line 101, ../sass/ands_portal.scss */
+/* line 100, ../sass/ands_portal.scss */
 .add_tag_form button#tag_btn {
   float: right;
   color: #fff;
@@ -3159,115 +3158,116 @@ div.theme-page-item p.theme-page-desc {
   padding: 11px 15px;
   display: inline-block;
 }
-/* line 110, ../sass/ands_portal.scss */
+/* line 109, ../sass/ands_portal.scss */
 .add_tag_form button#tag_btn:hover {
   cursor: pointer;
   background: #ff9930;
 }
 
-/* line 117, ../sass/ands_portal.scss */
+/* line 116, ../sass/ands_portal.scss */
 .suggestion-source {
   float: right;
   font-size: 11px;
   color: #ccc;
 }
 
-/* line 123, ../sass/ands_portal.scss */
+/* line 122, ../sass/ands_portal.scss */
 div.linkrecords {
   margin: 10px 10px 20px 40px;
   font-size: 13px;
 }
-/* line 126, ../sass/ands_portal.scss */
+/* line 125, ../sass/ands_portal.scss */
 div.linkrecords div.linkrecords_container {
   margin: 5px 20px;
 }
-/* line 129, ../sass/ands_portal.scss */
+/* line 128, ../sass/ands_portal.scss */
 div.linkrecords div.linkrecords_container li span {
   color: #999;
 }
 
-/* line 135, ../sass/ands_portal.scss */
+/* line 134, ../sass/ands_portal.scss */
 div.theme_page_banner {
   border: 1px solid #ccc;
   margin-bottom: 5px;
   overflow: hidden;
   height: 27px;
 }
-/* line 140, ../sass/ands_portal.scss */
+/* line 139, ../sass/ands_portal.scss */
 div.theme_page_banner div.img_slot {
   width: 50px;
   float: right;
   overflow: hidden;
 }
-/* line 145, ../sass/ands_portal.scss */
+/* line 144, ../sass/ands_portal.scss */
 div.theme_page_banner div.theme_page_header {
   padding: 0px 10px;
 }
-/* line 147, ../sass/ands_portal.scss */
+/* line 146, ../sass/ands_portal.scss */
 div.theme_page_banner div.theme_page_header h4 a {
   font-size: 13px;
 }
 
-/* line 154, ../sass/ands_portal.scss */
+/* line 153, ../sass/ands_portal.scss */
 img.linked_records {
   cursor: pointer;
 }
 
-/* line 158, ../sass/ands_portal.scss */
+/* line 157, ../sass/ands_portal.scss */
 .linked_record_tooltip_title {
   font-weight: bold;
 }
 
 /* qTip popup in lightcream */
-/* line 164, ../sass/ands_portal.scss */
+/* line 163, ../sass/ands_portal.scss */
 .ui-tooltip-lightcream {
   background-color: rgba(252, 249, 216, 0.6);
   border-color: #E0DBA3;
   border-width: 1px !important;
 }
-/* line 170, ../sass/ands_portal.scss */
+/* line 169, ../sass/ands_portal.scss */
 .ui-tooltip-lightcream .ui-tooltip-content {
   width: 100%;
   text-align: center;
 }
 
-/* line 178, ../sass/ands_portal.scss */
+/* line 177, ../sass/ands_portal.scss */
 ul.linkedrecords-list li {
   padding: 10px 0;
 }
-/* line 181, ../sass/ands_portal.scss */
+/* line 180, ../sass/ands_portal.scss */
 ul.linkedrecords-list li a span {
   display: block;
   color: #454545;
 }
-/* line 185, ../sass/ands_portal.scss */
+/* line 184, ../sass/ands_portal.scss */
 ul.linkedrecords-list li a:hover span {
   color: #454545;
 }
-/* line 189, ../sass/ands_portal.scss */
+/* line 188, ../sass/ands_portal.scss */
 ul.linkedrecords-list li:hover {
   background-color: rgba(252, 249, 216, 0.3);
 }
-/* line 194, ../sass/ands_portal.scss */
+/* line 193, ../sass/ands_portal.scss */
 ul.linkedrecords-list li + li {
   border-top: 1px solid #ccc;
 }
 
-/* line 199, ../sass/ands_portal.scss */
+/* line 198, ../sass/ands_portal.scss */
 .form-field {
   display: none;
 }
 
-/* line 203, ../sass/ands_portal.scss */
+/* line 202, ../sass/ands_portal.scss */
 .login_st {
   cursor: pointer;
 }
-/* line 205, ../sass/ands_portal.scss */
+/* line 204, ../sass/ands_portal.scss */
 .login_st .social_profile_pic {
   margin-top: -5px;
   margin-left: 10px;
   height: 42px;
   max-width: 42px;
+  border: 2px solid #84a07b;
 }
 
 /* line 213, ../sass/ands_portal.scss */
@@ -3305,12 +3305,22 @@ ul.linkedrecords-list li + li {
   background-image: url("images/party.png");
 }
 
+/* line 229, ../sass/ands_portal.scss */
+.portal-icon-info {
+  background-image: url("images/info.png");
+}
+
 /* line 230, ../sass/ands_portal.scss */
+.portal-icon-caret {
+  background-image: url("images/caret.png");
+}
+
+/* line 232, ../sass/ands_portal.scss */
 .connections_layout_container {
   background: white;
   border: 1px solid #ccc;
 }
-/* line 233, ../sass/ands_portal.scss */
+/* line 235, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_facet {
   float: left;
   width: 35%;
@@ -3319,55 +3329,55 @@ ul.linkedrecords-list li + li {
   max-height: 620px;
   overflow: auto;
 }
-/* line 241, ../sass/ands_portal.scss */
+/* line 243, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_facet ul li {
   list-style-type: none;
   padding: 4px 0;
 }
-/* line 244, ../sass/ands_portal.scss */
+/* line 246, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_facet ul li a {
   color: #84a07b;
 }
-/* line 247, ../sass/ands_portal.scss */
+/* line 249, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_facet ul li a:hover {
   color: #eb7700;
 }
-/* line 254, ../sass/ands_portal.scss */
+/* line 256, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right {
   float: left;
   width: 65%;
   padding: 0 10px;
 }
-/* line 258, ../sass/ands_portal.scss */
+/* line 260, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result {
   position: relative;
   padding: 10px;
   max-height: 620px;
   overflow: auto;
 }
-/* line 263, ../sass/ands_portal.scss */
+/* line 265, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview {
   width: 100%;
   margin-left: 0;
 }
-/* line 266, ../sass/ands_portal.scss */
+/* line 268, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_header .title {
   margin-left: 0;
 }
-/* line 269, ../sass/ands_portal.scss */
+/* line 271, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_description {
   font-size: 13px;
 }
-/* line 271, ../sass/ands_portal.scss */
+/* line 273, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_description .ro_preview_footer a {
   color: #84a07b;
 }
-/* line 275, ../sass/ands_portal.scss */
+/* line 277, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .relations {
   color: #9bb692;
   padding: 0 5px;
 }
-/* line 280, ../sass/ands_portal.scss */
+/* line 282, ../sass/ands_portal.scss */
 .connections_layout_container div.connections_layout_right div.connections_layout_result a.load_more {
   background: #eee;
   font-weight: bold;
@@ -3376,6 +3386,18 @@ ul.linkedrecords-list li + li {
   width: 100%;
   padding: 15px;
   display: block;
+}
+
+/* line 295, ../sass/ands_portal.scss */
+.user_tags a {
+  background: #c2e3f4;
+}
+
+/* line 299, ../sass/ands_portal.scss */
+.login_close {
+  float: right;
+  margin-right: 200px;
+  color: #3f3f3f;
 }
 /**
  * ANDS less file for compilation on deployment

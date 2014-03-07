@@ -713,6 +713,19 @@ var Mustache;
 		$(this).removeClass('exped');
     });
 
+    $('.login_close').click(function(){
+    	$('.login_banner').slideUp('fast');
+    });
+
+    $('.tags_helper').qtip({
+    	content:{
+    		text:'<p>\'User Contributed Tags\' are terms added to records by Research Data Australia users to assist discovery of these records by themselves and others. By clicking on an added tag you can discover other related records with the same tag.</p><p> In order to tag a record you must first login to Research Data Australia. Tags can be any string you choose but should be meaningful and have relevance to the record the tag is being added to. To assist you in assigning a tag, previously used tags and terms from the ANZSRC Fields of research (FOR) and Socio-economic objective (SEO) vocabularies are offered via autocomplete suggestions.</p>'
+    	},
+    	show:'mouseover',
+    	hide:'mouseout',
+    	style:{classes:'ui-tooltip-light ui-tooltip-shadow'}
+    });
+
     $('#ad_st').toggle(function() {
 	//don't init slider until we show the advanced search slidedown
 		$("#slider").editRangeSlider({

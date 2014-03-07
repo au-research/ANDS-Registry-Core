@@ -427,7 +427,7 @@
 
         <!-- OTHER SUBJECTS -->
         <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type!='anzsrc-for' and ../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type!='anzsrc-seo'">
-            <p>Keywords</p> 
+            <p class="subject_type">Keywords</p> 
             <div class="tags">
                 <xsl:for-each select="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']">      
                     <xsl:sort select="extRif:subject_type"/>
@@ -447,14 +447,14 @@
 </xsl:if>
 
  <xsl:if test="../extRif:annotations/extRif:tags">
-    <h4>Tags</h4>
-    <div class="tags" id="tags_container">
+    <p class="subject_type">User Contributed Tags <a href="#" class="tags_helper"><i class="portal-icon portal-icon-info"></i></a></p>
+    <div class="tags user_tags" id="tags_container">
       <xsl:for-each select="../extRif:annotations/extRif:tags/extRif:tag">
         <xsl:apply-templates select="."/>
       </xsl:for-each>
     </div>
-  </xsl:if>
-  %%%%ADDTAGFORM%%%%
+</xsl:if>
+%%%%ADDTAGFORM%%%%
 
     <!-- DISPLAY DATES -->
     <xsl:if test="ro:dates[descendant::text() != '']">
