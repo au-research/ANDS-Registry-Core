@@ -22,7 +22,7 @@ class Transforms_Extension extends ExtensionBase
 			}
 
 			$dom = new DOMDocument();
-			$dom->loadXML(str_replace('&', '&amp;' , $this->ro->getExtRif()));
+			$dom->loadXML(str_replace('&', '&amp;' , utf8_encode($this->ro->getExtRif())));
 			if ($add_tags)
 			{
 				return "<add>" . $xslt_processor->transformToXML($dom) . "</add>";
@@ -191,7 +191,7 @@ class Transforms_Extension extends ExtensionBase
 						$grant[0] = implode("\n", array_map('normaliseIdentifier', $grant_id));
 						if ((string) $grant[0] == "")
 						{
-							unset($grants[$i][0]);
+							unset($grants[0][0]);
 						}
 						elseif (is_array($related_party) && isset($related_party[0]))
 						{
@@ -209,21 +209,26 @@ class Transforms_Extension extends ExtensionBase
 					//unset($grants[0][0]);
 				}
 			}
+			$blankFundingInfoList = $sxml->xpath('//FundingInfo[not(FundingInfoList)]');
+			if (isset($blankFundingInfoList[0]))
+			{
+				unset($blankFundingInfoList[0][0]);
+			}
 
 
-			/* Post-process the Citations element
+			// Post-process the Citations element
 			$citations = $sxml->xpath('//CitationList[@postproc="1"]');
 			foreach ($citations AS $i => $citations)
 			{
 				// Remove the "to-process" marker
 				unset($citations[$i]["postproc"]);
 
-				$role->ResearcherID[0] = implode("\n", array_map('normaliseIdentifier', $researcher_ids));
+				/*$role->ResearcherID[0] = implode("\n", array_map('normaliseIdentifier', $researcher_ids));
 				if ((string) $role->ResearcherID[0] == "")
 				{
 					unset($roles[$i]->ResearcherID[0]);
-				}
-			}*/
+				}*/
+			}
 
 
 			return trim(removeXMLDeclaration($sxml->asXML())) . NL;
