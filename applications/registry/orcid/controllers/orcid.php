@@ -55,7 +55,6 @@ class Orcid extends MX_Controller {
 					$bio = $this->orcid_api->get_full();
 					if(!$bio) redirect(registry_url('orcid'));
 					$bio = json_decode($bio, true);
-
 					$this->wiz($bio);
 				}else{
 					redirect(registry_url('orcid/login'));

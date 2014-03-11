@@ -82,7 +82,7 @@ $application_directives = array(
 				"active_application" => "apps",
 				"default_controller" => "uploader/index",
 				"routes" => array(
-                     "mydois/([a-z]+)\.([a-z]+)" => "mydois/$1",
+                     "apps/mydois/([a-z]+)\.([a-z]+)" => "mydois/$1",
               	),
 			),
 	"roles" =>
