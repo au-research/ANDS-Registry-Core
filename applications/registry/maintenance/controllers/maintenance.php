@@ -542,7 +542,15 @@ class Maintenance extends MX_Controller {
 					}
 				}
 
-				if($task=='sync' || $task=='full_enrich' || $task=='fast_enrich'){
+				if($task == 'fast_sync' || $task == 'fast_enrich') {
+					try{
+						$ro->updateExtRif();
+					} catch (Exception $e){
+						array_push($error, $e->getMessage());
+					}
+				}
+
+				if($task=='sync' || $task=='full_enrich'){
 					try{
 						$ro->enrich();
 					}catch(Exception $e){
@@ -550,11 +558,12 @@ class Maintenance extends MX_Controller {
 					}
 				}
 
+
 				$this->benchmark->mark('enrich_ro_end');
 
 				//index
 				
-				if($task=='sync' || $task=='index'){
+				if($task=='sync' || $task=='index' || $task=='fast_sync'){
 					try{
 						$solrXML = $ro->transformForSOLR();
 						$allSOLRXML .= $solrXML;
@@ -588,7 +597,7 @@ class Maintenance extends MX_Controller {
 			$this->solr->clear($data_source_id);
 		}
 
-		if($task=='sync' || $task=='index'){
+		if($task=='sync' || $task=='index' || $task=='fast_sync'){
 			$this->solr->addDoc('<add>'.$allSOLRXML.'</add>');
 			$this->solr->commit();
 		}
@@ -609,6 +618,14 @@ class Maintenance extends MX_Controller {
 		$data['results'] = $results;
 
 		echo json_encode($data);
+	}
+
+	function test(){
+		$this->load->model('registry_object/registry_objects', 'ro');
+		$ro = $this->ro->getByID(13857);
+		$ro->updateExtRif();
+		echo 'done';
+
 	}
 
 	function smartSyncDS2($data_source_id, $print=false, $offset=0){
