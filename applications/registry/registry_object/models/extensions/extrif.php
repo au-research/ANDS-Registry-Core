@@ -388,15 +388,16 @@ class Extrif_Extension extends ExtensionBase
 		}
 
 		if ($options['subjects']) {
-			if($subjects = $this->ro->processSubjects());
-			unset($ext->extendedMetadata->subjects);
-			$ext->extendedMetadata->addChild('subjects');
-			foreach ($subjects AS $subject) {
-				$subject_node = $ext->extendedMetadata->subjects->addChild("extRif:subject", "", EXTRIF_NAMESPACE);
-				$subject_node->addChild("extRif:subject_value", $subject['value'], EXTRIF_NAMESPACE);
-				$subject_node->addChild("extRif:subject_type", $subject['type'], EXTRIF_NAMESPACE);
-				$subject_node->addChild("extRif:subject_resolved", $subject['resolved'], EXTRIF_NAMESPACE);
-				$subject_node->addChild("extRif:subject_uri", $subject['uri'], EXTRIF_NAMESPACE);
+			if($subjects = $this->ro->processSubjects()){
+				unset($ext->extendedMetadata->subjects);
+				$ext->extendedMetadata->addChild('subjects');
+				foreach ($subjects AS $subject) {
+					$subject_node = $ext->extendedMetadata->subjects->addChild("extRif:subject", "", EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_value", $subject['value'], EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_type", $subject['type'], EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_resolved", $subject['resolved'], EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_uri", $subject['uri'], EXTRIF_NAMESPACE);
+				}
 			}
 		}
 
