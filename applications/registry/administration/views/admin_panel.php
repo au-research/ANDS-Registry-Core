@@ -37,11 +37,15 @@
 					</p>
 
 					<p>
-						<a href="<?=base_url('administration/nla_pullback');?>" alt="API Log">
+						<a href="<?=base_url('administration/nla_pullback');?>" alt="NLA Pullback">
 							NLA Party Pullback (Manual Trigger)
 						</a>
 					</p>
-
+				<!--	<p>
+						<a href="<?=base_url('administration/orcid_pullback');?>" alt="ORCID Pullback">
+							ORCID Party Pullback (Manual Trigger)
+						</a>
+					</p> -->
 					<p>
 						<a href="<?=apps_url('topics/update_index');?>">
 							Update Topic List
@@ -56,7 +60,13 @@
 					</p>
 					<? endif; ?>
 
-
+					<? if mod_enabled('doi_test'): ?>
+					<p>
+						<a href="<?=apps_url('test_suite/doi_test');?>" alt="DOI test">
+							Test DOI Functions
+						</a>
+					</p>
+					<? endif; ?>
 			    </div>
 			    
 			</div>

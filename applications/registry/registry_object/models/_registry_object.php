@@ -3,8 +3,6 @@
 /**
  * Registry Object PHP object
  * 
- * XXX:
- * 
  * @author Ben Greenwood <ben.greenwood@ands.org.au>
  * @package ands/datasource
  * @subpackage helpers

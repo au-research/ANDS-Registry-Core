@@ -58,9 +58,23 @@ class Registry_fetch extends CI_Model
 
 	function fetchExtrifBySlug($slug)
 	{
-		$url = $this->config->item('registry_endpoint') . "getRegistryObject/?slug=" . $slug;
-		$contents = json_decode(@file_get_contents($url), true);
+		
+		$this->load->driver('cache');
+		$cached = $this->cache->file->get($slug);
+		if(!$cached){ //fresh new
+			//get the contents
+			$url = $this->config->item('registry_endpoint') . "getRegistryObject/?slug=" . $slug;
+			$contents = json_decode(@file_get_contents($url), true);
 
+			//save it to the cache, the entire extRif will be cached in the form of engine/cache/{{slug}}
+			//transformation will still be in real time
+			//The cache will be written in engine/cache, requires the directory to be writtable, 777
+			//TTL will be 10 minutes
+			$cached = $contents;
+			$this->cache->file->save($slug, $cached, 10);
+		}else{ //get from cache
+			$contents = $cached;
+		}
 
 		if (isset($contents['data']))
 		{

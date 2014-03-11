@@ -115,6 +115,7 @@ class nlaPullback extends MX_Controller
 	function pullbackRIFCSfromNLA($identifier)
 	{
 		$target_uri = $this->nlaServiceURI . "?query=rec.identifier=%22" . $identifier . "%22&version=1.1&operation=searchRetrieve&recordSchema=http%3A%2F%2Fands.org.au%2Fstandards%2Frif-cs%2FregistryObjects";
+		
 		$response = curl_file_get_contents($target_uri);
 
 		if ($response)

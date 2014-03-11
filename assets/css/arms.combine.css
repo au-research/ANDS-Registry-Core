@@ -9451,12 +9451,35 @@ div.tags .btn-group {
   border-top: 0;
   cursor: pointer;
 }
-.content-header h1 {
-  width:75%;
+
+/* line 99, ../sass/arms.scss */
+.icon-class {
+  height: 16px;
+  width: 16px;
+  background-image: url("../img/party.png");
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-position: left top;
 }
-#breadcrumb{
-  position:relative;
-  clear:both;
+
+/* line 108, ../sass/arms.scss */
+.icon-party {
+  background-image: url("../img/party.png");
+}
+
+/* line 112, ../sass/arms.scss */
+.icon-collection {
+  background-image: url("../img/collection.png");
+}
+
+/* line 116, ../sass/arms.scss */
+.icon-service {
+  background-image: url("../img/service.png");
+}
+
+/* line 120, ../sass/arms.scss */
+.icon-activity {
+  background-image: url("../img/activity.png");
 }
 /**
  * Core / Styling / Less

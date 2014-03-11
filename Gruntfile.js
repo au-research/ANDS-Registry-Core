@@ -55,14 +55,18 @@ module.exports = function(grunt){
 			portalStyles:{
 				options:{separator:''},
 				src:[
+
 					'<%=yeoman.portal_assets %>/css/knacss.css',
 					'<%=yeoman.portal_assets %>/style.css',
 					'<%=yeoman.portal_assets %>/css/ands-theme/jquery-ui-1.10.0.custom.min.css',
 					'<%=yeoman.portal_assets %>/css/flexslider.css',
 					'<%=yeoman.portal_assets %>/css/ui.dynatree.css',
-					'<%=yeoman.portal_assets %>/css/ands_portal.css',
-					'<%=yeoman.assets %>/lib/qtip2/jquery.qtip.min.css',
+
+	
 					'<%=yeoman.assets %>/lib/jQRangeSlider/css/iThing.css',
+					'<%=yeoman.portal_assets %>/css/zocial.css',
+					'<%=yeoman.assets %>/lib/qtip2/jquery.qtip.min.css',
+					'<%=yeoman.portal_assets %>/css/ands_portal.css',
 					'<%=yeoman.portal_assets %>/css/ands.less.compiled.css',
 				],
 				dest: '<%=yeoman.portal_assets %>/ands_portal.combined.css'

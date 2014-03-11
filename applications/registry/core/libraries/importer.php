@@ -163,6 +163,10 @@ class Importer {
 				{
 					$payload = mb_convert_encoding($payload,"UTF-8"); 
 				}
+				else
+				{
+					die('php mbstring must be installed.');
+				}
 				$continueIngest = true;				
 				// Build a SimpleXML object from the converted data
 				// We will throw an exception here if the payload isn't well-formed XML (which, by now, it should be)
@@ -871,7 +875,7 @@ class Importer {
 			// transform might be erroneous if assumed at this point.
 
 			// Throws an exception up if unable to validate in the payload's native schema
-			$this->crosswalk->validate($this->xmlPayload);
+			$this->crosswalk->validate(utf8_encode($this->xmlPayload));
 
 			// Crosswalk will create <registryObjects> with a <relatedInfo> element appended with the native format
 			$this->xmlPayload = $this->crosswalk->payloadToRIFCS($this->xmlPayload, $this->message_log);

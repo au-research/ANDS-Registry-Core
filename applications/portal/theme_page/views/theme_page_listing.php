@@ -1,3 +1,12 @@
+<?php 
+/**
+ * Theme Page Listing View
+ * Used for displaying a list of public theme pages
+ * 
+ * @param ARRAY index 
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
+ ?>
 <?php $this->load->view('rda_header');?>
 <div class="container less_padding" ng-app="portal_theme">
 	<div class="breadcrumb">
@@ -9,7 +18,7 @@
 		<div class="post clear">
 			<?php if(sizeof($index['items']) > 0): ?>
 			<?php foreach($index['items'] as $page): ?>
-			<?php if(isset($page['visible']) && $page['visible']=='true'): ?>
+			<?php if(isset($page['visible']) && $page['visible']): ?>
 			<div class="theme-page-item">
 				<?php $img_src = ($page['img_src']?$page['img_src']:'http://placehold.it/350x150&text=No+Cover+Image'); ?>
 				<a href="<?php echo portal_url('theme/'.$page['slug']);?>"><img class="cover"src="<?php echo $img_src;?>" alt=""></a>

@@ -90,8 +90,8 @@ class View extends MX_Controller {
 	private function renderDefaultViewPage($extRif)
 	{	
 		$data['title']='Research Data Australia';
-		$data['js_lib'] = array('dynatree','qtip','google_map');
-		$data['scripts'] = array('view');
+		$data['js_lib'] = array('dynatree','qtip','google_map', 'angular');
+		$data['scripts'] = array('view', 'connections');
 		$data['ro_slug'] = '';
 		$data['ro_id'] = '';
 
@@ -150,6 +150,9 @@ class View extends MX_Controller {
 		// Render the suggested links
 		$data['suggested_links_contents'] = $suggested_links;
 		$suggestedLinksDiv = $this->load->view('suggested_links', $data, true);
+
+		//render the add tag form
+		$addTagFormDiv = $this->load->view('add_tag_form', null, true);
 		//exit();
 
 		// Generate the view page contents
@@ -164,6 +167,8 @@ class View extends MX_Controller {
 		// well this was really uggly... we should fix it at ingest!
 		$data['registry_object_contents'] = str_replace('%%%%CONNECTIONS%%%%', $connDiv, $data['registry_object_contents']);
 		$data['registry_object_contents'] = str_replace('%%%%ANDS_SUGGESTED_LINKS%%%%', $suggestedLinksDiv, $data['registry_object_contents']);
+		$data['registry_object_contents'] = str_replace('%%%%ADDTAGFORM%%%%', $addTagFormDiv, $data['registry_object_contents']);
+
 
 		$this->load->view('default_view', $data);
 
@@ -190,7 +195,11 @@ class View extends MX_Controller {
 
 		// In here, go get the information/precanned text, etc.
 		// we have $this->registry-> which gives us the functions in models/registry_fetch.php
-
+		$matches = array();
+		preg_match('/<extRif\:simplifiedTitle>(.*)<\/extRif:simplifiedTitle>/', $extRif['data'], $matches);
+		if(isset($matches[1]) && $matches[1]!=''){
+			$data['title'] = trim(strip_tags($matches[1])).' - Research Data Australia';
+		}
 
 		if ($this->input->get('slug'))
 		{
@@ -315,6 +324,10 @@ class View extends MX_Controller {
 		}
 	}
 
+	/**
+	 * DEPRECATED in favour of new connections revamp
+	 * @return view
+	 */
 	function getConnections(){
 		$this->load->model('registry_fetch','registry');
 		$limit = 10;
@@ -340,7 +353,6 @@ class View extends MX_Controller {
 		$data['connections_contents'] = $connections[0];
 		$this->load->view('connections_all', $data);
 	}
-
 
 	function getSuggestedLinks($suggestor, $start, $rows)
 	{

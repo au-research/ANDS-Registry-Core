@@ -43,6 +43,9 @@ else
 }
 ?>
 <body>
+	<?php if ($versionInfo = codeVersionInfo()):
+		echo '<div class="codeversion"><img src="'. asset_url('images/info.png','core').'" /> '.$versionInfo.'</div>';
+	endif; ?>
 	<div class="header" <?=$environment_header_style;?>>
 		<div class="head">
 			<div class="tagline">
@@ -73,11 +76,54 @@ else
 			<img src="<?php echo base_url('assets/core/images/delete.png');?>" class="clearAll" tip="Clear current search"/>
 			<a class="browse_button" href="<?php echo base_url('browse');?>">Browse by Subject Area</a>
 			<a href="javascript:;" class="search_map" id="search_map_toggle">Browse by Map Coverage</a>
-			<div class="clear" style="margin-left:312px; padding-bottom:4px;"><a href="#" id="ad_st">Advanced Search</a></div>
-			<!--div class="clear buttons">
+
+			<?php 
+				if(config_item('oauth_config')) {
+					$logged_in = oauth_loggedin();
+					if($logged_in) {
+						$user = oauth_getUser();
+						if($user) {
+							echo '<a class="login_st" tip="Logged in as '.$user['profile']->displayName.'">';
+							echo '<img src="'.$user['profile']->photoURL.'" class="social_profile_pic"/>';
+							echo '</a>';
+						}
+					} else {
+						echo '<a class="login_st" tip="Login to Research Data Australia"><img class="social_profile_pic" src="'.asset_url('images/social_login.png', 'core').'" /></a>';
+					}
+				}
+			?>
+
+			<div class="clear" style="margin-left:312px; padding-bottom:4px;">
 				<a href="#" id="ad_st">Advanced Search</a>
-			</div-->
+			</div>
+			
 		</div><!-- inner -->
+
+		<div class="login_banner">
+			<div class="login_close"><a href="#">x</a></div>
+			<div class="adv_inner">
+				<?php if(config_item('oauth_config')): ?>
+				<?php if(!$logged_in): ?>
+
+				<div style="width:50%;float:left;padding:0 15px;">
+					<p style="font-weight:normal;">By logging into Research Data Australia, you will have access to additional features including the ability to contribute to the Research Data Australia community by adding tags (keywords) to records.</p>
+					<p style="font-weight:normal;font-size:10px;">ANDS will not supply or on sell any personal information obtained through your login and use of Research Data Australia. Data collected will only be used in the context of your logged in Research Data Australia session.</p>
+				</div>
+				<div>
+					<p><?php echo anchor('auth/login/Facebook/?redirect='.current_url(),'Login With Facebook', array('class'=>'zocial facebook')); ?></p>
+					<p><?php echo anchor('auth/login/Twitter/?redirect='.current_url(),'Login With Twitter', array('class'=>'zocial twitter')); ?></p>
+					<p><?php echo anchor('auth/login/Google/?redirect='.current_url(),'Login With Google', array('class'=>'zocial google')); ?></p>
+					<p><?php echo anchor('auth/login/LinkedIn/?redirect='.current_url(),'Login With LinkedIn', array('class'=>'zocial linkedin')); ?></p>
+				</div>
+				<div class="clearfix"></div>
+
+				<?php else: ?>
+					<p>Logged in as <b><?php echo $user['profile']->displayName; ?></b></p>
+					<p><?php echo anchor('auth/logout/?redirect='.current_url(),'Log Out from '.$user['service'], array('class'=>'zocial '.strtolower($user['service']))); ?></p>
+				<?php endif; ?>
+				<?php endif; ?>
+			</div>
+		</div>
 
 		<div class="advanced_search">
 		    <div id="adv_note_content" class="hide">
