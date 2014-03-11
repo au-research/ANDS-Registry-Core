@@ -245,6 +245,11 @@ $(document).on('click', '.sharing_widget', function(){
 	$(this).remove();
 });
 
+$('#moreCodeVersions').on('click', function(){
+	$(this).hide();
+	$(this).siblings().fadeIn();
+});
+
 function validateEmail(email) 
 {
     var re = /\S+@\S+\.\S+/;

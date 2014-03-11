@@ -4,7 +4,32 @@ function print_pre($var)
 	echo "<pre>";
 		print_r($var);
 	echo "</pre>";
-} 
+}
+
+function codeVersionInfo()
+{
+    $CI =& get_instance();
+    if ($CI->config->item('deployment_state') == 'development')
+    {
+        $gitdir = $CI->config->item('gitdir_path');
+        if ($gitdir) { $gitdir = "--git-dir=" .  escapeshellarg($gitdir); }
+        exec("git $gitdir branch | sed -n '/\* /s///p'", $git_branch, $err);
+        
+        // This means we can't use git (or the code is not in the git work tree)
+        if ($err || !isset($git_branch[0])) { return false; }
+
+        ob_start();
+        passthru("git $gitdir log -n 5 --pretty=format:\"%s on %cd [%cn]\"");
+        $git_log = explode("\n", ob_get_clean());
+        return "<div><small>Currently executing: <b>" . $git_branch[0] . "</b> code branch</small></div>" . 
+                "<div class='right'><small>Lastest Update: " . array_shift($git_log) . " <a href='#' id='moreCodeVersions'>[ + ]</a><br/>
+                <div class='otherCommits' style='display:none;'><b>Other Recent Commits on ".$git_branch[0]."</b>:<br/>" . implode("<br/>", $git_log) ."</div></small></div>";
+    }
+    else
+    {
+        return false;
+    }
+}
 
 function display_date($timestamp=0)
 {

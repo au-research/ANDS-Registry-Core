@@ -50,7 +50,6 @@ $ENV['site_admin'] = "Registry System Administrator";
 $ENV['site_admin_email'] = "admin@example.com"; // Will affect the error reporting status
 $ENV['deployment_state'] = "{CONFIGURE ME}";  // either "production" or "development"
 
-
 /*************************************************************************/
 /* (SECTION 2) ENABLED MODULES
 /*************************************************************************/
@@ -240,8 +239,9 @@ $ENV['oauth_config'] =
 	);
 
 /*********************************************************************/
-/* (SECTION 5) ADVANCED DATABASE CONFIGURATION
+/* (SECTION 5) ADVANCED CONFIGURATION
 /* - only if using non-standard table names or non-mysql DBMS
+/* - other miscelaneous options
 /*********************************************************************/
 
 // Name of the database being used for the registry and roles databases
@@ -253,3 +253,6 @@ $eDBCONF['statistics']['database'] = 'dbs_statistics';
 // If not using mysql (check CodeIgniter for valid values)
 $eDBCONF['default']['dbdriver'] = 'mysql';
 
+// Optional development branch variable, mainly to monitor push state of 
+// test systems (if specified, will report git branch in portal header)
+// $ENV['gitdir_path'] = "/path/to/.git"; 
