@@ -234,10 +234,52 @@ class Relationships_Extension extends ExtensionBase
 		return $classes;
 	}
 	
-	function getRelatedClassesString()
+
+	/* This function uses a single SQL query to identify the classes of linked records 
+	   that would be relevant to the quality string of any given record. This is significantly
+	   more performant than using the getConnections() function (particularly as this is used
+	   	for every enriched record in a harvest). */
+	function getRelatedClassesLite()
+	{
+		$classes = array();
+		// Check for the distinct classes from the
+		$explicit_and_reverse_links_query = 'SELECT DISTINCT rr.related_object_class AS `class` FROM registry_object_relationships rr WHERE rr.registry_object_id='.(int)$this->ro->id.'
+		UNION
+		SELECT DISTINCT ro.class AS `class` FROM registry_object_relationships rr1 JOIN registry_objects ro ON rr1.related_object_key=ro.`key`  WHERE  rr1.related_object_key="'.$this->db->escape($this->ro->key).'"
+		UNION
+		SELECT DISTINCT rir.related_info_type AS `class` FROM registry_object_identifier_relationships rir WHERE rir.registry_object_id='.(int)$this->ro->id.';';
+		$class_relationships = $this->db->query($explicit_and_reverse_links_query);
+		foreach ($class_relationships->result_array() as $class)
+		{
+			$classes[$class['class']] = ucfirst($class['class']);
+		}
+
+		// If we haven't found a party record yet, lets check for institutional pages (which we assume to always be parties)
+		if (!isset($classes['party']))
+		{
+			$institutional_pages_query = 'SELECT "party" AS `class` FROM institutional_pages WHERE `group` = "'.$this->db->escape($this->ro->group).'"';
+			$result = $this->db->query($institutional_pages_query);
+			if($result->num_rows() > 0)
+			{
+				$classes['party'] = 'Party';
+			}
+		}
+
+		// That should be it!
+		return $classes;
+}
+
+	function getRelatedClassesString($optimised = false)
 	{
 		$classes = "";
-		$list = $this->getRelatedClasses();
+		if ($optimised)
+		{
+			$list = $this->getRelatedClassesLite();
+		}
+		else
+		{
+			$list = $this->getRelatedClasses();
+		}
 		return implode($list);
 	}
 
