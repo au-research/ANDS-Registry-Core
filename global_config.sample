@@ -178,12 +178,12 @@ $ENV['gDOIS_DATACENTRE_NAME_MIDDLE'] = "";
 $ENV['gDOIS_DATACITE_PASSWORD'] = "";
 $ENV['gDOIS_RESPONSE_SUCCESS'] = "OK";
 $ENV['gDOIS_DATACENTRE_PREFIXS'] = array( '10.4225/','10.4226/','10.4227/','10.5072/');
-$eDBCONF['dois']['hostname'] = '';
-$eDBCONF['dois']['password'] = '';
-$eDBCONF['dois']['database'] = 'dois';
-$eDBCONF['dois']['dbdriver'] = 'postgre';
-*/
 
+$ENV['gDOIS_TEST_APP_ID'] = "";  // ANDS test datacenter app_id
+$ENV['gDOIS_TEST_SHARED_SECRET'] = "";  // ands test datacentre shared_secret 
+
+
+$eDBCONF['dois']['database'] = 'dbs_dois';
 
 /*
 //=> TWITTER API
