@@ -179,7 +179,6 @@ $(document).ready(function() {
 		click: function(e){
 			clear = true;
 			$.each($('.verify'), function(){
-				console.log(this);
 				if($(this).val()=='') {
 					clear=false;
 					 $(this).qtip({
