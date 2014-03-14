@@ -812,7 +812,6 @@ var Mustache;
 		click: function(e){
 			clear = true;
 			$.each($('.verify'), function(){
-				console.log(this);
 				if($(this).val()=='') {
 					clear=false;
 					 $(this).qtip({
@@ -821,7 +820,9 @@ var Mustache;
 						show:{ready:'true'},
 						hide:{event:'focus'},
     				}); 
-				}else{
+				}
+				else
+				{
 					$(this).qtip("disable");
 				}
 				
@@ -837,7 +838,9 @@ var Mustache;
 					show:{ready:'true'},
 					hide:{event:'focus'},
     				}); 
-    			}else{
+    			}
+    			else
+    			{
     				$('#contact-email').qtip("disable");
 				
     			}					
@@ -854,7 +857,9 @@ var Mustache;
 		  			error:function(msg){
 		  			}
 	  			}); 
-			}else{
+			}
+			else
+			{
 				return false;
 			}
 		}

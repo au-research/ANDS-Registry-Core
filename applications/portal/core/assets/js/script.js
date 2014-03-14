@@ -174,7 +174,9 @@ $(document).ready(function() {
 						show:{ready:'true'},
 						hide:{event:'focus'},
     				}); 
-				}else{
+				}
+				else
+				{
 					$(this).qtip("disable");
 				}
 				
@@ -190,7 +192,9 @@ $(document).ready(function() {
 					show:{ready:'true'},
 					hide:{event:'focus'},
     				}); 
-    			}else{
+    			}
+    			else
+    			{
     				$('#contact-email').qtip("disable");
 				
     			}					
@@ -207,7 +211,9 @@ $(document).ready(function() {
 		  			error:function(msg){
 		  			}
 	  			}); 
-			}else{
+			}
+			else
+			{
 				return false;
 			}
 		}
