@@ -35,13 +35,14 @@ class Registry_object_tags extends CI_Model {
 	 * @return [void]
 	 */
 	public function batchIndexAddTag($keys, $tag, $tag_type){
+		$this->load->model('registry_object/registry_objects', 'ro');
 		$_CI =& get_instance();
 		$solrXML = '';
 		$chunkSize = 400; 
 		$arraySize = sizeof($keys);
 		for($i = 0 ; $i < $arraySize ; $i++){
 			$key = $keys[$i];
-			$ro = $this->getPublishedByKey($key);
+			$ro = $this->ro->getPublishedByKey($key);
 			if($ro){
 				$ro->addTag($tag, $tag_type);
 				$solrXML .= '<doc><field name="id">'.$ro->id.'</field><field name="key">'.$ro->key.'</field><field name="data_source_id">'.$ro->data_source_id.'</field><field name="tag" update="add">'.$tag.'</field></doc>';
