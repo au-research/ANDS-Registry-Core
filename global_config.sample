@@ -184,6 +184,7 @@ $ENV['gDOIS_TEST_SHARED_SECRET'] = "";  // ands test datacentre shared_secret
 
 
 $eDBCONF['dois']['database'] = 'dbs_dois';
+*/
 
 /*
 //=> TWITTER API
