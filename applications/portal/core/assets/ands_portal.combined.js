@@ -811,7 +811,8 @@ var Mustache;
 
 		click: function(e){
 			clear = true;
-			$.each($('#contact-us-form input, #contact-content'), function(){
+			$.each($('.verify'), function(){
+				console.log(this);
 				if($(this).val()=='') {
 					clear=false;
 					 $(this).qtip({
@@ -845,14 +846,16 @@ var Mustache;
 			if(clear){ 
 		 	$.ajax({
 		  		type:"POST",
-		  		url: base_url+"/home/send/",
+		  		url: base_url+"/home/contact/?sent=true",
 		  		data:"name="+$('#contact-name').val()+"&email="+$('#contact-email').val()+"&content="+$('#contact-content').val(),   
 		  			success:function(msg){
 		  				$('#contact-us-form').html(msg);
 		  			},
 		  			error:function(msg){
 		  			}
-	  			});
+	  			}); 
+			}else{
+				return false;
 			}
 		}
 	});
