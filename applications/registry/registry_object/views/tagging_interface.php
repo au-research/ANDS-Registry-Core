@@ -7,8 +7,8 @@
 		<?php if($tags): ?>
 		<?php foreach($tags as $t): ?>
 		<div class="btn-group" ro_key="<?php echo $ro->key ?>" tag="<?php echo $t['name'] ?>">
-			<button class="btn btn-small <?php echo ($t['type']=='secret'?'btn-danger':''); ?>"><?php echo $t['name'] ?></button>
-			<button class="btn btn-small btn-remove <?php echo ($t['type']=='secret'?'btn-danger':''); ?>"><i class="icon icon-trash <?php echo ($t['type']=='secret'?'icon-white':''); ?>"></i></button>
+			<button class="btn btn-small <?php echo ($t['type']=='secret'?'btn-warning':''); ?>"><?php echo $t['name'] ?></button>
+			<button class="btn btn-small btn-remove <?php echo ($t['type']=='secret'?'btn-warning':''); ?>"><i class="icon icon-trash <?php echo ($t['type']=='secret'?'icon-white':''); ?>"></i></button>
 		</div>
 		<?php endforeach; ?>
 		<?php else: ?>
