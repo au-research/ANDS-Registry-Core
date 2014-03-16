@@ -53,6 +53,19 @@ class Tags_Extension extends ExtensionBase{
 		}else return false;
 	}
 
+	/**
+	 *
+	 */
+	function preCheckTag($tag, $tag_type){
+		if($tt = $this->getTagType($tag)){
+			if($tt == $tag_type) {
+				return true;
+			}else return false;
+		}else{
+			return true;
+		}
+	}
+
 	function isSecret($tag){
 		$tag_type = $this->ro->getTagType($tag);
 		if($tag_type=='secret'){
