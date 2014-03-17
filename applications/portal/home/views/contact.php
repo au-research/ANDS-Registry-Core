@@ -10,12 +10,12 @@
 	<?php if(!$sent):?>
 	<p><?php echo $message; ?></p>
 	<form action="?sent=true" method="post">
-		<p class="form-field"><input type="text" placeholder="Title" name="title" size="40" title="please input your name" id="title"/></p>
-		<p class="field"><input type="text" placeholder="Name" name="first_name" size="40" title="please input your name" id="first_name"/></p>
-		<p class="form-field"><input type="text" placeholder="Last_Name" name="last_name" size="40" title="please input your name" id="last-name"/></p>
-		<p class="form-field"><input type="text" placeholder="Email Address" name="email" id="email" size="40" title="please input a valid contact email address"/></p>
-		<p class="field"><input type="text" placeholder="Email Address" name="contact_email" id="contact-email" size="40" title="please input a valid email address"/></p>
-		<p class="field"><textarea name="content" rows="10" cols="40" id="contact-content" title="please enter some text" default=""></textarea><p>
+		<p class="form-field"><input type="text" placeholder="Title" name="title" size="40" title="Please input your title" id="title"/></p>
+		<p class="field"><input type="text" placeholder="Name" name="first_name" size="40" title="Please input your name" id="first_name" class="verify"/></p>
+		<p class="form-field"><input type="text" placeholder="Last_Name" name="last_name" size="40" title="Please input your last name" id="last-name"/></p>
+		<p class="form-field"><input type="text" placeholder="Email Address" name="email" id="email" size="40" title="Please input a valid email address"/></p>
+		<p class="field"><input type="text" placeholder="Email Address" name="contact_email" id="contact-email" size="40" title="Please input a valid email address" class="verify"/></p>
+		<p class="field"><textarea name="content" rows="10" cols="40" id="contact-content" title="Please enter some text" class="verify"></textarea><p>
 		<button id="contact-send-button">Send</button>
 	</form>
 	<?php else:?>

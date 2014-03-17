@@ -235,7 +235,12 @@ class Registry extends MX_Controller {
 		}else{
 			foreach($keys as $key){
 				$ro = $this->ro->getPublishedByKey($key);
-				if($action=='add' && $tag) $ro->addTag($tag, $tag_type);
+				if($ro->preCheckTag($tag, $tag_type)){
+					if($action=='add' && $tag) $ro->addTag($tag, $tag_type);
+				}else{
+					throw new Exception($tag. ' already exists as a '.$ro->getTagType($tag).' tag. Please try a different tag.');
+				}
+
 				if($action=='remove' && $tag) {
 					$ro->removeTag($tag);
 				}
