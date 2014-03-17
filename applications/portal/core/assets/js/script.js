@@ -178,7 +178,7 @@ $(document).ready(function() {
 
 		click: function(e){
 			clear = true;
-			$.each($('#contact-us-form input, #contact-content'), function(){
+			$.each($('.verify'), function(){
 				if($(this).val()=='') {
 					clear=false;
 					 $(this).qtip({
@@ -187,7 +187,9 @@ $(document).ready(function() {
 						show:{ready:'true'},
 						hide:{event:'focus'},
     				}); 
-				}else{
+				}
+				else
+				{
 					$(this).qtip("disable");
 				}
 				
@@ -203,7 +205,9 @@ $(document).ready(function() {
 					show:{ready:'true'},
 					hide:{event:'focus'},
     				}); 
-    			}else{
+    			}
+    			else
+    			{
     				$('#contact-email').qtip("disable");
 				
     			}					
@@ -212,14 +216,18 @@ $(document).ready(function() {
 			if(clear){ 
 		 	$.ajax({
 		  		type:"POST",
-		  		url: base_url+"/home/send/",
+		  		url: base_url+"/home/contact/?sent=true",
 		  		data:"name="+$('#contact-name').val()+"&email="+$('#contact-email').val()+"&content="+$('#contact-content').val(),   
 		  			success:function(msg){
 		  				$('#contact-us-form').html(msg);
 		  			},
 		  			error:function(msg){
 		  			}
-	  			});
+	  			}); 
+			}
+			else
+			{
+				return false;
 			}
 		}
 	});
