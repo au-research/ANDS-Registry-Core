@@ -620,14 +620,6 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	function test(){
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$ro = $this->ro->getByID(13857);
-		$ro->updateExtRif();
-		echo 'done';
-
-	}
-
 	function smartSyncDS2($data_source_id, $print=false, $offset=0){
 		$this->load->library('importer');
 		$this->load->model('data_source/data_sources', 'ds');

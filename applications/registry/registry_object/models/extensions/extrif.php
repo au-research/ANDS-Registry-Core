@@ -254,7 +254,7 @@ class Extrif_Extension extends ExtensionBase
 				
 				/*if($this->ro->getAttribute('group') == 'National Health and Medical Research Council')
 				{*/
-					$allRelatedObjects = $this->ro->getAllRelatedObjects();
+					$allRelatedObjects = $this->ro->getAllRelatedObjects(false, true);
 					foreach ($allRelatedObjects AS $relatedObject)
 					{
 					//var_dump($relatedObject);

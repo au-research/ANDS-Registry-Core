@@ -48,43 +48,10 @@ class Connections_Extension extends ExtensionBase
 	 */
 	function getConnections($published_only = true, $specific_type = null, $limit = 100, $offset = 0, $include_dupe_connections = false)
 	{
-		$unordered_connections = array();
-		$ordered_connections = 	array();
-		$total_connection_count = 0;
-
-		$this->_CI->load->model('data_source/data_sources','ds');
-		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
-
-		$allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t" || $ds->allow_reverse_internal_links == 1);
-		$allow_reverse_external_links = ($ds->allow_reverse_external_links == "t" || $ds->allow_reverse_external_links == 1);
-		
-		/* Step 1 - Straightforward link relationships */
-		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks());
-		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks());
-		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links));
-		/* Step 2 - Internal reverse links */
-		if ($allow_reverse_internal_links)
-		{
-
-			$unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks());
-		}
-
-		/* Step 3 - External reverse links */
-		if ($allow_reverse_external_links)
-		{
-			$unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks());
-		}
-
-		/* Step 4 - Contributor */
-		$unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks());
 
 
-		/* Step 5 - Duplicate Record connections */
-		if ( $include_dupe_connections )
-		{
-			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections());
-		}
-
+		$allowed_draft = ($published_only==true ? false : true);
+		$unordered_connections = $this->getAllRelatedObjects(!$allowed_draft, $include_dupe_connections);
 
 		/* Now sort according to "type" (collection / party_one / party_multi / activity...etc.) */
 		foreach($unordered_connections AS $connection)
@@ -194,35 +161,45 @@ class Connections_Extension extends ExtensionBase
 	}
 
 
-	function getAllRelatedObjects($allow_drafts = false)
+	function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false)
 	{
-		$connections = array();
+		$unordered_connections = array();
+
+
 		$this->_CI->load->model('data_source/data_sources','ds');
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
 
 		$allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t" || $ds->allow_reverse_internal_links == 1);
 		$allow_reverse_external_links = ($ds->allow_reverse_external_links == "t" || $ds->allow_reverse_external_links == 1);
 
-		$connections = array_merge($connections, $this->_getExplicitLinks($allow_drafts));
-
+		/* Step 1 - Straightforward link relationships */
+		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks($allow_drafts));
+		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks());
+		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links));
 		/* Step 2 - Internal reverse links */
 		if ($allow_reverse_internal_links)
 		{
-			$connections = array_merge($connections, $this->_getInternalReverseLinks($allow_drafts));
+
+			$unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks($allow_drafts));
 		}
 
 		/* Step 3 - External reverse links */
 		if ($allow_reverse_external_links)
 		{
-			$connections = array_merge($connections, $this->_getExternalReverseLinks($allow_drafts));
+			$unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks($allow_drafts));
 		}
 
 		/* Step 4 - Contributor */
-		$connections = array_merge($connections, $this->_getContributorLinks($allow_drafts));
+		$unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks($allow_drafts));
 
-		$connections = array_merge($connections, $this->_getIdentifierLinks());
-		$connections = array_merge($connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links));
-		return $connections;
+
+		/* Step 5 - Duplicate Record connections */
+		if ( $include_dupe_connections )
+		{
+			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections($allow_drafts));
+		}
+
+		return $unordered_connections;
 	}
 
 	function _getDescription($id){
