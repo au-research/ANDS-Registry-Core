@@ -330,7 +330,7 @@ class Extrif_Extension extends ExtensionBase
 			'single_values' => true,
 			'theme_pages' => false,
 			'tags' => true,
-			'subjects' => true
+			'subjects' => true,
 		);
 
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);

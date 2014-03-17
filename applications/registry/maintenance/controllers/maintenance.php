@@ -620,6 +620,20 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
+	function test(){
+		$this->load->model('registry_object/registry_objects', 'ro');
+//		$ro = $this->ro->getByID(12242);
+		$ro = $this->ro->getByID(146631);
+		$relationships = $ro->getAllRelatedObjects(false, true);
+//		foreach($relationships as $r){
+//			$r = $this->ro->getByID($r['registry_object_id']);
+//			$r->sync();
+//		}
+		$relationships2 = $ro->_getDuplicateConnections();
+		$relatedByIdentifiers = $ro->findMatchingRecords();
+		echo 'done';
+	}
+
 	function smartSyncDS2($data_source_id, $print=false, $offset=0){
 		$this->load->library('importer');
 		$this->load->model('data_source/data_sources', 'ds');

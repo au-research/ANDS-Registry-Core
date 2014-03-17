@@ -196,7 +196,7 @@ class Connections_Extension extends ExtensionBase
 		/* Step 5 - Duplicate Record connections */
 		if ( $include_dupe_connections )
 		{
-			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections($allow_drafts));
+			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections());
 		}
 
 		return $unordered_connections;
@@ -400,75 +400,36 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-	function _getDuplicateConnections()
+	function _getDuplicateConnections($already_checked = array())
 	{
-		$this->_CI->load->library('solr');
-        $this->_CI->solr->init();
-
 		$my_connections = array();
-		$sxml = $this->ro->getSimpleXML();
+		$relatedByIdentifiers = $this->ro->findMatchingRecords();
+		if(!$already_checked || is_null($already_checked)) $already_checked = array();
+		$new_check = array_merge($already_checked, $relatedByIdentifiers);
+		if (sizeof($relatedByIdentifiers) > 0) {
+			foreach ($relatedByIdentifiers as $id) {
+				$matched_ro = $this->_CI->ro->getByID($id);
+				if ($matched_ro && !in_array($id, $already_checked))
+				{
+					$matches = $matched_ro->_getDuplicateConnections($new_check);
+					if ($matches && count($matches) > 0)
+					{
+						foreach ($matches AS &$match)
+						{
+							// Don't match contributors
+							if ($match['origin'] == "CONTRIBUTOR") continue;
 
-		if (!$sxml) return $my_connections;
+							// Only match if the shared identifier record has the same class
+							if ($matched_ro->class != $this->ro->class) continue;
 
-        if ($sxml->registryObject)
-        {
-            $sxml = $sxml->registryObject;
-        }
-
-        // Identifier matches (if another object has the same identifier)
-        $my_identifiers = array();
- 		if($sxml->{strtolower($this->ro->class)}->identifier)
-        {
- 			foreach($sxml->{strtolower($this->ro->class)}->identifier AS $identifier)
-            {
-                if((string)$identifier != '')
-                {
-                	$my_identifiers[] = '"' . $this->_CI->solr->escapeSolrValue((string) $identifier) . '"';
-            	}
-            }
-        }
-
-        // No identifier, do nothing!
-        if (count($my_identifiers) == 0)
-        {
-        	return $my_connections;
-        }
-
-        $identifier_search_query = " +identifier_value:(" . implode(" OR ", $my_identifiers) . ")";
-        $identifier_search_query = " -key:(\"".$this->_CI->solr->escapeSolrValue($this->ro->key)."\") ". $identifier_search_query;
-  
-        $this->_CI->solr->setOpt("q", $identifier_search_query);
-        $this->_CI->solr->setOpt("fl", "id, class, display_title, slug, key");
-        $result = $this->_CI->solr->executeSearch(true);
-
-        if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0)
-        {
-            foreach($result['response']['docs'] AS $doc)
-            { 
-            	$matches = false;
-            	$matched_ro = $this->_CI->ro->getByID($doc['id']);
-            	if ($matched_ro)
-            	{
-	            	$matches = $matched_ro->getAllRelatedObjects();
-	           		if ($matches && count($matches) > 0)
-	           		{
-		            	foreach ($matches AS &$match)
-		            	{
-		            		// Don't match contributors 
-		            		if ($match['origin'] == "CONTRIBUTOR") continue; 
-
-		            		// Only match if the shared identifier record has the same class
-		            		if ($matched_ro->class != $this->ro->class) continue;
-
-            				$match["origin"] = "IDENTIFIER_MATCH";
-            				$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
-            				$my_connections[] = $match;
-		            	}
-		            }
-		        }
-            }
-        }
-
+							$match["origin"] = "IDENTIFIER_MATCH";
+							$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
+							$my_connections[] = $match;
+						}
+					}
+				}
+			}
+		}
 		return $my_connections;
 	}
 
