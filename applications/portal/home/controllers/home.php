@@ -144,7 +144,7 @@ class Home extends MX_Controller {
 			{
 				$data['sent'] = false;
 				$data['message'] = "Please fill in all required fields.";
-				$this->load->view('contact', $data);
+			//	$this->load->view('contact', $data);
 			}
 			else
 			{
@@ -157,7 +157,11 @@ class Home extends MX_Controller {
 				$data['sent'] = true;
 			}
 
-		}else $data['sent'] = false;
+		}else 
+		{
+			$data['sent'] = false;
+		}
+		
 		$this->load->view('contact', $data);
 	}
 
