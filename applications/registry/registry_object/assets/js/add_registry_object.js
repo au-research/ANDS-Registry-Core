@@ -562,9 +562,9 @@ function initEditForm(){
 			});
 
 			xml+='</'+ro_class+'>';
-			if($('#annotations').length > 0)
+			if($('#annotations')[0].value != '')
 			{
-				xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+				xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extrif:annotations>';
 			}
 			xml+='</registryObject>';
 			$('#myModal .modal-header h3').html('<h3>Save &amp; Validate Registry Object</h3>');
@@ -605,7 +605,7 @@ function initEditForm(){
 				}
 				xml += '<registryObject group="'+$('input[name=group]',admin).val()+'">';
 				xml += '<key>'+$('input[name=key]', admin).val()+'</key>';
-				xml += '<originatingSource type="'+$('input[name=originatingSourceType]', admin).val()+'">'+$('input[name=originatingSource]',admin).val()+'</originatingSource>';
+				xml += '<originatingSource type="'+$('input[name=originatingSourceType]', admin).val()+'">'+$('input[name=originatingSource]',admin).val()+'....</originatingSource>';
 				xml += '<'+ro_class+' type="'+$('input[name=type]',admin).val()+'" dateModified="'+$('input[name=date_modified]', admin).val()+'" '+dateAccessioned+'>';
 
 				$.each(allTabs, function(){
@@ -613,10 +613,11 @@ function initEditForm(){
 				});
 
 				xml+='</'+ro_class+'>';
-				if($('#annotations').length > 0)
+				if($('#annotations')[0].value != '')
 				{
-					xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+					xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extrif:annotations>';
 				}
+
 				xml+='</registryObject>';
 
 				/* Keep a backup of the form's RIFCS */
@@ -795,9 +796,9 @@ function validate(){
 	});
 
 	xml+='</'+ro_class+'>';
-	if($('#annotations').length > 0)
+	if($('#annotations')[0].value != '')
 	{
-		xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+		xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extrif:annotations>';
 	}
 	xml+='</registryObject>';
 	prettyPrint();
