@@ -33,7 +33,6 @@ class Identifiers_Extension extends ExtensionBase
 
 	public function findMatchingRecords($matches = array(), $tested_ids = array(), $recursive=true)
 	{
-		
 		if(sizeof($tested_ids) === 0) // first call
 		{
 			$tested_ids[] = $this->ro->id;
@@ -61,7 +60,7 @@ class Identifiers_Extension extends ExtensionBase
 						}
 					}
 					if($recursive) // continue traversing is needed
-						$matches = $this->findMatchingRecords($matches, $tested_ids);
+						return $matches = $this->findMatchingRecords($matches, $tested_ids);
 				}
 			}
 		}
@@ -96,7 +95,7 @@ class Identifiers_Extension extends ExtensionBase
 									$matches[] = $ro['registry_object_id'];
 								}
 							}
-							$matches = $this->findMatchingRecords($matches, $tested_ids);
+							return $matches = $this->findMatchingRecords($matches, $tested_ids);
 						}
 					}
 				}
