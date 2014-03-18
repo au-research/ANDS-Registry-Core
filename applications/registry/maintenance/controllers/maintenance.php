@@ -638,10 +638,14 @@ class Maintenance extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
 		$relationships = $ro->getAllRelatedObjects(false, true, true);
+		$already_sync = array();
 		foreach($relationships as $r){
-			$rr = $this->ro->getByID($r['registry_object_id']);
-			$rr->sync();
-			echo $rr->id. ' > '. $rr->class. ' > '.$rr->title.'<br/>';
+			if(!in_array($r['registry_object_id'], $already_sync)){
+				$rr = $this->ro->getByID($r['registry_object_id']);
+				$rr->sync();
+				$already_sync[] = $rr->id;
+				echo $rr->id. ' > '. $rr->class. ' > '.$rr->title.'<br/>';
+			}
 		}
 		echo 'done';
 	}

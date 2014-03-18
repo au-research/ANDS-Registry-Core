@@ -201,6 +201,28 @@ class Connections_Extension extends ExtensionBase
 			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections());
 		}
 
+		if ( $allow_all_links ) {
+			$identifierMatches = array();
+			foreach($unordered_connections as $cc){
+				if($cc['class']=='party'){
+					$cc_ro = $this->_CI->ro->getByID($cc['registry_object_id']);
+					$identifierMatches = array_merge($identifierMatches, $cc_ro->findMatchingRecords());
+				}
+			}
+			foreach ($identifierMatches as $ii){
+				$ii_ro = $this->_CI->ro->getByID($ii);
+				$unordered_connections[] = array(
+					'registry_object_id' => $ii_ro->id,
+					'key' => $ii_ro->key,
+					'class' => $ii_ro->class,
+					'title'=>$ii_ro->title,
+					'slug' => $ii_ro->slug,
+					'origin' => 'IDENTIFIER_MATCH',
+					'relation_type' => '(Automatically inferred link from records with matching identifiers)'
+				);
+			}
+		}
+
 		return $unordered_connections;
 	}
 
