@@ -163,7 +163,7 @@ class Connections_Extension extends ExtensionBase
 	}
 
 
-	function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false)
+	function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false, $allow_all_links = false)
 	{
 		$unordered_connections = array();
 
@@ -179,14 +179,14 @@ class Connections_Extension extends ExtensionBase
 		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks());
 		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links));
 		/* Step 2 - Internal reverse links */
-		if ($allow_reverse_internal_links)
+		if ($allow_reverse_internal_links || $allow_all_links)
 		{
 
 			$unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks($allow_drafts));
 		}
 
 		/* Step 3 - External reverse links */
-		if ($allow_reverse_external_links)
+		if ($allow_reverse_external_links || $allow_all_links)
 		{
 			$unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks($allow_drafts));
 		}
@@ -196,7 +196,7 @@ class Connections_Extension extends ExtensionBase
 
 
 		/* Step 5 - Duplicate Record connections */
-		if ( $include_dupe_connections )
+		if ( $include_dupe_connections || $allow_all_links)
 		{
 			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections());
 		}
