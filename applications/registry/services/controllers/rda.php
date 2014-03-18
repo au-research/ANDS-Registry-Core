@@ -758,7 +758,22 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$ro = $this->ro->getByID($id);
 		$content = '';
 		if($ro) {
-			$content = $ro->findMatchingRecords();
+			$matching = $ro->findMatchingRecords();
+			$content = array();
+			foreach($matching as $ro_id){
+				$ro = $this->ro->getByID($ro_id);
+				array_push(
+					$content,
+					array(
+						'id' => $ro->id,
+						'title' => $ro->title,
+						'slug' => $ro->slug,
+						'group' => $ro->group
+					)
+				);
+
+				unset($ro);
+			}
 			$this->output->set_output(json_encode(array('status'=>'OK', 'content'=>$content)));
 		} else {
 			throw new Exception("Unable to find registry object");
