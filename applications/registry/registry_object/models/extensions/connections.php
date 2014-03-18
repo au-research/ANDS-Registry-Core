@@ -402,7 +402,7 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-	function _getDuplicateConnections($already_checked = array())
+	function _getDuplicateConnections()
 	{
 		$my_connections = array();
 		$relatedByIdentifiers = $this->ro->findMatchingRecords();
