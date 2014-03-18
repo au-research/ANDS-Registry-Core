@@ -53,6 +53,8 @@ class Connections_Extension extends ExtensionBase
 		$allowed_draft = ($published_only==true ? false : true);
 		$unordered_connections = $this->getAllRelatedObjects(!$allowed_draft, $include_dupe_connections);
 
+		$ordered_connections = array();
+
 		/* Now sort according to "type" (collection / party_one / party_multi / activity...etc.) */
 		foreach($unordered_connections AS $connection)
 		{
