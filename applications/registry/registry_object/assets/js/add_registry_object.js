@@ -564,7 +564,7 @@ function initEditForm(){
 			xml+='</'+ro_class+'>';
 			if($('#annotations')[0].value != '')
 			{
-				xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extrif:annotations>';
+				xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
 			}
 			xml+='</registryObject>';
 			$('#myModal .modal-header h3').html('<h3>Save &amp; Validate Registry Object</h3>');
@@ -615,7 +615,7 @@ function initEditForm(){
 				xml+='</'+ro_class+'>';
 				if($('#annotations')[0].value != '')
 				{
-					xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extrif:annotations>';
+					xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
 				}
 
 				xml+='</registryObject>';
@@ -798,7 +798,7 @@ function validate(){
 	xml+='</'+ro_class+'>';
 	if($('#annotations')[0].value != '')
 	{
-		xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extrif:annotations>';
+		xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
 	}
 	xml+='</registryObject>';
 	prettyPrint();
