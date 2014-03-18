@@ -641,7 +641,7 @@ class Maintenance extends MX_Controller {
 		foreach($relationships as $r){
 			$rr = $this->ro->getByID($r['registry_object_id']);
 			$rr->sync();
-			echo $rr->id. ' > '. $rr->title.'<br/>';
+			echo $rr->id. ' > '. $rr->class. ' > '.$rr->title.'<br/>';
 		}
 		echo 'done';
 	}
