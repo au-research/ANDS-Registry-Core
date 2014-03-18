@@ -410,17 +410,14 @@ class Connections_Extension extends ExtensionBase
 		foreach($relatedByIdentifiers as $r_id){
 			$ro = $this->_CI->ro->getByID($r_id);
 
-			$match = array(
-				'registry_object_id' => $ro->id,
-				'key' => $ro->key,
-				'title' => $ro->title,
-				'slug' => $ro->slug,
-				'class' => $ro->class,
-				'status' => $ro->status,
-				'origin' => 'IDENTIFIER_MATCH',
-				'relation_type' => '(Automatically inferred link from records with matching identifiers)'
-			);
-			$my_connections[] = $match;
+			$matches = $ro->getAllRelatedObjects();
+
+			foreach($matches as &$match){
+				$match['origin'] = 'IDENTIFIER_MATCH';
+				$match['relation_type'] = '(Automatically inferred link from records with matching identifiers)';
+			}
+
+			$my_connections = array_merge($my_connections, $matches);
 		}
 		return $my_connections;
 	}
