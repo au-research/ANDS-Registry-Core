@@ -130,9 +130,7 @@ controller('openConnections', function($scope, searches){
 	 */
 	$scope.$watch('query', function(){
 		$scope.filters['q'] = $scope.query;
-		if($scope.query!=''){
-			$scope.search();
-		}
+        $scope.search();
 	});
 
 	/**
