@@ -53,6 +53,8 @@ class Connections_Extension extends ExtensionBase
 		$allowed_draft = ($published_only==true ? false : true);
 		$unordered_connections = $this->getAllRelatedObjects(!$allowed_draft, $include_dupe_connections);
 
+		$ordered_connections = array();
+
 		/* Now sort according to "type" (collection / party_one / party_multi / activity...etc.) */
 		foreach($unordered_connections AS $connection)
 		{
@@ -404,31 +406,21 @@ class Connections_Extension extends ExtensionBase
 	{
 		$my_connections = array();
 		$relatedByIdentifiers = $this->ro->findMatchingRecords();
-		if(!$already_checked || is_null($already_checked)) $already_checked = array();
-		$new_check = array_merge($already_checked, $relatedByIdentifiers);
-		if (sizeof($relatedByIdentifiers) > 0) {
-			foreach ($relatedByIdentifiers as $id) {
-				$matched_ro = $this->_CI->ro->getByID($id);
-				if ($matched_ro && !in_array($id, $already_checked))
-				{
-					$matches = $matched_ro->_getDuplicateConnections($new_check);
-					if ($matches && count($matches) > 0)
-					{
-						foreach ($matches AS &$match)
-						{
-							// Don't match contributors
-							if ($match['origin'] == "CONTRIBUTOR") continue;
 
-							// Only match if the shared identifier record has the same class
-							if ($matched_ro->class != $this->ro->class) continue;
+		foreach($relatedByIdentifiers as $r_id){
+			$ro = $this->_CI->ro->getByID($r_id);
 
-							$match["origin"] = "IDENTIFIER_MATCH";
-							$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
-							$my_connections[] = $match;
-						}
-					}
-				}
-			}
+			$match = array(
+				'registry_object_id' => $ro->id,
+				'key' => $ro->key,
+				'title' => $ro->title,
+				'slug' => $ro->slug,
+				'class' => $ro->class,
+				'status' => $ro->status,
+				'origin' => 'IDENTIFIER_MATCH',
+				'relation_type' => '(Automatically inferred link from records with matching identifiers)'
+			);
+			$my_connections[] = $match;
 		}
 		return $my_connections;
 	}

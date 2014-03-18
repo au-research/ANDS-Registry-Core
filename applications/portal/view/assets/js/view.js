@@ -845,8 +845,12 @@ function initAddTagForm(){
 				data:{key:key,tag:tag},
 				success: function(data){
 					$('.add_tag_form input, .add_tag_form button').removeAttr('disabled');
+                    $('.add_tag_form input').val('');
 					if(data.status=='OK'){
-						$('#tags_container').append('<a href="'+base_url+'search/#!/tag='+tag+'">'+tag+'</a>');
+                        if($('#tags_container').length == 0){
+                            $("<p class=\"subject_type\">User Contributed Tags <a href=\"#\" class=\"tags_helper\"><i class=\"portal-icon portal-icon-info\"></i></a></p> <div class=\"tags user_tags\" id=\"tags_container\"></div>").insertBefore('.add_tag_form');
+                        }
+                        $('#tags_container').append('<a href="'+base_url+'search/#!/tag='+tag+'">'+tag+'</a>');
 						sync();
 					}else{
 						if(data.message) $('.add_tag_form').append('<p>'+data.message+'</p>');
