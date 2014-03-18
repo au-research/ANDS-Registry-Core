@@ -634,6 +634,18 @@ class Maintenance extends MX_Controller {
 		echo 'done';
 	}
 
+	function fixRelationships($id) {
+		$this->load->model('registry_object/registry_objects', 'ro');
+		$ro = $this->ro->getByID($id);
+		$relationships = $ro->getAllRelatedObjects(false, true, true);
+		foreach($relationships as $r){
+			$rr = $this->ro->getByID($r['registry_object_id']);
+			$rr->sync();
+			echo $rr->id. ' > '. $rr->title.'<br/>';
+		}
+		echo 'done';
+	}
+
 	function smartSyncDS2($data_source_id, $print=false, $offset=0){
 		$this->load->library('importer');
 		$this->load->model('data_source/data_sources', 'ds');
