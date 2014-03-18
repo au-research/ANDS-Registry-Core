@@ -497,7 +497,7 @@ class Importer {
 				// previous relationships are reset by this call
 				if($ro)
 				{
-					$related_keys = $ro->addRelationships();
+					$related_keys = $ro->getRelatedKeys();
 					// directly affected records are re-enriched below (and reindexed...)
 					// we consider any related record keys to be directly affected and reindex them...
 					$this->addToAffectedList($related_keys);

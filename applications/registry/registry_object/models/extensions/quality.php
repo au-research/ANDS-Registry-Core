@@ -16,11 +16,13 @@ class Quality_Extension extends ExtensionBase
 		$this->_CI->load->model('registry_object/quality_checker', 'qa');
 		
 		// Get and update our quality metadata 
+
 		$this->ro->processIdentifiers();
 		$this->ro->addRelationships();
 		
 		// use the optimised version of getRelatedClassesString (which does not use getConnections())
 		$relatedClassStr = $this->ro->getRelatedClassesString(true);
+
 		
 		if($runBenchMark) $this->_CI->benchmark->mark('ro_qa_s1_end');
 		

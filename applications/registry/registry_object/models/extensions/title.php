@@ -161,8 +161,8 @@ class Title_Extension extends ExtensionBase
 			$CommonWords = array(' a ', ' about ', ' above ', ' above ', ' across ', ' after ', ' afterwards ',
 				' again ', ' against ', ' all ', ' almost ', ' alone ', ' along ', ' already ', ' also ', ' although ',
 				' always ', ' am ', ' among ', ' amongst ', ' amoungst ', ' amount”,  “an ', ' and ', ' another ', ' any ',
-				' anyhow ', ' anyone ', ' anything”,”anyway ', ' anywhere ', ' are ', ' around ', ' as ', ' at ', ' back ',
-				' be ', ' became ', ' because”,”become”,”becomes ', ' becoming ', ' been ', ' before ', ' beforehand ',
+				' anyhow ', ' anyone ', ' anything ', ' anyway ', ' anywhere ', ' are ', ' around ', ' as ', ' at ', ' back ',
+				' be ', ' became ', ' because ', ' become ', ' becomes ', ' becoming ', ' been ', ' before ', ' beforehand ',
 				' behind ', ' being ', ' below ', ' beside ', ' besides ', ' between ', ' beyond ', ' bill ', ' both ',
 				' bottom ', ' but ', ' by ', ' call ', ' can ', ' cannot ', ' cant ', ' co ', ' con ', ' could ', ' couldnt ',
 				' cry ', ' de ', ' describe ', ' detail ', ' do ', ' done ', ' down ', ' due ', ' during ', ' each ', ' eg ',
@@ -195,7 +195,7 @@ class Title_Extension extends ExtensionBase
 	}
 
 /*
-a very primitive way of braking up title into two list of words
+a very primitive way of breaking up title into two list of words
 based on their frequency in the description
 a list of significants and non-significant words from the registry would be needed rather than relying on someone's skill on writing a description
 */

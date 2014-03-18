@@ -17,6 +17,7 @@ class Sync_extension extends ExtensionBase{
 			$this->_CI->load->library('solr');
 			if($full){
 				$this->ro->addRelationships();
+				$this->ro->processIdentifiers();
 				$this->ro->update_quality_metadata();
 			}
 			$this->ro->enrich();

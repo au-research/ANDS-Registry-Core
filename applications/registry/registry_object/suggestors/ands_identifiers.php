@@ -45,7 +45,7 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 		$identifier_search_query = implode(" +identifier_value:", $my_identifiers);
 
 		// But exclude already related objects
-		$my_relationships = array_map(function($elt){ return '"' . $elt . '"'; }, $registry_object->getRelationships());
+		$my_relationships = array_map(function($elt){ return '"' . $elt . '"'; }, $registry_object->getRelatedKeys());
 		$my_relationships[] = '"'. $registry_object->key . '"';
 		array_unshift($my_relationships, ''); // prepend an element so that implode works
 		$relationship_search_query = " " . implode(" -key:", $my_relationships);
