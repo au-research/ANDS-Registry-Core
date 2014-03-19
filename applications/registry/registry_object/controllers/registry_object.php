@@ -839,10 +839,9 @@ class Registry_object extends MX_Controller {
 		//exit();
 		//$ro->enrich();	
 		//$ro->update_quality_metadata();		
-		$result = $ro->findMatchingRecordsRecursive();
-		$solrDoc = $ro->transformForSOLR();		
 
-		//echo json_encode($result);
+		$solrDoc = $ro->transformForSOLR();		
+		echo $solrDoc;
 	}
 
 
