@@ -209,7 +209,7 @@ class Registry extends MX_Controller {
 				$filters = $array['filters'];
 				if(isset($array['tag'])) $tag = $array['tag'];
 				if(isset($array['tag_type'])) $tag_type = $array['tag_type'];
-				$filters['tag'] = $tag;
+				if($action=='remove') $filters['tag'] = $tag;
 			}
 			$this->solr->setFilters($filters);
 			$this->solr->addBoostCondition('(tag:*)^1000');
