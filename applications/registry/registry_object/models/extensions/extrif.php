@@ -320,7 +320,7 @@ class Extrif_Extension extends ExtensionBase
 
 		$options = array(
 			'single_values' => true,
-			'theme_pages' => false,
+			'theme_pages' => true,
 			'tags' => true,
 			'subjects' => true,
 		);
@@ -348,10 +348,7 @@ class Extrif_Extension extends ExtensionBase
 			}catch(Exception $e){
 				throw new Exception ('iconv installation/configuration required for simplified title');
 			}
-
-			if($this->ro->class == PARTY){
-				$ext->extendedMetadata->matching_identifier_count = sizeof($this->ro->findMatchingRecords());
-			}
+			$ext->extendedMetadata->matching_identifier_count = sizeof($this->ro->findMatchingRecords());
 		}
 
 		if ($options['theme_pages']) {
@@ -363,18 +360,14 @@ class Extrif_Extension extends ExtensionBase
 			}
 		}
 
-		if ($options['tags'] && count($ext->annotations->tags)>0) {
-			if ($tags = $this->ro->getTags()) {
-				unset($ext->annotations->tags);
-				$ext->annotations->addChild('tags');
-				foreach ($tags as $tag){
-					try {
-						$tag_tag = $ext->annotations->tags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
-						$tag_tag->addAttribute('type', $tag['type']);
-					} catch (Exception $e){
-						throw new Exception($e);
-					}
-
+		if ($options['tags']) {
+			if($tags = $this->ro->getTags()) {
+				unset($ext->extendedMetadata->annotations);
+				$ext->extendedMetadata->addChild('annotations', null, EXTRIF_NAMESPACE);
+				$ext->extendedMetadata->annotations->addChild('tags', null, EXTRIF_NAMESPACE);
+				foreach($tags as $tag) {
+					$tag_node = $ext->extendedMetadata->annotations->tags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
+					$tag_node->addAttribute('type', $tag['type']);
 				}
 			}
 		}
