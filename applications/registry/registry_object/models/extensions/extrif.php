@@ -185,19 +185,13 @@ class Extrif_Extension extends ExtensionBase
 					$extendedMetadata->addChild("extRif:matching_identifier_count", sizeof($this->ro->findMatchingRecords()), EXTRIF_NAMESPACE);
 				}
 
-				//tags
+
 				//ANNOTATIONS
+				$annotations = $extendedMetadata->addChild("extRif:annotations", NULL, EXTRIF_NAMESPACE);
+
+				//tags
 				if($tags = $this->ro->getTags()){
-					if(count($xml->xpath('extRif:annotations'))){
-						$annotations = $xml->xpath('extRif:annotations');
-						$annotations = $annotations[0];
-					}else $annotations = $xml->addChild("extRif:annotations", NULL, EXTRIF_NAMESPACE);
-				
-					if(count($xml->xpath('extRif:annotations/extRif:tags'))){
-						$extRifTags = $xml->xpath('extRif:annotations/extRif:tags');
-						$extRifTags = $extRifTags[0];
-						$extRifTags[0]='';//hack to remove the tags
-					}else $extRifTags = $annotations->addChild("extRif:tags", NULL, EXTRIF_NAMESPACE);
+					$extRifTags = $annotations->addChild('extRif:tags', NULL, EXTRIF_NAMESPACE);
 
 					foreach($tags as $tag){
 						$tag_tag = $extRifTags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);

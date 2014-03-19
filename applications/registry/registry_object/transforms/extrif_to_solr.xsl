@@ -83,7 +83,7 @@
 
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:related_object"/>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:matching_identifier_count"/>
-                <xsl:apply-templates select="extRif:annotations/extRif:tags/extRif:tag"/>
+                <xsl:apply-templates select="extRif:extendedMetadata/extRif:annotations/extRif:tags/extRif:tag"/>
 
             </xsl:when>
         </xsl:choose>  
