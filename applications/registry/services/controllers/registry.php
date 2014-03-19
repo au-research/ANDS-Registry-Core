@@ -266,10 +266,12 @@ class Registry extends MX_Controller {
 		foreach($tags['data'] as $tag){
 			$row = $this->db->get_where('tags', array('name'=>$tag['name']));
 			$row = $row->first_row();
-			array_push($result, array(
-				'name' => $tag['name'],
-				'type' => $row->type
-			));
+			if($row){
+				array_push($result, array(
+					'name' => $tag['name'],
+					'type' => $row->type
+				));
+			}
 		}
 		
 		echo json_encode(array('status'=>'OK', 'content'=>$result));
