@@ -65,10 +65,16 @@ class Auth extends MX_Controller {
 					$access_token = $access_token['access_token'];
 
 					$users = $db->get_where('users', array('provider'=>$provider, 'identifier'=>$user_profile->identifier));
+
+					$allow = array('identifier', 'displayName', 'photoURL', 'firstName', 'lastName');
+					foreach($user_profile as $u=>$thing){
+						if(!in_array($u, $allow)) unset($user_profile->{$u});
+					}
+
 					if($users->num_rows() > 0){
 						$user = $users->first_row();
 						$db->where('id', $user->id);
-						$db->update('users', array('status'=>'logged_in', 'access_token'=>$access_token));
+						$db->update('users', array('status'=>'logged_in', 'access_token'=>$access_token, 'profile'=>json_encode($user_profile)));
 					}else{
 						$user = array(
 							'identifier' => $user_profile->identifier,
