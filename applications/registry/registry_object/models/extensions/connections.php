@@ -112,7 +112,7 @@ class Connections_Extension extends ExtensionBase
 			{
 				$class_valid = true;
 			}
-			$status_valid = (!$published_only || ($connection['status'] == PUBLISHED) || ($connection['origin'] == 'IDENTIFIER') ||  ($connection['origin'] == 'IDENTIFIER REVERSE'));
+			$status_valid = (!$published_only || ($connection['status'] == PUBLISHED) || ($connection['registry_object_id'] == null && ($connection['origin'] == 'IDENTIFIER' ||  $connection['origin'] == 'IDENTIFIER REVERSE')));
 			if ($class_valid && $status_valid)
 			{
 
