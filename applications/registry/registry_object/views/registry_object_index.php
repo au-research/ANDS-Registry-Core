@@ -246,9 +246,7 @@ date_default_timezone_set('Australia/Melbourne');
 					</div>
 				</div>
 
-
-
-				<?php if ($this->user->hasFunction('ORCA_TAG_MANAGER') && $this->user->hasAffiliation($ds->record_owner)): ?>
+				<?php if ($this->user->hasFunction('REGISTRY_USER') && $this->user->hasAffiliation($ds->record_owner)): ?>
 				<div class="widget-box">
 					<div class="widget-title">
 						<h5>Tags Management</h5>
