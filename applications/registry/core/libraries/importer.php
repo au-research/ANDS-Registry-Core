@@ -501,6 +501,24 @@ class Importer {
 					// directly affected records are re-enriched below (and reindexed...)
 					// we consider any related record keys to be directly affected and reindex them...
 					$this->addToAffectedList($related_keys);
+
+
+					// Also treat identifier matches as affected records which need to be enriched
+					// (to increment their extRif:matching_identifier_count)
+					$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+					$related_keys = array();
+					foreach($related_ids_by_identifier_matches AS $matching_record_id)
+					{
+						$matched_ro = $this->CI->ro->getByID($matching_record_id);
+						$related_keys[] = $matched_ro->key;
+					}
+					if (count($related_keys))
+					{
+						$this->addToAffectedList($related_keys);
+					}
+
+
+
 					// Keep track of our imported keys...
 					$this->imported_record_keys[] = $ro->key;
 					unset($ro);
