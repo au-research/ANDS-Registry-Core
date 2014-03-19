@@ -86,7 +86,7 @@ class Connections_Extension extends ExtensionBase
 				}
 			}
 
-			if($connection['class'] == "party" && $connection['registry_object_id'] == null && ($connection['origin'] == 'IDENTIFIER') ||  ($connection['origin'] == 'IDENTIFIER REVERSE')){
+			if($connection['class'] == "party" && $connection['registry_object_id'] == null && ($connection['origin'] == 'IDENTIFIER' ||  $connection['origin'] == 'IDENTIFIER REVERSE')){
 				$connection['class'] = "party_one";
 			}
 			// $connection['description'] = $this->_getDescription($connection['registry_object_id']);
