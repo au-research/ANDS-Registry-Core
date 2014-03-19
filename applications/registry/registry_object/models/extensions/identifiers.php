@@ -36,8 +36,8 @@ class Identifiers_Extension extends ExtensionBase
 		if(sizeof($tested_ids) === 0) // first call
 		{
 			$tested_ids[] = $this->ro->id;
-			$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $this->ro->id));
-			$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' AND ro.class = 'party' WHERE roi.registry_object_id != ".$this->ro->id." AND (";
+			$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $this->ro->id, 'identifier_type !='=> 'local'));
+			$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$this->ro->id." AND (";
 			$qArray = array();
 			$or = '';
 			if(sizeof($query->result_array()) > 0)
@@ -71,8 +71,8 @@ class Identifiers_Extension extends ExtensionBase
 				if(!in_array($registry_object_id, $tested_ids))
 				{
 					$tested_ids[] = $registry_object_id;
-					$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $registry_object_id));
-					$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' AND ro.class = 'party' WHERE roi.registry_object_id != ".$registry_object_id." AND (";
+					$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $registry_object_id, 'identifier_type !='=> 'local'));
+					$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$registry_object_id." AND (";
 					$qArray = array();
 					$or = '';
 					if(sizeof($query->result_array()) > 0)
