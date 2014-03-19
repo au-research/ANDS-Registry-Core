@@ -488,7 +488,7 @@ function initConnectionGraph()
 
 								a.attr('relation_type','nested_collection');
 								a.attr('page', 2);
-								console.log($(nodeSpan).html());
+								//console.log($(nodeSpan).html());
 							}
 							else
 							{
@@ -949,7 +949,6 @@ function initThemePageLinks(){
 		$.ajax({
 			url:base_url+ "theme_page/getThemePageBanner/"+slug,
 			success: function(data){
-				console.log(data);
 				this_div.html(data);
 			}
 		});
