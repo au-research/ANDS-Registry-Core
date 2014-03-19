@@ -1461,7 +1461,7 @@ public function getContributorGroupsEdit()
 
 			$this->importer->setDatasource($data_source);
 			$this->importer->commit(false);
-			$message = $this->importer->finishImportTasks();
+			$this->importer->finishImportTasks();
 
 			if ($error_log = $this->importer->getErrors())
 			{

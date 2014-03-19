@@ -435,8 +435,9 @@ class Importer {
 					}
 
 					// Save all our attributes to the object
-					$ro->save();
 
+					$ro->save();
+					$ro->processIdentifiers();
 					// Add this record to our counts, etc.
 					$this->importedRecords[] = $ro->id;
 					$this->ingest_successes++;
