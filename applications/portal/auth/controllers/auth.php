@@ -52,6 +52,7 @@ class Auth extends MX_Controller {
 		try{
 			$this->load->library('HybridAuthLib');
 			if ($this->hybridauthlib->providerEnabled($provider)){
+
 				$service = $this->hybridauthlib->authenticate($provider);
 
 				if ($service->isUserConnected()){
@@ -85,7 +86,7 @@ class Auth extends MX_Controller {
 
 					redirect($redirect);
 				}else{
-					show_error('Cannot authenticate user');
+					redirect($redirect);
 				}
 			}else{
 				show_404($_SERVER['REQUEST_URI']);
@@ -103,7 +104,8 @@ class Auth extends MX_Controller {
 				         if (isset($service)){
 				         	$service->logout();
 				         }
-				         show_error('User has cancelled the authentication or the provider refused the connection.');
+						 redirect($redirect);
+				         //show_error('User has cancelled the authentication or the provider refused the connection.');
 				         break;
 				case 6 : $error = 'User profile request failed. Most likely the user is not connected to the provider authentication needs to be done again.';
 				         break;
