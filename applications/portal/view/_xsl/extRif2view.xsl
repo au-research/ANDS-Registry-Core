@@ -446,7 +446,7 @@
 
 </xsl:if>
 
- <xsl:if test="../extRif:annotations/extRif:tags">
+ <xsl:if test="../exRif:extendedMetadata/extRif:annotations/extRif:tags">
     <p class="subject_type">User Contributed Tags <a href="#" class="tags_helper"><i class="portal-icon portal-icon-info"></i></a></p>
     <div class="tags user_tags" id="tags_container">
       <xsl:for-each select="../extRif:annotations/extRif:tags/extRif:tag">
