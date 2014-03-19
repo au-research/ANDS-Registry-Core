@@ -146,7 +146,6 @@ controller('openConnections', function($scope, searches){
 		if($scope.results && $scope.results.docs && $scope.numFound <= $scope.results.docs.length){
 			$scope.done = true;
 		}
-        console.log(!$scope.done && !$scope.loading);
 	}, true);
 
 	/**
