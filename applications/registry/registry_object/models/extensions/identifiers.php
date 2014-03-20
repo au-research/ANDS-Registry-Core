@@ -13,7 +13,7 @@ class Identifiers_Extension extends ExtensionBase
 		$sxml = $this->ro->getSimpleXML();	
 		$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
 		$this->db->where(array('registry_object_id' => $this->ro->id));
-		$this->db->delete('registry_object_identifiers');	
+		$this->db->delete('registry_object_identifiers');
 		foreach($sxml->xpath('//ro:'.$this->ro->class.'/ro:identifier') AS $identifier)
 		{
 		   if((string)$identifier != '')
