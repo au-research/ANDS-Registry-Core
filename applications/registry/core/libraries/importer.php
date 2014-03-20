@@ -517,7 +517,7 @@ class Importer {
 				if($ro)
 				{
 
-					$related_objects = $ro->getAllRelatedObjects();
+					$related_objects = $ro->getAllRelatedObjects(false, true, true);
 					$related_keys = array();
 					foreach($related_objects as $rr){
 						$related_keys[] = $rr['key'];
