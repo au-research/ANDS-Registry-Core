@@ -52,6 +52,7 @@ class Auth extends MX_Controller {
 		try{
 			$this->load->library('HybridAuthLib');
 			if ($this->hybridauthlib->providerEnabled($provider)){
+
 				$service = $this->hybridauthlib->authenticate($provider);
 
 				if ($service->isUserConnected()){
@@ -64,10 +65,16 @@ class Auth extends MX_Controller {
 					$access_token = $access_token['access_token'];
 
 					$users = $db->get_where('users', array('provider'=>$provider, 'identifier'=>$user_profile->identifier));
+
+					$allow = array('identifier', 'displayName', 'photoURL', 'firstName', 'lastName');
+					foreach($user_profile as $u=>$thing){
+						if(!in_array($u, $allow)) unset($user_profile->{$u});
+					}
+
 					if($users->num_rows() > 0){
 						$user = $users->first_row();
 						$db->where('id', $user->id);
-						$db->update('users', array('status'=>'logged_in', 'access_token'=>$access_token));
+						$db->update('users', array('status'=>'logged_in', 'access_token'=>$access_token, 'profile'=>json_encode($user_profile)));
 					}else{
 						$user = array(
 							'identifier' => $user_profile->identifier,
@@ -85,7 +92,7 @@ class Auth extends MX_Controller {
 
 					redirect($redirect);
 				}else{
-					show_error('Cannot authenticate user');
+					redirect($redirect);
 				}
 			}else{
 				show_404($_SERVER['REQUEST_URI']);
@@ -103,7 +110,8 @@ class Auth extends MX_Controller {
 				         if (isset($service)){
 				         	$service->logout();
 				         }
-				         show_error('User has cancelled the authentication or the provider refused the connection.');
+						 redirect($redirect);
+				         //show_error('User has cancelled the authentication or the provider refused the connection.');
 				         break;
 				case 6 : $error = 'User profile request failed. Most likely the user is not connected to the provider authentication needs to be done again.';
 				         break;

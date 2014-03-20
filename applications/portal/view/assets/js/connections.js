@@ -130,9 +130,10 @@ controller('openConnections', function($scope, searches){
 	 */
 	$scope.$watch('query', function(){
 		$scope.filters['q'] = $scope.query;
-		if($scope.query!=''){
-			$scope.search();
-		}
+        $scope.search();
+        if($scope.results && $scope.results.docs && $scope.numFound <= $scope.results.docs.length){
+            $scope.done = true;
+        }
 	});
 
 	/**
@@ -224,6 +225,11 @@ controller('openConnections', function($scope, searches){
 			$scope.relations = [];
 			$scope.results = data.result;
 			$scope.facet = data.facet_result;
+            $.each($scope.facet, function(){
+                $.each(this.values, function(){
+                    this.title = this.title.replace(/&gt;/g, '>');
+                });
+            });
 			$scope.getRelations();
 		});
 	}

@@ -209,6 +209,7 @@ class Registry extends MX_Controller {
 				$filters = $array['filters'];
 				if(isset($array['tag'])) $tag = $array['tag'];
 				if(isset($array['tag_type'])) $tag_type = $array['tag_type'];
+				if($action=='remove') $filters['tag'] = $tag;
 			}
 			$this->solr->setFilters($filters);
 			$this->solr->addBoostCondition('(tag:*)^1000');
@@ -235,10 +236,13 @@ class Registry extends MX_Controller {
 		}else{
 			foreach($keys as $key){
 				$ro = $this->ro->getPublishedByKey($key);
-				if($ro->preCheckTag($tag, $tag_type)){
-					if($action=='add' && $tag) $ro->addTag($tag, $tag_type);
-				}else{
-					throw new Exception($tag. ' already exists as a '.$ro->getTagType($tag).' tag. Please try a different tag.');
+
+				if($action=='add' && $tag){
+					if($ro->preCheckTag($tag, $tag_type)){
+						$ro->addTag($tag, $tag_type);
+					}else{
+						throw new Exception($tag. ' already exists as a '.$ro->getTagType($tag).' tag. Please try a different tag.');
+					}
 				}
 
 				if($action=='remove' && $tag) {
@@ -265,10 +269,12 @@ class Registry extends MX_Controller {
 		foreach($tags['data'] as $tag){
 			$row = $this->db->get_where('tags', array('name'=>$tag['name']));
 			$row = $row->first_row();
-			array_push($result, array(
-				'name' => $tag['name'],
-				'type' => $row->type
-			));
+			if($row){
+				array_push($result, array(
+					'name' => $tag['name'],
+					'type' => $row->type
+				));
+			}
 		}
 		
 		echo json_encode(array('status'=>'OK', 'content'=>$result));

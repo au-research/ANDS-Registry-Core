@@ -864,6 +864,16 @@ class Registry_objects extends CI_Model {
 			}
 		}
 
+		// Also treat identifier matches as affected records which need to be enriched
+		// (to increment their extRif:matching_identifier_count)
+		$related_ids_by_identifier_matches = $target_ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+		$related_keys = array();
+		foreach($related_ids_by_identifier_matches AS $matching_record_id)
+		{
+			$matched_ro = $this->ro->getByID($matching_record_id);
+			$reenrich_queue[] = $matched_ro->key;
+		}
+
 		// Delete the actual registry object
 		$this->load->model('data_source/data_sources', 'ds');
 		$data_source = $this->ds->getByID($target_ro->data_source_id);

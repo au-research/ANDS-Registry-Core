@@ -120,7 +120,7 @@ Only records which have coverage of the search region will be displayed.
 
 			{{/list_title}}
 			{{#matching_identifier_count}}
-				Contributed By: {{group}}
+				Contributor: {{group}}
 			{{/matching_identifier_count}}
 			{{#description}}
 			<div class="excerpt">
@@ -130,7 +130,7 @@ Only records which have coverage of the search region will be displayed.
 
 			{{#matching_identifier_count}}
 				<div class="linkrecords">
-					<a href="javascript:;" class="load_linkedrecords" ro_id="{{id}}">{{matching_identifier_count}} Linked Party Records</a>
+					<a href="javascript:;" class="load_linkedrecords" ro_id="{{id}}">{{matching_identifier_count}} Linked Records</a>
 					<div class="linkrecords_container"></div>
 				</div>
 			{{/matching_identifier_count}}
@@ -170,7 +170,7 @@ Only records which have coverage of the search region will be displayed.
 <script type="text/x-mustache" id="linkedrecords-template">
 <ul>
 {{#.}}
-	<li><a href="<?php echo base_url();?>{{slug}}" class="overrule_link">{{title}}</a> <span>Contributed by {{group}}</span></li>
+	<li><a href="<?php echo base_url();?>{{slug}}" class="overrule_link">{{title}}</a> <span><small>(Contributor: {{group}})</small></span></li>
 {{/.}}
 </ul>
 </script>

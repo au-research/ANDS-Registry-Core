@@ -29,47 +29,81 @@ class Identifiers_Extension extends ExtensionBase
 		}
 	}
 
-	/**
-	 * SOLR. Find registry objects that share the same identifier
-	 * @return array registry_object_id
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-	 */
-	public function findMatchingRecords(){
-		$sxml = $this->ro->getSimpleXML();	
-		$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);	
-		$identifiers = array();
-		foreach($sxml->xpath('//ro:'.$this->ro->class.'/ro:identifier') AS $identifier) {
-			if((string)$identifier != '') {
-				$identifiers[] = (string) $identifier;
-			}
-		}
 
-		$matching_records = array();
-		if(sizeof($identifiers) > 0){
-			foreach($identifiers as $i){
-				$solr_query = implode('") OR identifier_value:("', $identifiers);
-			}
-			$solr_query = '(identifier_value:("'.$solr_query.'")) AND -id:'.$this->ro->id. ' AND class:party' ;
 
-			$this->_CI->load->library('solr');
-			$this->_CI->solr->setOpt('q', $solr_query);
-			$this->_CI->solr->setOpt('fl', '*');
-			$result = $this->_CI->solr->executeSearch(true);
-			
-			if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0){
-				foreach($result['response']['docs'] as $d){
-					$matching_records[] = array(
-						'id' => $d['id'],
-						'title' => $d['title'],
-						'slug' => $d['slug'],
-						'description' => $d['description'],
-						'data_source_key' => $d['data_source_key'],
-						'group' => $d['group']
-					);
+	public function findMatchingRecords($matches = array(), $tested_ids = array(), $recursive=true)
+	{
+		if(sizeof($tested_ids) === 0) // first call
+		{
+			$tested_ids[] = $this->ro->id;
+			$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $this->ro->id, 'identifier_type !='=> 'local'));
+			$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$this->ro->id." AND (";
+			$qArray = array();
+			$or = '';
+			if(sizeof($query->result_array()) > 0)
+			{
+				foreach ($query->result_array() AS $row)
+				{
+					$sql .= $or."(roi.identifier = ? AND roi.identifier_type = ?)"; 
+					$or = ' OR ';
+					$qArray[] = $row['identifier'];
+					$qArray[] = $row['identifier_type'];
+				}
+				$sql .= ")";
+				
+				$query = $this->db->query($sql, $qArray);
+				
+				if(sizeof($query->result_array()) > 0){
+					foreach ($query->result_array() AS $ro){
+						if(!in_array($ro['registry_object_id'], $matches)){
+							$matches[] = $ro['registry_object_id'];
+						}
+					}
+					if($recursive) // continue traversing is needed
+						return $matches = $this->findMatchingRecords($matches, $tested_ids);
 				}
 			}
 		}
-		return $matching_records;
+		elseif(sizeof($matches) > 0)
+		{
+			foreach ($matches AS $registry_object_id)
+			{
+				if(!in_array($registry_object_id, $tested_ids))
+				{
+					$tested_ids[] = $registry_object_id;
+					$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $registry_object_id, 'identifier_type !='=> 'local'));
+					$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$registry_object_id." AND (";
+					$qArray = array();
+					$or = '';
+					if(sizeof($query->result_array()) > 0)
+					{
+						foreach ($query->result_array() AS $row)
+						{
+							$sql .= $or."(roi.identifier = ? AND roi.identifier_type = ?)"; 
+							$or = ' OR ';
+							$qArray[] = $row['identifier'];
+							$qArray[] = $row['identifier_type'];
+						}
+						$sql .= ")";
+						
+						$query = $this->db->query($sql, $qArray);
+						
+						if(sizeof($query->result_array()) > 0){
+							foreach ($query->result_array() AS $ro)
+							{
+								if(!in_array($ro['registry_object_id'], $tested_ids) && !in_array($ro['registry_object_id'], $matches)){
+									$matches[] = $ro['registry_object_id'];
+								}
+							}
+							return $matches = $this->findMatchingRecords($matches, $tested_ids);
+						}
+					}
+				}
+
+			}
+
+		}
+		return $matches;
 	}
 	
 }

@@ -622,10 +622,32 @@ class Maintenance extends MX_Controller {
 
 	function test(){
 		$this->load->model('registry_object/registry_objects', 'ro');
-		$ro = $this->ro->getByID(13857);
-		$ro->updateExtRif();
+//		$ro = $this->ro->getByID(12242);
+		$ro = $this->ro->getByID(146631);
+		$relationships = $ro->getAllRelatedObjects(false, true);
+//		foreach($relationships as $r){
+//			$r = $this->ro->getByID($r['registry_object_id']);
+//			$r->sync();
+//		}
+		$relationships2 = $ro->_getDuplicateConnections();
+		$relatedByIdentifiers = $ro->findMatchingRecords();
 		echo 'done';
+	}
 
+	function fixRelationships($id) {
+		$this->load->model('registry_object/registry_objects', 'ro');
+		$ro = $this->ro->getByID($id);
+		$relationships = $ro->getAllRelatedObjects(false, true, true);
+		$already_sync = array();
+		foreach($relationships as $r){
+			if(!in_array($r['registry_object_id'], $already_sync)){
+				$rr = $this->ro->getByID($r['registry_object_id']);
+				$rr->sync();
+				$already_sync[] = $rr->id;
+				echo $rr->id. ' > '. $rr->class. ' > '.$rr->title.'<br/>';
+			}
+		}
+		echo 'done';
 	}
 
 	function smartSyncDS2($data_source_id, $print=false, $offset=0){

@@ -11,6 +11,7 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 
 	public function getSuggestedLinksForRegistryObject(_registry_object $registry_object, $start, $rows)
 	{
+
 		// First, get published records with the same identifier as us
 		// Note: whilst we can use SOLR to get the linked-to records, 
 		//       we shouldn't use SOLR to get our own information, as 
@@ -60,64 +61,29 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 	private function getSuggestionsBySolrQuery($search_query, $start, $rows)
 	{
 		$CI =& get_instance();
-		$CI->load->library('solr');
-		$CI->solr->init();
-		$CI->solr->setOpt("q", $search_query);
-		$CI->solr->setOpt("start", $start);
-		$CI->solr->setOpt("rows", $rows);
-		$result = $CI->solr->executeSearch(true);
-		$suggestions = array();
+		$links = array();
+		$relatedByIdentifiers = $registry_object->findMatchingRecords();
 
-		if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0)
-		{
-			$links = array();
+		foreach($relatedByIdentifiers as $r_id){
+			$ro = $CI->ro->getByID($r_id);
 
-			foreach($result['response']['docs'] AS $doc)
-			{
-				$links[] = array("url"=>portal_url($doc['slug']),
-								"title"=>$doc['display_title'],
-								"class"=>$doc['class'],
-								"description"=>$doc['description'],
-								"slug"=>$doc['slug']);
-			}
-			if(!$rows) $rows=10;
-			$pagination = array();
-			if($start==0){
-				$currentPage = 1;
-			}else{
-				$currentPage = ceil($start/$rows)+1;
-			}
-			$totalPage = ceil($result['response']['numFound'] / (int) $rows);
-
-			if($currentPage!=1){
-				$prev = $start-$rows;
-				$next = $start+$rows;
-			}
-			else if($currentPage==1&&$totalPage==1){
-				$prev = false;
-				$next = false;
-			}elseif($currentPage==$totalPage){
-				$prev = $start-$rows;
-				$next = false;
-			}else{
-				$prev = false;
-				$next = $start+$rows;
-			}
-			$pagination = array("currentPage"=>$currentPage,"totalPage"=>$totalPage);
-			if($prev !== false) $pagination['prev']=(string)$prev;
-			if($next !== false) $pagination['next']=(string)$next;
-
+			$match = array("url"=>portal_url($ro->slug),
+								"title"=>$ro->title,
+								"class"=>$ro->class,
+								"description"=>$ro->getMetadata('the_description'),
+								"slug"=>$ro->slug);
+			$links[] = $match;
+		}
+			$pagination = array("currentPage"=>1,"totalPage"=>1);
 			$suggestions = array(
-				"count" => $result['response']['numFound'],
+				"count" => sizeof($relatedByIdentifiers),
 				"links" => $links,
 				"pagination" => $pagination,
 				"suggestor" => 'ands_identifiers'
 			);
-		}
+
 		return $suggestions;
 	}
-
-
 
 	/* May be necessary for future use?? */
 	public function getSuggestedLinksForString($query_string, $start, $rows)

@@ -118,7 +118,11 @@ $(function(){
             type: 'POST',
             data: {keys:[ro_key],tag:tag, tag_type:tag_type},
             success: function(data){
-                location.reload();
+                if(data.status=='ERROR'){
+                    alert(data.message);
+                }else{
+                    location.reload();
+                }
             }
          });
         }
@@ -134,7 +138,11 @@ $(function(){
            type: 'POST',
            data: {keys:[ro_key],tag:tag, tag_type:'secret'},
            success: function(data){
-               location.reload();
+               if(data.status=='ERROR'){
+                   alert(data.message);
+               }else{
+                   location.reload();
+               }
            }
         });
     });
@@ -148,7 +156,11 @@ $(function(){
             type: 'POST',
             data: {keys:[ro_key],tag:tag},
             success: function(data){
-                location.reload();
+                if(data.status=='ERROR'){
+                    alert(data.message);
+                } else {
+                    location.reload();
+                }
             }
         });
     }).on('click', '.tag_type_choose', function(e){
