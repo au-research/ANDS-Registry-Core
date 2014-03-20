@@ -236,6 +236,8 @@ class Registry extends MX_Controller {
 		}else{
 			foreach($keys as $key){
 				$ro = $this->ro->getPublishedByKey($key);
+				if(!$ro) $ro = $this->ro->getDraftByKey($key);
+				if(!$ro) throw new Exception("Can't find record with the key: ". $key);
 
 				if($action=='add' && $tag){
 					if($ro->preCheckTag($tag, $tag_type)){
