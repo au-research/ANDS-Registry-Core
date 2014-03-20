@@ -1375,8 +1375,7 @@ public function getContributorGroupsEdit()
 			}
 
 			$this->importer->setDatasource($data_source);
-			$this->importer->commit(false);
-			$this->importer->finishImportTasks();
+			$this->importer->commit();
 
 			if ($error_log = $this->importer->getErrors())
 			{
@@ -1460,8 +1459,7 @@ public function getContributorGroupsEdit()
 			$this->importer->setXML($xml);
 
 			$this->importer->setDatasource($data_source);
-			$this->importer->commit(false);
-			$this->importer->finishImportTasks();
+			$this->importer->commit();
 
 			if ($error_log = $this->importer->getErrors())
 			{
