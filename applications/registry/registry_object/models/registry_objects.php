@@ -157,7 +157,7 @@ class Registry_objects extends CI_Model {
 						    'fn' => function($db,$key) {
 							    $db->select("registry_object_id")
 								    ->from("registry_objects")
-								    ->where('binary `key` =', '"'.$key.'"', false)
+								    ->where('`key` =', '"'.$key.'"', false)
 								    ->where("status", PUBLISHED);
 							    return $db;
 						    })),
@@ -178,7 +178,7 @@ class Registry_objects extends CI_Model {
 						    'fn' => function($db,$key) {
 							    $db->select("registry_object_id")
 								    ->from("registry_objects")
-								    ->where('binary `key` =', '"'.$key.'"', false)
+								    ->where('`key` =', '"'.$key.'"', false)
 								    ->where_in("status", getDraftStatusGroup());
 							    return $db;
 						    })),
@@ -199,7 +199,7 @@ class Registry_objects extends CI_Model {
 						    'fn' => function($db,$key) {
 							    $db->select("registry_object_id")
 								    ->from("registry_objects")
-								    ->where('binary `key` =', '"'.$key.'"', false);
+								    ->where('`key` =', '"'.$key.'"', false);
 							    return $db;
 						    })),
 							true
