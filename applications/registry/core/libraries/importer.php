@@ -440,19 +440,12 @@ class Importer {
 					// Save all our attributes to the object
 					$ro->save();
 
-					// Duplicate the identifier matching logic so that we update existing matched records 
-					// (this is NB because the to-be-deleted identifier matches won't match once identifier is updated)
-					$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+					$related_objects = $ro->getAllRelatedObjects(false, true, true);
 					$related_keys = array();
-					foreach($related_ids_by_identifier_matches AS $matching_record_id)
-					{
-						$matched_ro = $this->CI->ro->getByID($matching_record_id);
-						$related_keys[] = $matched_ro->key;
+					foreach($related_objects as $rr){
+						$related_keys[] = $rr['key'];
 					}
-					if (count($related_keys))
-					{
-						$this->addToAffectedList($related_keys);
-					}
+					$this->addToAffectedList($related_keys);
 
 					$ro->processIdentifiers();
 
