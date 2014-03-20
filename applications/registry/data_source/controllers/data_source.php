@@ -1463,7 +1463,6 @@ public function getContributorGroupsEdit()
 			$this->importer->commit(false);
 			$this->importer->finishImportTasks();
 
-
 			if ($error_log = $this->importer->getErrors())
 			{
 				$log = $elogTitle.$log.NL.$error_log;
@@ -1778,10 +1777,14 @@ public function getContributorGroupsEdit()
 							$this->importer->addToAffectedList($deleted_and_affected_record_keys['affected_record_keys']);
 						} 
 					}
-					$importer_log = "IMPORT COMPLETED" . NL;
-					$importer_log .= "====================" . NL;
-					$importer_log .= $this->importer->getMessages() . NL;
-					$dataSource->append_log($importer_log, HARVEST_INFO,"HARVEST_INFO");
+					if ($dataSource->harvest_method != 'RIF')
+					{
+						$importer_log = "IMPORT COMPLETED" . NL;
+						$importer_log .= "====================" . NL;
+						$importer_log .= $this->importer->getMessages() . NL;
+						$dataSource->append_log($importer_log, HARVEST_INFO,"HARVEST_INFO");
+					}
+
 				}
 			}
 			else

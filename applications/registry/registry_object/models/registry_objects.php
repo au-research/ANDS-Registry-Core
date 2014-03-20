@@ -848,7 +848,7 @@ class Registry_objects extends CI_Model {
 			$this->db->insert('deleted_registry_objects');
 
 			// Re-enrich and reindex related
-			$reenrich_queue = $target_ro->getRelationships();
+			$reenrich_queue = $target_ro->getRelatedKeys();
 			if($finalise)
 			{
 			// Delete from the index

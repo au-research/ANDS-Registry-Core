@@ -302,7 +302,7 @@ class Core_extension extends ExtensionBase
 			// Reenrich related records (reindexes affected records)
 			// XXX: REENRICH RECORDS RELATED TO ME WHEN I CHANGE STATUS
 			/*
-			$reenrich_queue = $target_ro->getRelationships();
+			$reenrich_queue = $target_ro->getRelatedKeys();
 			$this->_CI->importer->_enrichRecords($reenrich_queue);
 			$this->_CI->importer->_reindexRecords($reenrich_queue);
 			*/
