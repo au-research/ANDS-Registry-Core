@@ -77,7 +77,7 @@ class Importer {
 	public function Importer()
 	{
 		$this->CI =& get_instance();
-				
+
 		// This is not a perfect science... the web server can still 
 		// reclaim the worker thread and terminate the PHP script execution....
 		ini_set('memory_limit', '2048M');

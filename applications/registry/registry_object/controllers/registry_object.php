@@ -409,11 +409,32 @@ class Registry_object extends MX_Controller {
 		$this->load->model("data_source/data_sources","ds");
 	 	$dataSources = $this->ds->getOwnedDataSources(true);
 
-	 	$this->load->model("registry_objects","ro");
-	 	$groups = $this->ro->getGroupSuggestor($dataSources);
-	 	foreach($groups->result() as $g){
-	 		$jsonData[] = array('value'=>$g->value, 'subtext'=>'');
+		// Use SOLR if we have loads of data sources (prevent performance issues for SUPERUSERS
+		// or data source admins with very many data sources). Note: this means that SUPERUSERs
+		// will no longer get group name suggestions for DRAFT records
+		if(count($dataSources) > 10)
+		{
+			$dataSourceIdString = implode(' ',$dataSources);
+
+			$this->load->library('Solr');
+			$this->solr->init();
+			$this->solr->setOpt('q','data_source_id:(' . $dataSourceIdString .')');
+			$this->solr->setFacetOpt('field','group');
+			$this->solr->executeSearch();
+			$groupNames = $this->solr->getFacetResult('group');
+			foreach($groupNames AS $g => $_)
+			{
+				$jsonData[] = array('value'=>$g, 'subtext'=>'');
+			}
 	 	}
+		else
+		{
+			$this->load->model("registry_objects","ro");
+			$groups = $this->ro->getGroupSuggestor($dataSources);
+			foreach($groups->result() as $g){
+				$jsonData[] = array('value'=>$g->value, 'subtext'=>'');
+			}
+		}
 
 		echo json_encode($jsonData);
 	}
