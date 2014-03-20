@@ -266,6 +266,21 @@ class Importer {
 				//$this->dataSource->updateStats();
 			//}
 
+		//}
+
+		$this->isImporting = false;
+		if($this->runBenchMark){
+			$this->CI->benchmark->mark('ingest_end');
+		}
+
+		if($finalise)
+		{
+			$taskLog = $this->finishImportTasks();
+			if($this->runBenchMark){
+				$this->dataSource->append_log($taskLog, IMPORT_INFO, "importer","IMPORT_INFO");
+			}
+
+
 			// Finish up by returning our stats...
 			$time_taken = sprintf ("%.3f", (float) (microtime(true) - $this->start_time));
 			$this->message_log[] = NL;
@@ -288,20 +303,8 @@ class Importer {
 			}
 
 			$this->message_log[] = $this->standardLog;
-		//}
-
-		$this->isImporting = false;
-		if($this->runBenchMark){
-			$this->CI->benchmark->mark('ingest_end');
 		}
 
-		if($finalise)
-		{
-			$taskLog = $this->finishImportTasks();
-			if($this->runBenchMark){
-				$this->dataSource->append_log($taskLog, IMPORT_INFO, "importer","IMPORT_INFO");
-			}
-		}
 	}
 
 
