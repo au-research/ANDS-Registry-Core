@@ -50,6 +50,6 @@ DROP INDEX `key_index` ;
 ALTER TABLE `dbs_registry`.`deleted_registry_objects` 
 ADD INDEX `key_index` USING HASH (`key` ASC);
 
-ALTER TABLE `dbs_registry`.`record_data` 
-DROP INDEX `fk_record_data_registry_object` ,
-ADD INDEX `fk_record_data_registry_object` (`registry_object_id` ASC, `current` ASC);
+#ALTER TABLE `dbs_registry`.`record_data` 
+#DROP INDEX `fk_record_data_registry_object` ,
+#ADD INDEX `fk_record_data_registry_object` (`registry_object_id` ASC, `current` ASC);
