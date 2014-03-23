@@ -33,6 +33,7 @@ import getopt
 import ssl
 import datetime
 import smtplib
+import socket
 import myconfig
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -47,7 +48,7 @@ from email.mime.text import MIMEText
 # 
 
 
-def handleErrors(owner_id, message):
+def handleErrors(owner_id, message, counter):
 
 	try:
 		resultList[owner_id] = resultList[owner_id] + '<br/>'+ message
@@ -55,6 +56,10 @@ def handleErrors(owner_id, message):
 	except KeyError:
 		resultList[owner_id] = message
 		errorCount[owner_id] = 1
+	try:
+		del testingArray[counter]
+	except KeyError:
+		pass
 
 #
 # Inserts a log entry to the given client_id into the database
@@ -170,15 +175,14 @@ def constructAbsolutePath(scheme, host, port, path):
 def checkRedirect(url_str, creator, doi_id, counter, redirectCount=0):
 	
 	if redirectCount > 5:
-		handleErrors(creator,'Too many redirects: DOI_ID: %s URL: %s' %(doi_id ,url_str))
+		handleErrors(creator,'Too many redirects: DOI_ID: %s URL: %s' %(doi_id ,url_str), counter)
 		return
 	try:
 
 		url = urllib.parse.urlsplit(url_str)
 		if url.scheme.find('http') != 0:
-			handleErrors(creator,'Not http: DOI_ID: %s URL: %s' %(doi_id ,url_str))
-			return
-		
+			handleErrors(creator,'Not http: DOI_ID: %s URL: %s' %(doi_id ,url_str), counter)
+			return		
 		urlPath = url.path  if url.query == '' else url.path + "?" + url.query
 		if url.scheme.find('https') == 0:
 			port = url.port if url.port else 443
@@ -211,19 +215,23 @@ def checkRedirect(url_str, creator, doi_id, counter, redirectCount=0):
 		if mStatus:
 			statusCode = int(mStatus.split()[1])
 			if(statusCode > 399):
-				handleErrors(creator,'4/500s: DOI_ID: %s URL: %s Status %s' %(doi_id, url_str, mStatus))			
+				handleErrors(creator,'4/500s: DOI_ID: %s URL: %s Status %s' %(doi_id, url_str, mStatus), counter)		
 			elif statusCode == 301 or statusCode == 302:
 				location = constructAbsolutePath(url.scheme, url.hostname, url.port, location)
 				if(url_str != location):
 					yield from checkRedirect(location, creator, doi_id, counter, redirectCount+1)
 				else:
-					handleErrors(creator,'REDIRECT URL SAME AS ORIGIN : DOI_ID: %s URL: %s' %(doi_id, url_str))
-	except UnboundLocalError:
-		e = sys.exc_info()[1]
-		handleErrors(creator,'Error: DOI_ID: %s URL: %s Exception %s' %(doi_id ,url_str, e))
-	except:
-		e = sys.exc_info()[1]
-		handleErrors(creator,'Error: DOI_ID: %s URL: %s Exception %s' %(doi_id ,url_str, e))
+					handleErrors(creator,'REDIRECT URL SAME AS ORIGIN : DOI_ID: %s URL: %s' %(doi_id, url_str), counter)
+			else:
+				try:
+					del testingArray[counter]
+				except KeyError:
+					pass
+	except UnboundLocalError as e:
+		handleErrors(creator,'Error: DOI_ID: %s URL: %s Exception %s' %(doi_id ,url_str, repr(e)), counter)
+	except Exception as e:
+		handleErrors(creator,'Error: DOI_ID: %s URL: %s Exception %s' %(doi_id ,url_str, repr(e)), counter)
+
 
 #
 # request the header for each resource and try to determin it is resolvable
@@ -241,9 +249,8 @@ def checkURLResource(r, counter):
 	try:
 		url = urllib.parse.urlsplit(url_str)
 		if url.scheme.find('http') != 0:
-			handleErrors(creator,'Not http: DOI_ID: %s URL: %s' %(doi_id, url_str))
+			handleErrors(creator,'Not http: DOI_ID: %s URL: %s' %(doi_id, url_str), counter)
 			return
-
 		urlPath = url.path  if url.query == '' else url.path + "?" + url.query
 		if url.scheme.find('https') == 0:
 			port = url.port if url.port else 443
@@ -251,7 +258,6 @@ def checkURLResource(r, counter):
 		else:
 			port = url.port if url.port else 80
 			reader, writer = yield from asyncio.open_connection(url.hostname, port)
-
 		query =('HEAD ' + urlPath + ' HTTP/1.0\r\n'
 	            'Host: {url.hostname}\r\n'
 	            'User-agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6\r\n'
@@ -278,21 +284,24 @@ def checkURLResource(r, counter):
 		if mStatus:
 			statusCode = int(mStatus.split()[1])
 			if(statusCode > 399):
-				handleErrors(creator,'4/500s: DOI_ID: %s URL: %s Status %s' %(doi_id, url_str, mStatus))
-			
+				handleErrors(creator,'4/500s: DOI_ID: %s URL: %s Status %s' %(doi_id, url_str, mStatus), counter)
 			elif statusCode == 301 or statusCode == 302:
 				location = constructAbsolutePath(url.scheme, url.hostname, url.port, location)
 				if(url_str != location):
 					yield from checkRedirect(location, creator, doi_id, counter)
 				else:
-					handleErrors(creator,'Error Redirect url same as original: DOI_ID: %s URL: %s' %(doi_id, url_str))
+					handleErrors(creator,'Error Redirect url same as original: DOI_ID: %s URL: %s' %(doi_id, url_str), counter)
+			else:
+				try:
+					del testingArray[counter]
+				except KeyError:
+					pass
+	except UnboundLocalError as e:
+		handleErrors(creator,'Error DOI_ID: %s URL: %s exception %s' %(doi_id, url_str, repr(e)), counter)
+	except Exception as e:
+		handleErrors(creator,'Error DOI_ID: %s URL: %s exception %s' %(doi_id, url_str, repr(e)), counter)
 
-	except UnboundLocalError:
-		e = sys.exc_info()[1]
-		handleErrors(creator,'Error DOI_ID: %s URL: %s exception %s' %(doi_id, url_str, e))
-	except:
-		e = sys.exc_info()[1]
-		handleErrors(creator,'Error DOI_ID: %s URL: %s exception %s' %(doi_id, url_str, e))
+
 
 
 #
@@ -341,23 +350,29 @@ def getClientList(client_id=None):
 def runTest(client_id, admin_email):
 	chunk = 100
 	start = 0
+	timeout = 15
 	doiList = getDOIlinksSL(client_id)
 
 	print("Number of URLs Tested: " + str(len(doiList)))
-
+	socket.setdefaulttimeout(timeout)
 	loop = asyncio.get_event_loop()
-	asyncio.sleep(50)
+	asyncio.sleep(timeout)
 	while len(doiList) > (int(start * chunk)):
 		taskArray = []
-		for num in range(start*chunk,((start+1)*chunk)-1):		
+		for num in range(start*chunk,((start+1)*chunk)-1):
 			if(len(doiList) > num):
-				taskArray.append(asyncio.async(checkURLResource(doiList[num],str(num))))	
-		try:	
-			loop.run_until_complete(asyncio.wait(taskArray))
+				testingArray[num] = {"url_str":doiList[num][13].strip(), "creator":doiList[num][11], "doi_id":doiList[num][0].strip()}
+				taskArray.append(asyncio.async(checkURLResource(doiList[num],num)))
+		try:
+			loop.run_until_complete(asyncio.wait(taskArray, timeout=timeout))
+			for k, v in testingArray.items():
+				handleErrors(v['creator'],'Error DOI_ID: %s URL: %s CONNECTION TIMEOUT' %(v['doi_id'], v['url_str']), -1)
+			testingArray.clear()
 		except ValueError:
 			print("num: %s range %s end %s" %(num, start*chunk, ((start+1)*chunk)-1))
 		start = start + 1
 	loop.close()
+
 	processResultLists(client_id, admin_email)
 
 def createConnection():
@@ -397,6 +412,7 @@ resultList = {}
 doiList = []
 clientList = {}
 errorCount = {}
+testingArray = {}
 conn = createConnection()
 
 if __name__ == "__main__":
