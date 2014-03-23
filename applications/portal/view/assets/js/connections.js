@@ -248,6 +248,10 @@ controller('openConnections', function($scope, searches){
 			var ind = this.related_object_id.indexOf(ro_id);
 			var relation = this.related_object_relation[ind];
 			var related_class = this.related_object_class[ind];
+
+            //quick fix
+            if (relation=='(Automatically inferred link from records with matching identifiers)') relation = 'Automatically inferred link from records with matching identifiers';
+
 			$scope.relations[this.id] = {related_relation:relation, related_class:related_class};
 		});
 	}
