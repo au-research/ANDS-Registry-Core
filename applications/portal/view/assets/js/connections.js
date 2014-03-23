@@ -76,11 +76,12 @@ controller('openConnections', function($scope, searches){
 				break;
 			case 'party_multi': 
 				$scope.filters['class'] = 'party';
-				delete $scope.filters['group'];
+                $scope.filters['type'] = 'group';
 				break;
 			case 'party_one':
 				$scope.filters['class'] = 'party';
 				$scope.filters['type'] = 'person';
+                break;
 		}
 
 		//search
