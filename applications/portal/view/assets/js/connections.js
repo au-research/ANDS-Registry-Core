@@ -61,6 +61,7 @@ controller('openConnections', function($scope, searches){
 		 */
 		var relation_type = $($event.target).attr('relation_type');
 		$scope.filters = {};
+        $scope.query = '';
 		switch(relation_type){
 			case 'collection': 
 				$scope.filters['class'] = 'collection';
