@@ -509,25 +509,19 @@ class Importer {
 				// previous relationships are reset by this call
 				if($ro)
 				{
+					$ro->addRelationships();
 					$related_keys = $ro->getRelatedKeys();
 					// directly affected records are re-enriched below (and reindexed...)
 					// we consider any related record keys to be directly affected and reindex them...
 					$this->addToAffectedList($related_keys);
 
 
-					// Also treat identifier matches as affected records which need to be enriched
-					// (to increment their extRif:matching_identifier_count)
-					$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+					$related_objects = $ro->getAllRelatedObjects(false, true, true);
 					$related_keys = array();
-					foreach($related_ids_by_identifier_matches AS $matching_record_id)
-					{
-						$matched_ro = $this->CI->ro->getByID($matching_record_id);
-						$related_keys[] = $matched_ro->key;
+					foreach($related_objects as $rr){
+						$related_keys[] = $rr['key'];
 					}
-					if (count($related_keys))
-					{
-						$this->addToAffectedList($related_keys);
-					}
+					$this->addToAffectedList($related_keys);
 
 
 

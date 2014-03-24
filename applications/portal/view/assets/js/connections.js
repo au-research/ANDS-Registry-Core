@@ -61,6 +61,7 @@ controller('openConnections', function($scope, searches){
 		 */
 		var relation_type = $($event.target).attr('relation_type');
 		$scope.filters = {};
+        $scope.query = '';
 		switch(relation_type){
 			case 'collection': 
 				$scope.filters['class'] = 'collection';
@@ -76,11 +77,12 @@ controller('openConnections', function($scope, searches){
 				break;
 			case 'party_multi': 
 				$scope.filters['class'] = 'party';
-				delete $scope.filters['group'];
+                $scope.filters['type'] = 'group';
 				break;
 			case 'party_one':
 				$scope.filters['class'] = 'party';
 				$scope.filters['type'] = 'person';
+                break;
 		}
 
 		//search
@@ -246,6 +248,10 @@ controller('openConnections', function($scope, searches){
 			var ind = this.related_object_id.indexOf(ro_id);
 			var relation = this.related_object_relation[ind];
 			var related_class = this.related_object_class[ind];
+
+            //quick fix
+            if (relation=='(Automatically inferred link from records with matching identifiers)') relation = 'Automatically inferred link from records with matching identifiers';
+
 			$scope.relations[this.id] = {related_relation:relation, related_class:related_class};
 		});
 	}
