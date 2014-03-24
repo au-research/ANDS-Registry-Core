@@ -23,7 +23,7 @@ class GRANTSMethod extends MethodHandler
 				$words = $this->getWords($this->params[$param_name]);
 				foreach($words as $word)
 				{
-					$CI->solr->setOpt('fq','+title_search:*'.$word.'*');
+					$CI->solr->setOpt('fq','+title_search:('.$word.')');
 					$gotQuery =true;
 				}				
 			}
