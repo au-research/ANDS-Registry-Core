@@ -88,24 +88,24 @@ div.theme-page-item p.theme-page-desc {
 
 /* line 88, ../sass/ands_portal.scss */
 .add_tag_form {
-  background: #f4f5f6;
-  padding: 10px;
   width: 100%;
   position: relative;
   display: block;
 }
-/* line 94, ../sass/ands_portal.scss */
+/* line 92, ../sass/ands_portal.scss */
 .add_tag_form input#tag_value {
+  display: block;
   padding: 10px;
-  width: 504px;
+  width: 200px;
   position: relative;
   background: white !important;
 }
-/* line 100, ../sass/ands_portal.scss */
+/* line 99, ../sass/ands_portal.scss */
 .add_tag_form button#tag_btn {
-  float: right;
+  display: inline-block;
+  height: 40px;
   color: #fff;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: bold;
   background: #eb7700;
   border: none;
