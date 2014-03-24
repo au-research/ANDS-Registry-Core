@@ -846,6 +846,7 @@ function initAddTagForm(){
 				success: function(data){
 					$('.add_tag_form input, .add_tag_form button').removeAttr('disabled');
                     $('.add_tag_form input').val('');
+                    $('.add_tag_form p').remove();
 					if(data.status=='OK'){
                         if($('#tags_container').length == 0){
                             $("<p class=\"subject_type\">User Contributed Tags <a href=\"#\" class=\"tags_helper\"><i class=\"portal-icon portal-icon-info\"></i></a></p> <div class=\"tags user_tags\" id=\"tags_container\"></div>").insertBefore('.add_tag_form');
