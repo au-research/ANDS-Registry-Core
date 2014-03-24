@@ -23,7 +23,7 @@ class GRANTSMethod extends MethodHandler
 				$words = $this->getWords($this->params[$param_name]);
 				foreach($words as $word)
 				{
-					$CI->solr->setOpt('fq','+display_title:'.$word);
+					$CI->solr->setOpt('fq','+title_search:*'.$word.'*');
 					$gotQuery =true;
 				}				
 			}
@@ -34,7 +34,7 @@ class GRANTSMethod extends MethodHandler
 			}*/
 			if($param_name == 'institution' && $this->params[$param_name] != '')
 			{
-				$CI->solr->setOpt('fq','related_object_display_title:*'.$this->params[$param_name].'*');
+				$CI->solr->setOpt('fq','+related_object_display_title:"'.$this->params[$param_name].'"');
 				$gotQuery =true;
 				/*
 				$institution = $this->getWords($this->params[$param_name]);
@@ -43,11 +43,15 @@ class GRANTSMethod extends MethodHandler
 					//$CI->solr->setOpt('fq','+related_object_display_title:'.$word.'');
 					$gotQuery =true;
 				}*/
-				$CI->solr->setOpt('fq','related_object_relation:"isManagedBy"');
+				$CI->solr->setOpt('fq','+related_object_relation:"isManagedBy"');
 			}
 			if($param_name == 'person' && $this->params[$param_name] != '')
 			{
-				$CI->solr->setOpt('fq','related_object_display_title:*'.$this->params[$param_name].'*');
+				$words = $this->getWords($this->params[$param_name]);
+				foreach($words as $word)
+				{
+					$CI->solr->setOpt('fq','+related_object_display_title_search:('.$word.')');
+				}
 				$gotQuery =true;
 				/*
 				$words = $this->getWords($this->params[$param_name]);
@@ -57,11 +61,16 @@ class GRANTSMethod extends MethodHandler
 					$gotQuery =true;
 				}
 				*/
-				$CI->solr->setOpt('fq','related_object_class:"party"');
+				$CI->solr->setOpt('fq','+related_object_class:"party"');
 			}
 			if($param_name == 'principalInvestigator' && $this->params[$param_name] != '')
 			{
-				$CI->solr->setOpt('fq','related_object_display_title:*'.$this->params[$param_name].'*');
+				$words = $this->getWords($this->params[$param_name]);
+				foreach($words as $word)
+				{
+					$CI->solr->setOpt('fq','+related_object_display_title_search:('.$word.')');
+				}	
+
 				$gotQuery =true;
 				/*
 				$principalInvestigator = $this->getWords($this->params[$param_name]);
@@ -70,7 +79,7 @@ class GRANTSMethod extends MethodHandler
 					$CI->solr->setOpt('fq','+related_object_display_title:'.$word);
 					$gotQuery =true;
 				}*/
-				$CI->solr->setOpt('fq','related_object_relation:"isPrincipalInvestigatorOf"');
+				$CI->solr->setOpt('fq','+related_object_relation:"isPrincipalInvestigatorOf"');
 
 			}
 			
@@ -157,7 +166,7 @@ class GRANTSMethod extends MethodHandler
 					}
 
 
-					if($canPass)
+					if(true)
 					{
 					$response['numFound'] += 1;
 					$recordData[] = array('key' => $r['key'], 
