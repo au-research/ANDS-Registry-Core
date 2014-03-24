@@ -252,6 +252,7 @@ def checkURLResource(r, counter):
 			handleErrors(creator,'Not http: DOI_ID: %s URL: %s' %(doi_id, url_str), counter)
 			return
 		urlPath = url.path  if url.query == '' else url.path + "?" + url.query
+		asyncio.sleep(0.3)
 		if url.scheme.find('https') == 0:
 			port = url.port if url.port else 443
 			reader, writer = yield from asyncio.open_connection(url.hostname, port, ssl=myconfig.context)
@@ -348,15 +349,15 @@ def getClientList(client_id=None):
 #
 
 def runTest(client_id, admin_email):
-	chunk = 100
+	chunk = 20
 	start = 0
-	timeout = 15
+	timeout = 20
 	doiList = getDOIlinksSL(client_id)
 
 	print("Number of URLs Tested: " + str(len(doiList)))
 	socket.setdefaulttimeout(timeout)
 	loop = asyncio.get_event_loop()
-	asyncio.sleep(timeout)
+	asyncio.sleep(5)
 	while len(doiList) > (int(start * chunk)):
 		taskArray = []
 		for num in range(start*chunk,((start+1)*chunk)-1):
