@@ -55,6 +55,9 @@ controller('openConnections', function($scope, searches){
 	 */
 	$scope.open = function($event){
 
+        //hide all qtip display
+        $('div.qtip:visible').qtip('hide');
+
 		/**
 		 * The relation type is set within the target event
 		 * This relation type will determine the class and type we will search for
