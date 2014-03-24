@@ -60,9 +60,11 @@ $(document).ready(function() {
     });
 
     $('.login_st').toggle(function(){
+        $('div.qtip:visible').qtip('hide');
     	$('.login_banner').slideDown();
     	$(this).addClass('exped');
     }, function(){
+        $('div.qtip:visible').qtip('hide');
 		$('.login_banner').slideUp('fast');
 		$(this).removeClass('exped');
     });
@@ -81,6 +83,7 @@ $(document).ready(function() {
     });
 
     $('#ad_st').toggle(function() {
+        $('div.qtip:visible').qtip('hide');
 	//don't init slider until we show the advanced search slidedown
 		$("#slider").editRangeSlider({
 	    	    scales: [
