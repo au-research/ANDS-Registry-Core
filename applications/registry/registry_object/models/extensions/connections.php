@@ -211,7 +211,8 @@ class Connections_Extension extends ExtensionBase
 			}
 			foreach ($identifierMatches as $ii){
 				$ii_ro = $this->_CI->ro->getByID($ii);
-				$unordered_connections[] = array(
+
+				$related_registry_object = array(
 					'registry_object_id' => $ii_ro->id,
 					'key' => $ii_ro->key,
 					'class' => $ii_ro->class,
@@ -220,6 +221,11 @@ class Connections_Extension extends ExtensionBase
 					'origin' => 'IDENTIFIER_MATCH',
 					'relation_type' => '(Automatically inferred link from records with matching identifiers)'
 				);
+
+				if ($ii_ro->status==PUBLISHED) {
+					$unordered_connections[] = $related_registry_object;
+				}
+
 			}
 		}
 
