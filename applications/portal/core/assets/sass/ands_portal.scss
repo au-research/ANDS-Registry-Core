@@ -90,12 +90,15 @@ div.theme-page-item{
 	position:relative;
 	display:block;
 	input#tag_value{
-      display:block;
+      display:inline;
 	  padding:10px;
 	  width:200px;
 	  position:relative;
 	  background:white !important;
 	}
+    .twitter-typeahead{
+      display:inline !important;
+    }
 	button#tag_btn{
 		display:inline-block;
         height:40px;
