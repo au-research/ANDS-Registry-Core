@@ -127,6 +127,9 @@ function initConnections(){
 $(document).on('click', 'a.suggestor_paging',function(e){
 	e.preventDefault();
 	updateLinksDisplay($('#links_dialog'), 'Suggested Links', $(this).attr('suggestor'), $(this).attr('offset'), 10);
+}).on('click', '.user_tags a', function(e){
+	e.preventDefault();
+	window.location = base_url+'search'+suffix+'tag='+encodeURIComponent($(this).text());
 });
 
 function formatConnectionTip(tt){
