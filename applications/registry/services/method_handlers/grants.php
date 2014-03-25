@@ -166,7 +166,7 @@ class GRANTSMethod extends MethodHandler
 					}
 
 
-					if(true)
+					if($canPass)
 					{
 					$response['numFound'] += 1;
 					$recordData[] = array('key' => $r['key'], 
