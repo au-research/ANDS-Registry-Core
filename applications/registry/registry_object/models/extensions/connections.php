@@ -440,9 +440,13 @@ class Connections_Extension extends ExtensionBase
 
 			$matches = $ro->getAllRelatedObjects();
 
-			foreach($matches as &$match){
-				$match['origin'] = 'IDENTIFIER_MATCH';
-				$match['relation_type'] = '(Automatically inferred link from records with matching identifiers)';
+			foreach($matches as $i=>&$match){
+				if ($match['origin']!='CONTRIBUTOR') {
+					$match['origin'] = 'IDENTIFIER_MATCH';
+					$match['relation_type'] = '(Automatically inferred link from records with matching identifiers)';
+				} else {
+					unset($matches[$i]);
+				}
 			}
 
 			$my_connections = array_merge($my_connections, $matches);
