@@ -119,7 +119,8 @@ else
 
 				<?php else: ?>
 					<p>Logged in as <b><?php echo $user['profile']->displayName; ?></b></p>
-					<p><?php echo anchor('auth/logout/?redirect='.current_url(),'Log Out from '.$user['service'], array('class'=>'zocial '.strtolower($user['service']))); ?></p>
+					<p style="margin:10px 0px 5px 0px;"><?php echo anchor('auth/logout/?redirect='.current_url(),'Log Out of Research Data Australia', array('style'=>'color: #fff;font-size: 16px;font-weight: bold;background: #f58000;border: none;padding: 11px 15px;margin:10px 0')); ?></p>
+					<p style="font-weight:normal;font-size:12px;">Please note that logging out of Research Data Australia will not log you out of <?php echo $user['service'];?></p>
 				<?php endif; ?>
 				<?php endif; ?>
 			</div>
