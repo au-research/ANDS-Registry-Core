@@ -20,6 +20,12 @@ angular.module('portal-filters', []).
 			}
 		};
 	}).
+    filter('removeHtml', function (){
+		return function(text) {
+			var html = $('<div/>').html(text).text();
+			return $('<div/>').html(html).text();
+		}
+    }).
 	filter('class_name', function(){
 		return function(text){
 			switch(text){

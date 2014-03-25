@@ -393,12 +393,15 @@
 
     </xsl:if>
 
+
+	<p><xsl:text>&amp;nbsp;</xsl:text></p>
+	<h4>Subjects</h4>
+
   <!-- DISPLAY SUBJECTS -->
   <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']">
     <div style="position:relative;clear:both">
         <!--<p><b>Subjects:</b>-->
-        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-        <h4>Subjects</h4>
+
 
         <!-- ANZSRC SUBJECTS -->
         <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type ='anzsrc-for'">

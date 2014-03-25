@@ -445,12 +445,25 @@ class Importer {
 					// Save all our attributes to the object
 					$ro->save();
 
+					//All related objects by any means are affected regardless
 					$related_objects = $ro->getAllRelatedObjects(false, true, true);
 					$related_keys = array();
 					foreach($related_objects as $rr){
 						$related_keys[] = $rr['key'];
 					}
 					$this->addToAffectedList($related_keys);
+
+					// Also treat identifier matches as affected records which need to be enriched
+					// (to increment their extRif:matching_identifier_count)
+					$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+					$related_keys = array();
+					foreach($related_ids_by_identifier_matches AS $matching_record_id){
+						$matched_ro = $this->CI->ro->getByID($matching_record_id);
+						$related_keys[] = $matched_ro->key;
+					}
+					if (count($related_keys)){
+						$this->addToAffectedList($related_keys);
+					}
 
 					$ro->processIdentifiers();
 
@@ -520,13 +533,25 @@ class Importer {
 					// we consider any related record keys to be directly affected and reindex them...
 					$this->addToAffectedList($related_keys);
 
-
+					// All related objects by any means are affected
 					$related_objects = $ro->getAllRelatedObjects(false, true, true);
 					$related_keys = array();
 					foreach($related_objects as $rr){
 						$related_keys[] = $rr['key'];
 					}
 					$this->addToAffectedList($related_keys);
+
+					// Also treat identifier matches as affected records which need to be enriched
+					// (to increment their extRif:matching_identifier_count)
+					$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+					$related_keys = array();
+					foreach($related_ids_by_identifier_matches AS $matching_record_id){
+						$matched_ro = $this->CI->ro->getByID($matching_record_id);
+						$related_keys[] = $matched_ro->key;
+					}
+					if (count($related_keys)){
+						$this->addToAffectedList($related_keys);
+					}
 
 
 

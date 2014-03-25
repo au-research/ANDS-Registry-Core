@@ -86,21 +86,24 @@ div.theme-page-item{
 }
 
 .add_tag_form{
-	background: #f4f5f6;
-	padding:10px;
 	width:100%;
 	position:relative;
 	display:block;
 	input#tag_value{
-		padding:10px;
-		width:504px;
-		position:relative;
-		background:white !important;
+      display:inline;
+	  padding:10px;
+	  width:200px;
+	  position:relative;
+	  background:white !important;
 	}
+    .twitter-typeahead{
+      display:inline !important;
+    }
 	button#tag_btn{
-		float:right;
+		display:inline-block;
+        height:40px;
 		color:#fff;
-		font-size:16px;
+		font-size:13px;
 		font-weight:bold;
 		background:$ands_orange;
 		border:none;
@@ -135,7 +138,6 @@ div.theme_page_banner{
 	border:1px solid #ccc;
 	margin-bottom:5px;
 	overflow:hidden;
-	height:27px;
 	div.img_slot{
 		width:50px;
 		float:right;
