@@ -323,6 +323,7 @@ class Extrif_Extension extends ExtensionBase
 			'theme_pages' => true,
 			'tags' => true,
 			'subjects' => true,
+			'relationships' => true
 		);
 
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
@@ -383,6 +384,19 @@ class Extrif_Extension extends ExtensionBase
 					$subject_node->addChild("extRif:subject_resolved", $subject['resolved'], EXTRIF_NAMESPACE);
 					$subject_node->addChild("extRif:subject_uri", $subject['uri'], EXTRIF_NAMESPACE);
 				}
+			}
+		}
+
+		if ($options['relationships']) {
+			$allRelatedObjects = $this->ro->getAllRelatedObjects(false, true, true);
+			unset($ext->extendedMetadata->related_object);
+			foreach ($allRelatedObjects AS $relatedObject) {
+				$relatedObj = $ext->extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
+				$relatedObj->addChild("extRif:related_object_key", $relatedObject['key'], EXTRIF_NAMESPACE);
+				$relatedObj->addChild("extRif:related_object_id", $relatedObject['registry_object_id'], EXTRIF_NAMESPACE);
+				$relatedObj->addChild("extRif:related_object_class", $relatedObject['class'], EXTRIF_NAMESPACE);
+				$relatedObj->addChild("extRif:related_object_display_title", str_replace('&', '&amp;' , $relatedObject['title']), EXTRIF_NAMESPACE);
+				$relatedObj->addChild("extRif:related_object_relation", $relatedObject['relation_type'], EXTRIF_NAMESPACE);
 			}
 		}
 
