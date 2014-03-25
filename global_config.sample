@@ -43,6 +43,8 @@ $ENV['solr_url'] = "{CONFIGURE ME}";
 $ENV['environment_name'] = "My Registry";
 $ENV['environment_colour'] = "#6EBF21";
 
+// registry mode used 'read-only' atm but more mode may follow 
+$ENV['registry_mode'] = "read-only";
 
 // Who is the administrator of this domain?  		[OPTIONAL]
 // error reports will be emailed to this address

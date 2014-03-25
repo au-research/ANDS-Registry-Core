@@ -34,7 +34,7 @@ CREATE  TABLE `dbs_registry`.`theme_pages` (
   PRIMARY KEY (`id`) );
 ALTER TABLE `dbs_registry`.`theme_pages` ADD COLUMN `secret_tag` VARCHAR(256) NULL  AFTER `slug` ;
 
-ALTER TABLE `dbs_registry`.`registry_object_relationships` CHANGE COLUMN `id` `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT  ;
+ALTER TABLE `dbs_registry`.`registry_object_relationships` DROP COLUMN `id`;
 
 ALTER TABLE `dbs_registry`.`registry_object_identifiers`
 ADD INDEX `idx_registry_object_id` USING BTREE (`registry_object_id` ASC),

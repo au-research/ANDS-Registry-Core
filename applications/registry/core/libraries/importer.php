@@ -18,7 +18,7 @@ class Importer {
 	private $forcePublish; // used when changing from DRAFT to PUBLISHED (ignore the QA flags, etc)
 	private $forceDraft; 
 	private $maintainStatus;
-
+	public $registryMode;
 	public $runBenchMark = false;
 	private $status; // status of the currently ingested record
 
@@ -102,6 +102,11 @@ class Importer {
 		// Enable memory profiling...
 		//ini_set('xdebug.profiler_enable',1);
 		//xdebug_enable();
+		if($this->registryMode == "read-only")
+		{
+			throw new Exception("The Registry currently set to Read-Only mode, no changes will be saved!");
+		}
+
 		if($this->runBenchMark){
 			$this->CI->benchmark->mark('ingest_start');
 		}
@@ -1404,6 +1409,7 @@ class Importer {
 		$this->gcCyclesCount = 0;
 		$this->gcCyclesTime = 0;
 		$this->runBenchMark = $this->CI->config->item('importer_benchmark_enabled');
+		$this->registryMode = $this->CI->config->item('registry_mode');
 	}
 
 
