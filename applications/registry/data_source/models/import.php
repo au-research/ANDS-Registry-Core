@@ -98,10 +98,10 @@ class Import extends CI_Model {
 								// Generate the list and display titles first, then the SLUG
 								$ro->updateTitles();
 								$ro->generateSlug();
-	
+								$ro->processIdentifiers();	
 								// Save all our attributes to the object
 								$ro->save();
-	
+
 								// Add this record to our counts, etc.
 								$harvested_record_ids[] = $ro->id;
 								$record_count++;
@@ -144,11 +144,8 @@ class Import extends CI_Model {
 
 				$ro = $this->ro->getByID($ro_id);
 
-				// add reverse relationships
-				//$ro->addRelationships();
+				$ro->addRelationships();
 				// XXX: re-enrich records which are related to this one
-
-
 
 				$ro->update_quality_metadata();
 

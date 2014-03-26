@@ -48,43 +48,12 @@ class Connections_Extension extends ExtensionBase
 	 */
 	function getConnections($published_only = true, $specific_type = null, $limit = 100, $offset = 0, $include_dupe_connections = false)
 	{
-		$unordered_connections = array();
-		$ordered_connections = 	array();
-		$total_connection_count = 0;
-
-		$this->_CI->load->model('data_source/data_sources','ds');
-		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
-
-		$allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t" || $ds->allow_reverse_internal_links == 1);
-		$allow_reverse_external_links = ($ds->allow_reverse_external_links == "t" || $ds->allow_reverse_external_links == 1);
-		
-		/* Step 1 - Straightforward link relationships */
-		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks());
-		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks());
-		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links));
-		/* Step 2 - Internal reverse links */
-		if ($allow_reverse_internal_links)
-		{
-
-			$unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks());
-		}
-
-		/* Step 3 - External reverse links */
-		if ($allow_reverse_external_links)
-		{
-			$unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks());
-		}
-
-		/* Step 4 - Contributor */
-		$unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks());
 
 
-		/* Step 5 - Duplicate Record connections */
-		if ( $include_dupe_connections )
-		{
-			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections());
-		}
+		$allowed_draft = ($published_only==true ? false : true);
+		$unordered_connections = $this->getAllRelatedObjects(!$allowed_draft, $include_dupe_connections);
 
+		$ordered_connections = array();
 
 		/* Now sort according to "type" (collection / party_one / party_multi / activity...etc.) */
 		foreach($unordered_connections AS $connection)
@@ -117,7 +86,7 @@ class Connections_Extension extends ExtensionBase
 				}
 			}
 
-			if($connection['class'] == "party" && $connection['registry_object_id'] == null && ($connection['origin'] == 'IDENTIFIER') ||  ($connection['origin'] == 'IDENTIFIER REVERSE')){
+			if($connection['class'] == "party" && $connection['registry_object_id'] == null && ($connection['origin'] == 'IDENTIFIER' ||  $connection['origin'] == 'IDENTIFIER REVERSE')){
 				$connection['class'] = "party_one";
 			}
 			// $connection['description'] = $this->_getDescription($connection['registry_object_id']);
@@ -143,7 +112,7 @@ class Connections_Extension extends ExtensionBase
 			{
 				$class_valid = true;
 			}
-			$status_valid = (!$published_only || ($connection['status'] == PUBLISHED) || ($connection['origin'] == 'IDENTIFIER') ||  ($connection['origin'] == 'IDENTIFIER REVERSE'));
+			$status_valid = (!$published_only || ($connection['status'] == PUBLISHED) || ($connection['registry_object_id'] == null && ($connection['origin'] == 'IDENTIFIER' ||  $connection['origin'] == 'IDENTIFIER REVERSE')));
 			if ($class_valid && $status_valid)
 			{
 
@@ -194,35 +163,73 @@ class Connections_Extension extends ExtensionBase
 	}
 
 
-	function getAllRelatedObjects($allow_drafts = false)
+	function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false, $allow_all_links = false)
 	{
-		$connections = array();
+		$unordered_connections = array();
+
+
 		$this->_CI->load->model('data_source/data_sources','ds');
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
 
 		$allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t" || $ds->allow_reverse_internal_links == 1);
 		$allow_reverse_external_links = ($ds->allow_reverse_external_links == "t" || $ds->allow_reverse_external_links == 1);
 
-		$connections = array_merge($connections, $this->_getExplicitLinks($allow_drafts));
-
+		/* Step 1 - Straightforward link relationships */
+		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks($allow_drafts));
+		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks());
+		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links));
 		/* Step 2 - Internal reverse links */
-		if ($allow_reverse_internal_links)
+		if ($allow_reverse_internal_links || $allow_all_links)
 		{
-			$connections = array_merge($connections, $this->_getInternalReverseLinks($allow_drafts));
+
+			$unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks($allow_drafts));
 		}
 
 		/* Step 3 - External reverse links */
-		if ($allow_reverse_external_links)
+		if ($allow_reverse_external_links || $allow_all_links)
 		{
-			$connections = array_merge($connections, $this->_getExternalReverseLinks($allow_drafts));
+			$unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks($allow_drafts));
 		}
 
 		/* Step 4 - Contributor */
-		$connections = array_merge($connections, $this->_getContributorLinks($allow_drafts));
+		$unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks($allow_drafts));
 
-		$connections = array_merge($connections, $this->_getIdentifierLinks());
-		$connections = array_merge($connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links));
-		return $connections;
+
+		/* Step 5 - Duplicate Record connections */
+		if ( $include_dupe_connections || $allow_all_links)
+		{
+			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections());
+		}
+
+		if ( $allow_all_links ) {
+			$identifierMatches = array();
+			foreach($unordered_connections as $cc){
+				if($cc['class']=='party'){
+					$cc_ro = $this->_CI->ro->getByID($cc['registry_object_id']);
+					$identifierMatches = array_merge($identifierMatches, $cc_ro->findMatchingRecords());
+				}
+			}
+			foreach ($identifierMatches as $ii){
+				$ii_ro = $this->_CI->ro->getByID($ii);
+
+				$related_registry_object = array(
+					'registry_object_id' => $ii_ro->id,
+					'key' => $ii_ro->key,
+					'class' => $ii_ro->class,
+					'title'=>$ii_ro->title,
+					'slug' => $ii_ro->slug,
+					'origin' => 'IDENTIFIER_MATCH',
+					'relation_type' => '(Automatically inferred link from records with matching identifiers)'
+				);
+
+				if ($ii_ro->status==PUBLISHED) {
+					$unordered_connections[] = $related_registry_object;
+				}
+
+			}
+		}
+
+		return $unordered_connections;
 	}
 
 	function _getDescription($id){
@@ -425,73 +432,25 @@ class Connections_Extension extends ExtensionBase
 
 	function _getDuplicateConnections()
 	{
-		$this->_CI->load->library('solr');
-        $this->_CI->solr->init();
-
 		$my_connections = array();
-		$sxml = $this->ro->getSimpleXML();
+		$relatedByIdentifiers = $this->ro->findMatchingRecords();
 
-		if (!$sxml) return $my_connections;
+		foreach($relatedByIdentifiers as $r_id){
+			$ro = $this->_CI->ro->getByID($r_id);
 
-        if ($sxml->registryObject)
-        {
-            $sxml = $sxml->registryObject;
-        }
+			$matches = $ro->getAllRelatedObjects();
 
-        // Identifier matches (if another object has the same identifier)
-        $my_identifiers = array();
- 		if($sxml->{strtolower($this->ro->class)}->identifier)
-        {
- 			foreach($sxml->{strtolower($this->ro->class)}->identifier AS $identifier)
-            {
-                if((string)$identifier != '')
-                {
-                	$my_identifiers[] = '"' . $this->_CI->solr->escapeSolrValue((string) $identifier) . '"';
-            	}
-            }
-        }
+			foreach($matches as $i=>&$match){
+				if ($match['origin']!='CONTRIBUTOR') {
+					$match['origin'] = 'IDENTIFIER_MATCH';
+					$match['relation_type'] = '(Automatically inferred link from records with matching identifiers)';
+				} else {
+					unset($matches[$i]);
+				}
+			}
 
-        // No identifier, do nothing!
-        if (count($my_identifiers) == 0)
-        {
-        	return $my_connections;
-        }
-
-        $identifier_search_query = " +identifier_value:(" . implode(" OR ", $my_identifiers) . ")";
-        $identifier_search_query = " -key:(\"".$this->_CI->solr->escapeSolrValue($this->ro->key)."\") ". $identifier_search_query;
-  
-        $this->_CI->solr->setOpt("q", $identifier_search_query);
-        $this->_CI->solr->setOpt("fl", "id, class, display_title, slug, key");
-        $result = $this->_CI->solr->executeSearch(true);
-
-        if (isset($result['response']['numFound']) && $result['response']['numFound'] > 0)
-        {
-            foreach($result['response']['docs'] AS $doc)
-            { 
-            	$matches = false;
-            	$matched_ro = $this->_CI->ro->getByID($doc['id']);
-            	if ($matched_ro)
-            	{
-	            	$matches = $matched_ro->getAllRelatedObjects();
-	           		if ($matches && count($matches) > 0)
-	           		{
-		            	foreach ($matches AS &$match)
-		            	{
-		            		// Don't match contributors 
-		            		if ($match['origin'] == "CONTRIBUTOR") continue; 
-
-		            		// Only match if the shared identifier record has the same class
-		            		if ($matched_ro->class != $this->ro->class) continue;
-
-            				$match["origin"] = "IDENTIFIER_MATCH";
-            				$match["relation_type"] = "(Automatically inferred link from records with matching identifiers)";
-            				$my_connections[] = $match;
-		            	}
-		            }
-		        }
-            }
-        }
-
+			$my_connections = array_merge($my_connections, $matches);
+		}
 		return $my_connections;
 	}
 

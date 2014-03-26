@@ -265,11 +265,11 @@ function bindSearchRelatedEvents(tt, target){
 		if(term!=''){
 			// data_source_id_value
 			var ds_option = '';
-			if($('#ds_option').attr('checked')=='checked'){
-				ds_option = '/'+$('#data_source_title').val();
+			if($('#ds_option').attr('checked')){
+				ds_option = '/'+$('#data_source_id').val();
 			}
 			var published_option = '';
-			if($('#published_option').attr('checked')=='checked'){
+			if($('#published_option').attr('checked')){
 				published_option = '&onlyPublished=yes';
 			}
 			var class_option = $('#class_related_search_option').val();

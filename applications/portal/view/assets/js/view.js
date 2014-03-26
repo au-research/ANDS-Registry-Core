@@ -127,6 +127,9 @@ function initConnections(){
 $(document).on('click', 'a.suggestor_paging',function(e){
 	e.preventDefault();
 	updateLinksDisplay($('#links_dialog'), 'Suggested Links', $(this).attr('suggestor'), $(this).attr('offset'), 10);
+}).on('click', '.user_tags a', function(e){
+	e.preventDefault();
+	window.location = base_url+'search'+suffix+'tag='+encodeURIComponent($(this).text());
 });
 
 function formatConnectionTip(tt){
@@ -488,7 +491,7 @@ function initConnectionGraph()
 
 								a.attr('relation_type','nested_collection');
 								a.attr('page', 2);
-								console.log($(nodeSpan).html());
+								//console.log($(nodeSpan).html());
 							}
 							else
 							{
@@ -845,8 +848,13 @@ function initAddTagForm(){
 				data:{key:key,tag:tag},
 				success: function(data){
 					$('.add_tag_form input, .add_tag_form button').removeAttr('disabled');
+                    $('.add_tag_form input').val('');
+                    $('.add_tag_form p').remove();
 					if(data.status=='OK'){
-						$('#tags_container').append('<a href="'+base_url+'search/#!/tag='+tag+'">'+tag+'</a>');
+                        if($('#tags_container').length == 0){
+                            $("<p class=\"subject_type\">User Contributed Tags <a href=\"#\" class=\"tags_helper\"><i class=\"portal-icon portal-icon-info\"></i></a></p> <div class=\"tags user_tags\" id=\"tags_container\"></div>").insertBefore('.add_tag_form');
+                        }
+                        $('#tags_container').append('<a href="'+base_url+'search/#!/tag='+tag+'">'+tag+'</a>');
 						sync();
 					}else{
 						if(data.message) $('.add_tag_form').append('<p>'+data.message+'</p>');
@@ -871,9 +879,9 @@ function initLinkedRecords(){
 		{
 			var text = '';
 			if(num==1) {
-				text = 'May also be described in another record';
+				text = '1 Linked Record';
 			}else {
-				text = 'Also described in '+ num + ' other records';
+				text = num + ' Linked Records';
 			}
 			$('.linked_records').qtip({
 				content: text,
@@ -886,7 +894,7 @@ function initLinkedRecords(){
 				style: {
 					classes: 'ui-tooltip-lightcream',
 					def: 'false',
-					width:250
+					width:135
 				},
 			});
 		}
@@ -903,7 +911,17 @@ function initLinkedRecords(){
 						success: function(data){
 							data = JSON.parse(data);
 							var ro_class = $('#class').text();
-							var msg ='<div class="linked_record_tooltip_title">This '+ro_class.toLowerCase()+' may also be described in:</div>';
+							//var msg ='<div class="linked_record_tooltip_title">This '+ro_class.toLowerCase()+' may also be described in:</div>';
+							var text =''
+							if (data.content.length == 1)
+							{
+								text = '1 Linked Record:';
+							}
+							else
+							{
+								text = data.content.length + ' Linked Records:';
+							}
+							var msg ='<div class="linked_record_tooltip_title">'+text+'</div>';
 							msg += '<ul class="linkedrecords-list">';
 							$.each(data.content, function(){
 								msg +='<a href="'+base_url+this.slug+'?fl"><li>'+this.title+'<br/><span class="grey">Contributed by '+this.group+'</span></li></a>';
@@ -935,7 +953,6 @@ function initThemePageLinks(){
 		$.ajax({
 			url:base_url+ "theme_page/getThemePageBanner/"+slug,
 			success: function(data){
-				console.log(data);
 				this_div.html(data);
 			}
 		});

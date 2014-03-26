@@ -662,7 +662,9 @@ function postSearch(){
 	}
 
 	if(searchData['tag']){
-		addDeleteFacet('tag', searchData['tag']);
+        if(searchData['tag'].indexOf('themeSecret_')==-1){
+            addDeleteFacet('tag', searchData['tag']);
+        }
 	}
 
 	if(searchData['subject_vocab_uri']){

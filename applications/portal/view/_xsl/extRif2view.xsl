@@ -393,12 +393,15 @@
 
     </xsl:if>
 
+
+	<p><xsl:text>&amp;nbsp;</xsl:text></p>
+	<h4>Subjects</h4>
+
   <!-- DISPLAY SUBJECTS -->
   <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']">
     <div style="position:relative;clear:both">
         <!--<p><b>Subjects:</b>-->
-        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-        <h4>Subjects</h4>
+
 
         <!-- ANZSRC SUBJECTS -->
         <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type ='anzsrc-for'">
@@ -446,10 +449,11 @@
 
 </xsl:if>
 
- <xsl:if test="../extRif:annotations/extRif:tags">
-    <p class="subject_type">User Contributed Tags <a href="#" class="tags_helper"><i class="portal-icon portal-icon-info"></i></a></p>
+
+ <xsl:if test="../extRif:extendedMetadata/extRif:annotations/extRif:tags">
+    <p class="subject_type">User Contributed Tags <a href="javascript:void();" class="tags_helper"><i class="portal-icon portal-icon-info"></i></a></p>
     <div class="tags user_tags" id="tags_container">
-      <xsl:for-each select="../extRif:annotations/extRif:tags/extRif:tag">
+      <xsl:for-each select="../extRif:extendedMetadata/extRif:annotations/extRif:tags/extRif:tag">
         <xsl:apply-templates select="."/>
       </xsl:for-each>
     </div>
@@ -490,13 +494,14 @@
 
 <!--  we will now transform the right hand stuff -->
 <div class="sidebar">
+	<xsl:apply-templates select="//extRif:theme_page"/>
 <h3 id="draft_status" class="hide" style="color:#FF6688;">DRAFT PREVIEW</h3>
 
   <xsl:if test="ro:location/ro:address/ro:electronic/@type='url' 
     or ro:rights or ro:location/ro:address/ro:electronic/@type='email' or ro:location/ro:address/ro:physical">     
     <div class="right-box">
         
-        <xsl:apply-templates select="//extRif:theme_page"/>
+
 
         <h2>Access</h2>
         <div class="limitHeight300">

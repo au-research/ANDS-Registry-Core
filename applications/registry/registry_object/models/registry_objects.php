@@ -157,7 +157,7 @@ class Registry_objects extends CI_Model {
 						    'fn' => function($db,$key) {
 							    $db->select("registry_object_id")
 								    ->from("registry_objects")
-								    ->where('binary `key` =', '"'.$key.'"', false)
+								    ->where('`key` =', '"'.$key.'"', false)
 								    ->where("status", PUBLISHED);
 							    return $db;
 						    })),
@@ -178,7 +178,7 @@ class Registry_objects extends CI_Model {
 						    'fn' => function($db,$key) {
 							    $db->select("registry_object_id")
 								    ->from("registry_objects")
-								    ->where('binary `key` =', '"'.$key.'"', false)
+								    ->where('`key` =', '"'.$key.'"', false)
 								    ->where_in("status", getDraftStatusGroup());
 							    return $db;
 						    })),
@@ -199,7 +199,7 @@ class Registry_objects extends CI_Model {
 						    'fn' => function($db,$key) {
 							    $db->select("registry_object_id")
 								    ->from("registry_objects")
-								    ->where('binary `key` =', '"'.$key.'"', false);
+								    ->where('`key` =', '"'.$key.'"', false);
 							    return $db;
 						    })),
 							true
@@ -848,7 +848,7 @@ class Registry_objects extends CI_Model {
 			$this->db->insert('deleted_registry_objects');
 
 			// Re-enrich and reindex related
-			$reenrich_queue = $target_ro->getRelationships();
+			$reenrich_queue = $target_ro->getRelatedKeys();
 			if($finalise)
 			{
 			// Delete from the index
@@ -862,6 +862,16 @@ class Registry_objects extends CI_Model {
 					$this->solr->commit();
 				}
 			}
+		}
+
+		// Also treat identifier matches as affected records which need to be enriched
+		// (to increment their extRif:matching_identifier_count)
+		$related_ids_by_identifier_matches = $target_ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+		$related_keys = array();
+		foreach($related_ids_by_identifier_matches AS $matching_record_id)
+		{
+			$matched_ro = $this->ro->getByID($matching_record_id);
+			$reenrich_queue[] = $matched_ro->key;
 		}
 
 		// Delete the actual registry object

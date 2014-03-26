@@ -58,6 +58,9 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 	*/
 	function loginFinish()
 	{
+		if(!isset($_REQUEST['oauth_token'])) {
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid Token.", 5 );
+		}
 		$oauth_token    = $_REQUEST['oauth_token'];
 		$oauth_verifier = $_REQUEST['oauth_verifier'];
 

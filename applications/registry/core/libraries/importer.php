@@ -18,7 +18,7 @@ class Importer {
 	private $forcePublish; // used when changing from DRAFT to PUBLISHED (ignore the QA flags, etc)
 	private $forceDraft; 
 	private $maintainStatus;
-
+	public $registryMode;
 	public $runBenchMark = false;
 	private $status; // status of the currently ingested record
 
@@ -77,7 +77,7 @@ class Importer {
 	public function Importer()
 	{
 		$this->CI =& get_instance();
-				
+
 		// This is not a perfect science... the web server can still 
 		// reclaim the worker thread and terminate the PHP script execution....
 		ini_set('memory_limit', '2048M');
@@ -102,6 +102,11 @@ class Importer {
 		// Enable memory profiling...
 		//ini_set('xdebug.profiler_enable',1);
 		//xdebug_enable();
+		if($this->registryMode == "read-only")
+		{
+			throw new Exception("The Registry currently set to Read-Only mode, no changes will be saved!");
+		}
+
 		if($this->runBenchMark){
 			$this->CI->benchmark->mark('ingest_start');
 		}
@@ -266,6 +271,21 @@ class Importer {
 				//$this->dataSource->updateStats();
 			//}
 
+		//}
+
+		$this->isImporting = false;
+		if($this->runBenchMark){
+			$this->CI->benchmark->mark('ingest_end');
+		}
+
+		if($finalise)
+		{
+			$taskLog = $this->finishImportTasks();
+			if($this->runBenchMark){
+				$this->dataSource->append_log($taskLog, IMPORT_INFO, "importer","IMPORT_INFO");
+			}
+
+
 			// Finish up by returning our stats...
 			$time_taken = sprintf ("%.3f", (float) (microtime(true) - $this->start_time));
 			$this->message_log[] = NL;
@@ -288,20 +308,8 @@ class Importer {
 			}
 
 			$this->message_log[] = $this->standardLog;
-		//}
-
-		$this->isImporting = false;
-		if($this->runBenchMark){
-			$this->CI->benchmark->mark('ingest_end');
 		}
 
-		if($finalise)
-		{
-			$taskLog = $this->finishImportTasks();
-			if($this->runBenchMark){
-				$this->dataSource->append_log($taskLog, IMPORT_INFO, "importer","IMPORT_INFO");
-			}
-		}
 	}
 
 
@@ -437,6 +445,28 @@ class Importer {
 					// Save all our attributes to the object
 					$ro->save();
 
+					//All related objects by any means are affected regardless
+					$related_objects = $ro->getAllRelatedObjects(false, true, true);
+					$related_keys = array();
+					foreach($related_objects as $rr){
+						$related_keys[] = $rr['key'];
+					}
+					$this->addToAffectedList($related_keys);
+
+					// Also treat identifier matches as affected records which need to be enriched
+					// (to increment their extRif:matching_identifier_count)
+					$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+					$related_keys = array();
+					foreach($related_ids_by_identifier_matches AS $matching_record_id){
+						$matched_ro = $this->CI->ro->getByID($matching_record_id);
+						$related_keys[] = $matched_ro->key;
+					}
+					if (count($related_keys)){
+						$this->addToAffectedList($related_keys);
+					}
+
+					$ro->processIdentifiers();
+
 					// Add this record to our counts, etc.
 					$this->importedRecords[] = $ro->id;
 					$this->ingest_successes++;
@@ -497,10 +527,34 @@ class Importer {
 				// previous relationships are reset by this call
 				if($ro)
 				{
-					$related_keys = $ro->addRelationships();
+					$ro->addRelationships();
+					$related_keys = $ro->getRelatedKeys();
 					// directly affected records are re-enriched below (and reindexed...)
 					// we consider any related record keys to be directly affected and reindex them...
 					$this->addToAffectedList($related_keys);
+
+					// All related objects by any means are affected
+					$related_objects = $ro->getAllRelatedObjects(false, true, true);
+					$related_keys = array();
+					foreach($related_objects as $rr){
+						$related_keys[] = $rr['key'];
+					}
+					$this->addToAffectedList($related_keys);
+
+					// Also treat identifier matches as affected records which need to be enriched
+					// (to increment their extRif:matching_identifier_count)
+					$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+					$related_keys = array();
+					foreach($related_ids_by_identifier_matches AS $matching_record_id){
+						$matched_ro = $this->CI->ro->getByID($matching_record_id);
+						$related_keys[] = $matched_ro->key;
+					}
+					if (count($related_keys)){
+						$this->addToAffectedList($related_keys);
+					}
+
+
+
 					// Keep track of our imported keys...
 					$this->imported_record_keys[] = $ro->key;
 					unset($ro);
@@ -1380,6 +1434,7 @@ class Importer {
 		$this->gcCyclesCount = 0;
 		$this->gcCyclesTime = 0;
 		$this->runBenchMark = $this->CI->config->item('importer_benchmark_enabled');
+		$this->registryMode = $this->CI->config->item('registry_mode');
 	}
 
 

@@ -34,4 +34,22 @@ CREATE  TABLE `dbs_registry`.`theme_pages` (
   PRIMARY KEY (`id`) );
 ALTER TABLE `dbs_registry`.`theme_pages` ADD COLUMN `secret_tag` VARCHAR(256) NULL  AFTER `slug` ;
 
-ALTER TABLE `dbs_registry`.`registry_object_relationships` CHANGE COLUMN `id` `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT  ;
+ALTER TABLE `dbs_registry`.`registry_object_relationships` DROP COLUMN `id`;
+
+ALTER TABLE `dbs_registry`.`registry_object_identifiers`
+ADD INDEX `idx_registry_object_id` USING BTREE (`registry_object_id` ASC),
+ADD INDEX `idx_identifier_pairs` USING BTREE (`identifier` ASC, `identifier_type` ASC);
+
+ALTER TABLE `dbs_registry`.`registry_objects` 
+DROP INDEX `key_class_index` ,
+ADD INDEX `key_class_index` USING HASH (`key` ASC, `class` ASC, `status` ASC),
+DROP INDEX `idx_ro_class` ,
+ADD INDEX `key_index` USING HASH (`class` ASC, `data_source_id` ASC),
+DROP INDEX `key_index` ;
+
+ALTER TABLE `dbs_registry`.`deleted_registry_objects` 
+ADD INDEX `key_index` USING HASH (`key` ASC);
+
+#ALTER TABLE `dbs_registry`.`record_data` 
+#DROP INDEX `fk_record_data_registry_object` ,
+#ADD INDEX `fk_record_data_registry_object` (`registry_object_id` ASC, `current` ASC);
