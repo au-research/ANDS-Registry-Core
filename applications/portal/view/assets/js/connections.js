@@ -230,9 +230,13 @@ controller('openConnections', function($scope, searches){
 			$scope.relations = [];
 			$scope.results = data.result;
 			$scope.facet = data.facet_result;
+			console.log($scope.facet);
             $.each($scope.facet, function(){
                 $.each(this.values, function(){
-                    this.title = this.title.replace(/&gt;/g, '>');
+	                this.title = this.title.toString();
+	                if(this.title.indexOf('&gtl')>0){
+		                this.title = this.title.replace(/&gt;/g, '>');
+	                }
                 });
             });
 			$scope.getRelations();
