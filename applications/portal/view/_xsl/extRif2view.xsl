@@ -49,17 +49,18 @@
          <xsl:choose>
         <xsl:when test="//extRif:extendedMetadata/extRif:contributor">
           <xsl:text>  /  </xsl:text>
-            <a class="crumb">
+            <a class="crumb group_crumb">
               <xsl:attribute name="href">
                 <xsl:value-of select="$base_url"/><xsl:value-of select="//extRif:extendedMetadata/extRif:contributor"/>
               </xsl:attribute>
               <xsl:value-of select="$group"/>
             </a>    
+            <img src="{$base_url}assets/core/images/caret.png" alt="" class="linked_records hide"/>
          </xsl:when> 
          <xsl:otherwise>
            <xsl:text>  /  </xsl:text>
-            <a href="{$base_url}search/#!/group={./@group}" class="crumb"><xsl:value-of select="$group"/></a>    
-     
+            <a href="{$base_url}search/#!/group={./@group}" class="crumb group_crumb"><xsl:value-of select="$group"/></a>    
+            <img src="{$base_url}assets/core/images/caret.png" alt="" class="linked_records hide"/>
          </xsl:otherwise>
        </xsl:choose>
     <xsl:text>  /  </xsl:text>
@@ -133,6 +134,7 @@
                 <span id="slug"><xsl:value-of select="//extRif:extendedMetadata/extRif:slug"/></span>
                 <span id="registry_object_id"><xsl:value-of select="//extRif:extendedMetadata/extRif:id"/></span>
                 <span id="class_type"><xsl:value-of select="$objectClassType"/></span>
+                <span id="matching_identifier_count"><xsl:value-of select="//extRif:extendedMetadata/extRif:matching_identifier_count"/></span>
             </div>
 
             <xsl:apply-templates select="ro:collection | ro:activity | ro:party | ro:service"/>
@@ -391,12 +393,15 @@
 
     </xsl:if>
 
+
+	<p><xsl:text>&amp;nbsp;</xsl:text></p>
+	<h4>Subjects</h4>
+
   <!-- DISPLAY SUBJECTS -->
   <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']">
     <div style="position:relative;clear:both">
         <!--<p><b>Subjects:</b>-->
-        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-        <h4>Subjects</h4>
+
 
         <!-- ANZSRC SUBJECTS -->
         <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type ='anzsrc-for'">
@@ -425,7 +430,7 @@
 
         <!-- OTHER SUBJECTS -->
         <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type!='anzsrc-for' and ../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']/extRif:subject_type!='anzsrc-seo'">
-            <p>Keywords</p> 
+            <p class="subject_type">Keywords</p> 
             <div class="tags">
                 <xsl:for-each select="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']">      
                     <xsl:sort select="extRif:subject_type"/>
@@ -436,12 +441,24 @@
             </div>
         </xsl:if> 
         
-        <!--</p> SUBJECTS WRAPPER--> 
+ 
+    
 
     </div>  
+
+
 </xsl:if>
 
+<p class="subject_type">User Contributed Tags <a href="javascript:void();" class="tags_helper"><i class="portal-icon portal-icon-info"></i></a></p>
+ <xsl:if test="../extRif:extendedMetadata/extRif:annotations/extRif:tags">
 
+    <div class="tags user_tags" id="tags_container">
+      <xsl:for-each select="../extRif:extendedMetadata/extRif:annotations/extRif:tags/extRif:tag">
+        <xsl:apply-templates select="."/>
+      </xsl:for-each>
+    </div>
+</xsl:if>
+%%%%ADDTAGFORM%%%%
 
     <!-- DISPLAY DATES -->
     <xsl:if test="ro:dates[descendant::text() != '']">
@@ -477,13 +494,14 @@
 
 <!--  we will now transform the right hand stuff -->
 <div class="sidebar">
+	<xsl:apply-templates select="//extRif:theme_page"/>
 <h3 id="draft_status" class="hide" style="color:#FF6688;">DRAFT PREVIEW</h3>
 
   <xsl:if test="ro:location/ro:address/ro:electronic/@type='url' 
     or ro:rights or ro:location/ro:address/ro:electronic/@type='email' or ro:location/ro:address/ro:physical">     
     <div class="right-box">
         
-        
+
 
         <h2>Access</h2>
         <div class="limitHeight300">
@@ -605,6 +623,12 @@
     </xsl:if>  
 </xsl:template> 
 
+<xsl:template match="extRif:theme_page">
+  <div class="theme_page">
+    <xsl:attribute name="slug"><xsl:value-of select="."/></xsl:attribute>
+  </div>
+</xsl:template>
+
 <xsl:template match="ro:name[@type='alternative']">   
     <p class="alt_displayTitle">Also known as: <xsl:apply-templates/></p>
 </xsl:template> 
@@ -688,6 +712,14 @@
       <xsl:value-of select="extRif:subject_resolved"/>
     </a>
     </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template match="extRif:tag">
+  <xsl:choose>
+    <xsl:when test="@type='public'">
+      <a href="{$base_url}search/#!/tag={.}"><xsl:value-of select="."/></a>
+    </xsl:when>
   </xsl:choose>
 </xsl:template>
 
@@ -1271,6 +1303,7 @@
 
 <xsl:template match="ro:location/ro:address/ro:electronic[ro:value/text() != '']">
   <xsl:if test="./@type='url'">
+
       <xsl:variable name="url">
           <xsl:choose>
               <xsl:when test="string-length(.)>30">
@@ -1280,7 +1313,7 @@
                 <xsl:value-of select="."/>
             </xsl:otherwise>
         </xsl:choose>
-    </xsl:variable>	
+    </xsl:variable> 
     <a>
         <xsl:attribute name="href">
             <xsl:value-of select="."/>

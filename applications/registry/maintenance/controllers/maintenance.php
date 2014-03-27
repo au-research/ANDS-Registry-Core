@@ -13,13 +13,19 @@ class Maintenance extends MX_Controller {
 
 	
 	public function index(){
-		acl_enforce('REGISTRY_STAFF');
-		$data['title'] = 'ARMS Maintenance';
-		$data['small_title'] = '';
-		$data['scripts'] = array('maintenance');
-		$data['js_lib'] = array('core', 'prettyprint', 'dataTables');
+		// acl_enforce('REGISTRY_STAFF');
+		// $data['title'] = 'ARMS Maintenance';
+		// $data['small_title'] = '';
+		// $data['scripts'] = array('maintenance');
+		// $data['js_lib'] = array('core', 'prettyprint', 'dataTables');
 
-		$this->load->view("maintenance_index", $data);
+		// $this->load->view("maintenance_index", $data);
+
+		acl_enforce('REGISTRY_STAFF');
+		$data['title'] = 'ARMS SyncMenu';
+		$data['scripts'] = array('sync_app');
+		$data['js_lib'] = array('core', 'angular', 'dataTables');
+		$this->load->view("syncmenu_index", $data);
 	}
 
 	public function migrate_tags_to_r11(){
@@ -48,6 +54,53 @@ class Maintenance extends MX_Controller {
 				echo '<hr/>';
 			}
 		}
+	}
+
+	public function migrate_themes_to_r12(){
+		acl_enforce('REGISTRY_STAFF');
+		$directory = './assets/shared/theme_pages/';
+		$index_file = 'theme_cms_index.json';
+		$root = scandir($directory, 1);
+		$this->load->helper('file');
+		$result = array();
+		$this->db->empty_table('theme_pages');
+		foreach($root as $value){
+			if($value === '.' || $value === '..') {continue;} 
+			$pieces = explode(".", $value);
+			if(is_file("$directory/$value")) {
+				if($pieces[0].'.json'!=$index_file){
+					$file = json_decode(read_file($directory.$pieces[0].'.json'), true);
+					$theme_page = array(
+						'title' => (isset($file['title'])?$file['title']:'No Title'),
+						'slug' => (isset($file['slug'])?$file['slug']:$pieces[0]),
+						'img_src'=> (isset($file['img_src'])?$file['img_src']:''),
+						'description'=>(isset($file['desc'])?$file['desc']:''),
+						'visible'=>(isset($file['visible'])?$file['visible']:false),
+						'content'=>json_encode($file)
+					);
+					if(isset($file['visible']) && $file['visible']==='true'){
+						$theme_page['visible'] = 1;
+					}else $theme_page['visible'] = 0;
+					$this->db->insert('theme_pages', $theme_page);
+				}
+			} 
+		}
+		echo 'Done';
+	}
+
+	public function migrate_tags_to_r12(){
+		acl_enforce('REGISTRY_STAFF');
+		$this->db->select('distinct(tag), type')->from('registry_object_tags');
+		$tags = $this->db->get();
+		$tags = $tags->result_array();
+		foreach($tags as $t){
+			$tag = array(
+				'name' => $t['tag'],
+				'type' => $t['type']
+			);
+			$this->db->insert('tags', $tag);
+		}
+		echo 'Done';
 	}
 
 	public function syncmenu(){
@@ -489,7 +542,15 @@ class Maintenance extends MX_Controller {
 					}
 				}
 
-				if($task=='sync' || $task=='full_enrich' || $task=='fast_enrich'){
+				if($task == 'fast_sync' || $task == 'fast_enrich') {
+					try{
+						$ro->updateExtRif();
+					} catch (Exception $e){
+						array_push($error, $e->getMessage());
+					}
+				}
+
+				if($task=='sync' || $task=='full_enrich'){
 					try{
 						$ro->enrich();
 					}catch(Exception $e){
@@ -497,11 +558,12 @@ class Maintenance extends MX_Controller {
 					}
 				}
 
+
 				$this->benchmark->mark('enrich_ro_end');
 
 				//index
 				
-				if($task=='sync' || $task=='index'){
+				if($task=='sync' || $task=='index' || $task=='fast_sync'){
 					try{
 						$solrXML = $ro->transformForSOLR();
 						$allSOLRXML .= $solrXML;
@@ -535,7 +597,7 @@ class Maintenance extends MX_Controller {
 			$this->solr->clear($data_source_id);
 		}
 
-		if($task=='sync' || $task=='index'){
+		if($task=='sync' || $task=='index' || $task=='fast_sync'){
 			$this->solr->addDoc('<add>'.$allSOLRXML.'</add>');
 			$this->solr->commit();
 		}
@@ -556,6 +618,36 @@ class Maintenance extends MX_Controller {
 		$data['results'] = $results;
 
 		echo json_encode($data);
+	}
+
+	function test(){
+		$this->load->model('registry_object/registry_objects', 'ro');
+//		$ro = $this->ro->getByID(12242);
+		$ro = $this->ro->getByID(146631);
+		$relationships = $ro->getAllRelatedObjects(false, true);
+//		foreach($relationships as $r){
+//			$r = $this->ro->getByID($r['registry_object_id']);
+//			$r->sync();
+//		}
+		$relationships2 = $ro->_getDuplicateConnections();
+		$relatedByIdentifiers = $ro->findMatchingRecords();
+		echo 'done';
+	}
+
+	function fixRelationships($id) {
+		$this->load->model('registry_object/registry_objects', 'ro');
+		$ro = $this->ro->getByID($id);
+		$relationships = $ro->getAllRelatedObjects(false, true, true);
+		$already_sync = array();
+		foreach($relationships as $r){
+			if(!in_array($r['registry_object_id'], $already_sync)){
+				$rr = $this->ro->getByID($r['registry_object_id']);
+				$rr->sync();
+				$already_sync[] = $rr->id;
+				echo $rr->id. ' > '. $rr->class. ' > '.$rr->title.'<br/>';
+			}
+		}
+		echo 'done';
 	}
 
 	function smartSyncDS2($data_source_id, $print=false, $offset=0){

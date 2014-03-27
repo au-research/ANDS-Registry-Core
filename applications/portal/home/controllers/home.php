@@ -115,20 +115,53 @@ class Home extends MX_Controller {
 
 	function contact(){
 		$data['title'] = 'Contact Us - Research Data Australia';
+		$data['message'] = '';
+		$site_admin_email = $this->config->item('site_admin_email');
+
+		/*
+			Obscure text email address from contact us page to help avoid email scrapers
+		*/
+		$data['contact_email'] = $this->myobfiscate($site_admin_email);
 		if($this->input->get('sent')!=''){
 			$this->load->library('user_agent');
 			$data['user_agent']=$this->agent->browser();
-			$name = $this->input->post('name');
-			$email = $this->input->post('email');
+
+			/* 
+				check if fields hidden from actual users but avaiable to bots have been filled - if so let's not email 
+			*/
+			$title = $this->input->post('title');
+			$last_name = $this->input->post('last_name');
+			$bogus_email = $this->input->post('email');		
+
+			/*
+				also check that all three fields have been filled out - if not let's not email
+			*/
+			$name = $this->input->post('first_name');
+			$email = $this->input->post('contact_email');
 			$content = $this->input->post('content');
-			$this->load->library('email');
-			$this->email->from($email, $name);
-			$this->email->to('services@ands.org.au');
-			$this->email->subject('RDA Contact Us');
-			$this->email->message($content);
-			$this->email->send();
-			$data['sent'] = true;
-		}else $data['sent'] = false;
+
+			if($title || $last_name || $bogus_email || !$name || !$email || !$content)
+			{
+				$data['sent'] = false;
+				$data['message'] = "Please fill in all required fields.";
+			//	$this->load->view('contact', $data);
+			}
+			else
+			{
+				$this->load->library('email');
+				$this->email->from($email, $name);
+				$this->email->to($site_admin_email);
+				$this->email->subject('RDA Contact Us');
+				$this->email->message($content);
+				$this->email->send();
+				$data['sent'] = true;
+			}
+
+		}else 
+		{
+			$data['sent'] = false;
+		}
+		
 		$this->load->view('contact', $data);
 	}
 
@@ -142,16 +175,14 @@ class Home extends MX_Controller {
 
     	if($ds==''){
 			$fields = array(
-				'q'=>'*:*','version'=>'2.2','start'=>0,'rows'=>100, 'wt'=>'json',
+				'q'=>'*:*','version'=>'2.2','start'=>0,'rows'=>0, 'wt'=>'json',
 				'fl'=>'key'
 			);
 					/*prep*/
 			$fields_string='';
 	    	foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }//build the string
-	    	$fields_string .= '&facet=true&facet.field=data_source_key';
+	    	$fields_string .= '&facet=true&facet.field=data_source_key&facet.limit=1000&facet.mincount=1';
 	    	rtrim($fields_string,'&');
-
-			//echo $solr_url.$fields_string;
 
 			$ch = curl_init();
 	    	//set the url, number of POST vars, POST data
@@ -272,5 +303,15 @@ class Home extends MX_Controller {
 		$this->email->send();
 
 		echo '<p> </p><p>Thank you for your enquiry into grant `'.$this->input->post('grant-id').'`. A ticket has been logged with the ANDS Services Team. You will be notified when the grant becomes available in Research Data Australia. </p>';
+	}
+
+	public function myobfiscate($emailaddress){
+ 		$email= $emailaddress; 
+ 		$obfuscatedEmail = '';               
+ 		$length = strlen($email);                         
+ 		for ($i = 0; $i < $length; $i++){                
+			$obfuscatedEmail .= "&#" . ord($email[$i]).";";
+ 		}
+ 		return $obfuscatedEmail;
 	}
 }

@@ -23,6 +23,35 @@ body{min-height:100%;}
 	}
 }
 
+.codeversion
+{
+	padding:4px;
+	background-image: -ms-linear-gradient(top, #eee 0%, #aaa 100%);
+	background-image: -moz-linear-gradient(top, #eee 0%, #aaa 100%);
+	background-image: -o-linear-gradient(top, #eee 0%, #aaa 100%);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #eee), color-stop(1, #aaa));
+	background-image: -webkit-linear-gradient(top, #eee 0%, #aaa 100%);
+	background-image: linear-gradient(to bottom, #eee 0%, #aaa 100%);
+	img
+	{
+		margin-right:4px;
+		margin-left:2px;
+	}
+	div
+	{
+		display:inline-block;
+	}
+	div.right {
+		float:right;
+		.otherCommits {
+			z-index:9991;
+			padding:10px;
+			border-color:black;
+			background-color:white;
+		}
+	}
+}
+
 .carousel{
 	margin-bottom:60px;
 }

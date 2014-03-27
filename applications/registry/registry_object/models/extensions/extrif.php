@@ -1,5 +1,4 @@
 <?php
-
 class Extrif_Extension extends ExtensionBase
 {
 	function __construct($ro_pointer)
@@ -59,9 +58,13 @@ class Extrif_Extension extends ExtensionBase
 					throw new Exception ('iconv installation/configuration required for simplified title');
 				}
 
+				$is_contributor_page = false;
 				if($contributor)
 				{
 					$extendedMetadata->addChild("extRif:contributor", str_replace('&', '&amp;' , $contributor[0]), EXTRIF_NAMESPACE);
+
+					// also mark whether this is a contributor page (used for boosting later)
+					if ($contributor[0] == $this->ro->slug) { $is_contributor_page = true; }
 				}
 				$theDescription = '';
 				$theDescriptionType = '';
@@ -176,25 +179,28 @@ class Extrif_Extension extends ExtensionBase
 				// XXX: TODO: Search base score, displayLogo
 				//$extendedMetadata->addChild("extRif:searchBaseScore", 100, EXTRIF_NAMESPACE);
 				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
-				
-				//tags
-				
+
+				// Include the count of any linked records based on identifier matches
+				$extendedMetadata->addChild("extRif:matching_identifier_count", sizeof($this->ro->findMatchingRecords()), EXTRIF_NAMESPACE);
+
 
 				//ANNOTATIONS
+				$annotations = $extendedMetadata->addChild("extRif:annotations", NULL, EXTRIF_NAMESPACE);
+
+				//tags
 				if($tags = $this->ro->getTags()){
-					if(count($xml->xpath('extRif:annotations'))){
-						$annotations = $xml->xpath('extRif:annotations');
-						$annotations = $annotations[0];
-					}else $annotations = $xml->addChild("extRif:annotations", NULL, EXTRIF_NAMESPACE);
-				
-					if(count($xml->xpath('extRif:annotations/extRif:tags'))){
-						$extRifTags = $xml->xpath('extRif:annotations/extRif:tags');
-						$extRifTags = $extRifTags[0];
-						$extRifTags[0]='';//hack to remove the tags
-					}else $extRifTags = $annotations->addChild("extRif:tags", NULL, EXTRIF_NAMESPACE);
+					$extRifTags = $annotations->addChild('extRif:tags', NULL, EXTRIF_NAMESPACE);
 
 					foreach($tags as $tag){
-						$extRifTags->addChild('extRif:tag', $tag, EXTRIF_NAMESPACE);
+						$tag_tag = $extRifTags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
+						$tag_tag->addAttribute('type', $tag['type']);
+					}
+				}
+
+				//Theme Page stuff
+				if($own_themepages = $this->ro->getThemePages()){
+					foreach($own_themepages as $t){
+						$extendedMetadata->addChild("extRif:theme_page", $t['slug'], EXTRIF_NAMESPACE);
 					}
 				}
 				
@@ -240,7 +246,8 @@ class Extrif_Extension extends ExtensionBase
 				
 				/*if($this->ro->getAttribute('group') == 'National Health and Medical Research Council')
 				{*/
-					foreach ($this->ro->getAllRelatedObjects() AS $relatedObject)
+					$allRelatedObjects = $this->ro->getAllRelatedObjects(false, true, true);
+					foreach ($allRelatedObjects AS $relatedObject)
 					{
 					//var_dump($relatedObject);
 						$relatedObj = $extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
@@ -280,6 +287,19 @@ class Extrif_Extension extends ExtensionBase
 				$xml = $this->ro->extractDatesForDisplay($xml);
 
 
+				/* 
+				Add some logic to boost highly connected records & contributor pages
+				*/
+				if($is_contributor_page)
+				{
+					$this->ro->search_boost = SEARCH_BOOST_CONTRIBUTOR_PAGE;
+				}
+				elseif (count($allRelatedObjects) > 0)
+				{
+					// Give credit to "highly connected" records (but limit to 10)
+					$this->ro->search_boost = min(pow(SEARCH_BOOST_PER_RELATION_EXP,count($allRelatedObjects)), SEARCH_BOOST_RELATION_MAX);
+				}
+
 				/* Names EXTRIF */
 				//$descriptions = $xml->xpath('//'.$this->ro->class.'/description');
 				
@@ -293,6 +313,95 @@ class Extrif_Extension extends ExtensionBase
 				throw new Exception ("Unable to enrich RIFCS. Not valid RIFCS XML");
 			}
 		}
+	}
+
+	function updateExtRif(){
+		$this->_CI->load->model('data_source/data_sources','ds');
+
+		$options = array(
+			'single_values' => true,
+			'theme_pages' => true,
+			'tags' => true,
+			'subjects' => true,
+			'relationships' => true
+		);
+
+		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
+
+		$extRif = $this->ro->getSimpleXML(null, true);
+		$namespaces = $extRif->getNameSpaces();
+		$extRifNameSpace = $namespaces['extRif'];
+
+		$ext = $extRif->children($extRifNameSpace);
+
+		if ($options['single_values']) {
+			$ext->extendedMetadata->slug = $this->ro->slug;
+			$ext->extendedMetadata->dataSourceKey = $ds->key;
+			$ext->extendedMetadata->status = $this->ro->status;
+			$ext->extendedMetadata->id = $this->ro->id;
+			$ext->extendedMetadata->dataSourceTitle = $ds->title;
+			$ext->extendedMetadata->dataSourceID = $this->ro->data_source_id;
+			$ext->extendedMetadata->updateTimestamp = $this->ro->updated;
+			$ext->extendedMetadata->displayTitle = str_replace('&', '&amp;' , $this->ro->title);
+			$ext->extendedMetadata->listTitle = str_replace('&', '&amp;' , $this->ro->list_title);
+			try{
+				$ext->extendedMetadata->simplifiedTitle = iconv('UTF-8', 'ASCII//TRANSLIT', str_replace('&', '&amp;' , $this->ro->list_title));
+			}catch(Exception $e){
+				throw new Exception ('iconv installation/configuration required for simplified title');
+			}
+			$ext->extendedMetadata->matching_identifier_count = sizeof($this->ro->findMatchingRecords());
+		}
+
+		if ($options['theme_pages']) {
+			unset($ext->extendedMetadata->theme_page);
+			if($own_themepages = $this->ro->getThemePages()){
+				foreach($own_themepages as $t){
+					$ext->extendedMetadata->theme_page[] = $t['slug'];
+				}
+			}
+		}
+
+		if ($options['tags']) {
+			if($tags = $this->ro->getTags()) {
+				unset($ext->extendedMetadata->annotations);
+				$ext->extendedMetadata->addChild('annotations', null, EXTRIF_NAMESPACE);
+				$ext->extendedMetadata->annotations->addChild('tags', null, EXTRIF_NAMESPACE);
+				foreach($tags as $tag) {
+					$tag_node = $ext->extendedMetadata->annotations->tags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
+					$tag_node->addAttribute('type', $tag['type']);
+				}
+			}
+		}
+
+		if ($options['subjects']) {
+			if($subjects = $this->ro->processSubjects()){
+				unset($ext->extendedMetadata->subjects);
+				$ext->extendedMetadata->addChild('subjects');
+				foreach ($subjects AS $subject) {
+					$subject_node = $ext->extendedMetadata->subjects->addChild("extRif:subject", "", EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_value", $subject['value'], EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_type", $subject['type'], EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_resolved", $subject['resolved'], EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_uri", $subject['uri'], EXTRIF_NAMESPACE);
+				}
+			}
+		}
+
+		if ($options['relationships']) {
+			$allRelatedObjects = $this->ro->getAllRelatedObjects(false, true, true);
+			unset($ext->extendedMetadata->related_object);
+			foreach ($allRelatedObjects AS $relatedObject) {
+				$relatedObj = $ext->extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
+				$relatedObj->addChild("extRif:related_object_key", $relatedObject['key'], EXTRIF_NAMESPACE);
+				$relatedObj->addChild("extRif:related_object_id", $relatedObject['registry_object_id'], EXTRIF_NAMESPACE);
+				$relatedObj->addChild("extRif:related_object_class", $relatedObject['class'], EXTRIF_NAMESPACE);
+				$relatedObj->addChild("extRif:related_object_display_title", str_replace('&', '&amp;' , $relatedObject['title']), EXTRIF_NAMESPACE);
+				$relatedObj->addChild("extRif:related_object_relation", $relatedObject['relation_type'], EXTRIF_NAMESPACE);
+			}
+		}
+
+		$this->ro->pruneExtrif();
+		$this->ro->updateXML($extRif->asXML(),TRUE,'extrif');
 	}
 	
 	function getLogoUrl($str)

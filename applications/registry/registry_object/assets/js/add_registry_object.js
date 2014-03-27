@@ -265,11 +265,11 @@ function bindSearchRelatedEvents(tt, target){
 		if(term!=''){
 			// data_source_id_value
 			var ds_option = '';
-			if($('#ds_option').attr('checked')=='checked'){
-				ds_option = '/'+$('#data_source_title').val();
+			if($('#ds_option').attr('checked')){
+				ds_option = '/'+$('#data_source_id').val();
 			}
 			var published_option = '';
-			if($('#published_option').attr('checked')=='checked'){
+			if($('#published_option').attr('checked')){
 				published_option = '&onlyPublished=yes';
 			}
 			var class_option = $('#class_related_search_option').val();
@@ -562,9 +562,9 @@ function initEditForm(){
 			});
 
 			xml+='</'+ro_class+'>';
-			if($('#annotations').length > 0)
+			if($('#annotations')[0].value != '')
 			{
-				xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+				xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
 			}
 			xml+='</registryObject>';
 			$('#myModal .modal-header h3').html('<h3>Save &amp; Validate Registry Object</h3>');
@@ -605,7 +605,7 @@ function initEditForm(){
 				}
 				xml += '<registryObject group="'+$('input[name=group]',admin).val()+'">';
 				xml += '<key>'+$('input[name=key]', admin).val()+'</key>';
-				xml += '<originatingSource type="'+$('input[name=originatingSourceType]', admin).val()+'">'+$('input[name=originatingSource]',admin).val()+'</originatingSource>';
+				xml += '<originatingSource type="'+$('input[name=originatingSourceType]', admin).val()+'">'+$('input[name=originatingSource]',admin).val()+'....</originatingSource>';
 				xml += '<'+ro_class+' type="'+$('input[name=type]',admin).val()+'" dateModified="'+$('input[name=date_modified]', admin).val()+'" '+dateAccessioned+'>';
 
 				$.each(allTabs, function(){
@@ -613,10 +613,11 @@ function initEditForm(){
 				});
 
 				xml+='</'+ro_class+'>';
-				if($('#annotations').length > 0)
+				if($('#annotations')[0].value != '')
 				{
-					xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+					xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
 				}
+
 				xml+='</registryObject>';
 
 				/* Keep a backup of the form's RIFCS */
@@ -795,9 +796,9 @@ function validate(){
 	});
 
 	xml+='</'+ro_class+'>';
-	if($('#annotations').length > 0)
+	if($('#annotations')[0].value != '')
 	{
-		xml += '<extrif:annotations xmlns:extrif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations').val()+'</extrif:annotations>';
+		xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
 	}
 	xml+='</registryObject>';
 	prettyPrint();

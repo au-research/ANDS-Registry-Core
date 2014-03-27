@@ -653,7 +653,7 @@ var Mustache;
 	}).on('typeahead:selected', function(){
 		window.location = base_url+'search/#!/q='+encodeURIComponent($('#search_box').val());
 	});
-	$('.twitter-typeahead').attr('style', '');
+	$('.inner .twitter-typeahead').attr('style', '');
 
 	if ($.browser.msie && $.browser.version <= 9.0) {
 		$('#who_contributes li').css({
@@ -705,30 +705,54 @@ var Mustache;
     	return false;
     });
 
+    $('.login_st').toggle(function(){
+        $('div.qtip:visible').qtip('hide');
+    	$('.login_banner').slideDown();
+    	$(this).addClass('exped');
+    }, function(){
+        $('div.qtip:visible').qtip('hide');
+		$('.login_banner').slideUp('fast');
+		$(this).removeClass('exped');
+    });
+
+    $('.login_close').click(function(){
+    	$('.login_banner').slideUp('fast');
+    });
+
+    $('.tags_helper').qtip({
+    	content:{
+    		text:'<p>\'User Contributed Tags\' are terms added to records by Research Data Australia users to assist discovery of these records by themselves and others. By clicking on an added tag you can discover other related records with the same tag.</p><p> In order to tag a record you must first login to Research Data Australia. Tags can be any string you choose but should be meaningful and have relevance to the record the tag is being added to. To assist you in assigning a tag, previously used tags and terms from the ANZSRC Fields of research (FOR) and Socio-economic objective (SEO) vocabularies are offered via autocomplete suggestions.</p>'
+    	},
+    	show:'mouseover',
+    	hide:'mouseout',
+    	style:{classes:'ui-tooltip-light ui-tooltip-shadow'}
+    });
+
     $('#ad_st').toggle(function() {
+        $('div.qtip:visible').qtip('hide');
 	//don't init slider until we show the advanced search slidedown
-	$("#slider").editRangeSlider({
-    	    scales: [
-		// Primary scale
-		{
-		    first: function(val){ return val; },
-		    next: function(val){ return val + 50; },
-		    stop: function(val){ return false; },
-		    label: function(val){ return val; }
-		}],
-    	    bounds:{min: 1544, max: 2012},
-    	    defaultValues:{min: 1544, max: 2012},
-    	    valueLabels:"change",
-    	    type:"number",
-    	    arrows:false,
-    	    delayOut:200
-	});
+		$("#slider").editRangeSlider({
+	    	    scales: [
+			// Primary scale
+			{
+			    first: function(val){ return val; },
+			    next: function(val){ return val + 50; },
+			    stop: function(val){ return false; },
+			    label: function(val){ return val; }
+			}],
+	    	    bounds:{min: 1544, max: 2012},
+	    	    defaultValues:{min: 1544, max: 2012},
+	    	    valueLabels:"change",
+	    	    type:"number",
+	    	    arrows:false,
+	    	    delayOut:200
+		});
 
         $('a.adv_note').qtip({
           content: {
 	    title: 'Search notes',
 	    text: $('#adv_note_content')
-	  },
+	  	},
           show: 'mouseover',
           hide: 'mouseout',
           style: {
@@ -803,7 +827,7 @@ var Mustache;
 
 		click: function(e){
 			clear = true;
-			$.each($('#contact-us-form input, #contact-content'), function(){
+			$.each($('.verify'), function(){
 				if($(this).val()=='') {
 					clear=false;
 					 $(this).qtip({
@@ -812,7 +836,9 @@ var Mustache;
 						show:{ready:'true'},
 						hide:{event:'focus'},
     				}); 
-				}else{
+				}
+				else
+				{
 					$(this).qtip("disable");
 				}
 				
@@ -828,7 +854,9 @@ var Mustache;
 					show:{ready:'true'},
 					hide:{event:'focus'},
     				}); 
-    			}else{
+    			}
+    			else
+    			{
     				$('#contact-email').qtip("disable");
 				
     			}					
@@ -837,14 +865,18 @@ var Mustache;
 			if(clear){ 
 		 	$.ajax({
 		  		type:"POST",
-		  		url: base_url+"/home/send/",
+		  		url: base_url+"/home/contact/?sent=true",
 		  		data:"name="+$('#contact-name').val()+"&email="+$('#contact-email').val()+"&content="+$('#contact-content').val(),   
 		  			success:function(msg){
 		  				$('#contact-us-form').html(msg);
 		  			},
 		  			error:function(msg){
 		  			}
-	  			});
+	  			}); 
+			}
+			else
+			{
+				return false;
 			}
 		}
 	});
@@ -870,6 +902,11 @@ $(document).on('click', '.sharing_widget', function(){
 	$(this).remove();
 });
 
+$('#moreCodeVersions').on('click', function(){
+	$(this).hide();
+	$(this).siblings().fadeIn();
+});
+
 function validateEmail(email) 
 {
     var re = /\S+@\S+\.\S+/;
@@ -880,13 +917,6 @@ function validateEmail(email)
 
     
 }
-	function getURLParameter(name) 
-	{
-	    return unescape(
-	        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
-	    );
-	}
-
 	function recurseGetText() { 
 		if (this.nodeType == 3)
 		{
@@ -1064,4 +1094,18 @@ function ellipsis (string, length){
 		// return trimmedString + '<span class="showmore_excerpt"><br /><a href="javascript:void(0);">More &hellip;</a></span>';
 		return trimmedString;
 	}
+}
+
+// These helpers have dependencies outside of document.ready state, so declare them here instead.
+function getURLParameter(name) 
+{
+    return unescape(
+        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+    );
+}
+
+// Check whether parameter is present in URL (including non-value params, i.e. ?isAlive&foo=bar)
+function checkURLParameterExists(name)
+{
+	return (RegExp('(^|\\\\?|&)' + name + '(=.*?|&|$)').exec(location.search))
 }

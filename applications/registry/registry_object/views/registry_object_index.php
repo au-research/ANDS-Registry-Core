@@ -246,11 +246,7 @@ date_default_timezone_set('Australia/Melbourne');
 					</div>
 				</div>
 
-
-
-				<?php 
-				if ($this->user->hasFunction('REGISTRY_STAFF')):
-				?>
+				<?php if ($this->user->hasFunction('REGISTRY_USER') && $this->user->hasAffiliation($ds->record_owner)): ?>
 				<div class="widget-box">
 					<div class="widget-title">
 						<h5>Tags Management</h5>
@@ -260,9 +256,16 @@ date_default_timezone_set('Australia/Melbourne');
 					</div>
 				</div>
 
-				<?php
-				endif;
-				?>
+				<div class="widget-box">
+					<div class="widget-title">
+						<h5>Add to Theme Page</h5>
+					</div>
+					<div class="widget-content">
+						<?php $data['themepages'] = $themepages; $data['own_themepages'] = $own_themepages; $this->load->view('theme_tagging_interface', $data);?>
+					</div>
+				</div>
+
+				<?php endif;?>
 			</div>
 		</div>
 		

@@ -10,54 +10,68 @@ class Relationships_Extension extends ExtensionBase
 	
 	function addRelationships()
 	{
-
-		// Delete any old relationships (we only run this on ingest, so its a once-off update)
-		$this->db->where(array('registry_object_id' => $this->ro->id));
-		$this->db->delete('registry_object_relationships');	
+		
+		$this->_CI->load->model('registry/data_source/data_sources', 'ds');
+		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
 		$sxml = $this->ro->getSimpleXml();
 
 		/* Explicit relationships */
 		$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
 		$explicit_keys = array();
-
+		// related objects (from past)
+		$existing_relatinships = $this->getExistingRelationships();
+		$new_relationships = array();
 		foreach ($sxml->xpath('//ro:relatedObject') AS $related_object)
 		{
-			$related_object_key = (string)$related_object->key;
-			$related_object_type = (string)$related_object->relation[0]['type'];
-			$related_object_relation_description = (string)$related_object->relation[0]->description;
-			$related_object_relation_url = (string)$related_object->relation[0]->url;
+			$explicit_keys[] = (string)$related_object->key;
+			$class = $this->getRelatedObjectClass((string)$related_object->key);
 
-			$result = $this->db->select('class, title')->get_where('registry_objects', array('key'=>(string)$related_object_key));
-			
-			$class = NULL;
-			$title = 'no title';
+			$relationship = array("registry_object_id" => (string)$this->ro->id,
+								"related_object_key" => (string)$related_object->key,
+								"related_object_class"=> (string) $class,
+								"relation_type" => (string)$related_object->relation[0]['type'],
+								"relation_description" => (string)$related_object->relation[0]->description,
+								"relation_url" => (string)$related_object->relation[0]->url,
+								"origin" => 'EXPLICIT');
+			$new_relationships[] = json_encode($relationship);
 
-			if ($result->num_rows() > 0)
+			if($ds->create_primary_relationships == DB_TRUE)
 			{
-				$record = $result->result_array();
-				$record = array_shift($record);
-				$result->free_result();
-				$class = $record['class'];
-				$title = $record['title'];
+			 	if($ds->primary_key_1 && $ds->primary_key_1 != $this->ro->key && !in_array($ds->primary_key_1, $explicit_keys))
+				{
+					$explicit_keys[] = (string) $ds->primary_key_1;
+					$this_relationship = $ds->{strtolower($this->ro->class) . "_rel_1"};
+					$relationship = array("registry_object_id" => (string)$this->ro->id,
+										"related_object_key" => (string) $ds->primary_key_1,
+										"related_object_class"=> (string) $$ds->class_1,
+										"relation_type" => (string) $this_relationship,
+										"relation_description" => "",
+										"relation_url" => "",
+										"origin" => PRIMARY_RELATIONSHIP);
+					$new_relationships[] = json_encode($relationship);
+				}
+				if($ds->primary_key_2 && $ds->primary_key_2 != $this->ro->key && !in_array($ds->primary_key_2, $explicit_keys))
+				{
+					$explicit_keys[] = (string) $ds->primary_key_2;
+					$this_relationship = $ds->{strtolower($this->ro->class) . "_rel_2"};
+					$relationship = array("registry_object_id" => $this->ro->id,
+										"related_object_key" => (string) $ds->primary_key_2,
+										"related_object_class"=> (string) $ds->class_2,
+										"relation_type" => (string) $this_relationship,
+										"relation_description" => "",
+										"relation_url" => "",
+										"origin" => PRIMARY_RELATIONSHIP);
+					$new_relationships[] = json_encode($relationship);
+				}
 			}
-			
-			$explicit_keys[] = (string) $related_object_key;
-
-			$this->db->insert('registry_object_relationships', 
-				array(
-						"registry_object_id"=>$this->ro->id, 
-						"related_object_key" => (string) $related_object_key,
-						'related_object_class'=> (string) $class,
-						"relation_type" => (string) $related_object_type,
-						"relation_description" => (string) $related_object_relation_description,
-						"relation_url" => (string) $related_object_relation_url,
-				)
-			);
 		}
 
+
 		$processedTypesArray = array('collection','party','service','activity');
+		
 		$this->db->where(array('registry_object_id' => $this->ro->id));
 		$this->db->delete('registry_object_identifier_relationships');	
+
 		foreach ($sxml->xpath('//ro:relatedInfo') AS $related_info)
 		{
 			
@@ -126,42 +140,69 @@ class Relationships_Extension extends ExtensionBase
 			}			
 		}
 
-		/* Create primary relationships links */
-		$this->_CI->load->model('registry/data_source/data_sources', 'ds');
-		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
+		$unchanged_relationships = array_intersect($existing_relatinships, $new_relationships); // leave them	
+		$removed_relationships = array_diff($existing_relatinships, $new_relationships);
+		$new_or_changed_relationships = array_diff($new_relationships, $existing_relatinships); // 
+		$inserted_keys = $this->insertNewRelationships($new_or_changed_relationships);
 
-		if ($ds->create_primary_relationships == DB_TRUE && $ds->primary_key_1 && $ds->primary_key_1 != $this->ro->key && !in_array($ds->primary_key_1, $explicit_keys))
-		{
-			$this_relationship = $ds->{strtolower($this->ro->class) . "_rel_1"};
-			$this->db->insert('registry_object_relationships', 
-				array(
-						"registry_object_id"=>$this->ro->id, 
-						"related_object_key" => (string) $ds->primary_key_1,
-						'related_object_class'=> (string) $ds->class_1,
-						"relation_type" => (string) $this_relationship,
-						"origin" => PRIMARY_RELATIONSHIP
-				)
-			);
-		}
+		$deleted_keys = $this->removeNonRenewedRelationships($removed_relationships);
 
-		if ($ds->create_primary_relationships == DB_TRUE && $ds->primary_key_2 && $ds->primary_key_2 != $this->ro->key && !in_array($ds->primary_key_2, $explicit_keys))
-		{
-			$this_relationship = $ds->{strtolower($this->ro->class) . "_rel_2"};
-			$this->db->insert('registry_object_relationships', 
-				array(
-						"registry_object_id"=>$this->ro->id, 
-						"related_object_key" => (string) $ds->primary_key_2,
-						'related_object_class'=> (string) $ds->class_2,
-						"relation_type" => (string) $this_relationship,
-						"origin" => PRIMARY_RELATIONSHIP
-				)
-			);
-		}
+		if(is_array($inserted_keys) && is_array($deleted_keys))
+			return  array_merge($inserted_keys, $deleted_keys);
+		elseif(is_array($deleted_keys))
+			return $deleted_keys;
+		elseif(is_array($inserted_keys))
+			return $inserted_keys;
+		else
+			return array();
 
-		return $explicit_keys;
 	}
 
-	function getRelationships()
+
+	function insertNewRelationships($new_or_changed_relationships)
+	{
+		$insertArray = array();
+		$inserted_keys = array();
+		foreach($new_or_changed_relationships as $rel)
+		{
+			$thisRelated = json_decode($rel,true);
+			 //$insertArray[] = $thisRelated;
+			if(is_array($thisRelated) && isset($thisRelated["related_object_key"]))
+			{
+				$inserted_keys[] = $thisRelated["related_object_key"];
+				//$insertArray[] = $thisRelated;
+				$this->db->insert("registry_object_relationships", $thisRelated);
+			}
+		}
+		// why doesn't insert_batch just work?? 
+		//$this->db->insert_batch("registry_object_relationships", $insertArray);
+		return $inserted_keys;
+	}
+
+	function removeNonRenewedRelationships($removed_relationships)
+	{
+		$deleted_keys = array();
+		foreach($removed_relationships as $rel)
+		{
+			$deletedArray = json_decode($rel, true);
+			if(is_array($deletedArray) && isset($deletedArray["related_object_key"]))
+			{
+				$deleted_keys[] = $deletedArray["related_object_key"];
+				$this->db->where(array("registry_object_id" => $deletedArray["registry_object_id"],
+				 					"related_object_key" => $deletedArray["related_object_key"],
+				  					"related_object_class"=> $deletedArray["related_object_class"],
+				   					"relation_type"=> $deletedArray["relation_type"],
+				   					"relation_description" => $deletedArray["relation_description"],
+									"relation_url" => $deletedArray["relation_url"],
+									"origin" => $deletedArray["origin"])
+				   					);
+				$this->db->delete("registry_object_relationships");	
+			}
+		}
+		return $deleted_keys;
+	}
+
+	function getRelatedKeys()
 	{
 		$related_keys = array();
 		$result = $this->db->select('related_object_key')->get_where('registry_object_relationships', array('registry_object_id'=>(string)$this->ro->id));
@@ -172,6 +213,36 @@ class Relationships_Extension extends ExtensionBase
 		return $related_keys;
 	}
 
+	function getRelatedObjectClass($related_key)
+	{
+
+		$result = $this->db->select('class')->get_where('registry_objects', array('key'=>$related_key));
+			
+		$class = NULL;
+		if ($result->num_rows() > 0)
+		{
+			$record = $result->result_array();
+			$record = array_shift($record);
+			$result->free_result();
+			$class = $record['class'];
+		}
+
+		return $class;
+	}
+
+	function getExistingRelationships()
+	{
+		$relationships = array();
+		$this->db->select("registry_object_id, related_object_key, related_object_class, relation_type, relation_description, relation_url, origin");
+		$this->db->where('registry_object_id',(string)$this->ro->id);	
+		$result = $this->db->get('registry_object_relationships');
+
+		foreach ($result->result_array() AS $row)
+		{
+			$relationships[] = json_encode($row);
+		}
+		return $relationships;
+	}
 
 	function getRelatedObjectsByIdentifier()
 	{
@@ -234,10 +305,52 @@ class Relationships_Extension extends ExtensionBase
 		return $classes;
 	}
 	
-	function getRelatedClassesString()
+
+	/* This function uses a single SQL query to identify the classes of linked records 
+	   that would be relevant to the quality string of any given record. This is significantly
+	   more performant than using the getConnections() function (particularly as this is used
+	   	for every enriched record in a harvest). */
+	function getRelatedClassesLite()
+	{
+		$classes = array();
+		// Check for the distinct classes from the
+		$explicit_and_reverse_links_query = 'SELECT DISTINCT rr.related_object_class AS `class` FROM registry_object_relationships rr WHERE rr.registry_object_id='.(int)$this->ro->id.'
+		UNION
+		SELECT DISTINCT ro.class AS `class` FROM registry_object_relationships rr1 JOIN registry_objects ro ON rr1.related_object_key=ro.`key`  WHERE  rr1.related_object_key="'.$this->db->escape($this->ro->key).'"
+		UNION
+		SELECT DISTINCT rir.related_info_type AS `class` FROM registry_object_identifier_relationships rir WHERE rir.registry_object_id='.(int)$this->ro->id.';';
+		$class_relationships = $this->db->query($explicit_and_reverse_links_query);
+		foreach ($class_relationships->result_array() as $class)
+		{
+			$classes[$class['class']] = ucfirst($class['class']);
+		}
+
+		// If we haven't found a party record yet, lets check for institutional pages (which we assume to always be parties)
+		if (!isset($classes['party']))
+		{
+			$institutional_pages_query = 'SELECT "party" AS `class` FROM institutional_pages WHERE `group` = "'.$this->db->escape($this->ro->group).'"';
+			$result = $this->db->query($institutional_pages_query);
+			if($result->num_rows() > 0)
+			{
+				$classes['party'] = 'Party';
+			}
+		}
+
+		// That should be it!
+		return $classes;
+}
+
+	function getRelatedClassesString($optimised = false)
 	{
 		$classes = "";
-		$list = $this->getRelatedClasses();
+		if ($optimised)
+		{
+			$list = $this->getRelatedClassesLite();
+		}
+		else
+		{
+			$list = $this->getRelatedClasses();
+		}
 		return implode($list);
 	}
 

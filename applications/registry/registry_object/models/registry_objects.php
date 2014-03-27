@@ -120,7 +120,22 @@ class Registry_objects extends CI_Model {
 			$results = array();
 			foreach ($query->result_array() as $rec)
 			{
-				$results[] = $make_ro ? new _registry_object($rec["registry_object_id"]) : $rec;
+				if ($make_ro)
+				{
+					$cached_object_reference = RegistryObjectReferenceCache::getById($rec["registry_object_id"]);
+					if ($cached_object_reference)
+					{
+						$results[] = $cached_object_reference;
+					}
+					else
+					{
+						$results[] = RegistryObjectReferenceCache::fetchCacheReference(new _registry_object($rec["registry_object_id"]));
+					}
+				}
+				else
+				{
+					$results[] = $rec;
+				}
 			}
 		}
 		if ($query)
@@ -129,21 +144,6 @@ class Registry_objects extends CI_Model {
 		}
 		return $results;
 	}
-
-	
-	// **** DEPRECATED, use getPublishedByKey, etc *****
-	/*function getByKey($key)
-	{
-		$results =  $this->_get(array(array('args' => $key,
-						    'fn' => function($db,$key) {
-							    $db->select("registry_object_id")
-								    ->from("registry_objects")
-								    ->where("key", $key);
-							    return $db;
-						    })));
-		return is_array($results) ? $results : null;
-	}*/
-
 
 	/**
 	 * Returns exactly one PUBLISHED registry object by Key (or NULL)
@@ -157,7 +157,7 @@ class Registry_objects extends CI_Model {
 						    'fn' => function($db,$key) {
 							    $db->select("registry_object_id")
 								    ->from("registry_objects")
-								    ->where('binary `key` =', '"'.$key.'"', false)
+								    ->where('`key` =', '"'.$key.'"', false)
 								    ->where("status", PUBLISHED);
 							    return $db;
 						    })),
@@ -178,7 +178,7 @@ class Registry_objects extends CI_Model {
 						    'fn' => function($db,$key) {
 							    $db->select("registry_object_id")
 								    ->from("registry_objects")
-								    ->where('binary `key` =', '"'.$key.'"', false)
+								    ->where('`key` =', '"'.$key.'"', false)
 								    ->where_in("status", getDraftStatusGroup());
 							    return $db;
 						    })),
@@ -199,7 +199,7 @@ class Registry_objects extends CI_Model {
 						    'fn' => function($db,$key) {
 							    $db->select("registry_object_id")
 								    ->from("registry_objects")
-								    ->where('binary `key` =', '"'.$key.'"', false);
+								    ->where('`key` =', '"'.$key.'"', false);
 							    return $db;
 						    })),
 							true
@@ -216,6 +216,26 @@ class Registry_objects extends CI_Model {
 	 */
 	function getByID($id)
 	{
+		// Reduce number of DB calls by avoiding the pipeline
+		// trying to determine the ID (when it was explicitly specified)
+		try 
+		{
+			$cached_object_reference = RegistryObjectReferenceCache::getById($id);
+			if ($cached_object_reference)
+			{
+				return $cached_object_reference;
+			}
+			else
+			{
+				return RegistryObjectReferenceCache::fetchCacheReference(new _registry_object($id));
+			}
+		}
+		catch (Exception $e)
+		{
+			return null;
+		}
+
+		/*
 		$results = $this->_get(array(array('args' => $id,
 						   'fn' => function($db,$id) {
 							   $db->select("registry_object_id")
@@ -226,6 +246,7 @@ class Registry_objects extends CI_Model {
 				       true,
 				       1);
 		return is_array($results) ? $results[0] : null;
+		*/
 	}
 
 
@@ -466,12 +487,25 @@ class Registry_objects extends CI_Model {
 		if($value=='!='){
 			$result = $CI->db->select('ra.registry_object_id')->from('registry_object_attributes ra')->where('attribute', $key)->where('value !=', $value);
 		}else $result = $CI->db->select('ra.registry_object_id')->from('registry_object_attributes ra')->where('attribute', $key)->where('value', $value);
+
 		if ($data_source_id){
 			$result->join('registry_objects r','ra.registry_object_id = r.registry_object_id')->where('data_source_id', $data_source_id);
 		}
+
 		$result = $result->get();
 
 		
+		$res = array();
+		foreach($result->result() as $r){
+			array_push($res, array('registry_object_id'=>$r->registry_object_id));
+		}
+		return $res;
+	}
+
+	function getBySQL($key, $value, $limit=10) {
+		$CI =& get_instance();
+		$result = $CI->db->select('registry_object_id')->from('registry_objects')->where($key, $value)->limit(1000);
+		$result = $result->get();
 		$res = array();
 		foreach($result->result() as $r){
 			array_push($res, array('registry_object_id'=>$r->registry_object_id));
@@ -488,7 +522,10 @@ class Registry_objects extends CI_Model {
 			foreach($args['filter'] as $key=>$value){
 				if(in_array($key, $white_list) && array_key_exists('data_source_id', $args)){
 					$ff = $this->getByAttributeDatasource($args['data_source_id'], $key, $value, false, false);
-				}else{
+				} elseif (in_array($key, $white_list)) {
+					$ff = $this->getBySQL($key, $value, $limit);
+					$filtering = true;
+				} else {
 					$data_source_id = (isset($args['data_source_id']) ? $args['data_source_id']: false);
 					$ff = $this->getByAttributeSQL($key, $value, $data_source_id);
 					$filtering = true;
@@ -504,6 +541,7 @@ class Registry_objects extends CI_Model {
 			}
 		}
 		$where_in = $filtered;
+
 		if($filtering && sizeof($where_in)==0) return array();
 		// $where_in = array();
 		// if($filtered){
@@ -731,51 +769,11 @@ class Registry_objects extends CI_Model {
 		return array('deleted_record_keys'=>$deleted_record_keys, 'affected_record_keys'=>$affected_record_keys);
 	}
 
-	/**
-	 * get a list of tags based on a set of given keys
-	 * @param  [array] $keys [list of registry object keys to get the tags from]
-	 * @return [array]       [array of resulting tags]
-	 */
-	public function getTagsByKeys($keys){
-		$tags = array();
-		foreach($keys as $key){
-			$ro = $this->getPublishedByKey($key);
-			if($ro->tag){
-				$ro_tags = $ro->getTags();
-				foreach($ro_tags as $tag){
-					if(!in_array($tag, $tags)) array_push($tags, $tag);
-				}
-			}
-			unset($ro);
-		}
-		return $tags;
-	}
-
-	/**
-	 * index keys after adding a single tag, this function performs the add tag functionality as well
-	 * @param  [array] $keys [list of registry object keys to add tags and index]
-	 * @param  [string] $tag  [a tag to add, must not be null or empty string]
-	 * @return [void]
-	 */
-	public function batchIndexAddTag($keys, $tag){
-		$_CI =& get_instance();
-		$solrXML = '';
-		$chunkSize = 400; 
-		$arraySize = sizeof($keys);
-		for($i = 0 ; $i < $arraySize ; $i++){
-			$key = $keys[$i];
-			$ro = $this->getPublishedByKey($key);
-			if($ro){
-				$ro->addTag($tag);
-				$solrXML .= '<doc><field name="id">'.$ro->id.'</field><field name="key">'.$ro->key.'</field><field name="data_source_id">'.$ro->data_source_id.'</field><field name="tag" update="add">'.$tag.'</field></doc>';
-				if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1)){
-					$_CI->solr->addDoc("<add>".$solrXML."</add>");
-					$_CI->solr->commit();
-					$solrXML ='';
-				}
-			}
-			unset($ro);
-		}
+	public function getAllThemePages() {
+		$themes = array();
+		$CI =& get_instance();
+		$query = $CI->db->get('theme_pages');
+		return $query->result_array();
 	}
 
 	/**
@@ -867,7 +865,7 @@ class Registry_objects extends CI_Model {
 			$this->db->insert('deleted_registry_objects');
 
 			// Re-enrich and reindex related
-			$reenrich_queue = $target_ro->getRelationships();
+			$reenrich_queue = $target_ro->getRelatedKeys();
 			if($finalise)
 			{
 			// Delete from the index
@@ -881,6 +879,16 @@ class Registry_objects extends CI_Model {
 					$this->solr->commit();
 				}
 			}
+		}
+
+		// Also treat identifier matches as affected records which need to be enriched
+		// (to increment their extRif:matching_identifier_count)
+		$related_ids_by_identifier_matches = $target_ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+		$related_keys = array();
+		foreach($related_ids_by_identifier_matches AS $matching_record_id)
+		{
+			$matched_ro = $this->ro->getByID($matching_record_id);
+			$reenrich_queue[] = $matched_ro->key;
 		}
 
 		// Delete the actual registry object
@@ -982,4 +990,45 @@ class Registry_objects extends CI_Model {
 		include_once("_registry_object.php");
 	}
 
+}
+
+/* Avoid hammering the database if the registry object
+   has been recently accessed from the database */
+class RegistryObjectReferenceCache {
+
+	static $cache_size = 150;
+	static $recent_ids = null;
+	static $registry_object_cache = array();
+	static $false = false;
+
+	function &getByID($id)
+	{
+		if (isset(self::$registry_object_cache[$id]))
+		{
+			return self::$registry_object_cache[$id];
+		}
+		else
+		{
+			return self::$false;
+		}
+	}
+
+	function fetchCacheReference(_registry_object $ro)
+	{
+		// First check the queue is initialised
+		if (!self::$recent_ids) { self::$recent_ids = new SplQueue(); }
+		// Add this RO to the queue
+		self::$recent_ids->enqueue($ro->id);
+
+		// If the cache is overflowing, purge the oldest
+		if (self::$recent_ids->count() > self::$cache_size)
+		{
+			$stale_id = self::$recent_ids->dequeue();
+			unset(self::$registry_object_cache[$stale_id]);
+		}
+
+		// Get the cache reference for this registry object
+		self::$registry_object_cache[$ro->id] = $ro;
+		return self::$registry_object_cache[$ro->id];
+	}
 }

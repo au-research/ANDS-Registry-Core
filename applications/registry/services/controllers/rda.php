@@ -603,20 +603,22 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 	public function getThemePageIndex(){	
 		$this->output->set_content_type(rda::response_format);
 		$results = array();
-		$this->load->helper('file');
-		$file = read_file('./assets/shared/theme_pages/theme_cms_index.json');
-		$file = json_decode($file, true);
-		$results = $file;
-		// services_spotlight_results_data_source
+		$this->load->model('apps/theme_cms/theme_pages');
+		$pages = $this->theme_pages->get();
+		foreach($pages as $p){
+			if($p['visible']){
+				$results[] = $p;
+			}
+		}
 		$this->output->set_output(json_encode(array("items"=>$results)));
 	}
 
 	public function getThemePage($slug){
 		$this->output->set_content_type(rda::response_format);
-		$this->load->helper('file');
-		$file = read_file('./assets/shared/theme_pages/'.$slug.'.json');
+		$this->load->model('apps/theme_cms/theme_pages');
+		$file = $this->theme_pages->get($slug);
 		if($file){
-			$this->output->set_output($file);
+			$this->output->set_output($file[0]['content']);
 		}else{
 			$this->output->set_output('File Not Found');
 		}
@@ -644,6 +646,150 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		}
 		// echo json_encode($ros);
 		$this->output->set_output(json_encode(array('ros'=>$ros)));
+	}
+
+	public function getTagSuggestion($lcsh){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$q = $this->input->get('q');
+
+		$result = array();
+
+		$lcsh = ($lcsh=='true') ? true : false;
+
+		if(!$lcsh){
+
+			//get results from tags
+			$this->db->select('name')->like('name', $q);
+			$matches = $this->db->get_where('tags', array('type'=>'public'));
+			foreach($matches->result() as $match){
+				array_push($result, array(
+					'name'=> $match->name,
+					'source'=>'Public Tags'
+				));
+			}
+
+			//get results from anzsrc-for
+			$this->load->library('vocab');
+			$matches = $this->vocab->anyContains($q, 'anzsrc-for');
+			foreach($matches as $match){
+				array_push($result, array(
+					'name' => $match,
+					'source' => 'ANZSRC-FOR'
+				));
+			}
+
+			//get results from anzsrc-seo
+			$this->load->library('vocab');
+			$matches = $this->vocab->anyContains($q, 'anzsrc-seo');
+			foreach($matches as $match){
+				array_push($result, array(
+					'name' => $match,
+					'source' => 'ANZSRC-SEO'
+				));
+			}
+		}
+
+		//get results from lcsh
+		// if($lcsh){
+		// 	$this->load->library('solr');
+		// 	$this->solr->setOpt('q', 'subject_type:lcsh');
+		// 	$this->solr->setOpt('rows', 0);
+		// 	$this->solr->setFacetOpt('pivot', 'subject_type,subject_value_resolved');
+		// 	$this->solr->executeSearch();
+		// 	$facet = $this->solr->getFacet();
+		// 	$facet_pivot = $facet->{'facet_pivot'}->{'subject_type,subject_value_resolved'};
+		// 	foreach($facet_pivot as $p){
+		// 		if($p->{'value'}=='lcsh'){
+		// 			foreach($p->{'pivot'} as $x){
+		// 				similar_text(strtolower($x->{'value'}), strtolower($q), $percent);
+		// 				if($percent > 50){
+		// 					array_push($result, array(
+		// 						'name' => $x->{'value'},
+		// 						'source' => 'LCSH'
+		// 					));
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
+
+		echo json_encode($result);
+	}
+
+	public function addTag(){
+		$key = $this->input->post('key');
+		$tag = $this->input->post('tag');
+		$user = $this->input->post('user');
+		$user_from = $this->input->post('user_from');
+		// echo $user.' from '.$user_from.' adding tag '.$tag.' to '.$key;
+
+		if(!$key || !$tag || !$user || !$user_from){
+			throw new Exception("An error has occured");
+		}
+
+		$this->load->model('registry_object/registry_objects','ro');
+		$ro = $this->ro->getPublishedByKey($key);
+		if($ro){
+			if($ro->isSecret($tag)){
+				throw new Exception('The tag '. $tag. ' is reserved. Please choose a different tag');
+			}
+			$ro->addTag($tag, 'public', $user, $user_from);
+			$this->output->set_output(json_encode(array('status'=>'OK')));
+		}else {
+			throw new Exception("Unable to find registry object");
+		}
+	}
+
+	public function syncRO(){
+		$key = $this->input->post('key');
+		$this->load->model('registry_object/registry_objects','ro');
+		$ro = $this->ro->getPublishedByKey($key);
+		if($ro){
+			$ro->sync();
+			$this->output->set_output(json_encode(array('status'=>'OK')));
+		}else {
+			throw new Exception("Unable to find registry object");
+		}
+	}
+
+	public function getMatchingRecordsOnIdentifiersByID($id){
+		$this->load->model('registry_object/registry_objects','ro');
+		$ro = $this->ro->getByID($id);
+		$content = '';
+		if($ro) {
+			$matching = $ro->findMatchingRecords();
+			$content = array();
+			foreach($matching as $ro_id){
+				$ro = $this->ro->getByID($ro_id);
+				array_push(
+					$content,
+					array(
+						'id' => $ro->id,
+						'title' => $ro->title,
+						'slug' => $ro->slug,
+						'group' => $ro->group
+					)
+				);
+
+				unset($ro);
+			}
+
+			// Sort the matched records by name and group
+			function sortByTitleAndGroup($a, $b)
+			{
+			    if ($a['title'] == $b['title'])
+			    {
+				return ($a['group'] < $b['group']) ? -1 : 1;
+				}
+				return ($a['title'] < $b['title']) ? -1 : 1;
+			}
+			usort($content,"sortByTitleAndGroup");
+
+			$this->output->set_output(json_encode(array('status'=>'OK', 'content'=>$content)));
+		} else {
+			throw new Exception("Unable to find registry object");
+		}
 	}
 
 	/* Setup this controller to handle the expected response format */

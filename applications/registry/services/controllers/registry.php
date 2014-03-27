@@ -185,7 +185,7 @@ class Registry extends MX_Controller {
 		if($filters['include_facet'] || $filters['include_facet_tags']) $data['facet'] = $this->solr->getFacet();
 		$data['numFound'] = $this->solr->getNumFound();
 		$data['solr_header'] = $this->solr->getHeader();
-		$data['fieldstrings'] = $this->solr->constructFieldString();
+		$data['fieldstrings'] = rawurldecode($this->solr->constructFieldString());
 		$data['timeTaken'] = $data['solr_header']->{'QTime'} / 1000;
 		echo json_encode($data);
 	}
@@ -196,49 +196,90 @@ class Registry extends MX_Controller {
 		header('Content-type: application/json');
 		$this->load->library('solr');
 		$this->load->model('registry_object/registry_objects', 'ro');
+		$this->load->model('registry_object/registry_object_tags', 'tags');
 
 		$keys = array();
 		if($source=='solr'){
 			$filters = $this->input->post('filters');
 			$tag = $this->input->post('tag');
+			$tag_type = $this->input->post('tag_type');
 			if(!$filters){
 				$data = file_get_contents("php://input");
 				$array = json_decode($data, true);
 				$filters = $array['filters'];
 				if(isset($array['tag'])) $tag = $array['tag'];
+				if(isset($array['tag_type'])) $tag_type = $array['tag_type'];
+				if($action=='remove') $filters['tag'] = $tag;
 			}
 			$this->solr->setFilters($filters);
 			$this->solr->addBoostCondition('(tag:*)^1000');
+			$this->solr->setOpt('rows', '2000');
 			$this->solr->executeSearch();
 			$result = $this->solr->getResult();
 			foreach($result->{'docs'} as $d) array_push($keys, $d->{'key'});
 		}elseif($source == 'keys'){
 			$keys = $this->input->post('keys');
 			$tag = $this->input->post('tag');
+			$tag_type = $this->input->post('tag_type');
 			if(!$keys){
 				$data = file_get_contents("php://input");
 				$array = json_decode($data, true);
 				$keys = $array['keys'];
 				if(isset($array['tag'])) $tag = $array['tag'];
+				if(isset($array['tag_type'])) $tag_type = $array['tag_type'];
 			}
 		}
 
 		if($action=='get'){
-			$tags = $this->ro->getTagsByKeys($keys);
+			$tags = $this->tags->getTagsByKeys($keys);
 			echo json_encode($tags);
 		}else{
 			foreach($keys as $key){
 				$ro = $this->ro->getPublishedByKey($key);
-				if($action=='add' && $tag) $ro->addTag($tag);
+				if(!$ro) $ro = $this->ro->getDraftByKey($key);
+				if(!$ro) throw new Exception("Can't find record with the key: ". $key);
+
+				if($action=='add' && $tag){
+					if($ro->preCheckTag($tag, $tag_type)){
+						$ro->addTag($tag, $tag_type);
+					}else{
+						throw new Exception($tag. ' already exists as a '.$ro->getTagType($tag).' tag. Please try a different tag.');
+					}
+				}
+
 				if($action=='remove' && $tag) {
 					$ro->removeTag($tag);
 				}
 				unset($ro);
 			}
-			if($action=='add') $this->ro->batchIndexAddTag($keys, $tag);
+			if($action=='add') $this->tags->batchIndexAddTag($keys, $tag, $tag_type);
 			if($action=='remove') $this->ro->batchIndexKeys($keys);
 			echo json_encode($keys);
 		}
+	}
+
+	public function tags_status(){
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$tags = $this->input->post('tags');
+		$data = file_get_contents("php://input");
+		$array = json_decode($data, true);
+		if(isset($array['tags'])) $tags = $array['tags'];
+		$result = array();
+		
+		foreach($tags['data'] as $tag){
+			$row = $this->db->get_where('tags', array('name'=>$tag['name']));
+			$row = $row->first_row();
+			if($row){
+				array_push($result, array(
+					'name' => $tag['name'],
+					'type' => $row->type
+				));
+			}
+		}
+		
+		echo json_encode(array('status'=>'OK', 'content'=>$result));
 	}
 
 	public function suggest($what='', $q=''){
@@ -263,7 +304,7 @@ class Registry extends MX_Controller {
 			}
 		}else if($what=='data_source_key'){
 			$this->load->model("data_source/data_sources","ds");
-			$dataSources = $this->ds->getAll(0, 0);
+			$dataSources = $this->ds->getOwnedDataSources();
 			foreach($dataSources as $ds){
 				if($q!=''){
 					if(stristr($ds->title, $q)) array_push($items, array('value'=>$ds->key, 'label'=>$ds->title));

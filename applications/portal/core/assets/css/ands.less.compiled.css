@@ -29,6 +29,31 @@ body {
 .carousel .flex-prev {
   margin-left: auto;
 }
+.codeversion {
+  padding: 4px;
+  background-image: -ms-linear-gradient(top, #eeeeee 0%, #aaaaaa 100%);
+  background-image: -moz-linear-gradient(top, #eeeeee 0%, #aaaaaa 100%);
+  background-image: -o-linear-gradient(top, #eeeeee 0%, #aaaaaa 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #eeeeee), color-stop(1, #aaaaaa));
+  background-image: -webkit-linear-gradient(top, #eeeeee 0%, #aaaaaa 100%);
+  background-image: linear-gradient(to bottom, #eeeeee 0%, #aaaaaa 100%);
+}
+.codeversion img {
+  margin-right: 4px;
+  margin-left: 2px;
+}
+.codeversion div {
+  display: inline-block;
+}
+.codeversion div.right {
+  float: right;
+}
+.codeversion div.right .otherCommits {
+  z-index: 9991;
+  padding: 10px;
+  border-color: black;
+  background-color: white;
+}
 .carousel {
   margin-bottom: 60px;
 }

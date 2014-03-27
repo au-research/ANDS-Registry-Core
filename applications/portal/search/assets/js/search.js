@@ -110,7 +110,6 @@ function executeSearch(searchData, searchUrl){
 		        $('#search_notice:not(.hide)').empty().addClass('hide');
 		}
 	        initSearchPage();
-	        $('.sidebar.mapmode_sidebar').hide();
 	}
         else {
 	        $('.container').css({opacity:0.5});
@@ -124,9 +123,10 @@ function executeSearch(searchData, searchUrl){
 			data: {filters:searchData},
 			dataType:'json',
 			success: function(data){
-				$.each(data.result.docs, function(){
-					// log(this.display_title, this.score, this.id);
+				/*$.each(data.result.docs, function(){
+					log(this.display_title, this.score, this.id);
 				});
+				log("---------------")*/
 
 				var numFound = data.result.numFound;
 			    var numReturned = data.result.docs.length;
@@ -305,6 +305,34 @@ $(document).on('click', '.filter',function(e){
 		delete searchData['facetsort'];
 	}
 	changeHashTo(formatSearch());
+}).on('click', '.load_linkedrecords', function(e){
+	e.stopPropagation();
+	e.preventDefault();
+	var linkedrecords_dom = $(this).next('.linkrecords_container');
+	if(!linkedrecords_dom.is(":empty")){
+		linkedrecords_dom.toggle();
+	}else{
+		$.ajax({
+			url:rda_service_url+'getMatchingRecordsOnIdentifiersByID/'+$(this).attr('ro_id'),
+			dataType:'json',
+			success: function(data){
+				if(data.status=='OK'){
+					var template = $('#linkedrecords-template').html();
+					var output = Mustache.render(template, data.content);
+					linkedrecords_dom.html(output);
+
+					$.each(data.content, function(){
+						$('.post[ro_id='+this.id+']').hide();
+					});
+				}
+			}
+		})
+	}
+}).on('click', '.overrule_link', function(e){
+	e.stopPropagation();
+	e.preventDefault();
+	var url = $(this).attr('href');
+	window.location = url;
 });
 
 function loadSubjectBrowse(val){
@@ -362,7 +390,7 @@ function loadSubjectBrowse(val){
 function initSearchPage(){
 	getTopLevelFacet();
 
-	if(urchin_id!='' && searchData['q']!=''){
+	if(urchin_id!='' && searchData['q']!='' && searchData['q'] && searchData['q']!==undefined){
 		var pageTracker = _gat._getTracker(urchin_id);
 		pageTracker._initData(); 
 		pageTracker._trackPageview('/search_results.php?q='+searchData['q']); 
@@ -391,6 +419,7 @@ function initSearchPage(){
 		 },function(){
 		 	clearPolygons();
 		 });
+		 if(!searchData['keepsidebar']) $('.sidebar.mapmode_sidebar').hide();
 	}else{
 		$('#searchmap').hide();
 		$('.container').css({margin:'0 auto',width:'960px',padding:'10px 0 0 0'});
@@ -554,7 +583,9 @@ function initSearchPage(){
 		style:{
 			classes:'ui-tooltip-light ui-tooltip-shadow'
 		}
-	})
+	});
+
+	$('.load_linkedrecords:first').click();
 }
 
 function initExplanations(theType)
@@ -570,10 +601,14 @@ function initExplanations(theType)
 }
 
 function getTopLevelFacet(){
+	var fuzzy = false;
+	if($('.fuzzy-suggest').length>0){
+		fuzzy = true;
+	}
 	$.ajax({
 		url:base_url+'search/getTopLevel',
 		type: 'POST',
-		data: {filters:searchData},
+		data: {filters:searchData, fuzzy:fuzzy},
 		success: function(data){
 			var template = $('#top-level-template').html();
 			var output = Mustache.render(template, data);
@@ -626,6 +661,12 @@ function postSearch(){
 		addDeleteFacet('s_subject_value_resolved', searchData['s_subject_value_resolved']);
 	}
 
+	if(searchData['tag']){
+        if(searchData['tag'].indexOf('themeSecret_')==-1){
+            addDeleteFacet('tag', searchData['tag']);
+        }
+	}
+
 	if(searchData['subject_vocab_uri']){
 		addDeleteFacet('subject_vocab_uri', searchData['subject_vocab_uri_display']);
 		$('.filter[filter_value="'+decodeURIComponent(searchData['subject_vocab_uri'])+'"]').remove();
@@ -673,6 +714,9 @@ function SidebarToggle(controlDiv, map) {
 	// Setup the click event listeners: simply set the map to Chicago.
 	google.maps.event.addDomListener(controlUI, 'click', function() {
 		$('.sidebar').toggle();
+		if($('.sidebar').is(':visible')){
+			searchData['keepsidebar'] = 'open';
+		}else delete searchData['keepsidebar'];
 	});
 }
 

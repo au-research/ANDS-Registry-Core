@@ -1404,7 +1404,7 @@ class CI_DB_active_record extends CI_DB_driver {
 				}
 				else
 				{
-					$not[] = $k.'-'.$v;
+					//$not[] = $k.'-'.$v;
 				}
 
 				if ($escape === FALSE)
