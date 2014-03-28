@@ -773,7 +773,9 @@ class Registry_objects extends CI_Model {
 		$themes = array();
 		$CI =& get_instance();
 		$query = $CI->db->get('theme_pages');
-		return $query->result_array();
+		if($query && $query->num_rows() > 0) {
+			return $query->result_array();
+		}else return array();
 	}
 
 	/**
