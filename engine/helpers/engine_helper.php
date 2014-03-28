@@ -300,7 +300,8 @@ function is_dev(){
 
 function check_services(){
 	$CI =& get_instance();
-	$solr_status = (array) simplexml_load_string(curl_post($CI->config->item('solr_url').'admin/ping', ''));
+	$solr_status = (array) simplexml_load_string(curl_post($CI->config->item('solr_url').'admin/ping', '', array('Content-type:application/x-www-form-urlencoded')));
+
 	if(!isset($solr_status['str']) || !$solr_status['str']=='OK'){
 		$error = $CI->load->view('soft500' , array(), true);
 		echo $error;
