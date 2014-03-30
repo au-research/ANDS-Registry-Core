@@ -110,10 +110,13 @@ else
 					<p style="font-weight:normal;font-size:10px;">ANDS will not supply or on sell any personal information obtained through your login and use of Research Data Australia. Data collected will only be used in the context of your logged in Research Data Australia session.</p>
 				</div>
 				<div>
-					<p><?php echo anchor('auth/login/Facebook/?redirect='.current_url(),'Login With Facebook', array('class'=>'zocial facebook')); ?></p>
-					<p><?php echo anchor('auth/login/Twitter/?redirect='.current_url(),'Login With Twitter', array('class'=>'zocial twitter')); ?></p>
-					<p><?php echo anchor('auth/login/Google/?redirect='.current_url(),'Login With Google', array('class'=>'zocial google')); ?></p>
-					<p><?php echo anchor('auth/login/LinkedIn/?redirect='.current_url(),'Login With LinkedIn', array('class'=>'zocial linkedin')); ?></p>
+					<?php
+						$oauth_conf = $this->config->item('oauth_config');
+					?>
+					<p><?php if($oauth_conf['providers']['Facebook']['enabled']) echo anchor('auth/login/Facebook/?redirect='.current_url(),'Login With Facebook', array('class'=>'zocial facebook')); ?></p>
+					<p><?php if($oauth_conf['providers']['Twitter']['enabled']) echo anchor('auth/login/Twitter/?redirect='.current_url(),'Login With Twitter', array('class'=>'zocial twitter')); ?></p>
+					<p><?php if($oauth_conf['providers']['Google']['enabled']) echo anchor('auth/login/Google/?redirect='.current_url(),'Login With Google', array('class'=>'zocial google')); ?></p>
+					<p><?php if($oauth_conf['providers']['LinkedIn']['enabled']) echo anchor('auth/login/LinkedIn/?redirect='.current_url(),'Login With LinkedIn', array('class'=>'zocial linkedin')); ?></p>
 				</div>
 				<div class="clearfix"></div>
 
