@@ -107,7 +107,7 @@ else
 
 				<div style="width:50%;float:left;padding:0 15px;">
 					<p style="font-weight:normal;">By logging into Research Data Australia, you will have access to additional features including the ability to contribute to the Research Data Australia community by adding tags (keywords) to records.</p>
-					<p style="font-weight:normal;font-size:10px;">ANDS will not supply or on sell any personal information obtained through your login and use of Research Data Australia. Data collected will only be used in the context of your logged in Research Data Australia session.</p>
+					<p style="font-weight:normal;font-size:10px;">Research Data Australia. <?php echo anchor('home/privacy_policy', 'Privacy Policy');?></p>
 				</div>
 				<div>
 					<?php
