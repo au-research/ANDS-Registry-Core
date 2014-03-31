@@ -48,7 +48,7 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 		}
 
 		// But exclude already related objects
-		$my_relationships = array_map(function($elt){ return '"' . $elt . '"'; }, $registry_object->getRelatedKeys());
+		$my_relationships = array_map(function($elt){ return $elt; }, $registry_object->getRelatedKeys());
 		$my_relationships[] = $registry_object->key;
 
 		$relationship_search_query = '';
@@ -59,7 +59,6 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 
 		$query = $relationship_search_query;
 		if($identifier_search_query!='') $query .= ' AND '. $identifier_search_query;
-
 
 
 		$suggestions = $this->getSuggestionsBySolrQuery($query, $start, $rows);

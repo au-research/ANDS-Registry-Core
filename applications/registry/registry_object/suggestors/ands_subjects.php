@@ -44,7 +44,7 @@ class Suggestor_ands_subjects implements GenericSuggestor
 
 
 		// But exclude already related objects
-		$my_relationships = array_map(function($elt){ return '"' . $elt . '"'; }, $registry_object->getRelatedKeys());
+		$my_relationships = array_map(function($elt){ return $elt; }, $registry_object->getRelatedKeys());
 		$my_relationships[] = $registry_object->key;
 
 		$relationship_search_query = '';
