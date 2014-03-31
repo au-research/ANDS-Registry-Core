@@ -21,25 +21,32 @@ class Data_sources extends CI_Model {
 	 * @param the data source key
 	 * @return _data_source object or NULL
 	 */
-	function getByKey($key)
+	function getByKey($key, $use_cache = true)
 	{
 		// Return cached _data_source object if the same key
-		$recent = DataSourceReferenceCache::getRecent();
-		if ($recent && $recent->key == $key)
-		{
-			return $recent;
-		}
+		if($use_cache){
+			$recent = DataSourceReferenceCache::getRecent();
+			if ($recent && $recent->key == $key)
+			{
+				return $recent;
+			}
+		}else{
+			$query = $this->db->select("data_source_id")->get_where('data_sources', array('key'=>$key));
+			if ($query->num_rows() == 0)
+			{
+				return NULL;
+			}
+			else
+			{
+				$id = $query->result_array();
+				if($use_cache){
+					DataSourceReferenceCache::set(new _data_source($id[0]['data_source_id']));
+					return DataSourceReferenceCache::getRecent();
+				} else {
+					return new _data_source($id[0]['data_source_id']);
+				}
+			}
 
-		$query = $this->db->select("data_source_id")->get_where('data_sources', array('key'=>$key));
-		if ($query->num_rows() == 0)
-		{
-			return NULL;
-		}
-		else
-		{
-			$id = $query->result_array();
-			DataSourceReferenceCache::set(new _data_source($id[0]['data_source_id']));
-			return DataSourceReferenceCache::getRecent();
 		}
 	} 	
 	
