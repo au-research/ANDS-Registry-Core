@@ -37,28 +37,32 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 			}
 		}
 
-        if (count($my_identifiers) == 0)
-        {
+        if (count($my_identifiers) == 0) {
         	return $suggestions;
         }
-		
-//		$identifier_search_query = implode(" +identifier_value:", $my_identifiers);
 
-		$identifier_search_query = implode('") AND +identifier_value:("', $my_identifiers);
-		$identifier_search_query = '+identifier_value:("'.$identifier_search_query.'")';
+		$identifier_search_query = '';
+		if(sizeof($my_identifiers) > 0){
+			$identifier_search_query = implode('") AND +identifier_value:("', $my_identifiers);
+			$identifier_search_query = '+identifier_value:("'.$identifier_search_query.'")';
+		}
 
 		// But exclude already related objects
 		$my_relationships = array_map(function($elt){ return '"' . $elt . '"'; }, $registry_object->getRelatedKeys());
 		$my_relationships[] = $registry_object->key;
-//		array_unshift($my_relationships, ''); // prepend an element so that implode works
 
-//		$relationship_search_query = " " . implode(" -key:", $my_relationships);
-		$relationship_search_query = implode('") -key:("', $my_relationships);
-		$relationship_search_query = '-key:("'.$relationship_search_query.'")';
+		$relationship_search_query = '';
+		if(sizeof($my_relationships) > 0) {
+			$relationship_search_query = implode('") -key:("', $my_relationships);
+			$relationship_search_query = '-key:("'.$relationship_search_query.'")';
+		}
 
-//		var_dump($start, $rows);
+		$query = $relationship_search_query;
+		if($identifier_search_query!='') $query .= 'AND '. $identifier_search_query;
 
-		$suggestions = $this->getSuggestionsBySolrQuery($relationship_search_query . " AND " . $identifier_search_query, $start, $rows);
+
+
+		$suggestions = $this->getSuggestionsBySolrQuery($query, $start, $rows);
 
 		return $suggestions;
 	}
