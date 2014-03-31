@@ -16,7 +16,7 @@ class Suggestor_ands_subjects implements GenericSuggestor
 		//       we shouldn't use SOLR to get our own information, as 
 		//       this would mean that DRAFT requests fail (drafts NOT 
 		// 		 in SOLR index).
-
+		$suggestions = array();
 		$sxml = $registry_object->getSimpleXML();
 		if ($sxml->registryObject)
 		{
@@ -24,7 +24,7 @@ class Suggestor_ands_subjects implements GenericSuggestor
 		}
 		
 		// Subject matches
-		$my_subjects = array('');
+		$my_subjects = array();
 		if($sxml->{strtolower($registry_object->class)}->subject)
 		{
 			foreach($sxml->{strtolower($registry_object->class)}->subject AS $subject)
@@ -32,16 +32,30 @@ class Suggestor_ands_subjects implements GenericSuggestor
 				$my_subjects[] = '"' . (string) removeBadValue($subject) . '" OR';
 			}
 		}
-		$subject_search_query = "(" . substr(implode(" subject_value_resolved:", $my_subjects), 0, -3) . ")";
+
+		if (count($my_subjects) == 0) {
+			return $suggestions;
+		}
+
+		$subject_search_query = '';
+		if(sizeof($my_subjects) > 0){
+			$subject_search_query = "(" . substr(implode(" subject_value_resolved:", $my_subjects), 0, -3) . ")";
+		}
 
 
 		// But exclude already related objects
 		$my_relationships = array_map(function($elt){ return '"' . $elt . '"'; }, $registry_object->getRelatedKeys());
-		$my_relationships[] = '"' . $registry_object->key . '"';
-		array_unshift($my_relationships, ''); // prepend an element so that 
-		$relationship_search_query = " " . implode(" -key:", $my_relationships);
+		$my_relationships[] = $registry_object->key;
 
-		$suggestions = $this->getSuggestionsBySolrQuery($relationship_search_query . " AND " . $subject_search_query, $start, $rows);
+		$relationship_search_query = '';
+		if(sizeof($my_relationships) > 0) {
+			$relationship_search_query = implode('") -key:("', $my_relationships);
+			$relationship_search_query = '-key:("'.$relationship_search_query.'")';
+		}
+
+		$query = $relationship_search_query;
+		if ($subject_search_query!='') $query .= ' AND '. $subject_search_query;
+		$suggestions = $this->getSuggestionsBySolrQuery($query, $start, $rows);
 
 		return $suggestions;
 	}
@@ -51,6 +65,10 @@ class Suggestor_ands_subjects implements GenericSuggestor
 	private function getSuggestionsBySolrQuery($search_query, $start, $rows)
 	{
 		$CI =& get_instance();
+
+		$start = ($start ? $start: 0);
+		$rows = ($rows ? $rows: 10);
+
 		$CI->load->library('solr');
 		$CI->solr->init();
 		$CI->solr->setOpt("q", $search_query);

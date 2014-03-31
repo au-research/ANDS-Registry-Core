@@ -58,7 +58,7 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 		}
 
 		$query = $relationship_search_query;
-		if($identifier_search_query!='') $query .= 'AND '. $identifier_search_query;
+		if($identifier_search_query!='') $query .= ' AND '. $identifier_search_query;
 
 
 
