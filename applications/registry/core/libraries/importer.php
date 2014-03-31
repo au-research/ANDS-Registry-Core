@@ -635,7 +635,7 @@ class Importer {
 					try{
 						$ro->enrich($this->runBenchMark);
 					}catch (Exception $e){
-						throw new Exteption($e);
+						throw new Exception($e);
 					}
 
 					if($this->runBenchMark)
