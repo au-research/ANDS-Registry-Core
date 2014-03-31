@@ -113,6 +113,11 @@ class Home extends MX_Controller {
 		$this->load->view('disclaimer', $data);
 	}
 
+	function privacy_policy() {
+		$data['title'] = 'Privacy Policy - Research Data Australia';
+		$this->load->view('privacy_policy', $data);
+	}
+
 	function contact(){
 		$data['title'] = 'Contact Us - Research Data Australia';
 		$data['message'] = '';
