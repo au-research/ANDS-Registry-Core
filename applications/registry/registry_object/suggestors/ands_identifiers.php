@@ -25,14 +25,14 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 
 		// Identifier matches (if another object has the same identifier)
 		//var_dump($sxml);
-		$my_identifiers = array('');
+		$my_identifiers = array();
 		if($sxml->{strtolower($registry_object->class)}->identifier)
 		{
 			foreach($sxml->{strtolower($registry_object->class)}->identifier AS $identifier)
 			{
 				if((string) $identifier != '')
 				{
-					$my_identifiers[] = '"' . (string) $identifier . '"';
+					$my_identifiers[] = (string) $identifier;
 				}
 			}
 		}
@@ -42,13 +42,21 @@ class Suggestor_ands_identifiers implements GenericSuggestor
         	return $suggestions;
         }
 		
-		$identifier_search_query = implode(" +identifier_value:", $my_identifiers);
+//		$identifier_search_query = implode(" +identifier_value:", $my_identifiers);
+
+		$identifier_search_query = implode('") AND +identifier_value:("', $my_identifiers);
+		$identifier_search_query = '+identifier_value:("'.$identifier_search_query.'")';
 
 		// But exclude already related objects
 		$my_relationships = array_map(function($elt){ return '"' . $elt . '"'; }, $registry_object->getRelatedKeys());
-		$my_relationships[] = '"'. $registry_object->key . '"';
-		array_unshift($my_relationships, ''); // prepend an element so that implode works
-		$relationship_search_query = " " . implode(" -key:", $my_relationships);
+		$my_relationships[] = $registry_object->key;
+//		array_unshift($my_relationships, ''); // prepend an element so that implode works
+
+//		$relationship_search_query = " " . implode(" -key:", $my_relationships);
+		$relationship_search_query = implode('") -key:("', $my_relationships);
+		$relationship_search_query = '-key:("'.$relationship_search_query.'")';
+
+//		var_dump($start, $rows);
 
 		$suggestions = $this->getSuggestionsBySolrQuery($relationship_search_query . " AND " . $identifier_search_query, $start, $rows);
 
@@ -60,6 +68,10 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 	private function getSuggestionsBySolrQuery($search_query, $start, $rows)
 	{
 		$CI =& get_instance();
+
+		$start = ($start ? $start: 0);
+		$rows = ($rows ? $rows: 10);
+
 		$CI->load->library('solr');
 		$CI->solr->init();
 		$CI->solr->setOpt("q", $search_query);
