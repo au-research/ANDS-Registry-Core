@@ -1176,7 +1176,7 @@
 							<div class="controls">
 								<select data-placeholder="Choose a Harvest Method" tabindex="1" class="chzn-select input-xlarge" for="harvest_method" id="harvest">
 									<option value="GET">DIRECT (HTTP)</option>
-									<option value="RIF">Harvested (OAI-PMH)</option>
+									<option value="PMH">Harvested (OAI-PMH)</option>
 								</select>
 								<input type="text" class="input-small hide" name="harvest_method" id="harvest_method" value="{{harvest_method}}">
 							</div>

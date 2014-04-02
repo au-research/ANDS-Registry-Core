@@ -859,8 +859,6 @@ class _data_source {
 		if($harvestMethod == '')
 			$harvestMethod = $this->getAttribute("harvest_method");
 
-		if ($harvestMethod == "rif") $harvestMethod = "RIF"; //crosswalk-introduced bugfix
-	
 		if($harvestDate == '')
 			$harvestDate = $this->getAttribute("harvest_date");
 
@@ -920,6 +918,12 @@ class _data_source {
 		$harvestRequest .= '&harvestid='.urlencode($harvestRequestId);
 		$harvestRequest .= '&sourceurl='.urlencode($dataSourceURI);
 		$harvestRequest .= '&method='.urlencode($harvestMethod);
+
+        if($providerType)
+        {
+            $harvestRequest .= '&metadataPrefix='.urlencode($providerType);
+        }
+
 		if( $OAISet )
 		{
 			$harvestRequest .= '&set='.urlencode($OAISet);
