@@ -12,3 +12,4 @@ node_modules/
 engine/cache/
 etc/misc/python/myconfig.py
 .idea/
+wordpress/

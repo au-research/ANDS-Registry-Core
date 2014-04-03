@@ -42,6 +42,7 @@ module.exports = function(grunt){
 					'<%=yeoman.assets %>/lib/less-1.3.0.min.js',
 					'<%=yeoman.assets %>/lib/jquery-1.7.2.min.js',
 					'<%=yeoman.assets %>/lib/jquery-ui-1.8.22.custom.min.js',
+					'<%=yeoman.assets %>/lib/bootstrap.youtubepopup.min.js',
 					'<%=yeoman.assets %>/lib/jquery.sticky.js',
 					'<%=yeoman.assets %>/lib/mustache.js',
 					'<%=yeoman.assets %>/lib/chosen/chosen.jquery.js',
