@@ -27,10 +27,23 @@
 	/* Don't show shadows when selecting text */
 	::-moz-selection { background: #5af; color: #fff; text-shadow: none; }
 	::selection { background: #5af; color: #fff; text-shadow: none; }
+
+	.message{
+		border:1px solid #ccc;
+		background:#ddd;
+		padding:20px;
+		color: #f24a5b;
+	}
 </style>
 </head>
 <body>
 	<h1 class="inset-text">500</h1>
 	<p>The service is currently down. Please try again in a few minutes</p>
+	<?php if(is_dev()):?>
+		<div class="message">
+			<?php echo $message;?>
+		</div>
+	<?php endif;?>
+
 </body>
 </html>
