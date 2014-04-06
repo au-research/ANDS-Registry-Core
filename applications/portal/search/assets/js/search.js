@@ -14,7 +14,6 @@ $(document).ready(function() {
 
 	/*GET HASH TAG*/
 	$(window).hashchange(function(){
-		var hash = window.location.hash;
 		var hash = location.href.substr(location.href.indexOf("#"));
 		var query = hash.substring(3, hash.length);
 		var words = query.split('/');
@@ -22,7 +21,6 @@ $(document).ready(function() {
 		$('#search_box, #selected_group, #selected_subject').empty();
 		$('div.qtip:visible').qtip('hide');
 		searchData = {};
-		fieldString = '';
 
 		// Flag whether to fire a new search after this logic
 		var refreshSearch = false;
@@ -530,12 +528,14 @@ function initSearchPage(){
 	$('#search_box').unbind('keypress').keypress(function(e){
 		if(e.which==13){//press enter
 			searchData['q']=$(this).val();
+			searchData['p']=1;
 			changeHashTo(formatSearch());
 		}
 	});
 
 	$('#searchTrigger').unbind('click').live('click', function(){
 		searchData['q']=$('#search_box').val();
+		searchData['p'] = 1;
 		changeHashTo(formatSearch());
     });
 
