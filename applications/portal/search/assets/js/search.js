@@ -306,6 +306,7 @@ $(document).on('click', '.filter',function(e){
 }).on('click', '.load_linkedrecords', function(e){
 	e.stopPropagation();
 	e.preventDefault();
+	var link = this;
 	var linkedrecords_dom = $(this).next('.linkrecords_container');
 	if(!linkedrecords_dom.is(":empty")){
 		linkedrecords_dom.toggle();
@@ -322,6 +323,14 @@ $(document).on('click', '.filter',function(e){
 					$.each(data.content, function(){
 						$('.post[ro_id='+this.id+']').hide();
 					});
+
+					$(link).removeClass('load_linkedrecords');
+					var next = $('.load_linkedrecords:visible');
+
+					if(next.length>0){
+						var nextone = next[0];
+						$(nextone).click();
+					}
 				}
 			}
 		})
