@@ -43,7 +43,7 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 
 		$identifier_search_query = '';
 		if(sizeof($my_identifiers) > 0){
-			$identifier_search_query = implode('") AND +identifier_value:("', $my_identifiers);
+            $identifier_search_query = join('","', $my_identifiers);
 			$identifier_search_query = '+identifier_value:("'.$identifier_search_query.'")';
 		}
 
