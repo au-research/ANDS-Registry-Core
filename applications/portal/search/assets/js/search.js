@@ -257,7 +257,7 @@ $(document).on('click', '.filter',function(e){
 	    position:{my:'top right', at:'bottom left'},
 	    style: {
 	        classes: 'ui-tooltip-light ui-tooltip-shadow seealso-tooltip',
-	        width: 400,
+	        width: 400
 	    }
 	});
 }).on('change', '#subjectfacet-select', function(){
@@ -799,7 +799,7 @@ function initMap(){
 	           // google.maps.drawing.OverlayType.MARKER,
 	           // google.maps.drawing.OverlayType.CIRCLE,
 	            google.maps.drawing.OverlayType.RECTANGLE
-	          ],
+	          ]
 	        },
 	        rectangleOptions:{
 	        	fillColor: '#FF0000'
@@ -947,7 +947,7 @@ function createMarker(latlng, id)
 	var marker = new google.maps.Marker({
 	          position: latlng,
 	          map: map,
-	          icon : pushPin,
+	          icon : pushPin
 	        });
 	marker.set("id", id);
 	google.maps.event.addListener(marker,"mouseover",function(){
