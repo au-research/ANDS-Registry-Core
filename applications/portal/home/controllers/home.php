@@ -208,7 +208,7 @@ class Home extends MX_Controller {
 
 			for($i=0;$i<sizeof($dsfacet);$i+=2){
 				echo '<sitemap>';
-				echo '<loc>'.base_url().'home/sitemap/?ds='.$dsfacet[$i].'</loc>';
+				echo '<loc>'.base_url().'home/sitemap/?ds='.urlencode($dsfacet[$i]).'</loc>';
 				echo '<lastmod>'.date('Y-m-d').'</lastmod>';
 				echo '</sitemap>';
 			}
