@@ -17,7 +17,7 @@
 	<link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget.css')?>"  media="screen" />
 	<link rel="stylesheet" href="<?php echo asset_url('print.css','core');?>" type="text/css" media="print" />
 
-	
+	<link rel="shortcut icon" href="<?php echo base_url('favicon.ico');?>"/>
 
 <?php if(isset($the_description)): ?>
 <meta name="description" content="<?=ellipsis($the_description,512); ?>"/>

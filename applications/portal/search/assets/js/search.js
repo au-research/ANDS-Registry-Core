@@ -14,7 +14,6 @@ $(document).ready(function() {
 
 	/*GET HASH TAG*/
 	$(window).hashchange(function(){
-		var hash = window.location.hash;
 		var hash = location.href.substr(location.href.indexOf("#"));
 		var query = hash.substring(3, hash.length);
 		var words = query.split('/');
@@ -22,7 +21,6 @@ $(document).ready(function() {
 		$('#search_box, #selected_group, #selected_subject').empty();
 		$('div.qtip:visible').qtip('hide');
 		searchData = {};
-		fieldString = '';
 
 		// Flag whether to fire a new search after this logic
 		var refreshSearch = false;
@@ -259,7 +257,7 @@ $(document).on('click', '.filter',function(e){
 	    position:{my:'top right', at:'bottom left'},
 	    style: {
 	        classes: 'ui-tooltip-light ui-tooltip-shadow seealso-tooltip',
-	        width: 400,
+	        width: 400
 	    }
 	});
 }).on('change', '#subjectfacet-select', function(){
@@ -308,6 +306,7 @@ $(document).on('click', '.filter',function(e){
 }).on('click', '.load_linkedrecords', function(e){
 	e.stopPropagation();
 	e.preventDefault();
+	var link = this;
 	var linkedrecords_dom = $(this).next('.linkrecords_container');
 	if(!linkedrecords_dom.is(":empty")){
 		linkedrecords_dom.toggle();
@@ -324,6 +323,14 @@ $(document).on('click', '.filter',function(e){
 					$.each(data.content, function(){
 						$('.post[ro_id='+this.id+']').hide();
 					});
+
+					$(link).removeClass('load_linkedrecords');
+					var next = $('.load_linkedrecords:visible');
+
+					if(next.length>0){
+						var nextone = next[0];
+						$(nextone).click();
+					}
 				}
 			}
 		})
@@ -530,12 +537,14 @@ function initSearchPage(){
 	$('#search_box').unbind('keypress').keypress(function(e){
 		if(e.which==13){//press enter
 			searchData['q']=$(this).val();
+			searchData['p']=1;
 			changeHashTo(formatSearch());
 		}
 	});
 
 	$('#searchTrigger').unbind('click').live('click', function(){
 		searchData['q']=$('#search_box').val();
+		searchData['p'] = 1;
 		changeHashTo(formatSearch());
     });
 
@@ -790,7 +799,7 @@ function initMap(){
 	           // google.maps.drawing.OverlayType.MARKER,
 	           // google.maps.drawing.OverlayType.CIRCLE,
 	            google.maps.drawing.OverlayType.RECTANGLE
-	          ],
+	          ]
 	        },
 	        rectangleOptions:{
 	        	fillColor: '#FF0000'
@@ -938,7 +947,7 @@ function createMarker(latlng, id)
 	var marker = new google.maps.Marker({
 	          position: latlng,
 	          map: map,
-	          icon : pushPin,
+	          icon : pushPin
 	        });
 	marker.set("id", id);
 	google.maps.event.addListener(marker,"mouseover",function(){

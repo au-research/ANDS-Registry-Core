@@ -397,12 +397,18 @@ $(document).ready(function(){
 		}
 	});
 
+	
+
+	$(function () {
+		$(".youtube").YouTubeModal({autoplay:0, width:695, height:480});
+	});
+
 });
 
 jQuery.fn.extend({
   slideRightShow: function(duration) {
     return this.each(function() {
-        $(this).show('slide', {direction: 'right'}, duration);
+        $(this).show('slide', {direction: 'right'}, duration)
     });
   },
   slideLeftHide: function(duration) {

@@ -171,99 +171,80 @@ class Home extends MX_Controller {
 	}
 
 	function sitemap(){
-
     	parse_str($_SERVER['QUERY_STRING'], $_GET);
     	$solr_url = $this->config->item('solr_url');
     	$ds = '';
     	if(isset($_GET['ds'])) $ds=$_GET['ds'];
 
-
     	if($ds==''){
-			$fields = array(
-				'q'=>'*:*','version'=>'2.2','start'=>0,'rows'=>0, 'wt'=>'json',
-				'fl'=>'key'
-			);
-					/*prep*/
-			$fields_string='';
-	    	foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }//build the string
-	    	$fields_string .= '&facet=true&facet.field=data_source_key&facet.limit=1000&facet.mincount=1';
-	    	rtrim($fields_string,'&');
 
-			$ch = curl_init();
-	    	//set the url, number of POST vars, POST data
-			curl_setopt($ch,CURLOPT_URL,$solr_url.'select');//post to SOLR
-			curl_setopt($ch,CURLOPT_POST,count($fields));//number of POST var
-			curl_setopt($ch,CURLOPT_POSTFIELDS,$fields_string);//post the field strings
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//return to variable
-	    	$content = curl_exec($ch);//execute the curl
+			$this->load->library('solr');
+			$this->solr->setFacetOpt('field', 'data_source_key');
+			$this->solr->setFacetOpt('limit', 1000);
+			$this->solr->setFacetOpt('mincount', 0);
 
-	    	//echo 'json received+<pre>'.$content.'</pre>';
+			$this->solr->executeSearch();
+			$res = $this->solr->getFacet();
 
-	    	$res = json_decode($content);
-	    	$dsfacet = $res->{'facet_counts'}->{'facet_fields'}->{'data_source_key'};
+	    	$dsfacet = $res->{'facet_fields'}->{'data_source_key'};
 
 			header("Content-Type: text/xml");
-			// $this->output->set_content_type('text/xml');
 			echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
 			for($i=0;$i<sizeof($dsfacet);$i+=2){
 				echo '<sitemap>';
-				echo '<loc>'.base_url().'home/sitemap/?ds='.$dsfacet[$i].'</loc>';
+				echo '<loc>'.base_url().'home/sitemap/?ds='.urlencode($dsfacet[$i]).'</loc>';
 				echo '<lastmod>'.date('Y-m-d').'</lastmod>';
 				echo '</sitemap>';
 			}
 
 			echo '</sitemapindex>';
 		}elseif($ds!=''){
-			$q = '*:* +data_source_key:("'.$ds.'")';
-			$q = urlencode($q);
-			$fields = array(
-				'q'=>$q,'version'=>'2.2','start'=>0,'rows'=>50000, 'wt'=>'json',
-				'fl'=>'key, slug, update_timestamp'
-			);
-					/*prep*/
-			$fields_string='';
-	    	foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }//build the string
-	    	rtrim($fields_string,'&');
 
-			//echo $fields_string;
+			$this->load->library('solr');
+			$filters = array('data_source_key'=>$ds);
+			$this->solr->setFilters($filters);
+			$this->solr->executeSearch();
+			$res = $this->solr->getResult();
 
-			$ch = curl_init();
-	    	//set the url, number of POST vars, POST data
-			curl_setopt($ch,CURLOPT_URL,$solr_url.'select');//post to SOLR
-			curl_setopt($ch,CURLOPT_POST,count($fields));//number of POST var
-			curl_setopt($ch,CURLOPT_POSTFIELDS,$fields_string);//post the field strings
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//return to variable
-	    	$content = curl_exec($ch);//execute the curl
-
-	    	//echo 'json received+<pre>'.$content.'</pre>';
-
-	    	$res = json_decode($content);
-	    	$keys = $res->{'response'}->{'docs'};
-	    	// var_dump($keys);
+	    	$keys = $res->{'docs'};
+			$freq = 'weekly';
+			if($this->is_active($ds)){
+				$freq = 'daily';
+			}
 
 			header("Content-Type: text/xml");
-			// $this->output->set_content_type('text/xml');
 			echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-
-			foreach($keys as $k){
+			foreach($keys as $k) {
 				//var_dump($k);
 				echo '<url>';
-				if ($k->{'slug'})
-				{
+				if ($k->{'slug'}){
 					echo '<loc>'.base_url().$k->{'slug'}.'</loc>';
-				}
-				else
-				{
+				} else {
 					echo '<loc>'.base_url().'view/?key='.urlencode($k->{'key'}).'</loc>';
 				}
-				echo '<changefreq>weekly</changefreq>';
+				echo '<changefreq>'.$freq.'</changefreq>';
 				echo '<lastmod>'.date('Y-m-d', strtotime($k->{'update_timestamp'})).'</lastmod>';
 				echo '</url>';
 			}
 
 			echo '</urlset>';
 		}
+	}
+
+	public function is_active($ds_key){
+		$this->load->library('solr');
+		$filters = array('data_source_key'=>$ds_key);
+		$this->solr->setFilters($filters);
+		$this->solr->setFacetOpt('query', 'record_created_timestamp:[NOW-1MONTH/MONTH TO NOW]');
+		$this->solr->executeSearch();
+		$facet = $this->solr->getFacet();
+		$result = $this->solr->getNumFound();
+		if($facet){
+			if($facet->{'facet_queries'}->{'record_created_timestamp:[NOW-1MONTH/MONTH TO NOW]'} > 0){
+				return true;
+			}else return false;
+		}else return false;
 	}
 
 	public function send(){
