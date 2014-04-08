@@ -230,10 +230,10 @@ ul.linkedrecords-list{
 .portal-icon-info {background-image:url('images/info.png');}
 .portal-icon-caret {background-image:url('images/caret.png');}
 
-.connections_layout_container{
+.explorer_layout_container{
 	background:white;
 	border:1px solid #ccc;
-	div.connections_layout_facet{
+	div.explorer_layout_facet{
 		float:left;
 		width:35%;
 		padding:0 15px;
@@ -254,11 +254,11 @@ ul.linkedrecords-list{
 			}
 		}
 	}
-	div.connections_layout_right{
+	div.explorer_layout_right{
 		float:left;
 		width:65%;
 		padding:0 10px;
-		div.connections_layout_result{
+		div.explorer_layout_result{
 			position:relative;
 			padding:10px;
 			max-height:620px;

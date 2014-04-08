@@ -143,12 +143,9 @@
 	}
 
 	// Only display if there are actually some connections to show...
-	if ($connDiv)
-	{
+	if ($connDiv) {
 		echo "<h2>Connections</h2>";
 		echo $connDiv;
 		echo "<p><br/></p>";
-		$this->load->view('connections_layout');
 	}
-
-?>
+	$this->load->view('explorer_layout');

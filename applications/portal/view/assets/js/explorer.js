@@ -6,7 +6,7 @@
  * @requires portal-filters infinite-scroll modules
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
-angular.module('connections',['portal-filters', 'infinite-scroll']).
+angular.module('explorer',['portal-filters', 'infinite-scroll']).
 /**
  * Search factory to use for solr searching, used default RDA search protocol
  * @param  module $http
@@ -28,7 +28,7 @@ factory('searches', function($http){
  * @param  factory searches
  * @return void
  */
-controller('openConnections', function($scope, searches){
+controller('openExplorer', function($scope, searches){
 
 	/**
 	 * Default Scope assignment
@@ -51,7 +51,7 @@ controller('openConnections', function($scope, searches){
 	/**
 	 * Triggers when an action ng-click="open($event)" occur
 	 * This will do a search then open the modal containing the search result
-	 * @param event $event
+	 * @param $event
 	 * @return void
 	 */
 	$scope.open = function($event){
@@ -135,7 +135,7 @@ controller('openConnections', function($scope, searches){
 		$scope.search();
 
 		//dialog setup and open
-		var c = $('#connections_layout_container');
+		var c = $('#explorer_layout_container');
 		$('.ui-widget-overlay').live('click', function() {
 			c.dialog( "close" );
 		});
@@ -190,7 +190,6 @@ controller('openConnections', function($scope, searches){
 	 * @return $scope.done
 	 */
 	$scope.$watch('results.docs', function(){
-		var total_found = $('.ro_preview').length;
 		if($scope.results && $scope.results.docs && $scope.numFound <= $scope.results.docs.length){
 			$scope.done = true;
 		}
@@ -204,21 +203,8 @@ controller('openConnections', function($scope, searches){
 	$scope.load_more = function(){
 		if(($('#connections_layout_container').dialog('isOpen')===true) && !$scope.done && !$scope.loading){
 			$scope.loading = true;
-			var ro_id = $('#registry_object_id').text();
 			$scope.page++;
-			$scope.filters['related_object_id'] = ro_id;
-			$scope.filters['include_facet_subjects'] = 1;
-			$scope.filters['p'] = $scope.page;
-			searches.search($scope.filters).then(function(data){
-				$scope.loading = false;
-				$.each(data.result.docs, function(){
-					$scope.results.docs.push(this);
-				});
-				if ($scope.explorer_type==='connections') {
-					$scope.getRelations();
-				}
-
-			});
+			$scope.search($scope.page, true);
 		}
 	}
 
@@ -264,15 +250,23 @@ controller('openConnections', function($scope, searches){
 	 * 
 	 * @return result set
 	 */
-	$scope.search = function(){
-		$scope.page = 1;
+	$scope.search = function(page, append){
+		if(!page) page = 1;
+		$scope.page = page;
 		$scope.done = false;
 		$scope.filters['include_facet_subjects'] = 1;
 		$scope.filters['p'] = $scope.page;
 		searches.search($scope.filters).then(function(data){
+			$scope.loading = false;
 			$scope.numFound = data.numFound;
 			$scope.relations = [];
-			$scope.results = data.result;
+			if(!append) {
+				$scope.results = data.result;
+			} else {
+				$.each(data.result.docs, function(){
+					$scope.results.docs.push(this);
+				});
+			}
 			$scope.facet = data.facet_result;
             $.each($scope.facet, function(){
                 $.each(this.values, function(){
@@ -284,6 +278,9 @@ controller('openConnections', function($scope, searches){
             });
 			if($scope.explorer_type==='connections'){
 				$scope.getRelations();
+			}
+			if($scope.results && $scope.results.docs && $scope.numFound <= $scope.results.docs.length){
+				$scope.done = true;
 			}
 		});
 	}
