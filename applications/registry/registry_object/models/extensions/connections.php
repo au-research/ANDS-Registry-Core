@@ -173,6 +173,7 @@ class Connections_Extension extends ExtensionBase
 
 		$allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t" || $ds->allow_reverse_internal_links == 1);
 		$allow_reverse_external_links = ($ds->allow_reverse_external_links == "t" || $ds->allow_reverse_external_links == 1);
+        $create_primary_relationships = ($ds->create_primary_relationships == "t" || $ds->create_primary_relationships == 1);
 
 		/* Step 1 - Straightforward link relationships */
 		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks($allow_drafts));
@@ -181,10 +182,14 @@ class Connections_Extension extends ExtensionBase
 		/* Step 2 - Internal reverse links */
 		if ($allow_reverse_internal_links || $allow_all_links)
 		{
-
-			$unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks($allow_drafts));
+			$unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks($allow_drafts));			
 		}
 
+        if ($create_primary_relationships)
+        {
+
+            $unordered_connections = array_merge($unordered_connections, $this->_getPrimaryLinks($allow_drafts));
+        }
 		/* Step 3 - External reverse links */
 		if ($allow_reverse_external_links || $allow_all_links)
 		{
@@ -379,7 +384,27 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
+	function _getPrimaryLinks($allow_unmatched_records = false)
+	{
+		/* Step 2 - Internal reverse links */
+		$my_connections = array();
 
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type, rr.relation_description')
+						 ->from('registry_object_relationships rr')
+						 ->join('registry_objects r','r.key = rr.related_object_key', ($allow_unmatched_records ? 'left' : ''))
+						 ->where('rr.registry_object_id',$this->ro->id)
+						 ->where('r.data_source_id',$this->ro->data_source_id)
+						 ->where('rr.origin =','PRIMARY');
+		$query = $this->db->get();
+
+		foreach ($query->result_array() AS $row)
+		{
+			$row['origin'] = "PRIMARY";
+			$my_connections[] = $row;
+		}
+
+		return $my_connections;
+	}
 
 	function _getExternalReverseLinks($allow_unmatched_records = false)
 	{

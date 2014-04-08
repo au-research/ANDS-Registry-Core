@@ -43,7 +43,7 @@ class Relationships_Extension extends ExtensionBase
 					$this_relationship = $ds->{strtolower($this->ro->class) . "_rel_1"};
 					$relationship = array("registry_object_id" => (string)$this->ro->id,
 										"related_object_key" => (string) $ds->primary_key_1,
-										"related_object_class"=> (string) $$ds->class_1,
+										"related_object_class"=> (string) $this->getRelatedObjectClass((string)$ds->primary_key_1),
 										"relation_type" => (string) $this_relationship,
 										"relation_description" => "",
 										"relation_url" => "",
@@ -56,7 +56,7 @@ class Relationships_Extension extends ExtensionBase
 					$this_relationship = $ds->{strtolower($this->ro->class) . "_rel_2"};
 					$relationship = array("registry_object_id" => $this->ro->id,
 										"related_object_key" => (string) $ds->primary_key_2,
-										"related_object_class"=> (string) $ds->class_2,
+										"related_object_class"=> (string) $this->getRelatedObjectClass((string)$ds->primary_key_2),
 										"relation_type" => (string) $this_relationship,
 										"relation_description" => "",
 										"relation_url" => "",
@@ -142,7 +142,7 @@ class Relationships_Extension extends ExtensionBase
 
 		$unchanged_relationships = array_intersect($existing_relatinships, $new_relationships); // leave them	
 		$removed_relationships = array_diff($existing_relatinships, $new_relationships);
-		$new_or_changed_relationships = array_diff($new_relationships, $existing_relatinships); // 
+		$new_or_changed_relationships = array_diff($new_relationships, $existing_relatinships); //
 		$inserted_keys = $this->insertNewRelationships($new_or_changed_relationships);
 
 		$deleted_keys = $this->removeNonRenewedRelationships($removed_relationships);
@@ -166,16 +166,17 @@ class Relationships_Extension extends ExtensionBase
 		foreach($new_or_changed_relationships as $rel)
 		{
 			$thisRelated = json_decode($rel,true);
-			 //$insertArray[] = $thisRelated;
+			//$insertArray[] = $thisRelated;
 			if(is_array($thisRelated) && isset($thisRelated["related_object_key"]))
 			{
 				$inserted_keys[] = $thisRelated["related_object_key"];
-				//$insertArray[] = $thisRelated;
+				$insertArray[] = $thisRelated;
 				$this->db->insert("registry_object_relationships", $thisRelated);
 			}
 		}
 		// why doesn't insert_batch just work?? 
 		//$this->db->insert_batch("registry_object_relationships", $insertArray);
+        //print_r($insertArray);
 		return $inserted_keys;
 	}
 

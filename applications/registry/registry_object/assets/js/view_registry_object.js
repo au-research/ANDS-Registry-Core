@@ -268,6 +268,10 @@ function processRelatedObjects(maxRelated)
                 {
                     revStr = "<em> (Automatically generated reverse link) </em>"
                 }
+                if( origin == 'PRIMARY')
+                {
+                    revStr = "<em> (Automatically generated primary link) </em>"
+                }
                 if(origin=='IDENTIFIER REVERSE')
                 {
                     revStr = "<em> (Automatically generated reverse link by Identifier) </em>";
