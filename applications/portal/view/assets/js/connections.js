@@ -270,7 +270,6 @@ controller('openConnections', function($scope, searches){
 		$scope.filters['include_facet_subjects'] = 1;
 		$scope.filters['p'] = $scope.page;
 		searches.search($scope.filters).then(function(data){
-			console.log(data);
 			$scope.numFound = data.numFound;
 			$scope.relations = [];
 			$scope.results = data.result;
