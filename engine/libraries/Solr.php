@@ -412,6 +412,30 @@ class Solr {
 				case 'related_object_id':
 					$this->setOpt('fq','+related_object_id:'.$value.'');
 					break;
+				case 'identifier_value':
+					if(is_array($value)){
+						$identifier_search_query = join('","', $value);
+						$identifier_search_query = '+identifier_value:("'.$identifier_search_query.'")';
+						$this->setOpt('fq', $identifier_search_query);
+					}else{
+						$this->setOpt('fq', '+identifier_value:("'.$value.'")');
+					}
+					break;
+				case 'subject_value':
+					if(is_array($value)){
+						$subject_search_query = join('" OR subject_value_resolved:"', $value);
+						$subject_search_query = "(subject_value_resolved:\"" .$subject_search_query."\")";
+						$this->setOpt('fq', $subject_search_query);
+					}else{
+						$this->setOpt('fq', '+identifier_value:("'.$value.'")');
+					}
+					break;
+				case 'not_id':
+					$this->setOpt('fq', '-id:'.$value.'');
+					break;
+				case 'not_related_object_id':
+					$this->setOpt('fq', '-related_object_id:'.$value.'');
+					break;
 			}
 		}
 	}

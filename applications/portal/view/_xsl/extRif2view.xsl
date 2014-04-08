@@ -493,7 +493,7 @@
 
 
 <!--  we will now transform the right hand stuff -->
-<div class="sidebar">
+<div class="sidebar" ng-app="connections" ng-controller="openConnections">
 	<xsl:apply-templates select="//extRif:theme_page"/>
 <h3 id="draft_status" class="hide" style="color:#FF6688;">DRAFT PREVIEW</h3>
 

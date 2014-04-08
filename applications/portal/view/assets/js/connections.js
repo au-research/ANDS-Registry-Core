@@ -45,6 +45,7 @@ controller('openConnections', function($scope, searches){
 	$scope.loading = false;
 	$scope.done = false;
 	$scope.class_name = $('#class').text();
+	$scope.explorer_type = '';
 
 
 	/**
@@ -63,29 +64,71 @@ controller('openConnections', function($scope, searches){
 		 * This relation type will determine the class and type we will search for
 		 */
 		var relation_type = $($event.target).attr('relation_type');
+		var ro_id = $('#registry_object_id').text();
+
 		$scope.filters = {};
         $scope.query = '';
 		switch(relation_type){
-			case 'collection': 
+			case 'collection':
+				$scope.explorer_type='connections';
 				$scope.filters['class'] = 'collection';
 				delete $scope.filters['type'];
 				break;
-			case 'activity': 
+			case 'activity':
+				$scope.explorer_type='connections';
 				$scope.filters['class'] = 'activity';
 				delete $scope.filters['type'];
 				break;
-			case 'service': 
+			case 'service':
+				$scope.explorer_type='connections';
 				$scope.filters['class'] = 'service';
 				delete $scope.filters['type'];
 				break;
-			case 'party_multi': 
+			case 'party_multi':
+				$scope.explorer_type='connections';
 				$scope.filters['class'] = 'party';
                 $scope.filters['type'] = 'group';
 				break;
 			case 'party_one':
+				$scope.explorer_type='connections';
 				$scope.filters['class'] = 'party';
 				$scope.filters['type'] = 'person';
                 break;
+			case 'identifier':
+				$scope.explorer_type='seealso';
+				delete $scope.filters['type'];
+				delete $scope.filters['class'];
+				if($('.identifier_value').length == 1){
+					$scope.filters['identifier_value'] = $('.identifier_value').text();
+				}else if($('.identifier_value').length > 1){
+					$scope.filters['identifier_value'] = [];
+					$('.identifier_value').each(function(){
+						var identifier = $(this).text();
+						$scope.filters['identifier_value'].push(identifier);
+					});
+				}
+				break;
+			case 'subject':
+				$scope.explorer_type='seealso';
+				delete $scope.filters['type'];
+				delete $scope.filters['class'];
+				if($('.subject_value').length == 1){
+					$scope.filters['subject_value'] = $('.subject_value').text();
+				}else if($('.subject_value').length > 1){
+					$scope.filters['subject_value'] = [];
+					$('.subject_value').each(function(){
+						var identifier = $(this).text();
+						$scope.filters['subject_value'].push(identifier);
+					});
+				}
+				break;
+		}
+
+		if($scope.explorer_type==='connections'){
+			$scope.filters['related_object_id'] = ro_id;
+		}else if($scope.explorer_type==='seealso'){
+			$scope.filters['not_id'] = ro_id;
+			$scope.filters['not_related_object_id'] = ro_id;
 		}
 
 		//search
@@ -171,7 +214,10 @@ controller('openConnections', function($scope, searches){
 				$.each(data.result.docs, function(){
 					$scope.results.docs.push(this);
 				});
-				$scope.getRelations();
+				if ($scope.explorer_type==='connections') {
+					$scope.getRelations();
+				}
+
 			});
 		}
 	}
@@ -219,18 +265,16 @@ controller('openConnections', function($scope, searches){
 	 * @return result set
 	 */
 	$scope.search = function(){
-		var ro_id = $('#registry_object_id').text();
 		$scope.page = 1;
 		$scope.done = false;
-		$scope.filters['related_object_id'] = ro_id;
 		$scope.filters['include_facet_subjects'] = 1;
 		$scope.filters['p'] = $scope.page;
 		searches.search($scope.filters).then(function(data){
+			console.log(data);
 			$scope.numFound = data.numFound;
 			$scope.relations = [];
 			$scope.results = data.result;
 			$scope.facet = data.facet_result;
-			console.log($scope.facet);
             $.each($scope.facet, function(){
                 $.each(this.values, function(){
 	                this.title = this.title.toString();
@@ -239,7 +283,9 @@ controller('openConnections', function($scope, searches){
 	                }
                 });
             });
-			$scope.getRelations();
+			if($scope.explorer_type==='connections'){
+				$scope.getRelations();
+			}
 		});
 	}
 
@@ -251,6 +297,7 @@ controller('openConnections', function($scope, searches){
 	 */
 	$scope.getRelations = function(){
 		var ro_id = $('#registry_object_id').text();
+		$scope.relations = {};
 		$.each($scope.results.docs, function(){
 			var ind = this.related_object_id.indexOf(ro_id);
 			var relation = this.related_object_relation[ind];

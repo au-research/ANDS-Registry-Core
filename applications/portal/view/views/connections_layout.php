@@ -19,7 +19,7 @@
 				<div class="ro_preview_header" >
 					<div class="title connection_preview_link"><i class="portal-icon portal-icon-{{doc.class}}"></i>
 						{{doc.title | truncate:160}}
-						<span class="relations">({{relations[doc.id].related_relation | relationship:relations[doc.id].related_class}})</span>
+						<span class="relations" ng-show="relations[doc.id].related_relation">({{relations[doc.id].related_relation | relationship:relations[doc.id].related_class}})</span>
 					</div>
 					<div class="clear"></div>
 				</div>

@@ -56,7 +56,9 @@ class Suggestor_ands_subjects implements GenericSuggestor
 		$query = $relationship_search_query;
 		if ($subject_search_query!='') $query .= ' AND '. $subject_search_query;
 		$suggestions = $this->getSuggestionsBySolrQuery($query, $start, $rows);
-
+		if(sizeof($suggestions)> 0){
+			$suggestions['values'] = $my_subjects;
+		}
 		return $suggestions;
 	}
 
