@@ -19,7 +19,7 @@ $(function(){
 	 *			#!/edit/115
 	 *			#!/delete/115
 	 */
-	 
+
 	$(window).hashchange(function(){
 		logTimer = 1000;
 		doLoadLogs = false;
@@ -1105,11 +1105,11 @@ function bind_ro_search()
 	$(".ro_search").each(function(){
 		if ($(this).attr('name').match(/contributor/))
 		{
-			$(this).ro_search_widget({ endpoint: base_url + "registry_object_search/", 'class': "party", ds: $('#data_source_id_input').val() });
+			$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", 'class': "party", ds: $('#data_source_id_input').val() });
 		}
 		else
 		{
-			$(this).ro_search_widget({ endpoint: base_url + "registry_object_search/", datasource: $('#data_source_id_input').val(), lock_presets: true });
+			$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", datasource: $('#data_source_id_input').val(), lock_presets: true });
 		}
 		
 	});
