@@ -344,12 +344,17 @@ ul.linkedrecords-list li + li {
   display: block;
 }
 
-/* line 296, ../sass/ands_portal.scss */
+/* line 297, ../sass/ands_portal.scss */
+.theme_content_section {
+  margin: 0px 0px 10px 0px;
+}
+
+/* line 301, ../sass/ands_portal.scss */
 .user_tags a {
   background: #c2e3f4;
 }
 
-/* line 300, ../sass/ands_portal.scss */
+/* line 305, ../sass/ands_portal.scss */
 .login_close {
   float: right;
   margin-right: 200px;

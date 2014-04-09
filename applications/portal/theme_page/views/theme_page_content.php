@@ -11,7 +11,7 @@
  ?>
 <?php if(isset($page[$region]) && sizeof($page[$region])>0): ?>
 <?php foreach($page[$region] as $f): ?>
-<div style="margin:10px 0">
+<div class="theme_content_section">
 	<?php
 		if(isset($f['title']) && trim($f['title'])!='' && isset($f['heading']) && $f['heading']){
 			echo '<'.$f['heading'].'>'.$f['title'].'</'.$f['heading'].'>';
