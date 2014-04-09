@@ -40,6 +40,7 @@
 			<input type="hidden" value="<?php echo (isset($f['search']['query'])? urlencode($f['search']['query']): ''); ?>" class="theme_search_query">
 			<input type="hidden" value="<?php echo (isset($f['search']['limit'])? $f['search']['limit']: ''); ?>" class="theme_search_limit">
 			<input type="hidden" value="<?php echo (isset($f['search']['random'])? urlencode($f['search']['random']): ''); ?>" class="theme_search_random">
+			<input type="hidden" value="<?php echo (isset($f['search']['view_search_text'])? $f['search']['view_search_text']: 'View All Search'); ?>" class="theme_search_view_search_text">
 			<?php if(isset($f['search']['fq'])): ?>
 			<?php foreach($f['search']['fq'] as $fq): ?>
 				<input type="hidden" value="<?php echo $fq['value']; ?>" class="theme_search_fq" fq-type="<?php echo $fq['name'] ?>">

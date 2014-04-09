@@ -12,7 +12,7 @@ angular.module('portal_theme',[]).
 	factory('searches', function($http){
 		return{
 			search: function(filters){
-				var promise = $http.post(real_base_url+'search/filter/', {'filters':filters}).then(function(response){
+				var promise = $http.post(base_url+'search/filter/', {'filters':filters}).then(function(response){
 					return response.data;
 				});
 				return promise;
@@ -53,14 +53,6 @@ angular.module('portal_theme',[]).
 				    itemWidth: 260,
 				    itemMargin: 40,
 				  });
-			}
-		}
-	}).
-	directive('limit', function(){
-		return {
-			restrict: 'A',
-			link: function(scope, element, attrs){
-				console.log(element);
 			}
 		}
 	}).
@@ -112,6 +104,11 @@ angular.module('portal_theme',[]).
 			filter['random'] = $('.theme_search_random', this).val();
 			if($.trim(filter['q'])=='') delete filter['q'];
 			// filter['id'] = $(this).attr('id');
+
+			var view_search_text = $('.theme_search_view_search_text', this).val();
+			if(view_search_text==''){
+				view_search_text = 'View All Search';
+			}
 			
 			var search_id = $(this).attr('id');
 			$('.theme_search_fq', this).each(function(){
@@ -127,6 +124,9 @@ angular.module('portal_theme',[]).
 				}else filter[$(this).attr('fq-type')] = $(this).val();
 			});
 
+
+
+
 			searches.search(filter).then(function(data){
 				$scope.search_results[search_id] = data;
 
@@ -134,10 +134,13 @@ angular.module('portal_theme',[]).
 				var filter_query = '';
 				$.each(filter, function(i, k){
 					if(k instanceof Array || (typeof(k)==='string' || k instanceof String)){
-						filter_query +=i+'='+encodeURIComponent(k)+'/';
+						if(i!='limit' && i!='random'){
+							filter_query +=i+'='+encodeURIComponent(k)+'/';
+						}
 					}
 				});
 				data.filter_query = filter_query;
+				data.view_search_text = view_search_text;
 
 				
 				data.tabs = [];
