@@ -436,6 +436,14 @@ class Solr {
 				case 'not_related_object_id':
 					$this->setOpt('fq', '-related_object_id:'.$value.'');
 					break;
+				case 'sort':
+					$this->setOpt('sort', $value);
+					break;
+				case 'limit':
+					$this->setOpt('rows', $value);
+					break;
+				case 'random':
+					$this->setOpt('sort', 'random_'.rand(1,255642).' desc');
 			}
 		}
 	}

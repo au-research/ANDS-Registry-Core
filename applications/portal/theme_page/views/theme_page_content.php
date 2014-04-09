@@ -1,11 +1,11 @@
-<?php 
+<?php
 /**
  * Theme Page Content View
  * Used for displaying the theme page content in the left and right region
  * Several contents will be loaded imediately.
  * Other content will be loaded asynchronously through AJAX. Eg: search results, facet, list_ro, relations
- * 
- * @param OBJ page 
+ *
+ * @param OBJ page
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
  ?>
@@ -38,6 +38,8 @@
 	<?php if($f['type']=='search'): ?>
 		<div class="theme_search search-result hide" id="<?php echo (isset($f['search']['id'])? $f['search']['id'] : 'NOID'); ?>">
 			<input type="hidden" value="<?php echo (isset($f['search']['query'])? urlencode($f['search']['query']): ''); ?>" class="theme_search_query">
+			<input type="hidden" value="<?php echo (isset($f['search']['limit'])? $f['search']['limit']: ''); ?>" class="theme_search_limit">
+			<input type="hidden" value="<?php echo (isset($f['search']['random'])? urlencode($f['search']['random']): ''); ?>" class="theme_search_random">
 			<?php if(isset($f['search']['fq'])): ?>
 			<?php foreach($f['search']['fq'] as $fq): ?>
 				<input type="hidden" value="<?php echo $fq['value']; ?>" class="theme_search_fq" fq-type="<?php echo $fq['name'] ?>">

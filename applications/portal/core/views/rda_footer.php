@@ -76,6 +76,7 @@
         localStorage.clear();
         var base_url = '<?php echo base_url();?>';
         var default_base_url = "<?php echo $this->config->item('default_base_url');?>";
+		var real_base_url = "<?php echo $this->config->item('default_base_url');?>";
         var suffix = '#!/';
         var deployment_state = "<?php echo $this->config->item('deployment_state');?>";
         var rda_service_url = "<?php echo $this->config->item('registry_endpoint'); ?>"

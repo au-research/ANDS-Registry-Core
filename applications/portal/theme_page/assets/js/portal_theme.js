@@ -12,7 +12,7 @@ angular.module('portal_theme',[]).
 	factory('searches', function($http){
 		return{
 			search: function(filters){
-				var promise = $http.post(base_url+'search/filter/', {'filters':filters}).then(function(response){
+				var promise = $http.post(real_base_url+'search/filter/', {'filters':filters}).then(function(response){
 					return response.data;
 				});
 				return promise;
@@ -108,6 +108,8 @@ angular.module('portal_theme',[]).
 		$('.theme_search').each(function(){
 			var filter = {};
 			filter['q'] = $('.theme_search_query', this).val();
+			filter['limit'] = $('.theme_search_limit', this).val();
+			filter['random'] = $('.theme_search_random', this).val();
 			if($.trim(filter['q'])=='') delete filter['q'];
 			// filter['id'] = $(this).attr('id');
 			
@@ -124,6 +126,7 @@ angular.module('portal_theme',[]).
 					}
 				}else filter[$(this).attr('fq-type')] = $(this).val();
 			});
+
 			searches.search(filter).then(function(data){
 				$scope.search_results[search_id] = data;
 
