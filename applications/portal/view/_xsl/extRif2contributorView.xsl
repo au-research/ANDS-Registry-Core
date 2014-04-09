@@ -62,6 +62,7 @@
         <xsl:value-of select="$base_url"/><xsl:value-of select="//extRif:extendedMetadata/extRif:slug"/>
     </xsl:attribute>
     <xsl:value-of select="$group"/></a>
+       <img src="{$base_url}assets/core/images/caret.png" alt="" class="linked_records hide"/>
        <xsl:text>  /  </xsl:text>
        <a>
       <xsl:attribute name="href">
@@ -83,6 +84,7 @@
                 <span id="slug"><xsl:value-of select="//extRif:extendedMetadata/extRif:slug"/></span>
                 <span id="registry_object_id"><xsl:value-of select="//extRif:extendedMetadata/extRif:id"/></span>
                 <span id="class_type"><xsl:value-of select="$objectClassType"/></span>
+                <span id="matching_identifier_count"><xsl:value-of select="//extRif:extendedMetadata/extRif:matching_identifier_count"/></span>
             </div>
 			
 
