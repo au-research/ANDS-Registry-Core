@@ -300,10 +300,20 @@ function is_dev(){
 
 function check_services(){
 	$CI =& get_instance();
-	$solr_status = (array) simplexml_load_string(curl_post($CI->config->item('solr_url').'admin/ping', '', array('Content-type:application/x-www-form-urlencoded')));
+	$solr_status = curl_post($CI->config->item('solr_url').'admin/ping?wt=json', '', array());
+	$solr_status = json_decode($solr_status, true);
 
-	if(!isset($solr_status['str']) || !$solr_status['str']=='OK'){
-		$error = $CI->load->view('soft500' , array(), true);
+	$data['message'] = '';
+	if(!$solr_status){
+		$data['message'] = 'SOLR Service is unreachable. please check the SOLR URL in global config: '. $CI->config->item('solr_url');
+	}else if($solr_status['responseHeader']['status']!=0){
+		$data['message'] = 'SOLR ping service returns '.$solr_status['responseHeader']['status'].', please check your SOLR configuration';
+	}else{
+		$data['message'] = 'Unknown error';
+	}
+
+	if(!$solr_status || (!isset($solr_status['responseHeader']['status']) && !$solr_status['responseHeader']['status']==0)) {
+		$error = $CI->load->view('soft500' , $data, true);
 		echo $error;
 		die();
 	}

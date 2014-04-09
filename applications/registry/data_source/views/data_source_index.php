@@ -979,13 +979,7 @@
 								<i>Data Sources can have up to 2 Primary Records <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#primary_rels" target="_blank" class="muted">?</a></sup></i>
 								<div class="clearfix"></div>
 								<div class="pull-left">
-									<div class="control-group hide">
-										<label class="control-label">Class</label>
-										<div class="controls">
-											<input type="text" class="rifcs-type" vocab="RIFCSClass" name="class_1" placeholder="Class" value="n/a"/>
-										</div>
-									</div>
-									
+
 									<div class="control-group">
 										<label class="control-label"><br/><br/>Primary Record Key</label>
 										<div class="controls">
@@ -1020,13 +1014,7 @@
 									</div>
 								</div>
 								<div class="pull-left">
-								<div class="control-group hide">
-										<label class="control-label">Class</label>
-									<div class="controls">
-											<input type="text" class="rifcs-type" vocab="RIFCSClass" name="class_2" placeholder="Class" value="n/a"/>
-										</div>
-									</div>
-									<div class="control-group">
+										<div class="control-group">
 										<label class="control-label"><br/><br/>Primary Record Key</label>
 										<div class="controls">
 											<span class="help-block">Relate all records to:</span>

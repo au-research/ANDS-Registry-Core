@@ -81,7 +81,6 @@ class View extends MX_Controller {
 		{
 			$this->renderDefaultViewPage($extRif);
 		}
-
 	}
 
 
@@ -91,7 +90,7 @@ class View extends MX_Controller {
 	{	
 		$data['title']='Research Data Australia';
 		$data['js_lib'] = array('dynatree','qtip','google_map', 'angular');
-		$data['scripts'] = array('view', 'connections');
+		$data['scripts'] = array('view', 'explorer');
 		$data['ro_slug'] = '';
 		$data['ro_id'] = '';
 

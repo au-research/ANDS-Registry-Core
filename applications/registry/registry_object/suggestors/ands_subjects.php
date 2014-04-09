@@ -29,7 +29,7 @@ class Suggestor_ands_subjects implements GenericSuggestor
 		{
 			foreach($sxml->{strtolower($registry_object->class)}->subject AS $subject)
 			{
-				$my_subjects[] = '"' . (string) removeBadValue($subject) . '" OR';
+				$my_subjects[] = (string) removeBadValue($subject);
 			}
 		}
 
@@ -37,9 +37,9 @@ class Suggestor_ands_subjects implements GenericSuggestor
 			return $suggestions;
 		}
 
-		$subject_search_query = '';
 		if(sizeof($my_subjects) > 0){
-			$subject_search_query = "(" . substr(implode(" subject_value_resolved:", $my_subjects), 0, -3) . ")";
+            $subject_search_query = join('" OR subject_value_resolved:"', $my_subjects);
+			$subject_search_query = "(subject_value_resolved:\"" .$subject_search_query."\")";
 		}
 
 
@@ -49,14 +49,16 @@ class Suggestor_ands_subjects implements GenericSuggestor
 
 		$relationship_search_query = '';
 		if(sizeof($my_relationships) > 0) {
-			$relationship_search_query = implode('") -key:("', $my_relationships);
+			$relationship_search_query = join('","', $my_relationships);
 			$relationship_search_query = '-key:("'.$relationship_search_query.'")';
 		}
 
 		$query = $relationship_search_query;
 		if ($subject_search_query!='') $query .= ' AND '. $subject_search_query;
 		$suggestions = $this->getSuggestionsBySolrQuery($query, $start, $rows);
-
+		if(sizeof($suggestions)> 0){
+			$suggestions['values'] = $my_subjects;
+		}
 		return $suggestions;
 	}
 

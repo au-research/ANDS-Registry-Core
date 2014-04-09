@@ -1,6 +1,6 @@
 <?php
 /**
- * Connections layout view, called by connections.php
+ * Explorer layout view, called by connections.php
  * This is an angularJS enabled template
  *
  *
@@ -8,18 +8,18 @@
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 ?>
-<div id="connections_layout_container" class="connections_layout_container hide">
+<div id="explorer_layout_container" class="explorer_layout_container hide">
 	
-	<div class="connections_layout_right">
-		<div class="connections_layout_filter">
+	<div class="explorer_layout_right">
+		<div class="explorer_layout_filter">
 			<input type="text" placeholder="Type to filter" ng-model="query"/>
 		</div>
-		<div class="connections_layout_result" infinite-scroll="load_more()">
+		<div class="explorer_layout_result" infinite-scroll="load_more()">
 			<div class="ro_preview" ng-repeat="doc in results.docs">
 				<div class="ro_preview_header" >
 					<div class="title connection_preview_link"><i class="portal-icon portal-icon-{{doc.class}}"></i>
 						{{doc.title | truncate:160}}
-						<span class="relations">({{relations[doc.id].related_relation | relationship:relations[doc.id].related_class}})</span>
+						<span class="relations" ng-show="relations[doc.id].related_relation">({{relations[doc.id].related_relation | relationship:relations[doc.id].related_class}})</span>
 					</div>
 					<div class="clear"></div>
 				</div>
@@ -34,7 +34,7 @@
 		</div>
 	</div>
 
-	<div class="connections_layout_facet">
+	<div class="explorer_layout_facet">
 		<div ng-repeat="f in facet" class="widget facet_group" ng-show="f.facet_type!='class'">
 			<h3 class="widget-title">{{f.label}}</h3>
 			<ul>
