@@ -46,6 +46,44 @@ span.darkgrey
 	}
 }
 
+.list-style-search{
+  .post{
+	height:auto;
+	padding:0;
+	margin-left:0;
+	min-height:0;
+	border:0;
+	.excerpt{
+	  display: none;
+	}
+	.class_icon{
+	  display:none;
+	}
+	a.title{
+	  color:$ands_green !important;
+	  line-height:1.5;
+	  font-weight: normal;
+	  text-decoration:none;
+	  outline:none;
+	  padding:4px 0;
+	  font-size:1em;
+	  &:hover{
+		color:$ands_orange !important;
+	  }
+	}
+	img.logo{
+	  display:none;
+	}
+	&:hover{
+	  height:auto;
+	  padding:0;
+	  margin-left:0;
+	  min-height:0;
+	  border:0;
+	}
+  }
+}
+
 
 
 div.login_banner{
