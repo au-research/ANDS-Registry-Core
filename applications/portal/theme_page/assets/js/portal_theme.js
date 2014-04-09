@@ -56,14 +56,6 @@ angular.module('portal_theme',[]).
 			}
 		}
 	}).
-	directive('limit', function(){
-		return {
-			restrict: 'A',
-			link: function(scope, element, attrs){
-				console.log(element);
-			}
-		}
-	}).
 	directive('filmstrip', function(){
 		return {
 			restrict : 'A',
@@ -108,8 +100,15 @@ angular.module('portal_theme',[]).
 		$('.theme_search').each(function(){
 			var filter = {};
 			filter['q'] = $('.theme_search_query', this).val();
+			filter['limit'] = $('.theme_search_limit', this).val();
+			filter['random'] = $('.theme_search_random', this).val();
 			if($.trim(filter['q'])=='') delete filter['q'];
 			// filter['id'] = $(this).attr('id');
+
+			var view_search_text = $('.theme_search_view_search_text', this).val();
+			if(view_search_text==''){
+				view_search_text = 'View All Search';
+			}
 			
 			var search_id = $(this).attr('id');
 			$('.theme_search_fq', this).each(function(){
@@ -124,6 +123,10 @@ angular.module('portal_theme',[]).
 					}
 				}else filter[$(this).attr('fq-type')] = $(this).val();
 			});
+
+
+
+
 			searches.search(filter).then(function(data){
 				$scope.search_results[search_id] = data;
 
@@ -131,10 +134,13 @@ angular.module('portal_theme',[]).
 				var filter_query = '';
 				$.each(filter, function(i, k){
 					if(k instanceof Array || (typeof(k)==='string' || k instanceof String)){
-						filter_query +=i+'='+encodeURIComponent(k)+'/';
+						if(i!='limit' && i!='random'){
+							filter_query +=i+'='+encodeURIComponent(k)+'/';
+						}
 					}
 				});
 				data.filter_query = filter_query;
+				data.view_search_text = view_search_text;
 
 				
 				data.tabs = [];

@@ -73,7 +73,7 @@
 		    {{/description}}
 		</div>
 	{{/result.docs}}
-	<a href="<?php echo portal_url('search');?>#!/{{filter_query}}">View Full Search ({{numFound}} results)</a>
+	<a href="<?php echo portal_url('search');?>#!/{{filter_query}}">{{view_search_text}} ({{numFound}} results)</a>
 {{/has_result}}
 
 {{#no_result}}

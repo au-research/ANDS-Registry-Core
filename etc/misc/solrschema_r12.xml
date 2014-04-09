@@ -103,7 +103,7 @@
 		<!-- SEARCH SORT VALUES -->
 		<field name="search_base_score" type="sint" indexed="true" stored="true"/>
 		<field name="_version_" type="string" indexed="true" stored="true" multiValued="false"/>
-
+		<dynamicField name="random_*" type="random"/>
 	</fields>
 
 
