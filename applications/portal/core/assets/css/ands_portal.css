@@ -272,12 +272,12 @@ ul.linkedrecords-list li + li {
 }
 
 /* line 233, ../sass/ands_portal.scss */
-.connections_layout_container {
+.explorer_layout_container {
   background: white;
   border: 1px solid #ccc;
 }
 /* line 236, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_facet {
+.explorer_layout_container div.explorer_layout_facet {
   float: left;
   width: 35%;
   padding: 0 15px;
@@ -286,55 +286,55 @@ ul.linkedrecords-list li + li {
   overflow: auto;
 }
 /* line 244, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_facet ul li {
+.explorer_layout_container div.explorer_layout_facet ul li {
   list-style-type: none;
   padding: 4px 0;
 }
 /* line 247, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_facet ul li a {
+.explorer_layout_container div.explorer_layout_facet ul li a {
   color: #84a07b;
 }
 /* line 250, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_facet ul li a:hover {
+.explorer_layout_container div.explorer_layout_facet ul li a:hover {
   color: #eb7700;
 }
 /* line 257, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_right {
+.explorer_layout_container div.explorer_layout_right {
   float: left;
   width: 65%;
   padding: 0 10px;
 }
 /* line 261, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_right div.connections_layout_result {
+.explorer_layout_container div.explorer_layout_right div.explorer_layout_result {
   position: relative;
   padding: 10px;
   max-height: 620px;
   overflow: auto;
 }
 /* line 266, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview {
+.explorer_layout_container div.explorer_layout_right div.explorer_layout_result .ro_preview {
   width: 100%;
   margin-left: 0;
 }
 /* line 269, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_header .title {
+.explorer_layout_container div.explorer_layout_right div.explorer_layout_result .ro_preview .ro_preview_header .title {
   margin-left: 0;
 }
 /* line 272, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_description {
+.explorer_layout_container div.explorer_layout_right div.explorer_layout_result .ro_preview .ro_preview_description {
   font-size: 13px;
 }
 /* line 274, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .ro_preview_description .ro_preview_footer a {
+.explorer_layout_container div.explorer_layout_right div.explorer_layout_result .ro_preview .ro_preview_description .ro_preview_footer a {
   color: #84a07b;
 }
 /* line 278, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_right div.connections_layout_result .ro_preview .relations {
+.explorer_layout_container div.explorer_layout_right div.explorer_layout_result .ro_preview .relations {
   color: #9bb692;
   padding: 0 5px;
 }
 /* line 283, ../sass/ands_portal.scss */
-.connections_layout_container div.connections_layout_right div.connections_layout_result a.load_more {
+.explorer_layout_container div.explorer_layout_right div.explorer_layout_result a.load_more {
   background: #eee;
   font-weight: bold;
   color: #84a07b;

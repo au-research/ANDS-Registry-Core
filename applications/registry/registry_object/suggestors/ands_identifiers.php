@@ -62,7 +62,9 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 
 
 		$suggestions = $this->getSuggestionsBySolrQuery($query, $start, $rows);
-
+		if(sizeof($suggestions)> 0){
+			$suggestions['values'] = $my_identifiers;
+		}
 		return $suggestions;
 	}
 

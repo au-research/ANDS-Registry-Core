@@ -41,6 +41,7 @@ angular.module('portal-filters', []).
 	}).
 	filter('relationship', function(){
 		return function(text, from_class){
+			if(!from_class) return text;
 			from_class = from_class.toLowerCase();
 
 			if(from_class=='collection'){
