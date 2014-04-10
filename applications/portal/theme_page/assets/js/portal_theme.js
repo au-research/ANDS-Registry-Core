@@ -103,6 +103,8 @@ angular.module('portal_theme',[]).
 			filter['limit'] = $('.theme_search_limit', this).val();
 			filter['random'] = $('.theme_search_random', this).val();
 			if($.trim(filter['q'])=='') delete filter['q'];
+			if(filter['limit']=='') filter['limit'] = 10;
+			if(filter['limit']=='') delete filter['random'];
 			// filter['id'] = $(this).attr('id');
 
 			var view_search_text = $('.theme_search_view_search_text', this).val();
