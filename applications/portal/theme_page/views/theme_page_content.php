@@ -47,7 +47,7 @@
 			}
 		?>
 		<div class="theme_search hide <?php echo $style;?>" id="<?php echo (isset($f['search']['id'])? $f['search']['id'] : 'NOID'); ?>">
-			<input type="hidden" value="<?php echo (isset($f['search']['query'])? urlencode($f['search']['query']): ''); ?>" class="theme_search_query">
+			<input type="hidden" value="<?php echo (isset($f['search']['query'])? rawurlencode($f['search']['query']): ''); ?>" class="theme_search_query">
 			<input type="hidden" value="<?php echo (isset($f['search']['limit'])? $f['search']['limit']: ''); ?>" class="theme_search_limit">
 			<input type="hidden" value="<?php echo (isset($f['search']['random'])? urlencode($f['search']['random']): ''); ?>" class="theme_search_random">
 			<input type="hidden" value="<?php echo (isset($f['search']['view_search_text'])? $f['search']['view_search_text']: 'View All Search'); ?>" class="theme_search_view_search_text">
