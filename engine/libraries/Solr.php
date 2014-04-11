@@ -221,6 +221,12 @@ class Solr {
 	// Takes an array of user-defined filters and crunches them into
 	// an ANDS-specific SOLR query (including ranking, field names, etc)
 	function setFilters($filters){
+
+		$CI =& get_instance();
+		$CI->load->library('vocab');
+
+
+
 		// Use SOLR's extended disMax query type - https://wiki.apache.org/solr/ExtendedDisMax
 		// (more forgiving query parsing for user input -- allows syntatically incorrect boolean queries)
 		$this->setOpt('defType', 'edismax');
@@ -325,7 +331,7 @@ class Solr {
 						foreach($value as $v) $fq_str .= ' subject_value_resolved:("'.$v.'")'; 
 						$this->setOpt('fq', $fq_str);
 					}else{
-						if($value!='all') $this->setOpt('fq', '+subject_value_resolved:("'.$value.'")');
+					   if($value!='all') $this->setOpt('fq', '+subject_value_resolved:("'.$value.'")');
 					}
 					break;
 				case 's_subject_value_resolved': 
@@ -337,7 +343,13 @@ class Solr {
 						foreach($value as $v) $fq_str .= ' subject_vocab_uri:("'.$v.'")'; 
 						$this->setOpt('fq', $fq_str);
 					}else{
-						if($value!='all') $this->setOpt('fq', '+subject_vocab_uri:("'.$value.'")');
+						$s = json_decode($CI->vocab->getConceptDetail('anzsrc-for', $value), true);
+						if($s){
+							$label = $s['result']['primaryTopic']['prefLabel']['_value'];
+							$this->setOpt('fq', '(subject_vocab_uri:("'.$value.'") OR tag:("'.$label.'"))');
+						}else{
+							if($value!='all') $this->setOpt('fq', '+subject_vocab_uri:("'.$value.'")');
+						}
 					}
 					break;
 				case 'temporal':
@@ -386,7 +398,17 @@ class Solr {
 						foreach($value as $v) $fq_str .= ' tag:("'.$v.'")'; 
 						$this->setOpt('fq', $fq_str);
 					}else{
-						if($value!='all') $this->setOpt('fq', '+tag:("'.$value.'")');
+						$resolved_url = $CI->vocab->resolveLabel($value, 'anzsrc-for');
+						if($resolved_url){
+							$resolved_url = $resolved_url['about'];
+							if($value!='all') {
+								$this->setOpt('fq', '(tag:("'.$value.'") OR subject_vocab_uri:("'.$resolved_url.'"))');
+							}else{
+								if($value!='all') $this->setOpt('fq', '+tag:("'.$value.'")');
+							}
+						}else{
+							if($value!='all') $this->setOpt('fq', '+tag:("'.$value.'")');
+						}
 					}
 					break;
 				case 'originating_source':
