@@ -22,11 +22,12 @@ RewriteRule ^(.*?)/assets/(.*?)/(.*)$ assets/$2/$3 [L]
 RewriteCond $1 !^applications/.*/
 RewriteRule ^(.*?)/assets/(.*?)/(.*)$ applications/$1/$2/assets/$3 [L]
 
+RewriteCond $1 !^(Shibboleth.sso)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !(.*)/$
 RewriteRule ^(.*)$ $1/ [L]
 
-RewriteCond $1 !^(index\.php|robots\.txt|favicon\.ico|legacy|googledocverificationidfile\.html)
+RewriteCond $1 !^(index\.php|robots\.txt|favicon\.ico|legacy|googledocverificationidfile\.html|Shibboleth.sso)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*?)/(.*)$ ./index.php?/$2&app=$1 [L,QSA]
