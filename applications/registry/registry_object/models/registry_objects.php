@@ -563,7 +563,7 @@ class Registry_objects extends CI_Model {
 						       	}
 
 							   	if($args['search']) {
-							   		$args['search'] = $this->db->escape_like_str($args['search']);
+							   		$args['search'] = $db->escape_like_str($args['search']);
 							   		$db->where('(`title` LIKE \'%'.$args['search'].'%\' || `key` LIKE \'%'.$args['search'].'%\' || `registry_objects`.`registry_object_id` LIKE \'%'.$args['search'].'%\')');
 							   		//$db->like('title', $args['search']);
 							   		//$db->or_like('key', $args['search']);
