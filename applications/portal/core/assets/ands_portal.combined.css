@@ -3049,7 +3049,13 @@ span.darkgrey {
   color: #7B7E80 !important;
 }
 
-/* line 14, ../sass/ands_portal.scss */
+/* line 13, ../sass/ands_portal.scss */
+.theme_content_section ul {
+  list-style-type: disc !important;
+  margin-left: 15px;
+}
+
+/* line 21, ../sass/ands_portal.scss */
 .sidebar .search-result .post {
   height: auto;
   padding: 0;
@@ -3057,15 +3063,15 @@ span.darkgrey {
   min-height: 0;
   border: 0;
 }
-/* line 20, ../sass/ands_portal.scss */
+/* line 27, ../sass/ands_portal.scss */
 .sidebar .search-result .post .excerpt {
   display: none;
 }
-/* line 23, ../sass/ands_portal.scss */
+/* line 30, ../sass/ands_portal.scss */
 .sidebar .search-result .post .class_icon {
   display: none;
 }
-/* line 26, ../sass/ands_portal.scss */
+/* line 33, ../sass/ands_portal.scss */
 .sidebar .search-result .post a.title {
   color: #84a07b !important;
   line-height: 1.5;
@@ -3075,55 +3081,62 @@ span.darkgrey {
   padding: 4px 0;
   font-size: 1em;
 }
-/* line 34, ../sass/ands_portal.scss */
+/* line 41, ../sass/ands_portal.scss */
 .sidebar .search-result .post a.title:hover {
   color: #eb7700 !important;
 }
-/* line 38, ../sass/ands_portal.scss */
+/* line 45, ../sass/ands_portal.scss */
 .sidebar .search-result .post img.logo {
   display: none;
 }
-/* line 41, ../sass/ands_portal.scss */
+/* line 48, ../sass/ands_portal.scss */
 .sidebar .search-result .post:hover {
   border: 0;
   margin: 0;
 }
 
-/* line 50, ../sass/ands_portal.scss */
+/* line 57, ../sass/ands_portal.scss */
+.search-result .portal-icon {
+  display: none;
+}
+
+/* line 63, ../sass/ands_portal.scss */
 .list-style-search .post {
   height: auto;
   padding: 0;
+  margin: 0;
   margin-left: 0;
   min-height: 0;
   border: 0;
 }
-/* line 56, ../sass/ands_portal.scss */
+/* line 70, ../sass/ands_portal.scss */
 .list-style-search .post .excerpt {
   display: none;
 }
-/* line 59, ../sass/ands_portal.scss */
+/* line 73, ../sass/ands_portal.scss */
 .list-style-search .post .class_icon {
   display: none;
 }
-/* line 62, ../sass/ands_portal.scss */
+/* line 76, ../sass/ands_portal.scss */
 .list-style-search .post a.title {
   color: #84a07b !important;
   line-height: 1.5;
   font-weight: normal;
   text-decoration: none;
+  display: inline;
   outline: none;
   padding: 4px 0;
   font-size: 1em;
 }
-/* line 70, ../sass/ands_portal.scss */
+/* line 85, ../sass/ands_portal.scss */
 .list-style-search .post a.title:hover {
   color: #eb7700 !important;
 }
-/* line 74, ../sass/ands_portal.scss */
+/* line 89, ../sass/ands_portal.scss */
 .list-style-search .post img.logo {
   display: none;
 }
-/* line 77, ../sass/ands_portal.scss */
+/* line 92, ../sass/ands_portal.scss */
 .list-style-search .post:hover {
   height: auto;
   padding: 0;
@@ -3131,8 +3144,16 @@ span.darkgrey {
   min-height: 0;
   border: 0;
 }
+/* line 99, ../sass/ands_portal.scss */
+.list-style-search .post:last-of-type {
+  margin-bottom: 10px;
+}
+/* line 103, ../sass/ands_portal.scss */
+.list-style-search .post:last-child {
+  margin-bottom: 10px;
+}
 
-/* line 89, ../sass/ands_portal.scss */
+/* line 110, ../sass/ands_portal.scss */
 div.login_banner {
   width: 100%;
   background: #f4f5f6;
@@ -3143,7 +3164,7 @@ div.login_banner {
   display: none;
 }
 
-/* line 99, ../sass/ands_portal.scss */
+/* line 120, ../sass/ands_portal.scss */
 div.theme-page-item {
   border: 1px solid #ccc;
   margin: 10px;
@@ -3152,36 +3173,36 @@ div.theme-page-item {
   float: left;
   overflow: hidden;
 }
-/* line 106, ../sass/ands_portal.scss */
+/* line 127, ../sass/ands_portal.scss */
 div.theme-page-item img.cover {
   height: 150px;
   width: 100%;
   overflow: hidden;
 }
-/* line 111, ../sass/ands_portal.scss */
+/* line 132, ../sass/ands_portal.scss */
 div.theme-page-item h4.theme-page-title {
   padding: 10px;
   overflow: hidden;
   text-align: center;
 }
-/* line 115, ../sass/ands_portal.scss */
+/* line 136, ../sass/ands_portal.scss */
 div.theme-page-item h4.theme-page-title a {
   text-align: center;
 }
-/* line 119, ../sass/ands_portal.scss */
+/* line 140, ../sass/ands_portal.scss */
 div.theme-page-item p.theme-page-desc {
   padding: 10px;
   height: 100px;
   overflow: auto;
 }
 
-/* line 126, ../sass/ands_portal.scss */
+/* line 147, ../sass/ands_portal.scss */
 .add_tag_form {
   width: 100%;
   position: relative;
   display: block;
 }
-/* line 130, ../sass/ands_portal.scss */
+/* line 151, ../sass/ands_portal.scss */
 .add_tag_form input#tag_value {
   display: inline;
   padding: 10px;
@@ -3189,11 +3210,11 @@ div.theme-page-item p.theme-page-desc {
   position: relative;
   background: white !important;
 }
-/* line 137, ../sass/ands_portal.scss */
+/* line 158, ../sass/ands_portal.scss */
 .add_tag_form .twitter-typeahead {
   display: inline !important;
 }
-/* line 140, ../sass/ands_portal.scss */
+/* line 161, ../sass/ands_portal.scss */
 .add_tag_form button#tag_btn {
   display: inline-block;
   height: 40px;
@@ -3205,108 +3226,108 @@ div.theme-page-item p.theme-page-desc {
   padding: 11px 15px;
   display: inline-block;
 }
-/* line 150, ../sass/ands_portal.scss */
+/* line 171, ../sass/ands_portal.scss */
 .add_tag_form button#tag_btn:hover {
   cursor: pointer;
   background: #ff9930;
 }
 
-/* line 157, ../sass/ands_portal.scss */
+/* line 178, ../sass/ands_portal.scss */
 .suggestion-source {
   float: right;
   font-size: 11px;
   color: #ccc;
 }
 
-/* line 163, ../sass/ands_portal.scss */
+/* line 184, ../sass/ands_portal.scss */
 div.linkrecords {
   margin: 10px 10px 20px 40px;
   font-size: 13px;
 }
-/* line 166, ../sass/ands_portal.scss */
+/* line 187, ../sass/ands_portal.scss */
 div.linkrecords div.linkrecords_container {
   margin: 5px 20px;
 }
-/* line 169, ../sass/ands_portal.scss */
+/* line 190, ../sass/ands_portal.scss */
 div.linkrecords div.linkrecords_container li span {
   color: #999;
 }
 
-/* line 175, ../sass/ands_portal.scss */
+/* line 196, ../sass/ands_portal.scss */
 div.theme_page_banner {
   border: 1px solid #ccc;
   margin-bottom: 5px;
   overflow: hidden;
 }
-/* line 179, ../sass/ands_portal.scss */
+/* line 200, ../sass/ands_portal.scss */
 div.theme_page_banner div.img_slot {
   height: 27px;
   overflow: hidden;
 }
-/* line 183, ../sass/ands_portal.scss */
+/* line 204, ../sass/ands_portal.scss */
 div.theme_page_banner div.theme_page_header {
   padding: 0px 10px;
 }
-/* line 185, ../sass/ands_portal.scss */
+/* line 206, ../sass/ands_portal.scss */
 div.theme_page_banner div.theme_page_header h4 a {
   font-size: 13px;
 }
 
-/* line 192, ../sass/ands_portal.scss */
+/* line 213, ../sass/ands_portal.scss */
 img.linked_records {
   cursor: pointer;
 }
 
-/* line 196, ../sass/ands_portal.scss */
+/* line 217, ../sass/ands_portal.scss */
 .linked_record_tooltip_title {
   font-weight: bold;
 }
 
 /* qTip popup in lightcream */
-/* line 202, ../sass/ands_portal.scss */
+/* line 223, ../sass/ands_portal.scss */
 .ui-tooltip-lightcream {
   background-color: rgba(252, 249, 216, 0.6);
   border-color: #E0DBA3;
   border-width: 1px !important;
 }
-/* line 208, ../sass/ands_portal.scss */
+/* line 229, ../sass/ands_portal.scss */
 .ui-tooltip-lightcream .ui-tooltip-content {
   width: 100%;
   text-align: center;
 }
 
-/* line 216, ../sass/ands_portal.scss */
+/* line 237, ../sass/ands_portal.scss */
 ul.linkedrecords-list li {
   padding: 10px 0;
 }
-/* line 219, ../sass/ands_portal.scss */
+/* line 240, ../sass/ands_portal.scss */
 ul.linkedrecords-list li a span {
   display: block;
   color: #454545;
 }
-/* line 223, ../sass/ands_portal.scss */
+/* line 244, ../sass/ands_portal.scss */
 ul.linkedrecords-list li a:hover span {
   color: #454545;
 }
-/* line 227, ../sass/ands_portal.scss */
+/* line 248, ../sass/ands_portal.scss */
 ul.linkedrecords-list li:hover {
   background-color: rgba(252, 249, 216, 0.3);
 }
-/* line 232, ../sass/ands_portal.scss */
+/* line 253, ../sass/ands_portal.scss */
 ul.linkedrecords-list li + li {
   border-top: 1px solid #ccc;
 }
 
-/* line 237, ../sass/ands_portal.scss */
+/* line 258, ../sass/ands_portal.scss */
 .form-field {
   display: none;
 }
 
-/* line 241, ../sass/ands_portal.scss */
+/* line 262, ../sass/ands_portal.scss */
 .login_st {
   cursor: pointer;
 }
-/* line 243, ../sass/ands_portal.scss */
+/* line 264, ../sass/ands_portal.scss */
 .login_st .social_profile_pic {
   margin-top: -5px;
   margin-left: 10px;
@@ -3315,7 +3336,7 @@ ul.linkedrecords-list li + li {
   border: 2px solid #84a07b;
 }
 
-/* line 252, ../sass/ands_portal.scss */
+/* line 273, ../sass/ands_portal.scss */
 .portal-icon {
   display: inline-block;
   width: 16px;
@@ -3325,47 +3346,47 @@ ul.linkedrecords-list li + li {
   background-repeat: no-repeat;
 }
 
-/* line 261, ../sass/ands_portal.scss */
+/* line 282, ../sass/ands_portal.scss */
 .portal-icon-delete {
   background-image: url("images/delete.png");
 }
 
-/* line 264, ../sass/ands_portal.scss */
+/* line 285, ../sass/ands_portal.scss */
 .portal-icon-collection {
   background-image: url("images/collection.png");
 }
 
-/* line 265, ../sass/ands_portal.scss */
+/* line 286, ../sass/ands_portal.scss */
 .portal-icon-activity {
   background-image: url("images/activity.png");
 }
 
-/* line 266, ../sass/ands_portal.scss */
+/* line 287, ../sass/ands_portal.scss */
 .portal-icon-service {
   background-image: url("images/service.png");
 }
 
-/* line 267, ../sass/ands_portal.scss */
+/* line 288, ../sass/ands_portal.scss */
 .portal-icon-party {
   background-image: url("images/party.png");
 }
 
-/* line 268, ../sass/ands_portal.scss */
+/* line 289, ../sass/ands_portal.scss */
 .portal-icon-info {
   background-image: url("images/info.png");
 }
 
-/* line 269, ../sass/ands_portal.scss */
+/* line 290, ../sass/ands_portal.scss */
 .portal-icon-caret {
   background-image: url("images/caret.png");
 }
 
-/* line 271, ../sass/ands_portal.scss */
+/* line 292, ../sass/ands_portal.scss */
 .explorer_layout_container {
   background: white;
   border: 1px solid #ccc;
 }
-/* line 274, ../sass/ands_portal.scss */
+/* line 295, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_facet {
   float: left;
   width: 35%;
@@ -3374,55 +3395,55 @@ ul.linkedrecords-list li + li {
   max-height: 620px;
   overflow: auto;
 }
-/* line 282, ../sass/ands_portal.scss */
+/* line 303, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_facet ul li {
   list-style-type: none;
   padding: 4px 0;
 }
-/* line 285, ../sass/ands_portal.scss */
+/* line 306, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_facet ul li a {
   color: #84a07b;
 }
-/* line 288, ../sass/ands_portal.scss */
+/* line 309, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_facet ul li a:hover {
   color: #eb7700;
 }
-/* line 295, ../sass/ands_portal.scss */
+/* line 316, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_right {
   float: left;
   width: 65%;
   padding: 0 10px;
 }
-/* line 299, ../sass/ands_portal.scss */
+/* line 320, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_right div.explorer_layout_result {
   position: relative;
   padding: 10px;
   max-height: 620px;
   overflow: auto;
 }
-/* line 304, ../sass/ands_portal.scss */
+/* line 325, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_right div.explorer_layout_result .ro_preview {
   width: 100%;
   margin-left: 0;
 }
-/* line 307, ../sass/ands_portal.scss */
+/* line 328, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_right div.explorer_layout_result .ro_preview .ro_preview_header .title {
   margin-left: 0;
 }
-/* line 310, ../sass/ands_portal.scss */
+/* line 331, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_right div.explorer_layout_result .ro_preview .ro_preview_description {
   font-size: 13px;
 }
-/* line 312, ../sass/ands_portal.scss */
+/* line 333, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_right div.explorer_layout_result .ro_preview .ro_preview_description .ro_preview_footer a {
   color: #84a07b;
 }
-/* line 316, ../sass/ands_portal.scss */
+/* line 337, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_right div.explorer_layout_result .ro_preview .relations {
   color: #9bb692;
   padding: 0 5px;
 }
-/* line 321, ../sass/ands_portal.scss */
+/* line 342, ../sass/ands_portal.scss */
 .explorer_layout_container div.explorer_layout_right div.explorer_layout_result a.load_more {
   background: #eee;
   font-weight: bold;
@@ -3433,17 +3454,17 @@ ul.linkedrecords-list li + li {
   display: block;
 }
 
-/* line 335, ../sass/ands_portal.scss */
+/* line 356, ../sass/ands_portal.scss */
 .theme_content_section {
   margin: 0px 0px 10px 0px;
 }
 
-/* line 339, ../sass/ands_portal.scss */
+/* line 360, ../sass/ands_portal.scss */
 .user_tags a {
   background: #c2e3f4;
 }
 
-/* line 343, ../sass/ands_portal.scss */
+/* line 364, ../sass/ands_portal.scss */
 .login_close {
   float: right;
   margin-right: 200px;

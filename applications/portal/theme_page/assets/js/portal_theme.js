@@ -109,7 +109,7 @@ angular.module('portal_theme',[]).
 
 			var view_search_text = $('.theme_search_view_search_text', this).val();
 			if(view_search_text==''){
-				view_search_text = 'View All Search';
+				view_search_text = 'View Full Search';
 			}
 			
 			var search_id = $(this).attr('id');
