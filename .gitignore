@@ -11,5 +11,7 @@ node_modules/
 .sass-cache/
 engine/cache/
 etc/misc/python/myconfig.py
+etc/misc/python/cert.pem
+etc/misc/python/__*
 .idea/
 wordpress/
