@@ -35,38 +35,39 @@ class Relationships_Extension extends ExtensionBase
 								"origin" => 'EXPLICIT');
 			$new_relationships[] = json_encode($relationship);
 
-			if($ds->create_primary_relationships == DB_TRUE)
-			{
-			 	if($ds->primary_key_1 && $ds->primary_key_1 != $this->ro->key && !in_array($ds->primary_key_1, $explicit_keys))
-				{
-					$explicit_keys[] = (string) $ds->primary_key_1;
-					$this_relationship = $ds->{strtolower($this->ro->class) . "_rel_1"};
-					$relationship = array("registry_object_id" => (string)$this->ro->id,
-										"related_object_key" => (string) $ds->primary_key_1,
-										"related_object_class"=> (string) $this->getRelatedObjectClass((string)$ds->primary_key_1),
-										"relation_type" => (string) $this_relationship,
-										"relation_description" => "",
-										"relation_url" => "",
-										"origin" => PRIMARY_RELATIONSHIP);
-					$new_relationships[] = json_encode($relationship);
-				}
-				if($ds->primary_key_2 && $ds->primary_key_2 != $this->ro->key && !in_array($ds->primary_key_2, $explicit_keys))
-				{
-					$explicit_keys[] = (string) $ds->primary_key_2;
-					$this_relationship = $ds->{strtolower($this->ro->class) . "_rel_2"};
-					$relationship = array("registry_object_id" => $this->ro->id,
-										"related_object_key" => (string) $ds->primary_key_2,
-										"related_object_class"=> (string) $this->getRelatedObjectClass((string)$ds->primary_key_2),
-										"relation_type" => (string) $this_relationship,
-										"relation_description" => "",
-										"relation_url" => "",
-										"origin" => PRIMARY_RELATIONSHIP);
-					$new_relationships[] = json_encode($relationship);
-				}
-			}
+
 		}
 
-
+        if($ds->create_primary_relationships == DB_TRUE)
+        {
+            if($ds->primary_key_1 && $ds->primary_key_1 != $this->ro->key && !in_array($ds->primary_key_1, $explicit_keys))
+            {
+                $explicit_keys[] = (string) $ds->primary_key_1;
+                $this_relationship = $ds->{strtolower($this->ro->class) . "_rel_1"};
+                $relationship = array("registry_object_id" => (string)$this->ro->id,
+                    "related_object_key" => (string) $ds->primary_key_1,
+                    "related_object_class"=> (string) $this->getRelatedObjectClass((string)$ds->primary_key_1),
+                    "relation_type" => (string) $this_relationship,
+                    "relation_description" => "",
+                    "relation_url" => "",
+                    "origin" => PRIMARY_RELATIONSHIP);
+                $new_relationships[] = json_encode($relationship);
+            }
+            if($ds->primary_key_2 && $ds->primary_key_2 != $this->ro->key && !in_array($ds->primary_key_2, $explicit_keys))
+            {
+                $explicit_keys[] = (string) $ds->primary_key_2;
+                $this_relationship = $ds->{strtolower($this->ro->class) . "_rel_2"};
+                $relationship = array("registry_object_id" => $this->ro->id,
+                    "related_object_key" => (string) $ds->primary_key_2,
+                    "related_object_class"=> (string) $this->getRelatedObjectClass((string)$ds->primary_key_2),
+                    "relation_type" => (string) $this_relationship,
+                    "relation_description" => "",
+                    "relation_url" => "",
+                    "origin" => PRIMARY_RELATIONSHIP);
+                $new_relationships[] = json_encode($relationship);
+            }
+        }
+        
 		$processedTypesArray = array('collection','party','service','activity');
 		
 		$this->db->where(array('registry_object_id' => $this->ro->id));

@@ -78,7 +78,7 @@ class XML_Extension extends ExtensionBase
 
 			$this->_simplexml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
 			$this->_simplexml->registerXPathNamespace("extRif", EXTRIF_NAMESPACE);
-			
+            $this->_simplexml->registerXPathNamespace("extrif", EXTRIF_NAMESPACE);
 			return $this->_simplexml;
 		}
 	}
