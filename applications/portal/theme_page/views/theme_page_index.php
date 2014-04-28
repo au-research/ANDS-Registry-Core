@@ -64,7 +64,7 @@
 				<img src="<?php echo base_url();?>assets/img/{{class}}.png" class="class_icon icontip_{{class}}" type="{{class}}"/>
 		    {{/class}}
 			{{#list_title}}
-				<a href="<?php echo base_url();?>{{slug}}" class="title">{{list_title}}</a>
+				<i class="portal-icon portal-icon-{{class}}"></i> <a href="<?php echo base_url();?>{{slug}}" class="title">{{list_title}}</a>
 			{{/list_title}}
 			{{#description}}
 				<div class="excerpt">
@@ -73,7 +73,7 @@
 		    {{/description}}
 		</div>
 	{{/result.docs}}
-	<a href="<?php echo portal_url('search');?>#!/{{filter_query}}">View Full Search ({{numFound}} results)</a>
+	<a href="<?php echo portal_url('search');?>#!/{{filter_query}}">{{view_search_text}} ({{numFound}} results)</a>
 {{/has_result}}
 
 {{#no_result}}

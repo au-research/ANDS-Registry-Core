@@ -288,7 +288,7 @@ class Registry extends MX_Controller {
 		header('Content-type: application/json');
 		$this->load->library('solr');
 		$items = array();
-		$accepted_facet = array('class', 'type', 'group', 'tag', 'originating_source', 'subject_value_resolved');
+		$accepted_facet = array('class', 'type', 'group', 'originating_source', 'subject_value_resolved');
 		if(in_array($what, $accepted_facet)){
 			$this->solr->setFacetOpt('field', $what);
 			$this->solr->setFacetOpt('sort','index');
@@ -312,6 +312,23 @@ class Registry extends MX_Controller {
 					array_push($items, array('value'=>$ds->key, 'label'=>$ds->title));
 				}
 			}
+		}else if($what=='tag'){
+			$this->load->library('vocab');
+			$matches = $this->vocab->anyContains($q, 'anzsrc-for');
+			foreach($matches as $match){
+				array_push($items, array('value'=>$match, 'label'=>$match));
+			}
+			$matches = $this->vocab->anyContains($q, 'anzsrc-seo');
+			foreach($matches as $match){
+				array_push($items, array('value'=>$match, 'label'=>$match));
+			}
+
+			$this->db->select('name')->like('name', $q);
+			$matches = $this->db->get_where('tags', array('type'=>'public'));
+			foreach($matches->result() as $match){
+				array_push($items, array('value'=>$match, 'label'=>$match));
+			}
+
 		}
 		echo json_encode($items);
 	}

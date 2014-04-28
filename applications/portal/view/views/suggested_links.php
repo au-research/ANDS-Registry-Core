@@ -7,19 +7,26 @@ if ($suggested_links_contents)
 	if ($suggested_links_contents['identifiers'] && $suggested_links_contents['identifiers']['count'] > 0)
 	{
 		$count_str = ($suggested_links_contents['identifiers']['count'] == 1 ? "record" : "records");
-		$output .= '<h5><a href="#" class="show_accordion" data-title="Records with matching identifiers" data-suggestor="ands_identifiers" data-start="0" data-rows="10">'.$suggested_links_contents['identifiers']['count'].' '.$count_str.'</a> with matching identifiers</h5>';
+		$output .= '<h5><a href="javascript:;" class="" data-title="Records with matching identifiers" data-suggestor="ands_identifiers" data-start="0" data-rows="10" relation_type="identifier" ng-click="open($event)">'.$suggested_links_contents['identifiers']['count'].' '.$count_str.'</a> with matching identifiers</h5>';
+		foreach($suggested_links_contents['identifiers']['values'] as $v) {
+			$output .= '<span class="identifier_value hide">'.$v.'</span>';
+		}
 	}
 
 	// Matching identifiers
 	if ($suggested_links_contents['subjects'] && $suggested_links_contents['subjects']['count'] > 0)
 	{
 		$count_str = ($suggested_links_contents['subjects']['count'] == 1 ? "record" : "records");
-		$output .= '<h5><a href="#" class="show_accordion" data-title="Records with matching subjects" data-suggestor="ands_subjects" data-start="0" data-rows="10">'.$suggested_links_contents['subjects']['count'].' '.$count_str.'</a> with matching subjects</h5>';
+		$output .= '<h5><a href="javascript:;" class="" data-title="Records with matching subjects" data-suggestor="ands_subjects" data-start="0" data-rows="10" relation_type="subject" ng-click="open($event)">'.$suggested_links_contents['subjects']['count'].' '.$count_str.'</a> with matching subjects</h5>';
+
+		foreach($suggested_links_contents['subjects']['values'] as $v) {
+			$output .= '<span class="subject_value hide">'.$v.'</span>';
+		}
 	}
 
 	if ($output)
 	{
-		$output = "<h2>Suggested Links</h2><h4>Internal Records</h4>"  .  $output;
+		$output = '<h2>Suggested Links</h2><h4>Internal Records</h4>'  .  $output.'';
 		echo $output;
 	}
 

@@ -101,7 +101,7 @@ $(function(){
             }
         });
 
-    }); 
+    });
 
 
 
@@ -267,6 +267,10 @@ function processRelatedObjects(maxRelated)
                 if(origin == 'REVERSE_EXT'|| origin == 'REVERSE_INT')
                 {
                     revStr = "<em> (Automatically generated reverse link) </em>"
+                }
+                if( origin == 'PRIMARY')
+                {
+                    revStr = "<em> (Automatically generated primary link) </em>"
                 }
                 if(origin=='IDENTIFIER REVERSE')
                 {

@@ -42,7 +42,7 @@ class Data_source extends MX_Controller {
 
 		$data['dataSources'] = $items;
 		$data['scripts'] = array('data_sources');
-		$data['js_lib'] = array('core', 'ands_datepicker','vocab_widget');
+		$data['js_lib'] = array('core', 'ands_datepicker','vocab_widget','rosearch_widget');
 
 		$this->load->view("data_source_index", $data);
 	}
@@ -1112,13 +1112,11 @@ public function getContributorGroupsEdit()
 				if($this->input->post('create_primary_relationships')=='false')
 				{
 					switch($attrib){
-						case 'class_1':
 						case 'primary_key_1':
 						case 'service_rel_1':
 						case 'activity_rel_1':
 						case 'collection_rel_1':
 						case 'party_rel_1':
-						case 'class_2':
 						case 'primary_key_2':
 						case 'service_rel_2':
 						case 'activity_rel_2':

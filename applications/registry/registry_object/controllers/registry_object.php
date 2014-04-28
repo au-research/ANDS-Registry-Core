@@ -25,8 +25,8 @@ class Registry_object extends MX_Controller {
 			$this->load->model('data_source/data_sources', 'ds');
 			$ds = $this->ds->getByID($ro->data_source_id);
 
-			$data['scripts'] = array('view_registry_object');
-			$data['js_lib'] = array('core','prettyprint');
+			$data['scripts'] = array('view_registry_object', 'registry_tag');
+			$data['js_lib'] = array('core','prettyprint', 'angular');
 			$data['title'] = $ro->title;
 			$data['ro'] = $ro;
 			$data['ro_id'] = $ro_id;

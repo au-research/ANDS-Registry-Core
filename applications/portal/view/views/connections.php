@@ -105,31 +105,31 @@
 				case "party_one":
 					$heading = "<h3>People</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ng-click="open($event)" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' People</a></p>';
+						$footer = '<p><a href="javascript:;" relation_type="'.$connections.'" ng-click="open($event)" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' People</a></p>';
 					}
 					break;	
 				case "party_multi":
 					$heading = "<h3>Organisations & Groups</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ng-click="open($event)" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Organisations & Groups</a></p>';
+						$footer = '<p><a href="javascript:;" relation_type="'.$connections.'" ng-click="open($event)" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Organisations & Groups</a></p>';
 					}
 					break;	
 				case "activity":
 					$heading = "<h3>Activities</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ng-click="open($event)" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Activities</a></p>';
+						$footer = '<p><a href="javascript:;" relation_type="'.$connections.'" ng-click="open($event)" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Activities</a></p>';
 					}
 					break;	
 				case "service":
 					$heading = "<h3>Services</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ng-click="open($event)" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Services</a></p>';
+						$footer = '<p><a href="javascript:;" relation_type="'.$connections.'" ng-click="open($event)" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Services</a></p>';
 					}
 					break;
 				case "collection":
 					$heading = "<h3>Collections</h3>";
 					if($count[$connections.'_count'] > 5){
-						$footer = '<p><a href="javascript:;" class="view_all_connection" relation_type="'.$connections.'" ng-click="open($event)" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Collections</a></p>';
+						$footer = '<p><a href="javascript:;" relation_type="'.$connections.'" ng-click="open($event)" ro_slug="'.$ro_slug.'" ro_id="'.$ro_id.'">View All '.$count[$connections.'_count']. ' Collections</a></p>';
 					}
 					break;	
 				default:
@@ -143,14 +143,9 @@
 	}
 
 	// Only display if there are actually some connections to show...
-	if ($connDiv)
-	{
-		echo '<div ng-app="connections" ng-controller="openConnections">';
+	if ($connDiv) {
 		echo "<h2>Connections</h2>";
 		echo $connDiv;
 		echo "<p><br/></p>";
-		$this->load->view('connections_layout');
-		echo '</div>';
 	}
-
-?>
+	$this->load->view('explorer_layout');
