@@ -245,8 +245,7 @@
         <div id="citation" style="position:relative;clear:both;">
             <xsl:choose>
                 <xsl:when test="ro:citationInfo/ro:citationMetadata[descendant::text() != '']">
-                    <p><xsl:text>&amp;nbsp;</xsl:text></p>
-                    <h4>How to Cite this Collection</h4>
+                    <h4 style="margin-top:30px;">How to Cite this Collection</h4>
                        <!--   <a title="Add this article to your Mendeley library" target="_blank">
                        <xsl:attribute name="href">
                         http://www.mendeley.com/import/?url=<xsl:value-of select="ro:citationInfo/ro:citationMetadata/ro:url"/>
@@ -258,8 +257,7 @@
                         </div>
                     </xsl:when>
                     <xsl:when test="ro:citationInfo/ro:fullCitation[text() != '']">
-                        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-                        <h4>How to Cite this Collection</h4>
+	                    <h4 style="margin-top:30px;">How to Cite this Collection</h4>
                         <h5>Full Citation:</h5>
                         <div class="citationDisplay">
                           <xsl:apply-templates select="ro:citationInfo/ro:fullCitation"/>
@@ -303,33 +301,27 @@
 
     <!-- DISPLAY RELATED INFO -->
     <xsl:if test="ro:relatedInfo[@type='publication' and ro:identifier/text() != '']">
-        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-        <h4>Related Publications</h4>
+        <h4 style="margin-top:30px">Related Publications</h4>
         <xsl:apply-templates select="ro:relatedInfo[@type='publication' and ro:identifier/text() != '']"/> 
     </xsl:if>
     <xsl:if test="ro:relatedInfo[@type='website' and ro:identifier/text() != '']">
-        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-        <h4>Related Websites</h4>
+        <h4 style="margin-top:30px;">Related Websites</h4>
         <xsl:apply-templates select="ro:relatedInfo[@type='website' and ro:identifier/text() != '']"/> 
     </xsl:if>
     <xsl:if test="ro:relatedInfo[@type='reuseInformation' and ro:identifier/text() != '']">
-        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-        <h4>Reuse Information</h4>
+	    <h4 style="margin-top:30px;">Reuse Information</h4>
         <xsl:apply-templates select="ro:relatedInfo[@type='reuseInformation' and ro:identifier/text() != '']"/> 
     </xsl:if>
     <xsl:if test="ro:relatedInfo[@type='dataQualityInformation' and ro:identifier/text() != '']">
-        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-        <h4>Data Quailty Information</h4>
+	    <h4 style="margin-top:30px;">Data Quality Information</h4>
         <xsl:apply-templates select="ro:relatedInfo[@type='dataQualityInformation' and ro:identifier/text() != '']"/> 
     </xsl:if>
     <xsl:if test="ro:relatedInfo[@type='metadata' and ro:identifier/text() != '']">
-        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-        <h4>Additional Metadata</h4>
+	    <h4 style="margin-top:30px;">Additional Metadata</h4>
         <xsl:apply-templates select="ro:relatedInfo[@type='metadata' and ro:identifier/text() != '']"/> 
     </xsl:if>
     <xsl:if test="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity'] or ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]">
-        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-        <h4>More Information</h4>
+	    <h4 style="margin-top:30px;">More Information</h4>
         <xsl:apply-templates select="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity']"/>
         <xsl:apply-templates select="ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]"/>
     </xsl:if>
@@ -353,8 +345,7 @@
         </xsl:variable>
           
 
-          <p>&amp;nbsp;</p>
-          <h4><xsl:value-of select="$coverageLabel"/></h4>
+          <h4 style="margin-top:30px"><xsl:value-of select="$coverageLabel"/></h4>
 
             <xsl:if test="../extRif:extendedMetadata/extRif:spatialGeometry/extRif:polygon">          
               <div id="spatial_coverage_map"></div>
@@ -376,7 +367,7 @@
       <xsl:if test="ro:coverage/ro:temporal or ro:location[@dateFrom!=''] or ro:location[@dateTo!='']">
 
         <xsl:if test="ro:coverage/ro:temporal/ro:date | ro:location[@dateFrom!=''] | ro:location[@datefrom!=''] | ro:location[@dateTo!=''] | ro:coverage/ro:temporal/ro:text">
-            <p>&amp;nbsp;</p><h4>Temporal Coverage:</h4>
+           <h4 style="margin-top:30px;">Temporal Coverage:</h4>
         </xsl:if>
 
         <xsl:if test="ro:coverage/ro:temporal/ro:date">
@@ -393,9 +384,7 @@
 
     </xsl:if>
 
-
-	<p><xsl:text>&amp;nbsp;</xsl:text></p>
-	<h4>Subjects</h4>
+	<h4 style="margin-top:30px">Subjects</h4>
 
   <!-- DISPLAY SUBJECTS -->
   <xsl:if test="../extRif:extendedMetadata/extRif:subjects/extRif:subject[extRif:subject_value/text() != '']">
@@ -462,10 +451,8 @@
 
     <!-- DISPLAY DATES -->
     <xsl:if test="ro:dates[descendant::text() != '']">
-        <p><xsl:text>&amp;nbsp;</xsl:text></p>
-        <h4>Dates</h4>
+        <h4 style="margin-top:30px">Dates</h4>
           <xsl:apply-templates select="ro:dates[descendant::text() != '']"/>
-        <p>&amp;nbsp;</p>
     </xsl:if>           
     
     <!-- DISPLAY IDENTIFIERS -->
