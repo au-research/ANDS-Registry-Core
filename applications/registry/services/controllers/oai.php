@@ -49,7 +49,7 @@ class Oai extends MX_Controller
 		array('prefix' => 'oai_dc',
 		      'schema' => 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd',
 		      'ns'     => 'http://www.openarchives.org/OAI/2.0/oai_dc/'),
-		array('prefix' => 'rif',
+		array('prefix' =>  RIFCS_SCHEME,
 		      'schema' => 'http://services.ands.org.au/documentation/rifcs/1.3/schema/registryObjects.xsd',
 		      'ns'     => 'http://ands.org.au/standards/rif-cs/registryObjects'),
 		array('prefix' => 'extRif',

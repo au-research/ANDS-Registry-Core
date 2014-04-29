@@ -17,6 +17,9 @@
             <publisher xmlns="http://purl.org/dc/elements/1.1/">
                 <xsl:value-of select="@group"/>
             </publisher>
+            <source xmlns="http://purl.org/dc/elements/1.1/">
+                <xsl:value-of select="ro:originatingSource"/>
+            </source>
             <identifier xmlns="http://purl.org/dc/elements/1.1/">
                 <xsl:value-of select="concat($base_url,extRif:extendedMetadata/extRif:slug)"/>
             </identifier>  
@@ -34,6 +37,9 @@
     </xsl:template>
    
     <xsl:template match="ro:collection | ro:party | ro:activity | ro:service">
+        <type xmlns="http://purl.org/dc/elements/1.1/">
+            <xsl:value-of select="@type"/>
+        </type>
         <xsl:apply-templates select="ro:identifier"/>
         <xsl:apply-templates select="ro:relatedInfo"/>
         <xsl:apply-templates select="ro:description"/>   

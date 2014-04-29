@@ -62,9 +62,11 @@ class _record
 		switch($format)
 		{
 		case 'dci':
-			$data = "<DigitalContentData>\n";
-			$data .= $this->_rec->transformToDCI();
-			$data .= "\n</DigitalContentData>";
+            $dciDoc = $this->_rec->transformToDCI();
+            if($dciDoc != "")
+            {
+			    $data = "<DigitalContentData>\n".$dciDoc."\n</DigitalContentData>";
+            }
 			break;
 		case 'oai_dc':
 			$data = $this->_rec->transformToDC();
@@ -75,6 +77,8 @@ class _record
 		case 'extRif':
 			$data = removeXMLDeclaration($this->_rec->getExtRif());
 			break;
+        default:
+            $data = removeXMLDeclaration($this->_rec->getRecordDataInScheme(null,$format));
 		}
 		if ($data)
 		{

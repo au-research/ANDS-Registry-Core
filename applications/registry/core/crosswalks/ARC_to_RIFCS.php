@@ -278,7 +278,7 @@ class ARC_to_RIFCS extends Crosswalk
 
 
     /**
-     * Map the column headings to csv fields, creating an 
+     * Map the column headings to csv fields, creating an
      * associative array.
      *
      *
@@ -292,7 +292,7 @@ class ARC_to_RIFCS extends Crosswalk
         {
             $csv_value = htmlentities($csv_value);
             $heading = (isset($this->csv_headings[$idx]) ? $this->csv_headings[$idx] : 'NO_HEADING');
-            $mapped_values[$heading] = $csv_value;       
+            $mapped_values[$heading] = $csv_value;
         }
         return $mapped_values;
     }
@@ -353,8 +353,8 @@ class ARC_to_RIFCS extends Crosswalk
         return $this->registryObjectChunks;
     }
 
-    /** 
-     * Write out an array to a STRING .csv (from http://php.net/manual/en/function.fputcsv.php) 
+    /**
+     * Write out an array to a STRING .csv (from http://php.net/manual/en/function.fputcsv.php)
      */
     private function sputcsv($row, $delimiter = ',', $enclosure = '"', $eol = "\n")
     {
@@ -368,20 +368,20 @@ class ARC_to_RIFCS extends Crosswalk
         {
             rewind($fp);
         }
-        
+
         if (fputcsv($fp, $row, $delimiter, $enclosure) === false)
         {
             return false;
         }
-        
+
         rewind($fp);
         $csv = fgets($fp);
-        
+
         if ($eol != PHP_EOL)
         {
             $csv = substr($csv, 0, (0 - strlen(PHP_EOL))) . $eol;
         }
-        
+
         return $csv;
     }
 
