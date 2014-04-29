@@ -98,11 +98,11 @@ class Transforms_Extension extends ExtensionBase
 		try{
 			$xslt_processor = Transforms::get_extrif_to_dci_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML($this->ro->getExtRif());
+			$dom->loadXML(str_replace('&', '&amp;' , utf8_encode($this->ro->getExtRif())));
 			$xslt_processor->setParameter('','dateHarvested', date("Y", $this->ro->created));
 			$xslt_processor->setParameter('','dateRequested', date("Y-m-d"));
 			$xml_output = $xslt_processor->transformToXML($dom);
-
+            if($xml_output == '') return "";
 			$dom = new DOMDocument;
 			$dom->loadXML($xml_output);
 			$sxml = simplexml_import_dom($dom);
@@ -115,105 +115,117 @@ class Transforms_Extension extends ExtensionBase
 				unset($roles[$i]["postproc"]);
 
 				// Change the value of the relation to be human-readable
-				$role->AuthorRole[0] = format_relationship("collection",(string)$role->AuthorRole[0],'EXPLICIT');
-				
+				$role["AuthorRole"] =  format_relationship("collection",(string)$role["AuthorRole"]);
+
 				// Include identifiers and addresses for this author (if they exist in the registry)
-				$researcher_object = $this->_CI->ro->getPublishedByKey((string)$role->ResearcherID[0]);
+				$researcher_object = $this->_CI->ro->getPublishedByKey((string)$role->AuthorID[0]);
+                unset($roles[$i]->AuthorID[0]);
 				if ($researcher_object && $researcher_sxml = $researcher_object->getSimpleXML())
 				{
+                    try
+                    {
+                        // Do we have an address? (using the normalisation_helper.php)
+                        $researcher_addresses = $researcher_sxml->xpath('//ro:location/ro:address');
+                        $address_string = "";
+                        if (is_array($researcher_addresses))
+                        {
+                            foreach($researcher_addresses AS $_addr)
+                            {
+                                if ($_addr->physical)
+                                {
+                                    $address_string .= normalisePhysicalAddress($_addr->physical). " ";
+                                }
+                                else if ($_addr->electronic)
+                                {
+                                    $address_string .= (string) $_addr->electronic->value. " ";
+                                }
+                            }
+                        }
+                        if ($address_string)
+                        {
+                            $role->AuthorAddress->AddressString = $address_string;
+                        }
+                    }
+                    catch (Exception $e)
+                    {
+                        // ignore sloppy coding errors...SimpleXML is awful
+                    }
+
+
 					// Handle the researcher IDs (using the normalisation_helper.php)
-					$researcher_ids = $researcher_sxml->xpath('//ro:identifier');
+					$researcher_ids = $researcher_sxml->xpath('//ro:party/ro:identifier');
+                    //var_dump($researcher_ids);
 					if (is_array($researcher_ids))
-					{	
-						$role->ResearcherID[0] = implode("\n", array_map('normaliseIdentifier', $researcher_ids));
-						if ((string) $role->ResearcherID[0] == "")
-						{
-							unset($roles[$i]->ResearcherID[0]);
-						}
-					}
-					else
 					{
-						unset($roles[$i]->ResearcherID[0]);
+                        foreach($researcher_ids as $researcher_id){
+                            if(strtolower($researcher_id['type']) == 'doi')
+                            {
+                                $doiVal = $this->substringAfter((string)$researcher_id, 'doi.org/');
+                                $author = $role->addChild('AuthorID', $doiVal); // uses the first father tag
+                                $author['type']= $researcher_id['type'];
+                            }
+                            else
+                            {
+                                $author = $role->addChild('AuthorID', (string)$researcher_id); // uses the first father tag
+                                $author['type']= $researcher_id['type'];
+                            }
+                        }
 					}
 
-					try
-					{
-						// Do we have an address? (using the normalisation_helper.php)
-						$researcher_addresses = $researcher_sxml->xpath('//ro:location/ro:address');
-						$address_string = "";
-						if (is_array($researcher_addresses))
-						{
-							foreach($researcher_addresses AS $_addr)
-							{
-								if ($_addr->physical)
-								{
-									$address_string .= normalisePhysicalAddress($_addr->physical);
-								}
-								else if ($_addr->electronic)
-								{
-									$address_string .= (string) $_addr->electronic->value;
-								}
-							}
-						}
-						if ($address_string)
-						{
-							$role->AuthorAddress = $address_string;
-						}
-					}
-					catch (Exception $e)
-					{
-						// ignore sloppy coding errors...SimpleXML is awful
-					}
 				}
 				else
 				{
-					unset($roles[$i]->ResearcherID[0]);
+					unset($roles[$i]->AuthorID[0]);
 				}
 			}
 
 			// Post-process the Grant and Funding info elements
-			$grants = $sxml->xpath('//FundingInfoList[@postproc="1"]');
-			if (isset($grants[0]) && $grant = $grants[0]->GrantNumber)
-			{
-				// Remove the "to-process" marker
-				unset($grants[0]["postproc"]);
+            $fundingInfoList = $sxml->xpath('//FundingInfoList[@postproc="1"]');
 
-				// Include identifiers and addresses for this author (if they exist in the registry)
-				$grant_object = $this->_CI->ro->getPublishedByKey((string)$grant);
-				if ($grant_object && $grant_object->status == PUBLISHED &&
-					$grant_sxml = $grant_object->getSimpleXML(NULL, TRUE))
-				{
-					// Handle the researcher IDs (using the normalisation_helper.php)
-					$grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc']");
-					$related_party = $grant_sxml->xpath("//extRif:related_object[extRif:related_object_relation = 'isFundedBy']");
-					if (is_array($grant_id))
-					{
-						$grant[0] = implode("\n", array_map('normaliseIdentifier', $grant_id));
-						if ((string) $grant[0] == "")
-						{
-							unset($grants[0][0]);
-						}
-						elseif (is_array($related_party) && isset($related_party[0]))
-						{
+            foreach($fundingInfoList as $fundingInfo)
+                unset($fundingInfo["postproc"]);
+            $grants = $sxml->xpath('//ParsedFunding');
+            foreach($grants as $grant){
+                $grantNumber = (string) $grant->GrantNumber;
+                // Include identifiers and addresses for this author (if they exist in the registry)
+                $grant_object = $this->_CI->ro->getPublishedByKey($grantNumber);
+                if ($grant_object && $grant_object->status == PUBLISHED &&
+                    $grant_sxml = $grant_object->getSimpleXML(NULL, true))
+                {
+                   // echo $grantNumber;
+                   // echo $grant_sxml;
+                    // Handle the researcher IDs (using the normalisation_helper.php)
+                    $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc']");
+                    $related_party = $grant_sxml->xpath("//extRif:related_object[extRif:related_object_relation = 'isFunderOf']");
+                    if (is_array($grant_id))
+                    {
+                        $grant->GrantNumber = implode("\n", array_map('normaliseIdentifier', $grant_id));
+                        if (is_array($related_party) && isset($related_party[0]))
+                        {
 
-							$grants[0]->addChild("FundingBody",(string)$related_party[0]->children(EXTRIF_NAMESPACE)->related_object_display_title);
-						}
-					}
-					else
-					{
-						unset($grants[0][0]);
-					}
-				}
-				else
-				{
-					//unset($grants[0][0]);
-				}
-			}
-			$blankFundingInfoList = $sxml->xpath('//FundingInfo[not(FundingInfoList)]');
-			if (isset($blankFundingInfoList[0]))
-			{
-				unset($blankFundingInfoList[0][0]);
-			}
+                            $grant->addChild("FundingOrganization",(string)$related_party[0]->children(EXTRIF_NAMESPACE)->related_object_display_title);
+                        }
+                    }
+                    else
+                    {
+                        unset($grant[0][0]);
+                    }
+                }
+                else
+                {
+                    unset($grant[0][0]);
+                }
+            }
+            $blankFundingInfoList = $sxml->xpath('//FundingInfoList[ParsedFunding/GrantNumber/text() = ""]');
+
+            foreach($blankFundingInfoList as $blankFundingInfo){
+                unset($blankFundingInfo[0][0]);
+            }
+
+
+			$blankFundingInfos = $sxml->xpath('//FundingInfo[not(FundingInfoList)]');
+            foreach($blankFundingInfos as $blankFundingInfo)
+                unset($blankFundingInfo[0][0]);
 
 
 			// Post-process the Citations element
@@ -292,6 +304,15 @@ class Transforms_Extension extends ExtensionBase
 			}
 		}
 	}
+
+    function substringAfter($string, $substring) {
+        $pos = strpos($string, $substring);
+        if ($pos === false)
+            return $string;
+        else
+            return(substr($string, $pos+strlen($substring)));
+    }
+
 
 }
 	

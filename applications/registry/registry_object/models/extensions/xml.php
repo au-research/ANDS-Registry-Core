@@ -68,7 +68,7 @@ class XML_Extension extends ExtensionBase
 			{
 				$xml = $this->getRif($record_data_id);
 			}
-			$this->_simplexml = simplexml_load_string($xml);
+			$this->_simplexml = simplexml_load_string(utf8_encode($xml));
 
 			$namespaces = $this->_simplexml->getNamespaces(true);
 			if ( !in_array(RIFCS_NAMESPACE, $namespaces) )
@@ -87,7 +87,7 @@ class XML_Extension extends ExtensionBase
 	function updateXML($data, $current = TRUE, $scheme = NULL)
 	{
 		$_xml = new _xml($this->ro->id);
-		$_xml->update($data, $current, $scheme); 
+		$changed = $_xml->update($data, $current, $scheme);
 
 		if (is_null($scheme))
 		{
@@ -100,6 +100,7 @@ class XML_Extension extends ExtensionBase
 			$this->_simplexml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
 			$this->_simplexml->registerXPathNamespace("extRif", EXTRIF_NAMESPACE);
 		}
+        return $changed;
 	}
 	
 	
@@ -169,6 +170,30 @@ class XML_Extension extends ExtensionBase
 		$result->free_result();
 		return $data;
 	}
+
+    function getRecordDataInScheme($revision_id = null, $scheme = RIFCS_SCHEME){
+
+        if ($revision_id)
+        {
+            $result = $this->db->select('data')->get_where('record_data', array('id'=>$revision_id, 'scheme'=>$scheme));
+        }
+        else
+        {
+            $result = $this->db->select('data')->order_by('timestamp','desc')->limit(1)->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'scheme'=>$scheme));
+        }
+
+        $data = false;
+        if ($result->num_rows() > 0)
+        {
+            foreach($result->result_array() AS $row)
+            {
+                $data = $row['data'];
+            }
+        }
+        $result->free_result();
+        return $data;
+    }
+
 
 	function getNativeFormat($record_data_id = NULL)
 	{
@@ -316,7 +341,8 @@ class _xml
 												'hash' => $newHash
 											));
 
-		}													
+		}
+        return ($oldHash != $newHash);
 	}
 }
 	

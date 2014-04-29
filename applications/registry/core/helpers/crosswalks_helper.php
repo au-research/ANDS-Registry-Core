@@ -12,6 +12,8 @@ function getCrossWalks()
 
 	// List our crosswalks
 	$CI =& get_instance();
+    echo "LOADING CROSS WALKS";
+
 	$CI->load->helper('directory');
 	$crosswalks = directory_map(REGISTRY_APP_PATH . "core/crosswalks");
 
@@ -19,8 +21,8 @@ function getCrossWalks()
 
 	foreach ($crosswalks AS $cw_class)
 	{
-		// Ignore classes with _filename.php
-		if (substr($cw_class,0,1) == "_") continue;
+		// Ignore directories and classes with _filename.php
+		if (is_array($cw_class) || substr($cw_class,0,1) == "_") continue;
 
 		// Construct the crosswalk object
 		$class_name = str_replace(".php","",$cw_class);

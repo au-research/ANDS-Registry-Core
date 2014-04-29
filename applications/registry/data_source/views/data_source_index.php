@@ -1146,8 +1146,12 @@
 							<div class="controls">
 								<select data-placeholder="Choose a Provider Type" tabindex="1" class="chzn-select input-xlarge" for="provider_type">
 									<option value=""></option>
-									<option value="<?=RIFCS_SCHEME;?>">RIFCS</option>
-									<?php 
+									<?php
+                                    $predefinedProviderTypes = $this->config->item('provider_types');
+                                    foreach($predefinedProviderTypes as $key=>$ppt)
+                                    {
+                                        echo '<option value="' . $ppt['prefix'] . '">' . $key . '</option>' . NL;
+                                    }
 									$crosswalks = getCrosswalks();
 									foreach ($crosswalks AS $crosswalk)
 									{
