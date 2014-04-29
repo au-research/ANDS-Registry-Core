@@ -95,6 +95,33 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 			echo json_encode($record[0]);
 			return;
+		} else if(count($record)==0){
+			//NO EXTRIF, attempt to create one
+			if($this->input->get('slug')){
+				$ro = $this->ro->getBySlug($this->input->get('slug'));
+			}elseif($this->input->get('registry_object_id')){
+				$ro = $this->ro->getByID($this->input->get('registry_object_id'));
+			}
+			if (!$ro) throw new Exception('Registry Object not found');
+
+			try{
+				$ro->enrich();
+			} catch (Exception $e){
+				throw new Exception('ERROR: Registry Object cannot be enriched: '. $e->getMessage());
+			}
+
+			$result = array();
+			$this->load->model('data_source/data_sources', 'ds');
+			$contributor = $this->db->get_where('institutional_pages',array('group' => $ro->getAttribute('group')));
+			if ($contributor->num_rows() >0) {				
+				$contributorRecord = array_pop($contributor->result_array());
+				$theContributor = $this->ro->getByID($contributorRecord['registry_object_id']);
+				if($theContributor && $theContributor->getAttribute('key')==$record[0]['key']){
+					$result['template'] = CONTRIBUTOR_PAGE_TEMPLATE;
+				}
+			}
+			$result['data'] = $ro->getExtRif();
+			echo json_encode($result);
 		}
 		else
 		{

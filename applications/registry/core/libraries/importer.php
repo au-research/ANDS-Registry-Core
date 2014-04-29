@@ -145,21 +145,13 @@ class Importer {
 		// Decide on the default status for these records
 		$this->status = $this->_getDefaultRecordStatusForDataSource($this->dataSource);
 
-		// want to treat the payload as an array of split XML documents, even if it's not
-		// (I reckon that SimpleXML goes memory-ape if it's trying to process a 100k-line XML doc)		
-		if (!is_array($this->xmlPayload))
-		{
-			// So fake it
-			$this->xmlPayload = array($this->xmlPayload);
-		}
-
 		if($this->runBenchMark){
 			$this->CI->benchmark->mark('ingest_stage_1_start');
 		}
-			foreach ($this->xmlPayload AS $idx => $payload)
-			{
+			//foreach ($this->xmlPayload AS $idx => $payload)
+			//{
 				// Escape XML entities from the start...
-				$payload = $this->cleanSchemaLocation(str_replace("&", "&amp;", $payload));
+				$payload = str_replace("&", "&amp;", $this->xmlPayload);
 
 				// Clean up non-UTF8 characters by trying to translate them
 
@@ -254,24 +246,10 @@ class Importer {
 					}
 				}
 
-			}
+			//}
 		if($this->runBenchMark){
 			$this->CI->benchmark->mark('ingest_stage_1_end');
 		}
-		
-
-		// Partial commits mean that there is more to come in this harvest...woooah-on donkey
-		//if (!$this->partialCommitOnly)
-		//{
-			// And now, onto the second stage...
-			// XXX: Don't do this...it's crappy
-			//if ($this->dataSource)
-			//{
-				// Update the data source stats
-				//$this->dataSource->updateStats();
-			//}
-
-		//}
 
 		$this->isImporting = false;
 		if($this->runBenchMark){
@@ -425,7 +403,7 @@ class Importer {
 					}
 
 					// Order is important here!
-					$ro->updateXML(wrapRegistryObjects($registryObject->asXML()));
+					$changed = $ro->updateXML(wrapRegistryObjects($registryObject->asXML()));
 
 					// Generate the list and display titles first, then the SLUG
 					$ro->updateTitles($ro->getSimpleXML());
@@ -444,7 +422,7 @@ class Importer {
 
 					// Save all our attributes to the object
 					$ro->save();
-
+                    /*
 					//All related objects by any means are affected regardless
 					$related_objects = $ro->getAllRelatedObjects(false, true, true);
 					$related_keys = array();
@@ -464,13 +442,15 @@ class Importer {
 					if (count($related_keys)){
 						$this->addToAffectedList($related_keys);
 					}
-
-					$ro->processIdentifiers();
-
-					// Add this record to our counts, etc.
-					$this->importedRecords[] = $ro->id;
-					$this->ingest_successes++;
-
+*/
+                    // if the rif-cs didn't change we don't need to enrich record.
+                    if($changed)
+                    {
+					    $ro->processIdentifiers();
+					    // Add this record to our counts, etc.
+					    $this->importedRecords[] = $ro->id;
+                    }
+                    $this->ingest_successes++;
 					// Memory management...
 					unset($ro);
 					clean_cycles();
@@ -515,7 +495,7 @@ class Importer {
 			}
 		}
 
-		if(is_array($this->importedRecords) && count($this->importedRecords) > 0)
+		else if(is_array($this->importedRecords) && count($this->importedRecords) > 0)
 		{
 
 			foreach ($this->importedRecords AS $ro_id)
@@ -531,24 +511,24 @@ class Importer {
 					$related_keys = $ro->getRelatedKeys();
 					// directly affected records are re-enriched below (and reindexed...)
 					// we consider any related record keys to be directly affected and reindex them...
-					$this->addToAffectedList($related_keys);
+					//$this->addToAffectedList($related_keys);
 
 					// All related objects by any means are affected
-					$related_objects = $ro->getAllRelatedObjects(false, true, true);
-					$related_keys = array();
-					foreach($related_objects as $rr){
-						$related_keys[] = $rr['key'];
-					}
-					$this->addToAffectedList($related_keys);
+					//$related_objects = $ro->getAllRelatedObjects(false, true, true);
+					//$related_keys = array();
+					//foreach($related_objects as $rr){
+					//	$related_keys[] = $rr['key'];
+					//}
+					//$this->addToAffectedList($related_keys);
 
 					// Also treat identifier matches as affected records which need to be enriched
 					// (to increment their extRif:matching_identifier_count)
-					$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
-					$related_keys = array();
-					foreach($related_ids_by_identifier_matches AS $matching_record_id){
-						$matched_ro = $this->CI->ro->getByID($matching_record_id);
-						$related_keys[] = $matched_ro->key;
-					}
+					//$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+					//$related_keys = array();
+					//foreach($related_ids_by_identifier_matches AS $matching_record_id){
+					//	$matched_ro = $this->CI->ro->getByID($matching_record_id);
+					//	$related_keys[] = $matched_ro->key;
+					//}
 					if (count($related_keys)){
 						$this->addToAffectedList($related_keys);
 					}
@@ -572,18 +552,13 @@ class Importer {
 
 	public function finishImportTasks()
 	{
-
 		$importedRecCount = count($this->importedRecords);
 		$this->_enrichRecords();
-		$importedCount = count($this->imported_record_keys);
-		$this->_reindexRecords();
-		$affectedCount = count($this->affected_record_keys);
 		$deletedCount = count($this->deleted_record_keys);
 		$this->_enrichAffectedRecords();
-		$AllAffectedCount = count($this->affected_record_keys);
 		$this->_indexAllAffectedRecords();
 		$indexedAllCount = count($this->affected_record_keys);
-		return "importedREC: ".$importedRecCount.NL."reindexed: ".$indexedAllCount.NL."affected (imp. + ext): ".$AllAffectedCount.NL."affected (ext only): ".$affectedCount.NL."deleted: ".$deletedCount;
+		return "Finished Import Tasks".NL."imported: ".$importedRecCount.NL."affected/related ".($indexedAllCount - $importedRecCount).NL."total: ".$indexedAllCount.NL."deleted: ".$deletedCount;
 	}
 
 	public function _enrichAffectedRecords()
@@ -601,13 +576,15 @@ class Importer {
 			{
 				foreach ($registryObjects AS $ro)
 				{
-
-					try {
-						$ro->addRelationships();
-					} catch (Exception $e) {
-						throw new Exception($e);
-					}
-
+                    //imported records already got their relationships handled
+                    if(!in_array($ro->key, $this->imported_record_keys))
+                    {
+                        try {
+                            $ro->addRelationships();
+                        } catch (Exception $e) {
+                            throw new Exception($e);
+                        }
+                    }
 					if($this->runBenchMark)
 					{
 						$this->roQACount++;
@@ -973,12 +950,24 @@ class Importer {
 	 */
 	public function setCrosswalk($crosswalk_metadata_format)
 	{
-		if (!$crosswalk_metadata_format) { return; }
-		
-		$crosswalks = getCrossWalks();
-		foreach (getCrosswalks() AS $crosswalk)
+
+        $crosswalk_identity = '';
+        if (!$crosswalk_metadata_format) { return; }
+
+        $predefinedProviderTypes = $this->CI->config->item('provider_types');
+
+        foreach($predefinedProviderTypes as $ppt)
+        {
+            if($ppt['prefix'] == $crosswalk_metadata_format)
+                $crosswalk_identity = $ppt['cross_walk'];
+        }
+
+        if($crosswalk_identity == '') { return;}
+
+        $crosswalks= getCrossWalks();
+		foreach ($crosswalks AS $crosswalk)
 		{
-			if ($crosswalk->metadataFormat() == $crosswalk_metadata_format)
+			if ($crosswalk->metadataFormat() == $crosswalk_metadata_format || $crosswalk->identify() == $crosswalk_identity)
 			{
 				$this->crosswalk = $crosswalk;
 			}
@@ -1113,10 +1102,10 @@ class Importer {
 		$this->forceDraft = TRUE;
 	}
 
-	public function cleanSchemaLocation($string)
-	{
-		return preg_replace('/ xsi:schemaLocation=".*?"/sm','', $string);
-	}
+	//public function cleanSchemaLocation($string)
+	//{
+	//	return preg_replace('/ xsi:schemaLocation=".*?"/sm','', $string);
+	//}
 
 	public function getBenchMarkLogArray(){
 		$result = array();
@@ -1228,7 +1217,7 @@ class Importer {
 	}
 
 
-	public function updateDeletedList($oai_feed)
+	public function updateDeletedList($oai_feed, $xs)
 	{
 		$gXPath = new DOMXpath($oai_feed);
 		$defaultNamespace = $gXPath->evaluate('/*')->item(0)->namespaceURI;
@@ -1237,7 +1226,7 @@ class Importer {
 		for( $i=0; $i < $deletedRegistryObjectList->length; $i++ )
 		{
 			$deletedRegistryObject = $deletedRegistryObjectList->item($i);
-			$registryObjectKey = substr($gXPath->evaluate("$xs:identifier", $deletedRegistryObject)->item(0)->nodeValue, 0, 512);
+			$registryObjectKey = substr($gXPath->evaluate($xs.":identifier", $deletedRegistryObject)->item(0)->nodeValue, 0, 512);
 			$this->addToDeletedList($registryObjectKey);			
 		}
 	}

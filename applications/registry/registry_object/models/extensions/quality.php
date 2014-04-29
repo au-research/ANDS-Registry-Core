@@ -18,7 +18,7 @@ class Quality_Extension extends ExtensionBase
 		// Get and update our quality metadata 
 	
 		// use the optimised version of getRelatedClassesString (which does not use getConnections())
-		$relatedClassStr = $this->ro->getRelatedClassesString(true);
+		$relatedClassStr = $this->ro->getRelatedClassesString(false);
 
 		
 		if($runBenchMark) $this->_CI->benchmark->mark('ro_qa_s1_end');

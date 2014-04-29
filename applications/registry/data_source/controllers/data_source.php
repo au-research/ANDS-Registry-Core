@@ -1671,7 +1671,7 @@ public function getContributorGroupsEdit()
 				}
 
 				// OAI requests get a different message
-				if ($mode == 'HARVEST' && $dataSource->harvest_method == 'RIF')
+				if ($mode == 'HARVEST' && $dataSource->harvest_method != 'GET')
 				{
 					$logMsg = 'Received some new records from the OAI provider... (harvest ID: '.$harvestId.')' . NL . ' ---';
 					$logMsgErr = 'An error occurred whilst receiving records from the OAI provider... (harvest ID: '.$harvestId.')';
@@ -1691,36 +1691,15 @@ public function getContributorGroupsEdit()
 
 					$this->load->model('data_source/data_sources', 'ds');
 
-					$recordCount = preg_match_all("/<metadata>(.*?)<\/metadata>/sm", $data, $matches);
+                    $this->importer->setXML($data);
 
-					if(!$recordCount)
-					{
-						if (strpos('<error code="noRecordsMatch">',$data) !== FALSE)
-						{
-							$logMsg .= NL . "\tOAI Provider returned no matching records.";
-							$mode = "CANCELLED";
-							$done = true;
-						}
-						else
-						{
-							// Probably a DIRECT harvest?
-							$this->importer->setXML($data);
-						}
-					}
-					else
-					{
-						$this->importer->setXML($matches[1]);
-					}
-
-					if ($dataSource->provider_type != RIFCS_SCHEME)
-					{
-						$this->importer->setCrosswalk($dataSource->provider_type);
-					}
+					$this->importer->setCrosswalk($dataSource->provider_type);
 
 					$this->importer->setHarvestID($harvestId);
+
 					$this->importer->setDatasource($dataSource);
 
-					if ($dataSource->harvest_method == 'RIF')
+					if ($dataSource->harvest_method != 'GET')
 					{
 						$this->importer->setPartialCommitOnly(TRUE);
 					}
@@ -1734,12 +1713,11 @@ public function getContributorGroupsEdit()
 
 							if($this->importer->getErrors())
 							{
-								$dataSource->append_log($logMsgErr.NL.$this->importer->getMessages().NL.$this->importer->getErrors(), HARVEST_ERROR, 'harvester', "HARVESTER_ERROR");	
 								$gotErrors = true;
 							}
 							//else
 							//{
-							if($dataSource->harvest_method == 'RIF')
+							if($dataSource->harvest_method != 'GET')
 							{
 								$logMsg = 'Received ' . $this->importer->ingest_attempts . ' new records from the OAI provider... (harvest ID: '.$harvestId.')' . NL . ' ---';
 							}
@@ -1773,7 +1751,7 @@ public function getContributorGroupsEdit()
 							$this->importer->addToAffectedList($deleted_and_affected_record_keys['affected_record_keys']);
 						} 
 					}
-					if ($dataSource->harvest_method != 'RIF')
+					if ($dataSource->harvest_method != 'GET')
 					{
 						$importer_log = "IMPORT COMPLETED" . NL;
 						$importer_log .= "====================" . NL;
@@ -1837,7 +1815,7 @@ public function getContributorGroupsEdit()
 					$importedIds[] = $row['registry_object_id'];
 				}
 				$this->importer->addToImportedIDList($importedIds);
-				$this->importer->finishImportTasks();
+				$importLog = $this->importer->finishImportTasks();
 
 				if($dataSource->advanced_harvest_mode == 'INCREMENTAL')
 				{
@@ -1852,7 +1830,7 @@ public function getContributorGroupsEdit()
 
 				$dataSource->updateStats();
 
-				$dataSource->append_log('Harvest complete! '.$harvested_record_count.' records harvested and ingested into the registry...  (harvest ID: '.$harvestId.')', HARVEST_INFO, "harvester", "HARVESTER_INFO");
+				$dataSource->append_log('Harvest complete! '.$harvested_record_count.' records harvested and ingested into the registry...  (harvest ID: '.$harvestId.')'. NL . $importLog, HARVEST_INFO, "harvester", "HARVESTER_INFO");
 			//}
 			//else
 			//{
@@ -1962,7 +1940,7 @@ public function getContributorGroupsEdit()
 		 	header('Cache-Control: no-cache, must-revalidate');
 		 	header('Content-type: application/xml');
 		 	echo wrapRegistryObjects(html_entity_decode($rifcs));
-		 }
+		}
 	}
 
 	/* Printable quality report */
