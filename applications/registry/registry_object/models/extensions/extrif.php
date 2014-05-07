@@ -285,7 +285,7 @@ class Extrif_Extension extends ExtensionBase
 				// Friendlify dates =)
 				$xml = $this->ro->extractDatesForDisplay($xml);
 
-
+				$allRelatedObjects = array();
 				/* 
 				Add some logic to boost highly connected records & contributor pages
 				*/
