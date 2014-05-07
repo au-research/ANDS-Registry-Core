@@ -470,7 +470,7 @@ class Importer {
 	public function _enrichRecords($directly_affected_records = array())
 	{
 		$this->CI->load->model('registry_object/registry_objects', 'ro');
-		
+
 		if($this->runBenchMark){
 			$this->CI->benchmark->mark('ingest_enrich_stage1_start');
 		}
@@ -681,7 +681,7 @@ class Importer {
 							$this->CI->benchmark->mark('solr_transform_start');
 						}
 						
-						$this->queueSOLRAdd($ro->transformForSOLR(false));
+						$this->queueSOLRAdd($ro->indexable_json());
 						
 						if($this->runBenchMark)
 						{
@@ -766,7 +766,7 @@ class Importer {
 						$this->CI->benchmark->mark('solr_transform_start');
 					}
 					
-					$this->queueSOLRAdd($ro->transformForSOLR(false));
+					$this->queueSOLRAdd($ro->indexable_json());
 					
 					if($this->runBenchMark)
 					{
@@ -1340,7 +1340,7 @@ class Importer {
 		$solrUpdateUrl = $solrUrl.'update/?wt=json';
 
 		try{
-			$result = json_decode(curl_post($solrUpdateUrl, "<add>" . implode("\n",$this->solr_queue) . "</add>"), true);
+			$result = json_decode(curl_post($solrUpdateUrl, json_encode($this->solr_queue)), true);
 			if($result['responseHeader']['status'] == self::SOLR_RESPONSE_CODE_OK)
 			{
 				$this->reindexed_records += count($this->solr_queue);

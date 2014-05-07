@@ -519,7 +519,8 @@ class Maintenance extends MX_Controller {
 		$offset = ($chunk_pos-1) * $chunkSize;
 		$limit = $chunkSize;
 		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, 'PUBLISHED', $offset, $limit);
-		$totalEnrichTime = 0; $totalIndexTime = 0; $allErrors = array(); $allSOLRXML = '';
+		$totalEnrichTime = 0; $totalIndexTime = 0; $allErrors = array();
+		$solr_docs = array();
 		$results = array();
 		foreach($keys as $key){
 			$result = array();
@@ -565,8 +566,7 @@ class Maintenance extends MX_Controller {
 				
 				if($task=='sync' || $task=='index' || $task=='fast_sync'){
 					try{
-						$solrXML = $ro->transformForSOLR();
-						$allSOLRXML .= $solrXML;
+						$solr_docs[] = $ro->indexable_json();
 					}catch(Exception $e){
 						array_push($error, $e->getMessage());
 					}
@@ -598,7 +598,7 @@ class Maintenance extends MX_Controller {
 		}
 
 		if($task=='sync' || $task=='index' || $task=='fast_sync'){
-			$this->solr->addDoc('<add>'.$allSOLRXML.'</add>');
+			$this->solr->add_json(json_encode($solr_docs));
 			$this->solr->commit();
 		}
 		
@@ -622,16 +622,40 @@ class Maintenance extends MX_Controller {
 
 	function test(){
 		$this->load->model('registry_object/registry_objects', 'ro');
-//		$ro = $this->ro->getByID(12242);
-		$ro = $this->ro->getByID(146631);
-		$relationships = $ro->getAllRelatedObjects(false, true);
-//		foreach($relationships as $r){
-//			$r = $this->ro->getByID($r['registry_object_id']);
-//			$r->sync();
-//		}
-		$relationships2 = $ro->_getDuplicateConnections();
-		$relatedByIdentifiers = $ro->findMatchingRecords();
-		echo 'done';
+
+		$ro = $this->ro->getByID(435946);
+//		$ro = $this->ro->getByID(7144);
+
+		$this->benchmark->mark('1_start');
+		$doc = $ro->indexable_json();
+		$this->benchmark->mark('1_end');
+
+		$result = array();
+		$result['json_test'] = $this->benchmark->elapsed_time('1_start', '1_end');
+		$result['json_doc'] = json_encode($doc);
+
+		$docs = array();
+		$docs[] = $doc;
+
+		$this->load->library('solr');
+//		$ro->sync();
+		$result['solr_delete'] = $this->solr->deleteByID(435946);
+		$result['solr_result'] = $this->solr->add_json(json_encode($docs));
+		$result['solr_commit'] = $this->solr->commit();
+
+//		echo json_encode($doc);
+//
+//		$this->benchmark->mark('2_start');
+//		$ro->enrich();
+//		$doc = $ro->transformForSOLR();
+//		$this->benchmark->mark('2_end');
+//
+//		$result['xml_test'] = $this->benchmark->elapsed_time('2_start', '2_end');
+//		$result['xml_doc'] = $doc;
+		var_dump($result);
+
+//		echo json_encode($doc);
+
 	}
 
 	function fixRelationships($id) {

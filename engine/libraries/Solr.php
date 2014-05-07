@@ -558,10 +558,13 @@ class Solr {
 		return curl_post($this->solr_url.'update?wt=json', $docs);
 	}
 
+	function add_json($docs){
+		return curl_post($this->solr_url.'update/?wt=json', $docs, array("Content-Type: application/json; charset=utf-8"));
+	}
+
 	function commit(){
 		return curl_post($this->solr_url.'update?wt=json&commit=true', '<commit waitSearcher="false"/>');
 	}
-
 
 	function deleteByQueryCondition($query_condition)
 	{

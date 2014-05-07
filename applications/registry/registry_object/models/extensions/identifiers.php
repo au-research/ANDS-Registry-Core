@@ -29,6 +29,20 @@ class Identifiers_Extension extends ExtensionBase
 		}
 	}
 
+	function getIdentifiers() {
+		$sxml = $this->ro->getSimpleXML();
+		$identifiersArray = array();
+		foreach($sxml->xpath('//ro:'.$this->ro->class.'/ro:identifier') AS $identifier) {
+			if((string)$identifier != '') {
+				$identifiersArray[] = array(
+					'identifier' => (string) $identifier,
+					'identifier_type' => (string) $identifier['type']
+				);
+			}
+		}
+		return $identifiersArray;
+	}
+
 
 
 	public function findMatchingRecords($matches = array(), $tested_ids = array(), $recursive=true)
