@@ -91,7 +91,6 @@ class Extrif_Extension extends ExtensionBase
 						{
 						// Clean the HTML with purifier, but decode entities first (else they wont be picked up in the first place)
 							$clean_html = htmlentities(htmlentities($this->_CI->purifier->purify_html( html_entity_decode(html_entity_decode($description_str)) )));
-						
 						}else{
 							$clean_html =  htmlentities(htmlentities($description_str));
 						}
@@ -243,50 +242,11 @@ class Extrif_Extension extends ExtensionBase
 				}	
 				
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s6_end');
-				
-				/*if($this->ro->getAttribute('group') == 'National Health and Medical Research Council')
-				{*/
-					$allRelatedObjects = $this->ro->getAllRelatedObjects(false, true, true);
-					foreach ($allRelatedObjects AS $relatedObject)
-					{
-					//var_dump($relatedObject);
-						$relatedObj = $extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_key", $relatedObject['key'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_id", $relatedObject['registry_object_id'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_class", $relatedObject['class'], EXTRIF_NAMESPACE);
-						//$relatedObj->addChild("extRif:related_object_type", $relatedObject['related_object_type'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_display_title", str_replace('&', '&amp;' , $relatedObject['title']), EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_relation", $relatedObject['relation_type'], EXTRIF_NAMESPACE);
-						//$relatedObj->addChild("extRif:related_object_logo", $relatedObject['the_logo'], EXTRIF_NAMESPACE);
-						if($relatedObject['registry_object_id'] != '' && $relatedObject['origin'] == 'IDENTIFIER' && $relatedObject['related_title'] == '')
-						{							
-							foreach ($xml->{$this->ro->class}->relatedInfo->identifier AS $identifier)
-							{
-								if((string)$identifier == $relatedObject['related_object_identifier'] && (string)$identifier['type'] == $relatedObject['related_object_identifier_type'])									
-									$identifier["resolved"] ='true';
-								}
-							}
-						}
-			/*	}
-				else
-				{
-					foreach ($this->ro->getRelatedObjects() AS $relatedObject)
-					{
-						$relatedObj = $extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_key", $relatedObject['related_object_key'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_id", $relatedObject['related_id'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_class", $relatedObject['class'], EXTRIF_NAMESPACE);
-						//$relatedObj->addChild("extRif:related_object_type", $relatedObject['related_object_type'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_display_title", $relatedObject['title'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_relation", $relatedObject['relation_type'], EXTRIF_NAMESPACE);
-						//$relatedObj->addChild("extRif:related_object_logo", $relatedObject['the_logo'], EXTRIF_NAMESPACE);
-					}
-				}
-				*/
+
 				// Friendlify dates =)
 				$xml = $this->ro->extractDatesForDisplay($xml);
 
-
+//				$allRelatedObjects = array();
 				/* 
 				Add some logic to boost highly connected records & contributor pages
 				*/
@@ -294,11 +254,11 @@ class Extrif_Extension extends ExtensionBase
 				{
 					$this->ro->search_boost = SEARCH_BOOST_CONTRIBUTOR_PAGE;
 				}
-				elseif (count($allRelatedObjects) > 0)
-				{
-					// Give credit to "highly connected" records (but limit to 10)
-					$this->ro->search_boost = min(pow(SEARCH_BOOST_PER_RELATION_EXP,count($allRelatedObjects)), SEARCH_BOOST_RELATION_MAX);
-				}
+//				elseif (count($allRelatedObjects) > 0)
+//				{
+//					// Give credit to "highly connected" records (but limit to 10)
+//					$this->ro->search_boost = min(pow(SEARCH_BOOST_PER_RELATION_EXP,count($allRelatedObjects)), SEARCH_BOOST_RELATION_MAX);
+//				}
 
 				/* Names EXTRIF */
 				//$descriptions = $xml->xpath('//'.$this->ro->class.'/description');

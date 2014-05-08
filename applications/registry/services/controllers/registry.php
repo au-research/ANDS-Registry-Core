@@ -120,19 +120,6 @@ class Registry extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	public function test(){
-		// $this->load->model('registry/registry_object/registry_objects', 'ro'); $ro = $this->ro->getByID(60655);$ro->sync();
-		// $this->load->library('solr');
-		// $solrXML = '<doc><field name="id">60655</field><field name="key">minhtest</field><field name="data_source_id">161</field><field name="tag" update="add">minh2</field></doc>';
-		// echo $this->solr->addDoc("<add>".$solrXML."</add>");
-		// echo $this->solr->commit();
-		// echo 'done'. $solrXML;
-
-		// $solrXML = '<doc><field name="id">60655</field><field name="key">minhtest</field><field name="data_source_id">161</field><field name="tag" update="add">another</field></doc>';
-		// echo $this->solr->addDoc("<add>".$solrXML."</add>");
-		// echo $this->solr->commit();
-		// echo 'done'. $solrXML;
-	}
 
 	public function post_solr_search(){
 		set_exception_handler('json_exception_handler');

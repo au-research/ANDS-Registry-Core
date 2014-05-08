@@ -785,7 +785,7 @@ class Registry_objects extends CI_Model {
 	 */
 	public function batchIndexKeys($keys){
 		$_CI =& get_instance();
-		$solrXML = '';
+		$solr_docs = array();
 		$chunkSize = 400;
 		$arraySize = sizeof($keys);
 		for($i=0;$i<$arraySize; $i++){
@@ -793,11 +793,11 @@ class Registry_objects extends CI_Model {
 			$ro = $this->getPublishedByKey($key);
 			if($ro){
 				$ro->enrich();
-				$solrXML.= $ro->transformForSOLR();
+				$solr_docs[] = $ro->indexable_json();
 				if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1)){
-					$_CI->solr->addDoc("<add>".$solrXML."</add>");
+					$_CI->solr->add_json(json_encode($solr_docs));
 					$_CI->solr->commit();
-					$solrXML ='';
+					$solr_docs = array();
 				}
 			}
 			unset($ro);

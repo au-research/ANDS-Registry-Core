@@ -337,148 +337,6 @@ class Maintenance extends MX_Controller {
 		}
 	}
 
-	/**
-	 * web service for maintenance, this will index a data source
-	 * @param  int $data_source_id 
-	 * @return json result
-	 */
-	function indexDS($data_source_id, $logit = false){
-		acl_enforce('REGISTRY_STAFF');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-
-		$data = array();
-		$data['data_source_id']=$data_source_id;
-		$data['error']='';
-
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$this->load->model('data_source/data_sources', 'ds');
-		$this->load->library('solr');
-
-		$ids = $this->ro->getIDsByDataSourceID($data_source_id, false, PUBLISHED);
-
-		$i = 0;
-		$response = '';
-		$errors = '';
-		$solrXML = '';
-		if($ids)
-		{
-			
-			$chunkSize = 400; 
-			$arraySize = sizeof($ids);
-			for($i = 0 ; $i < $arraySize ; $i++)
-			{
-				$roId = $ids[$i];	
-				try{
-					$ro = $this->ro->getByID($roId);
-					if($ro)
-					{
-						$solrXML .= $ro->transformForSOLR();
-						if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1))
-						{
-							$result = $this->solr->addDoc("<add>".$solrXML."</add>");
-							$response .= $result.NL;
-							$this->solr->commit();
-							$solrXML = '';
-						}
-					}
-				}
-				catch (Exception $e)
-				{
-					$errors .= nl2br($e).NL;
-				}
-			}
-
-			$data['results'] = $response;
-			$data['errors'] = $errors;
-			$data['totalAdded'] = $i;
-		}
-		if(!$logit)
-			echo json_encode($data);
-		else
-			return json_encode($data);
-	}
-
-	function clearDS($data_source_id, $logit = false){
-		acl_enforce('REGISTRY_STAFF');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		$this->load->library('solr');
-		$data['result'] = $this->solr->clear($data_source_id);
-		if(!$logit)
-			echo json_encode($data);
-		else
-			return json_encode($data);
-	}
-	
-	function clearAll(){
-		acl_enforce('REGISTRY_STAFF');
-		$data = array();
-		$data['logs'] = '';
-		$this->load->library('solr');
-		$data['logs'] .= $this->solr->clear();
-		echo json_encode($data);
-	}
-
-	function indexAll($print=false){
-		acl_enforce('REGISTRY_STAFF');
-		$data = array();
-		$data['logs'] = '';
-		$this->load->model('data_source/data_sources', 'ds');
-		$data_sources = $this->ds->getAll(0);
-		foreach($data_sources as $ds){
-			$data['logs'] .= $this->indexDS($ds->id, true);
-			if ($print)
-			{
-				echo $data['logs'];
-				$data['logs'] = '';
-				flush();
-			}
-		}
-		if (!$print)
-		{
-			echo json_encode($data);
-		}
-	}
-
-	function smartSync($step = 0, $start = 0){
-		$limit = 400;
-		$this->load->model('data_source/data_sources', 'ds');
-		$result = array();
-		if($step==0){
-			$result = $this->ds->getGroupsBySizeLimit($limit);
-			echo json_encode($result);	
-		}else if($step==1){
-			$result = $this->ds->getGroupsBySizeLimit($limit);
-			$total = sizeof($result['small']);
-			$current = 1;
-			foreach($result['small'] as $ds){
-				if($current >= $start){
-					echo '<b>'.$ds['data_source_id'].' ('.$current.'/'.$total.')</b> Count: '.$ds['count'].'<br/>';
-					$this->flush_buffers();
-					var_dump($this->smartSyncDS($ds['data_source_id']));
-					echo '<hr/>';
-					$this->flush_buffers();
-				}
-				$current++;
-			}
-		}else if($step==2){
-			$result = $this->ds->getGroupsBySizeLimit($limit);
-			$total = sizeof($result['large']);
-			$current = 1;
-			foreach($result['large'] as $ds){
-				if($current >= $start){
-					echo '<b>'.$ds['data_source_id'].' ('.$current.'/'.$total.')</b> Count: '.$ds['count'].'<br/>';
-					$this->flush_buffers();
-					var_dump($this->smartSyncDS($ds['data_source_id']));
-					echo '<hr/>';
-					$this->flush_buffers();
-				}
-				$current++;
-			}
-		}
-	}
-
 	function smartAnalyze($task='sync', $data_source_id){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -519,7 +377,8 @@ class Maintenance extends MX_Controller {
 		$offset = ($chunk_pos-1) * $chunkSize;
 		$limit = $chunkSize;
 		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, 'PUBLISHED', $offset, $limit);
-		$totalEnrichTime = 0; $totalIndexTime = 0; $allErrors = array(); $allSOLRXML = '';
+		$totalEnrichTime = 0; $totalIndexTime = 0; $allErrors = array();
+		$solr_docs = array();
 		$results = array();
 		foreach($keys as $key){
 			$result = array();
@@ -565,8 +424,7 @@ class Maintenance extends MX_Controller {
 				
 				if($task=='sync' || $task=='index' || $task=='fast_sync'){
 					try{
-						$solrXML = $ro->transformForSOLR();
-						$allSOLRXML .= $solrXML;
+						$solr_docs[] = $ro->indexable_json();
 					}catch(Exception $e){
 						array_push($error, $e->getMessage());
 					}
@@ -598,7 +456,7 @@ class Maintenance extends MX_Controller {
 		}
 
 		if($task=='sync' || $task=='index' || $task=='fast_sync'){
-			$this->solr->addDoc('<add>'.$allSOLRXML.'</add>');
+			$this->solr->add_json(json_encode($solr_docs));
 			$this->solr->commit();
 		}
 		
@@ -622,16 +480,40 @@ class Maintenance extends MX_Controller {
 
 	function test(){
 		$this->load->model('registry_object/registry_objects', 'ro');
-//		$ro = $this->ro->getByID(12242);
-		$ro = $this->ro->getByID(146631);
-		$relationships = $ro->getAllRelatedObjects(false, true);
-//		foreach($relationships as $r){
-//			$r = $this->ro->getByID($r['registry_object_id']);
-//			$r->sync();
-//		}
-		$relationships2 = $ro->_getDuplicateConnections();
-		$relatedByIdentifiers = $ro->findMatchingRecords();
-		echo 'done';
+
+		$ro = $this->ro->getByID(435946);
+//		$ro = $this->ro->getByID(7144);
+
+		$this->benchmark->mark('1_start');
+		$doc = $ro->indexable_json();
+		$this->benchmark->mark('1_end');
+
+		$result = array();
+		$result['json_test'] = $this->benchmark->elapsed_time('1_start', '1_end');
+		$result['json_doc'] = json_encode($doc);
+
+		$docs = array();
+		$docs[] = $doc;
+
+		$this->load->library('solr');
+//		$ro->sync();
+		$result['solr_delete'] = $this->solr->deleteByID(435946);
+		$result['solr_result'] = $this->solr->add_json(json_encode($docs));
+		$result['solr_commit'] = $this->solr->commit();
+
+//		echo json_encode($doc);
+//
+//		$this->benchmark->mark('2_start');
+//		$ro->enrich();
+//		$doc = $ro->transformForSOLR();
+//		$this->benchmark->mark('2_end');
+//
+//		$result['xml_test'] = $this->benchmark->elapsed_time('2_start', '2_end');
+//		$result['xml_doc'] = $doc;
+		var_dump($result);
+
+//		echo json_encode($doc);
+
 	}
 
 	function fixRelationships($id) {
@@ -650,62 +532,9 @@ class Maintenance extends MX_Controller {
 		echo 'done';
 	}
 
-	function smartSyncDS2($data_source_id, $print=false, $offset=0){
-		$this->load->library('importer');
-		$this->load->model('data_source/data_sources', 'ds');
-		$this->load->model('registry_object/registry_objects', 'ro');
-
-		//load
-		$ds = $this->ds->getByID($data_source_id);
-		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, PUBLISHED);
-
-		if($offset!=0) $keys = array_slice($keys, $offset);
-
-		if($print){
-			echo 'count: '.sizeof($keys).'<br/>';
-		}
-
-		$this->importer->_reset();
-		$this->importer->runBenchMark = true;
-		$this->importer->setDataSource($ds);
-		$this->importer->addToAffectedList($keys);
-
-		$this->importer->finishImportTasks();
-		if($print){
-			var_dump($this->importer->getBenchMarkLogArray());
-		}else{
-			return $this->importer->getBenchMarkLogArray();
-		}
-	}
-
 	function flush_buffers(){ 
 		ob_flush(); 
 		flush(); 
-	}
-
-	function enrichAll(){
-		acl_enforce('REGISTRY_STAFF');
-		$data = array();
-		$data['logs'] = '';
-		$this->load->model('data_source/data_sources', 'ds');
-		$data_sources = $this->ds->getAll(0);
-		foreach($data_sources as $ds){
-			$data['logs'] .= $this->enrichDS($ds->id);
-		}
-		echo json_encode($data);
-	}
-
-	function enrichMissing(){
-		acl_enforce('REGISTRY_STAFF');
-		$data['logs'] = '';
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$unenriched = $this->ro->getUnEnriched();
-		foreach($unenriched->result() as $u){
-			$ro = $this->ro->getByID($u->registry_object_id);
-			$ro->enrich();
-			$data['logs'] .= $ro->id.' ';
-		}
-		echo json_encode($data);
 	}
 
 	/**
