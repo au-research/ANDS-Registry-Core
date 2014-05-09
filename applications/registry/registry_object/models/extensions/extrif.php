@@ -53,9 +53,9 @@ class Extrif_Extension extends ExtensionBase
 				$extendedMetadata->addChild("extRif:displayTitle", str_replace('&', '&amp;' , $this->ro->title), EXTRIF_NAMESPACE);
 				$extendedMetadata->addChild("extRif:listTitle", str_replace('&', '&amp;' , $this->ro->list_title), EXTRIF_NAMESPACE);
 				try{
-					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//TRANSLIT', str_replace('&', '&amp;' , $this->ro->list_title)), EXTRIF_NAMESPACE);
+					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//IGNORE', str_replace('&', '&amp;' , $this->ro->list_title)), EXTRIF_NAMESPACE);
 				}catch(Exception $e){
-					throw new Exception ('iconv installation/configuration required for simplified title');
+					throw new Exception ('iconv installation/configuration required for simplified title <br/>'.$e);
 				}
 
 				$is_contributor_page = false;
@@ -87,14 +87,14 @@ class Extrif_Extension extends ExtensionBase
 							$this->ro->set_metadata('the_logo', $logoRef);
 						}
 						$testDescription = $this->isHtml( html_entity_decode(html_entity_decode($description_str)) );
-						if($testDescription==true)
-						{
-						// Clean the HTML with purifier, but decode entities first (else they wont be picked up in the first place)
-							$clean_html = htmlentities(htmlentities($this->_CI->purifier->purify_html( html_entity_decode(html_entity_decode($description_str)) )));
-						
-						}else{
-							$clean_html =  htmlentities(htmlentities($description_str));
-						}
+						// if($testDescription==true)
+						// {
+						// // Clean the HTML with purifier, but decode entities first (else they wont be picked up in the first place)
+						// 	$clean_html = htmlentities(($this->_CI->purifier->purify_html( html_entity_decode(($description_str)) )), ENT_QUOTES, 'UTF-8');
+						// }else{
+						// 	$clean_html =  htmlentities(htmlentities($description_str));
+						// }
+						$clean_html = $this->_CI->purifier->purify_html($description_str);
 						$encoded_html = '';
 
 						// Check for <br/>'s
@@ -345,7 +345,7 @@ class Extrif_Extension extends ExtensionBase
 			$ext->extendedMetadata->displayTitle = str_replace('&', '&amp;' , $this->ro->title);
 			$ext->extendedMetadata->listTitle = str_replace('&', '&amp;' , $this->ro->list_title);
 			try{
-				$ext->extendedMetadata->simplifiedTitle = iconv('UTF-8', 'ASCII//TRANSLIT', str_replace('&', '&amp;' , $this->ro->list_title));
+				$ext->extendedMetadata->simplifiedTitle = iconv('UTF-8', 'ASCII//IGNORE', str_replace('&', '&amp;' , $this->ro->list_title));
 			}catch(Exception $e){
 				throw new Exception ('iconv installation/configuration required for simplified title');
 			}
