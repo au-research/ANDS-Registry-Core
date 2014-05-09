@@ -50,10 +50,10 @@ class Extrif_Extension extends ExtensionBase
 				$extendedMetadata->addChild("extRif:dataSourceID", $this->ro->data_source_id, EXTRIF_NAMESPACE);
 				$extendedMetadata->addChild("extRif:updateTimestamp", $this->ro->updated, EXTRIF_NAMESPACE);					
 	
-				$extendedMetadata->addChild("extRif:displayTitle", str_replace('&', '&amp;' , $this->ro->title), EXTRIF_NAMESPACE);
-				$extendedMetadata->addChild("extRif:listTitle", str_replace('&', '&amp;' , $this->ro->list_title), EXTRIF_NAMESPACE);
+				$extendedMetadata->addChild("extRif:displayTitle", htmlspecialchars_decode($this->ro->title), EXTRIF_NAMESPACE);
+				$extendedMetadata->addChild("extRif:listTitle", htmlspecialchars_decode($this->ro->list_title), EXTRIF_NAMESPACE);
 				try{
-					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//IGNORE', str_replace('&', '&amp;' , $this->ro->list_title)), EXTRIF_NAMESPACE);
+					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//IGNORE', htmlspecialchars_decode($this->ro->list_title)), EXTRIF_NAMESPACE);
 				}catch(Exception $e){
 					throw new Exception ('iconv installation/configuration required for simplified title <br/>'.$e);
 				}
@@ -61,7 +61,7 @@ class Extrif_Extension extends ExtensionBase
 				$is_contributor_page = false;
 				if($contributor)
 				{
-					$extendedMetadata->addChild("extRif:contributor", str_replace('&', '&amp;' , $contributor[0]), EXTRIF_NAMESPACE);
+					$extendedMetadata->addChild("extRif:contributor", htmlspecialchars_decode($contributor[0]), EXTRIF_NAMESPACE);
 
 					// also mark whether this is a contributor page (used for boosting later)
 					if ($contributor[0] == $this->ro->slug) { $is_contributor_page = true; }
