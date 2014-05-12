@@ -13,6 +13,9 @@ angular.module('orcid_app', ['ngSanitize'])
 			},
 			search: function(filters) {
 				return $http.post(base_url+'/services/registry/post_solr_search', {filters:filters}).then(function(response) {return response.data});
+			},
+			import_works: function(ro_ids) {
+				return $http.post(base_url+'/orcid/import_to_orcid', {ro_ids:ro_ids}).then(function(response) {return response.data});
 			}
 		}
 	})
@@ -21,10 +24,11 @@ angular.module('orcid_app', ['ngSanitize'])
 function IndexCtrl($scope, works) {
 	$scope.works = {};
 	$scope.to_import = [];
-	$scope.import_suggested = false;
-	$scope.import_searched = false;
+	$scope.import_available = false;
 	$scope.filters = {};
 	$scope.search_results = {};
+	$scope.imported_ids= [];
+	$scope.import_stg = 'ready';
 
 	$scope.orcid = {
 		orcid_id:$('#orcid_id').text(),
@@ -32,26 +36,86 @@ function IndexCtrl($scope, works) {
 		last_name:$('#last_name').text()
 	};
 
-	works.getWorks($scope.orcid).then(function(data){
-		$scope.works = data.works;
+	$('.import').click(function(e){
+		e.preventDefault();
+		if(!$(this).hasClass('disabled')){
+			$('#myModal').modal();
+		}
+		return false;
 	});
 
+	$scope.refresh = function(){
+		works.getWorks($scope.orcid).then(function(data){
+			$scope.works = data.works;
+			$.each($scope.works, function(){
+				if(this.type=='imported'){
+					$scope.imported_ids.push(this.id);
+				}
+			})
+		});
+	}
+	$scope.refresh();
+
 	$scope.$watch('works', function(){
-		$scope.import_suggested = false;
+		$scope.review();
+	}, true);
+
+	$scope.$watch('search_results', function() {
+		$scope.review();
+	}, true);
+
+	$scope.review = function(){
+		$scope.import_available = false;
+		$scope.to_import = [];
 		$.each($scope.works, function(){
 			if(this.to_import) {
-				console.log(this);
-				$scope.import_suggested = true;
+				$scope.to_import.push(this);
+				$scope.import_available = true;
 			}
 		});
-	}, true);
+		if($scope.search_results && $scope.search_results.docs){
+			$.each($scope.search_results.docs, function(){
+				if(this.to_import) {
+					$scope.to_import.push(this);
+					$scope.import_available = true;
+				}
+			});
+		}
+		$scope.import_stg = 'ready';
+	}
 
 	$scope.search = function() {
 		if($scope.filters.q!=''){
-			console.log($scope.filters);
+			$scope.filters.rows = 100;
 			works.search($scope.filters).then(function(data){
 				$scope.search_results = data.result;
 			});
 		}
+	}
+
+	$scope.already_imported = function(item) {
+		$.each($scope.works, function(){
+			if(this.type=="imported" && this.id===item.id){
+				return true;
+			}
+		});
+		return false;
+	}
+
+	$scope.import = function() {
+		$scope.import_stg = 'importing';
+		var ids = [];
+		$.each($scope.to_import, function(){
+			ids.push(this.id);
+		});
+		works.import_works(ids).then(function(data){
+			if(data!=1){
+				console.err(data);
+				$scope.import_stg = 'error';
+			} else {
+				$scope.import_stg = 'complete';
+				$scope.refresh();
+			}
+		});
 	}
 }

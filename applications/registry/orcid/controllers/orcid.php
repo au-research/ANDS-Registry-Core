@@ -73,7 +73,13 @@ class Orcid extends MX_Controller {
 	}
 
 	function import_to_orcid(){
+		set_exception_handler('json_exception_handler');
 		$ro_ids = $this->input->post('ro_ids');
+		if(!$ro_ids){
+			$data = file_get_contents("php://input");
+			$data = json_decode($data, true);
+			$ro_ids = $data['ro_ids'];
+		}
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$xml = '';
 		foreach($ro_ids as $id){
@@ -189,12 +195,15 @@ class Orcid extends MX_Controller {
 		//load relevant models and libraries
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$this->load->library('solr');
+		$this->load->library('Orcid_api', 'orcid');
+
+		//debug
+		$data['orcid_id'] = '0000-0003-0670-6058';
+		$data['last_name'] = 'Nguyen';
 
 		//suggested
 		$result['suggested'] = array();
 		$suggested_collections = array();
-
-
 
 		//find parties of similar names
 		$this->solr->setOpt('fq', '+class:party');
@@ -279,6 +288,17 @@ class Orcid extends MX_Controller {
 				'imported'=> in_array($s['registry_object_id'], $imported_ids)
 			);
 		}
+
+		$bio = json_decode($this->orcid_api->get_full(), true);
+		if($bio){
+			$works = $bio['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'];
+			foreach($works as $w){
+				$title = $w['work-title']['title']['value'];
+				// var_dump($title);
+			}
+		}
+		
+		
 
 		echo json_encode($result);
 	}
