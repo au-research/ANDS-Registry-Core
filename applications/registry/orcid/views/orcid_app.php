@@ -20,7 +20,7 @@
 					</div>
 					<div class="widget-content">
 						<label class="checkbox" ng-repeat="item in works | filter:{type:'suggested'}">
-							<input type="checkbox" ng-model="item.to_import"/> <a href="{{item.url}}" target="_blank">{{item.title}}</a> <span class="label label-info" ng-show="item.imported">Imported</span>
+							<input type="checkbox" ng-model="item.to_import"/> <a href="{{item.url}}" target="_blank">{{item.title}}</a> <span class="label label-info" ng-show="item.imported && item.in_orcid">Imported</span>
 						</label>
 					</div>
 				</div>
@@ -73,7 +73,7 @@
 					<div class="widget-title"><h5>Datasets already imported from Research Data Australia</h5></div>
 					<div class="widget-content">
 						<ul>
-							<li ng-repeat="item in works | filter:{type:'imported'}"> <a href="{{item.url}}" target="_blank">{{item.title}}</a></li>
+							<li ng-repeat="item in works | filter:{type:'imported'} | filter:{imported:true} | filter:{in_orcid:true}"> <a href="{{item.url}}" target="_blank">{{item.title}}</a></li>
 						</ul>
 					</div>
 				</div>

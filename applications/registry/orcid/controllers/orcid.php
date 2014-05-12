@@ -272,7 +272,9 @@ class Orcid extends MX_Controller {
 				'id'=>$i->id,
 				'title'=>$i->title,
 				'key'=>$i->key,
-				'url'=>portal_url($i->slug)
+				'url'=>portal_url($i->slug),
+				'imported'=>true,
+				'in_orcid' => false
 			);
 			$imported_ids[] = $i->id;
 		}
@@ -285,7 +287,8 @@ class Orcid extends MX_Controller {
 				'title'=>$s['title'],
 				'key'=>$s['key'],
 				'url'=>portal_url($s['slug']),
-				'imported'=> in_array($s['registry_object_id'], $imported_ids)
+				'imported'=> in_array($s['registry_object_id'], $imported_ids),
+				'in_orcid' => false
 			);
 		}
 
@@ -294,7 +297,11 @@ class Orcid extends MX_Controller {
 			$works = $bio['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'];
 			foreach($works as $w){
 				$title = $w['work-title']['title']['value'];
-				// var_dump($title);
+				foreach($result['works'] as &$s) {
+					if($title==$s['title']) {
+						$s['in_orcid'] = true;
+					}
+				}
 			}
 		}
 		
