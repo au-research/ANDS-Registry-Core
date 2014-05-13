@@ -87,6 +87,7 @@ function IndexCtrl($scope, works) {
 	$scope.search = function() {
 		if($scope.filters.q!=''){
 			$scope.filters.rows = 100;
+			$scope.filters.class = 'collection';
 			works.search($scope.filters).then(function(data){
 				$scope.search_results = data.result;
 			});
