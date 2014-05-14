@@ -201,20 +201,18 @@ class Orcid extends MX_Controller {
 		$result['suggested'] = array();
 		$suggested_collections = array();
 
+		$already_checked = array();
+
 		//find parties of similar names
 		$this->solr->setOpt('fq', '+class:party');
 		$this->solr->setOpt('fq', '+display_title:('.$data['last_name'].')');
 		$this->solr->executeSearch();
-
-		$already_checked = array();
 		if($this->solr->getNumFound() > 0){
 			$result = $this->solr->getResult();
-			// echo json_encode($result);
 			foreach($result->{'docs'} as $d){
 				if(!in_array($d->{'id'}, $already_checked)){
 					$ro = $this->ro->getByID($d->{'id'});
 					$connections = $ro->getConnections(true,'collection');
-					// var_dump($connections[0]['collection']);
 					if(isset($connections[0]['collection']) && sizeof($connections[0]['collection']) > 0) {
 						$suggested_collections=array_merge($suggested_collections, $connections[0]['collection']);
 					}
@@ -244,15 +242,29 @@ class Orcid extends MX_Controller {
 			}
 		}
 
-		//find collection that has a relatedInfo/identifier like the orcid_id
-		$relatedByRelatedInfoIdentifier = $this->ro->getByRelatedInfoIdentifier($data['orcid_id']);
-		if ( is_array($relatedByRelatedInfoIdentifier) && sizeof($relatedByRelatedInfoIdentifier) > 0 ) {
-			foreach ( $relatedByRelatedInfoIdentifier as $ro_id) {
-				if( !in_array($ro_id, $already_checked) ) {
-					array_push($already_checked, $ro_id);
+		//find collection that has a relatedInfo/citationInfo like the orcid_id
+		$this->solr->clearOpt('fq');
+		$this->solr->setOpt('fq', 'fulltext:('.$data['orcid_id'].')');
+		$this->solr->setOpt('fq', 'class:(collection)');
+		$this->solr->executeSearch();
+		if($this->solr->getNumFound() > 0){
+			$result = $this->solr->getResult();
+			foreach($result->{'docs'} as $d){
+				if(!in_array($d->{'id'}, $already_checked)){
+					$new = array();
+					array_push($new, array(
+						'registry_object_id' => $d->{'id'},
+						'title' => $d->{'display_title'},
+						'key' => $d->{'key'},
+						'slug' => $d->{'slug'}
+					));
+					$suggested_collections=array_merge($suggested_collections, $new);
+					array_push($already_checked, $d->{'id'});
+					unset($ro);
 				}
 			}
 		}
+		
 
 		$result = array();
 

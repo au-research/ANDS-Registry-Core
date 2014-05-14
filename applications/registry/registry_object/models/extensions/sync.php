@@ -46,6 +46,7 @@ class Sync_extension extends ExtensionBase{
 		foreach($single_values as $s){
 			$json[$s] = $this->ro->{$s};
 		}
+		$json['display_title'] = $this->ro->title;
 
 		$json['record_modified_timestamp'] = gmdate('Y-m-d\TH:i:s\Z', ($this->ro->updated ? $this->ro->updated : $this->ro->created));
 		$json['record_created_timestamp'] = gmdate('Y-m-d\TH:i:s\Z', $this->ro->created);

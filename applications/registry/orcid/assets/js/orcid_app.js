@@ -137,7 +137,7 @@ function IndexCtrl($scope, works) {
 		});
 		works.import_works(ids).then(function(data){
 			if(data!=1){
-				console.err(data);
+				console.error(data);
 				$scope.import_stg = 'error';
 			} else {
 				$scope.import_stg = 'complete';
