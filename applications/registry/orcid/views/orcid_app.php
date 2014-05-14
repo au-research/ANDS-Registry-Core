@@ -19,9 +19,10 @@
 						<h5>Suggested Datasets</h5>
 					</div>
 					<div class="widget-content">
-						<label class="checkbox" ng-repeat="item in works | filter:{type:'suggested'}">
+						<label class="checkbox" ng-repeat="item in filteredWorks = (works| filter:{type:'suggested'})">
 							<input type="checkbox" ng-model="item.to_import"/> <a href="{{item.url}}" target="_blank">{{item.title}}</a> <span class="label label-info" ng-show="item.imported && item.in_orcid">Imported</span>
 						</label>
+						<div class="alert alert-info" ng-hide="filteredWorks.length">There are no suggested datasets, please use the search functions to look for works</div>
 					</div>
 				</div>
 
@@ -36,14 +37,14 @@
 								<button type="submit" class="btn">Search</button>
 							</div>
 						</form>
-						<div style="max-height:300px;overflow:auto">
+						<div style="height:450px;overflow:auto">
 							<div ng-repeat="doc in search_results.docs">
 								<div style="width:25px;float:left;line-height:10px;">
 									<input type="checkbox" ng-model="doc.to_import" />
 								</div>
 								<div style="margin-left:25px;">
 									<h5><a href="<?php echo portal_url()?>{{doc.slug}}">{{doc.title}}</a><span class="label label-info pull-right" style="margin-right:15px;" ng-show="imported_ids.indexOf(doc.id)!=-1">Imported</span></h5>
-									<p ng-bind-html-unsafe="doc.description"></p>
+									<p>{{doc.description | removeHtml}}</p>
 								</div>
 								<div class="clearfix"></div>
 								<hr/>
@@ -53,8 +54,8 @@
 				</div>
 			</div>
 			<div class="span4">
-				<div style="text-align:center">
-					<a href="#myModal" role="button" data-toggle="modal" class="btn btn-primary import" ng-class="{true:'', false:'disabled', '':'hidden'}[import_available]">
+				<div class="widget-box">
+					<a href="#myModal" role="button" data-toggle="modal" class="btn btn-primary btn-block btn-large import" ng-class="{true:'', false:'disabled', '':'hidden'}[import_available]">
 						Import Selected <span ng-show="to_import.length>0">{{to_import.length}}</span> Works
 					</a>
 				</div>
@@ -73,8 +74,9 @@
 					<div class="widget-title"><h5>Datasets already imported from Research Data Australia</h5></div>
 					<div class="widget-content">
 						<ul>
-							<li ng-repeat="item in works | filter:{type:'imported'} | filter:{imported:true} | filter:{in_orcid:true}"> <a href="{{item.url}}" target="_blank">{{item.title}}</a></li>
+							<li ng-repeat="item in filteredWorks = (works | filter:{type:'imported'} | filter:{imported:true} | filter:{in_orcid:true})"> <a href="{{item.url}}" target="_blank">{{item.title}}</a></li>
 						</ul>
+						<div class="alert alert-info" ng-hide="filteredWorks.length">You have not imported any works from Research Data Australia!</div>
 					</div>
 				</div>
 			</div>
@@ -91,7 +93,7 @@
 			<p><b>({{to_import.length}}) works have been selected for import to your ORCID profile.</b></p>
 			<p>Please review your selected works and ensure they are appropriate before continuing with the import</p>
 			<div class="well">
-				<p ng-repeat="item in to_import"><a href="" ng-click="item.to_import=!item.to_import"><i class="icon icon-remove"></i></a> {{item.title}}</p>
+				<p ng-repeat="item in to_import"><a href="" ng-click="item.to_import=!item.to_import"><i class="icon icon-minus-sign"></i></a> {{item.title}}</p>
 				<p ng-show="to_import.length==0">No works are selected for import</p>
 			</div>
 			<hr>
@@ -105,9 +107,12 @@
 			</div>
 			<p>Remember to review and set the appropriate visibility settings for the works via your profile in ORCID.</p>
 		</div>
-		<div class="modal-footer">
+		<div class="modal-footer" ng-show="import_stg!='complete'">
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 			<button class="btn btn-primary" ng-click="import()">Import</button>
+		</div>
+		<div class="modal-footer" ng-show="import_stg=='complete'">
+			<button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="refresh()">Ok</button>
 		</div>
 	</div>
 

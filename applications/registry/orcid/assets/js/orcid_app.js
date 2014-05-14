@@ -1,4 +1,10 @@
-angular.module('orcid_app', ['ngSanitize'])
+/**
+ * ORCID APP angularJS module
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
+angular.module('orcid_app', ['portal-filters'])
+
+	//Router
 	.config(function($routeProvider){
 		$routeProvider
 			.when('/', {
@@ -6,6 +12,8 @@ angular.module('orcid_app', ['ngSanitize'])
 				template: $('#index').html()
 			})
 	})
+
+	//Factory
 	.factory('works', function($http){
 		return {
 			getWorks: function(data) {
@@ -21,7 +29,14 @@ angular.module('orcid_app', ['ngSanitize'])
 	})
 ;
 
+/**
+ * Primary Controller
+ * @param  $scope
+ * @param factory works
+ */
 function IndexCtrl($scope, works) {
+
+	//Default Values
 	$scope.works = {};
 	$scope.to_import = [];
 	$scope.import_available = false;
@@ -36,6 +51,7 @@ function IndexCtrl($scope, works) {
 		last_name:$('#last_name').text()
 	};
 
+	//Overwrite the import button to only open the modal if it's not disabled
 	$('.import').click(function(e){
 		e.preventDefault();
 		if(!$(this).hasClass('disabled')){
@@ -44,18 +60,27 @@ function IndexCtrl($scope, works) {
 		return false;
 	});
 
+	//Refresh functions refreshes the works, populates the imported_ids 
 	$scope.refresh = function(){
+		$scope.imported_ids = [];
 		works.getWorks($scope.orcid).then(function(data){
 			$scope.works = data.works;
-			$.each($scope.works, function(){
-				if(this.type=='imported'){
-					$scope.imported_ids.push(this.id);
-				}
-			})
+			if($scope.works){
+				$.each($scope.works, function(){
+					if(this.type=='imported' && this.in_orcid){
+						$scope.imported_ids.push(this.id);
+					}
+				});
+			}
 		});
 	}
+	//run once
 	$scope.refresh();
 
+	/**
+	 * Watch Expression on works and search result to updat the import tag
+	 * @return {[type]} [description]
+	 */
 	$scope.$watch('works', function(){
 		$scope.review();
 	}, true);
@@ -67,12 +92,14 @@ function IndexCtrl($scope, works) {
 	$scope.review = function(){
 		$scope.import_available = false;
 		$scope.to_import = [];
-		$.each($scope.works, function(){
-			if(this.to_import) {
-				$scope.to_import.push(this);
-				$scope.import_available = true;
-			}
-		});
+		if($scope.works){
+			$.each($scope.works, function(){
+				if(this.to_import) {
+					$scope.to_import.push(this);
+					$scope.import_available = true;
+				}
+			});
+		}
 		if($scope.search_results && $scope.search_results.docs){
 			$.each($scope.search_results.docs, function(){
 				if(this.to_import) {
@@ -84,6 +111,10 @@ function IndexCtrl($scope, works) {
 		$scope.import_stg = 'ready';
 	}
 
+	/**
+	 * Generic SOLR search for collections
+	 * @return search_result
+	 */
 	$scope.search = function() {
 		if($scope.filters.q!=''){
 			$scope.filters.rows = 100;
@@ -94,15 +125,10 @@ function IndexCtrl($scope, works) {
 		}
 	}
 
-	$scope.already_imported = function(item) {
-		$.each($scope.works, function(){
-			if(this.type=="imported" && this.id===item.id){
-				return true;
-			}
-		});
-		return false;
-	}
-
+	/**
+	 * Import the set of to_import works to ORCID, calling the import_works factory method
+	 * Increment import stages from idle->importing->complete, error is a stage
+	 */
 	$scope.import = function() {
 		$scope.import_stg = 'importing';
 		var ids = [];
@@ -115,7 +141,6 @@ function IndexCtrl($scope, works) {
 				$scope.import_stg = 'error';
 			} else {
 				$scope.import_stg = 'complete';
-				$scope.refresh();
 			}
 		});
 	}

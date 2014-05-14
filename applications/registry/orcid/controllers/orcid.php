@@ -197,10 +197,6 @@ class Orcid extends MX_Controller {
 		$this->load->library('solr');
 		$this->load->library('Orcid_api', 'orcid');
 
-		//debug
-		$data['orcid_id'] = '0000-0003-0670-6058';
-		$data['last_name'] = 'Nguyen';
-
 		//suggested
 		$result['suggested'] = array();
 		$suggested_collections = array();
@@ -238,7 +234,6 @@ class Orcid extends MX_Controller {
 			foreach($result->{'docs'} as $d){
 				if(!in_array($d->{'id'}, $already_checked)){
 					$ro = $this->ro->getByID($d->{'id'});
-					$ro = $this->ro->getByID($d->{'id'});
 					$connections = $ro->getConnections(true,'collection');
 					if(isset($connections[0]['collection']) && sizeof($connections[0]['collection']) > 0) {
 						$suggested_collections=array_merge($suggested_collections, $connections[0]['collection']);
@@ -258,8 +253,6 @@ class Orcid extends MX_Controller {
 				}
 			}
 		}
-
-		
 
 		$result = array();
 
@@ -293,7 +286,7 @@ class Orcid extends MX_Controller {
 		}
 
 		$bio = json_decode($this->orcid_api->get_full(), true);
-		if($bio){
+		if($bio && isset($bio['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'])){
 			$works = $bio['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'];
 			foreach($works as $w){
 				$title = $w['work-title']['title']['value'];
@@ -304,8 +297,6 @@ class Orcid extends MX_Controller {
 				}
 			}
 		}
-		
-		
 
 		echo json_encode($result);
 	}
