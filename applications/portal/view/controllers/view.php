@@ -2,9 +2,64 @@
 
 class View extends MX_Controller {
 
+	/** 
+	 * Default View Handler
+	 * @return view 
+	 */
+	function index() {
+		if($this->input->get('key')) {
+			$this->handleRedirectFromKeyToSlug($this->input->get('key'));
+			return;
+		} else if (!$this->input->get('slug') && !$this->input->get('id') && !$this->input->get('any')) {
+			header("HTTP/1.1 404 Not Found");			
+			$this->load->view('soft404', array('message'=>'Page not Found'));
+			return;
+		}
+
+		$this->load->model('registry_fetch','registry');
+		if($this->input->get('id')) {
+			try {
+				$extRif = $this->registry->fetchExtRifByID($this->input->get('id'));
+			} catch (Exception $e) {			
+				header("HTTP/1.1 404 Not Found");
+				$this->load->view('soft404', array('message'=>$e->getMessage()));
+				return;
+			}
+		} elseif($this->input->get('any')) {
+			$this->handleRedirectFromAny($this->input->get('any'));
+			return;
+		} elseif($this->input->get('slug')) {
+			try {
+				$extRif = $this->registry->fetchExtRifBySlug($this->input->get('slug'));
+			} catch (SlugNoLongerValidException $e) {
+				header("HTTP/1.1 404 Not Found");
+				// throw new Exception('Page could not be found - 404');
+				$this->load->view('soft404', array('previously_valid_title'=>$e->getMessage()));
+				return;
+			} catch (PageNotValidException $e) {			
+				header("HTTP/1.1 404 Not Found");
+				// throw new Exception('Page could not be found - 404');
+				$this->load->view('soft404', array('message'=>$e->getMessage()));
+				return;
+			}
+		}
+
+		$this->load->library('stats');
+		$this->stats->registerPageView($extRif['registry_object_id']);
+
+		// Check if we have a specific rendering template
+		if(isset($extRif['template']) && $extRif['template'] == CONTRIBUTOR_PAGE_TEMPLATE) {
+			// If there is a renderer for this template, use it!
+			$this->checkCustomTemplate($extRif);
+		} else {
+			$this->renderDefaultViewPage($extRif);
+		}
+
+	}
+
 
 	/* DEFAULT VIEW HANDLER -- WILL FETCH EXTRIF AND HAND OVER TO A RENDERER (BELOW) */
-	function index()
+	function index2()
 	{
 		// Published records are always referenced by SLUG
 		// (for backwards compatibility, we can also redirect based on a key)
@@ -50,11 +105,11 @@ class View extends MX_Controller {
 			{
 				$extRif = $this->registry->fetchExtRifByID($this->input->get('id'));
 			}
-			catch (PageNotValidException $e)
+			catch (Exception $e)
 			{			
 				header("HTTP/1.1 404 Not Found");
-				throw new Exception('Page could not be found - 404');
-				//$this->load->view('soft404', array('message'=>$e->getMessage()));
+				// throw new Exception('Page could not be found - 404');
+				$this->load->view('soft404', array('message'=>$e->getMessage()));
 				return;
 			}						
 		}
@@ -127,20 +182,19 @@ class View extends MX_Controller {
 		$data['the_title'] = trim(implode(',', $data['the_title']));
 
 
-		if ($this->input->get('slug'))
-		{
+		if($this->input->get('id')){
+			$connections = $this->registry->fetchConnectionsByID($this->input->get('id'));
+			$suggested_links['identifiers'] = $this->registry->fetchSuggestedLinksByID($this->input->get('id'), "ands_identifiers",0 ,0);
+			$suggested_links['subjects'] = $this->registry->fetchSuggestedLinksByID($this->input->get('id'), "ands_subjects",0 ,0);
+			$data['ro_id'] = $this->input->get('id');
+		}else{
 			$connections = $this->registry->fetchConnectionsBySlug($this->input->get('slug'));
 			$suggested_links['identifiers'] = $this->registry->fetchSuggestedLinksBySlug($this->input->get('slug'), "ands_identifiers",0 ,0);
 			$suggested_links['subjects'] = $this->registry->fetchSuggestedLinksBySlug($this->input->get('slug'), "ands_subjects",0 ,0);
 			$data['ro_slug'] = $this->input->get('slug');
 		}
-		else
-		{
-			$connections = $this->registry->fetchConnectionsByID($this->input->get('id'));
-			$suggested_links['identifiers'] = $this->registry->fetchSuggestedLinksByID($this->input->get('id'), "ands_identifiers",0 ,0);
-			$suggested_links['subjects'] = $this->registry->fetchSuggestedLinksByID($this->input->get('id'), "ands_subjects",0 ,0);
-			$data['ro_id'] = $this->input->get('id');
-		}
+
+		
 
 		// Render the connections box
 		$data['connections_contents'] = $connections;
@@ -406,6 +460,26 @@ class View extends MX_Controller {
 		else
 		{
 			$this->renderDefaultViewPage($extRifResponse);
+		}
+	}
+
+	private function handleRedirectFromAny($any){
+		if($any){
+			$this->load->model('registry_fetch', 'registry');
+			$content = $this->registry->resolve($any);
+			if($content['data'] && isset($content['data']['id']) && isset($content['data']['slug'])){
+				redirect('/'.$content['data']['slug'].'/'.$content['data']['id']);
+			} else {
+				header("HTTP/1.1 404 Not Found");	
+				// throw new Exception('Page could not be found - 404'.'key:'.$key);
+				$this->load->view('soft404', array('message'=>$data['message']));	
+				return;
+			}
+		} else {
+			header("HTTP/1.1 404 Not Found");	
+			// throw new Exception('Page could not be found - 404'.'key:'.$key);
+			$this->load->view('soft404', array('invalid_key'=>'Supplied key is not valid'));	
+			return;
 		}
 	}
 

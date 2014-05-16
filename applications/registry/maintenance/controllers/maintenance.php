@@ -103,6 +103,88 @@ class Maintenance extends MX_Controller {
 		echo 'Done';
 	}
 
+	public function migrate_slugs_to_r13($commit = false) {
+		acl_enforce('REGISTRY_STAFF');
+	
+		if(!$commit){
+			$result = $this->db->query('SELECT slug,registry_object_id FROM dbs_registry.registry_objects WHERE CHAR_LENGTH(SLUG) > 32;');
+			echo 'There are '.$result->num_rows().' slugs that are longer than 32 characters <br/>';
+			$result = $this->db->query('select slug,registry_object_id from dbs_registry.url_mappings where registry_object_id IS NULL and slug in(select slug from registry_objects);');
+			echo 'There are '.$result->num_rows().' orphaned slugs <br/>';
+			$result = $this->db->select('slug, registry_object_id')->from('url_mappings')->where('registry_object_id', NULL)->get();
+			echo 'There are '.$result->num_rows(). ' bad slugs <br/>';
+			echo 'Run migrate_slugs_to_r13/true to commit fixing orphaned slugs and delete bad slugs';
+		} else {
+			ob_start();
+			ob_implicit_flush(1);
+
+			$this->load->model('registry_object/registry_objects', 'ro');
+
+			//fix orphaned slugs, giving them a registry object id
+			$result = $this->db->query('select slug,registry_object_id from dbs_registry.url_mappings where registry_object_id IS NULL and slug in(select slug from registry_objects);');
+			$result_array = $result->result_array();
+			if($result->num_rows()==0) {
+				echo 'There are no orphaned slug. <br/>';
+			} else echo 'There are '. $result->num_rows(). ' orphaned slug. Fixing. <br/>';
+			foreach($result->result_array as $r){
+				$ro = $this->ro->getBySlug($r['slug']);
+				if($ro){
+					$result = $this->db->update('url_mappings', array(
+						'registry_object_id'=>$ro->id
+					), array('slug'=>$r['slug']));
+					if($result){
+						echo 'success: '. $r['slug']. ' updated to '.$ro->id.'<br/>';
+					} else {
+						'failed: (cant update):'. $r['slug'].'<br/>';
+					}
+				} else {
+					echo 'failed (no record): '.$r['slug'].'<br/>';
+				}
+				unset($ro);
+				ob_flush();flush();
+			}
+
+			//delete bad slug
+			$result = $this->db->select('slug, registry_object_id')->from('url_mappings')->where('registry_object_id', NULL)->get();
+			if($result->num_rows()==0) {
+				echo 'There are no bad slug. <br/>';
+			} else {
+				echo 'There are '. $result->num_rows(). ' bad slug. Removing. <br/>';
+				$result = $this->db->delete('url_mappings', array('registry_object_id'=>NULL));
+				if($result){
+					echo 'success<br/>';
+				} else {
+					echo 'failed<br/>'; 
+				}
+			}
+			
+
+			//generating new slugs
+			$result = $this->db->query('SELECT slug,registry_object_id FROM dbs_registry.registry_objects WHERE CHAR_LENGTH(SLUG) > 32;');
+			echo 'There are '.$result->num_rows().' slugs that are longer than 32 characters <br/>';
+			foreach($result->result_array() as $r){
+				$ro = $this->ro->getByID($r['registry_object_id']);
+				if($ro){
+					$newSlug = $ro->generateSlug();
+					if($newSlug && $ro->update_field_index('slug')){
+						echo 'success:'.$r['slug'].' -> '. $newSlug.'<br/>';
+					} else {
+						echo 'failed generating Slug :'. $r['slug'].'<br/>';
+					}
+				} else {
+					echo 'failed (no record): '.$r['slug'].'<br/>';
+				}
+				unset($ro);
+				ob_flush();flush();
+			}
+			ob_end_flush(); 
+
+		}
+
+		// $result = $this->db->select('slug, registry_object_id')->from('url_mappings')->where('registry_object_id', NULL)->get();
+		
+	}
+
 	public function syncmenu(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'ARMS SyncMenu';
@@ -481,25 +563,34 @@ class Maintenance extends MX_Controller {
 	function test(){
 		$this->load->model('registry_object/registry_objects', 'ro');
 
-		$ro = $this->ro->getByID(435946);
+		// $ro = $this->ro->getByID(435946);
+		$ro = $this->ro->getByID(8224);
+		$slug = $ro->generateSlug();
+		var_dump($ro->title);
+		var_dump($slug);
+		// $json = json_encode($ro->indexable_json());
+
+		// $result = $ro->update_field_index('slug');
+		// echo json_encode($result);
+
 //		$ro = $this->ro->getByID(7144);
 
-		$this->benchmark->mark('1_start');
-		$doc = $ro->indexable_json();
-		$this->benchmark->mark('1_end');
+// 		$this->benchmark->mark('1_start');
+// 		$doc = $ro->indexable_json();
+// 		$this->benchmark->mark('1_end');
 
-		$result = array();
-		$result['json_test'] = $this->benchmark->elapsed_time('1_start', '1_end');
-		$result['json_doc'] = json_encode($doc);
+// 		$result = array();
+// 		$result['json_test'] = $this->benchmark->elapsed_time('1_start', '1_end');
+// 		$result['json_doc'] = json_encode($doc);
 
-		$docs = array();
-		$docs[] = $doc;
+// 		$docs = array();
+// 		$docs[] = $doc;
 
-		$this->load->library('solr');
-//		$ro->sync();
-		$result['solr_delete'] = $this->solr->deleteByID(435946);
-		$result['solr_result'] = $this->solr->add_json(json_encode($docs));
-		$result['solr_commit'] = $this->solr->commit();
+// 		$this->load->library('solr');
+// //		$ro->sync();
+// 		$result['solr_delete'] = $this->solr->deleteByID(435946);
+// 		$result['solr_result'] = $this->solr->add_json(json_encode($docs));
+// 		$result['solr_commit'] = $this->solr->commit();
 
 //		echo json_encode($doc);
 //
@@ -510,7 +601,7 @@ class Maintenance extends MX_Controller {
 //
 //		$result['xml_test'] = $this->benchmark->elapsed_time('2_start', '2_end');
 //		$result['xml_doc'] = $doc;
-		var_dump($result);
+		// var_dump($result);
 
 //		echo json_encode($doc);
 

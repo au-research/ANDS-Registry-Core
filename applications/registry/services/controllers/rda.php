@@ -31,8 +31,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$this->load->model('registry_object/Registry_objects', 'ro');
 
 		// Some validation on input
-		if (! $this->input->get('slug') && ! $this->input->get('registry_object_id'))
-		{ 
+		if (!$this->input->get('slug') && !$this->input->get('registry_object_id') && !$this->input->get('any')) { 
 			throw new Exception("No valid URL SLUG or registry_object_id specified.");
 		}
 
@@ -164,6 +163,45 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		}
 	}
 
+	public function resolveRegistryObject() {
+		if(!$this->input->get('any')){
+			throw new Exception('Nothing to resolve');
+		}
+
+		$any = $this->input->get('any');
+
+		$this->load->model('registry_object/registry_objects', 'ro');
+
+		//check for active slug mapping first
+		$result = $this->db->get_where('url_mappings', array('slug'=>$any));
+		$result_array = $result->result_array();
+
+		if($result->num_rows() > 0){
+			//found it, here's the ID
+			if($result_array[0]['registry_object_id']) $any = $result_array[0]['registry_object_id'];
+		}
+
+		$ro = $this->ro->getByID($any);
+		if(!$ro) $ro = $this->ro->getBySlug($any);
+		if(!$ro) $ro = $this->ro->getPublishedByKey($any);
+
+		if($ro){
+			$ro_content = array(
+				'id'=>$ro->id,
+				'key'=>$ro->key,
+				'slug'=>$ro->slug
+			);
+			$contents['data'] = $ro_content;
+			echo json_encode($contents);
+			return;
+		} else {
+			$contents = array('message' => 'Registry Object not found. Trying to resolve '.$any);
+			echo json_encode($contents);
+			return;
+		}
+
+	}
+
 
 	/**
 	* Fetch a list of connections from the registry
@@ -198,7 +236,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		elseif ($this->input->get('registry_object_id'))
 		{
 			$registry_object = $this->ro->getByID($this->input->get('registry_object_id'));
-			$published_only = FALSE;
+			$published_only = TRUE;
 		}elseif ($this->input->get('registry_object_key')){
 			$registry_object = $this->ro->getPublishedByKey(urldecode($this->input->get('registry_object_key')));
 			$published_only = TRUE;

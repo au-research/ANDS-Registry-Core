@@ -116,7 +116,7 @@ Only records which have coverage of the search region will be displayed.
 				<img src="<?php echo base_url();?>assets/img/{{class}}.png" class="class_icon icontip_{{class}}" type="{{class}}"/>
 			{{/class}}
 			{{#list_title}}
-				<a href="<?php echo base_url();?>{{slug}}" class="title">{{list_title}}</a>
+				<a href="<?php echo base_url();?>{{slug}}/{{id}}" class="title">{{list_title}}</a>
 
 			{{/list_title}}
 			{{#matching_identifier_count}}

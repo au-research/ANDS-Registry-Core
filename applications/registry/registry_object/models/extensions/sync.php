@@ -199,4 +199,23 @@ class Sync_extension extends ExtensionBase{
 		}
 		return $json;
 	}
+
+	function update_field_index($field){
+		$json = array();
+		$json['id'] = $this->ro->id;
+
+		if($field=='slug'){
+			$json['slug'] = array('set'=>$this->ro->slug);
+		}
+
+		$docs = array();
+		$docs[] = $json;
+		$this->_CI->load->library('solr');
+		$result = json_decode($this->_CI->solr->add_json(json_encode($docs)), true);
+		$this->_CI->solr->commit();
+
+		if(isset($result['responseHeader']) &&$result['responseHeader']['status']==0){
+			return true;
+		} else return false;
+	}
 }
