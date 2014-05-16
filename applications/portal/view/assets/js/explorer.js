@@ -201,7 +201,7 @@ controller('openExplorer', function($scope, searches){
 	 * @return void
 	 */
 	$scope.load_more = function(){
-		if(($('#connections_layout_container').dialog('isOpen')===true) && !$scope.done && !$scope.loading){
+		if($('.ui-dialog').is(':visible') && !$scope.done && !$scope.loading){
 			$scope.loading = true;
 			$scope.page++;
 			$scope.search($scope.page, true);

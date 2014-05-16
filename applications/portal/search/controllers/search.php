@@ -23,6 +23,8 @@ class Search extends MX_Controller {
 			$filters = $array['filters'];
 		}
 		$data = $this->solr_search($filters, true);
+
+		// echo $data['fieldstrings'];
 		//return the result to the client
 		echo json_encode($data);
 	}
@@ -34,8 +36,6 @@ class Search extends MX_Controller {
 
 		//optional facets return, true for rda search
 		$facets = array();
-
-		
 
 		if($include_facet){
 
@@ -64,6 +64,7 @@ class Search extends MX_Controller {
 		//boost
 		// $this->solr->setOpt('bq', 'id^1 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2 (*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
 		// $this->solr->setOpt('bq', '(*:* -group:("Australian Research Council"))^3  (*:* -group:("National Health and Medical Research Council"))^3');
+		
 		if($filters){
 			$this->solr->setFilters($filters);
 		}else{
