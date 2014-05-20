@@ -397,7 +397,7 @@ class View extends MX_Controller {
 		echo json_encode($this->input->post());
 		$this->load->library('stats');
 		if($this->input->post('url') && $this->input->post('from')){
-			$this->stats->registerClick($this->input->post('url'),$this->input->post('from'),'outbound');
+			$this->stats->registerClick($this->input->post('from'),$this->input->post('url'),'outbound');
 		}
 	}
 
