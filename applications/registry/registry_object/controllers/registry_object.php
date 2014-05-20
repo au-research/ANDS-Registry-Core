@@ -571,7 +571,7 @@ class Registry_object extends MX_Controller {
 		$ro->enrich();
 		$data['xml'] = html_entity_decode($ro->getRif());
 		$data['extrif'] = html_entity_decode($ro->getExtRif());
-		$data['solr'] = html_entity_decode($ro->transformForSOLR());
+		$data['solr'] = json_encode($ro->indexable_json());
 		//$data['view'] = $ro->transformForHtml();
 		$data['id'] = $ro->id;
 		$data['title'] = $ro->getAttribute('list_title');

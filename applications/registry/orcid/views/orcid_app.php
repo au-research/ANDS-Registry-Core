@@ -63,8 +63,7 @@
 					<div class="widget-title"><h5>Guidelines</h5></div>
 					<div class="widget-content">
 						<ul>
-							<li>Datasets are like other academic output. Only claim those where your connection to the dataset is something that you would include on your CV</li>
-							<li>Only claim datasets that you can justify/prove your connection to</li>
+							<li>Datasets are like other academic output. Only claim those that you can justify/prove your connection to.</li>
 							<li>Use the <a href="http://services.ands.org.au/documentation/rifcs/1.5/vocabs/vocabularies.html#Party_Relation_Type" target="_blank">"Party relation Type (party)"</a> in RIFCS to help define your connection</li>
 						</ul>
 					</div>

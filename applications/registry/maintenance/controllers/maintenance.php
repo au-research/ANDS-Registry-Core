@@ -482,7 +482,7 @@ class Maintenance extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 
 		// $ro = $this->ro->getByID(435946);
-		$ro = $this->ro->getByID(457376);
+		$ro = $this->ro->getByID(61929);
 		// $ro = $this->ro->getByID(7144);
 
 		$this->benchmark->mark('1_start');

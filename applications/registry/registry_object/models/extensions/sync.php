@@ -25,6 +25,7 @@ class Sync_extension extends ExtensionBase{
 				$docs = array();
 				$docs[] = $this->indexable_json();
 				$this->_CI->solr->add_json(json_encode($docs));
+				$this->_CI->solr->commit();
 			}
 		} catch (Exception $e) {
 			return 'error: '.$e;
