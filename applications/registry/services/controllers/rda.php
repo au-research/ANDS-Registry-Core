@@ -97,9 +97,10 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			$result_decoded = json_decode($result,true);
 			if(!$result_decoded['data']) {
 				$result = array();
-				$result['data'] = $theObject->getExtRif;
+				$theObject->enrich();
+				$result['data'] = $theObject->getExtRif();
 				$result['registry_object_id'] = $theObject->id;
-				$result['key'] = $theObject->registry_object_key;
+				$result['key'] = $theObject->key;
 				echo json_encode($result);
 			} else echo $result;
 

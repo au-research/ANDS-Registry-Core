@@ -22,7 +22,7 @@ class Transforms_Extension extends ExtensionBase
 			}
 
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars_decode($this->ro->getExtRif()), LIBXML_NOENT);
+			$dom->loadXML(htmlspecialchars_decode(htmlspecialchars($this->ro->getExtRif())), LIBXML_NOENT);
 			if ($add_tags)
 			{
 				return "<add>" . $xslt_processor->transformToXML($dom) . "</add>";
@@ -272,7 +272,7 @@ class Transforms_Extension extends ExtensionBase
 		try{
 			$xslt_processor = Transforms::get_extrif_to_form_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars_decode($rifcs), LIBXML_NOENT);
+			$dom->loadXML(htmlspecialchars_decode(htmlspecialchars($rifcs)), LIBXML_NOENT);
 			$xslt_processor->setParameter('','base_url',base_url());
 			return html_entity_decode($xslt_processor->transformToXML($dom));
 		} catch (Exception $e) {
