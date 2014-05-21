@@ -73,7 +73,13 @@ class Orcid extends MX_Controller {
 	}
 
 	function import_to_orcid(){
+		set_exception_handler('json_exception_handler');
 		$ro_ids = $this->input->post('ro_ids');
+		if(!$ro_ids){
+			$data = file_get_contents("php://input");
+			$data = json_decode($data, true);
+			$ro_ids = $data['ro_ids'];
+		}
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$xml = '';
 		foreach($ro_ids as $id){
@@ -155,10 +161,163 @@ class Orcid extends MX_Controller {
 	}
 
 	/**
+	 * [wiz description]
+	 * @param  orcid_bio $bio
+	 * @return view
+	 */
+	function wiz($bio) {
+		$data['title'] = 'Import Your Work';
+
+		//collect bio stuff
+		$data['bio'] = $bio['orcid-profile'];
+		$orcid_id = $data['bio']['orcid-identifier']['path'];
+
+		//scripts
+		$data['scripts'] = array('orcid_app');
+		$data['js_lib'] = array('core','prettyprint', 'angular');
+
+		$data['bio'] = $bio['orcid-profile'];
+		$data['orcid_id'] = $data['bio']['orcid-identifier']['path'];
+		$data['first_name'] = $data['bio']['orcid-bio']['personal-details']['given-names']['value'];
+		$data['last_name'] = $data['bio']['orcid-bio']['personal-details']['family-name']['value'];
+
+		$this->load->view('orcid_app', $data);
+	}
+
+	function orcid_works() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
+		set_exception_handler('json_exception_handler');
+
+		//load relevant models and libraries
+		$this->load->model('registry_object/registry_objects', 'ro');
+		$this->load->library('solr');
+		$this->load->library('Orcid_api', 'orcid');
+
+		//suggested
+		$result['suggested'] = array();
+		$suggested_collections = array();
+
+		$already_checked = array();
+
+		//find parties of similar names
+		$this->solr->setOpt('fq', '+class:party');
+		$this->solr->setOpt('fq', '+display_title:('.$data['last_name'].')');
+		$this->solr->executeSearch();
+		if($this->solr->getNumFound() > 0){
+			$result = $this->solr->getResult();
+			foreach($result->{'docs'} as $d){
+				if(!in_array($d->{'id'}, $already_checked)){
+					$ro = $this->ro->getByID($d->{'id'});
+					$connections = $ro->getConnections(true,'collection');
+					if(isset($connections[0]['collection']) && sizeof($connections[0]['collection']) > 0) {
+						$suggested_collections=array_merge($suggested_collections, $connections[0]['collection']);
+					}
+					array_push($already_checked, $d->{'id'});
+					unset($ro);
+				}
+			}
+		}
+
+		//find parties that have the same orcid_id
+		$this->solr->clearOpt('fq');
+		$this->solr->setOpt('fq', 'class:party');
+		$this->solr->setOpt('fq', 'identifier_value:('.$data['orcid_id'].')');
+		$this->solr->executeSearch();
+		if($this->solr->getNumFound() > 0){
+			$result = $this->solr->getResult();
+			foreach($result->{'docs'} as $d){
+				if(!in_array($d->{'id'}, $already_checked)){
+					$ro = $this->ro->getByID($d->{'id'});
+					$connections = $ro->getConnections(true,'collection');
+					if(isset($connections[0]['collection']) && sizeof($connections[0]['collection']) > 0) {
+						$suggested_collections=array_merge($suggested_collections, $connections[0]['collection']);
+					}
+					array_push($already_checked, $d->{'id'});
+					unset($ro);
+				}
+			}
+		}
+
+		//find collection that has a relatedInfo/citationInfo like the orcid_id
+		$this->solr->clearOpt('fq');
+		$this->solr->setOpt('fq', 'fulltext:('.$data['orcid_id'].')');
+		$this->solr->setOpt('fq', 'class:(collection)');
+		$this->solr->executeSearch();
+		if($this->solr->getNumFound() > 0){
+			$result = $this->solr->getResult();
+			foreach($result->{'docs'} as $d){
+				if(!in_array($d->{'id'}, $already_checked)){
+					$new = array();
+					array_push($new, array(
+						'registry_object_id' => $d->{'id'},
+						'title' => $d->{'display_title'},
+						'key' => $d->{'key'},
+						'slug' => $d->{'slug'}
+					));
+					$suggested_collections=array_merge($suggested_collections, $new);
+					array_push($already_checked, $d->{'id'});
+					unset($ro);
+				}
+			}
+		}
+		
+
+		$result = array();
+
+		//imported
+		$imported = $this->ro->getByAttribute('imported_by_orcid', $data['orcid_id']);
+		$imported_ids = array();
+		foreach ($imported as $i) {
+			$result['works'][] = array(
+				'type' => 'imported',
+				'id'=>$i->id,
+				'title'=>$i->title,
+				'key'=>$i->key,
+				'url'=>portal_url($i->slug),
+				'imported'=>true,
+				'in_orcid' => false
+			);
+			$imported_ids[] = $i->id;
+		}
+
+		//suggested
+		foreach($suggested_collections as $s) {
+			$result['works'][] = array(
+				'type' => 'suggested',
+				'id'=>$s['registry_object_id'],
+				'title'=>$s['title'],
+				'key'=>$s['key'],
+				'url'=>portal_url($s['slug']),
+				'imported'=> in_array($s['registry_object_id'], $imported_ids),
+				'in_orcid' => false
+			);
+		}
+
+		$bio = json_decode($this->orcid_api->get_full(), true);
+		if($bio && isset($bio['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'])){
+			$works = $bio['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'];
+			foreach($works as $w){
+				$title = $w['work-title']['title']['value'];
+				foreach($result['works'] as &$s) {
+					if($title==$s['title']) {
+						$s['in_orcid'] = true;
+					}
+				}
+			}
+		}
+
+		echo json_encode($result);
+	}
+
+	/**
 	 * The wizard?
 	 * @return view 
 	 */
-	function wiz($bio){
+	function wiz_dep($bio){
 
 		// var_dump($bio);
 

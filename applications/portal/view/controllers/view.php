@@ -431,9 +431,7 @@ class View extends MX_Controller {
 
 	}
 
-	function getRelationship()
-	{
-
+	function getRelationship(){
 		$relationship = $this->input->post('relationship');
 		$class = $this->input->post('object_class');
 		$theRel = format_relationship($class, $relationship,'EXPLICIT');
@@ -447,6 +445,14 @@ class View extends MX_Controller {
 				}
 			}
 		return ucfirst($theRel);
+	}
+
+	function recordoutbound(){
+		echo json_encode($this->input->post());
+		$this->load->library('stats');
+		if($this->input->post('url') && $this->input->post('from')){
+			$this->stats->registerClick($this->input->post('from'),$this->input->post('url'),'outbound');
+		}
 	}
 
 

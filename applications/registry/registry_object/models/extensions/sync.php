@@ -25,6 +25,7 @@ class Sync_extension extends ExtensionBase{
 				$docs = array();
 				$docs[] = $this->indexable_json();
 				$this->_CI->solr->add_json(json_encode($docs));
+				$this->_CI->solr->commit();
 			}
 		} catch (Exception $e) {
 			return 'error: '.$e;
@@ -46,6 +47,7 @@ class Sync_extension extends ExtensionBase{
 		foreach($single_values as $s){
 			$json[$s] = $this->ro->{$s};
 		}
+		$json['display_title'] = $this->ro->title;
 
 		$json['record_modified_timestamp'] = gmdate('Y-m-d\TH:i:s\Z', ($this->ro->updated ? $this->ro->updated : $this->ro->created));
 		$json['record_created_timestamp'] = gmdate('Y-m-d\TH:i:s\Z', $this->ro->created);
@@ -127,6 +129,30 @@ class Sync_extension extends ExtensionBase{
 			}
 		}
 
+		//related info text for searching
+		$json['related_info_search'] = '';
+		foreach($xml->{$this->ro->class}->relatedInfo as $relatedInfo){
+			$innerXML = $relatedInfo->saveXML();
+			$dom = new DOMDocument();
+			$dom->loadXML($innerXML);
+			$xpt = new DOMXpath($dom);
+			foreach($xpt->query('//relatedInfo') as $node) {
+				$json['related_info_search'] .= trim($node->nodeValue);
+			}
+		}
+
+		//citation metadata text
+		$json['citation_info_search'] = '';
+		foreach($xml->{$this->ro->class}->citationInfo as $citationInfo){
+			$innerXML = $citationInfo->saveXML();
+			$dom = new DOMDocument();
+			$dom->loadXML($innerXML);
+			$xpt = new DOMXpath($dom);
+			foreach($xpt->query('//citationInfo') as $node) {
+				$json['citation_info_search'] .= trim($node->nodeValue);
+			}
+		}
+
 		//spatial
 		if($spatialLocations = $this->ro->getLocationAsLonLats()){
 			$fields = array('spatial_coverage_extents', 'spatial_coverage_polygons', 'spatial_coverage_centres');
@@ -197,6 +223,8 @@ class Sync_extension extends ExtensionBase{
 			$json['related_object_display_title'][] = $related_object['title'];
 			$json['related_object_relation'][] = $related_object['relation_type'];
 		}
+
+		$json = array_filter($json);
 		return $json;
 	}
 
