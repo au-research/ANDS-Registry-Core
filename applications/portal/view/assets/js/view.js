@@ -1010,9 +1010,7 @@ $(document).on('click', '.connection_preview_link', function(e){
 		type:'POST',
 		dataType:'json',
 		data:{url:url,from:from},
-		success:function(data){
-			console.log(data);
-		}
+		success:function(data){}
 	});
 	window.open(url);
 });

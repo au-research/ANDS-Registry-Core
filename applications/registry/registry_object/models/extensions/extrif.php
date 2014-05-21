@@ -50,10 +50,10 @@ class Extrif_Extension extends ExtensionBase
 				$extendedMetadata->addChild("extRif:dataSourceID", $this->ro->data_source_id, EXTRIF_NAMESPACE);
 				$extendedMetadata->addChild("extRif:updateTimestamp", $this->ro->updated, EXTRIF_NAMESPACE);					
 	
-				$extendedMetadata->addChild("extRif:displayTitle", htmlspecialchars_decode($this->ro->title), EXTRIF_NAMESPACE);
-				$extendedMetadata->addChild("extRif:listTitle", htmlspecialchars_decode($this->ro->list_title), EXTRIF_NAMESPACE);
+				$extendedMetadata->addChild("extRif:displayTitle", htmlspecialchars_decode(str_replace("&"," ",$this->ro->title)), EXTRIF_NAMESPACE);
+				$extendedMetadata->addChild("extRif:listTitle", htmlspecialchars_decode(str_replace("&"," ",$this->ro->list_title)), EXTRIF_NAMESPACE);
 				try{
-					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//IGNORE', htmlspecialchars_decode($this->ro->list_title)), EXTRIF_NAMESPACE);
+					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//TRANSLIT', utf8_encode($this->ro->list_title)), EXTRIF_NAMESPACE);
 				}catch(Exception $e){
 					throw new Exception ('iconv installation/configuration required for simplified title <br/>'.$e);
 				}
@@ -133,7 +133,7 @@ class Extrif_Extension extends ExtensionBase
 							$theDescriptionType = $type;
 						}
 					}
-					$theDescription = strip_tags(html_entity_decode(html_entity_decode($theDescription)), '<p><br/><br />');
+					$theDescription = strip_tags(html_entity_decode(html_entity_decode(str_replace("&"," ",$theDescription))), '<p><br/><br />');
 					$extrifTheDescription = $extendedMetadata->addChild("extRif:the_description", $theDescription, EXTRIF_NAMESPACE);
 					$this->ro->set_metadata('the_description',$theDescription);
 					$theDescription = strip_tags($theDescription);
