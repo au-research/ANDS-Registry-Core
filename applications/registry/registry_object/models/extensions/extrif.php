@@ -53,7 +53,7 @@ class Extrif_Extension extends ExtensionBase
 				$extendedMetadata->addChild("extRif:displayTitle", htmlspecialchars_decode(str_replace("&"," ",$this->ro->title)), EXTRIF_NAMESPACE);
 				$extendedMetadata->addChild("extRif:listTitle", htmlspecialchars_decode(str_replace("&"," ",$this->ro->list_title)), EXTRIF_NAMESPACE);
 				try{
-					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//IGNORE', htmlspecialchars_decode($this->ro->list_title)), EXTRIF_NAMESPACE);
+					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//TRANSLIT', utf8_encode($this->ro->list_title)), EXTRIF_NAMESPACE);
 				}catch(Exception $e){
 					throw new Exception ('iconv installation/configuration required for simplified title <br/>'.$e);
 				}
