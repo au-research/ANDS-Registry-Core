@@ -93,7 +93,16 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 				
 			}
 
-			echo json_encode($record[0]);
+			$result = json_encode($record[0]);
+			$result_decoded = json_decode($result);
+			if(!$result_decoded['data']) {
+				$result = array();
+				$result['data'] = $theObject->getExtRif;
+				$result['registry_object_id'] = $theObject->id;
+				$result['key'] = $theObject->registry_object_key;
+				echo json_encode($result);
+			} else echo $result;
+
 			return;
 		} else if(count($record)==0){
 			//NO EXTRIF, attempt to create one

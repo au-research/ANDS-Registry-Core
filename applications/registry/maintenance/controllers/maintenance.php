@@ -622,16 +622,13 @@ class Maintenance extends MX_Controller {
 
 	function test(){
 		$this->load->model('registry_object/registry_objects', 'ro');
-//		$ro = $this->ro->getByID(12242);
-		$ro = $this->ro->getByID(146631);
-		$relationships = $ro->getAllRelatedObjects(false, true);
-//		foreach($relationships as $r){
-//			$r = $this->ro->getByID($r['registry_object_id']);
-//			$r->sync();
-//		}
-		$relationships2 = $ro->_getDuplicateConnections();
-		$relatedByIdentifiers = $ro->findMatchingRecords();
-		echo 'done';
+        //$ro = $this->ro->getByID(385969);
+        $ro = $this->ro->getPublishedByKey('f680f9c3-3a5b-408e-a356-5c19ad59d5f4');
+        if($ro){
+               	$ro->addRelationships();
+               	$ro->update_quality_metadata();
+                $ro->enrich();
+        }else echo 'not found';
 	}
 
 	function fixRelationships($id) {
