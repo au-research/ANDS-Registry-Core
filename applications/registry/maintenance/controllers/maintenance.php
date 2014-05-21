@@ -480,43 +480,13 @@ class Maintenance extends MX_Controller {
 
 	function test(){
 		$this->load->model('registry_object/registry_objects', 'ro');
-
-		// $ro = $this->ro->getByID(435946);
-		$ro = $this->ro->getByID(61929);
-		// $ro = $this->ro->getByID(7144);
-
-		$this->benchmark->mark('1_start');
-		$doc = $ro->indexable_json();
-		$this->benchmark->mark('1_end');
-
-		$result = array();
-		$result['json_test'] = $this->benchmark->elapsed_time('1_start', '1_end');
-		$result['json_doc'] = json_encode($doc);
-
-		// echo $result['json_doc'];
-
-		$docs = array();
-		$docs[] = $doc;
-
-// 		$this->load->library('solr');
-// //		$ro->sync();
-// 		$result['solr_delete'] = $this->solr->deleteByID(435946);
-		$result['solr_result'] = $this->solr->add_json(json_encode($docs));
-		$result['solr_commit'] = $this->solr->commit();
-
-//		echo json_encode($doc);
-//
-//		$this->benchmark->mark('2_start');
-//		$ro->enrich();
-//		$doc = $ro->transformForSOLR();
-//		$this->benchmark->mark('2_end');
-//
-//		$result['xml_test'] = $this->benchmark->elapsed_time('2_start', '2_end');
-//		$result['xml_doc'] = $doc;
-		var_dump($result);
-
-//		echo json_encode($doc);
-
+        //$ro = $this->ro->getByID(385969);
+        $ro = $this->ro->getPublishedByKey('f680f9c3-3a5b-408e-a356-5c19ad59d5f4');
+        if($ro){
+               	$ro->addRelationships();
+               	$ro->update_quality_metadata();
+                $ro->enrich();
+        }else echo 'not found';
 	}
 
 	function fixRelationships($id) {

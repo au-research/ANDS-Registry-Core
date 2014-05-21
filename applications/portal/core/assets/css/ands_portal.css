@@ -283,11 +283,11 @@ ul.linkedrecords-list li + li {
 }
 /* line 264, ../sass/ands_portal.scss */
 .login_st .social_profile_pic {
-  margin-top: -5px;
+  margin-top: -3px;
   margin-left: 10px;
   height: 42px;
   max-width: 42px;
-  border: 2px solid #84a07b;
+  border: 0px solid #84a07b;
 }
 
 /* line 273, ../sass/ands_portal.scss */

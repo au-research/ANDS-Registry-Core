@@ -425,7 +425,6 @@ class Solr {
 						$fq_str = '';
 						$fq_str = implode('") OR data_source_key:("', $value);
 						$fq_str = 'data_source_key:("'.$fq_str.'")';
-						// foreach($value as $v) $fq_str .= ' data_source_key:("'.$v.'")'; 
 						$this->setOpt('fq', $fq_str);
 					}else{
 						if($value!='all') $this->setOpt('fq', 'data_source_key:("'.$value.'")');
@@ -437,10 +436,10 @@ class Solr {
 				case 'identifier_value':
 					if(is_array($value)){
 						$identifier_search_query = join('","', $value);
-						$identifier_search_query = '+identifier_value:("'.$identifier_search_query.'")';
+						$identifier_search_query = '+identifier_value:('.$identifier_search_query.')';
 						$this->setOpt('fq', $identifier_search_query);
 					}else{
-						$this->setOpt('fq', '+identifier_value:("'.$value.'")');
+						$this->setOpt('fq', '+identifier_value:('.$value.')');
 					}
 					break;
 				case 'subject_value':
@@ -449,7 +448,7 @@ class Solr {
 						$subject_search_query = "(subject_value_resolved:\"" .$subject_search_query."\")";
 						$this->setOpt('fq', $subject_search_query);
 					}else{
-						$this->setOpt('fq', '+identifier_value:("'.$value.'")');
+						$this->setOpt('fq', '+subject_value_resolved:("'.$value.'")');
 					}
 					break;
 				case 'not_id':

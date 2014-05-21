@@ -973,6 +973,9 @@ function sync(){
 	});
 }
 
+//record all resolvable identifier outbound link
+$('#identifiers a[href]').addClass('recordOutBound');
+
 $(document).on('click', '.connection_preview_link', function(e){
 	e.preventDefault();
 	var preview_url = base_url + "preview/?identifier_relation_id=" +  $(this).attr('identifier_relation_id');
@@ -996,7 +999,21 @@ $(document).on('click', '.connection_preview_link', function(e){
 		});
 	}
 	return false;
-})
+}).on('click', '.recordOutBound', function(e){
+	e.preventDefault();
+
+	//record outbound link
+	var url = $(this).attr('href');
+	var from = document.URL;
+	$.ajax({
+		url:base_url+'view/recordoutbound',
+		type:'POST',
+		dataType:'json',
+		data:{url:url,from:from},
+		success:function(data){}
+	});
+	window.open(url);
+});
 
 
 
@@ -1007,6 +1024,7 @@ function stringToLatLng(str){
 	var coord = new google.maps.LatLng(parseFloat(lat), parseFloat(lon));
 	return coord;
 }
+
 
 
 
