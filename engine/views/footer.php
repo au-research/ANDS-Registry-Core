@@ -135,6 +135,7 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/ui-bootstrap-tpls-0.6.0.min.js', 'base') ?>"></script>
             <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/ui-utils.min.js', 'base') ?>"></script>
             <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/angular.datatables.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/portal-filters.js', 'base') ?>"></script>
 
         <?php elseif($lib=='colorbox'):?>
             <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
