@@ -173,35 +173,62 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		}
 	}
 
+	/**
+	 * Resolve a Registry Object ID, Key or Slug
+	 * If multiple registry objects found based on slug, returns data.multiple = true
+	 * @return json_array
+	 */
 	public function resolveRegistryObject() {
 		if(!$this->input->get('any')){
 			throw new Exception('Nothing to resolve');
 		}
 
+		//setup
+		$ro_content = array();
 		$any = $this->input->get('any');
-
 		$this->load->model('registry_object/registry_objects', 'ro');
 
-		//check for active slug mapping first
-		$result = $this->db->get_where('url_mappings', array('slug'=>$any));
-		$result_array = $result->result_array();
-
-		if($result->num_rows() > 0){
-			//found it, here's the ID
+		//check for registry objects with the same slug
+		$slug_search = $this->db->get_where('registry_objects', array('slug'=>$any));
+		if($slug_search->num_rows() == 1) {
+			//there's only 1 record
+			$result_array = $slug_search->result_array();
 			if($result_array[0]['registry_object_id']) $any = $result_array[0]['registry_object_id'];
+			$ro = $this->ro->getByID($any);
+		} elseif($slug_search->num_rows() > 1) {
+			//there's more than 1 record
+			$ro = $slug_search->result_array();
+		} else {
+			//not a slug, maybe an id or a key
+			$ro = $this->ro->getByID($any);
+			if(!$ro) $ro = $this->ro->getBySlug($any);
+			if(!$ro) $ro = $this->ro->getPublishedByKey($any);
 		}
 
-		$ro = $this->ro->getByID($any);
-		if(!$ro) $ro = $this->ro->getBySlug($any);
-		if(!$ro) $ro = $this->ro->getPublishedByKey($any);
+		//maybe an old slug, check in mapping table
+		if(!$ro) {
+			$url_mappings = $this->db->get_where('url_mappings', array('slug'=>$any));
+			if($url_mappings->num_rows() > 0) {
+				//found it, it's an old thing
+				$result_array = $url_mappings->result_array();
+				if($result_array[0]['registry_object_id']) $any = $result_array[0]['registry_object_id'];
+				$ro = $this->ro->getByID($any);
+			}
+		}
 
-		if($ro){
-			$ro_content = array(
-				'id'=>$ro->id,
-				'key'=>$ro->key,
-				'slug'=>$ro->slug
-			);
+		if($ro && !is_array($ro)) {
+			$ro_content['id'] = $ro->id;
+			$ro_content['key'] = $ro->key;
+			$ro_content['slug'] = $ro->slug;
 			$contents['data'] = $ro_content;
+			echo json_encode($contents);
+			return;
+		} elseif (is_array($ro)) {
+			$data = array(
+				'multiple'=>true,
+				'message' => 'Multiple Records Found: '. sizeof($ro)
+			);
+			$contents['data'] = $data;
 			echo json_encode($contents);
 			return;
 		} else {
@@ -209,7 +236,6 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			echo json_encode($contents);
 			return;
 		}
-
 	}
 
 

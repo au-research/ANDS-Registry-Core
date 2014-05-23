@@ -107,10 +107,10 @@ class Sync_extension extends ExtensionBase{
 			$json['description_value'][] = $encoded_html;
 			$json['description_type'][] = $type;
 		}
-
-		if($theDescription && $theDescriptionType) {
-			$json['description'] = htmlentities(strip_tags(html_entity_decode($theDescription), '<p></p><br><br />'));
-		}
+		
+		//will have a description field even if it's blank
+		$json['description'] = htmlentities(strip_tags(html_entity_decode($theDescription), '<p></p><br><br />'));
+		
 
 		//license
 		if($rights = $this->ro->processLicence()){

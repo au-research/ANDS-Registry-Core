@@ -170,7 +170,7 @@ Only records which have coverage of the search region will be displayed.
 <script type="text/x-mustache" id="linkedrecords-template">
 <ul>
 {{#.}}
-	<li><a href="<?php echo base_url();?>{{slug}}" class="overrule_link">{{title}} <span><small>(Contributor: {{group}})</small></span></a></li>
+	<li><a href="<?php echo base_url();?>{{slug}}/{{id}}" class="overrule_link">{{title}} <span><small>(Contributor: {{group}})</small></span></a></li>
 {{/.}}
 </ul>
 </script>

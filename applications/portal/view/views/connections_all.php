@@ -11,7 +11,7 @@
 			$html.='<div class="ro_preview_description hide"></div>';
 		}
 		else if($related_identity_type=='slug'){
-			$relation_link = base_url().$conn['slug'];
+			$relation_link = base_url().$conn['slug'].'/'.$conn['registry_object_id'];
 			$html.='<div class="ro_preview_header"><img class="icon-heading" src="'.base_url().'assets/core/images/icons/'.$conn['class'].'s.png"/><div class="title">'.$conn['title'].'</div><div class="clear"></div></div>';
 			$html.='<div class="ro_preview_description hide">'.html_entity_decode(html_entity_decode($conn['description'])).'<div class="ro_preview_footer"><a href="'.$relation_link.'">View Full Record</a></div></div>';
 		}else{

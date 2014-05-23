@@ -39,8 +39,8 @@
 							$iirId = 'identifier_relation_id='.$entry['identifier_relation_id'];
 						}
 						else if ($entry['status'] == PUBLISHED){
-							$url = base_url() . $entry['slug'];
-							$preview = 'slug='.$entry['slug'];
+							$url = base_url() . $entry['slug'].'/'.$entry['registry_object_id'];
+							$preview = 'slug='.$entry['slug'] .' registry_object_id='.$entry['registry_object_id'];
 						}
 						else{
 							$url = base_url() . "view/?id=" . $entry['registry_object_id'];

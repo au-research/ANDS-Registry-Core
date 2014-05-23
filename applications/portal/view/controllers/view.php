@@ -289,71 +289,48 @@ class View extends MX_Controller {
 			 styles and produce an undesirable error effect */
 	function preview(){
 		$this->load->model('registry_fetch','registry');
-
-		if ($this->input->get('slug'))
-		{
-
-			try
-			{
+		if($this->input->get('id')){
+			try{
+				$extRif = $this->registry->fetchExtRifByID($this->input->get('id'));
+				$html = $this->registry->transformExtrifToHTMLPreview($extRif['data']);
+			} catch (SlugNoLongerValidException $e) {
+				die("Registry object could not be located (perhaps it no longer exists!)");
+			}
+		} elseif ($this->input->get('slug')) {
+			try {
 				$extRif = $this->registry->fetchExtRifBySlug($this->input->get('slug'));
 				$html = $this->registry->transformExtrifToHTMLPreview($extRif['data']); 
-			}
-			catch (SlugNoLongerValidException $e)
-			{
+			} catch (SlugNoLongerValidException $e) {
 				die("Registry object could not be located (perhaps it no longer exists!)");
 			}
-		}
-		else if ($this->input->get('registry_object_id')) {
-			try
-			{
-				$extRif = $this->registry->fetchExtRifByID($this->input->get('registry_object_id'));
-				$html = $this->registry->transformExtrifToHTMLPreview($extRif['data']);
-			}
-			catch (SlugNoLongerValidException $e)
-			{
-				die("Registry object could not be located (perhaps it no longer exists!)");
-			}
-		}
-		else if ($this->input->post('roIds')) {
+		} elseif ($this->input->post('roIds')) {
 			$currRoID = null;
 			$html = '';
-			foreach($this->input->post('roIds') as $roID)
-			{
+			foreach($this->input->post('roIds') as $roID) {
 				$currRoID = $roID;
-				try
-				{
+				try {
 					$extRif = $this->registry->fetchExtRifByID($roID);
 					$html .= $this->registry->transformExtrifToHTMLPreview($extRif['data'], true);
-				}
-				catch (ErrorException $e)
-				{
+				} catch (ErrorException $e) {
 					$html .= "<div class='ro_preview'><div class='ro_preview_header'></div><div class='title'><i>Oops! The record at this location is missing - perhaps it was removed from the registry? (#".$currRoID.")</i> </div></div>";
-				}		
-				catch (PageNotValidException $e)
-				{			
+				} catch (PageNotValidException $e) {			
 					$html .= "<div class='ro_preview'><div class='ro_preview_header'></div><div class='title'><i>Oops! The record at this location is missing - perhaps it was removed from the registry? (#".$currRoID.")</i> </div></div>";
 				}						
-			}			
-		}
-		else if ($this->input->get('identifier_relation_id')) {
-			try
-			{
+			}
+		} elseif ($this->input->get('identifier_relation_id')) {
+			try {
 				$data = $this->registry->fetchRelatedInfoByIrId($this->input->get('identifier_relation_id'));
 				$html = $data[0]['connections_preview_div'];
-			}
-			catch (SlugNoLongerValidException $e)
-			{
+			} catch (SlugNoLongerValidException $e) {
 				die("Registry object Identifier Relationship doesn't exists!)");
 			}
-		}
-		else 
-		{
+		} else {
 			die("Registry object could not be located (no SLUG or ID or identifier_relation_id specified!)");
 		}
 
 		$response = array(
 			"slug" => $this->input->get('slug'),
-			"registry_object_id" => $this->input->get('registry_object_id'),
+			"registry_object_id" => $this->input->get('id'),
 			"rel_identifier_id" => $this->input->get('rel_identifier_id'),
 			"html" => "<div class='previewbox'>".$html."</div>"
 		);
@@ -475,6 +452,8 @@ class View extends MX_Controller {
 			$content = $this->registry->resolve($any);
 			if($content['data'] && isset($content['data']['id']) && isset($content['data']['slug'])){
 				redirect('/'.$content['data']['slug'].'/'.$content['data']['id']);
+			} elseif($content['data'] && isset($content['data']['multiple'])){
+				redirect('search#!/slug='.$any);
 			} else {
 				header("HTTP/1.1 404 Not Found");	
 				// throw new Exception('Page could not be found - 404'.'key:'.$key);

@@ -392,6 +392,9 @@ class Solr {
 				case 'fl':
 					$this->setOpt('fl', $value);
 					break;
+				case 'slug':
+					$this->setOpt('fq', '+slug:('.$value.')');
+					break;
 				case 'tag':
 					if(is_array($value)){
 						$fq_str = '';
@@ -465,6 +468,8 @@ class Solr {
 					break;
 				case 'random':
 					$this->setOpt('sort', 'random_'.rand(1,255642).' desc');
+					break;
+				
 			}
 		}
 	}
