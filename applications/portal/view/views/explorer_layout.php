@@ -26,7 +26,7 @@
 				<div class="ro_preview_description hide">
 					<span ng-bind-html-unsafe="doc.description | removeHtml | truncate:320"></span>
 					<div class="ro_preview_footer">
-						<a href="<?php echo base_url(); ?>{{doc.slug}}">View Full Record</a>
+						<a href="<?php echo base_url(); ?>{{doc.slug}}/{{doc.id}}">View Full Record</a>
 					</div>
 				</div>
 			</div>

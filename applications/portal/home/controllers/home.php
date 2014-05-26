@@ -219,7 +219,7 @@ class Home extends MX_Controller {
 				//var_dump($k);
 				echo '<url>';
 				if ($k->{'slug'}){
-					echo '<loc>'.base_url().$k->{'slug'}.'</loc>';
+					echo '<loc>'.base_url().$k->{'slug'}.'/'.$k->{'id'}.'</loc>';
 				} else {
 					echo '<loc>'.base_url().'view/?key='.urlencode($k->{'key'}).'</loc>';
 				}

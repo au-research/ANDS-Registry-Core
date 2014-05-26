@@ -103,6 +103,90 @@ class Maintenance extends MX_Controller {
 		echo 'Done';
 	}
 
+	public function migrate_slugs_to_r13($commit = false) {
+		acl_enforce('REGISTRY_STAFF');
+	
+		if(!$commit){
+			$result = $this->db->query('SELECT slug,registry_object_id FROM dbs_registry.registry_objects WHERE CHAR_LENGTH(SLUG) > 60;');
+			echo 'There are '.$result->num_rows().' slugs that are longer than 60 characters <br/>';
+			$result = $this->db->query('select slug,registry_object_id from dbs_registry.url_mappings where registry_object_id IS NULL and slug in(select slug from registry_objects);');
+			echo 'There are '.$result->num_rows().' orphaned slugs <br/>';
+			$result = $this->db->select('slug, registry_object_id')->from('url_mappings')->where('registry_object_id', NULL)->get();
+			echo 'There are '.$result->num_rows(). ' bad slugs <br/>';
+			echo 'Run migrate_slugs_to_r13/true to commit fixing orphaned slugs and delete bad slugs';
+		} else {
+			ob_start();
+			ob_implicit_flush(1);
+
+			$this->load->model('registry_object/registry_objects', 'ro');
+
+			//fix orphaned slugs, giving them a registry object id
+			$result = $this->db->query('select slug,registry_object_id from dbs_registry.url_mappings where registry_object_id IS NULL and slug in(select slug from registry_objects);');
+			$result_array = $result->result_array();
+			if($result->num_rows()==0) {
+				echo 'There are no orphaned slug. <br/>';
+			} else echo 'There are '. $result->num_rows(). ' orphaned slug. Fixing. <br/>';
+			foreach($result->result_array as $r){
+				$ro = $this->ro->getBySlug($r['slug']);
+				if($ro){
+					$result = $this->db->update('url_mappings', array(
+						'registry_object_id'=>$ro->id
+					), array('slug'=>$r['slug']));
+					if($result){
+						echo 'success: '. $r['slug']. ' updated to '.$ro->id.'<br/>';
+					} else {
+						'failed: (cant update):'. $r['slug'].'<br/>';
+					}
+				} else {
+					echo 'failed (no record): '.$r['slug'].'<br/>';
+				}
+				unset($ro);
+				ob_flush();flush();
+			}
+
+			//delete bad slug
+			$result = $this->db->select('slug, registry_object_id')->from('url_mappings')->where('registry_object_id', NULL)->get();
+			if($result->num_rows()==0) {
+				echo 'There are no bad slug. <br/>';
+			} else {
+				echo 'There are '. $result->num_rows(). ' bad slug. Removing. <br/>';
+				$result = $this->db->delete('url_mappings', array('registry_object_id'=>NULL));
+				if($result){
+					echo 'success<br/>';
+				} else {
+					echo 'failed<br/>'; 
+				}
+			}
+			
+
+			//generating new slugs
+			$result = $this->db->query('SELECT slug,registry_object_id FROM dbs_registry.registry_objects WHERE CHAR_LENGTH(SLUG) > 60;');
+			echo 'There are '.$result->num_rows().' slugs that are longer than 60 characters <br/>';
+			$i=1;
+			foreach($result->result_array() as $r){
+				echo $i.' ';
+				$ro = $this->ro->getByID($r['registry_object_id']);
+				if($ro){
+					$oldSlug = $ro->slug;
+					$newSlug = $ro->generateSlug();
+					if($newSlug){
+						echo 'success:'.$r['slug'].' -> '. $newSlug.'<br/>';
+					}
+				} else {
+					echo 'failed (no record): '.$r['slug'].'<br/>';
+				}
+				$i++;
+				unset($ro);
+				ob_flush();flush();
+			}
+			ob_end_flush(); 
+
+		}
+
+		// $result = $this->db->select('slug, registry_object_id')->from('url_mappings')->where('registry_object_id', NULL)->get();
+		
+	}
+
 	public function syncmenu(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'ARMS SyncMenu';
@@ -480,13 +564,21 @@ class Maintenance extends MX_Controller {
 
 	function test(){
 		$this->load->model('registry_object/registry_objects', 'ro');
-        //$ro = $this->ro->getByID(385969);
-        $ro = $this->ro->getPublishedByKey('f680f9c3-3a5b-408e-a356-5c19ad59d5f4');
-        if($ro){
-               	$ro->addRelationships();
-               	$ro->update_quality_metadata();
-                $ro->enrich();
-        }else echo 'not found';
+		$ro = $this->ro->getByID(112925);
+		echo $ro->generateSlug();
+		// $result = $this->db->query('SELECT slug,registry_object_id FROM dbs_registry.registry_objects WHERE CHAR_LENGTH(SLUG) > 32;');
+		// echo 'There are '.$result->num_rows().' slugs that are longer than 32 characters <br/>';
+		// foreach($result->result() as $r){
+		// 	echo $r->registry_object_id.' > '. $r->slug.' <br/>';
+		// }
+		// $this->load->model('registry_object/registry_objects', 'ro');
+  //       //$ro = $this->ro->getByID(385969);
+  //       $ro = $this->ro->getPublishedByKey('f680f9c3-3a5b-408e-a356-5c19ad59d5f4');
+  //       if($ro){
+  //              	$ro->addRelationships();
+  //              	$ro->update_quality_metadata();
+  //               $ro->enrich();
+  //       }else echo 'not found';
 	}
 
 	function fixRelationships($id) {
@@ -505,9 +597,9 @@ class Maintenance extends MX_Controller {
 		echo 'done';
 	}
 
-	function flush_buffers(){ 
-		ob_flush(); 
-		flush(); 
+	function flush_buffers(){
+		ob_flush();
+		flush();
 	}
 
 	/**

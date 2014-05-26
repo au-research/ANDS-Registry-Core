@@ -17,6 +17,7 @@
             <xsl:when test="//ro:service">Service</xsl:when>            
         </xsl:choose>       
     </xsl:variable>
+
     <xsl:variable name="objectClassType" >
       <xsl:choose>
          <xsl:when test="//ro:collection">collections</xsl:when>
@@ -26,13 +27,14 @@
          <xsl:when test="//ro:party">party_multi</xsl:when>	
          <xsl:when test="//ro:service">services</xsl:when>	
      </xsl:choose>		
- </xsl:variable>		 
+    </xsl:variable>		 
+
     <xsl:variable name="object_identifier" >
       <xsl:choose>
              <xsl:when test="//extRif:extendedMetadata/extRif:status = 'PUBLISHED'"> <xsl:value-of select="//extRif:extendedMetadata/extRif:slug"/> </xsl:when>
              <xsl:when test="//extRif:extendedMetadata/extRif:status != 'PUBLISHED'"> <xsl:value-of select="//extRif:extendedMetadata/extRif:id"/> </xsl:when>
       </xsl:choose>
- </xsl:variable>
+    </xsl:variable>
  
  <xsl:template match="ro:registryObject">
 

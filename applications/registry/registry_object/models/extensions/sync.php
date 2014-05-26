@@ -107,10 +107,10 @@ class Sync_extension extends ExtensionBase{
 			$json['description_value'][] = $encoded_html;
 			$json['description_type'][] = $type;
 		}
-
-		if($theDescription && $theDescriptionType) {
-			$json['description'] = htmlentities(strip_tags(html_entity_decode($theDescription), '<p></p><br><br />'));
-		}
+		
+		//will have a description field even if it's blank
+		$json['description'] = htmlentities(strip_tags(html_entity_decode($theDescription), '<p></p><br><br />'));
+		
 
 		//license
 		if($rights = $this->ro->processLicence()){
@@ -226,5 +226,24 @@ class Sync_extension extends ExtensionBase{
 
 		$json = array_filter($json);
 		return $json;
+	}
+
+	function update_field_index($field){
+		$json = array();
+		$json['id'] = $this->ro->id;
+
+		if($field=='slug'){
+			$json['slug'] = array('set'=>$this->ro->slug);
+		}
+
+		$docs = array();
+		$docs[] = $json;
+		$this->_CI->load->library('solr');
+		$result = json_decode($this->_CI->solr->add_json(json_encode($docs)), true);
+		$this->_CI->solr->commit();
+
+		if(isset($result['responseHeader']) &&$result['responseHeader']['status']==0){
+			return true;
+		} else return false;
 	}
 }

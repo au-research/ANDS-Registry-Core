@@ -33,6 +33,13 @@ class Dispatcher extends MX_Controller {
 		}
 		else if ($params[0] == "preview")
 		{
+			if(sizeof($params) > 2) {
+				$_GET['slug'] = $params[1];
+				$_GET['id'] = $params[2];
+			} elseif(sizeof($params)==2) {
+				$_GET['slug'] = array_pop($params);
+			}
+
 			if (!isset($_GET['slug'])) 
 			{
 				$_GET['slug'] = array_pop($params);
@@ -41,19 +48,27 @@ class Dispatcher extends MX_Controller {
 					$_GET['slug'] = null;
 				}
 			}
+
 			$params = array("view","preview");
 			echo Modules::run(implode("/",$params));
 		}
 		else
 		{
 			// If no match, assume it is a SLUG view request
-			$_GET['slug'] = array_pop($params);
+
+			if(sizeof($params) > 1) {
+				$_GET['slug'] = $params[0];
+				$_GET['id'] = $params[1];
+			} elseif(sizeof($params)==1) {
+				$_GET['any'] = array_pop($params);
+			}
 
 			// Quick fix for missing slash (might not work on "domain root" installations?)
-			if ($this->config->item('active_application') == $_GET['slug'] || !$_GET['slug'])
-			{
-				echo Modules::run("home");
-				return;
+			if(isset($_GET['slug'])) {
+				if ($this->config->item('active_application') == $_GET['slug'] || !$_GET['slug']) {
+					echo Modules::run("home");
+					return;
+				}
 			}
 
 			$params = array("view");
