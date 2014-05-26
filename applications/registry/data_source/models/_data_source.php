@@ -639,6 +639,13 @@ class _data_source {
 		}
 	}
 
+	function getHarvestStatus() {
+		$query = $this->db->get_where('python_harvest_requests', array('data_source_id'=>$this->id));
+		if($query->num_rows()>0){
+			return $query->result_array();
+		}
+	}
+
 	function requestNewharvest()
 	{
 		$this->cancelAllharvests();

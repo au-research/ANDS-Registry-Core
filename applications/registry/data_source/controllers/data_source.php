@@ -12,6 +12,101 @@
  */
 class Data_source extends MX_Controller {
 
+
+	public function index() {
+		acl_enforce('REGISTRY_USER');
+		$data['title'] = 'Manage My Data Sources';
+		$data['scripts'] = array('ds_app');
+		$data['js_lib'] = array('core', 'ands_datepicker','vocab_widget','rosearch_widget', 'angular');
+		$this->load->view("datasource_app", $data);
+	}
+
+	public function get($id=false) {
+		acl_enforce('REGISTRY_USER');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		$jsonData = array();
+		$jsonData['status'] = 'OK';
+
+		$this->load->model("data_sources","ds");
+		if(!$id){
+			$dataSources = $this->ds->getOwnedDataSources();
+		} elseif ($id && $id!=null) {
+			$ds = $this->ds->getByID($id);
+			$dataSources = array();
+			$dataSources[] = $ds;
+		}
+		$this->load->model("registry_object/registry_objects", "ro");
+
+		$items = array();
+		foreach($dataSources as $ds){
+			$item = array();
+			$item['title'] = $ds->title;
+			$item['id'] = $ds->id;
+			$item['counts'] = array();
+			foreach ($this->ro->valid_status AS $status){
+				if($ds->getAttribute("count_$status")>0){
+					array_push($item['counts'], array('status' => $status, 'count' =>$ds->getAttribute("count_$status"), 'name'=>readable($status)));
+				}
+			}
+			$item['qlcounts'] = array();
+			foreach ($this->ro->valid_levels AS $level){
+				array_push($item['qlcounts'], array('level' => $level, 'title' => ($level==4 ? 'Gold Standard Records' : 'Quality Level '.$level), 'count' =>$ds->getAttribute("count_level_$level")));
+			}
+			$item['classcounts'] = array();
+			foreach($this->ro->valid_classes as $class){
+				if($ds->getAttribute("count_$class")>0)array_push($item['classcounts'], array('class' => $class, 'count' =>$ds->getAttribute("count_$class"),'name'=>readable($class)));
+			}
+			$item['key']=$ds->key;
+			$item['record_owner']=$ds->record_owner;
+			$item['notes']=$ds->notes;
+			array_push($items, $item);
+		}
+
+		if($id && $ds) {
+			$logs = $ds->get_logs(0, 10, null, 'all', 'all');
+			$items[0]['logs'] = $logs;
+		}
+
+		$jsonData['items'] = $items;
+		$jsonData = json_encode($jsonData);
+		echo $jsonData;
+	}
+
+	public function get_log($id=false, $offset=0) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if(!$id) {
+			throw new Exception('ID must be specified');
+		} else {
+			$this->load->model("data_sources","ds");
+			$ds = $this->ds->getByID($id);
+			$logs = $ds->get_logs($offset, 10, null, 'all', 'all');
+			$jsonData['status'] = 'OK';
+			$jsonData['items'] = $logs;
+			echo json_encode($jsonData);
+		}
+	}
+
+	public function harvester_status($id=false) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if(!$id) {
+			throw new Exception('ID must be specified');
+		} else {
+			$this->load->model("data_sources","ds");
+			$ds = $this->ds->getByID($id);
+			$status = $ds->getHarvestStatus();
+			$jsonData['status'] = 'OK';
+			$jsonData['items'] = $status;
+			echo json_encode($jsonData);
+		}
+	}
+
 	/**
 	 * Manage My Datasources (MMR version for Data sources)
 	 * 
@@ -22,7 +117,7 @@ class Data_source extends MX_Controller {
 	 * @return [HTML] output
 	 */
 	
-	public function index(){
+	public function index2(){
 		//$this->output->enable_profiler(TRUE);
 		acl_enforce('REGISTRY_USER');
 		
