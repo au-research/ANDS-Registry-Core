@@ -62,6 +62,13 @@ class Data_source extends MX_Controller {
 			$item['key']=$ds->key;
 			$item['record_owner']=$ds->record_owner;
 			$item['notes']=$ds->notes;
+
+			if($id && $ds){
+				foreach($ds->attributes as $attrib=>$value){
+					$item[$attrib] = $value->value;
+				}
+			}
+
 			array_push($items, $item);
 		}
 
@@ -102,9 +109,147 @@ class Data_source extends MX_Controller {
 			$ds = $this->ds->getByID($id);
 			$status = $ds->getHarvestStatus();
 			$jsonData['status'] = 'OK';
-			$jsonData['items'] = $status;
+			if($status){
+				$jsonData['items'] = $status;
+			}else {
+				$jsonData['items'] = array(
+					array('status' => 'IDLE')
+				);
+			}
+			
 			echo json_encode($jsonData);
 		}
+	}
+
+	public function get_contributor($id=false){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if (!$id) {
+			throw new Exception('ID must be specified');
+		} else {
+			$jsonData = array();
+			$this->load->model("data_sources","ds");
+			$ds = $this->ds->getByID($id);
+			if($ds->institution_pages) {
+				$contributorPages = $ds->institution_pages;
+			} else {
+				$contributorPages = 0;
+			}
+			switch($contributorPages) {
+				case 0: $jsonData['contributorPages'] = 'Pages are not managed'; break;
+				case 1: $jsonData['contributorPages'] = 'Pages are automatically managed'; break;
+				case 2: $jsonData['contributorPages'] = 'Pages are manually managed'; break;
+			}
+			$dataSourceGroups = $ds->get_groups();
+			$items = array();
+			if (sizeof($dataSourceGroups) > 0) {
+				foreach($dataSourceGroups as $group) {
+					$group_contributor = $ds->get_group_contributor($group);
+					// echo json_encode($group_contributor);
+					$item = array();
+					$item['group'] = $group;
+					if(isset($group_contributor['key'])) {
+						$item['contributor_page_key'] = $group_contributor['key'];
+						$item['contributor_page_id'] = $group_contributor['registry_object_id'];
+						$item['contributor_page_link'] = base_url('registry_object/view/'.$group_contributor["registry_object_id"]);
+						$item['authorative_data_source_id'] = $group_contributor['authorative_data_source_id'];
+						if ((int) $item['authorative_data_source_id'] != $ds->id) {
+							$auth_ds = $this->ds->getByID((int) $item['authorative_data_source_id']);
+							$item['authorative_data_source_title'] = $auth_ds->title;
+							$item['has_authorative'] = true;
+						} else $item['authorative_data_source_title'] = $ds->title;
+					} else {
+						$item['contributor_page_key'] = '';
+					}
+					array_push($items, $item);
+				}
+			}
+			$jsonData['items'] = $items;
+			echo json_encode($jsonData);
+		}
+	}
+
+	public function save() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
+
+		$id = $data['id'];
+		if(!$id) {
+			throw new Exception('Data source ID is not specified');
+		}
+
+		acl_enforce('REGISTRY_USER');
+		ds_acl_enforce($id);
+
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+
+		$valid_attributes = array_merge(array_keys($ds->attributes()), array_keys($ds->harvesterParams));
+		$valid_attributes = array_merge($valid_attributes, $ds->primaryRelationship);
+		$valid_attributes = array_merge($valid_attributes, $ds->institutionPages);
+		$valid_attributes = array_merge($valid_attributes, array_keys($ds->stockAttributes));
+		$valid_attributes = array_merge($valid_attributes, array_keys($ds->extendedAttributes));
+		$valid_attributes = array_unique($valid_attributes);
+
+		if(isset($data['create_primary_relationships'])){
+			if ($data['create_primary_relationships']=='0' || $data['create_primary_relationships']=='false' || $data['create_primary_relationships']=='f') {
+				$data['primary_key_1']='';
+				$data['primary_key_2']='';
+			}
+		}
+		
+
+		if(isset($data['primary_key_1']) && $data['primary_key_1']==''){
+			$data['primary_key_1'] = '';
+			$data['service_rel_1'] = '';
+			$data['activity_rel_1'] = '';
+			$data['collection_rel_1'] = '';
+			$data['party_rel_1'] = '';
+		}
+
+		if(isset($data['primary_key_2']) && $data['primary_key_2']=='') {
+			$data['primary_key_2'] = '';
+			$data['service_rel_2'] = '';
+			$data['activity_rel_2'] = '';
+			$data['collection_rel_2'] = '';
+			$data['party_rel_2'] = '';
+		}
+
+		foreach($valid_attributes as $attrib) {
+
+			if(is_integer($attrib) && $attrib == 0) {
+				continue;
+			} elseif (isset($data[$attrib])) {
+				$new_value = trim($data[$attrib]);
+			} elseif (in_array($attrib, array_keys($ds->harvesterParams))) {
+				$new_value = $ds->harvesterParams[$attrib];
+			} elseif (in_array($attrib, $ds->primaryRelationship)){
+				$new_value = '';
+			}
+
+			if(!is_null($new_value) && $new_value != $ds->{$attrib}) {
+				$ds->{$attrib} = $new_value;
+			}
+		}
+
+		$ds->setContributorPages($data['institution_pages'], $data['contributor']);
+
+		$ds->save();
+		$ds->append_log("The data source settings were updated..." . NL . NL .
+								"Data Source was updated by: " . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . display_date());
+
+		echo json_encode(
+			array(
+				'status' => 'OK',
+				'message' => 'Saved Success'
+			)
+		);
+		// echo $id;
 	}
 
 	/**
@@ -233,8 +378,6 @@ class Data_source extends MX_Controller {
 		$this->load->view('manage_deleted_records', $data);
 	}
 
-
-
 	/**
 	 * Get MMR AJAX data for MMR
 	 *
@@ -344,14 +487,12 @@ class Data_source extends MX_Controller {
 			}
 			array_push($st['menu'], array('action'=>'delete', 'display'=>'Delete'));
 			
-
 			$args['sort'] = isset($filters['sort']) ? $filters['sort'] : array('updated'=>'desc');
 			$args['search'] = isset($filters['search']) ? $filters['search'] : false;
 			$args['or_filter'] = isset($filters['or_filter']) ? $filters['or_filter'] : false;
 			$args['filter'] = array('status'=>$s);
 			$args['filter'] = isset($filters['filter']) ? array_merge($filters['filter'], array('status'=>$s)) : array('status'=>$s);
 
-			
 			$offset = 0;
 			$limit = 20;
 
@@ -835,13 +976,15 @@ public function getContributorGroupsEdit()
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		date_default_timezone_set('Australia/Canberra');
+		set_exception_handler('json_exception_handler');
 
 		$POST = $this->input->post();
 		$items = array();
 		
 		if (isset($POST['id'])){
 			$id = (int) $this->input->post('id');
-		}	
+		}
+		if(!isset($id) || !$id) $id = $this->input->get('id');
 
 		$this->load->model("data_sources","ds");
 		$dataSource = $this->ds->getByID($id);
@@ -926,6 +1069,7 @@ public function getContributorGroupsEdit()
 	{
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 		reset_timezone();
 
 		$POST = $this->input->post();
@@ -933,7 +1077,8 @@ public function getContributorGroupsEdit()
 		
 		if (isset($POST['id'])){
 			$id = (int) $this->input->post('id');
-		}	
+		}
+		if(!isset($id) || !$id) $id = $this->input->get('id');
 		$this->load->model("data_sources","ds");
 		$dataSource = $this->ds->getByID($id);
 		//print($dataSource->attributes['institution_pages']->value);

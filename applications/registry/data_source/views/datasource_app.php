@@ -58,7 +58,7 @@
 			<li class="active view page-control"><a href="#!/view/{{ds.id}}">Dashboard</a></li>
 			<li class="mmr page-control"><a href="<?=base_url('data_source/manage_records/');?>/{{ds.id}}">Manage Records</a></li>
 			<li class="report page-control"><a href="<?=base_url('data_source/report/');?>/{{ds.id}}">Reports</a></li>
-			<li class="settings page-control"><a href="#!/settings/ds.id">Settings</a></li>
+			<li class="settings page-control"><a href="#!/settings/{{ds.id}}">Settings</a></li>
 		</ul>
 	</div>
 	<div id="breadcrumb">
@@ -181,6 +181,443 @@
 			</div>
 
 
+		</div>
+	</div>
+</div>
+
+<div id="settings_template" class="hide">
+	<div class="content-header">
+		<h1>{{ds.title}}</h1>
+		<ul class="nav nav-pills">
+			<li class="view page-control"><a href="#!/view/{{ds.id}}">Dashboard</a></li>
+			<li class="mmr page-control"><a href="<?=base_url('data_source/manage_records/');?>/{{ds.id}}">Manage Records</a></li>
+			<li class="report page-control"><a href="<?=base_url('data_source/report/');?>/{{ds.id}}">Reports</a></li>
+			<li class="active settings page-control"><a href="#!/settings/{{ds.id}}">Settings</a></li>
+		</ul>
+	</div>
+	<div id="breadcrumb">
+		<?php echo anchor('/', '<i class="icon-home"></i> Home', array('class'=>'tip-bottom', 'tip'=>'Go to Home'))?>
+		<a href="#!/">Manage My Data Sources</a>
+		<a href="#!/view/{{ds.id}}">{{ds.title}} - Dashboard</a>
+		<a href="#!/settings/{{ds.id}}" class="current">Settings</a>
+		<div class="pull-right">
+			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/DashboardHelp/">Help</a></span>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span12">
+				<div class="widget-box">
+					<div class="widget-content">
+						<a href="#!/edit/{{ds.id}}" class="btn btn-primary">Edit Settings</a>
+					</div>
+					<div class="widget-content">
+						<h4>Account Administration Information <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#account_info" target="_blank" class="muted">?</a></sup></h4>
+						<dl class="dl-horizontal dl-wide">
+							<dt>Key</dt><dd>{{ds.key}}</dd>
+							<dt>Title</dt><dd>{{ds.title}}</dd>
+							<dt>Record Owner</dt><dd>{{ds.record_owner}}</dd>
+							<dt>Contact Name</dt><dd>{{ds.contact_name}}</dd>
+							<dt>Contact Email</dt><dd>{{ds.contact_email}}</dd>
+							<dt>Notes</dt><dd>{{ds.notes}}</dd>
+						</dl>
+						<h4>Records Management Setttings</h4>
+						<dl class="dl-horizontal dl-wide">
+							<dt>Reverse Links <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#reverse_links" target="_blank" class="muted">?</a></sup></dt>
+							<dd>
+								<p><span checkbox="ds.allow_reverse_internal_links"></span> Allow reverse internal links</p>
+								<p><span checkbox="ds.allow_reverse_external_links"></span> Allow reverse external links</p>
+							</dd>
+							<dt>Create Primary Relationships <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#primary_rels" target="_blank" class="muted">?</a></sup></dt>
+							<dd><p><span checkbox="ds.create_primary_relationships"></span></p></dd>
+							<dt>Manually Publish <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#man_publish" target="_blank" class="muted">?</a></sup></dt>
+							<dd><p><span checkbox="ds.manual_publish"></span></p></dd>
+							<dt>Quality Assessment Required <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#qa_required" target="_blank" class="muted">?</a></sup></dt>
+							<dd><p><span checkbox="ds.qa_flag"></span></p></dd>
+							<span ng-show="ds.assessment_notify_email_addr">
+								<dt>Assessment Notification Email <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#qa_required" target="_blank" class="muted">?</a></sup></dt>
+								<dd><p>{{ds.assessment_notify_email_addr}}</p></dd>
+							</span>
+						</dl>
+						<h4>Contributor Pages <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#contributor_pgs" target="_blank" class="muted">?</a></sup></h4>
+						<div ng-show="ds.contributor">
+							<p>{{ds.contributor.contributor_page}}</p>
+							<table class="table table-hover headings-left">
+								<thead><tr><th class="align-left">GROUP</th><th class="align-left">Contributor Page Key</th></tr></thead>
+								<tbody>
+									<tr ng-repeat="item in ds.contributor.items">
+										<td>{{item.group}}</td>
+										<td ng-show="item.contributor_page_key"><a href="{{item.contributor_page_link}}">{{item.contributor_page_key}}</a></td>
+										<td ng-show="!item.contributor_page_key"><em>Not Managed!</em></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<h4>Harvester Settings <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#harvest_settings" target="_blank" class="muted">?</a></sup></h4>
+						<dl class="dl-horizontal dl-wide">
+							<span ng-show="ds.uri"><dt>URI</dt><dd>{{ds.uri}}</dd></span>
+							<span ng-show="ds.provider_type"><dt>Provider Type</dt><dd>{{ds.provider_type}}</dd></span>
+							<span ng-show="ds.harvest_method"><dt>Harvest Method</dt><dd>{{ds.harvest_method}}</dd></span>
+							<span ng-show="ds.advanced_harvest_mode"><dt>Advanced Harvest Mode</dt><dd>{{ds.advanced_harvest_mode}}</dd></span>
+							<span ng-show="ds.harvest_date"><dt>Harvest Date</dt><dd>{{ds.harvest_date}}</dd></span>
+							<span ng-show="ds.oai_set"><dt>OAI-PMH Set</dt><dd>{{ds.oai_set}}</dd></span>
+							<span ng-show="ds.harvest_frequency"><dt>Harvest Frequency</dt><dd>{{ds.harvest_frequency}}</dd></span>
+						</dl>
+						<h4></h4>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="edit_template" class="hide">
+	<div class="content-header">
+		<h1>{{ds.title}}</h1>
+		<ul class="nav nav-pills">
+			<li class="view page-control"><a href="#!/view/{{ds.id}}">Dashboard</a></li>
+			<li class="mmr page-control"><a href="<?=base_url('data_source/manage_records/');?>/{{ds.id}}">Manage Records</a></li>
+			<li class="report page-control"><a href="<?=base_url('data_source/report/');?>/{{ds.id}}">Reports</a></li>
+			<li class="active settings page-control"><a href="#!/settings/{{ds.id}}">Settings</a></li>
+		</ul>
+	</div>
+	<div id="breadcrumb">
+		<?php echo anchor('/', '<i class="icon-home"></i> Home', array('class'=>'tip-bottom', 'tip'=>'Go to Home'))?>
+		<a href="#!/">Manage My Data Sources</a>
+		<a href="#!/view/{{ds.id}}">{{ds.title}} - Dashboard</a>
+		<a href="#!/settings/{{ds.id}}">Settings</a>
+		<a href="#!/edit/{{ds.id}}" class="current">Edit Settings</a>
+		<div class="pull-right">
+			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/DashboardHelp/">Help</a></span>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="widget-box">
+				<div class="widget-title">
+					<ul class="nav nav-tabs">
+						<li ng-class="{'admin':'active'}[tab]"><a href="" ng-click="tab='admin'">Account Administration Information</a></li>
+						<li ng-class="{'records':'active'}[tab]"><a href="" ng-click="tab='records'">Records Management Settings</a></li>
+						<li ng-class="{'harvester':'active'}[tab]"><a href="" ng-click="tab='harvester'">Harvester Settings</a></li>
+					</ul>
+				</div>
+				<div class="widget-content nopadding">
+					<form class="form-horizontal">
+						<div ng-show="tab=='admin'">
+							<fieldset>
+								<legend>Account Administration Information <sup><a href="http://ands.org.au/guides/cpguide/cpgdsaaccount.html#accountadmin" target="_blank" class="muted">?</a></sup></legend>
+								<div class="control-group">
+									<label class="control-label">Key</label>
+									<div class="controls">
+										<span class="input-xlarge uneditable-input">{{ds.key}}</span>
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Title</label>
+									<div class="controls">
+										<input type="text" class="input-xlarge" name="title" ng-model="ds.title">
+									</div>
+								</div>
+								<?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')):?>
+									<div class="control-group">
+										<label class="control-label" for="record_owner">Record Owner</label>
+										<div class="controls">			
+											<select data-placeholder="Choose a Record Owner" tabindex="1" class="chzn-select input-xlarge" for="record_owner" ng-model="ds.record_owner">
+											<?php foreach($this->user->affiliations() as $a):?>
+											<option value="<?php echo $a;?>"><?php echo $a;?></option>
+											<?php endforeach;?>
+											</select>
+											<input type="text" class="input-small hide" name="record_owner" id="record_owner" value="{{record_owner}}">
+										</div>
+									</div>
+								<?php endif; ?>
+								<div class="control-group">
+									<label class="control-label">Contact Name</label>
+									<div class="controls">
+										<input type="text" class="input-xlarge" name="contact_name" ng-model="ds.contact_name">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label" for="contact_email">Contact Email</label>
+									<div class="controls">
+										<input type="text" class="input-xlarge" name="contact_email" ng-model="ds.contact_email">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label" for="notes">Notes</label>
+									<div class="controls">
+										<textarea class="input-xxlarge" name="notes" ng-model="ds.notes"></textarea>
+									</div>
+								</div>
+
+							</fieldset>
+						</div>
+
+						<div ng-show="tab=='records'">
+							<fieldset>
+								<legend>Records Management Settings</legend>
+								<div class="control-group">
+									<label class="control-label">Reverse Links <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#reverse_links" target="_blank" class="muted">?</a></sup></label>
+									<div class="controls">
+		    							<input type="checkbox" for="allow_reverse_internal_links" ng-model="ds.allow_reverse_internal_links">
+										<p class="help-inline">Allow reverse internal links</p>
+										<br>
+										<input type="checkbox" for="allow_reverse_external_links" ng-model="ds.allow_reverse_external_links">
+										<p class="help-inline">Allow reverse external links</p>
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">
+										Primary Relationships <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#primary_rels" target="_blank" class="muted">?</a></sup>
+									</label>
+									<div class="controls">
+										<input type="checkbox" ng-model="ds.create_primary_relationships">
+										<div ng-show="ds.create_primary_relationships" class="well" style="margin-top:10px;">
+											<i>Data Sources can have up to 2 Primary Records <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#primary_rels" target="_blank" class="muted">?</a></sup></i>
+											<div class="clearfix"></div>
+											<div class="pull-left">
+												<div class="control-group">
+													<label class="control-label"><br/><br/>Primary Record Key</label>
+													<div class="controls">
+														<span class="help-block">Relate all records to:</span>
+														<input type="text" class="input ro_search" ng-model="ds.primary_key_1"/>
+													</div>
+												</div>
+												<div class="control-group">
+													<label class="control-label"><br/><br/>Collection</label>
+													<div class="controls">
+														<span class="help-block">With the following relation types:</span>
+														<input type="text" class="rifcs-type" vocab="RIFCScollectionRelationType"  placeholder="Relation Type" ng-model="ds.collection_rel_1"/>
+													</div>
+												</div>
+												<div class="control-group">
+													<label class="control-label">Service</label>
+													<div class="controls">
+														<input type="text" class="rifcs-type" vocab="RIFCSserviceRelationType" placeholder="Relation Type" ng-model="ds.service_rel_1"/>
+													</div>
+												</div>
+												<div class="control-group">
+													<label class="control-label">Activity</label>
+													<div class="controls">
+														<input type="text" class="rifcs-type" vocab="RIFCSactivityRelationType" placeholder="Relation Type" ng-model="activity_rel_1"/>
+													</div>
+												</div>
+												<div class="control-group">
+													<label class="control-label">Party</label>
+													<div class="controls">
+														<input type="text" class="rifcs-type" vocab="RIFCSpartyRelationType" placeholder="Relation Type" ng-model="party_rel_1"/>
+													</div>
+												</div>
+											</div>
+											<div class="pull-left">
+													<div class="control-group">
+													<label class="control-label"><br/><br/>Primary Record Key</label>
+													<div class="controls">
+														<span class="help-block">Relate all records to:</span>
+														<input type="text" class="input ro_search" ng-model="ds.primary_key_2"/>
+													</div>
+												</div>
+												<div class="control-group">
+													<label class="control-label"><br/><br/>Collection</label>
+													<div class="controls">
+														<span class="help-block">With the following relation types:</span>
+														<input type="text" class="rifcs-type" vocab="RIFCScollectionRelationType" placeholder="Relation Type" ng-model="ds.collection_rel_2"/>
+													</div>
+												</div>
+												<div class="control-group">
+													<label class="control-label">Service</label>
+													<div class="controls">
+														<input type="text" class="rifcs-type" vocab="RIFCSserviceRelationType" placeholder="Relation Type" ng-model="ds.service_rel_2"/>
+													</div>
+												</div>
+												<div class="control-group">
+													<label class="control-label">Activity</label>
+													<div class="controls">
+														<input type="text" class="rifcs-type" vocab="RIFCSactivityRelationType" placeholder="Relation Type" ng-model="ds.activity_rel_2"/>
+													</div>
+												</div>
+												<div class="control-group">
+													<label class="control-label">Party</label>
+													<div class="controls">
+														<input type="text" class="rifcs-type" vocab="RIFCSpartyRelationType" placeholder="Relation Type" ng-model="ds.party_rel_2"/>
+													</div>
+												</div>
+											</div>
+											<div class="clearfix"></div>
+										</div>
+									</div>	
+								</div>
+
+								<div class="control-group">
+									<label class="control-label">Manually Publish Records
+										<sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#man_publish" target="_blank" class="muted">?</a></sup>
+									</label>
+									<div class="controls">
+	    								<input type="checkbox" for="manual_publish" ng-model="ds.manual_publish">
+									</div>
+								</div>
+
+								<?php if ($this->user->hasFunction('REGISTRY_STAFF')): ?>
+									<div class="control-group">
+										<label class="control-label">Quality Assessment Required
+											<sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#qa_required" target="_blank" class="muted">?</a></sup>
+										</label>
+										<div class="controls">
+			    							<input type="checkbox" for="qa_flag" ng-model="ds.qa_flag">    																
+										</div>
+									</div>
+
+									<div class="control-group">
+										<label class="control-label">Assessment Notification Email</label>
+										<div class="controls">
+											<input type="text" class="input-xlarge" ng-model="ds.assessment_notify_email_addr">
+										</div>
+									</div>
+								<?php endif; ?>
+
+								<div class="control-group">
+									<label class="control-label" for="institution_pages">Contributor Pages
+										<sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#contributor_pages" target="_blank" class="muted">?</a></sup>
+									</label>
+									<div class="controls">
+										<input type="radio" ng-model="ds.institution_pages" value="0"><p class="help-inline">Do not have contributor pages</p><br />
+										<input type="radio" ng-model="ds.institution_pages" value="1"><p class="help-inline">Auto generate Contributor Pages for all my groups</p><br />
+										<input type="radio" ng-model="ds.institution_pages" value="2"><p class="help-inline">Manually manage my Contributor Pages and groups</p><br />
+										<div class="well" ng-show="ds.contributor">
+											<p>{{ds.contributor.contributor_page}}</p>
+											<table class="table table-hover headings-left">
+												<thead><tr><th class="align-left">GROUP</th><th class="align-left">Contributor Page Key</th></tr></thead>
+												<tbody>
+													<tr ng-repeat="item in ds.contributor.items">
+														<td>{{item.group}}</td>
+														<td ng-show="ds.institution_pages=='0'"></td>
+														<td ng-show="ds.institution_pages=='1'">
+															<span ng-show="!item.has_authorative">
+																<a href="{{item.contributor_page_link}}" ng-show="item.contributor_page_key">{{item.contributor_page_key}}</a>
+																<span ng-show="!item.contributor_page_key">Contributor page will be generated upon save</span>
+															</span>
+															<span ng-show="item.has_authorative">(Already managed by {{item.authorative_data_source_title}} who is managing the group)</span>
+														</td>
+														<td ng-show="ds.institution_pages=='2'">
+															<input type="text" name="contributor_pages" class="ro_search" ng-model="item.contributor_page_key" ng-show="!item.has_authorative">
+															<span ng-show="item.has_authorative">(Already managed by {{item.authorative_data_source_title}} who is managing the group)</span>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+								
+							</fieldset>
+						</div>
+
+						<div ng-show="tab=='harvester'">
+							<fieldset>
+								<legend>Harvester Settings
+									<sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#harvest_settings" target="_blank" class="muted">?</a></sup>
+								</legend>
+								<div class="control-group">
+									<label class="control-label" for="uri">URI</label>
+									<div class="controls">
+										<input type="text" class="input-xxlarge" name="uri" ng-model="ds.uri">
+									</div>
+								</div>
+								<?php if($this->user->hasFunction('REGISTRY_SUPERUSER')):?>
+								<div class="control-group">
+									<label class="control-label" for="provider_type">Provider Type</label>
+									<div class="controls">
+										<select data-placeholder="Choose a Provider Type" tabindex="1" class="chzn-select input-xlarge" for="provider_type" ng-model="ds.provider_type">
+											<?php
+		                                    $predefinedProviderTypes = $this->config->item('provider_types');
+		                                    foreach($predefinedProviderTypes as $key=>$ppt){
+		                                        echo '<option value="' . $ppt['prefix'] . '">' . $key . '</option>' . NL;
+		                                    }
+											$crosswalks = getCrosswalks();
+											foreach ($crosswalks AS $crosswalk){
+												echo '<option value="' . $crosswalk->metadataFormat() . '">' . $crosswalk->identify() . '</option>' . NL;
+											}
+											?>
+										</select>
+									</div>
+								</div>
+								<?php endif; ?>
+
+								<div class="control-group">
+									<label class="control-label" for="harvest_method">Harvest Method</label>
+									<div class="controls">
+										<select data-placeholder="Choose a Harvest Method" tabindex="1" class="chzn-select input-xlarge" for="harvest_method" ng-model="ds.harvest_method">
+											<option value="GET">DIRECT (HTTP)</option>
+											<option value="PMH">Harvested (OAI-PMH)</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="control-group" ng-show="ds.harvest_method=='RIF'">
+									<label class="control-label" for="oai_set">OAI Set</label>
+									<div class="controls">
+										<input type="text" class="input-xlarge" name="oai_set" ng-model="oai_set">
+									</div>
+								</div>
+
+								<div class="control-group">
+									<label class="control-label" for="advanced_harvest_mode">Advanced Harvest Mode</label>
+									<div class="controls">
+										<select data-placeholder="Choose an Advanced Harvest Mode" tabindex="1" class="chzn-select input-xlarge" ng-model="ds.advanced_harvest_mode">
+											<option value="STANDARD">Standard Mode</option>
+											<option value="INCREMENTAL">Incremental Mode</option>
+											<option value="REFRESH">Full Refresh Mode</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="control-group">
+									<label class="control-label" for="harvest_date">Harvest Date</label>
+									<div class="controls">																					
+										<div class="input-append">						
+											<input type="text" class="input-xlarge datepicker" name="harvest_date" ng-model="ds.harvest_date" ng-change="alert"/>
+											<span class="add-on">
+										      <i data-time-icon="icon-time" data-date-icon="icon-calendar" class="icon-calendar"></i>
+										    </span>				
+										</div>
+										<a href="" tip="Remove harvest date" ng-click="ds.harvest_date=''"><i class="icon icon-remove"></i></a>
+									</div>
+								</div>
+
+								<div class="control-group">
+									<label class="control-label" for="harvest_frequency">Harvest Frequency</label>
+									<div class="controls">
+										<select data-placeholder="Choose a Harvest Frequency" tabindex="1" class="chzn-select input-xlarge" ng-model="ds.harvest_frequency">
+											<option value="">once only</option>
+											<?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')) { echo '<option value="hourly">hourly</option>'; } ?>
+											<option value="daily">daily</option>
+											<option value="weekly">weekly</option>
+											<option value="fortnightly">fortnightly</option>
+											<option value="monthly">monthly</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="control-group">
+									<div class="controls">
+										<a href="" class="btn btn-info">Test Harvest</a>
+									</div>
+								</div>
+
+							</fieldset>
+						</div>
+						<div class="form-actions">
+							<a href="" class="btn btn-primary" ng-click="save()">Save</a>
+							<a href="#!/view/{{ds.id}}" class="btn btn-link">Cancel</a>		
+							<br>
+							<div class="alert alert-{{msg.type}}" style="margin-top:10px" ng-show="msg">
+								{{msg.msg}}
+							</div>
+						</div>
+
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

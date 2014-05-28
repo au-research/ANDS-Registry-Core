@@ -414,7 +414,96 @@ class _data_source {
 		return $taskLog;
 	}
 
-	function setContributorPages($value,$inputvalues,$notifyChange=true)
+	function setContributorPages($value, $contribs) {
+		$data_source_id = $this->id;
+		$data_source_title = $this->title;
+		$this->_CI->load->model("registry_object/registry_objects", "ro");
+		$this->_CI->load->model("registry_object/rifcs_generator", "rifcs");
+		$groups = $this->get_groups();
+
+		$insertable = array();
+		if($value=="1" || $value=="2") {
+			//find group that we can insert
+			foreach($groups as $group) {
+				$query = $this->db->get_where('institutional_pages', array('group'=>$group));
+				if($query->num_rows() > 0) {
+					foreach ($query->result_array() as $page) {
+						if($page['authorative_data_source_id']==$data_source_id) {
+							//we want to delete this record and reinsert it								
+							$this->db->delete('institutional_pages', array('group'=>$group));
+							array_push($insertable, $group);
+						} //else we dont want to play with groups that have authoriative id different from the current one
+					}
+				} else {
+					array_push($insertable, $group);
+				}
+			}
+		}
+
+		switch ($value) {
+			case "0": 
+				//remove any reference to a contibutor page for this datasource from the institutional_pages db table
+				$delete = $this->db->delete('institutional_pages', array('authorative_data_source_id'=>$data_source_id));
+				break;
+			case "1":
+				//auto manage
+				//we have $insertable as the group that needs to be inserted or re-inserted
+				foreach($insertable as $group) {
+					$registry_object_key = 'Contributor:'.$group;
+					$data_source_key = $this->key;
+					$title=$group;
+					$contributorPage = $this->_CI->ro->getAllByKey('Contributor:'.$group);
+					if(!$contributorPage) {
+						//we need to automatically create the group party record if it dosn't exist				
+						$xml = wrapRegistryObjects($this->_CI->rifcs->xml($data_source_key ,$registry_object_key,$title,$group));
+						$this->_CI->importer->forceDraft();									
+						$this->_CI->importer->setXML($xml);
+						$this->_CI->importer->setDatasource($this);
+						$the_key = $this->_CI->importer->commit();
+
+						$contributorPage = $this->_CI->ro->getAllByKey($registry_object_key);
+						//we need to email services that we have created this page
+						//xxx:todo
+					}
+
+					//we need to add the  group , registry_object_id and autoritive datasource to the institutional_pages table
+					$registry_object_id = $contributorPage[0]->id;
+					$data = array(
+						"group"=> (string) $group,
+						"registry_object_id"=>$registry_object_id,
+						"authorative_data_source_id" => $data_source_id
+					);
+					$insert = $this->db->insert('institutional_pages',$data);
+				} 
+			
+				break;
+			case "2":
+				//manual manage
+				//we have $insertable as the group that needs to be inserted or re-inserted
+				
+				foreach($insertable as $group) {
+					foreach($contribs['items'] as $contrib) {
+						if($contrib['group']==$group && $contrib['contributor_page_key']) {
+							$contributorPage = $this->_CI->ro->getAllByKey($contrib['contributor_page_key']);
+							if(isset($contributorPage[0]->id) && $contributorPage[0]->class=='party') {
+								$registry_object_id = $contributorPage[0]->id;
+								$data = array(
+									"group"=> (string) $group,
+									"registry_object_id"=>$registry_object_id,
+									"authorative_data_source_id" => $data_source_id
+								);
+								$insert = $this->db->insert('institutional_pages',$data);
+							} else {
+								throw new Exception('Could not save contributor for group '.$group.', '.$contrib['contributor_page_key'].' is not a valid party record');
+							}
+						}
+					}
+				}
+			break;
+		}
+	}
+
+	function setContributorPages_dep($value,$inputvalues,$notifyChange=true)
 	{
 		$data_source_id = $this->id;
 		$data_source_title = $this->title;
