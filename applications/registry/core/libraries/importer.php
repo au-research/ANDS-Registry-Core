@@ -1058,27 +1058,18 @@ class Importer {
 		 * !QA, AP = PUBLISHED
 		 * !QA, !AP = APPROVED
 		 */
-		if ($this->forcePublish)
-		{
+		if ($this->forcePublish) {
 			return PUBLISHED;
-		}
-		else if ($this->forceDraft)
-		{
+		} else if ($this->forceDraft) {
 			return DRAFT;
 		}
 
-		if ($data_source->qa_flag === DB_TRUE)
-		{
+		if ($data_source->qa_flag == DB_TRUE) {
 			$status = SUBMITTED_FOR_ASSESSMENT;
-		}
-		else
-		{
-			if ($data_source->manual_publish === DB_TRUE)
-			{
+		} else {
+			if ($data_source->manual_publish == DB_TRUE) {
 				$status = APPROVED;
-			}
-			else
-			{
+			} else {
 				$status = PUBLISHED;
 			}
 		}

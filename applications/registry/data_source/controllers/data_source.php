@@ -13,6 +13,334 @@
 class Data_source extends MX_Controller {
 
 	/**
+	 * index page, display the angularJS data source app view
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return view
+	 */
+	public function index() {
+		acl_enforce('REGISTRY_USER');
+		$data['title'] = 'Manage My Data Sources';
+		$data['scripts'] = array('ds_app');
+		$data['js_lib'] = array('core', 'ands_datepicker','vocab_widget','rosearch_widget', 'angular');
+		$this->load->view("datasource_app", $data);
+	}
+
+	/**
+	 * get a JSON presentation of a data source
+	 * if there's no data source speficied, get all owned datasource
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  data_source_id $id
+	 * @return json
+	 */
+	public function get($id=false) {
+		//prepare
+		acl_enforce('REGISTRY_USER');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		$jsonData = array();
+		$jsonData['status'] = 'OK';
+
+		$this->load->model("data_sources","ds");
+		if(!$id){
+			$dataSources = $this->ds->getOwnedDataSources();
+		} elseif ($id && $id!=null) {
+			$ds = $this->ds->getByID($id);
+			$ds->updateStats();
+			$dataSources = array();
+			$dataSources[] = $ds;
+		}
+		$this->load->model("registry_object/registry_objects", "ro");
+
+		$items = array();
+		foreach($dataSources as $ds){
+			$item = array();
+			$item['title'] = $ds->title;
+			$item['id'] = $ds->id;
+			$item['counts'] = array();
+			foreach ($this->ro->valid_status AS $status){
+				if($ds->getAttribute("count_$status")>0){
+					array_push($item['counts'], array('status' => $status, 'count' =>$ds->getAttribute("count_$status"), 'name'=>readable($status)));
+				}
+			}
+			$item['qlcounts'] = array();
+			foreach ($this->ro->valid_levels AS $level){
+				array_push($item['qlcounts'], array('level' => $level, 'title' => ($level==4 ? 'Gold Standard Records' : 'Quality Level '.$level), 'count' =>$ds->getAttribute("count_level_$level")));
+			}
+			$item['classcounts'] = array();
+			foreach($this->ro->valid_classes as $class){
+				if($ds->getAttribute("count_$class")>0)array_push($item['classcounts'], array('class' => $class, 'count' =>$ds->getAttribute("count_$class"),'name'=>readable($class)));
+			}
+			$item['key']=$ds->key;
+			$item['record_owner']=$ds->record_owner;
+			$item['notes']=$ds->notes;
+
+			if($id && $ds){
+				foreach($ds->attributes as $attrib=>$value){
+					$item[$attrib] = $value->value;
+				}
+			}
+
+			array_push($items, $item);
+		}
+
+		if($id && $ds) {
+			$logs = $ds->get_logs(0, 10, null, 'all', 'all');
+			$items[0]['logs'] = $logs;
+		}
+
+		$jsonData['items'] = $items;
+		$jsonData = json_encode($jsonData);
+		echo $jsonData;
+	}
+
+	/**
+	 * get data source log
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  data_source_id $id
+	 * @param  integer $offset
+	 * @return json
+	 */
+	public function get_log($id=false, $offset=0, $limit=10, $logid=null) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		if(!$id) throw new Exception('ID must be specified');
+	
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		$logs = $ds->get_logs($offset, $limit, $logid, 'all', 'all');
+		$jsonData['status'] = 'OK';
+		$jsonData['items'] = $logs;
+		echo json_encode($jsonData);
+	}
+
+	/**
+	 * get harvester status
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  data_source_id $id 
+	 * @return json
+	 */
+	public function harvester_status($id=false) {
+		//prepare
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		if(!$id) throw new Exception('ID must be specified');
+		
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		$status = $ds->getHarvestStatus();
+		$jsonData['status'] = 'OK';
+		if($status){
+			$jsonData['items'] = $status;
+		}else {
+			$jsonData['items'] = array(
+				array('status' => 'IDLE')
+			);
+		}
+		
+		echo json_encode($jsonData);
+		
+	}
+
+	/**
+	 * Get a list of contributor of a data source
+	 * @param  data_source_id $id
+	 * @return json
+	 */
+	public function get_contributor($id=false){
+		//prepare
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		if (!$id) throw new Exception('ID must be specified');
+		
+		$jsonData = array();
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		if($ds->institution_pages) {
+			$contributorPages = $ds->institution_pages;
+		} else {
+			$contributorPages = 0;
+		}
+		switch($contributorPages) {
+			case 0: $jsonData['contributorPages'] = 'Pages are not managed'; break;
+			case 1: $jsonData['contributorPages'] = 'Pages are automatically managed'; break;
+			case 2: $jsonData['contributorPages'] = 'Pages are manually managed'; break;
+		}
+		$dataSourceGroups = $ds->get_groups();
+		$items = array();
+		if (sizeof($dataSourceGroups) > 0) {
+			foreach($dataSourceGroups as $group) {
+				$group_contributor = $ds->get_group_contributor($group);
+				$item = array();
+				$item['group'] = $group;
+				if(isset($group_contributor['key'])) {
+					$item['contributor_page_key'] = $group_contributor['key'];
+					$item['contributor_page_id'] = $group_contributor['registry_object_id'];
+					$item['contributor_page_link'] = base_url('registry_object/view/'.$group_contributor["registry_object_id"]);
+					$item['authorative_data_source_id'] = $group_contributor['authorative_data_source_id'];
+					//check if it's the authorative data source, if not then present the authorative one
+					if ((int) $item['authorative_data_source_id'] != $ds->id) {
+						$auth_ds = $this->ds->getByID((int) $item['authorative_data_source_id']);
+						$item['authorative_data_source_title'] = $auth_ds->title;
+						$item['has_authorative'] = true;
+					} else $item['authorative_data_source_title'] = $ds->title;
+				} else {
+					$item['contributor_page_key'] = '';
+				}
+				array_push($items, $item);
+			}
+			
+			$jsonData['items'] = $items;
+			echo json_encode($jsonData);
+		}
+	}
+
+	/**
+	 * Save a data source
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return [json] response.status
+	 */
+	public function save() {
+
+		//prepare
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$this->load->model("data_sources","ds");
+		$this->load->model("registry/registry_object/registry_objects","ro");
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
+		$id = $data['id'];
+		if(!$id) throw new Exception('Data source ID is not specified');
+
+		//access control
+		acl_enforce('REGISTRY_USER');
+		ds_acl_enforce($id);
+
+		//data source
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Data source not found with the ID: '. $id);
+
+		//construct a list of possible attributes, attributes that are not in this list will not get updated
+		$valid_attributes = array_merge(array_keys($ds->attributes()), array_keys($ds->harvesterParams));
+		$valid_attributes = array_merge($valid_attributes, $ds->primaryRelationship);
+		$valid_attributes = array_merge($valid_attributes, $ds->institutionPages);
+		$valid_attributes = array_merge($valid_attributes, array_keys($ds->stockAttributes));
+		$valid_attributes = array_merge($valid_attributes, array_keys($ds->extendedAttributes));
+		$valid_attributes = array_unique($valid_attributes);
+
+		//unset values based on previous values
+		if(isset($data['create_primary_relationships'])){
+			if ($data['create_primary_relationships']=='0' || $data['create_primary_relationships']=='false' || $data['create_primary_relationships']=='f') {
+				$data['primary_key_1']='';
+				$data['primary_key_2']='';
+			}
+		}
+		if(isset($data['primary_key_1']) && $data['primary_key_1']==''){
+			$data['primary_key_1'] = '';
+			$data['service_rel_1'] = '';
+			$data['activity_rel_1'] = '';
+			$data['collection_rel_1'] = '';
+			$data['party_rel_1'] = '';
+		}
+		if(isset($data['primary_key_2']) && $data['primary_key_2']=='') {
+			$data['primary_key_2'] = '';
+			$data['service_rel_2'] = '';
+			$data['activity_rel_2'] = '';
+			$data['collection_rel_2'] = '';
+			$data['party_rel_2'] = '';
+		}
+
+		//update each attribute
+		foreach($valid_attributes as $attrib) {
+
+			if(is_integer($attrib) && $attrib == 0) {
+				continue;
+			} elseif (isset($data[$attrib])) {
+				$new_value = trim($data[$attrib]);
+			} elseif (in_array($attrib, array_keys($ds->harvesterParams))) {
+				$new_value = $ds->harvesterParams[$attrib];
+			} elseif (in_array($attrib, $ds->primaryRelationship)){
+				$new_value = '';
+			}
+
+			//detect qa_flag changed to false
+			if($attrib=='qa_flag' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value != $ds->{$attrib}){
+
+				$newStatus = PUBLISHED;
+				if($data['manual_publish']) $newStatus = APPROVED;
+
+				//update all submitted for assessment records to new status
+				$ros = $this->ro->getByAttributeDatasource($ds->id, 'status', SUBMITTED_FOR_ASSESSMENT, true);
+				if($ros) {
+					foreach($ros as $sro) {
+						$sro->status = $newStatus;
+						$sro->save();
+					}
+				}
+
+				//update all assessment in progress records to new status
+				$ros = $this->ro->getByAttributeDatasource($ds->id, 'status', ASSESSMENT_IN_PROGRESS, true);
+				if($ros) {
+					foreach($ros as $sro) {
+						$sro->status = $newStatus;
+						$sro->save();
+					}
+				}
+			}
+
+			//detect manual_publish flag changed to false
+			if($attrib=='manual_publish' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value!=$ds->{$attrib}){
+				//publish all approved record
+				$ros = $this->ro->getByAttributeDatasource($ds->id, 'status', APPROVED, true);
+				if($ros) {
+					foreach($ros as $ro){
+						$ro->status = PUBLISHED;
+						$ro->save();
+					}
+				}
+			}
+
+			//update the actual value
+			if(!is_null($new_value) && $new_value != $ds->{$attrib}) {
+				$ds->{$attrib} = $new_value;
+			}
+
+		}
+
+		//update the contributor pages
+		if(isset($data['institution_pages'])){
+			$ds->setContributorPages($data['institution_pages'], $data['contributor']);
+		}
+		
+
+		//save the record
+		try{
+			$ds->save();
+			$ds->append_log("The data source settings were updated..." . NL . NL .
+									"Data Source was updated by: " . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . display_date());
+		} catch (Exception $e) {
+			throw new Exception($e);
+		}
+		
+		//if all goes well
+		echo json_encode(
+			array(
+				'status' => 'OK',
+				'message' => 'Saved Success'
+			)
+		);
+	}
+
+	/**
 	 * Manage My Datasources (MMR version for Data sources)
 	 * 
 	 * 
@@ -22,7 +350,7 @@ class Data_source extends MX_Controller {
 	 * @return [HTML] output
 	 */
 	
-	public function index(){
+	public function index2(){
 		//$this->output->enable_profiler(TRUE);
 		acl_enforce('REGISTRY_USER');
 		
@@ -138,8 +466,6 @@ class Data_source extends MX_Controller {
 		$this->load->view('manage_deleted_records', $data);
 	}
 
-
-
 	/**
 	 * Get MMR AJAX data for MMR
 	 *
@@ -249,14 +575,12 @@ class Data_source extends MX_Controller {
 			}
 			array_push($st['menu'], array('action'=>'delete', 'display'=>'Delete'));
 			
-
 			$args['sort'] = isset($filters['sort']) ? $filters['sort'] : array('updated'=>'desc');
 			$args['search'] = isset($filters['search']) ? $filters['search'] : false;
 			$args['or_filter'] = isset($filters['or_filter']) ? $filters['or_filter'] : false;
 			$args['filter'] = array('status'=>$s);
 			$args['filter'] = isset($filters['filter']) ? array_merge($filters['filter'], array('status'=>$s)) : array('status'=>$s);
 
-			
 			$offset = 0;
 			$limit = 20;
 
@@ -696,8 +1020,123 @@ class Data_source extends MX_Controller {
 		echo $jsonData;
 	}
 
+	public function add() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$this->load->model('data_sources', 'ds');
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
 
-	public function add(){
+		if(!$data['key']) throw new Exception('Data Source Key must be specified');
+		if(!$data['title']) throw new Exception('Data Source Title must be specified');
+
+		$query = $this->db->get_where('data_sources', array('key'=>$data['key']));
+		if($query->num_rows() > 0) throw new Exception('Data Source Key must be unique! Another data source already has the key: '. $data['key']);
+
+		//all validation goes well
+		try{
+			$ds = $this->ds->create($data['key'], url_title($data['title']));
+			$ds->setAttribute('title', $data['title']);
+			$ds->setAttribute('record_owner', $data['record_owner']);
+			$ds->setAttribute('qa_flag', DB_TRUE);
+			foreach($ds->stockAttributes as $key=>$value) {
+				if(!isset($ds->attributes[$key]))
+				$ds->setAttribute($key, $value);
+			}
+			foreach($ds->extendedAttributes as $key=>$value) {
+				if(!isset($ds->attributes[$key]))			
+				$ds->setAttribute($key, $value);
+			}	
+			foreach($ds->harvesterParams as $key=>$value) {
+				if(!isset($ds->attributes[$key]))			
+				$ds->setAttribute($key, $value);
+			}
+			$ds->save();
+			$ds->updateStats();
+		} catch (Exception $e) {
+			throw new Exception ($e);
+		}
+		if($ds && $ds->id) {
+			$result = array(
+				'status'=>'OK',
+				'data_source_id' => $ds->id
+			);
+			echo json_encode($result);
+		} else {
+			throw new Exception('Data Source could not be created because of some unknown error');
+		}
+	}
+
+	public function import($id=false, $type=false) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$this->load->model('data_sources', 'ds');
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
+
+		if(!$id) throw new Exception('Data source ID must be specified');
+
+		$xml = false;
+		if ($type == 'url') {
+			$url = $data['url'];
+			if(!$url) throw new Exception('URL must be provided');
+			if (!preg_match("/^https?:\/\/.*/",$url)){
+				throw new Exception('URL must be valid http:// or https:// resource. Please try again');
+				return;	
+			}
+
+			try {
+				$xml = @file_get_contents($url);
+			} catch (Exception $e) {
+				throw new Exception($e);
+				return;
+			}
+		}
+
+		if($type=='xml') $xml = $data['xml'];
+
+		if($xml || $type=='xml') {
+			$this->load->library('importer');
+			$ds = $this->ds->getByID($id);
+
+			//check the xml
+			if (strlen($xml)==0) throw new Exception('Unable to retrieve any content. Make sure the content is not empty');
+
+			$xml = stripXMLHeader($xml);
+
+			if(strpos($xml, '<registryObjects') === FALSE) $xml = wrapRegistryObjects($xml);
+
+			try {
+				$this->importer->setXML($xml);
+				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
+				if ($ds->provider_type != RIFCS_SCHEME) $this->importer->setCrosswalk($ds->provider_type);
+				$this->importer->setDatasource($ds);
+				$this->importer->commit();
+
+				if($error_log = $this->importer->getErrors() && $error_log && $error_log!='') {
+					throw new Exception($error_log);
+				}
+			} catch (Exception $e) {
+				throw new Exception($e);
+				return;
+			}
+		}
+
+		//all goes well
+		echo json_encode(
+			array(
+				'status' => 'OK',
+				'message' => 'Import completed successfully!'
+			)
+		);
+	}
+
+
+	public function add_dep(){
 
 		$this->load->model('data_sources', 'ds');
 		$ds = $this->ds->create($this->input->post('key'), url_title($this->input->post('title')));
@@ -718,7 +1157,7 @@ class Data_source extends MX_Controller {
 		{
 			if(!isset($ds->attributes[$key]))			
 			$ds->setAttribute($key, $value);
-		}			
+		}
 		$ds->save();
 		$ds->updateStats();
 		echo $ds->id;
@@ -729,13 +1168,15 @@ public function getContributorGroupsEdit()
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		date_default_timezone_set('Australia/Canberra');
+		set_exception_handler('json_exception_handler');
 
 		$POST = $this->input->post();
 		$items = array();
 		
 		if (isset($POST['id'])){
 			$id = (int) $this->input->post('id');
-		}	
+		}
+		if(!isset($id) || !$id) $id = $this->input->get('id');
 
 		$this->load->model("data_sources","ds");
 		$dataSource = $this->ds->getByID($id);
@@ -820,6 +1261,7 @@ public function getContributorGroupsEdit()
 	{
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 		reset_timezone();
 
 		$POST = $this->input->post();
@@ -827,7 +1269,8 @@ public function getContributorGroupsEdit()
 		
 		if (isset($POST['id'])){
 			$id = (int) $this->input->post('id');
-		}	
+		}
+		if(!isset($id) || !$id) $id = $this->input->get('id');
 		$this->load->model("data_sources","ds");
 		$dataSource = $this->ds->getByID($id);
 		//print($dataSource->attributes['institution_pages']->value);
@@ -1982,35 +2425,39 @@ public function getContributorGroupsEdit()
 		$this->load->view('chart_report', $data);
 	}
 
-	public function delete()
-	{
+	public function delete() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+
 		$ds_id = $this->input->post('ds_id');
+		if(!$ds_id) {
+			$ds_id = $data['id'];
+		}
 		$response = array();
 		$response['success'] = false;
 		$response['error'] = '';
 		$this->load->model("data_source/data_sources","ds");
 		$this->load->library('solr');
 		$response['log'] = $this->solr->clear($ds_id);
-		try{
+		try {
 			acl_enforce(AUTH_FUNCTION_SUPERUSER);
-		}
-		catch(Exception $e)
-		{
+		} catch(Exception $e) {
 			$response['error'] = $e->getMessage(); 
 			echo json_encode($response);
 			exit();
 		}
 
 		$dataSource = $this->ds->getByID($ds_id);
-		
-		if($dataSource)
-		{
 
+		if($dataSource) {
 			$response['log'] .= $dataSource->eraseFromDB();
 			$response['success'] = true;
 		}
 		else{
-			$response['error'] = 'No Data Source Found!';
+			$response['error'] = 'No Data Source Found! '. $ds_id;
 		}
 
 		echo json_encode($response);

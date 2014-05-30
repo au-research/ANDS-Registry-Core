@@ -38,80 +38,77 @@ print $ds->save();
  * @subpackage helpers
  */
 class _data_source {
+	
+	private $id; 	// the unique ID for this data source
+	private $_CI; 	// an internal reference to the CodeIgniter Engine 
+	private $db; 	// another internal reference to save typing!
+	
+	public $attributes = array();		// An array of attributes for this Data Source
+	const MAX_NAME_LEN = 32;
+	const MAX_VALUE_LEN = 255;
 
-    private $id; 	// the unique ID for this data source
-    private $_CI; 	// an internal reference to the CodeIgniter Engine
-    private $db; 	// another internal reference to save typing!
+	public $stockAttributes = array('title'=>'','record_owner'=>'','contact_name'=>' ', 'contact_email'=>' ', 'provider_type'=>RIFCS_SCHEME,'notes'=>'');
+	public $extendedAttributes = array('allow_reverse_internal_links'=>DB_TRUE,'allow_reverse_external_links'=>DB_TRUE,'manual_publish'=>DB_FALSE,'qa_flag'=>DB_TRUE,'create_primary_relationships'=>DB_FALSE,'assessment_notify_email_addr'=>'','created'=>'','updated'=>'');
+	public $harvesterParams = array('provider_type'=>'rif','uri'=>'http://','harvest_method'=>'GET','harvest_date'=>'','oai_set'=>'','advanced_harvest_mode'=>'STANDARD','harvest_frequency'=>'');
+	public $primaryRelationship = array('primary_key_1','primary_key_2','collection_rel_1','collection_rel_2','activity_rel_1','activity_rel_2','party_rel_1','party_rel_2','service_rel_1','service_rel_2');
+	public $institutionPages = array('institution_pages');
+	
+	function __construct($id = NULL, $core_attributes_only = FALSE)
+	{
+		if (!is_numeric($id) && !is_null($id)) 
+		{
+			throw new Exception("Data Source Wrapper must be initialised with a numeric Identifier");
+		}
+		
+		$this->id = $id;				// Set this object's ID
+		$this->_CI =& get_instance();	// Get a pointer to the framework's instance
+		$this->db =& $this->_CI->db;	// Shorthand pointer to database
+		
+		if (!is_null($id))
+		{
+			$this->init($core_attributes_only);
+		}
+	}
+	
+	
+	function getID()
+	{
+		return $this->id;
+	}
+	
+	function init($core_attributes_only = FALSE)
+	{
+		/* Initialise the "core" attributes */
+		$query = $this->db->get_where("data_sources", array('data_source_id' => $this->id));
+		
+		if ($query->num_rows() == 1)
+		{
+			$core_attributes = $query->row();	
+			foreach($core_attributes AS $name => $value)
+			{
+				$this->_initAttribute($name, $value, TRUE);
+			}
+		}
+		else 
+		{
+			throw new Exception("Unable to select Data Source from database");
+		}
+			
+		// If we just want more than the core attributes
+		if (!$core_attributes_only)
+		{
+			// Lets get all the rest of the data source attributes
+			$query = $this->db->get_where("data_source_attributes", array('data_source_id' => $this->id));
+			if ($query->num_rows() > 0)
+			{
+				foreach ($query->result() AS $row)
+				{
+					$this->_initAttribute($row->attribute, $row->value);
 
-    public $attributes = array();		// An array of attributes for this Data Source
-    const MAX_NAME_LEN = 32;
-    const MAX_VALUE_LEN = 255;
-
-    public $stockAttributes = array('title'=>'','record_owner'=>'','contact_name'=>' ', 'contact_email'=>' ', 'provider_type'=>RIFCS_SCHEME,'notes'=>'');
-    public $extendedAttributes = array('allow_reverse_internal_links'=>true,'allow_reverse_external_links'=>true,'manual_publish'=>false,'qa_flag'=>true,'create_primary_relationships'=>false,'assessment_notify_email_addr'=>'','created'=>'','updated'=>'');
-    public $harvesterParams = array('provider_type'=>'rif','uri'=>'http://','harvest_method'=>'GET','harvest_date'=>'','oai_set'=>'','advanced_harvest_mode'=>'STANDARD','harvest_frequency'=>'');
-    public $primaryRelationship = array('primary_key_1','primary_key_2','collection_rel_1','collection_rel_2','activity_rel_1','activity_rel_2','party_rel_1','party_rel_2','service_rel_1','service_rel_2');
-    public $institutionPages = array('institution_pages');
-
-    function __construct($id = NULL, $core_attributes_only = FALSE)
-    {
-        if (!is_numeric($id) && !is_null($id))
-        {
-            throw new Exception("Data Source Wrapper must be initialised with a numeric Identifier");
-        }
-
-        $this->id = $id;				// Set this object's ID
-        $this->_CI =& get_instance();	// Get a pointer to the framework's instance
-        $this->db =& $this->_CI->db;	// Shorthand pointer to database
-
-        if (!is_null($id))
-        {
-            $this->init($core_attributes_only);
-        }
-    }
-
-
-    function getID()
-    {
-        return $this->id;
-    }
-
-    function init($core_attributes_only = FALSE)
-    {
-
-
-        /* Initialise the "core" attributes */
-        $query = $this->db->get_where("data_sources", array('data_source_id' => $this->id));
-
-        if ($query->num_rows() == 1)
-        {
-            $core_attributes = $query->row();
-            foreach($core_attributes AS $name => $value)
-            {
-                $this->_initAttribute($name, $value, TRUE);
-            }
-        }
-        else
-        {
-            throw new Exception("Unable to select Data Source from database");
-        }
-
-        // If we just want more than the core attributes
-        if (!$core_attributes_only)
-        {
-            // Lets get all the rest of the data source attributes
-            $query = $this->db->get_where("data_source_attributes", array('data_source_id' => $this->id));
-            if ($query->num_rows() > 0)
-            {
-                foreach ($query->result() AS $row)
-                {
-                    $this->_initAttribute($row->attribute, $row->value);
-
-                }
-            }
-        }
-        return $this;
-
+				}		
+			}
+		}
+		return $this;
     }
 
     function setAttribute($name, $value = NULL)
@@ -629,18 +626,22 @@ class _data_source {
         return;
     }
 
-	function getHarvesterStatus(){
-		$query = $this->db->get_where("harvest_requests", array("data_source_id"=>$this->id,));
+
+
+	function getHarvestStatus() {
+		$query = $this->db->get_where('python_harvest_requests', array('data_source_id'=>$this->id));
 		if($query->num_rows()>0){
 			return $query->result_array();
-			//foreach($query->result_array() as $row){
-			//	return $row;
-			//}
 		}
 	}
 
-    // HARVESTER SPECIFIC FUNCTIONS //
+	function requestNewharvest()
+	{
+		$this->cancelAllharvests();
+		$this->requestHarvest();
+	}
 
+    // HARVESTER SPECIFIC FUNCTIONS //
 
 
     function setHarvestRequest($mode='HARVEST', $scheduled=true)
