@@ -7,7 +7,7 @@
 	<div class="content-header">
 		<h1>Manage My Datasource</h1>
 		<div class="btn-group">
-			<a class="btn btn-large" href="#/new_page"><i class="icon icon-plus"></i> Add New Datasource</a>
+			<a class="btn btn-large" data-toggle="modal" href="#new_ds"><i class="icon icon-plus"></i> Add New Datasource</a>
 		</div>
 	</div>
 
@@ -49,6 +49,50 @@
 		</div>
 	</div>
 
+	<div class="modal hide" id="new_ds">
+		<div class="modal-header">
+			<a href="javascript:;" class="close" data-dismiss="modal">×</a>
+			<h3>Add New Data Source</h3>
+		</div>
+		
+		<div class="modal-screen-container">
+			<div class="modal-body">
+				<div class="alert alert-info">
+					Please provide the key and the title for the data source
+				</div>
+				<form action="#" method="get" class="form-vertical">
+					<div class="control-group">
+						<label class="control-label">Key</label>
+						<div class="controls">
+							<input type="text" name="data_source_key" required>
+							<span class="help-block">Key has to be unique</span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" name="title">Title</label>
+						<div class="controls"><input required type="text" name="title"></div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" name="title">Owner</label>
+						<div class="controls">
+							<select name="record_owner">
+								<?php foreach($this->user->affiliations() as $a):?>
+								<option value="<?php echo $a;?>"><?php echo $a;?></option>
+								<?php endforeach;?>
+							</select>
+						</div>
+					</div>
+				</form>
+				<div class="alert alert-error" ng-show="error">
+					{{error}}
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="javascript:;" class="btn btn-primary" ng-click="add_new()">Save</a>
+		</div>
+	</div>
+
 </div>
 
 <div id="view_template" class="hide">
@@ -74,7 +118,6 @@
 
 			<div class="span8">
 
-				
 	 			<div class="btn-toolbar">
 					<div class="btn-group">
 				  		<a href="#!/edit/{{ds.id}}" class="btn"><i class="icon-edit"></i> Edit Settings</a>
@@ -85,32 +128,22 @@
 					<div class="btn-group pull-right">
 						<a class="btn dropdown-toggle ExportDataSource" data-toggle="modal" href="#exportDataSource" id="exportDS">Export Records</a>						
 					</div>
-					<div class="btn-group pull-right">
-						<a class="btn dropdown-toggle importRecords" data-toggle="dropdown" href="javascript:;">
-							<i class="icon-download-alt"></i> Import Records <span class="caret"></span>
-						</a>
-						<ul class="dropdown-menu">
-							<li><a data-toggle="modal" href="#importRecordsFromURLModal" id="importFromURLLink">From a URL</a></li>
-							<li><a data-toggle="modal" href="#importRecordsFromXMLModal" id="importFromXMLLink">From pasted XML</a></li>
-							<li><a href="" id="importFromHarvesterLink">From the Harvester</a></li>
-						</ul>
-					</div>
 				</div>
 
 				<div class="widget-box">
 					<div class="widget-title">
-						<span class="icon"><i class="icon icon-refresh"></i></span>
-						<h5 id="activity_log_title">Activity Log</h5>
+						<span class="icon" ng-click="get_latest_log()"><i class="icon icon-refresh"></i></span>
+						<h5 id="activity_log_title">Activity Log <small class="muted" ng-show="ds.refreshing">Refreshing</small></h5>
 						<div id="activity_log_switcher" class="pull-right">
-							<select class="log-type btn-mini">
-								<option value="all">All Logs</option>
+							<select class="btn-mini" ng-model="log_type">
+								<option value="">All Logs</option>
 								<option value="error">Errors</option>
 							</select>
 						</div>
 					</div>
 					<div class="widget-content nopadding">
 						<ul class="activity-list" id="data_source_log_container">
-							<li ng-repeat="log in ds.logs" class="{{log.type}}">
+							<li ng-repeat="log in ds.logs | filter:log_type" class="{{log.type}}">
 								<a href="" ng-click="log.show=!log.show" class="expand_log {{log.type}}">
 									<i class="icon-list-alt"></i>{{log.log | truncate:105}}<span class="label">{{log.date_modified * 1000 | date:'medium'}}</span>
 								</a>
@@ -120,18 +153,16 @@
 								</div>
 							</li>
 						</ul>
-						<ul class="activity-list">
+						<ul class="activity-list" ng-show="!nomore">
 							<li class="viewall">
 								<a href="" class="tip-top" ng-click="more_logs()">Show More<i class='icon-arrow-down'></i> <span class="label label-info" d="log_summary"></span></a>
 							</li>
 						</ul>
 					</div>
 			    </div>
-
 			</div>
 
 			<div class="span4">
-
 				<div class="widget-box">
 					<div class="widget-title">
 						<span class="icon" ng-click="refresh_harvest_status()"><i class="icon icon-refresh"></i></span>
@@ -141,7 +172,16 @@
 						{{harvester.status}}
 					</div>
 					<div class="widget-content">
-						<a href="" class="btn btn-primary">Import from Harvester</a>
+						<div class="btn-group">
+							<a href="" class="btn btn-primary"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
+							<a href="" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
+								<li><a href="" ng-click="open_import_modal('xml')"><i class="icon icon-briefcase"></i> Import from Pasted XML</a></li>
+								<li><a href="" ng-click="open_import_modal('upload')"><i class="icon icon-file"></i> Import from File</a></li>
+								<li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li>
+							</ul>
+						</div>
 					</div>
 				</div>
 
@@ -149,7 +189,7 @@
 					<div class="widget-title"><h5>Data Source Status Summary</h5></div>
 					<div class="widget-content nopadding">
 						<ul class="ro-list">
-							<li ng-repeat="status in ds.counts" class="status_{{status.status}}"><span class="name">{{status.name}}</span><span class="num">{{status.count}}</span></li>
+							<li ng-repeat="status in ds.counts" class="status_{{status.status}}" ng-click="mmr_link('status', status.status)"><span class="name">{{status.name}}</span><span class="num">{{status.count}}</span></li>
 						</ul>
 					</div>
 				</div>
@@ -158,7 +198,7 @@
 					<div class="widget-title"><h5>Data Source Class Summary</h5></div>
 					<div class="widget-content nopadding">
 						<ul class="ro-list">
-							<li ng-repeat="status in ds.classcounts"><span class="name">{{status.name}}</span><span class="num">{{status.count}}</span></li>
+							<li ng-repeat="status in ds.classcounts" ng-click="mmr_link('class', status.class)"><span class="name">{{status.name}}</span><span class="num">{{status.count}}</span></li>
 						</ul>
 					</div>
 				</div>
@@ -167,7 +207,7 @@
 					<div class="widget-title"><h5>Data Source Quality Summary</h5></div>
 					<div class="widget-content nopadding">
 						<ul class="ro-list">
-							<li ng-repeat="status in ds.qlcounts"><span class="name">Quality Level {{status.level}}</span><span class="num">{{status.count}}</span></li>
+							<li ng-repeat="status in ds.qlcounts" ng-click="mmr_link('quality_level', status.level)"><span class="name">Quality Level {{status.level}}</span><span class="num">{{status.count}}</span></li>
 						</ul>
 					</div>
 				</div>
@@ -175,14 +215,80 @@
 				
 
 				<?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')): ?>
-		  			<button class="btn btn-danger pull-right" data_source_title="{{title}}" data_source_id="{{data_source_id}}" id="delete_data_source_button"> <i class="icon-white icon-warning-sign"></i> Delete Data Source <i class="icon-white icon-trash"></i> </button>
+				<div class="widget-box">
+					<div class="widget-content">
+						<button class="btn btn-danger" ng-click="remove()"> <i class="icon-white icon-warning-sign"></i> Delete Data Source <i class="icon-white icon-trash"></i> </button>
+					</div>
+				</div>
 				<?php endif; ?>
-
 			</div>
-
-
 		</div>
 	</div>
+
+	<div class="modal hide" id="import_modal">
+		<div class="modal-header">
+			<a href="javascript:;" class="close" data-dismiss="modal">×</a>
+			<h3>{{importer.title}}</h3>
+		</div>
+		<div class="modal-screen-container">
+			<div class="modal-body" ng-show="importer.type=='url'">
+				<div class="alert alert-info">Import registry objects from a test feed or RIFCS XML file.</div>
+				<form class="form-horizontal">
+					<label class="control-label">URL to import records from:</label>
+					<div class="controls">
+						<input type="text" name="url" placeholder="http://" id="importer_url"/>
+						<p class="help-block">
+							<small>Use full URL format (including http://)</small>
+						</p>
+					</div>
+				</form>
+				<span class="label label-info">Note</span>
+				<small>
+					This tool will import RIFCS from an XML file using an Advanced Harvest Mode of Standard. For all other operations (such as OAI-PMH), please configure a Harvest from the Data Source Settings page. 
+				</small>
+			</div>
+			<div class="modal-body" ng-show="importer.type=='xml'">
+				<div class="alert alert-info">Paste the registry object contents into the field below</div>
+				<form class="form-vertical">
+					<fieldset>
+						<label> <b>Data to import:</b>
+						</label>
+						<textarea name="xml" id="importer_xml" rows="18" style="width:97%;font-family:Courier;font-size:8px;line-height:9px;"></textarea>
+					</fieldset>
+				</form>
+				<span class="label label-info">Note</span>
+				<small>
+					This tool will import pasted RIFCS contents using an Advanced Harvest Mode of Standard. For all other operations (such as OAI-PMH), please configure a Harvest from the Data Source Settings page. 
+				</small>
+				<small>
+					This tool is designed for small imports (&lt;100 records). It may fail with larger bulk imports.
+				</small>
+			</div>
+			<div class="modal-body" ng-show="importer.type=='upload'">
+				Import from File
+			</div>
+			<div class="modal-body" ng-show="importer.type=='path'">
+				Import from Harvested Path
+			</div>
+			<div class="modal-body" ng-show="importer.result">
+				<div class="alert alert-{{importer.result.type}}">
+					{{importer.result.message}}
+				</div>
+			</div>
+			<div class="modal-body" ng-show="importer.running">
+				<div class="progress progress-striped active">
+					<div class="bar" style="width: 100%;"></div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="" ng-click="import()" class="btn btn-primary" ng-class="{true:'disabled', false:''}[importer.running]">
+				<span ng-show="!importer.running">Import Records</span>
+				<span ng-show="importer.running">Importing... Please wait</span>
+			</a>
+		</div>
+	</div>
+
 </div>
 
 <div id="settings_template" class="hide">
@@ -217,9 +323,9 @@
 							<dt>Key</dt><dd>{{ds.key}}</dd>
 							<dt>Title</dt><dd>{{ds.title}}</dd>
 							<dt>Record Owner</dt><dd>{{ds.record_owner}}</dd>
-							<dt>Contact Name</dt><dd>{{ds.contact_name}}</dd>
-							<dt>Contact Email</dt><dd>{{ds.contact_email}}</dd>
-							<dt>Notes</dt><dd>{{ds.notes}}</dd>
+							<span ng-show="ds.contact_name"><dt>Contact Name</dt><dd>{{ds.contact_name}}</dd></span>
+							<span ng-show="ds.contact_email"><dt>Contact Email</dt><dd>{{ds.contact_email}}</dd></span>
+							<span ng-show="ds.notes"><dt>Notes</dt><dd>{{ds.notes}}</dd></span>
 						</dl>
 						<h4>Records Management Setttings</h4>
 						<dl class="dl-horizontal dl-wide">
@@ -620,6 +726,20 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="modal hide" id="modal">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal">×</button>
+	    <h3>{{modal.title}}</h3>
+	  </div>
+	  <div class="modal-body">
+	  	<div ng-bind-html-unsafe="modal.body"></div>
+	  </div>
+	  <div class="modal-footer">
+	    <a href='' class='btn' data-dismiss='modal'>OK</a>
+	  </div>
+	</div>
+
 </div>
 
 <?php $this->load->view('footer'); ?>
