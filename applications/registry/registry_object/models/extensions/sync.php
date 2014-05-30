@@ -25,6 +25,7 @@ class Sync_extension extends ExtensionBase{
 				$docs = array();
 				$docs[] = $this->indexable_json();
 				$this->_CI->solr->add_json(json_encode($docs));
+				$this->_CI->solr->commit();
 			}
 		} catch (Exception $e) {
 			return 'error: '.$e;
@@ -46,6 +47,7 @@ class Sync_extension extends ExtensionBase{
 		foreach($single_values as $s){
 			$json[$s] = $this->ro->{$s};
 		}
+		$json['display_title'] = $this->ro->title;
 
 		$json['record_modified_timestamp'] = gmdate('Y-m-d\TH:i:s\Z', ($this->ro->updated ? $this->ro->updated : $this->ro->created));
 		$json['record_created_timestamp'] = gmdate('Y-m-d\TH:i:s\Z', $this->ro->created);
@@ -105,10 +107,10 @@ class Sync_extension extends ExtensionBase{
 			$json['description_value'][] = $encoded_html;
 			$json['description_type'][] = $type;
 		}
-
-		if($theDescription && $theDescriptionType) {
-			$json['description'] = htmlentities(strip_tags(html_entity_decode($theDescription), '<p></p><br><br />'));
-		}
+		
+		//will have a description field even if it's blank
+		$json['description'] = htmlentities(strip_tags(html_entity_decode($theDescription), '<p></p><br><br />'));
+		
 
 		//license
 		if($rights = $this->ro->processLicence()){
@@ -124,6 +126,30 @@ class Sync_extension extends ExtensionBase{
 			foreach ($identifiers as $identifier) {
 				$json['identifier_value'][] = $identifier['identifier'];
 				$json['identifier_type'][] = $identifier['identifier_type'];
+			}
+		}
+
+		//related info text for searching
+		$json['related_info_search'] = '';
+		foreach($xml->{$this->ro->class}->relatedInfo as $relatedInfo){
+			$innerXML = $relatedInfo->saveXML();
+			$dom = new DOMDocument();
+			$dom->loadXML($innerXML);
+			$xpt = new DOMXpath($dom);
+			foreach($xpt->query('//relatedInfo') as $node) {
+				$json['related_info_search'] .= trim($node->nodeValue);
+			}
+		}
+
+		//citation metadata text
+		$json['citation_info_search'] = '';
+		foreach($xml->{$this->ro->class}->citationInfo as $citationInfo){
+			$innerXML = $citationInfo->saveXML();
+			$dom = new DOMDocument();
+			$dom->loadXML($innerXML);
+			$xpt = new DOMXpath($dom);
+			foreach($xpt->query('//citationInfo') as $node) {
+				$json['citation_info_search'] .= trim($node->nodeValue);
 			}
 		}
 
@@ -197,6 +223,27 @@ class Sync_extension extends ExtensionBase{
 			$json['related_object_display_title'][] = $related_object['title'];
 			$json['related_object_relation'][] = $related_object['relation_type'];
 		}
+
+		$json = array_filter($json);
 		return $json;
+	}
+
+	function update_field_index($field){
+		$json = array();
+		$json['id'] = $this->ro->id;
+
+		if($field=='slug'){
+			$json['slug'] = array('set'=>$this->ro->slug);
+		}
+
+		$docs = array();
+		$docs[] = $json;
+		$this->_CI->load->library('solr');
+		$result = json_decode($this->_CI->solr->add_json(json_encode($docs)), true);
+		$this->_CI->solr->commit();
+
+		if(isset($result['responseHeader']) &&$result['responseHeader']['status']==0){
+			return true;
+		} else return false;
 	}
 }

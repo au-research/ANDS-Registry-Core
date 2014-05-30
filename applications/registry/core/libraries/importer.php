@@ -1339,15 +1339,14 @@ class Importer {
 		$solrUrl = $this->CI->config->item('solr_url');
 		$solrUpdateUrl = $solrUrl.'update/?wt=json';
 
+		$this->CI->load->library('solr');
+
 		try{
-            $res =  curl_post($solrUpdateUrl, json_encode($this->solr_queue));
-			$result = json_decode($res, true);
-			if($result['responseHeader']['status'] == self::SOLR_RESPONSE_CODE_OK)
-			{
+			// $result = json_decode(curl_post($solrUpdateUrl, json_encode($this->solr_queue)), true);
+			$result = json_decode($this->CI->solr->add_json(json_encode($this->solr_queue)), true);
+			if($result['responseHeader']['status'] == self::SOLR_RESPONSE_CODE_OK) {
 				$this->reindexed_records += count($this->solr_queue);
-			}
-			else
-			{
+			} else {
 				// Throw back the SOLR response...
 				throw new Exception(var_export((isset($result['error']['msg']) ? $result['error']['msg'] : $result),true));
 			}
@@ -1355,7 +1354,7 @@ class Importer {
 		}
 		catch (Exception $e)
 		{
-			$this->error_log[] = "[INDEX] Error during reindex of registry object..." . BR . "<pre>HELLO" . $res . "</pre>";
+			$this->error_log[] = "[INDEX] Error during reindex of registry object..." . BR . "<pre>" . nl2br($e) . "</pre>";	
 		}
 
 		$this->solr_queue = array();

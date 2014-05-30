@@ -81,7 +81,7 @@
 											<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Queue <span class="caret"></span></button>
 											<ul class="dropdown-menu">
 												<li><a href="" ng-click="addTask('sync', ds.id)">Sync</a></li>
-												<li><a href="" ng-click="addTask('enrich', ds.id)">Enrich</a></li>
+												<li><a href="" ng-click="addTask('full_enrich', ds.id)">Enrich</a></li>
 												<li class="divider"></li>
 												<li><a href="" ng-click="addTask('fast_sync', ds.id)">Fast Sync</a></li>
 												<li><a href="" ng-click="addTask('fast_enrich', ds.id)">Fast Enrich</a></li>

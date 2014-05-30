@@ -114,7 +114,7 @@ function drawRegistryIcon(){
 function initConnections(){
 	$('.preview_connection').each(function(){
 		if(typeof $('a', this).attr('slug')!=='undefined'){
-			generatePreviewTip($(this), $('a',this).attr('slug'), null, $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'), null);
+			generatePreviewTip($(this), $('a',this).attr('slug'), $('a', this).attr('registry_object_id'), $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'), null);
 		}else if($('a', this).attr('identifier_relation_id')!=''){
 			generatePreviewTip($(this), null, null, $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'), $('a', this).attr('identifier_relation_id'));
 		}else if($('a', this).attr('draft_id')!=''){
@@ -584,12 +584,12 @@ function generatePreviewTip(element, slug, registry_object_id, relation_type, re
 	var preview_url;
 	if (slug != null)
 	{
-		preview_url = base_url + "preview/" + slug;
+		preview_url = base_url + "preview/" + slug + '/' + registry_object_id;
 		//alert(preview_url)
 	}
 	else if(registry_object_id != null)
 	{
-		preview_url = base_url + "preview/?registry_object_id=" + registry_object_id;
+		preview_url = base_url + "preview/?id=" + registry_object_id;
 	}
 	else if(identifier_relation_id != null)
 	{
@@ -616,7 +616,7 @@ function generatePreviewTip(element, slug, registry_object_id, relation_type, re
 					$("div.descriptions", temp).html($("div.descriptions", temp).directText());
 
 					if (data.slug){
-						$('.viewRecord',temp).attr("href", base_url + data.slug);
+						$('.viewRecord',temp).attr("href", base_url + data.slug + '/' + data.registry_object_id);
 					}
 					else
 					{
@@ -626,8 +626,8 @@ function generatePreviewTip(element, slug, registry_object_id, relation_type, re
 					var relDesc = '';
 					var relUrl = '';
 					if (data.slug){
-						$('.viewRecordLink'+data.slug).attr("href",base_url + data.slug);
-						$('.viewRecord').attr("href", base_url + data.slug);
+						$('.viewRecordLink'+data.slug).attr("href",base_url + data.slug+'/'+data.registry_object_id);
+						$('.viewRecord').attr("href", base_url + data.slug+'/'+data.registry_object_id);
 						if(relation_type){
 							
 							if(relation_description)
@@ -973,6 +973,9 @@ function sync(){
 	});
 }
 
+//record all resolvable identifier outbound link
+$('#identifiers a[href]').addClass('recordOutBound');
+
 $(document).on('click', '.connection_preview_link', function(e){
 	e.preventDefault();
 	var preview_url = base_url + "preview/?identifier_relation_id=" +  $(this).attr('identifier_relation_id');
@@ -996,7 +999,21 @@ $(document).on('click', '.connection_preview_link', function(e){
 		});
 	}
 	return false;
-})
+}).on('click', '.recordOutBound', function(e){
+	e.preventDefault();
+
+	//record outbound link
+	var url = $(this).attr('href');
+	var from = document.URL;
+	$.ajax({
+		url:base_url+'view/recordoutbound',
+		type:'POST',
+		dataType:'json',
+		data:{url:url,from:from},
+		success:function(data){}
+	});
+	window.open(url);
+});
 
 
 
@@ -1007,6 +1024,7 @@ function stringToLatLng(str){
 	var coord = new google.maps.LatLng(parseFloat(lat), parseFloat(lon));
 	return coord;
 }
+
 
 
 
