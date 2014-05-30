@@ -1014,19 +1014,8 @@ class Data_source extends MX_Controller {
 			array_push($jsonData['item']['classcounts'], array('class' => $class, 'count' =>$dataSource->getAttribute("count_$class"),'name'=>readable($class)));
 		}
 		
-		$harvesterStatus = $dataSource->getHarvesterStatus();
+		$harvesterStatus = $dataSource->getHarvestRequest();
 		$jsonData['item']['harvester_status'] = $harvesterStatus;
-		if ($jsonData['item']['harvester_status']){
-			foreach($jsonData['item']['harvester_status'] as &$ss){
-				if(strtotime($ss['next_harvest']) < time()){
-					$date = 'NOW';
-				}else{
-					$date = new DateTime($ss['next_harvest']);
-					$date = $date->format('Y-m-d H:i:s');
-				}
-				$ss['next_harvest'] = $date;
-			}
-		}
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
 	}
@@ -1730,19 +1719,18 @@ public function getContributorGroupsEdit()
 
 		$this->load->model("data_sources","ds");
 		$this->load->model("registry_object/registry_objects", "ro");
-
+        $jsonData['data_source_id'] = $this->input->post('data_source_id');
 		if ($this->input->post('data_source_id')){
 
 			$id = (int) $this->input->post('data_source_id');
-	
+            $jsonData['status'] = "trying";
 			if ($id == 0) {
 				 $jsonData['message'] = "ERROR: Invalid data source ID"; 
 			}
 			else 
 			{
 				$dataSource = $this->ds->getByID($id);
-				$dataSource->cancelAllharvests();
-				$dataSource->requestHarvest('','','','','','','','','','',false,true);
+                $jsonData['harvest_id'] = $dataSource->setHarvestRequest('HARVEST', false);
 				$jsonData['status'] = "OK";
 			}
 		}
@@ -1810,10 +1798,7 @@ public function getContributorGroupsEdit()
 
 			$this->importer->setXML($xml);
 			$this->importer->maintainStatus(); // records which already exist are harvested into their same status
-			if ($data_source->provider_type != RIFCS_SCHEME)
-			{
-				$this->importer->setCrosswalk($data_source->provider_type);
-			}
+			$this->importer->setCrosswalk($data_source->provider_type);
 
 			$this->importer->setDatasource($data_source);
 			$this->importer->commit();
@@ -2078,7 +2063,6 @@ public function getContributorGroupsEdit()
 		$message = 'THANK YOU';
 		$harvestId = false;
 		$gotErrors = false;
-		$ghostHarvest = false;
 		$logMsg = 'Harvest completed successfully';
 		$logMsgErr = 'An error occurred whilst trying to harvest records';
 
@@ -2091,7 +2075,9 @@ public function getContributorGroupsEdit()
 		$dataSource = $this->ds->getByHarvestID($harvestId);
 			if($dataSource)// WE MIGHT GET A GHOST HARVEST
 			{
-				if (isset($POST['content'])){
+                $dataSource->updateHarvestStatus($harvestId,'RECEIVING RECORDS');
+                $batchNumber = $dataSource->getCurrentBatchNumber($harvestId);
+                if (isset($POST['content'])){
 					$data =  $this->input->post('content');
 				}
 				if (isset($POST['errmsg'])){
@@ -2184,7 +2170,7 @@ public function getContributorGroupsEdit()
 				}
 				if($done == 'TRUE')
 				{
-					$dataSource->cancelHarvestRequest($harvestId,false);
+					$dataSource->updateHarvestStatus($harvestId,'FINISHED HARVESTING');
 					if($mode == 'HARVEST')
 					{
 						if($dataSource->advanced_harvest_mode == 'REFRESH' && !$gotErrors)
@@ -2207,7 +2193,6 @@ public function getContributorGroupsEdit()
 			else
 			{
 				$message = "DataSource doesn't exists";
-				$ghostHarvest = true;				
 			}
 			
 		}
@@ -2283,35 +2268,12 @@ public function getContributorGroupsEdit()
 			{
 				$dataSource->append_log('IMPORTER BENCHMARK RESULTS:'.NL.$this->importer->getBenchMarkLogs(), HARVEST_INFO, "importer", "BENCHMARK_INFO");
 			}
-			
 
-
-			if($dataSource->harvest_frequency != '')
-			{							
-				$dataSource->requestHarvest();
-			}
-
-
+            if($dataSource->harvest_frequency != '')
+            {
+                $dataSource->setNextHarvestRun($harvestId);
+            }
 		}
-		if($ghostHarvest) // in case it was a 'ghost' harvest, just tell the harvester to delete it
-		{
-
-			$harvesterBaseURI = $this->config->item('harvester_base_url');
-			$request = $harvesterBaseURI."deleteHarvestRequest?harvestid=".$harvestId;
-			$errors = '';
-			try
-			{
-				$dom_xml = file_get_contents($request, false, stream_context_create(array('http'=>array('timeout' => 5))));
-				$resultMessage = new DOMDocument();
-				$result = $resultMessage->loadXML($dom_xml);
-			}
-			catch (Exception $e)
-			{
-				$errors = $e->getMessage(); // no place to log errors
-			}
-
-		}
-
 
 	}
 
