@@ -6,3 +6,13 @@ CREATE  TABLE `dbs_registry`.`configs` (
   PRIMARY KEY (`id`) );
 ALTER TABLE `dbs_registry`.`configs` CHANGE COLUMN `value` `value` BLOB NULL DEFAULT NULL  ;
 
+CREATE  TABLE `dbs_registry`.`harvests` (
+  `harvest_id` MEDIUMINT NOT NULL AUTO_INCREMENT ,
+  `data_source_id` MEDIUMINT NOT NULL ,
+  `status` VARCHAR(45) NULL ,
+  `message` BLOB NULL ,
+  `next_run` DATETIME NULL ,
+  `last_run` DATETIME NULL ,
+  `mode` VARCHAR(45) NULL ,
+  `batch_number` VARCHAR(120) NULL ,
+  PRIMARY KEY (`harvest_id`) );

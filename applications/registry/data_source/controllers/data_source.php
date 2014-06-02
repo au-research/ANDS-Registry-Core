@@ -1711,8 +1711,7 @@ public function getContributorGroupsEdit()
 	/**
 	 * Trigger harvest
 	 */
-	function triggerHarvest()
-	{
+	function triggerHarvest() {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		$jsonData = array("status"=>"ERROR");

@@ -266,8 +266,10 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 	$scope.refresh_harvest_status = function() {
 		ds_factory.get_harvester_status($scope.ds.id).then(function(data){
 			$scope.harvester = data.items[0];
+			$timeout($scope.refresh_harvest_status, 3000);
 		});
 	}
+	$timeout($scope.refresh_harvest_status, 5000);
 
 	$scope.open_import_modal = function(method) {
 		$scope.importer.type = method;

@@ -626,10 +626,8 @@ class _data_source {
         return;
     }
 
-
-
 	function getHarvestStatus() {
-		$query = $this->db->get_where('python_harvest_requests', array('data_source_id'=>$this->id));
+		$query = $this->db->get_where('harvests', array('data_source_id'=>$this->id));
 		if($query->num_rows()>0){
 			return $query->result_array();
 		}
@@ -663,12 +661,12 @@ class _data_source {
         if($harvestId)
         {
             $this->db->where("harvest_id", $harvestId);
-            $this->db->update("python_harvest_requests", array('status'=>$status, 'next_run'=>date( 'Y-m-d\TH:i:s.uP', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>$mode));
+            $this->db->update("harvests", array('status'=>$status, 'next_run'=>date( 'Y-m-d\TH:i:s.uP', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>$mode));
             return $harvestId;
         }
         else
         {
-            $this->db->insert("python_harvest_requests", array("data_source_id" => $this->id, 'status'=>$status, 'next_run'=>date( 'Y-m-d\TH:i:s.uP', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>$mode));
+            $this->db->insert("harvests", array("data_source_id" => $this->id, 'status'=>$status, 'next_run'=>date( 'Y-m-d\TH:i:s.uP', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>$mode));
             return $this->db->insert_id();
         }
     }
@@ -682,18 +680,18 @@ class _data_source {
         $status = 'SCHEDULED on: ' . date("j F Y, g:i a", $nextRun);
         $batchNumber = strtoupper(sha1($nextRun));
         $this->db->where("id", $harvestId);
-        $this->db->update("python_harvest_requests", array('status'=>$status,'previous_run'=>date( 'Y-m-d\TH:i:s.uP', $previousRun), 'next_run'=>date( 'Y-m-d\TH:i:s.uP', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>'HARVEST'));
+        $this->db->update("harvests", array('status'=>$status,'previous_run'=>date( 'Y-m-d\TH:i:s.uP', $previousRun), 'next_run'=>date( 'Y-m-d\TH:i:s.uP', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>'HARVEST'));
     }
 
     function updateHarvestStatus($harvestId, $status)
     {
         $this->db->where("harvest_id", $harvestId);
-        $this->db->update("python_harvest_requests", array('status'=>$status));
+        $this->db->update("harvests", array('status'=>$status));
     }
 
     function getHarvestRequest($index=null)
     {
-        $query = $this->db->get_where("python_harvest_requests", array("data_source_id"=>$this->id));
+        $query = $this->db->get_where("harvests", array("data_source_id"=>$this->id));
         if($query->num_rows()>0){
             $row = $query->result_array();
             if($index)
@@ -707,10 +705,10 @@ class _data_source {
 
     function cancelHarvestRequest($harvestId)
     {
-        //$this->db->delete('python_harvest_requests', array('harvest_id'=>$harvestId));
+        //$this->db->delete('harvests', array('harvest_id'=>$harvestId));
         $this->db->where("harvest_id", $harvestId);
-        $this->db->update("python_harvest_requests", array('status'=>"STOPPED BY USER"));
-        $query = $this->db->get_where("python_harvest_requests", array("harvest_id"=>$harvestId));
+        $this->db->update("harvests", array('status'=>"STOPPED BY USER"));
+        $query = $this->db->get_where("harvests", array("harvest_id"=>$harvestId));
         if($query->num_rows()>0){
             $row = $query->result_array();
             return $row[0];
