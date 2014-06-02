@@ -302,3 +302,24 @@ function removeBadValue($string){
     $string = str_replace($match, '', $string);
     return $string;
 }
+function getNextHarvestDate($harvestDate, $harvestFrequency){
+    $now = time();
+    if($harvestDate)
+        $nextHarvest = $harvestDate;
+    else
+        $nextHarvest = $now;
+    while($nextHarvest < $now)
+		{
+            if($harvestFrequency == 'daily')
+                $nextHarvest = strtotime('+1 day', $harvestDate);
+            elseif($harvestFrequency == 'weekly')
+                $nextHarvest = strtotime('+1 week', $harvestDate);
+            elseif($harvestFrequency == 'fortnightly')
+                $nextHarvest = strtotime('+2 week', $harvestDate);
+            elseif($harvestFrequency == 'monthly')
+                $nextHarvest = strtotime('+1 month', $harvestDate);
+            else
+                $harvestDate += (60*60);
+        }
+    return $nextHarvest;
+}
