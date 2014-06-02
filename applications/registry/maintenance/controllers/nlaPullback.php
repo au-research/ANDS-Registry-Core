@@ -93,24 +93,23 @@ class nlaPullback extends MX_Controller
 
 	}
 
-	function extractRIFCSfromQueue($pullback_queue)
-	{
-		$xml_fragments = array();
-		if (is_array($pullback_queue))
-		{
-			foreach ($pullback_queue AS $identifier)
-			{
-				$fragment = $this->pullbackRIFCSfromNLA(trim($identifier));
-				if ($fragment)
-				{
-					$xml_fragments[] = $this->pullbackRIFCSfromNLA(trim($identifier));
-				}
-			}
-		}
-		return $xml_fragments; 
-	}
-
-
+    function extractRIFCSfromQueue($pullback_queue)
+    {
+        $fragments = '';
+        if (is_array($pullback_queue))
+        {
+            foreach ($pullback_queue AS $identifier)
+            {
+                $fragment = $this->pullbackRIFCSfromNLA(trim($identifier));
+                if ($fragment)
+                {
+                    $fragments .= unWrapRegistryObjects($fragment);
+                }
+            }
+            $fragments=wrapRegistryObjects($fragments);
+        }
+        return $fragments;
+    }
 
 	function pullbackRIFCSfromNLA($identifier)
 	{
