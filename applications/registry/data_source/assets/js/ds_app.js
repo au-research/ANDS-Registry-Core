@@ -25,6 +25,9 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			},
 			import: function(id, type, data) {
 				return $http.post(base_url+'data_source/import/'+id+'/'+type, {data:data}).then(function(response){return response.data});
+			},
+			start_harvest: function(id) {
+				return $http.get(base_url+'data_source/trigger_harvest/'+id).then(function(response){return response.data});
 			}
 		}
 	}).
@@ -270,6 +273,12 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		});
 	}
 	$timeout($scope.refresh_harvest_status, 5000);
+
+	$scope.start_harvest = function() {
+		ds_factory.start_harvest($scope.ds.id).then(function(data) {
+			$scope.refresh_harvest_status();
+		});
+	}
 
 	$scope.open_import_modal = function(method) {
 		$scope.importer.type = method;

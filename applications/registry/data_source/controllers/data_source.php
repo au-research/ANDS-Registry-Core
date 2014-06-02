@@ -1708,6 +1708,30 @@ public function getContributorGroupsEdit()
 		echo $jsonData;
 	}
 	
+	function trigger_harvest($id=false) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if(!$id) throw new Exception('Data source ID is required');
+
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Invalid Data source ID');
+
+		try {
+			$ds->setHarvestRequest('HARVEST', false);
+		} catch (Exception $e) {
+			throw new Exception($e);
+		}
+
+		echo json_encode(
+			array(
+				'status' => 'OK',
+				'message' => 'Harvest Started'
+			)
+		);
+	}
+
 	/**
 	 * Trigger harvest
 	 */

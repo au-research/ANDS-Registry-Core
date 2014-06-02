@@ -173,7 +173,7 @@
 					</div>
 					<div class="widget-content">
 						<div class="btn-group">
-							<a href="" class="btn btn-primary"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
+							<a href="" class="btn btn-primary" ng-click="start_harvest()"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
 							<a href="" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
 							<ul class="dropdown-menu">
 								<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
