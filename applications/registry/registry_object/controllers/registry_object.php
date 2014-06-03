@@ -1114,5 +1114,16 @@ class Registry_object extends MX_Controller {
 		}
 		return $actions;
 	}
+    
+    public function exportToEndnote($registry_object_id)
+    {
+       $this->load->model('registry_objects', 'ro');
+       $ro = $this->ro->getByID($registry_object_id);
+       $data = $ro->transformToEndnote();
 
+       header('Content-type: application/x-research-info-systems');
+
+       print($data);
+
+    }
 }
