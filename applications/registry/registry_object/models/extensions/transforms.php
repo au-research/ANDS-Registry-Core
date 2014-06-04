@@ -312,6 +312,26 @@ class Transforms_Extension extends ExtensionBase
             return(substr($string, $pos+strlen($substring)));
     }
 
+    function transformToEndnote()
+    {
+        $this->_CI->load->helper('normalisation');
 
+        try{
+            $xslt_processor = Transforms::get_extrif_to_endnote_transformer();
+            $dom = new DOMDocument();
+            $dom->loadXML(htmlspecialchars_decode($this->ro->getExtRif()), LIBXML_NOENT);
+            $xslt_processor->setParameter('','dateHarvested', date("Y", $this->ro->created));
+            $xslt_processor->setParameter('','dateRequested', date("Y-m-d"));
+            $xml_output = $xslt_processor->transformToXML($dom);
+            return $xml_output;
+            //if we want to post process the authors address and funding name we would do it here against the text string
+
+        }
+        catch (Exception $e)
+        {
+            echo "UNABLE TO TRANSFORM" . BR;
+            echo "<pre>" . nl2br($e->getMessage()) . "</pre>" . BR;
+        }
+    }
 }
 	

@@ -258,6 +258,8 @@
                     </xsl:when>
                     <xsl:when test="ro:citationInfo/ro:fullCitation[text() != '']">
 	                    <h4 style="margin-top:30px;">How to Cite this Collection</h4>
+
+
                         <h5>Full Citation:</h5>
                         <div class="citationDisplay">
                           <xsl:apply-templates select="ro:citationInfo/ro:fullCitation"/>
@@ -562,6 +564,11 @@
         </div>
       </xsl:if>
   </div>
+  <div class="container_clear"></div>
+    <a>
+        <xsl:attribute name="href"><xsl:value-of select="$base_url"/>registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/></xsl:attribute>
+        <button >Export To Endnote</button>
+    </a>
 
 </div> 
 <div class="container_clear"></div>
