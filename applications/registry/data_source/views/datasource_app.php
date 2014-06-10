@@ -178,7 +178,7 @@
 								<dd>{{harvester.percent}} %</dd>
 							</span>
 							<span ng-show="!harvester.percent && harvester.status=='HARVESTING'">
-								<dt>Current Chunk</dt>
+								<dt>Records Received</dt>
 								<dd>{{harvester.message.progress.current}}</dd>
 							</span>
 						</dl>
