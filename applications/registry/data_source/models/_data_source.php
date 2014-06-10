@@ -296,6 +296,7 @@ class _data_source {
         if ($core)
         {
             $this->attributes[$name]->core = TRUE;
+            $this->attributes[$name]->dirty = TRUE;
         }
     }
     /*

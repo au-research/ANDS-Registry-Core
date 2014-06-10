@@ -187,6 +187,28 @@ class Maintenance extends MX_Controller {
 		
 	}
 
+	public function migrate_ds_to_r13() {
+		acl_enforce('REGISTRY_STAFF');
+		set_exception_handler('json_exception_handler');
+		$this->load->model('data_source/data_sources', 'ds');
+		$all_ds = $this->ds->getAll(0,0);
+		foreach($all_ds as $ds){
+			$ds->title = $ds->title;
+			$ds->record_owner = $ds->record_owner;
+			try {
+				$ds->_initAttribute('title', $ds->title, true);
+				// $ds->title->dirty = true;
+				$ds->_initAttribute('record_owner', $ds->title, true);
+				// $ds->record_owner->dirty = true;
+				$ds->save();
+			} catch (Exception $e) {
+				throw new Exception($e);
+			}
+			
+		}
+		echo 'done';
+	}
+
 	public function syncmenu(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'ARMS SyncMenu';

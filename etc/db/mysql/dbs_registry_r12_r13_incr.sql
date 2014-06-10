@@ -16,3 +16,5 @@ CREATE  TABLE `dbs_registry`.`harvests` (
   `mode` VARCHAR(45) NULL ,
   `batch_number` VARCHAR(120) NULL ,
   PRIMARY KEY (`harvest_id`) );
+
+ALTER TABLE `dbs_registry`.`data_sources` ADD COLUMN `title` VARCHAR(512) NULL  AFTER `slug` , ADD COLUMN `record_owner` VARCHAR(512) NULL  AFTER `title` ;

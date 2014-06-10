@@ -165,7 +165,7 @@ class Auth extends CI_Controller {
 				$this->db = $db;
 
 				$this->load->model('data_source/data_sources','ds');
-				$data['data_sources']=$this->ds->getOwnedDataSources();
+				$data['data_sources']=$this->ds->getOwnedDataSources(false, true);
 			}
 
 			$this->load->view('dashboard', $data);

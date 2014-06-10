@@ -113,7 +113,7 @@ class Data_sources extends CI_Model {
 	 * @param the data source ID
 	 * @return _data_source object or NULL
 	 */
-	function getOwnedDataSources($just_id = false)
+	function getOwnedDataSources($just_id = false, $just_core=false)
 	{
 		$data_sources = array();
 		$affiliations = $this->user->affiliations();
@@ -121,7 +121,7 @@ class Data_sources extends CI_Model {
 		{
 			if ($this->user->hasFunction('REGISTRY_SUPERUSER'))
 			{
-				$query = $this->db->query("SELECT data_source_id FROM data_sources");	
+				$query = $this->db->query("SELECT * FROM data_sources");	
 			}
 			else
 			{
@@ -138,6 +138,8 @@ class Data_sources extends CI_Model {
 				{
 					if($just_id){
 						$data_sources[] = $ds['data_source_id'];
+					}elseif($just_core){
+						$data_sources[] = $ds;
 					}else{
 						$data_sources[] =  new _data_source($ds['data_source_id']);
 					}

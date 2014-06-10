@@ -132,7 +132,7 @@ else
 								echo '<ul>';
 								$i=0;
 								for($i=0; $i < sizeof($data_sources) && $i < 7; $i++){
-									echo '<li><a href="'.registry_url('data_source/manage#!/view/'.$data_sources[$i]->id).'">'.$data_sources[$i]->title . "</a></li>";
+									echo '<li><a href="'.registry_url('data_source/manage#!/view/'.$data_sources[$i]['data_source_id']).'">'.$data_sources[$i]['title'] . "</a></li>";
 								}
 								echo '</ul>';
 
@@ -142,7 +142,7 @@ else
 									echo '<select data-placeholder="Choose a Data Source to View" class="chzn-select" id="dashboard-datasource-chooser">';
 									echo '	<option value=""></option>';
 									foreach($data_sources as $ds){
-										echo '<option value="'.$ds->id.'">'.$ds->title.'</option>';
+										echo '<option value="'.$ds['data_source_id'].'">'.$ds['title'].'</option>';
 									}
 									echo '</select>';
 									echo '</div>';
