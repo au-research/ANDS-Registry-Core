@@ -269,6 +269,16 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 	$scope.refresh_harvest_status = function() {
 		ds_factory.get_harvester_status($scope.ds.id).then(function(data){
 			$scope.harvester = data.items[0];
+			try {
+				$scope.harvester.message = JSON.parse($scope.harvester.message);
+				if($scope.harvester.message.progress.total!='unknown' && $scope.harvester.message.progress.current) {
+					$scope.harvester.percent =  ($scope.harvester.message.progress.current * 100) / $scope.harvester.message.progress.total;
+					$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
+				}
+			} catch (err) {
+				console.error($scope.harvester.message);
+			}
+			
 			$timeout($scope.refresh_harvest_status, 3000);
 		});
 	}

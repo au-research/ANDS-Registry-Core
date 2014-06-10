@@ -171,13 +171,28 @@
 					<div class="widget-content">
 						<dl class="dl">
 							<dt>Status</dt><dd><span class="label label-info">{{harvester.status}}</span></dd>
-							<dt>Last Run</dt>
-							<dd>{{harvester.last_run}}</dd>
-							<dt>Next Run</dt>
-							<dd>{{harvester.next_run}}</dd>
+							<span ng-show="harvester.last_run"><dt>Last Run</dt><dd>{{harvester.last_run}}</dd></span>
+							<span ng-show="harvester.next_run"><dt>Next Run</dt><dd>{{harvester.next_run}}</dd></span>
+							<span ng-show="harvester.percent">
+								<dt>Percent Complete</dt>
+								<dd>{{harvester.percent}} %</dd>
+							</span>
+							<span ng-show="!harvester.percent && harvester.status=='HARVESTING'">
+								<dt>Current Chunk</dt>
+								<dd>{{harvester.message.progress.current}}</dd>
+							</span>
 						</dl>
-						<div ng-show="harvester.message" class="alert alert-info">
-							{{harvester.message}}
+						<div ng-show="!harvester.percent && harvester.status=='HARVESTING'">
+							<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>
+						</div>
+						<div class="progress progress-striped active" ng-show="harvester.percent">
+							<div class="bar" style="width: {{harvester.percent}}%;"></div>
+						</div>
+						<div ng-show="harvester.message.message" class="alert alert-info">
+							{{harvester.message.message}}
+						</div>
+						<div ng-show="harvester.message.error.log" class="alert alert-error">
+							{{harvester.message.error.log}}
 						</div>
 					</div>
 					<div class="widget-content">
