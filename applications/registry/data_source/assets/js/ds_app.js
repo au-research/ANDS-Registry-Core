@@ -28,6 +28,9 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			},
 			start_harvest: function(id) {
 				return $http.get(base_url+'data_source/trigger_harvest/'+id).then(function(response){return response.data});
+			},
+			stop_harvest: function(id) {
+				return $http.get(base_url+'/data_source/stop_harvest/'+id).then(function(response){return response.data;});
 			}
 		}
 	}).
@@ -133,7 +136,7 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 	}
 
 	$scope.process_values = function() {
-		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationship', 'qa_flag'];
+		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationship', 'qa_flag', 'export_dci'];
 		$.each($scope.ds, function(i){
 			if($.inArray(i, flags) > -1){
 				if((this=='t' || this=='1') && i!='id') {
@@ -269,6 +272,15 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 	$scope.refresh_harvest_status = function() {
 		ds_factory.get_harvester_status($scope.ds.id).then(function(data){
 			$scope.harvester = data.items[0];
+			switch($scope.harvester.status) {
+				case 'IDLE': $scope.harvester.can_start = true; $scope.harvester.can_stop = true; break;
+				case 'HARVESTING': $scope.harvester.can_start = false; $scope.harvester.can_stop = true; break;
+				case 'IMPORTING': $scope.harvester.can_start = false; $scope.harvester.can_stop = false; break;
+				case 'STOPPED': $scope.harvester.can_start = true; $scope.harvester.can_stop = false; break;
+				case 'COMPLETED': $scope.harvester.can_start = true; $scope.harvester.can_stop = false; break;
+				case 'SCHEDULED': $scope.harvester.can_start = true; $scope.harvester.can_stop = true; break;
+				case 'WAITING': $scope.harvester.can_start = false; $scope.harvester.can_stop = true; break;
+			}
 			try {
 				$scope.harvester.message = JSON.parse($scope.harvester.message);
 				if($scope.harvester.message.progress.total!='unknown' && $scope.harvester.message.progress.current) {
@@ -286,6 +298,12 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 	$scope.start_harvest = function() {
 		ds_factory.start_harvest($scope.ds.id).then(function(data) {
+			$scope.refresh_harvest_status();
+		});
+	}
+
+	$scope.stop_harvest = function() {
+		ds_factory.stop_harvest($scope.ds.id).then(function(data) {
 			$scope.refresh_harvest_status();
 		});
 	}

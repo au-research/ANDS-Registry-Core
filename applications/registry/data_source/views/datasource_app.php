@@ -197,7 +197,8 @@
 					</div>
 					<div class="widget-content">
 						<div class="btn-group">
-							<a href="" class="btn btn-primary" ng-click="start_harvest()"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
+							<a href="" class="btn btn-primary" ng-click="start_harvest()" ng-show="harvester.can_start"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
+							<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop"><i class="icon icon-white icon-stop"></i> Stop Harvester</a>
 							<a href="" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
 							<ul class="dropdown-menu">
 								<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
@@ -601,6 +602,14 @@
 										<label class="control-label">Assessment Notification Email</label>
 										<div class="controls">
 											<input type="text" class="input-xlarge" ng-model="ds.assessment_notify_email_addr">
+										</div>
+									</div>
+
+									<div class="control-group">
+										<label class="control-label">Export DCI
+										</label>
+										<div class="controls">
+			    							<input type="checkbox" for="export_dci" ng-model="ds.export_dci">    																
 										</div>
 									</div>
 								<?php endif; ?>

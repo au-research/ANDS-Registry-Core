@@ -1682,6 +1682,7 @@ public function getContributorGroupsEdit()
 
 		try {
 			$ds->setHarvestRequest('HARVEST', false);
+			$ds->setHarvestMessage('Harvest scheduled');
 		} catch (Exception $e) {
 			throw new Exception($e);
 		}
@@ -1706,6 +1707,7 @@ public function getContributorGroupsEdit()
 
 		try {
 			$ds->cancelHarvestRequest();
+			$ds->setHarvestMessage('Stopped by User');
 		} catch (Exception $e) {
 			throw new Exception($e);
 		}
@@ -1713,7 +1715,7 @@ public function getContributorGroupsEdit()
 		echo json_encode(
 			array(
 				'status' => 'OK',
-				'message' => 'Harvest Started'
+				'message' => 'Harvest Stopped'
 			)
 		);
 	}

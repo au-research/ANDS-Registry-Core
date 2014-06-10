@@ -48,7 +48,7 @@ class _data_source {
 	const MAX_VALUE_LEN = 255;
 
 	public $stockAttributes = array('title'=>'','record_owner'=>'','contact_name'=>' ', 'contact_email'=>' ', 'provider_type'=>RIFCS_SCHEME,'notes'=>'');
-	public $extendedAttributes = array('allow_reverse_internal_links'=>DB_TRUE,'allow_reverse_external_links'=>DB_TRUE,'manual_publish'=>DB_FALSE,'qa_flag'=>DB_TRUE,'create_primary_relationships'=>DB_FALSE,'assessment_notify_email_addr'=>'','created'=>'','updated'=>'');
+	public $extendedAttributes = array('allow_reverse_internal_links'=>DB_TRUE,'allow_reverse_external_links'=>DB_TRUE,'manual_publish'=>DB_FALSE,'qa_flag'=>DB_TRUE,'create_primary_relationships'=>DB_FALSE,'assessment_notify_email_addr'=>'','created'=>'','updated'=>'', 'export_dci'=>DB_FALSE);
 	public $harvesterParams = array('provider_type'=>'rif','uri'=>'http://','harvest_method'=>'GET','harvest_date'=>'','oai_set'=>'','advanced_harvest_mode'=>'STANDARD','harvest_frequency'=>'');
 	public $primaryRelationship = array('primary_key_1','primary_key_2','collection_rel_1','collection_rel_2','activity_rel_1','activity_rel_2','party_rel_1','party_rel_2','service_rel_1','service_rel_2');
 	public $institutionPages = array('institution_pages');
@@ -669,6 +669,20 @@ class _data_source {
         {
             $this->db->insert("harvests", array("data_source_id" => $this->id, 'status'=>$status, 'next_run'=>date( 'Y-m-d\TH:i:s.uP', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>$mode));
             return $this->db->insert_id();
+        }
+    }
+
+    function setHarvestMessage($msg) {
+        $harvest = $this->db->get_where('harvests', array('data_source_id'=>$this->id));
+        if($harvest->num_rows() > 0) {
+            $harvest = $harvest->result();
+            $harvest = $harvest[0];
+            $message = $harvest->message;
+            $message = json_decode($message, true);
+            $message['message'] = $msg;
+            $message = json_encode($message);
+            $this->db->where("data_source_id", $this->id);
+            $this->db->update('harvests', array('message'=>$message));
         }
     }
 
