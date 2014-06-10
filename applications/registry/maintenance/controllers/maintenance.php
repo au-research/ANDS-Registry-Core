@@ -195,6 +195,14 @@ class Maintenance extends MX_Controller {
 		$this->load->view("syncmenu_index", $data);
 	}
 
+	public function harvester() {
+		acl_enforce('REGISTRY_STAFF');
+		$data['title'] = 'ARMS Harvester Management';
+		$data['scripts'] = array('harvester_app');
+		$data['js_lib'] = array('core', 'angular');
+		$this->load->view("harvester_app", $data);
+	}
+
 	public function init(){
 		acl_enforce('REGISTRY_STAFF');
 		$this->load->library('importer');

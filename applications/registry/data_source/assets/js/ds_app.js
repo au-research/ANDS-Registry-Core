@@ -236,7 +236,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 	}
 	$scope.get($routeParams.id);
 
-	$scope.get_latest_log = function() {
+	$scope.get_latest_log = function(click) {
 		$scope.ds.refreshing = true;
 		ds_factory.get_log($scope.ds.id, 0, 10, $scope.ds.latest_log).then(function(data){
 			$scope.ds.refreshing = false;
@@ -250,7 +250,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			} else if(data.items.length == 0) {
 				timeout = 10000;
 			}
-			$timeout($scope.get_latest_log, timeout);
+			if(!click) $timeout($scope.get_latest_log, timeout);
 		});
 	}
 	$timeout($scope.get_latest_log, 1000);

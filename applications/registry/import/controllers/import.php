@@ -36,7 +36,7 @@ class Import extends MX_Controller {
 
 		switch($method) {
 			case 'path': 
-				$this->import_via_path($id);
+				$this->import_via_path($id, $this->input->get('batch'));
 				break;
 			case 'post':
 				var_dump($this->input->post());
@@ -47,14 +47,95 @@ class Import extends MX_Controller {
 		}
 	}
 
-	private function import_via_path($id) {
-		$dir = '/var/www/harvested_content/'.$id;
-		$files = scandir($dir.'/45');
-		var_dump($files);
+	private function import_via_path($id, $batch) {
+		if(!$batch) throw new Exception('Batch ID expected');
+		$dir = '/var/www/harvested_content/';
+
+		// $this->load->helper('xml_helper');
+
+		$batch_query = $this->db->get_where('harvests', array('data_source_id'=>$id));
+		if($batch_query->num_rows() > 0) {
+			$batch_array = $batch_query->result_array();
+			$harvest_id = $batch_array[0]['harvest_id'];
+			$path = $dir.$id.'/'.$harvest_id.'/'.$batch;
+
+			if(!is_dir($path)) {
+				//is not directory, it's a file
+				$path = $path.'.xml';
+				if(is_file($path)) {
+					
+					$this->load->library('importer');
+					$this->load->model('data_source/data_sources', 'ds');
+					$xml = file_get_contents($path);
+					
+					$ds = $this->ds->getByID($id);
+					if(!$ds) throw new Exception('Data Source not found');
+
+					try {
+						$this->importer->setXML($xml);
+						$this->importer->maintainStatus(); //records which already exists are harvested into their same status
+						$this->importer->setCrosswalk($ds->provider_type);
+						$this->importer->setDatasource($ds);
+						$this->importer->commit();
+					} catch (Exception $e) {
+						throw new Exception($e);
+						return;
+					}
+
+					try {
+						$ds->updateHarvestStatus($harvest_id, 'COMPLETED');
+						$ds->setNextHarvestRun($harvest_id);
+					} catch (Exception $e) {
+						$ds->append_log($e);
+						throw new Exception ($e);
+					}
+					
+					echo json_encode(
+						array(
+							'status' => 'OK',
+							'message' => $this->importer->getMessages(),
+							// 'error' => $this->importer->getErrors()
+						)
+					);
+
+				} else {
+					throw new Exception ("File not found: ". $path);
+				}
+			} else {
+				//is a directory
+			}
+
+		} else {
+			throw new Exception ('No Harvest Records were found');
+		}
 	}
 
+	public function list_harvests() {
+		$this->load->model('data_source/data_sources', 'ds');
+		$harvests = $this->db->get('harvests');
+
+		$result = array();
+		foreach($harvests->result_array() as $harvest) {
+			$result[] = $harvest;
+		}
+
+		foreach($result as &$r){
+			$ds = $this->ds->getByID($r['data_source_id']);
+			$r['data_source_title'] = $ds->title;
+			$r['record_owner'] = $ds->record_owner;
+			unset($ds);
+		}
+
+		echo json_encode(
+			array(
+				'status' => 'OK',
+				'harvests' => $result
+			)
+		);
+	}
 
 	function __construct() {
+		parent::__construct();
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');

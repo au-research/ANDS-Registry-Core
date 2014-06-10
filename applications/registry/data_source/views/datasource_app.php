@@ -132,7 +132,7 @@
 
 				<div class="widget-box">
 					<div class="widget-title">
-						<span class="icon" ng-click="get_latest_log()"><i class="icon icon-refresh"></i></span>
+						<span class="icon" ng-click="get_latest_log(true)"><i class="icon icon-refresh"></i></span>
 						<h5 id="activity_log_title">Activity Log <small class="muted" ng-show="ds.refreshing">Refreshing</small></h5>
 						<div id="activity_log_switcher" class="pull-right">
 							<select class="btn-mini" ng-model="log_type">
@@ -145,7 +145,7 @@
 						<ul class="activity-list" id="data_source_log_container">
 							<li ng-repeat="log in ds.logs | filter:log_type" class="{{log.type}}">
 								<a href="" ng-click="log.show=!log.show" class="expand_log {{log.type}}">
-									<i class="icon-list-alt"></i>{{log.log | truncate:105}}<span class="label">{{log.date_modified * 1000 | date:'medium'}}</span>
+									<i class="icon-list-alt"></i>{{log.log | truncate:105}}<span class="label">{{log.date_modified * 1000 | timeago}}</span>
 								</a>
 								<div class="log" ng-show="log.show">
 									<pre style="width:95%; float:left;">{{log.log}}</pre>
@@ -169,7 +169,16 @@
 						<h5>Harvester Status</h5>
 					</div>
 					<div class="widget-content">
-						{{harvester.status}}
+						<dl class="dl">
+							<dt>Status</dt><dd><span class="label label-info">{{harvester.status}}</span></dd>
+							<dt>Last Run</dt>
+							<dd>{{harvester.last_run}}</dd>
+							<dt>Next Run</dt>
+							<dd>{{harvester.next_run}}</dd>
+						</dl>
+						<div ng-show="harvester.message" class="alert alert-info">
+							{{harvester.message}}
+						</div>
 					</div>
 					<div class="widget-content">
 						<div class="btn-group">
@@ -653,8 +662,9 @@
 									<label class="control-label" for="harvest_method">Harvest Method</label>
 									<div class="controls">
 										<select data-placeholder="Choose a Harvest Method" tabindex="1" class="chzn-select input-xlarge" for="harvest_method" ng-model="ds.harvest_method">
-											<option value="GET">DIRECT (HTTP)</option>
-											<option value="PMH">Harvested (OAI-PMH)</option>
+											<option value="GETHarvester">DIRECT GET</option>
+											<option value="PMHHarvester">OAI-PMH</option>
+											<option value="CKANHarvester">CKAN JSON</option>
 										</select>
 									</div>
 								</div>

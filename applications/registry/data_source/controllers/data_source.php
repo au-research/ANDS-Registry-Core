@@ -341,41 +341,6 @@ class Data_source extends MX_Controller {
 	}
 
 	/**
-	 * Manage My Datasources (MMR version for Data sources)
-	 * 
-	 * 
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-	 * @param 
-	 * @todo ACL on which data source you have access to
-	 * @return [HTML] output
-	 */
-	
-	public function index2(){
-		//$this->output->enable_profiler(TRUE);
-		acl_enforce('REGISTRY_USER');
-		
-		$data['title'] = 'Manage My Data Sources';
-		$data['small_title'] = '';
-
-		$this->load->model("data_sources","ds");
-	 	$dataSources = $this->ds->getOwnedDataSources();
-
-		$items = array();
-		foreach($dataSources as $ds){
-			$item = array();
-			$item['title'] = $ds->title;
-			$item['id'] = $ds->id;
-			array_push($items, $item);
-		}
-
-		$data['dataSources'] = $items;
-		$data['scripts'] = array('data_sources');
-		$data['js_lib'] = array('core', 'ands_datepicker','vocab_widget','rosearch_widget');
-
-		$this->load->view("data_source_index", $data);
-	}
-
-	/**
 	 * Same as index
 	 */
 	public function manage(){
@@ -399,7 +364,6 @@ class Data_source extends MX_Controller {
 			$ds->setSlug($ds->title);
 			$ds->save();
 		}	
-		 	
 	}
 
 	/**
@@ -643,8 +607,6 @@ class Data_source extends MX_Controller {
 			//return sizeof($ros = $this->ro->getByDataSourceID($filters['ds_id'], 0, 0, $filters['args'], false));
 			return sizeof($ros = $this->ro->filter_by($filters['args'], 0, 0, false));
 		}
-
-		
 
 		//getting the data source and parse into the jsondata array
 		$data_source = $this->ds->getByID($filters['ds_id']);
@@ -1113,7 +1075,7 @@ class Data_source extends MX_Controller {
 			try {
 				$this->importer->setXML($xml);
 				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
-				if ($ds->provider_type != RIFCS_SCHEME) $this->importer->setCrosswalk($ds->provider_type);
+				$this->importer->setCrosswalk($ds->provider_type);
 				$this->importer->setDatasource($ds);
 				$this->importer->commit();
 
@@ -1720,6 +1682,30 @@ public function getContributorGroupsEdit()
 
 		try {
 			$ds->setHarvestRequest('HARVEST', false);
+		} catch (Exception $e) {
+			throw new Exception($e);
+		}
+
+		echo json_encode(
+			array(
+				'status' => 'OK',
+				'message' => 'Harvest Started'
+			)
+		);
+	}
+
+	function stop_harvest($id=false) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if(!$id) throw new Exception('Data source ID is required');
+
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Invalid Data source ID');
+
+		try {
+			$ds->cancelHarvestRequest();
 		} catch (Exception $e) {
 			throw new Exception($e);
 		}
@@ -2558,7 +2544,6 @@ public function getContributorGroupsEdit()
 			{$jsonData['message'] = "You must provide a published registry object key from within this data source for primary relationship.";}
 		
 		echo json_encode($jsonData);
-
 	}
 	/**
 	 * @ignore

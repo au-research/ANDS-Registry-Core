@@ -515,7 +515,7 @@ class _data_source {
                                 $manageGroup = false;
                             }
                     }
-                    if($manageGroup)
+                    if($manageGroup && isset($inputvalues['contributor_pages']))
                     {
                         // Turn the indexed input array back into associative values
                         foreach($inputvalues['contributor_pages'] AS $page_idx => $contributor_value)
@@ -656,7 +656,7 @@ class _data_source {
             $nextRun = time();
         }
 
-        $status = 'SCHEDULED on: ' . date("j F Y, g:i a", $nextRun);
+        $status = 'SCHEDULED';
         $batchNumber = strtoupper(sha1($nextRun));
         if($harvestId)
         {
@@ -671,16 +671,27 @@ class _data_source {
         }
     }
 
-    function setNextHarvestRun($harvestId)
-    {
+    function setNextHarvestRun($harvestId) {
         $harvestDate = strtotime($this->getAttribute("harvest_date"));
         date_default_timezone_set('Australia/Canberra');
         $previousRun = date( 'Y-m-d\TH:i:s.uP', time());
         $nextRun = getNextHarvestDate($harvestDate, $this->harvest_frequency);
-        $status = 'SCHEDULED on: ' . date("j F Y, g:i a", $nextRun);
+        $status = 'SCHEDULED';
         $batchNumber = strtoupper(sha1($nextRun));
-        $this->db->where("id", $harvestId);
-        $this->db->update("harvests", array('status'=>$status,'previous_run'=>date( 'Y-m-d\TH:i:s.uP', $previousRun), 'next_run'=>date( 'Y-m-d\TH:i:s.uP', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>'HARVEST'));
+        $this->db->where("harvest_id", $harvestId);
+        try{
+            $this->db->update('harvests', array(
+                    'status' => $status,
+                    'last_run' => $previousRun,
+                    'next_run' => date( 'Y-m-d\TH:i:s.uP', $nextRun),
+                    'batch_number' => $batchNumber,
+                    'mode' => 'HARVEST',
+                    // 'message' => null,
+                )
+            );
+        } catch (Exception $e) {
+            throw new Exception('Cannot update harvest requests '.$e);
+        }
     }
 
     function updateHarvestStatus($harvestId, $status)
@@ -703,11 +714,10 @@ class _data_source {
             return null;
     }
 
-    function cancelHarvestRequest($harvestId)
-    {
-        //$this->db->delete('harvests', array('harvest_id'=>$harvestId));
+    function cancelHarvestRequest(){
+        $harvestId = $this->getHarvestRequest('harvest_id');
         $this->db->where("harvest_id", $harvestId);
-        $this->db->update("harvests", array('status'=>"STOPPED BY USER"));
+        $this->db->update("harvests", array('status'=>"STOPPED"));
         $query = $this->db->get_where("harvests", array("harvest_id"=>$harvestId));
         if($query->num_rows()>0){
             $row = $query->result_array();
