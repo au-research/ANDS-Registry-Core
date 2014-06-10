@@ -691,22 +691,25 @@ class _data_source {
         date_default_timezone_set('Australia/Canberra');
         $previousRun = date( 'Y-m-d\TH:i:s.uP', time());
         $nextRun = getNextHarvestDate($harvestDate, $this->harvest_frequency);
-        $status = 'SCHEDULED';
-        $batchNumber = strtoupper(sha1($nextRun));
-        $this->db->where("harvest_id", $harvestId);
-        try{
-            $this->db->update('harvests', array(
-                    'status' => $status,
-                    'last_run' => $previousRun,
-                    'next_run' => date( 'Y-m-d\TH:i:s.uP', $nextRun),
-                    'batch_number' => $batchNumber,
-                    'mode' => 'HARVEST',
-                    // 'message' => null,
-                )
-            );
-        } catch (Exception $e) {
-            throw new Exception('Cannot update harvest requests '.$e);
+        if($nextRun){
+            $status = 'SCHEDULED';
+            $batchNumber = strtoupper(sha1($nextRun));
+            $this->db->where("harvest_id", $harvestId);
+            try{
+                $this->db->update('harvests', array(
+                        'status' => $status,
+                        'last_run' => $previousRun,
+                        'next_run' => date( 'Y-m-d\TH:i:s.uP', $nextRun),
+                        'batch_number' => $batchNumber,
+                        'mode' => 'HARVEST',
+                        // 'message' => null,
+                    )
+                );
+            } catch (Exception $e) {
+                throw new Exception('Cannot update harvest requests '.$e);
+            }
         }
+        
     }
 
     function updateHarvestStatus($harvestId, $status)

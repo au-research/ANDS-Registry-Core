@@ -319,8 +319,14 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
                 $nextHarvest = strtotime('+2 week', $nextHarvest);
             elseif($harvestFrequency == 'monthly')
                 $nextHarvest = strtotime('+1 month', $nextHarvest);
+            elseif($harvestFrequency =='once only' || !$harvestFrequency)
+                return null;
             else
-                $nextHarvest += (60*60);
+                return null;
         }
     return $nextHarvest;
+}
+
+function endsWith($haystack, $needle){
+    return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 }

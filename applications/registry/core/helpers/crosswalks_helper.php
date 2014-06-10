@@ -12,7 +12,6 @@ function getCrossWalks()
 
 	// List our crosswalks
 	$CI =& get_instance();
-    echo "LOADING CROSS WALKS";
 
 	$CI->load->helper('directory');
 	$crosswalks = directory_map(REGISTRY_APP_PATH . "core/crosswalks");

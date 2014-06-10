@@ -57,20 +57,22 @@ class Import extends MX_Controller {
 		if($batch_query->num_rows() > 0) {
 			$batch_array = $batch_query->result_array();
 			$harvest_id = $batch_array[0]['harvest_id'];
-			$path = $dir.$id.'/'.$harvest_id.'/'.$batch;
+			$path = $dir.$id.'/'.$batch;
 
+			$this->load->library('importer');
+			$this->load->model('data_source/data_sources', 'ds');
+
+			$ds = $this->ds->getByID($id);
+			if(!$ds) throw new Exception('Data Source not found');
+			$this->importer->setCrosswalk($ds->provider_type);
+			$this->importer->setDatasource($ds);
+			
+			
 			if(!is_dir($path)) {
 				//is not directory, it's a file
 				$path = $path.'.xml';
 				if(is_file($path)) {
-					
-					$this->load->library('importer');
-					$this->load->model('data_source/data_sources', 'ds');
 					$xml = file_get_contents($path);
-					
-					$ds = $this->ds->getByID($id);
-					if(!$ds) throw new Exception('Data Source not found');
-
 					try {
 						$this->importer->setXML($xml);
 						$this->importer->maintainStatus(); //records which already exists are harvested into their same status
@@ -103,6 +105,34 @@ class Import extends MX_Controller {
 				}
 			} else {
 				//is a directory
+				$files = scandir($path);
+				foreach($files as $f){
+					if(endsWith($f, '.xml')) {
+						$xml = file_get_contents($path.'/'.$f);
+						try {
+							$this->importer->setXML($xml);
+							$this->importer->maintainStatus(); //records which already exists are harvested into their same status
+							$this->importer->commit();
+						} catch (Exception $e) {
+							throw new Exception($e);
+							return;
+						}
+					}
+				}
+				try {
+					$ds->updateHarvestStatus($harvest_id, 'COMPLETED');
+					$ds->setNextHarvestRun($harvest_id);
+				} catch (Exception $e) {
+					$ds->append_log($e);
+					throw new Exception ($e);
+				}
+				echo json_encode(
+					array(
+						'status' => 'OK',
+						'message' => $this->importer->getMessages(),
+						// 'error' => $this->importer->getErrors()
+					)
+				);
 			}
 
 		} else {
