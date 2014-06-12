@@ -1,5 +1,41 @@
 <?php
 
+function get_config_item($name) {
+	$_ci =& get_instance();
+	if($_ci->config->item($name)) {
+		return $_ci->config->item($name);
+	} else {
+		//it's in the database table
+		$result = $_ci->db->get_where('configs', array('key'=>$name));
+		if($result->num_rows() > 0) {
+			$result_array = $result->result_array();
+			$result_item = $result_array[0];
+			if($result_item['type']=='json') {
+				$string = trim(preg_replace('/\s+/', ' ', $result_item['value']));
+				return json_decode($string, true);
+			} else {
+				return $result_item['value'];
+			}
+		} else {
+			return false;
+		}
+	}
+}
+
+function set_config_item($key, $type, $value) {
+	$_ci =& get_instance();
+	if($value=='json' && is_array($value)) $value = json_encode($value); 
+	$data = array(
+		'key' => $key,
+		'type' => $type,
+		'value' => $value
+	);
+	$update = $this->db->insert('configs', $data);
+	if($update) {
+		return true;
+	} else return false;
+}
+
 function mod_enabled($module_name)
 {
 	$CI =& get_instance();

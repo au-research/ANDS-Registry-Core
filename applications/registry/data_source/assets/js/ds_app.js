@@ -24,7 +24,7 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 				return $http.post(base_url+'data_source/delete/', {id:id}).then(function(response){return response.data});
 			},
 			import: function(id, type, data) {
-				return $http.post(base_url+'data_source/import/'+id+'/'+type, {data:data}).then(function(response){return response.data});
+				return $http.post(base_url+'import/put/'+id+'/'+type, {data:data}).then(function(response){return response.data});
 			},
 			start_harvest: function(id) {
 				return $http.get(base_url+'data_source/trigger_harvest/'+id).then(function(response){return response.data});
@@ -126,7 +126,6 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 		$scope.process_values();
 		bind_plugins($scope);
 		document.title = $scope.ds.title + ' - Edit Settings';
-		console.log($scope.ds);
 	});
 
 	$scope.load_contributor = function() {
@@ -165,6 +164,21 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 			}
 		});
 	}
+
+	$scope.$watch('ds.harvest_method', function(newv, oldv){
+		if($scope.ds.harvester_methods && newv!=oldv){
+			$.each($scope.ds.harvester_methods.harvester_config.harvester_methods, function(){
+				if(newv==this.id) {
+					$scope.harvest_params = {};
+					$scope.harvest_method_desc = this.description;
+					$.each(this.params, function(){
+						$scope.harvest_params[this.name] = true;
+					});
+					return false;
+				}
+			});
+		}
+	});
 
 	$scope.$watch('ds.manual_publish', function(newv, oldv){
 		if(oldv!=undefined && newv!=undefined) {
@@ -272,6 +286,8 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 	$scope.refresh_harvest_status = function() {
 		ds_factory.get_harvester_status($scope.ds.id).then(function(data){
 			$scope.harvester = data.items[0];
+
+			//can_start, can_stop
 			switch($scope.harvester.status) {
 				case 'IDLE': $scope.harvester.can_start = true; $scope.harvester.can_stop = true; break;
 				case 'HARVESTING': $scope.harvester.can_start = false; $scope.harvester.can_stop = true; break;
@@ -281,20 +297,25 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				case 'SCHEDULED': $scope.harvester.can_start = true; $scope.harvester.can_stop = true; break;
 				case 'WAITING': $scope.harvester.can_start = false; $scope.harvester.can_stop = true; break;
 			}
+
+			//parse message
 			try {
 				$scope.harvester.message = JSON.parse($scope.harvester.message);
 				if($scope.harvester.message.progress.total!='unknown' && $scope.harvester.message.progress.current) {
 					$scope.harvester.percent =  ($scope.harvester.message.progress.current * 100) / $scope.harvester.message.progress.total;
 					$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
 				}
+
 			} catch (err) {
 				console.error($scope.harvester.message);
 			}
+
+
 			
-			$timeout($scope.refresh_harvest_status, 3000);
+			$timeout($scope.refresh_harvest_status, 10000);
 		});
 	}
-	$timeout($scope.refresh_harvest_status, 5000);
+	$timeout($scope.refresh_harvest_status, 10000);
 
 	$scope.start_harvest = function() {
 		ds_factory.start_harvest($scope.ds.id).then(function(data) {
@@ -328,7 +349,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 	}
 
 	$scope.import = function() {
-		delete $scope.importer.result;
+		$scope.importer.result = {};
 		if($scope.importer.type && !$scope.importer.running) {
 			$scope.importer.running = true;
 			switch ($scope.importer.type) {
@@ -344,12 +365,12 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 					break;
 				case 'upload':
 					data = {
-
+						'file':$('#importer_file').val()
 					}
 					break;
 				case 'path':
 					data = {
-
+						'path':$('#importer_path').val()
 					}
 					break;
 			}

@@ -6,6 +6,11 @@
  */
 class Import extends MX_Controller {
 
+	/**
+	 * Returns the harvest for a given data source
+	 * @param  data_source_id $id
+	 * @return json
+	 */
 	public function get($id=false) {
 		if(!$id) throw new Exception('Data Source ID must be provided');
 		$this->load->model('data_source/data_sources', 'ds');
@@ -27,6 +32,12 @@ class Import extends MX_Controller {
 		);
 	}
 
+	/**
+	 * Mainly putHarvestData
+	 * @param  data_source_id $id     
+	 * @param  string  $method
+	 * @return json          result
+	 */
 	public function put($id=false, $method='path') {
 		if(!$id) throw new Exception('Data Source ID must be provided');
 		$this->load->model('data_source/data_sources', 'ds');
@@ -34,12 +45,24 @@ class Import extends MX_Controller {
 		if(!$ds) throw new Exception('Data Source Not Found');
 		if(!$method) throw new Exception('Put harvest data method must be provided');
 
+		//get POST data from php input, mainly for angularJS POST
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
+
+		//switchboard
 		switch($method) {
 			case 'path': 
 				$this->import_via_path($id, $this->input->get('batch'));
 				break;
 			case 'post':
-				var_dump($this->input->post());
+				throw new Exception('Method POST is not implemented');
+				break;
+			case 'url':
+				$this->simple_import('url', $id, $data);
+				break;
+			case 'xml':
+				$this->simple_import('xml', $id, $data);
 				break;
 			default:
 				throw new Exception('Invalid method');
@@ -47,12 +70,17 @@ class Import extends MX_Controller {
 		}
 	}
 
+	/**
+	 * Import into a data source via downloaded file
+	 * @param  data_source_id $id    
+	 * @param  string $batch batch_id of the current batch
+	 * @return json        
+	 */
 	private function import_via_path($id, $batch) {
 		if(!$batch) throw new Exception('Batch ID expected');
 		$dir = '/var/www/harvested_content/';
 
-		// $this->load->helper('xml_helper');
-
+		//getting the harvest_id
 		$batch_query = $this->db->get_where('harvests', array('data_source_id'=>$id));
 		if($batch_query->num_rows() > 0) {
 			$batch_array = $batch_query->result_array();
@@ -129,8 +157,7 @@ class Import extends MX_Controller {
 				echo json_encode(
 					array(
 						'status' => 'OK',
-						'message' => $this->importer->getMessages(),
-						// 'error' => $this->importer->getErrors()
+						'message' => $this->importer->getMessages()
 					)
 				);
 			}
@@ -140,6 +167,73 @@ class Import extends MX_Controller {
 		}
 	}
 
+	/**
+	 * Straightforward import from url or XML
+	 * @param  string $type url|xml
+	 * @param  data_source_id $id   
+	 * @param  POST_DATA $data from the switchboard
+	 * @return json       
+	 */
+	private function simple_import($type, $id, $data) {
+
+		if ($type == 'url') {
+			$url = $data['url'];
+			if(!$url) throw new Exception('URL must be provided');
+			if (!preg_match("/^https?:\/\/.*/",$url)){
+				throw new Exception('URL must be valid http:// or https:// resource. Please try again');
+				return;	
+			}
+
+			try {
+				$xml = @file_get_contents($url);
+			} catch (Exception $e) {
+				throw new Exception($e);
+				return;
+			}
+		}
+
+		if($type=='xml') $xml = $data['xml'];
+
+		if($xml || $type=='xml') {
+			$this->load->library('importer');
+			$ds = $this->ds->getByID($id);
+
+			//check the xml
+			if (strlen($xml)==0) throw new Exception('Unable to retrieve any content. Make sure the content is not empty');
+
+			$xml = stripXMLHeader($xml);
+
+			if(strpos($xml, '<registryObjects') === FALSE) $xml = wrapRegistryObjects($xml);
+
+			try {
+				$this->importer->setXML($xml);
+				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
+				$this->importer->setCrosswalk($ds->provider_type);
+				$this->importer->setDatasource($ds);
+				$this->importer->commit();
+
+				if($error_log = $this->importer->getErrors() && $error_log && $error_log!='') {
+					throw new Exception($error_log);
+				}
+			} catch (Exception $e) {
+				throw new Exception($e);
+				return;
+			}
+		}
+
+		//all goes well
+		echo json_encode(
+			array(
+				'status' => 'OK',
+				'message' => 'Import completed successfully! '. $this->importer->getMessages()
+			)
+		);
+	}
+
+	/**
+	 * List all harvest, currently used for harvester maintenance screen
+	 * @return json 
+	 */
 	public function list_harvests() {
 		$this->load->model('data_source/data_sources', 'ds');
 		$harvests = $this->db->get('harvests');
@@ -164,6 +258,10 @@ class Import extends MX_Controller {
 		);
 	}
 
+	/**
+	 * constructor
+	 * define header return type
+	 */
 	function __construct() {
 		parent::__construct();
 		header('Cache-Control: no-cache, must-revalidate');

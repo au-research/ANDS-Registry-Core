@@ -77,9 +77,17 @@ class Data_source extends MX_Controller {
 			$item['notes']=$ds->notes;
 
 			if($id && $ds){
+
+				$harvester_methods = get_config_item('harvester_methods');
+				if($harvester_methods) $item['harvester_methods'] = $harvester_methods;
+
 				foreach($ds->attributes as $attrib=>$value){
 					$item[$attrib] = $value->value;
 				}
+
+				//get harvester_method
+				
+				
 			}
 
 			array_push($items, $item);
@@ -1031,101 +1039,59 @@ class Data_source extends MX_Controller {
 		}
 	}
 
-	public function import($id=false, $type=false) {
+	function trigger_harvest($id=false) {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
-		$this->load->model('data_sources', 'ds');
-		$data = file_get_contents("php://input");
-		$data = json_decode($data, true);
-		$data = $data['data'];
+		if(!$id) throw new Exception('Data source ID is required');
 
-		if(!$id) throw new Exception('Data source ID must be specified');
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Invalid Data source ID');
 
-		$xml = false;
-		if ($type == 'url') {
-			$url = $data['url'];
-			if(!$url) throw new Exception('URL must be provided');
-			if (!preg_match("/^https?:\/\/.*/",$url)){
-				throw new Exception('URL must be valid http:// or https:// resource. Please try again');
-				return;	
-			}
-
-			try {
-				$xml = @file_get_contents($url);
-			} catch (Exception $e) {
-				throw new Exception($e);
-				return;
-			}
+		try {
+			$ds->setHarvestRequest('HARVEST', false);
+			$ds->setHarvestMessage('Harvest scheduled');
+		} catch (Exception $e) {
+			throw new Exception($e);
 		}
 
-		if($type=='xml') $xml = $data['xml'];
-
-		if($xml || $type=='xml') {
-			$this->load->library('importer');
-			$ds = $this->ds->getByID($id);
-
-			//check the xml
-			if (strlen($xml)==0) throw new Exception('Unable to retrieve any content. Make sure the content is not empty');
-
-			$xml = stripXMLHeader($xml);
-
-			if(strpos($xml, '<registryObjects') === FALSE) $xml = wrapRegistryObjects($xml);
-
-			try {
-				$this->importer->setXML($xml);
-				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
-				$this->importer->setCrosswalk($ds->provider_type);
-				$this->importer->setDatasource($ds);
-				$this->importer->commit();
-
-				if($error_log = $this->importer->getErrors() && $error_log && $error_log!='') {
-					throw new Exception($error_log);
-				}
-			} catch (Exception $e) {
-				throw new Exception($e);
-				return;
-			}
-		}
-
-		//all goes well
 		echo json_encode(
 			array(
 				'status' => 'OK',
-				'message' => 'Import completed successfully!'
+				'message' => 'Harvest Started'
 			)
 		);
 	}
 
+	function stop_harvest($id=false) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if(!$id) throw new Exception('Data source ID is required');
 
-	public function add_dep(){
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Invalid Data source ID');
 
-		$this->load->model('data_sources', 'ds');
-		$ds = $this->ds->create($this->input->post('key'), url_title($this->input->post('title')));
-		$ds->setAttribute('title', $this->input->post('title'));
-		$ds->setAttribute('record_owner', $this->input->post('record_owner'));
-		$ds->setAttribute('qa_flag', DB_TRUE);
-		foreach($ds->stockAttributes as $key=>$value)
-		{
-			if(!isset($ds->attributes[$key]))
-			$ds->setAttribute($key, $value);
+		try {
+			$ds->cancelHarvestRequest();
+			$ds->setHarvestMessage('Stopped by User');
+		} catch (Exception $e) {
+			throw new Exception($e);
 		}
-		foreach($ds->extendedAttributes as $key=>$value)
-		{
-			if(!isset($ds->attributes[$key]))			
-			$ds->setAttribute($key, $value);
-		}	
-		foreach($ds->harvesterParams as $key=>$value)
-		{
-			if(!isset($ds->attributes[$key]))			
-			$ds->setAttribute($key, $value);
-		}
-		$ds->save();
-		$ds->updateStats();
-		echo $ds->id;
+
+		echo json_encode(
+			array(
+				'status' => 'OK',
+				'message' => 'Harvest Stopped'
+			)
+		);
 	}
 
-public function getContributorGroupsEdit()
+	//dep
+
+	public function getContributorGroupsEdit()
 	{
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -1668,270 +1634,6 @@ public function getContributorGroupsEdit()
 		//$jsonData['attributes'] = $dataSource->attributes();
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
-	}
-	
-	function trigger_harvest($id=false) {
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		set_exception_handler('json_exception_handler');
-		if(!$id) throw new Exception('Data source ID is required');
-
-		$this->load->model("data_sources","ds");
-		$ds = $this->ds->getByID($id);
-		if(!$ds) throw new Exception('Invalid Data source ID');
-
-		try {
-			$ds->setHarvestRequest('HARVEST', false);
-			$ds->setHarvestMessage('Harvest scheduled');
-		} catch (Exception $e) {
-			throw new Exception($e);
-		}
-
-		echo json_encode(
-			array(
-				'status' => 'OK',
-				'message' => 'Harvest Started'
-			)
-		);
-	}
-
-	function stop_harvest($id=false) {
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		set_exception_handler('json_exception_handler');
-		if(!$id) throw new Exception('Data source ID is required');
-
-		$this->load->model("data_sources","ds");
-		$ds = $this->ds->getByID($id);
-		if(!$ds) throw new Exception('Invalid Data source ID');
-
-		try {
-			$ds->cancelHarvestRequest();
-			$ds->setHarvestMessage('Stopped by User');
-		} catch (Exception $e) {
-			throw new Exception($e);
-		}
-
-		echo json_encode(
-			array(
-				'status' => 'OK',
-				'message' => 'Harvest Stopped'
-			)
-		);
-	}
-
-	/**
-	 * Trigger harvest
-	 */
-	function triggerHarvest() {
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		$jsonData = array("status"=>"ERROR");
-
-		$this->load->model("data_sources","ds");
-		$this->load->model("registry_object/registry_objects", "ro");
-        $jsonData['data_source_id'] = $this->input->post('data_source_id');
-		if ($this->input->post('data_source_id')){
-
-			$id = (int) $this->input->post('data_source_id');
-            $jsonData['status'] = "trying";
-			if ($id == 0) {
-				 $jsonData['message'] = "ERROR: Invalid data source ID"; 
-			}
-			else 
-			{
-				$dataSource = $this->ds->getByID($id);
-                $jsonData['harvest_id'] = $dataSource->setHarvestRequest('HARVEST', false);
-				$jsonData['status'] = "OK";
-			}
-		}
-		
-		echo json_encode($jsonData);
-	}
-	/* was good for testing...
-	function requestNewharvest($data_source_id)
-	{
-		$this->load->model("data_sources","ds");
-		$dataSource = $this->ds->getByID($data_source_id);
-		$dataSource->requestNewharvest();
-	}
-	*/
-	/**
-	 * Importing (Ben's import from URL)
-	 * 
-	 * 
-	 * @author Ben Greenwood <ben.greenwood@anu.edu.au>
-	 * @param [POST] URL to the source
-	 * @todo ACL on which data source you have access to, error handling
-	 * @return [JSON] result of the saving [VOID] 
-	 */
-	function importFromURLtoDataSource()
-	{
-		$this->load->library('importer');
-		$this->load->model('data_source/data_sources', 'ds');		
-		$data_source = $this->ds->getByID($this->input->post('data_source_id'));	
-
-		// ACL enforcement
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce((int)$this->input->post('data_source_id'));
-
-		$slogTitle =  'Import from URL completed successfully'.NL;	
-		$elogTitle = 'An error occurred whilst importing from the specified URL'.NL;
-		$log = 'IMPORT LOG' . NL;
-		//$log .= 'URI: ' . $this->input->post('url') . NL;
-		$log .= 'Harvest Method: Direct import from URL' . NL;
-		
-		$url = $this->input->post('url');
-		$log .= "URL: ".$url.NL;
-		if (!preg_match("/^https?:\/\/.*/",$url))
-		{
-			$data_source->append_log($elogTitle.$log.NL."URL must be valid http:// or https:// resource. Please try again.", HARVEST_ERROR, "importer","DOCUMENT_LOAD_ERROR");
-			echo json_encode(array("response"=>"failure", "message"=>"URL must be valid http:// or https:// resource. Please try again.", "log"=>substr($elogTitle.$log,0, 1000)));
-			return;	
-		}
-		
-		try
-		{
-			$xml = @file_get_contents($this->input->post('url'));
-		}
-		catch (Exception $e)
-		{
-			$data_source->append_log($elogTitle.$log.NL."Unable to retrieve any content from the specified URL", HARVEST_ERROR, "importer","DOCUMENT_LOAD_ERROR");			
-			echo json_encode(array("response"=>"failure", "message"=>"Unable to retrieve any content from the specified URL.", "log"=>substr($elogTitle.$log,0, 1000)));
-			// todo: http error?
-			return;	
-		}
-		
-		try
-		{ 
-
-
-
-			$this->importer->setXML($xml);
-			$this->importer->maintainStatus(); // records which already exist are harvested into their same status
-			$this->importer->setCrosswalk($data_source->provider_type);
-
-			$this->importer->setDatasource($data_source);
-			$this->importer->commit();
-
-			if ($error_log = $this->importer->getErrors())
-			{
-				$log = $elogTitle.$log.$error_log;
-				$data_source->append_log($log, HARVEST_ERROR ,"HARVEST_ERROR");
-			}
-			//else{
-			$log = $slogTitle.$log.$this->importer->getMessages();
-			$data_source->append_log($log, HARVEST_INFO,"HARVEST_INFO");
-			//}
-
-		}
-		catch (Exception $e)
-		{
-			
-			$log .= "CRITICAL IMPORT ERROR [HARVEST COULD NOT CONTINUE]" . NL;
-			$log .= $e->getMessage();
-			$data_source->append_log($log, HARVEST_ERROR, "importer","IMPORT_ERROR");				
-			echo json_encode(array("response"=>"failure", "message"=>"An error occured whilst importing from this URL", "log"=>substr($log,0, 1000)));
-			return;	
-		}	
-		
-		if($this->importer->runBenchMark)
-			$data_source->append_log('IMPORTER BENCHMARK RESULTS:'.NL.$this->importer->getBenchMarkLogs(), HARVEST_INFO, "importer", "BENCHMARK_INFO");
-
-		echo json_encode(array("response"=>"success", "message"=>"Import completed successfully!", "log"=>$log));	
-			
-	}
-
-	/**
-	 * Importing (Ben's import from XML Paste)
-	 * 
-	 * 
-	 * @author Ben Greenwood <ben.greenwood@anu.edu.au>
-	 * @param [POST] xml A blob of XML data to parse and import
-	 * @todo ACL on which data source you have access to, error handling
-	 * @return [JSON] result of the saving [VOID] 
-	 */
-	function importFromXMLPasteToDataSource()
-	{
-		set_exception_handler('json_exception_handler');
-
-		$this->load->library('importer');
-		$this->importer->maintainStatus(); // records which already exist are harvested into their same status
-
-		$xml = $this->input->post('xml');
-		$slogTitle =  'Import from XML content completed successfully'.NL;	
-		$elogTitle = 'An error occurred whilst importing from the specified XML'.NL;
-
-		// ACL enforcement
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce((int)$this->input->post('data_source_id'));
-
-		$log = 'IMPORT LOG' . NL;
-		$log .= 'Harvest Method: Direct import from XML content' . NL;
-		$log .= strlen($xml) . ' characters received...' . NL;
-
-		$this->load->model('data_source/data_sources', 'ds');
-		$data_source = $this->ds->getByID($this->input->post('data_source_id'));
-
-		if (strlen($xml) == 0)
-		{
-			$data_source->append_log($elogTitle.$log.NL ."Unable to retrieve any content from the specified XML", HARVEST_ERROR, "importer","IMPORT_ERROR");		
-			echo json_encode(array("response"=>"failure", "message"=>"Unable to retrieve any content from the specified XML", "log"=>substr($elogTitle.$log,0, 1000)));
-			return;	
-		}
-
-		$xml=stripXMLHeader($xml);
-		if ($data_source->provider_type && $data_source->provider_type != RIFCS_SCHEME)
-		{
-			$this->importer->setCrosswalk($data_source->provider_type);
-		}
-		else if (strpos($xml, "<registryObjects") === FALSE)
-		{
-			$xml = wrapRegistryObjects($xml);
-		}
-
-		try
-		{ 
-
-			$this->importer->setXML($xml);
-
-			$this->importer->setDatasource($data_source);
-			$this->importer->commit();
-
-			if ($error_log = $this->importer->getErrors())
-			{
-				$log = $elogTitle.$log.NL.$error_log;
-				$data_source->append_log($log,  HARVEST_ERROR, "importer", "HARVEST_ERROR" );
-			}
-			//else{
-			$log = $slogTitle . $log;
-			$log .= "IMPORT COMPLETED" . NL;
-			$log .= "====================" . NL;
-			$log .= $this->importer->getMessages() . NL;
-			$data_source->append_log($log,  HARVEST_INFO, "importer", "HARVESTER_INFO" );
-			//}
-
-
-
-			// data source log append...
-			
-		}
-		catch (Exception $e)
-		{
-			
-			$log .= "CRITICAL IMPORT ERROR [HARVEST COULD NOT CONTINUE]" . NL;
-			$log .= $e->getMessage();
-
-			$data_source->append_log($elogTitle.$log, HARVEST_ERROR, "importer","IMPORT_ERROR");		
-			echo json_encode(array("response"=>"failure", "message"=>"An error occured whilst importing from the specified XML", "log"=>substr($elogTitle.$log,0, 1000)));
-			return;	
-		}	
-
-		if($this->importer->runBenchMark)
-			$data_source->append_log('IMPORTER BENCHMARK RESULTS:'.NL.$this->importer->getBenchMarkLogs(), HARVEST_INFO, "importer", "BENCHMARK_INFO");
-	
-		echo json_encode(array("response"=>"success", "message"=>"Import completed successfully!", "log"=>$log));	
-			
 	}
 
 	/**

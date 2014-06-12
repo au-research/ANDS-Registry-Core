@@ -203,7 +203,7 @@
 							<ul class="dropdown-menu">
 								<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
 								<li><a href="" ng-click="open_import_modal('xml')"><i class="icon icon-briefcase"></i> Import from Pasted XML</a></li>
-								<li><a href="" ng-click="open_import_modal('upload')"><i class="icon icon-file"></i> Import from File</a></li>
+								<!--li><a href="" ng-click="open_import_modal('upload')"><i class="icon icon-file"></i> Import from File</a></li-->
 								<li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li>
 							</ul>
 						</div>
@@ -290,10 +290,24 @@
 				</small>
 			</div>
 			<div class="modal-body" ng-show="importer.type=='upload'">
-				Import from File
+				<div class="alert alert-info">Import from Uploading File. Make sure uploaded file is XML and is valid</div>
+				<form action="" class="form">
+					<fieldset>
+						<label for="">File to upload</label>
+						<div class="controls">
+							<input type="file">
+						</div>
+					</fieldset>
+				</form>
 			</div>
 			<div class="modal-body" ng-show="importer.type=='path'">
-				Import from Harvested Path
+				<div class="alert alert-info">Import from Previous Harvest</div>
+				<form action="" class="form-horizontal">
+					<fieldset>
+						<label for="">Previous Path:</label>
+						<input type="text" class="input-xlarge uneditable-input" ng-model="harvester.message.output.file"/>
+					</fieldset>
+				</form>
 			</div>
 			<div class="modal-body" ng-show="importer.result">
 				<div class="alert alert-{{importer.result.type}}">
@@ -368,6 +382,10 @@
 							<span ng-show="ds.assessment_notify_email_addr">
 								<dt>Assessment Notification Email <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#qa_required" target="_blank" class="muted">?</a></sup></dt>
 								<dd><p>{{ds.assessment_notify_email_addr}}</p></dd>
+							</span>
+							<span ng-show="ds.export_dci">
+								<dt>Export DCI</dt>
+								<dd><span checkbox="ds.export_dci"></span></dd>
 							</span>
 						</dl>
 						<h4>Contributor Pages <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#contributor_pgs" target="_blank" class="muted">?</a></sup></h4>
@@ -656,12 +674,38 @@
 								<legend>Harvester Settings
 									<sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#harvest_settings" target="_blank" class="muted">?</a></sup>
 								</legend>
+
 								<div class="control-group">
+									<label class="control-label" for="harvest_method">Harvest Method</label>
+									<div class="controls">
+										<select ng-model="ds.harvest_method" ng-options="item.id as item.title for item in ds.harvester_methods.harvester_config.harvester_methods"></select>
+										<p class="help-inline">{{harvest_method_desc}}</p>
+									</div>
+								</div>
+
+								<div class="control-group" ng-show="harvest_params.uri">
 									<label class="control-label" for="uri">URI</label>
 									<div class="controls">
 										<input type="text" class="input-xxlarge" name="uri" ng-model="ds.uri">
 									</div>
 								</div>
+
+								<div class="control-group" ng-show="harvest_params.oai_set">
+									<label class="control-label" for="oai_set">OAI Set</label>
+									<div class="controls">
+										<input type="text" class="input-normal" name="oai_set" ng-model="ds.oai_set">
+									</div>
+								</div>
+	
+								<div class="control-group" ng-show="harvest_params.xsl_file">
+									<label class="control-label" for="xsl_file">Harvester Crosswalk</label>
+									<div class="controls">
+										<select ng-model="ds.xsl_file" ng-options="item for item in ds.harvester_methods.xsl_file"></select>
+										<p class="help-inline"><a href="" ng-click="ds.xsl_file=''"tip="Remove Crosswalk"><i class="icon icon-remove" ></i></a></p>
+									</div>
+								</div>
+
+
 								<?php if($this->user->hasFunction('REGISTRY_SUPERUSER')):?>
 								<div class="control-group">
 									<label class="control-label" for="provider_type">Provider Type</label>
@@ -681,17 +725,6 @@
 									</div>
 								</div>
 								<?php endif; ?>
-
-								<div class="control-group">
-									<label class="control-label" for="harvest_method">Harvest Method</label>
-									<div class="controls">
-										<select data-placeholder="Choose a Harvest Method" tabindex="1" class="chzn-select input-xlarge" for="harvest_method" ng-model="ds.harvest_method">
-											<option value="GETHarvester">DIRECT GET</option>
-											<option value="PMHHarvester">OAI-PMH</option>
-											<option value="CKANHarvester">CKAN JSON</option>
-										</select>
-									</div>
-								</div>
 
 								<div class="control-group" ng-show="ds.harvest_method=='RIF'">
 									<label class="control-label" for="oai_set">OAI Set</label>

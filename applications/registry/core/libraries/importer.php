@@ -950,7 +950,6 @@ class Importer {
 	 */
 	public function setCrosswalk($crosswalk_metadata_format)
 	{
-
         $crosswalk_identity = '';
         if (!$crosswalk_metadata_format) { return; }
 
@@ -961,7 +960,7 @@ class Importer {
             if($ppt['prefix'] == $crosswalk_metadata_format)
                 $crosswalk_identity = $ppt['cross_walk'];
         }
-
+        
         if($crosswalk_identity == '') { return;}
 
         $crosswalks= getCrossWalks();
