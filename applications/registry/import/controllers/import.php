@@ -92,6 +92,7 @@ class Import extends MX_Controller {
 
 			$ds = $this->ds->getByID($id);
 			if(!$ds) throw new Exception('Data Source not found');
+
 			$this->importer->setCrosswalk($ds->provider_type);
 			$this->importer->setDatasource($ds);
 			
@@ -108,6 +109,7 @@ class Import extends MX_Controller {
 						$this->importer->setDatasource($ds);
 						$this->importer->commit();
 					} catch (Exception $e) {
+						$ds->append_log($e, 'error');
 						throw new Exception($e);
 						return;
 					}
@@ -116,7 +118,7 @@ class Import extends MX_Controller {
 						$ds->updateHarvestStatus($harvest_id, 'COMPLETED');
 						$ds->setNextHarvestRun($harvest_id);
 					} catch (Exception $e) {
-						$ds->append_log($e);
+						$ds->append_log($e, 'error');
 						throw new Exception ($e);
 					}
 
@@ -125,8 +127,7 @@ class Import extends MX_Controller {
 					echo json_encode(
 						array(
 							'status' => 'OK',
-							'message' => $this->importer->getMessages(),
-							// 'error' => $this->importer->getErrors()
+							'message' => $this->importer->getMessages()
 						)
 					);
 
@@ -144,6 +145,7 @@ class Import extends MX_Controller {
 							$this->importer->maintainStatus(); //records which already exists are harvested into their same status
 							$this->importer->commit();
 						} catch (Exception $e) {
+							$ds->append_log($e, 'error');
 							throw new Exception($e);
 							return;
 						}
@@ -153,7 +155,7 @@ class Import extends MX_Controller {
 					$ds->updateHarvestStatus($harvest_id, 'COMPLETED');
 					$ds->setNextHarvestRun($harvest_id);
 				} catch (Exception $e) {
-					$ds->append_log($e);
+					$ds->append_log($e, 'error');
 					throw new Exception ($e);
 				}
 
