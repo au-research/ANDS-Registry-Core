@@ -24,7 +24,10 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 				return $http.post(base_url+'data_source/delete/', {id:id}).then(function(response){return response.data});
 			},
 			import: function(id, type, data) {
-				return $http.post(base_url+'import/put/'+id+'/'+type, {data:data}).then(function(response){return response.data});
+				if(type=='path'){
+					console.log(data);
+					return $http.get(base_url+'import/put/'+id+'?batch='+data.path).then(function(response){return response.data});
+				}else return $http.post(base_url+'import/put/'+id+'/'+type, {data:data}).then(function(response){return response.data});
 			},
 			start_harvest: function(id) {
 				return $http.get(base_url+'data_source/trigger_harvest/'+id).then(function(response){return response.data});
@@ -216,8 +219,6 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 					pubStat = 'approved'
 				}
 
-				console.log($scope.ds.count_SUBMITTED_FOR_ASSESSMENT, $scope.ds.count_ASSESSMENT_IN_PROGRESS)
-
 				if(parseInt($scope.ds.count_SUBMITTED_FOR_ASSESSMENT) > 0) {
 					publishStr += $scope.ds.count_SUBMITTED_FOR_ASSESSMENT + '`Submitted for Assessment`';
 				}
@@ -370,7 +371,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 					break;
 				case 'path':
 					data = {
-						'path':$('#importer_path').val()
+						'path':$('#importer_batch').val()
 					}
 					break;
 			}

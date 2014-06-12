@@ -171,6 +171,7 @@
 					<div class="widget-content">
 						<dl class="dl">
 							<dt>Status</dt><dd><span class="label label-info">{{harvester.status}}</span></dd>
+							<dt>URI</dt><dd>{{ds.uri}}</dd>
 							<span ng-show="harvester.last_run"><dt>Last Run</dt><dd>{{harvester.last_run}}</dd></span>
 							<span ng-show="harvester.next_run"><dt>Next Run</dt><dd>{{harvester.next_run}}</dd></span>
 							<span ng-show="harvester.percent">
@@ -304,8 +305,8 @@
 				<div class="alert alert-info">Import from Previous Harvest</div>
 				<form action="" class="form-horizontal">
 					<fieldset>
-						<label for="">Previous Path:</label>
-						<input type="text" class="input-xlarge uneditable-input" ng-model="harvester.message.output.file"/>
+						<label for="">Previous Batch:</label>
+						<input type="text" class="input-xlarge uneditable-input" ng-model="harvester.message.batch_number" id="importer_batch"/>
 					</fieldset>
 				</form>
 			</div>
