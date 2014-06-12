@@ -119,6 +119,8 @@ class Import extends MX_Controller {
 						$ds->append_log($e);
 						throw new Exception ($e);
 					}
+
+					$ds->append_log($this->importer->getMessages());
 					
 					echo json_encode(
 						array(
@@ -154,6 +156,8 @@ class Import extends MX_Controller {
 					$ds->append_log($e);
 					throw new Exception ($e);
 				}
+
+				$ds->append_log($this->importer->getMessages());
 				echo json_encode(
 					array(
 						'status' => 'OK',
@@ -220,6 +224,8 @@ class Import extends MX_Controller {
 				return;
 			}
 		}
+
+		$ds->append_log($this->importer->getMessages());
 
 		//all goes well
 		echo json_encode(
