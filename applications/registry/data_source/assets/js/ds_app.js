@@ -243,6 +243,8 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 	$scope.harvester = {};
 	$scope.importer = {};
 
+	if(!$scope.timers) $scope.timers = [];
+
 	$scope.get = function(id) {
 		ds_factory.get(id).then(function(data){
 			$scope.ds = data.items[0];
@@ -311,8 +313,6 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				console.error($scope.harvester.message);
 			}
 
-
-			
 			$timeout($scope.refresh_harvest_status, 10000);
 		});
 	}

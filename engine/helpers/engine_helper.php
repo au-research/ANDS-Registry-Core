@@ -25,15 +25,27 @@ function get_config_item($name) {
 function set_config_item($key, $type, $value) {
 	$_ci =& get_instance();
 	if($value=='json' && is_array($value)) $value = json_encode($value); 
-	$data = array(
-		'key' => $key,
-		'type' => $type,
-		'value' => $value
-	);
-	$update = $this->db->insert('configs', $data);
-	if($update) {
-		return true;
-	} else return false;
+
+	$query = get_config_item($key);
+	if(!$query) {
+		$data = array(
+			'key' => $key,
+			'type' => $type,
+			'value' => $value
+		);
+		$insert_query = $_ci->db->insert('configs', $data);
+		if($insert_query) {
+			return true;
+		} else return false;
+	} elseif($query!=$value) {
+		$_ci->db->where('key', $key);
+		$update_query = $_ci->db->update('configs', array(
+			'type' => $type,
+			'value' => $value
+		));
+	} else {
+		return false;
+	}
 }
 
 function mod_enabled($module_name)

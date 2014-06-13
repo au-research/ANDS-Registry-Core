@@ -13,19 +13,11 @@ class Maintenance extends MX_Controller {
 
 	
 	public function index(){
-		// acl_enforce('REGISTRY_STAFF');
-		// $data['title'] = 'ARMS Maintenance';
-		// $data['small_title'] = '';
-		// $data['scripts'] = array('maintenance');
-		// $data['js_lib'] = array('core', 'prettyprint', 'dataTables');
-
-		// $this->load->view("maintenance_index", $data);
-
 		acl_enforce('REGISTRY_STAFF');
-		$data['title'] = 'ARMS SyncMenu';
-		$data['scripts'] = array('sync_app');
-		$data['js_lib'] = array('core', 'angular', 'dataTables');
-		$this->load->view("syncmenu_index", $data);
+		$data['title'] = 'Registry Status';
+		$data['scripts'] = array('status_app');
+		$data['js_lib'] = array('core', 'angular');
+		$this->load->view("maintenance_dashboard", $data);
 	}
 
 	public function migrate_tags_to_r11(){
@@ -594,6 +586,70 @@ class Maintenance extends MX_Controller {
 
 		echo json_encode($data);
 	}
+
+	function status() {
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+
+		$data = array();
+
+		$data['solr'] = array(
+			'url' => get_config_item('solr_url')
+		);
+
+		$data['deployment'] = array(
+			'state' => get_config_item('deployment_state')
+		);
+
+		$data['admin'] = array(
+			'name' => get_config_item('site_admin'),
+			'email' => get_config_item('site_admin_email')
+		);
+
+		echo json_encode($data);
+	}
+
+	function config() {
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$data = array();
+		$query = $this->db->get('configs');
+		$configs = $query->result_array();
+
+		foreach($configs as $c) {
+			$data[$c['key']] = array(
+				'type' => $c['type'],
+				'value' => ($c['type']=='json') ? json_decode($c['value'],true) : $c['value']
+			);
+		}
+		echo json_encode($data);
+	}
+
+	function config_save() {
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
+
+		foreach($data as $key=>$c) {
+			if($c['type']=='string') set_config_item($key, $c['type'], $c['value']);
+		}
+
+		echo json_encode(array(
+			'status' => 'OK',
+			'message' => 'All configuration item successfully updated'
+		));
+
+		// echo set_config_item('harvested_contents_path', 'string', '/var/www/harvested_content');
+
+	}
+
+
 
 	function test(){
 		define("SAXON_DIR", "/var/www/htdocs/workareas/leo/harvester/lib/");

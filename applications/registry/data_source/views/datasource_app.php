@@ -198,6 +198,7 @@
 					</div>
 					<div class="widget-content">
 						<div class="btn-group">
+							<a href="" class="btn btn-primary disabled" ng-show="harvester.status=='IMPORTING'">Importing...</a>
 							<a href="" class="btn btn-primary" ng-click="start_harvest()" ng-show="harvester.can_start"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
 							<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop"><i class="icon icon-white icon-stop"></i> Stop Harvester</a>
 							<a href="" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>

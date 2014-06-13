@@ -78,7 +78,8 @@ class Import extends MX_Controller {
 	 */
 	private function import_via_path($id, $batch) {
 		if(!$batch) throw new Exception('Batch ID expected');
-		$dir = '/var/www/harvested_content/';
+		$dir = get_config_item('harvested_contents_path');
+		if(!$dir) throw new Exeption('Harvested Contents Path not configured');
 
 		//getting the harvest_id
 		$batch_query = $this->db->get_where('harvests', array('data_source_id'=>$id));
@@ -92,6 +93,8 @@ class Import extends MX_Controller {
 
 			$ds = $this->ds->getByID($id);
 			if(!$ds) throw new Exception('Data Source not found');
+
+			$ds->updateHarvestStatus($harvest_id, 'IMPORTING');
 
 			$this->importer->setCrosswalk($ds->provider_type);
 			$this->importer->setDatasource($ds);
@@ -137,13 +140,15 @@ class Import extends MX_Controller {
 			} else {
 				//is a directory
 				$files = scandir($path);
+				$this->importer->setHarvestID($batch);
+				$this->importer->setPartialCommitOnly(TRUE);
 				foreach($files as $f){
 					if(endsWith($f, '.xml')) {
 						$xml = file_get_contents($path.'/'.$f);
 						try {
 							$this->importer->setXML($xml);
 							$this->importer->maintainStatus(); //records which already exists are harvested into their same status
-							$this->importer->commit();
+							$this->importer->commit(false);
 						} catch (Exception $e) {
 							$ds->append_log($e, 'error');
 							throw new Exception($e);
@@ -151,6 +156,16 @@ class Import extends MX_Controller {
 						}
 					}
 				}
+
+				try {
+					$msg = $this->importer->finishImportTasks();
+					$ds->append_log($msg);
+				} catch (Exception $e) {
+					$ds->append_log($e, 'error');
+					throw new Exception($e);
+					return;
+				}
+
 				try {
 					$ds->updateHarvestStatus($harvest_id, 'COMPLETED');
 					$ds->setNextHarvestRun($harvest_id);
@@ -159,7 +174,7 @@ class Import extends MX_Controller {
 					throw new Exception ($e);
 				}
 
-				$ds->append_log($this->importer->getMessages());
+				
 				echo json_encode(
 					array(
 						'status' => 'OK',
@@ -170,6 +185,72 @@ class Import extends MX_Controller {
 
 		} else {
 			throw new Exception ('No Harvest Records were found');
+		}
+	}
+
+	public function analyze($id=false, $batch=false) {
+		if(!$id) throw new Exception('Data source ID expected');
+		if(!$batch) throw new Exception('Batch ID expected');
+		$dir = get_config_item('harvested_contents_path');
+		if(!$dir) throw new Exeption('Harvested Contents Path not configured');
+
+		$result = array();
+		$path = $dir.$id.'/'.$batch;
+
+		if(is_dir($path)) {
+			$result['is_dir'] = true;
+		} else {
+			$result['is_dir'] = false;
+		}
+
+		if($result['is_dir']) {
+			$files = scandir($path);
+			foreach($files as $f){
+				if(endsWith($f, '.xml')) {
+					$result['files'][] = str_replace('.xml', '', $f);
+				}
+			}
+			if($result['files']){
+				sort($result['files']);
+				$result['num_files'] = sizeof($result['files']);
+			}
+		}
+		echo json_encode($result);
+	}
+
+	public function miniImport($id=false, $batch=false, $file=false) {
+		if(!$id) throw new Exception('Data source ID expected');
+		if(!$batch) throw new Exception('Batch ID expected');
+		$dir = get_config_item('harvested_contents_path');
+		if(!$dir) throw new Exeption('Harvested Contents Path not configured');
+
+		$this->load->library('importer');
+		$this->load->model('data_source/data_sources', 'ds');
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Data Source not found');
+
+		$this->importer->setDatasource($ds);
+
+		$path = $dir.$id.'/'.$batch.'/'.$file.'.xml';
+		if(is_file($path)) {
+			$xml = file_get_contents($path);
+			try {
+				$this->importer->setXML($xml);
+				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
+				$this->importer->commit();
+			} catch (Exception $e) {
+				$ds->append_log($e, 'error');
+				throw new Exception($e);
+				return;
+			}
+
+			echo json_encode(array(
+				'status' => 'OK',
+				'message' => 'File '. $file. ' Ingested Successfully for Data Source '. $ds->title
+			));
+
+		}else {
+			throw new Exception('File: '. $path. ' Not Found');
 		}
 	}
 
