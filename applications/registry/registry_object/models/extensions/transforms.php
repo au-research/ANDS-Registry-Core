@@ -325,7 +325,7 @@ class Transforms_Extension extends ExtensionBase
             $xslt_processor->setParameter('','portal_url', portal_url().$this->ro->slug."/".$this->ro->id);
             $xml_output = $xslt_processor->transformToXML($dom);
 
-            //if we want to post process the authors  and funding name we would do it here against the text string
+            //we want to post process the authors and funding name
 
             $authors = explode('%%%AU - ',$xml_output);
 
@@ -350,14 +350,11 @@ class Transforms_Extension extends ExtensionBase
 
                if ($grant_object && $grant_object->status == PUBLISHED && $grant_sxml = $grant_object->getSimpleXML(NULL, true))
                {
-                   print_r($grant_sxml);
                    $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc']");
-               //   print_r($grant_id);
+
                    $related_party = $grant_sxml->xpath("//extRif:related_object[extRif:related_object_relation = 'isFunderOf']");
                    if (is_array($grant_id))
                    {
-                      echo "in here";
-                       $funder[0] = implode("\n", array_map('normaliseIdentifier', $grant_id));
                        if (is_array($related_party) && isset($related_party[0]))
                        {
                            $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%','A4 - '.(string)$related_party[0]->children(EXTRIF_NAMESPACE)->related_object_display_title, $xml_output);
@@ -374,11 +371,6 @@ class Transforms_Extension extends ExtensionBase
                    }
                }
 
-
-             //  print_r($funder_object->registry_object_id) ;
-              // print_r($funder_object->related_object);
-               //$outPutOfConnections = $this->_CI->ro->getConnections($grant_object->registry_object_id);
-               //$xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%','A4 - '.$funder_object->list_title, $xml_output);
            }
 
            return $xml_output;
