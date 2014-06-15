@@ -322,9 +322,67 @@ class Transforms_Extension extends ExtensionBase
             $dom->loadXML(htmlspecialchars_decode($this->ro->getExtRif()), LIBXML_NOENT);
             $xslt_processor->setParameter('','dateHarvested', date("Y", $this->ro->created));
             $xslt_processor->setParameter('','dateRequested', date("Y-m-d"));
+            $xslt_processor->setParameter('','portal_url', portal_url().$this->ro->slug."/".$this->ro->id);
             $xml_output = $xslt_processor->transformToXML($dom);
-            return $xml_output;
-            //if we want to post process the authors address and funding name we would do it here against the text string
+
+            //if we want to post process the authors  and funding name we would do it here against the text string
+
+            $authors = explode('%%%AU - ',$xml_output);
+
+            for($i=1;$i<count($authors);$i++)
+            {
+                $author = explode(' - AU%%%',$authors[$i]);
+                $author_object = $this->_CI->ro->getPublishedByKey(trim($author[0]));
+                if($author_object->list_title){
+                    $xml_output = str_replace('%%%AU - '.trim($author[0]).' - AU%%%','AU - '.$author_object->list_title, $xml_output);
+                }else{
+                    $xml_output = str_replace('%%%AU - '.trim($author[0]).' - AU%%%
+','', $xml_output);
+                }
+            }
+
+           $funders = explode('%%%A4 - ', $xml_output);
+           for($i=1;$i<count($funders);$i++)
+           {
+
+               $funder = explode(' - A4%%%',$funders[$i]);
+               $grant_object = $this->_CI->ro->getPublishedByKey(trim($funder[0]));
+
+               if ($grant_object && $grant_object->status == PUBLISHED && $grant_sxml = $grant_object->getSimpleXML(NULL, true))
+               {
+                   print_r($grant_sxml);
+                   $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc']");
+               //   print_r($grant_id);
+                   $related_party = $grant_sxml->xpath("//extRif:related_object[extRif:related_object_relation = 'isFunderOf']");
+                   if (is_array($grant_id))
+                   {
+                      echo "in here";
+                       $funder[0] = implode("\n", array_map('normaliseIdentifier', $grant_id));
+                       if (is_array($related_party) && isset($related_party[0]))
+                       {
+                           $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%','A4 - '.(string)$related_party[0]->children(EXTRIF_NAMESPACE)->related_object_display_title, $xml_output);
+                       } else{
+                           $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%
+','', $xml_output);
+                       }
+
+                   }
+                   else
+                   {
+                       $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%
+','', $xml_output);
+                   }
+               }
+
+
+             //  print_r($funder_object->registry_object_id) ;
+              // print_r($funder_object->related_object);
+               //$outPutOfConnections = $this->_CI->ro->getConnections($grant_object->registry_object_id);
+               //$xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%','A4 - '.$funder_object->list_title, $xml_output);
+           }
+
+           return $xml_output;
+
 
         }
         catch (Exception $e)
