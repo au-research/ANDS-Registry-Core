@@ -686,6 +686,12 @@ class _data_source {
         }
     }
 
+    function updateImporterMessage($msg) {
+        if(is_array($msg)) $msg = json_encode($msg);
+        $this->db->where("data_source_id", $this->id);
+        $this->db->update('harvests', array('importer_message'=>$msg));
+    }
+
     function setNextHarvestRun($harvestId) {
         $harvestDate = strtotime($this->getAttribute("harvest_date"));
         date_default_timezone_set('Australia/Canberra');

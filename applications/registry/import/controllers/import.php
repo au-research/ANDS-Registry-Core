@@ -139,25 +139,61 @@ class Import extends MX_Controller {
 				}
 			} else {
 				//is a directory
-				$files = scandir($path);
+				$directory = scandir($path);
 				$this->importer->setHarvestID($batch);
+				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
 				$this->importer->setPartialCommitOnly(TRUE);
-				foreach($files as $f){
+
+				$files = array();
+				foreach($directory as $f){
 					if(endsWith($f, '.xml')) {
-						$xml = file_get_contents($path.'/'.$f);
-						try {
-							$this->importer->setXML($xml);
-							$this->importer->maintainStatus(); //records which already exists are harvested into their same status
-							$this->importer->commit(false);
-						} catch (Exception $e) {
-							$ds->append_log($e, 'error');
-							throw new Exception($e);
-							return;
-						}
+						$files[] = $f;
+					}
+				}
+
+				$start_time = time();
+				$message = array(
+					'message' => 'Start Importing',
+					'progress' => array(
+						'start' => $start_time,
+						'end' => false,
+						'current' => 0,
+						'total' => sizeof($files)
+					)
+				);
+				$ds->updateImporterMessage($message);
+
+				foreach($files as $index=>$f) {
+					$xml = file_get_contents($path.'/'.$f);
+					try {
+						$this->importer->setXML($xml);
+						$this->importer->commit(false);
+						$message = array(
+							'message' => 'Importing',
+							'progress' => array(
+								'start' => $start_time,
+								'end' => false,
+								'current' => $index,
+								'total' => sizeof($files)
+							)
+						);
+						$ds->updateImporterMessage($message);
+					} catch (Exception $e) {
+						$ds->append_log($e, 'error');
+						throw new Exception($e);
+						return;
 					}
 				}
 
 				try {
+					$message = array(
+						'message' => 'Finishing Import Task',
+						'progress' => array(
+							'start' => $start_time,
+							'end' => time()
+						)
+					);
+					$ds->updateImporterMessage($message);
 					$msg = $this->importer->finishImportTasks();
 					$ds->append_log($msg);
 				} catch (Exception $e) {
@@ -167,6 +203,14 @@ class Import extends MX_Controller {
 				}
 
 				try {
+					$message = array(
+						'message' => 'Import Completed',
+						'progress' => array(
+							'start' => $start_time,
+							'end' => time()
+						)
+					);
+					$ds->updateImporterMessage($message);
 					$ds->updateHarvestStatus($harvest_id, 'COMPLETED');
 					$ds->setNextHarvestRun($harvest_id);
 				} catch (Exception $e) {

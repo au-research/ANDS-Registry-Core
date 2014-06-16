@@ -189,6 +189,9 @@
 						<div class="progress progress-striped active" ng-show="harvester.percent">
 							<div class="bar" style="width: {{harvester.percent}}%;"></div>
 						</div>
+						<div class="alert alert-warning" ng-show="ds.harvest_method=='PMHHarvester' && harvester.status=='HARVESTING'">
+							This is an OAI-PMH Harvest, the progress indication might be incorrect
+						</div>
 						<div ng-show="harvester.message.message" class="alert alert-info">
 							{{harvester.message.message}}
 						</div>
@@ -311,7 +314,7 @@
 					</fieldset>
 				</form>
 			</div>
-			<div class="modal-body" ng-show="importer.result">
+			<div class="modal-body" ng-show="importer.result.message">
 				<div class="alert alert-{{importer.result.type}}">
 					{{importer.result.message}}
 				</div>
@@ -685,6 +688,13 @@
 									</div>
 								</div>
 
+								<div class="control-group" ng-show="ds_crosswalk">
+									<label class="control-label" for="xsl_file">Data Source Crosswalk</label>
+									<div class="controls">
+										<input type="text" class="input-xlarge uneditable-input" ng-model="ds_crosswalk"/>
+									</div>
+								</div>
+
 								<div class="control-group" ng-show="harvest_params.uri">
 									<label class="control-label" for="uri">URI</label>
 									<div class="controls">
@@ -699,13 +709,7 @@
 									</div>
 								</div>
 	
-								<div class="control-group" ng-show="harvest_params.xsl_file">
-									<label class="control-label" for="xsl_file">Harvester Crosswalk</label>
-									<div class="controls">
-										<select ng-model="ds.xsl_file" ng-options="item for item in ds.harvester_methods.xsl_file"></select>
-										<p class="help-inline"><a href="" ng-click="ds.xsl_file=''"tip="Remove Crosswalk"><i class="icon icon-remove" ></i></a></p>
-									</div>
-								</div>
+								
 
 
 								<?php if($this->user->hasFunction('REGISTRY_SUPERUSER')):?>

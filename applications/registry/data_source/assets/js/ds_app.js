@@ -129,6 +129,10 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 		$scope.process_values();
 		bind_plugins($scope);
 		document.title = $scope.ds.title + ' - Edit Settings';
+
+		$.each($scope.ds.harvester_methods.xsl_file, function(){
+			if(this.indexOf($scope.ds.key)!=-1) $scope.ds_crosswalk = this;
+		});
 	});
 
 	$scope.load_contributor = function() {
@@ -304,11 +308,19 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			//parse message
 			try {
 				$scope.harvester.message = JSON.parse($scope.harvester.message);
-				if($scope.harvester.message.progress.total!='unknown' && $scope.harvester.message.progress.current) {
-					$scope.harvester.percent =  ($scope.harvester.message.progress.current * 100) / $scope.harvester.message.progress.total;
+				$scope.harvester.importer_message = JSON.parse($scope.harvester.importer_message);
+				if($scope.harvester.status=='HARVESTING'){
+					if($scope.harvester.message.progress.total!='unknown' && $scope.harvester.message.progress.current) {
+						$scope.harvester.percent =  ($scope.harvester.message.progress.current * 100) / $scope.harvester.message.progress.total;
+						$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
+					} else if($scope.ds.harvest_method=='PMHHarvester' && $scope.harvester.message.progress.current && $scope.ds.count_total) {
+						$scope.harvester.percent = ($scope.harvester.message.progress.current * 100) / parseInt($scope.ds.count_total);
+						$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
+					}
+				}else if($scope.harvester.status=='IMPORTING') {
+					$scope.harvester.percent = ($scope.harvester.importer_message.progress.current * 100) / $scope.harvester.importer_message.progress.total;
 					$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
 				}
-
 			} catch (err) {
 				console.error($scope.harvester.message);
 			}

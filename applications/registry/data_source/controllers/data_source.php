@@ -1052,6 +1052,7 @@ class Data_source extends MX_Controller {
 		try {
 			$ds->setHarvestRequest('HARVEST', false);
 			$ds->setHarvestMessage('Harvest scheduled');
+			$ds->setImporterMessage(array());
 		} catch (Exception $e) {
 			throw new Exception($e);
 		}

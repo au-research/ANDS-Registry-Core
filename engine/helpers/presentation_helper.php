@@ -319,6 +319,8 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
                 $nextHarvest = strtotime('+2 week', $nextHarvest);
             elseif($harvestFrequency == 'monthly')
                 $nextHarvest = strtotime('+1 month', $nextHarvest);
+            elseif($harvestFrequency =='hourly')
+                $nextHarvest += 60*60;
             elseif($harvestFrequency =='once only' || !$harvestFrequency)
                 return null;
             else
