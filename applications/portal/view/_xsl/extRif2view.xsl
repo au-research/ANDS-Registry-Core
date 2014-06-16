@@ -565,9 +565,9 @@
       </xsl:if>
   </div>
   <div class="container_clear"></div>
-    <a>
+    <a class="yellow_button">
         <xsl:attribute name="href"><xsl:value-of select="$base_url"/>registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/></xsl:attribute>
-        <button >Export To Endnote</button>
+        Export To Endnote
     </a>
 
 </div> 

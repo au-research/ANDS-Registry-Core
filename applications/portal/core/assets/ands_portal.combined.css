@@ -3470,6 +3470,20 @@ ul.linkedrecords-list li + li {
   margin-right: 200px;
   color: #3f3f3f;
 }
+
+.yellow_button {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    background: #f58000;
+    border: none;
+    padding: 11px 15px;
+    margin:10px 0;
+    text-decoration: none;
+}
+a.yellow_button:hover{
+    color:#eee;
+}
 /**
  * ANDS less file for compilation on deployment
  */
