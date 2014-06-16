@@ -309,8 +309,6 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
         $nextHarvest = $harvestDate;
     else
         $nextHarvest = $now;
-    //XXX:@TODO REMOVE
-    return $now;
     while($nextHarvest <= $now)
 		{
             if($harvestFrequency == 'daily')
