@@ -336,7 +336,10 @@ class Data_source extends MX_Controller {
 			//update the actual value
 			if(!is_null($new_value) && $new_value != $ds->{$attrib}) {
 				$ds->{$attrib} = $new_value;
-				$updated_values[$attrib] = $new_value;
+				$updated_values[] = array(
+					'key' => $attrib,
+					'value' => $new_value
+				);
 			}
 
 		}
@@ -347,14 +350,14 @@ class Data_source extends MX_Controller {
 		}
 
 		$updated = '';
-		foreach ($updated_values as $key=>$value) {
-			$updated .= $key. ' is set to '. $value.NL;
+		foreach ($updated_values as $kv) {
+			$updated .= $kv['key']. ' is set to '. $kv['value'].NL;
 		}
 
 		//harvester and primary relationships reset
 		try {
 			if($resetHarvest && ($data['uri'] != '' || $data['uri'] != 'http://')) {
-				$this->trigger_harvest($ds->id);
+				$this->trigger_harvest($ds->id, true);
 			}
 
 			if($resetPrimaryRelationships) {
@@ -1078,7 +1081,7 @@ class Data_source extends MX_Controller {
 		}
 	}
 
-	function trigger_harvest($id=false) {
+	function trigger_harvest($id=false, $mute = false) {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
@@ -1089,6 +1092,13 @@ class Data_source extends MX_Controller {
 		if(!$ds) throw new Exception('Invalid Data source ID');
 
 		try {
+			$harvestDate = strtotime($ds->getAttribute("harvest_date"));
+			$nextRun = getNextHarvestDate($harvestDate, $ds->harvest_frequency);
+			$ds->append_log(
+				'Harvest scheduled to run at '.date( 'Y-m-d\TH:i:s.uP', $nextRun).NL.
+				'URI: '.$ds->uri.NL.
+				'Harvest Method: '.$ds->harvest_method.NL
+			);
 			$ds->setHarvestRequest('HARVEST', false);
 			$ds->setHarvestMessage('Harvest scheduled');
 			$ds->updateImporterMessage(array());
@@ -1096,7 +1106,7 @@ class Data_source extends MX_Controller {
 			throw new Exception($e);
 		}
 
-		echo json_encode(
+		if(!$mute) echo json_encode(
 			array(
 				'status' => 'OK',
 				'message' => 'Harvest Started'

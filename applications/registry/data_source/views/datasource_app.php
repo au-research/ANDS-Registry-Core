@@ -809,12 +809,6 @@
 									</div>
 								</div>
 
-								<div class="control-group">
-									<div class="controls">
-										<a href="" class="btn btn-info">Test Harvest</a>
-									</div>
-								</div>
-
 							</fieldset>
 						</div>
 						<div class="form-actions">

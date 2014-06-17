@@ -319,6 +319,9 @@ class Import extends MX_Controller {
 	 */
 	private function simple_import($type, $id, $data) {
 
+		$this->load->library('importer');
+		$ds = $this->ds->getByID($id);
+
 		if ($type == 'url') {
 			$url = $data['url'];
 			if(!$url) throw new Exception('URL must be provided');
@@ -328,8 +331,10 @@ class Import extends MX_Controller {
 			}
 
 			try {
+				$ds->append_log('Import from URL: '. $data['url'].' started at '. date( 'Y-m-d H:i:s', time()));
 				$xml = @file_get_contents($url);
 			} catch (Exception $e) {
+				$ds->append_log('Import from URL ('.$data['url'].') failed'.NL.$e->getMessage(), 'error');
 				throw new Exception($e);
 				return;
 			}
@@ -338,11 +343,17 @@ class Import extends MX_Controller {
 		if($type=='xml') $xml = $data['xml'];
 
 		if($xml || $type=='xml') {
-			$this->load->library('importer');
-			$ds = $this->ds->getByID($id);
+			
+			if($type=='xml') {
+				$ds->append_log('Import from Pasted XML started at '. date( 'Y-m-d H:i:s', time()));
+			}
 
 			//check the xml
-			if (strlen($xml)==0) throw new Exception('Unable to retrieve any content. Make sure the content is not empty');
+			if (strlen($xml)==0){
+				if($type=='xml') $ds->append_log('Import from Pasted XML failed: Pasted content is empty', 'error');
+				throw new Exception('Unable to retrieve any content. Make sure the content is not empty');
+				return;
+			}
 
 			$xml = stripXMLHeader($xml);
 
@@ -359,6 +370,7 @@ class Import extends MX_Controller {
 					throw new Exception($error_log);
 				}
 			} catch (Exception $e) {
+				if($type=='xml') $ds->append_log('Import from Pasted XML failed: '.$e->getMessage(), 'error');
 				throw new Exception($e);
 				return;
 			}
