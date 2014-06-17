@@ -262,9 +262,8 @@ class Importer {
 		{
 			$taskLog = $this->finishImportTasks();
 			if($this->runBenchMark){
-				$this->dataSource->append_log($taskLog, IMPORT_INFO, "importer","IMPORT_INFO");
+				// $this->dataSource->append_log($taskLog, IMPORT_INFO, "importer","IMPORT_INFO");
 			}
-
 
 			// Finish up by returning our stats...
 			$time_taken = sprintf ("%.3f", (float) (microtime(true) - $this->start_time));
