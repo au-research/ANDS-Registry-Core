@@ -76,6 +76,8 @@ class Data_source extends MX_Controller {
 			$item['record_owner']=$ds->record_owner;
 			$item['notes']=$ds->notes;
 
+
+
 			if($id && $ds){
 
 				$harvester_methods = get_config_item('harvester_methods');
@@ -83,6 +85,11 @@ class Data_source extends MX_Controller {
 
 				foreach($ds->attributes as $attrib=>$value){
 					$item[$attrib] = $value->value;
+				}
+
+				if(isset($item['harvest_date'])) {
+					date_default_timezone_set('Australia/Canberra');
+					$item['harvest_date'] = date( 'Y-m-d H:i:s', strtotime($item['harvest_date']));
 				}
 
 				//get harvester_method
