@@ -708,7 +708,7 @@ class _data_source {
                         'next_run' => date( 'Y-m-d\TH:i:s.uP', $nextRun),
                         'batch_number' => $batchNumber,
                         'mode' => 'HARVEST',
-                        // 'message' => null,
+                        'message' => null,
                     )
                 );
             } catch (Exception $e) {

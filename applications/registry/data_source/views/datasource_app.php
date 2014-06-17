@@ -126,54 +126,21 @@
 						
 					</div>
 					<div class="btn-group pull-right">
-						<a class="btn dropdown-toggle ExportDataSource" data-toggle="modal" href="#exportDataSource" id="exportDS">Export Records</a>						
+						<a class="btn dropdown-toggle" ng-click="open_export_modal()"><i class="icon icon-hdd"></i> Export Records</a>						
 					</div>
 				</div>
 
-				<div class="widget-box">
-					<div class="widget-title">
-						<span class="icon" ng-click="get_latest_log(true)"><i class="icon icon-refresh"></i></span>
-						<h5 id="activity_log_title">Activity Log <small class="muted" ng-show="ds.refreshing">Refreshing</small></h5>
-						<div id="activity_log_switcher" class="pull-right">
-							<select class="btn-mini" ng-model="log_type">
-								<option value="">All Logs</option>
-								<option value="error">Errors</option>
-							</select>
-						</div>
-					</div>
-					<div class="widget-content nopadding">
-						<ul class="activity-list" id="data_source_log_container">
-							<li ng-repeat="log in ds.logs | filter:log_type" class="{{log.type}}">
-								<a href="" ng-click="log.show=!log.show" class="expand_log {{log.type}}">
-									<i class="icon-list-alt"></i>{{log.log | truncate:105}}<span class="label">{{log.date_modified * 1000 | timeago}}</span>
-								</a>
-								<div class="log" ng-show="log.show">
-									<pre style="width:95%; float:left;">{{log.log}}</pre>
-									<br class="clear"/>
-								</div>
-							</li>
-						</ul>
-						<ul class="activity-list" ng-show="!nomore">
-							<li class="viewall">
-								<a href="" class="tip-top" ng-click="more_logs()">Show More<i class='icon-arrow-down'></i> <span class="label label-info" d="log_summary"></span></a>
-							</li>
-						</ul>
-					</div>
-			    </div>
-			</div>
-
-			<div class="span4">
 				<div class="widget-box">
 					<div class="widget-title">
 						<span class="icon" ng-click="refresh_harvest_status()"><i class="icon icon-refresh"></i></span>
 						<h5>Harvester Status</h5>
 					</div>
 					<div class="widget-content">
-						<dl class="dl">
+						<dl class="dl dl-horizontal">
 							<dt>Status</dt><dd><span class="label label-info">{{harvester.status}}</span></dd>
 							<dt>URI</dt><dd>{{ds.uri}}</dd>
-							<span ng-show="harvester.last_run"><dt>Last Run</dt><dd>{{harvester.last_run}}</dd></span>
-							<span ng-show="harvester.next_run"><dt>Next Run</dt><dd>{{harvester.next_run}}</dd></span>
+							<span ng-show="harvester.last_run"><dt>Last Run</dt><dd>{{harvester.last_run | timeago}}</dd></span>
+							<span ng-show="harvester.next_run"><dt>Next Run</dt><dd>{{harvester.next_run | timeago}}</dd></span>
 							<span ng-show="harvester.percent">
 								<dt>Percent Complete</dt>
 								<dd>{{harvester.percent}} %</dd>
@@ -200,20 +167,55 @@
 						</div>
 					</div>
 					<div class="widget-content">
-						<div class="btn-group">
+						<div class="btn-group" style="float:right;">
 							<a href="" class="btn btn-primary disabled" ng-show="harvester.status=='IMPORTING'">Importing...</a>
 							<a href="" class="btn btn-primary" ng-click="start_harvest()" ng-show="harvester.can_start"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
-							<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop"><i class="icon icon-white icon-stop"></i> Stop Harvester</a>
+							<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop"><i class="icon icon-white icon-stop"></i> Stop Harvest</a>
 							<a href="" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-							<ul class="dropdown-menu">
+							<ul class="dropdown-menu pull-right">
 								<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
 								<li><a href="" ng-click="open_import_modal('xml')"><i class="icon icon-briefcase"></i> Import from Pasted XML</a></li>
 								<!--li><a href="" ng-click="open_import_modal('upload')"><i class="icon icon-file"></i> Import from File</a></li-->
 								<li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li>
 							</ul>
 						</div>
+						<div class="clearfix"></div>
 					</div>
 				</div>
+
+				<div class="widget-box">
+					<div class="widget-title">
+						<span class="icon" ng-click="get_latest_log(true)"><i class="icon icon-refresh"></i></span>
+						<h5 id="activity_log_title">Activity Log <small class="muted" ng-show="ds.refreshing">Refreshing</small></h5>
+						<div id="activity_log_switcher" class="pull-right">
+							<select class="btn-mini" ng-model="log_type">
+								<option value="">All Logs</option>
+								<option value="error">Errors</option>
+							</select>
+						</div>
+					</div>
+					<div class="widget-content nopadding">
+						<ul class="activity-list" id="data_source_log_container">
+							<li ng-repeat="log in ds.logs | filter:log_type" class="{{log.type}}">
+								<a href="" ng-click="log.show=!log.show" class="expand_log {{log.type}}">
+									<i class="icon-list-alt"></i>{{log.header | truncate:105}}<span class="label">{{log.date_modified * 1000 | timeago}}</span>
+								</a>
+								<div class="log" ng-show="log.show">
+									<pre style="width:95%; float:left;">{{log.log}}</pre>
+									<br class="clear"/>
+								</div>
+							</li>
+						</ul>
+						<ul class="activity-list" ng-show="!nomore">
+							<li class="viewall">
+								<a href="" class="tip-top" ng-click="more_logs()">Show More<i class='icon-arrow-down'></i> <span class="label label-info" d="log_summary"></span></a>
+							</li>
+						</ul>
+					</div>
+			    </div>
+			</div>
+
+			<div class="span4">
 
 				<div class="widget-box">
 					<div class="widget-title"><h5>Data Source Status Summary</h5></div>
@@ -315,7 +317,7 @@
 				</form>
 			</div>
 			<div class="modal-body" ng-show="importer.result.message">
-				<div class="alert alert-{{importer.result.type}}">
+				<div class="alert alert-{{importer.result.type}}" style="white-space: pre;">
 					{{importer.result.message}}
 				</div>
 			</div>
@@ -330,6 +332,43 @@
 				<span ng-show="!importer.running">Import Records</span>
 				<span ng-show="importer.running">Importing... Please wait</span>
 			</a>
+		</div>
+	</div>
+
+	<div class="modal hide fade" id="exportDataSource">
+		<div class="modal-header">
+			<a href="javascript:;" class="close" data-dismiss="modal">×</a>
+			<h3>Export Records As RIF-CS</h3>
+		</div>
+		
+		<div class="modal-screen-container">
+			<div name="selectionScreen" class="modal-body">
+				
+				<div class="alert alert-info">
+					Select the type of records you want to export from this datasource. 
+				</div>			
+				<form class="form-vertical" id="data_source_export_form">
+					<fieldset>
+						<label><b>Selection form</b> </label>
+						<label class="checkbox"><input type="checkbox" name="ro_class" value="activity" checked="checked" /><?php echo readable('activity');?></label>
+						<label class="checkbox"><input type="checkbox" name="ro_class" value="collection" checked="checked" /><?php echo readable('Collection');?></label>
+						<label class="checkbox"><input type="checkbox" name="ro_class" value="party" checked="checked" /><?php echo readable('Party');?></label>
+						<label class="checkbox"><input type="checkbox" name="ro_class" value="service" checked="checked" /><?php echo readable('Service');?></label>
+						<hr/>
+						<label class="checkbox"><input type="checkbox" name="ro_status" value="PUBLISHED" checked="checked" /><?php echo readable('PUBLISHED');?></label>
+						<label class="checkbox"><input type="checkbox" name="ro_status" value="APPROVED" checked="checked" /><?php echo readable('APPROVED');?></label>
+						<label class="checkbox"><input type="checkbox" name="ro_status" value="DRAFT" checked="checked" /><?php echo readable('DRAFT');?></label>
+						<label class="checkbox"><input type="checkbox" name="ro_status" value="SUBMITTED_FOR_ASSESSMENT" checked="checked" /><?php echo readable('SUBMITTED_FOR_ASSESSMENT');?></label>
+						<label class="checkbox"><input type="checkbox" name="ro_status" value="MORE_WORK_REQUIRED" checked="checked" /><?php echo readable('MORE_WORK_REQUIRED');?></label>
+						<label class="checkbox"><input type="checkbox" name="ro_status" value="ASSESSMENT_IN_PROGRESS" checked="checked"/><?php echo readable('assessment_in_progress');?></label>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="javascript:;" class="btn btn-primary" ng-click="export('file')"><i class="icon icon-white icon-download"></i> Download RIF-CS</a>
+			<a href="javascript:;" class="btn btn-link" ng-click="export('xml')">View RIF-CS in Browser</a>
+			<a href="#" class="btn hide" data-dismiss="modal">Close</a>
 		</div>
 	</div>
 
@@ -351,7 +390,7 @@
 		<a href="#!/view/{{ds.id}}">{{ds.title}} - Dashboard</a>
 		<a href="#!/settings/{{ds.id}}" class="current">Settings</a>
 		<div class="pull-right">
-			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/DashboardHelp/">Help</a></span>
+			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/SettingsHelp/">Help</a></span>
 		</div>
 	</div>
 	<div class="container-fluid">
@@ -442,7 +481,7 @@
 		<a href="#!/settings/{{ds.id}}">Settings</a>
 		<a href="#!/edit/{{ds.id}}" class="current">Edit Settings</a>
 		<div class="pull-right">
-			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/DashboardHelp/">Help</a></span>
+			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/SettingsHelp/">Help</a></span>
 		</div>
 	</div>
 	<div class="container-fluid">
@@ -709,14 +748,11 @@
 									</div>
 								</div>
 	
-								
-
-
 								<?php if($this->user->hasFunction('REGISTRY_SUPERUSER')):?>
 								<div class="control-group">
 									<label class="control-label" for="provider_type">Provider Type</label>
 									<div class="controls">
-										<select data-placeholder="Choose a Provider Type" tabindex="1" class="chzn-select input-xlarge" for="provider_type" ng-model="ds.provider_type">
+										<select ng-model="ds.provider_type">
 											<?php
 		                                    $predefinedProviderTypes = $this->config->item('provider_types');
 		                                    foreach($predefinedProviderTypes as $key=>$ppt){
@@ -742,11 +778,7 @@
 								<div class="control-group">
 									<label class="control-label" for="advanced_harvest_mode">Advanced Harvest Mode</label>
 									<div class="controls">
-										<select data-placeholder="Choose an Advanced Harvest Mode" tabindex="1" class="chzn-select input-xlarge" ng-model="ds.advanced_harvest_mode">
-											<option value="STANDARD">Standard Mode</option>
-											<option value="INCREMENTAL">Incremental Mode</option>
-											<option value="REFRESH">Full Refresh Mode</option>
-										</select>
+										<select ng-model="ds.advanced_harvest_mode" ng-options="item.value as item.name for item in adv_harvest_modes"></select>
 									</div>
 								</div>
 

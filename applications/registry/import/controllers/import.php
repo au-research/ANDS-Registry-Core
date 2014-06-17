@@ -98,7 +98,8 @@ class Import extends MX_Controller {
 
 			$this->importer->setCrosswalk($ds->provider_type);
 			$this->importer->setDatasource($ds);
-			
+			$this->importer->setHarvestID($batch);
+			$this->importer->maintainStatus(); //records which already exists are harvested into their same status
 			
 			if(!is_dir($path)) {
 				//is not directory, it's a file
@@ -107,12 +108,11 @@ class Import extends MX_Controller {
 					$xml = file_get_contents($path);
 					try {
 						$this->importer->setXML($xml);
-						$this->importer->maintainStatus(); //records which already exists are harvested into their same status
-						$this->importer->setCrosswalk($ds->provider_type);
-						$this->importer->setDatasource($ds);
-						$this->importer->commit();
+						$this->importer->commit(true);
 					} catch (Exception $e) {
 						$ds->append_log($e, 'error');
+						$ds->cancelHarvestRequest();
+						$ds->setHarvestMessage('Stopped By Error: '. $e->getMessage());
 						throw new Exception($e);
 						return;
 					}
@@ -122,7 +122,10 @@ class Import extends MX_Controller {
 						$ds->setNextHarvestRun($harvest_id);
 					} catch (Exception $e) {
 						$ds->append_log($e, 'error');
+						$ds->cancelHarvestRequest();
+						$ds->setHarvestMessage('Stopped By Error: '. $e->getMessage());
 						throw new Exception ($e);
+						return;
 					}
 
 					$ds->append_log($this->importer->getMessages());
@@ -130,18 +133,19 @@ class Import extends MX_Controller {
 					echo json_encode(
 						array(
 							'status' => 'OK',
-							'message' => $this->importer->getMessages()
+							'message' => $this->importer->getMessages(),
+							'error' => $this->importer->getErrors()
 						)
 					);
 
 				} else {
 					throw new Exception ("File not found: ". $path);
+					return;
 				}
 			} else {
 				//is a directory
 				$directory = scandir($path);
-				$this->importer->setHarvestID($batch);
-				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
+				
 				$this->importer->setPartialCommitOnly(TRUE);
 
 				$files = array();
@@ -180,6 +184,8 @@ class Import extends MX_Controller {
 						$ds->updateImporterMessage($message);
 					} catch (Exception $e) {
 						$ds->append_log($e, 'error');
+						$ds->cancelHarvestRequest();
+						$ds->setHarvestMessage('Stopped By Error: '. $e->getMessage());
 						throw new Exception($e);
 						return;
 					}
@@ -198,6 +204,8 @@ class Import extends MX_Controller {
 					$ds->append_log($msg);
 				} catch (Exception $e) {
 					$ds->append_log($e, 'error');
+					$ds->cancelHarvestRequest();
+					$ds->setHarvestMessage('Stopped By Error: '. $e->getMessage());
 					throw new Exception($e);
 					return;
 				}
@@ -215,6 +223,8 @@ class Import extends MX_Controller {
 					$ds->setNextHarvestRun($harvest_id);
 				} catch (Exception $e) {
 					$ds->append_log($e, 'error');
+					$ds->cancelHarvestRequest();
+					$ds->setHarvestMessage('Stopped By Error: '. $e->getMessage());
 					throw new Exception ($e);
 				}
 
@@ -232,6 +242,7 @@ class Import extends MX_Controller {
 		}
 	}
 
+	//test function
 	public function analyze($id=false, $batch=false) {
 		if(!$id) throw new Exception('Data source ID expected');
 		if(!$batch) throw new Exception('Batch ID expected');
@@ -262,6 +273,7 @@ class Import extends MX_Controller {
 		echo json_encode($result);
 	}
 
+	//test function
 	public function miniImport($id=false, $batch=false, $file=false) {
 		if(!$id) throw new Exception('Data source ID expected');
 		if(!$batch) throw new Exception('Batch ID expected');

@@ -236,6 +236,8 @@ class Data_source extends MX_Controller {
 		//data source
 		$ds = $this->ds->getByID($id);
 		if(!$ds) throw new Exception('Data source not found with the ID: '. $id);
+		$resetHarvest = false;
+		$resetPrimaryRelationships = false;
 
 		//construct a list of possible attributes, attributes that are not in this list will not get updated
 		$valid_attributes = array_merge(array_keys($ds->attributes()), array_keys($ds->harvesterParams));
@@ -247,11 +249,12 @@ class Data_source extends MX_Controller {
 
 		//unset values based on previous values
 		if(isset($data['create_primary_relationships'])){
-			if ($data['create_primary_relationships']=='0' || $data['create_primary_relationships']=='false' || $data['create_primary_relationships']=='f') {
+			if ($data['create_primary_relationships']===0 || $data['create_primary_relationships']===false || $data['create_primary_relationships']==='f') {
 				$data['primary_key_1']='';
 				$data['primary_key_2']='';
 			}
 		}
+
 		if(isset($data['primary_key_1']) && $data['primary_key_1']==''){
 			$data['primary_key_1'] = '';
 			$data['service_rel_1'] = '';
@@ -267,8 +270,12 @@ class Data_source extends MX_Controller {
 			$data['party_rel_2'] = '';
 		}
 
+		$updated_values = array();
+
 		//update each attribute
 		foreach($valid_attributes as $attrib) {
+
+			// if($attrib=='primary_key_1') throw new Exception($data['primary_key_1']);
 
 			if(is_integer($attrib) && $attrib == 0) {
 				continue;
@@ -305,6 +312,15 @@ class Data_source extends MX_Controller {
 				}
 			}
 
+			if($new_value != $ds->{$attrib} && in_array($attrib, array_keys($ds->harvesterParams))){
+			   $resetHarvest = true;
+			} 
+
+
+			if($new_value != $ds->{$attrib} && in_array($attrib, $ds->primaryRelationship)){
+			   $resetPrimaryRelationships = true;
+			}
+
 			//detect manual_publish flag changed to false
 			if($attrib=='manual_publish' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value!=$ds->{$attrib}){
 				//publish all approved record
@@ -320,6 +336,7 @@ class Data_source extends MX_Controller {
 			//update the actual value
 			if(!is_null($new_value) && $new_value != $ds->{$attrib}) {
 				$ds->{$attrib} = $new_value;
+				$updated_values[$attrib] = $new_value;
 			}
 
 		}
@@ -328,14 +345,36 @@ class Data_source extends MX_Controller {
 		if(isset($data['institution_pages'])){
 			$ds->setContributorPages($data['institution_pages'], $data['contributor']);
 		}
-		
 
+		$updated = '';
+		foreach ($updated_values as $key=>$value) {
+			$updated .= $key. ' is set to '. $value.NL;
+		}
+
+		//harvester and primary relationships reset
+		try {
+			if($resetHarvest && ($data['uri'] != '' || $data['uri'] != 'http://')) {
+				$this->trigger_harvest($ds->id);
+			}
+
+			if($resetPrimaryRelationships) {
+				$ds->reindexAllRecords();
+			}
+		} catch (Exception $e) {
+			$ds->append_log($e, 'error');
+			throw new Exception($e);
+		}
+		
 		//save the record
 		try{
 			$ds->save();
-			$ds->append_log("The data source settings were updated..." . NL . NL .
-									"Data Source was updated by: " . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . display_date());
+			$ds->append_log(
+				"The data source settings were updated..." . NL . NL .
+				"Data Source was updated by: " . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . display_date().NL.
+				$updated
+				);
 		} catch (Exception $e) {
+			$ds->append_log($e, 'error');
 			throw new Exception($e);
 		}
 		
@@ -1052,7 +1091,7 @@ class Data_source extends MX_Controller {
 		try {
 			$ds->setHarvestRequest('HARVEST', false);
 			$ds->setHarvestMessage('Harvest scheduled');
-			$ds->setImporterMessage(array());
+			$ds->updateImporterMessage(array());
 		} catch (Exception $e) {
 			throw new Exception($e);
 		}

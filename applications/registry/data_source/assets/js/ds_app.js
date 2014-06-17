@@ -25,7 +25,6 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			},
 			import: function(id, type, data) {
 				if(type=='path'){
-					console.log(data);
 					return $http.get(base_url+'import/put/'+id+'?batch='+data.path).then(function(response){return response.data});
 				}else return $http.post(base_url+'import/put/'+id+'/'+type, {data:data}).then(function(response){return response.data});
 			},
@@ -116,8 +115,13 @@ function SettingsCtrl($scope, $routeParams, ds_factory) {
 	}
 }
 
-function EditCtrl($scope, $routeParams, ds_factory) {
+function EditCtrl($scope, $routeParams, ds_factory, $location) {
 	$scope.ds = {};
+	$scope.adv_harvest_modes = [
+		{name:'Standard Mode', value:'STANDARD'},
+		{name:'Incremental Mode', value:'INCREMENTAL'},
+		{name:'Full Refresh Mode', value:'REFRESH'}
+	];
 
 	if($routeParams.tab) {
 		$scope.tab = $routeParams.tab;
@@ -142,7 +146,7 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 	}
 
 	$scope.process_values = function() {
-		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationship', 'qa_flag', 'export_dci'];
+		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci'];
 		$.each($scope.ds, function(i){
 			if($.inArray(i, flags) > -1){
 				if((this=='t' || this=='1') && i!='id') {
@@ -163,6 +167,7 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 					'type':'success',
 					'msg': 'Datasource saved successfully'
 				}
+				$location.path('/view/'+$scope.ds.id);
 			} else {
 				$scope.msg = {
 					'type':'error',
@@ -185,6 +190,18 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 				}
 			});
 		}
+		if($scope.ds.harvest_method=='PMHHarvester') {
+			$scope.adv_harvest_modes = [
+				{name:'Standard Mode', value:'STANDARD'},
+				{name:'Incremental Mode', value:'INCREMENTAL'},
+				{name:'Full Refresh Mode', value:'REFRESH'}
+			];
+		} else {
+			$scope.adv_harvest_modes = [
+				{name:'Standard Mode', value:'STANDARD'},
+				{name:'Full Refresh Mode', value:'REFRESH'}
+			];
+		}
 	});
 
 	$scope.$watch('ds.manual_publish', function(newv, oldv){
@@ -193,13 +210,13 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 			if((!oldv || oldv=='f' || oldv=='0') && newv) {
 				$scope.modal = {
 					'title':'Alert',
-					'body':'Enabling the ‘Manually Publish Records’ option will require you to <br />manually publish your approved records via the Manage My Records screen.'
+					'body':'Enabling the ‘Manually Publish Records’ option will require you to manually publish your approved records via the Manage My Records screen.'
 				}
 				$('#modal').modal();
 			} else if((!newv || newv=='f' || newv=='0') && oldv) {
 				$scope.modal = {
 					'title':'Alert',
-					'body':'Disabling the ‘Manually Publish Records’ option <br />will cause your approved records to be published automatically. <br/>This means your records will be publically visible in <br />Research Data Australia immediately after being approved.'
+					'body':'Disabling the ‘Manually Publish Records’ option will cause your approved records to be published automatically. This means your records will be publically visible in Research Data Australia immediately after being approved.'
 				}
 				$('#modal').modal();
 			}
@@ -212,7 +229,7 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 			if((!oldv || oldv=='f' || oldv=='0') && newv) {
 				$scope.modal = {
 					'title':'Alert',
-					'body':'Enabling the ‘Quality Assessment Required’ option will <br/>send any records entered into the ANDS registry from this data source <br />through the Quality Assessment workflow.'
+					'body':'Enabling the ‘Quality Assessment Required’ option will send any records entered into the ANDS registry from this data source through the Quality Assessment workflow.'
 				}
 				$('#modal').modal();
 			} else if((!newv || newv=='f' || newv=='0') && oldv) {
@@ -224,14 +241,14 @@ function EditCtrl($scope, $routeParams, ds_factory) {
 				}
 
 				if(parseInt($scope.ds.count_SUBMITTED_FOR_ASSESSMENT) > 0) {
-					publishStr += $scope.ds.count_SUBMITTED_FOR_ASSESSMENT + '`Submitted for Assessment`';
+					publishStr += $scope.ds.count_SUBMITTED_FOR_ASSESSMENT + ' `Submitted for Assessment`';
 				}
 				if(parseInt($scope.ds.count_ASSESSMENT_IN_PROGRESS) > 0) {
 					publishStr += ' and ' + $scope.ds.count_ASSESSMENT_IN_PROGRESS + ' `Assessment in Progress`'
 				}
 				$scope.modal = {
 					'title':'Alert',
-					'body':'Disabling the ‘Quality Assessment Required’ option will cause <br />'+publishStr+' records to be automatically '+pubStat+'. <br />It will also prevent any future records from being sent through <br />the Quality Assessment workflow.'
+					'body':'Disabling the ‘Quality Assessment Required’ option will cause '+publishStr+' records to be automatically '+pubStat+'. It will also prevent any future records from being sent through the Quality Assessment workflow.'
 				}
 				$('#modal').modal();
 			}
@@ -256,9 +273,17 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			if($scope.ds.logs) $scope.ds.latest_log = $scope.ds.logs[0].id;
 			if($scope.ds.logs.length < 10) $scope.nomore = true;
 			document.title = $scope.ds.title + ' - Dashboard';
+			$scope.process_logs();
 		});
 	}
 	$scope.get($routeParams.id);
+
+	$scope.process_logs = function() {
+		$.each($scope.ds.logs, function(){
+			var header = $.trim(this.log);
+			if(!this.header) this.header = header.split('\n')[0];
+		});
+	}
 
 	$scope.get_latest_log = function(click) {
 		$scope.ds.refreshing = true;
@@ -274,6 +299,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			} else if(data.items.length == 0) {
 				timeout = 10000;
 			}
+			$scope.process_logs();
 			if(!click) $timeout($scope.get_latest_log, timeout);
 		});
 	}
@@ -296,7 +322,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 			//can_start, can_stop
 			switch($scope.harvester.status) {
-				case 'IDLE': $scope.harvester.can_start = true; $scope.harvester.can_stop = true; break;
+				case 'IDLE': $scope.harvester.can_start = true; $scope.harvester.can_stop = false; break;
 				case 'HARVESTING': $scope.harvester.can_start = false; $scope.harvester.can_stop = true; break;
 				case 'IMPORTING': $scope.harvester.can_start = false; $scope.harvester.can_stop = false; break;
 				case 'STOPPED': $scope.harvester.can_start = true; $scope.harvester.can_stop = false; break;
@@ -340,6 +366,19 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		ds_factory.stop_harvest($scope.ds.id).then(function(data) {
 			$scope.refresh_harvest_status();
 		});
+	}
+
+	$scope.open_export_modal = function(){
+		$('#exportDataSource').modal('show');
+	}
+
+	$scope.export = function(type){
+		data_source_id = $scope.ds.id;
+		var data = {};
+		var form_data  = $('#data_source_export_form').serializeArray();
+		form_data.push({name:"as",value:type});
+		data = JSON.stringify(form_data);
+		window.open(base_url+'data_source/exportDataSource/'+data_source_id+'?data='+data, '_blank');
 	}
 
 	$scope.open_import_modal = function(method) {
@@ -390,7 +429,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			ds_factory.import($scope.ds.id, $scope.importer.type, data).then(function(data){
 				$scope.importer.running = false;
 				$scope.importer.result = {};
-				$scope.importer.result.message = data.message;
+				$scope.importer.result.message = $.trim(data.message);
 				if(data.status=='OK') {
 					$scope.importer.result.type = 'success'
 					$scope.get($scope.ds.id);

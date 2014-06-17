@@ -178,6 +178,7 @@ class Importer {
 					$this->ingest_failures++;
 					$continueIngest = false;
 					//$this->error_log[] = "Unable to parse XML into object (registryObject #".($idx+1)."): " . NL . $e->getMessage();
+					throw new Exception($e);
 				}
 				if($continueIngest)
 				{
@@ -196,6 +197,7 @@ class Importer {
 					// Right then, lets start parsing each registryObject & importing! 
 					foreach($sxml->xpath('//ro:registryObject') AS $registryObject)
 					{
+
 						$this->ingest_attempts++;
 						$continueWithIngest = true;
 						if($reValidateBeforeIngest)

@@ -141,7 +141,6 @@ class Transforms {
 			$cleanNSproc->importStyleSheet($cleanNS);
 			self::$clean_ns_transformer =	$cleanNSproc;
 		}
-
 		return self::$clean_ns_transformer;
 	}
 
