@@ -304,6 +304,8 @@ function removeBadValue($string){
 }
 
 function getNextHarvestDate($harvestDate, $harvestFrequency){
+    if($harvestFrequency =='once only' || $harvestFrequency == '')
+        return null;
     $now = time();
     if($harvestDate)
         $nextHarvest = $harvestDate;
@@ -321,10 +323,6 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
                 $nextHarvest = strtotime('+1 month', $nextHarvest);
             elseif($harvestFrequency =='hourly')
                 $nextHarvest += 60*60;
-            elseif($harvestFrequency =='once only' || !$harvestFrequency)
-                return null;
-            else
-                return null;
         }
     return $nextHarvest;
 }
