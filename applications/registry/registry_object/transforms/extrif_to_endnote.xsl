@@ -53,7 +53,7 @@ TY - DATA
 <xsl:choose>
     <!-- see if we have citationMetadatata -->
   <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
-        <xsl:text>AU - </xsl:text><xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor"/>
+        <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor"/>
   </xsl:when>
     <!-- use RelatedObjects then -->
 
@@ -234,7 +234,7 @@ TY - DATA
 
 <xsl:template match="extRif:subject_resolved">
     <xsl:if test="string(number(.)) = 'NaN'">
-           <xsl:text>KW - </xsl:text><xsl:value-of select="."/><xsl:text>
+           <xsl:text>KW - </xsl:text><xsl:value-of select="." disable-output-escaping="yes"/><xsl:text>
 </xsl:text>
      </xsl:if>
 </xsl:template>
@@ -269,7 +269,7 @@ TY - DATA
             <xsl:apply-templates select="ro:namePart[@type = 'family']"/>
             <xsl:apply-templates select="ro:namePart[@type = 'given']"/>
             <xsl:apply-templates select="ro:namePart[@type = 'title']"/>
-            <xsl:apply-templates select="ro:namePart[@type = '' or not(@type)]"/>
+            <xsl:apply-templates select="ro:namePart[@type = '' or not(@type) or @type= 'superior']"/>
         </xsl:variable>
         <xsl:value-of select="substring($title,1,string-length($title)-2)"/>
     <xsl:text>

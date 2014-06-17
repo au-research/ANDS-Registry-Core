@@ -370,6 +370,11 @@ class Transforms_Extension extends ExtensionBase
 ','', $xml_output);
                    }
                }
+               else
+               {
+                $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%
+','', $xml_output);
+               }
 
            }
 
