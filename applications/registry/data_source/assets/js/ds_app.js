@@ -225,7 +225,6 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 
 	$scope.$watch('ds.qa_flag', function(newv, oldv){
 		if(oldv!=undefined && newv!=undefined) {
-			console.log(oldv, newv);
 			if((!oldv || oldv=='f' || oldv=='0') && newv) {
 				$scope.modal = {
 					'title':'Alert',
@@ -255,6 +254,14 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 		}
 	});
 
+	$scope.$watch('ds.institution_pages', function(newv, oldv){
+		if(newv!=oldv && newv!=undefined && oldv!=undefined) {
+			switch(newv){
+				case '1': alert('Contributor pages will be generated for the new group(s) located in this data source.'); break;
+				case '2': alert('The contributor home page will be a public web document representing your organisation. ANDS advises that you should use only approved text and consult appropriate authorities within your organisation.');break;
+			}
+		}
+	});
 }
 
 function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
