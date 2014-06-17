@@ -4,6 +4,7 @@
     <xsl:strip-space elements="*"/>
     <xsl:param name="dateRequested"/>
     <xsl:param name="dateHarvested"/>
+    <xsl:param name="portal_url"/>
     <xsl:template match="/">
     <xsl:apply-templates/>
     </xsl:template>
@@ -17,12 +18,13 @@
         <xsl:variable name="DOI">
             <xsl:call-template name="getDOI"/>
         </xsl:variable>
-        <xsl:if test="$sourceUrl != ''">
+
 <xsl:text>Provider: Australian National Data Service
 Database: Research Data Australia
 Content:text/plain; charset="utf-8"
 
 
+TY - DATA
 </xsl:text>
 <xsl:text>Y2 - </xsl:text><xsl:value-of  select="$dateRequested"/><xsl:text>
 </xsl:text>
@@ -31,14 +33,22 @@ Content:text/plain; charset="utf-8"
 </xsl:text>
 </xsl:if>
 
+
  <xsl:variable name="publishedDate">
         <xsl:call-template name="getPublishedDate"/>
 </xsl:variable>
 <xsl:if test="$publishedDate != ''">
     <xsl:text>PY - </xsl:text><xsl:value-of select="substring($publishedDate,1,4)"/><xsl:text>
-SE - </xsl:text><xsl:value-of select="$publishedDate"/><xsl:text>
 </xsl:text>
 </xsl:if>
+
+        <xsl:if test="ro:relatedObject">
+            <xsl:text>we have a related object :)</xsl:text>  <xsl:value-of select="."/>
+        <xsl:text>
+
+        </xsl:text>
+        </xsl:if>
+
 
 <xsl:choose>
     <!-- see if we have citationMetadatata -->
@@ -46,8 +56,9 @@ SE - </xsl:text><xsl:value-of select="$publishedDate"/><xsl:text>
         <xsl:text>AU - </xsl:text><xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor"/>
   </xsl:when>
     <!-- use RelatedObjects then -->
-  <xsl:when test="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'hasPrincipalInvestigator'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'principalInvestigator'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'author'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'coInvestigator'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'isOwnedBy'] or extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'hasCollector']">
-        <xsl:apply-templates select="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'hasPrincipalInvestigator'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'principalInvestigator'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'author'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'coInvestigator'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'isOwnedBy'] | extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'hasCollector']"/>
+
+  <xsl:when test="ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] or ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] or ro:collection/ro:relatedObject/ro:relation[@type = 'author'] or ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] or ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] or ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']">
+        <xsl:apply-templates select="ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type = 'author'] | ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] | ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']" mode="author"/>
   </xsl:when>
      <!-- otherwise anonymus -->
   <xsl:otherwise>
@@ -57,9 +68,10 @@ SE - </xsl:text><xsl:value-of select="$publishedDate"/><xsl:text>
 </xsl:choose>
 
 <xsl:apply-templates select="extRif:extendedMetadata/extRif:displayTitle"/>
+        <xsl:if test="$sourceUrl != ''">
 <xsl:text>UR - </xsl:text><xsl:value-of select="$sourceUrl"/>
 <xsl:text>
-</xsl:text>
+</xsl:text></xsl:if>
 <xsl:if test="extRif:extendedMetadata/extRif:dataSourceTitle">
 <xsl:text>PB - </xsl:text>
                                 <xsl:choose>
@@ -121,13 +133,14 @@ SE - </xsl:text><xsl:value-of select="$publishedDate"/><xsl:text>
 </xsl:text>
 </xsl:if>
 
-<xsl:if test="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'isOutputOf']">
-     <xsl:text>A4 - </xsl:text><xsl:apply-templates select="extRif:extendedMetadata/extRif:related_object[extRif:related_object_relation = 'isOutputOf']" mode="fundingInfo"/><xsl:text>
- </xsl:text>
+<xsl:if test="ro:collection/ro:relatedObject/ro:relation[@type = 'isOutputOf']">
+     <xsl:apply-templates select="ro:collection/ro:relatedObject/ro:relation[@type = 'isOutputOf']" mode="fundingInfo"/><xsl:text>
+</xsl:text>
 </xsl:if>
 
+<xsl:text>ER -
+</xsl:text>
 
-</xsl:if>
 </xsl:template>
 
 <xsl:template match="text()">
@@ -185,7 +198,7 @@ SE - </xsl:text><xsl:value-of select="$publishedDate"/><xsl:text>
             </xsl:when>
             <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']">
                 <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']"/>
-            </xsl:when>         
+            </xsl:when>
             <xsl:when test="ro:collection/ro:identifier[@type='doi']">
                 <xsl:value-of select="ro:collection/ro:identifier[@type='doi']"/>
             </xsl:when>
@@ -204,6 +217,9 @@ SE - </xsl:text><xsl:value-of select="$publishedDate"/><xsl:text>
             <xsl:when test="ro:collection/ro:location/ro:address/ro:electronic[@type='url']">
                 <xsl:value-of select="ro:collection/ro:location/ro:address/ro:electronic[@type='url']"/>
             </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$portal_url"/>
+            </xsl:otherwise>
         </xsl:choose>
         </xsl:variable>
         <xsl:choose>
@@ -232,15 +248,15 @@ SE - </xsl:text><xsl:value-of select="$publishedDate"/><xsl:text>
         <xsl:choose>
             <xsl:when test="@type='dateFrom'">
                 <xsl:text>From </xsl:text>
-                    <xsl:value-of select="substring(.,1,4)"/>
+                    <xsl:value-of select="."/>
             </xsl:when>
             <xsl:when test="@type='dateTo'">
                <xsl:text> To </xsl:text>
-                    <xsl:value-of select="substring(.,1,4)"/>
+                    <xsl:value-of select="."/>
             </xsl:when>
             <xsl:otherwise>
 
-                    <xsl:value-of select="substring(.,1,4)"/>
+                    <xsl:value-of select="."/>
 
             </xsl:otherwise>
         </xsl:choose>
@@ -256,17 +272,19 @@ SE - </xsl:text><xsl:value-of select="$publishedDate"/><xsl:text>
             <xsl:apply-templates select="ro:namePart[@type = '' or not(@type)]"/>
         </xsl:variable>
         <xsl:value-of select="substring($title,1,string-length($title)-2)"/>
-</xsl:template>
-
-<xsl:template match="extRif:related_object">
-        <xsl:if test="not(preceding::extRif:related_object[extRif:related_object_key = current()/extRif:related_object_key])">
-            <xsl:text>AU - </xsl:text><xsl:apply-templates select="extRif:related_object_display_title"/><xsl:text>
+    <xsl:text>
 </xsl:text>
-        </xsl:if>
 </xsl:template>
 
-<xsl:template match="extRif:related_object" mode="fundingInfo">
-        <xsl:apply-templates select="extRif:related_object_key"/>
+<xsl:template match="ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type = 'author'] | ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] | ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']"  mode="author">
+
+            <xsl:text>%%%AU - </xsl:text><xsl:value-of select="../ro:key"/><xsl:text> - AU%%%
+</xsl:text>
+
+</xsl:template>
+
+<xsl:template match="ro:collection/ro:relatedObject/ro:relation[@type='isOutputOf']" mode="fundingInfo">
+    <xsl:text>%%%A4 - </xsl:text><xsl:value-of select="../ro:key"/><xsl:text> - A4%%%</xsl:text>
 </xsl:template>
 
 <xsl:template match="ro:namePart">
@@ -277,7 +295,7 @@ SE - </xsl:text><xsl:value-of select="$publishedDate"/><xsl:text>
         <xsl:choose>
             <xsl:when test="ro:collection/ro:dates[@type='dc.created']">
                 <xsl:value-of select="substring(ro:collection/ro:dates[@type='dc.created']/ro:date,1,4)"/>
-            </xsl:when>        
+            </xsl:when>
         </xsl:choose>
 </xsl:template>
 <xsl:template name="getPublishedDate">
