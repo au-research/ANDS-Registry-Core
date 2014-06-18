@@ -129,7 +129,7 @@ TY - DATA
 </xsl:if>
 
  <xsl:if test="extRif:extendedMetadata/extRif:dci_description">
-      <xsl:text>AB - </xsl:text><xsl:apply-templates select="extRif:extendedMetadata/extRif:dci_description"/><xsl:text>
+      <xsl:text>AB - </xsl:text><xsl:value-of select="extRif:extendedMetadata/extRif:dci_description" disable-output-escaping="yes"/><xsl:text>
 </xsl:text>
 </xsl:if>
 
