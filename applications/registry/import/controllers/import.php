@@ -79,7 +79,7 @@ class Import extends MX_Controller {
 	private function import_via_path($id, $batch) {
 		if(!$batch) throw new Exception('Batch ID expected');
 		$dir = get_config_item('harvested_contents_path');
-		if(!$dir) throw new Exeption('Harvested Contents Path not configured');
+		if(!$dir) throw new Exception('Harvested Contents Path not configured');
 
 		//getting the harvest_id
 		$batch_query = $this->db->get_where('harvests', array('data_source_id'=>$id));

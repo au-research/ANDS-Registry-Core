@@ -343,14 +343,14 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				$scope.harvester.message = JSON.parse($scope.harvester.message);
 				$scope.harvester.importer_message = JSON.parse($scope.harvester.importer_message);
 				if($scope.harvester.status=='HARVESTING'){
-					if($scope.harvester.message.progress.total!='unknown' && $scope.harvester.message.progress.current) {
+					if($scope.harvester.message.progress.total!='unknown' && $scope.harvester.message.progress.current && $scope.harvester.message.progress.total!=0) {
 						$scope.harvester.percent =  ($scope.harvester.message.progress.current * 100) / $scope.harvester.message.progress.total;
 						$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
-					} else if($scope.ds.harvest_method=='PMHHarvester' && $scope.harvester.message.progress.current && $scope.ds.count_total) {
+					} else if($scope.ds.harvest_method=='PMHHarvester' && $scope.harvester.message.progress.current && $scope.ds.count_total && $scope.ds.count_total!=0) {
 						$scope.harvester.percent = ($scope.harvester.message.progress.current * 100) / parseInt($scope.ds.count_total);
 						$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
 					}
-				}else if($scope.harvester.status=='IMPORTING') {
+				}else if($scope.harvester.status=='IMPORTING' && $scope.harvester.importer_message.progress.total!=0) {
 					$scope.harvester.percent = ($scope.harvester.importer_message.progress.current * 100) / $scope.harvester.importer_message.progress.total;
 					$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
 				}

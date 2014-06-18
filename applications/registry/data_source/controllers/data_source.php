@@ -283,7 +283,7 @@ class Data_source extends MX_Controller {
 		foreach($valid_attributes as $attrib) {
 
 			// if($attrib=='primary_key_1') throw new Exception($data['primary_key_1']);
-
+			$new_value = '';
 			if(is_integer($attrib) && $attrib == 0) {
 				continue;
 			} elseif (isset($data[$attrib])) {
@@ -358,7 +358,11 @@ class Data_source extends MX_Controller {
 
 		$updated = '';
 		foreach ($updated_values as $kv) {
-			$updated .= $kv['key']. ' is set to '. $kv['value'].NL;
+			if($kv['value']) {
+				$updated .= $kv['key']. ' is set to '. $kv['value'].NL;
+			} else {
+				$updated .= 'unset '. $kv['key'].NL;
+			}
 		}
 
 		//harvester and primary relationships reset
