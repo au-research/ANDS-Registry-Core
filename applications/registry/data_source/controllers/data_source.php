@@ -1108,10 +1108,16 @@ class Data_source extends MX_Controller {
 		try {
 			$harvestDate = strtotime($ds->getAttribute("harvest_date"));
 			$nextRun = getNextHarvestDate($harvestDate, $ds->harvest_frequency);
+			if($ds->harvest_method=='PMHHarvester' && $ds->oai_set) {
+				$oai_msg = 'OAI Set: '. $ds->oai_set;
+			}else $oai_msg = '';
 			$ds->append_log(
 				'Harvest scheduled to run at '.date( 'Y-m-d\TH:i:s.uP', $nextRun).NL.
 				'URI: '.$ds->uri.NL.
-				'Harvest Method: '.$ds->harvest_method.NL
+				'Harvest Method: '.$ds->harvest_method.NL.
+				'Provider Type: '.$ds->provider_type.NL.
+				'Advanced Harvest Mode: '.$ds->advanced_harvest_mode.NL.
+				$oai_msg.NL
 			);
 			$ds->setHarvestRequest('HARVEST', false);
 			$ds->setHarvestMessage('Harvest scheduled');

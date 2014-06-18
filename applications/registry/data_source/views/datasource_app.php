@@ -159,7 +159,8 @@
 								<dt ng-show="harvester.status=='COMPLETED' || harvester.status=='SCHEDULED'">Next Run</dt>
 								<dd>{{harvester.next_run}} ({{harvester.next_run | timeago}})</dd>
 							</span>
-							<dt>Harvest Frequency</dt><dd>{{ds.harvest_frequency}} starting from {{ds.harvest_date}} (AEST)</dd>
+							<span ng-show="ds.harvest_frequency"><dt>Harvest Frequency</dt><dd>{{ds.harvest_frequency}} starting from {{ds.harvest_date}} (AEST)</dd></span>
+							<span ng-show="!ds.harvest_frequency"><dt>Harvest Frequency</dt><dd>Once Off</dd></span>
 							<span ng-show="harvester.percent">
 								<dt>Percent Complete</dt>
 								<dd>{{harvester.percent}} %</dd>
