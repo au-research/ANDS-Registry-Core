@@ -103,9 +103,13 @@ function ListCtrl($scope, ds_factory, $location) {
 function SettingsCtrl($scope, $routeParams, ds_factory) {
 	$scope.ds = {};
 	ds_factory.get($routeParams.id).then(function(data){
-		$scope.ds = data.items[0];
-		$scope.load_contributor();
-		document.title = $scope.ds.title + ' - Settings';
+		if(data.status=='OK'){
+			$scope.ds = data.items[0];
+			$scope.load_contributor();
+			document.title = $scope.ds.title + ' - Settings';
+		}else{
+			$location.path('/');
+		}
 	});
 
 	$scope.load_contributor = function() {
@@ -128,15 +132,19 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 	} else $scope.tab = 'admin';
 
 	ds_factory.get($routeParams.id).then(function(data){
-		$scope.ds = data.items[0];
-		$scope.load_contributor();
-		$scope.process_values();
-		bind_plugins($scope);
-		document.title = $scope.ds.title + ' - Edit Settings';
+		if(data.status=='OK'){
+			$scope.ds = data.items[0];
+			$scope.load_contributor();
+			$scope.process_values();
+			bind_plugins($scope);
+			document.title = $scope.ds.title + ' - Edit Settings';
 
-		$.each($scope.ds.harvester_methods.xsl_file, function(){
-			if(this.indexOf($scope.ds.key)!=-1) $scope.ds_crosswalk = this;
-		});
+			$.each($scope.ds.harvester_methods.xsl_file, function(){
+				if(this.indexOf($scope.ds.key)!=-1) $scope.ds_crosswalk = this;
+			});
+		} else {
+			$location.path('/');
+		}
 	});
 
 	$scope.load_contributor = function() {
@@ -257,7 +265,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 	$scope.$watch('ds.institution_pages', function(newv, oldv){
 		if(newv!=oldv && newv!=undefined && oldv!=undefined) {
 			switch(newv){
-				case '1': alert('Contributor pages will be generated for the new group(s) located in this data source.'); break;
+				case '1': alert('Contributor pages will be generated for the new group(s) located in this data source. The contributor home page will be a public web document representing your organisation. ANDS advises that you should use only approved text and consult appropriate authorities within your organisation.'); break;
 				case '2': alert('The contributor home page will be a public web document representing your organisation. ANDS advises that you should use only approved text and consult appropriate authorities within your organisation.');break;
 			}
 		}
@@ -275,12 +283,19 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 	$scope.get = function(id) {
 		ds_factory.get(id).then(function(data){
-			$scope.ds = data.items[0];
-			$scope.refresh_harvest_status();
-			if($scope.ds.logs) $scope.ds.latest_log = $scope.ds.logs[0].id;
-			if($scope.ds.logs.length < 10) $scope.nomore = true;
-			document.title = $scope.ds.title + ' - Dashboard';
-			$scope.process_logs();
+			if(data.status=='OK'){
+				$scope.ds = data.items[0];
+				$scope.refresh_harvest_status();
+				if($scope.ds.logs) $scope.ds.latest_log = $scope.ds.logs[0].id;
+				if($scope.ds.logs.length < 10) $scope.nomore = true;
+				document.title = $scope.ds.title + ' - Dashboard';
+				$timeout($scope.get_latest_log, 1000);
+				$timeout($scope.refresh_harvest_status, 10000);
+				$scope.process_logs();
+			} else {
+				$location.path('/');
+			}
+			
 		});
 	}
 	$scope.get($routeParams.id);
@@ -303,15 +318,16 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 					$scope.ds.logs.unshift(this);
 				});
 				if($scope.ds.logs) $scope.ds.latest_log = $scope.ds.logs[0].id;
-			} else if(data.items.length == 0) {
+			} else if(data.items && data.items.length == 0) {
 				timeout = 10000;
+			} else {
+				$location.path('/');
 			}
 			$scope.process_logs();
 			if(!click) $timeout($scope.get_latest_log, timeout);
 		});
 	}
-	$timeout($scope.get_latest_log, 1000);
-
+	
 	$scope.more_logs = function() {
 		$scope.offset = $scope.offset + 10;
 		ds_factory.get_log($scope.ds.id, $scope.offset, 10, false).then(function(data){
@@ -361,8 +377,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			$timeout($scope.refresh_harvest_status, 10000);
 		});
 	}
-	$timeout($scope.refresh_harvest_status, 10000);
-
+	
 	$scope.start_harvest = function() {
 		ds_factory.start_harvest($scope.ds.id).then(function(data) {
 			$scope.refresh_harvest_status();

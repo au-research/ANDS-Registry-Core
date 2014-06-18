@@ -35,6 +35,7 @@ class Data_source extends MX_Controller {
 	public function get($id=false) {
 		//prepare
 		acl_enforce('REGISTRY_USER');
+
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
@@ -46,6 +47,7 @@ class Data_source extends MX_Controller {
 		if(!$id){
 			$dataSources = $this->ds->getOwnedDataSources();
 		} elseif ($id && $id!=null) {
+			ds_acl_enforce($id);
 			$ds = $this->ds->getByID($id);
 			$ds->updateStats();
 			$dataSources = array();
@@ -123,6 +125,7 @@ class Data_source extends MX_Controller {
 		set_exception_handler('json_exception_handler');
 
 		if(!$id) throw new Exception('ID must be specified');
+		ds_acl_enforce($id);
 	
 		$this->load->model("data_sources","ds");
 		$ds = $this->ds->getByID($id);
