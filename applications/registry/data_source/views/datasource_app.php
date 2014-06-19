@@ -597,13 +597,13 @@
 												<div class="control-group">
 													<label class="control-label">Activity</label>
 													<div class="controls">
-														<input type="text" class="rifcs-type" vocab="RIFCSactivityRelationType" placeholder="Relation Type" ng-model="activity_rel_1"/>
+														<input type="text" class="rifcs-type" vocab="RIFCSactivityRelationType" placeholder="Relation Type" ng-model="ds.activity_rel_1"/>
 													</div>
 												</div>
 												<div class="control-group">
 													<label class="control-label">Party</label>
 													<div class="controls">
-														<input type="text" class="rifcs-type" vocab="RIFCSpartyRelationType" placeholder="Relation Type" ng-model="party_rel_1"/>
+														<input type="text" class="rifcs-type" vocab="RIFCSpartyRelationType" placeholder="Relation Type" ng-model="ds.party_rel_1"/>
 													</div>
 												</div>
 											</div>
