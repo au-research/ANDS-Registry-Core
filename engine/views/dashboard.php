@@ -32,9 +32,9 @@ else
 <?php $this->load->view('header');?>
 <span>
 	<div class="pull-right">
-				<span class="label"><i class="icon-question-sign icon-white"></i>
-					<a class="youtube" href="http://www.youtube.com/watch?v=R5q4t73aCoo"> New to these screens? Take a tour!</a>
-				</span>
+		<span class="label"><i class="icon-question-sign icon-white"></i>
+			<a class="youtube" href="http://www.youtube.com/watch?v=R5q4t73aCoo"> New to these screens? Take a tour!</a>
+		</span>
 	</div>
 	&nbsp;
 </span>
@@ -132,7 +132,7 @@ else
 								echo '<ul>';
 								$i=0;
 								for($i=0; $i < sizeof($data_sources) && $i < 7; $i++){
-									echo '<li><a href="'.registry_url('data_source/manage#!/view/'.$data_sources[$i]['data_source_id']).'">'.$data_sources[$i]['title'] . "</a></li>";
+									echo '<li><a href="'.registry_url('data_source/#!/view/'.$data_sources[$i]['data_source_id']).'">'.$data_sources[$i]['title'] . "</a></li>";
 								}
 								echo '</ul>';
 

@@ -126,7 +126,21 @@
 						
 					</div>
 					<div class="btn-group pull-right">
+
 						<a class="btn dropdown-toggle" ng-click="open_export_modal()"><i class="icon icon-hdd"></i> Export Records</a>						
+					</div>
+
+					<div class="btn-group pull-right">
+						<a href="" class="btn btn-primary disabled" ng-show="harvester.status=='IMPORTING'">Importing...</a>
+						<a href="" class="btn btn-primary" ng-click="start_harvest()" ng-show="harvester.can_start"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
+						<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop"><i class="icon icon-white icon-stop"></i> Stop Harvest</a>
+						<a href="" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+						<ul class="dropdown-menu pull-right">
+							<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
+							<li><a href="" ng-click="open_import_modal('xml')"><i class="icon icon-briefcase"></i> Import from Pasted XML</a></li>
+							<!--li><a href="" ng-click="open_import_modal('upload')"><i class="icon icon-file"></i> Import from File</a></li-->
+							<li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li>
+						</ul>
 					</div>
 				</div>
 
@@ -139,8 +153,14 @@
 						<dl class="dl dl-horizontal">
 							<dt>Status</dt><dd><span class="label label-info">{{harvester.status}}</span></dd>
 							<dt>URI</dt><dd>{{ds.uri}}</dd>
-							<span ng-show="harvester.last_run"><dt>Last Run</dt><dd>{{harvester.last_run | timeago}}</dd></span>
-							<span ng-show="harvester.next_run"><dt>Next Run</dt><dd>{{harvester.next_run | timeago}}</dd></span>
+							<span ng-show="harvester.last_run"><dt>Last Run</dt><dd>{{harvester.last_run}} ({{harvester.last_run | timeago}})</dd></span>
+							<span ng-show="harvester.next_run">
+								<dt ng-show="harvester.status!='COMPLETED' && harvester.status!='SCHEDULED'">Current Run</dt>
+								<dt ng-show="harvester.status=='COMPLETED' || harvester.status=='SCHEDULED'">Next Run</dt>
+								<dd>{{harvester.next_run}} ({{harvester.next_run | timeago}})</dd>
+							</span>
+							<span ng-show="ds.harvest_frequency"><dt>Harvest Frequency</dt><dd>{{ds.harvest_frequency}} starting from {{ds.harvest_date}} (AEST)</dd></span>
+							<span ng-show="!ds.harvest_frequency"><dt>Harvest Frequency</dt><dd>Once Off</dd></span>
 							<span ng-show="harvester.percent">
 								<dt>Percent Complete</dt>
 								<dd>{{harvester.percent}} %</dd>
@@ -165,21 +185,6 @@
 						<div ng-show="harvester.message.error.log" class="alert alert-error">
 							{{harvester.message.error.log}}
 						</div>
-					</div>
-					<div class="widget-content">
-						<div class="btn-group" style="float:right;">
-							<a href="" class="btn btn-primary disabled" ng-show="harvester.status=='IMPORTING'">Importing...</a>
-							<a href="" class="btn btn-primary" ng-click="start_harvest()" ng-show="harvester.can_start"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
-							<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop"><i class="icon icon-white icon-stop"></i> Stop Harvest</a>
-							<a href="" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-							<ul class="dropdown-menu pull-right">
-								<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
-								<li><a href="" ng-click="open_import_modal('xml')"><i class="icon icon-briefcase"></i> Import from Pasted XML</a></li>
-								<!--li><a href="" ng-click="open_import_modal('upload')"><i class="icon icon-file"></i> Import from File</a></li-->
-								<li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li>
-							</ul>
-						</div>
-						<div class="clearfix"></div>
 					</div>
 				</div>
 
@@ -332,6 +337,7 @@
 				<span ng-show="!importer.running">Import Records</span>
 				<span ng-show="importer.running">Importing... Please wait</span>
 			</a>
+			<a href="javascript:;" data-dismiss="modal" class="btn" ng-show="importer.result">Ok</a>
 		</div>
 	</div>
 
@@ -592,13 +598,13 @@
 												<div class="control-group">
 													<label class="control-label">Activity</label>
 													<div class="controls">
-														<input type="text" class="rifcs-type" vocab="RIFCSactivityRelationType" placeholder="Relation Type" ng-model="activity_rel_1"/>
+														<input type="text" class="rifcs-type" vocab="RIFCSactivityRelationType" placeholder="Relation Type" ng-model="ds.activity_rel_1"/>
 													</div>
 												</div>
 												<div class="control-group">
 													<label class="control-label">Party</label>
 													<div class="controls">
-														<input type="text" class="rifcs-type" vocab="RIFCSpartyRelationType" placeholder="Relation Type" ng-model="party_rel_1"/>
+														<input type="text" class="rifcs-type" vocab="RIFCSpartyRelationType" placeholder="Relation Type" ng-model="ds.party_rel_1"/>
 													</div>
 												</div>
 											</div>

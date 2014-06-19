@@ -189,13 +189,17 @@ class Maintenance extends MX_Controller {
 			$ds->record_owner = $ds->record_owner;
 			try {
 				//fix Title
-				$ds->_initAttribute('title', $ds->title, true);
-				$ds->_initAttribute('record_owner', $ds->title, true);
+				$ds->_initAttribute('title', $ds->title, TRUE);
+				$ds->_initAttribute('record_owner', $ds->record_owner, TRUE);
 
 				if($ds->harvest_method=='GET') $ds->harvest_method = 'GETHarvester';
 				if($ds->harvest_method=='PMH' || $ds->harvest_method=='RIF') $ds->harvest_method = 'PMHHarvester';
 
 				$ds->save();
+
+				$this->db->delete('data_source_attributes', array('data_source_id'=>$ds->id, 'attribute'=>'title'));
+				$this->db->delete('data_source_attributes', array('data_source_id'=>$ds->id, 'attribute'=>'record_owner'));
+
 			} catch (Exception $e) {
 				throw new Exception($e);
 			}
@@ -652,34 +656,14 @@ class Maintenance extends MX_Controller {
 
 
 	function test(){
-		define("SAXON_DIR", "/var/www/htdocs/workareas/leo/harvester/lib/");
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$this->load->model('data_source/data_sources', 'ds');
 
-        java_require(SAXON_DIR."saxon8.jar;".SAXON_DIR."saxon8-dom.jar");
+		$ds = $this->ds->getByID(192);
+		var_dump($ds->attributes);
 
-        $sXslFile = REGISTRY_APP_PATH.'core/crosswalks/_xsl/dc_to_rifcs.xsl';
-        $sXmlFile = '/var/www/harvested_content/5/6BBD8B781EC9CFD70009A01FDA14E9A678ABE4D8.ckan';
-        try {
-            $oXslSource = new java("javax.xml.transform.stream.StreamSource", "file://".$sXslFile);
-            $oXmlSource = new java("javax.xml.transform.stream.StreamSource", "file://".$sXmlFile);
-            $oFeatureKeys = new JavaClass("net.sf.saxon.FeatureKeys");
-            
-            $oTransformerFactory = new java("net.sf.saxon.TransformerFactoryImpl");
-            
-            $oTransformerFactory->setAttribute($oFeatureKeys->SCHEMA_VALIDATION, 4);
-            
-            $oTransFormer = $oTransformerFactory->newTransformer($oXslSource);
-            
-            $oResultStringWriter = new java("java.io.StringWriter");
-            $oResultStream = new java("javax.xml.transform.stream.StreamResult", $oResultStringWriter);
-            
-            $oTransFormer->transform($oXmlSource, $oResultStream);
-            
-            echo java_cast($oResultStringWriter->toString(), "string");
-        }
-            catch(JavaException $e){
-            echo java_cast($e->getCause()->toString(), "string");
-            exit;
-        }
 	}
 
 	function fixRelationships($id) {

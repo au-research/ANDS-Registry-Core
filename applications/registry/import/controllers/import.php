@@ -79,7 +79,7 @@ class Import extends MX_Controller {
 	private function import_via_path($id, $batch) {
 		if(!$batch) throw new Exception('Batch ID expected');
 		$dir = get_config_item('harvested_contents_path');
-		if(!$dir) throw new Exeption('Harvested Contents Path not configured');
+		if(!$dir) throw new Exception('Harvested Contents Path not configured');
 
 		//getting the harvest_id
 		$batch_query = $this->db->get_where('harvests', array('data_source_id'=>$id));
@@ -117,6 +117,12 @@ class Import extends MX_Controller {
 						return;
 					}
 
+					$ds->append_log(
+						'Harvest Completed Successfully'.NL.
+						// print_r($batch_array, true).NL.
+						$this->importer->getMessages()
+					);
+
 					try {
 						$ds->updateHarvestStatus($harvest_id, 'COMPLETED');
 						$ds->setNextHarvestRun($harvest_id);
@@ -127,8 +133,6 @@ class Import extends MX_Controller {
 						throw new Exception ($e);
 						return;
 					}
-
-					$ds->append_log($this->importer->getMessages());
 					
 					echo json_encode(
 						array(
@@ -139,6 +143,7 @@ class Import extends MX_Controller {
 					);
 
 				} else {
+					$ds->cancelHarvestRequest();
 					throw new Exception ("File not found: ". $path);
 					return;
 				}
@@ -201,7 +206,11 @@ class Import extends MX_Controller {
 					);
 					$ds->updateImporterMessage($message);
 					$msg = $this->importer->finishImportTasks();
-					$ds->append_log($msg);
+					$ds->append_log(
+						'Harvest Completed Successfully'.NL.
+						// print_r($batch_array, true).NL.
+						$msg
+					);
 				} catch (Exception $e) {
 					$ds->append_log($e, 'error');
 					$ds->cancelHarvestRequest();

@@ -125,7 +125,7 @@ class Data_sources extends CI_Model {
 			}
 			else
 			{
-				$query = $this->db->select('data_source_id')->where('attribute','record_owner')->where_in('value',$affiliations)->get('data_source_attributes');
+				$query = $this->db->where_in('record_owner', $affiliations)->get('data_sources');
 			}
 
 			if ($query->num_rows() == 0)

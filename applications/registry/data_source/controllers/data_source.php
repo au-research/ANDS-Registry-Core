@@ -35,6 +35,7 @@ class Data_source extends MX_Controller {
 	public function get($id=false) {
 		//prepare
 		acl_enforce('REGISTRY_USER');
+
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
@@ -46,6 +47,7 @@ class Data_source extends MX_Controller {
 		if(!$id){
 			$dataSources = $this->ds->getOwnedDataSources();
 		} elseif ($id && $id!=null) {
+			ds_acl_enforce($id);
 			$ds = $this->ds->getByID($id);
 			$ds->updateStats();
 			$dataSources = array();
@@ -76,6 +78,8 @@ class Data_source extends MX_Controller {
 			$item['record_owner']=$ds->record_owner;
 			$item['notes']=$ds->notes;
 
+
+
 			if($id && $ds){
 
 				$harvester_methods = get_config_item('harvester_methods');
@@ -83,6 +87,11 @@ class Data_source extends MX_Controller {
 
 				foreach($ds->attributes as $attrib=>$value){
 					$item[$attrib] = $value->value;
+				}
+
+				if(isset($item['harvest_date'])) {
+					date_default_timezone_set('Australia/Canberra');
+					$item['harvest_date'] = date( 'Y-m-d H:i:s', strtotime($item['harvest_date']));
 				}
 
 				//get harvester_method
@@ -116,6 +125,7 @@ class Data_source extends MX_Controller {
 		set_exception_handler('json_exception_handler');
 
 		if(!$id) throw new Exception('ID must be specified');
+		ds_acl_enforce($id);
 	
 		$this->load->model("data_sources","ds");
 		$ds = $this->ds->getByID($id);
@@ -276,7 +286,7 @@ class Data_source extends MX_Controller {
 		foreach($valid_attributes as $attrib) {
 
 			// if($attrib=='primary_key_1') throw new Exception($data['primary_key_1']);
-
+			$new_value = '';
 			if(is_integer($attrib) && $attrib == 0) {
 				continue;
 			} elseif (isset($data[$attrib])) {
@@ -351,7 +361,11 @@ class Data_source extends MX_Controller {
 
 		$updated = '';
 		foreach ($updated_values as $kv) {
-			$updated .= $kv['key']. ' is set to '. $kv['value'].NL;
+			if($kv['value']) {
+				$updated .= $kv['key']. ' is set to '. $kv['value'].NL;
+			} else {
+				$updated .= 'unset '. $kv['key'].NL;
+			}
 		}
 
 		//harvester and primary relationships reset
@@ -1094,10 +1108,16 @@ class Data_source extends MX_Controller {
 		try {
 			$harvestDate = strtotime($ds->getAttribute("harvest_date"));
 			$nextRun = getNextHarvestDate($harvestDate, $ds->harvest_frequency);
+			if($ds->harvest_method=='PMHHarvester' && $ds->oai_set) {
+				$oai_msg = 'OAI Set: '. $ds->oai_set;
+			}else $oai_msg = '';
 			$ds->append_log(
 				'Harvest scheduled to run at '.date( 'Y-m-d\TH:i:s.uP', $nextRun).NL.
 				'URI: '.$ds->uri.NL.
-				'Harvest Method: '.$ds->harvest_method.NL
+				'Harvest Method: '.readable($ds->harvest_method).NL.
+				'Provider Type: '.$ds->provider_type.NL.
+				'Advanced Harvest Mode: '.$ds->advanced_harvest_mode.NL.
+				$oai_msg.NL
 			);
 			$ds->setHarvestRequest('HARVEST', false);
 			$ds->setHarvestMessage('Harvest scheduled');
