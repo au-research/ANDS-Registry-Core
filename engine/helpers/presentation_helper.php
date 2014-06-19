@@ -201,6 +201,10 @@ function readable($text, $singular = false){
         case "authentication_built_in": return "Built-in";break;
         case "authentication_ldap": return "LDAP";break;
         case "authentication_shibboleth": return "Shibboleth";break;
+        case "PMHHarvester": return "OAI-PMH Harvester";break;
+        case "GETHarvester": return "GET Harvester";break;
+        case "CSWHarvester": return "CSW Harvester";break;
+        case "CKANHarvester": return "CKAN Harvester";break;
 	}
 }
 
