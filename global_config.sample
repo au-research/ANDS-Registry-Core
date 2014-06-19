@@ -116,6 +116,9 @@ $ENV['vocab_resolving_services'] =  array(
 // allow to add different metadataPrefix for OAI harvesting
 // also can be configured to run cross walk if needed. (in the future once we have some)
 $ENV['provider_types'] = array(
+    'ISO 19139-1.4'=>array('prefix'=>'iso19139.mcp-1.4', 'name_space_uri'=>'RIFCS_NAMESPACE', 'cross_walk'=>''),
+    'ISO 19139'=>array('prefix'=>'iso19139.mcp', 'name_space_uri'=>'RIFCS_NAMESPACE', 'cross_walk'=>''),
+    'GDM'=>array('prefix'=>'http://www.isotc211.org/2005/gmd', 'name_space_uri'=>'RIFCS_NAMESPACE', 'cross_walk'=>''),
     'RIF-CS'=>array('prefix'=>'rif', 'name_space_uri'=>'RIFCS_NAMESPACE', 'cross_walk'=>''),
     'OAI DC'=>array('prefix'=>'oai_dc', 'name_space_uri'=>'RIFCS_NAMESPACE', 'cross_walk'=>'Dublin Core to RIFCS')
 );
