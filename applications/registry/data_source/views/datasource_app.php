@@ -337,6 +337,7 @@
 				<span ng-show="!importer.running">Import Records</span>
 				<span ng-show="importer.running">Importing... Please wait</span>
 			</a>
+			<a href="javascript:;" data-dismiss="modal" class="btn" ng-show="importer.result">Ok</a>
 		</div>
 	</div>
 
