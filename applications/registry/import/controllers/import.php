@@ -249,10 +249,10 @@ class Import extends MX_Controller {
 				$oldRegistryObjectIDs = $this->ro->getRecordsInDataSourceFromOldHarvest($ds->id, $batch);
 				$oldCount = sizeof($oldRegistryObjectIDs);
 				$totalCount = $ds->count_total;
-				$ds->append_log('Refresh Mode detected, records from old harvest with the same batch count: '. $oldCount. ' ; existing records count:'.$totalCount);
+				// $ds->append_log('Refresh Mode detected, records from old harvest with the same batch count: '. $oldCount. ' ; existing records count:'.$totalCount);
 
 				if($oldCount > ($totalCount * 0.2)) {
-					$ds->append_log('Records received less than 80% of existing records. Aborting records deletion');
+					$ds->append_log('Records received less than 80% of existing records. Keeping records');
 				} else {
 					try{
 						if(is_array($oldRegistryObjectIDs)){

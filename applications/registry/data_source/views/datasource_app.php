@@ -579,7 +579,7 @@
 													<label class="control-label"><br/><br/>Primary Record Key</label>
 													<div class="controls">
 														<span class="help-block">Relate all records to:</span>
-														<input type="text" class="input ro_search" ng-model="ds.primary_key_1"/>
+														<input rosearch dsid="ds.id" type="text" class="input" ng-model="ds.primary_key_1"/>
 													</div>
 												</div>
 												<div class="control-group">
@@ -613,7 +613,7 @@
 													<label class="control-label"><br/><br/>Primary Record Key</label>
 													<div class="controls">
 														<span class="help-block">Relate all records to:</span>
-														<input type="text" class="input ro_search" ng-model="ds.primary_key_2"/>
+														<input rosearch dsid="ds.id" type="text" class="input" ng-model="ds.primary_key_2"/>
 													</div>
 												</div>
 												<div class="control-group">
@@ -706,7 +706,7 @@
 															<span ng-show="item.has_authorative">(Already managed by {{item.authorative_data_source_title}} who is managing the group)</span>
 														</td>
 														<td ng-show="ds.institution_pages=='2'">
-															<input type="text" name="contributor_pages" class="ro_search" ng-model="item.contributor_page_key" ng-show="!item.has_authorative">
+															<input rosearch dsid="ds.id" type="text" name="contributor_pages" class="ro_search" ng-model="item.contributor_page_key" ng-show="!item.has_authorative">
 															<span ng-show="item.has_authorative">(Already managed by {{item.authorative_data_source_title}} who is managing the group)</span>
 														</td>
 													</tr>

@@ -46,6 +46,25 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			}
 		}
 	}).
+	directive('rosearch', function($parse) {
+		return {
+			restrict :'A',
+			scope: {
+				dsid: '='
+			},
+			link: function($scope, $ele, $attrs) {
+				$scope.$watch('dsid', function(nv){
+					if(nv){
+						if($ele.attr('name') && $ele.attr('name').match(/contributor/)) {
+							$ele.ro_search_widget({ endpoint: apps_url + "registry_object_search/", 'class': "party", datasource: $scope.dsid });
+						} else {
+							$ele.ro_search_widget({ endpoint: apps_url + "registry_object_search/", datasource: $scope.dsid, lock_presets: true });
+						}
+					}
+				});
+			}
+		}
+	}).
 	config(function($routeProvider, $locationProvider){
 		$routeProvider
 			.when('/',{
@@ -479,14 +498,6 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 function bind_plugins($scope) {
 	$('.datepicker').ands_datetimepicker();
-
-	$(".ro_search").each(function(){
-		if ($(this).attr('name') && $(this).attr('name').match(/contributor/)) {
-			$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", 'class': "party", ds: $scope.ds.id });
-		} else {
-			$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", datasource: $scope.ds.id, lock_presets: true });
-		}
-	});
 
 	function _getVocab(vocab){
 		vocab = vocab.replace("collection", "Collection");
