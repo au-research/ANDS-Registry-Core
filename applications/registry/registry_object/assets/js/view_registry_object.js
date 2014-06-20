@@ -38,6 +38,7 @@ $(function(){
 		});
 	});
 
+
     $('.status_change_action').on('click', function(e){
         e.preventDefault();
         url = base_url+'registry_object/update/';

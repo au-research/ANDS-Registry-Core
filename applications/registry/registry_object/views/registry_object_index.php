@@ -98,7 +98,7 @@ date_default_timezone_set('Australia/Melbourne');
 					<?php 
 						if($ro->status=='PUBLISHED')
 						{
-							$anchor = portal_url().$ro->slug;
+							$anchor = portal_url().$ro->slug.'/'.$ro->registry_object_id;
 							echo anchor($anchor, '<i class="icon-globe icon icon-white"></i> &nbsp; View in Research Data Australia', array('class'=>'btn btn-info','target'=>'_blank'));
 						}
 						else
@@ -206,6 +206,9 @@ date_default_timezone_set('Australia/Melbourne');
 						<a href="javascript:;" class="btn btn-small pull-right" style="margin-top:5px; margin-right:5px;" id="exportSOLR"><i class="icon-eject"></i> Show SOLR DOC</a>
 						<?php endif; ?>
 						<a href="javascript:;" class="btn btn-small pull-right" style="margin-top:5px; margin-right:5px;" id="exportRIFCS"><i class="icon-eject"></i> Show RIFCS</a>
+						<?php if($ro->native_path): ?>
+						<a href="javascript:;" class="btn btn-small pull-right" style="margin-top:5px; margin-right:5px;" id="exportNative"><i class="icon-eject"></i> Show Native</a>
+						<?php endif; ?>
 					</div>
 					<div class="widget-content">
 						<ul>

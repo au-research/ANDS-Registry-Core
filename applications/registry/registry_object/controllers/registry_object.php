@@ -604,7 +604,8 @@ class Registry_object extends MX_Controller {
 	public function get_native_record($id){
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
-		$data['txt'] = $ro->getNativeFormatData($id);
+		// $data['txt'] = $ro->getNativeFormatData($id);
+		$data['txt'] = @file_get_contents($ro->native_path);
 		$jsonData = json_encode($data);
 		echo $jsonData;
 	}

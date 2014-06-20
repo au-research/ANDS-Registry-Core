@@ -106,6 +106,7 @@ class Import extends MX_Controller {
 				$path = $path.'.xml';
 				if(is_file($path)) {
 					$xml = file_get_contents($path);
+					$this->importer->setFilePath($path);
 					try {
 						$this->importer->setXML($xml);
 						$this->importer->commit(true);
@@ -133,14 +134,6 @@ class Import extends MX_Controller {
 						throw new Exception ($e);
 						return;
 					}
-					
-					echo json_encode(
-						array(
-							'status' => 'OK',
-							'message' => $this->importer->getMessages(),
-							'error' => $this->importer->getErrors()
-						)
-					);
 
 				} else {
 					$ds->cancelHarvestRequest();
@@ -154,6 +147,7 @@ class Import extends MX_Controller {
 				$this->importer->setPartialCommitOnly(TRUE);
 
 				$files = array();
+				$natives  = array();
 				foreach($directory as $f){
 					if(endsWith($f, '.xml')) {
 						$files[] = $f;
@@ -174,6 +168,15 @@ class Import extends MX_Controller {
 
 				foreach($files as $index=>$f) {
 					$xml = file_get_contents($path.'/'.$f);
+					$this->importer->setFilePath($f);
+
+					$filename = basename($f, '.xml');
+					if(is_file($path.'/'.$filename.'.tmp')) {
+						$this->importer->setNativeFile($path.'/'.$filename.'.tmp');
+					} else {
+						$this->importer->setNativeFile(false);
+					}
+
 					try {
 						$this->importer->setXML($xml);
 						$this->importer->commit(false);
@@ -236,15 +239,41 @@ class Import extends MX_Controller {
 					$ds->setHarvestMessage('Stopped By Error: '. $e->getMessage());
 					throw new Exception ($e);
 				}
-
-				
-				echo json_encode(
-					array(
-						'status' => 'OK',
-						'message' => $this->importer->getMessages()
-					)
-				);
 			}
+
+			$ds->updateStats();
+
+			//check for refresh mode
+			if($ds->advanced_harvest_mode=='REFRESH'){
+				$this->load->model("registry_object/registry_objects", "ro");
+				$oldRegistryObjectIDs = $this->ro->getRecordsInDataSourceFromOldHarvest($ds->id, $batch);
+				$oldCount = sizeof($oldRegistryObjectIDs);
+				$totalCount = $ds->count_total;
+				$ds->append_log('Refresh Mode detected, records from old harvest with the same batch count: '. $oldCount. ' ; existing records count:'.$totalCount);
+
+				if($oldCount > ($totalCount * 0.2)) {
+					$ds->append_log('Records received less than 80% of existing records. Aborting records deletion');
+				} else {
+					try{
+						if(is_array($oldRegistryObjectIDs)){
+							$deleted_keys = $this->ro->deleteRegistryObjects($oldRegistryObjectIDs, false);
+					    	$ds->append_log('Refresh Mode detected. Deleted '. sizeof($deleted_keys['deleted_record_keys']).' record(s)');
+						}
+					} catch(Exception $e) {
+					    $ds->append_log("ERROR REMOVING RECORD FROM PREVIOUS HARVEST: ".NL.$e, HARVEST_INFO, "harvester", "HARVESTER_INFO");
+					    throw new Exception($e);
+					    return;
+					}
+				}
+			}
+			
+			
+			echo json_encode(
+				array(
+					'status' => 'OK',
+					'message' => $this->importer->getMessages()
+				)
+			);
 
 		} else {
 			throw new Exception ('No Harvest Records were found');

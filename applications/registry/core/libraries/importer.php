@@ -13,6 +13,8 @@ class Importer {
 	private $crosswalk;
 	private $harvestID;
 	private $dataSource;
+	private $filePath;
+	private $nativePath;
 	private $start_time;
 	private $partialCommitOnly;
 	private $forcePublish; // used when changing from DRAFT to PUBLISHED (ignore the QA flags, etc)
@@ -391,6 +393,9 @@ class Importer {
 					$ro->data_source_key = $this->dataSource->key;
 					$ro->group = (string) $registryObject['group'];
 					$ro->type = (string) $ro_xml['type'];
+
+					if($this->filePath) $ro->file_path = $this->filePath;
+					if($this->nativePath) $ro->native_path = $this->nativePath;
 
 					// Clean up all previous versions (set = FALSE, "prune" extRif)
 					$ro->cleanupPreviousVersions();
@@ -936,6 +941,16 @@ class Importer {
 		return;
 	}
 
+	public function setFilePath($path) {
+		$this->filePath = $path;
+		return;
+	}
+
+	public function setNativeFile($path) {
+		$this->nativePath = $path;
+		return;
+	}
+
 
 	/**
 	 * 
@@ -1368,6 +1383,8 @@ class Importer {
 		$this->crosswalk = null;
 		$this->xmlPayload = '';
 		$this->dataSource = null;
+		$this->filePath = false;
+		$this->nativePath = false;
 		$this->importedRecords = array();
 		$this->imported_record_keys = array();
 		$this->affected_record_keys = array();
