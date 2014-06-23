@@ -353,6 +353,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				$scope.ds.logs.push(this);
 			});
 			if($scope.ds.logs) $scope.ds.latest_log = $scope.ds.logs[0].id;
+			$scope.process_logs();
 		});
 	}
 
