@@ -119,7 +119,7 @@ class Import extends MX_Controller {
 					}
 
 					$ds->append_log(
-						'Harvest Completed Successfully'.NL.
+						'Harvest Completed'.NL.
 						// print_r($batch_array, true).NL.
 						$this->importer->getMessages()
 					);
@@ -210,7 +210,7 @@ class Import extends MX_Controller {
 					$ds->updateImporterMessage($message);
 					$msg = $this->importer->finishImportTasks();
 					$ds->append_log(
-						'Harvest Completed Successfully'.NL.
+						'Harvest Completed'.NL.
 						// print_r($batch_array, true).NL.
 						$msg
 					);

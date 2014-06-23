@@ -308,13 +308,11 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				if($scope.ds.logs) $scope.ds.latest_log = $scope.ds.logs[0].id;
 				if($scope.ds.logs.length < 10) $scope.nomore = true;
 				document.title = $scope.ds.title + ' - Dashboard';
-				$timeout($scope.get_latest_log, 1000);
-				$timeout($scope.refresh_harvest_status, 10000);
+				$scope.logTimer = $timeout($scope.get_latest_log, 1000);
 				$scope.process_logs();
 			} else {
 				$location.path('/');
 			}
-			
 		});
 	}
 	$scope.get($routeParams.id);
@@ -343,7 +341,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				$location.path('/');
 			}
 			$scope.process_logs();
-			if(!click) $timeout($scope.get_latest_log, timeout);
+			if(!click) $scope.logTimer = $timeout($scope.get_latest_log, timeout);
 		});
 	}
 	
@@ -376,6 +374,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			//parse message
 			try {
 				if($scope.harvester.message){
+					$scope.harvester.message = $scope.harvester.message.replace(/(\r\n|\n|\r)/gm,"");
 					$scope.harvester.message = JSON.parse($scope.harvester.message);
 					$scope.harvester.importer_message = JSON.parse($scope.harvester.importer_message);
 					if($scope.harvester.status=='HARVESTING'){
@@ -395,9 +394,16 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				console.error($scope.harvester.message);
 			}
 
-			$timeout($scope.refresh_harvest_status, 10000);
+			$scope.harvestTimer = $timeout($scope.refresh_harvest_status, 10000);
 		});
 	}
+
+	$scope.$on('$destroy', function(){
+		if($scope.logTimer) $timeout.cancel($scope.logTimer);
+		if($scope.harvestTimer) $timeout.cancel($scope.harvestTimer);
+	});
+
+	
 	
 	$scope.start_harvest = function() {
 		ds_factory.start_harvest($scope.ds.id).then(function(data) {
