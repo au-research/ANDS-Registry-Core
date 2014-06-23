@@ -9,6 +9,7 @@
 	</div>
 	<div id="breadcrumb" style="clear:both;">
 		<?php echo anchor(registry_url('auth/dashboard'), '<i class="icon-home"></i> Home'); ?>
+		<?php echo anchor(registry_url('maintenance'), 'Maintenance'); ?>
 		<a href="#/" class="current">Harvester Management</a>
 	</div>
 	
