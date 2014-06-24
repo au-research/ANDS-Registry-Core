@@ -51,7 +51,7 @@ class Identifiers_Extension extends ExtensionBase
 		{
 			$tested_ids[] = $this->ro->id;
 			$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $this->ro->id, 'identifier_type !='=> 'local'));
-			$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$this->ro->id." AND (";
+			$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$this->ro->id ." AND ro.class != 'collection' AND (";
 			$qArray = array();
 			$or = '';
 			if(sizeof($query->result_array()) > 0)
@@ -86,7 +86,7 @@ class Identifiers_Extension extends ExtensionBase
 				{
 					$tested_ids[] = $registry_object_id;
 					$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $registry_object_id, 'identifier_type !='=> 'local'));
-					$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$registry_object_id." AND (";
+					$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$registry_object_id." AND ro.class != 'collection' AND (";
 					$qArray = array();
 					$or = '';
 					if(sizeof($query->result_array()) > 0)

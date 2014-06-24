@@ -924,7 +924,7 @@ function initLinkedRecords(){
 							var msg ='<div class="linked_record_tooltip_title">'+text+'</div>';
 							msg += '<ul class="linkedrecords-list">';
 							$.each(data.content, function(){
-								msg +='<a href="'+base_url+this.slug+'?fl"><li>'+this.title+'<br/><span class="grey">Contributed by '+this.group+'</span></li></a>';
+								msg +='<a href="'+base_url+this.slug+'/'+this.id+'?fl"><li>'+this.title+'<br/><span class="grey">Contributed by '+this.group+'</span></li></a>';
 							});
 							this.set('content.text', msg);
 
