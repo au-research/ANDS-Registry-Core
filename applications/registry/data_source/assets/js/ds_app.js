@@ -399,7 +399,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 					}
 				}
 			} catch (err) {
-				console.error($scope.harvester.message);
+				console.error(err);
 			}
 
 			$scope.harvestTimer = $timeout($scope.refresh_harvest_status, 10000);

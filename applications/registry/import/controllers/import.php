@@ -121,7 +121,8 @@ class Import extends MX_Controller {
 					$ds->append_log(
 						'Harvest Completed'.NL.
 						// print_r($batch_array, true).NL.
-						$this->importer->getMessages()
+						$this->importer->getMessages().NL.
+						$this->importer->getErrors().NL
 					);
 
 					try {
@@ -212,7 +213,8 @@ class Import extends MX_Controller {
 					$ds->append_log(
 						'Harvest Completed'.NL.
 						// print_r($batch_array, true).NL.
-						$msg
+						$msg.NL.
+						$this->importer->getErrors().NL
 					);
 				} catch (Exception $e) {
 					$ds->append_log($e, 'error');
