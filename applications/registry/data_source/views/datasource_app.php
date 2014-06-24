@@ -579,7 +579,7 @@
 													<label class="control-label"><br/><br/>Primary Record Key</label>
 													<div class="controls">
 														<span class="help-block">Relate all records to:</span>
-														<input rosearch dsid="ds.id" type="text" class="input" ng-model="ds.primary_key_1"/>
+														<input dsid="ds.id" class="rosearch" type="text" class="input" ng-model="ds.primary_key_1"/>
 													</div>
 												</div>
 												<div class="control-group">
@@ -613,7 +613,7 @@
 													<label class="control-label"><br/><br/>Primary Record Key</label>
 													<div class="controls">
 														<span class="help-block">Relate all records to:</span>
-														<input rosearch dsid="ds.id" type="text" class="input" ng-model="ds.primary_key_2"/>
+														<input dsid="ds.id" class="rosearch" type="text" class="input" ng-model="ds.primary_key_2"/>
 													</div>
 												</div>
 												<div class="control-group">
