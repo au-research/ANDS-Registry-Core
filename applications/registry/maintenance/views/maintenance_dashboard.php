@@ -42,7 +42,7 @@
 							<dt>Total Harvest Started</dt><dd>{{config.harvester_status.value.total_harvests_started}}</dd>
 							<dt>Harvest Stopped</dt><dd>{{config.harvester_status.value.harvest_stopped}}</dd>
 							<dt>Harvest Completed</dt><dd>{{config.harvester_status.value.harvest_completed}}</dd>				
-							<dt>Harvest Cued</dt><dd>{{config.harvester_status.value.harvests_cued}}</dd>				
+							<dt>Harvest Queued</dt><dd>{{config.harvester_status.value.harvests_queued}}</dd>				
 						</dl>
 					</div>
 					<div class="widget-content">
