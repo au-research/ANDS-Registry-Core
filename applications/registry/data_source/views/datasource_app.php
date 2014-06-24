@@ -133,7 +133,8 @@
 					<div class="btn-group pull-right">
 						<a href="" class="btn btn-primary disabled" ng-show="harvester.status=='IMPORTING'">Importing...</a>
 						<a href="" class="btn btn-primary" ng-click="start_harvest()" ng-show="harvester.can_start"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
-						<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop"><i class="icon icon-white icon-stop"></i> Stop Harvest</a>
+						<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop && harvester.status!='SCHEDULED'"><i class="icon icon-white icon-stop"></i> Stop Harvest</a>
+						<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop && harvester.status=='SCHEDULED'">Cancel Scheduled Harvest</a>
 						<a href="" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
 						<ul class="dropdown-menu pull-right">
 							<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
