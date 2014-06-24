@@ -118,8 +118,12 @@ class Import extends MX_Controller {
 						return;
 					}
 
+					if($this->importer->getErrors()!=''){
+						$has_error_msg = 'with error(s)';
+					} else $has_error_msg = '';
+					
 					$ds->append_log(
-						'Harvest Completed'.NL.
+						'Harvest Completed '.$has_error_msg.NL.
 						// print_r($batch_array, true).NL.
 						$this->importer->getMessages().NL.
 						$this->importer->getErrors().NL
@@ -210,9 +214,11 @@ class Import extends MX_Controller {
 					);
 					$ds->updateImporterMessage($message);
 					$msg = $this->importer->finishImportTasks();
+					if($this->importer->getErrors()!=''){
+						$has_error_msg = 'with error(s)';
+					} else $has_error_msg = '';
 					$ds->append_log(
-						'Harvest Completed'.NL.
-						// print_r($batch_array, true).NL.
+						'Harvest Completed '.$has_error_msg.NL.
 						$msg.NL.
 						$this->importer->getErrors().NL
 					);
