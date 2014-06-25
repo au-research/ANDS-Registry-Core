@@ -412,12 +412,16 @@ class Import extends MX_Controller {
 				$this->importer->setDatasource($ds);
 				$this->importer->commit();
 
-				if($error_log = $this->importer->getErrors() && $error_log && $error_log!='') {
+				$error_log = $this->importer->getErrors();
+				if($error_log && $error_log!='') {
+					if($type=='xml') $ds->append_log('Import from Pasted XML failed '.$error_log, 'error');
+					if($type=='url') $ds->append_log('Import from URL failed '.NL.'URL: '.$url.NL.$error_log);
 					throw new Exception($error_log);
 				}
 			} catch (Exception $e) {
-				if($type=='xml') $ds->append_log('Import from Pasted XML failed: '.$e->getMessage(), 'error');
-				throw new Exception($e);
+				if($type=='xml') $ds->append_log('Import from Pasted XML failed '.$e->getMessage(), 'error');
+				if($type=='url') $ds->append_log('Import from URL failed '.NL.'URL: '.$url.NL.$e->getMessage());
+				throw new Exception($e->getMessage());
 				return;
 			}
 		}
