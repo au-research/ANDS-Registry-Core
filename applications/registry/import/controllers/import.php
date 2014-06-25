@@ -426,13 +426,17 @@ class Import extends MX_Controller {
 			}
 		}
 
-		$ds->append_log($this->importer->getMessages());
+		$import_msg = '';
+		if($type=='xml') $import_msg.='Import from Pasted XML Completed!'.NL;
+		if($type=='url') $import_msg.='Import from URL Completed!'.NL.'URL:'.$url.NL;
+		$import_msg.=trim($this->importer->getMessages());
+		$ds->append_log($import_msg);
 
 		//all goes well
 		echo json_encode(
 			array(
 				'status' => 'OK',
-				'message' => 'Import completed successfully! '. $this->importer->getMessages()
+				'message' => $import_msg
 			)
 		);
 	}

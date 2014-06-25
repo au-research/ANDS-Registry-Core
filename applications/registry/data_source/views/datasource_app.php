@@ -325,9 +325,7 @@
 				</form>
 			</div>
 			<div class="modal-body" ng-show="importer.result.message">
-				<div class="alert alert-{{importer.result.type}}" style="white-space: pre;">
-					{{importer.result.message}}
-				</div>
+				<div class="alert alert-{{importer.result.type}}" style="white-space: pre;">{{importer.result.message}}</div>
 			</div>
 			<div class="modal-body" ng-show="importer.running">
 				<div class="progress progress-striped active">
@@ -340,7 +338,7 @@
 				<span ng-show="!importer.running">Import Records</span>
 				<span ng-show="importer.running">Importing... Please wait</span>
 			</a>
-			<a href="javascript:;" data-dismiss="modal" class="btn" ng-show="importer.result">Ok</a>
+			<a href="javascript:;" data-dismiss="modal" class="btn" ng-show="importer.result.message">Ok</a>
 		</div>
 	</div>
 

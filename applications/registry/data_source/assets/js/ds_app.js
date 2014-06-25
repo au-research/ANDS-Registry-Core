@@ -441,10 +441,10 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 	$scope.open_import_modal = function(method) {
 		$scope.importer.type = method;
 		$scope.importer.result = {};
-		$('#importer_url').val();
-		$('#importer_xml').val();
-		$('#importer_file').val();
-		$('#importer_batch').val();
+		$('#importer_url').val('');
+		$('#importer_xml').val('');
+		$('#importer_file').val('');
+		$('#importer_batch').val('');
 		switch (method) {
 			case 'url' :
 				$scope.importer.title = 'Import From URL';
