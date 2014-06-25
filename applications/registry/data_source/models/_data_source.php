@@ -363,8 +363,7 @@ class _data_source {
 
     }
 
-    function reindexAllRecords()
-    {
+    function reindexAllRecords() {
         $this->_CI->load->library('importer');
 
         $targetRecords = array();
@@ -382,7 +381,7 @@ class _data_source {
             }
         }
 
-        $this->_CI->importer->_enrichRecords($targetRecords);
+        // $this->_CI->importer->_enrichRecords($targetRecords);
         $this->_CI->importer->_reindexRecords($targetRecords);
     }
 
