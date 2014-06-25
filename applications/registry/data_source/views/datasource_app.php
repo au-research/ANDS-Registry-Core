@@ -325,7 +325,7 @@
 				</form>
 			</div>
 			<div class="modal-body" ng-show="importer.result.message">
-				<div class="alert alert-{{importer.result.type}}" style="white-space: pre;">{{importer.result.message}}</div>
+				<div class="alert alert-{{importer.result.type}}" style="white-space: pre; word-wrap:break-word">{{importer.result.message}}</div>
 			</div>
 			<div class="modal-body" ng-show="importer.running">
 				<div class="progress progress-striped active">

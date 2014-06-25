@@ -389,7 +389,7 @@ class Import extends MX_Controller {
 		if($type=='xml') $xml = $data['xml'];
 
 		if($xml || $type=='xml') {
-			
+
 			if($type=='xml') {
 				$ds->append_log('Import from Pasted XML started at '. date( 'Y-m-d H:i:s', time()));
 			}
@@ -398,6 +398,12 @@ class Import extends MX_Controller {
 			if (strlen($xml)==0){
 				if($type=='xml') $ds->append_log('Import from Pasted XML failed: Pasted content is empty', 'error');
 				throw new Exception('Unable to retrieve any content. Make sure the content is not empty');
+				return;
+			}
+
+			if(!isValidXML($xml)){
+				if($type=='xml') $ds->append_log('Import from Pasted XML failed: Pasted content is not valid XML', 'error');
+				throw new Exception('Import failed, Input is not valid XML');
 				return;
 			}
 

@@ -390,3 +390,13 @@ function maxUploadSizeBytes()
 	$maxFileSize = min($max_upload, $max_post, $memory_limit);
 	return $maxFileSize;
 }
+
+//check if xml is valid document
+function isValidXML($xml) {
+    $doc = @simplexml_load_string($xml);
+    if ($doc) {
+        return true; //this is valid
+    } else {
+        return false; //this is not valid
+    }
+}
