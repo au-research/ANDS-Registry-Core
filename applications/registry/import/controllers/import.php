@@ -381,7 +381,7 @@ class Import extends MX_Controller {
 				$xml = @file_get_contents($url);
 			} catch (Exception $e) {
 				$ds->append_log('Import from URL ('.$data['url'].') failed'.NL.$e->getMessage(), 'error');
-				throw new Exception($e);
+				throw new Exception($e->getMessage());
 				return;
 			}
 		}
@@ -403,6 +403,7 @@ class Import extends MX_Controller {
 
 			$xml = stripXMLHeader($xml);
 
+
 			if(strpos($xml, '<registryObjects') === FALSE) $xml = wrapRegistryObjects($xml);
 
 			try {
@@ -412,19 +413,23 @@ class Import extends MX_Controller {
 				$this->importer->setCrosswalk($ds->provider_type);
 				$this->importer->setDatasource($ds);
 				$this->importer->commit();
-
-				$error_log = $this->importer->getErrors();
-				if($error_log && $error_log!='') {
-					if($type=='xml') $ds->append_log('Import from Pasted XML failed '.$error_log, 'error');
-					if($type=='url') $ds->append_log('Import from URL failed '.NL.'URL: '.$url.NL.$error_log);
-					throw new Exception($error_log);
-				}
 			} catch (Exception $e) {
 				if($type=='xml') $ds->append_log('Import from Pasted XML failed '.$e->getMessage(), 'error');
 				if($type=='url') $ds->append_log('Import from URL failed '.NL.'URL: '.$url.NL.$e->getMessage());
 				throw new Exception($e->getMessage());
 				return;
 			}
+
+			$error_log = $this->importer->getErrors();
+			if($error_log && $error_log!='') {
+				if($type=='xml') $ds->append_log('Import from Pasted XML failed due to errors'.$error_log, 'error');
+				if($type=='url') $ds->append_log('Import from URL failed due to errors '.NL.'URL: '.$url.NL.$error_log);
+				throw new Exception($error_log);
+			}
+		} elseif($type=='url') {
+			throw new Exception('URL not contain any XML');
+		} else {
+			throw new Exception('Bad XML');
 		}
 
 		$import_msg = '';
@@ -479,5 +484,6 @@ class Import extends MX_Controller {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
+		set_error_handler('json_error_handler');
 	}
 }

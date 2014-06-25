@@ -203,6 +203,11 @@ function json_exception_handler( $e ) {
     echo json_encode(array("status"=>"ERROR", "message"=> $e->getMessage()));
 }
 
+function json_error_handler($errno, $errstr, $errfile, $errline) {
+	throw new Exception('MESSAGE:'.$errstr ."on line " . $errline . " (" . $errfile .")");
+	// echo json_encode(array('status'=>'ERROR', 'message'=>'MESSAGE:'.$errstr ."on line " . $errline . " (" . $errfile .")"));
+}
+
 function asset_url( $path, $loc = 'modules')
 {
 	$CI =& get_instance();

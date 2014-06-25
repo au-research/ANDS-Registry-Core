@@ -192,7 +192,7 @@ class Importer {
 					catch(Exception $e)
 					{
 						$reValidateBeforeIngest = true;
-						$this->error_log[] = "Error whilst ingesting payload" . ": " . $e->getMessage() .NL.$payload;
+						$this->error_log[] = "Error whilst ingesting payload" . ": " . $e->getMessage() .NL;
 					}
 
 					$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
@@ -211,14 +211,12 @@ class Importer {
 							catch(Exception $e)
 							{
 								$continueWithIngest = false;
-								$this->error_log[] = "Error whilst ingesting record #" . $this->ingest_attempts . ": " . $e->getMessage() .NL.$registryObject->asXML();
+								$this->error_log[] = "Error whilst ingesting record #" . $this->ingest_attempts . ": " . $e->getMessage() .NL;
 							}
 						}
 
-
 						if($continueWithIngest)
 						{
-							
 							if((string)$registryObject->key == '')
 							{
 								$this->ingest_failures++;
@@ -1433,7 +1431,7 @@ class Importer {
 		$this->gcCyclesTime = 0;
 		$this->runBenchMark = $this->CI->config->item('importer_benchmark_enabled');
 		$this->registryMode = $this->CI->config->item('registry_mode');
-		error_reporting(E_ALL & ~E_STRICT);
+		error_reporting(E_ALL);
 	}
 
 
