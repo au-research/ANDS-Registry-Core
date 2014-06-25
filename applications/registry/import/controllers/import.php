@@ -406,6 +406,7 @@ class Import extends MX_Controller {
 			if(strpos($xml, '<registryObjects') === FALSE) $xml = wrapRegistryObjects($xml);
 
 			try {
+				$this->importer->runBenchMark = true;
 				$this->importer->setXML($xml);
 				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
 				$this->importer->setCrosswalk($ds->provider_type);

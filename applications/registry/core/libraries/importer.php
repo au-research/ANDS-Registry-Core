@@ -1341,7 +1341,7 @@ class Importer {
 	 */
 	function flushSOLRAdd()
 	{
-		if (count($this->solr_queue) == 0) return;
+		if (sizeof($this->solr_queue) == 0) return;
 
 		$solrUrl = $this->CI->config->item('solr_url');
 		$solrUpdateUrl = $solrUrl.'update/?wt=json';
@@ -1352,7 +1352,7 @@ class Importer {
 			// $result = json_decode(curl_post($solrUpdateUrl, json_encode($this->solr_queue)), true);
 			$result = json_decode($this->CI->solr->add_json(json_encode($this->solr_queue)), true);
 			if($result['responseHeader']['status'] == self::SOLR_RESPONSE_CODE_OK) {
-				$this->reindexed_records += count($this->solr_queue);
+				$this->reindexed_records += sizeof($this->solr_queue);
 			} else {
 				// Throw back the SOLR response...
 				throw new Exception(var_export((isset($result['error']['msg']) ? $result['error']['msg'] : $result),true));

@@ -65,7 +65,7 @@ class Sync_extension extends ExtensionBase{
 		$is_contributor = false;
 		$contributor = $this->ro->getContributorExists($this->ro->id);
 		if($contributor) {
-			$json['contributor'] = $contributor[0];
+			$json['contributor_page'] = $contributor[0];
 			if($contributor[0]==$this->ro->slug) $is_contributor = true;
 		}
 
