@@ -369,7 +369,7 @@ class Import extends MX_Controller {
 		$ds = $this->ds->getByID($id);
 
 		if ($type == 'url') {
-			$url = $data['url'];
+			$url = trim($data['url']);
 			if(!$url) throw new Exception('URL must be provided');
 			if (!preg_match("/^https?:\/\/.*/",$url)){
 				throw new Exception('URL must be valid http:// or https:// resource. Please try again');

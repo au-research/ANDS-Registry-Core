@@ -1433,6 +1433,7 @@ class Importer {
 		$this->gcCyclesTime = 0;
 		$this->runBenchMark = $this->CI->config->item('importer_benchmark_enabled');
 		$this->registryMode = $this->CI->config->item('registry_mode');
+		error_reporting(E_ALL & ~E_STRICT);
 	}
 
 
