@@ -192,7 +192,8 @@ class Importer {
 					catch(Exception $e)
 					{
 						$reValidateBeforeIngest = true;
-					}	
+						$this->error_log[] = "Error whilst ingesting record #" . $this->ingest_attempts . ": " . $e->getMessage() .NL.$registryObject->asXML();
+					}
 
 					$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
 
