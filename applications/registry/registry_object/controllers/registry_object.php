@@ -604,8 +604,7 @@ class Registry_object extends MX_Controller {
 	public function get_native_record($id){
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
-		// $data['txt'] = $ro->getNativeFormatData($id);
-		$data['txt'] = @file_get_contents($ro->native_path);
+		$data['txt'] = $ro->getNativeFormatData($id);
 		$jsonData = json_encode($data);
 		echo $jsonData;
 	}
@@ -1122,7 +1121,7 @@ class Registry_object extends MX_Controller {
        $ro = $this->ro->getByID($registry_object_id);
        $data = $ro->transformToEndnote();
 
-       header('Content-type: application/x-research-info-systems');
+       //header('Content-type: application/x-research-info-systems');
 
        print($data);
 

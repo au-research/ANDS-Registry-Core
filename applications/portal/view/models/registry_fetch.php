@@ -5,7 +5,9 @@ class Registry_fetch extends CI_Model
 
 	function transformExtrifToHTMLStandardRecord($extrif)
 	{
-		$xsl_args = array(
+
+
+        $xsl_args = array(
 			'base_url' => base_url(),
 		);
 
@@ -352,6 +354,14 @@ function fetchContributorDataById($id)
 		$response = json_decode(@file_get_contents($url), true);
 		return $response;
 	}
+
+    function fetchCollectionCreators()
+    {
+        $url = $this->config->item('registry_endpoint') . "getCollectionCreators";
+        $response = @file_get_contents($url);
+        return $response;
+    }
+
 
 }
 class PageNotValidException extends Exception {}

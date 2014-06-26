@@ -450,6 +450,12 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		echo json_encode(array("contents"=>$result->result()));
 	}
 
+    public function getCollectionCreators(){
+        $this->load->model('registry_object/registry_objects', 'ro');
+        $registry_object = $this->ro->getByID($this->input->get('id'));
+        echo '&rft.creator=Anonymous';
+    }
+
 	/**
 	 * Fetch canned text for contributor page
 	 *

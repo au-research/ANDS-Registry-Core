@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
 	initTips();
 
 	$('#search_box').typeahead({
@@ -57,6 +58,11 @@ $(document).ready(function() {
 		$("#slider").editRangeSlider("max",2012);
 		$("#slider").hide();
     	return false;
+    });
+
+    $('#show_dropdown').click(function() {
+        $("#export_dropdown").toggle();
+        return false;
     });
 
     $('.login_st').toggle(function(){

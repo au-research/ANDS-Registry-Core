@@ -8,7 +8,7 @@
     <xsl:param name="dateCreated"/>
     <xsl:param name="orca_view"/>  
     <xsl:param name="theGroup"/>
-    <xsl:param name="key"/>        
+    <xsl:param name="key"/>
     <xsl:variable name="objectClass" >
         <xsl:choose>
             <xsl:when test="//ro:collection">Collection</xsl:when>
@@ -240,6 +240,61 @@
     </div>
     
 <!-- DISPLAY CITATION INFORMATION -->
+
+    <!-- CREATE hidden citation Z3988 span for collections for reference library plugins -->
+    <xsl:if test = "$objectClass='Collection'">
+    <xsl:variable name="rft_id">
+        <xsl:call-template name="getId"/>
+    </xsl:variable>
+    <xsl:variable name="rft.identifier">
+        <xsl:call-template name="getIdentifier"/>
+    </xsl:variable>
+    <xsl:variable name="rft.publisher">
+       <xsl:call-template name="getPublisher"/>
+    </xsl:variable>
+    <xsl:variable name="rft.description">
+        <xsl:call-template name="getDescription"/>
+    </xsl:variable>
+        <xsl:variable name="rft.date">
+            <xsl:call-template name="getDate"/>
+        </xsl:variable>
+       <!-- <xsl:variable name="rft.creator">
+            <xsl:call-template name="getAuthors"/>
+        </xsl:variable> -->
+        <span class="Z3988">
+            <xsl:attribute name="title">
+                <xsl:text>ctx_ver=Z39.88-2004</xsl:text>
+                <xsl:text>&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc</xsl:text>
+                <xsl:text>&amp;amp;rfr_id=info%3Asid%2FANDS</xsl:text>
+                <xsl:if test="$rft_id != ''">
+                    <xsl:text>&amp;amp;rft_id=</xsl:text><xsl:value-of select="$rft_id"/>
+                </xsl:if>
+                <xsl:text>&amp;amp;rft.title=</xsl:text><xsl:value-of select="//extRif:displayTitle"/>
+                <xsl:if test="$rft.identifier != ''">
+                    <xsl:text>&amp;amp;rft.identifier=</xsl:text><xsl:value-of select="$rft.identifier"/>
+                </xsl:if>
+                <xsl:if test="$rft.publisher != ''">
+                    <xsl:text>&amp;amp;rft.publisher=</xsl:text><xsl:value-of select="$rft.publisher"/>
+                </xsl:if>
+                <xsl:if test="$rft.description != ''">
+                    <xsl:text>&amp;amp;rft.description=</xsl:text><xsl:value-of select="$rft.description"/>
+                </xsl:if>
+                <xsl:text>%%%%CREATORS%%%%</xsl:text>
+                <xsl:if test="$rft.date != ''">
+                    <xsl:text>&amp;amp;rft.date=</xsl:text><xsl:value-of select="$rft.date"/>
+                </xsl:if>
+            </xsl:attribute>
+        </span><span class="Z3988"></span>
+    </xsl:if>
+
+
+
+
+
+
+
+
+
     <xsl:choose>
       <xsl:when test="ro:citationInfo">
         <div id="citation" style="position:relative;clear:both;">
@@ -249,11 +304,11 @@
                        <!--   <a title="Add this article to your Mendeley library" target="_blank">
                        <xsl:attribute name="href">
                         http://www.mendeley.com/import/?url=<xsl:value-of select="ro:citationInfo/ro:citationMetadata/ro:url"/>
-                        </xsl:attribute> 
+                        </xsl:attribute>
                         <img src="http://www.mendeley.com/graphics/mendeley.png"/></a> -->
                         <h5>Citation (Metadata):</h5>
                         <div class="citationDisplay">
-                          <xsl:apply-templates select="ro:citationInfo/ro:citationMetadata"/> 
+                          <xsl:apply-templates select="ro:citationInfo/ro:citationMetadata"/>
                         </div>
                     </xsl:when>
                     <xsl:when test="ro:citationInfo/ro:fullCitation[text() != '']">
@@ -265,19 +320,8 @@
                           <xsl:apply-templates select="ro:citationInfo/ro:fullCitation"/>
                         </div>
                     </xsl:when>
-                    <xsl:otherwise >
-                        <!-- If we have found an empty citation element build the openURL using the object display title -->
-                        <span class="Z3988">    
-                            <xsl:attribute name="title">
-                                <xsl:text>ctx_ver=Z39.88-2004</xsl:text>
-                                <xsl:text>&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc</xsl:text>
-                                <xsl:text>&amp;amp;rfr_id=info%3Asid%2FANDS</xsl:text>
-                                <xsl:text>&amp;amp;rft.title=</xsl:text><xsl:value-of select="//extRif:displayTitle"/>
-                                <xsl:text>&amp;amp;rft.description=</xsl:text><xsl:value-of select="//extRif:displayTitle"/>
-                            </xsl:attribute>
-                        </span><span class="Z3988"></span>      
-                    </xsl:otherwise>                        
-                </xsl:choose>   
+
+                </xsl:choose>
             </div>          
         </xsl:when>
     </xsl:choose>
@@ -562,15 +606,25 @@
                 <xsl:attribute name="alt">Loading…</xsl:attribute>
             </img-->
         </div>
+          <br/><br/>
+          <a class="yellow_button" id="show_dropdown">              Export          <i class="fa fa-download"></i>
+              </a>
+          <div id="export_dropdown" class="hide">
+              <br />
+          <a>
+              <xsl:attribute name="href"><xsl:value-of select="$base_url"/>registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/></xsl:attribute>
+              Export To EndNote
+          </a>  <hr />
+          <a target="_blank">
+              <xsl:attribute name="href">http://www.myendnoteweb.com/?func=directExport&amp;partnerName=ResearchDataAustralia&amp;dataIdentifier=1&amp;dataRequestUrl=<xsl:value-of select="$base_url" />registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/> </xsl:attribute>Export To EndNote Online</a>
+          </div>
       </xsl:if>
   </div>
-  <div class="container_clear"></div>
-    <a class="yellow_button">
-        <xsl:attribute name="href"><xsl:value-of select="$base_url"/>registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/></xsl:attribute>
-        Export To Endnote
-    </a>
 
-</div> 
+  <div class="container_clear"></div>
+
+</div>
+
 <div class="container_clear"></div>
 <div class="border"></div>
 
@@ -1131,17 +1185,6 @@
 
 <xsl:template match="ro:citationInfo/ro:fullCitation">
     <p><xsl:value-of select="."/></p>
-    <span class="Z3988">    
-        <xsl:attribute name="title">
-            <xsl:text>ctx_ver=Z39.88-2004</xsl:text>
-            <xsl:text>&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc</xsl:text>
-            <xsl:text>&amp;amp;rfr_id=info%3Asid%2FANDS</xsl:text>
-            <xsl:text>&amp;amp;rft.title=</xsl:text><xsl:value-of select="//ro:displayTitle"/>
-            <xsl:text>&amp;amp;rft.description=</xsl:text><xsl:value-of select="."/>
-        </xsl:attribute>
-    </span>
-    <span class="Z3988">
-    </span>     
 </xsl:template>
 
 
@@ -1256,13 +1299,13 @@
       <a href="{./ro:url}" class="external"><xsl:value-of select="./ro:url"/></a>
     </xsl:if>
 </p>
-<span class="Z3988">   
+<!--<span class="Z3988">
    <xsl:attribute name="title">
        <xsl:text>ctx_ver=Z39.88-2004</xsl:text>
        <xsl:text>&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc</xsl:text>
        <xsl:text>&amp;amp;rfr_id=info%3Asid%2FANDS</xsl:text>
        <xsl:text>&amp;amp;rft.contributor=</xsl:text><xsl:apply-templates select="ro:contributor"/>
-       <xsl:text>&amp;amp;rft.title=</xsl:text><xsl:value-of select="./ro:title"/> 
+       <xsl:text>&amp;amp;rft.title=</xsl:text><xsl:value-of select="./ro:title"/>
        <xsl:text>&amp;amp;rft.place=</xsl:text><xsl:value-of select="./ro:placePublished"/>
        <xsl:text>&amp;amp;rft_id=</xsl:text><xsl:value-of select="./ro:url"/>
        <xsl:text>&amp;amp;rft.edition=</xsl:text><xsl:value-of select="./ro:version"/>.
@@ -1270,7 +1313,7 @@
    </xsl:attribute>
 </span>
 <span class="Z3988">
-</span>                                                     
+</span> -->
 </xsl:template> 
 
 <xsl:template match="ro:contributor">
@@ -1456,6 +1499,150 @@
   </xsl:choose>
 
 </xsl:template>
+
+
+    <xsl:template name="getId">
+        <xsl:variable name="rft_id">
+            <xsl:choose>
+                <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']">
+                    <xsl:text>info:doi</xsl:text><xsl:value-of select="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']"/>
+                </xsl:when>
+                <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle']">
+                    <xsl:value-of select="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle']"/>
+                </xsl:when>
+                <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri']">
+                    <xsl:value-of select="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri']"/>
+                </xsl:when>
+                <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']">
+                    <xsl:value-of select="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']"/>
+                </xsl:when>
+                <xsl:when test="../ro:collection/ro:identifier[@type='doi']">
+                    <xsl:text>info:doi</xsl:text><xsl:value-of select="../ro:collection/ro:identifier[@type='doi']"/>
+                </xsl:when>
+                <xsl:when test="../ro:collection/ro:identifier[@type='handle']">
+                    <xsl:value-of select="../ro:collection/ro:identifier[@type='handle']"/>
+                </xsl:when>
+                <xsl:when test="../ro:collection/ro:identifier[@type='uri']">
+                    <xsl:value-of select="../ro:collection/ro:identifier[@type='uri']"/>
+                </xsl:when>
+                <xsl:when test="../ro:collection/ro:identifier[@type='purl']">
+                    <xsl:value-of select="../ro:collection/ro:identifier[@type='purl']"/>
+                </xsl:when>
+                <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:url">
+                    <xsl:value-of select="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:url"/>
+                </xsl:when>
+                <xsl:when test="../ro:collection/ro:location/ro:address/ro:electronic[@type='url']">
+                    <xsl:value-of select="../ro:collection/ro:location/ro:address/ro:electronic[@type='url']"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="contains($rft_id,'doi.org/')">
+                <xsl:text>info:doi</xsl:text><xsl:value-of select="substring-after($rft_id,'doi.org/')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$rft_id"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="getIdentifier">
+            <xsl:choose>
+                <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier">
+                    <xsl:value-of select="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier"/>
+                </xsl:when>
+                <xsl:when test="../ro:collection/ro:identifier">
+                    <xsl:value-of select="../ro:collection/ro:identifier"/>
+                </xsl:when>
+           </xsl:choose>
+    </xsl:template>
+    <xsl:template name="getPublisher">
+        <xsl:choose>
+            <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:publisher">
+                <xsl:value-of select="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:publisher"/>
+            </xsl:when>
+            <xsl:when test="./@group">
+                <xsl:value-of select="./@group"/>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+    <xsl:template name="getDescription">
+           <xsl:choose>
+            <xsl:when test="../ro:collection/ro:description/@type='full'">
+                <xsl:value-of select="../ro:collection/ro:description"/>
+            </xsl:when>
+            <xsl:when test="../ro:collection/ro:description/@type='brief'">
+                <xsl:value-of select="../ro:collection/ro:description"/>
+            </xsl:when>
+        </xsl:choose>
+          <xsl:if test="../ro:collection/ro:description/@type='significanceStatement'">
+            <xsl:value-of select="../ro:collection/ro:description"/>
+        </xsl:if>
+        <xsl:if test="../ro:collection/ro:description/@type='notes'">
+            <xsl:value-of select="../ro:collection/ro:description"/>
+        </xsl:if>
+        <xsl:if test="../ro:collection/ro:description/@type='lineage'">
+            <xsl:value-of select="../ro:collection/ro:description"/>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="getDate">
+        <xsl:choose>
+            <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate']">
+                <xsl:value-of select="substring(../ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate'],1,4)"/>
+            </xsl:when>
+            <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='issued']">
+                <xsl:value-of select="substring(../ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='issued'],1,4)"/>
+            </xsl:when>
+            <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='created']">
+                <xsl:value-of select="substring(../ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='created'],1,4)"/>
+            </xsl:when>
+            <xsl:when test="../ro:collection/ro:dates[@type='dc.issued']">
+                <xsl:value-of select="substring(../ro:collection/ro:dates[@type='dc.issued']/ro:date,1,4)"/>
+            </xsl:when>
+            <xsl:when test="../ro:collection/ro:dates[@type='dc.available']">
+                <xsl:value-of select="substring(../ro:collection/ro:dates[@type='dc.available']/ro:date,1,4)"/>
+            </xsl:when>
+            <xsl:when test="../ro:collection/ro:dates[@type='dc.created']">
+                <xsl:value-of select="substring(../ro:collection/ro:dates[@type='dc.created']/ro:date,1,4)"/>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="getAuthors">
+
+        <xsl:choose>
+            <!-- see if we have citationMetadatata -->
+            <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
+                <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor"/>
+            </xsl:when>
+            <!-- use RelatedObjects then -->
+            <xsl:when test="../ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] or ../ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] or ../ro:collection/ro:relatedObject/ro:relation[@type = 'author'] or ../ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] or ../ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] or ../ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']">
+                <xsl:apply-templates select="../ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] | ../ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] | ../ro:collection/ro:relatedObject/ro:relation[@type = 'author'] | ../ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] | ../ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] | ../ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']" mode="author"/>
+            </xsl:when>
+            <!-- otherwise anonymus -->
+            <xsl:otherwise>
+
+                <xsl:text>&amp;rtf.creator=Anonymous</xsl:text>
+
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:template>
+
+    <xsl:template match="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
+        <xsl:text>&amp;rtf.creator=</xsl:text>
+        <xsl:variable name="title">
+            <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor/ro:namePart[@type = 'family']"/>
+            <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor/ro:namePart[@type = 'given']"/>
+            <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor/ro:namePart[@type = 'title']"/>
+            <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor/ro:namePart[@type = '' or not(@type) or @type= 'superior']"/>
+        </xsl:variable>
+        <xsl:value-of select="substring($title,1,string-length($title)-2)"/>
+    </xsl:template>
+
+    <xsl:template match="ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type = 'author'] | ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] | ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']"  mode="author">
+        <xsl:text>&amp;rtf.creator=</xsl:text><xsl:value-of select="../ro:key"/>
+    </xsl:template>
 
 <xsl:template match="extRif:extendedMetadata" priority="-1" />
 

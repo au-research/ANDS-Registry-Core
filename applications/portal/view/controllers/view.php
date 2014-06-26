@@ -208,6 +208,8 @@ class View extends MX_Controller {
 		$addTagFormDiv = $this->load->view('add_tag_form', null, true);
 		//exit();
 
+        //get the creators of this object
+        $creators =  $this->registry->fetchCollectionCreators();
 		// Generate the view page contents
 		$data['registry_object_contents'] = $this->registry->transformExtrifToHTMLStandardRecord($extRif['data']);
 
@@ -221,7 +223,7 @@ class View extends MX_Controller {
 		$data['registry_object_contents'] = str_replace('%%%%CONNECTIONS%%%%', $connDiv, $data['registry_object_contents']);
 		$data['registry_object_contents'] = str_replace('%%%%ANDS_SUGGESTED_LINKS%%%%', $suggestedLinksDiv, $data['registry_object_contents']);
 		$data['registry_object_contents'] = str_replace('%%%%ADDTAGFORM%%%%', $addTagFormDiv, $data['registry_object_contents']);
-
+        $data['registry_object_contents'] = str_replace('%%%%CREATORS%%%%', $creators, $data['registry_object_contents']);
 
 		$this->load->view('default_view', $data);
 
