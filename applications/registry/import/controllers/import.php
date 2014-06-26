@@ -45,6 +45,12 @@ class Import extends MX_Controller {
 		if(!$ds) throw new Exception('Data Source Not Found');
 		if(!$method) throw new Exception('Put harvest data method must be provided');
 
+		if($this->input->get('status') && $this->input->get('status')=='STOPPED') {
+			$error_log = $ds->getHarvestErrorLog();
+			$ds->append_log('An error has occured during harvesting'.NL.$error_log,'error');
+			return;
+		}
+
 		//get POST data from php input, mainly for angularJS POST
 		$data = file_get_contents("php://input");
 		$data = json_decode($data, true);

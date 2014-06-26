@@ -685,6 +685,18 @@ class _data_source {
         }
     }
 
+    function getHarvestErrorLog() {
+        $harvest = $this->db->get_where('harvests', array('data_source_id'=>$this->id));
+        if($harvest->num_rows() > 0) {
+            $harvest = $harvest->result();
+            $harvest = $harvest[0];
+            $message = $harvest->message;
+            $message = json_decode($message, true);
+            $error_log = $message['error']['log'];
+            return $error_log;
+        }
+    }
+
     function updateImporterMessage($msg) {
         if(is_array($msg)) $msg = json_encode($msg);
         $this->db->where("data_source_id", $this->id);
