@@ -1121,7 +1121,7 @@ class Registry_object extends MX_Controller {
        $ro = $this->ro->getByID($registry_object_id);
        $data = $ro->transformToEndnote();
 
-       //header('Content-type: application/x-research-info-systems');
+       header('Content-type: application/x-research-info-systems');
 
        print($data);
 
