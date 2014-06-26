@@ -47,7 +47,7 @@ class Import extends MX_Controller {
 
 		if($this->input->get('status') && $this->input->get('status')=='STOPPED') {
 			$error_log = $ds->getHarvestErrorLog();
-			$ds->append_log('An error has occured during harvesting'.NL.$error_log,'error');
+			$ds->append_log('Harvester Stopped By Error'.NL.$error_log,'error');
 			return;
 		}
 
