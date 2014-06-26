@@ -98,6 +98,8 @@
 		<field name="related_object_display_title_search" type="text_en_splitting" indexed="true" multiValued="true" stored="false"/>
 		<field name="related_object_relation" type="string" indexed="true" stored="true" multiValued="true"/>
 
+		<field name="theme_page" type="string" indexed="true" stored="true"/>
+
 		<field name="matching_identifier_count" type="int" indexed="true" stored="true"/>
 
 		<field name="related_info_search" type="text_en_splitting" indexed="true" stored="false"/>

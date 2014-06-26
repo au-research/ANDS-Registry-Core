@@ -1003,7 +1003,7 @@ class RegistryObjectReferenceCache {
 	static $registry_object_cache = array();
 	static $false = false;
 
-	function &getByID($id)
+	static function &getByID($id)
 	{
 		if (isset(self::$registry_object_cache[$id]))
 		{
@@ -1015,7 +1015,7 @@ class RegistryObjectReferenceCache {
 		}
 	}
 
-	function fetchCacheReference(_registry_object $ro)
+	static function fetchCacheReference(_registry_object $ro)
 	{
 		// First check the queue is initialised
 		if (!self::$recent_ids) { self::$recent_ids = new SplQueue(); }

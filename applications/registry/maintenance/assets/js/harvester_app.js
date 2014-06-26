@@ -39,10 +39,12 @@ function indexCtrl($scope, harvester, $timeout) {
 						case 'WAITING': this.can_start = false; this.can_stop = true; break;
 					}
 					try{
-						this.message = this.message.replace(/(\r\n|\n|\r)/gm,"");
-						this.message = JSON.parse(this.message);
+						if(this.message){
+							this.message = this.message.replace(/(\r\n|\n|\r)/gm,"");
+							this.message = JSON.parse(this.message);
+						}
 					} catch(err) {
-						console.error(this.data_source_id);
+						console.error(err + this.data_source_id);
 					}
 					// if(!click) $timeout($scope.refresh, 10000);
 				}

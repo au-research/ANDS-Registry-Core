@@ -14,7 +14,7 @@
 	
 	<div class="container-fluid">
 		<div class="row-fluid">
-			<div class="span3">
+			<div class="span4">
 				<div class="widget-box">
 					<div class="widget-title">
 						<h5>Index Status</h5>
@@ -24,34 +24,12 @@
 							<dt>Solr URL</dt><dd>{{status.solr.url}}</dd>
 						</dl>
 					</div>
-				</div>
-			</div>
-			<div class="span6">
-				<div class="widget-box">
-					<div class="widget-title">
-						<h5>Configurations</h5>
-					</div>
 					<div class="widget-content">
-						<form action="" class="form" ng-submit="save_config()">
-							<fieldset>
-								<legend>Harvester</legend>
-								<div class="control-group">
-									<label for="">Harvested Contents Path</label>
-									<div class="controls">
-										<input type="text" class="input-xxlarge" ng-model="config.harvested_contents_path.value">
-									</div>
-								</div>
-							</fieldset>
-							<button type="submit" class="btn btn-primary">Save</button>
-						</form>
-						<hr>
-						<div class="alert alert-success" ng-show="message">{{message}}</div>
-						<div class="alert alert-error" ng-show="error">{{error}}</div>
+						<?php echo anchor('maintenance/syncmenu', 'Sync Menu', array('class'=>'btn btn-primary')); ?>
 					</div>
 				</div>
 			</div>
-			<div class="span3">
-
+			<div class="span4">
 				<div class="widget-box">
 					<div class="widget-title">
 						<h5>Harvester Status</h5>
@@ -64,11 +42,15 @@
 							<dt>Total Harvest Started</dt><dd>{{config.harvester_status.value.total_harvests_started}}</dd>
 							<dt>Harvest Stopped</dt><dd>{{config.harvester_status.value.harvest_stopped}}</dd>
 							<dt>Harvest Completed</dt><dd>{{config.harvester_status.value.harvest_completed}}</dd>				
-							<dt>Harvest Cued</dt><dd>{{config.harvester_status.value.harvests_cued}}</dd>				
+							<dt>Harvest Queued</dt><dd>{{config.harvester_status.value.harvests_queued}}</dd>				
 						</dl>
 					</div>
+					<div class="widget-content">
+						<?php echo anchor('maintenance/harvester', 'Harvester Dashboard', array('class'=>'btn btn-primary')); ?>
+					</div>
 				</div>
-
+			</div>
+			<div class="span4">
 				<div class="widget-box">
 					<div class="widget-title">
 						<h5>Admin</h5>

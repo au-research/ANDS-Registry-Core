@@ -129,19 +129,6 @@
 
 						<a class="btn dropdown-toggle" ng-click="open_export_modal()"><i class="icon icon-hdd"></i> Export Records</a>						
 					</div>
-
-					<div class="btn-group pull-right">
-						<a href="" class="btn btn-primary disabled" ng-show="harvester.status=='IMPORTING'">Importing...</a>
-						<a href="" class="btn btn-primary" ng-click="start_harvest()" ng-show="harvester.can_start"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
-						<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop"><i class="icon icon-white icon-stop"></i> Stop Harvest</a>
-						<a href="" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-						<ul class="dropdown-menu pull-right">
-							<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
-							<li><a href="" ng-click="open_import_modal('xml')"><i class="icon icon-briefcase"></i> Import from Pasted XML</a></li>
-							<!--li><a href="" ng-click="open_import_modal('upload')"><i class="icon icon-file"></i> Import from File</a></li-->
-							<li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li>
-						</ul>
-					</div>
 				</div>
 
 				<div class="widget-box">
@@ -185,6 +172,22 @@
 						<div ng-show="harvester.message.error.log" class="alert alert-error">
 							{{harvester.message.error.log}}
 						</div>
+					</div>
+					<div class="widget-content">
+						<div class="btn-group pull-right">
+							<a href="" class="btn btn-primary disabled" ng-show="harvester.status=='IMPORTING'">Importing...</a>
+							<a href="" class="btn btn-primary" ng-click="start_harvest()" ng-show="harvester.can_start"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
+							<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop && harvester.status!='SCHEDULED'"><i class="icon icon-white icon-stop"></i> Stop Harvest</a>
+							<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop && harvester.status=='SCHEDULED'">Cancel Scheduled Harvest</a>
+							<a href="" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+							<ul class="dropdown-menu pull-right">
+								<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
+								<li><a href="" ng-click="open_import_modal('xml')"><i class="icon icon-briefcase"></i> Import from Pasted XML</a></li>
+								<!--li><a href="" ng-click="open_import_modal('upload')"><i class="icon icon-file"></i> Import from File</a></li-->
+								<li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li>
+							</ul>
+						</div>
+						<div class="clearfix"></div>
 					</div>
 				</div>
 
@@ -322,9 +325,7 @@
 				</form>
 			</div>
 			<div class="modal-body" ng-show="importer.result.message">
-				<div class="alert alert-{{importer.result.type}}" style="white-space: pre;">
-					{{importer.result.message}}
-				</div>
+				<div class="alert alert-{{importer.result.type}}" style="white-space: pre; word-wrap:break-word">{{importer.result.message}}</div>
 			</div>
 			<div class="modal-body" ng-show="importer.running">
 				<div class="progress progress-striped active">
@@ -337,7 +338,7 @@
 				<span ng-show="!importer.running">Import Records</span>
 				<span ng-show="importer.running">Importing... Please wait</span>
 			</a>
-			<a href="javascript:;" data-dismiss="modal" class="btn" ng-show="importer.result">Ok</a>
+			<a href="javascript:;" data-dismiss="modal" class="btn" ng-show="importer.result.message">Ok</a>
 		</div>
 	</div>
 
@@ -579,7 +580,7 @@
 													<label class="control-label"><br/><br/>Primary Record Key</label>
 													<div class="controls">
 														<span class="help-block">Relate all records to:</span>
-														<input rosearch dsid="ds.id" type="text" class="input" ng-model="ds.primary_key_1"/>
+														<input dsid="ds.id" class="rosearch" type="text" class="input" ng-model="ds.primary_key_1"/>
 													</div>
 												</div>
 												<div class="control-group">
@@ -613,7 +614,7 @@
 													<label class="control-label"><br/><br/>Primary Record Key</label>
 													<div class="controls">
 														<span class="help-block">Relate all records to:</span>
-														<input rosearch dsid="ds.id" type="text" class="input" ng-model="ds.primary_key_2"/>
+														<input dsid="ds.id" class="rosearch" type="text" class="input" ng-model="ds.primary_key_2"/>
 													</div>
 												</div>
 												<div class="control-group">

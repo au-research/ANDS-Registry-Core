@@ -203,6 +203,11 @@ function json_exception_handler( $e ) {
     echo json_encode(array("status"=>"ERROR", "message"=> $e->getMessage()));
 }
 
+function json_error_handler($errno, $errstr, $errfile, $errline) {
+	throw new Exception('MESSAGE:'.$errstr ."on line " . $errline . " (" . $errfile .")");
+	// echo json_encode(array('status'=>'ERROR', 'message'=>'MESSAGE:'.$errstr ."on line " . $errline . " (" . $errfile .")"));
+}
+
 function asset_url( $path, $loc = 'modules')
 {
 	$CI =& get_instance();
@@ -384,4 +389,14 @@ function maxUploadSizeBytes()
 	$memory_limit = $normalize(ini_get('memory_limit'));
 	$maxFileSize = min($max_upload, $max_post, $memory_limit);
 	return $maxFileSize;
+}
+
+//check if xml is valid document
+function isValidXML($xml) {
+    $doc = @simplexml_load_string($xml);
+    if ($doc) {
+        return true; //this is valid
+    } else {
+        return false; //this is not valid
+    }
 }

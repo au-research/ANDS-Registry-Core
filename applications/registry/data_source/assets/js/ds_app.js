@@ -46,20 +46,27 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			}
 		}
 	}).
-	directive('rosearch', function($parse) {
+	directive('rosearch', function($parse, $compile) {
 		return {
-			restrict :'A',
+			restrict :'AE',
 			scope: {
-				dsid: '='
+				dsid: '=',
+				ngModel:'='
 			},
-			link: function($scope, $ele, $attrs) {
+			replace:true,
+			require:'^ngModel',
+			link: function($scope, $ele, $attrs, ngModel) {
 				$scope.$watch('dsid', function(nv){
 					if(nv){
+						$ele.val($scope.$parent.$eval($attrs.ngModel));
 						if($ele.attr('name') && $ele.attr('name').match(/contributor/)) {
 							$ele.ro_search_widget({ endpoint: apps_url + "registry_object_search/", 'class': "party", datasource: $scope.dsid });
 						} else {
 							$ele.ro_search_widget({ endpoint: apps_url + "registry_object_search/", datasource: $scope.dsid, lock_presets: true });
 						}
+						$ele.bind('blur keyup change', function(){
+							return $scope.$apply(ngModel.$setViewValue($ele.val()));
+						});
 					}
 				});
 			}
@@ -194,7 +201,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 					'type':'success',
 					'msg': 'Datasource saved successfully'
 				}
-				$location.path('/view/'+$scope.ds.id);
+				// $location.path('/view/'+$scope.ds.id);
 			} else {
 				$scope.msg = {
 					'type':'error',
@@ -353,6 +360,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				$scope.ds.logs.push(this);
 			});
 			if($scope.ds.logs) $scope.ds.latest_log = $scope.ds.logs[0].id;
+			$scope.process_logs();
 		});
 	}
 
@@ -391,7 +399,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 					}
 				}
 			} catch (err) {
-				console.error($scope.harvester.message);
+				console.error(err);
 			}
 
 			$scope.harvestTimer = $timeout($scope.refresh_harvest_status, 10000);
@@ -432,6 +440,11 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 	$scope.open_import_modal = function(method) {
 		$scope.importer.type = method;
+		$scope.importer.result = {};
+		$('#importer_url').val('');
+		$('#importer_xml').val('');
+		$('#importer_file').val('');
+		$('#importer_batch').val('');
 		switch (method) {
 			case 'url' :
 				$scope.importer.title = 'Import From URL';
@@ -504,6 +517,14 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 function bind_plugins($scope) {
 	$('.datepicker').ands_datetimepicker();
+
+	$('.rosearch').each(function(){
+		if($(this).attr('name') && $(this).attr('name').match(/contributor/)) {
+			$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", 'class': "party", datasource: $scope.ds.id });
+		} else {
+			$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", datasource: $scope.ds.id, lock_presets: true });
+		}
+	});
 
 	function _getVocab(vocab){
 		vocab = vocab.replace("collection", "Collection");

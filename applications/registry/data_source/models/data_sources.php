@@ -302,12 +302,12 @@ class Data_sources extends CI_Model {
 class DataSourceReferenceCache {
 	static $recent = NULL;
 
-	function &getRecent()
+	static function &getRecent()
 	{
 		// force PHP to return an object reference
 		return self::$recent;
 	}
-	function set($data_source_obj)
+	static function set($data_source_obj)
 	{
 		self::$recent = $data_source_obj;
 	}

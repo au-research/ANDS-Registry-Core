@@ -193,7 +193,7 @@ class Extrif_Extension extends ExtensionBase
 					$extRifTags = $annotations->addChild('extRif:tags', NULL, EXTRIF_NAMESPACE);
 
 					foreach($tags as $tag){
-						$tag_tag = $extRifTags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
+						$tag_tag = $extRifTags->addChild('extRif:tag', str_replace("&","&amp;",$tag['name']) , EXTRIF_NAMESPACE);
 						$tag_tag->addAttribute('type', $tag['type']);
 					}
 				}
@@ -329,7 +329,7 @@ class Extrif_Extension extends ExtensionBase
 				$ext->extendedMetadata->addChild('annotations', null, EXTRIF_NAMESPACE);
 				$ext->extendedMetadata->annotations->addChild('tags', null, EXTRIF_NAMESPACE);
 				foreach($tags as $tag) {
-					$tag_node = $ext->extendedMetadata->annotations->tags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
+					$tag_node = $ext->extendedMetadata->annotations->tags->addChild('extRif:tag', str_replace('&', '&amp;' , $tag['name']), EXTRIF_NAMESPACE);
 					$tag_node->addAttribute('type', $tag['type']);
 				}
 			}

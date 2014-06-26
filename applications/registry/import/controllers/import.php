@@ -118,10 +118,15 @@ class Import extends MX_Controller {
 						return;
 					}
 
+					if($this->importer->getErrors()!=''){
+						$has_error_msg = 'with error(s)';
+					} else $has_error_msg = '';
+					
 					$ds->append_log(
-						'Harvest Completed'.NL.
+						'Harvest Completed '.$has_error_msg.NL.
 						// print_r($batch_array, true).NL.
-						$this->importer->getMessages()
+						$this->importer->getMessages().NL.
+						$this->importer->getErrors().NL
 					);
 
 					try {
@@ -209,10 +214,13 @@ class Import extends MX_Controller {
 					);
 					$ds->updateImporterMessage($message);
 					$msg = $this->importer->finishImportTasks();
+					if($this->importer->getErrors()!=''){
+						$has_error_msg = 'with error(s)';
+					} else $has_error_msg = '';
 					$ds->append_log(
-						'Harvest Completed'.NL.
-						// print_r($batch_array, true).NL.
-						$msg
+						'Harvest Completed '.$has_error_msg.NL.
+						$msg.NL.
+						$this->importer->getErrors().NL
 					);
 				} catch (Exception $e) {
 					$ds->append_log($e, 'error');
@@ -361,7 +369,7 @@ class Import extends MX_Controller {
 		$ds = $this->ds->getByID($id);
 
 		if ($type == 'url') {
-			$url = $data['url'];
+			$url = trim($data['url']);
 			if(!$url) throw new Exception('URL must be provided');
 			if (!preg_match("/^https?:\/\/.*/",$url)){
 				throw new Exception('URL must be valid http:// or https:// resource. Please try again');
@@ -373,7 +381,7 @@ class Import extends MX_Controller {
 				$xml = @file_get_contents($url);
 			} catch (Exception $e) {
 				$ds->append_log('Import from URL ('.$data['url'].') failed'.NL.$e->getMessage(), 'error');
-				throw new Exception($e);
+				throw new Exception($e->getMessage());
 				return;
 			}
 		}
@@ -381,7 +389,7 @@ class Import extends MX_Controller {
 		if($type=='xml') $xml = $data['xml'];
 
 		if($xml || $type=='xml') {
-			
+
 			if($type=='xml') {
 				$ds->append_log('Import from Pasted XML started at '. date( 'Y-m-d H:i:s', time()));
 			}
@@ -393,34 +401,54 @@ class Import extends MX_Controller {
 				return;
 			}
 
+			if(!isValidXML($xml)){
+				if($type=='xml') $ds->append_log('Import from Pasted XML failed: Pasted content is not valid XML', 'error');
+				throw new Exception('Import failed, Input is not valid XML');
+				return;
+			}
+
 			$xml = stripXMLHeader($xml);
+
 
 			if(strpos($xml, '<registryObjects') === FALSE) $xml = wrapRegistryObjects($xml);
 
 			try {
+				$this->importer->runBenchMark = true;
 				$this->importer->setXML($xml);
 				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
 				$this->importer->setCrosswalk($ds->provider_type);
 				$this->importer->setDatasource($ds);
 				$this->importer->commit();
-
-				if($error_log = $this->importer->getErrors() && $error_log && $error_log!='') {
-					throw new Exception($error_log);
-				}
 			} catch (Exception $e) {
-				if($type=='xml') $ds->append_log('Import from Pasted XML failed: '.$e->getMessage(), 'error');
-				throw new Exception($e);
+				if($type=='xml') $ds->append_log('Import from Pasted XML failed '.$e->getMessage(), 'error');
+				if($type=='url') $ds->append_log('Import from URL failed '.NL.'URL: '.$url.NL.$e->getMessage());
+				throw new Exception($e->getMessage());
 				return;
 			}
+
+			$error_log = $this->importer->getErrors();
+			if($error_log && $error_log!='') {
+				if($type=='xml') $ds->append_log('Import from Pasted XML failed due to errors'.$error_log, 'error');
+				if($type=='url') $ds->append_log('Import from URL failed due to errors '.NL.'URL: '.$url.NL.$error_log);
+				throw new Exception($error_log);
+			}
+		} elseif($type=='url') {
+			throw new Exception('URL not contain any XML');
+		} else {
+			throw new Exception('Bad XML');
 		}
 
-		$ds->append_log($this->importer->getMessages());
+		$import_msg = '';
+		if($type=='xml') $import_msg.='Import from Pasted XML Completed!'.NL;
+		if($type=='url') $import_msg.='Import from URL Completed!'.NL.'URL:'.$url.NL;
+		$import_msg.=trim($this->importer->getMessages());
+		$ds->append_log($import_msg);
 
 		//all goes well
 		echo json_encode(
 			array(
 				'status' => 'OK',
-				'message' => 'Import completed successfully! '. $this->importer->getMessages()
+				'message' => $import_msg
 			)
 		);
 	}
@@ -462,5 +490,6 @@ class Import extends MX_Controller {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
+		set_error_handler('json_error_handler');
 	}
 }
