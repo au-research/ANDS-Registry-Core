@@ -180,7 +180,7 @@ class Importer {
 					$this->ingest_failures++;
 					$continueIngest = false;
 					//$this->error_log[] = "Unable to parse XML into object (registryObject #".($idx+1)."): " . NL . $e->getMessage();
-					throw new Exception($e);
+					throw new Exception("Unable to parse XML into object".NL.$e->getMessage());
 				}
 				if($continueIngest)
 				{
@@ -1436,10 +1436,14 @@ class Importer {
 
 
 	function cleanNameSpace($rifcs){
-		$xslt_processor = Transforms::get_clean_ns_transformer();
-		$dom = new DOMDocument();
-		$dom->loadXML($rifcs);
-		return $xslt_processor->transformToXML($dom);
+		try{
+			$xslt_processor = Transforms::get_clean_ns_transformer();
+			$dom = new DOMDocument();
+			$dom->loadXML($rifcs);
+			return $xslt_processor->transformToXML($dom);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 	}
 
 

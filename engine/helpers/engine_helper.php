@@ -204,9 +204,10 @@ function json_exception_handler( $e ) {
 }
 
 function json_error_handler($errno, $errstr, $errfile, $errline) {
-	throw new Exception('MESSAGE:'.$errstr ."on line " . $errline . " (" . $errfile .")");
+	throw new Exception($errstr);
 	// echo json_encode(array('status'=>'ERROR', 'message'=>'MESSAGE:'.$errstr ."on line " . $errline . " (" . $errfile .")"));
 }
+if (function_exists('xdebug_disable')) xdebug_disable();
 
 function asset_url( $path, $loc = 'modules')
 {

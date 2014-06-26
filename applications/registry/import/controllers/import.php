@@ -280,8 +280,7 @@ class Import extends MX_Controller {
 					}
 				}
 			}
-			
-			
+	
 			echo json_encode(
 				array(
 					'status' => 'OK',
