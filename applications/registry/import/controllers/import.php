@@ -401,11 +401,11 @@ class Import extends MX_Controller {
 				return;
 			}
 
-			if(!isValidXML($xml)){
-				if($type=='xml') $ds->append_log('Import from Pasted XML failed: Pasted content is not valid XML', 'error');
-				throw new Exception('Import failed, Input is not valid XML');
-				return;
-			}
+			// if(!isValidXML($xml)){
+			// 	if($type=='xml') $ds->append_log('Import from Pasted XML failed: Pasted content is not valid XML', 'error');
+			// 	throw new Exception('Import failed, Input is not valid XML');
+			// 	return;
+			// }
 
 			$xml = stripXMLHeader($xml);
 

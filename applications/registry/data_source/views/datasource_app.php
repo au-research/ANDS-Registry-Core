@@ -164,7 +164,7 @@
 							<div class="bar" style="width: {{harvester.percent}}%;"></div>
 						</div>
 						<div class="alert alert-warning" ng-show="ds.harvest_method=='PMHHarvester' && harvester.status=='HARVESTING'">
-							This is an OAI-PMH Harvest, the progress indication might be incorrect
+							Progress indication for OAI-PMH harvest is an estimate only
 						</div>
 						<div ng-show="harvester.message.message" class="alert alert-info">
 							{{harvester.message.message}}
@@ -184,7 +184,7 @@
 								<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
 								<li><a href="" ng-click="open_import_modal('xml')"><i class="icon icon-briefcase"></i> Import from Pasted XML</a></li>
 								<!--li><a href="" ng-click="open_import_modal('upload')"><i class="icon icon-file"></i> Import from File</a></li-->
-								<li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li>
+								<!--li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li-->
 							</ul>
 						</div>
 						<div class="clearfix"></div>

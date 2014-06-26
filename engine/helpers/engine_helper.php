@@ -372,8 +372,7 @@ function check_services(){
 	}
 }
 
-function maxUploadSizeBytes()
-{
+function maxUploadSizeBytes(){
 	// Helper function to convert "2M" to bytes
 	$normalize = function($size) {
 		if (preg_match('/^([\d\.]+)([KMG])$/i', $size, $match)) {
