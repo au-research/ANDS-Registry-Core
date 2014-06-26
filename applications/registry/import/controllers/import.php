@@ -426,7 +426,7 @@ class Import extends MX_Controller {
 				$this->importer->commit();
 			} catch (Exception $e) {
 				if($type=='xml') $ds->append_log('Import from Pasted XML failed '.$e->getMessage(), 'error');
-				if($type=='url') $ds->append_log('Import from URL failed '.NL.'URL: '.$url.NL.$e->getMessage());
+				if($type=='url') $ds->append_log('Import from URL failed '.NL.'URL: '.$url.NL.$e->getMessage(), 'error');
 				throw new Exception($e->getMessage());
 				return;
 			}
@@ -434,7 +434,7 @@ class Import extends MX_Controller {
 			$error_log = $this->importer->getErrors();
 			if($error_log && $error_log!='') {
 				if($type=='xml') $ds->append_log('Import from Pasted XML failed due to errors'.$error_log, 'error');
-				if($type=='url') $ds->append_log('Import from URL failed due to errors '.NL.'URL: '.$url.NL.$error_log);
+				if($type=='url') $ds->append_log('Import from URL failed due to errors '.NL.'URL: '.$url.NL.$error_log, 'error');
 				throw new Exception($error_log);
 			}
 		} elseif($type=='url') {
