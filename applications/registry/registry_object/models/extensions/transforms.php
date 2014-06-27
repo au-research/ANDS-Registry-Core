@@ -427,7 +427,7 @@ class Transforms_Extension extends ExtensionBase
                 $author = explode(' - AU%%%',$authors[$i]);
                 $author_object = $this->_CI->ro->getPublishedByKey(trim($author[0]));
                 if($author_object->list_title){
-                    $xml_output = str_replace('%%%AU - '.trim($author[0]).' - AU%%%','AU - '.$author_object->list_title, $xml_output);
+                    $xml_output = str_replace('%%%AU - '.trim($author[0]).' - AU%%%','AU  - '.$author_object->list_title, $xml_output);
                 }else{
                     $xml_output = str_replace('%%%AU - '.trim($author[0]).' - AU%%%
 ','', $xml_output);
@@ -450,7 +450,7 @@ class Transforms_Extension extends ExtensionBase
                    {
                        if (is_array($related_party) && isset($related_party[0]))
                        {
-                           $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%','A4 - '.(string)$related_party[0]->children(EXTRIF_NAMESPACE)->related_object_display_title, $xml_output);
+                           $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%','A4  - '.(string)$related_party[0]->children(EXTRIF_NAMESPACE)->related_object_display_title, $xml_output);
                        } else{
                            $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%
 ','', $xml_output);

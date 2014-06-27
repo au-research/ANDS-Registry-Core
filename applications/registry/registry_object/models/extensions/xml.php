@@ -122,15 +122,24 @@ class XML_Extension extends ExtensionBase
 	function getExtRif()
 	{
 		$data = false;
-		$result = $this->db->select('data')->order_by('timestamp','desc')->limit(1)->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'scheme'=>EXTRIF_SCHEME));
-		if ($result->num_rows() > 0)
-		{
-			foreach($result->result_array() AS $row)
-			{
-				$data = $row['data'];
+		$result = $this->db->select('*')->order_by('timestamp','desc')->limit(1)->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'scheme'=>EXTRIF_SCHEME));
+		$rif_timestamp = $this->db->select('timestamp')->order_by('timestamp','desc')->limit(1)->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'scheme'=>RIFCS_SCHEME));
+
+		$latest_rif_timestamp = 0;
+		if ($rif_timestamp->num_rows() > 0) {
+			foreach($rif_timestamp->result_array() AS $row) {
+				$latest_rif_timestamp = $row['timestamp'];
 			}
 		}
-        else{
+
+		if ($result->num_rows() > 0) {
+			foreach($result->result_array() AS $row) {
+				$data = $row['data'];
+				if($row['timestamp'] < $latest_rif_timestamp) {
+					$data = $this->ro->enrichAndGetExtrif();
+				}
+			}
+		} else {
             $data = $this->ro->enrichAndGetExtrif();
         }
 		$result->free_result();

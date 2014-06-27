@@ -45,6 +45,12 @@ class Import extends MX_Controller {
 		if(!$ds) throw new Exception('Data Source Not Found');
 		if(!$method) throw new Exception('Put harvest data method must be provided');
 
+		if($this->input->get('status') && $this->input->get('status')=='STOPPED') {
+			$error_log = $ds->getHarvestErrorLog();
+			$ds->append_log('Harvester Stopped By Error'.NL.$error_log,'error');
+			return;
+		}
+
 		//get POST data from php input, mainly for angularJS POST
 		$data = file_get_contents("php://input");
 		$data = json_decode($data, true);
@@ -274,8 +280,7 @@ class Import extends MX_Controller {
 					}
 				}
 			}
-			
-			
+	
 			echo json_encode(
 				array(
 					'status' => 'OK',
@@ -401,11 +406,11 @@ class Import extends MX_Controller {
 				return;
 			}
 
-			if(!isValidXML($xml)){
-				if($type=='xml') $ds->append_log('Import from Pasted XML failed: Pasted content is not valid XML', 'error');
-				throw new Exception('Import failed, Input is not valid XML');
-				return;
-			}
+			// if(!isValidXML($xml)){
+			// 	if($type=='xml') $ds->append_log('Import from Pasted XML failed: Pasted content is not valid XML', 'error');
+			// 	throw new Exception('Import failed, Input is not valid XML');
+			// 	return;
+			// }
 
 			$xml = stripXMLHeader($xml);
 
@@ -421,7 +426,7 @@ class Import extends MX_Controller {
 				$this->importer->commit();
 			} catch (Exception $e) {
 				if($type=='xml') $ds->append_log('Import from Pasted XML failed '.$e->getMessage(), 'error');
-				if($type=='url') $ds->append_log('Import from URL failed '.NL.'URL: '.$url.NL.$e->getMessage());
+				if($type=='url') $ds->append_log('Import from URL failed '.NL.'URL: '.$url.NL.$e->getMessage(), 'error');
 				throw new Exception($e->getMessage());
 				return;
 			}
@@ -429,7 +434,7 @@ class Import extends MX_Controller {
 			$error_log = $this->importer->getErrors();
 			if($error_log && $error_log!='') {
 				if($type=='xml') $ds->append_log('Import from Pasted XML failed due to errors'.$error_log, 'error');
-				if($type=='url') $ds->append_log('Import from URL failed due to errors '.NL.'URL: '.$url.NL.$error_log);
+				if($type=='url') $ds->append_log('Import from URL failed due to errors '.NL.'URL: '.$url.NL.$error_log, 'error');
 				throw new Exception($error_log);
 			}
 		} elseif($type=='url') {

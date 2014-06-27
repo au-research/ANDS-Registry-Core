@@ -427,14 +427,26 @@ ul.linkedrecords-list li + li {
 
 .yellow_button {
     color: #fff;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: bold;
     background: #f58000;
     border: none;
-    padding: 11px 15px;
+    padding: 5px 5px;
     margin:10px 0;
+    width: 105px;
     text-decoration: none;
 }
 a.yellow_button:hover{
-    color:#eee;
+    color:#fff;
+
+}
+#export_dropdown{
+    background: #fff;
+    font-size: 12px;
+    margin: 10px 5px 5px;
+    border: solid #999999 1px;
+    padding: 5px 5px;
+}
+#show_dropdown{
+    cursor: pointer;
 }

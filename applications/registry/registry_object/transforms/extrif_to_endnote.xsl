@@ -24,12 +24,12 @@ Database: Research Data Australia
 Content:text/plain; charset="utf-8"
 
 
-TY - DATA
+TY  - DATA
 </xsl:text>
-<xsl:text>Y2 - </xsl:text><xsl:value-of  select="$dateRequested"/><xsl:text>
+<xsl:text>Y2  - </xsl:text><xsl:value-of  select="$dateRequested"/><xsl:text>
 </xsl:text>
 <xsl:if test="$DOI != ''">
-    <xsl:text>DO - </xsl:text><xsl:value-of select="$DOI"/><xsl:text>
+    <xsl:text>DO  - </xsl:text><xsl:value-of select="$DOI"/><xsl:text>
 </xsl:text>
 </xsl:if>
 
@@ -38,16 +38,9 @@ TY - DATA
         <xsl:call-template name="getPublishedDate"/>
 </xsl:variable>
 <xsl:if test="$publishedDate != ''">
-    <xsl:text>PY - </xsl:text><xsl:value-of select="substring($publishedDate,1,4)"/><xsl:text>
+    <xsl:text>PY  - </xsl:text><xsl:value-of select="substring($publishedDate,1,4)"/><xsl:text>
 </xsl:text>
 </xsl:if>
-
-        <xsl:if test="ro:relatedObject">
-            <xsl:text>we have a related object :)</xsl:text>  <xsl:value-of select="."/>
-        <xsl:text>
-
-        </xsl:text>
-        </xsl:if>
 
 
 <xsl:choose>
@@ -62,18 +55,18 @@ TY - DATA
   </xsl:when>
      <!-- otherwise anonymus -->
   <xsl:otherwise>
-        <xsl:text>AU - Anonymous
+        <xsl:text>AU  - Anonymous
 </xsl:text>
   </xsl:otherwise>
 </xsl:choose>
 
 <xsl:apply-templates select="extRif:extendedMetadata/extRif:displayTitle"/>
         <xsl:if test="$sourceUrl != ''">
-<xsl:text>UR - </xsl:text><xsl:value-of select="$sourceUrl"/>
+<xsl:text>UR  - </xsl:text><xsl:value-of select="$sourceUrl"/>
 <xsl:text>
 </xsl:text></xsl:if>
 <xsl:if test="extRif:extendedMetadata/extRif:dataSourceTitle">
-<xsl:text>PB - </xsl:text>
+<xsl:text>PB  - </xsl:text>
                                 <xsl:choose>
                                     <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:publisher">
                                         <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:publisher"/>
@@ -89,15 +82,16 @@ TY - DATA
     <xsl:call-template name="getCreatedDate"/>
 </xsl:variable>
 <xsl:if test="$createdDate != ''">
-    <xsl:text>DA - </xsl:text><xsl:value-of select="$createdDate"/><xsl:text>
+    <xsl:text>DA  - </xsl:text><xsl:value-of select="$createdDate"/><xsl:text>
 </xsl:text>
 </xsl:if>
 
 <xsl:if test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:version">
-    <xsl:text>ET - </xsl:text><xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:version"/>
+    <xsl:text>ET  - </xsl:text><xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:version"/><xsl:text>
+</xsl:text>
+</xsl:if>
 
- </xsl:if>
-<xsl:text>LA - English
+<xsl:text>LA  - English
 </xsl:text>
 
 
@@ -119,17 +113,16 @@ TY - DATA
 
 
 <xsl:if test="ro:collection/ro:description[@type='note']">
-<xsl:text>N1 - </xsl:text><xsl:value-of select="normalize-space(.)"/><xsl:text>
+<xsl:text>N1  - </xsl:text><xsl:value-of select="normalize-space(ro:collection/ro:description[@type='note'])" disable-output-escaping="yes"/><xsl:text>
 </xsl:text>
 </xsl:if>
 
 <xsl:if test="ro:collection/ro:coverage/ro:temporal/ro:date">
-     <xsl:text>C1 - </xsl:text><xsl:apply-templates select="ro:collection/ro:coverage/ro:temporal/ro:date"/><xsl:text>
-</xsl:text>
+     <xsl:apply-templates select="ro:collection/ro:coverage/ro:temporal/ro:date"/>
 </xsl:if>
 
  <xsl:if test="extRif:extendedMetadata/extRif:dci_description">
-      <xsl:text>AB - </xsl:text><xsl:value-of select="extRif:extendedMetadata/extRif:dci_description" disable-output-escaping="yes"/><xsl:text>
+      <xsl:text>AB  - </xsl:text><xsl:value-of select="extRif:extendedMetadata/extRif:dci_description" disable-output-escaping="yes"/><xsl:text>
 </xsl:text>
 </xsl:if>
 
@@ -148,18 +141,18 @@ TY - DATA
 </xsl:template>
 
 <xsl:template match="extRif:displayTitle">
-   <xsl:text>TI - </xsl:text><xsl:value-of select="."/><xsl:text>
+   <xsl:text>TI  - </xsl:text><xsl:value-of select="."/><xsl:text>
 </xsl:text>
 </xsl:template>
 
 
 <xsl:template match="extRif:right[@type='rightsStatement' and text()] | extRif:right[@type='accessRights' and text()] | extRif:right[@type='rights' and text()]">
-        <xsl:text>C5 - </xsl:text><xsl:value-of select="normalize-space(.)"/><xsl:text>
+        <xsl:text>C5  - </xsl:text><xsl:value-of select="normalize-space(.)"/><xsl:text>
 </xsl:text>
 </xsl:template>
 
 <xsl:template match="extRif:right[@type='licence']">
-        <xsl:text>C5 - </xsl:text><xsl:value-of select="normalize-space(.)"/><xsl:text>
+        <xsl:text>C5  - </xsl:text><xsl:value-of select="normalize-space(.)"/><xsl:text>
 </xsl:text>
 </xsl:template>
 
@@ -234,37 +227,43 @@ TY - DATA
 
 <xsl:template match="extRif:subject_resolved">
     <xsl:if test="string(number(.)) = 'NaN'">
-           <xsl:text>KW - </xsl:text><xsl:value-of select="." disable-output-escaping="yes"/><xsl:text>
+           <xsl:text>KW  - </xsl:text><xsl:value-of select="." disable-output-escaping="yes"/><xsl:text>
 </xsl:text>
      </xsl:if>
 </xsl:template>
 
 <xsl:template match="ro:spatial">
-        <xsl:text>RI - </xsl:text><xsl:value-of select="."/><xsl:text>
+        <xsl:text>RI  - </xsl:text><xsl:value-of select="."/><xsl:text>
 </xsl:text>
 </xsl:template>
 
 <xsl:template match="ro:date">
+    <xsl:text>C1  - </xsl:text>
         <xsl:choose>
             <xsl:when test="@type='dateFrom'">
                 <xsl:text>From </xsl:text>
                     <xsl:value-of select="."/>
-            </xsl:when>
+<xsl:text>
+</xsl:text>
+                        </xsl:when>
             <xsl:when test="@type='dateTo'">
                <xsl:text> To </xsl:text>
-                    <xsl:value-of select="."/>
+                    <xsl:value-of select="."/>    <xsl:text>
+</xsl:text>
             </xsl:when>
             <xsl:otherwise>
 
                     <xsl:value-of select="."/>
-
+    <xsl:text>
+</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
+
 </xsl:template>
 
 
 <xsl:template match="ro:contributor">
-    <xsl:text>AU - </xsl:text>
+    <xsl:text>AU  - </xsl:text>
         <xsl:variable name="title">
             <xsl:apply-templates select="ro:namePart[@type = 'family']"/>
             <xsl:apply-templates select="ro:namePart[@type = 'given']"/>

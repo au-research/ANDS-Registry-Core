@@ -142,6 +142,7 @@
     </div>
    </xs:documentation>
   </xs:annotation>
+  
  </xs:attribute>
  
  <xs:attribute name="id" type="xs:ID">

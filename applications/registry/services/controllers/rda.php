@@ -450,6 +450,28 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		echo json_encode(array("contents"=>$result->result()));
 	}
 
+    public function getCollectionCreators(){
+        $this->load->model('registry_object/registry_objects', 'ro');
+        $ro_id = $this->input->get('id');
+        $ro = $this->ro->getByID($ro_id);
+        $returnStr = '';
+        if($ro){
+            $connections = $ro->getAllRelatedObjects(false); // allow drafts
+            foreach($connections AS &$link)
+            {
+                if ($link['registry_object_id'] && in_array($link['relation_type'], array('author','coInvestigator','isOwnedBy','hasCollector')))
+                {
+                    $returnStr .= "&rft.creator=".$link['title'];
+                }
+            }
+        }
+        if($returnStr=='')
+        {
+            $returnStr .= '&rft.creator=Anonymous';
+        }
+        echo $returnStr;
+    }
+
 	/**
 	 * Fetch canned text for contributor page
 	 *
