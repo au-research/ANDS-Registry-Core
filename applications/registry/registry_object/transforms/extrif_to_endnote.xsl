@@ -42,13 +42,6 @@ TY  - DATA
 </xsl:text>
 </xsl:if>
 
-        <xsl:if test="ro:relatedObject">
-            <xsl:text>we have a related object :)</xsl:text>  <xsl:value-of select="."/>
-        <xsl:text>
-
-        </xsl:text>
-        </xsl:if>
-
 
 <xsl:choose>
     <!-- see if we have citationMetadatata -->
@@ -94,9 +87,10 @@ TY  - DATA
 </xsl:if>
 
 <xsl:if test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:version">
-    <xsl:text>ET  - </xsl:text><xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:version"/>
+    <xsl:text>ET  - </xsl:text><xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:version"/><xsl:text>
+</xsl:text>
+</xsl:if>
 
- </xsl:if>
 <xsl:text>LA  - English
 </xsl:text>
 
@@ -119,7 +113,7 @@ TY  - DATA
 
 
 <xsl:if test="ro:collection/ro:description[@type='note']">
-<xsl:text>N1  - </xsl:text><xsl:value-of select="normalize-space(ro:collection/ro:description[@type='note'])"/><xsl:text>
+<xsl:text>N1  - </xsl:text><xsl:value-of select="normalize-space(ro:collection/ro:description[@type='note'])" disable-output-escaping="yes"/><xsl:text>
 </xsl:text>
 </xsl:if>
 
@@ -249,7 +243,9 @@ TY  - DATA
             <xsl:when test="@type='dateFrom'">
                 <xsl:text>From </xsl:text>
                     <xsl:value-of select="."/>
-            </xsl:when>
+<xsl:text>
+</xsl:text>
+                        </xsl:when>
             <xsl:when test="@type='dateTo'">
                <xsl:text> To </xsl:text>
                     <xsl:value-of select="."/>    <xsl:text>
@@ -306,11 +302,11 @@ TY  - DATA
             <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate']">
                 <xsl:value-of select="substring(ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate'],1,4)"/>
             </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='dc.issued']">
-                <xsl:value-of select="substring(ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='dc.issued'],1,4)"/>
+            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='issued']">
+                <xsl:value-of select="substring(ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='issued'],1,4)"/>
             </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='dc.created']">
-                <xsl:value-of select="substring(ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='dc.created'],1,4)"/>
+            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='created']">
+                <xsl:value-of select="substring(ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='created'],1,4)"/>
             </xsl:when>
             <xsl:when test="ro:collection/ro:dates[@type='dc.issued']">
                 <xsl:value-of select="substring(ro:collection/ro:dates[@type='dc.issued']/ro:date,1,4)"/>

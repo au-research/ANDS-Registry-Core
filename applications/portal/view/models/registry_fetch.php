@@ -355,9 +355,9 @@ function fetchContributorDataById($id)
 		return $response;
 	}
 
-    function fetchCollectionCreators()
+    function fetchCollectionCreators($id)
     {
-        $url = $this->config->item('registry_endpoint') . "getCollectionCreators";
+        $url = $this->config->item('registry_endpoint') . "getCollectionCreators/?id=".$id;
         $response = @file_get_contents($url);
         return $response;
     }

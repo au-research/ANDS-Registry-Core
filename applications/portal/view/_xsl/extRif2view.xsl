@@ -255,12 +255,30 @@
     <xsl:variable name="rft.description">
         <xsl:call-template name="getDescription"/>
     </xsl:variable>
-        <xsl:variable name="rft.date">
-            <xsl:call-template name="getDate"/>
+    <xsl:variable name="rft.date">
+        <xsl:call-template name="getDate"/>
+    </xsl:variable>
+    <xsl:variable name="rft.creators">
+        <xsl:call-template name="getCreators"/>
+    </xsl:variable>
+    <xsl:variable name="rft.edition">
+        <xsl:call-template name="getEdition"/>
+    </xsl:variable>
+    <xsl:variable name="rft.place">
+        <xsl:call-template name="getPlace"/>
+    </xsl:variable>
+    <xsl:variable name="rft.relation">
+        <xsl:call-template name="getRelation"/>
+    </xsl:variable>
+    <xsl:variable name="rft.coverage">
+        <xsl:call-template name="getCoverage"/>
+    </xsl:variable>
+    <xsl:variable name="rft.rights">
+        <xsl:call-template name="getRights"/>
+    </xsl:variable>
+        <xsl:variable name="rft.subjects">
+            <xsl:call-template name="getSubjects"/>
         </xsl:variable>
-       <!-- <xsl:variable name="rft.creator">
-            <xsl:call-template name="getAuthors"/>
-        </xsl:variable> -->
         <span class="Z3988">
             <xsl:attribute name="title">
                 <xsl:text>ctx_ver=Z39.88-2004</xsl:text>
@@ -279,19 +297,32 @@
                 <xsl:if test="$rft.description != ''">
                     <xsl:text>&amp;amp;rft.description=</xsl:text><xsl:value-of select="$rft.description"/>
                 </xsl:if>
-                <xsl:text>%%%%CREATORS%%%%</xsl:text>
+                <xsl:value-of select="$rft.creators"></xsl:value-of>
                 <xsl:if test="$rft.date != ''">
                     <xsl:text>&amp;amp;rft.date=</xsl:text><xsl:value-of select="$rft.date"/>
                 </xsl:if>
+                <xsl:if test="$rft.edition != 'undefined' and $rft.edition != ''">
+                    <xsl:text>&amp;amp;rft.edition=</xsl:text><xsl:value-of select="$rft.edition"/>
+                </xsl:if>
+                <xsl:if test="$rft.relation != ''">
+                    <xsl:value-of select="$rft.relation"/>
+                </xsl:if>
+                <xsl:if test="$rft.coverage != ''">
+                    <xsl:value-of select="$rft.coverage"/>
+                </xsl:if>
+                <xsl:if test="$rft.rights != ''">
+                    <xsl:value-of select="$rft.rights"/>
+                </xsl:if>
+                <xsl:if test="$rft.subjects != ''">
+                    <xsl:value-of select="$rft.subjects"/>
+                </xsl:if>
+                <xsl:if test="$rft.place != 'undefined' and $rft.place != ''">
+                    <xsl:text>&amp;amp;rft.place=</xsl:text><xsl:value-of select="$rft.place"/>
+                </xsl:if>
+                <xsl:text>&amp;amp;rft.type=dataset&amp;amp;rft.language=English</xsl:text>
             </xsl:attribute>
         </span><span class="Z3988"></span>
     </xsl:if>
-
-
-
-
-
-
 
 
 
@@ -1200,7 +1231,7 @@
     </xsl:if>
     <xsl:if test="./ro:date">
         (
-        <xsl:apply-templates select="./ro:date"/>               
+        <xsl:apply-templates select="./ro:date"/>
         ):           
     </xsl:if>   
     <xsl:if test="./ro:title != ''">
@@ -1316,7 +1347,7 @@
 </span> -->
 </xsl:template> 
 
-<xsl:template match="ro:contributor">
+<xsl:template match="//ro:citationInfo/ro:citationMetadata/ro:contributor">
   <xsl:variable name="displayName">       
     <xsl:apply-templates select="./ro:namePart[@type='family']"/>
     <xsl:apply-templates select="./ro:namePart[@type='given']"/>
@@ -1324,11 +1355,12 @@
         <xsl:apply-templates select="./ro:namePart[@type='initial']"/>
     </xsl:if>   
     <xsl:apply-templates select="./ro:namePart[@type='full']"/>
+      <xsl:apply-templates select="./ro:namePart[@type='superior']"/>
     <xsl:apply-templates select="./ro:namePart[@type='']"/>
     <!-- catch-all statement for dodgy data -->
-    <xsl:apply-templates select="./ro:namePart[not (@type)] | ./ro:namePart[not(@type='family') and not(@type='given') and not(@type='initial') and not(@type='full') and not(@type='')]"/>   
+    <xsl:apply-templates select="./ro:namePart[not (@type)] | ./ro:namePart[not(@type='family') and not(@type='given') and not(@type='initial') and not(@type='full') and not(@type='superior') and not(@type='')]"/>
   </xsl:variable> 
-  <xsl:value-of select="concat(substring($displayName,1,string-length($displayName)-2),' ')"/>     
+  <xsl:value-of select="concat(substring($displayName,1,string-length($displayName)-2),' ')"/>
 </xsl:template> 
 
 <xsl:template match="//ro:citationInfo/ro:citationMetadata/ro:date[text() != '']">
@@ -1605,43 +1637,92 @@
             <xsl:when test="../ro:collection/ro:dates[@type='dc.created']">
                 <xsl:value-of select="substring(../ro:collection/ro:dates[@type='dc.created']/ro:date,1,4)"/>
             </xsl:when>
-        </xsl:choose>
-    </xsl:template>
-
-    <xsl:template name="getAuthors">
-
-        <xsl:choose>
-            <!-- see if we have citationMetadatata -->
-            <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
-                <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor"/>
+            <xsl:when test="../ro:collection/@dateModified">
+                <xsl:value-of select="../ro:collection/@dateModified"/>
             </xsl:when>
-            <!-- use RelatedObjects then -->
-            <xsl:when test="../ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] or ../ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] or ../ro:collection/ro:relatedObject/ro:relation[@type = 'author'] or ../ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] or ../ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] or ../ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']">
-                <xsl:apply-templates select="../ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] | ../ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] | ../ro:collection/ro:relatedObject/ro:relation[@type = 'author'] | ../ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] | ../ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] | ../ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']" mode="author"/>
+            <xsl:when test="../ro:collection/@dateAccessioned">
+                <xsl:value-of select="../ro:collection/@dateAccessioned"/>
             </xsl:when>
-            <!-- otherwise anonymus -->
             <xsl:otherwise>
-
-                <xsl:text>&amp;rtf.creator=Anonymous</xsl:text>
-
+                <xsl:value-of select="$dateCreated"/>
             </xsl:otherwise>
         </xsl:choose>
-
     </xsl:template>
 
-    <xsl:template match="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
-        <xsl:text>&amp;rtf.creator=</xsl:text>
-        <xsl:variable name="title">
-            <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor/ro:namePart[@type = 'family']"/>
-            <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor/ro:namePart[@type = 'given']"/>
-            <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor/ro:namePart[@type = 'title']"/>
-            <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor/ro:namePart[@type = '' or not(@type) or @type= 'superior']"/>
-        </xsl:variable>
-        <xsl:value-of select="substring($title,1,string-length($title)-2)"/>
+    <xsl:template name="getCreators">
+        <xsl:choose>
+            <xsl:when test="//ro:citationInfo/ro:citationMetadata/ro:contributor">
+               <xsl:for-each select="//ro:citationInfo/ro:citationMetadata/ro:contributor">
+                  <xsl:variable name="creatorName">
+                    <xsl:apply-templates select="./ro:namePart[@type='family']"/>
+                    <xsl:apply-templates select="./ro:namePart[@type='given']"/>
+                    <xsl:if test="./ro:namePart/@type='initial' and not(./ro:namePart/@type='given')">
+                        <xsl:apply-templates select="./ro:namePart[@type='initial']"/>
+                    </xsl:if>
+                    <xsl:apply-templates select="./ro:namePart[@type='full']"/>
+                    <xsl:apply-templates select="./ro:namePart[@type='superior']"/>
+                    <xsl:apply-templates select="./ro:namePart[@type='']"/>
+                    <!-- catch-all statement for dodgy data -->
+                    <xsl:apply-templates select="./ro:namePart[not (@type)] | ./ro:namePart[not(@type='family') and not(@type='given') and not(@type='initial') and not(@type='full') and not(@type='superior') and not(@type='')]"/>
+                  </xsl:variable>
+                  <xsl:text>&amp;rft.creator=</xsl:text><xsl:value-of select="concat(substring($creatorName,1,string-length($creatorName)-2),' ')"/>
+               </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>%%%%CREATORS%%%%</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type = 'author'] | ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] | ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']"  mode="author">
-        <xsl:text>&amp;rtf.creator=</xsl:text><xsl:value-of select="../ro:key"/>
+    <xsl:template name="getEdition">
+        <xsl:if test="//ro:citationInfo/ro:citationMetadata/ro:version">
+            <xsl:value-of select="//ro:citationInfo/ro:citationMetadata/ro:version"/>
+        </xsl:if>
+        <xsl:if test="//ro:citationInfo/ro:citationMetadata/ro:edition">
+                <xsl:value-of select="//ro:citationInfo/ro:citationMetadata/ro:edition"/>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="getPlace">
+        <xsl:if test="//ro:citationInfo/ro:citationMetadata/ro:placePublished">
+            <xsl:value-of select="//ro:citationInfo/ro:citationMetadata/ro:placePublished"/>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="getRelation">
+            <xsl:if test="//ro:collection/ro:relatedInfo[@type = 'publication']">
+                <xsl:for-each select="//ro:collection/ro:relatedInfo[@type = 'publication']">
+                    <xsl:text>&amp;rft.relation=</xsl:text><xsl:value-of select="./ro:identifier"/>
+                </xsl:for-each>
+            </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="getCoverage">
+        <xsl:if test="//ro:collection/ro:coverage/ro:spatial">
+           <xsl:text>&amp;rft.coverage=</xsl:text><xsl:value-of select="//ro:collection/ro:coverage/ro:spatial"/>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="getRights">
+         <xsl:if test="//ro:collection/ro:rights/ro:rightsStatement">
+            <xsl:for-each select="//ro:collection/ro:rights/ro:rightsStatement">
+                <xsl:text>&amp;rft.rights=</xsl:text><xsl:value-of select="."/><xsl:value-of select="./@rightsUri"/>
+            </xsl:for-each>
+        </xsl:if>
+        <xsl:if test="//ro:collection/ro:rights/ro:licence">
+            <xsl:for-each select="//ro:collection/ro:rights/ro:licence">
+                <xsl:text>&amp;rft.rights=</xsl:text><xsl:value-of select="."/><xsl:text> </xsl:text><xsl:value-of select="./@rightsUri"/>
+            </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="getSubjects">
+        <xsl:if test="//extRif:subject_resolved">
+            <xsl:for-each select="//extRif:subject_resolved">
+                <xsl:if test="string(number(.)) = 'NaN'">
+                    <xsl:text>&amp;rft.subject=</xsl:text><xsl:value-of select="." disable-output-escaping="yes"/>
+                </xsl:if>
+            </xsl:for-each>
+        </xsl:if>
     </xsl:template>
 
 <xsl:template match="extRif:extendedMetadata" priority="-1" />
