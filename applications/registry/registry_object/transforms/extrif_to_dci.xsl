@@ -11,7 +11,7 @@
 
     <xsl:template match="ro:registryObject"/>
 
-    <xsl:template match="ro:registryObject[ro:collection]">
+    <xsl:template match="ro:registryObject[ro:collection/@type= 'collection' or ro:collection/@type= 'repository' or ro:collection/@type= 'dataset']">
         <xsl:variable name="sourceUrl">
             <xsl:call-template name="getSourceURL"/>
         </xsl:variable>
@@ -49,16 +49,6 @@
                             <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
                                 <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor"/>
                             </xsl:when>
-                            <!-- use RelatedObjects then -->
-                <xsl:when test="ro:relatedObject[ro:relation/@type = 'hasPrincipalInvestigator'] or ro:relatedObject[ro:relation/@type = 'principalInvestigator'] or ro:relatedObject[ro:relation/@type =  'author'] or ro:relatedObject[ro:relation/@type = 'coInvestigator'] or ro:relatedObject[ro:relation/@type =  'isOwnedBy'] or ro:relatedObject[ro:relation/@type =  'hasCollector']">
-                    <xsl:apply-templates select="ro:relatedObject[ro:relation/@type =  'hasPrincipalInvestigator'] | ro:relatedObject[ro:relation/@type = 'principalInvestigator'] | ro:relatedObject[ro:relation/@type = 'author'] | ro:relatedObject[ro:relation/@type = 'coInvestigator'] | ro:relatedObject[ro:relation/@type = 'isOwnedBy'] | ro:relatedObject[ro:relation/@type =  'hasCollector']"/>
-                </xsl:when>
-                            <!-- otherwise anonymus -->
-                            <xsl:otherwise>
-                                <Author seq="1">
-                                    <AuthorName>Anonymous</AuthorName>
-                                </Author>
-                            </xsl:otherwise>
                         </xsl:choose>
                     </AuthorList>
                     <TitleList>
@@ -203,9 +193,9 @@
 
                 </DescriptorsData>
 
-                <xsl:if test="ro:related_object[ro:relation/@type = 'isOutputOf']">
+                <xsl:if test="ro:collection/ro:relatedObject[ro:relation/@type = 'isOutputOf']">
                     <FundingInfo>
-                        <xsl:apply-templates select="ro:related_object[ro:relation/@type = 'isOutputOf']" mode="fundingInfo"/>
+                        <xsl:apply-templates select="ro:collection/ro:relatedObject[ro:relation/@type = 'isOutputOf']" mode="fundingInfo"/>
                     </FundingInfo>
                 </xsl:if>
                 <!--
@@ -395,8 +385,8 @@
         </Author>
     </xsl:template>
 
-    <xsl:template match="ro:related_object">
-        <xsl:if test="not(preceding::ro:related_object[ro:key = current()/ro:key])">
+    <xsl:template match="ro:relatedObject">
+        <xsl:if test="not(preceding::ro:relatedObject[ro:key = current()/ro:key])">
             <Author seq="{position()}" postproc="1">
                 <xsl:if test="ro:relation">
                     <xsl:attribute name="AuthorRole">
@@ -410,8 +400,8 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="ro:related_object" mode="fundingInfo">
-        <FundingInfoList>
+    <xsl:template match="ro:relatedObject" mode="fundingInfo">
+        <FundingInfoList postproc="1">
             <ParsedFunding>
                 <GrantNumber>
                     <xsl:value-of select="ro:key"/>
