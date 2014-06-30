@@ -6,16 +6,20 @@ CREATE  TABLE `dbs_registry`.`configs` (
   PRIMARY KEY (`id`) );
 ALTER TABLE `dbs_registry`.`configs` CHANGE COLUMN `value` `value` BLOB NULL DEFAULT NULL  ;
 
-CREATE  TABLE `dbs_registry`.`harvests` (
-  `harvest_id` MEDIUMINT NOT NULL AUTO_INCREMENT ,
-  `data_source_id` MEDIUMINT NOT NULL ,
-  `status` VARCHAR(45) NULL ,
-  `message` BLOB NULL ,
-  `next_run` DATETIME NULL ,
-  `last_run` DATETIME NULL ,
-  `mode` VARCHAR(45) NULL ,
-  `batch_number` VARCHAR(120) NULL ,
-  PRIMARY KEY (`harvest_id`) );
+delimiter $$
+
+CREATE TABLE `harvests` (
+  `harvest_id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `data_source_id` mediumint(9) NOT NULL,
+  `status` varchar(45) DEFAULT NULL,
+  `message` text,
+  `next_run` datetime DEFAULT NULL,
+  `last_run` datetime DEFAULT NULL,
+  `mode` varchar(45) DEFAULT NULL,
+  `batch_number` varchar(120) DEFAULT NULL,
+  `importer_message` text,
+  PRIMARY KEY (`harvest_id`)
+)
 
 ALTER TABLE `dbs_registry`.`data_sources` ADD COLUMN `title` VARCHAR(512) NULL  AFTER `slug` , ADD COLUMN `record_owner` VARCHAR(512) NULL  AFTER `title` ;
 
