@@ -492,14 +492,14 @@ class Importer {
 					{
 						$ro->addRelationships();
 						$ro->update_quality_metadata();
-						$ro->enrich();
+						// $ro->enrich();
 						unset($ro);
 						clean_cycles();
 					}
 				}
 			}
 		}
-
+		
 		else if(is_array($this->importedRecords) && count($this->importedRecords) > 0)
 		{
 

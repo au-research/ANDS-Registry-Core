@@ -18,3 +18,7 @@ CREATE  TABLE `dbs_registry`.`harvests` (
   PRIMARY KEY (`harvest_id`) );
 
 ALTER TABLE `dbs_registry`.`data_sources` ADD COLUMN `title` VARCHAR(512) NULL  AFTER `slug` , ADD COLUMN `record_owner` VARCHAR(512) NULL  AFTER `title` ;
+
+ALTER TABLE `dbs_registry`.`registry_object_identifier_relationships` 
+ADD INDEX `idx_registry_object_id` (`registry_object_id` ASC) 
+, ADD INDEX `idx_identifier` (`related_object_identifier` ASC) ;

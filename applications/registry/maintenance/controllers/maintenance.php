@@ -656,13 +656,48 @@ class Maintenance extends MX_Controller {
 
 
 	function test(){
-		set_exception_handler('json_exception_handler');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
+		// set_exception_handler('json_exception_handler');
+		// header('Cache-Control: no-cache, must-revalidate');
+		// header('Content-type: application/json');
 		$this->load->model('data_source/data_sources', 'ds');
+		$this->load->model('registry_object/registry_objects', 'ro');
+		$ds = $this->ds->getByID(191);
+		$registry_objects = $this->ro->getIDsByDataSourceID(191, true);
 
-		$ds = $this->ds->getByID(192);
-		var_dump($ds->attributes);
+		foreach($registry_objects as $ro) {
+			$this->benchmark->mark('start');
+			echo 'Title: '. $ro->title.' ID: '.$ro->id.'<br/>';
+			$this->ro->deleteRegistryObject($ro);
+			$this->benchmark->mark('end');
+			echo 'Speed: '. $this->benchmark->elapsed_time('start', 'end');
+			echo '<br/>';
+		}
+
+		// $ro = $this->ro->getByID(476039);
+		// $this->benchmark->mark('start');
+		// $related_keys = $ro->getRelatedKeys();
+		// echo '<br/>';
+		// foreach($related_keys as $rk) {
+			
+		// 	$rk_ros = $this->ro->getAllByKey($rk);
+		// 	if(is_array($rk_ros)){
+		// 		foreach($rk_ros as $rk_ro){
+		// 			$this->benchmark->mark('start_rk');
+		// 			echo 'Related Key: '. $rk_ro->title.' ID: '.$rk_ro->id.'<br/>';
+		// 			// $rk_ro->addRelationships();
+		// 			$rk_ro->update_quality_metadata();
+		// 			$this->benchmark->mark('end_rk');
+		// 			echo 'Speed: '. $this->benchmark->elapsed_time('start_rk', 'end_rk');
+		// 			echo '<br/>';
+		// 		}
+		// 	}
+			
+		// }
+		// $this->benchmark->mark('end');
+		// echo 'Speed: '. $this->benchmark->elapsed_time('start', 'end');
+
+		// var_dump(sizeof($registry_objects));
+		// var_dump($ds->attributes);
 
 	}
 

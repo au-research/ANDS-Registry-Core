@@ -220,12 +220,15 @@ class Import extends MX_Controller {
 					);
 					$ds->updateImporterMessage($message);
 					$msg = $this->importer->finishImportTasks();
+
 					if($this->importer->getErrors()!=''){
 						$has_error_msg = 'with error(s)';
 					} else $has_error_msg = '';
+
 					$ds->append_log(
 						'Harvest Completed '.$has_error_msg.NL.
-						$msg.NL.
+						// print_r($batch_array, true).NL.
+						$this->importer->getMessages().NL.
 						$this->importer->getErrors().NL
 					);
 				} catch (Exception $e) {
@@ -263,10 +266,10 @@ class Import extends MX_Controller {
 				$oldRegistryObjectIDs = $this->ro->getRecordsInDataSourceFromOldHarvest($ds->id, $batch);
 				$oldCount = sizeof($oldRegistryObjectIDs);
 				$totalCount = $ds->count_total;
-				// $ds->append_log('Refresh Mode detected, records from old harvest with the same batch count: '. $oldCount. ' ; existing records count:'.$totalCount);
+				$ds->append_log('Refresh Mode detected, records from old harvest with the same batch count: '. $oldCount. ' ; existing records count:'.$totalCount);
 
-				if($oldCount > ($totalCount * 0.2)) {
-					$ds->append_log('Records received less than 80% of existing records. Keeping records');
+				if($oldCount > ($totalCount * 0.5)) {
+					$ds->append_log('Records received less than 50% of existing records. Keeping records');
 				} else {
 					try{
 						if(is_array($oldRegistryObjectIDs)){
