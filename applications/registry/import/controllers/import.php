@@ -266,15 +266,14 @@ class Import extends MX_Controller {
 				$oldRegistryObjectIDs = $this->ro->getRecordsInDataSourceFromOldHarvest($ds->id, $batch);
 				$oldCount = sizeof($oldRegistryObjectIDs);
 				$totalCount = $ds->count_total;
-				$ds->append_log('Refresh Mode detected, records from old harvest with the same batch count: '. $oldCount. ' ; existing records count:'.$totalCount);
 
 				if($oldCount > ($totalCount * 0.5)) {
-					$ds->append_log('Records received less than 50% of existing records. Keeping records');
+					$ds->append_log('More than %50 of existing records would be deleted by Refresh. Cancelling delete.'.NL.'Records from old harvest: '.$oldCount.NL.'Total Records: '.$totalCount);
 				} else {
 					try{
 						if(is_array($oldRegistryObjectIDs)){
 							$deleted_keys = $this->ro->deleteRegistryObjects($oldRegistryObjectIDs, false);
-					    	$ds->append_log('Refresh Mode detected. Deleted '. sizeof($deleted_keys['deleted_record_keys']).' record(s)');
+					    	$ds->append_log('Refresh Mode detected. Deleted '. sizeof($deleted_keys['deleted_record_keys']).' record(s)'.NL.'Records from old harvest: '.$oldCount.NL.'Total Records: '.$totalCount);
 						}
 					} catch(Exception $e) {
 					    $ds->append_log("ERROR REMOVING RECORD FROM PREVIOUS HARVEST: ".NL.$e, HARVEST_INFO, "harvester", "HARVESTER_INFO");

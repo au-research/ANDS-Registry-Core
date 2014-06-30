@@ -201,7 +201,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 					'type':'success',
 					'msg': 'Datasource saved successfully'
 				}
-				// $location.path('/view/'+$scope.ds.id);
+				$location.path('/view/'+$scope.ds.id);
 			} else {
 				$scope.msg = {
 					'type':'error',
