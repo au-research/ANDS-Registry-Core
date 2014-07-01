@@ -412,7 +412,7 @@ class Transforms_Extension extends ExtensionBase
         try{
             $xslt_processor = Transforms::get_extrif_to_endnote_transformer();
             $dom = new DOMDocument();
-            $dom->loadXML(htmlspecialchars_decode($this->ro->getExtRif()), LIBXML_NOENT);
+            $dom->loadXML(str_replace('&', '&amp;' , $this->ro->getExtRif()), LIBXML_NOENT);
             $xslt_processor->setParameter('','dateHarvested', date("Y", $this->ro->created));
             $xslt_processor->setParameter('','dateRequested', date("Y-m-d"));
             $xslt_processor->setParameter('','portal_url', portal_url().$this->ro->slug."/".$this->ro->id);
