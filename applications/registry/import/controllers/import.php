@@ -488,6 +488,51 @@ class Import extends MX_Controller {
 		);
 	}
 
+	public function list_files($id=false) {
+		if(!$id) throw new Exception('Data Source ID required');
+		$dir = get_config_item('harvested_contents_path');
+		if(!$dir) throw new Exception('Harvested Contents Path not configured');
+
+
+		if($this->input->get('path')){
+			$path = $this->input->get('path');
+			if(!is_file($path)) throw new Exception('Path not found');
+			$content = @file_get_contents($path);
+			echo json_encode(array(
+				'status' => 'OK',
+				'content' => $content
+			));
+			return;
+		}
+
+		$path = $dir.$id;
+		if(!is_dir($path)) throw new Exception('Datasource does not have any harvested path');
+		$batches = array();
+		foreach(scandir($path) as $f){
+			if($f!="." && $f!="..") $batches[] = $f;
+		}
+		if(sizeof($batches) == 0) throw new Exception('Data source does not have any batch harvested');
+
+		$result = array();
+
+		foreach($batches as $b) {
+			$link = $path.'/'.$b;
+			if(is_file($link)) $result[] = array('type'=>'file', 'link'=>$link, 'name'=>$b);
+			if(is_dir($link)) {
+				$files = array();
+				foreach(scandir($link) as $file){
+					if($file!="." && $file!="..") $files[] = array('type'=>'file', 'link'=>$link.'/'.$file, 'name'=>$file);
+				}
+				$result[] = array('type'=>'folder', 'link'=>$link, 'files'=>$files, 'name'=>$b);
+			}
+		}
+
+		echo json_encode(array(
+			'status' => 'OK',
+			'content' => $result
+		));
+	}
+
 	/**
 	 * constructor
 	 * define header return type
