@@ -267,29 +267,32 @@ class Importer {
 			}
 
 			// Finish up by returning our stats...
-			$time_taken = sprintf ("%.3f", (float) (microtime(true) - $this->start_time));
-			$this->message_log[] = NL;
-			$this->message_log[] = "Harvest complete! Took " . ($time_taken) . "s...";
-			$this->message_log[] = "Registry Object(s) in feed: " . $this->ingest_attempts;
-			$this->message_log[] = "Registry Object(s) created: " . $this->ingest_new_record;
-			$this->message_log[] = "Registry Object(s) updated: " . $this->ingest_new_revision;
-			if ($this->ingest_failures)
-			{
-				$this->message_log[] = "Registry Object(s) failed : " . $this->ingest_failures;
-			}
-			if ($this->ingest_duplicate_ignore)
-			{
-				$this->message_log[] = "Registry Object duplicates: " . $this->ingest_duplicate_ignore;
-			}
-			
-			if($this->CI->user->hasFunction('REGISTRY_SUPERUSER')) 
-			{
-				$this->message_log[] = "Reindexed record count: " . $this->reindexed_records;
-			}
-
-			$this->message_log[] = $this->standardLog;
+			$this->populateMessageLog();
 		}
 
+	}
+
+	private function populateMessageLog() {
+		$time_taken = sprintf ("%.3f", (float) (microtime(true) - $this->start_time));
+		$this->message_log[] = NL;
+		$this->message_log[] = "Import complete! Took " . ($time_taken) . "s...";
+		$this->message_log[] = "Registry Object(s) in feed: " . $this->ingest_attempts;
+		$this->message_log[] = "Registry Object(s) created: " . $this->ingest_new_record;
+		$this->message_log[] = "Registry Object(s) updated: " . $this->ingest_new_revision;
+		$this->message_log[] = "Registry Object(s) deleted: " . count($this->deleted_record_keys);
+
+		if ($this->ingest_failures) {
+			$this->message_log[] = "Registry Object(s) failed : " . $this->ingest_failures;
+		}
+		if ($this->ingest_duplicate_ignore) {
+			$this->message_log[] = "Registry Object duplicates: " . $this->ingest_duplicate_ignore;
+		}
+		
+		if($this->CI->user->hasFunction('REGISTRY_SUPERUSER')) {
+			$this->message_log[] = "Reindexed record count: " . $this->reindexed_records;
+		}
+
+		$this->message_log[] = $this->standardLog;
 	}
 
 
@@ -555,8 +558,8 @@ class Importer {
 
 	}
 
-	public function finishImportTasks()
-	{
+	public function finishImportTasks() {
+		$this->populateMessageLog();
 		$importedRecCount = count($this->importedRecords);
 		$this->_enrichRecords();
 		$deletedCount = count($this->deleted_record_keys);
