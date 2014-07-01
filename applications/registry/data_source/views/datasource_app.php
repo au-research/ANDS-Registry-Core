@@ -759,7 +759,7 @@
 								<div class="control-group" ng-show="ds_crosswalk">
 									<label class="control-label" for="xsl_file">Data Source Crosswalk</label>
 									<div class="controls">
-										<input type="text" class="input-xlarge uneditable-input" ng-model="ds_crosswalk"/>
+										<input type="text" class="input-xlarge uneditable-input" ng-model="ds.xsl_file"/>
 									</div>
 								</div>
 

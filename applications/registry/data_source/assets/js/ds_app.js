@@ -172,7 +172,10 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 			document.title = $scope.ds.title + ' - Edit Settings';
 
 			$.each($scope.ds.harvester_methods.xsl_file, function(){
-				if(this.indexOf($scope.ds.key)!=-1) $scope.ds_crosswalk = this;
+				if(this.indexOf($scope.ds.key)!=-1) {
+					$scope.ds_crosswalk = true;
+					$scope.xsl_file = $scope.ds_crosswalk;
+				}
 			});
 		} else {
 			$location.path('/');
