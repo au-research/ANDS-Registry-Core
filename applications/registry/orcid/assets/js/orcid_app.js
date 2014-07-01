@@ -137,8 +137,7 @@ function IndexCtrl($scope, works) {
 		});
 		works.import_works(ids).then(function(data){
 			if(data!=1){
-				console.error(data);
-				$scope.import_stg = 'error';
+				window.location = base_url+'/orcid/login';
 			} else {
 				$scope.import_stg = 'complete';
 			}
