@@ -265,9 +265,6 @@ class Importer {
 			if($this->runBenchMark){
 				// $this->dataSource->append_log($taskLog, IMPORT_INFO, "importer","IMPORT_INFO");
 			}
-
-			// Finish up by returning our stats...
-			$this->populateMessageLog();
 		}
 
 	}
