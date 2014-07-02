@@ -209,7 +209,7 @@ class View extends MX_Controller {
 		//exit();
 
         //get the creators of this object
-        $creators =  $this->registry->fetchCollectionCreators();
+        $creators =  $this->registry->fetchCollectionCreators($this->input->get('id'));
 		// Generate the view page contents
 		$data['registry_object_contents'] = $this->registry->transformExtrifToHTMLStandardRecord($extRif['data']);
 
