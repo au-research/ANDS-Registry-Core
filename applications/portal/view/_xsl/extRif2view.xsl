@@ -295,7 +295,7 @@
                     <xsl:text>&amp;amp;rft.publisher=</xsl:text><xsl:value-of select="$rft.publisher"/>
                 </xsl:if>
                 <xsl:if test="$rft.description != ''">
-                    <xsl:text>&amp;amp;rft.description=</xsl:text><xsl:value-of select="$rft.description"/>
+                    <xsl:text>&amp;amp;rft.description=</xsl:text><xsl:value-of select="translate($rft.description,'&quot;','')"/>
                 </xsl:if>
                 <xsl:value-of select="$rft.creators"></xsl:value-of>
                 <xsl:if test="$rft.date != ''">
