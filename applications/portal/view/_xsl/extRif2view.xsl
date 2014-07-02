@@ -6,6 +6,7 @@
     <xsl:strip-space elements="*"/>
     <xsl:param name="dataSource" select="//extRif:extendedMetadata/extRif:dataSourceKey"/>
     <xsl:param name="dateCreated"/>
+    <xsl:param name="current_time"/>
     <xsl:param name="orca_view"/>  
     <xsl:param name="theGroup"/>
     <xsl:param name="key"/>
@@ -643,11 +644,11 @@
           <div id="export_dropdown" class="hide">
               <br />
           <a>
-              <xsl:attribute name="href"><xsl:value-of select="$base_url"/>registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/></xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="$base_url"/>registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/><xsl:text>?foo=</xsl:text><xsl:value-of select="$current_time"/></xsl:attribute>
               Export To EndNote
           </a>  <hr />
           <a target="_blank">
-              <xsl:attribute name="href">http://www.myendnoteweb.com/?func=directExport&amp;partnerName=ResearchDataAustralia&amp;dataIdentifier=1&amp;dataRequestUrl=<xsl:value-of select="$base_url" />registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/> </xsl:attribute>Export To EndNote Online</a>
+              <xsl:attribute name="href">http://www.myendnoteweb.com/?func=directExport&amp;partnerName=ResearchDataAustralia&amp;dataIdentifier=1&amp;dataRequestUrl=<xsl:value-of select="$base_url" />registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/><xsl:text>?foo=</xsl:text><xsl:value-of select="$current_time"/></xsl:attribute>Export To EndNote Online</a>
           </div>
       </xsl:if>
   </div>
