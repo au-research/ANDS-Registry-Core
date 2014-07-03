@@ -253,9 +253,6 @@
     <xsl:variable name="rft.publisher">
        <xsl:call-template name="getPublisher"/>
     </xsl:variable>
-    <xsl:variable name="rft.description">
-        <xsl:call-template name="getDescription"/>
-    </xsl:variable>
     <xsl:variable name="rft.date">
         <xsl:call-template name="getDate"/>
     </xsl:variable>
@@ -295,9 +292,9 @@
                 <xsl:if test="$rft.publisher != ''">
                     <xsl:text>&amp;amp;rft.publisher=</xsl:text><xsl:value-of select="$rft.publisher"/>
                 </xsl:if>
-                <xsl:if test="$rft.description != ''">
-                    <xsl:text>&amp;amp;rft.description=</xsl:text><xsl:value-of select="translate($rft.description,'&quot;','')"/>
-                </xsl:if>
+
+                <xsl:text>&amp;amp;rft.description=%%%%DESCRIPTIONS%%%%</xsl:text>
+
                 <xsl:value-of select="$rft.creators"></xsl:value-of>
                 <xsl:if test="$rft.date != ''">
                     <xsl:text>&amp;amp;rft.date=</xsl:text><xsl:value-of select="$rft.date"/>
@@ -1599,25 +1596,7 @@
             </xsl:when>
         </xsl:choose>
     </xsl:template>
-    <xsl:template name="getDescription">
-           <xsl:choose>
-            <xsl:when test="../ro:collection/ro:description/@type='full'">
-                <xsl:value-of select="../ro:collection/ro:description"/>
-            </xsl:when>
-            <xsl:when test="../ro:collection/ro:description/@type='brief'">
-                <xsl:value-of select="../ro:collection/ro:description"/>
-            </xsl:when>
-        </xsl:choose>
-          <xsl:if test="../ro:collection/ro:description/@type='significanceStatement'">
-            <xsl:value-of select="../ro:collection/ro:description"/>
-        </xsl:if>
-        <xsl:if test="../ro:collection/ro:description/@type='notes'">
-            <xsl:value-of select="../ro:collection/ro:description"/>
-        </xsl:if>
-        <xsl:if test="../ro:collection/ro:description/@type='lineage'">
-            <xsl:value-of select="../ro:collection/ro:description"/>
-        </xsl:if>
-    </xsl:template>
+
     <xsl:template name="getDate">
         <xsl:choose>
             <xsl:when test="../ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate']">
@@ -1667,6 +1646,7 @@
                     <xsl:apply-templates select="./ro:namePart[not (@type)] | ./ro:namePart[not(@type='family') and not(@type='given') and not(@type='initial') and not(@type='full') and not(@type='superior') and not(@type='')]"/>
                   </xsl:variable>
                   <xsl:text>&amp;rft.creator=</xsl:text><xsl:value-of select="concat(substring($creatorName,1,string-length($creatorName)-2),' ')"/>
+                   <!--<xsl:text>&amp;rft.contributor=</xsl:text><xsl:value-of select="concat(substring($creatorName,1,string-length($creatorName)-2),' ')"/>-->
                </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>

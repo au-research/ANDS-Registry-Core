@@ -194,8 +194,92 @@ class View extends MX_Controller {
 			$data['ro_slug'] = $this->input->get('slug');
 		}
 
-		
+        $data['descriptions']='';
+        $matches = array();
+        preg_match('/<description type="full">(.*)<\/description>/', $extRif['data'], $matches);
+        //$data['descriptions'] =$extRif['data'];
+        if(isset($matches[0]) && $matches[0]!=''){
+            // PHP 5.3 compatibility
+            if(defined('ENT_HTML5'))
+            {
+                $ent_mode = ENT_QUOTES | constant('ENT_HTML5');
+            }
+            else
+            {
+                $ent_mode = ENT_QUOTES;
+            }
+            $data['descriptions'] = strip_tags(html_entity_decode(html_entity_decode(str_replace('&amp;',"&",$matches[1]))));
+        }
+        if($data['descriptions']=='')
+        {
+            preg_match('/<description type="brief">(.*)<\/description>/', $extRif['data'], $matches);
+            //$data['descriptions'] =$extRif['data'];
+            if(isset($matches[0]) && $matches[0]!=''){
+                // PHP 5.3 compatibility
+                if(defined('ENT_HTML5'))
+                {
+                    $ent_mode = ENT_QUOTES | constant('ENT_HTML5');
+                }
+                else
+                {
+                    $ent_mode = ENT_QUOTES;
+                }
+                $data['descriptions'] = strip_tags(html_entity_decode(html_entity_decode(str_replace('&amp;',"&",$matches[1]))));
+            }
+        }
+        preg_match_all('/<description type="note">(.*)<\/description>/', $extRif['data'], $matches);
+        $data['matches'] =$matches;
+        if(isset($matches[0]) && $matches[0]!=''){
+            // PHP 5.3 compatibility
+            if(defined('ENT_HTML5'))
+            {
+                $ent_mode = ENT_QUOTES | constant('ENT_HTML5');
+            }
+            else
+            {
+                $ent_mode = ENT_QUOTES;
+            }
+            foreach($matches[1] as $thematch)
+            {
+                $data['descriptions'] .= " ".strip_tags(html_entity_decode(html_entity_decode(str_replace('&amp;',"&",$thematch))));
+            }
+        }
 
+        preg_match_all('/<description type="significanceStatement">(.*)<\/description>/', $extRif['data'], $matches);
+        $data['matches'] =$matches;
+        if(isset($matches[0]) && $matches[0]!=''){
+            // PHP 5.3 compatibility
+            if(defined('ENT_HTML5'))
+            {
+                $ent_mode = ENT_QUOTES | constant('ENT_HTML5');
+            }
+            else
+            {
+                $ent_mode = ENT_QUOTES;
+            }
+            foreach($matches[1] as $thematch)
+            {
+                $data['descriptions'] .= " ".strip_tags(html_entity_decode(html_entity_decode(str_replace('&amp;',"&",$thematch))));
+            }
+        }
+
+        preg_match_all('/<description type="lineage">(.*)<\/description>/', $extRif['data'], $matches);
+        $data['matches'] =$matches;
+        if(isset($matches[0]) && $matches[0]!=''){
+            // PHP 5.3 compatibility
+            if(defined('ENT_HTML5'))
+            {
+                $ent_mode = ENT_QUOTES | constant('ENT_HTML5');
+            }
+            else
+            {
+                $ent_mode = ENT_QUOTES;
+            }
+            foreach($matches[1] as $thematch)
+            {
+                $data['descriptions'] .= " ".strip_tags(html_entity_decode(html_entity_decode(str_replace('&amp;',"&",$thematch))));
+            }
+        }
 		// Render the connections box
 		$data['connections_contents'] = $connections;
 		$connDiv = $this->load->view('connections', $data, true);
@@ -208,8 +292,10 @@ class View extends MX_Controller {
 		$addTagFormDiv = $this->load->view('add_tag_form', null, true);
 		//exit();
 
-        //get the creators of this object
+        //get the creators and description of this object for the COinS
         $creators =  $this->registry->fetchCollectionCreators($this->input->get('id'));
+        $descriptions =  $data['descriptions'];
+
 		// Generate the view page contents
 		$data['registry_object_contents'] = $this->registry->transformExtrifToHTMLStandardRecord($extRif['data']);
 
@@ -224,6 +310,7 @@ class View extends MX_Controller {
 		$data['registry_object_contents'] = str_replace('%%%%ANDS_SUGGESTED_LINKS%%%%', $suggestedLinksDiv, $data['registry_object_contents']);
 		$data['registry_object_contents'] = str_replace('%%%%ADDTAGFORM%%%%', $addTagFormDiv, $data['registry_object_contents']);
         $data['registry_object_contents'] = str_replace('%%%%CREATORS%%%%', $creators, $data['registry_object_contents']);
+        $data['registry_object_contents'] = str_replace('%%%%DESCRIPTIONS%%%%', $data['descriptions'], $data['registry_object_contents']);
 
 		$this->load->view('default_view', $data);
 
