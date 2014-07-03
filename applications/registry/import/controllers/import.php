@@ -107,6 +107,10 @@ class Import extends MX_Controller {
 			$this->importer->setHarvestID($batch);
 			$this->importer->maintainStatus(); //records which already exists are harvested into their same status
 			
+			// $ds->append_log(print_r($batch_array, true));
+
+			$count_before = $ds->count_total;
+
 			if(!is_dir($path)) {
 				//is not directory, it's a file
 				$path = $path.'.xml';
@@ -265,21 +269,31 @@ class Import extends MX_Controller {
 				$this->load->model("registry_object/registry_objects", "ro");
 				$oldRegistryObjectIDs = $this->ro->getRecordsInDataSourceFromOldHarvest($ds->id, $batch);
 				$oldCount = sizeof($oldRegistryObjectIDs);
-				$totalCount = $ds->count_total;
+				$count_after = (int) $ds->count_total;
+				$count_after_delete = $count_after - $oldCount;
 
-				if($oldCount > ($totalCount * 0.5)) {
-					$ds->append_log('More than %50 of existing records would be deleted by Refresh. Cancelling delete.'.NL.'Records from old harvest: '.$oldCount.NL.'Total Records: '.$totalCount);
-				} else {
+				if(($count_after - $oldCount) > ($count_before * 0.8)) {
 					try{
 						if(is_array($oldRegistryObjectIDs)){
 							$deleted_keys = $this->ro->deleteRegistryObjects($oldRegistryObjectIDs, false);
-					    	$ds->append_log('Refresh Mode detected. Deleted '. sizeof($deleted_keys['deleted_record_keys']).' record(s)'.NL.'Records from old harvest: '.$oldCount.NL.'Total Records: '.$totalCount);
+							$ds->append_log(
+								'Refresh Mode detected'.NL.
+								'Records count before harvest: '.$count_before.NL.
+								'Records count after harvest: '.$count_after_delete.NL.
+								'Records deleted: '. sizeof($deleted_keys['deleted_record_keys'])
+							);
 						}
 					} catch(Exception $e) {
 					    $ds->append_log("ERROR REMOVING RECORD FROM PREVIOUS HARVEST: ".NL.$e, HARVEST_INFO, "harvester", "HARVESTER_INFO");
 					    throw new Exception($e);
 					    return;
 					}
+				} else {
+					$ds->append_log(
+						'Refresh Mode Detected. Total records count would be reduced by more than 20%. Keeping previous records'.NL.
+						'Records count before harvest: '.$count_before.NL.
+						'Records count after harvest: '.$count_after_delete.NL
+					);
 				}
 			}
 	
