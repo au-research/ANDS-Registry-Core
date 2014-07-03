@@ -284,6 +284,8 @@ class Core_extension extends ExtensionBase
 					$this->ro->setAttribute("manually_assessed", 'yes');
 				}
 
+				$this->ro->index_solr();
+
 				if ($error_log = $this->_CI->importer->getErrors())
 				{
 					throw new Exception("Errors occured whilst migrating to PUBLISHED status: " . NL . $error_log);

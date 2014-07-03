@@ -205,7 +205,7 @@ class Orcid extends MX_Controller {
 
 		//find parties of similar names
 		$this->solr->setOpt('fq', '+class:party');
-		$this->solr->setOpt('fq', '+display_title:('.$data['last_name'].')');
+		$this->solr->setOpt('fq', '+title_search:('.$data['last_name'].')');
 		$this->solr->executeSearch();
 		if($this->solr->getNumFound() > 0){
 			$result = $this->solr->getResult();
@@ -224,8 +224,8 @@ class Orcid extends MX_Controller {
 
 		//find parties that have the same orcid_id
 		$this->solr->clearOpt('fq');
-		$this->solr->setOpt('fq', 'class:party');
-		$this->solr->setOpt('fq', 'identifier_value:('.$data['orcid_id'].')');
+		$this->solr->setOpt('fq', '+class:party');
+		$this->solr->setOpt('fq', '+identifier_value:('.$data['orcid_id'].')');
 		$this->solr->executeSearch();
 		if($this->solr->getNumFound() > 0){
 			$result = $this->solr->getResult();
@@ -271,18 +271,21 @@ class Orcid extends MX_Controller {
 		//imported
 		$imported = $this->ro->getByAttribute('imported_by_orcid', $data['orcid_id']);
 		$imported_ids = array();
-		foreach ($imported as $i) {
-			$result['works'][] = array(
-				'type' => 'imported',
-				'id'=>$i->id,
-				'title'=>$i->title,
-				'key'=>$i->key,
-				'url'=>portal_url($i->slug),
-				'imported'=>true,
-				'in_orcid' => false
-			);
-			$imported_ids[] = $i->id;
+		if($imported && is_array($imported)){
+			foreach ($imported as $i) {
+				$result['works'][] = array(
+					'type' => 'imported',
+					'id'=>$i->id,
+					'title'=>$i->title,
+					'key'=>$i->key,
+					'url'=>portal_url($i->slug),
+					'imported'=>true,
+					'in_orcid' => false
+				);
+				$imported_ids[] = $i->id;
+			}
 		}
+		
 
 		//suggested
 		foreach($suggested_collections as $s) {

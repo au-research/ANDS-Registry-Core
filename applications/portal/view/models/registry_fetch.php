@@ -9,6 +9,7 @@ class Registry_fetch extends CI_Model
 
         $xsl_args = array(
 			'base_url' => base_url(),
+            'current_time' => time()
 		);
 
 		// Add a level of entity decoding here 

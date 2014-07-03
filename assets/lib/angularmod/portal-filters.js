@@ -145,20 +145,27 @@ angular.module('portal-filters', []).
 	        if (!local) {
 	            (local = Date.now())
 	        }
+
 	 
 	        if (angular.isDate(time)) {
 	            time = time.getTime();
 	        } else if (typeof time === "string") {
-	            time = new Date(time).getTime();
+	        	var s = time;
+				var bits = s.split(/\D/);
+				var date = new Date(bits[0], --bits[1], bits[2], bits[3], bits[4]);
+				time = date.getTime();
 	        }
-	 
+
+	     
 	        if (angular.isDate(local)) {
 	            local = local.getTime();
 	        }else if (typeof local === "string") {
 	            local = new Date(local).getTime();
 	        }
+
+	        // console.log(local, time);
 	 
-	        if (typeof time !== 'number' || typeof local !== 'number') {
+	        if (typeof time !== 'number' || typeof local !== 'number' || isNaN(time) || isNaN(local)) {
 	            return;
 	        }
 	 
@@ -172,6 +179,7 @@ angular.module('portal-filters', []).
 	            MONTH = 2629744,
 	            YEAR = 31556926,
 	            DECADE = 315569260;
+	        
 	 
 	        if (offset <= MINUTE)              span = [ '', raw ? 'now' : 'less than a minute' ];
 	        else if (offset < (MINUTE * 60))   span = [ Math.round(Math.abs(offset / MINUTE)), 'min' ];
@@ -180,6 +188,7 @@ angular.module('portal-filters', []).
 	        else if (offset < (WEEK * 52))     span = [ Math.round(Math.abs(offset / WEEK)), 'week' ];
 	        else if (offset < (YEAR * 10))     span = [ Math.round(Math.abs(offset / YEAR)), 'year' ];
 	        else if (offset < (DECADE * 100))  span = [ Math.round(Math.abs(offset / DECADE)), 'decade' ];
+	        else if (isNaN(offset))			   span = [''];
 	        else                               span = [ '', 'a long time' ];
 	 
 	        span[1] += (span[0] === 0 || span[0] > 1) ? 's' : '';
@@ -188,7 +197,7 @@ angular.module('portal-filters', []).
 	        if (raw === true) {
 	            return span;
 	        }
-	        return (time <= local) ? span + ' ago' : 'in ' + span;
+	        return (time <= local && !isNaN(time)) ? span + ' ago' : 'in ' + span;
 	    }
 	})
 ;

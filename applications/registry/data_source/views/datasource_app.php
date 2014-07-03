@@ -252,7 +252,21 @@
 					</div>
 				</div>
 
-				
+				<?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')): ?>
+				<div class="widget-box">
+					<div class="widget-title"><h5>Data Source Downloaded Path</h5></div>
+					<div class="widget-content">
+						<ul>
+							<li ng-repeat="f in files">
+								<a href="" ng-click="toggle(f)"><i class="icon" ng-class="{'file':'icon-file','folder':'icon-folder-open'}[f.type]"></i> {{f.name}}</a>
+								<ul ng-show="f.type=='folder' && f.show">
+									<li ng-repeat="fi in f.files"><a href="" ng-click="toggle(fi)"><i class="icon icon-file"></i> {{fi.name}}</a></li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<?php endif; ?>
 
 				<?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')): ?>
 				<div class="widget-box">
@@ -262,6 +276,14 @@
 				</div>
 				<?php endif; ?>
 			</div>
+		</div>
+	</div>
+
+	<div class="modal hide" id="file_content">
+		<div class="modal-header">
+			<a href="javascript:;" class="close" data-dismiss="modal">×</a>
+			<h3>File Content</h3>
+			<pre class="prettyprint linenums"><code class="language-xml" ng-bind="file_content"></code></pre>
 		</div>
 	</div>
 
@@ -737,7 +759,7 @@
 								<div class="control-group" ng-show="ds_crosswalk">
 									<label class="control-label" for="xsl_file">Data Source Crosswalk</label>
 									<div class="controls">
-										<input type="text" class="input-xlarge uneditable-input" ng-model="ds_crosswalk"/>
+										<input type="text" class="input-xlarge uneditable-input" ng-model="ds.xsl_file"/>
 									</div>
 								</div>
 

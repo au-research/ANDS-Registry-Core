@@ -5,6 +5,12 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 				if(!id) id='';
 				return $http.get(base_url+'data_source/get/'+id).then(function(response){return response.data});
 			},
+			list_files: function(id) {
+				return $http.get(base_url+'import/list_files/'+id).then(function(response){return response.data});
+			},
+			get_file: function(id, path) {
+				return $http.get(base_url+'import/list_files/'+id+'?path='+path).then(function(response){return response.data});
+			},
 			get_log: function(id, offset, limit, logid) {
 				return $http.get(base_url+'data_source/get_log/'+id+'/'+offset+'/'+limit+'/'+logid).then(function(response){return response.data});
 			},
@@ -166,7 +172,10 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 			document.title = $scope.ds.title + ' - Edit Settings';
 
 			$.each($scope.ds.harvester_methods.xsl_file, function(){
-				if(this.indexOf($scope.ds.key)!=-1) $scope.ds_crosswalk = this;
+				if(this.indexOf($scope.ds.key)!=-1) {
+					$scope.ds_crosswalk = true;
+					$scope.xsl_file = $scope.ds_crosswalk;
+				}
 			});
 		} else {
 			$location.path('/');
@@ -201,7 +210,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 					'type':'success',
 					'msg': 'Datasource saved successfully'
 				}
-				// $location.path('/view/'+$scope.ds.id);
+				$location.path('/view/'+$scope.ds.id);
 			} else {
 				$scope.msg = {
 					'type':'error',
@@ -321,6 +330,13 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				$location.path('/');
 			}
 		});
+		ds_factory.list_files(id).then(function(data){
+			if(data.status=='OK'){
+				$scope.files = data.content;
+			} else {
+				$scope.files_error_msg = data.message;
+			}
+		});
 	}
 	$scope.get($routeParams.id);
 
@@ -329,6 +345,16 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			var header = $.trim(this.log);
 			if(!this.header) this.header = header.split('\n')[0];
 		});
+	}
+
+	$scope.toggle = function(f) {
+		if(f.type=='folder') f.show = !f.show;
+		if(f.type=='file') {
+			ds_factory.get_file($scope.ds.id, f.link).then(function(data){
+				$scope.file_content = data.content;
+				$('#file_content').modal('show');
+			});
+		}
 	}
 
 	$scope.get_latest_log = function(click) {

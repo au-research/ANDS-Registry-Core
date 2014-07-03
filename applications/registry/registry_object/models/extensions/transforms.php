@@ -400,7 +400,7 @@ class Transforms_Extension extends ExtensionBase
         try{
             $xslt_processor = Transforms::get_extrif_to_endnote_transformer();
             $dom = new DOMDocument();
-            $dom->loadXML(htmlspecialchars_decode($this->ro->getExtRif()), LIBXML_NOENT);
+            $dom->loadXML(str_replace('&', '&amp;' , $this->ro->getExtRif()), LIBXML_NOENT);
             $xslt_processor->setParameter('','dateHarvested', date("Y", $this->ro->created));
             $xslt_processor->setParameter('','dateRequested', date("Y-m-d"));
             $xslt_processor->setParameter('','portal_url', portal_url().$this->ro->slug."/".$this->ro->id);
@@ -429,16 +429,17 @@ class Transforms_Extension extends ExtensionBase
                $funder = explode(' - A4%%%',$funders[$i]);
                $grant_object = $this->_CI->ro->getPublishedByKey(trim($funder[0]));
 
-               if ($grant_object && $grant_object->status == PUBLISHED && $grant_sxml = $grant_object->getSimpleXML(NULL, true))
+               if ($grant_object && $grant_object->status == PUBLISHED)
                {
-                   $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc']");
-
-                   $related_party = $grant_sxml->xpath("//extRif:related_object[extRif:related_object_relation = 'isFunderOf']");
+                   $grant_sxml = $grant_object->getSimpleXML(NULL, true);
+                   // Handle the researcher IDs (using the normalisation_helper.php)
+                   $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
+                   $related_party = $grant_object->getRelatedObjectsByClassAndRelationshipType(['party'] ,['isFunderOf','isFundedBy']);
                    if (is_array($grant_id))
                    {
                        if (is_array($related_party) && isset($related_party[0]))
                        {
-                           $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%','A4  - '.(string)$related_party[0]->children(EXTRIF_NAMESPACE)->related_object_display_title, $xml_output);
+                           $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%','A4  - '.$related_party[0]['title'], $xml_output);
                        } else{
                            $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%
 ','', $xml_output);

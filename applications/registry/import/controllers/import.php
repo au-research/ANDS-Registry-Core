@@ -220,12 +220,15 @@ class Import extends MX_Controller {
 					);
 					$ds->updateImporterMessage($message);
 					$msg = $this->importer->finishImportTasks();
+
 					if($this->importer->getErrors()!=''){
 						$has_error_msg = 'with error(s)';
 					} else $has_error_msg = '';
+
 					$ds->append_log(
 						'Harvest Completed '.$has_error_msg.NL.
-						$msg.NL.
+						// print_r($batch_array, true).NL.
+						$this->importer->getMessages().NL.
 						$this->importer->getErrors().NL
 					);
 				} catch (Exception $e) {
@@ -263,15 +266,14 @@ class Import extends MX_Controller {
 				$oldRegistryObjectIDs = $this->ro->getRecordsInDataSourceFromOldHarvest($ds->id, $batch);
 				$oldCount = sizeof($oldRegistryObjectIDs);
 				$totalCount = $ds->count_total;
-				// $ds->append_log('Refresh Mode detected, records from old harvest with the same batch count: '. $oldCount. ' ; existing records count:'.$totalCount);
 
-				if($oldCount > ($totalCount * 0.2)) {
-					$ds->append_log('Records received less than 80% of existing records. Keeping records');
+				if($oldCount > ($totalCount * 0.5)) {
+					$ds->append_log('More than %50 of existing records would be deleted by Refresh. Cancelling delete.'.NL.'Records from old harvest: '.$oldCount.NL.'Total Records: '.$totalCount);
 				} else {
 					try{
 						if(is_array($oldRegistryObjectIDs)){
 							$deleted_keys = $this->ro->deleteRegistryObjects($oldRegistryObjectIDs, false);
-					    	$ds->append_log('Refresh Mode detected. Deleted '. sizeof($deleted_keys['deleted_record_keys']).' record(s)');
+					    	$ds->append_log('Refresh Mode detected. Deleted '. sizeof($deleted_keys['deleted_record_keys']).' record(s)'.NL.'Records from old harvest: '.$oldCount.NL.'Total Records: '.$totalCount);
 						}
 					} catch(Exception $e) {
 					    $ds->append_log("ERROR REMOVING RECORD FROM PREVIOUS HARVEST: ".NL.$e, HARVEST_INFO, "harvester", "HARVESTER_INFO");
@@ -484,6 +486,51 @@ class Import extends MX_Controller {
 				'harvests' => $result
 			)
 		);
+	}
+
+	public function list_files($id=false) {
+		if(!$id) throw new Exception('Data Source ID required');
+		$dir = get_config_item('harvested_contents_path');
+		if(!$dir) throw new Exception('Harvested Contents Path not configured');
+
+
+		if($this->input->get('path')){
+			$path = $this->input->get('path');
+			if(!is_file($path)) throw new Exception('Path not found');
+			$content = @file_get_contents($path);
+			echo json_encode(array(
+				'status' => 'OK',
+				'content' => $content
+			));
+			return;
+		}
+
+		$path = $dir.$id;
+		if(!is_dir($path)) throw new Exception('Datasource does not have any harvested path');
+		$batches = array();
+		foreach(scandir($path) as $f){
+			if($f!="." && $f!="..") $batches[] = $f;
+		}
+		if(sizeof($batches) == 0) throw new Exception('Data source does not have any batch harvested');
+
+		$result = array();
+
+		foreach($batches as $b) {
+			$link = $path.'/'.$b;
+			if(is_file($link)) $result[] = array('type'=>'file', 'link'=>$link, 'name'=>$b);
+			if(is_dir($link)) {
+				$files = array();
+				foreach(scandir($link) as $file){
+					if($file!="." && $file!="..") $files[] = array('type'=>'file', 'link'=>$link.'/'.$file, 'name'=>$file);
+				}
+				$result[] = array('type'=>'folder', 'link'=>$link, 'files'=>$files, 'name'=>$b);
+			}
+		}
+
+		echo json_encode(array(
+			'status' => 'OK',
+			'content' => $result
+		));
 	}
 
 	/**

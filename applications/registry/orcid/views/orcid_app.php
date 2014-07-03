@@ -106,7 +106,10 @@
 			</div>
 			<p>Remember to review and set the appropriate visibility settings for the works via your profile in ORCID.</p>
 		</div>
-		<div class="modal-footer" ng-show="import_stg!='complete'">
+		<div class="modal-footer" ng-show="import_stg=='importing'">
+			<button class="btn btn-primary disabled">Importing...</button>
+		</div>
+		<div class="modal-footer" ng-show="import_stg=='ready'">
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 			<button class="btn btn-primary" ng-click="import()">Import</button>
 		</div>
