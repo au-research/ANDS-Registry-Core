@@ -90,9 +90,19 @@
                         <Language>English</Language>
                     </LanguageList>
                 </BibliographicData>
-                <xsl:if test="extRif:extendedMetadata/extRif:dci_description">
+                <xsl:if test="ro:collection/ro:description">
                     <Abstract>
-                        <xsl:apply-templates select="extRif:extendedMetadata/extRif:dci_description"/>
+                        <xsl:choose>
+                            <xsl:when test="ro:collection/ro:description[@type = 'full']">
+                                <xsl:apply-templates select="ro:collection/ro:description[@type = 'full']"/>
+                            </xsl:when>
+                            <xsl:when test="ro:collection/ro:description[@type = 'brief']">
+                                <xsl:apply-templates select="ro:collection/ro:description[@type = 'brief']"/>
+                            </xsl:when>
+                        </xsl:choose>
+                        <xsl:apply-templates select="ro:collection/ro:description[@type = 'significanceStatement']"/>
+                        <xsl:apply-templates select="ro:collection/ro:description[@type = 'notes']"/>
+                        <xsl:apply-templates select="ro:collection/ro:description[@type = 'lineage']"/>
                     </Abstract>
                 </xsl:if>
 
@@ -412,6 +422,16 @@
 
     <xsl:template match="ro:namePart">
         <xsl:value-of select="."/><xsl:text>, </xsl:text>
+    </xsl:template>
+
+
+    <xsl:template match="ro:description">
+        <xsl:if test="preceding-sibling::ro:description">
+<xsl:text>
+ </xsl:text>
+        </xsl:if>
+
+        <xsl:value-of select="."/>
     </xsl:template>
 
     <xsl:template name="getCreatedDate">

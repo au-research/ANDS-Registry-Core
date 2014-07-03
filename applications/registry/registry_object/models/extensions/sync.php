@@ -32,6 +32,21 @@ class Sync_extension extends ExtensionBase{
 		}
 		return true;
 	}
+
+	function index_solr() {
+		try{
+			$this->_CI->load->library('solr');
+			if($this->ro->status=='PUBLISHED'){
+				$docs = array();
+				$docs[] = $this->indexable_json();
+				$this->_CI->solr->add_json(json_encode($docs));
+				$this->_CI->solr->commit();
+			}
+		} catch (Exception $e) {
+			return $e;
+		}
+		return true;
+	}
 	
 	function indexable_json() {
 		$xml = $this->ro->getSimpleXML();

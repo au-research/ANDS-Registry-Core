@@ -91,11 +91,18 @@ class Transforms_Extension extends ExtensionBase
 	}
 
 
-	function transformToDCI()
+	function transformToDCI($doDsCheck=true)
 	{
 		$this->_CI->load->helper('normalisation');
-        $ds = $this->_CI->ds->getByID($this->ro->data_source_id);
-        if($ds->export_dci == 1 || $ds->export_dci == 't')
+
+        $exportable = true;
+
+        if($doDsCheck)
+        {
+            $ds = $this->_CI->ds->getByID($this->ro->data_source_id);
+            $exportable = ($ds->export_dci == 1 || $ds->export_dci == 't');
+        }
+        if($exportable)
         {
             try{
 			$xslt_processor = Transforms::get_extrif_to_dci_transformer();
@@ -109,32 +116,12 @@ class Transforms_Extension extends ExtensionBase
 			$dom->loadXML($xml_output);
 			$sxml = simplexml_import_dom($dom);
 
-			// Post-process the AuthorRole element
-            /*
-             *                        <xsl:choose>
-                            <!-- see if we have citationMetadatata -->
-                            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
-                                <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor"/>
-                            </xsl:when>
-                            <!-- use RelatedObjects then -->
-                <xsl:when test="
-               ro:collection/ro:relatedObject[ro:relation/@type = 'hasPrincipalInvestigator']
-            or ro:collection/ro:relatedObject[ro:relation/@type = 'principalInvestigator']
-            or ro:collection/ro:relatedObject[ro:relation/@type =  'author']
-            or ro:collection/ro:relatedObject[ro:relation/@type = 'coInvestigator']
-            or ro:collection/ro:relatedObject[ro:relation/@type =  'isOwnedBy']
-            or ro:collection/ro:relatedObject[ro:relation/@type =  'hasCollector']">
-                    <xsl:apply-templates select="ro:collection/ro:relatedObject[ro:relation/@type =  'hasPrincipalInvestigator'] | ro:collection/ro:relatedObject[ro:relation/@type = 'principalInvestigator'] | ro:collection/ro:relatedObject[ro:relation/@type = 'author'] | ro:collection/ro:relatedObject[ro:relation/@type = 'coInvestigator'] | ro:collection/ro:relatedObject[ro:relation/@type = 'isOwnedBy'] | ro:collection/ro:relatedObject[ro:relation/@type =  'hasCollector']"/>
-                </xsl:when>
-                            <!-- otherwise anonymus -->
-                            <xsl:otherwise>
-                                <Author seq="1">
-                                    <AuthorName>Anonymous</AuthorName>
-                                </Author>
-                            </xsl:otherwise>
-                        </xsl:choose>
-            */
-            //check if we've got any Author from the CitationMetadata
+            $abstracts = $sxml->xpath('//Abstract');
+            foreach ($abstracts as $abstract)
+            {
+                $abstract[0] = strip_tags(html_entity_decode((string)$abstract));
+            }
+
             $TimePeriods = $sxml->xpath('//TimeperiodList/TimePeriod');
             if(sizeof($TimePeriods) > 2) // need to find earliest and latest
             {
@@ -167,7 +154,7 @@ class Transforms_Extension extends ExtensionBase
                 $classArray = ['party'];
                 $authorList = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
 
-                $seq = 0;
+                $seq = 1;
                 if(sizeof($authorList) > 0)
                 {
                     foreach ($authorList as $author)
@@ -266,7 +253,7 @@ class Transforms_Extension extends ExtensionBase
             {
                 $eAuthor = $eAuthorList->addChild('Author');
                 $eAuthor['seq'] = '1';
-                $eAuthor->addChild('AuthorName44', 'Anonymous');
+                $eAuthor->addChild('AuthorName', 'Anonymous');
             }
 
 
@@ -304,17 +291,18 @@ class Transforms_Extension extends ExtensionBase
                         unset($grant[0][0]);
                     }
                 }
-                $blankFundingInfoList = $sxml->xpath('//FundingInfoList[ParsedFunding/GrantNumber/text() = ""]');
 
-                foreach($blankFundingInfoList as $blankFundingInfo){
+                $blankFundingInfoList = $sxml->xpath('//FundingInfoList[ParsedFunding/GrantNumber/text() = ""] | //FundingInfoList[count(descendant::node()) < 3]' );
+
+                foreach($blankFundingInfoList as $blankFundingInfo)
+                {
                     unset($blankFundingInfo[0][0]);
-               }
 
+                }
 
                 $blankFundingInfos = $sxml->xpath('//FundingInfo[not(FundingInfoList)]');
                 foreach($blankFundingInfos as $blankFundingInfo)
                     unset($blankFundingInfo[0][0]);
-
 
                 // Post-process the Citations element
                 $citations = $sxml->xpath('//CitationList[@postproc="1"]');
