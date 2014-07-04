@@ -39,12 +39,18 @@ class Slug_Extension extends ExtensionBase
 
 
 		if($this->ro->slug != $result){
-			//the slug is different, let's change it!
-			$this->db->insert('url_mappings', array("slug"=>$result, "registry_object_id"=>$this->id, "created"=>time(), "updated"=>time()));
-			$this->ro->slug = $result;
-			$this->ro->save();
-			//update the index quickly
-			$this->ro->update_field_index('slug');
+			
+			try{
+				//the slug is different, let's change it!
+				$this->db->insert('url_mappings', array("slug"=>$result, "registry_object_id"=>$this->id, "created"=>time(), "updated"=>time()));
+				$this->ro->slug = $result;
+				$this->ro->save();
+				//update the index quickly
+				$this->ro->update_field_index('slug');
+			} catch (Exception $e) {
+				return 'Error Creating Slug'.$e->message();
+			}
+			
 		}
 
 		return $result;

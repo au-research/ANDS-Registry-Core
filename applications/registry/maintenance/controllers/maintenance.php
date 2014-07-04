@@ -661,17 +661,20 @@ class Maintenance extends MX_Controller {
 		// header('Content-type: application/json');
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->load->model('registry_object/registry_objects', 'ro');
-		$ds = $this->ds->getByID(191);
-		$registry_objects = $this->ro->getIDsByDataSourceID(191, true);
+		$ds = $this->ds->getByID(9);
+        $registry_objects = $this->ro->getIDsByDataSourceID(9, true);
 
-		foreach($registry_objects as $ro) {
-			$this->benchmark->mark('start');
-			echo 'Title: '. $ro->title.' ID: '.$ro->id.'<br/>';
-			$this->ro->deleteRegistryObject($ro);
-			$this->benchmark->mark('end');
-			echo 'Speed: '. $this->benchmark->elapsed_time('start', 'end');
-			echo '<br/>';
-		}
+        foreach($registry_objects as $ro) {
+                $this->benchmark->mark('start');
+                echo 'Title: '. $ro->title.' ID: '.$ro->id.'<br/>';
+                echo 'Slug:'. $ro->slug.'<br/>';
+                echo 'Result: '.$ro->generateSlug().'<br/>';
+                echo 'After: '.$ro->slug.'<br/>';
+                $ro->save();
+                $this->benchmark->mark('end');
+                echo 'Speed: '. $this->benchmark->elapsed_time('start', 'end');
+                echo '<br/>';
+        }
 
 		// $ro = $this->ro->getByID(476039);
 		// $this->benchmark->mark('start');
