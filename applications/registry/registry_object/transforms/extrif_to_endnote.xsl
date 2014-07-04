@@ -215,14 +215,7 @@ TY  - DATA
             </xsl:otherwise>
         </xsl:choose>
         </xsl:variable>
-        <xsl:choose>
-            <xsl:when test="contains($sourceUrl,'doi.org/')">
-                <xsl:value-of select="substring-after($sourceUrl,'doi.org/')"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="$sourceUrl"/>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:value-of select="$sourceUrl"/>
     </xsl:template>
 
 <xsl:template match="extRif:subject_resolved">
