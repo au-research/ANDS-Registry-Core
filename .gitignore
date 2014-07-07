@@ -15,3 +15,4 @@ etc/misc/python/cert.pem
 etc/misc/python/__*
 .idea/
 wordpress/
+engine/logs
