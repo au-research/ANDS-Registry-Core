@@ -619,8 +619,7 @@ class _data_source {
         return $this->db->count_all_results();
     }
 
-    function clear_logs()
-    {
+    function clear_logs() {
         $this->db->where(array("data_source_id" => $this->id));
         $this->db->delete("data_source_logs");
         return;

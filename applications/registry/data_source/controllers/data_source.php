@@ -1117,7 +1117,7 @@ class Data_source extends MX_Controller {
 			} else $oai_msg = '';
 
 			if($ds->advanced_harvest_mode=='INCREMENTAL') {
-				$incr_msg = 'From date: '.$ds->last_harvest_run_date.NL.'To date: '.$harvestDate;
+				$incr_msg = 'From date: '.$ds->last_harvest_run_date.NL.'To date: '.$harvestDate.NL;
 			} else $incr_msg = '';
 
 			$scheduled_date = date( 'Y-m-d H:i:s P', $nextRun);
@@ -1131,6 +1131,7 @@ class Data_source extends MX_Controller {
 				'Harvest Method: '.readable($ds->harvest_method).NL.
 				'Provider Type: '.$ds->provider_type.NL.
 				'Advanced Harvest Mode: '.$ds->advanced_harvest_mode.NL.
+				$incr_msg.
 				$oai_msg.NL
 			);
 			$ds->setHarvestRequest('HARVEST', false);
@@ -1171,6 +1172,23 @@ class Data_source extends MX_Controller {
 				'message' => 'Harvest Stopped'
 			)
 		);
+	}
+
+	function clear_logs($id=false){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if(!$id) throw new Exception('Data source ID is required');
+
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Invalid Data source ID');
+
+		try{
+			$ds->clear_logs();
+		} catch (Exception $e) {
+			throw new Exception($e);
+		}
 	}
 
 	//dep

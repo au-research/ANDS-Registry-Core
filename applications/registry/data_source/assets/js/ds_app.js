@@ -39,6 +39,9 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			},
 			stop_harvest: function(id) {
 				return $http.get(base_url+'/data_source/stop_harvest/'+id).then(function(response){return response.data;});
+			},
+			clear_logs: function(id) {
+				return $http.get(base_url+'/data_source/clear_logs/'+id).then(function(response){return response.data;});
 			}
 		}
 	}).
@@ -334,7 +337,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			if(data.status=='OK'){
 				$scope.ds = data.items[0];
 				$scope.refresh_harvest_status();
-				if($scope.ds.logs) $scope.ds.latest_log = $scope.ds.logs[0].id;
+				if($scope.ds.logs && $scope.ds.logs.length > 0) $scope.ds.latest_log = $scope.ds.logs[0].id;
 				if($scope.ds.logs.length < 10) $scope.nomore = true;
 				document.title = $scope.ds.title + ' - Dashboard';
 				$scope.logTimer = $timeout($scope.get_latest_log, 1000);
@@ -400,6 +403,12 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			});
 			if($scope.ds.logs) $scope.ds.latest_log = $scope.ds.logs[0].id;
 			$scope.process_logs();
+		});
+	}
+
+	$scope.clear_logs = function() {
+		ds_factory.clear_logs($scope.ds.id).then(function(data){
+			$scope.ds.logs = [];
 		});
 	}
 
