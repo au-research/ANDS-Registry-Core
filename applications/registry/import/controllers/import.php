@@ -296,6 +296,14 @@ class Import extends MX_Controller {
 					);
 				}
 			}
+
+			if($ds->advanced_harvest_mode == 'INCREMENTAL') {
+				date_default_timezone_set('UTC');
+				$ds->setAttribute("last_harvest_run_date",date("Y-m-d\TH:i:s\Z", time()));
+				date_default_timezone_set('Australia/Canberra');
+			} else {
+				$ds->setAttribute("last_harvest_run_date",'');
+			}
 	
 			echo json_encode(
 				array(
