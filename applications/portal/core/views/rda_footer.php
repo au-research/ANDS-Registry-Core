@@ -54,7 +54,6 @@
 	<div class="foot_nav">
 		<div class="inner">
 			<ul>
-                <li class="myCustomTrigger"><a href="#" id="atlwdg-trigger" class="atlwdg-trigger atlwdg-SUBTLE">Feedback?</a></li>
 				<li><a href="<?=base_url('');?>">Home</a></li>
 				<li><a href="<?=base_url('home/about');?>">About</a></li>				
 				<li class="myCustomTrigger"><a href="<?=base_url('home/contact');?>">Contact Us</a></li>

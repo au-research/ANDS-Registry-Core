@@ -48,6 +48,7 @@ else
 		echo '<div class="codeversion"><img src="'. asset_url('images/info.png','core').'" /> '.$versionInfo.'</div>';
 	endif; ?>
 	<div class="header" <?=$environment_header_style;?>>
+  <button class="myCustomTrigger yellow_button feedback_button">Feedback</button>
 		<div class="head">
 			<div class="tagline">
 				<a href="<?php echo base_url();?>"><span>Research Data</span> Australia</a>
