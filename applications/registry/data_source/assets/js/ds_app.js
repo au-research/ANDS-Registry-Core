@@ -45,7 +45,7 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 	directive('checkbox', function() {
 		return {
 			template: 	'<span class="label label-info">'+
-							'<i class="icon icon-white" ng-class="{\'t\':\'icon-ok\', \'f\':\'icon-remove\', \'1\':\'icon-ok\', \'0\':\'icon-remove\'}[checkbox]"></i>'+
+							'<i class="icon icon-white" ng-class="{\'t\':\'icon-ok\', true:\'icon-ok\', \'f\':\'icon-remove\', \'1\':\'icon-ok\', \'0\':\'icon-remove\', \'\':\'icon-remove\', false:\'icon-remove\'}[checkbox]"></i>'+
 					 	'</span>',
 			scope: {
 				checkbox: '=checkbox'
@@ -139,10 +139,23 @@ function SettingsCtrl($scope, $routeParams, ds_factory) {
 			$scope.ds = data.items[0];
 			$scope.load_contributor();
 			document.title = $scope.ds.title + ' - Settings';
+			// console.log($scope.ds.manual_publish);
+			$scope.process_values();
 		}else{
 			$location.path('/');
 		}
 	});
+
+	$scope.process_values = function() {
+		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci'];
+		$.each($scope.ds, function(i){
+			if($.inArray(i, flags) > -1){
+				if((this=='t' || this=='1') && i!='id') {
+					$scope.ds[i] = true;
+				} else $scope.ds[i] = false;
+			}
+		});
+	}
 
 	$scope.load_contributor = function() {
 		ds_factory.contributor($scope.ds.id).then(function(data){

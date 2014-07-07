@@ -166,7 +166,6 @@ class Data_source extends MX_Controller {
 		}
 		
 		echo json_encode($jsonData);
-		
 	}
 
 	/**
