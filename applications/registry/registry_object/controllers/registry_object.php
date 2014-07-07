@@ -1123,7 +1123,7 @@ class Registry_object extends MX_Controller {
 
        header('Content-type: application/x-research-info-systems');
 
-       print($data);
+       print(strip_tags(html_entity_decode(str_replace('amp;','&',$data))));
 
     }
 }
