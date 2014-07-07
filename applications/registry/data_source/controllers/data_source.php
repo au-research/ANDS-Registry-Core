@@ -154,8 +154,12 @@ class Data_source extends MX_Controller {
 		$status = $ds->getHarvestStatus();
 		$jsonData['status'] = 'OK';
 		if($status){
+			if($ds->harvest_frequency==''){//once off
+				$status[0]['last_run'] = $status[0]['next_run'];
+				$status[0]['next_run'] = false;
+			}
 			$jsonData['items'] = $status;
-		}else {
+		} else {
 			$jsonData['items'] = array(
 				array('status' => 'IDLE')
 			);
@@ -1117,8 +1121,13 @@ class Data_source extends MX_Controller {
 				$incr_msg = 'From date: '.$ds->last_harvest_run_date.NL.'To date: '.$harvestDate;
 			} else $incr_msg = '';
 
+			$scheduled_date = date( 'Y-m-d H:i:s P', $nextRun);
+			if($ds->harvest_frequency==''){//once off
+				$scheduled_date = date('Y-m-d H:i:s', time());
+			}
+
 			$ds->append_log(
-				'Harvest scheduled to run at '.date( 'Y-m-d\TH:i:s.uP', $nextRun).NL.
+				'Harvest scheduled to run at '.$scheduled_date.NL.
 				'URI: '.$ds->uri.NL.
 				'Harvest Method: '.readable($ds->harvest_method).NL.
 				'Provider Type: '.$ds->provider_type.NL.
