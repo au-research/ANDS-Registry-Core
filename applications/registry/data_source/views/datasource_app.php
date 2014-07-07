@@ -238,7 +238,7 @@
 					<div class="widget-title"><h5>Data Source Class Summary</h5></div>
 					<div class="widget-content nopadding">
 						<ul class="ro-list">
-							<li ng-repeat="status in ds.classcounts" ng-click="mmr_link('class', status.class)"><span class="name">{{status.name}}</span><span class="num">{{status.count}}</span></li>
+							<li ng-repeat="status in ds.classcounts" ng-click="mmr_link('class', status.class)"><span class="name"><i class="icon-class icon-{{status.class}}" style="margin-top:-1px;"></i> {{status.name}}</span><span class="num">{{status.count}}</span></li>
 						</ul>
 					</div>
 				</div>
