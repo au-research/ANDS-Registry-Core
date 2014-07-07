@@ -181,7 +181,7 @@ angular.module('portal-filters', []).
 	            DECADE = 315569260;
 	        
 	 
-	        if (offset <= MINUTE)              span = [ '', raw ? 'now' : 'less than a minute' ];
+	        if (offset <= MINUTE)              span = [ '', raw ? 'now' : parseInt(offset) + ' seconds' ];
 	        else if (offset < (MINUTE * 60))   span = [ Math.round(Math.abs(offset / MINUTE)), 'min' ];
 	        else if (offset < (HOUR * 24))     span = [ Math.round(Math.abs(offset / HOUR)), 'hr' ];
 	        else if (offset < (DAY * 7))       span = [ Math.round(Math.abs(offset / DAY)), 'day' ];
