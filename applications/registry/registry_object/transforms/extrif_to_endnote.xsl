@@ -181,28 +181,97 @@ TY  - DATA
         <xsl:variable name="sourceUrl">
         <xsl:choose>
             <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']"/>
+                <xsl:choose>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi'],'doi.org/'))>1">
+                        <xsl:text>http://dx.doi.org/</xsl:text><xsl:value-of select="substring-after(ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi'],'doi.org/')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>http://dx.doi.org/</xsl:text><xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
+
             <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle']"/>
+                <xsl:choose>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle'],'hdl:'))>0">
+                        <xsl:text>http://hdl.handle.net/</xsl:text><xsl:value-of select="substring-after(ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle'],'hdl:')"/>
+                    </xsl:when>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle'],'hdl.handle.net/'))>0">
+                        <xsl:text>http://hdl.handle.net/</xsl:text><xsl:value-of select="substring-after(ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle'],'hdl.handle.net/')"/>
+                    </xsl:when>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle'],'http:'))>0">
+                        <xsl:text></xsl:text><xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle']"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>http://hdl.handle.net/</xsl:text><xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle']"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri']"/>
+                <xsl:choose>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri'],'http'))>0">
+                        <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri']"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>http://</xsl:text><xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri']"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']"/>
+                <xsl:choose>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl'],'purl.org/'))>0">
+                        <xsl:text>http://purl.org/</xsl:text><xsl:value-of select="substring-after(ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl'],'purl.org/')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>http://purl.org/</xsl:text><xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:when test="ro:collection/ro:identifier[@type='doi']">
-                <xsl:value-of select="ro:collection/ro:identifier[@type='doi']"/>
+                <xsl:choose>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:identifier[@type='doi'],'doi.org/'))>1">
+                        <xsl:text>http://dx.doi.org/</xsl:text><xsl:value-of select="substring-after(ro:collection/ro:identifier[@type='doi'],'doi.org/')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>http://dx.doi.org/</xsl:text><xsl:value-of select="ro:collection/ro:identifier[@type='doi']"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:when test="ro:collection/ro:identifier[@type='handle']">
-                <xsl:value-of select="ro:collection/ro:identifier[@type='handle']"/>
+                <xsl:choose>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:identifier[@type='handle'],'hdl:'))>0">
+                        <xsl:text>http://hdl.handle.net/</xsl:text><xsl:value-of select="substring-after(ro:collection/ro:identifier[@type='handle'],'hdl:')"/>
+                    </xsl:when>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:identifier[@type='handle'],'hdl.handle.net/'))>0">
+                        <xsl:text>http://hdl.handle.net/</xsl:text><xsl:value-of select="substring-after(ro:collection/ro:identifier[@type='handle'],'hdl.handle.net/')"/>
+                    </xsl:when>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:identifier[@type='handle'],'http:'))>0">
+                        <xsl:text></xsl:text><xsl:value-of select="ro:collection/ro:identifier[@type='handle']"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>http://hdl.handle.net/</xsl:text><xsl:value-of select="ro:collection/ro:identifier[@type='handle']"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:when test="ro:collection/ro:identifier[@type='uri']">
-                <xsl:value-of select="ro:collection/ro:identifier[@type='uri']"/>
+                <xsl:choose>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:identifier[@type='uri'],'http'))>0">
+                        <xsl:value-of select="ro:collection/ro:identifier[@type='uri']"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>http://</xsl:text><xsl:value-of select="ro:collection/ro:identifier[@type='uri']"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:when test="ro:collection/ro:identifier[@type='purl']">
-                <xsl:value-of select="ro:collection/ro:identifier[@type='purl']"/>
+                <xsl:choose>
+                    <xsl:when test="string-length(substring-after(ro:collection/ro:identifier[@type='purl'],'purl.org/'))>0">
+                        <xsl:text>http://purl.org/</xsl:text><xsl:value-of select="substring-after(ro:collection/ro:identifier[@type='purl'],'purl.org/')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>http://purl.org/</xsl:text><xsl:value-of select="ro:collection/ro:identifier[@type='purl']"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:url">
                 <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:url"/>
