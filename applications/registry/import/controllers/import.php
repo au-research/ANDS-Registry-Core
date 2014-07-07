@@ -278,9 +278,9 @@ class Import extends MX_Controller {
 							$deleted_keys = $this->ro->deleteRegistryObjects($oldRegistryObjectIDs, false);
 							$ds->append_log(
 								'Refresh Mode detected'.NL.
-								'Records count before harvest: '.$count_before.NL.
-								'Records count after harvest: '.$count_after_delete.NL.
-								'Records deleted: '. sizeof($deleted_keys['deleted_record_keys'])
+								'Record count before harvest: '.$count_before.NL.
+								'Record count if Refresh performed: '.$count_after_delete.NL.
+								'Record(s) deleted: '. sizeof($deleted_keys['deleted_record_keys'])
 							);
 						}
 					} catch(Exception $e) {
@@ -290,11 +290,19 @@ class Import extends MX_Controller {
 					}
 				} else {
 					$ds->append_log(
-						'Refresh Mode Detected. Total records count would be reduced by more than 20%. Keeping previous records'.NL.
-						'Records count before harvest: '.$count_before.NL.
-						'Records count after harvest: '.$count_after_delete.NL
+						'Refresh Mode Cancelled. Total record count would be reduced by more than 20%. All records will be retained.'.NL.
+						'Record count before harvest: '.$count_before.NL.
+						'Record count if Refresh performed: '.$count_after_delete.NL
 					);
 				}
+			}
+
+			if($ds->advanced_harvest_mode == 'INCREMENTAL') {
+				date_default_timezone_set('UTC');
+				$ds->setAttribute("last_harvest_run_date",date("Y-m-d\TH:i:s\Z", time()));
+				date_default_timezone_set('Australia/Canberra');
+			} else {
+				$ds->setAttribute("last_harvest_run_date",'');
 			}
 	
 			echo json_encode(

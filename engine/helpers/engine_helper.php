@@ -107,11 +107,15 @@ function ds_acl_enforce($ds_id, $message = ''){
 
 function default_error_handler($errno, $errstr, $errfile, $errline)
 {
+	log_message('error', $errstr . " > on line " . $errline . " (" . $errfile .")");
+
 	// Ignore when error_reporting is turned off (sometimes inline with @ symbol)
 	if (error_reporting() == 0) { return true; }
 
 	// Ignore E_STRICT no email either
 	if ($errno == E_STRICT) { return true; }
+
+
 
 	if (ENVIRONMENT == "development")
 	{
@@ -125,6 +129,7 @@ function default_error_handler($errno, $errstr, $errfile, $errline)
 		notifySiteAdmin($errno, $errstr, $errfile, $errline);
 		throw new Exception("An unexpected system error has occured. Please try again or report this error to the system administrator.");
 	}
+
 
 
 	return true;   /* Don't execute PHP internal error handler */

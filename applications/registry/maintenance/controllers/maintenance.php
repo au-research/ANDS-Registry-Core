@@ -661,46 +661,27 @@ class Maintenance extends MX_Controller {
 		// header('Content-type: application/json');
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->load->model('registry_object/registry_objects', 'ro');
-		$ds = $this->ds->getByID(9);
-        $registry_objects = $this->ro->getIDsByDataSourceID(9, true);
+		// log_message('error', 'Test Error');
+		// log_message('info', 'Test Info');
+		// log_message('debug', 'Test Debug');
 
-        foreach($registry_objects as $ro) {
-                $this->benchmark->mark('start');
-                echo 'Title: '. $ro->title.' ID: '.$ro->id.'<br/>';
-                echo 'Slug:'. $ro->slug.'<br/>';
-                echo 'Result: '.$ro->generateSlug().'<br/>';
-                echo 'After: '.$ro->slug.'<br/>';
-                $ro->save();
-                $this->benchmark->mark('end');
-                echo 'Speed: '. $this->benchmark->elapsed_time('start', 'end');
-                echo '<br/>';
-        }
+		echo 5/0;
 
-		// $ro = $this->ro->getByID(476039);
-		// $this->benchmark->mark('start');
-		// $related_keys = $ro->getRelatedKeys();
-		// echo '<br/>';
-		// foreach($related_keys as $rk) {
-			
-		// 	$rk_ros = $this->ro->getAllByKey($rk);
-		// 	if(is_array($rk_ros)){
-		// 		foreach($rk_ros as $rk_ro){
-		// 			$this->benchmark->mark('start_rk');
-		// 			echo 'Related Key: '. $rk_ro->title.' ID: '.$rk_ro->id.'<br/>';
-		// 			// $rk_ro->addRelationships();
-		// 			$rk_ro->update_quality_metadata();
-		// 			$this->benchmark->mark('end_rk');
-		// 			echo 'Speed: '. $this->benchmark->elapsed_time('start_rk', 'end_rk');
-		// 			echo '<br/>';
-		// 		}
-		// 	}
-			
-		// }
-		// $this->benchmark->mark('end');
-		// echo 'Speed: '. $this->benchmark->elapsed_time('start', 'end');
+		// $ds = $this->ds->getByID(9);
+  //       $registry_objects = $this->ro->getIDsByDataSourceID(9, true);
 
-		// var_dump(sizeof($registry_objects));
-		// var_dump($ds->attributes);
+  //       foreach($registry_objects as $ro) {
+  //               $this->benchmark->mark('start');
+  //               echo 'Title: '. $ro->title.' ID: '.$ro->id.'<br/>';
+  //               echo 'Slug:'. $ro->slug.'<br/>';
+  //               echo 'Result: '.$ro->generateSlug().'<br/>';
+  //               echo 'After: '.$ro->slug.'<br/>';
+  //               $ro->save();
+  //               $this->benchmark->mark('end');
+  //               echo 'Speed: '. $this->benchmark->elapsed_time('start', 'end');
+  //               echo '<br/>';
+  //       }
+
 
 	}
 
