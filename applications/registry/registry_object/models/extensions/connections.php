@@ -187,7 +187,6 @@ class Connections_Extension extends ExtensionBase
 
         if ($create_primary_relationships)
         {
-
             $unordered_connections = array_merge($unordered_connections, $this->_getPrimaryLinks($allow_drafts));
         }
 		/* Step 3 - External reverse links */
@@ -396,7 +395,7 @@ class Connections_Extension extends ExtensionBase
 						 ->where('r.data_source_id',$this->ro->data_source_id)
 						 ->where('rr.origin =','PRIMARY');
 		$query = $this->db->get();
-
+		
 		foreach ($query->result_array() AS $row)
 		{
 			$row['origin'] = "PRIMARY";
