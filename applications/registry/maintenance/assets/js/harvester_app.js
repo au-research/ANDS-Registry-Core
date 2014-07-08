@@ -32,13 +32,12 @@ function indexCtrl($scope, harvester, $timeout) {
 					switch(this.status) {
 						case 'IDLE': this.can_start = true; this.can_stop = true; break;
 						case 'HARVESTING': this.can_start = false; this.can_stop = true; break;
-						case 'IMPORTING': this.can_start = false; this.can_stop = false; break;
+						case 'IMPORTING': this.can_start = false; this.can_stop = true; break;
 						case 'STOPPED': this.can_start = true; this.can_stop = false; break;
 						case 'COMPLETED': this.can_start = true; this.can_stop = false; break;
 						case 'SCHEDULED': this.can_start = true; this.can_stop = true; break;
 						case 'WAITING': this.can_start = false; this.can_stop = true; break;
-					}
-					try{
+					} try {
 						if(this.message){
 							this.message = this.message.replace(/(\r\n|\n|\r)/gm,"");
 							this.message = JSON.parse(this.message);
