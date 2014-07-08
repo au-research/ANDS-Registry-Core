@@ -684,6 +684,22 @@ class _data_source {
         }
     }
 
+    function clearHarvestError() {
+        $harvest = $this->db->get_where('harvests', array('data_source_id'=>$this->id));
+        if($harvest->num_rows() > 0) {
+            $harvest = $harvest->result();
+            $harvest = $harvest[0];
+            $message = $harvest->message;
+            $message = json_decode($message, true);
+            if(isset($message['error']['log'])) {
+                $message['error']['log'] = '';
+            }            
+            $message = json_encode($message);
+            $this->db->where("data_source_id", $this->id);
+            $this->db->update('harvests', array('message'=>$message));
+        }
+    }
+
     function getHarvestErrorLog() {
         $harvest = $this->db->get_where('harvests', array('data_source_id'=>$this->id));
         if($harvest->num_rows() > 0) {

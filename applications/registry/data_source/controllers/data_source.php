@@ -1109,6 +1109,9 @@ class Data_source extends MX_Controller {
 		if(!$ds) throw new Exception('Invalid Data source ID');
 
 		try {
+
+			$ds->clearHarvestError();
+
 			$harvestDate = strtotime($ds->getAttribute("harvest_date"));
 			$nextRun = getNextHarvestDate($harvestDate, $ds->harvest_frequency);
 
