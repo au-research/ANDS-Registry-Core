@@ -458,7 +458,7 @@
 								<dd><p>{{ds.assessment_notify_email_addr}}</p></dd>
 							</span>
 							<span ng-show="ds.export_dci">
-								<dt>Export DCI</dt>
+								<dt>Provide Records to Data Citation Index</dt>
 								<dd><span checkbox="ds.export_dci"></span></dd>
 							</span>
 						</dl>
@@ -698,7 +698,7 @@
 									</div>
 
 									<div class="control-group">
-										<label class="control-label">Export DCI
+										<label class="control-label">Provide Records to Data Citation Index
 										</label>
 										<div class="controls">
 			    							<input type="checkbox" for="export_dci" ng-model="ds.export_dci">    																
