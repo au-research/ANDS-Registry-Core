@@ -113,17 +113,31 @@ TY  - DATA
 
 
 <xsl:if test="ro:collection/ro:description[@type='note']">
-<xsl:text>N1  - </xsl:text><xsl:value-of select="normalize-space(ro:collection/ro:description[@type='note'])" disable-output-escaping="yes"/><xsl:text>
+<xsl:for-each select="ro:collection/ro:description[@type='note']">
+<xsl:text>N1  - </xsl:text><xsl:value-of select="normalize-space(.)" /><xsl:text>
 </xsl:text>
+</xsl:for-each>
 </xsl:if>
 
 <xsl:if test="ro:collection/ro:coverage/ro:temporal/ro:date">
      <xsl:apply-templates select="ro:collection/ro:coverage/ro:temporal/ro:date"/>
 </xsl:if>
-
- <xsl:if test="extRif:extendedMetadata/extRif:dci_description">
-      <xsl:text>AB  - </xsl:text><xsl:value-of select="extRif:extendedMetadata/extRif:dci_description" disable-output-escaping="yes"/><xsl:text>
+     <xsl:if test="ro:collection/ro:description">
+         <xsl:text>AB  - </xsl:text>
+             <xsl:choose>
+                 <xsl:when test="ro:collection/ro:description[@type = 'full']">
+                     <xsl:apply-templates select="ro:collection/ro:description[@type = 'full']"/>
+                 </xsl:when>
+                 <xsl:when test="ro:collection/ro:description[@type = 'brief']">
+                     <xsl:apply-templates select="ro:collection/ro:description[@type = 'brief']"/>
+                 </xsl:when>
+             </xsl:choose>
+             <xsl:apply-templates select="ro:collection/ro:description[@type = 'significanceStatement']"/>
+             <xsl:apply-templates select="ro:collection/ro:description[@type = 'notes']"/>
+             <xsl:apply-templates select="ro:collection/ro:description[@type = 'lineage']"/><xsl:text>
 </xsl:text>
+
+
 </xsl:if>
 
 <xsl:if test="ro:collection/ro:relatedObject/ro:relation[@type = 'isOutputOf']">
