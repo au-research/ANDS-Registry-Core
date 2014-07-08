@@ -3510,6 +3510,7 @@ a.yellow_button:hover{
     -ms-transform: rotate(270deg);
     transform: rotate(270deg);
     font-size: 14px;
+    z-index:99;
 }
 /**
  * ANDS less file for compilation on deployment
