@@ -48,14 +48,10 @@ TY  - DATA
   <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
         <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor"/>
   </xsl:when>
-    <!-- use RelatedObjects then -->
 
-  <xsl:when test="ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] or ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] or ro:collection/ro:relatedObject/ro:relation[@type = 'author'] or ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] or ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] or ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']">
-        <xsl:apply-templates select="ro:collection/ro:relatedObject/ro:relation[@type = 'hasPrincipalInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type  = 'principalInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type = 'author'] | ro:collection/ro:relatedObject/ro:relation[@type = 'coInvestigator'] | ro:collection/ro:relatedObject/ro:relation[@type = 'isOwnedBy'] | ro:collection/ro:relatedObject/ro:relation[@type = 'hasCollector']" mode="author"/>
-  </xsl:when>
      <!-- otherwise anonymus -->
   <xsl:otherwise>
-        <xsl:text>AU  - Anonymous
+        <xsl:text>%%%AU  - Anonymous
 </xsl:text>
   </xsl:otherwise>
 </xsl:choose>

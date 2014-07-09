@@ -436,6 +436,7 @@ class Connections_Extension extends ExtensionBase
 
         $allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t" || $ds->allow_reverse_internal_links == 1);
         $allow_reverse_external_links = ($ds->allow_reverse_external_links == "t" || $ds->allow_reverse_external_links == 1);
+        $create_primary_relationships = ($ds->create_primary_relationships == "t" || $ds->create_primary_relationships == 1);
 
         $unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks());
 
@@ -446,6 +447,10 @@ class Connections_Extension extends ExtensionBase
         if ($allow_reverse_external_links)
         {
             $unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks());
+        }
+        if ($create_primary_relationships)
+        {
+            $unordered_connections = array_merge($unordered_connections, $this->_getPrimaryLinks());
         }
 
         $connections = array();

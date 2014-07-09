@@ -407,18 +407,35 @@ class Transforms_Extension extends ExtensionBase
             $xml_output = $xslt_processor->transformToXML($dom);
 
             //we want to post process the authors and funding name
-
-            $authors = explode('%%%AU - ',$xml_output);
-
-            for($i=1;$i<count($authors);$i++)
+            if(str_replace("%%%AU  - Anonymous","",$xml_output)!=$xml_output)
             {
-                $author = explode(' - AU%%%',$authors[$i]);
-                $author_object = $this->_CI->ro->getPublishedByKey(trim($author[0]));
-                if($author_object->list_title){
-                    $xml_output = str_replace('%%%AU - '.trim($author[0]).' - AU%%%','AU  - '.$author_object->list_title, $xml_output);
+                $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector'];
+                $classArray = ['party'];
+                $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
+                if(count($authors)>0)
+                {
+                    $authStr = '';
+                    foreach($authors as $author)
+                    {
+                        $authStr .= "AU  - ".$author['title']."\n";
+
+                    }
                 }else{
-                    $xml_output = str_replace('%%%AU - '.trim($author[0]).' - AU%%%
+                    $authStr = 'AU  - Anonymous';
+                }
+                $xml_output = str_replace("%%%AU  - Anonymous",trim($authStr),$xml_output);
+            }else{
+                $authors = explode('%%%AU - ',$xml_output);
+                for($i=1;$i<count($authors);$i++)
+                {
+                    $author = explode(' - AU%%%',$authors[$i]);
+                    $author_object = $this->_CI->ro->getPublishedByKey(trim($author[0]));
+                    if($author_object->list_title){
+                        $xml_output = str_replace('%%%AU - '.trim($author[0]).' - AU%%%','AU  - '.$author_object->list_title, $xml_output);
+                    }else{
+                        $xml_output = str_replace('%%%AU - '.trim($author[0]).' - AU%%%
 ','', $xml_output);
+                    }
                 }
             }
 
