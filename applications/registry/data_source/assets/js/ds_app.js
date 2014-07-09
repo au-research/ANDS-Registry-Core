@@ -477,6 +477,11 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		$('#exportDataSource').modal('show');
 	}
 
+	$scope.show_error = function(log) {
+		$scope.showing_error = log;
+		$('#harvester_error_modal').modal('show');
+	}
+
 	$scope.export = function(type){
 		data_source_id = $scope.ds.id;
 		var data = {};

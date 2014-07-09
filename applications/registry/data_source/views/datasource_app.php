@@ -209,6 +209,7 @@
 									<i class="icon-list-alt"></i>{{log.header | truncate:105}}<span class="label">{{log.date_modified * 1000 | timeago}}</span>
 								</a>
 								<div class="log" ng-show="log.show">
+									<img ng-show="log.harvester_error_type" ng-click="show_error(log)" src="<?=asset_url('img/Question-mark-icon.png','base');?>" alt="" style="float:right;cursor:pointer;">
 									<pre style="width:95%; float:left;">{{log.log}}</pre>
 									<br class="clear"/>
 								</div>
@@ -399,6 +400,76 @@
 			<a href="javascript:;" class="btn btn-primary" ng-click="export('file')"><i class="icon icon-white icon-download"></i> Download RIF-CS</a>
 			<a href="javascript:;" class="btn btn-link" ng-click="export('xml')">View RIF-CS in Browser</a>
 			<a href="#" class="btn hide" data-dismiss="modal">Close</a>
+		</div>
+	</div>
+
+	<div class="modal hide fade" id="harvester_error_modal">
+		<div class="modal-header">
+			<a href="javascript:;" class="close" data-dismiss="modal">×</a>
+			<h3>Data Source Harvest error</h3>
+		</div>
+		<div class="modal-body">
+			<div ng-show="showing_error.harvester_error_type=='HARVESTER_ERROR'">
+				<h4>Harvester Error</h4>
+				<p><b>There was a problem communicating with the data source provider. </b></p>
+				<p>
+					<b>Ensure that</b>
+					<ul class="padded_list">
+						<li>The URL you provided is valid (including http:// or https://). </li>
+						<li>The URL you provided is available on the internet (i.e. not an internal intranet link). </li>
+						<li>If an OAI-PMH provider, the response is a valid OAI response. </li>
+						<li>If a HTTPS provider, the server is NOT using self-signed certificates. </li>
+					</ul>
+				</p>
+			</div>
+
+			<div ng-show="showing_error.harvester_error_type=='DOCUMENT_LOAD_ERROR'">
+				<h4>Document Load Error</h4>
+				<p><b>Your XML document failed to load, as the XML may not be correctly formed. </b></p>
+				<p>
+					<b>Ensure that</b>
+				<ul class="padded_list">
+					<li>All XML tags are nested properly.</li>
+					<li>All your records are structured correctly.</li>
+					<li>All your parent and child nodes are correctly formatted.</li>
+					<li>All your objects have been closed correctly. For example if you have an open tag <code>&lt;key&gt;</code> ensure you have a closed tag <code>&lt;/key&gt;</code>.</li>
+					<li><code>xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance"</code> has been defined prior to the <code>xml:schemaLocation</code>, within your XML document.</li>
+				</ul></p>
+				<p>
+					<b>References</b>
+					<ul class="normal">
+						<li><a href="http://www.w3.org/TR/REC-xml/" target="_blank">XML Specifications</a></li>
+						<li><a href="http://ands.org.au/guides/content-providers-guide.html" target="_blank">ANDS Content Providers Guide</a></li>
+						<li><a href="http://www.tizag.com/xmlTutorial/xmlparent.php" target="_blank">XML Parent information</a></li>
+						<li><a href="http://www.tizag.com/xmlTutorial/xmlchild.php" target="_blank">XML Child information</a></li>
+						<li><a href="http://services.ands.org.au/documentation/rifcs/schemadocs/registryObjects.html" target="_blank">RIF-CS Schema Documentation</a></li>
+					</ul>
+				</p>
+			</div>
+
+			<div ng-show="showing_error.harvester_error_type=='DOCUMENT_VALIDATION_ERROR'">
+				<h4>Document Validation Error</h4>
+				<p><b>Your XML document failed to validate against the RIF-CS schema </b></p>
+				<p>
+					<b>Ensure that</b>
+					<ul class="padded_list">
+						<li>All the records within your XML document have all the required elements and their associated attributes.</li>
+						<li>All registry object elements and their associated attributes are correctly spelled and labelled.</li>
+						<li>All the records within your XML document contain ONLY valid RIF-CS elements.</li>
+						<li>Your XML file does not contain any invalid characters.</li>
+					</ul>
+				</p>
+				<p>
+					<b>References</b>
+					<ul class="normal">
+						<li><a href="http://ands.org.au/guides/content-providers-guide.html" target="_blank">ANDS Content Providers Guide</a></li>
+						<li><a href="http://services.ands.org.au/documentation/rifcs/schemadocs/registryObjects.html" target="_blank">RIF-CS Schema Documentation</a></li>
+					</ul>
+				</p>
+			</div>
+
+			<hr>
+			<pre>{{showing_error.log}}</pre>
 		</div>
 	</div>
 
