@@ -83,7 +83,7 @@ class CI_Input {
 	 */
 	public function __construct()
 	{
-		log_message('debug', "Input Class Initialized");
+		// log_message('debug', "Input Class Initialized");
 
 		$this->_allow_get_array	= (config_item('allow_get_array') === TRUE);
 		$this->_enable_xss		= (config_item('global_xss_filtering') === TRUE);
@@ -648,7 +648,7 @@ class CI_Input {
 			$this->security->csrf_verify();
 		}
 
-		log_message('debug', "Global POST and COOKIE data sanitized");
+		// log_message('debug', "Global POST and COOKIE data sanitized");
 	}
 
 	// --------------------------------------------------------------------

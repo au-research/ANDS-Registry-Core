@@ -70,7 +70,7 @@ class CI_Cart {
 			$this->_cart_contents['total_items'] = 0;
 		}
 
-		log_message('debug', "Cart Class Initialized");
+		// log_message('debug', "Cart Class Initialized");
 	}
 
 	// --------------------------------------------------------------------

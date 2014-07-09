@@ -39,7 +39,7 @@ class CI_Table {
 
 	public function __construct()
 	{
-		log_message('debug', "Table Class Initialized");
+		// log_message('debug', "Table Class Initialized");
 	}
 
 	// --------------------------------------------------------------------

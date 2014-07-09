@@ -142,7 +142,7 @@ class Modules
 		
 		if ($type === 'other') {			
 			if (class_exists($file, FALSE))	{
-				log_message('debug', "File already loaded: {$location}");				
+				// log_message('debug', "File already loaded: {$location}");				
 				return $result;
 			}	
 			include_once $location;
@@ -156,7 +156,7 @@ class Modules
 
 			$result = $$type;
 		}
-		log_message('debug', "File loaded: {$location}");
+		// log_message('debug', "File loaded: {$location}");
 		return $result;
 	}
 

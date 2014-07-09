@@ -21,8 +21,8 @@ class Services extends MX_Controller {
 
 		$this->config->load('services');
 		$service_mapping = parse_ini_file(SERVICES_MODULE_PATH . "config.ini", true);
-		log_message('debug', 'Services request received from ' . $_SERVER["REMOTE_ADDR"]);
-		log_message('debug', 'Request URI: ' . $_SERVER["REQUEST_URI"]);
+		// log_message('debug', 'Services request received from ' . $_SERVER["REMOTE_ADDR"]);
+		// log_message('debug', 'Request URI: ' . $_SERVER["REQUEST_URI"]);
 		
 		// If no parameters supplied, display the services landing page!
 		if ($api_key == "index"){

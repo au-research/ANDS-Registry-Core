@@ -119,7 +119,7 @@ class CI_Security {
 		// Set the CSRF hash
 		$this->_csrf_set_hash();
 
-		log_message('debug', "Security Class Initialized");
+		// log_message('debug', "Security Class Initialized");
 	}
 
 	// --------------------------------------------------------------------
@@ -159,7 +159,7 @@ class CI_Security {
 		$this->_csrf_set_hash();
 		$this->csrf_set_cookie();
 
-		log_message('debug', "CSRF token verified ");
+		// log_message('debug', "CSRF token verified ");
 
 		return $this;
 	}
@@ -188,7 +188,7 @@ class CI_Security {
 
 		setcookie($this->_csrf_cookie_name, $this->_csrf_hash, $expire, config_item('cookie_path'), config_item('cookie_domain'), $secure_cookie);
 
-		log_message('debug', "CRSF cookie Set");
+		// log_message('debug', "CRSF cookie Set");
 
 		return $this;
 	}
@@ -462,7 +462,7 @@ class CI_Security {
 			return ($str == $converted_string) ? TRUE: FALSE;
 		}
 
-		log_message('debug', "XSS Filtering completed");
+		// log_message('debug', "XSS Filtering completed");
 		return $str;
 	}
 

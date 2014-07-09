@@ -318,7 +318,7 @@ class MX_Loader extends CI_Loader
 			include($_ci_path); 
 		}
 
-		log_message('debug', 'File loaded: '.$_ci_path);
+		// log_message('debug', 'File loaded: '.$_ci_path);
 
 		if ($_ci_return == TRUE) return ob_get_clean();
 

@@ -66,7 +66,7 @@ class CI_Upload {
 			$this->initialize($props);
 		}
 
-		log_message('debug', "Upload Class Initialized");
+		// log_message('debug', "Upload Class Initialized");
 	}
 
 	// --------------------------------------------------------------------

@@ -10,7 +10,7 @@ class HybridAuthLib extends Hybrid_Auth
 		$ci->load->helper('url_helper');
 		$config = config_item('oauth_config');
 		parent::__construct($config);
-		log_message('debug', 'HybridAuthLib Class Initalized');
+		// log_message('debug', 'HybridAuthLib Class Initalized');
 	}
 
 	/**

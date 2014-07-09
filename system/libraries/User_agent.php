@@ -71,7 +71,7 @@ class CI_User_agent {
 			}
 		}
 
-		log_message('debug', "User Agent Class Initialized");
+		// log_message('debug', "User Agent Class Initialized");
 	}
 
 	// --------------------------------------------------------------------

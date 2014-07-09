@@ -31,7 +31,7 @@ class CI_Session {
     
     function CI_Session()
     {
-        log_message('debug', "Native_session Class Initialized");
+        // log_message('debug', "Native_session Class Initialized");
         $this->_sess_run();
     }
 
