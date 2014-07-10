@@ -87,7 +87,14 @@ $(document).ready(function() {
     	hide:'mouseout',
     	style:{classes:'ui-tooltip-light ui-tooltip-shadow'}
     });
-
+    $('.endnote_helper').qtip({
+        content:{
+            text:'Export help'
+        },
+        show:'mouseover',
+        hide:'mouseout',
+        style:{classes:'ui-tooltip-light ui-tooltip-shadow'}
+    });
     $('#ad_st').toggle(function() {
         $('div.qtip:visible').qtip('hide');
 	//don't init slider until we show the advanced search slidedown

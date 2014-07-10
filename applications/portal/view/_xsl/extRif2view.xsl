@@ -636,8 +636,13 @@
             </img-->
         </div>
           <br/><br/>
-          <a class="yellow_button" id="show_dropdown">              Export          <i class="fa fa-download"></i>
-              </a>
+          <a class="yellow_button" id="show_dropdown">              Export         <i class="fa fa-download"></i>
+              </a> <xsl:text> </xsl:text>
+
+          <a href="http://services.ands.org.au/documentation/EndNoteHelp/" target="_blank"><img class="endnote_helper" aria-describedby="ui-tooltip-8" width="14px">
+          <xsl:attribute name="src"><xsl:value-of select="$base_url"/>
+          <xsl:text>assets/core/images/question_mark.png</xsl:text></xsl:attribute></img></a>
+
           <div id="export_dropdown" class="hide">
               <br />
           <a>
