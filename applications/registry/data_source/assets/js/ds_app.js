@@ -407,9 +407,11 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 	}
 
 	$scope.clear_logs = function() {
-		ds_factory.clear_logs($scope.ds.id).then(function(data){
-			$scope.ds.logs = [];
-		});
+		if(confirm('You are about to clear all entries in the Activity Log for this data source. Do you wish to continue?')){
+			ds_factory.clear_logs($scope.ds.id).then(function(data){
+				$scope.ds.logs = [];
+			});
+		}
 	}
 
 	$scope.refresh_harvest_status = function() {
