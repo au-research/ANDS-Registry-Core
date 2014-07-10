@@ -208,6 +208,18 @@ class Maintenance extends MX_Controller {
 		echo 'done';
 	}
 
+	public function migrate_ds_attr_to_r13(){
+		acl_enforce('REGISTRY_STAFF');
+		set_exception_handler('json_exception_handler');
+		$this->db->where('value', 't');
+		$query = $this->db->update('data_source_attributes', array('value'=>DB_TRUE));
+		if($query) echo 'Query updated. Rows affected: '.$this->db->affected_rows().'<br/>';
+
+		$this->db->where('value', 'f');
+		$query = $this->db->update('data_source_attributes', array('value'=>DB_FALSE));
+		if($query) echo 'Query updated. Rows affected: '.$this->db->affected_rows().'<br/>';
+	}
+
 	public function syncmenu(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'ARMS SyncMenu';
