@@ -105,7 +105,7 @@ class Import extends MX_Controller {
 			$this->importer->setCrosswalk($ds->provider_type);
 			$this->importer->setDatasource($ds);
 			$this->importer->setHarvestID($batch);
-			$this->importer->maintainStatus(); //records which already exists are harvested into their same status
+			// $this->importer->maintainStatus(); //records which already exists are harvested into their same status
 			
 			// $ds->append_log(print_r($batch_array, true));
 
@@ -367,7 +367,7 @@ class Import extends MX_Controller {
 			$xml = file_get_contents($path);
 			try {
 				$this->importer->setXML($xml);
-				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
+				// $this->importer->maintainStatus(); //records which already exists are harvested into their same status
 				$this->importer->commit();
 			} catch (Exception $e) {
 				$ds->append_log($e, 'error');
@@ -444,7 +444,7 @@ class Import extends MX_Controller {
 			try {
 				$this->importer->runBenchMark = true;
 				$this->importer->setXML($xml);
-				$this->importer->maintainStatus(); //records which already exists are harvested into their same status
+				// $this->importer->maintainStatus(); //records which already exists are harvested into their same status
 				$this->importer->setCrosswalk($ds->provider_type);
 				$this->importer->setDatasource($ds);
 				$this->importer->commit();
