@@ -1165,6 +1165,10 @@ class Data_source extends MX_Controller {
 		try {
 			$ds->cancelHarvestRequest();
 			$ds->setHarvestMessage('Stopped by User');
+			$ds->append_log(
+				'Harvest Stopped at '.date('Y-m-d H:i:s', time()).NL.
+				'Harvest was stopped by: ' . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . date('Y-m-d H:i:s', time())
+			);
 		} catch (Exception $e) {
 			throw new Exception($e);
 		}
