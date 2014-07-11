@@ -16,7 +16,7 @@ The ANDS Online Services software codebase is structured in a number of seperate
 ### Installation and Support
 
 - [Registry Installation Notes](https://researchdata.ands.org.au/developers/documentation/registry)
-- [Community Online Support Forum](http://community.ands.org.au/viewforum.php?f=201)
+- [Community Online Support Forum](http://developers.ands.org.au)
 
 ### Recent Changelogs
 - [Release 12](https://github.com/au-research/ANDS-Online-Services/wiki/Release12Changelog) (March 2014)
