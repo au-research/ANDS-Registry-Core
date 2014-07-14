@@ -798,11 +798,11 @@
 																<a href="{{item.contributor_page_link}}" ng-show="item.contributor_page_key">{{item.contributor_page_key}}</a>
 																<span ng-show="!item.contributor_page_key">Contributor page will be generated upon save</span>
 															</span>
-															<span ng-show="item.has_authorative">(Already managed by {{item.authorative_data_source_title}} who is managing the group)</span>
+															<span ng-show="item.has_authorative">(Already managed by {{item.authorative_data_source_title}})</span>
 														</td>
 														<td ng-show="ds.institution_pages=='2'">
 															<input rosearch dsid="ds.id" type="text" name="contributor_pages" class="ro_search" ng-model="item.contributor_page_key" ng-show="!item.has_authorative">
-															<span ng-show="item.has_authorative">(Already managed by {{item.authorative_data_source_title}} who is managing the group)</span>
+															<span ng-show="item.has_authorative">(Already managed by {{item.authorative_data_source_title}})</span>
 														</td>
 													</tr>
 												</tbody>
