@@ -470,11 +470,11 @@ class _data_source {
                             $contributorPage = $this->_CI->ro->getAllByKey($registry_object_key);
                             $contributorPage[0]->sync();
                             //we need to email services that we have created this page
-                            if ($notifyChange && $this->config->item('site_admin_email'))
+                            if ($notifyChange && $this->_CI->config->item('site_admin_email'))
                             {
                                 $subject = $title." contributor page has been generated under datasource ".$this->title;
                                 $message = '<a href="'.base_url().'registry_object/view/'.$contributorPage[0]->id.'">'.$registry_object_key .'</a>';
-                                $to = $this->config->item('site_admin_email');
+                                $to = $this->_CI->config->item('site_admin_email');
                                 $headers  = 'MIME-Version: 1.0' . "\r\n";
                                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                                 mail($to, $subject, $message, $headers);
@@ -542,11 +542,11 @@ class _data_source {
                                 );
                                 $insert = $this->db->insert('institutional_pages',$data);
                                 $contributorPage[0]->sync();
-                                if ($notifyChange && $this->config->item('site_admin_email'))
+                                if ($notifyChange && $this->_CI->config->item('site_admin_email'))
                                 {
                                     $subject = $contributorPage[0]->title." has been mapped as a contributor page for group ".$group." under datasource ".$data_source_title;
                                     $message = '<a href="'.base_url().'registry_object/view/'.$contributorPage[0]->id.'">'.$contributorPage[0]->key .'</a>';
-                                    $to = $this->config->item('site_admin_email');
+                                    $this->_CI->config->item('site_admin_email');
                                     $headers  = 'MIME-Version: 1.0' . "\r\n";
                                     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                                     mail($to, $subject, $message, $headers);
