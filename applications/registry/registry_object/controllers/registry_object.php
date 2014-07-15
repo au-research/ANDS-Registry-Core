@@ -1117,6 +1117,7 @@ class Registry_object extends MX_Controller {
     
     public function exportToEndnote($registry_object_id)
     {
+       $registry_object_id = str_replace(".ris","",$registry_object_id);
        $this->load->model('registry_objects', 'ro');
        $ro = $this->ro->getByID($registry_object_id);
        $data = $ro->transformToEndnote();

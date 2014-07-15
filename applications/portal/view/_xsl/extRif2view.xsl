@@ -646,7 +646,7 @@
           <div id="export_dropdown" class="hide">
               <br />
           <a>
-              <xsl:attribute name="href"><xsl:value-of select="$base_url"/>registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/><xsl:text>?foo=</xsl:text><xsl:value-of select="$current_time"/></xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="$base_url"/>registry/registry_object/exportToEndnote/<xsl:value-of select="//extRif:extendedMetadata/extRif:id"/><xsl:text>.ris?foo=</xsl:text><xsl:value-of select="$current_time"/></xsl:attribute>
               Export To EndNote
           </a>  <hr />
           <a target="_blank">
