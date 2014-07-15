@@ -260,7 +260,7 @@ class Solr {
 		}
 
 		// Filter records that match the search terms (boost according to where the terms match)
-		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.01 description_value^0.05 identifier_value^0.05 tag_search^0.05 fulltext~5^0.00001');
+		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.01 description_value^0.05 identifier_value^0.05 tag_search^0.05 fulltext^0.00001');
 
 		// Amount of slop applied to phrases in the user's query string filter (1 = 1 word apart)
 		$this->setOpt('qs', '1');
@@ -392,6 +392,9 @@ class Solr {
 				case 'fl':
 					$this->setOpt('fl', $value);
 					break;
+				case 'slug':
+					$this->setOpt('fq', '+slug:('.$value.')');
+					break;
 				case 'tag':
 					if(is_array($value)){
 						$fq_str = '';
@@ -465,6 +468,8 @@ class Solr {
 					break;
 				case 'random':
 					$this->setOpt('sort', 'random_'.rand(1,255642).' desc');
+					break;
+				
 			}
 		}
 	}
@@ -557,10 +562,13 @@ class Solr {
 		return curl_post($this->solr_url.'update?wt=json', $docs);
 	}
 
+	function add_json($docs){
+		return curl_post($this->solr_url.'update/?wt=json', $docs, array("Content-Type: application/json; charset=utf-8"));
+	}
+
 	function commit(){
 		return curl_post($this->solr_url.'update?wt=json&commit=true', '<commit waitSearcher="false"/>');
 	}
-
 
 	function deleteByQueryCondition($query_condition)
 	{

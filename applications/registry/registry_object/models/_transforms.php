@@ -15,7 +15,7 @@ class Transforms {
 	static $clean_ns_transformer = NULL;
 	static $extrif_to_dci_transformer = NULL;
 	static $extrif_to_orcid_transformer = NULL;
-	
+	static $extrif_to_endnote_transformer = NULL;
 
 	static function get_qa_transformer()
 	{
@@ -141,7 +141,6 @@ class Transforms {
 			$cleanNSproc->importStyleSheet($cleanNS);
 			self::$clean_ns_transformer =	$cleanNSproc;
 		}
-
 		return self::$clean_ns_transformer;
 	}
 
@@ -173,7 +172,19 @@ class Transforms {
 		return self::$extrif_to_orcid_transformer;
 	}
 
+    static function get_extrif_to_endnote_transformer()
+    {
+        if (is_null(self::$extrif_to_endnote_transformer))
+        {
+            $endnote_xsl = new DomDocument();
+            $endnote_xsl->load(REGISTRY_APP_PATH.'registry_object/transforms/extrif_to_endnote.xsl');
+            $endProc = new XSLTProcessor();
+            $endProc->importStyleSheet($endnote_xsl);
+            self::$extrif_to_endnote_transformer = $endProc;
+        }
 
+        return self::$extrif_to_endnote_transformer;
+    }
 	
 	
 }		

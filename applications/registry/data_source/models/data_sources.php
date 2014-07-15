@@ -113,7 +113,7 @@ class Data_sources extends CI_Model {
 	 * @param the data source ID
 	 * @return _data_source object or NULL
 	 */
-	function getOwnedDataSources($just_id = false)
+	function getOwnedDataSources($just_id = false, $just_core=false)
 	{
 		$data_sources = array();
 		$affiliations = $this->user->affiliations();
@@ -121,11 +121,11 @@ class Data_sources extends CI_Model {
 		{
 			if ($this->user->hasFunction('REGISTRY_SUPERUSER'))
 			{
-				$query = $this->db->query("SELECT data_source_id FROM data_sources");	
+				$query = $this->db->query("SELECT * FROM data_sources");	
 			}
 			else
 			{
-				$query = $this->db->select('data_source_id')->where('attribute','record_owner')->where_in('value',$affiliations)->get('data_source_attributes');
+				$query = $this->db->where_in('record_owner', $affiliations)->get('data_sources');
 			}
 
 			if ($query->num_rows() == 0)
@@ -138,6 +138,8 @@ class Data_sources extends CI_Model {
 				{
 					if($just_id){
 						$data_sources[] = $ds['data_source_id'];
+					}elseif($just_core){
+						$data_sources[] = $ds;
 					}else{
 						$data_sources[] =  new _data_source($ds['data_source_id']);
 					}
@@ -300,12 +302,12 @@ class Data_sources extends CI_Model {
 class DataSourceReferenceCache {
 	static $recent = NULL;
 
-	function &getRecent()
+	static function &getRecent()
 	{
 		// force PHP to return an object reference
 		return self::$recent;
 	}
-	function set($data_source_obj)
+	static function set($data_source_obj)
 	{
 		self::$recent = $data_source_obj;
 	}

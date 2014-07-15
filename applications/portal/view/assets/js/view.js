@@ -114,7 +114,7 @@ function drawRegistryIcon(){
 function initConnections(){
 	$('.preview_connection').each(function(){
 		if(typeof $('a', this).attr('slug')!=='undefined'){
-			generatePreviewTip($(this), $('a',this).attr('slug'), null, $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'), null);
+			generatePreviewTip($(this), $('a',this).attr('slug'), $('a', this).attr('registry_object_id'), $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'), null);
 		}else if($('a', this).attr('identifier_relation_id')!=''){
 			generatePreviewTip($(this), null, null, $('a', this).attr('relation_type'), $('a', this).attr('relation_description'), $('a', this).attr('relation_url'), $('a', this).attr('identifier_relation_id'));
 		}else if($('a', this).attr('draft_id')!=''){
@@ -197,7 +197,7 @@ function initDataciteSeeAlso(){
 			var count = parseInt(data.count);
 			if(count>0){
 				var datacite_explanation = $('#datacite_explanation').html();
-				var datacite_qmark = "<img class='datacite_help' src='"+base_url+"assets/core/images/question_mark.png' width='12px' />";
+				var datacite_qmark = "<img class='datacite_help' src='"+base_url+"assets/core/images/question_mark.png' width='14px' />";
 				$('#DataCiteSuggestedLinksBox').html('<h4>External Records</h4>' +'<h5><a href="#" class="show_accordion" data-title="Records suggested by DataCite" data-suggestor="'+suggestor+'" data-start="0" data-rows="10"> ' + data.count + " records</a> from DataCite " + datacite_qmark + "</h5>").fadeIn();
 				$('.datacite_help').qtip({
 					content:{text:datacite_explanation},
@@ -584,12 +584,12 @@ function generatePreviewTip(element, slug, registry_object_id, relation_type, re
 	var preview_url;
 	if (slug != null)
 	{
-		preview_url = base_url + "preview/" + slug;
+		preview_url = base_url + "preview/" + slug + '/' + registry_object_id;
 		//alert(preview_url)
 	}
 	else if(registry_object_id != null)
 	{
-		preview_url = base_url + "preview/?registry_object_id=" + registry_object_id;
+		preview_url = base_url + "preview/?id=" + registry_object_id;
 	}
 	else if(identifier_relation_id != null)
 	{
@@ -616,7 +616,7 @@ function generatePreviewTip(element, slug, registry_object_id, relation_type, re
 					$("div.descriptions", temp).html($("div.descriptions", temp).directText());
 
 					if (data.slug){
-						$('.viewRecord',temp).attr("href", base_url + data.slug);
+						$('.viewRecord',temp).attr("href", base_url + data.slug + '/' + data.registry_object_id);
 					}
 					else
 					{
@@ -626,8 +626,8 @@ function generatePreviewTip(element, slug, registry_object_id, relation_type, re
 					var relDesc = '';
 					var relUrl = '';
 					if (data.slug){
-						$('.viewRecordLink'+data.slug).attr("href",base_url + data.slug);
-						$('.viewRecord').attr("href", base_url + data.slug);
+						$('.viewRecordLink'+data.slug).attr("href",base_url + data.slug+'/'+data.registry_object_id);
+						$('.viewRecord').attr("href", base_url + data.slug+'/'+data.registry_object_id);
 						if(relation_type){
 							
 							if(relation_description)
@@ -924,7 +924,7 @@ function initLinkedRecords(){
 							var msg ='<div class="linked_record_tooltip_title">'+text+'</div>';
 							msg += '<ul class="linkedrecords-list">';
 							$.each(data.content, function(){
-								msg +='<a href="'+base_url+this.slug+'?fl"><li>'+this.title+'<br/><span class="grey">Contributed by '+this.group+'</span></li></a>';
+								msg +='<a href="'+base_url+this.slug+'/'+this.id+'?fl"><li>'+this.title+'<br/><span class="grey">Contributed by '+this.group+'</span></li></a>';
 							});
 							this.set('content.text', msg);
 

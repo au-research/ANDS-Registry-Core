@@ -56,7 +56,7 @@
 			<ul>
 				<li><a href="<?=base_url('');?>">Home</a></li>
 				<li><a href="<?=base_url('home/about');?>">About</a></li>				
-				<li><a href="<?=base_url('home/contact');?>">Contact Us</a></li>
+				<li class="myCustomTrigger"><a href="<?=base_url('home/contact');?>">Contact Us</a></li>
 				<li><a href="<?=base_url('home/disclaimer');?>">Disclaimer</a></li>	
 				<li><a href="<?=developer_url('');?>">Developers</a></li>
 				<li><a href="<?=base_url('search/#!/q=/tab=collection');?>">All Collections</a></li>
@@ -84,6 +84,7 @@
         <?php echo urchin_for($this->config->item('rda_urchin_id')); ?>
         var urchin_id = "<?php echo $this->config->item('rda_urchin_id');?>";
     </script>
+    <script type="text/javascript" src="https://jira.ands.org.au/s/d41d8cd98f00b204e9800998ecf8427e/en_AUc8oc9c-1988229788/6265/77/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d9610dcf"></script>
 
 	<!-- Zoo Scripts Untouched -->
 	<script type="text/javascript" src="<?php echo asset_url('ands_portal.combined.js', 'core'); ?>"></script>

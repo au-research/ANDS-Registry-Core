@@ -87,7 +87,7 @@ class CI_Router {
 	{
 		$this->config =& load_class('Config', 'core');
 		$this->uri =& load_class('URI', 'core');
-		log_message('debug', "Router Class Initialized");
+		// log_message('debug', "Router Class Initialized");
 	}
 
 	// --------------------------------------------------------------------
@@ -206,7 +206,7 @@ class CI_Router {
 		// re-index the routed segments array so it starts with 1 rather than 0
 		$this->uri->_reindex_segments();
 
-		log_message('debug', "No URI present. Default controller set.");
+		// log_message('debug', "No URI present. Default controller set.");
 	}
 
 	// --------------------------------------------------------------------

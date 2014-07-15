@@ -46,7 +46,7 @@ class CI_Lang {
 	 */
 	function __construct()
 	{
-		log_message('debug', "Language Class Initialized");
+		// log_message('debug', "Language Class Initialized");
 	}
 
 	// --------------------------------------------------------------------
@@ -127,7 +127,7 @@ class CI_Lang {
 		$this->language = array_merge($this->language, $lang);
 		unset($lang);
 
-		log_message('debug', 'Language file loaded: language/'.$idiom.'/'.$langfile);
+		// log_message('debug', 'Language file loaded: language/'.$idiom.'/'.$langfile);
 		return TRUE;
 	}
 

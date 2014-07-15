@@ -5,8 +5,11 @@ class Registry_fetch extends CI_Model
 
 	function transformExtrifToHTMLStandardRecord($extrif)
 	{
-		$xsl_args = array(
+
+
+        $xsl_args = array(
 			'base_url' => base_url(),
+            'current_time' => time()
 		);
 
 		// Add a level of entity decoding here 
@@ -125,6 +128,19 @@ class Registry_fetch extends CI_Model
 		}
 	}
 
+	function resolve($any) {
+		$url = $this->config->item('registry_endpoint') . "resolveRegistryObject/?any=" . $any;
+		$contents = json_decode(@file_get_contents($url), true);
+		if (isset($contents['data'])){
+			return $contents;
+		} else {
+			if($contents['message']=='404') {
+				throw new PageNotValidException($contents['message']);
+			}
+			throw new ErrorException("Error whilst fetching registry object: " . $contents['message']);
+		}
+	}
+
 	function fetchConnectionsBySlug($slug, $limit=5, $offset=0, $type_filter=null)
 	{
 		$url = $this->config->item('registry_endpoint') . "getConnections/?slug=" . $slug;
@@ -139,8 +155,7 @@ class Registry_fetch extends CI_Model
 		}
 		else
 		{
-			var_dump($contents);
-			throw new ErrorException("Error whilst fetching registry object connections: 333" . $url);
+			throw new ErrorException("Error whilst fetching registry object connections:" . $url);
 		}
 	}
 
@@ -340,6 +355,14 @@ function fetchContributorDataById($id)
 		$response = json_decode(@file_get_contents($url), true);
 		return $response;
 	}
+
+    function fetchCollectionCreators($id)
+    {
+        $url = $this->config->item('registry_endpoint') . "getCollectionCreators/?id=".$id;
+        $response = @file_get_contents($url);
+        return $response;
+    }
+
 
 }
 class PageNotValidException extends Exception {}

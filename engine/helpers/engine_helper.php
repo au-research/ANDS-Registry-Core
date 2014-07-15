@@ -1,5 +1,53 @@
 <?php
 
+function get_config_item($name) {
+	$_ci =& get_instance();
+	if($_ci->config->item($name)) {
+		return $_ci->config->item($name);
+	} else {
+		//it's in the database table
+		$result = $_ci->db->get_where('configs', array('key'=>$name));
+		if($result->num_rows() > 0) {
+			$result_array = $result->result_array();
+			$result_item = $result_array[0];
+			if($result_item['type']=='json') {
+				$string = trim(preg_replace('/\s+/', ' ', $result_item['value']));
+				return json_decode($string, true);
+			} else {
+				return $result_item['value'];
+			}
+		} else {
+			return false;
+		}
+	}
+}
+
+function set_config_item($key, $type, $value) {
+	$_ci =& get_instance();
+	if($value=='json' && is_array($value)) $value = json_encode($value); 
+
+	$query = get_config_item($key);
+	if(!$query) {
+		$data = array(
+			'key' => $key,
+			'type' => $type,
+			'value' => $value
+		);
+		$insert_query = $_ci->db->insert('configs', $data);
+		if($insert_query) {
+			return true;
+		} else return false;
+	} elseif($query!=$value) {
+		$_ci->db->where('key', $key);
+		$update_query = $_ci->db->update('configs', array(
+			'type' => $type,
+			'value' => $value
+		));
+	} else {
+		return false;
+	}
+}
+
 function mod_enabled($module_name)
 {
 	$CI =& get_instance();
@@ -59,11 +107,15 @@ function ds_acl_enforce($ds_id, $message = ''){
 
 function default_error_handler($errno, $errstr, $errfile, $errline)
 {
+	log_message('error', $errstr . " > on line " . $errline . " (" . $errfile .")");
+
 	// Ignore when error_reporting is turned off (sometimes inline with @ symbol)
 	if (error_reporting() == 0) { return true; }
 
 	// Ignore E_STRICT no email either
 	if ($errno == E_STRICT) { return true; }
+
+
 
 	if (ENVIRONMENT == "development")
 	{
@@ -77,6 +129,7 @@ function default_error_handler($errno, $errstr, $errfile, $errline)
 		notifySiteAdmin($errno, $errstr, $errfile, $errline);
 		throw new Exception("An unexpected system error has occured. Please try again or report this error to the system administrator.");
 	}
+
 
 
 	return true;   /* Don't execute PHP internal error handler */
@@ -154,6 +207,12 @@ set_exception_handler('default_exception_handler');
 function json_exception_handler( $e ) {
     echo json_encode(array("status"=>"ERROR", "message"=> $e->getMessage()));
 }
+
+function json_error_handler($errno, $errstr, $errfile, $errline) {
+	throw new Exception($errstr);
+	// echo json_encode(array('status'=>'ERROR', 'message'=>'MESSAGE:'.$errstr ."on line " . $errline . " (" . $errfile .")"));
+}
+if (function_exists('xdebug_disable')) xdebug_disable();
 
 function asset_url( $path, $loc = 'modules')
 {
@@ -319,8 +378,7 @@ function check_services(){
 	}
 }
 
-function maxUploadSizeBytes()
-{
+function maxUploadSizeBytes(){
 	// Helper function to convert "2M" to bytes
 	$normalize = function($size) {
 		if (preg_match('/^([\d\.]+)([KMG])$/i', $size, $match)) {
@@ -336,4 +394,14 @@ function maxUploadSizeBytes()
 	$memory_limit = $normalize(ini_get('memory_limit'));
 	$maxFileSize = min($max_upload, $max_post, $memory_limit);
 	return $maxFileSize;
+}
+
+//check if xml is valid document
+function isValidXML($xml) {
+    $doc = @simplexml_load_string($xml);
+    if ($doc) {
+        return true; //this is valid
+    } else {
+        return false; //this is not valid
+    }
 }

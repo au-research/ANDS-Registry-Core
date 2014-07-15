@@ -187,7 +187,6 @@ class Connections_Extension extends ExtensionBase
 
         if ($create_primary_relationships)
         {
-
             $unordered_connections = array_merge($unordered_connections, $this->_getPrimaryLinks($allow_drafts));
         }
 		/* Step 3 - External reverse links */
@@ -396,7 +395,7 @@ class Connections_Extension extends ExtensionBase
 						 ->where('r.data_source_id',$this->ro->data_source_id)
 						 ->where('rr.origin =','PRIMARY');
 		$query = $this->db->get();
-
+		
 		foreach ($query->result_array() AS $row)
 		{
 			$row['origin'] = "PRIMARY";
@@ -428,7 +427,45 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
+    function getRelatedObjectsByClassAndRelationshipType($classArray, $relationshipTypeArray)
+    {
+        $unordered_connections = array();
 
+        $this->_CI->load->model('data_source/data_sources','ds');
+        $ds = $this->_CI->ds->getByID($this->ro->data_source_id);
+
+        $allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t" || $ds->allow_reverse_internal_links == 1);
+        $allow_reverse_external_links = ($ds->allow_reverse_external_links == "t" || $ds->allow_reverse_external_links == 1);
+        $create_primary_relationships = ($ds->create_primary_relationships == "t" || $ds->create_primary_relationships == 1);
+
+        $unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks());
+
+        if ($allow_reverse_internal_links)
+        {
+            $unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks());
+        }
+        if ($allow_reverse_external_links)
+        {
+            $unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks());
+        }
+        if ($create_primary_relationships)
+        {
+            $unordered_connections = array_merge($unordered_connections, $this->_getPrimaryLinks());
+        }
+
+        $connections = array();
+
+        foreach($unordered_connections AS $connection)
+        {
+            if(in_array($connection['class'], $classArray) && in_array($connection['relation_type'], $relationshipTypeArray))
+            {
+                $connections[] = $connection;
+
+            }
+        }
+        return $connections;
+
+    }
 
 	function _getContributorLinks($allow_unmatched_records = false)
 	{

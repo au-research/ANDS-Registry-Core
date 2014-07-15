@@ -56,7 +56,7 @@ class CI_Xmlrpcs extends CI_Xmlrpc
 			$this->methods = array_merge($this->methods, $config['functions']);
 		}
 
-		log_message('debug', "XML-RPC Server Class Initialized");
+		// log_message('debug', "XML-RPC Server Class Initialized");
 	}
 
 	// --------------------------------------------------------------------

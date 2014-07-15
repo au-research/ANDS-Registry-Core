@@ -87,6 +87,7 @@ class Extrif_Extension extends ExtensionBase
 							$this->ro->set_metadata('the_logo', $logoRef);
 						}
 						$testDescription = $this->isHtml( html_entity_decode(html_entity_decode($description_str)) );
+
 						// if($testDescription==true)
 						// {
 						// // Clean the HTML with purifier, but decode entities first (else they wont be picked up in the first place)
@@ -95,6 +96,7 @@ class Extrif_Extension extends ExtensionBase
 						// 	$clean_html =  htmlentities(htmlentities($description_str));
 						// }
 						$clean_html = $this->_CI->purifier->purify_html($description_str);
+
 						$encoded_html = '';
 
 						// Check for <br/>'s
@@ -181,8 +183,7 @@ class Extrif_Extension extends ExtensionBase
 				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
 
 				// Include the count of any linked records based on identifier matches
-				$extendedMetadata->addChild("extRif:matching_identifier_count", sizeof($this->ro->findMatchingRecords()), EXTRIF_NAMESPACE);
-
+				if($this->ro->class!='collection') $extendedMetadata->addChild("extRif:matching_identifier_count", sizeof($this->ro->findMatchingRecords()), EXTRIF_NAMESPACE);
 
 				//ANNOTATIONS
 				$annotations = $extendedMetadata->addChild("extRif:annotations", NULL, EXTRIF_NAMESPACE);
@@ -192,7 +193,7 @@ class Extrif_Extension extends ExtensionBase
 					$extRifTags = $annotations->addChild('extRif:tags', NULL, EXTRIF_NAMESPACE);
 
 					foreach($tags as $tag){
-						$tag_tag = $extRifTags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
+						$tag_tag = $extRifTags->addChild('extRif:tag', str_replace("&","&amp;",$tag['name']) , EXTRIF_NAMESPACE);
 						$tag_tag->addAttribute('type', $tag['type']);
 					}
 				}
@@ -243,50 +244,11 @@ class Extrif_Extension extends ExtensionBase
 				}	
 				
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s6_end');
-				
-				/*if($this->ro->getAttribute('group') == 'National Health and Medical Research Council')
-				{*/
-					$allRelatedObjects = $this->ro->getAllRelatedObjects(false, true, true);
-					foreach ($allRelatedObjects AS $relatedObject)
-					{
-					//var_dump($relatedObject);
-						$relatedObj = $extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_key", $relatedObject['key'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_id", $relatedObject['registry_object_id'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_class", $relatedObject['class'], EXTRIF_NAMESPACE);
-						//$relatedObj->addChild("extRif:related_object_type", $relatedObject['related_object_type'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_display_title", str_replace('&', '&amp;' , $relatedObject['title']), EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_relation", $relatedObject['relation_type'], EXTRIF_NAMESPACE);
-						//$relatedObj->addChild("extRif:related_object_logo", $relatedObject['the_logo'], EXTRIF_NAMESPACE);
-						if($relatedObject['registry_object_id'] != '' && $relatedObject['origin'] == 'IDENTIFIER' && $relatedObject['related_title'] == '')
-						{							
-							foreach ($xml->{$this->ro->class}->relatedInfo->identifier AS $identifier)
-							{
-								if((string)$identifier == $relatedObject['related_object_identifier'] && (string)$identifier['type'] == $relatedObject['related_object_identifier_type'])									
-									$identifier["resolved"] ='true';
-								}
-							}
-						}
-			/*	}
-				else
-				{
-					foreach ($this->ro->getRelatedObjects() AS $relatedObject)
-					{
-						$relatedObj = $extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_key", $relatedObject['related_object_key'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_id", $relatedObject['related_id'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_class", $relatedObject['class'], EXTRIF_NAMESPACE);
-						//$relatedObj->addChild("extRif:related_object_type", $relatedObject['related_object_type'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_display_title", $relatedObject['title'], EXTRIF_NAMESPACE);
-						$relatedObj->addChild("extRif:related_object_relation", $relatedObject['relation_type'], EXTRIF_NAMESPACE);
-						//$relatedObj->addChild("extRif:related_object_logo", $relatedObject['the_logo'], EXTRIF_NAMESPACE);
-					}
-				}
-				*/
+
 				// Friendlify dates =)
 				$xml = $this->ro->extractDatesForDisplay($xml);
 
-
+//				$allRelatedObjects = array();
 				/* 
 				Add some logic to boost highly connected records & contributor pages
 				*/
@@ -294,11 +256,11 @@ class Extrif_Extension extends ExtensionBase
 				{
 					$this->ro->search_boost = SEARCH_BOOST_CONTRIBUTOR_PAGE;
 				}
-				elseif (count($allRelatedObjects) > 0)
-				{
-					// Give credit to "highly connected" records (but limit to 10)
-					$this->ro->search_boost = min(pow(SEARCH_BOOST_PER_RELATION_EXP,count($allRelatedObjects)), SEARCH_BOOST_RELATION_MAX);
-				}
+//				elseif (count($allRelatedObjects) > 0)
+//				{
+//					// Give credit to "highly connected" records (but limit to 10)
+//					$this->ro->search_boost = min(pow(SEARCH_BOOST_PER_RELATION_EXP,count($allRelatedObjects)), SEARCH_BOOST_RELATION_MAX);
+//				}
 
 				/* Names EXTRIF */
 				//$descriptions = $xml->xpath('//'.$this->ro->class.'/description');
@@ -367,7 +329,7 @@ class Extrif_Extension extends ExtensionBase
 				$ext->extendedMetadata->addChild('annotations', null, EXTRIF_NAMESPACE);
 				$ext->extendedMetadata->annotations->addChild('tags', null, EXTRIF_NAMESPACE);
 				foreach($tags as $tag) {
-					$tag_node = $ext->extendedMetadata->annotations->tags->addChild('extRif:tag', $tag['name'], EXTRIF_NAMESPACE);
+					$tag_node = $ext->extendedMetadata->annotations->tags->addChild('extRif:tag', str_replace('&', '&amp;' , $tag['name']), EXTRIF_NAMESPACE);
 					$tag_node->addAttribute('type', $tag['type']);
 				}
 			}

@@ -1790,6 +1790,7 @@
 
       this.$element.val(text)
       this.$element.change();
+      this.$element.trigger('input');
       if (typeof this.onselect == "function")
           this.onselect(val)
 

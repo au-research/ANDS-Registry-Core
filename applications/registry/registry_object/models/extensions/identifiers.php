@@ -29,15 +29,30 @@ class Identifiers_Extension extends ExtensionBase
 		}
 	}
 
+	function getIdentifiers() {
+		$sxml = $this->ro->getSimpleXML();
+		$identifiersArray = array();
+		foreach($sxml->xpath('//ro:'.$this->ro->class.'/ro:identifier') AS $identifier) {
+			if((string)$identifier != '') {
+				$identifiersArray[] = array(
+					'identifier' => (string) $identifier,
+					'identifier_type' => (string) $identifier['type']
+				);
+			}
+		}
+		return $identifiersArray;
+	}
+
 
 
 	public function findMatchingRecords($matches = array(), $tested_ids = array(), $recursive=true)
 	{
+		if($this->ro->class=='collection') return $matches;
 		if(sizeof($tested_ids) === 0) // first call
 		{
 			$tested_ids[] = $this->ro->id;
 			$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $this->ro->id, 'identifier_type !='=> 'local'));
-			$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$this->ro->id." AND (";
+			$sql = "SELECT ro.registry_object_id, ro.class FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$this->ro->id ." AND ro.class = '".$this->ro->class."' AND (";
 			$qArray = array();
 			$or = '';
 			if(sizeof($query->result_array()) > 0)
@@ -50,9 +65,7 @@ class Identifiers_Extension extends ExtensionBase
 					$qArray[] = $row['identifier_type'];
 				}
 				$sql .= ")";
-				
 				$query = $this->db->query($sql, $qArray);
-				
 				if(sizeof($query->result_array()) > 0){
 					foreach ($query->result_array() AS $ro){
 						if(!in_array($ro['registry_object_id'], $matches)){
@@ -72,7 +85,7 @@ class Identifiers_Extension extends ExtensionBase
 				{
 					$tested_ids[] = $registry_object_id;
 					$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $registry_object_id, 'identifier_type !='=> 'local'));
-					$sql = "SELECT ro.registry_object_id FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$registry_object_id." AND (";
+					$sql = "SELECT ro.registry_object_id, ro.class FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$registry_object_id." AND ro.class = '".$this->ro->class."' AND (";
 					$qArray = array();
 					$or = '';
 					if(sizeof($query->result_array()) > 0)

@@ -116,7 +116,7 @@ Only records which have coverage of the search region will be displayed.
 				<img src="<?php echo base_url();?>assets/img/{{class}}.png" class="class_icon icontip_{{class}}" type="{{class}}"/>
 			{{/class}}
 			{{#list_title}}
-				<a href="<?php echo base_url();?>{{slug}}" class="title">{{list_title}}</a>
+				<a href="<?php echo base_url();?>{{slug}}/{{id}}" class="title">{{list_title}}</a>
 
 			{{/list_title}}
 			{{#matching_identifier_count}}
@@ -170,7 +170,7 @@ Only records which have coverage of the search region will be displayed.
 <script type="text/x-mustache" id="linkedrecords-template">
 <ul>
 {{#.}}
-	<li><a href="<?php echo base_url();?>{{slug}}" class="overrule_link">{{title}} <span><small>(Contributor: {{group}})</small></span></a></li>
+	<li><a href="<?php echo base_url();?>{{slug}}/{{id}}" class="overrule_link">{{title}} <span><small>(Contributor: {{group}})</small></span></a></li>
 {{/.}}
 </ul>
 </script>

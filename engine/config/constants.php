@@ -45,8 +45,8 @@ define('BR','<br/>');
 define('NL',"\n");
 define('TAB',"\t");
 
-define('DB_TRUE',"t");
-define('DB_FALSE',"f");
+define('DB_TRUE',1);
+define('DB_FALSE',0);
 
 define('ENGINE_ENABLED_MODULE_LIST','ENGINE_ENABLED_MODULE_LIST');
 

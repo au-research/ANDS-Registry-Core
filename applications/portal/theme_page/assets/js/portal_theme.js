@@ -183,11 +183,13 @@ angular.module('portal_theme',[]).
 					$(facets).each(function(){
 						var facet_type = $(this).attr('facet-type');
 						var facet_data = '';
+						facet_data.filter_query = filter_query;
 						$(data.facet_result).each(function(){
 							if(this.facet_type==facet_type) facet_data = this;
 						});
 						$(facet_data.values).each(function(){
 							this.inc_title = encodeURIComponent(this.title);
+							this.filter_query = filter_query;
 						});
 						var template = $('#facet-template').html();
 						var output = Mustache.render(template, facet_data);

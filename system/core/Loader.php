@@ -129,7 +129,7 @@ class CI_Loader {
 		$this->_ci_model_paths = array(APPPATH);
 		$this->_ci_view_paths = array(APPPATH.'views/'	=> TRUE);
 
-		log_message('debug', "Loader Class Initialized");
+		// log_message('debug', "Loader Class Initialized");
 	}
 
 	// --------------------------------------------------------------------
@@ -515,7 +515,7 @@ class CI_Loader {
 				include_once($base_helper);
 
 				$this->_ci_helpers[$helper] = TRUE;
-				log_message('debug', 'Helper loaded: '.$helper);
+				// log_message('debug', 'Helper loaded: '.$helper);
 				continue;
 			}
 
@@ -527,7 +527,7 @@ class CI_Loader {
 					include_once($path.'helpers/'.$helper.'.php');
 
 					$this->_ci_helpers[$helper] = TRUE;
-					log_message('debug', 'Helper loaded: '.$helper);
+					// log_message('debug', 'Helper loaded: '.$helper);
 					break;
 				}
 			}
@@ -833,7 +833,7 @@ class CI_Loader {
 			include($_ci_path); // include() vs include_once() allows for multiple views with the same name
 		}
 
-		log_message('debug', 'File loaded: '.$_ci_path);
+		// log_message('debug', 'File loaded: '.$_ci_path);
 
 		// Return the file data if requested
 		if ($_ci_return === TRUE)
@@ -927,7 +927,7 @@ class CI_Loader {
 					}
 
 					$is_duplicate = TRUE;
-					log_message('debug', $class." class already loaded. Second attempt ignored.");
+					// log_message('debug', $class." class already loaded. Second attempt ignored.");
 					return;
 				}
 
@@ -966,7 +966,7 @@ class CI_Loader {
 					}
 
 					$is_duplicate = TRUE;
-					log_message('debug', $class." class already loaded. Second attempt ignored.");
+					// log_message('debug', $class." class already loaded. Second attempt ignored.");
 					return;
 				}
 

@@ -48,7 +48,7 @@ class CI_Migration {
 			$this->{'_' . $key} = $val;
 		}
 
-		log_message('debug', 'Migrations class initialized');
+		// log_message('debug', 'Migrations class initialized');
 
 		// Are they trying to use migrations while it is disabled?
 		if ($this->_migration_enabled !== TRUE)
@@ -183,7 +183,7 @@ class CI_Migration {
 			}
 		}
 
-		log_message('debug', 'Current migration: ' . $current_version);
+		// log_message('debug', 'Current migration: ' . $current_version);
 
 		$version = $i + ($step == 1 ? -1 : 0);
 
@@ -193,7 +193,7 @@ class CI_Migration {
 			return TRUE;
 		}
 
-		log_message('debug', 'Migrating from ' . $method . ' to version ' . $version);
+		// log_message('debug', 'Migrating from ' . $method . ' to version ' . $version);
 
 		// Loop through the migrations
 		foreach ($migrations AS $migration)
@@ -206,7 +206,7 @@ class CI_Migration {
 			$this->_update_version($current_version);
 		}
 
-		log_message('debug', 'Finished migrating to '.$current_version);
+		// log_message('debug', 'Finished migrating to '.$current_version);
 
 		return $current_version;
 	}

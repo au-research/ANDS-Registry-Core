@@ -15,6 +15,7 @@
 
 	<link rel="stylesheet" href="<?php echo asset_url('ands_portal.combined.css', 'core'); ?>" type="text/css" media="screen">
 	<link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget.css')?>"  media="screen" />
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/lib/font-awesome-4.1.0/css/font-awesome.min.css');?>" />
 	<link rel="stylesheet" href="<?php echo asset_url('print.css','core');?>" type="text/css" media="print" />
 
 	<link rel="shortcut icon" href="<?php echo base_url('favicon.ico');?>"/>
@@ -47,6 +48,7 @@ else
 		echo '<div class="codeversion"><img src="'. asset_url('images/info.png','core').'" /> '.$versionInfo.'</div>';
 	endif; ?>
 	<div class="header" <?=$environment_header_style;?>>
+  <button class="myCustomTrigger yellow_button feedback_button">Feedback</button>
 		<div class="head">
 			<div class="tagline">
 				<a href="<?php echo base_url();?>"><span>Research Data</span> Australia</a>

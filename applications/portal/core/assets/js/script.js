@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
 	initTips();
 
 	$('#search_box').typeahead({
@@ -59,6 +60,11 @@ $(document).ready(function() {
     	return false;
     });
 
+    $('#show_dropdown').click(function() {
+        $("#export_dropdown").toggle();
+        return false;
+    });
+
     $('.login_st').toggle(function(){
         $('div.qtip:visible').qtip('hide');
     	$('.login_banner').slideDown();
@@ -81,7 +87,14 @@ $(document).ready(function() {
     	hide:'mouseout',
     	style:{classes:'ui-tooltip-light ui-tooltip-shadow'}
     });
-
+    $('.endnote_helper').qtip({
+        content:{
+            text:'Export help'
+        },
+        show:'mouseover',
+        hide:'mouseout',
+        style:{classes:'ui-tooltip-light ui-tooltip-shadow'}
+    });
     $('#ad_st').toggle(function() {
         $('div.qtip:visible').qtip('hide');
 	//don't init slider until we show the advanced search slidedown
@@ -260,6 +273,15 @@ $('#moreCodeVersions').on('click', function(){
 	$(this).hide();
 	$(this).siblings().fadeIn();
 });
+
+window.ATL_JQ_PAGE_PROPS =  {
+    "triggerFunction": function(showCollectorDialog) {
+      //Requries that jQuery is available!
+        jQuery(".myCustomTrigger").click(function(e) {
+            e.preventDefault();
+            showCollectorDialog();
+    });
+}};
 
 function validateEmail(email) 
 {

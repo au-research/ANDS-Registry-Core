@@ -201,6 +201,10 @@ function readable($text, $singular = false){
         case "authentication_built_in": return "Built-in";break;
         case "authentication_ldap": return "LDAP";break;
         case "authentication_shibboleth": return "Shibboleth";break;
+        case "pmhharvester": return "OAI-PMH Harvester";break;
+        case "getharvester": return "GET Harvester";break;
+        case "cswharvester": return "CSW Harvester";break;
+        case "ckanharvester": return "CKAN Harvester";break;
 	}
 }
 
@@ -301,4 +305,32 @@ function removeBadValue($string){
     $match = array('%','&',);
     $string = str_replace($match, '', $string);
     return $string;
+}
+
+function getNextHarvestDate($harvestDate, $harvestFrequency){
+    if($harvestFrequency =='once only' || $harvestFrequency == '')
+        return null;
+    $now = time();
+    if($harvestDate)
+        $nextHarvest = $harvestDate;
+    else
+        $nextHarvest = $now;
+    while($nextHarvest <= $now)
+		{
+            if($harvestFrequency == 'daily')
+                $nextHarvest = strtotime('+1 day', $nextHarvest);
+            elseif($harvestFrequency == 'weekly')
+                $nextHarvest = strtotime('+1 week', $nextHarvest);
+            elseif($harvestFrequency == 'fortnightly')
+                $nextHarvest = strtotime('+2 week', $nextHarvest);
+            elseif($harvestFrequency == 'monthly')
+                $nextHarvest = strtotime('+1 month', $nextHarvest);
+            elseif($harvestFrequency =='hourly')
+                $nextHarvest += 60*60;
+        }
+    return $nextHarvest;
+}
+
+function endsWith($haystack, $needle){
+    return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 }

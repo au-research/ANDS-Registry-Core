@@ -13,38 +13,398 @@
 class Data_source extends MX_Controller {
 
 	/**
-	 * Manage My Datasources (MMR version for Data sources)
-	 * 
-	 * 
+	 * index page, display the angularJS data source app view
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-	 * @param 
-	 * @todo ACL on which data source you have access to
-	 * @return [HTML] output
+	 * @return view
 	 */
-	
-	public function index(){
-		//$this->output->enable_profiler(TRUE);
+	public function index() {
 		acl_enforce('REGISTRY_USER');
-		
 		$data['title'] = 'Manage My Data Sources';
-		$data['small_title'] = '';
+		$data['scripts'] = array('ds_app');
+		$data['js_lib'] = array('core', 'ands_datepicker','vocab_widget','rosearch_widget', 'angular');
+		$this->load->view("datasource_app", $data);
+	}
+
+	/**
+	 * get a JSON presentation of a data source
+	 * if there's no data source speficied, get all owned datasource
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  data_source_id $id
+	 * @return json
+	 */
+	public function get($id=false) {
+		//prepare
+		acl_enforce('REGISTRY_USER');
+
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		$jsonData = array();
+		$jsonData['status'] = 'OK';
 
 		$this->load->model("data_sources","ds");
-	 	$dataSources = $this->ds->getOwnedDataSources();
+		if(!$id){
+			$dataSources = $this->ds->getOwnedDataSources();
+		} elseif ($id && $id!=null) {
+			ds_acl_enforce($id);
+			$ds = $this->ds->getByID($id);
+			$ds->updateStats();
+			$dataSources = array();
+			$dataSources[] = $ds;
+		}
+		$this->load->model("registry_object/registry_objects", "ro");
 
 		$items = array();
 		foreach($dataSources as $ds){
 			$item = array();
 			$item['title'] = $ds->title;
 			$item['id'] = $ds->id;
+			$item['counts'] = array();
+			foreach ($this->ro->valid_status AS $status){
+				if($ds->getAttribute("count_$status")>0){
+					array_push($item['counts'], array('status' => $status, 'count' =>$ds->getAttribute("count_$status"), 'name'=>readable($status)));
+				}
+			}
+			$item['qlcounts'] = array();
+			foreach ($this->ro->valid_levels AS $level){
+				array_push($item['qlcounts'], array('level' => $level, 'title' => ($level==4 ? 'Gold Standard Records' : 'Quality Level '.$level), 'count' =>$ds->getAttribute("count_level_$level")));
+			}
+			$item['classcounts'] = array();
+			foreach($this->ro->valid_classes as $class){
+				if($ds->getAttribute("count_$class")>0)array_push($item['classcounts'], array('class' => $class, 'count' =>$ds->getAttribute("count_$class"),'name'=>readable($class)));
+			}
+			$item['key']=$ds->key;
+			$item['record_owner']=$ds->record_owner;
+			$item['notes']=$ds->notes;
+
+
+
+			if($id && $ds){
+
+				$harvester_methods = get_config_item('harvester_methods');
+				if($harvester_methods) $item['harvester_methods'] = $harvester_methods;
+
+				foreach($ds->attributes as $attrib=>$value){
+					$item[$attrib] = $value->value;
+				}
+
+				if(isset($item['harvest_date'])) {
+					date_default_timezone_set('Australia/Canberra');
+					$item['harvest_date'] = date( 'Y-m-d H:i:s', strtotime($item['harvest_date']));
+				}
+
+				//get harvester_method
+				
+				
+			}
+
 			array_push($items, $item);
 		}
 
-		$data['dataSources'] = $items;
-		$data['scripts'] = array('data_sources');
-		$data['js_lib'] = array('core', 'ands_datepicker','vocab_widget','rosearch_widget');
+		if($id && $ds) {
+			$logs = $ds->get_logs(0, 10, null, 'all', 'all');
+			$items[0]['logs'] = $logs;
+		}
 
-		$this->load->view("data_source_index", $data);
+		$jsonData['items'] = $items;
+		$jsonData = json_encode($jsonData);
+		echo $jsonData;
+	}
+
+	/**
+	 * get data source log
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  data_source_id $id
+	 * @param  integer $offset
+	 * @return json
+	 */
+	public function get_log($id=false, $offset=0, $limit=10, $logid=null) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		if(!$id) throw new Exception('ID must be specified');
+		ds_acl_enforce($id);
+	
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		$logs = $ds->get_logs($offset, $limit, $logid, 'all', 'all');
+		$jsonData['status'] = 'OK';
+		$jsonData['items'] = $logs;
+		echo json_encode($jsonData);
+	}
+
+	/**
+	 * get harvester status
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  data_source_id $id 
+	 * @return json
+	 */
+	public function harvester_status($id=false) {
+		//prepare
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		if(!$id) throw new Exception('ID must be specified');
+		
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		$status = $ds->getHarvestStatus();
+		$jsonData['status'] = 'OK';
+		if($status){
+			if($ds->harvest_frequency==''){//once off
+				$status[0]['last_run'] = $status[0]['next_run'];
+				$status[0]['next_run'] = false;
+			}
+			$jsonData['items'] = $status;
+		} else {
+			$jsonData['items'] = array(
+				array('status' => 'IDLE')
+			);
+		}
+		
+		echo json_encode($jsonData);
+	}
+
+	/**
+	 * Get a list of contributor of a data source
+	 * @param  data_source_id $id
+	 * @return json
+	 */
+	public function get_contributor($id=false){
+		//prepare
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		if (!$id) throw new Exception('ID must be specified');
+		
+		$jsonData = array();
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		if($ds->institution_pages) {
+			$contributorPages = $ds->institution_pages;
+		} else {
+			$contributorPages = 0;
+		}
+		switch($contributorPages) {
+			case 0: $jsonData['contributorPages'] = 'Pages are not managed'; break;
+			case 1: $jsonData['contributorPages'] = 'Pages are automatically managed'; break;
+			case 2: $jsonData['contributorPages'] = 'Pages are manually managed'; break;
+		}
+		$dataSourceGroups = $ds->get_groups();
+		$items = array();
+		if (sizeof($dataSourceGroups) > 0) {
+			foreach($dataSourceGroups as $group) {
+				$group_contributor = $ds->get_group_contributor($group);
+				$item = array();
+				$item['group'] = $group;
+				if(isset($group_contributor['key'])) {
+					$item['contributor_page_key'] = $group_contributor['key'];
+					$item['contributor_page_id'] = $group_contributor['registry_object_id'];
+					$item['contributor_page_link'] = base_url('registry_object/view/'.$group_contributor["registry_object_id"]);
+					$item['authorative_data_source_id'] = $group_contributor['authorative_data_source_id'];
+					//check if it's the authorative data source, if not then present the authorative one
+					if ((int) $item['authorative_data_source_id'] != $ds->id) {
+						$auth_ds = $this->ds->getByID((int) $item['authorative_data_source_id']);
+						$item['authorative_data_source_title'] = $auth_ds->title;
+						$item['has_authorative'] = true;
+					} else $item['authorative_data_source_title'] = $ds->title;
+				} else {
+					$item['contributor_page_key'] = '';
+				}
+				array_push($items, $item);
+			}
+			
+			$jsonData['items'] = $items;
+			echo json_encode($jsonData);
+		}
+	}
+
+	/**
+	 * Save a data source
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return [json] response.status
+	 */
+	public function save() {
+
+		//prepare
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$this->load->model("data_sources","ds");
+		$this->load->model("registry/registry_object/registry_objects","ro");
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
+		$id = $data['id'];
+		if(!$id) throw new Exception('Data source ID is not specified');
+
+		//access control
+		acl_enforce('REGISTRY_USER');
+		ds_acl_enforce($id);
+
+		//data source
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Data source not found with the ID: '. $id);
+		$resetHarvest = false;
+		$resetPrimaryRelationships = false;
+
+		//construct a list of possible attributes, attributes that are not in this list will not get updated
+		$valid_attributes = array_merge(array_keys($ds->attributes()), array_keys($ds->harvesterParams));
+		$valid_attributes = array_merge($valid_attributes, $ds->primaryRelationship);
+		$valid_attributes = array_merge($valid_attributes, $ds->institutionPages);
+		$valid_attributes = array_merge($valid_attributes, array_keys($ds->stockAttributes));
+		$valid_attributes = array_merge($valid_attributes, array_keys($ds->extendedAttributes));
+		$valid_attributes = array_unique($valid_attributes);
+
+		//unset values based on previous values
+		if(isset($data['create_primary_relationships'])){
+			if ($data['create_primary_relationships']===0 || $data['create_primary_relationships']===false || $data['create_primary_relationships']==='f') {
+				$data['primary_key_1']='';
+				$data['primary_key_2']='';
+			}
+		}
+
+		if(isset($data['primary_key_1']) && $data['primary_key_1']==''){
+			$data['primary_key_1'] = '';
+			$data['service_rel_1'] = '';
+			$data['activity_rel_1'] = '';
+			$data['collection_rel_1'] = '';
+			$data['party_rel_1'] = '';
+		}
+		if(isset($data['primary_key_2']) && $data['primary_key_2']=='') {
+			$data['primary_key_2'] = '';
+			$data['service_rel_2'] = '';
+			$data['activity_rel_2'] = '';
+			$data['collection_rel_2'] = '';
+			$data['party_rel_2'] = '';
+		}
+
+		$updated_values = array();
+
+		//update each attribute
+		foreach($valid_attributes as $attrib) {
+
+			// if($attrib=='primary_key_1') throw new Exception($data['primary_key_1']);
+			$new_value = '';
+			if(is_integer($attrib) && $attrib == 0) {
+				continue;
+			} elseif (isset($data[$attrib])) {
+				$new_value = trim($data[$attrib]);
+			} elseif (in_array($attrib, array_keys($ds->harvesterParams))) {
+				$new_value = $ds->harvesterParams[$attrib];
+			} elseif (in_array($attrib, $ds->primaryRelationship)){
+				$new_value = '';
+			}
+
+			//detect qa_flag changed to false
+			if($attrib=='qa_flag' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value != $ds->{$attrib}){
+
+				$newStatus = PUBLISHED;
+				if($data['manual_publish']) $newStatus = APPROVED;
+
+				//update all submitted for assessment records to new status
+				$ros = $this->ro->getByAttributeDatasource($ds->id, 'status', SUBMITTED_FOR_ASSESSMENT, true);
+				if($ros) {
+					foreach($ros as $sro) {
+						$sro->status = $newStatus;
+						$sro->save();
+					}
+				}
+
+				//update all assessment in progress records to new status
+				$ros = $this->ro->getByAttributeDatasource($ds->id, 'status', ASSESSMENT_IN_PROGRESS, true);
+				if($ros) {
+					foreach($ros as $sro) {
+						$sro->status = $newStatus;
+						$sro->save();
+					}
+				}
+			}
+
+			if($new_value != $ds->{$attrib} && in_array($attrib, array_keys($ds->harvesterParams))){
+			   $resetHarvest = true;
+			} 
+
+
+			if($new_value != $ds->{$attrib} && in_array($attrib, $ds->primaryRelationship)){
+			   $resetPrimaryRelationships = true;
+			}
+
+			//detect manual_publish flag changed to false
+			if($attrib=='manual_publish' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value!=$ds->{$attrib}){
+				//publish all approved record
+				$ros = $this->ro->getByAttributeDatasource($ds->id, 'status', APPROVED, true);
+				if($ros) {
+					foreach($ros as $ro){
+						$ro->status = PUBLISHED;
+						$ro->save();
+					}
+				}
+			}
+
+			//update the actual value
+			if(!is_null($new_value) && $new_value != $ds->{$attrib}) {
+				$ds->{$attrib} = $new_value;
+				$updated_values[] = array(
+					'key' => $attrib,
+					'value' => $new_value
+				);
+			}
+
+		}
+
+		//update the contributor pages
+		if(isset($data['institution_pages'])){
+			$ds->setContributorPages($data['institution_pages'], $data['contributor']);
+		}
+
+		$updated = '';
+		foreach ($updated_values as $kv) {
+			if($kv['value']) {
+				$updated .= $kv['key']. ' is set to '. $kv['value'].NL;
+			} else {
+				$updated .= 'unset '. $kv['key'].NL;
+			}
+		}
+
+		//harvester and primary relationships reset
+		try {
+			if($resetHarvest && ($data['uri'] != '' || $data['uri'] != 'http://')) {
+				$this->trigger_harvest($ds->id, true);
+			}
+
+			if($resetPrimaryRelationships) {
+				$ds->reindexAllRecords();
+			}
+		} catch (Exception $e) {
+			$ds->append_log($e, 'error');
+			throw new Exception($e);
+		}
+		
+		//save the record
+		try{
+			$ds->save();
+			$ds->append_log(
+				"The data source settings were updated..." . NL . NL .
+				"Data Source was updated by: " . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . display_date().NL.
+				$updated
+				);
+		} catch (Exception $e) {
+			$ds->append_log($e, 'error');
+			throw new Exception($e);
+		}
+		
+		//if all goes well
+		echo json_encode(
+			array(
+				'status' => 'OK',
+				'message' => 'Saved Success'
+			)
+		);
 	}
 
 	/**
@@ -71,7 +431,6 @@ class Data_source extends MX_Controller {
 			$ds->setSlug($ds->title);
 			$ds->save();
 		}	
-		 	
 	}
 
 	/**
@@ -137,8 +496,6 @@ class Data_source extends MX_Controller {
 		$data['limit'] = $limit;
 		$this->load->view('manage_deleted_records', $data);
 	}
-
-
 
 	/**
 	 * Get MMR AJAX data for MMR
@@ -249,14 +606,12 @@ class Data_source extends MX_Controller {
 			}
 			array_push($st['menu'], array('action'=>'delete', 'display'=>'Delete'));
 			
-
 			$args['sort'] = isset($filters['sort']) ? $filters['sort'] : array('updated'=>'desc');
 			$args['search'] = isset($filters['search']) ? $filters['search'] : false;
 			$args['or_filter'] = isset($filters['or_filter']) ? $filters['or_filter'] : false;
 			$args['filter'] = array('status'=>$s);
 			$args['filter'] = isset($filters['filter']) ? array_merge($filters['filter'], array('status'=>$s)) : array('status'=>$s);
 
-			
 			$offset = 0;
 			$limit = 20;
 
@@ -319,8 +674,6 @@ class Data_source extends MX_Controller {
 			//return sizeof($ros = $this->ro->getByDataSourceID($filters['ds_id'], 0, 0, $filters['args'], false));
 			return sizeof($ros = $this->ro->filter_by($filters['args'], 0, 0, false));
 		}
-
-		
 
 		//getting the data source and parse into the jsondata array
 		$data_source = $this->ds->getByID($filters['ds_id']);
@@ -690,63 +1043,177 @@ class Data_source extends MX_Controller {
 			array_push($jsonData['item']['classcounts'], array('class' => $class, 'count' =>$dataSource->getAttribute("count_$class"),'name'=>readable($class)));
 		}
 		
-		$harvesterStatus = $dataSource->getHarvesterStatus();
+		$harvesterStatus = $dataSource->getHarvestRequest();
 		$jsonData['item']['harvester_status'] = $harvesterStatus;
-		if ($jsonData['item']['harvester_status']){
-			foreach($jsonData['item']['harvester_status'] as &$ss){
-				if(strtotime($ss['next_harvest']) < time()){
-					$date = 'NOW';
-				}else{
-					$date = new DateTime($ss['next_harvest']);
-					$date = $date->format('Y-m-d H:i:s');
-				}
-				$ss['next_harvest'] = $date;
-			}
-		}
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
 	}
 
-
-	public function add(){
-
+	public function add() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 		$this->load->model('data_sources', 'ds');
-		$ds = $this->ds->create($this->input->post('key'), url_title($this->input->post('title')));
-		$ds->setAttribute('title', $this->input->post('title'));
-		$ds->setAttribute('record_owner', $this->input->post('record_owner'));
-		$ds->setAttribute('qa_flag', DB_TRUE);
-		foreach($ds->stockAttributes as $key=>$value)
-		{
-			if(!isset($ds->attributes[$key]))
-			$ds->setAttribute($key, $value);
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
+
+		if(!$data['key']) throw new Exception('Data Source Key must be specified');
+		if(!$data['title']) throw new Exception('Data Source Title must be specified');
+
+		$query = $this->db->get_where('data_sources', array('key'=>$data['key']));
+		if($query->num_rows() > 0) throw new Exception('Data Source Key must be unique! Another data source already has the key: '. $data['key']);
+
+		//all validation goes well
+		try{
+			$ds = $this->ds->create($data['key'], url_title($data['title']));
+			$ds->setAttribute('title', $data['title']);
+			$ds->setAttribute('record_owner', $data['record_owner']);
+			$ds->setAttribute('qa_flag', DB_TRUE);
+			foreach($ds->stockAttributes as $key=>$value) {
+				if(!isset($ds->attributes[$key]))
+				$ds->setAttribute($key, $value);
+			}
+			foreach($ds->extendedAttributes as $key=>$value) {
+				if(!isset($ds->attributes[$key]))			
+				$ds->setAttribute($key, $value);
+			}	
+			foreach($ds->harvesterParams as $key=>$value) {
+				if(!isset($ds->attributes[$key]))			
+				$ds->setAttribute($key, $value);
+			}
+			$ds->save();
+			$ds->updateStats();
+		} catch (Exception $e) {
+			throw new Exception ($e);
 		}
-		foreach($ds->extendedAttributes as $key=>$value)
-		{
-			if(!isset($ds->attributes[$key]))			
-			$ds->setAttribute($key, $value);
-		}	
-		foreach($ds->harvesterParams as $key=>$value)
-		{
-			if(!isset($ds->attributes[$key]))			
-			$ds->setAttribute($key, $value);
-		}			
-		$ds->save();
-		$ds->updateStats();
-		echo $ds->id;
+		if($ds && $ds->id) {
+			$result = array(
+				'status'=>'OK',
+				'data_source_id' => $ds->id
+			);
+			echo json_encode($result);
+		} else {
+			throw new Exception('Data Source could not be created because of some unknown error');
+		}
 	}
 
-public function getContributorGroupsEdit()
+	function trigger_harvest($id=false, $mute = false) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if(!$id) throw new Exception('Data source ID is required');
+
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Invalid Data source ID');
+
+		try {
+
+			$ds->clearHarvestError();
+
+			$harvestDate = strtotime($ds->getAttribute("harvest_date"));
+			$nextRun = getNextHarvestDate($harvestDate, $ds->harvest_frequency);
+
+			if($ds->harvest_method=='PMHHarvester' && $ds->oai_set) {
+				$oai_msg = 'OAI Set: '. $ds->oai_set;
+			} else $oai_msg = '';
+
+			if($ds->advanced_harvest_mode=='INCREMENTAL') {
+				$incr_msg = 'From date: '.date('Y-m-d H:i:s', strtotime($ds->last_harvest_run_date)).NL.'To date: '.date('Y-m-d H:i:s', $harvestDate).NL;
+			} else $incr_msg = '';
+
+			$scheduled_date = date( 'Y-m-d H:i:s P', $nextRun);
+			if($ds->harvest_frequency==''){//once off
+				$scheduled_date = date('Y-m-d H:i:s', time());
+			}
+
+			$ds->append_log(
+				'Harvest scheduled to run at '.$scheduled_date.NL.
+				'URI: '.$ds->uri.NL.
+				'Harvest Method: '.readable($ds->harvest_method).NL.
+				'Provider Type: '.$ds->provider_type.NL.
+				'Advanced Harvest Mode: '.$ds->advanced_harvest_mode.NL.
+				$incr_msg.
+				$oai_msg.NL
+			);
+			$ds->setHarvestRequest('HARVEST', false);
+			$ds->setHarvestMessage('Harvest scheduled');
+			$ds->updateImporterMessage(array());
+		} catch (Exception $e) {
+			throw new Exception($e);
+		}
+
+		if(!$mute) echo json_encode(
+			array(
+				'status' => 'OK',
+				'message' => 'Harvest Started'
+			)
+		);
+	}
+
+	function stop_harvest($id=false) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if(!$id) throw new Exception('Data source ID is required');
+
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Invalid Data source ID');
+
+		try {
+			$ds->cancelHarvestRequest();
+			$ds->setHarvestMessage('Stopped by User');
+			$ds->append_log(
+				'Scheduled harvest cancelled at '.date('Y-m-d H:i:s', time()).NL.
+				'Harvest was cancelled by: ' . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . date('Y-m-d H:i:s', time())
+			);
+		} catch (Exception $e) {
+			throw new Exception($e);
+		}
+
+		echo json_encode(
+			array(
+				'status' => 'OK',
+				'message' => 'Harvest Stopped'
+			)
+		);
+	}
+
+	function clear_logs($id=false){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if(!$id) throw new Exception('Data source ID is required');
+
+		$this->load->model("data_sources","ds");
+		$ds = $this->ds->getByID($id);
+		if(!$ds) throw new Exception('Invalid Data source ID');
+
+		try{
+			$ds->clear_logs();
+		} catch (Exception $e) {
+			throw new Exception($e);
+		}
+	}
+
+	//dep
+
+	public function getContributorGroupsEdit()
 	{
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		date_default_timezone_set('Australia/Canberra');
+		set_exception_handler('json_exception_handler');
 
 		$POST = $this->input->post();
 		$items = array();
 		
 		if (isset($POST['id'])){
 			$id = (int) $this->input->post('id');
-		}	
+		}
+		if(!isset($id) || !$id) $id = $this->input->get('id');
 
 		$this->load->model("data_sources","ds");
 		$dataSource = $this->ds->getByID($id);
@@ -831,6 +1298,7 @@ public function getContributorGroupsEdit()
 	{
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 		reset_timezone();
 
 		$POST = $this->input->post();
@@ -838,7 +1306,8 @@ public function getContributorGroupsEdit()
 		
 		if (isset($POST['id'])){
 			$id = (int) $this->input->post('id');
-		}	
+		}
+		if(!isset($id) || !$id) $id = $this->input->get('id');
 		$this->load->model("data_sources","ds");
 		$dataSource = $this->ds->getByID($id);
 		//print($dataSource->attributes['institution_pages']->value);
@@ -1275,225 +1744,6 @@ public function getContributorGroupsEdit()
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
 	}
-	
-	/**
-	 * Trigger harvest
-	 */
-	function triggerHarvest()
-	{
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		$jsonData = array("status"=>"ERROR");
-
-		$this->load->model("data_sources","ds");
-		$this->load->model("registry_object/registry_objects", "ro");
-
-		if ($this->input->post('data_source_id')){
-
-			$id = (int) $this->input->post('data_source_id');
-	
-			if ($id == 0) {
-				 $jsonData['message'] = "ERROR: Invalid data source ID"; 
-			}
-			else 
-			{
-				$dataSource = $this->ds->getByID($id);
-				$dataSource->cancelAllharvests();
-				$dataSource->requestHarvest('','','','','','','','','','',false,true);
-				$jsonData['status'] = "OK";
-			}
-		}
-		
-		echo json_encode($jsonData);
-	}
-	/* was good for testing...
-	function requestNewharvest($data_source_id)
-	{
-		$this->load->model("data_sources","ds");
-		$dataSource = $this->ds->getByID($data_source_id);
-		$dataSource->requestNewharvest();
-	}
-	*/
-	/**
-	 * Importing (Ben's import from URL)
-	 * 
-	 * 
-	 * @author Ben Greenwood <ben.greenwood@anu.edu.au>
-	 * @param [POST] URL to the source
-	 * @todo ACL on which data source you have access to, error handling
-	 * @return [JSON] result of the saving [VOID] 
-	 */
-	function importFromURLtoDataSource()
-	{
-		$this->load->library('importer');
-		$this->load->model('data_source/data_sources', 'ds');		
-		$data_source = $this->ds->getByID($this->input->post('data_source_id'));	
-
-		// ACL enforcement
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce((int)$this->input->post('data_source_id'));
-
-		$slogTitle =  'Import from URL completed successfully'.NL;	
-		$elogTitle = 'An error occurred whilst importing from the specified URL'.NL;
-		$log = 'IMPORT LOG' . NL;
-		//$log .= 'URI: ' . $this->input->post('url') . NL;
-		$log .= 'Harvest Method: Direct import from URL' . NL;
-		
-		$url = $this->input->post('url');
-		$log .= "URL: ".$url.NL;
-		if (!preg_match("/^https?:\/\/.*/",$url))
-		{
-			$data_source->append_log($elogTitle.$log.NL."URL must be valid http:// or https:// resource. Please try again.", HARVEST_ERROR, "importer","DOCUMENT_LOAD_ERROR");
-			echo json_encode(array("response"=>"failure", "message"=>"URL must be valid http:// or https:// resource. Please try again.", "log"=>substr($elogTitle.$log,0, 1000)));
-			return;	
-		}
-		
-		try
-		{
-			$xml = @file_get_contents($this->input->post('url'));
-		}
-		catch (Exception $e)
-		{
-			$data_source->append_log($elogTitle.$log.NL."Unable to retrieve any content from the specified URL", HARVEST_ERROR, "importer","DOCUMENT_LOAD_ERROR");			
-			echo json_encode(array("response"=>"failure", "message"=>"Unable to retrieve any content from the specified URL.", "log"=>substr($elogTitle.$log,0, 1000)));
-			// todo: http error?
-			return;	
-		}
-		
-		try
-		{ 
-
-
-
-			$this->importer->setXML($xml);
-			$this->importer->maintainStatus(); // records which already exist are harvested into their same status
-			if ($data_source->provider_type != RIFCS_SCHEME)
-			{
-				$this->importer->setCrosswalk($data_source->provider_type);
-			}
-
-			$this->importer->setDatasource($data_source);
-			$this->importer->commit();
-
-			if ($error_log = $this->importer->getErrors())
-			{
-				$log = $elogTitle.$log.$error_log;
-				$data_source->append_log($log, HARVEST_ERROR ,"HARVEST_ERROR");
-			}
-			//else{
-			$log = $slogTitle.$log.$this->importer->getMessages();
-			$data_source->append_log($log, HARVEST_INFO,"HARVEST_INFO");
-			//}
-
-		}
-		catch (Exception $e)
-		{
-			
-			$log .= "CRITICAL IMPORT ERROR [HARVEST COULD NOT CONTINUE]" . NL;
-			$log .= $e->getMessage();
-			$data_source->append_log($log, HARVEST_ERROR, "importer","IMPORT_ERROR");				
-			echo json_encode(array("response"=>"failure", "message"=>"An error occured whilst importing from this URL", "log"=>substr($log,0, 1000)));
-			return;	
-		}	
-		
-		if($this->importer->runBenchMark)
-			$data_source->append_log('IMPORTER BENCHMARK RESULTS:'.NL.$this->importer->getBenchMarkLogs(), HARVEST_INFO, "importer", "BENCHMARK_INFO");
-
-		echo json_encode(array("response"=>"success", "message"=>"Import completed successfully!", "log"=>$log));	
-			
-	}
-
-	/**
-	 * Importing (Ben's import from XML Paste)
-	 * 
-	 * 
-	 * @author Ben Greenwood <ben.greenwood@anu.edu.au>
-	 * @param [POST] xml A blob of XML data to parse and import
-	 * @todo ACL on which data source you have access to, error handling
-	 * @return [JSON] result of the saving [VOID] 
-	 */
-	function importFromXMLPasteToDataSource()
-	{
-		set_exception_handler('json_exception_handler');
-
-		$this->load->library('importer');
-		$this->importer->maintainStatus(); // records which already exist are harvested into their same status
-
-		$xml = $this->input->post('xml');
-		$slogTitle =  'Import from XML content completed successfully'.NL;	
-		$elogTitle = 'An error occurred whilst importing from the specified XML'.NL;
-
-		// ACL enforcement
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce((int)$this->input->post('data_source_id'));
-
-		$log = 'IMPORT LOG' . NL;
-		$log .= 'Harvest Method: Direct import from XML content' . NL;
-		$log .= strlen($xml) . ' characters received...' . NL;
-
-		$this->load->model('data_source/data_sources', 'ds');
-		$data_source = $this->ds->getByID($this->input->post('data_source_id'));
-
-		if (strlen($xml) == 0)
-		{
-			$data_source->append_log($elogTitle.$log.NL ."Unable to retrieve any content from the specified XML", HARVEST_ERROR, "importer","IMPORT_ERROR");		
-			echo json_encode(array("response"=>"failure", "message"=>"Unable to retrieve any content from the specified XML", "log"=>substr($elogTitle.$log,0, 1000)));
-			return;	
-		}
-
-		$xml=stripXMLHeader($xml);
-		if ($data_source->provider_type && $data_source->provider_type != RIFCS_SCHEME)
-		{
-			$this->importer->setCrosswalk($data_source->provider_type);
-		}
-		else if (strpos($xml, "<registryObjects") === FALSE)
-		{
-			$xml = wrapRegistryObjects($xml);
-		}
-
-		try
-		{ 
-
-			$this->importer->setXML($xml);
-
-			$this->importer->setDatasource($data_source);
-			$this->importer->commit();
-
-			if ($error_log = $this->importer->getErrors())
-			{
-				$log = $elogTitle.$log.NL.$error_log;
-				$data_source->append_log($log,  HARVEST_ERROR, "importer", "HARVEST_ERROR" );
-			}
-			//else{
-			$log = $slogTitle . $log;
-			$log .= "IMPORT COMPLETED" . NL;
-			$log .= "====================" . NL;
-			$log .= $this->importer->getMessages() . NL;
-			$data_source->append_log($log,  HARVEST_INFO, "importer", "HARVESTER_INFO" );
-			//}
-
-
-
-			// data source log append...
-			
-		}
-		catch (Exception $e)
-		{
-			
-			$log .= "CRITICAL IMPORT ERROR [HARVEST COULD NOT CONTINUE]" . NL;
-			$log .= $e->getMessage();
-
-			$data_source->append_log($elogTitle.$log, HARVEST_ERROR, "importer","IMPORT_ERROR");		
-			echo json_encode(array("response"=>"failure", "message"=>"An error occured whilst importing from the specified XML", "log"=>substr($elogTitle.$log,0, 1000)));
-			return;	
-		}	
-
-		if($this->importer->runBenchMark)
-			$data_source->append_log('IMPORTER BENCHMARK RESULTS:'.NL.$this->importer->getBenchMarkLogs(), HARVEST_INFO, "importer", "BENCHMARK_INFO");
-	
-		echo json_encode(array("response"=>"success", "message"=>"Import completed successfully!", "log"=>$log));	
-			
-	}
 
 	/**
 	 * Importing (Leo's reinstate based on ... Ben's import from XML Paste)
@@ -1635,7 +1885,6 @@ public function getContributorGroupsEdit()
 		$message = 'THANK YOU';
 		$harvestId = false;
 		$gotErrors = false;
-		$ghostHarvest = false;
 		$logMsg = 'Harvest completed successfully';
 		$logMsgErr = 'An error occurred whilst trying to harvest records';
 
@@ -1648,7 +1897,9 @@ public function getContributorGroupsEdit()
 		$dataSource = $this->ds->getByHarvestID($harvestId);
 			if($dataSource)// WE MIGHT GET A GHOST HARVEST
 			{
-				if (isset($POST['content'])){
+                $dataSource->updateHarvestStatus($harvestId,'RECEIVING RECORDS');
+                $batchNumber = $dataSource->getCurrentBatchNumber($harvestId);
+                if (isset($POST['content'])){
 					$data =  $this->input->post('content');
 				}
 				if (isset($POST['errmsg'])){
@@ -1741,7 +1992,7 @@ public function getContributorGroupsEdit()
 				}
 				if($done == 'TRUE')
 				{
-					$dataSource->cancelHarvestRequest($harvestId,false);
+					$dataSource->updateHarvestStatus($harvestId,'FINISHED HARVESTING');
 					if($mode == 'HARVEST')
 					{
 						if($dataSource->advanced_harvest_mode == 'REFRESH' && !$gotErrors)
@@ -1764,7 +2015,6 @@ public function getContributorGroupsEdit()
 			else
 			{
 				$message = "DataSource doesn't exists";
-				$ghostHarvest = true;				
 			}
 			
 		}
@@ -1840,35 +2090,12 @@ public function getContributorGroupsEdit()
 			{
 				$dataSource->append_log('IMPORTER BENCHMARK RESULTS:'.NL.$this->importer->getBenchMarkLogs(), HARVEST_INFO, "importer", "BENCHMARK_INFO");
 			}
-			
 
-
-			if($dataSource->harvest_frequency != '')
-			{							
-				$dataSource->requestHarvest();
-			}
-
-
+            if($dataSource->harvest_frequency != '')
+            {
+                $dataSource->setNextHarvestRun($harvestId);
+            }
 		}
-		if($ghostHarvest) // in case it was a 'ghost' harvest, just tell the harvester to delete it
-		{
-
-			$harvesterBaseURI = $this->config->item('harvester_base_url');
-			$request = $harvesterBaseURI."deleteHarvestRequest?harvestid=".$harvestId;
-			$errors = '';
-			try
-			{
-				$dom_xml = file_get_contents($request, false, stream_context_create(array('http'=>array('timeout' => 5))));
-				$resultMessage = new DOMDocument();
-				$result = $resultMessage->loadXML($dom_xml);
-			}
-			catch (Exception $e)
-			{
-				$errors = $e->getMessage(); // no place to log errors
-			}
-
-		}
-
 
 	}
 
@@ -2020,35 +2247,39 @@ public function getContributorGroupsEdit()
 		$this->load->view('chart_report', $data);
 	}
 
-	public function delete()
-	{
+	public function delete() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+
 		$ds_id = $this->input->post('ds_id');
+		if(!$ds_id) {
+			$ds_id = $data['id'];
+		}
 		$response = array();
 		$response['success'] = false;
 		$response['error'] = '';
 		$this->load->model("data_source/data_sources","ds");
 		$this->load->library('solr');
 		$response['log'] = $this->solr->clear($ds_id);
-		try{
+		try {
 			acl_enforce(AUTH_FUNCTION_SUPERUSER);
-		}
-		catch(Exception $e)
-		{
+		} catch(Exception $e) {
 			$response['error'] = $e->getMessage(); 
 			echo json_encode($response);
 			exit();
 		}
 
 		$dataSource = $this->ds->getByID($ds_id);
-		
-		if($dataSource)
-		{
 
+		if($dataSource) {
 			$response['log'] .= $dataSource->eraseFromDB();
 			$response['success'] = true;
 		}
 		else{
-			$response['error'] = 'No Data Source Found!';
+			$response['error'] = 'No Data Source Found! '. $ds_id;
 		}
 
 		echo json_encode($response);
@@ -2126,7 +2357,6 @@ public function getContributorGroupsEdit()
 			{$jsonData['message'] = "You must provide a published registry object key from within this data source for primary relationship.";}
 		
 		echo json_encode($jsonData);
-
 	}
 	/**
 	 * @ignore

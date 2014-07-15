@@ -39,7 +39,7 @@ class CI_DB_utility extends CI_DB_forge {
 		$CI =& get_instance();
 		$this->db =& $CI->db;
 
-		log_message('debug', "Database Utility Class Initialized");
+		// log_message('debug', "Database Utility Class Initialized");
 	}
 
 	// --------------------------------------------------------------------

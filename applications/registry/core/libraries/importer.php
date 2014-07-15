@@ -13,6 +13,8 @@ class Importer {
 	private $crosswalk;
 	private $harvestID;
 	private $dataSource;
+	private $filePath;
+	private $nativePath;
 	private $start_time;
 	private $partialCommitOnly;
 	private $forcePublish; // used when changing from DRAFT to PUBLISHED (ignore the QA flags, etc)
@@ -178,6 +180,7 @@ class Importer {
 					$this->ingest_failures++;
 					$continueIngest = false;
 					//$this->error_log[] = "Unable to parse XML into object (registryObject #".($idx+1)."): " . NL . $e->getMessage();
+					throw new Exception("Unable to parse XML into object".NL.$e->getMessage());
 				}
 				if($continueIngest)
 				{
@@ -189,13 +192,15 @@ class Importer {
 					catch(Exception $e)
 					{
 						$reValidateBeforeIngest = true;
-					}	
+						$this->error_log[] = "Error whilst ingesting payload" . ": " . $e->getMessage() .NL;
+					}
 
 					$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
 
 					// Right then, lets start parsing each registryObject & importing! 
 					foreach($sxml->xpath('//ro:registryObject') AS $registryObject)
 					{
+
 						$this->ingest_attempts++;
 						$continueWithIngest = true;
 						if($reValidateBeforeIngest)
@@ -206,14 +211,12 @@ class Importer {
 							catch(Exception $e)
 							{
 								$continueWithIngest = false;
-								$this->error_log[] = "Error whilst ingesting record #" . $this->ingest_attempts . ": " . $e->getMessage() .NL.$registryObject->asXML();
+								$this->error_log[] = "Error whilst ingesting record #" . $this->ingest_attempts . ": " . $e->getMessage() .NL;
 							}
 						}
 
-
 						if($continueWithIngest)
 						{
-							
 							if((string)$registryObject->key == '')
 							{
 								$this->ingest_failures++;
@@ -260,34 +263,33 @@ class Importer {
 		{
 			$taskLog = $this->finishImportTasks();
 			if($this->runBenchMark){
-				$this->dataSource->append_log($taskLog, IMPORT_INFO, "importer","IMPORT_INFO");
+				// $this->dataSource->append_log($taskLog, IMPORT_INFO, "importer","IMPORT_INFO");
 			}
-
-
-			// Finish up by returning our stats...
-			$time_taken = sprintf ("%.3f", (float) (microtime(true) - $this->start_time));
-			$this->message_log[] = NL;
-			$this->message_log[] = "Harvest complete! Took " . ($time_taken) . "s...";
-			$this->message_log[] = "Registry Object(s) in feed: " . $this->ingest_attempts;
-			$this->message_log[] = "Registry Object(s) created: " . $this->ingest_new_record;
-			$this->message_log[] = "Registry Object(s) updated: " . $this->ingest_new_revision;
-			if ($this->ingest_failures)
-			{
-				$this->message_log[] = "Registry Object(s) failed : " . $this->ingest_failures;
-			}
-			if ($this->ingest_duplicate_ignore)
-			{
-				$this->message_log[] = "Registry Object duplicates: " . $this->ingest_duplicate_ignore;
-			}
-			
-			if($this->CI->user->hasFunction('REGISTRY_SUPERUSER')) 
-			{
-				$this->message_log[] = "Reindexed record count: " . $this->reindexed_records;
-			}
-
-			$this->message_log[] = $this->standardLog;
 		}
 
+	}
+
+	private function populateMessageLog() {
+		$time_taken = sprintf ("%.3f", (float) (microtime(true) - $this->start_time));
+		$this->message_log[] = NL;
+		$this->message_log[] = "Import complete! Took " . ($time_taken) . "s...";
+		$this->message_log[] = "Registry Object(s) in feed: " . $this->ingest_attempts;
+		$this->message_log[] = "Registry Object(s) created: " . $this->ingest_new_record;
+		$this->message_log[] = "Registry Object(s) updated: " . $this->ingest_new_revision;
+		$this->message_log[] = "Registry Object(s) deleted: " . count($this->deleted_record_keys);
+
+		if ($this->ingest_failures) {
+			$this->message_log[] = "Registry Object(s) failed : " . $this->ingest_failures;
+		}
+		if ($this->ingest_duplicate_ignore) {
+			$this->message_log[] = "Registry Object duplicates: " . $this->ingest_duplicate_ignore;
+		}
+		
+		if($this->CI->user->hasFunction('REGISTRY_SUPERUSER')) {
+			$this->message_log[] = "Reindexed record count: " . $this->reindexed_records;
+		}
+
+		$this->message_log[] = $this->standardLog;
 	}
 
 
@@ -357,7 +359,6 @@ class Importer {
 						{
 							$this->CI->ro->emailAssessor($this->dataSource);
 						}
-						$this->ingest_new_record++;
 					}
 					else
 					{
@@ -381,15 +382,16 @@ class Importer {
 						}
 
 						$ro->record_owner = $record_owner;
-
-						$this->ingest_new_revision++;
 					}
-
+					if($ro) $this->ingest_new_revision++;
 					$ro->class = $class;
 					$ro->created_who = $record_owner;
 					$ro->data_source_key = $this->dataSource->key;
 					$ro->group = (string) $registryObject['group'];
 					$ro->type = (string) $ro_xml['type'];
+
+					if($this->filePath) $ro->file_path = $this->filePath;
+					if($this->nativePath) $ro->native_path = $this->nativePath;
 
 					// Clean up all previous versions (set = FALSE, "prune" extRif)
 					$ro->cleanupPreviousVersions();
@@ -410,6 +412,7 @@ class Importer {
 
 					// Only generate SLUGs for published records
 					$ro->setAttribute("harvest_id", $this->harvestID);
+					$ro->generateSlug();
 					if (in_array($this->status, getPublishedStatusGroup()))
 					{
 						$ro->generateSlug();
@@ -470,7 +473,7 @@ class Importer {
 	public function _enrichRecords($directly_affected_records = array())
 	{
 		$this->CI->load->model('registry_object/registry_objects', 'ro');
-		
+
 		if($this->runBenchMark){
 			$this->CI->benchmark->mark('ingest_enrich_stage1_start');
 		}
@@ -487,14 +490,14 @@ class Importer {
 					{
 						$ro->addRelationships();
 						$ro->update_quality_metadata();
-						$ro->enrich();
+						// $ro->enrich();
 						unset($ro);
 						clean_cycles();
 					}
 				}
 			}
 		}
-
+		
 		else if(is_array($this->importedRecords) && count($this->importedRecords) > 0)
 		{
 
@@ -550,8 +553,8 @@ class Importer {
 
 	}
 
-	public function finishImportTasks()
-	{
+	public function finishImportTasks() {
+		$this->populateMessageLog();
 		$importedRecCount = count($this->importedRecords);
 		$this->_enrichRecords();
 		$deletedCount = count($this->deleted_record_keys);
@@ -626,10 +629,8 @@ class Importer {
 						$this->roEnrichS5Time += $this->CI->benchmark->elapsed_time('ro_enrich_s4_end','ro_enrich_s5_end');
 						$this->roEnrichS6Time += $this->CI->benchmark->elapsed_time('ro_enrich_s5_end','ro_enrich_s6_end');
 						$this->roEnrichS7Time += $this->CI->benchmark->elapsed_time('ro_enrich_s6_end','ro_enrich_end');
-
 					}		
 
-					
 					unset($ro);
 					clean_cycles();
 				}
@@ -681,7 +682,7 @@ class Importer {
 							$this->CI->benchmark->mark('solr_transform_start');
 						}
 						
-						$this->queueSOLRAdd($ro->transformForSOLR(false));
+						$this->queueSOLRAdd($ro->indexable_json());
 						
 						if($this->runBenchMark)
 						{
@@ -766,7 +767,7 @@ class Importer {
 						$this->CI->benchmark->mark('solr_transform_start');
 					}
 					
-					$this->queueSOLRAdd($ro->transformForSOLR(false));
+					$this->queueSOLRAdd($ro->indexable_json());
 					
 					if($this->runBenchMark)
 					{
@@ -935,6 +936,16 @@ class Importer {
 		return;
 	}
 
+	public function setFilePath($path) {
+		$this->filePath = $path;
+		return;
+	}
+
+	public function setNativeFile($path) {
+		$this->nativePath = $path;
+		return;
+	}
+
 
 	/**
 	 * 
@@ -950,7 +961,6 @@ class Importer {
 	 */
 	public function setCrosswalk($crosswalk_metadata_format)
 	{
-
         $crosswalk_identity = '';
         if (!$crosswalk_metadata_format) { return; }
 
@@ -961,7 +971,7 @@ class Importer {
             if($ppt['prefix'] == $crosswalk_metadata_format)
                 $crosswalk_identity = $ppt['cross_walk'];
         }
-
+        
         if($crosswalk_identity == '') { return;}
 
         $crosswalks= getCrossWalks();
@@ -1058,27 +1068,18 @@ class Importer {
 		 * !QA, AP = PUBLISHED
 		 * !QA, !AP = APPROVED
 		 */
-		if ($this->forcePublish)
-		{
+		if ($this->forcePublish) {
 			return PUBLISHED;
-		}
-		else if ($this->forceDraft)
-		{
+		} else if ($this->forceDraft) {
 			return DRAFT;
 		}
 
-		if ($data_source->qa_flag === DB_TRUE)
-		{
+		if ($data_source->qa_flag == DB_TRUE) {
 			$status = SUBMITTED_FOR_ASSESSMENT;
-		}
-		else
-		{
-			if ($data_source->manual_publish === DB_TRUE)
-			{
+		} else {
+			if ($data_source->manual_publish == DB_TRUE) {
 				$status = APPROVED;
-			}
-			else
-			{
+			} else {
 				$status = PUBLISHED;
 			}
 		}
@@ -1334,19 +1335,19 @@ class Importer {
 	 */
 	function flushSOLRAdd()
 	{
-		if (count($this->solr_queue) == 0) return;
+		if (sizeof($this->solr_queue) == 0) return;
 
 		$solrUrl = $this->CI->config->item('solr_url');
 		$solrUpdateUrl = $solrUrl.'update/?wt=json';
 
+		$this->CI->load->library('solr');
+
 		try{
-			$result = json_decode(curl_post($solrUpdateUrl, "<add>" . implode("\n",$this->solr_queue) . "</add>"), true);
-			if($result['responseHeader']['status'] == self::SOLR_RESPONSE_CODE_OK)
-			{
-				$this->reindexed_records += count($this->solr_queue);
-			}
-			else
-			{
+			// $result = json_decode(curl_post($solrUpdateUrl, json_encode($this->solr_queue)), true);
+			$result = json_decode($this->CI->solr->add_json(json_encode($this->solr_queue)), true);
+			if($result['responseHeader']['status'] == self::SOLR_RESPONSE_CODE_OK) {
+				$this->reindexed_records += sizeof($this->solr_queue);
+			} else {
 				// Throw back the SOLR response...
 				throw new Exception(var_export((isset($result['error']['msg']) ? $result['error']['msg'] : $result),true));
 			}
@@ -1354,7 +1355,7 @@ class Importer {
 		}
 		catch (Exception $e)
 		{
-			$this->error_log[] = "[INDEX] Error during reindex of registry object..." . BR . "<pre>" . nl2br($e->getMessage()) . "</pre>";	
+			$this->error_log[] = "[INDEX] Error during reindex of registry object..." . BR . "<pre>" . nl2br($e) . "</pre>";	
 		}
 
 		$this->solr_queue = array();
@@ -1377,6 +1378,8 @@ class Importer {
 		$this->crosswalk = null;
 		$this->xmlPayload = '';
 		$this->dataSource = null;
+		$this->filePath = false;
+		$this->nativePath = false;
 		$this->importedRecords = array();
 		$this->imported_record_keys = array();
 		$this->affected_record_keys = array();
@@ -1424,14 +1427,19 @@ class Importer {
 		$this->gcCyclesTime = 0;
 		$this->runBenchMark = $this->CI->config->item('importer_benchmark_enabled');
 		$this->registryMode = $this->CI->config->item('registry_mode');
+		error_reporting(E_ALL);
 	}
 
 
 	function cleanNameSpace($rifcs){
-		$xslt_processor = Transforms::get_clean_ns_transformer();
-		$dom = new DOMDocument();
-		$dom->loadXML($rifcs);
-		return $xslt_processor->transformToXML($dom);
+		try{
+			$xslt_processor = Transforms::get_clean_ns_transformer();
+			$dom = new DOMDocument();
+			$dom->loadXML($rifcs);
+			return $xslt_processor->transformToXML($dom);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 	}
 
 

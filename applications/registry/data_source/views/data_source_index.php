@@ -299,7 +299,7 @@
 				
 			{{#harvester_status}}
 				<div class="widget-box">
-					<div class="widget-content alert">A harvest is scheduled for <b>{{next_harvest}}</b> <button class="btn delete delete_harvest pull-right" data_source_id="{{data_source_id}}" harvest_id="{{id}}"><i class="icon-remove"></i> Cancel Harvest</button></div>	
+					<div class="widget-content alert">Current Harvest status: <b>{{status}}</b> <button class="btn delete delete_harvest pull-right" data_source_id="{{data_source_id}}" harvest_id="{{harvest_id}}"><i class="icon-remove"></i> Cancel Harvest</button></div>
 				</div>
 			{{/harvester_status}}
 
@@ -1167,8 +1167,9 @@
 							<label class="control-label" for="harvest_method">Harvest Method</label>
 							<div class="controls">
 								<select data-placeholder="Choose a Harvest Method" tabindex="1" class="chzn-select input-xlarge" for="harvest_method" id="harvest">
-									<option value="GET">DIRECT (HTTP)</option>
-									<option value="PMH">Harvested (OAI-PMH)</option>
+									<option value="GETHarvester">HTTP GET</option>
+									<option value="PMHHarvester">OAI-PMH</option>
+									<option value="CKANHarvester">CKAN</option>
 								</select>
 								<input type="text" class="input-small hide" name="harvest_method" id="harvest_method" value="{{harvest_method}}">
 							</div>

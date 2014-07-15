@@ -13,19 +13,11 @@ class Maintenance extends MX_Controller {
 
 	
 	public function index(){
-		// acl_enforce('REGISTRY_STAFF');
-		// $data['title'] = 'ARMS Maintenance';
-		// $data['small_title'] = '';
-		// $data['scripts'] = array('maintenance');
-		// $data['js_lib'] = array('core', 'prettyprint', 'dataTables');
-
-		// $this->load->view("maintenance_index", $data);
-
 		acl_enforce('REGISTRY_STAFF');
-		$data['title'] = 'ARMS SyncMenu';
-		$data['scripts'] = array('sync_app');
-		$data['js_lib'] = array('core', 'angular', 'dataTables');
-		$this->load->view("syncmenu_index", $data);
+		$data['title'] = 'Registry Status';
+		$data['scripts'] = array('status_app');
+		$data['js_lib'] = array('core', 'angular');
+		$this->load->view("maintenance_dashboard", $data);
 	}
 
 	public function migrate_tags_to_r11(){
@@ -103,12 +95,145 @@ class Maintenance extends MX_Controller {
 		echo 'Done';
 	}
 
+	public function migrate_slugs_to_r13($commit = false) {
+		acl_enforce('REGISTRY_STAFF');
+	
+		if(!$commit){
+			$result = $this->db->query('SELECT slug,registry_object_id FROM dbs_registry.registry_objects WHERE CHAR_LENGTH(SLUG) > 60;');
+			echo 'There are '.$result->num_rows().' slugs that are longer than 60 characters <br/>';
+			$result = $this->db->query('select slug,registry_object_id from dbs_registry.url_mappings where registry_object_id IS NULL and slug in(select slug from registry_objects);');
+			echo 'There are '.$result->num_rows().' orphaned slugs <br/>';
+			$result = $this->db->select('slug, registry_object_id')->from('url_mappings')->where('registry_object_id', NULL)->get();
+			echo 'There are '.$result->num_rows(). ' bad slugs <br/>';
+			echo 'Run migrate_slugs_to_r13/true to commit fixing orphaned slugs and delete bad slugs';
+		} else {
+			ob_start();
+			ob_implicit_flush(1);
+
+			$this->load->model('registry_object/registry_objects', 'ro');
+
+			//fix orphaned slugs, giving them a registry object id
+			$result = $this->db->query('select slug,registry_object_id from dbs_registry.url_mappings where registry_object_id IS NULL and slug in(select slug from registry_objects);');
+			$result_array = $result->result_array();
+			if($result->num_rows()==0) {
+				echo 'There are no orphaned slug. <br/>';
+			} else echo 'There are '. $result->num_rows(). ' orphaned slug. Fixing. <br/>';
+			foreach($result->result_array as $r){
+				$ro = $this->ro->getBySlug($r['slug']);
+				if($ro){
+					$result = $this->db->update('url_mappings', array(
+						'registry_object_id'=>$ro->id
+					), array('slug'=>$r['slug']));
+					if($result){
+						echo 'success: '. $r['slug']. ' updated to '.$ro->id.'<br/>';
+					} else {
+						'failed: (cant update):'. $r['slug'].'<br/>';
+					}
+				} else {
+					echo 'failed (no record): '.$r['slug'].'<br/>';
+				}
+				unset($ro);
+				ob_flush();flush();
+			}
+
+			//delete bad slug
+			$result = $this->db->select('slug, registry_object_id')->from('url_mappings')->where('registry_object_id', NULL)->get();
+			if($result->num_rows()==0) {
+				echo 'There are no bad slug. <br/>';
+			} else {
+				echo 'There are '. $result->num_rows(). ' bad slug. Removing. <br/>';
+				$result = $this->db->delete('url_mappings', array('registry_object_id'=>NULL));
+				if($result){
+					echo 'success<br/>';
+				} else {
+					echo 'failed<br/>'; 
+				}
+			}
+			
+
+			//generating new slugs
+			$result = $this->db->query('SELECT slug,registry_object_id FROM dbs_registry.registry_objects WHERE CHAR_LENGTH(SLUG) > 60;');
+			echo 'There are '.$result->num_rows().' slugs that are longer than 60 characters <br/>';
+			$i=1;
+			foreach($result->result_array() as $r){
+				echo $i.' ';
+				$ro = $this->ro->getByID($r['registry_object_id']);
+				if($ro){
+					$oldSlug = $ro->slug;
+					$newSlug = $ro->generateSlug();
+					if($newSlug){
+						echo 'success:'.$r['slug'].' -> '. $newSlug.'<br/>';
+					}
+				} else {
+					echo 'failed (no record): '.$r['slug'].'<br/>';
+				}
+				$i++;
+				unset($ro);
+				ob_flush();flush();
+			}
+			ob_end_flush(); 
+
+		}
+
+		// $result = $this->db->select('slug, registry_object_id')->from('url_mappings')->where('registry_object_id', NULL)->get();
+		
+	}
+
+	public function migrate_ds_to_r13() {
+		acl_enforce('REGISTRY_STAFF');
+		set_exception_handler('json_exception_handler');
+		$this->load->model('data_source/data_sources', 'ds');
+		$all_ds = $this->ds->getAll(0,0);
+		foreach($all_ds as $ds){
+			$ds->title = $ds->title;
+			$ds->record_owner = $ds->record_owner;
+			try {
+				//fix Title
+				$ds->_initAttribute('title', $ds->title, TRUE);
+				$ds->_initAttribute('record_owner', $ds->record_owner, TRUE);
+
+				if($ds->harvest_method=='GET') $ds->harvest_method = 'GETHarvester';
+				if($ds->harvest_method=='PMH' || $ds->harvest_method=='RIF') $ds->harvest_method = 'PMHHarvester';
+
+				$ds->save();
+
+				$this->db->delete('data_source_attributes', array('data_source_id'=>$ds->id, 'attribute'=>'title'));
+				$this->db->delete('data_source_attributes', array('data_source_id'=>$ds->id, 'attribute'=>'record_owner'));
+
+			} catch (Exception $e) {
+				throw new Exception($e);
+			}
+			
+		}
+		echo 'done';
+	}
+
+	public function migrate_ds_attr_to_r13(){
+		acl_enforce('REGISTRY_STAFF');
+		set_exception_handler('json_exception_handler');
+		$this->db->where('value', 't');
+		$query = $this->db->update('data_source_attributes', array('value'=>DB_TRUE));
+		if($query) echo 'Query updated. Rows affected: '.$this->db->affected_rows().'<br/>';
+
+		$this->db->where('value', 'f');
+		$query = $this->db->update('data_source_attributes', array('value'=>DB_FALSE));
+		if($query) echo 'Query updated. Rows affected: '.$this->db->affected_rows().'<br/>';
+	}
+
 	public function syncmenu(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'ARMS SyncMenu';
 		$data['scripts'] = array('sync_app');
 		$data['js_lib'] = array('core', 'angular', 'dataTables');
 		$this->load->view("syncmenu_index", $data);
+	}
+
+	public function harvester() {
+		acl_enforce('REGISTRY_STAFF');
+		$data['title'] = 'ARMS Harvester Management';
+		$data['scripts'] = array('harvester_app');
+		$data['js_lib'] = array('core', 'angular');
+		$this->load->view("harvester_app", $data);
 	}
 
 	public function init(){
@@ -337,148 +462,6 @@ class Maintenance extends MX_Controller {
 		}
 	}
 
-	/**
-	 * web service for maintenance, this will index a data source
-	 * @param  int $data_source_id 
-	 * @return json result
-	 */
-	function indexDS($data_source_id, $logit = false){
-		acl_enforce('REGISTRY_STAFF');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-
-		$data = array();
-		$data['data_source_id']=$data_source_id;
-		$data['error']='';
-
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$this->load->model('data_source/data_sources', 'ds');
-		$this->load->library('solr');
-
-		$ids = $this->ro->getIDsByDataSourceID($data_source_id, false, PUBLISHED);
-
-		$i = 0;
-		$response = '';
-		$errors = '';
-		$solrXML = '';
-		if($ids)
-		{
-			
-			$chunkSize = 400; 
-			$arraySize = sizeof($ids);
-			for($i = 0 ; $i < $arraySize ; $i++)
-			{
-				$roId = $ids[$i];	
-				try{
-					$ro = $this->ro->getByID($roId);
-					if($ro)
-					{
-						$solrXML .= $ro->transformForSOLR();
-						if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1))
-						{
-							$result = $this->solr->addDoc("<add>".$solrXML."</add>");
-							$response .= $result.NL;
-							$this->solr->commit();
-							$solrXML = '';
-						}
-					}
-				}
-				catch (Exception $e)
-				{
-					$errors .= nl2br($e).NL;
-				}
-			}
-
-			$data['results'] = $response;
-			$data['errors'] = $errors;
-			$data['totalAdded'] = $i;
-		}
-		if(!$logit)
-			echo json_encode($data);
-		else
-			return json_encode($data);
-	}
-
-	function clearDS($data_source_id, $logit = false){
-		acl_enforce('REGISTRY_STAFF');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		$this->load->library('solr');
-		$data['result'] = $this->solr->clear($data_source_id);
-		if(!$logit)
-			echo json_encode($data);
-		else
-			return json_encode($data);
-	}
-	
-	function clearAll(){
-		acl_enforce('REGISTRY_STAFF');
-		$data = array();
-		$data['logs'] = '';
-		$this->load->library('solr');
-		$data['logs'] .= $this->solr->clear();
-		echo json_encode($data);
-	}
-
-	function indexAll($print=false){
-		acl_enforce('REGISTRY_STAFF');
-		$data = array();
-		$data['logs'] = '';
-		$this->load->model('data_source/data_sources', 'ds');
-		$data_sources = $this->ds->getAll(0);
-		foreach($data_sources as $ds){
-			$data['logs'] .= $this->indexDS($ds->id, true);
-			if ($print)
-			{
-				echo $data['logs'];
-				$data['logs'] = '';
-				flush();
-			}
-		}
-		if (!$print)
-		{
-			echo json_encode($data);
-		}
-	}
-
-	function smartSync($step = 0, $start = 0){
-		$limit = 400;
-		$this->load->model('data_source/data_sources', 'ds');
-		$result = array();
-		if($step==0){
-			$result = $this->ds->getGroupsBySizeLimit($limit);
-			echo json_encode($result);	
-		}else if($step==1){
-			$result = $this->ds->getGroupsBySizeLimit($limit);
-			$total = sizeof($result['small']);
-			$current = 1;
-			foreach($result['small'] as $ds){
-				if($current >= $start){
-					echo '<b>'.$ds['data_source_id'].' ('.$current.'/'.$total.')</b> Count: '.$ds['count'].'<br/>';
-					$this->flush_buffers();
-					var_dump($this->smartSyncDS($ds['data_source_id']));
-					echo '<hr/>';
-					$this->flush_buffers();
-				}
-				$current++;
-			}
-		}else if($step==2){
-			$result = $this->ds->getGroupsBySizeLimit($limit);
-			$total = sizeof($result['large']);
-			$current = 1;
-			foreach($result['large'] as $ds){
-				if($current >= $start){
-					echo '<b>'.$ds['data_source_id'].' ('.$current.'/'.$total.')</b> Count: '.$ds['count'].'<br/>';
-					$this->flush_buffers();
-					var_dump($this->smartSyncDS($ds['data_source_id']));
-					echo '<hr/>';
-					$this->flush_buffers();
-				}
-				$current++;
-			}
-		}
-	}
-
 	function smartAnalyze($task='sync', $data_source_id){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -519,7 +502,8 @@ class Maintenance extends MX_Controller {
 		$offset = ($chunk_pos-1) * $chunkSize;
 		$limit = $chunkSize;
 		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, 'PUBLISHED', $offset, $limit);
-		$totalEnrichTime = 0; $totalIndexTime = 0; $allErrors = array(); $allSOLRXML = '';
+		$totalEnrichTime = 0; $totalIndexTime = 0; $allErrors = array();
+		$solr_docs = array();
 		$results = array();
 		foreach($keys as $key){
 			$result = array();
@@ -565,8 +549,7 @@ class Maintenance extends MX_Controller {
 				
 				if($task=='sync' || $task=='index' || $task=='fast_sync'){
 					try{
-						$solrXML = $ro->transformForSOLR();
-						$allSOLRXML .= $solrXML;
+						$solr_docs[] = $ro->indexable_json();
 					}catch(Exception $e){
 						array_push($error, $e->getMessage());
 					}
@@ -598,7 +581,7 @@ class Maintenance extends MX_Controller {
 		}
 
 		if($task=='sync' || $task=='index' || $task=='fast_sync'){
-			$this->solr->addDoc('<add>'.$allSOLRXML.'</add>');
+			$this->solr->add_json(json_encode($solr_docs));
 			$this->solr->commit();
 		}
 		
@@ -620,15 +603,102 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
+	function status() {
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+
+		$data = array();
+
+		$data['solr'] = array(
+			'url' => get_config_item('solr_url')
+		);
+
+		$data['deployment'] = array(
+			'state' => get_config_item('deployment_state')
+		);
+
+		$data['admin'] = array(
+			'name' => get_config_item('site_admin'),
+			'email' => get_config_item('site_admin_email')
+		);
+
+		echo json_encode($data);
+	}
+
+	function config() {
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$data = array();
+		$query = $this->db->get('configs');
+		$configs = $query->result_array();
+
+		foreach($configs as $c) {
+			$data[$c['key']] = array(
+				'type' => $c['type'],
+				'value' => ($c['type']=='json') ? json_decode($c['value'],true) : $c['value']
+			);
+		}
+		echo json_encode($data);
+	}
+
+	function config_save() {
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
+
+		foreach($data as $key=>$c) {
+			if($c['type']=='string') set_config_item($key, $c['type'], $c['value']);
+		}
+
+		echo json_encode(array(
+			'status' => 'OK',
+			'message' => 'All configuration item successfully updated'
+		));
+
+		// echo set_config_item('harvested_contents_path', 'string', '/var/www/harvested_content');
+
+	}
+
+
+
 	function test(){
+		// set_exception_handler('json_exception_handler');
+		// header('Cache-Control: no-cache, must-revalidate');
+		// header('Content-type: application/json');
+		$this->load->model('data_source/data_sources', 'ds');
 		$this->load->model('registry_object/registry_objects', 'ro');
-        //$ro = $this->ro->getByID(385969);
-        $ro = $this->ro->getPublishedByKey('f680f9c3-3a5b-408e-a356-5c19ad59d5f4');
-        if($ro){
-               	$ro->addRelationships();
-               	$ro->update_quality_metadata();
-                $ro->enrich();
-        }else echo 'not found';
+		// log_message('error', 'Test Error');
+		// log_message('info', 'Test Info');
+		// log_message('debug', 'Test Debug');
+
+		$ro = $this->ro->getByID(475608);
+		$ro->addRelationships();
+		echo json_encode($ro->getAllRelatedObjects(true, false, true));
+
+		// echo 5/0;
+
+		// $ds = $this->ds->getByID(9);
+  //       $registry_objects = $this->ro->getIDsByDataSourceID(9, true);
+
+  //       foreach($registry_objects as $ro) {
+  //               $this->benchmark->mark('start');
+  //               echo 'Title: '. $ro->title.' ID: '.$ro->id.'<br/>';
+  //               echo 'Slug:'. $ro->slug.'<br/>';
+  //               echo 'Result: '.$ro->generateSlug().'<br/>';
+  //               echo 'After: '.$ro->slug.'<br/>';
+  //               $ro->save();
+  //               $this->benchmark->mark('end');
+  //               echo 'Speed: '. $this->benchmark->elapsed_time('start', 'end');
+  //               echo '<br/>';
+  //       }
+
+
 	}
 
 	function fixRelationships($id) {
@@ -647,62 +717,9 @@ class Maintenance extends MX_Controller {
 		echo 'done';
 	}
 
-	function smartSyncDS2($data_source_id, $print=false, $offset=0){
-		$this->load->library('importer');
-		$this->load->model('data_source/data_sources', 'ds');
-		$this->load->model('registry_object/registry_objects', 'ro');
-
-		//load
-		$ds = $this->ds->getByID($data_source_id);
-		$keys = $this->ro->getKeysByDataSourceID($data_source_id, false, PUBLISHED);
-
-		if($offset!=0) $keys = array_slice($keys, $offset);
-
-		if($print){
-			echo 'count: '.sizeof($keys).'<br/>';
-		}
-
-		$this->importer->_reset();
-		$this->importer->runBenchMark = true;
-		$this->importer->setDataSource($ds);
-		$this->importer->addToAffectedList($keys);
-
-		$this->importer->finishImportTasks();
-		if($print){
-			var_dump($this->importer->getBenchMarkLogArray());
-		}else{
-			return $this->importer->getBenchMarkLogArray();
-		}
-	}
-
-	function flush_buffers(){ 
-		ob_flush(); 
-		flush(); 
-	}
-
-	function enrichAll(){
-		acl_enforce('REGISTRY_STAFF');
-		$data = array();
-		$data['logs'] = '';
-		$this->load->model('data_source/data_sources', 'ds');
-		$data_sources = $this->ds->getAll(0);
-		foreach($data_sources as $ds){
-			$data['logs'] .= $this->enrichDS($ds->id);
-		}
-		echo json_encode($data);
-	}
-
-	function enrichMissing(){
-		acl_enforce('REGISTRY_STAFF');
-		$data['logs'] = '';
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$unenriched = $this->ro->getUnEnriched();
-		foreach($unenriched->result() as $u){
-			$ro = $this->ro->getByID($u->registry_object_id);
-			$ro->enrich();
-			$data['logs'] .= $ro->id.' ';
-		}
-		echo json_encode($data);
+	function flush_buffers(){
+		ob_flush();
+		flush();
 	}
 
 	/**

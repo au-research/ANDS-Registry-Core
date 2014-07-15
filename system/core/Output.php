@@ -106,7 +106,7 @@ class CI_Output {
 
 		$this->mime_types = $mimes;
 
-		log_message('debug', "Output Class Initialized");
+		// log_message('debug', "Output Class Initialized");
 	}
 
 	// --------------------------------------------------------------------
@@ -400,8 +400,8 @@ class CI_Output {
 		if ( ! isset($CI))
 		{
 			echo $output;
-			log_message('debug', "Final output sent to browser");
-			log_message('debug', "Total execution time: ".$elapsed);
+			// log_message('debug', "Final output sent to browser");
+			// log_message('debug', "Total execution time: ".$elapsed);
 			return TRUE;
 		}
 
@@ -445,8 +445,8 @@ class CI_Output {
 			echo $output;  // Send it to the browser!
 		}
 
-		log_message('debug', "Final output sent to browser");
-		log_message('debug', "Total execution time: ".$elapsed);
+		// log_message('debug', "Final output sent to browser");
+		// log_message('debug', "Total execution time: ".$elapsed);
 	}
 
 	// --------------------------------------------------------------------
@@ -498,7 +498,7 @@ class CI_Output {
 		fclose($fp);
 		@chmod($cache_path, FILE_WRITE_MODE);
 
-		log_message('debug', "Cache file written: ".$cache_path);
+		// log_message('debug', "Cache file written: ".$cache_path);
 	}
 
 	// --------------------------------------------------------------------
@@ -555,7 +555,7 @@ class CI_Output {
 			if (is_really_writable($cache_path))
 			{
 				@unlink($filepath);
-				log_message('debug', "Cache file has expired. File deleted");
+				// log_message('debug', "Cache file has expired. File deleted");
 				return FALSE;
 			}
 		}

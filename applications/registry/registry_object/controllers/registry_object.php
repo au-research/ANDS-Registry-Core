@@ -571,7 +571,7 @@ class Registry_object extends MX_Controller {
 		$ro->enrich();
 		$data['xml'] = html_entity_decode($ro->getRif());
 		$data['extrif'] = html_entity_decode($ro->getExtRif());
-		$data['solr'] = html_entity_decode($ro->transformForSOLR());
+		$data['solr'] = json_encode($ro->indexable_json());
 		//$data['view'] = $ro->transformForHtml();
 		$data['id'] = $ro->id;
 		$data['title'] = $ro->getAttribute('list_title');
@@ -1114,5 +1114,17 @@ class Registry_object extends MX_Controller {
 		}
 		return $actions;
 	}
+    
+    public function exportToEndnote($registry_object_id)
+    {
+       $registry_object_id = str_replace(".ris","",$registry_object_id);
+       $this->load->model('registry_objects', 'ro');
+       $ro = $this->ro->getByID($registry_object_id);
+       $data = $ro->transformToEndnote();
 
+       header('Content-type: application/x-research-info-systems');
+
+       print(strip_tags(html_entity_decode(html_entity_decode(str_replace('&amp;',"&",str_replace('&amp;',"&",$data))))));
+
+    }
 }
