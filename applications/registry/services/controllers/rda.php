@@ -125,7 +125,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			if ($contributor->num_rows() >0) {				
 				$contributorRecord = array_pop($contributor->result_array());
 				$theContributor = $this->ro->getByID($contributorRecord['registry_object_id']);
-				if($theContributor && $theContributor->getAttribute('key')==$record[0]['key']){
+				if($theContributor && $theContributor->getAttribute('key')==$ro->key){
 					$result['template'] = CONTRIBUTOR_PAGE_TEMPLATE;
 				}
 			}
