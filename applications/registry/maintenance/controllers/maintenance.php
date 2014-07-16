@@ -219,7 +219,8 @@ class Maintenance extends MX_Controller {
 					'data_source_id' => $orq->data_source_id, 
 					'status' => 'SCHEDULED',
 					'next_run' => date( 'Y-m-d H:i:s', strtotime($orq->next_harvest)) ,
-					'mode' => 'HARVEST'
+					'mode' => 'HARVEST',
+					'batch_number' => strtoupper(sha1(strtotime($orq->next_harvest)))
 				);
 				$harvest = $this->db->insert('harvests', $row);
 				if(!$harvest){
