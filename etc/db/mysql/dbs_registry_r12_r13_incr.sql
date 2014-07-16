@@ -4,7 +4,7 @@ CREATE  TABLE `configs` (
   `type` VARCHAR(45) NULL ,
   `value` VARCHAR(256) NULL ,
   PRIMARY KEY (`id`) );
-ALTER TABLE `dbs_registry`.`configs` CHANGE COLUMN `value` `value` BLOB NULL DEFAULT NULL  ;
+ALTER TABLE `configs` CHANGE COLUMN `value` `value` BLOB NULL DEFAULT NULL  ;
 
 delimiter $$
 

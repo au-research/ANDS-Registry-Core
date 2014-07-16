@@ -203,7 +203,6 @@ class Maintenance extends MX_Controller {
 			} catch (Exception $e) {
 				throw new Exception($e);
 			}
-			
 		}
 		echo 'done';
 	}
@@ -229,6 +228,17 @@ class Maintenance extends MX_Controller {
 			}
 		}
 		echo 'done';
+	}
+
+	public function migrate_content_path_to_r13() {
+		acl_enforce('REGISTRY_STAFF');
+		set_exception_handler('json_exception_handler');
+		if($this->input->get('val')){
+			set_config_item('harvested_contents_path', 'string', $this->input->get('val'));
+			echo 'done';
+		} else {
+			throw new Exception('val required');
+		}
 	}
 
 	public function migrate_ds_attr_to_r13(){
