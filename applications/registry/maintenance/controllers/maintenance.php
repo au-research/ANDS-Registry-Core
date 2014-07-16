@@ -208,6 +208,28 @@ class Maintenance extends MX_Controller {
 		echo 'done';
 	}
 
+	public function migrate_harvest_reqs_to_r13() {
+		acl_enforce('REGISTRY_STAFF');
+		set_exception_handler('json_exception_handler');
+
+		$old_harvest_requests = $this->db->get('harvest_requests');
+		if($old_harvest_requests->num_rows() > 0) {
+			foreach($old_harvest_requests->result() as $orq){
+				$row = array(
+					'data_source_id' => $orq->data_source_id, 
+					'status' => 'SCHEDULED',
+					'next_run' => date( 'Y-m-d H:i:s', strtotime($orq->next_harvest)) ,
+					'mode' => 'HARVEST'
+				);
+				$harvest = $this->db->insert('harvests', $row);
+				if(!$harvest){
+					echo $this->db->_error_message();die();
+				}
+			}
+		}
+		echo 'done';
+	}
+
 	public function migrate_ds_attr_to_r13(){
 		acl_enforce('REGISTRY_STAFF');
 		set_exception_handler('json_exception_handler');

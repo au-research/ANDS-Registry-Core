@@ -1,4 +1,4 @@
-CREATE  TABLE `dbs_registry`.`configs` (
+CREATE  TABLE `configs` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `key` VARCHAR(45) NOT NULL ,
   `type` VARCHAR(45) NULL ,
@@ -19,10 +19,17 @@ CREATE TABLE `harvests` (
   `batch_number` varchar(120) DEFAULT NULL,
   `importer_message` text,
   PRIMARY KEY (`harvest_id`)
-)
+);
 
-ALTER TABLE `dbs_registry`.`data_sources` ADD COLUMN `title` VARCHAR(512) NULL  AFTER `slug` , ADD COLUMN `record_owner` VARCHAR(512) NULL  AFTER `title` ;
+ALTER TABLE `data_sources` ADD COLUMN `title` VARCHAR(512) NULL  AFTER `slug` , ADD COLUMN `record_owner` VARCHAR(512) NULL  AFTER `title` ;
 
-ALTER TABLE `dbs_registry`.`registry_object_identifier_relationships` 
+ALTER TABLE `registry_object_identifier_relationships` 
 ADD INDEX `idx_registry_object_id` (`registry_object_id` ASC) 
 , ADD INDEX `idx_identifier` (`related_object_identifier` ASC) ;
+
+ALTER TABLE `registry_objects` 
+DROP INDEX `slug_UNIQUE` ;
+
+ALTER TABLE `url_mappings` 
+DROP INDEX `slug_UNIQUE` ;
+
