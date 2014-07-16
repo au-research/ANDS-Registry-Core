@@ -458,10 +458,14 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
         $ro = $this->ro->getByID($ro_id);
         $returnStr = '';
         if($ro){
-            $connections = $ro->getAllRelatedObjects(false); // allow drafts
+
+            $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector'];
+            $classArray = ['party'];
+            $connections = $ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
+
             foreach($connections AS &$link)
             {
-                if ($link['registry_object_id'] && in_array($link['relation_type'], array('author','coInvestigator','isOwnedBy','hasCollector')))
+                if ($link['status'] == PUBLISHED)
                 {
                     $returnStr .= "&rft.creator=".$link['title'];
                 }

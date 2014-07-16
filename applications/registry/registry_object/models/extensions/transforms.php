@@ -405,7 +405,7 @@ class Transforms_Extension extends ExtensionBase
             $xslt_processor->setParameter('','dateRequested', date("Y-m-d"));
             $xslt_processor->setParameter('','portal_url', portal_url().$this->ro->slug."/".$this->ro->id);
             $xml_output = $xslt_processor->transformToXML($dom);
-
+            $authStr = '';
             //we want to post process the authors and funding name
             if(str_replace("%%%AU  - Anonymous","",$xml_output)!=$xml_output)
             {
@@ -414,13 +414,19 @@ class Transforms_Extension extends ExtensionBase
                 $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
                 if(count($authors)>0)
                 {
-                    $authStr = '';
                     foreach($authors as $author)
                     {
-                        $authStr .= "AU  - ".$author['title']."\n";
+                        if($author['status']==PUBLISHED)
+                        {
+                            $authStr .= "AU  - ".$author['title']."\n";
+                        }
 
                     }
                 }else{
+                    $authStr = 'AU  - Anonymous';
+                }
+                if($authStr=='')
+                {
                     $authStr = 'AU  - Anonymous';
                 }
                 $xml_output = str_replace("%%%AU  - Anonymous",trim($authStr),$xml_output);
