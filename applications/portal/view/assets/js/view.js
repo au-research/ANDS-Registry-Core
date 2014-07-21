@@ -17,7 +17,6 @@ initViewPage();
 // duplicate displays will be postponed 'till next release
 //checkForDuplicateRecords();
 
-initConnectionGraph();
 drawMap();
 initConnections(); 
 initAddTagForm();
@@ -28,6 +27,7 @@ initThemePageLinks();
 if ( $('#class', metadataContainer).html() == "Collection" )
 {
 	initDataciteSeeAlso();
+	initConnectionGraph();
 }
 
 // Internal Suggested Links

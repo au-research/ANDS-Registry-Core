@@ -6,11 +6,11 @@ class Relationships_Extension extends ExtensionBase
 	function __construct($ro_pointer)
 	{
 		parent::__construct($ro_pointer);
-	}		
-	
+	}
+
 	function addRelationships()
 	{
-		
+
 		$this->_CI->load->model('registry/data_source/data_sources', 'ds');
 		$this->_CI->load->model('registry/registry_object/registry_objects', 'ro');
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
@@ -45,6 +45,7 @@ class Relationships_Extension extends ExtensionBase
             {
                 $explicit_keys[] = (string) $ds->primary_key_1;
                 $this_relationship = $ds->{strtolower($this->ro->class) . "_rel_1"};
+								$this_relationship = format_relationship($this->ro->class, $ds->{strtolower($this->ro->class) . "_rel_1"});
                 $relationship = array("registry_object_id" => (string)$this->ro->id,
                     "related_object_key" => (string) $ds->primary_key_1,
                     "related_object_class"=> (string) $this->getRelatedObjectClass((string)$ds->primary_key_1),
@@ -58,6 +59,7 @@ class Relationships_Extension extends ExtensionBase
             {
                 $explicit_keys[] = (string) $ds->primary_key_2;
                 $this_relationship = $ds->{strtolower($this->ro->class) . "_rel_2"};
+								$this_relationship = format_relationship($this->ro->class, $ds->{strtolower($this->ro->class) . "_rel_2"});
                 $relationship = array("registry_object_id" => $this->ro->id,
                     "related_object_key" => (string) $ds->primary_key_2,
                     "related_object_class"=> (string) $this->getRelatedObjectClass((string)$ds->primary_key_2),
@@ -109,15 +111,15 @@ class Relationships_Extension extends ExtensionBase
             }
 
         }
-        
+
 		$processedTypesArray = array('collection','party','service','activity');
-		
+
 		$this->db->where(array('registry_object_id' => $this->ro->id));
-		$this->db->delete('registry_object_identifier_relationships');	
+		$this->db->delete('registry_object_identifier_relationships');
 
 		foreach ($sxml->xpath('//ro:relatedInfo') AS $related_info)
 		{
-			
+
 			$related_info_type = (string)$related_info['type'];
 			if(in_array($related_info_type, $processedTypesArray))
 			{
@@ -150,7 +152,7 @@ class Relationships_Extension extends ExtensionBase
 				$identifier_count = 0;
 				foreach($related_info->identifier as $i)
 				{
-					$identifiers_div .= $this->getResolvedLinkForIdentifier((string)$i['type'],trim((string)$i));  	
+					$identifiers_div .= $this->getResolvedLinkForIdentifier((string)$i['type'],trim((string)$i));
 					$identifier_count++;
 				}
 				$identifiers_div = "<h5>Identifier".($identifier_count > 1 ? 's' : '').": </h5>".$identifiers_div;
@@ -160,14 +162,14 @@ class Relationships_Extension extends ExtensionBase
 			    $imgUrl = asset_url('img/'.$related_info_type.'.png', 'base');
 			    $classImg = '<img class="icon-heading" src="'.$imgUrl.'" alt="'.$related_info_type.'" style="width:24px; float:right;">';
 				$connections_preview_div = '<div class="previewItemHeader">'.$relation_type_disp.'</div>'.$classImg.'<h4>'.$related_info_title.'</h4><div class="post">'.$identifiers_div."<br/>".$connections_preview_div.'</div>';
-								
+
 				foreach($related_info->identifier as $i)
 				{
 					if(trim((string)$i) != '')
 					{
-						$this->db->insert('registry_object_identifier_relationships', 
+						$this->db->insert('registry_object_identifier_relationships',
 							array(
-								"registry_object_id"=>$this->ro->id, 
+								"registry_object_id"=>$this->ro->id,
 							  	"related_object_identifier"=>trim((string)$i),
 							  	"related_info_type"=>$related_info_type ,
 							  	"related_object_identifier_type"=>(string)$i['type'],
@@ -180,10 +182,10 @@ class Relationships_Extension extends ExtensionBase
 						);
 					}
 				}
-			}			
+			}
 		}
 
-		$unchanged_relationships = array_intersect($existing_relatinships, $new_relationships); // leave them	
+		$unchanged_relationships = array_intersect($existing_relatinships, $new_relationships); // leave them
 		$removed_relationships = array_diff($existing_relatinships, $new_relationships);
 		$new_or_changed_relationships = array_diff($new_relationships, $existing_relatinships); //
 		$inserted_keys = $this->insertNewRelationships($new_or_changed_relationships);
@@ -217,7 +219,7 @@ class Relationships_Extension extends ExtensionBase
 				$this->db->insert("registry_object_relationships", $thisRelated);
 			}
 		}
-		// why doesn't insert_batch just work?? 
+		// why doesn't insert_batch just work??
 		//$this->db->insert_batch("registry_object_relationships", $insertArray);
         //print_r($insertArray);
 		return $inserted_keys;
@@ -240,7 +242,7 @@ class Relationships_Extension extends ExtensionBase
 									"relation_url" => $deletedArray["relation_url"],
 									"origin" => $deletedArray["origin"])
 				   					);
-				$this->db->delete("registry_object_relationships");	
+				$this->db->delete("registry_object_relationships");
 			}
 		}
 		return $deleted_keys;
@@ -261,7 +263,7 @@ class Relationships_Extension extends ExtensionBase
 	{
 
 		$result = $this->db->select('class')->get_where('registry_objects', array('key'=>$related_key));
-			
+
 		$class = NULL;
 		if ($result->num_rows() > 0)
 		{
@@ -278,7 +280,7 @@ class Relationships_Extension extends ExtensionBase
 	{
 		$relationships = array();
 		$this->db->select("registry_object_id, related_object_key, related_object_class, relation_type, relation_description, relation_url, origin");
-		$this->db->where('registry_object_id',(string)$this->ro->id);	
+		$this->db->where('registry_object_id',(string)$this->ro->id);
 		$result = $this->db->get('registry_object_relationships');
 
 		foreach ($result->result_array() AS $row)
@@ -294,7 +296,7 @@ class Relationships_Extension extends ExtensionBase
 		$this->db->select('r.title, r.registry_object_id as related_id, r.class as class, rir.*')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','ri.identifier = rir.related_object_identifier and ri.identifier_type = rir.related_object_identifier_type','left')
-				 ->join('registry_objects r','r.registry_object_id = ri.registry_object_id','left')			 
+				 ->join('registry_objects r','r.registry_object_id = ri.registry_object_id','left')
 				 ->where('rir.registry_object_id',(string)$this->ro->id)
 				 ->where('r.status','PUBLISHED');
 		$query = $this->db->get();
@@ -322,7 +324,7 @@ class Relationships_Extension extends ExtensionBase
 
 		return $my_connections;
 	}
-	
+
 	function getRelatedClasses()
 	{
 		/* Holy crap! Use getConnections to infer relationships to drafts and reverse links :-))) */
@@ -348,9 +350,9 @@ class Relationships_Extension extends ExtensionBase
 
 		return $classes;
 	}
-	
 
-	/* This function uses a single SQL query to identify the classes of linked records 
+
+	/* This function uses a single SQL query to identify the classes of linked records
 	   that would be relevant to the quality string of any given record. This is significantly
 	   more performant than using the getConnections() function (particularly as this is used
 	   	for every enriched record in a harvest). */
@@ -400,7 +402,7 @@ class Relationships_Extension extends ExtensionBase
 
 	function getResolvedLinkForIdentifier($type, $value)
 	{
-		
+
 		$urlValue = $value;
 		switch ($type){
 			case 'handle':
