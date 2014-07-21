@@ -32,6 +32,11 @@ class GRANTSMethod extends MethodHandler
 				$gotQuery =true;
 				$CI->solr->setOpt('fq',' earliest_year:'.$this->params[$param_name].' latest_year:'.$this->params[$param_name]);
 			}*/
+            if($param_name == 'id' && $this->params[$param_name] != '')
+            {
+                $CI->solr->setOpt('fq','+key:*'.$this->params[$param_name].'*');
+                $gotQuery =true;
+            }
 			if($param_name == 'institution' && $this->params[$param_name] != '')
 			{
 				$CI->solr->setOpt('fq','+related_object_display_title:"'.$this->params[$param_name].'"');
@@ -99,6 +104,7 @@ class GRANTSMethod extends MethodHandler
 			//$response['query'] = $CI->solr->constructFieldString();
 			//return $this->formatter->display($response);
 			//exit();
+
 			$recordData = array();
 			if (isset($result['response']['docs']) && is_array($result['response']['docs']))
 			{			
