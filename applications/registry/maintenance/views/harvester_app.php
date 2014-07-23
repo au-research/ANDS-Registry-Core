@@ -30,11 +30,11 @@
 									<th>Actions</th>
 									<th ng-click="predicate = 'data_source_title';reverse=!reverse">Data Source</th>
 									<th ng-click="predicate = 'status';reverse=!reverse">Status</th>
-									<th ng-click="predicate = 'status';reverse=!reverse">Progress</th>
-									<th ng-click="predicate = 'status';reverse=!reverse">Record Owner</th>
+									<th>Progress</th>
+									<th ng-click="predicate = 'record_owner';reverse=!reverse">Record Owner</th>
 									<th ng-click="predicate = 'next_run';reverse=!reverse">Next Run</th>
 									<th ng-click="predicate = 'last_run';reverse=!reverse">Last Run</th>
-									<th ng-click="predicate = 'id';reverse=!reverse">Harvest ID</th>
+									<th ng-click="predicate = 'harvest_id';reverse=!reverse">Harvest ID</th>
 								</tr>
 							</thead>
 							<tbody>
