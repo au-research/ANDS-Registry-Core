@@ -576,9 +576,9 @@ class View extends MX_Controller {
 			}
 			else
 			{
-				header("HTTP/1.1 404 Not Found");	
+				header("HTTP/1.1 404 Not Found");
 				throw new Exception('Page could not be found - 404'.'key:'.$key);
-				//$this->load->view('soft404', array('invalid_key'=>'Supplied key is not valid'));	
+				// $this->load->view('soft404', array('invalid_key'=>'Supplied key is not valid'));	
 				return;
 			}
 		}
