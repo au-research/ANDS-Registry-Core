@@ -78,14 +78,13 @@ class Home extends MX_Controller {
 		$this->load->model('view/registry_fetch','registry');
 		$data['contributors'] = $this->registry->fetchInstitutionalPages();
 
-
 		$links = array();
 		foreach($data['groups'] as $g=>$count){
 			$l = '';
 			if(sizeof($data['contributors']['contents'])>0){
 				foreach($data['contributors']['contents'] as $c){
 					if($c['title']==$g){
-						$l = anchor($c['slug'], $g.' ('.$count.')');
+						$l = anchor($c['slug'].'/'.$c['registry_object_id'], $g.' ('.$count.')');
 						break;
 					}else{
 						$l = anchor('search#!/group='.rawurlencode($g), $g.' ('.$count.')');

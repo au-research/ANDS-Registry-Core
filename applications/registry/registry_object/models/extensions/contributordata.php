@@ -49,8 +49,11 @@ class ContributorData_Extension extends ExtensionBase
 
 		//we want to select all objects of type group which have this as a contibuting group;
 
+		$this->_CI->solr->setOpt('rows', '3000');
 		$this->_CI->solr->setOpt('fq', 'type:("group")');
 		$groups = $this->_CI->solr->executeSearch();
+		// var_dump($groups->{'response'}->{'numFound'});
+		// var_dump($groups->{'response'}->{'docs'});
 		foreach($groups->{'response'}->{'docs'} as $group){
 			if($group->{'slug'}!=$this->ro->getAttribute('slug'))
 			$contributorData['groups'][$group->{'list_title'}] = $group->{'slug'};
