@@ -60,7 +60,7 @@ $base_url = str_replace('/apps','/registry',base_url());
             </script>
 
         <?php elseif($lib=='tinymce'):?>
-            <script type="text/javascript" src="<?php echo$base_url;?>assets/lib/tiny_mce4/tinymce.min.js"></script>
+            <script type="text/javascript" src="<?php echo$base_url;?>assets/lib/tinymce/tinymce.min.js"></script>
             <script>
                var editor = 'tinymce';
             </script>
