@@ -133,7 +133,7 @@ class Importer {
 		}
 			// Apply the crosswalk (if applicable)
 		$this->_executeCrosswalk();
-		
+
 		if($this->runBenchMark){
 			$this->CI->benchmark->mark('crosswalk_execution_end');
 		}
@@ -971,8 +971,6 @@ class Importer {
             if($ppt['prefix'] == $crosswalk_metadata_format)
                 $crosswalk_identity = $ppt['cross_walk'];
         }
-        
-        if($crosswalk_identity == '') { return;}
 
         $crosswalks= getCrossWalks();
 		foreach ($crosswalks AS $crosswalk)
@@ -982,11 +980,13 @@ class Importer {
 				$this->crosswalk = $crosswalk;
 			}
 		}
-		
+
+        return;
+        /*if($crosswalk_identity == '') { return;}
 		if (!$this->crosswalk)
 		{
 			throw new Exception("Unable to load crosswalk: " . $crosswalk_metadata_format);
-		}
+		}*/
 	}
 
 

@@ -346,11 +346,12 @@ class ARC_to_RIFCS extends Crosswalk
 
     function returnChunks()
     {
-        foreach ($this->registryObjectChunks AS &$chunk)
+        $ro_xml = '';
+        foreach ($this->registryObjectChunks AS $chunk)
         {
-            $chunk = wrapRegistryObjects(implode(NL, $chunk));
+            $ro_xml .= implode(NL, $chunk);
         }
-        return $this->registryObjectChunks;
+        return wrapRegistryObjects($ro_xml);
     }
 
     /**
