@@ -78,7 +78,7 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
             // Map the column headings to each field, to simplify lookup
             $row = $this->mapCSVHeadings($csv_values);
 
-            if (!isset($row['GRANT_ID']) || !isset($row['DW_INDIVIDUAL_ID']) || trim($row['GRANT_SIMPLIFIED_TITLE']) == '') 
+            if (!isset($row['GRANT_ID']) || !isset($row['DW_INDIVIDUAL_ID']) || trim($row['GRANT_SIMPLIFIED_TITLE']) == '' || sizeof($this->csv_headings) != sizeof($csv_values))
             {
                 $log[] = "[CROSSWALK] Ignoring blank/invalid row...";
                 continue; //skip blank rows
