@@ -33,6 +33,16 @@ if ( $('#class', metadataContainer).html() == "Collection" )
 // Internal Suggested Links
 initInternalSuggestedLinks();
 
+if($('#groupsRightBox p').length > 5) {
+	var groupsSize = $('#groupsRightBox p').length;
+	$('#groupsRightBox p:gt(4)').hide();
+	$('#groupsRightBox').append('<p><a href="javascript:;" class="show_all_groups">Show All '+groupsSize+' Organisations & Groups</a></p>');
+	$('.show_all_groups').click(function(){
+		$('#groupsRightBox p').show();
+		$(this).remove();
+	});
+}
+
 if (!isPublished()) { $('#draft_status').removeClass("hide"); }
 
 $('.subject_vocab_filter').click(function(e){
