@@ -541,7 +541,7 @@ class _data_source {
                                     "authorative_data_source_id" => $data_source_id
                                 );
                                 $insert = $this->db->insert('institutional_pages',$data);
-                                $contributorPage[0]->sync();
+                                // $contributorPage[0]->sync();
                                 if ($notifyChange && $this->_CI->config->item('site_admin_email'))
                                 {
                                     $subject = $contributorPage[0]->title." has been mapped as a contributor page for group ".$group." under datasource ".$data_source_title;
