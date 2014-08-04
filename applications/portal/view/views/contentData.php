@@ -54,41 +54,30 @@
 	if (isset($contentData['contents']['groups']))
 	{
 
-		foreach($contentData['contents']['groups'] as $group=>$value)
-		{
-							$url = base_url() . $value ;					
-							$groupsDiv .= "<p><a href='".$url."'>".$group."</a></p>";		
-
+		foreach($contentData['contents']['groups'] as $group=>$value) {
+			$url = base_url() . $value ;					
+			$groupsDiv .= "<p><a href='".$url."'>".$group."</a></p>";		
 		}
 	}
 
 	// Only display if there are actually some contemt to show...
-	if ($groupsDiv)
-	{
+	if ($groupsDiv) {
 		echo '<div class="right-box" id="groupsRightBox">';
 		echo "<h3>Organisations & Groups</h3>";
 		echo $groupsDiv;
 		echo "</div>";
 	}
 
-
-
-	if (isset($contentData['contents']['collections']))
-	{
-
-		foreach($contentData['contents']['collections'] as $collection=>$value)
-		{
-							$url = base_url() .$value ;
-					
-							$collectionsDiv .= "<p><a href='".$url."'>".$collection."</a></p>";		
-
+	if (isset($contentData['contents']['collections'])) {
+		foreach($contentData['contents']['collections'] as $value) {
+			$url = base_url() .$value['title'].'/'.$value['id'] ;
+			$collectionsDiv .= "<p><a href='".$url."'>".$value['title']."</a></p>";
 		}
 	}
 
 	// Only display if there are actually some contemt to show...
-	if ($collectionsDiv)
-	{
-		echo '<div class="right-box" id="groupsRightBox">';
+	if ($collectionsDiv) {
+		echo '<div class="right-box" id="collectionsRightBox">';
 		echo "<h3>Last 5 Collections Added</h3>";
 		echo $collectionsDiv;
 		echo "</div>";

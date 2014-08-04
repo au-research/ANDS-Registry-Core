@@ -343,18 +343,18 @@ class View extends MX_Controller {
 			$data['title'] = trim(strip_tags($matches[1])).' - Research Data Australia';
 		}
 
-		if ($this->input->get('slug'))
-		{
-			$data['contentData'] = $this->registry->fetchContributorData((string)$this->input->get('slug'));
-			$contentDiv = $this->load->view('contentData', $data, true);
-			$data['cannedText'] = $this->registry->fetchContributorText((string)$this->input->get('slug'));
-			$cannedTextDiv = $this->load->view('cannedText', $data, true);
-		}
-		else
+		if ($this->input->get('id'))
 		{
 			$data['contentData'] = $this->registry->fetchContributorDataById($this->input->get('id'));
 			$contentDiv = $this->load->view('contentData', $data, true);
 			$data['cannedText'] = $this->registry->fetchContributorTextById($this->input->get('id'));
+			$cannedTextDiv = $this->load->view('cannedText', $data, true);
+		}
+		else
+		{
+			$data['contentData'] = $this->registry->fetchContributorData((string)$this->input->get('slug'));
+			$contentDiv = $this->load->view('contentData', $data, true);
+			$data['cannedText'] = $this->registry->fetchContributorText((string)$this->input->get('slug'));
 			$cannedTextDiv = $this->load->view('cannedText', $data, true);			
 		}
 
