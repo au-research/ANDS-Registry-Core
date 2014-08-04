@@ -69,7 +69,12 @@ class ContributorData_Extension extends ExtensionBase
 		$collectionsAdded = $this->_CI->solr->executeSearch();
 
 		foreach($collectionsAdded->{'response'}->{'docs'} as $collection){
-			$contributorData['collections'][$collection->{'list_title'}] = $collection->{'slug'};
+			// $contributorData['collections'][$collection->{'list_title'}] = $collection->{'slug'};
+			$contributorData['collections'][] = array(
+				'title' => $collection->{'list_title'},
+				'slug' => $collection->{'slug'},
+				'id' => $collection->{'id'}
+			);
 		}
 
 		return $contributorData;

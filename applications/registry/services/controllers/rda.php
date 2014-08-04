@@ -420,17 +420,13 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		// Get the RO instance for this registry object so we can fetch its contributor datat
 		$this->load->model('registry_object/registry_objects', 'ro');
 		
-		if ($this->input->get('slug'))
-		{
+		if ($this->input->get('id')) {
+			$registry_object = $this->ro->getByID($this->input->get('id'));
+		} elseif ($this->input->get('slug')){
 			$registry_object = $this->ro->getBySlug($this->input->get('slug'));
 		}
-		elseif ($this->input->get('id'))
-		{
-			$registry_object = $this->ro->getByID($this->input->get('id'));
-		}
 
-		if (!$registry_object)
-		{
+		if (!$registry_object) {
 			throw new Exception("Unable to fetch contributor data registry object.");
 		}
 		
@@ -443,13 +439,28 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 	}
 
 	public function getInstitutionals(){
-		$result = $this->db->select('registry_object_id')->from('institutional_pages')->get();
+		$result_inst = $this->db->select('group, registry_object_id')->from('institutional_pages')->get();
 		$inst = array();
-		foreach($result->result() as $r){
+		foreach($result_inst->result() as $r){
 			array_push($inst, $r->registry_object_id);
 		}
-		$result = $this->db->select('title, slug, registry_object_id')->from('registry_objects')->where('status', 'PUBLISHED')->where_in('registry_object_id', $inst)->get();
-		echo json_encode(array("contents"=>$result->result()));
+		$result_things = $this->db->select('title, slug, registry_object_id')->from('registry_objects')->where('status', 'PUBLISHED')->where_in('registry_object_id', $inst)->get();
+
+		$things = array();
+		foreach($result_things->result() as $vv) {
+			$things[$vv->registry_object_id] = array('slug'=>$vv->slug);
+		}
+
+		$fresult = array();
+		foreach($result_inst->result() as $r) {
+			array_push($fresult, array(
+				'registry_object_id' => $r->registry_object_id,
+				'title' => $r->group,
+				'slug' => $things[$r->registry_object_id]['slug']
+			));
+		}
+		
+		echo json_encode(array("contents"=>$fresult));
 	}
 
     public function getCollectionCreators(){

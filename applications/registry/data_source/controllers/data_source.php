@@ -369,7 +369,6 @@ class Data_source extends MX_Controller {
 				);
 			}
 			$ds->setContributorPages($data['institution_pages'], $cont_data);
-
 		}
 
 		$updated = '';
