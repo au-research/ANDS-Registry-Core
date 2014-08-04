@@ -524,7 +524,8 @@ class _data_source {
                                 $inputvalues[$groups[$page_idx]] = $contributor_value;
                             }
                         }
-
+                        =
+                        $registry_object_key = isset($inputvalues[$group]) ? $inputvalues[$group] : '';
                         $registry_object_key = $inputvalues[$group];
                         if($registry_object_key!='')
                         {
@@ -546,7 +547,7 @@ class _data_source {
                                 {
                                     $subject = $contributorPage[0]->title." has been mapped as a contributor page for group ".$group." under datasource ".$data_source_title;
                                     $message = '<a href="'.base_url().'registry_object/view/'.$contributorPage[0]->id.'">'.$contributorPage[0]->key .'</a>';
-                                    $this->_CI->config->item('site_admin_email');
+                                    $to = $this->_CI->config->item('site_admin_email');
                                     $headers  = 'MIME-Version: 1.0' . "\r\n";
                                     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                                     mail($to, $subject, $message, $headers);
