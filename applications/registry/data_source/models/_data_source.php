@@ -524,9 +524,8 @@ class _data_source {
                                 $inputvalues[$groups[$page_idx]] = $contributor_value;
                             }
                         }
-                        =
+                        
                         $registry_object_key = isset($inputvalues[$group]) ? $inputvalues[$group] : '';
-                        $registry_object_key = $inputvalues[$group];
                         if($registry_object_key!='')
                         {
                             $contributorPage = $this->_CI->ro->getAllByKey($registry_object_key);
