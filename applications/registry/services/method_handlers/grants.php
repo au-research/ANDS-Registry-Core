@@ -16,8 +16,17 @@ class GRANTSMethod extends MethodHandler
 		$CI =& get_instance();
 		$CI->load->library('solr');
 		$gotQuery = false;
+
+        $defaultGroups = '"National Health and Medical Research Council","Australian Research Council"';
+
 		foreach ($forwarded_params AS $param_name => $_)
 		{
+            //Determine which groups we are searching against
+            if($param_name == 'groups' && $this->params[$param_name] != ''){
+                $defaultGroups = '"'.$this->params[$param_name].'"';
+            }
+
+            $CI->solr->setOpt('fq','+group:('.$defaultGroups.')');
 			//display_title,researcher,year,institution
 			if($param_name == 'title' && $this->params[$param_name] != ''){
 				$words = $this->getWords($this->params[$param_name]);
@@ -95,7 +104,7 @@ class GRANTSMethod extends MethodHandler
 		{		
 			$CI->solr->setOpt('fq','+class:"activity"');
 			$CI->solr->setOpt('rows','999');
-			$CI->solr->setOpt('fq','+group:("National Health and Medical Research Council","Australian Research Council")');
+
 			// Get back a list of IDs for matching registry objects
 			$result = $CI->solr->executeSearch(true);
 			//$result = $CI->solr->getResult();
