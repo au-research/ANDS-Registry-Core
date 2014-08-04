@@ -453,11 +453,13 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 		$fresult = array();
 		foreach($result_inst->result() as $r) {
-			array_push($fresult, array(
-				'registry_object_id' => $r->registry_object_id,
-				'title' => $r->group,
-				'slug' => $things[$r->registry_object_id]['slug']
-			));
+			if(isset($things[$r->registry_object_id])){
+				array_push($fresult, array(
+					'registry_object_id' => $r->registry_object_id,
+					'title' => $r->group,
+					'slug' => $things[$r->registry_object_id]['slug']
+				));
+			}
 		}
 		
 		echo json_encode(array("contents"=>$fresult));
