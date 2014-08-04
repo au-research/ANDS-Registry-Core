@@ -205,19 +205,21 @@ class Data_sources extends CI_Model {
 	 * @param the value that the attribute must match
 	 * @return array(_data_source)
 	 */
-	function getByAttribute($attribute_name, $value)
-	{
+	function getByAttribute($attribute_name, $value) {
 		$matches = array();
-		$query = $this->db->select("data_source_id")->get_where('data_source_attributes', array("attribute"=>$attribute_name, "value"=>$value));
-		if ($query->num_rows() > 0)
-		{
-			foreach ($query->result_array() AS $result)
-			{
+		if(in_array($attribute_name, array('key', 'slug', 'title', 'record_owner'))) {
+			$query = $this->db->select('data_source_id')->get_where('data_sources', array($attribute_name=>$value));
+		} else {
+			$query = $this->db->select("data_source_id")->get_where('data_source_attributes', array("attribute"=>$attribute_name, "value"=>$value));
+		}
+		
+		if ($query->num_rows() > 0) {
+			foreach ($query->result_array() AS $result) {
 				$matches[] = new _data_source($result['data_source_id']);
 			}
 		}
 		return $matches;
-	} 	
+	} 
 	
 	/**
 	 * Get all datasources
