@@ -6,7 +6,9 @@ class GRANTSMethod extends MethodHandler
 	//var $params, $options, $formatter; 
    function handle()
    {
-   		$output=array();
+
+
+       $output=array();
 		$response = array();
 		$principalInvestigator = null;
 		$institution = null;
@@ -195,8 +197,21 @@ class GRANTSMethod extends MethodHandler
 			$response['recordData'] = $recordData;
 		}
 		// Bubble back the output status
-		return $this->formatter->display($response);
+       if(isset($_GET['callback']))
+       {
+            set_exception_handler('json_exception_handler');
+            header('Cache-Control: no-cache, must-revalidate');
+            header('Content-type: application/json');
+            $callback = (isset($_GET['callback'])? $_GET['callback']: '?');
+		    return $this->JSONP($callback,json_encode(array("status"=>"success", "message"=>$response)));
+       }else{
+            return $this->formatter->display($response);
+       }
    }
+
+    private function JSONP($callback, $r){
+        echo ($callback) . '(' . $r . ')';
+    }
 
    function processRelated($titles,$relation)
    {
