@@ -8,7 +8,7 @@ class GRANTSMethod extends MethodHandler
    {
 
 
-       $output=array();
+        $output=array();
 		$response = array();
 		$principalInvestigator = null;
 		$institution = null;
@@ -45,7 +45,7 @@ class GRANTSMethod extends MethodHandler
 			}*/
             if($param_name == 'id' && $this->params[$param_name] != '')
             {
-                $CI->solr->setOpt('fq','+key:*'.$this->params[$param_name].'*');
+                $CI->solr->setOpt('fq','+identifier_value:*'.$this->params[$param_name].'*');
                 $gotQuery =true;
             }
 			if($param_name == 'institution' && $this->params[$param_name] != '')
