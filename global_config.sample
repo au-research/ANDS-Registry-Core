@@ -103,8 +103,8 @@ $ENV['ENABLED_MODULES'] = array(
 // Consider using the ANDS-Harvester (an OAI-PMH compliant Java web app)
 $ENV['harvester_base_url'] = "";
 
-// Replace this with the URL of your vocabulary server (if you have one)
-$ENV['sissvoc_url'] = "http://researchdata.ands.org.au:8080/vocab/";
+// Replace this with the URL of your vocabulary server API (if you have one)
+$ENV['sissvoc_url'] = "http://researchdata.ands.org.au:8080/vocab/api/";
 
 // You can also use a vocab service resolve subjects based on their types
 $ENV['vocab_resolving_services'] =  array(
