@@ -70,7 +70,7 @@
 
 	if (isset($contentData['contents']['collections'])) {
 		foreach($contentData['contents']['collections'] as $value) {
-			$url = base_url() .$value['title'].'/'.$value['id'] ;
+			$url = base_url() .$value['slug'].'/'.$value['id'] ;
 			$collectionsDiv .= "<p><a href='".$url."'>".$value['title']."</a></p>";
 		}
 	}
