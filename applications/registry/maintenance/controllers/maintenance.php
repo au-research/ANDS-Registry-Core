@@ -253,6 +253,14 @@ class Maintenance extends MX_Controller {
 		if($query) echo 'Query updated. Rows affected: '.$this->db->affected_rows().'<br/>';
 	}
 
+	public function migrate_roles_to_r131() {
+		$cosi_db = $this->load->database('roles', TRUE);
+		$query = $cosi_db->where('enabled', 't')->update('roles', array('enabled'=>DB_TRUE));
+		if($query) echo 'Query updated. Rows affected: '.$cosi_db->affected_rows().'<br/>';
+		$query = $cosi_db->where('enabled', 't')->update('roles', array('enabled'=>DB_FALSE));
+		if($query) echo 'Query updated. Rows affected: '.$cosi_db->affected_rows().'<br/>';
+	}
+
 	public function syncmenu(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'ARMS SyncMenu';

@@ -46,7 +46,7 @@ class Role_authentication extends CI_Model {
     												array(
     													"role_id"=>$username,
     													"role_type_id"=>"ROLE_USER",	
-    													"enabled"=>'t'
+    													"enabled"=>DB_TRUE
     												));
 
 		if($result->num_rows() > 0){
@@ -73,7 +73,7 @@ class Role_authentication extends CI_Model {
                                                     array(
                                                         "role_id"=>$username,
                                                         "role_type_id"=>"ROLE_USER",    
-                                                        "enabled"=>'t'
+                                                        "enabled"=>DB_TRUE
                                                     ));
             }
         }
@@ -96,7 +96,7 @@ class Role_authentication extends CI_Model {
     													"role_id"=>$username,
     													"role_type_id"=>"ROLE_USER",
       													"authentication_service_id"=>gCOSI_AUTH_METHOD_BUILT_IN,	
-    													"enabled"=>'t'
+    													"enabled"=>DB_TRUE
     												));
     												
     		if ($result->num_rows() > 0)
@@ -177,7 +177,7 @@ class Role_authentication extends CI_Model {
 														"role_id"=>$username,
 														"role_type_id"=>"ROLE_USER",
 	  													"authentication_service_id"=>gCOSI_AUTH_METHOD_LDAP,	
-														"enabled"=>'t'
+														"enabled"=>DB_TRUE
 													));
 											
 			if ($result->num_rows() > 0)
@@ -302,7 +302,7 @@ class Role_authentication extends CI_Model {
 
     public function getAllOrganisationalRoles(){
         $roles = array();
-        $org_roles = $this->cosi_db->query("SELECT * FROM roles WHERE role_type_id='ROLE_ORGANISATIONAL' AND enabled='t' ORDER BY name ASC");
+        $org_roles = $this->cosi_db->query("SELECT * FROM roles WHERE role_type_id='ROLE_ORGANISATIONAL' AND enabled= ".DB_TRUE." ORDER BY name ASC");
         foreach($org_roles->result() as $r){
             $roles[] = array("role_id"=>$r->role_id, "name"=>$r->name);
         }
@@ -343,7 +343,7 @@ class Role_authentication extends CI_Model {
                 ->from('role_relations')
                 ->join('roles', 'roles.role_id = role_relations.parent_role_id')
                 ->where('role_relations.child_role_id', $role_id)
-                ->where('enabled', 't')
+                ->where('enabled', DB_TRUE)
                 ->where('role_relations.parent_role_id !=', $role_id)
                 ->get();
     	
