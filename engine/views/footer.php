@@ -152,7 +152,7 @@ $base_url = str_replace('/apps','/registry',base_url());
 
 	<!-- Module-specific styles and scripts -->
     <?php if (isset($scripts)): foreach($scripts as $script):?>
-        <script src="<?php echo asset_url('js/' . $script);?>.js" defer></script>
+        <script src="<?php echo asset_url('js/' . $script);?>.js"></script>
     <?php endforeach; endif; ?>
 
 
