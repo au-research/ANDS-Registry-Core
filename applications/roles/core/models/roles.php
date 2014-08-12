@@ -118,7 +118,7 @@ class Roles extends CI_Model {
                 ->from('role_relations')
                 ->join('roles', 'roles.role_id = role_relations.parent_role_id')
                 ->where('role_relations.child_role_id', $role_id)
-                ->where('enabled', 't')
+                ->where('enabled', DB_TRUE)
                 ->where('role_relations.parent_role_id !=', $role_id)
                 ->get();
 
