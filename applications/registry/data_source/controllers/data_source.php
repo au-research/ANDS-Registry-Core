@@ -361,12 +361,14 @@ class Data_source extends MX_Controller {
 		if(isset($data['institution_pages'])){
 			$cont_data = array();
 			$cont_data['contributor_pages'] = array();
-			foreach($data['contributor']['items'] as $v){
-				array_push($cont_data['contributor_pages'], $v['contributor_page_key']);
-				$updated_values[] = array(
-					'key' => 'Contributor Page for: '.$v['group'],
-					'value' => $v['contributor_page_key']
-				);
+			if($data['contributor'] && $data['contributor']['items']){
+				foreach($data['contributor']['items'] as $v){
+					array_push($cont_data['contributor_pages'], $v['contributor_page_key']);
+					$updated_values[] = array(
+						'key' => 'Contributor Page for: '.$v['group'],
+						'value' => $v['contributor_page_key']
+					);
+				}
 			}
 			$ds->setContributorPages($data['institution_pages'], $cont_data);
 		}
