@@ -220,8 +220,9 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 			'type':'info',
 			'msg':'Saving...'
 		};
+	
 		$('input[name=contributor_pages]').each(function(index){
-			if($scope.ds.contributor.items[index]) {
+			if($scope.ds.contributor && $scope.ds.contributor.items[index]) {
 				$scope.ds.contributor.items[index].contributor_page_key = $(this).val();
 			}
 		});
