@@ -114,9 +114,10 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
         }
         $log[] = "[CROSSWALK] Setup mapping in-memory. " . count($this->grants) . " grants, " . count($this->people) . " people";
 
-        //$this->renderParties($log);
+        $this->renderParties($log);
         $this->renderActivities($log);
-                    
+        var_dump($log);
+
     	return $this->returnChunks();
     }
 
@@ -475,17 +476,20 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
 
 
     var $registryObjectChunks = array();
-    const CHUNK_SIZE = 10;
+    const CHUNK_SIZE = 100;
 
     function addRegistryObjectToChunkQueue($rifcs_xml)
     {
+
         $current_chunk = end($this->registryObjectChunks);
+        //echo("array size:".count($current_chunk).NL);
         if (!$current_chunk || count($current_chunk) == self::CHUNK_SIZE)
         {
             $this->registryObjectChunks[] = array($rifcs_xml);
         }
         else
         {
+            //echo("SUB CHUNK". count($this->registryObjectChunks[count($this->registryObjectChunks)-1]).NL);
             $this->registryObjectChunks[count($this->registryObjectChunks)-1][] = $rifcs_xml;
         }
     }
@@ -493,8 +497,10 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
     function returnChunks()
     {
         $ro_xml = '';
+        echo("registryObjectChunks: ". count($this->registryObjectChunks).NL);
         foreach ($this->registryObjectChunks AS $chunk)
         {
+            echo("Chunks: ". count($chunk));
             $ro_xml .= implode(NL, $chunk);
         }
         //echo wrapRegistryObjects($ro_xml);

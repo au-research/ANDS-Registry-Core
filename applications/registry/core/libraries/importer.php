@@ -915,6 +915,9 @@ class Importer {
 			$temp_crosswalk_name = $this->crosswalk->metadataFormat();
 			unset($this->crosswalk);
 			$this->setCrosswalk($temp_crosswalk_name);
+            $fp = fopen($this->filePath.'.xwlk', 'w');
+            fwrite($fp, $this->xmlPayload);
+            fclose($fp);
 		}
 	}
 
@@ -1041,7 +1044,7 @@ class Importer {
 	private function _getSimpleXMLFromString($xml)
 	{
 		libxml_use_internal_errors(true);
-		$xml = simplexml_load_string($xml);
+		$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 
 		if ($xml === false)
 		{

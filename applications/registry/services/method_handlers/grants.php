@@ -24,7 +24,7 @@ class GRANTSMethod extends MethodHandler
 		foreach ($forwarded_params AS $param_name => $_)
 		{
             //Determine which groups we are searching against
-            if($param_name == 'groups' && $this->params[$param_name] != ''){
+            if($param_name == 'group' && $this->params[$param_name] != ''){
                 $defaultGroups = '"'.$this->params[$param_name].'"';
             }
 
@@ -38,27 +38,27 @@ class GRANTSMethod extends MethodHandler
 					$gotQuery =true;
 				}				
 			}
-			/*if($param_name == 'year' && $this->params[$param_name] != '')
-			{
-				$gotQuery =true;
-				$CI->solr->setOpt('fq',' earliest_year:'.$this->params[$param_name].' latest_year:'.$this->params[$param_name]);
-			}*/
+
             if($param_name == 'id' && $this->params[$param_name] != '')
             {
                 $CI->solr->setOpt('fq','+identifier_value:*'.$this->params[$param_name].'*');
+                $gotQuery =true;
+            }
+            if($param_name == 'description' && $this->params[$param_name] != '')
+            {
+
+               $words = $this->getWords($this->params[$param_name]);
+               foreach($words as $word)
+               {
+                    $CI->solr->setOpt('fq','+description:('.$word.')');
+                }
                 $gotQuery =true;
             }
 			if($param_name == 'institution' && $this->params[$param_name] != '')
 			{
 				$CI->solr->setOpt('fq','+related_object_display_title:"'.$this->params[$param_name].'"');
 				$gotQuery =true;
-				/*
-				$institution = $this->getWords($this->params[$param_name]);
-				foreach($institution as $word)
-				{
-					//$CI->solr->setOpt('fq','+related_object_display_title:'.$word.'');
-					$gotQuery =true;
-				}*/
+
 				$CI->solr->setOpt('fq','+related_object_relation:"isManagedBy"');
 			}
 			if($param_name == 'person' && $this->params[$param_name] != '')
@@ -69,14 +69,7 @@ class GRANTSMethod extends MethodHandler
 					$CI->solr->setOpt('fq','+related_object_display_title_search:('.$word.')');
 				}
 				$gotQuery =true;
-				/*
-				$words = $this->getWords($this->params[$param_name]);
-				foreach($words as $word)
-				{
-					$CI->solr->setOpt('fq','+related_object_display_title:'.$word);
-					$gotQuery =true;
-				}
-				*/
+
 				$CI->solr->setOpt('fq','+related_object_class:"party"');
 			}
 			if($param_name == 'principalInvestigator' && $this->params[$param_name] != '')
@@ -88,13 +81,7 @@ class GRANTSMethod extends MethodHandler
 				}	
 
 				$gotQuery =true;
-				/*
-				$principalInvestigator = $this->getWords($this->params[$param_name]);
-				foreach($principalInvestigator as $word)
-				{
-					$CI->solr->setOpt('fq','+related_object_display_title:'.$word);
-					$gotQuery =true;
-				}*/
+
 				$CI->solr->setOpt('fq','+related_object_relation:"isPrincipalInvestigatorOf"');
 
 			}
@@ -122,11 +109,16 @@ class GRANTSMethod extends MethodHandler
 				foreach ($result['response']['docs'] AS $r)
 				{
 					$relationships = array();
+                    $identifiers = array();
 					$canPass= true; 
 					if(isset($r['related_object_display_title']))
 					{
 						$relationships = $this->processRelated($r['related_object_display_title'],$r['related_object_relation']);
 					}
+                    if(isset($r['identifier_value']))
+                    {
+                        $identifiers = $this->processIdentifiers($r['identifier_value'],$r['identifier_type']);
+                    }
 					// POST FILTERS
 					if(isset($institution) && isset($relationships['isManagedBy']))
 					{
@@ -182,7 +174,6 @@ class GRANTSMethod extends MethodHandler
 						}
 					}
 
-
 					if($canPass)
 					{
 					$response['numFound'] += 1;
@@ -190,6 +181,8 @@ class GRANTSMethod extends MethodHandler
 						'slug' => $r['slug'], 
 						'title' =>  $r['display_title'], 
 						'description' =>  $r['description'],
+                        'identifiers' => $r['identifier_value'],
+                        'identifier_type' =>$identifiers,
 						'relations' => $relationships);
 					}
 				}
@@ -239,7 +232,27 @@ class GRANTSMethod extends MethodHandler
 		return $relatiships;
 
    }
+    function processIdentifiers($value,$type)
+    {
+        $identifiers = array();
+        for($i = 0 ; $i < sizeof($type) ; $i++)
+        {
+            if(isset($identifiers[$type[$i]]))
+            {
+                if(is_array($identifiers[$type[$i]]))
+                {
+                    $identifiers[$type[$i]][] = $value[$i];
+                }
 
+
+            }
+            else{
+                $identifiers[$type[$i]] = $value[$i];
+            }
+        }
+        return $identifiers;
+
+    }
    function getWords($string)
    {
    		$invalid_characters = array("$", "%", "#", "<", ">", "|", '"', "'", "(", ")");
