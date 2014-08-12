@@ -555,7 +555,8 @@ class Maintenance extends MX_Controller {
 				//enrich
 				if($task=='sync' || $task=='full_enrich'){
 					try{
-						$ro->addRelationships();
+                        $ro->processIdentifiers();
+                        $ro->addRelationships();
 					}catch(Exception $e){
 						array_push($error, $e->getMessage());
 					}
