@@ -41,6 +41,21 @@ angular.module('portal-filters', []).
 			}
 		}
 	}).
+	filter('config_readable', function(){
+		return function(text){
+			switch(text){
+				case 'environment_colour': return 'Environment Colour';break;
+				case 'environment_name': return 'Environment Name';break;
+				case 'harvested_contents_path': return 'Harvested Content Path';break;
+				case 'site_admin': return 'Site Administrator Name';break;
+				case 'site_admin_email': return 'Site Administrator Email';break;
+				case 'solr_url': return 'SOLR URL';break;
+				case 'sissvoc_url': return 'Sissvoc Vocab Server URL';break;
+				case 'shibboleth_sp': return 'Enable Shibboleth';break;
+				default: return text;break;
+			}
+		}
+	}).
 	filter('relationship', function(){
 		return function(text, from_class){
 			if(!from_class) return text;

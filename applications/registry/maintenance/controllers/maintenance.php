@@ -668,47 +668,6 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	function config() {
-		set_exception_handler('json_exception_handler');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		$data = array();
-		$query = $this->db->get('configs');
-		$configs = $query->result_array();
-
-		foreach($configs as $c) {
-			$data[$c['key']] = array(
-				'type' => $c['type'],
-				'value' => ($c['type']=='json') ? json_decode($c['value'],true) : $c['value']
-			);
-		}
-		echo json_encode($data);
-	}
-
-	function config_save() {
-		set_exception_handler('json_exception_handler');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-
-		$data = file_get_contents("php://input");
-		$data = json_decode($data, true);
-		$data = $data['data'];
-
-		foreach($data as $key=>$c) {
-			if($c['type']=='string') set_config_item($key, $c['type'], $c['value']);
-		}
-
-		echo json_encode(array(
-			'status' => 'OK',
-			'message' => 'All configuration item successfully updated'
-		));
-
-		// echo set_config_item('harvested_contents_path', 'string', '/var/www/harvested_content');
-
-	}
-
-
-
 	function test(){
 		// set_exception_handler('json_exception_handler');
 		// header('Cache-Control: no-cache, must-revalidate');
