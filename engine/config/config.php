@@ -14,24 +14,6 @@ $config = array_merge($config, $ENV);
 $config[ENGINE_ENABLED_MODULE_LIST] = &$config['ENABLED_MODULES'];
 
 
-$config['authenticators'] = Array(gCOSI_AUTH_METHOD_BUILT_IN => 'Built-in Authentication', gCOSI_AUTH_METHOD_LDAP=>'LDAP');
-if (isset($config['shibboleth_sp']) && $config['shibboleth_sp'])
-{
-	$config['authenticators'][gCOSI_AUTH_METHOD_SHIBBOLETH] = 'Australian Access Federation (AAF) credentials';
-	$config['default_authenticator'] = gCOSI_AUTH_METHOD_SHIBBOLETH;
-}
-else
-{
-	$config['default_authenticator'] = gCOSI_AUTH_METHOD_BUILT_IN;
-}
-
-
-// Default resolver
-if (!isset($config['sissvoc_url']))
-{
-	$config['sissvoc_url'] = "http://ands3.anu.edu.au:8080/sissvoc/api/";
-}
-
 //default locale for character type conversion, instead of C or POSIX
 setlocale(LC_CTYPE, 'en_AU');
 
@@ -523,7 +505,7 @@ $config['modules_locations'] = array(
 |
 */
 $config['base_url']	= $base_url;
-$config['solr_url'] = $ENV['solr_url'];
+// $config['solr_url'] = $ENV['solr_url'];
 
 
 /*

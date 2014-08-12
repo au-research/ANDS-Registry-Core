@@ -22,12 +22,59 @@ function get_config_item($name) {
 	}
 }
 
+function get_global_config_item($name) {
+	$_ci =& get_instance();
+	if($_ci->config->item($name)) {
+		return $_ci->config->item($name);
+	} else {
+		return false;
+	}
+}
+
+function get_db_config_item($name) {
+	$_ci =& get_instance();
+	$result = $_ci->db->get_where('configs', array('key'=>$name));
+	if($result->num_rows() > 0) {
+		$result_array = $result->result_array();
+		$result_item = $result_array[0];
+		if($result_item['type']=='json') {
+			$string = trim(preg_replace('/\s+/', ' ', $result_item['value']));
+			return json_decode($string, true);
+		} else {
+			return $result_item['value'];
+		}
+	} else {
+		return false;
+	}
+}
+
 function set_config_item($key, $type, $value) {
 	$_ci =& get_instance();
 	if($value=='json' && is_array($value)) $value = json_encode($value); 
 
-	$query = get_config_item($key);
-	if(!$query) {
+	$action = null;
+
+	if(get_db_config_item($key)){
+		$action = 'update';
+	} else {
+		$action = 'create';
+	}
+
+	// if(!get_global_config_item($key)){
+	// 	if(get_db_config_item($key)){
+	// 		$action = 'update';
+	// 	} else {
+	// 		$action = 'create';
+	// 	}
+	// } else {
+	// 	if(get_db_config_item($key)){
+	// 		$action='update';
+	// 	} else {
+	// 		$action = 'create';
+	// 	}
+	// }
+
+	if($action=='create'){
 		$data = array(
 			'key' => $key,
 			'type' => $type,
@@ -35,14 +82,16 @@ function set_config_item($key, $type, $value) {
 		);
 		$insert_query = $_ci->db->insert('configs', $data);
 		if($insert_query) {
+			log_message('info', 'CONFIG creating '.$value.' to '.$key.' as '.$type);
 			return true;
 		} else return false;
-	} elseif($query!=$value) {
+	} elseif($action=='update') {
 		$_ci->db->where('key', $key);
 		$update_query = $_ci->db->update('configs', array(
 			'type' => $type,
 			'value' => $value
 		));
+		log_message('info', 'CONFIG update '.$value.' to '.$key.' as '.$type);
 	} else {
 		return false;
 	}
@@ -164,15 +213,15 @@ function notifySiteAdmin($errno, $errstr, $errfile, $errline)
 	$_ci =& get_instance();
 	if($_ci->config->item('site_admin_email') && $_ci->config->item('site_admin_email') != '<admin @ email>')
 	{		
-		$siteAdmin = ($_ci->config->item('site_admin') ? $_ci->config->item('site_admin') : 'Site Admin'); 
+		$siteAdmin = (get_config_item('site_admin') ? get_config_item('site_admin') : 'Site Admin'); 
 
-		$siteInstance = ($_ci->config->item('environment_name') ? $_ci->config->item('environment_name') : 'Site Instance');
-		$siteState = ($_ci->config->item('deployment_state') ? " (".$_ci->config->item('deployment_state').")" : '');
+		$siteInstance = (get_config_item('environment_name') ? get_config_item('environment_name') : 'Site Instance');
+		$siteState = (get_config_item('deployment_state') ? " (".get_config_item('deployment_state').")" : '');
 
 
 		$email = $_ci->load->library('email');
-		$email->from($_ci->config->item('site_admin_email'), $siteAdmin);
-		$email->to($_ci->config->item('site_admin_email')); 
+		$email->from(get_config_item('site_admin_email'), $siteAdmin);
+		$email->to(get_config_item('site_admin_email')); 
 		$errDisp = error_level_tostring($errno);
 
 		$email->subject($errDisp.' occured on ' .$siteInstance.$siteState);
@@ -359,7 +408,7 @@ function is_dev(){
 
 function check_services(){
 	$CI =& get_instance();
-	$solr_status = curl_post($CI->config->item('solr_url').'admin/ping?wt=json', '', array());
+	$solr_status = curl_post(get_config_item('solr_url').'admin/ping?wt=json', '', array());
 	$solr_status = json_decode($solr_status, true);
 
 	$data['message'] = '';

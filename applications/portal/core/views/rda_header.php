@@ -30,10 +30,10 @@
 <?php endif; ?>
 </head>
 <?php
-if($this->config->item('environment_name'))
+if(get_config_item('environment_name'))
 {
-  $environment_name = $this->config->item('environment_name');
-  $environment_colour = ($this->config->item('environment_colour') ?: "#0088cc");
+  $environment_name = get_config_item('environment_name');
+  $environment_colour = (get_config_item('environment_colour') ?: "#0088cc");
   $environment_header_style = " style='border-top: 4px solid " . $environment_colour . ";'";
 }
 else
