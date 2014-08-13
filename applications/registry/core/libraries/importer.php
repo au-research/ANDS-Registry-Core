@@ -1044,7 +1044,14 @@ class Importer {
 	private function _getSimpleXMLFromString($xml)
 	{
 		libxml_use_internal_errors(true);
-		$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_PARSEHUGE);
+
+        if(!defined('LIBXML_PARSEHUGE')){
+            $xml = simplexml_load_string($xml, 'SimpleXMLElement');
+        }
+        else{
+            $xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_PARSEHUGE);
+
+        }
 
 		if ($xml === false)
 		{
