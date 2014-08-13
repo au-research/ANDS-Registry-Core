@@ -1078,8 +1078,8 @@ class Data_source extends MX_Controller {
 		//all validation goes well
 		try{
 			$ds = $this->ds->create($data['key'], url_title($data['title']));
-			$ds->setAttribute('title', $data['title']);
-			$ds->setAttribute('record_owner', $data['record_owner']);
+			$ds->_initAttribute('title', $data['title'], TRUE);
+			$ds->_initAttribute('record_owner', $data['record_owner'], TRUE);
 			$ds->setAttribute('qa_flag', DB_TRUE);
 			foreach($ds->stockAttributes as $key=>$value) {
 				if(!isset($ds->attributes[$key]))

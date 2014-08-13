@@ -118,7 +118,7 @@ class Roles extends CI_Model {
                 ->from('role_relations')
                 ->join('roles', 'roles.role_id = role_relations.parent_role_id')
                 ->where('role_relations.child_role_id', $role_id)
-                ->where('enabled', 't')
+                ->where('enabled', DB_TRUE)
                 ->where('role_relations.parent_role_id !=', $role_id)
                 ->get();
 
@@ -153,7 +153,7 @@ class Roles extends CI_Model {
                     ->from('role_relations')
                     ->join('roles', 'roles.role_id = role_relations.child_role_id')
                     ->where('role_relations.parent_role_id', $role_id)
-                    ->where('enabled', 't')
+                    ->where('enabled', DB_TRUE)
                     ->where('role_relations.child_role_id !=', $role_id)
                     ->get();
 
@@ -238,7 +238,7 @@ class Roles extends CI_Model {
                 ->join('roles', 'roles.role_id = role_relations.parent_role_id')
                 ->where('role_relations.child_role_id', $role_id)
                 ->where('roles.role_type_id', 'ROLE_ORGANISATIONAL')
-                ->where('enabled', 't')
+                ->where('enabled', DB_TRUE)
                 ->where('role_relations.parent_role_id !=', $role_id)
                 ->get();
         $owned = array();
@@ -343,7 +343,7 @@ class Roles extends CI_Model {
                 'type'=>'VARCHAR','constraint'=> 32
             ),
             'enabled'=>array(
-                'type'=>'VARCHAR', 'constraint'=>1, 'default'=>'t'
+                'type'=>'VARCHAR', 'constraint'=>1, 'default'=>DB_TRUE
             ),
             'created_when'=>array(
                 'type'=>'timestamp'
