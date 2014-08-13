@@ -50,8 +50,8 @@ class Extrif_Extension extends ExtensionBase
 				$extendedMetadata->addChild("extRif:dataSourceID", $this->ro->data_source_id, EXTRIF_NAMESPACE);
 				$extendedMetadata->addChild("extRif:updateTimestamp", $this->ro->updated, EXTRIF_NAMESPACE);					
 	
-				$extendedMetadata->addChild("extRif:displayTitle", htmlspecialchars_decode(str_replace("&"," ",$this->ro->title)), EXTRIF_NAMESPACE);
-				$extendedMetadata->addChild("extRif:listTitle", htmlspecialchars_decode(str_replace("&"," ",$this->ro->list_title)), EXTRIF_NAMESPACE);
+				$extendedMetadata->addChild("extRif:displayTitle", htmlspecialchars_decode(str_replace("&","&amp;",$this->ro->title)), EXTRIF_NAMESPACE);
+				$extendedMetadata->addChild("extRif:listTitle", htmlspecialchars_decode(str_replace("&","&amp;",$this->ro->list_title)), EXTRIF_NAMESPACE);
 				try{
 					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//TRANSLIT', utf8_encode($this->ro->list_title)), EXTRIF_NAMESPACE);
 				}catch(Exception $e){

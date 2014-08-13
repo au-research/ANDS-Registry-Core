@@ -342,10 +342,9 @@ class Transforms_Extension extends ExtensionBase
 			$xslt_processor->setParameter('','dateProvided', date("Y-m-d"));
 			$xslt_processor->setParameter('','rda_url', portal_url($this->ro->slug));
 			return $xslt_processor->transformToXML($dom);
-		}catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			echo "UNABLE TO TRANSFORM" . BR;	
-			echo "<pre>" . nl2br($e->getMessage()) . "</pre>" . BR;
+			echo "<pre>" . nl2br($e) . "</pre>" . BR;
 		}
 	}
 
@@ -353,12 +352,12 @@ class Transforms_Extension extends ExtensionBase
 		try{
 			$xslt_processor = Transforms::get_extrif_to_form_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars_decode(htmlspecialchars($rifcs)), LIBXML_NOENT);
+			$dom->loadXML(htmlspecialchars_decode(htmlspecialchars(str_replace('&', '&amp;',$rifcs))), LIBXML_NOENT);
 			$xslt_processor->setParameter('','base_url',base_url());
 			return html_entity_decode($xslt_processor->transformToXML($dom));
 		} catch (Exception $e) {
 			echo "UNABLE TO TRANSFORM" . BR;
-			echo "<pre>" . nl2br($e->getMessage()) . "</pre>" . BR;
+			echo "<pre>" . nl2br($e) . "</pre>" . BR;
 		}
 	}
 
