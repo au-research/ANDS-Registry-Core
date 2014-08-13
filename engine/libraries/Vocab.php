@@ -174,43 +174,23 @@ class Vocab {
         $json = false;
         if(is_array($this->resolvingServices))
         {
+            // var_dump($this->constructBroaderUriString($resolvingService, $uriprefix, $term));
             $content = $this->post($this->constructBroaderUriString($resolvingService, $uriprefix, $term));
             $json = json_decode($content, false);
         }      
         if($json){
             $this->result = $json;
-            foreach($json->{'result'}->{'items'} as $item)
-            {               
-                if(isset($item->{'broader'}))
-                {
-                    
-                    $notation = $item->{'broader'}->{'notation'};
-                    $subject['notation'] = $notation;
-                    $subject['uriprefix'] = $uriprefix;
-                    $subject['value'] = $item->{'broader'}->{'prefLabel'}->{'_value'};
-                    $subject['about'] = $item->{'broader'}->{'_about'};
-                    $this->resolvedArray[$uriprefix][$term]['broaderTerms'][] = $notation;
-                    if(!isset($this->resolvedArray[$uriprefix][$notation]))
-                    {
-                        $this->resolvedArray[$uriprefix][$notation] = $subject;
-                        $this->resolvedArray[$uriprefix][$notation]['broaderTerms'] = array();
-                    }
+            foreach($json->{'result'}->{'items'} as $item) {
+                $notation = $item->{'notation'};
+                $subject['notation'] = $notation;
+                $subject['uriprefix'] = $uriprefix;
+                $subject['value'] = $item->{'prefLabel'}->{'_value'};
+                $subject['about'] = $item->{'_about'};
+                $this->resolvedArray[$uriprefix][$term]['broaderTerms'][] = $notation;
+                if(!isset($this->resolvedArray[$uriprefix][$notation])) {
+                    $this->resolvedArray[$uriprefix][$notation] = $subject;
+                    $this->resolvedArray[$uriprefix][$notation]['broaderTerms'] = array();
                 }
-                if(isset($item->{'notation'}))
-                {
-                    $notation = $item->{'notation'};
-                    $subject['notation'] = $notation;
-                    $subject['uriprefix'] = $uriprefix;
-                    $subject['value'] = $item->{'prefLabel'}->{'_value'};
-                    $subject['about'] = $item->{'_about'};
-                    $this->resolvedArray[$uriprefix][$term]['broaderTerms'][] = $notation;
-                    if(!isset($this->resolvedArray[$uriprefix][$notation]))
-                    {
-                        $this->resolvedArray[$uriprefix][$notation] = $subject;
-                        $this->resolvedArray[$uriprefix][$notation]['broaderTerms'] = array();
-                    }
-                } 
-                          
             }
         }
     }

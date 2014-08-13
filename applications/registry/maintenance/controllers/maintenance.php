@@ -679,8 +679,9 @@ class Maintenance extends MX_Controller {
 		// log_message('debug', 'Test Debug');
 
 		$ro = $this->ro->getByID(475608);
-		$ro->addRelationships();
-		echo json_encode($ro->getAllRelatedObjects(true, false, true));
+		$ro->processSubjects();
+		// $ro->addRelationships();
+		// echo json_encode($ro->getAllRelatedObjects(true, false, true));
 
 		// echo 5/0;
 
