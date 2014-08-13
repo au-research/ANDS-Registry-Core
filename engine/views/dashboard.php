@@ -18,9 +18,9 @@
 
 
 
-if($this->config->item('environment_name'))
+if(get_config_item('environment_name'))
 {
-  $site_title = $this->config->item('environment_name').' Home';
+  $site_title = get_config_item('environment_name').' Home';
 }
 else
 {

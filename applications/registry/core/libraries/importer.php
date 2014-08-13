@@ -1347,7 +1347,7 @@ class Importer {
 	{
 		if (sizeof($this->solr_queue) == 0) return;
 
-		$solrUrl = $this->CI->config->item('solr_url');
+		$solrUrl = get_config_item('solr_url');
 		$solrUpdateUrl = $solrUrl.'update/?wt=json';
 
 		$this->CI->load->library('solr');
@@ -1374,7 +1374,7 @@ class Importer {
 
 	function commitSOLR()
 	{
-		$solrUrl = $this->CI->config->item('solr_url');
+		$solrUrl = get_config_item('solr_url');
 		$solrUpdateUrl = $solrUrl.'update/?wt=json';
 		return curl_post($solrUpdateUrl.'?commit=true', '<commit waitSearcher="false"/>');
 	}

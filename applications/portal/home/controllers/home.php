@@ -171,7 +171,7 @@ class Home extends MX_Controller {
 
 	function sitemap(){
     	parse_str($_SERVER['QUERY_STRING'], $_GET);
-    	$solr_url = $this->config->item('solr_url');
+    	$solr_url = get_config_item('solr_url');
     	$ds = '';
     	if(isset($_GET['ds'])) $ds=$_GET['ds'];
 
