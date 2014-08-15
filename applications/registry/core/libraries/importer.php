@@ -359,6 +359,7 @@ class Importer {
 						{
 							$this->CI->ro->emailAssessor($this->dataSource);
 						}
+                        $this->ingest_new_record++;
 					}
 					else
 					{
@@ -382,8 +383,9 @@ class Importer {
 						}
 
 						$ro->record_owner = $record_owner;
+                        $this->ingest_new_revision++;
 					}
-					if($ro) $this->ingest_new_revision++;
+
 					$ro->class = $class;
 					$ro->created_who = $record_owner;
 					$ro->data_source_key = $this->dataSource->key;
