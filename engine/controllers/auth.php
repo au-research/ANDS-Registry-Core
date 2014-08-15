@@ -12,7 +12,6 @@ class Auth extends CI_Controller {
 		$this->CI =& get_instance();
 
 		$data['authenticators'] = array(gCOSI_AUTH_METHOD_BUILT_IN => 'Built-in Authentication', gCOSI_AUTH_METHOD_LDAP=>'LDAP');
-		log_message('debug', get_config_item('shibboleth_sp'));
 		if (get_config_item('shibboleth_sp')=='true') {
 			$data['authenticators'][gCOSI_AUTH_METHOD_SHIBBOLETH] = 'Australian Access Federation (AAF) credentials';
 			$data['default_authenticator'] = gCOSI_AUTH_METHOD_SHIBBOLETH;
@@ -68,39 +67,43 @@ class Auth extends CI_Controller {
 		$data['scripts'] = array();
 		$this->CI =& get_instance();
 		$data['redirect'] = '';
-		$data['default_authenticator'] = $this->CI->config->item('default_authenticator');
-		$data['authenticators'] = $this->CI->config->item('authenticators');
+		$data['authenticators'] = array(gCOSI_AUTH_METHOD_BUILT_IN => 'Built-in Authentication', gCOSI_AUTH_METHOD_LDAP=>'LDAP');
+		if (get_config_item('shibboleth_sp')=='true') {
+			$data['authenticators'][gCOSI_AUTH_METHOD_SHIBBOLETH] = 'Australian Access Federation (AAF) credentials';
+			$data['default_authenticator'] = gCOSI_AUTH_METHOD_SHIBBOLETH;
+		} else {
+			$data['default_authenticator'] = gCOSI_AUTH_METHOD_BUILT_IN;
+		}
+
 		if(isset($_SERVER['shib-shared-token'])){
-			$sharedToken = $_SERVER['shib-shared-token'];
-			try 
-			{
-				if($this->user->authChallenge($sharedToken, ''))
-				{
+			$sharedToken = $_SERVER['shib-shared-token'];//authenticate using shared token
+		} elseif (isset($_SERVER['persistent-id'])) {
+			$sharedToken = sha1($_SERVER['persistent-id']);
+			echo $sharedToken;
+		} else {
+			$data['error_message'] = "Unable to login. Shibboleth IDP was not able to authenticate the given credentials. Missing shared token or persistent id";
+			$this->load->view('login', $data);
+		}
+
+		if($sharedToken) {
+			try {
+				if($this->user->authChallenge($sharedToken, '')) {
 					if($this->input->get('redirect')!='auth/dashboard/'){
 						redirect($this->input->get('redirect'));
-					}else{
+					} else {
 						redirect(registry_url().'auth/dashboard');
 					}
-				}
-				else
-				{
+				} else {
 					$data['error_message'] = "Unable to login. Please check your credentials are accurate.";
 					$this->load->view('login', $data);
 				}
 			}
-			catch (Exception $e)
-			{
+			catch (Exception $e) {
 				$data['error_message'] = "Unable to login. Please check your credentials are accurate.";
 				$data['exception'] = $e;
 				$this->load->view('login', $data);
 			}
-		}else{
-			$data['error_message'] = "Unable to login. Shibboleth IDP was not able to authenticate the given credentials.";
-			$this->load->view('login', $data);
 		}
-
-		
-
 	}
 
 	public function registerAffiliation($new = false){

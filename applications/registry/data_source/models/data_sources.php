@@ -113,27 +113,19 @@ class Data_sources extends CI_Model {
 	 * @param the data source ID
 	 * @return _data_source object or NULL
 	 */
-	function getOwnedDataSources($just_id = false, $just_core=false)
-	{
+	function getOwnedDataSources($just_id = false, $just_core=false) {
 		$data_sources = array();
 		$affiliations = $this->user->affiliations();
-		if (is_array($affiliations) && count($affiliations) > 0)
-		{
-			if ($this->user->hasFunction('REGISTRY_SUPERUSER'))
-			{
+		if (is_array($affiliations) && count($affiliations) > 0) {
+			if ($this->user->hasFunction('REGISTRY_SUPERUSER')) {
 				$query = $this->db->query("SELECT * FROM data_sources");	
-			}
-			else
-			{
+			} else {
 				$query = $this->db->where_in('record_owner', $affiliations)->get('data_sources');
 			}
 
-			if ($query->num_rows() == 0)
-			{
+			if ($query->num_rows() == 0) {
 				return $data_sources;
-			}
-			else
-			{				
+			} else {
 				foreach($query->result_array() AS $ds)
 				{
 					if($just_id){
@@ -147,9 +139,8 @@ class Data_sources extends CI_Model {
 				}
 			}
 		}
-		return $data_sources;	
-
-	} 
+		return $data_sources;
+	}
 
 	/**
 	 * Returns groups which this datasource has objects which are contributed by
