@@ -260,11 +260,13 @@ class Maintenance extends MX_Controller {
 		$query = $cosi_db->where('enabled', 'f')->update('roles', array('enabled'=>DB_FALSE));
 		if($query) echo 'Query updated. Rows affected: '.$cosi_db->affected_rows().'<br/>';
 
-		$query = $cosi_db->get_where('roles', array('authentication_service_id'=>'AUTHENTICATION_SHIBBOLETH'));
+		$query = $cosi_db->get_where('roles', array('authentication_service_id'=>'AUTHENTICATION_SHIBBOLETH', 'shared_token'=>null));
 
-		foreach($query->result() as $q){
-			echo $q->name.' set shared_token to'.$q->role_id.'<br/>';
-			$cosi_db->where('role_id', $q->role_id)->update('roles', array('shared_token'=>$q->role_id));
+		if($query->num_rows() > 0){
+			foreach($query->result() as $q){
+				echo $q->name.' set shared_token to'.$q->role_id.'<br/>';
+				$cosi_db->where('role_id', $q->role_id)->update('roles', array('shared_token'=>$q->role_id));
+			}
 		}
 	}
 
