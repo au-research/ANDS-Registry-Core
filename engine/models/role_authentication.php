@@ -42,39 +42,53 @@ class Role_authentication extends CI_Model {
     function authenticate($username, $password, $method=gCOSI_AUTH_METHOD_SHIBBOLETH)
     {
 
-    	$result = $this->cosi_db->get_where("roles",	
-    												array(
-    													"role_id"=>$username,
-    													"role_type_id"=>"ROLE_USER",	
-    													"enabled"=>DB_TRUE
-    												));
+    	$result = $this->cosi_db->get_where("roles", array("role_id"=>$username, "role_type_id"=>"ROLE_USER", "enabled"=>DB_TRUE ));
 
 		if($result->num_rows() > 0){
 			$method = trim($result->row(1)->authentication_service_id);
-		}
-        else
-        {
+            //update persistent-id
+            log_message('debug', 'update persistent-id to '. $_SERVER['persistent-id']);
+            if(isset($_SERVER['persistent-id'])){
+                $this->cosi_db->where('role_id', $username);
+                $this->cosi_db->update('roles', array('persistent_id'=>$_SERVER['persistent-id']));
+            }
+		} else {
             if($method==gCOSI_AUTH_METHOD_SHIBBOLETH){
-                //create user if this is the first shib login
-                
-                $data = array(
-                    'role_id' => $username,
-                    'role_type_id'=>'ROLE_USER',
-                    'authentication_service_id'=>$method,
-                    'enabled'=>DB_TRUE,
-                    'name'=> $_SERVER['displayName']
-                );
 
-                if($username == $_SERVER['shib-shared-token']){
-                    $this->cosi_db->insert('roles',$data);
+                //if first shib login
+                //check if there's an existing one
+                $name = isset($_SERVER['displayName']) ? $_SERVER['displayName'] : 'No Name Given';
+                if($name!='No Name Given') {
+                    $result = $this->cosi_db->get_where('roles', array('name'=>$name, 'authentication_service_id'=>gCOSI_AUTH_METHOD_SHIBBOLETH));
+                    if($result->num_rows() > 0) {
+                        //there's an existing user, update the edupersontargetID
+                        log_message('debug','existing user, update edupersontargetid to '. $_SERVER['persistent-id']);
+                        $role_id = trim($result->row(1)->role_id);
+                        log_message('info','role_id is '. $role_id);
+                        if(isset($_SERVER['persistent-id'])){
+                            $this->cosi_db->where('role_id', $role_id);
+                            $this->cosi_db->update('roles', array('persistent_id'=>$_SERVER['persistent-id']));
+                        }
+                    } else {
+                        //there's no user has the same name, create the user
+                        log_message('debug', 'create new user');
+                        $data = array(
+                            'role_id' => $username,
+                            'role_type_id' => 'ROLE_USER',
+                            'authentication_service_id'=>$method,
+                            'enabled'=>DB_TRUE,
+                            'name'=> $name,
+                            'shared_token' => isset($_SERVER['shib-shared-token']) ? $_SERVER['shib-shared-token'] : '',
+                            'persistent_id' => isset($_SERVER['persistent-id']) ? $_SERVER['persistent-id'] : '',
+                        );
+                        $this->cosi_db->insert('roles', $data);
+                        $this->registerAffiliation($username, 'SHIB_AUTHENTICATED', 'SYSTEM');
+                        $result = $this->cosi_db->get_where("roles", array("role_id"=>$username, "role_type_id"=>"ROLE_USER", "enabled"=>DB_TRUE));
+                    }
+                } else {
+                    //no name given
+                    throw new Exception('Bad Credentials. No name given');
                 }
-                $this->registerAffiliation($username,'SHIB_AUTHENTICATED','SYSTEM');
-                $result = $this->cosi_db->get_where("roles",    
-                                                    array(
-                                                        "role_id"=>$username,
-                                                        "role_type_id"=>"ROLE_USER",    
-                                                        "enabled"=>DB_TRUE
-                                                    ));
             }
         }
     												
@@ -131,15 +145,10 @@ class Role_authentication extends CI_Model {
     		}
     		
 		}
-		else if ($method === gCOSI_AUTH_METHOD_SHIBBOLETH)
-		{
-            if(!isset($_SERVER['displayName'])){
-                throw new Exception('Bad Credentials');
-            }
-			if ($username == '')
-			{
+		else if ($method === gCOSI_AUTH_METHOD_SHIBBOLETH) {
+			if ($username == '') {
 				throw new Exception('Authentication Failed (0)');
-			}			
+			}
 			$user_results = $this->getRolesAndActivitiesByRoleID ($username);   				
 			return array(	
 							'result'=>1,
