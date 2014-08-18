@@ -87,7 +87,6 @@ class XML_Extension extends ExtensionBase
 	function updateXML($data, $current = TRUE, $scheme = NULL)
 	{
 		$_xml = new _xml($this->ro->id);
-		$data = str_replace('&amp;', '&', $data);
 		$changed = $_xml->update($data, $current, $scheme);
 
 		if (is_null($scheme))

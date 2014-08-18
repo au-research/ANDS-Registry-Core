@@ -152,8 +152,8 @@ class Importer {
 		}
 			//foreach ($this->xmlPayload AS $idx => $payload)
 			//{
-				// Escape XML entities from the start...
-				$payload = str_replace("&", "&amp;", $this->xmlPayload);
+				// Escape XML entities from the start... unescape first
+				$payload = str_replace("&", "&amp;", (str_replace("&amp;", "&", (str_replace("&amp;", "&", $this->xmlPayload)))));
 
 				// Clean up non-UTF8 characters by trying to translate them
 
