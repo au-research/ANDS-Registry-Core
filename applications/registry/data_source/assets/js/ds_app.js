@@ -579,13 +579,13 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 function bind_plugins($scope) {
 	$('.datepicker').ands_datetimepicker();
 
-	$('.rosearch').each(function(){
-		if($(this).attr('name') && $(this).attr('name').match(/contributor/)) {
-			$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", 'class': "party", datasource: $scope.ds.id });
-		} else {
-			$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", datasource: $scope.ds.id, lock_presets: true });
-		}
-	});
+	// $('.rosearch').each(function(){
+	// 	if($(this).attr('name') && $(this).attr('name').match(/contributor/)) {
+	// 		$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", 'class': "party", datasource: $scope.ds.id });
+	// 	} else {
+	// 		$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", datasource: $scope.ds.id, lock_presets: true });
+	// 	}
+	// });
 
 	function _getVocab(vocab){
 		vocab = vocab.replace("collection", "Collection");
