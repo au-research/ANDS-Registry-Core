@@ -44,14 +44,16 @@ class Role_authentication extends CI_Model {
 
     	$result = $this->cosi_db->get_where("roles", array("role_id"=>$username, "role_type_id"=>"ROLE_USER", "enabled"=>DB_TRUE ));
 
-		if($result->num_rows() > 0){
+
+        if($result->num_rows() > 0){
 			$method = trim($result->row(1)->authentication_service_id);
             //update persistent-id
-            log_message('debug', 'update persistent-id to '. $_SERVER['persistent-id']);
+            // log_message('debug', 'update persistent-id to '. $_SERVER['persistent-id']);
             if(isset($_SERVER['persistent-id'])){
                 $this->cosi_db->where('role_id', $username);
                 $this->cosi_db->update('roles', array('persistent_id'=>$_SERVER['persistent-id']));
             }
+
 		} else {
             if($method==gCOSI_AUTH_METHOD_SHIBBOLETH){
 
@@ -90,8 +92,7 @@ class Role_authentication extends CI_Model {
                     throw new Exception('Bad Credentials. No name given');
                 }
             }
-        }
-    												
+        }											
     	//return array('result'=>0,'message'=>json_encode($result));												
     	if ($method === gCOSI_AUTH_METHOD_BUILT_IN)
 		{
@@ -169,7 +170,6 @@ class Role_authentication extends CI_Model {
 			/*
 			 * Try using the LDAP Authentication Methods
 			 */
-			
 			$this->load->helper('ldap');
 			if ($username == '')
 			{
@@ -180,6 +180,7 @@ class Role_authentication extends CI_Model {
 			{
 				throw new Exception('Authentication Failed (01)');
 			}
+
 			
 			$result = $this->cosi_db->get_where("roles",	
 													array(
