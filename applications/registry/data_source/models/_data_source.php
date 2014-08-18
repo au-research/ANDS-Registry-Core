@@ -167,6 +167,7 @@ class _data_source {
         $this->db->delete('deleted_registry_objects', array('data_source_id'=>$this->id));
         $this->db->delete('harvest_requests', array('data_source_id'=>$this->id));
         $this->db->delete('data_sources', array('data_source_id'=>$this->id));
+        $this->db->delete('harvests', array('data_source_id'=>$this->id));
         return $log;
     }
 
