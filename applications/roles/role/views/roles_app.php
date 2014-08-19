@@ -17,10 +17,12 @@
 			<div class="span6">
 				<div class="widget-box">
 					<div class="widget-title">
-						<h5>Roles Management</h5>
+						<ul class="nav nav-tabs">
+							<li ng-class="{'search':'active'}[tab1]"><a href="" ng-click="tab1='search'">Roles Search</a></li>
+							<li ng-class="{'new':'active'}[tab1]"><a href="" ng-click="tab1='new'">Add New Role</a></li>
+						</ul>
 					</div>
-					<div class="widget-content">
-						
+					<div class="widget-content" ng-show="tab1=='search'">
 						<form action="" class="form-search">
 							<input type="text" class="input-medium search-query" placeholder="Filter" ng-model="filter">
 							<select name="" id="" ng-model="limit">
@@ -34,12 +36,53 @@
 							<li ng-repeat="r in roles | filter:filter | limitTo:limit" ng-class="{r.role_id:'active'}[role.role_id]">
 								<a href="#/view/{{r.role_id}}/{{filter}}">{{r.name}} 
 									<br/>
-									<span class="label">{{r.role_type_id}}</span>
+									<span class="label label-info">{{r.role_type_id | config_readable}}</span>
+									<span class="label" ng-show="r.authentication_service_id">{{r.authentication_service_id | config_readable}}</span>
+									<span class="label" ng-show="r.role_id">{{r.role_id}}</span>
 								</a>
 							</li>
 						</ul>
-						
-						<div class="clearfix"></div>
+					</div>
+					<div class="widget-content" ng-show="tab1=='new'">
+						<form class="form-horizontal" id="">
+							<div class="control-group">
+								<label for="" class="control-label">ID *</label>
+								<div class="controls"><input type="text" name="role_id" required ng-model="newrole.role_id"></div>
+							</div>
+							<div class="control-group">
+								<label for="" class="control-label">Name *</label>
+								<div class="controls"><input type="text" name="name" required ng-model="newrole.name"></div>
+							</div>
+							<div class="control-group">
+								<label for="" class="control-label">Type</label>
+								<div class="controls">
+									<select name="role_type_id" id="role_type_id" ng-model="newrole.role_type_id">
+										<option value="ROLE_USER">User</option>
+										<option value="ROLE_ORGANISATIONAL">Organisational</option>
+										<option value="ROLE_FUNCTIONAL">Functional</option>
+										<option value="ROLE_DOI_APPID">DOI Application Identifier</option>
+									</select>
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="" class="control-label">Enabled</label>
+								<div class="controls"><input type="checkbox" name="enabled" ng-model="newrole.enabled" ng-true-value="1" ng-false-value="0"></div>
+							</div>
+							<div class="control-group" id="authentication_id" ng-show="newrole.role_type_id=='ROLE_USER'">
+								<label for="" class="control-label">Authentication Service</label>
+								<div class="controls">
+									<select name="authentication_service_id" ng-model="newrole.authentication_service_id">
+										<option value="AUTHENTICATION_BUILT_IN">Built In</option>
+										<option value="AUTHENTICATION_LDAP">LDAP</option>
+										<option value="AUTHENTICATION_SHIBBOLETH">Shibboleth</option>
+									</select>
+								</div>
+							</div>
+							<div class="alert alert-danger hide" id="msg"></div>
+							<div class="control-group">
+								<div class="controls"><button type="submit" class="btn btn-primary" ng-click="add()">Add Role</button></div>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
@@ -155,9 +198,22 @@
 
 				<div class="widget-box" ng-show="role">
 					<div class="widget-title">
-						<h5>Edit: {{role.role.name}}</h5>
+						<ul class="nav nav-tabs">
+							<li ng-class="{'view':'active'}[tab]"><a href="" ng-click="tab='view'">{{role.role.name}}</a></li>
+							<li ng-class="{'edit':'active'}[tab]"><a href="" ng-click="tab='edit'">Edit</a></li>
+						</ul>
 					</div>
-					<div class="widget-content">
+					<div class="widget-content" ng-show="tab=='view'">
+						<table class="table table-bordered data-table">
+							<tbody>
+								<tr ng-repeat="(key, v) in role.role">
+									<th>{{key | config_readable}}</th>
+									<td>{{v | config_readable}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="widget-content" ng-show="tab=='edit'">
 						<form class="form-horizontal" id="">
 							<div class="control-group">
 								<label for="" class="control-label">ID *</label>
@@ -199,53 +255,6 @@
 									<hr>
 									<button class="btn btn-danger" ng-click="delete()">Delete Role</button>
 								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-
-				<div class="widget-box">
-					<div class="widget-title">
-						<h5>New Role</h5>
-					</div>
-					<div class="widget-content">
-						<form class="form-horizontal" id="">
-							<div class="control-group">
-								<label for="" class="control-label">ID *</label>
-								<div class="controls"><input type="text" name="role_id" required ng-model="newrole.role_id"></div>
-							</div>
-							<div class="control-group">
-								<label for="" class="control-label">Name *</label>
-								<div class="controls"><input type="text" name="name" required ng-model="newrole.name"></div>
-							</div>
-							<div class="control-group">
-								<label for="" class="control-label">Type</label>
-								<div class="controls">
-									<select name="role_type_id" id="role_type_id" ng-model="newrole.role_type_id">
-										<option value="ROLE_USER">User</option>
-										<option value="ROLE_ORGANISATIONAL">Organisational</option>
-										<option value="ROLE_FUNCTIONAL">Functional</option>
-										<option value="ROLE_DOI_APPID">DOI Application Identifier</option>
-									</select>
-								</div>
-							</div>
-							<div class="control-group">
-								<label for="" class="control-label">Enabled</label>
-								<div class="controls"><input type="checkbox" name="enabled" ng-model="newrole.enabled" ng-true-value="1" ng-false-value="0"></div>
-							</div>
-							<div class="control-group" id="authentication_id" ng-show="newrole.role_type_id=='ROLE_USER'">
-								<label for="" class="control-label">Authentication Service</label>
-								<div class="controls">
-									<select name="authentication_service_id" ng-model="newrole.authentication_service_id">
-										<option value="AUTHENTICATION_BUILT_IN">Built In</option>
-										<option value="AUTHENTICATION_LDAP">LDAP</option>
-										<option value="AUTHENTICATION_SHIBBOLETH">Shibboleth</option>
-									</select>
-								</div>
-							</div>
-							<div class="alert alert-danger hide" id="msg"></div>
-							<div class="control-group">
-								<div class="controls"><button type="submit" class="btn btn-primary" ng-click="add()">Add Role</button></div>
 							</div>
 						</form>
 					</div>

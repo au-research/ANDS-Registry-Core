@@ -47,6 +47,8 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 	$scope.newrole = {
 		'role_id':'','name':'','role_type_id':'ROLE_USER','enabled':'1','authentication_service_id':'AUTHENTICATION_BUILT_IN'
 	}
+	$scope.tab = 'view';
+	$scope.tab1 = 'search';
 
 	roles.all().then(function(data){
 		$scope.roles = data;
