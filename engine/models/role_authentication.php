@@ -63,9 +63,9 @@ class Role_authentication extends CI_Model {
                     $result = $this->cosi_db->get_where('roles', array('name'=>$name, 'authentication_service_id'=>gCOSI_AUTH_METHOD_SHIBBOLETH));
                     if($result->num_rows() > 0) {
                         //there's an existing user, update the edupersontargetID
-                        log_message('debug','existing user, update edupersontargetid to '. $_SERVER['persistent-id']);
                         $role_id = trim($result->row(1)->role_id);
-                        log_message('info','role_id is '. $role_id);
+                        // log_message('info','role_id is '. $role_id);
+                        $username = $role_id;
                         if(isset($_SERVER['persistent-id'])){
                             $this->cosi_db->where('role_id', $role_id);
                             $this->cosi_db->update('roles', array('persistent_id'=>$_SERVER['persistent-id']));

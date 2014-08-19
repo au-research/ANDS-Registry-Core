@@ -29,6 +29,7 @@ class User {
 				AUTH_DOMAIN 			 =>	$login_response['auth_domain']
 			));
 
+			// log_message('info', 'register last login for '.$login_response['user_identifier']);
 			$this->CI->auth->register_last_login($login_response['user_identifier']);
 			
 			// And extract the functions and affiliations							
