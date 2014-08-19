@@ -15,14 +15,12 @@ class User {
 	/**
 	 * 
 	 */
-    function authChallenge($username, $password)
-    {
+    function authChallenge($username, $password) {
     	// Dynamically load the authentication_class (as defined in the config file)
     	$this->CI->load->model($this->CI->config->item('authentication_class'), 'auth');
 		$login_response = $this->CI->auth->authenticate($username, $password);
 
-		if ($login_response['result'] == 1)
-		{
+		if ($login_response['result'] == 1) {
 			// Set the user's identifier and friendly name to the session
 			$this->CI->session->set_userdata(array(
 				AUTH_USER_IDENTIFIER	 => $login_response['user_identifier'] . "::",
@@ -30,15 +28,15 @@ class User {
 				AUTH_METHOD 			 =>	$login_response['authentication_service_id'],
 				AUTH_DOMAIN 			 =>	$login_response['auth_domain']
 			));
+
+			$this->CI->auth->register_last_login($login_response['user_identifier']);
 			
 			// And extract the functions and affiliations							
 			$this->appendFunction(array_merge(array(AUTH_FUNCTION_LOGGED_IN_ATTRIBUTE),$login_response['functional_roles']));
 			$this->appendAffiliation($login_response['organisational_roles']);
 			
 			return true;
-		}
-		else
-		{
+		} else {
 			throw new Exception("Unable to authenticate user. Login object returned negative response.".$login_response['message']);
 		}
 		
@@ -48,10 +46,8 @@ class User {
 	/**
 	 * Logout the current user, destroying their current session data
 	 */
-	function logout()
-	{
-		if(!session_id())
-		{
+	function logout() {
+		if(!session_id()) {
 			session_start();
 		}
 		unset($this->session->userdata); 
@@ -60,8 +56,7 @@ class User {
 	}
 	
 
-	public function refreshAffiliations($role_id)
-	{
+	public function refreshAffiliations($role_id) {
 		$this->CI->load->model($this->CI->config->item('authentication_class'), 'auth');
 		$roles = $this->CI->auth->getRolesAndActivitiesByRoleID($role_id);
 		if($roles){

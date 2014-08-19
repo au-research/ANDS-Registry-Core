@@ -21,12 +21,9 @@ class Auth extends CI_Controller {
 
 		$data['redirect'] = '';
 		
-		if ($this->input->post('inputUsername') || $this->input->post('inputPassword') && !$this->user->loggedIn())
-		{
-			try 
-			{
-				if($this->user->authChallenge($this->input->post('inputUsername'), $this->input->post('inputPassword')))
-				{
+		if ($this->input->post('inputUsername') || $this->input->post('inputPassword') && !$this->user->loggedIn()) {
+			try {
+				if($this->user->authChallenge($this->input->post('inputUsername'), $this->input->post('inputPassword'))) {
 					if($this->input->post('redirect')){
 						redirect($this->input->post('redirect'));
 					}else{
@@ -34,8 +31,7 @@ class Auth extends CI_Controller {
 					}
 				}
 			}
-			catch (Exception $e)
-			{
+			catch (Exception $e) {
 				$data['error_message'] = "Unable to login. Please check your credentials are accurate.";
 				$data['exception'] = $e;
 			}
