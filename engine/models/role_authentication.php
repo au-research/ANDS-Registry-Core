@@ -48,7 +48,6 @@ class Role_authentication extends CI_Model {
         if($result->num_rows() > 0){
 			$method = trim($result->row(1)->authentication_service_id);
             //update persistent-id
-            // log_message('debug', 'update persistent-id to '. $_SERVER['persistent-id']);
             if(isset($_SERVER['persistent-id'])){
                 $this->cosi_db->where('role_id', $username);
                 $this->cosi_db->update('roles', array('persistent_id'=>$_SERVER['persistent-id']));
@@ -96,47 +95,33 @@ class Role_authentication extends CI_Model {
     	//return array('result'=>0,'message'=>json_encode($result));												
     	if ($method === gCOSI_AUTH_METHOD_BUILT_IN)
 		{
-			if ($username == '')
-			{
+			if ($username == '') {
 				throw new Exception('Authentication Failed (0)');
 			}
 				
-			if ($password == '')
-			{
+			if ($password == '') {
 				throw new Exception('Authentication Failed (1)');
 			}
 			
-    		$result = $this->cosi_db->get_where("roles",	
-    												array(
-    													"role_id"=>$username,
-    													"role_type_id"=>"ROLE_USER",
-      													"authentication_service_id"=>gCOSI_AUTH_METHOD_BUILT_IN,	
-    													"enabled"=>DB_TRUE
-    												));
+    		$result = $this->cosi_db->get_where("roles", array("role_id"=>$username, "role_type_id"=>"ROLE_USER", "authentication_service_id"=>gCOSI_AUTH_METHOD_BUILT_IN, "enabled"=>DB_TRUE ));
     												
-    		if ($result->num_rows() > 0)
-    		{
-    			$valid_users = $this->cosi_db->get_where("authentication_built_in",
-    													array(
-    														"role_id"=>$username,
-    														"passphrase_sha1"=>sha1($password)	
-    													));	
-    			if ($valid_users->num_rows() > 0)
-    			{
+    		if ($result->num_rows() > 0) {
+    			$valid_users = $this->cosi_db->get_where("authentication_built_in", array("role_id"=>$username, "passphrase_sha1"=>sha1($password) ));
+    			if ($valid_users->num_rows() > 0) {
     				$user_results = $this->getRolesAndActivitiesByRoleID ($valid_users->row(1)->role_id);
     				
 					return array(	
-									'result'=>1,
-                                    'authentication_service_id'=>$method,
-    								'message'=>'Success',
-									'user_identifier'=>$result->row(1)->role_id,
-					    			'name'=>$result->row(1)->name,
-                                    'auth_domain' => gPIDS_IDENTIFIER_SUFFIX,
-    								'last_login'=>$result->row(1)->last_login,
-    								'activities'=>$user_results['activities'],
-    								'organisational_roles'=>$user_results['organisational_roles'],
-    								'functional_roles'=>$user_results['functional_roles']
-    							);
+						'result'=>1,
+                        'authentication_service_id'=>$method,
+						'message'=>'Success',
+						'user_identifier'=>$result->row(1)->role_id,
+		    			'name'=>$result->row(1)->name,
+                        'auth_domain' => gPIDS_IDENTIFIER_SUFFIX,
+						'last_login'=>$result->row(1)->last_login,
+						'activities'=>$user_results['activities'],
+						'organisational_roles'=>$user_results['organisational_roles'],
+						'functional_roles'=>$user_results['functional_roles']
+					);
     			}
 	    		else
 	    		{
@@ -236,7 +221,9 @@ class Role_authentication extends CI_Model {
     }
     
     
-    
+    public function register_last_login($role_id){
+        $this->cosi_db->where('role_id', $role_id)->update('roles', array('last_login'=>date('Y-m-d H:i:s',time())));
+    }
     
     public function getRolesAndActivitiesByRoleID ($role_id, $recursive = true)
     {
