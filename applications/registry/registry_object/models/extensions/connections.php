@@ -176,38 +176,45 @@ class Connections_Extension extends ExtensionBase
 				}
 				
 				//build a remove list, remove records that fail to be chosen
-				foreach($matches as $title=>$list) {
+				foreach($matches as $title=>$ulist) {
 					$chosen = false;
-					foreach($list as $conn){
+					foreach($ulist as $conn){
 						$ro = $this->_CI->ro->getByID($conn['registry_object_id']);
 						//chosen are selected based on being a contributor page and/or having the same group as the primary related object
 						if(!$chosen && $ro->isContributor()) {
 							$chosen = $conn['registry_object_id'];
 						}
-						if(!$chosen && $this->ro->group == $ro->group){
-							$chosen = $conn['registry_object_id'];
-						}
 						unset($ro);
 					}
 
-					//if none is chosen, the first one will be chosen
-					if(!$chosen) $chosen = $list[0];
+					if(!$chosen){
+						foreach($ulist as $conn){
+							$ro = $this->_CI->ro->getByID($conn['registry_object_id']);
+							//chosen are selected based on being a contributor page and/or having the same group as the primary related object
+							if(!$chosen && $this->ro->group == $ro->group){
+								$chosen = $conn['registry_object_id'];
+							}
+							unset($ro);
+						}
+					}
 
-					//build a remove list for this titles
-					foreach($list as $conn){
-						if($conn['registry_object_id']!=$chosen){
+					//if none is chosen, the first one will be chosen
+					if(!$chosen) $chosen = $ulist[0];
+
+					//build a remove ulist for this titles
+					foreach($ulist as $conn){
+						if($chosen && $conn['registry_object_id']!=$chosen){
 							$remove_list[] = $conn['registry_object_id'];
 						}
 					}
 				}
 				
+				
 				//remove records that fail to be chosen
 				foreach($list as &$conn){
 					if(in_array($conn['registry_object_id'], $remove_list)){
 						$conn = false;
-						if($key=array_search($conn, $list)!==false){
-							unset($list[$key]);
-						}
+						if ($key=array_search($conn, $list)!==false) unset($list[$key]);
 					}
 				}
 
