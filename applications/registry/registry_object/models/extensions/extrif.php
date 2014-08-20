@@ -99,14 +99,12 @@ class Extrif_Extension extends ExtensionBase
 
 						$encoded_html = '';
 
-						// Check for <br/>'s
-						if (strpos($description_str, "&lt;br") !== FALSE || strpos($description_str, "&lt;p") !== FALSE || strpos($description_str, "&amp;#60;p") !== FALSE)
-						{
+						// Check if it is HTML
+						if ($testDescription) {
 							$encoded_html = $clean_html;
 							$extrifDescription = $extendedMetadata->addChild("extRif:description", $encoded_html, EXTRIF_NAMESPACE);
-						}
-						else
-						{
+						} else {
+							//If it's not HTML, we change new line chars to BR tags
 							$encoded_html = nl2br($clean_html);
 							$extrifDescription = $extendedMetadata->addChild("extRif:description", $encoded_html, EXTRIF_NAMESPACE);
 						}
