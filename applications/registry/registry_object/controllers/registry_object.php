@@ -692,6 +692,7 @@ class Registry_object extends MX_Controller {
 
 
 		$sentMail = false;
+
 		foreach($affected_ids as $id){
 			$ro = $this->ro->getByID($id);
 	
