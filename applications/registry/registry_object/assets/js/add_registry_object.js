@@ -1788,7 +1788,7 @@ function generateActionBar(data_response)
 	}
 	else
 	{
-		if(typeof(data_response['approve_required']) !=='undefined' && data_response.approve)
+		if(typeof(data_response['approve_required']) !=='undefined' && data_response.approve_required)
 		{
 			action_menu += 	'   <dd><a class="btn btn-small btn-fixed btn-warning strong status_action" data-loading-text="Approving Record..." to="APPROVE"><i class="icon-white icon-share-alt"></i> Move this record to Approved</a></dd>';
 		}
