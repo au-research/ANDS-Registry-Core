@@ -1781,7 +1781,7 @@ function generateActionBar(data_response)
 
 	var action_menu = '<dl class="dl-horizontal pull-left">' + 
 		 			 '	<dt><i class="icon icon-wrench"> </i> Record Actions</dt>';
-
+	
 	if (typeof(data_response['qa_required']) !=='undefined' && data_response.qa_required)
 	{
 		action_menu += 	'   <dd><a class="btn btn-small btn-fixed btn-warning strong status_action" data-loading-text="Submitting for Assessment..." to="SUBMITTED_FOR_ASSESSMENT"><i class="icon-white icon-share-alt"></i> Submit this Record for Assessment</a></dd>';

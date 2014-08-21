@@ -86,7 +86,7 @@ class Extrif_Extension extends ExtensionBase
 							$extendedMetadata->addChild("extrif:logo", $logoRef, EXTRIF_NAMESPACE);
 							$this->ro->set_metadata('the_logo', $logoRef);
 						}
-						$testDescription = $this->isHtml(html_entity_decode(html_entity_decode($description_str)) );
+						$isHTMLDescription = $this->isHtml(html_entity_decode(html_entity_decode($description_str)) );
 
 						// if($testDescription==true)
 						// {
@@ -100,7 +100,7 @@ class Extrif_Extension extends ExtensionBase
 						$encoded_html = '';
 
 						// Check if it is HTML
-						if ($testDescription) {
+						if ($isHTMLDescription===true) {
 							$encoded_html = $clean_html;
 							$extrifDescription = $extendedMetadata->addChild("extRif:description", $encoded_html, EXTRIF_NAMESPACE);
 						} else {

@@ -191,8 +191,8 @@ class Registry_object extends MX_Controller {
 		$this->load->model('data_source/data_sources', 'ds');
 		$ds = $this->ds->getByID($ro->data_source_id);
 
-		$qa = $ds->qa_flag=='t' ? true : false;
-		$manual_publish = ($ds->manual_publish=='t' || $ds->manual_publish==DB_TRUE) ? true: false;
+		$qa = $ds->qa_flag==DB_TRUE ? true : false;
+		$manual_publish = ($ds->manual_publish==DB_TRUE) ? true: false;
 
 		$response['title'] = 'QA Result';
 		$scripts = preg_split('/(\)\;)|(\;\\n)/', $result, -1, PREG_SPLIT_NO_EMPTY);
