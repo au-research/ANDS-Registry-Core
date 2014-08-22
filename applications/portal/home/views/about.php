@@ -23,8 +23,7 @@
 	input.</p>
 
 	<p>ANDS is funded by the Australian Government through the National
-	Collaborative Research Infrastructure Strategy (<a href="http://ncris.innovation.gov.au" target="_blank">NCRIS</a>)
-	and the Education Investment Fund (EIF) Super Science Initiative. </p>
+	Collaborative Research Infrastructure Strategy (<a href="http://ncris.innovation.gov.au" target="_blank">NCRIS</a>)</p>
 	
 	<h1>More Information</h1>
 	<p><a href="http://services.ands.org.au/documentation/andsbrochure.pdf">Download the ANDS Brochure</a></p>
