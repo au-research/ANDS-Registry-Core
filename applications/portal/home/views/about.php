@@ -23,7 +23,11 @@
 	input.</p>
 
 	<p>ANDS is funded by the Australian Government through the National
+<<<<<<< HEAD
 	Collaborative Research Infrastructure Strategy (<a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris" target="_blank">NCRIS</a>).</p>
+=======
+	Collaborative Research Infrastructure Strategy (<a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris" target="_blank">NCRIS</a>)</p>
+>>>>>>> more textual changes for ncris
 	
 	<h1>More Information</h1>
 	<p><a href="http://services.ands.org.au/documentation/andsbrochure.pdf">Download the ANDS Brochure</a></p>
