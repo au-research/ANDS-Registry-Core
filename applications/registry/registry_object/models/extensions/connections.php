@@ -159,7 +159,84 @@ class Connections_Extension extends ExtensionBase
 			}
 		}
 
+		//cc912 remove duplicate relationships
+		$this->_CI->load->model('registry_object/registry_objects','ro');
+		foreach($ordered_connections as $name=>&$list){
+			if(is_array($list)) {
+				$matches = array();
+				$remove_list = array();
+
+				//identify the records that have the exact same titles
+				foreach($list as &$conn){
+					foreach($list as $other_conn) {
+						if(($conn['title']==$other_conn['title']) && ($conn['registry_object_id']!=$other_conn['registry_object_id'])){
+							$matches[$conn['title']][] = $conn;
+						}
+					}
+				}
+				
+				//build a remove list, remove records that fail to be chosen
+				foreach($matches as $title=>$ulist) {
+					$chosen = false;
+					foreach($ulist as $conn){
+						$ro = $this->_CI->ro->getByID($conn['registry_object_id']);
+						//chosen are selected based on being a contributor page and/or having the same group as the primary related object
+						if(!$chosen && $ro->isContributor()) {
+							$chosen = $conn['registry_object_id'];
+						}
+						unset($ro);
+					}
+
+					if(!$chosen){
+						foreach($ulist as $conn){
+							$ro = $this->_CI->ro->getByID($conn['registry_object_id']);
+							//chosen are selected based on being a contributor page and/or having the same group as the primary related object
+							if(!$chosen && $this->ro->group == $ro->group){
+								$chosen = $conn['registry_object_id'];
+							}
+							unset($ro);
+						}
+					}
+
+					//if none is chosen, the first one will be chosen
+					if(!$chosen) $chosen = $ulist[0];
+
+					//build a remove ulist for this titles
+					foreach($ulist as $conn){
+						if($chosen && $conn['registry_object_id']!=$chosen){
+							$remove_list[] = $conn['registry_object_id'];
+						}
+					}
+				}
+				
+				//remove records that fail to be chosen
+				foreach($list as &$conn){
+					if(in_array($conn['registry_object_id'], $remove_list)){
+						$conn = false;
+						// if ($key=array_search($conn, $list)!==false) unset($list[$key]);
+					}
+				}
+
+			}
+		}
 		return array($ordered_connections);
+	}
+
+	function isContributor(){
+		$query = $this->db->get_where('institutional_pages', array('registry_object_id'=>$this->ro->id));
+		if($query->num_rows()>0){
+			return true;
+		} else return false;
+	}
+
+	function removeDuplicateRelationships($list) {
+		foreach($list as $conn) {
+			foreach($list as $other_conn) {
+				if(($conn['title']==$other_conn['title']) && ($conn['registry_object_id']!=$other_conn['registry_object_id'])){
+					var_dump($conn['title']);
+				}
+			}
+		}
 	}
 
 

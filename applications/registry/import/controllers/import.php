@@ -497,8 +497,10 @@ class Import extends MX_Controller {
 
 		foreach($result as &$r){
 			$ds = $this->ds->getByID($r['data_source_id']);
-			$r['data_source_title'] = $ds->title;
-			$r['record_owner'] = $ds->record_owner;
+			if($ds){
+				$r['data_source_title'] = $ds->title;
+				$r['record_owner'] = $ds->record_owner;
+			}
 			unset($ds);
 		}
 

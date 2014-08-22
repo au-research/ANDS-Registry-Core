@@ -30,7 +30,7 @@ class Solr {
 	 * @return [type] [description]
 	 */
 	function init(){
-		$this->solr_url = $this->CI->config->item('solr_url');
+		$this->solr_url = get_config_item('solr_url');
 		$this->options = array('q'=>'*:*','start'=>'0','indent'=>'on', 'wt'=>'json', 'fl'=>'*', 'rows'=>'10');
 		$this->multi_valued_fields = array('facet.field', 'fq');
 		$this->custom_query = false;

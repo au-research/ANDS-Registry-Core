@@ -5,8 +5,7 @@
     elementFormDefault="qualified" attributeFormDefault="unqualified">
 
     <!-- Point to a local cached version of the W3 XML schema to avoid 20s+ wait times in validation -->
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"
-        schemaLocation="http://services.ands.org.au/documentation/rifcs/xml/xml.xsd"/>
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
 
     <xsd:annotation>
         <xsd:documentation>Type library for Registry Schema</xsd:documentation>

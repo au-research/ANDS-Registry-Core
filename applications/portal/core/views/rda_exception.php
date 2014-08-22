@@ -2,7 +2,7 @@
 <div class="error_exception">
 
 
-	<?php if (ENVIRONMENT == "developmentxvxvxv"): ?>
+	<?php if (ENVIRONMENT == "developmentsss"): ?>
 	  <div class="message">
 		<img src="<?=asset_url('images/sad_smiley.png','core');?>" alt="Sad Smiley" qip="<?=$message;?>" />
 
@@ -12,7 +12,7 @@
 		 Oops! An error occured:<br/><br/>		
 		<div style="width:600px;"><pre><?=$message;?></pre></div>
 
-		<?php elseif(strpos($message, 'key:http://purl.org/au-research/grants/nhmrc/') !== false || strpos($message, 'key:http://purl.org/au-research/grants/arc/') !== false) : 
+	<?php elseif(strpos($message, 'key:http://purl.org/au-research/grants/nhmrc/') !== false || strpos($message, 'key:http://purl.org/au-research/grants/arc/') !== false) : 
 
 			
 			if(strpos($message, 'key:http://purl.org/au-research/grants/nhmrc/') !== false){

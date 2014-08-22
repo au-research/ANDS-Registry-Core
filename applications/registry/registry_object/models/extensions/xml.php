@@ -68,7 +68,7 @@ class XML_Extension extends ExtensionBase
 			{
 				$xml = $this->getRif($record_data_id);
 			}
-			$this->_simplexml = simplexml_load_string($xml);
+			$this->_simplexml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOENT);
 
 			$namespaces = $this->_simplexml->getNamespaces(true);
 			if ( !in_array(RIFCS_NAMESPACE, $namespaces) )

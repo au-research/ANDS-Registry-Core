@@ -10,17 +10,19 @@
  * 
  */
 
+if(file_exists('assets/shared/dashboard_news/dashboard.html')){
 	$news_content = @file_get_contents(asset_url('shared/dashboard_news/dashboard.html', 'base'));
-	if(!$news_content)
-		$news_content = @file_get_contents('http://services.ands.org.au/documentation/placeholder/dashboard.html');
-	if(!$news_content)
+} else {
+	$news_content = @file_get_contents('http://services.ands.org.au/documentation/placeholder/dashboard.html');
+	if(!$news_content){
 		$news_content = '<div style="overflow: hidden; height: 1072px;" class="box-content dash_news">No News content found for your installation create <br/>file <b>assets/shared/dashboard_news/dashboard.html</b></div>';
+	}
+}
 
 
-
-if($this->config->item('environment_name'))
+if(get_config_item('environment_name'))
 {
-  $site_title = $this->config->item('environment_name').' Home';
+  $site_title = get_config_item('environment_name').' Home';
 }
 else
 {

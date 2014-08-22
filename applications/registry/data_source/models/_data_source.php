@@ -167,6 +167,7 @@ class _data_source {
         $this->db->delete('deleted_registry_objects', array('data_source_id'=>$this->id));
         $this->db->delete('harvest_requests', array('data_source_id'=>$this->id));
         $this->db->delete('data_sources', array('data_source_id'=>$this->id));
+        $this->db->delete('harvests', array('data_source_id'=>$this->id));
         return $log;
     }
 
@@ -420,6 +421,12 @@ class _data_source {
         $this->_CI->load->model("registry_object/rifcs_generator", "rifcs");
         $groups = $this->get_groups();
 
+        $fixgroups = array();
+        foreach($groups as $group){
+            $fixgroups[] = $group;
+        }
+        $groups = $fixgroups;
+
         $pages = array();
         switch($value)
         {
@@ -495,7 +502,7 @@ class _data_source {
                 break;
             case "2":
                 // for each group for this datasource that is not already managed by another datasource
-                foreach($groups as $group)
+                foreach($groups as $group_index=>$group)
                 {
                     $manageGroup = true;
                     $query = '';
@@ -526,6 +533,8 @@ class _data_source {
                         }
                         
                         $registry_object_key = isset($inputvalues[$group]) ? $inputvalues[$group] : '';
+                        $registry_object_key = isset($inputvalues['contributor_pages'][$group_index]) ? $inputvalues['contributor_pages'][$group_index] : '';
+
                         if($registry_object_key!='')
                         {
                             $contributorPage = $this->_CI->ro->getAllByKey($registry_object_key);
@@ -533,6 +542,7 @@ class _data_source {
                             if(isset($contributorPage[0]->id) && $contributorPage[0]->class == "party")
                             {
                                 $registry_object_id = $contributorPage[0]->id;
+    
                                 //we need to add the  group , registry_object_id and autoritive datasource to the institutional_pages table
                                 $data = array(
                                     "id"=>null,
@@ -540,6 +550,7 @@ class _data_source {
                                     "registry_object_id"=>$registry_object_id,
                                     "authorative_data_source_id" => $data_source_id
                                 );
+    
                                 $insert = $this->db->insert('institutional_pages',$data);
                                 // $contributorPage[0]->sync();
                                 if ($notifyChange && $this->_CI->config->item('site_admin_email'))

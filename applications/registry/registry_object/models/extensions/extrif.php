@@ -23,7 +23,7 @@ class Extrif_Extension extends ExtensionBase
 		// Reset our namespace object (And go down one level from the wrapper if needed)
 		$xml =  addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
 
-		$xml = simplexml_load_string($xml);
+		$xml = simplexml_load_string(str_replace("&", "&amp;", $xml));
 
 		// Clone across the namespace (if applicable)
 		$namespaces = $xml->getNamespaces(true);
@@ -32,7 +32,7 @@ class Extrif_Extension extends ExtensionBase
 			$xml->addAttribute("xmlns",RIFCS_NAMESPACE);
 		}
 
-		$xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+		$xml = simplexml_load_string(addXMLDeclarationUTF8($xml->asXML()), 'SimpleXMLElement', LIBXML_NOENT);
 		// Cannot enrich already enriched RIFCS!!
 		if(true)//!isset($rifNS[EXTRIF_NAMESPACE])) //! (string) $attributes['enriched'])//! (string) $attributes['enriched'])
 		{
@@ -50,10 +50,10 @@ class Extrif_Extension extends ExtensionBase
 				$extendedMetadata->addChild("extRif:dataSourceID", $this->ro->data_source_id, EXTRIF_NAMESPACE);
 				$extendedMetadata->addChild("extRif:updateTimestamp", $this->ro->updated, EXTRIF_NAMESPACE);					
 	
-				$extendedMetadata->addChild("extRif:displayTitle", htmlspecialchars_decode(str_replace("&"," ",$this->ro->title)), EXTRIF_NAMESPACE);
-				$extendedMetadata->addChild("extRif:listTitle", htmlspecialchars_decode(str_replace("&"," ",$this->ro->list_title)), EXTRIF_NAMESPACE);
+				$extendedMetadata->addChild("extRif:displayTitle", str_replace("&", "&amp;", $this->ro->title), EXTRIF_NAMESPACE);
+				$extendedMetadata->addChild("extRif:listTitle", str_replace("&", "&amp;", $this->ro->list_title), EXTRIF_NAMESPACE);
 				try{
-					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//TRANSLIT', utf8_encode($this->ro->list_title)), EXTRIF_NAMESPACE);
+					$extendedMetadata->addChild("extRif:simplifiedTitle", iconv('UTF-8', 'ASCII//TRANSLIT', str_replace("&", "&amp;", $this->ro->list_title)), EXTRIF_NAMESPACE);
 				}catch(Exception $e){
 					throw new Exception ('iconv installation/configuration required for simplified title <br/>'.$e);
 				}
@@ -86,7 +86,7 @@ class Extrif_Extension extends ExtensionBase
 							$extendedMetadata->addChild("extrif:logo", $logoRef, EXTRIF_NAMESPACE);
 							$this->ro->set_metadata('the_logo', $logoRef);
 						}
-						$testDescription = $this->isHtml( html_entity_decode(html_entity_decode($description_str)) );
+						$isHTMLDescription = $this->isHtml(html_entity_decode(html_entity_decode($description_str)) );
 
 						// if($testDescription==true)
 						// {
@@ -99,14 +99,12 @@ class Extrif_Extension extends ExtensionBase
 
 						$encoded_html = '';
 
-						// Check for <br/>'s
-						if (strpos($description_str, "&lt;br") !== FALSE || strpos($description_str, "&lt;p") !== FALSE || strpos($description_str, "&amp;#60;p") !== FALSE)
-						{
+						// Check if it is HTML
+						if ($isHTMLDescription===true) {
 							$encoded_html = $clean_html;
 							$extrifDescription = $extendedMetadata->addChild("extRif:description", $encoded_html, EXTRIF_NAMESPACE);
-						}
-						else
-						{
+						} else {
+							//If it's not HTML, we change new line chars to BR tags
 							$encoded_html = nl2br($clean_html);
 							$extrifDescription = $extendedMetadata->addChild("extRif:description", $encoded_html, EXTRIF_NAMESPACE);
 						}
@@ -148,21 +146,21 @@ class Extrif_Extension extends ExtensionBase
 				foreach ($this->ro->processSubjects() AS $subject)
 				{
 					$subject_node = $subjects->addChild("extRif:subject", "", EXTRIF_NAMESPACE);
-					$subject_node->addChild("extRif:subject_value", $subject['value'], EXTRIF_NAMESPACE);
-					$subject_node->addChild("extRif:subject_type", $subject['type'], EXTRIF_NAMESPACE);
-					$subject_node->addChild("extRif:subject_resolved", $subject['resolved'], EXTRIF_NAMESPACE);
-					$subject_node->addChild("extRif:subject_uri", $subject['uri'], EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_value", str_replace("&", "&amp;", $subject['value']), EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_type", str_replace("&", "&amp;", $subject['type']), EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_resolved", str_replace("&", "&amp;", $subject['resolved']), EXTRIF_NAMESPACE);
+					$subject_node->addChild("extRif:subject_uri", str_replace("&", "&amp;", $subject['uri']), EXTRIF_NAMESPACE);
 				}
 				
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s3_end');
 	
 				foreach ($this->ro->processLicence() AS $right)
 				{
-					$theright = $extendedMetadata->addChild("extRif:right", $right['value'], EXTRIF_NAMESPACE);
+					$theright = $extendedMetadata->addChild("extRif:right", str_replace("&", "&amp;", $right['value']), EXTRIF_NAMESPACE);
 					$theright->addAttribute("type", $right['type']);	
-					if(isset($right['rightsUri']))$theright->addAttribute("rightsUri", $right['rightsUri']);					
-					if(isset($right['licence_type']))$theright->addAttribute("licence_type", $right['licence_type']);
-					if(isset($right['licence_group']))$theright->addAttribute("licence_group", $right['licence_group']);					
+					if(isset($right['rightsUri']))$theright->addAttribute("rightsUri", str_replace("&", "&amp;", $right['rightsUri']));
+					if(isset($right['licence_type']))$theright->addAttribute("licence_type", str_replace("&", "&amp;", $right['licence_type']));
+					if(isset($right['licence_group']))$theright->addAttribute("licence_group", str_replace("&", "&amp;", $right['licence_group']));
 				}
 
 				//$extendedMetadata->addChild("extRif:reverseLinks", $this->getReverseLinksStatusforEXTRIF($ds) , EXTRIF_NAMESPACE);
@@ -193,7 +191,7 @@ class Extrif_Extension extends ExtensionBase
 					$extRifTags = $annotations->addChild('extRif:tags', NULL, EXTRIF_NAMESPACE);
 
 					foreach($tags as $tag){
-						$tag_tag = $extRifTags->addChild('extRif:tag', str_replace("&","&amp;",$tag['name']) , EXTRIF_NAMESPACE);
+						$tag_tag = $extRifTags->addChild('extRif:tag', str_replace("&", "&amp;", $tag['name']) , EXTRIF_NAMESPACE);
 						$tag_tag->addAttribute('type', $tag['type']);
 					}
 				}

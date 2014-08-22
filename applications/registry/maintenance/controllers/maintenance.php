@@ -257,8 +257,17 @@ class Maintenance extends MX_Controller {
 		$cosi_db = $this->load->database('roles', TRUE);
 		$query = $cosi_db->where('enabled', 't')->update('roles', array('enabled'=>DB_TRUE));
 		if($query) echo 'Query updated. Rows affected: '.$cosi_db->affected_rows().'<br/>';
-		$query = $cosi_db->where('enabled', 't')->update('roles', array('enabled'=>DB_FALSE));
+		$query = $cosi_db->where('enabled', 'f')->update('roles', array('enabled'=>DB_FALSE));
 		if($query) echo 'Query updated. Rows affected: '.$cosi_db->affected_rows().'<br/>';
+
+		$query = $cosi_db->get_where('roles', array('authentication_service_id'=>'AUTHENTICATION_SHIBBOLETH', 'shared_token'=>null));
+
+		if($query->num_rows() > 0){
+			foreach($query->result() as $q){
+				echo $q->name.' set shared_token to'.$q->role_id.'<br/>';
+				$cosi_db->where('role_id', $q->role_id)->update('roles', array('shared_token'=>$q->role_id));
+			}
+		}
 	}
 
 	public function syncmenu(){
@@ -555,7 +564,8 @@ class Maintenance extends MX_Controller {
 				//enrich
 				if($task=='sync' || $task=='full_enrich'){
 					try{
-						$ro->addRelationships();
+                        $ro->processIdentifiers();
+                        $ro->addRelationships();
 					}catch(Exception $e){
 						array_push($error, $e->getMessage());
 					}
@@ -667,47 +677,6 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	function config() {
-		set_exception_handler('json_exception_handler');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		$data = array();
-		$query = $this->db->get('configs');
-		$configs = $query->result_array();
-
-		foreach($configs as $c) {
-			$data[$c['key']] = array(
-				'type' => $c['type'],
-				'value' => ($c['type']=='json') ? json_decode($c['value'],true) : $c['value']
-			);
-		}
-		echo json_encode($data);
-	}
-
-	function config_save() {
-		set_exception_handler('json_exception_handler');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-
-		$data = file_get_contents("php://input");
-		$data = json_decode($data, true);
-		$data = $data['data'];
-
-		foreach($data as $key=>$c) {
-			if($c['type']=='string') set_config_item($key, $c['type'], $c['value']);
-		}
-
-		echo json_encode(array(
-			'status' => 'OK',
-			'message' => 'All configuration item successfully updated'
-		));
-
-		// echo set_config_item('harvested_contents_path', 'string', '/var/www/harvested_content');
-
-	}
-
-
-
 	function test(){
 		// set_exception_handler('json_exception_handler');
 		// header('Cache-Control: no-cache, must-revalidate');
@@ -718,9 +687,12 @@ class Maintenance extends MX_Controller {
 		// log_message('info', 'Test Info');
 		// log_message('debug', 'Test Debug');
 
-		$ro = $this->ro->getByID(475608);
-		$ro->addRelationships();
-		echo json_encode($ro->getAllRelatedObjects(true, false, true));
+		$ro = $this->ro->getByID(507263);
+		$ro->enrich();
+		var_dump($ro->title);
+		// $ro->processSubjects();
+		// $ro->addRelationships();
+		// echo json_encode($ro->getAllRelatedObjects(true, false, true));
 
 		// echo 5/0;
 

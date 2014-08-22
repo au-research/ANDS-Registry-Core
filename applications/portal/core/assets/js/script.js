@@ -269,11 +269,6 @@ $(document).on('click', '.sharing_widget', function(){
 	$(this).remove();
 });
 
-$('#moreCodeVersions').on('click', function(){
-	$(this).hide();
-	$(this).siblings().fadeIn();
-});
-
 window.ATL_JQ_PAGE_PROPS =  {
     "triggerFunction": function(showCollectorDialog) {
       //Requries that jQuery is available!

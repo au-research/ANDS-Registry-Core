@@ -78,7 +78,7 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
             // Map the column headings to each field, to simplify lookup
             $row = $this->mapCSVHeadings($csv_values);
 
-            if (!isset($row['GRANT_ID']) || !isset($row['DW_INDIVIDUAL_ID']) || trim($row['GRANT_SIMPLIFIED_TITLE']) == '') 
+            if (!isset($row['GRANT_ID']) || !isset($row['DW_INDIVIDUAL_ID']) || trim($row['GRANT_SIMPLIFIED_TITLE']) == '' || sizeof($this->csv_headings) != sizeof($csv_values))
             {
                 $log[] = "[CROSSWALK] Ignoring blank/invalid row...";
                 continue; //skip blank rows
@@ -114,9 +114,10 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
         }
         $log[] = "[CROSSWALK] Setup mapping in-memory. " . count($this->grants) . " grants, " . count($this->people) . " people";
 
-        //$this->renderParties($log);
+        $this->renderParties($log);
         $this->renderActivities($log);
-                    
+        var_dump($log);
+
     	return $this->returnChunks();
     }
 
@@ -475,28 +476,35 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
 
 
     var $registryObjectChunks = array();
-    const CHUNK_SIZE = 10;
+    const CHUNK_SIZE = 100;
 
     function addRegistryObjectToChunkQueue($rifcs_xml)
     {
+
         $current_chunk = end($this->registryObjectChunks);
+        //echo("array size:".count($current_chunk).NL);
         if (!$current_chunk || count($current_chunk) == self::CHUNK_SIZE)
         {
             $this->registryObjectChunks[] = array($rifcs_xml);
         }
         else
         {
+            //echo("SUB CHUNK". count($this->registryObjectChunks[count($this->registryObjectChunks)-1]).NL);
             $this->registryObjectChunks[count($this->registryObjectChunks)-1][] = $rifcs_xml;
         }
     }
 
     function returnChunks()
     {
-        foreach ($this->registryObjectChunks AS &$chunk)
+        $ro_xml = '';
+        echo("registryObjectChunks: ". count($this->registryObjectChunks).NL);
+        foreach ($this->registryObjectChunks AS $chunk)
         {
-            $chunk = wrapRegistryObjects(implode(NL, $chunk));
+            echo("Chunks: ". count($chunk));
+            $ro_xml .= implode(NL, $chunk);
         }
-        return $this->registryObjectChunks;
+        //echo wrapRegistryObjects($ro_xml);
+        return wrapRegistryObjects($ro_xml);
     }
 
     /** 

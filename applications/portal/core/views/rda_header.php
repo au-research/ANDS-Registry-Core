@@ -30,10 +30,10 @@
 <?php endif; ?>
 </head>
 <?php
-if($this->config->item('environment_name'))
+if(get_config_item('environment_name'))
 {
-  $environment_name = $this->config->item('environment_name');
-  $environment_colour = ($this->config->item('environment_colour') ?: "#0088cc");
+  $environment_name = get_config_item('environment_name');
+  $environment_colour = (get_config_item('environment_colour') ?: "#0088cc");
   $environment_header_style = " style='border-top: 4px solid " . $environment_colour . ";'";
 }
 else
@@ -44,22 +44,14 @@ else
 }
 ?>
 <body>
-	<?php if ($versionInfo = codeVersionInfo()): 
-		echo '<div class="codeversion"><img src="'. asset_url('images/info.png','core').'" /> '.$versionInfo.'</div>';
-	endif; ?>
 	<div class="header" <?=$environment_header_style;?>>
   <button class="myCustomTrigger yellow_button feedback_button">Feedback</button>
 		<div class="head">
 			<div class="tagline">
 				<a href="<?php echo base_url();?>"><span>Research Data</span> Australia</a>
-				<?php
-					if ($environment_name)
-					{
-						echo "<small style='font-size:0.5em; color:". $environment_colour ."'>" . $environment_name . "</small>";
-					}
-				?>
 			</div><!-- tagline -->
 			<a href="<?php echo "http://www.ands.org.au/"; ?>" target="_blank" class="logo"><img src="<?php echo asset_url('images/logo.png','core');?>" alt="Research Data Australia Home Page Link (brought to you by ANDS)" /></a>
+			<a href="http://www.innovation.gov.au/" target="_blank" class="logo"><img style="height:41px" src="<?php echo asset_url('images/NCRIS_PROVIDER_rev.png','core');?>" alt="National Collaborative Research Infrastructure Strategy (NCRIS)" /></a>
 			<ul class="top_nav">
 				<li><a href="<?=base_url("home/about");?>">About</a></li>
 				<li><a href="<?=base_url('search/#!/q=/tab=collection');?>">Collections</a></li>								

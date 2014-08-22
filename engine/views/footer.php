@@ -60,7 +60,7 @@ $base_url = str_replace('/apps','/registry',base_url());
             </script>
 
         <?php elseif($lib=='tinymce'):?>
-            <script type="text/javascript" src="<?php echo$base_url;?>assets/lib/tiny_mce4/tinymce.min.js"></script>
+            <script type="text/javascript" src="<?php echo$base_url;?>assets/lib/tinymce/tinymce.min.js"></script>
             <script>
                var editor = 'tinymce';
             </script>
@@ -97,6 +97,10 @@ $base_url = str_replace('/apps','/registry',base_url());
        <?php elseif($lib=='orcid_widget'):?>
             <link href="<?php echo apps_url('assets/orcid_widget/css/orcid_widget.css');?>" rel="stylesheet" type="text/css">
             <script src="<?php echo apps_url('assets/orcid_widget/js/orcid_widget.js');?>" type="text/javascript"></script>
+
+       <?php elseif($lib=='grant_widget'):?>
+            <link href="<?php echo apps_url('assets/grant_widget/css/grant_widget.css');?>" rel="stylesheet" type="text/css">
+            <script src="<?php echo apps_url('assets/grant_widget/js/grant_widget.js');?>" type="text/javascript"></script>
 
         <?php elseif($lib=='location_capture_widget'):?>
             <link href="<?php echo apps_url('assets/location_capture_widget/css/location_capture_widget.css');?>" rel="stylesheet" type="text/css">
@@ -148,7 +152,7 @@ $base_url = str_replace('/apps','/registry',base_url());
 
 	<!-- Module-specific styles and scripts -->
     <?php if (isset($scripts)): foreach($scripts as $script):?>
-        <script src="<?php echo asset_url('js/' . $script);?>.js" defer></script>
+        <script src="<?php echo asset_url('js/' . $script);?>.js"></script>
     <?php endforeach; endif; ?>
 
 

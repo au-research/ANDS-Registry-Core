@@ -45,7 +45,7 @@ class Search extends MX_Controller {
 			
 			$facets['class'] = 'Class';
 			$facets['group'] = 'Contributor';
-			$facets['license_class'] = 'License';
+			$facets['license_class'] = 'Licence';
 			$facets['type'] = 'Type';
 
 			foreach($facets as $facet=>$display){

@@ -9,7 +9,7 @@ class Quality_checker extends CI_Model {
 		$xslt_processor = Transforms::get_qa_transformer();
 		
 		$dom = new DOMDocument();
-		$dom->loadXML(wrapRegistryObjects(removeXMLDeclaration($registry_object->getXML())));
+		$dom->loadXML(str_replace('&', '&amp;' , $registry_object->getRif()), LIBXML_NOENT);
 		$xslt_processor->setParameter('', 'dataSource', $registry_object->data_source_id);
 		$xslt_processor->setParameter('', 'output', $output_mode);
 		$xslt_processor->setParameter('', 'relatedObjectClassesStr', $relatedClassStr); // XXX: TODO!!!
@@ -21,7 +21,7 @@ class Quality_checker extends CI_Model {
 		$xslt_processor = Transforms::get_qa_level_transformer();
 		
 		$dom = new DOMDocument();
-		$dom->loadXML(wrapRegistryObjects(removeXMLDeclaration($registry_object->getXML())));	
+		$dom->loadXML(str_replace('&', '&amp;' , $registry_object->getRif()), LIBXML_NOENT);
 		$xslt_processor->setParameter('', 'relatedObjectClassesStr', $relatedClassStr); // XXX: TODO!!!
 		return $xslt_processor->transformToXML($dom);
 	}

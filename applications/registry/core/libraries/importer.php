@@ -133,7 +133,7 @@ class Importer {
 		}
 			// Apply the crosswalk (if applicable)
 		$this->_executeCrosswalk();
-		
+
 		if($this->runBenchMark){
 			$this->CI->benchmark->mark('crosswalk_execution_end');
 		}
@@ -145,27 +145,33 @@ class Importer {
 		}
 
 		// Decide on the default status for these records
-		$this->status = $this->_getDefaultRecordStatusForDataSource($this->dataSource);
+            $this->status = $this->_getDefaultRecordStatusForDataSource($this->dataSource);
 
-		if($this->runBenchMark){
-			$this->CI->benchmark->mark('ingest_stage_1_start');
-		}
+            if($this->runBenchMark){
+                $this->CI->benchmark->mark('ingest_stage_1_start');
+            }
 			//foreach ($this->xmlPayload AS $idx => $payload)
 			//{
-				// Escape XML entities from the start...
-				$payload = str_replace("&", "&amp;", $this->xmlPayload);
-
 				// Clean up non-UTF8 characters by trying to translate them
 
 				// If we have php-mbstring enabled, convert to UTF-8 (fixes crash on curly quotes!)
 				if (function_exists('mb_convert_encoding'))
 				{
-					$payload = mb_convert_encoding($payload,"UTF-8"); 
+					$payload = mb_convert_encoding($this->xmlPayload,"UTF-8");
 				}
 				else
 				{
 					die('php mbstring must be installed.');
 				}
+
+                // unescape (some entities are double escaped) first
+                while(strpos($payload,'&amp;') !== false)
+                {
+                    $payload = str_replace("&amp;", "&", $payload);
+                }
+                $payload = str_replace("&", "&amp;", $payload);
+
+
 				$continueIngest = true;				
 				// Build a SimpleXML object from the converted data
 				// We will throw an exception here if the payload isn't well-formed XML (which, by now, it should be)
@@ -359,6 +365,7 @@ class Importer {
 						{
 							$this->CI->ro->emailAssessor($this->dataSource);
 						}
+                        $this->ingest_new_record++;
 					}
 					else
 					{
@@ -382,8 +389,9 @@ class Importer {
 						}
 
 						$ro->record_owner = $record_owner;
+                        $this->ingest_new_revision++;
 					}
-					if($ro) $this->ingest_new_revision++;
+
 					$ro->class = $class;
 					$ro->created_who = $record_owner;
 					$ro->data_source_key = $this->dataSource->key;
@@ -915,6 +923,9 @@ class Importer {
 			$temp_crosswalk_name = $this->crosswalk->metadataFormat();
 			unset($this->crosswalk);
 			$this->setCrosswalk($temp_crosswalk_name);
+            $fp = fopen($this->filePath.'.xwlk', 'w');
+            fwrite($fp, $this->xmlPayload);
+            fclose($fp);
 		}
 	}
 
@@ -971,8 +982,6 @@ class Importer {
             if($ppt['prefix'] == $crosswalk_metadata_format)
                 $crosswalk_identity = $ppt['cross_walk'];
         }
-        
-        if($crosswalk_identity == '') { return;}
 
         $crosswalks= getCrossWalks();
 		foreach ($crosswalks AS $crosswalk)
@@ -982,11 +991,13 @@ class Importer {
 				$this->crosswalk = $crosswalk;
 			}
 		}
-		
+
+        return;
+        /*if($crosswalk_identity == '') { return;}
 		if (!$this->crosswalk)
 		{
 			throw new Exception("Unable to load crosswalk: " . $crosswalk_metadata_format);
-		}
+		}*/
 	}
 
 
@@ -1041,7 +1052,14 @@ class Importer {
 	private function _getSimpleXMLFromString($xml)
 	{
 		libxml_use_internal_errors(true);
-		$xml = simplexml_load_string($xml);
+
+        if(!defined('LIBXML_PARSEHUGE')){
+            $xml = simplexml_load_string($xml, 'SimpleXMLElement');
+        }
+        else{
+            $xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_PARSEHUGE);
+
+        }
 
 		if ($xml === false)
 		{
@@ -1337,7 +1355,7 @@ class Importer {
 	{
 		if (sizeof($this->solr_queue) == 0) return;
 
-		$solrUrl = $this->CI->config->item('solr_url');
+		$solrUrl = get_config_item('solr_url');
 		$solrUpdateUrl = $solrUrl.'update/?wt=json';
 
 		$this->CI->load->library('solr');
@@ -1364,7 +1382,7 @@ class Importer {
 
 	function commitSOLR()
 	{
-		$solrUrl = $this->CI->config->item('solr_url');
+		$solrUrl = get_config_item('solr_url');
 		$solrUpdateUrl = $solrUrl.'update/?wt=json';
 		return curl_post($solrUpdateUrl.'?commit=true', '<commit waitSearcher="false"/>');
 	}
