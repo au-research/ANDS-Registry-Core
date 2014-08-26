@@ -3,7 +3,7 @@
 	<img src="<?php echo asset_url('img/ands-full.png','base')?>" alt="" style="float:right;margin:0 20px;">
   <h4> Help us to improve Research Data Australia. </h4>
   <p>
-  	We are currently considering a redesign of the Research Data Australia website. We are seeking your input to help us improve our website and provide the information you want. If you are willing to provide us with some of your time in September to help us understand how you believe content on this website should be organised, then please register your details below.
+  	 We are currently considering a redesign of the Research Data Australia website. We are seeking your input to help us improve our website and provide the information you want. If you are willing to provide us with approximately 1 hour of your time in September, then please register your details below. 
   </p>
   <hr>
   <form action="" id="fwform">
