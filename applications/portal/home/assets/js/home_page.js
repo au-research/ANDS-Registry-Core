@@ -38,4 +38,21 @@ $(document).ready(function() {
 	    }
 	});
 
+
+	var fw_cookie = $.cookie('falling_water_dontshow');
+	if(!fw_cookie){
+		$('.open-popup-link').magnificPopup({
+		  type:'inline',
+		  midClick: true, // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
+		  removalDelay: 300,
+		  mainClass: 'mfp-zoom-in'
+		});
+		$('.open-popup-link').magnificPopup('open');
+		$('#nothanks').click(function(e){
+			e.preventDefault();
+			$.cookie('falling_water_dontshow', 'set');
+			$.magnificPopup.close();
+		});
+	}
+
 });

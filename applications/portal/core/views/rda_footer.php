@@ -126,7 +126,12 @@
 	        <?php elseif($lib=='colorbox'):?>
 	            <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
 	            <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
+	        
+			<?php elseif($lib=='popup'):?>
+	            <link href="<?php echo asset_url('lib/popup/magnific-popup.css', 'base');?>" rel="stylesheet" type="text/css">
+	            <script src="<?php echo asset_url('lib/popup/jquery.magnific-popup.min.js', 'base');?>" type="text/javascript"></script>
 	        <?php endif; ?>
+
 		<?php endforeach;?>
 	<?php endif; ?>
 

@@ -45,7 +45,7 @@ class Home extends MX_Controller {
 		//spotlights
 		
 		$data['scripts'] = array('home_page');
-		$data['js_lib'] = array('qtip');
+		$data['js_lib'] = array('qtip', 'popup');
 		$this->load->view('home', $data);
 	}
 
