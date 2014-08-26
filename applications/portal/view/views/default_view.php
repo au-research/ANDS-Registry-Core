@@ -13,4 +13,5 @@
 	?>
 
 </div>
+<?php $this->load->view('falling_water'); ?>
 <?php $this->load->view('rda_footer');?>

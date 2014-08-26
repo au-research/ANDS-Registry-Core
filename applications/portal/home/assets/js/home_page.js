@@ -53,6 +53,24 @@ $(document).ready(function() {
 			$.cookie('falling_water_dontshow', 'set');
 			$.magnificPopup.close();
 		});
+		$('#fwform').submit(function(e){
+			e.preventDefault();
+			var name = $('#fwform input[name=name]').val();
+			var email = $('#fwform input[name=email]').val();
+			if (!name) alert('Please input a name');
+			if (!email) alert('Please input an email address');
+			if (name && email) {
+				$.ajax({
+			  		type:"POST",
+			  		url: base_url+"/home/falling_water_register",
+			  		data: {name:name, email:email},
+		  			success:function(msg){
+		  				$.cookie('falling_water_dontshow', 'set');
+		  				$.magnificPopup.close();
+		  			}
+		  		}); 
+			}
+		});
 	}
 
 });
