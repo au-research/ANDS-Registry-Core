@@ -12,8 +12,6 @@
   	<label for="">Email Address: </label>
   	<input type="email" placeholder="Email Address" name="email" required>
   	<input type="submit" class="yellow_button" value="Submit">
+    <a href="javascript:;" id="nothanks" style="margin:0 10px;">No Thanks!</a>
   </form>
-  <p>
-  	<a href="javascript:;" id="nothanks">No Thanks!</a>
-  </p>
 </div>
