@@ -45,7 +45,7 @@ class Home extends MX_Controller {
 		//spotlights
 		
 		$data['scripts'] = array('home_page');
-		$data['js_lib'] = array('qtip');
+		$data['js_lib'] = array('qtip', 'popup');
 		$this->load->view('home', $data);
 	}
 
@@ -120,7 +120,7 @@ class Home extends MX_Controller {
 	function contact(){
 		$data['title'] = 'Contact Us - Research Data Australia';
 		$data['message'] = '';
-		$site_admin_email = $this->config->item('site_admin_email');
+		$site_admin_email = get_config_item('site_admin_email');
 
 		/*
 			Obscure text email address from contact us page to help avoid email scrapers
@@ -167,6 +167,24 @@ class Home extends MX_Controller {
 		}
 		
 		$this->load->view('contact', $data);
+	}
+
+	function falling_water_register(){
+		$this->load->library('user_agent');
+		$data['user_agent']=$this->agent->browser();
+
+		$site_admin_email = get_config_item('site_admin_email');
+
+		$name = $this->input->post('name');
+		$email = $this->input->post('email');
+
+		$this->load->library('email');
+		$this->email->from($email, $name);
+		$this->email->to($site_admin_email);
+		$this->email->subject('RDA new Falling Water participant');
+		$this->email->message('A new user has registered to participate in project Falling Water: '.$name.' <'.$email.'>');
+		$this->email->send();
+
 	}
 
 	function sitemap(){

@@ -144,7 +144,7 @@ class View extends MX_Controller {
 	private function renderDefaultViewPage($extRif)
 	{	
 		$data['title']='Research Data Australia';
-		$data['js_lib'] = array('dynatree','qtip','google_map', 'angular');
+		$data['js_lib'] = array('dynatree','qtip','google_map', 'angular', 'popup');
 		$data['scripts'] = array('view', 'explorer');
 		$data['ro_slug'] = '';
 		$data['ro_id'] = '';

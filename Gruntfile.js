@@ -84,6 +84,7 @@ module.exports = function(grunt){
 					'<%=yeoman.assets %>/lib/typeahead.min.js',
 					'<%=yeoman.assets %>/lib/mustache.js',
 					'<%=yeoman.assets %>/lib/jquery.ba-hashchange.min.js',
+					'<%=yeoman.portal_assets %>/js/jquery.cookie.js',
 					'<%=yeoman.portal_assets %>/js/script.js',
 				],
 				dest: '<%=yeoman.portal_assets %>/ands_portal.combined.js'

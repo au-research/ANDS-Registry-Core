@@ -1,4 +1,6 @@
 <?php $this->load->view('rda_header');?>
+
+
 <div class="container">
 	<div class="intro">
 		<h3>What’s in Research Data Australia</h3>
@@ -84,4 +86,6 @@
 	</ul>
 </script>
 </div>
+
+<?php $this->load->view('falling_water'); ?>
 <?php $this->load->view('rda_footer');?>
