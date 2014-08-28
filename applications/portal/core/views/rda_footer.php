@@ -46,8 +46,8 @@
 			<p>Research Data Australia is an Internet-based discovery service designed to provide rich connections between data, projects, researchers and institutions, and promote visibility of Australian research data collections in search engines. 
 				<a href="<?=base_url('home/about');?>">Read more about us...</a>
 			</p>
-			<p class="small">ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program and the Education Investment Fund (EIF) Super Science Initiative.</p>
-			<a href="http://www.innovation.gov.au/" class="gov_logo"><img src="<?php echo asset_url('images/dept_white.png', 'core');?>" alt="" /></a>
+			<p class="small">ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.</p>
+			<!-- <a href="http://www.innovation.gov.au/" class="gov_logo"><img src="<?php echo asset_url('images/dept_white.png', 'core');?>" alt="" /></a> -->
 			<a href="http://www.ands.org.au/" class="footer_logo"><img src="<?php echo asset_url('images/footer_logo.jpg', 'core');?>" alt="" /></a>			
 		</div><!-- foot -->		
 	</div><!-- footer -->	
@@ -126,7 +126,12 @@
 	        <?php elseif($lib=='colorbox'):?>
 	            <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
 	            <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
+	        
+			<?php elseif($lib=='popup'):?>
+	            <link href="<?php echo asset_url('lib/popup/magnific-popup.css', 'base');?>" rel="stylesheet" type="text/css">
+	            <script src="<?php echo asset_url('lib/popup/jquery.magnific-popup.min.js', 'base');?>" type="text/javascript"></script>
 	        <?php endif; ?>
+
 		<?php endforeach;?>
 	<?php endif; ?>
 

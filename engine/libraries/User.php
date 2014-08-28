@@ -28,9 +28,7 @@ class User {
 				AUTH_METHOD 			 =>	$login_response['authentication_service_id'],
 				AUTH_DOMAIN 			 =>	$login_response['auth_domain']
 			));
-
 			$this->CI->auth->register_last_login($login_response['user_identifier']);
-			
 			// And extract the functions and affiliations							
 			$this->appendFunction(array_merge(array(AUTH_FUNCTION_LOGGED_IN_ATTRIBUTE),$login_response['functional_roles']));
 			$this->appendAffiliation($login_response['organisational_roles']);

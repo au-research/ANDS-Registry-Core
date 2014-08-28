@@ -68,7 +68,7 @@ class XML_Extension extends ExtensionBase
 			{
 				$xml = $this->getRif($record_data_id);
 			}
-			$this->_simplexml = simplexml_load_string($xml);
+			$this->_simplexml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOENT);
 
 			$namespaces = $this->_simplexml->getNamespaces(true);
 			if ( !in_array(RIFCS_NAMESPACE, $namespaces) )
@@ -87,7 +87,6 @@ class XML_Extension extends ExtensionBase
 	function updateXML($data, $current = TRUE, $scheme = NULL)
 	{
 		$_xml = new _xml($this->ro->id);
-		$data = str_replace('&amp;', '&', $data);
 		$changed = $_xml->update($data, $current, $scheme);
 
 		if (is_null($scheme))

@@ -38,4 +38,39 @@ $(document).ready(function() {
 	    }
 	});
 
+
+	var fw_cookie = $.cookie('falling_water_dontshow');
+	if(!fw_cookie){
+		$('.open-popup-link').magnificPopup({
+		  type:'inline',
+		  midClick: true, // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
+		  removalDelay: 300,
+		  mainClass: 'mfp-zoom-in'
+		});
+		$('.open-popup-link').magnificPopup('open');
+		$('#nothanks').click(function(e){
+			e.preventDefault();
+			$.cookie('falling_water_dontshow', 'set');
+			$.magnificPopup.close();
+		});
+		$('#fwform').submit(function(e){
+			e.preventDefault();
+			var name = $('#fwform input[name=name]').val();
+			var email = $('#fwform input[name=email]').val();
+			if (!name) alert('Please input a name');
+			if (!email) alert('Please input an email address');
+			if (name && email) {
+				$.ajax({
+			  		type:"POST",
+			  		url: base_url+"/home/falling_water_register",
+			  		data: {name:name, email:email},
+		  			success:function(msg){
+		  				$.cookie('falling_water_dontshow', 'set');
+		  				$.magnificPopup.close();
+		  			}
+		  		}); 
+			}
+		});
+	}
+
 });

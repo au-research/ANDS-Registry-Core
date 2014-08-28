@@ -144,7 +144,7 @@ class View extends MX_Controller {
 	private function renderDefaultViewPage($extRif)
 	{	
 		$data['title']='Research Data Australia';
-		$data['js_lib'] = array('dynatree','qtip','google_map', 'angular');
+		$data['js_lib'] = array('dynatree','qtip','google_map', 'angular', 'popup');
 		$data['scripts'] = array('view', 'explorer');
 		$data['ro_slug'] = '';
 		$data['ro_id'] = '';
@@ -193,6 +193,7 @@ class View extends MX_Controller {
 			$suggested_links['subjects'] = $this->registry->fetchSuggestedLinksBySlug($this->input->get('slug'), "ands_subjects",0 ,0);
 			$data['ro_slug'] = $this->input->get('slug');
 		}
+
 
         $data['descriptions']='';
         $matches = array();
@@ -304,6 +305,7 @@ class View extends MX_Controller {
 		$data['registry_object_contents'] = str_replace('&amp;','&', $data['registry_object_contents']);
 		$data['registry_object_contents'] = str_replace('&lt;','<', $data['registry_object_contents']);
 		$data['registry_object_contents'] = str_replace('&gt;','>', $data['registry_object_contents']);*/
+
 
 		// well this was really uggly... we should fix it at ingest!
 		$data['registry_object_contents'] = str_replace('%%%%CONNECTIONS%%%%', $connDiv, $data['registry_object_contents']);

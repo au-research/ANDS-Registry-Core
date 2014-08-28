@@ -22,7 +22,7 @@ class Transforms_Extension extends ExtensionBase
 			}
 
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars_decode(htmlspecialchars($this->ro->getExtRif())), LIBXML_NOENT);
+			$dom->loadXML(htmlspecialchars($this->ro->getExtRif()), LIBXML_NOENT);
 			if ($add_tags)
 			{
 				return "<add>" . $xslt_processor->transformToXML($dom) . "</add>";
@@ -44,7 +44,7 @@ class Transforms_Extension extends ExtensionBase
 		try{
 			$xslt_processor = Transforms::get_qa_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars_decode($xml), LIBXML_NOENT);
+			$dom->loadXML(str_replace('&', '&amp;' , $xml), LIBXML_NOENT);
 			$xslt_processor->setParameter('','dataSource', $data_source_key ?: $this->ro->data_source_key );
 			$xslt_processor->setParameter('','relatedObjectClassesStr',$this->ro->getRelatedClassesString());
 			return $xslt_processor->transformToXML($dom);
@@ -80,7 +80,7 @@ class Transforms_Extension extends ExtensionBase
 		try{
 			$xslt_processor = Transforms::get_extrif_to_dc_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars_decode($this->ro->getExtRif()), LIBXML_NOENT);
+			$dom->loadXML(htmlspecialchars($this->ro->getExtRif()), LIBXML_NOENT);
 			$xslt_processor->setParameter('','base_url',portal_url());
 			return trim($xslt_processor->transformToXML($dom));
 		}catch (Exception $e)
@@ -107,7 +107,7 @@ class Transforms_Extension extends ExtensionBase
             try{
 			$xslt_processor = Transforms::get_extrif_to_dci_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars_decode($this->ro->getExtRif()), LIBXML_NOENT);
+			$dom->loadXML(htmlspecialchars($this->ro->getExtRif()), LIBXML_NOENT);
 			$xslt_processor->setParameter('','dateHarvested', date("Y", $this->ro->created));
 			$xslt_processor->setParameter('','dateRequested', date("Y-m-d"));
 			$xml_output = $xslt_processor->transformToXML($dom);
@@ -338,7 +338,7 @@ class Transforms_Extension extends ExtensionBase
 		try{
 			$xslt_processor = Transforms::get_extrif_to_orcid_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars_decode($this->ro->getExtRif()), LIBXML_NOENT);
+			$dom->loadXML(htmlspecialchars($this->ro->getExtRif()), LIBXML_NOENT);
 			$xslt_processor->setParameter('','dateProvided', date("Y-m-d"));
 			$xslt_processor->setParameter('','rda_url', portal_url($this->ro->slug));
 			return $xslt_processor->transformToXML($dom);
@@ -352,7 +352,8 @@ class Transforms_Extension extends ExtensionBase
 		try{
 			$xslt_processor = Transforms::get_extrif_to_form_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars_decode(htmlspecialchars(str_replace('&', '&amp;',$rifcs))), LIBXML_NOENT);
+            $rifcs = html_entity_decode($rifcs);
+			$dom->loadXML(str_replace('&', '&amp;' , $rifcs), LIBXML_NOENT);
 			$xslt_processor->setParameter('','base_url',base_url());
 			return html_entity_decode($xslt_processor->transformToXML($dom));
 		} catch (Exception $e) {

@@ -327,7 +327,7 @@ $(document).ready(function(){
 				data: {orgRole:orgRole,thisRole:thisRole},
 				success: function(data){
 					if(data.status=='OK'){
-						window.location.href = base_url+"vocab_service"+"/addVocabulary";
+						window.location.href = apps_url+"vocab_service"+"/addVocabulary";
 						//$('#myModal .modal-body').html('You have to logout and log back in for the changes to take effect <a href="'+base_url+'auth/logout">Logout</a>');
 						//$('#myModal').modal();
 					}else if(data.status=='WARNING'){

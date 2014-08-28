@@ -145,27 +145,33 @@ class Importer {
 		}
 
 		// Decide on the default status for these records
-		$this->status = $this->_getDefaultRecordStatusForDataSource($this->dataSource);
+            $this->status = $this->_getDefaultRecordStatusForDataSource($this->dataSource);
 
-		if($this->runBenchMark){
-			$this->CI->benchmark->mark('ingest_stage_1_start');
-		}
+            if($this->runBenchMark){
+                $this->CI->benchmark->mark('ingest_stage_1_start');
+            }
 			//foreach ($this->xmlPayload AS $idx => $payload)
 			//{
-				// Escape XML entities from the start...
-				$payload = str_replace("&", "&amp;", $this->xmlPayload);
-
 				// Clean up non-UTF8 characters by trying to translate them
 
 				// If we have php-mbstring enabled, convert to UTF-8 (fixes crash on curly quotes!)
 				if (function_exists('mb_convert_encoding'))
 				{
-					$payload = mb_convert_encoding($payload,"UTF-8"); 
+					$payload = mb_convert_encoding($this->xmlPayload,"UTF-8");
 				}
 				else
 				{
 					die('php mbstring must be installed.');
 				}
+
+                // unescape (some entities are double escaped) first
+                while(strpos($payload,'&amp;') !== false)
+                {
+                    $payload = str_replace("&amp;", "&", $payload);
+                }
+                $payload = str_replace("&", "&amp;", $payload);
+
+
 				$continueIngest = true;				
 				// Build a SimpleXML object from the converted data
 				// We will throw an exception here if the payload isn't well-formed XML (which, by now, it should be)
@@ -359,6 +365,7 @@ class Importer {
 						{
 							$this->CI->ro->emailAssessor($this->dataSource);
 						}
+                        $this->ingest_new_record++;
 					}
 					else
 					{
@@ -382,8 +389,9 @@ class Importer {
 						}
 
 						$ro->record_owner = $record_owner;
+                        $this->ingest_new_revision++;
 					}
-					if($ro) $this->ingest_new_revision++;
+
 					$ro->class = $class;
 					$ro->created_who = $record_owner;
 					$ro->data_source_key = $this->dataSource->key;
