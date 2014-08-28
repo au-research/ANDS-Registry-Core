@@ -270,6 +270,16 @@ class Maintenance extends MX_Controller {
 		}
 	}
 
+	public function fix_trim_roles_type_id() {
+		$cosi_db = $this->load->database('roles', TRUE);
+		$query = $cosi_db->get('roles');
+		foreach($query->result() as $q){
+			// echo $q->role_id.' >'.$q->role_type_id.'<br/>';
+			$cosi_db->where('role_id', $q->role_id)->update('roles', array('role_type_id'=>trim($q->role_type_id)));
+		}
+		echo 'Query updated. Rows affected:'.$cosi_db->affected_rows();
+	}
+
 	public function syncmenu(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'ARMS SyncMenu';

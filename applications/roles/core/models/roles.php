@@ -229,6 +229,8 @@ class Roles extends CI_Model {
         if(sizeof($recursiveRoles['functional_roles']) > 0) $this->cosi_db->where_not_in('role_id', $recursiveRoles['functional_roles']);
         $result = $this->cosi_db->get();
 
+        
+
         foreach($result->result() as $r) $res['functional'][] = $r;
 
         //missing org roles black magic
@@ -256,17 +258,17 @@ class Roles extends CI_Model {
      * @param [type] $post [description]
      */
     function add_role($post){
-        $this->cosi_db->insert('roles', 
+        $add = $this->cosi_db->insert('roles', 
             array(
                 'role_id'=>$post['role_id'],
                 'name'=>$post['name'],
                 'role_type_id'=>$post['role_type_id'],
-                'enabled'=> ($post['enabled']=='on' ? DB_TRUE : DB_FALSE),
+                'enabled'=> ($post['enabled']=='1' ? DB_TRUE : DB_FALSE),
                 'authentication_service_id'=> trim($post['authentication_service_id']),
                 'created_who'=>$this->user->localIdentifier()
             )
         );
-        if($post['authentication_service_id']=='AUTHENTICATION_BUILT_IN'){
+        if($post['authentication_service_id']=='AUTHENTICATION_BUILT_IN' && $post['role_type_id']=='ROLE_USER'){
             $this->cosi_db->insert('authentication_built_in',
                 array(
                     'role_id'=>$post['role_id'],
@@ -290,7 +292,7 @@ class Roles extends CI_Model {
         $this->cosi_db->update('roles', 
             array(
                 'name'=> $post['name'],
-                'enabled'=>($post['enabled']=='on' ? DB_TRUE : DB_FALSE)
+                'enabled'=>($post['enabled']=='1' ? DB_TRUE : DB_FALSE)
             )
         ); 
     }

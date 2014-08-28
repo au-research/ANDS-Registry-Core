@@ -52,6 +52,26 @@ angular.module('portal-filters', []).
 				case 'solr_url': return 'SOLR URL';break;
 				case 'sissvoc_url': return 'Sissvoc Vocab Server URL';break;
 				case 'shibboleth_sp': return 'Enable Shibboleth';break;
+				case 'ROLE_USER': return 'User'; break;
+				case 'ROLE_ORGANISATIONAL': return 'Organisation'; break;
+				case 'ROLE_FUNCTIONAL': return 'Function'; break;
+				case 'ROLE_DOI_APPID': return 'DOI Application ID'; break;
+				case 'AUTHENTICATION_LDAP': return 'LDAP'; break;
+				case 'AUTHENTICATION_SHIBBOLETH': return 'Shibboleth'; break;
+				case 'AUTHENTICATION_BUILT_IN': return 'Built In'; break;
+				case 'authentication_service_id': return 'Authentication Service ID';break;
+				case 'created_when': return 'Created When';break;
+				case 'created_who': return 'Created Who';break;
+				case 'enabled': return 'Enabled';break;
+				case 'id': return 'ID';break;
+				case 'last_login': return 'Last Login';break;
+				case 'modified_when': return 'Last Modified';break;
+				case 'modified_who': return 'Modified Who';break;
+				case 'name': return 'Name';break;
+				case 'persistent_id': return 'Shibboleth Persistent ID';break;
+				case 'role_id': return 'Role ID';break;
+				case 'role_type_id': return 'Type';break;
+				case 'shared_token': return 'Shibboleth Shared Token';break;
 				default: return text;break;
 			}
 		}

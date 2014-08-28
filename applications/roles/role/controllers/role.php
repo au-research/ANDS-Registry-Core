@@ -14,7 +14,14 @@ class Role extends MX_Controller {
 	 * default controller, returns the role management dashboard
 	 * @return view 
 	 */
-	public function index(){
+	public function index() {
+		$data['title'] = 'Roles Management';
+		$data['scripts'] = array('roles_app');
+		$data['js_lib'] = array('core', 'angular');
+		$this->load->view('roles_app', $data);
+	}
+
+	public function index2(){
 		// var_dump($this->user->functions());
 		$data['title'] = 'List Roles';
 		$data['scripts'] = array('roles');
@@ -27,6 +34,44 @@ class Role extends MX_Controller {
 		// $this->load->database('roles');
         // var_dump($this->db->get('registry_objects'));
 		//echo json_encode($this->roles->descendants('AusStage'));
+	}
+
+	public function get(){
+		if(!$this->input->get('role_id')) throw new Exception('Role ID must be specified');
+		$role_id = $this->input->get('role_id');
+
+		$data['role'] = $this->roles->get_role(rawurldecode($role_id));
+
+		$data['childs'] = $this->roles->list_childs($role_id); //only get explicit
+
+		$data['functional_roles'] = array();
+		$data['org_roles'] = array();
+
+		foreach($data['childs'] as $c){
+			if(trim($c->role_type_id) == "ROLE_FUNCTIONAL"){
+				array_push($data['functional_roles'], $c);
+			} elseif (trim($c->role_type_id)=="ROLE_ORGANISATIONAL"){
+				array_push($data['org_roles'], $c);
+			}
+		}
+
+		$data['missingRoles'] = $this->roles->get_missing(rawurldecode($role_id));
+
+		if(trim($data['role']->role_type_id)=='ROLE_USER' || trim($data['role']->role_type_id)=='ROLE_ORGANISATIONAL'){
+			$data['doi_app_id'] = $this->roles->list_childs(rawurldecode($role_id), true);
+			$data['missing_doi'] = $this->roles->missing_descendants(rawurldecode($role_id), $data['doi_app_id'], true);
+		}
+
+		if(trim($data['role']->role_type_id)=='ROLE_ORGANISATIONAL' || trim($data['role']->role_type_id)=='ROLE_FUNCTIONAL'){
+			$data['users'] = $this->roles->descendants(rawurldecode($role_id));
+			$data['missingUsers'] = $this->roles->missing_descendants(rawurldecode($role_id), $data['users']);
+		}
+
+		if(trim($data['role']->role_type_id)=='ROLE_ORGANISATIONAL'){
+			$data['data_sources'] = $this->roles->get_datasources($data['role']->role_id);
+		}
+
+		echo json_encode($data);
 	}
 
 	/**
@@ -92,7 +137,7 @@ class Role extends MX_Controller {
 	 * If a new role is posted, go back to the dashboard else return the default view
 	 * @return view
 	 */
-	public function add(){
+	public function add_dep(){
 		if($this->input->get('posted')){
 			$post = $this->input->post();
 			$roleId = rawurlencode($post['role_id']);
@@ -117,6 +162,27 @@ class Role extends MX_Controller {
 		}
 	}
 
+
+	public function add(){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$data = $data['data'];
+		$this->roles->add_role($data);
+	}
+
+	public function update(){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$role_id = $data['role_id'];
+		$data = $data['data'];
+		$this->roles->edit_role($role_id, $data);
+	}
 
 
 	/**
@@ -157,7 +223,14 @@ class Role extends MX_Controller {
 	 * @return true
 	 */
 	public function add_relation(){
-		$this->roles->add_relation($this->input->post('parent'), $this->input->post('child'));
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$parent = $data['parent'];
+		$child = $data['child'];
+		$this->roles->add_relation($parent, $child);
 	}
 
 	/**
@@ -167,7 +240,14 @@ class Role extends MX_Controller {
 	 * @return true
 	 */
 	public function remove_relation(){
-		$this->roles->remove_relation($this->input->post('parent'), $this->input->post('child'));
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$parent = $data['parent'];
+		$child = $data['child'];
+		$this->roles->remove_relation($parent, $child);
 	}
 
 	/**

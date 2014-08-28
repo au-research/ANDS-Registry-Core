@@ -564,9 +564,9 @@ class View extends MX_Controller {
 	{
 		if ($key)
 		{
+
 			$this->load->model('registry_fetch','registry');
 			$slug = $this->registry->getSlugFromKey(rawurldecode($key));
-
 			if ($slug)
 			{
 				if($slug['status']==PUBLISHED)
