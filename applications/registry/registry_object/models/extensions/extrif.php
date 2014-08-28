@@ -23,7 +23,7 @@ class Extrif_Extension extends ExtensionBase
 		// Reset our namespace object (And go down one level from the wrapper if needed)
 		$xml =  addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
 
-		$xml = simplexml_load_string(str_replace("&", "&amp;", $xml));
+		$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOENT);
 
 		// Clone across the namespace (if applicable)
 		$namespaces = $xml->getNamespaces(true);
