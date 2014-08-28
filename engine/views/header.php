@@ -98,7 +98,7 @@ if(get_config_item('environment_logo')){
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Roles <b class="caret"></b></a>
                   <ul class="dropdown-menu pull-right">
                     <li class=""><?php echo anchor(roles_url(''), 'List Roles');?></li>
-                    <li class=""><?php echo anchor(roles_url('role/add'), '<i class="icon icon-plus"></i> Add New Role');?></li>
+                    <li class=""><?php echo anchor(roles_url('role/#/add/'), '<i class="icon icon-plus"></i> Add New Role');?></li>
                   </ul>
                 </li>
               <?php endif;?>

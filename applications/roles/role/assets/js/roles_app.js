@@ -13,6 +13,10 @@ angular.module('roles_app', ['portal-filters']).
 				controller: indexCtrl,
 				template:$('#index_template').html()
 			})
+			.when('/:add/', {
+				controller: indexCtrl,
+				template:$('#index_template').html()
+			})
 	}).
 	factory('roles', function($http){
 		return{
@@ -49,6 +53,8 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 	}
 	$scope.tab = 'view';
 	$scope.tab1 = 'search';
+
+	if($routeParams.add) $scope.tab1 = 'new';
 
 	roles.all().then(function(data){
 		$scope.roles = data;
