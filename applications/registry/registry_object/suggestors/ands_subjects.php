@@ -90,7 +90,7 @@ class Suggestor_ands_subjects implements GenericSuggestor
 				$links[] = array("url"=>portal_url($doc['slug']),
 								"title"=>$doc['display_title'],
 								"class"=>$doc['class'],
-								"description"=>$doc['description'],
+								"description"=>isset($doc['description'])?$doc['description']:'' ,
 								"slug"=>$doc['slug']);
 			}
 			if(!$rows) $rows=10;
