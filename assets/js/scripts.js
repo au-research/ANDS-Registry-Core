@@ -147,22 +147,34 @@ $(document).ready(function(){
 				content:{
 					text: 'Loading...', // The text to use whilst the AJAX request is loading},
 					ajax: {
-						url: base_url+'services/registry/search?query='+encodeURIComponent(query), // URL to the local file
+						url: real_base_url+'registry/services/registry/search?query='+encodeURIComponent(query), // URL to the local file
 						type: 'GET', // POST or GET
 						data: {}, // Data to pass along with your request
 						success: function(data,status){
-							
-							if(data.length>0){
+
+							if(data.has_result){
 								var html = '<div class="dropdown"><ul class="nav nav-list">';
-								$.each(data, function(){
-									var h ='<li class=""><a href="'+base_url+'registry_object/view/'+this.id+'">'+this.value+'</a></li>';
+								if(data.ro.length) html += '<li class="nav-header">Registry Objects</li>';
+								$.each(data.ro, function(){
+									var h ='<li class=""><a href="'+this.link+'">'+this.value+'</a></li>';
 									html +=h
 								});
-								html+='</ul></div>';
+								if(data.ds.length) html += '<li class="nav-header">Data Sources</li>';
+								$.each(data.ds, function(){
+									var h ='<li class=""><a href="'+this.link+'">'+this.value+'</a></li>';
+									html +=h
+								});
+								if(data.roles.length) html += '<li class="nav-header">Roles</li>';
+								$.each(data.roles, function(){
+									var h ='<li class=""><a href="'+this.link+'">'+this.value+'</a></li>';
+									html +=h
+								});
+								html +='</ul></div>';
 								this.set('content.text', html);
-							}else{
+							} else {
 								this.set('content.text', 'No Result!');
 							}
+	
 						}
 					}
 				},

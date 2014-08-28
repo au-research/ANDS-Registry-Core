@@ -39,7 +39,7 @@ $base_url = str_replace('/apps','/registry',base_url());
         <?php echo urchin_for($this->config->item('svc_urchin_id')); ?>
     </script>
 
-    <script type="text/javascript" src="<?php echo$base_url;?>assets/js/arms.min.js"></script>
+    <script type="text/javascript" src="<?php echo$base_url;?>assets/js/arms.scripts.js"></script>
 
     <?php foreach($js_lib as $lib):?>
             

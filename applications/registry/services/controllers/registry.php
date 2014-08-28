@@ -79,22 +79,48 @@ class Registry extends MX_Controller {
 
 		$this->load->database();
 		$like = $this->input->get('query');
+
 		$this->db->select('registry_object_id, title');
 		$this->db->from('registry_objects');
 		$this->db->like('title', $like);
+		$this->db->or_like('registry_object_id', $like);
 		$this->db->or_like('key', $like);
 		$this->db->or_like('slug', $like);
 		$this->db->limit(10);
 		$query = $this->db->get();
 
-		$vocab_results = array();
+		$registry_object_results = array();
 		foreach($query->result() as $row){
-			$item = array('value'=>$row->title, 'id'=>$row->registry_object_id);
-			array_push($vocab_results, $item);
+			$item = array('value'=>$row->title, 'link'=>base_url('registry_objects/view/'.$row->registry_object_id));
+			array_push($registry_object_results, $item);
 		}
 
-		$vocab_results = json_encode($vocab_results);
-		echo $vocab_results;
+		$this->db->select('title, data_source_id')->from('data_sources')->like('title', $like)->or_like('key', $like)->or_like('data_source_id', $like);
+		$query = $this->db->get();
+		$data_source_results = array();
+		foreach($query->result() as $row){
+			$item = array('value'=>$row->title, 'link'=>base_url('data_source/manage#!/view/'.$row->data_source_id));
+			array_push($data_source_results, $item);
+		}
+
+		$roles_db = $this->load->database('roles', TRUE);
+		$query = $roles_db->select('name, role_id')->from('roles')->like('role_id', $like)->or_like('name', $like)->get();
+		$roles_results = array();
+		foreach($query->result() as $row){
+			$item = array('value'=>$row->name, 'link'=>roles_url('#/view/'.rawurlencode($row->role_id)));
+			array_push($roles_results, $item);
+		}
+
+		$result['ro'] = $registry_object_results;
+		$result['ds'] = $data_source_results;
+		$result['roles'] = $roles_results;
+
+		if(sizeof($result['ro']) > 0 || sizeof($result['ds']) > 0 || sizeof($result['roles']) > 0) {
+			$result['has_result'] = true;
+		}
+
+		$result = json_encode($result);
+		echo $result;
 	}
 
 	public function solr_search(){
