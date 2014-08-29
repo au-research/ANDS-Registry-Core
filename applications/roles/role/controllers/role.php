@@ -212,7 +212,10 @@ class Role extends MX_Controller {
 	 * @return true
 	 */
 	public function delete(){
-		$this->roles->delete_role($this->input->post('role_id'));
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$role_id = $data['role_id'];
+		$this->roles->delete_role($role_id);
 	}
 
 	/**

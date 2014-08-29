@@ -51,7 +51,7 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 	$scope.newrole = {
 		'role_id':'','name':'','role_type_id':'ROLE_USER','enabled':'1','authentication_service_id':'AUTHENTICATION_BUILT_IN'
 	}
-	$scope.tab = 'view';
+	$scope.tab = 'add_rel';
 	$scope.tab1 = 'search';
 
 	if($routeParams.add) $scope.tab1 = 'new';
@@ -62,6 +62,8 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 
 	$scope.select = function(role_id){
 		$scope.loading = true;
+		$scope.tab1 = 'view';
+		$scope.tab = 'add_rel';
 		roles.get(role_id).then(function(data){
 			$scope.loading = false;
 			$scope.role = data;
@@ -83,13 +85,7 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 
 	$scope.add = function() {
 		roles.add($scope.newrole).then(function(data){
-			alert('New Role '+$scope.newrole.name+' is successfully added');
-			$scope.newrole = {
-				'role_id':'','name':'','role_type_id':'ROLE_USER','enabled':'1','authentication_service_id':'AUTHENTICATION_BUILT_IN'
-			}
-			roles.all().then(function(data){
-				$scope.roles = data;
-			});
+			$location.path('/view/'+$scope.newrole.role_id);
 		});
 	}
 

@@ -228,8 +228,7 @@ class Roles extends CI_Model {
         $this->cosi_db->select('role_id, name, role_type_id')->from('roles')->where('role_type_id', 'ROLE_FUNCTIONAL');
         if(sizeof($recursiveRoles['functional_roles']) > 0) $this->cosi_db->where_not_in('role_id', $recursiveRoles['functional_roles']);
         $result = $this->cosi_db->get();
-
-        
+       
 
         foreach($result->result() as $r) $res['functional'][] = $r;
 
@@ -264,6 +263,7 @@ class Roles extends CI_Model {
                 'name'=>$post['name'],
                 'role_type_id'=>$post['role_type_id'],
                 'enabled'=> ($post['enabled']=='1' ? DB_TRUE : DB_FALSE),
+                'created_when' => date('Y-m-d H:i:s',time()),
                 'authentication_service_id'=> trim($post['authentication_service_id']),
                 'created_who'=>$this->user->localIdentifier()
             )
