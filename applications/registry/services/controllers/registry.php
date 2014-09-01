@@ -95,8 +95,7 @@ class Registry extends MX_Controller {
 			array_push($registry_object_results, $item);
 		}
 
-		$this->db->select('title, data_source_id')->from('data_sources')->like('title', $like)->or_like('key', $like)->or_like('data_source_id', $like);
-		$query = $this->db->get();
+		$query = $this->db->select('title, data_source_id')->from('data_sources')->like('title', $like)->or_like('key', $like)->or_like('data_source_id', $like)->limit(10)->get();
 		$data_source_results = array();
 		foreach($query->result() as $row){
 			$item = array('value'=>$row->title, 'link'=>base_url('data_source/manage#!/view/'.$row->data_source_id));
@@ -104,7 +103,7 @@ class Registry extends MX_Controller {
 		}
 
 		$roles_db = $this->load->database('roles', TRUE);
-		$query = $roles_db->select('name, role_id')->from('roles')->like('role_id', $like)->or_like('name', $like)->get();
+		$query = $roles_db->select('name, role_id')->from('roles')->like('role_id', $like)->or_like('name', $like)->limit(10)->get();
 		$roles_results = array();
 		foreach($query->result() as $row){
 			$item = array('value'=>$row->name, 'link'=>roles_url('#/view/'.rawurlencode($row->role_id)));
@@ -112,8 +111,8 @@ class Registry extends MX_Controller {
 		}
 
 		$result['ro'] = $registry_object_results;
-		$result['ds'] = $data_source_results;
-		$result['roles'] = $roles_results;
+		if ($this->user->hasFunction('REGISTRY_SUPERUSER')) $result['ds'] = $data_source_results;
+		if ($this->user->hasFunction('REGISTRY_SUPERUSER')) $result['roles'] = $roles_results;
 
 		if(sizeof($result['ro']) > 0 || sizeof($result['ds']) > 0 || sizeof($result['roles']) > 0) {
 			$result['has_result'] = true;
