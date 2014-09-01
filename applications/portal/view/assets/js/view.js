@@ -34,7 +34,7 @@ if(!fw_cookie){
 	$('.open-popup-link').magnificPopup('open');
 	$('#nothanks').click(function(e){
 		e.preventDefault();
-		$.cookie('falling_water_dontshow', 'set');
+		$.cookie('falling_water_dontshow', 'set', { path: '/' });
 		$.magnificPopup.close();
 	});
 	$('#fwform').submit(function(e){
@@ -49,7 +49,7 @@ if(!fw_cookie){
 		  		url: base_url+"/home/falling_water_register",
 		  		data: {name:name, email:email},
 	  			success:function(msg){
-	  				$.cookie('falling_water_dontshow', 'set');
+	  				$.cookie('falling_water_dontshow', 'set', { path: '/' });
 	  				$.magnificPopup.close();
 	  			}
 	  		}); 
