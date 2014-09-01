@@ -391,14 +391,18 @@
 						<label class="checkbox"><input type="checkbox" name="ro_status" value="DRAFT" checked="checked" /><?php echo readable('DRAFT');?></label>
 						<label class="checkbox"><input type="checkbox" name="ro_status" value="SUBMITTED_FOR_ASSESSMENT" checked="checked" /><?php echo readable('SUBMITTED_FOR_ASSESSMENT');?></label>
 						<label class="checkbox"><input type="checkbox" name="ro_status" value="MORE_WORK_REQUIRED" checked="checked" /><?php echo readable('MORE_WORK_REQUIRED');?></label>
-						<label class="checkbox"><input type="checkbox" name="ro_status" value="ASSESSMENT_IN_PROGRESS" checked="checked"/><?php echo readable('assessment_in_progress');?></label>
-					</fieldset>
+                        <label class="checkbox"><input type="checkbox" name="ro_status" value="ASSESSMENT_IN_PROGRESS" checked="checked"/><?php echo readable('assessment_in_progress');?></label>
+	                    <hr/>
+                        <label><b>Export As:</b></label>
+                        <label class="checkbox"><input type="radio" name="format" checked="checked" value="rif-cs"/> RIF-CS</label>
+                        <label class="checkbox"><input type="radio" name="format" value="dci"/> DCI</label>
+                    </fieldset>
 				</form>
 			</div>
 		</div>
 		<div class="modal-footer">
-			<a href="javascript:;" class="btn btn-primary" ng-click="export('file')"><i class="icon icon-white icon-download"></i> Download RIF-CS</a>
-			<a href="javascript:;" class="btn btn-link" ng-click="export('xml')">View RIF-CS in Browser</a>
+			<a href="javascript:;" class="btn btn-primary" ng-click="export('file')"><i class="icon icon-white icon-download"></i> Download As File</a>
+			<a href="javascript:;" class="btn btn-link" ng-click="export('xml')">View Records in Browser</a>
 			<a href="#" class="btn hide" data-dismiss="modal">Close</a>
 		</div>
 	</div>

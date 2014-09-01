@@ -49,9 +49,9 @@ class DCIMethod extends MethodHandler
 				$CI->load->model('registry_object/registry_objects','ro');
                 $CI->load->model('data_source/data_sources','ds');
 				$registryObject = $CI->ro->getByID($result['id']);
-                $ds = $CI->ds->getByID($this->ro->data_source_id);
-                $exportable = fale;
-                if($ds->export_dci == 1 || $ds->export_dci == 't')
+                $ds = $CI->ds->getByID($registryObject->data_source_id);
+                $exportable = false;
+                if($ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
                     $exportable = true;
 				if ($registryObject && $registryObject->class == 'collection' && $exportable)
 				{

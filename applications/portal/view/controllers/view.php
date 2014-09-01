@@ -194,6 +194,7 @@ class View extends MX_Controller {
 			$data['ro_slug'] = $this->input->get('slug');
 		}
 
+
         $data['descriptions']='';
         $matches = array();
         preg_match('/<description type="full">(.*)<\/description>/', $extRif['data'], $matches);
@@ -304,6 +305,7 @@ class View extends MX_Controller {
 		$data['registry_object_contents'] = str_replace('&amp;','&', $data['registry_object_contents']);
 		$data['registry_object_contents'] = str_replace('&lt;','<', $data['registry_object_contents']);
 		$data['registry_object_contents'] = str_replace('&gt;','>', $data['registry_object_contents']);*/
+
 
 		// well this was really uggly... we should fix it at ingest!
 		$data['registry_object_contents'] = str_replace('%%%%CONNECTIONS%%%%', $connDiv, $data['registry_object_contents']);
@@ -562,9 +564,9 @@ class View extends MX_Controller {
 	{
 		if ($key)
 		{
+
 			$this->load->model('registry_fetch','registry');
 			$slug = $this->registry->getSlugFromKey(rawurldecode($key));
-
 			if ($slug)
 			{
 				if($slug['status']==PUBLISHED)

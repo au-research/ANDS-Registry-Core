@@ -119,7 +119,7 @@ class Auth extends CI_Controller {
 			$jsonData['status']='WARNING';
 			$jsonData['message']='You are already affiliate with this organisation: '.$orgRole;
 		}else{
-			if($this->cosi->registerAffiliation($thisRole, $orgRole)){
+			if($this->auth->registerAffiliation($thisRole, $orgRole)){
 				$this->user->refreshAffiliations($thisRole);
 				$jsonData['status']='OK';
 				$jsonData['message']='registering success';

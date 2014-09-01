@@ -2130,24 +2130,27 @@ class Data_source extends MX_Controller {
 	{
 		parse_str($_SERVER['QUERY_STRING'], $_GET);
 		$as = 'xml';
-		$classtring = '';
-		$statusstring = '';
-		//$classtring = 'activitycollectionserviceparty';
+        $formatString = 'rif-cs';
+		$statusString = '';
+        $classString = '';
 		$data = json_decode($this->input->get('data'));
 		foreach($data as $param)
 		{
 			if($param->name == 'ro_class')
-				$classtring .= $param->value;
+				$classString .= $param->value;
 			if($param->name == 'as')
 				$as = $param->value;
 			if($param->name == 'ro_status')
-				$statusstring .= $param->value;
+				$statusString .= $param->value;
+            if($param->name == 'format')
+                $formatString = $param->value;
 		}
 		$this->load->model("data_sources","ds");
 		$this->load->model("registry_object/registry_objects", "ro");
 		$dataSource = $this->ds->getByID($id);
 		$dsSlug = $dataSource->getAttribute('slug');
 		$rifcs = '';
+        $dciOutput = '';
 		$ids = $this->ro->getIDsByDataSourceID($id, false, 'All');
 		if($ids)
 		{
@@ -2155,7 +2158,11 @@ class Data_source extends MX_Controller {
 			foreach($ids as $idx => $ro_id){
 				try{
 					$ro = $this->ro->getByID($ro_id);
-					if($ro && (strpos($classtring, $ro->class) !== false) && (strpos($statusstring, $ro->status) !== false))
+					if($formatString == 'dci')
+                    {
+                        $dciOutput .= $ro->transformToDCI(false);
+                    }
+                    elseif($ro && (strpos($classString, $ro->class) !== false) && (strpos($statusString, $ro->status) !== false))
 					{
 						$rifcs .= unWrapRegistryObjects($ro->getRif()).NL;
 					}
@@ -2168,20 +2175,30 @@ class Data_source extends MX_Controller {
 				}
 			}
 		}
+        if($formatString == 'dci'){
+            $result =  '<?xml version="1.0"?>'.NL;
+            $result .= '<DigitalContentData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DCI_schema_providers_V4.1.xsd">'.NL;
+            $result .= $dciOutput;
+            $result .= '</DigitalContentData>';
+        }
+        else{
+        $result = wrapRegistryObjects($rifcs);
+        }
 		if($as == 'file')
 		{
 		    $this->load->helper('download');
-		    force_download($dsSlug.'-RIF-CS-Export.xml', wrapRegistryObjects(html_entity_decode($rifcs)));
+            force_download($dsSlug.'-'.strtoupper($formatString).'-Export.xml', $result);
 		}
 		else
 		{
 		 	header('Cache-Control: no-cache, must-revalidate');
 		 	header('Content-type: application/xml');
-		 	echo wrapRegistryObjects(html_entity_decode($rifcs));
+		 	echo $result;
 		}
 	}
 
-	/* Printable quality report */
+
+    /* Printable quality report */
 	function quality_report($id, $status_filter = null){
 		//$data['report'] = $this->getDataSourceReport($id);
 		$data['title'] = 'Data Source Report';
