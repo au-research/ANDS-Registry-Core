@@ -107,7 +107,7 @@ class Transforms_Extension extends ExtensionBase
             try{
 			$xslt_processor = Transforms::get_extrif_to_dci_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars($this->ro->getExtRif()), LIBXML_NOENT);
+			$dom->loadXML($this->ro->getExtRif(), LIBXML_NOENT);
 			$xslt_processor->setParameter('','dateHarvested', date("Y", $this->ro->created));
 			$xslt_processor->setParameter('','dateRequested', date("Y-m-d"));
 			$xml_output = $xslt_processor->transformToXML($dom);
@@ -223,7 +223,7 @@ class Transforms_Extension extends ExtensionBase
                                             $author = $eAuthor->addChild('AuthorID', $doiVal); // uses the first father tag
                                             $author['type']= $researcher_id['type'];
                                         }
-                                        else if(substr('nla.gov.au/', (string)$researcher_id) !== false)
+                                        else if(strpos('nla.gov.au/', (string)$researcher_id) !== false)
                                         {
                                             $doiVal = $this->substringAfter((string)$researcher_id, 'nla.gov.au/');
                                             $author = $eAuthor->addChild('AuthorID', $doiVal); // uses the first father tag
@@ -338,7 +338,7 @@ class Transforms_Extension extends ExtensionBase
 		try{
 			$xslt_processor = Transforms::get_extrif_to_orcid_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML(htmlspecialchars($this->ro->getExtRif()), LIBXML_NOENT);
+			$dom->loadXML($this->ro->getExtRif(), LIBXML_NOENT);
 			$xslt_processor->setParameter('','dateProvided', date("Y-m-d"));
 			$xslt_processor->setParameter('','rda_url', portal_url($this->ro->slug));
 			return $xslt_processor->transformToXML($dom);
