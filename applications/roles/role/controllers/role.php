@@ -215,7 +215,8 @@ class Role extends MX_Controller {
 		$data = file_get_contents("php://input");
 		$data = json_decode($data, true);
 		$role_id = $data['role_id'];
-		$this->roles->delete_role($role_id);
+		if (!$role_id) $role_id = $this->input->post('role_id');
+		if ($role_id) $this->roles->delete_role($role_id);
 	}
 
 	/**
@@ -233,7 +234,7 @@ class Role extends MX_Controller {
 		$data = json_decode($data, true);
 		$parent = $data['parent'];
 		$child = $data['child'];
-		$this->roles->add_relation($parent, $child);
+		if($parent && $child) $this->roles->add_relation($parent, $child);
 	}
 
 	/**
@@ -250,7 +251,7 @@ class Role extends MX_Controller {
 		$data = json_decode($data, true);
 		$parent = $data['parent'];
 		$child = $data['child'];
-		$this->roles->remove_relation($parent, $child);
+		if($parent && $child) $this->roles->remove_relation($parent, $child);
 	}
 
 	/**
