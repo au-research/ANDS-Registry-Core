@@ -90,6 +90,18 @@ class Role_authentication extends CI_Model {
                             'persistent_id' => isset($_SERVER['persistent-id']) ? $_SERVER['persistent-id'] : '',
                             'email' => isset($_SERVER['mail']) ? $_SERVER['mail'] : '',
                         );
+
+                        //send alert email to admin
+                        $subject = 'A new shibboleth user has been automatically registered';
+                        $message = 'A new shibboleth user with the name of '.$name. ' has been automatically registered.';
+                        if(isset($_SERVER['persistent-id'])) $message .= 'With the persistent ID of: '.$_SERVER['persistent-id'].'.';
+                        if(isset($_SERVER['shib-shared-token'])) $message .= 'With the shared token of: '.$_SERVER['shib-shared-token'].'.';
+                        if(isset($_SERVER['mail'])) $message .= 'With the email of: '.$_SERVER['mail'].'.';
+                        $to = get_config_item('site_admin_email');
+                        $headers  = 'MIME-Version: 1.0' . "\r\n";
+                        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                        mail($to, $subject, $message, $headers);
+
                         $this->cosi_db->insert('roles', $data);
                         $this->registerAffiliation($username, 'SHIB_AUTHENTICATED', 'SYSTEM');
                         $result = $this->cosi_db->get_where("roles", array("role_id"=>$username, "role_type_id"=>"ROLE_USER", "enabled"=>DB_TRUE));
