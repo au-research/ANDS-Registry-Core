@@ -44,13 +44,18 @@ class Role_authentication extends CI_Model {
 
     	$result = $this->cosi_db->get_where("roles", array("role_id"=>$username, "role_type_id"=>"ROLE_USER", "enabled"=>DB_TRUE ));
 
-
         if($result->num_rows() > 0){
 			$method = trim($result->row(1)->authentication_service_id);
+
             //update persistent-id
-            if(isset($_SERVER['persistent-id'])){
+            if (isset($_SERVER['persistent-id'])){
                 $this->cosi_db->where('role_id', $username);
                 $this->cosi_db->update('roles', array('persistent_id'=>$_SERVER['persistent-id']));
+            }
+
+            //update email
+            if (isset($_SERVER['mail'])) {
+                $this->cosi_db->where('role_id', $username)->update('roles', array('email' =>$_SERVER['email']));
             }
 
 		} else {
@@ -70,9 +75,11 @@ class Role_authentication extends CI_Model {
                             $this->cosi_db->where('role_id', $role_id);
                             $this->cosi_db->update('roles', array('persistent_id'=>$_SERVER['persistent-id']));
                         }
+                        if (isset($_SERVER['mail'])) {
+                            $this->cosi_db->where('role_id', $username)->update('roles', array('email' =>$_SERVER['mail']));
+                        }
                     } else {
                         //there's no user has the same name, create the user
-                        log_message('debug', 'create new user');
                         $data = array(
                             'role_id' => $username,
                             'role_type_id' => 'ROLE_USER',
@@ -81,6 +88,7 @@ class Role_authentication extends CI_Model {
                             'name'=> $name,
                             'shared_token' => isset($_SERVER['shib-shared-token']) ? $_SERVER['shib-shared-token'] : '',
                             'persistent_id' => isset($_SERVER['persistent-id']) ? $_SERVER['persistent-id'] : '',
+                            'email' => isset($_SERVER['mail']) ? $_SERVER['mail'] : '',
                         );
                         $this->cosi_db->insert('roles', $data);
                         $this->registerAffiliation($username, 'SHIB_AUTHENTICATED', 'SYSTEM');
