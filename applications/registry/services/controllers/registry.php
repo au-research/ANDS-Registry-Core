@@ -91,7 +91,7 @@ class Registry extends MX_Controller {
 
 		$registry_object_results = array();
 		foreach($query->result() as $row){
-			$item = array('value'=>$row->title, 'link'=>base_url('registry_objects/view/'.$row->registry_object_id));
+			$item = array('value'=>$row->title, 'link'=>base_url('registry_object/view/'.$row->registry_object_id));
 			array_push($registry_object_results, $item);
 		}
 
