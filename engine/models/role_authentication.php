@@ -43,8 +43,7 @@ class Role_authentication extends CI_Model {
     {
 
     	$result = $this->cosi_db->get_where("roles", array("role_id"=>$username, "role_type_id"=>"ROLE_USER", "enabled"=>DB_TRUE ));
-        var_dump($_SERVER);
-        die();
+
         if($result->num_rows() > 0){
 			$method = trim($result->row(1)->authentication_service_id);
 
