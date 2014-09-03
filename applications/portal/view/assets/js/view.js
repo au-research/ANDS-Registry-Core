@@ -24,7 +24,7 @@ initLinkedRecords();
 initThemePageLinks();
 
 var fw_cookie = $.cookie('falling_water_dontshow');
-if(!fw_cookie){
+if(!fw_cookie && false){
 	$('.open-popup-link').magnificPopup({
 	  type:'inline',
 	  midClick: true, // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
