@@ -327,29 +327,20 @@
     <xsl:choose>
       <xsl:when test="ro:citationInfo">
         <div id="citation" style="position:relative;clear:both;">
-            <xsl:choose>
-                <xsl:when test="ro:citationInfo/ro:citationMetadata[descendant::text() != '']">
-                    <h4 style="margin-top:30px;">How to Cite this Collection</h4>
-                       <!--   <a title="Add this article to your Mendeley library" target="_blank">
-                       <xsl:attribute name="href">
-                        http://www.mendeley.com/import/?url=<xsl:value-of select="ro:citationInfo/ro:citationMetadata/ro:url"/>
-                        </xsl:attribute>
-                        <img src="http://www.mendeley.com/graphics/mendeley.png"/></a> -->
+         	<h4 style="margin-top:30px;">How to Cite this Collection</h4>
+		<xsl:choose> 
+                    	<xsl:when test="ro:citationInfo/ro:fullCitation[text() !='']">
+				<h5>Full Citation:</h5>
+				<div class="citationDisplay">
+				  <xsl:apply-templates select="ro:citationInfo/ro:fullCitation"/>
+				</div>
+			</xsl:when>
+			<xsl:when test="ro:citationInfo/ro:citationMetadata[descendant::text() != '']">
                         <h5>Citation (Metadata):</h5>
                         <div class="citationDisplay">
                           <xsl:apply-templates select="ro:citationInfo/ro:citationMetadata"/>
                         </div>
                     </xsl:when>
-                    <xsl:when test="ro:citationInfo/ro:fullCitation[text() != '']">
-	                    <h4 style="margin-top:30px;">How to Cite this Collection</h4>
-
-
-                        <h5>Full Citation:</h5>
-                        <div class="citationDisplay">
-                          <xsl:apply-templates select="ro:citationInfo/ro:fullCitation"/>
-                        </div>
-                    </xsl:when>
-
                 </xsl:choose>
             </div>          
         </xsl:when>
