@@ -287,7 +287,7 @@ class Solr {
 					$this->setOpt('q', $value);
 				break;
 				case 'q': 
-					$value = $this->escapeSolrValue($value);
+					// $value = $this->escapeSolrValue($value);
 					// if(trim($value)!="") $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
 					if(trim($value)!="") $this->setOpt('q', $value);
 				break;
