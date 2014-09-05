@@ -439,7 +439,7 @@ class Solr {
 				case 'identifier_value':
 					if(is_array($value)){
 						$identifier_search_query = join('","', $value);
-						$identifier_search_query = '+identifier_value:('.$identifier_search_query.')';
+						$identifier_search_query = '+identifier_value:("'.$identifier_search_query.'")';
 						$this->setOpt('fq', $identifier_search_query);
 					}else{
 						$this->setOpt('fq', '+identifier_value:('.$value.')');
