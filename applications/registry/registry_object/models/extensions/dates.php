@@ -231,7 +231,14 @@ class Dates_Extension extends ExtensionBase
 		utc_timezone();
 
 		$time = strtotime($w3cdtf);
-		if (!$time) { return false; }
+		if (!$time) {
+			//we need to cater for the instance when someone legitimately enters 1st jan 1970
+			if($w3cdtf == "1970-01-01T00:00:00Z"){ 
+				return "1970";
+			}else{
+				return false;
+			} 
+		}
 
 		if (date("H:i:s",$time) == "00:00:00")
 		{

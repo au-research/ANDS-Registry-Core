@@ -327,29 +327,20 @@
     <xsl:choose>
       <xsl:when test="ro:citationInfo">
         <div id="citation" style="position:relative;clear:both;">
-            <xsl:choose>
-                <xsl:when test="ro:citationInfo/ro:citationMetadata[descendant::text() != '']">
-                    <h4 style="margin-top:30px;">How to Cite this Collection</h4>
-                       <!--   <a title="Add this article to your Mendeley library" target="_blank">
-                       <xsl:attribute name="href">
-                        http://www.mendeley.com/import/?url=<xsl:value-of select="ro:citationInfo/ro:citationMetadata/ro:url"/>
-                        </xsl:attribute>
-                        <img src="http://www.mendeley.com/graphics/mendeley.png"/></a> -->
+         	<h4 style="margin-top:30px;">How to Cite this Collection</h4>
+		<xsl:choose> 
+                    	<xsl:when test="ro:citationInfo/ro:fullCitation[text() !='']">
+				<h5>Full Citation:</h5>
+				<div class="citationDisplay">
+				  <xsl:apply-templates select="ro:citationInfo/ro:fullCitation"/>
+				</div>
+			</xsl:when>
+			<xsl:when test="ro:citationInfo/ro:citationMetadata[descendant::text() != '']">
                         <h5>Citation (Metadata):</h5>
                         <div class="citationDisplay">
                           <xsl:apply-templates select="ro:citationInfo/ro:citationMetadata"/>
                         </div>
                     </xsl:when>
-                    <xsl:when test="ro:citationInfo/ro:fullCitation[text() != '']">
-	                    <h4 style="margin-top:30px;">How to Cite this Collection</h4>
-
-
-                        <h5>Full Citation:</h5>
-                        <div class="citationDisplay">
-                          <xsl:apply-templates select="ro:citationInfo/ro:fullCitation"/>
-                        </div>
-                    </xsl:when>
-
                 </xsl:choose>
             </div>          
         </xsl:when>
@@ -1228,57 +1219,58 @@
       <resolved identifier>
 -->
 <xsl:template match="ro:citationInfo/ro:citationMetadata">
-   <p>
-    <xsl:if test="./ro:contributor">
-        <xsl:apply-templates select="ro:contributor"/>
-    </xsl:if>
-    <xsl:if test="./ro:date">
-        (
-        <xsl:apply-templates select="./ro:date"/>
-        ):           
-    </xsl:if>   
-    <xsl:if test="./ro:title != ''">
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="./ro:title"/>.
-    </xsl:if>
-    <xsl:if test="./ro:publisher != ''">
-        <xsl:text> </xsl:text>      
-        <xsl:value-of select="./ro:publisher"/>.
-    </xsl:if>
-    <xsl:if test="./ro:identifier != ''">
-       <xsl:apply-templates select="./ro:identifier[@type = 'doi']" mode="doi_prefixedLink"/>
-       <xsl:apply-templates select="./ro:identifier[@type = 'uri']" mode="uri_prefixedLink"/>
-       <xsl:apply-templates select="./ro:identifier[@type = 'URL']" mode="uri_prefixedLink"/>
-       <xsl:apply-templates select="./ro:identifier[@type = 'url']" mode="uri_prefixedLink"/>
-       <xsl:apply-templates select="./ro:identifier[@type = 'purl']" mode="purl_prefixedLink"/>
-       <xsl:apply-templates select="./ro:identifier[@type = 'handle']" mode="handle_prefixedLink"/>
-       <xsl:apply-templates select="./ro:identifier[@type = 'AU-ANL:PEAU']" mode="nla_prefixedLink"/>
-       <xsl:apply-templates select="./ro:identifier[@type = 'ark']" mode="ark_prefixedLink"/>
-       <xsl:apply-templates select="current()[@type='orcid']" mode = "orcid_prefixedLink"/>
-       <xsl:apply-templates select="./ro:identifier[@type != 'doi' and @type != 'uri' and @type != 'URL' and @type != 'url' and @type != 'purl' and @type != 'handle' and @type != 'AU-ANL:PEAU' and @type != 'ark' and @type!='orcid']" mode="other_prefixedLink"/>
-       <xsl:text>.</xsl:text>
+        <!-- Content:template -->
 
-    </xsl:if>
-  <!--xsl:if test="./ro:version != ''">
-  <xsl:text> </xsl:text>
-  <xsl:value-of select="./ro:version"/>.
-  </xsl:if>
-  <xsl:if test="./ro:placePublished != ''">
-  <xsl:text> </xsl:text>
-  <xsl:value-of select="./ro:placePublished"/>.
-  </xsl:if>
-  <xsl:if test="./ro:publisher != ''">
-  <xsl:text> </xsl:text>
-  <xsl:value-of select="./ro:publisher"/>.
-  </xsl:if>
-  <xsl:if test="./ro:url != ''">
-  <xsl:text> </xsl:text>
-  <xsl:value-of select="./ro:url"/>
-  </xsl:if>
-  <xsl:if test="./ro:context != ''">
-  <xsl:text> </xsl:text>
-  , <xsl:value-of select="./ro:context"/>
-  </xsl:if-->
+    <p>
+        <!-- Enforce ordering of citationMetadata contributors to their seq nums and adding a semi-colon between contributor names- CC-938 -->
+       <xsl:for-each select="./ro:contributor">
+           <xsl:sort select="./@seq" data-type="number" order="ascending"/>
+           <xsl:if test="./@seq">
+                <xsl:apply-templates select="."/>
+                <xsl:if test="following-sibling::ro:contributor">
+                    ;
+                </xsl:if>
+           </xsl:if>
+       </xsl:for-each>
+
+       <xsl:for-each select="./ro:contributor">
+            <xsl:sort select="./@seq" data-type="number" order="ascending"/>
+            <xsl:if test="not(./@seq) ">
+                <xsl:apply-templates select="."/>
+                <xsl:if test="following-sibling::ro:contributor">;
+                </xsl:if>
+            </xsl:if>
+        </xsl:for-each>
+
+
+        <xsl:if test="./ro:date">
+         (
+         <xsl:apply-templates select="./ro:date"/>
+         ):
+     </xsl:if>
+     <xsl:if test="./ro:title != ''">
+         <xsl:text> </xsl:text>
+         <xsl:value-of select="./ro:title"/>.
+     </xsl:if>
+     <xsl:if test="./ro:publisher != ''">
+         <xsl:text> </xsl:text>
+         <xsl:value-of select="./ro:publisher"/>.
+     </xsl:if>
+     <xsl:if test="./ro:identifier != ''">
+        <xsl:apply-templates select="./ro:identifier[@type = 'doi']" mode="doi_prefixedLink"/>
+        <xsl:apply-templates select="./ro:identifier[@type = 'uri']" mode="uri_prefixedLink"/>
+        <xsl:apply-templates select="./ro:identifier[@type = 'URL']" mode="uri_prefixedLink"/>
+        <xsl:apply-templates select="./ro:identifier[@type = 'url']" mode="uri_prefixedLink"/>
+        <xsl:apply-templates select="./ro:identifier[@type = 'purl']" mode="purl_prefixedLink"/>
+        <xsl:apply-templates select="./ro:identifier[@type = 'handle']" mode="handle_prefixedLink"/>
+        <xsl:apply-templates select="./ro:identifier[@type = 'AU-ANL:PEAU']" mode="nla_prefixedLink"/>
+        <xsl:apply-templates select="./ro:identifier[@type = 'ark']" mode="ark_prefixedLink"/>
+        <xsl:apply-templates select="current()[@type='orcid']" mode = "orcid_prefixedLink"/>
+        <xsl:apply-templates select="./ro:identifier[@type != 'doi' and @type != 'uri' and @type != 'URL' and @type != 'url' and @type != 'purl' and @type != 'handle' and @type != 'AU-ANL:PEAU' and @type != 'ark' and @type!='orcid']" mode="other_prefixedLink"/>
+        <xsl:text>.</xsl:text>
+
+     </xsl:if>
+
     <xsl:if test="./ro:identifier != ''">
       <xsl:variable name="theResolvedURL">
         <xsl:apply-templates select="./ro:identifier[@type = 'doi']" mode="doi_resolveURL"/>
@@ -1333,21 +1325,7 @@
       <a href="{./ro:url}" class="external"><xsl:value-of select="./ro:url"/></a>
     </xsl:if>
 </p>
-<!--<span class="Z3988">
-   <xsl:attribute name="title">
-       <xsl:text>ctx_ver=Z39.88-2004</xsl:text>
-       <xsl:text>&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc</xsl:text>
-       <xsl:text>&amp;amp;rfr_id=info%3Asid%2FANDS</xsl:text>
-       <xsl:text>&amp;amp;rft.contributor=</xsl:text><xsl:apply-templates select="ro:contributor"/>
-       <xsl:text>&amp;amp;rft.title=</xsl:text><xsl:value-of select="./ro:title"/>
-       <xsl:text>&amp;amp;rft.place=</xsl:text><xsl:value-of select="./ro:placePublished"/>
-       <xsl:text>&amp;amp;rft_id=</xsl:text><xsl:value-of select="./ro:url"/>
-       <xsl:text>&amp;amp;rft.edition=</xsl:text><xsl:value-of select="./ro:version"/>.
-       <xsl:text>&amp;amp;rft.description=</xsl:text><xsl:value-of select="./ro:context"/>
-   </xsl:attribute>
-</span>
-<span class="Z3988">
-</span> -->
+
 </xsl:template> 
 
 <xsl:template match="//ro:citationInfo/ro:citationMetadata/ro:contributor">

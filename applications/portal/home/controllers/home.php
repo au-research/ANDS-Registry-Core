@@ -187,66 +187,87 @@ class Home extends MX_Controller {
 
 	}
 
-	function sitemap(){
+	function sitemap($page=''){
     	parse_str($_SERVER['QUERY_STRING'], $_GET);
     	$solr_url = get_config_item('solr_url');
     	$ds = '';
     	if(isset($_GET['ds'])) $ds=$_GET['ds'];
 
-    	if($ds==''){
+    	if ($page == 'main'){
+    		$pages = array(
+    			base_url(),
+    			base_url('home/about'),
+    			base_url('home/contact'),
+    			base_url('home/privacy_policy'),
+    			base_url('themes')
+    		);
 
-			$this->load->library('solr');
-			$this->solr->setFacetOpt('field', 'data_source_key');
-			$this->solr->setFacetOpt('limit', 1000);
-			$this->solr->setFacetOpt('mincount', 0);
-
-			$this->solr->executeSearch();
-			$res = $this->solr->getFacet();
-
-	    	$dsfacet = $res->{'facet_fields'}->{'data_source_key'};
-
-			header("Content-Type: text/xml");
-			echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-
-			for($i=0;$i<sizeof($dsfacet);$i+=2){
-				echo '<sitemap>';
-				echo '<loc>'.base_url().'home/sitemap/?ds='.urlencode($dsfacet[$i]).'</loc>';
-				echo '<lastmod>'.date('Y-m-d').'</lastmod>';
-				echo '</sitemap>';
-			}
-
-			echo '</sitemapindex>';
-		}elseif($ds!=''){
-
-			$this->load->library('solr');
-			$filters = array('data_source_key'=>$ds);
-			$this->solr->setFilters($filters);
-			$this->solr->executeSearch();
-			$res = $this->solr->getResult();
-
-	    	$keys = $res->{'docs'};
-			$freq = 'weekly';
-			if($this->is_active($ds)){
-				$freq = 'daily';
-			}
-
-			header("Content-Type: text/xml");
+    		header("Content-Type: text/xml");
 			echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-			foreach($keys as $k) {
-				//var_dump($k);
+			foreach ($pages as $p) {
 				echo '<url>';
-				if ($k->{'slug'}){
-					echo '<loc>'.base_url().$k->{'slug'}.'/'.$k->{'id'}.'</loc>';
-				} else {
-					echo '<loc>'.base_url().'view/?key='.urlencode($k->{'key'}).'</loc>';
-				}
-				echo '<changefreq>'.$freq.'</changefreq>';
-				echo '<lastmod>'.date('Y-m-d', strtotime($k->{'update_timestamp'})).'</lastmod>';
+				echo '<loc>'.$p.'</loc>';
+				echo '<changefreq>weekly</changefreq>';
+				echo '<lastmod>'.date('Y-m-d').'</lastmod>';
 				echo '</url>';
 			}
-
 			echo '</urlset>';
-		}
+    	} else {
+	    	if($ds==''){
+
+				$this->load->library('solr');
+				$this->solr->setFacetOpt('field', 'data_source_key');
+				$this->solr->setFacetOpt('limit', 1000);
+				$this->solr->setFacetOpt('mincount', 0);
+
+				$this->solr->executeSearch();
+				$res = $this->solr->getFacet();
+
+		    	$dsfacet = $res->{'facet_fields'}->{'data_source_key'};
+
+				header("Content-Type: text/xml");
+				echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+				echo '<sitemap><loc>'.base_url('home/sitemap/main').'</loc><lastmod>'.date('Y-m-d').'</lastmod></sitemap>';
+				for($i=0;$i<sizeof($dsfacet);$i+=2){
+					echo '<sitemap>';
+					echo '<loc>'.base_url().'home/sitemap/?ds='.urlencode($dsfacet[$i]).'</loc>';
+					echo '<lastmod>'.date('Y-m-d').'</lastmod>';
+					echo '</sitemap>';
+				}
+
+				echo '</sitemapindex>';
+			}elseif($ds!=''){
+
+				$this->load->library('solr');
+				$filters = array('data_source_key'=>$ds, 'rows'=>50000, 'fl'=>'key, id, update_timestamp, slug');
+				$this->solr->setFilters($filters);
+				$this->solr->executeSearch();
+				$res = $this->solr->getResult();
+
+		    	$keys = $res->{'docs'};
+				$freq = 'weekly';
+				if($this->is_active($ds)){
+					$freq = 'daily';
+				}
+
+				header("Content-Type: text/xml");
+				echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+				foreach($keys as $k) {
+					//var_dump($k);
+					echo '<url>';
+					if ($k->{'slug'}){
+						echo '<loc>'.base_url().$k->{'slug'}.'/'.$k->{'id'}.'</loc>';
+					} else {
+						echo '<loc>'.base_url().'view/?key='.urlencode($k->{'key'}).'</loc>';
+					}
+					echo '<changefreq>'.$freq.'</changefreq>';
+					echo '<lastmod>'.date('Y-m-d', strtotime($k->{'update_timestamp'})).'</lastmod>';
+					echo '</url>';
+				}
+				echo '</urlset>';
+			}
+    	}
+    	
 	}
 
 	public function is_active($ds_key){

@@ -287,7 +287,7 @@ class Solr {
 					$this->setOpt('q', $value);
 				break;
 				case 'q': 
-					$value = $this->escapeSolrValue($value);
+					// $value = $this->escapeSolrValue($value);
 					// if(trim($value)!="") $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
 					if(trim($value)!="") $this->setOpt('q', $value);
 				break;
@@ -439,7 +439,7 @@ class Solr {
 				case 'identifier_value':
 					if(is_array($value)){
 						$identifier_search_query = join('","', $value);
-						$identifier_search_query = '+identifier_value:('.$identifier_search_query.')';
+						$identifier_search_query = '+identifier_value:("'.$identifier_search_query.'")';
 						$this->setOpt('fq', $identifier_search_query);
 					}else{
 						$this->setOpt('fq', '+identifier_value:('.$value.')');

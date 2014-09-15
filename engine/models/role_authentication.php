@@ -44,13 +44,20 @@ class Role_authentication extends CI_Model {
 
     	$result = $this->cosi_db->get_where("roles", array("role_id"=>$username, "role_type_id"=>"ROLE_USER", "enabled"=>DB_TRUE ));
 
-
         if($result->num_rows() > 0){
 			$method = trim($result->row(1)->authentication_service_id);
+
             //update persistent-id
-            if(isset($_SERVER['persistent-id'])){
+            if (isset($_SERVER['persistent-id'])){
                 $this->cosi_db->where('role_id', $username);
                 $this->cosi_db->update('roles', array('persistent_id'=>$_SERVER['persistent-id']));
+            }
+
+            //update email
+            if (isset($_SERVER['mail'])) {
+                $this->cosi_db->where('role_id', $username)->update('roles', array('email' =>$_SERVER['mail']));
+            } elseif (isset($_SERVER['email'])) {
+                $this->cosi_db->where('role_id', $username)->update('roles', array('email' =>$_SERVER['email']));
             }
 
 		} else {
@@ -70,9 +77,18 @@ class Role_authentication extends CI_Model {
                             $this->cosi_db->where('role_id', $role_id);
                             $this->cosi_db->update('roles', array('persistent_id'=>$_SERVER['persistent-id']));
                         }
+                        if (isset($_SERVER['mail'])) {
+                           $this->cosi_db->where('role_id', $username)->update('roles', array('email' =>$_SERVER['mail']));
+                        } elseif (isset($_SERVER['email'])) {
+                           $this->cosi_db->where('role_id', $username)->update('roles', array('email' =>$_SERVER['email']));
+                        }
                     } else {
                         //there's no user has the same name, create the user
-                        log_message('debug', 'create new user');
+                        if (isset($_SERVER['mail'])) {
+                           $email = $_SERVER['mail'];
+                        } elseif (isset($_SERVER['email'])) {
+                           $email = $_SERVER['email'];
+                        } else $email = '';
                         $data = array(
                             'role_id' => $username,
                             'role_type_id' => 'ROLE_USER',
@@ -81,7 +97,20 @@ class Role_authentication extends CI_Model {
                             'name'=> $name,
                             'shared_token' => isset($_SERVER['shib-shared-token']) ? $_SERVER['shib-shared-token'] : '',
                             'persistent_id' => isset($_SERVER['persistent-id']) ? $_SERVER['persistent-id'] : '',
+                            'email' => $email,
                         );
+
+                        //send alert email to admin
+                        $subject = 'A new shibboleth user has been automatically registered';
+                        $message = 'A new shibboleth user with the name of '.$name. ' has been automatically registered.';
+                        if(isset($_SERVER['persistent-id'])) $message .= 'With the persistent ID of: '.$_SERVER['persistent-id'].'.';
+                        if(isset($_SERVER['shib-shared-token'])) $message .= 'With the shared token of: '.$_SERVER['shib-shared-token'].'.';
+                        if(isset($_SERVER['mail'])) $message .= 'With the email of: '.$email.'.';
+                        $to = get_config_item('site_admin_email');
+                        $headers  = 'MIME-Version: 1.0' . "\r\n";
+                        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                        mail($to, $subject, $message, $headers);
+
                         $this->cosi_db->insert('roles', $data);
                         $this->registerAffiliation($username, 'SHIB_AUTHENTICATED', 'SYSTEM');
                         $result = $this->cosi_db->get_where("roles", array("role_id"=>$username, "role_type_id"=>"ROLE_USER", "enabled"=>DB_TRUE));
