@@ -6,9 +6,11 @@
 <div id="list_template" class="hide">
 	<div class="content-header">
 		<h1>Manage My Datasource</h1>
+		<?php if($this->user->hasFunction('REGISTRY_SUPERUSER')): ?>
 		<div class="btn-group">
 			<a class="btn btn-large" data-toggle="modal" href="#new_ds"><i class="icon icon-plus"></i> Add New Datasource</a>
 		</div>
+		<?php endif; ?>
 	</div>
 
 	<div id="breadcrumb">
