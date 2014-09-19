@@ -131,6 +131,9 @@
 			<?php elseif($lib=='popup'):?>
 	            <link href="<?php echo asset_url('lib/popup/magnific-popup.css', 'base');?>" rel="stylesheet" type="text/css">
 	            <script src="<?php echo asset_url('lib/popup/jquery.magnific-popup.min.js', 'base');?>" type="text/javascript"></script>
+
+	        <?php elseif($lib=='d3'):?>
+	        	<script src="http://d3js.org/d3.v3.min.js"></script>
 	        <?php endif; ?>
 
 		<?php endforeach;?>

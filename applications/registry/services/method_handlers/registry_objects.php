@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'relationships', 'identifiers'
+        'get', 'core', 'relationships', 'identifiers'
     );
     
     //var $params, $options, $formatter; 
@@ -31,13 +31,26 @@ class Registry_objectsMethod extends MethodHandler {
         if ($id){
             $ci->load->model('registry_object/registry_objects', 'ro');
             $ro = new _registry_object($id);
-            if($method1 && in_array($method1, $this->valid_methods)) {
-                switch($method1) {
-                    case 'get': $result['registry_object'] = $this->core_handler($ro, $params); break;
-                    case 'relationships' : $result[$method1] = $this->relationships_handler($ro, $params); break;
-                    case 'identifiers' : throw new Exception('Method Not Implemented'); break;
+            $method1s = explode('-', $method1);
+            foreach($method1s as $m1){
+                if($m1 && in_array($m1, $this->valid_methods)) {
+                    switch($m1) {
+                        case 'get':
+                        case 'core':
+                             $result['registry_object'] = $this->core_handler($ro, $params); break;
+                        case 'relationships' : $result[$m1] = $this->relationships_handler($ro, $params); break;
+                        case 'identifiers' : throw new Exception('Method Not Implemented'); break;
+                    }
                 }
-            }
+
+            } 
+            // if($method1 && in_array($method1, $this->valid_methods)) {
+            //     switch($method1) {
+            //         case 'get': $result['registry_object'] = $this->core_handler($ro, $params); break;
+            //         case 'relationships' : $result[$method1] = $this->relationships_handler($ro, $params); break;
+            //         case 'identifiers' : throw new Exception('Method Not Implemented'); break;
+            //     }
+            // }
         } else {
             $result = $this->searcher($params);
         }
