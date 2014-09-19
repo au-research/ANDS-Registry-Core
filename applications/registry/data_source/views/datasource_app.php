@@ -855,7 +855,7 @@
 									</div>
 								</div>
 	
-								<?php if($this->user->hasFunction('REGISTRY_SUPERUSER')):?>
+								<?php if($this->user->hasFunction('REGISTRY_USER')):?>
 								<div class="control-group">
 									<label class="control-label" for="provider_type">Provider Type</label>
 									<div class="controls">
