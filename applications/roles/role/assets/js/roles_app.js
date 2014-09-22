@@ -47,12 +47,14 @@ angular.module('roles_app', ['portal-filters']).
 
 function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 	$scope.roles = {};
-	$scope.limit = 10;
+	$scope.limit = 50;
 	$scope.newrole = {
 		'role_id':'','name':'','role_type_id':'ROLE_USER','enabled':'1','authentication_service_id':'AUTHENTICATION_BUILT_IN'
 	}
 	$scope.tab = 'add_rel';
 	$scope.tab1 = 'search';
+	$scope.filter = '';
+	$scope.filterType = '';
 
 	if($routeParams.add) $scope.tab1 = 'new';
 
@@ -101,6 +103,22 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 				$location.path('/');
 			});
 		}
+	}
+
+	$scope.search = function(item) {
+		var name = item.name.toLowerCase();
+		var email = item.email ? item.email.toLowerCase() : '';
+		if(name.indexOf($scope.filter.toLowerCase())!=-1 || email.indexOf($scope.filter.toLowerCase())!=-1) {
+			return true;
+		}
+		return false;
+	}
+
+	$scope.searchtype = function(item) {
+		if(item.role_type_id==$scope.filterType || $scope.filterType==''){
+			return true;
+		}
+		return false;
 	}
 
 	if($routeParams.id) $scope.select($routeParams.id);
