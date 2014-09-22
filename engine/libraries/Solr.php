@@ -442,7 +442,7 @@ class Solr {
 						$identifier_search_query = '+identifier_value:("'.$identifier_search_query.'")';
 						$this->setOpt('fq', $identifier_search_query);
 					}else{
-						$this->setOpt('fq', '+identifier_value:('.$value.')');
+						$this->setOpt('fq', '+identifier_value:("'.$value.'")');
 					}
 					break;
 				case 'subject_value':
