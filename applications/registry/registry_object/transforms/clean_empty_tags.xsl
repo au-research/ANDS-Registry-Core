@@ -46,6 +46,13 @@
         </xsl:if>
     </xsl:template>
 
+    <xsl:template match="originatingSource[contains(text(),'...')]">
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <xsl:value-of select="substring-before(text(),'...')"/>
+        </xsl:copy>
+    </xsl:template>
+
      <xsl:template match="@dateModified | @dateAccessioned">
         <xsl:if test=". != ''">
                 <xsl:copy-of select="."/>

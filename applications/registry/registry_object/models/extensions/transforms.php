@@ -352,8 +352,7 @@ class Transforms_Extension extends ExtensionBase
 		try{
 			$xslt_processor = Transforms::get_extrif_to_form_transformer();
 			$dom = new DOMDocument();
-            $rifcs = html_entity_decode($rifcs);
-			$dom->loadXML(str_replace('&', '&amp;' , $rifcs), LIBXML_NOENT);
+			$dom->loadXML($rifcs, LIBXML_NOENT);
 			$xslt_processor->setParameter('','base_url',base_url());
 			return html_entity_decode($xslt_processor->transformToXML($dom));
 		} catch (Exception $e) {

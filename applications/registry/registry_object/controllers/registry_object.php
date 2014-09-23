@@ -255,7 +255,9 @@ class Registry_object extends MX_Controller {
 		//exit();
 		try{
 			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
-			$this->importer->setXML(wrapRegistryObjects($xml));
+            $xml = wrapRegistryObjects($xml);
+            $this->importer->validateRIFCS($xml);
+            $this->importer->setXML($xml);
 			$this->importer->setDatasource($ds);
 			$this->importer->commit();
 		}

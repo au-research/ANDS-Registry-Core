@@ -624,7 +624,7 @@
 		</tr>
 	</xsl:template>
 	
-	<xsl:template match="ro:relation/ro:url">
+	<xsl:template match="ro:relation/ro:url  | ro:electronic/ro:value | ro:electronic/ro:title | ro:electronic/ro:byteSize | ro:electronic/ro:mediaType | ro:electronic/ro:notes">
 		<tr>	
 			<td class="attribute">
 				<xsl:value-of select="local-name()"/><xsl:text>: </xsl:text>
@@ -677,7 +677,6 @@
 			</td>
 		</tr>
 	</xsl:template>
-
 
 	<xsl:template match="node()">
 		<tr>
