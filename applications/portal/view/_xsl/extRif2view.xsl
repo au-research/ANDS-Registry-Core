@@ -327,7 +327,7 @@
     <xsl:choose>
       <xsl:when test="ro:citationInfo">
         <div id="citation" style="position:relative;clear:both;">
-         	<h4 style="margin-top:30px;">How to Cite this Collection</h4>
+         	<h4 style="margin-top:30px;">Suggested Citation</h4>
 		<xsl:choose> 
                     	<xsl:when test="ro:citationInfo/ro:fullCitation[text() !='']">
 				<h5>Full Citation:</h5>
