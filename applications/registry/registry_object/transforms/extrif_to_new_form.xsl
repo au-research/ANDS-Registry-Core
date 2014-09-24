@@ -1310,30 +1310,79 @@
                     </span>
                     <div class="separate_line"/><br/>
                     <label class="control-label" for="Title">Target: </label>
-                    <span class="inputs_group">
-                        <input type="text" class="input-small"  name="target" placeholder="Target" value="{@target}"/>
-                    </span>
+                    <xsl:choose>
+                        <xsl:when test="@target">
+                            <span class="inputs_group">
+                                <input type="text" class="input-small"  name="target" placeholder="Target" value="{@target}"/>
+                            </span>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <span class="inputs_group">
+                                <input type="text" class="input-small"  name="target" placeholder="Target" value=""/>
+                            </span>
+                        </xsl:otherwise>
+                    </xsl:choose>
                     <xsl:if test="ancestor::ro:collection">
                         <div class="separate_line"/><br/>
                         <label class="control-label" for="Title">Title: </label>
-                        <span class="inputs_group">
-                            <input type="text" class="input-large" name="title" placeholder="Title" value="{ro:title}"/>
-                        </span>
+                        <xsl:choose>
+                            <xsl:when test="ro:title">
+                                <span class="inputs_group">
+                                    <input type="text" class="input-large" name="title" placeholder="Title" value="{ro:title}"/>
+                                </span>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <span class="inputs_group">
+                                    <input type="text" class="input-large" name="title" placeholder="Title" value=""/>
+                                </span>
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <div class="separate_line"/><br/>
                         <label class="control-label" for="notes">Notes: </label>
-                        <span class="inputs_group">
-                            <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value="{ro:notes}"/>
-                        </span>
+                        <xsl:choose>
+                            <xsl:when test="ro:notes">
+                                <xsl:apply-templates select="ro:notes"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <span class="inputs_group">
+                                    <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value=""/>
+                                </span>
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <div class="separate_line"/><br/>
+                        <button class="btn btn-primary addNew" type="electronic_addr_notes" add_new_type="electronic_addr_notes">
+                            <i class="icon-plus icon-white"></i> Add Notes
+                        </button>
+                        <br/>
                         <label class="control-label" for="mediaType">Media Type: </label>
-                        <span class="inputs_group">
-                            <input type="text" class="input-large" name="mediaType" placeholder="Media ype" value="{ro:mediaType}"/>
-                        </span>
+                        <xsl:choose>
+                            <xsl:when test="ro:mediaType">
+                                <xsl:apply-templates select="ro:mediaType"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <span class="inputs_group">
+                                    <input type="text" class="input-large" name="mediaType" placeholder="Media ype" value=""/>
+                                </span>
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <div class="separate_line"/><br/>
+                        <button class="btn btn-primary addNew" type="mediaType" add_new_type="mediaType">
+                            <i class="icon-plus icon-white"></i> Add Media Type
+                        </button>
+                        <br/>
                         <label class="control-label" for="byteSize">Byte Size: </label>
-                        <span class="inputs_group">
-                            <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value="{ro:byteSize}"/>
-                        </span>
+                        <xsl:choose>
+                            <xsl:when test="ro:byteSize">
+                                <span class="inputs_group">
+                                    <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value="{ro:byteSize}"/>
+                                </span>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <span class="inputs_group">
+                                    <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value=""/>
+                                </span>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:if>
                 </div>
             </div>
@@ -1372,6 +1421,18 @@
 
 		</div>
 	</xsl:template>
+
+    <xsl:template match="ro:notes">
+        <span class="inputs_group">
+            <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value="{text()}"/>
+        </span>
+    </xsl:template>
+
+    <xsl:template match="ro:mediaType">
+        <span class="inputs_group">
+            <input type="text" class="input-large" name="mediaType" placeholder="Media ype" value="{text()}"/>
+        </span>
+    </xsl:template>
 
 	<xsl:template match="ro:arg">
 		<div class="aro_box_part" type="arg">
@@ -1860,7 +1921,7 @@
         </span>
 
         <span class="inputs_group template" type="electronic_addr_notes">
-            <input type="text" class="input-large" name="Notes" placeholder="Notes" value=""/>
+            <input type="text" class="input-large" name="notes" placeholder="Notes" value=""/>
         </span>
 
 		<div class="aro_box_part template" type="physical">

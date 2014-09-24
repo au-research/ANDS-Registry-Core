@@ -53,7 +53,7 @@
         </xsl:copy>
     </xsl:template>
 
-     <xsl:template match="@dateModified | @dateAccessioned">
+     <xsl:template match="@dateModified | @dateAccessioned | @target">
         <xsl:if test=". != ''">
                 <xsl:copy-of select="."/>
         </xsl:if>
@@ -189,6 +189,16 @@
                 <xsl:copy>
                     <xsl:apply-templates select="@* | node()" />
                 </xsl:copy>   
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="electronic/title | electronic/notes | electronic/mediaType | electronic/byteSize">
+        <xsl:choose>
+            <xsl:when test="text() != ''">
+                <xsl:copy>
+                    <xsl:apply-templates select="node()" />
+                </xsl:copy>
             </xsl:when>
         </xsl:choose>
     </xsl:template>
