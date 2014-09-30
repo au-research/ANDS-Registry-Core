@@ -1227,7 +1227,7 @@
            <xsl:sort select="./@seq" data-type="number" order="ascending"/>
            <xsl:if test="./@seq">
                 <xsl:apply-templates select="."/>
-                <xsl:if test="following-sibling::ro:contributor">
+               <xsl:if test="position()!=last()">
                     ;
                 </xsl:if>
            </xsl:if>
@@ -1237,7 +1237,7 @@
             <xsl:sort select="./@seq" data-type="number" order="ascending"/>
             <xsl:if test="not(./@seq) ">
                 <xsl:apply-templates select="."/>
-                <xsl:if test="following-sibling::ro:contributor">;
+                <xsl:if test="position()!=last()">; 
                 </xsl:if>
             </xsl:if>
         </xsl:for-each>
