@@ -263,8 +263,13 @@ class Solr {
 		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.01 description_value^0.05 identifier_value^0.05 tag_search^0.05 fulltext^0.00001');
 
 		// Amount of slop applied to phrases in the user's query string filter (1 = 1 word apart)
-		$this->setOpt('qs', '1');
-
+		// Disable slopping for exact phrase search
+		if($filters['q'] && substr_count('"', $filters['q']) != 0){
+			$this->setOpt('qs', '1');
+		}
+		
+		
+		
 		// Score boosting applied to phrases based on how many parts of the phrase match
 		$this->setOpt('pf', 'title_search^5 description_value^0.5');
 		$this->setOpt('pf2', 'title_search^20 description_value^5 description_value~5^3');
