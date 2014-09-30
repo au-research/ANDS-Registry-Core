@@ -482,7 +482,7 @@ function initEditForm(){
 			}
 		}
 		//found it, geez
-		log(where);
+		// log(where);
 		//add the DOM
 		var new_dom = $(template).clone().removeClass('template').insertBefore(where).hide().slideDown();
 		assignFieldID(new_dom);
