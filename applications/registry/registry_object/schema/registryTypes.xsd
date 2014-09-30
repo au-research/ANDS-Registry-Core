@@ -141,6 +141,10 @@ date.</xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="title" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="notes" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="mediaType" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="byteSize" type="xsd:string" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="arg" minOccurs="0" maxOccurs="unbounded">
                 <xsd:complexType>
                     <xsd:simpleContent>
@@ -179,6 +183,14 @@ date.</xsd:documentation>
             <xsd:annotation>
                 <xsd:documentation>A value taken from a controlled vocabulary indicating the type of
                     electronic address.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="target" use="optional" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>Clicking the URL within electronic/value may perform one of two functions.  Populate electronic/@target with one of the following values to indicate which function is served:
+                    Proposed values:
+                    landingPage - URL takes you to the metadata for the collection
+                    directDownload - URL triggers a direct download</xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
     </xsd:complexType>

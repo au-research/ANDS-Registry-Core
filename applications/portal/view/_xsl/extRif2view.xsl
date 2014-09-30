@@ -327,7 +327,7 @@
     <xsl:choose>
       <xsl:when test="ro:citationInfo">
         <div id="citation" style="position:relative;clear:both;">
-         	<h4 style="margin-top:30px;">How to Cite this Collection</h4>
+         	<h4 style="margin-top:30px;">Suggested Citation</h4>
 		<xsl:choose> 
                     	<xsl:when test="ro:citationInfo/ro:fullCitation[text() !='']">
 				<h5>Full Citation:</h5>
@@ -1356,17 +1356,17 @@
 
       <xsl:variable name="url">
           <xsl:choose>
-              <xsl:when test="string-length(.)>30">
-                <xsl:value-of select="substring(.,0,30)"/>...
+              <xsl:when test="string-length(ro:value/text())>30">
+                <xsl:value-of select="substring(ro:value/text(),0,30)"/>...
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="."/>
+                <xsl:value-of select="ro:value/text()"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable> 
     <a>
         <xsl:attribute name="href">
-            <xsl:value-of select="."/>
+            <xsl:value-of select="ro:value/text()"/>
         </xsl:attribute>
         <xsl:attribute name="class">recordOutBound</xsl:attribute>
         <xsl:attribute name="type">electronic_address</xsl:attribute>

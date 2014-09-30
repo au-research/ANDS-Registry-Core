@@ -344,10 +344,11 @@ class Data_source extends MX_Controller {
 						$ro->save();
 					}
 				}
-			}
-
+      }
+      //some value are not meant to be updated
+      $blocked_value = array('data_source_id', 'created', 'key');
 			//update the actual value
-			if(!is_null($new_value) && $new_value != $ds->{$attrib}) {
+			if(!is_null($new_value) && $new_value != $ds->{$attrib} && !in_array($attrib, $blocked_value)) {
 				$ds->{$attrib} = $new_value;
 				$updated_values[] = array(
 					'key' => $attrib,
