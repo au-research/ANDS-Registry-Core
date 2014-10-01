@@ -1969,7 +1969,7 @@
                         <label class="control-label" for="mediaType">Media Type: </label>
                         <div class="controls">
                             <span class="inputs_group">
-                                <input type="text" class="input-large" name="mediaType" placeholder="Media ype" value=""/>
+                                <input type="text" class="input-large" name="mediaType" placeholder="Media Type" value=""/>
                             </span>
                         </div>
                     </div>

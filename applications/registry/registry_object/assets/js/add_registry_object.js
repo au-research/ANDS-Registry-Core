@@ -1661,23 +1661,27 @@ function getRIFCSforTab(tab, hasField){
 						var this_fragment = '';
 						//opening tag
 						if($(this).attr('type')=='electronic'){
-							this_fragment +='<'+$(this).attr('type')+' type="'+htmlEntities($('input[name=type]', this).val())+'" field_id="' +$(this).attr('field_id')+'" target="'+htmlEntities($('input[name=target]', this).val())+'">';
+							this_fragment +='<'+$(this).attr('type')+' type="'+htmlEntities($('input[name=type]', this).val())+'" field_id="' +$(this).attr('field_id')+'"';
+							if($('input[name=target]', this).length > 0) {
+								this_fragment += ' target="'+htmlEntities($('input[name=target]', this).val())+'"';
+							}
+							this_fragment +='>';
 							this_fragment +='<value>'+htmlEntities($('input[name=value]',this).val())+'</value>';
-                            this_fragment +='<title>'+htmlEntities($('input[name=title]',this).val())+'</title>';
+                            if($('input[name=title]', this).length > 0) this_fragment +='<title>'+htmlEntities($('input[name=title]',this).val())+'</title>';
                             $('input[name=notes]',this).each(function(){
                                 this_fragment +='<notes>'+htmlEntities($(this).val())+'</notes>';
                             });
                             $('input[name=mediaType]', this).each(function(){
                                 this_fragment +='<mediaType>'+htmlEntities($(this).val())+'</mediaType>';
                             });
-                            this_fragment +='<byteSize>'+htmlEntities($('input[name=byteSize]',this).val())+'</byteSize>';
+                           if($('input[name=byteSize]', this).length > 0)  this_fragment +='<byteSize>'+htmlEntities($('input[name=byteSize]',this).val())+'</byteSize>';
 							//deal with args here
-							var args = $('.aro_box_part', this);
-							$.each(args, function(){
-								this_fragment += '<'+$(this).attr('type')+' field_id="' +$(this).attr('field_id')+'" type="'+htmlEntities($('input[name=type]', this).val())+'" required="'+$('input[name=required]', this).val()+'" use="'+$('input[name=use]', this).val()+'">';
-								this_fragment += htmlEntities($('input[name=value]', this).val());
-								this_fragment +='</'+$(this).attr('type')+'>';
-							});
+							// var args = $('.aro_box_part', this);
+							// $.each(args, function(){
+							// 	this_fragment += '<'+$(this).attr('type')+' field_id="' +$(this).attr('field_id')+'" type="'+htmlEntities($('input[name=type]', this).val())+'" required="'+$('input[name=required]', this).val()+'" use="'+$('input[name=use]', this).val()+'">';
+							// 	this_fragment += htmlEntities($('input[name=value]', this).val());
+							// 	this_fragment +='</'+$(this).attr('type')+'>';
+							// });
 							this_fragment +='</'+$(this).attr('type')+'>';//closing tag
 						}else if($(this).attr('type')=='physical'){
 							//deal with address parts here
