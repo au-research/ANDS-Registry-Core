@@ -1302,135 +1302,135 @@
                     <label class="control-label" for="title">Electronic Address: </label>
                     <button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
                 </div>
-                <div class="controls">
+                
+            	<div class="control-group">
+            		<label class="control-label" for="value">Value: </label>
+            		<div class="controls">
+            			<span class="inputs_group">
+                		    <input type="text" class="inner_input" name="value" placeholder="Value" value="{ro:value}" valid-type="url"/>
+                		    <input type="text" class="inner_input_type rifcs-type" vocab="RIFCSElectronicAddressType" name="type" placeholder="Type" value="{@type}"/>
+                		</span>
+                        <xsl:if test="ancestor::ro:service">
+                            <button class="btn btn-primary showParts"><i class="icon-chevron-right icon-white"></i></button>
+                            <div class="parts hide">
+                                <xsl:apply-templates select="ro:arg"/>
+                                <div class="separate_line"/>
+                                <button class="btn btn-primary addNew" type="arg" add_new_type="arg">
+                                    <i class="icon-plus icon-white"></i> Add Args
+                                </button>
+                            </div>
+                        </xsl:if>
+            		</div>
+            	</div>
+                <div class="separate_line"/>
+                
+                
+                <xsl:if test="ancestor::ro:collection">
+                    <div class="control-group">
+                        <label class="control-label" for="Title">Target: </label>
+                        <div class="controls">
+                            <xsl:choose>
+                                <xsl:when test="@target">
+                                    <span class="inputs_group">
+                                        <input type="text" class="input-small"  name="target" placeholder="Target" value="{@target}"/>
+                                    </span>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <span class="inputs_group">
+                                        <input type="text" class="input-small"  name="target" placeholder="Target" value=""/>
+                                    </span>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </div>
+                    </div>
+
+                    <div class="separate_line"/>
                 	<div class="control-group">
-                		<label class="control-label" for="value">Value: </label>
+                		<label class="control-label" for="value">Title: </label>
                 		<div class="controls">
-                			<span class="inputs_group">
-	                		    <input type="text" class="inner_input" name="value" placeholder="Value" value="{ro:value}" valid-type="url"/>
-	                		    <input type="text" class="inner_input_type rifcs-type" vocab="RIFCSElectronicAddressType" name="type" placeholder="Type" value="{@type}"/>
-	                		</span>
+                			<xsl:choose>
+	                            <xsl:when test="ro:title">
+	                                <span class="inputs_group">
+	                                    <input type="text" class="input-large" name="title" placeholder="Title" value="{ro:title}"/>
+	                                </span>
+	                            </xsl:when>
+	                            <xsl:otherwise>
+	                                <span class="inputs_group">
+	                                    <input type="text" class="input-large" name="title" placeholder="Title" value=""/>
+	                                </span>
+	                            </xsl:otherwise>
+	                        </xsl:choose>
                 		</div>
                 	</div>
+                   
+                    <div class="separate_line"/>
+
+					<xsl:choose>
+                        <xsl:when test="ro:notes">
+                            <xsl:apply-templates select="ro:notes"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <div class="control-group">
+                                <label for="" class="control-label">Note: </label>
+                                <div class="controls">
+                                    <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value=""/>
+                                </div>
+                            </div>
+                        </xsl:otherwise>
+                    </xsl:choose>
+
+                    <div class="separate_line"/>
+                    <div class="control-group">                            
+                        <div class="controls">
+                            <button class="btn btn-primary addNew" type="electronic_addr_notes" add_new_type="electronic_addr_notes">
+                                <i class="icon-plus icon-white"></i> Add Notes
+                            </button>
+                        </div>
+                    </div>
+                   
+
+                    <xsl:choose>
+                        <xsl:when test="ro:mediaType">
+                            <xsl:apply-templates select="ro:mediaType"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <div class="control-group">
+                                <label for="" class="control-label">Media Type: </label>
+                                <div class="controls">
+                                    <input type="text" class="input-large" name="mediaType" placeholder="Media Type" value="{text()}"/>
+                                </div>
+                            </div>
+                        </xsl:otherwise>
+                    </xsl:choose>
+
                     <div class="separate_line"/>
                     <div class="control-group">
-                    	<label class="control-label" for="Title">Target: </label>
-                    	<div class="controls">
-                    		<xsl:choose>
-                    		    <xsl:when test="@target">
-                    		        <span class="inputs_group">
-                    		            <input type="text" class="input-small"  name="target" placeholder="Target" value="{@target}"/>
-                    		        </span>
-                    		    </xsl:when>
-                    		    <xsl:otherwise>
-                    		        <span class="inputs_group">
-                    		            <input type="text" class="input-small"  name="target" placeholder="Target" value=""/>
-                    		        </span>
-                    		    </xsl:otherwise>
-                    		</xsl:choose>
-                    	</div>
+                        <div class="controls">
+                            <button class="btn btn-primary addNew" type="mediaType" add_new_type="mediaType">
+                                <i class="icon-plus icon-white"></i> Add Media Type
+                            </button>
+                        </div>
                     </div>
-                    
-                    <xsl:if test="ancestor::ro:collection">
-                        <div class="separate_line"/>
-                    	<div class="control-group">
-                    		<label class="control-label" for="value">Title: </label>
-                    		<div class="controls">
-                    			<xsl:choose>
-		                            <xsl:when test="ro:title">
-		                                <span class="inputs_group">
-		                                    <input type="text" class="input-large" name="title" placeholder="Title" value="{ro:title}"/>
-		                                </span>
-		                            </xsl:when>
-		                            <xsl:otherwise>
-		                                <span class="inputs_group">
-		                                    <input type="text" class="input-large" name="title" placeholder="Title" value=""/>
-		                                </span>
-		                            </xsl:otherwise>
-		                        </xsl:choose>
-                    		</div>
-                    	</div>
-                       
-                        <div class="separate_line"/>
 
-						<xsl:choose>
-                            <xsl:when test="ro:notes">
-                                <xsl:apply-templates select="ro:notes"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <div class="control-group">
-                                    <label for="" class="control-label">Note: </label>
-                                    <div class="controls">
-                                        <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value=""/>
-                                    </div>
-                                </div>
-                            </xsl:otherwise>
-                        </xsl:choose>
-
-                        <div class="separate_line"/>
-                        <div class="control-group">                            
-                            <div class="controls">
-                                <button class="btn btn-primary addNew" type="electronic_addr_notes" add_new_type="electronic_addr_notes">
-                                    <i class="icon-plus icon-white"></i> Add Notes
-                                </button>
-                            </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mediaType">Byte Size: </label>
+                        <div class="controls">
+                            <xsl:choose>
+                                <xsl:when test="ro:byteSize">
+                                    <span class="inputs_group">
+                                        <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value="{ro:byteSize}"/>
+                                    </span>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <span class="inputs_group">
+                                        <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value=""/>
+                                    </span>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </div>
-                       
-
-                        <xsl:choose>
-                            <xsl:when test="ro:mediaType">
-                                <xsl:apply-templates select="ro:mediaType"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <div class="control-group">
-	                                <label for="" class="control-label">Media Type: </label>
-	                                <div class="controls">
-	                                    <input type="text" class="input-large" name="mediaType" placeholder="Media Type" value="{text()}"/>
-	                                </div>
-	                            </div>
-                            </xsl:otherwise>
-                        </xsl:choose>
-
-                        <div class="separate_line"/>
-                        <div class="control-group">
-                            <div class="controls">
-                                <button class="btn btn-primary addNew" type="mediaType" add_new_type="mediaType">
-                                    <i class="icon-plus icon-white"></i> Add Media Type
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label class="control-label" for="mediaType">Byte Size: </label>
-                            <div class="controls">
-                                <xsl:choose>
-                                    <xsl:when test="ro:byteSize">
-                                        <span class="inputs_group">
-                                            <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value="{ro:byteSize}"/>
-                                        </span>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <span class="inputs_group">
-                                            <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value=""/>
-                                        </span>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </div>
-                        </div>
-                    </xsl:if>
-                </div>
+                    </div>
+                </xsl:if>
             </div>
-
-			<xsl:if test="ancestor::ro:service">
-				<button class="btn btn-primary showParts"><i class="icon-chevron-right icon-white"></i></button>
-				<div class="parts hide">
-					<xsl:apply-templates select="ro:arg"/>
-					<div class="separate_line"/>
-					<button class="btn btn-primary addNew" type="arg" add_new_type="arg">
-						<i class="icon-plus icon-white"></i> Add Args
-					</button>
-				</div>
-			</xsl:if>
 		</div>
 	</xsl:template>
 
@@ -1455,19 +1455,25 @@
 	</xsl:template>
 
     <xsl:template match="ro:notes">
-        <div class="control-group">
-            <label for="" class="control-label">Note: </label>
-            <div class="controls">
-                <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value="{text()}"/>
+        <div class="aro_box_part">
+            <div class="control-group">
+                <label for="" class="control-label">Note: </label>
+                <div class="controls">
+                    <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value="{text()}"/>
+                    <button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
+                </div>
             </div>
         </div>
     </xsl:template>
 
     <xsl:template match="ro:mediaType">
-    	<div class="control-group">
-            <label for="" class="control-label">Media Type: </label>
-            <div class="controls">
-                <input type="text" class="input-large" name="mediaType" placeholder="Media Type" value="{text()}"/>
+        <div class="aro_box_part">
+        	<div class="control-group">
+                <label for="" class="control-label">Media Type: </label>
+                <div class="controls">
+                    <input type="text" class="input-large" name="mediaType" placeholder="Media Type" value="{text()}"/>
+                    <button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
+                </div>
             </div>
         </div>
     </xsl:template>
@@ -1899,17 +1905,28 @@
                     <label class="control-label" for="title">Electronic Address: </label>
                     <button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
                 </div>
-                <div class="controls">
-                    <div class="control-group">
-                        <label class="control-label" for="value">Value: </label>
-                        <div class="controls">
-                            <span class="inputs_group">
-                                <input type="text" class="inner_input" name="value" placeholder="Value" value="" valid-type="url"/>
-                                <input type="text" class="inner_input_type rifcs-type" vocab="RIFCSElectronicAddressType" name="type" placeholder="Type" value=""/>
-                            </span>
-                        </div>
+               
+                <div class="control-group">
+                    <label class="control-label" for="value">Value: </label>
+                    <div class="controls">
+                        <span class="inputs_group">
+                            <input type="text" class="inner_input" name="value" placeholder="Value" value="" valid-type="url"/>
+                            <input type="text" class="inner_input_type rifcs-type" vocab="RIFCSElectronicAddressType" name="type" placeholder="Type" value=""/>
+                        </span>
+                        <xsl:if test="//ro:service">
+                            <button class="btn btn-primary showParts"><i class="icon-chevron-right icon-white"></i></button>
+                            <div class="parts hide">
+                                <div class="separate_line"/>
+                                <button class="btn btn-primary addNew" type="arg" add_new_type="arg">
+                                    <i class="icon-plus icon-white"></i> Add Args
+                                </button>
+                            </div>
+                        </xsl:if>
                     </div>
-                    <div class="separate_line"/>
+                </div>
+                <div class="separate_line"/>
+                
+                <xsl:if test="//ro:collection">
                     <div class="control-group">
                         <label class="control-label" for="Title">Target: </label>
                         <div class="controls">
@@ -1918,93 +1935,83 @@
                             </span>
                         </div>
                     </div>
-                    
-                    <xsl:if test="//ro:collection">
-                        <div class="separate_line"/>
-                        <div class="control-group">
-                            <label class="control-label" for="value">Title: </label>
-                            <div class="controls">
-                                <span class="inputs_group">
-                                    <input type="text" class="input-large" name="title" placeholder="Title" value=""/>
-                                </span>
-                            </div>
-                        </div>
-                       
-                        <div class="separate_line"/>
-                        <div class="control-group">
-                            <label class="control-label" for="value">Notes: </label>
-                            <div class="controls">
-                                <span class="inputs_group">
-                                    <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value=""/>
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="separate_line"/>
-                        <div class="control-group">
-                            <div class="controls">
-                                <button class="btn btn-primary addNew" type="electronic_addr_notes" add_new_type="electronic_addr_notes">
-                                    <i class="icon-plus icon-white"></i> Add Notes
-                                </button>
-                            </div>
-                        </div>
-                       
-
-                        <div class="control-group">
-                            <label class="control-label" for="mediaType">Media Type: </label>
-                            <div class="controls">
-                                <span class="inputs_group">
-                                    <input type="text" class="input-large" name="mediaType" placeholder="Media ype" value=""/>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="separate_line"/>
-                        <div class="control-group">
-                            <div class="controls">
-                                <button class="btn btn-primary addNew" type="mediaType" add_new_type="mediaType">
-                                    <i class="icon-plus icon-white"></i> Add Media Type
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label class="control-label" for="mediaType">Byte Size: </label>
-                            <div class="controls">
-                                <span class="inputs_group">
-                                    <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value=""/>
-                                </span>
-                            </div>
-                        </div>
-                    </xsl:if>
-                </div>
-            </div>
-
-            <xsl:if test="//ro:service">
-                <button class="btn btn-primary showParts"><i class="icon-chevron-right icon-white"></i></button>
-                <div class="parts hide">
                     <div class="separate_line"/>
-                    <button class="btn btn-primary addNew" type="arg" add_new_type="arg">
-                        <i class="icon-plus icon-white"></i> Add Args
-                    </button>
-                </div>
-            </xsl:if>
+                    <div class="control-group">
+                        <label class="control-label" for="value">Title: </label>
+                        <div class="controls">
+                            <span class="inputs_group">
+                                <input type="text" class="input-large" name="title" placeholder="Title" value=""/>
+                            </span>
+                        </div>
+                    </div>
+                   
+                    <div class="separate_line"/>
+                    <div class="control-group">
+                        <label class="control-label" for="value">Notes: </label>
+                        <div class="controls">
+                            <span class="inputs_group">
+                                <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value=""/>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="separate_line"/>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button class="btn btn-primary addNew" type="electronic_addr_notes" add_new_type="electronic_addr_notes">
+                                <i class="icon-plus icon-white"></i> Add Notes
+                            </button>
+                        </div>
+                    </div>
+                   
+
+                    <div class="control-group">
+                        <label class="control-label" for="mediaType">Media Type: </label>
+                        <div class="controls">
+                            <span class="inputs_group">
+                                <input type="text" class="input-large" name="mediaType" placeholder="Media ype" value=""/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="separate_line"/>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button class="btn btn-primary addNew" type="mediaType" add_new_type="mediaType">
+                                <i class="icon-plus icon-white"></i> Add Media Type
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="mediaType">Byte Size: </label>
+                        <div class="controls">
+                            <span class="inputs_group">
+                                <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value=""/>
+                            </span>
+                        </div>
+                    </div>
+                </xsl:if>
+                
+            </div>
         </div>
 
-        <span class="inputs_group template" type="mediaType">
+        <span class="aro_box_part template" type="mediaType">
             <div class="control-group">
             	<label for="" class="control-label">Media Type: </label>
                 <div class="controls">
                     <input type="text" class="input-large" name="mediaType" placeholder="Media Type" value=""/>
+                    <button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
                 </div>
             </div>
         </span>
 
-        <span class="inputs_group template" type="electronic_addr_notes">
+        <span class="aro_box_part template" type="electronic_addr_notes">
             <div class="control-group">
                 <label for="" class="control-label">Note: </label>
                 <div class="controls">
                     <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value=""/>
+                    <button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>
                 </div>
             </div>
         </span>
