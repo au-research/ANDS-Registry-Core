@@ -18,7 +18,6 @@ class Services extends MX_Controller {
 	
 	public function _remap($api_key, $params = array())
 	{
-
 		$this->config->load('services');
 		$service_mapping = parse_ini_file(SERVICES_MODULE_PATH . "config.ini", true);
 		// log_message('debug', 'Services request received from ' . $_SERVER["REMOTE_ADDR"]);
@@ -79,7 +78,7 @@ class Services extends MX_Controller {
 
 		// All the setup is finished! Palm off the handling of the request...
 		ob_start();
-		$status = ($handler->handle() ? SUCCESS : FAILURE);
+		$status = ($handler->handle($params) ? SUCCESS : FAILURE);
 		$this->output->set_output(ob_get_clean());
 
 		// Log this request
@@ -251,8 +250,7 @@ class Services extends MX_Controller {
 	private function getMethodHandler($method)
 	{
 		$handler = null;
-		
-		if ($method && ctype_alnum($method))
+		if ($method)
 		{
 			
 			$path = SERVICES_MODULE_PATH . '/method_handlers/' . strtolower($method) . '.php';

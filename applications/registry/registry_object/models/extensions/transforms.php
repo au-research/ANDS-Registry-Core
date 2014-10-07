@@ -352,8 +352,7 @@ class Transforms_Extension extends ExtensionBase
 		try{
 			$xslt_processor = Transforms::get_extrif_to_form_transformer();
 			$dom = new DOMDocument();
-            $rifcs = html_entity_decode($rifcs);
-			$dom->loadXML(str_replace('&', '&amp;' , $rifcs), LIBXML_NOENT);
+			$dom->loadXML($rifcs, LIBXML_NOENT);
 			$xslt_processor->setParameter('','base_url',base_url());
 			return html_entity_decode($xslt_processor->transformToXML($dom));
 		} catch (Exception $e) {
@@ -462,7 +461,7 @@ class Transforms_Extension extends ExtensionBase
                    {
                        if (is_array($related_party) && isset($related_party[0]))
                        {
-                           $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%','A4  - '.$related_party[0]['title'], $xml_output);
+                           $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%','A4  - ,'.$related_party[0]['title'], $xml_output);
                        } else{
                            $xml_output = str_replace('%%%A4 - '.trim($funder[0]).' - A4%%%
 ','', $xml_output);

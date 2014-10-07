@@ -3065,7 +3065,7 @@ function validateDate(dateText) {
 }
 
 function validateUrl(url) { 
-    var re = /(ftp|http):\/\/([_a-z\d\-]+(\.[_a-z\d\-]+)+)(([_a-z\d\-\\\.\/]+[_a-z\d\-\\\/])+)*/;
+    var re = /(ftp|http|https):\/\/([_a-z\d\-]+(\.[_a-z\d\-]+)+)(([_a-z\d\-\\\.\/]+[_a-z\d\-\\\/])+)*/;
     return re.test(url);
 }
 

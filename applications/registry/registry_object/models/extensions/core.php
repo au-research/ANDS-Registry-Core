@@ -119,7 +119,7 @@ class Core_extension extends ExtensionBase
 		return $this;
 	}
 	
-	function save($change_updated = true)
+	function save($change_updated = false)
 	{
 		// When saving, trigger special business logic if the record status changed
 

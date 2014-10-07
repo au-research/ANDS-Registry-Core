@@ -482,7 +482,7 @@ function initEditForm(){
 			}
 		}
 		//found it, geez
-		//log(where);
+		// log(where);
 		//add the DOM
 		var new_dom = $(template).clone().removeClass('template').insertBefore(where).hide().slideDown();
 		assignFieldID(new_dom);
@@ -605,7 +605,7 @@ function initEditForm(){
 				}
 				xml += '<registryObject group="'+$('input[name=group]',admin).val()+'">';
 				xml += '<key>'+$('input[name=key]', admin).val()+'</key>';
-				xml += '<originatingSource type="'+$('input[name=originatingSourceType]', admin).val()+'">'+$('input[name=originatingSource]',admin).val()+'....</originatingSource>';
+				xml += '<originatingSource type="'+$('input[name=originatingSourceType]', admin).val()+'">'+$('input[name=originatingSource]',admin).val()+'</originatingSource>';
 				xml += '<'+ro_class+' type="'+$('input[name=type]',admin).val()+'" dateModified="'+$('input[name=date_modified]', admin).val()+'" '+dateAccessioned+'>';
 
 				$.each(allTabs, function(){
@@ -619,7 +619,7 @@ function initEditForm(){
 				}
 
 				xml+='</registryObject>';
-
+                //log(xml);
 				/* Keep a backup of the form's RIFCS */
 				$('#myModal .modal-header h3').html('<h3>Take a backup of your Record\'s XML Contents</h3>');
 				$('#myModal .modal-body').html('<div style="width:100%; margin:both; text-align:left;">' + 
@@ -1661,15 +1661,27 @@ function getRIFCSforTab(tab, hasField){
 						var this_fragment = '';
 						//opening tag
 						if($(this).attr('type')=='electronic'){
-							this_fragment +='<'+$(this).attr('type')+' type="'+htmlEntities($('input[name=type]', this).val())+'" field_id="' +$(this).attr('field_id')+'">';
+							this_fragment +='<'+$(this).attr('type')+' type="'+htmlEntities($('input[name=type]', this).val())+'" field_id="' +$(this).attr('field_id')+'"';
+							if($('input[name=target]', this).length > 0) {
+								this_fragment += ' target="'+htmlEntities($('input[name=target]', this).val())+'"';
+							}
+							this_fragment +='>';
 							this_fragment +='<value>'+htmlEntities($('input[name=value]',this).val())+'</value>';
+                            if($('input[name=title]', this).length > 0) this_fragment +='<title>'+htmlEntities($('input[name=title]',this).val())+'</title>';
+                            $('input[name=notes]',this).each(function(){
+                                this_fragment +='<notes>'+htmlEntities($(this).val())+'</notes>';
+                            });
+                            $('input[name=mediaType]', this).each(function(){
+                                this_fragment +='<mediaType>'+htmlEntities($(this).val())+'</mediaType>';
+                            });
+                           if($('input[name=byteSize]', this).length > 0)  this_fragment +='<byteSize>'+htmlEntities($('input[name=byteSize]',this).val())+'</byteSize>';
 							//deal with args here
-							var args = $('.aro_box_part', this);
-							$.each(args, function(){
-								this_fragment += '<'+$(this).attr('type')+' field_id="' +$(this).attr('field_id')+'" type="'+htmlEntities($('input[name=type]', this).val())+'" required="'+$('input[name=required]', this).val()+'" use="'+$('input[name=use]', this).val()+'">';
-								this_fragment += htmlEntities($('input[name=value]', this).val());
-								this_fragment +='</'+$(this).attr('type')+'>';
-							});
+							// var args = $('.aro_box_part', this);
+							// $.each(args, function(){
+							// 	this_fragment += '<'+$(this).attr('type')+' field_id="' +$(this).attr('field_id')+'" type="'+htmlEntities($('input[name=type]', this).val())+'" required="'+$('input[name=required]', this).val()+'" use="'+$('input[name=use]', this).val()+'">';
+							// 	this_fragment += htmlEntities($('input[name=value]', this).val());
+							// 	this_fragment +='</'+$(this).attr('type')+'>';
+							// });
 							this_fragment +='</'+$(this).attr('type')+'>';//closing tag
 						}else if($(this).attr('type')=='physical'){
 							//deal with address parts here

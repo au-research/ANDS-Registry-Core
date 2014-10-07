@@ -47,6 +47,7 @@
 				<a href="<?=base_url('home/about');?>">Read more about us...</a>
 			</p>
 			<p class="small">ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.</p>
+			<a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris" target="_blank" class="gov_logo"><img style="height:75px;" src="<?php echo asset_url('images/NCRIS_PROVIDER_rev.png','core');?>" alt="National Collaborative Research Infrastructure Strategy (NCRIS)" /></a>
 			<!-- <a href="http://www.innovation.gov.au/" class="gov_logo"><img src="<?php echo asset_url('images/dept_white.png', 'core');?>" alt="" /></a> -->
 			<a href="http://www.ands.org.au/" class="footer_logo"><img src="<?php echo asset_url('images/footer_logo.jpg', 'core');?>" alt="" /></a>			
 		</div><!-- foot -->		
@@ -130,6 +131,9 @@
 			<?php elseif($lib=='popup'):?>
 	            <link href="<?php echo asset_url('lib/popup/magnific-popup.css', 'base');?>" rel="stylesheet" type="text/css">
 	            <script src="<?php echo asset_url('lib/popup/jquery.magnific-popup.min.js', 'base');?>" type="text/javascript"></script>
+
+	        <?php elseif($lib=='d3'):?>
+	        	<script src="http://d3js.org/d3.v3.min.js"></script>
 	        <?php endif; ?>
 
 		<?php endforeach;?>

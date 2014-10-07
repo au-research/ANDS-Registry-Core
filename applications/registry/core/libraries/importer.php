@@ -193,7 +193,7 @@ class Importer {
 				// Last chance to check valid format of the payload
 					$reValidateBeforeIngest = false;
 				    try{
-						$this->_validateRIFCS($payload);	
+						$this->validateRIFCS($payload);
 					}
 					catch(Exception $e)
 					{
@@ -212,7 +212,7 @@ class Importer {
 						if($reValidateBeforeIngest)
 						{
 							try{
-								$this->_validateRIFCS(wrapRegistryObjects($registryObject->asXML()));
+								$this->validateRIFCS(wrapRegistryObjects($registryObject->asXML()));
 							}
 							catch(Exception $e)
 							{
@@ -432,7 +432,8 @@ class Importer {
 					}
 
 					// Save all our attributes to the object
-					$ro->save();
+                    //TODO:
+					$ro->save($changed);
                     /*
 					//All related objects by any means are affected regardless
 					$related_objects = $ro->getAllRelatedObjects(false, true, true);
@@ -1013,7 +1014,7 @@ class Importer {
 	/**
 	 * 
 	 */
-	private function _validateRIFCS($xml)
+	public function validateRIFCS($xml)
 	{
 		$doc = new DOMDocument('1.0','utf-8');
 		$doc->loadXML($xml);

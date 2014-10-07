@@ -454,3 +454,8 @@ function isValidXML($xml) {
         return false; //this is not valid
     }
 }
+
+function alphasort_name($a, $b){
+	if($a->name == $b->name) return 0;
+	return ($a->name < $a->name) ? -1 : 1;
+}

@@ -28,13 +28,20 @@
 							<input type="text" class="input-medium search-query" placeholder="Filter" ng-model="filter">
 							<select name="" id="" ng-model="limit">
 								<option value="10">View 10</option>
-								<option value="20">View 20</option>
 								<option value="50">View 50</option>
+								<option value="100">View 100</option>
+							</select>
+							<select name="" id="" ng-model="filterType">
+								<option value="">Show All Roles</option>
+								<option value="ROLE_USER">Show User Roles</option>
+								<option value="ROLE_FUNCTIONAL">Show Functional Roles</option>
+								<option value="ROLE_ORGANISATIONAL">Show Organisational Roles</option>
+								<option value="ROLE_DOI_APPID">Show DOI Application ID</option>
 							</select>
 						</form>
 						<hr>
 						<ul class="nav nav-tabs nav-stacked">
-							<li ng-repeat="r in roles | filter:filter | limitTo:limit" ng-class="{r.role_id:'active'}[role.role_id]">
+							<li ng-repeat="r in roles | filter:search | limitTo:limit | filter:searchtype" ng-class="{r.role_id:'active'}[role.role_id]">
 								<a href="#/view/{{r.role_id}}/{{filter}}">{{r.name}} 
 									<br/>
 									<span class="label label-info">{{r.role_type_id | config_readable}}</span>
@@ -175,7 +182,7 @@
 							<div class="control-group">
 								<label for="" class="control-label">Add Functional Role:</label>
 								<div class="controls">
-									<select ng-model="add.functional" ng-options="c.role_id as c.name for c in role.missingRoles.functional"></select>
+									<select ng-model="add.functional" ng-options="c.role_id as c.name for c in role.missingRoles.functional | orderObjectBy:'name'"></select>
 									<button class="btn" ng-show="!loading" ng-click="add_relation(role.role.role_id, add.functional)"><i class="icon icon-plus"></i> Add Role Relation</button>
 								</div>
 							</div>
@@ -183,7 +190,7 @@
 							<div class="control-group">
 								<label for="" class="control-label">Add Organisational Role:</label>
 								<div class="controls">
-									<select ng-model="add.org" ng-options="c.role_id as c.name for c in role.missingRoles.organisational"></select>
+									<select ng-model="add.org" ng-options="c.role_id as c.name for c in role.missingRoles.organisational | orderObjectBy:'name'"></select>
 									<button class="btn" ng-show="!loading" ng-click="add_relation(role.role.role_id, add.org)"><i class="icon icon-plus"></i> Add Role Relation</button>
 								</div>
 							</div>
@@ -191,7 +198,7 @@
 							<div class="control-group">
 								<label for="" class="control-label">Add DOI Application Identifier:</label>
 								<div class="controls">
-									<select ng-model="add.doi" ng-options="c.role_id as c.name for c in role.missing_doi"></select>
+									<select ng-model="add.doi" ng-options="c.role_id as c.name for c in role.missing_doi | orderObjectBy:'name'"></select>
 									<button class="btn" ng-show="!loading" ng-click="add_relation(role.role.role_id, add.doi)"><i class="icon icon-plus"></i> Add Role Relation</button>
 								</div>
 							</div>
@@ -202,7 +209,7 @@
 						<h5>Users</h5>
 						<ul>
 							<li ng-repeat="c in role.users">
-								<a href="">{{c.name}}</a> <a href="" ng-click="remove_relation(role.role_id, c.role_id)"><i class="icon icon-remove"></i></a>
+								<a href="#/view/{{c.role_id}}">{{c.name}}</a> <a href="" ng-click="remove_relation(role.role_id, c.role_id)"><i class="icon icon-remove"></i></a>
 								<ul ng-show="c.childs">
 									<li ng-repeat="cc in c.childs">
 										<a href="#/view/{{cc.role_id}}">{{cc.name}}</a>
@@ -216,7 +223,7 @@
 					</div>
 					<div class="widget-content" ng-show="role.data_sources && tab=='add_rel'">
 						<h5>Data Sources</h5>
-						<ul><li ng-repeat="c in role.data_sources.result"><a href="">{{c.title}}</a></li></ul>
+						<ul><li ng-repeat="c in role.data_sources.result"><a href="{{c.registry_url}}">{{c.title}}</a></li></ul>
 					</div>
 					<div class="widget-content" ng-show="role.functional_roles">
 						<h5>Functional Roles</h5>

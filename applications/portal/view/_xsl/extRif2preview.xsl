@@ -731,17 +731,17 @@
   <xsl:if test="./@type='url'">
       <xsl:variable name="url">
           <xsl:choose>
-              <xsl:when test="string-length(.)>30">
-                <xsl:value-of select="substring(.,0,30)"/>...
+              <xsl:when test="string-length(ro:value/text())>30">
+                <xsl:value-of select="substring(ro:value/text(),0,30)"/>...
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="."/>
+                <xsl:value-of select="ro:value/text()"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>	
     <a>
         <xsl:attribute name="href">
-            <xsl:value-of select="."/>
+            <xsl:value-of select="ro:value/text()"/>
         </xsl:attribute>
         <xsl:attribute name="class">recordOutBound</xsl:attribute>
         <xsl:attribute name="type">electronic_address</xsl:attribute>

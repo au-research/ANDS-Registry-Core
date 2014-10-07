@@ -102,6 +102,7 @@
                         </xsl:choose>
                         <xsl:apply-templates select="ro:collection/ro:description[@type = 'significanceStatement']"/>
                         <xsl:apply-templates select="ro:collection/ro:description[@type = 'notes']"/>
+                        <xsl:apply-templates select="ro:collection/ro:description[@type = 'note']"/>
                         <xsl:apply-templates select="ro:collection/ro:description[@type = 'lineage']"/>
                     </Abstract>
                 </xsl:if>

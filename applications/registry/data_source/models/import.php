@@ -93,14 +93,14 @@ class Import extends CI_Model {
 								$ro->setAttribute("harvest_id", $harvestID);
 	
 								// Order is important here!
-								$ro->updateXML($registryObject->asXML());
+								$changed = $ro->updateXML($registryObject->asXML());
 	
 								// Generate the list and display titles first, then the SLUG
 								$ro->updateTitles();
 								$ro->generateSlug();
 								$ro->processIdentifiers();	
 								// Save all our attributes to the object
-								$ro->save();
+								$ro->save($changed);
 
 								// Add this record to our counts, etc.
 								$harvested_record_ids[] = $ro->id;

@@ -686,7 +686,7 @@
 		</div>
 	</xsl:template>
 
-	<xsl:template match="ro:collection/ro:relatedObject[position() < $maxRelatedDisp] | ro:activity/ro:relatedObject[position() < $maxRelatedDisp] | ro:party/ro:relatedObject[position() < $maxRelatedDisp]  | ro:service/ro:relatedObject[position() < $maxRelatedDisp]">
+	<xsl:template match="ro:collection/ro:relatedObject[position() &gt; $maxRelatedDisp] | ro:activity/ro:relatedObject[position() &gt; $maxRelatedDisp] | ro:party/ro:relatedObject[position() &gt; $maxRelatedDisp]  | ro:service/ro:relatedObject[position() &gt; $maxRelatedDisp]">
 		<div class="aro_box" type="relatedobject">
 			<div class="aro_box_display clearfix">
 				<a href="javascript:;" class="toggle">
@@ -899,6 +899,14 @@
 					value="{@type}"/>
 				<input type="text" class="input-xlarge" name="value" placeholder="Value"
 					value="{ro:value}"/>
+                <xsl:if test="ancestor::ro:collection">
+                    <div class="parts hide">
+                        <input type="text" class="input-small" name="title" placeholder="Title" value="{ro:title}"/>
+                        <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value="{ro:title}"/>
+                        <input type="text" class="input-large" name="mediaType" placeholder="Media ype" value="{ro:mediaType}"/>
+                        <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value="{ro:byteSize}"/>
+                    </div>
+                </xsl:if>
 				<xsl:if test="ancestor::ro:service">
 					<button class="btn btn-primary showParts"><i class="icon-chevron-right icon-white"></i></button>
 					<div class="parts hide">
@@ -1284,6 +1292,15 @@
 			<div class="control-group">
 				<input type="text" class="input-small" name="type" placeholder="Type" value=""/>
 				<input type="text" class="input-xlarge" name="value" placeholder="Value" value=""/>
+                <input type="text" class="input-small" name="target" placeholder="Target" value=""/>
+                <xsl:if test="ro:collection">
+                    <div class="parts hide">
+                        <input type="text" class="input-small" name="title" placeholder="Title" value=""/>
+                        <input type="text" class="input-xlarge" name="notes" placeholder="Notes" value=""/>
+                        <input type="text" class="input-large" name="mediaType" placeholder="Media ype" value=""/>
+                        <input type="text" class="input-small" name="byteSize" placeholder="Byte Size" value=""/>
+                    </div>
+                </xsl:if>
 				<xsl:if test="ro:service">
 					<button class="btn btn-primary showParts"><i class="icon-chevron-right icon-white"></i></button>
 					<div class="parts hide">
