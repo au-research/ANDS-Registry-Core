@@ -1,6 +1,69 @@
 <?php
 class Auth extends CI_Controller {
 
+	public function login2(){
+		$data['title'] = 'Login';
+		$data['js_lib'] = array('core', 'angular129');
+		$data['scripts'] = array('login');
+
+		$data['authenticators'] = array(
+			'built-in' => array(
+				'slug'		=> 'built_in',
+				'display' 	=> 'Built In',
+				'view' 		=>  $this->load->view('authenticators/built_in', false, true)
+			),
+			'ldap' => array(
+				'slug'		=> 'ldap',
+				'display' 	=> 'LDAP',
+				'view' 		=>  $this->load->view('authenticators/ldap', false, true)
+			),
+			'shibboleth_sp' => array(
+				'slug'		=> 'shibboleth_sp',
+				'display'	=> 'Shibboleth',
+				'default'	=> true,
+				'view'		=> $this->load->view('authenticators/shibboleth_sp', false, true)
+			),
+			'aaf_rapid' => array(
+				'slug'		=> 'aaf_rapid',
+				'display' 	=> 'AAF Rapid Connect',
+				'view' 		=>  $this->load->view('authenticators/aaf_rapid', false, true)
+			),
+		);
+
+		$data['default_authenticator'] = false;
+		foreach($data['authenticators'] as $auth) {
+			if(isset($auth['default']) && $auth['default']===true) {
+				$data['default_authenticator'] = $auth['slug'];
+				break;
+			}
+		}
+
+		$this->load->view('login2', $data);
+	}
+
+	public function authenticate($method = 'built_in') {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$authenticator_class = $method.'_authenticator';
+		
+		if (!file_exists('engine/models/authenticators/'.$authenticator_class.'.php')) {
+			throw new Exception('Authenticator '.$authenticator_class.' not found!');
+		}
+
+		//get parameters from angularjs POST
+		$params = json_decode(file_get_contents('php://input'), true);
+
+		try {
+			$this->load->model('authenticators/'.$authenticator_class, 'auth');
+			$this->auth->load_params($params);
+			$this->auth->authenticate();
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+		
+	}
+
 	public function login(){
 		$data['title'] = 'Login';
 		$data['js_lib'] = array('core');
