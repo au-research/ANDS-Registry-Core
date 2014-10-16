@@ -376,8 +376,8 @@ class Role_authentication extends CI_Model {
     	foreach($related_roles->result() AS $row)
     	{
     		$roles[] = array("role_id" => $row->parent_role_id, "role_type_id" => $row->role_type_id);
-    		if($recursive && !in_array($role_id, $prev)) {
-                array_push($prev, $role_id);
+    		if($recursive && !in_array($row->parent_role_id, $prev)) {
+                array_push($prev, $row->parent_role_id);
                 $child = $this->getChildRoles($row->parent_role_id, $recursive, $prev);
                 if(sizeof($child) > 0) {
                     $roles = array_merge($roles, $this->getChildRoles($row->parent_role_id, $recursive, $prev));
