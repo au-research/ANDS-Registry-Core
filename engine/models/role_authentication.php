@@ -380,7 +380,7 @@ class Role_authentication extends CI_Model {
                 array_push($prev, $role_id);
                 $child = $this->getChildRoles($row->parent_role_id, $recursive, $prev);
                 if(sizeof($child) > 0) {
-                    $roles = array_merge($roles, $this->getChildRoles($row->parent_role_id));
+                    $roles = array_merge($roles, $this->getChildRoles($row->parent_role_id, $recursive, $prev));
                 }
             }
     	}
