@@ -283,14 +283,14 @@ class Role_authentication extends CI_Model {
     	}
 
         // Superadmins get all organisational roles
-        if ($superadmin && $recursive)
-        {
-            function getOnlyRoleIds(&$item, $key) { $item = $item['role_id']; }
-            $orgRoles = $this->getAllOrganisationalRoles();
-            array_walk( $orgRoles, 'getOnlyRoleIds' );
+        // if ($superadmin && $recursive)
+        // {
+        //     function getOnlyRoleIds(&$item, $key) { $item = $item['role_id']; }
+        //     $orgRoles = $this->getAllOrganisationalRoles();
+        //     array_walk( $orgRoles, 'getOnlyRoleIds' );
 
-            $ret['organisational_roles'] = array_merge($ret['organisational_roles'], $orgRoles);
-        }
+        //     $ret['organisational_roles'] = array_merge($ret['organisational_roles'], $orgRoles);
+        // }
     	
     	return $ret;
     				
@@ -360,7 +360,7 @@ class Role_authentication extends CI_Model {
     }
     
     
-    private function getChildRoles($role_id, $recursive = true)
+    private function getChildRoles($role_id, $recursive = true, $prev = array())
     {
     	$roles = array();
     	
@@ -376,8 +376,9 @@ class Role_authentication extends CI_Model {
     	foreach($related_roles->result() AS $row)
     	{
     		$roles[] = array("role_id" => $row->parent_role_id, "role_type_id" => $row->role_type_id);
-    		if($recursive) {
-                $child = $this->getChildRoles($row->parent_role_id);
+    		if($recursive && !in_array($role_id, $prev)) {
+                array_push($prev, $role_id);
+                $child = $this->getChildRoles($row->parent_role_id, $recursive, $prev);
                 if(sizeof($child) > 0) {
                     $roles = array_merge($roles, $this->getChildRoles($row->parent_role_id));
                 }

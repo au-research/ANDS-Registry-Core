@@ -114,6 +114,7 @@ class Roles extends CI_Model {
         // $role = $this->get_role($role_id);
         // return $res;
 
+
         $result = $this->cosi_db
                 ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
                 ->from('role_relations')
@@ -132,7 +133,7 @@ class Roles extends CI_Model {
                 }
                 if(!in_array($r->role_id, $prev)) {
                     array_push($prev, $r->role_id);
-                    $childs = $this->list_childs($r->parent_role_id);
+                    $childs = $this->list_childs($r->parent_role_id, $include_doi, $prev);
                     if(sizeof($childs) > 0){
                         $r->childs = $childs;
                     }else{
