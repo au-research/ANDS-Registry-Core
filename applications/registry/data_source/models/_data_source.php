@@ -48,7 +48,7 @@ class _data_source {
 	const MAX_VALUE_LEN = 255;
 
 	public $stockAttributes = array('title'=>'','record_owner'=>'','contact_name'=>' ', 'contact_email'=>' ', 'provider_type'=>RIFCS_SCHEME,'notes'=>'');
-	public $extendedAttributes = array('allow_reverse_internal_links'=>DB_TRUE,'allow_reverse_external_links'=>DB_TRUE,'manual_publish'=>DB_FALSE,'qa_flag'=>DB_TRUE,'create_primary_relationships'=>DB_FALSE,'assessment_notify_email_addr'=>'','created'=>'','updated'=>'', 'export_dci'=>DB_FALSE);
+	public $extendedAttributes = array('allow_reverse_internal_links'=>DB_TRUE,'allow_reverse_external_links'=>DB_TRUE,'manual_publish'=>DB_FALSE,'qa_flag'=>DB_TRUE,'create_primary_relationships'=>DB_FALSE,'assessment_notify_email_addr'=>'','created'=>'','updated'=>'', 'export_dci'=>DB_FALSE, 'crosswalks'=>'');
 	public $harvesterParams = array('provider_type'=>'rif','uri'=>'http://','harvest_method'=>'GETHarvester','harvest_date'=>'','oai_set'=>'','advanced_harvest_mode'=>'STANDARD','harvest_frequency'=>'', 'metadataPrefix'=>'', 'xsl_file'=>'');
 	public $primaryRelationship = array('primary_key_1','primary_key_2','collection_rel_1','collection_rel_2','activity_rel_1','activity_rel_2','party_rel_1','party_rel_2','service_rel_1','service_rel_2');
 	public $institutionPages = array('institution_pages');
@@ -115,7 +115,7 @@ class _data_source {
     {
         if (strlen($name) > self::MAX_NAME_LEN || strlen($value) > self::MAX_VALUE_LEN)
         {
-            $value = substr($value, 0, self::MAX_VALUE_LEN);
+            // $value = substr($value, 0, self::MAX_VALUE_LEN);
             //throw new Exception("Attribute name exceeds " . self::MAX_NAME_LEN . " chars or value exceeds " . self::MAX_VALUE_LEN . ". Attribute not set");
         }
 

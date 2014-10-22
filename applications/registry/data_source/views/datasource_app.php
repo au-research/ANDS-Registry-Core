@@ -591,14 +591,14 @@
 			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/SettingsHelp/">Help</a></span>
 		</div>
 	</div>
-	<div class="container-fluid">
+	<div class="container-fluid" ng-show="ds">
 		<div class="row-fluid">
 			<div class="widget-box">
 				<div class="widget-title">
 					<ul class="nav nav-tabs">
 						<li ng-class="{'admin':'active'}[tab]"><a href="" ng-click="tab='admin'">Account Administration Information</a></li>
 						<li ng-class="{'records':'active'}[tab]"><a href="" ng-click="tab='records'">Records Management Settings</a></li>
-						<li ng-class="{'harvester':'active'}[tab]"><a href="" ng-click="tab='harvester'">Harvester Settings</a></li>
+						<li ng-class="{'harvester':'active'}[tab]" ng-show="ds.harvester_methods"><a href="" ng-click="tab='harvester'">Harvester Settings</a></li>
 					</ul>
 				</div>
 				<div class="widget-content nopadding">
@@ -820,7 +820,7 @@
 							</fieldset>
 						</div>
 
-						<div ng-show="tab=='harvester'">
+						<div ng-show="tab=='harvester' && ds.harvester_methods">
 							<fieldset>
 								<legend>Harvester Settings
 									<sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#harvest_settings" target="_blank" class="muted">?</a></sup>
@@ -855,25 +855,61 @@
 									</div>
 								</div>
 	
-								<?php if($this->user->hasFunction('REGISTRY_USER')):?>
+
 								<div class="control-group">
-									<label class="control-label" for="provider_type">Provider Type</label>
+									<label class="control-label" for="provider_type" ng-show="ds.harvest_method=='PMHHarvester'">Metadata Prefix</label>
+									<label class="control-label" for="provider_type" ng-show="ds.harvest_method=='CSWHarvester'">Output Schema</label>
+									<label class="control-label" for="provider_type" ng-show="ds.harvest_method=='CKANHarvester' || ds.harvest_method=='GETHarvester'">Provider Type</label>
 									<div class="controls">
-										<select ng-model="ds.provider_type">
-											<?php
-		                                    $predefinedProviderTypes = $this->config->item('provider_types');
-		                                    foreach($predefinedProviderTypes as $key=>$ppt){
-		                                        echo '<option value="' . $ppt['prefix'] . '">' . $key . '</option>' . NL;
-		                                    }
-											$crosswalks = getCrosswalks();
-											foreach ($crosswalks AS $crosswalk){
-												echo '<option value="' . $crosswalk->metadataFormat() . '">' . $crosswalk->identify() . '</option>' . NL;
-											}
-											?>
-										</select>
+										<select ng-model="ds.provider_type" ng-options="item.value as item.name for item in provider_types"></select>
 									</div>
 								</div>
-								<?php endif; ?>
+
+								<div class="control-group">
+									<label class="control-label" for="provider_type">XSL File</label>
+									<div class="controls">
+										<input type="text" ng-model="ds.xsl_file">
+									</div>
+								</div>
+
+								<div class="control-group" ng-repeat="cr in ds.crosswalks">
+									<div class="controls">
+										<div class="widget-box success">
+											<div class="widget-title">
+												<h5 ng-show="cr.path">{{cr.path}}
+													<span class="badge badge-success" ng-show="cr.active">Active</span>
+													<span class="badge" ng-show="!cr.active">Inactive</span>
+												</h5>
+												<h5 ng-hide="cr.path">No File</h5>
+												<div class="btn-group pull-right">
+													<!-- <a href="#" class="btn btn-primary" tip="Edit"><i class="icon-white icon-edit"></i></a> -->
+													<a ng-click="removeFromList(ds.crosswalks, $index)" class="btn btn-danger" tip="Remove"><i class="icon-white icon-remove"></i></a>
+												</div>
+											</div>
+											<div class="widget-content">
+												<div class="control-group" ng-show="cr.type=='crosswalk'">
+													<label class="control-label" for="provider_type" ng-show="ds.harvest_method=='PMHHarvester'">Metadata Prefix</label>
+													<label class="control-label" for="provider_type" ng-show="ds.harvest_method=='CSWHarvester'">Output Schema</label>
+													<label class="control-label" for="provider_type" ng-show="ds.harvest_method=='CKANHarvester' || ds.harvest_method=='GETHarvester'">Provider Type</label>
+													<div class="controls">
+														<input type="text" ng-model="cr.prefix">
+													</div>
+												</div>
+											</div>
+											<div class="widget-content">
+												<input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this.files)" style="line-height:0px;"/>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="control-group">
+									<div class="controls">
+										<a class="btn btn-primary" ng-click="addCrosswalk(ds, 'crosswalk')"><i class="icon icon-white icon-plus"></i> Add Crosswalk</a>		
+										<a class="btn" ng-click="addCrosswalk(ds,'support')"><i class="icon icon-plus"></i> Add Supporting File</a>		
+										<a href="javascript:void;"><i class="icon icon-question-sign" tip="Files uploaded can be an xml or xsl file"></i></a>
+									</div>
+								</div>
 
 								<div class="control-group" ng-show="ds.harvest_method=='RIF'">
 									<label class="control-label" for="oai_set">OAI Set</label>
