@@ -209,12 +209,14 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			bind_plugins($scope);
 			document.title = $scope.ds.title + ' - Edit Settings';
 
-			$.each($scope.ds.harvester_methods.xsl_file, function(){
-				if(this.indexOf($scope.ds.key)!=-1) {
-					$scope.ds_crosswalk = true;
-					$scope.xsl_file = $scope.ds_crosswalk;
-				}
-			});
+			// if($scope.ds.harvester_methods && $scope.harvester_methods.xsl_file){
+			// 	$.each($scope.ds.harvester_methods.xsl_file, function(){
+			// 		if(this.indexOf($scope.ds.key)!=-1) {
+			// 			$scope.ds_crosswalk = true;
+			// 			$scope.xsl_file = $scope.ds_crosswalk;
+			// 		}
+			// 	});
+			// }
 		} else {
 			$location.path('/');
 		}
@@ -349,11 +351,13 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 				$scope.ds.xsl_file = '';
 				return;
 			}
-			$.each($scope.ds.crosswalks, function(){
-				if(this.type=='crosswalk' && this.prefix==newv){
-					$scope.ds.xsl_file = this.full_path;
-				}
-			});
+			if($scope.ds.crosswalks){
+				$.each($scope.ds.crosswalks, function(){
+					if(this.type=='crosswalk' && this.prefix==newv){
+						$scope.ds.xsl_file = this.full_path;
+					}
+				});
+			}
 		}
 	});
 
