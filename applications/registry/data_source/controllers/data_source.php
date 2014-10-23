@@ -89,6 +89,10 @@ class Data_source extends MX_Controller {
 					$item[$attrib] = $value->value;
 				}
 
+				if(isset($item['crosswalks'])) {
+					// $item['crosswalks'] = json_decode($item['crosswalks'], true);
+				}
+
 				if(isset($item['harvest_date'])) {
 					date_default_timezone_set('Australia/Canberra');
 					$item['harvest_date'] = date( 'Y-m-d H:i:s', strtotime($item['harvest_date']));
@@ -110,6 +114,43 @@ class Data_source extends MX_Controller {
 		$jsonData['items'] = $items;
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
+	}
+
+	public function upload($id=false) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		$upload_path = './assets/uploads/harvester_crosswalks/';
+		if(!is_dir($upload_path)) {
+			if(!mkdir($upload_path)) throw new Exception('Upload path are not created correctly. Contact server administrator');
+		}
+		$upload_path = $upload_path.$id.'/';
+		if(!is_dir($upload_path)) {
+			if(!mkdir($upload_path)) throw new Exception('Upload path are not created correctly. Contact server administrator');
+		}
+
+		$config['upload_path'] = $upload_path;
+		$config['allowed_types'] = 'xml|xsl';
+		$config['overwrite'] = true;
+		$config['max_size']	= '400';
+		$this->load->library('upload', $config);
+		if(!$this->upload->do_upload('file')) {
+			echo json_encode(
+				array(
+					'status'=>'ERROR',
+					'message' => $this->upload->display_errors()
+				)
+			);
+		} else {
+			echo json_encode(
+				array(
+					'status'=>'OK',
+					'message' => 'File uploaded successfully!',
+					'data' => $this->upload->data()
+				)
+			);
+		}
 	}
 
 	/**
@@ -281,6 +322,10 @@ class Data_source extends MX_Controller {
 			$data['activity_rel_2'] = '';
 			$data['collection_rel_2'] = '';
 			$data['party_rel_2'] = '';
+		}
+
+		if(isset($data['crosswalks'])) {
+			$data['crosswalks'] = json_encode($data['crosswalks']);
 		}
 
 		$updated_values = array();

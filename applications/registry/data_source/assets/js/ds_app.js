@@ -55,6 +55,24 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			}
 		}
 	}).
+	directive('fileread', function() {
+		return {
+	        scope: {
+	            fileread: "="
+	        },
+	        link: function (scope, element, attributes) {
+	            element.bind("change", function (changeEvent) {
+	                var reader = new FileReader();
+	                reader.onload = function (loadEvent) {
+	                    scope.$apply(function () {
+	                        scope.fileread = loadEvent.target.result;
+	                    });
+	                }
+	                reader.readAsDataURL(changeEvent.target.files[0]);
+	            });
+	        }
+	    }
+	}).
 	directive('rosearch', function($parse, $compile) {
 		return {
 			restrict :'AE',
@@ -167,12 +185,15 @@ function SettingsCtrl($scope, $routeParams, ds_factory) {
 	}
 }
 
-function EditCtrl($scope, $routeParams, ds_factory, $location) {
+function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 	$scope.ds = {};
 	$scope.adv_harvest_modes = [
 		{name:'Standard Mode', value:'STANDARD'},
 		{name:'Incremental Mode', value:'INCREMENTAL'},
 		{name:'Full Refresh Mode', value:'REFRESH'}
+	];
+	$scope.provider_types = [
+		{name: 'RIF-CS',value:'rif'}
 	];
 
 	if($routeParams.tab) {
@@ -182,17 +203,20 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 	ds_factory.get($routeParams.id).then(function(data){
 		if(data.status=='OK'){
 			$scope.ds = data.items[0];
+
 			$scope.load_contributor();
 			$scope.process_values();
 			bind_plugins($scope);
 			document.title = $scope.ds.title + ' - Edit Settings';
 
-			$.each($scope.ds.harvester_methods.xsl_file, function(){
-				if(this.indexOf($scope.ds.key)!=-1) {
-					$scope.ds_crosswalk = true;
-					$scope.xsl_file = $scope.ds_crosswalk;
-				}
-			});
+			// if($scope.ds.harvester_methods && $scope.harvester_methods.xsl_file){
+			// 	$.each($scope.ds.harvester_methods.xsl_file, function(){
+			// 		if(this.indexOf($scope.ds.key)!=-1) {
+			// 			$scope.ds_crosswalk = true;
+			// 			$scope.xsl_file = $scope.ds_crosswalk;
+			// 		}
+			// 	});
+			// }
 		} else {
 			$location.path('/');
 		}
@@ -213,6 +237,43 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 				}
 			}
 		});
+		if($scope.ds.crosswalks) {
+			$scope.ds.crosswalks = JSON.parse($scope.ds.crosswalks);
+		}
+	}
+
+	$scope.addCrosswalk = function(ds, type) {
+		if(!ds.crosswalks) ds.crosswalks = [];
+		ds.crosswalks.push(
+			{
+				'path':'',
+				'full_path':'',
+				'type':type,
+				'prefix':'',
+				'active':false
+			}
+		)
+	}
+
+	$scope.uploadFile = function(files) {
+		var cr = angular.element(this)[0].cr;
+		var fd = new FormData();
+	    //Take the first selected file
+	    fd.append("file", files[0]);
+	    $http.post(base_url+'data_source/upload/'+$scope.ds.id, fd, {
+	        withCredentials: true,
+	        headers: {'Content-Type': undefined },
+	        transformRequest: angular.identity
+	    }).success(function(data){
+	    	if(data.status=='OK'){
+	    		cr.path = data.data.file_name;
+	    		cr.full_path = data.data.full_path;
+	    	} else {
+	    		alert(data.message);
+	    	}
+	    }).error(function(data){
+	    	// console.error(data);
+	    });
 	}
 
 	$scope.save = function() {
@@ -269,9 +330,53 @@ function EditCtrl($scope, $routeParams, ds_factory, $location) {
 		}
 	});
 
+	$scope.$watch('ds.crosswalks', function(newv, oldv){
+		if($scope.ds.crosswalks){
+			$scope.provider_types = [
+				{name: 'RIF-CS',value:'rif'}
+			]
+			$.each($scope.ds.crosswalks, function(){
+				if(this.path!=''){
+					$scope.provider_types.push({
+						name:this.prefix+' - '+this.path, value:this.prefix
+					});
+				}
+			});
+		}
+	}, true);
+
+	$scope.$watch('ds.provider_type', function(newv, oldv){
+		if($scope.ds.provider_type) {
+			if($scope.ds.provider_type=='rif') {
+				$scope.ds.xsl_file = '';
+				return;
+			}
+			if($scope.ds.crosswalks){
+				$.each($scope.ds.crosswalks, function(){
+					if(this.type=='crosswalk' && this.prefix==newv){
+						$scope.ds.xsl_file = this.full_path;
+					}
+				});
+			}
+		}
+	});
+
+	$scope.$watch('ds.xsl_file', function(newv, oldv) {
+		if($scope.ds.xsl_file) {
+			$.each($scope.ds.crosswalks, function(){
+				if(this.full_path == newv) {
+					this.active = true;
+				} else this.active = false;
+			});
+		}
+	});
+
+	$scope.removeFromList = function(list, index){
+		list.splice(index, 1);
+	}
+
 	$scope.$watch('ds.manual_publish', function(newv, oldv){
 		if(oldv!=undefined && newv!=undefined) {
-			console.log(oldv, newv);
 			if((!oldv || oldv=='f' || oldv=='0') && newv) {
 				$scope.modal = {
 					'title':'Alert',

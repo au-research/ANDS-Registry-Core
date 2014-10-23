@@ -116,8 +116,8 @@ class Data_sources extends CI_Model {
 	function getOwnedDataSources($just_id = false, $just_core=false) {
 		$data_sources = array();
 		$affiliations = $this->user->affiliations();
-		if (is_array($affiliations) && count($affiliations) > 0) {
-			if ($this->user->hasFunction('REGISTRY_SUPERUSER')) {
+		if ((is_array($affiliations) && count($affiliations) > 0) || $this->user->hasFunction(AUTH_FUNCTION_SUPERUSER)) {
+			if ($this->user->hasFunction(AUTH_FUNCTION_SUPERUSER)) {
 				$query = $this->db->query("SELECT * FROM data_sources");	
 			} else {
 				$query = $this->db->where_in('record_owner', $affiliations)->get('data_sources');

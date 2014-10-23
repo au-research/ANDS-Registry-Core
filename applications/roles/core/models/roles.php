@@ -109,10 +109,12 @@ class Roles extends CI_Model {
      * @param  string $role_id
      * @return array_object if an object has a child, object->childs will be a list of the child objects
      */
-    function list_childs($role_id, $include_doi=false){
+    function list_childs($role_id, $include_doi=false, $prev=array()){
         $res = array();
         // $role = $this->get_role($role_id);
-        
+        // return $res;
+
+
         $result = $this->cosi_db
                 ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
                 ->from('role_relations')
@@ -129,12 +131,51 @@ class Roles extends CI_Model {
                 }else if(!$include_doi){
                     $res[] = $r;
                 }
-                $childs = $this->list_childs($r->parent_role_id);
-                if(sizeof($childs) > 0){
-                    $r->childs = $childs;
-                }else{
-                    $r->childs = false;
+                if(!in_array($r->role_id, $prev)) {
+                    array_push($prev, $r->role_id);
+                    $childs = $this->list_childs($r->parent_role_id, $include_doi, $prev);
+                    if(sizeof($childs) > 0){
+                        $r->childs = $childs;
+                    }else{
+                        $r->childs = false;
+                    }
                 }
+            }
+        }
+        return $res;
+    }
+
+    function immediate_childs($role_id) {
+        $res = array();
+        $result = $this->cosi_db
+                ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
+                ->from('role_relations')
+                ->join('roles', 'roles.role_id = role_relations.parent_role_id')
+                ->where('role_relations.child_role_id', $role_id)
+                ->where('enabled', DB_TRUE)
+                ->where('role_relations.parent_role_id !=', $role_id)
+                ->get();
+        if($result->num_rows() > 0){
+            foreach($result->result() as $r){
+                $res[] = $r;
+            }
+        }
+        return $res;
+    }
+
+    function immediate_parents($role_id) {
+         $res = array();
+        $result = $this->cosi_db
+                ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
+                ->from('role_relations')
+                ->join('roles', 'roles.role_id = role_relations.parent_role_id')
+                ->where('role_relations.parent_role_id', $role_id)
+                ->where('enabled', DB_TRUE)
+                ->where('role_relations.child_role_id !=', $role_id)
+                ->get();
+        if($result->num_rows() > 0){
+            foreach($result->result() as $r){
+                $res[] = $r;
             }
         }
         return $res;
@@ -145,7 +186,7 @@ class Roles extends CI_Model {
      * @param  string $role_id
      * @return array_object
      */
-    function descendants($role_id, $include_doi=false){
+    function descendants($role_id, $include_doi=false, $prev = array()){
         $res = array();
     
         $result = $this->cosi_db
@@ -164,11 +205,14 @@ class Roles extends CI_Model {
                 }else if(!$include_doi){
                     $res[] = $r;
                 }
-                
-                $childs = $this->descendants($r->role_id);
-                if(sizeof($childs) > 0){
-                    $r->childs = $childs;
-                }else $r->childs = false;
+
+                if(!in_array($r->role_id, $prev)){
+                    array_push($prev, $r->role_id);
+                    $childs = $this->descendants($r->role_id, $include_doi, $prev);
+                    if(sizeof($childs) > 0){
+                        $r->childs = $childs;
+                    }else $r->childs = false;
+                }
             }
         }
         return $res;

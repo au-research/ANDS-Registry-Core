@@ -378,7 +378,7 @@ def runTest(client_id, admin_email):
 
 def createConnection():
 	try:
-		return pymysql.connect(host=myconfig.db_host, unix_socket='/tmp/mysql.sock', user=myconfig.db_user, passwd=myconfig.db_passwd, db=myconfig.db)
+		return pymysql.connect(host=myconfig.db_host, user=myconfig.db_user, passwd=myconfig.db_passwd, db=myconfig.db)
 	except:
 		e = sys.exc_info()[1]
 		print("Database Exception %s" %(e))
