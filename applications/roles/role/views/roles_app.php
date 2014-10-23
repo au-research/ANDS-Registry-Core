@@ -152,7 +152,26 @@
 							<div class="control-group">
 								<div class="controls">
 									<button type="submit" class="btn btn-primary" ng-click="update()">Update Role</button>
-									<hr>
+									<button ng-click="resetPassword()" class="btn">Reset Password</button>
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="" class="control-label">Merge Role <i class="icon icon-question-sign" tip="Add all the roles relation from"></i></label>
+								<div class="controls">
+									<select ng-model="merge_target" ng-options="c.role_id as c.name for c in roles"></select>
+									<div ng-show="role_merge_missing">
+										<hr>
+										Roles exists in <b>{{merge_target}}</b> that is not in <b>{{role.role.name}}</b>
+										<ul>
+											<li ng-repeat="r in role_merge_missing">{{r.name}}</li>
+										</ul>
+										<button class="btn btn-primary" ng-click="commit_merge_role(merge_target, role.role.role_id)">Add these roles to {{role.role.name}}</button>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="control-group">
+								<div class="controls">
 									<button class="btn btn-danger" ng-click="delete()">Delete Role</button>
 								</div>
 							</div>

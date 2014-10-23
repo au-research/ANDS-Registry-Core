@@ -145,6 +145,42 @@ class Roles extends CI_Model {
         return $res;
     }
 
+    function immediate_childs($role_id) {
+        $res = array();
+        $result = $this->cosi_db
+                ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
+                ->from('role_relations')
+                ->join('roles', 'roles.role_id = role_relations.parent_role_id')
+                ->where('role_relations.child_role_id', $role_id)
+                ->where('enabled', DB_TRUE)
+                ->where('role_relations.parent_role_id !=', $role_id)
+                ->get();
+        if($result->num_rows() > 0){
+            foreach($result->result() as $r){
+                $res[] = $r;
+            }
+        }
+        return $res;
+    }
+
+    function immediate_parents($role_id) {
+         $res = array();
+        $result = $this->cosi_db
+                ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
+                ->from('role_relations')
+                ->join('roles', 'roles.role_id = role_relations.parent_role_id')
+                ->where('role_relations.parent_role_id', $role_id)
+                ->where('enabled', DB_TRUE)
+                ->where('role_relations.child_role_id !=', $role_id)
+                ->get();
+        if($result->num_rows() > 0){
+            foreach($result->result() as $r){
+                $res[] = $r;
+            }
+        }
+        return $res;
+    }
+
     /**
      * basically reverse of the list_childs function, search for all (childs) of a role
      * @param  string $role_id

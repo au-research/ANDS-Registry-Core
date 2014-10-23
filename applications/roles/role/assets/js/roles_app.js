@@ -38,8 +38,17 @@ angular.module('roles_app', ['portal-filters']).
 			update: function(id, data){
 				return $http.post(base_url+'role/update/',{role_id:id, data:data}).then(function(response){return response.data});
 			},
+			resetpw: function(id) {
+				return $http.get(base_url+'role/resetPassphrase/?role_id='+id).then(function(response){return response.data});
+			},
 			delete_role: function(id){
 				return $http.post(base_url+'role/delete/',{role_id:id}).then(function(response){return response.data});
+			},
+			get_merge_missing: function(id, sid) {
+				return $http.get(base_url+'role/role_missing?first_role='+id+'&second_role='+sid).then(function(response){return response.data});
+			},
+			get_merge_missing_commit: function(id, sid) {
+				return $http.get(base_url+'role/role_missing/true?first_role='+id+'&second_role='+sid).then(function(response){return response.data});
 			}
 		}
 	})
@@ -63,6 +72,7 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 	});
 
 	$scope.select = function(role_id){
+		$scope.role = {};
 		$scope.loading = true;
 		$scope.tab1 = 'view';
 		$scope.tab = 'add_rel';
@@ -97,6 +107,14 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 		});
 	}
 
+	$scope.resetPassword = function(){
+		roles.resetpw($scope.role.role.role_id).then(function(data){
+			if(data.status=='OK'){
+				alert('Password has been reset successfully for '+$scope.role.role.role_id);
+			}
+		});
+	}
+
 	$scope.delete = function() {
 		if(confirm('Are you sure you want to delete this role:'+$scope.role.role.name+'? This action is irreversible')){
 			roles.delete_role($scope.role.role.role_id).then(function(data){
@@ -119,6 +137,20 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 			return true;
 		}
 		return false;
+	}
+
+	$scope.$watch('merge_target', function(newv, oldv){
+		if(newv!='' && $scope.role && $scope.role.role){
+			roles.get_merge_missing($scope.role.role.role_id, newv).then(function(data){
+				$scope.role_merge_missing = data.missing;
+			});
+		}
+	})
+
+	$scope.commit_merge_role = function(target, role){
+		roles.get_merge_missing_commit(role, target).then(function(data){
+			$scope.select($scope.role.role.role_id);
+		});
 	}
 
 	if($routeParams.id) $scope.select($routeParams.id);
