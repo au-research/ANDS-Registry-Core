@@ -302,10 +302,44 @@ class Spatial_Extension extends ExtensionBase
 			$extents['area'] = ($east - $west) * ($north - $south);
 			$extents['center'] = (($east + $west)/2)." ".(($north + $south)/2);
 			$extents['extent'] = $west." ".$south." ".$east." ".$north;
+            $extents['west'] = $west;
+            $extents['east'] = $east;
 		}	
 		return $extents;		
 	}
-	
+
+    function insertZeroBypassCoords($coords, $west, $east)
+    {
+        $newCoords = "";
+        $tok = strtok($coords, " ");
+        $prevLat = null;
+        $prevLng = null;
+        $space = "";
+        while ($tok !== FALSE)
+        {
+            $keyValue = explode(",", $tok);
+            if(is_numeric($keyValue[1]) && is_numeric($keyValue[0]))
+            {
+                $lng = floatval($keyValue[1]);
+                $lat = floatval($keyValue[0]);
+                if ($prevLat && $prevLat == $west && $lat == $east)
+                {
+                    $newCoords .= $space."0,".$prevLng;
+                }
+                if($prevLat && $prevLat == $east && $lat == $west)
+                {
+                    $newCoords .= $space."0,".$prevLng;
+                }
+                $newCoords .= $space.$tok;
+                $space = " ";
+                $prevLat = $lat;
+                $prevLng = $lng;
+            }
+            $tok = strtok(" ");
+        }
+        return $newCoords;
+    }
+
 	function isValidKmlPolyCoords($coords)
 	{
 		$valid = false;

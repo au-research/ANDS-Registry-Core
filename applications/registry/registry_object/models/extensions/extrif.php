@@ -215,11 +215,18 @@ class Extrif_Extension extends ExtensionBase
 					foreach ($spatialLocations AS $lonLat)
 					{
 						//echo "enriching..." . $extent;
-						$spatialGeometry->addChild("extRif:polygon", $lonLat, EXTRIF_NAMESPACE);
+
 						$extents = $this->ro->calcExtent($lonLat);
 						$spatialGeometry->addChild("extRif:extent", $extents['extent'], EXTRIF_NAMESPACE);
 						$sumOfAllAreas += $extents['area'];
 						$spatialGeometry->addChild("extRif:center", $extents['center'], EXTRIF_NAMESPACE);
+                        if( $extents['west'] +  $extents['east'] < 5 &&  $extents['east'] > 175)
+                        {
+                            //need to insert zero bypass
+                            $lonLat = $this->ro->insertZeroBypassCoords($lonLat, $extents['west'], $extents['east']);
+                        }
+                        $spatialGeometry->addChild("extRif:polygon", $lonLat, EXTRIF_NAMESPACE);
+
 					}
 					$spatialGeometry->addChild("extRif:area", $sumOfAllAreas, EXTRIF_NAMESPACE);
 				}
