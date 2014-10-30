@@ -322,11 +322,8 @@ class Spatial_Extension extends ExtensionBase
             {
                 $lng = floatval($keyValue[1]);
                 $lat = floatval($keyValue[0]);
-                if ($prevLat && $prevLat == $west && $lat == $east)
-                {
-                    $newCoords .= $space."0,".$prevLng;
-                }
-                if($prevLat && $prevLat == $east && $lat == $west)
+                //insert a coordinate at lat=0 to force drawing tool to go around the globe.
+                if ($prevLat && (($prevLat == $west && $lat == $east) || ($prevLat == $east && $lat == $west)))
                 {
                     $newCoords .= $space."0,".$prevLng;
                 }
