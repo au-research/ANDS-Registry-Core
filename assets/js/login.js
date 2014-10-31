@@ -21,8 +21,9 @@ function loginCtrl($scope, $routeParams, loginService){
 			username:$scope.username,
 			password:$scope.password
 		}
+		$('form button').button('loading');
 		loginService.authenticate(method, data).then(function(data){
-			console.log(data);
+			$('form button').button('reset');
 			if(data.status=='ERROR'){
 				$scope.message = data.message;
 			} else if(data.status=='SUCCESS'){
