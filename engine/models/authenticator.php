@@ -66,6 +66,8 @@ class Authenticator extends CI_Model {
 		//register last login
 		$this->cosi_db->where('role_id', $role->role_id)->update('roles', array('last_login'=>date('Y-m-d H:i:s',time())));
 
+		$this->post_authentication_hook();
+
 		echo json_encode(
 			array(
 				'status' => 'SUCCESS',
@@ -74,8 +76,11 @@ class Authenticator extends CI_Model {
 		);
 	}
 
-	private function getChildRoles($role_id, $recursive = true) {
-		$roles = array();
+	public function post_authentication_hook() {}
+
+
+	private function getChildRoles($role_id, $recursive = true, $prev = array()) {
+    	$roles = array();
     	
     	$related_roles = $this->cosi_db
                 ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
@@ -89,16 +94,17 @@ class Authenticator extends CI_Model {
     	foreach($related_roles->result() AS $row)
     	{
     		$roles[] = array("role_id" => $row->parent_role_id, "role_type_id" => $row->role_type_id);
-    		if($recursive) {
-                $child = $this->getChildRoles($row->parent_role_id);
+    		if($recursive && !in_array($row->parent_role_id, $prev)) {
+                array_push($prev, $row->parent_role_id);
+                $child = $this->getChildRoles($row->parent_role_id, $recursive, $prev);
                 if(sizeof($child) > 0) {
-                    $roles = array_merge($roles, $this->getChildRoles($row->parent_role_id));
+                    $roles = array_merge($roles, $this->getChildRoles($row->parent_role_id, $recursive, $prev));
                 }
             }
     	}
     	
     	return $roles;
-	}
+    }
 
 	//OVERWRITE function for authentication
 	public function authenticate() { return false; }

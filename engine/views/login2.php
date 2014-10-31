@@ -22,7 +22,7 @@
 	<div class="row">
 		<div class="span6 offset3">
 			<h3>Login</h3>
-			<div class="alert">Login</div>
+			<div class="alert" ng-show="error=='login_required'">You have to be logged in to use this functionality</div>
 			<div class="widget-box" ng-cloak>
 				<div class="widget-title">
 					<ul class="nav nav-tabs">
@@ -38,7 +38,7 @@
 				</div>
 				<?php endforeach; ?>
 			</div>
-			<div class="alert alert-error" ng-show="message">{{message.message}}</div>
+			<div class="alert alert-error" ng-show="message">{{message}}</div>
 		</div>
 
 	</div>

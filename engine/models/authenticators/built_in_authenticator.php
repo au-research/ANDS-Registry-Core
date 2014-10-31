@@ -8,6 +8,7 @@ require_once('engine/models/authenticator.php');
 class Built_in_authenticator extends Authenticator {
 
 	public function authenticate() {
+		// sleep(2);
 		$this->auth_domain = gPIDS_IDENTIFIER_SUFFIX;
 
 		$result = $this->cosi_db->get_where('roles', 

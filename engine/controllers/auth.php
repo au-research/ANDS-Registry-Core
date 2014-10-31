@@ -1,7 +1,7 @@
 <?php
 class Auth extends CI_Controller {
 
-	public function login2(){
+	public function login(){
 		$data['title'] = 'Login';
 		$data['js_lib'] = array('core', 'angular129');
 		$data['scripts'] = array('login');
@@ -17,14 +17,9 @@ class Auth extends CI_Controller {
 				'display' 	=> 'LDAP',
 				'view' 		=>  $this->load->view('authenticators/ldap', false, true)
 			),
-			'shibboleth_sp' => array(
-				'slug'		=> 'shibboleth_sp',
-				'display'	=> 'Shibboleth',
-				'default'	=> true,
-				'view'		=> $this->load->view('authenticators/shibboleth_sp', false, true)
-			),
 			'aaf_rapid' => array(
 				'slug'		=> 'aaf_rapid',
+				'default'	=> true,
 				'display' 	=> 'AAF Rapid Connect',
 				'view' 		=>  $this->load->view('authenticators/aaf_rapid', false, true)
 			),
@@ -54,6 +49,12 @@ class Auth extends CI_Controller {
 		//get parameters from angularjs POST
 		$params = json_decode(file_get_contents('php://input'), true);
 
+		if(!$params) $params = array();
+		$post = ($this->input->post() ? $this->input->post() : array());
+
+		//get parameters from POST
+		$params = array_merge($params, $post);
+
 		try {
 			$this->load->model('authenticators/'.$authenticator_class, 'auth');
 			$this->auth->load_params($params);
@@ -64,7 +65,7 @@ class Auth extends CI_Controller {
 		
 	}
 
-	public function login(){
+	public function login2(){
 		$data['title'] = 'Login';
 		$data['js_lib'] = array('core');
 		$data['scripts'] = array();

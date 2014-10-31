@@ -11,6 +11,6 @@
 		</div>
 	</div>
 	<div class="control-group">
-		<button type="submit" class="btn btn-primary">Login using Built In Account</button>
+		<button type="submit" class="btn btn-primary" data-loading-text="Logging in... Please wait">Login using Built In Account</button>
 	</div>
 </form>
