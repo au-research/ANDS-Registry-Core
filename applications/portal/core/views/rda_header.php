@@ -49,6 +49,9 @@ else
 		<div class="head">
 			<div class="tagline">
 				<a href="<?php echo base_url();?>"><span>Research Data</span> Australia</a>
+				<?php if($environment_name): ?>
+				<a href="#" style="font-size:14px;color:<?php echo $environment_colour;?>"><?php echo $environment_name;?></a>
+				<?php endif;?>
 			</div><!-- tagline -->
 			<a href="<?php echo "http://www.ands.org.au/"; ?>" target="_blank" class="logo"><img src="<?php echo asset_url('images/logo.png','core');?>" alt="Research Data Australia Home Page Link (brought to you by ANDS)" /></a>
 			<!-- <a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris" target="_blank" class="logo"><img style="height:41px" src="<?php echo asset_url('images/NCRIS_PROVIDER_rev.png','core');?>" alt="National Collaborative Research Infrastructure Strategy (NCRIS)" /></a> -->
