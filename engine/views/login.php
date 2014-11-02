@@ -1,89 +1,47 @@
-<?php 
+<?php
 
 /**
- * Core Data Source Template File
- * 
- * 
+ * Login form
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
- * @see ands/registry_object/_registry_object
- * @package ands/datasource
- * 
  */
 ?>
 <?php $this->load->view('header');?>
+<style>
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+	display: none !important;
+}
+</style>
 
-<div class="container" id="main-content">
-	<div class="row">
-			<div class="span3">&nbsp;</div>
-
-			<div class="span6">
-				<div class="widget-box">
-					<div class="widget-title">
-						<h5>Login</h5>
-						<div class="buttons">
-							<?php printAlternativeLoginControl($authenticators); ?>
-						</div>
-						<div class="right-widget">
-													
-						</div>
-					</div>
-					<div class="widget-content">
-						
-						<?php if (isset($error_message)): ?>
-							<div class="alert alert-error">
-								<?php echo $error_message; ?>
-							</div>
-						<?php endif; ?>
-						<?php /* REMOVED - prints user's password to screen
-						// USEFUL FOR DEBUGGING ONLY
-						if(false): ?>
-							<div class="alert alert-error">
-								Error: <?php echo $exception->getMessage(); ?>
-							</div>
-						<?php endif; */ ?>
-						<?php 
-						printLoginForm($authenticators, $default_authenticator, 'loginForm', isset($redirect) ? $redirect : '');
-						printAlternativeLoginForms($authenticators, $default_authenticator, isset($redirect) ? $redirect : '');
-						?>
-					</div>
-
-				</div>
-			</div>
-
-			<div class="span3 pull-right">
-			</div>
-	</div>
-
-
-	<div class="row">
-		<div class="span3">&nbsp;</div>
-		<div class="span6">
-			<div class="alert alert-info">
-				<center>
-					<small>Searching for Research Data? <a href="<?php echo portal_url();?>" target="_blank" style="color:inherit;">Visit <b>Research Data Australia</b> <i class="icon-globe icon"></i></a></small>
-				</center>
-			</div>
-		</div>
-	</div>
+<div class="container" ng-app="login_app">
+	<div ng-view></div>	
 </div>
 
 
-<!-- Prompt user to upgrade browser -->
-<script type="text/javascript"> 
-var $buoop = {vs:{i:7,f:3.6,o:10.6,s:4,n:9}} 
-	$buoop.ol = window.onload; 
-	window.onload=function(){ 
-	 try {if ($buoop.ol) $buoop.ol();}catch (e) {} 
-	 var e = document.createElement("script"); 
-	 e.setAttribute("type", "text/javascript"); 
-	 e.setAttribute("src", "../../assets/js/update.js"); 
-	 document.body.appendChild(e); 
-	} 
-</script> 
+<div class="container hide" id="main">
+	<input type="hidden" value="<?php echo $default_authenticator;?>" id="default_authenticator">
+	<div class="row">
+		<div class="span6 offset3">
+			<h3>Login</h3>
+			<div class="alert" ng-show="error=='login_required'">You have to be logged in to use this functionality</div>
+			<div class="widget-box" ng-cloak>
+				<div class="widget-title">
+					<ul class="nav nav-tabs">
+						<?php foreach($authenticators as $auth): ?>
+						<li ng-class="{'<?php echo $auth['slug']?>':'active'}[tab]"><a href="#/<?php echo $auth['slug']?>?redirect={{redirect}}"><?php echo $auth['display']; ?></a></li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+
+				<?php foreach($authenticators as $auth): ?>
+				<div class="widget-content" ng-show="tab=='<?php echo $auth['slug'];?>'" ng-cloak>
+					<?php echo $auth['view']; ?>
+				</div>
+				<?php endforeach; ?>
+			</div>
+			<div class="alert alert-error" ng-show="message">{{message}}</div>
+		</div>
+
+	</div>
+</div>
 
 <?php $this->load->view('footer');?>
-
-
-<?php
-
-?>

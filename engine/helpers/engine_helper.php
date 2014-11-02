@@ -117,7 +117,7 @@ function acl_enforce($function_name, $message = '')
 	$_ci =& get_instance();
 	if (!$_ci->user->isLoggedIn())
 	{
-		redirect('auth/login/?error=login_required&redirect='.curPageURL());
+		redirect('auth/login/#/?error=login_required&redirect='.curPageURL());
 		// throw new Exception (($message ?: "Access to this function requires you to be logged in. Perhaps you have been automatically logged out?"));
 	}
 	else if (!$_ci->user->hasFunction($function_name))

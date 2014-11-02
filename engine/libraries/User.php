@@ -40,6 +40,17 @@ class User {
 		
 		return false;
     }
+
+    function authComplete($role){
+    	$this->CI->session->set_userdata(array(
+			AUTH_USER_IDENTIFIER	 => $role['user_identifier'] . "::",
+			AUTH_USER_FRIENDLY_NAME	 => $role['name'],
+			AUTH_METHOD 			 =>	$role['authentication_service_id'],
+			AUTH_DOMAIN 			 =>	$role['auth_domain']
+		));			
+		$this->appendFunction(array_merge(array(AUTH_FUNCTION_LOGGED_IN_ATTRIBUTE),$role['functional_roles']));
+		$this->appendAffiliation($role['organisational_roles']);
+    }
 	
 	/**
 	 * Logout the current user, destroying their current session data
@@ -170,8 +181,7 @@ class User {
 	function hasFunction($name)
 	{
 		// Add superuser capabilities
-		if (in_array(AUTH_FUNCTION_SUPERUSER, $this->functions))
-		{
+		if (in_array(AUTH_FUNCTION_SUPERUSER, $this->functions)) {
 			return TRUE;
 		}
 		return in_array($name, $this->functions);
