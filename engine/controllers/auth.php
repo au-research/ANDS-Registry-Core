@@ -16,14 +16,21 @@ class Auth extends CI_Controller {
 				'slug'		=> 'ldap',
 				'display' 	=> 'LDAP',
 				'view' 		=>  $this->load->view('authenticators/ldap', false, true)
-			),
-			'aaf_rapid' => array(
+			)
+		);
+
+		// var_dump(get_config_item('aaf_rapidconnect_url'));
+		// var_dump(get_config_item('aaf_rapidconnect_secret'));
+
+		if(get_config_item('aaf_rapidconnect_url') && get_config_item('aaf_rapidconnect_secret')) {
+			$rapid_connect = array(
 				'slug'		=> 'aaf_rapid',
 				'default'	=> true,
 				'display' 	=> 'AAF Rapid Connect',
 				'view' 		=>  $this->load->view('authenticators/aaf_rapid', false, true)
-			),
-		);
+			);
+			array_push($data['authenticators'], $rapid_connect);
+		}
 
 		$data['default_authenticator'] = false;
 		foreach($data['authenticators'] as $auth) {
@@ -32,8 +39,9 @@ class Auth extends CI_Controller {
 				break;
 			}
 		}
+		if(!$data['default_authenticator']) $data['default_authenticator'] = 'built_in';
 
-		$this->load->view('login2', $data);
+		$this->load->view('login', $data);
 	}
 
 	public function authenticate($method = 'built_in') {
@@ -63,56 +71,6 @@ class Auth extends CI_Controller {
 			throw new Exception($e->getMessage());
 		}
 		
-	}
-
-	public function login2(){
-		$data['title'] = 'Login';
-		$data['js_lib'] = array('core');
-		$data['scripts'] = array();
-		//$config['authenticators'] = Array('Built in' => gCOSI_AUTH_METHOD_BUILT_IN, 'LDAP'=> gCOSI_AUTH_METHOD_LDAP, 'Shibboleth'=>gCOSI_AUTH_METHOD_SHIBBOLETH);
-		//$config['default_authenticator'] = gCOSI_AUTH_METHOD_BUILT_IN;
-		
-
-		$this->CI =& get_instance();
-
-		$data['authenticators'] = array(gCOSI_AUTH_METHOD_BUILT_IN => 'Built-in Authentication', gCOSI_AUTH_METHOD_LDAP=>'LDAP');
-		if (get_config_item('shibboleth_sp')=='true') {
-			$data['authenticators'][gCOSI_AUTH_METHOD_SHIBBOLETH] = 'Australian Access Federation (AAF) credentials';
-			$data['default_authenticator'] = gCOSI_AUTH_METHOD_SHIBBOLETH;
-		} else {
-			$data['default_authenticator'] = gCOSI_AUTH_METHOD_BUILT_IN;
-		}
-
-		$data['redirect'] = '';
-		
-		if ($this->input->post('inputUsername') || $this->input->post('inputPassword') && !$this->user->loggedIn()) {
-			try {
-				if($this->user->authChallenge($this->input->post('inputUsername'), $this->input->post('inputPassword'))) {
-					if($this->input->post('redirect')){
-						redirect($this->input->post('redirect'));
-					}else{
-						redirect(registry_url().'auth/dashboard');
-					}
-				}
-			}
-			catch (Exception $e) {
-				$data['error_message'] = "Unable to login. Please check your credentials are accurate.";
-				$data['exception'] = $e;
-			}
-		}
-
-		if($this->input->get('error')){
-			$error = $this->input->get('error');
-			if($error=='login_required'){
-				$data['error_message'] = "Access to this function requires you to be logged in. Perhaps you have been automatically logged out?";
-			}
-		}
-
-		if($this->input->get('redirect')) {
-			$data['redirect'] = $this->input->get('redirect');
-		}else $data['redirect'] = registry_url().'auth/dashboard';
-		
-		$this->load->view('login', $data);
 	}
 	
 	public function logout(){

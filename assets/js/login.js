@@ -13,8 +13,11 @@ login_app.config(['$routeProvider', function($routeProvider){
 		;
 }]);
 
-function loginCtrl($scope, $routeParams, loginService){
+function loginCtrl($scope, $routeParams, loginService, $location){
 	$scope.tab = $routeParams.method ? $routeParams.method : $('#default_authenticator').val();
+	$scope.redirect = $location.search().redirect ? $location.search().redirect : '';
+	$scope.error = $location.search().error ? $location.search().error : '';
+	$scope.message = $location.search().message ? $location.search().message : false;
 	
 	$scope.authenticate = function(method){
 		var data = {
@@ -23,11 +26,16 @@ function loginCtrl($scope, $routeParams, loginService){
 		}
 		$('form button').button('loading');
 		loginService.authenticate(method, data).then(function(data){
-			$('form button').button('reset');
 			if(data.status=='ERROR'){
 				$scope.message = data.message;
+				$('form button').button('reset');
 			} else if(data.status=='SUCCESS'){
-				document.location.href = data.message.redirect_to;
+				if(!$scope.redirect){
+					document.location.href = data.message.redirect_to;	
+				} else {
+					document.location.href = $scope.redirect;
+				}
+				
 			}
 		});
 	}
