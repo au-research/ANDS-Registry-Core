@@ -380,7 +380,10 @@ class Connections_Extension extends ExtensionBase
 					$row['relation_type'] = 'hasAssociationWith';
 				if($row['related_title'] != '' or $row['status'] != null)
 				{
-					$my_connections[] = $row;
+					if(!($row['related_info_type'] == 'service' && ($row['relation_type'] == "isSupportedBy" || $row['relation_type'] == "presents") && $row['relation_url'] != "")){
+                        $my_connections[] = $row;
+                    }
+
 				}
 			}
 		}

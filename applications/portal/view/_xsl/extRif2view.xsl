@@ -562,6 +562,10 @@
                     <h3>Download Data</h3>
                     <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@target='directDownload']" mode="button"/></p>
                 </xsl:if>
+                <xsl:if test="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isSupportedBy'] and ro:relation/ro:url/text() != '']">
+                    <h3>Online via Tools</h3>
+                    <p><xsl:apply-templates select="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isSupportedBy'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/></p>
+                </xsl:if>
                 <xsl:if test="ro:location/ro:address/ro:electronic/@type='url'">
                     <h3>Source</h3>
                     <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@type='url']"/></p>
@@ -799,6 +803,22 @@
       <a href="{$base_url}search/#!/tag={.}"><xsl:value-of select="."/></a>
     </xsl:when>
   </xsl:choose>
+</xsl:template>
+
+<xsl:template match="ro:relatedInfo" mode="onlineTools">
+    <a>
+        <xsl:attribute name="class">identifier</xsl:attribute>
+        <xsl:attribute name="href"> <xsl:value-of select="ro:relation/ro:url"/></xsl:attribute>
+        <xsl:attribute name="title"><xsl:text>Visit Service</xsl:text></xsl:attribute>
+        <xsl:choose>
+        <xsl:when test="ro:title">
+            <xsl:value-of select="ro:title"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="ro:relation/ro:url"/>
+        </xsl:otherwise>
+        </xsl:choose>
+    </a>
 </xsl:template>
 
 <xsl:template match="ro:relatedInfo">
