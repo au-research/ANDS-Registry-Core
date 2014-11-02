@@ -19,6 +19,15 @@ class Auth extends CI_Controller {
 			)
 		);
 
+		if(get_config_item('shibboleth_sp')) {
+			$shibboleth_sp =  array(
+				'slug'		=>'shibboleth_sp',
+				'display'	=> 'Shibboleth SP',
+				'view'		=> $this->load->view('authenticators/shibboleth_sp', false, true)
+			);
+			array_push($data['authenticators'], $shibboleth_sp);
+		}
+
 		// var_dump(get_config_item('aaf_rapidconnect_url'));
 		// var_dump(get_config_item('aaf_rapidconnect_secret'));
 
