@@ -18,7 +18,7 @@
             <xsl:call-template name="getSourceURL"/>
         </xsl:variable>
         <xsl:variable name="lower_type" select="translate(ro:collection/@type, $uppercase, $smallcase)"/>
-        <xsl:if test="$sourceUrl != '' and ($lower_type = 'collection' or $lower_type = 'repository' or $lower_type = 'dataset')">
+        <xsl:if test="not(extRif:extendedMetadata/extRif:annotations/extRif:tags/extRif:tag[@type='secret' and text() = 'excludeDCI']) and  $sourceUrl != '' and ($lower_type = 'collection' or $lower_type = 'repository' or $lower_type = 'dataset')">
             <DataRecord>
                 <Header>
                     <DateProvided>
