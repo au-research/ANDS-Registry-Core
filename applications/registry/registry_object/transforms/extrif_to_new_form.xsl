@@ -1483,12 +1483,10 @@
 			<label class="control-label" for="title">Arg: </label>
 			<div class="control-group">
 				<span>
-					<button class="btn triggerTypeAhead" type="button"><span class="caret"></span></button>
 					<input type="text" class="input-small rifcs-type" vocab="RIFCSArgType" name="type" placeholder="Type" value="{@type}"/>
 				</span>
 				<input type="text" class="input-xlarge" name="required"  placeholder="Required" value="{@required}"/>
 				<span>
-					<button class="btn triggerTypeAhead" type="button"><span class="caret"></span></button>
 					<input type="text" class="input-small rifcs-type" vocab="RIFCSArgUse" name="use"  placeholder="Use" value="{@use}"/>
 				</span>
 				<input type="text" class="input-xlarge" name="value"  placeholder="Value" value="{text()}"/>
@@ -2045,12 +2043,10 @@
 			<label class="control-label" for="title">Arg: </label>
 			<div class="control-group">
 				<span>
-					<button class="btn triggerTypeAhead" type="button"><span class="caret"></span></button>
 					<input type="text" class="input-small rifcs-type" vocab="RIFCSArgType" name="type" placeholder="Type" value=""/>
 				</span>
 				<input type="text" class="input-xlarge" name="required"  placeholder="Required" value=""/>
 				<span>
-					<button class="btn triggerTypeAhead" type="button"><span class="caret"></span></button>
 					<input type="text" class="input-small rifcs-type" vocab="RIFCSArgUse" name="use"  placeholder="Use" value=""/>
 				</span>
 				<input type="text" class="input-xlarge" name="value"  placeholder="Value" value=""/>

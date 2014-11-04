@@ -224,7 +224,7 @@ $(function(){
         	event.preventDefault();
     	}
 	});
-	validate();
+	// validate();
 
 
 	$(document).on('click','.search_related_btn', function(){
@@ -611,6 +611,7 @@ function initEditForm(){
 				$.each(allTabs, function(){
 					xml += getRIFCSforTab(this,false);
 				});
+				
 
 				xml+='</'+ro_class+'>';
 				if($('#annotations')[0].value != '')
@@ -1271,20 +1272,8 @@ function bindPartsTooltip(){
 		var parts = $(this).next('.parts')[0];
 		if(parts){
 			var button = this;
-			$(this).qtip({
-				content:{text:$(parts)},
-				position:{
-					my:'center left',
-					at: 'center right'
-				},
-				show: {event: 'click'},
-				hide: {event: 'unfocus'},
-				events: {
-					show: function(event, api) {
-						//console.log(api.id, button);
-					}
-				},
-				style: {classes: 'ui-tooltip-shadow ui-tooltip-bootstrap ui-tooltip-large'}
+			$(button).click(function(){
+				$(parts).toggle();
 			});
 		}
 	});
@@ -1491,6 +1480,7 @@ function getRIFCSforTab(tab, hasField){
 			if(this_fragment_type!='citationMetadata' && this_fragment_type!='coverage' && this_fragment_type!='relatedObject'&& this_fragment_type!='rights') fragment +=fragment_meta;
 		});
 		fragment +='>';
+
 		//finish fragment header
 
 		//onto the body of the fragment
@@ -1676,12 +1666,12 @@ function getRIFCSforTab(tab, hasField){
                             });
                            if($('input[name=byteSize]', this).length > 0)  this_fragment +='<byteSize>'+htmlEntities($('input[name=byteSize]',this).val())+'</byteSize>';
 							//deal with args here
-							// var args = $('.aro_box_part', this);
-							// $.each(args, function(){
-							// 	this_fragment += '<'+$(this).attr('type')+' field_id="' +$(this).attr('field_id')+'" type="'+htmlEntities($('input[name=type]', this).val())+'" required="'+$('input[name=required]', this).val()+'" use="'+$('input[name=use]', this).val()+'">';
-							// 	this_fragment += htmlEntities($('input[name=value]', this).val());
-							// 	this_fragment +='</'+$(this).attr('type')+'>';
-							// });
+							var args = $('.aro_box_part', this);
+							$.each(args, function(){
+								this_fragment += '<'+$(this).attr('type')+' field_id="' +$(this).attr('field_id')+'" type="'+htmlEntities($('input[name=type]', this).val())+'" required="'+$('input[name=required]', this).val()+'" use="'+$('input[name=use]', this).val()+'">';
+								this_fragment += htmlEntities($('input[name=value]', this).val());
+								this_fragment +='</'+$(this).attr('type')+'>';
+							});
 							this_fragment +='</'+$(this).attr('type')+'>';//closing tag
 						}else if($(this).attr('type')=='physical'){
 							//deal with address parts here
