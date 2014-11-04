@@ -10,8 +10,6 @@ class Sync extends Task {
 	private $target = false; //ds or ro
 	private $target_id = false;
 	
-
-
 	function load_params($task) {
 		parse_str($task['params'], $params);
 		$this->target = $params['type'] ? $params['type'] : false;
