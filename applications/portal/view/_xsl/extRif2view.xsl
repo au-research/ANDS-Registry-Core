@@ -564,7 +564,10 @@
                 </xsl:if>
                 <xsl:if test="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isSupportedBy'] and ro:relation/ro:url/text() != '']">
                     <h3>Online via Tools</h3>
-                    <p><xsl:apply-templates select="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isSupportedBy'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/></p>
+                    <p>
+                        <xsl:apply-templates select="ro:relatedObject[ro:relation[@type = 'presents'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/>
+                        <xsl:apply-templates select="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isSupportedBy'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/>
+                    </p>
                 </xsl:if>
                 <xsl:if test="ro:location/ro:address/ro:electronic/@type='url'">
                     <h3>Source</h3>
@@ -818,7 +821,17 @@
             <xsl:value-of select="ro:relation/ro:url"/>
         </xsl:otherwise>
         </xsl:choose>
-    </a>
+    </a><br/>
+</xsl:template>
+
+<xsl:template match="ro:relatedObject" mode="onlineTools">
+    <a>
+        <xsl:attribute name="class">identifier  resolvable_key hide</xsl:attribute>
+        <xsl:attribute name="key_value"><xsl:value-of select="ro:key"/></xsl:attribute>
+        <xsl:attribute name="href"> <xsl:value-of select="ro:relation/ro:url"/></xsl:attribute>
+        <xsl:attribute name="title"><xsl:text>Visit Service</xsl:text></xsl:attribute>
+        <xsl:value-of select="ro:relation/ro:url"/>
+    </a><br/>
 </xsl:template>
 
 <xsl:template match="ro:relatedInfo">

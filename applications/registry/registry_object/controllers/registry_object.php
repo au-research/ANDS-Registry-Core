@@ -868,11 +868,6 @@ class Registry_object extends MX_Controller {
 		echo $solrDoc;
 	}
 
-    function get_services_url($id){
-
-
-    }
-
 	//-----------DEPRECATED AFTER THIS LINE -----------------------//
 
 	/**
