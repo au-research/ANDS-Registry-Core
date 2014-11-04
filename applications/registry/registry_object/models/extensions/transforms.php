@@ -253,7 +253,7 @@ class Transforms_Extension extends ExtensionBase
             {
                 $eAuthor = $eAuthorList->addChild('Author');
                 $eAuthor['seq'] = '1';
-                $eAuthor->addChild('AuthorName', 'Anonymous');
+                $eAuthor->addChild('AuthorName', $this->ro->group);
             }
 
 
