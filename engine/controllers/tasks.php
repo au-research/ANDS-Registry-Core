@@ -2,7 +2,10 @@
 class Tasks extends CI_Controller {
 
 	public function index() {
-		echo 'Hello World';
+		$data['title'] = 'ANDS Task Manager';
+		$data['scripts'] = array('task_mgr');
+		$data['js_lib'] = array('core', 'angular129');
+		$this->load->view('tasks_manager', $data);
 	}
 
 	public function test() {
@@ -64,10 +67,10 @@ class Tasks extends CI_Controller {
 
 		try {
 			$this->load->model('tasks/'.$task_class, 'task');
+			$this->task->init($task['id']);
 			$this->task->load_params($task);
 			$this->task->run();
 			$this->task->report();
-			$this->task_mgr->complete_task($task);
 		} catch (Exception $e) {
 			throw new Exception ($e->getMessage());
 		}

@@ -36,9 +36,4 @@ class Task_mgr extends CI_Model {
 		}
 	}
 
-	function complete_task($task) {
-		$query = $this->db->where('id', $task['id'])->update('tasks', array(
-			'status' => 'COMPLETED'
-		));
-	}
 }
