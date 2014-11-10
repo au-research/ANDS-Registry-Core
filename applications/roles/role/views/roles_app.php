@@ -162,10 +162,15 @@
 									<div ng-show="role_merge_missing">
 										<hr>
 										Roles exists in <b>{{merge_target}}</b> that is not in <b>{{role.role.name}}</b>
-										<ul>
+										<ul ng-show="role_merge_missing">
 											<li ng-repeat="r in role_merge_missing">{{r.name}}</li>
 										</ul>
+										
 										<button class="btn btn-primary" ng-click="commit_merge_role(merge_target, role.role.role_id)">Add these roles to {{role.role.name}}</button>
+									</div>
+									<div ng-show="role_merge_missing.length==0">
+										<hr>
+										<div class="alert alert-info">No role to merge</div>
 									</div>
 								</div>
 							</div>
