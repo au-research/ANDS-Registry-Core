@@ -16,7 +16,7 @@ initViewPage();
 
 // duplicate displays will be postponed 'till next release
 //checkForDuplicateRecords();
-
+getRelatedObjectsTitleByKey();
 drawMap();
 initConnections(); 
 initAddTagForm();
@@ -622,6 +622,31 @@ function initConnectionGraph()
 				);  
 
 }
+
+
+
+function getRelatedObjectsTitleByKey()
+{
+    if($('.resolvable_key').length > 0)
+    {
+        $('.resolvable_key').each(function(){
+            link = $(this);
+            if($(this).attr('key_value')){
+                title_url = base_url + 'registry/services/api/registry_objects/?fq=key:("' + encodeURIComponent($(this).attr('key_value')) + '")&fl=title';
+                $.ajax({
+                    type:"GET",
+                    url: title_url,
+                    success:function(msg){
+                        title = msg.message.response.docs[0].title;
+                        link.html(title);
+                    }
+                });
+            }
+            link.removeClass('hide');
+        });
+    }
+}
+
 
 function generatePreviewTip(element, slug, registry_object_id, relation_type, relation_description, relation_url, identifier_relation_id)
 {

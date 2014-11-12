@@ -348,8 +348,11 @@ class Connections_Extension extends ExtensionBase
 			{
 				$row['origin'] = "EXPLICIT";
 			}
+            if(!($row['class'] == 'service' && ($row['relation_type'] == "isSupportedBy" || $row['relation_type'] == "presents") && $row['relation_url'] != ""))
+            {
+                $my_connections[] = $row;
+            }
 
-			$my_connections[] = $row;
 		}
 
 		return $my_connections;
@@ -380,7 +383,7 @@ class Connections_Extension extends ExtensionBase
 					$row['relation_type'] = 'hasAssociationWith';
 				if($row['related_title'] != '' or $row['status'] != null)
 				{
-					$my_connections[] = $row;
+		            $my_connections[] = $row;
 				}
 			}
 		}
