@@ -562,14 +562,14 @@
                     <h3>Download Data</h3>
                     <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@target='directDownload']" mode="button"/></p>
                 </xsl:if>
-                <xsl:if test="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isSupportedBy'] and ro:relation/ro:url/text() != '']">
+                <xsl:if test="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isPresentedBy' or @type = 'supports'] and ro:relation/ro:url/text() != ''] or ro:relatedObject[ro:relation[@type = 'supports' or @type = 'isPresentedBy'] and ro:relation/ro:url/text() != '']">
                     <h3>Online via Tools</h3>
                     <p>
-                        <xsl:apply-templates select="ro:relatedObject[ro:relation[@type = 'presents'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/>
-                        <xsl:apply-templates select="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isSupportedBy'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/>
+                        <xsl:apply-templates select="ro:relatedObject[ro:relation[@type = 'supports' or @type = 'isPresentedBy'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/>
+                        <xsl:apply-templates select="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isPresentedBy' or @type = 'supports'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/>
                     </p>
                 </xsl:if>
-                <xsl:if test="ro:location/ro:address/ro:electronic/@type='url'">
+                <xsl:if test="ro:location/ro:address/ro:electronic[@type='url' and @target != 'directDownload']">
                     <h3>Source</h3>
                     <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@type='url']"/></p>
                 </xsl:if>
