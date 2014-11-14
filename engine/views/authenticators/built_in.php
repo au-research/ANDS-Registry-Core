@@ -3,11 +3,11 @@
 	<div class="control-group">
 		<div class="controls">
 			<label for="">Username</label>
-			<input type="text" placeholder="Username" ng-model="username">
+			<input type="text" placeholder="Username" ng-model="username" auto-fill-sync>
 		</div>
 		<div class="controls">
 			<label for="">Password</label>
-			<input type="password" placeholder="Password" ng-model="password">
+			<input type="password" placeholder="Password" ng-model="password" auto-fill-sync>
 		</div>
 	</div>
 	<div class="control-group">

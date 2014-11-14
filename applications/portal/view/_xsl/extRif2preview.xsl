@@ -725,29 +725,64 @@
         <xsl:text>,</xsl:text>
     </xsl:if>       
     <xsl:value-of select="."/> 
-</xsl:template> 
+</xsl:template>
 
 <xsl:template match="ro:location/ro:address/ro:electronic">
-  <xsl:if test="./@type='url'">
-      <xsl:variable name="url">
-          <xsl:choose>
-              <xsl:when test="string-length(ro:value/text())>30">
-                <xsl:value-of select="substring(ro:value/text(),0,30)"/>...
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="ro:value/text()"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>	
-    <a>
-        <xsl:attribute name="href">
-            <xsl:value-of select="ro:value/text()"/>
-        </xsl:attribute>
-        <xsl:attribute name="class">recordOutBound</xsl:attribute>
-        <xsl:attribute name="type">electronic_address</xsl:attribute>
-        <xsl:attribute name="target">_blank</xsl:attribute><xsl:value-of select="$url"/>
-    </a><br />
-</xsl:if>
+    <xsl:choose>
+        <xsl:when test="./@target='directDownload'">
+            <xsl:variable name="title">
+                <xsl:choose>
+                    <xsl:when test="string-length(ro:title)>12">
+                        <xsl:value-of select="substring(ro:title,0,12)"/>...
+                    </xsl:when>
+                    <xsl:when test="ro:title">
+                        <xsl:value-of select="ro:title"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>Download</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            <xsl:variable name="label">
+                <xsl:value-of select="$title"/>
+                <xsl:if test="ro:mediaType">
+                    <xsl:text>&amp;mdash;</xsl:text><xsl:value-of select="ro:mediaType"/>
+                </xsl:if>
+                <xsl:if test="ro:byteSize">
+                    <xsl:text> (</xsl:text><xsl:value-of select="ro:byteSize"/><xsl:text>)</xsl:text>
+                </xsl:if>
+            </xsl:variable>
+            <a class="yellow_button">
+                <xsl:attribute name="href">
+                    <xsl:value-of select="ro:value/text()"/>
+                </xsl:attribute>
+                <xsl:attribute name="target">_blank</xsl:attribute>
+                <xsl:attribute name="tip"><xsl:value-of select="concat(ro:title, '&lt;br/&gt;', ro:notes)"/></xsl:attribute>
+                <xsl:value-of select="$label"/>
+                <i class="fa fa-download"></i>
+            </a><br/>
+        </xsl:when>
+        <xsl:when test="./@type='url'">
+            <xsl:variable name="url">
+                <xsl:choose>
+                    <xsl:when test="string-length(ro:value/text())>30">
+                        <xsl:value-of select="substring(ro:value/text(),0,30)"/>...
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="ro:value/text()"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="ro:value/text()"/>
+                </xsl:attribute>
+                <xsl:attribute name="class">recordOutBound</xsl:attribute>
+                <xsl:attribute name="type">electronic_address</xsl:attribute>
+                <xsl:attribute name="target">_blank</xsl:attribute><xsl:value-of select="$url"/>
+            </a><br />
+        </xsl:when>
+    </xsl:choose>
 </xsl:template>
 
 <xsl:template match="ro:location/ro:address/ro:physical">

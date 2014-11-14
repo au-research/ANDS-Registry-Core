@@ -13,6 +13,21 @@ login_app.config(['$routeProvider', function($routeProvider){
 		;
 }]);
 
+login_app.directive('autoFillSync', function($timeout) {
+   return {
+      require: 'ngModel',
+      link: function(scope, elem, attrs, ngModel) {
+          var origVal = elem.val();
+          $timeout(function () {
+              var newVal = elem.val();
+              if(ngModel.$pristine && origVal !== newVal) {
+                  ngModel.$setViewValue(newVal);
+              }
+          }, 500);
+      }
+   }
+});
+
 function loginCtrl($scope, $routeParams, loginService, $location){
 	$scope.tab = $routeParams.method ? $routeParams.method : $('#default_authenticator').val();
 	$scope.redirect = $location.search().redirect ? $location.search().redirect : '';

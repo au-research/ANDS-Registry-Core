@@ -868,7 +868,6 @@ class Registry_object extends MX_Controller {
 		echo $solrDoc;
 	}
 
-
 	//-----------DEPRECATED AFTER THIS LINE -----------------------//
 
 	/**

@@ -866,42 +866,38 @@
 								</div>
 
 								<div class="control-group">
-									<label class="control-label" for="provider_type">XSL File</label>
 									<div class="controls">
-										<input type="text" ng-model="ds.xsl_file">
+										<table>
+											<tr ng-repeat="cr in ds.crosswalks">
+												<td>
+													<span ng-hide="cr.path">
+														<input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this.files)" style="line-height:0px;"/>
+													</span>
+													<span ng-show="cr.path">
+														<b>{{cr.path}}</b> 
+													</span>
+												</td>
+												<td>
+													<span class="badge badge-success" ng-show="cr.active && cr.type!='support'" ng-click="ds.provider_type=cr.prefix">Active</span>
+													<span class="badge" ng-show="!cr.active && cr.type!='support'" ng-click="ds.provider_type=cr.prefix">Inactive</span>
+													<span class="badge" ng-show="!cr.active && cr.type=='support'">Supporting</span>
+												</td>
+												<td>
+													<span ng-show="cr.type!='support'">
+														<label style="width:auto;" class="control-label" for="provider_type" ng-show="ds.harvest_method=='PMHHarvester'">Metadata Prefix</label>
+														<label style="width:auto;"class="control-label" for="provider_type" ng-show="ds.harvest_method=='CSWHarvester'">Output Schema</label>
+														<label style="width:auto;"class="control-label" for="provider_type" ng-show="ds.harvest_method=='CKANHarvester' || ds.harvest_method=='GETHarvester'">Provider Type</label>
+														<input style="margin-left:5px;" type="text" ng-model="cr.prefix">
+													</span>
+												</td>
+												<td>
+													<a href="javascript:;" tip="Remove" ng-click="removeFromList(ds.crosswalks, $index)"><i class="icon icon-remove"></i></a>
+												</td>
+											</tr>
+										</table>
 									</div>
 								</div>
-
-								<div class="control-group" ng-repeat="cr in ds.crosswalks">
-									<div class="controls">
-										<div class="widget-box success">
-											<div class="widget-title">
-												<h5 ng-show="cr.path">{{cr.path}}
-													<span class="badge badge-success" ng-show="cr.active">Active</span>
-													<span class="badge" ng-show="!cr.active">Inactive</span>
-												</h5>
-												<h5 ng-hide="cr.path">No File</h5>
-												<div class="btn-group pull-right">
-													<!-- <a href="#" class="btn btn-primary" tip="Edit"><i class="icon-white icon-edit"></i></a> -->
-													<a ng-click="removeFromList(ds.crosswalks, $index)" class="btn btn-danger" tip="Remove"><i class="icon-white icon-remove"></i></a>
-												</div>
-											</div>
-											<div class="widget-content">
-												<div class="control-group" ng-show="cr.type=='crosswalk'">
-													<label class="control-label" for="provider_type" ng-show="ds.harvest_method=='PMHHarvester'">Metadata Prefix</label>
-													<label class="control-label" for="provider_type" ng-show="ds.harvest_method=='CSWHarvester'">Output Schema</label>
-													<label class="control-label" for="provider_type" ng-show="ds.harvest_method=='CKANHarvester' || ds.harvest_method=='GETHarvester'">Provider Type</label>
-													<div class="controls">
-														<input type="text" ng-model="cr.prefix">
-													</div>
-												</div>
-											</div>
-											<div class="widget-content">
-												<input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this.files)" style="line-height:0px;"/>
-											</div>
-										</div>
-									</div>
-								</div>
+								
 
 								<div class="control-group">
 									<div class="controls">

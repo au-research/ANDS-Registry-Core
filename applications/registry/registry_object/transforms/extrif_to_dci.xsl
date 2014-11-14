@@ -5,17 +5,20 @@
     <xsl:strip-space elements="*"/>
     <xsl:param name="dateRequested"/>
     <xsl:param name="dateHarvested"/>
+    <xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'" />
+    <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
     <xsl:template match="/">
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="ro:registryObject"/>
 
-    <xsl:template match="ro:registryObject[ro:collection/@type= 'collection' or ro:collection/@type= 'repository' or ro:collection/@type= 'dataset']">
+    <xsl:template match="ro:registryObject[ro:collection]">
         <xsl:variable name="sourceUrl">
             <xsl:call-template name="getSourceURL"/>
         </xsl:variable>
-        <xsl:if test="$sourceUrl != ''">
+        <xsl:variable name="lower_type" select="translate(ro:collection/@type, $uppercase, $smallcase)"/>
+        <xsl:if test="not(extRif:extendedMetadata/extRif:annotations/extRif:tags/extRif:tag[@type='secret' and text() = 'excludeDCI']) and  $sourceUrl != '' and ($lower_type = 'collection' or $lower_type = 'repository' or $lower_type = 'dataset')">
             <DataRecord>
                 <Header>
                     <DateProvided>
