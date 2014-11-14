@@ -270,3 +270,14 @@ $eDBCONF['default']['dbdriver'] = 'mysql';
 // Optional development branch variable, mainly to monitor push state of 
 // test systems (if specified, will report git branch in portal header)
 // $ENV['gitdir_path'] = "/path/to/.git"; 
+
+
+//======================================
+// GOOGLE ANALYTICS (enable FOR PRODUCTION ONLY)
+$enable_google_analytic		= false;
+$google_analytic_code		= 'UA-XXXXXXX-X'; //FOR PRODUCTION ONLY
+$ENV['google_analytic_code'] = 'UA-XXXXXXX-X';
+$ENV['google_key'] = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+$ENV['ga_email'] = 'google_analytics@email.com';
+$ENV['ga_password'] = 'XXXXXXXX';
+$ENV['ga_profile_id'] = 'XXXXXXXXXX';
