@@ -3,13 +3,13 @@ CREATE TABLE `registry_object_links` (
   `registry_object_id` mediumint(8) unsigned NOT NULL,
   `data_source_id` mediumint(8) unsigned NOT NULL,
   `link_type` varchar(32) DEFAULT NULL,
-  `url` varchar(512) DEFAULT NULL,
+  `link` varchar(512) DEFAULT NULL,
   `status` varchar(32) DEFAULT NULL,
   `last_checked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   KEY `idx_data_source_id_rol` (`data_source_id`),
   KEY `idx_registry_object_id_rol` (`registry_object_id`),
-  KEY `idx_url_rol` (`url`),
+  KEY `idx_link_rol` (`link`),
   CONSTRAINT `fk_rol_registry_object_id` FOREIGN KEY (`registry_object_id`)
     REFERENCES `registry_objects` (`registry_object_id`)
     ON DELETE NO ACTION ON UPDATE NO ACTION,
