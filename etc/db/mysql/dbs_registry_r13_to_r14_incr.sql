@@ -2,7 +2,7 @@ CREATE TABLE `registry_object_links` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `registry_object_id` mediumint(8) unsigned NOT NULL,
   `data_source_id` mediumint(8) unsigned NOT NULL,
-  `link_type` varchar(32) DEFAULT NULL,
+  `link_type` varchar(64) DEFAULT NULL,
   `link` varchar(512) DEFAULT NULL,
   `status` varchar(32) DEFAULT NULL,
   `last_checked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
