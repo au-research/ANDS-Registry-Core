@@ -1,0 +1,6 @@
+div.modal div.results { width:80%; margin-left:auto;margin-right:auto;}
+div.modal div.results ul.unstyled { border:thin #bbb solid;}
+div.modal span.status { height:1em;margin-left:0.5em;padding:0.2em;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;}
+div.modal span.class { margin-left:0.5em;}
+div.modal span.class:before { content:"[";}
+div.modal span.class:after { content:"]";}

@@ -349,6 +349,9 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 		if($scope.ds.provider_type) {
 			if($scope.ds.provider_type=='rif') {
 				$scope.ds.xsl_file = '';
+				$.each($scope.ds.crosswalks, function(){
+					this.active = false;
+				});
 				return;
 			}
 			if($scope.ds.crosswalks){

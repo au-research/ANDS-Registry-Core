@@ -870,17 +870,17 @@
 										<table>
 											<tr ng-repeat="cr in ds.crosswalks">
 												<td>
+													<span class="badge badge-success" ng-show="cr.active && cr.type!='support'" ng-click="ds.provider_type=cr.prefix">Active</span>
+													<span class="badge" ng-show="!cr.active && cr.type!='support'" ng-click="ds.provider_type=cr.prefix">Inactive</span>
+													<span class="badge" ng-show="!cr.active && cr.type=='support'">Supporting</span>
+												</td>
+												<td>
 													<span ng-hide="cr.path">
 														<input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this.files)" style="line-height:0px;"/>
 													</span>
 													<span ng-show="cr.path">
 														<b>{{cr.path}}</b> 
 													</span>
-												</td>
-												<td>
-													<span class="badge badge-success" ng-show="cr.active && cr.type!='support'" ng-click="ds.provider_type=cr.prefix">Active</span>
-													<span class="badge" ng-show="!cr.active && cr.type!='support'" ng-click="ds.provider_type=cr.prefix">Inactive</span>
-													<span class="badge" ng-show="!cr.active && cr.type=='support'">Supporting</span>
 												</td>
 												<td>
 													<span ng-show="cr.type!='support'">

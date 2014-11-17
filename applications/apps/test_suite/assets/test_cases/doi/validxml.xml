@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns="http://datacite.org/schema/kernel-2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-2.1 http://schema.datacite.org/meta/kernel-2.1/metadata.xsd">
+	<identifier identifierType="DOI"></identifier>
+	<creators>
+		<creator>
+			<creatorName>Woods, Liz</creatorName>
+		</creator>
+	</creators>
+	<titles>
+		<title>Data Test Example</title>
+	</titles>
+	<publisher>ANDS</publisher>
+	<publicationYear>2014</publicationYear>
+</resource>
