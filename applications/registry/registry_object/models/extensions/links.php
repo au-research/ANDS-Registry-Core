@@ -7,7 +7,6 @@
  */
 
 
-
 class links_Extension extends ExtensionBase
 {
 
@@ -23,13 +22,21 @@ class links_Extension extends ExtensionBase
         $eaLinks = $this->processElectronicAddresses($sXml);
         $cmUrls = $this->processCitationUrl($sXml);
         $descLinks = $this->processDescriptions($sXml);
-        $allLinks = array_merge($eaLinks, $cmUrls, $descLinks);
-        $this->storeLinks($allLinks);
+        $identifierLinks = $this->processIdentifierLinks($sXml);
+        $allLinks = array_merge($eaLinks, $cmUrls, $descLinks, $identifierLinks);
+        //find existing links for this ro
+        $currentLinks = $this->getExistingLinks();
+        // get existing - all = links to delete
+        $removedLinks = array_diff($currentLinks, $allLinks);
+        // new links - current to insert
+        $newLinks = array_diff($allLinks, $currentLinks);
+        // the rest remains the same
+        $this->deleteLinks($removedLinks);
+        $this->storeLinks($newLinks);
     }
 
     function processElectronicAddresses($sXml){
         $eaLinks = array();
-
         $ro_id = $this->ro->id;
         $ds_id = $this->ro->data_source_id;
         $electronic_address = $sXml->xpath('//ro:electronic');
@@ -37,7 +44,7 @@ class links_Extension extends ExtensionBase
         {
             $type = 'electronic_'.(string)$address["type"];
             $value = (string)$address->value[0];
-            array_push($eaLinks, array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW'));
+            array_push($eaLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
         }
         return $eaLinks;
     }
@@ -52,7 +59,7 @@ class links_Extension extends ExtensionBase
         {
             $type = 'citation_metadata_url';
             $value = (string)$cm->url[0];
-            array_push($cUrls, array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW'));
+            array_push($cUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
         }
         return $cUrls;
     }
@@ -69,19 +76,130 @@ class links_Extension extends ExtensionBase
             preg_match_all($regex, html_entity_decode($desc), $matches);
             $type = 'description_link';
             foreach($matches[0] as $url){
-                array_push($descLinks, array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$url,'status'=>'NEW'));
+                array_push($descLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$url,'status'=>'NEW')));
             }
         }
         return $descLinks;
     }
 
-    function storeLinks($linksArray)
+    function processIdentifierLinks($sXml) {
+
+        $identifiersLinks = array();
+        $ro_id = $this->ro->id;
+        $ds_id = $this->ro->data_source_id;
+        foreach($sXml->xpath('//ro:'.$this->ro->class.'/ro:identifier') AS $identifier) {
+            if((string)$identifier != '') {
+                $vType = strtolower((string) $identifier['type']);
+                $type = 'identifier_'.$vType.'_link';
+                $link = $this->getResolvedLinkForIdentifier($vType, (string) $identifier);
+                if($link != '')
+                {
+                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$link,'status'=>'NEW')));
+                }
+            }
+        }
+        foreach($sXml->xpath('//ro:'.$this->ro->class.'/ro:relatedInfo/ro:identifier') AS $identifier) {
+            if((string)$identifier != '') {
+                $vType = strtolower((string) $identifier['type']);
+                $type = 'identifier_'.$vType.'_link';
+                $link = $this->getResolvedLinkForIdentifier($vType, (string) $identifier);
+                if($link != '')
+                {
+                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$link,'status'=>'NEW')));
+                }
+            }
+        }
+        foreach($sXml->xpath('//ro:'.$this->ro->class.'/ro:citationInfo/ro:citationMetadata/ro:identifier') AS $identifier) {
+            if((string)$identifier != '') {
+                $vType = strtolower((string) $identifier['type']);
+                $type = 'citation_metadata_identifier_'.$vType.'_link';
+                $link = $this->getResolvedLinkForIdentifier($vType, (string) $identifier);
+                if($link != '')
+                {
+                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$link,'status'=>'NEW')));
+                }
+            }
+        }
+        return $identifiersLinks;
+    }
+
+    function getResolvedLinkForIdentifier($type, $value)
     {
-        $this->db->where(array('registry_object_id' => $this->ro->id));
-        $this->db->delete('registry_object_links');
-        foreach($linksArray as $link){
+        switch ($type){
+            case 'handle':
+                if (strpos($value,'http://hdl.handle.net/') === false){
+                    $value = 'http://hdl.handle.net/'.$value;
+                }
+                return $value;
+                break;
+            case 'purl':
+                if (strpos($value,'http://purl.org/') === false){
+                    $value = 'http://purl.org/'.$value;
+                }
+                return $value;
+                break;
+            case 'doi':
+                if (strpos($value,'http://dx.doi.org/') === false){
+                    $value = 'http://dx.doi.org/'.$value;
+                }
+                return $value;
+                break;
+            case 'uri':
+                if (strpos($value,'http://') === false && strpos($value,'https://') === false){
+                    $value = 'http://'.$value;
+                }
+                return $value;
+                break;
+            case 'orcid':
+                if (strpos($value,'http://orcid.org/') === false){
+                    $value = 'http://orcid.org/'.$value;
+                }
+                return $value;
+                break;
+            case 'au-anl:peau':
+                if (strpos($value,'http://nla.gov.au/') === false){
+                    $value = 'http://nla.gov.au/'.$value;
+                }
+                return $value;
+                break;
+            default:
+                return "";
+        }
+    }
+
+    function storeLinks($jsonLinksArray)
+    {
+        foreach($jsonLinksArray as $link){
+            $link = json_decode($link, true);
             $this->db->insert('registry_object_links',$link);
         }
     }
+
+    function deleteLinks($jsonLinksArray)
+    {
+        foreach($jsonLinksArray as $link){
+            $link = json_decode($link, true);
+            $this->db->where(array("registry_object_id" => $link["registry_object_id"],
+                'data_source_id'=>$link['data_source_id'],
+                'link_type'=>$link['link_type'],
+                'link'=>$link['link']));
+            $this->db->delete("registry_object_links");
+        }
+    }
+
+    function getExistingLinks()
+    {
+        $eLinksArray = array();
+        $this->db->select("registry_object_id, data_source_id, link_type, link");
+        $this->db->where('registry_object_id',(string)$this->ro->id);
+        $result = $this->db->get('registry_object_links');
+        foreach ($result->result_array() AS $row)
+        {
+            $row['status'] = 'NEW';
+            $eLinksArray[] = json_encode($row);
+        }
+        return $eLinksArray;
+    }
+
 }
 
