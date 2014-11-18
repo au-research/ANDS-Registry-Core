@@ -87,6 +87,7 @@ class Auth extends CI_Controller {
 		$this->user->logout(); 		
 	}
 	
+	//MAYBE DEPRECATED as of R14
 	public function setUser(){
 		$sharedToken = '';
 		$data['title'] = 'Login';

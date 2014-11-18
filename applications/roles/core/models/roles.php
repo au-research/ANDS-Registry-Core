@@ -301,6 +301,8 @@ class Roles extends CI_Model {
      * @param [type] $post [description]
      */
     function add_role($post){
+        $query = $this->cosi_db->get_where('roles', array('role_id'=>$post['role_id']));
+        if($query->num_rows() > 0) throw new Exception('Role ID '.$post['role_id'].' already exists');
         $add = $this->cosi_db->insert('roles', 
             array(
                 'role_id'=>$post['role_id'],
