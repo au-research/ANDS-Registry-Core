@@ -42,7 +42,7 @@ class Mydois extends MX_Controller {
 		acl_enforce('DOI_USER');
 
 		$data['js_lib'] = array('core');
-		$data['title'] = 'My DOIs List';
+		$data['title'] = 'My DOIs';
 		$data['associated_app_ids'] = array();
 
 		if($this->user->loggedIn())
@@ -141,7 +141,7 @@ class Mydois extends MX_Controller {
 
 		$data['js_lib'] = array('core');
 		$data['scripts'] = array('mydois','datacite_form');
-		$data['title'] = 'DOI Query Tool';
+		$data['title'] = 'My DOIs';
 		
 		// Validate the appId
 		$appId = $this->input->get_post('app_id');
