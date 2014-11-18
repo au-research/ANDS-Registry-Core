@@ -144,7 +144,6 @@ $(document).on('change','#fileupload',function(e){
         xhr.onreadystatechange = function(e) {
             if ( 4 == this.readyState ) {
                 var jsonObj = eval('('+this.response+')')
-                console.log(jsonObj.xml)
                 $("#xmldisplay").html('<pre>'+ htmlEntities(jsonObj.xml)+'</pre>').text()
                 $("input[name='xml']").val(jsonObj.xml);
             }

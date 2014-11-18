@@ -12,7 +12,7 @@ $(document).ready(function() {
     	var kernelSchema = "http://schema.datacite.org/meta/kernel-3/metadata.xsd";
     	var kernelSchemaLocation = kernelNamespace + " " + kernelSchema;
     	var header = "<?xml version='1.0' encoding='UTF-8'?>" + br() + "<resource xmlns='" + kernelNamespace + "' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='" + kernelSchemaLocation + "'>" + br();
-    	document.title = pageTitle;
+    	//document.title = pageTitle;
 
     	ps($('select#resourcetypegeneral'), resourceType);
     	ps($('select#descriptiontype'), descriptionType);

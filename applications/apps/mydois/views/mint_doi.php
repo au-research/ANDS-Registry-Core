@@ -48,7 +48,7 @@
                .hidden{display:none}.visible{display:block}
                .input-field{margin-bottom:2px;width:89%}
                input.attrib{width:43%}select.attrib{width:45%}
-               .tag{float:left;margin-top:2px;width:80%}
+               .tag{float:left;margin-top:2px;width:80%;background-color: lightblue ;font-weight: bold;font-size:12px}
                /*div.left{float:left;width:38%}*/
                /*div.right{float:right;width:61%}*/
                div.entry{margin-bottom:6px}
@@ -247,13 +247,13 @@
     </div>
 <div class="modal hide fade" id="mintDoiResult" tabindex="-1" role="dialog" aria-labelledby="mintDoiResult" aria-hidden="true">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" id="doi_mint_close">×</button>
+        <button type="button" class="close" data-dismiss="modal" id="doi_mint_close_x">×</button>
 
     </div>
     <div class="modal-body">
         <p>
         <div>
-            mint successful
+           
         </div>
         </p>
     </div>
