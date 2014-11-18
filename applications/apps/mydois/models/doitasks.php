@@ -463,7 +463,26 @@ class Doitasks extends CI_Model {
 					unlink($tempFile);
 				}
 
+                libxml_use_internal_errors(true);
+
 				$result = $doiObjects->schemaValidate(asset_url('schema').$dataciteSchema[$theSchema]);
+
+                if ($result === TRUE)
+                {
+                    libxml_use_internal_errors(false);
+                    return TRUE;
+                }
+                else
+                {
+                    $errors = libxml_get_errors();
+                    $error_string = '';
+                    foreach ($errors as $error) {
+                        $error_string .= TAB . "Line " .$error->line . ": " . $error->message;
+                    }
+                    libxml_clear_errors();
+                    libxml_use_internal_errors(false);
+
+                }
 
 				$xml = $doiObjects->saveXML();
 			
@@ -471,7 +490,7 @@ class Doitasks extends CI_Model {
 
 				if( $errors || !$result)
 				{
-					$verbosemessage = "Document Validation Error: ".$errors['message'];
+					$verbosemessage = "Document Validation Error: ". $error_string;
 					$errorMessages = doisGetUserMessage("MT006", $doi_id=NULL, $response_type, $app_id, $verbosemessage,$urlValue);
 				}			
 				
