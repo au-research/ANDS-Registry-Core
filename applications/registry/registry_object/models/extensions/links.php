@@ -26,8 +26,15 @@ class links_Extension extends ExtensionBase
         $allLinks = array_merge($eaLinks, $cmUrls, $descLinks, $identifierLinks);
         //find existing links for this ro
         $currentLinks = $this->getExistingLinks();
+        // print "<br />currentLinks = <br />";
+        // var_dump($currentLinks);
+        // print "<br /><br />";
         // get existing - all = links to delete
         $removedLinks = array_diff($currentLinks, $allLinks);
+        // print "<br />allLinks = <br />";
+        // var_dump($allLinks);
+        // print "<br />removedLinks = <br />";
+        // var_dump($removedLinks);
         // new links - current to insert
         $newLinks = array_diff($allLinks, $currentLinks);
         // the rest remains the same
@@ -54,7 +61,8 @@ class links_Extension extends ExtensionBase
         $cUrls = array();
         $ro_id = $this->ro->id;
         $ds_id = $this->ro->data_source_id;
-        $citation_metadata = $sXml->xpath('//ro:citationMetadata');
+        // The url is optional, so only select elements that have one.
+        $citation_metadata = $sXml->xpath('//ro:citationMetadata[ro:url]');
         foreach ($citation_metadata AS $cm)
         {
             $type = 'citation_metadata_url';
@@ -72,7 +80,7 @@ class links_Extension extends ExtensionBase
         $descriptions = $sXml->xpath('//ro:description');
         foreach ($descriptions AS $desc)
         {
-            $regex = '/https?\:\/\/[^\" ]+/i';
+            $regex = '/https?\:\/\/[^\" <]+/i';
             preg_match_all($regex, html_entity_decode($desc), $matches);
             $type = 'description_link';
             foreach($matches[0] as $url){
