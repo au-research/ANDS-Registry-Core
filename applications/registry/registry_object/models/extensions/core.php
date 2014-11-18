@@ -18,7 +18,8 @@ class Core_extension extends ExtensionBase
 		// registry_objects table as opposed to others in _attributes)
 		$query = $this->db->join("`registry_objects` `ro`", 'ro.registry_object_id = ra.registry_object_id')
 							->get_where("`registry_object_attributes` `ra`", array('ra.registry_object_id' => $this->id));
-		
+		//echo $this->id;
+        //echo "hello world";
 		if ($query->num_rows() > 0)
 		{
 			foreach ($query->result_array() AS $row)
@@ -43,7 +44,7 @@ class Core_extension extends ExtensionBase
 		}
 		else 
 		{
-			throw new Exception("Unable to select Registry Object from database");
+			throw new Exception("Unable to select Registry Object from database ID:".$this->id);
 		}
 			
 		// Store the status of the registry object when it was first retrieved so
@@ -338,6 +339,7 @@ class Core_extension extends ExtensionBase
 		$this->db->delete('url_mappings', array('registry_object_id'=>$this->id));
 		//if($error = $this->db->_error_message())
 		//$log .= NL."url_mappings: " .$error;
+        $this->db->where('registry_object_links', array('registry_object_id'=>$this->id));
 		//TODO: do we still need this table??
 		//$this->db->delete('spatial_extents', array('registry_object_id'=>$this->id));
 		//$log .= NL."spatial_extents: " .$this->db->_error_message();
@@ -346,8 +348,7 @@ class Core_extension extends ExtensionBase
 		//$log .= NL."registry_objects: " .$error;
 		return $log;
 	}
-	
-	
+
 	function getAttribute($name, $graceful = TRUE)
 	{
 		if (isset($this->attributes[$name]) && $this->attributes[$name] != NULL) 

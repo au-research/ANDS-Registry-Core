@@ -734,9 +734,40 @@ class Registry_objects extends CI_Model {
 		{
 			throw new Exception("Errors occured whilst cloning the record to DRAFT status: " . NL . $error_log);
 		}
-		
+
 		return $this->getDraftByKey($registry_object->key);
 	}
+
+
+    function erase($id)
+    {
+        $log ='';
+        $CI =& get_instance();
+        $CI->db->delete('registry_object_relationships', array('registry_object_id'=>$id));
+        $CI->db->delete('registry_object_identifier_relationships', array('registry_object_id'=>$id));
+        $CI->db->delete('registry_object_identifiers', array('registry_object_id'=>$id));
+        //if($error = $this->db->_error_message())
+        //$log = NL."registry_object_relationships: " .$error;
+        $CI->db->delete('registry_object_metadata', array('registry_object_id'=>$id));
+        //if($error = $this->db->_error_message())
+        //$log .= NL."registry_object_metadata: " .$error;
+        $CI->db->delete('registry_object_attributes', array('registry_object_id'=>$id));
+        //if($error = $this->db->_error_message())
+        //$log .= NL."registry_object_attributes: " .$error;
+        $CI->db->delete('record_data', array('registry_object_id'=>$id));
+        //if($error = $this->db->_error_message())
+        //$log .= NL."record_data: " .$error;
+        $CI->db->delete('url_mappings', array('registry_object_id'=>$id));
+        //if($error = $this->db->_error_message())
+        //$log .= NL."url_mappings: " .$error;
+        $CI->db->where('registry_object_links', array('registry_object_id'=>$id));
+        //$this->db->delete('spatial_extents', array('registry_object_id'=>$this->id));
+        //$log .= NL."spatial_extents: " .$this->db->_error_message();
+        $CI->db->delete('registry_objects', array('registry_object_id'=>$id));
+        //if($error = $this->db->_error_message())
+        //$log .= NL."registry_objects: " .$error;
+        return $log;
+    }
 
 	public function deleteRegistryObjects($target_ro_ids, $finalise = true)
 	{

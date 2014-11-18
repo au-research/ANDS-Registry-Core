@@ -569,7 +569,7 @@
                         <xsl:apply-templates select="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isPresentedBy' or @type = 'supports'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/>
                     </p>
                 </xsl:if>
-                <xsl:if test="ro:location/ro:address/ro:electronic[@type='url' and @target != 'directDownload']">
+                <xsl:if test="ro:location/ro:address/ro:electronic[@type='url' and not(@target = 'directDownload')]">
                     <h3>Source</h3>
                     <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@type='url']"/></p>
                 </xsl:if>
@@ -577,7 +577,7 @@
           <!--  <xsl:apply-templates select="ro:description[@type = 'accessRights' or @type = 'rights']"/> -->
             <!--xsl:apply-templates select="ro:rights"/-->
             <xsl:apply-templates select="//extRif:right[@type='licence']"/>
-            <xsl:apply-templates select="//extRif:right[@type!='licence']"/>  
+            <xsl:apply-templates select="//extRif:right[not(@type ='licence')]"/>
 
             <xsl:if test="ro:location/ro:address/ro:electronic/@type='email' or ro:location/ro:address/ro:physical">
                 <h3>Contacts</h3>
