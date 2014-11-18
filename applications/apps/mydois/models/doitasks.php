@@ -470,7 +470,6 @@ class Doitasks extends CI_Model {
                 if ($result === TRUE)
                 {
                     libxml_use_internal_errors(false);
-                    return TRUE;
                 }
                 else
                 {
@@ -481,7 +480,6 @@ class Doitasks extends CI_Model {
                     }
                     libxml_clear_errors();
                     libxml_use_internal_errors(false);
-
                 }
 
 				$xml = $doiObjects->saveXML();
