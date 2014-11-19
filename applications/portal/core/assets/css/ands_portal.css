@@ -439,7 +439,8 @@ ul.linkedrecords-list li + li {
 }
 
 /* line 381, ../sass/ands_portal.scss */
-a.yellow_button:hover {
+.yellow_button:hover {
+  background: #F58072;
   color: #fff;
 }
 
@@ -522,4 +523,28 @@ a.yellow_button:hover {
 /* line 452, ../sass/ands_portal.scss */
 .mfp-zoom-in.mfp-removing.mfp-bg {
   opacity: 0;
+}
+
+/* line 461, ../sass/ands_portal.scss */
+.label {
+  line-height: 28px;
+  cursor: pointer;
+  background: #cdd2d5;
+  color: white !important;
+  padding: 3px 6px;
+}
+
+/* line 469, ../sass/ands_portal.scss */
+.label-open {
+  background: #a3be99;
+}
+
+/* line 473, ../sass/ands_portal.scss */
+.label-conditional {
+  background: #efb214;
+}
+
+/* line 477, ../sass/ands_portal.scss */
+.label-restricted {
+  background: #e93938;
 }
