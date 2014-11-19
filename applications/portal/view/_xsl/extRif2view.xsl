@@ -1487,6 +1487,7 @@
 
  <xsl:if test="./@type='rights' or ./@type='rightsStatement'"><h4>Rights statement</h4></xsl:if>
  <xsl:if test="./@type='accessRights'"><h4>Access rights</h4></xsl:if>
+    <span class="{@accessRights_type}"><xsl:value-of select="@accessRights_type"/></span>
  <p class="rights"><xsl:value-of select="." disable-output-escaping="yes"/>
  <xsl:if test="./@rightsUri"><p>
     <a target="_blank">
