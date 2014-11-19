@@ -72,7 +72,7 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 	});
 
 	$scope.select = function(role_id){
-		$scope.role = {};
+		// $scope.role = {};
 		$scope.loading = true;
 		$scope.tab1 = 'view';
 		$scope.tab = 'add_rel';
@@ -96,8 +96,14 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 	}
 
 	$scope.add = function() {
+		$('#add_role').button('loading');
 		roles.add($scope.newrole).then(function(data){
-			$location.path('/view/'+$scope.newrole.role_id);
+			if(data.status=='ERROR') {
+				$('#add_role').button('reset');
+				alert(data.message);
+			} else {
+				$location.path('/view/'+$scope.newrole.role_id);
+			}
 		});
 	}
 

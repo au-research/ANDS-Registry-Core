@@ -98,7 +98,7 @@
 							</div>
 							<div class="alert alert-danger hide" id="msg"></div>
 							<div class="control-group">
-								<div class="controls"><button type="submit" class="btn btn-primary" ng-click="add()">Add Role</button></div>
+								<div class="controls"><button type="submit" class="btn btn-primary" ng-click="add()" data-loading-text="Loading..." id="add_role">Add Role</button></div>
 							</div>
 						</form>
 					</div>
@@ -151,7 +151,7 @@
 							<div class="alert alert-danger hide" id="msg"></div>
 							<div class="control-group">
 								<div class="controls">
-									<button type="submit" class="btn btn-primary" ng-click="update()">Update Role</button>
+									<button type="submit" class="btn btn-primary" ng-click="update()" data-loading-text="Loading...">Update Role</button>
 									<button ng-click="resetPassword()" class="btn">Reset Password</button>
 								</div>
 							</div>

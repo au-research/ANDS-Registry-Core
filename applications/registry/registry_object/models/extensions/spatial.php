@@ -296,7 +296,9 @@ class Spatial_Extension extends ExtensionBase
 		if($north == $south && $east == $west){
 			$extents['area'] = 0;
 			$extents['center'] = $west." ".$south;
-			$extents['extent'] = $west." ".$south;	
+			$extents['extent'] = $west." ".$south;
+            $extents['west'] = $west;
+            $extents['east'] = $east;
 		}
 		else{
 			$extents['area'] = ($east - $west) * ($north - $south);

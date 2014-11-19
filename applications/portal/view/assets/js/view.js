@@ -155,6 +155,16 @@ function drawRegistryIcon(){
 	})
 }
 
+$('.label').qtip({
+	content : function(){
+		var html = '<div type="open"><b>open:</b> Online data that can be electronically accessed free of charge with no conditions imposed on the user.</div><br/><div type="conditional"><b>conditional:</b> Online or offline data that can be accessed free of charge, providing certain conditions are met.</div><br/><div type="contidional"><b>restricted:</b> Online or offline data where access to the data is restricted.</div>';
+		return html;
+	},
+	show:'mouseover',
+	hide:'mouseout',
+	style:{classes:'ui-tooltip-light ui-tooltip-shadow'}
+});
+
 function initConnections(){
 	$('.preview_connection').each(function(){
 		if(typeof $('a', this).attr('slug')!=='undefined'){
