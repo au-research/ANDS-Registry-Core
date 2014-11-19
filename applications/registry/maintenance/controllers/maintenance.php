@@ -688,39 +688,28 @@ class Maintenance extends MX_Controller {
 	}
 
 	function test(){
-		// set_exception_handler('json_exception_handler');
+		set_exception_handler('json_exception_handler');
 		// header('Cache-Control: no-cache, must-revalidate');
 		// header('Content-type: application/json');
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->load->model('registry_object/registry_objects', 'ro');
-		// log_message('error', 'Test Error');
-		// log_message('info', 'Test Info');
-		// log_message('debug', 'Test Debug');
 
-		$ro = $this->ro->getByID(507263);
-		$ro->enrich();
-		var_dump($ro->title);
-		// $ro->processSubjects();
-		// $ro->addRelationships();
-		// echo json_encode($ro->getAllRelatedObjects(true, false, true));
-
-		// echo 5/0;
-
-		// $ds = $this->ds->getByID(9);
-  //       $registry_objects = $this->ro->getIDsByDataSourceID(9, true);
-
-  //       foreach($registry_objects as $ro) {
-  //               $this->benchmark->mark('start');
-  //               echo 'Title: '. $ro->title.' ID: '.$ro->id.'<br/>';
-  //               echo 'Slug:'. $ro->slug.'<br/>';
-  //               echo 'Result: '.$ro->generateSlug().'<br/>';
-  //               echo 'After: '.$ro->slug.'<br/>';
-  //               $ro->save();
-  //               $this->benchmark->mark('end');
-  //               echo 'Speed: '. $this->benchmark->elapsed_time('start', 'end');
-  //               echo '<br/>';
-  //       }
-
+		// $ds = $this->ds->getByID(190);
+		// $ids = $this->ro->getIDsByDataSourceID(303);
+		// foreach($ids as $id) {
+		// 	$ro = $this->ro->getByID($id);
+		// 	if(!$ro) {
+		// 		echo 'ID :'.$id. ' is bad and is fixed'.'<br/>';
+		// 		// $this->ro->erase($id);
+		// 	} else {
+		// 		// echo 'ID :'.$id. ' is good'.'<br/>';
+		// 	}
+		// 	unset($ro);
+		// }
+		// 
+		// $this->load->library('logging');
+		$logger = $this->logging->get_logger('simple');
+		$logger->info('test message');
 
 	}
 
