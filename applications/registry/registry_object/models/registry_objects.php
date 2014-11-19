@@ -760,7 +760,7 @@ class Registry_objects extends CI_Model {
         $CI->db->delete('url_mappings', array('registry_object_id'=>$id));
         //if($error = $this->db->_error_message())
         //$log .= NL."url_mappings: " .$error;
-        $CI->db->where('registry_object_links', array('registry_object_id'=>$id));
+        $CI->db->delete('registry_object_links', array('registry_object_id'=>$id));
         //$this->db->delete('spatial_extents', array('registry_object_id'=>$this->id));
         //$log .= NL."spatial_extents: " .$this->db->_error_message();
         $CI->db->delete('registry_objects', array('registry_object_id'=>$id));

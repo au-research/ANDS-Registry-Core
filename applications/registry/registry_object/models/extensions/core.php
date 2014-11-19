@@ -339,7 +339,7 @@ class Core_extension extends ExtensionBase
 		$this->db->delete('url_mappings', array('registry_object_id'=>$this->id));
 		//if($error = $this->db->_error_message())
 		//$log .= NL."url_mappings: " .$error;
-        $this->db->where('registry_object_links', array('registry_object_id'=>$this->id));
+        $this->db->delete('registry_object_links', array('registry_object_id'=>$this->id));
 		//TODO: do we still need this table??
 		//$this->db->delete('spatial_extents', array('registry_object_id'=>$this->id));
 		//$log .= NL."spatial_extents: " .$this->db->_error_message();
