@@ -122,7 +122,7 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
             <p class="alert">To request a change to any of the information related to this DOI AppID, please contact <a href="mailto:services@ands.org.au">services@ands.org.au</a></p>
 		</div>
 		<div class="widget-content hide" name="check_links">
-			<div class="alert alert-info">
+			<div class="alert alert-info" id="linkChecker_message">
                 The DOI Link report will be sent to the registered Client Contact Email.
             </div>
 			<a href="javascript:;" id="linkChecker" class="btn btn-primary" app_id="<?php echo $app_id; ?>">Check DOI Links</a>
