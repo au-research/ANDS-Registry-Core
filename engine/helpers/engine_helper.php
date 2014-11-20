@@ -82,7 +82,7 @@ function set_config_item($key, $type, $value) {
 		);
 		$insert_query = $_ci->db->insert('configs', $data);
 		if($insert_query) {
-			log_message('info', 'CONFIG creating '.$value.' to '.$key.' as '.$type);
+			// log_message('info', 'CONFIG creating '.$value.' to '.$key.' as '.$type);
 			return true;
 		} else return false;
 	} elseif($action=='update') {
@@ -91,7 +91,7 @@ function set_config_item($key, $type, $value) {
 			'type' => $type,
 			'value' => $value
 		));
-		log_message('info', 'CONFIG update '.$value.' to '.$key.' as '.$type);
+		// log_message('info', 'CONFIG update '.$value.' to '.$key.' as '.$type);
 	} else {
 		return false;
 	}
@@ -156,7 +156,7 @@ function ds_acl_enforce($ds_id, $message = ''){
 
 function default_error_handler($errno, $errstr, $errfile, $errline)
 {
-	log_message('error', $errstr . " > on line " . $errline . " (" . $errfile .")");
+	ulog($errstr . " > on line " . $errline . " (" . $errfile .")", 'error', 'error');
 
 	// Ignore when error_reporting is turned off (sometimes inline with @ symbol)
 	if (error_reporting() == 0) { return true; }
