@@ -573,7 +573,6 @@
                     </p>
                 </xsl:if>
 
-
           <!--  <xsl:apply-templates select="ro:description[@type = 'accessRights' or @type = 'rights']"/> -->
             <!--xsl:apply-templates select="ro:rights"/-->
             <xsl:apply-templates select="//extRif:right[@type='licence']"/>
@@ -1487,7 +1486,7 @@
 
  <xsl:if test="./@type='rights' or ./@type='rightsStatement'"><h4>Rights statement</h4></xsl:if>
  <xsl:if test="./@type='accessRights'"><h4>Access rights</h4></xsl:if>
- <xsl:if test="./@type='accessRights_type'">
+ <xsl:if test="@accessRights_type">
     <span class="label label-{@accessRights_type}" type="{@accessRights_type}"><xsl:value-of select="@accessRights_type"/></span>
   </xsl:if>
  <p class="rights"><xsl:value-of select="." disable-output-escaping="yes"/>
