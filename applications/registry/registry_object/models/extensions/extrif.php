@@ -158,8 +158,9 @@ class Extrif_Extension extends ExtensionBase
 				{
 					$theright = $extendedMetadata->addChild("extRif:right", str_replace("&", "&amp;", $right['value']), EXTRIF_NAMESPACE);
 					$theright->addAttribute("type", $right['type']);
-                    if($right['accessRights_type'])
+                    if (isset($right['accessRights_type'])) {
                         $theright->addAttribute("accessRights_type", $right['accessRights_type']);
+                    }
 					if(isset($right['rightsUri']))$theright->addAttribute("rightsUri", str_replace("&", "&amp;", $right['rightsUri']));
 					if(isset($right['licence_type']))$theright->addAttribute("licence_type", str_replace("&", "&amp;", $right['licence_type']));
 					if(isset($right['licence_group']))$theright->addAttribute("licence_group", str_replace("&", "&amp;", $right['licence_group']));

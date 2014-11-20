@@ -46,11 +46,9 @@ class LicenceTypes_Extension extends ExtensionBase
 				}
                 if($right['type']=='accessRights')
                 {
-                    if((string)$theRight['type']!='')
+                    if(trim((string)$theRight['type'])!='')
                     {
                         $right['accessRights_type'] = (string)$theRight['type'];
-                    }else{
-                        $right['accessRights_type'] = 'Unknown';
                     }
                 }
 				$rights[] = $right;

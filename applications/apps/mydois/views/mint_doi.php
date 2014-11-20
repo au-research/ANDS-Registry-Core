@@ -9,6 +9,7 @@
  * 
  */
 ?>
+<?php $_SESSION['doi'] =  $doi_id; ?>
 	<div class="box-content">
 
 		<p id="mint_result">  </p>
@@ -19,7 +20,9 @@
                 <input type="hidden" name="app_id" value="<?php echo $app_id; ?>"/>
                 <input type="hidden" name="xml"/> <a href="http://schema.datacite.org/meta/kernel-3.0/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
             <div class="control-group">
-                <label class="control-label">DOI</label> <div class="controls"><input type="text" name="doi" value="<?php echo $doi_id; ?>" readonly="readonly"/></div>
+                <label class="control-label">DOI</label> <div class="controls" style="margin-top:5px"><?php echo $doi_id; ?></div>
+
+
 
             </div>
             <div class="control-group">
@@ -253,7 +256,7 @@
     <div class="modal-body">
         <p>
         <div>
-           
+
         </div>
         </p>
     </div>
