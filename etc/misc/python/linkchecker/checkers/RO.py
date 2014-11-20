@@ -802,7 +802,7 @@ data_source_id: {}
                  " WHERE rol.registry_object_id = ro.registry_object_id")
         if data_source_id is not None:
             query += " AND rol.`data_source_id`=" + str(data_source_id)
-        query += ";"
+        query += " ORDER BY ro.registry_object_id;"
         if self._debug:
             print("DEBUG: get_RO_links query:", query, file=sys.stderr)
         cur.execute(query)
