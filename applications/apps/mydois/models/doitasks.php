@@ -166,17 +166,17 @@ class Doitasks extends CI_Model {
 			{
 				$doiObjects = new DOMDocument();
 						
-				$result = $doiObjects->loadXML($xml);
+				//$result = $doiObjects->loadXML($xml);
 		
-				$errors = error_get_last();
+				//$errors = error_get_last();
 			
-				if( $errors )
-				{
-					$errorMessages = "Document Load Error: ".$errors['message']."\n";
+				//if( $errors )
+				//{
+					//$errorMessages = "Document Load Error: ".$errors['message']."\n";
 
-				}
-				else 
-				{
+				//}
+				//else
+				//{
 					// Validate it against the datacite schema.
 					error_reporting(0);
 					// Create temporary file and save manually created DOMDocument.
@@ -226,7 +226,7 @@ class Doitasks extends CI_Model {
 						$verbosemessage = "Document Validation Error: ".$error_string;
 						$errorMessages = doisGetUserMessage("MT007", doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
 					}				
-				}	
+				//}
 			}
 
             if(!$this->validDomain($urlValue,$client_domains)){
