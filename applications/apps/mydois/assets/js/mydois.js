@@ -110,19 +110,6 @@ $(document).on('click', '#doi_mint_confirm', function(){
     }
 })
 
-$(document).on('click', '#doi_mint_close', function(){
-    location.reload();
-})
-$(document).on('click', '#doi_mint_close_x', function(){
-    location.reload();
-})
-$(document).on('click', '#doi_update_close', function(){
-
-    location.reload();
-})
-$(document).on('click', '#doi_update_close_x', function(){
-    location.reload();
-})
 $(document).on('change','#fileupload',function(e){
     $('#mint_result').html('').removeClass('label label-important');
     var file = this.files[0];
@@ -183,15 +170,12 @@ $(document).on('click', '#doi_update_confirm', function(){
         $("#loading").html('');
         $("#update_form").removeClass('hide');
     }else{
-
-        $.ajax({
+            $.ajax({
             url: url,
             type: 'POST',
             data: {doi_id:doi, xml:xml, client_id:client_id},
             success: function(data){
-                console.log(data)
                 if(data.response.type=='failure'){
-                    console.log(data.response);
                     var message =  data.response.message;
                     if(data.response.verbosemessage!='') message = message + ' <br /><i>'+data.response.verbosemessage+'</i>'
                     $('#update_result').css('white-space','normal')
@@ -213,6 +197,15 @@ $(document).on('click', '#doi_update_confirm', function(){
         });
     }
 })
+
+$('#mintDoiResult').on('hidden.bs.modal', function () {
+    window.location.reload(true);
+})
+
+$('#updateDoiModal').on('hidden.bs.modal', function () {
+    window.location.reload(true);
+})
+
 function htmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
