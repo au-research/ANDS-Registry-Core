@@ -304,6 +304,8 @@ class DOIChecker(base.BaseChecker):
 
         SCHEME_NOT_HTTP_FORMAT = ('Error: Scheme is not http(s): '
                                   'DOI_ID: {} URL: {}')
+        URL_PARSE_ERROR_FORMAT = ('Error: Parsing URL failed: '
+                                  'DOI_ID: {} URL: {}')
         STATUS_ERROR_FORMAT = '4/500s: DOI_ID: {} URL: {} Status {}'
         REDIRECT_SAME_FORMAT = ('Error: Redirect URL same as original: '
                                 'DOI_ID: {} URL: {}')
@@ -329,6 +331,17 @@ class DOIChecker(base.BaseChecker):
                                            testing_array,
                                            creator,
                                            SCHEME_NOT_HTTP_FORMAT.format(
+                                               doi_id,
+                                               url_str),
+                                           counter)
+                    return
+                if not url.hostname:
+                    # Something wrong with the parsing of the URL,
+                    # possibly "http:/only-one-slash.com".
+                    self._handle_one_error(result_list, error_count,
+                                           testing_array,
+                                           creator,
+                                           URL_PARSE_ERROR_FORMAT.format(
                                                doi_id,
                                                url_str),
                                            counter)

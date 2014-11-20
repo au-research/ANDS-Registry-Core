@@ -381,6 +381,7 @@ class ROChecker(base.BaseChecker):
         url_str = url_str_original = r['link']
 
         SCHEME_NOT_HTTP_FORMAT = ('Error: Scheme is not http(s): ')
+        URL_PARSE_ERROR_FORMAT = ('Error: Parsing URL failed')
         STATUS_ERROR_FORMAT = '4/500s: Status {}'
         REDIRECT_SAME_FORMAT = ('Error: Redirect URL same as original: ')
         EXCEPTION_FORMAT = 'Error: {}'
@@ -403,6 +404,16 @@ class ROChecker(base.BaseChecker):
                     # i.e., be either "http" or "https".
                     self._handle_one_error(url_str_original,
                                            SCHEME_NOT_HTTP_FORMAT,
+                                           timestamp,
+                                           testing_array,
+                                           counter,
+                                           test_results)
+                    return
+                if not url.hostname:
+                    # Something wrong with the parsing of the URL,
+                    # possibly "http:/only-one-slash.com".
+                    self._handle_one_error(url_str_original,
+                                           URL_PARSE_ERROR_FORMAT,
                                            timestamp,
                                            testing_array,
                                            counter,
