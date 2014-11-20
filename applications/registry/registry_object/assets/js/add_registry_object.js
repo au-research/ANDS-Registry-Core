@@ -1666,7 +1666,7 @@ function getRIFCSforTab(tab, hasField){
                             });
                            if($('input[name=byteSize]', this).length > 0)  this_fragment +='<byteSize>'+htmlEntities($('input[name=byteSize]',this).val())+'</byteSize>';
 							//deal with args here
-							var args = $('.aro_box_part', this);
+							var args = $('.aro_box_part[type=args]', this);
 							$.each(args, function(){
 								this_fragment += '<'+$(this).attr('type')+' field_id="' +$(this).attr('field_id')+'" type="'+htmlEntities($('input[name=type]', this).val())+'" required="'+$('input[name=required]', this).val()+'" use="'+$('input[name=use]', this).val()+'">';
 								this_fragment += htmlEntities($('input[name=value]', this).val());
