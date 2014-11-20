@@ -1417,7 +1417,7 @@
             </xsl:attribute>
             <xsl:attribute name="target">_blank</xsl:attribute>
             <xsl:attribute name="tip"><xsl:value-of select="concat(ro:title, '&lt;br/&gt;', ro:notes)"/></xsl:attribute>
-            <xsl:value-of select="$label"/>
+            <xsl:value-of select="concat($label, ' ')"/>
             <i class="fa fa-download"></i>
         </a><br/><br/>
     </xsl:template>
