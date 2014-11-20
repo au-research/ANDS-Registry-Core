@@ -570,7 +570,6 @@
                     </p>
                 </xsl:if>
                 <xsl:if test="ro:location/ro:address/ro:electronic[@type='url' and not(@target = 'directDownload')]">
-                    <h3>Source</h3>
                     <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@type='url']"/></p>
                 </xsl:if>
 

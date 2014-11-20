@@ -166,7 +166,7 @@
 
     //now, perform the vocab lookup
     widget.vocab_widget('narrow',
-		        'http://purl.org/au-research/vocabulary/RIFCS/1.4/RIFCSIdentifierType');
+		        'http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSIdentifierType');
 
   }
 &lt;/script&gt;
