@@ -156,12 +156,12 @@
 								</div>
 							</div>
 							<div class="control-group">
-								<label for="" class="control-label">Merge Role <i class="icon icon-question-sign" tip="Add all the roles relation from"></i></label>
+								<label for="" class="control-label">Copy Access From <i class="icon icon-question-sign" tip="All access permissions from the selected role will be copied."></i></label>
 								<div class="controls">
 									<select ng-model="merge_target" ng-options="c.role_id as c.name for c in roles"></select>
 									<div ng-show="role_merge_missing">
 										<hr>
-										Roles exists in <b>{{merge_target}}</b> that is not in <b>{{role.role.name}}</b>
+                                        The following roles exist in <b>{{merge_target}}</b> that are not in  <b>{{role.role.name}}</b>
 										<ul ng-show="role_merge_missing">
 											<li ng-repeat="r in role_merge_missing">{{r.name}}</li>
 										</ul>
