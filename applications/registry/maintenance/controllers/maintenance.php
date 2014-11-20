@@ -708,8 +708,7 @@ class Maintenance extends MX_Controller {
 		// }
 		// 
 		// $this->load->library('logging');
-		$logger = $this->logging->get_logger('importer');
-		$logger->info('test message');
+		ulog('a registry activity', 'registry');
 
 	}
 

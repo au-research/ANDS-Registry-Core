@@ -459,3 +459,33 @@ function alphasort_name($a, $b){
 	if($a->name == $b->name) return 0;
 	return ($a->name < $a->name) ? -1 : 1;
 }
+
+/**
+ * Universal log function
+ * @param  string $message 
+ * @param  string $logger    [registry|importer|activity|portal|error]
+ * @param  string $type    	 [info|debug|warning|error|critical]
+ * @return void
+ */
+function ulog($message='', $logger='activity', $type='info') {
+	$CI =& get_instance();
+
+	//check if the logging class is loaded, if not, load it
+	if (!class_exists('Logging')) {
+		$CI->load->library('logging');
+	}
+
+	try {
+		$logger = $CI->logging->get_logger($logger);
+		switch($type) {
+			case 'info' : $logger->info($message);break;
+			case 'debug' : $logger->debug($message);break;
+			case 'warning' : $logger->warning($message);break;
+			case 'error' : $logger->error($message);break;
+			case 'critical' : $logger->critical($message);break;
+		}
+	} catch (Exception $e) {
+		throw new Exception($e);
+		// log_message('error', $e->getMessage());
+	}
+}

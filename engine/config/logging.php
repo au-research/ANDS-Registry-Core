@@ -27,6 +27,12 @@ $config = array(
         'format' => '{date} - {message}',
         'file_path' => 'activity'
     ),
+    'error' => array(
+        'level' => 'ERROR',
+        'type' => 'file',
+        'format' => '{date} - {message}',
+        'file_path' => 'error'
+    ),
     'email_criticals' => array(
         'level' => 'CRITICAL',
         'type' => 'email',
