@@ -188,9 +188,7 @@ $(document).on('click', '#doi_update_confirm', function(){
             type: 'POST',
             data: {doi_id:doi, xml:xml, client_id:client_id},
             success: function(data){
-                console.log(data)
                 if(data.response.type=='failure'){
-                    console.log(data.response);
                     var message =  data.response.message;
                     if(data.response.verbosemessage!='') message = message + ' <br /><i>'+data.response.verbosemessage+'</i>'
                     $('#update_result').css('white-space','normal')
