@@ -77,8 +77,7 @@ class Doitasks extends CI_Model {
 	}
 	
 	function update(){
-			
-		$xml ='';	
+		$xml ='';
 		$errorMessages = '';	
 		$notifyMessage = '';
 		$logMessage = '';
@@ -200,14 +199,31 @@ class Doitasks extends CI_Model {
                             $theSchema = $this->getXmlSchema($resources->item(0)->attributes->item(0)->nodeValue);
                         }
                     }
-					$result = $doiObjects->schemaValidate(asset_url('schema').$dataciteSchema[$theSchema]);
 
+                    libxml_use_internal_errors(true);
+
+                    $result = $doiObjects->schemaValidate(asset_url('schema').$dataciteSchema[$theSchema]);
+
+                    if ($result === TRUE)
+                    {
+                        libxml_use_internal_errors(false);
+                    }
+                    else
+                    {
+                        $errors = libxml_get_errors();
+                        $error_string = '';
+                        foreach ($errors as $error) {
+                            $error_string .= "Line " .$error->line . ": " . $error->message;
+                        }
+                        libxml_clear_errors();
+                        libxml_use_internal_errors(false);
+                    }
 					$xml = $doiObjects->saveXML();
 
 					$errors = error_get_last();
 					if( $errors || !$result)
 					{
-						$verbosemessage = "Document Validation Error: ".$errors['message']."\n";						
+						$verbosemessage = "Document Validation Error: ".$error_string;
 						$errorMessages = doisGetUserMessage("MT007", doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
 					}				
 				}	
@@ -291,7 +307,6 @@ class Doitasks extends CI_Model {
 	}
 	
 	function mint(){
-
 
 		$dataciteSchema = $this->config->item('gCMD_SCHEMA_URIS');
 
@@ -466,8 +481,7 @@ class Doitasks extends CI_Model {
                 libxml_use_internal_errors(true);
 
 				$result = $doiObjects->schemaValidate(asset_url('schema').$dataciteSchema[$theSchema]);
-
-                if ($result === TRUE)
+                 if ($result === TRUE)
                 {
                     libxml_use_internal_errors(false);
                 }
@@ -476,7 +490,7 @@ class Doitasks extends CI_Model {
                     $errors = libxml_get_errors();
                     $error_string = '';
                     foreach ($errors as $error) {
-                        $error_string .= TAB . "Line " .$error->line . ": " . $error->message;
+                        $error_string .=  "Line " .$error->line . ": " . $error->message;
                     }
                     libxml_clear_errors();
                     libxml_use_internal_errors(false);
@@ -678,7 +692,7 @@ class Doitasks extends CI_Model {
 				}
 			}else{
 			
-				$verbosemessage = $response;		
+				$verbosemessage = $activateResult;
 				$errorMessages = doisGetUserMessage("MT010",$doiValue,$response_type,$app_id, $verbosemessage,$urlValue);				
 			}
 		}

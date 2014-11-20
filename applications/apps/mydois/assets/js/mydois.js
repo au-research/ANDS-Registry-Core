@@ -183,8 +183,7 @@ $(document).on('click', '#doi_update_confirm', function(){
         $("#loading").html('');
         $("#update_form").removeClass('hide');
     }else{
-
-        $.ajax({
+            $.ajax({
             url: url,
             type: 'POST',
             data: {doi_id:doi, xml:xml, client_id:client_id},
