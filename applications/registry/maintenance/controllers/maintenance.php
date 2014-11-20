@@ -324,10 +324,10 @@ class Maintenance extends MX_Controller {
 			$data_source = $this->ds->getByKey($this->config->item('example_ds_key'));
 		}
 		
-		$sampleRecordUrls = array('http://services.ands.org.au/documentation/rifcs/1.5/examples/eg-collection-1.xml',
-			'http://services.ands.org.au/documentation/rifcs/1.5/examples/eg-party-1.xml',
-			'http://services.ands.org.au/documentation/rifcs/1.5/examples/eg-service-1.xml',
-			'http://services.ands.org.au/documentation/rifcs/1.5/examples/eg-activity-1.xml');
+		$sampleRecordUrls = array('http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-collection-1.xml',
+			'http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-party-1.xml',
+			'http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-service-1.xml',
+			'http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-activity-1.xml');
 
 		$xml = '';
 		foreach($sampleRecordUrls as $recUrl){

@@ -851,7 +851,7 @@
 				<label>Access Rights</label>
 				<input type="text" class="input-xlarge" name="rightsUri" placeholder="Rights Uri" value="{ro:accessRights/@rightsUri}"/>
 				<input type="text" class="input-xlarge" name="value" placeholder="Value" value="{ro:accessRights/text()}"/>				
-				<input type="text" class="input-xlarge" name="type" placeholder="Type" value="{ro:accessRights/@type}"/>			
+				<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSAccessRightsType" name="type" placeholder="Type" value="{ro:accessRights/@type}"/>
 			</div>
 		</div>
 	</xsl:template>
@@ -1332,12 +1332,12 @@
                             <xsl:choose>
                                 <xsl:when test="@target">
                                     <span class="inputs_group">
-                                        <input type="text" class="input-small"  name="target" placeholder="Target" value="{@target}"/>
+                                        <input type="text" class="input_large rifcs-type" vocab="RIFCSElectronicAddressTarget" name="target" placeholder="Target" value="{@target}"/>
                                     </span>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <span class="inputs_group">
-                                        <input type="text" class="input-small"  name="target" placeholder="Target" value=""/>
+                                        <input type="text" class="input_large rifcs-type" vocab="RIFCSElectronicAddressTarget" name="target" placeholder="Target" value=""/>
                                     </span>
                                 </xsl:otherwise>
                             </xsl:choose>
@@ -1655,20 +1655,20 @@
 			</div>
 			<div class="aro_box_part" type="rightsStatement">
 				<label>Rights Statement</label>
-				<input type="text" class="input-xlarge" name="rightsUri" placeholder="Rights Uri" value="{ro:rightsStatement/@rightsURI}"/>
-				<input type="text" class="input-xlarge" name="value" placeholder="Value" value="{ro:rightsStatement/text()}"/>
+				<input type="text" class="input-xlarge" name="rightsUri" placeholder="Rights Uri" value=""/>
+				<input type="text" class="input-xlarge" name="value" placeholder="Value" value=""/>
 			</div>
 			<div class="aro_box_part" type="licence">
 				<label>Licence</label>
-				<input type="text" class="input-xlarge" name="rightsUri" placeholder="Rights Uri" value="{licence/@rightsURI}"/>
-				<input type="text" class="input-xlarge" name="value" placeholder="Value" value="{ro:licence/text()}"/>
-				<input type="text" class="input-xlarge rifcs-type" vocab="RIFCSLicenceType" name="type" placeholder="Type" value="{ro:licence/@type}"/>	
+				<input type="text" class="input-xlarge" name="rightsUri" placeholder="Rights Uri" value=""/>
+				<input type="text" class="input-xlarge" name="value" placeholder="Value" value=""/>
+				<input type="text" class="input-xlarge rifcs-type" vocab="RIFCSLicenceType" name="type" placeholder="Type" value=""/>
 			</div>		
 			<div class="aro_box_part" type="accessRights">
 				<label>Access Rights</label>
-				<input type="text" class="input-xlarge" name="rightsUri" placeholder="Rights Uri" value="{accessRights/@rightsURI}"/>
-				<input type="text" class="input-xlarge" name="value" placeholder="Value" value="{ro:accessRights/text()}"/>				
-				<input type="text" class="input-xlarge" name="type" placeholder="Type" value="{ro:accessRights/@type}"/>
+				<input type="text" class="input-xlarge" name="rightsUri" placeholder="Rights Uri" value=""/>
+				<input type="text" class="input-xlarge" name="value" placeholder="Value" value=""/>
+                <input type="text" class="inner_input_type rifcs-type" vocab="RIFCSAccessRightsType" name="type" placeholder="Type" value=""/>
 			</div>
 		</div>
 
@@ -1929,7 +1929,7 @@
                         <label class="control-label" for="Title">Target: </label>
                         <div class="controls">
                             <span class="inputs_group">
-                                <input type="text" class="input-small"  name="target" placeholder="Target" value=""/>
+                                <input type="text" class="input_large rifcs-type" vocab="RIFCSElectronicAddressTarget" name="target" placeholder="Target" value=""/>
                             </span>
                         </div>
                     </div>
