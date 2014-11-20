@@ -558,6 +558,9 @@
 
         <h2><xsl:if test="$objectClass = 'Collection'"><xsl:text>Data </xsl:text></xsl:if>Access</h2>
         <div class="limitHeight300">
+                <xsl:if test="ro:location/ro:address/ro:electronic[@type='url' and not(@target = 'directDownload')]">
+                    <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@type='url']"/></p>
+                </xsl:if>
                 <xsl:if test="ro:location/ro:address/ro:electronic/@target='directDownload'">
                     <h3>Download Data</h3>
                     <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@target='directDownload']" mode="button"/></p>
@@ -569,9 +572,7 @@
                         <xsl:apply-templates select="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isPresentedBy' or @type = 'supports'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/>
                     </p>
                 </xsl:if>
-                <xsl:if test="ro:location/ro:address/ro:electronic[@type='url' and not(@target = 'directDownload')]">
-                    <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@type='url']"/></p>
-                </xsl:if>
+
 
           <!--  <xsl:apply-templates select="ro:description[@type = 'accessRights' or @type = 'rights']"/> -->
             <!--xsl:apply-templates select="ro:rights"/-->
