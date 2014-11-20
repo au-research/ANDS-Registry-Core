@@ -3,18 +3,36 @@
 // Sample configuration for the logging library
 
 $config = array(
-    'simple' => array(
+    'registry' => array(
         'level' => 'INFO',
         'type' => 'file',
-        'format' => "{date} - {message}",
-        'file_path' => ''
+        'format' => '{date} - {message}',
+        'file_path' => 'registry'
+    ),
+    'importer' => array(
+        'level' => 'INFO',
+        'type' => 'file',
+        'format' => '{date} - {message}',
+        'file_path' => 'importer'
+    ),
+    'activity' => array(
+        'level' => 'INFO',
+        'type' => 'file',
+        'format' => '{date} - {message}',
+        'file_path' => 'activity'
+    ),
+    'portal' => array(
+        'level' => 'INFO',
+        'type' => 'file',
+        'format' => '{date} - {message}',
+        'file_path' => 'activity'
     ),
     'email_criticals' => array(
         'level' => 'CRITICAL',
         'type' => 'email',
         'format' => "{date} - {level}: {message}",
-        'to' => 'sjwood25890@gmail.com',
-        'from' => 'noreply@example.com',
+        'to' => '',
+        'from' => '',
         'subject' => 'New critical logging message'
     )
 );
