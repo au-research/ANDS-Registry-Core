@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+/**
+ * @author sjwood25890 https://github.com/sjwood25890/codeigniter-logging
+ * Replaced default Codeigniter logging functionality
+ */
 class Logging
 {
     const CRITICAL = 0;
