@@ -386,9 +386,9 @@
 	    <h4 style="margin-top:30px;">Additional Metadata</h4>
         <xsl:apply-templates select="ro:relatedInfo[@type='metadata' and ro:identifier/text() != '']"/> 
     </xsl:if>
-    <xsl:if test="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity'] or ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]">
+    <xsl:if test="ro:relatedInfo[not(@type ='metadata') and not(@type='dataQualityInformation') and not(@type='reuseInformation') and not(@type='website') and not(@type='publication') and not(@type='party') and not(@type='collection') and not(@type='service') and not(@type='activity')] or ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]">
 	    <h4 style="margin-top:30px;">More Information</h4>
-        <xsl:apply-templates select="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity']"/>
+        <xsl:apply-templates select="ro:relatedInfo[not(@type ='metadata') and not(@type='dataQualityInformation') and not(@type='reuseInformation') and not(@type='website') and not(@type='publication') and not(@type='party') and not(@type='collection') and not(@type='service') and not(@type='activity')]"/>
         <xsl:apply-templates select="ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]"/>
     </xsl:if>
 
@@ -1487,6 +1487,7 @@
 
  <xsl:if test="./@type='rights' or ./@type='rightsStatement'"><h4>Rights statement</h4></xsl:if>
  <xsl:if test="./@type='accessRights'"><h4>Access rights</h4></xsl:if>
+    <span class="label label-{@accessRights_type}" type="{@accessRights_type}"><xsl:value-of select="@accessRights_type"/></span>
  <p class="rights"><xsl:value-of select="." disable-output-escaping="yes"/>
  <xsl:if test="./@rightsUri"><p>
     <a target="_blank">

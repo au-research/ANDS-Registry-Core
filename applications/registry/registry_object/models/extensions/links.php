@@ -23,7 +23,9 @@ class links_Extension extends ExtensionBase
         $cmUrls = $this->processCitationUrl($sXml);
         $descLinks = $this->processDescriptions($sXml);
         $identifierLinks = $this->processIdentifierLinks($sXml);
-        $allLinks = array_merge($eaLinks, $cmUrls, $descLinks, $identifierLinks);
+        $relationLinks = $this->processRelationUrl($sXml);
+        $allLinks = array_merge($eaLinks, $cmUrls, $descLinks, $identifierLinks,
+                                $relationLinks);
         //find existing links for this ro
         $currentLinks = $this->getExistingLinks();
         // print "<br />currentLinks = <br />";
@@ -129,6 +131,28 @@ class links_Extension extends ExtensionBase
             }
         }
         return $identifiersLinks;
+    }
+
+    // relatedObject/relation/url and relatedInfo/relation/url
+    // NB "type" attribute is required in both cases, and we use it in
+    // generating the link_type.
+    function processRelationUrl($sXml)
+    {
+        $rUrls = array();
+        $ro_id = $this->ro->id;
+        $ds_id = $this->ro->data_source_id;
+        // The url is optional, so only select elements that have one.
+        $relation_metadata =
+          $sXml->xpath('//ro:relation[ro:url]');
+        foreach ($relation_metadata AS $rm)
+        {
+            $rmParent = $rm->xpath('..');
+            $rType = strtolower((string) $rm['type']);
+            $type = $rmParent[0]->getName() . '_relation_' . $rType. '_url';
+            $value = (string)$rm->url[0];
+            array_push($rUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
+        }
+        return $rUrls;
     }
 
     function getResolvedLinkForIdentifier($type, $value)

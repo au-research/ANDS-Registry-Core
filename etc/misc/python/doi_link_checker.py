@@ -84,7 +84,7 @@ def sendEmail(emailAddr, clientTitle, message):
 		me = myconfig.adminEmailAddr
 		msg = MIMEMultipart('alternative')
 		msg['Subject'] = "Broken Links Discovered for Cite My Data Client: " + clientTitle
-		msg['From'] = "DOI LINK CHECKER"
+		msg['From'] = "DOI.LINK.CHECKER"
 		msg['To'] = emailAddr
 		text = message
 		html = """\

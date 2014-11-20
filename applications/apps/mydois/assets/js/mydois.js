@@ -9,6 +9,9 @@ $(document).on('click', '.nav li', function(){
 });
 
 $(document).on('click', '#linkChecker', function(){
+    $('#linkChecker_message').removeClass('alert alert-info');
+    $('#linkChecker_message').html('');
+    $("#linkChecker_message").html('<p>Checking.....</p><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div>')
 	var app_id = $(this).attr('app_id');
 	$.ajax({
 		url:apps_url+'mydois/runDoiLinkChecker', 
@@ -16,6 +19,7 @@ $(document).on('click', '#linkChecker', function(){
 		data: {app_id:app_id},
 		success: function(data){
 			if(data.status=='SUCCESS'){
+                $('#linkChecker_message').html('');
 				$('#linkChecker_result').html(data.message);																				
 			}
 		}
@@ -47,7 +51,7 @@ $(document).on('click', '#doi_mint_confirm', function(){
     $("#mint_result").html('<p>Minting.....</p><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div>')
     $("#mint_form").addClass('hide');
     var theButton = this;
-    var doi = $("input[name='doi']").val();
+   // var doi = $("input[name='doi']").val();
     var doi_url = $("input[name='url']").val();
     var client_id = $("input[name='client_id']").val();
     var app_id= $("input[name='app_id']").val();
@@ -81,7 +85,7 @@ $(document).on('click', '#doi_mint_confirm', function(){
         $.ajax({
             url: url,
             type: 'POST',
-            data: {doi_id:doi, xml:xml, client_id:client_id},
+            data: {xml:xml, client_id:client_id},
             success: function(data){
                 if(data.response.type=='failure'){
                     var message =  data.response.message;

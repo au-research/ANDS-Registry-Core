@@ -324,7 +324,7 @@ class Doitasks extends CI_Model {
         $manual_mint = $this->input->get('manual_mint');
         if($manual_mint)
         {
-            $doiValue = rawurldecode($this->input->get_post('doi_id'));
+            $doiValue = rawurldecode($_SESSION['doi']);
             $client_id = rawurldecode($this->input->get_post('client_id'));
         }
 
