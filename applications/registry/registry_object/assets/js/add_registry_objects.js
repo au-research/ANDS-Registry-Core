@@ -144,7 +144,7 @@ function initVocabWidgets(container){
 			log(xhr);
 		});
 		widget.vocab_widget('repository', 'rifcs');
-		widget.vocab_widget('narrow', "http://purl.org/au-research/vocabulary/RIFCS/1.4/" + vocab);		 
+		widget.vocab_widget('narrow', "http://purl.org/au-research/vocabulary/RIFCS/1.6/" + vocab);
 	});
 
 }

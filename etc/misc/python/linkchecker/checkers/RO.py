@@ -325,6 +325,8 @@ class ROChecker(base.BaseChecker):
         pass
 
     # Format string for HEAD query.
+    # NB: The Keep-Alive entry is for possible future work:
+    #     doing a subsequent GET request to analyse the page content.
     # Replacement fields:
     # url_path -- The query URL to be sent.
     # url -- The entire URL object, as returned by urlsplit().
@@ -379,6 +381,7 @@ class ROChecker(base.BaseChecker):
         url_str = url_str_original = r['link']
 
         SCHEME_NOT_HTTP_FORMAT = ('Error: Scheme is not http(s): ')
+        URL_PARSE_ERROR_FORMAT = ('Error: Parsing URL failed')
         STATUS_ERROR_FORMAT = '4/500s: Status {}'
         REDIRECT_SAME_FORMAT = ('Error: Redirect URL same as original: ')
         EXCEPTION_FORMAT = 'Error: {}'
@@ -401,6 +404,16 @@ class ROChecker(base.BaseChecker):
                     # i.e., be either "http" or "https".
                     self._handle_one_error(url_str_original,
                                            SCHEME_NOT_HTTP_FORMAT,
+                                           timestamp,
+                                           testing_array,
+                                           counter,
+                                           test_results)
+                    return
+                if not url.hostname:
+                    # Something wrong with the parsing of the URL,
+                    # possibly "http:/only-one-slash.com".
+                    self._handle_one_error(url_str_original,
+                                           URL_PARSE_ERROR_FORMAT,
                                            timestamp,
                                            testing_array,
                                            counter,
@@ -455,15 +468,14 @@ class ROChecker(base.BaseChecker):
                 while True:
                     line = yield from reader.readline()
                     if not line:
-                        # Empty line was read, so that was the end
-                        # of the result headers.
-                        break
-                    if line.startswith(bytes('<', 'utf-8')):
-                        # Oh dear, the server is now sending the page.
-                        # This has been seen with an IIS/6.0 server.
+                        # End of file read.
                         break
                     # readline() returns a bytes, so it must be decoded.
                     line = line.decode("utf-8").rstrip()
+                    if line.startswith('<'):
+                        # Oh dear, the server is now sending the page.
+                        # This has been seen with an IIS/6.0 server.
+                        break
                     if line:
                         # The next two lines are not used for now,
                         # but might be useful in the future.
@@ -482,6 +494,9 @@ class ROChecker(base.BaseChecker):
                             mStatus = line
                         if line.startswith(('Location:', 'location:')):
                             location = line.split()[1]
+                    else:
+                        # Empty line was read; end of headers.
+                        break
                 if mStatus:
                     # The status line is "HTTP/1.x 300 ....", so the status
                     # code is the second field after split,
@@ -798,7 +813,7 @@ data_source_id: {}
                  " WHERE rol.registry_object_id = ro.registry_object_id")
         if data_source_id is not None:
             query += " AND rol.`data_source_id`=" + str(data_source_id)
-        query += ";"
+        query += " ORDER BY ro.registry_object_id;"
         if self._debug:
             print("DEBUG: get_RO_links query:", query, file=sys.stderr)
         cur.execute(query)

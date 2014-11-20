@@ -51,7 +51,7 @@ $("#anzsrc-vocab").vocab_widget({
 		<pre>
 $("#rifcs-idtype").vocab_widget({
     mode:"narrow",
-    mode_params:"http://purl.org/au-research/vocabulary/RIFCS/1.4/RIFCSIdentifierType",
+    mode_params:"http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSIdentifierType",
     repository:"rifcs",
     cache: false,
     fields: ['definition'],
@@ -71,7 +71,7 @@ $("#rifcs-idtype").vocab_widget({
 		<pre>
 $("#rifcs-idtype-input").vocab_widget({
     mode:"narrow",
-    mode_params:"http://purl.org/au-research/vocabulary/RIFCS/1.4/RIFCSIdentifierType",
+    mode_params:"http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSIdentifierType",
     repository:"rifcs",
     cache: false,
     fields: ['label', 'definition', 'about'],
@@ -93,8 +93,8 @@ $("#rifcs-idtype-input").vocab_widget({
 		<pre>
 $("#rifcs-relationtype").vocab_widget({
     mode:"collection",
-    mode_params:"http://purl.org/au-research/vocabulary/RIFCS/1.5/RIFCSPartyToPartyRelationType,
-    repository:"rifcs15",
+    mode_params:"http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSPartyToPartyRelationType,
+    repository:"rifcs16",
     cache: false,
     fields: ['label'],
     target_field: 'label'});
@@ -156,7 +156,7 @@ elem.on('error.vocab.ands', function(event, xhr) {
 
 //now, perform the vocab lookup
 widget.vocab_widget('narrow',
-		    'http://purl.org/au-research/vocabulary/RIFCS/1.4/RIFCSIdentifierType');
+		    'http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSIdentifierType');
 		</pre>
 	      </div>
 	      <div id="vocab-core">
