@@ -206,6 +206,7 @@ class Mydois extends MX_Controller {
         }
         $data['client_id'] = $client_obj->client_id;
         $data['doi_id'] = $client_obj->datacite_prefix.$doi_client_id."/".uniqid();
+        $_SESSION['doi'] = $data['doi_id'];
         $data['app_id'] = $appId;
 		
 		$data['client'] = $client_obj;
