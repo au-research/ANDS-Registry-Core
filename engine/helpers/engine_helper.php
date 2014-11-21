@@ -82,7 +82,7 @@ function set_config_item($key, $type, $value) {
 		);
 		$insert_query = $_ci->db->insert('configs', $data);
 		if($insert_query) {
-			log_message('info', 'CONFIG creating '.$value.' to '.$key.' as '.$type);
+			// log_message('info', 'CONFIG creating '.$value.' to '.$key.' as '.$type);
 			return true;
 		} else return false;
 	} elseif($action=='update') {
@@ -91,7 +91,7 @@ function set_config_item($key, $type, $value) {
 			'type' => $type,
 			'value' => $value
 		));
-		log_message('info', 'CONFIG update '.$value.' to '.$key.' as '.$type);
+		// log_message('info', 'CONFIG update '.$value.' to '.$key.' as '.$type);
 	} else {
 		return false;
 	}
@@ -156,7 +156,7 @@ function ds_acl_enforce($ds_id, $message = ''){
 
 function default_error_handler($errno, $errstr, $errfile, $errline)
 {
-	log_message('error', $errstr . " > on line " . $errline . " (" . $errfile .")");
+	ulog($errstr . " > on line " . $errline . " (" . $errfile .")", 'error', 'error');
 
 	// Ignore when error_reporting is turned off (sometimes inline with @ symbol)
 	if (error_reporting() == 0) { return true; }
@@ -458,4 +458,34 @@ function isValidXML($xml) {
 function alphasort_name($a, $b){
 	if($a->name == $b->name) return 0;
 	return ($a->name < $a->name) ? -1 : 1;
+}
+
+/**
+ * Universal log function
+ * @param  string $message 
+ * @param  string $logger    [registry|importer|activity|portal|error]
+ * @param  string $type    	 [info|debug|warning|error|critical]
+ * @return void
+ */
+function ulog($message='', $logger='activity', $type='info') {
+	$CI =& get_instance();
+
+	//check if the logging class is loaded, if not, load it
+	if (!class_exists('Logging')) {
+		$CI->load->library('logging');
+	}
+
+	try {
+		$logger = $CI->logging->get_logger($logger);
+		switch($type) {
+			case 'info' : $logger->info($message);break;
+			case 'debug' : $logger->debug($message);break;
+			case 'warning' : $logger->warning($message);break;
+			case 'error' : $logger->error($message);break;
+			case 'critical' : $logger->critical($message);break;
+		}
+	} catch (Exception $e) {
+		throw new Exception($e);
+		// log_message('error', $e->getMessage());
+	}
 }
