@@ -1,0 +1,435 @@
+##############################################################
+# 
+# Vocabulary: RIFCS (v1.6)
+#             <http://researchdata.ands.org.au/registry/vocab_service/#!/view/34>
+#
+# Contact: Joel Benn, Australian National Data Service
+#          <joel.benn@ands.org.au>
+#
+##############################################################
+# This is based on the template LDA configuration for a SISSvoc service
+# Reference - <https://www.seegrid.csiro.au/wiki/Siss/SISSvoc30Specification
+# Copyright (c) CSIRO 2012
+# Re-use permitted according to Creative Commons Attribution 3.0 Australia (CC BY 3.0) 
+# see <http://creativecommons.org/licenses/by/3.0/au/>
+##############################################################
+
+
+## Common prefixes - don't change these.
+@prefix api:     <http://purl.org/linked-data/api/vocab#> .
+@prefix dc:      <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix elda:    <http://www.epimorphics.com/vocabularies/lda#> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix owl:     <http://def.seegrid.csiro.au/isotc211//owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix svoc:    <http://www.seegrid.csiro.au/siss/voc/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+
+##############################################################
+svoc:rifcs15 a api:API 
+	; api:maxPageSize "200"
+	; api:defaultPageSize "200" 
+	; api:defaultFormatter [ 
+			a api:XsltFormatter
+			; api:name 'html'
+			; api:stylesheet 'xsltsheets/ashtml.xsl' 
+			; api:mimeType 'text/html' 
+	]
+	; api:variable
+		[api:name "_resourceRoot"; api:value "/vocab/"]
+		, [api:name "_vocabName"; api:value "Registry Interchange Format - Collections and Services (RIFCS) v1.6 Vocabulary Service"]
+		, [api:name "_vocabMore"; api:value "http://www.ands.org.au/resource/rif-cs.html"]
+		, [api:name "_vocabAPIDoco"; api:value ""]
+		, [api:name "webapp"; api:value "/vocab"]	
+##############################################################
+
+	; api:defaultViewer api:describeViewer 
+	; rdfs:label "Registry Interchange Format - Collections and Services (RIFCS) v1.6 Vocabulary Service"@en 
+	; api:sparqlEndpoint <http://ands3.anu.edu.au:8080/openrdf-sesame/repositories/rifcs16> 
+
+	; api:endpoint
+		svoc:URIEndpoint ,
+		svoc:conceptByLabelNotationURIEndpoint ,
+		svoc:conceptByConceptSchemeEndpoint ,
+
+
+		svoc:topConceptsByConceptSchemeEndpoint ,
+		svoc:topConceptsEndpoint ,
+
+		svoc:conceptSchemeEndpoint , 			
+		svoc:conceptListEndpoint , 
+		svoc:conceptByLabelEndpoint , 
+		svoc:conceptByLabelLooseEndpoint ,
+		svoc:broaderThanURIEndpoint ,
+		svoc:narrowerThanURIEndpoint ,
+		svoc:broaderByLabelEndpoint ,
+		svoc:narrowerByLabelEndpoint ,
+
+		svoc:conceptCollectionEndpoint , 
+		svoc:inCollectionURIEndpoint
+	.
+
+## remove this if the endpoint does not support SPARQL 1.1
+<http://ands3.anu.edu.au:8080/openrdf-sesame/repositories/rifcs16> elda:supportsNestedSelect true .
+
+
+# Viewers (this section describes what properties should be displayed in a particular "view")
+svoc:viewerNone a api:Viewer 
+    ; api:name "none"
+    .
+
+svoc:basicConceptSchemeViewer a api:Viewer 
+    ; api:name "conceptScheme" 
+    ; api:property rdfs:label, skos:hasTopConcept
+    .
+
+svoc:basicCollectionViewer a api:Viewer 
+    ; api:name "collection" 
+    ; api:property rdfs:label
+    .
+
+svoc:basicConceptViewer a api:Viewer 
+    ; api:name "concept" 
+    ; api:property skos:prefLabel, skos:notation, skos:broader, skos:definition, skos:narrower
+    .
+
+
+# Service Endpoints 
+
+## 0. This is the basic "tell me what you know about the resource identified by this URI" request. 
+svoc:URIEndpoint a api:ItemEndpoint
+		; rdfs:comment "Describe the resource identified by this URI" 
+		; api:uriTemplate  "/rifcs16/resource?uri={URI}" 
+		; api:exampleRequestPath  "/rifcs16/resource?uri=http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDatesType/dc.issued"
+		; api:itemTemplate  "{URI}"
+		; api:defaultViewer  api:labelledDescribeViewer
+		; api:viewer  api:basicViewer,api:labelledDescribeViewer
+		.
+
+
+## 1. List of concept schemes - basic-view 
+svoc:conceptSchemeEndpoint a api:ListEndpoint 
+		; rdfs:comment "List all ConceptSchemes in this vocabulary" 
+		; api:uriTemplate  "/rifcs16/conceptschemes" 
+		; api:exampleRequestPath  "/rifcs16/conceptschemes"
+		; api:selector [	api:where " ?item a skos:ConceptScheme . " ] 
+		; api:defaultViewer  svoc:basicConceptSchemeViewer
+		; api:viewer  api:basicViewer,svoc:basicConceptSchemeViewer 
+		.
+		
+## 2. List of concept collections - basic-view 	 
+svoc:conceptCollectionEndpoint a api:ListEndpoint 
+		; rdfs:comment "List all concept collections" 
+		; api:uriTemplate  "/rifcs16/collections" 
+		; api:exampleRequestPath  "/rifcs16/collections"
+		; api:selector [ api:where " ?item a ?type . FILTER ( ?type = skos:Collection || ?type = skos:OrderedCollection ) " ] 
+		; api:defaultViewer  svoc:basicCollectionViewer
+		; api:viewer  api:basicViewer,svoc:basicCollectionViewer 
+		.
+		
+## 3. List of concepts - basic-view 
+svoc:conceptListEndpoint a api:ListEndpoint 
+		; rdfs:comment "List all concepts" 
+		; api:uriTemplate  "/rifcs16/concepts" 
+		; api:exampleRequestPath  "/rifcs16/concepts"
+		; api:selector [ 
+				api:where " ?item a skos:Concept . " 
+		] 
+		; api:defaultViewer svoc:basicConceptViewer 
+		; api:viewer  api:basicViewer,svoc:basicConceptViewer 
+		.
+
+## list of concepts within a specific conceptscheme 
+svoc:conceptByConceptSchemeEndpoint a api:ListEndpoint
+		; rdfs:comment "List all concepts which are in the specified conceptscheme"
+                ; api:uriTemplate  "/rifcs16/concepts?scheme={scheme_uri}"
+                ; api:exampleRequestPath  "/rifcs16/concepts?scheme=http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"
+                ; api:variable  [ api:name "scheme_uri"; api:type rdfs:Resource ] 
+                ; api:selector [
+                                api:where " ?item a skos:Concept . ?item skos:inScheme ?scheme_uri . "
+                ]
+                ; api:defaultViewer svoc:basicConceptViewer
+                ; api:viewer  api:basicViewer,svoc:basicConceptViewer
+                .
+                
+
+## list of concepts in the specified collection
+svoc:inCollectionURIEndpoint a api:ListEndpoint 
+		; rdfs:comment "List of concepts which are members of the collection identified by this URI"
+		; api:uriTemplate  "/rifcs16/concepts/inCollection?uri={baseCollection}" 
+		; api:exampleRequestPath  "/rifcs16/concepts/inCollection?uri=http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSCollectionToCollectionRelationType"
+		; api:variable  [ api:name "baseCollection"; api:type rdfs:Resource ] 
+		; api:selector [ 
+				# counter-intuitively, skos:member property indicates the object is a member of the subject
+				api:where " ?baseCollection skos:member ?item . "
+		]
+		; api:defaultViewer svoc:basicConceptViewer 
+		; api:viewer  api:basicViewer,svoc:basicConceptViewer 
+		.
+
+
+## 4. List of concepts where a label matches the text, in English 
+svoc:conceptByLabelEndpoint a api:ListEndpoint 
+		; rdfs:comment "List concepts where a skos label property has exact match to text, in English"
+		; api:uriTemplate  "/rifcs16/concepts?anylabel={text}" 
+		; api:exampleRequestPath  "/rifcs16/concepts?anylabel=handle" 
+		; api:selector [
+				api:where " ?item a skos:Concept . ?item ?label ?l . FILTER ( ?label = skos:prefLabel || ?label = skos:altLabel ) FILTER ( str(?l) = ?text ) "
+		] 		
+		; api:defaultViewer svoc:basicConceptViewer 
+		; api:viewer  api:basicViewer,svoc:basicConceptViewer 
+		.
+	
+svoc:conceptByLabelNotationURIEndpoint a api:ListEndpoint
+                 ; rdfs:comment "List concepts where a skos label/notation or RDF URI property contains this text, case-insensitive"
+                 ; api:uriTemplate  "/rifcs16/concepts?anycontains={text}"
+                 ; api:exampleRequestPath  "/rifcs16/concepts?anycontains=citation"
+                 ; api:selector [
+                                 api:where " ?item a skos:Concept .  ?item ?label ?l . FILTER (   ((?label = rdfs:label || ?label = skos:prefLabel || ?label = skos:altLabel ) && regex( str(?l) , ?text , 'i' )   )|| ((?label= skos:notation ) && str(?l) = ?text )   || ( regex( str(?item), ?text, 'i') && ( ?label = skos:prefLabel ))   ) " ## URI match, only when the URI has a prefLabel
+                 ]
+                 ; api:defaultViewer svoc:basicConceptViewer
+                 ; api:viewer  api:basicViewer,svoc:basicConceptViewer
+                 .
+	
+## list of concepts where a label contains the text, any language, case-insensitive 
+svoc:conceptByLabelLooseEndpoint a api:ListEndpoint 
+		; rdfs:comment "List concepts where a skos label property contains this text, case-insensitive"
+		; api:uriTemplate  "/rifcs16/concepts?labelcontains={text}" 
+		; api:exampleRequestPath  "/rifcs16/concepts?labelcontains=harvard" 
+		; api:selector [
+				api:where " ?item a skos:Concept . ?item ?label ?l . FILTER ( ?label = skos:prefLabel || ?label = skos:altLabel ) FILTER regex( str(?l) , ?text , 'i' ) "
+		] 		
+		; api:defaultViewer svoc:basicConceptViewer 
+		; api:viewer  api:basicViewer,svoc:basicConceptViewer 
+		.
+
+
+# list all of the top concepts in the vocabulary
+svoc:topConceptsEndpoint a api:ListEndpoint
+		; rdfs:comment "List all concepts which are topConcepts of the vocabulary"
+                ; api:uriTemplate  "/rifcs16/concepts/topConcepts"
+                ; api:exampleRequestPath  "/rifcs16/concepts/topConcepts"
+                ; api:selector [
+                                api:where " ?item a skos:Concept . ?l skos:hasTopConcept ?item . "
+                ]
+                ; api:defaultViewer svoc:basicConceptViewer
+                ; api:viewer  api:basicViewer,svoc:basicConceptViewer
+                .
+
+# list of top concepts for a specific conceptscheme
+svoc:topConceptsByConceptSchemeEndpoint a api:ListEndpoint
+		; rdfs:comment "List all concepts which are topConcepts of the vocabulary"
+                ; api:uriTemplate  "/rifcs16/concepts/topConcepts?scheme={scheme_uri}"
+                ; api:exampleRequestPath  "/rifcs16/concepts/topConcepts?scheme=http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"
+                ; api:variable  [ api:name "scheme_uri"; api:type rdfs:Resource ] 
+                ; api:selector [
+                                api:where " ?item a skos:Concept .  ?scheme_uri skos:hasTopConcept ?item . "
+                ]
+                ; api:defaultViewer svoc:basicConceptViewer
+                ; api:viewer  api:basicViewer,svoc:basicConceptViewer
+                .
+		
+
+
+## list of concepts narrower than the one identified by this URI 
+svoc:narrowerThanURIEndpoint a api:ListEndpoint 
+		; rdfs:comment "List concepts narrower than the one identified by this URI"
+		; api:uriTemplate  "/rifcs16/concepts/narrower?uri={baseConcept}" 
+		; api:exampleRequestPath  "/rifcs16/concepts/narrower?uri=http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDatesType/dc.dateAccepted"
+		; api:variable  [ api:name "baseConcept"; api:type rdfs:Resource ] 
+		; api:selector [ 
+				api:where " ?baseConcept skos:narrower ?item . "
+		]
+		; api:defaultViewer svoc:basicConceptViewer 
+		; api:viewer  api:basicViewer,svoc:basicConceptViewer 
+		.
+
+## list of concepts narrower than the one where a label matches the text, in English 
+svoc:narrowerByLabelEndpoint a api:ListEndpoint 
+		; rdfs:comment "List concepts narrower than any concepts with this exact label"
+		; api:uriTemplate  "/rifcs16/concepts/narrower?anylabel={text}" 
+		; api:exampleRequestPath  "/rifcs16/concepts/narrower?anylabel=Cambrian" 
+		; api:selector [
+				api:where " ?i0 skos:narrower ?item . ?i0 ?label ?l . FILTER ( ?label = rdfs:label || ?label = skos:prefLabel || ?label = skos:altLabel ) FILTER ( ?l = ?text@en ) "
+		] 		
+		; api:defaultViewer svoc:basicConceptViewer 
+		; api:viewer  api:basicViewer,svoc:basicConceptViewer 
+		.
+
+
+
+
+
+## list of concepts broader than the one identified by this URI 
+svoc:broaderThanURIEndpoint a api:ListEndpoint 
+		; rdfs:comment "List concepts broader than the one identified by this URI"
+		; api:uriTemplate  "/rifcs16/concepts/broader?uri={baseConcept}" 
+		; api:exampleRequestPath  "/rifcs16/concepts/broader?uri=http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDatesType/dc.dateAccepted"
+		; api:variable  [ api:name "baseConcept"; api:type rdfs:Resource ] 
+		; api:selector [ 
+				api:where " ?baseConcept skos:broader ?item . "
+		]
+		; api:defaultViewer svoc:basicConceptViewer 
+		; api:viewer  api:basicViewer,svoc:basicConceptViewer 
+		.
+
+## list of concepts broader than the one where a label matches the text, in English 
+svoc:broaderByLabelEndpoint a api:ListEndpoint 
+		; rdfs:comment "List concepts broader than any concepts with this exact label"
+		; api:uriTemplate  "/rifcs16/concepts/broader?anylabel={text}" 
+		; api:exampleRequestPath  "/rifcs16/concepts/broader?anylabel=Cambrian" 
+		; api:selector [
+				api:where " ?i0 skos:broader ?item . ?i0 ?label ?l . FILTER ( ?label = rdfs:label || ?label = skos:prefLabel || ?label = skos:altLabel ) FILTER ( ?l = ?text@en ) "
+		] 		
+		; api:defaultViewer svoc:basicConceptViewer 
+		; api:viewer  api:basicViewer,svoc:basicConceptViewer 
+		.
+		
+
+
+
+
+#
+# VOCABULARY
+#
+# The vocabulary declarations say which properties can be used in queries
+# and by what short name those properties are known. If property P with short
+# name Q has range type T, then a query parameters Q=V is translated to
+# a WHERE clause fragment ?it em P V' whereV' is a literal which is V
+# with type T. This is especially important for numbers and booleans.
+# 
+
+## RDF
+rdf:type
+    api:label "type" ; 
+    rdfs:range rdfs:Class .
+  
+## RDFS
+rdfs:label 
+    api:label "label" ; 
+    api:structured "true"^^xsd:boolean;
+    a           rdf:Property .
+
+rdfs:comment 
+    api:label "comment" ; 
+    api:structured "true"^^xsd:boolean;
+    a           rdf:Property .
+
+## SKOS
+skos:Concept
+		api:label "Concept" ;
+		a         rdfs:Class .
+             
+skos:ConceptScheme 
+		api:label "ConceptScheme" ;
+		a         rdfs:Class .
+
+skos:topConceptOf
+		api:label "topConceptOf" ;
+		rdfs:range      skos:ConceptScheme .
+            
+skos:hasTopConcept
+		api:label "hasTopConcept" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+            
+skos:inScheme
+		api:label "inScheme" ; 
+		rdfs:domain	skos:Concept ;
+		rdfs:range      skos:ConceptScheme .
+
+skos:member
+		api:label "member" ; 
+		api:multiValued true ;
+		rdfs:domain	skos:Collection ;
+		rdfs:range      skos:Concept .
+
+skos:memberList
+		api:label "memberList" ; 
+		rdfs:domain	skos:OrderedCollection ;
+		rdfs:range      skos:Concept .
+
+skos:prefLabel
+		api:label "prefLabel" ;
+		api:structured "true"^^xsd:boolean;
+		a           rdf:Property .
+
+skos:definition
+		api:label "definition" ;
+		a           rdf:Property .
+
+            
+skos:altLabel
+		api:label "altLabel" ; 
+		api:multiValued true ;
+		api:structured "true"^^xsd:boolean;
+		a         rdf:Property  .
+            
+skos:notation
+		a owl:DatatypeProperty; 
+		api:label "notation"  .
+
+skos:semanticRelation
+		api:label "semanticRelation" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
+skos:related
+		api:label "related" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
+skos:broader
+		api:label "broader" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
+skos:narrower
+		api:label "narrower" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
+skos:broaderTransitive
+		api:label "broaderTransitive" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
+skos:narrowerTransitive
+		api:label "narrowerTransitive" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+            
+skos:mappingRelation
+		api:label "mappingRelation" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
+skos:closeMatch
+		api:label "closeMatch" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
+skos:exactMatch
+		api:label "exactMatch" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
+skos:broadMatch
+		api:label "broadMatch" ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
+skos:narrowMatch 
+		api:label "narrowMatch " ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
+skos:relatedMatch 
+		api:label "relatedMatch " ; 
+		api:multiValued true ;
+		rdfs:range      skos:Concept .
+
