@@ -1,0 +1,17 @@
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+
+class Registry_objects extends CI_Model {
+
+	public function getByID($id) {
+		return new _ro($id);
+	}
+
+	public function getBySlug($slug) {
+
+	} 
+
+	function __construct() {
+		parent::__construct();
+		include_once("_ro.php");
+	}
+}

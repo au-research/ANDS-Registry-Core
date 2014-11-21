@@ -36,8 +36,9 @@ class Registry_objectsMethod extends MethodHandler {
                 if($m1 && in_array($m1, $this->valid_methods)) {
                     switch($m1) {
                         case 'get':
+                        case 'registry':
                         case 'core':
-                             $result['registry_object'] = $this->core_handler($ro, $params); break;
+                             $result['core'] = $this->core_handler($ro, $params); break;
                         case 'relationships' : $result[$m1] = $this->relationships_handler($ro, $params); break;
                         case 'identifiers' : throw new Exception('Method Not Implemented'); break;
                     }
