@@ -465,7 +465,7 @@
 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
 	<skos:prefLabel xml:lang="en">open</skos:prefLabel>
 	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
-	<skos:definition xml:lang="en">Used with online data to identify data that can be electronically accessed free of charge with no conditions imposed on the usert</skos:definition>
+	<skos:definition xml:lang="en">Used with online data to identify data that can be electronically accessed free of charge with no conditions imposed on the user</skos:definition>
 	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSAccessRightsType"/>
 </rdf:Description>
 	
