@@ -343,7 +343,6 @@
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSElectronicAddressType/email"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSElectronicAddressType/other"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSElectronicAddressType/url"/>
-	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSElectronicAddressType/wsdl"/>
 	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
 </rdf:Description>
 	
@@ -1909,14 +1908,6 @@
 	<skos:prefLabel xml:lang="en">url</skos:prefLabel>
 	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
 	<skos:definition xml:lang="en">Uniform Resource Locator</skos:definition>
-	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSElectronicAddressType"/>
-</rdf:Description>
-
-<rdf:Description rdf:about="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSElectronicAddressType/wsdl">
-	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-	<skos:prefLabel xml:lang="en">wsdl</skos:prefLabel>
-	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
-	<skos:definition xml:lang="en">(service only) Web Service Definition Language</skos:definition>
 	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSElectronicAddressType"/>
 </rdf:Description>
 
