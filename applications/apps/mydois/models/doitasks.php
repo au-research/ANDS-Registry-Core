@@ -363,27 +363,38 @@ class Doitasks extends CI_Model
             }
 
             if (!$manual_mint) $doiValue = strtoupper($datacite_prefix . $client_id2 . '/' . uniqid()); //generate a unique suffix for this doi for this client
-
+            libxml_use_internal_errors(true);
             $doiObjects = new DOMDocument();
 
             $doiObjects->loadXML($xml);
-            $resources = $doiObjects->getElementsByTagName('resource');
-            $theSchema = 'unknown';
-            if ($resources->length > 0) {
-                if (isset($resources->item(0)->attributes->item(0)->name)) {
-                    $theSchema = $this->getXmlSchema($resources->item(0)->attributes->item(0)->nodeValue);
-                }
-            }
-            if ($theSchema == "unknown") {
-                $errors['message'] = "You have not provided a known schema location in your xml";
-            }
+
+            $errors = libxml_get_errors();
 
             if ($errors) {
+                $error_string = '';
+                foreach ($errors as $error) {
+                    $error_string .= "Line " . $error->line . ": " . $error->message;
+                }
+                $errors['message'] = "Errors with the xml:";
+                $verbosemessage = "Document Validation Error: " . $error_string;
+                $errorMessages = doisGetUserMessage("MT006", $doi_id = NULL, $response_type, $app_id, $verbosemessage, $urlValue);
+                libxml_clear_errors();
+            }else{
+                $resources = $doiObjects->getElementsByTagName('resource');
+                $theSchema = 'unknown';
+                if ($resources->length > 0) {
+                    if (isset($resources->item(0)->attributes->item(0)->name)) {
+                        $theSchema = $this->getXmlSchema($resources->item(0)->attributes->item(0)->nodeValue);
+                    }
+                }
+                if ($theSchema == "unknown") {
+                    $errors['message'] = "You have not provided a known schema location in your xml";
+                }
+            }
+            
+            libxml_use_internal_errors(false);
 
-                $verbosemessage = "Document Load Error: " . $errors['message'];
-                $errorMessages .= doisGetUserMessage("MT010", $doi_id = NULL, $response_type, $app_id, $verbosemessage, $urlValue);
-            } else {
-                $errors = error_get_last();
+            if(!$errors) {
                 // we need to insert the determined doi value into the xml string to be sent to datacite
                 // so we create a new 'identifier' element, set the identifierType attribute to DOI and
                 // replace the current identifier element then  write out to the xml string that is passed
@@ -395,13 +406,8 @@ class Doitasks extends CI_Model
                 $newdoi->setAttribute('identifierType', "DOI");
                 $doiObjects->getElementsByTagName('resource')->item(0)->insertBefore($newdoi, $doiObjects->getElementsByTagName('resource')->item(0)->firstChild);
                 $xml = $doiObjects->saveXML();
-            }
 
-            if ($errors) {
 
-                $verbosemessage = "Document Load Error: " . $errors['message'];
-                $errorMessages = doisGetUserMessage("MT010", $doi_id = NULL, $response_type, $app_id, $verbosemessage, $urlValue);
-            } else {
                 // Validate it against the datacite schema.
                 error_reporting(0);
 
@@ -431,8 +437,8 @@ class Doitasks extends CI_Model
                     $verbosemessage = "Document Validation Error: " . $error_string;
                     $errorMessages = doisGetUserMessage("MT006", $doi_id = NULL, $response_type, $app_id, $verbosemessage, $urlValue);
                 }
-
             }
+
             if (!$errors) {
                 //ensure provided url is valid with registered top level domain
 
