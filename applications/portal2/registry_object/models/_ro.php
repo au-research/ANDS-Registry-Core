@@ -4,21 +4,21 @@ class _ro {
 
 	public $prop;
 
-	function __construct($id) {
-		$this->init($id);
+	function __construct($id, $populate=array('core')) {
+		$this->init($id, $populate);
 	}
 
-	function init($id) {
+	function init($id, $populate = array('core')) {
 		$this->prop = array(
 			'id' => $id
 		);
-		$this->fetch();
+		$this->fetch($populate);
 	}
 
 	public function __get($property) {
 		if(isset($this->prop[$property])) {
 			return $this->prop[$property];
-		}
+		} else return false;
 	}
 
 	public function __set($property, $value) {

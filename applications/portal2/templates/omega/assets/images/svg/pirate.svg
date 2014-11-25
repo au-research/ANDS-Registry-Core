@@ -1,0 +1,31 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+<g>
+        <path fill="none"  stroke-width="1" stroke-miterlimit="10" d="M57.561,50.178c0-0.659-0.184-1.275-0.5-1.8
+            c0.057-0.333,0.084-0.674,0.084-1.023c0-3.393-2.75-6.144-6.145-6.144c-3.394,0-6.145,2.751-6.145,6.144
+            c0,0.349,0.03,0.69,0.085,1.023c-0.317,0.525-0.5,1.142-0.5,1.8c0,1.67,1.173,3.064,2.74,3.407v4.149h7.638v-4.149
+            C56.387,53.242,57.561,51.848,57.561,50.178z"/>
+        <circle fill="none"  stroke-width="1" stroke-miterlimit="10" cx="47.928" cy="50.178" r="1.744"/>
+        <circle fill="none"  stroke-width="1" stroke-miterlimit="10" cx="54.072" cy="50.178" r="1.744"/>
+        <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="51" y1="57.65" x2="51" y2="54.662"/>
+        <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="52.91" y1="57.65" x2="52.91" y2="54.662"/>
+        <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="49.09" y1="57.65" x2="49.09" y2="54.662"/>
+    </g>
+    <path fill="none"  stroke-width="1" stroke-miterlimit="10" d="M65.145,40.827
+        c-1.373,1.373-5.767,0.795-5.767,0.795s-0.578-4.394,0.795-5.767s2.017,2.955,2.017,2.955S66.518,39.454,65.145,40.827z"/>
+    <path fill="none"  stroke-width="1" stroke-miterlimit="10" d="M36.855,59.173
+        c1.373-1.373,5.767-0.795,5.767-0.795s0.578,4.394-0.795,5.767s-2.017-2.955-2.017-2.955S35.482,60.546,36.855,59.173z"/>
+
+        <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="56.508" y1="44.492" x2="59.378" y2="41.622"/>
+
+        <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="42.622" y1="58.378" x2="46.898" y2="54.102"/>
+    <path fill="none"  stroke-width="1" stroke-miterlimit="10" d="M60.173,64.145
+        c-1.373-1.373-0.795-5.767-0.795-5.767s4.394-0.578,5.767,0.795s-2.955,2.017-2.955,2.017S61.546,65.518,60.173,64.145z"/>
+    <path fill="none"  stroke-width="1" stroke-miterlimit="10" d="M41.827,35.855
+        c1.373,1.373,0.795,5.767,0.795,5.767s-4.394,0.578-5.767-0.795s2.955-2.018,2.955-2.018S40.454,34.482,41.827,35.855z"/>
+
+        <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="54.867" y1="53.867" x2="59.378" y2="58.378"/>
+
+        <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="42.622" y1="41.622" x2="45.609" y2="44.609"/>
+</g>
+</svg>

@@ -1,0 +1,13 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+
+<g>
+
+        <circle display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" cx="39.506" cy="57.732" r="7.784"/>
+
+        <circle display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" cx="37.146" cy="60.092" r="0.675"/>
+    <polyline display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" points="57.401,39.8
+        63.048,45.445 69.791,38.7 64.165,33.074 45.324,51.913   "/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="66.359" y1="42.135" x2="62.558" y2="38.334"/>
+</g>
+</svg>

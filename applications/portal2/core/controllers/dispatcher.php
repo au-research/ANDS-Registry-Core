@@ -71,7 +71,13 @@ class Dispatcher extends MX_Controller {
 				}
 			}
 
-			$params = array("registry_object/view");
+			// if ($_GET['slug']=='dino') {
+			// 	$params = array('dinosaur/view');
+			// } elseif ($_GET['slug'] == 'ro') {
+			// 	$params = array('registry_object/view');
+			// }
+
+			$params = array($this->config->item('default_view_model'));
 			echo Modules::run(implode("/",$params));
 			return;
 		}

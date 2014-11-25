@@ -3,12 +3,12 @@
 class Registry_objects extends CI_Model {
 
 	public function getByID($id) {
-		return new _ro($id);
+		return new _ro($id, array('core', 'descriptions', 'relationships'));
 	}
 
 	public function getBySlug($slug) {
 
-	} 
+	}
 
 	function __construct() {
 		parent::__construct();

@@ -1,0 +1,14 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+
+        <circle display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" cx="50.932" cy="47.777" r="11.153"/>
+    <path display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" d="M58.527,34.661
+        c7.243,4.194,9.716,13.465,5.521,20.71c-4.194,7.244-13.466,9.716-20.71,5.522"/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="61.013" y1="30.461" x2="56.662" y2="37.885"/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="46.267" y1="55.672" x2="41.156" y2="64.391"/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="50.932" y1="62.896" x2="50.932" y2="69.99"/>
+</g>
+</svg>

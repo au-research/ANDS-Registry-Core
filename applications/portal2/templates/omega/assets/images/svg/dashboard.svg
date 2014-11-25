@@ -1,0 +1,23 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+    <g  display="inline">
+        <circle fill="none"  stroke-width="1" stroke-miterlimit="10" cx="51" cy="50" r="14.414"/>
+    </g>
+    <g  display="inline">
+        <path fill="none"  stroke-width="1" stroke-miterlimit="10" d="M39.253,58.555
+            c2.613-3.666,6.9-6.059,11.747-6.059c4.848,0,9.134,2.393,11.747,6.059"/>
+    </g>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="51.586" y1="52.461" x2="52.523" y2="44.023"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="51" y1="37.812" x2="51" y2="40.859"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="59.618" y1="41.382" x2="57.463" y2="43.537"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="42.382" y1="41.382" x2="44.537" y2="43.537"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="38.812" y1="50" x2="41.859" y2="50"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="63.188" y1="50" x2="60.141" y2="50"/>
+</g>
+</svg>

@@ -1,0 +1,15 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+
+
+<g>
+
+        <ellipse display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" cx="51.023" cy="50" rx="14.381" ry="14.414"/>
+    <polygon display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" points="56.248,40.845
+        49.196,48.953 45.797,59.155 52.85,51.047    "/>
+
+        <circle display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" cx="51.023" cy="50" r="0.351"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="52.62" y1="44.841" x2="54.65" y2="46.004"/>
+</g>
+
+</svg>

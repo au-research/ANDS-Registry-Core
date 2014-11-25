@@ -1,0 +1,10 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+    <g display="inline">
+        <polyline fill="none" stroke-width="1" stroke-miterlimit="10" points="68.735,50.469 68.735,40.161
+            47.964,40.161 47.964,37.037 33.128,37.037 33.128,50.469         "/>
+    </g>
+    <polygon display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" points="68.735,64.837
+        33.128,64.837 31.879,50.312 69.984,50.312   "/>
+</g>
+</svg>

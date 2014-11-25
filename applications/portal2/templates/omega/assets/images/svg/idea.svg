@@ -1,0 +1,25 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+    <g display="inline">
+        <path fill="none" stroke-width="1" stroke-miterlimit="10" d="M53.274,69.209h-4.686v-1.562h-2.056
+            c0,0-0.007-5.07-0.004-6.736c0.004-2.889-1.25-3.394-2.885-5.028c-1.864-1.866-3.019-4.442-3.019-7.289
+            c0-2.846,1.154-5.422,3.019-7.288c1.866-1.865,4.442-3.019,7.289-3.019l0,0c2.847,0,5.422,1.153,7.288,3.019
+            c1.863,1.864,3.019,4.442,3.019,7.288c0,2.847-1.155,5.423-3.019,7.289c-1.635,1.635-2.889,2.14-2.885,5.028
+            c0.002,1.666-0.004,6.736-0.004,6.736h-2.057V69.209z"/>
+
+            <line fill="none" stroke-width="1" stroke-miterlimit="10" x1="46.532" y1="60.412" x2="55.206" y2="60.412"/>
+    </g>
+    <g display="inline">
+
+            <line fill="none" stroke-width="1" stroke-miterlimit="10" x1="50.932" y1="30.01" x2="50.932" y2="35.164"/>
+
+            <line fill="none" stroke-width="1" stroke-miterlimit="10" x1="60.927" y1="32.687" x2="58.35" y2="37.15"/>
+
+            <line fill="none" stroke-width="1" stroke-miterlimit="10" x1="68.243" y1="40.005" x2="63.781" y2="42.583"/>
+
+            <line fill="none" stroke-width="1" stroke-miterlimit="10" x1="40.936" y1="32.687" x2="43.514" y2="37.15"/>
+
+            <line fill="none" stroke-width="1" stroke-miterlimit="10" x1="33.62" y1="40.005" x2="38.083" y2="42.581"/>
+    </g>
+</g>
+</svg>

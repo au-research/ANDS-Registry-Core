@@ -1,2 +1,3 @@
 <?php
-$config['default_template'] = 'ands-green';
+$config['default_template'] = 'omega';
+$config['default_view_model'] = 'registry_object/view';

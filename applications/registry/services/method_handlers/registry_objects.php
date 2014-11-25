@@ -4,14 +4,14 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/_method_handler.php');
 class Registry_objectsMethod extends MethodHandler {
     private $default_params = array(
         'q' => '*:*',
-        'fl' => 'id,key,slug,title,class,data_source_id',
+        'fl' => 'id,key,slug,title,class,data_source_id,group',
         'wt' => 'json',
         'indent' => 'on',
         'rows' => 20
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers'
+        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry'
     );
     
     //var $params, $options, $formatter; 
@@ -38,7 +38,11 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'get':
                         case 'registry':
                         case 'core':
-                             $result['core'] = $this->core_handler($ro, $params); break;
+                            $result['core'] = $this->core_handler($ro, $params); break;
+                        case 'detail':
+                            $result['detail'] = $this->detail_handler($ro, $params); break;
+                        case 'descriptions':
+                            $result['descriptions'] = $this->descriptions_handler($ro, $params);break;
                         case 'relationships' : $result[$m1] = $this->relationships_handler($ro, $params); break;
                         case 'identifiers' : throw new Exception('Method Not Implemented'); break;
                     }
@@ -103,6 +107,23 @@ class Registry_objectsMethod extends MethodHandler {
             if(!$attr) $attr = $ro->getAttribute($f);
             if(!$attr) $attr = null;
             $result[$f] = $attr;
+        }
+        return $result;
+    }
+
+    private function descriptions_handler($ro, $params) {
+        $result = array();
+        $xml = $ro->getSimpleXML();
+        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+        $xml = simplexml_load_string($xml);
+        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+        foreach($xml->{$ro->class}->description as $description){
+            $type = (string) $description['type'];
+            $description_str = html_entity_decode((string) $description);
+            $result[] = array(
+                'type' => $type,
+                'description' => $description_str
+            );
         }
         return $result;
     }

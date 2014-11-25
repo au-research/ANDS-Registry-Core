@@ -1,0 +1,14 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+
+        <rect x="38.125" y="46.251" display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" width="25.613" height="22.958"/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="38.125" y1="62.807" x2="63.738" y2="62.807"/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="50.932" y1="31.728" x2="50.932" y2="57.809"/>
+    <g display="inline">
+        <polyline fill="none" stroke-width="1" stroke-miterlimit="10" points="60.614,41.098 50.932,31.103
+            41.249,41.098       "/>
+    </g>
+</g>
+</svg>
