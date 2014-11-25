@@ -336,7 +336,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 				{name: 'RIF-CS',value:'rif'}
 			]
 			$.each($scope.ds.crosswalks, function(){
-				if(this.path!='' && this.type=='crosswalk'){
+				if(this.type=='crosswalk'){
 					$scope.provider_types.push({
 						name:this.prefix+' - '+this.path, value:this.prefix
 					});
