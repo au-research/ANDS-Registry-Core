@@ -338,7 +338,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			$.each($scope.ds.crosswalks, function(){
 				if(this.type=='crosswalk'){
 					$scope.provider_types.push({
-						name:this.prefix+' - '+this.path, value:this.prefix
+						name:this.prefix + ((this.path) ? ' - '+this.path : ''), value:this.prefix
 					});
 				}
 			});
@@ -357,7 +357,16 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			if($scope.ds.crosswalks){
 				$.each($scope.ds.crosswalks, function(){
 					if(this.type=='crosswalk' && this.prefix==newv){
-						$scope.ds.xsl_file = this.full_path;
+                        if(this.full_path) {
+                            $scope.ds.xsl_file = this.full_path;
+                        } else {
+                            $scope.ds.xsl_file = '';
+                            $.each($scope.ds.crosswalks, function(){
+                               this.active = false;
+                            });
+                            this.active = true;
+                        }
+
 					}
 				});
 			}
