@@ -333,7 +333,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 	$scope.$watch('ds.crosswalks', function(newv, oldv){
 		if($scope.ds.crosswalks){
 			$scope.provider_types = [
-				{name: 'RIF-CS',value:'rif'}
+				{name: 'rif',value:'rif'}
 			]
 			$.each($scope.ds.crosswalks, function(){
 				if(this.type=='crosswalk'){
