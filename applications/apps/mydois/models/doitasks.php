@@ -938,10 +938,12 @@ class Doitasks extends CI_Model
     {
         //check that the host component of a given url belings to one of the clients registered domains
         $theDomain = parse_url($urlValue);
-        foreach ($client_domains as $domain) {
-            $check = strpos($theDomain['host'], $domain->client_domain);
-            if ($check || $check === 0) {
-                return true;
+        if(isset($theDomain['host'])){
+            foreach ($client_domains as $domain) {
+                $check = strpos($theDomain['host'], $domain->client_domain);
+                if ($check || $check === 0) {
+                    return true;
+                }
             }
         }
         return false;
