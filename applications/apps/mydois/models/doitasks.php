@@ -248,17 +248,21 @@ class Doitasks extends CI_Model
             }
         }
 
-
+        if ($manual_update) {
+            $update = "M_UPDATE";
+        }else{
+            $update = "UPDATE";
+        }
         if ($errorMessages) {
             $outstr = $errorMessages;
             //We need to log this activity as errorred
 
-            insertDoiActivity("UPDATE", $doiValue, "FAILURE", $client_id, $errorMessages);
+            insertDoiActivity($update, $doiValue, "FAILURE", $client_id, $errorMessages);
         }
 
         if ($notifyMessage) {
             //We need to log this activity
-            insertDoiActivity("UPDATE", $doiValue, "SUCCESS", $client_id, $notifyMessage);
+            insertDoiActivity($update, $doiValue, "SUCCESS", $client_id, $notifyMessage);
             $outstr = $notifyMessage;
         }
 
@@ -482,16 +486,22 @@ class Doitasks extends CI_Model
             }
         }
 
+        if($manual_mint){
+            $mint = "M_MINT";
+        }else{
+            $mint = "MINT";
+        }
+        
         if ($errorMessages) {
             $outstr = $errorMessages;
             //We need to log this activity as errorred
 
-            insertDoiActivity("MINT", $doiValue, "FAILURE", $client_id = 0, $errorMessages);
+            insertDoiActivity($mint, $doiValue, "FAILURE", $client_id = 0, $errorMessages);
         }
 
         if ($notifyMessage) {
             //We need to log this activity
-            insertDoiActivity("MINT", $doiValue, "SUCCESS", $client_id, $notifyMessage);
+            insertDoiActivity($mint, $doiValue, "SUCCESS", $client_id, $notifyMessage);
             $outstr = $notifyMessage;
         }
 
