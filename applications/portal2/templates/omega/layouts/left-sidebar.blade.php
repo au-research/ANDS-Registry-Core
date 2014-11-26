@@ -20,12 +20,12 @@
     		    <section class="section swatch-white" style="z-index:1">
     		    	<div class="container">
     		    		<div class="row element-short-top">
-    		    			<div class="col-md-9">
-    		    				@yield('content')
-    		    			</div>
     		    			<div class="col-md-3 sidebar">
     		    				@yield('sidebar')
     		    			</div>
+                            <div class="col-md-9">
+                                @yield('content')
+                            </div>
     		    		</div>
     		    	</div>
     		    </section>

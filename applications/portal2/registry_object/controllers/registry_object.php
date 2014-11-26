@@ -11,6 +11,11 @@ class Registry_object extends MX_Controller {
 		$this->blade->set('ro', $ro)->set('sidebar', array(1,2,3,4))->render('registry_object/view');
 	}
 
+	function search_view() {
+		$this->load->library('blade');
+		$this->blade->render('registry_object/search');
+	}
+
 	function get() {
 		$this->load->model('registry_objects', 'ro');
 		if($this->input->get('id')){

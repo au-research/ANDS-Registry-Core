@@ -439,7 +439,6 @@ class Blade
         return preg_replace('/\{\{--((.|\s)*?)--\}\}/', "<?php /* $1 */ ?>\n", $value);
     }
 
-
     /**
      * Rewrites Blade echo statements into PHP echo statements.
      *
@@ -450,7 +449,6 @@ class Blade
     {
         return preg_replace('/\{\{(.+?)\}\}/', '<?php echo $1; ?>', $value);
     }
-
 
     /**
      * Rewrites Blade "for else" statements into valid PHP.

@@ -18,6 +18,7 @@
         </div>
         <div class="pull-right">
             <a href="">Advanced Search</a>
+            <a href="">Map Search</a>
         </div>
     </form>
 </div>

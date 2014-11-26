@@ -1,17 +1,17 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Registry_objects extends CI_Model {
+class Dinosaurs extends CI_Model {
 
 	public function getByID($id) {
-		return new _ro($id, array('core', 'descriptions', 'relationships', 'subjects', 'identifiers', 'spatial', 'temporal'));
+		return new _dino($id);
 	}
 
 	public function getBySlug($slug) {
 
-	}
+	} 
 
 	function __construct() {
 		parent::__construct();
-		include_once("_ro.php");
+		include_once("_dino.php");
 	}
 }

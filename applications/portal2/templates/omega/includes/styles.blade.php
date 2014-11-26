@@ -10,3 +10,4 @@
 <link rel="stylesheet" href="{{asset_url('omega/css/swatch-white-green.min.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('omega/css/swatch-white-red.min.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('omega/css/fonts.min.css','templates')}}" media="screen">
+<link rel="stylesheet" href="{{asset_url('omega/css/ands.css','templates')}}" media="screen">
