@@ -44,8 +44,21 @@ class View extends MX_Controller {
 			}
 		}
 
-		$this->load->library('stats');
-		$this->stats->registerPageView($extRif['registry_object_id']);
+		// $this->load->library('stats');
+		// $this->stats->registerPageView($extRif['registry_object_id']);
+
+		//register page view
+		$event = array(
+			'event' => 'portal_view',
+			'roid' => $extRif['registry_object_id'],
+			'template' => isset($extRif['template']) ? $extRif['template'] : 'default',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		if (isset($_SERVER['HTTP_REFERER']) && $referer = $_SERVER['HTTP_REFERER']) {
+			$event['referer'] = $referer;
+		}
+		ulog_terms($event,'portal');
 
 		// Check if we have a specific rendering template
 		if(isset($extRif['template']) && $extRif['template'] == CONTRIBUTOR_PAGE_TEMPLATE) {
@@ -436,6 +449,14 @@ class View extends MX_Controller {
 		$this->load->library('stats');
 		if($this->input->post('url') && $this->input->post('from')){
 			$this->stats->registerClick($this->input->post('from'),$this->input->post('url'),'outbound');
+			$event = array(
+				'event'=>'outbound',
+				'from' => $this->input->post('from'),
+				'to' => $this->input->post('url'),
+				'ip' => $this->input->ip_address(),
+				'user_agent' => $this->input->user_agent()
+			);
+			ulog_terms($event,'portal');
 		}
 	}
 
