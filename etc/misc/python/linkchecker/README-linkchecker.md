@@ -57,10 +57,15 @@ option should be used to maintain compatibility.
 
 The registry objects link checker includes detailed reports in its
 generated emails as an attached CSV file. This file is suitable for
-opening in popular spreadsheet programs. It is important to set the
+opening in common spreadsheet programs. It is important to set the
 `registry_prefix` option correctly in the configuration file (see
 below) so that the generated links to the corresponding registry
 objects are correct.
+
+The registry objects link checker works by querying the
+`registry_object_links` table that has been added in Release 14 of the
+Registry software. Hence, it can not be used with previous releases of
+the Registry.
 
 
 ## Using the link checker
