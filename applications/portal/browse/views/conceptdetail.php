@@ -18,7 +18,7 @@
 		<td>Resolve URL</td><td><a href="<?php echo $p->{'isPrimaryTopicOf'};?>"><?php echo $p->{'isPrimaryTopicOf'};?></a></td>
 	</tr>
 
-	<?php if(isset($p->{'broader'})):?>
+	<?php if(isset($p->{'broader'}) && isset($p->{'broader'}->{'_about'})):?>
 	<tr class="vocabulary_metadata">
 		<td>Broader Concept</td>
 		<td><a href="<?php echo $p->{'broader'}->{'_about'};?>"><?php echo $p->{'broader'}->{'_about'};?></a></td>

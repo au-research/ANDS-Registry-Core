@@ -9,6 +9,15 @@ class Browse extends MX_Controller {
 		$data['js_lib'] = array('vocab_widget');
 		// $data['vocabularies'] = $this->getVocabTree();
 		// $data['image_base_url'] = $this->image_base_url;
+		
+		$event = array(
+			'event'=>'portal_page',
+			'page' => 'browse_vocab',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
+
 		$this->load->view('browse_index', $data);
 	}
 
@@ -28,6 +37,17 @@ class Browse extends MX_Controller {
 		$data['vocab'] = 'anzsrc-for';
 		$data['prefLabel'] = $data['r']->{'result'}->{'primaryTopic'}->{'prefLabel'}->{'_value'};
 		$data['uri']=$data['r']->{'result'}->{'primaryTopic'}->{'_about'};
+
+		$event = array(
+			'event'=>'portal_page',
+			'page' => 'concept_detail',
+			'vocab' => $data['vocab'],
+			'notation' => $data['notation'],
+			'vocab_label' => $data['prefLabel'],
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
 
 		$this->load->view('conceptdetail', $data);
 	}

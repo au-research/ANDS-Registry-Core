@@ -489,3 +489,12 @@ function ulog($message='', $logger='activity', $type='info') {
 		// log_message('error', $e->getMessage());
 	}
 }
+
+function ulog_terms($terms=array(), $logger='activity', $type='info')
+{
+	$msg = '';
+	foreach($terms as $key=>$term) {
+		$msg.='['.$key.':'.$term.']';
+	}
+	ulog($msg,$logger,$type);
+}

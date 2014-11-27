@@ -41,8 +41,18 @@ class Home extends MX_Controller {
 		}
 
 		$this->load->library('stats');
-		$this->stats->registerPageView();
+		// $this->stats->registerPageView();
 		//spotlights
+		//
+	
+		//register page view
+		$event = array(
+			'event'=>'portal_page',
+			'page' => 'home',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
 		
 		$data['scripts'] = array('home_page');
 		$data['js_lib'] = array('qtip', 'popup');
@@ -96,24 +106,52 @@ class Home extends MX_Controller {
 			array_push($links, $l);
 		}
 		$data['links'] = $links;
-		$this->load->library('stats');
-		$this->stats->registerPageView();
+		
+		$event = array(
+			'event'=>'portal_page',
+			'page' => 'contributors',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
+
 		$data['title'] = 'Contributors - Research Data Australia';
 		$this->load->view('who_contributes', $data);
 	}
 
 	function about(){
 		$data['title'] = 'About - Research Data Australia';
+		$event = array(
+			'event'=>'portal_page',
+			'page' => 'about',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
 		$this->load->view('about', $data);
 	}
 
 	function disclaimer(){
 		$data['title'] = 'Disclaimer - Research Data Australia';
+		$event = array(
+			'event'=>'portal_page',
+			'page' => 'disclaimer',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
 		$this->load->view('disclaimer', $data);
 	}
 
 	function privacy_policy() {
 		$data['title'] = 'Privacy Policy - Research Data Australia';
+		$event = array(
+			'event'=>'portal_page',
+			'page' => 'privacy_policy',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
 		$this->load->view('privacy_policy', $data);
 	}
 
@@ -121,6 +159,14 @@ class Home extends MX_Controller {
 		$data['title'] = 'Contact Us - Research Data Australia';
 		$data['message'] = '';
 		$site_admin_email = get_config_item('site_admin_email');
+
+		$event = array(
+			'event'=>'portal_page',
+			'page' => 'contact_page',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
 
 		/*
 			Obscure text email address from contact us page to help avoid email scrapers
@@ -192,6 +238,14 @@ class Home extends MX_Controller {
     	$solr_url = get_config_item('solr_url');
     	$ds = '';
     	if(isset($_GET['ds'])) $ds=$_GET['ds'];
+
+    	$event = array(
+			'event'=>'portal_page',
+			'page' => 'sitemap',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
 
     	if ($page == 'main'){
     		$pages = array(

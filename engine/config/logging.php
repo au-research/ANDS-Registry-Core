@@ -6,31 +6,31 @@ $config = array(
     'registry' => array(
         'level' => 'INFO',
         'type' => 'file',
-        'format' => '{date} - {message}',
+        'format' => '[date:{date}] {message}',
         'file_path' => 'registry'
     ),
     'importer' => array(
         'level' => 'INFO',
         'type' => 'file',
-        'format' => '{date} - {message}',
+        'format' => '[date:{date}] {message}',
         'file_path' => 'importer'
     ),
     'activity' => array(
         'level' => 'INFO',
         'type' => 'file',
-        'format' => '{date} - {message}',
+        'format' => '[date:{date}] {message}',
         'file_path' => 'activity'
     ),
     'portal' => array(
         'level' => 'INFO',
         'type' => 'file',
-        'format' => '{date} - {message}',
-        'file_path' => 'activity'
+        'format' => '[date:{date}] {message}',
+        'file_path' => 'portal'
     ),
     'error' => array(
         'level' => 'ERROR',
         'type' => 'file',
-        'format' => '{date} - {message}',
+        'format' => '[date:{date}] {message}',
         'file_path' => 'error'
     ),
     'email_criticals' => array(
