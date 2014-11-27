@@ -18,7 +18,7 @@ function rda_exception_handler( $e ) {
    
     echo $_ci->load->view( 'rda_footer' , $data , true);
 }
-set_exception_handler('rda_exception_handler');
+// set_exception_handler('rda_exception_handler');
 
 function oauth_loggedin(){
 	$CI =& get_instance();

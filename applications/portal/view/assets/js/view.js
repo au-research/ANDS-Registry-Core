@@ -157,7 +157,20 @@ function drawRegistryIcon(){
 
 $('.label').qtip({
 	content : function(){
-		var html = '<div type="open"><b>open:</b> Online data that can be electronically accessed free of charge with no conditions imposed on the user.</div><br/><div type="conditional"><b>conditional:</b> Online or offline data that can be accessed free of charge, providing certain conditions are met.</div><br/><div type="contidional"><b>restricted:</b> Online or offline data where access to the data is restricted.</div>';
+        var textArray = [];
+        textArray["open"]="<div type=\"open\"><b>open:</b> Online data that can be electronically accessed free of charge with no conditions imposed on the user.</div>",
+        textArray["conditional"]="<div type=\"conditional\"><b>conditional:</b> Online or offline data that can be accessed free of charge, providing certain conditions are met (e.g free registration is required to access data online).</div>",
+        textArray["restricted"] ="<div type=\"restricted\"><b>restricted:</b> Online or offline data where access to the data is restricted.</div>";
+
+        var html = '';
+
+        for(accessType in textArray){
+            if($(this).text() == accessType)  html = textArray[accessType]+"<br />";
+        }
+        for(accessType in textArray){
+            if($(this).text() != accessType)  html = html + textArray[accessType]+"<br />";
+        }
+        
 		return html;
 	},
 	show:'mouseover',
