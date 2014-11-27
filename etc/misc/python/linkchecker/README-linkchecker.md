@@ -50,7 +50,8 @@ outputs HTML on the console. This new DOI link checker module normally
 outputs plain text, but can be configured to output HTML using a
 command-line option (`--html_output`). When incorporating the link
 checker into the ANDS Registry administration web interface, this
-option should be used to maintain compatibility.
+option should be used to maintain compatibility.  See the invocation
+section below for specific examples.
 
 
 ### The RO link checker
@@ -133,4 +134,30 @@ For example:
   all registry objects belonging to data source 47. An email will be
   sent to the address registered for this data source.
 
+The following sections show how the link checker can be integrated
+into a production system.
 
+
+### DOI link checker called from the Registry
+
+
+The setting of the `DOI_LINK_CHECKER_SCRIPT` in `global_config.php`
+should be set to something like this:
+
+     $ENV['DOI_LINK_CHECKER_SCRIPT'] = "/full/path/to/linkchecker.py --html_output -i /full/path/to/linkchecker.ini -m DOI";
+
+
+### DOI link checker called from cron
+
+A crontab entry to send reports to all DOI clients quarterly might
+look like this:
+
+    30 03 01 */3 * /full/path/to/python3.4 /full/path/to/linkchecker.py -i /full/path/to/linkchecker.ini -m DOI >/dev/null 2>&1
+
+
+### RO link checker called from cron
+
+A crontab entry to send reports to all data source contacts quarterly
+might look like this:
+
+    30 03 05 */3 * /full/path/to/python3.4 /full/path/to/linkchecker.py -i /full/path/to/linkchecker.ini -m RO >/dev/null 2>&1

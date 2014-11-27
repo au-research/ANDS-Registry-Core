@@ -210,7 +210,12 @@ $ENV['twitter_oauth_access_secret'] = '';
 //
 // DOI LINK CHECKER VARIABLES
 $ENV['PYTHON_BIN'] = ""; // will have to point to a python 3.3 or later version
+// To use the original DOI link checker:
 $ENV['DOI_LINK_CHECKER_SCRIPT'] = "<full_path_to_doi_link_checker.py>";
+// To use the new link checker provided in Release 14, create a
+// suitable linkchecker.ini (see the link checker README) and use the
+// following setting:
+// $ENV['DOI_LINK_CHECKER_SCRIPT'] = "<full_path_to_new_linkchecker.py> --html_output -i <full_path_to_linkchecker.ini> -m DOI";
 
 //OAUTH Configuration
 $ENV['oauth_config'] =
