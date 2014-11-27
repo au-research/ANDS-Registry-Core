@@ -99,7 +99,7 @@ class Registry_objectsMethod extends MethodHandler {
 
     private function spatial_handler() {
         $result = array();
-        if($this->index) {
+        if($this->index && isset($this->index['spatial_coverage_extents'])) {
             //spatial_coverage_extents, spatial_coverage_polygons, spatial_coverage_centres, spatial_coverage_area_sum
             foreach($this->index['spatial_coverage_extents'] as $key=>$sub) {
                 $result[] = array(
