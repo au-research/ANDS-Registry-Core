@@ -40,7 +40,7 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
 			<table class="table table-hover table-condensed">
 				<thead>
 					<tr>
-						<th style="text-align:left">Title</th>
+						<th style="text-align:left;word-wrap: break-word">Title</th>
 						<th style="text-align:left">DOI</th>
 						<th style="text-align:left"></th>
 						<th style="text-align:left"></th>
@@ -53,7 +53,7 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
 				$doiTitle = getDoiTitle($doi->datacite_xml);
 				?>
 					<tr>
-						<td width="40%"><small><strong><?=$doiTitle;?></strong><br/><?=anchor($doi->url,$doi->url);?></small></td>
+						<td style="word-wrap:break-word;max-width:400px;width:40%;word-break:break-all;"><small><strong><?=$doiTitle;?></strong><br/><?=anchor($doi->url,$doi->url);?></small></td>
 						<td>
 							<?=anchor('http://dx.doi.org/' . $doi->doi_id, $doi->doi_id);?>
 							<?php if(strpos($doi->doi_id ,$testDoiPrefix) === 0) {echo "<br/><span class='muted'><em>Test prefix DOI</em></span>";}  ?>
