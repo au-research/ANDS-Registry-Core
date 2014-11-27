@@ -156,15 +156,13 @@ function ds_acl_enforce($ds_id, $message = ''){
 
 function default_error_handler($errno, $errstr, $errfile, $errline)
 {
-	ulog($errstr . " > on line " . $errline . " (" . $errfile .")", 'error', 'error');
+	ulog($errstr . " > on line " . $errline . " (" . $errfile .")". 'Error: '.error_level_tostring($errno), 'error', 'error');
 
 	// Ignore when error_reporting is turned off (sometimes inline with @ symbol)
 	if (error_reporting() == 0) { return true; }
 
 	// Ignore E_STRICT no email either
 	if ($errno == E_STRICT) { return true; }
-
-
 
 	if (ENVIRONMENT == "development")
 	{
@@ -174,20 +172,16 @@ function default_error_handler($errno, $errstr, $errfile, $errline)
 	{
 		// hide E_NOTICE from users 
 		if ($errno == E_NOTICE) { return true; }
-		
-		notifySiteAdmin($errno, $errstr, $errfile, $errline);
 		throw new Exception("An unexpected system error has occured. Please try again or report this error to the system administrator.");
 	}
 
-
-
 	return true;   /* Don't execute PHP internal error handler */
-
 }
 
 function error_level_tostring($errno)
 {
     $errorlevels = array(
+    	2048 => 'E_STRICT',
         2047 => 'E_ALL',
         1024 => 'E_USER_NOTICE',
         512 => 'E_USER_WARNING',
