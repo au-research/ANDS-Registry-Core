@@ -23,6 +23,10 @@ database_password = <database password>
 # HTTP servers reject the connection if the provided certificate
 # is not signed. It is sufficient to provide a new, self-signed
 # certificate.
+# NB: If specifying a relative path, this is interpreted relative
+# to the working directory, not the location of the link checker script.
+# In a production environment, you almost certainly want to specify
+# an absolute path.
 ssl_certificate   = <location of a cert file, or a self signed cert>
 
 # Timeout for checking a link, in seconds.

@@ -26,7 +26,11 @@ database_password = mypassword
 # HTTP servers reject the connection if the provided certificate
 # is not signed. It is sufficient to provide a new, self-signed
 # certificate.
-ssl_certificate   = cert.pem
+# NB: If specifying a relative path, this is interpreted relative
+# to the working directory, not the location of the link checker script.
+# In a production environment, you almost certainly want to specify
+# an absolute path.
+ssl_certificate   = /give/the/full/path/to/cert.pem
 
 # Timeout for checking a link, in seconds.
 link_timeout      = 20
