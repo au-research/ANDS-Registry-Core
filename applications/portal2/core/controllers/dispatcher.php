@@ -26,13 +26,10 @@ class Dispatcher extends MX_Controller {
 		array_unshift($params, $method);
 		$requested_controller = CI::$APP->router->locate($params);
 
-		if(!is_null($requested_controller))
-		{
+		if(!is_null($requested_controller)) {
 			echo Modules::run(implode("/",$params));
 			return;
-		}
-		else if ($params[0] == "preview")
-		{
+		} else if ($params[0] == "preview") {
 			if(sizeof($params) > 2) {
 				$_GET['slug'] = $params[1];
 				$_GET['id'] = $params[2];
@@ -51,16 +48,19 @@ class Dispatcher extends MX_Controller {
 
 			$params = array("view","preview");
 			echo Modules::run(implode("/",$params));
-		}
-		else
-		{
-			// If no match, assume it is a SLUG view request
+		} else if($params[0]=='search') {
+			$action_model = $this->config->item('default_model').'/search';
+			$params = array($action_model);
+			echo Modules::run(implode("/",$params));
+			return;
+		} else {
 
+			// If no match, assume it is a SLUG view request
 			if(sizeof($params) > 1) {
 				$_GET['slug'] = $params[0];
 				$_GET['id'] = $params[1];
 			} elseif(sizeof($params)==1) {
-				$_GET['any'] = array_pop($params);
+				$_GET['any'] =$params[0];
 			}
 
 			// Quick fix for missing slash (might not work on "domain root" installations?)
@@ -70,14 +70,10 @@ class Dispatcher extends MX_Controller {
 					return;
 				}
 			}
-
-			// if ($_GET['slug']=='dino') {
-			// 	$params = array('dinosaur/view');
-			// } elseif ($_GET['slug'] == 'ro') {
-			// 	$params = array('registry_object/view');
-			// }
-
-			$params = array($this->config->item('default_view_model'));
+			
+			//view
+			$action_model = $this->config->item('default_model').'/view';
+			$params = array($action_model);
 			echo Modules::run(implode("/",$params));
 			return;
 		}

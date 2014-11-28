@@ -11,7 +11,7 @@ class Registry_object extends MX_Controller {
 		$this->blade->set('ro', $ro)->set('sidebar', array(1,2,3,4))->render('registry_object/view');
 	}
 
-	function search_view() {
+	function search() {
 		$this->load->library('blade');
 		$this->blade->render('registry_object/search');
 	}

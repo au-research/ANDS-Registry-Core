@@ -1,4 +1,4 @@
-@extends('layouts/left-sidebar')
+@extends('layouts/left-sidebar-fw')
 
 @section('content')
 	main content

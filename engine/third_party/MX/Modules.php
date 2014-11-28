@@ -63,7 +63,6 @@ class Modules
 		}
 
 		if($class = self::load($module)) {
-
 			$method = array_shift(explode("/",$method));
 			if (method_exists($class, $method))	{
 				ob_start();
