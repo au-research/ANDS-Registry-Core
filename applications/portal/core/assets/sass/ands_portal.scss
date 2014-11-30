@@ -378,9 +378,9 @@ ul.linkedrecords-list{
 	width: 105px;
 	text-decoration: none;
 }
-a.yellow_button:hover{
+.yellow_button:hover{
+    background:#F58072;
     color:#fff;
-
 }
 #export_dropdown{
     background: #fff;
@@ -458,3 +458,22 @@ a.yellow_button:hover{
 }
 
 
+.label {
+	line-height:28px;
+	cursor:pointer;
+	background: #cdd2d5;
+	color:white !important;
+	padding:3px 6px;
+}
+
+.label-open {
+	background:#a3be99;
+}
+
+.label-conditional {
+	background:#efb214;
+}
+
+.label-restricted {
+	background:#e93938;
+}

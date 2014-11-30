@@ -157,7 +157,10 @@ class Extrif_Extension extends ExtensionBase
 				foreach ($this->ro->processLicence() AS $right)
 				{
 					$theright = $extendedMetadata->addChild("extRif:right", str_replace("&", "&amp;", $right['value']), EXTRIF_NAMESPACE);
-					$theright->addAttribute("type", $right['type']);	
+					$theright->addAttribute("type", $right['type']);
+                    if (isset($right['accessRights_type'])) {
+                        $theright->addAttribute("accessRights_type", $right['accessRights_type']);
+                    }
 					if(isset($right['rightsUri']))$theright->addAttribute("rightsUri", str_replace("&", "&amp;", $right['rightsUri']));
 					if(isset($right['licence_type']))$theright->addAttribute("licence_type", str_replace("&", "&amp;", $right['licence_type']));
 					if(isset($right['licence_group']))$theright->addAttribute("licence_group", str_replace("&", "&amp;", $right['licence_group']));
@@ -215,11 +218,18 @@ class Extrif_Extension extends ExtensionBase
 					foreach ($spatialLocations AS $lonLat)
 					{
 						//echo "enriching..." . $extent;
-						$spatialGeometry->addChild("extRif:polygon", $lonLat, EXTRIF_NAMESPACE);
+
 						$extents = $this->ro->calcExtent($lonLat);
 						$spatialGeometry->addChild("extRif:extent", $extents['extent'], EXTRIF_NAMESPACE);
 						$sumOfAllAreas += $extents['area'];
 						$spatialGeometry->addChild("extRif:center", $extents['center'], EXTRIF_NAMESPACE);
+                        if( $extents['west'] +  $extents['east'] < 5 &&  $extents['east'] > 175)
+                        {
+                            //need to insert zero bypass
+                            $lonLat = $this->ro->insertZeroBypassCoords($lonLat, $extents['west'], $extents['east']);
+                        }
+                        $spatialGeometry->addChild("extRif:polygon", $lonLat, EXTRIF_NAMESPACE);
+
 					}
 					$spatialGeometry->addChild("extRif:area", $sumOfAllAreas, EXTRIF_NAMESPACE);
 				}
@@ -266,6 +276,10 @@ class Extrif_Extension extends ExtensionBase
 				//$ds->append_log(var_export($xml->asXML(), true));
 				$this->ro->pruneExtrif();
 				$this->ro->updateXML($xml->asXML(),TRUE,'extrif');
+                if($this->ro->status == PUBLISHED){
+                    $this->ro->processLinks();
+                }
+
 				//return $this;
 			}
 			else

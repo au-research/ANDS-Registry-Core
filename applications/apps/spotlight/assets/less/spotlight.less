@@ -1,0 +1,109 @@
+#item_list{
+	background:#ddd;
+	padding:0;
+	min-height:700px;
+	border-right:1px solid #adadad;
+	overflow:show;
+	ul{
+		margin:0;
+		li{
+			list-style-type: none;
+			a{
+				margin:0px;
+				padding:10px 20px;
+				border-bottom:1px solid #adadad;
+				display:block;
+				text-decoration:none;
+				color:#5e6469;
+				&:hover{
+					color:#0088cc;
+					border-right:1px solid rgb(249, 249, 249);
+					background:rgb(249, 249, 249);
+				}
+				&.active{
+					color:#0088cc;
+					border-right:1px solid rgb(249, 249, 249);
+					background:rgb(249, 249, 249);
+					margin-right:-1px;
+				}
+			}
+		}
+	}
+	
+}
+
+#item_detail{
+	
+}
+
+#item_preview{
+	text-align:center;
+	/***********************************************************************************/
+	/*                             Research Domains Slider				               */
+	/***********************************************************************************/
+
+	a{
+		color: #9ab790;
+	}
+	a.title {
+		color: #2f3134;
+		font-size: 15px;
+		font-weight: bold;
+		line-height: 20px;
+		display: inline-block;
+		padding: 0 0 6px;
+	}
+	.flexslider .excerpt {
+		padding: 0 0 6px;
+	}
+
+	/* FlexSlider Necessary Styles*********************************/
+	 .flexslider {
+	    margin:0;
+	    padding:0 0 36px;
+	}
+	.flexslider .slides > li {
+	    display:none;
+	    -webkit-backface-visibility:hidden;
+	}
+	 /* Hide the slides before the JS is loaded. Avoids image jumping */
+	.flexslider img {
+	    display:block;
+	    margin: 0 0 16px;
+	}
+	.flex-pauseplay span {
+	    text-transform:capitalize;
+	}
+	/* Clearfix for the .slides element */
+	.slides:after {
+	    content:".";
+	    display:block;
+	    clear:both;
+	    visibility:hidden;
+	    line-height:0;
+	    height:0;
+	}
+	 html[xmlns] .slides {
+	    display:block;
+	}
+	 * html .slides {
+	    height:1%;
+	}
+	/* No JavaScript Fallback */
+	/* If you are not using another script, such as Modernizr, make sure you * include js that eliminates this class on page load */
+	.no-js .slides > li:first-child {
+	    display:block;
+	}
+	/* FlexSlider Default Theme*********************************/
+	.flexslider {
+		width: 432px;
+		margin:40px auto;
+		padding: 0 0 0 0;
+	    background:#fff;
+	    position:relative;
+	    zoom:1;
+	    text-align:left;
+	    border:1px solid #ddd;
+	    padding:10px;
+	}
+}

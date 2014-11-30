@@ -25,7 +25,7 @@ $Revision: 32 $
 class Roles extends CI_Model {
 
 	private $cosi_db = null;
-	
+
     function __construct(){
         parent::__construct();
 		$this->cosi_db = $this->load->database('roles', TRUE);
@@ -36,20 +36,20 @@ class Roles extends CI_Model {
      * @return array_object
      */
     function all_roles(){
-        $result = $this->cosi_db->get("roles");
+        $result = $this->cosi_db->order_by('name','asc')->get("roles");
         return $result->result();
     }
 
     /**
      * returns a list of role based on the role_type_id
      * @param  string $role_type_id if not provided, return all roles
-     * @return array_object               
+     * @return array_object
      */
     function list_roles($role_type_id){
         if($role_type_id){
-            $result = $this->cosi_db->get_where("roles",    
+            $result = $this->cosi_db->get_where("roles",
                                                     array(
-                                                        "role_type_id"=>$role_type_id                                                        
+                                                        "role_type_id"=>$role_type_id
                                                     ));
         }else{
             $result = $this->cosi_db->get("roles");
@@ -60,10 +60,10 @@ class Roles extends CI_Model {
     /**
      * retrieve a single role
      * @param  string $role_id the role_id identifier
-     * @return object          
+     * @return object
      */
     function get_role($role_id){
-        $result = $this->cosi_db->get_where("roles",    
+        $result = $this->cosi_db->get_where("roles",
                                                     array(
                                                         "role_id"=>$role_id
                                                     ));
@@ -74,11 +74,11 @@ class Roles extends CI_Model {
 
     /**
      * add a relation between roles, this adds an entry into the role_relations table
-     * @param string $parent_role_id    
-     * @param string $child_role_id 
+     * @param string $parent_role_id
+     * @param string $child_role_id
      */
     function add_relation($parent_role_id, $child_role_id){
-        $result = $this->cosi_db->insert('role_relations', 
+        $result = $this->cosi_db->insert('role_relations',
             array(
                 'parent_role_id'=>$parent_role_id,
                 'child_role_id'=>$child_role_id,
@@ -91,8 +91,8 @@ class Roles extends CI_Model {
     /**
      * this function remove a relation between 2 roles, explicit parent and child must be provided
      * @param  string $parent_role_id
-     * @param  string $child_role_id 
-     * @return result                
+     * @param  string $child_role_id
+     * @return result
      */
     function remove_relation($parent_role_id, $child_role_id){
         $result = $this->cosi_db->delete('role_relations',
@@ -145,6 +145,42 @@ class Roles extends CI_Model {
         return $res;
     }
 
+    function immediate_childs($role_id) {
+        $res = array();
+        $result = $this->cosi_db
+                ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
+                ->from('role_relations')
+                ->join('roles', 'roles.role_id = role_relations.parent_role_id')
+                ->where('role_relations.child_role_id', $role_id)
+                ->where('enabled', DB_TRUE)
+                ->where('role_relations.parent_role_id !=', $role_id)
+                ->get();
+        if($result->num_rows() > 0){
+            foreach($result->result() as $r){
+                $res[] = $r;
+            }
+        }
+        return $res;
+    }
+
+    function immediate_parents($role_id) {
+         $res = array();
+        $result = $this->cosi_db
+                ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
+                ->from('role_relations')
+                ->join('roles', 'roles.role_id = role_relations.parent_role_id')
+                ->where('role_relations.parent_role_id', $role_id)
+                ->where('enabled', DB_TRUE)
+                ->where('role_relations.child_role_id !=', $role_id)
+                ->get();
+        if($result->num_rows() > 0){
+            foreach($result->result() as $r){
+                $res[] = $r;
+            }
+        }
+        return $res;
+    }
+
     /**
      * basically reverse of the list_childs function, search for all (childs) of a role
      * @param  string $role_id
@@ -152,7 +188,7 @@ class Roles extends CI_Model {
      */
     function descendants($role_id, $include_doi=false, $prev = array()){
         $res = array();
-    
+
         $result = $this->cosi_db
                     ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
                     ->from('role_relations')
@@ -184,9 +220,9 @@ class Roles extends CI_Model {
 
     /**
      * getting all the missing descendants for organisational view
-     * @param  string $role_id     
-     * @param  array $descendants 
-     * @return array_object              
+     * @param  string $role_id
+     * @param  array $descendants
+     * @return array_object
      */
     function missing_descendants($role_id, $descendants, $include_doi=false){
         $ownedRoles = array();
@@ -210,8 +246,8 @@ class Roles extends CI_Model {
 
     /**
      * use a service provided by the registry to find out all the data sources affiliated with an org role
-     * @param  string $org_role 
-     * @return array           
+     * @param  string $org_role
+     * @return array
      */
     function get_datasources($org_role){
         $url = $this->config->item('registry_endpoint') .'get_datasources/?record_owner='.rawurlencode($org_role);
@@ -236,7 +272,7 @@ class Roles extends CI_Model {
         $this->cosi_db->select('role_id, name, role_type_id')->from('roles')->where('role_type_id', 'ROLE_FUNCTIONAL');
         if(sizeof($recursiveRoles['functional_roles']) > 0) $this->cosi_db->where_not_in('role_id', $recursiveRoles['functional_roles']);
         $result = $this->cosi_db->get();
-       
+
 
         foreach($result->result() as $r) $res['functional'][] = $r;
 
@@ -265,7 +301,9 @@ class Roles extends CI_Model {
      * @param [type] $post [description]
      */
     function add_role($post){
-        $add = $this->cosi_db->insert('roles', 
+        $query = $this->cosi_db->get_where('roles', array('role_id'=>$post['role_id']));
+        if($query->num_rows() > 0) throw new Exception('Role ID '.$post['role_id'].' already exists');
+        $add = $this->cosi_db->insert('roles',
             array(
                 'role_id'=>$post['role_id'],
                 'name'=>$post['name'],
@@ -292,23 +330,23 @@ class Roles extends CI_Model {
     /**
      * Update a role name and enable status
      * @param  string $role_id
-     * @param  array $post    
-     * @return true          
+     * @param  array $post
+     * @return true
      */
     function edit_role($role_id, $post){
         $this->cosi_db->where('role_id', $role_id);
-        $this->cosi_db->update('roles', 
+        $this->cosi_db->update('roles',
             array(
                 'name'=> $post['name'],
                 'enabled'=>($post['enabled']=='1' ? DB_TRUE : DB_FALSE)
             )
-        ); 
+        );
     }
 
     function reset_built_in_passphrase($role_id)
     {
         $this->cosi_db->where('role_id', $role_id);
-        $this->cosi_db->update('authentication_built_in', array('passphrase_sha1'=>sha1('abc123'))); 
+        $this->cosi_db->update('authentication_built_in', array('passphrase_sha1'=>sha1('abc123')));
     }
 
     /**
@@ -459,7 +497,7 @@ class Roles extends CI_Model {
         $this->dbforge->create_table('authentication_built_in', true);
         $all_built_in = $this->old_cosi_db->get('dba.tbl_authentication_built_in');
         foreach($all_built_in->result() as $r){
-            $this->db->insert('authentication_built_in', 
+            $this->db->insert('authentication_built_in',
                 array(
                     'role_id'=>$r->role_id,
                     'passphrase_sha1'=>$r->passphrase_sha1,

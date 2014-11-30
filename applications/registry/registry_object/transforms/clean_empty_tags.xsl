@@ -53,7 +53,7 @@
         </xsl:copy>
     </xsl:template>
 
-     <xsl:template match="@dateModified | @dateAccessioned | @target">
+     <xsl:template match="@dateModified | @dateAccessioned | @target | @rightsUri | accessRights/@type | licence/@type">
         <xsl:if test=". != ''">
                 <xsl:copy-of select="."/>
         </xsl:if>
@@ -225,7 +225,7 @@
 
     <xsl:template match="rightsStatement">
         <xsl:choose>
-            <xsl:when test="text() != ''">
+            <xsl:when test="text() != '' or @rightsUri != ''">
                 <xsl:copy>
                     <xsl:apply-templates select="@* | node()" />
                 </xsl:copy>   
@@ -235,7 +235,7 @@
 
     <xsl:template match="rights">
         <xsl:choose>
-            <xsl:when test=". != ''">
+            <xsl:when test="licence[@type != '' or text() != '' or @rightsUri != ''] or rightsStatement[text() != '' or @rightsUri != ''] or accessRights[@type != '' or text() != '' or @rightsUri != '']">
                 <xsl:copy>
                     <xsl:apply-templates select="@* | node()" />
                 </xsl:copy>   

@@ -38,8 +38,17 @@ angular.module('roles_app', ['portal-filters']).
 			update: function(id, data){
 				return $http.post(base_url+'role/update/',{role_id:id, data:data}).then(function(response){return response.data});
 			},
+			resetpw: function(id) {
+				return $http.get(base_url+'role/resetPassphrase/?role_id='+id).then(function(response){return response.data});
+			},
 			delete_role: function(id){
 				return $http.post(base_url+'role/delete/',{role_id:id}).then(function(response){return response.data});
+			},
+			get_merge_missing: function(id, sid) {
+				return $http.get(base_url+'role/role_missing?first_role='+id+'&second_role='+sid).then(function(response){return response.data});
+			},
+			get_merge_missing_commit: function(id, sid) {
+				return $http.get(base_url+'role/role_missing/true?first_role='+id+'&second_role='+sid).then(function(response){return response.data});
 			}
 		}
 	})
@@ -63,6 +72,7 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 	});
 
 	$scope.select = function(role_id){
+		// $scope.role = {};
 		$scope.loading = true;
 		$scope.tab1 = 'view';
 		$scope.tab = 'add_rel';
@@ -86,14 +96,28 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 	}
 
 	$scope.add = function() {
+		$('#add_role').button('loading');
 		roles.add($scope.newrole).then(function(data){
-			$location.path('/view/'+$scope.newrole.role_id);
+			if(data.status=='ERROR') {
+				$('#add_role').button('reset');
+				alert(data.message);
+			} else {
+				$location.path('/view/'+$scope.newrole.role_id);
+			}
 		});
 	}
 
 	$scope.update = function(){
 		roles.update($scope.role.role.role_id, $scope.role.role).then(function(data){
 			$scope.select($scope.role.role.role_id);
+		});
+	}
+
+	$scope.resetPassword = function(){
+		roles.resetpw($scope.role.role.role_id).then(function(data){
+			if(data.status=='OK'){
+				alert('Password has been reset successfully for '+$scope.role.role.role_id);
+			}
 		});
 	}
 
@@ -119,6 +143,20 @@ function indexCtrl($scope, roles, $timeout, $routeParams, $location) {
 			return true;
 		}
 		return false;
+	}
+
+	$scope.$watch('merge_target', function(newv, oldv){
+		if(newv!='' && $scope.role && $scope.role.role){
+			roles.get_merge_missing($scope.role.role.role_id, newv).then(function(data){
+				$scope.role_merge_missing = data.missing;
+			});
+		}
+	})
+
+	$scope.commit_merge_role = function(target, role){
+		roles.get_merge_missing_commit(role, target).then(function(data){
+			$scope.select($scope.role.role.role_id);
+		});
 	}
 
 	if($routeParams.id) $scope.select($routeParams.id);

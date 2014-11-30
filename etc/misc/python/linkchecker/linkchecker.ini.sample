@@ -1,0 +1,56 @@
+# Sample configuration for link checker.
+# Don't use this file as it is: it won't work!
+# This file just shows you the sorts of values that should
+# be provided. See linkchecker.ini.template for a template
+# file to start with for making your own configuration.
+
+# Top-level configuration. Must be in a section "DEFAULT".
+[DEFAULT]
+
+# Email address to use as the sender of generated emails.
+# This address is also used as the recipient of generated emails
+# in some cases.
+sender_email      = Admin.Email@organization.org
+
+# SMTP host
+smtp_host         = localhost
+
+# Database connection for accessing the links to be checked.
+database_module   = pymysql
+database_host     = dbhost.organization.org
+database_user     = webuser
+database_password = mypassword
+
+# Location of an SSL certificate to use when checking a link over HTTPS.
+# In general, this should not be anything special.  However, some
+# HTTP servers reject the connection if the provided certificate
+# is not signed. It is sufficient to provide a new, self-signed
+# certificate.
+# NB: If specifying a relative path, this is interpreted relative
+# to the working directory, not the location of the link checker script.
+# In a production environment, you almost certainly want to specify
+# an absolute path.
+ssl_certificate   = /give/the/full/path/to/cert.pem
+
+# Timeout for checking a link, in seconds.
+link_timeout      = 20
+
+# Batch size for link checking. At most batch_size URLs are tested at once.
+batch_size        = 20
+
+
+# (Override) settings for checking DOI links
+[DOI]
+database_name     = dbs_dois
+
+# (Override) settings for checking Registry objects
+[RO]
+database_name     = dbs_registry
+# Prefix for registry objects. If your registry objects look like
+#   http://myhost.org/data-source-name/12345,
+# then registry_prefix should be set to http://myhost.org/
+# If your registry objects look like
+#   http://myhost.org/core/data-source-name/12345,
+# then registry_prefix should be set to http://myhost.org/core/
+# (A slash is added to the end, if you don't include one.)
+registry_prefix   = http://registry.organization.org/

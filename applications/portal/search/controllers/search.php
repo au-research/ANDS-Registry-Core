@@ -24,6 +24,15 @@ class Search extends MX_Controller {
 		}
 		$data = $this->solr_search($filters, true);
 
+		//register search
+		$event = array(
+			'event'=>'portal_search',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		$event = array_merge($event, $filters);
+		ulog_terms($event,'portal');
+
 		// echo $data['fieldstrings'];
 		//return the result to the client
 		echo json_encode($data);

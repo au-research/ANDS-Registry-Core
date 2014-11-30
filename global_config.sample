@@ -210,7 +210,12 @@ $ENV['twitter_oauth_access_secret'] = '';
 //
 // DOI LINK CHECKER VARIABLES
 $ENV['PYTHON_BIN'] = ""; // will have to point to a python 3.3 or later version
+// To use the original DOI link checker:
 $ENV['DOI_LINK_CHECKER_SCRIPT'] = "<full_path_to_doi_link_checker.py>";
+// To use the new link checker provided in Release 14, create a
+// suitable linkchecker.ini (see the link checker README) and use the
+// following setting:
+// $ENV['DOI_LINK_CHECKER_SCRIPT'] = "<full_path_to_new_linkchecker.py> --html_output -i <full_path_to_linkchecker.ini> -m DOI";
 
 //OAUTH Configuration
 $ENV['oauth_config'] =
@@ -270,3 +275,14 @@ $eDBCONF['default']['dbdriver'] = 'mysql';
 // Optional development branch variable, mainly to monitor push state of 
 // test systems (if specified, will report git branch in portal header)
 // $ENV['gitdir_path'] = "/path/to/.git"; 
+
+
+//======================================
+// GOOGLE ANALYTICS (enable FOR PRODUCTION ONLY)
+$enable_google_analytic		= false;
+$google_analytic_code		= 'UA-XXXXXXX-X'; //FOR PRODUCTION ONLY
+$ENV['google_analytic_code'] = 'UA-XXXXXXX-X';
+$ENV['google_key'] = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+$ENV['ga_email'] = 'google_analytics@email.com';
+$ENV['ga_password'] = 'XXXXXXXX';
+$ENV['ga_profile_id'] = 'XXXXXXXXXX';

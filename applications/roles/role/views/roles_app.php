@@ -98,7 +98,7 @@
 							</div>
 							<div class="alert alert-danger hide" id="msg"></div>
 							<div class="control-group">
-								<div class="controls"><button type="submit" class="btn btn-primary" ng-click="add()">Add Role</button></div>
+								<div class="controls"><button type="submit" class="btn btn-primary" ng-click="add()" data-loading-text="Loading..." id="add_role">Add Role</button></div>
 							</div>
 						</form>
 					</div>
@@ -151,8 +151,32 @@
 							<div class="alert alert-danger hide" id="msg"></div>
 							<div class="control-group">
 								<div class="controls">
-									<button type="submit" class="btn btn-primary" ng-click="update()">Update Role</button>
-									<hr>
+									<button type="submit" class="btn btn-primary" ng-click="update()" data-loading-text="Loading...">Update Role</button>
+									<button ng-click="resetPassword()" class="btn">Reset Password</button>
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="" class="control-label">Copy Access From <i class="icon icon-question-sign" tip="All access permissions from the selected role will be copied."></i></label>
+								<div class="controls">
+									<select ng-model="merge_target" ng-options="c.role_id as c.name for c in roles"></select>
+									<div ng-show="role_merge_missing">
+										<hr>
+                                        The following roles exist in <b>{{merge_target}}</b> that are not in  <b>{{role.role.name}}</b>
+										<ul ng-show="role_merge_missing">
+											<li ng-repeat="r in role_merge_missing">{{r.name}}</li>
+										</ul>
+										
+										<button class="btn btn-primary" ng-click="commit_merge_role(merge_target, role.role.role_id)">Add these roles to {{role.role.name}}</button>
+									</div>
+									<div ng-show="role_merge_missing.length==0">
+										<hr>
+										<div class="alert alert-info">No role to merge</div>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="control-group">
+								<div class="controls">
 									<button class="btn btn-danger" ng-click="delete()">Delete Role</button>
 								</div>
 							</div>

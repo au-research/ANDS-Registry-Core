@@ -82,7 +82,7 @@ function set_config_item($key, $type, $value) {
 		);
 		$insert_query = $_ci->db->insert('configs', $data);
 		if($insert_query) {
-			log_message('info', 'CONFIG creating '.$value.' to '.$key.' as '.$type);
+			// log_message('info', 'CONFIG creating '.$value.' to '.$key.' as '.$type);
 			return true;
 		} else return false;
 	} elseif($action=='update') {
@@ -91,7 +91,7 @@ function set_config_item($key, $type, $value) {
 			'type' => $type,
 			'value' => $value
 		));
-		log_message('info', 'CONFIG update '.$value.' to '.$key.' as '.$type);
+		// log_message('info', 'CONFIG update '.$value.' to '.$key.' as '.$type);
 	} else {
 		return false;
 	}
@@ -117,7 +117,7 @@ function acl_enforce($function_name, $message = '')
 	$_ci =& get_instance();
 	if (!$_ci->user->isLoggedIn())
 	{
-		redirect('auth/login/?error=login_required&redirect='.curPageURL());
+		redirect('auth/login/#/?error=login_required&redirect='.curPageURL());
 		// throw new Exception (($message ?: "Access to this function requires you to be logged in. Perhaps you have been automatically logged out?"));
 	}
 	else if (!$_ci->user->hasFunction($function_name))
@@ -156,15 +156,13 @@ function ds_acl_enforce($ds_id, $message = ''){
 
 function default_error_handler($errno, $errstr, $errfile, $errline)
 {
-	log_message('error', $errstr . " > on line " . $errline . " (" . $errfile .")");
+	ulog($errstr . " > on line " . $errline . " (" . $errfile .")". 'Error: '.error_level_tostring($errno), 'error', 'error');
 
 	// Ignore when error_reporting is turned off (sometimes inline with @ symbol)
 	if (error_reporting() == 0) { return true; }
 
 	// Ignore E_STRICT no email either
 	if ($errno == E_STRICT) { return true; }
-
-
 
 	if (ENVIRONMENT == "development")
 	{
@@ -174,20 +172,16 @@ function default_error_handler($errno, $errstr, $errfile, $errline)
 	{
 		// hide E_NOTICE from users 
 		if ($errno == E_NOTICE) { return true; }
-		
-		notifySiteAdmin($errno, $errstr, $errfile, $errline);
 		throw new Exception("An unexpected system error has occured. Please try again or report this error to the system administrator.");
 	}
 
-
-
 	return true;   /* Don't execute PHP internal error handler */
-
 }
 
 function error_level_tostring($errno)
 {
     $errorlevels = array(
+    	2048 => 'E_STRICT',
         2047 => 'E_ALL',
         1024 => 'E_USER_NOTICE',
         512 => 'E_USER_WARNING',
@@ -458,4 +452,43 @@ function isValidXML($xml) {
 function alphasort_name($a, $b){
 	if($a->name == $b->name) return 0;
 	return ($a->name < $a->name) ? -1 : 1;
+}
+
+/**
+ * Universal log function
+ * @param  string $message 
+ * @param  string $logger    [registry|importer|activity|portal|error]
+ * @param  string $type    	 [info|debug|warning|error|critical]
+ * @return void
+ */
+function ulog($message='', $logger='activity', $type='info') {
+	$CI =& get_instance();
+
+	//check if the logging class is loaded, if not, load it
+	if (!class_exists('Logging')) {
+		$CI->load->library('logging');
+	}
+
+	try {
+		$logger = $CI->logging->get_logger($logger);
+		switch($type) {
+			case 'info' : $logger->info($message);break;
+			case 'debug' : $logger->debug($message);break;
+			case 'warning' : $logger->warning($message);break;
+			case 'error' : $logger->error($message);break;
+			case 'critical' : $logger->critical($message);break;
+		}
+	} catch (Exception $e) {
+		throw new Exception($e);
+		// log_message('error', $e->getMessage());
+	}
+}
+
+function ulog_terms($terms=array(), $logger='activity', $type='info')
+{
+	$msg = '';
+	foreach($terms as $key=>$term) {
+		$msg.='['.$key.':'.$term.']';
+	}
+	ulog($msg,$logger,$type);
 }

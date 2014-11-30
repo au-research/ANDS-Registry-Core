@@ -283,14 +283,14 @@ class Role_authentication extends CI_Model {
     	}
 
         // Superadmins get all organisational roles
-        // if ($superadmin && $recursive)
-        // {
-        //     function getOnlyRoleIds(&$item, $key) { $item = $item['role_id']; }
-        //     $orgRoles = $this->getAllOrganisationalRoles();
-        //     array_walk( $orgRoles, 'getOnlyRoleIds' );
+        if ($superadmin && $recursive)
+        {
+            function getOnlyRoleIds(&$item, $key) { $item = $item['role_id']; }
+            $orgRoles = $this->getAllOrganisationalRoles();
+            array_walk( $orgRoles, 'getOnlyRoleIds' );
 
-        //     $ret['organisational_roles'] = array_merge($ret['organisational_roles'], $orgRoles);
-        // }
+            $ret['organisational_roles'] = array_merge($ret['organisational_roles'], $orgRoles);
+        }
     	
     	return $ret;
     				

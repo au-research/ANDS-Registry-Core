@@ -21,20 +21,6 @@ class Role extends MX_Controller {
 		$this->load->view('roles_app', $data);
 	}
 
-	public function index2(){
-		// var_dump($this->user->functions());
-		$data['title'] = 'List Roles';
-		$data['scripts'] = array('roles');
-		$data['js_lib'] = array('core', 'dataTables');
-		$this->load->view('roles_index', $data);
-	}
-
-	public function test(){
-		echo json_encode($this->roles->get_datasources('Joels Organisation'));
-		// $this->load->database('roles');
-        // var_dump($this->db->get('registry_objects'));
-		//echo json_encode($this->roles->descendants('AusStage'));
-	}
 
 	public function get(){
 		if(!$this->input->get('role_id')) throw new Exception('Role ID must be specified');
@@ -74,39 +60,6 @@ class Role extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	/**
-	 * view controller, returns the view of a role with all of its roles, org and func roles included
-	 * @param  string $role_id role_id is now in the url, so needs to be decoded correctly for usage
-	 * @return view          
-	 */
-	public function view(){
-		$role_id = $this->input->get('role_id');
-
-		$data['role'] = $this->roles->get_role(rawurldecode($role_id));
-
-		$data['childs'] = $this->roles->list_childs($role_id); //only get explicit
-
-		$data['missingRoles'] = $this->roles->get_missing(rawurldecode($role_id));
-
-		if(trim($data['role']->role_type_id)=='ROLE_USER' || trim($data['role']->role_type_id)=='ROLE_ORGANISATIONAL'){
-			$data['doi_app_id'] = $this->roles->list_childs(rawurldecode($role_id), true);
-			$data['missing_doi'] = $this->roles->missing_descendants(rawurldecode($role_id), $data['doi_app_id'], true);
-		}
-
-		if(trim($data['role']->role_type_id)=='ROLE_ORGANISATIONAL' || trim($data['role']->role_type_id)=='ROLE_FUNCTIONAL'){
-			$data['users'] = $this->roles->descendants(rawurldecode($role_id));
-			$data['missingUsers'] = $this->roles->missing_descendants(rawurldecode($role_id), $data['users']);
-		}
-
-		if(trim($data['role']->role_type_id)=='ROLE_ORGANISATIONAL'){
-			$data['data_sources'] = $this->roles->get_datasources($data['role']->role_id);
-		}
-
-		$data['title'] = 'View Role - '.$data['role']->name;
-		$data['scripts'] = array('role_view');
-		$data['js_lib'] = array('core');
-		$this->load->view('role_view', $data);
-	}
 
 	public function checkUniqueRoleId($roleId)
 	{
@@ -119,15 +72,17 @@ class Role extends MX_Controller {
 		echo json_encode($result);
 	}
 
-	public function resetPassphrase($roleId)
-	{
-		$user = $this->roles->get_role($roleId);
+	public function resetPassphrase() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$role_id = $this->input->get('role_id');
+		$user = $this->roles->get_role($role_id);
 		$result = array();
-		$result['success'] = false;
-		if($this->roles->get_role($roleId) && $user->authentication_service_id =='AUTHENTICATION_BUILT_IN')
-		{
-			$this->roles->reset_built_in_passphrase($roleId);
-			$result['success'] = true;
+		$result['status'] = 'ERROR';
+		if($user && $user->authentication_service_id =='AUTHENTICATION_BUILT_IN') {
+			$this->roles->reset_built_in_passphrase($role_id);
+			$result['status'] = 'OK';
 		}
 		echo json_encode($result);
 	}
@@ -293,6 +248,50 @@ class Role extends MX_Controller {
 			array_push($roles, $role);
 		}
 		echo json_encode($roles);
+	}
+
+	public function role_missing($commit = false) {
+		$first = $this->input->get('first_role');
+		$second = $this->input->get('second_role');
+	
+		$first_childs = $this->roles->immediate_childs($first);
+		$second_childs = $this->roles->immediate_childs($second);
+
+		$missing = array();
+		foreach($second_childs as $srole) {
+			if(!$this->has_role($srole, $first_childs)){
+				array_push($missing, $srole);
+			}
+		}
+
+		if(!$commit) {
+			echo json_encode(
+				array(
+					'status'=>'OK',
+					'missing'=>$missing
+				)
+			);
+		} else {
+			foreach($missing as $m){
+				$this->roles->add_relation($m->role_id, $first);
+			}
+			echo json_encode(
+				array(
+					'status' => 'OK',
+					'message' => 'All roles added successfully'
+				)
+			);
+		}
+		
+	}
+
+	private function has_role($role, $role_list) {
+		foreach($role_list as $r) {
+			if($r->role_id == $role->role_id) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

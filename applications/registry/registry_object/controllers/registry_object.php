@@ -142,7 +142,7 @@ class Registry_object extends MX_Controller {
 				$ro = $this->ro->cloneToDraft($registry_object_id);
 			}
 		}
-		
+
 		if ($ro->status != DRAFT)
 		{
 			$ro->status = DRAFT;
@@ -859,15 +859,15 @@ class Registry_object extends MX_Controller {
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
 		$ro->enrich();
+        //$log = $this->ro->erase($id);
 		//echo $ro->getExtRif();
 		//exit();
 		//$ro->enrich();	
 		//$ro->update_quality_metadata();		
 
-		$solrDoc = $ro->transformForSOLR();		
-		echo $solrDoc;
+		//$solrDoc = $ro->transformForSOLR();
+		echo "done";
 	}
-
 
 	//-----------DEPRECATED AFTER THIS LINE -----------------------//
 

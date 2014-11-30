@@ -29,9 +29,9 @@ class LicenceTypes_Extension extends ExtensionBase
 			foreach($theRights as $key=>$theRight)
 			{
 				$right['value']= (string)$theRight;
-				$right['type'] = (string)$key;
-				if((string)$theRight['rightsUri']!='') $right['rightsUri'] = (string)$theRight['rightsUri'];
-
+				if((string)$theRight['rightsUri']!='')
+                    $right['rightsUri'] = (string)$theRight['rightsUri'];
+                $right['type'] = (string)$key;
 				if($right['type']=='licence')
 				{
 					if((string)$theRight['type']!='')
@@ -41,9 +41,16 @@ class LicenceTypes_Extension extends ExtensionBase
 						$right['licence_type'] = 'Unknown';
 					}
 
-					$right['licence_group'] = $this->getLicenceGroup($right['licence_type']);	
+					$right['licence_group'] = $this->getLicenceGroup($right['licence_type']);
 					if($right['licence_group']=='') $right['licence_group'] = 'Unknown';
 				}
+                if($right['type']=='accessRights')
+                {
+                    if(trim((string)$theRight['type'])!='')
+                    {
+                        $right['accessRights_type'] = (string)$theRight['type'];
+                    }
+                }
 				$rights[] = $right;
 				unset($right);
 			}

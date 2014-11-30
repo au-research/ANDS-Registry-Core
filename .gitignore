@@ -1,5 +1,3 @@
-applications/apps/
-applications/developers/
 global_config.php
 ._*
 .settings
@@ -13,6 +11,9 @@ engine/cache/
 etc/misc/python/myconfig.py
 etc/misc/python/cert.pem
 etc/misc/python/__*
+etc/misc/python/linkchecker/linkchecker.ini
+etc/misc/python/linkchecker/__pycache__
+etc/misc/python/linkchecker/checkers/__pycache__
 .idea/
 wordpress/
 engine/logs

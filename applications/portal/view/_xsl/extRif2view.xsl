@@ -386,9 +386,9 @@
 	    <h4 style="margin-top:30px;">Additional Metadata</h4>
         <xsl:apply-templates select="ro:relatedInfo[@type='metadata' and ro:identifier/text() != '']"/> 
     </xsl:if>
-    <xsl:if test="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity'] or ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]">
+    <xsl:if test="ro:relatedInfo[not(@type ='metadata') and not(@type='dataQualityInformation') and not(@type='reuseInformation') and not(@type='website') and not(@type='publication') and not(@type='party') and not(@type='collection') and not(@type='service') and not(@type='activity')] or ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]">
 	    <h4 style="margin-top:30px;">More Information</h4>
-        <xsl:apply-templates select="ro:relatedInfo[@type !='metadata' and @type!='dataQualityInformation' and @type!='reuseInformation' and @type!='website' and @type!='publication' and @type!='party' and @type!='collection' and @type!='service' and @type!='activity']"/>
+        <xsl:apply-templates select="ro:relatedInfo[not(@type ='metadata') and not(@type='dataQualityInformation') and not(@type='reuseInformation') and not(@type='website') and not(@type='publication') and not(@type='party') and not(@type='collection') and not(@type='service') and not(@type='activity')]"/>
         <xsl:apply-templates select="ro:relatedInfo[(@type='party' or @type='collection' or @type='service' or @type='activity') and (not(ro:title) or ro:title/text() = '') and (not(ro:identifier/@resolved))]"/>
     </xsl:if>
 
@@ -556,16 +556,27 @@
         
 
 
-        <h2>Access</h2>
+        <h2><xsl:if test="$objectClass = 'Collection'"><xsl:text>Data </xsl:text></xsl:if>Access</h2>
         <div class="limitHeight300">
-            <xsl:if test="ro:location/ro:address/ro:electronic/@type='url'">
-                <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic"/></p> 
-            </xsl:if>
-       
+                <xsl:if test="ro:location/ro:address/ro:electronic[@type='url' and not(@target = 'directDownload')]">
+                    <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@type='url']"/></p>
+                </xsl:if>
+                <xsl:if test="ro:location/ro:address/ro:electronic/@target='directDownload'">
+                    <h3>Download Data</h3>
+                    <p><xsl:apply-templates select="ro:location/ro:address/ro:electronic[@target='directDownload']" mode="button"/></p>
+                </xsl:if>
+                <xsl:if test="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isPresentedBy' or @type = 'supports'] and ro:relation/ro:url/text() != ''] or ro:relatedObject[ro:relation[@type = 'supports' or @type = 'isPresentedBy'] and ro:relation/ro:url/text() != '']">
+                    <h3>Online via Tools</h3>
+                    <p>
+                        <xsl:apply-templates select="ro:relatedObject[ro:relation[@type = 'supports' or @type = 'isPresentedBy'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/>
+                        <xsl:apply-templates select="ro:relatedInfo[@type = 'service' and ro:relation[@type = 'isPresentedBy' or @type = 'supports'] and ro:relation/ro:url/text() != '']" mode="onlineTools"/>
+                    </p>
+                </xsl:if>
+
           <!--  <xsl:apply-templates select="ro:description[@type = 'accessRights' or @type = 'rights']"/> -->
             <!--xsl:apply-templates select="ro:rights"/-->
             <xsl:apply-templates select="//extRif:right[@type='licence']"/>
-            <xsl:apply-templates select="//extRif:right[@type!='licence']"/>  
+            <xsl:apply-templates select="//extRif:right[not(@type ='licence')]"/>
 
             <xsl:if test="ro:location/ro:address/ro:electronic/@type='email' or ro:location/ro:address/ro:physical">
                 <h3>Contacts</h3>
@@ -794,6 +805,32 @@
       <a href="{$base_url}search/#!/tag={.}"><xsl:value-of select="."/></a>
     </xsl:when>
   </xsl:choose>
+</xsl:template>
+
+<xsl:template match="ro:relatedInfo" mode="onlineTools">
+    <a>
+        <xsl:attribute name="class">identifier</xsl:attribute>
+        <xsl:attribute name="href"> <xsl:value-of select="ro:relation/ro:url"/></xsl:attribute>
+        <xsl:attribute name="title"><xsl:text>Visit Service</xsl:text></xsl:attribute>
+        <xsl:choose>
+        <xsl:when test="ro:title">
+            <xsl:value-of select="ro:title"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="ro:relation/ro:url"/>
+        </xsl:otherwise>
+        </xsl:choose>
+    </a><br/>
+</xsl:template>
+
+<xsl:template match="ro:relatedObject" mode="onlineTools">
+    <a>
+        <xsl:attribute name="class">identifier  resolvable_key hide</xsl:attribute>
+        <xsl:attribute name="key_value"><xsl:value-of select="ro:key"/></xsl:attribute>
+        <xsl:attribute name="href"> <xsl:value-of select="ro:relation/ro:url"/></xsl:attribute>
+        <xsl:attribute name="title"><xsl:text>Visit Service</xsl:text></xsl:attribute>
+        <xsl:value-of select="ro:relation/ro:url"/>
+    </a><br/>
 </xsl:template>
 
 <xsl:template match="ro:relatedInfo">
@@ -1351,29 +1388,62 @@
     <xsl:value-of select="substring(.,1,4)"/> 
 </xsl:template> 
 
-<xsl:template match="ro:location/ro:address/ro:electronic[ro:value/text() != '']">
-  <xsl:if test="./@type='url'">
-
-      <xsl:variable name="url">
-          <xsl:choose>
-              <xsl:when test="string-length(ro:value/text())>30">
-                <xsl:value-of select="substring(ro:value/text(),0,30)"/>...
-            </xsl:when>
-            <xsl:otherwise>
+    <xsl:template match="ro:location/ro:address/ro:electronic[ro:value/text() != '']" mode="button">
+      <xsl:variable name="title">
+            <xsl:choose>
+                <xsl:when test="string-length(ro:title)>15">
+                    <xsl:value-of select="substring(ro:title,0,15)"/>...
+                </xsl:when>
+                <xsl:when test="ro:title">
+                    <xsl:value-of select="ro:title"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>Download</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="label">
+            <xsl:value-of select="$title"/>
+            <xsl:if test="ro:mediaType">
+                <xsl:text>&amp;mdash;</xsl:text><xsl:value-of select="ro:mediaType"/>
+            </xsl:if>
+            <xsl:if test="ro:byteSize">
+                <xsl:text> (</xsl:text><xsl:value-of select="ro:byteSize"/><xsl:text>)</xsl:text>
+            </xsl:if>
+        </xsl:variable>
+        <a class="yellow_button">
+            <xsl:attribute name="href">
                 <xsl:value-of select="ro:value/text()"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable> 
-    <a>
-        <xsl:attribute name="href">
-            <xsl:value-of select="ro:value/text()"/>
-        </xsl:attribute>
-        <xsl:attribute name="class">recordOutBound</xsl:attribute>
-        <xsl:attribute name="type">electronic_address</xsl:attribute>
-        <xsl:attribute name="target">_blank</xsl:attribute><xsl:value-of select="$url"/>
-    </a><br />
-</xsl:if>
-</xsl:template>
+            </xsl:attribute>
+            <xsl:attribute name="target">_blank</xsl:attribute>
+            <xsl:attribute name="tip"><xsl:value-of select="concat(ro:title, '&lt;br/&gt;', ro:notes)"/></xsl:attribute>
+            <xsl:value-of select="concat($label, ' ')"/>
+            <i class="fa fa-download"></i>
+        </a><br/><br/>
+    </xsl:template>
+
+    <xsl:template match="ro:location/ro:address/ro:electronic[ro:value/text() != '']">
+        <xsl:if test="not(@target) or @target != 'directDownload'">
+            <xsl:variable name="url">
+                <xsl:choose>
+                    <xsl:when test="string-length(ro:value/text())>30">
+                        <xsl:value-of select="substring(ro:value/text(),0,30)"/>...
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="ro:value/text()"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="ro:value/text()"/>
+                </xsl:attribute>
+                <xsl:attribute name="class">recordOutBound</xsl:attribute>
+                <xsl:attribute name="type">electronic_address</xsl:attribute>
+                <xsl:attribute name="target">_blank</xsl:attribute><xsl:value-of select="$url"/>
+            </a><br/>
+        </xsl:if>
+    </xsl:template>
 
 <xsl:template match="ro:location/ro:address/ro:physical[ro:addressPart/text() != '']">
   <p>
@@ -1416,6 +1486,9 @@
 
  <xsl:if test="./@type='rights' or ./@type='rightsStatement'"><h4>Rights statement</h4></xsl:if>
  <xsl:if test="./@type='accessRights'"><h4>Access rights</h4></xsl:if>
+ <xsl:if test="@accessRights_type">
+    <span class="label label-{@accessRights_type}" type="{@accessRights_type}"><xsl:value-of select="@accessRights_type"/></span>
+  </xsl:if>
  <p class="rights"><xsl:value-of select="." disable-output-escaping="yes"/>
  <xsl:if test="./@rightsUri"><p>
     <a target="_blank">

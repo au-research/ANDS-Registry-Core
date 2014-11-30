@@ -3,52 +3,83 @@ class Auth extends CI_Controller {
 
 	public function login(){
 		$data['title'] = 'Login';
-		$data['js_lib'] = array('core');
-		$data['scripts'] = array();
-		//$config['authenticators'] = Array('Built in' => gCOSI_AUTH_METHOD_BUILT_IN, 'LDAP'=> gCOSI_AUTH_METHOD_LDAP, 'Shibboleth'=>gCOSI_AUTH_METHOD_SHIBBOLETH);
-		//$config['default_authenticator'] = gCOSI_AUTH_METHOD_BUILT_IN;
-		
+		$data['js_lib'] = array('core', 'angular129');
+		$data['scripts'] = array('login');
 
-		$this->CI =& get_instance();
+		$data['authenticators'] = array(
+			'built-in' => array(
+				'slug'		=> 'built_in',
+				'display' 	=> 'Built In',
+				'view' 		=>  $this->load->view('authenticators/built_in', false, true)
+			),
+			'ldap' => array(
+				'slug'		=> 'ldap',
+				'display' 	=> 'LDAP',
+				'view' 		=>  $this->load->view('authenticators/ldap', false, true)
+			)
+		);
 
-		$data['authenticators'] = array(gCOSI_AUTH_METHOD_BUILT_IN => 'Built-in Authentication', gCOSI_AUTH_METHOD_LDAP=>'LDAP');
-		if (get_config_item('shibboleth_sp')=='true') {
-			$data['authenticators'][gCOSI_AUTH_METHOD_SHIBBOLETH] = 'Australian Access Federation (AAF) credentials';
-			$data['default_authenticator'] = gCOSI_AUTH_METHOD_SHIBBOLETH;
-		} else {
-			$data['default_authenticator'] = gCOSI_AUTH_METHOD_BUILT_IN;
+		if(get_config_item('shibboleth_sp')) {
+			$shibboleth_sp =  array(
+				'slug'		=>'shibboleth_sp',
+				'display'	=> 'Shibboleth SP',
+				'view'		=> $this->load->view('authenticators/shibboleth_sp', false, true)
+			);
+			array_push($data['authenticators'], $shibboleth_sp);
 		}
 
-		$data['redirect'] = '';
-		
-		if ($this->input->post('inputUsername') || $this->input->post('inputPassword') && !$this->user->loggedIn()) {
-			try {
-				if($this->user->authChallenge($this->input->post('inputUsername'), $this->input->post('inputPassword'))) {
-					if($this->input->post('redirect')){
-						redirect($this->input->post('redirect'));
-					}else{
-						redirect(registry_url().'auth/dashboard');
-					}
-				}
-			}
-			catch (Exception $e) {
-				$data['error_message'] = "Unable to login. Please check your credentials are accurate.";
-				$data['exception'] = $e;
-			}
+		// var_dump(get_config_item('aaf_rapidconnect_url'));
+		// var_dump(get_config_item('aaf_rapidconnect_secret'));
+
+		if(get_config_item('aaf_rapidconnect_url') && get_config_item('aaf_rapidconnect_secret')) {
+			$rapid_connect = array(
+				'slug'		=> 'aaf_rapid',
+				'default'	=> true,
+				'display' 	=> 'AAF Rapid Connect',
+				'view' 		=>  $this->load->view('authenticators/aaf_rapid', false, true)
+			);
+			array_push($data['authenticators'], $rapid_connect);
 		}
 
-		if($this->input->get('error')){
-			$error = $this->input->get('error');
-			if($error=='login_required'){
-				$data['error_message'] = "Access to this function requires you to be logged in. Perhaps you have been automatically logged out?";
+		$data['default_authenticator'] = false;
+		foreach($data['authenticators'] as $auth) {
+			if(isset($auth['default']) && $auth['default']===true) {
+				$data['default_authenticator'] = $auth['slug'];
+				break;
 			}
 		}
+		if(!$data['default_authenticator']) $data['default_authenticator'] = 'built_in';
 
-		if($this->input->get('redirect')) {
-			$data['redirect'] = $this->input->get('redirect');
-		}else $data['redirect'] = registry_url().'auth/dashboard';
-		
 		$this->load->view('login', $data);
+	}
+
+	public function authenticate($method = 'built_in') {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$authenticator_class = $method.'_authenticator';
+		
+		if (!file_exists('engine/models/authenticators/'.$authenticator_class.'.php')) {
+			throw new Exception('Authenticator '.$authenticator_class.' not found!');
+		}
+
+		//get parameters from angularjs POST
+		$params = json_decode(file_get_contents('php://input'), true);
+
+		if(!$params) $params = array();
+		$post = ($this->input->post() ? $this->input->post() : array());
+
+		//get parameters from POST
+		$params = array_merge($params, $post);
+
+		try {
+			$this->load->model('authenticators/'.$authenticator_class, 'auth');
+			$this->auth->load_params($params);
+			$this->auth->authenticate();
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+		
 	}
 	
 	public function logout(){
@@ -56,6 +87,7 @@ class Auth extends CI_Controller {
 		$this->user->logout(); 		
 	}
 	
+	//MAYBE DEPRECATED as of R14
 	public function setUser(){
 		$sharedToken = '';
 		$data['title'] = 'Login';

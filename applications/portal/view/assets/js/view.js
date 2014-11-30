@@ -16,7 +16,7 @@ initViewPage();
 
 // duplicate displays will be postponed 'till next release
 //checkForDuplicateRecords();
-
+getRelatedObjectsTitleByKey();
 drawMap();
 initConnections(); 
 initAddTagForm();
@@ -154,6 +154,29 @@ function drawRegistryIcon(){
 		}
 	})
 }
+
+$('.label').qtip({
+	content : function(){
+        var textArray = [];
+        textArray["open"]="<div type=\"open\"><b>open:</b> Online data that can be electronically accessed free of charge with no conditions imposed on the user.</div>",
+        textArray["conditional"]="<div type=\"conditional\"><b>conditional:</b> Online or offline data that can be accessed free of charge, providing certain conditions are met (e.g free registration is required to access data online).</div>",
+        textArray["restricted"] ="<div type=\"restricted\"><b>restricted:</b> Online or offline data where access to the data is restricted.</div>";
+
+        var html = '';
+
+        for(accessType in textArray){
+            if($(this).text() == accessType)  html = textArray[accessType]+"<br />";
+        }
+        for(accessType in textArray){
+            if($(this).text() != accessType)  html = html + textArray[accessType]+"<br />";
+        }
+        
+		return html;
+	},
+	show:'mouseover',
+	hide:'mouseout',
+	style:{classes:'ui-tooltip-light ui-tooltip-shadow'}
+});
 
 function initConnections(){
 	$('.preview_connection').each(function(){
@@ -622,6 +645,31 @@ function initConnectionGraph()
 				);  
 
 }
+
+
+
+function getRelatedObjectsTitleByKey()
+{
+    if($('.resolvable_key').length > 0)
+    {
+        $('.resolvable_key').each(function(){
+            link = $(this);
+            if($(this).attr('key_value')){
+                title_url = base_url + 'registry/services/api/registry_objects/?fq=key:("' + encodeURIComponent($(this).attr('key_value')) + '")&fl=title';
+                $.ajax({
+                    type:"GET",
+                    url: title_url,
+                    success:function(msg){
+                        title = msg.message.response.docs[0].title;
+                        link.html(title);
+                    }
+                });
+            }
+            link.removeClass('hide');
+        });
+    }
+}
+
 
 function generatePreviewTip(element, slug, registry_object_id, relation_type, relation_description, relation_url, identifier_relation_id)
 {
