@@ -74,6 +74,8 @@ from . import base
 
 
 class ROChecker(base.BaseChecker):
+    """Checker for registry objects.
+    """
 
     # registry_prefix: "http://path-to-registry-objects/"
     #   A trailing slash will be added, if there isn't one.
@@ -503,7 +505,7 @@ class ROChecker(base.BaseChecker):
                     # i.e., at position 1.
                     status_code = int(mStatus.split()[1])
                     # Now treat the different status codes as appropriate.
-                    if(status_code > 399):
+                    if status_code > 399:
                         # Status > 399 is an error, e.g., a "404".
                         self._handle_one_error(url_str_original,
                                                STATUS_ERROR_FORMAT.format(
@@ -519,7 +521,7 @@ class ROChecker(base.BaseChecker):
                                                                 url.hostname,
                                                                 url.port,
                                                                 location)
-                        if (url_str != location):
+                        if url_str != location:
                             # Follow a redirect.
                             url_str = location
                             # This is the only branch that falls through and
