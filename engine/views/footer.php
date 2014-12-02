@@ -142,9 +142,9 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/portal-filters.js', 'base') ?>"></script>
 
         <?php elseif($lib=='angular129'): ?>
-            <script type="text/javascript" src="//code.angularjs.org/1.2.9/angular.min.js"></script>
-            <script type="text/javascript" src="//code.angularjs.org/1.2.9/angular-route.min.js"></script>
-            <script type="text/javascript" src="//code.angularjs.org/1.2.9/angular-resource.min.js"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angular129.min.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angular129-route.min.js', 'base') ?>"></script>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angular129-resource.min.js', 'base') ?>"></script>
 
 
         <?php elseif($lib=='colorbox'):?>
