@@ -1,10 +1,10 @@
 <?php
 function rda_exception_handler( $e ) {
 
-	if ($e instanceof ErrorException)
-	{
-		notifySiteAdmin("-1", $e->getMessage(), "...", "");
+	if ($e instanceof ErrorException) {
+		
 	}
+	ulog("[error:portal]".$e->getMessage(), 'error', 'error');
 
     $_ci =& get_instance(); // CI super object to access load etc.
     
@@ -13,12 +13,10 @@ function rda_exception_handler( $e ) {
 	$data['title'] = 'An error occurred!';
 
     echo $_ci->load->view( 'rda_header' , $data , true); 
-    
    	echo $_ci->load->view( 'rda_exception' , array("message" => $e->getMessage()) , true );
-   
     echo $_ci->load->view( 'rda_footer' , $data , true);
 }
-// set_exception_handler('rda_exception_handler');
+set_exception_handler('rda_exception_handler');
 
 function oauth_loggedin(){
 	$CI =& get_instance();

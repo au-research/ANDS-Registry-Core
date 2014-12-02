@@ -49,6 +49,8 @@ from . import base
 
 
 class DOIChecker(base.BaseChecker):
+    """Checker for DOIs.
+    """
 
     def do_link_checking(self):
         """Do the link checking.
@@ -430,7 +432,7 @@ class DOIChecker(base.BaseChecker):
                     # i.e., at position 1.
                     status_code = int(mStatus.split()[1])
                     # Now treat the different status codes as appropriate.
-                    if(status_code > 399):
+                    if status_code > 399:
                         # Status > 399 is an error, e.g., a "404".
                         self._handle_one_error(result_list, error_count,
                                                testing_array,
@@ -447,7 +449,7 @@ class DOIChecker(base.BaseChecker):
                                                                 url.hostname,
                                                                 url.port,
                                                                 location)
-                        if (url_str != location):
+                        if url_str != location:
                             # Follow a redirect.
                             url_str = location
                             # This is the only branch that falls through and

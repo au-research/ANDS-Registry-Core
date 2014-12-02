@@ -63,10 +63,15 @@ class Modules
 		}
 
 		if($class = self::load($module)) {
+
 			$method = array_shift(explode("/",$method));
+			$ex = explode('/', $method);
+			$method = array_shift($ex);
 			if (method_exists($class, $method))	{
 				ob_start();
-				$args = explode("/",array_pop(func_get_args()));
+				$arg = func_get_args();
+				$ex = array_pop($arg);
+				$args = explode("/",$ex);
 				$output = call_user_func_array(array($class, $method), array_slice($args, 2));
 				$buffer = ob_get_clean();
 				return ($output !== NULL) ? $output : $buffer;

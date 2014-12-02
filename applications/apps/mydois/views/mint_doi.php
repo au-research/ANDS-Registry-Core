@@ -12,12 +12,13 @@
 	<div class="box-content">
 
 		<p id="mint_result">  </p>
-        <div id="mint_form">
-		    <form action="<?=base_url('mydois/manualMint/');?>" method="POST" class="form-horizontal" id="mint_form" enctype="multipart/form-data">
+        <div id="mint_form_div">
+		    <form action="<?=base_url('mydois/uploadFile/');?>" method="POST" class="form-horizontal" id="mint_form" enctype="multipart/form-data">
                 <div id="loading"></div>
                 <input type="hidden" name="client_id" value="<?php echo $client_id; ?>"/>
                 <input type="hidden" name="app_id" value="<?php echo $app_id; ?>"/>
-                <input type="hidden" name="xml"/> <a href="http://schema.datacite.org/meta/kernel-3.0/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
+                <input type="hidden" name="xml" id="xml" value=""/> <a href="http://schema.datacite.org/meta/kernel-3.0/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
+                <input type="hidden" name="xml_upload" id="xml_upload" value=""/>
             <div class="control-group">
                 <label class="control-label">DOI</label> <div class="controls" style="margin-top:5px"><?php echo $_SESSION['doi']; ?></div>
 
@@ -32,7 +33,10 @@
             </div>
         <div class="control-group" id="uploadxml" style="display:none">
             <label class="control-label">File</label> <div class="controls"><input type="file" name="fileupload" id="fileupload"> </div>
-            <div id="xmldisplay"></div>
+           <!--  <input name="my_hidden" id="hfParam" type="hidden" /> -->
+            <iframe id='my_iframe' name='my_iframe' src="" class="hidden">
+            </iframe>
+            <div id="xmldisplay" class="prettyprint"></div>
         </div>
 
        <div class="control-group" id="formxml" style="display:none">
