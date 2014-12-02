@@ -31,7 +31,9 @@ $(document).on('change','input:radio[name="xml_input"]',function(e){
 	$.each(radio,function(){$('#'+this.value).css('display','none')});
     $('#'+toDisplay).css('display','block')
 });
+
 $('#formxml').show();
+
 $(document).on('click', '#doi_mint_confirm', function(){
 
     var xml_input = 'formxml';
@@ -51,15 +53,18 @@ $(document).on('click', '#doi_mint_confirm', function(){
     $("#mint_result").html('<p>Minting.....</p><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div>')
     $("#mint_form").addClass('hide');
     var theButton = this;
-   // var doi = $("input[name='doi']").val();
     var doi_url = $("input[name='url']").val();
     var client_id = $("input[name='client_id']").val();
     var app_id= $("input[name='app_id']").val();
     var url = apps_url+'mydois/mint.json/?manual_mint=true&url='+doi_url+'&app_id='+app_id;
-    var xml = $("input[name='xml']").val();
+    var theInput = document.getElementById('xml');
+    var theInput_upload = document.getElementById('xml_upload');
+    var xml = theInput.value
+    var xml_upload = theInput_upload.value
+    if(xml_upload!='')xml = xml_upload
 
     if(req_element_error!=''){
-        message = req_element_error
+        message = req_element_error;
         $('#mint_result').css('white-space','normal')
         $('#mint_result').html(message).addClass('label label-important');
         $(theButton).button('reset');
@@ -110,40 +115,45 @@ $(document).on('click', '#doi_mint_confirm', function(){
     }
 })
 
-$(document).on('change','#fileupload',function(e){
-    $('#mint_result').html('').removeClass('label label-important');
-    var file = this.files[0];
-    type = file.type;
-    if(type=='text/xml'){
-        var fd = new FormData;
-        fd.append('file', file);
+function successFunction() {
+    var iframeObject = document.getElementById('my_iframe');
 
-        var xhr = new XMLHttpRequest();
-        var uploadurl = apps_url+'mydois/uploadFile';
 
-        xhr.file = file; // not necessary if you create scopes like this
-        xhr.addEventListener('progress', function(e) {
-            var done = e.position || e.loaded, total = e.totalSize || e.total;
-            //console.log('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
-        }, false);
-        if ( xhr.upload ) {
-            xhr.upload.onprogress = function(e) {
-                var done = e.position || e.loaded, total = e.totalSize || e.total;
-               // console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
-            };
-        }
-        xhr.onreadystatechange = function(e) {
-            if ( 4 == this.readyState ) {
-                var jsonObj = eval('('+this.response+')')
-                $("#xmldisplay").html('<pre>'+ htmlEntities(jsonObj.xml)+'</pre>').text()
-                $("input[name='xml']").val(jsonObj.xml);
-            }
-        };
-        xhr.open('post', uploadurl, true);
-        xhr.send(fd);
-    }else{
-        $('#mint_result').html('Only files of type text/xml accepted').addClass('label label-important');
+    if (iframeObject.contentDocument) { // DOM
+        doc = iframeObject.contentDocument;
     }
+    else if (iframeObject.contentWindow) { // IE win
+        doc = iframeObject.contentWindow.document;
+    }
+    if (doc) {
+        console.log(doc);
+        var outputxml = doc.getElementById('xml_p');
+        var xml = outputxml.innerText;
+        var displayXml = outputxml.innerHTML;
+    }
+    $("#xmldisplay").html(displayXml)
+    var xmlObject = document.getElementById('xml');
+    var xmlObject_upload = document.getElementById('xml_upload');
+    xmlObject_upload.value = xml.replace("<br>","");
+}
+
+
+$(document).on('change','#fileupload',function(e){
+    var theForm = document.getElementById('mint_form');
+    $('#mint_result').html('').removeClass('label label-important');
+
+    theForm.target = 'my_iframe';
+    theForm.submit();
+    var callback = function () {
+        if (successFunction){
+            successFunction();
+
+        }
+        $('#frame').unbind('load', callback);
+    };
+
+    $('#my_iframe').bind('load', callback);
+
 });
 
 $(document).on('click', '#doi_update_confirm', function(){
