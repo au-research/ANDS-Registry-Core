@@ -25,9 +25,9 @@ class Registry_objectsMethod extends MethodHandler {
         $id = isset($params[1]) ? $params[1] : false;
         $method1 = isset($params[2]) ? $params[2]: 'get';
         $method2 = isset($params[3]) ? $params[3]: false;
-        
+
         $ci =& get_instance();
-    
+
         $result = array();
         if ($id){
             $ci->load->model('registry_object/registry_objects', 'ro');
@@ -118,11 +118,15 @@ class Registry_objectsMethod extends MethodHandler {
         $result = array();
         if($this->index) {
             //date_from, date_to, earliest_year, latest_year
-            foreach($this->index['date_from'] as $sub) {
-                $result['date_from'][] = $sub;
+            if(isset($this->index['date_from'])){
+                foreach($this->index['date_from'] as $sub) {
+                    $result['date_from'][] = $sub;
+                }
             }
-            foreach($this->index['date_to'] as $sub) {
-                $result['date_to'][] = $sub;
+            if(isset($this->index['date_to'])){
+                foreach($this->index['date_to'] as $sub) {
+                    $result['date_to'][] = $sub;
+                }
             }
             if($this->index['earliest_year']) $result['earliest_year'] = $this->index['earliest_year'];
             if($this->index['latest_year']) $result['latest_year'] = $this->index['latest_year'];

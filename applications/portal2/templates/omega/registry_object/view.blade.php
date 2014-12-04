@@ -9,10 +9,9 @@
 		<h2 class="post-title bordered"><a href="#">{{$ro->core['title']}}</a></h2>
 	</header>
 	<div class="post-body">
-		@include('registry_object/descriptions')
-		@include('registry_object/identifiers-list')
-		@include('registry_object/related-objects-list')
-		@include('registry_object/subjects-list')
+		@foreach ($contents as $content)
+			@include('registry_object/'.$content)
+		@endforeach
 	</div>
 </article>
 @stop
