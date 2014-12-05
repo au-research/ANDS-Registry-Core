@@ -128,8 +128,8 @@ class Registry_objectsMethod extends MethodHandler {
                     $result['date_to'][] = $sub;
                 }
             }
-            if($this->index['earliest_year']) $result['earliest_year'] = $this->index['earliest_year'];
-            if($this->index['latest_year']) $result['latest_year'] = $this->index['latest_year'];
+            if(isset($this->index['earliest_year'])) $result['earliest_year'] = $this->index['earliest_year'];
+            if(isset($this->index['latest_year'])) $result['latest_year'] = $this->index['latest_year'];
         }
         return $result;
     }

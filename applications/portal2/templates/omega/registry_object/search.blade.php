@@ -1,7 +1,16 @@
 @extends('layouts/left-sidebar-fw')
 
 @section('content')
-	main content
+	<article class="post post-showinfo" ng-repeat="doc in result.response.docs">
+        <header class="post-head">
+            <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
+            <small> by <a href="">2 comments</a> </small>
+            <!-- <span class="post-icon"> <i class="fa fa-picture-o"></i> </span> -->
+        </header>
+        <div class="post-body">
+        	<p data-ng-bind-html="doc.description | trustAsHtml"></p>
+        </div>
+    </article>
 @stop
 
 @section('sidebar')
@@ -20,15 +29,10 @@
 	</form>
 </div>
 
-<div class="sidebar-widget widget_search">
-	<h3 class="sidebar-header">By Subject</h3>
-	<ul class="list-unstyled">
-		<li><input type="checkbox"> <a href="">Lorem ipsum dolor sit.</a></li>
-		<li><input type="checkbox"> <a href="">Lorem ipsum dolor sit.</a></li>
-		<li><input type="checkbox"> <a href="">Lorem ipsum dolor sit.</a></li>
-		<li><input type="checkbox"> <a href="">Lorem ipsum dolor sit.</a></li>
-		<li><a href="">View More...</a></li>
-	</ul>
-</div>
+@foreach ($facets as $facet)
+	@include('registry_object/facet/'.$facet)
+@endforeach
+
+
 
 @stop

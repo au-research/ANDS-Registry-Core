@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="app">
     @include('includes/header')
-    <body>
+    <body ng-controller="mainController">
         @include('includes/top-menu')
         <div id="content">
         	<article>
@@ -18,7 +18,7 @@
     		        </div>
     		    </section>
     		    <section class="section swatch-white" style="z-index:1">
-    		    	<div class="container-fluid">
+    		    	<div class="container" >
     		    		<div class="row element-short-top">
     		    			<div class="col-md-3 sidebar">
     		    				@yield('sidebar')

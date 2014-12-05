@@ -1,6 +1,8 @@
 <?php
 class Registry_object extends MX_Controller {
 
+	private $components = array();
+
 	function view(){
 		if($this->input->get('id')){
 			$ro = $this->ro->getByID($this->input->get('id'));
@@ -8,46 +10,38 @@ class Registry_object extends MX_Controller {
 
 		$this->load->library('blade');
 
-		$contents = array(
-			'descriptions',
-			'identifiers-list',
-			'related-objects-list',
-			'subjects-list'
-		);
-
-		$aside = array(
-			'metadata-info',
-			'suggested-datasets-list'
-		);
-
 		$this->blade
 			->set('ro', $ro)
-			->set('contents', $contents)
-			->set('aside', $aside)
+			->set('contents', $this->components['view'])
+			->set('aside', $this->components['aside'])
 			->render('registry_object/view');
 	}
 
 	function search() {
+		if($this->input->get('q')) {
+			redirect('search/#!/q='.$this->input->get('q'));
+		}
 		$this->load->library('blade');
-		$this->blade->render('registry_object/search');
+		$this->blade
+			->set('lib', array('angular13'))
+			->set('scripts', array('search_app', 'search_components'))
+			->set('facets', $this->components['facet'])
+			->render('registry_object/search');
 	}
 
 	function s() {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
-		$filters = array('q'=>'geoscience');
+
+		$data = json_decode(file_get_contents("php://input"), true);
+		$filters = $data['filters'];
 
 		$this->load->library('solr');
 		$this->solr->setFilters($filters);
-		$facets['class'] = 'Class';
-		$facets['group'] = 'Contributor';
-		$facets['license_class'] = 'Licence';
-		$facets['type'] = 'Type';
-
-		foreach($facets as $facet=>$display){
-			// $this->solr->setFacetOpt('field', $facet);
+		foreach($this->components['facet'] as $facet){
+			$this->solr->setFacetOpt('field', $facet);
 		}
-		$this->solr->setOpt('fl', 'id,title');
+		$this->solr->setOpt('fl', 'id,title,description,slug');
 		$this->solr->setOpt('hl', 'true');
 		$this->solr->setOpt('hl.fl', '*');
 
@@ -70,5 +64,10 @@ class Registry_object extends MX_Controller {
 	function __construct() {
 		parent::__construct();
 		$this->load->model('registry_objects', 'ro');
+		$this->components = array(
+			'view' => array('descriptions', 'identifiers-list', 'related-objects-list', 'subjects-list'),
+			'aside' => array('metadata-info', 'suggested-datasets-list'),
+			'facet' => array('group', 'license_class', 'type')
+		);
 	}
 }

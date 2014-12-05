@@ -47,9 +47,5 @@ class _ro {
 		}
 	}
 
-	public function search($filters) {
-		
-		
-	}
 
 }
