@@ -1,5 +1,6 @@
-<div class="col-md-8 col-md-offset-2" data-os-animation="" data-os-animation-delay="">
-    <form role="search" method="get" action="{{base_url('search')}}">
+<div class="col-md-8 col-md-offset-2" data-os-animation="fadeInDown" data-os-animation-delay="">
+    <!-- <form role="search" method="get" action="{{base_url('search')}}"> -->
+    <form role="search" method="get" ng-submit="search(filters)">
         <div class="input-group">
             <span class="input-group-btn">
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">All <span class="caret"></span></button>

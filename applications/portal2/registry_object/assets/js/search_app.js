@@ -19,6 +19,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 	$scope.result = {};
 
 	$scope.$on('$locationChangeSuccess', function() {
+		console.log('location change');
 		$scope.filters = search_factory.filters_from_hash($location.path());
 		$scope.search();
 	});
@@ -26,7 +27,6 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 	$scope.search = function() {
 		search_factory.search($scope.filters).then(function(data){
 			$scope.result = data;
-			console.log($scope.result);
 			$scope.result.facets = {};
 			$.each($scope.result.facet_counts.facet_fields, function(j,k){
 				$scope.result.facets[j] = [];
@@ -38,6 +38,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 					$scope.result.facets[j].push(fa);
 				}
 			});
+			console.log($scope.result);
 		});
 	}
 });

@@ -1,7 +1,7 @@
 @extends('layouts/left-sidebar-fw')
 
 @section('content')
-	<article class="post post-showinfo" ng-repeat="doc in result.response.docs">
+	<article class="post post-showinfo os-animation animated fadeInUp" ng-repeat="doc in result.response.docs">
         <header class="post-head">
             <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
             <small> by <a href="">2 comments</a> </small>

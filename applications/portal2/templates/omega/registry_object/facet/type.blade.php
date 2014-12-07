@@ -1,4 +1,4 @@
-<div class="sidebar-widget widget_search">
+<div class="sidebar-widget widget_search os-animation animated fadeInDown">
 	<h3 class="sidebar-header">Types</h3>
 	<ul class="list-unstyled">
 		<li ng-repeat="type in result.facets.type | limitTo:5"><input type="checkbox"> <a href="">[[type.name]] ([[type.value]])</a></li>
