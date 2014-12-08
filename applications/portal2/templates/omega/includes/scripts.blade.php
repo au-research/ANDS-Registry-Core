@@ -1,3 +1,7 @@
+<script>
+	var base_url = "{{base_url()}}";
+	var registry_url = "{{registry_url()}}";
+</script>
 @if(isset($lib))
 	@foreach($lib as $l)
 		@if($l=='angular13')
