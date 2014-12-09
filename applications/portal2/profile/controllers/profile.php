@@ -1,7 +1,11 @@
 <?php
 class Profile extends MX_Controller {
 	function index(){
-		$this->blade->render('home');
+		if($this->user->isLoggedIn()) {
+			$this->blade->render('profile/dashboard');
+		} else {
+			redirect('profile/login');
+		}
 	}
 
 	function login() {

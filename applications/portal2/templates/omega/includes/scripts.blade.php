@@ -11,6 +11,16 @@
 		@endif
 	@endforeach
 @endif
+
+<!-- Include the angularJS library since every page will needs it for the search script -->
+<script src="{{asset_url('js/lib/angular.min.js', 'core')}}"></script>
+<script src="{{asset_url('js/lib/angular-route.min.js', 'core')}}"></script>
+<script src="{{asset_url('js/lib/angular-sanitize.min.js', 'core')}}"></script>
+
+<!-- Search Script and Resources is included in every page -->
+<script src="{{asset_url('js/search.js', 'core')}}"></script>
+<script src="{{asset_url('js/search_components.js', 'core')}}"></script>
+
 <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
 <script src="{{asset_url('omega/js/theme.min.js','templates')}}"></script>
 
