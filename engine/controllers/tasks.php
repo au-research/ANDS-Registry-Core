@@ -12,7 +12,7 @@ class Tasks extends CI_Controller {
 		$task = array(
 			'id' => 100,
 			'name' => 'sync',
-			'params' => 'type=ds&id=70',
+			'params' => 'type=ds&id=70,53',
 		);
 		$this->doTask($task);
 		// $this->task_mgr->add_task($task);
@@ -46,6 +46,16 @@ class Tasks extends CI_Controller {
 	public function exe() {
 		$this->load->model('task_mgr');
 		$task = $this->task_mgr->find_task();
+		if($task) {
+			$this->doTask($task);
+		} else {
+			echo json_encode(array('message'=>'No task to execute'));
+		}
+	}
+
+	public function immediate($task_id) {
+		$this->load->model('task_mgr');
+		$task = $this->task_mgr->find_specific_task($task_id);
 		if($task) {
 			$this->doTask($task);
 		} else {

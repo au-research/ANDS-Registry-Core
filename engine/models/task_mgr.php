@@ -42,4 +42,14 @@ class Task_mgr extends CI_Model {
 		}
 	}
 
+	function find_specific_task($id) {
+		$query = $this->db->where('id', $id)->get('tasks');
+		if($query->num_rows() > 0) {
+			$result = $query->result_array();
+			return $result[0];
+		} else {
+			return false;
+		}
+	}
+
 }
