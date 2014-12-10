@@ -34,13 +34,13 @@ class Task extends CI_Model {
 		//overwrite this method
 		$this->run_task();
 
-		$stuff = array('status'=>'COMPLETED', 'message'=>json_encode($this->messages));
-		$this->update_db($stuff);
-
 		$this->hook_end();
 		$this->benchmark->mark('code_end');
 		$this->elapsed = $this->benchmark->elapsed_time('code_start', 'code_end');
 		$this->messages['elapsed'] = $this->elapsed;
+
+		$stuff = array('status'=>'COMPLETED', 'message'=>json_encode($this->messages));
+		$this->update_db($stuff);
 	}
 
 	public function update_db($stuff) {

@@ -19,6 +19,12 @@ class Task_mgr extends CI_Model {
 	}
 
 	function find_task() {
+		//if there's a task already running, don't do anything
+		$query = $this->db->where('status', 'RUNNING')->get('tasks');
+		if($query->num_rows() > 0) {
+			return false;
+		}
+
 		// 0 priority task to be executed immediately
 		$query = $this->db->where('status', 'PENDING')->where('priority', '0')->get('tasks');
 		if($query->num_rows() > 0) {

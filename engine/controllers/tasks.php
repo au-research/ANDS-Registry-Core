@@ -10,16 +10,12 @@ class Tasks extends CI_Controller {
 
 	public function test() {
 		$task = array(
-			'name' 		=> 'sync',
-			'params'	=> 'type=ds&id=303,192,4444'
+			'id' => 100,
+			'name' => 'sync',
+			'params' => 'type=ds&id=70',
 		);
 		$this->doTask($task);
-
-		$task2 = array(
-			'name' => 'sync',
-			'params'	=> 'type=ro&id=475612,475616,12341234134'
-		);
-		// $this->doTask($task2);
+		// $this->task_mgr->add_task($task);
 	}
 
 	public function add() {
@@ -41,15 +37,20 @@ class Tasks extends CI_Controller {
 			'params'	=> 'type=ds&id=192'
 		);
 
-		// $this->task_mgr->add_task($task);
-		$this->task_mgr->add_task($task2);
-		$this->task_mgr->add_task($task3);
+		$this->task_mgr->add_task($task);
+		$this->task_mgr->add_task($task);
+		// $this->task_mgr->add_task($task2);
+		// $this->task_mgr->add_task($task3);
 	}
 
 	public function exe() {
 		$this->load->model('task_mgr');
 		$task = $this->task_mgr->find_task();
-		$this->doTask($task);
+		if($task) {
+			$this->doTask($task);
+		} else {
+			echo json_encode(array('message'=>'No task to execute'));
+		}
 	}
 
 	private function doTask($task){
