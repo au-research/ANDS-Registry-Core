@@ -56,6 +56,13 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 					$scope.result.facets[j].push(fa);
 				}
 			});
+			$.each($scope.result.highlighting, function(i,k){
+				$.each($scope.result.response.docs, function(){
+					if(this.id==i) {
+						this.hl = k;
+					}
+				});
+			});
 		});
 	}
 

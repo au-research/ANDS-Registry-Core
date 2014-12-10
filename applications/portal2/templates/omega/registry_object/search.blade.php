@@ -11,7 +11,11 @@
             <!-- <span class="post-icon"> <i class="fa fa-picture-o"></i> </span> -->
         </header>
         <div class="post-body">
-        	<p data-ng-bind-html="doc.description | trustAsHtml"></p>
+            <!-- [[doc.hl]] -->
+            <div ng-repeat="x in doc.hl">
+                <p ng-repeat="b in x" data-ng-bind-html="b"></p>
+            </div>
+        	<p data-ng-bind-html="doc.description | trustAsHtml" ng-show="!doc.hl"></p>
         </div>
     </article>
 

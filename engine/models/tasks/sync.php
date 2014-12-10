@@ -92,8 +92,8 @@ class Sync extends Task {
 		} catch (Exception $e) {
 			$this->log('[error][sync][ds_id:'.$ds_id.'][index:'.$e->getMessage().']');
 		}
-		
-		$this->log('[success][sync][ds_id:'.$ds_id.'][chunk:'.$this->chunkSize.']');
+
+		$this->log('[success][sync][ds_id:'.$ds_id.'][chunk:'.$this->chunkPos.']');
 	}
 
 	function sync_ro($ro_id) {
