@@ -7,7 +7,16 @@
         <h4 class="modal-title" id="myModalLabel">Advanced Search</h4>
       </div>
       <div class="modal-body">
-        [[filters]]
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-4">
+              <ul class="nav nav-pills nav-stacked">
+                <li ng-repeat="field in advanced_search.fields" ng-class="{'active':field.active==true}"><a href="" ng-click="selectAdvancedField(field)">[[field.display]]</a></li>
+              </ul>
+            </div>
+            <div class="col-md-8">Content</div>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary">Search</button>

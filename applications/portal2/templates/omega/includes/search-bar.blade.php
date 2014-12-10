@@ -7,8 +7,11 @@
                 <ul class="dropdown-menu" role="menu">
                   <li><a href="" ng-click="search_type='all'">All</a></li>
                   <li><a href="" ng-click="search_type='title'">Title</a></li>
+                  <li><a href="" ng-click="search_type='identifier'">Identifier</a></li>
+                  <li><a href="" ng-click="search_type='related_people'">Related People</a></li>
+                  <li><a href="" ng-click="search_type='related_organisations'">Related Organisations</a></li>
                   <li><a href="" ng-click="search_type='description'">Description</a></li>
-                  <li><a href="" ng-click="search_type='subject'">Subject</a></li>
+                  <!-- <li><a href="" ng-click="search_type='subject'">Subject</a></li> -->
                 </ul>
             </span>
             <input type="text" value="" name="q" class="form-control" placeholder="Search Research Data Australia" ng-model="q">

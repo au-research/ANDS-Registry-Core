@@ -21,6 +21,15 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 	$scope.result = {};
 	$scope.fields = ['title', 'description', 'subject'];
 
+	$scope.advanced_search = {};
+	$scope.advanced_search.fields = search_factory.advanced_fields();
+	$scope.selectAdvancedField = function(field) {
+		$.each($scope.advanced_search.fields, function(){
+			this.active = false;
+		});
+		field.active = true;
+	}
+
 	$scope.$on('$locationChangeSuccess', function() {
 		$scope.filters = search_factory.filters_from_hash($location.path());
 		$scope.populateFilters();
