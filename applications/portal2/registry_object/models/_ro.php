@@ -30,12 +30,16 @@ class _ro {
 	}
 
 	public function fetch($params = array('core')) {
-		$url ='https://devl.ands.org.au/minh/registry/services/api/registry_objects/'.$this->id.'/';
+
+		$url = base_url().'registry/services/api/registry_objects/'.$this->id.'/';
+
 		foreach($params as $par) {
 			$url.=$par.'-';
 		}
-		$content = @file_get_contents($url);
+
+  		$content = @file_get_contents($url);
 		$content = json_decode($content, true);
+
 		if ($content['status']=='success') {
 			foreach($params as $par) {
 				if(isset($content['message'][$par])) {
