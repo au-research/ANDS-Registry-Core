@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations'
+        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'reuse', 'quality'
     );
 
     private $ro = null;
@@ -47,6 +47,8 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'spatial' :        $result[$m1] = $this->spatial_handler(); break;
                         case 'temporal' :       $result[$m1] = $this->temporal_handler(); break;
                         case 'citations' :      $result[$m1] = $this->citations_handler(); break;
+                        case 'reuse' :          $result[$m1] = $this->relatedInfo_handler('reuseInformation'); break;
+                        case 'quality' :        $result[$m1] = $this->relatedInfo_handler('dataQualityInformation'); break;
                     }
                 }
             }
@@ -199,6 +201,25 @@ class Registry_objectsMethod extends MethodHandler {
         return $result;
     }
 
+    private function relatedInfo_handler($relatedInfo_type) {
+        $result = array();
+        $xml = $this->ro->getSimpleXML();
+        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+        $xml = simplexml_load_string($xml);
+        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+        foreach($xml->{$this->ro->class}->relatedInfo as $relatedInfo){
+            $type = (string) $relatedInfo['type'];
+            $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
+            if($type==$relatedInfo_type)
+            $result[] = array(
+                'type' => $type,
+                'title' =>  (string) $relatedInfo->title,
+                'identifier' => Array('identifier_type'=>(string) $relatedInfo->identifier['type'],'identifier_value'=>(string) $relatedInfo->identifier,'identifier_href'=>$identifier_resolved),
+                'notes' => (string) $relatedInfo->notes
+            );
+        }
+        return $result;
+    }
     private function citations_handler() {
         $result = array();
         $xml = $this->ro->getSimpleXML();
@@ -219,7 +240,6 @@ class Registry_objectsMethod extends MethodHandler {
                          );
                      }
                      $contributors[] =array(
-
                          'name' => $nameParts,
                          'seq' => (string)$contributor['seq'],
                      );
@@ -228,9 +248,9 @@ class Registry_objectsMethod extends MethodHandler {
                  $displayNames ='';
                  $contributorCount = 0;
                  foreach($contributors as $contributor){
-                 $contributorCount++;
-                 $displayNames .= formatName($contributor['name']);
-                 if($contributorCount < count($contributors)) $displayNames .= "; ";
+                    $contributorCount++;
+                    $displayNames .= formatName($contributor['name']);
+                    if($contributorCount < count($contributors)) $displayNames .= "; ";
                  }
                  $identifierResolved = identifierResolution((string)$citationMetadata->identifier, (string)$citationMetadata->identifier['type']);
 
@@ -315,6 +335,9 @@ function identifierResolution($identifier,$type)
             return $identifier_href;
             break;
         case 'ark':
+            if(!strpos($identifier,"http://")) $identifier_href =$identifier;
+            else $identifier_href = "http://".$identifier;
+            return $identifier_href;
             break;
         case 'AU-ANL:PEAU':
             break;
@@ -325,6 +348,9 @@ function identifierResolution($identifier,$type)
         case 'uri':
             break;
         case 'urn':
+            break;
+        default:
+            return false;
             break;
     }
 
