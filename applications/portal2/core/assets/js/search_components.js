@@ -18,6 +18,15 @@ angular.module('search_components',[])
 				if(term && value && term!='')filters[term] = value;
 			});
 			return filters;
+		},
+		advanced_fields: function() {
+			var fields = [
+				{'name':'terms', 'display':'Search Terms', 'active':true},
+				{'name':'group', 'display':'Contributors'},
+				{'name':'licence_class', 'display':'License'},
+				{'name':'types', 'display':'Types'},
+			];
+			return fields;
 		}
 	}
 })

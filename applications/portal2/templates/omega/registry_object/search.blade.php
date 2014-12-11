@@ -1,6 +1,9 @@
 @extends('layouts/left-sidebar-fw')
 
 @section('content')
+
+<!-- Button trigger modal -->
+
 	<article class="post post-showinfo os-animation animated fadeInUp" ng-repeat="doc in result.response.docs">
         <header class="post-head">
             <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
@@ -8,18 +11,23 @@
             <!-- <span class="post-icon"> <i class="fa fa-picture-o"></i> </span> -->
         </header>
         <div class="post-body">
-        	<p data-ng-bind-html="doc.description | trustAsHtml"></p>
+            <!-- [[doc.hl]] -->
+            <div ng-repeat="x in doc.hl">
+                <p ng-repeat="b in x" data-ng-bind-html="b"></p>
+            </div>
+        	<p data-ng-bind-html="doc.description | trustAsHtml" ng-show="!doc.hl"></p>
         </div>
     </article>
+
 @stop
 
 @section('sidebar')
 
 <div class="sidebar-widget widget_search">
 	<h3 class="sidebar-header">Refine search result</h3>
-	<form action="">
+	<form ng-submit="addKeyWord(extra_keywords)">
 		<div class="input-group">
-            <input type="text" value="" name="s" class="form-control" placeholder="Add more keywords">
+            <input type="text" value="" name="s" class="form-control" placeholder="Add more keywords" ng-model="extra_keywords">
             <span class="input-group-btn">
 	            <button class="btn" type="submit" value="Search">
 	                <i class="fa fa-search"></i> Go
@@ -32,7 +40,5 @@
 @foreach ($facets as $facet)
 	@include('registry_object/facet/'.$facet)
 @endforeach
-
-
 
 @stop

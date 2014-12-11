@@ -23,9 +23,9 @@ class Registry_object extends MX_Controller {
 		}
 		$this->load->library('blade');
 		$this->blade
-			->set('lib', array('angular13'))
-			->set('scripts', array('search_app', 'search_components'))
+			->set('scripts', array('search_app'))
 			->set('facets', $this->components['facet'])
+			->set('search', true) //to disable the global search
 			->render('registry_object/search');
 	}
 
@@ -44,6 +44,10 @@ class Registry_object extends MX_Controller {
 		$this->solr->setOpt('fl', 'id,title,description,slug');
 		$this->solr->setOpt('hl', 'true');
 		$this->solr->setOpt('hl.fl', '*');
+		$this->solr->setOpt('hl.simple.pre', '<b>');
+		$this->solr->setOpt('hl.simple.post', '</b>');
+		// $this->solr->setOpt('hl.fragsize', '300');
+		// $this->solr->setOpt('hl.snippets', '100');
 
 		$this->solr->setFacetOpt('mincount','1');
 		$this->solr->setFacetOpt('limit','100');

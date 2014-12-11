@@ -231,12 +231,37 @@ class Sync_extension extends ExtensionBase{
 		$related_objects = $this->ro->getAllRelatedObjects(false, true, true);
 		$fields = array('related_object_key', 'related_object_id', 'related_object_class', 'related_object_display_title', 'related_object_relation');
 		foreach($fields as $f) $json[$f] = array();
+		$fields = array('related_collection', 'related_party_one', 'related_party_multi', 'related_activity', 'related_service');
+		foreach($fields as $f) $json[$f] = array();
 		foreach($related_objects as $related_object){
 			$json['related_object_key'][] = $related_object['key'];
 			$json['related_object_id'][] = $related_object['registry_object_id'];
 			$json['related_object_class'][] = $related_object['class'];
 			$json['related_object_display_title'][] = $related_object['title'];
 			$json['related_object_relation'][] = $related_object['relation_type'];
+
+			if($related_object['class']=='collection') {
+				$json['related_collection'][] = $related_object['title'];
+			} else if($related_object['class']=='activity') {
+				$json['related_activity'][] = $related_object['title'];
+			} else if($related_object['class']=='service') {
+				$json['related_service'][] = $related_object['title'];
+			} else if($related_object['class']=='party') {
+				$rro = $this->_CI->ro->getByID($related_object['registry_object_id']);
+				if($rro) {
+					if($rro->type=='person') {
+						$json['related_party_one'][] = $related_object['title'];
+					} else if($rro->type=='group') {
+						$json['related_party_multi'][] = $related_object['title'];
+					}
+				}
+				unset($rro);
+			}
+
+		}
+
+		foreach($related_objects as $related_object) {
+
 		}
 
 		$json = array_filter($json);
