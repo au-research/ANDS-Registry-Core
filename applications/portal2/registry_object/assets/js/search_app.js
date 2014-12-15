@@ -38,11 +38,12 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 				if(this.name==select){
 					$scope.selectAdvancedField(this);
 				}
-			});
-			
+			});		
 		}
 		$('#advanced_search').modal();
-		
+	}
+	$scope.closeAdvanced = function() {
+		$('#advanced_search').modal('hide');	
 	}
 	// $scope.advanced();
 
@@ -175,6 +176,16 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 		return false;
 	}
 
+	$scope.sizeofField = function(type) {
+		if($scope.filters[type]) {
+			if(typeof $scope.filters[type]!='object') {
+				return 1;
+			} else if(typeof $scope.filters[type]=='object') {
+				return $scope.filters[type].length;
+			}
+		} else return 0;
+	}
+
 	/**
 	 * Go to a page
 	 * @param  {int} x 
@@ -199,7 +210,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 		return false;
 	}
 
-	$scope.toggleFilter = function(type, value) {
+	$scope.toggleFilter = function(type, value, execute) {
 		if($scope.filters[type]) {
 			if($scope.filters[type]==value) {
 				$scope.clearFilter(type,value);
@@ -213,7 +224,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 		} else {
 			$scope.addFilter(type, value);
 		}
-		$scope.hashChange();
+		if(!execute) $scope.hashChange();
 	}
 
 	$scope.addFilter = function(type, value) {

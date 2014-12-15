@@ -1,7 +1,8 @@
 @extends('layouts/left-sidebar-fw')
 
 @section('content')
-    @include('includes/search-header')
+
+@include('includes/search-header')
 <article class="post post-showinfo os-animation animated fadeInUp" ng-repeat="doc in result.response.docs">
     <header class="post-head">
         <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
@@ -17,10 +18,19 @@
     </div>
 </article>
 
+<nav class="pull-right">
+  <ul class="pagination pagination-sm" style="margin:0 auto;">
+    <li><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+    <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
+    <li><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+  </ul>
+</nav>
+
+<div class="clear"></div>
+
 @stop
 
 @section('sidebar')
-
 
 
 <div class="sidebar-widget widget_search">

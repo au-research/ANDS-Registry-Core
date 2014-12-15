@@ -12,7 +12,7 @@ class Tasks extends CI_Controller {
 		$task = array(
 			'id' => 100,
 			'name' => 'sync',
-			'params' => 'type=ds&id=98',
+			'params' => 'type=ds&id=91',
 		);
 		$this->doTask($task);
 		// $this->task_mgr->add_task($task);
