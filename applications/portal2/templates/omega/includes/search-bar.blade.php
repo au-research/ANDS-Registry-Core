@@ -1,6 +1,6 @@
 <div class="col-md-8 col-md-offset-2" data-os-animation="fadeInDown" data-os-animation-delay="" <?php if(!isset($search)) echo 'ng-app="search" ng-controller="searchCtrl"' ?>>
     <!-- <form role="search" method="get" action="{{base_url('search')}}"> -->
-    <form role="search" method="get" ng-submit="search(filters)">
+    <form role="search" method="get" ng-submit="hashChange()">
         <div class="input-group">
             <span class="input-group-btn">
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">[[search_type | uppercase]] <span class="caret"></span></button>

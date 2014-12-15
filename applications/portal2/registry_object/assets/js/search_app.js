@@ -20,6 +20,8 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 	$scope.filters = {};
 	$scope.result = {};
 	$scope.fields = ['title', 'description', 'subject'];
+	$scope.allfilters = [];
+	$scope.allfacets = [];
 
 	$scope.advanced_search = {};
 	$scope.advanced_search.fields = search_factory.advanced_fields();
@@ -30,11 +32,61 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 		field.active = true;
 	}
 
+	$scope.advanced = function(select) {
+		if (select) {
+			$.each($scope.advanced_search.fields, function(){
+				if(this.name==select){
+					$scope.selectAdvancedField(this);
+				}
+			});
+			
+		}
+		$('#advanced_search').modal();
+		
+	}
+	// $scope.advanced();
+
 	$scope.$on('$locationChangeSuccess', function() {
 		$scope.filters = search_factory.filters_from_hash($location.path());
 		$scope.populateFilters();
 		$scope.search();
 	});
+
+	$scope.$watch('filters', function(newv, oldv){
+		if(newv) {
+			$scope.allfilters = [];
+			$.each($scope.filters, function(i,k){
+				if(i!='p' && k) {
+					if(typeof k!='object') {
+						$scope.allfilters.push({'name':i,'value':k.toString()});
+					} else if(typeof k=='object') {
+						$.each(k,function(){
+							$scope.allfilters.push({'name':i,'value':this.toString()});
+						});
+					}
+				}
+			});
+		}
+	});
+
+	$scope.hashChange = function(){
+		$scope.filters.q = $scope.q;
+		if ($scope.search_type!='all') {
+			$scope.cleanfilters();
+			$scope.filters[$scope.search_type] = $scope.q;
+		}
+		var hash = '';
+		$.each($scope.filters, function(i,k){
+			if(typeof k!='object'){
+				hash+=i+'='+k+'/';
+			} else if (typeof k=='object'){
+				$.each(k, function(){
+					hash+=i+'='+this+'/';
+				});
+			}
+		});
+		$location.path(hash);
+	}
 
 	$scope.search = function() {
 		$scope.filters.q = $scope.q;
@@ -43,9 +95,13 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 			$scope.filters[$scope.search_type] = $scope.q;
 		}
 		$scope.populateFilters();
+
+		//regular search
 		search_factory.search($scope.filters).then(function(data){
 			$scope.result = data;
 			$scope.result.facets = {};
+
+			//construct the facets array
 			$.each($scope.result.facet_counts.facet_fields, function(j,k){
 				$scope.result.facets[j] = [];
 				for (var i = 0; i < $scope.result.facet_counts.facet_fields[j].length;i+=2){
@@ -56,6 +112,8 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 					$scope.result.facets[j].push(fa);
 				}
 			});
+
+			//construct the highlighting array
 			$.each($scope.result.highlighting, function(i,k){
 				$.each($scope.result.response.docs, function(){
 					if(this.id==i) {
@@ -63,33 +121,123 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 					}
 				});
 			});
-		});
-	}
 
-	$scope.advanced = function() {
-		$('#advanced_search').modal();
+			//construct the pagination
+			$scope.page = {
+				cur: ($scope.filters['p'] ? parseInt($scope.filters['p']) : 1),
+				rows: ($scope.filters['rows'] ? parseInt($scope.filters['rows']) : 15),
+				range: 3,
+				pages: [],
+			}
+
+			$scope.page.end = Math.ceil($scope.result.response.numFound / $scope.page.rows);
+
+			for (var x = ($scope.page.cur - $scope.page.range); x < (($scope.page.cur + $scope.page.range)+1);x++ ) {
+				if (x > 0 && x <= $scope.page.end) {
+					$scope.page.pages.push(x);
+				}
+			}
+			
+		});
+
+		//search without filters
+		var dumb_filters = {
+			'q':$scope.filters['q']
+		};
+		search_factory.search(dumb_filters).then(function(data){
+			$.each(data.facet_counts.facet_fields, function(j,k){
+				$scope.allfacets[j]=[];
+				for(var i=0;i<data.facet_counts.facet_fields[j].length-1;i+=2){
+					var fa = {
+						name: data.facet_counts.facet_fields[j][i],
+						value:data.facet_counts.facet_fields[j][i+1]
+					}
+					$scope.allfacets[j].push(fa);
+				}
+			});
+		});
 	}
 
 	$scope.addKeyWord = function(key) {
 		$scope.q += ' '+key;
-		$scope.search();
+		$scope.hashChange();
+	}
+
+	$scope.isAdvancedSearchActive = function(type) {
+		if($scope.advanced_search.fields.length){
+			for (var i=0;i<$scope.advanced_search.fields.length;i++){
+				if($scope.advanced_search.fields[i].name==type && $scope.advanced_search.fields[i].active) {
+					return true;
+					break;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Go to a page
+	 * @param  {int} x 
+	 * @return {search}
+	 */
+	$scope.goto = function(x) {
+		$scope.filters['p'] = ''+x;
+		$scope.hashChange();
+	}
+
+	$scope.isFacet = function(type, value) {
+		if($scope.filters[type]) {
+			if(typeof $scope.filters[type]=='string' && $scope.filters[type]==value) {
+				return true;
+			} else if(typeof $scope.filters[type]=='object') {
+				if($scope.filters[type].indexOf(value)!=-1) {
+					return true;
+				} else return false;
+			}
+			return false;
+		}
+		return false;
 	}
 
 	$scope.toggleFilter = function(type, value) {
-		if ($scope.filters[type]) {
-			$scope.clearFilter(type);
+		if($scope.filters[type]) {
+			if($scope.filters[type]==value) {
+				$scope.clearFilter(type,value);
+			} else {
+				if($scope.filters[type].indexOf(value)==-1) {
+					$scope.addFilter(type, value);
+				} else {
+					$scope.clearFilter(type,value);
+				}
+			}
 		} else {
 			$scope.addFilter(type, value);
 		}
-		$scope.search();
+		$scope.hashChange();
 	}
 
 	$scope.addFilter = function(type, value) {
-		$scope.filters[type] = value;
+		if($scope.filters[type]){
+			if(typeof $scope.filters[type]=='string') {
+				var old = $scope.filters[type];
+				$scope.filters[type] = [];
+				$scope.filters[type].push(old);
+				$scope.filters[type].push(value);
+			} else if(typeof $scope.filters[type]=='object') {
+				$scope.filters[type].push(value);
+			}
+		} else $scope.filters[type] = value;
+
 	}
 
-	$scope.clearFilter = function(type) {
-		delete $scope.filters[type];
+	$scope.clearFilter = function(type, value) {
+		if(typeof $scope.filters[type]=='string') {
+			if(type=='q') $scope.q = '';
+			delete $scope.filters[type];
+		} else if(typeof $scope.filters[type]=='object') {
+			var index = $scope.filters[type].indexOf(value);
+			$scope.filters[type].splice(index, 1);
+		}
 	}
 
 	$scope.cleanfilters = function() {

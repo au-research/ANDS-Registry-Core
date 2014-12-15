@@ -14,7 +14,40 @@
                 <li ng-repeat="field in advanced_search.fields" ng-class="{'active':field.active==true}"><a href="" ng-click="selectAdvancedField(field)">[[field.display]]</a></li>
               </ul>
             </div>
-            <div class="col-md-8">Content</div>
+            <div class="col-md-8">
+
+              <div ng-show="isAdvancedSearchActive('terms')">
+                Search Term
+              </div>
+
+              <div ng-show="isAdvancedSearchActive('group')">
+                <ul class="list-unstyled">
+                  <li ng-repeat="type in allfacets.group">
+                    <input type="checkbox" ng-checked="isFacet('group', type.name)" ng-click="toggleFilter('group', type.name)">
+                    <a href="" ng-click="toggleFilter('group', type.name)">[[type.name]] ([[type.value]])</a></li>
+                  </li>
+                </ul>
+              </div>
+              
+              <div ng-show="isAdvancedSearchActive('license_class')">
+                <ul class="list-unstyled">
+                  <li ng-repeat="type in allfacets.license_class">
+                    <input type="checkbox" ng-checked="isFacet('license_class', type.name)" ng-click="toggleFilter('license_class', type.name)">
+                    <a href="" ng-click="toggleFilter('license_class', type.name)">[[type.name]] ([[type.value]])</a></li>
+                  </li>
+                </ul>
+              </div>
+
+              <div ng-show="isAdvancedSearchActive('type')">
+                <ul class="list-unstyled">
+                  <li ng-repeat="type in allfacets.type">
+                    <input type="checkbox" ng-checked="isFacet('type', type.name)" ng-click="toggleFilter('type', type.name)">
+                    <a href="" ng-click="toggleFilter('type', type.name)">[[type.name]] ([[type.value]])</a></li>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
