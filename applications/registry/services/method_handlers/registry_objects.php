@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal'
+        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'reuse', 'quality'
     );
 
     private $ro = null;
@@ -46,13 +46,15 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'subjects' :       $result[$m1] = $this->subjects_handler(); break;
                         case 'spatial' :        $result[$m1] = $this->spatial_handler(); break;
                         case 'temporal' :       $result[$m1] = $this->temporal_handler(); break;
+                        case 'citations' :      $result[$m1] = $this->citations_handler(); break;
+                        case 'reuse' :          $result[$m1] = $this->relatedInfo_handler('reuseInformation'); break;
+                        case 'quality' :        $result[$m1] = $this->relatedInfo_handler('dataQualityInformation'); break;
                     }
                 }
             }
         } else {
             $result = $this->searcher($params);
         }
-
         return $this->formatter->display($result);
     }
 
@@ -74,9 +76,9 @@ class Registry_objectsMethod extends MethodHandler {
             foreach($this->index['subject_value_unresolved'] as $key=>$sub) {
                 $result[] = array(
                     'subject' => $sub,
-                    'resolved' => $this->index['subject_value_resolved'][$key],
+                    'resolved' => titleCase($this->index['subject_value_resolved'][$key]),
                     'type' => $this->index['subject_type'][$key],
-                    'vocab_uri' => $this->index['subject_vocab_uri'][$key]
+                    'vocab_uri' => $this->index['subject_vocab_uri'][$key],
                 );
             }
         }
@@ -199,6 +201,87 @@ class Registry_objectsMethod extends MethodHandler {
         return $result;
     }
 
+    private function relatedInfo_handler($relatedInfo_type) {
+        $result = array();
+        $xml = $this->ro->getSimpleXML();
+        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+        $xml = simplexml_load_string($xml);
+        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+        foreach($xml->{$this->ro->class}->relatedInfo as $relatedInfo){
+            $type = (string) $relatedInfo['type'];
+            $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
+            if($type==$relatedInfo_type)
+            $result[] = array(
+                'type' => $type,
+                'title' =>  (string) $relatedInfo->title,
+                'identifier' => Array('identifier_type'=>(string) $relatedInfo->identifier['type'],'identifier_value'=>(string) $relatedInfo->identifier,'identifier_href'=>$identifier_resolved),
+                'notes' => (string) $relatedInfo->notes
+            );
+        }
+        return $result;
+    }
+    private function citations_handler() {
+        $result = array();
+        $xml = $this->ro->getSimpleXML();
+        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+        $xml = simplexml_load_string($xml);
+        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+        foreach($xml->{$this->ro->class}->citationInfo as $citation){
+             foreach($citation->citationMetadata as $citationMetadata){
+                 $contributors = Array();
+                 foreach($citationMetadata->contributor as $contributor)
+                 {
+                    $nameParts = Array();
+                    foreach($contributor->namePart as $namePart)
+                     {
+                             $nameParts[] = array(
+                             'namePart_type' => (string)$namePart['type'],
+                             'name' => (string)$namePart
+                         );
+                     }
+                     $contributors[] =array(
+                         'name' => $nameParts,
+                         'seq' => (string)$contributor['seq'],
+                     );
+                 }
+                 usort($contributors,"seq");
+                 $displayNames ='';
+                 $contributorCount = 0;
+                 foreach($contributors as $contributor){
+                    $contributorCount++;
+                    $displayNames .= formatName($contributor['name']);
+                    if($contributorCount < count($contributors)) $displayNames .= "; ";
+                 }
+                 $identifierResolved = identifierResolution((string)$citationMetadata->identifier, (string)$citationMetadata->identifier['type']);
+
+                 $result[] = array(
+                     'type'=> 'metadata',
+                     'identifier' => (string)$citationMetadata->identifier,
+                     'identifier_type' => strtoupper((string)$citationMetadata->identifier['type']),
+                     'identifierResolved' => $identifierResolved,
+                     'version' => (string)$citationMetadata->version,
+                     'publisher' => (string)$citationMetadata->publisher,
+                     'url' => (string)$citationMetadata->url,
+                     'context' => (string)$citationMetadata->context,
+                     'placePublished' => (string)$citationMetadata->placePublished,
+                     'title' => (string)$citationMetadata->title,
+                     'date_type' => (string)$citationMetadata->date['type'],
+                     'date' => date("Y",strtotime((string)$citationMetadata->date)),
+                     'contributors' => $displayNames
+                 );
+
+             }
+            foreach($citation->fullCitation as $fullCitation){
+                $result[] = array(
+                    'type'=> 'fullCitation',
+                    'value' => (string)$fullCitation,
+                    'citation_type' => (string)$fullCitation['style']
+                );
+
+            }
+        }
+        return $result;
+    }
     private function relationships_handler() {
         $result = array();
         $specific = isset($this->params[3]) ? $this->params[3]: null;
@@ -209,4 +292,109 @@ class Registry_objectsMethod extends MethodHandler {
         }
         return $relationships;
     }
+}
+
+///citation formation helper functions
+
+//function to sort contributor names based on the seq number if it exist
+function seq($a, $b)
+{
+    if ($a['seq'] == $b['seq']) {
+        return 0;
+    }
+    return ($a['seq'] < $b['seq']) ? -1 : 1;
+}
+
+//function to concatenate name values based on the name part type
+function formatName($a)
+{
+    $order = array('family','given','initial','title','superior');
+    $displayName = '';
+    foreach($order as $o){
+        $givenFound = false;
+        foreach($a as $namePart)
+        {
+            if($namePart['namePart_type']==$o) {
+                if($namePart['namePart_type']=='given') $givenFound = true;
+                if($namePart['namePart_type']=='initial' && $givenFound) $namePart['name']='';
+                else $displayName .=  $namePart['name'].", ";
+            }
+        }
+    }
+    return trim($displayName,", ")." ";
+}
+
+//function to create resolvable link for citation identifiers
+function identifierResolution($identifier,$type)
+{
+    switch($type)
+    {
+        case 'doi':
+            if(!strpos($identifier,"doi.org/")) $identifier_href ="http://dx.doi.org/".$identifier;
+            else $identifier_href = "http://dx.doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
+            return $identifier_href;
+            break;
+        case 'ark':
+            if(!strpos($identifier,"http://")) $identifier_href =$identifier;
+            else $identifier_href = "http://".$identifier;
+            return $identifier_href;
+            break;
+        case 'AU-ANL:PEAU':
+            break;
+        case 'handle':
+            break;
+        case 'purl':
+            break;
+        case 'uri':
+            break;
+        case 'urn':
+            break;
+        default:
+            return false;
+            break;
+    }
+
+}
+
+// generic function to title case a given string
+
+function titleCase($title)
+{
+    $smallwordsarray = array(
+        'of','a','the','and','an','or','nor','but','is','if','then','else','when',
+        'at','from','by','on','off','for','in','out','over','to','into','with'
+    );
+
+    $re = '/(?#! splitCamelCase Rev:20140412)
+    # Split camelCase "words". Two global alternatives. Either g1of2:
+      (?<=[a-z])      # Position is after a lowercase,
+      (?=[A-Z])       # and before an uppercase letter.
+    | (?<=[A-Z])      # Or g2of2; Position is after uppercase,
+      (?=[A-Z][a-z])  # and before upper-then-lower case.
+    /x';
+    $words = explode(' ', $title);
+
+    foreach ($words as $key => $word)
+    {
+        $a = preg_split($re, $word);
+        $count = count($a);
+        if($count>1){
+            $words[$key] = '';
+            for ($i = 0; $i < $count; ++$i) {
+                $words[$key] .= ucwords($a[$i])." ";
+            }
+
+        } else {
+            $word = strtolower($word);
+            if ($key == 0 or !in_array($word, $smallwordsarray))
+                $words[$key] = ucwords($word);
+            else
+                $words[$key] = $word;
+            }
+        }
+
+    $newtitle = implode(' ', $words);
+
+    return $newtitle;
+
 }
