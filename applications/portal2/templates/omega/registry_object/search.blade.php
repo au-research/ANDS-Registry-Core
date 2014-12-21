@@ -2,9 +2,9 @@
 
 @section('content')
 
-<div class="panel panel-primary element-no-top element-small-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
+<div class="panel panel-primary element-no-top element-small-bottom" data-os-animation="fadeInUp">
     @include('includes/search-header')
-    <div class="panel-body swatch-white" ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea">
+    <div  ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInUp" style="-webkit-animation: 0.2s;">
         <div class="element-no-top element-no-bottom" data-os-animation="none" data-os-animation-delay="0s">
             <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
             <div ng-repeat="x in doc.hl">

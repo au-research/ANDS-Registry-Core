@@ -13,9 +13,9 @@
 @endif
 
 <!-- Include the angularJS library since every page will needs it for the search script -->
-<script src="{{asset_url('js/lib/angular.min.js', 'core')}}"></script>
-<script src="{{asset_url('js/lib/angular-route.min.js', 'core')}}"></script>
-<script src="{{asset_url('js/lib/angular-sanitize.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular/angular.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular-route/angular-route.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular-sanitize/angular-sanitize.min.js', 'core')}}"></script>
 
 <!-- Search Script and Resources is included in every page -->
 <script src="{{asset_url('js/search.js', 'core')}}"></script>

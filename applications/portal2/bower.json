@@ -1,0 +1,22 @@
+{
+  "name": "ANDS Portal",
+  "version": "15",
+  "homepage": "https://github.com/au-research/ANDS-Registry-Core",
+  "authors": [
+    "Minh Duc Nguyen <minh.nguyen@ands.org.au>"
+  ],
+  "license": "Apache2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "core/assets/lib/",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "1.3.8",
+    "angular-route": "1.3.8",
+    "angular-sanitize": "1.3.8"
+  }
+}
