@@ -1,6 +1,4 @@
-<div class="container-fluid">
-	<div class="pull-right">
-		<small>[[result.response.numFound]] Results found ([[result.responseHeader.QTime]] milliseconds)</small>
-	</div>
+<div class="panel-body swatch-white">
+	<small>[[result.response.numFound]] Results found ([[result.responseHeader.QTime]] milliseconds)</small>
 </div>
 

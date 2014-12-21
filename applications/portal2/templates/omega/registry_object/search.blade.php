@@ -2,34 +2,21 @@
 
 @section('content')
 
-@include('includes/search-header')
-
-<div class="panel panel-primary element-no-top element-small-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;" ng-repeat="doc in result.response.docs">
-    <div class="panel-body swatch-white">
+<div class="panel panel-primary element-no-top element-small-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
+    @include('includes/search-header')
+    <div class="panel-body swatch-white" ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea">
         <div class="element-no-top element-no-bottom" data-os-animation="none" data-os-animation-delay="0s">
             <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
-                <div ng-repeat="x in doc.hl">
-                    <p ng-repeat="b in x" data-ng-bind-html="b"></p>
-                </div>
-                <p data-ng-bind-html="doc.description | trustAsHtml" ng-show="!doc.hl"></p>
+            <div ng-repeat="x in doc.hl">
+                <p ng-repeat="b in x" data-ng-bind-html="b"></p>
+            </div>
+            <p data-ng-bind-html="doc.description | trustAsHtml" ng-show="!doc.hl"></p>
+            <div class="toolbar" style="margin-top:15px;">
+                <input type="checkbox"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">View Record</a>
+            </div>
         </div>
     </div>
 </div>
-
-<article class="post post-showinfo os-animation animated fadeInUp" ng-repeat="doc in result.response.docs">
-    <header class="post-head">
-        <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
-        <small> by <a href="">2 comments</a> </small>
-        <!-- <span class="post-icon"> <i class="fa fa-picture-o"></i> </span> -->
-    </header>
-    <div class="post-body">
-        <!-- [[doc.hl]] -->
-        <div ng-repeat="x in doc.hl">
-            <p ng-repeat="b in x" data-ng-bind-html="b"></p>
-        </div>
-    	<p data-ng-bind-html="doc.description | trustAsHtml" ng-show="!doc.hl"></p>
-    </div>
-</article>
 
 <nav class="pull-right">
   <ul class="pagination pagination-sm" style="margin:0 auto;">
