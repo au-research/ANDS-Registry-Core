@@ -52,7 +52,6 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'quality' :        $result[$m1] = $this->relatedInfo_handler('dataQualityInformation'); break;
                     }
                 }
-                $this->suggest_handler();
             }
         } else {
             $result = $this->searcher($params);
