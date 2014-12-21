@@ -2,7 +2,15 @@
 <h2>Identifiers</h2>
 <ul>
 	@foreach($ro->identifiers as $col)
-	<li>{{$col['type']}} : <a href="">{{$col['value']}}</a></li>
+    <?php
+        echo '<li>'.$col['type']. " : " ;
+        if(isset($col['identifier']['href']) && $col['identifier']['href']!='') {
+            echo '<a href="'.$col['identifier']['href'].'">'.$col['value'].'</a>';
+        }else{
+            echo $col['value'];
+        }
+        echo "</li>"
+    ?>
 	@endforeach
 </ul>
 @endif

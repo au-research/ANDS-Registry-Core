@@ -22,7 +22,7 @@
             ({{$citation['date']}}): {{$citation['title']}}.
             {{$citation['publisher']}}.
             {{$citation['identifier_type']}} :{{$citation['identifier']}}
-             <br /><a href="{{$citation['identifierResolved']}}">{{$citation['identifierResolved']}}</a>
+             <br /><a href="{{$citation['identifierResolved']['href']}}">{{$citation['identifierResolved']['display_text']}}</a>
             @if($citation['url'])
                 <br /><a href="{{$citation['url']}}">{{$citation['url']}}</a>
             @endif

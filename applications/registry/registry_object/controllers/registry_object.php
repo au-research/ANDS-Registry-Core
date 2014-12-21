@@ -862,11 +862,12 @@ class Registry_object extends MX_Controller {
         //$log = $this->ro->erase($id);
 		//echo $ro->getExtRif();
 		//exit();
-		//$ro->enrich();	
-		//$ro->update_quality_metadata();		
+		//$ro->enrich();
+		$ro->update_quality_metadata();
 
-		//$solrDoc = $ro->transformForSOLR();
-		echo "done";
+		$solrDoc = $ro->transformForSOLR();
+        echo $solrDoc;
+		//echo "done";
 	}
 
 	//-----------DEPRECATED AFTER THIS LINE -----------------------//

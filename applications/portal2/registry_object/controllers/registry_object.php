@@ -69,7 +69,7 @@ class Registry_object extends MX_Controller {
 		parent::__construct();
 		$this->load->model('registry_objects', 'ro');
 		$this->components = array(
-			'view' => array('descriptions','reuse-list','quality-list', 'identifiers-list', 'related-objects-list', 'subjects-list', 'citation-info'),
+			'view' => array('descriptions','reuse-list','quality-list','dates-list', 'identifiers-list', 'connectiontree','related-objects-list', 'subjects-list', 'citation-info'),
 			'aside' => array('metadata-info', 'suggested-datasets-list'),
 			'facet' => array('group', 'license_class', 'type')
 		);
