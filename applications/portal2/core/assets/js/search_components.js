@@ -3,7 +3,7 @@ angular.module('search_components',[])
 .factory('search_factory', function($http){
 	return{
 		search: function(filters){
-			var promise = $http.post('../registry_object/s', {'filters':filters}).then(function(response){
+			var promise = $http.post(base_url+'registry_object/s', {'filters':filters}).then(function(response){
 				return response.data;
 			});
 			return promise;
@@ -15,7 +15,22 @@ angular.module('search_components',[])
 				var t = this.split('=');
 				var term = t[0];
 				var value = t[1];
-				if(term && value && term!='')filters[term] = value;
+				if(term && value && term!=''){
+
+					if(filters[term]) {
+						if(typeof filters[term]=='string') {
+							var old = filters[term];
+							filters[term] = [];
+							filters[term].push(old);
+							filters[term].push(value);
+						} else if(typeof filters[term]=='object') {
+							filters[term].push(value);
+						}
+					} else {
+						filters[term] = value;
+					}
+					
+				}
 			});
 			return filters;
 		},
@@ -23,8 +38,8 @@ angular.module('search_components',[])
 			var fields = [
 				{'name':'terms', 'display':'Search Terms', 'active':true},
 				{'name':'group', 'display':'Contributors'},
-				{'name':'licence_class', 'display':'License'},
-				{'name':'types', 'display':'Types'},
+				{'name':'license_class', 'display':'License'},
+				{'name':'type', 'display':'Types'},
 			];
 			return fields;
 		}

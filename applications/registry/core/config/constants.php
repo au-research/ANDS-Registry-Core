@@ -10,7 +10,7 @@ define('HARVEST_COMPLETE','TRUE');
 
 define('IMPORT_INFO','info');
 
-define('EXTRIF_SCHEME','extRif');
+// define('EXTRIF_SCHEME','extRif');
 
 define('DRAFT_RECORD_SLUG','draft_record_');
 

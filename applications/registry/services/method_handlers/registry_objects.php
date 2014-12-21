@@ -45,6 +45,7 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'relationships' :  $result[$m1] = $this->relationships_handler(); break;
                         case 'identifiers' :    $result[$m1] = $this->identifiers_handler(); break;
                         case 'subjects' :       $result[$m1] = $this->subjects_handler(); break;
+                        case 'suggest' :        $result[$m1] = $this->suggest_handler(); break;
                         case 'spatial' :        $result[$m1] = $this->spatial_handler(); break;
                         case 'temporal' :       $result[$m1] = $this->temporal_handler(); break;
                         case 'citations' :      $result[$m1] = $this->citations_handler(); break;
@@ -85,6 +86,20 @@ class Registry_objectsMethod extends MethodHandler {
                 );
             }
         }
+        return $result;
+    }
+
+    private function suggest_handler() {
+        $result = array();
+
+        //construct the pool
+        $pool = array();
+
+        //populate the pool with different suggestor
+        $suggested = $this->ro->getSuggestedLinks('subjects');
+
+        var_dump($suggested);
+
         return $result;
     }
 
