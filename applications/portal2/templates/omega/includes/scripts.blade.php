@@ -24,6 +24,13 @@
 <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
 <script src="{{asset_url('omega/js/theme.min.js','templates')}}"></script>
 
+
+<!-- View page Script and Resources is included in every page -->
+<script src="{{asset_url('lib/jquery/dist/jquery.js', 'core')}}"></script>
+<script src="{{asset_url('lib/jquery-ui/jquery-ui.js', 'core')}}"></script>
+<script src="{{asset_url('lib/dynatree/src/jquery.dynatree.js', 'core')}}"></script>
+<script src="{{asset_url('js/view.js', 'core')}}"></script>
+
 @if(isset($scripts))
 	@foreach($scripts as $script)
 		<script src="{{asset_url('js/'.$script.'.js')}}"></script>
