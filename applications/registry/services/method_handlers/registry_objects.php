@@ -114,6 +114,7 @@ class Registry_objectsMethod extends MethodHandler {
                 $result[] = array(
                     'type' => $sub,
                     'value' => $this->index['identifier_value'][$key],
+                    'identifier' => identifierResolution($this->index['identifier_value'][$key],$sub)
                 );
             }
         }
@@ -139,22 +140,51 @@ class Registry_objectsMethod extends MethodHandler {
     private function temporal_handler() {
         // var_dump($this->index);
         $result = array();
-        if($this->index) {
-            //date_from, date_to, earliest_year, latest_year
-            if(isset($this->index['date_from'])){
-                foreach($this->index['date_from'] as $sub) {
-                    $result['date_from'][] = $sub;
-                }
+        $xml = $this->ro->getSimpleXML();
+        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+        $xml = simplexml_load_string($xml);
+        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+        foreach($xml->{$this->ro->class}->coverage->temporal as $dates){
+            $eachDate = Array();
+            foreach($dates as $date)
+            {
+                $eachDate[] = Array(
+                    'type'=>(string)$date['type'],
+                    'dateFormat'=>(string)$date['dateFormat'],
+                    'date'=>(string)($date)
+
+                );
             }
-            if(isset($this->index['date_to'])){
-                foreach($this->index['date_to'] as $sub) {
-                    $result['date_to'][] = $sub;
-                }
-            }
-            if(isset($this->index['earliest_year'])) $result['earliest_year'] = $this->index['earliest_year'];
-            if(isset($this->index['latest_year'])) $result['latest_year'] = $this->index['latest_year'];
+
+            $result[] = Array(
+
+                'type' => (string) $dates['type'],
+                'date' => $eachDate
+
+            );
         }
         return $result;
+        /*
+     //this was the original code to get temporal data for the new rda however it was using index - need to use ro so we only get temporal coverage type dates
+      $result = array();
+       if($this->index) {
+           //date_from, date_to, earliest_year, latest_year
+           if(isset($this->index['date_from'])){
+               foreach($this->index['date_from'] as $sub) {
+                   $result['date_from'][] = $sub;
+               }
+           }
+           if(isset($this->index['date_to'])){
+               foreach($this->index['date_to'] as $sub) {
+                   $result['date_to'][] = $sub;
+               }
+           }
+           if(isset($this->index['earliest_year'])) $result['earliest_year'] = $this->index['earliest_year'];
+           if(isset($this->index['latest_year'])) $result['latest_year'] = $this->index['latest_year'];
+       }
+
+
+       return $result; */
     }
 
     private function searcher($params) {
@@ -351,6 +381,7 @@ class Registry_objectsMethod extends MethodHandler {
     {
         $ci =& get_instance();
         $ci->load->model('registry_object/registry_objects','thisro');
+        $ci->load->model('services/connectiontree','connectiontree');
         $ro = $ci->thisro->getByID($id);
 
         $ancestors = $ci->connectiontree->getImmediateAncestors($ro, true);
@@ -364,7 +395,7 @@ class Registry_objectsMethod extends MethodHandler {
            foreach ($ancestors AS $ancestor_element)
             {
                 if($ro->id != $ancestor_element['registry_object_id']){
-                    $root_element_id = $ci->connectiontree->getRootAncestor($ci->thisro->getByID($ancestor_element['registry_object_id']), true);
+                  $root_element_id = $ci->connectiontree->getRootAncestor($ci->thisro->getByID($ancestor_element['registry_object_id']), true);
                   $root_registry_object = $ci->thisro->getByID($root_element_id->id);
 
                     // Only generate the tree if this is a unique ancestor
@@ -422,14 +453,22 @@ function identifierResolution($identifier,$type)
         case 'doi':
             if(!strpos($identifier,"doi.org/")) $identifier_href ="http://dx.doi.org/".$identifier;
             else $identifier_href = "http://dx.doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
-            return $identifier_href;
+            $identifiers['href'] = $identifier_href;
+            $identifiers['display_text'] = "http://dx.doi.org/".$identifier;
+            return  $identifiers;
             break;
         case 'ark':
-            if(!strpos($identifier,"http://")) $identifier_href =$identifier;
-            else $identifier_href = "http://".$identifier;
-            return $identifier_href;
+            $identifier = str_replace('http://','',str_replace('https://','',$identifier));
+            $identifiers['href'] = '';
+            $identifiers['display_text'] = $identifier;
+            return $identifier;
             break;
         case 'AU-ANL:PEAU':
+            if(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
+            else $identifier_href = "http://nla.gov.au/".substr($identifier,strpos($identifier,"nla.gov.au/")+11);
+            $identifiers['href'] = $identifier_href;
+            $identifiers['display_text'] = $identifier;
+            return  $identifiers;
             break;
         case 'handle':
             break;
