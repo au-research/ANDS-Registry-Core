@@ -144,28 +144,38 @@ class Registry_objectsMethod extends MethodHandler {
         $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
         $xml = simplexml_load_string($xml);
         $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        foreach($xml->{$this->ro->class}->coverage->temporal as $dates){
+        foreach($xml->{$this->ro->class}->coverage->temporal->date as $date){
             $eachDate = Array();
-            foreach($dates as $date)
-            {
+
                 $eachDate[] = Array(
                     'type'=>(string)$date['type'],
                     'dateFormat'=>(string)$date['dateFormat'],
                     'date'=>(string)($date)
 
                 );
-            }
+
 
             $result[] = Array(
 
-                'type' => (string) $dates['type'],
+                'type' => 'date',
                 'date' => $eachDate
 
             );
         }
+
+        foreach($xml->{$this->ro->class}->coverage->temporal->text as $temporal){
+
+
+            $result[] = Array(
+
+                'type' => 'text',
+                'date' => (string)$temporal
+
+        );
+        }
         return $result;
         /*
-     //this was the original code to get temporal data for the new rda however it was using index - need to use ro so we only get temporal coverage type dates
+     //this was the original code to get temporal data for the new rda however it wausing index - need to use ro so we only get temporal coverage type dates
       $result = array();
        if($this->index) {
            //date_from, date_to, earliest_year, latest_year
