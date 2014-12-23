@@ -16,11 +16,18 @@
 @if($ro-temporal)
     @foreach($ro->temporal as $date)
     <p>
+
         Data Temporal Coverage
         <?php
-        foreach($date['date'] as $each_date)
-        {
-            echo $each_date['type']." ".date('d M Y',strtotime($each_date['date']))." ";
+
+        if($date['type']=='date'){
+
+            foreach($date['date'] as $each_date)
+            {
+                echo $each_date['type']." ".date('d M Y',strtotime($each_date['date']))." ";
+            }
+        } elseif ($date['type']=='text'){
+            echo (string)$date['date'];
         }
         ?>
     </p>
