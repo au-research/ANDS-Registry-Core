@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'reuse', 'quality', 'dates', 'connectiontree'
+        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'reuse', 'quality', 'suggest', 'dates', 'connectiontree'
     );
 
     private $ro = null;
@@ -31,7 +31,6 @@ class Registry_objectsMethod extends MethodHandler {
         $result = array();
         if ($id){
             $ci->load->model('registry_object/registry_objects', 'ro');
-            $ci->load->model('connectiontree','connectiontree');
             $this->ro = new _registry_object($id);
             $this->populate_index($id);
             $method1s = explode('-', $method1);
@@ -92,13 +91,17 @@ class Registry_objectsMethod extends MethodHandler {
     private function suggest_handler() {
         $result = array();
 
-        //construct the pool
-        $pool = array();
+        //pools
+        $suggestors = array('subjects');
 
         //populate the pool with different suggestor
-        $suggested = $this->ro->getSuggestedLinks('subjects');
+        $ci =& get_instance();
 
-        var_dump($suggested);
+        foreach ($suggestors as $suggestor) {
+            $ci->load->model('registry_object/suggestors/'.$suggestor, 'ss');
+            $ci->ss->set_ro($this->ro);
+            $result[$suggestor] = $ci->ss->suggest();
+        }
 
         return $result;
     }
@@ -111,7 +114,6 @@ class Registry_objectsMethod extends MethodHandler {
                 $result[] = array(
                     'type' => $sub,
                     'value' => $this->index['identifier_value'][$key],
-                    'identifier' => identifierResolution($this->index['identifier_value'][$key],$sub)
                 );
             }
         }
@@ -136,35 +138,7 @@ class Registry_objectsMethod extends MethodHandler {
 
     private function temporal_handler() {
         // var_dump($this->index);
-
         $result = array();
-        $xml = $this->ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        foreach($xml->{$this->ro->class}->coverage->temporal as $dates){
-            $eachDate = Array();
-            foreach($dates as $date)
-            {
-                $eachDate[] = Array(
-                    'type'=>(string)$date['type'],
-                    'dateFormat'=>(string)$date['dateFormat'],
-                    'date'=>(string)($date)
-
-                );
-            }
-
-            $result[] = Array(
-
-                'type' => (string) $dates['type'],
-                'date' => $eachDate
-
-            );
-        }
-        return $result;
-      /*
-      //this was the original code to get temporal data for the new rda however it wausing index - need to use ro so we only get temporal coverage type dates
-       $result = array();
         if($this->index) {
             //date_from, date_to, earliest_year, latest_year
             if(isset($this->index['date_from'])){
@@ -180,9 +154,7 @@ class Registry_objectsMethod extends MethodHandler {
             if(isset($this->index['earliest_year'])) $result['earliest_year'] = $this->index['earliest_year'];
             if(isset($this->index['latest_year'])) $result['latest_year'] = $this->index['latest_year'];
         }
-
-
-        return $result; */
+        return $result;
     }
 
     private function searcher($params) {
@@ -263,7 +235,7 @@ class Registry_objectsMethod extends MethodHandler {
             $result[] = array(
                 'type' => $type,
                 'title' =>  (string) $relatedInfo->title,
-                'identifier' => Array('identifier_type'=>(string) $relatedInfo->identifier['type'],'identifier_value'=>(string) $relatedInfo->identifier,'identifier'=>$identifier_resolved),
+                'identifier' => Array('identifier_type'=>(string) $relatedInfo->identifier['type'],'identifier_value'=>(string) $relatedInfo->identifier,'identifier_href'=>$identifier_resolved),
                 'notes' => (string) $relatedInfo->notes
             );
         }
@@ -331,6 +303,7 @@ class Registry_objectsMethod extends MethodHandler {
         }
         return $result;
     }
+
     private function relationships_handler() {
         $result = array();
         $specific = isset($this->params[3]) ? $this->params[3]: null;
@@ -341,7 +314,6 @@ class Registry_objectsMethod extends MethodHandler {
         }
         return $relationships;
     }
-
 
     private function dates_handler() {
         $result = array();
@@ -410,7 +382,6 @@ class Registry_objectsMethod extends MethodHandler {
 
         return $trees;
     }
-
 }
 
 ///citation formation helper functions
@@ -451,22 +422,14 @@ function identifierResolution($identifier,$type)
         case 'doi':
             if(!strpos($identifier,"doi.org/")) $identifier_href ="http://dx.doi.org/".$identifier;
             else $identifier_href = "http://dx.doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
-            $identifiers['href'] = $identifier_href;
-            $identifiers['display_text'] = "http://dx.doi.org/".$identifier;
-            return  $identifiers;
+            return $identifier_href;
             break;
         case 'ark':
-            $identifier = str_replace('http://','',str_replace('https://','',$identifier));
-            $identifiers['href'] = '';
-            $identifiers['display_text'] = $identifier;
-            return $identifier;
+            if(!strpos($identifier,"http://")) $identifier_href =$identifier;
+            else $identifier_href = "http://".$identifier;
+            return $identifier_href;
             break;
         case 'AU-ANL:PEAU':
-            if(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
-            else $identifier_href = "http://nla.gov.au/".substr($identifier,strpos($identifier,"nla.gov.au/")+11);
-            $identifiers['href'] = $identifier_href;
-            $identifiers['display_text'] = $identifier;
-            return  $identifiers;
             break;
         case 'handle':
             break;
@@ -525,4 +488,3 @@ function titleCase($title)
     return $newtitle;
 
 }
-
