@@ -1,3 +1,36 @@
 .navbar {
 	margin-bottom:0px;
 }
+span.dynatree-empty,
+span.dynatree-vline,
+span.dynatree-connector,
+span.dynatree-expander,
+span.dynatree-icon,
+span.dynatree-checkbox,
+span.dynatree-radio,
+span.dynatree-drag-helper-img,
+#dynatree-drop-marker
+{
+    width: 16px;
+    height: 16px;
+    /*	display: -moz-inline-box; /* @ FF 1+2 removed for issue 221 */
+    /*	-moz-box-align: start; /* issue 221 */
+    display: inline-block; /* Required to make a span sizeable */
+    vertical-align: top;
+    background-repeat: no-repeat;
+    background-position: left;
+    background-image: url("icons.gif");
+}
+
+ul.dynatree-container
+{
+    font-family: tahoma, arial, helvetica;
+    font-size: 10pt; /* font size should not be too big */
+    white-space: nowrap;
+    padding: 3px;
+    margin: 0; /* issue 201 */
+    background-color: white;
+    border: none;
+    overflow: auto;
+    height: auto; /* issue 263 */
+}

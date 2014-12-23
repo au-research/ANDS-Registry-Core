@@ -95,7 +95,7 @@ function initConnectionGraph()
 							}
 
 							/* Change the icon in the tree */
-						/*	if (node.data['class']=="collection")
+							if (node.data['class']=="collection")
 							{
 								$(nodeSpan).find("span.dynatree-icon").css("background-position", "-38px -155px");
 							}
@@ -110,7 +110,7 @@ function initConnectionGraph()
 							else if (node.data['class']=="activity")
 							{
 								$(nodeSpan).find("span.dynatree-icon").css("background-position", "-57px -155px");
-							}  */
+							}
 							
 							$(nodeSpan).attr('title', $(nodeSpan).text());
 							$('a',$(nodeSpan)).attr('href', base_url + node.data.slug +"/"+node.data.registry_object_id);
