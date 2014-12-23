@@ -34,7 +34,7 @@ class Solr {
 		$this->options = array('q'=>'*:*','start'=>'0','indent'=>'on', 'wt'=>'json', 'fl'=>'*', 'rows'=>'10');
 		$this->multi_valued_fields = array('facet.field', 'fq');
 		$this->custom_query = false;
-		return true;
+		return $this;
 	}
 
 	/**
@@ -56,6 +56,7 @@ class Solr {
 		}else{
 		   $this->options[$field] = $value;
 		}
+		return $this;
 	}
 
    /**
@@ -67,6 +68,7 @@ class Solr {
 		if(isset($this->options[$field])){          
 		   unset($this->options[$field]);
 		}
+		return $this;
 	}
 
 	/**
@@ -86,6 +88,7 @@ class Solr {
 	 */
 	function setCustomQuery($query){
 		$this->custom_query = $query.'&wt=json';
+		return $this;
 	}
 
 	/**
@@ -111,7 +114,8 @@ class Solr {
 	 */
 	function setFacetOpt($field, $value=null){
 		$this->setOpt('facet','true');
-		$this->setOpt('facet.' . $field, $value); 
+		$this->setOpt('facet.' . $field, $value);
+		return $this;
 	}
 
 
@@ -121,6 +125,7 @@ class Solr {
 	 */
 	function setSolrUrl($value){
 		$this->solr_url = $value;
+		return $this;
 	}
 
 
@@ -477,6 +482,7 @@ class Solr {
 				
 			}
 		}
+		return $this;
 	}
 
 	/**
