@@ -51,6 +51,7 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'reuse' :          $result[$m1] = $this->relatedInfo_handler('reuseInformation'); break;
                         case 'quality' :        $result[$m1] = $this->relatedInfo_handler('dataQualityInformation'); break;
                         case 'dates' :          $result[$m1] = $this->dates_handler(); break;
+                        case 'publications' :   $result[$m1] = $this->relatedInfo_handler('publication'); break;
                         case 'connectiontree' : $result[$m1] = $this->connectiontree_handler($id); break;
                     }
                 }
@@ -385,7 +386,6 @@ class Registry_objectsMethod extends MethodHandler {
         }
         return $result;
     }
-
 
     private function connectiontree_handler($id)
     {

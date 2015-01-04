@@ -1,5 +1,5 @@
 @if($ro->relationships && isset($ro->relationships[0]['collection']))
-<h2>Related Publications</h2>
+<h2>Related Collections</h2>
 <ul>
 	@foreach($ro->relationships[0]['collection'] as $col)
 	<li><a href="">{{$col['title']}}</a></li>

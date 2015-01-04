@@ -3,7 +3,7 @@
 class Registry_objects extends CI_Model {
 
 	public function getByID($id) {
-		return new _ro($id, array('core', 'descriptions', 'relationships', 'subjects', 'identifiers', 'spatial', 'temporal','citations','reuse','quality','dates','connectiontree'));
+		return new _ro($id, array('core', 'descriptions', 'relationships', 'subjects', 'identifiers', 'spatial', 'temporal','citations','reuse','quality','dates','connectiontree','publications'));
 	}
 
 	public function getBySlug($slug) {
