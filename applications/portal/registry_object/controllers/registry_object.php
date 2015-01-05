@@ -11,6 +11,7 @@ class Registry_object extends MX_Controller {
 		$this->load->library('blade');
 
 		$this->blade
+			->set('scripts', array('view'))
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
 			->set('aside', $this->components['aside'])

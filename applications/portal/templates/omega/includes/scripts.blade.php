@@ -25,7 +25,6 @@
 <script src="{{asset_url('lib/jquery/dist/jquery.js', 'core')}}"></script>
 <script src="{{asset_url('lib/jquery-ui/jquery-ui.js', 'core')}}"></script>
 <script src="{{asset_url('lib/dynatree/src/jquery.dynatree.js', 'core')}}"></script>
-<script src="{{asset_url('js/view.js', 'core')}}"></script>
 
 <!-- Search Script and Resources is included in every page -->
 <script src="{{asset_url('js/search.js', 'core')}}"></script>
