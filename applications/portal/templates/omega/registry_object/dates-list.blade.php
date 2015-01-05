@@ -1,6 +1,6 @@
 @if(($ro->dates && isset($ro->dates[0]['type']))|| ($ro->temporal && isset($ro->temporal[0]['date'])))
 <h2>Dates</h2>
-@if($ro-dates)
+@if($ro->dates)
 	@foreach($ro->dates as $date)
     <p>
         {{$date['displayType']}}
@@ -13,7 +13,7 @@
     </p>
 	@endforeach
 @endif
-@if($ro-temporal)
+@if($ro->temporal)
     @foreach($ro->temporal as $date)
     <p>
 

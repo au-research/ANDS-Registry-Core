@@ -35,6 +35,7 @@ class _ro {
 		foreach($params as $par) {
 			$url.=$par.'-';
 		}
+		var_dump($url);
   		$content = @file_get_contents($url);
 		$content = json_decode($content, true);
 
