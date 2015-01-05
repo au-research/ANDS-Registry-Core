@@ -161,3 +161,7 @@ A crontab entry to send reports to all data source contacts quarterly
 might look like this:
 
     30 03 05 */3 * /full/path/to/python3.4 /full/path/to/linkchecker.py -i /full/path/to/linkchecker.ini -m RO >/dev/null 2>&1
+
+Or, to send all reports to a central administrator::
+
+    30 03 05 */3 * /full/path/to/python3.4 /full/path/to/linkchecker.py -i /full/path/to/linkchecker.ini -m RO -e admin.email@admin.com >/dev/null 2>&1
