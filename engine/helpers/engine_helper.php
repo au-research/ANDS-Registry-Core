@@ -313,9 +313,7 @@ function identifier_url($suffix=''){
 }
 
 function developer_url($suffix=''){
-	$CI =& get_instance();
-
-	return $CI->config->item('default_base_url') . 'developers/'. $suffix;
+	return 'http://developers.ands.org.au';
 }
 
 function current_protocol()

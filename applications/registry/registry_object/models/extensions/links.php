@@ -82,7 +82,7 @@ class links_Extension extends ExtensionBase
         $descriptions = $sXml->xpath('//ro:description');
         foreach ($descriptions AS $desc)
         {
-            $regex = '/https?\:\/\/[^\" <]+/i';
+            $regex = '/https?\:\/\/[^\"\'\s<]+/i';
             preg_match_all($regex, html_entity_decode($desc), $matches);
             $type = 'description_link';
             foreach($matches[0] as $url){
