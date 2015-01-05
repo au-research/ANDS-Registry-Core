@@ -49,7 +49,7 @@ $application_directives = array(
 	"portal" => 
 			array(	
 				"base_url" => "%%BASEURL%%/",
-				"active_application" => "portal2",
+				"active_application" => "portal",
 				"default_controller" => "page",
 				"routes" => array(
 					"topic/(:any)" => "topic/view_topic/$1",
