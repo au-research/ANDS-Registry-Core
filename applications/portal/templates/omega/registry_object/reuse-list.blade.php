@@ -5,7 +5,7 @@
         {{$reuse_info['title']}}<br />
         {{$reuse_info['identifier']['identifier_type']}} :
         @if($reuse_info['identifier']['identifier_href'])
-        <a href="{{$quality_info['identifier']['identifier_href']}}">{{$reuse_info['identifier']['identifier_value']}}</a><br />
+        <a href="{{$reuse_info['identifier']['identifier_href']}}">{{$reuse_info['identifier']['identifier_value']}}</a><br />
         @else
         {{$reuse_info['identifier']['identifier_value']}}<br />
         @endif

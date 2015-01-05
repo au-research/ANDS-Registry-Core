@@ -28,7 +28,7 @@ class Statistics extends MX_Controller
 
         $data['registry_statistics'] = $this->getRegistryStatistics($from, $to);
         $data['doi_statistics'] = $this->getDoiStatistics($from, $to);
-        //$data['pids_statistics'] = $this->getPidsStatistics($from, $to);
+        $data['pids_statistics'] = $this->getPidsStatistics($from, $to);
 
         $data['user_statistics'] = $this->getUserStatistics($from, $to);
         $data['title'] = "Statistics";

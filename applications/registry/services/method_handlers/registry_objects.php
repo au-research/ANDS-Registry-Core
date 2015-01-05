@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'reuse', 'quality', 'suggest', 'dates', 'connectiontree'
+        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'reuse', 'quality', 'suggest', 'dates', 'connectiontree', 'publications'
     );
 
     private $ro = null;
@@ -277,6 +277,8 @@ class Registry_objectsMethod extends MethodHandler {
                 'type' => $type,
                 'title' =>  (string) $relatedInfo->title,
                 'identifier' => Array('identifier_type'=>(string) $relatedInfo->identifier['type'],'identifier_value'=>(string) $relatedInfo->identifier,'identifier_href'=>$identifier_resolved),
+                'relation' =>Array('relation_type'=>(string) $relatedInfo->relation['type'],'description'=>(string) $relatedInfo->relation->description,'url'=>(string) $relatedInfo->relation->url),
+                //'relation' =>$relatedInfo->relation,
                 'notes' => (string) $relatedInfo->notes
             );
         }
