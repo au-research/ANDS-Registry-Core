@@ -114,7 +114,7 @@ class BaseChecker:
         """
         if path.startswith('http'):
             return path
-        if(port):
+        if port:
             return scheme + "://" + host + ":" + port + path
         else:
             return scheme + "://" + host + path
