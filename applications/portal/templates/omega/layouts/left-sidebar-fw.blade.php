@@ -17,7 +17,7 @@
     		            </div>
     		        </div>
     		    </section>
-    		    <section class="section swatch-gray" style="z-index:1">
+    		    <section class="section swatch-white" style="z-index:1;background:#e9e9e9">
     		    	<div class="container-fluid">
     		    		<div class="row element-short-top">
     		    			<div class="col-md-3 sidebar">

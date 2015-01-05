@@ -1,4 +1,4 @@
-var app = angular.module('search', ['ngSanitize', 'search_components'], function($interpolateProvider){
+var app = angular.module('app', ['ngSanitize', 'search_components'], function($interpolateProvider){
 	$interpolateProvider.startSymbol('[[');
 	$interpolateProvider.endSymbol(']]');
 });

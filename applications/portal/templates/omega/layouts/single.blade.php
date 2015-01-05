@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="app">
     @include('includes/header')
     <body>
         @include('includes/top-menu')

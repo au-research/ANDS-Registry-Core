@@ -1,7 +1,5 @@
 @extends('layouts/left-sidebar-fw')
-
 @section('content')
-
 <div class="panel panel-primary element-no-top element-small-bottom" data-os-animation="fadeInUp">
     @include('includes/search-header')
     <div  ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInUp" style="-webkit-animation: 0.2s;">
@@ -27,12 +25,9 @@
 </nav>
 
 <div class="clear"></div>
-
 @stop
-
 @section('sidebar')
-
-<div class="panel panel-primary element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
+<div class="panel panel-primary panel-green element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
     <div class="panel-heading">
         <h3 class="panel-title">Refine search results</h3>
     </div>
@@ -54,9 +49,7 @@
         </ul>
     </div>
 </div>
-
     @foreach ($facets as $facet)
     	@include('registry_object/facet/'.$facet)
     @endforeach
-
 @stop
