@@ -49,6 +49,11 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 		{value:100,label:'Show 100'}
 	];
 
+	$scope.sort = [
+		{value:'score desc',label:'Relevence'},
+		{value:'title asc',label:'Title A-Z'},
+	];
+
 	$scope.selectAdvancedField = function(field) {
 		$.each($scope.advanced_search.fields, function(){
 			this.active = false;
@@ -125,6 +130,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 			$scope.filters[$scope.search_type] = $scope.q;
 		}
 		if(!$scope.filters['rows']) $scope.filters['rows'] = 15;
+		if(!$scope.filters['sort']) $scope.filters['sort'] = 'score desc';
 		$scope.populateFilters();
 
 		//regular search
@@ -242,6 +248,11 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 			return false;
 		}
 		return false;
+	}
+
+	$scope.changeFilter = function(type, value) {
+		$scope.filters[type] = value;
+		$scope.hashChange();
 	}
 
 	$scope.toggleFilter = function(type, value, execute) {
