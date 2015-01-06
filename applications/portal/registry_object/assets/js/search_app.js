@@ -14,6 +14,31 @@ app.filter('trustAsHtml', ['$sce', function($sce){
 	}
 }]);
 
+app.filter('hightlight', function(){
+	return function(text) {
+		if(text.indexOf('@@@hl@@@')){
+			text = text.replace(/@@@hl@@@/g, '<b>');
+			text = text.replace(/@@@endhl@@@/g, '</b>');
+		}
+		return text;
+	}
+});
+
+app.directive('tooltip', function(){
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs){
+            $(element).hover(function(){
+                // on mouseenter
+                $(element).tooltip('show');
+            }, function(){
+                // on mouseleave
+                $(element).tooltip('hide');
+            });
+        }
+    };
+});
+
 app.controller('mainController', function($scope, search_factory, $location, $sce) {
 	$scope.q = '';
 	$scope.search_type = 'all';
@@ -26,6 +51,13 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 
 	$scope.advanced_search = {};
 	$scope.advanced_search.fields = search_factory.advanced_fields();
+
+	$scope.pp = [
+		{value:15,label:'Show 15'},
+		{value:50,label:'Show 50'},
+		{value:100,label:'Show 100'}
+	];
+
 	$scope.selectAdvancedField = function(field) {
 		$.each($scope.advanced_search.fields, function(){
 			this.active = false;
@@ -58,7 +90,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 		if(newv) {
 			$scope.allfilters = [];
 			$.each($scope.filters, function(i,k){
-				if(i!='p' && k) {
+				if(i!='p' && k && i!='rows') {
 					if(typeof k!='object') {
 						$scope.allfilters.push({'name':i,'value':k.toString()});
 					} else if(typeof k=='object') {
@@ -101,6 +133,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 			$scope.cleanfilters();
 			$scope.filters[$scope.search_type] = $scope.q;
 		}
+		if(!$scope.filters['rows']) $scope.filters['rows'] = 15;
 		$scope.populateFilters();
 
 		//regular search

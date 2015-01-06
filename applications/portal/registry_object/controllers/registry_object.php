@@ -49,12 +49,16 @@ class Registry_object extends MX_Controller {
 		$this->solr->setOpt('fl', 'id,title,description,slug');
 		$this->solr->setOpt('hl', 'true');
 		$this->solr->setOpt('hl.fl', '*');
-		$this->solr->setOpt('hl.simple.pre', '<b>');
-		$this->solr->setOpt('hl.simple.post', '</b>');
+		$this->solr->setOpt('hl.simple.pre', '&lt;b&gt;');
+		$this->solr->setOpt('hl.simple.post', '&lt;/b&gt;');
 		// $this->solr->setOpt('hl.alternateField', 'description');
 		// $this->solr->setOpt('hl.alternateFieldLength', '100');
 		// $this->solr->setOpt('hl.fragsize', '300');
 		// $this->solr->setOpt('hl.snippets', '100');
+		// 
+		// 
+		
+		// $this->solr->setOpt('fq', 'fulltext:(+creek)');
 
 		$this->solr->setFacetOpt('mincount','1');
 		$this->solr->setFacetOpt('limit','100');

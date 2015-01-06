@@ -7,7 +7,7 @@
             <ul class="list-unstyled">
         		<li ng-repeat="group in result.facets.group | limitTo:5">
         			<input type="checkbox" ng-checked="isFacet('group', group.name)" ng-click="toggleFilter('group', group.name)">
-        			<a href="" ng-click="toggleFilter('group', group.name)">
+        			<a href="" ng-click="toggleFilter('group', group.name)" title="[[group.name]] ([[group.value]])">
         				[[group.name]] ([[group.value]])
         			</a>
         		</li>
