@@ -16,6 +16,7 @@ class Registry_object extends MX_Controller {
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
 			->set('aside', $this->components['aside'])
+			->set('url', $ro->construct_api_url())
 			->render('registry_object/view');
 	}
 

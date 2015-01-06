@@ -17,6 +17,10 @@
 @stop
 
 @section('sidebar')
+<div class="sidebar-widget">
+	<h3>Debug Menu</h3>
+	<b>API URL</b> {{$ro->api_url}}
+</div>
 <div class="sidebar-widget widget_archive">
 	<h3 class="sidebar-header">Metadata Information</h3>
 	<ul>

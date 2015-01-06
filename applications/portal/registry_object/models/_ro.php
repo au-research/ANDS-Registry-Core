@@ -28,14 +28,19 @@ class _ro {
 		$this->fetch(array($par));
 	}
 
-	public function fetch($params = array('core')) {
-
+	public function construct_api_url($params = array('core')) {
 		$url = base_url().'registry/services/api/registry_objects/'.$this->id.'/';
-
 		foreach($params as $par) {
 			$url.=$par.'-';
 		}
-		var_dump($url);
+		return $url;
+	}
+
+	public function fetch($params = array('core')) {
+		
+		$url = $this->construct_api_url($params);
+		$this->prop['api_url'] = $url;
+		
   		$content = @file_get_contents($url);
 		$content = json_decode($content, true);
 

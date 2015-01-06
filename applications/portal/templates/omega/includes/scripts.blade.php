@@ -22,8 +22,9 @@
 @endif
 
 <!-- Search Script and Resources is included in every page -->
-<script src="{{asset_url('js/search.js', 'core')}}"></script>
 <script src="{{asset_url('js/search_components.js', 'core')}}"></script>
+<script src="{{asset_url('js/search.js', 'core')}}"></script>
+
 
 @if(isset($scripts))
 	@foreach($scripts as $script)
