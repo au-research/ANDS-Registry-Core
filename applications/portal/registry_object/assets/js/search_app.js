@@ -14,15 +14,6 @@ app.filter('trustAsHtml', ['$sce', function($sce){
 	}
 }]);
 
-app.filter('hightlight', function(){
-	return function(text) {
-		if(text.indexOf('@@@hl@@@')){
-			text = text.replace(/@@@hl@@@/g, '<b>');
-			text = text.replace(/@@@endhl@@@/g, '</b>');
-		}
-		return text;
-	}
-});
 
 app.directive('tooltip', function(){
     return {
@@ -202,8 +193,8 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 
 	$scope.addKeyWord = function(key) {
 		if (key) {
-			$scope.q += ' '+key;
-			$scope.hashChange();
+			$scope.toggleFilter('refine', key);
+			$scope.extra_keywords = '';
 		}
 	}
 

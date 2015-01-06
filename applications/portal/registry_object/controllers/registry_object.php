@@ -35,6 +35,7 @@ class Registry_object extends MX_Controller {
 	function s() {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 
 		$data = json_decode(file_get_contents("php://input"), true);
 		$filters = $data['filters'];
