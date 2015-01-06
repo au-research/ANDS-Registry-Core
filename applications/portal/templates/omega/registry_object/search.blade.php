@@ -1,4 +1,5 @@
 @extends('layouts/left-sidebar-fw')
+
 @section('content')
 <div class="panel panel-primary element-no-top element-small-bottom" data-os-animation="fadeInUp">
     @include('includes/search-header')
@@ -26,6 +27,7 @@
 
 <div class="clear"></div>
 @stop
+
 @section('sidebar')
 <div class="panel panel-primary panel-green element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
     <div class="panel-heading">

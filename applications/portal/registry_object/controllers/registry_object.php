@@ -39,6 +39,8 @@ class Registry_object extends MX_Controller {
 		$data = json_decode(file_get_contents("php://input"), true);
 		$filters = $data['filters'];
 
+		// sleep(2);
+
 		$this->load->library('solr');
 		$this->solr->setFilters($filters);
 		foreach($this->components['facet'] as $facet){

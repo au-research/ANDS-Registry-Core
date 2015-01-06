@@ -22,6 +22,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 	$scope.fields = ['title', 'description', 'subject'];
 	$scope.allfilters = [];
 	$scope.allfacets = [];
+	$scope.loading = false;
 
 	$scope.advanced_search = {};
 	$scope.advanced_search.fields = search_factory.advanced_fields();
@@ -90,6 +91,11 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 	}
 
 	$scope.search = function() {
+
+		if ($scope.loading) return false;
+
+		$scope.loading = true;
+
 		$scope.filters.q = $scope.q;
 		if ($scope.search_type!='all') {
 			$scope.cleanfilters();
@@ -138,6 +144,8 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 					$scope.page.pages.push(x);
 				}
 			}
+
+			$scope.loading = false;
 			
 		});
 
@@ -160,8 +168,10 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 	}
 
 	$scope.addKeyWord = function(key) {
-		$scope.q += ' '+key;
-		$scope.hashChange();
+		if (key) {
+			$scope.q += ' '+key;
+			$scope.hashChange();
+		}
 	}
 
 	$scope.isAdvancedSearchActive = function(type) {
