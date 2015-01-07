@@ -572,7 +572,7 @@ class Maintenance extends MX_Controller {
 			if($ro){
 				$this->benchmark->mark('enrich_ro_start');
 				//enrich
-				if($task=='sync' || $task=='full_enrich'){
+				if($task=='sync' || $task=='enrich'){
 					try{
                         $ro->processIdentifiers();
                         $ro->addRelationships();
@@ -595,7 +595,7 @@ class Maintenance extends MX_Controller {
 					}
 				}
 
-				if($task=='sync' || $task=='full_enrich'){
+				if($task=='sync' || $task=='enrich'){
 					try{
 						$ro->enrich();
 					}catch(Exception $e){
