@@ -8,6 +8,10 @@ class Profile extends MX_Controller {
 		}
 	}
 
+	function dashboard() {
+		$this->index();
+	}
+
 	function login() {
 		$authenticators = array(
 			'built-in' => array(
@@ -17,6 +21,10 @@ class Profile extends MX_Controller {
 			'ldap' => array(
 				'slug'		=> 'ldap',
 				'display' 	=> 'LDAP',
+			),
+			'social' => array(
+				'slug'		=> 'social',
+				'display'	=> 'Social'
 			)
 		);
 
@@ -33,8 +41,17 @@ class Profile extends MX_Controller {
 			->set('authenticators', $authenticators)
 			->set('default_authenticator', $default_authenticator)
 			->set('scripts', array('login'))
-			->set('lib', array('angular13'))
 			->render('profile/login');
+	}
+
+	function logout() {
+		if($this->user->isLoggedIn()) {
+			if(!session_id()) session_start();
+			$this->session->sess_destroy();
+			redirect('profile/login');
+		} else {
+			redirect('profile/login');
+		}
 	}
 
 	public function __construct() {

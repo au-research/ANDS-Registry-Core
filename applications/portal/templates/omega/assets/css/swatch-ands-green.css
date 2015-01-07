@@ -420,7 +420,7 @@
   color: white;
 }
 .swatch-white .tab-content, .swatch-white .nav-tabs .active a, .swatch-white .tab-content, .swatch-white .nav-tabs .active a:hover, [class*="swatch-"] .swatch-white .tab-content, [class*="swatch-"] .swatch-white .nav-tabs .active a, [class*="swatch-"] .swatch-white .tab-content, [class*="swatch-"] .swatch-white .nav-tabs .active a:hover {
-  background: #84a07b;
+  background: #ccc;
 }
 .swatch-white .nav-tabs > li > a:hover, .swatch-white .nav-tabs > li > a:focus, [class*="swatch-"] .swatch-white .nav-tabs > li > a:hover, [class*="swatch-"] .swatch-white .nav-tabs > li > a:focus {
   color: white;

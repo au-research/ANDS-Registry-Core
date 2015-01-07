@@ -81,6 +81,13 @@ class Auth extends CI_Controller {
 		}
 		
 	}
+
+	public function oauth(){
+		if ($_SERVER['REQUEST_METHOD'] === 'GET'){
+			$_GET = $_REQUEST;
+		}
+		require_once FCPATH.'/assets/lib/hybridauth/index.php';
+	}
 	
 	public function logout(){
 		// Logs the user out and redirects them to the homepage/logout confirmation screen

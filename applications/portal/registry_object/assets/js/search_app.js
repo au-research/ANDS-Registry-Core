@@ -86,7 +86,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 		if(newv) {
 			$scope.allfilters = [];
 			$.each($scope.filters, function(i,k){
-				if(i!='p' && k && i!='rows') {
+				if(i!='p' && k && i!='rows' && i!='sort') {
 					if(typeof k!='object') {
 						$scope.allfilters.push({'name':i,'value':k.toString()});
 					} else if(typeof k=='object') {
@@ -153,7 +153,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 			//construct the highlighting array
 			$.each($scope.result.highlighting, function(i,k){
 				$.each($scope.result.response.docs, function(){
-					if(this.id==i) {
+					if(this.id==i && !$.isEmptyObject(k)) {
 						this.hl = k;
 					}
 				});
