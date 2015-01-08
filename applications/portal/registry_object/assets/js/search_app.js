@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'search_components'], function($interpolateProvider){
+var app = angular.module('app', ['ngRoute', 'ngSanitize', 'search_components', 'profile_components'], function($interpolateProvider){
 	$interpolateProvider.startSymbol('[[');
 	$interpolateProvider.endSymbol(']]');
 });
@@ -30,7 +30,7 @@ app.directive('tooltip', function(){
     };
 });
 
-app.controller('mainController', function($scope, search_factory, $location, $sce) {
+app.controller('mainController', function($scope, search_factory, profile_factory, $location, $sce) {
 	$scope.q = '';
 	$scope.search_type = 'all';
 	$scope.filters = {};
@@ -105,6 +105,11 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 			$scope.cleanfilters();
 			$scope.filters[$scope.search_type] = $scope.q;
 		}
+		var hash = $scope.getHash();
+		$location.path(hash);
+	}
+
+	$scope.getHash = function() {
 		var hash = '';
 		$.each($scope.filters, function(i,k){
 			if(typeof k!='object'){
@@ -115,7 +120,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 				});
 			}
 		});
-		$location.path(hash);
+		return hash;
 	}
 
 	$scope.search = function() {
@@ -309,6 +314,12 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 				$scope.search_type = this.toString();
 				$scope.q = $scope.filters[this];
 			}
+		});
+	}
+
+	$scope.saveSearch = function(){
+		profile_factory.add_user_data('saved_search', $scope.getHash()).then(function(data){
+			alert('done');
 		});
 	}
 });

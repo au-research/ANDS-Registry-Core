@@ -36,6 +36,9 @@
     <div class="panel-body swatch-white">
         [[filters]]
     </div>
+    <div class="panel-body swatch-white">
+        <a href="" class="btn btn-primary" ng-click="saveSearch()">Save Search</a>
+    </div>
 </div>
 <div class="panel panel-primary panel-green element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
     <div class="panel-heading">
