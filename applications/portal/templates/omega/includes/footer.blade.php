@@ -1,6 +1,6 @@
-@if(!isset($search))
+
     @include('includes/advanced_search')
-@endif
+
  <footer id="footer" role="contentinfo">
     <section class="section swatch-black">
         <div class="container">

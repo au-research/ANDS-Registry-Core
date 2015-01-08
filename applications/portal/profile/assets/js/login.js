@@ -43,7 +43,6 @@ login_app.controller('loginCtrl', function($scope, $routeParams, loginService, $
 			username:$scope.username,
 			password:$scope.password
 		}
-
 		$('form button').button('loading');
 		$scope.message = false;
 		loginService.authenticate(method, data).then(function(data){
@@ -56,7 +55,6 @@ login_app.controller('loginCtrl', function($scope, $routeParams, loginService, $
 				} else {
 					document.location.href = $scope.redirect;
 				}
-				
 			}
 		});
 	}

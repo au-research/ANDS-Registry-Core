@@ -1,14 +1,13 @@
 @extends('layouts/left-sidebar-fw')
 
 @section('content')
-
 <div class="panel panel-primary element-no-top element-small-bottom" data-os-animation="fadeInUp">
     @include('includes/search-header')
     <div  ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInUp" style="-webkit-animation: 0.2s;">
         <div class="element-no-top element-no-bottom" data-os-animation="none" data-os-animation-delay="0s">
             <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
             <div ng-repeat="x in doc.hl">
-                <p ng-repeat="b in x" data-ng-bind-html="b"></p>
+                <p ng-repeat="b in x" data-ng-bind-html="b | trustAsHtml"></p>
             </div>
             <p data-ng-bind-html="doc.description | trustAsHtml" ng-show="!doc.hl"></p>
             <div class="toolbar" style="margin-top:15px;">
@@ -27,12 +26,18 @@
 </nav>
 
 <div class="clear"></div>
-
 @stop
 
 @section('sidebar')
-
-<div class="panel panel-primary element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Search debugging</h3>
+    </div>
+    <div class="panel-body swatch-white">
+        [[filters]]
+    </div>
+</div>
+<div class="panel panel-primary panel-green element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
     <div class="panel-heading">
         <h3 class="panel-title">Refine search results</h3>
     </div>
@@ -54,9 +59,7 @@
         </ul>
     </div>
 </div>
-
     @foreach ($facets as $facet)
     	@include('registry_object/facet/'.$facet)
     @endforeach
-
 @stop

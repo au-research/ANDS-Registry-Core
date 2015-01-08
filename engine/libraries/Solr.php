@@ -479,6 +479,15 @@ class Solr {
 				case 'random':
 					$this->setOpt('sort', 'random_'.rand(1,255642).' desc');
 					break;
+				case 'refine':
+					if(is_array($value)){
+						foreach($value as $v) {
+							$this->setOpt('fq', '+(title_search:("'.$v.'") description_value:("'.$v.'"))');
+						}
+					}else{
+						$this->setOpt('fq', '+(title_search:("'.$value.'") description_value:("'.$value.'"))');
+					}
+					break;
 				
 			}
 		}

@@ -11,9 +11,12 @@ class Registry_object extends MX_Controller {
 		$this->load->library('blade');
 
 		$this->blade
+			->set('scripts', array('view'))
+			->set('lib', array('jquery-ui', 'dynatree'))
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
 			->set('aside', $this->components['aside'])
+			->set('url', $ro->construct_api_url())
 			->render('registry_object/view');
 	}
 
@@ -32,9 +35,12 @@ class Registry_object extends MX_Controller {
 	function s() {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 
 		$data = json_decode(file_get_contents("php://input"), true);
 		$filters = $data['filters'];
+
+		// sleep(2);
 
 		$this->load->library('solr');
 		$this->solr->setFilters($filters);
@@ -44,12 +50,16 @@ class Registry_object extends MX_Controller {
 		$this->solr->setOpt('fl', 'id,title,description,slug');
 		$this->solr->setOpt('hl', 'true');
 		$this->solr->setOpt('hl.fl', '*');
-		$this->solr->setOpt('hl.simple.pre', '<b>');
-		$this->solr->setOpt('hl.simple.post', '</b>');
+		$this->solr->setOpt('hl.simple.pre', '&lt;b&gt;');
+		$this->solr->setOpt('hl.simple.post', '&lt;/b&gt;');
 		// $this->solr->setOpt('hl.alternateField', 'description');
 		// $this->solr->setOpt('hl.alternateFieldLength', '100');
 		// $this->solr->setOpt('hl.fragsize', '300');
 		// $this->solr->setOpt('hl.snippets', '100');
+		// 
+		// 
+		
+		// $this->solr->setOpt('fq', 'fulltext:(+creek)');
 
 		$this->solr->setFacetOpt('mincount','1');
 		$this->solr->setFacetOpt('limit','100');

@@ -721,6 +721,13 @@ data_source_id: {}
             try:
                 data_source_title = data_sources[data_source_id]['title']
                 client_broken_link_count = error_count[data_source_id]
+                # Don't go any further for this data source if there
+                # weren't any broken links. NB unlike in DOI.py,
+                # we have to do this check, as here we _do_ get elements
+                # in result_list for all data sources, even those
+                # with no errors.
+                if client_broken_link_count == 0:
+                    continue
                 message_time = datetime.datetime.now().strftime(
                     "%Y-%m-%d %H:%M")
                 message_text = self.MESSAGE_FORMAT.format(

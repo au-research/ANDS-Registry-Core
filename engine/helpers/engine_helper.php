@@ -229,7 +229,7 @@ function notifySiteAdmin($errno, $errstr, $errfile, $errline)
 	}
 }
 
-set_error_handler("default_error_handler");
+// set_error_handler("default_error_handler");
 
 function default_exception_handler( $e ) {
 
@@ -245,7 +245,7 @@ function default_exception_handler( $e ) {
    
     echo $_ci->load->view( 'footer' , $data , true);
 }
-set_exception_handler('default_exception_handler');
+// set_exception_handler('default_exception_handler');
 
 function json_exception_handler( $e ) {
     echo json_encode(array("status"=>"ERROR", "message"=> $e->getMessage()));
@@ -313,9 +313,7 @@ function identifier_url($suffix=''){
 }
 
 function developer_url($suffix=''){
-	$CI =& get_instance();
-
-	return $CI->config->item('default_base_url') . 'developers/'. $suffix;
+	return 'http://developers.ands.org.au';
 }
 
 function current_protocol()
@@ -470,6 +468,7 @@ function ulog($message='', $logger='activity', $type='info') {
 	if (!class_exists('Logging')) {
 		$CI->load->library('logging');
 	}
+	$CI->load->library('logging');
 
 	try {
 		$logger = $CI->logging->get_logger($logger);

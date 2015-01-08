@@ -15,6 +15,7 @@ angular.module('search_components',[])
 				var t = this.split('=');
 				var term = t[0];
 				var value = t[1];
+				if(term=='rows') value = parseInt(value);
 				if(term && value && term!=''){
 
 					if(filters[term]) {

@@ -148,34 +148,30 @@ class Registry_objectsMethod extends MethodHandler {
         $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
         $xml = simplexml_load_string($xml);
         $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        foreach($xml->{$this->ro->class}->coverage->temporal->date as $date){
-            $eachDate = Array();
+        if($xml->{$this->ro->class}->coverage->temporal){
+            foreach($xml->{$this->ro->class}->coverage->temporal->date as $date){
+                $eachDate = Array();
+                    $eachDate[] = Array(
+                        'type'=>(string)$date['type'],
+                        'dateFormat'=>(string)$date['dateFormat'],
+                        'date'=>(string)($date)
 
-                $eachDate[] = Array(
-                    'type'=>(string)$date['type'],
-                    'dateFormat'=>(string)$date['dateFormat'],
-                    'date'=>(string)($date)
+                    );
+                $result[] = Array(
+
+                    'type' => 'date',
+                    'date' => $eachDate
 
                 );
+            }
 
+            foreach($xml->{$this->ro->class}->coverage->temporal->text as $temporal){
+                $result[] = Array(
+                    'type' => 'text',
+                    'date' => (string)$temporal
 
-            $result[] = Array(
-
-                'type' => 'date',
-                'date' => $eachDate
-
-            );
-        }
-
-        foreach($xml->{$this->ro->class}->coverage->temporal->text as $temporal){
-
-
-            $result[] = Array(
-
-                'type' => 'text',
-                'date' => (string)$temporal
-
-        );
+                );
+            }
         }
         return $result;
         /*
@@ -368,32 +364,26 @@ class Registry_objectsMethod extends MethodHandler {
         $xml = simplexml_load_string($xml);
         $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
         foreach($xml->{$this->ro->class}->dates as $dates){
-           $eachDate = Array();
-           $displayType = titleCase(str_replace("dc.","",(string) $dates['type']));
-           foreach($dates as $date)
-           {
+            $eachDate = Array();
+            $displayType = titleCase(str_replace("dc.","",(string) $dates['type']));
+            foreach($dates as $date) {
                $eachDate[] = Array(
                    'type'=>(string)$date['type'],
                    'dateFormat'=>(string)$date['dateFormat'],
                    'date'=>(string)($date)
 
                );
-           }
-
+            }
             $result[] = Array(
-
                 'type' => (string) $dates['type'],
                 'displayType' => $displayType,
                 'date' => $eachDate
-
             );
-
         }
         return $result;
     }
 
-    private function connectiontree_handler($id)
-    {
+    private function connectiontree_handler($id) {
         $ci =& get_instance();
         $ci->load->model('registry_object/registry_objects','thisro');
         $ci->load->model('services/connectiontree','connectiontree');

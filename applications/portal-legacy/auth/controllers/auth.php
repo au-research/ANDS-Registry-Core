@@ -46,7 +46,7 @@ class Auth extends MX_Controller {
 	}
 
 
-	public function login($provider){
+	public function log12in($provider){
 		$redirect = $this->input->get('redirect');
 		if(!$redirect) $redirect = '/';
 		try{

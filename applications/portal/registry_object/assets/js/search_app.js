@@ -14,6 +14,22 @@ app.filter('trustAsHtml', ['$sce', function($sce){
 	}
 }]);
 
+
+app.directive('tooltip', function(){
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs){
+            $(element).hover(function(){
+                // on mouseenter
+                $(element).tooltip('show');
+            }, function(){
+                // on mouseleave
+                $(element).tooltip('hide');
+            });
+        }
+    };
+});
+
 app.controller('mainController', function($scope, search_factory, $location, $sce) {
 	$scope.q = '';
 	$scope.search_type = 'all';
@@ -22,9 +38,22 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 	$scope.fields = ['title', 'description', 'subject'];
 	$scope.allfilters = [];
 	$scope.allfacets = [];
+	$scope.loading = false;
 
 	$scope.advanced_search = {};
 	$scope.advanced_search.fields = search_factory.advanced_fields();
+
+	$scope.pp = [
+		{value:15,label:'Show 15'},
+		{value:50,label:'Show 50'},
+		{value:100,label:'Show 100'}
+	];
+
+	$scope.sort = [
+		{value:'score desc',label:'Relevence'},
+		{value:'title asc',label:'Title A-Z'},
+	];
+
 	$scope.selectAdvancedField = function(field) {
 		$.each($scope.advanced_search.fields, function(){
 			this.active = false;
@@ -57,7 +86,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 		if(newv) {
 			$scope.allfilters = [];
 			$.each($scope.filters, function(i,k){
-				if(i!='p' && k) {
+				if(i!='p' && k && i!='rows' && i!='sort') {
 					if(typeof k!='object') {
 						$scope.allfilters.push({'name':i,'value':k.toString()});
 					} else if(typeof k=='object') {
@@ -90,11 +119,18 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 	}
 
 	$scope.search = function() {
+
+		if ($scope.loading) return false;
+
+		$scope.loading = true;
+
 		$scope.filters.q = $scope.q;
 		if ($scope.search_type!='all') {
 			$scope.cleanfilters();
 			$scope.filters[$scope.search_type] = $scope.q;
 		}
+		if(!$scope.filters['rows']) $scope.filters['rows'] = 15;
+		if(!$scope.filters['sort']) $scope.filters['sort'] = 'score desc';
 		$scope.populateFilters();
 
 		//regular search
@@ -117,7 +153,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 			//construct the highlighting array
 			$.each($scope.result.highlighting, function(i,k){
 				$.each($scope.result.response.docs, function(){
-					if(this.id==i) {
+					if(this.id==i && !$.isEmptyObject(k)) {
 						this.hl = k;
 					}
 				});
@@ -138,6 +174,8 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 					$scope.page.pages.push(x);
 				}
 			}
+
+			$scope.loading = false;
 			
 		});
 
@@ -160,8 +198,10 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 	}
 
 	$scope.addKeyWord = function(key) {
-		$scope.q += ' '+key;
-		$scope.hashChange();
+		if (key) {
+			$scope.toggleFilter('refine', key);
+			$scope.extra_keywords = '';
+		}
 	}
 
 	$scope.isAdvancedSearchActive = function(type) {
@@ -208,6 +248,11 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 			return false;
 		}
 		return false;
+	}
+
+	$scope.changeFilter = function(type, value) {
+		$scope.filters[type] = value;
+		$scope.hashChange();
 	}
 
 	$scope.toggleFilter = function(type, value, execute) {

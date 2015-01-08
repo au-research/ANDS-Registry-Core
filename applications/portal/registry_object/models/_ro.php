@@ -1,7 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class _ro {
-
 	public $prop;
 
 	function __construct($id, $populate=array('core')) {
@@ -29,14 +28,19 @@ class _ro {
 		$this->fetch(array($par));
 	}
 
-	public function fetch($params = array('core')) {
-
+	public function construct_api_url($params = array('core')) {
 		$url = base_url().'registry/services/api/registry_objects/'.$this->id.'/';
-
 		foreach($params as $par) {
 			$url.=$par.'-';
 		}
-echo $url;
+		return $url;
+	}
+
+	public function fetch($params = array('core')) {
+		
+		$url = $this->construct_api_url($params);
+		$this->prop['api_url'] = $url;
+		
   		$content = @file_get_contents($url);
 		$content = json_decode($content, true);
 
@@ -54,6 +58,4 @@ echo $url;
 
 
 	}
-
-
 }
