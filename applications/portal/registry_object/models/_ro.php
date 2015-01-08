@@ -42,6 +42,7 @@ echo $url;
 
 		if ($content['status']=='success') {
 			foreach($params as $par) {
+
 				if(isset($content['message'][$par])) {
 					foreach($content['message'][$par] as $attr=>$val) {
 						$this->prop[$par][$attr] = $val;
@@ -49,6 +50,9 @@ echo $url;
 				}
 			}
 		}
+
+
+
 	}
 
 

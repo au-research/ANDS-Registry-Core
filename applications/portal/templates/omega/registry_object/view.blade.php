@@ -6,7 +6,15 @@
 ?>
 <article class="post">
 	<header class="post-head">
-		<h2 class="post-title bordered"><a href="#">{{$ro->core['title']}}</a></h2>
+        <div class="post-title bordered">
+		<h2 ><a href="#">{{$ro->core['title']}}</a></h2>
+        @if($ro->relationships && isset($ro->relationships[0]['party_one']))
+            @foreach($ro->relationships[0]['party_one'] as $col)
+            <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}">{{$col['title']}}</a> {{$col['relation_type']}}
+            @endforeach
+
+        @endif
+        </div>
 	</header>
 	<div class="post-body">
 		@foreach ($contents as $content)
@@ -17,16 +25,14 @@
 @stop
 
 @section('sidebar')
+
+
 <div class="sidebar-widget widget_archive">
-	<h3 class="sidebar-header">Metadata Information</h3>
-	<ul>
-		<li><a href="">Descriptions (6)</a></li>
-		<li><a href="">Related Publications (2)</a></li>
-		<li><a href="">Related Researchers (2)</a></li>
-		<li><a href="">Related Services (2)</a></li>
-		<li><a href="">Related Services (1)</a></li>
-		<li><a href="">Related Projects (1)</a></li>
-	</ul>
+
+    @foreach ($aside as $side)
+    @include('registry_object/'.$side)
+    @endforeach
+
 </div>
 <div class="sidebar-widget widget_recent_entries">
 	<h3 class="sidebar-header">Suggested Datasets</h3>

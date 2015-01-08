@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'reuse', 'quality', 'suggest', 'dates', 'connectiontree', 'publications'
+        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'reuse', 'quality', 'suggest', 'dates', 'connectiontree', 'publications', 'rights', 'directaccess','contact'
     );
 
     private $ro = null;
@@ -53,6 +53,9 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'dates' :          $result[$m1] = $this->dates_handler(); break;
                         case 'publications' :   $result[$m1] = $this->relatedInfo_handler('publication'); break;
                         case 'connectiontree' : $result[$m1] = $this->connectiontree_handler($id); break;
+                        case 'rights' :         $result[$m1] = $this->rights_handler(); break;
+                        case 'directaccess' :       $result[$m1] = $this->download_handler(); break;
+                        case 'contact' :        $result[$m1] = $this->contact_handler(); break;
                     }
                 }
             }
@@ -111,11 +114,11 @@ class Registry_objectsMethod extends MethodHandler {
         $result = array();
         if($this->index) {
             //identifier_type, identifier_value
-            foreach($this->index['identifier_type'] as $key=>$sub) {
+            foreach($this->index['identifier_type'] as $key=>$type) {
                 $result[] = array(
-                    'type' => $sub,
+                    'type' => $type,
                     'value' => $this->index['identifier_value'][$key],
-                    'identifier' => identifierResolution($this->index['identifier_value'][$key],$sub)
+                    'identifier' => identifierResolution($this->index['identifier_value'][$key],$type)
                 );
             }
         }
@@ -176,7 +179,7 @@ class Registry_objectsMethod extends MethodHandler {
         }
         return $result;
         /*
-     //this was the original code to get temporal data for the new rda however it wausing index - need to use ro so we only get temporal coverage type dates
+     //this was the original code to get temporal data for the new rda however it was using index - need to use ro so we only get temporal coverage type dates
       $result = array();
        if($this->index) {
            //date_from, date_to, earliest_year, latest_year
@@ -278,12 +281,12 @@ class Registry_objectsMethod extends MethodHandler {
                 'title' =>  (string) $relatedInfo->title,
                 'identifier' => Array('identifier_type'=>(string) $relatedInfo->identifier['type'],'identifier_value'=>(string) $relatedInfo->identifier,'identifier_href'=>$identifier_resolved),
                 'relation' =>Array('relation_type'=>(string) $relatedInfo->relation['type'],'description'=>(string) $relatedInfo->relation->description,'url'=>(string) $relatedInfo->relation->url),
-                //'relation' =>$relatedInfo->relation,
                 'notes' => (string) $relatedInfo->notes
             );
         }
         return $result;
     }
+
     private function citations_handler() {
         $result = array();
         $xml = $this->ro->getSimpleXML();
@@ -396,35 +399,145 @@ class Registry_objectsMethod extends MethodHandler {
         $ci->load->model('services/connectiontree','connectiontree');
         $ro = $ci->thisro->getByID($id);
 
-        $ancestors = $ci->connectiontree->getImmediateAncestors($ro, true);
-
-        $depth = 5;
         $trees = array();
 
-        if ($ancestors)
-        {
+        if($ro->class == 'collection'){
 
-           foreach ($ancestors AS $ancestor_element)
+            $ancestors = $ci->connectiontree->getImmediateAncestors($ro, true);
+
+            $depth = 5;
+
+            if ($ancestors)
             {
-                if($ro->id != $ancestor_element['registry_object_id']){
-                  $root_element_id = $ci->connectiontree->getRootAncestor($ci->thisro->getByID($ancestor_element['registry_object_id']), true);
-                  $root_registry_object = $ci->thisro->getByID($root_element_id->id);
 
-                    // Only generate the tree if this is a unique ancestor
-                   if (!isset($ci->connectiontree->recursed_children[$root_registry_object->id]))
-                    {
-                        $trees[] = $ci->connectiontree->get($root_registry_object, $depth, true, $ro->id);
+               foreach ($ancestors AS $ancestor_element)
+                {
+                    if($ro->id != $ancestor_element['registry_object_id']){
+                      $root_element_id = $ci->connectiontree->getRootAncestor($ci->thisro->getByID($ancestor_element['registry_object_id']), true);
+                      $root_registry_object = $ci->thisro->getByID($root_element_id->id);
+
+                        // Only generate the tree if this is a unique ancestor
+                       if (!isset($ci->connectiontree->recursed_children[$root_registry_object->id]))
+                        {
+                            $trees[] = $ci->connectiontree->get($root_registry_object, $depth, true, $ro->id);
+                        }
                     }
                 }
             }
+            else
+            {
+                $trees[] = $ci->connectiontree->get($ro, $depth, true);
+            }
         }
-        else
-        {
-            $trees[] = $ci->connectiontree->get($ro, $depth, true);
-        }
-
         return $trees;
     }
+
+    private function rights_handler()
+    {
+        $rights = array();
+        $xml = $this->ro->getSimpleXML();
+        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+        $xml = simplexml_load_string($xml);
+        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+        foreach($xml->{$this->ro->class}->rights as $right){
+
+            foreach($right->accessRights as $accessRights){
+                $rights[] = Array(
+                  'rights_type' => 'accessRights',
+                  'uri'=>(string)$accessRights['rightsUri'],
+                  'type' => (string)$accessRights['type'],
+                  'value' => (string)$accessRights
+                );
+            }
+            foreach($right->rightsStatement as $rightsStatement){
+                $rights[] = Array(
+                    'rights_type' => 'rightsStatement',
+                    'uri'=>(string)$rightsStatement['rightsUri'],
+                    'type' => (string)$rightsStatement['type'],
+                    'value' => (string)$rightsStatement
+                );
+            }
+            foreach($right->licence as $licence){
+                $rights[] = Array(
+                    'rights_type' => 'licence',
+                    'uri'=>(string)$licence['rightsUri'],
+                    'type' => (string)$licence['type'],
+                    'value' => (string)$licence
+                );
+            }
+        }
+        return $rights;
+    }
+
+    private function download_handler()
+    {
+        $download = array();
+
+        $xml = $this->ro->getSimpleXML();
+        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+        $xml = simplexml_load_string($xml);
+        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+        foreach($xml->{$this->ro->class}->location->address->electronic as $directaccess){
+            if($directaccess['type']=='url'&& $directaccess['target']=='directDownload'){
+                $download[] = Array(
+                    'contact_type' => 'url',
+                    'contact_value' => (string)$contact
+                );
+
+            }
+
+        }
+        return $download;
+    }
+
+    private function contact_handler()
+    {
+        $contacts = array();
+        $xml = $this->ro->getSimpleXML();
+        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+        $xml = simplexml_load_string($xml);
+        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+        foreach($xml->{$this->ro->class}->location->address->electronic as $contact) {
+            if($contact['type']=='url'){
+                $contacts[] = Array(
+                    'contact_type' => 'url',
+                    'contact_value' => (string)$contact
+                );
+
+            }
+
+        }
+        foreach($xml->{$this->ro->class}->location->address->physical as $contact){
+            if($contact['type']=='physical'){
+                $contacts[] = Array(
+                    'contact_type' => 'telephoneNumber',
+                    'contact_value' => (string)$contact
+                );
+
+            }
+            if($contact->addressPart['type']=='telephoneNumber'){
+                $contacts[] = Array(
+                    'contact_type' => 'telephoneNumber',
+                    'contact_value' => (string)$contact
+                );
+
+            }
+            if($contact->addressPart['type']=='faxNumber'){
+                $contacts[] = Array(
+                    'contact_type' => 'faxNumber',
+                    'contact_value' => (string)$contact
+                );
+
+            }
+        }
+
+
+
+                     //   <xsl:apply-templates select="ro:location/ro:address/ro:physical"/></p>
+                    //</xsl:if>
+        return $contacts;
+    }
+
 }
 
 ///citation formation helper functions
@@ -466,27 +579,37 @@ function identifierResolution($identifier,$type)
             if(!strpos($identifier,"doi.org/")) $identifier_href ="http://dx.doi.org/".$identifier;
             else $identifier_href = "http://dx.doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
             $identifiers['href'] = $identifier_href;
-            $identifiers['display_text'] = "http://dx.doi.org/".$identifier;
+            $identifiers['display_text'] = strtoupper($type);
+            $identifiers['hover_text'] = '';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/doi_icon.png alt="External Link"/>';
             return  $identifiers;
             break;
         case 'ark':
             $identifier = str_replace('http://','',str_replace('https://','',$identifier));
             $identifiers['href'] = '';
             $identifiers['display_text'] = $identifier;
-            return $identifier;
+            $identifiers['hover_text'] = '';
+            return $identifiers;
             break;
         case 'AU-ANL:PEAU':
             if(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
             else $identifier_href = "http://nla.gov.au/".substr($identifier,strpos($identifier,"nla.gov.au/")+11);
             $identifiers['href'] = $identifier_href;
-            $identifiers['display_text'] = $identifier;
+            $identifiers['display_text'] = strtoupper($type);
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/nla_icon.png alt="External Link"/>';
             return  $identifiers;
             break;
         case 'handle':
+
             break;
         case 'purl':
             break;
         case 'uri':
+            $identifiers['href'] = $identifier;
+            $identifiers['display_text'] = strtoupper($type);
+            $identifiers['hover_text'] = 'Resolve this URI';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/external_link.png alt="External Link"/>';
+            return $identifiers;
             break;
         case 'urn':
             break;

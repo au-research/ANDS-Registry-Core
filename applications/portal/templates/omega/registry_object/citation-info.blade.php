@@ -4,7 +4,7 @@
 
 @if($ro->citations)
 <div id="citation">
-    <h2>Suggested Citation</h2>
+    <h3>Cite</h3>
     @foreach($order as $o)
 	    @foreach($ro->citations as $citation)
             @if($citation['type']==$o)
@@ -22,7 +22,7 @@
             ({{$citation['date']}}): {{$citation['title']}}.
             {{$citation['publisher']}}.
             {{$citation['identifier_type']}} :{{$citation['identifier']}}
-             <br /><a href="{{$citation['identifierResolved']['href']}}">{{$citation['identifierResolved']['display_text']}}</a>
+             <br /><a href="{{$citation['identifierResolved']['href']}}">{{$citation['identifier']}}</a>
             @if($citation['url'])
                 <br /><a href="{{$citation['url']}}">{{$citation['url']}}</a>
             @endif
