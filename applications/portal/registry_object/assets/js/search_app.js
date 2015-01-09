@@ -43,6 +43,8 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 	$scope.advanced_search = {};
 	$scope.advanced_search.fields = search_factory.advanced_fields();
 
+	$scope.selected = [];
+
 	$scope.pp = [
 		{value:15,label:'Show 15'},
 		{value:50,label:'Show 50'},
@@ -71,6 +73,7 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 		}
 		$('#advanced_search').modal();
 	}
+
 	$scope.closeAdvanced = function() {
 		$('#advanced_search').modal('hide');	
 	}
@@ -202,6 +205,17 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 		});
 	}
 
+	$scope.toggleResult = function(ro) {
+		var exist = false;
+		$.each($scope.selected, function(i,k){
+			if(k && ro.id == k.id) {
+				$scope.selected.splice(i, 1);
+				exist = true;
+			}
+		});
+		if(!exist) $scope.selected.push(ro);
+	}
+
 	$scope.addKeyWord = function(key) {
 		if (key) {
 			$scope.toggleFilter('refine', key);
@@ -317,9 +331,15 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 		});
 	}
 
-	$scope.saveSearch = function(){
-		profile_factory.add_user_data('saved_search', $scope.getHash()).then(function(data){
-			alert('done');
-		});
+	$scope.add_user_data = function(type) {
+		if(type=='saved_record') {
+			profile_factory.add_user_data('saved_record', $scope.selected).then(function(data){
+				alert('done');
+			});
+		} else if(type=='saved_search') {
+			profile_factory.add_user_data('saved_search', $scope.getHash()).then(function(data){
+				alert('done');
+			});
+		}
 	}
 });

@@ -2,7 +2,7 @@
 @if(isset($user->user_data['saved_record']))
 	<ul>
 	@foreach($user->user_data['saved_record'] as $ss)
-		<li><a href="{{$ss['url']}}">{{$ss['id']}}</a></li>
+		<li><a href="{{$ss['url']}}">{{$ss['title']}}</a></li>
 	@endforeach
 	</ul>
 @else

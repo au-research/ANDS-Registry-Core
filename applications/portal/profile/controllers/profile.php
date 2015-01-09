@@ -16,19 +16,29 @@ class Profile extends MX_Controller {
 		$data = json_decode(file_get_contents("php://input"), true);
 		$data = $data['data'];
 
+		$this->load->model('portal_user');
+		
 		//prepare the data to be saved
 		if ($type=='saved_search') {
 			$data = array(
 				'query_string' => $data
 			);
+			$saved_data = array(
+				'type' => $type,
+				'value' => $data
+			);
+			$this->portal_user->add_user_data($saved_data);
+		} if ($type=='saved_record') {
+			foreach($data as $d) {
+				if (!$this->portal_user->has_saved_search($d['id'])){
+					$saved_data = array(
+						'type' => $type,
+						'value' => array('id'=>$d['id'], 'slug'=>$d['slug'], 'url' => portal_url($d['slug'].'/'.$d['id']), 'title'=>$d['title'])
+					);
+					$this->portal_user->add_user_data($saved_data);
+				}
+			}
 		}
-
-		$saved_data = array(
-			'type' => $type,
-			'value' => $data
-		);
-		$this->load->model('portal_user');
-		$this->portal_user->add_user_data($saved_data);
 	}
 
 	public function test() {
