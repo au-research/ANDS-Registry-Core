@@ -16,6 +16,7 @@ class Registry_objectsMethod extends MethodHandler {
 
     private $ro = null;
     private $index = null;
+    private $xml = null;
     
     //var $params, $options, $formatter; 
     function handle($params=''){
@@ -32,7 +33,7 @@ class Registry_objectsMethod extends MethodHandler {
         if ($id){
             $ci->load->model('registry_object/registry_objects', 'ro');
             $this->ro = new _registry_object($id);
-            $this->populate_index($id);
+            $this->populate_resource($id);
             $method1s = explode('-', $method1);
             foreach($method1s as $m1){
                 if($m1 && in_array($m1, $this->valid_methods)) {
@@ -65,7 +66,15 @@ class Registry_objectsMethod extends MethodHandler {
         return $this->formatter->display($result);
     }
 
-    private function populate_index($id) {
+    /**
+     * populate the SOLR index for fast searching on normalized fields and the commonly used Simple XML
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @param  registry_object_id $id 
+     * @return [populated $this->index and $this->xml]
+     */
+    private function populate_resource($id) {
+
+        //local SOLR index for fast searching
         $ci =& get_instance();
         $ci->load->library('solr');
         $ci->solr->setOpt('fq', '+id:'.$id);
@@ -74,8 +83,22 @@ class Registry_objectsMethod extends MethodHandler {
         if(sizeof($result['response']['docs']) == 1) {
             $this->index = $result['response']['docs'][0];
         }
+
+        //local XML resource
+        $xml = $this->ro->getSimpleXML();
+        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+        $xml = simplexml_load_string($xml);
+        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+        if ($xml) {
+            $this->xml = $xml;
+        }
     }
 
+    /**
+     * Subjects handler
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @return array list of subjects from SOLR index
+     */
     private function subjects_handler() {
         $result = array();
         if($this->index) {
@@ -92,6 +115,12 @@ class Registry_objectsMethod extends MethodHandler {
         return $result;
     }
 
+    /**
+     * Suggested Datasets handler
+     * returns a list of suggested datasets based on different type of pools
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @return array
+     */
     private function suggest_handler() {
         $result = array();
 
@@ -110,6 +139,11 @@ class Registry_objectsMethod extends MethodHandler {
         return $result;
     }
 
+    /**
+     * Identifiers handler
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @return array list of identifier from SOLR index
+     */
     private function identifiers_handler() {
         $result = array();
         if($this->index) {
@@ -125,6 +159,11 @@ class Registry_objectsMethod extends MethodHandler {
         return $result;
     }
 
+    /**
+     * Spatial handler
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @return array list of spatial polygons, extents and center from SOLR index, provide an area sum
+     */
     private function spatial_handler() {
         $result = array();
         if($this->index && isset($this->index['spatial_coverage_extents'])) {
@@ -141,62 +180,45 @@ class Registry_objectsMethod extends MethodHandler {
         return $result;
     }
 
+    /**
+    * Temporal handler
+    * @author Liz Woods <liz.woods@ands.org.au>
+    * @return array list of all temporal fields
+    */
     private function temporal_handler() {
-        // var_dump($this->index);
         $result = array();
-        $xml = $this->ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        if($xml->{$this->ro->class}->coverage->temporal){
-            foreach($xml->{$this->ro->class}->coverage->temporal->date as $date){
-                $eachDate = Array();
-                    $eachDate[] = Array(
-                        'type'=>(string)$date['type'],
-                        'dateFormat'=>(string)$date['dateFormat'],
-                        'date'=>(string)($date)
+        if ($this->index && $this->xml->{$this->ro->class}->coverage) {
+            if($this->xml->{$this->ro->class}->coverage->temporal){
+                foreach($xml->{$this->ro->class}->coverage->temporal->date as $date){
+                    $eachDate = Array();
+                        $eachDate[] = Array(
+                            'type'=>(string)$date['type'],
+                            'dateFormat'=>(string)$date['dateFormat'],
+                            'date'=>(string)($date)
+                        );
+                    $result[] = Array(
 
+                        'type' => 'date',
+                        'date' => $eachDate
                     );
-                $result[] = Array(
-
-                    'type' => 'date',
-                    'date' => $eachDate
-
-                );
-            }
-
-            foreach($xml->{$this->ro->class}->coverage->temporal->text as $temporal){
-                $result[] = Array(
-                    'type' => 'text',
-                    'date' => (string)$temporal
-
-                );
+                }
+                foreach($xml->{$this->ro->class}->coverage->temporal->text as $temporal){
+                    $result[] = Array(
+                        'type' => 'text',
+                        'date' => (string)$temporal
+                    );
+                }
             }
         }
         return $result;
-        /*
-     //this was the original code to get temporal data for the new rda however it was using index - need to use ro so we only get temporal coverage type dates
-      $result = array();
-       if($this->index) {
-           //date_from, date_to, earliest_year, latest_year
-           if(isset($this->index['date_from'])){
-               foreach($this->index['date_from'] as $sub) {
-                   $result['date_from'][] = $sub;
-               }
-           }
-           if(isset($this->index['date_to'])){
-               foreach($this->index['date_to'] as $sub) {
-                   $result['date_to'][] = $sub;
-               }
-           }
-           if(isset($this->index['earliest_year'])) $result['earliest_year'] = $this->index['earliest_year'];
-           if(isset($this->index['latest_year'])) $result['latest_year'] = $this->index['latest_year'];
-       }
-
-
-       return $result; */
     }
 
+    /**
+    * Search handler
+    * Used for searching and interacting with the SOLR index at a RESTful level
+    * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+    * @return solr_result
+    */
     private function searcher($params) {
         $result = array();
         $ci =& get_instance();
@@ -233,6 +255,12 @@ class Registry_objectsMethod extends MethodHandler {
         return $result;
     }
 
+    /**
+    * CORE handler
+    * Returns core registry object attribute
+    * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+    * @return array
+    */
     private function core_handler() {
         $result = array();
         $fl = isset($this->params['fl']) ? explode(',',$this->params['fl']) : explode(',',$this->default_params['fl']);
@@ -245,107 +273,123 @@ class Registry_objectsMethod extends MethodHandler {
         return $result;
     }
 
+    /**
+    * Descriptions handler
+    * As an example on how to get data from multiple source, index and xml
+    * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+    * @return array list of description with types
+    */
     private function descriptions_handler() {
         $result = array();
-        $xml = $this->ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        foreach($xml->{$this->ro->class}->description as $description){
-            $type = (string) $description['type'];
-            $description_str = html_entity_decode((string) $description);
-            $result[] = array(
-                'type' => $type,
-                'description' => $description_str
-            );
-        }
-        return $result;
-    }
-
-    private function relatedInfo_handler($relatedInfo_type) {
-        $result = array();
-        $xml = $this->ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        foreach($xml->{$this->ro->class}->relatedInfo as $relatedInfo){
-            $type = (string) $relatedInfo['type'];
-            $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
-            if($type==$relatedInfo_type)
-            $result[] = array(
-                'type' => $type,
-                'title' =>  (string) $relatedInfo->title,
-                'identifier' => Array('identifier_type'=>(string) $relatedInfo->identifier['type'],'identifier_value'=>(string) $relatedInfo->identifier,'identifier_href'=>$identifier_resolved),
-                'relation' =>Array('relation_type'=>(string) $relatedInfo->relation['type'],'description'=>(string) $relatedInfo->relation->description,'url'=>(string) $relatedInfo->relation->url),
-                'notes' => (string) $relatedInfo->notes
-            );
-        }
-        return $result;
-    }
-
-    private function citations_handler() {
-        $result = array();
-        $xml = $this->ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        foreach($xml->{$this->ro->class}->citationInfo as $citation){
-             foreach($citation->citationMetadata as $citationMetadata){
-                 $contributors = Array();
-                 foreach($citationMetadata->contributor as $contributor)
-                 {
-                    $nameParts = Array();
-                    foreach($contributor->namePart as $namePart)
-                     {
-                             $nameParts[] = array(
-                             'namePart_type' => (string)$namePart['type'],
-                             'name' => (string)$namePart
-                         );
-                     }
-                     $contributors[] =array(
-                         'name' => $nameParts,
-                         'seq' => (string)$contributor['seq'],
-                     );
-                 }
-                 usort($contributors,"seq");
-                 $displayNames ='';
-                 $contributorCount = 0;
-                 foreach($contributors as $contributor){
-                    $contributorCount++;
-                    $displayNames .= formatName($contributor['name']);
-                    if($contributorCount < count($contributors)) $displayNames .= "; ";
-                 }
-                 $identifierResolved = identifierResolution((string)$citationMetadata->identifier, (string)$citationMetadata->identifier['type']);
-
-                 $result[] = array(
-                     'type'=> 'metadata',
-                     'identifier' => (string)$citationMetadata->identifier,
-                     'identifier_type' => strtoupper((string)$citationMetadata->identifier['type']),
-                     'identifierResolved' => $identifierResolved,
-                     'version' => (string)$citationMetadata->version,
-                     'publisher' => (string)$citationMetadata->publisher,
-                     'url' => (string)$citationMetadata->url,
-                     'context' => (string)$citationMetadata->context,
-                     'placePublished' => (string)$citationMetadata->placePublished,
-                     'title' => (string)$citationMetadata->title,
-                     'date_type' => (string)$citationMetadata->date['type'],
-                     'date' => date("Y",strtotime((string)$citationMetadata->date)),
-                     'contributors' => $displayNames
-                 );
-
-             }
-            foreach($citation->fullCitation as $fullCitation){
+        if ($this->xml) {
+            foreach($this->xml->{$this->ro->class}->description as $description){
+                $type = (string) $description['type'];
+                $description_str = html_entity_decode((string) $description);
                 $result[] = array(
-                    'type'=> 'fullCitation',
-                    'value' => (string)$fullCitation,
-                    'citation_type' => (string)$fullCitation['style']
+                    'type' => $type,
+                    'description' => $description_str
                 );
-
             }
         }
         return $result;
     }
 
+    /**
+    * Related Info handler
+    * @author Liz Woods <liz.woods@ands.org.au>
+    * @param  string type
+    * @return array
+    */
+    private function relatedInfo_handler($relatedInfo_type) {
+        $result = array();
+        if ($this->xml) {
+            foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo){
+                $type = (string) $relatedInfo['type'];
+                $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
+                if($type==$relatedInfo_type)
+                $result[] = array(
+                    'type' => $type,
+                    'title' =>  (string) $relatedInfo->title,
+                    'identifier' => Array('identifier_type'=>(string) $relatedInfo->identifier['type'],'identifier_value'=>(string) $relatedInfo->identifier,'identifier_href'=>$identifier_resolved),
+                    'relation' =>Array('relation_type'=>(string) $relatedInfo->relation['type'],'description'=>(string) $relatedInfo->relation->description,'url'=>(string) $relatedInfo->relation->url),
+                    'notes' => (string) $relatedInfo->notes
+                );
+            }
+        }
+        return $result;
+    }
+
+    /**
+    * Citations handler
+    * @author Liz Woods <liz.woods@ands.org.au>
+    * @return array
+    */
+    private function citations_handler() {
+        $result = array();
+        if ($this->xml) {
+            foreach($this->xml->{$this->ro->class}->citationInfo as $citation){
+                 foreach($citation->citationMetadata as $citationMetadata){
+                     $contributors = Array();
+                     foreach($citationMetadata->contributor as $contributor)
+                     {
+                        $nameParts = Array();
+                        foreach($contributor->namePart as $namePart)
+                         {
+                                 $nameParts[] = array(
+                                 'namePart_type' => (string)$namePart['type'],
+                                 'name' => (string)$namePart
+                             );
+                         }
+                         $contributors[] =array(
+                             'name' => $nameParts,
+                             'seq' => (string)$contributor['seq'],
+                         );
+                     }
+                     usort($contributors,"seq");
+                     $displayNames ='';
+                     $contributorCount = 0;
+                     foreach($contributors as $contributor){
+                        $contributorCount++;
+                        $displayNames .= formatName($contributor['name']);
+                        if($contributorCount < count($contributors)) $displayNames .= "; ";
+                     }
+                     $identifierResolved = identifierResolution((string)$citationMetadata->identifier, (string)$citationMetadata->identifier['type']);
+
+                     $result[] = array(
+                         'type'=> 'metadata',
+                         'identifier' => (string)$citationMetadata->identifier,
+                         'identifier_type' => strtoupper((string)$citationMetadata->identifier['type']),
+                         'identifierResolved' => $identifierResolved,
+                         'version' => (string)$citationMetadata->version,
+                         'publisher' => (string)$citationMetadata->publisher,
+                         'url' => (string)$citationMetadata->url,
+                         'context' => (string)$citationMetadata->context,
+                         'placePublished' => (string)$citationMetadata->placePublished,
+                         'title' => (string)$citationMetadata->title,
+                         'date_type' => (string)$citationMetadata->date['type'],
+                         'date' => date("Y",strtotime((string)$citationMetadata->date)),
+                         'contributors' => $displayNames
+                     );
+
+                 }
+                foreach($citation->fullCitation as $fullCitation){
+                    $result[] = array(
+                        'type'=> 'fullCitation',
+                        'value' => (string)$fullCitation,
+                        'citation_type' => (string)$fullCitation['style']
+                    );
+
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+    * Relationships handler
+    * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+    * @return array
+    */
     private function relationships_handler() {
         $result = array();
         $specific = isset($this->params[3]) ? $this->params[3]: null;
@@ -357,32 +401,40 @@ class Registry_objectsMethod extends MethodHandler {
         return $relationships;
     }
 
+    /**
+    * Citations handler
+    * @author Liz Woods <liz.woods@ands.org.au>
+    * @return array
+    */
     private function dates_handler() {
         $result = array();
-        $xml = $this->ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        foreach($xml->{$this->ro->class}->dates as $dates){
-            $eachDate = Array();
-            $displayType = titleCase(str_replace("dc.","",(string) $dates['type']));
-            foreach($dates as $date) {
-               $eachDate[] = Array(
-                   'type'=>(string)$date['type'],
-                   'dateFormat'=>(string)$date['dateFormat'],
-                   'date'=>(string)($date)
+        if ($this->xml) {
+            foreach($this->xml->{$this->ro->class}->dates as $dates){
+                $eachDate = Array();
+                $displayType = titleCase(str_replace("dc.","",(string) $dates['type']));
+                foreach($dates as $date) {
+                   $eachDate[] = Array(
+                       'type'=>(string)$date['type'],
+                       'dateFormat'=>(string)$date['dateFormat'],
+                       'date'=>(string)($date)
 
-               );
+                   );
+                }
+                $result[] = Array(
+                    'type' => (string) $dates['type'],
+                    'displayType' => $displayType,
+                    'date' => $eachDate
+                );
             }
-            $result[] = Array(
-                'type' => (string) $dates['type'],
-                'displayType' => $displayType,
-                'date' => $eachDate
-            );
         }
         return $result;
     }
 
+    /**
+    * Connection Tree handler
+    * @author Liz Woods <liz.woods@ands.org.au>
+    * @return array
+    */
     private function connectiontree_handler($id) {
         $ci =& get_instance();
         $ci->load->model('registry_object/registry_objects','thisro');
@@ -391,140 +443,129 @@ class Registry_objectsMethod extends MethodHandler {
 
         $trees = array();
 
-        if($ro->class == 'collection'){
-
+        if ($ro->class == 'collection') {
             $ancestors = $ci->connectiontree->getImmediateAncestors($ro, true);
-
             $depth = 5;
-
-            if ($ancestors)
-            {
-
-               foreach ($ancestors AS $ancestor_element)
-                {
+            if ($ancestors) {
+               foreach ($ancestors AS $ancestor_element) {
                     if($ro->id != $ancestor_element['registry_object_id']){
-                      $root_element_id = $ci->connectiontree->getRootAncestor($ci->thisro->getByID($ancestor_element['registry_object_id']), true);
-                      $root_registry_object = $ci->thisro->getByID($root_element_id->id);
+                        $root_element_id = $ci->connectiontree->getRootAncestor($ci->thisro->getByID($ancestor_element['registry_object_id']), true);
+                        $root_registry_object = $ci->thisro->getByID($root_element_id->id);
 
                         // Only generate the tree if this is a unique ancestor
-                       if (!isset($ci->connectiontree->recursed_children[$root_registry_object->id]))
-                        {
+                        if (!isset($ci->connectiontree->recursed_children[$root_registry_object->id])) {
                             $trees[] = $ci->connectiontree->get($root_registry_object, $depth, true, $ro->id);
                         }
                     }
                 }
-            }
-            else
-            {
+            } else {
                 $trees[] = $ci->connectiontree->get($ro, $depth, true);
             }
         }
         return $trees;
     }
 
-    private function rights_handler()
-    {
+    /**
+    * Rights handler
+    * @author Liz Woods <liz.woods@ands.org.au>
+    * @return array
+    */
+    private function rights_handler() {
         $rights = array();
-        $xml = $this->ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        foreach($xml->{$this->ro->class}->rights as $right){
+        if ($this->xml) {
+            foreach($this->xml->{$this->ro->class}->rights as $right){
 
-            foreach($right->accessRights as $accessRights){
-                $rights[] = Array(
-                  'rights_type' => 'accessRights',
-                  'uri'=>(string)$accessRights['rightsUri'],
-                  'type' => (string)$accessRights['type'],
-                  'value' => (string)$accessRights
-                );
-            }
-            foreach($right->rightsStatement as $rightsStatement){
-                $rights[] = Array(
-                    'rights_type' => 'rightsStatement',
-                    'uri'=>(string)$rightsStatement['rightsUri'],
-                    'type' => (string)$rightsStatement['type'],
-                    'value' => (string)$rightsStatement
-                );
-            }
-            foreach($right->licence as $licence){
-                $rights[] = Array(
-                    'rights_type' => 'licence',
-                    'uri'=>(string)$licence['rightsUri'],
-                    'type' => (string)$licence['type'],
-                    'value' => (string)$licence
-                );
+                foreach($right->accessRights as $accessRights){
+                    $rights[] = Array(
+                      'rights_type' => 'accessRights',
+                      'uri'=>(string)$accessRights['rightsUri'],
+                      'type' => (string)$accessRights['type'],
+                      'value' => (string)$accessRights
+                    );
+                }
+                foreach($right->rightsStatement as $rightsStatement){
+                    $rights[] = Array(
+                        'rights_type' => 'rightsStatement',
+                        'uri'=>(string)$rightsStatement['rightsUri'],
+                        'type' => (string)$rightsStatement['type'],
+                        'value' => (string)$rightsStatement
+                    );
+                }
+                foreach($right->licence as $licence){
+                    $rights[] = Array(
+                        'rights_type' => 'licence',
+                        'uri'=>(string)$licence['rightsUri'],
+                        'type' => (string)$licence['type'],
+                        'value' => (string)$licence
+                    );
+                }
             }
         }
         return $rights;
     }
 
+    /**
+    * Download Direct Access handler
+    * @author Liz Woods <liz.woods@ands.org.au>
+    * @return array
+    */
     private function download_handler()
     {
         $download = array();
-
-        $xml = $this->ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        foreach($xml->{$this->ro->class}->location->address->electronic as $directaccess){
-            if($directaccess['type']=='url'&& $directaccess['target']=='directDownload'){
-                $download[] = Array(
-                    'contact_type' => 'url',
-                    'contact_value' => (string)$directaccess
-                );
-
+        if ($this->xml && $this->xml->{$this->ro->class}->location && $this->xml->{$this->ro->class}->location->address) {
+            foreach($this->xml->{$this->ro->class}->location->address->electronic as $directaccess){
+                if($directaccess['type']=='url'&& $directaccess['target']=='directDownload'){
+                    $download[] = Array(
+                        'contact_type' => 'url',
+                        'contact_value' => (string)$contact
+                    );
+                }
             }
-
         }
         return $download;
     }
 
+    /**
+    * Contacts handler
+    * @author Liz Woods <liz.woods@ands.org.au>
+    * @return array
+    */
     private function contact_handler()
     {
         $contacts = array();
-        $xml = $this->ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        foreach($xml->{$this->ro->class}->location->address->electronic as $contact) {
-            if($contact['type']=='url'){
-                $contacts[] = Array(
-                    'contact_type' => 'url',
-                    'contact_value' => (string)$contact
-                );
-
+        if ($this->xml && $this->xml->{$this->ro->class}->location && $this->xml->{$this->ro->class}->location->address) {
+            foreach($this->xml->{$this->ro->class}->location->address->electronic as $contact) {
+                if($contact['type']=='url'){
+                    $contacts[] = Array(
+                        'contact_type' => 'url',
+                        'contact_value' => (string)$contact
+                    );
+                }
             }
+            foreach($this->xml->{$this->ro->class}->location->address->physical as $contact){
+                if($contact['type']=='physical'){
+                    $contacts[] = Array(
+                        'contact_type' => 'telephoneNumber',
+                        'contact_value' => (string)$contact
+                    );
 
-        }
-        foreach($xml->{$this->ro->class}->location->address->physical as $contact){
-            if($contact['type']=='physical'){
-                $contacts[] = Array(
-                    'contact_type' => 'telephoneNumber',
-                    'contact_value' => (string)$contact
-                );
+                }
+                if($contact->addressPart['type']=='telephoneNumber'){
+                    $contacts[] = Array(
+                        'contact_type' => 'telephoneNumber',
+                        'contact_value' => (string)$contact
+                    );
 
-            }
-            if($contact->addressPart['type']=='telephoneNumber'){
-                $contacts[] = Array(
-                    'contact_type' => 'telephoneNumber',
-                    'contact_value' => (string)$contact
-                );
+                }
+                if($contact->addressPart['type']=='faxNumber'){
+                    $contacts[] = Array(
+                        'contact_type' => 'faxNumber',
+                        'contact_value' => (string)$contact
+                    );
 
-            }
-            if($contact->addressPart['type']=='faxNumber'){
-                $contacts[] = Array(
-                    'contact_type' => 'faxNumber',
-                    'contact_value' => (string)$contact
-                );
-
+                }
             }
         }
-
-
-
-                     //   <xsl:apply-templates select="ro:location/ro:address/ro:physical"/></p>
-                    //</xsl:if>
         return $contacts;
     }
 
