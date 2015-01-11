@@ -189,7 +189,7 @@ class Registry_objectsMethod extends MethodHandler {
         $result = array();
         if ($this->index && $this->xml->{$this->ro->class}->coverage) {
             if($this->xml->{$this->ro->class}->coverage->temporal){
-                foreach($xml->{$this->ro->class}->coverage->temporal->date as $date){
+                foreach($this->xml->{$this->ro->class}->coverage->temporal->date as $date){
                     $eachDate = Array();
                         $eachDate[] = Array(
                             'type'=>(string)$date['type'],
@@ -202,7 +202,7 @@ class Registry_objectsMethod extends MethodHandler {
                         'date' => $eachDate
                     );
                 }
-                foreach($xml->{$this->ro->class}->coverage->temporal->text as $temporal){
+                foreach($this->xml->{$this->ro->class}->coverage->temporal->text as $temporal){
                     $result[] = Array(
                         'type' => 'text',
                         'date' => (string)$temporal
@@ -517,7 +517,7 @@ class Registry_objectsMethod extends MethodHandler {
                 if($directaccess['type']=='url'&& $directaccess['target']=='directDownload'){
                     $download[] = Array(
                         'contact_type' => 'url',
-                        'contact_value' => (string)$contact
+                        'contact_value' => (string)$directaccess
                     );
                 }
             }
