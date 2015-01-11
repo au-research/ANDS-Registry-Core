@@ -11,7 +11,7 @@
             </div>
             <p data-ng-bind-html="doc.description | trustAsHtml" ng-show="!doc.hl"></p>
             <div class="toolbar" style="margin-top:15px;">
-                <input type="checkbox"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">View Record</a>
+                <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
             </div>
         </div>
     </div>
@@ -35,6 +35,9 @@
     </div>
     <div class="panel-body swatch-white">
         [[filters]]
+    </div>
+    <div class="panel-body swatch-white">
+        <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')">Save Search</a>
     </div>
 </div>
 <div class="panel panel-primary panel-green element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">

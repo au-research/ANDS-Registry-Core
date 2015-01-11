@@ -229,7 +229,7 @@ function notifySiteAdmin($errno, $errstr, $errfile, $errline)
 	}
 }
 
-// set_error_handler("default_error_handler");
+set_error_handler("default_error_handler");
 
 function default_exception_handler( $e ) {
 
@@ -245,7 +245,7 @@ function default_exception_handler( $e ) {
    
     echo $_ci->load->view( 'footer' , $data , true);
 }
-// set_exception_handler('default_exception_handler');
+set_exception_handler('default_exception_handler');
 
 function json_exception_handler( $e ) {
     echo json_encode(array("status"=>"ERROR", "message"=> $e->getMessage()));
@@ -263,21 +263,23 @@ function asset_url( $path, $loc = 'modules')
 
 	if($loc == 'base'){
 		return $CI->config->item('default_base_url').'assets/'.$path;
-	}else if($loc == 'shared'){
+	} else if ($loc == 'shared'){
 		return $CI->config->item('default_base_url').'assets/shared/'.$path;
-	}else if($loc == 'core'){
+	} else if( $loc == 'core'){
 		return base_url( 'assets/core/' . $path );
-	}else if($loc == 'modules'){
+	} else if ($loc == 'modules'){
 		if ($module_path = $CI->router->fetch_module()){
 			return base_url( 'assets/' . $module_path . "/" . $path );
 		}
 		else{
 			return base_url( 'assets/' . $path );
 		}
-	}else if($loc == 'templates'){
+	} else if ($loc == 'templates'){
 		return base_url('assets/templates/'.$path);
-	}else if($loc =='base_path'){
+	} else if ($loc =='base_path'){
 		return $CI->config->item('default_base_url').$path;
+	} else if ($loc == 'full_base_path') {
+		return base_url('assets/'.$path);
 	}
 }
 

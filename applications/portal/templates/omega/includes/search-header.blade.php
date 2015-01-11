@@ -8,5 +8,8 @@
 		<div style="width:auto;display:inline-block;">
 			<select ng-options="item.value as item.label for item in sort" ng-model="filters.sort" ng-change="changeFilter('sort', filters.sort)"></select>
 		</div>
+		<div style="width:auto;display:inline-block;">
+			<a class="btn">[[selected.length]] selected record</a> <a href="" class="btn btn-primary" ng-click="add_user_data('saved_record')">Add to Favourites</a>
+		</div>
 	</div>
 </div>

@@ -22,9 +22,9 @@
 @endif
 
 <!-- Search Script and Resources is included in every page -->
-<script src="{{asset_url('js/search_components.js', 'core')}}"></script>
-<script src="{{asset_url('js/search.js', 'core')}}"></script>
-
+<script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('profile/js/profile_components.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('registry_object/js/search.js', 'full_base_path')}}"></script>
 
 @if(isset($scripts))
 	@foreach($scripts as $script)

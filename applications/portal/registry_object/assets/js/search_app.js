@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'search_components'], function($interpolateProvider){
+var app = angular.module('app', ['ngRoute', 'ngSanitize', 'search_components', 'profile_components'], function($interpolateProvider){
 	$interpolateProvider.startSymbol('[[');
 	$interpolateProvider.endSymbol(']]');
 });
@@ -30,7 +30,7 @@ app.directive('tooltip', function(){
     };
 });
 
-app.controller('mainController', function($scope, search_factory, $location, $sce) {
+app.controller('mainController', function($scope, search_factory, profile_factory, $location, $sce) {
 	$scope.q = '';
 	$scope.search_type = 'all';
 	$scope.filters = {};
@@ -42,6 +42,8 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 
 	$scope.advanced_search = {};
 	$scope.advanced_search.fields = search_factory.advanced_fields();
+
+	$scope.selected = [];
 
 	$scope.pp = [
 		{value:15,label:'Show 15'},
@@ -71,6 +73,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 		}
 		$('#advanced_search').modal();
 	}
+
 	$scope.closeAdvanced = function() {
 		$('#advanced_search').modal('hide');	
 	}
@@ -105,6 +108,11 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 			$scope.cleanfilters();
 			$scope.filters[$scope.search_type] = $scope.q;
 		}
+		var hash = $scope.getHash();
+		$location.path(hash);
+	}
+
+	$scope.getHash = function() {
 		var hash = '';
 		$.each($scope.filters, function(i,k){
 			if(typeof k!='object'){
@@ -115,7 +123,7 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 				});
 			}
 		});
-		$location.path(hash);
+		return hash;
 	}
 
 	$scope.search = function() {
@@ -195,6 +203,17 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 				}
 			});
 		});
+	}
+
+	$scope.toggleResult = function(ro) {
+		var exist = false;
+		$.each($scope.selected, function(i,k){
+			if(k && ro.id == k.id) {
+				$scope.selected.splice(i, 1);
+				exist = true;
+			}
+		});
+		if(!exist) $scope.selected.push(ro);
 	}
 
 	$scope.addKeyWord = function(key) {
@@ -310,5 +329,17 @@ app.controller('mainController', function($scope, search_factory, $location, $sc
 				$scope.q = $scope.filters[this];
 			}
 		});
+	}
+
+	$scope.add_user_data = function(type) {
+		if(type=='saved_record') {
+			profile_factory.add_user_data('saved_record', $scope.selected).then(function(data){
+				alert('done');
+			});
+		} else if(type=='saved_search') {
+			profile_factory.add_user_data('saved_search', $scope.getHash()).then(function(data){
+				alert('done');
+			});
+		}
 	}
 });

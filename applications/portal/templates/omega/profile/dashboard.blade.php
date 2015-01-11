@@ -2,7 +2,9 @@
 @section('content')
 <article>
   <section class="section swatch-white">
-    {{$this->user->name()}}
+    
+	@include('profile/dashboard_modules/saved_searches')
+	@include('profile/dashboard_modules/saved_records')
   </section>
 </article>
 @stop
