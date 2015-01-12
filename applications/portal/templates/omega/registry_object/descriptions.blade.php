@@ -1,7 +1,7 @@
 <?php
 	$order = array('brief', 'full');
 ?>
-<div id="descriptions">
+<div id="descriptions" style="clear:both">
 @if($ro->descriptions)
 
 	@foreach($order as $o)

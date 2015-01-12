@@ -517,7 +517,8 @@ class Registry_objectsMethod extends MethodHandler {
                 if($directaccess['type']=='url'&& $directaccess['target']=='directDownload'){
                     $download[] = Array(
                         'contact_type' => 'url',
-                        'contact_value' => (string)$directaccess
+                        'contact_value' => (string)$directaccess->value,
+                        'title'=>(string)$directaccess->title,
                     );
                 }
             }

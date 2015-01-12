@@ -7,15 +7,12 @@
 <article class="post">
 	<header class="post-head">
         <div class="post-title bordered">
-		<h2 ><a href="#">{{$ro->core['title']}}</a></h2>
-        @if($ro->relationships && isset($ro->relationships[0]['party_one']))
-            @foreach($ro->relationships[0]['party_one'] as $col)
-            <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}">{{$col['title']}}</a> {{$col['relation_type']}}
+            @foreach ($view_headers as $view_header)
+                @include('registry_object/'.$view_header)
             @endforeach
-
-        @endif
         </div>
 	</header>
+
 	<div class="post-body">
 		@foreach ($contents as $content)
 			@include('registry_object/'.$content)
