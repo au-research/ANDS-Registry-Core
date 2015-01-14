@@ -860,10 +860,10 @@ class Statistics extends MX_Controller
                 $slug = trim($result->getPagePath(), '/');
                 $the_slug = explode("/", $slug);
 
-                if (isset($the_slug[1])) {
+                if (isset($slug[1])) {
                     $objectData = $this->ro->getByID($the_slug[1]);
 
-                    if ($objectData) {
+                    if ($objectData->slug != '') {
                         $data = array(
                             //'id' => '',
                             'slug' => $objectData->slug,
@@ -879,7 +879,7 @@ class Statistics extends MX_Controller
                     } else {
                         $objectData = $this->ro->getBySlug($the_slug[0]);
 
-                        if ($objectData) {
+                        if ($objectData->slug != '') {
                             $data = array(
                                // 'id' => '',
                                 'slug' => $objectData->slug,
@@ -894,10 +894,10 @@ class Statistics extends MX_Controller
                             );
                         }
                     }
-                } elseif (isset($the_slug[0])) {
+                } elseif (isset($slug[0])) {
                     $objectData = $this->ro->getBySlug($the_slug[0]);
 
-                    if ($objectData) {
+                    if ($objectData->slug != '') {
                         $data = array(
                             //'id' => '',
                             'slug' => $objectData->slug,

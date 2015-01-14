@@ -12,7 +12,7 @@ class Registry_object extends MX_Controller {
 
 		$this->blade
 			->set('scripts', array('view'))
-			->set('lib', array('jquery-ui', 'dynatree'))
+			->set('lib', array('jquery-ui', 'dynatree','qTip'))
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
 			->set('aside', $this->components['aside'])

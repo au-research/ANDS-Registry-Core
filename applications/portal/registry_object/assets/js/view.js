@@ -1,7 +1,13 @@
 $(document).ready(function() {
     initConnectionGraph()
-});
+    //console.log($.browser)
+    $('a[title]').qtip( {
+        content:{text:'My content'},
+       // show:{target: $('a')}
 
+    });
+
+});
 
 
 function traverseAndSelectChildren(tree, select_id)

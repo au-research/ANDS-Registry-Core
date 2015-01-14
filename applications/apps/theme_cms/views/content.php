@@ -72,7 +72,7 @@
 							<select ng-model="c.heading" ng-options="h.value as h.title for h in available_headings"></select>
 							<hr/>
 							<div ng-show="c.type == 'html'">
-								<textarea ui-tinymce="tinymceOptions" ng-model="c.content" class="editor"></textarea>
+								<textarea ui-tinymce="tinymceOptions" ng-model="c.content"></textarea>
 							</div>
 
 							<div ng-show="c.type == 'gallery'">

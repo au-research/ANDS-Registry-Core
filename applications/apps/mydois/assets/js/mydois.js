@@ -9,9 +9,6 @@ $(document).on('click', '.nav li', function(){
 });
 
 $(document).on('click', '#linkChecker', function(){
-    $('#linkChecker_message').removeClass('alert alert-info');
-    $('#linkChecker_message').html('');
-    $("#linkChecker_message").html('<p>Checking.....</p><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div>')
 	var app_id = $(this).attr('app_id');
 	$.ajax({
 		url:apps_url+'mydois/runDoiLinkChecker', 
@@ -19,7 +16,6 @@ $(document).on('click', '#linkChecker', function(){
 		data: {app_id:app_id},
 		success: function(data){
 			if(data.status=='SUCCESS'){
-                $('#linkChecker_message').html('');
 				$('#linkChecker_result').html(data.message);																				
 			}
 		}
@@ -31,9 +27,7 @@ $(document).on('change','input:radio[name="xml_input"]',function(e){
 	$.each(radio,function(){$('#'+this.value).css('display','none')});
     $('#'+toDisplay).css('display','block')
 });
-
 $('#formxml').show();
-
 $(document).on('click', '#doi_mint_confirm', function(){
 
     var xml_input = 'formxml';
@@ -53,18 +47,15 @@ $(document).on('click', '#doi_mint_confirm', function(){
     $("#mint_result").html('<p>Minting.....</p><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div>')
     $("#mint_form").addClass('hide');
     var theButton = this;
+    var doi = $("input[name='doi']").val();
     var doi_url = $("input[name='url']").val();
     var client_id = $("input[name='client_id']").val();
     var app_id= $("input[name='app_id']").val();
     var url = apps_url+'mydois/mint.json/?manual_mint=true&url='+doi_url+'&app_id='+app_id;
-    var theInput = document.getElementById('xml');
-    var theInput_upload = document.getElementById('xml_upload');
-    var xml = theInput.value
-    var xml_upload = theInput_upload.value
-    if(xml_upload!='')xml = xml_upload
+    var xml = $("input[name='xml']").val();
 
     if(req_element_error!=''){
-        message = req_element_error;
+        message = req_element_error
         $('#mint_result').css('white-space','normal')
         $('#mint_result').html(message).addClass('label label-important');
         $(theButton).button('reset');
@@ -90,7 +81,7 @@ $(document).on('click', '#doi_mint_confirm', function(){
         $.ajax({
             url: url,
             type: 'POST',
-            data: {xml:xml, client_id:client_id},
+            data: {doi_id:doi, xml:xml, client_id:client_id},
             success: function(data){
                 if(data.response.type=='failure'){
                     var message =  data.response.message;
@@ -115,45 +106,54 @@ $(document).on('click', '#doi_mint_confirm', function(){
     }
 })
 
-function successFunction() {
-    var iframeObject = document.getElementById('my_iframe');
+$(document).on('click', '#doi_mint_close', function(){
+    location.reload();
+})
+$(document).on('click', '#doi_mint_close_x', function(){
+    location.reload();
+})
+$(document).on('click', '#doi_update_close', function(){
 
-
-    if (iframeObject.contentDocument) { // DOM
-        doc = iframeObject.contentDocument;
-    }
-    else if (iframeObject.contentWindow) { // IE win
-        doc = iframeObject.contentWindow.document;
-    }
-    if (doc) {
-        console.log(doc);
-        var outputxml = doc.getElementById('xml_p');
-        var xml = outputxml.innerText;
-        var displayXml = outputxml.innerHTML;
-    }
-    $("#xmldisplay").html(displayXml)
-    var xmlObject = document.getElementById('xml');
-    var xmlObject_upload = document.getElementById('xml_upload');
-    xmlObject_upload.value = xml.replace("<br>","");
-}
-
-
+    location.reload();
+})
+$(document).on('click', '#doi_update_close_x', function(){
+    location.reload();
+})
 $(document).on('change','#fileupload',function(e){
-    var theForm = document.getElementById('mint_form');
     $('#mint_result').html('').removeClass('label label-important');
+    var file = this.files[0];
+    type = file.type;
+    if(type=='text/xml'){
+        var fd = new FormData;
+        fd.append('file', file);
 
-    theForm.target = 'my_iframe';
-    theForm.submit();
-    var callback = function () {
-        if (successFunction){
-            successFunction();
+        var xhr = new XMLHttpRequest();
+        var uploadurl = apps_url+'mydois/uploadFile';
 
+        xhr.file = file; // not necessary if you create scopes like this
+        xhr.addEventListener('progress', function(e) {
+            var done = e.position || e.loaded, total = e.totalSize || e.total;
+            //console.log('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
+        }, false);
+        if ( xhr.upload ) {
+            xhr.upload.onprogress = function(e) {
+                var done = e.position || e.loaded, total = e.totalSize || e.total;
+               // console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
+            };
         }
-        $('#frame').unbind('load', callback);
-    };
-
-    $('#my_iframe').bind('load', callback);
-
+        xhr.onreadystatechange = function(e) {
+            if ( 4 == this.readyState ) {
+                var jsonObj = eval('('+this.response+')')
+                console.log(jsonObj.xml)
+                $("#xmldisplay").html('<pre>'+ htmlEntities(jsonObj.xml)+'</pre>').text()
+                $("input[name='xml']").val(jsonObj.xml);
+            }
+        };
+        xhr.open('post', uploadurl, true);
+        xhr.send(fd);
+    }else{
+        $('#mint_result').html('Only files of type text/xml accepted').addClass('label label-important');
+    }
 });
 
 $(document).on('click', '#doi_update_confirm', function(){
@@ -180,12 +180,15 @@ $(document).on('click', '#doi_update_confirm', function(){
         $("#loading").html('');
         $("#update_form").removeClass('hide');
     }else{
-            $.ajax({
+
+        $.ajax({
             url: url,
             type: 'POST',
             data: {doi_id:doi, xml:xml, client_id:client_id},
             success: function(data){
+                console.log(data)
                 if(data.response.type=='failure'){
+                    console.log(data.response);
                     var message =  data.response.message;
                     if(data.response.verbosemessage!='') message = message + ' <br /><i>'+data.response.verbosemessage+'</i>'
                     $('#update_result').css('white-space','normal')
@@ -207,15 +210,6 @@ $(document).on('click', '#doi_update_confirm', function(){
         });
     }
 })
-
-$('#mintDoiResult').on('hidden.bs.modal', function () {
-    window.location.reload(true);
-})
-
-$('#updateDoiModal').on('hidden.bs.modal', function () {
-    window.location.reload(true);
-})
-
 function htmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }

@@ -1,11 +1,11 @@
 @if($ro->relationships && isset($ro->relationships[0]['collection']))
 <h2>Related Collections</h2>
-<ul>
+
 	@foreach($ro->relationships[0]['collection'] as $col)
 
-	<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
+	<a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="this title" class="tooltip2">{{$col['title']}}</a><br />
 	@endforeach
-</ul>
+
 @endif
 
 <!--@if($ro->relationships && isset($ro->relationships[0]['party_one']))

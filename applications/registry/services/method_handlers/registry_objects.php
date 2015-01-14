@@ -55,7 +55,7 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'publications' :   $result[$m1] = $this->relatedInfo_handler('publication'); break;
                         case 'connectiontree' : $result[$m1] = $this->connectiontree_handler($id); break;
                         case 'rights' :         $result[$m1] = $this->rights_handler(); break;
-                        case 'directaccess' :       $result[$m1] = $this->download_handler(); break;
+                        case 'directaccess' :   $result[$m1] = $this->download_handler(); break;
                         case 'contact' :        $result[$m1] = $this->contact_handler(); break;
                     }
                 }
@@ -327,6 +327,12 @@ class Registry_objectsMethod extends MethodHandler {
     private function citations_handler() {
         $result = array();
         if ($this->xml) {
+            $endNote = 'Provider: Australian National Data Service
+Database: Research Data Australia
+Content:text/plain; charset="utf-8"
+
+
+TY  - DATA';
             foreach($this->xml->{$this->ro->class}->citationInfo as $citation){
                  foreach($citation->citationMetadata as $citationMetadata){
                      $contributors = Array();
@@ -368,7 +374,8 @@ class Registry_objectsMethod extends MethodHandler {
                          'title' => (string)$citationMetadata->title,
                          'date_type' => (string)$citationMetadata->date['type'],
                          'date' => date("Y",strtotime((string)$citationMetadata->date)),
-                         'contributors' => $displayNames
+                         'contributors' => $displayNames,
+                         'endNote' => $endNote
                      );
 
                  }
@@ -376,11 +383,13 @@ class Registry_objectsMethod extends MethodHandler {
                     $result[] = array(
                         'type'=> 'fullCitation',
                         'value' => (string)$fullCitation,
-                        'citation_type' => (string)$fullCitation['style']
+                        'citation_type' => (string)$fullCitation['style'],
+                        'endNote' => $endNote
                     );
 
                 }
             }
+
         }
         return $result;
     }

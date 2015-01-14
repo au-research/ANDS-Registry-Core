@@ -17,7 +17,9 @@
 			<script src="{{asset_url('lib/jquery-ui/jquery-ui.js', 'core')}}"></script>
 		@elseif($l=='dynatree')
 			<script src="{{asset_url('lib/dynatree/src/jquery.dynatree.js', 'core')}}"></script>
-		@endif
+        @elseif($l=='qTip')
+            <script src="{{asset_url('lib/qTip2/jquery.qtip.js', 'core')}}"></script>
+        @endif
 	@endforeach
 @endif
 
