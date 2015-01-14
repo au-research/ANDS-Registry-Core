@@ -1,16 +1,55 @@
 <?php
+/**
+ * Page controller
+ * This controller main purpose is to display static pages
+ * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
 class Page extends MX_Controller {
+
+	/**
+	 * Index / Home page
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return view 
+	 */
 	function index(){
 		$this->blade->render('home');
 	}
 
-	function test(){
-		$this->blade->set('foo', 'bar')
-						->set('an_array', array(1, 2, 3, 4))
-						->append('an_array', 5)
-						->set_data(array('more' => 'data', 'other' => 'data'))
-						->render('test', array('message' => 'Hello World2!'));
+	/**
+	 * About page
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return view 
+	 */
+	function about() {
+		$this->blade->render('about');
 	}
+
+	/**
+	 * Privacy Policy
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return view 
+	 */
+	function privacy() {
+		$this->blade->render('privacy_policy');
+	}
+
+	/**
+	 * Disclaimer page
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return view 
+	 */
+	function disclaimer() {
+		$this->blade->render('privacy_policy');
+	}
+
+	/**
+	 * Display the sitemap
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return view 
+	 */
+	function sitemap() {}
+
+
 
 	public function __construct() {
 		parent::__construct();

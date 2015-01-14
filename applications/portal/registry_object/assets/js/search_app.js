@@ -1,10 +1,18 @@
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'search_components', 'profile_components'], function($interpolateProvider){
+var app = angular.module('app', ['ngRoute', 'ngSanitize', 'search_components', 'profile_components', 'uiGmapgoogle-maps'], function($interpolateProvider){
 	$interpolateProvider.startSymbol('[[');
 	$interpolateProvider.endSymbol(']]');
 });
 
 app.config(function($routeProvider, $locationProvider) {
     $locationProvider.hashPrefix('!');
+});
+
+app.config(function(uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        //    key: 'your api key',
+        v: '3.17',
+        libraries: 'weather,geometry,visualization'
+    });
 });
 
 app.filter('trustAsHtml', ['$sce', function($sce){
@@ -30,10 +38,72 @@ app.directive('tooltip', function(){
     };
 });
 
-app.controller('mainController', function($scope, search_factory, profile_factory, $location, $sce) {
+app.controller('mapController', function($scope, uiGmapGoogleMapApi){
+	uiGmapGoogleMapApi.then(function(maps) {
+		$scope.map = {
+			// new google.maps.LatLng(-25.397, 133.644)
+			center: {
+				latitude: -25.397, longitude: 133.644
+			}, 
+			zoom: 4,
+			events: {
+				tilesloaded: function(map){
+					$scope.$apply(function(){
+						$scope.$parent.mapInstance = map;
+						google.maps.event.trigger($scope.$parent.mapInstance, "resize");
+					});
+				},
+				mouseover: function(map) {
+					$scope.$apply(function(){
+						google.maps.event.trigger($scope.$parent.mapInstance, "resize");
+					});
+				}
+			}
+		};
+		$scope.options = {
+			disableDefaultUI: true,
+		  	panControl: false,
+		  	navigationControl: false,
+		  	scrollwheel: true,
+		  	scaleControl: true
+		};
+		$scope.showWeather = false;
+    });
+
+	$scope.centres = [];
+
+    $scope.$on('search_complete', function(){
+    	//construct the array of centres
+		$.each($scope.result.response.docs, function(){
+			if(this.spatial_coverage_centres){
+				//1st one
+				var pair = this.spatial_coverage_centres[0];
+				var split = pair.split(' ');
+				var lon = split[0];
+				var lat = split[1];
+				// console.log(this.spatial_coverage_centres,pair,split,lon,lat)
+				$scope.centres.push(
+					{
+						id: this.id,
+						title: this.title,
+						longitude: lon,
+						latitude: lat,
+						showw:true,
+						onClick: function() {
+							this.showw=!this.showw;
+						}
+					}
+				)
+			}
+		});
+    });
+});
+
+app.controller('mainController', function($scope, search_factory, profile_factory, $location, $sce, uiGmapGoogleMapApi, $timeout) {
 	$scope.q = '';
 	$scope.search_type = 'all';
 	$scope.filters = {};
+	$scope.prefilters = {}; //prefilters used to store temporary values like temporal and spatial
 	$scope.result = {};
 	$scope.fields = ['title', 'description', 'subject'];
 	$scope.allfilters = [];
@@ -47,13 +117,17 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 
 	$scope.pp = [
 		{value:15,label:'Show 15'},
-		{value:50,label:'Show 50'},
+		{value:30,label:'Show 30'},
+		{value:60,label:'Show 60'},
 		{value:100,label:'Show 100'}
 	];
 
 	$scope.sort = [
-		{value:'score desc',label:'Relevence'},
+		{value:'score desc',label:'Relevance'},
 		{value:'title asc',label:'Title A-Z'},
+		{value:'title desc',label:'Title Z-A'},
+		{value:'title desc',label:'Popular'},
+		{value:'record_created_timestamp asc',label:'Date Added'},
 	];
 
 	$scope.selectAdvancedField = function(field) {
@@ -72,12 +146,14 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 			});		
 		}
 		$('#advanced_search').modal();
+		if ($scope.mapInstance) {
+			google.maps.event.trigger($scope.mapInstance, "resize");
+		}
 	}
 
 	$scope.closeAdvanced = function() {
 		$('#advanced_search').modal('hide');	
 	}
-	// $scope.advanced();
 
 	$scope.$on('$locationChangeSuccess', function() {
 		$scope.filters = search_factory.filters_from_hash($location.path());
@@ -174,15 +250,14 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 				range: 3,
 				pages: [],
 			}
-
 			$scope.page.end = Math.ceil($scope.result.response.numFound / $scope.page.rows);
-
 			for (var x = ($scope.page.cur - $scope.page.range); x < (($scope.page.cur + $scope.page.range)+1);x++ ) {
 				if (x > 0 && x <= $scope.page.end) {
 					$scope.page.pages.push(x);
 				}
 			}
 
+			$scope.$broadcast('search_complete');
 			$scope.loading = false;
 			
 		});
@@ -329,7 +404,15 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 				$scope.q = $scope.filters[this];
 			}
 		});
+
+		//temporal
+		if ($scope.filters['temporal'] && $scope.filters['temporal'].indexOf('-')) {
+			var split = $scope.filters['temporal'].split('-');
+			$scope.prefilters.dateFrom = parseInt(split[0]);
+			$scope.prefilters.dateTo = parseInt(split[1]);
+		}
 	}
+
 
 	$scope.add_user_data = function(type) {
 		if(type=='saved_record') {
