@@ -308,6 +308,8 @@ class DOIChecker(base.BaseChecker):
                                   'DOI_ID: {} URL: {}')
         URL_PARSE_ERROR_FORMAT = ('Error: Parsing URL failed: '
                                   'DOI_ID: {} URL: {}')
+        NO_STATUS_ERROR_FORMAT = ('Error: Server did not return an '
+                                  'HTTP status code')
         STATUS_ERROR_FORMAT = '4/500s: DOI_ID: {} URL: {} Status {}'
         REDIRECT_SAME_FORMAT = ('Error: Redirect URL same as original: '
                                 'DOI_ID: {} URL: {}')
@@ -426,6 +428,16 @@ class DOIChecker(base.BaseChecker):
                     else:
                         # Empty line was read; end of headers.
                         break
+                if 'mStatus' not in locals():
+                    # Made it through the loop without setting mStatus,
+                    # which means (for some reason) we didn't get
+                    # an HTTP status code.
+                    self._handle_one_error(result_list, error_count,
+                                           testing_array,
+                                           creator,
+                                           NO_STATUS_ERROR_FORMAT,
+                                           counter)
+                    return
                 if mStatus:
                     # The status line is "HTTP/1.x 300 ....", so the status
                     # code is the second field after split,

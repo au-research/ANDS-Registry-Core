@@ -385,6 +385,8 @@ class ROChecker(base.BaseChecker):
         SCHEME_NOT_HTTP_FORMAT = ('Error: Scheme is not http(s): ')
         URL_PARSE_ERROR_FORMAT = ('Error: Parsing URL failed')
         STATUS_ERROR_FORMAT = '4/500s: Status {}'
+        NO_STATUS_ERROR_FORMAT = ('Error: Server did not return an '
+                                  'HTTP status code')
         REDIRECT_SAME_FORMAT = ('Error: Redirect URL same as original: ')
         EXCEPTION_FORMAT = 'Error: {}'
         TOO_MANY_REDIRECTS_FORMAT = ('Error: too many redirects: '
@@ -499,6 +501,17 @@ class ROChecker(base.BaseChecker):
                     else:
                         # Empty line was read; end of headers.
                         break
+                if 'mStatus' not in locals():
+                    # Made it through the loop without setting mStatus,
+                    # which means (for some reason) we didn't get
+                    # an HTTP status code.
+                    self._handle_one_error(url_str_original,
+                                           NO_STATUS_ERROR_FORMAT,
+                                           timestamp,
+                                           testing_array,
+                                           counter,
+                                           test_results)
+                    return
                 if mStatus:
                     # The status line is "HTTP/1.x 300 ....", so the status
                     # code is the second field after split,
