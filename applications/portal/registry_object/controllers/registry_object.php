@@ -27,13 +27,14 @@ class Registry_object extends MX_Controller {
 		}
 		$this->load->library('blade');
 		$this->blade
+			->set('lib', array('ui-events', 'angular-ui-map', 'google-map'))
 			->set('scripts', array('search_app'))
 			->set('facets', $this->components['facet'])
 			->set('search', true) //to disable the global search
 			->render('registry_object/search');
 	}
 
-	function s() {
+	function s($class = 'collection') {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
@@ -46,9 +47,9 @@ class Registry_object extends MX_Controller {
 		$this->load->library('solr');
 		$this->solr->setFilters($filters);
 		foreach($this->components['facet'] as $facet){
-			$this->solr->setFacetOpt('field', $facet);
+			if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
 		}
-		$this->solr->setOpt('fl', 'id,title,description,slug');
+		$this->solr->setOpt('fl', 'id,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons');
 		$this->solr->setOpt('hl', 'true');
 		$this->solr->setOpt('hl.fl', '*');
 		$this->solr->setOpt('hl.simple.pre', '&lt;b&gt;');
@@ -60,7 +61,8 @@ class Registry_object extends MX_Controller {
 		// 
 		// 
 		
-		// $this->solr->setOpt('fq', 'fulltext:(+creek)');
+		//restrict to default class
+		$this->solr->setOpt('fq', '+class:'.$class);
 
 		$this->solr->setFacetOpt('mincount','1');
 		$this->solr->setFacetOpt('limit','100');
@@ -85,7 +87,7 @@ class Registry_object extends MX_Controller {
             'view_headers' =>array('logo', 'title','related-parties'),
 			'view' => array('descriptions','reuse-list','quality-list','dates-list', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list'),
 			'aside' => array('access', 'citation-info','rights-info','contact-info'),
-			'facet' => array('group', 'license_class', 'type')
+			'facet' => array('spatial','group', 'license_class', 'type', 'temporal')
 		);
 	}
 }

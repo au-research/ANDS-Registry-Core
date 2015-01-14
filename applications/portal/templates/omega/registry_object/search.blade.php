@@ -3,9 +3,10 @@
 @section('content')
 <div class="panel panel-primary element-no-top element-small-bottom" data-os-animation="fadeInUp">
     @include('includes/search-header')
-    <div  ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInUp" style="-webkit-animation: 0.2s;">
+    <div  ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInUp" style="-webkit-animation: 0.2s;" ng-cloak>
         <div class="element-no-top element-no-bottom" data-os-animation="none" data-os-animation-delay="0s">
             <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
+            <p><small>[[doc.group]]</small></p>
             <div ng-repeat="x in doc.hl">
                 <p ng-repeat="b in x" data-ng-bind-html="b | trustAsHtml"></p>
             </div>
@@ -29,15 +30,21 @@
 @stop
 
 @section('sidebar')
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">Search debugging</h3>
-    </div>
+<div class="panel panel-primary" ng-cloak>
+    <div class="panel-heading">Current Search</div>
     <div class="panel-body swatch-white">
         [[filters]]
     </div>
     <div class="panel-body swatch-white">
-        <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')">Save Search</a>
+        <ul class="list-unstyled">
+            <li ng-repeat="filter in allfilters">
+                <button class="btn btn-link btn-xs" ng-click="toggleFilter(filter.name,filter.value)">[[filter.value]] <i class="fa fa-remove"></i></button>
+            </li>   
+        </ul>
+        <div class="panel-body swatch-white">
+            <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')">Save Search</a>
+            <a href="" class="btn" ng-click="add_user_data('saved_search')">Clear Search</a>
+        </div>
     </div>
 </div>
 <div class="panel panel-primary panel-green element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
@@ -55,11 +62,6 @@
                 </span>
             </div>
         </form>
-        <ul class="list-unstyled">
-            <li ng-repeat="filter in allfilters">
-                <button class="btn btn-link btn-xs" ng-click="toggleFilter(filter.name,filter.value)">[[filter.value]] <i class="fa fa-remove"></i></button>
-            </li>   
-        </ul>
     </div>
 </div>
     @foreach ($facets as $facet)

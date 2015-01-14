@@ -1,4 +1,4 @@
-<div ng-show="result.facets.license_class.length > 0" class="panel panel-primary element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
+<div ng-show="result.facets.license_class.length > 0" class="panel panel-primary element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;" ng-cloak>
     <div class="panel-heading">
         <h3 class="panel-title">License</h3>
     </div>

@@ -430,7 +430,7 @@ jQuery(document).ready(function( $ ) {
     // ======================
 
     // Add wrapper to select boxes
-    $('select').wrap('<div class="select-wrap">');
+    // $('select').wrap('<div class="select-wrap">');
 
 
     // Bullet navigation

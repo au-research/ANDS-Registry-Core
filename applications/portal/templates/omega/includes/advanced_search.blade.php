@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade bs-example-modal-lg" id="advanced_search" role="dialog" aria-labelledby="Advanced Search" aria-hidden="true" style="z-index:999999">
+<div class="modal fade advanced-search-modal" id="advanced_search" role="dialog" aria-labelledby="Advanced Search" aria-hidden="true" style="z-index:999999">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -7,16 +7,16 @@
         <h4 class="modal-title" id="myModalLabel">Advanced Search</h4>
       </div>
       <div class="modal-body">
-        <div class="container-fluid">
+        <div class="container">
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-2">
               <ul class="nav nav-pills nav-stacked">
                 <li ng-repeat="field in advanced_search.fields" ng-class="{'active':field.active==true}">
                   <a href="" ng-click="selectAdvancedField(field)"><span class="badge" ng-show="sizeofField(field.name) > 0">[[sizeofField(field.name)]]</span> [[field.display]]</a>
                 </li>
               </ul>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-10">
 
               <div ng-show="isAdvancedSearchActive('terms')">
                 Terms
@@ -47,6 +47,10 @@
                     <a href="" ng-click="toggleFilter('type', type.name)">[[type.name]] ([[type.value]])</a></li>
                   </li>
                 </ul>
+              </div>
+
+              <div ng-if="isAdvancedSearchActive('spatial')">
+                @include('registry_object/facet/map')
               </div>
 
             </div>

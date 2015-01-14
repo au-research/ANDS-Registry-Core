@@ -9,7 +9,7 @@
 <script src="{{asset_url('lib/angular-sanitize/angular-sanitize.min.js', 'core')}}"></script>
 
 <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
-<script src="{{asset_url('omega/js/theme.min.js','templates')}}"></script>
+<!-- <script src="{{asset_url('omega/js/theme.js','templates')}}"></script> -->
 
 @if(isset($lib))
 	@foreach($lib as $l)
@@ -23,10 +23,26 @@
 	@endforeach
 @endif
 
+<!-- Map Search Scripts -->
+<script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.min.js', 'core')}}"></script>
+
 <!-- Search Script and Resources is included in every page -->
 <script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('profile/js/profile_components.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('registry_object/js/search.js', 'full_base_path')}}"></script>
+
+<!-- LESS.JS for development only-->
+<script>
+  less = {
+    env: "development",
+    async: false,
+    fileAsync: false,
+    poll: 1000,
+    logLevel:0
+  };
+</script>
+<script src="{{asset_url('lib/less.js/dist/less.min.js', 'core')}}"></script>
 
 @if(isset($scripts))
 	@foreach($scripts as $script)
