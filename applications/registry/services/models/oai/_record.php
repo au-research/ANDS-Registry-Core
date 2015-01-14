@@ -62,14 +62,14 @@ class _record
 		switch($format)
 		{
 		case 'dci':
-            $dciDoc = $this->_rec->transformToDCI();
+            $dciDoc = $this->_rec->transformToDCI(false);
             if($dciDoc != "")
             {
 			    $data = "<DigitalContentData>\n".$dciDoc."\n</DigitalContentData>";
             }
 			break;
 		case 'oai_dc':
-			$data = $this->_rec->transformToDC();
+			$data = $this->_rec->transformToDC(false);
 			break;
 		case 'rif':
 			$data = removeXMLDeclaration(wrapRegistryObjects($this->_rec->getRif()));
