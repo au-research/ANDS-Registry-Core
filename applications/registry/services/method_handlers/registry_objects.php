@@ -28,7 +28,8 @@ class Registry_objectsMethod extends MethodHandler {
         $method2 = isset($params[3]) ? $params[3]: false;
 
         $ci =& get_instance();
-
+        // $ci->load->library('benchmark');
+        $ci->benchmark->mark('code_start');
         $result = array();
         if ($id){
             $ci->load->model('registry_object/registry_objects', 'ro');
@@ -63,7 +64,11 @@ class Registry_objectsMethod extends MethodHandler {
         } else {
             $result = $this->searcher($params);
         }
-        return $this->formatter->display($result);
+        $ci->benchmark->mark('code_end');
+        $benchmark = array(
+            'elapsed' => $ci->benchmark->elapsed_time('code_start', 'code_end')
+        );
+        return $this->formatter->display($result, $benchmark);
     }
 
     /**
