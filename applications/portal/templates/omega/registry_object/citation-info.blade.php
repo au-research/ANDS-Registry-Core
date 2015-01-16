@@ -3,13 +3,15 @@
 ?>
 
 @if($ro->citations)
-<div id="citation">
-    <h3>Cite</h3>
+<button>Cite</button>
+<div id="citation" class="hide">
+
     @foreach($order as $o)
 	    @foreach($ro->citations as $citation)
             @if($citation['type']==$o)
                 <h5>Full Citation:</h5>
 	            <p>{{$citation['value']}}</p>
+
             @endif
 	    @endforeach
     @endforeach
@@ -30,4 +32,12 @@
         @endif
     @endforeach
 </div>
+
+<button>Export</button>
+<div id="endnote" class="hide">
+    @foreach($ro->citations as $citation)
+    <p>{{$citation['endNote']}}</p>
+    @endforeach
+</div>
+
 @endif

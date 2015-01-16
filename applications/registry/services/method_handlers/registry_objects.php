@@ -327,12 +327,7 @@ class Registry_objectsMethod extends MethodHandler {
     private function citations_handler() {
         $result = array();
         if ($this->xml) {
-            $endNote = 'Provider: Australian National Data Service
-Database: Research Data Australia
-Content:text/plain; charset="utf-8"
-
-
-TY  - DATA';
+            $endNote = generateEndnoteText();
             foreach($this->xml->{$this->ro->class}->citationInfo as $citation){
                  foreach($citation->citationMetadata as $citationMetadata){
                      $contributors = Array();
@@ -386,7 +381,6 @@ TY  - DATA';
                         'citation_type' => (string)$fullCitation['style'],
                         'endNote' => $endNote
                     );
-
                 }
             }
 
@@ -581,9 +575,13 @@ TY  - DATA';
 
 }
 
-///citation formation helper functions
+//helper functions
 
-//function to sort contributor names based on the seq number if it exist
+/**
+ * ort contributor names based on the seq number if it exist
+ * @author Liz Woods <liz.woods@ands.org.au>
+ * @return array
+ */
 function seq($a, $b)
 {
     if ($a['seq'] == $b['seq']) {
@@ -592,7 +590,12 @@ function seq($a, $b)
     return ($a['seq'] < $b['seq']) ? -1 : 1;
 }
 
-//function to concatenate name values based on the name part type
+
+/**
+ * Concatenate name values based on the name part type
+ * @author Liz Woods <liz.woods@ands.org.au>
+ * @return string
+ */
 function formatName($a)
 {
     $order = array('family','given','initial','title','superior');
@@ -611,7 +614,12 @@ function formatName($a)
     return trim($displayName,", ")." ";
 }
 
-//function to create resolvable link for citation identifiers
+
+/**
+ * Create resolvable link for identifiers
+ * @author Liz Woods <liz.woods@ands.org.au>
+ * @return array
+ */
 function identifierResolution($identifier,$type)
 {
     switch($type)
@@ -644,6 +652,7 @@ function identifierResolution($identifier,$type)
 
             break;
         case 'purl':
+
             break;
         case 'uri':
             $identifiers['href'] = $identifier;
@@ -653,6 +662,7 @@ function identifierResolution($identifier,$type)
             return $identifiers;
             break;
         case 'urn':
+
             break;
         default:
             return false;
@@ -661,8 +671,12 @@ function identifierResolution($identifier,$type)
 
 }
 
-// generic function to title case a given string
 
+/**
+ * Convert string to title case
+ * @author Liz Woods <liz.woods@ands.org.au>
+ * @return string
+ */
 function titleCase($title)
 {
     $smallwordsarray = array(
@@ -701,5 +715,24 @@ function titleCase($title)
     $newtitle = implode(' ', $words);
 
     return $newtitle;
+
+}
+
+
+/**
+ * Endnote citation handler
+ * @author Liz Woods <liz.woods@ands.org.au>
+ * @return string
+ */
+function generateEndnoteText()
+{
+    $endnote = 'Provider: Australian National Data Service
+Database: Research Data Australia
+Content:text/plain; charset="utf-8"
+
+
+TY  - DATA';
+
+    return $endnote;
 
 }
