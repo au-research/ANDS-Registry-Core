@@ -23,6 +23,7 @@ class Registry_object extends MX_Controller {
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
 			->set('aside', $this->components['aside'])
+            ->set('view_headers', $this->components['view_headers'])
 			->set('url', $ro->construct_api_url())
 			->render('registry_object/view');
 	}
@@ -119,7 +120,8 @@ class Registry_object extends MX_Controller {
 		$this->components = array(
 			'view' => array('descriptions','reuse-list','quality-list','dates-list', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list'),
 			'aside' => array('access', 'citation-info','rights-info','contact-info'),
-			'facet' => array('spatial','group', 'license_class', 'type', 'temporal')
+			'facet' => array('spatial','group', 'license_class', 'type', 'temporal'),
+            'view_headers' => array('title','related-parties')
 		);
 	}
 }
