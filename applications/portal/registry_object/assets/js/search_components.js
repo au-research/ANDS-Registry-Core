@@ -3,7 +3,7 @@ angular.module('search_components',[])
 .factory('search_factory', function($http){
 	return{
 		search: function(filters){
-			var promise = $http.post(base_url+'registry_object/s', {'filters':filters}).then(function(response){
+			var promise = $http.post(base_url+'registry_object/filter', {'filters':filters}).then(function(response){
 				return response.data;
 			});
 			return promise;
