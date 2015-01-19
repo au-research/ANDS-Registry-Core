@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'relatedInfo','suggest', 'dates', 'connectiontree', 'rights', 'directaccess','contact'
+        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'relatedInfo','suggest', 'dates', 'connectiontrees', 'rights', 'directaccess','contact'
     );
 
     public $ro = null;
@@ -43,7 +43,6 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'get':
                         case 'registry':
                         case 'relationships' :  $result[$m1] = $this->relationships_handler(); break;
-                        case 'connectiontree' : $result[$m1] = $this->connectiontree_handler($id); break;
 
                         default :  $result[$m1] = $this->ro_handle($m1);  break;
 
@@ -173,43 +172,6 @@ class Registry_objectsMethod extends MethodHandler {
         }
         return $relationships;
     }
-
-    /**
-    * Connection Tree handler
-    * @author Liz Woods <liz.woods@ands.org.au>
-    * @return array
-    */
-    private function connectiontree_handler($id) {
-        $ci =& get_instance();
-        $ci->load->model('registry_object/registry_objects','thisro');
-        $ci->load->model('services/connectiontree','connectiontree');
-        $ro = $ci->thisro->getByID($id);
-
-        $trees = array();
-
-        if ($ro->class == 'collection') {
-            $ancestors = $ci->connectiontree->getImmediateAncestors($ro, true);
-            $depth = 5;
-            if ($ancestors) {
-               foreach ($ancestors AS $ancestor_element) {
-                    if($ro->id != $ancestor_element['registry_object_id']){
-                        $root_element_id = $ci->connectiontree->getRootAncestor($ci->thisro->getByID($ancestor_element['registry_object_id']), true);
-                        $root_registry_object = $ci->thisro->getByID($root_element_id->id);
-
-                        // Only generate the tree if this is a unique ancestor
-                        if (!isset($ci->connectiontree->recursed_children[$root_registry_object->id])) {
-                            $trees[] = $ci->connectiontree->get($root_registry_object, $depth, true, $ro->id);
-                        }
-                    }
-                }
-            } else {
-                $trees[] = $ci->connectiontree->get($ro, $depth, true);
-            }
-        }
-        return $trees;
-    }
-
-
 }
 
 ///citation formation helper functions
