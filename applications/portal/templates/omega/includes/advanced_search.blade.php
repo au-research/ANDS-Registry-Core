@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade advanced-search-modal" id="advanced_search" role="dialog" aria-labelledby="Advanced Search" aria-hidden="true" style="z-index:999999">
+<div class="modal advanced-search-modal fade" id="advanced_search" role="dialog" aria-labelledby="Advanced Search" aria-hidden="true" style="z-index:999999">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
