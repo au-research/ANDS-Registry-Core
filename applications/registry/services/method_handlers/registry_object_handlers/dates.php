@@ -1,7 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 /**
-* Citations handler
+* Dates handler
 * @author Liz Woods <liz.woods@ands.org.au>
 * @return array
 */

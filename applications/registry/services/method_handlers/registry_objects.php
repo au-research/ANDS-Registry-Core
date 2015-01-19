@@ -39,23 +39,15 @@ class Registry_objectsMethod extends MethodHandler {
             foreach($method1s as $m1){
                 if($m1 && in_array($m1, $this->valid_methods)) {
                     switch($m1) {
+
                         case 'get':
                         case 'registry':
-                        case 'core':            $result[$m1] = $this->ro_handle('core'); break;
-                        case 'descriptions':    $result[$m1] = $this->ro_handle('descriptions');break;
                         case 'relationships' :  $result[$m1] = $this->relationships_handler(); break;
-                        case 'identifiers' :    $result[$m1] = $this->ro_handle('identifiers'); break;
-                        case 'subjects' :       $result[$m1] = $this->ro_handle('subjects'); break;
-                        case 'suggest' :        $result[$m1] = $this->ro_handle('suggest'); break;
-                        case 'spatial' :        $result[$m1] = $this->ro_handle('spatial'); break;
-                        case 'temporal' :       $result[$m1] = $this->ro_handle('temporal'); break;
                         case 'citations' :      $result[$m1] = $this->citations_handler(); break;
-                        case 'relatedInfo':     $result[$m1] = $this->relatedInfo_handler(); break;
-                        case 'dates' :          $result[$m1] = $this->ro_handle('dates'); break;
                         case 'connectiontree' : $result[$m1] = $this->connectiontree_handler($id); break;
-                        case 'rights' :         $result[$m1] = $this->ro_handle('rights'); break;
-                        case 'directaccess' :   $result[$m1] = $this->ro_handle('download'); break;
-                        case 'contact' :        $result[$m1] = $this->ro_handle('contact'); break;
+
+                        default :  $result[$m1] = $this->ro_handle($m1);  break;
+
                     }
                 }
             }
@@ -167,29 +159,7 @@ class Registry_objectsMethod extends MethodHandler {
         return $result;
     }
 
-    /**
-    * Related Info handler
-    * @author Liz Woods <liz.woods@ands.org.au>
-    * @param  string type
-    * @return array
-    */
-    private function relatedInfo_handler() {
-        $result = array();
-        if ($this->xml) {
-            foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo){
-                $type = (string) $relatedInfo['type'];
-                $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
-                $result[] = array(
-                    'type' => $type,
-                    'title' =>  (string) $relatedInfo->title,
-                    'identifier' => Array('identifier_type'=>(string) $relatedInfo->identifier['type'],'identifier_value'=>(string) $relatedInfo->identifier,'identifier_href'=>$identifier_resolved),
-                    'relation' =>Array('relation_type'=>(string) $relatedInfo->relation['type'],'description'=>(string) $relatedInfo->relation->description,'url'=>(string) $relatedInfo->relation->url),
-                    'notes' => (string) $relatedInfo->notes
-                );
-            }
-        }
-        return $result;
-    }
+
 
     /**
     * Citations handler

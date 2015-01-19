@@ -1,6 +1,5 @@
 @if($ro->relatedInfo)
 <?php $heading = "<h2>Related Publications</h2>" ?>
-<ul>
     @foreach($ro->relatedInfo as $relatedInfo)
         @if($relatedInfo['type']=='publication')
             <?php echo $heading; $heading=''; ?>
@@ -16,5 +15,4 @@
             @endif
         @endif
 	@endforeach
-</ul>
 @endif
