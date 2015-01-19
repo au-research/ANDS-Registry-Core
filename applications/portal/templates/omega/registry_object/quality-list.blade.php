@@ -1,16 +1,20 @@
-@if($ro->quality && isset($ro->quality[0]['title']))
-<h2>Data Quality Information</h2>
-	@foreach($ro->quality as $quality_info)
-    <p>
-        {{$quality_info['title']}}<br />
-        {{$quality_info['identifier']['identifier_type']}} :
-        @if($quality_info['identifier']['identifier_href'])
-            <a href="{{$quality_info['identifier']['identifier_href']}}">{{$quality_info['identifier']['identifier_value']}}</a><br />
-        @else
-            {{$quality_info['identifier']['identifier_value']}}<br />
+@if($ro->relatedInfo)
+
+    <?php $heading = "<h2>Data Quality Information</h2>"; ?>
+    @foreach($ro->relatedInfo as $relatedInfo)
+        @if($relatedInfo['type']=='dataQualityInformation')
+            <?php echo $heading; $heading=''; ?>
+            <p>
+            {{$relatedInfo['title']}}<br />
+            {{$relatedInfo['identifier']['identifier_type']}} :
+            @if($relatedInfo['identifier']['identifier_href'])
+                <a href="{{$relatedInfo['identifier']['identifier_href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
+            @else
+                {{$relatedInfo['identifier']['identifier_value']}}<br />
+            @endif
+            {{$relatedInfo['notes']}}
+            </p>
         @endif
-        {{$quality_info['notes']}}
-     </p>
 	@endforeach
 @endif
 

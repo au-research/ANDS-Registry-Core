@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'reuse', 'quality', 'suggest', 'dates', 'connectiontree', 'publications', 'rights', 'directaccess','contact'
+        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'relatedInfo','suggest', 'dates', 'connectiontree', 'rights', 'directaccess','contact'
     );
 
     private $ro = null;
@@ -50,10 +50,8 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'spatial' :        $result[$m1] = $this->spatial_handler(); break;
                         case 'temporal' :       $result[$m1] = $this->temporal_handler(); break;
                         case 'citations' :      $result[$m1] = $this->citations_handler(); break;
-                        case 'reuse' :          $result[$m1] = $this->relatedInfo_handler('reuseInformation'); break;
-                        case 'quality' :        $result[$m1] = $this->relatedInfo_handler('dataQualityInformation'); break;
                         case 'dates' :          $result[$m1] = $this->dates_handler(); break;
-                        case 'publications' :   $result[$m1] = $this->relatedInfo_handler('publication'); break;
+                        case 'relatedInfo':     $result[$m1] = $this->relatedInfo_handler(); break;
                         case 'connectiontree' : $result[$m1] = $this->connectiontree_handler($id); break;
                         case 'rights' :         $result[$m1] = $this->rights_handler(); break;
                         case 'directaccess' :   $result[$m1] = $this->download_handler(); break;
@@ -305,13 +303,12 @@ class Registry_objectsMethod extends MethodHandler {
     * @param  string type
     * @return array
     */
-    private function relatedInfo_handler($relatedInfo_type) {
+    private function relatedInfo_handler() {
         $result = array();
         if ($this->xml) {
             foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo){
                 $type = (string) $relatedInfo['type'];
                 $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
-                if($type==$relatedInfo_type)
                 $result[] = array(
                     'type' => $type,
                     'title' =>  (string) $relatedInfo->title,

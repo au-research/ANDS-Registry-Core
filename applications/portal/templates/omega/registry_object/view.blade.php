@@ -8,6 +8,7 @@
 	<header class="post-head">
         <div class="post-title bordered">
             @foreach ($view_headers as $view_header)
+
                 @include('registry_object/'.$view_header)
             @endforeach
         </div>
