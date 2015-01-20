@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="{{asset_url('omega/css/swatch-ands-green.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('omega/css/fonts.min.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('lib/dynatree/src/skin/ui.dynatree.css', 'core')}}" media="screen">
+<link rel="stylesheet" href="{{asset_url('lib/qtip2/jquery.qtip.css', 'core')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('omega/css/ands.css','templates')}}" media="screen">
 
 <!-- LESS file for development only -->

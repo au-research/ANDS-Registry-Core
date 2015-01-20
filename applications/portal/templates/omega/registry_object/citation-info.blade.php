@@ -3,7 +3,7 @@
 ?>
 
 @if($ro->citations)
-<button>Cite</button>
+<button class="citation">Cite</button>
 <div id="citation" class="hide">
 
     @foreach($order as $o)
@@ -33,8 +33,8 @@
     @endforeach
 </div>
 
-<button>Export</button>
-<div id="endnote" class="hide">
+<button class="export">Export</button>
+<div id="export" class="hide">
     @foreach($ro->citations as $citation)
     <p>{{$citation['endNote']}}</p>
     @endforeach

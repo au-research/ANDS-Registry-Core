@@ -1,11 +1,13 @@
 $(document).ready(function() {
     initConnectionGraph()
     //console.log($.browser)
-    $('a[title]').qtip( {
-        content:{text:'My content'},
-       // show:{target: $('a')}
+    $('a[title]').qtip({
 
-    });
+    style: {classes: 'ui-tooltip-light ui-tooltip-shadow seealso-tooltip',width: '250px'},
+    show: 'mouseover',
+    hide: 'mouseout' })
+
+
 
 });
 
