@@ -55,6 +55,8 @@ $application_directives = array(
 					"topic/(:any)" => "topic/view_topic/$1",
 					"themes" => "theme_page/index",
 					"theme/(:any)" => "theme_page/view/$1",
+					"contributors" => "group/index",
+					"contributors/(:any)" => "group/view/$1",
 					"(:any)"=>"core/dispatcher/$1",
 					),
 			),
