@@ -3,8 +3,8 @@
 @section('content')
 <div class="panel panel-primary element-no-top element-small-bottom" data-os-animation="fadeInUp">
     @include('includes/search-header')
-    <div  ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInUp" style="-webkit-animation: 0.2s;" ng-cloak>
-        <div class="element-no-top element-no-bottom" data-os-animation="none" data-os-animation-delay="0s">
+    <div  ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
+        <div class="element-no-top element-no-bottom">
             <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
             <p><small>[[doc.group]]</small></p>
             <div ng-repeat="x in doc.hl">

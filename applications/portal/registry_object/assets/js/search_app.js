@@ -217,6 +217,8 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 		if(!$scope.filters['sort']) $scope.filters['sort'] = 'score desc';
 		$scope.populateFilters();
 
+		$('.sresult').addClass('fadeOutRight');
+
 		//regular search
 		search_factory.search($scope.filters).then(function(data){
 			$scope.result = data;
