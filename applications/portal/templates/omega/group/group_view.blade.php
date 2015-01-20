@@ -1,6 +1,19 @@
 @extends('layouts/right-sidebar')
 @section('content')
-  <?php var_dump($group); ?>
+  <article class="post">
+    <header class="post-head">
+          <div class="post-title bordered">
+              <h1>{{$group['title']}}</h1>
+          </div>
+    </header>
+
+    <div class="post-body">
+      To date, {{$group['title']}} has {{$group['counts']}} collection records in Research Data Australia, which covers {{sizeof($group['facet']['subjects'])}} subjects areas including 
+      {{$group['facet']['subjects'][0]['name']}}, {{$group['facet']['subjects'][1]['name']}} and {{$group['facet']['subjects'][2]['name']}}, {{sizeof($group['groups'])}} research groups 
+      have been actively involved in collecting data and creating metadata records for the data.  All the Collections, Parties, Activities and Services associated with {{$group['title']}} 
+      can be accessed from the Registry Contents box on the right hand side of this page.
+    </div>
+  </article>
 @stop
 
 @section('sidebar')

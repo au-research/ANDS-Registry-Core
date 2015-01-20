@@ -65,11 +65,14 @@ class Groups extends CI_Model {
 			->setFacetOpt('field','class')
 			->setFacetOpt('field', 'subject_value_resolved')
 			->setFacetOpt('mincount', '1')
+			->setFacetOpt('limit', '-1')
+			->setFacetOpt('sort', 'count')
 			->executeSearch();
 
 		$group['facet'] = array();
 
 		//classes
+		$group['facet']['class'] = array();
 		$classes = $this->solr->getFacetResult('class');
 		foreach ($classes as $class=>$num) {
 			$group['facet']['class'][] = array(
@@ -79,6 +82,7 @@ class Groups extends CI_Model {
 		}
 
 		//subjects
+		$group['facet']['subjects'] = array();
 		$subjects = $this->solr->getFacetResult('subject_value_resolved');
 		foreach ($subjects as $subject=>$num) {
 			$group['facet']['subjects'][] = array(
@@ -117,7 +121,6 @@ class Groups extends CI_Model {
 				'slug' => $doc['slug']
 			);
 		}
-
 
 
 		return $group;
