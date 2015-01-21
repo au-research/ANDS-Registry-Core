@@ -17,6 +17,8 @@ class Registry_object extends MX_Controller {
 
 		$this->load->library('blade');
 
+		$theme = ($this->input->get('theme') ? $this->input->get('theme') : 'standard');
+
 		$this->blade
 			->set('scripts', array('view'))
 			->set('lib', array('jquery-ui', 'dynatree', 'qtip'))
@@ -25,6 +27,7 @@ class Registry_object extends MX_Controller {
 			->set('aside', $this->components['aside'])
             ->set('view_headers', $this->components['view_headers'])
 			->set('url', $ro->construct_api_url())
+			->set('theme', $theme)
 			->render('registry_object/view');
 	}
 
@@ -119,7 +122,7 @@ class Registry_object extends MX_Controller {
 		$this->load->model('registry_objects', 'ro');
 		$this->components = array(
 			'view' => array('descriptions','reuse-list','quality-list','dates-list', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list'),
-			'aside' => array('access', 'citation-info','rights-info','contact-info'),
+			'aside' => array('rights-info','contact-info'),
 			'facet' => array('spatial','group', 'license_class', 'type', 'temporal'),
             'view_headers' => array('title','related-parties')
 		);
