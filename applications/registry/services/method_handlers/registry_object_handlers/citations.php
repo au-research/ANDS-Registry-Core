@@ -111,23 +111,21 @@ Y2  - '.date("Y-m-d")."
     private function getPublicationDate()
     {
         $publicationDate = '';
-        if($theDates = $this->xml->xpath("//citationInfo/citationMetadata/date[@type='publicationDate']")) {
-
+      /*  if($theDates = $this->gXPath("//ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate']")) {
+            $publicationDate = substr($theDates[0],1,4);
 
 
         }
-        elseif($theDates = $this->xml->xpath("//citationInfo/citationMetadata/date[@type='issued']")) {
-                $publicationDate = substr($theDate,1,4);
-            foreach($theDates as $theDate ) {
-                $publicationDate = substr($theDate,1,4);
-            }
+        elseif($theDates = $this->gXPath("//ro:citationInfo/ro:citationMetadata/ro:date[@type='issued']")) {
+                $publicationDate = substr($theDates[0],1,4);
+
         }
 
         if($publicationDate!='')
         {
             $publicationDate = "PY  - ".$publicationDate."
 ";
-        }
+        } */
 
         return $publicationDate;
 
@@ -166,4 +164,4 @@ Y2  - '.date("Y-m-d")."
                 <xsl:value-of select="substring($dateHarvested,1,4)" />
             </xsl:when>
         </xsl:choose>
-</xsl:template> 8/
+</xsl:template> */
