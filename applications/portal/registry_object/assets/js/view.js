@@ -3,13 +3,15 @@ $(document).ready(function() {
     //console.log($.browser)
     $('a[title]').qtip({
 
-    style: {classes: 'ui-tooltip-light ui-tooltip-shadow seealso-tooltip',width: '250px'},
-    show: 'mouseover',
-    hide: 'mouseout' })
+	    style: {classes: 'ui-tooltip-light ui-tooltip-shadow seealso-tooltip',width: '250px'},
+	    show: 'mouseover',
+	    hide: 'mouseout' })
+	});
 
-
-
-});
+	$(document).on('click', '.panel-heading a', function(e){
+		e.preventDefault();
+		$(this).parents('.panel-content').children('.panel-body').height('auto');
+	});
 
 
 function traverseAndSelectChildren(tree, select_id)
