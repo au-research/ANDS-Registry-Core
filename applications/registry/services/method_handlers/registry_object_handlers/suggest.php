@@ -17,10 +17,22 @@ class Suggest extends ROHandler {
         $ci =& get_instance();
 
         foreach ($suggestors as $suggestor) {
-            $ci->load->model('registry_object/suggestors/'.$suggestor, 'ss');
+            $ci->load->model('registry_object/suggestors/'.$suggestor.'_suggestor', 'ss');
             $ci->ss->set_ro($this->ro);
             $result[$suggestor] = $ci->ss->suggest();
         }
+
+        //finalize the pool
+        //@todo need to compare scores and stuff
+        $result['final'] = array();
+        foreach($result as $source=>$pool) {
+            foreach($pool as $ro) {
+                if (!in_array_r($ro, $result['final'])){
+                    array_push($result['final'], $ro);
+                }
+            }
+        }
+        // var_dump($all);
 
         return $result;
 	}

@@ -495,3 +495,13 @@ function ulog_terms($terms=array(), $logger='activity', $type='info')
 	}
 	ulog($msg,$logger,$type);
 }
+
+function in_array_r($needle, $haystack, $strict = false) {
+    foreach ($haystack as $item) {
+        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))) {
+            return true;
+        }
+    }
+
+    return false;
+}
