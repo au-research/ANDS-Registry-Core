@@ -1,10 +1,9 @@
 @if($ro->connectiontrees[0]['children'])
-
-<h2>This dataset is part of a larger collection </h2>
-<?php $data = urlencode(json_encode($ro->connectiontrees));?>
-<div id="connectionTree" mydata="<?=$data?>" ro_id="<?=$ro->id?>">
+<div class="panel panel-primary panel-content swatch-white">
+	<div class="panel-heading">Connection Tree</div>
+	<div class="panel-body">
+		<?php $data = urlencode(json_encode($ro->connectiontrees));?>
+		<div id="connectionTree" mydata="<?=$data?>" ro_id="<?=$ro->id?>"> </div>
+	</div>
 </div>
 @endif
-
-
-
