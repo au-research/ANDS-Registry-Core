@@ -8,9 +8,10 @@ $(document).ready(function() {
 	    hide: 'mouseout' })
 	});
 
-	$(document).on('click', '.panel-heading a', function(e){
+	$('#rightsContent').hide();
+	$(document).on('click', '#toggleRightsContent', function(e){
 		e.preventDefault();
-		$(this).parents('.panel-content').children('.panel-body').height('auto');
+		$('#rightsContent').slideToggle();
 	});
 
 

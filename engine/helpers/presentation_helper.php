@@ -180,6 +180,10 @@ function readable($text, $singular = false){
         case "getharvester": return "GET Harvester";break;
         case "cswharvester": return "CSW Harvester";break;
         case "ckanharvester": return "CKAN Harvester";break;
+        case 'licence': return 'Licence';break;
+        case 'accessrights': return 'Access rights';break;
+        case 'rightsstatement': return 'Rights Statement';break;
+        default: return $text;
 	}
 }
 

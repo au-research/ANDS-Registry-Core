@@ -21,18 +21,18 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-8">
-                                <header>
+                                <header style="padding-bottom:10px">
                                     <h1 class="hairline bordered-normal">{{$ro->core['title']}}</h1>
                                     <small>{{$ro->core['group']}}</small>
                                 </header>
+                                <div class="btn-group animated fadeInRight" role="group" aria-label="...">
+                                    <a class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Cite</a>
+                                    <a class="btn btn-sm btn-default"><i class="fa fa-cloud-download"></i> Export</a>
+                                    <a class="btn btn-sm btn-default"><i class="fa fa-bookmark-o"></i> Bookmark</a>
+                                </div>
                             </div>
                             <div class="col-md-4">
-                                <a href="" class="btn btn-lg btn-block btn-primary">Go to Data</a>
-                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                    <a class="btn btn-default"><i class="fa fa-edit"></i> Cite</a>
-                                    <a class="btn btn-default"><i class="fa fa-cloud-download"></i> Export</a>
-                                    <a class="btn btn-default"><i class="fa fa-bookmark-o"></i> Bookmark</a>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -41,10 +41,10 @@
     		    	<div class="container">
     		    		<div class="row element-short-top">
     		    			<div class="col-md-9">
+                                @include('registry_object/contents/standard3-getdatalicence')
     		    				@yield('content')
     		    			</div>
     		    			<div class="col-md-3 sidebar animated slideInRight">
-                                @include('registry_object/contents/standard-getdatalicence')
     		    				@yield('sidebar')
     		    			</div>
     		    		</div>

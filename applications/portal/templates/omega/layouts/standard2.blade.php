@@ -27,8 +27,7 @@
                                 </header>
                             </div>
                             <div class="col-md-4">
-                                <a href="" class="btn btn-lg btn-block btn-primary">Go to Data</a>
-                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                <div class="btn-group btn-group-vertical pull-right animated fadeInRight" role="group" aria-label="...">
                                     <a class="btn btn-default"><i class="fa fa-edit"></i> Cite</a>
                                     <a class="btn btn-default"><i class="fa fa-cloud-download"></i> Export</a>
                                     <a class="btn btn-default"><i class="fa fa-bookmark-o"></i> Bookmark</a>
