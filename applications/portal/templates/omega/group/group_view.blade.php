@@ -52,7 +52,7 @@
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Registry Contents</div>
     <div class="panel-body">
-        <ul>
+        <ul class="listy">
             @foreach($group['facet']['class'] as $class)
                 <li><a href="">{{readable($class['name'])}} <small>({{$class['num']}})</small></a></li>
             @endforeach
@@ -63,7 +63,7 @@
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Organisations & Groups</div>
     <div class="panel-body">
-        <ul>
+        <ul class="listy">
             @foreach($group['groups'] as $gr)
                 <li><a href="">{{$gr['title']}}</a></li>
             @endforeach
@@ -74,7 +74,7 @@
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Last 5 Collections Added</div>
     <div class="panel-body">
-        <ul>
+        <ul class="listy">
             @foreach($group['latest_collections'] as $gr)
                 <li><a href="">{{$gr['title']}}</a></li>
             @endforeach
