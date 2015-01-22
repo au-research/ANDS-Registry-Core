@@ -8,7 +8,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Subjects extends ROHandler {
 	function handle() {
 		$result = array();
-        if($this->index) {
+        if($this->index && isset($this->index['subject_value_resolved'])) {
             //subject_value_unresolved, subject_value_resolved, subject_type, subject_vocab_uri
             foreach($this->index['subject_value_unresolved'] as $key=>$sub) {
                 $result[] = array(

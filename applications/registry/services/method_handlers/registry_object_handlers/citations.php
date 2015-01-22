@@ -84,9 +84,11 @@ TY  - DATA
 Y2  - '.date("Y-m-d")."
 ";
         $doi = '';
-        foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->identifier as $identifiers) {
-            if($identifiers['type']=='doi'){
-                $doi = $identifiers;
+        if($this->xml->citationInfo){
+            foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->identifier as $identifiers) {
+                if($identifiers['type']=='doi'){
+                    $doi = $identifiers;
+                }
             }
         }
         if($doi=='') {

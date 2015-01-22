@@ -25,6 +25,7 @@
                                     <h1 class="hairline bordered-normal">{{$ro->core['title']}}</h1>
                                     <small>{{$ro->core['group']}}</small>
                                 </header>
+                                @include('registry_object/contents/related-parties')
                             </div>
                         </div>
                     </div>
