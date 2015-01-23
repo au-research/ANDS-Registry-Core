@@ -9,8 +9,11 @@
 <script src="{{asset_url('lib/angular-sanitize/angular-sanitize.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-animate/angular-animate.min.js', 'core')}}"></script>
 
+
+
 <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
 <!-- <script src="{{asset_url('omega/js/theme.js','templates')}}"></script> -->
+
 
 @if(isset($lib))
 	@foreach($lib as $l)
@@ -32,6 +35,10 @@
 <script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('profile/js/profile_components.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('registry_object/js/search.js', 'full_base_path')}}"></script>
+
+
+
+
 
 <!-- LESS.JS for development only-->
 <script>

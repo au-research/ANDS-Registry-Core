@@ -20,19 +20,10 @@
                 <section class="section swatch-white section-text-shadow section-innder-shadow element-short-top element-short-bottom">
                     <div class="container">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <header>
-                                    <h1 class="hairline bordered-normal">{{$ro->core['title']}}</h1>
-                                    <small>{{$ro->core['group']}}</small>
+                                    <h1 class="hairline bordered-normal">{{$group['title']}}</h1>
                                 </header>
-                            </div>
-                            <div class="col-md-4">
-                                <a href="" class="btn btn-lg btn-block btn-primary">Go to Data</a>
-                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                    <a class="btn btn-default"><i class="fa fa-edit"></i> Cite</a>
-                                    <a class="btn btn-default"><i class="fa fa-cloud-download"></i> Export</a>
-                                    <a class="btn btn-default"><i class="fa fa-bookmark-o"></i> Bookmark</a>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -40,12 +31,11 @@
     		    <section class="section swatch-gray" style="z-index:1">
     		    	<div class="container">
     		    		<div class="row element-short-top">
-    		    			<div class="col-md-9">
-    		    				@yield('content')
+    		    			<div class="col-md-8">
+    		    				
     		    			</div>
-    		    			<div class="col-md-3 sidebar animated slideInRight">
-                                @include('registry_object/contents/standard-getdatalicence')
-    		    				@yield('sidebar')
+    		    			<div class="col-md-4 sidebar animated slideInRight">
+                                
     		    			</div>
     		    		</div>
     		    	</div>

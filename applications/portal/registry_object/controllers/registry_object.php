@@ -17,7 +17,7 @@ class Registry_object extends MX_Controller {
 
 		$this->load->library('blade');
 
-		$theme = ($this->input->get('theme') ? $this->input->get('theme') : 'standard');
+		$theme = ($this->input->get('theme') ? $this->input->get('theme') : 'standard4');
 
 		$this->blade
 			->set('scripts', array('view'))
@@ -60,6 +60,7 @@ class Registry_object extends MX_Controller {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
+
 		$data = json_decode(file_get_contents("php://input"), true);
 		$filters = $data['filters'];
 
@@ -83,6 +84,7 @@ class Registry_object extends MX_Controller {
 		$this->solr->setOpt('hl.simple.pre', '&lt;b&gt;');
 		$this->solr->setOpt('hl.simple.post', '&lt;/b&gt;');
 
+
 		//experiment hl attrs
 		// $this->solr->setOpt('hl.alternateField', 'description');
 		// $this->solr->setOpt('hl.alternateFieldLength', '100');
@@ -96,6 +98,8 @@ class Registry_object extends MX_Controller {
 		$this->solr->setFacetOpt('limit','100');
 		$this->solr->setFacetOpt('sort','count');
 		$result = $this->solr->executeSearch();
+
+
 
 		echo json_encode($result);
 	}

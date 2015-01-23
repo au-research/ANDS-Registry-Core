@@ -1,42 +1,42 @@
-@if($ro->rights)
 <?php
-$order = array('licence','rightsStatement','accessRights');
+    //preparation
+    $cc = false;
+    $ar = false;
+    $detail = false;
+    if ($ro->rights) {
+        foreach($ro->rights as $right) {
+            if ($right['rights_type']=='licence' && $right['type']=='CC-BY') {
+                $cc = $right['value'];
+            } elseif ($right['rights_type']=='accessRights') {
+                $ar = $right['type'];
+            } else {
+                $detail = true;
+            }
+        }
+        if ($detail) {
+            $content = '';
+            foreach ($ro->rights as $right) {
+                $content .= '<h4>'.readable($right['rights_type']).'</h4>';
+                $content .= '<p>'.$right['value'].'</p>';
+            }
+        }
+    }
 ?>
 
-<div id="rights">
-    <h3>Licence & Rights</h3>
-
-    @foreach($order as $o)
-        @foreach($ro->rights as $right)
-            @if($right['rights_type']==$o)
-                <?php
-                 switch($right['rights_type'])
-                {
-                   case 'licence':
-                        echo "<h4>Licence</h4>";
-                        break;
-                   case 'accessRights':
-                        echo "<h4>Access rights</h4>";
-                        break;
-                   case 'rightsStatement':
-                        echo "<h4>Rights Statement</h4>";
-                        break;
-                   default;
-                     break;
-                 }
-                ?>
-                @if($right['uri'])
-                {{$right['uri']}}<br />
-                @endif
-                @if($right['type'])
-                {{$right['type']}}<br />
-                @endif
-                @if($right['value'])
-                {{$right['value']}}<br />
-                @endif
-            @endif
-        @endforeach
-    @endforeach
-
-</div>
+@if($ro->rights)
+    <h3>License & Rights</h3>
+    @if($ar)
+        <span class="label label-info label-{{$ar}}" for="">{{$ar}}</span>
+    @endif
+    @if($cc)
+        <img src="{{asset_url('images/icons/'.$cc.'.png', 'core')}}" class="img-cc" alt="{{$cc}}">
+    @endif
+    <p>
+        @if($detail)
+            <a href="javascript:;" id="toggleRightsContent">View details</a>
+            <div id="rightsContent">
+                @if($content) {{$content}} @endif
+            </div>
+        @endif
+    </p>
 @endif

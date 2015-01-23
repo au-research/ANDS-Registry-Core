@@ -8,7 +8,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Identifiers extends ROHandler {
 	function handle() {
 		$result = array();
-        if($this->index) {
+        if($this->index && isset($this->index['identifier_type'])) {
             //identifier_type, identifier_value
             foreach($this->index['identifier_type'] as $key=>$type) {
                 $result[] = array(
