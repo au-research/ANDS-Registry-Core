@@ -4,7 +4,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/_method_handler.php');
 class Registry_objectsMethod extends MethodHandler {
     private $default_params = array(
         'q' => '*:*',
-        'fl' => 'id,key,slug,title,class,data_source_id,group',
+        'fl' => 'id,key,slug,title,class,data_source_id,group,created',
         'wt' => 'json',
         'indent' => 'on',
         'rows' => 20
@@ -96,6 +96,11 @@ class Registry_objectsMethod extends MethodHandler {
         $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
         if ($xml) {
             $this->xml = $xml;
+            $rifDom = new DOMDocument();
+            $rifDom->loadXML( $this->ro->getRif());
+            $gXPath = new DOMXpath($rifDom);
+            $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
+            $this->gXPath = $gXPath;
         }
     }
 
@@ -109,6 +114,7 @@ class Registry_objectsMethod extends MethodHandler {
         return array(
             'index' => $this->index,
             'xml' => $this->xml,
+            'gXPath' => $this->gXPath,
             'ro' => $this->ro,
             'params' => $this->params,
             'default_params' => $this->default_params

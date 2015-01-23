@@ -83,85 +83,83 @@ Content:text/plain; charset="utf-8"
 TY  - DATA
 Y2  - '.date("Y-m-d")."
 ";
-        $doi = '';
-        foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->identifier as $identifiers) {
-            if($identifiers['type']=='doi'){
-                $doi = $identifiers;
-            }
-        }
-        if($doi=='') {
-            foreach($this->xml->{$this->ro->class}->identifier as $identifiers) {
-                if($identifiers['type']=='doi'){
-                    $doi = $identifiers;
-                }
-            }
-        }
+        $doi = $this->getDoi();
         if($doi!=''){
-            if(strpos($doi,"doi.org/")) {
-                $doi = substr($doi,strpos($doi,"doi.org/")+8);
-            }
             $endNote .= "DO  - ".$doi."
 ";
         }
+        $publicationDate = $this->getPublicationDate();
+        if($publicationDate!='') {
+            $endNote .= "PY  - ".$publicationDate."
+";
+        }
 
-        $endNote .= $this->getPublicationDate();
         return $endNote;
     }
+    private function getDoi(){
 
+        $doi = '';
+        $query = '';
+        if($this->gXPath->evaluate("count(//ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi'])")>0) {
+            $query = "//ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']";
+        }
+        elseif($this->gXPath->evaluate("count(//ro:identifier/[@type='doi'])")>0) {
+            $query = "//ro:identifier/[@type='doi']";
+        }
+
+        if($query!=''){
+            $dois = $this->gXPath->query($query);
+            foreach($dois as $doivalue) {
+                $doi = $doivalue->nodeValue;
+            }
+            if(strpos($doi,"doi.org/")) {
+                $doi = substr($doi,strpos($doi,"doi.org/")+8);
+            }
+        }
+        return $doi;
+
+    }
     private function getPublicationDate()
     {
         $publicationDate = '';
-      /*  if($theDates = $this->gXPath("//ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate']")) {
-            $publicationDate = substr($theDates[0],1,4);
-
-
+        $query = '';
+        if($this->gXPath->evaluate("count(//ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate'])")>0) {
+            $query = "//ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate']";
         }
-        elseif($theDates = $this->gXPath("//ro:citationInfo/ro:citationMetadata/ro:date[@type='issued']")) {
-                $publicationDate = substr($theDates[0],1,4);
-
+        elseif($this->gXPath->evaluate("count(//ro:citationInfo/ro:citationMetadata/ro:date[@type='issued'])")>0) {
+            $query = "//ro:citationInfo/ro:citationMetadata/ro:date[@type='issued']";
+        }
+        elseif($this->gXPath->evaluate("count(//ro:citationInfo/ro:citationMetadata/ro:date[@type='created'])")>0) {
+            $query = "//ro:citationInfo/ro:citationMetadata/ro:date[@type='created']";
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:dates[@type='dc.issued'])")>0) {
+            $query = "//ro:collection/ro:dates[@type='dc.issued']";
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:dates[@type='dc.available'])")>0) {
+            $query = "//ro:collection/ro:dates[@type='dc.available']";
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:dates[@type='dc.created'])")>0) {
+            $query = "//ro:collection/ro:dates[@type='dc.created']";
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/@dateModified)")>0) {
+            $query = "//ro:collection/@dateModified";
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/@dateAccessioned)")>0) {
+            $query = "ro:collection/@dateAccessioned";
         }
 
-        if($publicationDate!='')
-        {
-            $publicationDate = "PY  - ".$publicationDate."
-";
-        } */
+        if($query!=''){
+            $dates = $this->gXPath->query($query);
+            foreach($dates as $date) {
+                $publicationDate = date("Y",strtotime($date->nodeValue));
+            }
+        }else{
+            $publicationDate = $this->ro->created;
+        }
 
-        return $publicationDate;
-
+        return  $publicationDate;
     }
 }
 
-/*
 
-<xsl:template name="getPublishedDate">
-        <xsl:choose>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate']">
-                <xsl:value-of select="substring(ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='publicationDate'],1,4)"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='issued']">
-                <xsl:value-of select="substring(ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='issued'],1,4)"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='created']">
-                <xsl:value-of select="substring(ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='created'],1,4)"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:dates[@type='dc.issued']">
-                <xsl:value-of select="substring(ro:collection/ro:dates[@type='dc.issued']/ro:date,1,4)"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:dates[@type='dc.available']">
-                <xsl:value-of select="substring(ro:collection/ro:dates[@type='dc.available']/ro:date,1,4)"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:dates[@type='dc.created']">
-                <xsl:value-of select="substring(ro:collection/ro:dates[@type='dc.created']/ro:date,1,4)"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/@dateModified">
-                <xsl:value-of select="substring(ro:collection/@dateModified,1,4)"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/@dateAccessioned">
-                <xsl:value-of select="substring(ro:collection/@dateAccessioned,1,4)"/>
-            </xsl:when>
-            <xsl:when test="$dateHarvested">
-                <xsl:value-of select="substring($dateHarvested,1,4)" />
-            </xsl:when>
-        </xsl:choose>
-</xsl:template> */
+
