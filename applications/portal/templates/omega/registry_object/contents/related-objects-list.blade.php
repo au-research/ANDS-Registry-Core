@@ -1,3 +1,4 @@
+@if($ro->relationships)
 <div class="swatch-white">
 	<div class="panel panel-primary element-no-top element-short-bottom panel-content">
 		<div class="panel-heading">
@@ -43,3 +44,4 @@
 		</div>
 	</div>
 </div>
+@endif

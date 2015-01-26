@@ -11,6 +11,9 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <header>
+                                    @if($ro->logo)
+                                    <img src="{{$ro->logo[0]}}" alt="logo" class="header-logo animated fadeInDown">
+                                    @endif
                                     <h1 class="hairline bordered-normal">{{$ro->core['title']}}</h1>
                                     <small>{{$ro->core['group']}}</small>
                                 </header>

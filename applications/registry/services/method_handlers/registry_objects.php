@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'relatedInfo','suggest', 'dates', 'connectiontrees', 'rights', 'directaccess','contact'
+        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'relatedInfo','suggest', 'dates', 'connectiontrees', 'rights', 'directaccess','contact', 'logo'
     );
 
     public $ro = null;
@@ -44,7 +44,18 @@ class Registry_objectsMethod extends MethodHandler {
                         case 'registry':
                         case 'relationships' :  $result[$m1] = $this->relationships_handler(); break;
 
-                        default :  $result[$m1] = $this->ro_handle($m1);  break;
+                        default : 
+                            try {
+                                $r = $this->ro_handle($m1);
+                                if (!is_array_empty($r)) {
+                                     $result[$m1] = $r;
+                                }
+                               
+                            } catch (Exception $e) {
+                                $result[$m1] = array();
+                            }
+                            
+                            break;
 
                     }
                 }

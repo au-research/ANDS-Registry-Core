@@ -313,3 +313,17 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
 function endsWith($haystack, $needle){
     return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 }
+
+function is_array_empty($input) {
+   $result = true;
+
+   if (is_array($input) && count($input) > 0) {
+      foreach ($input as $val) {
+         $result = $result && is_array_empty($val);
+      }
+   } else {
+      $result = empty($input);
+   }
+
+   return $result;
+}
