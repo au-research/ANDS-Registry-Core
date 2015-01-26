@@ -1,5 +1,6 @@
 <?php
 	$order = array('brief', 'full');
+	$omit = array('logo');
 ?>
 @if($ro->descriptions)
 <div class="swatch-white">
@@ -18,7 +19,7 @@
 			@endforeach
 			
 			@foreach($ro->descriptions as $desc)
-				@if(!in_array($desc['type'], $order))
+				@if(!in_array($desc['type'], $order) && !in_array($desc['type'], $omit))
 					<small>{{$desc['type']}}</small>
 					<p>{{$desc['description']}}</p>
 				@endif
