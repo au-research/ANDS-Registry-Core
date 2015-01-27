@@ -10,8 +10,8 @@
                     <p>
                     {{$relatedInfo['title']}}<br />
                     {{$relatedInfo['identifier']['identifier_type']}} :
-                    @if($relatedInfo['identifier']['identifier_href'])
-                        <a href="{{$relatedInfo['identifier']['identifier_href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
+                    @if(isset($relatedInfo['identifier']['identifier_href']))
+                        <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
                     @else
                         {{$relatedInfo['identifier']['identifier_value']}}<br />
                     @endif

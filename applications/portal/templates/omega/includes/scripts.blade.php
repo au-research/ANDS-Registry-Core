@@ -8,6 +8,7 @@
 <script src="{{asset_url('lib/angular-route/angular-route.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-sanitize/angular-sanitize.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-animate/angular-animate.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular-ui-utils/ui-utils.min.js', 'core')}}"></script>
 
 
 

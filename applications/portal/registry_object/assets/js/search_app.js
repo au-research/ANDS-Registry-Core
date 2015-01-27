@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'search_components', 'profile_components', 'uiGmapgoogle-maps'], function($interpolateProvider){
+var app = angular.module('app', ['ngRoute', 'ngSanitize', 'search_components', 'profile_components', 'uiGmapgoogle-maps', 'ui.utils'], function($interpolateProvider){
 	$interpolateProvider.startSymbol('[[');
 	$interpolateProvider.endSymbol(']]');
 });
@@ -109,6 +109,7 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 	$scope.allfilters = [];
 	$scope.allfacets = [];
 	$scope.loading = false;
+	$scope.selectState = 'selectAll';
 
 	$scope.advanced_search = {};
 	$scope.advanced_search.fields = search_factory.advanced_fields();
@@ -291,6 +292,28 @@ app.controller('mainController', function($scope, search_factory, profile_factor
 			}
 		});
 		if(!exist) $scope.selected.push(ro);
+		if($scope.selected.length != $scope.result.response.docs.length) {
+			$scope.selectState = 'deselectSelected';
+		}
+		if($scope.selected.length == 0) {
+			$scope.selectState = 'selectAll';
+		}
+	}
+
+	$scope.toggleResults = function() {
+		if ($scope.selectState == 'selectAll') {
+			$.each($scope.result.response.docs, function(){
+				this.select = true;
+				$scope.selected.push(this);
+			});
+			$scope.selectState = 'deselectAll';
+		} else if ($scope.selectState=='deselectAll' || $scope.selectState=='deselectSelected') {
+			$scope.selected = [];
+			$.each($scope.result.response.docs, function(){
+				this.select = false;
+			});
+			$scope.selectState = 'selectAll';
+		}
 	}
 
 	$scope.addKeyWord = function(key) {

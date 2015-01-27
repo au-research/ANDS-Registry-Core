@@ -17,6 +17,11 @@
     		            </div>
     		        </div>
     		    </section>
+                <section class="section swatch-white">
+                    <div class="swatch-white scroll-fixed element-shorter-top element-shorter-bottom" ui-scrollfix="+224">
+                        @include('includes/search-header')
+                    </div>
+                </section>
     		    <section class="section swatch-white" style="z-index:1;background:#e9e9e9">
     		    	<div class="container-fluid">
     		    		<div class="row element-short-top">
