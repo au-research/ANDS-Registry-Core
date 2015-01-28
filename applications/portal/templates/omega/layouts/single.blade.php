@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="app" ng-controller="mainController">
     @include('includes/header')
-    <body>
+    <body ng-controller="searchController">
         @include('includes/top-menu')
         <div id="content">
             @yield('content')

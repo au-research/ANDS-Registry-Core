@@ -35,6 +35,19 @@ angular.module('search_components',[])
 			});
 			return filters;
 		},
+		filters_to_hash: function(filters) {
+			var hash = '';
+			$.each(filters, function(i,k){
+				if(typeof k!='object'){
+					hash+=i+'='+k+'/';
+				} else if (typeof k=='object'){
+					$.each(k, function(){
+						hash+=i+'='+this+'/';
+					});
+				}
+			});
+			return hash;
+		},
 		advanced_fields: function() {
 			var fields = [
 				{'name':'terms', 'display':'Search Terms', 'active':true},

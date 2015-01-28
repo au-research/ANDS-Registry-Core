@@ -9,8 +9,8 @@
     		    <section class="section swatch-gray" style="z-index:1">
     		    	<div class="container-fluid">
     		    		<div class="row element-short-top">
-                            <div class="col-md-9">
-                                <div class="container-fluid">
+                            <div class="col-md-9" style="padding-right:0">
+                                <div class="container-fluid" style="padding:0">
                                     <div class="col-md-12">
                                         <div class="panel panel-body swatch-white">
                                             @if($ro->logo)
