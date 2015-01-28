@@ -68,7 +68,11 @@ class Citations extends ROHandler {
 
                 }
             }
-
+            if(!$this->xml->{$this->ro->class}->citationInfo){
+                $result[] = array(
+                    'endNote' => $endNote
+                );
+            }
         }
         return $result;
 	}
@@ -94,8 +98,52 @@ Y2  - '.date("Y-m-d")."
 ";
         }
 
+        $contributors = $this->getContributors();
+        if($contributors!=''){
+            foreach($contributors as $contributor){
+                $endNote .= "AU  - ".$contributor['name']."
+";
+            }
+        }
+        else{
+            $endNote .= "AU  - Anonymous
+";
+        }
+
+        $endNote .= "TI  - ".$this->ro->title."
+";
+        $sourceUrl = $this->getSourceUrl();
+        if($sourceUrl!=''){
+            $endNote .= "UR  - ".$sourceUrl."
+";
+        }
+        $publisher = $this->getPublisher();
+        if($publisher!=''){
+            $endNote .= "PB  - ".$publisher."
+";
+        }
+        $createdDate = $this->getCreatedDate();
+        if($createdDate!=''){
+            $endNote .= "DA  - ".$createdDate."
+";
+        }
+        $version = $this->getVersion();
+        if($version!=''){
+            $endNote .= "ET  - ".$version."
+";
+        }
+
+        $endNote .="LA  - English
+";
+        $rights = $this->ro->processLicence();
+        foreach($rights as $right) {
+            if($right['value']!='') $endNote .="C1  - ".$right['value']."
+";
+        }
+
         return $endNote;
     }
+
     private function getDoi(){
 
         $doi = '';
@@ -119,6 +167,7 @@ Y2  - '.date("Y-m-d")."
         return $doi;
 
     }
+
     private function getPublicationDate()
     {
         $publicationDate = '';
@@ -159,6 +208,160 @@ Y2  - '.date("Y-m-d")."
 
         return  $publicationDate;
     }
+
+    private function getSourceUrl()
+    {
+        $sourceUrl = '';
+        $query = '';
+        if($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi'])")>0) {
+            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']";
+            $type = 'doi';
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle'])")>0) {
+            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle']";
+            $type = 'handle';
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri'])")>0) {
+            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri']";
+            $type = 'uri';
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl'])")>0) {
+            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']";
+            $type = 'purl';
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='doi'])")>0) {
+            $query = "//ro:collection/ro:identifier[@type='doi']";
+            $type = 'doi';
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='handle'])")>0) {
+            $query = "//ro:collection/ro:identifier[@type='handle']";
+            $type = 'handle';
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='uri'])")>0) {
+            $query = "//ro:collection/ro:identifier[@type='uri']";
+            $type = 'uri';
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='purl']")>0) {
+            $query = "//ro:collection/ro:identifier[@type='purl']";
+            $type = 'purl';
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:url")>0) {
+            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:url";
+            $type = 'url';
+        }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:location/ro:address/ro:electronic[@type='url']")>0) {
+            $query = "//ro:collection/ro:location/ro:address/ro:electronic[@type='url']";
+            $type = 'url';
+        }
+        if($query!=''){
+            $urls = $this->gXPath->query($query);
+            foreach($urls as $url) {
+                $sourceUrl = $url->nodeValue;
+                $resolved = identifierResolution($sourceUrl,$type);
+                $sourceUrl = $resolved['href'];
+            }
+        } else {
+
+            $sourceUrl = portal_url();
+        }
+
+        return  $sourceUrl;
+    }
+
+    private function getPublisher(){
+
+        $publisher = '';
+        $query = '';
+        if($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:publisher)")>0) {
+            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:publisher";
+        }
+        elseif($this->gXPath->evaluate("count(//@group)")>0){
+            $query = "//@group";
+        }
+        if($query!=''){
+            $publishers = $this->gXPath->query($query);
+            foreach($publishers as $apublisher) {
+                $publisher = $apublisher->nodeValue;
+            }
+        }
+
+        return $publisher;
+    }
+    
+    private function getCreatedDate(){
+
+        $createdDate = '';
+        $query = '';
+        if($this->gXPath->evaluate("count(//ro:collection/ro:dates[@type='dc.created'])")>0) {
+            $query = "//ro:collection/ro:dates[@type='dc.created']";
+        }
+        if($query!=''){
+            $createdDates = $this->gXPath->query($query);
+            foreach($createdDates as $created_Date) {
+                $createdDate = date("Y",strtotime($created_Date->nodeValue));
+            }
+        }
+
+        return $createdDate;
+    }
+
+    private function getVersion(){
+
+        $version = '';
+        $query = '';
+        if($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:version)")>0) {
+            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:version";
+        }
+        if($query!=''){
+            $versions = $this->gXPath->query($query);
+            foreach($versions as $aversion) {
+                $version = $aversion->nodeValue;
+            }
+        }
+
+        return $version;
+    }
+
+    private function getContributors(){
+        $contributors = Array();
+        foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor){
+             $nameParts = Array();
+             foreach($contributor->namePart as $namePart){
+                    $nameParts[] = array(
+                            'namePart_type' => (string)$namePart['type'],
+                            'name' => (string)$namePart
+                        );
+             }
+             $contributors[] =array(
+                   'name' => formatName($nameParts),
+                    'seq' => (string)$contributor['seq'],
+                );
+         }
+
+        if(!$contributors){
+            $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector'];
+            $classArray = ['party'];
+            $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
+            if(count($authors)>0)
+            {
+                foreach($authors as $author)
+                {
+                    if($author['status']==PUBLISHED)
+                    {
+                        $contributors[] =array(
+                            'name' => $author['title'],
+                            'seq' => ''
+                        );
+                    }
+
+                }
+            }
+        }
+
+        usort($contributors,"seq");
+        return $contributors;
+    }
+
 }
 
 
