@@ -1,5 +1,5 @@
-<h3>Contact Information</h3>
 @if($ro->contacts)
+<h3>Contact Information</h3>
 <div id="contact">
     <h3>Contact Information</h3>
 	@foreach($ro->contacts as $contact)

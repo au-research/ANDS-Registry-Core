@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="app" ng-controller="mainController">
+<html lang="en">
     @include('includes/header')
-    <body ng-controller="searchController">
+    <body>
         @include('includes/top-menu')
         <div id="content">
         	<article>
@@ -23,14 +23,16 @@
                     </div>
                 </section>
     		    <section class="section swatch-gray" style="z-index:1">
-    		    	<div class="container">
+    		    	<div class="container-fluid">
     		    		<div class="row element-short-top">
-    		    			<div class="col-md-8">
-    		    				@yield('content')
-    		    			</div>
-    		    			<div class="col-md-4 sidebar animated slideInRight">
+                            <div class="col-md-3">
                                 @include('registry_object/contents/standard-getdatalicence')
                                 @include('registry_object/contents/standard-metafunc')
+                            </div>
+    		    			<div class="col-md-6">
+    		    				@yield('content')
+    		    			</div>
+    		    			<div class="col-md-3 sidebar animated slideInRight">
     		    				@yield('sidebar')
     		    			</div>
     		    		</div>

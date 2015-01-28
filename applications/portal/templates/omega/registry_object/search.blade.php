@@ -2,39 +2,55 @@
 
 @section('content')
 <div class="panel panel-primary element-no-top element-small-bottom" data-os-animation="fadeInUp">
-    @include('includes/search-header')
-    <div  ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
-        <div class="element-no-top element-no-bottom">
+    <div class="panel-body swatch-white" style="padding:10px" ng-cloak ng-show="result">
+        <a href="" class="btn btn-link btn-sm" ng-click="toggleResults()">
+            <span ng-show="selectState=='deselectAll'"><i class="fa fa-check-square-o"></i> Deselect All</span>
+            <span ng-show="selectState=='selectAll'"><i class="fa fa-square-o"></i> Select All</span>
+            <span ng-show="selectState=='deselectSelected'"><i class="fa fa-minus-square-o"></i> Deselect Selected</span>
+        </a>
+        <nav ng-hide="loading" ng-cloak class="pull-right">
+            <ul class="pagi">
+                <li><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+                <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
+                <li><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+            </ul>
+        </nav>
+    </div>
+   
+    <div ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
+        <div class="stoolbar">
+            <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
+        </div>
+        <div class="element-no-top element-no-bottom scontent">
             <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
             <p><small>[[doc.group]]</small></p>
             <div ng-repeat="x in doc.hl">
                 <p ng-repeat="b in x" data-ng-bind-html="b | trustAsHtml"></p>
             </div>
             <p data-ng-bind-html="doc.description | trustAsHtml" ng-show="!doc.hl"></p>
-            <div class="toolbar" style="margin-top:15px;">
-                <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
-            </div>
         </div>
     </div>
+
+    <div class="panel-body swatch-white" style="padding:10px" ng-cloak>
+        <small ng-hide="loading" ng-cloak class="pull-left"><b>[[result.response.numFound]]</b> results ([[result.responseHeader.QTime]] milliseconds)</small>
+        <nav ng-hide="loading" ng-cloak class="pull-right">
+            <ul class="pagi">
+                <li><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+                <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
+                <li><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+            </ul>
+        </nav>
+    </div>
 </div>
-
-<nav class="pull-right">
-  <ul class="pagination pagination-sm" style="margin:0 auto;">
-    <li><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
-    <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
-    <li><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
-  </ul>
-</nav>
-
 <div class="clear"></div>
 @stop
 
 @section('sidebar')
 <div class="panel panel-primary" ng-cloak>
     <div class="panel-heading">Current Search</div>
-    <div class="panel-body swatch-white">
+    <!-- <div class="panel-body swatch-white">
         [[filters]]
-    </div>
+    </div> -->
     <div class="panel-body swatch-white">
         <ul class="list-unstyled">
             <li ng-repeat="filter in allfilters">

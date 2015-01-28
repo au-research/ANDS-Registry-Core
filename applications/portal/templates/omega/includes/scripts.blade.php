@@ -8,6 +8,7 @@
 <script src="{{asset_url('lib/angular-route/angular-route.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-sanitize/angular-sanitize.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-animate/angular-animate.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular-ui-utils/ui-utils.min.js', 'core')}}"></script>
 
 
 
@@ -34,8 +35,8 @@
 <!-- Search Script and Resources is included in every page -->
 <script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('profile/js/profile_components.js', 'full_base_path')}}"></script>
-<script src="{{asset_url('registry_object/js/search.js', 'full_base_path')}}"></script>
-
+<!-- <script src="{{asset_url('registry_object/js/search.js', 'full_base_path')}}"></script> -->
+<script src="{{asset_url('registry_object/js/search_app.js', 'full_base_path')}}"></script>
 
 
 

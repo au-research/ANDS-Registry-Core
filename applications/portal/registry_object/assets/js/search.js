@@ -15,7 +15,6 @@ app.controller('searchCtrl', function($scope){
 		} else {
 			search_url+='q='+$scope.q;
 		}
-
 		window.location = search_url;
 	}
 
