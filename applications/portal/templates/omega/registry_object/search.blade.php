@@ -59,7 +59,7 @@
         </ul>
         <div class="panel-body swatch-white">
             <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')">Save Search</a>
-            <a href="" class="btn" ng-click="add_user_data('saved_search')">Clear Search</a>
+            <a href="" class="btn" ng-click="clearSearch()">Clear Search</a>
         </div>
     </div>
 </div>

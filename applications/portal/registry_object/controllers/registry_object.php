@@ -44,7 +44,7 @@ class Registry_object extends MX_Controller {
 		$this->load->library('blade');
 		$this->blade
 			->set('lib', array('ui-events', 'angular-ui-map', 'google-map'))
-			->set('scripts', array('search_app'))
+			// ->set('scripts', array('search_app'))
 			->set('facets', $this->components['facet'])
 			->set('search', true) //to disable the global search
 			->render('registry_object/search');
@@ -98,6 +98,7 @@ class Registry_object extends MX_Controller {
 		$this->solr->setFacetOpt('limit','100');
 		$this->solr->setFacetOpt('sort','count');
 		$result = $this->solr->executeSearch();
+		$result->{'url'} = $this->solr->constructFieldString();
 
 
 

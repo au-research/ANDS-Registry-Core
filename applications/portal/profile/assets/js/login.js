@@ -1,23 +1,23 @@
-var login_app = angular.module('login_app', ['ngRoute'], function($interpolateProvider){
+var app = angular.module('app', ['ngRoute'], function($interpolateProvider){
 	$interpolateProvider.startSymbol('[[');
 	$interpolateProvider.endSymbol(']]');
 });
 
-login_app.config(['$routeProvider', function($routeProvider){
+app.config(['$routeProvider', function($routeProvider){
 	$routeProvider
 		.when('/', {
 			template:$('#main').html(),
-			controller:'loginCtrl'
+			controller:'mainController'
 		})
 		.when('/:method', {
 			template:$('#main').html(),
-			controller:'loginCtrl'
+			controller:'mainController'
 		})
 		;
 }]);
 
 
-login_app.directive('autoFillSync', function($timeout) {
+app.directive('autoFillSync', function($timeout) {
    return {
       require: 'ngModel',
       link: function(scope, elem, attrs, ngModel) {
@@ -32,7 +32,7 @@ login_app.directive('autoFillSync', function($timeout) {
    }
 });
 
-login_app.controller('loginCtrl', function($scope, $routeParams, loginService, $location){
+app.controller('mainController', function($scope, $routeParams, loginService, $location){
 	$scope.tab = $routeParams.method ? $routeParams.method : $('#default_authenticator').val();
 	$scope.redirect = $location.search().redirect ? $location.search().redirect : base_url + 'profile';
 	$scope.error = $location.search().error ? $location.search().error : '';
@@ -60,7 +60,7 @@ login_app.controller('loginCtrl', function($scope, $routeParams, loginService, $
 	}
 });
 
-login_app.factory('loginService', function($http){
+app.factory('loginService', function($http){
 	return {
 		authenticate: function(method, data) {
 			return $http.post(registry_url+'auth/authenticate/'+method, data).then(function(response){return response.data});

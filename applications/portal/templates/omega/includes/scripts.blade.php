@@ -35,11 +35,10 @@
 <!-- Search Script and Resources is included in every page -->
 <script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('profile/js/profile_components.js', 'full_base_path')}}"></script>
-<!-- <script src="{{asset_url('registry_object/js/search.js', 'full_base_path')}}"></script> -->
+<script src="{{asset_url('registry_object/js/portal-filters.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('registry_object/js/search_controller.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('registry_object/js/main_search_controller.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('registry_object/js/search_app.js', 'full_base_path')}}"></script>
-
-
-
 
 <!-- LESS.JS for development only-->
 <script>
