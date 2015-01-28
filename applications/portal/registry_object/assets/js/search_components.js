@@ -55,6 +55,7 @@ angular.module('search_components',[])
 				{'name':'license_class', 'display':'License'},
 				{'name':'type', 'display':'Types'},
 				{'name':'spatial', 'display':'Spatial'},
+				{'name':'class', 'display':'Class'}
 			];
 			return fields;
 		}

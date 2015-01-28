@@ -53,6 +53,15 @@
                 @include('registry_object/facet/map')
               </div>
 
+              <div ng-if="isAdvancedSearchActive('class')">
+                Search is restricted to: <b>[[filters.class]]</b>
+                <ul class="list-unstyled">
+                  <li ng-repeat="c in class_choices">
+                    <input type="radio" ng-model="filters.class" ng-value="c.name" /> [[c.val]]
+                  </li>
+                </ul>
+              </div>
+
             </div>
           </div>
         </div>

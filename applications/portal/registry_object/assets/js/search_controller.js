@@ -3,6 +3,13 @@ function searchController($scope, search_factory, uiGmapGoogleMapApi){
 	$scope.query = '';
 	$scope.search_type = 'q';
 	$scope.allfacets = [];
+	
+	$scope.class_choices = [
+		{'name':'collection', 'val':'Collection', 'selected':true},
+		{'name':'activity', 'val':'Activity', 'selected':false},
+		{'name':'party', 'val':'Party', 'selected':false},
+		{'name':'service', 'val':'Services', 'selected':false}
+	];
 
 	$scope.hashChange = function(){
 		var search_url = base_url+'search/#!/';
@@ -31,7 +38,7 @@ function searchController($scope, search_factory, uiGmapGoogleMapApi){
 				if(this.name==select){
 					$scope.selectAdvancedField(this);
 				}
-			});		
+			});
 		}
 		$('#advanced_search').modal();
 		// if ($scope.mapInstance) google.maps.event.trigger($scope.mapInstance, "resize");

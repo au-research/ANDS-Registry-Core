@@ -17,4 +17,3 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 
 app.controller('searchController', searchController);
 app.controller('mainController', mainSearchController);
-

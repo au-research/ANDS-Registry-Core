@@ -116,6 +116,7 @@ function mainSearchController($scope, search_factory, profile_factory, $location
 		}
 		if(!$scope.filters['rows']) $scope.filters['rows'] = 15;
 		if(!$scope.filters['sort']) $scope.filters['sort'] = 'score desc';
+		if(!$scope.filters['class']) $scope.filters['class'] = 'collection';
 		$scope.populateFilters();
 
 		$('.sresult').addClass('fadeOutRight');
