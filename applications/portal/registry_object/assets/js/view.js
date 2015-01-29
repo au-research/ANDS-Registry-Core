@@ -8,10 +8,17 @@ $(document).ready(function() {
 	});
 
 	$('#rightsContent').hide();
+	$('#dataformats').hide();
 	$(document).on('click', '#toggleRightsContent', function(e){
 		e.preventDefault();
 		$('#rightsContent').slideToggle();
+	}).on('click', '#gotodata', function(e){
+		e.preventDefault();
+		$('#dataformats').slideToggle();
 	});
+
+	
+
 });
 
 

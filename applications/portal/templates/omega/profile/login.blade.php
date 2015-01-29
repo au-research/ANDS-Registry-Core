@@ -1,7 +1,7 @@
-@extends('layouts/single')
+@extends('layouts/single-no-search')
 @section('content')
 <input type="hidden" id="default_authenticator" value="{{$default_authenticator}}">
-<section class="section swatch-white" ng-app="login_app" >
+<section class="section swatch-white">
     <div class="container">
         <div class="row">
             <div class="col-md-12 text-center">

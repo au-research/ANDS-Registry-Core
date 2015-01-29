@@ -44,7 +44,7 @@ class Registry_object extends MX_Controller {
 		$this->load->library('blade');
 		$this->blade
 			->set('lib', array('ui-events', 'angular-ui-map', 'google-map'))
-			->set('scripts', array('search_app'))
+			// ->set('scripts', array('search_app'))
 			->set('facets', $this->components['facet'])
 			->set('search', true) //to disable the global search
 			->render('registry_object/search');
@@ -56,7 +56,7 @@ class Registry_object extends MX_Controller {
 	 * @param  string $class class restriction
 	 * @return json
 	 */
-	function filter($class = 'collection') {
+	function filter() {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
@@ -68,6 +68,11 @@ class Registry_object extends MX_Controller {
 		// sleep(2);
 
 		$this->load->library('solr');
+
+		//restrict to default class
+		$default_class = isset($filters['class']) ? $filters['class'] : 'collection';
+		$this->solr->setOpt('fq', '+class:'.$default_class);
+
 		$this->solr->setFilters($filters);
 
 		//returns this set of Facets
@@ -84,22 +89,17 @@ class Registry_object extends MX_Controller {
 		$this->solr->setOpt('hl.simple.pre', '&lt;b&gt;');
 		$this->solr->setOpt('hl.simple.post', '&lt;/b&gt;');
 
-
 		//experiment hl attrs
 		// $this->solr->setOpt('hl.alternateField', 'description');
 		// $this->solr->setOpt('hl.alternateFieldLength', '100');
 		// $this->solr->setOpt('hl.fragsize', '300');
 		// $this->solr->setOpt('hl.snippets', '100');
-		
-		//restrict to default class
-		$this->solr->setOpt('fq', '+class:'.$class);
 
 		$this->solr->setFacetOpt('mincount','1');
 		$this->solr->setFacetOpt('limit','100');
 		$this->solr->setFacetOpt('sort','count');
 		$result = $this->solr->executeSearch();
-
-
+		$result->{'url'} = $this->solr->constructFieldString();
 
 		echo json_encode($result);
 	}
