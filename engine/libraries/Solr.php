@@ -273,6 +273,7 @@ class Solr {
 			$this->setOpt('qs', '1');
 		}
 		
+		$this->setOpt('q.op', 'AND');
 		
 		
 		// Score boosting applied to phrases based on how many parts of the phrase match
