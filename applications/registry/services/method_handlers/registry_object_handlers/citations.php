@@ -109,7 +109,13 @@ Y2  - '.date("Y-m-d")."
             $endNote .= "AU  - Anonymous
 ";
         }
-
+        $funders = $this->getFunders();
+        if($funders!=''){
+            foreach($funders as $funder){
+                $endNote .= "A$  - ".$funder."
+";
+            }
+        }
         $endNote .= "TI  - ".$this->ro->title."
 ";
         $sourceUrl = $this->getSourceUrl();
@@ -268,7 +274,8 @@ Y2  - '.date("Y-m-d")."
         return  $sourceUrl;
     }
 
-    private function getPublisher(){
+    private function getPublisher()
+    {
 
         $publisher = '';
         $query = '';
@@ -288,7 +295,8 @@ Y2  - '.date("Y-m-d")."
         return $publisher;
     }
     
-    private function getCreatedDate(){
+    private function getCreatedDate()
+    {
 
         $createdDate = '';
         $query = '';
@@ -305,7 +313,8 @@ Y2  - '.date("Y-m-d")."
         return $createdDate;
     }
 
-    private function getVersion(){
+    private function getVersion()
+    {
 
         $version = '';
         $query = '';
@@ -322,9 +331,10 @@ Y2  - '.date("Y-m-d")."
         return $version;
     }
 
-    private function getContributors(){
-        $contributors = Array();
-        foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor){
+    private function getContributors()
+    {
+       $contributors = Array();
+       foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor){
              $nameParts = Array();
              foreach($contributor->namePart as $namePart){
                     $nameParts[] = array(
@@ -336,9 +346,9 @@ Y2  - '.date("Y-m-d")."
                    'name' => formatName($nameParts),
                     'seq' => (string)$contributor['seq'],
                 );
-         }
+        }
 
-        if(!$contributors){
+       if(!$contributors){
             $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector'];
             $classArray = ['party'];
             $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
@@ -353,14 +363,47 @@ Y2  - '.date("Y-m-d")."
                             'seq' => ''
                         );
                     }
-
                 }
             }
-        }
+       }
 
         usort($contributors,"seq");
         return $contributors;
     }
+
+    private function getFunders()
+    {
+
+        $funders[] = Array();
+
+       // $funderParties = $this->gXPath->query("//ro:collection/ro:relatedObject/ro:relation[@type='isOutputOf']");
+      /*  foreach($this->xml->{$this->ro->class}->relatedObject as $partyFunder){
+           // var_dump($partyFunder->relation);
+            if($partyFunder->relation['type']=='isOutputOf'){
+                //$funder = $this->ro->getbyKey($partyFunder->key);
+                var_dump($partyFunder);
+                exit();
+                $thefunders = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
+                if(count($thefunders)>0)
+                {
+                    foreach($thefunders as $funder)
+                    {
+                        if($funder['status']==PUBLISHED)
+                        {
+                            $funders[] = $funder['title'];
+
+                        }
+                    }
+                }
+
+            }
+
+        } */
+
+        return $funders;
+
+    }
+
 
 }
 
