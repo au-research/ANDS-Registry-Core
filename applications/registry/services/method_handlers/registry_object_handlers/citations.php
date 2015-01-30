@@ -112,7 +112,7 @@ Y2  - '.date("Y-m-d")."
         $funders = $this->getFunders();
         if($funders!=''){
             foreach($funders as $funder){
-                $endNote .= "A$  - ".$funder."
+                $endNote .= "A4  - ".$funder."
 ";
             }
         }
@@ -374,31 +374,35 @@ Y2  - '.date("Y-m-d")."
     private function getFunders()
     {
 
-        $funders[] = Array();
+        $CI =& get_instance();
+        $CI->load->model('registry_object/registry_objects', 'mro');
 
-       // $funderParties = $this->gXPath->query("//ro:collection/ro:relatedObject/ro:relation[@type='isOutputOf']");
-      /*  foreach($this->xml->{$this->ro->class}->relatedObject as $partyFunder){
-           // var_dump($partyFunder->relation);
+        $funders = Array();
+
+        foreach($this->xml->{$this->ro->class}->relatedObject as $partyFunder){
             if($partyFunder->relation['type']=='isOutputOf'){
-                //$funder = $this->ro->getbyKey($partyFunder->key);
-                var_dump($partyFunder);
-                exit();
-                $thefunders = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
-                if(count($thefunders)>0)
+                $key = $partyFunder->key;
+                $grant_objects = $CI->mro->getAllByKey($key);
+                foreach ($grant_objects as $grant_object)
                 {
-                    foreach($thefunders as $funder)
-                    {
-                        if($funder['status']==PUBLISHED)
-                        {
-                            $funders[] = $funder['title'];
+                    $grant_sxml = $grant_object->getSimpleXML(NULL, true);
 
+                    // Handle the researcher IDs (using the normalisation_helper.php)
+                    $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
+
+                    $related_party = $grant_object->getRelatedObjectsByClassAndRelationshipType(['party'] ,['isFunderOf','isFundedBy']);
+                    if (is_array($grant_id))
+                    {
+                        if (is_array($related_party) && isset($related_party[0]))
+                        {
+                            $funders[] = $related_party[0]['title'];
                         }
                     }
                 }
 
             }
 
-        } */
+        }
 
         return $funders;
 
