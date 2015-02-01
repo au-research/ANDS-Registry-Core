@@ -36,7 +36,7 @@ function mainSearchController($scope, search_factory, profile_factory, $location
 		if(newv) {
 			$scope.allfilters = [];
 			$.each($scope.filters, function(i,k){
-				if(i!='p' && k && i!='rows' && i!='sort') {
+				if(i!='p' && k && i!='rows' && i!='sort' && i!='class') {
 					if(typeof k!='object') {
 						$scope.allfilters.push({'name':i,'value':k.toString()});
 					} else if(typeof k=='object') {

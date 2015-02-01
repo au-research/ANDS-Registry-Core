@@ -20,6 +20,12 @@ class Group extends MX_Controller {
 			->render('group/group_view');
 	}
 
+	function cms() {
+		acl_enforce('REGISTRY_STAFF');
+		var_dump($this->user->affiliations());
+		var_dump($this->user->functions());
+	}
+
 	function __construct() {
 		parent::__construct();
 		$this->load->library('blade');

@@ -6,8 +6,8 @@
         <div class=" element-no-top element-no-bottom" data-os-animation="none" data-os-animation-delay="0s">
             <ul class="listy">
         		<li ng-repeat="group in result.facets.group | limitTo:5">
-        			<input type="checkbox" ng-checked="isFacet('group', group.name)" ng-click="toggleFilter('group', group.name)">
-        			<a href="" ng-click="toggleFilter('group', group.name)" title="[[group.name]] ([[group.value]])">
+        			<input type="checkbox" ng-checked="isFacet('group', group.name)" ng-click="toggleFilter('group', group.name, true)">
+        			<a href="" ng-click="toggleFilter('group', group.name, true)" title="[[group.name]] ([[group.value]])">
         				[[group.name]] <small>([[group.value]])</small>
         			</a>
         		</li>
