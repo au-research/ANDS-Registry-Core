@@ -33,6 +33,24 @@
             <div class="panel-body">{{$group['custom_data']['overview']}}</div>
         </div>
         @endif
+        @if($group['custom_data']['researchdarea'])
+        <div class="panel panel-primary panel-content swatch-white">
+            <div class="panel-heading">Research and Key Research Areas</div>
+            <div class="panel-body">{{$group['custom_data']['researchdarea']}}</div>
+        </div>
+        @endif
+        @if($group['custom_data']['researchdataprofile'])
+        <div class="panel panel-primary panel-content swatch-white">
+            <div class="panel-heading">Research Data Profile</div>
+            <div class="panel-body">{{$group['custom_data']['researchdataprofile']}}</div>
+        </div>
+        @endif
+        @if($group['custom_data']['researchsupport'])
+        <div class="panel panel-primary panel-content swatch-white">
+            <div class="panel-heading">Research Support</div>
+            <div class="panel-body">{{$group['custom_data']['researchsupport']}}</div>
+        </div>
+        @endif
     @endif
 
 
@@ -61,6 +79,28 @@
 @stop
 
 @section('sidebar')
+
+@if($group['has_custom_data'])
+    @if($group['custom_data']['contact'])
+    <div class="panel panel-primary panel-content swatch-white">
+        <div class="panel-heading">Contact</div>
+        <div class="panel-body">{{$group['custom_data']['contact']}}</div>
+    </div>
+    @endif
+    @if($group['custom_data']['identifiers'])
+    <div class="panel panel-primary panel-content swatch-white">
+        <div class="panel-heading">Identifiers</div>
+        <div class="panel-body">
+            <ul class="list-unstyled">
+                @foreach($group['custom_data']['identifiers'] as $identifier)
+                <li>{{$identifier['value']}}</li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+    @endif
+@endif
+
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Registry Contents</div>
     <div class="panel-body">
@@ -83,6 +123,7 @@
     </div>
 </div>
 
+@if($group['latest_collections'])
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Last 5 Collections Added</div>
     <div class="panel-body">
@@ -93,5 +134,6 @@
         </ul>
     </div>
 </div>
+@endif
 
 @stop

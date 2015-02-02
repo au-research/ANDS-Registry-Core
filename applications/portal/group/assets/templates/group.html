@@ -76,8 +76,8 @@
 						<div class="panel-heading">Identifiers</div>
 						<div class="panel-body">
 							<div ng-repeat="identifier in group.data.identifiers">
-								<input type="text" class="" ng-model="identifier.value" placeholder="type">
-								<input type="text" class="" ng-model="identifier.name" placeholder="value">
+								<input type="text" class="" ng-model="identifier.type" placeholder="type">
+								<input type="text" class="" ng-model="identifier.value" placeholder="value">
 								<a href="" ng-click="removeIdentifier($index)"><i class='fa fa-remove'></i></a>
 							</div>
 							
