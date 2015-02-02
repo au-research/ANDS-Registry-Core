@@ -24,6 +24,11 @@
 			<script src="{{asset_url('lib/dynatree/src/jquery.dynatree.js', 'core')}}"></script>
         @elseif($l=='qtip')
             <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
+        @elseif($l=='textAngular')
+        	<link rel='stylesheet' href="{{asset_url('lib/textAngular/src/textAngular.css', 'core')}}">
+            <script src="{{asset_url('lib/textAngular/dist/textAngular-rangy.min.js', 'core')}}"></script>
+            <script src="{{asset_url('lib/textAngular/dist/textAngular-sanitize.min.js', 'core')}}"></script>
+            <script src="{{asset_url('lib/textAngular/dist/textAngular.min.js', 'core')}}"></script>
         @endif
 	@endforeach
 @endif

@@ -122,8 +122,88 @@ class Groups extends CI_Model {
 			);
 		}
 
+		//get custom fields from the database
+		$data = $this->fetchData($group['title']);
+		if($data) {
+			$group['has_custom_data'] = true;
+			$group['custom_data'] = json_decode($data->{'data'}, true);
+		} else {
+			$group['has_custom_data'] = false;
+		}
 
 		return $group;
+	}
+
+	function fetchData($name='') {
+		$this->portal_db = $this->load->database('portal', TRUE);
+		$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name), 1, 0);
+		if ($result->num_rows() > 0) {
+			return $result->first_row();
+		} else {
+			return false;
+		}
+	}
+
+	function saveData($name='', $data=array()) {
+		$this->portal_db = $this->load->database('portal', TRUE);
+
+		//check if there's an existing one
+		$existing = $this->fetchData($name);
+		if ($existing) {
+			//update
+			$data = array(
+				'status' => $data['status'],
+				'data' => json_encode($data['data'])
+			);
+			$this->portal_db->where('name', $name);
+			$result = $this->portal_db->update('contributor_pages', $data);
+		} else {
+			//create
+			$data = array(
+				'name' => $name,
+				'authorative_datasource' => '0',
+				'status' => $data['status'],
+				'data' => json_encode($data['data'])
+			);
+			$result = $this->portal_db->insert('contributor_pages', $data);
+		}
+		return $result;
+	}
+
+
+	function getOwnedGroups() {
+		if($this->user->hasFunction('REGISTRY_SUPERUSER')) {
+			$groups = $this->getAll();
+			$owned_groups = array();
+			foreach($groups as $group) {
+				array_push($owned_groups, $group['title']);
+			}
+		} else {
+			$url = base_url().'registry/services/api/data_sources/';
+			$owned_ds = $this->user->ownedDataSourceIDs();
+			foreach($owned_ds as $ds) {
+				$url.=$ds.'-';
+			}
+			$url.='/groups';
+
+			$content = @file_get_contents($url);
+			$content = json_decode($content, true);
+			$owned_groups = array();
+			if ($content['status']=='success') {
+				foreach($owned_ds as $ds) {
+					if(isset($content['message'][$ds])) {
+						foreach($content['message'][$ds]['groups'] as $group) {
+							if(!in_array($group, $owned_groups)) {
+								array_push($owned_groups, $group);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+		return $owned_groups;
 	}
 
 }
