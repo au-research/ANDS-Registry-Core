@@ -855,19 +855,14 @@ class Registry_object extends MX_Controller {
 
 	
 
-	function get_solr_doc($id){
+	function get_solr_doc($id, $limit=null){
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
-		$ro->enrich();
-        //$log = $this->ro->erase($id);
-		//echo $ro->getExtRif();
-		//exit();
-		//$ro->enrich();
-		$ro->update_quality_metadata();
-
-		$solrDoc = $ro->transformForSOLR();
-        echo $solrDoc;
-		//echo "done";
+		$solrDoc = $ro->indexable_json($limit);
+        echo json_encode($solrDoc);
 	}
 
 	//-----------DEPRECATED AFTER THIS LINE -----------------------//
@@ -1037,14 +1032,22 @@ class Registry_object extends MX_Controller {
 		
 	}
 
-	public function getConnections($ro_id)
+	public function getConnections($ro_id, $limit=null)
 	{
 		$connections = array();
-		$status = array(); 
+		$status = array();
+        if($limit && (int)$limit > 0)
+            $party_conn_limit = $limit;
+        else
+            $party_conn_limit = 20;
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($ro_id);
 		if($ro){
-			$connections = $ro->getAllRelatedObjects(true); // allow drafts
+            //$connections = $ro->getConnections();
+            if($ro->class == 'party')
+			    $connections = $ro->getAllRelatedObjects(true, false, false, $party_conn_limit); // allow drafts
+            else
+                $connections = $ro->getAllRelatedObjects(true);
 			foreach($connections AS &$link)
 			{
 				// Reverse the relationship description (note: this reverses to the "readable" version (i.e. not camelcase))
