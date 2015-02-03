@@ -1,9 +1,8 @@
 angular.module('search_components',[])
-
 .factory('search_factory', function($http){
 	return{
 		search: function(filters){
-			var promise = $http.post(base_url+'registry_object/s', {'filters':filters}).then(function(response){
+			var promise = $http.post(base_url+'registry_object/filter', {'filters':filters}).then(function(response){
 				return response.data;
 			});
 			return promise;
@@ -35,6 +34,19 @@ angular.module('search_components',[])
 			});
 			return filters;
 		},
+		filters_to_hash: function(filters) {
+			var hash = '';
+			$.each(filters, function(i,k){
+				if(typeof k!='object'){
+					hash+=i+'='+k+'/';
+				} else if (typeof k=='object'){
+					$.each(k, function(){
+						hash+=i+'='+this+'/';
+					});
+				}
+			});
+			return hash;
+		},
 		advanced_fields: function() {
 			var fields = [
 				{'name':'terms', 'display':'Search Terms', 'active':true},
@@ -42,6 +54,7 @@ angular.module('search_components',[])
 				{'name':'license_class', 'display':'License'},
 				{'name':'type', 'display':'Types'},
 				{'name':'spatial', 'display':'Spatial'},
+				{'name':'class', 'display':'Class'}
 			];
 			return fields;
 		}

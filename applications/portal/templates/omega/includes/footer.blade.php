@@ -1,7 +1,5 @@
-
-    @include('includes/advanced_search')
-
- <footer id="footer" role="contentinfo">
+@include('includes/advanced_search')
+<footer id="footer" role="contentinfo">
     <section class="section swatch-black">
         <div class="container">
             <div class="row element-normal-top element-normal-bottom">

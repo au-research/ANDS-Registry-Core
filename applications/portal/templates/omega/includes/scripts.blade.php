@@ -7,9 +7,14 @@
 <script src="{{asset_url('lib/angular/angular.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-route/angular-route.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-sanitize/angular-sanitize.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular-animate/angular-animate.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular-ui-utils/ui-utils.min.js', 'core')}}"></script>
+
+
 
 <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
 <!-- <script src="{{asset_url('omega/js/theme.js','templates')}}"></script> -->
+
 
 @if(isset($lib))
 	@foreach($lib as $l)
@@ -17,8 +22,14 @@
 			<script src="{{asset_url('lib/jquery-ui/jquery-ui.js', 'core')}}"></script>
 		@elseif($l=='dynatree')
 			<script src="{{asset_url('lib/dynatree/src/jquery.dynatree.js', 'core')}}"></script>
-        @elseif($l=='qTip')
-            <script src="{{asset_url('lib/qTip2/jquery.qtip.js', 'core')}}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing&amp;sensor=false"></script>
+        @elseif($l=='qtip')
+            <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
+        @elseif($l=='textAngular')
+        	<link rel='stylesheet' href="{{asset_url('lib/textAngular/src/textAngular.css', 'core')}}">
+            <script src="{{asset_url('lib/textAngular/dist/textAngular-rangy.min.js', 'core')}}"></script>
+            <script src="{{asset_url('lib/textAngular/dist/textAngular-sanitize.min.js', 'core')}}"></script>
+            <script src="{{asset_url('lib/textAngular/dist/textAngular.min.js', 'core')}}"></script>
         @endif
 	@endforeach
 @endif
@@ -30,7 +41,10 @@
 <!-- Search Script and Resources is included in every page -->
 <script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('profile/js/profile_components.js', 'full_base_path')}}"></script>
-<script src="{{asset_url('registry_object/js/search.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('registry_object/js/portal-filters.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('registry_object/js/search_controller.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('registry_object/js/main_search_controller.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('registry_object/js/search_app.js', 'full_base_path')}}"></script>
 
 <!-- LESS.JS for development only-->
 <script>

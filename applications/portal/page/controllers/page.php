@@ -39,8 +39,20 @@ class Page extends MX_Controller {
 	 * @return view 
 	 */
 	function disclaimer() {
-		$this->blade->render('privacy_policy');
+		$this->blade->render('disclaimer');
 	}
+
+
+    /**
+     * Help page
+     * @author Liz Woods <liz.woods@ands.org.au>
+     * @return view
+     */
+    function help() {
+        $this->blade->render('help');
+    }
+
+
 
 	/**
 	 * Display the sitemap

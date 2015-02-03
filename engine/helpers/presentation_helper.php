@@ -180,6 +180,10 @@ function readable($text, $singular = false){
         case "getharvester": return "GET Harvester";break;
         case "cswharvester": return "CSW Harvester";break;
         case "ckanharvester": return "CKAN Harvester";break;
+        case 'licence': return 'Licence';break;
+        case 'accessrights': return 'Access rights';break;
+        case 'rightsstatement': return 'Rights Statement';break;
+        default: return $text;
 	}
 }
 
@@ -308,4 +312,18 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
 
 function endsWith($haystack, $needle){
     return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
+}
+
+function is_array_empty($input) {
+   $result = true;
+
+   if (is_array($input) && count($input) > 0) {
+      foreach ($input as $val) {
+         $result = $result && is_array_empty($val);
+      }
+   } else {
+      $result = empty($input);
+   }
+
+   return $result;
 }

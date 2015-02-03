@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="app" ng-controller="mainController">
     @include('includes/header')
-    <body>
+    <body ng-controller="searchController">
         @include('includes/top-menu')
         <div id="content">
-        	<article ng-controller="mapController">
+        	<article>
         		<section class="section swatch-black section-text-shadow section-inner-shadow" style="overflow:visible">
         		   <div class="background-media skrollable skrollable-between" style="background-image: url(http://devl.ands.org.au/minh/assets/templates/omega/images/uploads/home-classic-1.jpg); background-attachment: fixed; background-size: cover; background-position: 50% 60%; background-repeat: no-repeat;" data-start="background-position:" data-70-top-bottom="background-position:">
         		   </div>
@@ -17,10 +17,15 @@
     		            </div>
     		        </div>
     		    </section>
+                <section class="section swatch-white">
+                    <div class="swatch-white scroll-fixed element-shorter-top element-shorter-bottom" ui-scrollfix="+224">
+                        @include('includes/search-header')
+                    </div>
+                </section>
     		    <section class="section swatch-white" style="z-index:1;background:#e9e9e9">
     		    	<div class="container-fluid">
     		    		<div class="row element-short-top">
-    		    			<div class="col-md-3 sidebar">
+    		    			<div class="col-md-3 sidebar animated slideInLeft">
     		    				@yield('sidebar')
     		    			</div>
                             <div class="col-md-9">
