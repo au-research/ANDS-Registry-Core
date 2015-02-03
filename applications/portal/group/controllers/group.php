@@ -30,7 +30,8 @@ class Group extends MX_Controller {
 	function get() {
 		$group_name = $this->input->get('group') ? $this->input->get('group') : false;
 		if($group_name) {
-			$group = $this->groups->fetchData($group_name);
+			$group = $this->groups->fetchData($group_name, 'DRAFT');
+			if(!$group) $group = $this->groups->fetchData($group_name, 'PUBLISHED');
 			if ($group) {
 				$result = $group;
 			} else {
@@ -49,14 +50,25 @@ class Group extends MX_Controller {
 	}
 
 	function save() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 		$group_name = $this->input->get('group') ? $this->input->get('group') : false;
 		$data = json_decode(file_get_contents("php://input"), true);
 		$data = $data['data'];
 		$result = $this->groups->saveData($group_name, $data);
 		if ($result) {
+			$message = '';
+			if($data['status']=='DRAFT') {
+				$message = 'The draft has been saved at '.gmdate("Y-m-d H:i:s", time());
+			} elseif ($data['status']=='REQUESTED') {
+				$message = 'The draft has been saved and requested for approval at '.gmdate("Y-m-d H:i:s", time());
+			} elseif ($data['status']=='PUBLISHED') {
+				$message = 'The draft has been published at '.gmdate("Y-m-d H:i:s", time());
+			}
 			echo json_encode(array(
 				'status' => 'success',
-				'message' => 'The draft has been saved at '.gmdate("Y-m-d H:i:s", time())
+				'message' => $message
 			));
 		} else {
 			echo json_encode(array(

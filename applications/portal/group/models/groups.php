@@ -134,9 +134,18 @@ class Groups extends CI_Model {
 		return $group;
 	}
 
-	function fetchData($name='') {
+	function fetchData($name='', $prefer='PUBLISHED') {
 		$this->portal_db = $this->load->database('portal', TRUE);
-		$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name), 1, 0);
+
+		if($prefer=='PUBLISHED') {
+			$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name, 'status'=>'PUBLISHED'), 1, 0);
+		} else {
+			$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name, 'status'=>'DRAFT'), 1, 0);
+			if($result->num_rows() == 0) {
+				$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name, 'status'=>'REQUESTED'), 1, 0);
+			} 
+		}
+
 		if ($result->num_rows() > 0) {
 			return $result->first_row();
 		} else {
@@ -144,29 +153,56 @@ class Groups extends CI_Model {
 		}
 	}
 
+	function getAllData() {
+		$this->portal_db = $this->load->database('portal', TRUE);
+		$result = $this->portal_db->select('name,status,date_modified')->get('contributor_pages');
+		if ($result->num_rows() > 0) {
+			return $result->result_array();
+		}
+	}
+
 	function saveData($name='', $data=array()) {
 		$this->portal_db = $this->load->database('portal', TRUE);
 
-		//check if there's an existing one
-		$existing = $this->fetchData($name);
-		if ($existing) {
-			//update
-			$data = array(
-				'status' => $data['status'],
-				'data' => json_encode($data['data'])
-			);
-			$this->portal_db->where('name', $name);
-			$result = $this->portal_db->update('contributor_pages', $data);
-		} else {
-			//create
+		$published = $this->fetchData($name, 'PUBLISHED');
+		$drafts = $this->fetchData($name, 'DRAFT');
+
+		if(!isset($data['status'])) $data['status'] = 'DRAFT';
+
+		if(!$drafts) {
+			//create a draft
 			$data = array(
 				'name' => $name,
 				'authorative_datasource' => '0',
 				'status' => $data['status'],
-				'data' => json_encode($data['data'])
+				'data' => json_encode($data['data']),
+				'date_modified' => date("Y-m-d H:i:s")
+			);
+			$result = $this->portal_db->insert('contributor_pages', $data);
+		} elseif ($drafts && $data['status']!='PUBLISHED') {
+			//update the draft
+			$data = array(
+				'status' => $data['status'],
+				'data' => json_encode($data['data']),
+				'date_modified' => date("Y-m-d H:i:s")
+			);
+			$this->portal_db->where('name', $name);
+			$this->portal_db->where_in('status', array('DRAFT', 'REQUESTED'));
+			$result = $this->portal_db->update('contributor_pages', $data);
+		} elseif ($data['status']=='PUBLISHED') {
+			//destroy all
+			$this->portal_db->where('name', $name)->delete('contributor_pages');
+			//create a PUBLISHED
+			$data = array(
+				'name' => $name,
+				'authorative_datasource' => '0',
+				'status' => $data['status'],
+				'data' => json_encode($data['data']),
+				'date_modified' => date("Y-m-d H:i:s")
 			);
 			$result = $this->portal_db->insert('contributor_pages', $data);
 		}
+		
 		return $result;
 	}
 

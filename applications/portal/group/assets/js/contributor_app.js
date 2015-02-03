@@ -28,22 +28,25 @@ app.controller('GroupsCtrl', function($scope, groupFactory, $log){
 
 app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams){
 
-	$scope.tatoolbar = [['h1','h2','h3'],['bold','italics'],['insertImage']];
+	$scope.tatoolbar = [['h1','h2','h3'],['bold','italics','underline'],['insertLink'],['ul', 'ol'],['insertImage']];
 
 	groupFactory.get($routeParams.group).then(function(data){
 		$scope.group = data;
-		$log.debug('group', $scope.group);
+		$log.debug('group', $scope.group.status);
 	});
 
-	$scope.save = function(){
+	$scope.save = function(state){
+		$scope.saveMessage = 'loading...';
+		$log.debug(state);
+		if(state) $scope.group.status = state;
 		$log.debug($scope.group);
-		$scope.group.status = 'DRAFT';
 		delete $scope.group.nodata;
 		groupFactory.save($scope.group.name, $scope.group).then(function(data){
 			$scope.saveMessage = data.message;
 		});
 	}
 
+	//identifier operation deprecated in favor of html fields for identifiers
 	$scope.addIdentifier = function() {
 		if(!$scope.group.data) $scope.group.data = {};
 		if($scope.group.data.identifiers) {
@@ -56,7 +59,6 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams){
 			]
 		}
 	}
-
 	$scope.removeIdentifier = function(index) {
 		$log.debug('removing identifier at index', index);
 		$scope.group.data.identifiers.splice(index, 1);

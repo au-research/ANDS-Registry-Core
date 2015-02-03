@@ -17,10 +17,14 @@
 				<div class="col-md-12">
 					<div class="panel swatch-white">
 						<div class="panel-body">
-							<span class="label label-info">DRAFT</span>
+							<a href="" class="btn btn-primary" ng-click="save()" ng-if="group.status!='PUBLISHED'"><i class="fa fa-save"></i> Save</a>
+							<a href="" class="btn btn-primary" ng-click="save('DRAFT')" ng-if="group.status=='PUBLISHED'"><i class="fa fa-save"></i> Save to Draft</a>
+							<a href="" class="btn btn-info" ng-click="save('REQUESTED')" ng-if="group.status=='DRAFT'">Request for Assessment</a>
+							<a href="" class="btn btn-danger" ng-click="save('PUBLISHED')" ng-if="group.status!='PUBLISHED'">Publish</a>
 							<small ng-if="saveMessage">[[saveMessage]]</small>
 							<div class="pull-right">
-								<a href="" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i> Save</a>
+								<span class="label label-default">Last Modified: [[group.date_modified]]</span>
+								<span class="label label-info">[[group.status]]</span>
 							</div>
 						</div>
 					</div>
@@ -75,13 +79,7 @@
 					<div class="panel swatch-white">
 						<div class="panel-heading">Identifiers</div>
 						<div class="panel-body">
-							<div ng-repeat="identifier in group.data.identifiers">
-								<input type="text" class="" ng-model="identifier.type" placeholder="type">
-								<input type="text" class="" ng-model="identifier.value" placeholder="value">
-								<a href="" ng-click="removeIdentifier($index)"><i class='fa fa-remove'></i></a>
-							</div>
-							
-							<a href="" class="btn btn-primary" ng-click="addIdentifier()">Add Identifier</a>
+							<div text-angular ng-model="group.data.identifiers" ta-toolbar="tatoolbar"></div>
 						</div>
 					</div>
 					<div class="panel swatch-white">

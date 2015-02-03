@@ -11,3 +11,4 @@ CREATE  TABLE `dbs_portal`.`contributor_pages` (
   `data` TEXT NULL ,
   PRIMARY KEY (`id`) );
 ALTER TABLE `dbs_portal`.`contributor_pages` CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT  ;
+ALTER TABLE `dbs_portal`.`contributor_pages` ADD COLUMN `date_modified` DATETIME NULL  AFTER `data` ;

@@ -7,6 +7,7 @@ angular.module('groupFactory',[])
 				if (name) para = '?group='+name;
 				var promise = $http.get(base_url+'group/get'+para).then(function(response){
 					if(response.data.data) response.data.data = angular.fromJson(response.data.data);
+					$log.debug(response.data.data);
 					return response.data;
 				});
 				return promise;
