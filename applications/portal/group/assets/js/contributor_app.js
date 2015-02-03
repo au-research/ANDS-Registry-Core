@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute','portal-filters', 'groupFactory', 'textAngular'], function($interpolateProvider){
+var app = angular.module('app', ['ngRoute','portal-filters', 'groupFactory', 'textAngular', 'profile_components'], function($interpolateProvider){
 	$interpolateProvider.startSymbol('[[');
 	$interpolateProvider.endSymbol(']]');
 });
@@ -26,13 +26,19 @@ app.controller('GroupsCtrl', function($scope, groupFactory, $log){
 	});
 });
 
-app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams){
+app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, profile_factory){
 
 	$scope.tatoolbar = [['h1','h2','h3'],['bold','italics','underline'],['insertLink'],['ul', 'ol'],['insertImage']];
 
 	groupFactory.get($routeParams.group).then(function(data){
 		$scope.group = data;
-		$log.debug('group', $scope.group.status);
+	});
+
+	profile_factory.get_user_data().then(function(data){
+		$scope.user = data;
+		$log.debug($scope.user);
+		if($scope.user.function.indexOf('REGISTRY_SUPERUSER')!=-1) $scope.superuser = true;
+		$log.debug($scope.superuser);
 	});
 
 	$scope.save = function(state){

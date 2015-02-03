@@ -46,6 +46,12 @@ class Profile extends MX_Controller {
 	public function current_user() {
 		$this->load->model('portal_user');
 		$user = $this->portal_user->getCurrentUser();
+
+		//fix silly functions encoding
+		$functions = array();
+		foreach($user->function as $f) array_push($functions, $f);
+		$user->function = $functions;
+		
 		echo json_encode($user);
 	}
 

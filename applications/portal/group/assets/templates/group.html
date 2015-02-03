@@ -20,7 +20,7 @@
 							<a href="" class="btn btn-primary" ng-click="save()" ng-if="group.status!='PUBLISHED'"><i class="fa fa-save"></i> Save</a>
 							<a href="" class="btn btn-primary" ng-click="save('DRAFT')" ng-if="group.status=='PUBLISHED'"><i class="fa fa-save"></i> Save to Draft</a>
 							<a href="" class="btn btn-info" ng-click="save('REQUESTED')" ng-if="group.status=='DRAFT'">Request for Assessment</a>
-							<a href="" class="btn btn-danger" ng-click="save('PUBLISHED')" ng-if="group.status!='PUBLISHED'">Publish</a>
+							<a href="" class="btn btn-danger" ng-click="save('PUBLISHED')" ng-if="group.status!='PUBLISHED' && superuser">Publish</a>
 							<small ng-if="saveMessage">[[saveMessage]]</small>
 							<div class="pull-right">
 								<span class="label label-default">Last Modified: [[group.date_modified]]</span>
