@@ -112,12 +112,15 @@ function mod_enforce($module_name)
 	}
 }
 
-function acl_enforce($function_name, $message = '')
+function acl_enforce($function_name, $message = '', $portal=false)
 {
 	$_ci =& get_instance();
-	if (!$_ci->user->isLoggedIn())
-	{
-		redirect('auth/login/#/?error=login_required&redirect='.curPageURL());
+	if (!$_ci->user->isLoggedIn()) {
+		if($portal) {
+			redirect('profile/login/?redirect='.curPageURL());
+		} else {
+			redirect('auth/login/#/?error=login_required&redirect='.curPageURL());
+		}
 		// throw new Exception (($message ?: "Access to this function requires you to be logged in. Perhaps you have been automatically logged out?"));
 	}
 	else if (!$_ci->user->hasFunction($function_name))

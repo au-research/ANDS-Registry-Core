@@ -26,6 +26,35 @@
         }
     ?>
 
+    @if($group['has_custom_data'])
+        @if(isset($group['custom_data']['overview']))
+        <div class="panel panel-primary panel-content swatch-white">
+            <div class="panel-heading">Overview</div>
+            <div class="panel-body">{{$group['custom_data']['overview']}}</div>
+        </div>
+        @endif
+        @if(isset($group['custom_data']['researchdarea']))
+        <div class="panel panel-primary panel-content swatch-white">
+            <div class="panel-heading">Research and Key Research Areas</div>
+            <div class="panel-body">{{$group['custom_data']['researchdarea']}}</div>
+        </div>
+        @endif
+        @if(isset($group['custom_data']['researchdataprofile']))
+        <div class="panel panel-primary panel-content swatch-white">
+            <div class="panel-heading">Research Data Profile</div>
+            <div class="panel-body">{{$group['custom_data']['researchdataprofile']}}</div>
+        </div>
+        @endif
+        @if(isset($group['custom_data']['researchsupport']))
+        <div class="panel panel-primary panel-content swatch-white">
+            <div class="panel-heading">Research Support</div>
+            <div class="panel-body">{{$group['custom_data']['researchsupport']}}</div>
+        </div>
+        @endif
+    @endif
+
+
+    @if(!$group['has_custom_data'])
     <div class="panel panel-primary swatch-white">
         <div class="panel-body">
             To date, {{$group['title']}} has {{$group['counts']}} collection records in Research Data Australia, which covers {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}, {{sizeof($group['groups'])}} research groups 
@@ -33,6 +62,7 @@
             can be accessed from the Registry Contents box on the right hand side of this page.
         </div>
     </div>
+    @endif
 
     <div class="panel panel-primary panel-content swatch-white">
         <div class="panel-heading">Subjects Covered</div>
@@ -49,6 +79,22 @@
 @stop
 
 @section('sidebar')
+
+@if($group['has_custom_data'])
+    @if(isset($group['custom_data']['contact']))
+    <div class="panel panel-primary panel-content swatch-white">
+        <div class="panel-heading">Contact</div>
+        <div class="panel-body">{{$group['custom_data']['contact']}}</div>
+    </div>
+    @endif
+    @if(isset($group['custom_data']['identifiers']))
+    <div class="panel panel-primary panel-content swatch-white">
+        <div class="panel-heading">Identifiers</div>
+        <div class="panel-body">{{$group['custom_data']['identifiers']}}</div>
+    </div>
+    @endif
+@endif
+
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Registry Contents</div>
     <div class="panel-body">
@@ -71,6 +117,7 @@
     </div>
 </div>
 
+@if($group['latest_collections'])
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Last 5 Collections Added</div>
     <div class="panel-body">
@@ -81,5 +128,6 @@
         </ul>
     </div>
 </div>
+@endif
 
 @stop

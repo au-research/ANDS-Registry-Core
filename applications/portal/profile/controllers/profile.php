@@ -41,20 +41,7 @@ class Profile extends MX_Controller {
 		}
 	}
 
-	public function test() {
-		$this->load->model('portal_user');
-		//data
-		$data = array(
-			'type' => 'saved_record',
-			'value' => array('id'=>160562, 'slug'=>'plans-not-otherwise-classified', 'url'=>'http://devl.ands.org.au/minh/plans-not-otherwise-classified/160564')
-		);
 
-		if($this->portal_user->has_saved_search($data['value']['id'])) {
-			echo 'already there';
-		} else {
-			$this->portal_user->add_user_data($data);
-		}
-	}
 
 	public function current_user() {
 		$this->load->model('portal_user');

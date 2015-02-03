@@ -53,8 +53,8 @@
     </div> -->
     <div class="panel-body swatch-white">
         <table class="table">
-            <tr ng-repeat="filter in allfilters" ng-click="toggleFilter(filter.name,filter.value)">
-                <td style="text-align:right;font-weight:bold;">[[filter.name]]</td><td>[[filter.value]] <i class="fa fa-remove pull-right"></i></td>
+            <tr ng-repeat="filter in allfilters">
+                <td style="text-align:right;font-weight:bold;">[[filter.name]]</td><td>[[filter.value]]</td><td><a href="" ng-click="toggleFilter(filter.name, filter.value, true)"><i class="fa fa-remove"></i></a></td>
             </tr>
         </table>
         <div class="panel-body swatch-white">

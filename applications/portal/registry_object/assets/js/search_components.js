@@ -1,5 +1,4 @@
 angular.module('search_components',[])
-
 .factory('search_factory', function($http){
 	return{
 		search: function(filters){

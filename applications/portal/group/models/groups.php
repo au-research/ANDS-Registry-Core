@@ -122,8 +122,124 @@ class Groups extends CI_Model {
 			);
 		}
 
+		//get custom fields from the database
+		$data = $this->fetchData($group['title']);
+		if($data) {
+			$group['has_custom_data'] = true;
+			$group['custom_data'] = json_decode($data->{'data'}, true);
+		} else {
+			$group['has_custom_data'] = false;
+		}
 
 		return $group;
+	}
+
+	function fetchData($name='', $prefer='PUBLISHED') {
+		$this->portal_db = $this->load->database('portal', TRUE);
+
+		if($prefer=='PUBLISHED') {
+			$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name, 'status'=>'PUBLISHED'), 1, 0);
+		} else {
+			$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name, 'status'=>'DRAFT'), 1, 0);
+			if($result->num_rows() == 0) {
+				$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name, 'status'=>'REQUESTED'), 1, 0);
+			} 
+		}
+
+		if ($result->num_rows() > 0) {
+			return $result->first_row();
+		} else {
+			return false;
+		}
+	}
+
+	function getAllData() {
+		$this->portal_db = $this->load->database('portal', TRUE);
+		$result = $this->portal_db->select('name,status,date_modified')->get('contributor_pages');
+		if ($result->num_rows() > 0) {
+			return $result->result_array();
+		}
+	}
+
+	function saveData($name='', $data=array()) {
+		$this->portal_db = $this->load->database('portal', TRUE);
+
+		$published = $this->fetchData($name, 'PUBLISHED');
+		$drafts = $this->fetchData($name, 'DRAFT');
+
+		if(!isset($data['status'])) $data['status'] = 'DRAFT';
+
+		if(!$drafts) {
+			//create a draft
+			$data = array(
+				'name' => $name,
+				'authorative_datasource' => '0',
+				'status' => $data['status'],
+				'data' => json_encode($data['data']),
+				'date_modified' => date("Y-m-d H:i:s")
+			);
+			$result = $this->portal_db->insert('contributor_pages', $data);
+		} elseif ($drafts && $data['status']!='PUBLISHED') {
+			//update the draft
+			$data = array(
+				'status' => $data['status'],
+				'data' => json_encode($data['data']),
+				'date_modified' => date("Y-m-d H:i:s")
+			);
+			$this->portal_db->where('name', $name);
+			$this->portal_db->where_in('status', array('DRAFT', 'REQUESTED'));
+			$result = $this->portal_db->update('contributor_pages', $data);
+		} elseif ($data['status']=='PUBLISHED') {
+			//destroy all
+			$this->portal_db->where('name', $name)->delete('contributor_pages');
+			//create a PUBLISHED
+			$data = array(
+				'name' => $name,
+				'authorative_datasource' => '0',
+				'status' => $data['status'],
+				'data' => json_encode($data['data']),
+				'date_modified' => date("Y-m-d H:i:s")
+			);
+			$result = $this->portal_db->insert('contributor_pages', $data);
+		}
+		
+		return $result;
+	}
+
+
+	function getOwnedGroups() {
+		if($this->user->hasFunction('REGISTRY_SUPERUSER')) {
+			$groups = $this->getAll();
+			$owned_groups = array();
+			foreach($groups as $group) {
+				array_push($owned_groups, $group['title']);
+			}
+		} else {
+			$url = base_url().'registry/services/api/data_sources/';
+			$owned_ds = $this->user->ownedDataSourceIDs();
+			foreach($owned_ds as $ds) {
+				$url.=$ds.'-';
+			}
+			$url.='/groups';
+
+			$content = @file_get_contents($url);
+			$content = json_decode($content, true);
+			$owned_groups = array();
+			if ($content['status']=='success') {
+				foreach($owned_ds as $ds) {
+					if(isset($content['message'][$ds])) {
+						foreach($content['message'][$ds]['groups'] as $group) {
+							if(!in_array($group, $owned_groups)) {
+								array_push($owned_groups, $group);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+		return $owned_groups;
 	}
 
 }

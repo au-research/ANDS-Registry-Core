@@ -6,8 +6,8 @@
         <div class="element-no-top element-no-bottom" data-os-animation="none" data-os-animation-delay="0s">
             <ul class="listy">
         		<li ng-repeat="type in result.facets.type | limitTo:5">
-        			<input type="checkbox" ng-checked="isFacet('type', type.name)" ng-click="toggleFilter('type', type.name)">
-        			<a href="" ng-click="toggleFilter('type', type.name)">[[type.name]] <small>([[type.value]])</small></a></li>
+        			<input type="checkbox" ng-checked="isFacet('type', type.name)" ng-click="toggleFilter('type', type.name, true)">
+        			<a href="" ng-click="toggleFilter('type', type.name, true)">[[type.name]] <small>([[type.value]])</small></a></li>
         		<li><a href="" ng-click="advanced('type')">View More...</a></li>
         	</ul>
         </div>

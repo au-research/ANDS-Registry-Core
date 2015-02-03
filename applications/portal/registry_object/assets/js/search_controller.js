@@ -102,7 +102,7 @@ function searchController($scope, search_factory, uiGmapGoogleMapApi){
 			$scope.addFilter(type, value);
 		}
 		console.log($scope.filters);
-		// if(!execute) $scope.hashChange();
+		if(execute) $scope.hashChange();
 	}
 
 	$scope.addFilter = function(type, value) {
