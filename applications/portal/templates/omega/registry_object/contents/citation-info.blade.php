@@ -17,6 +17,7 @@
     @endforeach
 
     @foreach($ro->citations as $citation)
+    {{$citation['coins']}}
         @if(!in_array($citation['type'], $order))
             <h5>Citation (Metadata):</h5>
             <p>
@@ -37,6 +38,7 @@
 <div id="export" class="hide">
     @foreach($ro->citations as $citation)
     <p>{{$citation['endNote']}}</p>
+
     @endforeach
 </div>
 
