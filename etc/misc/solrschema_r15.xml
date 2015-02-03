@@ -165,7 +165,6 @@
 
 	<copyField source="identifier_value" dest="identifier_value_search"/>
 
-	<copyField source="related_collection_title" dest="related_collection_search"/>
 	<copyField source="related_party_one_title" dest="related_party_one_search"/>
 	<copyField source="related_party_multi_title" dest="related_party_multi_search"/>
 	<copyField source="related_activity_title" dest="related_activity_search"/>

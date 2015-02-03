@@ -489,6 +489,15 @@ class Solr {
 						$this->setOpt('fq', '+(title_search:("'.$value.'") description_value:("'.$value.'"))');
 					}
 					break;
+				case 'access_right':
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' access_rights:("'.$v.'")'; 
+						$this->setOpt('fq', $fq_str);
+					}else{
+						if($value!='all') $this->setOpt('fq', '+access_rights:("'.$value.'")');
+					}
+					break;
 				
 			}
 		}
