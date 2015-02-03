@@ -22,6 +22,7 @@
 			<script src="{{asset_url('lib/jquery-ui/jquery-ui.js', 'core')}}"></script>
 		@elseif($l=='dynatree')
 			<script src="{{asset_url('lib/dynatree/src/jquery.dynatree.js', 'core')}}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing&amp;sensor=false"></script>
         @elseif($l=='qtip')
             <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
         @elseif($l=='textAngular')
