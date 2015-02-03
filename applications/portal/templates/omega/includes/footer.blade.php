@@ -21,10 +21,10 @@
                     <div id="categories-4" class="sidebar-widget  widget_categories">
                         <h3 class="sidebar-header">Registry Contents</h3>
                         <ul>
-                            <li class="cat-item"> <a href="#" title="">Collections</a> </li>
-                            <li class="cat-item"> <a href="#" title="">Parties</a> </li>
-                            <li class="cat-item"> <a href="#" title="">Activities</a> </li>
-                            <li class="cat-item"> <a href="#" title="">Services</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('search/#!/class=collection')}}" title="">Collections</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('search/#!/class=party')}}" title="">Parties</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('search/#!/class=activity')}}" title="">Activities</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('search/#!/class=service')}}" title="">Services</a> </li>
                         </ul>
                     </div>
                 </div>

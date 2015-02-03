@@ -5,8 +5,12 @@
 	        <a href="">Subjects</a>
 	    </div>
 		<div class="panel-body swatch-white">
-			@foreach($ro->subjects as $col)
-			<a href="">{{$col['resolved']}}</a> |
+			<?php 
+				$subjects = $ro->subjects;
+				uasort($subjects, 'subjectSortResolved');
+			?>
+			@foreach($subjects as $col)
+			<a href="{{base_url().'search/#!/subject_value_resolved='.$col['resolved']}}">{{$col['resolved']}}</a> |
 			@endforeach
 		</div>
 	</div>

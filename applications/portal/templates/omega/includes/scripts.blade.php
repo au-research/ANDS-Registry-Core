@@ -34,6 +34,8 @@
 	@endforeach
 @endif
 
+<script type="text/javascript" src="{{asset_url('lib/readmore/readmore.min.js', 'core')}}"></script>
+
 <!-- Map Search Scripts -->
 <script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.min.js', 'core')}}"></script>

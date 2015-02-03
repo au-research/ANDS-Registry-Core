@@ -17,7 +17,7 @@ class Registry_object extends MX_Controller {
 
 		$this->load->library('blade');
 
-		$theme = ($this->input->get('theme') ? $this->input->get('theme') : 'standard4');
+		$theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
 
 		$this->blade
 			->set('scripts', array('view'))

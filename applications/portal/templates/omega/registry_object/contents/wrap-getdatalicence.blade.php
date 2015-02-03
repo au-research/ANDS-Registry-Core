@@ -57,10 +57,6 @@
             </div>
         @endif
 
-        <div class="center-block" style="text-align:center">
-            <span class="label label-default">301+ Viewed</span>
-            <span class="label label-default">98 Cited</span>
-            <span class="label label-default">47 Accessed</span>
-        </div>
+        
     </div>
 </div>
