@@ -12,32 +12,20 @@
                             <li class="cat-item"> <a href="{{portal_url()}}" title="">My RDA</a> </li>
                             <li class="cat-item myCustomTrigger"> <a href="{{portal_url('page/contact')}}" title="">Contact us</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('page/disclaimer')}}" title="">Disclaimer</a> </li>
+                            <li class="cat-item"> <a href="http://developers.ands.org.au" title="">Developers</a> </li>
+                            <li class="cat-item"> <a href="{{registry_url()}}" title="">ANDS Online Services</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('page/privacy')}}" title="">Privacy Policy</a> </li>
-                            <li class="cat-item"> <a href="{{portal_url('page/help')}}" title="">Help</a> </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div id="categories-3" class="sidebar-widget  widget_categories">
-                        <h3 class="sidebar-header">Explore</h3>
-                        <ul>
-                            <li class="cat-item"> <a href="{{portal_url()}}" title="">Themed Collections</a> </li>
-                            <li class="cat-item"> <a href="{{portal_url()}}" title="">Open Data</a> </li>
-                            <li class="cat-item"> <a href="{{portal_url()}}" title="">Tools and Services</a> </li>
-                            <li class="cat-item"> <a href="{{portal_url('search/#!/class=activity')}}" title="">Projects and Grants</a> </li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div id="categories-4" class="sidebar-widget  widget_categories">
-                        <h3 class="sidebar-header">External Resources</h3>
+                        <h3 class="sidebar-header">Registry Contents</h3>
                         <ul>
-                            <li class="cat-item"> <a href="http://www.ands.org.au/" title="">ANDS Website</a> </li>
-                            <li class="cat-item"> <a href="http://developers.ands.org.au" title="">Developers</a> </li>
-                            <li class="cat-item"> <a href="{{base_url('')}}" title="">ANDS Online Services</a> </li>
-                       <?php if($this->ro->id) { ?>
-                            <li class="cat-item"> <a href="{{base_url('registry/registry_object/view/')}}/<?=$this->ro->id?>" title="">Registry View</a> </li>
-                       <?php   } ?>
+                            <li class="cat-item"> <a href="{{portal_url('search/#!/class=collection')}}" title="">Collections</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('search/#!/class=party')}}" title="">Parties</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('search/#!/class=activity')}}" title="">Activities</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('search/#!/class=service')}}" title="">Services</a> </li>
                         </ul>
                     </div>
                 </div>
