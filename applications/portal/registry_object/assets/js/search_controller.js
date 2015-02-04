@@ -1,4 +1,4 @@
-function searchController($scope, search_factory, uiGmapGoogleMapApi){
+function searchController($scope, search_factory, uiGmapGoogleMapApi, $log){
 	$scope.filters = {};
 	$scope.query = '';
 	$scope.search_type = 'q';
@@ -203,5 +203,9 @@ function searchController($scope, search_factory, uiGmapGoogleMapApi){
 				);
 			}
 		});
+    });
+
+    $scope.$on('overwrite_map', function(){
+    	$log.debug('overwritten');
     });
 }

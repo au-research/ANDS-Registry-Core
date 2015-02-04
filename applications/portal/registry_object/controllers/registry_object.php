@@ -31,8 +31,12 @@ class Registry_object extends MX_Controller {
                 break;
         }
 
+		//record event
+		$ro->event('view');
+
+
 		$this->blade
-			->set('scripts', array('view'))
+			->set('scripts', array('view', 'view_app'))
 			->set('lib', array('jquery-ui', 'dynatree', 'qtip'))
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
@@ -43,6 +47,21 @@ class Registry_object extends MX_Controller {
 			->set('url', $ro->construct_api_url())
 			->set('theme', $theme)
 			->render($render);
+	}
+
+	/**
+	 * Returns the stat of a record
+	 * @param  int $id
+	 * @return json
+	 */
+	function stat($id) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$this->load->model('registry_objects', 'ro');
+		$ro = $this->ro->getByID($id);
+		$stats = $ro->stat();
+		echo json_encode($stats);
 	}
 
 	/**
@@ -123,12 +142,11 @@ class Registry_object extends MX_Controller {
 	 * for development only!
 	 * @return json 
 	 */
-	function get() {
+	function get($id) {
 		$this->load->model('registry_objects', 'ro');
-		if($this->input->get('id')){
-			$ro = $this->ro->getByID($this->input->get('id'));
-		}
-		echo json_encode($ro);
+		$ro = $this->ro->getByID($id);
+		$stats = $ro->stat();
+		echo json_encode($stats);
 	}
 
 	/**
