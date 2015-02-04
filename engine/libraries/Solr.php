@@ -498,7 +498,21 @@ class Solr {
 						if($value!='all') $this->setOpt('fq', '+access_rights:("'.$value.'")');
 					}
 					break;
-				
+				case 'related_party_one_id':
+					$this->setOpt('fq', '+related_party_one_id:"'.$value.'"');
+					break;
+				case 'related_party_multi_id':
+					$this->setOpt('fq', '+related_party_multi_id:"'.$value.'"');
+					break;
+				case 'related_collection_id':
+					$this->setOpt('fq', '+related_collection_id:"'.$value.'"');
+					break;
+				case 'related_service_id':
+					$this->setOpt('fq', '+related_service_id:"'.$value.'"');
+					break;
+				case 'related_activity_id':
+					$this->setOpt('fq', '+related_activity_id:"'.$value.'"');
+					break;
 			}
 		}
 		return $this;

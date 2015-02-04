@@ -28,9 +28,9 @@
             <div class="row">
                 <div class="col-md-12 element-normal-top element-normal-bottom">
                     <header class="text-center element-normal-bottom os-animation condensed animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
-                        <h1 class="bigger hairline bordered bordered-normal"> Discover, Access, Reuse Data </h1>
+                        <h1 class="bigger hairline bordered bordered-normal">Find data for research.</h1>
                         <p class="normal">
-                            Research Data Australia is an internet-based discovery service designed to provide rich connections between data, projects, researchers and promote visibility of Australian research data collections in search engines <a href="">Read more about us...</a>
+                            Find, access, and re-use data for research - from over one hundred Australian research organisations, government agencies, and cultural institutions
                         </p>
                     </header>
                     @include('includes/search-bar')

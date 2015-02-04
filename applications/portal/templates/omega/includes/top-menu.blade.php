@@ -9,7 +9,9 @@
             <a href="{{portal_url()}}" class="navbar-brand">
                 <span>Research Data</span> Australia
             </a>
-            <small>1 liner</small>
+            @if(current_url()!=base_url())
+            <small>Find data for research</small>
+            @endif
         </div>
         <nav class="collapse navbar-collapse main-navbar" role="navigation">
             <ul class="nav navbar-nav navbar-right">

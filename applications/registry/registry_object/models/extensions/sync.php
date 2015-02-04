@@ -15,7 +15,7 @@ class Sync_extension extends ExtensionBase{
 	 * @param boolean $full determine whether to do addRelationships() and update quality metadata
 	 * @return boolean/string [if it's a string, it's an error message]
 	 */
-	function sync($full = true){
+	function sync($full = true, $conn_limit=20){
 		try {
 			$this->_CI->load->library('solr');
 			if($full){
@@ -26,7 +26,7 @@ class Sync_extension extends ExtensionBase{
 			$this->ro->enrich();
 			if($this->ro->status=='PUBLISHED'){
 				$docs = array();
-				$docs[] = $this->indexable_json();
+				$docs[] = $this->indexable_json($conn_limit);
 				$this->_CI->solr->add_json(json_encode($docs));
 				$this->_CI->solr->commit();
 			}
@@ -58,7 +58,7 @@ class Sync_extension extends ExtensionBase{
         $gXPath = new DOMXpath($rifDom);
         $gXPath->registerNamespace('ro', RIFCS_NAMESPACE);
 		$json = array();
-        $party_service_conn_limit = 20;
+        $party_service_conn_limit = 200;
 
         if($limit && (int)$limit > 0)
             $party_service_conn_limit = $limit;

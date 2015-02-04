@@ -49,6 +49,14 @@ class Registry_object extends MX_Controller {
 			->render($render);
 	}
 
+	function preview($id) {
+		$this->load->library('blade');
+		$ro = $this->ro->getByID($id);
+		$this->blade
+			->set('ro', $ro)
+			->render('registry_object/preview');
+	}
+
 	/**
 	 * Returns the stat of a record
 	 * @param  int $id
