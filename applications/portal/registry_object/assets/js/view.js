@@ -41,6 +41,7 @@ function traverseAndSelectChildren(tree, select_id) {
 }
 
 function drawMap(){//drawing the map on the left side
+
     if($('#spatial_coverage_map').length > 0){//if there is a coverage
         var latlng = new google.maps.LatLng(-25.397, 133.644);
         var myOptions = {
@@ -59,11 +60,10 @@ function drawMap(){//drawing the map on the left side
         var locationText = [];
 
         $.each(coverages, function(){
-            setTimeout('500');
+            // setTimeout('500');
             coverage = $(this).text();
             split = coverage.split(' ');
-            if(split.length>1)
-            {
+            if(split.length>1) {
                 mapContainsOnlyMarkers = false;
                 coords = [];
                 $.each(split, function(){
@@ -134,6 +134,7 @@ function initConnectionGraph() {
 
 		/* Generate the tree */
 		$("#connectionTree").dynatree({
+			debugLevel: 0,
 			children: data,
 			onActivate: function(node) {
 			// If this has more parts, open them...

@@ -123,7 +123,6 @@ function mainSearchController($scope, search_factory, profile_factory, $location
 
 		//regular search
 		search_factory.search($scope.filters).then(function(data){
-			console.log(data);
 			$scope.result = data;
 			$scope.result.facets = {};
 

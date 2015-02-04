@@ -13,10 +13,14 @@ class Profile extends MX_Controller {
 	}
 
 	public function add_user_data($type) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 		$data = json_decode(file_get_contents("php://input"), true);
 		$data = $data['data'];
 
 		$this->load->model('portal_user');
+
 		
 		//prepare the data to be saved
 		if ($type=='saved_search') {

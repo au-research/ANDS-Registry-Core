@@ -88,6 +88,51 @@ class _ro {
 		}
 	}
 
+	/**
+	 * Returns the stats of this registry object via the DB
+	 * Creates an empty one in case there's no stat
+	 * @return array
+	 */
+	public function stat(){
+		$ci =& get_instance();
+    	$db = $ci->load->database('portal', true);
+    	
+    	$result = $db->get_where('record_stats', array('ro_id' => $this->core['id']));
+    	if($result->num_rows() == 0) {
+    		//create if not exist
+    		$data = array(
+    			'ro_id' => $this->core['id'],
+    			'ro_slug' => $this->core['slug']
+    		);
+    		$db->insert('record_stats', $data);
+    		$result = $db->get_where('record_stats', array('ro_id' => $this->core['id']));
+    	}
+    	$result_array = $result->result_array();
+    	return $result_array[0];
+	}
+
+	/**
+	 * Record an event
+	 * @param  string $event view|cite|access
+	 * @return void
+	 */
+	public function event($event = 'view') {
+		$ci =& get_instance();
+    	$db = $ci->load->database('portal', true);
+		if ($this->stat()) {
+			//make sure there's a stat instance
+			$ci->db->where('ro_id', $this->core['id']);
+			if ($event=='view') {
+				$db->set('viewed', 'viewed+1', FALSE);
+			} else if($event=='cite') {
+				$db->set('cited', 'cited+1', FALSE);
+			} else if($event=='access') {
+				$db->set('accessed', 'accessed+1', FALSE);
+			}
+			$db->update('record_stats');
+		}
+	}
+
 	//deprecated?
 	public function populate($par) {
 		$this->fetch(array($par));
