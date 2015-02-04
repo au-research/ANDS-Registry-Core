@@ -19,16 +19,30 @@ class Registry_object extends MX_Controller {
 
 		$theme = ($this->input->get('theme') ? $this->input->get('theme') : 'standard4');
 
+        switch($ro->core['class']){
+            case 'collection':
+                $render = 'registry_object/view';
+                break;
+            case 'activity':
+                $render = 'registry_object/activity';
+                break;
+            default:
+                $render = 'registry_object/view';
+                break;
+        }
+
 		$this->blade
 			->set('scripts', array('view'))
 			->set('lib', array('jquery-ui', 'dynatree', 'qtip'))
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
+            ->set('activity_contents',$this->components['activity'])
 			->set('aside', $this->components['aside'])
+            ->set('activity_aside', $this->components['activity_aside'])
             ->set('view_headers', $this->components['view_headers'])
 			->set('url', $ro->construct_api_url())
 			->set('theme', $theme)
-			->render('registry_object/view');
+			->render($render);
 	}
 
 	/**
@@ -128,7 +142,9 @@ class Registry_object extends MX_Controller {
 			'view' => array('descriptions','reuse-list','quality-list','dates-list','spatial-info', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list'),
 			'aside' => array('rights-info','contact-info'),
 			'facet' => array('spatial','group', 'license_class', 'type', 'temporal'),
-            'view_headers' => array('title','related-parties')
+            'view_headers' => array('title','related-parties'),
+            'activity'=>array('descriptions','spatial-info','publications-list', 'subjects-list','identifiers-list','contact-info'),
+            'activity_aside'=>('related-objects-list')
 		);
 	}
 }
