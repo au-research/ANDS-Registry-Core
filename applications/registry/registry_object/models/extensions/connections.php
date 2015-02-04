@@ -240,7 +240,7 @@ class Connections_Extension extends ExtensionBase
 	}
 
 
-	function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false, $allow_all_links = false)
+	function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false, $allow_all_links = false, $limit=99999)
 	{
 		$unordered_connections = array();
 
@@ -253,31 +253,32 @@ class Connections_Extension extends ExtensionBase
         $create_primary_relationships = ($ds->create_primary_relationships == "t" || $ds->create_primary_relationships == 1);
 
 		/* Step 1 - Straightforward link relationships */
-		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks($allow_drafts));
-		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks());
-		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links));
+        /* Contributor */
+        $unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks($allow_drafts));
+		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks($allow_drafts, $limit));
+		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks($limit));
+		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links, $limit));
 		/* Step 2 - Internal reverse links */
-		if ($allow_reverse_internal_links || $allow_all_links)
+		if (($allow_reverse_internal_links || $allow_all_links) && count($unordered_connections) < $limit)
 		{
-			$unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks($allow_drafts));			
+			$unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks($allow_drafts, $limit));
 		}
 
-        if ($create_primary_relationships)
+        if ($create_primary_relationships && count($unordered_connections) < $limit)
         {
-            $unordered_connections = array_merge($unordered_connections, $this->_getPrimaryLinks($allow_drafts));
+            $unordered_connections = array_merge($unordered_connections, $this->_getPrimaryLinks($allow_drafts, $limit));
         }
 		/* Step 3 - External reverse links */
-		if ($allow_reverse_external_links || $allow_all_links)
+		if (($allow_reverse_external_links || $allow_all_links ) && count($unordered_connections) < $limit)
 		{
-			$unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks($allow_drafts));
+			$unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks($allow_drafts, $limit));
 		}
 
-		/* Step 4 - Contributor */
-		$unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks($allow_drafts));
+
 
 
 		/* Step 5 - Duplicate Record connections */
-		if ( $include_dupe_connections || $allow_all_links)
+		if ( ($include_dupe_connections || $allow_all_links ) && count($unordered_connections) < $limit)
 		{
 			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections());
 		}
@@ -330,7 +331,7 @@ class Connections_Extension extends ExtensionBase
 		}
 	}
 
-	function _getExplicitLinks($allow_unmatched_records = false)
+	function _getExplicitLinks($allow_unmatched_records = false, $limit=99999)
 	{
 		/* Step 1 - Straightforward link relationships */
 		$my_connections = array();
@@ -339,7 +340,8 @@ class Connections_Extension extends ExtensionBase
 				 ->from('registry_object_relationships rr')
 				 ->join('registry_objects r','rr.related_object_key = r.key', ($allow_unmatched_records ? 'left' : ''))
 				 ->where('rr.registry_object_id',$this->id)
-				 ->where('rr.origin','EXPLICIT');
+				 ->where('rr.origin','EXPLICIT')
+                 ->limit($limit);
 		$query = $this->db->get();
 
 		foreach ($query->result_array() AS $row)
@@ -358,7 +360,7 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-	function _getIdentifierLinks()
+	function _getIdentifierLinks($limit=99999)
 	{
 		/* Step 1 - Straightforward link relationships */
 		$my_connections = array();
@@ -366,7 +368,8 @@ class Connections_Extension extends ExtensionBase
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type','left')
 				 ->join('registry_objects r','r.registry_object_id = ri.registry_object_id','left')			 
-				 ->where('rir.registry_object_id',$this->id);
+				 ->where('rir.registry_object_id',$this->id)
+                  ->limit($limit);
 		$query = $this->db->get();
 
 		foreach ($query->result_array() AS $row)
@@ -390,7 +393,7 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-	function _getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links)
+	function _getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links, $limit=99999)
 	{
 		/* Step 1 - Straightforward link relationships */
 		$my_connections = array();
@@ -401,7 +404,8 @@ class Connections_Extension extends ExtensionBase
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
 				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 
 				 ->where('ri.registry_object_id',$this->id)
-				 ->where('r.status','PUBLISHED');
+				 ->where('r.status','PUBLISHED')
+                ->limit($limit);
 		}
 		else if($allow_reverse_internal_links)
 		{
@@ -411,7 +415,8 @@ class Connections_Extension extends ExtensionBase
 				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 
 				 ->where('ri.registry_object_id',$this->id)
 				 ->where('r.data_source_id',$this->ro->data_source_id)
-				 ->where('r.status','PUBLISHED');
+				 ->where('r.status','PUBLISHED')
+                ->limit($limit);
 		}
 		else if($allow_reverse_external_links)
 		{
@@ -421,7 +426,8 @@ class Connections_Extension extends ExtensionBase
 				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 
 				 ->where('ri.registry_object_id',$this->id)
 				 ->where('r.data_source_id !=',$this->ro->data_source_id)
-				 ->where('r.status','PUBLISHED');
+				 ->where('r.status','PUBLISHED')
+                ->limit($limit);
 		}
 		else{
 			return $my_connections;
@@ -441,7 +447,7 @@ class Connections_Extension extends ExtensionBase
 	}
 
 
-	function _getInternalReverseLinks($allow_unmatched_records = false)
+	function _getInternalReverseLinks($allow_unmatched_records = false, $limit=99999)
 	{
 		/* Step 2 - Internal reverse links */
 		$my_connections = array();
@@ -451,7 +457,8 @@ class Connections_Extension extends ExtensionBase
 						 ->join('registry_objects r','rr.registry_object_id = r.registry_object_id', ($allow_unmatched_records ? 'left' : ''))
 						 ->where('rr.related_object_key',$this->ro->key)
 						 ->where('r.data_source_id',$this->ro->data_source_id)
-						 ->where('rr.origin !=','PRIMARY');
+						 ->where('rr.origin !=','PRIMARY')
+                        ->limit($limit);
 		$query = $this->db->get();
 
 		foreach ($query->result_array() AS $row)
@@ -463,7 +470,7 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-	function _getPrimaryLinks($allow_unmatched_records = false)
+	function _getPrimaryLinks($allow_unmatched_records = false, $limit=99999)
 	{
 		/* Step 2 - Internal reverse links */
 		$my_connections = array();
@@ -473,7 +480,8 @@ class Connections_Extension extends ExtensionBase
 						 ->join('registry_objects r','r.key = rr.related_object_key', ($allow_unmatched_records ? 'left' : ''))
 						 ->where('rr.registry_object_id',$this->ro->id)
 						 ->where('r.data_source_id',$this->ro->data_source_id)
-						 ->where('rr.origin =','PRIMARY');
+						 ->where('rr.origin =','PRIMARY')
+                        ->limit($limit);
 		$query = $this->db->get();
 		
 		foreach ($query->result_array() AS $row)
@@ -485,7 +493,7 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-	function _getExternalReverseLinks($allow_unmatched_records = false)
+	function _getExternalReverseLinks($allow_unmatched_records = false, $limit=99999)
 	{
 		/* Step 3 - External reverse links */
 		$my_connections = array();
@@ -494,7 +502,8 @@ class Connections_Extension extends ExtensionBase
 						 ->from('registry_object_relationships rr')
 						 ->join('registry_objects r','rr.registry_object_id = r.registry_object_id', ($allow_unmatched_records ? 'left' : ''))
 						 ->where('rr.related_object_key',$this->ro->key)
-						 ->where('r.data_source_id !=',$this->ro->data_source_id);
+						 ->where('r.data_source_id !=',$this->ro->data_source_id)
+                         ->limit($limit);
 		$query = $this->db->get();
 
 		foreach ($query->result_array() AS $row)

@@ -17,7 +17,7 @@ class Registry_object extends MX_Controller {
 
 		$this->load->library('blade');
 
-		$theme = ($this->input->get('theme') ? $this->input->get('theme') : 'standard4');
+		$theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
 
         switch($ro->core['class']){
             case 'collection':
@@ -141,10 +141,10 @@ class Registry_object extends MX_Controller {
 		$this->components = array(
 			'view' => array('descriptions','reuse-list','quality-list','dates-list','spatial-info', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list'),
 			'aside' => array('rights-info','contact-info'),
-			'facet' => array('spatial','group', 'license_class', 'type', 'temporal'),
             'view_headers' => array('title','related-parties'),
             'activity'=>array('descriptions','spatial-info','publications-list', 'subjects-list','identifiers-list','contact-info'),
-            'activity_aside'=>('related-objects-list')
+            'activity_aside'=>('related-objects-list'),
+			'facet' => array('spatial','group', 'license_class', 'type', 'temporal', 'access_rights')
 		);
 	}
 }

@@ -10,7 +10,7 @@
     		    	<div class="container">
     		    		<div class="row element-short-top">
 
-                            <div class="col-md-9" style="padding-right:0">
+                            <div class="col-md-9 view-content" style="padding-right:0">
                                 <div class="panel panel-body swatch-white">
                                     @if($ro->logo)
                                     <img src="{{$ro->logo[0]}}" alt="logo" class="header-logo animated fadeInDown">
@@ -36,6 +36,15 @@
                             </div>
 
                             <div class="col-md-3">
+                                <div class="panel panel-primary swatch-white">
+                                    <div class="panel-body">
+                                        <div class="center-block" style="text-align:center">
+                                            <span class="label label-default">301+ Viewed</span>
+                                            <span class="label label-default">98 Cited</span>
+                                            <span class="label label-default">47 Accessed</span>
+                                        </div>
+                                    </div>
+                                </div>
                                 @yield('sidebar')
                             </div>
 

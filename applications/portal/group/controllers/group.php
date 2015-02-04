@@ -14,10 +14,17 @@ class Group extends MX_Controller {
 	}
 
 	function test() {
-		$name = 'Australian Ocean Data Network';
-		$slug = url_title($name, '-', true);
-		$group = $this->groups->get($slug);
-		echo json_encode($group['custom_data']['overview']);
+		$array = array(1,2,3,4,5);
+		echo $this->formatSolrArray($array, 'group');
+	}
+
+	function formatSolrArray($array, $type) {
+		$str = '';
+		foreach($array as &$a) {
+			$a = $type.':('.$a.')';
+		}
+		$str = implode($array, ' OR ');
+		return $str;
 	}
 
 	function view($slug) {

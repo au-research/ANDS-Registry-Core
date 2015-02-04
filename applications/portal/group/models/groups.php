@@ -101,7 +101,7 @@ class Groups extends CI_Model {
 			$group['groups'][] = array(
 				'id' => $doc['id'],
 				'title' => $doc['title'],
-				'slug' => $doc['slug']
+				'slug' => isset($doc['slug']) ? $doc['slug']:''
 			);
 		}
 

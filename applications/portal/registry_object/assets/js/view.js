@@ -18,7 +18,7 @@ $(document).ready(function() {
 		$('#dataformats').slideToggle();
 	});
 
-	
+	// $('.panel-body').readmore();
 
 });
 

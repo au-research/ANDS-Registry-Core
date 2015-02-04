@@ -1,7 +1,7 @@
 @extends('layouts/single')
 @section('content')
 <article>
-	<section class="section swatch-white">
+	<section class="section swatch-white element-normal-bottom">
        <div class="container">
            <div class="row">
                <div class="col-md-12">

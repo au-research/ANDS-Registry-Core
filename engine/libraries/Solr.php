@@ -273,7 +273,7 @@ class Solr {
 			$this->setOpt('qs', '1');
 		}
 		
-		$this->setOpt('q.op', 'AND');
+		// $this->setOpt('q.op', 'AND');
 		
 		
 		// Score boosting applied to phrases based on how many parts of the phrase match
@@ -300,7 +300,7 @@ class Solr {
 				case 'q': 
 					// $value = $this->escapeSolrValue($value);
 					// if(trim($value)!="") $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
-					if(trim($value)!="") $this->setOpt('q', $value);
+					if(trim($value)!="") $this->setOpt('q', '{!q.op=AND}'.$value);
 				break;
 				case 'p': 
 					$page = (int)$value;
@@ -489,10 +489,28 @@ class Solr {
 						$this->setOpt('fq', '+(title_search:("'.$value.'") description_value:("'.$value.'"))');
 					}
 					break;
+				case 'access_right':
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' access_rights:("'.$v.'")'; 
+						$this->setOpt('fq', $fq_str);
+					}else{
+						if($value!='all') $this->setOpt('fq', '+access_rights:("'.$value.'")');
+					}
+					break;
 				
 			}
 		}
 		return $this;
+	}
+
+	function formatSolrArray($array, $type) {
+		$str = '';
+		foreach($array as &$a) {
+			$a = $type.':('.$a.')';
+		}
+		$str = implode($array, ' OR ');
+		return $str;
 	}
 
 	/**

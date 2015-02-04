@@ -66,7 +66,7 @@ class GRANTSMethod extends MethodHandler
 				$words = $this->getWords($this->params[$param_name]);
 				foreach($words as $word)
 				{
-					$CI->solr->setOpt('fq','+related_object_display_title_search:('.$word.')');
+					$CI->solr->setOpt('fq',' related_object_display_title_search:('.$word.') OR researchers:('.$word.')');
 				}
 				$gotQuery =true;
 

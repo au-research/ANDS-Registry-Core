@@ -52,6 +52,7 @@
 		<field name="type_search" type="text_en_splitting" indexed="true" stored="true"/>
 
 		<field name="license_class" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="access_rights" type="string" indexed="true" stored="true" multiValued="false"/>
 
 		<field name="title" type="string" indexed="true" stored="true"/>
 		<field name="title_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
@@ -90,27 +91,24 @@
 		<field name="earliest_year" type="sint" indexed="true" stored="true" multiValued="false"/>
 		<field name="latest_year" type="sint" indexed="true" stored="true" multiValued="false"/>
 
-		<field name="related_object_key" type="string" indexed="true" stored="true" multiValued="true"/>
-		<field name="related_object_id" type="string" indexed="true" stored="true" multiValued="true"/>
-		<field name="related_object_class" type="string" indexed="true" stored="true" multiValued="true"/>
-		<field name="related_object_type" type="string" indexed="true" stored="true" multiValued="true"/>
-		<field name="related_object_display_title" type="string" indexed="true" stored="true" multiValued="true"/>
-		<field name="related_object_display_title_search" type="text_en_splitting" indexed="true" multiValued="true" stored="false"/>
-		<field name="related_object_relation" type="string" indexed="true" stored="true" multiValued="true"/>
-
-		<field name="related_collection" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="related_collection_id" type="string" indexed="true" stored="true" multiValued="true"/>
+		<field name="related_collection_title" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="related_collection_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
 
-		<field name="related_party_one" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="related_party_one_id" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="related_party_one_title" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="related_party_one_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
 
-		<field name="related_party_multi" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="related_party_multi_id" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="related_party_multi_title" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="related_party_multi_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
 
-		<field name="related_activity" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="related_activity_id" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="related_activity_title" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="related_activity_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
 
-		<field name="related_service" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="related_service_id" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="related_service_title" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="related_service_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
 
 		<field name="theme_page" type="string" indexed="true" stored="true"/>
@@ -124,6 +122,13 @@
 		<field name="search_base_score" type="sint" indexed="true" stored="true"/>
 		<field name="_version_" type="string" indexed="true" stored="true" multiValued="false"/>
 		<dynamicField name="random_*" type="random"/>
+
+        <!-- activity search fields used also by facets -->
+        <field name="activity_status" type="string" indexed="true" stored="true" multiValued="false"/>
+        <field name="funding_amount" type="sfloat" indexed="true" stored="true" multiValued="false"/>
+        <field name="funding_scheme" type="text_en_splitting" indexed="true" stored="true" multiValued="false"/>
+        <field name="researchers" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
+
 	</fields>
 
 
@@ -160,12 +165,10 @@
 
 	<copyField source="identifier_value" dest="identifier_value_search"/>
 
-	<copyField source="related_object_display_title" dest="related_object_display_title_search"/>
-	<copyField source="related_collection" dest="related_collection_search"/>
-	<copyField source="related_party_one" dest="related_party_one_search"/>
-	<copyField source="related_party_multi" dest="related_party_multi_search"/>
-	<copyField source="related_activity" dest="related_activity_search"/>
-	<copyField source="related_service" dest="related_service_search"/>
+	<copyField source="related_party_one_title" dest="related_party_one_search"/>
+	<copyField source="related_party_multi_title" dest="related_party_multi_search"/>
+	<copyField source="related_activity_title" dest="related_activity_search"/>
+	<copyField source="related_service_title" dest="related_service_search"/>
 	
 
 
