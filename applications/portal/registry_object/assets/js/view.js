@@ -18,6 +18,15 @@ $(document).ready(function() {
 		$('#dataformats').slideToggle();
 	});
 
+
+    window.ATL_JQ_PAGE_PROPS =  {
+        "triggerFunction": function(showCollectorDialog) {
+            //Requries that jQuery is available!
+            jQuery(".myCustomTrigger").click(function(e) {
+                e.preventDefault();
+                showCollectorDialog();
+            });
+        }};
 	// $('.panel-body').readmore();
 
 });
@@ -293,3 +302,4 @@ function stringToLatLng(str){
     var coord = new google.maps.LatLng(parseFloat(lat), parseFloat(lon));
     return coord;
 }
+
