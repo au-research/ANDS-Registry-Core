@@ -55,7 +55,7 @@ function searchController($scope, search_factory, uiGmapGoogleMapApi, $log){
 
 	$scope.advanced_search = {};
 	$scope.advanced_search.fields = search_factory.advanced_fields();
-	search_factory.search($scope.filters).then(function(data){
+	search_factory.search_not_record($scope.filters).then(function(data){
 		$.each(data.facet_counts.facet_fields, function(j,k){
 			$scope.allfacets[j]=[];
 			for(var i=0;i<data.facet_counts.facet_fields[j].length-1;i+=2){

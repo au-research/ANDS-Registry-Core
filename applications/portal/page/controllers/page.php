@@ -12,6 +12,7 @@ class Page extends MX_Controller {
 	 * @return view 
 	 */
 	function index(){
+		$this->record_hit('home');
 		$this->blade->render('home');
 	}
 
@@ -21,6 +22,7 @@ class Page extends MX_Controller {
 	 * @return view 
 	 */
 	function about() {
+		$this->record_hit('about');
 		$this->blade->render('about');
 	}
 
@@ -30,6 +32,7 @@ class Page extends MX_Controller {
 	 * @return view 
 	 */
 	function privacy() {
+		$this->record_hit('privacy');
 		$this->blade->render('privacy_policy');
 	}
 
@@ -39,6 +42,7 @@ class Page extends MX_Controller {
 	 * @return view 
 	 */
 	function disclaimer() {
+		$this->record_hit('disclaimer');
 		$this->blade->render('disclaimer');
 	}
 
@@ -49,6 +53,7 @@ class Page extends MX_Controller {
      * @return view
      */
     function help() {
+    	$this->record_hit('help');
         $this->blade->render('help');
     }
 
@@ -61,6 +66,15 @@ class Page extends MX_Controller {
 	 */
 	function sitemap() {}
 
+	function record_hit($page = 'home') {
+		$event = array(
+			'event'=>'portal_page',
+			'page' => $page,
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
+	}
 
 
 	public function __construct() {

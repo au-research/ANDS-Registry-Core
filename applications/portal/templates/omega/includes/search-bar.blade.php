@@ -1,7 +1,7 @@
 <div class="col-md-2">
   <div class="pull-right">
   @if($this->input->get('refer_q'))
-    <a href="{{base_url('search')}}#!/{{$this->input->get('refer_q')}}">Return to search</a>
+    <a href="{{base_url('search')}}#!/{{$this->input->get('refer_q')}}"><i class="fa fa-arrow-left"></i> Return to search</a>
   @endif
   </div>
 </div>

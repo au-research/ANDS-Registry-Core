@@ -13,7 +13,7 @@
 				@foreach($ro->descriptions as $desc)
 					@if($desc['type']==$o)
 						<small>{{$desc['type']}}</small>
-						<p>{{$desc['description']}}</p>
+						<p>{{html_entity_decode($desc['description'])}}</p>
 					@endif
 				@endforeach
 			@endforeach
@@ -21,7 +21,7 @@
 			@foreach($ro->descriptions as $desc)
 				@if(!in_array($desc['type'], $order) && !in_array($desc['type'], $omit))
 					<small>{{$desc['type']}}</small>
-					<p>{{$desc['description']}}</p>
+					<p>{{html_entity_decode($desc['description'])}}</p>
 				@endif
 			@endforeach
 		</div>
