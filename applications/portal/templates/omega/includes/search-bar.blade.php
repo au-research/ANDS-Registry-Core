@@ -1,4 +1,11 @@
-<div class="col-md-8 col-md-offset-2" data-os-animation="fadeInDown" data-os-animation-delay="">
+<div class="col-md-2">
+  <div class="pull-right">
+  @if($this->input->get('refer_q'))
+    <a href="{{base_url('search')}}#!/{{$this->input->get('refer_q')}}">Return to search</a>
+  @endif
+  </div>
+</div>
+<div class="col-md-8" data-os-animation="fadeInDown" data-os-animation-delay="">
     <!-- <form role="search" method="get" action="{{base_url('search')}}"> -->
     <form role="search" method="get" ng-submit="hashChange()">
         <span ng-if="filters.class && filters.class!='collection'">Search is restricted to [[filters.class]]</span>

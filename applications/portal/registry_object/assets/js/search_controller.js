@@ -19,6 +19,11 @@ function searchController($scope, search_factory, uiGmapGoogleMapApi, $log){
 		window.location = url;
 	}
 
+	$scope.getHash = function(){
+		var hash = search_factory.filters_to_hash($scope.filters);
+		return hash;
+	}
+
 	$scope.$watch('search_type', function(newv, oldv){
 		var search_types = ['q', 'title', 'identifier', 'related_people', 'related_organisation', 'description'];
 		$.each(search_types, function(){
