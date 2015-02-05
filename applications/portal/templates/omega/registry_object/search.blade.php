@@ -22,7 +22,7 @@
             <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
         </div>
         <div class="element-no-top element-no-bottom scontent">
-            <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]">[[doc.title]]</a> </h2>
+            <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[getHash()]]">[[doc.title]]</a> </h2>
             <p><small>[[doc.group]]</small></p>
             <div ng-repeat="x in doc.hl">
                 <p ng-repeat="b in x" data-ng-bind-html="b | trustAsHtml"></p>

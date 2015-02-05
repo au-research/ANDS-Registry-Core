@@ -35,9 +35,9 @@
                             <li class="cat-item"> <a href="http://www.ands.org.au/" title="">ANDS Website</a> </li>
                             <li class="cat-item"> <a href="http://developers.ands.org.au" title="">Developers</a> </li>
                             <li class="cat-item"> <a href="{{base_url('')}}" title="">ANDS Online Services</a> </li>
-                            <?php if($this->ro->id) { ?>
+                            @if(isset($ro) && $ro->core['id'])
                                 <li class="cat-item"> <a href="{{base_url('registry/registry_object/view/')}}/<?=$this->ro->id?>" title="">Registry View</a> </li>
-                            <?php   } ?>
+                            @endif
                         </ul>
                     </div>
                 </div>

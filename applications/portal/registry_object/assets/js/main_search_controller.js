@@ -1,4 +1,4 @@
-function mainSearchController($scope, search_factory, profile_factory, $location, $sce, uiGmapGoogleMapApi, $timeout) {
+function mainSearchController($scope, search_factory, profile_factory, $location, $sce, uiGmapGoogleMapApi, $timeout, $log) {
 	$scope.search_type = 'all';
 	$scope.filters = {};
 	$scope.prefilters = {}; //prefilters used to store temporary values like temporal and spatial
@@ -28,8 +28,10 @@ function mainSearchController($scope, search_factory, profile_factory, $location
 	$scope.$on('$locationChangeSuccess', function() {
 		$scope.filters = search_factory.filters_from_hash($location.path());
 		$scope.populateFilters();
-		$scope.search();
-		$scope.$broadcast('filters', {'filters':$scope.filters, 'query':$scope.query});
+		if(window.location.href.indexOf("search") > -1) {
+			$scope.search();
+			$scope.$broadcast('filters', {'filters':$scope.filters, 'query':$scope.query});
+		}
 	});
 
 	$scope.$watch('filters', function(newv, oldv){
@@ -65,13 +67,6 @@ function mainSearchController($scope, search_factory, profile_factory, $location
 		$scope.hashChange();
 	}
 
-	$scope.$on('inisearch', function(e, s){
-		console.log('received', s);
-		if(s.url) {
-			window.location = s.url;
-		}
-	});
-
 	$scope.getHash = function() {
 		var hash = '';
 		$.each($scope.filters, function(i,k){
@@ -104,7 +99,6 @@ function mainSearchController($scope, search_factory, profile_factory, $location
 	}
 
 	$scope.search = function() {
-
 		if ($scope.loading) return false;
 
 		$scope.loading = true;

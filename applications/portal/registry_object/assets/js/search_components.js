@@ -7,6 +7,12 @@ angular.module('search_components',[])
 			});
 			return promise;
 		},
+		search_not_record: function(filters){
+			var promise = $http.post(base_url+'registry_object/filter/true', {'filters':filters}).then(function(response){
+				return response.data;
+			});
+			return promise;
+		},
 		filters_from_hash:function(hash) {
 			var xp = hash.split('/');
 			var filters = {};

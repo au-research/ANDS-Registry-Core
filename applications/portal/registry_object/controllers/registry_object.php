@@ -34,10 +34,20 @@ class Registry_object extends MX_Controller {
 
 		//record event
 		$ro->event('view');
-
+		ulog_terms(
+			array(
+				'event' => 'portal_view',
+				'roid' => $ro->core['id'],
+				'roclass' => $ro->core['class'],
+				'dsid' => $ro->core['data_source_id'],
+				'group' => $ro->core['group'],
+				'ip' => $this->input->ip_address(),
+				'user_agent' => $this->input->user_agent()
+			),'portal', 'info'
+		);
 
 		$this->blade
-			->set('scripts', array('view', 'view_app'))
+			->set('scripts', array('view', 'view_app', 'tag_controller'))
 			->set('lib', array('jquery-ui', 'dynatree', 'qtip'))
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
@@ -58,6 +68,26 @@ class Registry_object extends MX_Controller {
 			->render('registry_object/preview');
 	}
 
+	function addTag() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = json_decode(file_get_contents("php://input"), true);
+
+		$data = $data['data'];
+		$data['user'] = $this->user->name();
+		$data['user_from'] = $this->user->authDomain();
+
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL,base_url().'registry/services/rda/addTag');//post to SOLR
+		curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$content = curl_exec($ch);//execute the curl
+		curl_close($ch);//close the curl
+
+		echo $content;
+	}
+
 	/**
 	 * Returns the stat of a record
 	 * @param  int $id
@@ -70,6 +100,7 @@ class Registry_object extends MX_Controller {
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
 		$stats = $ro->stat();
+
 		echo json_encode($stats);
 	}
 
@@ -98,7 +129,7 @@ class Registry_object extends MX_Controller {
 	 * @param  string $class class restriction
 	 * @return json
 	 */
-	function filter() {
+	function filter($no_record = false) {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
@@ -116,6 +147,18 @@ class Registry_object extends MX_Controller {
 		$this->solr->setOpt('fq', '+class:'.$default_class);
 
 		$this->solr->setFilters($filters);
+
+		//not recording a hit for the quick search done for advanced search
+		if (!$no_record) {
+			$event = array(
+				'event' => 'portal_search',
+				'ip' => $this->input->ip_address(),
+				'user_agent' => $this->input->user_agent()
+			);
+			$event = array_merge($event, $filters);
+			ulog_terms($event,'portal');
+		}
+		
 
 		//returns this set of Facets
 		foreach($this->components['facet'] as $facet){
@@ -154,8 +197,7 @@ class Registry_object extends MX_Controller {
 	function get($id) {
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
-		$stats = $ro->stat();
-		echo json_encode($stats);
+		echo json_encode($ro);
 	}
 
 	/**
@@ -166,7 +208,7 @@ class Registry_object extends MX_Controller {
 		parent::__construct();
 		$this->load->model('registry_objects', 'ro');
 		$this->components = array(
-			'view' => array('descriptions','reuse-list','quality-list','dates-list','spatial-info', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list'),
+			'view' => array('descriptions','reuse-list','quality-list','dates-list','spatial-info', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list','tags'),
 			'aside' => array('rights-info','contact-info'),
             'view_headers' => array('title','related-parties'),
             'activity'=>array('descriptions','spatial-info','publications-list', 'subjects-list','identifiers-list','contact-info'),

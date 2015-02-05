@@ -11,15 +11,19 @@ class Suggest extends ROHandler {
 		$result = array();
 
         //pools
-        $suggestors = array('subjects');
+                $suggestors = array('subjects', 'shared_text', 'related_object');
 
         //populate the pool with different suggestor
         $ci =& get_instance();
 
         foreach ($suggestors as $suggestor) {
-            $ci->load->model('registry_object/suggestors/'.$suggestor.'_suggestor', 'ss');
-            $ci->ss->set_ro($this->ro);
-            $result[$suggestor] = $ci->ss->suggest();
+            // Can't load a model on top of an existing field, so
+            // create a different field name for each suggestor.
+            $suggestor_field = 'ss_'.$suggestor;
+            $ci->load->model('registry_object/suggestors/'.$suggestor.'_suggestor', $suggestor_field);
+            $ci->$suggestor_field->set_ro($this->ro);
+
+            $result[$suggestor] = $ci->$suggestor_field->suggest();
         }
 
         //finalize the pool
