@@ -32,8 +32,7 @@
     		    				@yield('content')
     		    			</div>
     		    			<div class="col-md-4 sidebar animated slideInRight">
-                                @include('registry_object/contents/standard-getdatalicence')
-                                @include('registry_object/contents/standard-metafunc')
+                                @include('registry_object/activity_contents/activity-metafunc')
     		    				@yield('sidebar')
     		    			</div>
     		    		</div>
