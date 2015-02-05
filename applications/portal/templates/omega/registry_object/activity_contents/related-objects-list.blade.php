@@ -10,7 +10,7 @@
 			<ul>
 				@foreach($ro->relationships[0]['collection'] as $col)
 					@if($col)
-						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}">{{$col['title']}}</a></li>
+						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview">{{$col['title']}}</a></li>
 					@endif
 				@endforeach
 			</ul>
@@ -21,7 +21,7 @@
 			<ul>
 				@foreach($ro->relationships[0]['party_multi'] as $col)
 					@if($col)
-						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}">{{$col['title']}}</a></li>
+						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview">{{$col['title']}}</a></li>
 					@endif
 				@endforeach
 			</ul>
@@ -32,7 +32,7 @@
 			<ul>
 				@foreach($ro->relationships[0]['service'] as $col)
 					@if($col)
-						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}">{{$col['title']}}</a></li>
+						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview">{{$col['title']}}</a></li>
 					@endif
 				@endforeach
 			</ul>
@@ -43,7 +43,7 @@
 			<ul>
 				@foreach($ro->relationships[0]['activity'] as $col)
 					@if($col)
-						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}">{{$col['title']}}</a></li>
+						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview">{{$col['title']}}</a></li>
 					@endif
 				@endforeach
 			</ul>

@@ -802,7 +802,7 @@ class Maintenance extends MX_Controller {
 			$data['message'] = '<i class="icon icon-remove"></i> No Registry Object Found!';
 		}else{
 			if($use=='id'){
-				if($msg = $ro->sync()!=true){
+				if($msg = $ro->sync(true,99999999)!=true){
 					$data['status'] = 'error';
 					$data['message'] = $msg;
 				}

@@ -4,7 +4,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/_method_handler.php');
 class Registry_objectsMethod extends MethodHandler {
     private $default_params = array(
         'q' => '*:*',
-        'fl' => 'id,key,slug,title,class,data_source_id,group,created,type',
+        'fl' => 'id,key,slug,title,class,type,data_source_id,group,created',
         'wt' => 'json',
         'indent' => 'on',
         'rows' => 20
@@ -40,9 +40,9 @@ class Registry_objectsMethod extends MethodHandler {
                 if($m1 && in_array($m1, $this->valid_methods)) {
                     switch($m1) {
 
-                        case 'get':
-                        case 'registry':
-                        case 'relationships' :  $result[$m1] = $this->relationships_handler(); break;
+                        case 'get':             
+                        case 'registry':           $result[$m1] = $this->ro_handle('core'); break;
+                        case 'relationships'    :  $result[$m1] = $this->relationships_handler(); break;
 
                         default : 
                             try {
@@ -180,13 +180,54 @@ class Registry_objectsMethod extends MethodHandler {
     * @return array
     */
     private function relationships_handler() {
-        $result = array();
-        $specific = isset($this->params[3]) ? $this->params[3]: null;
-        if (isset($this->params['mode']) && $this->params['mode']=='unordered') {
-            $relationships = $this->ro->getAllRelatedObjects(false, true, true);
-        } else {
-            $relationships = $this->ro->getConnections(true, $specific);
+        $relationships = array();
+
+        $ci =& get_instance();
+        $ci->load->model('registry_object/registry_objects', 'ro');
+
+        $limit = isset($_GET['related_object_limit']) ? $_GET['related_object_limit'] : 5;
+
+        $types = array('collection','party_one', 'party_multi', 'activity', 'service');
+
+        $ci->load->library('solr');
+        $search_class = $this->ro->class;
+        if($this->ro->class=='party') {
+            if (strtolower($this->ro->type)=='person'){
+                $search_class = 'party_one';
+            } elseif(strtolower($this->ro->type)=='group') {
+                $search_class = 'party_multi';
+            }
         }
+
+        foreach($types as $type) {
+            $ci->solr->init();
+            $ci->solr
+                ->setOpt('fq', '+related_'.$search_class.'_id:'.$this->ro->id)
+                ->setOpt('fl', 'id,slug,title,class,type')
+                ->setOpt('rows', $limit);
+            if ($type=='party_one') {
+                $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type_search:person');
+            } elseif ($type=='party_multi') {
+                $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type_search:group');
+            } else {
+                $ci->solr->setOpt('fq', '+class:'.$type);
+            }
+            $result = $ci->solr->executeSearch(true);
+            if ($result['response']['numFound'] > 0) {
+                $relationships[$type.'_count'] = $result['response']['numFound'];
+                $relationships[$type] = array();
+                foreach($result['response']['docs'] as $doc) {
+                    $relationships[$type][] = array(
+                        'registry_object_id' => $doc['id'],
+                        'slug' => $doc['slug'],
+                        'class' => $doc['class'],
+                        'type' => $doc['type'],
+                        'title' => $doc['title']
+                    );
+                }
+            }
+        }
+
         return $relationships;
     }
 }

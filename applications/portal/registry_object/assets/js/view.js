@@ -2,12 +2,7 @@ $(document).ready(function() {
     initConnectionGraph()
     drawMap();
     //console.log($.browser)
-    $('a[title]').qtip({
-	    style: {classes: 'ui-tooltip-light ui-tooltip-shadow seealso-tooltip',width: '250px'},
-	    show: 'mouseover',
-	    hide: 'mouseout'
-	});
-
+    
 	$('#rightsContent').hide();
 	$('#dataformats').hide();
 	$(document).on('click', '#toggleRightsContent', function(e){
@@ -29,6 +24,32 @@ $(document).ready(function() {
         }};
 	// $('.panel-body').readmore();
 
+});
+
+$(document).on('click', '.ro_preview', function(event){
+	event.preventDefault();
+	$(this).qtip({
+		show:{event:'click'},
+		hide:'unfocus',
+		content: {
+			text: function(event, api) {
+				api.elements.content.html('Loading...');
+				return $.ajax({
+					url:base_url+'registry_object/preview/'+$(this).attr('ro_id')
+				}).then(function(content){
+					return content;
+				},function(xhr,status,error){
+					api.set('content.text', status + ': ' + error);
+				});
+			}
+		},
+		position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
+		style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'},
+		show: {
+			event:event.type,
+			ready:'true'
+		}
+	},event);
 });
 
 
