@@ -211,8 +211,6 @@ class Registry_object extends MX_Controller {
 			'view' => array('descriptions','reuse-list','quality-list','dates-list','spatial-info', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list','tags'),
 			'aside' => array('rights-info','contact-info'),
             'view_headers' => array('title','related-parties'),
-            'activity'=>array('descriptions','spatial-info','publications-list', 'subjects-list','identifiers-list','contact-info'),
-            'activity_aside'=>('related-objects-list'),
 			'facet' => array('spatial','group', 'license_class', 'type', 'temporal', 'access_rights')
 		);
 	}

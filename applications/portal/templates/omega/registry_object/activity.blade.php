@@ -6,6 +6,7 @@
 ?>
 <article class="post">
 	<div class="post-body">
+        @include('registry_object/activity_contents/'.$content)
 		@foreach ($activity_contents as $content)
 			@include('registry_object/activity_contents/'.$content)
 		@endforeach
