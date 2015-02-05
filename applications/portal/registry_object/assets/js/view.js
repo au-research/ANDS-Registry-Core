@@ -3,7 +3,6 @@ $(document).ready(function() {
     drawMap();
     //console.log($.browser)
     
-
 	$('#rightsContent').hide();
 	$('#dataformats').hide();
 	$(document).on('click', '#toggleRightsContent', function(e){
@@ -27,11 +26,10 @@ $(document).ready(function() {
 
 });
 
-$(document).on('click', '.ro_preview', function(e){
-	e.preventDefault();
-	console.log(e);
+$(document).on('click', '.ro_preview', function(event){
+	event.preventDefault();
 	$(this).qtip({
-		show:'click',
+		show:{event:'click'},
 		hide:'unfocus',
 		content: {
 			text: function(event, api) {
@@ -45,10 +43,13 @@ $(document).on('click', '.ro_preview', function(e){
 				});
 			}
 		},
-		position: {viewport : $(window)},
+		position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
 		style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'},
-		show: {ready:'true'}
-	});
+		show: {
+			event:event.type,
+			ready:'true'
+		}
+	},event);
 });
 
 

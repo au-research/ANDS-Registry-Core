@@ -13,6 +13,7 @@ class Descriptions extends ROHandler {
             foreach($this->xml->{$this->ro->class}->description as $description){
                 $type = (string) $description['type'];
                 $description_str = html_entity_decode((string) $description);
+
                 $result[] = array(
                     'type' => $type,
                     'description' => $description_str
