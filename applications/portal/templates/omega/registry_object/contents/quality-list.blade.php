@@ -1,12 +1,18 @@
 @if($ro->relatedInfo)
-<div class="swatch-white">
+<?php
+$found = false;
+$heading = '<div class="swatch-white">
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
         <div class="panel-heading">
             <a href="">Data Quality Information</a>
         </div>
-        <div class="panel-body swatch-white">
+        <div class="panel-body swatch-white">';
+$closure = '        </div>
+    </div>
+</div>'; ?>
             @foreach($ro->relatedInfo as $relatedInfo)
                 @if($relatedInfo['type']=='dataQualityInformation')
+<?php if(!$found){ echo $heading; $found = true; }?>
                     <p>
                     {{$relatedInfo['title']}}<br />
                     {{$relatedInfo['identifier']['identifier_type']}} :
@@ -19,7 +25,6 @@
                     </p>
                 @endif
             @endforeach
-        </div>
-    </div>
-</div>
+<?php if($found) echo $closure; ?>
+
 @endif

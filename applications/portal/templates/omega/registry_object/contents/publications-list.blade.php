@@ -1,9 +1,19 @@
 @if($ro->relatedInfo)
-<div class="panel panel-primary panel-content swatch-white">
+<?php   $heading = '<div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Related Publications</div>
-    <div class="panel-body">
+    <div class="panel-body">';
+        $closing = '</div></div>';
+        $found=false;
+        ?>
+
+
         @foreach($ro->relatedInfo as $relatedInfo)
             @if($relatedInfo['type']=='publication')
+                <?php
+                if(!$found){
+                    echo $heading;
+                    $found = true;
+                }?>
                 <img src="<?php echo base_url()?>assets/core/images/icons/publications.png"   style="margin-top: -2px; height: 24px; width: 24px;"> {{$relatedInfo['title']}}<br/>
                 {{$relatedInfo['identifier']['identifier_type']}} :
                 @if($relatedInfo['identifier']['identifier_href'])
@@ -16,6 +26,5 @@
                 @endif
             @endif
         @endforeach
-    </div>
-</div>
+    <?php if($found) echo $closing; ?>
 @endif
