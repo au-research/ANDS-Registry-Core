@@ -5,6 +5,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 * @author Liz Woods <liz.woods@ands.org.au>
 * @return array
 */
+
 class ExistenceDates extends ROHandler {
 	function handle() {
 		$result = array();
