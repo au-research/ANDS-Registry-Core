@@ -1,0 +1,6 @@
+<div ng-if="result && result.response.numFound > 0">
+	<ul>
+		<li ng-repeat="doc in result.response.docs"><a href="{{base_url}}{{doc.slug}}/{{doc.id}}">{{doc.title}}</a></li>
+		<li><a href="{{base_url}}search/#!/{{filter_query}}">View Full Search</a></li>
+	</ul>
+</div>

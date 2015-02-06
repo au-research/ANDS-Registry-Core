@@ -14,6 +14,7 @@
 
 <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
 <!-- <script src="{{asset_url('omega/js/theme.js','templates')}}"></script> -->
+<script src="{{asset_url('js/scripts.js', 'core')}}"></script>
 
 
 @if(isset($lib))
@@ -22,7 +23,6 @@
 			<script src="{{asset_url('lib/jquery-ui/jquery-ui.js', 'core')}}"></script>
 		@elseif($l=='dynatree')
 			<script src="{{asset_url('lib/dynatree/src/jquery.dynatree.js', 'core')}}"></script>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing&amp;sensor=false"></script>
         @elseif($l=='qtip')
             <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
         @elseif($l=='textAngular')
@@ -30,6 +30,10 @@
             <script src="{{asset_url('lib/textAngular/dist/textAngular-rangy.min.js', 'core')}}"></script>
             <script src="{{asset_url('lib/textAngular/dist/textAngular-sanitize.min.js', 'core')}}"></script>
             <script src="{{asset_url('lib/textAngular/dist/textAngular.min.js', 'core')}}"></script>
+        @elseif($l=='colorbox')
+            <script src="{{asset_url('lib/colorbox/jquery.colorbox-min.js', 'core')}}"></script>
+        @elseif($l=='mustache')
+            <script src="{{asset_url('lib/mustache/mustache.min.js', 'core')}}"></script>
         @endif
 	@endforeach
 @endif
