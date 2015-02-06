@@ -1,4 +1,7 @@
 @if($ro->relationships)
+<?php
+	// var_dump($ro->relationships['activity']);
+?>
 <?php 
 	$search_class = $ro->core['class'];
 	if($ro->core['class']=='party') {

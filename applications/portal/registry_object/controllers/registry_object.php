@@ -25,7 +25,6 @@ class Registry_object extends MX_Controller {
                 break;
             case 'activity':
                 $render = 'registry_object/activity';
-                $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'activity');
                 break;
             default:
                 $render = 'registry_object/view';
@@ -48,10 +47,12 @@ class Registry_object extends MX_Controller {
 
 		$this->blade
 			->set('scripts', array('view', 'view_app', 'tag_controller'))
-			->set('lib', array('jquery-ui', 'dynatree', 'qtip'))
+			->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
+            ->set('activity_contents',$this->components['activity'])
 			->set('aside', $this->components['aside'])
+            ->set('activity_aside', $this->components['activity_aside'])
             ->set('view_headers', $this->components['view_headers'])
 			->set('url', $ro->construct_api_url())
 			->set('theme', $theme)
@@ -196,9 +197,12 @@ class Registry_object extends MX_Controller {
 	 * @return json 
 	 */
 	function get($id) {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
-		echo json_encode($ro);
+		echo json_encode($ro->relationships);
 	}
 
 	/**
@@ -212,6 +216,8 @@ class Registry_object extends MX_Controller {
 			'view' => array('descriptions','reuse-list','quality-list','dates-list','spatial-info', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list','tags'),
 			'aside' => array('rights-info','contact-info'),
             'view_headers' => array('title','related-parties'),
+            'activity'=>array('descriptions','spatial-info','publications-list', 'subjects-list','identifiers-list','contact-info'),
+            'activity_aside'=>('related-objects-list'),
 			'facet' => array('spatial','group', 'license_class', 'type', 'temporal', 'access_rights')
 		);
 	}
