@@ -34,6 +34,8 @@
             <script src="{{asset_url('lib/colorbox/jquery.colorbox-min.js', 'core')}}"></script>
         @elseif($l=='mustache')
             <script src="{{asset_url('lib/mustache/mustache.min.js', 'core')}}"></script>
+        @elseif($l=='map')
+            <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing&amp;sensor=false"></script>
         @endif
 	@endforeach
 @endif
