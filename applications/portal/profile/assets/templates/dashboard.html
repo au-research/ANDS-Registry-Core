@@ -1,0 +1,68 @@
+<div class="container">
+	<div class="row element-short-top">
+		<div class="col-md-9">
+			<section ng-if="user">
+							
+				<div class="panel panel-primary swatch-white panel-content">
+					<div class="panel-heading">Saved Search</div>
+					<div class="panel-body" ng-if="user.user_data.saved_search">
+						<ul>
+							<li ng-repeat="search in user.user_data.saved_search"><a href="[[base_url]]search#!/[[search.query_string]]">[[search.query_string]]</a></li>
+						</ul>
+					</div>
+					<div class="panel-body" ng-if="!user.user_data.saved_search">
+						You have no saved search!
+					</div>
+				</div>
+				
+				<div class="panel panel-primary swatch-white panel-content">
+					<div class="panel-heading">Saved Records</div>
+					<div class="panel-body" ng-if="user.user_data.saved_record">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<td>Record Name</td><td>Data Publisher</td><td>Viewed</td><td>Last Update</td><td>Action</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="record in user.user_data.saved_record">
+									<td><a href="[[base_url]][[record.slug]]/[[record.id]]">[[record.title]]</a></td>
+									<td>0</td>
+									<td>0</td>
+									<td>0</td>
+									<td>
+										<!-- Single button -->
+										<div class="btn-group">
+											<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+												Action <span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu" role="menu">
+												<li ng-repeat="action in available_actions"><a href="#">[[action]]</a></li>
+											</ul>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="panel-body" ng-if="!user.user_data.saved_record">
+						You have no saved record!
+					</div>
+				</div>
+						
+			</section>
+		</div>
+		<div class="col-md-3 sidebar" ng-if="user">
+			<div class="panel panel-primary swatch-white panel-content">
+				<div class="panel-heading">Logged In User</div>
+				<div class="panel-body">
+					<h3>[[user.name]]</h3>
+					<p>[[user.authMethod]]</p>
+					<hr>
+					<a href="[[base_url]]profile/logout" class="btn btn-danger"><i class="fa fa-sign-out"></i> Logout</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
