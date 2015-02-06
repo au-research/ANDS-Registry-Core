@@ -191,7 +191,7 @@ class Registry_objectsMethod extends MethodHandler {
 
         
 
-        $relationships = $this->ro->getConnections(true,null,5);
+        $relationships = $this->ro->getConnections();
         $relationships = $relationships[0];
 
 

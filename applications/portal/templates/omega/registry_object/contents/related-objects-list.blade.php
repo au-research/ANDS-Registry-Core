@@ -18,7 +18,9 @@
 	        <a href="">Related</a>
 	    </div>
 		<div class="panel-body swatch-white">
-			@if($ro->relationships && isset($ro->relationships['collection']))
+		
+			<!-- Not displaying collections at all -->
+			@if($ro->relationships && isset($ro->relationships['collection']) && false)
 			<h4>Related Collections</h4>
 			<ul>
 				@foreach($ro->relationships['collection'] as $col)
