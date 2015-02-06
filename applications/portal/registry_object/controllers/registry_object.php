@@ -25,6 +25,7 @@ class Registry_object extends MX_Controller {
                 break;
             case 'activity':
                 $render = 'registry_object/activity';
+                $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'activity');
                 break;
             default:
                 $render = 'registry_object/view';
