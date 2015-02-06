@@ -9,11 +9,17 @@
 	        <a href="">Descriptions</a>
 	    </div>
 		<div class="panel-body swatch-white">
+            @if($ro->core['type']=='grant')
+            <h2>Research Grant</h2>
+            @endif
+            @if($ro->core['type']=='project')
+            <h2>Research Project</h2>
+            @endif
+
 			@foreach($order as $o)
 				@foreach($ro->descriptions as $desc)
 					@if($desc['type']==$o)
-						<small>{{$desc['type']}}</small>
-						<p>{{html_entity_decode($desc['description'])}}</p>
+						<p><strong>{{$desc['type']}}</strong>{{html_entity_decode($desc['description'])}}</p>
 					@endif
 				@endforeach
 			@endforeach
