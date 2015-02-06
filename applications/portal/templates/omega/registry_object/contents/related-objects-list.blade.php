@@ -32,7 +32,7 @@
 			</ul>
 			@endif
 
-			@if($ro->relationships && isset($ro->relationships['party_multi']) && $ro->core['class']!='activity')
+			@if($ro->relationships && isset($ro->relationships['party_multi']))
 			<h4>Organisations</h4>
 			<ul>
 				@foreach($ro->relationships['party_multi'] as $col)
