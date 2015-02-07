@@ -8,11 +8,52 @@ class Tasks extends CI_Controller {
 		$this->load->view('tasks_manager', $data);
 	}
 
+	public function list_task(){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$this->load->model('task_mgr');
+		$list = $this->task_mgr->list_task();
+		echo json_encode($list);
+	}
+
+	public function next_task() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$this->load->model('task_mgr');
+		$task = $this->task_mgr->find_task();
+		echo json_encode($task);
+	}
+
+	public function add_task() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = json_decode(file_get_contents("php://input"), true);
+		// echo json_encode($data);
+		$type = $data['task'];
+		$params = $data['params'];
+		// echo json_encode($data);
+
+		$this->load->model('task_mgr');
+		$task = array(
+			'name' => $type,
+			'params' => $params
+		);
+		$this->task_mgr->add_task($task);
+	}
+
+	public function clear_pending(){
+		$this->load->model('task_mgr');
+		$this->task_mgr->clear_pending();
+	}
+
 	public function test() {
 		$task = array(
 			'id' => 100,
 			'name' => 'sync',
-			'params' => 'type=ds&id=58,101',
+			'params' => 'type=ds&id=45',
 		);
 		$this->doTask($task);
 		// $this->task_mgr->add_task($task);
