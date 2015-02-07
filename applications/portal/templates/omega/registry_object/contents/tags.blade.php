@@ -15,11 +15,12 @@ In order to tag a record you must first login to Research Data Australia. Tags c
 			<p class="element-short-top"><a href="{{portal_url('profile')}}">Login</a> to tag this record with meaningful keywords to make it easier to discover</p>
 		@else
 			<form class="element-short-top input-group" style="width:270px" ng-submit="addTag()">
-				<input type="text" class="form-control col-md-4" placeholder="Start typing to add tags" ng-model="newTag">
+				<input type="text" class="form-control col-md-4" placeholder="Start typing to add tags" ng-model="newTag" typeahead="value.name for value in getSuggestTag($viewValue)" typeahead-min-length="2" typeahead-loading="loadingSuggestions">
 				<span class="input-group-btn">
 					<input type="submit" class="btn btn-primary" value="Add Tag"><i class="fa fa-tag"></i> Add Tag</input>
 				</span>
 			</form>
+			<i ng-show="loadingSuggestions" class="fa fa-refresh fa-spin"></i>
 		@endif
 	</div>
 </div>

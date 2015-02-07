@@ -9,12 +9,15 @@
 <script src="{{asset_url('lib/angular-sanitize/angular-sanitize.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-animate/angular-animate.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-ui-utils/ui-utils.min.js', 'core')}}"></script>
-
+<script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap-tpls.min.js', 'core')}}"></script>
 
 
 <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
 <!-- <script src="{{asset_url('omega/js/theme.js','templates')}}"></script> -->
 <script src="{{asset_url('js/scripts.js', 'core')}}"></script>
+
+
 
 
 @if(isset($lib))

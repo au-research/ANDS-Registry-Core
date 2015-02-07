@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'search_components', 'profile_components', 'uiGmapgoogle-maps', 'ui.utils', 'portal-filters', 'record_components'], function($interpolateProvider){
+var app = angular.module('app', ['ngRoute', 'ui.bootstrap', 'ngSanitize', 'search_components', 'profile_components', 'uiGmapgoogle-maps', 'ui.utils', 'portal-filters', 'record_components'], function($interpolateProvider){
 	$interpolateProvider.startSymbol('[[');
 	$interpolateProvider.endSymbol(']]');
 });
