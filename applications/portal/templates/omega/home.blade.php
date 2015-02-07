@@ -48,6 +48,7 @@
                </div>
            </div>
            <div class="row ">
+            @include('includes/subjects-list')
            </div>
        </div>
     </section>

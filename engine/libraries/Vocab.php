@@ -272,8 +272,8 @@ class Vocab {
         $tree = array();
         if(is_array($this->resolvingServices))
         {
-            header('Cache-Control: no-cache, must-revalidate');
-            header('Content-type: application/json');
+            // header('Cache-Control: no-cache, must-revalidate');
+            // header('Content-type: application/json');
             $content = $this->post($this->constructUriString('resource', $this->resolvingServices[$vocab], ''));
 
             if($json = json_decode($content, false)){

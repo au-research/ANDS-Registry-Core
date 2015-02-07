@@ -12,8 +12,19 @@ class Page extends MX_Controller {
 	 * @return view 
 	 */
 	function index(){
+		header('Content-Type: text/html; charset=utf-8');
+		$this->load->library('vocab');
+		$toplevel = $this->vocab->getTopLevel('anzsrc-for', array());
 		$this->record_hit('home');
-		$this->blade->render('home');
+		$this->blade
+			->set('subjects', $toplevel['topConcepts'])
+			->render('home');
+	}
+
+	function test(){
+		$this->load->library('vocab');
+		$toplevel = $this->vocab->getTopLevel('anzsrc-for', array());
+		var_dump($toplevel);
 	}
 
 	/**
