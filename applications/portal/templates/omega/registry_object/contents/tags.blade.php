@@ -8,7 +8,7 @@ In order to tag a record you must first login to Research Data Australia. Tags c
 	<div class="panel-body">
 		@if($ro->tags)
 			@foreach($ro->tags as $tag)
-				<span for="" class="label label-default tag-{{$tag['type']}}"><i class='fa fa-tag' style="color:white"></i> {{$tag['name']}}</span>
+				<a href="{{base_url('search')}}#!/tag={{$tag['name']}}" class="btn btn-primary btn-link btn-sm btn-icon-left"><span><i class="fa fa-tag"></i></span>{{$tag['name']}}</a>
 			@endforeach
 		@endif
 		@if(!$this->user->isLoggedIn())
