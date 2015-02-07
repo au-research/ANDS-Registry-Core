@@ -1,4 +1,4 @@
-app.controller('viewController', function($scope, profile_factory, record_factory, $log){
+app.controller('viewController', function($scope, $log, $modal, profile_factory, record_factory){
 
 	$scope.ro = {
 		'id': $('#ro_id').val(),
@@ -19,5 +19,11 @@ app.controller('viewController', function($scope, profile_factory, record_factor
 			alert('This record is bookmarked');
 		});
 	};
+
+	$scope.openCitationModal = function(){
+		$log.debug('open');
+		$log.debug($('#citationModal'));
+		$('#citationModal').modal();
+	}
 
 });

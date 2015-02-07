@@ -60,6 +60,7 @@
     		    </section>
         	</article>
         </div>
+        @include('registry_object/contents/citation-modal')
         @include('includes/footer')
     </body>
 </html>

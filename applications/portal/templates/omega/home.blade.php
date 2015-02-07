@@ -65,10 +65,9 @@
                                <div class="box box-round box-medium box-simple">
                                    <div class="box-dummy"></div>
                                    <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
-                                       <!-- <img class="" src="assets/images/icons/indicator-512w.png" alt="a clock"> -->
+                                    <i class="fa fa-home" style="color:white;"></i>
                                    </div>
                                </div>
-                               <!-- <h3 class="normal bold bordered bordered-small "> Collections </h3> -->
                                <p class="">Discover data and services by theme in our <strong>collection guides</strong></p>
                            </div>
                        </div>
@@ -77,10 +76,9 @@
                                <div class="box box-round box-medium box-simple">
                                    <div class="box-dummy"></div>
                                    <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
-                                       <!-- <img class="" src="assets/images/icons/gift-512w.png" alt="a gift"> -->
+                                       <i class="fa fa-barcode" style="color:white;"></i>
                                    </div>
                                </div>
-                               <!-- <h3 class="normal bold bordered bordered-small "> Services </h3> -->
                                <p class="">Access research data-related services ands tools</p>
                            </div>
                        </div>
@@ -89,10 +87,9 @@
                                <div class="box box-round box-medium box-simple">
                                    <div class="box-dummy"></div>
                                    <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
-                                       <!-- <img class="" src="assets/images/icons/lifebuoy-512w.png" alt="a support"> -->
+                                    <i class="fa fa-cc" style="color:white;"></i>
                                    </div>
                                </div>
-                               <!-- <h3 class="normal bold bordered bordered-small "> Activities </h3> -->
                                <p class="">Find open-data that is accessible and free to use</p>
                            </div>
                        </div>
@@ -101,7 +98,7 @@
                                <div class="box box-round box-medium box-simple">
                                    <div class="box-dummy"></div>
                                    <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
-                                       <!-- <img class="" src="assets/images/icons/map-512w.png" alt="a clock"> -->
+                                    <i class="fa fa-graduation-cap" style="color:white;"></i>
                                    </div>
                                </div>
                                <!-- <h3 class="normal bold bordered bordered-small "> Ultra flexible </h3> -->
