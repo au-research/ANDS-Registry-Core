@@ -18,8 +18,15 @@
                                     @endif
                                     [[message]]
                                     <h1 class="hairline bordered-normal">{{$ro->core['title']}}</h1>
+                                    @if($ro->core['alt_title'])
+                                        <small>Also known as: 
+                                            {{implode(', ',$ro->core['alt_title'])}}
+                                        </small><br/>
+                                    @endif
                                     <small>{{$ro->core['group']}}</small><br/>
+
                                     <div class="clear"></div>
+                                    
                                     <div class="container-fluid">
                                         <div class="row">
                                             <div class="col-md-7">
