@@ -18,7 +18,7 @@
                                     @endif
                                     [[message]]
                                     <h1 class="hairline bordered-normal">{{$ro->core['title']}}</h1>
-                                    @if($ro->core['alt_title'])
+                                    @if(isset($ro->core['alt_title']))
                                         <small>Also known as: 
                                             {{implode(', ',$ro->core['alt_title'])}}
                                         </small><br/>
@@ -29,8 +29,15 @@
                                     
                                     <div class="container-fluid">
                                         <div class="row">
-                                            <div class="col-md-7">
+                                            <div class="col-md-5">
                                                 @include('registry_object/contents/related-parties')
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="center-block" style="text-align:center">
+                                                    <i class="fa fa-lg fa-facebook fa-border"></i>
+                                                    <i class="fa fa-lg fa-twitter fa-border"></i>
+                                                    <i class="fa fa-lg fa-google fa-border"></i>
+                                                </div>
                                             </div>
                                             <div class="col-md-5">
                                                 <div class="btn-group btn-group-justified" ng-if="ro.stat">
@@ -47,11 +54,6 @@
 
                                     <div class="pull-left swatch-white" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
                                         @include('registry_object/contents/wrap-getdatalicence')
-                                        <div class="center-block" style="text-align:center">
-                                            <i class="fa fa-lg fa-facebook fa-border"></i>
-                                            <i class="fa fa-lg fa-twitter fa-border"></i>
-                                            <i class="fa fa-lg fa-google fa-border"></i>
-                                        </div>
                                     </div>
                                     @yield('content')
                                 </div>

@@ -18,7 +18,7 @@ app.controller('dashboardCtrl', function($scope, $log, profile_factory){
 
 	profile_factory.get_user().then(function(data){
 		$scope.user = data;
-		// $log.debug($scope.user);
+		$log.debug($scope.user);
 	});
 
 	$scope.action = 'action';
