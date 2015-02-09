@@ -27,7 +27,12 @@ $(document).ready(function() {
 	$('a[tip]').qtip({
 		content:{
 			text:function(e,api){
-				return $(this).attr('tip')
+				var tip = $(this).attr('tip');
+				var content = tip;
+				if($(tip.toString()).length) {
+					content = $(tip.toString()).html();
+				}
+				return content;
 			}
 		},
 		hide:'mouseleave, unfocus, click',

@@ -27,7 +27,7 @@ class Registry_objectsMethod extends MethodHandler {
         $method1 = isset($params[2]) ? $params[2]: 'get';
         $method2 = isset($params[3]) ? $params[3]: false;
 
-        if($method1=='get') $method1 = implode($this->valid_methods, '-');
+        if($method1=='get' || strpos($method1, 'rda')!==false) $method1 = implode($this->valid_methods, '-');
 
         $ci =& get_instance();
         // $ci->load->library('benchmark');
