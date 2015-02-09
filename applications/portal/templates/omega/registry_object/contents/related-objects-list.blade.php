@@ -1,4 +1,7 @@
 @if($ro->relationships)
+<?php
+	// var_dump($ro->relationships['activity']);
+?>
 <?php 
 	$search_class = $ro->core['class'];
 	if($ro->core['class']=='party') {
@@ -15,7 +18,9 @@
 	        <a href="">Related</a>
 	    </div>
 		<div class="panel-body swatch-white">
-			@if($ro->relationships && isset($ro->relationships['collection']))
+		
+			<!-- Not displaying collections at all -->
+			@if($ro->relationships && isset($ro->relationships['collection']) && false)
 			<h4>Related Collections</h4>
 			<ul>
 				@foreach($ro->relationships['collection'] as $col)

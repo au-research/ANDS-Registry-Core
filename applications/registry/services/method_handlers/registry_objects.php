@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'relatedInfo','suggest', 'dates', 'connectiontrees', 'rights', 'directaccess','contact', 'logo', 'tags'
+        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'relatedInfo','suggest', 'dates', 'connectiontrees', 'rights', 'directaccess','contact', 'logo', 'tags','existenceDates'
     );
 
     public $ro = null;
@@ -189,44 +189,50 @@ class Registry_objectsMethod extends MethodHandler {
 
         $types = array('collection','party_one', 'party_multi', 'activity', 'service');
 
-        $ci->load->library('solr');
-        $search_class = $this->ro->class;
-        if($this->ro->class=='party') {
-            if (strtolower($this->ro->type)=='person'){
-                $search_class = 'party_one';
-            } elseif(strtolower($this->ro->type)=='group') {
-                $search_class = 'party_multi';
-            }
-        }
+        
 
-        foreach($types as $type) {
-            $ci->solr->init();
-            $ci->solr
-                ->setOpt('fq', '+related_'.$search_class.'_id:'.$this->ro->id)
-                ->setOpt('fl', 'id,slug,title,class,type')
-                ->setOpt('rows', $limit);
-            if ($type=='party_one') {
-                $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type_search:person');
-            } elseif ($type=='party_multi') {
-                $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type_search:group');
-            } else {
-                $ci->solr->setOpt('fq', '+class:'.$type);
-            }
-            $result = $ci->solr->executeSearch(true);
-            if ($result['response']['numFound'] > 0) {
-                $relationships[$type.'_count'] = $result['response']['numFound'];
-                $relationships[$type] = array();
-                foreach($result['response']['docs'] as $doc) {
-                    $relationships[$type][] = array(
-                        'registry_object_id' => $doc['id'],
-                        'slug' => $doc['slug'],
-                        'class' => $doc['class'],
-                        'type' => $doc['type'],
-                        'title' => $doc['title']
-                    );
-                }
-            }
-        }
+        $relationships = $this->ro->getConnections();
+        $relationships = $relationships[0];
+
+
+        //THE FOLLOWING CODE ARE FOR SOLR SEARCH, THIS IS UNRELIABLE AND REQUIRE ALL RECORDS TO BE INDEXED CORRECTLY, NOT ADVISABLE
+        //$ci->load->library('solr');
+        // $search_class = $this->ro->class;
+        // if($this->ro->class=='party') {
+        //     if (strtolower($this->ro->type)=='person'){
+        //         $search_class = 'party_one';
+        //     } elseif(strtolower($this->ro->type)=='group') {
+        //         $search_class = 'party_multi';
+        //     }
+        // }
+        // foreach($types as $type) {
+        //     $ci->solr->init();
+        //     $ci->solr
+        //         ->setOpt('fq', '+related_'.$search_class.'_id:'.$this->ro->id)
+        //         ->setOpt('fl', 'id,slug,title,class,type')
+        //         ->setOpt('rows', $limit);
+        //     if ($type=='party_one') {
+        //         $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type_search:person');
+        //     } elseif ($type=='party_multi') {
+        //         $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type_search:group');
+        //     } else {
+        //         $ci->solr->setOpt('fq', '+class:'.$type);
+        //     }
+        //     $result = $ci->solr->executeSearch(true);
+        //     if ($result['response']['numFound'] > 0) {
+        //         $relationships[$type.'_count'] = $result['response']['numFound'];
+        //         $relationships[$type] = array();
+        //         foreach($result['response']['docs'] as $doc) {
+        //             $relationships[$type][] = array(
+        //                 'registry_object_id' => $doc['id'],
+        //                 'slug' => $doc['slug'],
+        //                 'class' => $doc['class'],
+        //                 'type' => $doc['type'],
+        //                 'title' => $doc['title']
+        //             );
+        //         }
+        //     }
+        // }
 
         return $relationships;
     }

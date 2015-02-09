@@ -1,8 +1,14 @@
 @if($ro->relatedInfo)
-<?php $heading = "<h2>Data Reuse Information</h2>"; ?>
+<?php $heading = '<div class="swatch-white">
+    <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+        <div class="panel-heading">';
+$closure = '</div></div></div>';
+$found=false;
+?>
+
 	@foreach($ro->relatedInfo as $relatedInfo)
         @if($relatedInfo['type']=='reuseInformation')
-        <?php echo $heading; $heading=''; ?>
+        <?php if(!$found) {echo $heading; $found=true;} ?>
         <p>
             {{$relatedInfo['title']}}<br />
             {{$relatedInfo['identifier']['identifier_type']}} :
@@ -15,5 +21,6 @@
         </p>
         @endif
 	@endforeach
+<?php if($found) {echo $closure;} ?>
 @endif
 

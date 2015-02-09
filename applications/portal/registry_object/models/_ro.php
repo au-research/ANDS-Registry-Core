@@ -111,6 +111,18 @@ class _ro {
     	return $result_array[0];
 	}
 
+	public function cite($class = 'endnote', $type = 'text') {
+		if ($class=='endnote') {
+			if ($type=='text') {
+				return 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.';	
+			} elseif ($type=='link') {
+				return base_url('registry_object/'.$this->core['id'].'/cite/endnote');
+			}
+		} else {
+
+		}
+	}
+
 	/**
 	 * Record an event
 	 * @param  string $event view|cite|access

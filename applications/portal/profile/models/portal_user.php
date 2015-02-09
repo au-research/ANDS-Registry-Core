@@ -35,7 +35,7 @@ class Portal_user extends CI_Model {
 	 * @param  string $role_id role_id pk table field for identification
 	 * @return array           
 	 */
-	private function getUserData($role_id) {
+	public function getUserData($role_id) {
 		$this->portal_db = $this->load->database('portal', TRUE);
 		$result = $this->portal_db->get_where('user_data', array('role_id'=>$role_id));
 		if($result->num_rows() > 0){
@@ -57,6 +57,13 @@ class Portal_user extends CI_Model {
 		$user_data = $user->user_data;
 		$user_data[$data['type']][] = $data['value'];
 		$data = array('user_data' => json_encode($user_data));
+		$this->portal_db = $this->load->database('portal', TRUE);
+		$this->portal_db->where('role_id', $user->identifier)->update('user_data', $data);
+	}
+
+	public function update_user_data($data) {
+		$user = $this->getCurrentUser();
+		$data = array('user_data' => json_encode($data));
 		$this->portal_db = $this->load->database('portal', TRUE);
 		$this->portal_db->where('role_id', $user->identifier)->update('user_data', $data);
 	}

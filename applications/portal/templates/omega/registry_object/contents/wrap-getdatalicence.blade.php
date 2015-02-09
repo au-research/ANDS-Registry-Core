@@ -35,11 +35,10 @@
 		</div>
 
     	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
-            <a class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Cite</a>
-            <a class="btn btn-sm btn-default"><i class="fa fa-cloud-download"></i> Export</a>
+            <a class="btn btn-sm btn-default" ng-click="openCitationModal()"><i class="fa fa-edit"></i> Cite</a>
             <a class="btn btn-sm btn-default" ng-click="bookmark()"><i class="fa fa-bookmark-o"></i> Bookmark</a>
-            <a class="btn btn-sm btn-default"><i class="fa fa-print"></i> Print</a>
         </div>
+
         <div class="center-block" style="text-align:center">
         	@if($ar)
         	    <span class="label label-info label-{{$ar}}" for="">{{$ar}}</span>

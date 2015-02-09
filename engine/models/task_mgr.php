@@ -18,6 +18,23 @@ class Task_mgr extends CI_Model {
 		$this->db->insert('tasks', $task);
 	}
 
+	function list_task() {
+		$result['pending'] = array();
+		$result['running'] = array();
+
+		$query = $this->db->where('status', 'PENDING')->get('tasks');
+		if ($query->num_rows() > 0) {
+			$result['pending'] = $query->result_array();
+		}
+
+		$query = $this->db->where('status', 'RUNNING')->get('tasks');
+		if ($query->num_rows() > 0) {
+			$result['running'] = $query->result_array();
+		}
+
+		return $result;
+	}
+
 	function find_task() {
 		//if there's a task already running, don't do anything
 		$query = $this->db->where('status', 'RUNNING')->get('tasks');
@@ -52,4 +69,7 @@ class Task_mgr extends CI_Model {
 		}
 	}
 
+	function clear_pending() {
+		return $this->db->delete('tasks', array('status'=>'PENDING'));
+	}
 }

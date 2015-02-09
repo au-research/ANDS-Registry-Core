@@ -20,7 +20,7 @@
                         echo $col['value'];
                     }
                     ?>
-                    @if($col['identifier']['display_icon'])
+                    @if(isset($col['identifier']['display_icon']))
                         {{$col['identifier']['display_icon']}}
                     @endif
                     <?php

@@ -1,6 +1,12 @@
 /**
  * COMMON
  */
+
+@project: #cbb77a;
+@grant: #ddcab9;
+@primaryColor: #84a07b;
+@secondaryColor: #eb7700;
+
 .navbar-brand {
 	span {
 		color: #eb7700;
@@ -39,7 +45,9 @@ ul.listy {
 		margin-bottom: 15px !important;
 	}
 }
-
+.panel{
+	word-wrap:break-word;
+}
 .navbar-brand {
 	padding: 33px 15px 0px;
 	height:auto;
@@ -136,12 +144,14 @@ ul.pagi {
 .panel-content {
 	position:relative;
 	.panel-heading {
-		width:auto;
-		position:absolute;
-		right:0;
+		float:right;
 		background: #6c6c6c !important;
 		font-size:12px;
 		padding: 4px 11px;
+	}
+	.panel-tools{
+		float:right;
+		padding:2px 11px;
 	}
 	.panel-body {
 		padding-top:30px;
@@ -180,4 +190,32 @@ ul.pagi {
 .header-logo {
 	max-width:109px;
 	float:left;
+}
+
+
+.project{
+  background-color: @project;
+}
+
+.grant{
+  background-color: @grant;
+}
+
+.flexslider .slides img {
+	/*height:90px;*/
+	max-height:170px;
+	width:auto!important;
+    display:block;
+    margin: 0 37px 16px 0px;
+    padding:0 0 15px 15px;
+    float:right;
+}
+
+.btn-noaction:hover {
+	background:transparent !important;
+	color: @primaryColor !important;
+}
+.round {
+	padding:15px;
+	border-radius: 50%;
 }

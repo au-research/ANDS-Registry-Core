@@ -1,5 +1,5 @@
 angular.module('search_components',[])
-.factory('search_factory', function($http){
+.factory('search_factory', function($http, $log){
 	return{
 		search: function(filters){
 			var promise = $http.post(base_url+'registry_object/filter', {'filters':filters}).then(function(response){
@@ -47,7 +47,7 @@ angular.module('search_components',[])
 					hash+=i+'='+k+'/';
 				} else if (typeof k=='object'){
 					$.each(k, function(){
-						hash+=i+'='+this+'/';
+						hash+=i+'='+decodeURIComponent(this)+'/';
 					});
 				}
 			});

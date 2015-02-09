@@ -24,6 +24,17 @@ $(document).ready(function() {
         }};
 	// $('.panel-body').readmore();
 
+	$('a[tip]').qtip({
+		content:{
+			text:function(e,api){
+				return $(this).attr('tip')
+			}
+		},
+		hide:'mouseleave, unfocus, click',
+		position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
+		style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
+	});
+
 });
 
 $(document).on('click', '.ro_preview', function(event){
@@ -141,7 +152,7 @@ function drawMap(){//drawing the map on the left side
             
         });
 
-        console.log(bounds);
+        // console.log(bounds);
         map2.fitBounds(bounds);
 
         if (mapContainsOnlyMarkers)

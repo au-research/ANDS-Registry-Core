@@ -7,7 +7,7 @@ function get_config_item($name) {
 	} else {
 		//it's in the database table
 		$result = $_ci->db->get_where('configs', array('key'=>$name));
-		if($result->num_rows() > 0) {
+		if($result && $result->num_rows() > 0) {
 			$result_array = $result->result_array();
 			$result_item = $result_array[0];
 			if($result_item['type']=='json') {
@@ -494,7 +494,9 @@ function ulog_terms($terms=array(), $logger='activity', $type='info')
 {
 	$msg = '';
 	foreach($terms as $key=>$term) {
-		$msg.='['.$key.':'.$term.']';
+		if(!is_array($key) && !is_array($term)) {
+			$msg.='['.$key.':'.$term.']';
+		}
 	}
 	ulog($msg,$logger,$type);
 }

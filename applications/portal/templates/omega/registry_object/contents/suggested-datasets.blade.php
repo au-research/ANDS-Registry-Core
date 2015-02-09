@@ -11,6 +11,7 @@
 						</div>
 						<a href="{{portal_url($rs['slug'].'/'.$rs['id'])}}">{{$rs['title']}}</a>
 						<small>{{$rs['title']}}</small>
+					</li>
 				@endforeach
 			</ul>
 		</div>

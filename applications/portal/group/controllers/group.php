@@ -7,10 +7,18 @@
 class Group extends MX_Controller {
 
 	function index() {
-		$groups = $this->groups->getAll();
-		$this->blade
-			->set('groups', $groups)
-			->render('group/group_index');
+		if ($this->input->get('preview')) {
+			$slug = url_title($this->input->get('preview'), '-', true);
+			$group = $this->groups->get($slug, 'DRAFT');
+			$this->blade
+				->set('group', $group)
+				->render('group/group_view');
+		} else {
+			$groups = $this->groups->getAll();
+			$this->blade
+				->set('groups', $groups)
+				->render('group/group_index');
+		}
 	}
 
 	function test() {

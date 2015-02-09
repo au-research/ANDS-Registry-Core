@@ -1,4 +1,5 @@
-function mainSearchController($scope, search_factory, profile_factory, $location, $sce, uiGmapGoogleMapApi, $timeout, $log) {
+function mainSearchController($scope, search_factory, profile_factory, $sce, uiGmapGoogleMapApi, $timeout, $log) {
+
 	$scope.search_type = 'all';
 	$scope.filters = {};
 	$scope.prefilters = {}; //prefilters used to store temporary values like temporal and spatial
@@ -25,14 +26,17 @@ function mainSearchController($scope, search_factory, profile_factory, $location
 		{value:'record_created_timestamp asc',label:'Date Added'},
 	];
 
-	$scope.$on('$locationChangeSuccess', function() {
-		$scope.filters = search_factory.filters_from_hash($location.path());
+	$scope.$watch(function(){
+		return location.hash;
+	},function(){
+		$scope.filters = search_factory.filters_from_hash(location.hash);
 		$scope.populateFilters();
 		if(window.location.href.indexOf("search") > -1) {
 			$scope.search();
 			$scope.$broadcast('filters', {'filters':$scope.filters, 'query':$scope.query});
 		}
 	});
+
 
 	$scope.$watch('filters', function(newv, oldv){
 		if(newv) {
@@ -58,7 +62,7 @@ function mainSearchController($scope, search_factory, profile_factory, $location
 			$scope.filters[$scope.search_type] = $scope.q;
 		}
 		var hash = $scope.getHash();
-		$location.path(hash);
+		location.hash = hash;
 	}
 
 	$scope.clearSearch = function(){
@@ -74,7 +78,7 @@ function mainSearchController($scope, search_factory, profile_factory, $location
 				hash+=i+'='+k+'/';
 			} else if (typeof k=='object'){
 				$.each(k, function(){
-					hash+=i+'='+this+'/';
+					hash+=i+'='+encodeURIComponent(this)+'/';
 				});
 			}
 		});

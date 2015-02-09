@@ -6,10 +6,49 @@ class Profile extends MX_Controller {
 			$user = $this->portal_user->getCurrentUser();
 			$this->blade
 				->set('user', $user)
-				->render('profile/dashboard');
+				->set('scripts', array('profile_app'))
+				->render('profile/dashboard2');
 		} else {
 			redirect('profile/login');
 		}
+	}
+
+	public function get_user_data() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		if ($this->user->isLoggedIn()) {
+			$this->load->model('portal_user');
+			$user = $this->portal_user->getCurrentUser();
+			$data = $user->portal_user->getUserData($user->identifier);
+			echo json_encode($data);
+		} else {
+			echo json_encode(array(
+				'status' => 'error',
+				'message' => 'User is not logged in'
+			));
+		}
+	}
+
+	public function test(){
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+    	$this->load->model('portal_user');
+
+    	$user = $this->portal_user->getCurrentUser();
+
+    	$saved_record = $user->user_data['saved_record'];
+    	$saved_record['list'] = array('1','2','3');
+
+    	echo json_encode($saved_record);
+
+    	$list = array(
+    		'name' => 'A Single List',
+    		'created' => date("Y-m-d H:i:s"),
+    		'records' => array()
+    	);
+
 	}
 
 	public function add_user_data($type) {

@@ -16,6 +16,17 @@ class Core extends ROHandler {
             if(!$attr) $attr = null;
             $result[$f] = $attr;
         }
+        
+        $alt_title = array();
+        if($this->xml) {
+            foreach($this->xml->{$this->ro->class}->name as $name) {
+                $type = (string) $name['type'];
+                if (($type=='abbreviated' || $type=='alternative') && $name->namePart) {
+                    $alt_title[] = (string) $name->namePart;
+                }
+            }
+        }
+        if(!empty($alt_title)) $result['alt_title'] = $alt_title;
         return $result;
 	}
 }

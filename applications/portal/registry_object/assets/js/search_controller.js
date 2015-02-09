@@ -186,11 +186,12 @@ function searchController($scope, search_factory, uiGmapGoogleMapApi, $log){
 
     $scope.$on('search_complete', function(){
     	//construct the array of centres
+
 		$.each($scope.result.response.docs, function(){
 			if(this.spatial_coverage_centres){
 				//1st one
 				var pair = this.spatial_coverage_centres[0];
-				var split = pair.split(' ');
+				var split = pair.split(',');
 				var lon = split[0];
 				var lat = split[1];
 				// console.log(this.spatial_coverage_centres,pair,split,lon,lat)
