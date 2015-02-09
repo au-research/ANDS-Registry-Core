@@ -18,7 +18,7 @@ class Shared_text_suggestor extends _GenericSuggestor {
 
         //construct the query string
         $str = 'id:'.$this->ro->id;
-		
+
         //call SOLR library
         $ci =& get_instance();
         $ci->load->library('solr');
@@ -29,7 +29,6 @@ class Shared_text_suggestor extends _GenericSuggestor {
             ->setOpt('rows', '10')
             ->setOpt('fl', 'id,key,slug,title,score')
             ->setOpt('defType', 'edismax')
-            ->setOpt('fq', '-id:'.$this->ro->id)
             ->setOpt('fq', 'class:collection')
             ->setOpt('mlt', 'true')
             ->setOpt('mlt.fl', 'description,display_title')
