@@ -15,9 +15,58 @@ class Page extends MX_Controller {
 		header('Content-Type: text/html; charset=utf-8');
 		$this->load->library('vocab');
 		$toplevel = $this->vocab->getTopLevel('anzsrc-for', array());
+
+		$highlevel = array(
+			array(
+				'display'=>'Humanities and Social Sciences',
+				'codes' => array('13','16','17','19','20','21','22'),
+				'img_src' => asset_url('images/subjects/Humanities_3.jpg', 'core')
+			),
+			array(
+				'display' => 'Business, Economics and Law',
+				'codes' => array('14','15','18'),
+				'img_src' => asset_url('images/subjects/Business_1.jpg', 'core')
+			),
+			array(
+				'display' => 'Medical and Health Sciences',
+				'codes' => array('11','0707'),
+				'img_src' => asset_url('images/subjects/Medical_1.jpg', 'core')
+			),
+			array(
+				'display' => 'Engineering, Built Environment, Computing and Technology',
+				'codes' => array('08','09','10','12'),
+				'img_src' => asset_url('images/subjects/Engineering_1.jpg', 'core')
+			),
+			array(
+				'display' => 'Biological Sciences',
+				'codes' => array('0601','0603','0604','0605','0606','0607','0608','0699','0701','0702','0703','0704','0706','0799'),
+				'img_src' => asset_url('images/subjects/Biological_1.jpg', 'core')
+			),
+			array(
+				'display' => 'Environmental Sciences and Ecology',
+				'codes' => array('05','0602'),
+				'img_src' => asset_url('images/subjects/Environmental_1.jpg', 'core')
+			),
+			array(
+				'display' => 'Earth Sciences',
+				'codes' => array('04'),
+				'img_src' => asset_url('images/subjects/EarthSciences_1.jpg', 'core')
+			),
+			array(
+				'display'=>'Physical, Chemical and Mathematical Sciences',
+				'codes' => array('01','02','03'),
+				'img_src' => asset_url('images/subjects/Physical_1.jpg', 'core')
+			)
+		);
+
+		foreach($highlevel as &$item) {
+			$item['uri'] = base_url('search');
+		}
+
 		$this->record_hit('home');
 		$this->blade
 			->set('subjects', $toplevel['topConcepts'])
+			->set('highlevel', $highlevel)
 			->render('home');
 	}
 
