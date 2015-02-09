@@ -14,7 +14,9 @@ class Suggest extends ROHandler {
         $suggestors = array(
            'subjects'=>array('boost'=>1,'handler'=>'subjects'),
            'shared_text'=>array('boost'=>1,'handler'=>'shared_text'),
-           'related_object'=>array('boost'=>1,'handler'=>'related_object')
+           'related_object'=>array('boost'=>1,'handler'=>'related_object'),
+           'temporal_coverage'=>array('boost'=>1,'handler'=>'temporal_coverage'),
+           'spatial_coverage'=>array('boost'=>1,'handler'=>'spatial_coverage')
         );
         
         //populate the pool with the different suggestors
@@ -46,18 +48,17 @@ class Suggest extends ROHandler {
         $fullSet = array();
         foreach ($suggestors as $key=>$val) {
             $count = count($result[$key]);
-
+            $fractionOf = 100;
             if($count > 0){
-                $step = floatval(100/$count);
                 foreach($result[$key] as $suggestedRo){
                     if(array_key_exists($suggestedRo['id'],$fullSet)){
                         $fullSet[$suggestedRo['id']] +=
-                            ($suggestors[$key]['boost'] * (100 - $step));
+                            ($suggestors[$key]['boost'] * ($fractionOf - $count));
                     }else{
                         $fullSet[$suggestedRo['id']] =
-                            ($suggestors[$key]['boost'] * (100 - $step));
+                            ($suggestors[$key]['boost'] * ($fractionOf - $count));
                     }
-                    $step += floatval(100/$count);
+                    $count--;
                 }
             }
         }

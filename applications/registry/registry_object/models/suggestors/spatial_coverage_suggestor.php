@@ -6,8 +6,8 @@ require_once(APP_PATH. 'registry_object/models/_GenericSuggestor.php');
  * @author Leo Monus <Leo.Monus@ands.org.au>
  * @author Richard Walker <Richard.Walker@ands.org.au>
  */
-class Temporal_coverage_suggestor extends _GenericSuggestor {
-	
+class Spatial_coverage_suggestor extends _GenericSuggestor {
+
     /**
      * Suggest Records based on related object ids, using the Solr's mlt search.
      * Rely on Solr's score.
@@ -16,31 +16,35 @@ class Temporal_coverage_suggestor extends _GenericSuggestor {
     function suggest() {
 
         //construct the query string
+        $ci =& get_instance();
+        $ci->load->library('solr');
+        $ci->solr->init();
         $str = 'id:'.$this->ro->id;
         $this->ro->processTemporal();
-		$earliest = '*';
-        $latest = '*';
-        if($this->ro->getEarliestAsYear() != 9999999)
-            $earliest = $this->ro->getEarliestAsYear();
-        if($this->ro->getLatestAsYear() != 0)
-            $latest = $this->ro->getLatestAsYear();
-
-        //call SOLR library
+        $centers = array();
+        $ci->solr
+            ->init()
+            ->setOpt('q', $str)
+            ->setOpt('rows', '50')
+            ->setOpt('fl', 'spatial_coverage_centres');
+        $result = $ci->solr->executeSearch(true);
+        if($result['response']['numFound'] > 0) {
+            foreach($result['response']['docs'] as $doc) {
+                    $centers[] = $doc['spatial_coverage_centres'];
+            }
+        }
+        
         $suggestions = array();
-        $this->minYear = 9999999;
-        $this->maxYear = 0;
-        if($earliest != '*' || $latest != '*')
+        foreach($centers as $key=>$center)
         {
-            $str = 'date_from:['.$earliest.'-01-01T00:00:00Z TO '.$latest.'-12-31T23:59:59Z] AND date_to:['.$earliest.'-01-01T00:00:00Z TO '.$latest.'-12-31T23:59:59Z]';
-            $ci =& get_instance();
-            $ci->load->library('solr');
-            $ci->solr->init();
+            $latLon = explode(',', $center[0]);
             $ci->solr
                 ->init()
-                ->setOpt('q', $str)
+                ->setOpt('q', '*:*')
                 ->setOpt('rows', '50')
                 ->setOpt('fq', '-id:'.$this->ro->id)
                 ->setOpt('fq', 'class:collection')
+                ->setOpt('fq', '{!geofilt pt='.$latLon[1].','.$latLon[0].' sfield=spatial_coverage_extents d=50}')
                 ->setOpt('fl', 'id,key,slug,title,score');
 
             $result = $ci->solr->executeSearch(true);
