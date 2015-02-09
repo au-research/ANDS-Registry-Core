@@ -24,7 +24,19 @@
                                                 {{implode(', ',$ro->core['alt_title'])}}
                                             </small><br/>
                                         @endif
-                                        <small>{{$ro->core['group']}}</small><br/>
+                                        <small>{{$ro->core['group']}}</small> 
+
+                                        @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
+                                        <a href="" tip="#identifiermatch"><i class="fa fa-caret-down"></i></a>
+                                        <div id="identifiermatch" class="hide">
+                                            <b>{{sizeof($ro->identifiermatch)}} linked Records:</b>
+                                            <ul class="swatch-white">
+                                                @foreach($ro->identifiermatch as $mm)
+                                                <li><a href="{{base_url($mm['slug'].'/'.$mm['registry_object_id'])}}">{{$mm['title']}} <br/><small>Contributed by {{$mm['group']}}</small></a></li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        @endif
 
                                         <div class="clear"></div>
                                         
