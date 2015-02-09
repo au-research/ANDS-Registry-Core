@@ -73,9 +73,24 @@ class Registry_object extends MX_Controller {
 			//hack
 			$rdb = $this->load->database('registry', TRUE);
 			$result = $rdb->get_where('registry_object_identifier_relationships', array('id'=>$this->input->get('identifier_relation_id')));
+
+			$html = '';
 			if ($result->num_rows() > 0) {
-				echo $result->first_row()->connections_preview_div;
+				$fr = $result->first_row();
+				$html = $fr->connections_preview_div;
+
+				$pullback = false;
+				//ORCID "Pull back"
+				if($fr->related_info_type=='party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
+					$pullback = $this->ro->resolveIdentifier('orcid', $fr->related_object_identifier);
+				}
 			}
+
+			$this->blade
+				->set('record', $fr)
+				->set('pullback', $pullback)
+				->render('registry_object/preview-identifier-relation');
+
 		}
 		
 	}

@@ -36,6 +36,42 @@ class Registry_objects extends CI_Model {
 
 	}
 
+	/**
+	 * Resolve an Identifier and return the "pull back" resource
+	 * @param  string $type       
+	 * @param  string $identifier 
+	 * @return array             
+	 */
+	public function resolveIdentifier($type = 'orcid', $identifier) {
+		if (!$identifier) throw new Exception('No Identifier Provided');
+		if ($type=='orcid') {
+			$ch = curl_init();
+			$headers = array('Accept: application/orcid+json');
+			curl_setopt($ch, CURLOPT_URL, "http://pub.orcid.org/".$identifier); # URL to post to
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 ); # return into a variable
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers ); # custom headers, see above
+			$result = curl_exec( $ch ); # run!
+			curl_close($ch);
+
+			$result = json_decode($result, true);
+
+			$first_name = $result['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
+			$last_name = $result['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
+			$name = $first_name.' '.$last_name;
+			$bio = "";
+
+			if(isset($result['orcid-profile']['orcid-bio']['biography'])){
+				$bio = $result['orcid-profile']['orcid-bio']['biography']['value'];
+			}
+
+			return array(
+				'name' => $name,
+				'bio' => $bio,
+				'orcid' => $identifier
+			);
+		}
+	}
+
 	function __construct() {
 		parent::__construct();
 		include_once("_ro.php");
