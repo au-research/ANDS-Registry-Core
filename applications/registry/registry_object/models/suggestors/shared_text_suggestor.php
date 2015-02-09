@@ -29,6 +29,8 @@ class Shared_text_suggestor extends _GenericSuggestor {
             ->setOpt('rows', '10')
             ->setOpt('fl', 'id,key,slug,title,score')
             ->setOpt('defType', 'edismax')
+            ->setOpt('fq', '-id:'.$this->ro->id)
+            ->setOpt('fq', 'class:collection')
             ->setOpt('mlt', 'true')
             ->setOpt('mlt.fl', 'description,display_title')
             ->setOpt('mlt.count', '50');
