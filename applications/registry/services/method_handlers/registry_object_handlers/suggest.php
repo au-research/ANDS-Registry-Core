@@ -11,33 +11,57 @@ class Suggest extends ROHandler {
 		$result = array();
 
         //pools
-                $suggestors = array('subjects', 'shared_text', 'related_object');
+        $suggestors = array(
+            'subjects'=>array("boost=>5,'handler"=>'subjects'),
+            'shared_text'=>array("boost=>5,'handler"=>'shared_text'),
+            'related_object'=>array("boost=>5,'handler"=>'related_object')
+        );
 
         //populate the pool with different suggestor
         $ci =& get_instance();
-
-        foreach ($suggestors as $suggestor) {
+        $allSet = array();
+        foreach ($suggestors as $key=>$val) {
             // Can't load a model on top of an existing field, so
             // create a different field name for each suggestor.
-            $suggestor_field = 'ss_'.$suggestor;
-            $ci->load->model('registry_object/suggestors/'.$suggestor.'_suggestor', $suggestor_field);
+            $suggestor_field = 'ss_'.$key;
+            $ci->load->model('registry_object/suggestors/'.$key.'_suggestor', $suggestor_field);
             $ci->$suggestor_field->set_ro($this->ro);
-
-            $result[$suggestor] = $ci->$suggestor_field->suggest();
+            if($boost = $ci->input->get($key))
+                $suggestors[$key]['boost'] = floatval($boost);
+            $result[$key] = $ci->$suggestor_field->suggest($val['boost']);
+            $allSet = array_merge($result[$key], $allSet);
         }
+        $fullSet = array();
+        foreach ($suggestors as $key=>$val) {
+            $count = count($result[$key]);
+            if($count > 0){
+                $step = floatval(100/$count);
+                foreach($result[$key] as $suggestedRo){
+                    if(array_key_exists($suggestedRo['id'],$fullSet)){
+                        $fullSet[$suggestedRo['id']] +=  ($suggestors[$key]['boost'] * (100 - $step));
+                    }else{
 
-        //finalize the pool
-        //@todo need to compare scores and stuff
-        $result['final'] = array();
-        foreach($result as $source=>$pool) {
-            foreach($pool as $ro) {
-                if (!in_array_r($ro, $result['final'])){
-                    array_push($result['final'], $ro);
+                        $fullSet[$suggestedRo['id']] =  ($suggestors[$key]['boost'] * (100 - $step));
+                    }
+                    $step += floatval(100/$count);
                 }
             }
         }
-        // var_dump($all);
+        arsort($fullSet,SORT_NUMERIC);
+        $subSet = array_slice($fullSet, 0, 5, true);
 
-        return $result;
+        foreach($subSet as $id=>$score)
+        {
+            $topFive[] = $this->getRecord($id, $allSet);
+        }
+        return  $topFive;
 	}
+
+    private function getRecord($id, $sourceArray){
+        foreach($sourceArray as $record){
+            if($record['id'] == $id)
+                return $record;
+        }
+        return null;
+    }
 }
