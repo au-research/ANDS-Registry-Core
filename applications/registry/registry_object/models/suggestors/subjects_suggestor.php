@@ -47,6 +47,7 @@ class Subjects_suggestor extends _GenericSuggestor {
             ->setOpt('rows', '10')
             ->setOpt('fl', 'id,key,slug,title,score')
             ->setOpt('fq', '-id:'.$this->ro->id)
+            ->setOpt('fq', 'class:collection')
             ->setOpt('defType', 'edismax');
 
         $suggestions = array();

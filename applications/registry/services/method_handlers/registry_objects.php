@@ -11,7 +11,7 @@ class Registry_objectsMethod extends MethodHandler {
     );
 
     private $valid_methods = array(
-        'get', 'core', 'relationships', 'identifiers','descriptions', 'registry', 'subjects', 'spatial', 'temporal', 'citations', 'relatedInfo','suggest', 'dates', 'connectiontrees', 'rights', 'directaccess','contact', 'logo', 'tags','existenceDates'
+        'core', 'relationships', 'identifiers','descriptions', 'subjects', 'spatial', 'temporal', 'citations', 'relatedInfo','suggest', 'dates', 'connectiontrees', 'rights', 'directaccess','contact', 'logo', 'tags','existenceDates', 'identifiermatch'
     );
 
     public $ro = null;
@@ -26,6 +26,8 @@ class Registry_objectsMethod extends MethodHandler {
         $id = isset($params[1]) ? $params[1] : false;
         $method1 = isset($params[2]) ? $params[2]: 'get';
         $method2 = isset($params[3]) ? $params[3]: false;
+
+        if($method1=='get' || strpos($method1, 'rda')!==false) $method1 = implode($this->valid_methods, '-');
 
         $ci =& get_instance();
         // $ci->load->library('benchmark');
@@ -191,7 +193,7 @@ class Registry_objectsMethod extends MethodHandler {
 
         
 
-        $relationships = $this->ro->getConnections();
+        $relationships = $this->ro->getConnections(true,null,100,0,true);
         $relationships = $relationships[0];
 
 

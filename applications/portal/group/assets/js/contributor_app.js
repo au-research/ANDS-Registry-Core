@@ -28,13 +28,14 @@ app.controller('GroupsCtrl', function($scope, groupFactory, $log){
 
 app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, profile_factory){
 
+	$scope.base_url = base_url;
 	$scope.tatoolbar = [['h1','h2','h3'],['bold','italics','underline'],['insertLink'],['ul', 'ol'],['insertImage']];
 
 	groupFactory.get($routeParams.group).then(function(data){
 		$scope.group = data;
 	});
 
-	profile_factory.get_user_data().then(function(data){
+	profile_factory.get_user().then(function(data){
 		$scope.user = data;
 		$log.debug($scope.user);
 		if($scope.user.function.indexOf('REGISTRY_SUPERUSER')!=-1) $scope.superuser = true;

@@ -6,6 +6,7 @@
 @grant: #ddcab9;
 @primaryColor: #84a07b;
 @secondaryColor: #eb7700;
+@darkGray: #6c6c6c;
 
 .navbar-brand {
 	span {
@@ -146,12 +147,13 @@ ul.pagi {
 	.panel-heading {
 		float:right;
 		background: #6c6c6c !important;
+		color: white !important;
 		font-size:12px;
 		padding: 4px 11px;
 	}
 	.panel-tools{
 		float:right;
-		padding:2px 11px;
+		padding:2px 11px 2px 0;
 	}
 	.panel-body {
 		padding-top:30px;
@@ -218,4 +220,19 @@ ul.pagi {
 .round {
 	padding:15px;
 	border-radius: 50%;
+}
+
+.view-page-metadata{
+	background: @darkGray;
+	width:auto;
+	position:absolute;
+	top:0;
+	color:white;
+	ul {
+		margin:0;padding:0;
+		li {
+			list-style-type:none;
+			display:inline-block;
+		}
+	}
 }

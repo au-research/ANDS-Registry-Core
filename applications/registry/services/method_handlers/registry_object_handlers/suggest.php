@@ -7,37 +7,89 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  * @return array
  */
 class Suggest extends ROHandler {
-	function handle() {
-		$result = array();
+    function handle() {
+        $result = array();
 
         //pools
-                $suggestors = array('subjects', 'shared_text', 'related_object');
-
-        //populate the pool with different suggestor
+        $suggestors = array(
+           'subjects'=>array('boost'=>1,'handler'=>'subjects'),
+           'shared_text'=>array('boost'=>1,'handler'=>'shared_text'),
+           'related_object'=>array('boost'=>1,'handler'=>'related_object'),
+           'temporal_coverage'=>array('boost'=>1,'handler'=>'temporal_coverage'),
+           'spatial_coverage'=>array('boost'=>1,'handler'=>'spatial_coverage')
+        );
+        
+        //populate the pool with the different suggestors
         $ci =& get_instance();
 
-        foreach ($suggestors as $suggestor) {
+        // Merged results of the various suggestors
+        $allSet = array();
+
+        // Get results from each suggestor
+        foreach ($suggestors as $key=>$val) {
             // Can't load a model on top of an existing field, so
             // create a different field name for each suggestor.
-            $suggestor_field = 'ss_'.$suggestor;
-            $ci->load->model('registry_object/suggestors/'.$suggestor.'_suggestor', $suggestor_field);
+            $suggestor_field = 'ss_'.$key;
+            $ci->load->model(
+                'registry_object/suggestors/'.$key.'_suggestor',
+                $suggestor_field
+            );
             $ci->$suggestor_field->set_ro($this->ro);
-
-            $result[$suggestor] = $ci->$suggestor_field->suggest();
+            // Override boost parameters from request URL.
+            $boost = $ci->input->get($key);
+            if ($boost)
+                $suggestors[$key]['boost'] = floatval($boost);
+        
+            $result[$key] = $ci->$suggestor_field->suggest();
+            $allSet = array_merge($result[$key], $allSet);
         }
-
-        //finalize the pool
-        //@todo need to compare scores and stuff
-        $result['final'] = array();
-        foreach($result as $source=>$pool) {
-            foreach($pool as $ro) {
-                if (!in_array_r($ro, $result['final'])){
-                    array_push($result['final'], $ro);
+        
+        // Normalize rankings and apply boosting
+        $fullSet = array();
+        foreach ($suggestors as $key=>$val) {
+            $count = count($result[$key]);
+            $fractionOf = 100;
+            if($count > 0){
+                foreach($result[$key] as $suggestedRo){
+                    if(array_key_exists($suggestedRo['id'],$fullSet)){
+                        $fullSet[$suggestedRo['id']] +=
+                            ($suggestors[$key]['boost'] * ($fractionOf - $count));
+                    }else{
+                        $fullSet[$suggestedRo['id']] =
+                            ($suggestors[$key]['boost'] * ($fractionOf - $count));
+                    }
+                    $count--;
                 }
             }
         }
-        // var_dump($all);
 
+        // (Descending) sort by value: the score of each record
+        arsort($fullSet,SORT_NUMERIC);
+        // Get the top five
+        $limit = $ci->input->get('limit');
+        if (!$limit)
+            $limit = 5;
+        $subSet = array_slice($fullSet, 0, $limit, true);
+
+        // We have only the ID and score, so now get the records
+        $result['final'] = array();
+        foreach($subSet as $id=>$score)
+        {
+            $result['final'][] = $this->getRecord($id, $score, $allSet);
+        }
         return $result;
 	}
+
+
+    // Get an individual record out of the merged suggestor results
+    private function getRecord($id, $score, $sourceArray){
+        foreach($sourceArray as $record){
+            if($record['id'] == $id){
+                $record['score'] = $score;
+                return $record;
+            }
+
+        }
+        return null;
+    }
 }

@@ -13,9 +13,10 @@ function searchController($scope, search_factory, uiGmapGoogleMapApi, $log){
 
 	$scope.hashChange = function(){
 		var search_url = base_url+'search/#!/';
-		$scope.filters[$scope.search_type] = $scope.query;
-		var hash = search_factory.filters_to_hash($scope.filters);
+		$scope.filters['q'] = $scope.query;
+		var hash = $scope.getHash();
 		var url = search_url + hash;
+		// $log.debug(url);
 		window.location = url;
 	}
 

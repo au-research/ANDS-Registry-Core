@@ -3,41 +3,64 @@
     @include('includes/header')
     <body ng-controller="searchController">
         @include('includes/top-menu')
-        <div id="content">
+        <div id="content" >
             @include('includes/hidden-metadata')
-        	<article ng-controller="viewController">
-        		@include('includes/search-section')
+        	
+                @include('includes/search-section')
+        	<article ng-controller="viewController">	
     		    <section class="section swatch-gray" style="z-index:1">
     		    	<div class="container">
     		    		<div class="row element-short-top">
                             <div class="col-md-9 view-content" style="padding-right:0">
-                            
-                                <div class="panel panel-body swatch-white">
-                                    @if($ro->logo)
-                                    <img src="{{$ro->logo[0]}}" alt="logo" class="header-logo animated fadeInDown">
-                                    @endif
-                                    [[message]]
-                                    <h1 class="hairline bordered-normal">{{$ro->core['title']}}</h1>
-                                    @if($ro->core['alt_title'])
-                                        <small>Also known as: 
-                                            {{implode(', ',$ro->core['alt_title'])}}
-                                        </small><br/>
-                                    @endif
-                                    <small>{{$ro->core['group']}}</small><br/>
+                                <div class="panel panel-primary swatch-white panel-content">
+                                    <div class="panel-body">
+                                        @if($ro->logo)
+                                        <img src="{{$ro->logo[0]}}" alt="logo" class="header-logo animated fadeInDown">
+                                        @endif
+                                        [[message]]
+                                        <h1 class="hairline bordered-normal">{{$ro->core['title']}}</h1>
+                                        @if(isset($ro->core['alt_title']))
+                                            <small>Also known as: 
+                                                {{implode(', ',$ro->core['alt_title'])}}
+                                            </small><br/>
+                                        @endif
+                                        <small>{{$ro->core['group']}}</small> 
 
-                                    <div class="clear"></div>
-                                    
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-md-7">
-                                                @include('registry_object/contents/related-parties')
-                                            </div>
-                                            <div class="col-md-5">
-                                                <div class="btn-group btn-group-justified" ng-if="ro.stat">
-                                                    <a href="#" class="btn btn-sm btn-link btn-noaction"><small>Viewed: </small>[[ro.stat.viewed]]</a>
-                                                    <a href="#" class="btn btn-sm btn-link btn-noaction"><small>Cited: </small>[[ro.stat.cited]]</a>
-                                                    <a href="#" class="btn btn-sm btn-link btn-noaction"><small>Accessed: </small>[[ro.stat.accessed]]</a>
+                                        @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
+                                        <a href="" tip="#identifiermatch"><i class="fa fa-caret-down"></i></a>
+                                        <div id="identifiermatch" class="hide">
+                                            <b>{{sizeof($ro->identifiermatch)}} linked Records:</b>
+                                            <ul class="swatch-white">
+                                                @foreach($ro->identifiermatch as $mm)
+                                                <li><a href="{{base_url($mm['slug'].'/'.$mm['registry_object_id'])}}">{{$mm['title']}} <br/><small>Contributed by {{$mm['group']}}</small></a></li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        @endif
+
+                                        <div class="clear"></div>
+                                        
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    @include('registry_object/contents/related-parties')
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body" style="padding:0 0 10px 0">
+                                        <div class="panel-tools">
+                                            <div ng-if="ro.stat">
+                                                <a href="#" style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</a>
+                                                <a href="#" style="padding-right:4px;"><small>Cited: </small>[[ro.stat.cited]]</a>
+                                                <a href="#" style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</a>
+                                            </div>
+                                        </div>
+                                        <div class="panel-tools">
+                                            <div class="center-block" style="text-align:center">
+                                                <i class="fa fa-facebook" style="padding-right:4px"></i>
+                                                <i class="fa fa-twitter" style="padding-right:4px"></i>
+                                                <i class="fa fa-google" style="padding-right:4px"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -47,11 +70,6 @@
 
                                     <div class="pull-left swatch-white" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
                                         @include('registry_object/contents/wrap-getdatalicence')
-                                        <div class="center-block" style="text-align:center">
-                                            <i class="fa fa-lg fa-facebook fa-border"></i>
-                                            <i class="fa fa-lg fa-twitter fa-border"></i>
-                                            <i class="fa fa-lg fa-google fa-border"></i>
-                                        </div>
                                     </div>
                                     @yield('content')
                                 </div>

@@ -39,7 +39,7 @@ class Groups extends CI_Model {
 	 * the group returns will be an associative array
 	 * @return group 
 	 */
-	function get($slug) {
+	function get($slug, $prefer = 'PUBLISHED') {
 
 		//find the group in SOLR
 		//@todo could be shorten by caching the result?
@@ -123,7 +123,7 @@ class Groups extends CI_Model {
 		}
 
 		//get custom fields from the database
-		$data = $this->fetchData($group['title']);
+		$data = $this->fetchData($group['title'], $prefer);
 		if($data) {
 			$group['has_custom_data'] = true;
 			$group['custom_data'] = json_decode($data->{'data'}, true);
