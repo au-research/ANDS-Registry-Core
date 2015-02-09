@@ -1,4 +1,4 @@
-@if($ro->suggest)
+@if($ro->suggest && isset($ro->suggest['final']))
 <div class="panel panel-primary panel-content swatch-white">
 	<div class="panel-heading">Suggested Datasets</div>
 	<div class="panel-body">

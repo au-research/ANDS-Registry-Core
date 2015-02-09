@@ -60,12 +60,24 @@ class Registry_object extends MX_Controller {
 			->render($render);
 	}
 
-	function preview($id) {
+	function preview() {
 		$this->load->library('blade');
-		$ro = $this->ro->getByID($id);
-		$this->blade
-			->set('ro', $ro)
-			->render('registry_object/preview');
+
+		if ($this->input->get('ro_id')){
+			$ro = $this->ro->getByID($id);
+			$this->blade
+				->set('ro', $ro)
+				->render('registry_object/preview');
+		} elseif($this->input->get('identifier_relation_id')) {
+
+			//hack
+			$rdb = $this->load->database('registry', TRUE);
+			$result = $rdb->get_where('registry_object_identifier_relationships', array('id'=>$this->input->get('identifier_relation_id')));
+			if ($result->num_rows() > 0) {
+				echo $result->first_row()->connections_preview_div;
+			}
+		}
+		
 	}
 
 	function addTag() {

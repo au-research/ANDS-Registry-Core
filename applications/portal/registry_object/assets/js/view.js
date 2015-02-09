@@ -50,8 +50,13 @@ $(document).on('click', '.ro_preview', function(event){
 		content: {
 			text: function(event, api) {
 				api.elements.content.html('Loading...');
+				if ($(this).attr('ro_id')) {
+					var url = base_url+'registry_object/preview/?ro_id='+$(this).attr('ro_id');
+				} else if($(this).attr('identifier_relation_id')) {
+					var url = base_url+'registry_object/preview/?identifier_relation_id='+$(this).attr('identifier_relation_id')
+				}
 				return $.ajax({
-					url:base_url+'registry_object/preview/'+$(this).attr('ro_id')
+					url:url
 				}).then(function(content){
 					return content;
 				},function(xhr,status,error){
