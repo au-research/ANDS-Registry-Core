@@ -3,17 +3,48 @@
         <div class="modal-content">
             <div class="modal-header">Cite</div>
             <div class="modal-body">
-                Copy and paste a formatted citation or use one of the links to import into a bibliography manager.
-                <form action="" class="form">
-                	<div class="form-group">
-                		<label for="">EndNote</label>
-                		<textarea name="" id="" cols="30" rows="3" class="form-control">
-                			{{$ro->cite('endnote', 'text')}}
-                		</textarea>
-                	</div>
-                </form>
+                <p>Copy and paste a formatted citation or use one of the links to import into a bibliography manager.</p>
+                        <?php
+                        $order = array('fullCitation');
+                        ?>
+                            @if($ro->citations)
+                            @foreach($order as $o)
+                            @foreach($ro->citations as $citation)
+                            @if($citation['type']==$o)
+                        <dl>
+                            <dt>Citation:</dt>
+                            <dd>
+                                <p>{{$citation['value']}}</p>
+                            </dd>
+                        </dl>
+                            @endif
+                            @endforeach
+                            @endforeach
+
+                            @foreach($ro->citations as $citation)
+                            {{$citation['coins']}}
+                            @if(!in_array($citation['type'], $order))
+                        <dl>
+                            <dt >Datacite</dt>
+                            <dd>
+                                {{$citation['contributors']}}
+                                ({{$citation['date']}}): {{$citation['title']}}.
+                                {{$citation['publisher']}}.
+                                {{$citation['identifier_type']}} :{{$citation['identifier']}}
+                                <br /><a href="{{$citation['identifierResolved']['href']}}">{{$citation['identifier']}}</a>
+                                @if($citation['url'])
+                                <br /><a href="{{$citation['url']}}">{{$citation['url']}}</a>
+                                @endif
+                            </dd>
+                            @endif
+                            @endforeach
+                            @endif
+                        </dl>
                 <div class="btn-group btn-link">
-                	<a href="{{$ro->cite('endnote', 'link')}}">EndNote</a>
+                	<a title="Export to EndNote" href="<?=base_url()."registry/registry_object/exportToEndnote/".$ro->core['id'].".ris?foo=".time()?>">EndNote</a>
+                </div>
+                <div class="btn-group btn-link">
+                    <a href="http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl=<?=base_url()."registry/registry_object/exportToEndnote/".$ro->core['id']."?foo=".time()?>">EndNote Web</a>
                 </div>
             </div>
         </div>
