@@ -12,9 +12,9 @@ class Suggest extends ROHandler {
 
         //pools
         $suggestors = array(
-            'subjects'=>array('boost'=>5,'handler'=>'subjects'),
-            'shared_text'=>array('boost'=>5,'handler'=>'shared_text'),
-//            'related_object'=>array('boost'=>5,'handler'=>'related_object')
+           'subjects'=>array('boost'=>1,'handler'=>'subjects'),
+           'shared_text'=>array('boost'=>1,'handler'=>'shared_text'),
+           'related_object'=>array('boost'=>1,'handler'=>'related_object')
         );
         
         //populate the pool with the different suggestors
@@ -46,6 +46,7 @@ class Suggest extends ROHandler {
         $fullSet = array();
         foreach ($suggestors as $key=>$val) {
             $count = count($result[$key]);
+
             if($count > 0){
                 $step = floatval(100/$count);
                 foreach($result[$key] as $suggestedRo){
@@ -64,22 +65,29 @@ class Suggest extends ROHandler {
         // (Descending) sort by value: the score of each record
         arsort($fullSet,SORT_NUMERIC);
         // Get the top five
-        $subSet = array_slice($fullSet, 0, 5, true);
+        $limit = $ci->input->get('limit');
+        if (!$limit)
+            $limit = 5;
+        $subSet = array_slice($fullSet, 0, $limit, true);
 
         // We have only the ID and score, so now get the records
+        $result['final'] = array();
         foreach($subSet as $id=>$score)
         {
-            $topFive[] = $this->getRecord($id, $allSet);
+            $result['final'][] = $this->getRecord($id, $score, $allSet);
         }
-        return $topFive;
+        return $result;
 	}
 
 
     // Get an individual record out of the merged suggestor results
-    private function getRecord($id, $sourceArray){
+    private function getRecord($id, $score, $sourceArray){
         foreach($sourceArray as $record){
-            if($record['id'] == $id)
+            if($record['id'] == $id){
+                $record['score'] = $score;
                 return $record;
+            }
+
         }
         return null;
     }
