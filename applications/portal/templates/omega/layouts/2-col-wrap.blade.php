@@ -38,17 +38,17 @@
                                     </div>
                                     <div class="panel-body" style="padding:0 0 10px 0">
                                         <div class="panel-tools">
-                                            <div class="btn-group" ng-if="ro.stat">
-                                                <a href="#" class="btn btn-sm btn-link btn-noaction"><small>Viewed: </small>[[ro.stat.viewed]]</a>
-                                                <a href="#" class="btn btn-sm btn-link btn-noaction"><small>Cited: </small>[[ro.stat.cited]]</a>
-                                                <a href="#" class="btn btn-sm btn-link btn-noaction"><small>Accessed: </small>[[ro.stat.accessed]]</a>
+                                            <div ng-if="ro.stat">
+                                                <a href="#" style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</a>
+                                                <a href="#" style="padding-right:4px;"><small>Cited: </small>[[ro.stat.cited]]</a>
+                                                <a href="#" style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</a>
                                             </div>
                                         </div>
                                         <div class="panel-tools">
                                             <div class="center-block" style="text-align:center">
-                                                <i class="fa fa-facebook fa-border"></i>
-                                                <i class="fa fa-twitter fa-border"></i>
-                                                <i class="fa fa-google fa-border"></i>
+                                                <i class="fa fa-facebook" style="padding-right:4px"></i>
+                                                <i class="fa fa-twitter" style="padding-right:4px"></i>
+                                                <i class="fa fa-google" style="padding-right:4px"></i>
                                             </div>
                                         </div>
                                     </div>
