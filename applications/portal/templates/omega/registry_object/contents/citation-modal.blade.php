@@ -44,7 +44,7 @@
                 	<a title="Export to EndNote" href="<?=base_url()."registry/registry_object/exportToEndnote/".$ro->core['id'].".ris?foo=".time()?>">EndNote</a>
                 </div>
                 <div class="btn-group btn-link">
-                    <a href="http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl=<?=base_url()."registry/registry_object/exportToEndnote/".$ro->core['id']."?foo=".time()?>">EndNote Web</a>
+                    <a title="Export to EndNote Web" href="http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl=<?=base_url()."registry/registry_object/exportToEndnote/".$ro->core['id']."?foo=".time()?>">EndNote Web</a>
                 </div>
             </div>
         </div>
