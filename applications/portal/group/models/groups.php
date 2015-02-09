@@ -176,7 +176,8 @@ class Groups extends CI_Model {
 				'authorative_datasource' => '0',
 				'status' => $data['status'],
 				'data' => json_encode($data['data']),
-				'date_modified' => date("Y-m-d H:i:s")
+				'date_modified' => date("Y-m-d H:i:s"),
+				'modified_who' => $this->user->localIdentifier()
 			);
 			$result = $this->portal_db->insert('contributor_pages', $data);
 		} elseif ($drafts && $data['status']!='PUBLISHED') {
@@ -184,7 +185,8 @@ class Groups extends CI_Model {
 			$data = array(
 				'status' => $data['status'],
 				'data' => json_encode($data['data']),
-				'date_modified' => date("Y-m-d H:i:s")
+				'date_modified' => date("Y-m-d H:i:s"),
+				'modified_who' => $this->user->localIdentifier()
 			);
 			$this->portal_db->where('name', $name);
 			$this->portal_db->where_in('status', array('DRAFT', 'REQUESTED'));
@@ -198,7 +200,8 @@ class Groups extends CI_Model {
 				'authorative_datasource' => '0',
 				'status' => $data['status'],
 				'data' => json_encode($data['data']),
-				'date_modified' => date("Y-m-d H:i:s")
+				'date_modified' => date("Y-m-d H:i:s"),
+				'modified_who' => $this->user->localIdentifier()
 			);
 			$result = $this->portal_db->insert('contributor_pages', $data);
 		}
