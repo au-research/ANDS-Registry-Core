@@ -4,7 +4,7 @@
 <?php
 	// var_dump($ro);
 ?>
-<article class="post">
+<article class="post" itemscope itemtype="http://schema.org/Dataset">
 	<div class="post-body">
 		@foreach ($contents as $content)
 			@include('registry_object/contents/'.$content)

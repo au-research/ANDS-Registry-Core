@@ -472,10 +472,19 @@ Y2  - '.date("Y-m-d")."
                             'name' => (string)$namePart
                         );
              }
+           $org_text='';
+           if((int)$contributor['seq']>1)
+           {
+               $org_text = ' itemprop="contributor"';
+           }
+           elseif((int)$contributor['seq']==1){
+               $org_text = ' itemprop="creator"';
+           }
              $contributors[] =array(
                    'name' => formatName($nameParts),
                     'seq' => (string)$contributor['seq'],
-                );
+                    'org_text' => $org_text
+             );
         }
 
        if(!$contributors){
@@ -490,8 +499,10 @@ Y2  - '.date("Y-m-d")."
                     {
                         $contributors[] =array(
                             'name' => $author['title'],
-                            'seq' => ''
+                            'seq' => '',
+                            $org_text = ' itemprop="creator"'
                         );
+
                     }
                 }
             }
