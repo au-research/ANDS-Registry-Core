@@ -64,20 +64,48 @@ class Registry_object extends MX_Controller {
 		$this->load->library('blade');
 
 		if ($this->input->get('ro_id')){
-			$ro = $this->ro->getByID($id);
+			$ro = $this->ro->getByID($this->input->get('ro_id'));
 			$this->blade
 				->set('ro', $ro)
 				->render('registry_object/preview');
 		} elseif($this->input->get('identifier_relation_id')) {
 
-			//hack
+			//hack into the registry network and grab things
+			//@todo: figure things out for yourself
 			$rdb = $this->load->database('registry', TRUE);
 			$result = $rdb->get_where('registry_object_identifier_relationships', array('id'=>$this->input->get('identifier_relation_id')));
+
 			if ($result->num_rows() > 0) {
-				echo $result->first_row()->connections_preview_div;
+				$fr = $result->first_row();
+
+				$ro = false;
+
+				$pullback = false;
+				//ORCID "Pull back"
+				if($fr->related_info_type=='party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
+					$pullback = $this->ro->resolveIdentifier('orcid', $fr->related_object_identifier);
+					$filters = array('identifier_value'=>$fr->related_object_identifier);
+					$ro = $this->ro->findRecord($filters);
+				}
+
+				$this->blade
+					->set('record', $fr)
+					->set('ro', $ro)
+					->set('pullback', $pullback)
+					->render('registry_object/preview-identifier-relation');
 			}
+		} else if ($this->input->get('identifier_doi')) {
+			$identifier = $this->input->get('identifier_doi');
+			
+			//DOI "Pullback"
+			$pullback = $this->ro->resolveIdentifier('doi', $identifier);
+			$ro = $this->ro->findRecord(array('identifier_value'=>$identifier));
+
+			$this->blade
+				->set('ro', $ro)
+				->set('pullback', $pullback)
+				->render('registry_object/preview_doi');
 		}
-		
 	}
 
 	function addTag() {

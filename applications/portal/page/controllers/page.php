@@ -50,7 +50,7 @@ class Page extends MX_Controller {
 			array(
 				'display' => 'Earth Sciences',
 				'codes' => array('04'),
-				'img_src' => asset_url('images/subjects/EarthSciences_1.jpg', 'core')
+				'img_src' => asset_url('images/subjects/EarthSciences_2.jpg', 'core')
 			),
 			array(
 				'display'=>'Physical, Chemical and Mathematical Sciences',
