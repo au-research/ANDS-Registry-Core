@@ -68,7 +68,7 @@
                                     <i class="fa fa-home" style="color:white;"></i>
                                    </div>
                                </div>
-                               <p class="">Discover data and services by theme in themed collection guides</p>
+                               <p class="">Discover data in themed collection</p>
                            </div>
                        </div>
                        <div class="col-md-3 ">
@@ -90,7 +90,7 @@
                                     <i class="fa fa-cc" style="color:white;"></i>
                                    </div>
                                </div>
-                               <p class="">Find open data that is accessible and reusable</p>
+                               <p class="">Find open data that is reusable</p>
                            </div>
                        </div>
                        <div class="col-md-3 ">

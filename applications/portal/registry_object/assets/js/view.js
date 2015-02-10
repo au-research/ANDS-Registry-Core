@@ -54,14 +54,21 @@ $(document).on('click', '.ro_preview', function(event){
 					var url = base_url+'registry_object/preview/?ro_id='+$(this).attr('ro_id');
 				} else if($(this).attr('identifier_relation_id')) {
 					var url = base_url+'registry_object/preview/?identifier_relation_id='+$(this).attr('identifier_relation_id')
+				} else if($(this).attr('identifier_doi')) {
+					var url = base_url+'registry_object/preview/?identifier_doi='+$(this).attr('identifier_doi')
 				}
-				return $.ajax({
-					url:url
-				}).then(function(content){
-					return content;
-				},function(xhr,status,error){
-					api.set('content.text', status + ': ' + error);
-				});
+				if (url) {
+					return $.ajax({
+						url:url
+					}).then(function(content){
+						return content;
+					},function(xhr,status,error){
+						api.set('content.text', status + ': ' + error);
+					});
+				} else {
+					return 'Error displaying preview';
+				}
+				
 			}
 		},
 		position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },

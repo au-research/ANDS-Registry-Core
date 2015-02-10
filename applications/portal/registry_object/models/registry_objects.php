@@ -69,7 +69,77 @@ class Registry_objects extends CI_Model {
 				'bio' => $bio,
 				'orcid' => $identifier
 			);
+		} elseif ($type=='doi') {
+
+			//prepare identifier, strip out http
+			$identifier = str_replace("http://dx.doi.org/", "", $identifier);
+
+			//Crossref
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, "http://api.crossref.org/works/".$identifier);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
+			$result = curl_exec( $ch );
+			curl_close($ch);
+
+			$result = json_decode($result, true);
+
+			if($result) {
+				return array(
+					'title' => isset($result['message']['title']) ? $result['message']['title'][0] : 'No Title',
+					'publisher' => isset($result['message']['publisher']) ? $result['message']['publisher'] : '',
+					'source' => isset($result['message']['source']) ? $result['message']['source'] : '',
+					'DOI' => isset($result['message']['DOI']) ? $result['message']['DOI'] : '',
+					'type' => isset($result['message']['type']) ? $result['message']['type'] : '',
+					'url' => isset($result['message']['URL']) ? $result['message']['URL'] : '',
+				);
+			} else {
+				//try get it from Datacite
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, "http://search.datacite.org/api?wt=json&fl=doi,creator,resourceTypeGeneral,description,publisher,title&q=doi:".$identifier);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
+				$result = curl_exec( $ch );
+				curl_close($ch);
+
+				$result = json_decode($result, true);
+				if ($result) {
+					if($result['response']['numFound'] > 0) {
+						$record = $result['response']['docs'][0];
+						return array(
+							'title' => isset($record['title']) ? $record['title'][0] : 'No Title',
+							'publisher' => isset($record['publisher']) ? $record['publisher'] : '',
+							'doi' => isset($record['doi']) ? $record['doi'] : '',
+							'type' => isset($record['resourceTypeGeneral']) ? $record['resourceTypeGeneral'] : '',
+							'url' => 'http://dx.doi.org/'.$identifier,
+							'source' => '',
+						);
+					} else {
+						//No result from Datacite
+						return false;
+					}
+				} else {
+					//No result from Crossref nor Datacite
+					return false;
+				}
+			}
 		}
+	}
+
+	public function findRecord($filters = array()){
+		$this->load->library('solr');
+		$this->solr->init();
+		$this->solr->setFilters($filters);
+		$this->solr->setOpt('rows', 1);
+		$this->solr->setOpt('fl', 'id');
+		$result = $this->solr->executeSearch(true);
+
+		if ($result['response']['numFound'] > 0) {
+			$record = $result['response']['docs'][0];
+			$id = $record['id'];
+			return $this->getByID($id);
+		} else {
+			return false;
+		}
+
 	}
 
 	function __construct() {
