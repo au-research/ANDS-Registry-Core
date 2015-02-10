@@ -1,9 +1,27 @@
-@if($ro->contacts)
-<h3>Contact Information</h3>
+@if($ro->contact)
+
 <div id="contact">
     <h3>Contact Information</h3>
-	@foreach($ro->contacts as $contact)
-  	    <p>{{$contact['value']}}</p>
- 	@endforeach
+    @foreach($ro->contact as $contact)
+    <?php
+        if($contact['contact_type']=='url'){
+            echo '<p><a href="'.$contact['contact_value'].'">'.$contact['contact_value'].'</a></p>';
+        }
+        if($contact['contact_type']=='email'){
+            echo  '<p>'.$contact['contact_value'].'</p>';
+        }
+        elseif($contact['contact_type']=='telephoneNumber')
+        {
+            echo  '<p>Ph: '.$contact['contact_value'].'</p>';
+        }
+        elseif($contact['contact_type']=='faxNumber')
+        {
+            echo  '<p>Fax: '.$contact['contact_value'].'</p>';
+        }
+        else{
+            echo html_entity_decode($contact['contact_value']);
+        }
+    ?>
+    @endforeach
 </div>
 @endif

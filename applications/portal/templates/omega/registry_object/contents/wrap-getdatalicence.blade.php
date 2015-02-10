@@ -21,17 +21,17 @@
             }
         }
     }
+
 ?>
 <div class="panel panel-primary swatch-white">
     <div class="panel-body">
     	<a href="" class="btn btn-lg btn-primary btn-block" id="gotodata"><i class="fa fa-cube"></i> Go to Data</a>
     	<div id="dataformats">
-    		<a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top"><span>CSV</span>File name (7 KB)</a>
-    		<a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top"><span>CSV</span>File name</a>
-    		<a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top"><span>ZIP</span>File name</a>
-    		<a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top"><span>RAR</span>File name</a>
-    		<a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top"><span>XML</span>Some long filename ...(102 MB)</a>
-    		<a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top"><span><i class="fa fa-globe"></i></span>A Cage Aquaculture...(CADS_TOOL)</a>
+            @if($ro->directaccess)
+            @include('registry_object/contents/access')
+            @else
+            <p>Please use the contact information below to obtain access to this data</p>
+            @endif
 		</div>
 
     	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
@@ -57,6 +57,8 @@
             </div>
         @endif
 
-        
+            @include('registry_object/contents/contact-info')
+
+
     </div>
 </div>

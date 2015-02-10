@@ -11,10 +11,13 @@ class Directaccess extends ROHandler {
         if ($this->xml && $this->xml->{$this->ro->class}->location && $this->xml->{$this->ro->class}->location->address) {
             foreach($this->xml->{$this->ro->class}->location->address->electronic as $directaccess){
                 if($directaccess['type']=='url'&& $directaccess['target']=='directDownload'){
+                    if((string)$directaccess->title=='')$directaccess->title=(string)$directaccess->value;
                     $download[] = Array(
                         'contact_type' => 'url',
                         'contact_value' => (string)$directaccess->value,
                         'title'=>(string)$directaccess->title,
+                        'mediaType'=>(string)$directaccess->mediaType,
+                        'byteSize'=>(string)$directaccess->byteSize,
                     );
                 }
             }

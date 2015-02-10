@@ -8,39 +8,47 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Contact extends ROHandler {
 	function handle() {
 		$contacts = array();
-        if ($this->xml && $this->xml->{$this->ro->class}->location && $this->xml->{$this->ro->class}->location->address) {
-            foreach($this->xml->{$this->ro->class}->location->address->electronic as $contact) {
-                if($contact['type']=='url'){
-                    $contacts[] = Array(
-                        'contact_type' => 'url',
-                        'contact_value' => (string)$contact
-                    );
-                }
-            }
-            foreach($this->xml->{$this->ro->class}->location->address->physical as $contact){
-                if($contact['type']=='physical'){
-                    $contacts[] = Array(
-                        'contact_type' => 'telephoneNumber',
-                        'contact_value' => (string)$contact
-                    );
 
-                }
-                if($contact->addressPart['type']=='telephoneNumber'){
-                    $contacts[] = Array(
-                        'contact_type' => 'telephoneNumber',
-                        'contact_value' => (string)$contact
-                    );
 
-                }
-                if($contact->addressPart['type']=='faxNumber'){
-                    $contacts[] = Array(
-                        'contact_type' => 'faxNumber',
-                        'contact_value' => (string)$contact
-                    );
+        $electronic_contact = $this->gXPath->query("//ro:location/ro:address/ro:electronic[@type='email']");
 
-                }
-            }
+        foreach($electronic_contact as $contact){
+
+
+          $contacts[] =Array(
+                'contact_type' => 'email',
+                'contact_value' => $contact->nodeValue
+            );
         }
+
+        $physical_contact = $this->gXPath->query("//ro:location/ro:address/ro:physical/ro:addressPart[@type='telephoneNumber']");
+
+        foreach($physical_contact as $contact){
+
+            $contacts[] =Array(
+                'contact_type' => 'telephoneNumber',
+                'contact_value' => $contact->nodeValue
+            );
+        }
+        $physical_contact = $this->gXPath->query("//ro:location/ro:address/ro:physical/ro:addressPart[@type='faxNumber']");
+
+        foreach($physical_contact as $contact){
+
+            $contacts[] =Array(
+                'contact_type' => 'faxNumber',
+                'contact_value' => $contact->nodeValue
+            );
+        }
+        $physical_contact = $this->gXPath->query("//ro:location/ro:address/ro:physical/ro:addressPart[@type='addressLine']");
+
+        foreach($physical_contact as $contact){
+
+            $contacts[] =Array(
+                'contact_type' => 'addressLine',
+                'contact_value' => $contact->nodeValue
+            );
+        }
+
         return $contacts;
 	}
 }

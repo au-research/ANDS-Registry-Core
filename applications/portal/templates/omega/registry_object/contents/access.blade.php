@@ -1,17 +1,10 @@
-@if($ro->directsaccess)
-    <h3>Data Access</h3>
-@elseif($ro->contacts)
-    <h3>Data Access</h3>
-@elseif($ro->rights)
-    <h3>Data Access</h3>
-@endif
-
 @if($ro->directaccess)
-<div id="access">
-    <h2>Direct Download</h2>
 	@foreach($ro->directaccess as $access)
-    <button class="download"><a href="{{$access['contact_value']}}" target="_blank">{{$access['title']}}</a></button>
-
+<?php if($access['byteSize']!=''){
+    $access['title'] = $access['title'].'  ('.$access['byteSize'].')' ;
+}
+?>
+       <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{$access['contact_value']}}"><span>{{$access['mediaType']}}</span>{{$access['title']}} </a>
  	@endforeach
-</div>
+
 @endif
