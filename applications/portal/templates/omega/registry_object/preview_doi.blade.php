@@ -4,9 +4,16 @@
 	<div class="panel-body">
 		<h4>{{$pullback['title']}}</h4>
 		<dl class='dl'>
+			@if($pullback['type'])
 			<dt>Type</dt><dd>{{$pullback['type']}}</dd>
+			@endif
+			@if($pullback['publisher'])
 			<dt>Publisher</dt><dd>{{$pullback['publisher']}}</dd>
+			@endif
 		</dl>
+		@if($pullback['description'])
+		<p>{{$pullback['description']}}</p>
+		@endif
 
 		@if($ro)
 			<?php 

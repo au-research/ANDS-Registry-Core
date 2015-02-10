@@ -91,6 +91,7 @@ class Registry_objects extends CI_Model {
 					'DOI' => isset($result['message']['DOI']) ? $result['message']['DOI'] : '',
 					'type' => isset($result['message']['type']) ? $result['message']['type'] : '',
 					'url' => isset($result['message']['URL']) ? $result['message']['URL'] : '',
+					'description' => ''
 				);
 			} else {
 				//try get it from Datacite
@@ -111,6 +112,7 @@ class Registry_objects extends CI_Model {
 							'type' => isset($record['resourceTypeGeneral']) ? $record['resourceTypeGeneral'] : '',
 							'url' => 'http://dx.doi.org/'.$identifier,
 							'source' => '',
+							'description' => isset($record['description']) ? $record['description'][0] : ''
 						);
 					} else {
 						//No result from Datacite

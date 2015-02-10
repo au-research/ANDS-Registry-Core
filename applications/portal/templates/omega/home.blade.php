@@ -68,7 +68,7 @@
                                     <i class="fa fa-home" style="color:white;"></i>
                                    </div>
                                </div>
-                               <p class="">Discover data in themed collection</p>
+                               <p class="">Discover data in themed collections</p>
                            </div>
                        </div>
                        <div class="col-md-3 ">
