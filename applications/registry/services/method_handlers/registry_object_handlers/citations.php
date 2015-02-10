@@ -458,10 +458,8 @@ Y2  - '.date("Y-m-d")."
 
     function getContributors($ro)
     {
-        $CI =& get_instance();
-        $CI->load->model('registry_object/registry_objects', 'mro');
+
         $contributors = Array();
-      // return $contributors;
         $xml = $ro->getSimpleXML();
         $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
         $xml = simplexml_load_string($xml);
@@ -483,7 +481,7 @@ Y2  - '.date("Y-m-d")."
        if(!$contributors){
             $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector'];
             $classArray = ['party'];
-            $authors = $this->mro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
+            $authors = $ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
             if(count($authors)>0)
             {
                 foreach($authors as $author)
@@ -498,7 +496,12 @@ Y2  - '.date("Y-m-d")."
                 }
             }
        }
-
+        if(!$contributors){
+            $contributors[] =array(
+                'name' => 'Anonymous',
+                'seq' => ''
+            );
+        }
         usort($contributors,"seq");
         return $contributors;
     }

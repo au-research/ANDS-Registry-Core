@@ -13,6 +13,7 @@ class Directaccess extends ROHandler {
                 if($directaccess['type']=='url'&& $directaccess['target']=='directDownload'){
                     if((string)$directaccess->title=='')$directaccess->title=(string)$directaccess->value;
                     $download[] = Array(
+                        'access_type' => 'direct',
                         'contact_type' => 'url',
                         'contact_value' => (string)$directaccess->value,
                         'title'=>(string)$directaccess->title,
@@ -20,6 +21,37 @@ class Directaccess extends ROHandler {
                         'byteSize'=>(string)$directaccess->byteSize,
                     );
                 }
+            }
+            if(!$download){
+                foreach($this->xml->{$this->ro->class}->location->address->electronic as $directaccess){
+                    if($directaccess['type']=='url'&& $directaccess['target']=='landingPage'){
+                        if((string)$directaccess->title=='')$directaccess->title=(string)$directaccess->value;
+                        $download[] = Array(
+                            'access_type' => 'url',
+                            'contact_type' => 'url',
+                            'contact_value' => (string)$directaccess->value,
+                            'title'=>(string)$directaccess->title,
+                            'mediaType'=>(string)$directaccess->mediaType,
+                            'byteSize'=>(string)$directaccess->byteSize,
+                        );
+                    }
+                }
+            }
+            if(!$download){
+                foreach($this->xml->{$this->ro->class}->location->address->electronic as $directaccess){
+                    if($directaccess['type']=='url'&& $directaccess['target']!='directDownload' && $directaccess['target']!='landingPage'){
+                        if((string)$directaccess->title=='')$directaccess->title=(string)$directaccess->value;
+                        $download[] = Array(
+                            'access_type' => 'url',
+                            'contact_type' => 'url',
+                            'contact_value' => (string)$directaccess->value,
+                            'title'=>(string)$directaccess->title,
+                            'mediaType'=>(string)$directaccess->mediaType,
+                            'byteSize'=>(string)$directaccess->byteSize,
+                        );
+                    }
+                }
+
             }
         }
         return $download;
