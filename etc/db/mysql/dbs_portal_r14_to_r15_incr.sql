@@ -3,15 +3,16 @@ CREATE  TABLE `dbs_portal`.`user_data` (
   `user_data` TEXT NULL ,
   PRIMARY KEY (`role_id`) );
 
-CREATE  TABLE `dbs_portal`.`contributor_pages` (
-  `id` INT NOT NULL ,
-  `name` VARCHAR(256) NULL ,
-  `authorative_datasource` INT NULL ,
-  `status` VARCHAR(45) NULL ,
-  `data` TEXT NULL ,
-  PRIMARY KEY (`id`) );
-ALTER TABLE `dbs_portal`.`contributor_pages` CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT  ;
-ALTER TABLE `dbs_portal`.`contributor_pages` ADD COLUMN `date_modified` DATETIME NULL  AFTER `data` ;
+CREATE TABLE `contributor_pages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(256) DEFAULT NULL,
+  `authorative_datasource` int(11) DEFAULT NULL,
+  `status` varchar(45) DEFAULT NULL,
+  `data` text,
+  `date_modified` datetime DEFAULT NULL,
+  `modified_who` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
 
 CREATE  TABLE `dbs_portal`.`record_stats` (
   `id` INT NOT NULL AUTO_INCREMENT ,

@@ -193,12 +193,41 @@ class Registry_objectsMethod extends MethodHandler {
 
         
 
-        $relationships = $this->ro->getConnections(true,null,100,0,true);
+        $relationships = $this->ro->getConnections(true,null,5,0,true);
         $relationships = $relationships[0];
+
+        //get the correct count in SOLR
+        $ci->load->library('solr');
+        $search_class = $this->ro->class;
+        if($this->ro->class=='party') {
+            if (strtolower($this->ro->type)=='person'){
+                $search_class = 'party_one';
+            } elseif(strtolower($this->ro->type)=='group') {
+                $search_class = 'party_multi';
+            }
+        }
+
+        foreach ($types as $type) {
+            if(isset($relationships[$type.'_count'])) {
+                $ci->solr->init();
+                $ci->solr
+                    ->setOpt('fq', '+related_'.$search_class.'_id:'.$this->ro->id)
+                    ->setOpt('rows', '0');
+                if ($type=='party_one') {
+                    $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type:person');
+                } elseif ($type=='party_multi') {
+                    $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type:group');
+                } else {
+                    $ci->solr->setOpt('fq', '+class:'.$type);
+                }
+                $result = $ci->solr->executeSearch(true);
+                $relationships[$type.'_count_solr'] = $result['response']['numFound'];
+            }
+        }
 
 
         //THE FOLLOWING CODE ARE FOR SOLR SEARCH, THIS IS UNRELIABLE AND REQUIRE ALL RECORDS TO BE INDEXED CORRECTLY, NOT ADVISABLE
-        //$ci->load->library('solr');
+        // $ci->load->library('solr');
         // $search_class = $this->ro->class;
         // if($this->ro->class=='party') {
         //     if (strtolower($this->ro->type)=='person'){

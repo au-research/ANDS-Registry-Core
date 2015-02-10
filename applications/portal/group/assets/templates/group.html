@@ -24,7 +24,7 @@
 							<small ng-if="saveMessage">[[saveMessage]]</small>
 							<div class="pull-right">
 								<a href="[[base_url]]group/?preview=[[group.name]]" class="btn btn-link btn-sml" ng-if="group.status!='PUBLISHED'">Preview</a>
-								<span class="label label-default">Last Modified: [[group.date_modified]]</span>
+								<span class="label label-default">Last Modified: [[group.date_modified]] ([[group.modified_who]])</span>
 								<span class="label label-info">[[group.status]]</span>
 							</div>
 						</div>

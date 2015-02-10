@@ -28,8 +28,8 @@
 					<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
 					@endif
 				@endforeach
-				@if(sizeof($ro->relationships['collection']) < $ro->relationships['collection_count'])
-					<li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count']}} related collections</a></li>
+				@if(sizeof($ro->relationships['collection']) < $ro->relationships['collection_count_solr'])
+					<li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count_solr']}} related collections</a></li>
 				@endif
 			</ul>
 			@endif
@@ -42,8 +42,8 @@
 						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
 					@endif
 				@endforeach
-				@if(sizeof($ro->relationships['party_multi']) < $ro->relationships['party_multi_count'])
-					<li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=party/type=group">View all {{$ro->relationships['party_multi_count']}} related organisations</a></li>
+				@if(sizeof($ro->relationships['party_multi']) < $ro->relationships['party_multi_count_solr'])
+					<li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=party/type=group">View all {{$ro->relationships['party_multi_count_solr']}} related organisations</a></li>
 				@endif
 			</ul>
 			@endif
@@ -56,8 +56,8 @@
 						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
 					@endif
 				@endforeach
-				@if(sizeof($ro->relationships['service']) < $ro->relationships['service_count'])
-					<li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=service">View all {{$ro->relationships['service_count']}} related services</a></li>
+				@if(sizeof($ro->relationships['service']) < $ro->relationships['service_count_solr'])
+					<li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=service">View all {{$ro->relationships['service_count_solr']}} related services</a></li>
 				@endif
 			</ul>
 			@endif
@@ -70,8 +70,8 @@
 						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
 					@endif
 				@endforeach
-				@if(sizeof($ro->relationships['activity']) < $ro->relationships['activity_count'])
-					<li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=activity">View all {{$ro->relationships['activity_count']}} related activities</a></li>
+				@if(sizeof($ro->relationships['activity']) < $ro->relationships['activity_count_solr'])
+					<li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=activity">View all {{$ro->relationships['activity_count_solr']}} related activities</a></li>
 				@endif
 			</ul>
 			@endif
