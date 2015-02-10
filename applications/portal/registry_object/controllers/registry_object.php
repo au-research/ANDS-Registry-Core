@@ -64,7 +64,7 @@ class Registry_object extends MX_Controller {
 		$this->load->library('blade');
 
 		if ($this->input->get('ro_id')){
-			$ro = $this->ro->getByID($id);
+			$ro = $this->ro->getByID($this->input->get('ro_id'));
 			$this->blade
 				->set('ro', $ro)
 				->render('registry_object/preview');

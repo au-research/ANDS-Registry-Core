@@ -68,7 +68,7 @@
                                     <i class="fa fa-home" style="color:white;"></i>
                                    </div>
                                </div>
-                               <p class="">Discover data and services by theme in our <strong>collection guides</strong></p>
+                               <p class="">Discover data and services by theme in themed collection guides</p>
                            </div>
                        </div>
                        <div class="col-md-3 ">
@@ -79,7 +79,7 @@
                                        <i class="fa fa-barcode" style="color:white;"></i>
                                    </div>
                                </div>
-                               <p class="">Access research data-related services ands tools</p>
+                               <p class="">Access data-related services and tools</p>
                            </div>
                        </div>
                        <div class="col-md-3 ">
@@ -90,7 +90,7 @@
                                     <i class="fa fa-cc" style="color:white;"></i>
                                    </div>
                                </div>
-                               <p class="">Find open-data that is accessible and free to use</p>
+                               <p class="">Find open data that is accessible and reusable</p>
                            </div>
                        </div>
                        <div class="col-md-3 ">
@@ -102,7 +102,7 @@
                                    </div>
                                </div>
                                <!-- <h3 class="normal bold bordered bordered-small "> Ultra flexible </h3> -->
-                               <p class="">Search for research grant information in our sister portal, Research Grant Australia</p>
+                               <p class="">Search for research grants and projects</p>
                            </div>
                        </div>
                    </div>

@@ -1,9 +1,9 @@
 @if($ro->relationships && isset($ro->relationships['party_one']))
     @foreach($ro->relationships['party_one'] as $col)
-    	@if($col['slug'] && $col['registry_object_id'])
-        <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}} <small>({{$col['relation_type']}}) </small></a> 
-    	@elseif($col['identifier_relation_id'])
+    	@if(isset($col['identifier_relation_id']))
     	<a href="<?php echo base_url()?>" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}" style="margin-right:5px;">{{$col['title']}} <small>({{$col['relation_type']}}) </small></a> 
+        @elseif($col['slug'] && $col['registry_object_id'])
+        <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}} <small>({{$col['relation_type']}}) </small></a> 
     	@endif
     @endforeach
     @if(sizeof($ro->relationships['party_one']) < $ro->relationships['party_one_count_solr'])
