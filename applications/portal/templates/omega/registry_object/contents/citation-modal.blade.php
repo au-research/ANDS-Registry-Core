@@ -29,7 +29,7 @@
                             <dd>
                                 {{$citation['contributors']}}
                                 ({{$citation['date']}}): {{$citation['title']}}.
-                                {{$citation['publisher']}}.
+                                <span itemprop="publisher">{{$citation['publisher']}}</span>.
                                 {{$citation['identifier_type']}} :{{$citation['identifier']}}
                                 <br /><a href="{{$citation['identifierResolved']['href']}}">{{$citation['identifier']}}</a>
                                 @if($citation['url'])

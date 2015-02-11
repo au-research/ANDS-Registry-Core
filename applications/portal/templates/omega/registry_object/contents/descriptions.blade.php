@@ -13,7 +13,7 @@
 				@foreach($ro->descriptions as $desc)
 					@if($desc['type']==$o)
 						<small>{{$desc['type']}}</small>
-						<p><span itemprop="description">{{html_entity_decode($desc['description'])}}</span></p>
+						<p itemprop="description">{{html_entity_decode($desc['description'])}}</p>
 					@endif
 				@endforeach
 			@endforeach

@@ -17,19 +17,22 @@
                 $title = substr($title,0,35)."...";
             }
             $preText='';
+            $itemprop='';
             if($access['access_type']=='directDownload')
             {
-                $preText='Download data<br/>';
+                $preText='Download data <br/>';
             }
             elseif($access['access_type']=='landingPage'){
-                $preText='Access data via landing page</br >';
+                $preText='Access data via landing page </br >';
+                $itemprop = ' itemprop="distribution"';
             }elseif($access['access_type']=='viaService'){
-                $preText='Access data online via tools</br >';
+                $preText='Access data online via tools </br >';
             }
+
             ?>
-           <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{$access['access_value']}}" title="{{$access['notes']}}">
+           <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{$access['access_value']}}" title="{{$access['notes']}}" <?=$itemprop?>>
                <span>{{$access['mediaType']}}</span>
-               <?=$preText;?><?=$title?> </a>
+               <?=$preText;?><?=$title?></a>
         @endforeach
         </div>
     @endif

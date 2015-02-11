@@ -11,20 +11,20 @@
     		    <section class="section swatch-gray" style="z-index:1">
     		    	<div class="container">
     		    		<div class="row element-short-top">
-                            <div class="col-md-9 view-content" style="padding-right:0">
+                            <div class="col-md-9 view-content" style="padding-right:0"  itemscope itemtype="http://schema.org/Dataset">
                                 <div class="panel panel-primary swatch-white panel-content">
                                     <div class="panel-body">
                                         @if($ro->logo)
                                         <img src="{{$ro->logo[0]}}" alt="logo" class="header-logo animated fadeInDown">
                                         @endif
                                         [[message]]
-                                        <h1 class="hairline bordered-normal">{{$ro->core['title']}}</h1>
+                                        <h1 class="hairline bordered-normal"><span itemprop="name">{{$ro->core['title']}}</span></h1>
                                         @if(isset($ro->core['alt_title']))
-                                            <small>Also known as: 
-                                                {{implode(', ',$ro->core['alt_title'])}}
+                                            <small>Also known as:
+                                                <span>{{implode(', ',$ro->core['alt_title'])}}</span>
                                             </small><br/>
                                         @endif
-                                        <small>{{$ro->core['group']}}</small> 
+                                        <small itemprop="sourceOrganization">{{$ro->core['group']}}</small>
 
                                         @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
                                         <a href="" tip="#identifiermatch"><i class="fa fa-caret-down"></i></a>

@@ -11,13 +11,8 @@ class Citations extends ROHandler {
 	function handle() {
         $result = array();
         if ($this->xml) {
-            //$id = $this->ro->id;
             $coins_ro = $this->ro;
-            //var_dump($coins_ro->id);
-          //exit();
             $coins = $this->getCoinsSpan($coins_ro);
-            //var_dump($coins);
-          // exit();
             foreach($this->xml->{$this->ro->class}->citationInfo as $citation){
                 foreach($citation->citationMetadata as $citationMetadata){
                     $contributors = Array();
@@ -40,19 +35,36 @@ class Citations extends ROHandler {
                     $displayNames ='';
                     $contributorCount = 0;
                     foreach($contributors as $contributor){
+                        $org_text='';
+                        if((int)$contributor['seq']>1)
+                        {
+                            $org_text = ' itemprop="contributor"';
+                        }
+                        elseif((int)$contributor['seq']==1){
+                            $org_text = ' itemprop="creator author"';
+                        }
                         $contributorCount++;
-                        $displayNames .= formatName($contributor['name']);
+                        $displayNames .= '<span '.$org_text.'>'.formatName($contributor['name']).'</span>';
                         if($contributorCount < count($contributors)) $displayNames .= "; ";
                     }
                     $identifierResolved = identifierResolution((string)$citationMetadata->identifier, (string)$citationMetadata->identifier['type']);
-
+                    if((string)$citationMetadata->version!=''){
+                        $version_text = ' itemprop="version"';
+                    }else{
+                        $version_text = '';
+                    }
+                    if((string)$citationMetadata->publisher!=''){
+                        $publisher_text = ' itemprop="publisher"';
+                    }else{
+                        $publisher_text = '';
+                    }
                     $result[] = array(
                         'type'=> 'metadata',
                         'identifier' => (string)$citationMetadata->identifier,
                         'identifier_type' => strtoupper((string)$citationMetadata->identifier['type']),
                         'identifierResolved' => $identifierResolved,
-                        'version' => (string)$citationMetadata->version,
-                        'publisher' => (string)$citationMetadata->publisher,
+                        'version' => "<span ".$version_text.">".(string)$citationMetadata->version."</span>",
+                        'publisher' => "<span ".$publisher_text.">".(string)$citationMetadata->publisher."</span>",
                         'url' => (string)$citationMetadata->url,
                         'context' => (string)$citationMetadata->context,
                         'placePublished' => (string)$citationMetadata->placePublished,
@@ -472,18 +484,10 @@ Y2  - '.date("Y-m-d")."
                             'name' => (string)$namePart
                         );
              }
-           $org_text='';
-           if((int)$contributor['seq']>1)
-           {
-               $org_text = ' itemprop="contributor"';
-           }
-           elseif((int)$contributor['seq']==1){
-               $org_text = ' itemprop="creator"';
-           }
+
              $contributors[] =array(
                    'name' => formatName($nameParts),
-                    'seq' => (string)$contributor['seq'],
-                    'org_text' => $org_text
+                    'seq' => (string)$contributor['seq']
              );
         }
 
@@ -499,8 +503,7 @@ Y2  - '.date("Y-m-d")."
                     {
                         $contributors[] =array(
                             'name' => $author['title'],
-                            'seq' => '',
-                            $org_text = ' itemprop="creator"'
+                            'seq' => ''
                         );
 
                     }

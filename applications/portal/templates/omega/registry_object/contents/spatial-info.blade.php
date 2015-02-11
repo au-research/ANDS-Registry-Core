@@ -8,7 +8,11 @@
 			<div id="spatial_coverage_map" class="map-canvas angular-google-map-container"></div>
 			<!-- @include('registry_object/facet/map') -->
 			@foreach($ro->spatial as $a_coverage)
-			<p class="coverage hide">{{$a_coverage['polygon']}}</p>
+            @if($a_coverage['polygon'])
+			<p class="coverage hide" itemprop="spatial">{{$a_coverage['polygon']}}</p>
+            @else
+            <p class="coverage hide">{{$a_coverage['polygon']}}</p>
+            @endif
 			<p class="spatial_coverage_center hide">{{$a_coverage['center']}}</p>
 			@endforeach
         </div>

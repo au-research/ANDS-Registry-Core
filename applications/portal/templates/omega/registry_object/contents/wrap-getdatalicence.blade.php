@@ -16,8 +16,10 @@
         if ($detail) {
             $content = '';
             foreach ($ro->rights as $right) {
+                $itemprop = '';
+                if($right['rights_type']=='licence') $itemprop = 'itemprop="license"';
                 $content .= '<h4>'.readable($right['rights_type']).'</h4>';
-                $content .= '<p>'.$right['value'].'</p>';
+                $content .= '<p '.$itemprop.'>'.$right['value'].'</p>';
             }
         }
     }

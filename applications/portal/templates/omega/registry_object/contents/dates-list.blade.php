@@ -29,7 +29,7 @@
 
                         foreach($date['date'] as $each_date)
                         {
-                            echo $each_date['type']." ".date('d M Y',strtotime($each_date['date']))." ";
+                            echo $each_date['type'].' <span itemprop="temporal">'.date('d M Y',strtotime($each_date['date']))."</span> ";
                         }
                     } elseif ($date['type']=='text'){
                         echo (string)$date['date'];

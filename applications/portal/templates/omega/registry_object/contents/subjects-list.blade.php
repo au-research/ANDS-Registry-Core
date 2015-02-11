@@ -10,7 +10,7 @@
 				uasort($subjects, 'subjectSortResolved');
 			?>
 			@foreach($subjects as $col)
-			<a href="{{base_url().'search/#!/subject_value_resolved='.$col['resolved']}}">{{$col['resolved']}}</a> |
+			<a href="{{base_url().'search/#!/subject_value_resolved='.$col['resolved']}}" itemprop="about keywords">{{$col['resolved']}}</a> |
 			@endforeach
 		</div>
 
