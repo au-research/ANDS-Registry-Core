@@ -13,6 +13,8 @@
 			<a href="{{base_url().'search/#!/subject_value_resolved='.$col['resolved']}}">{{$col['resolved']}}</a> |
 			@endforeach
 		</div>
+
+        @include('registry_object/contents/tags')
 	</div>
 </div>
 @endif

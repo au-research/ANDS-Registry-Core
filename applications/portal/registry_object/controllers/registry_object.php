@@ -254,7 +254,7 @@ class Registry_object extends MX_Controller {
 		parent::__construct();
 		$this->load->model('registry_objects', 'ro');
 		$this->components = array(
-			'view' => array('descriptions','reuse-list','quality-list','dates-list','spatial-info', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list','tags'),
+			'view' => array('descriptions','reuse-list','quality-list','dates-list','spatial-info', 'connectiontree','publications-list','related-objects-list',  'subjects-list', 'identifiers-list'),
 			'aside' => array('rights-info','contact-info'),
             'view_headers' => array('title','related-parties'),
             'activity'=>array('descriptions','spatial-info','publications-list', 'subjects-list','identifiers-list','contact-info'),
