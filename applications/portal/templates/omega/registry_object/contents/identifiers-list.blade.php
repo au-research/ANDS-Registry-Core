@@ -5,7 +5,7 @@
             <a href="">Identifiers</a>
         </div>
         <div class="panel-body swatch-white">
-            <ul>
+            <ul class="list-unstyled">
                 @foreach($ro->identifiers as $col)
                     @if($col['identifier']['display_text'])
                         <?php

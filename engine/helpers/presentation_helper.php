@@ -183,6 +183,11 @@ function readable($text, $singular = false){
         case 'licence': return 'Licence';break;
         case 'accessrights': return 'Access rights';break;
         case 'rightsstatement': return 'Rights Statement';break;
+        case 'full': return 'Full description';break;
+        case 'brief': return 'Brief description';break;
+        case 'note': return 'Notes';break;
+        case 'significanceStatement': return 'Significance Statement';break;
+        case 'lineage': return 'Lineage';break;
         default: return $text;
 	}
 }

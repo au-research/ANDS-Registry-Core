@@ -25,7 +25,7 @@
 			<ul>
 				@foreach($ro->relationships['collection'] as $col)
 					@if($col)
-					<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
+					<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}} <small>{{$col['relation_type']}}</small></a></li>
 					@endif
 				@endforeach
 				@if(sizeof($ro->relationships['collection']) < $ro->relationships['collection_count_solr'])
@@ -39,7 +39,7 @@
 			<ul>
 				@foreach($ro->relationships['party_multi'] as $col)
 					@if($col)
-						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
+						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}} <small>{{$col['relation_type']}}</small></a></li>
 					@endif
 				@endforeach
 				@if(sizeof($ro->relationships['party_multi']) < $ro->relationships['party_multi_count_solr'])
@@ -53,7 +53,7 @@
 			<ul>
 				@foreach($ro->relationships['service'] as $col)
 					@if($col)
-						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
+						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}} <small>{{$col['relation_type']}}</small></a></li>
 					@endif
 				@endforeach
 				@if(sizeof($ro->relationships['service']) < $ro->relationships['service_count_solr'])
@@ -67,7 +67,7 @@
 			<ul>
 				@foreach($ro->relationships['activity'] as $col)
 					@if($col)
-						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
+						<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}} <small>{{$col['relation_type']}}</small></a></li>
 					@endif
 				@endforeach
 				@if(sizeof($ro->relationships['activity']) < $ro->relationships['activity_count_solr'])
