@@ -29,8 +29,10 @@ $(document).ready(function() {
 			text:function(e,api){
 				var tip = $(this).attr('tip');
 				var content = tip;
-				if($(tip.toString()).length) {
-					content = $(tip.toString()).html();
+				if(tip.indexOf('#')==0 || tip.indexOf('.')==0) {
+					if($(tip.toString()).length) {
+						content = $(tip.toString()).html();
+					}
 				}
 				return content;
 			}

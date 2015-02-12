@@ -17,7 +17,6 @@
                                         @if($ro->logo)
                                         <img src="{{$ro->logo[0]}}" alt="logo" class="header-logo animated fadeInDown">
                                         @endif
-                                        [[message]]
                                         <h1 class="hairline bordered-normal"><span itemprop="name">{{$ro->core['title']}}</span></h1>
                                         @if(isset($ro->core['alt_title']))
                                             <small>Also known as:
@@ -57,11 +56,7 @@
                                             </div>
                                         </div>
                                         <div class="panel-tools">
-                                            <div class="center-block" style="text-align:center">
-                                                <i class="fa fa-facebook" style="padding-right:4px"></i>
-                                                <i class="fa fa-twitter" style="padding-right:4px"></i>
-                                                <i class="fa fa-google" style="padding-right:4px"></i>
-                                            </div>
+                                            @include('registry_object/contents/social-sharing')
                                         </div>
                                     </div>
                                 </div>
