@@ -1,7 +1,7 @@
 @if($ro->contact)
 
 <div id="contact">
-    <h3>Contact Information</h3>
+    <h4>Contact Information</h4>
     @foreach($ro->contact as $contact)
     <?php
         if($contact['contact_type']=='url'){

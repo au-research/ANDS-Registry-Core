@@ -34,8 +34,10 @@
             <a class="btn btn-sm btn-default" ng-click="bookmark()"><i class="fa fa-bookmark-o"></i> Bookmark</a>
         </div>
 
-        <div class="center-block" style="text-align:center">
-
+        <div>
+            @if($ar || $cc || $detail)
+                <h4>License & Rights</h4>
+            @endif
         	@if($ar=='open')
         	    <a href="" tip="Online data that can be electronically accessed free of charge with no restrictions imposed on the user"><span class="label label-info label-{{$ar}}" for="">OPEN</span></a>
         	@elseif($ar=='conditional')
@@ -57,7 +59,7 @@
             @elseif($cc=='CC-BY-NC-ND')
                 <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a>
             @else 
-                <span>{{cc}}</span>
+                <span>{{$cc}}</span>
         	@endif
 
         	@if($detail)
