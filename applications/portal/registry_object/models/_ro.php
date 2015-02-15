@@ -72,9 +72,18 @@ class _ro {
 		//get the URL
 		$url = $this->construct_api_url($params);
 		$this->prop['api_url'] = $url;
+
+		//try and get it from cache
+		$cache_id = 'ro-api-'.$this->id;
+		$ci =& get_instance();
+		$ci->load->driver('cache');
+		if(! $content = $ci->cache->file->get($cache_id)) {
+			//not in the cache, get it and save it
+			$content = @file_get_contents($url);
+			$ci->cache->file->save($cache_id, $content, 10);
+		}
 		
 		//Fetch the data and populate as per the result
-  		$content = @file_get_contents($url);
 		$content = json_decode($content, true);
 
 		if ($content['status']=='success') {
