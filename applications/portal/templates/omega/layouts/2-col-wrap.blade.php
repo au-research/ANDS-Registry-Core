@@ -6,7 +6,7 @@
         <div id="content" >
             @include('includes/hidden-metadata')
         	
-                @include('includes/search-section')
+            @include('includes/search-section')
         	<article ng-controller="viewController">	
     		    <section class="section swatch-gray" style="z-index:1">
     		    	<div class="container">

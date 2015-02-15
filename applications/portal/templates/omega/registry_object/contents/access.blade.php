@@ -1,7 +1,6 @@
 @if($ro->directaccess)
-
     @if($ro->directaccess[0]['access_type']=='url')
-        <a href="{{$ro->directaccess[0]['access_value']}}" class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to Data</a>
+        <a href="{{$ro->directaccess[0]['access_value']['href']}}" class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to Data</a>
     @endif
 
     @if($ro->directaccess[0]['access_type']!='url')
@@ -30,7 +29,7 @@
             }
 
             ?>
-           <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{$access['access_value']}}" title="{{$access['notes']}}" <?=$itemprop?>>
+           <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{$access['access_value']['href']}}" title="{{$access['notes']}}" <?=$itemprop?>>
                <span>{{$access['mediaType']}}</span>
                <?=$preText;?><?=$title?></a>
         @endforeach
