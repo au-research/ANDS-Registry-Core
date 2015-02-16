@@ -490,6 +490,7 @@ class Solr {
 					}
 					break;
 				case 'access_right':
+				case 'access_rights':
 					if(is_array($value)){
 						$fq_str = '';
 						foreach($value as $v) $fq_str .= ' access_rights:("'.$v.'")'; 

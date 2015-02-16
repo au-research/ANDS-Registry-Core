@@ -192,7 +192,6 @@ class Registry_object extends MX_Controller {
 		if(!is_array($default_class)) {
 			$this->solr->setOpt('fq', '+class:'.$default_class);
 		}
-		
 
 		$this->solr->setFilters($filters);
 

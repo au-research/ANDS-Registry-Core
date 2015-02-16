@@ -24,10 +24,13 @@
         <div class="element-no-top element-no-bottom scontent">
             <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[getHash()]]">[[doc.title]]</a> </h2>
             <p><small>[[doc.group]]</small></p>
-            <div ng-repeat="x in doc.hl">
-                <p ng-repeat="b in x" data-ng-bind-html="b | trustAsHtml"></p>
-            </div>
-            <p data-ng-bind-html="doc.description | trustAsHtml" ng-show="!doc.hl"></p>
+            <p ng-repeat="(index, content) in getHighlight(doc.id)">
+                <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
+            </p>
+            <p ng-if="getHighlight(doc.id)===false">
+                [[doc.description | text | truncate:200]]
+            </p>
+           <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
         </div>
     </div>
 
@@ -53,8 +56,9 @@
     </div> -->
     <div class="panel-body swatch-white">
         <table class="table">
-            <tr ng-repeat="filter in allfilters">
-                <td style="text-align:right;font-weight:bold;">[[filter.name]]</td><td>[[filter.value]]</td><td><a href="" ng-click="toggleFilter(filter.name, filter.value, true)"><i class="fa fa-remove"></i></a></td>
+
+            <tr ng-repeat="(name, value) in filters">
+                <td style="text-align:right;font-weight:bold;">[[name]]</td><td>[[value]]</td><td><a href="" ng-click="toggleFilter(name, value, true)"><i class="fa fa-remove"></i></a></td>
             </tr>
         </table>
         <div class="panel-body swatch-white">
@@ -79,8 +83,19 @@
             </div>
         </form>
     </div>
+
+    <div class="panel-body swatch-white" ng-repeat="(name,facet) in facets">
+        <h4>[[name | filter_name]]</h4>
+        <ul class="listy">
+            <li ng-repeat="item in facet | limitTo:5">
+                <input type="checkbox" ng-checked="isFacet(name, item.name)" ng-click="toggleFilter(name, item.name, true)">
+                <a href="">[[item.name]] <small>[[item.value]]</small></a>    
+            </li>
+            <li><a href="" ng-click="advanced(name)">View More</a></li>
+        </ul>
+    </div>
+
+    
 </div>
-    @foreach ($facets as $facet)
-    	@include('registry_object/facet/'.$facet)
-    @endforeach
+    
 @stop

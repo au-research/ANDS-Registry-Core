@@ -9,6 +9,10 @@ angular.module('portal-filters', [])
 				case 'related_organisation': return 'Related Organisations' ;break;
 				case 'description': return 'Description' ;break;
 				case 'subject': return 'Subject' ;break;
+				case 'access_rights': return 'Access Rights'; break;
+				case 'group': return 'Contributor'; break;
+				case 'license_class': return 'Licenses'; break;
+				case 'type': return 'Type'; break;
 			}
 		}
 	})
@@ -28,6 +32,12 @@ angular.module('portal-filters', [])
 			}
 		};
 	})
+	.filter('text', ['$sce', function($sce){
+		return function(text){
+			var decoded = $('<div/>').html(text).text();
+			return decoded;
+		}
+	}])
 	.filter('trustAsHtml', ['$sce', function($sce){
 		return function(text){
 			var decoded = $('<div/>').html(text).text();

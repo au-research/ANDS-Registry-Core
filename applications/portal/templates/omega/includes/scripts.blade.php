@@ -45,17 +45,23 @@
 
 
 <!-- Map Search Scripts -->
-<script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script>
-<script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.min.js', 'core')}}"></script>
+<!-- <script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script> -->
+<!-- <script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.min.js', 'core')}}"></script> -->
 
 <!-- Search Script and Resources is included in every page -->
-<script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>
-<script src="{{asset_url('profile/js/profile_components.js', 'full_base_path')}}"></script>
+<!-- <script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>
+
 <script src="{{asset_url('registry_object/js/record_components.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('registry_object/js/portal-filters.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('registry_object/js/search_controller.js', 'full_base_path')}}"></script>
 <script src="{{asset_url('registry_object/js/main_search_controller.js', 'full_base_path')}}"></script>
-<script src="{{asset_url('registry_object/js/search_app.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('registry_object/js/search_app.js', 'full_base_path')}}"></script> -->
+
+<script src="{{asset_url('registry_object/js/record_components.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('profile/js/profile_components.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('registry_object/js/search.js', 'full_base_path')}}"></script>
+<script src="{{asset_url('registry_object/js/portal-filters.js', 'full_base_path')}}"></script>
+
 <script type="text/javascript" src="https://jira.ands.org.au/s/d41d8cd98f00b204e9800998ecf8427e/en_AUc8oc9c-1988229788/6265/77/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d9610dcf"></script>
 
 
