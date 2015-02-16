@@ -45,10 +45,10 @@ class Temporal_coverage_suggestor extends _GenericSuggestor {
 
             $result = $ci->solr->executeSearch(true);
             if($result['response']['numFound'] > 0) {
+                $maxScore = floatval($result['response']['maxScore']);
                 foreach($result['response']['docs'] as $doc) {
-                    if(!in_array_r($doc, $suggestions)){
-                        $suggestions[] = $doc;
-                    }
+                    $doc['score'] = $doc['score'] / $maxScore;
+                    $suggestions[] = $doc;
                 }
             }
         }

@@ -516,7 +516,7 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-    function getRelatedObjectsByClassAndRelationshipType($classArray, $relationshipTypeArray)
+    function getRelatedObjectsByClassAndRelationshipType($classArray = array(), $relationshipTypeArray = array())
     {
         $unordered_connections = array();
 
@@ -546,7 +546,8 @@ class Connections_Extension extends ExtensionBase
 
         foreach($unordered_connections AS $connection)
         {
-            if(in_array($connection['class'], $classArray) && in_array($connection['relation_type'], $relationshipTypeArray))
+            if((sizeof($classArray) == 0 || in_array($connection['class'], $classArray))
+                && (sizeof($relationshipTypeArray) == 0 || in_array($connection['relation_type'], $relationshipTypeArray)))
             {
                 $connections[] = $connection;
 

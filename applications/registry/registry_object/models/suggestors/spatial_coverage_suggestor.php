@@ -33,7 +33,7 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
                     $centers[] = $doc['spatial_coverage_centres'];
             }
         }
-        
+
         $suggestions = array();
         foreach($centers as $key=>$center)
         {
@@ -49,10 +49,10 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
 
             $result = $ci->solr->executeSearch(true);
             if($result['response']['numFound'] > 0) {
+                $maxScore = floatval($result['response']['maxScore']);
                 foreach($result['response']['docs'] as $doc) {
-                    if(!in_array_r($doc, $suggestions)){
+                        $doc['score'] = $doc['score'] / $maxScore;
                         $suggestions[] = $doc;
-                    }
                 }
             }
         }

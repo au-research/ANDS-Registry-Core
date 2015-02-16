@@ -16,7 +16,8 @@ class Suggest extends ROHandler {
            'shared_text'=>array('boost'=>1,'handler'=>'shared_text'),
            'related_object'=>array('boost'=>1,'handler'=>'related_object'),
            'temporal_coverage'=>array('boost'=>1,'handler'=>'temporal_coverage'),
-           'spatial_coverage'=>array('boost'=>1,'handler'=>'spatial_coverage')
+           'spatial_coverage'=>array('boost'=>1,'handler'=>'spatial_coverage'),
+           'tags'=>array('boost'=>1,'handler'=>'tags')
         );
         
         //populate the pool with the different suggestors
@@ -45,26 +46,25 @@ class Suggest extends ROHandler {
         }
         
         // Normalize rankings and apply boosting
+
         $fullSet = array();
         foreach ($suggestors as $key=>$val) {
-            $count = count($result[$key]);
-            $fractionOf = 100;
-            if($count > 0){
+            if(count($result[$key]) > 0){
                 foreach($result[$key] as $suggestedRo){
                     if(array_key_exists($suggestedRo['id'],$fullSet)){
                         $fullSet[$suggestedRo['id']] +=
-                            ($suggestors[$key]['boost'] * ($fractionOf - $count));
+                            ($suggestors[$key]['boost'] * floatval($suggestedRo['score']));
                     }else{
                         $fullSet[$suggestedRo['id']] =
-                            ($suggestors[$key]['boost'] * ($fractionOf - $count));
+                            ($suggestors[$key]['boost'] * $suggestedRo['score']);
                     }
-                    $count--;
                 }
             }
         }
 
         // (Descending) sort by value: the score of each record
         arsort($fullSet,SORT_NUMERIC);
+
         // Get the top five
         $limit = $ci->input->get('limit');
         if (!$limit)
