@@ -112,6 +112,68 @@ class Registry_object extends MX_Controller {
 		}
 	}
 
+	function vocab($vocab='anzsrc-for') {
+		$uri = $this->input->get('uri');
+		$data = json_decode(file_get_contents("php://input"), true);
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$this->load->library('vocab');
+		if (!$uri) { //get top level
+			$toplevel = $this->vocab->getTopLevel('anzsrc-for', array());
+			// foreach ($toplevel['topConcepts'] as &$l) {
+			// 	$r = array();
+			// 	$result = json_decode($this->vocab->getConceptDetail('anzsrc-for', $l['uri']), true);
+			// 	if(isset($result['result']['primaryTopic']['narrower'])){
+			// 		foreach($result['result']['primaryTopic']['narrower'] as $narrower) {
+			// 			$curi = $narrower['_about'];
+			// 			$concept = json_decode($this->vocab->getConceptDetail('anzsrc-for', $curi), true);
+			// 			$concept = array(
+			// 				'notation' => $concept['result']['primaryTopic']['notation'],
+			// 				'prefLabel' => $concept['result']['primaryTopic']['prefLabel']['_value'],
+			// 				'uri' => $curi,
+			// 				'collectionNum' => $this->vocab->getNumCollections($curi, array())
+			// 			);
+			// 			array_push($r, $concept);
+			// 		}
+			// 	}
+			// 	$l['subtree'] = $r;
+			// }
+			echo json_encode($toplevel['topConcepts']);
+		} else {
+			$r = array();
+			$result = json_decode($this->vocab->getConceptDetail('anzsrc-for', $uri), true);
+			if(isset($result['result']['primaryTopic']['narrower'])){
+				foreach($result['result']['primaryTopic']['narrower'] as $narrower) {
+					$curi = $narrower['_about'];
+					$concept = json_decode($this->vocab->getConceptDetail('anzsrc-for', $curi), true);
+					$concept = array(
+						'notation' => $concept['result']['primaryTopic']['notation'],
+						'prefLabel' => $concept['result']['primaryTopic']['prefLabel']['_value'],
+						'uri' => $curi,
+						'collectionNum' => $this->vocab->getNumCollections($curi, array())
+					);
+					array_push($r, $concept);
+				}
+			}
+			echo json_encode($r);
+		}
+	}
+
+	function getSubjects() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$result = array();
+		foreach($this->config->item('subjects') as $subject) {
+			$slug = url_title($subject['display'], '-', true);
+			foreach($subject['codes'] as $code) {
+				$result[$slug][] = 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$code;
+			}
+		}
+		echo json_encode($result);
+	}
+
 	function addTag() {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -210,6 +272,19 @@ class Registry_object extends MX_Controller {
 		//returns this set of Facets
 		foreach($this->components['facet'] as $facet){
 			if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
+		}
+
+		//high level subjects facet
+		$subjects = $this->config->item('subjects');
+		foreach ($subjects as $subject) {
+			$fq = '(';
+			foreach($subject['codes'] as $code) {
+				$fq .= 'subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$code.'") ';
+			}
+			$fq.=')';
+			$this->solr->setFacetOpt('query', 
+				'{! key='.url_title($subject['display'], '-', true).'}'.$fq
+			);
 		}
 
 		//flags, these are the only fields that will be returned in the search

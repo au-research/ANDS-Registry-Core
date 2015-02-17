@@ -58,7 +58,7 @@
         <table class="table">
 
             <tr ng-repeat="(name, value) in filters">
-                <td style="text-align:right;font-weight:bold;">[[name]]</td><td>[[value]]</td><td><a href="" ng-click="toggleFilter(name, value, true)"><i class="fa fa-remove"></i></a></td>
+                <td style="text-align:right;font-weight:bold;">[[name | filter_name]]</td><td ng-bind-html="value | filter_value">[[value | filter_value | trustAsHtml]]</td><td><a href="" ng-click="toggleFilter(name, value, true)"><i class="fa fa-remove"></i></a></td>
             </tr>
         </table>
         <div class="panel-body swatch-white">
@@ -84,14 +84,14 @@
         </form>
     </div>
 
-    <div class="panel-body swatch-white" ng-repeat="(name,facet) in facets">
-        <h4>[[name | filter_name]]</h4>
+    <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true">
+        <h4>[[facet.name | filter_name]]</h4>
         <ul class="listy">
-            <li ng-repeat="item in facet | limitTo:5">
-                <input type="checkbox" ng-checked="isFacet(name, item.name)" ng-click="toggleFilter(name, item.name, true)">
-                <a href="">[[item.name]] <small>[[item.value]]</small></a>    
+            <li ng-repeat="item in facet.value | limitTo:8 | orderBy:'item.value':true">
+                <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
+                <a href="" ng-click="toggleFilter(facet.name, item.name, true)">[[item.name | truncate:30]] <small>[[item.value]]</small></a>    
             </li>
-            <li><a href="" ng-click="advanced(name)">View More</a></li>
+            <li><a href="" ng-click="advanced(facet.name)">View More</a></li>
         </ul>
     </div>
 

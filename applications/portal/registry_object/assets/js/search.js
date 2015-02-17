@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'portal-filters', 'ui.bootstrap', 'profile_components', 'record_components']);
+var app = angular.module('app', ['ngRoute', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components']);
 
 app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$interpolateProvider.startSymbol('[[');
@@ -9,7 +9,7 @@ app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$logProvider.debugEnabled(true);
 });
 
-app.controller('searchCtrl', function($scope, $log, $modal, search_factory){
+app.controller('searchCtrl', function($scope, $log, $modal, search_factory, vocab_factory){
 	
 	$scope.$watch(function(){
 		return location.hash;
@@ -215,6 +215,8 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory){
 	$scope.advanced = function(active){
 		if (active) {
 			$scope.selectAdvancedField(active);
+		} else {
+			$scope.selectAdvancedField('terms')
 		}
 		$('#advanced_search').modal('show');
 	}
@@ -250,6 +252,36 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory){
 		} else return 0;
 	}
 
+	//VOCAB TREE
+	vocab_factory.get().then(function(data){
+		$scope.vocab_tree = data;
+	});
+	vocab_factory.getSubjects().then(function(data){
+		// $log.debug(data);
+		vocab_factory.subjects = data;
+	});
+	$scope.getSubTree = function(item) {
+		if(!item['subtree']) {
+			vocab_factory.get(item.uri).then(function(data){
+				item['subtree'] = data;
+			});
+		}
+	}
+	$scope.isVocabSelected = function(item) {
+		return vocab_factory.isSelected(item, $scope.filters);
+	}
+	$scope.isVocabParentSelected = function(item) {
+		var found = false;
+		var subjects = vocab_factory.subjects;
+		angular.forEach(subjects[$scope.filters['subject']], function(uri){
+			if(uri.indexOf(item.uri) != -1 && !found && uri!=item.uri) {
+				found = true;
+			}
+		});
+		return found;
+	}
+	// $scope.advanced('subject');
+
 });
 
 app.factory('search_factory', function($http, $log){
@@ -277,6 +309,7 @@ app.factory('search_factory', function($http, $log){
 
 		advanced_fields: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
+			{'name':'subject', 'display':'Subjects', 'active':true},
 			{'name':'group', 'display':'Contributors'},
 			{'name':'access_rights', 'display':'Access Rights'},
 			{'name':'license_class', 'display':'License'},
@@ -307,7 +340,19 @@ app.factory('search_factory', function($http, $log){
 		},
 
 		construct_facets: function(result) {
-			var facets = {};
+			var facets = [];
+
+			//subjects
+			facets['subject'] = [];
+			angular.forEach(result.facet_counts.facet_queries, function(item, index) {
+				var fa = {
+					name: index,
+					value: parseInt(item)
+				}
+				facets['subject'].push(fa)
+			});
+
+			//other facet fields
 			angular.forEach(result.facet_counts.facet_fields, function(item, index) {
 				facets[index] = [];
 				for (var i = 0; i < result.facet_counts.facet_fields[index].length ; i+=2) {
@@ -318,8 +363,19 @@ app.factory('search_factory', function($http, $log){
 					facets[index].push(fa);
 				}
 			});
+
+			var order = ['subject', 'group', 'access_rights', 'license_class'];
+			var orderedfacets = [];
+			angular.forEach(order, function(item){
+				// orderedfacets[item] = facets[item]
+				orderedfacets.push({
+					name: item,
+					value: facets[item]
+				});
+			});
+			// $log.debug('orderedfacet', orderedfacets);
 			// $log.debug('facets', facets);
-			return facets;
+			return orderedfacets;
 		},
 
 		filters_from_hash:function(hash) {
@@ -361,6 +417,52 @@ app.factory('search_factory', function($http, $log){
 				}
 			});
 			return hash;
+		}
+	}
+});
+
+app.factory('vocab_factory', function($http, $log){
+	return {
+		tree : {},
+		subjects: {},
+		get: function (term) {
+			var url = '';
+			if (term) {
+				url = '?uri='+term;
+			}
+			return $http.get(base_url+'registry_object/vocab/'+url).then(function(response){
+				return response.data
+			});
+		},
+		isSelected: function(item, filters) {
+			if (filters['subject_vocab_uri']) {
+				// $log.debug(decodeURIComponent(filters['subject_vocab_uri']), item.uri);
+				if(decodeURIComponent(filters['subject_vocab_uri'])==item.uri) {
+					return true;
+				} else if(angular.isArray(filters['subject_vocab_uri'])) {
+					angular.forEach(filters['subject_vocab_uri'], function(content, index) {
+						if(content==item.uri) {
+							return true;
+						}
+					});
+				}
+			} else if(filters['subject']){
+				var found = false;
+				angular.forEach(this.subjects[filters['subject']], function(uri){
+					if(uri==item.uri && !found) {
+						found = true;
+					}
+				});
+				return found;
+			} else {
+				$log.debug('no');
+				return false;
+			}
+		},
+		getSubjects: function(){
+			return $http.get(base_url+'registry_object/getSubjects').then(function(response){
+				return response.data
+			});
 		}
 	}
 });

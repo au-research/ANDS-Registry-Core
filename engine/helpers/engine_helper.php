@@ -510,3 +510,7 @@ function in_array_r($needle, $haystack, $strict = false) {
 
     return false;
 }
+
+function dd($stuff) {
+	die(var_dump($stuff));
+}

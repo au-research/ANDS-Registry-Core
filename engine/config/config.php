@@ -52,6 +52,7 @@ $application_directives = array(
 				"active_application" => "portal",
 				"default_controller" => "page",
 				"routes" => array(
+					"home/(:any)" => "page/$1",
 					"topic/(:any)" => "topic/view_topic/$1",
 					"themes" => "theme_page/index",
 					"theme/(:any)" => "theme_page/view/$1",

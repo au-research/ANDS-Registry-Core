@@ -32,7 +32,7 @@ class Solr {
 	function init(){
 		$this->solr_url = get_config_item('solr_url');
 		$this->options = array('q'=>'*:*','start'=>'0','indent'=>'on', 'wt'=>'json', 'fl'=>'*', 'rows'=>'10');
-		$this->multi_valued_fields = array('facet.field', 'fq');
+		$this->multi_valued_fields = array('facet.field', 'fq', 'facet.query');
 		$this->custom_query = false;
 		return $this;
 	}
@@ -351,7 +351,10 @@ class Solr {
 				case 'subject_vocab_uri':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' subject_vocab_uri:("'.$v.'")'; 
+						foreach($value as $v) {
+							$v = rawurldecode($v);
+							$fq_str .= ' subject_vocab_uri:("'.$v.'")'; 
+						}
 						$this->setOpt('fq', $fq_str);
 					}else{
 						$s = json_decode($CI->vocab->getConceptDetail('anzsrc-for', $value), true);
@@ -514,9 +517,41 @@ class Solr {
 				case 'related_activity_id':
 					$this->setOpt('fq', '+related_activity_id:"'.$value.'"');
 					break;
+				case 'subject':
+					if(is_array($value)) {
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= $this->formatSubjectsArrayFilters($v).' ';
+						$this->setOpt('fq', $fq_str);
+					} else {
+						$this->setOpt('fq', $this->formatSubjectsArrayFilters($value));
+					}
+					break;
 			}
 		}
 		return $this;
+	}
+
+	function formatSubjectsArrayFilters($value) {
+		$fq = ' (';
+		$subjects = $this->CI->config->item('subjects');
+
+		$subject = false;
+		foreach($subjects as $item) {
+			if(url_title($item['display'], '-', true)==$value) {
+				$subject = $item;
+			}
+		}
+		if(!$subject) {
+			return '';
+		} else {
+			foreach($subject['codes'] as $code) {
+				$fq.='subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$code.'") ';
+			}
+			
+			$fq.=')';
+			return $fq;
+		}
+		
 	}
 
 	function formatSolrArray($array, $type) {
