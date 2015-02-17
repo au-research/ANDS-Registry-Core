@@ -28,7 +28,7 @@
                 <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
             </p>
             <p ng-if="getHighlight(doc.id)===false">
-                [[doc.description | text | truncate:200]]
+                [[doc.description | text | truncate:500]]
             </p>
            <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
         </div>

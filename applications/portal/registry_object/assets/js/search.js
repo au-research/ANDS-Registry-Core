@@ -455,7 +455,6 @@ app.factory('vocab_factory', function($http, $log){
 				});
 				return found;
 			} else {
-				$log.debug('no');
 				return false;
 			}
 		},
