@@ -20,15 +20,49 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		$scope.search();
 	});
 
+	
+
 	$scope.isArray = angular.isArray;
 
 	$scope.$on('toggleFilter', function(e, data){
 		$scope.toggleFilter(data.type, data.value, data.execute);
 	});
 
+	$scope.$watch('search_type', function(newv,oldv){
+		if (newv) {
+			delete $scope.filters['q'];
+			delete $scope.filters[oldv];
+			$scope.filters[newv] = $scope.query;
+		}
+	});
+
+	$scope.hasFilter = function(){
+		var empty = {'q':''};
+		if(!angular.equals($scope.filters, empty)) {
+			return true;
+		} else return false;
+	}
+
+	$scope.clearSearch = function(){
+		search_factory.reset();
+		$scope.sync();
+		$scope.hashChange();
+	}
+
+	$scope.isLoading = function(){
+		if(location.href.indexOf('search')>-1 && $scope.loading) {
+			return true;
+		} else return false;
+	}
+
 	$scope.hashChange = function(){
 		// $log.debug($scope.query, search_factory.query);
-		$scope.filters.q = $scope.query;
+		// $scope.filters.q = $scope.query;
+		if ($scope.search_type=='q') {
+			$scope.filters.q = $scope.query;
+		} else {
+			$scope.filters[$scope.search_type] = $scope.query;
+		}
 		search_factory.update('filters', $scope.filters);
 		// $log.debug(search_factory.filters, search_factory.filters_to_hash(search_factory.filters));
 		var hash = search_factory.filters_to_hash(search_factory.filters)
@@ -42,8 +76,14 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		}
 	}
 
+	$scope.filters_to_hash = function() {
+		return search_factory.filters_to_hash($scope.filters);
+	}
+
 	$scope.search = function(){
+		$scope.loading = true;
 		search_factory.search($scope.filters).then(function(data){
+			$scope.loading = false;
 			// search_factory.updateResult(data);
 			search_factory.update('result', data);
 			search_factory.update('facets', search_factory.construct_facets(data));
@@ -335,6 +375,10 @@ app.factory('search_factory', function($http, $log){
 			{value:100,label:'Show 100'}
 		],
 
+		available_search_type: [
+			'q', 'title', 'identifier', 'related_people', 'related_organisations', 'description'
+		],
+
 		sort : [
 			{value:'score desc',label:'Relevance'},
 			{value:'title asc',label:'Title A-Z'},
@@ -357,7 +401,21 @@ app.factory('search_factory', function($http, $log){
 		ingest: function(hash) {
 			this.filters = this.filters_from_hash(hash);
 			if (this.filters.q) this.query = this.filters.q;
+			// $log.debug(this.available_search_type);
+			var that = this;
+			angular.forEach(this.available_search_type, function(x){
+				if (that.filters.hasOwnProperty(x)) {
+					that.query = that.filters[x];
+					that.search_type = x;
+				}
+			});
 			return this.filters;
+		},
+
+		reset: function(){
+			this.filters = {q:''};
+			this.search_type = 'q';
+			this.query = '';
 		},
 
 		update: function(which, what) {

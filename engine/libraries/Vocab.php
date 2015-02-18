@@ -236,7 +236,7 @@ class Vocab {
 
         $CI->solr->init();
         if($filters){
-             $CI->solr->setFilters($filters);
+            $CI->solr->setFilters($filters);
         }
 
         $CI->solr->setOpt('fq', '+subject_vocab_uri:("'.$uri.'")');
@@ -261,7 +261,6 @@ class Vocab {
             }
         }
 
-    
         return $CI->solr->getNumFound();
      //    return $CI->solr->constructFieldString();
     }

@@ -16,23 +16,9 @@ class Group extends MX_Controller {
 		} else {
 			$groups = $this->groups->getAll();
 			$this->blade
-				->set('groups', $groups)
+				->set('contributors', $groups)
 				->render('group/group_index');
 		}
-	}
-
-	function test() {
-		$array = array(1,2,3,4,5);
-		echo $this->formatSolrArray($array, 'group');
-	}
-
-	function formatSolrArray($array, $type) {
-		$str = '';
-		foreach($array as &$a) {
-			$a = $type.':('.$a.')';
-		}
-		$str = implode($array, ' OR ');
-		return $str;
 	}
 
 	function view($slug) {

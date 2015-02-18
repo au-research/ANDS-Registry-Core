@@ -15,9 +15,8 @@ class Page extends MX_Controller {
 		header('Content-Type: text/html; charset=utf-8');
 		$this->load->library('vocab');
 		
-
+		//high level
 		$highlevel = $this->config->item('subjects');
-
 		foreach ($highlevel as &$item) {
 			$query = '';
 			foreach($item['codes'] as $code) {
@@ -26,9 +25,15 @@ class Page extends MX_Controller {
 			$item['query'] = $query;
 		}
 
+		//contributors
+		$this->load->model('group/groups', 'groups');
+		$contributors = $this->groups->getAll();
+
 		$this->record_hit('home');
 		$this->blade
+			->set('scripts', array('home'))
 			->set('highlevel', $highlevel)
+			->set('contributors', $contributors)
 			->render('home');
 	}
 

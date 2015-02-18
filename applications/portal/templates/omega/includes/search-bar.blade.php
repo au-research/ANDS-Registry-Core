@@ -22,12 +22,19 @@
                   <!-- <li><a href="" ng-click="search_type='subject'">Subject</a></li> -->
                 </ul>
             </span>
-            <input type="text" value="" name="q" class="form-control" placeholder="Search Research Data Australia" ng-model="query">
+            <input type="text" value="" name="q" class="form-control" placeholder="Search for data" ng-model="query">
             <span class="input-group-btn">
-                <button class="btn btn-primary" type="submit" value="Search">
-                    <i class="fa fa-search"></i> Search
-                </button>
+              <button class="btn btn-primary" ng-if="hasFilter()" ng-click="clearSearch()">
+                <i class='fa fa-remove'></i>
+              </button>
+              <button class="btn btn-primary" ng-if="isLoading()">
+                <i class='fa fa-refresh fa-spin'></i> Loading...
+              </button>
+              <button class="btn btn-primary" type="submit" value="Search">
+                  <i class="fa fa-search"></i> Search
+              </button>
             </span>
+
         </div>
         <div class="pull-right">
             <a href="" ng-click="advanced()">Advanced Search</a>

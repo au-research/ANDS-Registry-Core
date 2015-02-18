@@ -25,13 +25,26 @@ class Groups extends CI_Model {
 		foreach($result as $key=>$value) {
 			$groups[] = array(
 				'title' => $key,
-				'logo' 	=> false,
+				'logo' 	=> $this->fetchLogo($key),
 				'slug'	=> url_title($key, '-', true),
 				'counts' => $value
 			);
 		}
 
 		return $groups;
+	}
+
+	function fetchLogo($group) {
+		$slug = url_title($group, '-', true);
+		$path = 'applications/portal/group/assets/logos/'.$slug.'.jpg';
+		$path2 = 'applications/portal/group/assets/logos/'.$slug.'.png';
+		if (file_exists($path)) {
+			return asset_url('group/logos/'.$slug.'.jpg', 'full_base_path');
+		} elseif(file_exists($path2)) {
+			return asset_url('group/logos/'.$slug.'.png', 'full_base_path');
+		} else {
+			return false;
+		}
 	}
 
 	/**
