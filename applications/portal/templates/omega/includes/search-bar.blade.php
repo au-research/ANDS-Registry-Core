@@ -27,7 +27,7 @@
               <button class="btn btn-primary" ng-if="hasFilter()" ng-click="clearSearch()">
                 <i class='fa fa-remove'></i>
               </button>
-              <button class="btn btn-primary" ng-if="loading">
+              <button class="btn btn-primary" ng-if="isLoading()">
                 <i class='fa fa-refresh fa-spin'></i> Loading...
               </button>
               <button class="btn btn-primary" type="submit" value="Search">

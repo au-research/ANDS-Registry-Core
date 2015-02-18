@@ -47,6 +47,12 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		$scope.hashChange();
 	}
 
+	$scope.isLoading = function(){
+		if(location.href.indexOf('search')>-1 && $scope.loading) {
+			return true;
+		} else return false;
+	}
+
 	$scope.hashChange = function(){
 		// $log.debug($scope.query, search_factory.query);
 		// $scope.filters.q = $scope.query;
