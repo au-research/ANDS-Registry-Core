@@ -76,49 +76,57 @@
                    </header>
                    <div class="row " data-os-animation="" data-os-animation-delay="">
                        <div class="col-md-3 ">
-                           <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".0s" style="-webkit-animation: 0s;">
-                               <div class="box box-round box-medium box-simple">
-                                   <div class="box-dummy"></div>
-                                   <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
-                                    <i class="fa fa-home" style="color:white;"></i>
-                                   </div>
-                               </div>
-                               <p class="">Discover data in themed collections</p>
-                           </div>
+                        <a href="{{portal_url('themes')}}">
+                         <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".0s" style="-webkit-animation: 0s;">
+                             <div class="box box-round box-medium box-simple">
+                                 <div class="box-dummy"></div>
+                                 <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
+                                  <i class="fa fa-home" style="color:white;"></i>
+                                 </div>
+                             </div>
+                             <p class="">Discover data in themed collections</p>
+                         </div>
+                        </a>
                        </div>
                        <div class="col-md-3 ">
-                           <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".3s" style="-webkit-animation: 0.3s;">
-                               <div class="box box-round box-medium box-simple">
-                                   <div class="box-dummy"></div>
-                                   <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
-                                       <i class="fa fa-barcode" style="color:white;"></i>
-                                   </div>
-                               </div>
-                               <p class="">Access data-related services and tools</p>
-                           </div>
+                        <a href="{{portal_url('search')}}#!/class=service">
+                         <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".3s" style="-webkit-animation: 0.3s;">
+                             <div class="box box-round box-medium box-simple">
+                                 <div class="box-dummy"></div>
+                                 <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
+                                     <i class="fa fa-barcode" style="color:white;"></i>
+                                 </div>
+                             </div>
+                             <p class="">Access data-related services and tools</p>
+                         </div>
+                        </a>
                        </div>
                        <div class="col-md-3 ">
-                           <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".6s" style="-webkit-animation: 0.6s;">
-                               <div class="box box-round box-medium box-simple">
-                                   <div class="box-dummy"></div>
-                                   <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
-                                    <i class="fa fa-cc" style="color:white;"></i>
-                                   </div>
-                               </div>
-                               <p class="">Find open data that is reusable</p>
-                           </div>
+                        <a href="{{portal_url('search')}}#!/access_rights=open">
+                         <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".6s" style="-webkit-animation: 0.6s;">
+                             <div class="box box-round box-medium box-simple">
+                                 <div class="box-dummy"></div>
+                                 <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
+                                  <i class="fa fa-cc" style="color:white;"></i>
+                                 </div>
+                             </div>
+                             <p class="">Find open data that is reusable</p>
+                         </div>
+                        </a>
                        </div>
                        <div class="col-md-3 ">
-                           <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".9s" style="-webkit-animation: 0.9s;">
-                               <div class="box box-round box-medium box-simple">
-                                   <div class="box-dummy"></div>
-                                   <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
-                                    <i class="fa fa-graduation-cap" style="color:white;"></i>
-                                   </div>
-                               </div>
-                               <!-- <h3 class="normal bold bordered bordered-small "> Ultra flexible </h3> -->
-                               <p class="">Search for research grants and projects</p>
-                           </div>
+                        <a href="{{portal_url('grants')}}">
+                         <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".9s" style="-webkit-animation: 0.9s;">
+                             <div class="box box-round box-medium box-simple">
+                                 <div class="box-dummy"></div>
+                                 <div class="box-inner grid-overlay-0" style="background-color:#353b42;">
+                                  <i class="fa fa-graduation-cap" style="color:white;"></i>
+                                 </div>
+                             </div>
+                             <!-- <h3 class="normal bold bordered bordered-small "> Ultra flexible </h3> -->
+                             <p class="">Search for research grants and projects</p>
+                         </div>
+                        </a>
                        </div>
                    </div>
                </div>

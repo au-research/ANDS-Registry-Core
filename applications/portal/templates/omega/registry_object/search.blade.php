@@ -16,7 +16,7 @@
             </ul>
         </nav>
     </div>
-   
+    
     <div ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
         <div class="stoolbar">
             <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">

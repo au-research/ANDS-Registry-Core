@@ -20,6 +20,8 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		$scope.search();
 	});
 
+	
+
 	$scope.isArray = angular.isArray;
 
 	$scope.$on('toggleFilter', function(e, data){
