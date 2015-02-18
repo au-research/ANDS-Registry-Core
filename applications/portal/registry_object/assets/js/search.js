@@ -34,6 +34,19 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		}
 	});
 
+	$scope.hasFilter = function(){
+		var empty = {'q':''};
+		if(!angular.equals($scope.filters, empty)) {
+			return true;
+		} else return false;
+	}
+
+	$scope.clearSearch = function(){
+		search_factory.reset();
+		$scope.sync();
+		$scope.hashChange();
+	}
+
 	$scope.hashChange = function(){
 		// $log.debug($scope.query, search_factory.query);
 		// $scope.filters.q = $scope.query;
@@ -55,8 +68,14 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		}
 	}
 
+	$scope.filters_to_hash = function() {
+		return search_factory.filters_to_hash($scope.filters);
+	}
+
 	$scope.search = function(){
+		$scope.loading = true;
 		search_factory.search($scope.filters).then(function(data){
+			$scope.loading = false;
 			// search_factory.updateResult(data);
 			search_factory.update('result', data);
 			search_factory.update('facets', search_factory.construct_facets(data));
@@ -383,6 +402,12 @@ app.factory('search_factory', function($http, $log){
 				}
 			});
 			return this.filters;
+		},
+
+		reset: function(){
+			this.filters = {q:''};
+			this.search_type = 'q';
+			this.query = '';
 		},
 
 		update: function(which, what) {

@@ -22,7 +22,7 @@
             <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
         </div>
         <div class="element-no-top element-no-bottom scontent">
-            <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[getHash()]]">[[doc.title]]</a> </h2>
+            <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
             <p><small>[[doc.group]]</small></p>
             <p ng-repeat="(index, content) in getHighlight(doc.id)">
                 <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
@@ -55,7 +55,7 @@
         [[filters]]
     </div> -->
     <div class="panel-body swatch-white">
-        <div ng-repeat="(name, value) in filters">
+        <div ng-repeat="(name, value) in filters" ng-if="value!=''">
             <h4>[[name | filter_name]]</h4>
             <ul class="listy" ng-show="isArray(value) && name!='anzsrc-for'">
                 <li ng-repeat="v in value track by $index"> <a href="" ng-click="toggleFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
@@ -66,7 +66,7 @@
             <resolve-subjects ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></resolve-subjects>
         </div>
         <div class="panel-body swatch-white">
-            <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')">Save Search</a>
+            <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')"><i class="fa fa-save"></i> Save Search</a>
             <a href="" class="btn" ng-click="clearSearch()">Clear Search</a>
         </div>
     </div>
