@@ -21,7 +21,7 @@
     };
     </script>
     <section class="section swatch-black section-text-shadow section-inner-shadow" style="overflow:visible;z-index:9">
-        <div class="background-media skrollable skrollable-between" style="background-image: url(http://devl.ands.org.au/minh/assets/templates/omega/images/uploads/home-classic-1.jpg); background-attachment: fixed; background-size: cover; background-position: 50% 60%; background-repeat: no-repeat;" data-start="background-position:" data-70-top-bottom="background-position:">
+        <div class="background-media" style="background-image: url(http://devl.ands.org.au/minh/assets/templates/omega/images/uploads/home-classic-1.jpg); background-size: cover; background-position: 50% 60%; background-repeat: no-repeat;" >
        </div>
        <div class="background-overlay grid-overlay-30 " style="background-color: rgba(0,0,0,0.3);"></div>
         <div class="container">
@@ -49,6 +49,21 @@
            </div>
            <div class="row ">
             @include('includes/subjects-list')
+           </div>
+       </div>
+    </section>
+    <section class="section swatch-white">
+       <div class="container">
+           <div class="row">
+               <div class="col-md-12">
+                   <header class="text-center element-normal-top element-medium-bottom not-condensed os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
+                       <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;"> Who Publishes to Research Data Australia </h1>
+                       <h3><a href="{{portal_url('contributors')}}">View all</a></h3>
+                   </header>
+               </div>
+           </div>
+           <div class="row ">
+            @include('includes/contributors-list')
            </div>
        </div>
     </section>

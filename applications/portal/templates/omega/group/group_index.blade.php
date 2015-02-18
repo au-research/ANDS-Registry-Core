@@ -1,4 +1,4 @@
-@extends('layouts/single')
+@extends('layouts/single-with-search')
 @section('content')
 <article>
 	<section class="section swatch-white">
@@ -6,17 +6,12 @@
            <div class="row">
                <div class="col-md-12">
                    <header class="text-center element-normal-top element-medium-bottom not-condensed os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
-                       <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">Contributors</h1>
+                       <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">Who Publishes to Research Data Australia</h1>
                    </header>
                </div>
            </div>
-           <div class="row ">
-            <ul>
-              <?php //var_dump($groups);?>
-              @foreach($groups as $group)
-                <li><a href="{{base_url('contributors/'.$group['slug'])}}">{{$group['title']}}</a></li>
-              @endforeach
-            </ul>
+           <div class="row">
+            @include('includes/contributors-list-thumbnail');
            </div>
        </div>
     </section>
