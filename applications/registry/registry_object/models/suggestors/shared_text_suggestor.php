@@ -26,13 +26,13 @@ class Shared_text_suggestor extends _GenericSuggestor {
         $ci->solr
             ->init()
             ->setOpt('q', $str)
-            ->setOpt('rows', '10')
-            ->setOpt('fl', 'id,key,slug,title,score')
+            ->setOpt('rows', '1')
+            ->setOpt('fl', 'id,key,slug,title,score,class')
             ->setOpt('defType', 'edismax')
             ->setOpt('fq', 'class:collection')
             ->setOpt('mlt', 'true')
             ->setOpt('mlt.fl', 'description,display_title')
-            ->setOpt('mlt.count', '50');
+            ->setOpt('mlt.count', '100');
         
         $suggestions = array();
 
@@ -41,8 +41,10 @@ class Shared_text_suggestor extends _GenericSuggestor {
         if($result['moreLikeThis'][$this->ro->id]['numFound'] > 0) {
             $maxScore = floatval($result['moreLikeThis'][$this->ro->id]['maxScore']);
             foreach($result['moreLikeThis'][$this->ro->id]['docs'] as $doc) {
+                if($doc['class'] == 'collection'){
                     $doc['score'] = $doc['score'] / $maxScore;
                     $suggestions[] = $doc;
+                }
             }
         }
         
