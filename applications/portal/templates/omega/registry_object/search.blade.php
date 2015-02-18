@@ -93,7 +93,11 @@
         <h4>Subjects</h4>
         <ul class="listy">
           <li ng-repeat="item in vocab_tree | orderBy:'pos' | limitTo:5">
-            <input type="checkbox" ng-checked="isVocabSelected(item)" ui-indeterminate="isVocabParentSelected(item)" ng-click="toggleFilter('anzsrc-for', item.notation, true)"><a href="" ng-click="toggleFilter('anzsrc-for', item.notation, true)">[[item.prefLabel]]</a>
+            <input type="checkbox" ng-checked="isVocabSelected(item)" ui-indeterminate="isVocabParentSelected(item)" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
+            <a href="" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
+                [[item.prefLabel]]
+                <small>[[item.collectionNum]]</small>
+            </a>
           </li>
             <li><a href="" ng-click="advanced('subject')">View More</a></li>
         </ul>

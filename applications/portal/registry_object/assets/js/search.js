@@ -93,6 +93,9 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 			// $log.debug($scope.allfacets);
 		});
 
+		//init vocabulary
+		$scope.vocabInit();
+
 		// $log.debug('sync result', $scope.result);
 	}
 
@@ -259,16 +262,23 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 	}
 
 	//VOCAB TREE
-	vocab_factory.get().then(function(data){
-		$scope.vocab_tree = data;
-	});
-	vocab_factory.getSubjects().then(function(data){
-		// $log.debug(data);
-		vocab_factory.subjects = data;
-	});
+	//
+	//
+	
+	$scope.vocabInit = function() {
+		vocab_factory.get(false, $scope.filters).then(function(data){
+			$scope.vocab_tree = data;
+		});
+		//getting vocabulary in configuration, mainly for matching isSelected
+		vocab_factory.getSubjects().then(function(data){
+			// $log.debug(data);
+			vocab_factory.subjects = data;
+		});
+	}
+
 	$scope.getSubTree = function(item) {
 		if(!item['subtree']) {
-			vocab_factory.get(item.uri).then(function(data){
+			vocab_factory.get(item.uri, $scope.filters).then(function(data){
 				item['subtree'] = data;
 			});
 		}
@@ -291,14 +301,14 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 				}
 			});
 		} else if($scope.filters['anzsrc-for']) {
-			if ($scope.filters['anzsrc-for']==item.notation){
-				found = true;
-			} else if (angular.isArray($scope.filters['anzsrc-for'])) {
+			if (angular.isArray($scope.filters['anzsrc-for'])) {
 				angular.forEach($scope.filters['anzsrc-for'], function(code){
 					if(code.indexOf(item.notation) == 0 && !found && code!=item.notation) {
 						found =  true;
 					}
 				});
+			} else if ($scope.filters['anzsrc-for'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-for']!=item.notation){
+				found = true;
 			}
 		}
 		if(found) {
@@ -451,12 +461,12 @@ app.factory('vocab_factory', function($http, $log){
 	return {
 		tree : {},
 		subjects: {},
-		get: function (term) {
+		get: function (term, filters) {
 			var url = '';
 			if (term) {
 				url = '?uri='+term;
 			}
-			return $http.get(base_url+'registry_object/vocab/'+url).then(function(response){
+			return $http.post(base_url+'registry_object/vocab/'+url, {'filters':filters}).then(function(response){
 				return response.data
 			});
 		},
@@ -501,7 +511,7 @@ app.factory('vocab_factory', function($http, $log){
 				return response.data
 			});
 		},
-		resolveSubjects2: function(subjects){
+		resolveSubjects: function(subjects){
 			return $http.post(base_url+'registry_object/resolveSubjects', {data:subjects}).then(function(response){
 				return response.data
 			});
@@ -522,7 +532,7 @@ app.directive('resolveSubjects', function($http, $log, vocab_factory){
 			scope.$watch('subjects', function(newv){
 				if(newv) {
 					scope.result = [];
-					vocab_factory.resolveSubjects2(scope.subjects).then(function(data){
+					vocab_factory.resolveSubjects(scope.subjects).then(function(data){
 						// $log.debug(data);
 						angular.forEach(data, function(label, notation){
 							scope.result.push({notation:notation,label:label});

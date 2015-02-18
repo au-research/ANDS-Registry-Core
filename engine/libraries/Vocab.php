@@ -234,13 +234,13 @@ class Vocab {
         $CI =& get_instance();
         $CI->load->library('solr');
 
-        // var_dump($filters);
         $CI->solr->init();
         if($filters){
              $CI->solr->setFilters($filters);
         }
 
         $CI->solr->setOpt('fq', '+subject_vocab_uri:("'.$uri.'")');
+        $CI->solr->setOpt('fq', '+class:(collection)');
 
         // var_dumP($CI->solr->constructFieldString());
         $CI->solr->executeSearch();

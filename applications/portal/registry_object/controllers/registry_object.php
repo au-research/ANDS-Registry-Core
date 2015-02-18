@@ -118,9 +118,10 @@ class Registry_object extends MX_Controller {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
+		$filters = $data['filters'];
 		$this->load->library('vocab');
 		if (!$uri) { //get top level
-			$toplevel = $this->vocab->getTopLevel('anzsrc-for', array());
+			$toplevel = $this->vocab->getTopLevel('anzsrc-for', $filters);
 			// foreach ($toplevel['topConcepts'] as &$l) {
 			// 	$r = array();
 			// 	$result = json_decode($this->vocab->getConceptDetail('anzsrc-for', $l['uri']), true);
@@ -151,7 +152,7 @@ class Registry_object extends MX_Controller {
 						'notation' => $concept['result']['primaryTopic']['notation'],
 						'prefLabel' => $concept['result']['primaryTopic']['prefLabel']['_value'],
 						'uri' => $curi,
-						'collectionNum' => $this->vocab->getNumCollections($curi, array())
+						'collectionNum' => $this->vocab->getNumCollections($curi, $filters)
 					);
 					array_push($r, $concept);
 				}
