@@ -536,6 +536,26 @@ class Solr {
 						$this->setOpt('fq', '+subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$value.'")');
 					}
 					break;
+				case 'title':
+					if(!$filters['q']) $this->setOpt('q', $value);
+					$this->setOpt('fq', '+title_search:('.$value.')');
+					break;
+				case 'description':
+					if(!$filters['q']) $this->setOpt('q', $value);
+					$this->setOpt('fq', '+description_value:('.$value.')');
+					break;
+				case 'identifier':
+					if(!$filters['q']) $this->setOpt('q', $value);
+					$this->setOpt('fq', '+identifier_value_search:('.$value.')');
+					break;
+				case 'related_people':
+					if(!$filters['q']) $this->setOpt('q', $value);
+					$this->setOpt('fq', '+related_party_one_search:('.$value.')');
+					break;
+				case 'related_organisations':
+					if(!$filters['q']) $this->setOpt('q', $value);
+					$this->setOpt('fq', '+related_party_multi_search:('.$value.')');
+					break;
 			}
 		}
 		return $this;
