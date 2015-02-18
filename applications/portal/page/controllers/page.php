@@ -18,6 +18,14 @@ class Page extends MX_Controller {
 
 		$highlevel = $this->config->item('subjects');
 
+		foreach ($highlevel as &$item) {
+			$query = '';
+			foreach($item['codes'] as $code) {
+				$query.='/anzsrc-for='.$code;
+			}
+			$item['query'] = $query;
+		}
+
 		$this->record_hit('home');
 		$this->blade
 			->set('highlevel', $highlevel)
@@ -38,7 +46,7 @@ class Page extends MX_Controller {
 
 	function test3(){
 		$this->load->library('vocab');
-		$result = $this->vocab->resolveSubject('04', 'anzsrc-for');
+		$result = $this->vocab->resolveSubject('0711', 'anzsrc-for');
 		echo json_encode($result);
 	}
 

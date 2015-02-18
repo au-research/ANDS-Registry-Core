@@ -14,6 +14,7 @@ angular.module('portal-filters', [])
 				case 'license_class': return 'Licenses'; break;
 				case 'type': return 'Type'; break;
 				case 'subject_vocab_uri': return 'Subject Vocabulary URI'; break;
+				case 'anzsrc-for': return 'Subjects'; break;
 				default: return text;
 			}
 		}
@@ -60,4 +61,18 @@ angular.module('portal-filters', [])
 			return $sce.trustAsHtml(decoded);
 		}
 	}])
+	.filter('orderObjectBy', function() {
+	  return function(items, field, reverse) {
+	    var filtered = [];
+	    angular.forEach(items, function(item) {
+	      filtered.push(item);
+	    });
+	    filtered.sort(function (a, b) {
+	      return (a[field] > b[field] ? 1 : -1);
+	    });
+	    if(reverse) filtered.reverse();
+	    return filtered;
+	  };
+});
+
 ;

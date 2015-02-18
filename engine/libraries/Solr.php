@@ -526,6 +526,16 @@ class Solr {
 						$this->setOpt('fq', $this->formatSubjectsArrayFilters($value));
 					}
 					break;
+				case 'anzsrc-for': 
+					if(is_array($value)) {
+						$fq_str = '(';
+						foreach($value as $v) $fq_str .= ' subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$v.'")';
+						$fq_str .= ')';
+						$this->setOpt('fq', $fq_str);
+					} else {
+						$this->setOpt('fq', '+subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$value.'")');
+					}
+					break;
 			}
 		}
 		return $this;

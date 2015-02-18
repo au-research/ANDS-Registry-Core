@@ -174,6 +174,31 @@ class Registry_object extends MX_Controller {
 		echo json_encode($result);
 	}
 
+	function resolveSubjects() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = json_decode(file_get_contents("php://input"), true);
+		$subjects = $data['data'];
+
+		$this->load->library('vocab');
+
+		$result = array();
+
+		if (is_array($subjects)) {
+			foreach ($subjects as $subject) {
+				$r = json_decode($this->vocab->getConceptDetail('anzsrc-for', 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$subject), true);
+				$result[$subject] = $r['result']['primaryTopic']['prefLabel']['_value'];
+			}
+		} else {
+			$r = json_decode($this->vocab->getConceptDetail('anzsrc-for', 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$subjects), true);
+			$result[$subjects] = $r['result']['primaryTopic']['prefLabel']['_value'];
+		}
+
+		
+		echo json_encode($result);
+	}
+
 	function addTag() {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');

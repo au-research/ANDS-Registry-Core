@@ -20,6 +20,12 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		$scope.search();
 	});
 
+	$scope.isArray = angular.isArray;
+
+	$scope.$on('toggleFilter', function(e, data){
+		$scope.toggleFilter(data.type, data.value, data.execute);
+	});
+
 	$scope.hashChange = function(){
 		// $log.debug($scope.query, search_factory.query);
 		$scope.filters.q = $scope.query;
@@ -87,7 +93,7 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 			// $log.debug($scope.allfacets);
 		});
 
-		// $log.debug($scope.result);
+		// $log.debug('sync result', $scope.result);
 	}
 
 	/**
@@ -268,16 +274,36 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		}
 	}
 	$scope.isVocabSelected = function(item) {
-		return vocab_factory.isSelected(item, $scope.filters);
+		var found = vocab_factory.isSelected(item, $scope.filters);
+		if (found) {
+			item.pos = 1;
+		}
+		return found;
 	}
 	$scope.isVocabParentSelected = function(item) {
 		var found = false;
-		var subjects = vocab_factory.subjects;
-		angular.forEach(subjects[$scope.filters['subject']], function(uri){
-			if(uri.indexOf(item.uri) != -1 && !found && uri!=item.uri) {
+		
+		if($scope.filters['subject']){
+			var subjects = vocab_factory.subjects;
+			angular.forEach(subjects[$scope.filters['subject']], function(uri){
+				if(uri.indexOf(item.uri) != -1 && !found && uri!=item.uri) {
+					found = true;
+				}
+			});
+		} else if($scope.filters['anzsrc-for']) {
+			if ($scope.filters['anzsrc-for']==item.notation){
 				found = true;
+			} else if (angular.isArray($scope.filters['anzsrc-for'])) {
+				angular.forEach($scope.filters['anzsrc-for'], function(code){
+					if(code.indexOf(item.notation) == 0 && !found && code!=item.notation) {
+						found =  true;
+					}
+				});
 			}
-		});
+		}
+		if(found) {
+			item.pos = 1;
+		}
 		return found;
 	}
 	// $scope.advanced('subject');
@@ -342,15 +368,15 @@ app.factory('search_factory', function($http, $log){
 		construct_facets: function(result) {
 			var facets = [];
 
-			//subjects
-			facets['subject'] = [];
-			angular.forEach(result.facet_counts.facet_queries, function(item, index) {
-				var fa = {
-					name: index,
-					value: parseInt(item)
-				}
-				facets['subject'].push(fa)
-			});
+			//subjects DEPRECATED in favor of ANZSRC codes directly from the home page
+			// facets['subject'] = [];
+			// angular.forEach(result.facet_counts.facet_queries, function(item, index) {
+			// 	var fa = {
+			// 		name: index,
+			// 		value: parseInt(item)
+			// 	}
+			// 	facets['subject'].push(fa)
+			// });
 
 			//other facet fields
 			angular.forEach(result.facet_counts.facet_fields, function(item, index) {
@@ -364,7 +390,7 @@ app.factory('search_factory', function($http, $log){
 				}
 			});
 
-			var order = ['subject', 'group', 'access_rights', 'license_class'];
+			var order = ['group', 'access_rights', 'license_class'];
 			var orderedfacets = [];
 			angular.forEach(order, function(item){
 				// orderedfacets[item] = facets[item]
@@ -454,6 +480,18 @@ app.factory('vocab_factory', function($http, $log){
 					}
 				});
 				return found;
+			} else if(filters['anzsrc-for']){
+				var found = false;
+				if(filters['anzsrc-for']==item.notation){
+					found = true;
+				} else if (angular.isArray(filters['anzsrc-for'])) {
+					angular.forEach(filters['anzsrc-for'], function(code){
+						if(code==item.notation && !found) {
+							found =  true;
+						}
+					});
+				}
+				return found;
 			} else {
 				return false;
 			}
@@ -462,6 +500,41 @@ app.factory('vocab_factory', function($http, $log){
 			return $http.get(base_url+'registry_object/getSubjects').then(function(response){
 				return response.data
 			});
+		},
+		resolveSubjects2: function(subjects){
+			return $http.post(base_url+'registry_object/resolveSubjects', {data:subjects}).then(function(response){
+				return response.data
+			});
+		}
+	}
+});
+
+app.directive('resolveSubjects', function($http, $log, vocab_factory){
+	return {
+		template: '<ul class="listy"><li ng-repeat="item in result"><a href="" ng-click="toggleFilter(\'anzsrc-for\', item.notation, true)">{{item.label}} <small><i class="fa fa-remove"></i></small></a></li></ul>',
+		scope: {
+			subjects: '=subjects',
+			vocab: '='
+		},
+		transclude: true,
+		link: function(scope) {
+			scope.result = [];
+			scope.$watch('subjects', function(newv){
+				if(newv) {
+					scope.result = [];
+					vocab_factory.resolveSubjects2(scope.subjects).then(function(data){
+						// $log.debug(data);
+						angular.forEach(data, function(label, notation){
+							scope.result.push({notation:notation,label:label});
+						});
+						// $log.debug(scope.result);
+					});
+				}
+			});
+
+			scope.toggleFilter = function(type, value, execute) {
+				scope.$emit('toggleFilter', {type:type,value:value,execute:execute});
+			}
 		}
 	}
 });

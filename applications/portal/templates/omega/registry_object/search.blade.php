@@ -55,12 +55,16 @@
         [[filters]]
     </div> -->
     <div class="panel-body swatch-white">
-        <table class="table">
-
-            <tr ng-repeat="(name, value) in filters">
-                <td style="text-align:right;font-weight:bold;">[[name | filter_name]]</td><td ng-bind-html="value | filter_value">[[value | filter_value | trustAsHtml]]</td><td><a href="" ng-click="toggleFilter(name, value, true)"><i class="fa fa-remove"></i></a></td>
-            </tr>
-        </table>
+        <div ng-repeat="(name, value) in filters">
+            <h4>[[name | filter_name]]</h4>
+            <ul class="listy" ng-show="isArray(value) && name!='anzsrc-for'">
+                <li ng-repeat="v in value track by $index"> <a href="" ng-click="toggleFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
+            </ul>
+            <ul class="listy" ng-show="isArray(value)===false && name!='anzsrc-for'">
+                <li> <a href="" ng-click="toggleFilter(name, value, true)">[[value]]<small><i class="fa fa-remove"></i></small></a> </li>
+            </ul>
+            <resolve-subjects ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></resolve-subjects>
+        </div>
         <div class="panel-body swatch-white">
             <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')">Save Search</a>
             <a href="" class="btn" ng-click="clearSearch()">Clear Search</a>
@@ -84,10 +88,22 @@
         </form>
     </div>
 
+    <!-- Subject Facet -->
+    <div class="panel-body swatch-white">
+        <h4>Subjects</h4>
+        <ul class="listy">
+          <li ng-repeat="item in vocab_tree | orderBy:'pos' | limitTo:5">
+            <input type="checkbox" ng-checked="isVocabSelected(item)" ui-indeterminate="isVocabParentSelected(item)" ng-click="toggleFilter('anzsrc-for', item.notation, true)"><a href="" ng-click="toggleFilter('anzsrc-for', item.notation, true)">[[item.prefLabel]]</a>
+          </li>
+            <li><a href="" ng-click="advanced('subject')">View More</a></li>
+        </ul>
+    </div>
+    
+
     <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true">
         <h4>[[facet.name | filter_name]]</h4>
         <ul class="listy">
-            <li ng-repeat="item in facet.value | limitTo:8 | orderBy:'item.value':true">
+            <li ng-repeat="item in facet.value | limitTo:5 | orderBy:'item.value'">
                 <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
                 <a href="" ng-click="toggleFilter(facet.name, item.name, true)">[[item.name | truncate:30]] <small>[[item.value]]</small></a>    
             </li>
