@@ -3,16 +3,14 @@
         @foreach($highlevel as $item)
         <div class="masonry-item portfolio-item isotope-item" data-menu-order="1" data-title="{{$item['display']}}">
             <div class="figure portfolio-os-animation element-no-top element-no-bottom text-center figcaption-middle normalwidth image-filter-sepia fade-in image-filter-onhover animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s">
-                
-                
                 <div class="element-no-top element-no-bottom text-center figcaption-middle normalwidth image-filter-sepia fade-in image-filter-onhover" data-os-animation="fadeIn">
-                   <a href="{{base_url('search')}}#!/subject_vocab_uri={{rawurlencode($item['uri'])}}" class="figure-image magnific-vimeo" data-links="" target="_self">
-                       <img src="{{$item['img_src']}}" alt="" class="normalwidth" style="height:190px">
+                   <a href="{{base_url('search').'#!/subject='.url_title($item['display'], '-', true)}}" class="figure-image magnific-vimeo" data-links="" target="_self">
+                       <img src="{{asset_url('images/subjects/'.$item['img'], 'core')}}" alt="" class="normalwidth" style="height:190px">
                     </a>
                 </div>
                 <div class="figure-caption text-center">
                     <h3 class="figure-caption-title bordered bordered-small bordered-link">
-                        <a href="{{base_url('search')}}#!/subject_vocab_uri={{rawurlencode($item['uri'])}}" target="_self">{{$item['display']}}</a>
+                        <a href="{{base_url('search').'#!/subject='.url_title($item['display'], '-', true)}}" target="_self">{{$item['display']}}</a>
                     </h3>
                 </div>
             </div>

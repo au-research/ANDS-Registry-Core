@@ -11,42 +11,43 @@
           <div class="row">
             <div class="col-md-2">
               <ul class="nav nav-pills nav-stacked">
-                <li ng-repeat="field in advanced_search.fields" ng-class="{'active':field.active==true}">
-                  <a href="" ng-click="selectAdvancedField(field)"><span class="badge" ng-show="sizeofField(field.name) > 0">[[sizeofField(field.name)]]</span> [[field.display]]</a>
+                <li ng-repeat="field in advanced_fields" ng-class="{'active':field.active==true}">
+                  <a href="" ng-click="selectAdvancedField(field.name)">
+                    <span class="badge" ng-show="sizeofField(field.name) > 0">[[sizeofField(field.name)]]</span>
+                    [[field.display]]
+                  </a>
                 </li>
               </ul>
             </div>
             <div class="col-md-10">
-
               <div ng-show="isAdvancedSearchActive('terms')">
                 Terms
               </div>
 
-              <div ng-show="isAdvancedSearchActive('group')">
-                <ul class="list-unstyled">
-                  <li ng-repeat="type in allfacets.group">
-                    <input type="checkbox" ng-checked="isFacet('group', type.name)" ng-click="toggleFilter('group', type.name)">
-                    <a href="" ng-click="toggleFilter('group', type.name)">[[type.name]] ([[type.value]])</a></li>
-                  </li>
-                </ul>
-              </div>
-              
-              <div ng-show="isAdvancedSearchActive('license_class')">
-                <ul class="list-unstyled">
-                  <li ng-repeat="type in allfacets.license_class">
-                    <input type="checkbox" ng-checked="isFacet('license_class', type.name)" ng-click="toggleFilter('license_class', type.name)">
-                    <a href="" ng-click="toggleFilter('license_class', type.name)">[[type.name]] ([[type.value]])</a></li>
-                  </li>
-                </ul>
-              </div>
-
-              <div ng-show="isAdvancedSearchActive('type')">
-                <ul class="list-unstyled">
-                  <li ng-repeat="type in allfacets.type">
-                    <input type="checkbox" ng-checked="isFacet('type', type.name)" ng-click="toggleFilter('type', type.name)">
-                    <a href="" ng-click="toggleFilter('type', type.name)">[[type.name]] ([[type.value]])</a></li>
-                  </li>
-                </ul>
+              <div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in allfacets">
+                  <ul class="list-unstyled" ng-if="facet.name!='subject'">
+                      <li ng-repeat="item in facet.value">
+                          <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, false)">
+                          <a href="">[[item.name]] <small>[[item.value]]</small></a>    
+                      </li>
+                  </ul>
+                  <div ng-if="facet.name=='subject'">
+                    <ul>
+                      <li ng-repeat="item in vocab_tree">
+                        <input type="checkbox" ng-checked="isVocabSelected(item)" ui-indeterminate="isVocabParentSelected(item)"><a href="" ng-click="getSubTree(item)">[[item.prefLabel]]</a>
+                        <ul ng-if="item.subtree">
+                          <li ng-repeat="item2 in item.subtree">
+                            <input type="checkbox" ng-checked="isVocabSelected(item2)" ui-indeterminate="isVocabParentSelected(item2)"><a href="" ng-click="getSubTree(item2)">[[item2.prefLabel]]</a>
+                            <ul ng-if="item2.subtree">
+                              <li ng-repeat="item3 in item2.subtree">
+                                <input type="checkbox" ng-checked="isVocabSelected(item3)" ui-indeterminate="isVocabParentSelected(item3)" ><a href="" ng-click="getSubTree(item3)">[[item3.prefLabel]]</a>
+                              </li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
               </div>
 
               <div ng-if="isAdvancedSearchActive('spatial')">

@@ -15,9 +15,8 @@
         </div>
         <nav class="collapse navbar-collapse main-navbar" role="navigation">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{portal_url('explore')}}">Explore</a></li>
+                <li><a href="{{portal_url('explore')}}">Explore <i class="fa fa-caret-down"></i></a></li>
                 <li><a href="{{portal_url('page/about')}}">About</a></li>
-                <li><a href="{{portal_url('page/help')}}">Help</a></li>
                 <li><a href="{{portal_url('profile')}}">MyRDA</a></li>
             </ul>
         </nav>

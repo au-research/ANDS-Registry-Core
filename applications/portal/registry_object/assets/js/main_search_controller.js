@@ -205,8 +205,6 @@ function mainSearchController($scope, search_factory, profile_factory, $sce, uiG
 		}
 	}
 
-	
-
 	$scope.sizeofField = function(type) {
 		if($scope.filters[type]) {
 			if(typeof $scope.filters[type]!='object') {
