@@ -18,6 +18,14 @@
         }
     }
 
+    $hasRelatedWebsite = false;
+    foreach($ro->relatedInfo as $relatedInfo) {
+        if ($relatedInfo['type']=='website'){
+            $hasRelatedWebsite = true;
+            break; // stop looking once found!!!
+        }
+    }
+
     $hasDerivedCollection = false;
     if ($ro->relationships && isset($ro->relationships['collection'])) {
         foreach ($ro->relationships['collection'] as $col) {
@@ -122,7 +130,7 @@
                     @endif
 
 
-                    @if($ro->relatedInfo)
+                    @if($hasRelatedWebsite)
                     <h4>Related Websites</h4>
                     @foreach($ro->relatedInfo as $relatedInfo)
                         @if($relatedInfo['type']=='website')
