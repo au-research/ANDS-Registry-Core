@@ -42,7 +42,7 @@ class Mydois extends MX_Controller {
 		acl_enforce('DOI_USER');
 
 		$data['js_lib'] = array('core');
-		$data['title'] = 'My DOIs';
+		$data['title'] = 'My DOIs List';
 		$data['associated_app_ids'] = array();
 
 		if($this->user->loggedIn())
@@ -139,9 +139,9 @@ class Mydois extends MX_Controller {
 	{
 		acl_enforce('DOI_USER');
 
-		$data['js_lib'] = array('core','prettyprint');
+		$data['js_lib'] = array('core');
 		$data['scripts'] = array('mydois','datacite_form');
-		$data['title'] = 'My DOIs';
+		$data['title'] = 'DOI Query Tool';
 		
 		// Validate the appId
 		$appId = $this->input->get_post('app_id');
@@ -206,7 +206,6 @@ class Mydois extends MX_Controller {
         }
         $data['client_id'] = $client_obj->client_id;
         $data['doi_id'] = $client_obj->datacite_prefix.$doi_client_id."/".uniqid();
-        $_SESSION['doi'] = $data['doi_id'];
         $data['app_id'] = $appId;
 		
 		$data['client'] = $client_obj;
@@ -319,15 +318,41 @@ class Mydois extends MX_Controller {
 		
 	}
 
+    /*function manualMintForm(){
+
+        acl_enforce('DOI_USER');
+        $doi_db = $this->load->database('dois', TRUE);
+        $appId = $this->input->get_post('app_id');
+        if (!$appId) throw new Exception ('Invalid App ID');
+
+        $query = $doi_db->where('app_id',$appId)->select('*')->get('doi_client');
+        if (!$client_obj = $query->result()) throw new Exception ('Invalid App ID');
+        $client_obj = array_pop($client_obj);
+        $data['client_id'] = $client_obj->client_id;
+        if($client_obj->client_id<10){
+            $client_obj->client_id = "0".$client_obj->client_id;
+        }
+        $data['doi_id'] = $client_obj->datacite_prefix.$client_obj->client_id."/".uniqid();
+        $data['app_id'] = $appId;
+        $this->load->view('mint_doi',$data);
+    } */
 
     function uploadFile(){
-        if ( isset($_FILES['fileupload']) ) {
-            $filename = time().basename($_FILES['fileupload']['name']);
+        if ( isset($_FILES['file']) ) {
+            $filename = time().basename($_FILES['file']['name']);
             $error = true;
+
             $path = '/tmp/'.$filename;
-            $error = move_uploaded_file($_FILES['fileupload']['tmp_name'], $path);
-            echo '<p id="xml_p">'.nl2br(htmlentities(file_get_contents($path)))."</p>";
+            $error = move_uploaded_file($_FILES['file']['tmp_name'], $path);
+
+            $rsp = array(
+                'error' => $error, // Used in JS
+                'filename' => $filename,
+                'filepath' => '/tmp/' . $filename, // Web accessible
+                'xml' =>file_get_contents($path),
+            );
             unlink($path);
+            echo json_encode($rsp);
             exit;
         }else{
             echo json_encode("File not uploaded");

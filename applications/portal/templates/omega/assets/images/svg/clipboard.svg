@@ -1,0 +1,14 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+
+        <circle display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" cx="50.932" cy="33.602" r="0.156"/>
+    <path display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" d="M54.056,33.914v3.435h-6.248
+        v-3.435c0-1.725,1.398-3.123,3.124-3.123C52.657,30.791,54.056,32.188,54.056,33.914z"/>
+    <polyline display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" points="42.342,39.536
+        36.877,39.536 36.877,69.209 64.987,69.209 64.987,39.536 59.521,39.536   "/>
+    <polyline display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" points="42.342,42.504
+        39.843,42.504 39.843,66.242 52.337,66.242 62.02,66.242 62.02,42.504 59.521,42.504   "/>
+
+        <rect x="42.342" y="37.349" display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" width="17.179" height="6.873"/>
+</g>
+</svg>

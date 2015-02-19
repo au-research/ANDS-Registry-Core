@@ -147,11 +147,10 @@ class Transforms_Extension extends ExtensionBase
 
 
             }
-            $eAuthorList = $sxml->xpath('//AuthorList')[0];
-
+            $eAuthorList = $sxml->xpath('//AuthorList');
             if(sizeof($sxml->xpath('//AuthorList/Author')) == 0){
-                $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector'];
-                $classArray = ['party'];
+                $relationshipTypeArray = array('hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
+                $classArray = array('party');
                 $authorList = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
 
                 $seq = 1;
@@ -272,7 +271,7 @@ class Transforms_Extension extends ExtensionBase
                         $grant_sxml = $grant_object->getSimpleXML(NULL, true);
                         // Handle the researcher IDs (using the normalisation_helper.php)
                         $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
-                        $related_party = $grant_object->getRelatedObjectsByClassAndRelationshipType(['party'] ,['isFunderOf','isFundedBy']);
+                        $related_party = $grant_object->getRelatedObjectsByClassAndRelationshipType(array('party') ,array('isFunderOf','isFundedBy'));
                         if (is_array($grant_id))
                         {
                             $grant->GrantNumber = implode("\n", array_map('normaliseIdentifier', $grant_id));
@@ -408,8 +407,8 @@ class Transforms_Extension extends ExtensionBase
             //we want to post process the authors and funding name
             if(str_replace("%%%AU  - Anonymous","",$xml_output)!=$xml_output)
             {
-                $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector'];
-                $classArray = ['party'];
+                $relationshipTypeArray = array('hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
+                $classArray = array('party');
                 $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
                 if(count($authors)>0)
                 {
@@ -456,7 +455,7 @@ class Transforms_Extension extends ExtensionBase
                    $grant_sxml = $grant_object->getSimpleXML(NULL, true);
                    // Handle the researcher IDs (using the normalisation_helper.php)
                    $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
-                   $related_party = $grant_object->getRelatedObjectsByClassAndRelationshipType(['party'] ,['isFunderOf','isFundedBy']);
+                   $related_party = $grant_object->getRelatedObjectsByClassAndRelationshipType(array('party') ,array('isFunderOf','isFundedBy'));
                    if (is_array($grant_id))
                    {
                        if (is_array($related_party) && isset($related_party[0]))

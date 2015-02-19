@@ -32,9 +32,9 @@ class Solr {
 	function init(){
 		$this->solr_url = get_config_item('solr_url');
 		$this->options = array('q'=>'*:*','start'=>'0','indent'=>'on', 'wt'=>'json', 'fl'=>'*', 'rows'=>'10');
-		$this->multi_valued_fields = array('facet.field', 'fq');
+		$this->multi_valued_fields = array('facet.field', 'fq', 'facet.query');
 		$this->custom_query = false;
-		return true;
+		return $this;
 	}
 
 	/**
@@ -56,6 +56,7 @@ class Solr {
 		}else{
 		   $this->options[$field] = $value;
 		}
+		return $this;
 	}
 
    /**
@@ -67,6 +68,7 @@ class Solr {
 		if(isset($this->options[$field])){          
 		   unset($this->options[$field]);
 		}
+		return $this;
 	}
 
 	/**
@@ -86,6 +88,7 @@ class Solr {
 	 */
 	function setCustomQuery($query){
 		$this->custom_query = $query.'&wt=json';
+		return $this;
 	}
 
 	/**
@@ -111,7 +114,8 @@ class Solr {
 	 */
 	function setFacetOpt($field, $value=null){
 		$this->setOpt('facet','true');
-		$this->setOpt('facet.' . $field, $value); 
+		$this->setOpt('facet.' . $field, $value);
+		return $this;
 	}
 
 
@@ -121,6 +125,7 @@ class Solr {
 	 */
 	function setSolrUrl($value){
 		$this->solr_url = $value;
+		return $this;
 	}
 
 
@@ -268,6 +273,7 @@ class Solr {
 			$this->setOpt('qs', '1');
 		}
 		
+		// $this->setOpt('q.op', 'AND');
 		
 		
 		// Score boosting applied to phrases based on how many parts of the phrase match
@@ -294,7 +300,11 @@ class Solr {
 				case 'q': 
 					// $value = $this->escapeSolrValue($value);
 					// if(trim($value)!="") $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
-					if(trim($value)!="") $this->setOpt('q', $value);
+					if((strpos($value, 'AND')!==false) && (strpos($value, 'OR')!==false)) {
+						if(trim($value)!="") $this->setOpt('q', '{!q.op=AND}'.$value);
+					} else {
+						if(trim($value)!="") $this->setOpt('q', $value);
+					}
 				break;
 				case 'p': 
 					$page = (int)$value;
@@ -345,7 +355,10 @@ class Solr {
 				case 'subject_vocab_uri':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' subject_vocab_uri:("'.$v.'")'; 
+						foreach($value as $v) {
+							$v = rawurldecode($v);
+							$fq_str .= ' subject_vocab_uri:("'.$v.'")'; 
+						}
 						$this->setOpt('fq', $fq_str);
 					}else{
 						$s = json_decode($CI->vocab->getConceptDetail('anzsrc-for', $value), true);
@@ -474,9 +487,114 @@ class Solr {
 				case 'random':
 					$this->setOpt('sort', 'random_'.rand(1,255642).' desc');
 					break;
-				
+				case 'refine':
+					if(is_array($value)){
+						foreach($value as $v) {
+							$this->setOpt('fq', '+(title_search:("'.$v.'") description_value:("'.$v.'"))');
+						}
+					}else{
+						$this->setOpt('fq', '+(title_search:("'.$value.'") description_value:("'.$value.'"))');
+					}
+					break;
+				case 'access_right':
+				case 'access_rights':
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' access_rights:("'.$v.'")'; 
+						$this->setOpt('fq', $fq_str);
+					}else{
+						if($value!='all') $this->setOpt('fq', '+access_rights:("'.$value.'")');
+					}
+					break;
+				case 'related_party_one_id':
+					$this->setOpt('fq', '+related_party_one_id:"'.$value.'"');
+					break;
+				case 'related_party_multi_id':
+					$this->setOpt('fq', '+related_party_multi_id:"'.$value.'"');
+					break;
+				case 'related_collection_id':
+					$this->setOpt('fq', '+related_collection_id:"'.$value.'"');
+					break;
+				case 'related_service_id':
+					$this->setOpt('fq', '+related_service_id:"'.$value.'"');
+					break;
+				case 'related_activity_id':
+					$this->setOpt('fq', '+related_activity_id:"'.$value.'"');
+					break;
+				case 'subject':
+					if(is_array($value)) {
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= $this->formatSubjectsArrayFilters($v).' ';
+						$this->setOpt('fq', $fq_str);
+					} else {
+						$this->setOpt('fq', $this->formatSubjectsArrayFilters($value));
+					}
+					break;
+				case 'anzsrc-for': 
+					if(is_array($value)) {
+						$fq_str = '(';
+						foreach($value as $v) $fq_str .= ' subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$v.'")';
+						$fq_str .= ')';
+						$this->setOpt('fq', $fq_str);
+					} else {
+						$this->setOpt('fq', '+subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$value.'")');
+					}
+					break;
+				case 'title':
+					if(!$filters['q']) $this->setOpt('q', $value);
+					$this->setOpt('fq', '+title_search:('.$value.')');
+					break;
+				case 'description':
+					if(!$filters['q']) $this->setOpt('q', $value);
+					$this->setOpt('fq', '+description_value:('.$value.')');
+					break;
+				case 'identifier':
+					if(!$filters['q']) $this->setOpt('q', $value);
+					$this->setOpt('fq', '+identifier_value_search:('.$value.')');
+					break;
+				case 'related_people':
+					if(!$filters['q']) $this->setOpt('q', $value);
+					$this->setOpt('fq', '+related_party_one_search:('.$value.')');
+					break;
+				case 'related_organisations':
+					if(!$filters['q']) $this->setOpt('q', $value);
+					$this->setOpt('fq', '+related_party_multi_search:('.$value.')');
+					break;
 			}
 		}
+		return $this;
+	}
+
+	function formatSubjectsArrayFilters($value) {
+		$fq = ' (';
+		$subjects = $this->CI->config->item('subjects');
+
+		$subject = false;
+		foreach($subjects as $item) {
+			if(url_title($item['display'], '-', true)==$value) {
+				$subject = $item;
+			}
+		}
+		if(!$subject) {
+			return '';
+		} else {
+			foreach($subject['codes'] as $code) {
+				$fq.='subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$code.'") ';
+			}
+			
+			$fq.=')';
+			return $fq;
+		}
+		
+	}
+
+	function formatSolrArray($array, $type) {
+		$str = '';
+		foreach($array as &$a) {
+			$a = $type.':('.$a.')';
+		}
+		$str = implode($array, ' OR ');
+		return $str;
 	}
 
 	/**

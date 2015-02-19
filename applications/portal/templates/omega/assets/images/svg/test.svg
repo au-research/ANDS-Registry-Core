@@ -1,0 +1,31 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+
+
+
+<g>
+    <g id="compass_1_" display="inline">
+
+            <ellipse fill="none"  stroke-width="1" stroke-miterlimit="10" cx="51.023" cy="50" rx="14.381" ry="14.414"/>
+    </g>
+    <g id="compass_2_" display="inline">
+        <ellipse fill="none"  stroke-width="1" stroke-miterlimit="10" cx="51.023" cy="50" rx="9.004" ry="9.023"/>
+    </g>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="42.773" y1="38.193" x2="45.858" y2="42.608"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="39.242" y1="41.732" x2="43.647" y2="44.824"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="39.242" y1="58.268" x2="43.647" y2="55.176"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="42.773" y1="61.807" x2="45.858" y2="57.393"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="59.271" y1="61.807" x2="56.188" y2="57.393"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="62.805" y1="58.268" x2="58.398" y2="55.176"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="62.805" y1="41.732" x2="58.398" y2="44.824"/>
+
+        <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="59.271" y1="38.193" x2="56.188" y2="42.608"/>
+</g>
+
+</svg>

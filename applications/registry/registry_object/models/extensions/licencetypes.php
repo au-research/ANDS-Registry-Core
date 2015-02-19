@@ -8,16 +8,7 @@ class LicenceTypes_Extension extends ExtensionBase
 		parent::__construct($ro_pointer);
 	}		
 	
-	/* This should be a loader for classes in a seperate directory called "suggestors" 
 
-		Workflow should be:
-
-			- check if there is a file with the name of the suggestor in our suggestors directory
-			- instantiate that class and pass it the reference to this registry object
-			- have the logic for each suggestor in it's own file and class to avoid clutter
-			- the suggester's ->suggest() method returns an array of suggested links (not sure what format this object should be in?)
-
-	*/
 	function processLicence()
 	{
 		$rights = array();
@@ -66,7 +57,7 @@ class LicenceTypes_Extension extends ExtensionBase
 					$right = array();
 					$right['value']= (string)$theRightsDescription;
 
-					$right['type'] = $theRightsDescription['type'];
+					$right['type'] = (string)$theRightsDescription['type'];
 
 					if($this->checkRightsText($right['value']))
 					{

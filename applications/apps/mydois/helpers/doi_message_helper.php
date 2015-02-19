@@ -34,12 +34,20 @@ function doisGetUserMessage($responseCode, $doi_id,$response_type="string",$app_
 			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";	
 			break;
 		case "MT006":
-			$message = "The metadata you have provided to mint a new DOI has failed the schema validation.Metadata is validated against the latest version of the DataCite Metadata Schema.For information about the schema and the latest version supported,please visit the ANDS website http://ands.org.au.Detailed information about the validation errors can be found below.";
+			$message = "The metadata you have provided to mint a new DOI has failed the schema validation. 
+			Metadata is validated against the latest version of the DataCite Metadata Schema. 
+			For information about the schema and the latest version supported, 
+			please visit the ANDS website http://ands.org.au. 
+			Detailed information about the validation errors can be found below.";
 			$type = "failure";	
 			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";		
 			break;
 		case "MT007":
-			$message = "The metadata you have provided to update DOI ".$doi_id." has failed the schema validation.Metadata is validated against the DataCite Metadata Schema.For information about the schema and the latest version supported,please visit the ANDS website http://ands.org.au.Detailed information about the validation errors can be found below.";
+			$message = "The metadata you have provided to update DOI ".$doi_id." has failed the schema validation. 
+			Metadata is validated against the DataCite Metadata Schema.
+			For information about the schema and the latest version supported, 
+			please visit the ANDS website http://ands.org.au. 
+			Detailed information about the validation errors can be found below.";
 			$type = "failure";
 			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";			
 			break;

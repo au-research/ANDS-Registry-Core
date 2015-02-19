@@ -1,0 +1,5 @@
+<div ng-if="result">
+	<ul>
+		<li ng-repeat="f in facet"><a href="{{base_url}}search/#!/{{filter_query}}{{facetel.facet.type}}={{f.name}}">{{f.name}} ({{f.value}})</a></li>
+	</ul>
+</div>

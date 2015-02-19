@@ -1,0 +1,76 @@
+.navbar {
+	margin-bottom:0px;
+}
+span.dynatree-empty,
+span.dynatree-vline,
+span.dynatree-connector,
+span.dynatree-expander,
+span.dynatree-icon,
+span.dynatree-checkbox,
+span.dynatree-radio,
+span.dynatree-drag-helper-img,
+#dynatree-drop-marker
+{
+    width: 16px;
+    height: 16px;
+    /*	display: -moz-inline-box; /* @ FF 1+2 removed for issue 221 */
+    /*	-moz-box-align: start; /* issue 221 */
+    display: inline-block; /* Required to make a span sizeable */
+    vertical-align: top;
+    background-repeat: no-repeat;
+    background-position: left;
+    background-image: url("icons.gif");
+}
+
+ul.dynatree-container
+{
+    font-family: tahoma, arial, helvetica;
+    font-size: 10pt; /* font size should not be too big */
+    white-space: nowrap;
+    padding: 3px;
+    margin: 0; /* issue 201 */
+    background-color: white;
+    border: none;
+    overflow: auto;
+    height: auto; /* issue 263 */
+}
+
+.feedback_button {
+    left: -40px;
+    top: 50%;
+    box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
+    border-radius: 2px 0px 0px;
+    position: fixed;
+    display: block;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: arial,FreeSans,Helvetica,sans-serif;
+    cursor: pointer;
+    -webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+    font-size: 14px;
+    z-index: 99;
+}
+
+.yellow_button {
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    background: #f58000;
+    border: none;
+    padding: 5px 5px;
+    margin: 10px 0;
+    width: 105px;
+    text-decoration: none;
+}
+
+.yellow_button:hover {
+    background: #F58072;
+    color: #fff;
+}
+ul{
+    list-style-position:inside;
+}

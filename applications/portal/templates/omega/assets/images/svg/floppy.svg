@@ -1,0 +1,10 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+    <path fill="none"  stroke-width="1" stroke-miterlimit="10" d="M64.393,35.6H61H45v1h-3l-1-1
+        c0,0-3.951,0-4.419,0v28.819c0.135,0,28.631,0,28.812,0V36.6L64.393,35.6z"/>
+    <polyline fill="none"  stroke-width="1" stroke-miterlimit="10" points="45,46 42,46 42,36.6     "/>
+    <rect x="45" y="35.6" fill="none"  stroke-width="1" stroke-miterlimit="10" width="14" height="11.4"/>
+
+        <rect id="label_12_" x="41" y="52" fill="none"  stroke-width="1" stroke-miterlimit="10" width="20" height="12.418"/>
+</g>
+</svg>

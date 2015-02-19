@@ -689,27 +689,19 @@ class Maintenance extends MX_Controller {
 
 	function test(){
 		set_exception_handler('json_exception_handler');
-		// header('Cache-Control: no-cache, must-revalidate');
-		// header('Content-type: application/json');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->load->model('registry_object/registry_objects', 'ro');
 
-		// $ds = $this->ds->getByID(190);
-		// $ids = $this->ro->getIDsByDataSourceID(303);
-		// foreach($ids as $id) {
-		// 	$ro = $this->ro->getByID($id);
-		// 	if(!$ro) {
-		// 		echo 'ID :'.$id. ' is bad and is fixed'.'<br/>';
-		// 		// $this->ro->erase($id);
-		// 	} else {
-		// 		// echo 'ID :'.$id. ' is good'.'<br/>';
-		// 	}
-		// 	unset($ro);
-		// }
-		// 
-		// $this->load->library('logging');
-		ulog('a registry activity', 'registry');
+		$ro = $this->ro->getByID(475608);
 
+		echo json_encode($ro->indexable_json());
+
+		// $this->load->model('registry_object/indexers/solr_indexer', 'indexer');
+		// $this->indexer->set_ro($ro);
+		// $payload = $this->indexer->construct_payload();
+		// echo json_encode($payload);
 	}
 
 	function fixRelationships($id) {
@@ -810,7 +802,7 @@ class Maintenance extends MX_Controller {
 			$data['message'] = '<i class="icon icon-remove"></i> No Registry Object Found!';
 		}else{
 			if($use=='id'){
-				if($msg = $ro->sync()!=true){
+				if($msg = $ro->sync(true,99999999)!=true){
 					$data['status'] = 'error';
 					$data['message'] = $msg;
 				}

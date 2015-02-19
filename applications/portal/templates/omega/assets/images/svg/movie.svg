@@ -1,0 +1,20 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="46.872" y1="41.254" x2="51.088" y2="41.254"/>
+    <polyline display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" points="60.927,52.655
+        60.927,61.556 38.282,61.556 38.282,54.373   "/>
+
+        <rect x="60.927" y="54.529" display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" width="4.842" height="5.31"/>
+    <polygon display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" points="70.141,60.933
+        65.769,59.839 65.769,54.529 70.141,53.436   "/>
+    <g display="inline">
+        <circle fill="none" stroke-width="1" stroke-miterlimit="10" cx="58.896" cy="44.378" r="8.278"/>
+        <circle fill="none" stroke-width="1" stroke-miterlimit="10" cx="58.896" cy="44.377" r="0.345"/>
+    </g>
+    <g display="inline">
+        <circle fill="none" stroke-width="1" stroke-miterlimit="10" cx="39.999" cy="46.095" r="8.278"/>
+        <circle fill="none" stroke-width="1" stroke-miterlimit="10" cx="39.999" cy="46.095" r="0.345"/>
+    </g>
+</g>
+</svg>

@@ -40,7 +40,7 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
 			<table class="table table-hover table-condensed">
 				<thead>
 					<tr>
-						<th style="text-align:left;word-wrap: break-word">Title</th>
+						<th style="text-align:left">Title</th>
 						<th style="text-align:left">DOI</th>
 						<th style="text-align:left"></th>
 						<th style="text-align:left"></th>
@@ -53,7 +53,7 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
 				$doiTitle = getDoiTitle($doi->datacite_xml);
 				?>
 					<tr>
-						<td style="word-wrap:break-word;max-width:400px;width:40%;word-break:break-all;"><small><strong><?=$doiTitle;?></strong><br/><?=anchor($doi->url,$doi->url);?></small></td>
+						<td width="40%"><small><strong><?=$doiTitle;?></strong><br/><?=anchor($doi->url,$doi->url);?></small></td>
 						<td>
 							<?=anchor('http://dx.doi.org/' . $doi->doi_id, $doi->doi_id);?>
 							<?php if(strpos($doi->doi_id ,$testDoiPrefix) === 0) {echo "<br/><span class='muted'><em>Test prefix DOI</em></span>";}  ?>
@@ -122,7 +122,7 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
             <p class="alert">To request a change to any of the information related to this DOI AppID, please contact <a href="mailto:services@ands.org.au">services@ands.org.au</a></p>
 		</div>
 		<div class="widget-content hide" name="check_links">
-			<div class="alert alert-info" id="linkChecker_message">
+			<div class="alert alert-info">
                 The DOI Link report will be sent to the registered Client Contact Email.
             </div>
 			<a href="javascript:;" id="linkChecker" class="btn btn-primary" app_id="<?php echo $app_id; ?>">Check DOI Links</a>

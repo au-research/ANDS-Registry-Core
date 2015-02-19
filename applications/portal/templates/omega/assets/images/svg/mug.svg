@@ -1,0 +1,15 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+    <path display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" d="M59.209,67.647
+        c0,0.862-0.699,1.562-1.562,1.562H41.249c-0.862,0-1.562-0.699-1.562-1.562V45.002c0-0.862,0.699-1.562,1.562-1.562h16.398
+        c0.861,0,1.562,0.698,1.562,1.562V67.647z"/>
+    <path display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" d="M59.209,53.436
+        c0-4.054,1.924-5.153,4.295-5.153s4.295,1.101,4.295,5.153c0,4.055-2.081,7.341-4.686,7.341c-3.254,0-3.904,0.157-3.904,2.03"/>
+    <path display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" d="M48.745,40.63
+        c0,0,0.937-1.575,0.937-4.025c0-1.412-1.25-3.325,0-6.125"/>
+    <path display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" d="M53.431,40.63
+        c0,0,0.937-1.357,0.937-3.469c0-1.215-1.25-2.866,0-5.277"/>
+    <path display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" d="M44.216,40.63
+        c0,0,0.937-1.357,0.937-3.469c0-1.215-1.25-2.866,0-5.277"/>
+</g>
+</svg>

@@ -180,6 +180,60 @@ function readable($text, $singular = false){
         case "getharvester": return "GET Harvester";break;
         case "cswharvester": return "CSW Harvester";break;
         case "ckanharvester": return "CKAN Harvester";break;
+        case 'licence': return 'Licence';break;
+        case 'rights': return 'Rights';break;
+        case 'accessrights': return 'Access rights';break;
+        case 'rightsstatement': return 'Rights Statement';break;
+        case 'full': return 'Full description';break;
+        case 'brief': return 'Brief description';break;
+        case 'note': return 'Notes';break;
+        case 'significancestatement': return 'Significance Statement';break;
+        case 'lineage': return 'Lineage';break;
+        case 'addsvalueto' : return  'Adds value to'; break;
+        case 'describes' : return  'Describes'; break;
+        case 'enriches': return  'Enriches'; break;
+        case 'hasassociationwith' : return  'Associated with'; break;
+        case 'hascollector' : return  'Aggregated by'; break;
+        case 'hasderivedcollection' : return  'Has derived collection'; break;
+        case 'hasmember' : return  'Has member'; break;
+        case 'hasoutput' : return  'Produces'; break;
+        case 'haspart' : return  'Includes'; break;
+        case 'hasparticipant' : return  'Undertaken by'; break;
+        case 'hasprincipalinvestigator' : return 'Principal investigator'; break;
+        case 'hasvalueaddedby' : return 'Value added by'; break;
+        case 'isavailablethrough' : return 'Available through'; break;
+        case 'iscitedby' : return 'Cited by'; break;
+        case 'iscollectorof' : return 'Collector of'; break;
+        case 'isderivedfrom' : return 'Derived from'; break;
+        case 'isdescribedby' : return 'Described by'; break;
+        case 'isdocumentedby' : return 'Documented by'; break;
+        case 'isenrichedby' : return 'Enriched by'; break;
+        case 'isfundedby' : return 'Funded by'; break;
+        case 'isfunderof' : return 'Funds'; break;
+        case 'islocatedin' : return 'Located in'; break;
+        case 'islocationfor' : return 'Location for'; break;
+        case 'ismanagedby' : return 'Managed by'; break;
+        case 'ismanagerof' : return  'Manages'; break;
+        case 'ismemberof' : return  'Member of'; break;
+        case 'isoperatedonby' : return  'Operated on by'; break;
+        case 'isoutputof' : return  'Output of'; break;
+        case 'isownedby' : return  'Owned by'; break;
+        case 'isownerof' : return  'Owner of'; break;
+        case 'isparticipantin' : return  'Participant in'; break;
+        case 'ispartof' : return  'Part of'; break;
+        case 'ispresentedby' : return  'Presented by'; break;
+        case 'isprincipalinvestigatorof" Principal investigator of'; break;
+        case 'isproducedby' : return  'Produced by'; break;
+        case 'isreferencedby' : return  'Referenced by'; break;
+        case 'isreviewedby' : return  'Reviewed by'; break;
+        case 'issupplementedby' : return  'Supplemented by'; break;
+        case 'issupplementto' : return  'Supplement to'; break;
+        case 'issupportedby' : return  'Supported by'; break;
+        case 'operateson' : return  'Operates on'; break;
+        case 'produces' : return  'Produces'; break;
+        case 'presents' : return  'Presents'; break;
+        case 'supports' : return  'Supports'; break;
+        default: return $text;
 	}
 }
 
@@ -308,4 +362,18 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
 
 function endsWith($haystack, $needle){
     return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
+}
+
+function is_array_empty($input) {
+   $result = true;
+
+   if (is_array($input) && count($input) > 0) {
+      foreach ($input as $val) {
+         $result = $result && is_array_empty($val);
+      }
+   } else {
+      $result = empty($input);
+   }
+
+   return $result;
 }
