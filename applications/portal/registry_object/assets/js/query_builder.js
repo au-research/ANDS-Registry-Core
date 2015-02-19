@@ -89,7 +89,7 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
                     { name: 'related_party_one_search'},
                     { name: 'related_party_multi_search'},
                     { name: 'description_value'}
-                ];
+                ]
 
                 scope.conditions = [
                     { name: ':' }
