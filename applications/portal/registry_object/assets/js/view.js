@@ -105,7 +105,7 @@ function drawMap(){//drawing the map on the left side
     if($('#spatial_coverage_map').length > 0){//if there is a coverage
         var latlng = new google.maps.LatLng(-25.397, 133.644);
         var myOptions = {
-            zoom: 2,disableDefaultUI: true,center:latlng,panControl: true,zoomControl: true,mapTypeControl: true,scaleControl: true,
+            zoom: 2,disableDefaultUI: true,center:latlng,panControl: true,zoomControl: true,mapTypeControl: true,scaleControl: true, scrollwheel:false,
             streetViewControl: false,overviewMapControl: true,mapTypeId: google.maps.MapTypeId.TERRAIN
         };
         var map2 = new google.maps.Map(document.getElementById("spatial_coverage_map"),myOptions);
