@@ -36,7 +36,7 @@
 
         <div>
             @if($ar || $cc || $detail)
-                <h4>License & Rights</h4>
+                <h4>Licence & Rights</h4>
             @endif
         	@if($ar=='open')
         	    <a href="" tip="Online data that can be electronically accessed free of charge with no restrictions imposed on the user"><span class="label label-info label-{{$ar}}" for="">OPEN</span></a>
