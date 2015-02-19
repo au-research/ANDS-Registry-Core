@@ -71,3 +71,6 @@ ul.dynatree-container
     background: #F58072;
     color: #fff;
 }
+ul{
+    list-style-position:inside;
+}
