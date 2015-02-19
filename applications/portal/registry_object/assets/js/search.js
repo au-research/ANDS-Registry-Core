@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components', 'queryBuilder']);
+var app = angular.module('app', ['ngRoute', 'ngSanitize', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components', 'queryBuilder', 'lz-string']);
 
 app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$interpolateProvider.startSymbol('[[');
@@ -16,6 +16,9 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 	},function(){
 		$scope.filters = search_factory.ingest(location.hash);
 		$scope.sync();
+		if($scope.filters.cq) {
+			$scope.$broadcast('cq', $scope.filters.cq);
+		}
 		// $log.debug('after sync', $scope.filters, search_factory.filters, $scope.query, search_factory.query, $scope.search_type);
 		$scope.search();
 	});
@@ -44,6 +47,14 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		$scope.changeFilter(data.type, data.value, data.execute);
 	});
 
+	$scope.$on('changeQuery', function(e, data){
+		$scope.query = data;
+		$scope.filters['q'] = data;
+		search_factory.update('query', data);
+		search_factory.update('filters', $scope.filters);
+		// $scope.filters['q'] = data;
+	});
+
 	$scope.$watch('search_type', function(newv,oldv){
 		if (newv) {
 			delete $scope.filters['q'];
@@ -52,17 +63,17 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		}
 	});
 
-	$scope.$watch('query', function(newv,oldv){
-		if (newv) {
-			$scope.$broadcast('query', {query:$scope.query, search_type:$scope.search_type});
-		}
-	});
+	// $scope.$watch('query', function(newv,oldv){
+	// 	if (newv) {
+	// 		$scope.$broadcast('query', {query:$scope.query, search_type:$scope.search_type});
+	// 	}
+	// });
 
-	$scope.$watch('filters.cq', function(newv){
-		if(newv) {
-			$scope.$broadcast('cq', newv);
-		}
-	});
+	// $scope.$watch('filters.cq', function(newv){
+	// 	if(newv) {
+	// 		$scope.$broadcast('cq', newv);
+	// 	}
+	// });
 
 	$scope.hasFilter = function(){
 		var empty = {'q':''};
@@ -84,7 +95,7 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 	}
 
 	$scope.hashChange = function(){
-		$log.debug('query', $scope.query, search_factory.query);
+		// $log.debug('query', $scope.query, search_factory.query);
 		// $scope.filters.q = $scope.query;
 		if ($scope.search_type=='q') {
 			$scope.filters.q = $scope.query;

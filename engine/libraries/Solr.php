@@ -303,12 +303,9 @@ class Solr {
 					if((strpos($value, 'AND')!==false) && (strpos($value, 'OR')!==false)) {
 						if(trim($value)!="") $this->setOpt('q', '{!q.op=AND}'.$value);
 					} else {
-						if(trim($value)!="") $this->setOpt('q', ''.$value);
+						if(trim($value)!="") $this->setOpt('q', $value);
 					}
 				break;
-				case 'cq':
-					$this->setOpt('q', $value);
-					break;
 				case 'p': 
 					$page = (int)$value;
 					if($page>1){
