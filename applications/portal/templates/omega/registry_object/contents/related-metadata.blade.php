@@ -1,15 +1,22 @@
 <?php
 	$has_metadata = false;
+    $has_moreInfo = false;
+    $notTypes = array('publication','dataQualityInformation','website','reuseInformation','metadata');
 	if ($ro->relatedInfo) {
 		foreach ($ro->relatedInfo as $relatedInfo) {
 			if ($relatedInfo['type']=='metadata') {
 				$has_metadata = true;
 			}
 		}
+        foreach ($ro->relatedInfo as $relatedInfo) {
+            if (!in_array($relatedInfo['type'],$notTypes)) {
+                $has_moreInfo = true;
+            }
+        }
 	}
 	
 ?>
-@if($has_metadata)
+@if($has_metadata || $has_moreInfo)
 <div class="swatch-white">
 	<div class="panel panel-primary element-no-top element-short-bottom panel-content">
 		<div class="panel-heading">
@@ -21,7 +28,7 @@
 				    <h5><a href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><img src="<?php echo base_url()?>assets/core/images/icons/publications.png" style="margin-top: -2px; height: 24px; width: 24px;"> {{$relatedInfo['title']}}</a></h5>
 				    <p>
 				        <b>{{$relatedInfo['identifier']['identifier_type']}}</b> : 
-				        @if($relatedInfo['identifier']['identifier_href'])
+				        @if($relatedInfo['identifier']['identifier_href']['href'])
 				            <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
 				        @else
 				            {{$relatedInfo['identifier']['identifier_value']}}
@@ -32,6 +39,26 @@
 				    @endif
 			    @endif
 			@endforeach
+            @foreach($ro->relatedInfo as $relatedInfo)
+                @if(!in_array($relatedInfo['type'],$notTypes))
+                    <h5> {{$relatedInfo['title']}}</h5>
+                    <p>
+                    <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                    @if($relatedInfo['identifier']['identifier_href']['href'])
+                        <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
+                    @else
+                        {{$relatedInfo['identifier']['identifier_value']}}
+                    @endif
+                    </p>
+
+                    @if($relatedInfo['relation']['url'])
+                        <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a>{{$relatedInfo['relation']['display_icon']}}</p>
+                    @endif
+                    @if($relatedInfo['notes'])
+                        <p>{{$relatedInfo['notes']}}</p>
+                    @endif
+                @endif
+            @endforeach
 		</div>
 	</div>
 </div>
