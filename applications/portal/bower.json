@@ -29,7 +29,8 @@
     "textAngular": "~1.3.4",
     "colorbox": "~1.5.14",
     "mustache": "~1.0.0",
-    "angular-bootstrap": "~0.12.0"
+    "angular-bootstrap": "~0.12.0",
+    "angular-lz-string": "~1.0.1"
   },
   "resolutions": {
     "angular": "^1.2.x"

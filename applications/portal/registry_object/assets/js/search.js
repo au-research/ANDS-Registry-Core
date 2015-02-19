@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components']);
+var app = angular.module('app', ['ngRoute', 'ngSanitize', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components', 'queryBuilder', 'lz-string']);
 
 app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$interpolateProvider.startSymbol('[[');
@@ -9,23 +9,50 @@ app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$logProvider.debugEnabled(true);
 });
 
-app.controller('searchCtrl', function($scope, $log, $modal, search_factory, vocab_factory){
+app.controller('searchCtrl', function($scope, $log, $modal, search_factory, vocab_factory, profile_factory){
 	
 	$scope.$watch(function(){
 		return location.hash;
 	},function(){
 		$scope.filters = search_factory.ingest(location.hash);
 		$scope.sync();
+		if($scope.filters.cq) {
+			$scope.$broadcast('cq', $scope.filters.cq);
+		}
 		// $log.debug('after sync', $scope.filters, search_factory.filters, $scope.query, search_factory.query, $scope.search_type);
 		$scope.search();
 	});
 
-	
+	$scope.getHash = function(){
+		var hash = '';
+		$.each($scope.filters, function(i,k){
+			if(typeof k!='object'){
+				hash+=i+'='+k+'/';
+			} else if (typeof k=='object'){
+				$.each(k, function(){
+					hash+=i+'='+encodeURIComponent(this)+'/';
+				});
+			}
+		});
+		return hash;
+	}
 
 	$scope.isArray = angular.isArray;
 
 	$scope.$on('toggleFilter', function(e, data){
 		$scope.toggleFilter(data.type, data.value, data.execute);
+	});
+
+	$scope.$on('changeFilter', function(e, data){
+		$scope.changeFilter(data.type, data.value, data.execute);
+	});
+
+	$scope.$on('changeQuery', function(e, data){
+		$scope.query = data;
+		$scope.filters['q'] = data;
+		search_factory.update('query', data);
+		search_factory.update('filters', $scope.filters);
+		// $scope.filters['q'] = data;
 	});
 
 	$scope.$watch('search_type', function(newv,oldv){
@@ -35,6 +62,18 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 			$scope.filters[newv] = $scope.query;
 		}
 	});
+
+	// $scope.$watch('query', function(newv,oldv){
+	// 	if (newv) {
+	// 		$scope.$broadcast('query', {query:$scope.query, search_type:$scope.search_type});
+	// 	}
+	// });
+
+	// $scope.$watch('filters.cq', function(newv){
+	// 	if(newv) {
+	// 		$scope.$broadcast('cq', newv);
+	// 	}
+	// });
 
 	$scope.hasFilter = function(){
 		var empty = {'q':''};
@@ -56,7 +95,7 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 	}
 
 	$scope.hashChange = function(){
-		// $log.debug($scope.query, search_factory.query);
+		// $log.debug('query', $scope.query, search_factory.query);
 		// $scope.filters.q = $scope.query;
 		if ($scope.search_type=='q') {
 			$scope.filters.q = $scope.query;
@@ -95,8 +134,12 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 
 	$scope.sync = function(){
 		$scope.filters = search_factory.filters;
+
 		$scope.query = search_factory.query;
 		$scope.search_type = search_factory.search_type;
+
+		// $scope.$broadcast('query', {query:$scope.query, search_type:$scope.search_type});
+
 		$scope.result = search_factory.result;
 		$scope.facets = search_factory.facets;
 		$scope.pp = search_factory.pp;
@@ -208,9 +251,11 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		return false;
 	}
 
-	$scope.changeFilter = function(type, value) {
+	$scope.changeFilter = function(type, value, execute) {
 		$scope.filters[type] = value;
-		$scope.hashChange();
+		if (execute===true) {
+			$scope.hashChange();
+		}
 	}
 
 	$scope.goto = function(x) {
@@ -254,6 +299,18 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 				this.select = false;
 			});
 			$scope.selectState = 'selectAll';
+		}
+	}
+
+	$scope.add_user_data = function(type) {
+		if(type=='saved_record') {
+			profile_factory.add_user_data('saved_record', $scope.selected).then(function(data){
+				alert('done');
+			});
+		} else if(type=='saved_search') {
+			profile_factory.add_user_data('saved_search', $scope.getHash()).then(function(data){
+				alert('done');
+			});
 		}
 	}
 
