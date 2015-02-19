@@ -181,6 +181,7 @@ function readable($text, $singular = false){
         case "cswharvester": return "CSW Harvester";break;
         case "ckanharvester": return "CKAN Harvester";break;
         case 'licence': return 'Licence';break;
+        case 'rights': return 'Rights';break;
         case 'accessrights': return 'Access rights';break;
         case 'rightsstatement': return 'Rights Statement';break;
         case 'full': return 'Full description';break;

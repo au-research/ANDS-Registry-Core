@@ -12,12 +12,13 @@ class Descriptions extends ROHandler {
         if ($this->xml) {
             foreach($this->xml->{$this->ro->class}->description as $description){
                 $type = (string) $description['type'];
-                $description_str = html_entity_decode((string) $description);
-
-                $result[] = array(
-                    'type' => $type,
-                    'description' => $description_str
-                );
+                if($type!='rights' && $type!='accessRights'){
+                    $description_str = html_entity_decode((string) $description);
+                    $result[] = array(
+                        'type' => $type,
+                        'description' => $description_str
+                    );
+                }
             }
         }
         return $result;

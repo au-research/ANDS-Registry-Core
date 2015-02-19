@@ -5,9 +5,9 @@
     $detail = false;
     if ($ro->rights) {
         foreach($ro->rights as $right) {
-            if ($right['rights_type']=='licence' && $right['type']=='CC-BY') {
+            if ($right['type']=='licence' && $right['licence_type']=='CC-BY') {
                 $cc = $right['value'];
-            } elseif ($right['rights_type']=='accessRights') {
+            } elseif ($right['type']=='accessRights') {
                 $ar = $right['type'];
             } else {
                 $detail = true;
@@ -17,8 +17,8 @@
             $content = '';
             foreach ($ro->rights as $right) {
                 $itemprop = '';
-                if($right['rights_type']=='licence') $itemprop = 'itemprop="license"';
-                $content .= '<h4>'.readable($right['rights_type']).'</h4>';
+                if($right['type']=='licence') $itemprop = 'itemprop="license"';
+                $content .= '<h4>'.readable($right['type']).'</h4>';
                 $content .= '<p '.$itemprop.'>'.$right['value'].'</p>';
             }
         }
@@ -47,23 +47,23 @@
             @endif
 
         	@if($cc=='CC-BY')
-        	    <a href="http://creativecommons.org/licenses/by/3.0/au/" tip="Attribution"><img src="{{asset_url('images/icons/CC-BY.png', 'core')}}" class="img-cc" alt="CC-BY"></a>
+        	    <a href="http://creativecommons.org/licenses/by/3.0/au/" tip="Attribution"><img src="{{asset_url('images/icons/CC-BY.png', 'core')}}" class="img-cc" alt="CC-BY"></a> <br/>
             @elseif($cc=='CC-BY-SA')
-                <a href="http://creativecommons.org/licenses/by-sa/3.0/au/" tip="Attribution-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-SA.png', 'core')}}" class="img-cc" alt="CC-BY-SA"></a>
+                <a href="http://creativecommons.org/licenses/by-sa/3.0/au/" tip="Attribution-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-SA.png', 'core')}}" class="img-cc" alt="CC-BY-SA"></a> <br/>
             @elseif($cc=='CC-BY-ND')
-                <a href="http://creativecommons.org/licenses/by-nd/3.0/au/" tip="Attribution-No Derivatives"><img src="{{asset_url('images/icons/CC-BY-ND.png', 'core')}}" class="img-cc" alt="CC-BY-ND"></a>
+                <a href="http://creativecommons.org/licenses/by-nd/3.0/au/" tip="Attribution-No Derivatives"><img src="{{asset_url('images/icons/CC-BY-ND.png', 'core')}}" class="img-cc" alt="CC-BY-ND"></a> <br/>
             @elseif($cc=='CC-BY-NC')
-                <a href="http://creativecommons.org/licenses/by-nc/3.0/au/" tip="Attribution-Non Commercial"><img src="{{asset_url('images/icons/CC-BY-NC.png', 'core')}}" class="img-cc" alt="CC-BY-NC"></a>
+                <a href="http://creativecommons.org/licenses/by-nc/3.0/au/" tip="Attribution-Non Commercial"><img src="{{asset_url('images/icons/CC-BY-NC.png', 'core')}}" class="img-cc" alt="CC-BY-NC"></a> <br/>
             @elseif($cc=='CC-BY-NC-SA')
-                <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/au/" tip="Attribution-Non Commercial-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-NC-SA.png', 'core')}}" class="img-cc" alt="CC-BY-NC-SA"></a>
+                <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/au/" tip="Attribution-Non Commercial-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-NC-SA.png', 'core')}}" class="img-cc" alt="CC-BY-NC-SA"></a> <br/>
             @elseif($cc=='CC-BY-NC-ND')
-                <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a>
+                <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
             @else 
                 <span>{{$cc}}</span>
         	@endif
 
         	@if($detail)
-        	    <br/><a href="javascript:;" id="toggleRightsContent">View details</a>
+        	   <a href="javascript:;" id="toggleRightsContent">View details</a>
         	@endif
         </div>
         
