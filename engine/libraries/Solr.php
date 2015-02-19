@@ -300,8 +300,15 @@ class Solr {
 				case 'q': 
 					// $value = $this->escapeSolrValue($value);
 					// if(trim($value)!="") $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
-					if(trim($value)!="") $this->setOpt('q', '{!q.op=AND}'.$value);
+					if((strpos($value, 'AND')!==false) && (strpos($value, 'OR')!==false)) {
+						if(trim($value)!="") $this->setOpt('q', '{!q.op=AND}'.$value);
+					} else {
+						if(trim($value)!="") $this->setOpt('q', ''.$value);
+					}
 				break;
+				case 'cq':
+					$this->setOpt('q', $value);
+					break;
 				case 'p': 
 					$page = (int)$value;
 					if($page>1){

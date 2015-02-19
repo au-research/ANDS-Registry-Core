@@ -3,6 +3,7 @@ angular.module('portal-filters', [])
 		return function(text) {
 			switch(text) {
 				case 'q': return 'All' ;break;
+				case 'cq': return 'Advanced Query' ;break;
 				case 'title': return 'Title' ;break;
 				case 'identifier': return 'Identifier' ;break;
 				case 'related_people': return 'Related People' ;break;

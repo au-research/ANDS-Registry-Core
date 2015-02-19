@@ -22,6 +22,16 @@
             <div class="col-md-10">
               <div ng-show="isAdvancedSearchActive('terms')">
                 Terms
+                <input type="text" ng-model="query">
+                <div ng-controller="QueryBuilderCtrl">
+                  <div class="alert alert-info">
+                      <strong>Complex Query</strong><br>
+                      <span ng-bind-html="output"></span>
+                  </div>
+
+                  <query-builder group="filter.group"></query-builder>
+
+                </div>
               </div>
 
               <div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in allfacets">
