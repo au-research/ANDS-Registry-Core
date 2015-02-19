@@ -52,7 +52,6 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		$scope.filters['q'] = data;
 		search_factory.update('query', data);
 		search_factory.update('filters', $scope.filters);
-		// $scope.filters['q'] = data;
 	});
 
 	$scope.$watch('search_type', function(newv,oldv){
@@ -84,6 +83,7 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 
 	$scope.clearSearch = function(){
 		search_factory.reset();
+		$scope.$broadcast('clearSearch');
 		$scope.sync();
 		$scope.hashChange();
 	}

@@ -28,19 +28,12 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
     });
 
     $scope.$on('cq', function(e, data){
-        // var string = "This is my compression test.";
-        // $log.debug("Size of sample is: " + string.length);
-        // var compressed = LZString.compress(string);
-        // $log.debug(compressed);
-        // $log.debug("Size of compressed sample is: " + compressed.length);
-        // string = LZString.decompress(compressed);
-        // $log.debug("Sample is: " + string);
-        // $log.debug(data);
-        // $log.debug(LZString.decompress('N4Ig5gTg9grgDiAXKKcCmECGAXKEkgCCAcgCIgA0IEMANmgM5IDaoAxlAHYAmAltry4FElEADNeaWtwJi6tbGgAe2UdxyYCARgBMAZlEASQwAtMDEwGk0ATwJQARgCs0bbIj0BWLSAC+Fdi4+ASERESoJKRkRAWx6AH0GNEwINhM1DW19I1NzK1t7Z1d3ABY9AA4'));
-        // $scope.filter = LZString.decompressFromBase64(data);
-        // $log.debug($scope.filter);
-        // $log.debug(LZString.decompressFromEncodedURIComponent(data));
         $scope.filter = JSON.parse(LZString.decompressFromEncodedURIComponent(data));
+    });
+
+    $scope.$on('clearSearch', function(e){
+        var data = '{"group": {"operator": "AND","rules": []}}';
+        $scope.filter = JSON.parse(data);
     });
 
     $scope.parse = function(data){
@@ -48,46 +41,8 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
             data.query = data.query.substr(1);
             data.query = data.query.substr(0, data.query.length-1);
         }
-        // $log.debug(data.query);
         var ndata = {};
         ndata.group = {'operator': 'AND', 'rules':[]};
-        // if(data.query.indexOf('AND')>-1) {
-        //     ndata.group = {'operator':'AND', 'rules':[]};
-        //     var literals = data.query.split('AND');
-        //     angular.forEach(literals, function(literal){
-        //         if(literal.indexOf(':')>-1) {
-        //             var pair = literal.split(':');
-        //             $log.debug(pair);
-        //             ndata.group.rules.push({
-        //                 condition:':',
-        //                 field:$scope.convertType(pair[0]).trim(),
-        //                 data:pair[1].trim()
-        //             });
-        //         } else {
-        //             ndata.group.rules.push({
-        //                 condition:':',
-        //                 field:$scope.convertType(data.search_type),
-        //                 data:literal
-        //             });
-        //         }
-        //     });
-        // } else if(data.query.indexOf('OR')>-1){
-        //     ndata.group = {'operator':'OR', 'rules':[]};
-        //     var literals = data.query.split('OR');
-        //     angular.forEach(literals, function(literal){
-        //         ndata.group.rules.push({
-        //             condition:':',
-        //             field:$scope.convertType(data.search_type),
-        //             data:literal
-        //         });
-        //     });
-        // } else {
-        //     ndata.group.rules.push({
-        //         condition:':',
-        //         field:$scope.convertType(data.search_type),
-        //         data:data.query
-        //     });
-        // }
         return ndata;
     }
 

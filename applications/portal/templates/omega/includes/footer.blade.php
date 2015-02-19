@@ -1,4 +1,3 @@
-@include('includes/advanced_search')
 <footer id="footer" role="contentinfo">
     <section class="section swatch-black">
         <div class="container">

@@ -36,6 +36,7 @@
                 </section>
         	</article>
         </div>
+        @include('includes/advanced_search')
         @include('includes/footer')
     </body>
 </html>
