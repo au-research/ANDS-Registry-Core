@@ -2,12 +2,13 @@
 	$order = array('brief', 'full');
 	$omit = array('logo');
 ?>
-@if($ro->descriptions)
 <div class="swatch-white">
-	<div class="panel panel-primary element-no-top element-short-bottom panel-content">
-		<div class="panel-heading">
-	        <a href="">Descriptions</a>
-	    </div>
+    <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+
+@if($ro->descriptions)
+        <div class="panel-heading">
+            <a href="">Descriptions</a>
+        </div>
 		<div class="panel-body swatch-white">
 			@foreach($order as $o)
 				@foreach($ro->descriptions as $desc)
@@ -24,7 +25,14 @@
 					<p itemprop="description">{{html_entity_decode($desc['description'])}}</p>
 				@endif
 			@endforeach
-		</div>
-	</div>
-</div>
+        </div>
+@else
+        <div class="panel-heading">
+            <a href="">Information</a>
+        </div>
+        <div class="panel-body swatch-white">
+        </div>
 @endif
+
+    </div>
+</div>
