@@ -7,7 +7,8 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
     }
 
     function computed(group) {
-        if (!group) return "";
+        // $log.debug(group);
+        if (!group || group.rules.length == 0) return "";
         for (var str = "(", i = 0; i < group.rules.length; i++) {
             i > 0 && (str += " " + group.operator + " ");
             str += group.rules[i].group ?
@@ -83,12 +84,12 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
                 ];
 
                 scope.fields = [
-                    { name: 'fulltext'},
-                    { name: 'title_search'},
-                    { name: 'identifier_value_search'},
-                    { name: 'related_party_one_search'},
-                    { name: 'related_party_multi_search'},
-                    { name: 'description_value'}
+                    { name: 'fulltext', display: 'All'},
+                    { name: 'title_search', display: 'Title'},
+                    { name: 'identifier_value_search', display: 'Identifier'},
+                    { name: 'related_party_one_search', display: 'Related People'},
+                    { name: 'related_party_multi_search', display: 'Related Organisations'},
+                    { name: 'description_value', display: 'Description'}
                 ]
 
                 scope.conditions = [
