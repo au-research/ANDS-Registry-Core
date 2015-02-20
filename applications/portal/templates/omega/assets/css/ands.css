@@ -3,7 +3,6 @@
 }
 span.dynatree-empty,
 span.dynatree-vline,
-span.dynatree-connector,
 span.dynatree-expander,
 span.dynatree-icon,
 span.dynatree-checkbox,
@@ -33,6 +32,14 @@ ul.dynatree-container
     border: none;
     overflow: auto;
     height: auto; /* issue 263 */
+}
+
+
+span.dynatree-selected a
+{
+    color: #ffa255 !important;
+    font-style: italic;
+    font-weight: bold;
 }
 
 .feedback_button {
