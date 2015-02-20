@@ -18,7 +18,7 @@
     		        </div>
     		    </section>
                 <section class="section swatch-white">
-                    <div class="swatch-white scroll-fixed element-shorter-top element-shorter-bottom" ui-scrollfix="+224">
+                    <div class="swatch-white scroll-fixed element-shorter-top element-shorter-bottom" ui-scrollfix="+224" style="overflow:visible">
                         @include('includes/search-header')
                     </div>
                 </section>

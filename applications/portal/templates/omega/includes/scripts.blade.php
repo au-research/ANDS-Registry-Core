@@ -12,6 +12,14 @@
 <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap-tpls.min.js', 'core')}}"></script>
 
+<!-- Angular Loading Bar -->
+<link rel="stylesheet" href="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.css', 'core')}}"></link>
+<script src="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.js', 'core')}}"></script>
+
+<!-- Angular Select -->
+<link rel="stylesheet" href="{{asset_url('lib/angular-ui-select/dist/select.css', 'core')}}"></link>
+<script src="{{asset_url('lib/angular-ui-select/dist/select.js', 'core')}}"></script>
+
 
 <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
 <!-- <script src="{{asset_url('omega/js/theme.js','templates')}}"></script> -->

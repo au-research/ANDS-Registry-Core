@@ -40,6 +40,17 @@
                   </ul>
               </div>
 
+              <div ng-if="isAdvancedSearchActive('temporal')">
+                <label for="">From Year</label>
+                <select ng-model="filters.year_from" ng-options="year_from as year_from for year_from in temporal_range">
+                    <option value="" style="display:none">From Year</option>
+                </select>
+                <label for="">To Year</label>
+                <select ng-model="filters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true">
+                    <option value="" style="display:none">To Year</option>
+                </select>
+              </div>
+
               <div ng-if="isAdvancedSearchActive('subject')">
                 <div>
                   <ul class="list-unstyled">

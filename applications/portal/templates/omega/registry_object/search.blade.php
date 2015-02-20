@@ -103,16 +103,27 @@
         </ul>
     </div>
     
-
     <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true">
         <h4>[[facet.name | filter_name]]</h4>
         <ul class="listy">
             <li ng-repeat="item in facet.value | limitTo:5 | orderBy:'item.value'">
-                <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
-                <a href="" ng-click="toggleFilter(facet.name, item.name, true)">[[item.name | truncate:30]] <small>[[item.value]]</small></a>    
+                <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="clearFilter(facet.name, item.name, true)">
+                <a href="" ng-click="clearFilter(facet.name, item.name, true)">[[item.name | truncate:30]] <small>[[item.value]]</small></a>    
             </li>
             <li><a href="" ng-click="advanced(facet.name)">View More</a></li>
         </ul>
+    </div>
+
+    <!-- Temporal Facet -->
+    <div class="panel-body swatch-white">
+        <h4>Temporal</h4>
+        <select ng-model="filters.year_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
+            <option value="" style="display:none">From Year</option>
+        </select>
+        <select ng-model="filters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
+            <option value="" style="display:none">To Year</option>
+        </select>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
     </div>
 
     

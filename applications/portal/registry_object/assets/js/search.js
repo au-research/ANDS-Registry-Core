@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components', 'queryBuilder', 'lz-string']);
+var app = angular.module('app', ['ngRoute', 'ngSanitize', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components', 'queryBuilder', 'lz-string', 'angular-loading-bar', 'ui.select']);
 
 app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$interpolateProvider.startSymbol('[[');
@@ -10,6 +10,18 @@ app.config(function($interpolateProvider, $locationProvider, $logProvider){
 });
 
 app.controller('searchCtrl', function($scope, $log, $modal, search_factory, vocab_factory, profile_factory){
+	
+
+	$scope.people = [
+	    { name: 'Adam',      email: 'adam@email.com',      age: 10 },
+	    { name: 'Amalie',    email: 'amalie@email.com',    age: 12 },
+	    { name: 'Wladimir',  email: 'wladimir@email.com',  age: 30 },
+	    { name: 'Samantha',  email: 'samantha@email.com',  age: 31 },
+	    { name: 'Estefanía', email: 'estefanía@email.com', age: 16 },
+	    { name: 'Natasha',   email: 'natasha@email.com',   age: 54 },
+	    { name: 'Nicole',    email: 'nicole@email.com',    age: 43 },
+	    { name: 'Adrian',    email: 'adrian@email.com',    age: 21 }
+	  ];
 	
 	$scope.$watch(function(){
 		return location.hash;
@@ -161,6 +173,13 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 					$scope.page.pages.push(x);
 				}
 			}
+
+			//get temporal range
+			search_factory.search().then(function(data){
+				// $log.debug(data);
+				$scope.temporal_range = search_factory.temporal_range(data);
+			});
+			
 		}
 
 		//get all facets by deleting the existing facets restrain from the filters
@@ -173,8 +192,13 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		// $log.debug(filters_no_facet);
 		search_factory.search(filters_no_facet).then(function(data){
 			$scope.allfacets = search_factory.construct_facets(data);
+
+			
 			// $log.debug($scope.allfacets);
+			// 
 		});
+
+		
 
 		//init vocabulary
 		$scope.vocabInit();
@@ -227,14 +251,15 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		} else $scope.filters[type] = value;
 	}
 
-	$scope.clearFilter = function(type, value) {
-		if(typeof $scope.filters[type]=='string') {
+	$scope.clearFilter = function(type, value, execute) {
+		if(typeof $scope.filters[type]!='object') {
 			if(type=='q') $scope.q = '';
 			delete $scope.filters[type];
 		} else if(typeof $scope.filters[type]=='object') {
 			var index = $scope.filters[type].indexOf(value);
 			$scope.filters[type].splice(index, 1);
 		}
+		if(execute) $scope.hashChange();
 	}
 
 	$scope.isFacet = function(type, value) {
@@ -450,7 +475,7 @@ app.factory('search_factory', function($http, $log){
 			{'name':'group', 'display':'Contributors'},
 			{'name':'access_rights', 'display':'Access Rights'},
 			{'name':'license_class', 'display':'License'},
-			{'name':'type', 'display':'Types'},
+			{'name':'temporal', 'display':'Temporal'},
 			{'name':'spatial', 'display':'Spatial'},
 			{'name':'class', 'display':'Class'}
 		],
@@ -524,9 +549,35 @@ app.factory('search_factory', function($http, $log){
 					value: facets[item]
 				});
 			});
+
+			// $log.debug(result.facet_counts.facet_fields.earliest_year);
+			
+
 			// $log.debug('orderedfacet', orderedfacets);
 			// $log.debug('facets', facets);
 			return orderedfacets;
+		},
+
+		temporal_range: function(result) {
+			var range = [];
+			var earliest_year = false;
+			var latest_year = false;
+
+			if(result.facet_counts.facet_fields.earliest_year) {
+				earliest_year = result.facet_counts.facet_fields.earliest_year[0];
+			}
+			if(result.facet_counts.facet_fields.latest_year) {
+				latest_year = result.facet_counts.facet_fields.latest_year[0];
+			}
+
+			if(earliest_year && latest_year) {
+				// $log.debug(earliest_year, latest_year);
+				for(i = parseInt(earliest_year); i < parseInt(latest_year);i++){
+					range.push(i);
+				}
+			}
+
+			return range;
 		},
 
 		filters_from_hash:function(hash) {
@@ -536,7 +587,7 @@ app.factory('search_factory', function($http, $log){
 				var t = this.split('=');
 				var term = t[0];
 				var value = t[1];
-				if(term=='rows') value = parseInt(value);
+				if(term=='rows'||term=='year_from'||term=='year_to') value = parseInt(value);
 				if(term && value && term!=''){
 
 					if(filters[term]) {
