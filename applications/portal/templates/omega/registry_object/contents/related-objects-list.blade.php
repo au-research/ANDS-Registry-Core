@@ -24,7 +24,6 @@
             }
         }
 
-        $hasRelatedWebsite = false;
         foreach($ro->relatedInfo as $relatedInfo) {
             if ($relatedInfo['type']=='website'){
                 $hasRelatedWebsite = true;
@@ -79,55 +78,55 @@
 
                     @if($hasDerivedCollection)
                     <h4>Related Data</h4>
-                    <ul>
+                    <p>
                         @foreach($ro->relationships['collection'] as $col)
                             @if($col && ($col['relation_type']=='hasDerivedCollection' || $col['relation_type']=='isDerivedFrom'))
-                            <li><small>{{readable($col['relation_type'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
+                        <img src="<?php echo base_url()?>assets/img/collection.png" style="margin-top: -2px; height: 24px; width: 24px;"/> <small>{{readable($col['relation_type'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
                             @endif
                         @endforeach
-                    </ul>
+                    </p>
                     @endif
 
                     @if($hasRelatedOrganisation)
                     <h4>Related Organisations</h4>
-                    <ul>
+                    <p>
                         @foreach($ro->relationships['party_multi'] as $col)
                             @if($col)
-                                <li><small>{{readable($col['relation_type'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
+                        <img src="<?php echo base_url()?>assets/img/party.png" style="margin-top: -2px; height: 24px; width: 24px;"/><small>{{readable($col['relation_type'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
                         @if(sizeof($ro->relationships['party_multi']) < $ro->relationships['party_multi_count_solr'])
-                            <li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=party/type=group">View all {{$ro->relationships['party_multi_count_solr']}} related organisations</a></li>
+                            <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=party/type=group">View all {{$ro->relationships['party_multi_count_solr']}} related organisations</a>
                         @endif
-                    </ul>
+                    </p>
                     @endif
 
                     @if($hasRelatedGrantsOrProjects)
                     <h4>Related Grants and Projects</h4>
-                    <ul>
+                   <p>
                         @foreach($ro->relationships['activity'] as $col)
                             @if($col)
-                                <li><small>{{readable($col['relation_type'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
+                        <img src="<?php echo base_url()?>assets/img/activity.png" style="margin-top: -2px; height: 24px; width: 24px;"/><small>{{readable($col['relation_type'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
                             @endif
                         @endforeach
                         @if(sizeof($ro->relationships['activity']) < $ro->relationships['activity_count_solr'])
-                            <li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=activity">View all {{$ro->relationships['activity_count_solr']}} related activities</a></li>
+                            <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=activity">View all {{$ro->relationships['activity_count_solr']}} related activities</a>
                         @endif
-                    </ul>
+                   </p>
                     @endif
 
                     @if($hasRelatedServices)
                     <h4>Related Services</h4>
-                    <ul>
+                    <p>
                         @foreach($ro->relationships['service'] as $col)
                             @if($col)
-                                <li><small>{{readable($col['relation_type'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
+                        <img src="<?php echo base_url()?>assets/img/service.png" style="margin-top: -2px; height: 24px; width: 24px;"/><small>{{readable($col['relation_type'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
                         @if(sizeof($ro->relationships['service']) < $ro->relationships['service_count_solr'])
-                            <li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=service">View all {{$ro->relationships['service_count_solr']}} related services</a></li>
+                            <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=service">View all {{$ro->relationships['service_count_solr']}} related services</a>
                         @endif
-                    </ul>
+                    </p>
                     @endif
 
 
