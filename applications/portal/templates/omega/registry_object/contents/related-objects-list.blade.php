@@ -1,5 +1,11 @@
 @if($ro->relationships)
 <?php
+    $hasRelatedOrganisation = isset($ro->relationships['party_multi']);
+    $hasRelatedGrantsOrProjects = isset($ro->relationships['activity']);
+    $hasRelatedServices = isset($ro->relationships['service']);
+    $hasRelatedInfo = isset($ro->relatedInfo);
+    $hasRelatedPublication = false;
+    $hasRelatedWebsite = false;
 
     $search_class = $ro->core['class'];
     if($ro->core['class']=='party') {
@@ -10,10 +16,7 @@
         }
     }
 
-    $hasRelatedPublication = false;
-    $hasRelatedWebsite = false;
-
-    if($ro->relatedInfo){
+    if($hasRelatedInfo){
         foreach($ro->relatedInfo as $relatedInfo) {
             if ($relatedInfo['type']=='publication'){
                 $hasRelatedPublication = true;
@@ -39,12 +42,6 @@
             }
         }
     }
-
-    $hasRelatedOrganisation = isset($ro->relationships['party_multi']);
-    $hasRelatedGrantsOrProjects = isset($ro->relationships['activity']);
-    $hasRelatedServices = isset($ro->relationships['service']);
-    $hasRelatedInfo = isset($ro->relatedInfo);
-
 ?>
     @if($hasRelatedPublication || $hasDerivedCollection || $hasRelatedOrganisation || $hasRelatedGrantsOrProjects || $hasRelatedServices || $hasRelatedInfo)
         <div class="swatch-white">
@@ -148,7 +145,7 @@
                                 @endif
                             </p>
                             @if($relatedInfo['relation']['url'])
-                                <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a><img class="identifier_logo" src= '<?=portal_url()'assets/core/images/icons/nla_icon.png alt="External Link"/></p>
+                                <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a><img class="identifier_logo" src= '<?=portal_url();?>'assets/core/images/icons/nla_icon.png alt="External Link"/></p>
                             @endif
                         @endif
                     @endforeach
