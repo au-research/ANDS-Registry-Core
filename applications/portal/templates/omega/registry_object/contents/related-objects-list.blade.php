@@ -11,18 +11,22 @@
     }
 
     $hasRelatedPublication = false;
-    foreach($ro->relatedInfo as $relatedInfo) {
-        if ($relatedInfo['type']=='publication'){
-            $hasRelatedPublication = true;
-            break; // stop looking once found!!!
-        }
-    }
-
     $hasRelatedWebsite = false;
-    foreach($ro->relatedInfo as $relatedInfo) {
-        if ($relatedInfo['type']=='website'){
-            $hasRelatedWebsite = true;
-            break; // stop looking once found!!!
+
+    if($ro->relatedInfo){
+        foreach($ro->relatedInfo as $relatedInfo) {
+            if ($relatedInfo['type']=='publication'){
+                $hasRelatedPublication = true;
+                break; // stop looking once found!!!
+            }
+        }
+
+        $hasRelatedWebsite = false;
+        foreach($ro->relatedInfo as $relatedInfo) {
+            if ($relatedInfo['type']=='website'){
+                $hasRelatedWebsite = true;
+                break; // stop looking once found!!!
+            }
         }
     }
 
@@ -138,13 +142,13 @@
                             <p>
                                 <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
                                 @if($relatedInfo['identifier']['identifier_href'])
-                                    <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{$relatedInfo['identifier']['identifier_href']['display_icon']}}<br />
+                                    <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/nla_icon.png alt="External Link"/><br />
                                 @else
                                     {{$relatedInfo['identifier']['identifier_value']}}
                                 @endif
                             </p>
                             @if($relatedInfo['relation']['url'])
-                                <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
+                                <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a><img class="identifier_logo" src= '<?=portal_url()'assets/core/images/icons/nla_icon.png alt="External Link"/></p>
                             @endif
                         @endif
                     @endforeach
