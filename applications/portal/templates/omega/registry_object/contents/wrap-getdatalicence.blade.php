@@ -8,7 +8,9 @@
             if ($right['type']=='licence' && $right['licence_type']=='CC-BY') {
                 $cc = $right['value'];
             } elseif ($right['type']=='accessRights') {
-                $ar = $right['accessRights_type'];
+                if(isset($right['accessRights_type'])){
+                    $ar = $right['accessRights_type'];
+                }
                 $detail=true;
             } else {
                 $detail = true;
