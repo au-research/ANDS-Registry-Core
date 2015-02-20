@@ -1,8 +1,5 @@
 <div class="swatch-white">
     <div class="panel panel-primary element-no-top element-no-bottom panel-content" style="border:1px solid #cfcfcf;background:white;padding-bottom:20px">
-        <div class="panel-heading">
-            <a href="">Group</a>
-        </div>
         <div class="panel-body swatch-white">
             <div class="form-inline">
                 <select ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="form-control input-sm"></select>
@@ -18,9 +15,8 @@
             </div>
         </div>
         <div class="swatch-white" ng-if="group.rules.length > 0">
-            <div class="group-conditions panel panel-primary element-no-top element-no-bottom panel-content" style="border:1px solid #cfcfcf;margin:10px">
-                <div class="panel-heading"><a href="">Condition</a></div>
-                <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition panel-body swatch-white element element-no-top element-no-bottom">
+            <div class="group-conditions panel panel-primary element-no-top element-no-bottom panel-content" style="border:1px solid #cfcfcf;margin:10px;background:white;padding:10px">
+                <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition swatch-white element element-no-top element-no-bottom">
                     <div ng-switch="rule.hasOwnProperty('group')">
                         <div ng-switch-when="true">
                             <query-builder group="rule.group"></query-builder>
@@ -28,12 +24,13 @@
                         <div ng-switch-default="ng-switch-default">
                             <div class="form-inline">
                                 <select ng-options="t.name as t.display for t in fields" ng-model="rule.field" class="form-control input-sm"></select>
-                                <span style="margin-left:5px">:</span>
+                                <select ng-options="t.name as t.display for t in conditions" ng-model="rule.condition" class="form-control input-sm"></select>
                                 <input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm"/>
                                 <button style="margin-left: 5px" ng-click="removeCondition($index)" class="btn btn-sm btn-link"><i class="fa fa-remove"></i></button>
                             </div>
                         </div>
                     </div>
+                    <div ng-if="$index<group.rules.length-1" style="padding:10px"><strong>[[group.operator]]</strong></div>
                 </div>
             </div>
         </div>

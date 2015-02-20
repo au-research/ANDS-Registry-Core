@@ -11,9 +11,17 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
         if (!group || group.rules.length == 0) return "";
         for (var str = "(", i = 0; i < group.rules.length; i++) {
             i > 0 && (str += " " + group.operator + " ");
-            str += group.rules[i].group ?
-                computed(group.rules[i].group) :
-                group.rules[i].field + "" + htmlEntities(group.rules[i].condition) + "" + group.rules[i].data;
+
+            if(group.rules[i].group) {
+                str += computed(group.rules[i].group)
+            } else {
+                if(group.rules[i].condition=='-') {
+                    str += '-' + group.rules[i].field + ':' + group.rules[i].data;
+                }else {
+                    str += group.rules[i].field + "" + htmlEntities(group.rules[i].condition) + "" + group.rules[i].data;
+                }
+                
+            }
         }
 
         return str + ")";
@@ -58,7 +66,7 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
         $scope.json = JSON.stringify(newValue, null, 0);
         $scope.output = computed(newValue.group);
         // $log.debug($scope.json, $scope.output);
-        if ($scope.output!='()'){
+        if ($scope.output!='()' && $scope.output!=''){
             $scope.$emit('changeFilter', {type:'cq', value:LZString.compressToEncodedURIComponent($scope.json),execute:false});
             $scope.$emit('changeQuery', $scope.output);
         }
@@ -93,7 +101,8 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
                 ]
 
                 scope.conditions = [
-                    { name: ':' }
+                    { name: ':', display:'Contains' },
+                    { name: '-', display:'Excludes'}
                 ];
 
                 scope.addCondition = function () {
