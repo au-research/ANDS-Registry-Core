@@ -217,6 +217,13 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		} else return false;
 	}
 
+	$scope.showFilter = function(filter_name){
+		var show = true;
+		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort') {
+			show = false;
+		}
+		return show;
+	}
 
 	/**
 	 * Filter manipulation
@@ -445,7 +452,10 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 app.factory('search_factory', function($http, $log){
 	return {
 		status : 'idle',
-		filters: [],
+		filters: {
+			'rows':15,
+			'sort':'score desc'
+		},
 		query: '',
 		search_type: 'q',
 		result: null,
@@ -602,9 +612,11 @@ app.factory('search_factory', function($http, $log){
 					} else {
 						filters[term] = value;
 					}
-					
 				}
 			});
+
+			if(!filters.rows) filters.rows = 15;
+			if(!filters.sort) filters.sort = 'score asc';
 			return filters;
 		},
 		filters_to_hash: function(filters) {
