@@ -81,3 +81,24 @@ span.dynatree-selected a
 ul{
     list-style-position:inside;
 }
+.label {
+    line-height: 28px;
+    cursor: pointer;
+    background: #cdd2d5;
+    color: white !important;
+    padding: 3px 6px;
+}
+
+.label-open {
+    background: #a3be99;
+}
+
+
+.label-conditional {
+    background: #efb214;
+}
+
+
+.label-restricted {
+    background: #e93938;
+}
