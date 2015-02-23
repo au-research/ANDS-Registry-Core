@@ -9,8 +9,9 @@ class Directaccess extends ROHandler {
 	function handle() {
 		$download = array();
         if ($this->xml && $this->xml->{$this->ro->class}->location && $this->xml->{$this->ro->class}->location->address) {
-            foreach($this->xml->{$this->ro->class}->location->address->electronic as $directaccess){
-                if($directaccess['type']=='url'&& ($directaccess['target']=='directDownload' || $directaccess['target']=='landingPage')){
+            foreach($this->xml->{$this->ro->class}->location as $location){
+                $directaccess=$location->address->electronic;
+                if($directaccess && $directaccess['type']=='url'&& ($directaccess['target']=='directDownload' || $directaccess['target']=='landingPage')){
                     if((string)$directaccess->title=='')$directaccess->title=(string)$directaccess->value;
                     $download[] = Array(
                         'access_type' => (string)$directaccess['target'],
@@ -40,7 +41,6 @@ class Directaccess extends ROHandler {
             }
 
         }
-
         $relationshipTypeArray = ['isPresentedBy','supports'];
         $classArray = ['service'];
         $services = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
@@ -60,24 +60,21 @@ class Directaccess extends ROHandler {
 
 
         }
-
-        if(!$download){
-            foreach($this->xml->{$this->ro->class}->location->address->electronic as $directaccess){
-                 if($directaccess['type']=='url'&& $directaccess['target']!='directDownload' && $directaccess['target']!='landingPage'){
-                     if((string)$directaccess->title=='')$directaccess->title=(string)$directaccess->value;
-                        $download[] = Array(
-                            'access_type' => 'url',
-                            'contact_type' => 'url',
-                            'access_value' => (string)$directaccess->value,
-                            'title'=>(string)$directaccess->title,
-                            'mediaType'=>(string)$directaccess->mediaType,
-                            'byteSize'=>(string)$directaccess->byteSize,
-                      );
-                 }
-            }
-
-        }
-
+        foreach($this->xml->{$this->ro->class}->location as $location){
+          $directaccess=$location->address->electronic;
+              if($directaccess && $directaccess['type']=='url' && $directaccess['target']!='directDownload' && $directaccess['target']!='landingPage'){
+                     if((string)$directaccess->title==''||!$directaccess->title){$directaccess->title=(string)$directaccess->value;}
+                     $download[] = Array(
+                          'access_type' => 'url',
+                          'contact_type' => 'url',
+                          'access_value' => (string)$directaccess->value,
+                          'title'=>(string)$directaccess->title,
+                          'mediaType'=>(string)$directaccess->mediaType,
+                          'byteSize'=>(string)$directaccess->byteSize,
+                          'notes' =>''
+                     );
+                }
+          }
         return $download;
 	}
 }

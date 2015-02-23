@@ -1,7 +1,7 @@
 <?php
 	$has_metadata = false;
     $has_moreInfo = false;
-    $notTypes = array('publication','dataQualityInformation','website','reuseInformation','metadata');
+    $notTypes = array('publication','dataQualityInformation','website','reuseInformation','metadata','service');
 	if ($ro->relatedInfo) {
 		foreach ($ro->relatedInfo as $relatedInfo) {
 			if ($relatedInfo['type']=='metadata') {
@@ -29,7 +29,7 @@
 				    <p>
 				        <b>{{$relatedInfo['identifier']['identifier_type']}}</b> : 
 				        @if($relatedInfo['identifier']['identifier_href']['href'])
-				            <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
+				            <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{$relatedInfo['identifier']['identifier_href']['display_icon']}}<br />
 				        @else
 				            {{$relatedInfo['identifier']['identifier_value']}}
 				        @endif
@@ -40,19 +40,39 @@
 			    @endif
 			@endforeach
             @foreach($ro->relatedInfo as $relatedInfo)
+            @if($relatedInfo['type']='service' && $relatedInfo['relation']['url']!='')
+            <h5> {{$relatedInfo['title']}}</h5>
+            <p>
+                <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                @if($relatedInfo['identifier']['identifier_href']['href'])
+                <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{$relatedInfo['identifier']['identifier_href']['display_icon']}}<br />
+                @else
+                {{$relatedInfo['identifier']['identifier_value']}}
+                @endif
+            </p>
+
+            @if($relatedInfo['relation']['url'])
+            <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
+            @endif
+            @if($relatedInfo['notes'])
+            <p>{{$relatedInfo['notes']}}</p>
+            @endif
+            @endif
+            @endforeach
+            @foreach($ro->relatedInfo as $relatedInfo)
                 @if(!in_array($relatedInfo['type'],$notTypes))
                     <h5> {{$relatedInfo['title']}}</h5>
                     <p>
                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
                     @if($relatedInfo['identifier']['identifier_href']['href'])
-                        <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
+                        <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{$relatedInfo['identifier']['identifier_href']['display_icon']}}<br />
                     @else
                         {{$relatedInfo['identifier']['identifier_value']}}
                     @endif
                     </p>
 
                     @if($relatedInfo['relation']['url'])
-                        <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a>{{$relatedInfo['relation']['display_icon']}}</p>
+                        <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
                     @endif
                     @if($relatedInfo['notes'])
                         <p>{{$relatedInfo['notes']}}</p>
