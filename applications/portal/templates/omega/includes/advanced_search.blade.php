@@ -87,12 +87,16 @@
                 </ul>
               </div>
 
+              <div ng-if="isAdvancedSearchActive('review')">
+                [[ prefilters ]]
+              </div>
+
             </div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" ng-click="hashChange();closeAdvanced();">Search</button>
+        <button type="button" class="btn btn-primary" ng-click="advancedSearch();">Search</button>
       </div>
     </div>
   </div>

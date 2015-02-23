@@ -18,7 +18,8 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 });
 
 
-app.controller('searchCtrl', function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
+app.controller('searchCtrl', 
+function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
 	
 
 	$scope.people = [
@@ -363,12 +364,21 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 	 * Advanced Search Section
 	 */
 	$scope.advanced = function(active){
+		$scope.prefilters = {};
+		angular.copy($scope.filters, $scope.prefilters);
 		if (active) {
 			$scope.selectAdvancedField(active);
 		} else {
 			$scope.selectAdvancedField('terms')
 		}
 		$('#advanced_search').modal('show');
+	}
+
+	$scope.advancedSearch = function(){
+		$scope.filters = {};
+		angular.copy($scope.prefilters, $scope.filters);
+		$scope.hashChange();
+		$('#advanced_search').modal('hide');
 	}
 	
 	$scope.selectAdvancedField = function(name) {
@@ -496,7 +506,6 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 				//LatLngBounds(sw?:LatLng, ne?:LatLng)
 				var rBounds = new google.maps.LatLngBounds(sw,ne);
 
-
 				if($scope.searchBox) {
 					$scope.searchBox.setMap(null);
 					$scope.searchBox = null;
@@ -513,6 +522,7 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 			  	});
 			  	// $log.debug($scope.geoCodeRectangle);
 			  	$scope.searchBox.setMap($scope.mapInstance);
+			  	google.maps.event.trigger($scope.mapInstance, 'resize');
 			}
 		});
 
@@ -565,9 +575,6 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 			});
 		}
 
-		$scope.$watch('drawingManager', function(newv){
-			$log.debug(newv);
-		});
 	});
 	
 	$scope.centres = [];
@@ -639,7 +646,8 @@ app.factory('search_factory', function($http, $log){
 			{'name':'license_class', 'display':'License'},
 			{'name':'temporal', 'display':'Temporal'},
 			{'name':'spatial', 'display':'Spatial'},
-			{'name':'class', 'display':'Class'}
+			{'name':'class', 'display':'Class'},
+			{'name':'review', 'display':'Review'}
 		],
 
 		ingest: function(hash) {
@@ -851,7 +859,7 @@ app.factory('vocab_factory', function($http, $log){
 	}
 });
 
-app.directive('resolveSubjects', function($http, $log, vocab_factory){
+app.directive('resolve', function($http, $log, vocab_factory){
 	return {
 		template: '<ul class="listy"><li ng-repeat="item in result"><a href="" ng-click="toggleFilter(\'anzsrc-for\', item.notation, true)">{{item.label}} <small><i class="fa fa-remove"></i></small></a></li></ul>',
 		scope: {
@@ -875,7 +883,7 @@ app.directive('resolveSubjects', function($http, $log, vocab_factory){
 			});
 
 			scope.toggleFilter = function(type, value, execute) {
-				scope.$emit('toggleFilter', {type:type,value:value,execute:execute});
+				// scope.$emit('toggleFilter', {type:type,value:value,execute:execute});
 			}
 		}
 	}

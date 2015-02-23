@@ -63,7 +63,7 @@
             <ul class="listy" ng-show="isArray(value)===false && name!='anzsrc-for'">
                 <li> <a href="" ng-click="toggleFilter(name, value, true)">[[value]]<small><i class="fa fa-remove"></i></small></a> </li>
             </ul>
-            <resolve-subjects ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></resolve-subjects>
+            <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></div>
         </div>
         <div class="panel-body swatch-white">
             <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')"><i class="fa fa-save"></i> Save Search</a>
@@ -107,8 +107,8 @@
         <h4>[[facet.name | filter_name]]</h4>
         <ul class="listy">
             <li ng-repeat="item in facet.value | limitTo:5 | orderBy:'item.value'">
-                <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="clearFilter(facet.name, item.name, true)">
-                <a href="" ng-click="clearFilter(facet.name, item.name, true)">[[item.name | truncate:30]] <small>[[item.value]]</small></a>    
+                <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
+                <a href="" ng-click="toggleFilter(facet.name, item.name, true)">[[item.name | truncate:30]] <small>[[item.value]]</small></a>    
             </li>
             <li><a href="" ng-click="advanced(facet.name)">View More</a></li>
         </ul>
