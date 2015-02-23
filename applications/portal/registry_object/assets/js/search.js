@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components', 'queryBuilder', 'lz-string', 'angular-loading-bar', 'ui.select']);
+var app = angular.module('app', ['ngRoute', 'ngSanitize', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components', 'queryBuilder', 'lz-string', 'angular-loading-bar', 'ui.select', 'uiGmapgoogle-maps']);
 
 app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$interpolateProvider.startSymbol('[[');
@@ -9,18 +9,27 @@ app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$logProvider.debugEnabled(true);
 });
 
-app.controller('searchCtrl', function($scope, $log, $modal, search_factory, vocab_factory, profile_factory){
+app.config(function(uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        //    key: 'your api key',
+        v: '3.17',
+        libraries: 'weather,drawing,geometry,visualization'
+    });
+});
+
+
+app.controller('searchCtrl', function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
 	
 
 	$scope.people = [
-	    { name: 'Adam',      email: 'adam@email.com',      age: 10 },
-	    { name: 'Amalie',    email: 'amalie@email.com',    age: 12 },
-	    { name: 'Wladimir',  email: 'wladimir@email.com',  age: 30 },
-	    { name: 'Samantha',  email: 'samantha@email.com',  age: 31 },
-	    { name: 'Estefanía', email: 'estefanía@email.com', age: 16 },
-	    { name: 'Natasha',   email: 'natasha@email.com',   age: 54 },
-	    { name: 'Nicole',    email: 'nicole@email.com',    age: 43 },
-	    { name: 'Adrian',    email: 'adrian@email.com',    age: 21 }
+		{ name: 'Adam',      email: 'adam@email.com',      age: 10 },
+		{ name: 'Amalie',    email: 'amalie@email.com',    age: 12 },
+		{ name: 'Wladimir',  email: 'wladimir@email.com',  age: 30 },
+		{ name: 'Samantha',  email: 'samantha@email.com',  age: 31 },
+		{ name: 'Estefanía', email: 'estefanía@email.com', age: 16 },
+		{ name: 'Natasha',   email: 'natasha@email.com',   age: 54 },
+		{ name: 'Nicole',    email: 'nicole@email.com',    age: 43 },
+		{ name: 'Adrian',    email: 'adrian@email.com',    age: 21 }
 	  ];
 	
 	$scope.$watch(function(){
@@ -138,7 +147,10 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 			// search_factory.updateResult(data);
 			search_factory.update('result', data);
 			search_factory.update('facets', search_factory.construct_facets(data));
+
 			$scope.sync();
+			$scope.$broadcast('search_complete');
+			$scope.populateCenters();
 			// $log.debug('result', $scope.result);
 			// $log.debug($scope.result, search_factory.result);
 		});
@@ -446,16 +458,150 @@ app.controller('searchCtrl', function($scope, $log, $modal, search_factory, voca
 		return found;
 	}
 	// $scope.advanced('subject');
+	// 
+	// 
+	
+	//MAP
+	uiGmapGoogleMapApi.then(function(maps) {
+		$scope.map = {
+			center:{
+				latitude:-25.397, longitude:133.644
+			},
+			zoom:4,
+			bounds:{},
+			options: {
+				disableDefaultUI: true,
+				panControl: false,
+				navigationControl: false,
+				scrollwheel: true,
+				scaleControl: true
+			},
+			events: {
+				tilesloaded: function(map){
+					$scope.$apply(function () {
+				   		$scope.mapInstance = map;
+				    });
+				}
+			}
+		};
+
+		$scope.$watch('mapInstance', function(newv, oldv){
+			if(newv && !angular.equals(newv,oldv)){
+				bindDrawingManager(newv);
+
+				var wsenArray = $scope.filters['spatial'].split(' ');
+				var sw = new google.maps.LatLng(wsenArray[1],wsenArray[0]);
+				var ne = new google.maps.LatLng(wsenArray[3],wsenArray[2]);
+				//148.359375 -32.546813 152.578125 -28.998532
+				//LatLngBounds(sw?:LatLng, ne?:LatLng)
+				var rBounds = new google.maps.LatLngBounds(sw,ne);
+
+
+				if($scope.searchBox) {
+					$scope.searchBox.setMap(null);
+					$scope.searchBox = null;
+				}
+
+			  	$scope.searchBox = new google.maps.Rectangle({
+			  		fillColor:'#ffff00',
+			  		fillOpacity: 0.4,
+				    strokeWeight: 1,
+				    clickable: false,
+				    editable: false,
+				    zIndex: 1,
+			  		bounds:rBounds
+			  	});
+			  	// $log.debug($scope.geoCodeRectangle);
+			  	$scope.searchBox.setMap($scope.mapInstance);
+			}
+		});
+
+		function bindDrawingManager(map) {
+			var polyOption = {
+			    fillColor: '#ffff00',
+			    fillOpacity: 0.4,
+			    strokeWeight: 1,
+			    clickable: false,
+			    editable: false,
+			    zIndex: 1
+			};
+			$scope.drawingManager = new google.maps.drawing.DrawingManager({
+			    drawingControl: true,
+			    drawingControlOptions: {
+			        position: google.maps.ControlPosition.TOP_CENTER,
+			            drawingModes: [
+			              google.maps.drawing.OverlayType.RECTANGLE
+			            ]
+			     },
+			     circleOptions: polyOption,
+			     rectangleOptions: polyOption,
+			     polygonOptions: polyOption,
+			     polylineOptions: polyOption,
+			});
+			$scope.drawingManager.setMap(map);
+
+			google.maps.event.addListener($scope.drawingManager, 'overlaycomplete', function(e) {
+				if(e.type == google.maps.drawing.OverlayType.RECTANGLE) {
+
+					$scope.drawingManager.setDrawingMode(null);
+
+					if($scope.searchBox){
+						$scope.searchBox.setMap(null);
+						$scope.searchBox = null;
+					}
+
+				   	$scope.searchBox = e.overlay;
+				    var bnds = $scope.searchBox.getBounds();
+				    var n = bnds.getNorthEast().lat().toFixed(6);
+					var e = bnds.getNorthEast().lng().toFixed(6);
+					var s = bnds.getSouthWest().lat().toFixed(6);
+					var w = bnds.getSouthWest().lng().toFixed(6);
+
+					// drawing.setMap(null);
+
+					$scope.filters['spatial'] = w + ' ' + s + ' ' + e + ' ' + n;
+					$scope.centres = [];
+				}
+			});
+		}
+
+		$scope.$watch('drawingManager', function(newv){
+			$log.debug(newv);
+		});
+	});
+	
+	$scope.centres = [];
+	$scope.populateCenters = function(){
+		angular.forEach($scope.result.response.docs, function(doc){
+			if(doc.spatial_coverage_centres){
+				var pair = doc.spatial_coverage_centres[0];
+				var split = pair.split(' ');
+				var lon = split[0];
+				var lat = split[1];
+				// console.log(doc.spatial_coverage_centres,pair,split,lon,lat)
+				if(lon && lat){
+					$scope.centres.push({
+						id: doc.id,
+						title: doc.title,
+						longitude: lon,
+						latitude: lat,
+						showw:true,
+						onClick: function() {
+							doc.showw=!doc.showw;
+						}
+					});
+				}
+			}
+		});
+	}
+
 
 });
 
 app.factory('search_factory', function($http, $log){
 	return {
 		status : 'idle',
-		filters: {
-			'rows':15,
-			'sort':'score desc'
-		},
+		filters: [],
 		query: '',
 		search_type: 'q',
 		result: null,
@@ -470,6 +616,12 @@ app.factory('search_factory', function($http, $log){
 		available_search_type: [
 			'q', 'title', 'identifier', 'related_people', 'related_organisations', 'description'
 		],
+
+		default_filters: {
+			'rows':15,
+			'sort':'score desc',
+			// 'spatial_coverage_centres': '*'
+		},
 
 		sort : [
 			{value:'score desc',label:'Relevance'},
@@ -615,8 +767,10 @@ app.factory('search_factory', function($http, $log){
 				}
 			});
 
-			if(!filters.rows) filters.rows = 15;
-			if(!filters.sort) filters.sort = 'score asc';
+			angular.forEach(this.default_filters, function(content,type){
+				if(!filters[type]) filters[type] = content;
+			});
+
 			return filters;
 		},
 		filters_to_hash: function(filters) {

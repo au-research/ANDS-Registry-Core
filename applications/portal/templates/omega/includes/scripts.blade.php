@@ -53,8 +53,8 @@
 
 
 <!-- Map Search Scripts -->
-<!-- <script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script> -->
-<!-- <script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.min.js', 'core')}}"></script> -->
+<script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.js', 'core')}}"></script>
 
 <!-- Search Script and Resources is included in every page -->
 <!-- <script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>

@@ -284,6 +284,9 @@ class Registry_object extends MX_Controller {
 
 		$this->solr->setFilters($filters);
 
+		//test
+		// $this->solr->setOpt('fq', '+spatial_coverage_centres:*');
+
 		//not recording a hit for the quick search done for advanced search
 		if (!$no_record) {
 			$event = array(
