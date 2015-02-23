@@ -15,7 +15,11 @@
                                         @if($ro->logo)
                                         <img src="{{$ro->logo[0]}}" alt="logo" class="header-logo animated fadeInDown">
                                         @endif
-                                        <h1 class="hairline bordered-normal">{{$ro->core['title']}}  [@include('registry_object/contents/existenceDates-list')]</h1>
+                                        <h1 class="hairline bordered-normal">{{$ro->core['title']}}
+                                            @if($ro->existenceDates)
+                                                [@include('registry_object/contents/existenceDates-list')]
+                                            @endif
+                                        </h1>
                                         @include('registry_object/activity_contents/activity-parties')
                                     </div>
                                 </div>
