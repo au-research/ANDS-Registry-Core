@@ -69,11 +69,19 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.changeFilter(data.type, data.value, data.execute);
 	});
 
+	$scope.$on('changePreFilter', function(e, data){
+		$scope.prefilters[data.type] = data.value;
+	});
+
 	$scope.$on('changeQuery', function(e, data){
 		$scope.query = data;
 		$scope.filters['q'] = data;
 		search_factory.update('query', data);
 		search_factory.update('filters', $scope.filters);
+	});
+
+	$scope.$on('changePreQuery', function(e, data){
+		$scope.prefilters['q'] = data;
 	});
 
 	$scope.$watch('search_type', function(newv,oldv){
@@ -151,10 +159,17 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 			$scope.sync();
 			$scope.$broadcast('search_complete');
-			$scope.populateCenters();
+			$scope.populateCenters($scope.result.response.docs);
 			// $log.debug('result', $scope.result);
 			// $log.debug($scope.result, search_factory.result);
 		});
+	}
+
+	$scope.presearch = function(){
+		search_factory.search($scope.prefilters).then(function(data){
+			$scope.preresult = data;
+			$scope.populateCenters($scope.preresult.response.docs);
+		})
 	}
 
 	$scope.sync = function(){
@@ -363,22 +378,74 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	/**
 	 * Advanced Search Section
 	 */
+	$scope.prefilters = {};
 	$scope.advanced = function(active){
 		$scope.prefilters = {};
+		$scope.preresult = {};
 		angular.copy($scope.filters, $scope.prefilters);
-		if (active) {
+		if (active && active!='close') {
 			$scope.selectAdvancedField(active);
-		} else {
+			$('#advanced_search').modal('show');
+		} else if(active=='close'){
+			$('#advanced_search').modal('hide');
+		}else {
 			$scope.selectAdvancedField('terms')
+			$('#advanced_search').modal('show');
 		}
-		$('#advanced_search').modal('show');
+		$scope.presearch();
 	}
 
 	$scope.advancedSearch = function(){
 		$scope.filters = {};
 		angular.copy($scope.prefilters, $scope.filters);
+		$scope.query = $scope.prefilters.q;
+
 		$scope.hashChange();
 		$('#advanced_search').modal('hide');
+	}
+
+	$scope.togglePreFilter = function(type, value, execute) {
+		$log.debug('toggling', type,value);
+		if($scope.prefilters[type]) {
+			if($scope.prefilters[type]==value) {
+				$scope.clearPreFilter(type,value);
+			} else {
+				if($scope.prefilters[type].indexOf(value)==-1) {
+					$scope.addPreFilter(type, value);
+				} else {
+					$scope.clearPreFilter(type,value);
+				}
+			}
+		} else {
+			$scope.addPreFilter(type, value);
+		}
+		if(execute) $scope.presearch();
+	}
+
+	$scope.addPreFilter = function(type, value) {
+		$log.debug('adding', type,value);
+		if($scope.prefilters[type]){
+			if(typeof $scope.prefilters[type]=='string') {
+				var old = $scope.prefilters[type];
+				$scope.prefilters[type] = [];
+				$scope.prefilters[type].push(old);
+				$scope.prefilters[type].push(value);
+			} else if(typeof $scope.prefilters[type]=='object') {
+				$scope.prefilters[type].push(value);
+			}
+		} else $scope.prefilters[type] = value;
+	}
+
+	$scope.clearPreFilter = function(type, value, execute) {
+		$log.debug('clearing', type,value);
+		if(typeof $scope.prefilters[type]!='object') {
+			if(type=='q') $scope.q = '';
+			delete $scope.prefilters[type];
+		} else if(typeof $scope.prefilters[type]=='object') {
+			var index = $scope.prefilters[type].indexOf(value);
+			$scope.prefilters[type].splice(index, 1);
+		}
+		if(execute) $scope.presearch();
 	}
 	
 	$scope.selectAdvancedField = function(name) {
@@ -388,6 +455,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				f.active = true;
 			} else f.active = false;
 		});
+		$scope.presearch();
 	}
 
 	$scope.isAdvancedSearchActive = function(type) {
@@ -409,6 +477,11 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			} else if(typeof $scope.filters[type]=='object') {
 				return $scope.filters[type].length;
 			}
+		} else if(type=='review'){
+			if($scope.preresult && $scope.preresult.response) {
+				return $scope.preresult.response.numFound;
+			} else return 0;
+			
 		} else return 0;
 	}
 
@@ -434,8 +507,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			});
 		}
 	}
-	$scope.isVocabSelected = function(item) {
-		var found = vocab_factory.isSelected(item, $scope.filters);
+	$scope.isVocabSelected = function(item, filters) {
+		if(!filters) filters = $scope.filters;
+		var found = vocab_factory.isSelected(item, filters);
 		if (found) {
 			item.pos = 1;
 		}
@@ -499,29 +573,33 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			if(newv && !angular.equals(newv,oldv)){
 				bindDrawingManager(newv);
 
-				var wsenArray = $scope.filters['spatial'].split(' ');
-				var sw = new google.maps.LatLng(wsenArray[1],wsenArray[0]);
-				var ne = new google.maps.LatLng(wsenArray[3],wsenArray[2]);
-				//148.359375 -32.546813 152.578125 -28.998532
-				//LatLngBounds(sw?:LatLng, ne?:LatLng)
-				var rBounds = new google.maps.LatLngBounds(sw,ne);
+				//Draw the searchbox
+				if($scope.filters['spatial']) {
+					var wsenArray = $scope.filters['spatial'].split(' ');
+					var sw = new google.maps.LatLng(wsenArray[1],wsenArray[0]);
+					var ne = new google.maps.LatLng(wsenArray[3],wsenArray[2]);
+					//148.359375 -32.546813 152.578125 -28.998532
+					//LatLngBounds(sw?:LatLng, ne?:LatLng)
+					var rBounds = new google.maps.LatLngBounds(sw,ne);
 
-				if($scope.searchBox) {
-					$scope.searchBox.setMap(null);
-					$scope.searchBox = null;
+					if($scope.searchBox) {
+						$scope.searchBox.setMap(null);
+						$scope.searchBox = null;
+					}
+
+				  	$scope.searchBox = new google.maps.Rectangle({
+				  		fillColor:'#ffff00',
+				  		fillOpacity: 0.4,
+					    strokeWeight: 1,
+					    clickable: false,
+					    editable: false,
+					    zIndex: 1,
+				  		bounds:rBounds
+				  	});
+				  	// $log.debug($scope.geoCodeRectangle);
+				  	$scope.searchBox.setMap($scope.mapInstance);
 				}
-
-			  	$scope.searchBox = new google.maps.Rectangle({
-			  		fillColor:'#ffff00',
-			  		fillOpacity: 0.4,
-				    strokeWeight: 1,
-				    clickable: false,
-				    editable: false,
-				    zIndex: 1,
-			  		bounds:rBounds
-			  	});
-			  	// $log.debug($scope.geoCodeRectangle);
-			  	$scope.searchBox.setMap($scope.mapInstance);
+				
 			  	google.maps.event.trigger($scope.mapInstance, 'resize');
 			}
 		});
@@ -569,8 +647,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 					// drawing.setMap(null);
 
-					$scope.filters['spatial'] = w + ' ' + s + ' ' + e + ' ' + n;
+					$scope.prefilters['spatial'] = w + ' ' + s + ' ' + e + ' ' + n;
 					$scope.centres = [];
+					$scope.presearch();
 				}
 			});
 		}
@@ -578,26 +657,36 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	});
 	
 	$scope.centres = [];
-	$scope.populateCenters = function(){
-		angular.forEach($scope.result.response.docs, function(doc){
+	$scope.populateCenters = function(results){
+		angular.forEach(results, function(doc){
 			if(doc.spatial_coverage_centres){
 				var pair = doc.spatial_coverage_centres[0];
-				var split = pair.split(' ');
-				var lon = split[0];
-				var lat = split[1];
-				// console.log(doc.spatial_coverage_centres,pair,split,lon,lat)
-				if(lon && lat){
-					$scope.centres.push({
-						id: doc.id,
-						title: doc.title,
-						longitude: lon,
-						latitude: lat,
-						showw:true,
-						onClick: function() {
-							doc.showw=!doc.showw;
+				if (pair) {
+					var split = pair.split(' ');
+					if (split.length == 1) {
+						split = pair.split(',');
+					}
+					
+					if(split.length > 1 && split[0]!=0 && split[1]!=0){
+
+						var lon = split[0];
+						var lat = split[1];
+						// console.log(doc.spatial_coverage_centres,pair,split,lon,lat)
+						if(lon && lat){
+							$scope.centres.push({
+								id: doc.id,
+								title: doc.title,
+								longitude: lon,
+								latitude: lat,
+								showw:true,
+								onClick: function() {
+									doc.showw=!doc.showw;
+								}
+							});
 						}
-					});
+					}
 				}
+				
 			}
 		});
 	}
@@ -883,7 +972,7 @@ app.directive('resolve', function($http, $log, vocab_factory){
 			});
 
 			scope.toggleFilter = function(type, value, execute) {
-				// scope.$emit('toggleFilter', {type:type,value:value,execute:execute});
+				scope.$emit('toggleFilter', {type:type,value:value,execute:execute});
 			}
 		}
 	}

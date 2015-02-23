@@ -67,8 +67,8 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
         $scope.output = computed(newValue.group);
         // $log.debug($scope.json, $scope.output);
         if ($scope.output!='()' && $scope.output!=''){
-            $scope.$emit('changeFilter', {type:'cq', value:LZString.compressToEncodedURIComponent($scope.json),execute:false});
-            $scope.$emit('changeQuery', $scope.output);
+            $scope.$emit('changePreFilter', {type:'cq', value:LZString.compressToEncodedURIComponent($scope.json),execute:false});
+            $scope.$emit('changePreQuery', $scope.output);
         }
     }, true);
 

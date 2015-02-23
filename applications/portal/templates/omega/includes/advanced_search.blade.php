@@ -34,19 +34,19 @@
               <div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in allfacets">
                   <ul class="list-unstyled" ng-if="facet.name!='subject'">
                       <li ng-repeat="item in facet.value">
-                          <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, false)">
-                          <a href="">[[item.name]] <small>[[item.value]]</small></a>    
+                          <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
+                          <a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name]] <small>[[item.value]]</small></a>    
                       </li>
                   </ul>
               </div>
 
               <div ng-if="isAdvancedSearchActive('temporal')">
                 <label for="">From Year</label>
-                <select ng-model="filters.year_from" ng-options="year_from as year_from for year_from in temporal_range">
+                <select ng-model="prefilters.year_from" ng-options="year_from as year_from for year_from in temporal_range">
                     <option value="" style="display:none">From Year</option>
                 </select>
                 <label for="">To Year</label>
-                <select ng-model="filters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true">
+                <select ng-model="prefilters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true">
                     <option value="" style="display:none">To Year</option>
                 </select>
               </div>
@@ -55,15 +55,15 @@
                 <div>
                   <ul class="list-unstyled">
                     <li ng-repeat="item in vocab_tree">
-                      <input type="checkbox" ng-checked="isVocabSelected(item)" ui-indeterminate="isVocabParentSelected(item)" ng-click="toggleFilter('anzsrc-for', item.notation, false)">
+                      <input type="checkbox" ng-checked="isVocabSelected(item, prefilters)" ui-indeterminate="isVocabParentSelected(item)" ng-click="togglePreFilter('anzsrc-for', item.notation, false)">
                       <a href="" ng-click="getSubTree(item)">[[item.prefLabel]]</a>
                       <ul ng-if="item.subtree">
                         <li ng-repeat="item2 in item.subtree">
-                          <input type="checkbox" ng-checked="isVocabSelected(item2)" ui-indeterminate="isVocabParentSelected(item2)" ng-click="toggleFilter('anzsrc-for', item2.notation, false)">
+                          <input type="checkbox" ng-checked="isVocabSelected(item, prefilters2)" ui-indeterminate="isVocabParentSelected(item2)" ng-click="togglePreFilter('anzsrc-for', item2.notation, false)">
                           <a href="" ng-click="getSubTree(item2)">[[item2.prefLabel]]</a>
                           <ul ng-if="item2.subtree">
                             <li ng-repeat="item3 in item2.subtree">
-                              <input type="checkbox" ng-checked="isVocabSelected(item3)" ui-indeterminate="isVocabParentSelected(item3)" ng-click="toggleFilter('anzsrc-for', item3.notation, false)">
+                              <input type="checkbox" ng-checked="isVocabSelected(item, prefilters3)" ui-indeterminate="isVocabParentSelected(item3)" ng-click="togglePreFilter('anzsrc-for', item3.notation, false)">
                               <a href="" ng-click="getSubTree(item3)">[[item3.prefLabel]]</a>
                             </li>
                           </ul>
@@ -88,7 +88,31 @@
               </div>
 
               <div ng-if="isAdvancedSearchActive('review')">
-                [[ prefilters ]]
+                <div class="panel panel-primary" ng-cloak>
+                    <div class="panel-heading">Current Search</div>
+                    <!-- <div class="panel-body swatch-white">
+                        [[filters]]
+                    </div> -->
+                    <div class="panel-body swatch-white">
+                        <div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name)">
+                            <h4>[[name | filter_name]]</h4>
+                            <ul class="listy" ng-show="isArray(value) && name!='anzsrc-for'">
+                                <li ng-repeat="v in value track by $index"> <a href="" ng-click="togglePreFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
+                            </ul>
+                            <ul class="listy" ng-show="isArray(value)===false && name!='anzsrc-for'">
+                                <li> <a href="" ng-click="togglePreFilter(name, value, true)">[[value]]<small><i class="fa fa-remove"></i></small></a> </li>
+                            </ul>
+                            <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></div>
+                        </div>
+                        <div class="panel-body swatch-white">
+                          <a href="" class="btn btn-primary" ng-click="advancedSearch();"><i class="fa fa-search"></i> Search</a>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="well">
+                  <b>[[ preresult.response.numFound ]]</b> result(s) found with these filters. Hit <a href="" ng-click="advancedSearch();">Search</a>
+                </div>
               </div>
 
             </div>
@@ -96,6 +120,7 @@
         </div>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-link" ng-click="advanced('close');">Cancel</button>
         <button type="button" class="btn btn-primary" ng-click="advancedSearch();">Search</button>
       </div>
     </div>
