@@ -6,6 +6,7 @@
         <div id="content">
             @yield('content')
         </div>
+        @include('includes/advanced_search')
         @include('includes/footer')
     </body>
 </html>

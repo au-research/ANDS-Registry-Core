@@ -16,6 +16,8 @@ angular.module('portal-filters', [])
 				case 'type': return 'Type'; break;
 				case 'subject_vocab_uri': return 'Subject Vocabulary URI'; break;
 				case 'anzsrc-for': return 'Subjects'; break;
+				case 'year_from': return 'From Year'; break;
+				case 'year_to': return 'To Year'; break;
 				default: return text;
 			}
 		}
@@ -52,8 +54,11 @@ angular.module('portal-filters', [])
 	})
 	.filter('text', ['$sce', function($sce){
 		return function(text){
-			var decoded = $('<div/>').html(text).text();
-			return decoded;
+			var tmp = document.createElement("DIV");
+			tmp.innerHTML = text;
+			return tmp.textContent || tmp.innerText || "";
+			// var decoded = $('<div/>').html(text).text();
+			// return decoded;
 		}
 	}])
 	.filter('trustAsHtml', ['$sce', function($sce){

@@ -30,9 +30,8 @@
     "colorbox": "~1.5.14",
     "mustache": "~1.0.0",
     "angular-bootstrap": "~0.12.0",
-    "angular-lz-string": "~1.0.1"
-  },
-  "resolutions": {
-    "angular": "^1.2.x"
+    "angular-lz-string": "~1.0.1",
+    "angular-loading-bar": "~0.7.0",
+    "angular-ui-select": "~0.9.9"
   }
 }

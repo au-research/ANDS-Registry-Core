@@ -9,10 +9,10 @@
                 @yield('header')
                 <section class="section swatch-gray" style="z-index:1">
                     <div ng-view></div>
-                    
                 </section>
             </article>
         </div>
+        @include('includes/advanced_search')
         @include('includes/footer')
     </body>
 </html>

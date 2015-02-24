@@ -11,8 +11,22 @@
 			</div>
 		</div>
 		<div class="col-md-3" style="text-align:right;line-height:36px;">
-			Sort by: <select ng-options="item.value as item.label for item in sort" ng-model="filters.sort" ng-change="changeFilter('sort', filters.sort)"></select>
-			<select ng-options="item.value as item.label for item in pp" ng-model="filters.rows" ng-change="changeFilter('rows', filters.rows)"></select>
+			<span class="btn-group">
+				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Sort by: [[ filters.sort ]]<span class="caret"></span></button>
+				<ul class="dropdown-menu" role="menu">
+					<li ng-repeat="item in sort">
+						<a ng-click="changeFilter('sort', item.value, true)" href="">[[ item.label ]]</a>
+					</li>
+				</ul>
+			</span>
+			<span class="btn-group">
+				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Show: [[ filters.rows ]]<span class="caret"></span></button>
+				<ul class="dropdown-menu" role="menu">
+					<li ng-repeat="item in pp">
+						<a ng-click="filters.rows=item.value" href="">[[ item.label ]]</a>
+					</li>
+				</ul>
+			</span>
 		</div>
 	</div>
 </div>

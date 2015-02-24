@@ -7,6 +7,7 @@
         	@include('includes/search-section')
             @yield('content')
         </div>
+        @include('includes/advanced_search')
         @include('includes/footer')
     </body>
 </html>

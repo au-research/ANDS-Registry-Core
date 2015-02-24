@@ -12,6 +12,14 @@
 <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap-tpls.min.js', 'core')}}"></script>
 
+<!-- Angular Loading Bar -->
+<link rel="stylesheet" href="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.css', 'core')}}"></link>
+<script src="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.js', 'core')}}"></script>
+
+<!-- Angular Select -->
+<link rel="stylesheet" href="{{asset_url('lib/angular-ui-select/dist/select.css', 'core')}}"></link>
+<script src="{{asset_url('lib/angular-ui-select/dist/select.js', 'core')}}"></script>
+
 
 <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
 <!-- <script src="{{asset_url('omega/js/theme.js','templates')}}"></script> -->
@@ -45,8 +53,8 @@
 
 
 <!-- Map Search Scripts -->
-<!-- <script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script> -->
-<!-- <script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.min.js', 'core')}}"></script> -->
+<script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script>
+<script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.js', 'core')}}"></script>
 
 <!-- Search Script and Resources is included in every page -->
 <!-- <script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>

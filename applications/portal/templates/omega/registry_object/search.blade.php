@@ -18,19 +18,29 @@
     </div>
 
     <div ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
-        <div class="stoolbar">
-            <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
-        </div>
-        <div class="element-no-top element-no-bottom scontent">
-            <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
-            <p><small>[[doc.group]]</small></p>
-            <p ng-repeat="(index, content) in getHighlight(doc.id)">
-                <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
-            </p>
-            <p ng-if="getHighlight(doc.id)===false">
-                [[doc.description | text | truncate:500]]
-            </p>
-           <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
+        <div class="container-fluid">
+            <div class="row">
+                
+                <div class="element-no-top element-no-bottom" ng-class="{'col-md-8':filters.spatial}">
+                    <div class="stoolbar">
+                        <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
+                    </div>
+                    <div class="scontent">
+                        <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
+                        <p><small>[[doc.group]]</small></p>
+                        <p ng-repeat="(index, content) in getHighlight(doc.id)">
+                            <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
+                        </p>
+                        <p ng-if="getHighlight(doc.id)===false">
+                            [[doc.description | text | truncate:500]]
+                        </p>
+                    </div>
+                   <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
+                </div>
+                <div class="col-md-4" ng-if="filters.spatial">
+                    <div mappreview sbox="filters.spatial" centres="doc.spatial_coverage_centres" polygons="doc.spatial_coverage_polygons" draw="'static'"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -55,7 +65,7 @@
         [[filters]]
     </div> -->
     <div class="panel-body swatch-white">
-        <div ng-repeat="(name, value) in filters" ng-if="value!='' && name!='cq'">
+        <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
             <h4>[[name | filter_name]]</h4>
             <ul class="listy" ng-show="isArray(value) && name!='anzsrc-for'">
                 <li ng-repeat="v in value track by $index"> <a href="" ng-click="toggleFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
@@ -63,7 +73,7 @@
             <ul class="listy" ng-show="isArray(value)===false && name!='anzsrc-for'">
                 <li> <a href="" ng-click="toggleFilter(name, value, true)">[[value]]<small><i class="fa fa-remove"></i></small></a> </li>
             </ul>
-            <resolve-subjects ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></resolve-subjects>
+            <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></div>
         </div>
         <div class="panel-body swatch-white">
             <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')"><i class="fa fa-save"></i> Save Search</a>
@@ -103,7 +113,6 @@
         </ul>
     </div>
     
-
     <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true">
         <h4>[[facet.name | filter_name]]</h4>
         <ul class="listy">
@@ -113,6 +122,18 @@
             </li>
             <li><a href="" ng-click="advanced(facet.name)">View More</a></li>
         </ul>
+    </div>
+
+    <!-- Temporal Facet -->
+    <div class="panel-body swatch-white">
+        <h4>Temporal</h4>
+        <select ng-model="filters.year_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
+            <option value="" style="display:none">From Year</option>
+        </select>
+        <select ng-model="filters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
+            <option value="" style="display:none">To Year</option>
+        </select>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
     </div>
 
     

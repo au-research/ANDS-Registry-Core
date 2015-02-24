@@ -81,6 +81,7 @@
         	</article>
         </div>
         @include('registry_object/contents/citation-modal')
+        @include('includes/advanced_search')
         @include('includes/footer')
     </body>
 </html>

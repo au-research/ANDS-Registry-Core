@@ -38,7 +38,7 @@
         
         <div class="pull-right">
             <a href="" ng-click="advanced()">Advanced Search</a>
-            <a href="">Map Search</a>
+            <a href="" ng-click="advanced('spatial')">Map Search</a>
         </div>
     </form>
 </div>

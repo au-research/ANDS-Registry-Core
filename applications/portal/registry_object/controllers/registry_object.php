@@ -268,7 +268,8 @@ class Registry_object extends MX_Controller {
 		set_exception_handler('json_exception_handler');
 
 		$data = json_decode(file_get_contents("php://input"), true);
-		$filters = $data['filters'];
+
+		$filters = isset($data['filters']) ? $data['filters'] : false;
 
 		// experiment with delayed response time
 		// sleep(2);
@@ -283,6 +284,9 @@ class Registry_object extends MX_Controller {
 
 		$this->solr->setFilters($filters);
 
+		//test
+		// $this->solr->setOpt('fq', '+spatial_coverage_centres:*');
+
 		//not recording a hit for the quick search done for advanced search
 		if (!$no_record) {
 			$event = array(
@@ -290,7 +294,10 @@ class Registry_object extends MX_Controller {
 				'ip' => $this->input->ip_address(),
 				'user_agent' => $this->input->user_agent()
 			);
-			$event = array_merge($event, $filters);
+			if($filters){
+				$event = array_merge($event, $filters);
+			}
+			
 			ulog_terms($event,'portal');
 		}
 		
@@ -301,17 +308,25 @@ class Registry_object extends MX_Controller {
 		}
 
 		//high level subjects facet
-		$subjects = $this->config->item('subjects');
-		foreach ($subjects as $subject) {
-			$fq = '(';
-			foreach($subject['codes'] as $code) {
-				$fq .= 'subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$code.'") ';
-			}
-			$fq.=')';
-			$this->solr->setFacetOpt('query', 
-				'{! key='.url_title($subject['display'], '-', true).'}'.$fq
-			);
-		}
+		// $subjects = $this->config->item('subjects');
+		// foreach ($subjects as $subject) {
+		// 	$fq = '(';
+		// 	foreach($subject['codes'] as $code) {
+		// 		$fq .= 'subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$code.'") ';
+		// 	}
+		// 	$fq.=')';
+		// 	$this->solr->setFacetOpt('query', 
+		// 		'{! key='.url_title($subject['display'], '-', true).'}'.$fq
+		// 	);
+		// }
+
+		//temporal facet
+		$this->solr
+			->setFacetOpt('field', 'earliest_year')
+			->setFacetOpt('field', 'latest_year')
+			->setOpt('f.earliest_year.facet.sort', 'count asc')
+			->setOpt('f.latest_year.facet.sort', 'count');
+
 
 		//flags, these are the only fields that will be returned in the search
 		$this->solr->setOpt('fl', 'id,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons');
