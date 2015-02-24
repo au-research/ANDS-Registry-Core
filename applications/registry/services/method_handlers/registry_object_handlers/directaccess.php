@@ -8,39 +8,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Directaccess extends ROHandler {
 	function handle() {
 		$download = array();
-        if ($this->xml && $this->xml->{$this->ro->class}->location && $this->xml->{$this->ro->class}->location->address) {
-            foreach($this->xml->{$this->ro->class}->location as $location){
-                $directaccess=$location->address->electronic;
-                if($directaccess && $directaccess['type']=='url'&& ($directaccess['target']=='directDownload' || $directaccess['target']=='landingPage')){
-                    if((string)$directaccess->title=='')$directaccess->title=(string)$directaccess->value;
-                    $download[] = Array(
-                        'access_type' => (string)$directaccess['target'],
-                        'contact_type' => 'url',
-                        'access_value' => (string)$directaccess->value,
-                        'title'=>(string)$directaccess->title,
-                        'mediaType'=>(string)$directaccess->mediaType,
-                        'byteSize'=>(string)$directaccess->byteSize,
-                        'notes'=>(string)$directaccess->notes
-                    );
-                }
-            }
-            foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo){
-                $type = (string) $relatedInfo['type'];
-                $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
-                if($type == 'service'&& $identifier_resolved!=''){
-                    $download[] = Array(
-                        'access_type' => 'viaService',
-                        'contact_type' => 'url',
-                        'access_value' => $identifier_resolved,
-                        'title'=> (string) $relatedInfo->title,
-                        'mediaType'=>'',
-                        'byteSize'=>'',
-                        'notes' => (string) $relatedInfo->notes
-                    );
-                }
-            }
 
-        }
         $relationshipTypeArray = ['isPresentedBy','supports'];
         $classArray = ['service'];
         $services = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
@@ -60,21 +28,68 @@ class Directaccess extends ROHandler {
 
 
         }
-        foreach($this->xml->{$this->ro->class}->location as $location){
-          $directaccess=$location->address->electronic;
-              if($directaccess && $directaccess['type']=='url' && $directaccess['target']!='directDownload' && $directaccess['target']!='landingPage'){
-                     if((string)$directaccess->title==''||!$directaccess->title){$directaccess->title=(string)$directaccess->value;}
-                     $download[] = Array(
-                          'access_type' => 'url',
-                          'contact_type' => 'url',
-                          'access_value' => (string)$directaccess->value,
-                          'title'=>(string)$directaccess->title,
-                          'mediaType'=>(string)$directaccess->mediaType,
-                          'byteSize'=>(string)$directaccess->byteSize,
-                          'notes' =>''
-                     );
+
+        if($this->xml->{$this->ro->class}->relatedInfo){
+            foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo){
+                $type = (string) $relatedInfo['type'];
+                $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
+                if($type == 'service'&& $identifier_resolved!=''){
+                    $download[] = Array(
+                        'access_type' => 'viaService',
+                        'contact_type' => 'url',
+                        'access_value' => $identifier_resolved,
+                        'title'=> (string) $relatedInfo->title,
+                        'mediaType'=>'',
+                        'byteSize'=>'',
+                        'notes' => (string) $relatedInfo->notes
+                    );
                 }
-          }
+            }
+        }
+
+        if ($this->xml && $this->xml->{$this->ro->class}->location->address->electronic) {
+            if($this->gXPath->evaluate("count(//ro:location/ro:address/ro:electronic[@type='url'])")>0) {
+                $query = "//ro:location/ro:address/ro:electronic[@type='url']";
+            }
+
+            if($query!=''){
+                $locations = $this->gXPath->query($query);
+
+                foreach($locations as $directaccess) {
+                    $target = $directaccess->getAttribute('target');
+                    if($target!='directDownload' && $target!='landingPage') $target='url';
+                    $title='';
+                    foreach($directaccess->getElementsByTagName('title') as $title){
+                        $title = $title->nodeValue;
+                    }
+                    if($title=='') $title = $directaccess->nodeValue;
+                    $mediaType = '';
+                    foreach($directaccess->getElementsByTagName('mediaType') as $mediaType){
+                        $mediaType = $mediaType->nodeValue;
+                    }
+                    $byteSize = '';
+                    foreach($directaccess->getElementsByTagName('byteSize') as $byteSize){
+                          $byteSize = $byteSize->nodeValue;
+                    }
+                    $notes = '';
+                    foreach($directaccess->getElementsByTagName('notes') as $notes){
+                           $notes = $notes->nodeValue;
+                    }
+                     $download[] = Array(
+                            'access_type' => $target,
+                            'contact_type' => 'url',
+                            'access_value' => $directaccess->nodeValue,
+                            'title'=>$title ,
+                            'mediaType'=>$mediaType,
+                            'byteSize'=>$byteSize,
+                            'notes'=>$notes
+                    );
+
+               }
+            }
+
+        }
+
         return $download;
 	}
 }
