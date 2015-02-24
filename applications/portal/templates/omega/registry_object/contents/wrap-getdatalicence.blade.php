@@ -30,7 +30,11 @@
 ?>
 <div class="panel panel-primary swatch-white">
     <div class="panel-body">
-
+        @if($ro->citations)
+            @foreach($ro->citations as $citation)
+                {{$citation['coins']}}
+            @endforeach
+        @endif
         @include('registry_object/contents/access')
     	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
             <a class="btn btn-sm btn-default" ng-click="openCitationModal()"><i class="fa fa-edit"></i> Cite</a>
