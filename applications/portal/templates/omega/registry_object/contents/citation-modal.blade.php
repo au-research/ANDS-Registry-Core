@@ -22,10 +22,9 @@
                             @endforeach
 
                             @foreach($ro->citations as $citation)
-                            {{$citation['coins']}}
                             @if(!in_array($citation['type'], $order))
                         <dl>
-                            <dt >Datacite</dt>
+                            <dt >DataCite</dt>
                             <dd>
                                 {{$citation['contributors']}}
                                 ({{$citation['date']}}): {{$citation['title']}}.
@@ -43,8 +42,11 @@
                 <div class="btn-group btn-link">
                 	<a title="Export to EndNote" href="<?=base_url()."registry/registry_object/exportToEndnote/".$ro->core['id'].".ris?foo=".time()?>">EndNote</a>
                 </div>
-                <div class="btn-group btn-link">
-                    <a title="Export to EndNote Web" href="http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl=<?=base_url()."registry/registry_object/exportToEndnote/".$ro->core['id']."?foo=".time()?>">EndNote Web</a>
+                <div class="btn-group btn-link" style="padding-left:40px">
+                    <a title="Export to EndNote Web" href="http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl=<?=base_url()."registry/registry_object/exportToEndnote/".$ro->core['id']."?foo=".time()?>" target="_blank">EndNote Web</a>
+                </div>
+                <div class="btn-group btn-link" style="padding-left:40px">
+                    <a title="EndNote Help" href="http://services.ands.org.au/documentation/EndNoteHelp" target="_blank">EndNote Help</a>
                 </div>
             </div>
         </div>
