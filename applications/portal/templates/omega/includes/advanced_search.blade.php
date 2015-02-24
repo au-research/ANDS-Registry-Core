@@ -79,10 +79,10 @@
               </div>
 
               <div ng-if="isAdvancedSearchActive('class')">
-                Search is restricted to: <b>[[filters.class]]</b>
+                Search is restricted to: <b>[[prefilters.class]]</b>
                 <ul class="list-unstyled">
                   <li ng-repeat="c in class_choices">
-                    <input type="radio" ng-model="filters.class" ng-value="c.name" /> [[c.val]]
+                    <input type="radio" ng-model="prefilters.class" ng-value="c.name" /> [[c.val]]
                   </li>
                 </ul>
               </div>

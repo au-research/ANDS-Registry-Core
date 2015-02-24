@@ -21,7 +21,7 @@
         <div class="container-fluid">
             <div class="row">
                 
-                <div class="element-no-top element-no-bottom col-md-8">
+                <div class="element-no-top element-no-bottom" ng-class="{'col-md-8':filters.spatial}">
                     <div class="stoolbar">
                         <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
                     </div>
@@ -37,7 +37,7 @@
                     </div>
                    <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" ng-if="filters.spatial">
                     <div mappreview sbox="filters.spatial" centres="doc.spatial_coverage_centres" polygons="doc.spatial_coverage_polygons" draw="'static'"></div>
                 </div>
             </div>
