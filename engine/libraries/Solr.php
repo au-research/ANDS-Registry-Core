@@ -391,7 +391,7 @@ class Solr {
 					}
 					break;
 				case 'spatial':
-					$this->setOpt('fq','+spatial_coverage_extents:"Intersects('.$value.')"');
+					$this->setOpt('fq','+spatial_coverage_extents:"Within('.$value.')"');
 					break;
 				case 'map':
 					$this->setOpt('fq','+spatial_coverage_area_sum:[0.00001 TO *]');
