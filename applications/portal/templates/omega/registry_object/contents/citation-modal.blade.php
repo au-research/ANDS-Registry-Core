@@ -25,7 +25,7 @@
                             {{$citation['coins']}}
                             @if(!in_array($citation['type'], $order))
                         <dl>
-                            <dt >Datacite</dt>
+                            <dt >DataCite</dt>
                             <dd>
                                 {{$citation['contributors']}}
                                 ({{$citation['date']}}): {{$citation['title']}}.
