@@ -9,9 +9,12 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  */
 class Citations extends ROHandler {
 	function handle() {
+
         $result = array();
         if ($this->xml) {
+
             $coins_ro = $this->ro;
+
             $coins = $this->getCoinsSpan($coins_ro);
             foreach($this->xml->{$this->ro->class}->citationInfo as $citation){
                 foreach($citation->citationMetadata as $citationMetadata){
@@ -217,14 +220,21 @@ Y2  - '.date("Y-m-d")."
         foreach($creators as $creator){
             $rft_creators .= '&rft.creator='.$creator['name'];
         }
+
         $rft_date = $this->getPublicationdate();
-        $rights = $rights = $coins_ro->processLicence();
+
+        $rights  = $coins_ro->processLicence();
+
         $rft_rights = '';
         foreach($rights as $right){
-            if($right['type'] == 'rightsStatement' || $right['type'] == 'licence'){
-                $rft_rights .= '&rft_rights='.$right['value']." ".$right['rightsUri'];
+            if(isset($right['type'])){
+                if($right['type'] == 'rightsStatement' || $right['type'] == 'licence'){
+                    if(isset($right['value'])) $rft_rights .= '&rft_rights='.$right['value'];
+                    if(isset($right['rightsUri'])) $rft_rights .= " ".$right['rightsUri'];
+                }
             }
         }
+       // return $rft_rights;
         $subjects = $this->getKeywords();
         $rft_subjects = '';
         foreach($subjects as $subject){
@@ -269,7 +279,7 @@ Y2  - '.date("Y-m-d")."
         if($this->gXPath->evaluate("count(//ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi'])")>0) {
             $query = "//ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']";
         }
-        elseif($this->gXPath->evaluate("count(//ro:identifier/[@type='doi'])")>0) {
+        elseif($this->gXPath->evaluate("count(//ro:identifier[@type='doi'])")>0) {
             $query = "//ro:identifier/[@type='doi']";
         }
 
