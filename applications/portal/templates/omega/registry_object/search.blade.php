@@ -18,19 +18,29 @@
     </div>
 
     <div ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
-        <div class="stoolbar">
-            <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
-        </div>
-        <div class="element-no-top element-no-bottom scontent">
-            <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
-            <p><small>[[doc.group]]</small></p>
-            <p ng-repeat="(index, content) in getHighlight(doc.id)">
-                <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
-            </p>
-            <p ng-if="getHighlight(doc.id)===false">
-                [[doc.description | text | truncate:500]]
-            </p>
-           <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
+        <div class="container-fluid">
+            <div class="row">
+                
+                <div class="element-no-top element-no-bottom col-md-8">
+                    <div class="stoolbar">
+                        <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
+                    </div>
+                    <div class="scontent">
+                        <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
+                        <p><small>[[doc.group]]</small></p>
+                        <p ng-repeat="(index, content) in getHighlight(doc.id)">
+                            <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
+                        </p>
+                        <p ng-if="getHighlight(doc.id)===false">
+                            [[doc.description | text | truncate:500]]
+                        </p>
+                    </div>
+                   <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
+                </div>
+                <div class="col-md-4">
+                    <div mappreview sbox="filters.spatial" centres="doc.spatial_coverage_centres" polygons="doc.spatial_coverage_polygons" draw="'static'"></div>
+                </div>
+            </div>
         </div>
     </div>
 

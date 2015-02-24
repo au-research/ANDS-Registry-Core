@@ -308,17 +308,17 @@ class Registry_object extends MX_Controller {
 		}
 
 		//high level subjects facet
-		$subjects = $this->config->item('subjects');
-		foreach ($subjects as $subject) {
-			$fq = '(';
-			foreach($subject['codes'] as $code) {
-				$fq .= 'subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$code.'") ';
-			}
-			$fq.=')';
-			$this->solr->setFacetOpt('query', 
-				'{! key='.url_title($subject['display'], '-', true).'}'.$fq
-			);
-		}
+		// $subjects = $this->config->item('subjects');
+		// foreach ($subjects as $subject) {
+		// 	$fq = '(';
+		// 	foreach($subject['codes'] as $code) {
+		// 		$fq .= 'subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$code.'") ';
+		// 	}
+		// 	$fq.=')';
+		// 	$this->solr->setFacetOpt('query', 
+		// 		'{! key='.url_title($subject['display'], '-', true).'}'.$fq
+		// 	);
+		// }
 
 		//temporal facet
 		$this->solr
