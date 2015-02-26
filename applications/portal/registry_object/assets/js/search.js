@@ -174,6 +174,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.sort = search_factory.sort;
 		$scope.advanced_fields = search_factory.advanced_fields;
 
+		if($scope.filters['class']=='activity') {
+			$scope.advanced_fields = search_factory.advanced_fields_activity;
+		}
+
 		//construct the pagination
 		if ($scope.result) {
 			// $log.debug($scope.result);
@@ -724,7 +728,7 @@ app.factory('search_factory', function($http, $log){
 
 		advanced_fields: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'subject', 'display':'Subjects', 'active':true},
+			{'name':'subject', 'display':'Subjects'},
 			{'name':'group', 'display':'Contributors'},
 			{'name':'access_rights', 'display':'Access Rights'},
 			{'name':'license_class', 'display':'License'},
@@ -733,6 +737,22 @@ app.factory('search_factory', function($http, $log){
 			{'name':'class', 'display':'Class'},
 			{'name':'review', 'display':'Review'}
 		],
+
+		advanced_fields_activity: [
+			{'name':'terms', 'display':'Search Terms', 'active':true},
+			{'name':'type', 'display':'Types'},
+			{'name':'activity_status', 'display':'Status'},
+			{'name':'subject', 'display':'Subjects'},
+			{'name':'administering_institution', 'display':'Administering Institution'},
+			{'name':'date_range', 'display':'Date Range'},
+			{'name':'funders', 'display':'Funders'},
+			{'name':'funding_scheme', 'display':'Funding Scheme'},
+			{'name':'class', 'display':'Class'},
+			{'name':'review', 'display':'Review'}
+		],
+
+		collection_facet_order: ['group', 'access_rights', 'license_class'],
+		activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
 		ingest: function(hash) {
 			this.filters = this.filters_from_hash(hash);
@@ -794,7 +814,12 @@ app.factory('search_factory', function($http, $log){
 				}
 			});
 
-			var order = ['group', 'access_rights', 'license_class'];
+			var order = this.collection_facet_order;
+
+			if(this.filters['class']=='activity'){
+				var order = this.activity_facet_order;
+			}
+
 			var orderedfacets = [];
 			angular.forEach(order, function(item){
 				// orderedfacets[item] = facets[item]
@@ -807,7 +832,7 @@ app.factory('search_factory', function($http, $log){
 			// $log.debug(result.facet_counts.facet_fields.earliest_year);
 			
 
-			// $log.debug('orderedfacet', orderedfacets);
+			$log.debug('orderedfacet', orderedfacets);
 			// $log.debug('facets', facets);
 			return orderedfacets;
 		},

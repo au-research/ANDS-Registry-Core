@@ -240,7 +240,9 @@ class Vocab {
         }
 
         $CI->solr->setOpt('fq', '+subject_vocab_uri:("'.$uri.'")');
-        $CI->solr->setOpt('fq', '+class:(collection)');
+
+        //default to collection
+        if(!isset($filters['class'])) $CI->solr->setOpt('fq', '+class:(collection)');
 
         // var_dumP($CI->solr->constructFieldString());
         $CI->solr->executeSearch();
@@ -274,7 +276,6 @@ class Vocab {
             // header('Cache-Control: no-cache, must-revalidate');
             // header('Content-type: application/json');
             $content = $this->post($this->constructUriString('resource', $this->resolvingServices[$vocab], ''));
-
             if($json = json_decode($content, false)){
                 foreach($json->{'result'}->{'primaryTopic'}->{'hasTopConcept'} as $concept){
                     $concept_uri = $concept->{'_about'};
@@ -286,7 +287,7 @@ class Vocab {
                     $c['prefLabel'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'prefLabel'}->{'_value'};
                     $c['uri'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'_about'};
                     $c['collectionNum'] = $this->getNumCollections($c['uri'],$filters, $fuzzy);
-                    if($c['collectionNum'] > 0){
+                    if(isset($c['collectionNum']) > 0){
                         $tree['topConcepts'][] = $c;
                     }
                 }

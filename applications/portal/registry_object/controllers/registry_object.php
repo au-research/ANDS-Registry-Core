@@ -254,7 +254,7 @@ class Registry_object extends MX_Controller {
 		$this->blade
 			->set('lib', array('ui-events', 'angular-ui-map', 'google-map'))
 			// ->set('scripts', array('search_app'))
-			->set('facets', $this->components['facet'])
+			// ->set('facets', $this->components['facet'])
 			->set('search', true) //to disable the global search
 			->render('registry_object/search');
 	}
@@ -307,9 +307,17 @@ class Registry_object extends MX_Controller {
 		
 
 		//returns this set of Facets
-		foreach($this->components['facet'] as $facet){
-			if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
+		
+		if ($default_class=='activity')  {
+			foreach($this->components['activity_facet'] as $facet){
+				if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
+			}
+		} elseif($default_class=='collection') {
+			foreach($this->components['facet'] as $facet){
+				if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
+			}
 		}
+		
 
 		//high level subjects facet
 		// $subjects = $this->config->item('subjects');
@@ -333,7 +341,7 @@ class Registry_object extends MX_Controller {
 
 
 		//flags, these are the only fields that will be returned in the search
-		$this->solr->setOpt('fl', 'id,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons');
+		$this->solr->setOpt('fl', 'id,type,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons,administering_institution,researchers');
 
 		//highlighting
 		$this->solr->setOpt('hl', 'true');
@@ -393,7 +401,8 @@ class Registry_object extends MX_Controller {
 			'view' => array('descriptions','reuse-list','quality-list','dates-list', 'connectiontree','related-objects-list' ,'spatial-info', 'subjects-list', 'related-metadata', 'identifiers-list'),
 			'aside' => array('rights-info','contact-info'),
             'view_headers' => array('title','related-parties'),
-			'facet' => array('spatial','group', 'license_class', 'type', 'temporal', 'access_rights')
+			'facet' => array('spatial','group', 'license_class', 'type', 'temporal', 'access_rights'),
+			'activity_facet' => array('type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders')
 		);
 	}
 }
