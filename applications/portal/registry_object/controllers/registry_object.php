@@ -21,7 +21,11 @@ class Registry_object extends MX_Controller {
 
 		$this->load->library('blade');
 
+
+
 		$theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
+        $logo = $this->getLogo($ro->core['group']);
+        $group_slug = url_title($ro->core['group'], '-', true);
 
         switch($ro->core['class']){
             case 'collection':
@@ -55,12 +59,12 @@ class Registry_object extends MX_Controller {
 			->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
-            ->set('activity_contents',$this->components['activity'])
 			->set('aside', $this->components['aside'])
-            ->set('activity_aside', $this->components['activity_aside'])
             ->set('view_headers', $this->components['view_headers'])
 			->set('url', $ro->construct_api_url())
 			->set('theme', $theme)
+            ->set('logo',$logo)
+            ->set('group_slug',$group_slug)
 			->render($render);
 	}
 
@@ -367,6 +371,17 @@ class Registry_object extends MX_Controller {
 		echo json_encode($ro->relationships);
 	}
 
+    /**
+     * Get the logo url for a groups logo if it exists!
+     * @param $group
+     * @return string
+     */
+    function getLogo($group) {
+        $this->load->model('group/groups','group');
+        $logo = $this->group->fetchLogo($group);
+        return $logo;
+    }
+
 	/**
 	 * Construction
 	 * Defines the components that will be displayed and search for within the application
@@ -378,8 +393,6 @@ class Registry_object extends MX_Controller {
 			'view' => array('descriptions','reuse-list','quality-list','dates-list', 'connectiontree','related-objects-list' ,'spatial-info', 'subjects-list', 'related-metadata', 'identifiers-list'),
 			'aside' => array('rights-info','contact-info'),
             'view_headers' => array('title','related-parties'),
-            'activity'=>array('descriptions','spatial-info','publications-list', 'subjects-list','identifiers-list','contact-info'),
-            'activity_aside'=>('related-objects-list'),
 			'facet' => array('spatial','group', 'license_class', 'type', 'temporal', 'access_rights')
 		);
 	}
