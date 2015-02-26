@@ -734,6 +734,9 @@ app.factory('search_factory', function($http, $log){
 			{'name':'review', 'display':'Review'}
 		],
 
+		collection_facet_order: ['group', 'access_rights', 'license_class'],
+		activity_facet_order: ['type', 'activity_status', 'funding_scheme'],
+
 		ingest: function(hash) {
 			this.filters = this.filters_from_hash(hash);
 			if (this.filters.q) this.query = this.filters.q;
@@ -794,7 +797,12 @@ app.factory('search_factory', function($http, $log){
 				}
 			});
 
-			var order = ['group', 'access_rights', 'license_class'];
+			var order = this.collection_facet_order;
+
+			if(this.filters['class']=='activity'){
+				var order = this.activity_facet_order;
+			}
+
 			var orderedfacets = [];
 			angular.forEach(order, function(item){
 				// orderedfacets[item] = facets[item]

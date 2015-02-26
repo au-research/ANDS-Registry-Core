@@ -25,6 +25,9 @@
                     <div class="stoolbar">
                         <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
                     </div>
+                    <div class="pull-right" ng-if="filters.class=='activity'">
+                        [[doc.type]]
+                    </div>
                     <div class="scontent">
                         <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
                         <p><small>[[doc.group]]</small></p>
@@ -35,6 +38,7 @@
                             [[doc.description | text | truncate:500]]
                         </p>
                     </div>
+                    
                    <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
                 </div>
                 <div class="col-md-4" ng-if="filters.spatial">
@@ -99,7 +103,7 @@
     </div>
 
     <!-- Subject Facet -->
-    <div class="panel-body swatch-white">
+    <div class="panel-body swatch-white" ng-if="filter.class=='collection'">
         <h4>Subjects</h4>
         <ul class="listy">
           <li ng-repeat="item in vocab_tree | orderBy:'pos' | limitTo:5">
@@ -125,7 +129,7 @@
     </div>
 
     <!-- Temporal Facet -->
-    <div class="panel-body swatch-white">
+    <div class="panel-body swatch-white" ng-if="filters.class=='collection'">
         <h4>Temporal</h4>
         <select ng-model="filters.year_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
             <option value="" style="display:none">From Year</option>
