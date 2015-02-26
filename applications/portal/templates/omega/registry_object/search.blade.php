@@ -37,6 +37,12 @@
                         <p ng-if="getHighlight(doc.id)===false">
                             [[doc.description | text | truncate:500]]
                         </p>
+                        <div ng-if="doc.administering_institution">
+                            <b>Administering Institution</b>: [[doc.administering_institution.join(',')]]
+                        </div>
+                        <div ng-if="doc.researchers">
+                            <b>Researchers: </b> [[doc.researchers.join(',')]]
+                        </div>
                     </div>
                     
                    <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
@@ -103,7 +109,7 @@
     </div>
 
     <!-- Subject Facet -->
-    <div class="panel-body swatch-white" ng-if="filter.class=='collection'">
+    <div class="panel-body swatch-white">
         <h4>Subjects</h4>
         <ul class="listy">
           <li ng-repeat="item in vocab_tree | orderBy:'pos' | limitTo:5">

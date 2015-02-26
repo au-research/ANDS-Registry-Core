@@ -337,7 +337,7 @@ class Registry_object extends MX_Controller {
 
 
 		//flags, these are the only fields that will be returned in the search
-		$this->solr->setOpt('fl', 'id,type,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons');
+		$this->solr->setOpt('fl', 'id,type,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons,administering_institution,researchers');
 
 		//highlighting
 		$this->solr->setOpt('hl', 'true');
@@ -389,7 +389,7 @@ class Registry_object extends MX_Controller {
             'activity'=>array('descriptions','spatial-info','publications-list', 'subjects-list','identifiers-list','contact-info'),
             'activity_aside'=>('related-objects-list'),
 			'facet' => array('spatial','group', 'license_class', 'type', 'temporal', 'access_rights'),
-			'activity_facet' => array('type', 'activity_status', 'funding_scheme')
+			'activity_facet' => array('type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders')
 		);
 	}
 }
