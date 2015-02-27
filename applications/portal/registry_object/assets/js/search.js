@@ -9,6 +9,7 @@ app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$logProvider.debugEnabled(true);
 });
 
+
 app.config(function(uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
         //    key: 'your api key',
@@ -20,7 +21,9 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 
 app.controller('searchCtrl', 
 function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
-	
+
+    $scope.query_title = 'Untitled Query';
+    $scope.saved_records_folder = 'Untitled';
 
 	$scope.class_choices = [
 		{'name':'collection', 'val':'Collection', 'selected':true},
@@ -29,6 +32,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		{'name':'service', 'val':'Services', 'selected':false}
 	];
 	
+
 	$scope.$watch(function(){
 		return location.hash;
 	},function(){
@@ -189,7 +193,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				cur: ($scope.filters['p'] ? parseInt($scope.filters['p']) : 1),
 				rows: ($scope.filters['rows'] ? parseInt($scope.filters['rows']) : 15),
 				range: 3,
-				pages: [],
+				pages: []
 			}
 			$scope.page.end = Math.ceil($scope.result.response.numFound / $scope.page.rows);
 			for (var x = ($scope.page.cur - $scope.page.range); x < (($scope.page.cur + $scope.page.range)+1);x++ ) {
@@ -361,17 +365,58 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.add_user_data = function(type) {
-		if(type=='saved_record') {
-			profile_factory.add_user_data('saved_record', $scope.selected).then(function(data){
-				alert('done');
-			});
-		} else if(type=='saved_search') {
-			profile_factory.add_user_data('saved_search', $scope.getHash()).then(function(data){
-				alert('done');
-			});
-		}
+            $('#my-rda-'+type+'-modal').modal('show');
 	}
 
+
+    $scope.save_records = function(action){
+        if(action == 'save')
+        {
+            var ngdata = [];
+            angular.forEach($scope.selected, function(ro){
+
+                ngdata.push({
+                    id:ro.id,
+                    slug:ro.slug,
+                    group:ro.group,
+                    title:ro.title,
+                    folder:$scope.saved_records_folder,
+                    last_viewed:parseInt(new Date().getTime() / 1000)
+                });
+            });
+            profile_factory.add_user_data('saved_record', ngdata).then(function(data){
+                if(data.status == "OK")
+                {
+                    $('#my-rda-saved_record-modal').modal('hide');
+                }
+            });
+        }
+    }
+
+    $scope.save_search = function(action)
+    {
+        if(action == 'save')
+        {
+            var ngdata = [];
+            $log.debug($scope.query_title);
+            ngdata.push({
+                query_title: $scope.query_title,
+                query_string: $scope.getHash(),
+                num_found: $scope.result.response.numFound,
+                num_found_since_last_check: 0,
+                num_found_since_saved:0,
+                saved_time:parseInt(new Date().getTime() / 1000),
+                refresh_time:parseInt(new Date().getTime() / 1000),
+                folder:$scope.folderf
+            });
+            profile_factory.add_user_data('saved_search', ngdata).then(function(data){
+                if(data.status == "OK")
+                {
+                    $('#my-rda-saved_search-modal').modal('hide');
+                }
+            });
+        }
+    }
 
 	/**
 	 * Advanced Search Section
@@ -622,7 +667,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			     circleOptions: polyOption,
 			     rectangleOptions: polyOption,
 			     polygonOptions: polyOption,
-			     polylineOptions: polyOption,
+			     polylineOptions: polyOption
 			});
 			$scope.drawingManager.setMap(map);
 
@@ -727,7 +772,7 @@ app.factory('search_factory', function($http, $log){
 			{value:'title asc',label:'Title A-Z'},
 			{value:'title desc',label:'Title Z-A'},
 			{value:'title desc',label:'Popular'},
-			{value:'record_created_timestamp asc',label:'Date Added'},
+			{value:'record_created_timestamp asc',label:'Date Added'}
 		],
 
 		advanced_fields: [

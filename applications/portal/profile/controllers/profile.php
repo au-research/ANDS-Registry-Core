@@ -1,5 +1,6 @@
 <?php
 class Profile extends MX_Controller {
+
 	function index(){
 		if($this->user->isLoggedIn()) {
 			$this->load->model('portal_user');
@@ -51,6 +52,24 @@ class Profile extends MX_Controller {
 
 	}
 
+    public function is_bookmarked($id) {
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+        $this->load->model('portal_user');
+//        dd($this->portal_user->has_saved_record($id));
+        $saved_data = [];
+        if($this->portal_user->has_saved_record($id)) {
+            $saved_data[] = array(
+                'id' => $id,
+                'last_viewed' => time());
+            $msg = $this->portal_user->modify_user_data('saved_record', 'modify', $saved_data);
+            echo json_encode(array('status'=>'OK', 'message'=>'IS BOOKMARKED'));
+
+        } else echo json_encode(array('status'=>'ERROR', 'message'=>'IS NOT BOOKMARKED'));
+    }
+
+
 	public function add_user_data($type) {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -59,7 +78,7 @@ class Profile extends MX_Controller {
 		$data = $data['data'];
 
 		$this->load->model('portal_user');
-
+        $message = array('status' => 'OK');
 		
 		//prepare the data to be saved
 		if ($type=='saved_search') {
@@ -70,19 +89,36 @@ class Profile extends MX_Controller {
 				'type' => $type,
 				'value' => $data
 			);
+            $message['saved_data'] = $saved_data;
 			$this->portal_user->add_user_data($saved_data);
 		} if ($type=='saved_record') {
 			foreach($data as $d) {
-				if (!$this->portal_user->has_saved_search($d['id'])){
+				if (!$this->portal_user->has_saved_record($d['id'],$d['folder'])){
 					$saved_data = array(
 						'type' => $type,
-						'value' => array('id'=>$d['id'], 'slug'=>$d['slug'], 'url' => portal_url($d['slug'].'/'.$d['id']), 'title'=>$d['title'])
+						'value' => array('folder'=>$d['folder'], 'id'=>$d['id'], 'slug'=>$d['slug'], 'url' => portal_url($d['slug'].'/'.$d['id']), 'title'=>$d['title'])
 					);
 					$this->portal_user->add_user_data($saved_data);
 				}
+                else{
+                    $message['status'] = 'error';
+                    $message['info'] = 'record with '.$d['title'].' already bookmarked';
+                }
 			}
 		}
+        echo json_encode($message);
 	}
+
+    public function modify_user_data($type, $action) {
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+        $data = json_decode(file_get_contents("php://input"), true);
+        $data = $data['data'];
+        $this->load->model('portal_user');
+        $message = $this->portal_user->modify_user_data($type, $action, $data);
+        echo json_encode($message);
+    }
 
 
 

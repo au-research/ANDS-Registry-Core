@@ -6,5 +6,5 @@
 	@endforeach
 	</ul>
 @else
-	<p>There's no saved search available</p>
+	<p>There's no saved records</p>
 @endif

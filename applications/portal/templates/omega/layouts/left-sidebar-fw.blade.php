@@ -35,6 +35,7 @@
     		    	</div>
     		    </section>
                 @include('includes/advanced_search')
+                @include('includes/my-rda')
         	</article>
         </div>
         @include('includes/footer')

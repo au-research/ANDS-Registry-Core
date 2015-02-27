@@ -249,11 +249,11 @@ function mainSearchController($scope, search_factory, profile_factory, $sce, uiG
 	$scope.add_user_data = function(type) {
 		if(type=='saved_record') {
 			profile_factory.add_user_data('saved_record', $scope.selected).then(function(data){
-				alert('done');
+				alert('done diggity');
 			});
 		} else if(type=='saved_search') {
 			profile_factory.add_user_data('saved_search', $scope.getHash()).then(function(data){
-				alert('done');
+				alert('done diggity');
 			});
 		}
 	}

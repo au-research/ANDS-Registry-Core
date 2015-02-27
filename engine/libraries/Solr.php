@@ -306,6 +306,16 @@ class Solr {
 						if(trim($value)!="") $this->setOpt('q', $value);
 					}
 				break;
+                case 'after_date':
+                    date_default_timezone_set("UTC");
+                    $date = date("Y-m-d\TH:i:s\Z",$value);
+                    $this->setOpt('fq', 'update_timestamp:['.$date.' TO *]');
+                    break;
+                case 'before_date':
+                    date_default_timezone_set("UTC");
+                    $date = date("Y-m-d\TH:i:s\Z",$value);
+                    $this->setOpt('fq', 'update_timestamp:[* TO '.$date.']');
+                    break;
 				case 'p': 
 					$page = (int)$value;
 					if($page>1){
