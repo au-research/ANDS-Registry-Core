@@ -566,6 +566,13 @@ class Solr {
 					if(!$filters['q']) $this->setOpt('q', $value);
 					$this->setOpt('fq', '+related_party_multi_search:('.$value.')');
 					break;
+				case 'funding_from':
+					$funding_from = $value;
+					if (isset($filters['funding_to'])) {
+						$funding_to = $filters['funding_to'];
+					} else $funding_to = '*';
+					$this->setOpt('fq','funding_amount:['.$funding_from.' TO '.$funding_to.']');
+					break;
 			}
 		}
 		return $this;

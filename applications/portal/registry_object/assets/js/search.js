@@ -392,7 +392,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.advancedSearch = function(){
 		$scope.filters = {};
 		angular.copy($scope.prefilters, $scope.filters);
-		$scope.query = $scope.prefilters.q;
+		if($scope.prefilters.q) $scope.query = $scope.prefilters.q;
 
 		$scope.hashChange();
 		$('#advanced_search').modal('hide');
@@ -747,6 +747,7 @@ app.factory('search_factory', function($http, $log){
 			{'name':'date_range', 'display':'Date Range'},
 			{'name':'funders', 'display':'Funders'},
 			{'name':'funding_scheme', 'display':'Funding Scheme'},
+			{'name':'funding_amount', 'display':'Funding Amount'},
 			{'name':'class', 'display':'Class'},
 			{'name':'review', 'display':'Review'}
 		],

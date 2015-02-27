@@ -146,6 +146,13 @@
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
     </div>
 
+    <!-- Funding Amount for Activity Search-->
+    <div class="panel-body swatch-white" ng-if="filters.class=='activity'">
+        <h4>Funding Amount</h4>
+        <input type="text" ng-model="filters.funding_from" class="form-control" placeholder="Funding From"/>
+        <input type="text" ng-model="filters.funding_to" class="form-control" placeholder="Funding To"/>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
+    </div>
     
 </div>
     

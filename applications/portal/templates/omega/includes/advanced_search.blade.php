@@ -51,6 +51,13 @@
                 </select>
               </div>
 
+              <div ng-if="isAdvancedSearchActive('funding_amount')">
+                <label for="">Funding From</label>
+                <input type="text" ng-model="prefilters.funding_from" class="form-control" placeholder="Funding From"/>
+                <label for="">Funding To</label>
+                <input type="text" ng-model="prefilters.funding_to" class="form-control" placeholder="Funding To"/>
+              </div>
+
               <div ng-if="isAdvancedSearchActive('subject')">
                 <div>
                   <ul class="list-unstyled">
