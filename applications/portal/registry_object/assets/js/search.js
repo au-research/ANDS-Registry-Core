@@ -41,6 +41,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.search();
 	});
 
+	$scope.$on("$locationChangeSuccess", function () {
+		$log.debug(location.hash);
+	})
+
 	$scope.getHash = function(){
 		var hash = '';
 		$.each($scope.filters, function(i,k){
@@ -833,7 +837,7 @@ app.factory('search_factory', function($http, $log){
 			// $log.debug(result.facet_counts.facet_fields.earliest_year);
 			
 
-			$log.debug('orderedfacet', orderedfacets);
+			// $log.debug('orderedfacet', orderedfacets);
 			// $log.debug('facets', facets);
 			return orderedfacets;
 		},
