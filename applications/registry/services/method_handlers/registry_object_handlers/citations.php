@@ -109,7 +109,7 @@ Y2  - '.date("Y-m-d")."
 ";
         }
 
-        $publicationDate = $this->getPublicationDate();
+        $publicationDate = $this->getPublicationDate($ro);
         if($publicationDate!='') {
             $endNote .= "PY  - ".$publicationDate."
 ";
@@ -198,7 +198,8 @@ Y2  - '.date("Y-m-d")."
 ";
         }
 
-        $endNote .= "ER  - ";
+        $endNote .= "ER  -
+";
 
         return $endNote;
     }
@@ -221,7 +222,7 @@ Y2  - '.date("Y-m-d")."
             $rft_creators .= '&rft.creator='.$creator['name'];
         }
 
-        $rft_date = $this->getPublicationdate();
+        $rft_date = $this->getPublicationdate($coins_ro);
 
         $rights  = $coins_ro->processLicence();
 
@@ -315,7 +316,7 @@ Y2  - '.date("Y-m-d")."
         return $identifier;
 
     }
-    function getPublicationDate()
+    function getPublicationDate($ro)
     {
         $publicationDate = '';
         $query = '';
@@ -350,7 +351,7 @@ Y2  - '.date("Y-m-d")."
                 $publicationDate = date("Y",strtotime($date->nodeValue));
             }
         }else{
-            $publicationDate = $this->ro->created;
+            $publicationDate = date("Y",$ro->created);
         }
 
         return  $publicationDate;
@@ -486,19 +487,21 @@ Y2  - '.date("Y-m-d")."
         $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
         $xml = simplexml_load_string($xml);
         $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-       foreach($xml->{$ro->class}->citationInfo->citationMetadata->contributor as $contributor){
-             $nameParts = Array();
-             foreach($contributor->namePart as $namePart){
-                    $nameParts[] = array(
-                            'namePart_type' => (string)$namePart['type'],
-                            'name' => (string)$namePart
-                        );
-             }
+        if(isset($xml->{$ro->class}->citationInfo->citationMetadata->contributor)){
+           foreach($xml->{$ro->class}->citationInfo->citationMetadata->contributor as $contributor){
+                 $nameParts = Array();
+                 foreach($contributor->namePart as $namePart){
+                        $nameParts[] = array(
+                                'namePart_type' => (string)$namePart['type'],
+                                'name' => (string)$namePart
+                            );
+                 }
 
-             $contributors[] =array(
-                   'name' => formatName($nameParts),
-                    'seq' => (string)$contributor['seq']
-             );
+                 $contributors[] =array(
+                       'name' => formatName($nameParts),
+                        'seq' => (string)$contributor['seq']
+                 );
+            }
         }
 
        if(!$contributors){
@@ -606,12 +609,14 @@ Y2  - '.date("Y-m-d")."
         $xml = simplexml_load_string($xml);
         $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
         $dates = Array();
-        foreach($xml->{$ro->class}->coverage->temporal->date as $date){
-            $type = '';
-            $type = (string)$date['type'];
-            if($type=='dateFrom') $type = 'From';
-            if($type=='dateTo') $type = 'To';
-            $dates[] = $type ." ".(string)($date);
+        if(isset($xml->{$ro->class}->coverage->temporal->date)){
+            foreach($xml->{$ro->class}->coverage->temporal->date as $date){
+                $type = '';
+                $type = (string)$date['type'];
+                if($type=='dateFrom') $type = 'From';
+                if($type=='dateTo') $type = 'To';
+                $dates[] = $type ." ".(string)($date);
+            }
         }
         return $dates;
     }
