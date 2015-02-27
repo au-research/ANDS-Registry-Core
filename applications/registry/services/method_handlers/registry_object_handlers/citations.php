@@ -389,15 +389,15 @@ Y2  - '.date("Y-m-d")."
             $query = "//ro:collection/ro:identifier[@type='uri']";
             $type = 'uri';
         }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='purl']")>0) {
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='purl'])")>0) {
             $query = "//ro:collection/ro:identifier[@type='purl']";
             $type = 'purl';
         }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:url")>0) {
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:url)")>0) {
             $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:url";
             $type = 'url';
         }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:location/ro:address/ro:electronic[@type='url']")>0) {
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:location/ro:address/ro:electronic[@type='url'])")>0) {
             $query = "//ro:collection/ro:location/ro:address/ro:electronic[@type='url']";
             $type = 'url';
         }

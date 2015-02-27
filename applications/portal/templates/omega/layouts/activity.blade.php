@@ -14,7 +14,7 @@
                                     <div class="panel-body {{$ro->core['type']}}">
                                         <div class="header-logo animated fadeInDown"  title="Record provided by {{$ro->core['group']}}">
                                         @if($logo)
-                                            <a href="{base_url('contributors/')}}{{$group_slug}}" title="Record provided by {{$ro->core['group']}}"><img src="{{$logo}}" alt="logo" class="header-logo animated fadeInDown"></a>
+                                            <a href="{{base_url('contributors')}}/{{$group_slug}}" title="Record provided by {{$ro->core['group']}}"><img src="{{$logo}}" alt="logo" class="header-logo animated fadeInDown"></a>
                                         @else
                                             <small>{{$ro->core['group']}}</small>
                                         @endif

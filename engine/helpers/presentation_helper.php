@@ -239,6 +239,7 @@ function readable($text, $singular = false){
         case 'fundingScheme' : return  'Funding Scheme'; break;
         case 'fundingscheme' : return  'Funding Scheme'; break;
         case 'leadinvestigator' : return  'Lead investigator'; break;
+        case 'principalinvestigator' : return  'Principal investigator'; break;
         case 'coinvestigator' : return  'Co investigator'; break;
         default: return $text;
 	}
