@@ -43,7 +43,19 @@ class Groups extends CI_Model {
 		} elseif(file_exists($path2)) {
 			return asset_url('group/logos/'.$slug.'.png', 'full_base_path');
 		} else {
-			return false;
+
+			//check for custom logo that is published
+			$data = $this->fetchData($slug);
+			if ($data) {
+				$data = json_decode($data->{'data'}, true);
+				if (isset($data['logo'])) {
+					return $data['logo'];
+				}
+			} else {
+				//no custom data
+				return false;
+			}
+
 		}
 	}
 
