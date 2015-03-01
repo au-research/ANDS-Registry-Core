@@ -306,6 +306,16 @@ class Solr {
 						if(trim($value)!="") $this->setOpt('q', $value);
 					}
 				break;
+                case 'after_date':
+                    date_default_timezone_set("UTC");
+                    $date = date("Y-m-d\TH:i:s\Z",$value);
+                    $this->setOpt('fq', 'update_timestamp:['.$date.' TO *]');
+                    break;
+                case 'before_date':
+                    date_default_timezone_set("UTC");
+                    $date = date("Y-m-d\TH:i:s\Z",$value);
+                    $this->setOpt('fq', 'update_timestamp:[* TO '.$date.']');
+                    break;
 				case 'p': 
 					$page = (int)$value;
 					if($page>1){
@@ -565,6 +575,13 @@ class Solr {
 				case 'related_organisations':
 					if(!$filters['q']) $this->setOpt('q', $value);
 					$this->setOpt('fq', '+related_party_multi_search:('.$value.')');
+					break;
+				case 'funding_from':
+					$funding_from = $value;
+					if (isset($filters['funding_to'])) {
+						$funding_to = $filters['funding_to'];
+					} else $funding_to = '*';
+					$this->setOpt('fq','funding_amount:['.$funding_from.' TO '.$funding_to.']');
 					break;
 			}
 		}

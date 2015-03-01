@@ -22,6 +22,7 @@
         	</article>
         </div>
         @include('includes/advanced_search')
+        @include('includes/my-rda')
         @include('includes/footer')
     </body>
 </html>

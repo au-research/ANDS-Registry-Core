@@ -127,7 +127,13 @@
         <field name="activity_status" type="string" indexed="true" stored="true" multiValued="false"/>
         <field name="funding_amount" type="sfloat" indexed="true" stored="true" multiValued="false"/>
         <field name="funding_scheme" type="text_en_splitting" indexed="true" stored="true" multiValued="false"/>
-        <field name="researchers" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
+        <field name="researchers" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="researchers_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
+        <field name="administering_institution" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="administering_institution_search" type="text_en_splitting" indexed="true" stored="true" />
+        <field name="funders" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="funders_search" type="text_en_splitting" indexed="true" stored="true" />
+
 
 	</fields>
 
@@ -169,7 +175,10 @@
 	<copyField source="related_party_multi_title" dest="related_party_multi_search"/>
 	<copyField source="related_activity_title" dest="related_activity_search"/>
 	<copyField source="related_service_title" dest="related_service_search"/>
-	
+
+	<copyField source="administering_institution" dest="administering_institution_search"/>
+	<copyField source="researchers" dest="researchers_search"/>
+	<copyField source="funders" dest="funders_search"/>
 
 
 	<!-- DEPRECATED: The defaultSearchField is consulted by various query parsers when

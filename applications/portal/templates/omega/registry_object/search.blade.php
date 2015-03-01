@@ -25,6 +25,9 @@
                     <div class="stoolbar">
                         <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
                     </div>
+                    <div class="pull-right" ng-if="filters.class=='activity'">
+                        [[doc.type]]
+                    </div>
                     <div class="scontent">
                         <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
                         <p><small>[[doc.group]]</small></p>
@@ -34,7 +37,14 @@
                         <p ng-if="getHighlight(doc.id)===false">
                             [[doc.description | text | truncate:500]]
                         </p>
+                        <div ng-if="doc.administering_institution">
+                            <b>Administering Institution</b>: [[doc.administering_institution.join(',')]]
+                        </div>
+                        <div ng-if="doc.researchers">
+                            <b>Researchers: </b> [[doc.researchers.join(',')]]
+                        </div>
                     </div>
+                    
                    <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
                 </div>
                 <div class="col-md-4" ng-if="filters.spatial">
@@ -125,7 +135,7 @@
     </div>
 
     <!-- Temporal Facet -->
-    <div class="panel-body swatch-white">
+    <div class="panel-body swatch-white" ng-if="filters.class=='collection'">
         <h4>Temporal</h4>
         <select ng-model="filters.year_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
             <option value="" style="display:none">From Year</option>
@@ -136,6 +146,13 @@
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
     </div>
 
+    <!-- Funding Amount for Activity Search-->
+    <div class="panel-body swatch-white" ng-if="filters.class=='activity'">
+        <h4>Funding Amount</h4>
+        <input type="text" ng-model="filters.funding_from" class="form-control" placeholder="Funding From"/>
+        <input type="text" ng-model="filters.funding_to" class="form-control" placeholder="Funding To"/>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
+    </div>
     
 </div>
     

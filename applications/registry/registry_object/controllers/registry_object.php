@@ -1125,10 +1125,20 @@ class Registry_object extends MX_Controller {
     public function exportToEndnote($registry_object_id)
     {
         $registry_object_id = str_replace(".ris","",$registry_object_id);
+        $citations = '';
+        $registry_objects = Array();
         $CI =& get_instance();
         $CI->load->model('registry_object/registry_objects', 'rom');
-        $cite_ro = $CI->rom->getByID($registry_object_id);
-        $citations = ro_handle('citations',$cite_ro);
+
+        if(str_replace("-"," ",$registry_object_id)!=$registry_object_id){
+            $registry_objects = explode("-",$registry_object_id);
+        }else{
+            $registry_objects[]=$registry_object_id;
+        }
+        foreach($registry_objects as $id){
+            $cite_ro = $CI->rom->getByID($id);
+            if($cite_ro) $citations .= ro_handle('citations',$cite_ro);
+        }
         header('Content-type: application/x-research-info-systems');
         print($citations);
 

@@ -271,7 +271,6 @@ class Sync_extension extends ExtensionBase{
                         }
                     }
 			}
-
 		}
 
         foreach($gXPath->query('//ro:description[@type="fundingAmount"]') as $node) {
@@ -282,8 +281,10 @@ class Sync_extension extends ExtensionBase{
             $json['funding_scheme'] = strip_tags(html_entity_decode($node->nodeValue));
         }
 
+        //researchers for activity
+        $json['researchers'] = [];
         foreach($gXPath->query('//ro:description[@type="researchers"]') as $node) {
-            $json['researchers'] = strip_tags(html_entity_decode($node->nodeValue));
+            $json['researchers'][] = strip_tags(html_entity_decode($node->nodeValue));
         }
 
         $activityStatus = '';
@@ -323,6 +324,23 @@ class Sync_extension extends ExtensionBase{
             }
         }
         $json['activity_status'] = $activityStatus;
+
+        //Administering Institution, Funders and Researchers from related objects for activities
+        if ($this->ro->class=='activity') {
+        	$json['administering_institution'] = array();
+        	$json['funders'] = array();
+        	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, true, true);
+        	foreach ($related_objects as $related_object) {
+        		if ($related_object['class']=='party' && $related_object['relation_type']=='isAdministeredBy') {
+        			$json['administering_institution'][] = $related_object['title'];
+        		} else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
+        			$json['funders'][] = $related_object['title'];
+        		} else if($related_object['class']=='party' && $related_object['relation_type']=='isParticipantIn') {
+        			$json['researchers'][] = $related_object['title'];
+        		}
+        	}
+        }
+
 
         $json = array_filter($json);
 		return $json;

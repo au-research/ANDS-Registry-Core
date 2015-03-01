@@ -18,6 +18,10 @@ angular.module('portal-filters', [])
 				case 'anzsrc-for': return 'Subjects'; break;
 				case 'year_from': return 'From Year'; break;
 				case 'year_to': return 'To Year'; break;
+				case 'funding_scheme': return 'Funding Scheme'; break;
+				case 'funders': return 'Funders'; break;
+				case 'administering_institution': return 'Administering Institution'; break;
+				case 'activity_status': return 'Status'; break;
 				default: return text;
 			}
 		}

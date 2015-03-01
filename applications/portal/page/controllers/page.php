@@ -37,30 +37,6 @@ class Page extends MX_Controller {
 			->render('home');
 	}
 
-	function test(){
-		$this->load->library('vocab');
-		$toplevel = $this->vocab->getTopLevel('anzsrc-for', array());
-		echo json_encode($toplevel['topConcepts']);
-	}
-
-	function test2() {
-		$this->load->library('vocab');
-		$result = $this->vocab->getConceptDetail('anzsrc-for', 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/0401');
-		echo ($result);
-	}
-
-	function test3(){
-		$this->load->library('vocab');
-		$result = $this->vocab->resolveSubject('0711', 'anzsrc-for');
-		echo json_encode($result);
-	}
-
-	function test4(){
-		$this->load->library('vocab');
-		$result = $this->vocab->getResource('http://purl.org/au-research/vocabulary/anzsrc-for/2008/0401');
-		echo json_encode($result);
-	}
-
 	/**
 	 * About page
 	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -109,7 +85,110 @@ class Page extends MX_Controller {
 	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @return view 
 	 */
-	function sitemap() {}
+	function sitemap($page='') {
+    	parse_str($_SERVER['QUERY_STRING'], $_GET);
+    	$solr_url = get_config_item('solr_url');
+    	$ds = '';
+    	if(isset($_GET['ds'])) $ds=$_GET['ds'];
+
+    	$event = array(
+			'event'=>'portal_page',
+			'page' => 'sitemap',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		ulog_terms($event,'portal');
+
+    	if ($page == 'main'){
+    		$pages = array(
+    			base_url(),
+    			base_url('home/about'),
+    			base_url('home/contact'),
+    			base_url('home/privacy_policy'),
+    			base_url('themes')
+    		);
+
+    		header("Content-Type: text/xml");
+			echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+			foreach ($pages as $p) {
+				echo '<url>';
+				echo '<loc>'.$p.'</loc>';
+				echo '<changefreq>weekly</changefreq>';
+				echo '<lastmod>'.date('Y-m-d').'</lastmod>';
+				echo '</url>';
+			}
+			echo '</urlset>';
+    	} else {
+	    	if($ds==''){
+
+				$this->load->library('solr');
+				$this->solr->setFacetOpt('field', 'data_source_key');
+				$this->solr->setFacetOpt('limit', 1000);
+				$this->solr->setFacetOpt('mincount', 0);
+
+				$this->solr->executeSearch();
+				$res = $this->solr->getFacet();
+
+		    	$dsfacet = $res->{'facet_fields'}->{'data_source_key'};
+
+				header("Content-Type: text/xml");
+				echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+				echo '<sitemap><loc>'.base_url('home/sitemap/main').'</loc><lastmod>'.date('Y-m-d').'</lastmod></sitemap>';
+				for($i=0;$i<sizeof($dsfacet);$i+=2){
+					echo '<sitemap>';
+					echo '<loc>'.base_url().'home/sitemap/?ds='.urlencode($dsfacet[$i]).'</loc>';
+					echo '<lastmod>'.date('Y-m-d').'</lastmod>';
+					echo '</sitemap>';
+				}
+
+				echo '</sitemapindex>';
+			}elseif($ds!=''){
+
+				$this->load->library('solr');
+				$filters = array('data_source_key'=>$ds, 'rows'=>50000, 'fl'=>'key, id, update_timestamp, slug');
+				$this->solr->setFilters($filters);
+				$this->solr->executeSearch();
+				$res = $this->solr->getResult();
+
+		    	$keys = $res->{'docs'};
+				$freq = 'weekly';
+				if($this->is_active($ds)){
+					$freq = 'daily';
+				}
+
+				header("Content-Type: text/xml");
+				echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+				foreach($keys as $k) {
+					//var_dump($k);
+					echo '<url>';
+					if ($k->{'slug'}){
+						echo '<loc>'.base_url().$k->{'slug'}.'/'.$k->{'id'}.'</loc>';
+					} else {
+						echo '<loc>'.base_url().'view/?key='.urlencode($k->{'key'}).'</loc>';
+					}
+					echo '<changefreq>'.$freq.'</changefreq>';
+					echo '<lastmod>'.date('Y-m-d', strtotime($k->{'update_timestamp'})).'</lastmod>';
+					echo '</url>';
+				}
+				echo '</urlset>';
+			}
+    	}
+	}
+
+	public function is_active($ds_key){
+		$this->load->library('solr');
+		$filters = array('data_source_key'=>$ds_key);
+		$this->solr->setFilters($filters);
+		$this->solr->setFacetOpt('query', 'record_created_timestamp:[NOW-1MONTH/MONTH TO NOW]');
+		$this->solr->executeSearch();
+		$facet = $this->solr->getFacet();
+		$result = $this->solr->getNumFound();
+		if($facet){
+			if($facet->{'facet_queries'}->{'record_created_timestamp:[NOW-1MONTH/MONTH TO NOW]'} > 0){
+				return true;
+			}else return false;
+		}else return false;
+	}
 
 	function record_hit($page = 'home') {
 		$event = array(

@@ -21,7 +21,11 @@ class Registry_object extends MX_Controller {
 
 		$this->load->library('blade');
 
+
+
 		$theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
+        $logo = $this->getLogo($ro->core['group']);
+        $group_slug = url_title($ro->core['group'], '-', true);
 
         switch($ro->core['class']){
             case 'collection':
@@ -55,12 +59,12 @@ class Registry_object extends MX_Controller {
 			->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
 			->set('ro', $ro)
 			->set('contents', $this->components['view'])
-            ->set('activity_contents',$this->components['activity'])
 			->set('aside', $this->components['aside'])
-            ->set('activity_aside', $this->components['activity_aside'])
             ->set('view_headers', $this->components['view_headers'])
 			->set('url', $ro->construct_api_url())
 			->set('theme', $theme)
+            ->set('logo',$logo)
+            ->set('group_slug',$group_slug)
 			->render($render);
 	}
 
@@ -250,7 +254,7 @@ class Registry_object extends MX_Controller {
 		$this->blade
 			->set('lib', array('ui-events', 'angular-ui-map', 'google-map'))
 			// ->set('scripts', array('search_app'))
-			->set('facets', $this->components['facet'])
+			// ->set('facets', $this->components['facet'])
 			->set('search', true) //to disable the global search
 			->render('registry_object/search');
 	}
@@ -303,9 +307,17 @@ class Registry_object extends MX_Controller {
 		
 
 		//returns this set of Facets
-		foreach($this->components['facet'] as $facet){
-			if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
+		
+		if ($default_class=='activity')  {
+			foreach($this->components['activity_facet'] as $facet){
+				if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
+			}
+		} elseif($default_class=='collection') {
+			foreach($this->components['facet'] as $facet){
+				if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
+			}
 		}
+		
 
 		//high level subjects facet
 		// $subjects = $this->config->item('subjects');
@@ -329,7 +341,7 @@ class Registry_object extends MX_Controller {
 
 
 		//flags, these are the only fields that will be returned in the search
-		$this->solr->setOpt('fl', 'id,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons');
+		$this->solr->setOpt('fl', 'id,type,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons,administering_institution,researchers');
 
 		//highlighting
 		$this->solr->setOpt('hl', 'true');
@@ -367,6 +379,17 @@ class Registry_object extends MX_Controller {
 		echo json_encode($ro->relationships);
 	}
 
+    /**
+     * Get the logo url for a groups logo if it exists!
+     * @param $group
+     * @return string
+     */
+    function getLogo($group) {
+        $this->load->model('group/groups','group');
+        $logo = $this->group->fetchLogo($group);
+        return $logo;
+    }
+
 	/**
 	 * Construction
 	 * Defines the components that will be displayed and search for within the application
@@ -378,9 +401,8 @@ class Registry_object extends MX_Controller {
 			'view' => array('descriptions','reuse-list','quality-list','dates-list', 'connectiontree','related-objects-list' ,'spatial-info', 'subjects-list', 'related-metadata', 'identifiers-list'),
 			'aside' => array('rights-info','contact-info'),
             'view_headers' => array('title','related-parties'),
-            'activity'=>array('descriptions','spatial-info','publications-list', 'subjects-list','identifiers-list','contact-info'),
-            'activity_aside'=>('related-objects-list'),
-			'facet' => array('spatial','group', 'license_class', 'type', 'temporal', 'access_rights')
+			'facet' => array('spatial','group', 'license_class', 'type', 'temporal', 'access_rights'),
+			'activity_facet' => array('type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders')
 		);
 	}
 }

@@ -20,7 +20,6 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
         $ci->load->library('solr');
         $ci->solr->init();
         $str = 'id:'.$this->ro->id;
-        $this->ro->processTemporal();
         $centers = array();
         $ci->solr
             ->init()
@@ -30,6 +29,7 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
         $result = $ci->solr->executeSearch(true);
         if($result['response']['numFound'] > 0) {
             foreach($result['response']['docs'] as $doc) {
+                if(isset($doc['spatial_coverage_centres']))
                     $centers[] = $doc['spatial_coverage_centres'];
             }
         }

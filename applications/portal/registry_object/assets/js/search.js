@@ -9,6 +9,7 @@ app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$logProvider.debugEnabled(true);
 });
 
+
 app.config(function(uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
         //    key: 'your api key',
@@ -20,7 +21,9 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 
 app.controller('searchCtrl', 
 function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
-	
+
+    $scope.query_title = 'Untitled Query';
+    $scope.saved_records_folder = 'Untitled';
 
 	$scope.class_choices = [
 		{'name':'collection', 'val':'Collection', 'selected':true},
@@ -29,6 +32,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		{'name':'service', 'val':'Services', 'selected':false}
 	];
 	
+
 	$scope.$watch(function(){
 		return location.hash;
 	},function(){
@@ -40,6 +44,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		// $log.debug('after sync', $scope.filters, search_factory.filters, $scope.query, search_factory.query, $scope.search_type);
 		$scope.search();
 	});
+
+	$scope.$on("$locationChangeSuccess", function () {
+		$log.debug(location.hash);
+	})
 
 	$scope.getHash = function(){
 		var hash = '';
@@ -174,6 +182,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.sort = search_factory.sort;
 		$scope.advanced_fields = search_factory.advanced_fields;
 
+		if($scope.filters['class']=='activity') {
+			$scope.advanced_fields = search_factory.advanced_fields_activity;
+		}
+
 		//construct the pagination
 		if ($scope.result) {
 			// $log.debug($scope.result);
@@ -181,7 +193,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				cur: ($scope.filters['p'] ? parseInt($scope.filters['p']) : 1),
 				rows: ($scope.filters['rows'] ? parseInt($scope.filters['rows']) : 15),
 				range: 3,
-				pages: [],
+				pages: []
 			}
 			$scope.page.end = Math.ceil($scope.result.response.numFound / $scope.page.rows);
 			for (var x = ($scope.page.cur - $scope.page.range); x < (($scope.page.cur + $scope.page.range)+1);x++ ) {
@@ -353,17 +365,58 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.add_user_data = function(type) {
-		if(type=='saved_record') {
-			profile_factory.add_user_data('saved_record', $scope.selected).then(function(data){
-				alert('done');
-			});
-		} else if(type=='saved_search') {
-			profile_factory.add_user_data('saved_search', $scope.getHash()).then(function(data){
-				alert('done');
-			});
-		}
+            $('#my-rda-'+type+'-modal').modal('show');
 	}
 
+
+    $scope.save_records = function(action){
+        if(action == 'save')
+        {
+            var ngdata = [];
+            angular.forEach($scope.selected, function(ro){
+
+                ngdata.push({
+                    id:ro.id,
+                    slug:ro.slug,
+                    group:ro.group,
+                    title:ro.title,
+                    folder:$scope.saved_records_folder,
+                    last_viewed:parseInt(new Date().getTime() / 1000)
+                });
+            });
+            profile_factory.add_user_data('saved_record', ngdata).then(function(data){
+                if(data.status == "OK")
+                {
+                    $('#my-rda-saved_record-modal').modal('hide');
+                }
+            });
+        }
+    }
+
+    $scope.save_search = function(action)
+    {
+        if(action == 'save')
+        {
+            var ngdata = [];
+            $log.debug($scope.query_title);
+            ngdata.push({
+                query_title: $scope.query_title,
+                query_string: $scope.getHash(),
+                num_found: $scope.result.response.numFound,
+                num_found_since_last_check: 0,
+                num_found_since_saved:0,
+                saved_time:parseInt(new Date().getTime() / 1000),
+                refresh_time:parseInt(new Date().getTime() / 1000),
+                folder:$scope.folderf
+            });
+            profile_factory.add_user_data('saved_search', ngdata).then(function(data){
+                if(data.status == "OK")
+                {
+                    $('#my-rda-saved_search-modal').modal('hide');
+                }
+            });
+        }
+    }
 
 	/**
 	 * Advanced Search Section
@@ -388,7 +441,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.advancedSearch = function(){
 		$scope.filters = {};
 		angular.copy($scope.prefilters, $scope.filters);
-		$scope.query = $scope.prefilters.q;
+		if($scope.prefilters.q) $scope.query = $scope.prefilters.q;
 
 		$scope.hashChange();
 		$('#advanced_search').modal('hide');
@@ -614,7 +667,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			     circleOptions: polyOption,
 			     rectangleOptions: polyOption,
 			     polygonOptions: polyOption,
-			     polylineOptions: polyOption,
+			     polylineOptions: polyOption
 			});
 			$scope.drawingManager.setMap(map);
 
@@ -719,12 +772,12 @@ app.factory('search_factory', function($http, $log){
 			{value:'title asc',label:'Title A-Z'},
 			{value:'title desc',label:'Title Z-A'},
 			{value:'title desc',label:'Popular'},
-			{value:'record_created_timestamp asc',label:'Date Added'},
+			{value:'record_created_timestamp asc',label:'Date Added'}
 		],
 
 		advanced_fields: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'subject', 'display':'Subjects', 'active':true},
+			{'name':'subject', 'display':'Subjects'},
 			{'name':'group', 'display':'Contributors'},
 			{'name':'access_rights', 'display':'Access Rights'},
 			{'name':'license_class', 'display':'License'},
@@ -733,6 +786,23 @@ app.factory('search_factory', function($http, $log){
 			{'name':'class', 'display':'Class'},
 			{'name':'review', 'display':'Review'}
 		],
+
+		advanced_fields_activity: [
+			{'name':'terms', 'display':'Search Terms', 'active':true},
+			{'name':'type', 'display':'Types'},
+			{'name':'activity_status', 'display':'Status'},
+			{'name':'subject', 'display':'Subjects'},
+			{'name':'administering_institution', 'display':'Administering Institution'},
+			{'name':'date_range', 'display':'Date Range'},
+			{'name':'funders', 'display':'Funders'},
+			{'name':'funding_scheme', 'display':'Funding Scheme'},
+			{'name':'funding_amount', 'display':'Funding Amount'},
+			{'name':'class', 'display':'Class'},
+			{'name':'review', 'display':'Review'}
+		],
+
+		collection_facet_order: ['group', 'access_rights', 'license_class'],
+		activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
 		ingest: function(hash) {
 			this.filters = this.filters_from_hash(hash);
@@ -794,7 +864,12 @@ app.factory('search_factory', function($http, $log){
 				}
 			});
 
-			var order = ['group', 'access_rights', 'license_class'];
+			var order = this.collection_facet_order;
+
+			if(this.filters['class']=='activity'){
+				var order = this.activity_facet_order;
+			}
+
 			var orderedfacets = [];
 			angular.forEach(order, function(item){
 				// orderedfacets[item] = facets[item]

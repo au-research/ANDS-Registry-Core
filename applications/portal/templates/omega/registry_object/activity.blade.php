@@ -1,9 +1,6 @@
 @extends('layouts/'.$theme)
 
 @section('content')
-<?php
-	// var_dump($ro);
-?>
 <article class="post">
 	<div class="post-body">
         @include('registry_object/activity_contents/descriptions')

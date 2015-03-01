@@ -233,6 +233,14 @@ function readable($text, $singular = false){
         case 'produces' : return  'Produces'; break;
         case 'presents' : return  'Presents'; break;
         case 'supports' : return  'Supports'; break;
+        case 'fundingAmount' : return  'Funding Amount'; break;
+        case 'fundingamount' : return  'Funding Amount'; break;
+        case 'researchers' : return  'Researchers'; break;
+        case 'fundingScheme' : return  'Funding Scheme'; break;
+        case 'fundingscheme' : return  'Funding Scheme'; break;
+        case 'leadinvestigator' : return  'Lead investigator'; break;
+        case 'principalinvestigator' : return  'Principal investigator'; break;
+        case 'coinvestigator' : return  'Co investigator'; break;
         default: return $text;
 	}
 }

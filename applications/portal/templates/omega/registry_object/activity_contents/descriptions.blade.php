@@ -1,6 +1,7 @@
 <?php
-	$order = array('fundingAmount','fundingScheme','researchers','brief', 'full');
+	$order = array('researchers','fundingAmount','fundingScheme','brief', 'full');
 	$omit = array('logo');
+    $researchersfound='no';
 ?>
 @if($ro->descriptions)
 <div class="swatch-white">
@@ -19,10 +20,23 @@
 			@foreach($order as $o)
 				@foreach($ro->descriptions as $desc)
 					@if($desc['type']==$o)
-						<p><strong>{{$desc['type']}}</strong>{{html_entity_decode($desc['description'])}}</p>
+                        <?php   $type = readable($desc['type']);
+                                if($desc['type']=='researchers'){
+                                    $researchersfound='yes';
+                                }
+                                if($o == 'brief' && $researchersfound=='no'){
+                                    ?>
+                                    @include('registry_object/activity_contents/activity-people')
+                        <?php
+                                }
+                        ?>
+						<p><strong>{{$type}}</strong> {{html_entity_decode($desc['description'])}}
+
+                        </p>
 					@endif
 				@endforeach
 			@endforeach
+
 			
 			@foreach($ro->descriptions as $desc)
 				@if(!in_array($desc['type'], $order) && !in_array($desc['type'], $omit))
