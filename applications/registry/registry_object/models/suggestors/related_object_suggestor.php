@@ -56,7 +56,7 @@ class Related_object_suggestor extends _GenericSuggestor
         foreach($this->relationship_types as $class=>$typeArray)
         {
             $connections = $this->ro->getRelatedObjectsByClassAndRelationshipType(
-                array($class),$typeArray);
+            array($class),$typeArray);
             if($class == 'collection') // get them from DB only
             {
                 foreach ($connections as $connection) {
@@ -73,6 +73,7 @@ class Related_object_suggestor extends _GenericSuggestor
                             'slug'=>$row['slug'],
                             'title'=>$row['title'],
                             'class'=>$class,
+                            'RDAUrl' => portal_url($row['slug'].'/'.$row['id']),
                             'relation_type'=>$connection['relation_type'],
                             'score'=>1
                         );
@@ -175,6 +176,7 @@ class Related_object_suggestor extends _GenericSuggestor
                     $doc['score'] = $score_override;
                     $doc['relation_type'] = $relation_type;
                     $doc['class'] = $class;
+                    $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
                 }
             }

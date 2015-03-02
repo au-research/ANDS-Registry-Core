@@ -18,6 +18,7 @@ class Subjects_suggestor extends _GenericSuggestor {
     function suggest() {
 
         //Get subjects from the XML
+        $suggestions = array();
         $sxml = $this->ro->getSimpleXML();
         if ($sxml->registryObject) {
             $sxml = $sxml->registryObject;
@@ -51,14 +52,13 @@ class Subjects_suggestor extends _GenericSuggestor {
                 ->setOpt('fq', 'class:collection')
                 ->setOpt('defType', 'edismax');
 
-            $suggestions = array();
-
             $result = $ci->solr->executeSearch(true);
 
             if($result['response']['numFound'] > 0) {
                 $maxScore = floatval($result['response']['maxScore']);
                 foreach($result['response']['docs'] as $doc) {
                     $doc['score'] = $doc['score'] / $maxScore;
+                    $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
                 }
             }
