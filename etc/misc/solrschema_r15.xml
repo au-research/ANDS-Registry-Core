@@ -55,7 +55,7 @@
         <field name="access_rights" type="string" indexed="true" stored="true" multiValued="false"/>
 
 		<field name="title" type="string" indexed="true" stored="true"/>
-		<field name="title_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
+		<field name="title_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true" termVectors="true"/>
 		<field name="display_title" type="string" indexed="true" stored="true"/>
 		<field name="list_title" type="string" indexed="true" stored="true"/>
 		<field name="list_title_sort" type="alphaOnlySort" indexed="true" stored="false"/>
@@ -66,7 +66,7 @@
 		<field name="alt_title_search" type="text_en_splitting" indexed="true" stored="false" multiValued="true"/>
 		
 		<field name="description" type="text_en_splitting" indexed="true" stored="true" multiValued="false"/>
-		<field name="description_value" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
+		<field name="description_value" type="text_en_splitting" indexed="true" stored="true" multiValued="true" termVectors="true"/>
 		<field name="description_type" type="string" indexed="true" stored="true" multiValued="true"/>
 	
 		<field name="subject_value_resolved" type="string" indexed="true" stored="true" multiValued="true"/>
