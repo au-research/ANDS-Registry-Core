@@ -21,6 +21,7 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
         $ci->solr->init();
         $str = 'id:'.$this->ro->id;
         $centers = array();
+        $suggestions = array();
         $ci->solr
             ->init()
             ->setOpt('q', $str)
@@ -34,7 +35,6 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
             }
         }
 
-        $suggestions = array();
         foreach($centers as $key=>$center)
         {
             $latLon = explode(',', $center[0]);
@@ -51,11 +51,13 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
             if($result['response']['numFound'] > 0) {
                 $maxScore = floatval($result['response']['maxScore']);
                 foreach($result['response']['docs'] as $doc) {
-                        $doc['score'] = $doc['score'] / $maxScore;
-                        $suggestions[] = $doc;
+                    $doc['score'] = $doc['score'] / $maxScore;
+                    $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
+                    $suggestions[] = $doc;
                 }
             }
         }
+
         return $suggestions;
     }
 

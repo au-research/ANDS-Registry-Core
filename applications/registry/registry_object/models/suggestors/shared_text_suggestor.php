@@ -43,6 +43,7 @@ class Shared_text_suggestor extends _GenericSuggestor {
             foreach($result['moreLikeThis'][$this->ro->id]['docs'] as $doc) {
                 if($doc['class'] == 'collection'){
                     $doc['score'] = $doc['score'] / $maxScore;
+                    $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
                 }
             }

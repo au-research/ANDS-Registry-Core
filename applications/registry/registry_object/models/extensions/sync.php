@@ -27,8 +27,8 @@ class Sync_extension extends ExtensionBase{
 			if($this->ro->status=='PUBLISHED'){
 				$docs = array();
 				$docs[] = $this->indexable_json($conn_limit);
-				$this->_CI->solr->add_json(json_encode($docs));
-				$this->_CI->solr->commit();
+				$r = $this->_CI->solr->add_json(json_encode($docs));
+				$r = $this->_CI->solr->commit();
 			}
 		} catch (Exception $e) {
 			return 'error: '.$e;

@@ -400,6 +400,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
             var ngdata = [];
             $log.debug($scope.query_title);
             ngdata.push({
+            	id:$scope.query_title,
                 query_title: $scope.query_title,
                 query_string: $scope.getHash(),
                 num_found: $scope.result.response.numFound,
