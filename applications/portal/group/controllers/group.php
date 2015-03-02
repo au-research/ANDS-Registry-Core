@@ -80,11 +80,48 @@ class Group extends MX_Controller {
 		}
 	}
 
+	function upload() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		$upload_path = './assets/uploads/custom_group_logo/';
+		if(!is_dir($upload_path)) {
+			if(!mkdir($upload_path)) throw new Exception('Upload path are not created correctly. Contact server administrator');
+		}
+
+		$config['upload_path'] = $upload_path;
+		$config['allowed_types'] = 'jpg|png|gif';
+		$config['overwrite'] = true;
+		$config['max_size']	= '4000';
+
+		$this->load->library('upload', $config);
+		if(!$this->upload->do_upload('file')) {
+			echo json_encode(
+				array(
+					'status'=>'ERROR',
+					'message' => $this->upload->display_errors()
+				)
+			);
+		} else {
+			$data = $this->upload->data();
+			$name = $data['orig_name'];
+			echo json_encode(
+				array(
+					'status'=>'OK',
+					'message' => 'File uploaded successfully!',
+					'data' => $this->upload->data(),
+					'url' => asset_url('uploads/custom_group_logo/'.$name, 'base')
+				)
+			);
+		}
+	}
+
 	function cms() {
 		acl_enforce('REGISTRY_STAFF', '', true);
 		$this->blade
 			->set('scripts', array('contributor_app', 'contributor_factory'))
-			->set('lib', array('textAngular'))
+			->set('lib', array('textAngular', 'ngupload'))
 			->render('group/group_cms');
 	}
 
