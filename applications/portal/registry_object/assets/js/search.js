@@ -271,6 +271,14 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if(execute) $scope.hashChange();
 	}
 
+	$scope.toggleAccessRights = function() {
+		if ($scope.filters['access_rights']) {
+			delete $scope.filters['access_rights'];
+		} else {
+			$scope.filters['access_rights'] = 'open';
+		}
+	}
+
 	$scope.addFilter = function(type, value) {
 		if($scope.filters[type]){
 			if(typeof $scope.filters[type]=='string') {
