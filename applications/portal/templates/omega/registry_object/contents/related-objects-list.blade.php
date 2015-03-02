@@ -18,6 +18,7 @@
     $hasRelatedPublication = false;
     $hasRelatedWebsite = false;
     $hasDerivedCollection = false;
+    $hasRelatedCollection = false;
 
     $search_class = $ro->core['class'];
     if($ro->core['class']=='party') {
@@ -46,6 +47,7 @@
 
 
     if ($ro->relationships && isset($ro->relationships['collection'])) {
+        $hasRelatedCollection = true;
         foreach ($ro->relationships['collection'] as $col) {
             if ($col['relation_type']=='hasDerivedCollection' || $col['relation_type']=='isDerivedFrom') {
                 $hasDerivedCollection = true;
@@ -88,7 +90,7 @@
                     <!-- Only display collections with the relationship of isDerivedFrom or hasDerivedCollection -->
 
 
-                    @if($hasDerivedCollection)
+                    @if($hasDerivedCollection && $ro->core['class']=='collection')
                     <h4>Related Data</h4>
                     <p>
                         @foreach($ro->relationships['collection'] as $col)
@@ -98,7 +100,14 @@
                         @endforeach
                     </p>
                     @endif
-
+                    @if($hasRelatedCollection && $ro->core['class']!='collection')
+                    <h4>Related Data</h4>
+                    <p>
+                        @foreach($ro->relationships['collection'] as $col)
+                        <img src="<?php echo base_url()?>assets/img/collection.png" style="margin-top: -2px; height: 24px; width: 24px;"/> <small>{{readable($col['relation_type'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
+                        @endforeach
+                    </p>
+                    @endif
                     @if($hasRelatedOrganisation)
                     <h4>Related Organisations</h4>
                     <p>
