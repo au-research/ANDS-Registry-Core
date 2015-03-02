@@ -34,10 +34,9 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
                     $centers[] = $doc['spatial_coverage_centres'];
             }
         }
-
         foreach($centers as $key=>$center)
         {
-            $latLon = explode(',', $center[0]);
+            $latLon = explode(' ', $center[0]);
             $ci->solr
                 ->init()
                 ->setOpt('q', '*:*')
