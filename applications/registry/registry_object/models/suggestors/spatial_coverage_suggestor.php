@@ -37,9 +37,9 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
         foreach($centers as $key=>$center)
         {
             $latLon = explode(' ', $center[0]);
-            if(!is_array($latLon))
+            if(!is_array($latLon) || count($latLon) < 2)
                 $latLon = explode(',', $center[0]);
-            if(is_array($latLon)){
+            if(is_array($latLon) && count($latLon == 2)){
                 $ci->solr
                     ->init()
                     ->setOpt('q', '*:*')
