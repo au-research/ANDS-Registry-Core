@@ -37,22 +37,26 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
         foreach($centers as $key=>$center)
         {
             $latLon = explode(' ', $center[0]);
-            $ci->solr
-                ->init()
-                ->setOpt('q', '*:*')
-                ->setOpt('rows', '50')
-                ->setOpt('fq', '-id:'.$this->ro->id)
-                ->setOpt('fq', 'class:collection')
-                ->setOpt('fq', '{!geofilt pt='.$latLon[1].','.$latLon[0].' sfield=spatial_coverage_extents d=50}')
-                ->setOpt('fl', 'id,key,slug,title,score');
+            if(!is_array($latLon))
+                $latLon = explode(',', $center[0]);
+            if(is_array($latLon)){
+                $ci->solr
+                    ->init()
+                    ->setOpt('q', '*:*')
+                    ->setOpt('rows', '50')
+                    ->setOpt('fq', '-id:'.$this->ro->id)
+                    ->setOpt('fq', 'class:collection')
+                    ->setOpt('fq', '{!geofilt pt='.$latLon[1].','.$latLon[0].' sfield=spatial_coverage_extents d=50}')
+                    ->setOpt('fl', 'id,key,slug,title,score');
 
-            $result = $ci->solr->executeSearch(true);
-            if($result['response']['numFound'] > 0) {
-                $maxScore = floatval($result['response']['maxScore']);
-                foreach($result['response']['docs'] as $doc) {
-                    $doc['score'] = $doc['score'] / $maxScore;
-                    $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
-                    $suggestions[] = $doc;
+                $result = $ci->solr->executeSearch(true);
+                if($result['response']['numFound'] > 0) {
+                    $maxScore = floatval($result['response']['maxScore']);
+                    foreach($result['response']['docs'] as $doc) {
+                        $doc['score'] = $doc['score'] / $maxScore;
+                        $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
+                        $suggestions[] = $doc;
+                    }
                 }
             }
         }
