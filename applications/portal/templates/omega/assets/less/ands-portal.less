@@ -9,14 +9,20 @@
 @gray: #ccc;
 @darkGray: #6c6c6c;
 
+/*OVERWRITE*/
+
+
 .navbar-brand {
+	font-size:25px;
 	span {
 		color: #eb7700;
 		font-weight:normal;
 		text-decoration:none;
-		font-size:22px;
 	}
 }
+
+
+
 
 ul.listy {
 	padding-left:0;
@@ -258,3 +264,12 @@ ul.pagi {
 .flex-direction-nav a{
 	color:@primaryColor !important;
 }
+
+.swatch-gray a {
+	color: @primaryColor;
+	&:hover{
+		color:@secondaryColor;
+	}
+}
+
+.icon-portal { color: @secondaryColor !important; }

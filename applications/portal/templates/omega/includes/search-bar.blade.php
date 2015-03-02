@@ -39,7 +39,7 @@
           <input type="checkbox" ng-checked="filters.access_rights=='open'" ng-click="toggleAccessRights()"> Open
         </div>
         <div class="pull-right">
-            <a href="" ng-click="advanced()">Advanced Search</a>
+            <a href="" ng-click="advanced()" style="margin-right:6px">Advanced Search</a>
             <a href="" ng-click="advanced('spatial')">Map Search</a>
         </div>
     </form>

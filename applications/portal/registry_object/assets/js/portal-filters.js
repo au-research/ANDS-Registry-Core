@@ -11,7 +11,7 @@ angular.module('portal-filters', [])
 				case 'description': return 'Description' ;break;
 				case 'subject': return 'Subjects' ;break;
 				case 'access_rights': return 'Access Rights'; break;
-				case 'group': return 'Contributor'; break;
+				case 'group': return 'Data Provider'; break;
 				case 'license_class': return 'Licenses'; break;
 				case 'type': return 'Type'; break;
 				case 'subject_vocab_uri': return 'Subject Vocabulary URI'; break;
