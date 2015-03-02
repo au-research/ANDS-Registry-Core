@@ -47,6 +47,8 @@
             <script src="{{asset_url('lib/mustache/mustache.min.js', 'core')}}"></script>
         @elseif($l=='map')
             <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing&amp;sensor=false"></script>
+        @elseif($l=='ngupload')
+            <script type="text/javascript" src="{{asset_url('lib/ng-file-upload/angular-file-upload-all.min.js','core')}}"></script>
         @endif
 	@endforeach
 @endif

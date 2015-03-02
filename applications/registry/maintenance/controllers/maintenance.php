@@ -694,9 +694,12 @@ class Maintenance extends MX_Controller {
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->load->model('registry_object/registry_objects', 'ro');
 
-		$ro = $this->ro->getByID(581672);
+		$ro = $this->ro->getByID(564505);
 
 		echo json_encode($ro->indexable_json());
+
+		$this->load->library('solr');
+		$this->solr->deleteByID(564505);
 
 		$ro->sync();
 
