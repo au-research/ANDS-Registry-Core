@@ -30,8 +30,7 @@
 ?>
 <div class="panel panel-primary swatch-white">
     <div class="panel-body">
-        @include('registry_object/contents/access')
-    	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
+           	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
             <a class="btn btn-sm btn-default" ng-click="removeBookmark()" ng-if="ro.bookmarked"><i class="fa fa-bookmark"></i> Bookmarked</a>
             <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="!ro.bookmarked"><i class="fa fa-bookmark-o"></i> Bookmark</a>
         </div>

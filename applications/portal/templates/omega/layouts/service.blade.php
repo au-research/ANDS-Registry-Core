@@ -62,7 +62,7 @@
 
                                 <div>
 
-                                    <div class="pull-left swatch-white" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
+                                   <div class="pull-left swatch-white" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
                                         @include('registry_object/service_contents/wrap-getdatalicence')
                                     </div>
                                     @yield('content')
@@ -71,8 +71,10 @@
                             </div>
 
                             <div class="col-md-3">
+
                                 @yield('sidebar')
                             </div>
+
 
     		    		</div>
     		    	</div>
