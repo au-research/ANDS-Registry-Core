@@ -51,12 +51,33 @@
                 </select>
               </div>
 
+              <div ng-if="isAdvancedSearchActive('date_range')">
+                <h3>Commencement Date Range</h3>
+                <select ng-model="prefilters.commence_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
+                    <option value="" style="display:none">From Year</option>
+                </select>
+                <select ng-model="prefilters.commence_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
+                    <option value="" style="display:none">To Year</option>
+                </select>
+                <div class="alert alert-info">Please note that adding this filter will restrict your search to only those activity records in Research Data Australia which have a start date recorded</div>
+                <h3>Completion Date Range</h3>
+                <select ng-model="prefilters.completion_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
+                    <option value="" style="display:none">From Year</option>
+                </select>
+                <select ng-model="prefilters.completion_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
+                    <option value="" style="display:none">To Year</option>
+                </select>
+                <div class="alert alert-info">Please note that adding this filter will restrict your search to only those activity records in Research Data Australia which have an end date recorded</div>
+              </div>
+
               <div ng-if="isAdvancedSearchActive('funding_amount')">
                 <label for="">Funding From</label>
                 <input type="text" ng-model="prefilters.funding_from" class="form-control" placeholder="Funding From"/>
                 <label for="">Funding To</label>
                 <input type="text" ng-model="prefilters.funding_to" class="form-control" placeholder="Funding To"/>
               </div>
+
+
 
               <div ng-if="isAdvancedSearchActive('subject')">
                 <div>
