@@ -115,9 +115,12 @@ class Page extends MX_Controller {
 		$this->load->model('group/groups', 'groups');
 		$contributors = $this->groups->getFunders();
 
+		$banner = asset_url('images/activity_banner.jpg','core');
+
     	$this->blade
     		->set('scripts', array('home'))
     		->set('highlevel', $highlevel)
+    		->set('banner', $banner)
     		->set('contributors', $contributors)
     		->render('grants');
     }

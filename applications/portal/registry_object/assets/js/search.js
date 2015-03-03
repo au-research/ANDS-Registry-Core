@@ -947,8 +947,16 @@ app.factory('search_factory', function($http, $log){
 				if(!filters[type]) filters[type] = content;
 			});
 
+			//auto switch to activity search in grants
 			if(location.href.indexOf('grants')>-1) {
 				filters['class'] = 'activity';
+				
+			}
+
+			if(filters['class']=='activity' && location.href.indexOf('search')>-1) {
+				$('#banner-image').css('background-image', "url('"+base_url+"assets/core/images/activity_banner.jpg')");
+			} else if(filters['class']=='collection' && location.href.indexOf('search')>-1) {
+				$('#banner-image').css('background-image', "url('"+base_url+"assets/core/images/collection_banner.jpg')");
 			}
 
 			return filters;
