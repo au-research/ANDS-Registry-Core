@@ -271,6 +271,14 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if(execute) $scope.hashChange();
 	}
 
+	$scope.toggleAccessRights = function() {
+		if ($scope.filters['access_rights']) {
+			delete $scope.filters['access_rights'];
+		} else {
+			$scope.filters['access_rights'] = 'open';
+		}
+	}
+
 	$scope.addFilter = function(type, value) {
 		if($scope.filters[type]){
 			if(typeof $scope.filters[type]=='string') {
@@ -400,6 +408,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
             var ngdata = [];
             $log.debug($scope.query_title);
             ngdata.push({
+            	id:$scope.query_title,
                 query_title: $scope.query_title,
                 query_string: $scope.getHash(),
                 num_found: $scope.result.response.numFound,
@@ -937,6 +946,10 @@ app.factory('search_factory', function($http, $log){
 			angular.forEach(this.default_filters, function(content,type){
 				if(!filters[type]) filters[type] = content;
 			});
+
+			if(location.href.indexOf('grants')>-1) {
+				filters['class'] = 'activity';
+			}
 
 			return filters;
 		},

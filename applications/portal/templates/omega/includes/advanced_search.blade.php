@@ -3,6 +3,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
+
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
         <h4 class="modal-title" id="myModalLabel">Advanced Search</h4>
       </div>
@@ -51,12 +52,33 @@
                 </select>
               </div>
 
+              <div ng-if="isAdvancedSearchActive('date_range')">
+                <h3>Commencement Date Range</h3>
+                <select ng-model="prefilters.commence_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
+                    <option value="" style="display:none">From Year</option>
+                </select>
+                <select ng-model="prefilters.commence_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
+                    <option value="" style="display:none">To Year</option>
+                </select>
+                <div class="alert alert-info">Please note that adding this filter will restrict your search to only those activity records in Research Data Australia which have a start date recorded</div>
+                <h3>Completion Date Range</h3>
+                <select ng-model="prefilters.completion_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
+                    <option value="" style="display:none">From Year</option>
+                </select>
+                <select ng-model="prefilters.completion_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
+                    <option value="" style="display:none">To Year</option>
+                </select>
+                <div class="alert alert-info">Please note that adding this filter will restrict your search to only those activity records in Research Data Australia which have an end date recorded</div>
+              </div>
+
               <div ng-if="isAdvancedSearchActive('funding_amount')">
                 <label for="">Funding From</label>
                 <input type="text" ng-model="prefilters.funding_from" class="form-control" placeholder="Funding From"/>
                 <label for="">Funding To</label>
                 <input type="text" ng-model="prefilters.funding_to" class="form-control" placeholder="Funding To"/>
               </div>
+
+
 
               <div ng-if="isAdvancedSearchActive('subject')">
                 <div>
@@ -126,7 +148,15 @@
           </div>
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer swatch-white">
+        <div class="btn-group pull-left">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            Search for [[prefilters.class]] <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li ng-repeat="c in class_choices"><a href="" ng-click="prefilters.class=c.name">[[c.name]]</a></li>
+          </ul>
+        </div>
         <button type="button" class="btn btn-link" ng-click="advanced('close');">Cancel</button>
         <button type="button" class="btn btn-primary" ng-click="advancedSearch();">Search</button>
       </div>

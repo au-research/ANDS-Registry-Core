@@ -5,6 +5,11 @@
         <div class="row">
             <div class="col-md-12">
                 <header>
+                    @if($group['has_custom_data'])
+                        @if(isset($group['custom_data']['logo']))
+                        <img src="{{$group['custom_data']['logo']}}" alt="Logo" class="header-logo animated fadeInDown"/>
+                        @endif
+                    @endif             
                     <h1 class="hairline bordered-normal">{{$group['title']}}</h1>
                 </header>
             </div>

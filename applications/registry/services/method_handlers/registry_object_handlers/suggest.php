@@ -9,7 +9,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Suggest extends ROHandler {
     function handle() {
         $result = array();
-
+        $result['message'] = 'No Suggested Collection was found';
         //pools
         $suggestors = array(
            'subjects'=>array('boost'=>1,'handler'=>'subjects'),
@@ -38,11 +38,15 @@ class Suggest extends ROHandler {
             $ci->$suggestor_field->set_ro($this->ro);
             // Override boost parameters from request URL.
             $boost = $ci->input->get($key);
-            if ($boost)
+            if ($boost){
                 $suggestors[$key]['boost'] = floatval($boost);
-        
+            }
             $result[$key] = $ci->$suggestor_field->suggest();
-            $allSet = array_merge($result[$key], $allSet);
+
+            if(is_array($result[$key])){
+                $allSet = array_merge($result[$key], $allSet);
+            }
+
         }
         
         // Normalize rankings and apply boosting
@@ -77,6 +81,7 @@ class Suggest extends ROHandler {
         {
             $result['final'][] = $this->getRecord($id, $score, $allSet);
         }
+        $result['message'] = sizeof($fullSet). " Suggested Collections were found";
         return $result;
 	}
 

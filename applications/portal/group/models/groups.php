@@ -36,6 +36,17 @@ class Groups extends CI_Model {
 
 	function fetchLogo($group) {
 		$slug = url_title($group, '-', true);
+
+		//check for custom logo that is published
+		$data = $this->fetchData($slug);
+		if ($data) {
+			$data = json_decode($data->{'data'}, true);
+			if (isset($data['logo'])) {
+				return $data['logo'];
+			}
+		}
+
+		//check for default path
 		$path = 'applications/portal/group/assets/logos/'.$slug.'.jpg';
 		$path2 = 'applications/portal/group/assets/logos/'.$slug.'.png';
 		if (file_exists($path)) {
@@ -43,8 +54,36 @@ class Groups extends CI_Model {
 		} elseif(file_exists($path2)) {
 			return asset_url('group/logos/'.$slug.'.png', 'full_base_path');
 		} else {
-			return false;
+			 return false;
 		}
+		return false;
+	}
+
+	/**
+	 * Get a list of funders
+	 * funders are party of type group and has relation of isFundedBy
+	 * @return [type] [description]
+	 */
+	function getFunders() {
+		$this->load->library('solr');
+		$this->solr
+			->setFacetOpt('facet', 'true')
+			->setOpt('fq', '+class:activity')
+			->setFacetOpt('field', 'funders');
+		$result = $this->solr->executeSearch();
+		$result = $this->solr->getFacetResult('funders');
+		
+		$groups = array();
+		foreach($result as $key=>$value) {
+			$groups[] = array(
+				'title' => $key,
+				'logo' 	=> $this->fetchLogo($key),
+				'slug'	=> url_title($key, '-', true),
+				'counts' => $value
+			);
+		}
+
+		return $groups;
 	}
 
 	/**

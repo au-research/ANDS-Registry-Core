@@ -31,7 +31,7 @@ class Shared_text_suggestor extends _GenericSuggestor {
             ->setOpt('defType', 'edismax')
             ->setOpt('fq', 'class:collection')
             ->setOpt('mlt', 'true')
-            ->setOpt('mlt.fl', 'description,display_title')
+            ->setOpt('mlt.fl', 'description_value,title_search')
             ->setOpt('mlt.count', '100');
         
         $suggestions = array();
@@ -43,6 +43,7 @@ class Shared_text_suggestor extends _GenericSuggestor {
             foreach($result['moreLikeThis'][$this->ro->id]['docs'] as $doc) {
                 if($doc['class'] == 'collection'){
                     $doc['score'] = $doc['score'] / $maxScore;
+                    $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
                 }
             }

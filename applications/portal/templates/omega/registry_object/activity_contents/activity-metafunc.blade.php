@@ -31,9 +31,10 @@ if ($ro->rights) {
 <div class="panel panel-primary swatch-white">
     <div class="panel-body">
         <div class="center-block" style="text-align:center">
-            <span class="label label-info">301+ Viewed</span>
-           <!-- <span class="label label-info">98 Cited</span> -->
-            <span class="label label-info">47 Accessed</span>
+            <div ng-if="ro.stat">
+                <a href="#" style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</a>
+                <a href="#" style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</a>
+            </div>
         </div>
         
     	<div class="btn-group btn-group-justified element element-short-bottom element-short-top" role="group" aria-label="...">
@@ -82,10 +83,8 @@ if ($ro->rights) {
         @endif
 
         @include('registry_object/contents/contact-info')
-        <div class="center-block" style="text-align:center">
-            <i class="fa fa-lg fa-facebook fa-border"></i>
-            <i class="fa fa-lg fa-twitter fa-border"></i>
-            <i class="fa fa-lg fa-google fa-border"></i>
+        <div class="panel-tools">
+            @include('registry_object/contents/social-sharing')
         </div>
         
     </div>

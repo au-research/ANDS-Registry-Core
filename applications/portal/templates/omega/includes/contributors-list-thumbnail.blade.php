@@ -1,3 +1,4 @@
+<?php uasort($contributors, 'alphasort_byattr_title'); ?>
 <div class="portfolio-container element-medium-top element-medium-bottom">
     <div class="portfolio masonry isotope" data-padding="10" data-col-xs="1" data-col-sm="1" data-col-md="4" data-col-lg="4" data-layout="fitRows">
         @foreach($contributors as $group)

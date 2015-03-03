@@ -48,6 +48,7 @@ class Temporal_coverage_suggestor extends _GenericSuggestor {
                 $maxScore = floatval($result['response']['maxScore']);
                 foreach($result['response']['docs'] as $doc) {
                     $doc['score'] = $doc['score'] / $maxScore;
+                    $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
                 }
             }

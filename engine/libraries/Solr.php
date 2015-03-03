@@ -583,6 +583,33 @@ class Solr {
 					} else $funding_to = '*';
 					$this->setOpt('fq','funding_amount:['.$funding_from.' TO '.$funding_to.']');
 					break;
+				case 'funding_to' :
+					$funding_to = $value;
+					if (isset($filters['funding_from'])) {
+						$funding_from = $filters['funding_from'];
+					} else $funding_from = '*';
+					$this->setOpt('fq','funding_amount:['.$funding_from.' TO '.$funding_to.']');
+					break;
+				case 'commence_from':
+					$commence_from = $value;
+					$commence_to = isset($filters['commence_to']) ? $filters['commence_to'] : '*';
+					$this->setOpt('fq','earliest_year:['.$commence_from.' TO '.$commence_to.']');
+					break;
+				case 'commence_to':
+					$commence_to = $value;
+					$commence_from = isset($filters['commence_from']) ? $filters['commence_from'] : '*';
+					$this->setOpt('fq','earliest_year:['.$commence_from.' TO '.$commence_to.']');
+					break;
+				case 'completion_from':
+					$completion_from = $value;
+					$completion_to = isset($filters['completion_to']) ? $filters['completion_to'] : '*';
+					$this->setOpt('fq','latest_year:['.$completion_from.' TO '.$completion_to.']');
+					break;
+				case 'completion_to':
+					$completion_to = $value;
+					$completion_from = isset($filters['completion_from']) ? $filters['completion_from'] : '*';
+					$this->setOpt('fq','latest_year:['.$completion_from.' TO '.$completion_to.']');
+					break;
 			}
 		}
 		return $this;

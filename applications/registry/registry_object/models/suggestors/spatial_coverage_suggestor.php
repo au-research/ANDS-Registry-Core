@@ -21,6 +21,7 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
         $ci->solr->init();
         $str = 'id:'.$this->ro->id;
         $centers = array();
+        $suggestions = array();
         $ci->solr
             ->init()
             ->setOpt('q', $str)
@@ -33,29 +34,33 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
                     $centers[] = $doc['spatial_coverage_centres'];
             }
         }
-
-        $suggestions = array();
         foreach($centers as $key=>$center)
         {
-            $latLon = explode(',', $center[0]);
-            $ci->solr
-                ->init()
-                ->setOpt('q', '*:*')
-                ->setOpt('rows', '50')
-                ->setOpt('fq', '-id:'.$this->ro->id)
-                ->setOpt('fq', 'class:collection')
-                ->setOpt('fq', '{!geofilt pt='.$latLon[1].','.$latLon[0].' sfield=spatial_coverage_extents d=50}')
-                ->setOpt('fl', 'id,key,slug,title,score');
+            $latLon = explode(' ', $center[0]);
+            if(!is_array($latLon) || count($latLon) < 2)
+                $latLon = explode(',', $center[0]);
+            if(is_array($latLon) && count($latLon == 2)){
+                $ci->solr
+                    ->init()
+                    ->setOpt('q', '*:*')
+                    ->setOpt('rows', '50')
+                    ->setOpt('fq', '-id:'.$this->ro->id)
+                    ->setOpt('fq', 'class:collection')
+                    ->setOpt('fq', '{!geofilt pt='.$latLon[1].','.$latLon[0].' sfield=spatial_coverage_extents d=50}')
+                    ->setOpt('fl', 'id,key,slug,title,score');
 
-            $result = $ci->solr->executeSearch(true);
-            if($result['response']['numFound'] > 0) {
-                $maxScore = floatval($result['response']['maxScore']);
-                foreach($result['response']['docs'] as $doc) {
+                $result = $ci->solr->executeSearch(true);
+                if($result['response']['numFound'] > 0) {
+                    $maxScore = floatval($result['response']['maxScore']);
+                    foreach($result['response']['docs'] as $doc) {
                         $doc['score'] = $doc['score'] / $maxScore;
+                        $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                         $suggestions[] = $doc;
+                    }
                 }
             }
         }
+
         return $suggestions;
     }
 
