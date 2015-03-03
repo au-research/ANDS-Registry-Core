@@ -21,7 +21,7 @@ class Registry_object extends MX_Controller {
 
 		$this->load->library('blade');
 
-
+		$banner = asset_url('images/collection_banner.jpg', 'core');
 
 		$theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
         $logo = $this->getLogo($ro->core['group']);

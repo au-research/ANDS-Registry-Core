@@ -18,10 +18,10 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Explore <i class="fa fa-caret-down"></i></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="{{portal_url('themes')}}">Themed collections</a></li>
-                        <li><a href="{{portal_url('search')}}#!/class=service">Services and Tools</a></li>
-                        <li><a href="{{portal_url('search')}}#!/access_rights=open">Open data</a></li>
-                        <li><a href="{{portal_url('grants')}}">Grants Portal</a></li>
+                        <li><a href="{{portal_url('themes')}}"><i class="fa fa-folder-open icon-portal"></i> Themed collections</a></li>
+                        <li><a href="{{portal_url('search')}}#!/class=service"><i class="fa fa-wrench icon-portal"></i> Services and Tools</a></li>
+                        <li><a href="{{portal_url('search')}}#!/access_rights=open"><i class="fa fa-unlock icon-portal"></i> Open data</a></li>
+                        <li><a href="{{portal_url('grants')}}"><i class="fa fa-flask icon-portal"></i> Grants and Projects</a></li>
                     </ul>
                 </li>
                 <li><a href="{{portal_url('page/about')}}">About</a></li>

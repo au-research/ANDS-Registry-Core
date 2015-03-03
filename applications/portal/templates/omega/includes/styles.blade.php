@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="{{asset_url('omega/css/bootstrap.min.css','templates')}}">
 <link rel="stylesheet" href="{{asset_url('omega/css/theme.min.css','templates')}}">
 <link rel="stylesheet" href="{{asset_url('omega/css/color-defaults.min.css','templates')}}" media="screen">
-<link rel="stylesheet" href="{{asset_url('omega/css/swatch-white.min.css','templates')}}" media="screen">
+<link rel="stylesheet" href="{{asset_url('omega/css/swatch-white.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('omega/css/swatch-blue.min.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('omega/css/swatch-gray.min.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('omega/css/swatch-black.min.css','templates')}}" media="screen">

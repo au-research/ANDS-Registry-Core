@@ -5,16 +5,7 @@
         @include('includes/top-menu')
         <div id="content">
         	<article>
-        		<section class="section swatch-black section-text-shadow section-inner-shadow" style="overflow:visible">
-        		@include('includes/banner-image')
-    		        <div class="container">
-    		            <div class="row">
-    		                <div class="col-md-12 element-medium-top element-short-bottom os-animation animated fadeIn">
-    		                    @include('includes/search-bar')
-    		                </div>
-    		            </div>
-    		        </div>
-    		    </section>
+        		@include('includes/search-section')
                 <section class="section swatch-white" style="overflow:visible">
                     <div class="swatch-white scroll-fixed element-shorter-top element-shorter-bottom" ui-scrollfix="+224" style="overflow:visible">
                         @include('includes/search-header')

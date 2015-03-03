@@ -76,3 +76,20 @@ h1 { font-size:30px; }
 		box-shadow: 0px 3px 0px #84a07b;
     }
  }
+
+.btn-primary {
+	background-color:@primaryColor;
+	&:hover {
+		background-color:@secondaryColor !important;
+	}
+}
+
+.btn-group {
+	.dropdown-menu {
+		li {
+			a:hover{
+				background-color:@secondaryColor !important;
+			}
+		}
+	}
+}

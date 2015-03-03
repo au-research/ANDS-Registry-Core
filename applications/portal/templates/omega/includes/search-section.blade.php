@@ -1,4 +1,4 @@
-<section class="section swatch-black section-text-shadow section-inner-shadow" style="overflow:visible">
+<section class="section swatch-white search-section section-text-shadow section-inner-shadow" style="overflow:visible">
    @include('includes/banner-image')
     <div class="container">
         <div class="row">
