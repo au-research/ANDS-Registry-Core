@@ -23,6 +23,12 @@
 $eDBCONF = array();
 require_once('./global_config.php');
 
+if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "") && ($ENV['protocol']=='https://')){
+    $redirect = "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+    header("HTTP/1.1 301 Moved Permanently");
+    header("Location: $redirect");
+}
+
 define('ENVIRONMENT', $ENV['deployment_state']);
 /*
  *---------------------------------------------------------------

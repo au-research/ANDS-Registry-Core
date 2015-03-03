@@ -30,6 +30,7 @@ $eDBCONF['default']['dbdriver'] = 'mysql';
 
 // The Server Base URL is the URL via which users access the software installation
 // (for example: http://researchdata.your.org.au/myportal/
+$ENV['protocol'] = 'http://';
 $ENV['default_base_url'] = "{CONFIGURE ME}";
 
 
