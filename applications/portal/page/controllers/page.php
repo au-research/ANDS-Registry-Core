@@ -99,6 +99,28 @@ class Page extends MX_Controller {
         $this->blade->render('help');
     }
 
+    function grants() {
+
+    	//high level
+		$highlevel = $this->config->item('subjects');
+		foreach ($highlevel as &$item) {
+			$query = '';
+			foreach($item['codes'] as $code) {
+				$query.='/anzsrc-for='.$code;
+			}
+			$item['query'] = '/class=activity'.$query;
+		}
+
+		//contributors
+		$this->load->model('group/groups', 'groups');
+		$contributors = $this->groups->getFunders();
+
+    	$this->blade
+    		->set('scripts', array('home'))
+    		->set('highlevel', $highlevel)
+    		->set('contributors', $contributors)
+    		->render('grants');
+    }
 
 
 	/**

@@ -13,6 +13,9 @@
     		    		<div class="row element-short-top">
                             <div class="col-md-9 view-content" style="padding-right:0"  itemscope itemtype="http://schema.org/Dataset">
                                 <div class="panel panel-primary swatch-white panel-content">
+                                    <div class="panel-tools">
+                                        @include('registry_object/contents/icon')
+                                    </div>
                                     <div class="panel-body">
                                         @if($ro->logo)
                                         <img src="{{$ro->logo[0]}}" alt="logo" class="header-logo animated fadeInDown">

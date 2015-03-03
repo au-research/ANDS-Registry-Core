@@ -54,6 +54,7 @@ $application_directives = array(
 				"routes" => array(
 					"home/(:any)" => "page/$1",
 					"topic/(:any)" => "topic/view_topic/$1",
+					"grants" => "page/grants",
 					"themes" => "theme_page/index",
 					"theme/(:any)" => "theme_page/view/$1",
 					"contributors" => "group/index",

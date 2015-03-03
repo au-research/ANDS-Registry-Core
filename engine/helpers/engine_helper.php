@@ -459,6 +459,11 @@ function alphasort_name($a, $b){
 	return ($a->name < $a->name) ? -1 : 1;
 }
 
+function alphasort_byattr_title($a, $b) {
+	if($a['title']==$b['title']) return 0;
+	return ($a['title'] < $b['title']) ? -1 : 1;
+}
+
 /**
  * Universal log function
  * @param  string $message 

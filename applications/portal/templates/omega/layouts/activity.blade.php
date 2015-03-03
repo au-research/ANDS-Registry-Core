@@ -11,6 +11,9 @@
                         <div class="row element-short-top">
                             <div class="col-md-9" style="padding-right:0">
                                 <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+                                    <div class="panel-tools">
+                                        @include('registry_object/contents/icon')
+                                    </div>
                                     <div class="panel-body {{$ro->core['type']}}">
                                         <div class="header-logo animated fadeInDown"  title="Record provided by {{$ro->core['group']}}">
                                         @if($logo)

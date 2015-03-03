@@ -13,39 +13,44 @@
     		    		<div class="row element-short-top">
                             <div class="col-md-9 view-content" style="padding-right:0"  itemscope itemtype="http://schema.org/Dataset">
                                 <div class="panel panel-primary swatch-white panel-content">
+                                    <div class="panel-tools">
+                                        @include('registry_object/contents/icon')
+                                    </div>
                                     <div class="panel-body">
-                                        @if($logo)
-                                        <a href="{{base_url('contributors')}}/{{$group_slug}}" title="Record provided by {{$ro->core['group']}}"><img src="{{$logo}}" alt="logo" class="header-logo animated fadeInDown"></a>
-                                        @endif
-                                        <h1 class="hairline bordered-normal"><span itemprop="name">{{$ro->core['title']}}</span></h1>
-                                        @if(isset($ro->core['alt_title']))
-                                            <small>Also known as:
-                                                <span>{{implode(', ',$ro->core['alt_title'])}}</span>
-                                            </small><br/>
-                                        @endif
-                                        <small itemprop="sourceOrganization">{{$ro->core['group']}}</small>
-
-                                        @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
-                                        <a href="" tip="#identifiermatch"><i class="fa fa-caret-down"></i></a>
-                                        <div id="identifiermatch" class="hide">
-                                            <b>{{sizeof($ro->identifiermatch)}} linked Records:</b>
-                                            <ul class="swatch-white">
-                                                @foreach($ro->identifiermatch as $mm)
-                                                <li><a href="{{base_url($mm['slug'].'/'.$mm['registry_object_id'])}}">{{$mm['title']}} <br/><small>Contributed by {{$mm['group']}}</small></a></li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                        @endif
-
-                                        <div class="clear"></div>
-                                        
                                         <div class="container-fluid">
                                             <div class="row">
-                                                <div class="col-md-12">
+                                                <div class="col-xs-12 col-md-2">
+                                                    @if($logo)
+                                                    <a href="{{base_url('contributors')}}/{{$group_slug}}" title="Record provided by {{$ro->core['group']}}"><img src="{{$logo}}" alt="logo" class="header-logo animated fadeInDown"></a>
+                                                    @endif
+                                                </div>
+                                                <div class="col-xs-12 col-md-10">
+                                                    <h1 class="hairline bordered-normal"><span itemprop="name">{{$ro->core['title']}}</span></h1>
+                                                    @if(isset($ro->core['alt_title']))
+                                                        <small>Also known as:
+                                                            <span>{{implode(', ',$ro->core['alt_title'])}}</span>
+                                                        </small><br/>
+                                                    @endif
+                                                    <small itemprop="sourceOrganization">{{$ro->core['group']}}</small>
+
+                                                    @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
+                                                    <a href="" tip="#identifiermatch"><i class="fa fa-caret-down"></i></a>
+                                                    <div id="identifiermatch" class="hide">
+                                                        <b>{{sizeof($ro->identifiermatch)}} linked Records:</b>
+                                                        <ul class="swatch-white">
+                                                            @foreach($ro->identifiermatch as $mm)
+                                                            <li><a href="{{base_url($mm['slug'].'/'.$mm['registry_object_id'])}}">{{$mm['title']}} <br/><small>Contributed by {{$mm['group']}}</small></a></li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                    @endif
+                                                    
+                                                     <div class="clear"></div>
                                                     @include('registry_object/contents/related-parties')
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="clear"></div>
                                     </div>
                                     <div class="panel-body" style="padding:0 0 10px 0">
                                         <div class="panel-tools">
