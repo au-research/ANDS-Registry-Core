@@ -49,7 +49,7 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 		delete $scope.group.nodata;
 		
 		if(!$scope.group.data) $scope.group.data = {};
-		if(!$scope.group.state) $scope.group.status = 'DRAFT';
+		if(!$scope.group.status) $scope.group.status = 'DRAFT';
 		$log.debug($scope.group);
 		groupFactory.save($scope.group.name, $scope.group).then(function(data){
 			$scope.saveMessage = data.message;
