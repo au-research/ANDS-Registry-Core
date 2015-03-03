@@ -43,10 +43,10 @@ h1 { font-size:30px; }
 	}
 }
 
-.swatch-gray a {
+.swatch-gray a, .panel a {
 	color: @primaryColor;
 	&:hover{
-		color:@secondaryColor;
+		color:@secondaryColor !important;
 	}
 }
 
@@ -82,6 +82,13 @@ h1 { font-size:30px; }
 	&:hover {
 		background-color:@secondaryColor !important;
 	}
+}
+
+.btn-default {
+	i {
+		color:white !important;
+	}
+	color:white !important;
 }
 
 .btn-group {
