@@ -947,6 +947,10 @@ app.factory('search_factory', function($http, $log){
 				if(!filters[type]) filters[type] = content;
 			});
 
+			if(location.href.indexOf('grants')>-1) {
+				filters['class'] = 'activity';
+			}
+
 			return filters;
 		},
 		filters_to_hash: function(filters) {

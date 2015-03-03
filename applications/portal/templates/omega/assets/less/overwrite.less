@@ -1,0 +1,78 @@
+/**
+ * Overwrite the default styling class
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
+
+.navbar-brand {
+	font-size:25px;
+	padding: 33px 15px 0px;
+	height:auto;
+	span {
+		color: #eb7700;
+		font-weight:normal;
+		text-decoration:none;
+	}
+}
+
+.panel { word-wrap:break-word; }
+.post { margin-bottom:auto; }
+
+h1 { font-size:30px; }
+
+
+.flexslider .slides img {
+	/*height:90px;*/
+	max-height:170px;
+	width:auto!important;
+	display:block;
+	margin: 0 37px 16px 0px;
+	padding:0 0 15px 15px;
+	float:right;
+}
+.flex-direction-nav a { color:@primaryColor !important; }
+
+.swatch-white {
+	.panel-footer a, .panel-header a {
+		color:white;
+	}
+	.active {
+		color: #eb7700 !important;
+		a {
+			color: #eb7700 !important;
+		}
+	}
+}
+
+.swatch-gray a {
+	color: @primaryColor;
+	&:hover{
+		color:@secondaryColor;
+	}
+}
+
+.mce-panel {
+	button {
+		background-color:inherit !important;
+	}
+	i {
+		color: black !important;
+		font-size:inherit !important;
+		display:inline-block;
+		position:relative;
+		left:0;top:0;
+	}
+}
+
+.ta-editor {
+    min-height: 300px;
+    height: auto;
+    overflow: auto;
+    font-family: inherit;
+    font-size: 100%;
+    background: #e9e9e9;
+    &:focus {
+    	-webkit-box-shadow: 0px 3px 0px #84a07b;
+	 	-moz-box-shadow: 0px 3px 0px #84a07b;
+		box-shadow: 0px 3px 0px #84a07b;
+    }
+ }

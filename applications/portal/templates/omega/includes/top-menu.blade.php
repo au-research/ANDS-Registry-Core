@@ -26,7 +26,6 @@
                 </li>
                 <li><a href="{{portal_url('page/about')}}">About</a></li>
                 <li><a href="{{portal_url('profile')}}">MyRDA</a></li>
-
             </ul>
         </nav>
     </div>

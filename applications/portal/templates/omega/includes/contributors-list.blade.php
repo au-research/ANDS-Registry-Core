@@ -1,3 +1,4 @@
+<?php uasort($contributors, 'alphasort_byattr_title'); ?>
 <div class="flexslider" id="slider">
 	<ul class="slides">
 		@foreach($contributors as $group)
