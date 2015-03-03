@@ -3,9 +3,7 @@
 <article>
 
 	<section class="section swatch-black section-text-shadow section-inner-shadow element-short-bottom" style="overflow:visible;z-index:9">
-        <div class="background-media" style="background-image: url({{asset_url('omega/images/uploads/home-classic-1.jpg','templates')}}); background-size: cover; background-position: 50% 60%; background-repeat: no-repeat;" >
-       </div>
-       <div class="background-overlay grid-overlay-30 " style="background-color: rgba(0,0,0,0.3);"></div>
+        @include('includes/banner-image')
         <div class="container">
             <div class="row">
                 <div class="col-md-12 element-normal-top element-normal-bottom">

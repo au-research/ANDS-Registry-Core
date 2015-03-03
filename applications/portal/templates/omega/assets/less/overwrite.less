@@ -43,10 +43,10 @@ h1 { font-size:30px; }
 	}
 }
 
-.swatch-gray a {
+.swatch-gray a, .panel a {
 	color: @primaryColor;
 	&:hover{
-		color:@secondaryColor;
+		color:@secondaryColor !important;
 	}
 }
 
@@ -76,3 +76,27 @@ h1 { font-size:30px; }
 		box-shadow: 0px 3px 0px #84a07b;
     }
  }
+
+.btn-primary {
+	background-color:@primaryColor;
+	&:hover {
+		background-color:@secondaryColor !important;
+	}
+}
+
+.btn-default {
+	i {
+		color:white !important;
+	}
+	color:white !important;
+}
+
+.btn-group {
+	.dropdown-menu {
+		li {
+			a:hover{
+				background-color:@secondaryColor !important;
+			}
+		}
+	}
+}

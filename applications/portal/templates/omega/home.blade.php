@@ -20,10 +20,8 @@
         }
     };
     </script>
-    <section class="section swatch-black section-text-shadow section-inner-shadow element-short-bottom" style="overflow:visible;z-index:9">
-        <div class="background-media" style="background-image: url({{asset_url('omega/images/uploads/home-classic-1.jpg','templates')}}); background-size: cover; background-position: 50% 60%; background-repeat: no-repeat;" >
-       </div>
-       <div class="background-overlay grid-overlay-30 " style="background-color: rgba(0,0,0,0.3);"></div>
+    <section class="section swatch-white search-section section-text-shadow section-inner-shadow element-short-bottom" style="overflow:visible;z-index:9">
+        @include('includes/banner-image')
         <div class="container">
             <div class="row">
                 <div class="col-md-12 element-normal-top element-normal-bottom">
@@ -69,6 +67,7 @@
                                   <i class="fa fa-folder-open icon-portal"></i>
                                  </div>
                              </div>
+                             <h3 class="normal bold bordered bordered-small ">Themed Collections</h3>
                              <p class="">Discover data in themed collections</p>
                          </div>
                         </a>
@@ -82,6 +81,7 @@
                                      <i class="fa fa-wrench icon-portal"></i>
                                  </div>
                              </div>
+                             <h3 class="normal bold bordered bordered-small ">Services and Tools</h3>
                              <p class="">Access data-related services and tools</p>
                          </div>
                         </a>
@@ -95,6 +95,7 @@
                                   <i class="fa fa-unlock icon-portal"></i>
                                  </div>
                              </div>
+                             <h3 class="normal bold bordered bordered-small ">Open Data</h3>
                              <p class="">Find open data that is reusable</p>
                          </div>
                         </a>
@@ -108,7 +109,7 @@
                                   <i class="fa fa-flask icon-portal"></i>
                                  </div>
                              </div>
-                             <!-- <h3 class="normal bold bordered bordered-small "> Ultra flexible </h3> -->
+                             <h3 class="normal bold bordered bordered-small ">Grants and Projects</h3>
                              <p class="">Search for research grants and projects</p>
                          </div>
                         </a>

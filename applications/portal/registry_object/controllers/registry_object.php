@@ -21,7 +21,7 @@ class Registry_object extends MX_Controller {
 
 		$this->load->library('blade');
 
-
+		$banner = asset_url('images/collection_banner.jpg', 'core');
 
 		$theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
         $logo = $this->getLogo($ro->core['group']);
@@ -34,6 +34,7 @@ class Registry_object extends MX_Controller {
             case 'activity':
                 $render = 'registry_object/activity';
                 $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'activity');
+                $banner =  asset_url('images/activity_banner.jpg', 'core');
                 break;
             case 'party':
                 $render = 'registry_object/party';
@@ -72,6 +73,7 @@ class Registry_object extends MX_Controller {
 			->set('url', $ro->construct_api_url())
 			->set('theme', $theme)
             ->set('logo',$logo)
+            ->set('banner', $banner)
             ->set('group_slug',$group_slug)
 			->render($render);
 	}
@@ -258,6 +260,7 @@ class Registry_object extends MX_Controller {
 		if($this->input->get('q')) {
 			redirect('search/#!/q='.$this->input->get('q'));
 		}
+
 		$this->load->library('blade');
 		$this->blade
 			->set('lib', array('ui-events', 'angular-ui-map', 'google-map'))

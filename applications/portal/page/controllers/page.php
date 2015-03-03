@@ -43,8 +43,29 @@ class Page extends MX_Controller {
 	 * @return view 
 	 */
 	function about() {
-		$this->record_hit('about');
-		$this->blade->render('about');
+
+
+
+        $highlevel = $this->config->item('subjects');
+        foreach ($highlevel as &$item) {
+            $query = '';
+            foreach($item['codes'] as $code) {
+                $query.='/anzsrc-for='.$code;
+            }
+            $item['query'] = $query;
+        }
+
+        //contributors
+        $this->load->model('group/groups', 'groups');
+        $contributors = $this->groups->getAll();
+
+        $this->record_hit('about');
+        $this->blade
+            ->set('scripts', array('home'))
+            ->set('highlevel', $highlevel)
+            ->set('contributors', $contributors)
+            ->render('about');
+
 	}
 
 	/**
@@ -94,9 +115,12 @@ class Page extends MX_Controller {
 		$this->load->model('group/groups', 'groups');
 		$contributors = $this->groups->getFunders();
 
+		$banner = asset_url('images/activity_banner.jpg','core');
+
     	$this->blade
     		->set('scripts', array('home'))
     		->set('highlevel', $highlevel)
+    		->set('banner', $banner)
     		->set('contributors', $contributors)
     		->render('grants');
     }
