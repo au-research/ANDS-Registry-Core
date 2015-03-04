@@ -253,12 +253,13 @@ class Vocab {
             }
             $this->facets = $facets;
         } else {
-            if ($this->facets[$uri]) {
+            if (isset($this->facets[$uri])) {
                 //get it from the facet cache, faster
                 // ulog('got count for '.$uri.' from the facet cache: '.$this->facets[$uri]);
                 return $this->facets[$uri];
             } else {
-
+                // return 0;
+                
                 //it's not in the facet cache, have to do some thing
                 $CI->solr->init();
                 if($filters){
