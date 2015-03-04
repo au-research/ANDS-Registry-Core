@@ -15,14 +15,24 @@ class Registry_object extends MX_Controller {
 	 */
 	function view(){
 
-		if($this->input->get('id')){
+        $key = null;
+        $id = null;
+        $slug = null;
+        if($this->input->get('id')){
 			$ro = $this->ro->getByID($this->input->get('id'));
 		}
+        if(!$ro && $this->input->get('key'))
+        {
+            $key = $this->input->get('key');
+            $ro = $this->ro->getByKey($key);
+        }
+        $this->load->library('blade');
 
+        if($ro)
+        {
 		$this->load->library('blade');
 
 		$banner = asset_url('images/collection_banner.jpg', 'core');
-
 		$theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
         $logo = $this->getLogo($ro->core['group']);
         $group_slug = url_title($ro->core['group'], '-', true);
@@ -76,6 +86,39 @@ class Registry_object extends MX_Controller {
             ->set('banner', $banner)
             ->set('group_slug',$group_slug)
 			->render($render);
+        }
+        elseif(strpos($key, 'http://purl.org/au-research/grants/nhmrc/') !== false || strpos($key, 'http://purl.org/au-research/grants/arc/') !== false)
+        {
+			if(strpos($key, 'http://purl.org/au-research/grants/nhmrc/') !== false){
+                $institution = 'National Health and Medical Research Council';
+                $grantIdPos = strpos($key, 'nhmrc/') + 6;
+                $grantId =	substr ($key, $grantIdPos);
+                $purl = $key;
+            }
+            else{
+                $institution = 'Australian Research Council';
+                $grantIdPos = strpos($key, 'arc/') + 4;
+                $grantId =	substr ($key, $grantIdPos);
+                $purl = $key;
+            }
+            $this->blade
+                ->set('scripts', array('view', 'grant_form'))
+                ->set('lib', array('jquery-ui'))
+                ->set('message', "NO ACTIVITY FOR YOU!!")
+                ->set('institution', $institution)
+                ->set('grantId', $grantId)
+                ->set('purl', $purl)
+                ->set('logo','http://researchdata.ands.org.au/assets/core/images/sad_smiley.png')
+                ->render('soft_404_activity');
+        }
+        else{
+            $this->blade
+                ->set('scripts', array('view'))
+                ->set('lib', array('jquery-ui'))
+                ->set('message', "RECORD CAN'T BE LOCATED FOR YOU!!")
+                ->set('logo','http://researchdata.ands.org.au/assets/core/images/sad_smiley.png')
+                ->render('soft_404');
+        }
 	}
 
 	function preview() {
