@@ -101,12 +101,12 @@ app.controller('dashboardCtrl', function($scope, $rootScope, $log, profile_facto
         });
     }
 
-
+    
 
     $scope.modify_user_data = function(type, action, id) {
         var records = [];
         if(action=='refresh') {
-              $scope.refreshQueries(id);
+            $scope.refreshQueries(id);
         }
         else{
             records.push({id:id});

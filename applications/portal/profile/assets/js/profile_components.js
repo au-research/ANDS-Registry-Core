@@ -32,6 +32,7 @@ angular.module('profile_components',[])
                 "saved_search_group":['refresh', 'delete'],
                 "saved_search":['refresh', 'delete']
             };
+
 			return actions;
 		}
 	}

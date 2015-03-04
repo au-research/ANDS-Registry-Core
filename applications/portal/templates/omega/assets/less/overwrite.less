@@ -46,7 +46,7 @@ h1 { font-size:30px; }
 .swatch-gray a, .panel a {
 	color: @primaryColor;
 	&:hover{
-		color:@secondaryColor !important;
+		color:@secondaryColor;
 	}
 }
 
@@ -80,6 +80,7 @@ h1 { font-size:30px; }
 .btn-primary {
 	background-color:@primaryColor;
 	&:hover {
+		color:white !important;
 		background-color:@secondaryColor !important;
 	}
 }
@@ -91,10 +92,21 @@ h1 { font-size:30px; }
 	color:white !important;
 }
 
+.btn-danger {
+	i {
+		color:white !important;
+	}
+	color:white !important;
+}
+
 .btn-group {
 	.dropdown-menu {
 		li {
+			i {
+				color:white !important;
+			}
 			a:hover{
+				color:white !important;
 				background-color:@secondaryColor !important;
 			}
 		}
