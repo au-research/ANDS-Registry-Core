@@ -37,6 +37,9 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
         });
 	};
 
+
+
+
     $scope.removeBookmark = function(){
         var records = [];
         records.push({id:$scope.ro.id});

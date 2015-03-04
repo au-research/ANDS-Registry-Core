@@ -25,6 +25,22 @@ class Registry_objects extends CI_Model {
 
 	}
 
+    /**
+     * get an _ro by key
+     * @param  string $key
+     * @todo
+     * @return _ro
+     */
+    public function getByKey($key) {
+        $id = $this->findRecord(array('q'=>'+key:("'.$key.'")'), true);
+        if($id)
+        {
+            return new _ro($id, array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch'));
+        }
+        return false;
+    }
+
+
 	/**
 	 * get an _ro by ANY
 	 * detects the query to see if it's a slug or an id and then handle accordingly
@@ -126,7 +142,7 @@ class Registry_objects extends CI_Model {
 		}
 	}
 
-	public function findRecord($filters = array()){
+	public function findRecord($filters = array(), $id_only = false){
 		$this->load->library('solr');
 		$this->solr->init();
 		$this->solr->setFilters($filters);
@@ -137,12 +153,19 @@ class Registry_objects extends CI_Model {
 		if ($result['response']['numFound'] > 0) {
 			$record = $result['response']['docs'][0];
 			$id = $record['id'];
-			return $this->getByID($id);
+            if($id_only){
+                return $id;
+            }
+            else{
+                return $this->getByID($id);
+            }
 		} else {
 			return false;
 		}
 
 	}
+
+
 
 	function __construct() {
 		parent::__construct();
