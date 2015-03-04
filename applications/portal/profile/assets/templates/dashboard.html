@@ -4,108 +4,88 @@
 			<section ng-if="user">
 				<div class="panel panel-primary swatch-white panel-content">
 					<div class="panel-heading">Saved Search</div>
-                     <div class="panel-body" ng-if="user.user_data.saved_search">
-                         <table class="table table-bordered">
-                             <thead>
-                             <tr>
-                                 <td collspan="2">
-                                 Number of saved search: [[saved_search_count]]
-                                </td>
-                                <td colspan="3">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                            Bulk Action <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li ng-repeat="action in available_actions.saved_search_group"><a href="" ng-click="modify_user_data('saved_search',action, 'group')" >[[action]]</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                             </tr>
-                             <tr>
-                                 <td>Query Name</td><td>Number of records found</td><td>Date saved</td></td><td>new records since saved</td><td>last refreshed</td><td>new records since refresh</td><td>date saved</td>
-                             </tr>
-                             </thead>
-                             <tbody>
-                             <tr ng-repeat="search in user.user_data.saved_search">
-                                 <td><a href="[[base_url]]search#!/[[search.query_string]]">[[search.query_title]]</a></td>
-                                 <td>[[search.num_found]]</td>
-                                 <td>[[search.saved_time  * 1000 | date:'yyyy-MM-dd HH:mm:ss']]</td>
-                                 <td><a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.saved_time]]/">[[search.num_found_since_saved]]</a></td>
-                                 <td>[[search.refresh_time  * 1000 | date:'yyyy-MM-dd HH:mm:ss']]</td>
-                                 <td><a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.refresh_time]]/">[[search.num_found_since_last_check]]</a></td>
-                                 <td>
-                                     <div class="btn-group">
-                                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                             Action <span class="caret"></span>
-                                         </button>
-                                         <ul class="dropdown-menu" role="menu">
-                                             <li ng-repeat="action in available_actions.saved_search"><a href="" ng-click="modify_user_data('saved_search',action, search.query_string)" >[[action]]</a></li>
-                                         </ul>
-                                     </div>
-                                 </td>
-                             </tr>
-                             </tbody>
-                         </table>
-                     </div>
+
+					<div class="panel-body" ng-if="user.user_data.saved_search">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<td><a href="" class="btn btn-link"><i class="fa fa-square-o"></i></a></td>
+									<td>Saved Search</td>
+									<td>Result</td>
+									<td>
+										Action
+									</td>
+								</tr>
+							</thead>
+							<tbody ng-repeat="search in user.user_data.saved_search">
+								<td><input type="checkbox" ng-model="search.selected" ng-click="search.selected=!search.selected"></td>
+								<td><a href="[[base_url]]search#!/[[search.query_string]]">[[ search.query_title ]]</a></td>
+								<td>
+									<a href="[[base_url]]search#!/[[search.query_string]]">[[ search.num_found ]]</a> records<br>
+									<a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.saved_time]]/">[[ search.num_found_since_saved ]]</a> new records since saved <br>
+									<small>Saved: [[ search.saved_time * 1000 | timeago ]]</small> <br>
+									<small ng-if="search.refresh_time"><a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.refresh_time]]/">[[ search.num_found_since_last_check ]]</a> records since  Last Refresh: [[ search.refresh_time * 1000 | timeago ]]</small> <br>
+								</td>
+								<td>
+									<a href="" class="btn btn-primary" ng-click="modify_user_data('saved_search', 'refresh', search.query_string)"><i class="fa fa-refresh"></i> Refresh</a>
+									<a href="" class="btn btn-link"><i class="fa fa-trash-o"></i></a>
+								</td>
+							</tbody>
+						</table>
+					 </div>
+
 					<div class="panel-body" ng-if="!user.user_data.saved_search">
 						You have no saved search!
 					</div>
 				</div>
 
-                <div class="panel panel-primary swatch-white panel-content">
-                    <div class="panel-heading">Saved Records</div>
-                    <div class="panel-body" ng-if="user.user_data.saved_record">
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <td collspan="2">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">[[folderf]] ([[folders.all]])<span class="caret"></span></button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li ng-repeat="(key,value) in folders"><a href="" ng-click="updateSorted(key)">[[key]] ([[value]])</a></li>
-                                        </ul>
-                                    </div>
-
-                                </td>
-                                <td colspan="3">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-                                        Bulk Action <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu">
-                                        <li ng-repeat="action in available_actions.saved_record_group"><a href="" ng-click="modify_user_data('saved_record',action,'group')" >[[action]]</a></li>
-                                    </ul>
-                                </div>
-                            </td></tr>
-                            <tr>
-                                <td>Record Name</td><td>Data Publisher</td><td>Last viewed</td><td>Action</td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="record in user.user_data.saved_record" ng-if="folderfilter(record)">
-                                <td><a href="[[base_url]][[record.slug]]/[[record.id]]">[[record.title]]</a></td>
-                                <td>[[record.group]]</td>
-                                <td>[[record.last_viewed * 1000 | date:'yyyy-MM-dd HH:mm:ss']]</td>
-                                <td>
-
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-                                            Action <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li ng-repeat="action in available_actions.saved_record"><a href="" ng-click="modify_user_data('saved_record',action,record.id)" >[[action]]</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="panel-body" ng-if="!user.user_data.saved_record">
-                        You have no saved record!
-                    </div>
-                </div>
+				<div class="panel panel-primary swatch-white panel-content">
+					<div class="panel-heading">Saved Records</div>
+				
+					<div class="panel-body" ng-if="user.user_data.saved_record">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<td><a href="" class="btn btn-link"><i class="fa fa-square-o"></i></a></td>
+									<td>
+										<div class="btn-group">
+											<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">[[folderf]] ([[folders.all]])<span class="caret"></span></button>
+											<ul class="dropdown-menu" role="menu">
+												<li ng-repeat="(key,value) in folders"><a href="" ng-click="updateSorted(key)">[[key]] ([[value]])</a></li>
+											</ul>
+										</div>
+									</td>
+									<td>Action</td>
+								</tr>
+							</thead>
+							<tbody>
+							<tr ng-repeat="record in user.user_data.saved_record" ng-if="folderfilter(record)">
+								<td><input type="checkbox" ng-model="record.selected" ng-click="record.selected=!record.selected"></td>
+								<td>
+									<a href="[[base_url]][[record.slug]]/[[record.id]]">[[ record.title ]]</a><br>
+									<small>Data Provider: [[ record.group ]]</small><br>
+									<small>Last Viewed: [[record.last_viewed * 1000 | timeago]]</small>
+								</td>
+								<td>
+									<div class="btn-group">
+										<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+											Action <span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu" role="menu">
+											<li><a href=""><i class="fa fa-folder-o"></i> Move</a></li>
+											<li><a href=""><i class="fa fa-download"></i> Export</a></li>
+											<li><a href="" ng-click="modify_user_data('saved_record', 'delete', record.id)"><i class="fa fa-trash-o"></i> Delete</a></li>
+										</ul>
+									</div>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="panel-body" ng-if="!user.user_data.saved_record">
+						You have no saved record!
+					</div>
+				</div>
 			</section>
 		</div>
 		<div class="col-md-3 sidebar" ng-if="user">
@@ -113,20 +93,20 @@
 				<div class="panel-heading">Logged In User</div>
 				<div class="panel-body">
 					<h3>[[user.name]]</h3>
-					<p>[[user.authMethod]]</p>
+					<!-- <p>[[user.authMethod]]</p> -->
 					<hr>
 					<a href="[[base_url]]profile/logout" class="btn btn-danger"><i class="fa fa-sign-out"></i> Logout</a>
 				</div>
 			</div>
 
-            <div class="panel panel-primary swatch-white panel-content" ng-if="user.function.indexOf('ORCA_SOURCE_ADMIN') > -1">
-                <div class="panel-heading">Functions</div>
-                <div class="panel-body">
-                    <ul class="listy">
-                        <li><a href="[[base_url]]group/cms">Contributor CMS</a></li>
-                    </ul>
-                </div>
-            </div>
+			<div class="panel panel-primary swatch-white panel-content" ng-if="user.function.indexOf('ORCA_SOURCE_ADMIN') > -1">
+				<div class="panel-heading">Functions</div>
+				<div class="panel-body">
+					<ul class="listy">
+						<li><a href="[[base_url]]group/cms">Contributor CMS</a></li>
+					</ul>
+				</div>
+			</div>
 		</div>
 
 
