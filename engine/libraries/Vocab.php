@@ -9,6 +9,7 @@ class Vocab {
 	private $CI;
 	private $resolvingServices;
     private $resolvedArray;
+    private $facets;
 
 	/**
 	 * Construction of this class
@@ -234,36 +235,68 @@ class Vocab {
         $CI =& get_instance();
         $CI->load->library('solr');
 
-        $CI->solr->init();
-        if($filters){
-            $CI->solr->setFilters($filters);
-        }
-
-        $CI->solr->setOpt('fq', '+subject_vocab_uri:("'.$uri.'")');
-
-        //default to collection
-        if(!isset($filters['class'])) $CI->solr->setOpt('fq', '+class:(collection)');
-
-        // var_dumP($CI->solr->constructFieldString());
-        $CI->solr->executeSearch();
-
-        if($CI->solr->getNumFound() > 0) return $CI->solr->getNumFound();
-        //if still no result is found, do a fuzzy search, store the old search term and search again
-        if($CI->solr->getNumFound()==0 && isset($filters['q']) && $fuzzy){
-            $new_search_term_array = explode(' ', escapeSolrValue($filters['q']));
-            $new_search_term='';
-            foreach($new_search_term_array as $c ){
-                $new_search_term .= $c.'~0.7 ';
+        if(!$this->facets) {
+            //build the facet cache
+            // ulog('building cache for '.$uri);
+            $CI->solr->init();
+            if($filters){
+                $CI->solr->setFilters($filters);
             }
-            $CI->solr->setOpt('q', 'fulltext:('.$new_search_term.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $new_search_term).')');
-            // $CI->solr->addQueryCondition('AND subject_vocab_uri:("'.$uri.'")');
-            $CI->solr->executeSearch();
-            if($CI->solr->getNumFound() > 0){
-                $data['fuzzy_result'] = true;
+            if(!isset($filters['class'])) $CI->solr->setOpt('fq', '+class:(collection)');
+            $CI->solr->setOpt('fl', 'id')->setOpt('rows', 0);
+            $CI->solr->setFacetOpt('field', 'subject_vocab_uri')->setFacetOpt('limit', '-1');
+            $result = $CI->solr->executeSearch(true);
+            $solr_facets = $result['facet_counts']['facet_fields']['subject_vocab_uri'];
+            $facets = array();
+            for($i=0;$i<sizeof($solr_facets)-1;$i+=2) {
+                $facets[$solr_facets[$i]] = $solr_facets[$i+1];
+            }
+            $this->facets = $facets;
+        } else {
+            if ($this->facets[$uri]) {
+                //get it from the facet cache, faster
+                // ulog('got count for '.$uri.' from the facet cache: '.$this->facets[$uri]);
+                return $this->facets[$uri];
+            } else {
+
+                //it's not in the facet cache, have to do some thing
+                $CI->solr->init();
+                if($filters){
+                    $CI->solr->setFilters($filters);
+                }
+
+                $CI->solr->setOpt('fq', '+subject_vocab_uri:("'.$uri.'")');
+
+                //default to collection
+                if(!isset($filters['class'])) $CI->solr->setOpt('fq', '+class:(collection)');
+
+                // var_dumP($CI->solr->constructFieldString());
+                $CI->solr->executeSearch();
+
+                if($CI->solr->getNumFound() > 0) return $CI->solr->getNumFound();
+                //if still no result is found, do a fuzzy search, store the old search term and search again
+                if($CI->solr->getNumFound()==0 && isset($filters['q']) && $fuzzy){
+                    $new_search_term_array = explode(' ', escapeSolrValue($filters['q']));
+                    $new_search_term='';
+                    foreach($new_search_term_array as $c ){
+                        $new_search_term .= $c.'~0.7 ';
+                    }
+                    $CI->solr->setOpt('q', 'fulltext:('.$new_search_term.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $new_search_term).')');
+                    // $CI->solr->addQueryCondition('AND subject_vocab_uri:("'.$uri.'")');
+                    $CI->solr->executeSearch();
+                    if($CI->solr->getNumFound() > 0){
+                        $data['fuzzy_result'] = true;
+                    }
+                }
+
+                return $CI->solr->getNumFound();
+
             }
         }
+        
 
-        return $CI->solr->getNumFound();
+
+        
      //    return $CI->solr->constructFieldString();
     }
 

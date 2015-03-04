@@ -162,10 +162,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.presearch = function(){
-		search_factory.search($scope.prefilters).then(function(data){
+		search_factory.search_no_record($scope.prefilters).then(function(data){
 			$scope.preresult = data;
 			$scope.populateCenters($scope.preresult.response.docs);
-		})
+		});
 	}
 
 	$scope.sync = function(){
@@ -203,28 +203,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			}
 
 			//get temporal range
-			search_factory.search().then(function(data){
-				// $log.debug(data);
+			search_factory.search_no_record().then(function(data){
 				$scope.temporal_range = search_factory.temporal_range(data);
 			});
 			
 		}
 
-		//get all facets by deleting the existing facets restrain from the filters
-		var filters_no_facet = {};
-		angular.copy($scope.filters, filters_no_facet);
-		angular.forEach($scope.facets, function(content, index){
-			delete filters_no_facet[index];
-		});
-		// $log.debug($scope.filters, filters_no_facet);
-		// $log.debug(filters_no_facet);
-		search_factory.search(filters_no_facet).then(function(data){
-			$scope.allfacets = search_factory.construct_facets(data);
-
-			
-			// $log.debug($scope.allfacets);
-			// 
-		});
+		
 
 		//init vocabulary
 		$scope.vocabInit();
@@ -444,6 +429,17 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.selectAdvancedField('terms')
 			$('#advanced_search').modal('show');
 		}
+
+		//get all facets by deleting the existing facets restrain from the filters
+		var filters_no_facet = {};
+		angular.copy($scope.filters, filters_no_facet);
+		angular.forEach($scope.facets, function(content, index){
+			delete filters_no_facet[index];
+		});
+		search_factory.search_no_record(filters_no_facet).then(function(data){
+			$scope.allfacets = search_factory.construct_facets(data);
+		});
+
 		$scope.presearch();
 	}
 
@@ -545,11 +541,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		vocab_factory.get(false, $scope.filters).then(function(data){
 			$scope.vocab_tree = data;
 		});
+
 		//getting vocabulary in configuration, mainly for matching isSelected
-		vocab_factory.getSubjects().then(function(data){
-			// $log.debug(data);
-			vocab_factory.subjects = data;
-		});
+		if(!angular.equals(vocab_factory.subjects, {})) {
+			vocab_factory.getSubjects().then(function(data){
+				vocab_factory.subjects = data;
+			});
+		}
 	}
 
 	$scope.getSubTree = function(item) {
@@ -559,6 +557,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			});
 		}
 	}
+	
 	$scope.isVocabSelected = function(item, filters) {
 		if(!filters) filters = $scope.filters;
 		var found = vocab_factory.isSelected(item, filters);
@@ -567,6 +566,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		}
 		return found;
 	}
+
 	$scope.isVocabParentSelected = function(item) {
 		var found = false;
 		
@@ -848,6 +848,14 @@ app.factory('search_factory', function($http, $log){
 			return promise;
 		},
 
+		search_no_record: function(filters) {
+			var promise = $http.post(base_url+'registry_object/filter/true', {'filters':filters}).then(function(response){
+				this.status = 'idle';
+				return response.data;
+			});
+			return promise;
+		},
+
 		construct_facets: function(result) {
 			var facets = [];
 
@@ -946,6 +954,18 @@ app.factory('search_factory', function($http, $log){
 			angular.forEach(this.default_filters, function(content,type){
 				if(!filters[type]) filters[type] = content;
 			});
+
+			//auto switch to activity search in grants
+			if(location.href.indexOf('grants')>-1) {
+				filters['class'] = 'activity';
+				
+			}
+
+			if(filters['class']=='activity' && location.href.indexOf('search')>-1) {
+				$('#banner-image').css('background-image', "url('"+base_url+"assets/core/images/activity_banner.jpg')");
+			} else if(filters['class']=='collection' && location.href.indexOf('search')>-1) {
+				$('#banner-image').css('background-image', "url('"+base_url+"assets/core/images/collection_banner.jpg')");
+			}
 
 			return filters;
 		},

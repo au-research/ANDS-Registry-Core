@@ -71,6 +71,8 @@ class Registry_objects extends CI_Model {
 
 			$result = json_decode($result, true);
 
+			if(!isset($result['orcid-profile'])) return false;
+
 			$first_name = $result['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
 			$last_name = $result['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
 			$name = $first_name.' '.$last_name;

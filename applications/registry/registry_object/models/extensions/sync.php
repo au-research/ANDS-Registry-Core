@@ -218,13 +218,18 @@ class Sync_extension extends ExtensionBase{
 
 		//subjects
 		$subjects = $this->ro->processSubjects();
-		$fields = array('subject_value_resolved', 'subject_value_unresolved', 'subject_type', 'subject_vocab_uri');
+		$fields = array('subject_value_resolved', 'subject_value_unresolved', 'subject_type', 'subject_vocab_uri', 'subject_anzsrcfor', 'subject_anzsrcseo');
 		foreach($fields as $f) $json[$f] = array();
 		foreach($subjects as $s){
 			$json['subject_value_unresolved'][] = $s['value'];
 			$json['subject_value_resolved'][] = $s['resolved'];
 			$json['subject_vocab_uri'][] = $s['uri'];
 			$json['subject_type'][] = $s['type'];
+			if (trim(strtolower($s['type']))=='anzsrc-for') {
+				$json['subject_anzsrcfor'][] = $s['resolved'];
+			} else if(trim(strtolower($s['type']))=='anzsrc-seo') {
+				$json['subject_anzsrcseo'][] = $s['resolved'];
+			}
 		}
 
 		//related objects

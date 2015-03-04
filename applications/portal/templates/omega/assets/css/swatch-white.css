@@ -63,7 +63,7 @@
   background-color: rgba(255, 255, 255, 0.3);
 }
 .swatch-white .btn-primary i, [class*="swatch-"] .swatch-white .btn-primary i {
-  color: white !important;
+  color: white;
 }
 .swatch-white .btn-link, [class*="swatch-"] .swatch-white .btn-link {
   background: none;
@@ -75,7 +75,7 @@
   background: none;
 }
 .swatch-white .btn-link i, [class*="swatch-"] .swatch-white .btn-link i {
-  color: #82c9ed !important;
+  color: #82c9ed;
 }
 .swatch-white .btn-link:hover, [class*="swatch-"] .swatch-white .btn-link:hover {
   text-decoration: none;
@@ -245,7 +245,7 @@
   background: rgba(255, 255, 255, 0.95);
 }
 .swatch-white .dropdown-submenu > a:after, [class*="swatch-"] .swatch-white .dropdown-submenu > a:after {
-  border-left-color: #82c9ed !important;
+  border-left-color: #82c9ed;
 }
 .swatch-white .dropdown-submenu > a:hover:after, [class*="swatch-"] .swatch-white .dropdown-submenu > a:hover:after {
   border-left-color: white !important;
@@ -329,7 +329,7 @@
   }
   .swatch-white .dropdown-submenu > a:after, [class*="swatch-"] .swatch-white .dropdown-submenu > a:after {
     border-left-color: transparent !important;
-    border-top-color: #82c9ed !important;
+    border-top-color: #82c9ed;
   }
   .swatch-white .menu-item-object-oxy_mega_menu .dropdown-menu > li > ul > li > a:hover, [class*="swatch-"] .swatch-white .menu-item-object-oxy_mega_menu .dropdown-menu > li > ul > li > a:hover {
     background: #82c9ed;
@@ -339,13 +339,13 @@
     display: none;
   }
   .swatch-white .nav-highlight > a, [class*="swatch-"] .swatch-white .nav-highlight > a {
-    color: #82c9ed !important;
+    color: #82c9ed;
   }
   .swatch-white .nav-highlight > a:after, [class*="swatch-"] .swatch-white .nav-highlight > a:after {
     background: transparent;
   }
   .swatch-white .nav-highlight > a:hover, [class*="swatch-"] .swatch-white .nav-highlight > a:hover {
-    color: #82c9ed !important;
+    color: #82c9ed;
   }
   .swatch-white .nav-highlight > a:hover:after, [class*="swatch-"] .swatch-white .nav-highlight > a:hover:after {
     background: transparent;
@@ -454,7 +454,7 @@
   color: white;
 }
 .swatch-white .tab-pane .btn, .swatch-white .tab-pane.active .btn, [class*="swatch-"] .swatch-white .tab-pane .btn, [class*="swatch-"] .swatch-white .tab-pane.active .btn {
-  color: #82c9ed !important;
+  color: #82c9ed;
   background: white !important;
 }
 .swatch-white .tab-pane .tooltip-inner, .swatch-white .tab-pane.active .tooltip-inner, [class*="swatch-"] .swatch-white .tab-pane .tooltip-inner, [class*="swatch-"] .swatch-white .tab-pane.active .tooltip-inner {
@@ -533,13 +533,13 @@
   background-color: #1c1c1c;
 }
 .swatch-white .bordered-link:after, [class*="swatch-"] .swatch-white .bordered-link:after {
-  background-color: #82c9ed !important;
+  background-color: #82c9ed;
 }
 .swatch-white .bordered > a:after, [class*="swatch-"] .swatch-white .bordered > a:after {
   background-color: #82c9ed;
 }
 .swatch-white .bordered-link:after, [class*="swatch-"] .swatch-white .bordered-link:after {
-  background-color: #82c9ed !important;
+  background-color: #82c9ed;
 }
 .swatch-white #infscr-loading, [class*="swatch-"] .swatch-white #infscr-loading {
   background: #82c9ed;

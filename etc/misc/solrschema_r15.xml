@@ -76,6 +76,9 @@
 		<field name="subject_value_unresolved" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="subject_type" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="subject_vocab_uri" type="string" indexed="true" stored="true" multiValued="true"/>
+		<field name="subject_anzsrcfor" type="string" indexed="true" stored="true" multiValued="true"/>
+		<field name="subject_anzsrcseo" type="string" indexed="true" stored="true" multiValued="true"/>
+
 
 		<field name="identifier_value" type="string" indexed="true" stored="true" multiValued="true"/>
 		<field name="identifier_value_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>

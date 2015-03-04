@@ -3,6 +3,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
+
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
         <h4 class="modal-title" id="myModalLabel">Advanced Search</h4>
       </div>
@@ -147,7 +148,15 @@
           </div>
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer swatch-white">
+        <div class="btn-group pull-left">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            Search for [[prefilters.class]] <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li ng-repeat="c in class_choices"><a href="" ng-click="prefilters.class=c.name">[[c.name]]</a></li>
+          </ul>
+        </div>
         <button type="button" class="btn btn-link" ng-click="advanced('close');">Cancel</button>
         <button type="button" class="btn btn-primary" ng-click="advancedSearch();">Search</button>
       </div>

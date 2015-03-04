@@ -63,7 +63,7 @@
   background-color: rgba(255, 255, 255, 0.3);
 }
 .swatch-white .btn-primary i, [class*="swatch-"] .swatch-white .btn-primary i {
-  color: white !important;
+  color: white;
 }
 .swatch-white .btn-link, [class*="swatch-"] .swatch-white .btn-link {
   background: none;

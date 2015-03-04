@@ -13,6 +13,7 @@ app.config(['$routeProvider', function($routeProvider){
 			template:$('#main').html(),
 			controller:'mainController'
 		})
+		.otherwise( {redirectTo:'/'})
 		;
 }]);
 

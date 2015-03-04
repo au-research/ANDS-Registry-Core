@@ -13,6 +13,9 @@
     		    		<div class="row element-short-top">
                             <div class="col-md-9 view-content" style="padding-right:0"  itemscope itemtype="http://schema.org/Dataset">
                                 <div class="panel panel-primary swatch-white panel-content">
+                                    <div class="panel-tools">
+                                        @include('registry_object/contents/icon')
+                                    </div>
                                     <div class="panel-body">
                                         @if($ro->logo)
                                         <img src="{{$ro->logo[0]}}" alt="logo" class="header-logo animated fadeInDown">
@@ -62,15 +65,16 @@
 
                                 <div>
 
-                                    <div class="pull-left swatch-white" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
+                                  <!--  <div class="pull-left swatch-white" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
                                         @include('registry_object/party_contents/wrap-getdatalicence')
-                                    </div>
+                                    </div> -->
                                     @yield('content')
                                 </div>
 
                             </div>
 
                             <div class="col-md-3">
+                                @include('registry_object/party_contents/wrap-getdatalicence')
                                 @yield('sidebar')
                             </div>
 

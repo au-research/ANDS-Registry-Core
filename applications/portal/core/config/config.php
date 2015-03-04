@@ -11,7 +11,7 @@ $config['subjects'] = array(
 	array(
 		'display' => 'Business, Economics and Law',
 		'codes' => array('14','15','18'),
-		'img' => 'Business_1.jpg'
+		'img' => 'Business_3.jpg'
 	),
 	array(
 		'display' => 'Medical and Health Sciences',
