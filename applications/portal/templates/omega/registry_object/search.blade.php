@@ -17,7 +17,7 @@
         </nav>
     </div>
 
-    <div ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
+    <div ng-repeat="doc in result.response.docs" ng-if="!doc.hide" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
         <div class="container-fluid">
             <div class="row">
                 
@@ -31,6 +31,15 @@
                     <div class="scontent">
                         <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
                         <p><small>[[doc.group]]</small></p>
+                        <p ng-if="doc.matching_identifier_count">[[ doc.matching_identifier_count ]] Linked Records</p>
+                        <p ng-if="doc.identifiermatch">
+                            <ul>
+                                <li ng-repeat="idd in doc.identifiermatch">
+                                    <a href="[[base_url]][[idd.slug]]/[[idd.registry_object_id]]">[[idd.title]]</a>
+                                    <small>(Contributor: [[idd.group]])</small>
+                                </li>
+                            </ul>
+                        </p>
                         <p ng-repeat="(index, content) in getHighlight(doc.id)">
                             <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
                         </p>
