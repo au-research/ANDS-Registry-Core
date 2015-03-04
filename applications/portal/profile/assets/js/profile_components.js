@@ -34,7 +34,22 @@ angular.module('profile_components',[])
             };
 
 			return actions;
-		}
+		},
+        get_user_folders: function(user_data){
+            var folders = {};
+            folders['all'] = Object.keys(user_data.saved_record).length;
+            angular.forEach(user_data.saved_record, function(record){
+                if (record.folder){
+                    if(folders[record.folder] == undefined) {
+                        folders[record.folder] = 1;
+                    }
+                    else{
+                        folders[record.folder] = folders[record.folder] + 1;
+                    }
+                }
+            });
+            return folders;
+        }
 	}
 })
 

@@ -294,6 +294,7 @@ class Registry_object extends MX_Controller {
 	}
 
     /**
+     * increment the stats for a specified type by the value given
      * Returns the stat of a record
      * @param  int $id
      * @return json

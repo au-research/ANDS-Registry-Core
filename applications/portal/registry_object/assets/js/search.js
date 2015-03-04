@@ -23,7 +23,11 @@ app.controller('searchCtrl',
 function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
 
     $scope.query_title = 'Untitled Query';
-    $scope.saved_records_folder = 'Untitled';
+    $scope.saved_records_folder = 'New Folder';
+    profile_factory.get_user().then(function(data){
+        $scope.user = data;
+        $scope.folders = profile_factory.get_user_folders(data.user_data);
+    });
 
 	$scope.class_choices = [
 		{'name':'collection', 'val':'Collection', 'selected':true},
@@ -361,6 +365,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
             $('#my-rda-'+type+'-modal').modal('show');
 	}
 
+    $scope.updateFolder = function(fName){
+        $scope.saved_records_folder = fName;
+    }
 
     $scope.save_records = function(action){
         if(action == 'save')
