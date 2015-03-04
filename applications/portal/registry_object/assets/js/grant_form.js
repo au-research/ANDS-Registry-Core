@@ -10,8 +10,17 @@ app.controller('grantForm', function($scope, $log, $http){
             contact_company: $scope.contact_company,
             purl: $('#purl').val()
         };
+
         $http.post(base_url+'page/requestGrantEmail', {'data':data}).then(function(response){
-                $('#grant-query-div').html(response.message);
+
+            if(response.data.status=='OK') {
+                $('#grant-query-div').html(response.data.message);
+            }
+            else{
+                $('#grant-query-div').html(response.data.message);
+                $log.debug(response.data);
+            }
         });
     }
+
 });

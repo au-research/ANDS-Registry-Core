@@ -127,7 +127,6 @@ class Page extends MX_Controller {
             $email->send();
             $message['status'] = 'OK';
             $message['message'] = 'Thank you for your enquiry into grant `'.$data['grant_id'].'`. A ticket has been logged with the ANDS Services Team. You will be notified when the grant becomes available in Research Data Australia.';
-            echo json_encode($message);
         }
         echo json_encode($message);
     }
