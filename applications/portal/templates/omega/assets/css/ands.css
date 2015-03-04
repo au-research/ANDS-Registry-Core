@@ -97,3 +97,17 @@ ul{
 .label-restricted {
     background: #e93938;
 }
+
+a[href^="http://"]:after,
+a[href^="https://"]:after {
+   content: url('../../../../assets/core/images/icons/external_link.png');
+   margin: 0 0 0 5px;
+}
+
+a[href*="ands.org.au/"]:after,
+a[href*="doi.org/"]:after,
+a[href*="nla"]:after,
+a[href*="creativecommons.org/"]:after{
+    content: '';
+    margin: 0;
+}

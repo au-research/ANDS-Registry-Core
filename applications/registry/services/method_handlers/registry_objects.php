@@ -310,7 +310,7 @@ function identifierResolution($identifier,$type)
             $identifiers['href'] = $identifier_href;
             $identifiers['display_text'] = strtoupper($type);
             $identifiers['hover_text'] = '';
-            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/doi_icon.png alt="External Link"/>';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/doi_icon.png alt="DOI Link"/>';
             return  $identifiers;
             break;
         case 'ark':
@@ -324,8 +324,8 @@ function identifierResolution($identifier,$type)
             if(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
             else $identifier_href = "http://nla.gov.au/".substr($identifier,strpos($identifier,"nla.gov.au/")+11);
             $identifiers['href'] = $identifier_href;
-            $identifiers['display_text'] = strtoupper($type);
-            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/nla_icon.png alt="External Link"/>';
+            $identifiers['display_text'] = 'NLA';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/nla_icon.png alt="NLA Link"/>';
             return  $identifiers;
             break;
         case 'handle':
@@ -337,7 +337,6 @@ function identifierResolution($identifier,$type)
             $identifiers['href'] = $identifier;
             $identifiers['display_text'] = strtoupper($type);
             $identifiers['hover_text'] = 'Resolve this URI';
-            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/external_link.png alt="External Link"/>';
             return $identifiers;
             break;
         case 'urn':
