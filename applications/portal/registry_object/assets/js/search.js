@@ -150,6 +150,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.loading = true;
 		search_factory.search($scope.filters).then(function(data){
 			$scope.loading = false;
+			$scope.fuzzy = data.fuzzy_result;
 			// search_factory.updateResult(data);
 			search_factory.update('result', data);
 			search_factory.update('facets', search_factory.construct_facets(data));
