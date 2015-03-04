@@ -198,7 +198,7 @@ class Groups extends CI_Model {
 			} 
 		}
 
-		if ($result->num_rows() > 0) {
+		if ($result && $result->num_rows() > 0) {
 			return $result->first_row();
 		} else {
 			return false;

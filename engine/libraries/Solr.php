@@ -136,7 +136,9 @@ class Solr {
 	function getNumFound(){
 		if(isset($this->result->{'response'}->{'numFound'})){
 			return ((int) ($this->result->{'response'}->{'numFound'}));
-		}else{
+		}else if(isset($this->result['response']['numFound'])){
+			return ((int) $this->result['response']['numFound']);
+		} else {
 			return 0;
 		}
 	}

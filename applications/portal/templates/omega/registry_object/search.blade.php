@@ -1,9 +1,15 @@
 @extends('layouts/left-sidebar-fw')
 
 @section('content')
+
 <div class="panel panel-primary element-no-top element-small-bottom" data-os-animation="fadeInUp">
+
+    <div class="panel-body swatch-white" ng-if="fuzzy" ng-cloak>
+        Your search for '<b>[[ query ]]</b>' returned 0 results. Below are some alternatives which closely match your query.
+    </div>
+
     <div class="panel-body swatch-white" style="padding:10px" ng-cloak ng-show="result">
-        <a href="" class="btn btn-link btn-sm" ng-click="toggleResults()">
+        <a href="" class="btn btn-link btn-sm" ng-click="toggleResults()" ng-if="result.response.numFound > 0">
             <span ng-show="selectState=='deselectAll'"><i class="fa fa-check-square-o"></i> Deselect All</span>
             <span ng-show="selectState=='selectAll'"><i class="fa fa-square-o"></i> Select All</span>
             <span ng-show="selectState=='deselectSelected'"><i class="fa fa-minus-square-o"></i> Deselect Selected</span>
@@ -17,7 +23,16 @@
         </nav>
     </div>
 
-    <div ng-repeat="doc in result.response.docs" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
+    <div class="panel-body swatch-white" ng-if="result.response.docs.length < 1" ng-cloak>
+        <p>The search term <b>[[ query ]]</b> did not return any results</p>
+        <p>Some suggestion for searching in Research Data Australia</p>
+        <ul>
+            <li>Make sure that all words are spelled correctly</li>
+            <li>Try using different or more general search keywords</li>
+        </ul>
+    </div>
+
+    <div ng-repeat="doc in result.response.docs" ng-if="!doc.hide" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
         <div class="container-fluid">
             <div class="row">
                 
@@ -31,6 +46,15 @@
                     <div class="scontent">
                         <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
                         <p><small>[[doc.group]]</small></p>
+                        <p ng-if="doc.matching_identifier_count">[[ doc.matching_identifier_count ]] Linked Records</p>
+                        <p ng-if="doc.identifiermatch">
+                            <ul>
+                                <li ng-repeat="idd in doc.identifiermatch">
+                                    <a href="[[base_url]][[idd.slug]]/[[idd.registry_object_id]]">[[idd.title]]</a>
+                                    <small>(Contributor: [[idd.group]])</small>
+                                </li>
+                            </ul>
+                        </p>
                         <p ng-repeat="(index, content) in getHighlight(doc.id)">
                             <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
                         </p>

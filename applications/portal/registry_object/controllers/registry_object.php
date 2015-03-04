@@ -339,7 +339,7 @@ class Registry_object extends MX_Controller {
 	 * @return json
 	 * @internal param string $class class restriction
 	 */
-	function filter($no_record = false) {
+	function filter($no_log = false) {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
@@ -365,7 +365,7 @@ class Registry_object extends MX_Controller {
 		// $this->solr->setOpt('fq', '+spatial_coverage_centres:*');
 
 		//not recording a hit for the quick search done for advanced search
-		if (!$no_record) {
+		if (!$no_log) {
 			$event = array(
 				'event' => 'portal_search',
 				'ip' => $this->input->ip_address(),
@@ -414,7 +414,7 @@ class Registry_object extends MX_Controller {
 
 
 		//flags, these are the only fields that will be returned in the search
-		$this->solr->setOpt('fl', 'id,type,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons,administering_institution,researchers');
+		$this->solr->setOpt('fl', 'id,type,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons,administering_institution,researchers,matching_identifier_count');
 
 		//highlighting
 		$this->solr->setOpt('hl', 'true');
@@ -431,8 +431,24 @@ class Registry_object extends MX_Controller {
 		$this->solr->setFacetOpt('mincount','1');
 		$this->solr->setFacetOpt('limit','100');
 		$this->solr->setFacetOpt('sort','count');
-		$result = $this->solr->executeSearch();
-		$result->{'url'} = $this->solr->constructFieldString();
+		$result = $this->solr->executeSearch(true);
+
+		//fuzzy search
+		if($this->solr->getNumFound() == 0) {
+			$new_search_term_array = explode(' ', escapeSolrValue($filters['q']));
+			$new_search_term='';
+			foreach($new_search_term_array as $c ){
+				$new_search_term .= $c.'~0.7 ';
+			}
+			// $new_search_term = $data['search_term'].'~0.7';
+			$this->solr->setOpt('q', 'fulltext:('.$new_search_term.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $new_search_term).')');
+			$result = $this->solr->executeSearch(true);
+			if($this->solr->getNumFound() > 0){
+				$result['fuzzy_result'] = true;
+			}
+		}
+
+		$result['url'] = $this->solr->constructFieldString();
 
 		echo json_encode($result);
 	}

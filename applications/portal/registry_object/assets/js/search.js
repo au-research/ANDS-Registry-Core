@@ -24,6 +24,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
     $scope.query_title = 'Untitled Query';
     $scope.saved_records_folder = 'Untitled';
+    $scope.base_url = base_url;
 
 	$scope.class_choices = [
 		{'name':'collection', 'val':'Collection', 'selected':true},
@@ -149,6 +150,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.loading = true;
 		search_factory.search($scope.filters).then(function(data){
 			$scope.loading = false;
+			$scope.fuzzy = data.fuzzy_result;
 			// search_factory.updateResult(data);
 			search_factory.update('result', data);
 			search_factory.update('facets', search_factory.construct_facets(data));
@@ -206,10 +208,49 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			search_factory.search_no_record().then(function(data){
 				$scope.temporal_range = search_factory.temporal_range(data);
 			});
-			
 		}
 
+		//duplicate record matching
+		if ($scope.result) {
+			var matchingdoc = [];
+			angular.forEach($scope.result.response.docs, function(doc){
+				if (doc.matching_identifier_count) {
+					matchingdoc.push(doc);
+				}
+			});
+			// $log.debug(matchingdoc);
+			angular.forEach(matchingdoc, function(doc) {
+				if(!doc.hide) {
+					search_factory.get_matching_records(doc.id).then(function(data){
+						if (doc) {
+							doc.identifiermatch = data.message.identifiermatch;
+						}
+					});
+				}
+			});
+		}
+
+		$scope.$watch('result.response.docs', function(newv){
+			if (newv) {
+				angular.forEach($scope.result.response.docs, function(doc){
+					if(doc.identifiermatch && !doc.hide) {
+						angular.forEach(doc.identifiermatch, function(idd){
+							$scope.hidedoc(idd.registry_object_id);
+						});
+					}
+				});
+			}
+		},true);
 		
+		$scope.hidedoc = function(id) {
+			if ($scope.result) {
+				angular.forEach($scope.result.response.docs, function(doc){
+					if (doc.id==id && !doc.hide) {
+						doc.hide = true;
+					}
+				});
+			}
+		}
 
 		//init vocabulary
 		$scope.vocabInit();
@@ -981,6 +1022,13 @@ app.factory('search_factory', function($http, $log){
 				}
 			});
 			return hash;
+		},
+		get_matching_records: function(id) {
+			var promise = $http.get(registry_url+'services/api/registry_objects/'+id+'/identifiermatch').then(function(response){
+				this.status = 'idle';
+				return response.data;
+			});
+			return promise;
 		}
 	}
 });
