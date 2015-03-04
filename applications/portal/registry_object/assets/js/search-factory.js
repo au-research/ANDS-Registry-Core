@@ -18,6 +18,11 @@ app.factory('search_factory', function($http, $log){
 		],
 
 		class_choices: [
+			// {value:'collection', label:'Data'},
+			// {value:'party', label:'People'},
+			// {value:'service', label:'Grants and Projects'},
+			// {value:'collection', label:'Data'},
+
 			'collection', 'party' , 'service', 'activity'
 		],
 
@@ -39,12 +44,11 @@ app.factory('search_factory', function($http, $log){
 		advanced_fields: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
 			{'name':'subject', 'display':'Subjects'},
-			{'name':'group', 'display':'Contributors'},
-			{'name':'access_rights', 'display':'Access Rights'},
-			{'name':'license_class', 'display':'License'},
-			{'name':'temporal', 'display':'Temporal'},
-			{'name':'spatial', 'display':'Spatial'},
-			{'name':'class', 'display':'Class'},
+			{'name':'group', 'display':'Data Provider'},
+			{'name':'access_rights', 'display':'Access'},
+			{'name':'license_class', 'display':'Licence'},
+			{'name':'temporal', 'display':'Time Period'},
+			{'name':'spatial', 'display':'Location'},
 			{'name':'review', 'display':'Review'}
 		],
 
@@ -58,7 +62,6 @@ app.factory('search_factory', function($http, $log){
 			{'name':'funders', 'display':'Funders'},
 			{'name':'funding_scheme', 'display':'Funding Scheme'},
 			{'name':'funding_amount', 'display':'Funding Amount'},
-			{'name':'class', 'display':'Class'},
 			{'name':'review', 'display':'Review'}
 		],
 

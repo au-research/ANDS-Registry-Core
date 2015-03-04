@@ -107,15 +107,6 @@
                 @include('registry_object/facet/map')
               </div>
 
-              <div ng-if="isAdvancedSearchActive('class')">
-                Search is restricted to: <b>[[prefilters.class]]</b>
-                <ul class="list-unstyled">
-                  <li ng-repeat="c in class_choices">
-                    <input type="radio" ng-model="prefilters.class" ng-value="c.name" /> [[c.val]]
-                  </li>
-                </ul>
-              </div>
-
               <div ng-if="isAdvancedSearchActive('review')">
                 <div class="panel panel-primary" ng-cloak>
                     <div class="panel-heading">Current Search</div>
