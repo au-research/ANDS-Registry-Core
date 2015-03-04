@@ -222,25 +222,18 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			angular.forEach(matchingdoc, function(doc) {
 				if(!doc.hide) {
 					search_factory.get_matching_records(doc.id).then(function(data){
-						if (doc) {
+						if (doc && !doc.hide) {
 							doc.identifiermatch = data.message.identifiermatch;
+							if(doc && !doc.hide) {
+								angular.forEach(doc.identifiermatch, function(idd){
+									$scope.hidedoc(idd.registry_object_id);
+								});
+							}
 						}
 					});
 				}
 			});
 		}
-
-		$scope.$watch('result.response.docs', function(newv){
-			if (newv) {
-				angular.forEach($scope.result.response.docs, function(doc){
-					if(doc.identifiermatch && !doc.hide) {
-						angular.forEach(doc.identifiermatch, function(idd){
-							$scope.hidedoc(idd.registry_object_id);
-						});
-					}
-				});
-			}
-		},true);
 		
 		$scope.hidedoc = function(id) {
 			if ($scope.result) {
