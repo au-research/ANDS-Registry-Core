@@ -12,11 +12,18 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
 		if (data.id) $scope.ro.stat = data;
 	});
 
+    $scope.access = function(event) {
+        record_factory.add_stat($scope.ro.id, 'accessed', 1).then(function(data){
+            location.href = event.target.href;
+        })
+    };
+
     profile_factory.check_is_bookmarked($scope.ro.id).then(function(data){
        if (data.status=='OK') {
           $scope.ro.bookmarked = true;
        } else $scope.ro.bookmarked = false;
     });
+
 
 	$scope.bookmark = function() {
         var records = [];

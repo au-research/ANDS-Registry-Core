@@ -293,6 +293,25 @@ class Registry_object extends MX_Controller {
 		echo json_encode($stats);
 	}
 
+    /**
+     * Returns the stat of a record
+     * @param  int $id
+     * @return json
+     */
+    function add_stat($id) {
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+        $data = json_decode(file_get_contents("php://input"), true);
+        $type = $data['data']['type'];
+        $value = intval($data['data']['value']);
+        $this->load->model('registry_objects', 'ro');
+        $ro = $this->ro->getByID($id);
+        $ro->event($type, $value);
+        $stats = $ro->stat();
+
+        echo json_encode($stats);
+    }
 	/**
 	 * Search View
 	 * Displaying the search view for the current component

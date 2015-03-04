@@ -11,9 +11,9 @@ if($ro->core['class']=='service'){
 @if($ro->directaccess)
     @if($ro->directaccess[0]['access_type']=='url')
         @if(isset($ro->directaccess[0]['access_value']['href']))
-            <a href="{{$ro->directaccess[0]['access_value']['href']}}" class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to {{$buttonStr}}</a>
+            <a href="{{trim($ro->directaccess[0]['access_value']['href'])}}" ng-click="$event.preventDefault();access($event)" class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to {{$buttonStr}}</a>
         @elseif(isset($ro->directaccess[0]['access_value']))
-            <a href="{{$ro->directaccess[0]['access_value']}}" class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to {{$buttonStr}}</a>
+            <a href="{{trim($ro->directaccess[0]['access_value'])}}" ng-click="$event.preventDefault();access($event)" class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to {{$buttonStr}}</a>
         @endif
 
     @endif
@@ -46,11 +46,11 @@ if($ro->core['class']=='service'){
             ?>
 
             @if(isset($access['access_value']['href']))
-            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{$access['access_value']['href']}}" title="{{$access['notes']}}" <?=$itemprop?>>
+            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{trim($access['access_value']['href'])}}" ng-click="$event.preventDefault();access($event)" title="{{$access['notes']}}" <?=$itemprop?>>
             <span>{{$access['mediaType']}}</span>
             <?=$preText;?><?=$title?></a>
             @elseif(isset($access['access_value']))
-            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{$access['access_value']}}" title="{{$access['notes']}}" <?=$itemprop?>>
+            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{trim($access['access_value'])}}" ng-click="$event.preventDefault();access($event)" title="{{$access['notes']}}" <?=$itemprop?>>
                 <span>{{$access['mediaType']}}</span>
                 <?=$preText;?><?=$title?></a>
             @endif
