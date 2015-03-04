@@ -58,8 +58,6 @@
         @endif
     @endif
 
-
-    @if(!$group['has_custom_data'])
     <div class="panel panel-primary swatch-white">
         <div class="panel-body">
             To date, {{$group['title']}} has {{$group['counts']}} collection records in Research Data Australia, which covers {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}, {{sizeof($group['groups'])}} research groups 
@@ -67,7 +65,6 @@
             can be accessed from the Registry Contents box on the right hand side of this page.
         </div>
     </div>
-    @endif
 
     <div class="panel panel-primary panel-content swatch-white">
         <div class="panel-heading">Subjects Covered</div>
