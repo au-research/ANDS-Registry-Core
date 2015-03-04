@@ -38,7 +38,7 @@ class Shared_text_suggestor extends _GenericSuggestor {
 
         $result = $ci->solr->executeSearch(true);
 
-        if($result['moreLikeThis'][$this->ro->id]['numFound'] > 0) {
+        if(isset($result['moreLikeThis'][$this->ro->id]) &&  $result['moreLikeThis'][$this->ro->id]['numFound'] > 0) {
             $maxScore = floatval($result['moreLikeThis'][$this->ro->id]['maxScore']);
             foreach($result['moreLikeThis'][$this->ro->id]['docs'] as $doc) {
                 if($doc['class'] == 'collection'){
