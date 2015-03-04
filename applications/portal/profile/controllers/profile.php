@@ -152,7 +152,11 @@ class Profile extends MX_Controller {
 			'social' => array(
 				'slug'		=> 'social',
 				'display'	=> 'Social'
-			)
+			),
+			'aaf' => array(
+				'slug' 		=> 'aaf',
+				'display' 	=> 'Shibboleth AAF Rapid Connect'
+			),
 		);
 
 		$default_authenticator = false;

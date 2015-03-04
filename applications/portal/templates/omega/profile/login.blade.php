@@ -15,7 +15,7 @@
 </section>
 
 <div class="row hide" id="main">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-lg-6 col-lg-offset-3 col-xs-12 col-md-12">
         <div class="element-small-top element-normal-bottom os-animation animated fadeInLeft" data-os-animation="fadeInLeft" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
             <div class="tabbable ''">
                 <ul class="nav nav-tabs" data-tabs="tabs">
