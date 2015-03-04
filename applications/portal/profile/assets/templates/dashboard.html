@@ -23,8 +23,8 @@
 								<td>
 									<a href="[[base_url]]search#!/[[search.query_string]]">[[ search.num_found ]]</a> records<br>
 									<a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.saved_time]]/">[[ search.num_found_since_saved ]]</a> new records since saved <br>
-									<small>Saved: [[ search.saved_time * 1000 | timeago ]]</small> <br>
-									<small ng-if="search.refresh_time"><a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.refresh_time]]/">[[ search.num_found_since_last_check ]]</a> records since  Last Refresh: [[ search.refresh_time * 1000 | timeago ]]</small> <br>
+									<small>Saved: [[ search.saved_time * 1000 | date ]]</small> <br>
+									<small ng-if="search.refresh_time"><a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.refresh_time]]/">[[ search.num_found_since_last_check ]]</a> records since  Last Refresh: [[ search.refresh_time * 1000 | date ]]</small> <br>
 								</td>
 								<td>
 									<a href="" class="btn btn-primary" ng-click="modify_user_data('saved_search', 'refresh', search.query_string)"><i class="fa fa-refresh"></i> Refresh</a>
@@ -64,7 +64,7 @@
 								<td>
 									<a href="[[base_url]][[record.slug]]/[[record.id]]">[[ record.title ]]</a><br>
 									<small>Data Provider: [[ record.group ]]</small><br>
-									<small>Last Viewed: [[record.last_viewed * 1000 | timeago]]</small>
+									<small>Last Viewed: [[record.last_viewed * 1000 | date ]]</small>
 								</td>
 								<td>
 									<div class="btn-group">
@@ -92,7 +92,7 @@
 			<div class="panel panel-primary swatch-white panel-content">
 				<div class="panel-heading">Logged In User</div>
 				<div class="panel-body">
-					<h3>[[user.name]]</h3>
+					<h3><i class="fa fa-user"></i> [[user.name]]</h3>
 					<!-- <p>[[user.authMethod]]</p> -->
 					<hr>
 					<a href="[[base_url]]profile/logout" class="btn btn-danger"><i class="fa fa-sign-out"></i> Logout</a>

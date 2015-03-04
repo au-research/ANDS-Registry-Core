@@ -7,6 +7,7 @@ class Profile extends MX_Controller {
 			$user = $this->portal_user->getCurrentUser();
 			$this->blade
 				->set('user', $user)
+				->set('title', 'MyRDA - Research Data Australia')
 				->set('scripts', array('profile_app'))
 				->render('profile/dashboard2');
 		} else {
@@ -161,7 +162,7 @@ class Profile extends MX_Controller {
 				break;
 			}
 		}
-		if(!$default_authenticator) $default_authenticator = 'built_in';
+		if(!$default_authenticator) $default_authenticator = 'social';
 
 		$this->blade
 			->set('authenticators', $authenticators)

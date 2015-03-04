@@ -16,7 +16,6 @@ app.controller('dashboardCtrl', function($scope, $rootScope, $log, profile_facto
 	$scope.hello = 'Hello World';
 	$scope.base_url = base_url;
 
-
     $scope.saved_search_count = 0;
 
     $scope.fetch = function(){
@@ -42,8 +41,6 @@ app.controller('dashboardCtrl', function($scope, $rootScope, $log, profile_facto
                         }
                     }
                 });
-
-
             }
         });
     }
