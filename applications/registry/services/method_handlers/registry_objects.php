@@ -309,16 +309,25 @@ function identifierResolution($identifier,$type)
             else $identifier_href = "http://dx.doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
             $identifiers['href'] = $identifier_href;
             $identifiers['display_text'] = strtoupper($type);
-            $identifiers['hover_text'] = '';
+            $identifiers['hover_text'] = 'Resolve this DOI';
             $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/doi_icon.png alt="DOI Link"/>';
             return  $identifiers;
             break;
         case 'ark':
             $identifier = str_replace('http://','',str_replace('https://','',$identifier));
             $identifiers['href'] = '';
-            $identifiers['display_text'] = $identifier;
+            $identifiers['display_text'] = 'ARK';
             $identifiers['hover_text'] = '';
             return $identifiers;
+            break;
+        case 'orcid':
+            if(!strpos($identifier,"orcid.org/")) $identifier_href ="http://orcid.org/".$identifier;
+            else $identifier_href = "http://orcid.org/".substr($identifier,strpos($identifier,"orcid.org/")+10);
+            $identifiers['href'] = $identifier_href;
+            $identifiers['display_text'] = 'ORCID';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/orcid_icon.png alt="ORCID Link"/>';
+            $identifiers['hover_text'] = 'Resolve this ORCID';
+            return  $identifiers;
             break;
         case 'AU-ANL:PEAU':
             if(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
@@ -326,12 +335,27 @@ function identifierResolution($identifier,$type)
             $identifiers['href'] = $identifier_href;
             $identifiers['display_text'] = 'NLA';
             $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/nla_icon.png alt="NLA Link"/>';
+            $identifiers['hover_text'] = 'View the record for this party in Trove';
             return  $identifiers;
             break;
         case 'handle':
-
+            if(strpos($identifier,"dl:")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
+            elseif(strpos($identifier,"dl.handle.net/")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl.handle.net/")+15);
+            else $identifier_href = "http://hdl.handle.net/".$identifier;
+            $identifiers['href'] = $identifier_href;
+            $identifiers['display_text'] = 'Handle';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/handle_icon.png alt="Handle Link"/>';
+            $identifiers['hover_text'] = 'Resolve this handle';
+            return  $identifiers;
             break;
         case 'purl':
+            if(strpos($identifier,"url.org/")<1) $identifier_href ="http://purl.org/".$identifier;
+            else $identifier_href = "http://purl.org/".substr($identifier,strpos($identifier,"purl.org/")+9);
+            $identifiers['href'] = $identifier_href;
+            $identifiers['display_text'] = 'PURL';
+            $identifiers['display_icon'] = '';
+            $identifiers['hover_text'] = 'Resolve this PURL';
+            return  $identifiers;
             break;
         case 'uri':
             $identifiers['href'] = $identifier;
@@ -340,6 +364,22 @@ function identifierResolution($identifier,$type)
             return $identifiers;
             break;
         case 'urn':
+            break;
+        case 'local':
+            $identifiers['display_text'] = 'Local';
+            return $identifiers;
+            break;
+        case 'isil':
+            $identifiers['display_text'] = 'ISIL';
+            return $identifiers;
+            break;
+        case 'abn':
+            $identifiers['display_text'] = 'ABN';
+            return $identifiers;
+            break;
+        case 'arc':
+            $identifiers['display_text'] = 'ARC';
+            return $identifiers;
             break;
         default:
             return false;

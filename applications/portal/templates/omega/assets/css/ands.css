@@ -107,6 +107,8 @@ a[href^="https://"]:after {
 a[href*="ands.org.au/"]:after,
 a[href*="doi.org/"]:after,
 a[href*="nla"]:after,
+a[href*="orcid"]:after,
+a[href*="handle.net"]:after,
 a[href*="creativecommons.org/"]:after{
     content: '';
     margin: 0;
