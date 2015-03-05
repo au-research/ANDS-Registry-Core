@@ -393,7 +393,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			        }
 			    }
 			});
-			
 		} else if(type=='saved_search') {
 			var modalInstance = $modal.open({
 			    templateUrl: base_url+'assets/registry_object/templates/saveSearchModal.html',
@@ -415,7 +414,17 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			        }
 			    }
 			});
-			
+		} else if(type=='export') {
+			var modalInstance = $modal.open({
+			    templateUrl: base_url+'assets/registry_object/templates/exportModal.html',
+			    controller: 'exportCtrl',
+			    windowClass: 'modal-center',
+			    resolve: {
+			        id: function () {
+			           	return $scope.selected;
+			        }
+			    }
+			});
 		}
 		modalInstance.result.then(function(){
 		    //close
@@ -423,54 +432,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		    //dismiss
 		});
 	}
-
-
-    $scope.save_records = function(action){
-        if(action == 'save') {
-            var ngdata = [];
-            angular.forEach($scope.selected, function(ro){
-
-                ngdata.push({
-                    id:ro.id,
-                    slug:ro.slug,
-                    group:ro.group,
-                    title:ro.title,
-                    folder:$scope.saved_records_folder,
-                    last_viewed:parseInt(new Date().getTime() / 1000)
-                });
-            });
-            profile_factory.add_user_data('saved_record', ngdata).then(function(data){
-                if(data.status == "OK")
-                {
-                    $('#my-rda-saved_record-modal').modal('hide');
-                }
-            });
-        }
-    }
-
-    $scope.save_search = function(action) {
-        if(action == 'save') {
-            var ngdata = [];
-            $log.debug($scope.query_title);
-            ngdata.push({
-            	id:$scope.query_title,
-                query_title: $scope.query_title,
-                query_string: $scope.getHash(),
-                num_found: $scope.result.response.numFound,
-                num_found_since_last_check: 0,
-                num_found_since_saved:0,
-                saved_time:parseInt(new Date().getTime() / 1000),
-                refresh_time:parseInt(new Date().getTime() / 1000),
-                folder:$scope.folderf
-            });
-            profile_factory.add_user_data('saved_search', ngdata).then(function(data){
-                if(data.status == "OK")
-                {
-                    $('#my-rda-saved_search-modal').modal('hide');
-                }
-            });
-        }
-    }
 
 	/**
 	 * Advanced Search Section
