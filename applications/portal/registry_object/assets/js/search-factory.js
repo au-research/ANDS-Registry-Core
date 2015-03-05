@@ -18,12 +18,10 @@ app.factory('search_factory', function($http, $log){
 		],
 
 		class_choices: [
-			// {value:'collection', label:'Data'},
-			// {value:'party', label:'People'},
-			// {value:'service', label:'Grants and Projects'},
-			// {value:'collection', label:'Data'},
-
-			'collection', 'party' , 'service', 'activity'
+			{value:'collection', label:'Data'},
+			{value:'party', label:'People and Organisation'},
+			{value:'service', label:'Services and Tools'},
+			{value:'activity', label:'Grants and Projects'}
 		],
 
 		default_filters: {

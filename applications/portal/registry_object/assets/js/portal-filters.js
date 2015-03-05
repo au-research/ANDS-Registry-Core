@@ -40,6 +40,17 @@ angular.module('portal-filters', [])
 			}
 		}
 	})
+	.filter('getLabelFor', function($log){
+		return function(value, filter) {
+			var ret = '';
+			angular.forEach(filter, function(f){
+				if(f.value==value) {
+					ret = f.label;
+				}
+			});
+			return ret;
+		}
+	})
 	.filter('truncate', function () {
 		return function (text, length, end) {
 			if(text){

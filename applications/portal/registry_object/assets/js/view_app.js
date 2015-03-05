@@ -18,46 +18,37 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
         })
     };
 
-    profile_factory.check_is_bookmarked($scope.ro.id).then(function(data){
-       if (data.status=='OK') {
-          $scope.ro.bookmarked = true;
-       } else $scope.ro.bookmarked = false;
-    });
+    
+    $scope.check = function() {
+        profile_factory.check_is_bookmarked($scope.ro.id).then(function(data){
+           if (data.status=='OK') {
+              $scope.ro.bookmarked = true;
+           } else $scope.ro.bookmarked = false;
+        });
+    }
+    $scope.check();
 
 
 	$scope.bookmark = function() {
-        var records = [];
-        records.push({
-                id:$scope.ro.id,
-                slug:$scope.ro.slug,
-                group:$scope.ro.group,
-                title:$scope.ro.title,
-                folder:'unsorted',
-                last_viewed:parseInt(new Date().getTime() / 1000)
-            });
-        profile_factory.modify_user_data('saved_record', 'add', records).then(function(data){
-            if(data.status=='OK') {
-                $scope.ro.bookmarked = true;
-            } else {
-                $log.debug(data);
+        var modalInstance = $modal.open({
+            templateUrl: base_url+'assets/registry_object/templates/moveModal.html',
+            controller: 'moveCtrl',
+            windowClass: 'modal-center',
+            resolve: {
+                id: function () {
+                    return $scope.ro.id;
+                }
             }
+        });
+        modalInstance.result.then(function(){
+            //close
+            $scope.check();
+        }, function(){
+            //dismiss
+            $scope.check();
         });
 	};
 
-
-
-
-    $scope.removeBookmark = function(){
-        var records = [];
-        records.push({id:$scope.ro.id});
-        profile_factory.modify_user_data('saved_record', 'delete', records).then(function(data){
-            if(data.status=='OK') {
-                $scope.ro.bookmarked = false;
-            } else {
-                $log.debug(data);
-            }
-        });
-    }
 
 	$scope.openCitationModal = function(){
 		$log.debug('open');

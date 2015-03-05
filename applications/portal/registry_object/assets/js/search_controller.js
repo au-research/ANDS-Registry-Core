@@ -6,10 +6,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
     $scope.base_url = base_url;
 
 	$scope.class_choices = [
-		{'name':'collection', 'val':'Collection', 'selected':true},
-		{'name':'activity', 'val':'Activity', 'selected':false},
-		{'name':'party', 'val':'Party', 'selected':false},
-		{'name':'service', 'val':'Services', 'selected':false}
+		{value:'collection', label:'Data'},
+		{value:'party', label:'People and Organisation'},
+		{value:'service', label:'Services and Tools'},
+		{value:'activity', label:'Grants and Projects'}
 	];
 	
 
@@ -79,6 +79,17 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.filters[newv] = $scope.query;
 		}
 	});
+
+	$scope.getLabelFor = function(filter, value) {
+		if ($scope[filter]) {
+			angular.forEach($scope[filter], function(f) {
+				if (f.value==value) {
+					$log.debug(f.label);
+					return f.label;
+				}
+			});
+		}
+	}
 
 	$scope.hasFilter = function(){
 		var empty = {'q':''};
@@ -243,7 +254,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.showFilter = function(filter_name){
 		var show = true;
-		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort') {
+		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class' || filter_name=='q') {
 			show = false;
 		}
 		return show;
@@ -371,13 +382,51 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.add_user_data = function(type) {
-            $('#my-rda-'+type+'-modal').modal('show');
+		if (type=='saved_record') {
+			var modalInstance = $modal.open({
+			    templateUrl: base_url+'assets/registry_object/templates/moveModal.html',
+			    controller: 'moveCtrl',
+			    windowClass: 'modal-center',
+			    resolve: {
+			        id: function () {
+			           	return $scope.selected;
+			        }
+			    }
+			});
+			
+		} else if(type=='saved_search') {
+			var modalInstance = $modal.open({
+			    templateUrl: base_url+'assets/registry_object/templates/saveSearchModal.html',
+			    controller: 'saveSearchCtrl',
+			    windowClass: 'modal-center',
+			    resolve: {
+			        saved_search_data: function () {
+			           	var data = {
+			            	id:Math.random().toString(36).substring(7),
+			            	query_title: 'Untitled Search',
+			                query_string: $scope.getHash(),
+			                num_found: $scope.result.response.numFound,
+			                num_found_since_last_check: 0,
+			                num_found_since_saved:0,
+			                saved_time:parseInt(new Date().getTime() / 1000),
+			                refresh_time:parseInt(new Date().getTime() / 1000),
+			            }
+			            return data;
+			        }
+			    }
+			});
+			
+		}
+		modalInstance.result.then(function(){
+		    //close
+		}, function(){
+		    //dismiss
+		});
 	}
 
 
     $scope.save_records = function(action){
-        if(action == 'save')
-        {
+        if(action == 'save') {
             var ngdata = [];
             angular.forEach($scope.selected, function(ro){
 
@@ -399,10 +448,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
         }
     }
 
-    $scope.save_search = function(action)
-    {
-        if(action == 'save')
-        {
+    $scope.save_search = function(action) {
+        if(action == 'save') {
             var ngdata = [];
             $log.debug($scope.query_title);
             ngdata.push({

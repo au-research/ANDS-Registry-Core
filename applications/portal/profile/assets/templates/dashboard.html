@@ -9,11 +9,23 @@
 						<table class="table table-bordered">
 							<thead>
 								<tr>
-									<td><a href="" class="btn btn-link"><i class="fa fa-square-o"></i></a></td>
+									<td>
+										<a href="" class="btn btn-link" ng-click="toggleSelection('saved_search')">
+											<i class="fa fa-square-o" ng-if="selected('saved_search') == 0"></i>
+											<i class="fa fa-check-square-o" ng-if="selected('saved_search') > 0"></i>
+										</a>
+									</td>
 									<td>Saved Search</td>
 									<td>Result</td>
 									<td>
-										Action
+										<span ng-if="selected('saved_search') == 0">Action</span>
+										<div class="btn-group" ng-if="selected('saved_search') > 0">
+											<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Bulk Action ([[ selected('saved_search') ]]) <span class="caret"></span></button>
+											<ul class="dropdown-menu" role="menu">
+												<li><a href="" ng-click="modify_user_data('saved_search', 'refresh', 'group')"><i class="fa fa-refresh"></i> Refresh</a></li>
+												<li><a href="" ng-click="modify_user_data('saved_search', 'delete', 'group')"><i class="fa fa-trash-o"></i> Delete</a></li>
+											</ul>
+										</div>
 									</td>
 								</tr>
 							</thead>
@@ -23,12 +35,12 @@
 								<td>
 									<a href="[[base_url]]search#!/[[search.query_string]]">[[ search.num_found ]]</a> records<br>
 									<a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.saved_time]]/">[[ search.num_found_since_saved ]]</a> new records since saved <br>
-									<small>Saved: [[ search.saved_time * 1000 | date ]]</small> <br>
-									<small ng-if="search.refresh_time"><a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.refresh_time]]/">[[ search.num_found_since_last_check ]]</a> records since  Last Refresh: [[ search.refresh_time * 1000 | date ]]</small> <br>
+									<small>Saved: [[ search.saved_time * 1000 | date ]] ([[ search.saved_time * 1000 | timeago ]])</small> <br>
+									<small ng-if="search.refresh_time"><a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.refresh_time]]/">[[ search.num_found_since_last_check ]]</a> records since  Last Refresh: [[ search.refresh_time * 1000 | date ]] ([[ search.refresh_time * 1000 | timeago ]])</small> <br>
 								</td>
 								<td>
 									<a href="" class="btn btn-primary" ng-click="modify_user_data('saved_search', 'refresh', search.query_string)"><i class="fa fa-refresh"></i> Refresh</a>
-									<a href="" class="btn btn-link"><i class="fa fa-trash-o"></i></a>
+									<a href="" class="btn btn-link" ng-click="modify_user_data('saved_search', 'delete', search.query_string)"><i class="fa fa-trash-o"></i></a>
 								</td>
 							</tbody>
 						</table>
@@ -46,16 +58,31 @@
 						<table class="table table-bordered">
 							<thead>
 								<tr>
-									<td><a href="" class="btn btn-link"><i class="fa fa-square-o"></i></a></td>
+									<td>
+										<a href="" class="btn btn-link" ng-click="toggleSelection('saved_record')">
+											<i class="fa fa-square-o" ng-if="selected('saved_record') == 0"></i>
+											<i class="fa fa-check-square-o" ng-if="selected('saved_record') > 0"></i>
+										</a>
+									</td>
 									<td>
 										<div class="btn-group">
-											<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">[[folderf]] ([[folders.all]])<span class="caret"></span></button>
+											<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">[[folderf]] ([[ folderCount(folderf) ]])<span class="caret"></span></button>
 											<ul class="dropdown-menu" role="menu">
 												<li ng-repeat="(key,value) in folders"><a href="" ng-click="updateSorted(key)">[[key]] ([[value]])</a></li>
 											</ul>
 										</div>
 									</td>
-									<td>Action</td>
+									<td>
+										<span ng-if="selected('saved_record') == 0">Action</span>
+										<div class="btn-group" ng-if="selected('saved_record') > 0">
+											<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Bulk Action ([[ selected('saved_record') ]]) <span class="caret"></span></button>
+											<ul class="dropdown-menu" role="menu">
+												<li><a href="" ng-click="modify_user_data('saved_record', 'move', 'group')"><i class="fa fa-folder-o"></i> Move</a></li>
+												<li><a href="" ng-click="modify_user_data('saved_record', 'export', 'group')"><i class="fa fa-download"></i> Export</a></li>
+												<li><a href="" ng-click="modify_user_data('saved_record', 'delete', 'group')"><i class="fa fa-trash-o"></i> Delete</a></li>
+											</ul>
+										</div>
+									</td>
 								</tr>
 							</thead>
 							<tbody>
@@ -64,7 +91,7 @@
 								<td>
 									<a href="[[base_url]][[record.slug]]/[[record.id]]">[[ record.title ]]</a><br>
 									<small>Data Provider: [[ record.group ]]</small><br>
-									<small>Last Viewed: [[record.last_viewed * 1000 | date ]]</small>
+									<small>Last Viewed: [[record.last_viewed * 1000 | date ]] ([[record.last_viewed * 1000 | timeago ]])</small>
 								</td>
 								<td>
 									<div class="btn-group">
@@ -72,8 +99,8 @@
 											Action <span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu" role="menu">
-											<li><a href=""><i class="fa fa-folder-o"></i> Move</a></li>
-											<li><a href=""><i class="fa fa-download"></i> Export</a></li>
+											<li><a href="" ng-click="modify_user_data('saved_record', 'move', record.id)"><i class="fa fa-folder-o"></i> Move</a></li>
+											<li><a href="" ng-click="modify_user_data('saved_record', 'export', record.id)"><i class="fa fa-download"></i> Export</a></li>
 											<li><a href="" ng-click="modify_user_data('saved_record', 'delete', record.id)"><i class="fa fa-trash-o"></i> Delete</a></li>
 										</ul>
 									</div>
@@ -87,6 +114,7 @@
 					</div>
 				</div>
 			</section>
+			<div class="clear"></div>
 		</div>
 		<div class="col-md-3 sidebar" ng-if="user">
 			<div class="panel panel-primary swatch-white panel-content">

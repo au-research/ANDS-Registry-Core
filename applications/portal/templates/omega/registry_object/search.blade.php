@@ -147,7 +147,7 @@
         </ul>
     </div>
     
-    <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true">
+    <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true" ng-if="facet.value.length > 0">
         <h4>[[facet.name | filter_name]]</h4>
         <ul class="listy">
             <li ng-repeat="item in facet.value | limitTo:5 | orderBy:'item.value'">

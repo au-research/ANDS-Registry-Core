@@ -463,17 +463,22 @@ class Registry_object extends MX_Controller {
 
 	/**
 	 * List all attribute of a registry object
-	 * for development only!
 	 * @param $id
 	 * @return json
 	 */
-	function get($id) {
+	function get($id, $params='') {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
+
+		$params = explode('-', $params);
+		if(empty($params)) $params = array('core');
+
+	
+
 		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($id);
-		echo json_encode($ro->relationships);
+		$ro = $this->ro->getByID($id, $params);
+		echo json_encode($ro->prop);
 	}
 
     /**
