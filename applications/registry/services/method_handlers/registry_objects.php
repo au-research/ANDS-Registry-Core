@@ -361,6 +361,7 @@ function identifierResolution($identifier,$type)
             $identifiers['href'] = $identifier;
             $identifiers['display_text'] = strtoupper($type);
             $identifiers['hover_text'] = 'Resolve this URI';
+            $identifiers['display_icon'] = '';
             return $identifiers;
             break;
         case 'urn':
