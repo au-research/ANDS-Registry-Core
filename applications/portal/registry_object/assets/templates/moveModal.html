@@ -1,0 +1,38 @@
+<div style="modal-center">
+	<div class="modal-header">
+		<button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<h4 class="modal-title">Move to Folder</h4>
+	</div>
+	<div class="modal-body swatch-white">
+		<p ng-if="record">Saving Record: <b>[[ record.core.title ]]</b></p>
+		<p ng-if="records">Saving [[ records.length ]] records</p>
+		<div ng-if="folders">
+			<label for="">To folder</label>
+			<ul ng-if="record">
+				<li ng-repeat="(name,total) in folders" ng-if="name!='all'" >
+					<a href="" ng-click="moveToFolder(name)">[[ name ]]</a>
+					<i class="fa" ng-class="{true:'fa-check'}[inFolder(record.id,name)]"></i>
+				</li>
+			</ul>
+			<ul ng-if="records">
+				<li ng-repeat="(name,total) in folders" ng-if="name!='all'">
+					<a href="" ng-click="moveRecordsToFolder(records, name)">[[ name ]]</a>
+					<i class="fa" ng-class="{true:'fa-check'}[inRecordsFolder(records,name)]"></i>
+				</li>
+			</ul>
+		</div>
+		<label for="">Or into a new folder</label>
+		<form action="" ng-submit="moveToFolder(new_folder)">
+			<div class="input-group">
+	            <input type="text" value="" name="s" class="form-control ng-pristine ng-valid" placeholder="New Folder" ng-model="new_folder">
+	            <span class="input-group-btn">
+	                <button class="btn" type="submit" value="Search">Go</button>
+	            </span>
+	        </div>
+        </form>
+        <hr>
+        <div ng-if="bookmarked">
+        	<a href="" class="btn btn-danger" ng-click="unBookmark(record.id)"><i class="fa fa-trash-o"></i> Remove from MyRDA</a>
+        </div>
+	</div>
+</div>

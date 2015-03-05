@@ -18,6 +18,8 @@ class Registry_object extends MX_Controller {
         $key = null;
         $id = null;
         $slug = null;
+        $show_dup_identifier_qtip = true;
+        $fl = '?fl';
         if($this->input->get('id')){
 			$ro = $this->ro->getByID($this->input->get('id'));
 		}
@@ -27,7 +29,10 @@ class Registry_object extends MX_Controller {
             $ro = $this->ro->getByKey($key);
         }
         $this->load->library('blade');
-
+        if($this->input->get('fl') !== false)
+        {
+            $show_dup_identifier_qtip = false;
+        }
         if($ro)
         {
 		$this->load->library('blade');
@@ -85,6 +90,8 @@ class Registry_object extends MX_Controller {
             ->set('logo',$logo)
             ->set('banner', $banner)
             ->set('group_slug',$group_slug)
+            ->set('fl',$fl)
+            ->set('show_dup_identifier_qtip', $show_dup_identifier_qtip)
 			->render($render);
         }
         elseif(strpos($key, 'http://purl.org/au-research/grants/nhmrc/') !== false || strpos($key, 'http://purl.org/au-research/grants/arc/') !== false)
@@ -456,17 +463,22 @@ class Registry_object extends MX_Controller {
 
 	/**
 	 * List all attribute of a registry object
-	 * for development only!
 	 * @param $id
 	 * @return json
 	 */
-	function get($id) {
+	function get($id, $params='') {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
+
+		$params = explode('-', $params);
+		if(empty($params)) $params = array('core');
+
+	
+
 		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($id);
-		echo json_encode($ro->relationships);
+		$ro = $this->ro->getByID($id, $params);
+		echo json_encode($ro->prop);
 	}
 
     /**

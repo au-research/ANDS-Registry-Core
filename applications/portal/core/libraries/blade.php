@@ -76,6 +76,8 @@ class Blade
      */
     public $blade_ext = '.blade.php';
 
+    protected $template_stack = array();
+
     /**
      * Current Template
      * @var string
@@ -200,21 +202,28 @@ class Blade
      */
     public function render($template, $data = NULL, $return = FALSE)
     {
-        if (isset($data))
-        {
-            $this->set_data($data);
+        
+        try {
+            if (isset($data))
+            {
+                $this->set_data($data);
+            }
+
+            // Compile and run template
+            $compiled = $this->_compile($template);
+            $content = $this->_run($compiled, $this->_data);
+
+            if ( ! $return)
+            {
+                $this->output->append_output($content);
+            }
+
+            return $content;
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            var_dump($this->template_stack);
         }
-
-        // Compile and run template
-        $compiled = $this->_compile($template);
-        $content = $this->_run($compiled, $this->_data);
-
-        if ( ! $return)
-        {
-            $this->output->append_output($content);
-        }
-
-        return $content;
+        
     }
 
 
@@ -228,6 +237,8 @@ class Blade
     {
         // Default location
         $full_path = APP_PATH . 'templates/' . $this->template .'/'. $view . $this->blade_ext;
+
+        array_push($this->template_stack, $full_path);
         
         // Modular Separation / Modular Extensions has been detected
         if (method_exists($this->router, 'fetch_module'))

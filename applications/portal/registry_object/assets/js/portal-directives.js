@@ -1,6 +1,6 @@
 app.directive('resolve', function($http, $log, vocab_factory){
 	return {
-		template: '<ul class="listy"><li ng-repeat="item in result"><a href="" ng-click="toggleFilter(\'anzsrc-for\', item.notation, true)">{{item.label}} <small><i class="fa fa-remove"></i></small></a></li></ul>',
+		template: '<ul class="listy"><li ng-repeat="item in result"><a href="" ng-click="toggleFilter(\'anzsrc-for\', item.notation, true)">{{item.label | toTitleCase}} <small><i class="fa fa-remove"></i></small></a></li></ul>',
 		scope: {
 			subjects: '=subjects',
 			vocab: '='
@@ -241,4 +241,22 @@ app.directive('mappreview', function($log, uiGmapGoogleMapApi){
 			}
 		}
 	}
-});
+})
+
+app.directive('focusMe', function($timeout, $parse) {
+  return {
+    //scope: true,   // optionally create a child scope
+    link: function(scope, element, attrs) {
+      var model = $parse(attrs.focusMe);
+      scope.$watch(model, function(value) {
+        if(value === true) { 
+          $timeout(function() {
+            element[0].focus(); 
+          });
+        }
+      });
+    }
+  };
+})
+
+;

@@ -107,15 +107,6 @@
                 @include('registry_object/facet/map')
               </div>
 
-              <div ng-if="isAdvancedSearchActive('class')">
-                Search is restricted to: <b>[[prefilters.class]]</b>
-                <ul class="list-unstyled">
-                  <li ng-repeat="c in class_choices">
-                    <input type="radio" ng-model="prefilters.class" ng-value="c.name" /> [[c.val]]
-                  </li>
-                </ul>
-              </div>
-
               <div ng-if="isAdvancedSearchActive('review')">
                 <div class="panel panel-primary" ng-cloak>
                     <div class="panel-heading">Current Search</div>
@@ -151,10 +142,10 @@
       <div class="modal-footer swatch-white">
         <div class="btn-group pull-left">
           <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            Search for [[prefilters.class]] <span class="caret"></span>
+            Search for [[ prefilters.class | getLabelFor:class_choices ]] <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu">
-            <li ng-repeat="c in class_choices"><a href="" ng-click="prefilters.class=c.name">[[c.name]]</a></li>
+            <li ng-repeat="c in class_choices"><a href="" ng-click="prefilters.class=c.value">[[c.value | getLabelFor:class_choices ]]</a></li>
           </ul>
         </div>
         <button type="button" class="btn btn-link" ng-click="advanced('close');">Cancel</button>

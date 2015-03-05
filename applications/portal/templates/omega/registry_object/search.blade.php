@@ -139,7 +139,7 @@
           <li ng-repeat="item in vocab_tree | orderBy:'pos' | limitTo:5">
             <input type="checkbox" ng-checked="isVocabSelected(item)" ui-indeterminate="isVocabParentSelected(item)" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
             <a href="" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
-                [[item.prefLabel]]
+                [[ item.prefLabel | toTitleCase | truncate:30 ]]
                 <small>[[item.collectionNum]]</small>
             </a>
           </li>
@@ -147,7 +147,7 @@
         </ul>
     </div>
     
-    <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true">
+    <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true" ng-if="facet.value.length > 0">
         <h4>[[facet.name | filter_name]]</h4>
         <ul class="listy">
             <li ng-repeat="item in facet.value | limitTo:5 | orderBy:'item.value'">
