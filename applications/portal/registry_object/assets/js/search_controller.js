@@ -340,6 +340,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.goto = function(x) {
 		$scope.filters['p'] = ''+x;
 		$scope.hashChange();
+		$("html, body").animate({ scrollTop: 0 }, 500);
 	}
 
 
