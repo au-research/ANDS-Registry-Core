@@ -8,7 +8,7 @@
             <ul class="list-unstyled">
                 @foreach($ro->identifiers as $col)
                     <?php $hover_text=''; ?>
-                    @if($col['identifier']['display_text'])
+                    @if(isset($col['identifier']['display_text']))
                         <?php
                         $col['type'] = $col['identifier']['display_text'];
                         ?>

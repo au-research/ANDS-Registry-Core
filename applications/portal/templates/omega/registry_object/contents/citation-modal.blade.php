@@ -10,7 +10,7 @@
                             @if($ro->citations)
                             @foreach($order as $o)
                             @foreach($ro->citations as $citation)
-                            @if($citation['type']==$o)
+                            @if($citation['type']==$o && $citation['value']!='')
                         <dl>
                             <dt>Citation:</dt>
                             <dd>

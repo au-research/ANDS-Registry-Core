@@ -11,11 +11,13 @@ class Citations extends ROHandler {
 	function handle() {
 
         $result = array();
+
         if ($this->xml) {
 
             $coins_ro = $this->ro;
-
             $coins = $this->getCoinsSpan($coins_ro);
+
+
             foreach($this->xml->{$this->ro->class}->citationInfo as $citation){
                 foreach($citation->citationMetadata as $citationMetadata){
                     $contributors = Array();
@@ -89,7 +91,14 @@ class Citations extends ROHandler {
 
                 }
             }
-        }
+            $result[] = array(
+                'type'=> 'fullCitation',
+                'value' => '',
+                'citation_type' => '',
+                'coins' => $coins
+            );
+         }
+
         return $result;
 	}
 
@@ -303,7 +312,7 @@ Y2  - '.date("Y-m-d")."
         if($this->gXPath->evaluate("count(//ro:citationInfo/ro:citationMetadata/ro:identifier)")>0) {
             $query = "//ro:citationInfo/ro:citationMetadata/ro:identifier";
         }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier/)")>0) {
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier)")>0) {
             $query = "//ro:collection/ro:identifier";
         }
 
