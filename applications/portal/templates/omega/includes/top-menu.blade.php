@@ -1,5 +1,5 @@
 <div class="navbar swatch-black" role="banner">
-    <div class="container" style="z-index:9999">
+    <div class="container" style="z-index:10">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".main-navbar">
                 <span class="icon-bar"></span>

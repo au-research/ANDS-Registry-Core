@@ -25,6 +25,26 @@ angular.module('profile_components',[])
 			});
 			return promise;
 		},
+		get_user_folders: function(user) {
+			folders = {};
+			folders['all'] = 0;
+
+			if(user.user_data && user.user_data.saved_record) {
+			    folders['all'] = Object.keys(user.user_data.saved_record).length;
+
+			    angular.forEach(user.user_data.saved_record, function(record){
+			        if (record.folder){
+			            if(folders[record.folder] == undefined) {
+			                folders[record.folder] = 1;
+			            }
+			            else{
+			                folders[record.folder] = folders[record.folder] + 1;
+			            }
+			        }
+			    });
+			}
+			return folders;
+		},
 		get_user_available_actions: function(){
 			var actions = {
                 "saved_record_group":['move', 'delete', 'export'],
@@ -34,22 +54,7 @@ angular.module('profile_components',[])
             };
 
 			return actions;
-		},
-        get_user_folders: function(user_data){
-            var folders = {};
-            folders['all'] = Object.keys(user_data.saved_record).length;
-            angular.forEach(user_data.saved_record, function(record){
-                if (record.folder){
-                    if(folders[record.folder] == undefined) {
-                        folders[record.folder] = 1;
-                    }
-                    else{
-                        folders[record.folder] = folders[record.folder] + 1;
-                    }
-                }
-            });
-            return folders;
-        }
+		}
 	}
 })
 

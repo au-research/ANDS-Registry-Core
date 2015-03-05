@@ -59,10 +59,7 @@
 <script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.js', 'core')}}"></script>
 
 <!-- Search Script and Resources is included in every page -->
-<!-- <script src="{{asset_url('registry_object/js/search_components.js', 'full_base_path')}}"></script>
 
-<script src="{{asset_url('registry_object/js/main_search_controller.js', 'full_base_path')}}"></script>
-<script src="{{asset_url('registry_object/js/search_app.js', 'full_base_path')}}"></script> -->
 
 <script src="{{asset_url('lib/angular-lz-string/angular-lz-string.js', 'core')}}"></script>
 <script src="{{asset_url('registry_object/js/record_components.js', 'full_base_path')}}"></script>

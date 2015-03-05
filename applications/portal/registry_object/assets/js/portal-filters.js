@@ -10,14 +10,14 @@ angular.module('portal-filters', [])
 				case 'related_organisation': return 'Related Organisations' ;break;
 				case 'description': return 'Description' ;break;
 				case 'subject': return 'Subjects' ;break;
-				case 'access_rights': return 'Access Rights'; break;
+				case 'access_rights': return 'Access'; break;
 				case 'group': return 'Data Provider'; break;
-				case 'license_class': return 'Licenses'; break;
+				case 'license_class': return 'Licence'; break;
 				case 'type': return 'Type'; break;
 				case 'subject_vocab_uri': return 'Subject Vocabulary URI'; break;
 				case 'anzsrc-for': return 'Subjects'; break;
-				case 'year_from': return 'From Year'; break;
-				case 'year_to': return 'To Year'; break;
+				case 'year_from': return 'Time Period (from)'; break;
+				case 'year_to': return 'Time Period (to)'; break;
 				case 'funding_scheme': return 'Funding Scheme'; break;
 				case 'funders': return 'Funders'; break;
 				case 'administering_institution': return 'Administering Institution'; break;
@@ -38,6 +38,17 @@ angular.module('portal-filters', [])
 			} else {
 				return $sce.trustAsHtml(text);
 			}
+		}
+	})
+	.filter('getLabelFor', function($log){
+		return function(value, filter) {
+			var ret = '';
+			angular.forEach(filter, function(f){
+				if(f.value==value) {
+					ret = f.label;
+				}
+			});
+			return ret;
 		}
 	})
 	.filter('truncate', function () {
