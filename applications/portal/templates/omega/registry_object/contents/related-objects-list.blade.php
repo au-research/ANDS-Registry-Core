@@ -150,7 +150,6 @@
                     </p>
                     @endif
 
-
                     @if($hasRelatedWebsite)
                     <h4>Related Websites</h4>
                     @foreach($ro->relatedInfo as $relatedInfo)
@@ -159,13 +158,13 @@
                             <p>
                                 <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
                                 @if($relatedInfo['identifier']['identifier_href'])
-                                    <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><img class="identifier_logo" src= "{{portal_url()}}assets/core/images/icons/external_link.png" alt="External Link"/><br />
+                                    <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
                                 @else
                                     {{$relatedInfo['identifier']['identifier_value']}}
                                 @endif
                             </p>
                             @if($relatedInfo['relation']['url'])
-                                <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a><img class="identifier_logo" src= "{{portal_url()}}assets/core/images/icons/external_link.png" alt="External Link"/></p>
+                                <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
                             @endif
                         @endif
                     @endforeach

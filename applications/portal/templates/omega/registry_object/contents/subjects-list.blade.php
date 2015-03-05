@@ -21,4 +21,16 @@
         @include('registry_object/contents/tags')
 	</div>
 </div>
+@else
+    @if($ro->core['class']=='collection')
+    <div class="swatch-white">
+        <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+            <div class="panel-heading">
+                <a href="">Tags</a>
+            </div>
+
+            @include('registry_object/contents/tags')
+        </div>
+    </div>
+    @endif
 @endif
