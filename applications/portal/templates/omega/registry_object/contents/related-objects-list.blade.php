@@ -73,11 +73,12 @@
                                     <h5><a href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><i class="fa fa-book icon-portal"></i> {{$relatedInfo['title']}}</a></h5>
                                     <p>
                                         <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
-                                        @if(isset($relatedInfo['identifier']['identifier_href']['href']))
+                                        <?php if(isset($relatedInfo['identifier']['identifier_href']['href'])){ ?>
+
                                             <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
-                                        @else
+                                        <?php }else{ ?>
                                             {{$relatedInfo['identifier']['identifier_value']}}
-                                        @endif
+                                        <?php } ?>
                                     </p>
                                     @if($relatedInfo['relation']['url'])
                                         <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
