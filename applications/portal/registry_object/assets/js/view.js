@@ -46,7 +46,7 @@ $(document).ready(function() {
             width:135
         },
         events: {
-            show: function(){git commit 
+            show: function(){
                 setTimeout(function(){$('a[qtip_popup]').qtip('hide');}, 3000); //$('a[qtip_popup]').qtip('destroy')
             },
             hide: function () {
