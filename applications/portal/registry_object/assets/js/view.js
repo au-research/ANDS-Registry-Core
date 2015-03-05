@@ -41,7 +41,7 @@ $(document).ready(function() {
         },
         position: {viewport: $(window),my: 'bottom center',at: 'top center'},
         style: {
-            classes: 'ui-tooltip-lightcream',
+            classes: 'qtip-bootstrap',
             def: 'false',
             width:135
         },
