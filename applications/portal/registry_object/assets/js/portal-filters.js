@@ -40,6 +40,11 @@ angular.module('portal-filters', [])
 			}
 		}
 	})
+	.filter('toTitleCase', function($log){
+		return function(str){
+			return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});	
+		}
+	})
 	.filter('getLabelFor', function($log){
 		return function(value, filter) {
 			var ret = '';
