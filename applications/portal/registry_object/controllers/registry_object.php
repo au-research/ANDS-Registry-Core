@@ -18,6 +18,8 @@ class Registry_object extends MX_Controller {
         $key = null;
         $id = null;
         $slug = null;
+        $show_dup_identifier_qtip = true;
+        $fl = '?fl';
         if($this->input->get('id')){
 			$ro = $this->ro->getByID($this->input->get('id'));
 		}
@@ -27,7 +29,10 @@ class Registry_object extends MX_Controller {
             $ro = $this->ro->getByKey($key);
         }
         $this->load->library('blade');
-
+        if($this->input->get('fl') !== false)
+        {
+            $show_dup_identifier_qtip = false;
+        }
         if($ro)
         {
 		$this->load->library('blade');
@@ -85,6 +90,8 @@ class Registry_object extends MX_Controller {
             ->set('logo',$logo)
             ->set('banner', $banner)
             ->set('group_slug',$group_slug)
+            ->set('fl',$fl)
+            ->set('show_dup_identifier_qtip', $show_dup_identifier_qtip)
 			->render($render);
         }
         elseif(strpos($key, 'http://purl.org/au-research/grants/nhmrc/') !== false || strpos($key, 'http://purl.org/au-research/grants/arc/') !== false)

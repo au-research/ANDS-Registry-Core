@@ -24,6 +24,67 @@ $(document).ready(function() {
         }};
 	// $('.panel-body').readmore();
 
+
+
+    $('a[qtip_popup]').qtip({
+        content: {
+            text: $('a[qtip_popup]').attr('qtip_popup')
+        },
+        show: {
+            delay: 1000,
+            solo: false,
+            ready: true
+        },
+        hide: {
+            event: "inactive",
+            delay: 2000
+        },
+        position: {viewport: $(window),my: 'bottom center',at: 'top center'},
+        style: {
+            classes: 'ui-tooltip-lightcream',
+            def: 'false',
+            width:135
+        },
+        events: {
+            show: function(){git commit 
+                setTimeout(function(){$('a[qtip_popup]').qtip('hide');}, 3000); //$('a[qtip_popup]').qtip('destroy')
+            },
+            hide: function () {
+                $(this).qtip('destroy');
+            }
+        }
+    });
+
+    $('a[qtip]').mouseover(function(){
+        $(this).qtip('hide');
+        $('a[qtip]').qtip({
+            content:{
+                text:function(e,api){
+                    var tip = $(this).attr('qtip');
+                    var content = tip;
+                    if(tip.indexOf('#')==0 || tip.indexOf('.')==0) {
+                        if($(tip.toString()).length) {
+                            content = $(tip.toString()).html();
+                        }
+                    }
+                    return content;
+                }
+            },
+            show: {
+                event: 'mouseover, click',
+                ready: true
+            },
+            hide:'mouseleave, unfocus, click',
+            position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
+            style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
+        });
+    });
+
+
+
+
+
+
 	$('a[tip]').qtip({
 		content:{
 			text:function(e,api){
