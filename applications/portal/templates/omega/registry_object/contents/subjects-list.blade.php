@@ -11,7 +11,7 @@
 			?>
 			@foreach($subjects as $col)
             @if(isset($col['resolved']))
-			<a href="{{base_url().'search/#!/subject_value_resolved='.$col['resolved']}}" itemprop="about keywords">{{$col['resolved']}}</a> 
+			<a href="{{base_url().'search/#!/subject_value_resolved='.$col['resolved']}}" itemprop="about keywords">{{$col['resolved']}}</a> |
             @else
             <a href="{{base_url().'search/#!/subject_value_resolved='.$col['resolved']}}" itemprop="about keywords">{{$col['subject']}}</a> |
             @endif
