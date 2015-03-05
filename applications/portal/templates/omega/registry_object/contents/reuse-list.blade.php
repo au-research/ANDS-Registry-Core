@@ -19,7 +19,7 @@ $closure = '        </div>
         <p>
             {{$relatedInfo['title']}}<br />
             {{$relatedInfo['identifier']['identifier_type']}} :
-            @if($relatedInfo['identifier']['identifier_href'])
+            @if($relatedInfo['identifier']['identifier_href']['href'])
             <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
             @else
             {{$relatedInfo['identifier']['identifier_value']}}<br />
