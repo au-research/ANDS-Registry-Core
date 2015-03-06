@@ -14,7 +14,7 @@ class Directaccess extends ROHandler {
         $services = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
         foreach($services as $service){
             if($service['relation_url']!='' && $service['status']==PUBLISHED){
-                if($service['relation_description']=='')$service['relation_description']=$service['relation_url'];
+                if($service['relation_description']=='')$service['relation_description']=$service['title'];
                 $download[] = Array(
                     'access_type' => 'viaService',
                     'contact_type' => 'url',
