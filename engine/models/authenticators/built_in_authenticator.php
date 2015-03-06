@@ -29,4 +29,14 @@ class Built_in_authenticator extends Authenticator {
 		$user = $result->row(1);
 		$this->return_roles($user);
 	}
+
+	public function post_authentication_hook(){
+		$redirect = '/auth/dashboard';
+        $this->load->helper('cookie');
+        if($this->input->cookie('auth_redirect')) {
+            $redirect = $this->input->cookie('auth_redirect');
+            unset($_COOKIE['auth_redirect']);
+        }
+        redirect($redirect);
+	}
 }
