@@ -119,7 +119,10 @@ class Sync_extension extends ExtensionBase{
 			$json['description_value'][] = $description_str;
 			$json['description_type'][] = $type;
 		}
+        $listDescription = trim(strip_tags(html_entity_decode(html_entity_decode($theDescription))));
+        $json['list_description'] = $listDescription;
         $theDescription = htmlentities(strip_tags(html_entity_decode($theDescription), '<p></p><br><br />'));
+
 		//will have a description field even if it's blank
         //add <br/> for NL if doesn't already have <p> or <br/>
         if (strpos($theDescription, "&lt;br") !== FALSE || strpos($theDescription, "&lt;p") !== FALSE || strpos($theDescription, "&amp;#60;p") !== FALSE) {

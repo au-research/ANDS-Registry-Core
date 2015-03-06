@@ -59,7 +59,7 @@
                             <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
                         </p>
                         <p ng-if="getHighlight(doc.id)===false">
-                            [[doc.description | text | truncate:500]]
+                            [[doc.list_description | text | truncate:500]]
                         </p>
                         <div ng-if="doc.administering_institution">
                             <b>Administering Institution</b>: [[doc.administering_institution.join(',')]]

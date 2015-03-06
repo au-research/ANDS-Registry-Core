@@ -66,6 +66,7 @@
 		<field name="alt_title_search" type="text_en_splitting" indexed="true" stored="false" multiValued="true"/>
 		
 		<field name="description" type="text_en_splitting" indexed="true" stored="true" multiValued="false"/>
+        <field name="list_description" type="string" indexed="false" stored="true" multiValued="false"/>
 		<field name="description_value" type="text_en_splitting" indexed="true" stored="true" multiValued="true" termVectors="true"/>
 		<field name="description_type" type="string" indexed="true" stored="true" multiValued="true"/>
 	
