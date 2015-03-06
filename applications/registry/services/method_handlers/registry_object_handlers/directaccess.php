@@ -47,8 +47,8 @@ class Directaccess extends ROHandler {
             }
         }
 
-        if ($this->xml && $this->xml->{$this->ro->class}->location->address->electronic) {
-            if($this->gXPath->evaluate("count(//ro:location/ro:address/ro:electronic[@type='url'])")>0) {
+        if ($this->xml && $this->gXPath->evaluate("count(//ro:location/ro:address/ro:electronic") > 0) {
+            if($this->gXPath->evaluate("count(//ro:location/ro:address/ro:electronic[@type='url'])") > 0) {
                 $query = "//ro:location/ro:address/ro:electronic[@type='url']";
             }
 
