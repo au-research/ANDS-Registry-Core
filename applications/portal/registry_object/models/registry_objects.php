@@ -11,11 +11,11 @@ class Registry_objects extends CI_Model {
 	 * @param  int $id registry object id
 	 * @return _ro
 	 */
-	public function getByID($id, $props = array()) {
+	public function getByID($id, $props = array(), $useCache = true) {
 		if (empty($props)) {
 			$props = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
 		}
-		return new _ro($id, $props);
+		return new _ro($id, $props, $useCache);
 	}
 
 	/**
@@ -34,11 +34,12 @@ class Registry_objects extends CI_Model {
      * @todo
      * @return _ro
      */
-    public function getByKey($key) {
+    public function getByKey($key, $useCache = true) {
         $id = $this->findRecord(array('q'=>'+key:("'.$key.'")'), true);
         if($id)
         {
-            return new _ro($id, array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch'));
+            $props = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
+            return new _ro($id, $props, $useCache);
         }
         return false;
     }
