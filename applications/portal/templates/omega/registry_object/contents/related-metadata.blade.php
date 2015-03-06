@@ -28,7 +28,7 @@
 				    <h5><a href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><img src="<?php echo base_url()?>assets/core/images/icons/publications.png" style="margin-top: -2px; height: 24px; width: 24px;"> {{$relatedInfo['title']}}</a></h5>
 				    <p>
 				        <b>{{$relatedInfo['identifier']['identifier_type']}}</b> : 
-				        @if($relatedInfo['identifier']['identifier_href']['href'])
+				        @if(isset($relatedInfo['identifier']['identifier_href']['href']))
 				            <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{$relatedInfo['identifier']['identifier_href']['display_icon']}}<br />
 				        @else
 				            {{$relatedInfo['identifier']['identifier_value']}}
