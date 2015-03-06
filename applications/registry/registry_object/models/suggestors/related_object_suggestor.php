@@ -73,7 +73,7 @@ class Related_object_suggestor extends _GenericSuggestor
                             'slug'=>$row['slug'],
                             'title'=>$row['title'],
                             'class'=>$class,
-                            'RDAUrl' => portal_url($row['slug'].'/'.$row['id']),
+                            'RDAUrl' => portal_url($row['slug'].'/'.$row['registry_object_id']),
                             'relation_type'=>$connection['relation_type'],
                             'score'=>1
                         );
