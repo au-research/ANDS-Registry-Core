@@ -8,7 +8,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Directaccess extends ROHandler {
 	function handle() {
 		$download = array();
-
+        $query ='';
         $relationshipTypeArray = ['isPresentedBy','supports'];
         $classArray = ['service'];
         $services = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
