@@ -15,6 +15,8 @@ class Profile extends MX_Controller {
 		}
 	}
 
+	
+
 	public function get_user_data() {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -139,7 +141,14 @@ class Profile extends MX_Controller {
 		$this->index();
 	}
 
+	private function save_auth_cookie() {
+		if(isset($_SERVER['HTTP_REFERER'])) {
+			setcookie("auth_redirect", $_SERVER['HTTP_REFERER'], time()+3600, '/');
+		}
+	}
+
 	function login() {
+		$this->save_auth_cookie();
 		$authenticators = array(
 			'built-in' => array(
 				'slug' => 'built_in',
@@ -177,6 +186,8 @@ class Profile extends MX_Controller {
 
 	function logout() {
 		if($this->user->isLoggedIn()) {
+			$this->load->helper('cookie');
+			delete_cookie("auth_redirect");
 			if(!session_id()) session_start();
 			$this->session->sess_destroy();
 			redirect('profile/login');

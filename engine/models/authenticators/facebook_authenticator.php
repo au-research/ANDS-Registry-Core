@@ -55,10 +55,4 @@ class Facebook_authenticator extends Authenticator {
 
 	public function load_params($params) {}
     private function check_req() {}
-
-    public function post_authentication_hook() {
-    	$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : 'profile';
-    	if($redirect=='profile') $redirect = portal_url('profile#!/dashboard');
-    	redirect($redirect);
-    }
 }
