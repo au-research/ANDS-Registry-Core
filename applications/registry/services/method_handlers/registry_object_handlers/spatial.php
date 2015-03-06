@@ -16,7 +16,7 @@ class Spatial extends ROHandler {
                     'polygon' => $this->index['spatial_coverage_polygons'][$key],
                     'center' => $this->index['spatial_coverage_centres'][$key],
                 );
-                if($this->index['spatial_coverage_area_sum']) $result['area_sum'] = $this->index['spatial_coverage_area_sum'];
+                if(isset($this->index['spatial_coverage_area_sum'])) $result['area_sum'] = $this->index['spatial_coverage_area_sum'];
             }
         }
         return $result;
