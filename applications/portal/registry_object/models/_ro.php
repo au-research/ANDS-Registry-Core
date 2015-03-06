@@ -8,10 +8,9 @@ class _ro {
 	//object properties are all located in the same array
 	public $prop;
 
-
-	function __construct($id, $populate=array('core')) {
+	function __construct($id, $populate=array('core'), $useCache) {
 		//populate the property as soon as the object is constructed
-		$this->init($id, $populate);
+		$this->init($id, $populate, $useCache);
 	}
 
 	/**
@@ -20,11 +19,11 @@ class _ro {
 	 * @param  array  $populate a list of attributes to populate, default to just core
 	 * @return void           
 	 */
-	function init($id, $populate = array('core')) {
+	function init($id, $populate = array('core'), $useCache) {
 		$this->prop = array(
 			'id' => $id
 		);
-		$this->fetch($populate);
+		$this->fetch($populate, $useCache);
 	}
 
 	/**
@@ -67,25 +66,38 @@ class _ro {
 	 * @todo  ERROR HANDLING
 	 * @return void         
 	 */
-	public function fetch($params = array('core')) {
+	public function fetch($params = array('core'), $useCache = true) {
 		
 		//get the URL
 		$url = $this->construct_api_url($params);
 		$this->prop['api_url'] = $url;
-
+        $this->prop['message'] = "OK";
+        $this->prop['fromCache'] = $useCache;
+        $this->prop['status'] = false;
 		//try and get it from cache
 		$cache_id = 'ro-api-'.$this->id;
 		$ci =& get_instance();
 		$ci->load->driver('cache');
-		if(! $content = $ci->cache->file->get($cache_id)) {
-			//not in the cache, get it and save it
-			$content = @file_get_contents($url);
-			$ci->cache->file->save($cache_id, $content, 10);
+        if($useCache)
+        {
+            if(! $content = $ci->cache->file->get($cache_id))
+            {
+                //not in the cache, get it and save it
+                $content = @file_get_contents($url);
+                $contentArray = json_decode($content, true);
+                if ($contentArray['status']=='success') {
+                    $ci->cache->file->save($cache_id, $content, 10);
+                }
+            }
 		}
-		
+        else
+        {
+            $content = @file_get_contents($url);
+        }
+
 		//Fetch the data and populate as per the result
 		$content = json_decode($content, true);
-
+        $this->prop['status'] = $content['status'];
 		if ($content['status']=='success') {
 			foreach($params as $par) {
 				if(isset($content['message'][$par])) {
@@ -95,6 +107,9 @@ class _ro {
 				}
 			}
 		}
+        else{
+            $this->prop['message'] = $content['message'];
+        }
 	}
 
 	/**

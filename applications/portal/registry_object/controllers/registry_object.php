@@ -20,65 +20,70 @@ class Registry_object extends MX_Controller {
         $slug = null;
         $show_dup_identifier_qtip = true;
         $fl = '?fl';
+        $useCache = true;
+        if($this->input->get('useCache') == 'no'){
+            $useCache = false;
+        }
+
         if($this->input->get('id')){
-			$ro = $this->ro->getByID($this->input->get('id'));
+			$ro = $this->ro->getByID($this->input->get('id'), null, $useCache);
 		}
-        if(!$ro && $this->input->get('key'))
+        if($ro->prop['status'] == 'error' && $this->input->get('key'))
         {
             $key = $this->input->get('key');
-            $ro = $this->ro->getByKey($key);
+            $ro = $this->ro->getByKey($key, $useCache);
         }
         $this->load->library('blade');
         if($this->input->get('fl') !== false)
         {
             $show_dup_identifier_qtip = false;
         }
-        if($ro)
+        if($ro->prop['status'] == 'success')
         {
-		$this->load->library('blade');
+            $this->load->library('blade');
 
-		$banner = asset_url('images/collection_banner.jpg', 'core');
-		$theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
-        $logo = $this->getLogo($ro->core['group']);
-        $group_slug = url_title($ro->core['group'], '-', true);
+            $banner = asset_url('images/collection_banner.jpg', 'core');
+            $theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
+            $logo = $this->getLogo($ro->core['group']);
+            $group_slug = url_title($ro->core['group'], '-', true);
 
-        switch($ro->core['class']){
-            case 'collection':
-                $render = 'registry_object/view';
-                break;
-            case 'activity':
-                $render = 'registry_object/activity';
-                $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'activity');
-                $banner =  asset_url('images/activity_banner.jpg', 'core');
-                break;
-            case 'party':
-                $render = 'registry_object/party';
-                $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'party');
-                break;
-            case 'service':
-                $render = 'registry_object/service';
-                $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'service');
-                break;
-            default:
-                $render = 'registry_object/view';
-                break;
-        }
+            switch($ro->core['class']){
+                case 'collection':
+                    $render = 'registry_object/view';
+                    break;
+                case 'activity':
+                    $render = 'registry_object/activity';
+                    $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'activity');
+                    $banner =  asset_url('images/activity_banner.jpg', 'core');
+                    break;
+                case 'party':
+                    $render = 'registry_object/party';
+                    $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'party');
+                    break;
+                case 'service':
+                    $render = 'registry_object/service';
+                    $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'service');
+                    break;
+                default:
+                    $render = 'registry_object/view';
+                    break;
+            }
 
-		//record event
-		$ro->event('view');
-		ulog_terms(
-			array(
-				'event' => 'portal_view',
-				'roid' => $ro->core['id'],
-				'roclass' => $ro->core['class'],
-				'dsid' => $ro->core['data_source_id'],
-				'group' => $ro->core['group'],
-				'ip' => $this->input->ip_address(),
-				'user_agent' => $this->input->user_agent()
-			),'portal', 'info'
-		);
+            //record event
+            $ro->event('view');
+            ulog_terms(
+                array(
+                    'event' => 'portal_view',
+                    'roid' => $ro->core['id'],
+                    'roclass' => $ro->core['class'],
+                    'dsid' => $ro->core['data_source_id'],
+                    'group' => $ro->core['group'],
+                    'ip' => $this->input->ip_address(),
+                    'user_agent' => $this->input->user_agent()
+                ),'portal', 'info'
+            );
 
-		$this->blade
+		    $this->blade
 			->set('scripts', array('view', 'view_app', 'tag_controller'))
 			->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
 			->set('ro', $ro)
@@ -122,7 +127,7 @@ class Registry_object extends MX_Controller {
             $this->blade
                 ->set('scripts', array('view'))
                 ->set('lib', array('jquery-ui'))
-                ->set('message', "RECORD CAN'T BE LOCATED FOR YOU!!")
+                ->set('message', $ro->prop['status'].NL.$ro->prop['message'])
                 ->set('logo','http://researchdata.ands.org.au/assets/core/images/sad_smiley.png')
                 ->render('soft_404');
         }
