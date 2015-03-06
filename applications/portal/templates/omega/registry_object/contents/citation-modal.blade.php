@@ -30,7 +30,11 @@
                                 ({{$citation['date']}}): {{$citation['title']}}.
                                 <span itemprop="publisher">{{$citation['publisher']}}</span>.
                                 {{$citation['identifier_type']}} :{{$citation['identifier']}}
+                                @if($citation['identifierResolved']['href'])
                                 <br /><a href="{{$citation['identifierResolved']['href']}}">{{$citation['identifier']}}</a>
+                                @else
+                                <br />{{$citation['identifier']}}</a>
+                                @endif
                                 @if($citation['url'])
                                 <br /><a href="{{$citation['url']}}">{{$citation['url']}}</a>
                                 @endif
