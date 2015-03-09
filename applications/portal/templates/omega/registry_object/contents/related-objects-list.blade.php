@@ -155,15 +155,26 @@
                     <h4>Related Websites</h4>
                     @foreach($ro->relatedInfo as $relatedInfo)
                         @if($relatedInfo['type']=='website')
-                            <h5><i class="fa fa-globe icon-portal"></i> {{$relatedInfo['title']}}</h5>
-                            <p>
-                                <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
-                                @if($relatedInfo['identifier']['identifier_href'])
+                            @if($relatedInfo['title'])
+                            <h5><i class="fa fa-globe fa-lg icon-portal""></i> {{$relatedInfo['title']}}</h5>
+                                <p>
+                                    <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                                    @if($relatedInfo['identifier']['identifier_href'])
+                                        <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
+                                    @else
+                                        {{$relatedInfo['identifier']['identifier_value']}}
+                                    @endif
+                                </p>
+                            @else
+                                <p> <i class="fa fa-globe icon-portal"></i>
+                                    <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                                    @if($relatedInfo['identifier']['identifier_href'])
                                     <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
-                                @else
+                                    @else
                                     {{$relatedInfo['identifier']['identifier_value']}}
-                                @endif
-                            </p>
+                                    @endif
+                                </p>
+                            @endif
                             @if($relatedInfo['relation']['url'])
                                 <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
                             @endif
