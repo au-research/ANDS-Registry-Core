@@ -28,6 +28,30 @@ app.directive('resolve', function($http, $log, vocab_factory){
 	}
 });
 
+app.directive('classicon', function($log) {
+	return {
+		template: '<i class="{{class}}"></i>',
+		scope: {
+			fclass: '='
+		},
+		transclude: true,
+		link: function(scope, element) {
+			scope.$watch('fclass', function() {
+				if (scope.fclass=='collection') {
+					scope.class = 'fa fa-folder-open';
+				} else if(scope.fclass=='service') {
+					scope.class = 'fa fa-wrench';
+				} else if(scope.fclass=='party') {
+					scope.class = 'fa fa-user';
+				} else if(scope.fclass=='activity') {
+					scope.class = 'fa fa-flask';
+				}
+			});
+			
+		}
+	}
+});
+
 app.directive('mappreview', function($log, uiGmapGoogleMapApi){
 	return {
 		template: '<a href="" ng-click="advanced(\'spatial\')"><img src="{{static_img_src}}"/></a><div></div>',

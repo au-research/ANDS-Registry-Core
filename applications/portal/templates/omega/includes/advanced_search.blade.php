@@ -142,10 +142,10 @@
       <div class="modal-footer swatch-white">
         <div class="btn-group pull-left">
           <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            Search for [[ prefilters.class | getLabelFor:class_choices ]] <span class="caret"></span>
+            Search for <span classicon fclass="filters.class"></span> [[ prefilters.class | getLabelFor:class_choices ]] <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu">
-            <li ng-repeat="c in class_choices"><a href="" ng-click="prefilters.class=c.value">[[c.value | getLabelFor:class_choices ]]</a></li>
+            <li ng-repeat="c in class_choices"><a href="" ng-click="prefilters.class=c.value"><span classicon fclass="c.value"></span> [[c.value | getLabelFor:class_choices ]]</a></li>
           </ul>
         </div>
         <button type="button" class="btn btn-link" ng-click="advanced('close');">Cancel</button>

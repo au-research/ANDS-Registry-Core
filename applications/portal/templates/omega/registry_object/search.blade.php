@@ -99,6 +99,9 @@
         [[filters]]
     </div> -->
     <div class="panel-body swatch-white">
+        <div>
+            <span classicon fclass="filters.class"></span> [[ filters.class | getLabelFor:class_choices ]]
+        </div>
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
             <h4>[[name | filter_name]]</h4>
             <ul class="listy" ng-show="isArray(value) && name!='anzsrc-for'">
