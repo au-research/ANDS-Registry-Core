@@ -89,6 +89,10 @@ class Authenticator extends CI_Model {
 			$redirect = portal_url('profile#!/dashboard');
 		}
 
+		$this->redirect_hook($redirect);
+	}
+
+	public function redirect_hook($redirect){
 		redirect($redirect);
 	}
 

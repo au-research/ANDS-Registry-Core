@@ -85,15 +85,15 @@
                   <ul class="list-unstyled">
                     <li ng-repeat="item in vocab_tree">
                       <input type="checkbox" ng-checked="isVocabSelected(item, prefilters)" ui-indeterminate="isVocabParentSelected(item)" ng-click="togglePreFilter('anzsrc-for', item.notation, false)">
-                      <a href="" ng-click="getSubTree(item)">[[item.prefLabel]]</a>
+                      <a href="" ng-click="getSubTree(item)">[[item.prefLabel | toTitleCase]]</a>
                       <ul ng-if="item.subtree">
                         <li ng-repeat="item2 in item.subtree">
                           <input type="checkbox" ng-checked="isVocabSelected(item, prefilters2)" ui-indeterminate="isVocabParentSelected(item2)" ng-click="togglePreFilter('anzsrc-for', item2.notation, false)">
-                          <a href="" ng-click="getSubTree(item2)">[[item2.prefLabel]]</a>
+                          <a href="" ng-click="getSubTree(item2)">[[item2.prefLabel | toTitleCase]]</a>
                           <ul ng-if="item2.subtree">
                             <li ng-repeat="item3 in item2.subtree">
                               <input type="checkbox" ng-checked="isVocabSelected(item, prefilters3)" ui-indeterminate="isVocabParentSelected(item3)" ng-click="togglePreFilter('anzsrc-for', item3.notation, false)">
-                              <a href="" ng-click="getSubTree(item3)">[[item3.prefLabel]]</a>
+                              <a href="" ng-click="getSubTree(item3)">[[item3.prefLabel | toTitleCase]]</a>
                             </li>
                           </ul>
                         </li>
