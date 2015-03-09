@@ -106,11 +106,15 @@ class Portal_user extends CI_Model {
                                 $user_data[$type][$id] = $record;
                                 break;
                             case 'modify':
-                                $oldRecord = $user_data[$type][$id];
-                                foreach($oldRecord as $key=>$val)
-                                    if(isset($record[$key]))
-                                        $oldRecord[$key] = $record[$key];
-                                $user_data[$type][$id] = $oldRecord;
+                                $oldRecord = isset($user_data[$type][$id]) ? $user_data[$type][$id] : false;
+                                if($oldRecord) {
+                                	foreach($oldRecord as $key=>$val) {
+	                            	    if(isset($record[$key])){
+	                            	        $oldRecord[$key] = $record[$key];
+                            	    	}
+                            		}
+                            		$user_data[$type][$id] = $oldRecord;
+                            	}
                                 break;
                             case 'delete':
                                 unset($user_data[$type][$id]);
