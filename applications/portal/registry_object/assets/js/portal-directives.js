@@ -28,6 +28,24 @@ app.directive('resolve', function($http, $log, vocab_factory){
 	}
 });
 
+app.directive('resolveRo', function($log, $http, record_factory) {
+	return {
+		template: '{{title}}',
+		scope: {
+			roid: '='
+		},
+		transclude: true,
+		link: function(scope) {
+			scope.title = scope.roid;
+			record_factory.get_record(scope.roid).then(function(data){
+				if(data.core && data.core.title) {
+					scope.title = data.core.title;
+				}
+			});
+		}
+	}
+});
+
 app.directive('classicon', function($log) {
 	return {
 		template: '<i class="{{class}}"></i>',
