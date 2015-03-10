@@ -8,27 +8,43 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Temporal extends ROHandler {
 	function handle() {
 		$result = array();
-        if ($this->index && $this->xml->{$this->ro->class}->coverage) {
-            if($this->xml->{$this->ro->class}->coverage->temporal){
-                foreach($this->xml->{$this->ro->class}->coverage->temporal->date as $date){
-                    $eachDate = Array();
-                        $eachDate[] = Array(
-                            'type'=>(string)$date['type'],
-                            'dateFormat'=>(string)$date['dateFormat'],
-                            'date'=>(string)($date)
-                        );
-                    $result[] = Array(
+        if($this->gXPath->evaluate("count(//ro:coverage/ro:temporal)")>0) {
+            $query = "//ro:coverage/ro:temporal";
+        }
 
-                        'type' => 'date',
-                        'date' => $eachDate
-                    );
-                }
-                foreach($this->xml->{$this->ro->class}->coverage->temporal->text as $temporal){
-                    $result[] = Array(
-                        'type' => 'text',
-                        'date' => (string)$temporal
-                    );
-                }
+        $dates = $this->gXPath->query($query);
+        foreach($dates as $date){
+            $eachDate = Array();
+            foreach($date->getElementsByTagName('date') as $adate){
+               $eachDate[] = Array(
+                    'type'=>$adate->getAttribute('type'),
+                    'dateFormat'=>$adate->getAttribute('dateFormat'),
+                    'date'=>$adate->nodeValue
+                );
+
+            }
+            if(count($eachDate)>0){
+                $result[]= Array(
+                    'type'=>'date',
+                    'date'=> $eachDate
+                );
+            }
+        }
+        foreach($dates as $date){
+            $eachDate = Array();
+            foreach($date->getElementsByTagName('text') as $adate){
+                $eachDate[] = Array(
+                    'type'=>$adate->getAttribute('type'),
+                    'dateFormat'=>$adate->getAttribute('dateFormat'),
+                    'date'=>$adate->nodeValue
+                );
+
+            }
+            if(count($eachDate)>0){
+                $result[]= Array(
+                    'type'=>'text',
+                    'date'=> $eachDate
+                );
             }
         }
         return $result;
