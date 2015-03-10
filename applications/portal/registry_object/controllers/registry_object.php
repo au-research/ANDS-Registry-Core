@@ -48,14 +48,15 @@ class Registry_object extends MX_Controller {
 
         if((!$ro || $ro->prop['status'] == 'error') && $slug){
             $ro = $this->ro->getBySlug($slug, null, $useCache);
-            if($ro && $ro->prop['status'] == 'success')
-            {
-                redirect($slug.'/'.$ro->prop['core']['id']);
-            }
             if($ro == 'MULTIPLE')
             {
                 redirect('search/#!/slug='.$slug);
             }
+            if($ro && $ro->prop['status'] == 'success')
+            {
+                redirect($slug.'/'.$ro->prop['core']['id']);
+            }
+
         }
 
         if((!$ro || $ro->prop['status'] == 'error') && $key)
