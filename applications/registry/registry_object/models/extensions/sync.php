@@ -70,13 +70,13 @@ class Sync_extension extends ExtensionBase{
 		foreach($single_values as $s){
 			$json[$s] = $this->ro->{$s};
 		}
-		$json['display_title'] = $this->ro->title;
+		$json['display_title'] = strip_tags(html_entity_decode($this->ro->title));
 
 		$json['record_modified_timestamp'] = gmdate('Y-m-d\TH:i:s\Z', ($this->ro->updated ? $this->ro->updated : $this->ro->created));
 		$json['record_created_timestamp'] = gmdate('Y-m-d\TH:i:s\Z', $this->ro->created);
 
 		try{
-			$json['simplified_title'] = iconv('UTF-8', 'ASCII//TRANSLIT', $this->ro->list_title);
+			$json['simplified_title'] = strip_tags(html_entity_decode(iconv('UTF-8', 'ASCII//TRANSLIT', $this->ro->list_title)));
 		} catch (Exception $e) {
 			throw new Exception ('iconv installation/configuration required for simplified title');
 		}
