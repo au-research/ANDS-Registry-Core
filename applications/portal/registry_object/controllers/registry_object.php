@@ -104,7 +104,7 @@ class Registry_object extends MX_Controller {
             }
 
             //record event
-            $ro->event('view');
+            $ro->event('viewed');
             ulog_terms(
                 array(
                     'event' => 'portal_view',

@@ -152,18 +152,20 @@ class _ro {
 	 * @param  string $event view|cite|access
 	 * @return void
 	 */
-	public function event($event = 'viewed', $value = 1) {
-		$ci =& get_instance();
-    	$db = $ci->load->database('portal', true);
-		if ($this->stat()) {
+	public function event($event = 'NO DEFAULT', $value = 1) {
+        $validEvents = array('viewed','cited','accessed');
+		if ($this->stat() && in_array($event, $validEvents))
+        {
 			//make sure there's a stat instance
-			$ci->db->where('ro_id', $this->core['id']);
-			if ($event=='view') {
-				$db->set('viewed', 'viewed +'.$value, FALSE);
+            $ci =& get_instance();
+            $db = $ci->load->database('portal', true);
+			$db->where('ro_id', $this->core['id']);
+			if ($event=='viewed') {
+                $db->set('viewed', 'viewed +'.$value, FALSE);
 			} else if($event=='cited') {
-				$db->set('cited', 'cited +'.$value, FALSE);
+                $db->set('cited', 'cited +'.$value, FALSE);
 			} else if($event=='accessed') {
-				$db->set('accessed', 'accessed + '.$value, FALSE);
+                $db->set('accessed', 'accessed + '.$value, FALSE);
 			}
 			$db->update('record_stats');
 		}
