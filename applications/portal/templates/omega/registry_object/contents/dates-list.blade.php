@@ -19,7 +19,7 @@
                         elseif(isset($prev_date['type']) && $prev_date['type']=='dateTo'&& $each_date['type']=='dateTo') $type = ' ,';
                         else $type = '';
                         $prev_date=$each_date;
-                        echo $type." ".date('d M Y',strtotime($each_date['date']))." ";
+                        echo $type." ".nicifyDate($each_date['date'])." ";
                     }
                     $prev_date='';
                     ?>
@@ -31,19 +31,23 @@
                 @foreach($ro->temporal as $date)
                 <p>
 
-                    Data Temporal Coverage:
+                    Temporal Coverage:
                     <?php
 
                     if($date['type']=='date'){
 
+                        $prev_date=Array();
                         foreach($date['date'] as $each_date)
                         {
+
                             if(isset($prev_date['type'])&& $prev_date['type']=='dateFrom' && $each_date['type']=='dateTo') $type = 'to';
                             elseif(isset($prev_date['type']) && $prev_date['type']=='dateTo'&& $each_date['type']=='dateTo') $type = ' ,';
+                            elseif(isset($prev_date['type']) && $prev_date['type']=='dateTo'&& $each_date['type']=='dateFrom') $type = ' ,';
                             else $type = '';
                             $prev_date=$each_date;
-                            echo $type.' <span itemprop="temporal">'.date('d M Y',strtotime($each_date['date']))."</span> ";
+                            echo $type." ".nicifyDate($each_date['date'])." ";
                         }
+                        $prev_date='';
                     } elseif ($date['type']=='text'){
                         echo (string)$date['date'];
                     }

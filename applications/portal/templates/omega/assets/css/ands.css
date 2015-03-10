@@ -100,11 +100,14 @@ ul{
 
 a[href^="http://"]:after,
 a[href^="https://"]:after {
-   content: url('../../../../assets/core/images/icons/external_link.png');
-   margin: 0 0 0 5px;
+    font-family: FontAwesome;
+    content: "\f08e";
+    display: inline-block;
+    padding-left: 3px;
+    vertical-align: middle;
 }
 
-a[href*="ands.org.au/"]:after,
+a[href*="ands.org.au"]:after,
 a[href*="doi.org/"]:after,
 a[href*="nla"]:after,
 a[href*="orcid"]:after,
@@ -112,4 +115,17 @@ a[href*="handle.net"]:after,
 a[href*="creativecommons.org/"]:after{
     content: '';
     margin: 0;
+}
+a.gov_logo:after{
+    content: '';
+    margin: 0;
+}
+a.cboxElement:after{
+    content: '';
+    margin: 0;
+}
+
+a.noexicon:after {
+    content: '';
+    margin: ;
 }

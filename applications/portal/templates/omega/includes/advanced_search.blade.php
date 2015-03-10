@@ -85,15 +85,15 @@
                   <ul class="list-unstyled">
                     <li ng-repeat="item in vocab_tree">
                       <input type="checkbox" ng-checked="isVocabSelected(item, prefilters)" ui-indeterminate="isVocabParentSelected(item)" ng-click="togglePreFilter('anzsrc-for', item.notation, false)">
-                      <a href="" ng-click="getSubTree(item)">[[item.prefLabel]]</a>
+                      <a href="" ng-click="getSubTree(item)">[[item.prefLabel | toTitleCase]]</a>
                       <ul ng-if="item.subtree">
                         <li ng-repeat="item2 in item.subtree">
                           <input type="checkbox" ng-checked="isVocabSelected(item, prefilters2)" ui-indeterminate="isVocabParentSelected(item2)" ng-click="togglePreFilter('anzsrc-for', item2.notation, false)">
-                          <a href="" ng-click="getSubTree(item2)">[[item2.prefLabel]]</a>
+                          <a href="" ng-click="getSubTree(item2)">[[item2.prefLabel | toTitleCase]]</a>
                           <ul ng-if="item2.subtree">
                             <li ng-repeat="item3 in item2.subtree">
                               <input type="checkbox" ng-checked="isVocabSelected(item, prefilters3)" ui-indeterminate="isVocabParentSelected(item3)" ng-click="togglePreFilter('anzsrc-for', item3.notation, false)">
-                              <a href="" ng-click="getSubTree(item3)">[[item3.prefLabel]]</a>
+                              <a href="" ng-click="getSubTree(item3)">[[item3.prefLabel | toTitleCase]]</a>
                             </li>
                           </ul>
                         </li>
@@ -142,10 +142,10 @@
       <div class="modal-footer swatch-white">
         <div class="btn-group pull-left">
           <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            Search for [[ prefilters.class | getLabelFor:class_choices ]] <span class="caret"></span>
+            Search for <span classicon fclass="filters.class"></span> [[ prefilters.class | getLabelFor:class_choices ]] <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu">
-            <li ng-repeat="c in class_choices"><a href="" ng-click="prefilters.class=c.value">[[c.value | getLabelFor:class_choices ]]</a></li>
+            <li ng-repeat="c in class_choices"><a href="" ng-click="prefilters.class=c.value"><span classicon fclass="c.value"></span> [[c.value | getLabelFor:class_choices ]]</a></li>
           </ul>
         </div>
         <button type="button" class="btn btn-link" ng-click="advanced('close');">Cancel</button>

@@ -19,11 +19,11 @@
                                     <div class="panel-body">
                                         <div class="container-fluid">
                                             <div class="row">
+                                                @if($logo)
                                                 <div class="col-xs-12 col-md-2">
-                                                    @if($logo)
                                                     <a href="{{base_url('contributors')}}/{{$group_slug}}" title="Record provided by {{$ro->core['group']}}"><img src="{{$logo}}" alt="logo" class="header-logo animated fadeInDown"></a>
-                                                    @endif
                                                 </div>
+                                                @endif
                                                 <div class="col-xs-12 col-md-10">
                                                     <h1 class="hairline bordered-normal"><span itemprop="name">{{$ro->core['title']}}</span></h1>
                                                     @if(isset($ro->core['alt_title']))

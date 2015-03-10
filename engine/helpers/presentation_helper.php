@@ -385,3 +385,43 @@ function is_array_empty($input) {
 
    return $result;
 }
+
+function nicifyDate($w3cdtf)
+{
+    utc_timezone();
+
+    $time = strtotime($w3cdtf);
+    if (!$time) {
+        //we need to cater for the instance when someone legitimately enters 1st jan 1970
+        if($w3cdtf == "1970-01-01T00:00:00Z"){
+            return "1970";
+        }else{
+            return false;
+        }
+    }
+
+    if(strlen($w3cdtf)<11){
+        return($w3cdtf);
+    }
+    if (date("H:i:s",$time) == "00:00:00")
+    {
+        if(date("m-d", $time) == "01-01")
+        {
+            // Assume friendly display of just the year
+            return date("Y", $time); // i.e. 2001
+        }
+        else
+        {
+            // Assume friendly display of full date (and no time)
+            return date("Y-m-d", $time); 	// i.e.  March 10, 2001
+        }
+    }
+    else
+    {
+        // Assume friendly display of full date and time
+        return date("Y-m-d H:i", $time); 	// i.e.  March 10, 2001, 5:16 pm
+    }
+
+    reset_timezone();
+
+}
