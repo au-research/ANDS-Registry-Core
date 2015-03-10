@@ -16,6 +16,16 @@
                                 <h3>We're sorry...</h3>
                                 Oops! An error occured:<br/><br/>
                                 <div style="width:600px;"><pre>{{$message}}</pre>
+                                <pre>@if(isset($id))
+                                    id: {{$id}}</pre>
+                                @endif
+                                <pre>@if(isset($slug))
+                                    slug: {{$slug}}</pre>
+                                @endif
+                                <pre>@if(isset($key))
+                                    key: {{$key}}</pre>
+                                @endif
+
                                 </div>
                             </div>
                         </div>

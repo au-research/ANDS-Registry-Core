@@ -24,8 +24,18 @@ class Registry_objects extends CI_Model {
 	 * @todo
 	 * @return _ro
 	 */
-	public function getBySlug($slug) {
-
+	public function getBySlug($slug, $useCache = true) {
+        if($this->checkRecordCount(array('q'=>'+slug:("'.$slug.'")+status:PUBLISHED')) > 1)
+        {
+            return 'MULTIPLE';
+        }
+        $id = $this->findRecord(array('q'=>'+slug:("'.$slug.'")+status:PUBLISHED'), true);
+        if($id)
+        {
+            $props = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
+            return new _ro($id, $props, $useCache);
+        }
+        return false;
 	}
 
     /**
@@ -168,10 +178,18 @@ class Registry_objects extends CI_Model {
 		} else {
 			return false;
 		}
-
 	}
 
+    public function checkRecordCount($filters = array()){
+        $this->load->library('solr');
+        $this->solr->init();
+        $this->solr->setFilters($filters);
+        $this->solr->setOpt('rows', 1);
+        $this->solr->setOpt('fl', 'id');
+        $result = $this->solr->executeSearch(true);
+        return $result['response']['numFound'];
 
+    }
 
 	function __construct() {
 		parent::__construct();

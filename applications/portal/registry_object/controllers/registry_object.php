@@ -15,30 +15,63 @@ class Registry_object extends MX_Controller {
 	 */
 	function view(){
 
-        $key = null;
-        $id = null;
-        $slug = null;
+
         $show_dup_identifier_qtip = true;
         $fl = '?fl';
         $useCache = true;
+        $ro = null;
         if($this->input->get('useCache') == 'no'){
             $useCache = false;
         }
+        $id = $this->input->get('id');
+        $slug = $this->input->get('slug');
+        $key = $this->input->get('key');
+        $any = $this->input->get('any');
 
-        if($this->input->get('id')){
-			$ro = $this->ro->getByID($this->input->get('id'), null, $useCache);
-		}
-        if($ro->prop['status'] == 'error' && $this->input->get('key'))
+
+        if($any)
         {
-            $key = $this->input->get('key');
-            $ro = $this->ro->getByKey($key, $useCache);
+            if(is_numeric($any))
+                $id = $any;
+            else
+                $slug = $any;
         }
+
+        if($id)
+        {
+            $ro = $this->ro->getByID($id, null, $useCache);
+            if($ro && $ro->prop['status'] == 'success' && (!$slug || $slug != $ro->prop['core']['slug']))
+            {
+                redirect($ro->prop['core']['slug'].'/'.$id);
+            }
+        }
+
+        if((!$ro || $ro->prop['status'] == 'error') && $slug){
+            $ro = $this->ro->getBySlug($slug, null, $useCache);
+            if($ro && $ro->prop['status'] == 'success')
+            {
+                redirect($slug.'/'.$ro->prop['core']['id']);
+            }
+            if($ro == 'MULTIPLE')
+            {
+                redirect('search/#!/slug='.$slug);
+            }
+        }
+
+        if((!$ro || $ro->prop['status'] == 'error') && $key)
+        {
+            $ro = $this->ro->getByKey($key, $useCache);
+            if($ro && $ro->prop->core['status'] == 'success'){
+                redirect($ro->prop['core']['slug'].'/'.$ro->prop['core']['id']);
+            }
+        }
+
         $this->load->library('blade');
         if($this->input->get('fl') !== false)
         {
             $show_dup_identifier_qtip = false;
         }
-        if($ro->prop['status'] == 'success')
+        if($ro && $ro->prop['status'] == 'success')
         {
             $this->load->library('blade');
 
@@ -124,10 +157,17 @@ class Registry_object extends MX_Controller {
                 ->render('soft_404_activity');
         }
         else{
+            if(!$ro)
+                $message = "NO RECORD FOUND";
+            else
+                $message = $ro->prop['status'].NL.$ro->prop['message'];
             $this->blade
                 ->set('scripts', array('view'))
                 ->set('lib', array('jquery-ui'))
-                ->set('message', $ro->prop['status'].NL.$ro->prop['message'])
+                ->set('id', $this->input->get('id'))
+                ->set('key', $this->input->get('key'))
+                ->set('slug', $this->input->get('slug'))
+                ->set('message', $message)
                 ->set('logo','http://researchdata.ands.org.au/assets/core/images/sad_smiley.png')
                 ->render('soft_404');
         }
