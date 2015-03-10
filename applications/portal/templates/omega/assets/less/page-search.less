@@ -12,11 +12,43 @@
 	background:white;
 	border-bottom:1px solid #acacac;
 }
+
+/* Smartphones (landscape) ----------- */
+
+
+
+
 .advanced-search-modal {
 	.modal-dialog {
-		width: 1200px;
+		@media screen {
+			@media (min-width:768px) {
+				width: 95%;
+			}
+			@media (min-width:1300px) {
+				width: 1200px;
+			}
+		}
+		#advmenu { padding:0 }
+		#advbody { max-height:450px;overflow:auto; }
+		.navbar-toggle { margin:0; }
+		.navbar { min-height:40px; margin-bottom:15px;}
+		.navbar-brand { font-size:19px; padding:10px 15px;}
 	}
 }
+
+
+
+@media only screen and (min-width : 1024px) {
+	.advanced-search-modal .modal-dialog { width: 1000px}
+}
+
+@media only screen and (min-width : 1300px) {
+	.advanced-search-modal .modal-dialog { width: 1200px}
+}
+
+
+
+
 .angular-google-map-container { height: 400px; }
 .map-canvas {
 	img {max-width: none !important;}

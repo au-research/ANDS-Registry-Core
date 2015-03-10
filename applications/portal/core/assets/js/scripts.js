@@ -99,4 +99,11 @@ jQuery(document).ready(function( $ ) {
 
     // Init the isotope
     isotopeInit();
+
+    $(document).on('click', '.togglediv', function(e){
+        e.preventDefault();
+        var div = $(this).attr('data-toggle');
+        console.log(div, $(div), $(div).length);
+        $(div).toggle();
+    });
 });

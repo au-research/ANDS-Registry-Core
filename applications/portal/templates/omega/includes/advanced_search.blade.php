@@ -8,21 +8,35 @@
         <h4 class="modal-title" id="myModalLabel">Advanced Search</h4>
       </div>
       <div class="modal-body">
-        <div class="container">
+        <div class="container-fluid">
           <div class="row">
-            <div class="col-md-2">
-              <ul class="nav nav-pills nav-stacked">
-                <li ng-repeat="field in advanced_fields" ng-class="{'active':field.active==true}">
-                  <a href="" ng-click="selectAdvancedField(field.name)">
-                    <span class="badge" ng-show="sizeofField(field.name) > 0">[[sizeofField(field.name)]]</span>
-                    [[field.display]]
-                  </a>
-                </li>
-              </ul>
+            <div class="col-xs-12 col-md-2">
+
+              <nav class="navbar navbar-default" role="navigation">
+                 <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#advmenu">
+                       <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Filters</a>
+                 </div>
+                 <div class="clearfix"></div>
+                 <div class="collapse navbar-collapse" id="advmenu">
+                    <ul class="nav nav-pills nav-stacked">
+                      <li ng-repeat="field in advanced_fields" ng-class="{'active':field.active==true}">
+                        <a href="" ng-click="selectAdvancedField(field.name)">
+                          <span class="badge" ng-show="sizeofField(field.name) > 0">[[sizeofField(field.name)]]</span>
+                          [[field.display]]
+                        </a>
+                      </li>
+                    </ul>
+                 </div>
+              </nav>
+
             </div>
-            <div class="col-md-10">
+            <div class="col-xs-12 col-md-10" id="advbody">
               <div ng-show="isAdvancedSearchActive('terms')">
-                <input type="text" ng-model="query">
                 <div ng-controller="QueryBuilderCtrl">
                   <div class="alert alert-info">
                       <strong>Query Construction</strong><br>
