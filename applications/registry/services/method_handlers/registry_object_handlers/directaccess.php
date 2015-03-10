@@ -57,6 +57,14 @@ class Directaccess extends ROHandler {
 
                 foreach($locations as $directaccess) {
                     $target = $directaccess->getAttribute('target');
+                    $url_link = '';
+                    foreach($directaccess->getElementsByTagName('value') as $url){
+                        $url_link = trim($url->nodeValue);
+                    }
+                    if(strpos($url_link, 'http') === false)
+                    {
+                        $url_link = 'http://'.$url_link;
+                    }
                     if($target!='directDownload' && $target!='landingPage') $target='url';
                     $title='';
                     foreach($directaccess->getElementsByTagName('title') as $title){
@@ -78,7 +86,7 @@ class Directaccess extends ROHandler {
                      $download[] = Array(
                             'access_type' => $target,
                             'contact_type' => 'url',
-                            'access_value' => $directaccess->nodeValue,
+                            'access_value' => $url_link,
                             'title'=>$title ,
                             'mediaType'=>$mediaType,
                             'byteSize'=>$byteSize,
