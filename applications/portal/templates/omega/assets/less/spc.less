@@ -14,19 +14,22 @@
 .icon-portal { color: @secondaryColor !important; }
 .icon-white {color: white !important;}
 
+.no-bottom { 
+	margin-bottom:0px !important;
+	li { padding:0px 5px !important; border:none !important; }
+}
+
 .modal-center {
-  text-align: center;
-}
-
-.modal-center:before {
-  display: inline-block;
-  vertical-align: middle;
-  content: " ";
-  height: 100%;
-}
-
-.modal-center .modal-dialog {
-  display: inline-block;
-  text-align: left;
-  vertical-align: middle;
+	&:before {
+		display: inline-block;
+		vertical-align: middle;
+		content: " ";
+		height: 100%;
+	}
+	.modal-dialog {
+		display: inline-block;
+		text-align: left;
+		vertical-align: middle;
+	}
+  	text-align: center;
 }
