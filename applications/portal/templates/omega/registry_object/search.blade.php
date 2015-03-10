@@ -99,13 +99,23 @@
         [[filters]]
     </div> -->
     <div class="panel-body swatch-white">
+        <div>
+            <span classicon fclass="filters.class"></span> [[ filters.class | getLabelFor:class_choices ]]
+        </div>
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
             <h4>[[name | filter_name]]</h4>
             <ul class="listy" ng-show="isArray(value) && name!='anzsrc-for'">
-                <li ng-repeat="v in value track by $index"> <a href="" ng-click="toggleFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
+                <li ng-repeat="v in value track by $index"> 
+                    <a href="" ng-click="toggleFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
             </ul>
             <ul class="listy" ng-show="isArray(value)===false && name!='anzsrc-for'">
-                <li> <a href="" ng-click="toggleFilter(name, value, true)">[[value]]<small><i class="fa fa-remove"></i></small></a> </li>
+                <li>
+                    <a href="" ng-click="toggleFilter(name, value, true)">
+                        <span ng-if="name!='related_party_one_id'">[[value]]</span>
+                        <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
+                        <small><i class="fa fa-remove"></i></small>
+                    </a>
+                </li>
             </ul>
             <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></div>
         </div>

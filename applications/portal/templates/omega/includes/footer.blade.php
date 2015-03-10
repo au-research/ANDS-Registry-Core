@@ -42,6 +42,20 @@
                     </div>
                 </div>
                 <div class="col-md-3">
+                    <?php
+                        $url = ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? base_url().$ro->core['slug'].'/'.$ro->core['id'] : current_url() );
+                        $title = ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? $ro->core['title']. ' - Research Data Australia' : 'Research Data Australia' );
+                    ?>
+                    <div id="categories-5" class="sidebar-widget widget_categories">
+                        <h3 class="sidebar-header">Social</h3>
+                        <ul>
+                            <li class="cat-item"><a class="noexicon" href="http://www.facebook.com/sharer.php?u={{$url}}"><i class="fa fa-facebook"></i> Facebook</a></li>
+                            <li class="cat-item"><a class="noexicon" href="https://twitter.com/share?url={{$url}}&text={{$title}}&hashtags=andsdata"><i class="fa fa-twitter"></i> Twitter</a></li>
+                            <li class="cat-item"><a class="noexicon" href="https://plus.google.com/share?url={{$url}}"><i class="fa fa-google"></i> Google</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
                     <div id="categories-4" class="sidebar-widget  widget_categories">
                         <h3 class="sidebar-header">External Resources</h3>
                         <ul>

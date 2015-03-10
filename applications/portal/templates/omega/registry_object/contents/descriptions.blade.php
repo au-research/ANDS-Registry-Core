@@ -13,16 +13,22 @@
 			@foreach($order as $o)
 				@foreach($ro->descriptions as $desc)
 					@if($desc['type']==$o && $desc['description']!='')
-						<small>{{readable($desc['type'])}}</small>
-						<span itemprop="description">{{html_entity_decode($desc['description'])}}</span>
+						<div class="description">
+							<small>{{readable($desc['type'])}}</small>
+							<span itemprop="description">{{html_entity_decode($desc['description'])}}</span>
+						</div>
+						
 					@endif
 				@endforeach
 			@endforeach
 			
 			@foreach($ro->descriptions as $desc)
 				@if(!in_array($desc['type'], $order) && !in_array($desc['type'], $omit) && $desc['description']!='')
-					<small>{{readable($desc['type'])}}</small>
-					<span itemprop="description">{{html_entity_decode($desc['description'])}}</span>
+					<div class="description">
+						<small>{{readable($desc['type'])}}</small>
+						<span itemprop="description">{{html_entity_decode($desc['description'])}}</span>
+					</div>
+					
 				@endif
 			@endforeach
         </div>

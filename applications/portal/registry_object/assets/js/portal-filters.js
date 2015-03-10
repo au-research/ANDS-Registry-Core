@@ -22,6 +22,7 @@ angular.module('portal-filters', [])
 				case 'funders': return 'Funders'; break;
 				case 'administering_institution': return 'Administering Institution'; break;
 				case 'activity_status': return 'Status'; break;
+				case 'related_party_one_id': return 'Related Researcher'; break;
 				default: return text;
 			}
 		}

@@ -24,4 +24,6 @@ class LDAP_authenticator extends Authenticator {
 			throw new Exception('Login failed. Bad credentials');
 		}
 	}
+
+	public function redirect_hook($to) {}
 }
