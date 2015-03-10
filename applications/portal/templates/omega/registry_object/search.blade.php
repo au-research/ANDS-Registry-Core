@@ -94,13 +94,18 @@
 
 @section('sidebar')
 <div class="panel panel-primary" ng-cloak>
-    <div class="panel-heading">Current Search</div>
+    <div class="panel-heading">
+        Current Search
+        <div class="pull-right">
+            <span classicon fclass="filters.class"></span> [[ filters.class | getLabelFor:class_choices ]]
+        </div>
+    </div>
     <!-- <div class="panel-body swatch-white">
         [[filters]]
     </div> -->
     <div class="panel-body swatch-white">
         <div>
-            <span classicon fclass="filters.class"></span> [[ filters.class | getLabelFor:class_choices ]]
+            
         </div>
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
             <h4>[[name | filter_name]]</h4>

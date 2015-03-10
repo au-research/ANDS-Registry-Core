@@ -64,6 +64,7 @@ app.directive('classicon', function($log) {
 				} else if(scope.fclass=='activity') {
 					scope.class = 'fa fa-flask';
 				}
+				scope.class += ' icon-white';
 			});
 			
 		}
