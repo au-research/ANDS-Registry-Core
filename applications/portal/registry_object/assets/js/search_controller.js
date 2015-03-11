@@ -122,6 +122,11 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			return true;
 		} else return false;
 	}
+	
+	$scope.newSearch = function() {
+		$scope.filters['p'] = 1;
+		$scope.hashChange();
+	}
 
 	$scope.hashChange = function(){
 		// $log.debug('query', $scope.query, search_factory.query);

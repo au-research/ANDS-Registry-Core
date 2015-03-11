@@ -7,7 +7,7 @@
 </div>
 <div class="col-md-8" data-os-animation="fadeInDown" data-os-animation-delay="" ng-cloak>
     <!-- <form role="search" method="get" action="{{base_url('search')}}"> -->
-    <form role="search" method="get" ng-submit="hashChange()">
+    <form role="search" method="get" ng-submit="newSearch()">
         <span ng-if="filters.class && filters.class!='collection'">Search is restricted to [[ filters.class | getLabelFor:class_choices ]]</span>
         <div class="input-group">
             <span class="input-group-btn">
@@ -24,7 +24,7 @@
             </span>
             <input type="text" value="" name="q" class="form-control" placeholder="Search for data" ng-model="query">
             <span class="input-group-btn">
-              <button class="btn btn-primary" type="button" ng-if="hasFilter()" ng-click="clearSearch()">
+              <button class="btn btn-primary" type="button" ng-if="hasFilter() && !isLoading()" ng-click="clearSearch()">
                 <i class='fa fa-remove'></i>
               </button>
               <button class="btn btn-primary" type="button" ng-if="isLoading()">
