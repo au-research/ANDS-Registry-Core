@@ -7,6 +7,6 @@
     	@endif
     @endforeach
     @if(sizeof($ro->relationships['party_one']) < $ro->relationships['party_one_count_solr'])
-		<a href="{{portal_url()}}search/#!/related_party_one_id={{$ro->core['id']}}/class=party/type=person">View all {{$ro->relationships['party_one_count_solr']}} related parties</a></li>
+		<a href="{{portal_url()}}search/#!/related_{{$ro->core['class']}}_id={{$ro->core['id']}}/class=party/type=person">View all {{$ro->relationships['party_one_count_solr']}} related parties</a></li>
 	@endif
 @endif
