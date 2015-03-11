@@ -58,8 +58,11 @@
                         <p ng-repeat="(index, content) in getHighlight(doc.id)">
                             <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
                         </p>
-                        <p ng-if="getHighlight(doc.id)===false">
-                            [[doc.list_description | text | truncate:500]]
+                        <p ng-if="getHighlight(doc.id)===false && doc.list_description">
+                            [[ doc.list_description | text | truncate:500 ]]
+                        </p>
+                        <p ng-if="getHighlight(doc.id)===false && !doc.list_description && doc.description">
+                            [[ doc.description | text | truncate:500 ]]
                         </p>
                         <div ng-if="doc.administering_institution">
                             <b>Administering Institution</b>: [[doc.administering_institution.join(',')]]
