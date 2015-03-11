@@ -35,7 +35,7 @@ app.factory('search_factory', function($http, $log){
 			{value:'score desc',label:'Relevance'},
 			{value:'title asc',label:'Title A-Z'},
 			{value:'title desc',label:'Title Z-A'},
-			{value:'title desc',label:'Popular'},
+			// {value:'title desc',label:'Popular'},
 			{value:'record_created_timestamp asc',label:'Date Added'}
 		],
 
