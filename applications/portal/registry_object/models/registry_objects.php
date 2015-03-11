@@ -115,9 +115,13 @@ class Registry_objects extends CI_Model {
 
 			$result = json_decode($result, true);
 
+
+			$title = isset($result['message']['title'][0]) ? $result['message']['title'][0] : false;
+			if (!$title) $title = isset($result['message']['container-title'][0]) ? $result['message']['container-title'][0] : 'No Title';
+
 			if($result) {
 				return array(
-					'title' => isset($result['message']['title']) ? $result['message']['title'][0] : 'No Title',
+					'title' => $title,
 					'publisher' => isset($result['message']['publisher']) ? $result['message']['publisher'] : '',
 					'source' => isset($result['message']['source']) ? $result['message']['source'] : '',
 					'DOI' => isset($result['message']['DOI']) ? $result['message']['DOI'] : '',
