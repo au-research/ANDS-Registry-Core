@@ -116,12 +116,13 @@
             <h4>[[name | filter_name]]</h4>
             <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li ng-repeat="v in value track by $index"> 
-                    <a href="" ng-click="toggleFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
+                    <a href="" ng-click="toggleFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove"></i></small> </a>
+                </li>
             </ul>
             <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
-                        <span ng-if="name!='related_party_one_id'">[[value]]</span>
+                        <span ng-if="name!='related_party_one_id'">[[ value | truncate:30 ]]</span>
                         <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
                         <small><i class="fa fa-remove"></i></small>
                     </a>

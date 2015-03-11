@@ -199,12 +199,12 @@ app.factory('search_factory', function($http, $log){
 							var old = filters[term];
 							filters[term] = [];
 							filters[term].push(old);
-							filters[term].push(value);
+							filters[term].push(decodeURIComponent(value));
 						} else if(typeof filters[term]=='object') {
-							filters[term].push(value);
+							filters[term].push(decodeURIComponent(value));
 						}
 					} else {
-						filters[term] = value;
+						filters[term] = decodeURIComponent(value);
 					}
 				}
 			});
@@ -231,10 +231,10 @@ app.factory('search_factory', function($http, $log){
 			var hash = '';
 			$.each(filters, function(i,k){
 				if(typeof k!='object'){
-					hash+=i+'='+k+'/';
+					hash+=i+'='+encodeURIComponent(k)+'/';
 				} else if (typeof k=='object'){
 					$.each(k, function(){
-						hash+=i+'='+decodeURIComponent(this)+'/';
+						hash+=i+'='+encodeURIComponent(this)+'/';
 					});
 				}
 			});
