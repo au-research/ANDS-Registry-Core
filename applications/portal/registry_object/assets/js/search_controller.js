@@ -492,6 +492,14 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.presearch();
 	}
 
+	$scope.$watch('prefilters.class', function(newv){
+		if(newv=='activity') {
+			$scope.advanced_fields = search_factory.advanced_fields_activity;
+		} else if(newv=='collection') {
+			$scope.advanced_fields = search_factory.advanced_fields;
+		}
+	});
+
 	$scope.advancedSearch = function(){
 		$scope.filters = {};
 		angular.copy($scope.prefilters, $scope.filters);
