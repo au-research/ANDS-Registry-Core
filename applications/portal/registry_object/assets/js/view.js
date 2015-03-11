@@ -80,29 +80,6 @@ $(document).ready(function() {
         });
     });
 
-
-
-
-
-
-	$('a[tip]').qtip({
-		content:{
-			text:function(e,api){
-				var tip = $(this).attr('tip');
-				var content = tip;
-				if(tip.indexOf('#')==0 || tip.indexOf('.')==0) {
-					if($(tip.toString()).length) {
-						content = $(tip.toString()).html();
-					}
-				}
-				return content;
-			}
-		},
-		hide:'mouseleave, unfocus, click',
-		position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
-		style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
-	});
-
 });
 
 $(document).on('click', '.ro_preview', function(event){
