@@ -15,7 +15,8 @@
 	<div class="container-fluid element-short-top">
 		<div class="panel swatch-white">
 			<div class="panel-body">
-				<ul>
+				<span ng-if="status=='loading'"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
+				<ul ng-if="groups" ng-cloak>
 					<li ng-repeat="group in groups"><a href="#/groups/[[group]]">[[group]]</a></li>
 				</ul>
 			</div>

@@ -20,7 +20,9 @@ app.config(['$routeProvider', '$locationProvider',
   }]);
 
 app.controller('GroupsCtrl', function($scope, groupFactory, $log){
+	$scope.status = 'loading';
 	groupFactory.get().then(function(data){
+		$scope.status = 'done';
 		$scope.groups = data.groups;
 		// $log.debug($scope.groups);
 	});
