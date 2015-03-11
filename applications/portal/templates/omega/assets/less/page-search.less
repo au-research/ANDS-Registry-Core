@@ -13,11 +13,6 @@
 	border-bottom:1px solid #acacac;
 }
 
-/* Smartphones (landscape) ----------- */
-
-
-
-
 .advanced-search-modal {
 	.modal-dialog {
 		@media screen {
@@ -37,18 +32,18 @@
 	}
 }
 
-
-
-@media only screen and (min-width : 1024px) {
-	.advanced-search-modal .modal-dialog { width: 1000px}
+.search-header {
+	line-height:30px;
+	p {margin:0;}
+	.sort-box {
+		@media (max-width:1000px) {
+			text-align:left;
+		}
+		@media (min-width:1000px) {
+			text-align:right;
+		}
+	}
 }
-
-@media only screen and (min-width : 1300px) {
-	.advanced-search-modal .modal-dialog { width: 1200px}
-}
-
-
-
 
 .angular-google-map-container { height: 400px; }
 .map-canvas {
@@ -90,6 +85,9 @@ ul.listy {
 			display:inline;
 			padding:8px 5px;
 			small {float:right;}
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 }
