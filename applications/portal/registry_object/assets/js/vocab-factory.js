@@ -37,7 +37,7 @@ app.factory('vocab_factory', function($http, $log){
 					found = true;
 				} else if (angular.isArray(filters['anzsrc-for'])) {
 					angular.forEach(filters['anzsrc-for'], function(code){
-						if(code==item.notation && !found) {
+						if((code==item.notation || item.notation.indexOf(code) == 0) && !found) {
 							found =  true;
 						}
 					});
@@ -51,7 +51,7 @@ app.factory('vocab_factory', function($http, $log){
 					found = true;
 				} else if (angular.isArray(filters['anzsrc-seo'])) {
 					angular.forEach(filters['anzsrc-seo'], function(code){
-						if(code==item.notation && !found) {
+						if((code==item.notation || item.notation.indexOf(code) == 0) && !found) {
 							found =  true;
 						}
 					});

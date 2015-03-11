@@ -112,12 +112,12 @@
                       <span ng-if="!item.has_narrower">[[item.prefLabel | toTitleCase]] ([[ item.collectionNum ]])</span>
                       <ul ng-if="item.subtree && item.showsubtree">
                         <li ng-repeat="item2 in item.subtree">
-                          <input type="checkbox" ng-checked="isVocabSelected(item2, prefilters2)" ui-indeterminate="isVocabParentSelected(item2)" ng-click="togglePreFilter(vocab, item2.notation, false)">
+                          <input type="checkbox" ng-checked="isVocabSelected(item2, prefilters)" ui-indeterminate="isVocabParentSelected(item2)" ng-click="togglePreFilter(vocab, item2.notation, false)">
                           <a href="" ng-click="getSubTree(item2)" ng-if="item2.has_narrower">[[item2.prefLabel | toTitleCase]] ([[ item2.collectionNum ]])</a>
                           <span ng-if="!item2.has_narrower">[[item2.prefLabel | toTitleCase]] ([[ item.collectionNum ]])</span>
                           <ul ng-if="item2.subtree && item2.showsubtree">
                             <li ng-repeat="item3 in item2.subtree">
-                              <input type="checkbox" ng-checked="isVocabSelected(item3, prefilters3)" ui-indeterminate="isVocabParentSelected(item3)" ng-click="togglePreFilter(vocab, item3.notation, false)">
+                              <input type="checkbox" ng-checked="isVocabSelected(item3, prefilters)" ui-indeterminate="isVocabParentSelected(item3)" ng-click="togglePreFilter(vocab, item3.notation, false)">
                               <a href="" ng-click="getSubTree(item3)" ng-if="item3.has_narrower">[[item3.prefLabel | toTitleCase]] ([[ item3.collectionNum ]])</a>
                               <span ng-if="!item3.has_narrower">[[item3.prefLabel | toTitleCase]] ([[ item.collectionNum ]])</span>
                             </li>
