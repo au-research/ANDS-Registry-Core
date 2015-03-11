@@ -32,6 +32,7 @@ angular.module('portal-filters', [])
 				case 'gcmd': return 'GCMD Keywords'; break;
 				case 'lcsh': return 'LCSH'; break;
 				case 'keywords': return 'Keywords'; break;
+				case 'refine': return 'Refine'; break;
 				default: return text;
 			}
 		}
