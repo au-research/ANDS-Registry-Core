@@ -631,6 +631,33 @@ class Solr {
 					$completion_from = isset($filters['completion_from']) ? $filters['completion_from'] : '*';
 					$this->setOpt('fq','latest_year:['.$completion_from.' TO '.$completion_to.']');
 					break;
+				case 'funding_scheme':
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' funding_scheme:("'.$v.'")'; 
+						$this->setOpt('fq', $fq_str);
+					}else{
+						if($value!='all') $this->setOpt('fq', '+funding_scheme:("'.$value.'")');
+					}
+					break;
+				case 'funders':
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' funders:("'.$v.'")'; 
+						$this->setOpt('fq', $fq_str);
+					}else{
+						if($value!='all') $this->setOpt('fq', '+funders:("'.$value.'")');
+					}
+					break;
+				case 'activity_status':
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' activity_status:("'.$v.'")'; 
+						$this->setOpt('fq', $fq_str);
+					}else{
+						if($value!='all') $this->setOpt('fq', '+activity_status:("'.$value.'")');
+					}
+					break;
 			}
 		}
 		return $this;
