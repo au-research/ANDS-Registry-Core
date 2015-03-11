@@ -74,11 +74,19 @@
         <div class="panel-body widget_tag_cloud">
             <div class="tag-cloud">
                 <ul>
-                    <?php array_splice($group['facet']['subjects'], 100); ?>
+                    <?php 
+                        if(sizeof($group['facet']['subjects'] > 50)) {
+                            $orig = sizeof($group['facet']['subjects']);
+                        }
+                        if($this->input->get('m')!='allsubjects') array_splice($group['facet']['subjects'], 50); 
+                    ?>
                     @foreach($group['facet']['subjects'] as $subject)
                         <li><a href="">{{$subject['name']}} <span>({{$subject['num']}})</span></a></li>
                     @endforeach
                 </ul>
+                @if($orig > sizeof($group['facet']['subjects']))
+                    Displaying: {{sizeof($group['facet']['subjects'])}} out of {{$orig}} available subjects. <a href="{{current_url()}}?m=allsubjects">View All</a>
+                @endif
             </div>
         </div>
     </div>
