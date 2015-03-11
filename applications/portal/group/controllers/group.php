@@ -118,7 +118,7 @@ class Group extends MX_Controller {
 	}
 
 	function cms() {
-		acl_enforce('REGISTRY_STAFF', '', true);
+		acl_enforce('REGISTRY_USER', '', true);
 		$this->blade
 			->set('scripts', array('contributor_app', 'contributor_factory'))
 			->set('lib', array('textAngular', 'ngupload'))
