@@ -16,6 +16,7 @@
         </a>
         <nav ng-hide="loading" ng-cloak class="pull-right">
             <ul class="pagi">
+                <li><small>Page [[ page.cur ]] / [[ page.end ]]</small></li>
                 <li><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
                 <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
                 <li><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
@@ -85,6 +86,7 @@
         <small ng-hide="loading" ng-cloak class="pull-left"><b>[[result.response.numFound]]</b> results ([[result.responseHeader.QTime]] milliseconds)</small>
         <nav ng-hide="loading" ng-cloak class="pull-right">
             <ul class="pagi">
+                <li><small>Page [[ page.cur ]] / [[ page.end ]]</small></li>
                 <li><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
                 <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
                 <li><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
