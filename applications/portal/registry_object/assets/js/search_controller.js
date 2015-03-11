@@ -165,6 +165,11 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		});
 	}
 
+	$scope.addKeyWord = function(extra_keywords) {
+		$scope.toggleFilter('refine', extra_keywords, true);
+		$scope.extra_keywords = '';
+	}
+
 	$scope.presearch = function(){
 		search_factory.search_no_record($scope.prefilters).then(function(data){
 			$scope.preresult = data;

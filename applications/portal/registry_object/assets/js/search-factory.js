@@ -95,8 +95,12 @@ app.factory('search_factory', function($http, $log){
 			// $log.debug('search filters', filters);
 			var promise = $http.post(base_url+'registry_object/filter', {'filters':filters}).then(function(response){
 				this.status = 'idle';
-				// $log.debug('response', response.data);
-				return response.data;
+				if(response.data.response && response.data.responseHeader.status==0) {
+					return response.data;
+				} else {
+					$log.debug(response);
+					return false;
+				}
 			});
 			return promise;
 		},
@@ -123,6 +127,7 @@ app.factory('search_factory', function($http, $log){
 			// });
 
 			//other facet fields
+
 			angular.forEach(result.facet_counts.facet_fields, function(item, index) {
 				facets[index] = [];
 				for (var i = 0; i < result.facet_counts.facet_fields[index].length ; i+=2) {
