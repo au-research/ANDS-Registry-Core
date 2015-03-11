@@ -126,6 +126,10 @@ class Profile extends MX_Controller {
 
 
 	public function current_user() {
+		header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+        
 		$this->load->model('portal_user');
 		$user = $this->portal_user->getCurrentUser();
 

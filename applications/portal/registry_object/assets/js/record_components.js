@@ -28,6 +28,7 @@ angular.module('record_components',['profile_components'])
 })
 
 .controller('moveCtrl', function($scope, $log, $modalInstance, id, profile_factory, record_factory){
+    $scope.base_url = base_url;
     $scope.message = 'test';
     $scope.id = id;
 
@@ -40,17 +41,24 @@ angular.module('record_components',['profile_components'])
         });
     }
 
-    profile_factory.check_is_bookmarked($scope.id).then(function(data){
-       if (data.status=='OK') {
-          $scope.bookmarked = true;
-       } else $scope.bookmarked = false;
-    });
-
+    if ($scope.id && !angular.isArray($scope.id)) {
+        profile_factory.check_is_bookmarked($scope.id).then(function(data){
+           if (data.status=='OK') {
+              $scope.bookmarked = true;
+           } else $scope.bookmarked = false;
+        });
+    }
+    
     $scope.fetch = function(){
         $scope.folders = {};
         profile_factory.get_user().then(function(data){
-            $scope.user = data;
-            $scope.folders = profile_factory.get_user_folders($scope.user);
+            if(data.status=='ERROR') {
+                $scope.loggedin = false;
+            } else {
+                $scope.loggedin = true;
+                $scope.user = data;
+                $scope.folders = profile_factory.get_user_folders($scope.user);
+            }
         });
     }
 
