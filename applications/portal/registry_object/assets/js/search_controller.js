@@ -168,6 +168,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.presearch = function(){
 		search_factory.search_no_record($scope.prefilters).then(function(data){
 			$scope.preresult = data;
+			$scope.prefacets = search_factory.construct_facets($scope.preresult);
 			$scope.populateCenters($scope.preresult.response.docs);
 		});
 	}
@@ -334,6 +335,20 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				return true;
 			} else if(typeof $scope.filters[type]=='object') {
 				if($scope.filters[type].indexOf(value)!=-1) {
+					return true;
+				} else return false;
+			}
+			return false;
+		}
+		return false;
+	}
+
+	$scope.isPrefilterFacet = function(type, value) {
+		if($scope.prefilters[type]) {
+			if(typeof $scope.prefilters[type]=='string' && $scope.prefilters[type]==value) {
+				return true;
+			} else if(typeof $scope.prefilters[type]=='object') {
+				if($scope.prefilters[type].indexOf(value)!=-1) {
 					return true;
 				} else return false;
 			}
@@ -553,11 +568,11 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.sizeofField = function(type) {
-		if($scope.filters[type]) {
-			if(typeof $scope.filters[type]!='object') {
+		if($scope.prefilters[type]) {
+			if(typeof $scope.prefilters[type]!='object') {
 				return 1;
-			} else if(typeof $scope.filters[type]=='object') {
-				return $scope.filters[type].length;
+			} else if(typeof $scope.prefilters[type]=='object') {
+				return $scope.prefilters[type].length;
 			}
 		} else if(type=='review'){
 			if($scope.preresult && $scope.preresult.response) {

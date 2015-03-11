@@ -46,10 +46,10 @@
                 </div>
               </div>
 
-              <div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in allfacets">
+              <div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in prefacets">
                   <ul class="list-unstyled" ng-if="facet.name!='subject'">
                       <li ng-repeat="item in facet.value">
-                          <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
+                          <input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
                           <a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name]] <small>[[item.value]]</small></a>    
                       </li>
                   </ul>

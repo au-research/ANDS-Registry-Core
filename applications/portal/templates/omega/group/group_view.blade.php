@@ -29,6 +29,9 @@
                 $subjects_list .= ', '. $s['name'] .'';
             }
         }
+
+        //limit to 100
+        
     ?>
 
     @if($group['has_custom_data'])
@@ -71,6 +74,7 @@
         <div class="panel-body widget_tag_cloud">
             <div class="tag-cloud">
                 <ul>
+                    <?php array_splice($group['facet']['subjects'], 100); ?>
                     @foreach($group['facet']['subjects'] as $subject)
                         <li><a href="">{{$subject['name']}} <span>({{$subject['num']}})</span></a></li>
                     @endforeach
