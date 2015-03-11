@@ -109,11 +109,11 @@
         </div>
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
             <h4>[[name | filter_name]]</h4>
-            <ul class="listy no-bottom" ng-show="isArray(value) && name!='anzsrc-for'">
+            <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li ng-repeat="v in value track by $index"> 
                     <a href="" ng-click="toggleFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
             </ul>
-            <ul class="listy no-bottom" ng-show="isArray(value)===false && name!='anzsrc-for'">
+            <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
                         <span ng-if="name!='related_party_one_id'">[[value]]</span>
@@ -122,7 +122,8 @@
                     </a>
                 </li>
             </ul>
-            <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></div>
+            <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="'anzsrc-for'"></div>
+            <div resolve ng-if="name=='anzsrc-seo'" subjects="value" vocab="'anzsrc-seo'"></div>
         </div>
         <div class="panel-body swatch-white">
             <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')"><i class="fa fa-save"></i> Save Search</a>

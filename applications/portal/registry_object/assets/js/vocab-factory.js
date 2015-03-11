@@ -2,12 +2,12 @@ app.factory('vocab_factory', function($http, $log){
 	return {
 		tree : {},
 		subjects: {},
-		get: function (term, filters) {
+		get: function (term, filters, vocab) {
 			var url = '';
 			if (term) {
 				url = '?uri='+term;
 			}
-			return $http.post(base_url+'registry_object/vocab/'+url, {'filters':filters}).then(function(response){
+			return $http.post(base_url+'registry_object/vocab/'+vocab+'/'+url, {'filters':filters}).then(function(response){
 				return response.data
 			});
 		},
@@ -41,6 +41,22 @@ app.factory('vocab_factory', function($http, $log){
 							found =  true;
 						}
 					});
+				} else if(item.notation.indexOf(filters['anzsrc-for']) == 0) {
+					found = true;
+				}
+				return found;
+			} else if(filters['anzsrc-seo']) {
+				var found = false;
+				if(filters['anzsrc-seo']==item.notation){
+					found = true;
+				} else if (angular.isArray(filters['anzsrc-seo'])) {
+					angular.forEach(filters['anzsrc-seo'], function(code){
+						if(code==item.notation && !found) {
+							found =  true;
+						}
+					});
+				} else if(item.notation.indexOf(filters['anzsrc-seo']) == 0) {
+					found = true;
 				}
 				return found;
 			} else {
@@ -52,8 +68,8 @@ app.factory('vocab_factory', function($http, $log){
 				return response.data
 			});
 		},
-		resolveSubjects: function(subjects){
-			return $http.post(base_url+'registry_object/resolveSubjects', {data:subjects}).then(function(response){
+		resolveSubjects: function(vocab, subjects){
+			return $http.post(base_url+'registry_object/resolveSubjects/'+vocab, {data:subjects}).then(function(response){
 				return response.data
 			});
 		}

@@ -15,7 +15,8 @@ angular.module('portal-filters', [])
 				case 'license_class': return 'Licence'; break;
 				case 'type': return 'Type'; break;
 				case 'subject_vocab_uri': return 'Subject Vocabulary URI'; break;
-				case 'anzsrc-for': return 'Subjects'; break;
+				case 'anzsrc-for': return 'Subjects ANZSRC-FOR'; break;
+				case 'anzsrc-seo': return 'Subjects ANZSRC-SEO'; break;
 				case 'year_from': return 'Time Period (from)'; break;
 				case 'year_to': return 'Time Period (to)'; break;
 				case 'funding_scheme': return 'Funding Scheme'; break;
@@ -23,6 +24,14 @@ angular.module('portal-filters', [])
 				case 'administering_institution': return 'Administering Institution'; break;
 				case 'activity_status': return 'Status'; break;
 				case 'related_party_one_id': return 'Related Researcher'; break;
+				case 'scot': return 'Schools of Online Thesaurus'; break;
+				case 'pont': return 'Powerhouse Museum Object Name Thesaurus'; break;
+				case 'psychit': return 'Thesaurus of psychological index terms'; break;
+				case 'anzsrc': return 'ANZSRC'; break;
+				case 'apt': return 'Australian Pictorial Thesaurus'; break;
+				case 'gcmd': return 'GCMD Keywords'; break;
+				case 'lcsh': return 'LCSH'; break;
+				case 'keywords': return 'Keywords'; break;
 				default: return text;
 			}
 		}

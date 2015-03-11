@@ -11,7 +11,19 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		{value:'service', label:'Services and Tools'},
 		{value:'activity', label:'Grants and Projects'}
 	];
-	
+
+	$scope.vocab = 'anzsrc-for';
+	$scope.vocab_choices = [
+		{value:'anzsrc-for', label: 'ANZSRC FOR'},
+		{value:'anzsrc-seo', label: 'ANZSRC SEO'},
+		{value:'anzsrc', label: 'ANZSRC'},
+		{value:'keywords', label: 'Keywords'},
+		{value:'scot', label: 'School of Online Thesaurus'},
+		{value:'pont', label: 'Powerhouse Museum Object Name Thesaurus'},
+		{value:'psychit', label: 'Thesaurus of psychological index terms'},
+		{value:'apt', label: 'Australian Pictorial Thesaurus'},
+		{value:'lcsh', label: 'LCSH'}
+	];
 
 	$scope.$watch(function(){
 		return location.hash;
@@ -558,10 +570,22 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	//VOCAB TREE
 	//
 	//
-	
+	$scope.$watch('vocab', function(newv, oldv){
+		if (newv!=oldv) {
+			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
+				$scope.vocab_tree_tmp = data;
+			});
+		}
+	});
+	$scope.setVocab = function(v) {
+		$scope.vocab = v;
+	}
+
 	$scope.vocabInit = function() {
-		vocab_factory.get(false, $scope.filters).then(function(data){
+		$scope.vocab = 'anzsrc-for';
+		vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
 			$scope.vocab_tree = data;
+			$scope.vocab_tree_tmp = $scope.vocab_tree;
 		});
 
 		//getting vocabulary in configuration, mainly for matching isSelected
@@ -573,8 +597,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.getSubTree = function(item) {
-		if(!item['subtree']) {
-			vocab_factory.get(item.uri, $scope.filters).then(function(data){
+		item['showsubtree'] = !item['showsubtree'];
+		if(!item['subtree'] && ($scope.vocab=='anzsrc-for' || $scope.vocab=='anzsrc-seo')) {
+			vocab_factory.get(item.uri, $scope.filters, $scope.vocab).then(function(data){
 				item['subtree'] = data;
 			});
 		}
@@ -607,6 +632,16 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 					}
 				});
 			} else if ($scope.filters['anzsrc-for'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-for']!=item.notation){
+				found = true;
+			}
+		} else if($scope.filters['anzsrc-seo']) {
+			if (angular.isArray($scope.filters['anzsrc-seo'])) {
+				angular.forEach($scope.filters['anzsrc-seo'], function(code){
+					if(code.indexOf(item.notation) == 0 && !found && code!=item.notation) {
+						found =  true;
+					}
+				});
+			} else if ($scope.filters['anzsrc-seo'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-seo']!=item.notation){
 				found = true;
 			}
 		}
