@@ -133,4 +133,15 @@ jQuery(document).ready(function( $ ) {
         }, event); // Pass through our original event to qTip
     });
 
+
+    //Feedback button
+    window.ATL_JQ_PAGE_PROPS =  {
+        "triggerFunction": function(showCollectorDialog) {
+            //Requries that jQuery is available!
+            jQuery(".myCustomTrigger").click(function(e) {
+                e.preventDefault();
+                showCollectorDialog();
+            });
+        }};
+
 });
