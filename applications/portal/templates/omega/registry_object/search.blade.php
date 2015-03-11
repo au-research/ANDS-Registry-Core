@@ -16,6 +16,7 @@
         </a>
         <nav ng-hide="loading" ng-cloak class="pull-right">
             <ul class="pagi">
+                <li><small>Page [[ page.cur ]] / [[ page.end ]]</small></li>
                 <li><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
                 <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
                 <li><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
@@ -85,6 +86,7 @@
         <small ng-hide="loading" ng-cloak class="pull-left"><b>[[result.response.numFound]]</b> results ([[result.responseHeader.QTime]] milliseconds)</small>
         <nav ng-hide="loading" ng-cloak class="pull-right">
             <ul class="pagi">
+                <li><small>Page [[ page.cur ]] / [[ page.end ]]</small></li>
                 <li><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
                 <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
                 <li><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
@@ -114,12 +116,13 @@
             <h4>[[name | filter_name]]</h4>
             <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li ng-repeat="v in value track by $index"> 
-                    <a href="" ng-click="toggleFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
+                    <a href="" ng-click="toggleFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove"></i></small> </a>
+                </li>
             </ul>
             <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
-                        <span ng-if="name!='related_party_one_id'">[[value]]</span>
+                        <span ng-if="name!='related_party_one_id'">[[ value | truncate:30 ]]</span>
                         <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
                         <small><i class="fa fa-remove"></i></small>
                     </a>

@@ -140,6 +140,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		// $log.debug(search_factory.filters, search_factory.filters_to_hash(search_factory.filters));
 		var hash = search_factory.filters_to_hash(search_factory.filters)
 		// $log.debug('changing hash to ', hash);
+		// return false;
+		
 
 		//only change the hash at search page, other page will navigate to the search page
 		if (location.href.indexOf('search')==-1) {
