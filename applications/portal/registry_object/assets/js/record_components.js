@@ -32,6 +32,7 @@ angular.module('record_components',['profile_components'])
     $scope.message = 'test';
     $scope.id = id;
 
+
     if (angular.isArray($scope.id)) {
         $scope.records = $scope.id;
         // $log.debug($scope.records);
@@ -39,6 +40,12 @@ angular.module('record_components',['profile_components'])
         record_factory.get_record($scope.id).then(function(data){
             $scope.record = data;
         });
+    }
+
+    //handle empty
+    $scope.empty = false;
+    if (angular.isArray($scope.id) && $scope.id.length == 0) {
+        $scope.empty = true;
     }
 
     if ($scope.id && !angular.isArray($scope.id)) {
@@ -154,6 +161,11 @@ angular.module('record_components',['profile_components'])
 
 .controller('exportCtrl', function($scope, $log, $modalInstance, id, record_factory){
     $scope.id = id;
+
+    $scope.empty = false;
+    if (angular.isArray($scope.id) && $scope.id.length == 0) {
+        $scope.empty = true;
+    }
 
     if (angular.isArray($scope.id)) {
         $scope.records = $scope.id;

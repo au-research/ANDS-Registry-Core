@@ -3,7 +3,7 @@
 		<button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 		<h4 class="modal-title">Save to MyRDA</h4>
 	</div>
-	<div class="modal-body swatch-white" ng-if="loggedin" ng-cloak>
+	<div class="modal-body swatch-white" ng-if="loggedin && !empty" ng-cloak>
 		<p ng-if="record">Saving Record: <b>[[ record.core.title ]]</b></p>
 		<p ng-if="records">Saving [[ records.length ]] records</p>
 		<div ng-if="folders">
@@ -37,5 +37,9 @@
 	</div>
 	<div class="modal-body swatch-white" ng-if="!loggedin" ng-cloak>
 		<p>You are not logged in to MyRDA. Please <a href="[[base_url]]profile/login">Login to MyRDA</a> to save records</p>
+	</div>
+	<div class="modal-body swatch-white" ng-if="empty" ng-cloak>
+		<p>You haven't selected a record to save.</p> 
+		<p>Please select a record to save to MyRDA</p>
 	</div>
 </div>
