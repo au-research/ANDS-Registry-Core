@@ -123,7 +123,11 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else return false;
 	}
 	
-	$scope.newSearch = function() {
+	$scope.newSearch = function(query) {
+		if(query!='' && query!=undefined) {
+			$scope.query = query;
+			$scope.filters['sort'] = 'score desc';
+		}
 		$scope.filters['p'] = 1;
 		$scope.hashChange();
 	}
@@ -201,6 +205,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 		if($scope.filters['class']=='activity') {
 			$scope.advanced_fields = search_factory.advanced_fields_activity;
+			$scope.sort = search_factory.activity_sort;
 		}
 
 		//construct the pagination

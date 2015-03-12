@@ -26,7 +26,7 @@ app.factory('search_factory', function($http, $log){
 
 		default_filters: {
 			'rows':15,
-			'sort':'score desc',
+			'sort':'title asc',
 			'class':'collection'
 			// 'spatial_coverage_centres': '*'
 		},
@@ -37,6 +37,18 @@ app.factory('search_factory', function($http, $log){
 			{value:'title desc',label:'Title Z-A'},
 			// {value:'title desc',label:'Popular'},
 			{value:'record_created_timestamp asc',label:'Date Added'}
+		],
+
+		activity_sort : [
+			{value: 'score desc', label: 'Relevance'},
+			{value: 'title asc',label:'Title A-Z'},
+			{value: 'title desc',label:'Title Z-A'},
+			{value: 'earliest_year asc', label:'Commencement <i class="fa fa-sort-amount-asc"></i>'},
+			{value: 'earliest_year desc', label:'Commencement <i class="fa fa-sort-amount-desc"></i>'},
+			{value: 'latest_year asc', label:'Completion <i class="fa fa-sort-amount-asc"></i>'},
+			{value: 'latest_year desc', label:'Completion <i class="fa fa-sort-amount-desc"></i>'},
+			{value: 'funding_amount asc', label:'Funding Amount <i class="fa fa-sort-amount-asc"></i>'},
+			{value: 'funding_amount desc', label:'Funding Amount <i class="fa fa-sort-amount-desc"></i>'}
 		],
 
 		advanced_fields: [
