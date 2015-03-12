@@ -31,8 +31,11 @@
                                                             <span>{{implode(', ',$ro->core['alt_title'])}}</span>
                                                         </small><br/>
                                                     @endif
-                                                    <small itemprop="sourceOrganization">{{$ro->core['group']}}</small>
-
+                                                    @if(!$logo)
+                                                        <a href="{{base_url('contributors')}}/{{$group_slug}}" tip="Record provided by {{$ro->core['group']}}" title="Record provided by {{$ro->core['group']}}"><span itemprop="sourceOrganization">{{$ro->core['group']}}</span></a>
+                                                    @else
+                                                        <small itemprop="sourceOrganization">{{$ro->core['group']}}</small>
+                                                    @endif
                                                     @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
                                                         @if($show_dup_identifier_qtip)
                                                         <a href="" qtip="#identifiermatch" tip_popup="{{sizeof($ro->identifiermatch)}} linked Records"><i class="fa fa-caret-down"></i></a>
