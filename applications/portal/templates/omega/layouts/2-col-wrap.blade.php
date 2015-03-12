@@ -59,9 +59,9 @@
                                     <div class="panel-body" style="padding:0 0 10px 0" ng-if="ro" ng-cloak>
                                         <div class="panel-tools">
                                             <div ng-if="ro.stat">
-                                                <a href="#" style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</a>
-                                                <a href="#" style="padding-right:4px;"><small>Cited: </small>[[ro.stat.cited]]</a>
-                                                <a href="#" style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</a>
+                                                <span style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</span>
+                                                <span style="padding-right:4px;"><small>Cited: </small>[[ro.stat.cited]]</span>
+                                                <span style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</span>
                                             </div>
                                         </div>
                                         <div class="panel-tools">
