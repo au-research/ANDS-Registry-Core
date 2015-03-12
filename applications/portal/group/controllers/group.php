@@ -91,7 +91,7 @@ class Group extends MX_Controller {
 		}
 
 		$config['upload_path'] = $upload_path;
-		$config['allowed_types'] = 'jpg|png|gif';
+		$config['allowed_types'] = 'jpg|png|gif|jpeg';
 		$config['overwrite'] = true;
 		$config['max_size']	= '4000';
 
