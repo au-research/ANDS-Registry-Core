@@ -100,7 +100,7 @@ class Group extends MX_Controller {
 			echo json_encode(
 				array(
 					'status'=>'ERROR',
-					'message' => $this->upload->display_errors()
+					'message' => $this->upload->display_errors('','')
 				)
 			);
 		} else {
