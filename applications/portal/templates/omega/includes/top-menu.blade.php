@@ -10,7 +10,7 @@
                 <span>Research Data</span> Australia
             </a>
             @if(current_url()!=base_url())
-            <small>Find data for research</small>
+            <br><small>Find data for research</small>
             @endif
         </div>
         <nav class="collapse navbar-collapse main-navbar" role="navigation">
