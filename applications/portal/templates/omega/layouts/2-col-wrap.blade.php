@@ -56,7 +56,7 @@
                                         </div>
                                         <div class="clear"></div>
                                     </div>
-                                    <div class="panel-body" style="padding:0 0 10px 0">
+                                    <div class="panel-body" style="padding:0 0 10px 0" ng-if="ro" ng-cloak>
                                         <div class="panel-tools">
                                             <div ng-if="ro.stat">
                                                 <a href="#" style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</a>
