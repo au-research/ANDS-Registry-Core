@@ -8,7 +8,9 @@
 <div class="col-md-8" data-os-animation="fadeInDown" data-os-animation-delay="" ng-cloak>
     <!-- <form role="search" method="get" action="{{base_url('search')}}"> -->
     <form role="search" method="get" ng-submit="newSearch(query)" ng-if="filters.class!='activity'">
-        <span ng-if="filters.class && filters.class!='collection'">Search is restricted to [[ filters.class | getLabelFor:class_choices ]]</span>
+        <span ng-if="filters.class && filters.class!='collection'">
+          <a href="" ng-click="changeFilter('class', 'collection', true)">Search is restricted to [[ filters.class | getLabelFor:class_choices ]] <i class="fa fa-remove"></i></a>
+        </span>
         <div class="input-group">
             <span class="input-group-btn">
               <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">[[search_type | filter_name]] <span class="caret"></span></button>
@@ -46,7 +48,9 @@
 
 
     <form role="search" method="get" ng-submit="newSearch(query)" ng-if="filters.class=='activity'">
-        <span ng-if="filters.class && filters.class!='collection'">Search is restricted to [[ filters.class | getLabelFor:class_choices ]]</span>
+        <span ng-if="filters.class && filters.class!='collection'">
+          <a href="" ng-click="changeFilter('class', 'collection', true)">Search is restricted to [[ filters.class | getLabelFor:class_choices ]] <i class="fa fa-remove"></i></a>
+        </span>
         <div class="input-group">
             <span class="input-group-btn">
               <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">[[search_type | filter_name]] <span class="caret"></span></button>
