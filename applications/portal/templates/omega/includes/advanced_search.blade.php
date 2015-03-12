@@ -40,48 +40,48 @@
 							<div ng-show="isAdvancedSearchActive('terms')">
 								<div ng-controller="QueryBuilderCtrl">
 									<div class="alert alert-info">
-											<strong>Query Construction</strong><br>
-											<span ng-bind-html="output"></span>
+										<strong>Query Construction</strong><br>
+										<span ng-bind-html="output"></span>
 									</div>
 									<query-builder group="filter.group"></query-builder>
 								</div>
 							</div>
 
 							<div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in prefacets">
-									<ul class="list-unstyled" ng-if="facet.name!='subject'">
-											<li ng-repeat="item in facet.value | orderObjectBy:'name'">
-													<input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
-													<a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name]] <small>[[item.value]]</small></a>    
-											</li>
-									</ul>
+								<ul class="list-unstyled" ng-if="facet.name!='subject'">
+									<li ng-repeat="item in facet.value | orderObjectBy:'name'">
+											<input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
+											<a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name]] <small>[[item.value]]</small></a>    
+									</li>
+								</ul>
 							</div>
 
 							<div ng-if="isAdvancedSearchActive('temporal')">
 								<label for="">From Year</label>
 								<select class="form-control"ng-model="prefilters.year_from" ng-options="year_from as year_from for year_from in temporal_range">
-										<option value="" style="display:none">From Year</option>
+									<option value="" style="display:none">From Year</option>
 								</select>
 								<label for="">To Year</label>
 								<select class="form-control"ng-model="prefilters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true">
-										<option value="" style="display:none">To Year</option>
+									<option value="" style="display:none">To Year</option>
 								</select>
 							</div>
 
 							<div ng-if="isAdvancedSearchActive('date_range')">
 								<h3>Commencement Date Range</h3>
 								<select ng-model="prefilters.commence_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
-										<option value="" style="display:none">From Year</option>
+									<option value="" style="display:none">From Year</option>
 								</select>
 								<select ng-model="prefilters.commence_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
-										<option value="" style="display:none">To Year</option>
+									<option value="" style="display:none">To Year</option>
 								</select>
 								<div class="alert alert-info">Please note that adding this filter will restrict your search to only those activity records in Research Data Australia which have a start date recorded</div>
 								<h3>Completion Date Range</h3>
 								<select ng-model="prefilters.completion_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
-										<option value="" style="display:none">From Year</option>
+									<option value="" style="display:none">From Year</option>
 								</select>
 								<select ng-model="prefilters.completion_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
-										<option value="" style="display:none">To Year</option>
+									<option value="" style="display:none">To Year</option>
 								</select>
 								<div class="alert alert-info">Please note that adding this filter will restrict your search to only those activity records in Research Data Australia which have an end date recorded</div>
 							</div>
@@ -120,7 +120,7 @@
 														<li ng-repeat="item3 in item2.subtree">
 															<input type="checkbox" ng-checked="isVocabSelected(item3, prefilters)" ui-indeterminate="isVocabParentSelected(item3)" ng-click="togglePreFilter(vocab, item3.notation, false)">
 															<a href="" ng-click="getSubTree(item3)" ng-if="item3.has_narrower">[[item3.prefLabel | toTitleCase]] ([[ item3.collectionNum ]])</a>
-															<span ng-if="!item3.has_narrower">[[item3.prefLabel | toTitleCase]] ([[ item.collectionNum ]])</span>
+															<span ng-if="!item3.has_narrower">[[item3.prefLabel | toTitleCase]] ([[ item3.collectionNum ]])</span>
 														</li>
 													</ul>
 												</li>

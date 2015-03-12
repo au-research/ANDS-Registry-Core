@@ -58,9 +58,10 @@
                         </p>
                         
                         <div ng-repeat="(index, content) in getHighlight(doc.id)">
-                            <p ng-repeat="c in content">
+                            <p ng-repeat="c in content track by $index">
                                 <span ng-bind-html="c | trustAsHtml"></span> <small><b>[[index | highlightreadable]]</b></small>
                             </p>
+
                         </div>
 
                         <p ng-if="getHighlight(doc.id)===false && doc.list_description">
