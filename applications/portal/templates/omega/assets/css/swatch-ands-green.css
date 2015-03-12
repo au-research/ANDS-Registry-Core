@@ -13,7 +13,7 @@
   /*color: #84a07b;*/
 }
 .swatch-white a:hover, [class*="swatch-"] .swatch-white a:hover {
-  color: #4f9bc2;
+  /*color: #4f9bc2;*/
 }
 .swatch-white small, [class*="swatch-"] .swatch-white small {
   color: rgba(76, 76, 76, 0.8);
