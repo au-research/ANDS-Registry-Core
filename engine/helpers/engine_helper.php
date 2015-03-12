@@ -460,8 +460,8 @@ function alphasort_name($a, $b){
 }
 
 function alphasort_byattr_title($a, $b) {
-	if($a['title']==$b['title']) return 0;
-	return ($a['title'] < $b['title']) ? -1 : 1;
+	if(strtolower($a['title'])==strtolower($b['title'])) return 0;
+	return (strtolower($a['title']) < strtolower($b['title'])) ? -1 : 1;
 }
 
 /**

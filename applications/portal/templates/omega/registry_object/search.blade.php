@@ -16,9 +16,10 @@
         </a>
         <nav ng-hide="loading" ng-cloak class="pull-right">
             <ul class="pagi">
-                <li><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+                <li><small>Page [[ page.cur ]] / [[ page.end ]]</small></li>
+                <li ng-if="page.cur!=1"><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">First</span></a></li>
                 <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
-                <li><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+                <li ng-if="page.cur!=page.end"><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Last</span></a></li>
             </ul>
         </nav>
     </div>
@@ -58,8 +59,11 @@
                         <p ng-repeat="(index, content) in getHighlight(doc.id)">
                             <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
                         </p>
-                        <p ng-if="getHighlight(doc.id)===false">
-                            [[doc.list_description | text | truncate:500]]
+                        <p ng-if="getHighlight(doc.id)===false && doc.list_description">
+                            [[ doc.list_description | text | truncate:500 ]]
+                        </p>
+                        <p ng-if="getHighlight(doc.id)===false && !doc.list_description && doc.description">
+                            [[ doc.description | text | truncate:500 ]]
                         </p>
                         <div ng-if="doc.administering_institution">
                             <b>Administering Institution</b>: [[doc.administering_institution.join(',')]]
@@ -82,9 +86,10 @@
         <small ng-hide="loading" ng-cloak class="pull-left"><b>[[result.response.numFound]]</b> results ([[result.responseHeader.QTime]] milliseconds)</small>
         <nav ng-hide="loading" ng-cloak class="pull-right">
             <ul class="pagi">
-                <li><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+                <li><small>Page [[ page.cur ]] / [[ page.end ]]</small></li>
+                <li ng-if="page.cur!=1"><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">First</span></a></li>
                 <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
-                <li><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+                <li ng-if="page.cur!=page.end"><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Last</span></a></li>
             </ul>
         </nav>
     </div>
@@ -109,20 +114,22 @@
         </div>
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
             <h4>[[name | filter_name]]</h4>
-            <ul class="listy no-bottom" ng-show="isArray(value) && name!='anzsrc-for'">
+            <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li ng-repeat="v in value track by $index"> 
-                    <a href="" ng-click="toggleFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
+                    <a href="" ng-click="toggleFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove"></i></small> </a>
+                </li>
             </ul>
-            <ul class="listy no-bottom" ng-show="isArray(value)===false && name!='anzsrc-for'">
+            <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
-                        <span ng-if="name!='related_party_one_id'">[[value]]</span>
+                        <span ng-if="name!='related_party_one_id'">[[ value | truncate:30 ]]</span>
                         <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
                         <small><i class="fa fa-remove"></i></small>
                     </a>
                 </li>
             </ul>
-            <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></div>
+            <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="'anzsrc-for'"></div>
+            <div resolve ng-if="name=='anzsrc-seo'" subjects="value" vocab="'anzsrc-seo'"></div>
         </div>
         <div class="panel-body swatch-white">
             <a href="" class="btn btn-primary" ng-click="add_user_data('saved_search')"><i class="fa fa-save"></i> Save Search</a>
@@ -151,7 +158,7 @@
     <div class="panel-body swatch-white">
         <h4>Subjects</h4>
         <ul class="listy">
-          <li ng-repeat="item in vocab_tree | orderBy:'pos' | limitTo:5">
+          <li ng-repeat="item in vocab_tree | orderBy:'pos' | orderBy:prefLabel | limitTo:5">
             <input type="checkbox" ng-checked="isVocabSelected(item)" ui-indeterminate="isVocabParentSelected(item)" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
             <a href="" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
                 [[ item.prefLabel | toTitleCase | truncate:30 ]]
@@ -165,7 +172,7 @@
     <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true" ng-if="facet.value.length > 0">
         <h4>[[facet.name | filter_name]]</h4>
         <ul class="listy">
-            <li ng-repeat="item in facet.value | limitTo:5 | orderBy:'item.value'">
+            <li ng-repeat="item in facet.value | limitTo:5">
                 <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
                 <a href="" ng-click="toggleFilter(facet.name, item.name, true)">[[item.name | truncate:30]] <small>[[item.value]]</small></a>    
             </li>

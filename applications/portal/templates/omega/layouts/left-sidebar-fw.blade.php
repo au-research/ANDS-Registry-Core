@@ -14,10 +14,10 @@
     		    <section class="section swatch-white" style="z-index:1;background:#e9e9e9">
     		    	<div class="container-fluid">
     		    		<div class="row element-short-top">
-    		    			<div class="col-md-3 sidebar animated slideInLeft">
+    		    			<div class="col-xs-12 col-md-4 col-lg-3 sidebar animated slideInLeft">
     		    				@yield('sidebar')
     		    			</div>
-                            <div class="col-md-9">
+                            <div class="col-xs-12 col-md-8 col-lg-9">
                                 @yield('content')
                             </div>
     		    		</div>

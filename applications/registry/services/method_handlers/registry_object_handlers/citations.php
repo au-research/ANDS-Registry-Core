@@ -277,7 +277,7 @@ Y2  - '.date("Y-m-d")."
         if($rft_subjects) $coins .= $rft_subjects;
         if($rft_place) $coins .= '&rft_place='.$rft_place;
         $coins .= '&rft.type=dataset&rft.language=English';
-        $coins .= '"><span class="Z3988"></span>';
+        $coins .= '"></span><span class="Z3988"></span>';
 
         return $coins;
     }

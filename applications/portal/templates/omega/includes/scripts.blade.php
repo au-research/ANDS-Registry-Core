@@ -12,6 +12,8 @@
 <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap.min.js', 'core')}}"></script>
 <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap-tpls.min.js', 'core')}}"></script>
 
+
+
 <!-- Angular Loading Bar -->
 <link rel="stylesheet" href="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.css', 'core')}}"></link>
 <script src="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.js', 'core')}}"></script>
@@ -22,8 +24,14 @@
 
 
 <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
+
+
+<!-- QTip, useful anywhere -->
+<script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
+
 <!-- <script src="{{asset_url('omega/js/theme.js','templates')}}"></script> -->
 <script src="{{asset_url('js/scripts.js', 'core')}}"></script>
+
 
 
 
@@ -34,8 +42,6 @@
 			<script src="{{asset_url('lib/jquery-ui/jquery-ui.js', 'core')}}"></script>
 		@elseif($l=='dynatree')
 			<script src="{{asset_url('lib/dynatree/src/jquery.dynatree.js', 'core')}}"></script>
-        @elseif($l=='qtip')
-            <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
         @elseif($l=='textAngular')
         	<link rel='stylesheet' href="{{asset_url('lib/textAngular/src/textAngular.css', 'core')}}">
             <script src="{{asset_url('lib/textAngular/dist/textAngular-rangy.min.js', 'core')}}"></script>

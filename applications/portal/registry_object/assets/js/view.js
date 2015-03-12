@@ -14,14 +14,7 @@ $(document).ready(function() {
 	});
 
 
-    window.ATL_JQ_PAGE_PROPS =  {
-        "triggerFunction": function(showCollectorDialog) {
-            //Requries that jQuery is available!
-            jQuery(".myCustomTrigger").click(function(e) {
-                e.preventDefault();
-                showCollectorDialog();
-            });
-        }};
+    
 	// $('.panel-body').readmore();
 
 
@@ -36,23 +29,16 @@ $(document).ready(function() {
             ready: true
         },
         hide: {
-            event: "inactive",
-            delay: 2000
+            delay: 1000,
+            fixed: true,
         },
         position: {viewport: $(window),my: 'bottom center',at: 'top center'},
         style: {
             classes: 'qtip-bootstrap',
             def: 'false',
             width:135
-        },
-        events: {
-            show: function(){
-                setTimeout(function(){$('a[qtip_popup]').qtip('hide');}, 3000); //$('a[qtip_popup]').qtip('destroy')
-            },
-            hide: function () {
-                $(this).qtip('destroy');
-            }
         }
+
     });
 
     $('a[qtip]').mouseover(function(){
@@ -74,34 +60,14 @@ $(document).ready(function() {
                 event: 'mouseover, click',
                 ready: true
             },
-            hide:'mouseleave, unfocus, click',
+            hide: {
+                delay: 1000,
+                fixed: true,
+            },
             position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
             style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
         });
     });
-
-
-
-
-
-
-	$('a[tip]').qtip({
-		content:{
-			text:function(e,api){
-				var tip = $(this).attr('tip');
-				var content = tip;
-				if(tip.indexOf('#')==0 || tip.indexOf('.')==0) {
-					if($(tip.toString()).length) {
-						content = $(tip.toString()).html();
-					}
-				}
-				return content;
-			}
-		},
-		hide:'mouseleave, unfocus, click',
-		position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
-		style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
-	});
 
 });
 
@@ -109,7 +75,10 @@ $(document).on('click', '.ro_preview', function(event){
 	event.preventDefault();
 	$(this).qtip({
 		show:{event:'click'},
-		hide:'unfocus',
+        hide: {
+            delay: 1000,
+            fixed: true,
+        },
 		content: {
 			text: function(event, api) {
 				api.elements.content.html('Loading...');
@@ -270,26 +239,6 @@ function initConnectionGraph() {
 				    node.expand();
 			    }
 			},
-			onClick: function(node) {
-				//if (node.data.registry_object_id != ro_id())
-				//{
-					// $('#' + node.li.id).qtip('show');
-				//}
-
-				// XXX: show the tooltip
-				// A DynaTreeNode object is passed to the activation handler
-				// Note: we also get this event, if persistence is on, and the page is reloaded.
-			   //window.location = base_url + node.data.slug;
-			},
-			onDblClick: function(node) {
-			// Change to view this record
-					if (node.data.status=='PUBLISHED')	{
-						window.location = base_url + node.data.slug + "/" + node.data.registry_object_id;
-					}
-					else{
-						window.location = base_url + "view/?id=" + node.data.registry_object_id;
-					}
-			},
 
 			onPostInit: function (isReloading, isError) {
 				// Hackery to make the nodes representing THIS registry object
@@ -333,7 +282,8 @@ function initConnectionGraph() {
 				
 				$(nodeSpan).attr('title', $(nodeSpan).text());
 				$('a',$(nodeSpan)).attr('href', base_url + node.data.slug +"/"+node.data.registry_object_id);
-
+                $('a',$(nodeSpan)).attr('ro_id', node.data.registry_object_id);
+                $('a',$(nodeSpan)).addClass('ro_preview');
 				if (node.data['class']=="more")
 				{
 					$(nodeSpan).find("span.dynatree-icon").remove();
@@ -352,60 +302,7 @@ function initConnectionGraph() {
 
 					a.attr('relation_type','nested_collection');
 					a.attr('page', 2);
-					//console.log($(nodeSpan).html());
 				}
-	            /*	else
-				{
-
-					 Prepare the tooltip preview
-					$('#' + node.li.id).qtip({
-						content: {
-							text: 'Loading preview...',
-							title: {
-								text: 'Preview',
-								button: 'Close'
-							},
-							ajax: {
-								url: preview_url, 
-								type: 'GET',
-								//data: { "slug": node.data.slug, "registry_object_id": node.data.registry_object_id },
-								success: function(data, status) {
-									data = $.parseJSON(data);                                       
-									var decoded_content = $(data.html);
-									var content_description = htmlDecode(decoded_content.find('.post .descriptions').html());
-									decoded_content.find('.post .descriptions').html('<small>' + content_description + '</small>');
-									this.set('content.text', decoded_content);
-
-									if (data.slug)
-									{
-										$('.viewRecord').attr("href", base_url + data.slug);
-									}
-									else
-									{
-										$('.viewRecord').attr("href",base_url+"view/?id=" + data.registry_object_id);
-									}
-								} 
-							}
-						},
-						position: {
-							my: 'left center',
-							at: 'right center',
-							target: $('#' + node.li.id + " > span")
-						},
-						show: {
-							event: 'none',
-							solo: true
-						},
-						hide: {
-							delay: 1000,
-							fixed: true
-						},
-						style: {
-							classes: 'ui-tooltip-light ui-tooltip-shadow previewPopup',
-							width: 550
-						}
-					});
-				}*/
 			}
 
 	    });

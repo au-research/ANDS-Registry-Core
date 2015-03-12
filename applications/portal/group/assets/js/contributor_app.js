@@ -20,7 +20,9 @@ app.config(['$routeProvider', '$locationProvider',
   }]);
 
 app.controller('GroupsCtrl', function($scope, groupFactory, $log){
+	$scope.status = 'loading';
 	groupFactory.get().then(function(data){
+		$scope.status = 'done';
 		$scope.groups = data.groups;
 		// $log.debug($scope.groups);
 	});
@@ -81,8 +83,8 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 					var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
 					// $log.debug('progress: ' + progressPercentage + '% ' + evt.config.file.name);
 				}).success(function (data, status, headers, config) {
-					// $log.debug(data);
-					if(data.status=='OK' && data.url) {
+					if(data.url) {
+						if(!$scope.group.data) $scope.group.data = {};
 						$scope.group.data.logo = data.url;
 					}
 				});

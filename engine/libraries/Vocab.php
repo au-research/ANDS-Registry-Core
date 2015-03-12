@@ -321,6 +321,7 @@ class Vocab {
                     $c['prefLabel'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'prefLabel'}->{'_value'};
                     $c['uri'] = $resolved_concept->{'result'}->{'primaryTopic'}->{'_about'};
                     $c['collectionNum'] = $this->getNumCollections($c['uri'],$filters, $fuzzy);
+                    $c['has_narrower'] = (isset($resolved_concept->{'result'}->{'primaryTopic'}->{'narrower'}) && sizeof($resolved_concept->{'result'}->{'primaryTopic'}->{'narrower'}) > 0) ? true : false;
                     if(isset($c['collectionNum']) > 0){
                         $tree['topConcepts'][] = $c;
                     }

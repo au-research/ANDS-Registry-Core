@@ -10,8 +10,9 @@ app.directive('resolve', function($http, $log, vocab_factory){
 			scope.result = [];
 			scope.$watch('subjects', function(newv){
 				if(newv) {
+					
 					scope.result = [];
-					vocab_factory.resolveSubjects(scope.subjects).then(function(data){
+					vocab_factory.resolveSubjects(scope.vocab, scope.subjects).then(function(data){
 						// $log.debug(data);
 						angular.forEach(data, function(label, notation){
 							scope.result.push({notation:notation,label:label});

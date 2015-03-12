@@ -105,5 +105,47 @@ jQuery(document).ready(function( $ ) {
         var div = $(this).attr('data-toggle');
         console.log(div, $(div), $(div).length);
         $(div).toggle();
+    }).on('mouseover', '*[tip]', function(event){
+        // Bind the qTip within the event handler
+        var my = $(this).attr('my');
+        var at = $(this).attr('at');
+        if(!my){
+            my = 'bottom center';
+        }
+        if(!at){
+            at = 'top center';
+        }
+        $(this).qtip({
+            overwrite: false, // Make sure the tooltip won't be overridden once created
+            content: $(this).attr('tip'),
+            show: {
+                event: event.type, // Use the same show event as the one that triggered the event handler
+                ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
+            },
+            hide: {
+                delay: 1000,
+                fixed: true,
+            },
+            position: {
+                my: my, // Use the corner...
+                at: at,
+                viewport: $(window)
+            },
+            style: {
+                classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
+            }
+        }, event); // Pass through our original event to qTip
     });
+
+
+    //Feedback button
+    window.ATL_JQ_PAGE_PROPS =  {
+        "triggerFunction": function(showCollectorDialog) {
+            //Requries that jQuery is available!
+            jQuery(".myCustomTrigger").click(function(e) {
+                e.preventDefault();
+                showCollectorDialog();
+            });
+        }};
+
 });

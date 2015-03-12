@@ -26,7 +26,7 @@ app.factory('search_factory', function($http, $log){
 
 		default_filters: {
 			'rows':15,
-			'sort':'score desc',
+			'sort':'title asc',
 			'class':'collection'
 			// 'spatial_coverage_centres': '*'
 		},
@@ -35,8 +35,20 @@ app.factory('search_factory', function($http, $log){
 			{value:'score desc',label:'Relevance'},
 			{value:'title asc',label:'Title A-Z'},
 			{value:'title desc',label:'Title Z-A'},
-			{value:'title desc',label:'Popular'},
+			// {value:'title desc',label:'Popular'},
 			{value:'record_created_timestamp asc',label:'Date Added'}
+		],
+
+		activity_sort : [
+			{value: 'score desc', label: 'Relevance'},
+			{value: 'title asc',label:'Title A-Z'},
+			{value: 'title desc',label:'Title Z-A'},
+			{value: 'earliest_year asc', label:'Commencement <i class="fa fa-sort-amount-asc"></i>'},
+			{value: 'earliest_year desc', label:'Commencement <i class="fa fa-sort-amount-desc"></i>'},
+			{value: 'latest_year asc', label:'Completion <i class="fa fa-sort-amount-asc"></i>'},
+			{value: 'latest_year desc', label:'Completion <i class="fa fa-sort-amount-desc"></i>'},
+			{value: 'funding_amount asc', label:'Funding Amount <i class="fa fa-sort-amount-asc"></i>'},
+			{value: 'funding_amount desc', label:'Funding Amount <i class="fa fa-sort-amount-desc"></i>'}
 		],
 
 		advanced_fields: [
@@ -95,8 +107,12 @@ app.factory('search_factory', function($http, $log){
 			// $log.debug('search filters', filters);
 			var promise = $http.post(base_url+'registry_object/filter', {'filters':filters}).then(function(response){
 				this.status = 'idle';
-				// $log.debug('response', response.data);
-				return response.data;
+				if(response.data.response && response.data.responseHeader.status==0) {
+					return response.data;
+				} else {
+					$log.debug(response);
+					return false;
+				}
 			});
 			return promise;
 		},
@@ -109,7 +125,7 @@ app.factory('search_factory', function($http, $log){
 			return promise;
 		},
 
-		construct_facets: function(result) {
+		construct_facets: function(result, sclass) {
 			var facets = [];
 
 			//subjects DEPRECATED in favor of ANZSRC codes directly from the home page
@@ -123,6 +139,7 @@ app.factory('search_factory', function($http, $log){
 			// });
 
 			//other facet fields
+
 			angular.forEach(result.facet_counts.facet_fields, function(item, index) {
 				facets[index] = [];
 				for (var i = 0; i < result.facet_counts.facet_fields[index].length ; i+=2) {
@@ -138,6 +155,12 @@ app.factory('search_factory', function($http, $log){
 
 			if(this.filters['class']=='activity'){
 				var order = this.activity_facet_order;
+			}
+
+			if(sclass=='collection') {
+				order = this.collection_facet_order;
+			} else if(sclass=='activity') {
+				order = this.activity_facet_order;
 			}
 
 			var orderedfacets = [];
@@ -180,6 +203,7 @@ app.factory('search_factory', function($http, $log){
 		},
 
 		filters_from_hash:function(hash) {
+
 			var xp = hash.split('/');
 			var filters = {};
 			$.each(xp, function(){
@@ -194,12 +218,12 @@ app.factory('search_factory', function($http, $log){
 							var old = filters[term];
 							filters[term] = [];
 							filters[term].push(old);
-							filters[term].push(value);
+							filters[term].push(decodeURIComponent(value));
 						} else if(typeof filters[term]=='object') {
-							filters[term].push(value);
+							filters[term].push(decodeURIComponent(value));
 						}
 					} else {
-						filters[term] = value;
+						filters[term] = decodeURIComponent(value);
 					}
 				}
 			});
@@ -226,10 +250,10 @@ app.factory('search_factory', function($http, $log){
 			var hash = '';
 			$.each(filters, function(i,k){
 				if(typeof k!='object'){
-					hash+=i+'='+k+'/';
+					hash+=i+'='+encodeURIComponent(k)+'/';
 				} else if (typeof k=='object'){
 					$.each(k, function(){
-						hash+=i+'='+decodeURIComponent(this)+'/';
+						hash+=i+'='+encodeURIComponent(this)+'/';
 					});
 				}
 			});

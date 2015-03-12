@@ -240,44 +240,125 @@ class Registry_object extends MX_Controller {
 		$filters = $data['filters'];
 		$this->load->library('vocab');
 		if (!$uri) { //get top level
-			$toplevel = $this->vocab->getTopLevel('anzsrc-for', $filters);
-			// foreach ($toplevel['topConcepts'] as &$l) {
-			// 	$r = array();
-			// 	$result = json_decode($this->vocab->getConceptDetail('anzsrc-for', $l['uri']), true);
-			// 	if(isset($result['result']['primaryTopic']['narrower'])){
-			// 		foreach($result['result']['primaryTopic']['narrower'] as $narrower) {
-			// 			$curi = $narrower['_about'];
-			// 			$concept = json_decode($this->vocab->getConceptDetail('anzsrc-for', $curi), true);
-			// 			$concept = array(
-			// 				'notation' => $concept['result']['primaryTopic']['notation'],
-			// 				'prefLabel' => $concept['result']['primaryTopic']['prefLabel']['_value'],
-			// 				'uri' => $curi,
-			// 				'collectionNum' => $this->vocab->getNumCollections($curi, array())
-			// 			);
-			// 			array_push($r, $concept);
-			// 		}
-			// 	}
-			// 	$l['subtree'] = $r;
-			// }
-			echo json_encode($toplevel['topConcepts']);
+
+			if($vocab=='anzsrc-for' || $vocab=='anzsrc-seo') {
+				$toplevel = $this->vocab->getTopLevel($vocab, $filters);
+				echo json_encode($toplevel['topConcepts']);
+			} else {
+				$toplevel = $this->getSubjectsVocab($vocab, $filters);
+				echo json_encode($toplevel);
+			}
+			
 		} else {
 			$r = array();
-			$result = json_decode($this->vocab->getConceptDetail('anzsrc-for', $uri), true);
+			$result = json_decode($this->vocab->getConceptDetail($vocab, $uri), true);
 			if(isset($result['result']['primaryTopic']['narrower'])){
 				foreach($result['result']['primaryTopic']['narrower'] as $narrower) {
 					$curi = $narrower['_about'];
-					$concept = json_decode($this->vocab->getConceptDetail('anzsrc-for', $curi), true);
+					$concept = json_decode($this->vocab->getConceptDetail($vocab, $curi), true);
 					$concept = array(
 						'notation' => $concept['result']['primaryTopic']['notation'],
 						'prefLabel' => $concept['result']['primaryTopic']['prefLabel']['_value'],
 						'uri' => $curi,
-						'collectionNum' => $this->vocab->getNumCollections($curi, $filters)
+						'collectionNum' => $this->vocab->getNumCollections($curi, $filters),
+						'has_narrower' => (isset($concept['result']['primaryTopic']['narrower']) && sizeof($concept['result']['primaryTopic']['narrower']) > 0) ? true : false
 					);
+
 					array_push($r, $concept);
 				}
 			}
 			echo json_encode($r);
 		}
+	}
+
+	function getSubjectsVocab($vocab_type, $filters) {
+		$subjects_categories = $this->config->item('subjects_categories');
+		$list = $subjects_categories[$vocab_type]['list'];
+		$result = array();
+		foreach($list as $l){
+			$result_type = $this->getAllSubjectsForType($l, $filters);
+			$result_list = (isset($result_type['list']) ? $result_type['list'] : array());
+			$result = array_merge($result, $result_list);
+		}
+		$azTree = array();
+		$azTree['0-9'] = array('subtree'=>array(), 'collectionNum'=>0, 'prefLabel'=>'0-9', 'notation'=>'0-9');
+		foreach(range('A', 'Z') as $i) {
+			$azTree[$i]=array('subtree'=>array(), 'collectionNum'=>0, 'prefLabel'=>$i, 'notation'=>url_title($i));
+		}
+
+		foreach($result as $r){
+			if(ctype_alnum($r['prefLabel'])){
+				$first = strtoupper($r['prefLabel'][0]);
+				if(is_numeric($first)){$first='0-9';}
+				$azTree[$first]['collectionNum']++;
+				array_push($azTree[$first]['subtree'], $r);
+			}
+		}
+
+		foreach($azTree as &$com) {
+			$com['has_narrower'] = $com['collectionNum'] > 0 ? true : false;
+		}
+
+		$result = array();
+		foreach($azTree as $com) {
+			array_push($result, $com);
+		}
+		return $result;
+	}
+
+	function getAllSubjectsForType($type, $filters){
+		$this->load->library('solr');
+		$this->solr->setOpt('q', '*:*');
+		$this->solr->setOpt('defType', 'edismax');
+		$this->solr->setOpt('mm', '3');
+		$this->solr->setOpt('q.alt', '*:*');
+		$this->solr->setOpt('fl', '*, score');
+		$this->solr->setOpt('qf', 'id^1 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2');
+		$this->solr->setOpt('rows', '0');
+
+		$this->solr->clearOpt('fq');
+
+		if($filters){
+            $this->solr->setFilters($filters);
+        }else{
+        	$this->solr->setBrowsingFilter();
+        }
+        $this->solr->addQueryCondition('+subject_type:"'.$type.'"');
+		$this->solr->setFacetOpt('pivot', 'subject_type,subject_value_resolved');
+		$this->solr->setFacetOpt('sort', 'subject_value_resolved');
+		$this->solr->setFacetOpt('limit', '25000');
+		$content = $this->solr->executeSearch();
+
+		//if still no result is found, do a fuzzy search, store the old search term and search again
+		if($this->solr->getNumFound()==0){
+			if (!isset($filters['q'])) $filters['q'] = '';
+			$new_search_term_array = explode(' ', $filters['q']);
+			$new_search_term='';
+			foreach($new_search_term_array as $c ){
+				$new_search_term .= $c.'~0.7 ';
+			}
+			// $new_search_term = $data['search_term'].'~0.7';
+			$this->solr->setOpt('q', 'fulltext:('.$new_search_term.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $new_search_term).')');
+			$this->solr->executeSearch();
+		}
+
+		$facets = $this->solr->getFacet();
+		$facet_pivots = $facets->{'facet_pivot'}->{'subject_type,subject_value_resolved'};
+		//echo json_encode($facet_pivots);
+		$result = array();
+		$result[$type] = array();
+		
+		foreach($facet_pivots as $p){
+			if($p->{'value'}==$type){
+				$result[$type] = array('count'=>$p->{'count'}, 'list'=>array());
+				foreach($p->{'pivot'} as $pivot){
+					array_push($result[$type]['list'], array('prefLabel'=>$pivot->{'value'}, 'collectionNum'=>$pivot->{'count'}, 'notation'=>url_title($pivot->{'value'}, '-', true)));
+				}
+				$result[$type]['size'] = sizeof($result[$type]['list']);
+				// echo json_encode($p->{'pivot'});
+			}
+		}
+		return $result[$type];
 	}
 
 	function getSubjects() {
@@ -294,7 +375,7 @@ class Registry_object extends MX_Controller {
 		echo json_encode($result);
 	}
 
-	function resolveSubjects() {
+	function resolveSubjects($vocab) {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
@@ -307,11 +388,11 @@ class Registry_object extends MX_Controller {
 
 		if (is_array($subjects)) {
 			foreach ($subjects as $subject) {
-				$r = json_decode($this->vocab->getConceptDetail('anzsrc-for', 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$subject), true);
+				$r = json_decode($this->vocab->getConceptDetail($vocab, 'http://purl.org/au-research/vocabulary/'.$vocab.'/2008/'.$subject), true);
 				$result[$subject] = $r['result']['primaryTopic']['prefLabel']['_value'];
 			}
 		} else {
-			$r = json_decode($this->vocab->getConceptDetail('anzsrc-for', 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$subjects), true);
+			$r = json_decode($this->vocab->getConceptDetail($vocab, 'http://purl.org/au-research/vocabulary/'.$vocab.'/2008/'.$subjects), true);
 			$result[$subjects] = $r['result']['primaryTopic']['prefLabel']['_value'];
 		}
 
@@ -497,7 +578,7 @@ class Registry_object extends MX_Controller {
 		$result = $this->solr->executeSearch(true);
 
 		//fuzzy search
-		if($this->solr->getNumFound() == 0) {
+		if($this->solr->getNumFound() == 0 && isset($filters['q'])) {
 			$new_search_term_array = explode(' ', escapeSolrValue($filters['q']));
 			$new_search_term='';
 			foreach($new_search_term_array as $c ){

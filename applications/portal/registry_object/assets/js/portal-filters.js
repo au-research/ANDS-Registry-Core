@@ -15,7 +15,8 @@ angular.module('portal-filters', [])
 				case 'license_class': return 'Licence'; break;
 				case 'type': return 'Type'; break;
 				case 'subject_vocab_uri': return 'Subject Vocabulary URI'; break;
-				case 'anzsrc-for': return 'Subjects'; break;
+				case 'anzsrc-for': return 'Subjects ANZSRC-FOR'; break;
+				case 'anzsrc-seo': return 'Subjects ANZSRC-SEO'; break;
 				case 'year_from': return 'Time Period (from)'; break;
 				case 'year_to': return 'Time Period (to)'; break;
 				case 'funding_scheme': return 'Funding Scheme'; break;
@@ -23,6 +24,15 @@ angular.module('portal-filters', [])
 				case 'administering_institution': return 'Administering Institution'; break;
 				case 'activity_status': return 'Status'; break;
 				case 'related_party_one_id': return 'Related Researcher'; break;
+				case 'scot': return 'Schools of Online Thesaurus'; break;
+				case 'pont': return 'Powerhouse Museum Object Name Thesaurus'; break;
+				case 'psychit': return 'Thesaurus of psychological index terms'; break;
+				case 'anzsrc': return 'ANZSRC'; break;
+				case 'apt': return 'Australian Pictorial Thesaurus'; break;
+				case 'gcmd': return 'GCMD Keywords'; break;
+				case 'lcsh': return 'LCSH'; break;
+				case 'keywords': return 'Keywords'; break;
+				case 'refine': return 'Refine'; break;
 				default: return text;
 			}
 		}
@@ -153,14 +163,16 @@ angular.module('portal-filters', [])
 	        return (time <= local && !isNaN(time)) ? span + ' ago' : 'in ' + span;
 	    }
 	})
-	.filter('orderObjectBy', function() {
+	.filter('orderObjectBy', function($log) {
 	  return function(items, field, reverse) {
 	    var filtered = [];
 	    angular.forEach(items, function(item) {
 	      filtered.push(item);
 	    });
 	    filtered.sort(function (a, b) {
-	      return (a[field] > b[field] ? 1 : -1);
+	    	var asort = (typeof(a[field])=='string' ? a[field].toLowerCase() : a[field]);
+	    	var bsort = (typeof(b[field])=='string' ? b[field].toLowerCase() : b[field]);
+	    	return (asort > bsort ? 1 : -1);
 	    });
 	    if(reverse) filtered.reverse();
 	    return filtered;
