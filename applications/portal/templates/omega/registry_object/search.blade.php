@@ -57,7 +57,7 @@
                             </ul>
                         </p>
                         <p ng-repeat="(index, content) in getHighlight(doc.id)">
-                            <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
+                            <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index | highlightreadable]]</b></small>
                         </p>
                         <p ng-if="getHighlight(doc.id)===false && doc.list_description">
                             [[ doc.list_description | text | truncate:500 ]]

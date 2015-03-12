@@ -46,13 +46,13 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 
 	$scope.save = function(state){
 		$scope.saveMessage = 'loading...';
-		$log.debug(state);
+		// $log.debug(state);
 		if(state) $scope.group.status = state;
 		delete $scope.group.nodata;
 		
 		if(!$scope.group.data) $scope.group.data = {};
 		if(!$scope.group.status) $scope.group.status = 'DRAFT';
-		$log.debug($scope.group);
+		// $log.debug($scope.group);
 		groupFactory.save($scope.group.name, $scope.group).then(function(data){
 			$scope.saveMessage = data.message;
 		});
