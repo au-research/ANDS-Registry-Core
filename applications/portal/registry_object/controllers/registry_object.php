@@ -74,6 +74,7 @@ class Registry_object extends MX_Controller {
         }
         if($ro && $ro->prop['status'] == 'success')
         {
+
             $this->load->library('blade');
 
             $banner = asset_url('images/collection_banner.jpg', 'core');
@@ -104,18 +105,25 @@ class Registry_object extends MX_Controller {
             }
 
             //record event
-            $ro->event('viewed');
-            ulog_terms(
-                array(
-                    'event' => 'portal_view',
-                    'roid' => $ro->core['id'],
-                    'roclass' => $ro->core['class'],
-                    'dsid' => $ro->core['data_source_id'],
-                    'group' => $ro->core['group'],
-                    'ip' => $this->input->ip_address(),
-                    'user_agent' => $this->input->user_agent()
-                ),'portal', 'info'
-            );
+            if($ro->core['status'] == 'PUBLISHED')
+            {
+                $ro->event('viewed');
+                ulog_terms(
+                    array(
+                        'event' => 'portal_view',
+                        'roid' => $ro->core['id'],
+                        'roclass' => $ro->core['class'],
+                        'dsid' => $ro->core['data_source_id'],
+                        'group' => $ro->core['group'],
+                        'ip' => $this->input->ip_address(),
+                        'user_agent' => $this->input->user_agent()
+                    ),'portal', 'info'
+                );
+            }
+            else{
+                $banner =  "http://devl.ands.org.au/workareas/leo/draft.jpg";
+            }
+
 
 		    $this->blade
 			->set('scripts', array('view', 'view_app', 'tag_controller'))
@@ -127,6 +135,7 @@ class Registry_object extends MX_Controller {
 			->set('url', $ro->construct_api_url())
 			->set('theme', $theme)
             ->set('logo',$logo)
+            ->set('isPublished', $ro->core['status'] == 'PUBLISHED')
             ->set('banner', $banner)
             ->set('group_slug',$group_slug)
             ->set('fl',$fl)
@@ -179,8 +188,10 @@ class Registry_object extends MX_Controller {
 
 		if ($this->input->get('ro_id')){
 			$ro = $this->ro->getByID($this->input->get('ro_id'));
+			$omit = $this->input->get('omit') ? $this->input->get('omit') : false;
 			$this->blade
 				->set('ro', $ro)
+				->set('omit', $omit)
 				->render('registry_object/preview');
 		} elseif($this->input->get('identifier_relation_id')) {
 
@@ -524,6 +535,10 @@ class Registry_object extends MX_Controller {
 			foreach($this->components['facet'] as $facet){
 				if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
 			}
+		} else {
+			foreach($this->components['facet'] as $facet){
+				if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
+			}
 		}
 		
 
@@ -553,7 +568,7 @@ class Registry_object extends MX_Controller {
 
 		//highlighting
 		$this->solr->setOpt('hl', 'true');
-		$this->solr->setOpt('hl.fl', 'identifier_value_search, related_party_one_search, related_party_multi_search, group_search, related_info_search, subject_value_resolved_search, description_value, date_to, date_from, citation_info_search');
+		$this->solr->setOpt('hl.fl', 'identifier_value_search, related_party_one_search, related_party_multi_search, related_activity_search, related_service_search, group_search, related_info_search, subject_value_resolved_search, description_value, date_to, date_from, citation_info_search');
 		$this->solr->setOpt('hl.simple.pre', '&lt;b&gt;');
 		$this->solr->setOpt('hl.simple.post', '&lt;/b&gt;');
 

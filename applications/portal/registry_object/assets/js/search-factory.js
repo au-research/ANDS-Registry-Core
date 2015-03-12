@@ -93,7 +93,8 @@ app.factory('search_factory', function($http, $log){
 		},
 
 		reset: function(){
-			this.filters = {q:''};
+			var prev_class = this.filters['class'];
+			this.filters = {q:'', 'class': prev_class};
 			this.search_type = 'q';
 			this.query = '';
 		},

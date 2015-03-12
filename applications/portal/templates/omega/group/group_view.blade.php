@@ -81,7 +81,7 @@
                         if($this->input->get('m')!='allsubjects') array_splice($group['facet']['subjects'], 50); 
                     ?>
                     @foreach($group['facet']['subjects'] as $subject)
-                        <li><a href="">{{$subject['name']}} <span>({{$subject['num']}})</span></a></li>
+                        <li><a href="{{base_url()}}search#!/group={{$group['title']}}/subject_value_resolved={{$subject['name']}}">{{$subject['name']}} <span>({{$subject['num']}})</span></a></li>
                     @endforeach
                 </ul>
                 @if($orig > sizeof($group['facet']['subjects']))
@@ -114,22 +114,24 @@
     <div class="panel-body">
         <ul class="listy">
             @foreach($group['facet']['class'] as $class)
-                <li><a href="">{{readable($class['name'])}} <small>({{$class['num']}})</small></a></li>
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class={{$class['name']}}">{{readable($class['name'])}} <small>({{$class['num']}})</small></a></li>
             @endforeach
         </ul>
     </div>
 </div>
 
+@if($group['groups'])
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Organisations & Groups</div>
     <div class="panel-body">
         <ul class="listy">
             @foreach($group['groups'] as $gr)
-                <li><a href="">{{$gr['title']}}</a></li>
+                <li><a href="{{base_url()}}{{$gr['slug']}}/{{$gr['id']}}">{{$gr['title']}}</a></li>
             @endforeach
         </ul>
     </div>
 </div>
+@endif
 
 @if($group['latest_collections'])
 <div class="panel panel-primary panel-content swatch-white">
@@ -137,7 +139,7 @@
     <div class="panel-body">
         <ul class="listy">
             @foreach($group['latest_collections'] as $gr)
-                <li><a href="">{{$gr['title']}}</a></li>
+                <li><a href="{{base_url()}}{{$gr['slug']}}/{{$gr['id']}}">{{$gr['title']}}</a></li>
             @endforeach
         </ul>
     </div>

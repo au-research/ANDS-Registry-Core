@@ -91,7 +91,7 @@ class Group extends MX_Controller {
 		}
 
 		$config['upload_path'] = $upload_path;
-		$config['allowed_types'] = 'jpg|png|gif';
+		$config['allowed_types'] = 'jpg|png|gif|jpeg';
 		$config['overwrite'] = true;
 		$config['max_size']	= '4000';
 
@@ -100,7 +100,7 @@ class Group extends MX_Controller {
 			echo json_encode(
 				array(
 					'status'=>'ERROR',
-					'message' => $this->upload->display_errors()
+					'message' => $this->upload->display_errors('','')
 				)
 			);
 		} else {

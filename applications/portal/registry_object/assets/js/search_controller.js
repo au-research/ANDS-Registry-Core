@@ -97,7 +97,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if ($scope[filter]) {
 			angular.forEach($scope[filter], function(f) {
 				if (f.value==value) {
-					$log.debug(f.label);
 					return f.label;
 				}
 			});
@@ -105,13 +104,23 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.hasFilter = function(){
-		var empty = {'q':''};
-		if(!angular.equals($scope.filters, empty)) {
-			return true;
-		} else return false;
+
+		var has_filter = false;
+		angular.forEach($scope.filters, function(val, index){
+			if(index!='class' && index!='rows' && index!='sort') {
+				if(val!='') {
+					has_filter = true;
+				}
+			}
+		});
+
+		if ($scope.query!='') has_filter = true;
+		
+		return has_filter;
 	}
 
 	$scope.clearSearch = function(){
+		$scope.query = '';
 		search_factory.reset();
 		$scope.$broadcast('clearSearch');
 		$scope.sync();

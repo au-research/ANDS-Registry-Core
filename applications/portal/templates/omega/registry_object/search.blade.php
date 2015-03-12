@@ -57,7 +57,7 @@
                             </ul>
                         </p>
                         <p ng-repeat="(index, content) in getHighlight(doc.id)">
-                            <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index]]</b></small>
+                            <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index | highlightreadable]]</b></small>
                         </p>
                         <p ng-if="getHighlight(doc.id)===false && doc.list_description">
                             [[ doc.list_description | text | truncate:500 ]]
@@ -158,7 +158,7 @@
     <div class="panel-body swatch-white">
         <h4>Subjects</h4>
         <ul class="listy">
-          <li ng-repeat="item in vocab_tree | orderBy:'pos' | limitTo:5">
+          <li ng-repeat="item in vocab_tree | orderBy:'pos' | orderBy:prefLabel | limitTo:5">
             <input type="checkbox" ng-checked="isVocabSelected(item)" ui-indeterminate="isVocabParentSelected(item)" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
             <a href="" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
                 [[ item.prefLabel | toTitleCase | truncate:30 ]]
@@ -172,7 +172,7 @@
     <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true" ng-if="facet.value.length > 0">
         <h4>[[facet.name | filter_name]]</h4>
         <ul class="listy">
-            <li ng-repeat="item in facet.value | limitTo:5 | orderBy:'item.value'">
+            <li ng-repeat="item in facet.value | limitTo:5">
                 <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
                 <a href="" ng-click="toggleFilter(facet.name, item.name, true)">[[item.name | truncate:30]] <small>[[item.value]]</small></a>    
             </li>

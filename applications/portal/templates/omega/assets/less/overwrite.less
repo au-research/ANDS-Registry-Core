@@ -32,7 +32,7 @@ h1 { font-size:30px; }
 .flex-direction-nav a { color:@primaryColor !important; }
 
 .swatch-white {
-	.panel-footer a, .panel-header a {
+	.panel-footer a, .panel-header a, .panel-heading i, .btn i {
 		color:white;
 	}
 	.active {
@@ -49,6 +49,39 @@ h1 { font-size:30px; }
 		color:@secondaryColor;
 	}
 }
+
+.swatch-black {
+	input:focus {
+		
+	}
+	input {
+		&:focus {
+			-webkit-box-shadow: 0 3px 0 @secondaryColor;
+			-moz-box-shadow: 0 3px 0 @secondaryColor;
+			box-shadow: 0 3px 0 @secondaryColor;
+		}
+		&::selection,  {
+			color: white;
+			background: @primaryColor;
+		}
+		&::-moz-selection {
+			color: white;
+			background: @primaryColor;
+		}
+	}
+}
+
+::selection {
+	color: white;
+	background: @primaryColor;
+}
+
+::-moz-selection {
+	color: white;
+	background: @primaryColor;
+}
+
+
 
 .mce-panel {
 	button {
@@ -106,16 +139,35 @@ h1 { font-size:30px; }
 	}
 }
 
+
+.swatch-white {
+	background:white;
+	.panel, .panel-primary, .panel-content {
+		background:white !important;
+	}
+	a {
+		color: @primaryColor;
+		&:hover {
+			color: @secondaryColor;
+		}
+	}
+}
+
 .btn-group {
 	.dropdown-menu {
 		li {
-			i {
-				color:white !important;
-			}
-			a:hover{
-				color:white !important;
-				background-color:@secondaryColor !important;
-			}
+			a {
+				color: #4c4c4c;
+				&:hover {
+					color: white;
+					background: @secondaryColor;
+				}
+			} 
 		}
 	}
+}
+
+
+.open>.btn-primary.dropdown-toggle {
+	background-color: @secondaryColor;
 }

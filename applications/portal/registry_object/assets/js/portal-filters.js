@@ -2,7 +2,7 @@ angular.module('portal-filters', [])
 	.filter('filter_name', function(){
 		return function(text) {
 			switch(text) {
-				case 'q': return 'All' ;break;
+				case 'q': return 'Search Terms' ;break;
 				case 'cq': return 'Advanced Query' ;break;
 				case 'title': return 'Title' ;break;
 				case 'identifier': return 'Identifier' ;break;
@@ -33,7 +33,31 @@ angular.module('portal-filters', [])
 				case 'lcsh': return 'LCSH'; break;
 				case 'keywords': return 'Keywords'; break;
 				case 'refine': return 'Refine'; break;
+				case 'subject_value_resolved': return 'Subject'; break;
 				default: return text;
+			}
+		}
+	})
+	.filter('highlightreadable', function() {
+		return function(text) {
+			switch(text) {
+
+				case 'identifier_value_search' : return 'Identifier' ; break;
+				// case 'access' : return 'Access Details' ; break;
+				case 'related_party_one_search' : return 'Related People' ; break;
+				case 'related_party_multi_search' : return 'Related Organisations' ; break;
+				case 'group_search' : return 'Data Provider' ; break;
+				case 'related_info_search' : return 'Related Data' ; break;
+				case 'related_activity_search' : return 'Related Project or Grant' ; break;
+				case 'related_service_search' : return 'Related Tool or Service' ; break;
+				case 'related_info_search' : return 'Related Resource' ; break;
+				case 'subject_value_resolved_search' : return 'Subject' ; break;
+				case 'description_value' : return 'Description' ; break;
+				case 'date_to' : return 'Dates' ; break;
+				case 'date_to' : return 'Dates' ; break;
+				case 'date_from' : return 'Coverage' ; break;
+				case 'citation_info_search' : return 'Citation ' ; break;
+				default : return text;
 			}
 		}
 	})
@@ -163,14 +187,16 @@ angular.module('portal-filters', [])
 	        return (time <= local && !isNaN(time)) ? span + ' ago' : 'in ' + span;
 	    }
 	})
-	.filter('orderObjectBy', function() {
+	.filter('orderObjectBy', function($log) {
 	  return function(items, field, reverse) {
 	    var filtered = [];
 	    angular.forEach(items, function(item) {
 	      filtered.push(item);
 	    });
 	    filtered.sort(function (a, b) {
-	      return (a[field] > b[field] ? 1 : -1);
+	    	var asort = (typeof(a[field])=='string' ? a[field].toLowerCase() : a[field]);
+	    	var bsort = (typeof(b[field])=='string' ? b[field].toLowerCase() : b[field]);
+	    	return (asort > bsort ? 1 : -1);
 	    });
 	    if(reverse) filtered.reverse();
 	    return filtered;

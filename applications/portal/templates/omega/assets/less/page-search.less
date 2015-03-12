@@ -85,9 +85,6 @@ ul.listy {
 			display:inline;
 			padding:8px 5px;
 			small {float:right;}
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
 		}
 	}
 }
@@ -95,16 +92,17 @@ ul.listy {
 /*Search Bar*/
 .search-section {
 	color:white;
+	i {
+		color: white !important;
+	}
 	.btn {
 		background:@lightGray;
 		color:black;
+		i {color:black !important;}
 		&:hover{
 			background:@lightGray;
 			color:black !important;
 		}
-	}
-	i {
-		color:black !important;
 	}
 	a {
 		color:white;

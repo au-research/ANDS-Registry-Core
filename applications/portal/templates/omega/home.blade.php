@@ -20,7 +20,7 @@
         }
     };
     </script>
-    <section class="section swatch-white search-section section-text-shadow section-inner-shadow element-short-bottom" style="overflow:visible;z-index:9">
+    <section class="section swatch-black search-section section-text-shadow section-inner-shadow element-short-bottom" style="overflow:visible;z-index:9">
         @include('includes/banner-image')
         <div class="container">
             <div class="row">
