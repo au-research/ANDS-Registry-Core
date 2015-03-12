@@ -308,6 +308,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else {
 			$scope.addFilter(type, value);
 		}
+		$scope.filters['p'] = 1;
 		if(execute) $scope.hashChange();
 	}
 
