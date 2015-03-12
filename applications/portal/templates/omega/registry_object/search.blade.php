@@ -195,7 +195,7 @@
         <select ng-model="filters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
             <option value="" style="display:none">To Year</option>
         </select>
-        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
 
     <!-- Funding Amount for Activity Search-->
@@ -203,7 +203,7 @@
         <h4>Funding Amount</h4>
         <input type="text" ng-model="filters.funding_from" class="form-control" placeholder="Funding From"/>
         <input type="text" ng-model="filters.funding_to" class="form-control" placeholder="Funding To"/>
-        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
 
     <!-- Commencement date for activity search -->
@@ -215,7 +215,7 @@
         <select ng-model="filters.commence_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
             <option value="" style="display:none">To Year</option>
         </select>
-        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
 
     <!-- Completion date for activity search -->
@@ -227,7 +227,7 @@
         <select ng-model="filters.completion_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
             <option value="" style="display:none">To Year</option>
         </select>
-        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
     
 </div>
