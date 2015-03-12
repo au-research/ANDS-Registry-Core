@@ -106,19 +106,6 @@ h1 { font-size:30px; }
 	}
 }
 
-.btn-group {
-	.dropdown-menu {
-		li {
-			i {
-				color:white !important;
-			}
-			a:hover{
-				color:white !important;
-				background-color:@secondaryColor !important;
-			}
-		}
-	}
-}
 
 .swatch-white {
 	background:white;
@@ -133,17 +120,20 @@ h1 { font-size:30px; }
 	}
 }
 
-.dropdown-menu {
-	li {
-		a {
-			color: #4c4c4c;
-			&:hover {
-				color: white;
-				background: @secondaryColor;
-			}
-		} 
+.btn-group {
+	.dropdown-menu {
+		li {
+			a {
+				color: #4c4c4c;
+				&:hover {
+					color: white;
+					background: @secondaryColor;
+				}
+			} 
+		}
 	}
 }
+
 
 .open>.btn-primary.dropdown-toggle {
 	background-color: @secondaryColor;
