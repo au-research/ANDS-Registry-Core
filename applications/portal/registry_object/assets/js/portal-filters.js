@@ -2,7 +2,7 @@ angular.module('portal-filters', [])
 	.filter('filter_name', function(){
 		return function(text) {
 			switch(text) {
-				case 'q': return 'All' ;break;
+				case 'q': return 'Search Terms' ;break;
 				case 'cq': return 'Advanced Query' ;break;
 				case 'title': return 'Title' ;break;
 				case 'identifier': return 'Identifier' ;break;
