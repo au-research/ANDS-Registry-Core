@@ -571,6 +571,7 @@ class Registry_object extends MX_Controller {
 		$this->solr->setOpt('hl.fl', 'identifier_value_search, related_party_one_search, related_party_multi_search, related_activity_search, related_service_search, group_search, related_info_search, subject_value_resolved_search, description_value, date_to, date_from, citation_info_search');
 		$this->solr->setOpt('hl.simple.pre', '&lt;b&gt;');
 		$this->solr->setOpt('hl.simple.post', '&lt;/b&gt;');
+		$this->solr->setOpt('hl.snippets', '2');
 
 		//experiment hl attrs
 		// $this->solr->setOpt('hl.alternateField', 'description');
