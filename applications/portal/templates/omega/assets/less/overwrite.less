@@ -50,6 +50,39 @@ h1 { font-size:30px; }
 	}
 }
 
+.swatch-black {
+	input:focus {
+		
+	}
+	input {
+		&:focus {
+			-webkit-box-shadow: 0 3px 0 @secondaryColor;
+			-moz-box-shadow: 0 3px 0 @secondaryColor;
+			box-shadow: 0 3px 0 @secondaryColor;
+		}
+		&::selection,  {
+			color: white;
+			background: @primaryColor;
+		}
+		&::-moz-selection {
+			color: white;
+			background: @primaryColor;
+		}
+	}
+}
+
+::selection {
+	color: white;
+	background: @primaryColor;
+}
+
+::-moz-selection {
+	color: white;
+	background: @primaryColor;
+}
+
+
+
 .mce-panel {
 	button {
 		background-color:inherit !important;
