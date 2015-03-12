@@ -38,7 +38,7 @@ class Groups extends CI_Model {
 		$slug = url_title($group, '-', true);
 
 		//check for custom logo that is published
-		$data = $this->fetchData($slug);
+		$data = $this->fetchData($group);
 		if ($data) {
 			$data = json_decode($data->{'data'}, true);
 			if (isset($data['logo'])) {
@@ -204,6 +204,7 @@ class Groups extends CI_Model {
 
 		if($prefer=='PUBLISHED') {
 			$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name, 'status'=>'PUBLISHED'), 1, 0);
+
 		} else {
 			$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name, 'status'=>'DRAFT'), 1, 0);
 			if($result->num_rows() == 0) {
