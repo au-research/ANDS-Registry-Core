@@ -74,6 +74,7 @@ class Registry_object extends MX_Controller {
         }
         if($ro && $ro->prop['status'] == 'success')
         {
+
             $this->load->library('blade');
 
             $banner = asset_url('images/collection_banner.jpg', 'core');
@@ -104,18 +105,25 @@ class Registry_object extends MX_Controller {
             }
 
             //record event
-            $ro->event('viewed');
-            ulog_terms(
-                array(
-                    'event' => 'portal_view',
-                    'roid' => $ro->core['id'],
-                    'roclass' => $ro->core['class'],
-                    'dsid' => $ro->core['data_source_id'],
-                    'group' => $ro->core['group'],
-                    'ip' => $this->input->ip_address(),
-                    'user_agent' => $this->input->user_agent()
-                ),'portal', 'info'
-            );
+            if($ro->core['status'] == 'PUBLISHED')
+            {
+                $ro->event('viewed');
+                ulog_terms(
+                    array(
+                        'event' => 'portal_view',
+                        'roid' => $ro->core['id'],
+                        'roclass' => $ro->core['class'],
+                        'dsid' => $ro->core['data_source_id'],
+                        'group' => $ro->core['group'],
+                        'ip' => $this->input->ip_address(),
+                        'user_agent' => $this->input->user_agent()
+                    ),'portal', 'info'
+                );
+            }
+            else{
+                $banner =  "http://devl.ands.org.au/workareas/leo/draft.jpg";
+            }
+
 
 		    $this->blade
 			->set('scripts', array('view', 'view_app', 'tag_controller'))
@@ -127,6 +135,7 @@ class Registry_object extends MX_Controller {
 			->set('url', $ro->construct_api_url())
 			->set('theme', $theme)
             ->set('logo',$logo)
+            ->set('isPublished', $ro->core['status'] == 'PUBLISHED')
             ->set('banner', $banner)
             ->set('group_slug',$group_slug)
             ->set('fl',$fl)
