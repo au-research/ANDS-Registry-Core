@@ -188,8 +188,10 @@ class Registry_object extends MX_Controller {
 
 		if ($this->input->get('ro_id')){
 			$ro = $this->ro->getByID($this->input->get('ro_id'));
+			$omit = $this->input->get('omit') ? $this->input->get('omit') : false;
 			$this->blade
 				->set('ro', $ro)
+				->set('omit', $omit)
 				->render('registry_object/preview');
 		} elseif($this->input->get('identifier_relation_id')) {
 

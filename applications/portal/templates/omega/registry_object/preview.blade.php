@@ -18,7 +18,7 @@
 	<h4>Related Collections</h4>
 	<ul>
 		@foreach($ro->relationships['collection'] as $col)
-			@if($col)
+			@if($col && $col['registry_object_id'] != $omit)
 			<li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
 			@endif
 		@endforeach
