@@ -28,7 +28,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.$watch(function(){
 		return location.hash;
 	},function(){
-		$scope.filters = search_factory.ingest(location.href.split("#")[1]);
+		var hash = location.hash ? location.href.split("#")[1] : '';
+		$scope.filters = search_factory.ingest(hash);
 		$scope.sync();
 		if($scope.filters.cq) {
 			$scope.$broadcast('cq', $scope.filters.cq);
