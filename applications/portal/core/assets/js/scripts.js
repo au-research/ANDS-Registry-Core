@@ -122,6 +122,10 @@ jQuery(document).ready(function( $ ) {
                 event: event.type, // Use the same show event as the one that triggered the event handler
                 ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
             },
+            hide: {
+                delay: 1000,
+                fixed: true,
+            },
             position: {
                 my: my, // Use the corner...
                 at: at,

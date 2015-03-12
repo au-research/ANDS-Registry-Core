@@ -127,5 +127,8 @@ a.cboxElement:after{
 
 a.noexicon:after {
     content: '';
-    margin: ;
+    margin: 0;
+}
+.Z3988{
+    visibility: hidden;
 }
