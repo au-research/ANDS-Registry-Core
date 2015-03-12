@@ -125,7 +125,7 @@ app.factory('search_factory', function($http, $log){
 			return promise;
 		},
 
-		construct_facets: function(result) {
+		construct_facets: function(result, sclass) {
 			var facets = [];
 
 			//subjects DEPRECATED in favor of ANZSRC codes directly from the home page
@@ -155,6 +155,12 @@ app.factory('search_factory', function($http, $log){
 
 			if(this.filters['class']=='activity'){
 				var order = this.activity_facet_order;
+			}
+
+			if(sclass=='collection') {
+				order = this.collection_facet_order;
+			} else if(sclass=='activity') {
+				order = this.activity_facet_order;
 			}
 
 			var orderedfacets = [];
@@ -197,6 +203,7 @@ app.factory('search_factory', function($http, $log){
 		},
 
 		filters_from_hash:function(hash) {
+
 			var xp = hash.split('/');
 			var filters = {};
 			$.each(xp, function(){

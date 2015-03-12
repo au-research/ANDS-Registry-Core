@@ -28,7 +28,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.$watch(function(){
 		return location.hash;
 	},function(){
-		$scope.filters = search_factory.ingest(location.hash);
+		$scope.filters = search_factory.ingest(location.href.split("#")[1]);
 		$scope.sync();
 		if($scope.filters.cq) {
 			$scope.$broadcast('cq', $scope.filters.cq);
@@ -182,9 +182,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.presearch = function(){
+		// search_factory.update('filters', $scope.prefilters);
 		search_factory.search_no_record($scope.prefilters).then(function(data){
 			$scope.preresult = data;
-			$scope.prefacets = search_factory.construct_facets($scope.preresult);
+			$scope.prefacets = search_factory.construct_facets($scope.preresult, $scope.prefilters['class']);
 			$scope.populateCenters($scope.preresult.response.docs);
 		});
 	}
@@ -515,6 +516,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else if(newv=='collection') {
 			$scope.advanced_fields = search_factory.advanced_fields;
 		}
+		$scope.presearch();
 	});
 
 	$scope.advancedSearch = function(){
