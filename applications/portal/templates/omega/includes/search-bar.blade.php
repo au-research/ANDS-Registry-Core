@@ -17,10 +17,10 @@
               <ul class="dropdown-menu" role="menu">
                 <li><a href="" ng-click="search_type='q'">All</a></li>
                 <li><a href="" ng-click="search_type='title'">Title</a></li>
+                <li><a href="" ng-click="search_type='description'">Description</a></li>
                 <li><a href="" ng-click="search_type='identifier'">Identifier</a></li>
                 <li><a href="" ng-click="search_type='related_people'">Related People</a></li>
                 <li><a href="" ng-click="search_type='related_organisations'">Related Organisations</a></li>
-                <li><a href="" ng-click="search_type='description'">Description</a></li>
                 <!-- <li><a href="" ng-click="search_type='subject'">Subject</a></li> -->
               </ul>
             </span>

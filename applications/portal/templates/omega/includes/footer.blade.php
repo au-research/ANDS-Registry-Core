@@ -47,7 +47,7 @@
                         $title = ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? $ro->core['title']. ' - Research Data Australia' : 'Research Data Australia' );
                     ?>
                     <div id="categories-5" class="sidebar-widget widget_categories">
-                        <h3 class="sidebar-header">Social</h3>
+                        <h3 class="sidebar-header">Share</h3>
                         <ul>
                             <li class="cat-item"><a class="noexicon" href="http://www.facebook.com/sharer.php?u={{$url}}"><i class="fa fa-facebook"></i> Facebook</a></li>
                             <li class="cat-item"><a class="noexicon" href="https://twitter.com/share?url={{$url}}&text={{$title}}&hashtags=andsdata"><i class="fa fa-twitter"></i> Twitter</a></li>
