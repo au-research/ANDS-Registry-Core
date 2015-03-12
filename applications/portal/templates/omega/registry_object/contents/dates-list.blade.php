@@ -49,7 +49,10 @@
                         }
                         $prev_date='';
                     } elseif ($date['type']=='text'){
-                        echo (string)$date['date'];
+                        foreach($date['date'] as $each_date)
+                        {
+                            echo $each_date['date']."<br />";
+                        }
                     }
                     ?>
                 </p>
