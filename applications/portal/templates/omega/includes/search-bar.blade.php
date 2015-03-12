@@ -7,7 +7,7 @@
 </div>
 <div class="col-md-8" data-os-animation="fadeInDown" data-os-animation-delay="" ng-cloak>
     <!-- <form role="search" method="get" action="{{base_url('search')}}"> -->
-    <form role="search" method="get" ng-submit="newSearch(query)" ng-if="filters.class=='collection'">
+    <form role="search" method="get" ng-submit="newSearch(query)" ng-if="filters.class!='activity'">
         <span ng-if="filters.class && filters.class!='collection'">Search is restricted to [[ filters.class | getLabelFor:class_choices ]]</span>
         <div class="input-group">
             <span class="input-group-btn">
