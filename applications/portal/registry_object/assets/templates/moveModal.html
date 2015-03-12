@@ -34,6 +34,8 @@
         <div ng-if="bookmarked">
         	<a href="" class="btn btn-danger" ng-click="unBookmark(record.id)"><i class="fa fa-trash-o"></i> Remove from MyRDA</a>
         </div>
+        <div class="alert alert-success" ng-if="success_msg">[[ success_msg ]]</div>
+		<div class="alert alert-important" ng-if="error_msg">[[ error_msg ]]</div>
 	</div>
 	<div class="modal-body swatch-white" ng-if="!loggedin" ng-cloak>
 		<p>You are not logged in to MyRDA. Please <a href="[[base_url]]profile/login">Login to MyRDA</a> to save records</p>

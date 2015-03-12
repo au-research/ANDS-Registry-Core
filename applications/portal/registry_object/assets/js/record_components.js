@@ -95,8 +95,10 @@ angular.module('record_components',['profile_components'])
             if (!$scope.bookmarked) action = 'add';
             profile_factory.modify_user_data('saved_record', action, records).then(function(data){
                 if(data.status=='OK') {
+                    $scope.success_msg = 'Records successfully saved';
                     $scope.fetch();
                 } else {
+                    $scope.error_msg = 'An error has occured while saving '+records.length+' to folder '+folder;
                     $log.debug(data);
                 }
             });
@@ -111,8 +113,10 @@ angular.module('record_components',['profile_components'])
         });
         profile_factory.modify_user_data('saved_record', 'modify', records).then(function(data){
             if(data.status=='OK') {
+                $scope.success_msg = 'Records successfully saved';
                 $scope.fetch();
             } else {
+                $scope.error_msg = 'An error has occured while saving '+records.length+' to folder '+folder;
                 $log.debug(data);
             }
         });

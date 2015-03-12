@@ -10,11 +10,17 @@
 				uasort($subjects, 'subjectSortResolved');
 			?>
 			@foreach($subjects as $col)
-            @if(isset($col['resolved']))
-			<a href="{{base_url().'search/#!/subject_value_resolved='.$col['resolved']}}" itemprop="about keywords">{{$col['resolved']}}</a> |
-            @else
-            <a href="{{base_url().'search/#!/subject_value='.$col['subject']}}" itemprop="about keywords">{{$col['subject']}}</a> |
-            @endif
+                @if(isset($col['resolved']))
+                    @if($col['type']=='anzsrc-for')
+                        <a href="{{base_url().'search/#!/anzsrc-for='.$col['subject']}}" itemprop="about keywords">{{$col['resolved']}}</a> |
+                    @elseif($col['type']=='anzsrc-seo')
+                        <a href="{{base_url().'search/#!/anzsrc-seo='.$col['subject']}}" itemprop="about keywords">{{$col['resolved']}}</a> |
+                    @else
+                        <a href="{{base_url().'search/#!/subject_value_resolved='.$col['resolved']}}" itemprop="about keywords">{{$col['resolved']}}</a> |
+                    @endif
+                @else
+                <a href="{{base_url().'search/#!/subject_value='.$col['subject']}}" itemprop="about keywords">{{$col['subject']}}</a> |
+                @endif
 			@endforeach
 		</div>
 
