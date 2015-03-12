@@ -241,7 +241,7 @@ class Groups extends CI_Model {
 				'name' => $name,
 				'authorative_datasource' => '0',
 				'status' => $data['status'],
-				'data' => json_encode($data['data']),
+				'data' => json_encode($data['data'], JSON_FORCE_OBJECT),
 				'date_modified' => date("Y-m-d H:i:s"),
 				'modified_who' => $this->user->localIdentifier()
 			);
@@ -250,7 +250,7 @@ class Groups extends CI_Model {
 			//update the draft
 			$data = array(
 				'status' => $data['status'],
-				'data' => json_encode($data['data']),
+				'data' => json_encode($data['data'], JSON_FORCE_OBJECT),
 				'date_modified' => date("Y-m-d H:i:s"),
 				'modified_who' => $this->user->localIdentifier()
 			);
@@ -265,7 +265,7 @@ class Groups extends CI_Model {
 				'name' => $name,
 				'authorative_datasource' => '0',
 				'status' => $data['status'],
-				'data' => json_encode($data['data']),
+				'data' => json_encode($data['data'], JSON_FORCE_OBJECT),
 				'date_modified' => date("Y-m-d H:i:s"),
 				'modified_who' => $this->user->localIdentifier()
 			);
