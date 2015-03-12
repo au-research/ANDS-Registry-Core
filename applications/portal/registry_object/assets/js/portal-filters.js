@@ -163,14 +163,16 @@ angular.module('portal-filters', [])
 	        return (time <= local && !isNaN(time)) ? span + ' ago' : 'in ' + span;
 	    }
 	})
-	.filter('orderObjectBy', function() {
+	.filter('orderObjectBy', function($log) {
 	  return function(items, field, reverse) {
 	    var filtered = [];
 	    angular.forEach(items, function(item) {
 	      filtered.push(item);
 	    });
 	    filtered.sort(function (a, b) {
-	      return (a[field] > b[field] ? 1 : -1);
+	    	var asort = (typeof(a[field])=='string' ? a[field].toLowerCase() : a[field]);
+	    	var bsort = (typeof(b[field])=='string' ? b[field].toLowerCase() : b[field]);
+	    	return (asort > bsort ? 1 : -1);
 	    });
 	    if(reverse) filtered.reverse();
 	    return filtered;

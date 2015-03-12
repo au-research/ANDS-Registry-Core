@@ -48,7 +48,7 @@
 
               <div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in prefacets">
                   <ul class="list-unstyled" ng-if="facet.name!='subject'">
-                      <li ng-repeat="item in facet.value">
+                      <li ng-repeat="item in facet.value | orderObjectBy:'name'">
                           <input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
                           <a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name]] <small>[[item.value]]</small></a>    
                       </li>
@@ -106,7 +106,7 @@
                   </div>
                   <div class="clearfix"></div>
                   <ul class="tree" ng-if="vocab_tree_tmp" ng-cloak>
-                    <li ng-repeat="item in vocab_tree_tmp">
+                    <li ng-repeat="item in vocab_tree_tmp | orderObjectBy:'prefLabel'">
                       <input type="checkbox" ng-checked="isVocabSelected(item, prefilters)" ui-indeterminate="isVocabParentSelected(item)" ng-click="togglePreFilter(vocab, item.notation, false)">
                       <a href="" ng-click="getSubTree(item)" ng-if="item.has_narrower">[[item.prefLabel | toTitleCase]] ([[ item.collectionNum ]])</a>
                       <span ng-if="!item.has_narrower">[[item.prefLabel | toTitleCase]] ([[ item.collectionNum ]])</span>
