@@ -119,3 +119,32 @@ h1 { font-size:30px; }
 		}
 	}
 }
+
+.swatch-white {
+	background:white;
+	.panel, .panel-primary, .panel-content {
+		background:white !important;
+	}
+	a {
+		color: @primaryColor;
+		&:hover {
+			color: @secondaryColor;
+		}
+	}
+}
+
+.dropdown-menu {
+	li {
+		a {
+			color: #4c4c4c;
+			&:hover {
+				color: white;
+				background: @secondaryColor;
+			}
+		} 
+	}
+}
+
+.open>.btn-primary.dropdown-toggle {
+	background-color: @secondaryColor;
+}
