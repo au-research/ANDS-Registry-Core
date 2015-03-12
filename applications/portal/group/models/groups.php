@@ -108,9 +108,10 @@ class Groups extends CI_Model {
 
 		//reload solr
 		$this->load->library('solr');
-		$this->solr->init();
 
-		$this->solr->setOpt('fq', '+group:("'.$group['title'].'")');
+		$this->solr
+			->init()
+			->setOpt('fq', '+group:("'.$group['title'].'")');
 
 		//facets
 		$this->solr
@@ -133,6 +134,13 @@ class Groups extends CI_Model {
 			);
 		}
 
+		// dd($this->solr->getFacetResult('subject_value_resolved'));
+
+		$this->solr
+			->setOpt('fq', '+class:collection')
+			->executeSearch();
+
+
 		//subjects
 		$group['facet']['subjects'] = array();
 		$subjects = $this->solr->getFacetResult('subject_value_resolved');
@@ -146,6 +154,10 @@ class Groups extends CI_Model {
 		//reload and collect groups
 		$group['groups'] = array();
 		$result = $this->solr
+			->init()
+			->setOpt('fq', '+group:("'.$group['title'].'")')
+			->setOpt('fq', '+class:party')
+			->setOpt('fq', '+type_search:group')
 			->setOpt('rows', '10')
 			->setOpt('fl', 'id,slug,title')
 			->executeSearch(true);
@@ -160,6 +172,7 @@ class Groups extends CI_Model {
 		//latest 5 collections
 		$group['latest_collections'] = array();
 		$this->solr
+			->init()
 			->clearOpt('fq')
 			->setOpt('rows', '5')
 			->setOpt('fq', '+group:("'.$group['title'].'")')

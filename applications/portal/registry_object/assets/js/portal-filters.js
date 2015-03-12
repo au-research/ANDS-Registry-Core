@@ -33,6 +33,7 @@ angular.module('portal-filters', [])
 				case 'lcsh': return 'LCSH'; break;
 				case 'keywords': return 'Keywords'; break;
 				case 'refine': return 'Refine'; break;
+				case 'subject_value_resolved': return 'Subject'; break;
 				default: return text;
 			}
 		}

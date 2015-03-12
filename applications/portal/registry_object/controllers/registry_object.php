@@ -533,6 +533,10 @@ class Registry_object extends MX_Controller {
 			foreach($this->components['facet'] as $facet){
 				if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
 			}
+		} else {
+			foreach($this->components['facet'] as $facet){
+				if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
+			}
 		}
 		
 
