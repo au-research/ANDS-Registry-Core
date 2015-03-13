@@ -46,13 +46,13 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 
 	$scope.save = function(state){
 		$scope.saveMessage = 'loading...';
-		$log.debug(state);
+		// $log.debug(state);
 		if(state) $scope.group.status = state;
 		delete $scope.group.nodata;
 		
 		if(!$scope.group.data) $scope.group.data = {};
 		if(!$scope.group.status) $scope.group.status = 'DRAFT';
-		$log.debug($scope.group);
+		// $log.debug($scope.group);
 		groupFactory.save($scope.group.name, $scope.group).then(function(data){
 			$scope.saveMessage = data.message;
 		});
@@ -76,6 +76,8 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 		if (files && files.length) {
 			for (var i = 0; i < files.length; i++) {
 				var file = files[i];
+				$scope.uploading = true;
+				delete $scope.error_upload_msg;
 				$upload.upload({
 					url: base_url+'group/upload',
 					file: file
@@ -83,9 +85,12 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 					var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
 					// $log.debug('progress: ' + progressPercentage + '% ' + evt.config.file.name);
 				}).success(function (data, status, headers, config) {
-					if(data.url) {
+					$scope.uploading = false;
+					if(data.status == 'OK' && data.url) {
 						if(!$scope.group.data) $scope.group.data = {};
 						$scope.group.data.logo = data.url;
+					} else if(data.status=='ERROR') {
+						$scope.error_upload_msg = data.message;
 					}
 				});
 			}

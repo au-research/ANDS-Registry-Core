@@ -151,15 +151,20 @@ function pluralise($word, $count)
     else return $word . "s";
 }
 
-function readable($text, $singular = false){
+function readable($text, $altered = false){
 	$text = trim(strtolower($text));
+    if(str_replace('REVERSE','',$altered) != $altered || $altered == true) {
+        $altered = true;
+    }else{
+        $altered = false;
+    }
 	switch($text){
         case "all": return 'All'; break;
-		case "draft": return ($singular ? 'Draft' : 'Drafts');break;
+		case "draft": return ($altered ? 'Draft' : 'Drafts');break;
 		case "submitted_for_assessment": return 'Submitted for Assessment';break;
 		case "assessment_in_progress": return 'Assessment In Progress';break;
-		case "approved": return ($singular ? 'Approved' : 'Approved Records');break;
-		case "published": return  ($singular ? 'Published' : 'Published Records');break;
+		case "approved": return ($altered ? 'Approved' : 'Approved Records');break;
+		case "published": return  ($altered ? 'Published' : 'Published Records');break;
 		case "more_work_required": return 'More Work Required';break;
 		case "collection": return 'Collections';break;
 		case "party": return 'Parties';break;
@@ -208,7 +213,7 @@ function readable($text, $singular = false){
         case 'isdescribedby' : return 'Described by'; break;
         case 'isdocumentedby' : return 'Documented by'; break;
         case 'isenrichedby' : return 'Enriched by'; break;
-        case 'isfundedby' : return 'Funded by'; break;
+        case 'isfundedby' : return ($altered ? 'Funds' : 'Funded by');break;
         case 'isfunderof' : return 'Funds'; break;
         case 'islocatedin' : return 'Located in'; break;
         case 'islocationfor' : return 'Location for'; break;

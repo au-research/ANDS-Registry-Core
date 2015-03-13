@@ -295,6 +295,13 @@ function formatName($a)
                 else $displayName .=  $namePart['name'].", ";
             }
         }
+
+    }
+    foreach($a as $namePart)
+    {
+        if(!$namePart['namePart_type']) {
+            $displayName .=  $namePart['name'].", ";
+        }
     }
     return trim($displayName,", ")." ";
 }

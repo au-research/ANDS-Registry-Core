@@ -97,7 +97,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if ($scope[filter]) {
 			angular.forEach($scope[filter], function(f) {
 				if (f.value==value) {
-					$log.debug(f.label);
 					return f.label;
 				}
 			});
@@ -105,13 +104,23 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.hasFilter = function(){
-		var empty = {'q':''};
-		if(!angular.equals($scope.filters, empty)) {
-			return true;
-		} else return false;
+
+		var has_filter = false;
+		angular.forEach($scope.filters, function(val, index){
+			if(index!='class' && index!='rows' && index!='sort') {
+				if(val!='') {
+					has_filter = true;
+				}
+			}
+		});
+
+		if ($scope.query!='') has_filter = true;
+
+		return has_filter;
 	}
 
 	$scope.clearSearch = function(){
+		$scope.query = '';
 		search_factory.reset();
 		$scope.$broadcast('clearSearch');
 		$scope.sync();
@@ -286,7 +295,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.showFilter = function(filter_name){
 		var show = true;
-		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class' || filter_name=='q') {
+		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
 			show = false;
 		}
 		return show;
@@ -361,6 +370,21 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			return false;
 		}
 		return false;
+	}
+
+	$scope.showFacet = function(facet) {
+		if ($scope.filters['class']=='collection') {
+			var allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial'];
+		} else if($scope.filters['class']=='activity') {
+			var allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'commencement_year', 'completion_year', 'funding_amount'];
+		} else {
+			var allowed = ['subjects', 'group'];
+		}
+		if(allowed.indexOf(facet) > -1) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	$scope.isPrefilterFacet = function(type, value) {
@@ -517,8 +541,12 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.advanced_fields = search_factory.advanced_fields_activity;
 		} else if(newv=='collection') {
 			$scope.advanced_fields = search_factory.advanced_fields;
+		} else if(newv=='party') {
+			$scope.advanced_fields = search_factory.advanced_fields_party;
+		} else if(newv=='service') {
+			$scope.advanced_fields = search_factory.advanced_fields_service;
 		}
-		$scope.presearch();
+		$scope.presearch(); 
 	});
 
 	$scope.advancedSearch = function(){

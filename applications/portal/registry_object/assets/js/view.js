@@ -83,7 +83,7 @@ $(document).on('click', '.ro_preview', function(event){
 			text: function(event, api) {
 				api.elements.content.html('Loading...');
 				if ($(this).attr('ro_id')) {
-					var url = base_url+'registry_object/preview/?ro_id='+$(this).attr('ro_id');
+					var url = base_url+'registry_object/preview/?ro_id='+$(this).attr('ro_id')+'&omit='+$('#ro_id').val();
 				} else if($(this).attr('identifier_relation_id')) {
 					var url = base_url+'registry_object/preview/?identifier_relation_id='+$(this).attr('identifier_relation_id')
 				} else if($(this).attr('identifier_doi')) {

@@ -1,3 +1,30 @@
+app.directive('facetSearch', function($http, $log){
+	return {
+		templateUrl: base_url+'assets/registry_object/templates/facetSearch.html',
+		scope : {
+			facets: '=',
+			type :'@'
+		},
+		link: function(scope) {
+			scope.$watch('facets', function(newv){
+				if(newv) {
+					// $log.debug(scope.type, newv);
+					scope.facet = false;
+					angular.forEach(newv, function(content, index) {
+						scope.facet = (content.name == scope.type ? content : scope.facet);
+					});
+					// $log.debug(scope.facet);
+				}
+			});
+
+			scope.isFacet = scope.$parent.isFacet;
+			scope.toggleFilter = scope.$parent.toggleFilter;
+			scope.advanced = scope.$parent.advanced;
+			scope.hashChange = scope.$parent.hashChange;
+		}
+	}
+});
+
 app.directive('resolve', function($http, $log, vocab_factory){
 	return {
 		template: '<ul class="listy no-bottom"><li ng-repeat="item in result"><a href="" ng-click="toggleFilter(\'anzsrc-for\', item.notation, true)">{{item.label | toTitleCase | truncate:30}} <small><i class="fa fa-remove"></i></small></a></li></ul>',
@@ -65,7 +92,7 @@ app.directive('classicon', function($log) {
 				} else if(scope.fclass=='activity') {
 					scope.class = 'fa fa-flask';
 				}
-				scope.class += ' icon-white';
+				// scope.class += ' icon-white';
 			});
 			
 		}

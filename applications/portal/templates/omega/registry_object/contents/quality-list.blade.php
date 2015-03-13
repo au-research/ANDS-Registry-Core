@@ -3,9 +3,7 @@
 $found = false;
 $heading = '<div class="swatch-white">
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
-        <div class="panel-heading">
-            <a href="">Data Quality Information</a>
-        </div>
+        <div class="panel-heading"> Data Quality Information </div>
         <div class="panel-body swatch-white">';
 $closure = '        </div>
     </div>

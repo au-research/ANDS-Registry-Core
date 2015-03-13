@@ -21,6 +21,21 @@ class Spatial extends ROHandler {
                     if(isset($this->index['spatial_coverage_area_sum'])) $result['area_sum'] = $this->index['spatial_coverage_area_sum'];
                 }
             }
+
+            if($this->gXPath->evaluate("count(//ro:coverage/ro:spatial)")>0) {
+                $query = "//ro:coverage/ro:spatial";
+            }
+
+            $coverages = $this->gXPath->query($query);
+            foreach($coverages as $spatial){
+                $type = $spatial->getAttribute('type');
+                if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox')
+                $result[] = array (
+                    'type' => $type,
+                    'value' => $spatial->nodeValue
+                );
+
+            }
         }
         else{
             $coords = $this->ro->getLocationAsLonLats();

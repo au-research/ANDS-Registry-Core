@@ -6,9 +6,7 @@
 @if($ro->descriptions)
 <div class="swatch-white">
 	<div class="panel panel-primary element-no-top element-short-bottom panel-content">
-		<div class="panel-heading">
-	        <a href="">Descriptions</a>
-	    </div>
+		<div class="panel-heading"> Descriptions </div>
 		<div class="panel-body swatch-white">
             @if($ro->core['type']=='grant')
             <h2>Research Grant</h2>
@@ -24,12 +22,14 @@
                                 if($desc['type']=='researchers'){
                                     $researchersfound='yes';
                                 }
-                                if($o == 'brief' && $researchersfound=='no'){
+                                if(($o == 'fundingAmount'||$o == 'fundingScheme'||$o == 'brief'||$o='full') && $researchersfound=='no'){
+                                    $researchersfound='yes;'
                                     ?>
-                                    @include('registry_object/activity_contents/activity-people')
-                        <?php
+                                  <p><strong>Researchers </strong> @include('registry_object/activity_contents/activity-people')</p>
+                                <?php
                                 }
                         ?>
+
 						<p><strong>{{$type}}</strong> {{html_entity_decode($desc['description'])}}
 
                         </p>

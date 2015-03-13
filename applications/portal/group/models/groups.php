@@ -38,7 +38,7 @@ class Groups extends CI_Model {
 		$slug = url_title($group, '-', true);
 
 		//check for custom logo that is published
-		$data = $this->fetchData($slug);
+		$data = $this->fetchData($group);
 		if ($data) {
 			$data = json_decode($data->{'data'}, true);
 			if (isset($data['logo'])) {
@@ -108,9 +108,10 @@ class Groups extends CI_Model {
 
 		//reload solr
 		$this->load->library('solr');
-		$this->solr->init();
 
-		$this->solr->setOpt('fq', '+group:("'.$group['title'].'")');
+		$this->solr
+			->init()
+			->setOpt('fq', '+group:("'.$group['title'].'")');
 
 		//facets
 		$this->solr
@@ -133,6 +134,13 @@ class Groups extends CI_Model {
 			);
 		}
 
+		// dd($this->solr->getFacetResult('subject_value_resolved'));
+
+		$this->solr
+			->setOpt('fq', '+class:collection')
+			->executeSearch();
+
+
 		//subjects
 		$group['facet']['subjects'] = array();
 		$subjects = $this->solr->getFacetResult('subject_value_resolved');
@@ -146,6 +154,10 @@ class Groups extends CI_Model {
 		//reload and collect groups
 		$group['groups'] = array();
 		$result = $this->solr
+			->init()
+			->setOpt('fq', '+group:("'.$group['title'].'")')
+			->setOpt('fq', '+class:party')
+			->setOpt('fq', '+type_search:group')
 			->setOpt('rows', '10')
 			->setOpt('fl', 'id,slug,title')
 			->executeSearch(true);
@@ -160,6 +172,7 @@ class Groups extends CI_Model {
 		//latest 5 collections
 		$group['latest_collections'] = array();
 		$this->solr
+			->init()
 			->clearOpt('fq')
 			->setOpt('rows', '5')
 			->setOpt('fq', '+group:("'.$group['title'].'")')
@@ -191,6 +204,7 @@ class Groups extends CI_Model {
 
 		if($prefer=='PUBLISHED') {
 			$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name, 'status'=>'PUBLISHED'), 1, 0);
+
 		} else {
 			$result = $this->portal_db->get_where('contributor_pages', array('name'=>$name, 'status'=>'DRAFT'), 1, 0);
 			if($result->num_rows() == 0) {
@@ -227,7 +241,7 @@ class Groups extends CI_Model {
 				'name' => $name,
 				'authorative_datasource' => '0',
 				'status' => $data['status'],
-				'data' => json_encode($data['data']),
+				'data' => json_encode($data['data'], JSON_FORCE_OBJECT),
 				'date_modified' => date("Y-m-d H:i:s"),
 				'modified_who' => $this->user->localIdentifier()
 			);
@@ -236,7 +250,7 @@ class Groups extends CI_Model {
 			//update the draft
 			$data = array(
 				'status' => $data['status'],
-				'data' => json_encode($data['data']),
+				'data' => json_encode($data['data'], JSON_FORCE_OBJECT),
 				'date_modified' => date("Y-m-d H:i:s"),
 				'modified_who' => $this->user->localIdentifier()
 			);
@@ -251,7 +265,7 @@ class Groups extends CI_Model {
 				'name' => $name,
 				'authorative_datasource' => '0',
 				'status' => $data['status'],
-				'data' => json_encode($data['data']),
+				'data' => json_encode($data['data'], JSON_FORCE_OBJECT),
 				'date_modified' => date("Y-m-d H:i:s"),
 				'modified_who' => $this->user->localIdentifier()
 			);

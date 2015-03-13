@@ -6,9 +6,7 @@
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
 
 @if($ro->descriptions)
-        <div class="panel-heading">
-            <a href="">Descriptions</a>
-        </div>
+        <div class="panel-heading"> Descriptions </div>
 		<div class="panel-body swatch-white">
 			@foreach($order as $o)
 				@foreach($ro->descriptions as $desc)

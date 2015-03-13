@@ -188,8 +188,10 @@ class Registry_object extends MX_Controller {
 
 		if ($this->input->get('ro_id')){
 			$ro = $this->ro->getByID($this->input->get('ro_id'));
+			$omit = $this->input->get('omit') ? $this->input->get('omit') : false;
 			$this->blade
 				->set('ro', $ro)
+				->set('omit', $omit)
 				->render('registry_object/preview');
 		} elseif($this->input->get('identifier_relation_id')) {
 
@@ -533,6 +535,10 @@ class Registry_object extends MX_Controller {
 			foreach($this->components['facet'] as $facet){
 				if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
 			}
+		} else {
+			foreach($this->components['facet'] as $facet){
+				if ($facet!='temporal' && $facet!='spatial') $this->solr->setFacetOpt('field', $facet);
+			}
 		}
 		
 
@@ -562,9 +568,10 @@ class Registry_object extends MX_Controller {
 
 		//highlighting
 		$this->solr->setOpt('hl', 'true');
-		$this->solr->setOpt('hl.fl', 'identifier_value_search, related_party_one_search, related_party_multi_search, group_search, related_info_search, subject_value_resolved_search, description_value, date_to, date_from, citation_info_search');
+		$this->solr->setOpt('hl.fl', 'identifier_value_search, related_party_one_search, related_party_multi_search, related_activity_search, related_service_search, group_search, related_info_search, subject_value_resolved_search, description_value, date_to, date_from, citation_info_search');
 		$this->solr->setOpt('hl.simple.pre', '&lt;b&gt;');
 		$this->solr->setOpt('hl.simple.post', '&lt;/b&gt;');
+		$this->solr->setOpt('hl.snippets', '2');
 
 		//experiment hl attrs
 		// $this->solr->setOpt('hl.alternateField', 'description');

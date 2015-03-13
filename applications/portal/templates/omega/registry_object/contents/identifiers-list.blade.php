@@ -1,9 +1,7 @@
 @if($ro->identifiers)
 <div class="swatch-white">
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
-        <div class="panel-heading">
-            <a href="">Identifiers</a>
-        </div>
+        <div class="panel-heading"> Identifiers </div>
         <div class="panel-body swatch-white">
             <ul class="list-unstyled">
                 @foreach($ro->identifiers as $col)
