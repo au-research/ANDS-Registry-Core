@@ -16,10 +16,10 @@
   /*color: #4f9bc2;*/
 }
 .swatch-white small, [class*="swatch-"] .swatch-white small {
-  color: rgba(76, 76, 76, 0.8);
+  /*color: rgba(76, 76, 76, 0.8);*/
 }
 .swatch-white small a, [class*="swatch-"] .swatch-white small a {
-  color: rgba(76, 76, 76, 0.8);
+  /*color: rgba(76, 76, 76, 0.8);*/
 }
 .swatch-white small a:hover, [class*="swatch-"] .swatch-white small a:hover {
   color: #84a07b;
