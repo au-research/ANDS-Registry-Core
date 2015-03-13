@@ -115,7 +115,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		});
 
 		if ($scope.query!='') has_filter = true;
-		
+
 		return has_filter;
 	}
 
@@ -295,7 +295,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.showFilter = function(filter_name){
 		var show = true;
-		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class' || filter_name=='q') {
+		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
 			show = false;
 		}
 		return show;

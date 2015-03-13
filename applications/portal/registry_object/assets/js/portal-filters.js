@@ -2,12 +2,12 @@ angular.module('portal-filters', [])
 	.filter('filter_name', function(){
 		return function(text) {
 			switch(text) {
-				case 'q': return 'Search Terms' ;break;
+				case 'q': return 'All Fields' ;break;
 				case 'cq': return 'Advanced Query' ;break;
 				case 'title': return 'Title' ;break;
 				case 'identifier': return 'Identifier' ;break;
 				case 'related_people': return 'Related People' ;break;
-				case 'related_organisation': return 'Related Organisations' ;break;
+				case 'related_organisations': return 'Related Organisations' ;break;
 				case 'description': return 'Description' ;break;
 				case 'subject': return 'Subjects' ;break;
 				case 'access_rights': return 'Access'; break;
@@ -58,6 +58,16 @@ angular.module('portal-filters', [])
 				case 'date_from' : return 'Coverage' ; break;
 				case 'citation_info_search' : return 'Citation ' ; break;
 				default : return text;
+			}
+		}
+	})
+	.filter('socialreadable', function(){
+		return function(text) {
+			switch(text) {
+				case 'AUTHENTICATION_SOCIAL_FACEBOOK' : return 'Facebook'; break;
+				case 'AUTHENTICATION_SOCIAL_TWITTER' : return 'Twitter'; break;
+				case 'AUTHENTICATION_SOCIAL_GOOGLE' : return 'Google'; break;
+				case 'AUTHENTICATION_SOCIAL_LINKEDIN' : return 'LinkedIn'; break;
 			}
 		}
 	})

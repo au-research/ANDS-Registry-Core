@@ -56,9 +56,14 @@
                                 </li>
                             </ul>
                         </p>
-                        <p ng-repeat="(index, content) in getHighlight(doc.id)">
-                            <span data-ng-bind-html="content | trustAsHtml"></span> <small><b>[[index | highlightreadable]]</b></small>
-                        </p>
+                        
+                        <div ng-repeat="(index, content) in getHighlight(doc.id)">
+                            <p ng-repeat="c in content track by $index">
+                                <span ng-bind-html="c | trustAsHtml"></span> <small><b>[[index | highlightreadable]]</b></small>
+                            </p>
+
+                        </div>
+
                         <p ng-if="getHighlight(doc.id)===false && doc.list_description">
                             [[ doc.list_description | text | truncate:500 ]]
                         </p>
@@ -113,7 +118,8 @@
             
         </div>
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
-            <h4>[[name | filter_name]]</h4>
+            <h4 ng-if="name!='q' || (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
+            <h4 ng-if="name=='q' && filters.cq">Advanced Search</h4>
             <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li ng-repeat="v in value track by $index"> 
                     <a href="" ng-click="toggleFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove"></i></small> </a>
@@ -189,7 +195,7 @@
         <select ng-model="filters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
             <option value="" style="display:none">To Year</option>
         </select>
-        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
 
     <!-- Funding Amount for Activity Search-->
@@ -197,7 +203,7 @@
         <h4>Funding Amount</h4>
         <input type="text" ng-model="filters.funding_from" class="form-control" placeholder="Funding From"/>
         <input type="text" ng-model="filters.funding_to" class="form-control" placeholder="Funding To"/>
-        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
 
     <!-- Commencement date for activity search -->
@@ -209,7 +215,7 @@
         <select ng-model="filters.commence_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
             <option value="" style="display:none">To Year</option>
         </select>
-        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
 
     <!-- Completion date for activity search -->
@@ -221,7 +227,7 @@
         <select ng-model="filters.completion_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
             <option value="" style="display:none">To Year</option>
         </select>
-        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Search</button>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
     
 </div>
