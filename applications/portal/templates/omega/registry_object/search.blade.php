@@ -160,8 +160,8 @@
         </form>
     </div>
 
-    <div facet-search facets="facets" type="'type'" ng-if="showFacet('type')"></div>
-    <div facet-search facets="facets" type="'activity_status'" ng-if="showFacet('activity_status')"></div>
+    <div facet-search facets="facets" type="type" ng-if="showFacet('type')"></div>
+    <div facet-search facets="facets" type="activity_status" ng-if="showFacet('activity_status')"></div>
 
     <!-- Subject Facet -->
     <div class="panel-body swatch-white" ng-if="showFacet('subjects')">
@@ -178,12 +178,12 @@
         </ul>
     </div>
 
-    <div facet-search facets="facets" type="'group'" ng-if="showFacet('group')"></div>
-    <div facet-search facets="facets" type="'access_rights'" ng-if="showFacet('access_rights')"></div>
-    <div facet-search facets="facets" type="'license_class'" ng-if="showFacet('license_class')"></div>
+    <div facet-search facets="facets" type="group" ng-if="showFacet('group')"></div>
+    <div facet-search facets="facets" type="access_rights" ng-if="showFacet('access_rights')"></div>
+    <div facet-search facets="facets" type="license_class" ng-if="showFacet('license_class')"></div>
 
-    <div facet-search facets="facets" type="'administering_institution'" ng-if="showFacet('administering_institution')"></div>
-    <div facet-search facets="facets" type="'funders'" ng-if="showFacet('funders')"></div>
+    <div facet-search facets="facets" type="administering_institution" ng-if="showFacet('administering_institution')"></div>
+    <div facet-search facets="facets" type="funders" ng-if="showFacet('funders')"></div>
 
     
 

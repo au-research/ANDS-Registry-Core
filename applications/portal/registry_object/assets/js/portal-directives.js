@@ -3,8 +3,7 @@ app.directive('facetSearch', function($http, $log){
 		templateUrl: base_url+'assets/registry_object/templates/facetSearch.html',
 		scope : {
 			facets: '=',
-			filters: '=',
-			type :'='
+			type :'@'
 		},
 		link: function(scope) {
 			scope.$watch('facets', function(newv){
