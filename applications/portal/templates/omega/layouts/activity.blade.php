@@ -26,12 +26,12 @@
                                             @if($ro->existenceDates)
                                                 [@include('registry_object/contents/existenceDates-list')]
                                             @endif
-                                        </h1>
+
                                         @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
                                         @if($show_dup_identifier_qtip)
-                                        <a href="" qtip="#identifiermatch" tip_popup="{{sizeof($ro->identifiermatch)}} linked Records"><i class="fa fa-caret-down"></i></a>
+                                        <a href="" qtip="#identifiermatch" tip_popup="{{sizeof($ro->identifiermatch)}} linked Records"><i class="fa fa-caret-down small"></i></a>
                                         @else
-                                        <a href="" qtip="#identifiermatch"><i class="fa fa-caret-down"></i></a>
+                                        <a href="" qtip="#identifiermatch"><i class="fa fa-caret-down small"></i></a>
                                         @endif
                                         <div id="identifiermatch" class="hide">
                                             <b>{{sizeof($ro->identifiermatch)}} linked Records:</b>
@@ -42,7 +42,7 @@
                                             </ul>
                                         </div>
                                         @endif
-
+                                        </h1>
                                         <div class="clear"></div>
 
                                         <div class="container-fluid">

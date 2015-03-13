@@ -26,10 +26,11 @@
                                 }
                                 if($o == 'brief' && $researchersfound=='no'){
                                     ?>
-                                    @include('registry_object/activity_contents/activity-people')
+                                   <strong>Researchers </strong>
                         <?php
                                 }
                         ?>
+                        @include('registry_object/activity_contents/activity-people')
 						<p><strong>{{$type}}</strong> {{html_entity_decode($desc['description'])}}
 
                         </p>

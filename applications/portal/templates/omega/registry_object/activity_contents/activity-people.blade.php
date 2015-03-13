@@ -1,7 +1,7 @@
 <?php $researcherfound = false; ?>
 @if($ro->relationships)
     @if(isset($ro->relationships['party_one']))
-        <strong>Researchers </strong>
+
         <?php
             $peoplecount = 0;
             $researcherfound = true;
@@ -28,4 +28,23 @@
             <?php if($peoplecount<count($people)) { echo ", ";} ?>
         @endforeach
     @endif
+@endif
+
+@if($ro->relatedInfo)
+    @foreach($ro->relatedInfo as $relatedInfo)
+        @if($relatedInfo['type']=='party')
+
+            <?php if($researcherfound){ echo ",  ";} ?>
+
+
+            @if(isset($relatedInfo['identifier']['identifier_href']['href']))
+                <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['title']}}</a>
+            @else
+                {{$relatedInfo['title']}}
+            @endif
+            @if(isset($relatedInfo['relation']['relation_type']))
+                ({{readable($relatedInfo['relation']['relation_type'])}})
+            @endif
+        @endif
+    @endforeach
 @endif
