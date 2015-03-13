@@ -1,10 +1,10 @@
-<div class="panel-body swatch-white" ng-if="facet">
+<div class="panel-body swatch-white" ng-if="facet && facet.value.length > 0">
     <h4>[[facet.name | filter_name]]</h4>
     <ul class="listy">
         <li ng-repeat="item in facet.value | limitTo:5">
             <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
             <a href="" ng-click="toggleFilter(facet.name, item.name, true)">[[item.name | truncate:30]] <small>[[item.value]]</small></a>    
         </li>
-        <li><a href="" ng-click="advanced(facet.name)">View More</a></li>
+        <li ng-if="facet.value.length >= 5"><a href="" ng-click="advanced(facet.name)">View More</a></li>
     </ul>
 </div>

@@ -160,6 +160,7 @@
         </form>
     </div>
 
+    <div facet-search facets="facets" type="'type'" ng-if="showFacet('type')"></div>
     <div facet-search facets="facets" type="'activity_status'" ng-if="showFacet('activity_status')"></div>
 
     <!-- Subject Facet -->

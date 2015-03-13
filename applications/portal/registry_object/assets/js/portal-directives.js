@@ -9,10 +9,12 @@ app.directive('facetSearch', function($http, $log){
 		link: function(scope) {
 			scope.$watch('facets', function(newv){
 				if(newv) {
+					// $log.debug(scope.type, newv);
 					scope.facet = false;
 					angular.forEach(newv, function(content, index) {
 						scope.facet = (content.name == scope.type ? content : scope.facet);
 					});
+					// $log.debug(scope.facet);
 				}
 			});
 
