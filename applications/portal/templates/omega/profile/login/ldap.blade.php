@@ -7,7 +7,7 @@
             </div>
             <div class="form-group form-icon-group">
                 <input autoFillSync class="form-control" id="password" name="password" placeholder="Your password *" type="password" required="" ng-model="password">
-                <i class="fa fa-envelope"></i>
+                <i class="fa fa-key"></i>
             </div>
             <div>
             	<button type="submit" class="btn btn-primary" data-loading-text="Logging in... Please wait">Login using LDAP Account</button>
