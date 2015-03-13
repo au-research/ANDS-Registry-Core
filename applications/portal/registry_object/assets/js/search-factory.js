@@ -62,6 +62,16 @@ app.factory('search_factory', function($http, $log){
 			{'name':'review', 'display':'Review'}
 		],
 
+		advanced_fields_party: [
+			{'name':'subject', 'display':'Subjects'},
+			{'name':'group', 'display':'Data Provider'},
+		],
+
+		advanced_fields_service: [
+			{'name':'subject', 'display':'Subjects'},
+			{'name':'group', 'display':'Data Provider'},
+		],
+
 		advanced_fields_activity: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
 			{'name':'type', 'display':'Types'},

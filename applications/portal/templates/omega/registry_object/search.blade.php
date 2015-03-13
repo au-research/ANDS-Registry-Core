@@ -160,8 +160,10 @@
         </form>
     </div>
 
+    <div facet-search facets="facets" type="'activity_status'" ng-if="showFacet('activity_status')"></div>
+
     <!-- Subject Facet -->
-    <div class="panel-body swatch-white">
+    <div class="panel-body swatch-white" ng-if="showFacet('subjects')">
         <h4>Subjects</h4>
         <ul class="listy">
           <li ng-repeat="item in vocab_tree | orderBy:'pos' | orderBy:prefLabel | limitTo:5">
@@ -174,32 +176,18 @@
             <li><a href="" ng-click="advanced('subject')">View More</a></li>
         </ul>
     </div>
-    
-    <div class="panel-body swatch-white" ng-repeat="facet in facets | orderBy:'name':true" ng-if="facet.value.length > 0">
-        <h4>[[facet.name | filter_name]]</h4>
-        <ul class="listy">
-            <li ng-repeat="item in facet.value | limitTo:5">
-                <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
-                <a href="" ng-click="toggleFilter(facet.name, item.name, true)">[[item.name | truncate:30]] <small>[[item.value]]</small></a>    
-            </li>
-            <li><a href="" ng-click="advanced(facet.name)">View More</a></li>
-        </ul>
-    </div>
 
-    <!-- Temporal Facet -->
-    <div class="panel-body swatch-white" ng-if="filters.class=='collection'">
-        <h4>Temporal</h4>
-        <select ng-model="filters.year_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
-            <option value="" style="display:none">From Year</option>
-        </select>
-        <select ng-model="filters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
-            <option value="" style="display:none">To Year</option>
-        </select>
-        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
-    </div>
+    <div facet-search facets="facets" type="'group'" ng-if="showFacet('group')"></div>
+    <div facet-search facets="facets" type="'access_rights'" ng-if="showFacet('access_rights')"></div>
+    <div facet-search facets="facets" type="'license_class'" ng-if="showFacet('license_class')"></div>
+
+    <div facet-search facets="facets" type="'administering_institution'" ng-if="showFacet('administering_institution')"></div>
+    <div facet-search facets="facets" type="'funders'" ng-if="showFacet('funders')"></div>
+
+    
 
     <!-- Funding Amount for Activity Search-->
-    <div class="panel-body swatch-white" ng-if="filters.class=='activity'">
+    <div class="panel-body swatch-white" ng-show="showFacet('funding_amount')">
         <h4>Funding Amount</h4>
         <input type="text" ng-model="filters.funding_from" class="form-control" placeholder="Funding From"/>
         <input type="text" ng-model="filters.funding_to" class="form-control" placeholder="Funding To"/>
@@ -207,7 +195,7 @@
     </div>
 
     <!-- Commencement date for activity search -->
-    <div class="panel-body swatch-white" ng-if="filters.class=='activity'">
+    <div class="panel-body swatch-white" ng-show="showFacet('commencement_date')">
         <h4>Commencement date</h4>
         <select ng-model="filters.commence_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
             <option value="" style="display:none">From Year</option>
@@ -219,7 +207,7 @@
     </div>
 
     <!-- Completion date for activity search -->
-    <div class="panel-body swatch-white" ng-if="filters.class=='activity'">
+    <div class="panel-body swatch-white" ng-show="showFacet('completion_date')">
         <h4>Completion date</h4>
         <select ng-model="filters.completion_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
             <option value="" style="display:none">From Year</option>
@@ -228,6 +216,26 @@
             <option value="" style="display:none">To Year</option>
         </select>
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
+    </div>
+
+    <!-- Temporal Facet -->
+    <div class="panel-body swatch-white" ng-show="showFacet('temporal')">
+        <h4>Time Period</h4>
+        <select ng-model="filters.year_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
+            <option value="" style="display:none">From Year</option>
+        </select>
+        <select ng-model="filters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
+            <option value="" style="display:none">To Year</option>
+        </select>
+        <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
+    </div>
+
+    <!-- Location Facet -->
+    <div class="panel-body swatch-white" ng-show="showFacet('spatial')">
+        <h4>Location <i class="fa fa-info" tip="Geographical area ( either a point location or an area) where data was collected or a place which is the subject of a data collection"></i></h4>
+        <ul class="listy">
+            <li> <a href="" ng-click="advanced('spatial')">View Map <i class="fa fa-globe"></i></a></li>
+        </ul>
     </div>
     
 </div>

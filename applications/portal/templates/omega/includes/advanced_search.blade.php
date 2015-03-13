@@ -24,14 +24,14 @@
 								 </div>
 								 <div class="clearfix"></div>
 								 <div class="collapse navbar-collapse" id="advmenu">
-										<ul class="nav nav-pills nav-stacked">
-											<li ng-repeat="field in advanced_fields" ng-class="{'active':field.active==true}">
-												<a href="" ng-click="selectAdvancedField(field.name)">
-													<span class="badge" ng-show="sizeofField(field.name) > 0">[[sizeofField(field.name)]]</span>
-													[[field.display]]
-												</a>
-											</li>
-										</ul>
+									<ul class="nav nav-pills nav-stacked">
+										<li ng-repeat="field in advanced_fields" ng-class="{'active':field.active==true}">
+											<a href="" ng-click="selectAdvancedField(field.name)">
+												<span class="badge" ng-show="sizeofField(field.name) > 0">[[sizeofField(field.name)]]</span>
+												[[field.display]]
+											</a>
+										</li>
+									</ul>
 								 </div>
 							</nav>
 

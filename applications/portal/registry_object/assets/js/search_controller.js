@@ -372,6 +372,29 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		return false;
 	}
 
+	$scope.showFacet = function(facet) {
+		if ($scope.filters['class']=='collection') {
+			var allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial'];
+		} else if($scope.filters['class']=='activity') {
+			var allowed = ['activity_status', 'subjects', 'administering_institution', 'funders', 'commencement_year', 'completion_year', 'funding_amount'];
+		} else {
+			var allowed = ['subjects', 'group'];
+		}
+		if(allowed.indexOf(facet) > -1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	$scope.getFacet = function(facet) {
+		if ($scope.facets && $scope.facets[facet]) {
+			return $scope.facets[facet];
+		} else {
+			return false;
+		}
+	}
+
 	$scope.isPrefilterFacet = function(type, value) {
 		if($scope.prefilters[type]) {
 			if(typeof $scope.prefilters[type]=='string' && $scope.prefilters[type]==value) {
@@ -526,8 +549,12 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.advanced_fields = search_factory.advanced_fields_activity;
 		} else if(newv=='collection') {
 			$scope.advanced_fields = search_factory.advanced_fields;
+		} else if(newv=='party') {
+			$scope.advanced_fields = search_factory.advanced_fields_party;
+		} else if(newv=='service') {
+			$scope.advanced_fields = search_factory.advanced_fields_service;
 		}
-		$scope.presearch();
+		$scope.presearch(); 
 	});
 
 	$scope.advancedSearch = function(){
