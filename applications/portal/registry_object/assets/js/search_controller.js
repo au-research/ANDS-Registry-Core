@@ -378,7 +378,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else if($scope.filters['class']=='activity') {
 			var allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'commencement_year', 'completion_year', 'funding_amount'];
 		} else {
-			var allowed = ['subjects', 'group'];
+			var allowed = ['type' ,'subjects', 'group'];
 		}
 		if(allowed.indexOf(facet) > -1) {
 			return true;

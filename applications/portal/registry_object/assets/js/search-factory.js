@@ -63,13 +63,15 @@ app.factory('search_factory', function($http, $log){
 		],
 
 		advanced_fields_party: [
+			{'name':'type', 'display':'Types'},
 			{'name':'subject', 'display':'Subjects'},
-			{'name':'group', 'display':'Data Provider'},
+			{'name':'group', 'display':'Data Provider'}
 		],
 
 		advanced_fields_service: [
+			{'name':'type', 'display':'Types'},
 			{'name':'subject', 'display':'Subjects'},
-			{'name':'group', 'display':'Data Provider'},
+			{'name':'group', 'display':'Data Provider'}
 		],
 
 		advanced_fields_activity: [
@@ -85,7 +87,7 @@ app.factory('search_factory', function($http, $log){
 			{'name':'review', 'display':'Review'}
 		],
 
-		collection_facet_order: ['group', 'access_rights', 'license_class'],
+		collection_facet_order: ['group', 'access_rights', 'license_class', 'type'],
 		activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
 		ingest: function(hash) {
