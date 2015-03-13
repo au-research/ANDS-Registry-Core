@@ -12,13 +12,10 @@ app.controller('grantForm', function($scope, $log, $http){
         };
 
         $http.post(base_url+'page/requestGrantEmail', {'data':data}).then(function(response){
-
-            if(response.data.status=='OK') {
+            if (response.data.status=='OK') {
                 $('#grant-query-div').html(response.data.message);
-            }
-            else{
+            } else{
                 $('#grant-query-div').html(response.data.message);
-                $log.debug(response.data);
             }
         });
     }

@@ -88,7 +88,6 @@ class Page extends MX_Controller {
 		$this->blade->render('disclaimer');
 	}
 
-
     /**
      * Help page
      * @author Liz Woods <liz.woods@ands.org.au>
@@ -99,19 +98,19 @@ class Page extends MX_Controller {
         $this->blade->render('help');
     }
 
-
     public function requestGrantEmail(){
-        $_ci =& get_instance();
+    	header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
         $message['status'] = 'ERROR';
         $message['message'] = 'NOT ENOUGH INFORMATION OR SOMETHING IS STILL WRONG!';
         $data = json_decode(file_get_contents("php://input"), true);
         $data = $data['data'];
         $from_email = $data['contact_email'];
-        $to_email = $_ci->config->item('site_admin_email');
-        if($from_email && $to_email && $to_email != '<admin @ email>')
-        {
-
-            $name = $data['contact-name'];
+        $to_email = $this->config->item('site_admin_email');
+        if($from_email && $to_email && $to_email != '<admin @ email>') {
+            $name = $data['contact_name'];
             $content = 'Grant ID: '.$data['grant_id'].NL;
             $content .= 'Grant Title: '.$data['grant_title'].NL;
             $content .= 'Institution: '.$data['institution'].NL;
@@ -119,7 +118,7 @@ class Page extends MX_Controller {
             $content .= 'Reported by: '.$data['contact_name'].NL;
             $content .= 'From: '.$data['contact_company'].NL;
             $content .= 'Contact email: '.$data['contact_email'].NL;
-            $email = $_ci->load->library('email');
+            $email = $this->load->library('email');
             $email->from($from_email, $name);
             $email->to($to_email);
             $email->subject('Missing RDA Grant Record '.$data['grant_id']);
