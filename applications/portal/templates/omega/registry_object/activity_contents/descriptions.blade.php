@@ -24,13 +24,14 @@
                                 if($desc['type']=='researchers'){
                                     $researchersfound='yes';
                                 }
-                                if($o == 'brief' && $researchersfound=='no'){
+                                if(($o == 'fundingAmount'||$o == 'fundingScheme'||$o == 'brief'||$o='full') && $researchersfound=='no'){
+                                    $researchersfound='yes;'
                                     ?>
-                                   <strong>Researchers </strong>
-                        <?php
+                                  <p><strong>Researchers </strong> @include('registry_object/activity_contents/activity-people')</p>
+                                <?php
                                 }
                         ?>
-                        @include('registry_object/activity_contents/activity-people')
+
 						<p><strong>{{$type}}</strong> {{html_entity_decode($desc['description'])}}
 
                         </p>
