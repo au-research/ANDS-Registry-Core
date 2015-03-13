@@ -158,10 +158,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		
 
 		//only change the hash at search page, other page will navigate to the search page
-		if (location.href.indexOf('search')==-1) {
-			location.href = base_url+'search/#' + '!/' + hash;
+		if(location.href.indexOf(base_url+'search')==0) {
+			location.hash = '!/'+hash;
 		} else {
-			location.hash = '!/'+hash;			
+			location.href = base_url+'search/#' + '!/' + hash;
 		}
 	}
 
