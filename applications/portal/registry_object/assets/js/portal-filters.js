@@ -7,7 +7,7 @@ angular.module('portal-filters', [])
 				case 'title': return 'Title' ;break;
 				case 'identifier': return 'Identifier' ;break;
 				case 'related_people': return 'Related People' ;break;
-				case 'related_organisation': return 'Related Organisations' ;break;
+				case 'related_organisations': return 'Related Organisations' ;break;
 				case 'description': return 'Description' ;break;
 				case 'subject': return 'Subjects' ;break;
 				case 'access_rights': return 'Access'; break;
