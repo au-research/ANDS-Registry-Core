@@ -15,23 +15,31 @@
                                         @include('registry_object/contents/icon')
                                     </div>
                                     <div class="panel-body {{$ro->core['type']}}">
-                                        <div class="header-logo animated fadeInDown"  title="Record provided by {{$ro->core['group']}}">
                                         @if($logo)
+                                        <div class="col-xs-12 col-md-2">
                                             <a href="{{base_url('contributors')}}/{{$group_slug}}" title="Record provided by {{$ro->core['group']}}"><img src="{{$logo}}" alt="logo" class="header-logo animated fadeInDown"></a>
-                                        @else
-                                            <small>{{$ro->core['group']}}</small>
-                                        @endif
                                         </div>
+                                        @endif
                                         <h1 class="hairline bordered-normal">{{$ro->core['title']}}
                                             @if($ro->existenceDates)
                                                 [@include('registry_object/contents/existenceDates-list')]
                                             @endif
-
+                                        </h1>
+                                        @if(isset($ro->core['alt_title']))
+                                        <small>Also known as:
+                                            <span>{{implode(', ',$ro->core['alt_title'])}}</span>
+                                        </small><br/>
+                                        @endif
+                                        @if(!$logo)
+                                           <a href="{{base_url('contributors')}}/{{$group_slug}}" tip="Record provided by {{$ro->core['group']}}" title="Record provided by {{$ro->core['group']}}"><span itemprop="sourceOrganization">{{$ro->core['group']}}</span></a>
+                                        @else
+                                            <small itemprop="sourceOrganization">{{$ro->core['group']}}</small>
+                                        @endif
                                         @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
                                         @if($show_dup_identifier_qtip)
-                                        <a href="" qtip="#identifiermatch" tip_popup="{{sizeof($ro->identifiermatch)}} linked Records"><i class="fa fa-caret-down small"></i></a>
+                                        <a href="" qtip="#identifiermatch" tip_popup="{{sizeof($ro->identifiermatch)}} linked Records"><i class="fa fa-caret-down"></i></a>
                                         @else
-                                        <a href="" qtip="#identifiermatch"><i class="fa fa-caret-down small"></i></a>
+                                        <a href="" qtip="#identifiermatch"><i class="fa fa-caret-down"></i></a>
                                         @endif
                                         <div id="identifiermatch" class="hide">
                                             <b>{{sizeof($ro->identifiermatch)}} linked Records:</b>
@@ -42,7 +50,7 @@
                                             </ul>
                                         </div>
                                         @endif
-                                        </h1>
+
                                         <div class="clear"></div>
 
                                         <div class="container-fluid">
