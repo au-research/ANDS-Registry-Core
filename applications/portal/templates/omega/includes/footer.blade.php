@@ -34,10 +34,10 @@
                     <div id="categories-3" class="sidebar-widget  widget_categories">
                         <h3 class="sidebar-header">Explore</h3>
                         <ul>
-                            <li class="cat-item"> <a href="{{portal_url()}}" title="">Themed Collections</a> </li>
-                            <li class="cat-item"> <a href="{{portal_url()}}" title="">Open Data</a> </li>
-                            <li class="cat-item"> <a href="{{portal_url()}}" title="">Tools and Services</a> </li>
-                            <li class="cat-item"> <a href="{{portal_url('search/#!/class=activity')}}" title="">Projects and Grants</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('themes')}}" title="">Themed Collections</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('search')}}#!/access_rights=open" title="">Open Data</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('search')}}#!/class=service" title="">Tools and Services</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('grants')}}" title="">Projects and Grants</a> </li>
                         </ul>
                     </div>
                 </div>

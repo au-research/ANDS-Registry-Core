@@ -7,7 +7,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.class_choices = [
 		{value:'collection', label:'Data'},
-		{value:'party', label:'People and Organisation'},
+		{value:'party', label:'People and Organisations'},
 		{value:'service', label:'Services and Tools'},
 		{value:'activity', label:'Grants and Projects'}
 	];

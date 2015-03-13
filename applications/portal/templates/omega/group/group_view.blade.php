@@ -29,10 +29,15 @@
                 $subjects_list .= ', '. $s['name'] .'';
             }
         }
-
-        //limit to 100
-        
     ?>
+
+    <div class="panel panel-primary swatch-white">
+        <div class="panel-body">
+            To date, {{$group['title']}} has {{$group['counts']}} collection records in Research Data Australia, which covers {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}, {{sizeof($group['groups'])}} research groups 
+            have been actively involved in collecting data and creating metadata records for the data.  All the Collections, Parties, Activities and Services associated with {{$group['title']}} 
+            can be accessed from the Registry Contents box on the right hand side of this page.
+        </div>
+    </div>
 
     @if($group['has_custom_data'])
         @if(isset($group['custom_data']['overview']))
@@ -61,13 +66,7 @@
         @endif
     @endif
 
-    <div class="panel panel-primary swatch-white">
-        <div class="panel-body">
-            To date, {{$group['title']}} has {{$group['counts']}} collection records in Research Data Australia, which covers {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}, {{sizeof($group['groups'])}} research groups 
-            have been actively involved in collecting data and creating metadata records for the data.  All the Collections, Parties, Activities and Services associated with {{$group['title']}} 
-            can be accessed from the Registry Contents box on the right hand side of this page.
-        </div>
-    </div>
+    
 
     <div class="panel panel-primary panel-content swatch-white">
         <div class="panel-heading">Subjects Covered</div>
@@ -99,12 +98,6 @@
     <div class="panel panel-primary panel-content swatch-white">
         <div class="panel-heading">Contact</div>
         <div class="panel-body">{{$group['custom_data']['contact']}}</div>
-    </div>
-    @endif
-    @if(isset($group['custom_data']['identifiers']))
-    <div class="panel panel-primary panel-content swatch-white">
-        <div class="panel-heading">Identifiers</div>
-        <div class="panel-body">{{$group['custom_data']['identifiers']}}</div>
     </div>
     @endif
 @endif
@@ -144,6 +137,15 @@
         </ul>
     </div>
 </div>
+@endif
+
+@if($group['has_custom_data'])
+    @if(isset($group['custom_data']['identifiers']))
+    <div class="panel panel-primary panel-content swatch-white">
+        <div class="panel-heading">Identifiers</div>
+        <div class="panel-body">{{$group['custom_data']['identifiers']}}</div>
+    </div>
+    @endif
 @endif
 
 @stop
