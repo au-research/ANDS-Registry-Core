@@ -61,6 +61,16 @@ angular.module('portal-filters', [])
 			}
 		}
 	})
+	.filter('socialreadable', function(){
+		return function(text) {
+			switch(text) {
+				case 'AUTHENTICATION_SOCIAL_FACEBOOK' : return 'Facebook'; break;
+				case 'AUTHENTICATION_SOCIAL_TWITTER' : return 'Twitter'; break;
+				case 'AUTHENTICATION_SOCIAL_GOOGLE' : return 'Google'; break;
+				case 'AUTHENTICATION_SOCIAL_LINKEDIN' : return 'LinkedIn'; break;
+			}
+		}
+	})
 	.filter('filter_value', function($sce){
 		return function(text) {
 			if (angular.isArray(text)) {

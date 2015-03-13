@@ -119,6 +119,15 @@ app.controller('dashboardCtrl', function($scope, $rootScope, $log, profile_facto
         }
     }
 
+    $scope.isSocial = function(user) {
+        var social_auth_methods = ['AUTHENTICATION_SOCIAL_FACEBOOK', 'AUTHENTICATION_SOCIAL_TWITTER', 'AUTHENTICATION_SOCIAL_GOOGLE', 'AUTHENTICATION_SOCIAL_LINKEDIN'];
+        if (social_auth_methods.indexOf(user.authMethod) >-1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     $scope.openMoveModal = function(id) {
         var modalInstance = $modal.open({
             templateUrl: base_url+'assets/registry_object/templates/moveModal.html',
