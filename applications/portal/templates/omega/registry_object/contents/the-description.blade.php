@@ -3,7 +3,7 @@
 	$omit = array('logo');
 
 	$the_description = false;
-	if ($ro->descriptions) {
+	if (isset($ro->descriptions)) {
 		foreach($ro->descriptions as $desc) {
 			if($desc['type']=='brief' && !$the_description) {
 				$the_description = $desc['description'];
