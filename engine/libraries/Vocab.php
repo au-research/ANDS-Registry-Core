@@ -253,7 +253,9 @@ class Vocab {
             }
             $this->facets = $facets;
             // ulog('built cache and got count for '.$uri.' from facet cache: '.$this->facets[$uri]);
-            return $this->facets[$uri];
+            if(isset($this->facets[$uri])) {
+               return $this->facets[$uri];
+            } else return 0;
         } else {
             if (isset($this->facets[$uri])) {
                 //get it from the facet cache, faster
