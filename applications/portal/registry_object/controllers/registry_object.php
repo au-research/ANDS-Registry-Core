@@ -60,7 +60,7 @@ class Registry_object extends MX_Controller {
         //view/?key={key} => redirect to {slug}/{id}
         if((!$ro || $ro->prop['status'] == 'error') && $key) {
             $ro = $this->ro->getByKey($key, $useCache);
-            if($ro && $ro->prop->core['status'] == 'success'){
+            if($ro && $ro->prop['status'] == 'success'){
                 redirect($ro->prop['core']['slug'].'/'.$ro->prop['core']['id']);
             }
         }
