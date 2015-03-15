@@ -30,7 +30,7 @@
 				@endif
 			@endforeach
         </div>
-@else
+@elseif($ro->rights||$ro->contact||($ro->directaccess && $ro->core['class']=='collection'))
         <div class="panel-heading">
             <a href="">Information</a>
         </div>
