@@ -6,11 +6,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="{{portal_url()}}" class="navbar-brand">
-                <span>Research Data</span> Australia
-            </a>
+            <div>
+                <a href="{{portal_url()}}" class="navbar-brand">
+                    <span>Research Data</span> Australia
+                </a>
+            </div>
+            
             @if(current_url()!=base_url())
-            <br><small>Find data for research</small>
+            <div class="clear"><small>Find data for research</small></div>
             @endif
         </div>
         <nav class="collapse navbar-collapse main-navbar" role="navigation">
