@@ -68,7 +68,7 @@
                             <h4>Related Publications</h4>
                             @foreach($ro->relatedInfo as $relatedInfo)
                                 @if($relatedInfo['type']=='publication')
-                                    <h5><a href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><i class="fa fa-book icon-portal"></i> {{$relatedInfo['title']}}</a></h5>
+                                    <a href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><i class="fa fa-book icon-portal"></i> {{$relatedInfo['title']}}</a>
                                     <p>
                                         <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
                                         <?php if(isset($relatedInfo['identifier']['identifier_href']['href'])){ ?>
@@ -154,7 +154,7 @@
                     @foreach($ro->relatedInfo as $relatedInfo)
                         @if($relatedInfo['type']=='website')
                             @if($relatedInfo['title'])
-                            <h5><i class="fa fa-globe fa-lg icon-portal""></i> {{$relatedInfo['title']}}</h5>
+                            <i class="fa fa-globe fa-lg icon-portal""></i> <strong>{{$relatedInfo['title']}}</strong>
                                 <p>
                                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
                                     @if($relatedInfo['identifier']['identifier_href'])
