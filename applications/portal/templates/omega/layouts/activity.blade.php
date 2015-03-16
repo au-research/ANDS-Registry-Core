@@ -21,9 +21,9 @@
                                             @endif
                                         </h1>
                                         @if(isset($ro->core['alt_title']))
-                                        <small>Also known as:
-                                            <span>{{implode(', ',$ro->core['alt_title'])}}</span>
-                                        </small><br/>
+                                            @foreach($ro->core['alt_title'] as $aTitle)
+                                                <small>Also known as:</small> '{{$aTitle}}<br />
+                                            @endforeach
                                         @endif
 
                                         @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
