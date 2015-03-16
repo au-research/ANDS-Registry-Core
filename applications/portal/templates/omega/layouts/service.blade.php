@@ -14,8 +14,10 @@
                             <div class="col-md-9 view-content" style="padding-right:0"  itemscope itemtype="http://schema.org/Dataset">
                                 <div class="panel panel-primary swatch-white panel-content">
                                     <div class="panel-body">
-                                        @if($ro->logo)
-                                        <img src="{{$ro->logo[0]}}" alt="logo" class="header-logo animated fadeInDown">
+                                        @if($logo)
+                                        <div class="col-xs-12 col-md-2">
+                                            <a href="{{base_url('contributors')}}/{{$group_slug}}" title="Record provided by {{$ro->core['group']}}"><img src="{{$logo}}" alt="logo" class="header-logo animated fadeInDown"></a>
+                                        </div>
                                         @endif
                                         <h1 class="hairline bordered-normal"><span itemprop="name">{{$ro->core['title']}}</span></h1>
                                         @if(isset($ro->core['alt_title']))
