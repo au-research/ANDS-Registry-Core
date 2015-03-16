@@ -24,7 +24,7 @@
                 <!-- <li><a href="" ng-click="search_type='subject'">Subject</a></li> -->
               </ul>
             </span>
-            <input type="text" value="" name="q" class="form-control" placeholder="Search for data" ng-model="query">
+            <input type="text" value="" name="q" class="form-control" placeholder="Search for [[ filters.class | getLabelFor:class_choices ]]" ng-model="query">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button" ng-if="hasFilter() && !isLoading()" ng-click="clearSearch()">
                 <i class='fa fa-remove'></i>
