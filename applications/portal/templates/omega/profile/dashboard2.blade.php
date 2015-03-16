@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="app">
     @include('includes/header')
-    <body ng-controller="searchCtrl">
+    <body>
         @include('includes/top-menu')
-        <div id="content">
+        <div id="content" ng-controller="searchCtrl">
             <article>
                 @include('includes/search-section')
                 @yield('header')
@@ -11,10 +11,9 @@
                     <div ng-view></div>
                 </section>
             </article>
+            @include('includes/advanced_search')
+            @include('includes/my-rda')
         </div>
-
-        @include('includes/advanced_search')
-        @include('includes/my-rda')
         @include('includes/footer')
     </body>
 </html>
