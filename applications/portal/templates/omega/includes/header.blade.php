@@ -1,3 +1,4 @@
+
 <head>
     <meta charset="utf-8">
     <title>{{ isset($ro->core['title']) ? $ro->core['title']: 'Research Data Australia'}}</title>

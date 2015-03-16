@@ -1,6 +1,7 @@
 app.controller('searchCtrl', 
 function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
 
+
     $scope.query_title = 'Untitled Query';
     $scope.saved_records_folder = 'Untitled';
     $scope.base_url = base_url;
@@ -871,6 +872,4 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			}
 		});
 	}
-
-
 });

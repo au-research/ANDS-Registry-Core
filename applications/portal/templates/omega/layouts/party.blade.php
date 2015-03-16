@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="app">
     @include('includes/header')
-    <body ng-controller="searchCtrl">
+    <body>
         @include('includes/top-menu')
-        <div id="content" >
+        <div id="content" ng-controller="searchCtrl">
             @include('includes/hidden-metadata')
         	
             @include('includes/search-section')

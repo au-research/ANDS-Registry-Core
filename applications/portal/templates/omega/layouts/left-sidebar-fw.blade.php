@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="app">
+<html lang="en" ng-app="app" id="ng-app">
     @include('includes/header')
-    <body ng-controller="searchCtrl">
+    <body>
         @include('includes/top-menu')
-        <div id="content">
+        <div id="content" ng-controller="searchCtrl">
         	<article>
         		@include('includes/search-section')
                 <section class="section swatch-white" style="overflow:visible">

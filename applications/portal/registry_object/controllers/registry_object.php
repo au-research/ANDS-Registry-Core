@@ -464,6 +464,7 @@ class Registry_object extends MX_Controller {
 	 * @return HTML 
 	 */
 	function search() {
+		
 		//redirect to the correct URL if q is used in the search query
 		if($this->input->get('q')) {
 			redirect('search/#!/q='.$this->input->get('q'));
