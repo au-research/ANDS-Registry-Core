@@ -48,7 +48,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     @include('registry_object/activity_contents/activity-parties')
-                                                    <small itemprop="sourceOrganization">{{$ro->core['group']}}</small>
+                                                    <strong>Provided by </strong> <a href="{{base_url('contributors')}}/{{$group_slug}}" tip="Record provided by {{$ro->core['group']}}" title="Record provided by {{$ro->core['group']}}"><span itemprop="sourceOrganization">{{$ro->core['group']}}</span></a>
                                                 </div>
                                             </div>
                                         </div>
