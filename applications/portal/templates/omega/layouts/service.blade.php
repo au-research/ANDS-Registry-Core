@@ -23,7 +23,11 @@
                                                 <span>{{implode(', ',$ro->core['alt_title'])}}</span>
                                             </small><br/>
                                         @endif
+                                        @if(!$logo)
+                                        <a href="{{base_url('contributors')}}/{{$group_slug}}" tip="Record provided by {{$ro->core['group']}}" title="Record provided by {{$ro->core['group']}}"><span itemprop="sourceOrganization">{{$ro->core['group']}}</span></a>
+                                        @else
                                         <small itemprop="sourceOrganization">{{$ro->core['group']}}</small>
+                                        @endif
 
                                         @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
                                             @if($show_dup_identifier_qtip)
@@ -55,7 +59,6 @@
                                         <div class="panel-tools">
                                             <div ng-if="ro.stat">
                                                 <a href="#" style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</a>
-                                                <a href="#" style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</a>
                                             </div>
                                         </div>
                                         <div class="panel-tools">

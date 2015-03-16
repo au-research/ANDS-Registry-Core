@@ -62,7 +62,6 @@
                                         <div class="panel-tools">
                                             <div ng-if="ro.stat">
                                                 <a href="#" style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</a>
-                                                <a href="#" style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</a>
                                             </div>
                                         </div>
                                         <div class="panel-tools">
@@ -72,10 +71,6 @@
                                 </div>
 
                                 <div>
-
-                                  <!--  <div class="pull-left swatch-white" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
-                                        @include('registry_object/party_contents/wrap-getdatalicence')
-                                    </div> -->
                                     @yield('content')
                                 </div>
 
