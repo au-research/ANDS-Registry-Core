@@ -65,7 +65,7 @@
                     <p>
                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
                     @if(isset($relatedInfo['identifier']['identifier_href']['href']))
-                        <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{$relatedInfo['identifier']['identifier_href']['display_icon']}}<br />
+                        <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{ isset($relatedInfo['identifier']['identifier_href']['display_icon']) ? $relatedInfo['identifier']['identifier_href']['display_icon'] : '' }}<br />
                     @else
                         {{$relatedInfo['identifier']['identifier_value']}}
                     @endif
