@@ -6,9 +6,9 @@
         <div id="content" ng-controller="searchCtrl">
         	@include('includes/search-section')
             @yield('content')
+            @include('includes/advanced_search')
+            @include('includes/my-rda')
         </div>
-        @include('includes/advanced_search')
-        @include('includes/my-rda')
         @include('includes/footer')
     </body>
 </html>
