@@ -68,15 +68,15 @@ class Sync_extension extends ExtensionBase{
 		);
 
 		foreach($single_values as $s){
-			$json[$s] = $this->ro->{$s};
+			$json[$s] = html_entity_decode($this->ro->{$s}, ENT_QUOTES);
 		}
-		$json['display_title'] = strip_tags(html_entity_decode($this->ro->title));
+		$json['display_title'] = strip_tags(html_entity_decode($this->ro->title, ENT_QUOTES));
 
 		$json['record_modified_timestamp'] = gmdate('Y-m-d\TH:i:s\Z', ($this->ro->updated ? $this->ro->updated : $this->ro->created));
 		$json['record_created_timestamp'] = gmdate('Y-m-d\TH:i:s\Z', $this->ro->created);
 
 		try{
-			$json['simplified_title'] = strip_tags(html_entity_decode(iconv('UTF-8', 'ASCII//TRANSLIT', $this->ro->list_title)));
+			$json['simplified_title'] = strip_tags(html_entity_decode(iconv('UTF-8', 'ASCII//TRANSLIT', $this->ro->list_title), ENT_QUOTES));
 		} catch (Exception $e) {
 			throw new Exception ('iconv installation/configuration required for simplified title');
 		}
@@ -100,7 +100,7 @@ class Sync_extension extends ExtensionBase{
 		$theDescriptionType = '';
 		foreach($xml->registryObject->{$this->ro->class}->description as $description){
 			$type = (string) $description['type'];
-			$description_str = strip_tags(html_entity_decode((string) $description));
+			$description_str = strip_tags(html_entity_decode((string) $description, ENT_QUOTES));
 			//the one and only THE description
 			if($type == 'brief' && $theDescriptionType != 'brief') {
 				$theDescription = (string) $description;
@@ -119,9 +119,9 @@ class Sync_extension extends ExtensionBase{
 			$json['description_value'][] = $description_str;
 			$json['description_type'][] = $type;
 		}
-        $listDescription = trim(strip_tags(html_entity_decode(html_entity_decode($theDescription))));
+        $listDescription = trim(strip_tags(html_entity_decode(html_entity_decode($theDescription)), ENT_QUOTES));
         $json['list_description'] = $listDescription;
-        $theDescription = htmlentities(strip_tags(html_entity_decode($theDescription), '<p></p><br><br />'));
+        $theDescription = htmlentities(strip_tags(html_entity_decode($theDescription, ENT_QUOTES), '<p></p><br><br />'));
 
 		//will have a description field even if it's blank
         //add <br/> for NL if doesn't already have <p> or <br/>
@@ -225,7 +225,7 @@ class Sync_extension extends ExtensionBase{
 		foreach($fields as $f) $json[$f] = array();
 		foreach($subjects as $s){
 			$json['subject_value_unresolved'][] = $s['value'];
-			$json['subject_value_resolved'][] = $s['resolved'];
+			$json['subject_value_resolved'][] = html_entity_decode($s['resolved'], ENT_QUOTES);
 			$json['subject_vocab_uri'][] = $s['uri'];
 			$json['subject_type'][] = $s['type'];
 			// if (trim(strtolower($s['type']))=='anzsrc-for') {
