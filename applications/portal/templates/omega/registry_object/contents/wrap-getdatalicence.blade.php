@@ -28,11 +28,12 @@
     }
 
 ?>
+
 <div class="panel panel-primary swatch-white">
     <div class="panel-body">
         @if($ro->citations)
             @foreach($ro->citations as $citation)
-                {{$citation['coins']}}
+                {{ isset($citation['coins']) ? $citation['coins'] : ''}}
             @endforeach
         @endif
         @include('registry_object/contents/access')

@@ -70,9 +70,10 @@
                     </div>
                 </section>
         	</article>
+            @include('includes/advanced_search')
+            @include('includes/my-rda')
         </div>
-        @include('includes/advanced_search')
-        @include('includes/my-rda')
+        
         @include('includes/footer')
     </body>
 </html>
