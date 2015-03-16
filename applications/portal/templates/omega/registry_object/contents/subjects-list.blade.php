@@ -21,12 +21,13 @@
                 @endif
 			@endforeach
 		</div>
-
+        @if($ro->core['class']!='activity')
         @include('registry_object/contents/tags')
+        @endif
 	</div>
 </div>
 @else
-    @if($ro->core['class']=='collection')
+    @if($ro->core['class']!='activity')
     <div class="swatch-white">
         <div class="panel panel-primary element-no-top element-short-bottom panel-content">
             <div class="panel-heading">

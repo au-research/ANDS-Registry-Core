@@ -91,12 +91,14 @@ class Citations extends ROHandler {
 
                 }
             }
-            $result[] = array(
-                'type'=> 'fullCitation',
-                'value' => '',
-                'citation_type' => '',
-                'coins' => $coins
-            );
+            if(!$result){
+                $result[] = array(
+                    'type'=> 'fullCitation',
+                    'value' => '',
+                    'citation_type' => '',
+                    'coins' => $coins
+                );
+            }
          }
 
         return $result;
@@ -277,7 +279,7 @@ Y2  - '.date("Y-m-d")."
         if($rft_subjects) $coins .= $rft_subjects;
         if($rft_place) $coins .= '&rft_place='.$rft_place;
         $coins .= '&rft.type=dataset&rft.language=English';
-        $coins .= '"></span><span class="Z3988"></span>';
+        $coins .= '"></span>';
 
         return $coins;
     }

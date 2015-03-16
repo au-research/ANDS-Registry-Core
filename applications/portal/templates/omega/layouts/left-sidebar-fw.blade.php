@@ -23,9 +23,9 @@
     		    		</div>
     		    	</div>
     		    </section>
-                @include('includes/advanced_search')
-                @include('includes/my-rda')
         	</article>
+            @include('includes/advanced_search')
+            @include('includes/my-rda')
         </div>
         @include('includes/footer')
     </body>

@@ -89,10 +89,11 @@
     		    	</div>
     		    </section>
         	</article>
+            @include('registry_object/contents/citation-modal')
+            @include('includes/advanced_search')
+            @include('includes/my-rda')
         </div>
-        @include('registry_object/contents/citation-modal')
-        @include('includes/advanced_search')
-        @include('includes/my-rda')
+        
         @include('includes/footer')
     </body>
 </html>
