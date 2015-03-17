@@ -13,7 +13,7 @@
                 }
 
             }
-            if($right['value']!=''){
+            if($right['value']!='' || $right['rightsUri']!=''){
                 $detail=true;
             }
         }
@@ -21,10 +21,14 @@
             $content = '';
             foreach ($ro->rights as $right) {
                 $itemprop = '';
-                if($right['type']=='licence' && $right['value']!='') {$itemprop = 'itemprop="license"';
+                if($right['type']=='licence' && ($right['value']!=''|| $right['rightsUri']!='')) {$itemprop = 'itemprop="license"';
 
-                    $content .= '<h4>'.readable($right['type']).'</h4>';
-                    $content .= '<p '.$itemprop.'>'.$right['value'].'</p>';
+                    $content .= '<h4>'.readable($right['type']).'</h4><p '.$itemprop.'>';
+                    if(isset($right['value']) and $right['value']!='')
+                        $content .= $right['value'].'<br />';
+                    if(isset($right['rightsUri']) and $right['rightsUri']!='')
+                        $content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'<br />';
+                    $content .= '</p>';
                 }
             }
         }
