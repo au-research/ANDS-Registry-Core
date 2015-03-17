@@ -41,14 +41,20 @@ class Groups extends CI_Model {
 		$data = $this->fetchData($group);
 		if ($data) {
 			$data = json_decode($data->{'data'}, true);
+			if(isset($data['hide_logo']) && $data['hide_logo']) {
+				return false;
+			}
 			if (isset($data['logo'])) {
 				return $data['logo'];
 			}
 		}
+		
+
 
 		//check for default path
 		$path = 'applications/portal/group/assets/logos/'.$slug.'.jpg';
 		$path2 = 'applications/portal/group/assets/logos/'.$slug.'.png';
+
 		if (file_exists($path)) {
 			return asset_url('group/logos/'.$slug.'.jpg', 'full_base_path');
 		} elseif(file_exists($path2)) {

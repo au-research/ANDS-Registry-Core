@@ -5,11 +5,28 @@
         <div class="row">
             <div class="col-md-12">
                 <header>
-                    @if($group['has_custom_data'])
-                        @if(isset($group['custom_data']['logo']))
-                        <img src="{{$group['custom_data']['logo']}}" alt="Logo" class="header-logo animated fadeInDown"/>
-                        @endif
-                    @endif             
+                    <?php 
+
+                        $logo = false;
+
+                        if ($group['logo']) {
+                            $logo = $group['logo'];
+                        }
+
+                        if ($group['has_custom_data']) {
+                            if (isset($group['custom_data']['hide_logo'])) {
+                                if ($group['custom_data']['hide_logo']) {
+                                    if(isset($group['custom_data']['logo'])) {
+                                        $logo = $group['custom_data']['logo'];
+                                    }
+                                }
+                            }
+                        }
+                    ?>
+                    @if($logo)
+                        <img src="{{$logo}}" alt="Logo" class="header-logo animated fadeInDown"/>
+                    @endif
+                    
                     <h1 class="hairline bordered-normal">{{$group['title']}}</h1>
                 </header>
             </div>
