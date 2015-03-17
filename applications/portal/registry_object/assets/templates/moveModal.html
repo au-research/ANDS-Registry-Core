@@ -8,16 +8,11 @@
 		<p ng-if="records">Saving [[ records.length ]] records</p>
 		<div ng-if="folders">
 			<label for="">To folder</label>
-			<ul ng-if="record">
+			<ul>
 				<li ng-repeat="(name,total) in folders" ng-if="name!='all'" >
 					<a href="" ng-click="moveToFolder(name)">[[ name ]]</a>
-					<i class="fa" ng-class="{true:'fa-check'}[inFolder(record.id,name)]"></i>
-				</li>
-			</ul>
-			<ul ng-if="records">
-				<li ng-repeat="(name,total) in folders" ng-if="name!='all'">
-					<a href="" ng-click="moveRecordsToFolder(records, name)">[[ name ]]</a>
-					<i class="fa" ng-class="{true:'fa-check'}[inRecordsFolder(records,name)]"></i>
+					<i ng-if="record" class="fa" ng-class="{true:'fa-check'}[inFolder(record.id,name)]"></i>
+					<i ng-if="records" class="fa" ng-class="{true:'fa-check'}[inRecordsFolder(records,name)]"></i>
 				</li>
 			</ul>
 		</div>

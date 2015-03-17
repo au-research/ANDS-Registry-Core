@@ -35,7 +35,6 @@ angular.module('record_components',['profile_components'])
 
     if (angular.isArray($scope.id)) {
         $scope.records = $scope.id;
-        // $log.debug($scope.records);
     } else {
         record_factory.get_record($scope.id).then(function(data){
             $scope.record = data;
@@ -93,6 +92,7 @@ angular.module('record_components',['profile_components'])
         if(records) {
             var action = 'modify';
             if (!$scope.bookmarked) action = 'add';
+            // $log.debug(records, action);
             profile_factory.modify_user_data('saved_record', action, records).then(function(data){
                 if(data.status=='OK') {
                     $scope.success_msg = 'Records successfully saved';
@@ -103,23 +103,6 @@ angular.module('record_components',['profile_components'])
                 }
             });
         }
-    }
-
-    $scope.moveRecordsToFolder = function(records, folder) {
-        angular.forEach(records, function(record){
-            record.selected = false;
-            record.folder = folder;
-            record.last_viewed = parseInt(new Date().getTime() / 1000);
-        });
-        profile_factory.modify_user_data('saved_record', 'modify', records).then(function(data){
-            if(data.status=='OK') {
-                $scope.success_msg = 'Records successfully saved';
-                $scope.fetch();
-            } else {
-                $scope.error_msg = 'An error has occured while saving '+records.length+' to folder '+folder;
-                $log.debug(data);
-            }
-        });
     }
 
     $scope.unBookmark = function(id) {
