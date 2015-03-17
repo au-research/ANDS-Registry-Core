@@ -61,88 +61,88 @@ class Portal_user extends CI_Model {
 		$this->portal_db->where('role_id', $user->identifier)->update('user_data', $data);
 	}
 
-    /**
-     * Update a user_data of the current user
-     * @param type, action, data
-     */
-    public function modify_user_data($type, $action, $data){
+	/**
+	 * Update a user_data of the current user
+	 * @param type, action, data
+	 */
+	public function modify_user_data($type, $action, $data){
 
-            $user = $this->getCurrentUser();
-            $user_data = $user->user_data;
-            $response['type'] = $type;
-            $response['action'] = $action;
+		$user = $this->getCurrentUser();
+		$user_data = $user->user_data;
+		$response['type'] = $type;
+		$response['action'] = $action;
 
-            $response['status'] = "OK";
-            switch ($type){
-                case 'saved_search':
-                    foreach($data as $record)
-                    {
-                        $response['record_id'] = $record['id'];
-                        switch ($action){
-                            case 'add':
-                                $user_data[$type][$record['query_string']] = $record;
-                                break;
-                            case 'refresh':
-                                $oldRecord = $user_data[$type][$record['id']];
-                                foreach($oldRecord as $key=>$val)
-                                    if(isset($record[$key]))
-                                        $oldRecord[$key] = $record[$key];
-                                $user_data[$type][$record['id']] = $oldRecord;
-                                break;
-                            case 'delete':
-                                $id = $record['id'];
-                                unset($user_data[$type][$id]);
-                                break;
-                        }
-                    }
-                break;
-                case 'saved_record':
-                    foreach($data as $record)
-                    {
+		$response['status'] = "OK";
+		switch ($type) {
+			case 'saved_search':
+				foreach($data as $record) {
+					$response['record_id'] = $record['id'];
+					switch ($action){
+						case 'add':
+							$user_data[$type][$record['query_string']] = $record;
+							break;
+						case 'refresh':
+							$oldRecord = $user_data[$type][$record['id']];
+							foreach ($oldRecord as $key=>$val) {
+								if (isset($record[$key])) {
+									$oldRecord[$key] = $record[$key];
+								}
+							}
+							$user_data[$type][$record['id']] = $oldRecord;
+							break;
+						case 'delete':
+							$id = $record['id'];
+							if(isset($user_data[$type][$id])) {
+								unset($user_data[$type][$id]);
+							}
+							foreach($user_data[$type] as $index=>$record) {
+								if($record['id']==$id) {
+									unset($user_data[$type][$index]);
+								}
+							}
+							break;
+					}
+				}
+				break;
+			case 'saved_record':
+				foreach($data as $record) {
+					$id = $record['id'];
+					switch ($action){
+						case 'add':
+							$user_data[$type][$id] = $record;
+							break;
+						case 'modify':
+							$oldRecord = isset($user_data[$type][$id]) ? $user_data[$type][$id] : false;
+							if($oldRecord) {
+								foreach($oldRecord as $key=>$val) {
+									if(isset($record[$key])){
+										$oldRecord[$key] = $record[$key];
+									}
+								}
+								$user_data[$type][$id] = $oldRecord;
+							}
+							break;
+						case 'delete':
+							unset($user_data[$type][$id]);
+							break;
+					}
+				}
+				break;
+		}
 
-                        $id = $record['id'];
-                        switch ($action){
-                            case 'add':
-                                $user_data[$type][$id] = $record;
-                                break;
-                            case 'modify':
-                                $oldRecord = isset($user_data[$type][$id]) ? $user_data[$type][$id] : false;
-                                if($oldRecord) {
-                                	foreach($oldRecord as $key=>$val) {
-	                            	    if(isset($record[$key])){
-	                            	        $oldRecord[$key] = $record[$key];
-                            	    	}
-                            		}
-                            		$user_data[$type][$id] = $oldRecord;
-                            	}
-                                break;
-                            case 'delete':
-                                unset($user_data[$type][$id]);
-                                break;
-                        }
-                    }
-                break;
-            }
-
-            if(count($user_data[$type]) === 0)
-                unset($user_data[$type]);
-
-            $this->update_user_data($user_data);
-        return $response;
-        }
-
-
-
-
-
-
-
+		if ( count($user_data[$type]) === 0 ) {
+			unset($user_data[$type]);
+		}
+		$this->update_user_data($user_data);
+		return $response;
+	}
 
 	public function update_user_data($data) {
 		$user = $this->getCurrentUser();
 		$data = array('user_data' => json_encode($data));
 		$this->portal_db = $this->load->database('portal', TRUE);
-		$this->portal_db->where('role_id', $user->identifier)->update('user_data', $data);
+		$result = $this->portal_db->where('role_id', $user->identifier)->update('user_data', $data);
+		return $result;
 	}
 
 	/**
