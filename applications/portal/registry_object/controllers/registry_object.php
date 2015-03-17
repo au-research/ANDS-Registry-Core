@@ -574,6 +574,15 @@ class Registry_object extends MX_Controller {
 		$this->solr->setOpt('hl.simple.post', '&lt;/b&gt;');
 		$this->solr->setOpt('hl.snippets', '2');
 
+		//extract sentence
+		$this->solr->setOpt('hl.fragmenter', 'regex');
+		$this->solr->setOpt('hl.fragsize', '140');
+		$this->solr->setOpt('hl.regex.slop', '1.0');
+		$this->solr->setOpt('hl.regex.pattern', "\w[^.!?]{400,600}[.!?]");
+		$this->solr->setOpt('hl.bs.type', "SENTENCE");
+		$this->solr->setOpt('hl.bs.maxScan', "30");
+		$this->solr->setOpt('hl.useFastVectorHighlighter', "true");
+
 		//experiment hl attrs
 		// $this->solr->setOpt('hl.alternateField', 'description');
 		// $this->solr->setOpt('hl.alternateFieldLength', '100');

@@ -182,7 +182,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.sync();
 			$scope.$broadcast('search_complete');
 			$scope.populateCenters($scope.result.response.docs);
-			// $log.debug('result', $scope.result);
+			$log.debug('result', $scope.result);
 			// $log.debug($scope.result, search_factory.result);
 		});
 	}
@@ -412,6 +412,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.goto = function(x) {
 		$scope.filters['p'] = ''+x;
 		$scope.hashChange();
+		$scope.selected = [];
+		$scope.selectState = 'selectAll';
 		$("html, body").animate({ scrollTop: 0 }, 500);
 	}
 
@@ -436,6 +438,16 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if($scope.selected.length == 0) {
 			$scope.selectState = 'selectAll';
 		}
+	}
+
+	$scope.isSelected = function(ro) {
+		var ret = false;
+		angular.forEach($scope.selected, function(x, index){
+			if (ro.id==x.id) {
+				ret = true;
+			}
+		});
+		return ret;
 	}
 
 	$scope.toggleResults = function() {
@@ -548,8 +560,21 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else if(newv=='service') {
 			$scope.advanced_fields = search_factory.advanced_fields_service;
 		}
-		$scope.presearch(); 
+		$scope.presearch();
+		$scope.cleanPrefilters();
 	});
+
+	$scope.cleanPrefilters = function() {
+		var cleanout = [];
+		if ($scope.prefilters['class']=='activity') {
+			cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial'];
+		} else {
+			cleanout = ['type', 'subject', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
+		}
+		angular.forEach(cleanout, function(f) {
+			delete $scope.prefilters[f];
+		});
+	}
 
 	$scope.advancedSearch = function(){
 		$scope.filters = {};

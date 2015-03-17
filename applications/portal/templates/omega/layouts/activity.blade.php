@@ -22,7 +22,9 @@
                                         </h1>
                                         @if(isset($ro->core['alt_title']))
                                             @foreach($ro->core['alt_title'] as $aTitle)
-                                                <small>Also known as:</small> '{{$aTitle}}<br />
+                                                @if($aTitle!=$ro->core['title'])
+                                                 <small>Also known as:</small> '{{$aTitle}}<br />
+                                                @endif
                                             @endforeach
                                         @endif
 

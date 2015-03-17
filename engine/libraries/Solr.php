@@ -358,7 +358,7 @@ class Solr {
 						foreach($value as $v) $fq_str .= ' subject_value_resolved:('.$v.')'; 
 						$this->setOpt('fq', $fq_str);
 					}else{
-					   if($value!='all') $this->setOpt('fq', '+subject_value_resolved:("'.$value.'")');
+					   if($value!='all') $this->setOpt('fq', '+subject_value_resolved:('.$value.')');
 					}
 					break;
 				case 's_subject_value_resolved': 
@@ -597,6 +597,15 @@ class Solr {
 					if(!$filters['q']) $this->setOpt('q', $value);
 					$this->setOpt('fq', '+related_party_multi_search:('.$value.')');
 					break;
+				case 'administering_institution':
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' administering_institution:("'.$v.'")'; 
+						$this->setOpt('fq', $fq_str);
+					}else{
+						if($value!='all') $this->setOpt('fq', '+administering_institution:("'.$value.'")');
+					}
+					break;
 				case 'funding_from':
 					$funding_from = $value;
 					if (isset($filters['funding_to'])) {
@@ -755,8 +764,8 @@ class Solr {
 
 	function escapeInvalidXmlChars($urlComp)
 	{
-		$findArray = array("&", "<", ">");
-		$replaceArray = array("&amp;", "&lt;", "&gt;");
+		$findArray = array("&", "<", ">", ":");
+		$replaceArray = array("&amp;", "&lt;", "&gt;", "\:");
 		$value = rawurldecode($urlComp);
 		return str_replace($findArray, $replaceArray, $value);
 	}
