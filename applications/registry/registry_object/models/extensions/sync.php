@@ -349,6 +349,19 @@ class Sync_extension extends ExtensionBase{
         	}
         }
 
+        //lowercase all facet-able values
+        $lowercase = array('group', 'type', 'license_class', 'access_rights', 'activity_status', 'administering_institution', 'funders');
+        foreach ($lowercase as $l) {
+        	if(isset($json[$l])) {
+        		if (is_array($json[$l])) {
+        			foreach($json[$l] as &$v) {
+        				$v = strtolower($v);
+        			}
+        		} else {
+        			$json[$l] = strtolower($json[$l]);
+        		}
+        	}
+        }
 
         $json = array_filter($json);
 		return $json;

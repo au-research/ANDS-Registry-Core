@@ -5,24 +5,30 @@
     $detail = false;
     if ($ro->rights) {
         foreach($ro->rights as $right) {
-            if ($right['type']=='licence' && $right['licence_type']=='CC-BY') {
-                $cc = $right['value'];
+            if ($right['type']=='licence' && $right['licence_type']!='') {
+                $cc = $right['licence_type'];
             } elseif ($right['type']=='accessRights') {
                 if(isset($right['accessRights_type'])){
                     $ar = $right['accessRights_type'];
                 }
+            }
+            if($right['value']!='' || $right['rightsUri']!=''){
                 $detail=true;
-            } else {
-                $detail = true;
             }
         }
         if ($detail) {
             $content = '';
             foreach ($ro->rights as $right) {
                 $itemprop = '';
-                if($right['type']=='licence') $itemprop = 'itemprop="license"';
-                $content .= '<h4>'.readable($right['type']).'</h4>';
-                $content .= '<p '.$itemprop.'>'.$right['value'].'</p>';
+                if($right['type']=='licence')  $itemprop = 'itemprop="license"';
+                if($right['value']!=''|| $right['rightsUri']!=''){
+                    $content .= '<h4>'.readable($right['type']).'</h4><p '.$itemprop.'>';
+                    if(isset($right['value']) and $right['value']!='')
+                        $content .= $right['value'].'<br />';
+                    if(isset($right['rightsUri']) and $right['rightsUri']!='')
+                        $content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
+                    $content .= '</p>';
+                }
             }
         }
     }
@@ -68,21 +74,21 @@
             @elseif($cc=='CC-BY-NC-ND')
                 <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
             @else 
-                <span>{{$cc}}</span>
+                <span>{{sentenceCase($cc)}}</span>
         	@endif
 
-        	@if($detail)
+        	@if(isset($content))
         	   <a href="javascript:;" id="toggleRightsContent">View details</a>
         	@endif
         </div>
         
-        @if($detail)
+        @if(isset($content))
             <div id="rightsContent">
                 @if($content) {{$content}} @endif
             </div>
         @endif
 
-            @include('registry_object/contents/contact-info')
+       @include('registry_object/contents/contact-info')
 
 
     </div>

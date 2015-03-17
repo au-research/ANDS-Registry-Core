@@ -135,6 +135,31 @@ jQuery(document).ready(function( $ ) {
                 classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
             }
         }, event); // Pass through our original event to qTip
+    }).on('mouseover', '*[xtip]', function(event){
+        var cut = $(this).attr('cut') ? $(this).attr('cut') : 30;
+        var content = $(this).attr('xtip');
+        if (content.length > cut) {
+            $(this).qtip({
+                overwrite: false, // Make sure the tooltip won't be overridden once created
+                content: $(this).attr('xtip'),
+                show: {
+                    event: event.type, // Use the same show event as the one that triggered the event handler
+                    ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
+                },
+                hide: {
+                    delay: 1000,
+                    fixed: true,
+                },
+                position: {
+                    my: 'bottom center', // Use the corner...
+                    at: 'top center',
+                    viewport: $(window)
+                },
+                style: {
+                    classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
+                }
+            }, event); // Pass through our original event to qTip
+        };
     });
 
 

@@ -198,6 +198,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.preresult = data;
 			$scope.prefacets = search_factory.construct_facets($scope.preresult, $scope.prefilters['class']);
 			$scope.populateCenters($scope.preresult.response.docs);
+			vocab_factory.get(false, $scope.prefilters, $scope.vocab).then(function(data){
+				$scope.vocab_tree_tmp = data;
+			});
 		});
 	}
 
@@ -299,6 +302,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
 			show = false;
 		}
+		if($scope.filters[filter_name]=="")  show = false;
 		return show;
 	}
 
@@ -377,7 +381,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if ($scope.filters['class']=='collection') {
 			var allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial'];
 		} else if($scope.filters['class']=='activity') {
-			var allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'commencement_year', 'completion_year', 'funding_amount'];
+			var allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'commencement_date', 'completion_date', 'funding_amount'];
 		} else {
 			var allowed = ['type' ,'subjects', 'group'];
 		}
@@ -527,6 +531,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.prefilters = {};
 		$scope.preresult = {};
 		angular.copy($scope.filters, $scope.prefilters);
+
 		if (active && active!='close') {
 			$scope.selectAdvancedField(active);
 			$('#advanced_search').modal('show');

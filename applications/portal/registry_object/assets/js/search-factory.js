@@ -26,23 +26,23 @@ app.factory('search_factory', function($http, $log){
 
 		default_filters: {
 			'rows':15,
-			'sort':'title asc',
+			'sort':'list_title_sort asc',
 			'class':'collection'
 			// 'spatial_coverage_centres': '*'
 		},
 
 		sort : [
 			{value:'score desc',label:'Relevance'},
-			{value:'title asc',label:'Title A-Z'},
-			{value:'title desc',label:'Title Z-A'},
+			{value:'list_title_sort asc',label:'Title A-Z'},
+			{value:'list_title_sort desc',label:'Title Z-A'},
 			// {value:'title desc',label:'Popular'},
 			{value:'record_created_timestamp asc',label:'Date Added'}
 		],
 
 		activity_sort : [
 			{value: 'score desc', label: 'Relevance'},
-			{value: 'title asc',label:'Title A-Z'},
-			{value: 'title desc',label:'Title Z-A'},
+			{value: 'list_title_sort asc',label:'Title A-Z'},
+			{value: 'list_title_sort desc',label:'Title Z-A'},
 			{value: 'earliest_year asc', label:'Commencement <i class="fa fa-sort-amount-asc"></i>'},
 			{value: 'earliest_year desc', label:'Commencement <i class="fa fa-sort-amount-desc"></i>'},
 			{value: 'latest_year asc', label:'Completion <i class="fa fa-sort-amount-asc"></i>'},
