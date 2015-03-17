@@ -14,10 +14,10 @@
                     @elseif($col['type']=='anzsrc-seo')
                         <a href="{{base_url().'search/#!/anzsrc-seo='.$col['subject']}}" itemprop="about keywords">{{$col['resolved']}}</a> |
                     @else
-                        <a href="{{base_url().'search/#!/subject_value_resolved='.$col['resolved']}}" itemprop="about keywords">{{$col['resolved']}}</a> |
+                        <a href="{{base_url().'search/#!/subject_value_resolved='.rawurlencode($col['resolved'])}}" itemprop="about keywords">{{$col['resolved']}}</a> |
                     @endif
                 @else
-                <a href="{{base_url().'search/#!/subject_value='.$col['subject']}}" itemprop="about keywords">{{$col['subject']}}</a> |
+                <a href="{{base_url().'search/#!/subject_value='.rawurlencode($col['subject'])}}" itemprop="about keywords">{{$col['subject']}}</a> |
                 @endif
 			@endforeach
 		</div>
