@@ -166,7 +166,7 @@
     <div class="panel-body swatch-white" ng-if="showFacet('subjects')">
         <h4>Subjects</h4>
         <ul class="listy">
-          <li ng-repeat="item in vocab_tree | orderBy:'pos' | orderBy:prefLabel | limitTo:5">
+          <li ng-repeat="item in vocab_tree | orderObjectBy:'collectionNum':true | limitTo:5">
             <input type="checkbox" ng-checked="isVocabSelected(item)" ui-indeterminate="isVocabParentSelected(item)" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
             <a href="" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
                 [[ item.prefLabel | toTitleCase | truncate:30 ]]
