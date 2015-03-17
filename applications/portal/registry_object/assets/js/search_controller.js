@@ -159,11 +159,19 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		
 
 		//only change the hash at search page, other page will navigate to the search page
-		if(location.href.indexOf(base_url+'search')==0) {
+		if ($scope.onSearchPage()) {
 			location.hash = '!/'+hash;
 		} else {
 			location.href = base_url+'search/#' + '!/' + hash;
 		}
+	}
+
+	$scope.onSearchPage = function() {
+		var ret = false;
+		if (location.href.indexOf(base_url+'search')==0) {
+			ret = true;
+		}
+		return ret;
 	}
 
 	$scope.filters_to_hash = function() {
@@ -676,7 +684,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	//
 	//
 	$scope.$watch('vocab', function(newv, oldv){
-		if (newv!=oldv) {
+		if (newv!=oldv && $scope.isAdvancedSearchActive('subject')) {
 			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
 				$scope.vocab_tree_tmp = data;
 			});
@@ -688,17 +696,22 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.vocabInit = function() {
 		$scope.vocab = 'anzsrc-for';
-		vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
-			$scope.vocab_tree = data;
-			$scope.vocab_tree_tmp = $scope.vocab_tree;
-		});
 
-		//getting vocabulary in configuration, mainly for matching isSelected
-		if(!angular.equals(vocab_factory.subjects, {})) {
-			vocab_factory.getSubjects().then(function(data){
-				vocab_factory.subjects = data;
+		//only loads in search page, other page don't have subject facet (yet)
+		if ( $scope.onSearchPage() ) {
+			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
+				$scope.vocab_tree = data;
+				$scope.vocab_tree_tmp = $scope.vocab_tree;
 			});
 		}
+		
+
+		// DEPRECATED. getting vocabulary in configuration, mainly for matching isSelected
+		// if(!angular.equals(vocab_factory.subjects, {})) {
+		// 	vocab_factory.getSubjects().then(function(data){
+		// 		vocab_factory.subjects = data;
+		// 	});
+		// }
 	}
 
 	$scope.getSubTree = function(item) {
