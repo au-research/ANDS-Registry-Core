@@ -13,7 +13,7 @@
 					@if($desc['type']==$o && $desc['description']!='')
 						<div class="description">
 							<small>{{readable($desc['type'])}}</small>
-							<span itemprop="description">{{html_entity_decode($desc['description'])}}</span>
+							<span itemprop="description">{{nl2br(html_entity_decode($desc['description']))}}</span>
 						</div>
 						
 					@endif
@@ -24,7 +24,7 @@
 				@if(!in_array($desc['type'], $order) && !in_array($desc['type'], $omit) && $desc['description']!='')
 					<div class="description">
 						<small>{{readable($desc['type'])}}</small>
-						<span itemprop="description">{{html_entity_decode($desc['description'])}}</span>
+						<span itemprop="description">{{nl2br(html_entity_decode($desc['description']))}}</span>
 					</div>
 					
 				@endif

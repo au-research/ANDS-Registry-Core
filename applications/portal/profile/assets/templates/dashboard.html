@@ -36,7 +36,7 @@
 									<a href="[[base_url]]search#!/[[search.query_string]]">[[ search.num_found ]]</a> records<br>
 									<a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.saved_time]]/">[[ search.num_found_since_saved ]]</a> new records since saved <br>
 									<small>Saved: [[ search.saved_time * 1000 | date ]] ([[ search.saved_time * 1000 | timeago ]])</small> <br>
-									<small ng-if="search.refresh_time"><a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.refresh_time]]/">[[ search.num_found_since_last_check ]]</a> records since  Last Refresh: [[ search.refresh_time * 1000 | date ]] ([[ search.refresh_time * 1000 | timeago ]])</small> <br>
+									<small ng-if="search.last_ran"><a href="[[base_url]]search#!/[[search.query_string]]after_date=[[search.last_ran]]/">[[ search.num_found_since_last_check ]]</a> records since  Last Refresh: [[ search.refresh_time * 1000 | date ]] ([[ search.refresh_time * 1000 | timeago ]])</small> <br>
 								</td>
 								<td>
 									<a href="" class="btn btn-primary" ng-click="modify_user_data('saved_search', 'refresh', search.query_string)"><i class="fa fa-refresh"></i> Refresh</a>

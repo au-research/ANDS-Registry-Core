@@ -53,15 +53,20 @@ app.controller('dashboardCtrl', function($scope, $rootScope, $log, profile_facto
     }
 
     $scope.refreshQueries = function(id){
+       $log.debug($scope.user.user_data.saved_search);
         angular.forEach($scope.user.user_data.saved_search, function(record){
             if(id == 'group' || record.query_string == id)
             {
-                var last_ran = record.refresh_time;
+
+                var last_ran = record.saved_time;
+                if(record.last_ran)
+                    last_ran = record.last_ran;
+                var last_refresh = record.refresh_time;
                 var saved_time = record.saved_time;
                 var query_string = record.query_string;
                 var num_found_since_last_check = 0;
                 var num_fund_since_saved = 0;
-                var query_num_found_since_last_check = query_string + 'after_date=' + last_ran + '/';
+                var query_num_found_since_last_check = query_string + 'after_date=' + last_refresh + '/';
                 var query_num_found_since_saved = query_string + 'after_date=' + saved_time + '/';
                 var filters = search_factory.filters_from_hash(query_num_found_since_last_check);
                 var search_results = search_factory.search(filters).then(function(data){
@@ -73,6 +78,7 @@ app.controller('dashboardCtrl', function($scope, $rootScope, $log, profile_facto
                         records.push({id:query_string,
                             num_found_since_last_check:num_found_since_last_check,
                             num_found_since_saved:num_fund_since_saved,
+                            last_ran:last_refresh,
                             refresh_time:parseInt(new Date().getTime() / 1000)
                         });
                         profile_factory.modify_user_data('saved_search', 'refresh', records).then(function(data){
