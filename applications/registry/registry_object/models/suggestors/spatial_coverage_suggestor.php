@@ -36,6 +36,7 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
         }
         foreach($centers as $key=>$center)
         {
+            $maxRows = 50;
             $latLon = explode(' ', $center[0]);
             if(!is_array($latLon) || count($latLon) < 2)
                 $latLon = explode(',', $center[0]);
@@ -43,7 +44,7 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
                 $ci->solr
                     ->init()
                     ->setOpt('q', '*:*')
-                    ->setOpt('rows', '50')
+                    ->setOpt('rows', $maxRows)
                     ->setOpt('fq', '-id:'.$this->ro->id)
                     ->setOpt('fq', 'class:collection')
                     ->setOpt('fq', '{!geofilt pt='.$latLon[1].','.$latLon[0].' sfield=spatial_coverage_extents d=50}')
@@ -52,8 +53,10 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
                 $result = $ci->solr->executeSearch(true);
                 if($result['response']['numFound'] > 0) {
                     $maxScore = floatval($result['response']['maxScore']);
+                    $intScore = 0;
                     foreach($result['response']['docs'] as $doc) {
-                        $doc['score'] = $doc['score'] / $maxScore;
+                        $doc['score'] = ($doc['score'] / $maxScore) * 1-($intScore/$maxRows);
+                        $intScore++;
                         $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                         $suggestions[] = $doc;
                     }

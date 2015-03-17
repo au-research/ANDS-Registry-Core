@@ -18,7 +18,7 @@ class Shared_text_suggestor extends _GenericSuggestor {
 
         //construct the query string
         $str = 'id:'.$this->ro->id;
-
+        $maxRows = 50;
         //call SOLR library
         $ci =& get_instance();
         $ci->load->library('solr');
@@ -32,17 +32,21 @@ class Shared_text_suggestor extends _GenericSuggestor {
             ->setOpt('fq', 'class:collection')
             ->setOpt('mlt', 'true')
             ->setOpt('mlt.fl', 'description_value,title_search')
-            ->setOpt('mlt.count', '100');
+            ->setOpt('mlt.count', $maxRows);
         
         $suggestions = array();
 
         $result = $ci->solr->executeSearch(true);
 
         if(isset($result['moreLikeThis'][$this->ro->id]) &&  $result['moreLikeThis'][$this->ro->id]['numFound'] > 0) {
-            $maxScore = floatval($result['moreLikeThis'][$this->ro->id]['maxScore']);
+            $maxScore = false;
+            $intScore = 0;
             foreach($result['moreLikeThis'][$this->ro->id]['docs'] as $doc) {
                 if($doc['class'] == 'collection'){
-                    $doc['score'] = $doc['score'] / $maxScore;
+                    if(!$maxScore)
+                        $maxScore = floatval($doc['score']);
+                    $doc['score'] = $doc['score'] / $maxScore * 1-($intScore/$maxRows);
+                    $intScore++;;
                     $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
                 }

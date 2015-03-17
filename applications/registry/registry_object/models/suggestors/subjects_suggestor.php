@@ -40,13 +40,14 @@ class Subjects_suggestor extends _GenericSuggestor {
         if($str != '')
         {
             //call SOLR library
+            $maxRows = 50;
             $ci =& get_instance();
             $ci->load->library('solr');
             $ci->solr->init();
             $ci->solr
                 ->init()
                 ->setOpt('q', $str)
-                ->setOpt('rows', '10')
+                ->setOpt('rows', $maxRows)
                 ->setOpt('fl', 'id,key,slug,title,score')
                 ->setOpt('fq', '-id:'.$this->ro->id)
                 ->setOpt('fq', 'class:collection')
@@ -55,9 +56,12 @@ class Subjects_suggestor extends _GenericSuggestor {
             $result = $ci->solr->executeSearch(true);
 
             if($result['response']['numFound'] > 0) {
+
                 $maxScore = floatval($result['response']['maxScore']);
+                $intScore = 0;
                 foreach($result['response']['docs'] as $doc) {
-                    $doc['score'] = $doc['score'] / $maxScore;
+                    $doc['score'] = ($doc['score'] / $maxScore) * 1-($intScore/$maxRows);
+                    $intScore++;
                     $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
                 }

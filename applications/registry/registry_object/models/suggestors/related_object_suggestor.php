@@ -50,15 +50,18 @@ class Related_object_suggestor extends _GenericSuggestor
     {
         $ci =& get_instance();
         $score_override = 1;
+
         $suggestions = array();
         $ci->load->library('solr');
-
+        $maxRows = 50;
         foreach($this->relationship_types as $class=>$typeArray)
         {
+            $nextOverRide = 0;
             $connections = $this->ro->getRelatedObjectsByClassAndRelationshipType(
             array($class),$typeArray);
             if($class == 'collection') // get them from DB only
             {
+
                 foreach ($connections as $connection) {
 
                     $ci->db->select('registry_object_id, key, slug, title')
@@ -77,6 +80,7 @@ class Related_object_suggestor extends _GenericSuggestor
                             'relation_type'=>$connection['relation_type'],
                             'score'=>1
                         );
+                        $nextOverRide = 0.3;
                     }
                 }
             }
@@ -133,31 +137,36 @@ class Related_object_suggestor extends _GenericSuggestor
                             }
                         }
                         // call Solr library
-                        $result = $this->runSolrQuery($ci, $str);
-                        $this->processSolrResult(
-                            $result,
-                            $suggestions,
-                            $score_override,
-                            $class,
-                            $relationship_type
-                        );
+                        $result = $this->runSolrQuery($ci, $str, $maxRows);
+                        if($result['response']['numFound'] > 0){
+                            $this->processSolrResult(
+                                $result,
+                                $suggestions,
+                                $score_override,
+                                $class,
+                                $relationship_type,
+                                $maxRows
+                            );
+                            $nextOverRide = 0.3;
+                        }
+
 
                     }
 
                 }
             }
-            $score_override = $score_override - 0.3;
+            $score_override = $score_override - $nextOverRide;
         }
         return $suggestions;
     }
 
 
-    private function runSolrQuery($ci, $query)
+    private function runSolrQuery($ci, $query, $maxRows)
     {
         $ci->solr
             ->init()
             ->setOpt('q', $query)
-            ->setOpt('rows', '10')
+            ->setOpt('rows', $maxRows)
             ->setOpt('fl', 'id,key,slug,title,score')
             ->setOpt('fq', '-id:'.$this->ro->id)
             ->setOpt('fq', 'class:collection')
@@ -168,17 +177,18 @@ class Related_object_suggestor extends _GenericSuggestor
         return $result;
     }
 
-    private function processSolrResult($result, &$suggestions, $score_override, $class, $relation_type)
+    private function processSolrResult($result, &$suggestions, $score_override, $class, $relation_type, $maxRows)
     {
-        if ($result['response']['numFound'] > 0) {
-            foreach ($result['response']['docs'] as $doc) {
-                if (!in_array_r($doc, $suggestions)) {
-                    $doc['score'] = $score_override;
-                    $doc['relation_type'] = $relation_type;
-                    $doc['class'] = $class;
-                    $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
-                    $suggestions[] = $doc;
-                }
+        $intScore = 0;
+        $maxScore = floatval($result['response']['maxScore']);
+        foreach ($result['response']['docs'] as $doc) {
+            if (!in_array_r($doc, $suggestions)) {
+                $doc['score'] = $doc['score'] / $maxScore * 1-($intScore/$maxRows) * $score_override;
+                $intScore++;
+                $doc['relation_type'] = $relation_type;
+                $doc['class'] = $class;
+                $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
+                $suggestions[] = $doc;
             }
         }
     }

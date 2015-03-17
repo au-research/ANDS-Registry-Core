@@ -29,6 +29,7 @@ class Temporal_coverage_suggestor extends _GenericSuggestor {
         $suggestions = array();
         $this->minYear = 9999999;
         $this->maxYear = 0;
+        $maxRows = 50;
         if($earliest != '*' || $latest != '*')
         {
             $str = 'date_from:['.$earliest.'-01-01T00:00:00Z TO '.$latest.'-12-31T23:59:59Z] AND date_to:['.$earliest.'-01-01T00:00:00Z TO '.$latest.'-12-31T23:59:59Z]';
@@ -46,8 +47,10 @@ class Temporal_coverage_suggestor extends _GenericSuggestor {
             $result = $ci->solr->executeSearch(true);
             if($result['response']['numFound'] > 0) {
                 $maxScore = floatval($result['response']['maxScore']);
+                $intScore = 0;
                 foreach($result['response']['docs'] as $doc) {
-                    $doc['score'] = $doc['score'] / $maxScore;
+                    $doc['score'] = ($doc['score'] / $maxScore) * 1-($intScore/$maxRows);
+                    $intScore++;
                     $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
                 }

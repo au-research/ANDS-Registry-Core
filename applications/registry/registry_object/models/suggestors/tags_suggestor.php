@@ -33,12 +33,13 @@ class Tags_suggestor extends _GenericSuggestor {
         //call SOLR library
         if($str != '')
         {
+            $maxRows = 50;
             $ci->load->library('solr');
             $ci->solr->init();
             $ci->solr
                 ->init()
                 ->setOpt('q', $str)
-                ->setOpt('rows', '10')
+                ->setOpt('rows', $maxRows)
                 ->setOpt('fl', 'id,key,slug,title,score')
                 ->setOpt('fq', '-id:'.$this->ro->id)
                 ->setOpt('fq', 'class:collection')
@@ -48,8 +49,10 @@ class Tags_suggestor extends _GenericSuggestor {
 
             if($result['response']['numFound'] > 0) {
                 $maxScore = floatval($result['response']['maxScore']);
+                $intScore = 0;
                 foreach($result['response']['docs'] as $doc) {
-                    $doc['score'] = $doc['score'] / $maxScore;
+                    $doc['score'] = ($doc['score'] / $maxScore) * 1-($intScore/$maxRows);
+                    $intScore++;
                     $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
                 }
