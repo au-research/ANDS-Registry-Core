@@ -11,7 +11,6 @@
                 if(isset($right['accessRights_type'])){
                     $ar = $right['accessRights_type'];
                 }
-
             }
             if($right['value']!='' || $right['rightsUri']!=''){
                 $detail=true;
@@ -21,13 +20,13 @@
             $content = '';
             foreach ($ro->rights as $right) {
                 $itemprop = '';
-                if($right['type']=='licence' && ($right['value']!=''|| $right['rightsUri']!='')) {$itemprop = 'itemprop="license"';
-
+                if($right['type']=='licence')  $itemprop = 'itemprop="license"';
+                if($right['value']!=''|| $right['rightsUri']!=''){
                     $content .= '<h4>'.readable($right['type']).'</h4><p '.$itemprop.'>';
                     if(isset($right['value']) and $right['value']!='')
                         $content .= $right['value'].'<br />';
                     if(isset($right['rightsUri']) and $right['rightsUri']!='')
-                        $content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'<br />';
+                        $content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
                     $content .= '</p>';
                 }
             }
@@ -89,7 +88,7 @@
             </div>
         @endif
 
-            @include('registry_object/contents/contact-info')
+       @include('registry_object/contents/contact-info')
 
 
     </div>
