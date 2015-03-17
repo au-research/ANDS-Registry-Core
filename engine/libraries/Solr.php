@@ -755,8 +755,8 @@ class Solr {
 
 	function escapeInvalidXmlChars($urlComp)
 	{
-		$findArray = array("&", "<", ">");
-		$replaceArray = array("&amp;", "&lt;", "&gt;");
+		$findArray = array("&", "<", ">", ":");
+		$replaceArray = array("&amp;", "&lt;", "&gt;", "\:");
 		$value = rawurldecode($urlComp);
 		return str_replace($findArray, $replaceArray, $value);
 	}
