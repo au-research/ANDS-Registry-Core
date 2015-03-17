@@ -377,7 +377,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if ($scope.filters['class']=='collection') {
 			var allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial'];
 		} else if($scope.filters['class']=='activity') {
-			var allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'commencement_year', 'completion_year', 'funding_amount'];
+			var allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'commencement_date', 'completion_date', 'funding_amount'];
 		} else {
 			var allowed = ['type' ,'subjects', 'group'];
 		}
