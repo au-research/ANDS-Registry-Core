@@ -17,6 +17,12 @@ app.directive('facetSearch', function($http, $log){
 				}
 			});
 
+			scope.tipfor = function(text) {
+				if(text.length >= 30) {
+					return text;
+				} else return 'not long enough';
+			}
+
 			scope.isFacet = scope.$parent.isFacet;
 			scope.toggleFilter = scope.$parent.toggleFilter;
 			scope.advanced = scope.$parent.advanced;
