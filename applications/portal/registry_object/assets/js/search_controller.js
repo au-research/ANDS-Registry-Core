@@ -570,12 +570,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	});
 
 	$scope.cleanPrefilters = function() {
-		var cleanout = [];
-		if ($scope.prefilters['class']=='activity') {
-			cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial'];
-		} else {
-			cleanout = ['type', 'subject', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
-		}
+		// var cleanout = [];
+		// if ($scope.prefilters['class']=='activity') {
+		// 	cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial'];
+		// } else {
+		// 	cleanout = ['type', 'subject', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
+		// }
+		var cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial', 'type', 'subject', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
 		angular.forEach(cleanout, function(f) {
 			delete $scope.prefilters[f];
 		});
