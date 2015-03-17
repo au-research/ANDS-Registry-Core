@@ -5,24 +5,27 @@
     $detail = false;
     if ($ro->rights) {
         foreach($ro->rights as $right) {
-            if ($right['type']=='licence' && $right['licence_type']=='CC-BY') {
-                $cc = $right['value'];
+            if ($right['type']=='licence' && $right['licence_type']!='') {
+                $cc = $right['licence_type'];
             } elseif ($right['type']=='accessRights') {
                 if(isset($right['accessRights_type'])){
                     $ar = $right['accessRights_type'];
                 }
+
+            }
+            if($right['value']!=''){
                 $detail=true;
-            } else {
-                $detail = true;
             }
         }
         if ($detail) {
             $content = '';
             foreach ($ro->rights as $right) {
                 $itemprop = '';
-                if($right['type']=='licence') $itemprop = 'itemprop="license"';
-                $content .= '<h4>'.readable($right['type']).'</h4>';
-                $content .= '<p '.$itemprop.'>'.$right['value'].'</p>';
+                if($right['type']=='licence' && $right['value']!='') {$itemprop = 'itemprop="license"';
+
+                    $content .= '<h4>'.readable($right['type']).'</h4>';
+                    $content .= '<p '.$itemprop.'>'.$right['value'].'</p>';
+                }
             }
         }
     }
@@ -68,15 +71,15 @@
             @elseif($cc=='CC-BY-NC-ND')
                 <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
             @else 
-                <span>{{$cc}}</span>
+                <span>{{sentenceCase($cc)}}</span>
         	@endif
 
-        	@if($detail)
+        	@if(isset($content))
         	   <a href="javascript:;" id="toggleRightsContent">View details</a>
         	@endif
         </div>
         
-        @if($detail)
+        @if(isset($content))
             <div id="rightsContent">
                 @if($content) {{$content}} @endif
             </div>
