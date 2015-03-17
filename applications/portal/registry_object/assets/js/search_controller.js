@@ -482,6 +482,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			                num_found_since_saved:0,
 			                saved_time:parseInt(new Date().getTime() / 1000),
 			                refresh_time:parseInt(new Date().getTime() / 1000),
+                            last_ran:parseInt(new Date().getTime() / 1000)
 			            }
 			            return data;
 			        }
