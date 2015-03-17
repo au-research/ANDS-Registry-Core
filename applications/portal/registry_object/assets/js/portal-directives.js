@@ -33,7 +33,7 @@ app.directive('facetSearch', function($http, $log){
 
 app.directive('resolve', function($http, $log, vocab_factory){
 	return {
-		template: '<ul class="listy no-bottom"><li ng-repeat="item in result"><a href="" ng-click="toggleFilter(\'anzsrc-for\', item.notation, true)">{{item.label | toTitleCase | truncate:30}} <small><i class="fa fa-remove"></i></small></a></li></ul>',
+		template: '<ul class="listy no-bottom"><li ng-repeat="item in result"><a href="" ng-click="toggleFilter(\'anzsrc-for\', item.notation, true)">{{item.label | toTitleCase | truncate:30}} <small><i class="fa fa-remove" tip="Remove Item"></i></small></a></li></ul>',
 		scope: {
 			subjects: '=subjects',
 			vocab: '='

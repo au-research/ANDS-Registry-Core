@@ -299,6 +299,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
 			show = false;
 		}
+		if($scope.filters[filter_name]=="")  show = false;
 		return show;
 	}
 

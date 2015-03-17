@@ -7,7 +7,7 @@
 			<div class="animated fadeInDown">
 				<a href="" class="btn btn-primary btn-sm btn-icon-right" ng-click="add_user_data('saved_record')">Save To MyRDA <span><i class="fa fa-bookmark-o"></i></span></a>
 				<a href="" class="btn btn-primary btn-sm btn-icon-right" ng-click="add_user_data('export')" ng-if="filters.class=='collection'">Export <span><i class="fa fa-download"></i></span></a>
-				<a class="btn">Records selected: [[selected.length]]</a>
+				Records selected: [[selected.length]]
 			</div>
 		</div>
 		<div class="col-md-5 col-lg-5 sort-box">
