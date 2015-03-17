@@ -28,8 +28,9 @@ class Dates_Extension extends ExtensionBase
 		$this->maxYear = 0;
 		$temporalArray = array();
 		$sxml = $this->ro->getSimpleXML();
+        //TODO: fix me...
 		$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-		$temporals = $sxml->xpath('//ro:date');
+		$temporals = $sxml->xpath('//ro:temporal/ro:date');
 		foreach ($temporals AS $temporal)
 		{
 			$type = (string)$temporal["type"];
