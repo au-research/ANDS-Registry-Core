@@ -1,6 +1,7 @@
 $(document).ready(function() {
     initConnectionGraph()
-    drawMap();
+    // drawMap();
+    setTimeout( "drawMap()",500 );
     //console.log($.browser)
     
 	$('#rightsContent').hide();
@@ -214,6 +215,9 @@ function drawMap(){//drawing the map on the left side
                 if (map2.getZoom() > 3) map2.setZoom(3);
             });
         }
+        
+        google.maps.event.trigger(map2, 'resize');
+        map2.setZoom( map2.getZoom() );
     }
 }
 

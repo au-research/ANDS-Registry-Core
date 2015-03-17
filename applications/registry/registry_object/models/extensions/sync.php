@@ -350,7 +350,7 @@ class Sync_extension extends ExtensionBase{
         }
 
         //lowercase all facet-able values
-        $lowercase = array('group', 'type', 'license_class', 'access_rights', 'activity_status', 'administering_institution', 'funders');
+        $lowercase = array('type', 'license_class', 'access_rights', 'activity_status', 'administering_institution', 'funders');
         foreach ($lowercase as $l) {
         	if(isset($json[$l])) {
         		if (is_array($json[$l])) {

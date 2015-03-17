@@ -159,11 +159,19 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		
 
 		//only change the hash at search page, other page will navigate to the search page
-		if(location.href.indexOf(base_url+'search')==0) {
+		if ($scope.onSearchPage()) {
 			location.hash = '!/'+hash;
 		} else {
 			location.href = base_url+'search/#' + '!/' + hash;
 		}
+	}
+
+	$scope.onSearchPage = function() {
+		var ret = false;
+		if (location.href.indexOf(base_url+'search')==0) {
+			ret = true;
+		}
+		return ret;
 	}
 
 	$scope.filters_to_hash = function() {
@@ -182,7 +190,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.sync();
 			$scope.$broadcast('search_complete');
 			$scope.populateCenters($scope.result.response.docs);
-			$log.debug('result', $scope.result);
+			// $log.debug('result', $scope.result);
 			// $log.debug($scope.result, search_factory.result);
 		});
 	}
@@ -570,12 +578,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	});
 
 	$scope.cleanPrefilters = function() {
-		var cleanout = [];
-		if ($scope.prefilters['class']=='activity') {
-			cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial'];
-		} else {
-			cleanout = ['type', 'subject', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
-		}
+		// var cleanout = [];
+		// if ($scope.prefilters['class']=='activity') {
+		// 	cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial'];
+		// } else {
+		// 	cleanout = ['type', 'subject', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
+		// }
+		var cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial', 'type', 'subject', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
 		angular.forEach(cleanout, function(f) {
 			delete $scope.prefilters[f];
 		});
@@ -675,7 +684,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	//
 	//
 	$scope.$watch('vocab', function(newv, oldv){
-		if (newv!=oldv) {
+		if (newv!=oldv && $scope.isAdvancedSearchActive('subject')) {
 			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
 				$scope.vocab_tree_tmp = data;
 			});
@@ -687,17 +696,22 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.vocabInit = function() {
 		$scope.vocab = 'anzsrc-for';
-		vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
-			$scope.vocab_tree = data;
-			$scope.vocab_tree_tmp = $scope.vocab_tree;
-		});
 
-		//getting vocabulary in configuration, mainly for matching isSelected
-		if(!angular.equals(vocab_factory.subjects, {})) {
-			vocab_factory.getSubjects().then(function(data){
-				vocab_factory.subjects = data;
+		//only loads in search page, other page don't have subject facet (yet)
+		if ( $scope.onSearchPage() ) {
+			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
+				$scope.vocab_tree = data;
+				$scope.vocab_tree_tmp = $scope.vocab_tree;
 			});
 		}
+		
+
+		// DEPRECATED. getting vocabulary in configuration, mainly for matching isSelected
+		// if(!angular.equals(vocab_factory.subjects, {})) {
+		// 	vocab_factory.getSubjects().then(function(data){
+		// 		vocab_factory.subjects = data;
+		// 	});
+		// }
 	}
 
 	$scope.getSubTree = function(item) {

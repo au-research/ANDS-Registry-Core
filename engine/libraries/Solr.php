@@ -358,7 +358,7 @@ class Solr {
 						foreach($value as $v) $fq_str .= ' subject_value_resolved:('.$v.')'; 
 						$this->setOpt('fq', $fq_str);
 					}else{
-					   if($value!='all') $this->setOpt('fq', '+subject_value_resolved:('.$value.')');
+					   if($value!='all') $this->setOpt('fq', '+s_subject_value_resolved:("'.$value.'")');
 					}
 					break;
 				case 's_subject_value_resolved': 
