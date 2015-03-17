@@ -57,11 +57,10 @@
                             </ul>
                         </p>
                         
-                        <div ng-repeat="(index, content) in getHighlight(doc.id)">
-                            <p ng-repeat="c in content track by $index">
+                        <div ng-repeat="(index, content) in getHighlight(doc.id)" class="element-shorter-bottom">
+                            <div ng-repeat="c in content track by $index" class="element-shortest-bottom">
                                 <span ng-bind-html="c | trustAsHtml"></span> <small><b>[[index | highlightreadable]]</b></small>
-                            </p>
-
+                            </div>
                         </div>
 
                         <p ng-if="getHighlight(doc.id)===false && doc.list_description">
@@ -221,7 +220,7 @@
 
     <!-- Temporal Facet -->
     <div class="panel-body swatch-white" ng-show="showFacet('temporal')">
-        <h4>Time Period</h4>
+        <h4>Time Period <i class="fa fa-info" tip="Please note that adding a time period filter to your search will restrict your search to only those records in Research Data Australia which contain temporal information."></i></h4>
         <select ng-model="filters.year_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
             <option value="" style="display:none">From Year</option>
         </select>
