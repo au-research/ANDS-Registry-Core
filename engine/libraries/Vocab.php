@@ -232,6 +232,7 @@ class Vocab {
     }
 
     function getNumCollections($uri,$filters, $fuzzy = false){
+        unset($filters['anzsrc-for']);
         $CI =& get_instance();
         $CI->load->library('solr');
         // ulog('trying to get count for '.$uri);

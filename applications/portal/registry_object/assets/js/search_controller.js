@@ -198,6 +198,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.preresult = data;
 			$scope.prefacets = search_factory.construct_facets($scope.preresult, $scope.prefilters['class']);
 			$scope.populateCenters($scope.preresult.response.docs);
+			vocab_factory.get(false, $scope.prefilters, $scope.vocab).then(function(data){
+				$scope.vocab_tree_tmp = data;
+			});
 		});
 	}
 
@@ -528,6 +531,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.prefilters = {};
 		$scope.preresult = {};
 		angular.copy($scope.filters, $scope.prefilters);
+
 		if (active && active!='close') {
 			$scope.selectAdvancedField(active);
 			$('#advanced_search').modal('show');
