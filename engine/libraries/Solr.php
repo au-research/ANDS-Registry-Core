@@ -597,6 +597,15 @@ class Solr {
 					if(!$filters['q']) $this->setOpt('q', $value);
 					$this->setOpt('fq', '+related_party_multi_search:('.$value.')');
 					break;
+				case 'administering_institution':
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' administering_institution:("'.$v.'")'; 
+						$this->setOpt('fq', $fq_str);
+					}else{
+						if($value!='all') $this->setOpt('fq', '+administering_institution:("'.$value.'")');
+					}
+					break;
 				case 'funding_from':
 					$funding_from = $value;
 					if (isset($filters['funding_to'])) {

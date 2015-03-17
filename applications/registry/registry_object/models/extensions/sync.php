@@ -339,7 +339,7 @@ class Sync_extension extends ExtensionBase{
         	$json['funders'] = array();
         	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, true, true);
         	foreach ($related_objects as $related_object) {
-        		if ($related_object['class']=='party' && $related_object['relation_type']=='isAdministeredBy') {
+        		if ($related_object['class']=='party' && $related_object['relation_type']=='isManagedBy') {
         			$json['administering_institution'][] = $related_object['title'];
         		} else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
         			$json['funders'][] = $related_object['title'];

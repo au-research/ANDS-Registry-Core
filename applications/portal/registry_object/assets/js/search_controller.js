@@ -182,7 +182,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.sync();
 			$scope.$broadcast('search_complete');
 			$scope.populateCenters($scope.result.response.docs);
-			// $log.debug('result', $scope.result);
+			$log.debug('result', $scope.result);
 			// $log.debug($scope.result, search_factory.result);
 		});
 	}

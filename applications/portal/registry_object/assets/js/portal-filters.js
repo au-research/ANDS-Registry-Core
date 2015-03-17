@@ -21,7 +21,7 @@ angular.module('portal-filters', [])
 				case 'year_to': return 'Time Period (to)'; break;
 				case 'funding_scheme': return 'Funding Scheme'; break;
 				case 'funders': return 'Funders'; break;
-				case 'administering_institution': return 'Administering Institution'; break;
+				case 'administering_institution': return 'Managing Institutions'; break;
 				case 'activity_status': return 'Status'; break;
 				case 'related_party_one_id': return 'Related Researcher'; break;
 				case 'scot': return 'Schools of Online Thesaurus'; break;
