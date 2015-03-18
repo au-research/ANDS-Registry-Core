@@ -16,9 +16,9 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
                 str += computed(group.rules[i].group)
             } else {
                 if(group.rules[i].condition=='-') {
-                    str += '-' + group.rules[i].field + ':' + group.rules[i].data;
+                    str += '-' + group.rules[i].field + ':' + '('+group.rules[i].data+')';
                 }else {
-                    str += group.rules[i].field + "" + htmlEntities(group.rules[i].condition) + "" + group.rules[i].data;
+                    str += group.rules[i].field + "" + htmlEntities(group.rules[i].condition) + "" + '('+group.rules[i].data+')';
                 }
                 
             }

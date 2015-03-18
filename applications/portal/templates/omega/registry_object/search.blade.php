@@ -113,9 +113,6 @@
         [[filters]]
     </div> -->
     <div class="panel-body swatch-white">
-        <div>
-            
-        </div>
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
             <h4 ng-if="name!='q' || (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
             <h4 ng-if="name=='q' && filters.cq">Advanced Search</h4>

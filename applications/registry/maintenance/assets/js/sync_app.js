@@ -41,6 +41,9 @@ angular.module('sync_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitiz
 			},
 			add_task: function(task, params) {
 				return $http.post(base_url+'tasks/add_task/', {task:task, params:params}).then(function(response){return response.data;});		
+			},
+			solr_search: function(query) {
+				return $http.post(base_url+'maintenance/solr_search/', {query:query}).then(function(response){return response.data;});		
 			}
 		}
 	})
@@ -204,6 +207,39 @@ function indexCtrl($scope, sync_service){
 		ids = ids.join();
 		sync_service.add_task('sync', 'type=ds&id='+ids).then(function(data){
 			$scope.refreshTask();
+		});
+	}
+
+
+	$scope.solr_search = function() {
+		if($scope.solr_query!='') {
+			sync_service.solr_search($scope.solr_query).then(function(data){
+				$scope.solr_result = data;
+			});
+		}
+	}
+
+	$scope.solr_query_sync = function() {
+		ids = [];
+		angular.forEach($scope.solr_result.response.docs, function(doc){
+			ids.push(doc.id);
+		});
+
+		Array.prototype.chunk = function(chunkSize) {
+		    var array=this;
+		    return [].concat.apply([],
+		        array.map(function(elem,i) {
+		            return i%chunkSize ? [] : [array.slice(i,i+chunkSize)];
+		        })
+		    );
+		}
+
+		ids = ids.chunk(50);
+
+		angular.forEach(ids, function(list) {
+			sync_service.add_task('sync', 'type=ro&id='+list).then(function(data){
+				$scope.refreshTask();
+			});
 		});
 	}
 

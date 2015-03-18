@@ -291,7 +291,7 @@ class Solr {
 
 		// map each of the user-supplied filters to it's corresponding SOLR parameter
 		foreach($filters as $key=>$value){
-			if(!is_array($value)){
+			if(!is_array($value) && $key!='q'){
 				$value = $this->escapeInvalidXmlChars($value);
 			} 
 			switch($key){
