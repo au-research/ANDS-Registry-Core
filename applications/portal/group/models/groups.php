@@ -17,7 +17,8 @@ class Groups extends CI_Model {
 		$this->solr
 			->setFacetOpt('facet', 'true')
 			->setOpt('fq', '+class:collection')
-			->setFacetOpt('field', 'group');
+			->setFacetOpt('field', 'group')
+			->setFacetOpt('limit', '-1');
 		$result = $this->solr->executeSearch();
 		$result = $this->solr->getFacetResult('group');
 
