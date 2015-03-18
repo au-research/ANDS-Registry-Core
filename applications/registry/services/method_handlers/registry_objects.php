@@ -193,7 +193,7 @@ class Registry_objectsMethod extends MethodHandler {
 
         
 
-        $relationships = $this->ro->getConnections(true,null,5,0,true);
+        $relationships = $this->ro->getConnections(true,null,$limit,0,true);
         $relationships = $relationships[0];
 
         //get the correct count in SOLR

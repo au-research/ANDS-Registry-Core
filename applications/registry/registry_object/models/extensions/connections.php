@@ -376,7 +376,7 @@ class Connections_Extension extends ExtensionBase
 		foreach ($query->result_array() AS $row)
 		{
 			
-			if(($row['status'] == null || $row['status'] == 'PUBLISHED') && !in_array($row['related_object_identifier'], $processed_identifiers))
+			if(($row['status'] == null || $row['status'] == 'PUBLISHED'))
 			{
                 $processed_identifiers[] = $row['related_object_identifier'];
                 $row['origin'] = "IDENTIFIER";

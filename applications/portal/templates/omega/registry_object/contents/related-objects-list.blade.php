@@ -93,8 +93,10 @@
                     <h4>Related Data</h4>
                     <p>
                         @foreach($ro->relationships['collection'] as $col)
-                            @if($col && ($col['relation_type']=='hasDerivedCollection' || $col['relation_type']=='isDerivedFrom'))
+                            @if($col['slug'] && $col['registry_object_id'])
                             <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
+                            @elseif(isset($col['identifier_relation_id']))
+                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
                     </p>
@@ -103,7 +105,11 @@
                     <h4>Related Data</h4>
                     <p>
                         @foreach($ro->relationships['collection'] as $col)
-                        <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
+                            @if($col['slug'] && $col['registry_object_id'])
+                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
+                            @elseif(isset($col['identifier_relation_id']))
+                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
+                            @endif
                         @endforeach
                     </p>
                     @endif
@@ -111,8 +117,10 @@
                     <h4>Related Organisations</h4>
                     <p>
                         @foreach($ro->relationships['party_multi'] as $col)
-                            @if($col)
-                        <i class="fa fa-group icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
+                            @if($col['slug'] && $col['registry_object_id'])
+                            <i class="fa fa-group icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
+                            @elseif(isset($col['identifier_relation_id']))
+                            <i class="fa fa-group icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
                         @if(sizeof($ro->relationships['party_multi']) < $ro->relationships['party_multi_count_solr'])
@@ -125,9 +133,11 @@
                     <h4>Related Grants and Projects</h4>
                    <p>
                         @foreach($ro->relationships['activity'] as $col)
-                            @if($col)
-                            <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
-                            @endif
+                           @if($col['slug'] && $col['registry_object_id'])
+                           <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
+                           @elseif(isset($col['identifier_relation_id']))
+                           <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
+                           @endif
                         @endforeach
                         @if(sizeof($ro->relationships['activity']) < $ro->relationships['activity_count_solr'])
                             <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=activity">View all {{$ro->relationships['activity_count_solr']}} related activities</a>
@@ -139,8 +149,10 @@
                     <h4>Related Services</h4>
                     <p>
                         @foreach($ro->relationships['service'] as $col)
-                            @if($col)
+                            @if($col['slug'] && $col['registry_object_id'])
                             <i class="fa fa-wrench icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
+                            @elseif(isset($col['identifier_relation_id']))
+                            <i class="fa fa-wrench icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
                         @if(sizeof($ro->relationships['service']) < $ro->relationships['service_count_solr'])
