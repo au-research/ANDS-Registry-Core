@@ -231,6 +231,16 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.sort = search_factory.activity_sort;
 		}
 
+		if($scope.filters['class']=='activity') {
+			$scope.advanced_fields = search_factory.advanced_fields_activity;
+		} else if($scope.filters['class']=='collection') {
+			$scope.advanced_fields = search_factory.advanced_fields;
+		} else if($scope.filters['class']=='party') {
+			$scope.advanced_fields = search_factory.advanced_fields_party;
+		} else if($scope.filters['class']=='service') {
+			$scope.advanced_fields = search_factory.advanced_fields_service;
+		}
+
 		//construct the pagination
 		if ($scope.result) {
 			// $log.debug($scope.result);
@@ -248,7 +258,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			}
 
 			//get temporal range
-			search_factory.search_no_record().then(function(data){
+			var tmp_filter = {};
+			tmp_filter['class'] = $scope.filters['class'];
+			search_factory.search_no_record(tmp_filter).then(function(data){
 				$scope.temporal_range = search_factory.temporal_range(data);
 			});
 		}
@@ -389,7 +401,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if ($scope.filters['class']=='collection') {
 			var allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial'];
 		} else if($scope.filters['class']=='activity') {
-			var allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'funding_scheme', 'commencement_date', 'completion_date', 'funding_amount'];
+			var allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'funding_scheme', 'commencement_to', 'commencement_from', 'completion_to', 'completion_from', 'funding_amount'];
 		} else {
 			var allowed = ['type' ,'subjects', 'group'];
 		}

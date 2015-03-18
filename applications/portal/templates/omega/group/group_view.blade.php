@@ -9,7 +9,7 @@
 
                         $logo = false;
 
-                        if ($group['logo']) {
+                        if (isset($group['logo'])) {
                             $logo = $group['logo'];
                         }
 

@@ -195,6 +195,17 @@
 				</div>
 
 				<div class="widget-box">
+					<div class="widget-title"><h5>Solr Selective Syncing</h5></div>
+					<div class="widget-content">
+						<input type="text" ng-model="solr_query" placeholder="Solr Query">
+						<span ng-show="solr_result">{{solr_result.response.numFound}} records found (limit to 500)</span>
+						<hr>
+						<button class="btn btn-default" ng-click="solr_search()">Search</button>
+						<button class="btn btn-default" ng-show="solr_result && solr_result.response.numFound > 0" ng-click="solr_query_sync()">BG Sync {{solr_result.response.docs.length}}</button>
+					</div>
+				</div>
+
+				<div class="widget-box">
 					<div class="widget-title">
 						<h5>Current Operation: {{ct.status}}</h5>
 					</div>

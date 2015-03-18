@@ -34,6 +34,10 @@ angular.module('portal-filters', [])
 				case 'keywords': return 'Keywords'; break;
 				case 'refine': return 'Refine'; break;
 				case 'subject_value_resolved': return 'Subject'; break;
+				case 'commencement_to': return 'Commencement To'; break;
+				case 'commencement_from': return 'Commencement From'; break;
+				case 'completion_to': return 'Completion To'; break;
+				case 'completion_from': return 'Completion From'; break;
 				default: return text;
 			}
 		}

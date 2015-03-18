@@ -411,6 +411,25 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
+	function solr_search() {
+		acl_enforce('REGISTRY_STAFF');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		$data = file_get_contents("php://input");
+		$data = json_decode($data, true);
+		$query = $data['query'];
+
+		$this->load->library('solr');
+		$this->solr
+			->setOpt('rows', '5000')
+			->setOpt('fl', 'id')
+			->setOpt('q', $query);
+		$result = $this->solr->executeSearch(true);
+		echo json_encode($result);
+	}
+
 	function getDataSourcesStat(){
 		acl_enforce('REGISTRY_STAFF');
 		header('Cache-Control: no-cache, must-revalidate');

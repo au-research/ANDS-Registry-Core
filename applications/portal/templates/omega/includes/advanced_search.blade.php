@@ -143,14 +143,24 @@
 										</div> -->
 										<div class="panel-body swatch-white">
 												<div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name)">
-														<h4>[[name | filter_name]]</h4>
-														<ul class="listy" ng-show="isArray(value) && name!='anzsrc-for'">
-																<li ng-repeat="v in value track by $index"> <a href="" ng-click="togglePreFilter(name, v, true)">[[v]]<small><i class="fa fa-remove"></i></small></a> </li>
-														</ul>
-														<ul class="listy" ng-show="isArray(value)===false && name!='anzsrc-for'">
-																<li> <a href="" ng-click="togglePreFilter(name, value, true)">[[value]]<small><i class="fa fa-remove"></i></small></a> </li>
-														</ul>
-														<div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="anzsrc-for"></div>
+												    <h4 ng-if="name!='q' || (name=='q' && !prefilters.cq)">[[name | filter_name]]</h4>
+												    <h4 ng-if="name=='q' && prefilters.cq">Advanced Search</h4>
+												    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
+												        <li ng-repeat="v in value track by $index"> 
+												            <a href="" ng-click="toggleFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
+												        </li>
+												    </ul>
+												    <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
+												        <li>
+												            <a href="" ng-click="toggleFilter(name, value, true)">
+												                <span ng-if="name!='related_party_one_id'">[[ value | truncate:30 ]]</span>
+												                <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
+												                <small><i class="fa fa-remove" tip="Remove Item"></i></small>
+												            </a>
+												        </li>
+												    </ul>
+												    <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="'anzsrc-for'"></div>
+												    <div resolve ng-if="name=='anzsrc-seo'" subjects="value" vocab="'anzsrc-seo'"></div>
 												</div>
 												<div class="panel-body swatch-white">
 													<a href="" class="btn btn-primary" ng-click="advancedSearch();"><i class="fa fa-search"></i> Search</a>
