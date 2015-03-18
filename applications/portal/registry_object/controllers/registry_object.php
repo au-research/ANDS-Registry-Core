@@ -581,7 +581,7 @@ class Registry_object extends MX_Controller {
 		$this->solr->setOpt('hl.regex.pattern', "\w[^.!?]{400,600}[.!?]");
 		$this->solr->setOpt('hl.bs.type', "SENTENCE");
 		$this->solr->setOpt('hl.bs.maxScan', "30");
-		$this->solr->setOpt('hl.useFastVectorHighlighter', "true");
+		// $this->solr->setOpt('hl.useFastVectorHighlighter', "true");
 
 		//experiment hl attrs
 		// $this->solr->setOpt('hl.alternateField', 'description');
