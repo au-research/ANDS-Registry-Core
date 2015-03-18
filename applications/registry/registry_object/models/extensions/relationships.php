@@ -256,8 +256,31 @@ class Relationships_Extension extends ExtensionBase
 		{
 			$related_keys[] = $row['related_object_key'];
 		}
-		return $related_keys;
+		return array_merge($related_keys, $this->getRelatedKeysByIdentifier());
 	}
+
+
+    function getRelatedKeysByIdentifier()
+    {
+        /* Step 1 - Straightforward link relationships */
+        $related_keys = array();
+        $this->db->select('r.key, ri.identifier')
+            ->from('registry_object_identifier_relationships rir')
+            ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type','left')
+            ->join('registry_objects r','r.registry_object_id = ri.registry_object_id','left')
+            ->where('rir.registry_object_id',$this->id);
+        $query = $this->db->get();
+
+        foreach ($query->result_array() AS $row)
+        {
+            if($row['key'] != null )
+            {
+                $related_keys[] = $row['key'];
+            }
+        }
+        return $related_keys;
+    }
+
 
 	function getRelatedObjectClass($related_key)
 	{
