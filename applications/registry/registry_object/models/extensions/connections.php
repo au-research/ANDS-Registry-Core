@@ -364,6 +364,7 @@ class Connections_Extension extends ExtensionBase
 	{
 		/* Step 1 - Straightforward link relationships */
 		$my_connections = array();
+        $processed_identifiers = array();
 		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type','left')
@@ -375,8 +376,12 @@ class Connections_Extension extends ExtensionBase
 		foreach ($query->result_array() AS $row)
 		{
 			
-			if(($row['status'] == null || $row['status'] == 'PUBLISHED'))
+			if(($row['status'] == null || $row['status'] == 'PUBLISHED') && !in_array($row['related_object_identifier'], $processed_identifiers))
 			{
+                if($row['class'] == 'party') // avoid duplicated parties those will be merged later...
+                {
+                    $processed_identifiers[] = $row['related_object_identifier'];
+                }
                 $row['origin'] = "IDENTIFIER";
 				if($row['class'] == null) 
 					$row['class'] = $row['related_info_type'];
