@@ -19,7 +19,11 @@
         @endif
         <div class="panel-body swatch-white">
             @foreach($ro->relatedInfo as $relatedInfo)
-                <h5><a href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><img src="<?php echo base_url()?>assets/core/images/icons/publications.png" style="margin-top: -2px; height: 24px; width: 24px;"> {{$relatedInfo['title']}}</a></h5>
+                @if(@if($relatedInfo['identifier']['identifier_type'] == 'doi)
+                    <h5><a href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><img src="<?php echo base_url()?>assets/core/images/icons/publications.png" style="margin-top: -2px; height: 24px; width: 24px;"> {{$relatedInfo['title']}}</a></h5>
+                @else
+                <h5><img src="<?php echo base_url()?>assets/core/images/icons/publications.png" style="margin-top: -2px; height: 24px; width: 24px;"> {{$relatedInfo['title']}}</a></h5>
+                @endif
                 <p>
                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b> : 
                     @if($relatedInfo['identifier']['identifier_href'])
