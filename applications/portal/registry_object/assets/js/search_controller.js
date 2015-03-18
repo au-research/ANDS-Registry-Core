@@ -576,10 +576,18 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.$watch('prefilters.class', function(newv){
+		var tmp_filter = {};
+		tmp_filter['class'] = newv;
 		if(newv=='activity') {
 			$scope.advanced_fields = search_factory.advanced_fields_activity;
+			search_factory.search_no_record(tmp_filter).then(function(data){
+				$scope.temporal_range = search_factory.temporal_range(data);
+			});
 		} else if(newv=='collection') {
 			$scope.advanced_fields = search_factory.advanced_fields;
+			search_factory.search_no_record(tmp_filter).then(function(data){
+				$scope.temporal_range = search_factory.temporal_range(data);
+			});
 		} else if(newv=='party') {
 			$scope.advanced_fields = search_factory.advanced_fields_party;
 		} else if(newv=='service') {

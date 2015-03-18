@@ -192,7 +192,7 @@
     </div>
 
     <!-- Commencement date for activity search -->
-    <div class="panel-body swatch-white" ng-show="showFacet('commencement_date')">
+    <div class="panel-body swatch-white" ng-show="showFacet('commencement_from')">
         <h4>Commencement date</h4>
         <select ng-model="filters.commence_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
             <option value="" style="display:none">From Year</option>
@@ -204,7 +204,7 @@
     </div>
 
     <!-- Completion date for activity search -->
-    <div class="panel-body swatch-white" ng-show="showFacet('completion_date')">
+    <div class="panel-body swatch-white" ng-show="showFacet('completion_to')">
         <h4>Completion date</h4>
         <select ng-model="filters.completion_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
             <option value="" style="display:none">From Year</option>
