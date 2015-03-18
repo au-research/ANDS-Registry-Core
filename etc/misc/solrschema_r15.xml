@@ -130,7 +130,8 @@
         <!-- activity search fields used also by facets -->
         <field name="activity_status" type="string" indexed="true" stored="true" multiValued="false"/>
         <field name="funding_amount" type="sfloat" indexed="true" stored="true" multiValued="false"/>
-        <field name="funding_scheme" type="text_en_splitting" indexed="true" stored="true" multiValued="false"/>
+        <field name="funding_scheme" type="string" indexed="true" stored="true" multiValued="false"/>
+        <field name="funding_scheme_search" type="text_en_splitting" indexed="true" stored="true" multiValued="false"/>
         <field name="researchers" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="researchers_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
         <field name="administering_institution" type="string" indexed="true" stored="true" multiValued="true"/>

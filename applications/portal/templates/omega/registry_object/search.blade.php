@@ -182,6 +182,7 @@
     <div facet-search facets="facets" type="license_class" ng-if="showFacet('license_class')"></div>
     <div facet-search facets="facets" type="administering_institution" ng-if="showFacet('administering_institution')"></div>
     <div facet-search facets="facets" type="funders" ng-if="showFacet('funders')"></div>
+    <div facet-search facets="facets" type="funding_scheme" ng-if="showFacet('funding_scheme')"></div>
 
     
 
