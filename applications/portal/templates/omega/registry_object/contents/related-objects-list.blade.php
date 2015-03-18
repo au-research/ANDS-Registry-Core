@@ -68,8 +68,7 @@
                             <h4>Related Publications</h4>
                             @foreach($ro->relatedInfo as $relatedInfo)
                                 @if($relatedInfo['type']=='publication')
-                                    <?php if(isset($relatedInfo['identifier']['identifier_href']['href'])){ ?>
-
+                                    <?php if($relatedInfo['identifier']['identifier_type'] == 'doi'){ ?>
                                         <a  href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><i class="fa fa-book icon-portal"></i> {{$relatedInfo['title']}}</a>
                                     <?php }else{ ?>
                                         <i class="fa fa-book icon-portal"></i> {{$relatedInfo['title']}}
