@@ -231,6 +231,16 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.sort = search_factory.activity_sort;
 		}
 
+		if($scope.filters['class']=='activity') {
+			$scope.advanced_fields = search_factory.advanced_fields_activity;
+		} else if($scope.filters['class']=='collection') {
+			$scope.advanced_fields = search_factory.advanced_fields;
+		} else if($scope.filters['class']=='party') {
+			$scope.advanced_fields = search_factory.advanced_fields_party;
+		} else if($scope.filters['class']=='service') {
+			$scope.advanced_fields = search_factory.advanced_fields_service;
+		}
+
 		//construct the pagination
 		if ($scope.result) {
 			// $log.debug($scope.result);
