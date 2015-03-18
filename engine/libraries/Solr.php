@@ -431,6 +431,9 @@ class Solr {
 				case 'slug':
 					$this->setOpt('fq', '+slug:('.$value.')');
 					break;
+				case 'key':
+					$this->setOpt('fq', '+key:("'.$value.'")');
+					break;
 				case 'tag':
 					if(is_array($value)){
 						$fq_str = '';

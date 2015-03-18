@@ -25,11 +25,14 @@ class Registry_objects extends CI_Model {
 	 * @return _ro
 	 */
 	public function getBySlug($slug, $useCache = true) {
-        if($this->checkRecordCount(array('q'=>'+slug:("'.$slug.'")+status:PUBLISHED')) > 1)
+        if($this->checkRecordCount(array('slug'=>$slug)) > 1)
         {
             return 'MULTIPLE';
         }
-        $id = $this->findRecord(array('q'=>'+slug:("'.$slug.'")+status:PUBLISHED'), true);
+        $filters = array(
+        	'slug' => $slug
+        );
+        $id = $this->findRecord($filters, true);
         if($id)
         {
             $props = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
@@ -45,7 +48,7 @@ class Registry_objects extends CI_Model {
      * @return _ro
      */
     public function getByKey($key, $useCache = true) {
-        $id = $this->findRecord(array('q'=>'+key:("'.$key.'")'), true);
+        $id = $this->findRecord(array('key'=>$key), true);
         if($id)
         {
             $props = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
