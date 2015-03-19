@@ -56,7 +56,7 @@
         }
     }
 ?>
-    @if($hasRelatedPublication || $hasDerivedCollection || $hasRelatedOrganisation || $hasRelatedGrantsOrProjects || $hasRelatedServices || $hasRelatedInfo)
+    @if($hasRelatedCollection || $hasRelatedPublication || $hasDerivedCollection || $hasRelatedOrganisation || $hasRelatedGrantsOrProjects || $hasRelatedServices || $hasRelatedInfo)
         <div class="swatch-white">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <div class="panel-heading"> Related </div>
@@ -159,6 +159,9 @@
                             <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
+                        @if(sizeof($ro->relationships['collection_count_solr']) < 5)
+                        <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count_solr']}} related collections</a>
+                        @endif
                     </p>
                     @endif
                     @if($hasRelatedOrganisation)
