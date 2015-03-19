@@ -49,6 +49,16 @@ class Contact extends ROHandler {
             );
         }
 
+        $physical_contact = $this->gXPath->query("//ro:location/ro:address/ro:physical/ro:addressPart[@type='text']");
+
+        foreach($physical_contact as $contact){
+
+            $contacts[] =Array(
+                'contact_type' => 'text',
+                'contact_value' => $contact->nodeValue
+            );
+        }
+
         return $contacts;
 	}
 }
