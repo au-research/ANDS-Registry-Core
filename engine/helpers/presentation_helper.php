@@ -193,7 +193,7 @@ function readable($text, $altered = false){
         case 'full': return 'Full description';break;
         case 'brief': return 'Brief description';break;
         case 'note': return 'Notes';break;
-        case 'significancestatement': return 'Significance Statement';break;
+       // case 'significancestatement': return 'Significance Statement';break;
         case 'lineage': return 'Lineage';break;
         case 'addsvalueto' : return  'Adds value to'; break;
         case 'describes' : return  'Describes'; break;
