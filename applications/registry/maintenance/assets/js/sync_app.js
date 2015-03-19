@@ -234,7 +234,7 @@ function indexCtrl($scope, sync_service){
 		    );
 		}
 
-		ids = ids.chunk(50);
+		ids = ids.chunk(200);
 
 		angular.forEach(ids, function(list) {
 			sync_service.add_task('sync', 'type=ro&id='+list).then(function(data){

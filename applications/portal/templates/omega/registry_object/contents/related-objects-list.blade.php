@@ -68,22 +68,41 @@
                             <h4>Related Publications</h4>
                             @foreach($ro->relatedInfo as $relatedInfo)
                                 @if($relatedInfo['type']=='publication')
-                                    <?php if($relatedInfo['identifier']['identifier_type'] == 'doi'){ ?>
-                                        <a  href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><i class="fa fa-book icon-portal"></i> {{$relatedInfo['title']}}</a>
+                                    <?php
+                                    $description = 'tip="'.$relatedInfo['title'].'"';
+                                    ?>
+                                     <?php if($relatedInfo['identifier']['identifier_type'] == 'doi'){ ?>
+
+                                        <a  href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}" {{$description}}><i class="fa fa-book icon-portal"></i> {{$relatedInfo['title']}}</a>
                                     <?php }else{ ?>
                                         <i class="fa fa-book icon-portal"></i> {{$relatedInfo['title']}}
                                     <?php } ?>
                                     <p>
                                         <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
                                         <?php if(isset($relatedInfo['identifier']['identifier_href']['href'])){ ?>
-
-                                            <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
+                                            <?php
+                                            if(isset($relatedInfo['identifier']['identifier_href']['hover_text'])){
+                                                $description = 'tip="'.$relatedInfo['identifier']['identifier_href']['hover_text'].'"';
+                                            }else{
+                                                $description = 'tip="'.$relatedInfo['identifier']['identifier_value'].'"';
+                                            }
+                                            ?>
+                                            <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}" {{$description}}>{{$relatedInfo['identifier']['identifier_value']}}</a><br />
                                         <?php }else{ ?>
                                             {{$relatedInfo['identifier']['identifier_value']}}
                                         <?php } ?>
                                     </p>
                                     @if($relatedInfo['relation']['url'])
-                                        <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
+                                    <?php
+                                    $description = '';
+                                    if(isset($relatedInfo['relation']['description'])&& $relatedInfo['relation']['description']!='')
+                                    {
+                                        $description .= 'tip="'.$relatedInfo['relation']['url']."<br/>".$relatedInfo['relation']['description'].'"';
+                                    }else{
+                                        $description .= 'tip="'.$relatedInfo['relation']['url'].'"';
+                                    }
+                                    ?>
+                                        <p>URI : <a href="{{$relatedInfo['relation']['url']}}" {{$description}}>{{$relatedInfo['relation']['url']}}</a></p>
                                     @endif
                                 @endif
                             @endforeach
@@ -97,10 +116,17 @@
                     <h4>Related Data</h4>
                     <p>
                         @foreach($ro->relationships['collection'] as $col)
+                        <?php
+                        if(isset($col['relation_description']) && $col['relation_description']!=''){
+                            $description = 'tip="'.$col['title']."<br/>".$col['relation_description'].'"';
+                        }else{
+                            $description = 'tip="'.$col['title'].'"';
+                        }
+                        ?>
                             @if($col['slug'] && $col['registry_object_id'])
-                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
+                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" {{$description}} class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
                             @elseif(isset($col['identifier_relation_id']))
-                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
+                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" {{$description}} class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
                     </p>
@@ -110,9 +136,9 @@
                     <p>
                         @foreach($ro->relationships['collection'] as $col)
                             @if($col['slug'] && $col['registry_object_id'])
-                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
+                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" {{$description}} ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
                             @elseif(isset($col['identifier_relation_id']))
-                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
+                            <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
                     </p>
@@ -121,10 +147,17 @@
                     <h4>Related Organisations</h4>
                     <p>
                         @foreach($ro->relationships['party_multi'] as $col)
+                        <?php
+                        if(isset($col['relation_description']) && $col['relation_description']!=''){
+                            $description = 'tip="'.$col['title']."<br/>".$col['relation_description'].'"';
+                        }else{
+                            $description = 'tip="'.$col['title'].'"';
+                        }
+                        ?>
                             @if($col['slug'] && $col['registry_object_id'])
-                            <i class="fa fa-group icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
+                            <i class="fa fa-group icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" {{$description}} ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
                             @elseif(isset($col['identifier_relation_id']))
-                            <i class="fa fa-group icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
+                            <i class="fa fa-group icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
                         @if(sizeof($ro->relationships['party_multi']) < $ro->relationships['party_multi_count_solr'])
@@ -137,10 +170,17 @@
                     <h4>Related Grants and Projects</h4>
                    <p>
                         @foreach($ro->relationships['activity'] as $col)
+                       <?php
+                       if(isset($col['relation_description']) && $col['relation_description']!=''){
+                           $description = 'tip="'.$col['title']."<br/>".$col['relation_description'].'"';
+                       }else{
+                           $description = 'tip="'.$col['title'].'"';
+                       }
+                       ?>
                            @if($col['slug'] && $col['registry_object_id'])
-                           <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
+                           <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" {{$description}} ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
                            @elseif(isset($col['identifier_relation_id']))
-                           <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
+                           <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                            @endif
                         @endforeach
                         @if(sizeof($ro->relationships['activity']) < $ro->relationships['activity_count_solr'])
@@ -153,10 +193,18 @@
                     <h4>Related Services</h4>
                     <p>
                         @foreach($ro->relationships['service'] as $col)
+                        <?php
+                        $description ='';
+                        if(isset($col['relation_description']) && $col['relation_description']!=''){
+                            $description = 'tip="'.$col['title']."<br/>".$col['relation_description'].'"';
+                        }else{
+                            $description = 'tip="'.$col['title'].'"';
+                        }
+                        ?>
                             @if($col['slug'] && $col['registry_object_id'])
-                            <i class="fa fa-wrench icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
+                            <i class="fa fa-wrench icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" {{$description}} ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
                             @elseif(isset($col['identifier_relation_id']))
-                            <i class="fa fa-wrench icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
+                            <i class="fa fa-wrench icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
                         @if(sizeof($ro->relationships['service']) < $ro->relationships['service_count_solr'])
@@ -172,17 +220,39 @@
                             @if($relatedInfo['title'])
                             <i class="fa fa-globe fa-lg icon-portal""></i> {{$relatedInfo['title']}}
                                 <p>
-                                    <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                                    @if($relatedInfo['identifier']['identifier_href']['display_text'])
+                                    <b>{{$relatedInfo['identifier']['identifier_href']['display_text']}}</b> :
+                                    @else
+                                    <b>{{$relatedInfo['identifier']['identifier_type']}}</b>:
+                                    @endif
                                     @if($relatedInfo['identifier']['identifier_href'])
-                                        <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
+                                    <?php
+                                    if(isset($relatedInfo['identifier']['identifier_href']['hover_text'])){
+                                        $description = 'tip="'.$relatedInfo['identifier']['identifier_href']['hover_text'].'"';
+                                    }else{
+                                        $description = 'tip="'.$relatedInfo['identifier']['identifier_value'].'"';
+                                    }
+                                    ?>
+                                        <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}" {{$description}}>{{$relatedInfo['identifier']['identifier_value']}}</a><br />
                                     @else
                                         {{$relatedInfo['identifier']['identifier_value']}}
                                     @endif
                                 </p>
                             @else
                                 <p> <i class="fa fa-globe icon-portal"></i>
-                                    <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                                    @if($relatedInfo['identifier']['identifier_href']['display_text'])
+                                        <b>{{$relatedInfo['identifier']['identifier_href']['display_text']}}</b> :
+                                    @else
+                                        <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                                    @endif
                                     @if($relatedInfo['identifier']['identifier_href'])
+                                    <?php
+                                    if(isset($relatedInfo['identifier']['identifier_href']['hover_text'])){
+                                        $description = 'tip="'.$relatedInfo['identifier']['identifier_href']['hover_text'].'"';
+                                    }else{
+                                        $description = 'tip="'.$relatedInfo['identifier']['identifier_value'].'"';
+                                    }
+                                    ?>
                                     <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
                                     @else
                                     {{$relatedInfo['identifier']['identifier_value']}}
@@ -190,6 +260,15 @@
                                 </p>
                             @endif
                             @if($relatedInfo['relation']['url'])
+                            <?php
+                            $description = '';
+                            if(isset($relatedInfo['relation']['description'])&& $relatedInfo['relation']['description']!='')
+                            {
+                                $description .= 'tip="'.$relatedInfo['relation']['url']."<br/>".$relatedInfo['relation']['description'].'"';
+                            }else{
+                                $description .= 'tip="'.$relatedInfo['relation']['url'].'"';
+                            }
+                            ?>
                                 <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
                             @endif
                         @endif

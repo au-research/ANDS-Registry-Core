@@ -23,6 +23,7 @@ class Group extends MX_Controller {
 
 	function view($slug) {
 		$group = $this->groups->get($slug);
+		
 		$this->blade
 			->set('group', $group)
 			->set('title', $group['title'])

@@ -9,7 +9,7 @@ class Sync extends Task {
 
 	private $target = false; //ds or ro
 	private $target_id = false;
-	private $chunkSize = 50;
+	private $chunkSize = 100;
 	private $chunkPos = 0;
 	private $mode = 'sync';
 	

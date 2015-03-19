@@ -51,7 +51,7 @@
 								<ul class="list-unstyled" ng-if="facet.name!='subject'">
 									<li ng-repeat="item in facet.value | orderObjectBy:'name'">
 											<input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
-											<a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name]] <small>[[item.value]]</small></a>    
+											<a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name | toTitleCase]] <small>[[item.value]]</small></a>    
 									</li>
 								</ul>
 							</div>
