@@ -132,6 +132,7 @@
 						<dl class="dl-horizontal">
 							<dt>Running Task</dt> <dd>{{tasks.running.length}}</dd>
 							<dt>Pending Tasks</dt> <dd>{{tasks.pending.length}}</dd>
+							<dt>Completed Tasks</dt> <dd>{{tasks.completed}}</dd>
 						</dl>
 						<hr>
 						<select ng-model="pendingTaskShow" name="" id="">
@@ -141,8 +142,8 @@
 							<option value="100">100</option>
 						</select>
 						<ul>
-							<li ng-repeat="task in tasks.running">{{task.name}} {{task.params}} <span class="label label-info">RUNNING</span></li>
-							<li ng-repeat="task in tasks.pending | limitTo:pendingTaskShow">{{task.name}} {{task.params}} <span class="label label-default">PENDING</span></li>
+							<li ng-repeat="task in tasks.running" tip="{{task.params}}">{{task.name}} <span class="label label-info">RUNNING</span></li>
+							<li ng-repeat="task in tasks.pending | limitTo:pendingTaskShow" tip="{{task.params}}">{{task.name}} <span class="label label-default">PENDING</span></li>
 						</ul>
 					</div>
 					<div class="widget-content">
@@ -198,7 +199,7 @@
 					<div class="widget-title"><h5>Solr Selective Syncing</h5></div>
 					<div class="widget-content">
 						<input type="text" ng-model="solr_query" placeholder="Solr Query">
-						<span ng-show="solr_result">{{solr_result.response.numFound}} records found (limit to 500)</span>
+						<span ng-show="solr_result">{{solr_result.response.numFound}} records found</span>
 						<hr>
 						<button class="btn btn-default" ng-click="solr_search()">Search</button>
 						<button class="btn btn-default" ng-show="solr_result && solr_result.response.numFound > 0" ng-click="solr_query_sync()">BG Sync {{solr_result.response.docs.length}}</button>
