@@ -558,12 +558,14 @@ Y2  - '.date("Y-m-d")."
         foreach($xml->{$ro->class}->relatedObject as $partyFunder){
             if($partyFunder->relation['type']=='isOutputOf'){
                 $key = $partyFunder->key;
+
                 $grant_objects = $CI->mro->getAllByKey($key);
+
+
                 foreach ($grant_objects as $grant_object)
                 {
                     $grant_sxml = $grant_object->getSimpleXML(NULL, true);
-
-                    if($grant_object == 'PUBLISHED'){
+                    if($grant_object->status == PUBLISHED){
                         $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
                         $related_party = $grant_object->getRelatedObjectsByClassAndRelationshipType(['party'] ,['isFunderOf','isFundedBy']);
                         if (is_array($grant_id))
@@ -648,10 +650,10 @@ Y2  - '.date("Y-m-d")."
             $descriptions[] = strip_tags(html_entity_decode($a_description->nodeValue));
         }
 
-        $ro_descriptions = $this->gXPath->query("//ro:collection/ro:description[@type='note']");
+     /*   $ro_descriptions = $this->gXPath->query("//ro:collection/ro:description[@type='note']");
         foreach($ro_descriptions as $a_description) {
             $descriptions[] = strip_tags(html_entity_decode($a_description->nodeValue));
-        }
+        } */
 
         $ro_descriptions = $this->gXPath->query("//ro:collection/ro:description[@type='lineage']");
         foreach($ro_descriptions as $a_description) {
