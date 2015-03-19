@@ -126,6 +126,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.$broadcast('clearSearch');
 		$scope.sync();
 		$scope.hashChange();
+		$('input[name=q]').focus();
 	}
 
 	$scope.isLoading = function(){
