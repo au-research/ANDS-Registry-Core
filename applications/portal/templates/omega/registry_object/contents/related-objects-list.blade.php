@@ -69,40 +69,49 @@
                             @foreach($ro->relatedInfo as $relatedInfo)
                                 @if($relatedInfo['type']=='publication')
                                     <?php
-                                    $description = 'tip="'.$relatedInfo['title'].'"';
-                                    ?>
-                                     <?php if($relatedInfo['identifier']['identifier_type'] == 'doi'){ ?>
+                                    $description = '';
+                                    $relationship = '';
+                                    if(isset($relatedInfo['relation']['relation_type']) && $relatedInfo['relation']['relation_type']!=''){
+                                        $relationship = readable($relatedInfo['relation']['relation_type']);
+                                    }
+                                     if(isset($relatedInfo['relation']['description'])&& $relatedInfo['relation']['description']!=''){
+                                       $description .= 'tip="'.$relatedInfo['relation']['description'].'"';
+                                     }
 
-                                        <a  href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}" {{$description}}><i class="fa fa-book icon-portal"></i> {{$relatedInfo['title']}}</a>
-                                    <?php }else{ ?>
-                                        <i class="fa fa-book icon-portal"></i> {{$relatedInfo['title']}}
-                                    <?php } ?>
-                                    <p>
-                                        <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                                     elseif(isset($relatedInfo['identifier']['identifier_href']['hover_text'])&&$relatedInfo['identifier']['identifier_href']['hover_text']!=''){
+                                        $description = 'tip="'.$relatedInfo['identifier']['identifier_href']['hover_text'].'"';
+                                     }
+                                     elseif(isset($relatedInfo['identifier']['identifier_value'])&& $relatedInfo['identifier']['identifier_value']!=''){
+                                         $description = 'tip="'.$relatedInfo['identifier']['identifier_value'].'"';
+                                     }
+                                     else{
+                                        $description = 'tip="'.$relatedInfo['title'].'"';
+                                     }
+                                    ?>
+                                     <?php if($relatedInfo['identifier']['identifier_type'] == 'doi'  && isset($relatedInfo['title']) && $relatedInfo['title']!=''){ ?>
+
+                                    <i class="fa fa-book icon-portal"></i> <small>{{$relationship}} </small> <a  href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}" tip="{{$relatedInfo['title']}}">{{$relatedInfo['title']}}</a><p>
+                                    <?php }
+                                     elseif($relatedInfo['identifier']['identifier_type'] != 'doi' && isset($relatedInfo['title']) && $relatedInfo['title']!=''){ ?>
+                                        <i class="fa fa-book icon-portal"></i><small>{{$relationship}} </small> {{$relatedInfo['title']}}.<p>
+                                    <?php }
+                                    else{
+                                        ?>
+                                        <i class="fa fa-book icon-portal"></i>{{$relationship}}
+                                    <?php
+                                    }
+                                     ?>
+
+                                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
                                         <?php if(isset($relatedInfo['identifier']['identifier_href']['href'])){ ?>
-                                            <?php
-                                            if(isset($relatedInfo['identifier']['identifier_href']['hover_text'])){
-                                                $description = 'tip="'.$relatedInfo['identifier']['identifier_href']['hover_text'].'"';
-                                            }else{
-                                                $description = 'tip="'.$relatedInfo['identifier']['identifier_value'].'"';
-                                            }
-                                            ?>
+
                                             <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}" {{$description}}>{{$relatedInfo['identifier']['identifier_value']}}</a><br />
                                         <?php }else{ ?>
                                             {{$relatedInfo['identifier']['identifier_value']}}
                                         <?php } ?>
                                     </p>
                                     @if($relatedInfo['relation']['url'])
-                                    <?php
-                                    $description = '';
-                                    if(isset($relatedInfo['relation']['description'])&& $relatedInfo['relation']['description']!='')
-                                    {
-                                        $description .= 'tip="'.$relatedInfo['relation']['url']."<br/>".$relatedInfo['relation']['description'].'"';
-                                    }else{
-                                        $description .= 'tip="'.$relatedInfo['relation']['url'].'"';
-                                    }
-                                    ?>
-                                        <p>URI : <a href="{{$relatedInfo['relation']['url']}}" {{$description}}>{{$relatedInfo['relation']['url']}}</a></p>
+                                        <p><small>{{$relationship}} </small>URI : <a href="{{$relatedInfo['relation']['url']}}" {{$description}}>{{$relatedInfo['relation']['url']}}</a></p>
                                     @endif
                                 @endif
                             @endforeach
@@ -193,14 +202,7 @@
                     <h4>Related Services</h4>
                     <p>
                         @foreach($ro->relationships['service'] as $col)
-                        <?php
-                        $description ='';
-                        if(isset($col['relation_description']) && $col['relation_description']!=''){
-                            $description = 'tip="'.$col['title']."<br/>".$col['relation_description'].'"';
-                        }else{
-                            $description = 'tip="'.$col['title'].'"';
-                        }
-                        ?>
+
                             @if($col['slug'] && $col['registry_object_id'])
                             <i class="fa fa-wrench icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" {{$description}} ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
                             @elseif(isset($col['identifier_relation_id']))
@@ -217,8 +219,27 @@
                     <h4>Related Websites</h4>
                     @foreach($ro->relatedInfo as $relatedInfo)
                         @if($relatedInfo['type']=='website')
+                    <?php
+                    $description = '';
+                    $relationship = '';
+                    if(isset($relatedInfo['relation']['relation_type']) && $relatedInfo['relation']['relation_type']!=''){
+                        $relationship = readable($relatedInfo['relation']['relation_type']);
+                    }
+                    if(isset($relatedInfo['relation']['description'])&& $relatedInfo['relation']['description']!=''){
+                        $description .= 'tip="'.$relatedInfo['relation']['description'].'"';
+                    }
+                    elseif(isset($relatedInfo['identifier']['identifier_href']['hover_text'])&&$relatedInfo['identifier']['identifier_href']['hover_text']!=''){
+                        $description = 'tip="'.$relatedInfo['identifier']['identifier_href']['hover_text'].'"';
+                    }
+                    elseif(isset($relatedInfo['identifier']['identifier_value'])&& $relatedInfo['identifier']['identifier_value']!=''){
+                        $description = 'tip="'.$relatedInfo['identifier']['identifier_value'].'"';
+                    }
+                    else{
+                        $description = 'tip="'.$relatedInfo['title'].'"';
+                    }
+                    ?>
                             @if($relatedInfo['title'])
-                            <i class="fa fa-globe fa-lg icon-portal""></i> {{$relatedInfo['title']}}
+                            <i class="fa fa-globe icon-portal""></i>  <small>{{$relationship}} </small> {{$relatedInfo['title']}}
                                 <p>
                                     @if($relatedInfo['identifier']['identifier_href']['display_text'])
                                     <b>{{$relatedInfo['identifier']['identifier_href']['display_text']}}</b> :
@@ -226,50 +247,29 @@
                                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b>:
                                     @endif
                                     @if($relatedInfo['identifier']['identifier_href'])
-                                    <?php
-                                    if(isset($relatedInfo['identifier']['identifier_href']['hover_text'])){
-                                        $description = 'tip="'.$relatedInfo['identifier']['identifier_href']['hover_text'].'"';
-                                    }else{
-                                        $description = 'tip="'.$relatedInfo['identifier']['identifier_value'].'"';
-                                    }
-                                    ?>
                                         <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}" {{$description}}>{{$relatedInfo['identifier']['identifier_value']}}</a><br />
                                     @else
                                         {{$relatedInfo['identifier']['identifier_value']}}
                                     @endif
                                 </p>
                             @else
-                                <p> <i class="fa fa-globe icon-portal"></i>
+                                <p> <i class="fa fa-globe icon-portal"></i> <small>{{$relationship}} </small>
                                     @if($relatedInfo['identifier']['identifier_href']['display_text'])
                                         <b>{{$relatedInfo['identifier']['identifier_href']['display_text']}}</b> :
                                     @else
                                         <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
                                     @endif
                                     @if($relatedInfo['identifier']['identifier_href'])
-                                    <?php
-                                    if(isset($relatedInfo['identifier']['identifier_href']['hover_text'])){
-                                        $description = 'tip="'.$relatedInfo['identifier']['identifier_href']['hover_text'].'"';
-                                    }else{
-                                        $description = 'tip="'.$relatedInfo['identifier']['identifier_value'].'"';
-                                    }
-                                    ?>
-                                    <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a><br />
+
+                                    <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}" {{$description}} >{{$relatedInfo['identifier']['identifier_value']}}</a><br />
                                     @else
                                     {{$relatedInfo['identifier']['identifier_value']}}
                                     @endif
                                 </p>
                             @endif
                             @if($relatedInfo['relation']['url'])
-                            <?php
-                            $description = '';
-                            if(isset($relatedInfo['relation']['description'])&& $relatedInfo['relation']['description']!='')
-                            {
-                                $description .= 'tip="'.$relatedInfo['relation']['url']."<br/>".$relatedInfo['relation']['description'].'"';
-                            }else{
-                                $description .= 'tip="'.$relatedInfo['relation']['url'].'"';
-                            }
-                            ?>
-                                <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
+
+                                <p>URI : <a href="{{$relatedInfo['relation']['url']}}" tip="Resolve this URI">{{$relatedInfo['relation']['url']}}</a></p>
                             @endif
                         @endif
                     @endforeach
