@@ -152,6 +152,7 @@ function pluralise($word, $count)
 }
 
 function readable($text, $altered = false){
+    $defaultText = sentenceCase($text);
 	$text = trim(strtolower($text));
     if(str_replace('REVERSE','',$altered) != $altered || $altered == true) {
         $altered = true;
@@ -192,7 +193,7 @@ function readable($text, $altered = false){
         case 'full': return 'Full description';break;
         case 'brief': return 'Brief description';break;
         case 'note': return 'Notes';break;
-        case 'significancestatement': return 'Significance Statement';break;
+       // case 'significancestatement': return 'Significance Statement';break;
         case 'lineage': return 'Lineage';break;
         case 'addsvalueto' : return  'Adds value to'; break;
         case 'describes' : return  'Describes'; break;
@@ -246,7 +247,7 @@ function readable($text, $altered = false){
         case 'leadinvestigator' : return  'Lead investigator'; break;
         case 'principalinvestigator' : return  'Principal investigator'; break;
         case 'coinvestigator' : return  'Co investigator'; break;
-        default: return $text;
+        default: return $defaultText;
 	}
 }
 
