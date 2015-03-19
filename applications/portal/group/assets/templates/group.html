@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<a href="#/groups">Back</a>
+				<a href="#/groups">Return to Menu</a>
 				<header><h1 class="hairline bordered-normal">[[group.name]]</h1></header>
 			</div>
 		</div>
@@ -15,6 +15,11 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12">
+
+					<div class="alert alert-info">
+						The contributor home page will be a public web document representing your organisation. ANDS advises that you should use only approved text and consult appropriate authorities within your organisation.
+					</div>
+
 					<div class="panel swatch-white">
 						<div class="panel-body">
 							<a href="" class="btn btn-primary" ng-click="save()" ng-if="group.status!='PUBLISHED'"><i class="fa fa-save"></i> Save</a>
@@ -45,7 +50,7 @@
 						</div>
 					</div>
 					<div class="panel swatch-white">
-						<div class="panel-heading">Research and Key Research Areas</div>
+						<div class="panel-heading">Research and Key Research Areas <i class="fa fa-info icon-black" tip="Text describing a contributor's distinctive research portfolio and research strength."></i></div>
 						<div class="panel-body">
 							<div class="form-group">
 								<div text-angular ng-model="group.data.researchdarea" ta-toolbar="tatoolbar"></div>
@@ -53,7 +58,7 @@
 						</div>
 					</div>
 					<div class="panel swatch-white">
-						<div class="panel-heading">Research Data Profile</div>
+						<div class="panel-heading">Research Data Profile <i class="fa fa-info icon-black" tip="Text describing and highlighting the research data (and unrelated parties, projects, and services) whose description the organisation has contributed to Research Data Australia. <br/> Note: this type of description will be auto generated for contributor pages by the system. Data providers can supplement this generated text with their own custom text by adding a description of this type. This custom text may highlight any significant collection initiatives or unique discipline data holdings perhaps related to the organisation's research Areas (described above)"></i></div>
 						<div class="panel-body">
 							<div class="form-group">
 								<div text-angular ng-model="group.data.researchdataprofile" ta-toolbar="tatoolbar"></div>
@@ -61,7 +66,7 @@
 						</div>
 					</div>
 					<div class="panel swatch-white">
-						<div class="panel-heading">Research Support</div>
+						<div class="panel-heading">Research Support <i class="fa fa-info icon-black" tip="Text describing specific data-related support services offered by the contributor such as archivess, repositories, data centres, metadata stores, high performance computing facilities, data-intensive instruments, e-research support centres, data management support services, etc."></i></div>
 						<div class="panel-body">
 							<div class="form-group">
 								<div text-angular ng-model="group.data.researchsupport" ta-toolbar="tatoolbar"></div>

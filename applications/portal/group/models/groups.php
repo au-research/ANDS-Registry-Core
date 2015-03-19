@@ -24,12 +24,15 @@ class Groups extends CI_Model {
 
 		$groups = array();
 		foreach($result as $key=>$value) {
-			$groups[] = array(
-				'title' => $key,
-				'logo' 	=> $this->fetchLogo($key),
-				'slug'	=> url_title($key, '-', true),
-				'counts' => $value
-			);
+			if($value > 0) {
+				$groups[] = array(
+					'title' => $key,
+					'logo' 	=> $this->fetchLogo($key),
+					'slug'	=> url_title($key, '-', true),
+					'counts' => $value
+				);
+			}
+			
 		}
 
 		return $groups;
