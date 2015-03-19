@@ -15,7 +15,7 @@
 		@include('registry_object/contents/contact-info')
 	@endif
 	@if($ro->relationships && isset($ro->relationships['collection']))
-	<h4>Related Collections</h4>
+	<h4>More data related to {{$ro->core['title']}}</h4>
 	<ul>
 		@foreach($ro->relationships['collection'] as $col)
 			@if($col && $col['registry_object_id'] != $omit)
@@ -23,7 +23,7 @@
 			@endif
 		@endforeach
 		@if(sizeof($ro->relationships['collection']) < $ro->relationships['collection_count'])
-			<li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count']}} related collections</a></li>
+			<li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count']}} related data</a></li>
 		@endif
 	</ul>
 	@endif

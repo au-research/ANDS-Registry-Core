@@ -160,7 +160,7 @@
                             @endif
                         @endforeach
                         @if($ro->relationships['collection_count_solr'] > $relatedLimit)
-                        <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count_solr']}} related collections</a>
+                        <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count_solr']}} related data</a>
                         @endif
                     </p>
                     @endif
