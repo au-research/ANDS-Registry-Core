@@ -159,7 +159,7 @@
                             <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
-                        @if(sizeof($ro->relationships['collection_count_solr']) < 5)
+                        @if($ro->relationships['collection_count_solr'] > $relatedLimit)
                         <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count_solr']}} related collections</a>
                         @endif
                     </p>
