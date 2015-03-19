@@ -47,7 +47,7 @@ class Identifiers_Extension extends ExtensionBase
 
 	public function findMatchingRecords($matches = array(), $tested_ids = array(), $recursive=true)
 	{
-		if($this->ro->class=='collection') return $matches;
+		//if($this->ro->class=='collection') return $matches;
 		if(sizeof($tested_ids) === 0) // first call
 		{
 			$tested_ids[] = $this->ro->id;
