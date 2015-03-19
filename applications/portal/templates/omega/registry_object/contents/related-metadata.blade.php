@@ -60,7 +60,7 @@
             @endif
             @endforeach
             @foreach($ro->relatedInfo as $relatedInfo)
-                @if(!in_array($relatedInfo['type'],$notTypes))
+                @if(!in_array($relatedInfo['type'],$notTypes) && !in_array(trim($relatedInfo['identifier']['identifier_value']), $resolvedPartyIdentifiers))
                     <h5> {{$relatedInfo['title']}}</h5>
                     <p>
                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :

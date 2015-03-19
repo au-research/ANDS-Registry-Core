@@ -32,12 +32,13 @@ angular.module('portal-filters', [])
 				case 'gcmd': return 'GCMD Keywords'; break;
 				case 'lcsh': return 'LCSH'; break;
 				case 'keywords': return 'Keywords'; break;
-				case 'refine': return 'Refine'; break;
+				case 'refine': return 'Keywords'; break;
 				case 'subject_value_resolved': return 'Subject'; break;
 				case 'commencement_to': return 'Commencement To'; break;
 				case 'commencement_from': return 'Commencement From'; break;
 				case 'completion_to': return 'Completion To'; break;
 				case 'completion_from': return 'Completion From'; break;
+				case 'spatial': return 'Location'; break;
 				default: return text;
 			}
 		}

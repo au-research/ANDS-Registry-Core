@@ -124,13 +124,22 @@ class Registry_object extends MX_Controller {
             	//Handle Draft
                 $banner =  "http://devl.ands.org.au/workareas/leo/draft.jpg";
             }
+            $resolvedPartyIdentifiers = array();
 
-
+            if(isset($ro->relationships['party_one']))
+            {
+                foreach($ro->relationships['party_one'] as $rel)
+                {
+                 if(($rel['origin'] == 'IDENTIFIER' || $rel['origin'] == 'IDENTIFIER REVERSE') && $rel['registry_object_id'] != '')
+                     $resolvedPartyIdentifiers[] = $rel['related_object_identifier'];
+                }
+            }
             //Do the rendering
 		    $this->blade
 				->set('scripts', array('view', 'view_app', 'tag_controller'))
 				->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
 				->set('ro', $ro)
+                ->set('resolvedPartyIdentifiers', $resolvedPartyIdentifiers)
 				->set('contents', $this->components['view'])
 				->set('aside', $this->components['aside'])
 	            ->set('view_headers', $this->components['view_headers'])
