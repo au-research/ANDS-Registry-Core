@@ -186,21 +186,20 @@ function drawMap(){//drawing the map on the left side
 	        }
         });
 
-        //draw centers
-        var centers = $('p.spatial_coverage_center');
-        $.each(centers, function(){
-        	if($(this).html() !=''){
-        		drawable = true;
-        		var marker = new google.maps.Marker({
-        		    map: map2,
-        		    position: stringToLatLng($(this).html()),
-        		    draggable: false,
-        		    raiseOnDrag:false,
-        		    visible:true
-        		});
-        	}
-            
-        });
+        //DEPRECATED the drawing of centres
+        // var centers = $('p.spatial_coverage_center');
+        // $.each(centers, function(){
+        // 	if($(this).html() !=''){
+        // 		drawable = true;
+        // 		var marker = new google.maps.Marker({
+        // 		    map: map2,
+        // 		    position: stringToLatLng($(this).html()),
+        // 		    draggable: false,
+        // 		    raiseOnDrag:false,
+        // 		    visible:true
+        // 		});
+        // 	}
+        // });
 
         // console.log(bounds);
         map2.fitBounds(bounds);

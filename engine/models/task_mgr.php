@@ -32,6 +32,11 @@ class Task_mgr extends CI_Model {
 			$result['running'] = $query->result_array();
 		}
 
+		$query = $this->db->where('status', 'COMPLETED')->get('tasks');
+		if ($query->num_rows() > 0) {
+			$result['completed'] = $query->num_rows();
+		}
+
 		return $result;
 	}
 

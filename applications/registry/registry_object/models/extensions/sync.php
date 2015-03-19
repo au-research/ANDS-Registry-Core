@@ -349,6 +349,9 @@ class Sync_extension extends ExtensionBase{
         	}
         }
 
+        //default values if none present
+        if(!isset($json['license_class'])) $json['license_class'] = 'unknown';
+
         //lowercase all facet-able values
         $lowercase = array('type', 'license_class', 'access_rights', 'activity_status', 'administering_institution', 'funders');
         foreach ($lowercase as $l) {

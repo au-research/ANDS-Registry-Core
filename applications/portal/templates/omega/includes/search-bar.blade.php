@@ -37,12 +37,12 @@
               </button>
             </span>
         </div>
-        <div class="pull-left" ng-if="filters.class!='activity'">
+        <div class="pull-left" ng-if="filters.class=='collection'">
           <input type="checkbox" ng-checked="filters.access_rights=='open'" ng-click="toggleAccessRights()"> <a href="" ng-click="toggleAccessRights()" tip="Restrict search to open data only">Open data only</a>
         </div>
         <div class="pull-right">
             <a href="" ng-click="advanced()" style="margin-right:6px">Advanced Search</a>
-            <a href="" ng-click="advanced('spatial')" ng-if="filters.class!='activity'">Map Search</a>
+            <a href="" ng-click="advanced('spatial')" ng-if="filters.class=='collection'">Map Search</a>
         </div>
     </form>
     
