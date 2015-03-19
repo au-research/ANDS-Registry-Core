@@ -2,7 +2,20 @@
 
 <?php
 
-    $hasRelatedOrganisation = isset($ro->relationships['party_multi']);
+    $relation = Array('isFundedBy','isManagedBy','isAdministeredBy');
+    if($ro->core['class']=='activity'){
+        $hasRelatedOrganisation = false;
+        if(isset($ro->relationships['party_multi'])){
+            foreach($ro->relationships['party_multi'] as $aparty){
+                if(!in_array($aparty['relation_type'],$relation)){
+                    $hasRelatedOrganisation = true;
+                }
+            }
+        }
+
+    }else{
+        $hasRelatedOrganisation = isset($ro->relationships['party_multi']);
+    }
     $hasRelatedGrantsOrProjects = isset($ro->relationships['activity']);
     $hasRelatedServices = isset($ro->relationships['service']);
 ?>
@@ -168,7 +181,9 @@
                     <h4>Related Organisations</h4>
                     <p>
                         @foreach($ro->relationships['party_multi'] as $col)
+
                         <?php
+                        if($ro->core['class']!='activity' || ($ro->core['class']=='activity'&& !in_array($col['relation_type'],$relation))){
                         if(isset($col['relation_description']) && $col['relation_description']!=''){
                             $description = 'tip="'.$col['title']."<br/>".$col['relation_description'].'"';
                         }else{
@@ -180,6 +195,7 @@
                             @elseif(isset($col['identifier_relation_id']))
                             <i class="fa fa-group icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
+                        <?php } ?>
                         @endforeach
                         @if(sizeof($ro->relationships['party_multi']) < $ro->relationships['party_multi_count_solr'])
                             <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=party/type=group">View all {{$ro->relationships['party_multi_count_solr']}} related organisations</a>

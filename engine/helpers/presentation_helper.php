@@ -152,6 +152,7 @@ function pluralise($word, $count)
 }
 
 function readable($text, $altered = false){
+    $defaultText = sentenceCase($text);
 	$text = trim(strtolower($text));
     if(str_replace('REVERSE','',$altered) != $altered || $altered == true) {
         $altered = true;
@@ -246,7 +247,7 @@ function readable($text, $altered = false){
         case 'leadinvestigator' : return  'Lead investigator'; break;
         case 'principalinvestigator' : return  'Principal investigator'; break;
         case 'coinvestigator' : return  'Co investigator'; break;
-        default: return $text;
+        default: return $defaultText;
 	}
 }
 
