@@ -208,6 +208,15 @@ angular.module('record_components',['profile_components'])
         });
     }
 
+    profile_factory.get_user().then(function(data){
+        if(data.status=='ERROR') {
+            $scope.loggedin = false;
+        } else {
+            $scope.loggedin = true;
+            $scope.user = data;
+        }
+    });
+
     $scope.dismiss = function(){
         $modalInstance.dismiss();
     }

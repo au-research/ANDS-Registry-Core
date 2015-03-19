@@ -3,9 +3,7 @@
 		<button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 		<h4 class="modal-title">Save Search</h4>
 	</div>
-	<div class="modal-body swatch-white">
-
-
+	<div class="modal-body swatch-white" ng-if="loggedin">
 		<p ng-if="data">
 			<p>
 				<dl>
@@ -22,6 +20,8 @@
 		        </div>
 	        </form>
 		</p>
-
+	</div>
+	<div class="modal-body swatch-white" ng-if="!loggedin" ng-cloak>
+		<p>You are not logged in to MyRDA. Please <a href="[[base_url]]profile/login">Login to MyRDA</a> to save records</p>
 	</div>
 </div>
