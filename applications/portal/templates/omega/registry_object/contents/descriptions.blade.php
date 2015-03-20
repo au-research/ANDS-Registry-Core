@@ -32,11 +32,21 @@
 					@endif
 				@endforeach
 			@endforeach
-			
 			@foreach($ro->descriptions as $desc)
+                <?php
+                $showHeading = false;
+                ?>
 				@if(!in_array($desc['type'], $order) && !in_array($desc['type'], $omit) && $desc['description']!='')
 					<div class="description">
-						<small>{{readable($desc['type'])}}</small>
+                        <?php
+                        if($currentHeading != $desc['type']){
+                            $showHeading = true;
+                            $currentHeading = $desc['type'];
+                        }
+                        ?>
+                        @if($showHeading)
+                        <small>{{readable($currentHeading)}}</small>
+                        @endif
 						<span itemprop="description">{{nl2br(html_entity_decode($desc['description']))}}</span>
 					</div>
 					
