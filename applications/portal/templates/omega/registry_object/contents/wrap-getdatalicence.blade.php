@@ -27,8 +27,9 @@
             foreach ($ro->rights as $right) {
                 $itemprop = '';
                 if($right['type']=='licence')  $itemprop = 'itemprop="license"';
+                if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
                 $content .= '<h4>'.readable($right['type']).'</h4><p '.$itemprop.'>';
-                if(isset($right['value']) && $right['value']!='')
+                if(isset($right['value']) && trim($right['value'])!='')
                     $content .= $right['value'].'<br />';
                 if(isset($right['rightsUri']) && $right['rightsUri']!='')
                     $content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
