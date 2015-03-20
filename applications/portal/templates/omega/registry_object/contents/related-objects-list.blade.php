@@ -231,6 +231,13 @@
                     <p>
                         @foreach($ro->relationships['service'] as $col)
 
+                        <?php
+                        if(isset($col['relation_description']) && $col['relation_description']!=''){
+                            $description = 'tip="'.$col['title']."<br/>".$col['relation_description'].'"';
+                        }else{
+                            $description = 'tip="'.$col['title'].'"';
+                        }
+                        ?>
                             @if($col['slug'] && $col['registry_object_id'])
                             <i class="fa fa-wrench icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" {{$description}} ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br/>
                             @elseif(isset($col['identifier_relation_id']))
