@@ -135,7 +135,7 @@
         <field name="researchers" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="researchers_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
         <field name="administering_institution" type="string" indexed="true" stored="true" multiValued="true"/>
-        <field name="administering_institution_search" type="text_en_splitting" indexed="true" stored="true" />
+        <field name="administering_institution_search" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
         <field name="funders" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="funders_search" type="text_en_splitting" indexed="true" multiValued="true" stored="false" />
 
