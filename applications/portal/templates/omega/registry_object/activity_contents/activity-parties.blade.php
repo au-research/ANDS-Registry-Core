@@ -15,8 +15,8 @@ $order = Array('isFundedBy','isManagedBy','isAdministeredBy')
                     }else{
                         $output = "Administered by";
                     }
-                echo "<strong>".$output." </strong>";?>
-                <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}}</a></br>
+                echo "<strong>".$output;?>
+                <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}}</a></strong></br>
             @endif
         @endforeach
         @endif

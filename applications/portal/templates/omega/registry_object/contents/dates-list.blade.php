@@ -29,7 +29,7 @@
                 @foreach($ro->temporal as $date)
                 <p>
 
-                    Temporal Coverage:
+                    Data time period:
                     <?php
 
                     if($date['type']=='date'){

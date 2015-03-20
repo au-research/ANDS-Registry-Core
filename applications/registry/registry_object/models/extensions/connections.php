@@ -5,7 +5,7 @@ class Connections_Extension extends ExtensionBase
 {
 
 	private $party_one_types = array('person','administrativePosition');
-	private $party_multi_types = array('group');
+	private $party_multi_types = array('group','Group');
 	
 	function __construct($ro_pointer)
 	{
