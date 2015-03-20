@@ -14,11 +14,14 @@
                             <div class="col-md-9 view-content" style="padding-right:0"  itemscope itemtype="http://schema.org/Dataset">
                                 <div class="panel panel-primary swatch-white panel-content">
                                     <div class="panel-body">
+                                        <div class="container-fluid">
+                                            <div class="row">
                                         @if($logo)
                                         <div class="col-xs-12 col-md-2">
                                             <a href="{{base_url('contributors')}}/{{$group_slug}}" title="Record provided by {{$ro->core['group']}}"><img src="{{$logo}}" alt="logo" class="header-logo animated fadeInDown"></a>
                                         </div>
                                         @endif
+                                        <div class="col-xs-12 col-md-10">
                                         <h1 class="hairline bordered-normal"><span itemprop="name">{{$ro->core['title']}}</span></h1>
                                         @if(isset($ro->core['alt_title']))
                                             <small>Also known as:
@@ -48,10 +51,7 @@
                                         @endif
 
                                         <div class="clear"></div>
-                                        
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="col-md-12">
+                                     
                                                     @include('registry_object/contents/related-parties')
                                                 </div>
                                             </div>
