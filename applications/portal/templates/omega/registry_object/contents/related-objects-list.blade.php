@@ -126,6 +126,11 @@
                                     @if($relatedInfo['relation']['url'])
                                         <p><small>{{$relationship}} </small>URI : <a href="{{$relatedInfo['relation']['url']}}" {{$description}}>{{$relatedInfo['relation']['url']}}</a></p>
                                     @endif
+                        @if($relatedInfo['notes'])
+                        <p>
+                            {{$relatedInfo['notes']}}
+                        </p>
+                        @endif
                                 @endif
                             @endforeach
                         @endif
@@ -305,6 +310,11 @@
                             @if($relatedInfo['relation']['url'])
 
                                 <p>URI : <a href="{{$relatedInfo['relation']['url']}}" tip="Resolve this URI">{{$relatedInfo['relation']['url']}}</a></p>
+                            @endif
+                            @if($relatedInfo['notes'])
+                            <p>
+                                {{$relatedInfo['notes']}}
+                            </p>
                             @endif
                         @endif
                     @endforeach

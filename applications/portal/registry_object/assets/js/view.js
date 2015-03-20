@@ -283,10 +283,13 @@ function initConnectionGraph() {
 					$(nodeSpan).find("span.dynatree-icon").css("background-position", "-57px -155px");
 				}
 				
-				$(nodeSpan).attr('title', $(nodeSpan).text());
+				$('a',$(nodeSpan)).attr('title', $(nodeSpan).text());
 				$('a',$(nodeSpan)).attr('href', base_url + node.data.slug +"/"+node.data.registry_object_id);
                 $('a',$(nodeSpan)).attr('ro_id', node.data.registry_object_id);
                 $('a',$(nodeSpan)).addClass('ro_preview');
+                if($(nodeSpan).text().length>120){
+                    $('a',$(nodeSpan)).text($(nodeSpan).text().substring(0,120)+' ...');
+                }
 				if (node.data['class']=="more")
 				{
 					$(nodeSpan).find("span.dynatree-icon").remove();
@@ -305,6 +308,7 @@ function initConnectionGraph() {
 
 					a.attr('relation_type','nested_collection');
 					a.attr('page', 2);
+
 				}
 			}
 
