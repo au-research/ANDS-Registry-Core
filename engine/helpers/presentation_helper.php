@@ -193,7 +193,6 @@ function readable($text, $altered = false){
         case 'full': return 'Full description';break;
         case 'brief': return 'Brief description';break;
         case 'note': return 'Notes';break;
-       // case 'significancestatement': return 'Significance Statement';break;
         case 'lineage': return 'Lineage';break;
         case 'addsvalueto' : return  'Adds value to'; break;
         case 'describes' : return  'Describes'; break;
@@ -225,10 +224,10 @@ function readable($text, $altered = false){
         case 'isoutputof' : return  'Output of'; break;
         case 'isownedby' : return  'Owned by'; break;
         case 'isownerof' : return  'Owner of'; break;
-        case 'isparticipantin' : return  'Participant in'; break;
+        case 'isparticipantin' : return  'Participant'; break;
         case 'ispartof' : return  'Part of'; break;
         case 'ispresentedby' : return  'Presented by'; break;
-        case 'isprincipalinvestigatorof" Principal investigator of'; break;
+        case 'isprincipalinvestigatorof" Principal investigator'; break;
         case 'isproducedby' : return  'Produced by'; break;
         case 'isreferencedby' : return  'Referenced by'; break;
         case 'isreviewedby' : return  'Reviewed by'; break;
@@ -239,10 +238,9 @@ function readable($text, $altered = false){
         case 'produces' : return  'Produces'; break;
         case 'presents' : return  'Presents'; break;
         case 'supports' : return  'Supports'; break;
-        case 'fundingAmount' : return  'Funding Amount'; break;
         case 'fundingamount' : return  'Funding Amount'; break;
+        case 'deliverymethod' : return  'Delivery method'; break;
         case 'researchers' : return  'Researchers'; break;
-        case 'fundingScheme' : return  'Funding Scheme'; break;
         case 'fundingscheme' : return  'Funding Scheme'; break;
         case 'leadinvestigator' : return  'Lead investigator'; break;
         case 'principalinvestigator' : return  'Principal investigator'; break;
