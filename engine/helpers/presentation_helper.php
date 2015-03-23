@@ -414,16 +414,19 @@ function nicifyDate($w3cdtf)
             // Assume friendly display of just the year
             return date("Y", $time); // i.e. 2001
         }
+        elseif(date("d", $time)=="01"){
+            return date("m Y", $time); // i.e. 2001
+        }
         else
         {
             // Assume friendly display of full date (and no time)
-            return date("Y-m-d", $time); 	// i.e.  March 10, 2001
+            return date("m Y", $time); 	// i.e.  March 10, 2001
         }
     }
     else
     {
-        // Assume friendly display of full date and time
-        return date("Y-m-d H:i", $time); 	// i.e.  March 10, 2001, 5:16 pm
+        // Assume friendly display of full date
+        return date("d m Y", $time); 	// i.e.  10 03 2001, 5:16 pm
     }
 
     reset_timezone();
