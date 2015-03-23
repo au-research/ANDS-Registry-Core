@@ -1,7 +1,7 @@
 <?php
 	$has_metadata = false;
     $has_moreInfo = false;
-    $notTypes = array('publication','dataQualityInformation','website','reuseInformation','metadata','service');
+    $notTypes = array('publication','dataQualityInformation','website','reuseInformation','metadata');
 	if ($ro->relatedInfo) {
 		foreach ($ro->relatedInfo as $relatedInfo) {
 			if ($relatedInfo['type']=='metadata') {
@@ -10,7 +10,17 @@
 		}
         foreach ($ro->relatedInfo as $relatedInfo) {
             if (!in_array($relatedInfo['type'],$notTypes)) {
-                $has_moreInfo = true;
+                if($relatedInfo['type'] == 'service' && $relatedInfo['relation']['url']=='')
+                {
+                    $has_moreInfo = false;
+                }
+                elseif($relatedInfo['type'] == 'party' && in_array(trim($relatedInfo['identifier']['identifier_value']), $resolvedPartyIdentifiers)){
+                    $has_moreInfo = false;
+                }
+                else{
+                    $has_moreInfo = true;
+                }
+
             }
         }
 	}
@@ -20,7 +30,7 @@
 <div class="swatch-white">
 	<div class="panel panel-primary element-no-top element-short-bottom panel-content">
 		<div class="panel-heading">
-	        <a href="">Other Information</a>
+	        <a id="OtherInformation">Other Information</a>
 	    </div>
 		<div class="panel-body swatch-white">
 			@foreach($ro->relatedInfo as $relatedInfo)
@@ -40,7 +50,7 @@
 			    @endif
 			@endforeach
             @foreach($ro->relatedInfo as $relatedInfo)
-            @if($relatedInfo['type']='service' && $relatedInfo['relation']['url']!='')
+            @if($relatedInfo['type']=='service' && $relatedInfo['relation']['url']!='')
             <h5> {{$relatedInfo['title']}}</h5>
             <p>
                 <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
