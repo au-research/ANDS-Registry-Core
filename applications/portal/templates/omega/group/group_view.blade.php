@@ -66,7 +66,7 @@
         @endif
     @endif
 
-    <div class="panel panel-primary swatch-white">
+    <div class="panel panel-primary panel-content swatch-white">
         <div class="panel-heading">Research Data Profile</div>
         <div class="panel-body">
             To date, {{$group['title']}} has {{$group['counts']}} collection records in Research Data Australia, which covers {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}, {{sizeof($group['groups'])}} research groups 
