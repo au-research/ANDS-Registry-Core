@@ -82,12 +82,8 @@
 											<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Queue <span class="caret"></span></button>
 											<ul class="dropdown-menu">
 												<li><a href="" ng-click="addTask('sync', ds.id)">Sync</a></li>
-												<li><a href="" ng-click="addTask('enrich', ds.id)">Enrich</a></li>
 												<li class="divider"></li>
 												<li><a href="" ng-click="addBGSync(ds.id)">Background Sync</a></li>
-												<li class="divider"></li>
-												<li><a href="" ng-click="addTask('fast_sync', ds.id)">Fast Sync</a></li>
-												<li><a href="" ng-click="addTask('fast_enrich', ds.id)">Fast Enrich</a></li>
 												<li class="divider"></li>
 												<li><a href="" ng-click="addTask('index', ds.id)">Index</a></li>
 												<li><a href="" ng-click="addTask('clear', ds.id)">Clear Index</a></li>
@@ -162,21 +158,18 @@
 								<li class="disabled"><a href="">Small Datasources (&lt; 400)</a></li>
 								<li><a href="" ng-click="massAddTask('sync', 'small')">Sync</a></li>
 								<li><a href="" ng-click="massAddBGSync('small')">Background Sync</a></li>
-								<li><a href="" ng-click="massAddTask('enrich', 'small')">Enrich</a></li>
 								<li><a href="" ng-click="massAddTask('index', 'small')">Index</a></li>
 								<li><a href="" ng-click="massAddTask('clear', 'small')">Clear Index</a></li>
 								<li class="divider"></li>
 								<li class="disabled"><a href="">Medium Datasources (400 - 1000)</a></li>
 								<li><a href="" ng-click="massAddTask('sync', 'medium')">Sync</a></li>
 								<li><a href="" ng-click="massAddBGSync('medium')">Background Sync</a></li>
-								<li><a href="" ng-click="massAddTask('enrich', 'medium')">Fast Enrich</a></li>
 								<li><a href="" ng-click="massAddTask('index', 'medium')">Index</a></li>
 								<li><a href="" ng-click="massAddTask('clear', 'medium')">Clear Index</a></li>
 								<li class="divider"></li>
 								<li class="disabled"><a href="">Big Datasources (&gt; 1000)</a></li>
 								<li><a href="" ng-click="massAddTask('sync', 'big')">Sync</a></li>
 								<li><a href="" ng-click="massAddBGSync('large')">Background Sync</a></li>
-								<li><a href="" ng-click="massAddTask('enrich', 'big')">Enrich</a></li>
 								<li><a href="" ng-click="massAddTask('index', 'big')">Index</a></li>
 								<li><a href="" ng-click="massAddTask('clear', 'big')">Clear Index</a></li>
 							</ul>
@@ -202,7 +195,7 @@
 						<span ng-show="solr_result">{{solr_result.response.numFound}} records found</span>
 						<hr>
 						<button class="btn btn-default" ng-click="solr_search()">Search</button>
-						<button class="btn btn-default" ng-show="solr_result && solr_result.response.numFound > 0" ng-click="solr_query_sync()">BG Sync {{solr_result.response.docs.length}}</button>
+						<button class="btn btn-default" ng-show="solr_result && solr_result.response.numFound > 0" ng-click="solr_query_sync()">BG Sync {{solr_result.response.numFound}}</button>
 					</div>
 				</div>
 

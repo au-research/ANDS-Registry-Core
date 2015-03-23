@@ -423,7 +423,7 @@ class Maintenance extends MX_Controller {
 
 		$this->load->library('solr');
 		$this->solr
-			->setOpt('rows', '10000')
+			->setOpt('rows', '0')
 			->setOpt('fl', 'id')
 			->setOpt('q', $query);
 		$result = $this->solr->executeSearch(true);

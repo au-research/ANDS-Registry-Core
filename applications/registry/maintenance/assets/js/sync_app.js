@@ -220,33 +220,12 @@ function indexCtrl($scope, sync_service){
 	}
 
 	$scope.solr_query_sync = function() {
-		ids = [];
-		angular.forEach($scope.solr_result.response.docs, function(doc){
-			ids.push(doc.id);
-		});
-
-		Array.prototype.chunk = function(chunkSize) {
-		    var array=this;
-		    return [].concat.apply([],
-		        array.map(function(elem,i) {
-		            return i%chunkSize ? [] : [array.slice(i,i+chunkSize)];
-		        })
-		    );
-		}
-
-		ids = ids.chunk(200);
-
-		angular.forEach(ids, function(list) {
-			sync_service.add_task('sync', 'type=ro&id='+list).then(function(data){
+		if($scope.solr_query!=''){
+			sync_service.add_task('sync', 'type=solr_query&id='+$scope.solr_query).then(function(data){
 				$scope.refreshTask();
 			});
-		});
+		}
 	}
-
-
-	// $scope.addTask('sync', 32);
-	// $scope.addTask('index', 75);
-	// $scope.addTask('enrich', 86);
 }
 
 function interrogateDS($scope, $routeParams, sync_service){

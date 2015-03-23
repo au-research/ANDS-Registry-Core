@@ -43,6 +43,11 @@ class Sync extends Task {
 					$this->sync_ds($ds_id);
 				}
 			}
+		} else if($this->target=='solr_query') {
+			if ($this->target_id) {
+				$this->sync_solr_query($this->target_id);
+			}
+			
 		}
 	}
 
@@ -57,6 +62,36 @@ class Sync extends Task {
 			$task = array(
 				'name' => 'sync',
 				'params' => 'type=ds&id='.$ds_id.'&chunkPos='.$i,
+			);
+			$this->task_mgr->add_task($task);
+		}
+	}
+
+	function sync_solr_query($query) {
+		$ci =& get_instance();
+		$ci->load->library('solr');
+		$ci->solr
+			->setOpt('rows', '50000')
+			->setOpt('fl', 'id')
+			->setOpt('q', $query);
+		$result = $this->solr->executeSearch(true);
+
+		$data['total'] = sizeof($result['response']['docs']);
+		$data['chunkSize'] = 200;
+		$data['numChunk'] = ceil(($data['chunkSize'] < $data['total'] ? ($data['total'] / $data['chunkSize']) : 1));
+
+		$ids = array();
+		foreach($result['response']['docs'] as $doc) {
+			array_push($ids, $doc['id']);
+		}
+
+		$chunks = array_chunk($ids, $data['chunkSize']);
+
+		$this->load->model('task_mgr');
+		foreach($chunks as $chunk) {
+			$task = array(
+				'name' => 'sync',
+				'params' => 'type=ro&id='.implode(',', $chunk)
 			);
 			$this->task_mgr->add_task($task);
 		}

@@ -53,7 +53,7 @@ class Tasks extends CI_Controller {
 		$task = array(
 			'id' => 100,
 			'name' => 'sync',
-			'params' => 'type=ds&id=45',
+			'params' => 'type=solr_query&id=+class:party',
 		);
 		$this->doTask($task);
 		// $this->task_mgr->add_task($task);
