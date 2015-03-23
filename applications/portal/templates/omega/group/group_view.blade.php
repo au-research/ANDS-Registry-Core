@@ -124,7 +124,7 @@
     <div class="panel-body">
         <ul class="listy">
             @foreach($group['facet']['class'] as $class)
-                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class={{$class['name']}}">{{readable($class['name'])}} <small>({{$class['num']}})</small></a></li>
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class={{$class['name']}}">{{class_name($class['name'])}} <small>({{$class['num']}})</small></a></li>
             @endforeach
         </ul>
     </div>
