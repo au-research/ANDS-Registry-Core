@@ -53,7 +53,7 @@ class Task extends CI_Model {
 	public function hook_end() {}
 
 	//overwrite these methods
-	public function load_params($params = false) {}
+	public function load_params($task) {}
 	public function run_task() {}
 	public function report() {
 		echo json_encode($this->messages);

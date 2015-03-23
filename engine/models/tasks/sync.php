@@ -18,6 +18,8 @@ class Sync extends Task {
 		$this->target = $params['type'] ? $params['type'] : false;
 		$this->target_id = $params['id'] ? $params['id'] : false;
 
+		// ulog('target ids'. $this->target_id);
+
 		if(isset($params['chunkPos'])) {
 			$this->chunkPos = $params['chunkPos'];
 		} else {
@@ -135,8 +137,10 @@ class Sync extends Task {
 		try {
 			$ro = $this->ro->getByID($ro_id);
 			if($ro) {
+				// ulog('[syncing:'.$ro_id.']');
 				$ro->sync();
 				$this->log('[success][sync][ro_id:'.$ro_id.']');
+				// ulog('[success][sync][ro_id:'.$ro_id.']');
 				unset($ro);
 			} else {
 				$this->log('[error][notfound][ro_id:'.$ro_id.']');
