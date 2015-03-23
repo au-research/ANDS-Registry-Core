@@ -23,9 +23,14 @@ app.directive('facetSearch', function($http, $log){
 				} else return 'not long enough';
 			}
 
+			scope.filterExists = scope.$parent.filterExists;
 			scope.isFacet = scope.$parent.isFacet;
 			scope.toggleFilter = scope.$parent.toggleFilter;
-			scope.advanced = scope.$parent.advanced;
+
+			scope.advanced = function(active) {
+				scope.$emit('advanced', active);
+			}
+			
 			scope.hashChange = scope.$parent.hashChange;
 		}
 	}

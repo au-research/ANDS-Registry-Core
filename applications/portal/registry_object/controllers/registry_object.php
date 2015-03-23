@@ -15,7 +15,7 @@ class Registry_object extends MX_Controller {
 	function view(){
 
 		$this->load->library('blade');
-        $relatedLimit = 5;
+
 		//Setup the variables
         $ro = null;
         $id = $this->input->get('id');
@@ -138,9 +138,9 @@ class Registry_object extends MX_Controller {
 		    $this->blade
 				->set('scripts', array('view', 'view_app', 'tag_controller'))
 				->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
+				->set('relatedLimit', 5)
 				->set('ro', $ro)
                 ->set('resolvedPartyIdentifiers', $resolvedPartyIdentifiers)
-                ->set('relatedLimit', $relatedLimit)
 				->set('contents', $this->components['view'])
 				->set('aside', $this->components['aside'])
 	            ->set('view_headers', $this->components['view_headers'])

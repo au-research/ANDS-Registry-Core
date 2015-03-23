@@ -143,7 +143,7 @@ function initVocabWidgets(container){
 		elem.on('error.vocab.ands', function(event, xhr) {
 			log(xhr);
 		});
-		widget.vocab_widget('repository', 'rifcs');
+		widget.vocab_widget('repository', 'rifcs16');
 		widget.vocab_widget('narrow', "http://purl.org/au-research/vocabulary/RIFCS/1.6/" + vocab);
 	});
 

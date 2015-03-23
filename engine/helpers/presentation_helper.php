@@ -227,7 +227,8 @@ function readable($text, $altered = false){
         case 'isparticipantin' : return  'Participant'; break;
         case 'ispartof' : return  'Part of'; break;
         case 'ispresentedby' : return  'Presented by'; break;
-        case 'isprincipalinvestigatorof" Principal investigator'; break;
+        case 'isprincipalinvestigatorof' : return 'Principal investigator'; break;
+        case 'isprincipalinvestigator' :  return 'Principal investigator'; break;
         case 'isproducedby' : return  'Produced by'; break;
         case 'isreferencedby' : return  'Referenced by'; break;
         case 'isreviewedby' : return  'Reviewed by'; break;
@@ -414,16 +415,19 @@ function nicifyDate($w3cdtf)
             // Assume friendly display of just the year
             return date("Y", $time); // i.e. 2001
         }
+        elseif(date("d", $time)=="01"){
+            return date("m Y", $time); // i.e. 2001
+        }
         else
         {
             // Assume friendly display of full date (and no time)
-            return date("Y-m-d", $time); 	// i.e.  March 10, 2001
+            return date("m Y", $time); 	// i.e.  March 10, 2001
         }
     }
     else
     {
-        // Assume friendly display of full date and time
-        return date("Y-m-d H:i", $time); 	// i.e.  March 10, 2001, 5:16 pm
+        // Assume friendly display of full date
+        return date("d m Y", $time); 	// i.e.  10 03 2001, 5:16 pm
     }
 
     reset_timezone();

@@ -10,43 +10,44 @@ class Temporal extends ROHandler {
 		$result = array();
         if($this->gXPath->evaluate("count(//ro:coverage/ro:temporal)")>0) {
             $query = "//ro:coverage/ro:temporal";
+            $dates = $this->gXPath->query($query);
+            foreach($dates as $date){
+                $eachDate = Array();
+                foreach($date->getElementsByTagName('date') as $adate){
+                   $eachDate[] = Array(
+                        'type'=>$adate->getAttribute('type'),
+                        'dateFormat'=>$adate->getAttribute('dateFormat'),
+                        'date'=>$adate->nodeValue
+                    );
+
+                }
+                if(count($eachDate)>0){
+                    $result[]= Array(
+                        'type'=>'date',
+                        'date'=> $eachDate
+                    );
+                }
+            }
+            foreach($dates as $date){
+                $eachDate = Array();
+                foreach($date->getElementsByTagName('text') as $adate){
+                    $eachDate[] = Array(
+                        'type'=>$adate->getAttribute('type'),
+                        'dateFormat'=>$adate->getAttribute('dateFormat'),
+                        'date'=>$adate->nodeValue
+                    );
+
+                }
+                if(count($eachDate)>0){
+                    $result[]= Array(
+                        'type'=>'text',
+                        'date'=> $eachDate
+                    );
+                }
+            }
         }
 
-        $dates = $this->gXPath->query($query);
-        foreach($dates as $date){
-            $eachDate = Array();
-            foreach($date->getElementsByTagName('date') as $adate){
-               $eachDate[] = Array(
-                    'type'=>$adate->getAttribute('type'),
-                    'dateFormat'=>$adate->getAttribute('dateFormat'),
-                    'date'=>$adate->nodeValue
-                );
-
-            }
-            if(count($eachDate)>0){
-                $result[]= Array(
-                    'type'=>'date',
-                    'date'=> $eachDate
-                );
-            }
-        }
-        foreach($dates as $date){
-            $eachDate = Array();
-            foreach($date->getElementsByTagName('text') as $adate){
-                $eachDate[] = Array(
-                    'type'=>$adate->getAttribute('type'),
-                    'dateFormat'=>$adate->getAttribute('dateFormat'),
-                    'date'=>$adate->nodeValue
-                );
-
-            }
-            if(count($eachDate)>0){
-                $result[]= Array(
-                    'type'=>'text',
-                    'date'=> $eachDate
-                );
-            }
-        }
+        
         return $result;
 	}
 }

@@ -257,6 +257,14 @@ class Solr {
 			$this->setOpt('sort', "list_title_sort asc");
 		}
 
+
+
+
+
+
+
+
+
 		// By default, also bring back the score in results (overridden if fl filter set)
 		$this->setOpt('fl', '*, score'); 
 
@@ -267,7 +275,7 @@ class Solr {
 		}
 
 		// Filter records that match the search terms (boost according to where the terms match)
-		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.01 description_value^0.05 identifier_value^0.05 tag_search^0.05 fulltext^0.00001');
+		$this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.01 description_value^0.05 identifier_value^0.05 tag_search^0.05 fulltext^0.00001 related_party_one_search^0.2');
 
 		// Amount of slop applied to phrases in the user's query string filter (1 = 1 word apart)
 		// Disable slopping for exact phrase search
@@ -279,9 +287,9 @@ class Solr {
 		
 		
 		// Score boosting applied to phrases based on how many parts of the phrase match
-		$this->setOpt('pf', 'title_search^5 description_value^0.5');
-		$this->setOpt('pf2', 'title_search^20 description_value^5 description_value~5^3');
-		$this->setOpt('pf3', 'title_search^100 description_value^25 description_value~5^5');
+		$this->setOpt('pf', 'title_search^5 alt_title_search^4 description_value^0.5 related_party_one_search^1');
+		$this->setOpt('pf2', 'title_search^20 alt_title_search^18 description_value^5 description_value~5^3 related_party_one_search^2');
+		$this->setOpt('pf3', 'title_search^100 alt_title_search^90 description_value^25 description_value~5^5 related_party_one_search^3');
 
 		// Default amount of "slop" on phrase queries (applied to pf, pf2, pf3 if not overriden by tilde)
 		$this->setOpt('ps', '2');

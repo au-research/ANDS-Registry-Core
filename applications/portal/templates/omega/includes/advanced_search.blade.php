@@ -27,8 +27,7 @@
 									<ul class="nav nav-pills nav-stacked">
 										<li ng-repeat="field in advanced_fields" ng-class="{'active':field.active==true}">
 											<a href="" ng-click="selectAdvancedField(field.name)">
-												<span class="badge" ng-show="sizeofField(field.name) > 0">[[sizeofField(field.name)]]</span>
-												[[field.display]]
+												[[field.display]] <i class="fa fa-check" ng-show="sizeofField(field.name) > 0"></i>
 											</a>
 										</li>
 									</ul>
@@ -47,11 +46,11 @@
 								</div>
 							</div>
 
-							<div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in prefacets">
+							<div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in prefacets2">
 								<ul class="list-unstyled" ng-if="facet.name!='subject'">
 									<li ng-repeat="item in facet.value | orderObjectBy:'name'">
-											<input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
-											<a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name | toTitleCase]] <small>[[item.value]]</small></a>    
+										<input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name | toTitleCase]] <small>[[item.value]]</small></a>    
 									</li>
 								</ul>
 							</div>

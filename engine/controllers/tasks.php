@@ -53,40 +53,25 @@ class Tasks extends CI_Controller {
 		$task = array(
 			'id' => 100,
 			'name' => 'sync',
-			'params' => 'type=ds&id=45',
+			'params' => 'type=solr_query&id=+class:party',
 		);
 		$this->doTask($task);
 		// $this->task_mgr->add_task($task);
 	}
 
-	public function add() {
-		$this->load->model('task_mgr');
-
-		$task = array(
-			'name' 		=> 'sync',
-			'params'	=> 'type=ro&id=475612,475616,12341234134',
-			'priority' 	=> 0
-		);
-
-		$task2 = array(
-			'name' 		=> 'sync',
-			'params'	=> 'type=ds&id=303'
-		);
-
-		$task3 = array(
-			'name' 		=> 'sync',
-			'params'	=> 'type=ds&id=192'
-		);
-
-		$this->task_mgr->add_task($task);
-		$this->task_mgr->add_task($task);
-		// $this->task_mgr->add_task($task2);
-		// $this->task_mgr->add_task($task3);
-	}
-
 	public function exe() {
 		$this->load->model('task_mgr');
 		$task = $this->task_mgr->find_task();
+		if($task) {
+			$this->doTask($task);
+		} else {
+			echo json_encode(array('message'=>'No task to execute'));
+		}
+	}
+
+	public function doByID($id) {
+		$this->load->model('task_mgr');
+		$task = $this->task_mgr->find_specific_task($id);
 		if($task) {
 			$this->doTask($task);
 		} else {
