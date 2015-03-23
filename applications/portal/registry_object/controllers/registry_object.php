@@ -138,6 +138,7 @@ class Registry_object extends MX_Controller {
 		    $this->blade
 				->set('scripts', array('view', 'view_app', 'tag_controller'))
 				->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
+				->set('relatedLimit', 5)
 				->set('ro', $ro)
                 ->set('resolvedPartyIdentifiers', $resolvedPartyIdentifiers)
 				->set('contents', $this->components['view'])
