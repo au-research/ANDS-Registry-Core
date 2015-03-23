@@ -120,6 +120,14 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		return has_filter;
 	}
 
+	$scope.filterExists = function(filter) {
+		var ret = false;
+		if ($scope.filters[filter]) {
+			ret = true;
+		}
+		return ret;
+	}
+
 	$scope.clearSearch = function(){
 		$scope.query = '';
 		search_factory.reset();
@@ -202,7 +210,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.presearch = function(){
-		// search_factory.update('filters', $scope.prefilters);
 		search_factory.search_no_record($scope.prefilters).then(function(data){
 			$scope.preresult = data;
 			$scope.prefacets = search_factory.construct_facets($scope.preresult, $scope.prefilters['class']);
@@ -549,9 +556,19 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	 */
 	$scope.prefilters = {};
 	$scope.advanced = function(active){
-		$scope.prefilters = {};
-		$scope.preresult = {};
+		// $scope.prefilters = {};
+		// $scope.preresult = {};
 		angular.copy($scope.filters, $scope.prefilters);
+		
+		//get all facets by deleting the existing facets restrain from the filters
+		var filters_no_facet = {};
+		angular.copy($scope.filters, filters_no_facet);
+		angular.forEach($scope.facets, function(content, index){
+			delete filters_no_facet[index];
+		});
+		search_factory.search_no_record(filters_no_facet).then(function(data){
+			$scope.allfacets = search_factory.construct_facets(data);
+		});
 
 		if (active && active!='close') {
 			$scope.selectAdvancedField(active);
@@ -563,14 +580,24 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$('#advanced_search').modal('show');
 		}
 
-		//get all facets by deleting the existing facets restrain from the filters
-		var filters_no_facet = {};
-		angular.copy($scope.filters, filters_no_facet);
-		angular.forEach($scope.facets, function(content, index){
-			delete filters_no_facet[index];
+		// $log.debug($scope.prefilters);
+		// $scope.selectAdvancedField(active);
+		$scope.presearch();
+	}
+
+	$scope.selectAdvancedField = function(name) {
+		// $log.debug('selecting', name);
+		angular.forEach($scope.advanced_fields, function(f){
+			if (f.name==name) {
+				f.active = true;
+			} else f.active = false;
 		});
-		search_factory.search_no_record(filters_no_facet).then(function(data){
-			$scope.allfacets = search_factory.construct_facets(data);
+
+		$scope.prefilters2 = {};
+		angular.copy($scope.prefilters, $scope.prefilters2);
+		delete $scope.prefilters2[name];
+		search_factory.search_no_record($scope.prefilters2).then(function(data){
+			$scope.prefacets2 = search_factory.construct_facets(data, $scope.prefilters['class']);
 		});
 
 		$scope.presearch();
@@ -664,15 +691,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if(execute) $scope.presearch();
 	}
 	
-	$scope.selectAdvancedField = function(name) {
-		// $log.debug('selecting', name);
-		angular.forEach($scope.advanced_fields, function(f){
-			if (f.name==name) {
-				f.active = true;
-			} else f.active = false;
-		});
-		$scope.presearch();
-	}
+	
 
 	$scope.isAdvancedSearchActive = function(type) {
 		if($scope.advanced_fields.length){
@@ -687,6 +706,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.sizeofField = function(type) {
+		// if(type=='group') $log.debug($scope.prefilters[type]);
 		if($scope.prefilters[type]) {
 			if(typeof $scope.prefilters[type]!='object') {
 				return 1;
