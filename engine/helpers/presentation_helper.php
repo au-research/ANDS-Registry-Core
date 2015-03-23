@@ -227,7 +227,8 @@ function readable($text, $altered = false){
         case 'isparticipantin' : return  'Participant'; break;
         case 'ispartof' : return  'Part of'; break;
         case 'ispresentedby' : return  'Presented by'; break;
-        case 'isprincipalinvestigatorof" Principal investigator'; break;
+        case 'isprincipalinvestigatorof' : return 'Principal investigator'; break;
+        case 'isprincipalinvestigator' :  return 'Principal investigator'; break;
         case 'isproducedby' : return  'Produced by'; break;
         case 'isreferencedby' : return  'Referenced by'; break;
         case 'isreviewedby' : return  'Reviewed by'; break;
