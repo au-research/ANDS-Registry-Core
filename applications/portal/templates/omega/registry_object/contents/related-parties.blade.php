@@ -1,3 +1,14 @@
+<?php
+$relatedSearchQuery = portal_url().'search/#!/related_'.$ro->core['class'].'_id='.$ro->core['id'];
+if($ro->identifiermatch && sizeof($ro->identifiermatch) > 0){
+foreach($ro->identifiermatch as $mm)
+{
+$relatedSearchQuery .= '/related_'.$ro->core['class'].'_id='.$mm['registry_object_id'];
+}
+}
+?>
+
+
 @if($ro->relationships && isset($ro->relationships['party_one']))
     @foreach($ro->relationships['party_one'] as $col)
         @if($col['slug'] && $col['registry_object_id'])
@@ -13,8 +24,8 @@
         <a href="<?php echo base_url()?>" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}" ">{{$col['title']}} <small>({{readable($col['relation_type'])}}) </small></a>
         @endif
     @endforeach
-    @if(sizeof($ro->relationships['party_one']) < $ro->relationships['party_one_count_solr'])
-		<a href="{{portal_url()}}search/#!/related_{{$ro->core['class']}}_id={{$ro->core['id']}}/class=party/type=person">View all {{$ro->relationships['party_one_count_solr']}} related parties</a></li>
+    @if($ro->relationships['party_one_count'] > $relatedLimit)
+		<a href="{{$relatedSearchQuery}}/class=party/type=person">View all {{$ro->relationships['party_one_count_solr']}} related parties</a></li>
 	@endif
 @endif
 
@@ -33,7 +44,7 @@
         <a href="<?php echo base_url()?>" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}" ">{{$col['title']}} <small>({{readable($col['relation_type'])}}) </small></a>
         @endif
     @endforeach
-    @if(sizeof($ro->relationships['party_multi']) < $ro->relationships['party_multi_count_solr'])
-    <a href="{{portal_url()}}search/#!/related_{{$ro->core['class']}}_id={{$ro->core['id']}}/class=party/type=group">View all {{$ro->relationships['party_multi_count_solr']}} related parties</a></li>
+    @if($ro->relationships['party_multi_count'] > $relatedLimit)
+    <a href="{{$relatedSearchQuery}}/class=party/type=group">View all {{$ro->relationships['party_multi_count_solr']}} related parties</a></li>
     @endif
 @endif
