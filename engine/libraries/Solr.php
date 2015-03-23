@@ -542,7 +542,14 @@ class Solr {
 					$this->setOpt('fq', '+related_party_multi_id:"'.$value.'"');
 					break;
 				case 'related_collection_id':
-					$this->setOpt('fq', '+related_collection_id:"'.$value.'"');
+                    if(is_array($value)){
+                        $fq_str = '';
+                        foreach($value as $v)
+                            $fq_str .= ' related_collection_id:("'.$v.'")';
+                        $this->setOpt('fq', $fq_str);
+                    }else{
+					    $this->setOpt('fq', '+related_collection_id:"'.$value.'"');
+                    }
 					break;
 				case 'related_service_id':
 					$this->setOpt('fq', '+related_service_id:"'.$value.'"');
