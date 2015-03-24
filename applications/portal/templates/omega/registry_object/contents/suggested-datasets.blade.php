@@ -7,10 +7,9 @@
 				@foreach($ro->suggest['final'] as $rs)
 					<li class="clearfix">
 						<div class="post-icon">
-							<a href="{{portal_url($rs['slug'].'/'.$rs['id'])}}"><i class="fa fa-bolt"></i></a>
+							<a href="{{portal_url($rs['slug'].'/'.$rs['id'])}}" class="ro_preview" ro_id="{{$rs['id']}}"><i class="fa fa-folder-open"></i></a>
 						</div>
-						<a href="{{portal_url($rs['slug'].'/'.$rs['id'])}}">{{$rs['title']}}</a>
-						<small>{{$rs['title']}}</small>
+                        <a href="{{portal_url($rs['slug'].'/'.$rs['id'])}}" class="ro_preview" ro_id="{{$rs['id']}}" style="margin-right:5px;">{{$rs['title']}}</a>
 					</li>
 				@endforeach
 			</ul>

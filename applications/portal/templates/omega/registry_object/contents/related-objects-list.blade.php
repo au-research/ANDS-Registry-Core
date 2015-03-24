@@ -42,6 +42,14 @@
         }
     }
 
+    $relatedSearchQuery = portal_url().'search/#!/related_'.$search_class.'_id='.$ro->core['id'];
+    if($ro->identifiermatch && sizeof($ro->identifiermatch) > 0){
+        foreach($ro->identifiermatch as $mm)
+        {
+            $relatedSearchQuery .= '/related_'.$search_class.'_id='.$mm['registry_object_id'];
+        }
+    }
+
     if($hasRelatedInfo){
         foreach($ro->relatedInfo as $relatedInfo) {
             if ($relatedInfo['type']=='publication'){
@@ -177,8 +185,8 @@
                             <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
-                        @if($ro->relationships['collection_count_solr'] > $relatedLimit)
-                        <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count_solr']}} related data</a>
+                        @if($ro->relationships['collection_count'] > $relatedLimit)
+                        <a href="{{$relatedSearchQuery}}/class=collection">View all {{$ro->relationships['collection_count']}} related data</a>
                         @endif
                     </p>
                     @endif
@@ -202,8 +210,8 @@
                             @endif
                         <?php } ?>
                         @endforeach
-                        @if(sizeof($ro->relationships['party_multi']) < $ro->relationships['party_multi_count_solr'])
-                            <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=party/type=group">View all {{$ro->relationships['party_multi_count_solr']}} related organisations</a>
+                        @if($ro->relationships['party_multi_count'] > $relatedLimit)
+                            <a href="{{$relatedSearchQuery}}/class=party/type=group">View all {{$ro->relationships['party_multi_count']}} related organisations</a>
                         @endif
                     </p>
                     @endif
@@ -225,8 +233,8 @@
                            <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                            @endif
                         @endforeach
-                        @if(sizeof($ro->relationships['activity']) < $ro->relationships['activity_count_solr'])
-                            <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=activity">View all {{$ro->relationships['activity_count_solr']}} related activities</a>
+                        @if($ro->relationships['activity_count'] > $relatedLimit)
+                            <a href="{{$relatedSearchQuery}}/class=activity">View all {{$ro->relationships['activity_count']}} related activities</a>
                         @endif
                    </p>
                     @endif
@@ -249,8 +257,8 @@
                             <i class="fa fa-wrench icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
-                        @if(sizeof($ro->relationships['service']) < $ro->relationships['service_count_solr'])
-                            <a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=service">View all {{$ro->relationships['service_count_solr']}} related services</a>
+                        @if($ro->relationships['service_count'] > $relatedLimit)
+                            <a href="{{$relatedSearchQuery}}/class=service">View all {{$ro->relationships['service_count']}} related services</a>
                         @endif
                     </p>
                     @endif

@@ -48,14 +48,6 @@
         }
     ?>
 
-    <div class="panel panel-primary swatch-white">
-        <div class="panel-body">
-            To date, {{$group['title']}} has {{$group['counts']}} collection records in Research Data Australia, which covers {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}, {{sizeof($group['groups'])}} research groups 
-            have been actively involved in collecting data and creating metadata records for the data.  All the Collections, Parties, Activities and Services associated with {{$group['title']}} 
-            can be accessed from the Registry Contents box on the right hand side of this page.
-        </div>
-    </div>
-
     @if($group['has_custom_data'])
         @if(isset($group['custom_data']['overview']))
         <div class="panel panel-primary panel-content swatch-white">
@@ -63,18 +55,34 @@
             <div class="panel-body">{{$group['custom_data']['overview']}}</div>
         </div>
         @endif
+    @endif
+
+    @if($group['has_custom_data'])
         @if(isset($group['custom_data']['researchdarea']))
         <div class="panel panel-primary panel-content swatch-white">
             <div class="panel-heading">Research and Key Research Areas</div>
             <div class="panel-body">{{$group['custom_data']['researchdarea']}}</div>
         </div>
         @endif
-        @if(isset($group['custom_data']['researchdataprofile']))
-        <div class="panel panel-primary panel-content swatch-white">
-            <div class="panel-heading">Research Data Profile</div>
-            <div class="panel-body">{{$group['custom_data']['researchdataprofile']}}</div>
+    @endif
+
+    <div class="panel panel-primary panel-content swatch-white">
+        <div class="panel-heading">Research Data Profile</div>
+        <div class="panel-body">
+            To date, {{$group['title']}} has {{$group['counts']}} collection records in Research Data Australia, which covers {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}, {{sizeof($group['groups'])}} research groups 
+            have been actively involved in collecting data and creating metadata records for the data.  All the Collections, Parties, Activities and Services associated with {{$group['title']}} 
+            can be accessed from the Registry Contents box on the right hand side of this page.
         </div>
+        @if($group['has_custom_data'])
+            @if(isset($group['custom_data']['researchdataprofile']))
+            <div class="panel-body">
+                {{$group['custom_data']['researchdataprofile']}}
+            </div>
+            @endif
         @endif
+    </div>
+
+    @if($group['has_custom_data'])
         @if(isset($group['custom_data']['researchsupport']))
         <div class="panel panel-primary panel-content swatch-white">
             <div class="panel-heading">Research Support</div>
@@ -82,8 +90,6 @@
         </div>
         @endif
     @endif
-
-    
 
     <div class="panel panel-primary panel-content swatch-white">
         <div class="panel-heading">Subjects Covered</div>

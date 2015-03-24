@@ -12,12 +12,12 @@ class Suggest extends ROHandler {
         $result['message'] = 'No Suggested Collection was found';
         //pools
         $suggestors = array(
-           'subjects'=>array('boost'=>1,'handler'=>'subjects'),
-           'shared_text'=>array('boost'=>1,'handler'=>'shared_text'),
-           'related_object'=>array('boost'=>1,'handler'=>'related_object'),
-           'temporal_coverage'=>array('boost'=>1,'handler'=>'temporal_coverage'),
-           'spatial_coverage'=>array('boost'=>1,'handler'=>'spatial_coverage'),
-           'tags'=>array('boost'=>1,'handler'=>'tags')
+           'subjects'=>array('boost'=>0.3,'handler'=>'subjects'),
+           'shared_text'=>array('boost'=>0.3,'handler'=>'shared_text'),
+           'related_object'=>array('boost'=>0.1,'handler'=>'related_object'),
+           'temporal_coverage'=>array('boost'=>0.1,'handler'=>'temporal_coverage'),
+           'spatial_coverage'=>array('boost'=>0.1,'handler'=>'spatial_coverage'),
+           'tags'=>array('boost'=>0.1,'handler'=>'tags')
         );
         
         //populate the pool with the different suggestors

@@ -59,7 +59,7 @@
                         
                         <div ng-repeat="(index, content) in getHighlight(doc.id)" class="element-shorter-bottom">
                             <div ng-repeat="c in content track by $index" class="element-shortest-bottom">
-                                <span ng-bind-html="c | trustAsHtml"></span> ([[index | highlightreadable]])
+                                <span ng-bind-html="c | trustAsHtml"></span> <span class="muted">(in [[index | highlightreadable]])</span>
                             </div>
                         </div>
 

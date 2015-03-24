@@ -244,41 +244,49 @@ class Sync_extension extends ExtensionBase{
 		$fields = array('related_collection_id', 'related_party_one_id', 'related_party_multi_id', 'related_activity_id', 'related_service_id');
 		foreach($fields as $f) $json[$f] = array();
         $fields = array('related_collection_search', 'related_party_one_search', 'related_party_multi_search', 'related_activity_search', 'related_service_search');
+        $processedIds = array();
         foreach($fields as $f) $json[$f] = array();
-		foreach($related_objects as $related_object){
-			if($related_object['class']=='collection') {
-                $json['related_collection_title'][] = $related_object['title'];
-                $json['related_collection_id'][] = $related_object['registry_object_id'];
-			} else if($related_object['class']=='activity') {
-                $json['related_activity_title'][] = $related_object['title'];
-                $json['related_activity_id'][] = $related_object['registry_object_id'];
-			} else if($related_object['class']=='service') {
-                $json['related_service_title'][] = $related_object['title'];
-                $json['related_service_id'][] = $related_object['registry_object_id'];
-			} else if($related_object['class']=='party') {
+		    foreach($related_objects as $related_object){
+                if($related_object['registry_object_id'] == null || !in_array($related_object['registry_object_id'], $processedIds))
+                {
+                    $processedIds[] = $related_object['registry_object_id'];
+                    if($related_object['class']=='collection') {
+                        $json['related_collection_title'][] = $related_object['title'];
+                        if($related_object['registry_object_id'])
+                            $json['related_collection_id'][] = $related_object['registry_object_id'];
+                    } else if($related_object['class']=='activity') {
+                        $json['related_activity_title'][] = $related_object['title'];
+                        if($related_object['registry_object_id'])
+                            $json['related_activity_id'][] = $related_object['registry_object_id'];
+                    } else if($related_object['class']=='service') {
+                        $json['related_service_title'][] = $related_object['title'];
+                        if($related_object['registry_object_id'])
+                            $json['related_service_id'][] = $related_object['registry_object_id'];
+                    } else if($related_object['class']=='party' && $related_object['registry_object_id']) {
 
-                $this->_CI->db->select('value')
-                    ->from('registry_object_attributes')
-                    ->where('attribute', 'type')
-                    ->where('registry_object_id',$related_object['registry_object_id']);
-                $query = $this->_CI->db->get();
-                    foreach($query->result_array() AS $row)
-                    {
-                        if (isset($row['value']))
-                        {
-                            if (in_array($row['value'],$this->party_multi_types))
+                        $this->_CI->db->select('value')
+                            ->from('registry_object_attributes')
+                            ->where('attribute', 'type')
+                            ->where('registry_object_id',$related_object['registry_object_id']);
+                        $query = $this->_CI->db->get();
+                            foreach($query->result_array() AS $row)
                             {
-                                $json['related_party_multi_title'][] = $related_object['title'];
-                                $json['related_party_multi_id'][] = $related_object['registry_object_id'];
-                            }
-                            else
-                            {
-                                $json['related_party_one_title'][] = $related_object['title'];
-                                $json['related_party_one_id'][] = $related_object['registry_object_id'];
-                            }
+                                if (isset($row['value']))
+                                {
+                                    if (in_array($row['value'],$this->party_multi_types))
+                                    {
+                                        $json['related_party_multi_title'][] = $related_object['title'];
+                                        $json['related_party_multi_id'][] = $related_object['registry_object_id'];
+                                    }
+                                    else
+                                    {
+                                        $json['related_party_one_title'][] = $related_object['title'];
+                                        $json['related_party_one_id'][] = $related_object['registry_object_id'];
+                                    }
+                                }
                         }
-                    }
-			}
+                }
+            }
 		}
 
         foreach($gXPath->query('//ro:description[@type="fundingAmount"]') as $node) {
