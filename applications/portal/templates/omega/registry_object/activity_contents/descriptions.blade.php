@@ -23,10 +23,24 @@
                                     $researchersfound='yes';
                                 }
                                 if(($o == 'fundingAmount'||$o == 'fundingScheme'||$o == 'brief'||$o='full') && $researchersfound=='no'){
-                                    $researchersfound='yes;'
+
+
+                                    if($ro->relationships){
+                                        if(isset($ro->relationships['party_one']))
+                                            $researchersfound='yes';
+                                    }
+                                    if($ro->relatedInfo){
+                                        foreach($ro->relatedInfo as $relatedInfo){
+                                            if($relatedInfo['type']=='party'){
+                                                $researchersfound='yes';
+                                            }
+                                        }
+                                    }
+                                    if($researchersfound=='yes'){
                                     ?>
                                   <p><strong>Researchers </strong> @include('registry_object/activity_contents/activity-people')</p>
                                 <?php
+                                    }
                                 }
                         ?>
 
