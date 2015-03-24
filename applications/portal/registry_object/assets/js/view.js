@@ -287,8 +287,8 @@ function initConnectionGraph() {
 				$('a',$(nodeSpan)).attr('href', base_url + node.data.slug +"/"+node.data.registry_object_id);
                 $('a',$(nodeSpan)).attr('ro_id', node.data.registry_object_id);
                 $('a',$(nodeSpan)).addClass('ro_preview');
-                if($(nodeSpan).text().length>120){
-                    $('a',$(nodeSpan)).text($(nodeSpan).text().substring(0,120)+' ...');
+                if($(nodeSpan).text().length>100){
+                    $('a',$(nodeSpan)).text($(nodeSpan).text().substring(0,100)+' ...');
                 }
 				if (node.data['class']=="more")
 				{

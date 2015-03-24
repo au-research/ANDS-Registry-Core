@@ -53,7 +53,7 @@
 				@endif
 			@endforeach
         </div>
-@elseif($ro->rights||($ro->contact && $ro->core['class']=='collection') ||($ro->directaccess && $ro->core['class']=='collection'))
+@elseif($ro->core['class']=='collection')
         <div class="panel-heading">
             <a href="">Information</a>
         </div>
