@@ -71,13 +71,13 @@ class Directaccess extends ROHandler {
                         $title = $title->nodeValue;
                     }
                     if($title=='') $title = $directaccess->nodeValue;
-                    $mediaType = '';
+                    $mediaTypeStr = '';
                     foreach($directaccess->getElementsByTagName('mediaType') as $mediaType){
-                        $mediaType = $mediaType->nodeValue;
+                        $mediaTypeStr .= $mediaType->nodeValue.",";
                     }
-                    $byteSize = '';
+                    $byteSizeStr = '';
                     foreach($directaccess->getElementsByTagName('byteSize') as $byteSize){
-                          $byteSize = $byteSize->nodeValue;
+                        $byteSizeStr .= $byteSize->nodeValue.",";
                     }
                     $notes = '';
                     foreach($directaccess->getElementsByTagName('notes') as $notes){
@@ -88,8 +88,8 @@ class Directaccess extends ROHandler {
                             'contact_type' => 'url',
                             'access_value' => $url_link,
                             'title'=>$title ,
-                            'mediaType'=>$mediaType,
-                            'byteSize'=>$byteSize,
+                            'mediaType'=>trim($mediaTypeStr,","),
+                            'byteSize'=>trim($byteSizeStr,","),
                             'notes'=>$notes
                     );
 
