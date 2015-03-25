@@ -2,6 +2,12 @@ app.controller('searchCtrl',
 function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
 
 
+	//setting default search class
+	if ($('#ro_id').length) {
+		var search_class = $('#ro_class').val();
+		search_factory.update_class(search_class);
+	}
+
     $scope.query_title = 'Untitled Query';
     $scope.saved_records_folder = 'Untitled';
     $scope.base_url = base_url;

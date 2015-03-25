@@ -65,7 +65,11 @@ class Tasks extends CI_Controller {
 		if($task) {
 			$this->doTask($task);
 		} else {
-			echo json_encode(array('message'=>'No task to execute'));
+			if($running = $this->task_mgr->is_running()) {
+				echo json_encode(array('message'=>'A task is already running'));
+			} else {
+				echo json_encode(array('message'=>'No task to execute'));
+			}
 		}
 	}
 

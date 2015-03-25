@@ -64,6 +64,13 @@ class Task_mgr extends CI_Model {
 		}
 	}
 
+	function is_running() {
+		$query = $this->db->where('status', 'RUNNING')->get('tasks');
+		if($query->num_rows() > 0) {
+			return true;
+		}
+	}
+
 	function find_specific_task($id) {
 		$query = $this->db->where('id', $id)->get('tasks');
 		if($query->num_rows() > 0) {
