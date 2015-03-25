@@ -68,6 +68,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.$on('toggleFilter', function(e, data){
 		$scope.toggleFilter(data.type, data.value, data.execute);
 	});
+	
+	$scope.$on('togglePreFilter', function(e, data){
+		$scope.togglePreFilter(data.type, data.value, data.execute);
+	});
 
 	$scope.$on('advanced', function(e, data){
 		$scope.advanced(data);
