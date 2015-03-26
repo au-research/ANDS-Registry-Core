@@ -151,14 +151,15 @@ function pluralise($word, $count)
     else return $word . "s";
 }
 
-function readable($text, $altered = false){
+function readable($text, $altered=false,$class=false){
+    $relationshipText = $text;
     $defaultText = sentenceCase($text);
 	$text = trim(strtolower($text));
-    if(str_replace('REVERSE','',$altered) != $altered || $altered == true) {
-        $altered = true;
-    }else{
-        $altered = false;
+
+    if(gettype($altered)=='string'){
+        return format_relationship($class, $relationshipText, $altered);
     }
+
 	switch($text){
         case "all": return 'All'; break;
 		case "draft": return ($altered ? 'Draft' : 'Drafts');break;
@@ -197,48 +198,6 @@ function readable($text, $altered = false){
         case 'addsvalueto' : return  'Adds value to'; break;
         case 'describes' : return  'Describes'; break;
         case 'enriches': return  'Enriches'; break;
-        case 'hasassociationwith' : return  'Associated with'; break;
-        case 'hascollector' : return  'Aggregated by'; break;
-        case 'hasderivedcollection' : return  'Has derived collection'; break;
-        case 'hasmember' : return  'Has member'; break;
-        case 'hasoutput' : return  'Produces'; break;
-        case 'haspart' : return  'Includes'; break;
-        case 'hasparticipant' : return  'Undertaken by'; break;
-        case 'hasprincipalinvestigator' : return 'Principal investigator'; break;
-        case 'hasvalueaddedby' : return 'Value added by'; break;
-        case 'isavailablethrough' : return 'Available through'; break;
-        case 'iscitedby' : return 'Cited by'; break;
-        case 'iscollectorof' : return 'Collector of'; break;
-        case 'isderivedfrom' : return 'Derived from'; break;
-        case 'isdescribedby' : return 'Described by'; break;
-        case 'isdocumentedby' : return 'Documented by'; break;
-        case 'isenrichedby' : return 'Enriched by'; break;
-        case 'isfundedby' : return ($altered ? 'Funds' : 'Funded by');break;
-        case 'isfunderof' : return 'Funds'; break;
-        case 'islocatedin' : return 'Located in'; break;
-        case 'islocationfor' : return 'Location for'; break;
-        case 'ismanagedby' : return 'Managed by'; break;
-        case 'ismanagerof' : return  'Manages'; break;
-        case 'ismemberof' : return  'Member of'; break;
-        case 'isoperatedonby' : return  'Operated on by'; break;
-        case 'isoutputof' : return  'Output of'; break;
-        case 'isownedby' : return  'Owned by'; break;
-        case 'isownerof' : return  'Owner of'; break;
-        case 'isparticipantin' : return  'Participant'; break;
-        case 'ispartof' : return  'Part of'; break;
-        case 'ispresentedby' : return  'Presented by'; break;
-        case 'isprincipalinvestigatorof' : return 'Principal investigator'; break;
-        case 'isprincipalinvestigator' :  return 'Principal investigator'; break;
-        case 'isproducedby' : return  'Produced by'; break;
-        case 'isreferencedby' : return  'Referenced by'; break;
-        case 'isreviewedby' : return  'Reviewed by'; break;
-        case 'issupplementedby' : return  'Supplemented by'; break;
-        case 'issupplementto' : return  'Supplement to'; break;
-        case 'issupportedby' : return  'Supported by'; break;
-        case 'operateson' : return  'Operates on'; break;
-        case 'produces' : return  'Produces'; break;
-        case 'presents' : return  'Presents'; break;
-        case 'supports' : return  'Supports'; break;
         case 'fundingamount' : return  'Funding Amount'; break;
         case 'deliverymethod' : return  'Delivery method'; break;
         case 'researchers' : return  'Researchers'; break;
