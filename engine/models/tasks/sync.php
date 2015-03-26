@@ -167,7 +167,7 @@ class Sync extends Task {
 			try {
 				$ro = $this->ro->getByID($ro_id);
 				if($ro) {
-					$docs[] = $ro->indexable_json();
+					$docs[] = $ro->lite_indexable_json();
 				} else {
 					$this->solr->deleteByID($ro_id);
 					$this->log('[error][notfound][ro_id:'.$ro_id.']');

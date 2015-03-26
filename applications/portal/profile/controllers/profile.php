@@ -141,6 +141,20 @@ class Profile extends MX_Controller {
 		echo json_encode($user);
 	}
 
+	public function get_specific_user() {
+		header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+
+        $identifier = $this->input->get('identifier');
+
+        if(!$identifier) throw new Exception('identifier required');
+
+        $this->load->model('portal_user');
+        $user = $this->portal_user->getSpecificUser($identifier);
+        echo json_encode($user);
+	}
+
 	function dashboard() {
 		$this->index();
 	}

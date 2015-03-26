@@ -101,3 +101,23 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 		$scope.group.data.identifiers.splice(index, 1);
 	}
 });
+
+app.directive('resolveUser', function($log, $http, profile_factory) {
+	return {
+		template: '{{name}}',
+		scope: {
+			roleid: '='
+		},
+		transclude: true,
+		link: function(scope) {
+			scope.name = scope.roleid;
+			scope.$watch('roleid', function(newv){
+				if (newv) {
+					profile_factory.get_specific_user(scope.roleid).then(function(data){
+						if(data.name) scope.name = data.name;
+					});
+				}
+			});
+		}
+	}
+});

@@ -89,6 +89,8 @@ app.directive('resolveRo', function($log, $http, record_factory) {
 	}
 });
 
+
+
 app.directive('classicon', function($log) {
 	return {
 		template: '<i class="{{class}}"></i>',

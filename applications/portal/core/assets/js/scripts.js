@@ -123,7 +123,7 @@ jQuery(document).ready(function( $ ) {
                 ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
             },
             hide: {
-                delay: 1000,
+                delay: 200,
                 fixed: true,
             },
             position: {
@@ -147,7 +147,7 @@ jQuery(document).ready(function( $ ) {
                     ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
                 },
                 hide: {
-                    delay: 1000,
+                    delay: 200,
                     fixed: true,
                 },
                 position: {

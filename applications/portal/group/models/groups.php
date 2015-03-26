@@ -281,6 +281,14 @@ class Groups extends CI_Model {
 			);
 			$result = $this->portal_db->insert('contributor_pages', $data);
 		}
+
+		if($data['status']=='REQUESTED') {
+			//alert new contributor page
+			ulog_email(
+				'Contributor Page requested to be Published',
+				'Contributor Page '.$name.' requested to be published. Link: '.portal_url('group/cms/#/groups/'.$name)
+			);
+		}
 		
 		return $result;
 	}

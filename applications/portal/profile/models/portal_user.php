@@ -27,6 +27,21 @@ class Portal_user extends CI_Model {
 		return $this;
 	}
 
+	public function getSpecificUser($identifier) {
+		$result = array();
+		$result['identifier'] = $identifier;
+		$this->roles_db = $this->load->database('roles', TRUE);
+		$r = $this->roles_db->get_where('roles', array('role_id'=>$identifier));
+
+		if($r->num_rows() > 0) {
+			$row = $r->first_row();
+			$result['name'] = $row->name;
+			return $row;
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	 * Get the user_data array for the given user, mostly the current user but can be used for any user
 	 * If the user_data array doesn't exist, a row will be generated for the given user containing a blank

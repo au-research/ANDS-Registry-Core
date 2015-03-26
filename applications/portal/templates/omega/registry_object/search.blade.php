@@ -194,36 +194,28 @@
     <!-- Commencement date for activity search -->
     <div class="panel-body swatch-white" ng-show="showFacet('commencement_from')">
         <h4>Commencement date</h4>
-        <select ng-model="filters.commence_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
-            <option value="" style="display:none">From Year</option>
-        </select>
-        <select ng-model="filters.commence_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
-            <option value="" style="display:none">To Year</option>
-        </select>
+        <input type="text" class="form-control" ng-model="filters.commence_from" placeholder="From Year. eg [[earliest_year]]">
+        <input type="text" class="form-control" ng-model="filters.commence_to" placeholder="To Year. eg [[latest_year]]">
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
 
     <!-- Completion date for activity search -->
     <div class="panel-body swatch-white" ng-show="showFacet('completion_to')">
         <h4>Completion date</h4>
-        <select ng-model="filters.completion_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
-            <option value="" style="display:none">From Year</option>
-        </select>
-        <select ng-model="filters.completion_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
-            <option value="" style="display:none">To Year</option>
-        </select>
+        <input type="text" class="form-control" ng-model="filters.completion_from" placeholder="From Year. eg [[earliest_year]]">
+        <input type="text" class="form-control" ng-model="filters.completion_to" placeholder="To Year. eg [[latest_year]]">
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
 
     <!-- Temporal Facet -->
     <div class="panel-body swatch-white" ng-show="showFacet('temporal')">
         <h4>Time Period <i class="fa fa-info" tip="Please note that adding a time period filter to your search will restrict your search to only those records in Research Data Australia which contain temporal information."></i></h4>
-        <select ng-model="filters.year_from" ng-options="year_from as year_from for year_from in temporal_range" class="form-control">
-            <option value="" style="display:none">From Year</option>
-        </select>
-        <select ng-model="filters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true" class="form-control">
-            <option value="" style="display:none">To Year</option>
-        </select>
+        <form action="" class="form-horizontal">
+            <input type="text" class="form-control" ng-model="filters.year_from" placeholder="From Year. eg [[earliest_year]]">
+            <input type="text" class="form-control" ng-model="filters.year_to" placeholder="To Year. eg [[latest_year]]">
+        </form>
+        
+        
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
 

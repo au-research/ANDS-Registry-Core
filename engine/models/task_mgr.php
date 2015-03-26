@@ -43,7 +43,7 @@ class Task_mgr extends CI_Model {
 	function find_task() {
 		//if there's a task already running, don't do anything
 		$query = $this->db->where('status', 'RUNNING')->get('tasks');
-		if($query->num_rows() > 0) {
+		if($query->num_rows() > 5) {
 			return false;
 		}
 
@@ -62,6 +62,8 @@ class Task_mgr extends CI_Model {
 			$result = $query->result_array();
 			return $result[0];
 		}
+
+		return false;
 	}
 
 	function is_running() {
