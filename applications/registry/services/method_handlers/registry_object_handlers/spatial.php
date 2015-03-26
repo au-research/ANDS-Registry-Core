@@ -35,6 +35,19 @@ class Spatial extends ROHandler {
 
                 }
             }
+            if ($this->gXPath->evaluate("count(//ro:location/ro:spatial)")>0) {
+                $query = "//ro:location/ro:spatial";
+                $coverages = $this->gXPath->query($query);
+                foreach($coverages as $spatial){
+                    $type = $spatial->getAttribute('type');
+                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox')
+                        $result[] = array (
+                            'type' => $type,
+                            'value' => $spatial->nodeValue
+                        );
+
+                }
+            }
 
             
         }
