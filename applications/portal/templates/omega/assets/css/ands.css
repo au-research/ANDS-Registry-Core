@@ -98,7 +98,7 @@ ul{
     background: #e93938;
 }
 
-a[href^="http://"]:after,
+/*a[href^="http://"]:after,
 a[href^="https://"]:after {
     font-family: FontAwesome;
     content: "\f08e";
@@ -123,7 +123,7 @@ a.gov_logo:after{
 a.cboxElement:after{
     content: '';
     margin: 0;
-}
+}*/
 
 a.noexicon:after {
     content: '';

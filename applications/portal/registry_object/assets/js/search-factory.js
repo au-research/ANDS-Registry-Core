@@ -117,6 +117,10 @@ app.factory('search_factory', function($http, $log){
 			this[which] = what;
 		},
 
+		update_class: function(what) {
+			this.default_filters['class'] = what;
+		},
+
 		search: function(filters){
 			this.status = 'loading';
 			// $log.debug('search filters', filters);
