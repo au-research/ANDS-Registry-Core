@@ -79,14 +79,14 @@ class Authenticator extends CI_Model {
 	public function post_authentication_hook(){
 		$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : 'auth/dashboard';
 		
+		if ($redirect =='profile' || $redirect == portal_url('profile')) {
+			$redirect = portal_url('profile#!/dashboard');
+		}
+
 		$this->load->helper('cookie');
 		if(get_cookie('auth_redirect')) {
 			$redirect = get_cookie('auth_redirect');
 			delete_cookie('auth_redirect');
-		}
-
-		if ($redirect =='profile' || $redirect == portal_url('profile')) {
-			$redirect = portal_url('profile#!/dashboard');
 		}
 
 		$this->redirect_hook($redirect);

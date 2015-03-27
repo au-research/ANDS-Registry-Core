@@ -138,3 +138,6 @@ a.noexicon:after {
     padding:0px !important;
     line-height:0;
 }
+
+.profile_image_large {max-width:70%;}
+.profile_image_small {width:30px}

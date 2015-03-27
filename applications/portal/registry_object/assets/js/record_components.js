@@ -141,6 +141,10 @@ angular.module('record_components',['profile_components'])
         $modalInstance.dismiss();
     }
 
+    $scope.getCurrentURL = function() {
+        return encodeURIComponent(window.location.href);
+    }
+
     $scope.fetch();
 
 })

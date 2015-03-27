@@ -160,6 +160,12 @@ jQuery(document).ready(function( $ ) {
                 }
             }, event); // Pass through our original event to qTip
         };
+    }).on('click', '.login_btn', function(event){
+        event.preventDefault();
+        console.log(window.location.href);
+        var url = $(this).attr('href');
+        var redirect = window.location.href;
+        location.href = url+'?redirect='+encodeURIComponent(redirect);
     });
 
 

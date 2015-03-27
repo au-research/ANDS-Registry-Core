@@ -122,7 +122,11 @@
 				<div class="panel-body">
 					<h3><i class="fa fa-user"></i> [[user.name]]</h3>
 					<!-- <p>[[user]]</p> -->
+
+					<img src="[[ user.profile_image ]]" alt="" ng-if="user.profile_image" class="profile_image_large">
+					<!-- <img src="" alt="" ng-if="!user.oauth_data">	 -->
 					<hr>
+
 					<a href="[[base_url]]profile/logout" class="btn btn-danger"><i class="fa fa-sign-out"></i> Logout</a>
 					<p ng-if="isSocial(user)">
 						<small>Please note that logging out of Research Data Australia will not log you out of [[ user.authMethod | socialreadable ]]</small>
