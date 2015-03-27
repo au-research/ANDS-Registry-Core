@@ -151,13 +151,13 @@ function pluralise($word, $count)
     else return $word . "s";
 }
 
-function readable($text, $altered=false,$class=false){
+function readable($text, $altered=false,$class=false,$to_class=false){
     $relationshipText = $text;
     $defaultText = sentenceCase($text);
 	$text = trim(strtolower($text));
 
     if(gettype($altered)=='string'){
-        return format_relationship($class, $relationshipText, $altered);
+        return format_relationship($class, $relationshipText, $altered,$to_class);
     }
 
 	switch($text){

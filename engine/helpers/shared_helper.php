@@ -7,7 +7,7 @@
  * @param  [type] $reverse           [description]
  * @return [type]                    [description]
  */
-function format_relationship($from_class, $relationship_type, $origin=false){
+function format_relationship($from_class, $relationship_type, $origin=false,$to_class){
 	$typeArray['collection'] = array(
 		"describes" => array("Describes", "Described by"),
 		"hasAssociationWith" => array("Associated with", "Associated with"),
@@ -92,10 +92,10 @@ function format_relationship($from_class, $relationship_type, $origin=false){
 		"isPrincipalInvestigator" =>array("Principal investigator of", "Principal investigator"),
 	);
 	
-	$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
+	//$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
 
 	if($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER'){//reverse
-		return (isset($allTypesArray[$relationship_type]) ? $allTypesArray[$relationship_type][1] : $relationship_type);
+		return (isset($typeArray[$to_class][$relationship_type]) ? $typeArray[$to_class][$relationship_type][1] : $relationship_type);
 	}
 	else 
 	{

@@ -19,9 +19,9 @@ $relatedSearchQuery .= '/related_'.$ro->core['class'].'_id='.$mm['registry_objec
             $description = 'tip="'.$col['relation_description'].'"';
         }
         ?>
-        <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" {{$description}} class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}} <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'])}}) </small></a>
+        <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" {{$description}} class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}} <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}) </small></a>
         @elseif(isset($col['identifier_relation_id']))
-        <a href="<?php echo base_url()?>" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}" ">{{$col['title']}} <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'])}}) </small></a>
+        <a href="<?php echo base_url()?>" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}" ">{{$col['title']}} <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}) </small></a>
         @endif
     @endforeach
     @if($ro->relationships['party_one_count'] > $relatedLimit)
@@ -41,7 +41,7 @@ $relatedSearchQuery .= '/related_'.$ro->core['class'].'_id='.$mm['registry_objec
         ?>
         <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" {{$description}} class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}} <small>({{readable($col['relation_type'])}}) </small></a>
         @elseif(isset($col['identifier_relation_id']))
-        <a href="<?php echo base_url()?>" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}" ">{{$col['title']}} <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'])}}) </small></a>
+        <a href="<?php echo base_url()?>" class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}" ">{{$col['title']}} <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}) </small></a>
         @endif
     @endforeach
     @if($ro->relationships['party_multi_count'] > $relatedLimit)
