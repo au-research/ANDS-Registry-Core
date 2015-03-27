@@ -1146,7 +1146,9 @@ class Registry_object extends MX_Controller {
 
 }
 
+
 function ro_handle($handler,$cite_ro) {
+
 
     require_once(REGISTRY_APP_PATH . '/services/method_handlers/registry_object_handlers/'.$handler.'.php');
 
@@ -1160,13 +1162,26 @@ function ro_handle($handler,$cite_ro) {
         $gXPath = new DOMXpath($rifDom);
         $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
     }
+
+    //local SOLR index for fast searching
+    $ci =& get_instance();
+    $ci->load->library('solr');
+    $ci->solr->setOpt('fq', '+id:'.$cite_ro->id);
+    $ci->solr->setOpt('fl', 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved');
+    $result = $ci->solr->executeSearch(true);
+
+
+    if(sizeof($result['response']['docs']) == 1) {
+        $index = $result['response']['docs'][0];
+    }
     $resource = array(
-        'index' => '',
+        'index' => $index,
         'xml' => $xml,
         'gXPath' => $gXPath,
         'params' => 'citations',
         'default_params' => ''
     );
     $citation_handler = new $handler($resource);
+
     return $citation_handler->getEndnoteText($cite_ro);
 }
