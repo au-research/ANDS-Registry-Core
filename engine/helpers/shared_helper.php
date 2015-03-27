@@ -8,6 +8,7 @@
  * @return [type]                    [description]
  */
 function format_relationship($from_class, $relationship_type, $origin=false,$to_class){
+  //  return $origin;
 	$typeArray['collection'] = array(
 		"describes" => array("Describes", "Described by"),
 		"hasAssociationWith" => array("Associated with", "Associated with"),
@@ -95,11 +96,11 @@ function format_relationship($from_class, $relationship_type, $origin=false,$to_
 	//$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
 
 	if($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER'){//reverse
-		return (isset($typeArray[$to_class][$relationship_type]) ? $typeArray[$to_class][$relationship_type][1] : $relationship_type);
+		return (isset($typeArray[$to_class][$relationship_type]) ? $typeArray[$to_class][$relationship_type][1] : sentenceCase($relationship_type));
 	}
 	else 
 	{
-		return (isset($typeArray[$from_class][$relationship_type]) ? $typeArray[$from_class][$relationship_type][0] : from_camel_case($relationship_type));
+		return (isset($typeArray[$from_class][$relationship_type]) ? $typeArray[$from_class][$relationship_type][0] : sentenceCase($relationship_type));
 	}
 }
 
