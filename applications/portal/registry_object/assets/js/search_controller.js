@@ -1,6 +1,7 @@
 app.controller('searchCtrl', 
 function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
 
+	$scope.sf = search_factory;
 
 	//setting default search class
 	if ($('#ro_id').length) {

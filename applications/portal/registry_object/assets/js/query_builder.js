@@ -1,36 +1,53 @@
 app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
 
-    var data = '{"group": {"operator": "AND","rules": []}}';
+    var data = '{"group":{"root": true, "operator":"AND","rules":[{"group":{"operator":"AND","rules":[{"condition":":","field":"fulltext","data":"","$$hashKey":"064"},{"condition":":","field":"fulltext","data":""}]},"$$hashKey":"05Z"}]}}';
 
     function htmlEntities(str) {
         return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     function computed(group) {
-        // $log.debug(group);
         if (!group || group.rules.length == 0) return "";
-        for (var str = "(", i = 0; i < group.rules.length; i++) {
-            i > 0 && (str += " " + group.operator + " ");
-
-            if(group.rules[i].group) {
-                str += computed(group.rules[i].group)
-            } else {
-                if(group.rules[i].condition=='-') {
-                    str += '-' + group.rules[i].field + ':' + '('+group.rules[i].data+')';
-                }else {
-                    str += group.rules[i].field + "" + htmlEntities(group.rules[i].condition) + "" + '('+group.rules[i].data+')';
+        
+        // if(!group.root) {
+        //     var hasdata = true;
+        //     for (var i=0;i < group.rules.length; i++) {
+        //         if (group.rules[i].data!='') {
+        //             hasdata = false;
+        //         }
+        //     }
+        //     if (!hasdata) return "";
+        // }
+        
+        for (var str = "", i = 0; i < group.rules.length; i++) {
+            if(group.rules[i].data!='' && group.rules[i]!==undefined){
+                i > 0 && (str += " " + group.operator + " ");
+                if(group.rules[i].group) {
+                    str += computed(group.rules[i].group)
+                } else {
+                    if(group.rules[i].condition=='-') {
+                        if(group.rules[i].data.indexOf(' ') > -1) {
+                            str += '-' + group.rules[i].field + ':' + '('+group.rules[i].data+')';
+                        } else {
+                            str += '-' + group.rules[i].field + ':' + group.rules[i].data;
+                        }
+                    }else {
+                        if(group.rules[i].data.indexOf(' ')> -1) {
+                            str += group.rules[i].field + "" + htmlEntities(group.rules[i].condition) + "" + '('+group.rules[i].data+')';
+                        } else {
+                            str += group.rules[i].field + "" + htmlEntities(group.rules[i].condition) + "" + group.rules[i].data;
+                        }
+                    }
                 }
-                
             }
         }
 
-        return str + ")";
+        return str + "";
     }
 
     $scope.json = null;
 
     $scope.filter = JSON.parse(data);
-    $scope.advanced_mode = false;
 
     $scope.$on('query', function(e, data){
         $scope.filter = $scope.parse(data);
@@ -41,7 +58,6 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
     });
 
     $scope.$on('clearSearch', function(e){
-        var data = '{"group": {"operator": "AND","rules": []}}';
         $scope.filter = JSON.parse(data);
     });
 
@@ -66,9 +82,11 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
         $scope.json = JSON.stringify(newValue, null, 0);
         $scope.output = computed(newValue.group);
         // $log.debug($scope.json, $scope.output);
-        if ($scope.output!='()' && $scope.output!=''){
+        if ($scope.output!='()' && $scope.output!="" && $scope.output!='(())'){
             $scope.$emit('changePreFilter', {type:'cq', value:LZString.compressToEncodedURIComponent($scope.json),execute:false});
             $scope.$emit('changePreQuery', $scope.output);
+        } else {
+            $scope.$emit('changePreQuery', '');
         }
     }, true);
 
@@ -92,7 +110,7 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
                 ];
 
                 scope.fields = [
-                    { name: 'fulltext', display: 'All'},
+                    { name: 'fulltext', display: 'All Fields'},
                     { name: 'title_search', display: 'Title'},
                     { name: 'identifier_value_search', display: 'Identifier'},
                     { name: 'related_party_one_search', display: 'Related People'},
@@ -121,7 +139,9 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
                     scope.group.rules.push({
                         group: {
                             operator: 'AND',
-                            rules: []
+                            rules: [
+                                {condition:":", field:'fulltext', data:''}
+                            ]
                         }
                     });
                 };
@@ -139,3 +159,14 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
         }
     }
 }]);
+queryBuilder.filter('getDisplayFor', function($log){
+    return function(value, filter) {
+        var ret = '';
+        angular.forEach(filter, function(f){
+            if(f.name==value) {
+                ret = f.display;
+            }
+        });
+        return ret;
+    }
+});
