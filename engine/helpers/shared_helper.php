@@ -96,11 +96,11 @@ function format_relationship($from_class, $relationship_type, $origin=false,$to_
 	//$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
 
 	if($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER'){//reverse
-		return (isset($typeArray[$to_class][$relationship_type]) ? $typeArray[$to_class][$relationship_type][1] : sentenceCase($relationship_type));
+		return (isset($typeArray[$to_class][$relationship_type]) ? $typeArray[$to_class][$relationship_type][1] : from_camel_case($relationship_type));
 	}
 	else 
 	{
-		return (isset($typeArray[$from_class][$relationship_type]) ? $typeArray[$from_class][$relationship_type][0] : sentenceCase($relationship_type));
+		return (isset($typeArray[$from_class][$relationship_type]) ? $typeArray[$from_class][$relationship_type][0] : from_camel_case($relationship_type));
 	}
 }
 
@@ -111,6 +111,8 @@ function from_camel_case($str) {
     	$func = create_function('$c', 'return " " . strtolower($c[1]);');
     	$newStr = preg_replace_callback('/([A-Z])/', $func, $str);
     	return ucfirst($newStr);
-	}
+	}elseif(is_string($str)){
+        return sentenceCase($str);
+    }
 	else return '';
   }
