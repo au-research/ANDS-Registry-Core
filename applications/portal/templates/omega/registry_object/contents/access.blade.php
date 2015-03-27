@@ -1,9 +1,9 @@
 <?php
 if($ro->core['class']=='service'){
-    $buttonStr = 'Service';
+    $buttonStr = 'Service Provider';
     $textStr = 'service';
 }else{
-    $buttonStr = 'Data';
+    $buttonStr = 'Data Provider';
     $textStr = 'data';
 }
 
@@ -19,7 +19,7 @@ if($ro->core['class']=='service'){
     @endif
 
     @if($ro->directaccess[0]['access_type']!='url')
-        <a href="" class="btn btn-lg btn-primary btn-block" id="gotodata"><i class="fa fa-cube"></i> Go to Data</a>
+        <a href="" class="btn btn-lg btn-primary btn-block" id="gotodata"><i class="fa fa-cube"></i> Go to Data Providers</a>
         <div id="dataformats">
         @foreach($ro->directaccess as $access)
             <?php
