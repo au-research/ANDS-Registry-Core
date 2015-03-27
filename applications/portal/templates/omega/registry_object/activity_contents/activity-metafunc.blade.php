@@ -33,15 +33,16 @@ if ($ro->rights) {
         <div class="center-block" style="text-align:center">
             <div ng-if="ro.stat">
                 <a href="#" style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</a>
-                <a href="#" style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</a>
+               <!-- <a href="#" style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</a> -->
             </div>
         </div>
         
     	<div class="btn-group btn-group-justified element element-short-bottom element-short-top" role="group" aria-label="...">
             <!--<a class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Cite</a>
             <a class="btn btn-sm btn-default"><i class="fa fa-cloud-download"></i> Export</a> -->
-            <a class="btn btn-sm btn-default" ng-click="bookmark()"><i class="fa fa-bookmark-o"></i> Bookmark</a>
-            <a class="btn btn-sm btn-default"><i class="fa fa-print"></i> Print</a>
+            <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="ro.bookmarked"><i class="fa fa-bookmark"></i> Saved to MyRDA</a>
+            <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="!ro.bookmarked"><i class="fa fa-bookmark-o"></i> Save to MyRDA</a>
+           <!-- <a class="btn btn-sm btn-default"><i class="fa fa-print"></i> Print</a> -->
         </div>
         <div>
             @if($ar || $cc || $detail)

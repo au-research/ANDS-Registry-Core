@@ -4,7 +4,8 @@
     <body>
         @include('includes/top-menu')
         <div id="content" ng-controller="searchCtrl">
-        	<article>
+        	<article ng-controller="viewController">
+
                 @include('includes/hidden-metadata')
         		@include('includes/search-section')
                 <section class="section swatch-gray" style="z-index:1">
