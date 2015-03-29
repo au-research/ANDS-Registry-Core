@@ -97,6 +97,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.prefilters['q'] = data;
 	});
 
+	$scope.setSearchType = function(value) {
+		$scope.search_type = value;
+	}
+
 	$scope.$watch('search_type', function(newv,oldv){
 		if (newv) {
 			delete $scope.filters['q'];

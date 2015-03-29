@@ -13,6 +13,24 @@ app.factory('search_factory', function($http, $log){
 			{value:100,label:'Show 100'}
 		],
 
+		search_types: [
+			{value:'q', label:'All Fields'},
+			{value:'title', label:'Title'},
+			{value:'description', label:'Description'},
+			{value:'identifier', label:'Identifier'},
+			{value:'related_people', label:'Related People'},
+			{value:'related_organisations', label:'Related Organisations'}
+		],
+
+		search_types_activities: [
+			{value:'q', label:'All Fields'},
+			{value:'title', label:'Title'},
+			{value:'description', label:'Description'},
+			{value:'identifier', label:'Identifier'},
+			{value:'institution', label:'Institution'},
+			{value:'researcher', label:'Researcher'}
+		],
+
 		available_search_type: [
 			'q', 'title', 'identifier', 'related_people', 'related_organisations', 'description'
 		],
@@ -97,12 +115,26 @@ app.factory('search_factory', function($http, $log){
 			if (this.filters.q) this.query = this.filters.q;
 			// $log.debug(this.available_search_type);
 			var that = this;
-			angular.forEach(this.available_search_type, function(x){
-				if (that.filters.hasOwnProperty(x)) {
-					that.query = that.filters[x];
-					that.search_type = x;
-				}
-			});
+
+			if(that.filters['class']!='activity') {
+				angular.forEach(this.search_types, function(x){
+					var term = x.value;
+					if (that.filters.hasOwnProperty(term)) {
+						that.query = that.filters[term];
+						that.search_type = term;
+					}
+				});
+			} else {
+				angular.forEach(this.search_types_activities, function(x){
+					var term = x.value;
+					if (that.filters.hasOwnProperty(term)) {
+						$log.debug('here');
+						that.query = that.filters[term];
+						that.search_type = term;
+					}
+				});
+			}
+		
 			return this.filters;
 		},
 

@@ -224,6 +224,10 @@ angular.module('record_components',['profile_components'])
     $scope.dismiss = function(){
         $modalInstance.dismiss();
     }
+
+    $scope.getCurrentURL = function() {
+        return encodeURIComponent(window.location.href);
+    }
 })
 
 ;

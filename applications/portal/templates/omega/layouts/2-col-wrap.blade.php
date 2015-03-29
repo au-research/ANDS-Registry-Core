@@ -63,8 +63,8 @@
                                         <div class="panel-tools">
                                             <div ng-if="ro.stat">
                                                 <span style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</span>
-                                                <span style="padding-right:4px;"><small>Cited: </small>[[ro.stat.cited]]</span>
-                                                <span style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</span>
+                                                <span style="padding-right:4px;" ng-if="ro.stat.cited > 0"><small>Cited: </small>[[ro.stat.cited]]</span>
+                                                <span style="padding-right:4px;" ng-if="ro.stat.accessed > 0"><small>Accessed: </small>[[ro.stat.accessed]]</span>
                                             </div>
                                         </div>
                                         <div class="panel-tools">

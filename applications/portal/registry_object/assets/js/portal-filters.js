@@ -22,7 +22,9 @@ angular.module('portal-filters', [])
 				case 'funding_scheme': return 'Funding Scheme'; break;
 				case 'funders': return 'Funders'; break;
 				case 'administering_institution': return 'Managing Institutions'; break;
+				case 'institution': return 'Institution'; break;
 				case 'activity_status': return 'Status'; break;
+				case 'researcher': return 'Researcher'; break;
 				case 'related_party_one_id': return 'Related Researcher'; break;
 				case 'scot': return 'Schools of Online Thesaurus'; break;
 				case 'pont': return 'Powerhouse Museum Object Name Thesaurus'; break;
