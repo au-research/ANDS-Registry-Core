@@ -110,7 +110,7 @@ class Registry_objectsMethod extends MethodHandler {
         if ($xml) {
             $this->xml = $xml;
             $rifDom = new DOMDocument();
-            $rifDom->loadXML( $this->ro->getRif());
+            $rifDom->loadXML($this->ro->getRif());
             $gXPath = new DOMXpath($rifDom);
             $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
             $this->gXPath = $gXPath;

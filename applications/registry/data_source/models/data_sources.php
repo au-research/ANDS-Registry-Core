@@ -115,6 +115,7 @@ class Data_sources extends CI_Model {
 	 */
 	function getOwnedDataSources($just_id = false, $just_core=false) {
 		$data_sources = array();
+        $this->user->refreshAffiliations($this->user->localIdentifier());
 		$affiliations = $this->user->affiliations();
 		if ((is_array($affiliations) && count($affiliations) > 0) || $this->user->hasFunction(AUTH_FUNCTION_SUPERUSER)) {
 			if ($this->user->hasFunction(AUTH_FUNCTION_SUPERUSER)) {

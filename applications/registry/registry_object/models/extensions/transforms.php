@@ -107,7 +107,7 @@ class Transforms_Extension extends ExtensionBase
             try{
 			$xslt_processor = Transforms::get_extrif_to_dci_transformer();
 			$dom = new DOMDocument();
-			$dom->loadXML($this->ro->getExtRif(), LIBXML_NOENT);
+			$dom->loadXML($this->ro->getRif(), LIBXML_NOENT);
 			$xslt_processor->setParameter('','dateHarvested', date("Y", $this->ro->created));
 			$xslt_processor->setParameter('','dateRequested', date("Y-m-d"));
 			$xml_output = $xslt_processor->transformToXML($dom);
@@ -147,7 +147,7 @@ class Transforms_Extension extends ExtensionBase
 
 
             }
-            $eAuthorList = $sxml->xpath('//AuthorList');
+            $eAuthorList = $sxml->xpath('//AuthorList')[0];
             if(sizeof($sxml->xpath('//AuthorList/Author')) == 0){
                 $relationshipTypeArray = array('hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
                 $classArray = array('party');
@@ -215,18 +215,21 @@ class Transforms_Extension extends ExtensionBase
                                             $doiVal = $this->substringAfter((string)$researcher_id, 'doi.org/');
                                             $author = $eAuthor->addChild('AuthorID', $doiVal); // uses the first father tag
                                             $author['type']= $researcher_id['type'];
+                                            $idArray[] = $doiVal;
                                         }
                                         else if(strtoupper($researcher_id['type']) == 'AU-ANL:PEAU')
                                         {
                                             $doiVal = $this->substringAfter((string)$researcher_id, 'nla.gov.au/');
                                             $author = $eAuthor->addChild('AuthorID', $doiVal); // uses the first father tag
                                             $author['type']= $researcher_id['type'];
+                                            $idArray[] = $doiVal;
                                         }
                                         else if(strpos('nla.gov.au/', (string)$researcher_id) !== false)
                                         {
                                             $doiVal = $this->substringAfter((string)$researcher_id, 'nla.gov.au/');
                                             $author = $eAuthor->addChild('AuthorID', $doiVal); // uses the first father tag
                                             $author['type']= $researcher_id['type'];
+                                            $idArray[] = $doiVal;
                                         }
                                         else
                                         {
@@ -234,7 +237,7 @@ class Transforms_Extension extends ExtensionBase
                                             $author['type']= $researcher_id['type'];
                                         }
                                         $idArray[] = (string)$researcher_id;
-                                        $idArray[] = $doiVal;
+
 
                                     }
                                 }

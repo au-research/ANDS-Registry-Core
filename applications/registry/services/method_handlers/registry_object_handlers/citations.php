@@ -14,8 +14,8 @@ class Citations extends ROHandler {
 
         if ($this->xml) {
 
-            $coins_ro = $this->ro;
-            $coins = $this->getCoinsSpan($coins_ro);
+
+            $coins = $this->getCoinsSpan();
 
 
             foreach($this->xml->{$this->ro->class}->citationInfo as $citation){
@@ -104,7 +104,7 @@ class Citations extends ROHandler {
         return $result;
 	}
 
-    public function getEndnoteText($ro)
+    public function getEndnoteText()
     {
         $endNote = 'Provider: Australian National Data Service
 Database: Research Data Australia
@@ -120,13 +120,13 @@ Y2  - '.date("Y-m-d")."
 ";
         }
 
-        $publicationDate = $this->getPublicationDate($ro);
+        $publicationDate = $this->getPublicationDate();
         if($publicationDate!='') {
             $endNote .= "PY  - ".$publicationDate."
 ";
         }
 
-        $contributors = $this->getContributors($ro);
+        $contributors = $this->getContributors();
         if($contributors!=''){
             foreach($contributors as $contributor){
                 $endNote .= "AU  - ".$contributor['name']."
@@ -138,13 +138,13 @@ Y2  - '.date("Y-m-d")."
 ";
         }
 
-        $funders = $this->getFunders($ro);
+        $funders = $this->getFunders();
         foreach($funders as $funder){
             $endNote .= "A4  - ".$funder."
 ";
         }
 
-        $endNote .= "TI  - ".$ro->title."
+        $endNote .= "TI  - ".$this->ro->title."
 ";
 
         $sourceUrl = $this->getSourceUrl($output='endNote');
@@ -173,7 +173,7 @@ Y2  - '.date("Y-m-d")."
 
         $endNote .="LA  - English
 ";
-        $rights = $ro->processLicence();
+        $rights = $this->ro->processLicence();
         foreach($rights as $right) {
             if($right['value']!='') $endNote .="C5  - ".$right['value']."
 ";
@@ -197,7 +197,7 @@ Y2  - '.date("Y-m-d")."
 ";
         }
 
-        $dates = $this->getDates($ro);
+        $dates = $this->getDates();
         foreach($dates as $date) {
             $endNote .="C1  - ".$date."
 ";
@@ -215,7 +215,7 @@ Y2  - '.date("Y-m-d")."
         return $endNote;
     }
 
-    private function getCoinsSpan($coins_ro)
+    private function getCoinsSpan()
     {
         $coins = '';
 
@@ -228,14 +228,14 @@ Y2  - '.date("Y-m-d")."
             $rft_description .= $description;
         }
         $rft_creators = '';
-        $creators= $this->getContributors($coins_ro);
+        $creators= $this->getContributors();
         foreach($creators as $creator){
             $rft_creators .= '&rft.creator='.$creator['name'];
         }
 
-        $rft_date = $this->getPublicationdate($coins_ro);
+        $rft_date = $this->getPublicationdate();
 
-        $rights  = $coins_ro->processLicence();
+        $rights  = $this->ro->processLicence();
 
         $rft_rights = '';
         foreach($rights as $right){
@@ -267,7 +267,7 @@ Y2  - '.date("Y-m-d")."
         $rft_place = $this->getPlace();
         $coins .=  '<span class="Z3988" title="ctx_ver=Z39.88-2004&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc&rfr_id=info%3Asid%2FANDS';
         if($rft_id) $coins .= '&rft_id='.$rft_id;
-        $coins .= '&rft.title='.$coins_ro->title;
+        $coins .= '&rft.title='.$this->ro->title;
         if($rft_identifier) $coins .= '&rft.identifier='.$rft_identifier;
         if($rft_publisher) $coins .= '&rft.publisher='.$rft_publisher;
         $coins .= '&rft.description='.$rft_description.$rft_creators;
@@ -292,11 +292,11 @@ Y2  - '.date("Y-m-d")."
             $query = "//ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']";
         }
         elseif($this->gXPath->evaluate("count(//ro:identifier[@type='doi'])")>0) {
-            $query = "//ro:identifier/[@type='doi']";
+            $query = "//ro:identifier[@type='doi']";
         }
 
         if($query!=''){
-            $dois = $this->gXPath->query($query);
+            $dois = $this->gXPath->evaluate($query);
             foreach($dois as $doivalue) {
                 $doi = $doivalue->nodeValue;
             }
@@ -327,7 +327,7 @@ Y2  - '.date("Y-m-d")."
         return $identifier;
 
     }
-    function getPublicationDate($ro)
+    function getPublicationDate()
     {
         $publicationDate = '';
         $query = '';
@@ -362,7 +362,7 @@ Y2  - '.date("Y-m-d")."
                 $publicationDate = date("Y",strtotime($date->nodeValue));
             }
         }else{
-            $publicationDate = date("Y",$ro->created);
+            $publicationDate = date("Y",$this->ro->created);
         }
 
         return  $publicationDate;
@@ -490,16 +490,13 @@ Y2  - '.date("Y-m-d")."
         return $version;
     }
 
-    function getContributors($ro)
+    function getContributors()
     {
 
         $contributors = Array();
-        $xml = $ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
-        if(isset($xml->{$ro->class}->citationInfo->citationMetadata->contributor)){
-           foreach($xml->{$ro->class}->citationInfo->citationMetadata->contributor as $contributor){
+        if(isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor)){
+            echo "hello 1";
+           foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor){
                  $nameParts = Array();
                  foreach($contributor->namePart as $namePart){
                         $nameParts[] = array(
@@ -516,9 +513,10 @@ Y2  - '.date("Y-m-d")."
         }
 
        if(!$contributors){
-            $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector'];
-            $classArray = ['party'];
-            $authors = $ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
+           echo "hello 2";
+            $relationshipTypeArray = array('hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
+            $classArray = array('party');
+            $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
             if(count($authors)>0)
             {
                 foreach($authors as $author)
@@ -544,24 +542,17 @@ Y2  - '.date("Y-m-d")."
         return $contributors;
     }
 
-    function getFunders($ro)
+    function getFunders()
     {
-
         $CI =& get_instance();
         $CI->load->model('registry_object/registry_objects', 'mro');
-        $xml = $ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
         $funders = Array();
 
-        foreach($xml->{$ro->class}->relatedObject as $partyFunder){
+        foreach($this->xml->{$this->ro->class}->relatedObject as $partyFunder){
             if($partyFunder->relation['type']=='isOutputOf'){
                 $key = $partyFunder->key;
 
                 $grant_objects = $CI->mro->getAllByKey($key);
-
-
                 foreach ($grant_objects as $grant_object)
                 {
                     $grant_sxml = $grant_object->getSimpleXML(NULL, true);
@@ -586,9 +577,8 @@ Y2  - '.date("Y-m-d")."
     function getKeywords(){
 
         $keywords = Array();
-
         if($this->index && isset($this->index['subject_value_resolved'])) {
-            foreach($this->index['subject_value_unresolved'] as $key=>$sub) {
+            foreach($this->index['subject_value_resolved'] as $key=>$sub) {
                 $keywords[] = titleCase($this->index['subject_value_resolved'][$key]);
             }
         }
@@ -616,14 +606,10 @@ Y2  - '.date("Y-m-d")."
         return $notes;
     }
 
-    function getDates($ro){
-        $xml = $ro->getSimpleXML();
-        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-        $xml = simplexml_load_string($xml);
-        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+    function getDates(){
         $dates = Array();
-        if(isset($xml->{$ro->class}->coverage->temporal->date)){
-            foreach($xml->{$ro->class}->coverage->temporal->date as $date){
+        if(isset($this->xml->{$this->ro->class}->coverage->temporal->date)){
+            foreach($this->xml->{$this->ro->class}->coverage->temporal->date as $date){
                 $type = '';
                 $type = (string)$date['type'];
                 if($type=='dateFrom') $type = 'From';

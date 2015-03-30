@@ -521,7 +521,7 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-    function getRelatedObjectsByClassAndRelationshipType($classArray = array(), $relationshipTypeArray = array())
+    function getRelatedObjectsByClassAndRelationshipType($classArray = array(), $relationshipTypeArray = array(), $forDCI = false)
     {
         $unordered_connections = array();
 
@@ -554,8 +554,58 @@ class Connections_Extension extends ExtensionBase
             if((sizeof($classArray) == 0 || in_array($connection['class'], $classArray))
                 && (sizeof($relationshipTypeArray) == 0 || in_array($connection['relation_type'], $relationshipTypeArray)))
             {
-                $connections[] = $connection;
+                if($forDCI)
+                {
+                    $this->db->select('identifier, identifier_type')
+                        ->from('registry_object_identifiers')
+                        ->where('registry_object_id',$connection['registry_object_id']);
 
+                    $query = $this->db->get();
+                    foreach($query->result_array() AS $row)
+                    {
+                        $connection['identifiers'][] = array($row['identifier'], $row['identifier_type']);
+                    }
+                    $this->db->select('data')
+                        ->from('record_data')
+                        ->where('registry_object_id',$connection['registry_object_id'])
+                        ->where('scheme','rif')
+                        ->where('current',true)
+                        ->limit(1);
+                    $query = $this->db->get();
+
+                    foreach ($query->result_array() AS $row)
+                    {
+                        $_sxml = simplexml_load_string($row['data']);
+                        $_sxml->registerXPathNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
+                        $physical_addresses = $_sxml->xpath('//ro:location/ro:address/ro:physical');
+                        $address_string = "";
+                        if (is_array($physical_addresses))
+                        {
+                            foreach($physical_addresses AS $_addr)
+                            {
+                               $address_string .= (string) $_addr->addressPart. " ";
+                            }
+                        }
+                        if ($address_string)
+                        {
+                            $connection['addresses'][] = $address_string;
+                        }
+                        $electronic_addresses = $_sxml->xpath('//ro:location/ro:address/ro:electronic');
+                        $address_string = "";
+                        if (is_array($electronic_addresses))
+                        {
+                            foreach($electronic_addresses AS $_addr)
+                            {
+                                $address_string .= (string) $_addr->value. " ";
+                            }
+                        }
+                        if ($address_string)
+                        {
+                            $connection['addresses'][] = $address_string;
+                        }
+                    }
+                }
+                $connections[] = $connection;
             }
         }
         return $connections;

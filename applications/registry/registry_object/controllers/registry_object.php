@@ -1137,7 +1137,10 @@ class Registry_object extends MX_Controller {
         }
         foreach($registry_objects as $id){
             $cite_ro = $CI->rom->getByID($id);
-            if($cite_ro) $citations .= ro_handle('citations',$cite_ro);
+            if($cite_ro)
+            {
+                $citations .= ro_handle('citations',$registry_object_id, $cite_ro);
+            }
         }
         header('Content-type: application/x-research-info-systems');
         print($citations);
@@ -1146,27 +1149,37 @@ class Registry_object extends MX_Controller {
 
 }
 
-function ro_handle($handler,$cite_ro) {
+function ro_handle($handler, $registry_object_id, $cite_ro) {
 
     require_once(REGISTRY_APP_PATH . '/services/method_handlers/registry_object_handlers/'.$handler.'.php');
 
     $xml = $cite_ro->getSimpleXML();
     $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
     $xml = simplexml_load_string($xml);
-    $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+    $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()));
     if ($xml) {
         $rifDom = new DOMDocument();
         $rifDom->loadXML( $cite_ro->getRif());
         $gXPath = new DOMXpath($rifDom);
         $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
     }
+    $ci =& get_instance();
+    $ci->load->library('solr');
+    $ci->solr->clearOpt('fq');
+    $ci->solr->setOpt('fq', '+id:'.$registry_object_id);
+    $result = $ci->solr->executeSearch(true);
+    if(sizeof($result['response']['docs']) == 1) {
+        $index = $result['response']['docs'][0];
+    }
+
     $resource = array(
-        'index' => '',
+        'index' => $index,
         'xml' => $xml,
         'gXPath' => $gXPath,
-        'params' => 'citations',
+        'ro'=> $cite_ro,
+        'params' => '',
         'default_params' => ''
     );
     $citation_handler = new $handler($resource);
-    return $citation_handler->getEndnoteText($cite_ro);
+    return $citation_handler->getEndnoteText();
 }

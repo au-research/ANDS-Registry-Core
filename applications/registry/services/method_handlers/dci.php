@@ -5,11 +5,18 @@ class DCIMethod extends MethodHandler
 {
 	private $default_params = array(
 		'q' => '*:* +class:("collection")',
-		'fl' => 'id',
+        'fl' => 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved,list_description,earliest_year,laest_year',
         'wt' => 'json',
         'rows' => 200
     );
-	
+
+    private $valid_methods = array(
+        'core', 'dci'
+    );
+
+    public $ro = null;
+    public $index = null;
+    public $xml = null;
 	//var $params, $options, $formatter; 
    function handle()
    {
@@ -32,7 +39,7 @@ class DCIMethod extends MethodHandler
 
 		foreach($fields AS $key => $field)
 		{
-			$CI->solr->setOpt($key, $field);
+            $CI->solr->setOpt($key, $field);
 		}
 		
 		// Only pull back collections!
@@ -40,7 +47,7 @@ class DCIMethod extends MethodHandler
 
 		// Get back a list of IDs for matching registry objects
 		$result = $CI->solr->executeSearch(true);
-	
+
 		$rifcsOutput = array();
 		if (isset($result['response']['docs']) && is_array($result['response']['docs']))
 		{
@@ -48,22 +55,71 @@ class DCIMethod extends MethodHandler
 			{
 				$CI->load->model('registry_object/registry_objects','ro');
                 $CI->load->model('data_source/data_sources','ds');
-				$registryObject = $CI->ro->getByID($result['id']);
-                $ds = $CI->ds->getByID($registryObject->data_source_id);
+                $this->ro = new _registry_object($result['id']);
+                $this->populate_resource($result['id']);
+
+                $ds = $CI->ds->getByID($this->ro->data_source_id);
+
                 $exportable = false;
                 if($ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
                     $exportable = true;
-				if ($registryObject && $registryObject->class == 'collection' && $exportable)
+
+				if ($this->ro && $this->ro->class == 'collection' && $exportable)
 				{
-					$rifcsOutput[] .= $registryObject->transformToDCI(false);
+                    $rifcsOutput[] = $this->ro_handle('dci');
 				}
                 else{
                     $rifcsOutput[] = "not exportable";
                 }
 			}
 		}
-
 		// Bubble back the output status
 		return $this->formatter->display($rifcsOutput);
    }
+
+    private function populate_resource($id) {
+
+        //local SOLR index for fast searching
+        $ci =& get_instance();
+        $ci->load->library('solr');
+        $ci->solr->clearOpt('fq');
+        $ci->solr->setOpt('fq', '+id:'.$id);
+        $result = $ci->solr->executeSearch(true);
+        if(sizeof($result['response']['docs']) == 1) {
+            $this->index = $result['response']['docs'][0];
+        }
+
+        //local XML resource
+        $xml = $this->ro->getSimpleXML();
+        $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+        $xml = simplexml_load_string($xml);
+        $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
+        if ($xml) {
+            $this->xml = $xml;
+            $rifDom = new DOMDocument();
+            $rifDom->loadXML($this->ro->getRif());
+            $gXPath = new DOMXpath($rifDom);
+            $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
+            $this->gXPath = $gXPath;
+        }
+    }
+
+
+    private function ro_handle($handler) {
+        require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/'.$handler.'.php');
+        $handler = new $handler($this->get_resource());
+        return $handler->handle();
+    }
+
+    function get_resource() {
+        return array(
+            'index' => $this->index, //escape &
+            'xml' => $this->xml,
+            'gXPath' => $this->gXPath,
+            'ro' => $this->ro,
+            'params' => $this->params,
+            'default_params' => $this->default_params
+        );
+    }
+
 }
