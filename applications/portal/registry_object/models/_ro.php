@@ -115,6 +115,10 @@ class _ro {
 	/**
 	 * Returns the stats of this registry object via the DB
 	 * Creates an empty one in case there's no stat
+     * NB See also the _update_citation_counts_in_portal_database method
+     * of etc/misc/python/citation_services/services/TRDCI.py
+     * for the one other place in the code where rows are added
+     * to the record_stats table.
 	 * @return array
 	 */
 	public function stat(){
