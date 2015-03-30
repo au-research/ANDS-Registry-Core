@@ -1053,7 +1053,7 @@ class Registry_object extends MX_Controller {
 				// Reverse the relationship description (note: this reverses to the "readable" version (i.e. not camelcase))
 				if ($link['registry_object_id'] && in_array($link['origin'], array('REVERSE_EXT','REVERSE_INT')))
 				{
-					$link['relation_type'] = format_relationship($link['class'], $link['relation_type'], $link['origin']);
+					$link['relation_type'] = format_relationship($link['class'], $link['relation_type'], $link['origin'], $ro->class);
 				}
 				if($link['status']) $link['readable_status'] = readable($link['status']);
 			}

@@ -7,7 +7,8 @@
  * @param  [type] $reverse           [description]
  * @return [type]                    [description]
  */
-function format_relationship($from_class, $relationship_type, $origin=false,$to_class){
+function format_relationship($from_class, $relationship_type, $origin=false, $to_class='collection'){
+    // default $to_class to collection in case ro not there!!
   //  return $origin;
 	$typeArray['collection'] = array(
 		"describes" => array("Describes", "Described by"),

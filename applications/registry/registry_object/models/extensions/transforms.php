@@ -169,7 +169,7 @@ class Transforms_Extension extends ExtensionBase
                                 $eAuthor['seq'] = $seq++;
 
                                 // Change the value of the relation to be human-readable
-                                $eAuthor["AuthorRole"] =  format_relationship("collection",(string)$author["relation_type"]);
+                                $eAuthor["AuthorRole"] =  "dude";//format_relationship("collection",(string)$author["relation_type"],(string)$author['origin'], 'party');
                                 // Do we have an address? (using the normalisation_helper.php)
                                 $authorNames = $researcher_sxml->xpath('//extRif:displayTitle');
                                 foreach($authorNames as $authorName)

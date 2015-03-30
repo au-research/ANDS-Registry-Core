@@ -124,7 +124,8 @@ class DCI extends ROHandler {
         {
             $eAuthor = $authorList->addChild("Author");
             $eAuthor['seq'] = $seq++;
-            $eAuthor['AuthorRole'] = format_relationship("collection",(string)$author["relation_type"]);
+            //return format_relationship($class, $relationshipText, $altered,$to_class);
+            $eAuthor['AuthorRole'] = format_relationship("collection",(string)$author["relation_type"], (string)$author['origin'], 'party');
             $eAuthor->addChild('AuthorName', $author['title']);
             if(isset($author['identifiers']) && sizeof($author['identifiers'] > 0))
             {
