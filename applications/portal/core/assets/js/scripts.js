@@ -123,7 +123,7 @@ jQuery(document).ready(function( $ ) {
                 ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
             },
             hide: {
-                delay: 1000,
+                delay: 200,
                 fixed: true,
             },
             position: {
@@ -147,7 +147,7 @@ jQuery(document).ready(function( $ ) {
                     ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
                 },
                 hide: {
-                    delay: 1000,
+                    delay: 200,
                     fixed: true,
                 },
                 position: {
@@ -160,6 +160,12 @@ jQuery(document).ready(function( $ ) {
                 }
             }, event); // Pass through our original event to qTip
         };
+    }).on('click', '.login_btn', function(event){
+        event.preventDefault();
+        console.log(window.location.href);
+        var url = $(this).attr('href');
+        var redirect = window.location.href;
+        location.href = url+'?redirect='+encodeURIComponent(redirect);
     });
 
 

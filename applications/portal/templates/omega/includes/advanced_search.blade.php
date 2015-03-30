@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal advanced-search-modal fade" id="advanced_search" role="dialog" aria-labelledby="Advanced Search" aria-hidden="true" style="z-index:999999">
+<div class="modal advanced-search-modal fade" id="advanced_search" role="dialog" aria-labelledby="Advanced Search" aria-hidden="true" style="z-index:9999">
 	<div class="modal-dialog">
 		<div class="modal-content">
 
@@ -50,7 +50,8 @@
 								<ul class="list-unstyled" ng-if="facet.name!='subject'">
 									<li ng-repeat="item in facet.value | orderObjectBy:'name'">
 										<input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
-										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name | toTitleCase]] <small>[[item.value]]</small></a>    
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name!='group'">[[item.name | toTitleCase]] <small>[[item.value]]</small></a>    
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name=='group'">[[item.name]] <small>[[item.value]]</small></a>    
 									</li>
 								</ul>
 							</div>
@@ -136,35 +137,35 @@
 
 							<div ng-if="isAdvancedSearchActive('review')">
 								<div class="panel panel-primary" ng-cloak>
-										<div class="panel-heading">Current Search</div>
-										<!-- <div class="panel-body swatch-white">
-												[[filters]]
-										</div> -->
-										<div class="panel-body swatch-white">
-												<div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name)">
-												    <h4 ng-if="name!='q' || (name=='q' && !prefilters.cq)">[[name | filter_name]]</h4>
-												    <h4 ng-if="name=='q' && prefilters.cq">Advanced Search</h4>
-												    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
-												        <li ng-repeat="v in value track by $index"> 
-												            <a href="" ng-click="toggleFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
-												        </li>
-												    </ul>
-												    <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
-												        <li>
-												            <a href="" ng-click="toggleFilter(name, value, true)">
-												                <span ng-if="name!='related_party_one_id'">[[ value | truncate:30 ]]</span>
-												                <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
-												                <small><i class="fa fa-remove" tip="Remove Item"></i></small>
-												            </a>
-												        </li>
-												    </ul>
-												    <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="'anzsrc-for'"></div>
-												    <div resolve ng-if="name=='anzsrc-seo'" subjects="value" vocab="'anzsrc-seo'"></div>
-												</div>
-												<div class="panel-body swatch-white">
-													<a href="" class="btn btn-primary" ng-click="advancedSearch();"><i class="fa fa-search"></i> Search</a>
-												</div>
+									<div class="panel-heading">Current Search</div>
+									<!-- <div class="panel-body swatch-white">
+											[[filters]]
+									</div> -->
+									<div class="panel-body swatch-white">
+										<div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name)">
+										    <h4 ng-if="name!='q' || (name=='q' && !prefilters.cq)">[[name | filter_name]]</h4>
+										    <h4 ng-if="name=='q' && prefilters.cq">Advanced Search</h4>
+										    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
+										        <li ng-repeat="v in value track by $index"> 
+										            <a href="" ng-click="togglePreFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
+										        </li>
+										    </ul>
+										    <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
+										        <li>
+										            <a href="" ng-click="togglePreFilter(name, value, true)">
+										                <span ng-if="name!='related_party_one_id'">[[ value | truncate:30 ]]</span>
+										                <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
+										                <small><i class="fa fa-remove" tip="Remove Item"></i></small>
+										            </a>
+										        </li>
+										    </ul>
+										    <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="'anzsrc-for'" prefilter="true"></div>
+										    <div resolve ng-if="name=='anzsrc-seo'" subjects="value" vocab="'anzsrc-seo'" prefilter="true"></div>
 										</div>
+										<div class="panel-body swatch-white">
+											<a href="" class="btn btn-primary" ng-click="advancedSearch();"><i class="fa fa-search"></i> Search</a>
+										</div>
+									</div>
 								</div>
 								<hr>
 								<div class="well">

@@ -20,6 +20,8 @@ class Registry_objectsMethod extends MethodHandler {
     
     //var $params, $options, $formatter; 
     function handle($params=''){
+        $ci =& get_instance();
+
         $this->params = $params;
 
         //registry_objects/<id>/method1/method2
@@ -27,15 +29,42 @@ class Registry_objectsMethod extends MethodHandler {
         $method1 = isset($params[2]) ? $params[2]: 'get';
         $method2 = isset($params[3]) ? $params[3]: false;
 
+        $useCache = $ci->input->get('useCache') ? false : true;
+
         if($method1=='get' || strpos($method1, 'rda')!==false) $method1 = implode($this->valid_methods, '-');
 
-        $ci =& get_instance();
         // $ci->load->library('benchmark');
         $ci->benchmark->mark('code_start');
         $result = array();
+
         if ($id){
             $ci->load->model('registry_object/registry_objects', 'ro');
             $this->ro = new _registry_object($id);
+
+            //check in cache
+            $ci->load->driver('cache');
+            $cache_id = $id.'-'.$method1;
+            $updated = (int) $this->ro->getAttribute('updated');
+
+            if (($cache = $ci->cache->file->get($cache_id)) && $useCache) {
+                $result = json_decode($cache, true);
+
+                //check cache updated
+                $meta = $ci->cache->file->get_metadata($cache_id);
+
+                if ($updated < $meta['mtime']) {
+                    $ci->benchmark->mark('code_end');
+                    $benchmark = array(
+                        'elapsed' => $ci->benchmark->elapsed_time('code_start', 'code_end'),
+                        'cached' => $meta['mtime'],
+                        'updated' => $updated,
+                        'memory_usage' => $ci->benchmark->memory_usage()
+                    );
+                    return $this->formatter->display($result, $benchmark);
+                }
+            }
+
+            //fill the result with data
             $this->populate_resource($id);
             $method1s = explode('-', $method1);
             foreach($method1s as $m1){
@@ -62,6 +91,12 @@ class Registry_objectsMethod extends MethodHandler {
                     }
                 }
             }
+
+            //store result in cache
+            $cache_content = json_encode($result, true);
+            
+            $ci->cache->file->save($cache_id, $cache_content, 36000);
+
         } else {
             $result = $this->searcher($params);
         }

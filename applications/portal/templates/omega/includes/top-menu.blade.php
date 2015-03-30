@@ -28,7 +28,18 @@
                     </ul>
                 </li>
                 <li><a href="{{portal_url('page/about')}}">About</a></li>
-                <li><a href="{{portal_url('profile')}}">MyRDA</a></li>
+                @if(!$this->user->loggedIn())
+                    <li><a href="{{portal_url('profile/login')}}" class="login_btn">MyRDA Login</a></li>
+                @else
+                    <li><a href="{{portal_url('profile')}}">MyRDA</a></li>
+                @endif
+
+                <?php 
+                    $profile_image = profile_image();
+                ?>
+                @if($profile_image)
+                   <li><a href="{{portal_url('profile')}}"><img src="{{ $profile_image }}" alt="" class="profile_image_small"></a></li>
+                @endif
             </ul>
         </nav>
     </div>

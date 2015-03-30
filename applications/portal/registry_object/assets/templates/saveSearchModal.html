@@ -22,6 +22,6 @@
 		</p>
 	</div>
 	<div class="modal-body swatch-white" ng-if="!loggedin" ng-cloak>
-		<p>You are not logged in to MyRDA. Please <a href="[[base_url]]profile/login">Login to MyRDA</a> to save records</p>
+		<p>You are not logged in to MyRDA. Please <a href="[[base_url]]profile/login/?redirect=[[ getCurrentURL() ]]">Login to MyRDA</a> to save records</p>
 	</div>
 </div>

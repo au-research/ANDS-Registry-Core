@@ -29,7 +29,7 @@
 							<small ng-if="saveMessage">[[saveMessage]]</small>
 							<div class="pull-right">
 								<a href="[[base_url]]group/?preview=[[group.name]]" class="btn btn-link btn-sml" ng-if="group.status!='PUBLISHED'" target="_blank">Preview</a>
-								<span class="label label-default" ng-if="group.date_modified">Last Modified: [[group.date_modified]] ([[ group.modified_who ]])</span>
+								<span class="label label-default" ng-if="group.date_modified">Last Modified: [[group.date_modified]] (<span resolve-user roleid="group.modified_who"></span>)</span>
 								<span class="label label-info">[[group.status]]</span>
 							</div>
 						</div>

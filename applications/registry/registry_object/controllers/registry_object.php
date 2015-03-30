@@ -1139,7 +1139,7 @@ class Registry_object extends MX_Controller {
             $cite_ro = $CI->rom->getByID($id);
             if($cite_ro)
             {
-                $citations .= ro_handle('citations',$registry_object_id, $cite_ro);
+                $citations .= use_citation_handle($registry_object_id, $cite_ro);
             }
         }
         header('Content-type: application/x-research-info-systems');
@@ -1149,9 +1149,10 @@ class Registry_object extends MX_Controller {
 
 }
 
-function ro_handle($handler, $registry_object_id, $cite_ro) {
 
-    require_once(REGISTRY_APP_PATH . '/services/method_handlers/registry_object_handlers/'.$handler.'.php');
+function use_citation_handle($registry_object_id, $cite_ro) {
+
+    require_once(REGISTRY_APP_PATH . '/services/method_handlers/registry_object_handlers/citations.php');
 
     $xml = $cite_ro->getSimpleXML();
     $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
@@ -1163,11 +1164,14 @@ function ro_handle($handler, $registry_object_id, $cite_ro) {
         $gXPath = new DOMXpath($rifDom);
         $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
     }
+
     $ci =& get_instance();
     $ci->load->library('solr');
     $ci->solr->clearOpt('fq');
     $ci->solr->setOpt('fq', '+id:'.$registry_object_id);
+    $ci->solr->setOpt('fl', 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved');
     $result = $ci->solr->executeSearch(true);
+
     if(sizeof($result['response']['docs']) == 1) {
         $index = $result['response']['docs'][0];
     }
@@ -1180,6 +1184,7 @@ function ro_handle($handler, $registry_object_id, $cite_ro) {
         'params' => '',
         'default_params' => ''
     );
-    $citation_handler = new $handler($resource);
+    $citation_handler = new citations($resource);
     return $citation_handler->getEndnoteText();
+
 }

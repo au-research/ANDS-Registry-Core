@@ -23,8 +23,26 @@ class Portal_user extends CI_Model {
 		$this->authMethod = $this->user->authMethod();
 		$this->function = $this->user->functions();
 		$this->user_data = $this->getUserData($this->identifier);
+		// $this->oauth_data = $this->getOauthData($this->identifier);
+		$this->profile_image = profile_image();
 		unset($this->portal_db); //prevent portal_db Active Record Object from returning with the obj
+		unset($this->role_db); //prevent portal_db Active Record Object from returning with the obj
 		return $this;
+	}
+
+	public function getSpecificUser($identifier) {
+		$result = array();
+		$result['identifier'] = $identifier;
+		$this->roles_db = $this->load->database('roles', TRUE);
+		$r = $this->roles_db->get_where('roles', array('role_id'=>$identifier));
+
+		if($r->num_rows() > 0) {
+			$row = $r->first_row();
+			$result['name'] = $row->name;
+			return $row;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -45,6 +63,17 @@ class Portal_user extends CI_Model {
 			//create a new user data row for this user
 			$data = array('role_id'=>$role_id, 'user_data'=>'{}');
 			$this->portal_db->insert('user_data', $data);
+		}
+	}
+
+	public function getOauthData($role_id) {
+		$this->role_db = $this->load->database('roles', TRUE);
+		$result = $this->role_db->get_where('roles', array('role_id'=>$role_id));
+		if ($result->num_rows() > 0) {
+			$r = $result->first_row();
+			return json_decode($r->oauth_data, true);
+		} else {
+			return false;
 		}
 	}
 

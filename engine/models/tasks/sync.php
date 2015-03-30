@@ -28,6 +28,7 @@ class Sync extends Task {
 
 		$this->load->model('registry/registry_object/registry_objects', 'ro');
 		$this->load->model('registry/data_source/data_sources', 'ds');
+		$this->load->library('solr');
 	}
 
 	function run_task() {
@@ -47,9 +48,11 @@ class Sync extends Task {
 			}
 		} else if($this->target=='solr_query') {
 			if ($this->target_id) {
-				$this->sync_solr_query($this->target_id);
+				$this->analyze_solr_query($this->target_id, 'index');
 			}
-			
+		} else if($this->target=='index_ro') {
+			$list = explode(',', $this->target_id);
+			$this->index($list);
 		}
 	}
 
@@ -67,9 +70,10 @@ class Sync extends Task {
 			);
 			$this->task_mgr->add_task($task);
 		}
+		$this->log('[success][task:queued][size:'.$data['total'].']');
 	}
 
-	function sync_solr_query($query) {
+	function analyze_solr_query($query) {
 		$ci =& get_instance();
 		$ci->load->library('solr');
 		$ci->solr
@@ -79,7 +83,7 @@ class Sync extends Task {
 		$result = $this->solr->executeSearch(true);
 
 		$data['total'] = sizeof($result['response']['docs']);
-		$data['chunkSize'] = 200;
+		$data['chunkSize'] = $this->chunkSize;
 		$data['numChunk'] = ceil(($data['chunkSize'] < $data['total'] ? ($data['total'] / $data['chunkSize']) : 1));
 
 		$ids = array();
@@ -88,15 +92,15 @@ class Sync extends Task {
 		}
 
 		$chunks = array_chunk($ids, $data['chunkSize']);
-
 		$this->load->model('task_mgr');
 		foreach($chunks as $chunk) {
 			$task = array(
 				'name' => 'sync',
-				'params' => 'type=ro&id='.implode(',', $chunk)
+				'params' => 'type=index_ro&id='.implode(',', $chunk)
 			);
 			$this->task_mgr->add_task($task);
 		}
+		$this->log('[success][task:queued][size:'.$data['total'].']');
 	}
 
 	function sync_ds($ds_id) {
@@ -138,16 +142,45 @@ class Sync extends Task {
 			$ro = $this->ro->getByID($ro_id);
 			if($ro) {
 				// ulog('[syncing:'.$ro_id.']');
-				$ro->sync();
-				$this->log('[success][sync][ro_id:'.$ro_id.']');
+				$res = $ro->sync();
+				if($res===true) {
+					$this->log('[success][sync][ro_id:'.$ro_id.']');
+				} else {
+					$this->log('[error][error:sync][msg:'.$res.']');
+				}
 				// ulog('[success][sync][ro_id:'.$ro_id.']');
 				unset($ro);
 			} else {
+				//record is not found, proceed to delete the index
+				$this->solr->deleteByID($ro_id);
 				$this->log('[error][notfound][ro_id:'.$ro_id.']');
+				unset($ro);
 			}
 		} catch (Exception $e) {
 			$this->log('[error] '. $e->getMessage());
 		}
+	}
+
+	function index($list) {
+		$docs = array();
+		foreach($list as $ro_id) {
+			try {
+				$ro = $this->ro->getByID($ro_id);
+				if($ro) {
+					$docs[] = $ro->lite_indexable_json();
+				} else {
+					$this->solr->deleteByID($ro_id);
+					$this->log('[error][notfound][ro_id:'.$ro_id.']');
+				}
+				unset($ro);
+			} catch (Exception $e) {
+				$this->log('[error] '. $e->getMessage());
+			}
+		}
+		$r = $this->solr->add_json(json_encode($docs));
+		$this->log('[success][add_solr_msg:'.$r.']');
+		$r = $this->solr->commit();
+		$this->log('[success][commit_solr_msg:'.$r.'][task:index_ro][ro_id:'.implode(',', $list).']');
 	}
 
 

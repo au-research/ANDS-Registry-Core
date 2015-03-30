@@ -10,7 +10,6 @@ class Relationships_Extension extends ExtensionBase
 
 	function addRelationships()
 	{
-
 		$this->_CI->load->model('registry/data_source/data_sources', 'ds');
 		$this->_CI->load->model('registry/registry_object/registry_objects', 'ro');
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);

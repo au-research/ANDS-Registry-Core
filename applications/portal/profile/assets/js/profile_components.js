@@ -25,6 +25,12 @@ angular.module('profile_components',[])
 			});
 			return promise;
 		},
+		get_specific_user: function(roleid) {
+			var promise = $http.get(base_url+'profile/get_specific_user/?identifier='+roleid).then(function(response){
+				return response.data;
+			});
+			return promise;
+		},
 		get_user_folders: function(user) {
 			folders = {};
 			folders['all'] = 0;

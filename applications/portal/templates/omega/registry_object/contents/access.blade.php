@@ -1,9 +1,9 @@
 <?php
 if($ro->core['class']=='service'){
-    $buttonStr = 'Service';
+    $buttonStr = 'Service Provider';
     $textStr = 'service';
 }else{
-    $buttonStr = 'Data';
+    $buttonStr = 'Data Provider';
     $textStr = 'data';
 }
 
@@ -19,14 +19,16 @@ if($ro->core['class']=='service'){
     @endif
 
     @if($ro->directaccess[0]['access_type']!='url')
-        <a href="" class="btn btn-lg btn-primary btn-block" id="gotodata"><i class="fa fa-cube"></i> Go to Data</a>
+        <a href="" class="btn btn-lg btn-primary btn-block" id="gotodata"><i class="fa fa-cube"></i> Go to Data Providers</a>
         <div id="dataformats">
         @foreach($ro->directaccess as $access)
             <?php
-            if($access['byteSize']!=''){
-                $access['title'] = $access['title'].'  ('.$access['byteSize'].')' ;
-            }
             $title = $access['title'];
+
+            if($access['byteSize']!=''){
+                $title = $access['title'].'  ('.$access['byteSize'].')' ;
+            }
+
             if(strlen($title)>35){
                 $title = substr($title,0,35)."...";
             }
@@ -43,14 +45,19 @@ if($ro->core['class']=='service'){
                 $preText='Access data online via tools </br >';
             }
 
+            $tip = ' tip="'.$access['title']."<br />";
+            if($access['notes']!='') $tip .= $access['notes']."<br />";
+            if($access['mediaType']!='') $tip .= $access['mediaType']."<br />";
+            if($access['byteSize']!='') $tip .= $access['byteSize'];
+            $tip .='"';
             ?>
 
             @if(isset($access['access_value']['href']))
-            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{trim($access['access_value']['href'])}}" ng-click="$event.preventDefault();access($event)" title="{{$access['notes']}}" <?=$itemprop?>>
+            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{trim($access['access_value']['href'])}}" ng-click="$event.preventDefault();access($event)" {{$tip}} title="{{$access['notes']}}" <?=$itemprop?>>
             <span>{{$access['mediaType']}}</span>
             <?=$preText;?><?=$title?></a>
             @elseif(isset($access['access_value']))
-            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{trim($access['access_value'])}}" ng-click="$event.preventDefault();access($event)" title="{{$access['notes']}}" <?=$itemprop?>>
+            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{trim($access['access_value'])}}" ng-click="$event.preventDefault();access($event)" {{$tip}} title="{{$access['notes']}}" <?=$itemprop?>>
                 <span>{{$access['mediaType']}}</span>
                 <?=$preText;?><?=$title?></a>
             @endif

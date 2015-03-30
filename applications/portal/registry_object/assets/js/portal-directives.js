@@ -38,17 +38,17 @@ app.directive('facetSearch', function($http, $log){
 
 app.directive('resolve', function($http, $log, vocab_factory){
 	return {
-		template: '<ul class="listy no-bottom"><li ng-repeat="item in result"><a href="" ng-click="toggleFilter(\'anzsrc-for\', item.notation, true)">{{item.label | toTitleCase | truncate:30}} <small><i class="fa fa-remove" tip="Remove Item"></i></small></a></li></ul>',
+		template: '<ul class="listy no-bottom"><li ng-repeat="item in result"><a href="" ng-click="toggleFilter(vocab, item.notation, true)">{{item.label | toTitleCase | truncate:30}} <small><i class="fa fa-remove" tip="Remove Item"></i></small></a></li></ul>',
 		scope: {
 			subjects: '=subjects',
-			vocab: '='
+			vocab: '=',
+			prefilter:'@'
 		},
 		transclude: true,
 		link: function(scope) {
 			scope.result = [];
 			scope.$watch('subjects', function(newv){
 				if(newv) {
-					
 					scope.result = [];
 					vocab_factory.resolveSubjects(scope.vocab, scope.subjects).then(function(data){
 						// $log.debug(data);
@@ -61,7 +61,11 @@ app.directive('resolve', function($http, $log, vocab_factory){
 			});
 
 			scope.toggleFilter = function(type, value, execute) {
-				scope.$emit('toggleFilter', {type:type,value:value,execute:execute});
+				if(!scope.prefilter) {
+					scope.$emit('toggleFilter', {type:type,value:value,execute:execute});
+				} else {
+					scope.$emit('togglePreFilter', {type:type,value:value,execute:execute});
+				}
 			}
 		}
 	}
@@ -84,6 +88,8 @@ app.directive('resolveRo', function($log, $http, record_factory) {
 		}
 	}
 });
+
+
 
 app.directive('classicon', function($log) {
 	return {

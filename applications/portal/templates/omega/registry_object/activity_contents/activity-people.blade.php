@@ -18,7 +18,7 @@
         @foreach($people as $col)
             <?php
                 $peoplecount++;
-                $type = readable($col['relation_type']);
+                $type = readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class']);
             ?>
             @if($col['title'])
                 <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}}</a>({{$type}})
@@ -38,7 +38,7 @@
                 {{$relatedInfo['title']}}
             @endif
             @if(isset($relatedInfo['relation']['relation_type']))
-                ({{readable($relatedInfo['relation']['relation_type'])}})
+                ({{readable($relatedInfo['relation']['relation_type'],'EXPLICIT',$ro->core['class'])}})
             @endif
         @endif
     @endforeach

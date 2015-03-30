@@ -1,6 +1,13 @@
 app.controller('searchCtrl', 
 function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
 
+	$scope.sf = search_factory;
+
+	//setting default search class
+	if ($('#ro_id').length) {
+		var search_class = $('#ro_class').val();
+		search_factory.update_class(search_class);
+	}
 
     $scope.query_title = 'Untitled Query';
     $scope.saved_records_folder = 'Untitled';
@@ -62,6 +69,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.$on('toggleFilter', function(e, data){
 		$scope.toggleFilter(data.type, data.value, data.execute);
 	});
+	
+	$scope.$on('togglePreFilter', function(e, data){
+		$scope.togglePreFilter(data.type, data.value, data.execute);
+	});
 
 	$scope.$on('advanced', function(e, data){
 		$scope.advanced(data);
@@ -85,6 +96,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.$on('changePreQuery', function(e, data){
 		$scope.prefilters['q'] = data;
 	});
+
+	$scope.setSearchType = function(value) {
+		$scope.search_type = value;
+	}
 
 	$scope.$watch('search_type', function(newv,oldv){
 		if (newv) {
@@ -268,8 +283,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			//get temporal range
 			var tmp_filter = {};
 			tmp_filter['class'] = $scope.filters['class'];
-			search_factory.search_no_record(tmp_filter).then(function(data){
+			search_factory.search_no_record($scope.filters).then(function(data){
 				$scope.temporal_range = search_factory.temporal_range(data);
+				$scope.earliest_year = $scope.temporal_range[0];
+				$scope.latest_year = $scope.temporal_range[$scope.temporal_range.length - 1];
 			});
 		}
 
@@ -608,12 +625,12 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		tmp_filter['class'] = newv;
 		if(newv=='activity') {
 			$scope.advanced_fields = search_factory.advanced_fields_activity;
-			search_factory.search_no_record(tmp_filter).then(function(data){
+			search_factory.search_no_record($scope.prefilters).then(function(data){
 				$scope.temporal_range = search_factory.temporal_range(data);
 			});
 		} else if(newv=='collection') {
 			$scope.advanced_fields = search_factory.advanced_fields;
-			search_factory.search_no_record(tmp_filter).then(function(data){
+			search_factory.search_no_record($scope.prefilters).then(function(data){
 				$scope.temporal_range = search_factory.temporal_range(data);
 			});
 		} else if(newv=='party') {

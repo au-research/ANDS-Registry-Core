@@ -4,9 +4,9 @@ class Profile extends MX_Controller {
 	function index(){
 		if($this->user->isLoggedIn()) {
 			$this->load->model('portal_user');
-			$user = $this->portal_user->getCurrentUser();
+			// $user = $this->portal_user->getCurrentUser();
 			$this->blade
-				->set('user', $user)
+				// ->set('user', $user)
 				->set('title', 'MyRDA - Research Data Australia')
 				->set('scripts', array('profile_app'))
 				->render('profile/dashboard2');
@@ -141,13 +141,33 @@ class Profile extends MX_Controller {
 		echo json_encode($user);
 	}
 
+	public function get_specific_user() {
+		header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+
+        $identifier = $this->input->get('identifier');
+
+        if(!$identifier) throw new Exception('identifier required');
+
+        $this->load->model('portal_user');
+        $user = $this->portal_user->getSpecificUser($identifier);
+        echo json_encode($user);
+	}
+
 	function dashboard() {
 		$this->index();
 	}
 
 	private function save_auth_cookie() {
+		$this->load->helper('cookie');
 		if(isset($_SERVER['HTTP_REFERER'])) {
 			setcookie("auth_redirect", $_SERVER['HTTP_REFERER'], time()+3600, '/');
+		}
+
+		if ($this->input->get('redirect')) {
+			delete_cookie('auth_redirect');
+			setcookie('auth_redirect', $this->input->get('redirect'), time()+3600, '/');
 		}
 	}
 

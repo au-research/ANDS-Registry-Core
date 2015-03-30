@@ -495,6 +495,24 @@ function ulog($message='', $logger='activity', $type='info') {
 	}
 }
 
+function ulog_email($subject='', $message='', $logger='activity', $type='info') {
+	ulog($message, $logger, $type);
+
+	$_ci =& get_instance();
+
+	$siteAdmin = (get_config_item('site_admin') ? get_config_item('site_admin') : 'Site Admin'); 
+	$siteInstance = (get_config_item('environment_name') ? get_config_item('environment_name') : 'Site Instance');
+	$siteState = (get_config_item('deployment_state') ? " (".get_config_item('deployment_state').")" : '');
+
+	$email = $_ci->load->library('email');
+	$email->from(get_config_item('site_admin_email'), $siteAdmin);
+	$email->to(get_config_item('site_admin_email')); 
+
+	$email->subject($subject);
+	$email->message($message);	
+	$email->send();
+}
+
 function ulog_terms($terms=array(), $logger='activity', $type='info')
 {
 	$msg = '';

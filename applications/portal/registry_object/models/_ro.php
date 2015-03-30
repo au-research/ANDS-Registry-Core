@@ -86,7 +86,7 @@ class _ro {
                 $content = @file_get_contents($url);
                 $contentArray = json_decode($content, true);
                 if ($contentArray['status']=='success') {
-                    $ci->cache->file->save($cache_id, $content, 10);
+                    $ci->cache->file->save($cache_id, $content, 3600);
                 }
             }
 		}
