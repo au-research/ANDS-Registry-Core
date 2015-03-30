@@ -20,8 +20,8 @@ class DCI extends ROHandler {
         $this->DCIDom = dom_import_simplexml($this->DCIRoot);
         $this->citation_handler = new citations($this->get_resource());
         $sourceUrl = $this->citation_handler->getSourceUrl();
-        if($sourceUrl == null)
-            return "not Exportable";
+        //if($sourceUrl == null)
+        //    return "not Exportable";
         $this->getHeader();
         $this->getBibliographicData($sourceUrl);
         $this->getAbstract();
@@ -35,7 +35,12 @@ class DCI extends ROHandler {
     {
         $header = $this->DCIRoot->addChild('Header');
         $header->addChild('DateProvided', date('Y-m-d', time()));
-        $header->addChild('RepositoryName', $this->ro->group);
+        if(isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->publisher)){
+            $header->addChild('RepositoryName', $this->xml->{$this->ro->class}->citationInfo->citationMetadata->publisher);
+        }
+        else{
+            $header->addChild('RepositoryName', $this->ro->group);
+        }
         $header->addChild('Owner', $this->ro->group);
         $header->addChild('RecordIdentifier', $this->ro->key);
     }
@@ -115,31 +120,56 @@ class DCI extends ROHandler {
 
 
     private function getAuthors($authorList){
-        $forDCI = true;
-        $relationshipTypeArray = array('hasAssociationWith','hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
-        $classArray = array('party');
-        $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray, $forDCI);
-        $seq = 1;
-        foreach($authors as $author)
-        {
-            $eAuthor = $authorList->addChild("Author");
-            $eAuthor['seq'] = $seq++;
-            //return format_relationship($class, $relationshipText, $altered,$to_class);
-            $eAuthor['AuthorRole'] = format_relationship("collection",(string)$author["relation_type"], (string)$author['origin'], 'party');
-            $eAuthor->addChild('AuthorName', $author['title']);
-            if(isset($author['identifiers']) && sizeof($author['identifiers'] > 0))
+        if(isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor)){
+            foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor){
+                $nameParts = Array();
+                foreach($contributor->namePart as $namePart){
+                    $nameParts[] = array(
+                        'namePart_type' => (string)$namePart['type'],
+                        'name' => (string)$namePart
+                    );
+                }
+                $eAuthor = $authorList->addChild("Author");
+                $eAuthor['seq'] = (string)$contributor['seq'];
+                $eAuthor['AuthorRole'] = "Contributor";
+                $eAuthor->addChild('AuthorName', formatName($nameParts));
+            }
+        }
+        else{
+            $forDCI = true;
+            $relationshipTypeArray = array('hasAssociationWith','hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
+            $classArray = array('party');
+            $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray, $forDCI);
+            if($authors)
             {
-                foreach($author['identifiers'] as $id){
-                    $authorId = $eAuthor->addChild('AuthorID', trim($id[0]));
-                    $authorId['type'] = $id[1];
+                $seq = 1;
+                foreach($authors as $author)
+                {
+                    $eAuthor = $authorList->addChild("Author");
+                    $eAuthor['seq'] = $seq++;
+                    //return format_relationship($class, $relationshipText, $altered,$to_class);
+                    $eAuthor['AuthorRole'] = format_relationship("collection",(string)$author["relation_type"], (string)$author['origin'], 'party');
+                    $eAuthor->addChild('AuthorName', $author['title']);
+                    if(isset($author['identifiers']) && sizeof($author['identifiers'] > 0))
+                    {
+                        foreach($author['identifiers'] as $id){
+                            $authorId = $eAuthor->addChild('AuthorID', trim($id[0]));
+                            $authorId['type'] = $id[1];
+                        }
+                    }
+                    if(isset($author['addresses']))
+                    {
+                        $authorAddress = $eAuthor->addChild('AuthorAddress');
+                        foreach($author['addresses'] as $addr){
+                            $authorAddress->addChild('AddressString', (string) $addr);
+                        }
+                    }
                 }
             }
-            if(isset($author['addresses']))
-            {
-                $authorAddress = $eAuthor->addChild('AuthorAddress');
-                foreach($author['addresses'] as $addr){
-                    $authorAddress->addChild('AddressString', (string) $addr);
-                }
+            else{
+                $eAuthor = $authorList->addChild("Author");
+                $eAuthor['seq'] = '1';
+                $eAuthor->addChild('AuthorName', $this->ro->group);
             }
         }
     }

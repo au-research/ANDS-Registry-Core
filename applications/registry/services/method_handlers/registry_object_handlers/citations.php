@@ -492,10 +492,8 @@ Y2  - '.date("Y-m-d")."
 
     function getContributors()
     {
-
         $contributors = Array();
         if(isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor)){
-            echo "hello 1";
            foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor){
                  $nameParts = Array();
                  foreach($contributor->namePart as $namePart){
@@ -513,7 +511,6 @@ Y2  - '.date("Y-m-d")."
         }
 
        if(!$contributors){
-           echo "hello 2";
             $relationshipTypeArray = array('hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
             $classArray = array('party');
             $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);

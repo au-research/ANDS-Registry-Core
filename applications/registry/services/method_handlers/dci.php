@@ -64,13 +64,13 @@ class DCIMethod extends MethodHandler
                 if($ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
                     $exportable = true;
 
-				if ($this->ro && $this->ro->class == 'collection' && $exportable)
-				{
+				//if ($this->ro && $this->ro->class == 'collection' && $exportable)
+				//{
                     $rifcsOutput[] = $this->ro_handle('dci');
-				}
-                else{
-                    $rifcsOutput[] = "not exportable";
-                }
+				//}
+               // else{
+               //     $rifcsOutput[] = "not exportable";
+               // }
 			}
 		}
 		// Bubble back the output status
