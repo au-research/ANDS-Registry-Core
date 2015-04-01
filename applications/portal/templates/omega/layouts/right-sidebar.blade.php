@@ -6,10 +6,10 @@
         <div id="content" ng-controller="searchCtrl">
         	<article>
         		@include('includes/search-section')
-                @yield('header')
     		    <section class="section swatch-gray" style="z-index:1">
     		    	<div class="container">
-    		    		<div class="row element-short-top">
+                        @yield('header')
+    		    		<div class="row">
     		    			<div class="col-md-9">
     		    				@yield('content')
     		    			</div>
@@ -21,7 +21,6 @@
     		    </section>
         	</article>
             @include('includes/advanced_search')
-            @include('includes/my-rda')
         </div>
         @include('includes/footer')
     </body>
