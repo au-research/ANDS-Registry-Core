@@ -3,14 +3,16 @@ $(document).ready(function() {
    $('#slider').flexslider({
        animation: "slide",
        animationLoop:true,
-       slideshowSpeed: 100000,
+       slideshowSpeed: 2500,
        pauseOnHover:true,
        directionNav:true,
        controlNav: false,
        prevText: '',
        nextText: '',
-       itemWidth: 322,
+       itemWidth: 240,
        itemMargin: 10,
-       move:1
+       // smoothHeight: true,
+       move:1,
+       minItems: 4,
      });             
 });
