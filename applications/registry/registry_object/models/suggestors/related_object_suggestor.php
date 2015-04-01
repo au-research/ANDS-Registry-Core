@@ -183,7 +183,7 @@ class Related_object_suggestor extends _GenericSuggestor
         $maxScore = floatval($result['response']['maxScore']);
         foreach ($result['response']['docs'] as $doc) {
             if (!in_array_r($doc, $suggestions)) {
-                $doc['score'] = $doc['score'] / $maxScore * 1-($intScore/$maxRows) * $score_override;
+                $doc['score'] = $doc['score'] / $maxScore * (1-($intScore/$maxRows) * $score_override);
                 $intScore++;
                 $doc['relation_type'] = $relation_type;
                 $doc['class'] = $class;

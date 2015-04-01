@@ -51,7 +51,7 @@ class Tags_suggestor extends _GenericSuggestor {
                 $maxScore = floatval($result['response']['maxScore']);
                 $intScore = 0;
                 foreach($result['response']['docs'] as $doc) {
-                    $doc['score'] = ($doc['score'] / $maxScore) * 1-($intScore/$maxRows);
+                    $doc['score'] = ($doc['score'] / $maxScore) * (1-($intScore/$maxRows));
                     $intScore++;
                     $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
