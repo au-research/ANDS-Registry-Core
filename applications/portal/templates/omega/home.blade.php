@@ -24,13 +24,15 @@
         @include('includes/banner-image')
         <div class="container">
             <div class="row">
-                <div class="col-md-12 element-normal-top element-normal-bottom">
-                    <header class="text-center element-small-bottom os-animation condensed animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
-                        <h1 class="bigger hairline bordered bordered-normal">Find data for research.</h1>
-                        <p class="normal">
+                <div class="col-md-12 element-higher-top element-short-bottom">
+                    <header class="text-center element-normal-bottom os-animation condensed animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
+                        <h1 class="bigger hairline bordered bordered-normal element-shorter-bottom">Find data for research.</h1>
+                        <p class="normal col-md-8 col-md-offset-2">
                             Find, access, and re-use data for research - from over one hundred Australian research organisations, government agencies, and cultural institutions
                         </p>
                     </header>
+                </div>
+                <div class="col-md-12 element-higher-bottom">
                     @include('includes/search-bar')
                 </div>
             </div>
