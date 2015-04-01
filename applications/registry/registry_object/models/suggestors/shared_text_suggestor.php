@@ -45,7 +45,7 @@ class Shared_text_suggestor extends _GenericSuggestor {
                 if($doc['class'] == 'collection'){
                     if(!$maxScore)
                         $maxScore = floatval($doc['score']);
-                    $doc['score'] = $doc['score'] / $maxScore * 1-($intScore/$maxRows);
+                    $doc['score'] = $doc['score'] / $maxScore * (1-($intScore/$maxRows));
                     $intScore++;;
                     $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;

@@ -492,7 +492,6 @@ Y2  - '.date("Y-m-d")."
 
     function getContributors()
     {
-
         $contributors = Array();
         if(isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor)){
            foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor){

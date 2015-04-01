@@ -29,9 +29,7 @@ angular.module('record_components',['profile_components'])
 
 .controller('moveCtrl', function($scope, $log, $modalInstance, id, profile_factory, record_factory){
     $scope.base_url = base_url;
-    $scope.message = 'test';
     $scope.id = id;
-
 
     if (angular.isArray($scope.id)) {
         $scope.records = $scope.id;
@@ -200,6 +198,7 @@ angular.module('record_components',['profile_components'])
 
 .controller('saveSearchCtrl', function($scope, $log, $modalInstance, saved_search_data, profile_factory){
     $scope.data = saved_search_data;
+    $scope.base_url = base_url;
     $scope.saveSearch = function(){
         ngdata = [];
         ngdata.push($scope.data);
