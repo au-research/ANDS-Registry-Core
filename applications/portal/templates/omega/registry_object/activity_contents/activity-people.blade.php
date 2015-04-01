@@ -21,7 +21,7 @@
                 $type = readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class']);
             ?>
             @if($col['title'])
-                <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}}</a>({{$type}})
+                <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" style="margin-right:5px;" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a>({{$type}})
             @endif
             <?php if($peoplecount<count($people)) { echo ", ";} ?>
         @endforeach
