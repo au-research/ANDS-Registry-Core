@@ -54,9 +54,7 @@
 			@endforeach
         </div>
 @elseif($ro->core['class']=='collection')
-        <div class="panel-heading">
-            <a href="">Information</a>
-        </div>
+        <!-- <div class="panel-heading"> <a href="">Information</a> </div> -->
         <div class="panel-body swatch-white">
         </div>
 @endif

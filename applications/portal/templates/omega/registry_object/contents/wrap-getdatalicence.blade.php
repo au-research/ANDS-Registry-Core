@@ -40,7 +40,7 @@
 
 ?>
 
-<div class="panel panel-primary swatch-white">
+<div class="panel panel-primary swatch-white gray-bg">
     <div class="panel-body">
         @if($ro->citations)
             @foreach($ro->citations as $citation)

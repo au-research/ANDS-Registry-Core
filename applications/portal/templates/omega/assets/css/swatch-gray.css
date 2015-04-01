@@ -10,7 +10,7 @@
   color: rgba(28, 28, 28, 0.8);
 }
 .swatch-gray a, [class*="swatch-"] .swatch-gray a {
-  color: #82c9ed;
+  /*color: #82c9ed;*/
 }
 .swatch-gray a:hover, [class*="swatch-"] .swatch-gray a:hover {
   color: #4f9bc2;
