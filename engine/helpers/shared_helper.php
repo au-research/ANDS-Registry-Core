@@ -10,6 +10,9 @@
 function format_relationship($from_class, $relationship_type, $origin=false, $to_class='collection'){
     // default $to_class to collection in case ro not there!!
   //  return $origin;
+    if(str_replace('party','',$to_class)!=$to_class){
+            $to_class='party';
+    }
 	$typeArray['collection'] = array(
 		"describes" => array("Describes", "Described by"),
 		"hasAssociationWith" => array("Associated with", "Associated with"),
@@ -52,7 +55,7 @@ function format_relationship($from_class, $relationship_type, $origin=false, $to
 		"isMemberOf" => array("Member of","Has memeber"),
 		"isOwnedBy" => array("Owned by","Owns"),
 		"isOwnerOf" => array("Owner of", "Owned by"),
-		"isParticipantIn" => array("Participant in","Has participant"),
+		"isParticipantIn" => array("Participant in","Undertaken by"),
 		"isPartOf" => array("Part of","Participant in"),
 		"enriches" =>array("Enriches", "Enriched by"),
 		"makesAvailable" =>array("Makes available", "Available through"),
@@ -84,6 +87,7 @@ function format_relationship($from_class, $relationship_type, $origin=false, $to
 		"hasOutput" => array("Produces","Output of"),
 		"hasPart" => array("Includes","Part of"),
 		"hasParticipant" => array("Undertaken by","Participant in"),
+        "isParticipantIn" => array("Participant in","Undertaken by"),
 		"isFundedBy" => array("Funded by","Funds"),
 		"isManagedBy" => array("Managed by","Manages"),
 		"isOwnedBy" => array("Owned by","Owns"),
