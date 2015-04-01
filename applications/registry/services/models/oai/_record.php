@@ -63,6 +63,7 @@ class _record
 		{
 		case 'dci':
             $dciDoc = $this->_rec->transformToDCI(false);
+            //$dciDoc = $this->_rec->getDCI(false);
             if($dciDoc != "")
             {
 			    $data = "<DigitalContentData>\n".$dciDoc."\n</DigitalContentData>";

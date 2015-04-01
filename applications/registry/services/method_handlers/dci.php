@@ -5,7 +5,7 @@ class DCIMethod extends MethodHandler
 {
 	private $default_params = array(
 		'q' => '*:* +class:("collection")',
-        'fl' => 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved,list_description,earliest_year,laest_year',
+        'fl' => 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved,list_description,earliest_year,latest_year',
         'wt' => 'json',
         'rows' => 200
     );
