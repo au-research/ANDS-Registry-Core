@@ -22,11 +22,14 @@
                                 $showHeading = true;
                                 $currentHeading = $desc['type'];
                             }
+                            $description = html_entity_decode($desc['description']);
+                            if(strip_tags($description) == $description)
+                                $description = nl2br($description);
                             ?>
                             @if($showHeading)
 							<small>{{readable($currentHeading)}}</small>
                             @endif
-							<span itemprop="description">{{nl2br(html_entity_decode($desc['description']))}}</span>
+							<span itemprop="description">{{$description}}</span>
 						</div>
 						
 					@endif
@@ -43,11 +46,15 @@
                             $showHeading = true;
                             $currentHeading = $desc['type'];
                         }
+                        $description = html_entity_decode($desc['description']);
+                        if(strip_tags($description) == $description)
+                            $description = nl2br($description);
                         ?>
                         @if($showHeading)
                         <small>{{readable($currentHeading)}}</small>
                         @endif
-						<span itemprop="description">{{nl2br(html_entity_decode($desc['description']))}}</span>
+                        @if(str_cont(
+						<span itemprop="description">{{$description}}</span>
 					</div>
 					
 				@endif
