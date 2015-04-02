@@ -1,6 +1,6 @@
 @foreach($theme[$region] as $f)
 
-<div class="panel panel-primary panel-content swatch-white">
+<div class="panel swatch-white">
 	@if($f['title'])
 		<div class="panel-heading">{{$f['title']}}</div>
 	@endif

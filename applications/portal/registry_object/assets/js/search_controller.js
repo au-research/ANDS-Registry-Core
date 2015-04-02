@@ -724,18 +724,45 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.sizeofField = function(type) {
 		// if(type=='group') $log.debug($scope.prefilters[type]);
+		// 
+		// 
+		
+		var ret = 0;
+
+		if(type=='subject') {
+			var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh'];
+			angular.forEach(fields_array, function(ss){
+				if ($scope.prefilters[ss] ) {
+					ret = 1;
+				}
+			});
+		}
+
+		if(type=='temporal') {
+			var fields_array = ['year_from', 'year_to'];
+			angular.forEach(fields_array, function(ss){
+				if ($scope.prefilters[ss] ) {
+					ret = 1;
+				}
+			});
+		}
+
+
 		if($scope.prefilters[type]) {
 			if(typeof $scope.prefilters[type]!='object') {
-				return 1;
+				ret = 1
 			} else if(typeof $scope.prefilters[type]=='object') {
 				return $scope.prefilters[type].length;
 			}
 		} else if(type=='review'){
 			if($scope.preresult && $scope.preresult.response) {
 				return $scope.preresult.response.numFound;
-			} else return 0;
-			
-		} else return 0;
+			} else {
+				ret = 0;
+			}
+		}
+
+		return ret;
 	}
 
 	//VOCAB TREE
@@ -839,8 +866,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			zoom:4,
 			bounds:{},
 			options: {
-				disableDefaultUI: true,
-				panControl: false,
+				disableDefaultUI: false,
+				panControl: true,
 				navigationControl: false,
 				scrollwheel: true,
 				scaleControl: true
