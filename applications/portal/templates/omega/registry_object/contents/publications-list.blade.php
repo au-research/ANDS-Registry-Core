@@ -13,9 +13,7 @@
 <div class="swatch-white">
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
         @if($found)
-        <div class="panel-heading">
-            <a href="">Related Publications</a>
-        </div>
+        <!-- <div class="panel-heading"> <a href="">Related Publications</a> </div> -->
         @endif
         <div class="panel-body swatch-white">
             @foreach($ro->relatedInfo as $relatedInfo)

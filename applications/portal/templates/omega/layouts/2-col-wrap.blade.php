@@ -75,9 +75,10 @@
 
                                 <div>
 
-                                    <div class="pull-left swatch-white" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
+                                    <div class="pull-left swatch-gray" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
                                         @include('registry_object/contents/wrap-getdatalicence')
                                     </div>
+                                    
                                     
                                     @yield('content')
                                 </div>

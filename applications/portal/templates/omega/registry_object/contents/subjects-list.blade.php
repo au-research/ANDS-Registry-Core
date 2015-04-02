@@ -1,6 +1,6 @@
 @if($ro->subjects)
 <div class="swatch-white">
-	<div class="panel panel-primary element-no-top element-short-bottom panel-content">
+	<div class="panel element-no-top element-short-bottom">
 		<div class="panel-heading"> Subjects </div>
 		<div class="panel-body swatch-white">
 			<?php 
@@ -22,7 +22,7 @@
 			@endforeach
 		</div>
         @if($ro->core['class']!='activity')
-        @include('registry_object/contents/tags')
+            @include('registry_object/contents/tags')
         @endif
 	</div>
 </div>
@@ -30,10 +30,7 @@
     @if($ro->core['class']!='activity')
     <div class="swatch-white">
         <div class="panel panel-primary element-no-top element-short-bottom panel-content">
-            <div class="panel-heading">
-                <a href="">Tags</a>
-            </div>
-
+            <!-- <div class="panel-heading"> <a href="">Tags</a> </div> -->
             @include('registry_object/contents/tags')
         </div>
     </div>

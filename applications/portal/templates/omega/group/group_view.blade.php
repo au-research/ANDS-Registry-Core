@@ -1,9 +1,9 @@
 @extends('layouts/right-sidebar')
 @section('header')
-<section class="section swatch-white section-text-shadow section-innder-shadow element-short-top element-short-bottom">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
+<div class="row element element-short-top">
+    <div class="col-md-12">
+        <div class="panel swatch-white">
+            <div class="panel-body">
                 <header>
                     <?php 
 
@@ -26,13 +26,13 @@
                     @if($logo)
                         <img src="{{$logo}}" alt="Logo" class="header-logo animated fadeInDown"/>
                     @endif
-                    
-                    <h1 class="hairline bordered-normal">{{$group['title']}}</h1>
+                    <h1 class="big hairline os-animation animated fadeIn">{{$group['title']}}</h1>
                 </header>
             </div>
+            
         </div>
     </div>
-</section>
+</div>
 @stop
 
 @section('content')
@@ -50,8 +50,8 @@
 
     @if($group['has_custom_data'])
         @if(isset($group['custom_data']['overview']))
-        <div class="panel panel-primary panel-content swatch-white">
-            <div class="panel-heading">Overview</div>
+        <div class="panel swatch-white">
+            <!-- <div class="panel-heading">Overview</div> -->
             <div class="panel-body">{{$group['custom_data']['overview']}}</div>
         </div>
         @endif
@@ -59,18 +59,18 @@
 
     @if($group['has_custom_data'])
         @if(isset($group['custom_data']['researchdarea']))
-        <div class="panel panel-primary panel-content swatch-white">
+        <div class="panel swatch-white">
             <div class="panel-heading">Research and Key Research Areas</div>
             <div class="panel-body">{{$group['custom_data']['researchdarea']}}</div>
         </div>
         @endif
     @endif
 
-    <div class="panel panel-primary panel-content swatch-white">
+    <div class="panel swatch-white">
         <div class="panel-heading">Research Data Profile</div>
         <div class="panel-body">
-            To date, {{$group['title']}} has {{$group['counts']}} collection records in Research Data Australia, which covers {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}, {{sizeof($group['groups'])}} research groups 
-            have been actively involved in collecting data and creating metadata records for the data.  All the Collections, Parties, Activities and Services associated with {{$group['title']}} 
+            To date, {{$group['title']}} has {{$group['counts']}} data records in Research Data Australia, which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}. {{sizeof($group['groups'])}} research group(s) 
+            have been actively involved in collecting data and creating metadata records for the data.  All the data records, people, projects, grants and services associated with {{$group['title']}} 
             can be accessed from the Registry Contents box on the right hand side of this page.
         </div>
         @if($group['has_custom_data'])
@@ -84,14 +84,14 @@
 
     @if($group['has_custom_data'])
         @if(isset($group['custom_data']['researchsupport']))
-        <div class="panel panel-primary panel-content swatch-white">
+        <div class="panel swatch-white">
             <div class="panel-heading">Research Support</div>
             <div class="panel-body">{{$group['custom_data']['researchsupport']}}</div>
         </div>
         @endif
     @endif
 
-    <div class="panel panel-primary panel-content swatch-white">
+    <div class="panel swatch-white">
         <div class="panel-heading">Subjects Covered</div>
         <div class="panel-body widget_tag_cloud">
             <div class="tag-cloud">
@@ -118,15 +118,15 @@
 
 @if($group['has_custom_data'])
     @if(isset($group['custom_data']['contact']))
-    <div class="panel panel-primary panel-content swatch-white">
+    <div class="panel swatch-white">
         <div class="panel-heading">Contact</div>
         <div class="panel-body">{{$group['custom_data']['contact']}}</div>
     </div>
     @endif
 @endif
 
-<div class="panel panel-primary panel-content swatch-white">
-    <div class="panel-heading">Registry Contents</div>
+<div class="panel swatch-white">
+    <!-- <div class="panel-heading">Registry Contents</div> -->
     <div class="panel-body">
         <ul class="listy">
             @foreach($group['facet']['class'] as $class)
@@ -137,7 +137,7 @@
 </div>
 
 @if($group['groups'])
-<div class="panel panel-primary panel-content swatch-white">
+<div class="panel swatch-white">
     <div class="panel-heading">Organisations & Groups</div>
     <div class="panel-body">
         <ul class="listy">
@@ -150,7 +150,7 @@
 @endif
 
 @if($group['latest_collections'])
-<div class="panel panel-primary panel-content swatch-white">
+<div class="panel swatch-white">
     <div class="panel-heading">Last 5 Collections Added</div>
     <div class="panel-body">
         <ul class="listy">
@@ -164,7 +164,7 @@
 
 @if($group['has_custom_data'])
     @if(isset($group['custom_data']['identifiers']))
-    <div class="panel panel-primary panel-content swatch-white">
+    <div class="panel swatch-white">
         <div class="panel-heading">Identifiers</div>
         <div class="panel-body">{{$group['custom_data']['identifiers']}}</div>
     </div>

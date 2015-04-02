@@ -12,7 +12,7 @@ foreach($ro->spatial as $a_coverage){
 
 <div class="swatch-white">
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
-        <div class="panel-heading"> Spatial Coverage And Location </div>
+        <!-- <div class="panel-heading"> Spatial Coverage And Location </div> -->
         <div class="panel-body swatch-white">
             @if($needmap)
 			<div id="spatial_coverage_map" class="map-canvas angular-google-map-container"></div>
