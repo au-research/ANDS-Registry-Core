@@ -4,7 +4,7 @@
     <div class="col-md-12">
         <div class="panel swatch-white">
             <div class="panel-body">
-                <header>
+                <header> <div class="header_title">
                     <?php 
 
                         $logo = false;
@@ -26,8 +26,8 @@
                     @if($logo)
                         <img src="{{$logo}}" alt="Logo" class="header-logo animated fadeInDown"/>
                     @endif
-                    <h1 class="big hairline os-animation animated fadeIn">{{$group['title']}}</h1>
-                </header>
+                  <h1 class="big hairline os-animation animated fadeIn">{{$group['title']}}</h1>
+                    </div>  </header>
             </div>
             
         </div>

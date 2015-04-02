@@ -141,3 +141,7 @@ a.noexicon:after {
 
 .profile_image_large {max-width:70%;}
 .profile_image_small {width:30px}
+.header_title{
+    display:inline;
+    border:1px white solid;
+}
