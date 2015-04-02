@@ -8,7 +8,10 @@
 					<div class="element-no-top element-no-bottom text-center figcaption-middle normalwidth image-filter-sepia image-filter-onhover">
 						<a href="{{portal_url('contributors/'.$group['slug'])}}" class="figure-image magnific-vimeo" data-links="" target="_self">
 							@if($group['logo'])
-							<img src="{{$group['logo']}}" alt="" class="normalwidth logo-homepage">
+							<div class="logo-place">
+								<img src="{{$group['logo']}}" alt="" class="" align="middle"/>
+							</div>
+							
 							@else
 							<div class="logo-placement"><p>{{$group['title']}}</p></div>
 							@endif

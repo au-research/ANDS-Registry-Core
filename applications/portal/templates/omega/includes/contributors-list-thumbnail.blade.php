@@ -5,9 +5,12 @@
         <div class="masonry-item portfolio-item isotope-item" data-menu-order="1" data-title="{{$group['title']}}">
             <div class="figure portfolio-os-animation element-no-top element-no-bottom text-center figcaption-middle normalwidth image-filter-sepia fade-in image-filter-onhover animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s">
                 <div class="element-no-top element-no-bottom text-center figcaption-middle normalwidth image-filter-sepia image-filter-onhover">
-                   <a href="{{portal_url('contributors/'.$group['slug'])}}" class="figure-image magnific-vimeo" data-links="" target="_self" tip="Click to view the contributor profile for {{ $group['title'] }}">
+                    <a href="{{portal_url('contributors/'.$group['slug'])}}" class="figure-image magnific-vimeo" data-links="" target="_self">
                         @if($group['logo'])
-                        <img src="{{$group['logo']}}" alt="" class="normalwidth logo-homepage">
+                        <div class="logo-place">
+                            <img src="{{$group['logo']}}" alt="" class="" align="middle"/>
+                        </div>
+                        
                         @else
                         <div class="logo-placement"><p>{{$group['title']}}</p></div>
                         @endif
