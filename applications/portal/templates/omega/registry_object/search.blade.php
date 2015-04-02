@@ -42,7 +42,7 @@
                         <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
                     </div>
                     <div class="pull-right" ng-if="filters.class=='activity'">
-                        [[doc.type]]
+                        [[ doc.type | toTitleCase ]]
                     </div>
                     <div class="scontent">
                         <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>

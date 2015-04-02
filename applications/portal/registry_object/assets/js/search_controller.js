@@ -37,6 +37,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		return location.hash;
 	},function(){
 		var hash = location.hash ? location.href.split("#")[1] : '';
+		if ( $('#refer_q').length ) {
+			hash = $('#refer_q').val();
+		}
 		$scope.filters = search_factory.ingest(hash);
 		$scope.sync();
 		if($scope.filters.cq) {
