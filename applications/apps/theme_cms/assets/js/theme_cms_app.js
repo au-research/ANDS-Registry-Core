@@ -158,7 +158,6 @@ function ListCtrl($scope, pages_factory){
 function ViewPage($scope, $http, $routeParams, pages_factory, $location, search_factory){
 
 	$scope.tinymceOptions = {
-	    selector: "textarea.editor",
 	    theme: "modern",
 	    plugins: [
 	        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
