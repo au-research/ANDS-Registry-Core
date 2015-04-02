@@ -58,13 +58,9 @@
 
 							<div ng-if="isAdvancedSearchActive('temporal')">
 								<label for="">From Year</label>
-								<select class="form-control"ng-model="prefilters.year_from" ng-options="year_from as year_from for year_from in temporal_range">
-									<option value="" style="display:none">From Year</option>
-								</select>
+								<input type="text" class="form-control" ng-model="prefilters.year_from" placeholder="From Year. eg [[earliest_year]]">
 								<label for="">To Year</label>
-								<select class="form-control"ng-model="prefilters.year_to" ng-options="year_to as year_to for year_to in temporal_range | orderBy:year_to:true">
-									<option value="" style="display:none">To Year</option>
-								</select>
+								<input type="text" class="form-control" ng-model="prefilters.year_to" placeholder="To Year. eg [[latest_year]]">
 							</div>
 
 							<div ng-if="isAdvancedSearchActive('date_range')">
