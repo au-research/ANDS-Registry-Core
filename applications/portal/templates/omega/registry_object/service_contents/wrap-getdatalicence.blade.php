@@ -28,7 +28,7 @@
     }
 
 ?>
-<div class="panel panel-primary swatch-white">
+<div class="panel swatch-white gray-bg">
     <div class="panel-body">
         @include('registry_object/contents/access')
     	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
