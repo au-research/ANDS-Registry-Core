@@ -50,8 +50,8 @@
 								<ul class="list-unstyled" ng-if="facet.name!='subject'">
 									<li ng-repeat="item in facet.value | orderObjectBy:'name'">
 										<input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
-										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name!='group'">[[item.name | toTitleCase]] <small>[[item.value]]</small></a>    
-										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name=='group'">[[item.name]] <small>[[item.value]]</small></a>    
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name!='group'">[[item.name | toTitleCase]] ([[item.value]])</a>    
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name=='group'">[[item.name]] ([[item.value]])</a>    
 									</li>
 								</ul>
 							</div>
