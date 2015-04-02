@@ -2,8 +2,8 @@
 	<div class="row element-short-top">
 		<div class="col-md-9">
 			<section ng-if="user">
-				<div class="panel panel-primary swatch-white panel-content">
-					<div class="panel-heading">Saved Search</div>
+				<div class="panel swatch-white">
+					<div class="panel-heading">My Saved Search</div>
 
 					<div class="panel-body" ng-if="user.user_data.saved_search">
 						<table class="table table-bordered">
@@ -51,8 +51,8 @@
 					</div>
 				</div>
 
-				<div class="panel panel-primary swatch-white panel-content">
-					<div class="panel-heading">Saved Records</div>
+				<div class="panel swatch-white">
+					<div class="panel-heading">My Saved Records</div>
 				
 					<div class="panel-body" ng-if="user.user_data.saved_record">
 						<table class="table table-bordered">
@@ -118,7 +118,7 @@
 		</div>
 		<div class="col-md-3 sidebar" ng-if="user">
 			<div class="panel panel-primary swatch-white panel-content">
-				<div class="panel-heading">Logged In User</div>
+				<!-- <div class="panel-heading">Logged In User</div> -->
 				<div class="panel-body">
 					<h3><i class="fa fa-user"></i> [[user.name]]</h3>
 					<!-- <p>[[user]]</p> -->
@@ -134,8 +134,8 @@
 				</div>
 			</div>
 
-			<div class="panel panel-primary swatch-white panel-content" ng-if="user.function.indexOf('ORCA_SOURCE_ADMIN') > -1 || user.function.indexOf('REGISTRY_USER') > -1">
-				<div class="panel-heading">Functions</div>
+			<div class="panel swatch-white" ng-if="user.function.indexOf('ORCA_SOURCE_ADMIN') > -1 || user.function.indexOf('REGISTRY_USER') > -1">
+				<div class="panel-heading">My Functions</div>
 				<div class="panel-body">
 					<ul class="listy">
 						<li><a href="[[base_url]]group/cms">Contributor CMS</a></li>
