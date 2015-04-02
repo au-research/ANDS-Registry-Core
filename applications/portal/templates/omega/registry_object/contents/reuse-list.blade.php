@@ -2,7 +2,7 @@
 <?php
 $found = false;
 $heading = '<div class="swatch-white">
-    <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+    <div class="panel element-no-top element-short-bottom">
         <div class="panel-heading"> Reuse Information </div>
         <div class="panel-body swatch-white">';
 $closure = '        </div>
