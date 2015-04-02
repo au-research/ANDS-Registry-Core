@@ -65,7 +65,7 @@ class Registry_objectsMethod extends MethodHandler {
             }
 
             //delete the cache at the portal side, because the record is updated
-            $ci->cache->delete('ro-api-'.$ro_id);
+            $ci->cache->delete('ro-api-'.$id);
 
             //fill the result with data
             $this->populate_resource($id);
