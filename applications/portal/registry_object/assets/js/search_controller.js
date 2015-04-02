@@ -866,8 +866,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			zoom:4,
 			bounds:{},
 			options: {
-				disableDefaultUI: true,
-				panControl: false,
+				disableDefaultUI: false,
+				panControl: true,
 				navigationControl: false,
 				scrollwheel: true,
 				scaleControl: true
