@@ -52,7 +52,13 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     @include('registry_object/activity_contents/activity-parties')
+                                                    @if($ro->core['group']=='National Health and Medical Research Council')
+                                                    <br /><strong>Provided by  <a href="{{ portal_url('view') }}?key=http://dx.doi.org/10.13039/501100000925"s  tip="Record provided by {{$ro->core['group']}}"><span itemprop="sourceOrganization">{{$ro->core['group']}}</span></a></strong>
+                                                    @elseif($ro->core['group']=='Australian Research Council')
+                                                    <br /><strong>Provided by  <a href="{{ portal_url('view') }}?key=http://dx.doi.org/10.13039/501100000923"  tip="Record provided by {{$ro->core['group']}}"><span itemprop="sourceOrganization">{{$ro->core['group']}}</span></a></strong>
+                                                    @else
                                                     <br /><strong>Provided by  <a href="{{base_url('contributors')}}/{{$group_slug}}" tip="Record provided by {{$ro->core['group']}}" title="Record provided by {{$ro->core['group']}}"><span itemprop="sourceOrganization">{{$ro->core['group']}}</span></a></strong>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
