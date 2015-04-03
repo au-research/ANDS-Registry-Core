@@ -37,6 +37,13 @@
 						</div>
 						<div class="col-xs-12 col-md-10 swatch-white" id="advbody">
 							<div ng-show="isAdvancedSearchActive('terms')">
+								<i class="fa fa-info" tip='
+								<ul>
+									<li>Use the ? symbol to perform a single character wildcard search. E.g. Organi?ations.</li>
+									<li>Use the <star> symbol to perform multiple character wildcard search. E.g. Extend* </li>
+									<li> Use quotes " " to perform an exact phrase search. E.g. "ice sheets"</li>
+								</ul>
+								'></i>
 								<div ng-controller="QueryBuilderCtrl">
 									<div class="alert alert-info">
 										<strong>Query Construction</strong><br>
