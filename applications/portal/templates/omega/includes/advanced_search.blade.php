@@ -58,6 +58,12 @@
 							</div>
 
 							<div ng-if="isAdvancedSearchActive('temporal')">
+								<div class="alert alert-info" ng-if="earliest_year && latest_year">
+									To filter your results by a time period enter a year range between [[ earliest_year ]] and [[ latest_year ]] inclusive. Open ranges can be specified by leaving one of the fields blank. Please note that adding a time period filter to your search will restrict your search to only those records in Research Data Australia which contain temporal information.
+								</div>
+								<div class="alert alert-info" ng-if="!earliest_year && !latest_year">
+									Search results contain no time period information.
+								</div>
 								<label for="">From Year</label>
 								<input type="text" class="form-control" ng-model="prefilters.year_from" placeholder="From Year. eg [[earliest_year]]">
 								<label for="">To Year</label>
