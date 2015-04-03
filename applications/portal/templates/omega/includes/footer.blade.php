@@ -4,7 +4,7 @@
             <div class="row element-normal-top element-normal-bottom">
                 <div class="col-md-8">
                     <p>
-                        Research Data Australia is an Internet-based discovery service designed to provide rich connections between data, projects, researchers and institutions, and promote visibility of Australian research data collections in search engines. Read more about us...
+                        Research Data Australia is an Internet-based discovery service designed to provide rich connections between data, projects, researchers and institutions, and promote visibility of Australian research data collections in search engines. <a href="{{portal_url('page/about')}}">Read more about us...</a>
                     </p>
                     <small>ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.</small>
                 </div>
@@ -49,9 +49,9 @@
                     <div id="categories-5" class="sidebar-widget widget_categories">
                         <h3 class="sidebar-header">Share</h3>
                         <ul>
-                            <li class="cat-item"><a class="noexicon" href="http://www.facebook.com/sharer.php?u={{$url}}"><i class="fa fa-facebook"></i> Facebook</a></li>
-                            <li class="cat-item"><a class="noexicon" href="https://twitter.com/share?url={{$url}}&text={{$title}}&hashtags=andsdata"><i class="fa fa-twitter"></i> Twitter</a></li>
-                            <li class="cat-item"><a class="noexicon" href="https://plus.google.com/share?url={{$url}}"><i class="fa fa-google"></i> Google</a></li>
+                            <li class="cat-item"><a class="noexicon" href="http://www.facebook.com/sharer.php?u={{$url}}" target="_blank"><i class="fa fa-facebook"></i> Facebook</a></li>
+                            <li class="cat-item"><a class="noexicon" href="https://twitter.com/share?url={{$url}}&text={{$title}}&hashtags=andsdata" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
+                            <li class="cat-item"><a class="noexicon" href="https://plus.google.com/share?url={{$url}}" target="_blank"><i class="fa fa-google"></i> Google</a></li>
                         </ul>
                     </div>
                 </div>
@@ -59,8 +59,8 @@
                     <div id="categories-4" class="sidebar-widget  widget_categories">
                         <h3 class="sidebar-header">External Resources</h3>
                         <ul>
-                            <li class="cat-item"> <a href="http://www.ands.org.au/" title="">ANDS Website</a> </li>
-                            <li class="cat-item"> <a href="http://developers.ands.org.au" title="">Developers</a> </li>
+                            <li class="cat-item"> <a href="http://www.ands.org.au/" title="" target="_blank">ANDS Website</a> </li>
+                            <li class="cat-item"> <a href="http://developers.ands.org.au" title="" target="_blank">Developers</a> </li>
                             <li class="cat-item"> <a href="{{base_url('registry/')}}" title="">ANDS Online Services</a> </li>
                             @if(isset($ro) && $ro->core['id'])
                                 <li class="cat-item"> <a href="{{base_url('registry/registry_object/view/')}}/<?=$this->ro->id?>" title="">Registry View</a> </li>

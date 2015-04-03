@@ -135,7 +135,19 @@
 							</div>
 
 							<div ng-if="isAdvancedSearchActive('spatial')">
+								<i class="fa fa-info" tip="
+									To define a search region
+									<ul>
+										<li>Select the box tool.</li>
+										<li>Click on the map and drag the mouse to draw a rectangle.</li>
+										<li>Release the mouse to finish.</li>
+									</ul>
+								"></i> 
+								
 								@include('registry_object/facet/map')
+								<div class="alert alert-info">
+									Note: Adding a Location filter will restrict your search to only records that have location information described.
+								</div>
 							</div>
 
 							<div ng-if="isAdvancedSearchActive('review')">

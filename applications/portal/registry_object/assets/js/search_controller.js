@@ -539,7 +539,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			        saved_search_data: function () {
 			           	var data = {
 			            	id:Math.random().toString(36).substring(7),
-			            	query_title: 'Untitled Search',
+			            	query_title: '',
 			                query_string: $scope.getHash(),
 			                num_found: $scope.result.response.numFound,
 			                num_found_since_last_check: 0,

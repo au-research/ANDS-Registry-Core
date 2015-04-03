@@ -70,7 +70,7 @@
                             [[ doc.description | text | truncate:500 ]]
                         </p>
                         <div ng-if="doc.administering_institution">
-                            <b>Administering Institution</b>: [[doc.administering_institution.join(',')]]
+                            <b>Managing Institution</b>: [[ doc.administering_institution.join(',') | toTitleCase ]]
                         </div>
                         <div ng-if="doc.researchers">
                             <b>Researchers: </b> [[doc.researchers.join(', ')]]
