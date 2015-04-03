@@ -73,7 +73,7 @@
                             <b>Administering Institution</b>: [[doc.administering_institution.join(',')]]
                         </div>
                         <div ng-if="doc.researchers">
-                            <b>Researchers: </b> [[doc.researchers.join(',')]]
+                            <b>Researchers: </b> [[doc.researchers.join(', ')]]
                         </div>
                     </div>
                     

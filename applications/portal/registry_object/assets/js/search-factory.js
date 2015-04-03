@@ -96,12 +96,12 @@ app.factory('search_factory', function($http, $log){
 
 		advanced_fields_activity: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'activity_status', 'display':'Status'},
-			{'name':'subject', 'display':'Subjects'},
-			{'name':'administering_institution', 'display':'Administering Institution'},
+			{'name':'subject', 'display':'Subject'},
+			{'name':'administering_institution', 'display':'Managing Institution'},
 			{'name':'date_range', 'display':'Date Range'},
-			{'name':'funders', 'display':'Funders'},
+			{'name':'funders', 'display':'Funder'},
 			{'name':'funding_scheme', 'display':'Funding Scheme'},
 			{'name':'funding_amount', 'display':'Funding Amount'},
 			{'name':'review', 'display':'Review'}
