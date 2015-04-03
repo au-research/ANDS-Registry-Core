@@ -132,6 +132,7 @@ angular.module('portal_theme',[]).
 				$scope.$parent.$watch('page', function(newv){
 					if(newv) {
 						$scope.el = $scope.$parent.getSearch($scope.id);
+						if (!$scope.el.search.limit && $scope.el.search.limit!=0) $scope.el.search.limit = 15;
 						// $log.debug('found search', $scope.el);
 						var search = $scope.el.search;
 						var filters = searches.constructFilterArray(search);

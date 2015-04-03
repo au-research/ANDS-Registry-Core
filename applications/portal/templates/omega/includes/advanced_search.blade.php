@@ -143,7 +143,7 @@
 										<li>Release the mouse to finish.</li>
 									</ul>
 								"></i> 
-								
+								<a href="" ng-click="clearMap()" ng-if="searchBox">Clear Map</a>
 								@include('registry_object/facet/map')
 								<div class="alert alert-info">
 									Note: Adding a Location filter will restrict your search to only records that have location information described.

@@ -861,6 +861,12 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	// 
 	
 	//MAP
+	$scope.clearMap = function() {
+		$scope.searchBox.setMap(null);
+		$scope.searchBox = null;
+		delete $scope.filters['spatial'];
+		$scope.centres = [];
+	}
 	uiGmapGoogleMapApi.then(function(maps) {
 		$scope.map = {
 			center:{
