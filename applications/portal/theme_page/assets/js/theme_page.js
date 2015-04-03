@@ -218,28 +218,32 @@ angular.module('portal_theme',[]).
 		return {
 			restrict: 'ACME',
 			templateUrl:base_url+'assets/theme_page/js/templates/relation.html',
-			transclude: true,
+			transclude: false,
+			scope: {
+
+			},
 			compile: function(element, attrs, transclude){
 
 				// $log.debug('every instance ', element);
 				return function(scope,iElement,iAttrs){
 					scope.base_url = base_url;
 					// $log.debug('this instance', iAttrs);
-					scope.type = iAttrs.type;
 					scope.key = iAttrs.key;
-					// $log.debug('values: ', scope.type,scope.key);
+					// $log.debug(scope.type);
 					scope.conn = [];
 					searches.getConnections(scope.key).then(function(data){
 						// $log.debug('connections for ', scope.key, data);
 						// $log.debug(data.connections);
 						angular.forEach(data.connections, function(i,k){
-							if(i[scope.type]){
-								// $log.debug('found ', i[scope.type]);
-								angular.forEach(i[scope.type], function(i,k){
-									scope.conn.push(i);
+							
+							if(i[iAttrs.type]){
+								// $log.debug('found ', i[iAttrs.type]);
+								angular.forEach(i[iAttrs.type], function(obj){
+									scope.conn.push(obj);
 								});
 							}
 						});
+						// $log.debug(scope.conn);
 					});
 				}
 			}

@@ -12,7 +12,7 @@
                             <div class="col-md-12">
                                 <header>
                                     <h1 class="hairline bordered-normal">{{$theme['title']}}</h1>
-                                    <small>Breadcrumbs</small>
+                                    <a href="{{portal_url('themes')}}"><i class="fa fa-arrow-left"></i> Return to Themed Collections</a>
                                 </header>
                             </div>
                         </div>
