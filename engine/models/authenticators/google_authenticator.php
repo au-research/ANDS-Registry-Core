@@ -23,7 +23,7 @@ class Google_authenticator extends Authenticator {
 				}
 				
 				//check if there's an existing profile
-				$user = $this->cosi_db->get_where('roles', array('role_id'=>$user_profile->identifier, 'authentication_service_id'=>'AUTHENTICATION_SOCIAL_FACEBOOK'));
+				$user = $this->cosi_db->get_where('roles', array('role_id'=>$user_profile->identifier, 'authentication_service_id'=>'AUTHENTICATION_SOCIAL_GOOGLE'));
 
 				if($user->num_rows() > 0) {
 					//found existing user, maybe updating some logs here
@@ -32,7 +32,7 @@ class Google_authenticator extends Authenticator {
 					$data = array(
 						'role_id' => $user_profile->identifier,
 						'role_type_id' => 'ROLE_USER',
-						'authentication_service_id' => 'AUTHENTICATION_SOCIAL_FACEBOOK',
+						'authentication_service_id' => 'AUTHENTICATION_SOCIAL_GOOGLE',
 						'enabled' => DB_TRUE,
 						'name' => $user_profile->displayName,
 						'oauth_access_token' => $access_token,
@@ -41,7 +41,7 @@ class Google_authenticator extends Authenticator {
 					);
 
 					$this->cosi_db->insert('roles',$data);
-					$user = $this->cosi_db->get_where('roles', array('role_id'=>$user_profile->identifier, 'authentication_service_id'=>'AUTHENTICATION_SOCIAL_FACEBOOK'));
+					$user = $this->cosi_db->get_where('roles', array('role_id'=>$user_profile->identifier, 'authentication_service_id'=>'AUTHENTICATION_SOCIAL_GOOGLE'));
 				}
 
 				$user = $user->row(1);
