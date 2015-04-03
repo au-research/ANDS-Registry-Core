@@ -29,7 +29,7 @@
                             @if($showHeading)
 							<small>{{readable($currentHeading)}}</small>
                             @endif
-							<span itemprop="description">{{$description}}</span>
+							<p><span itemprop="description">{{$description}}</span></p>
 						</div>
 						
 					@endif
@@ -54,7 +54,7 @@
                         <small>{{readable($currentHeading)}}</small>
                         @endif
                         @if(str_cont(
-						<span itemprop="description">{{$description}}</span>
+						<p><span itemprop="description">{{$description}}</span></p>
 					</div>
 					
 				@endif
