@@ -203,9 +203,10 @@ angular.module('record_components',['profile_components'])
         ngdata = [];
         ngdata.push($scope.data);
         profile_factory.add_user_data('saved_search', ngdata).then(function(data){
-            if(data.status=='OK') {
-                $modalInstance.close();
+            if (data.status=='OK') {
+                $scope.success_msg = 'Save Search has been successful';
             } else {
+                $scope.error_msg = 'An error has occured while saving this search';
                 $log.debug(data);
             }
         });

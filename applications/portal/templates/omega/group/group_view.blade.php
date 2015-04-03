@@ -39,7 +39,7 @@
     <?php
         $subjects_list = '';
         if (sizeof($group['facet']['subjects']) > 3) {
-            $subjects_list = 'including '.$group['facet']['subjects'][0]['name'].', '.$group['facet']['subjects'][1]['name'].' and '.$group['facet']['subjects'][2]['name'];
+            $subjects_list = 'including <a href="'.base_url('search').'#!/group='.$group['title'].'/subject_value_resolved='.rawurlencode($group['facet']['subjects'][0]['name']).'">'.$group['facet']['subjects'][0]['name'].'</a>, <a href="'.base_url('search').'#!/group='.$group['title'].'/subject_value_resolved='.rawurlencode($group['facet']['subjects'][1]['name']).'">'.$group['facet']['subjects'][1]['name'].'</a> and <a href="'.base_url('search').'#!/group='.$group['title'].'/subject_value_resolved='.rawurlencode($group['facet']['subjects'][2]['name']).'">'.$group['facet']['subjects'][2]['name'].'</a>';
         } elseif (sizeof($group['facet']['subjects']) > 0) {
             $subjects_list = 'including ';
             foreach ($group['facet']['subjects'] as $s) {
@@ -69,7 +69,7 @@
     <div class="panel swatch-white">
         <div class="panel-heading">Research Data Profile</div>
         <div class="panel-body">
-            To date, {{$group['title']}} has {{$group['counts']}} data records in Research Data Australia, which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}. {{sizeof($group['groups'])}} research group(s) 
+            To date, {{$group['title']}} has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a> in Research Data Australia, which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}. {{sizeof($group['groups'])}} research group(s) 
             have been actively involved in collecting data and creating metadata records for the data.  All the data records, people, projects, grants and services associated with {{$group['title']}} 
             can be accessed from the Registry Contents box on the right hand side of this page.
         </div>
@@ -91,6 +91,7 @@
         @endif
     @endif
 
+    @if(sizeof($group['facet']['subjects']) > 0)
     <div class="panel swatch-white">
         <div class="panel-heading">Subjects Covered</div>
         <div class="panel-body widget_tag_cloud">
@@ -112,6 +113,7 @@
             </div>
         </div>
     </div>
+    @endif
 @stop
 
 @section('sidebar')
