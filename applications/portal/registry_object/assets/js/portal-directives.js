@@ -36,6 +36,42 @@ app.directive('facetSearch', function($http, $log){
 	}
 });
 
+app.directive('facetinfo', function($log) {
+	return {
+		template: '<i class="fa fa-info" tip="{{info}}" ng-if="info"></i>',
+		scope: {
+			infotype: '=',
+			infovalue: '='
+		},
+		transclude: true,
+		link: function(scope) {
+			// $log.debug(scope.infotype, scope.infovalue);
+
+			var values = {
+				'access_rights' : {
+					'open' : 'Online data that can be electronically accessed free of charge with no restrictions imposed on the user.',
+					'conditional' : 'Online or offline data that can be accessed free of charge, providing certain conditions are met (e.g. free registration is required to access data online).',
+					'restricted': 'Online or offline data where access to the data is limited in some way (e.g. access is only available to a particular group of users).',
+					'unknown': 'no value or user defined custom value'
+				},
+				'license_class': {
+					'open licence': 'A licence bearing broad permissions that may include a requirement to attribute the source, or share-alike (or both), requiring a derivative work to be licensed on the same or similar terms as the reused material.',
+					'non-commercial licence' : 'As for the Open Licence but also restricting reuse only for non-commercial purposes.',
+					'non-derivative licence' : 'As for the Open Licence but also prohibits adaptation of the material, and in the second case also restricts reuse only for non-commercial purposes.',
+					'restrictive licence': 'A licence preventing reuse of material unless certain restrictive conditions are satisfied. Note licence restrictions, and contact',
+					'no licence': 'All rights to reuse, communicate, publish or reproduce the material are reserved, with the exception of specific rights contained within the Copyright Act 1968 or similar laws.  Contact the copyright holder for permission to reuse this material.',
+					'unknown': 'no value or user defined custom value'
+				}
+			}
+			// $log.debug(values);
+
+			if (values[scope.infotype] && values[scope.infotype][scope.infovalue]) {
+				scope.info = values[scope.infotype][scope.infovalue];
+			}
+		}
+	}
+});
+
 app.directive('resolve', function($http, $log, vocab_factory){
 	return {
 		template: '<ul class="listy no-bottom"><li ng-repeat="item in result"><a href="" ng-click="toggleFilter(vocab, item.notation, true)">{{item.label | toTitleCase | truncate:30}} <small><i class="fa fa-remove" tip="Remove Item"></i></small></a></li></ul>',
