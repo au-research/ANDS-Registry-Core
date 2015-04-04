@@ -115,7 +115,7 @@
     <div class="panel-body swatch-white">
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
             <h4 ng-if="name!='q' || (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
-            <h4 ng-if="name=='q' && filters.cq">Advanced Search</h4>
+            <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
             <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li ng-repeat="v in value track by $index"> 
                     <a href="" ng-click="toggleFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>

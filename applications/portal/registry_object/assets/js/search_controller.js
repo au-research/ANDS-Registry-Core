@@ -726,9 +726,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.sizeofField = function(type) {
-		// if(type=='group') $log.debug($scope.prefilters[type]);
-		// 
-		// 
 		
 		var ret = 0;
 
@@ -748,6 +745,30 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 					ret = 1;
 				}
 			});
+		}
+
+		if(type=='date_range') {
+			var fields_array = ['commence_from', 'commence_to', 'completed_from', 'completed_to'];
+			angular.forEach(fields_array, function(ss){
+				if ($scope.prefilters[ss] ) {
+					ret = 1;
+				}
+			});
+		}
+
+		if (type=='funding_amount') {
+			var fields_array = ['funding_from', 'funding_to'];
+			angular.forEach(fields_array, function(ss){
+				if ($scope.prefilters[ss] ) {
+					ret = 1;
+				}
+			});
+		}
+
+		if (type=='terms') {
+			if ($scope.prefilters['q'] && $scope.prefilters['q']!='' ) {
+				ret = 1;
+			}
 		}
 
 

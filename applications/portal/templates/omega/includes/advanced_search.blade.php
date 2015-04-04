@@ -166,7 +166,7 @@
 									<div class="panel-body swatch-white">
 										<div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name)">
 										    <h4 ng-if="name!='q' || (name=='q' && !prefilters.cq)">[[name | filter_name]]</h4>
-										    <h4 ng-if="name=='q' && prefilters.cq">Advanced Search</h4>
+										    <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
 										    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
 										        <li ng-repeat="v in value track by $index"> 
 										            <a href="" ng-click="togglePreFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
