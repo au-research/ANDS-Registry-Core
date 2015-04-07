@@ -13,7 +13,8 @@
 			<span class="input-group-btn">
 				<input type="submit" class="btn btn-primary" value="Add Tag"><i class="fa fa-tag"></i> Add Tag</input>
 			</span>
-		</form>
+		</form> <br /><em><span id="tag_error"/></em>
+
 		<i ng-show="loadingSuggestions" class="fa fa-refresh fa-spin"></i>
 	@endif
 </div>
