@@ -19,7 +19,7 @@
             echo  '<p>Fax: '.$contact['contact_value'].'</p>';
         }
         else{
-            echo html_entity_decode($contact['contact_value']);
+            echo html_entity_decode($contact['contact_value'])."<br />";
         }
     ?>
     @endforeach
