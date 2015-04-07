@@ -2,6 +2,7 @@
 	$order = array('researchers','fundingAmount','fundingScheme','brief', 'full');
 	$omit = array('logo');
     $researchersfound='no';
+    $prev_type = '';
 ?>
 @if($ro->descriptions)
 <div class="swatch-white">
@@ -43,10 +44,14 @@
                                     }
                                 }
                         ?>
+                        <?php if($prev_type!=''&& $prev_type!=$type){ echo "</p>";}
+                        if ($prev_type!=$type) { ?>
+						<p><strong>{{$type}}</strong> <?php } else { echo ", ";} ?>{{html_entity_decode($desc['description'])}}
 
-						<p><strong>{{$type}}</strong> {{html_entity_decode($desc['description'])}}
 
-                        </p>
+                        <?php
+                            $prev_type=$type;
+                        ?>
 					@endif
 				@endforeach
 			@endforeach

@@ -351,7 +351,7 @@ class Sync_extension extends ExtensionBase{
         			$json['administering_institution'][] = $related_object['title'];
         		} else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
         			$json['funders'][] = $related_object['title'];
-        		} else if($related_object['class']=='party' && $related_object['relation_type']=='isParticipantIn') {
+        		} else if($related_object['class']=='party' && strtolower($related_object['type'])=='person') {
         			$json['researchers'][] = $related_object['title'];
         		}
         	}

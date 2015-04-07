@@ -20,13 +20,13 @@
         }
     };
     </script>
-    <section class="section swatch-black search-section section-text-shadow section-inner-shadow element-short-bottom" style="overflow:visible;z-index:9">
+    <section class="section swatch-black search-section section-text-shadow section-inner-shadow element-shorter-bottom" style="overflow:visible;z-index:9">
         @include('includes/banner-image')
         <div class="container">
             <div class="row">
                 <div class="col-md-12 element-higher-top element-short-bottom">
                     <header class="text-center element-normal-bottom os-animation condensed animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
-                        <h1 class="bigger hairline bordered bordered-normal element-shorter-bottom">Find data for research.</h1>
+                        <h1 class="bigger hairline bordered bordered-normal element-shorter-bottom">Find data for research</h1>
                         <p class="normal col-md-8 col-md-offset-2">
                             Find, access, and re-use data for research - from over one hundred Australian research organisations, government agencies, and cultural institutions
                         </p>
@@ -42,7 +42,7 @@
        <div class="container">
            <div class="row">
                <div class="col-md-12">
-                   <header class="text-center element-normal-top element-no-bottom not-condensed os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
+                   <header class="text-center element-short-top element-no-bottom not-condensed os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
                        <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;"> Browse By Subjects </h1>
                    </header>
                </div>
@@ -56,7 +56,7 @@
        <div class="container">
            <div id="services" class="row">
                <div class="col-md-12">
-                   <header class="text-center element-normal-top element-no-bottom os-animation condensed animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
+                   <header class="text-center element-short-top element-no-bottom os-animation condensed animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
                        <h1 class="bigger hairline bordered bordered-normal"> Explore </h1>
                    </header>
                    <div class="row " data-os-animation="" data-os-animation-delay="">
@@ -125,7 +125,7 @@
        <div class="container">
            <div class="row">
                <div class="col-md-12">
-                   <header class="text-center element-normal-top element-medium-bottom not-condensed os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
+                   <header class="text-center element-short-top element-medium-bottom not-condensed os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
                        <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;"> Who Contributes to Research Data Australia </h1>
                        <h3><a href="{{portal_url('contributors')}}">View all</a></h3>
                    </header>

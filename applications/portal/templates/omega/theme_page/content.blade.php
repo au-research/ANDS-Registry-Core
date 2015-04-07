@@ -1,10 +1,14 @@
 @foreach($theme[$region] as $f)
 
 <div class="panel swatch-white">
-	@if($f['title'])
-		<div class="panel-heading">{{$f['title']}}</div>
-	@endif
+
 	<div class="panel-body">
+	
+		@if($f['title'])
+			@if($f['heading'])
+				<{{$f['heading']}}>{{$f['title']}}</{{$f['heading']}}>
+			@endif
+		@endif
 
 		<?php if($f['type']=='html'): ?>
 			<?php echo $f['content']; ?>

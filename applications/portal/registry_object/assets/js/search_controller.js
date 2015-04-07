@@ -37,6 +37,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		return location.hash;
 	},function(){
 		var hash = location.hash ? location.href.split("#")[1] : '';
+		if ( $('#refer_q').length ) {
+			hash = $('#refer_q').val();
+		}
 		$scope.filters = search_factory.ingest(hash);
 		$scope.sync();
 		if($scope.filters.cq) {
@@ -536,7 +539,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			        saved_search_data: function () {
 			           	var data = {
 			            	id:Math.random().toString(36).substring(7),
-			            	query_title: 'Untitled Search',
+			            	query_title: '',
 			                query_string: $scope.getHash(),
 			                num_found: $scope.result.response.numFound,
 			                num_found_since_last_check: 0,
@@ -723,9 +726,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.sizeofField = function(type) {
-		// if(type=='group') $log.debug($scope.prefilters[type]);
-		// 
-		// 
 		
 		var ret = 0;
 
@@ -745,6 +745,30 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 					ret = 1;
 				}
 			});
+		}
+
+		if(type=='date_range') {
+			var fields_array = ['commence_from', 'commence_to', 'completed_from', 'completed_to'];
+			angular.forEach(fields_array, function(ss){
+				if ($scope.prefilters[ss] ) {
+					ret = 1;
+				}
+			});
+		}
+
+		if (type=='funding_amount') {
+			var fields_array = ['funding_from', 'funding_to'];
+			angular.forEach(fields_array, function(ss){
+				if ($scope.prefilters[ss] ) {
+					ret = 1;
+				}
+			});
+		}
+
+		if (type=='terms') {
+			if ($scope.prefilters['q'] && $scope.prefilters['q']!='' ) {
+				ret = 1;
+			}
 		}
 
 
@@ -858,6 +882,12 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	// 
 	
 	//MAP
+	$scope.clearMap = function() {
+		$scope.searchBox.setMap(null);
+		$scope.searchBox = null;
+		delete $scope.filters['spatial'];
+		$scope.centres = [];
+	}
 	uiGmapGoogleMapApi.then(function(maps) {
 		$scope.map = {
 			center:{

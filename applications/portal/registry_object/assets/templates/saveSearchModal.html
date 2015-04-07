@@ -18,8 +18,13 @@
 		                <button class="btn" type="submit" value="Search">Save Search</button>
 		            </span>
 		        </div>
+		        <div class="alert alert-success" ng-if="success_msg">[[ success_msg ]]</div>
+				<div class="alert alert-important" ng-if="error_msg">[[ error_msg ]]</div>
 	        </form>
 		</p>
+	</div>
+	<div class="modal-body swatch-white">
+		<a href="[[base_url]]profile" target="_blank">Open MyRDA</a>
 	</div>
 	<div class="modal-body swatch-white" ng-if="!loggedin" ng-cloak>
 		<p>You are not logged in to MyRDA. Please <a href="[[base_url]]profile/login/?redirect=[[ getCurrentURL() ]]">Login to MyRDA</a> to save records</p>

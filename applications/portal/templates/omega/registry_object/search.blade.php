@@ -42,7 +42,7 @@
                         <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
                     </div>
                     <div class="pull-right" ng-if="filters.class=='activity'">
-                        [[doc.type]]
+                        [[ doc.type | toTitleCase ]]
                     </div>
                     <div class="scontent">
                         <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
@@ -70,10 +70,10 @@
                             [[ doc.description | text | truncate:500 ]]
                         </p>
                         <div ng-if="doc.administering_institution">
-                            <b>Administering Institution</b>: [[doc.administering_institution.join(',')]]
+                            <b>Managing Institution</b>: [[ doc.administering_institution.join(',') | toTitleCase ]]
                         </div>
                         <div ng-if="doc.researchers">
-                            <b>Researchers: </b> [[doc.researchers.join(',')]]
+                            <b>Researchers: </b> [[doc.researchers.join(', ')]]
                         </div>
                     </div>
                     
@@ -115,7 +115,7 @@
     <div class="panel-body swatch-white">
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
             <h4 ng-if="name!='q' || (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
-            <h4 ng-if="name=='q' && filters.cq">Advanced Search</h4>
+            <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
             <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li ng-repeat="v in value track by $index"> 
                     <a href="" ng-click="toggleFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
@@ -163,7 +163,7 @@
     <div class="panel-body swatch-white" ng-if="showFacet('subjects')">
         <h4>Subjects</h4>
         <ul class="listy">
-          <li ng-repeat="item in vocab_tree | orderObjectBy:'collectionNum':true | limitTo:5">
+          <li ng-repeat="item in vocab_tree | orderObjectBy:'collectionNum':true | limitTo:5" ng-if="item.collectionNum > 0">
             <input type="checkbox" ng-checked="isVocabSelected(item)" ui-indeterminate="isVocabParentSelected(item)" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
             <a href="" ng-click="toggleFilter('anzsrc-for', item.notation, true)">
                 [[ item.prefLabel | toTitleCase | truncate:30 ]]

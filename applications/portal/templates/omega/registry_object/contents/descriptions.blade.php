@@ -27,9 +27,9 @@
                                 $description = nl2br($description);
                             ?>
                             @if($showHeading)
-							<small>{{readable($currentHeading)}}</small>
+							<h4>{{readable($currentHeading)}}</h4>
                             @endif
-							<span itemprop="description">{{$description}}</span>
+							{{$description ? $description : ''}}
 						</div>
 						
 					@endif
@@ -51,10 +51,9 @@
                             $description = nl2br($description);
                         ?>
                         @if($showHeading)
-                        <small>{{readable($currentHeading)}}</small>
+                        <h4>{{readable($currentHeading)}}</h4>
                         @endif
-                        @if(str_cont(
-						<span itemprop="description">{{$description}}</span>
+                        {{$description ? $description : ''}}
 					</div>
 					
 				@endif

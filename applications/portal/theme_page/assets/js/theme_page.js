@@ -132,6 +132,7 @@ angular.module('portal_theme',[]).
 				$scope.$parent.$watch('page', function(newv){
 					if(newv) {
 						$scope.el = $scope.$parent.getSearch($scope.id);
+						if (!$scope.el.search.limit && $scope.el.search.limit!=0) $scope.el.search.limit = 15;
 						// $log.debug('found search', $scope.el);
 						var search = $scope.el.search;
 						var filters = searches.constructFilterArray(search);
@@ -154,6 +155,7 @@ angular.module('portal_theme',[]).
 				id:'='
 			},
 			controller: function($scope, $log, searches) {
+				$scope.limit = 5;
 				$scope.base_url = base_url;
 				$scope.$parent.$watch('page', function(newv){
 					if(newv) {
@@ -184,6 +186,10 @@ angular.module('portal_theme',[]).
 						
 					}
 				});
+					
+				$scope.viewAll = function() {
+					$scope.limit = 300;
+				}
 			}
 		}
 	}).
@@ -218,33 +224,52 @@ angular.module('portal_theme',[]).
 		return {
 			restrict: 'ACME',
 			templateUrl:base_url+'assets/theme_page/js/templates/relation.html',
-			transclude: true,
+			transclude: false,
+			scope: {
+
+			},
 			compile: function(element, attrs, transclude){
 
 				// $log.debug('every instance ', element);
 				return function(scope,iElement,iAttrs){
 					scope.base_url = base_url;
 					// $log.debug('this instance', iAttrs);
-					scope.type = iAttrs.type;
 					scope.key = iAttrs.key;
-					// $log.debug('values: ', scope.type,scope.key);
+					// $log.debug(scope.type);
 					scope.conn = [];
 					searches.getConnections(scope.key).then(function(data){
 						// $log.debug('connections for ', scope.key, data);
 						// $log.debug(data.connections);
 						angular.forEach(data.connections, function(i,k){
-							if(i[scope.type]){
-								// $log.debug('found ', i[scope.type]);
-								angular.forEach(i[scope.type], function(i,k){
-									scope.conn.push(i);
+							
+							if(i[iAttrs.type]){
+								// $log.debug('found ', i[iAttrs.type]);
+								angular.forEach(i[iAttrs.type], function(obj){
+									scope.conn.push(obj);
 								});
 							}
 						});
+						// $log.debug(scope.conn);
 					});
 				}
 			}
 		}
-	}).
+	})
+	.filter('orderObjectBy', function($log) {
+	  return function(items, field, reverse) {
+	    var filtered = [];
+	    angular.forEach(items, function(item) {
+	      filtered.push(item);
+	    });
+	    filtered.sort(function (a, b) {
+	    	var asort = (typeof(a[field])=='string' ? a[field].toLowerCase() : a[field]);
+	    	var bsort = (typeof(b[field])=='string' ? b[field].toLowerCase() : b[field]);
+	    	return (asort > bsort ? 1 : -1);
+	    });
+	    if(reverse) filtered.reverse();
+	    return filtered;
+	  };
+}).
 	controller('init', function($scope, pages, searches, $filter, $log){
 		$scope.search_results = {}; 
 		$scope.slug = $('#slug').val();

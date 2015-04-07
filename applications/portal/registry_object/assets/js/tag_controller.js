@@ -11,6 +11,9 @@ app.controller('tagController', function($scope, $log, $http){
 			if(response.data.status=='OK') {
 				location.reload();
 			}
+            if(response.data.status=='ERROR' && response.data.message!='') {
+                $('#tag_error').html(response.data.message);
+            }
 		});
 	}
 

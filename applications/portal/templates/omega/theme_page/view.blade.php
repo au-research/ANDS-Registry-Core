@@ -12,7 +12,7 @@
                             <div class="col-md-12">
                                 <header>
                                     <h1 class="hairline bordered-normal">{{$theme['title']}}</h1>
-                                    <small>Breadcrumbs</small>
+                                    <a href="{{portal_url('themes')}}"><i class="fa fa-arrow-left"></i> Return to Themed Collections</a>
                                 </header>
                             </div>
                         </div>
@@ -24,7 +24,7 @@
     		    			<div class="col-md-9">
     		    				@include('theme_page/content', array('region'=>'left'))
     		    			</div>
-    		    			<div class="col-md-3 sidebar">
+    		    			<div class="col-md-3">
     		    				@include('theme_page/content', array('region'=>'right'))
     		    			</div>
     		    		</div>

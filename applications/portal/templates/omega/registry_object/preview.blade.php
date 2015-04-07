@@ -23,7 +23,9 @@
 
 ?>
 <div class="swatch-white">
-	<h2 class="bordered bold">@include('includes/icon') {{$ro->core['title']}}</h2>
+	<h2 class="bordered bold">@include('includes/icon')
+      <a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}">  {{$ro->core['title']}}</a>
+    </h2>
 	<p>@include('registry_object/contents/the-description')</p>
 	@if($ro->core['class']=='party')
 		@include('registry_object/contents/contact-info')
@@ -43,5 +45,5 @@
     @else
         <br/>
 	@endif
-	<a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm">View Record</a>
+	<a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm pull-right">View Record</a>
 </div>

@@ -9,7 +9,7 @@ angular.module('portal-filters', [])
 				case 'related_people': return 'Related People' ;break;
 				case 'related_organisations': return 'Related Organisations' ;break;
 				case 'description': return 'Description' ;break;
-				case 'subject': return 'Subjects' ;break;
+				case 'subject': return 'Subject' ;break;
 				case 'access_rights': return 'Access'; break;
 				case 'group': return 'Data Provider'; break;
 				case 'license_class': return 'Licence'; break;
@@ -20,8 +20,8 @@ angular.module('portal-filters', [])
 				case 'year_from': return 'Time Period (from)'; break;
 				case 'year_to': return 'Time Period (to)'; break;
 				case 'funding_scheme': return 'Funding Scheme'; break;
-				case 'funders': return 'Funders'; break;
-				case 'administering_institution': return 'Managing Institutions'; break;
+				case 'funders': return 'Funder'; break;
+				case 'administering_institution': return 'Managing Institution'; break;
 				case 'institution': return 'Institution'; break;
 				case 'activity_status': return 'Status'; break;
 				case 'researcher': return 'Researcher'; break;
@@ -31,10 +31,10 @@ angular.module('portal-filters', [])
 				case 'psychit': return 'Thesaurus of psychological index terms'; break;
 				case 'anzsrc': return 'ANZSRC'; break;
 				case 'apt': return 'Australian Pictorial Thesaurus'; break;
-				case 'gcmd': return 'GCMD Keywords'; break;
+				case 'gcmd': return 'GCMD Keyword'; break;
 				case 'lcsh': return 'LCSH'; break;
-				case 'keywords': return 'Keywords'; break;
-				case 'refine': return 'Keywords'; break;
+				case 'keywords': return 'Keyword'; break;
+				case 'refine': return 'Keyword'; break;
 				case 'subject_value_resolved': return 'Subject'; break;
 				case 'commencement_to': return 'Commencement To'; break;
 				case 'commencement_from': return 'Commencement From'; break;

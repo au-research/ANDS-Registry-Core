@@ -37,6 +37,13 @@
 						</div>
 						<div class="col-xs-12 col-md-10 swatch-white" id="advbody">
 							<div ng-show="isAdvancedSearchActive('terms')">
+								<i class="fa fa-info" tip='
+								<ul>
+									<li>Use the ? symbol to perform a single character wildcard search. E.g. Organi?ations.</li>
+									<li>Use the <star> symbol to perform multiple character wildcard search. E.g. Extend* </li>
+									<li> Use quotes " " to perform an exact phrase search. E.g. "ice sheets"</li>
+								</ul>
+								'></i>
 								<div ng-controller="QueryBuilderCtrl">
 									<div class="alert alert-info">
 										<strong>Query Construction</strong><br>
@@ -50,13 +57,20 @@
 								<ul class="list-unstyled" ng-if="facet.name!='subject'">
 									<li ng-repeat="item in facet.value | orderObjectBy:'name'">
 										<input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
-										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name!='group'">[[item.name | toTitleCase]] <small>[[item.value]]</small></a>    
-										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name=='group'">[[item.name]] <small>[[item.value]]</small></a>    
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name!='group'">[[item.name | toTitleCase]] ([[item.value]])</a>  
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name=='group'">[[item.name]] ([[item.value]])</a>    
+										<span facetinfo infotype="facet.name" infovalue="item.name"></span>
 									</li>
 								</ul>
 							</div>
 
 							<div ng-if="isAdvancedSearchActive('temporal')">
+								<div class="alert alert-info" ng-if="earliest_year && latest_year">
+									To filter your results by a time period enter a year range between [[ earliest_year ]] and [[ latest_year ]] inclusive. Open ranges can be specified by leaving one of the fields blank. Please note that adding a time period filter to your search will restrict your search to only those records in Research Data Australia which contain temporal information.
+								</div>
+								<div class="alert alert-info" ng-if="!earliest_year && !latest_year">
+									Search results contain no time period information.
+								</div>
 								<label for="">From Year</label>
 								<input type="text" class="form-control" ng-model="prefilters.year_from" placeholder="From Year. eg [[earliest_year]]">
 								<label for="">To Year</label>
@@ -128,7 +142,19 @@
 							</div>
 
 							<div ng-if="isAdvancedSearchActive('spatial')">
+								<i class="fa fa-info" tip="
+									To define a search region
+									<ul>
+										<li>Select the box tool.</li>
+										<li>Click on the map and drag the mouse to draw a rectangle.</li>
+										<li>Release the mouse to finish.</li>
+									</ul>
+								"></i> 
+								<a href="" ng-click="clearMap()" ng-if="searchBox">Clear Map</a>
 								@include('registry_object/facet/map')
+								<div class="alert alert-info">
+									Note: Adding a Location filter will restrict your search to only records that have location information described.
+								</div>
 							</div>
 
 							<div ng-if="isAdvancedSearchActive('review')">
@@ -140,7 +166,7 @@
 									<div class="panel-body swatch-white">
 										<div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name)">
 										    <h4 ng-if="name!='q' || (name=='q' && !prefilters.cq)">[[name | filter_name]]</h4>
-										    <h4 ng-if="name=='q' && prefilters.cq">Advanced Search</h4>
+										    <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
 										    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
 										        <li ng-repeat="v in value track by $index"> 
 										            <a href="" ng-click="togglePreFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
