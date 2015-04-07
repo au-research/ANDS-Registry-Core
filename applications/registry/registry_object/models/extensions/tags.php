@@ -114,6 +114,7 @@ class Tags_Extension extends ExtensionBase{
 				}else $data['type'] = $type;
 				$this->db->insert('registry_object_tags', $data);
 				$this->markTag(1);
+                $this->ro->update_field_index('tag');
 				return true;
 			}else return false;
 	
@@ -143,6 +144,7 @@ class Tags_Extension extends ExtensionBase{
 			$this->markTag(0);
 		}
 		$this->removeTagDB($tag);
+        $this->ro->update_field_index('tag');
 		return true;
 	}
 }
