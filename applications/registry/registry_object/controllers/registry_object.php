@@ -628,7 +628,7 @@ class Registry_object extends MX_Controller {
 				$jsonData['msg'] = $e;
 			}
 		}else if($action=='remove'){
-			if($ro->removeTag($tag) && $ro->sync(false)){
+			if($ro->removeTag($tag)){
 				$jsonData['status'] = 'success';
 			}else $jsonData['status'] = 'error';
 		}

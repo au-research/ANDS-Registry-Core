@@ -656,7 +656,25 @@ class Sync_extension extends ExtensionBase{
 		if($field=='slug'){
 			$json['slug'] = array('set'=>$this->ro->slug);
 		}
+        if($field=='tag')
+        {
+            $tags = $this->ro->getTags();
+            if(isset($tags) && sizeof($tags) > 0)
+            {
+                $json['tag'] = array();
+                $json['tag_type'] = array();
+                $json['tag']['set'] = array();
+                $json['tag_type']['set'] = array();
+                foreach($tags as $tag){
+                    $json['tag']['set'][] = $tag['name'];
+                    $json['tag_type']['set'][] = $tag['type'];
+                }
+            }else{
+                $json['tag']['set'] = null;
+                $json['tag_type']['set'] = null;
+            }
 
+        }
 		$docs = array();
 		$docs[] = $json;
 		$this->_CI->load->library('solr');
