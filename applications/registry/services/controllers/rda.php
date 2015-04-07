@@ -860,6 +860,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 	}
 
 	public function addTag(){
+
 		$key = $this->input->post('key');
 		$tag = $this->input->post('tag');
 		$user = $this->input->post('user');

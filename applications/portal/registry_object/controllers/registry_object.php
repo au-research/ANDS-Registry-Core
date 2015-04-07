@@ -420,15 +420,14 @@ class Registry_object extends MX_Controller {
 
 		$data = $data['data'];
 		$data['user'] = $this->user->name();
-		$data['user_from'] = $this->user->authDomain();
+		$data['user_from'] = $this->user->authDomain() ? $this->user->authDomain() : $this->user->authMethod();
 
-		$ch = curl_init();
-		curl_setopt($ch,CURLOPT_URL,base_url().'registry/services/rda/addTag');//post to SOLR
-		curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$content = curl_exec($ch);//execute the curl
-		curl_close($ch);//close the curl
+		$fields = '';
+		foreach($data as $key=>$value) {
+			$fields .= $key.'='.rawurlencode($value).'&';
+		}//build the string
 
+		$content = curl_post(base_url().'registry/services/rda/addTag', $fields, array('header'=>'multipart/form-data'));
 		echo $content;
 	}
 
