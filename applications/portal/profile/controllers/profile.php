@@ -172,6 +172,11 @@ class Profile extends MX_Controller {
 	}
 
 	function login() {
+
+		if($this->user->isLoggedIn()) {
+			redirect('profile/#!/dashboard');
+		}
+
 		$this->save_auth_cookie();
 		$authenticators = array(
 			'built-in' => array(
