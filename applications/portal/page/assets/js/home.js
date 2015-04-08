@@ -3,7 +3,7 @@ $(document).ready(function() {
    $('#slider').flexslider({
        animation: "slide",
        animationLoop:true,
-       slideshowSpeed: 25002500,
+       slideshowSpeed: 2500,
        pauseOnHover:true,
        directionNav:true,
        controlNav: false,
