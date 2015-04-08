@@ -6,18 +6,21 @@
 			<?php 
 				$subjects = $ro->subjects;
 				uasort($subjects, 'subjectSortResolved');
+                $classSearchComp = '';
+                if($ro->core['class'] != 'collection')
+                    $classSearchComp = '/class='.$ro->core['class'];
 			?>
 			@foreach($subjects as $col)
                 @if(isset($col['resolved']))
                     @if($col['type']=='anzsrc-for')
-                        <a href="{{base_url().'search/#!/anzsrc-for='.$col['subject']}}" itemprop="about keywords">{{$col['resolved']}}</a> |
+                        <a href="{{base_url().'search/#!/anzsrc-for='.$col['subject'].$classSearchComp}}" itemprop="about keywords">{{$col['resolved']}}</a> |
                     @elseif($col['type']=='anzsrc-seo')
-                        <a href="{{base_url().'search/#!/anzsrc-seo='.$col['subject']}}" itemprop="about keywords">{{$col['resolved']}}</a> |
+                        <a href="{{base_url().'search/#!/anzsrc-seo='.$col['subject'].$classSearchComp}}" itemprop="about keywords">{{$col['resolved']}}</a> |
                     @else
-                        <a href="{{base_url().'search/#!/subject_value_resolved='.rawurlencode($col['resolved'])}}" itemprop="about keywords">{{$col['resolved']}}</a> |
+                        <a href="{{base_url().'search/#!/subject_value_resolved='.rawurlencode($col['resolved']).$classSearchComp}}" itemprop="about keywords">{{$col['resolved']}}</a> |
                     @endif
                 @else
-                <a href="{{base_url().'search/#!/subject_value='.rawurlencode($col['subject'])}}" itemprop="about keywords">{{$col['subject']}}</a> |
+                <a href="{{base_url().'search/#!/subject_value='.rawurlencode($col['subject']).$classSearchComp}}" itemprop="about keywords">{{$col['subject']}}</a> |
                 @endif
 			@endforeach
 		</div>
