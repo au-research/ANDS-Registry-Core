@@ -373,7 +373,7 @@ class Sync_extension extends ExtensionBase{
         		}
         	}
         }
-
+        $this->_dropCache();
         $json = array_filter($json);
 		return $json;
 	}
@@ -682,7 +682,23 @@ class Sync_extension extends ExtensionBase{
 		$this->_CI->solr->commit();
 
 		if(isset($result['responseHeader']) && $result['responseHeader']['status']==0){
+            $this->_dropCache();
 			return true;
 		} else return false;
 	}
+
+    function _dropCache()
+    {
+        $api_id = 'ro-api-'.$this->ro->id.'-portal';
+        $portal_id = 'ro-portal-'.$this->ro->id;
+        $ci =& get_instance();
+        $ci->load->driver('cache');
+        try{
+        $ci->cache->file->delete($api_id);
+        $ci->cache->file->delete($portal_id);
+        }
+        catch(Exception $e){
+
+        }
+    }
 }

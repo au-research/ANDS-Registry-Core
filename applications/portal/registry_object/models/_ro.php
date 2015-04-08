@@ -75,7 +75,7 @@ class _ro {
         $this->prop['fromCache'] = $useCache;
         $this->prop['status'] = false;
 		//try and get it from cache
-		$cache_id = 'ro-api-'.$this->id;
+		$cache_id = 'ro-portal-'.$this->id;
 		$ci =& get_instance();
 		$ci->load->driver('cache');
         if($useCache)

@@ -10,9 +10,7 @@ class Registry_objectsMethod extends MethodHandler {
         'rows' => 20
     );
 
-    private $valid_methods = array(
-        'core', 'relationships', 'identifiers','descriptions', 'subjects', 'spatial', 'temporal', 'citations', 'relatedInfo','suggest', 'dates', 'connectiontrees', 'rights', 'directaccess','contact', 'logo', 'tags','existenceDates', 'identifiermatch'
-    );
+    private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
 
     public $ro = null;
     public $index = null;
@@ -31,7 +29,18 @@ class Registry_objectsMethod extends MethodHandler {
 
         $useCache = $ci->input->get('useCache') ? false : true;
 
-        if($method1=='get' || strpos($method1, 'rda')!==false) $method1 = implode($this->valid_methods, '-');
+        $cache_id = $id.'-'.$method1;
+
+        $all = implode($this->valid_methods, '-').'-';
+
+        if ($method1 == $all) {
+            $cache_id = 'ro-api-'.$id.'-'.'portal';
+        }
+
+        if($method1=='get' || strpos($method1, 'rda')!==false) {
+            $method1 = implode($this->valid_methods, '-');
+            $cache_id = 'ro-api-'.$id.'-'.'portal';
+        }
 
         // $ci->load->library('benchmark');
         $ci->benchmark->mark('code_start');
@@ -43,7 +52,7 @@ class Registry_objectsMethod extends MethodHandler {
 
             //check in cache
             $ci->load->driver('cache');
-            $cache_id = $id.'-'.$method1;
+//            $cache_id = $id.'-'.$method1;
             $updated = (int) $this->ro->getAttribute('updated');
 
             if (($cache = $ci->cache->file->get($cache_id)) && $useCache) {
