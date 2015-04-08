@@ -171,12 +171,12 @@ jQuery(document).ready(function( $ ) {
 
     //Feedback button
     window.ATL_JQ_PAGE_PROPS =  {
-        "triggerFunction": function(showCollectorDialog) {
-            //Requries that jQuery is available!
-            jQuery(".myCustomTrigger").click(function(e) {
-                e.preventDefault();
-                showCollectorDialog();
-            });
-        }};
+    "triggerFunction": function(showCollectorDialog) {
+        //Requries that jQuery is available!
+        jQuery(".feedback_button").click(function(e) {
+            e.preventDefault();
+            showCollectorDialog();
+        });
+    }};
 
 });
