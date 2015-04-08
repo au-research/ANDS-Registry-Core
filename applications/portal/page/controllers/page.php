@@ -44,8 +44,6 @@ class Page extends MX_Controller {
 	 */
 	function about() {
 
-
-
         $highlevel = $this->config->item('subjects');
         foreach ($highlevel as &$item) {
             $query = '';
