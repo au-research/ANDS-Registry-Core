@@ -5,7 +5,7 @@
 	<div class="panel-body">
 	
 		@if($f['title'])
-			@if($f['heading'])
+			@if(isset($f['heading']))
 				<{{$f['heading']}}>{{$f['title']}}</{{$f['heading']}}>
 			@endif
 		@endif
