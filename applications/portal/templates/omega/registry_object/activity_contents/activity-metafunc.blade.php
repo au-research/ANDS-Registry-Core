@@ -32,7 +32,7 @@ if ($ro->rights) {
     <div class="panel-body">
         <div class="center-block" style="text-align:center">
             <div ng-if="ro.stat">
-                <a href="#" style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</a>
+                <span style="padding-right:4px;" tip="This page has been viewed [[ro.stat.viewed]] times."><small>Viewed: </small>[[ro.stat.viewed]]</span>
                <!-- <a href="#" style="padding-right:4px;"><small>Accessed: </small>[[ro.stat.accessed]]</a> -->
             </div>
         </div>

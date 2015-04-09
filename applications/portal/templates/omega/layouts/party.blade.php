@@ -62,7 +62,7 @@
                                     <div class="panel-body" style="padding:0 0 10px 0">
                                         <div class="panel-tools">
                                             <div ng-if="ro.stat">
-                                                <a href="#" style="padding-right:4px;"><small>Viewed: </small>[[ro.stat.viewed]]</a>
+                                                <span style="padding-right:4px;" tip="This page has been viewed [[ro.stat.viewed]] times."><small>Viewed: </small>[[ro.stat.viewed]]</span>
                                             </div>
                                         </div>
                                         <div class="panel-tools">
