@@ -1,0 +1,572 @@
+/**
+ * Single Purpose Content Styling
+ * This file is for the single purpose styling
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
+.element-shorter-top {
+  margin-top: 10px !important;
+}
+.element-shorter-bottom {
+  margin-bottom: 10px !important;
+}
+.element-shortest-top {
+  margin-top: 5px !important;
+}
+.element-shortest-bottom {
+  margin-bottom: 5px !important;
+}
+.qtip-normal {
+  font-size: 14px;
+  max-width: 740px;
+  min-width: 100px;
+}
+.muted {
+  font-size: 12px;
+  color: #6c6c6c;
+  font-style: 'italic';
+}
+.project {
+  background-color: #ffffff;
+}
+.grant {
+  background-color: #ffffff;
+}
+.icon-portal {
+  color: #eb7700 !important;
+}
+.icon-white {
+  color: white !important;
+}
+.icon-black {
+  color: black !important;
+}
+.text-pull-right {
+  text-align: right;
+}
+.gray-bg {
+  background-color: #e9e9e9 !important;
+}
+.element-higher-top {
+  padding-top: 102px !important;
+}
+.element-higher-bottom {
+  padding-bottom: 102px !important;
+}
+.no-bottom {
+  margin-bottom: 0px !important;
+}
+.no-bottom li {
+  padding: 0px 5px !important;
+  border: none !important;
+}
+.modal-center {
+  text-align: center;
+}
+.modal-center:before {
+  display: inline-block;
+  vertical-align: middle;
+  content: " ";
+  height: 100%;
+}
+.modal-center .modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+div.vertical-center {
+  height: 100px;
+  line-height: 100px;
+}
+div.vertical-center span.vertical-center {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+/**
+ * Framework starts from here ...
+ * ------------------------------
+ */
+.tree,
+.tree ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tree ul {
+  margin-left: 1em;
+  /* indentation */
+  position: relative;
+}
+.tree ul ul {
+  margin-left: 0.5em;
+}
+/* (indentation/2) */
+.tree ul:before {
+  content: "";
+  display: block;
+  width: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-left: 1px solid;
+}
+.tree li {
+  margin: 0;
+  padding: 0 1.5em;
+  /* indentation + .5em */
+  line-height: 2em;
+  /* default list item's `line-height` */
+  font-weight: normal;
+  position: relative;
+}
+.tree ul li:before {
+  content: "";
+  display: block;
+  width: 10px;
+  /* same with indentation */
+  height: 0;
+  border-top: 1px solid;
+  margin-top: -1px;
+  /* border top width */
+  position: absolute;
+  top: 1em;
+  /* (line-height/2) */
+  left: 0;
+}
+.tree ul li:last-child:before {
+  background: white;
+  /* same with body background */
+  height: auto;
+  top: 1em;
+  /* (line-height/2) */
+  bottom: 0;
+}
+.list-normal {
+  padding-left: 0;
+}
+.list-normal li {
+  list-style-type: disc;
+  list-style-position: inside;
+  text-indent: -1em;
+  padding-left: 1em;
+}
+/**
+ * Modules used mainly in view page
+ */
+.panel-content {
+  position: relative;
+  z-index: 9;
+  overflow: visible;
+}
+.panel-content .panel-heading {
+  float: right;
+  background: #6c6c6c !important;
+  color: white !important;
+  font-size: 12px;
+  padding: 4px 11px;
+}
+.panel-content .panel-tools {
+  float: right;
+  padding: 2px 11px 2px 0;
+}
+.panel-content .panel-body {
+  padding-top: 30px;
+}
+.panel-content .panel-footer {
+  width: auto;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+.description p {
+  font-size: 16px;
+}
+.view-content .panel {
+  margin-bottom: 15px !important;
+}
+.label-ar {
+  width: 50%;
+  height: 54px;
+  padding: 14px 40px 19px;
+  font-size: 18px;
+  font-variant: small-caps;
+}
+.img-cc {
+  height: 22px;
+}
+.img-cc-standard3 {
+  width: auto;
+  height: 48px;
+}
+.header-logo {
+  margin: 0px 10px 10px 0px;
+  max-width: 109px;
+  float: left;
+}
+.btn-noaction:hover {
+  background: transparent !important;
+  color: #84a07b !important;
+}
+.round {
+  padding: 15px;
+  border-radius: 50%;
+}
+.view-page-metadata {
+  background: #6c6c6c;
+  width: auto;
+  position: absolute;
+  top: 0;
+  color: white;
+}
+.view-page-metadata ul {
+  margin: 0;
+  padding: 0;
+}
+.view-page-metadata ul li {
+  list-style-type: none;
+  display: inline-block;
+}
+.logo-placement {
+  height: 170px;
+}
+.logo-placement p {
+  position: relative;
+  top: 50%;
+  font-size: 25px;
+  color: #cccccc;
+}
+.logo-place {
+  height: 170px;
+  width: 170px;
+  overflow: hidden;
+  text-align: center;
+  margin: 0 auto;
+  vertical-align: bottom;
+}
+.logo-place img {
+  top: 50%;
+  width: 170px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  line-height: 100%;
+  display: inline-block;
+  vertical-align: bottom;
+  border: 0;
+}
+.carousel img {
+  height: 160px !important;
+}
+#colorbox {
+  z-index: 9999;
+}
+/**
+ * Modules used mainly in search page
+ */
+.scroll-fixed.ui-scrollfix {
+  width: 100%;
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  margin: 0 auto !important;
+  padding: 10px 0;
+  background: white;
+  border-bottom: 1px solid #acacac;
+}
+@media screen and (min-width: 768px) {
+  .advanced-search-modal .modal-dialog {
+    width: 95%;
+  }
+}
+@media screen and (min-width: 1300px) {
+  .advanced-search-modal .modal-dialog {
+    width: 1200px;
+  }
+}
+.advanced-search-modal .modal-dialog #advmenu {
+  padding: 0;
+}
+.advanced-search-modal .modal-dialog #advbody {
+  min-height: 450px;
+  max-height: 550px;
+  overflow: auto;
+}
+.advanced-search-modal .modal-dialog #advaside {
+  padding: 0;
+}
+.advanced-search-modal .modal-dialog .navbar-toggle {
+  margin: 0;
+}
+.advanced-search-modal .modal-dialog .navbar {
+  min-height: 40px;
+  margin-bottom: 15px;
+}
+.advanced-search-modal .modal-dialog .navbar-brand {
+  font-size: 19px;
+  padding: 10px 15px;
+}
+.search-header {
+  line-height: 30px;
+}
+.search-header p {
+  margin: 0;
+}
+@media (max-width: 1000px) {
+  .search-header .sort-box {
+    text-align: left;
+  }
+}
+@media (min-width: 1000px) {
+  .search-header .sort-box {
+    text-align: right;
+  }
+}
+.angular-google-map-container {
+  height: 400px;
+}
+.map-canvas {
+  position: relative;
+}
+.map-canvas img {
+  max-width: none !important;
+}
+.sresult .scontent {
+  margin-left: 30px;
+}
+.sresult .stoolbar {
+  float: left;
+  width: 30px;
+}
+ul.pagi {
+  margin: 0 auto;
+  padding: 0;
+}
+ul.pagi li {
+  list-style-type: none;
+  display: inline;
+  margin: 0px 5px;
+}
+ul.pagi li:active {
+  color: #eb7700 !important;
+}
+ul.listy {
+  padding-left: 0;
+}
+ul.listy li {
+  list-style-type: none;
+  padding: 8px 5px;
+  border-bottom: 1px solid #ececec;
+}
+ul.listy li:last-child {
+  border: none;
+}
+ul.listy li a {
+  height: 32px;
+  line-height: 32px;
+  overflow: hidden;
+  display: inline;
+  padding: 8px 0px 8px 5px;
+}
+ul.listy li a small {
+  position: absolute;
+  right: 30px;
+  background: white;
+  height: 32px;
+  line-height: 32px;
+  padding-left: 10px;
+}
+/*Search Bar*/
+.search-section {
+  color: white;
+}
+.search-section i {
+  color: white !important;
+}
+.search-section .btn {
+  background: #f5f5f5;
+  color: black;
+}
+.search-section .btn i {
+  color: black !important;
+}
+.search-section .btn:hover {
+  background: #f5f5f5;
+  color: black !important;
+}
+.search-section a {
+  color: white;
+}
+.search-section a:hover {
+  color: #cccccc;
+}
+.search-section h1 {
+  color: white;
+}
+.search-section h1.bordered:after {
+  background-color: white;
+}
+/**
+ * Overwrite the default styling class
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
+.navbar-brand {
+  font-size: 25px;
+  padding: 33px 15px 0px;
+  height: auto;
+}
+.navbar-brand span {
+  color: #eb7700;
+  font-weight: normal;
+  text-decoration: none;
+}
+.panel {
+  word-wrap: break-word;
+}
+.post {
+  margin-bottom: auto;
+}
+h1 {
+  font-size: 30px;
+}
+small a {
+  color: #84a07b !important;
+}
+.alert-info {
+  color: white;
+}
+.flexslider .slides img {
+  /*height:90px;*/
+  max-height: 170px;
+  width: auto;
+  display: block;
+  margin: 0 37px 16px 0px;
+  padding: 0 0 15px 15px;
+  float: right;
+}
+.flex-direction-nav a {
+  color: #84a07b !important;
+}
+.swatch-white .panel-footer a,
+.swatch-white .panel-header a,
+.swatch-white .panel-heading i,
+.swatch-white .btn i {
+  color: white;
+}
+.swatch-white .active {
+  color: #eb7700 !important;
+}
+.swatch-white .active a {
+  color: #eb7700 !important;
+}
+.swatch-gray .gray-bg {
+  background-color: #e9e9e9 !important;
+}
+.swatch-gray a,
+.panel a {
+  color: #84a07b;
+}
+.swatch-gray a:hover,
+.panel a:hover {
+  color: #eb7700;
+}
+.swatch-black input:focus {
+  -webkit-box-shadow: 0 3px 0 #eb7700;
+  -moz-box-shadow: 0 3px 0 #eb7700;
+  box-shadow: 0 3px 0 #eb7700;
+}
+.swatch-black input::selection {
+  color: white;
+  background: #84a07b;
+}
+.swatch-black input::-moz-selection {
+  color: white;
+  background: #84a07b;
+}
+::selection {
+  color: white;
+  background: #84a07b;
+}
+::-moz-selection {
+  color: white;
+  background: #84a07b;
+}
+.mce-panel button {
+  background-color: inherit !important;
+}
+.mce-panel i {
+  color: black !important;
+  font-size: inherit !important;
+  display: inline-block;
+  position: relative;
+  left: 0;
+  top: 0;
+}
+.ta-editor {
+  min-height: 300px;
+  height: auto;
+  overflow: auto;
+  font-family: inherit;
+  font-size: 100%;
+  background: #e9e9e9;
+}
+.ta-editor:focus {
+  -webkit-box-shadow: 0px 3px 0px #84a07b;
+  -moz-box-shadow: 0px 3px 0px #84a07b;
+  box-shadow: 0px 3px 0px #84a07b;
+}
+.btn-primary {
+  background-color: #84a07b;
+}
+.btn-primary:hover {
+  color: white !important;
+  background-color: #eb7700 !important;
+}
+.btn-default {
+  color: white !important;
+}
+.btn-default i {
+  color: white !important;
+}
+.btn-danger {
+  color: white !important;
+}
+.btn-danger i {
+  color: white !important;
+}
+.btn-info {
+  color: white !important;
+}
+.btn-info i {
+  color: white !important;
+}
+.swatch-white {
+  background: white;
+}
+.swatch-white .panel,
+.swatch-white .panel-primary,
+.swatch-white .panel-content {
+  background: white !important;
+}
+.swatch-white a {
+  color: #84a07b;
+}
+.swatch-white a:hover {
+  color: #eb7700;
+}
+.btn-group .dropdown-menu li a {
+  color: #4c4c4c;
+}
+.btn-group .dropdown-menu li a:hover {
+  color: white;
+  background: #eb7700;
+}
+.open > .btn-primary.dropdown-toggle {
+  background-color: #eb7700;
+}
+.flex-prev {
+  left: -70px;
+}
+.flex-next {
+  right: -70px;
+}
+/*OVERWRITE*/

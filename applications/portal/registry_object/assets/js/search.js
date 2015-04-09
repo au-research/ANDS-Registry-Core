@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components', 'queryBuilder', 'lz-string', 'angular-loading-bar', 'ui.select', 'uiGmapgoogle-maps']);
+var app = angular.module('app', ['ngRoute', 'ngSanitize', 'portal-filters', 'ui.bootstrap', 'ui.utils', 'profile_components', 'record_components', 'queryBuilder', 'lz-string', 'angular-loading-bar', 'uiGmapgoogle-maps']);
 
 app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$interpolateProvider.startSymbol('[[');
