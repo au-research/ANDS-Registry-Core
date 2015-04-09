@@ -153,7 +153,7 @@
 
 @if($group['latest_collections'])
 <div class="panel swatch-white">
-    <div class="panel-heading">Last 5 Collections Added</div>
+    <div class="panel-heading">Last 5 Data Records Added</div>
     <div class="panel-body">
         <ul class="listy">
             @foreach($group['latest_collections'] as $gr)

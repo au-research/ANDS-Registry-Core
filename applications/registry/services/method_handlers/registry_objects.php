@@ -407,7 +407,7 @@ function identifierResolution($identifier,$type)
             else $identifier_href = "http://purl.org/".substr($identifier,strpos($identifier,"purl.org/")+9);
             $identifiers['href'] = $identifier_href;
             $identifiers['display_text'] = 'PURL';
-            $identifiers['display_icon'] = '';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/external_link.png alt="External Link"/>';
             $identifiers['hover_text'] = 'Resolve this PURL';
             return  $identifiers;
             break;
@@ -415,7 +415,7 @@ function identifierResolution($identifier,$type)
             $identifiers['href'] = $identifier;
             $identifiers['display_text'] = strtoupper($type);
             $identifiers['hover_text'] = 'Resolve this URI';
-            $identifiers['display_icon'] = '';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/external_link.png alt="External Link"/>';
             return $identifiers;
             break;
         case 'urn':

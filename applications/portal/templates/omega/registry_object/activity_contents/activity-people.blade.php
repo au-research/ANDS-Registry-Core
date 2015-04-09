@@ -21,9 +21,9 @@
                 $type = readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class']);
             ?>
             @if($col['title'])
-                <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" style="margin-right:5px;" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a>({{$type}})
+                <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a>({{$type}})
             @endif
-            <?php if($peoplecount<count($people)) { echo ", ";} ?>
+            <?php if($peoplecount<count($people)) {echo ",&nbsp;";} ?>
         @endforeach
     @endif
 @endif
@@ -31,7 +31,7 @@
 @if($ro->relatedInfo)
     @foreach($ro->relatedInfo as $relatedInfo)
         @if($relatedInfo['type']=='party')
-            <?php if($researcherfound){ echo ",  ";} ?>
+            <?php if($researcherfound){ echo ",&nbsp;";} ?>
             @if(isset($relatedInfo['identifier']['identifier_href']['href']))
                 <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['title']}}</a>
             @else

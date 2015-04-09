@@ -52,42 +52,6 @@ module.exports = function(grunt){
 					'<%=yeoman.assets %>/js/scripts.js',
 				],
 				dest:'<%=yeoman.assets %>/js/arms.scripts.js'
-			},
-			portalStyles:{
-				options:{separator:''},
-				src:[
-
-					'<%=yeoman.portal_assets %>/css/knacss.css',
-					'<%=yeoman.portal_assets %>/style.css',
-					'<%=yeoman.portal_assets %>/css/ands-theme/jquery-ui-1.10.0.custom.min.css',
-					'<%=yeoman.portal_assets %>/css/flexslider.css',
-					'<%=yeoman.portal_assets %>/css/ui.dynatree.css',
-
-	
-					'<%=yeoman.assets %>/lib/jQRangeSlider/css/iThing.css',
-					'<%=yeoman.portal_assets %>/css/zocial.css',
-					'<%=yeoman.assets %>/lib/qtip2/jquery.qtip.min.css',
-					'<%=yeoman.portal_assets %>/css/ands_portal.css',
-					'<%=yeoman.portal_assets %>/css/ands.less.compiled.css',
-				],
-				dest: '<%=yeoman.portal_assets %>/ands_portal.combined.css'
-			},
-			portalScripts:{
-				options:{separator:';'},
-				src:[
-					'<%=yeoman.assets %>/lib/jquery-1.8.3.min.js',
-					'<%=yeoman.portal_assets %>/js/jquery.flexslider-min.js',
-					'<%=yeoman.assets %>/lib/jquery-ui-1.8.23.custom.min.js',
-					'<%=yeoman.assets %>/lib/qtip2/jquery.qtip.min.js',
-					'<%=yeoman.assets %>/lib/jQRangeSlider/jQAllRangeSliders-withRuler-min.js',
-					'<%=yeoman.assets %>/lib/less-1.3.0.min.js',
-					'<%=yeoman.assets %>/lib/typeahead.min.js',
-					'<%=yeoman.assets %>/lib/mustache.js',
-					'<%=yeoman.assets %>/lib/jquery.ba-hashchange.min.js',
-					'<%=yeoman.portal_assets %>/js/jquery.cookie.js',
-					'<%=yeoman.portal_assets %>/js/script.js',
-				],
-				dest: '<%=yeoman.portal_assets %>/ands_portal.combined.js'
 			}
 		},
 		uglify:{
@@ -108,13 +72,6 @@ module.exports = function(grunt){
 					cssDir: '<%= yeoman.assets %>/css',
 					debugInfo: false
 				}
-			},
-			portal:{
-				options: {
-					sassDir: '<%= yeoman.portal_assets %>/sass',
-					cssDir: '<%= yeoman.portal_assets %>/css',
-					debugInfo: false
-				}
 			}
 		},
 		less: {
@@ -122,22 +79,12 @@ module.exports = function(grunt){
 				files:{
 					"<%= yeoman.assets %>/css/arms.less.compiled.css": "<%= yeoman.assets %>/less/arms.less"
 				}
-			},
-			portal:{
-				files:{
-					"<%= yeoman.portal_assets %>/css/ands.less.compiled.css": "<%= yeoman.portal_assets %>/less/ands.less"
-				}
 			}
 		},
 		watch: {
 			core: {
 				files: ['<%= yeoman.assets %>/sass/{,*/}*.{scss,sass}', '<%= yeoman.assets %>/less/{,*/}*.{less,less}'],
 				tasks: ['compass:core', 'concat:coreStyles', 'cssmin'],
-				options:{nospawn:true}
-			},
-			portal:{
-				files: ['<%= yeoman.portal_assets %>/sass/{,*/}*.{scss,sass}', '<%= yeoman.portal_assets %>/less/{,*/}*.{less,less}'],
-				tasks: ['compass:portal', 'less:portal', 'concat:portalStyles'],
 				options:{nospawn:true}
 			}
 		}
@@ -156,10 +103,4 @@ module.exports = function(grunt){
 		'watch:core'
 	]);
 
-	grunt.registerTask('portal', [
-		'compass:portal',
-		'less:portal',
-		'concat:portalStyles',
-		'concat:portalScripts'
-	]);
 }

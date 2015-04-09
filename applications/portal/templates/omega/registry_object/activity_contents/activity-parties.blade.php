@@ -36,12 +36,11 @@ $prev_out ='';
                         $prev_out = 'Administered by';
                     }
                 if($output==''){
-                    echo",";
+                    echo ",";
                 }else{
-                    echo"<br />";
+                    echo "<br />";
                 }
-                echo "<strong>".$output;?>
-                <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" style="margin-right:5px;" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></strong>
+                echo "<strong>".$output;?></strong> &nbsp; <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" class="ro_preview" ro_id="{{$col['registry_object_id']}}">{{trim($col['title'])}}</a>
             @endif
         @endforeach
         @endif
