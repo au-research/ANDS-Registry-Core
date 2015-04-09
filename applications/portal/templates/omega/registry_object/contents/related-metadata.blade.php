@@ -10,7 +10,7 @@
 		}
         foreach ($ro->relatedInfo as $relatedInfo) {
             if (!in_array($relatedInfo['type'],$notTypes)) {
-                if($relatedInfo['type'] == 'service' && $relatedInfo['relation']['url']=='')
+                if($relatedInfo['type'] == 'service' && ($relatedInfo['relation']['url']== '' || $relatedInfo['title'] != ''))
                 {
                     $has_moreInfo = false;
                 }
@@ -48,44 +48,41 @@
 			    @endif
 			@endforeach
             @foreach($ro->relatedInfo as $relatedInfo)
-            @if($relatedInfo['type']=='service' && $relatedInfo['relation']['url']!='')
-            <h5> {{$relatedInfo['title']}}</h5>
-            <p>
-                <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
-                @if($relatedInfo['identifier']['identifier_href']['href'])
-                <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{$relatedInfo['identifier']['identifier_href']['display_icon']}}<br />
-                @else
-                {{$relatedInfo['identifier']['identifier_value']}}
-                @endif
-            </p>
+            @if($relatedInfo['type']=='service' && ($relatedInfo['title']!='' || $relatedInfo['relation']['url']==''))
+            @elseif($relatedInfo['type']=='service' && $relatedInfo['title']=='' && $relatedInfo['relation']['url']!='')
+                <p>
+                    <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                    @if($relatedInfo['identifier']['identifier_href']['href'])
+                    <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{$relatedInfo['identifier']['identifier_href']['display_icon']}}<br />
+                    @else
+                    {{$relatedInfo['identifier']['identifier_value']}}
+                    @endif
+                </p>
 
-            @if($relatedInfo['relation']['url'])
-            <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
-            @endif
-            @if($relatedInfo['notes'])
-            <p>{{$relatedInfo['notes']}}</p>
-            @endif
-            @endif
-            @endforeach
-            @foreach($ro->relatedInfo as $relatedInfo)
-                @if(!in_array($relatedInfo['type'],$notTypes) && !in_array(trim($relatedInfo['identifier']['identifier_value']), $resolvedPartyIdentifiers))
-                    <h5> {{$relatedInfo['title']}}</h5>
-                    <p>
+                @if($relatedInfo['relation']['url'])
+                <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
+                @endif
+                @if($relatedInfo['notes'])
+                <p>{{$relatedInfo['notes']}}</p>
+                @endif
+            @elseif(!in_array($relatedInfo['type'],$notTypes) && !in_array(trim($relatedInfo['identifier']['identifier_value']), $resolvedPartyIdentifiers))
+                <h5> {{$relatedInfo['title']}}</h5>
+                <p>
                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
                     @if(isset($relatedInfo['identifier']['identifier_href']['href']))
-                        <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{ isset($relatedInfo['identifier']['identifier_href']['display_icon']) ? $relatedInfo['identifier']['identifier_href']['display_icon'] : '' }}<br />
+                    <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{ isset($relatedInfo['identifier']['identifier_href']['display_icon']) ? $relatedInfo['identifier']['identifier_href']['display_icon'] : '' }}<br />
                     @else
-                        {{$relatedInfo['identifier']['identifier_value']}}
+                    {{$relatedInfo['identifier']['identifier_value']}}
                     @endif
-                    </p>
+                </p>
 
-                    @if($relatedInfo['relation']['url'])
-                        <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
-                    @endif
-                    @if($relatedInfo['notes'])
-                        <p>{{$relatedInfo['notes']}}</p>
-                    @endif
+                @if($relatedInfo['relation']['url'])
+                <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
                 @endif
+                @if($relatedInfo['notes'])
+                <p>{{$relatedInfo['notes']}}</p>
+                @endif
+            @endif
             @endforeach
 		</div>
 	</div>
