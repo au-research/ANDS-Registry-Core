@@ -90,39 +90,6 @@ class Transforms_Extension extends ExtensionBase
 		}
 	}
 
-    function getDCI($addContainer=true){
-        require_once(REGISTRY_APP_PATH . '/services/method_handlers/_method_handler.php');
-        require_once(REGISTRY_APP_PATH . '/services/method_handlers/registry_object_handlers/dci.php');
-        $xml = $this->ro->getSimpleXML();
-        $rifDom = new DOMDocument();
-        $rifDom->loadXML($this->ro->getRif());
-        $gXPath = new DOMXpath($rifDom);
-        $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
-        $ci =& get_instance();
-        $ci->load->library('solr');
-        $ci->solr->clearOpt('fq');
-        $ci->solr->setOpt('fq', '+id:'.$this->ro->id);
-        $ci->solr->setOpt('fl', 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved');
-        $result = $ci->solr->executeSearch(true);
-
-        if(sizeof($result['response']['docs']) == 1) {
-        $index = $result['response']['docs'][0];
-        }
-
-        $resource = array(
-            'index' => $index,
-            'xml' => $xml,
-            'gXPath' => $gXPath,
-            'ro'=> $this->ro,
-            'params' => '',
-            'default_params' => ''
-        );
-        var_dump($this);
-        $dci_handler = new dci($resource);
-        return $dci_handler->handle();
-    }
-
-
 
 	function transformToDCI($doDsCheck=true)
 	{

@@ -1,4 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 class _record
 {
 	public $id;
@@ -62,12 +63,11 @@ class _record
 		switch($format)
 		{
 		case 'dci':
-            $dciDoc = $this->_rec->transformToDCI(false);
-            //$dciDoc = $this->_rec->getDCI(false);
-            if($dciDoc != "")
-            {
-			    $data = "<DigitalContentData>\n".$dciDoc."\n</DigitalContentData>";
-            }
+            require_once(REGISTRY_APP_PATH . '/services/method_handlers/dci.php');
+            $dci_handler = new DCIMethod();
+            $dci_handler->ro = $this->_rec;
+            $dci_handler->populate_resource($this->id);
+            $data = $dci_handler->ro_handle('dci');
 			break;
 		case 'oai_dc':
 			$data = $this->_rec->transformToDC(false);

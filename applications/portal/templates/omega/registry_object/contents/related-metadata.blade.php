@@ -29,7 +29,7 @@
 @if($has_metadata || $has_moreInfo)
 <div class="swatch-white">
 	<div class="panel panel-primary element-no-top element-short-bottom panel-content">
-		<!-- <div class="panel-heading"> <a id="OtherInformation">Other Information</a> </div> -->
+		<div class="panel-heading"> <a id="OtherInformation">Other Information</a> </div>
 		<div class="panel-body swatch-white">
 			@foreach($ro->relatedInfo as $relatedInfo)
 				@if($relatedInfo['type']=='metadata')

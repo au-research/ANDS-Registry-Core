@@ -1,21 +1,29 @@
-@extends('layouts/single')
-@section('content')
-<article>
-	<section class="section swatch-white element-normal-bottom">
-       <div class="container">
-           <div class="row">
-               <div class="col-md-12">
-                   <header class="text-center element-normal-top element-medium-bottom not-condensed os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
-                       <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">Help</h1>
-                   </header>
+@extends('layouts/right-sidebar')
+@section('header')
+  <div class="row element element-short-top"></div>
+@stop
 
-                   <p>Place holder only</p>
-                   <p>Content to be determined</p>
-               </div>
-           </div>
-           <div class="row ">
-           </div>
-       </div>
-    </section>
-</article>
+@section('content')
+<div class="panel swatch-white">
+  <div class="panel-heading">Search</div>
+  <div class="panel-body">
+  </div>
+</div>
+<div class="panel swatch-white">
+  <div class="panel-heading">Advanced Search</div>
+  <div class="panel-body">
+    @include('includes/help-adv-search')
+  </div>
+</div>
+@stop
+
+@section('sidebar')
+<div class="panel swatch-white">
+  <div class="panel-heading">Search</div>
+  <div class="panel-body">
+    <ul>
+      <li><a href="#perform_a_search">Performing a Search</a></li>
+    </ul>
+  </div>
+</div>
 @stop

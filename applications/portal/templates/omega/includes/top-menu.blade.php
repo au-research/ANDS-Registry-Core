@@ -44,4 +44,6 @@
         </nav>
     </div>
 </div>
-<button class="myCustomTrigger yellow_button feedback_button">Feedback</button>
+<button class="yellow_button feedback_button">Feedback</button>
+<button class="yellow_button help_button" data-toggle="modal" data-target="#help_modal"><i class="fa fa-question-circle"></i> Help</button>
+@include('includes/help-modal')

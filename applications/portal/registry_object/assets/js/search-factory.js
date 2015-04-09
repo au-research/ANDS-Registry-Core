@@ -77,21 +77,26 @@ app.factory('search_factory', function($http, $log){
 			{'name':'license_class', 'display':'Licence'},
 			{'name':'temporal', 'display':'Time Period'},
 			{'name':'spatial', 'display':'Location'},
-			{'name':'review', 'display':'Review'}
+			{'name':'review', 'display':'Review'},
+			{'name':'help', 'display':'<i class="fa fa-question-circle"></i> Help'}
 		],
 
 		advanced_fields_party: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
 			{'name':'type', 'display':'Types'},
 			{'name':'subject', 'display':'Subjects'},
-			{'name':'group', 'display':'Data Provider'}
+			{'name':'group', 'display':'Data Provider'},
+			{'name':'review', 'display':'Review'},
+			{'name':'help', 'display':'<i class="fa fa-question-circle"></i> Help'}
 		],
 
 		advanced_fields_service: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
 			{'name':'type', 'display':'Types'},
 			{'name':'subject', 'display':'Subjects'},
-			{'name':'group', 'display':'Data Provider'}
+			{'name':'group', 'display':'Data Provider'},
+			{'name':'review', 'display':'Review'},
+			{'name':'help', 'display':'<i class="fa fa-question-circle"></i> Help'}
 		],
 
 		advanced_fields_activity: [
@@ -104,7 +109,8 @@ app.factory('search_factory', function($http, $log){
 			{'name':'funders', 'display':'Funder'},
 			{'name':'funding_scheme', 'display':'Funding Scheme'},
 			{'name':'funding_amount', 'display':'Funding Amount'},
-			{'name':'review', 'display':'Review'}
+			{'name':'review', 'display':'Review'},
+			{'name':'help', 'display':'<i class="fa fa-question-circle"></i> Help'}
 		],
 
 		collection_facet_order: ['group', 'access_rights', 'license_class', 'type'],

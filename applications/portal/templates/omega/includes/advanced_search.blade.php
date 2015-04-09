@@ -27,7 +27,7 @@
 									<ul class="nav nav-pills nav-stacked">
 										<li ng-repeat="field in advanced_fields" ng-class="{'active':field.active==true}">
 											<a href="" ng-click="selectAdvancedField(field.name)">
-												[[field.display]] <i class="fa fa-check" ng-show="sizeofField(field.name) > 0"></i>
+												<span ng-bind-html="field.display"></span> <i class="fa fa-check" ng-show="sizeofField(field.name) > 0"></i>
 											</a>
 										</li>
 									</ul>
@@ -195,7 +195,12 @@
 								</div>
 							</div>
 
+							<div ng-if="isAdvancedSearchActive('help')">
+								@include('includes/help-adv-search')
+							</div>
+
 						</div>
+
 					</div>
 				</div>
 			</div>

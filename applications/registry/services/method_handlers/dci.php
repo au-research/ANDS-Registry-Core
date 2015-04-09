@@ -33,7 +33,7 @@ class DCIMethod extends MethodHandler
 		}
 
 		$fields = array_merge($this->default_params, $fields);
-		
+
 		$CI =& get_instance();
 		$CI->load->library('solr');
 
@@ -64,20 +64,20 @@ class DCIMethod extends MethodHandler
                 if($ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
                     $exportable = true;
 
-				//if ($this->ro && $this->ro->class == 'collection' && $exportable)
-				//{
+				if ($this->ro && $this->ro->class == 'collection' && $exportable)
+				{
                     $rifcsOutput[] = $this->ro_handle('dci');
-				//}
-               // else{
-               //     $rifcsOutput[] = "not exportable";
-               // }
+				}
+                else{
+                    $rifcsOutput[] = "not exportable";
+                }
 			}
 		}
 		// Bubble back the output status
 		return $this->formatter->display($rifcsOutput);
    }
 
-    private function populate_resource($id) {
+    function populate_resource($id) {
 
         //local SOLR index for fast searching
         $ci =& get_instance();
@@ -105,7 +105,7 @@ class DCIMethod extends MethodHandler
     }
 
 
-    private function ro_handle($handler) {
+    function ro_handle($handler) {
         require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/'.$handler.'.php');
         $handler = new $handler($this->get_resource());
         return $handler->handle();

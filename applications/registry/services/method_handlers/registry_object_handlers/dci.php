@@ -19,9 +19,14 @@ class DCI extends ROHandler {
         $this->DCIRoot = new SimpleXMLElement("<DataRecord></DataRecord>");
         $this->DCIDom = dom_import_simplexml($this->DCIRoot);
         $this->citation_handler = new citations($this->get_resource());
+        $CI =& get_instance();
+        $ds = $CI->ds->getByID($this->ro->data_source_id);
+        $exportable = false;
+        if($ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
+            $exportable = true;
         $sourceUrl = $this->citation_handler->getSourceUrl();
-        //if($sourceUrl == null)
-        //    return "not Exportable";
+        if($sourceUrl == null || !($exportable))
+            return "not Exportable";
         $this->getHeader();
         $this->getBibliographicData($sourceUrl);
         $this->getAbstract();

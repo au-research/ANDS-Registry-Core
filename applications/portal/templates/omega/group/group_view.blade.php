@@ -71,7 +71,7 @@
         <div class="panel-body">
             To date, {{$group['title']}} has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a> in Research Data Australia, which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}. {{sizeof($group['groups'])}} research group(s) 
             have been actively involved in collecting data and creating metadata records for the data.  All the data records, people, projects, grants and services associated with {{$group['title']}} 
-            can be accessed from the Registry Contents box on the right hand side of this page.
+            can be accessed from the box on the right hand side of this page.
         </div>
         @if($group['has_custom_data'])
             @if(isset($group['custom_data']['researchdataprofile']))
