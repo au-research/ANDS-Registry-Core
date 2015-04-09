@@ -43,7 +43,6 @@
 	@endforeach
 @endif
 
-
 @if(is_dev())
     <script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script>
     <script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.js', 'core')}}"></script>

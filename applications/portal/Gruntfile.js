@@ -50,7 +50,7 @@ module.exports = function(grunt){
 					'<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
 					'<%=yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.js',
 					'<%=yeoman.templates %>/omega/assets/js/packages.min.js',
-					'<%=yeoman.templates %>/lib/qtip2/jquery.qtip.js',
+					'<%=yeoman.assets %>/lib/qtip2/jquery.qtip.js',
 					'<%=yeoman.assets %>/js/scripts.js',
 				],
 				dest:'<%=yeoman.assets %>/js/lib.js'
