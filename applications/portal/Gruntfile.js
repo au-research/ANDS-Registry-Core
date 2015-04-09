@@ -14,8 +14,8 @@ module.exports = function(grunt){
 				report:'min'
 			},
 			minify:{
-				src:'<%= yeoman.assets %>/css/arms.combine.css',
-				dest:'<%= yeoman.assets %>/css/arms.comb.min.css'
+				src:'<%= yeoman.assets %>/css/portal.combine.css',
+				dest:'<%= yeoman.assets %>/css/portal.combine.min.css'
 			}
 		},
 		concat:{
@@ -49,8 +49,9 @@ module.exports = function(grunt){
 					'<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap.min.js',
 					'<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
 					'<%=yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.js',
-					'<%=yeoman.templates %>/omega/js/packages.min.js',
+					'<%=yeoman.templates %>/omega/assets/js/packages.min.js',
 					'<%=yeoman.templates %>/lib/qtip2/jquery.qtip.js',
+					'<%=yeoman.assets %>/js/scripts.js',
 				],
 				dest:'<%=yeoman.assets %>/js/lib.js'
 			},
@@ -80,7 +81,8 @@ module.exports = function(grunt){
 			},
 			scripts:{
 				files:{
-					'<%= yeoman.assets %>/js/arms.min.js':['<%= yeoman.assets %>/js/arms.scripts.js']
+					'<%= yeoman.assets %>/js/lib.min.js':['<%= yeoman.assets %>/js/lib.js'],
+					'<%= yeoman.assets %>/js/portal_lib.min.js':['<%= yeoman.assets %>/js/portal_lib.js'],
 				}
 			}
 		},
@@ -90,20 +92,12 @@ module.exports = function(grunt){
 					"<%= yeoman.assets %>/css/portal.less.compiled.css": "<%= yeoman.templates %>/omega/assets/less/ands-portal.less"
 				}
 			}
-		},
-		watch: {
-			core: {
-				files: ['<%= yeoman.assets %>/sass/{,*/}*.{scss,sass}', '<%= yeoman.assets %>/less/{,*/}*.{less,less}'],
-				tasks: ['compass:core', 'concat:coreStyles', 'cssmin'],
-				options:{nospawn:true}
-			}
 		}
 	});
 	require('load-grunt-tasks')(grunt);
 
 	//define your tasks
 	grunt.registerTask('default', [
-		'compass',
 		'less',
 		'concat',
 		'uglify'
