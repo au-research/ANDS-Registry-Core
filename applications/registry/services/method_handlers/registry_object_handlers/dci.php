@@ -31,6 +31,7 @@ class DCI extends ROHandler {
         $this->getBibliographicData($sourceUrl);
         $this->getAbstract();
         $this->getRightsAndLicencing();
+        $this->getParentDataRef();
         $this->getDescriptorsData();
 
         return $this->DCIDom->ownerDocument->saveXML($this->DCIDom->ownerDocument->documentElement, LIBXML_NOXMLDECL);
@@ -68,7 +69,7 @@ class DCI extends ROHandler {
         $title = $titleList->addChild("ItemTitle", $this->ro->title);
         $title['TitleType'] = "English title";
         $source = $bibliographicData->addChild('Source');
-        $source->addChild("sourceUrl", $sourceUrl);
+        $source->addChild("SourceURL", $sourceUrl);
         $source->addChild("SourceRepository" , $this->citation_handler->getPublisher());
         $publicationDate = $this->citation_handler->getPublicationDate();
         if($publicationDate)
@@ -155,18 +156,26 @@ class DCI extends ROHandler {
                     //return format_relationship($class, $relationshipText, $altered,$to_class);
                     $eAuthor['AuthorRole'] = format_relationship("collection",(string)$author["relation_type"], (string)$author['origin'], 'party');
                     $eAuthor->addChild('AuthorName', $author['title']);
-                    if(isset($author['identifiers']) && sizeof($author['identifiers'] > 0))
-                    {
-                        foreach($author['identifiers'] as $id){
-                            $authorId = $eAuthor->addChild('AuthorID', trim($id[0]));
-                            $authorId['type'] = $id[1];
-                        }
-                    }
                     if(isset($author['addresses']))
                     {
                         $authorAddress = $eAuthor->addChild('AuthorAddress');
                         foreach($author['addresses'] as $addr){
                             $authorAddress->addChild('AddressString', (string) $addr);
+                            break;
+                        }
+                    }
+                    if(isset($author['electronic_addresses']))
+                    {
+                        foreach($author['electronic_addresses'] as $addr){
+                            $eAuthor->addChild('AuthorEmail', (string) $addr);
+                            break;
+                        }
+                    }
+                    if(isset($author['identifiers']) && sizeof($author['identifiers'] > 0))
+                    {
+                        foreach($author['identifiers'] as $id){
+                            $authorId = $eAuthor->addChild('AuthorID', trim($id[0]));
+                            $authorId['type'] = $id[1];
                         }
                     }
                 }
@@ -175,6 +184,23 @@ class DCI extends ROHandler {
                 $eAuthor = $authorList->addChild("Author");
                 $eAuthor['seq'] = '1';
                 $eAuthor->addChild('AuthorName', $this->ro->group);
+            }
+        }
+    }
+
+    private function getParentDataRef()
+    {
+        $relationshipTypeArray = array('isPartOf');
+        $classArray = array('collection');
+        $parentCollections = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
+        if($parentCollections)
+        {
+            foreach($parentCollections as $parentCollection)
+            {
+                if($parentCollection['key'] != ''){
+                    $this->DCIRoot->addChild("ParentDataRef", $parentCollection['key']);
+                    break;
+                }
             }
         }
     }

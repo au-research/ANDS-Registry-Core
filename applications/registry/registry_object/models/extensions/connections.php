@@ -590,7 +590,7 @@ class Connections_Extension extends ExtensionBase
                         {
                             $connection['addresses'][] = $address_string;
                         }
-                        $electronic_addresses = $_sxml->xpath('//ro:location/ro:address/ro:electronic');
+                        $electronic_addresses = $_sxml->xpath('//ro:location/ro:address/ro:electronic[@type="email"]');
                         $address_string = "";
                         if (is_array($electronic_addresses))
                         {
@@ -601,7 +601,7 @@ class Connections_Extension extends ExtensionBase
                         }
                         if ($address_string)
                         {
-                            $connection['addresses'][] = $address_string;
+                            $connection['electronic_addresses'][] = $address_string;
                         }
                     }
                 }

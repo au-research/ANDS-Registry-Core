@@ -9,7 +9,7 @@ class DCIInterface extends FormatHandler
 	{
 		
 		echo "<?xml version=\"1.0\"?>".NL;
-		echo '<DigitalContentData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DCI_schema_providers_V4.1.xsd">'.NL;
+		echo '<DigitalContentData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DCI_schema_providers_V4.2.xsd">'.NL;
         echo implode($payload);
         echo '</DigitalContentData>';
         //echo $dciDoc;
@@ -17,7 +17,7 @@ class DCIInterface extends FormatHandler
     
 	function error($message)
 	{
-		$dciDoc = '<DigitalContentData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DCI_schema_providers_V4.1.xsd">'.NL;
+		$dciDoc = '<DigitalContentData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DCI_schema_providers_V4.2.xsd">'.NL;
         $dciDoc .= $message;
         $dciDoc .= '</DigitalContentData>';
         echo $dciDoc;
