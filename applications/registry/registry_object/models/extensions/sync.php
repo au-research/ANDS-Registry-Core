@@ -618,19 +618,23 @@ class Sync_extension extends ExtensionBase{
 
 		//Administering Institution, Funders and Researchers from related objects for activities
 		if ($this->ro->class=='activity') {
-			$json['administering_institution'] = array();
-			$json['funders'] = array();
-			if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, true, true);
-			foreach ($related_objects as $related_object) {
-				if ($related_object['class']=='party' && $related_object['relation_type']=='isManagedBy') {
-					$json['administering_institution'][] = $related_object['title'];
-				} else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
-					$json['funders'][] = $related_object['title'];
-				} else if($related_object['class']=='party' && $related_object['relation_type']=='isParticipantIn') {
-					$json['researchers'][] = $related_object['title'];
-				}
-			}
-		}
+        	$json['administering_institution'] = array();
+        	$json['funders'] = array();
+        	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, true, true);
+        	foreach ($related_objects as $related_object) {
+        		if ($related_object['class']=='party' && $related_object['relation_type']=='isManagedBy') {
+        			$json['administering_institution'][] = $related_object['title'];
+        		} else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
+        			$json['funders'][] = $related_object['title'];
+        		} else if($related_object['class']=='party') {
+        			$tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
+        			if ( $tmp_ro && strtolower($tmp_ro->type)=='person' ) {
+        				$json['researchers'][] = $related_object['title'];
+        			}
+        			unset($tmp_ro);
+        		}
+        	}
+        }
 
 		//default values if none present
 		if(!isset($json['license_class'])) $json['license_class'] = 'unknown';
