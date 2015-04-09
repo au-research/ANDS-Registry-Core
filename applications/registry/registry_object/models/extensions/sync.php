@@ -351,8 +351,12 @@ class Sync_extension extends ExtensionBase{
         			$json['administering_institution'][] = $related_object['title'];
         		} else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
         			$json['funders'][] = $related_object['title'];
-        		} else if($related_object['class']=='party' && strtolower($related_object['type'])=='person') {
-        			$json['researchers'][] = $related_object['title'];
+        		} else if($related_object['class']=='party') {
+        			$tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
+        			if ( $tmp_ro && strtolower($tmp_ro->type)=='person' ) {
+        				$json['researchers'][] = $related_object['title'];
+        			}
+        			unset($tmp_ro);
         		}
         	}
         }
