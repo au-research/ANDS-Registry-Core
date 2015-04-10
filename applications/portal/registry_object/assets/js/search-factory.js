@@ -134,7 +134,6 @@ app.factory('search_factory', function($http, $log){
 				angular.forEach(this.search_types_activities, function(x){
 					var term = x.value;
 					if (that.filters.hasOwnProperty(term)) {
-						$log.debug('here');
 						that.query = that.filters[term];
 						that.search_type = term;
 					}
