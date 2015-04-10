@@ -713,11 +713,38 @@ class Maintenance extends MX_Controller {
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->load->model('registry_object/registry_objects', 'ro');
 
-		$ro = $this->ro->getByID(189615);
+		// $ro = $this->ro->getByID(189615);
 
-		echo json_encode($ro->indexable_json());
+		// echo json_encode($ro->indexable_json());
 
-		$ro->sync();
+		// $ro->sync();
+
+		$ros = array(425663,425664,425665,425666,425667,425668,425669,425670,425671,425672,425673,425674,425675,425676,425677,425878,425880,425881,425882,425883,425884,425885,425886,425887,425888,425889,425890,425891,425892,425893,425894,425895,425896,425897,425898,425899,425900,425901,425902,425903,425904,425905,425906,425907,425908,425909,425910,425911,425912,425913,425914,425915,425916,425917,425918,425919,425920,425922,425923,425924,425925,425926,425927,425778,425779,425780,425781,425782,425783,425784,42578);
+
+		$this->benchmark->mark('start');
+		foreach($ros as $id) {
+			$ro = $this->ro->getByID($id);
+			if ($ro) {
+
+				ulog('investigating '.$id);
+				$this->benchmark->mark('code_start');
+				$size = sizeof($ro->findMatchingRecords());
+				$this->benchmark->mark('code_end');
+				ulog('found '.$size.' matching records after '. $this->benchmark->elapsed_time('code_start', 'code_end'));
+			} else {
+				ulog('no ro for '.$id);
+				echo 'No RO for '.$id.'<br/>';
+			}
+		}
+		$this->benchmark->mark('end');
+		ulog('finished. Took '.$this->benchmark->elapsed_time('start', 'end'));
+		
+		// $ro = $this->ro->getByID(425888);
+		// $this->benchmark->mark('code_start');
+		// $matching = $ro->findMatchingRecords(array(), array(), array(), true);
+		// $this->benchmark->mark('code_end');
+		// echo 'took '.$this->benchmark->elapsed_time('code_start', 'code_end');
+		// var_dump($matching);
 
 		// $this->load->model('registry_object/indexers/solr_indexer', 'indexer');
 		// $this->indexer->set_ro($ro);

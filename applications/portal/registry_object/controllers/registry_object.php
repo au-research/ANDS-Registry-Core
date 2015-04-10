@@ -122,7 +122,6 @@ class Registry_object extends MX_Controller {
                 );
             } else {
             	//Handle Draft
-                $banner =  "http://devl.ands.org.au/workareas/leo/draft.jpg";
             }
             $resolvedPartyIdentifiers = array();
 
