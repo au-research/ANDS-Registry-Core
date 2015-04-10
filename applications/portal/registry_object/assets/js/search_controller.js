@@ -41,6 +41,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			hash = $('#refer_q').val();
 		}
 		$scope.filters = search_factory.ingest(hash);
+		angular.copy($scope.filters, $scope.prefilters);
 		$scope.sync();
 		if($scope.filters.cq) {
 			$scope.$broadcast('cq', $scope.filters.cq);
