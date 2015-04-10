@@ -41,6 +41,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			hash = $('#refer_q').val();
 		}
 		$scope.filters = search_factory.ingest(hash);
+		angular.copy($scope.filters, $scope.prefilters);
 		$scope.sync();
 		if($scope.filters.cq) {
 			$scope.$broadcast('cq', $scope.filters.cq);
@@ -207,6 +208,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.search = function(){
 		$scope.loading = true;
+
+		if (urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
+			if (ga) {
+				ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
+			}
+		}
+
 		search_factory.search($scope.filters).then(function(data){
 			$scope.loading = false;
 			$scope.fuzzy = data.fuzzy_result;

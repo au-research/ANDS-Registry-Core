@@ -182,7 +182,7 @@
 
     <!-- Funding Amount for Activity Search-->
     <div class="panel-body swatch-white" ng-show="showFacet('funding_amount')">
-        <h4>Funding Amount</h4>
+        <h4>Funding Amount <i class="fa fa-info" tip="Funding amount should be entered in whole dollars with no comma or $ sign"></i></h4>
         <input type="text" ng-model="filters.funding_from" class="form-control" placeholder="Funding From"/>
         <input type="text" ng-model="filters.funding_to" class="form-control" placeholder="Funding To"/>
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>

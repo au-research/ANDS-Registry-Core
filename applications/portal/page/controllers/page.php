@@ -55,13 +55,17 @@ class Page extends MX_Controller {
 
         //contributors
         $this->load->model('group/groups', 'groups');
+        $this->load->model('registry_object/registry_objects', 'registry_object');
         $contributors = $this->groups->getAll();
+        $filters = Array('class'=>'collection','status'=>'PUBLISHED');
+        $collections = $this->registry_object->checkRecordCount($filters);
 
         $this->record_hit('about');
         $this->blade
             ->set('scripts', array('home'))
             ->set('highlevel', $highlevel)
             ->set('contributors', $contributors)
+            ->set('collections', $collections)
             ->render('about');
 
 	}

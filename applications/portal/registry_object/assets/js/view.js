@@ -261,6 +261,7 @@ function initConnectionGraph() {
 				}
 				else
 				{
+					var draftText = '<small class="lightgrey">[DRAFT]</small> ';
 					$('a', nodeSpan).prepend(draftText);
 					preview_url = base_url + "preview/?registry_object_id=" + node.data.registry_object_id;
 				}

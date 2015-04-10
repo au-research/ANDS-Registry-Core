@@ -96,7 +96,7 @@ class Sync extends Task {
 		foreach($chunks as $chunk) {
 			$task = array(
 				'name' => 'sync',
-				'params' => 'type=index_ro&id='.implode(',', $chunk)
+				'params' => 'type=sync&id='.implode(',', $chunk)
 			);
 			$this->task_mgr->add_task($task);
 		}
@@ -167,7 +167,7 @@ class Sync extends Task {
 			try {
 				$ro = $this->ro->getByID($ro_id);
 				if($ro) {
-					$docs[] = $ro->lite_indexable_json();
+					$docs[] = $ro->indexable_json();
 				} else {
 					$this->solr->deleteByID($ro_id);
 					$this->log('[error][notfound][ro_id:'.$ro_id.']');
