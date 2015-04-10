@@ -198,22 +198,22 @@ angular.module('portal_theme',[]).
 			restrict: 'ACME',
 			templateUrl:base_url+'assets/theme_page/js/templates/list-ro.html',
 			transclude: true,
+			scope: {},
 			compile: function(element, attrs, transclude){
 				
 				// $log.debug('every instance ', element);
-				return function(scope,iElement,iAttrs){
-					scope.base_url = base_url;
+				return function($scope,iElement,iAttrs){
+					$scope.base_url = base_url;
 					// $log.debug('this instance', element);
-					transclude(scope,function(clone){
+					transclude($scope,function(clone){
 						// $log.debug('clone: ', clone);
-						scope.msg = 'he he';
-						scope.list = [];
+						$scope.list = [];
 						$.each($('li.ro',clone), function(){
-							scope.list.push($(this).text());
+							$scope.list.push($(this).text());
 						});
-						// $log.debug('list unresolved:',scope.list);
-						searches.getByList(scope.list).then(function(data){
-							scope.resolved = data.ros;
+						// $log.debug('list unresolved:',$scope.list);
+						searches.getByList($scope.list).then(function(data){
+							$scope.resolved = data.ros;
 						});
 					});
 				}
