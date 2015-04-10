@@ -97,6 +97,7 @@
 							</div>
 
 							<div ng-if="isAdvancedSearchActive('funding_amount')">
+								<h4>Funding Amount <i class="fa fa-info" tip="Funding amount should be entered in whole dollars with no comma or $ sign"></i></h4>
 								<label for="">Funding From</label>
 								<input type="text" ng-model="prefilters.funding_from" class="form-control" placeholder="Funding From"/>
 								<label for="">Funding To</label>

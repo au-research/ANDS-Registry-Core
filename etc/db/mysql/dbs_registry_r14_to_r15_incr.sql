@@ -17,13 +17,5 @@ CREATE TABLE `registry_object_citations` (
   `citation_data` text,
   `status` varchar(32),
   `Last_checked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`),
-  KEY `idx_data_source_id_roc` (`data_source_id`),
-  KEY `idx_registry_object_id_roc` (`registry_object_id`),
-  CONSTRAINT `fk_roc_registry_object_id` FOREIGN KEY (`registry_object_id`)
-    REFERENCES `registry_objects` (`registry_object_id`)
-    ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_roc_data_source_id` FOREIGN KEY (`data_source_id`)
-    REFERENCES `data_sources` (`data_source_id`)
-    ON DELETE NO ACTION ON UPDATE NO ACTION
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
