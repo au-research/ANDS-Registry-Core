@@ -4,7 +4,7 @@
             <div class="row element-normal-top element-normal-bottom">
                 <div class="col-md-8">
                     <p>
-                        Research Data Australia is an Internet-based discovery service designed to provide rich connections between data, projects, researchers and institutions, and promote visibility of Australian research data collections in search engines. <a href="{{portal_url('page/about')}}">Read more about us...</a>
+                        Research Data Australia is the data discovery service of the Australian National Data Service (ANDS). ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program. Read more <a href="http://www.ands.org.au/andsbrochurejan2015.pdf">about ANDS</a>...
                     </p>
                     <small>ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.</small>
                 </div>
