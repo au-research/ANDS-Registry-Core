@@ -103,11 +103,8 @@
 
 @section('sidebar')
 <div class="panel panel-primary" ng-cloak>
-    <div class="panel-heading">
-        Current Search
-        <div class="pull-right">
-            <span classicon fclass="filters.class"></span> [[ filters.class | getLabelFor:class_choices ]]
-        </div>
+    <div class="panel-heading">Current Search<div class="pull-right">
+            <span classicon fclass="filters.class"></span>[[ filters.class | getLabelFor:class_choices ]]</div>
     </div>
     <!-- <div class="panel-body swatch-white">
         [[filters]]
