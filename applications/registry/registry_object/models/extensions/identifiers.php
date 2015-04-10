@@ -45,7 +45,7 @@ class Identifiers_Extension extends ExtensionBase
 
 
 
-	public function findMatchingRecords($matches = array(), $tested_ids = array(), $recursive=true)
+	public function findMatchingRecords($matches = array(), $tested_ids = array(), $tested_identifiers = array(), $recursive=true)
 	{
 		//if($this->ro->class=='collection') return $matches;
 		if(sizeof($tested_ids) === 0) // first call
@@ -63,6 +63,8 @@ class Identifiers_Extension extends ExtensionBase
 					$or = ' OR ';
 					$qArray[] = $row['identifier'];
 					$qArray[] = $row['identifier_type'];
+
+					$tested_identifiers[] = $row['identifier'];
 				}
 				$sql .= ")";
 				$query = $this->db->query($sql, $qArray);
@@ -73,7 +75,7 @@ class Identifiers_Extension extends ExtensionBase
 						}
 					}
 					if($recursive) // continue traversing is needed
-						return $matches = $this->findMatchingRecords($matches, $tested_ids);
+						return $matches = $this->findMatchingRecords($matches, $tested_ids, $tested_identifiers);
 				}
 			}
 		}
@@ -84,7 +86,15 @@ class Identifiers_Extension extends ExtensionBase
 				if(!in_array($registry_object_id, $tested_ids))
 				{
 					$tested_ids[] = $registry_object_id;
-					$query = $this->db->get_where('registry_object_identifiers', array('registry_object_id' => $registry_object_id, 'identifier_type !='=> 'local'));
+					// $query = $this->db->where('registry_object_identifiers', array('registry_object_id' => $registry_object_id, 'identifier_type !='=> 'local'))->where_not_in('identifier', $tested_identifiers)->get('');
+					// $query = $this->db->where('registry_object_identifiers', array('registry_object_id' => $registry_object_id, 'identifier_type !='=> 'local'))->where_not_in('identifier', $tested_identifiers)->get('');
+
+					$query = $this->db->select('*')
+							->from('registry_object_identifiers')
+							->where('registry_object_id', $registry_object_id)
+							->where('identifier_type !=', 'local')
+							->where_not_in('identifier', $tested_identifiers)
+							->get();
 					$sql = "SELECT ro.registry_object_id, ro.class FROM `registry_object_identifiers` roi RIGHT JOIN `registry_objects` ro ON ro.registry_object_id = roi.registry_object_id  AND ro.status = 'PUBLISHED' WHERE roi.registry_object_id != ".$registry_object_id." AND ro.class = '".$this->ro->class."' AND (";
 					$qArray = array();
 					$or = '';
@@ -96,6 +106,7 @@ class Identifiers_Extension extends ExtensionBase
 							$or = ' OR ';
 							$qArray[] = $row['identifier'];
 							$qArray[] = $row['identifier_type'];
+							$tested_identifiers[] = $row['identifier'];
 						}
 						$sql .= ")";
 						
@@ -108,7 +119,7 @@ class Identifiers_Extension extends ExtensionBase
 									$matches[] = $ro['registry_object_id'];
 								}
 							}
-							return $matches = $this->findMatchingRecords($matches, $tested_ids);
+							return $matches = $this->findMatchingRecords($matches, $tested_ids, $tested_identifiers);
 						}
 					}
 				}
