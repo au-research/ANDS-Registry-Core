@@ -234,6 +234,27 @@ jQuery(document).ready(function( $ ) {
         var url = $(this).attr('href');
         var redirect = window.location.href;
         location.href = url+'?redirect='+encodeURIComponent(redirect);
+    }).on('click', '.help_button', function(event){
+        var urlStr = window.location.href;
+        var useTab = 'overview';
+        if(urlStr.indexOf('/search/#!') > 0)
+        {
+            useTab = 'search';
+        }
+        else if(urlStr.indexOf('/profile#!') > 0)
+        {
+            useTab = 'myrda';
+        }
+        $('#overview_tab').removeClass('active');
+        $('#search_tab').removeClass('active');
+        $('#myrda_tab').removeClass('active');
+        $('#advsearch_tab').removeClass('active');
+        $('#overview').removeClass('active');
+        $('#search').removeClass('active');
+        $('#myrda').removeClass('active');
+
+        $('#'+useTab).addClass('active');
+        $('#'+useTab+'_tab').addClass('active');
     });
 
 
