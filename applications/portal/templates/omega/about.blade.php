@@ -43,10 +43,10 @@ $banner = isset($banner) ? $banner : asset_url('images/collection_banner.jpg', '
             <div class="col-md-12">
                 <div class="col-md-2 not-condensed os-animation animated fadeInUp"> </div>
                 <div class="col-md-10  ">
-                    <div class="col-md-4" style="float:left" >
+                    <div class="col-md-4" >
                         @include('includes/about-subjects-list')
                     </div>
-                    <div class="col-md-6 text-center" style="padding-left:20px;padding-top:100px" >
+                    <div class="col-md-6 text-center" style="padding-left:20px;padding-top:30px" >
                         <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;color:#000000">Data for researchers everywhere</h1>
                         <div class="text-left">
                         <p>Research Data Australia caters specifically for researchers but also has broader relevance to others including policy makers, educators and business people.</p>
@@ -129,7 +129,7 @@ $banner = isset($banner) ? $banner : asset_url('images/collection_banner.jpg', '
                             </a>
                         </div>
                         <div class="col-md-4 ">
-                            <a href="">
+                            <a href="" data-toggle="modal" data-target="#help_modal" class="search_help">
                                 <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".3s" style="-webkit-animation: 0.3s;">
                                     <div class="box box-round box-medium box-simple">
                                         <div class="box-dummy"></div>

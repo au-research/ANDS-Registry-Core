@@ -121,7 +121,7 @@ jQuery(document).ready(function( $ ) {
             $counter.waypoint(function() {
                 window.setTimeout(function() {
                     $odometer.html( $counter.attr( 'data-count' ) );
-                }, 1500);
+                }, 500);
             },{
                 triggerOnce: true,
                 offset: 'bottom-in-view'
@@ -255,6 +255,14 @@ jQuery(document).ready(function( $ ) {
 
         $('#'+useTab).addClass('active');
         $('#'+useTab+'_tab').addClass('active');
+    }).on('click', '.search_help', function(event){
+        $('#overview_tab').removeClass('active');
+        $('#myrda_tab').removeClass('active');
+        $('#advsearch_tab').removeClass('active');
+        $('#overview').removeClass('active');
+        $('#myrda').removeClass('active');
+        $('#search').addClass('active');
+        $('#search_tab').addClass('active');
     });
 
 

@@ -3886,7 +3886,7 @@ CHECKS.ie6 = {
             $counter.waypoint(function() {
                 window.setTimeout(function() {
                     $odometer.html( $counter.attr( 'data-count' ) );
-                }, 1500);
+                }, 500);
             },{
                 triggerOnce: true,
                 offset: 'bottom-in-view'
@@ -3999,6 +3999,35 @@ CHECKS.ie6 = {
         var url = $(this).attr('href');
         var redirect = window.location.href;
         location.href = url+'?redirect='+encodeURIComponent(redirect);
+    }).on('click', '.help_button', function(event){
+        var urlStr = window.location.href;
+        var useTab = 'overview';
+        if(urlStr.indexOf('/search/#!') > 0)
+        {
+            useTab = 'search';
+        }
+        else if(urlStr.indexOf('/profile#!') > 0)
+        {
+            useTab = 'myrda';
+        }
+        $('#overview_tab').removeClass('active');
+        $('#search_tab').removeClass('active');
+        $('#myrda_tab').removeClass('active');
+        $('#advsearch_tab').removeClass('active');
+        $('#overview').removeClass('active');
+        $('#search').removeClass('active');
+        $('#myrda').removeClass('active');
+
+        $('#'+useTab).addClass('active');
+        $('#'+useTab+'_tab').addClass('active');
+    }).on('click', '.search_help', function(event){
+        $('#overview_tab').removeClass('active');
+        $('#myrda_tab').removeClass('active');
+        $('#advsearch_tab').removeClass('active');
+        $('#overview').removeClass('active');
+        $('#myrda').removeClass('active');
+        $('#search').addClass('active');
+        $('#search_tab').addClass('active');
     });
 
 
