@@ -6,7 +6,6 @@
                     <p>
                         Research Data Australia is the data discovery service of the Australian National Data Service (ANDS). ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program. Read more <a href="http://www.ands.org.au/andsbrochurejan2015.pdf">about ANDS</a>...
                     </p>
-                    <small>ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.</small>
                 </div>
                 <div class="col-md-2">
                    <a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris" target="_blank" class="gov_logo"><img style="height:75px;" src="<?php echo asset_url('images/NCRIS_PROVIDER_rev.png','core');?>" alt="National Collaborative Research Infrastructure Strategy (NCRIS)" /></a>
