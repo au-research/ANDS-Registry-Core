@@ -368,10 +368,18 @@ function identifierResolution($identifier,$type)
             return  $identifiers;
             break;
         case 'ark':
-            $identifier = str_replace('http://','',str_replace('https://','',$identifier));
             $identifiers['href'] = '';
+            $identifiers['display_icon'] = '';
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier && str_replace('/ark:/','',$identifier)!=$identifier){
+                $identifiers['href'] = $identifier;
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/external_link.png alt="External Link"/>';
+            }
+            elseif(strpos($identifier,'/ark:/')>1){
+                $identifiers['href'] = 'http://'.$identifier;
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/external_link.png alt="External Link"/>';
+            }
             $identifiers['display_text'] = 'ARK';
-            $identifiers['hover_text'] = '';
+            $identifiers['hover_text'] = 'Resolve this ARK identifier';
             return $identifiers;
             break;
         case 'orcid':
