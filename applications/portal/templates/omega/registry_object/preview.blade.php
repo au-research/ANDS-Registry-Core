@@ -31,8 +31,8 @@
 	@if($ro->core['class']=='party')
 		@include('registry_object/contents/contact-info')
 	@endif
-
-	@if($showMore||$ro->identifiers)
+<!-- ||$ro->identifiers -->
+	@if($showMore)
         <h4>More data related to {{$ro->core['title']}}</h4>
         @if($showMore)
         <ul>
@@ -48,7 +48,7 @@
         @endif
 
 
-        @include('registry_object/contents/identifiers-list')
+       <!-- @include('registry_object/contents/identifiers-list') -->
 
     @else
         <br/>
