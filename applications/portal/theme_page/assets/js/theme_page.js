@@ -132,16 +132,18 @@ angular.module('portal_theme',[]).
 				$scope.$parent.$watch('page', function(newv){
 					if(newv) {
 						$scope.el = $scope.$parent.getSearch($scope.id);
-						if (!$scope.el.search.limit && $scope.el.search.limit!=0) $scope.el.search.limit = 15;
-						// $log.debug('found search', $scope.el);
-						var search = $scope.el.search;
-						var filters = searches.constructFilterArray(search);
-						$scope.filter_query = searches.contructFilterQuery(filters);
-					
-						searches.search(filters).then(function(data){
-							$scope.result = data;
-							// $log.debug('results for ', $scope.id, data);
-						});
+						if ( typeof $scope.el.search!=='undefined' ) {
+							if (typeof $scope.el.search.limit!=='undefined' && !$scope.el.search.limit && $scope.el.search.limit!=0) $scope.el.search.limit = 15;
+							// $log.debug('found search', $scope.el);
+							var search = $scope.el.search;
+							var filters = searches.constructFilterArray(search);
+							$scope.filter_query = searches.contructFilterQuery(filters);
+							
+							searches.search(filters).then(function(data){
+								$scope.result = data;
+								// $log.debug('results for ', $scope.id, data);
+							});
+						}
 					}
 				});
 			}
