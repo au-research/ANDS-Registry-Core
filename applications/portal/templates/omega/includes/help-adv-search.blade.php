@@ -11,7 +11,7 @@
 <img style="width:460px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/AdvancedSearch.png', 'core')}}" alt="Advanced Search"/>
 <p>The Advanced Search popout allows you to build/refine complex queries all in a single tabbed popout. From within the Advanced Search you can construct boolean searches and apply one or more filter categories to your search.
 </p>
-<p>Note that there is no defined order to the tabs in the Advanced Search and you can apply the filters in any order you choose. Where there are multiple options for a filter category e.g. (Subjects) the options & record counts displayed are based on your your query. Each time you switch tabs the available filter options and record counts are updated to reflect any changes on the previous tab.</p>
+<p>Note that there is no defined order to the tabs in the Advanced Search and you can apply the filters in any order you choose. Where there are multiple options for a filter category e.g. (Subjects) the options & record counts displayed are based on your query. Each time you switch tabs the available filter options and record counts are updated to reflect any changes on the previous tab.</p>
 
 <h3 id="review_your_adv_search">Reviewing your Advanced Search</h3>
 <p>As you build/refine your search in the Advanced Search popout, you can review the entire search and the number of results which will be returned by selecting the ‘Review’ tab. The tab also allows you to modify your search by removing filters.</p>
@@ -26,7 +26,7 @@
 	<li>Multiple search terms entered into a single Condition Value are treated by the search as being separated by the Boolean operator AND.</li>
 	<li>The search terms are treated as case insensitive E.g. ‘Rain’ is the same as ‘rain’.</li>
 	<li>Exact phrases can also be entered into Condition Values by using quotes " " E.g. "ice sheets"</li>
-	<li>The ? symbol can be used to perform a single character wildcard search. E.g. Organi?ations. Note that the wildcard can only be used for single</li>
+	<li>The ? symbol can be used to perform a single character wildcard search. E.g. Organi?ations.</li>
 	<li>The * symbol can be used to perform multiple character wildcard search. E.g. Extend*</li>
 </ul>
 <p class="small muted">Note: Wildcard characters can be applied to single search terms, but not to search phrases.</p>
