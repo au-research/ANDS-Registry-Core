@@ -1,9 +1,13 @@
 <h2>Search</h2>
-<h3>Performing a Search</h3>
+<ul style="list-style-type: none;">
+    <li><a href="#performing_search">Performing a Search</a></li>
+    <li><a href="#refining_search">Refining a Search – Filters, Keywords &amp; Multi-select</a></li>
+    <li><a href="#clearing_search">Clearing a Search</a></li>
+    <li><a href="#understaning_search_result">Understanding Your Search Results</a></li>
+</ul>
+<h3 id="performing_search">Performing a Search</h3>
 <br/><img style="width:460px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/SearchBar.png', 'core')}}" alt="Search Bar"/><br/>
-<h3>Refining a Search – Filters, Keywords &amp; Multi-select</h3>
-<br/><img style="width:260px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/Filters.png', 'core')}}" alt="Filters"/><br/>
-<p>Once you have executed a search and are on the Search Results page, you can further refine your search by adding additional keywords and filters which are displayed on the left hand side of the page under the ‘Refine search results’ section. Adding a filter will restrictTo perform a search simply type your search terms into the Search Bar displayed at the top of the page and click the ‘Search’ button. The search will be executed and you will be navigated to the Search Results page where you can further refine your search. If you would like to be more precise on where to look for your search terms you can use the dropdown displayed with the Search Bar to select a specific field to search within. The following search fields are available:</p>
+<p>To perform a search simply type your search terms into the Search Bar displayed at the top of the page and click the ‘Search’ button. The search will be executed and you will be navigated to the Search Results page where you can further refine your search. If you would like to be more precise on where to look for your search terms you can use the dropdown displayed with the Search Bar to select a specific field to search within. The following search fields are available:</p>
 <ul>
     <li>Title - The search will attempt to locate your search terms in the title of each record.
     </li>
@@ -20,9 +24,11 @@
 <p>Exact phrases can also be entered into the Search Bar by using quotes " " E.g. "ice sheets"
 </p>
 
-<p>More complex search term queries can be conducted using the Advanced Search. Please refer to the section below.
-your search to only records which contain the filter value.</p>
+<p>More complex search term queries can be conducted using the Advanced Search. Please refer to the Advanced Search tab above.</p>
 
+<h3 id="refining_search">Refining a Search – Filters, Keywords &amp; Multi-select</h3>
+<br/><img style="width:260px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/Filters.png', 'core')}}" alt="Filters"/><br/>
+<p>Once you have executed a search and are on the Search Results page, you can further refine your search by adding additional keywords and filters which are displayed on the left hand side of the page under the ‘Refine search results’ section. Adding a filter will restrict your search to only records which contain the filter value.</p>
 <p>Note that the only filter value which is mandatory for a data record is the ‘Data Provider’ value. All other values are optional.</p>
 
 <h4>Checkbox Filters & Multi-Select:</h4>
@@ -37,12 +43,12 @@ and ‘To Year’. The placeholder text shown in the text fields indicates the a
 <p><i>*Temporal Coverage = Time period during which data was collected or observations made.</i></p>
 <h4>Keywords:</h4>
 <p>Additional keywords can be added to your search by either adding more search terms to the Search Bar at the top of the page or by using the Keywords filter shown at the top of the ‘Refine search results’ section on the left hand side of the page.</p>
-<h4>Location filter:</h4>
+<h4 id="location_filer">Location filter:</h4>
 <p>The Location filter allows you to restrict your search results to only records that have mappable location information described, which falls within a specified region. The Location filter is available through the Advanced Search. Please refer to the Advanced Search section below for more information.</p>
-<h3>Clearing a Search</h3>
+<h3 id="clearing_search">Clearing a Search</h3>
 <br/><img style="width:260px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/ClearSearch.png', 'core')}}" alt="Clear Search"/><br/>
 <p>To clear a search click the black ‘X’ displayed in the search bar or click the ‘Clear Search’ button displayed in the Current Search section displayed on the left hand side of the Search Results page.</p>
-<h3>Understanding Your Search Results</h3>
+<h3 id="understaning_search_result">Understanding Your Search Results</h3>
 <p>The search within Research Data Australia will return records matching your specified search parameters (terms and filters). By default the returned records will be sorted by ‘Relevance’, where each record in a search result is given a ranking based on how closely a record matches the entered parameters. The search ranking algorithm used in Research Data Australia for ‘Relevance’ is complex and cannot easily be described. Below is a very rough guide for how the default ranking and matching is achieved.</p>
 <ul>
     <li>Searches for a given word in Research Data Australia will generate results of any records which contain the entire word or the "stem" of the word (a stem is generated by a built-in Solr  filter, which breaks down search terms into their "word stems", so "fishing" will match "fish")</li>

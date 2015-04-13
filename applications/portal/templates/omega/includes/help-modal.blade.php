@@ -12,7 +12,7 @@
 				<div role="tabpanel">
 				  <!-- Nav tabs -->
 				  <ul class="nav nav-tabs" role="tablist">
-				    <li role="presentation" id="overview_tab"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+				    <li role="presentation" id="overview_tab" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
 				    <li role="presentation" id="search_tab"><a href="#search" aria-controls="search" role="tab" data-toggle="tab">Search</a></li>
 				    <li role="presentation" id="myrda_tab"><a href="#myrda" aria-controls="MyRDA" role="tab" data-toggle="tab">MyRDA</a></li>
 				    <li role="presentation" id="advsearch_tab"><a href="#advsearch" aria-controls="advsearch" role="tab" data-toggle="tab">Advanced Search</a></li>
@@ -20,7 +20,7 @@
 
 				  <!-- Tab panes -->
 				  <div class="tab-content">
-					<div role="tabpanel" class="tab-pane" id="overview">
+					<div role="tabpanel" class="tab-pane active" id="overview">
                         @include('includes/help-overview')
 				    </div>
 				    <div role="tabpanel" class="tab-pane" id="search">
