@@ -117,7 +117,6 @@ jQuery(document).ready(function( $ ) {
                 value: $odometer.text(),
                 format: $counter.attr('data-format')
             });
-            console.log(od);
             $counter.waypoint(function() {
                 window.setTimeout(function() {
                     $odometer.html( $counter.attr( 'data-count' ) );

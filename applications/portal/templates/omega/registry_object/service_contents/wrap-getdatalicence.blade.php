@@ -41,11 +41,11 @@
                 <h4>Licence & Rights</h4>
             @endif
         	@if($ar=='open')
-        	    <a href="" tip="Online data that can be electronically accessed free of charge with no restrictions imposed on the user"><span class="label  label-{{$ar}}" for="">OPEN</span></a>
+        	    <a href="" tip="Data that is readily accessible and reusable"><span class="label  label-{{$ar}}" for="">OPEN</span></a>
         	@elseif($ar=='conditional')
-                <a href="" tip="Online or offline data that can be accessed free of charge, providing certain conditions are met (e.g. free registration is required to access data online)"><span class="label label-{{$ar}}" for="">CONDITIONAL</span></a>
+                <a href="" tip="Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required)"><span class="label label-{{$ar}}" for="">CONDITIONAL</span></a>
             @elseif($ar=='restricted')
-                <a href="" tip="Online or offline data where access to the data is limited in some way (e.g. access is only available to a particular group of users"><span class="label label-{{$ar}}" for="">RESTRICTED</span></a>
+                <a href="" tip="Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location)"><span class="label label-{{$ar}}" for="">RESTRICTED</span></a>
             @endif
 
         	@if($cc=='CC-BY')

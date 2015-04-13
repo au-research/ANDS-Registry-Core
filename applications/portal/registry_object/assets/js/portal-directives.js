@@ -49,9 +49,9 @@ app.directive('facetinfo', function($log) {
 
 			var values = {
 				'access_rights' : {
-					'open' : 'Online data that can be electronically accessed free of charge with no restrictions imposed on the user.',
-					'conditional' : 'Online or offline data that can be accessed free of charge, providing certain conditions are met (e.g. free registration is required to access data online).',
-					'restricted': 'Online or offline data where access to the data is limited in some way (e.g. access is only available to a particular group of users).',
+					'open' : 'Data that is readily accessible and reusable.',
+					'conditional' : 'Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required).',
+					'restricted': 'Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location).',
 					'unknown': 'no value or user defined custom value'
 				},
 				'license_class': {
