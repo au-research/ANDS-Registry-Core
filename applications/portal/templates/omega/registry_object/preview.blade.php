@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 	$search_class = $ro->core['class'];
 	if($ro->core['class']=='party') {
 		if (strtolower($ro->core['type'])=='person'){
@@ -30,8 +31,10 @@
 	@if($ro->core['class']=='party')
 		@include('registry_object/contents/contact-info')
 	@endif
-	@if($showMore)
+
+	@if($showMore||$ro->identifiers)
         <h4>More data related to {{$ro->core['title']}}</h4>
+        @if($showMore)
         <ul>
             @foreach($ro->relationships['collection'] as $col)
                 @if($col && $col['registry_object_id'] != $omit)
@@ -42,8 +45,12 @@
                 <li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count']}} related data</a></li>
             @endif
         </ul>
+        @endif
+
+
+        @include('registry_object/contents/identifiers-list')
+
     @else
         <br/>
 	@endif
-	<a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm pull-right">View Record</a>
-</div>
+	<a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-p

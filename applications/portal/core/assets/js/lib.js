@@ -3855,6 +3855,40 @@ CHECKS.ie6 = {
                 },200);
             });
         });
+
+        if(readCookie('help_shown') != 'true')
+        {
+            $('.help_button').click();
+        }
+
+        $('#help_modal').on('hidden.bs.modal', function () {
+            if(readCookie('help_shown') != 'true')
+            {
+                $('.help_button').qtip({
+                    content: {
+                        text: "Access help anytime"
+                    },
+                    show: {
+                        delay: 1000,
+                        solo: false,
+                        ready: true
+                    },
+                    hide: {
+                        delay: 1000,
+                        fixed: true,
+                    },
+                    position: {viewport: $(window),my: 'bottom center',at: 'top center'},
+                    style: {
+                        classes: 'qtip-bootstrap',
+                        def: 'false',
+                        width:135
+                    }
+
+                });
+            }
+
+            createCookie("help_shown",'true',100000);
+        });
     }
 
     // Re initialise isotope on window resize
@@ -3882,10 +3916,11 @@ CHECKS.ie6 = {
                 value: $odometer.text(),
                 format: $counter.attr('data-format')
             });
+            console.log(od);
             $counter.waypoint(function() {
                 window.setTimeout(function() {
                     $odometer.html( $counter.attr( 'data-count' ) );
-                }, 500);
+                }, 1500);
             },{
                 triggerOnce: true,
                 offset: 'bottom-in-view'
@@ -3925,7 +3960,30 @@ CHECKS.ie6 = {
     onScrollInit( $( '.recent-simple-os-animation' ), $('.recent-simple-os-container') );
 
 
+    function createCookie(name,value,days) {
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime()+(days*24*60*60*1000));
+            var expires = "; expires="+date.toGMTString();
+        }
+        else var expires = "";
+        document.cookie = name+"="+value+expires+"; path=/";
+    }
 
+    function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+
+    function eraseCookie(name) {
+        createCookie(name,"",-1);
+    }
 
 
 
