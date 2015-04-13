@@ -151,6 +151,9 @@ div.vertical-center span.vertical-center {
   text-indent: -1em;
   padding-left: 1em;
 }
+.logo-homepage {
+  height: 175px;
+}
 /**
  * Modules used mainly in view page
  */
