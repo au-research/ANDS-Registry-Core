@@ -59,8 +59,8 @@
 			
 			@foreach($ro->descriptions as $desc)
 				@if(!in_array($desc['type'], $order) && !in_array($desc['type'], $omit))
-					<small>{{$desc['type']}}</small>
-					<p>{{html_entity_decode($desc['description'])}}</p>
+                    <p><strong>{{readable($desc['type'])}} </strong>
+					{{html_entity_decode($desc['description'])}}</p>
 				@endif
 			@endforeach
 		</div>
