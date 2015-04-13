@@ -209,11 +209,11 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.search = function(){
 		$scope.loading = true;
 
-		if (urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
-			if (ga) {
-				ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
-			}
+		if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
+			ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
 		}
+		
+		
 
 		search_factory.search($scope.filters).then(function(data){
 			$scope.loading = false;
