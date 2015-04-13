@@ -101,6 +101,12 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.prefilters['q'] = data;
 	});
 
+	$scope.$watch('query', function(newv,oldv){
+		if(newv!=oldv) {
+			$scope.filters['q'] = newv;
+		}
+	});
+
 	$scope.setSearchType = function(value) {
 		$scope.search_type = value;
 	}

@@ -178,8 +178,6 @@
     <div facet-search facets="facets" type="funders" ng-if="showFacet('funders')"></div>
     <div facet-search facets="facets" type="funding_scheme" ng-if="showFacet('funding_scheme')"></div>
 
-    
-
     <!-- Funding Amount for Activity Search-->
     <div class="panel-body swatch-white" ng-show="showFacet('funding_amount')">
         <h4>Funding Amount <i class="fa fa-info" tip="Funding amount should be entered in whole dollars with no comma or $ sign"></i></h4>
