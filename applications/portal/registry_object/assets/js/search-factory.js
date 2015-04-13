@@ -265,10 +265,12 @@ app.factory('search_factory', function($http, $log){
 
 			if(earliest_year && latest_year) {
 				// $log.debug(earliest_year, latest_year);
-				for(i = parseInt(earliest_year); i < parseInt(latest_year);i++){
+				for(i = parseInt(earliest_year); i < parseInt(latest_year)+1;i++){
 					range.push(i);
 				}
 			}
+
+			// $log.debug(range);
 
 			return range;
 		},
