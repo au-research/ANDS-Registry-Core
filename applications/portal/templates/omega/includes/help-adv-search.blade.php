@@ -1,4 +1,3 @@
-<h3>Advanced Search</h3>
 <ul style="list-style-type: none;">
     <li><a href="#review_your_adv_search">Reviewing your Advanced Search</a></li>
     <li><a href="#search_term_query_constructor">Search Terms Query Constructor</a></li>

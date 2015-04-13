@@ -1,4 +1,3 @@
-<h3>MyRDA</h3>
 <ul style="list-style-type: none;">
     <li><a href="#accessing_my_rda">Accessing MyRDA</a></li>
     <li><a href="#saving_searches">Saving Searches</a></li>

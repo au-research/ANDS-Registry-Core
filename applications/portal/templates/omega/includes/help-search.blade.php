@@ -1,4 +1,4 @@
-<h3>Search</h3>
+
 <ul style="list-style-type: none;">
     <li><a href="#performing_search">Performing a Search</a></li>
     <li><a href="#refining_search">Refining a Search – Filters, Keywords &amp; Multi-select</a></li>
