@@ -10,11 +10,11 @@
 		}
         foreach ($ro->relatedInfo as $relatedInfo) {
             if (!in_array($relatedInfo['type'],$notTypes)) {
-                if($relatedInfo['type'] == 'service' && ($relatedInfo['relation']['url']== '' || $relatedInfo['title'] != ''))
+                if($relatedInfo['type'] == 'service' && ($relatedInfo['relation']['url']== '' || $relatedInfo['title'] != '') && !$has_moreInfo)
                 {
                     $has_moreInfo = false;
                 }
-                elseif($relatedInfo['type'] == 'party' && in_array(trim($relatedInfo['identifier']['identifier_value']), $resolvedPartyIdentifiers)){
+                elseif($relatedInfo['type'] == 'party' && in_array(trim($relatedInfo['identifier']['identifier_value']), $resolvedPartyIdentifiers)  && !$has_moreInfo){
                     $has_moreInfo = false;
                 }
                 else{
@@ -48,6 +48,7 @@
 			    @endif
 			@endforeach
             @foreach($ro->relatedInfo as $relatedInfo)
+
             @if($relatedInfo['type']=='service' && ($relatedInfo['title']!='' || $relatedInfo['relation']['url']==''))
             @elseif($relatedInfo['type']=='service' && $relatedInfo['title']=='' && $relatedInfo['relation']['url']!='')
                 <p>
@@ -66,6 +67,7 @@
                 <p>{{$relatedInfo['notes']}}</p>
                 @endif
             @elseif(!in_array($relatedInfo['type'],$notTypes) && !in_array(trim($relatedInfo['identifier']['identifier_value']), $resolvedPartyIdentifiers))
+
                 <h5> {{$relatedInfo['title']}}</h5>
                 <p>
                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
