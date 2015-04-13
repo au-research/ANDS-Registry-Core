@@ -1,9 +1,7 @@
 <h2>Search</h2>
 <h3>Performing a Search</h3>
 <br/><img style="width:460px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/SearchBar.png', 'core')}}" alt="Search Bar"/><br/>
-<h3>Refining a Search – Filters, Keywords &amp; Multi-select</h3>
-<br/><img style="width:260px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/Filters.png', 'core')}}" alt="Filters"/><br/>
-<p>Once you have executed a search and are on the Search Results page, you can further refine your search by adding additional keywords and filters which are displayed on the left hand side of the page under the ‘Refine search results’ section. Adding a filter will restrictTo perform a search simply type your search terms into the Search Bar displayed at the top of the page and click the ‘Search’ button. The search will be executed and you will be navigated to the Search Results page where you can further refine your search. If you would like to be more precise on where to look for your search terms you can use the dropdown displayed with the Search Bar to select a specific field to search within. The following search fields are available:</p>
+<p>To perform a search simply type your search terms into the Search Bar displayed at the top of the page and click the ‘Search’ button. The search will be executed and you will be navigated to the Search Results page where you can further refine your search. If you would like to be more precise on where to look for your search terms you can use the dropdown displayed with the Search Bar to select a specific field to search within. The following search fields are available:</p>
 <ul>
     <li>Title - The search will attempt to locate your search terms in the title of each record.
     </li>
@@ -20,9 +18,11 @@
 <p>Exact phrases can also be entered into the Search Bar by using quotes " " E.g. "ice sheets"
 </p>
 
-<p>More complex search term queries can be conducted using the Advanced Search. Please refer to the section below.
-your search to only records which contain the filter value.</p>
+<p>More complex search term queries can be conducted using the Advanced Search. Please refer to the Advanced Search tab above.</p>
 
+<h3>Refining a Search – Filters, Keywords &amp; Multi-select</h3>
+<br/><img style="width:260px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/Filters.png', 'core')}}" alt="Filters"/><br/>
+<p>Once you have executed a search and are on the Search Results page, you can further refine your search by adding additional keywords and filters which are displayed on the left hand side of the page under the ‘Refine search results’ section. Adding a filter will restrict your search to only records which contain the filter value.</p>
 <p>Note that the only filter value which is mandatory for a data record is the ‘Data Provider’ value. All other values are optional.</p>
 
 <h4>Checkbox Filters & Multi-Select:</h4>
