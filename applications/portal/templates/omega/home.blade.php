@@ -75,7 +75,7 @@
                         </a>
                        </div>
                        <div class="col-md-3 ">
-                        <a href="{{portal_url('search')}}#!/class=service">
+                        <a href="{{portal_url('theme/services')}}">
                          <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".3s" style="-webkit-animation: 0.3s;">
                              <div class="box box-round box-medium box-simple">
                                  <div class="box-dummy"></div>
@@ -89,7 +89,7 @@
                         </a>
                        </div>
                        <div class="col-md-3 ">
-                        <a href="{{portal_url('search')}}#!/access_rights=open">
+                        <a href="{{portal_url('theme/open-data')}}">
                          <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".6s" style="-webkit-animation: 0.6s;">
                              <div class="box box-round box-medium box-simple">
                                  <div class="box-dummy"></div>
