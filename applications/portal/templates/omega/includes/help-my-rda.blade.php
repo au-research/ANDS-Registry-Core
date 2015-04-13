@@ -1,6 +1,12 @@
 <h3>MyRDA</h3>
+<ul style="list-style-type: none;">
+    <li><a href="#accessing_my_rda">Accessing MyRDA</a></li>
+    <li><a href="#saving_searches">Saving Searches</a></li>
+    <li><a href="#saving_records">Saving Records</a></li>
+    <li><a href="#check_for_new_records">Checking for New Results for your Saved Searches</a></li>
+</ul>
 <p>MyRDA provides you with a personal account in Research Data Australia. Once logged in you will gain access to additional functionality such as the ability to save searches and records for viewing across separate RDA sessions, and the ability to contribute to the Research Data Australia community by adding tags (keywords) to records to assist in discovery.</p>
-<h4>Accessing MyRDA</h4>
+<h3 id="accessing_my_rda">Accessing MyRDA</h3>
 <p>MyRDA can be accessed from the ‘MyRDA Login’ menu option shown in the Research Data Australia menu bar displayed at the top of each page.</p>
 <img style="width:560px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/MyRDALogin.png', 'core')}}" alt="Advanced Search"/>
 
@@ -12,7 +18,7 @@
 <li><b>LDAP</b> – LDAP authentication is only used by ANDS staff.</li>
 </ul>
 
-<h4>Saving Searches</h4>
+<h3 id="saving_searches">Saving Searches</h3>
 <p>Once logged into your MyRDA account searches can be saved and rerun across Research Data Australia sessions.
 To save a search:</p>
 <ol>
@@ -24,7 +30,7 @@ To save a search:</p>
 </ol>
 <img style="width:260px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/SaveSearch.png', 'core')}}" alt="Save Search"/>
 
-<h4>Saving Records</h4>
+<h3 id="saving_records">Saving Records</h3>
 <p>Once logged into your MyRDA account records can be saved from the Search Results and Record View pages.</p>
 <img style="width:360px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/SaveRecordsSearch.png', 'core')}}" alt="Save Search"/>
 
@@ -48,7 +54,7 @@ To save a search:</p>
         <li>Enter a name for a new folder to save the record(s) into and click the ‘Go’ button, or select an existing folder to save the record(s) into. The records will be saved to your MyRDA account.</li>
     </ol>
 
-<h4>Checking for New Results for your Saved Searches</h4>
+<h3 id="check_for_new_records">Checking for New Results for your Saved Searches</h3>
 <p>Once a search has been saved to your account checking for new results across Research Data Australia sessions is a quick and easy process.</p>
 
 <p>Before checking for new results it’s important to understand the details displayed for a saved search. Each saved search displays 3 record counts:</p>
