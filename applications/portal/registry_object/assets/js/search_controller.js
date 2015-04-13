@@ -213,7 +213,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
 		}
 		
-		
 
 		search_factory.search($scope.filters).then(function(data){
 			$scope.loading = false;
@@ -291,14 +290,19 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				}
 			}
 
+			// $scope.temp
+
+			$scope.temporal_range = search_factory.temporal_range($scope.result);
+			$scope.earliest_year = $scope.temporal_range[0];
+			$scope.latest_year = $scope.temporal_range[$scope.temporal_range.length - 1];
+
 			//get temporal range
-			var tmp_filter = {};
-			tmp_filter['class'] = $scope.filters['class'];
-			search_factory.search_no_record($scope.filters).then(function(data){
-				$scope.temporal_range = search_factory.temporal_range(data);
-				$scope.earliest_year = $scope.temporal_range[0];
-				$scope.latest_year = $scope.temporal_range[$scope.temporal_range.length - 1];
-			});
+			// search_factory.search_no_record($scope.filters).then(function(data){
+			// 	$scope.temporal_range = search_factory.temporal_range(data);
+			// 	$log.debug(data);
+			// 	$scope.earliest_year = $scope.temporal_range[0];
+			// 	$scope.latest_year = $scope.temporal_range[$scope.temporal_range.length - 1];
+			// });
 		}
 
 		//duplicate record matching

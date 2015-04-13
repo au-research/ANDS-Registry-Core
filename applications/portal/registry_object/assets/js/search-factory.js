@@ -241,11 +241,26 @@ app.factory('search_factory', function($http, $log){
 			var earliest_year = false;
 			var latest_year = false;
 
-			if(result.facet_counts.facet_fields.earliest_year) {
-				earliest_year = result.facet_counts.facet_fields.earliest_year[0];
+			// $log.debug(result.facet_counts.facet_fields.earliest_year);
+
+			var earliest_array = result.facet_counts.facet_fields.earliest_year;
+			var latest_array = result.facet_counts.facet_fields.latest_year;
+
+
+			for (i=0;i<earliest_array.length-1;i+=2) {
+				if (earliest_year && parseInt(earliest_array[i]) < earliest_year) {
+					earliest_year = parseInt(earliest_array[i]);
+				} else if(!earliest_year) {
+					earliest_year = parseInt(earliest_array[i]);
+				}
 			}
-			if(result.facet_counts.facet_fields.latest_year) {
-				latest_year = result.facet_counts.facet_fields.latest_year[0];
+
+			for (i=0;i<latest_array.length-1;i+=2) {
+				if (latest_year && parseInt(latest_array[i]) > latest_year) {
+					latest_year = parseInt(latest_array[i]);
+				} else if(!latest_year) {
+					latest_year = parseInt(latest_array[i]);
+				}
 			}
 
 			if(earliest_year && latest_year) {
