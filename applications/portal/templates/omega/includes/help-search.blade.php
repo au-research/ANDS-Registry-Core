@@ -5,6 +5,21 @@
     <li><a href="#clearing_search">Clearing a Search</a></li>
     <li><a href="#understaning_search_result">Understanding Your Search Results</a></li>
 </ul>
+<br/>
+<h3 id="search_video">How to search in Research Data Australia</h3>
+<br/>
+<object width="560" height="315">
+    <param name="movie" value="https://www.youtube.com/v/MZGb2tqF2Pw?version=3&hl=en_US"></param>
+    <param name="allowFullScreen" value="true"></param>
+    <param name="allowscriptaccess" value="always"></param>
+    <embed
+        src="https://www.youtube.com/v/MZGb2tqF2Pw?version=3&hl=en_US"
+        type="application/x-shockwave-flash" width="560" height="315"
+        allowscriptaccess="always"
+        allowfullscreen="true">
+    </embed>
+</object>
+<br/><br/>
 <h3 id="performing_search">Performing a Search</h3>
 <br/><img style="width:460px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/SearchBar.png', 'core')}}" alt="Search Bar"/><br/>
 <p>To perform a search simply type your search terms into the Search Bar displayed at the top of the page and click the ‘Search’ button. The search will be executed and you will be navigated to the Search Results page where you can further refine your search. If you would like to be more precise on where to look for your search terms you can use the dropdown displayed with the Search Bar to select a specific field to search within. The following search fields are available:</p>
