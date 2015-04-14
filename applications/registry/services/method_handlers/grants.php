@@ -17,6 +17,7 @@ class GRANTSMethod extends MethodHandler
    		$forwarded_params = array_intersect_key(array_flip($permitted_forwarding_params), $this->params);
 		$CI =& get_instance();
 		$CI->load->library('solr');
+        $ro = $CI->load->model('registry_object/registry_objects');
 		$gotQuery = false;
 
         $defaultGroups = '"National Health and Medical Research Council","Australian Research Council"';
@@ -56,33 +57,33 @@ class GRANTSMethod extends MethodHandler
             }
 			if($param_name == 'institution' && $this->params[$param_name] != '')
 			{
-				$CI->solr->setOpt('fq','+related_object_display_title:"'.$this->params[$param_name].'"');
+				$CI->solr->setOpt('fq','+related_party_multi_search:"'.$this->params[$param_name].'"');
 				$gotQuery =true;
 
-				$CI->solr->setOpt('fq','+related_object_relation:"isManagedBy"');
+				//$CI->solr->setOpt('fq','+related_object_relation:"isManagedBy"');
 			}
 			if($param_name == 'person' && $this->params[$param_name] != '')
 			{
 				$words = $this->getWords($this->params[$param_name]);
 				foreach($words as $word)
 				{
-					$CI->solr->setOpt('fq',' related_object_display_title_search:('.$word.') OR researchers:('.$word.')');
+					$CI->solr->setOpt('fq',' related_party_one_search:('.$word.') OR researchers:('.$word.')');
 				}
 				$gotQuery =true;
 
-				$CI->solr->setOpt('fq','+related_object_class:"party"');
+				//$CI->solr->setOpt('fq','+related_object_class:"party"');
 			}
 			if($param_name == 'principalInvestigator' && $this->params[$param_name] != '')
 			{
 				$words = $this->getWords($this->params[$param_name]);
 				foreach($words as $word)
 				{
-					$CI->solr->setOpt('fq','+related_object_display_title_search:('.$word.')');
+					$CI->solr->setOpt('fq','+related_party_one_search:('.$word.')');
 				}	
 
 				$gotQuery =true;
 
-				$CI->solr->setOpt('fq','+related_object_relation:"isPrincipalInvestigatorOf"');
+				//$CI->solr->setOpt('fq','+related_object_relation:"isPrincipalInvestigatorOf"');
 
 			}
 			
@@ -108,13 +109,18 @@ class GRANTSMethod extends MethodHandler
 			{			
 				foreach ($result['response']['docs'] AS $r)
 				{
-					$relationships = array();
+
+                    $relationships = array();
                     $identifiers = array();
-					$canPass= true; 
-					if(isset($r['related_object_display_title']))
+					$canPass= true;
+                    $r_o = $ro->getById($r['id']);
+                    $related = $r_o->getRelatedObjectsByClassAndRelationshipType(array('party'), array());
+
+    				if(isset($related))
 					{
-						$relationships = $this->processRelated($r['related_object_display_title'],$r['related_object_relation']);
+						$relationships = $this->processRelated($related);
 					}
+
                     if(isset($r['identifier_value']))
                     {
                         $identifiers = $this->processIdentifiers($r['identifier_value'],$r['identifier_type']);
@@ -179,7 +185,7 @@ class GRANTSMethod extends MethodHandler
 					$response['numFound'] += 1;
 					$recordData[] = array('key' => $r['key'], 
 						'slug' => $r['slug'], 
-						'title' =>  $r['display_title'], 
+						'title' =>  $r['display_title'],
 						'description' =>  $r['description'],
                         'identifiers' => $r['identifier_value'],
                         'identifier_type' =>$identifiers,
@@ -206,29 +212,32 @@ class GRANTSMethod extends MethodHandler
         echo ($callback) . '(' . $r . ')';
     }
 
-   function processRelated($titles,$relation)
+   function processRelated($related)
    {
 		$relatiships = array();
-		for($i = 0 ; $i < sizeof($relation) ; $i++)
+		for($i = 0 ; $i < sizeof($related) ; $i++)
 		{
-			if(isset($relatiships[$relation[$i]]))
+			if(isset($related[$i]['relation_type'])&&$related[$i]['status']=='PUBLISHED')
 			{
-				if(is_array($relatiships[$relation[$i]]))
+				if(isset($relatiships[$related[$i]['relation_type']]))
 				{
-					$relatiships[$relation[$i]][] = $titles[$i];
+					$relatiships[$related[$i]['relation_type']][] = $related[$i]['title'];
 				}
 				else{
-					$firstTitle = $relatiships[$relation[$i]];
-					$relatiships[$relation[$i]] = array();
-					$relatiships[$relation[$i]][] = $firstTitle;
-					$relatiships[$relation[$i]][] = $titles[$i];
+					$firstTitle = $related[$i]['title'];
+					$relatiships[$related[$i]['relation_type']] = array();
+					$relatiships[$related[$i]['relation_type']][] = $firstTitle;
 				}
 
 			}
-			else{
-				$relatiships[$relation[$i]] = $titles[$i];
-			}
+
 		}
+
+        foreach($relatiships as $key=>$relationship){
+           if(count($relationship)==1){
+               $relatiships[$key] = $relationship[0];
+           }
+        }
 		return $relatiships;
 
    }
