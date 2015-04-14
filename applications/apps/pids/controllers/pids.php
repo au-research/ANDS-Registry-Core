@@ -363,8 +363,10 @@ class Pids extends MX_Controller {
 
 
         $pidsDetails = array();
-        $userIdentifier = $this->session->userdata(PIDS_USER_IDENTIFIER);
-        $userDomain = $this->session->userdata(PIDS_USER_DOMAIN);
+        $params = $this->input->post('params');
+        $searchText = (isset($params['searchText'])? $params['searchText']: null);
+        $authDomain = (isset($params['authDomain'])? $params['authDomain']: $this->user->authDomain());
+        $identifier = (isset($params['identifier'])? $params['identifier']: $this->user->localIdentifier());
         $fileName = preg_replace('-\W-','_',$this->pids->getFilePrefixForCurrentIdentifier())."_".date('Y-m-d')."_all_pids.csv";
         header('Cache-Control: no-cache, must-revalidate');
         header('Content-type: application/csv');
@@ -372,11 +374,11 @@ class Pids extends MX_Controller {
         header("Pragma: no-cache");
         header("Expires: 0");
 
-        $ownerHandle = $this->pids->getOwnerHandle($userIdentifier, $userDomain);
+        $ownerHandle = $this->pids->getOwnerHandle($identifier,$authDomain);
 
         if($ownerHandle)
         {
-            $handles = $this->pids->getHandles($ownerHandle);
+            $handles = $this->pids->getHandles($ownerHandle, $searchText);
             if(sizeof($handles) > 0){
                 $result = $this->pids->getHandlesDetails($handles);
                 foreach($result as $r)

@@ -9,10 +9,9 @@ RewriteRule ^services/ registry/ [R=301,L]
 # RewriteRule ^apps/mydois/doi_(.*?)\.php apps/mydois/$1 [R=301,L,QSA]
 # RewriteRule ^registry/orca/services/oai\.php registry/services/oai [R=301,L,QSA]
 
-
-
-RewriteCond $1 ^(css|img|js|less|lib|uploads|shared)
+RewriteCond $1 ^(css|img|js|less|lib|uploads|shared|images)
 RewriteRule ^assets/(.*?)/(.*)$ assets/$1/$2 [L]
+RewriteRule ^assets/templates/(.*?)/(.*)$ applications/portal/templates/$1/assets/$2 [L]
 RewriteRule ^assets/(.*?)/(.*)$ applications/portal/$1/assets/$2 [L]
 
 RewriteCond $1 ^(registry|roles|apps|developer)

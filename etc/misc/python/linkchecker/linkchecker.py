@@ -18,7 +18,7 @@ main()
 """
 
 # Version number. Printed out as part of HELP_TEXT.
-VERSION = "0.0.0"
+VERSION = "0.0.1"
 
 # System libraries
 import configparser
@@ -156,7 +156,7 @@ def process_args(argv):
             print("ssl_certificate file not readable:",
                   params['ssl_certificate'])
             sys.exit(4)
-        ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+        ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
         ssl_context.load_cert_chain(certfile=params['ssl_certificate'])
         params['ssl_context'] = ssl_context
     return params

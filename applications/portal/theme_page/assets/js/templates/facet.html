@@ -1,0 +1,6 @@
+<div ng-if="result">
+	<ul class="list-normal">
+		<li ng-repeat="f in facet | limitTo:limit | orderObjectBy:'name'"><a href="{{base_url}}search/#!/{{filter_query}}{{facetel.facet.type}}={{f.name}}">{{f.name}} ({{f.value}})</a></li>
+	</ul>
+	<a href="" ng-if="facet.length > limit" ng-click="viewAll()">View More</a>
+</div>

@@ -7,7 +7,7 @@ function get_config_item($name) {
 	} else {
 		//it's in the database table
 		$result = $_ci->db->get_where('configs', array('key'=>$name));
-		if($result->num_rows() > 0) {
+		if($result && $result->num_rows() > 0) {
 			$result_array = $result->result_array();
 			$result_item = $result_array[0];
 			if($result_item['type']=='json') {
@@ -112,12 +112,15 @@ function mod_enforce($module_name)
 	}
 }
 
-function acl_enforce($function_name, $message = '')
+function acl_enforce($function_name, $message = '', $portal=false)
 {
 	$_ci =& get_instance();
-	if (!$_ci->user->isLoggedIn())
-	{
-		redirect('auth/login/#/?error=login_required&redirect='.curPageURL());
+	if (!$_ci->user->isLoggedIn()) {
+		if($portal) {
+			redirect('profile/login/?redirect='.curPageURL());
+		} else {
+			redirect('auth/login/#/?error=login_required&redirect='.curPageURL());
+		}
 		// throw new Exception (($message ?: "Access to this function requires you to be logged in. Perhaps you have been automatically logged out?"));
 	}
 	else if (!$_ci->user->hasFunction($function_name))
@@ -263,19 +266,23 @@ function asset_url( $path, $loc = 'modules')
 
 	if($loc == 'base'){
 		return $CI->config->item('default_base_url').'assets/'.$path;
-	}else if($loc == 'shared'){
+	} else if ($loc == 'shared'){
 		return $CI->config->item('default_base_url').'assets/shared/'.$path;
-	}else if($loc == 'core'){
+	} else if( $loc == 'core'){
 		return base_url( 'assets/core/' . $path );
-	}else if($loc == 'modules'){
+	} else if ($loc == 'modules'){
 		if ($module_path = $CI->router->fetch_module()){
 			return base_url( 'assets/' . $module_path . "/" . $path );
 		}
 		else{
 			return base_url( 'assets/' . $path );
 		}
-	}else if($loc =='base_path'){
+	} else if ($loc == 'templates'){
+		return base_url('assets/templates/'.$path);
+	} else if ($loc =='base_path'){
 		return $CI->config->item('default_base_url').$path;
+	} else if ($loc == 'full_base_path') {
+		return base_url('assets/'.$path);
 	}
 }
 
@@ -452,6 +459,11 @@ function alphasort_name($a, $b){
 	return ($a->name < $a->name) ? -1 : 1;
 }
 
+function alphasort_byattr_title($a, $b) {
+	if(strtolower($a['title'])==strtolower($b['title'])) return 0;
+	return (strtolower($a['title']) < strtolower($b['title'])) ? -1 : 1;
+}
+
 /**
  * Universal log function
  * @param  string $message 
@@ -466,6 +478,7 @@ function ulog($message='', $logger='activity', $type='info') {
 	if (!class_exists('Logging')) {
 		$CI->load->library('logging');
 	}
+	$CI->load->library('logging');
 
 	try {
 		$logger = $CI->logging->get_logger($logger);
@@ -482,11 +495,45 @@ function ulog($message='', $logger='activity', $type='info') {
 	}
 }
 
+function ulog_email($subject='', $message='', $logger='activity', $type='info') {
+	ulog($message, $logger, $type);
+
+	$_ci =& get_instance();
+
+	$siteAdmin = (get_config_item('site_admin') ? get_config_item('site_admin') : 'Site Admin'); 
+	$siteInstance = (get_config_item('environment_name') ? get_config_item('environment_name') : 'Site Instance');
+	$siteState = (get_config_item('deployment_state') ? " (".get_config_item('deployment_state').")" : '');
+
+	$email = $_ci->load->library('email');
+	$email->from(get_config_item('site_admin_email'), $siteAdmin);
+	$email->to(get_config_item('site_admin_email')); 
+
+	$email->subject($subject);
+	$email->message($message);	
+	$email->send();
+}
+
 function ulog_terms($terms=array(), $logger='activity', $type='info')
 {
 	$msg = '';
 	foreach($terms as $key=>$term) {
-		$msg.='['.$key.':'.$term.']';
+		if(!is_array($key) && !is_array($term)) {
+			$msg.='['.$key.':'.$term.']';
+		}
 	}
 	ulog($msg,$logger,$type);
+}
+
+function in_array_r($needle, $haystack, $strict = false) {
+    foreach ($haystack as $item) {
+        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function dd($stuff) {
+	die(var_dump($stuff));
 }

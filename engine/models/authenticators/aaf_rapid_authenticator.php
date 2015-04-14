@@ -82,12 +82,8 @@ class Aaf_rapid_authenticator extends Authenticator {
 	}
 
 	public function load_params($params){
-		if (!$params['assertion']) throw new Exception('JWT assertion failure');
+		if (!isset($params['assertion'])) throw new Exception('JWT assertion failure');
 		$this->jwt_token = $params['assertion'];
-	}
-
-	public function post_authentication_hook(){
-		redirect('/auth/dashboard');
 	}
 
 }

@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 
 /**
  * Registry Object controller
@@ -628,7 +628,7 @@ class Registry_object extends MX_Controller {
 				$jsonData['msg'] = $e;
 			}
 		}else if($action=='remove'){
-			if($ro->removeTag($tag) && $ro->sync(false)){
+			if($ro->removeTag($tag)){
 				$jsonData['status'] = 'success';
 			}else $jsonData['status'] = 'error';
 		}
@@ -855,18 +855,14 @@ class Registry_object extends MX_Controller {
 
 	
 
-	function get_solr_doc($id){
+	function get_solr_doc($id, $limit=null){
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
-		$ro->enrich();
-        //$log = $this->ro->erase($id);
-		//echo $ro->getExtRif();
-		//exit();
-		//$ro->enrich();	
-		//$ro->update_quality_metadata();		
-
-		//$solrDoc = $ro->transformForSOLR();
-		echo "done";
+		$solrDoc = $ro->indexable_json($limit);
+        echo json_encode($solrDoc);
 	}
 
 	//-----------DEPRECATED AFTER THIS LINE -----------------------//
@@ -1036,20 +1032,28 @@ class Registry_object extends MX_Controller {
 		
 	}
 
-	public function getConnections($ro_id)
+	public function getConnections($ro_id, $limit=null)
 	{
 		$connections = array();
-		$status = array(); 
+		$status = array();
+        if($limit && (int)$limit > 0)
+            $party_conn_limit = $limit;
+        else
+            $party_conn_limit = 20;
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($ro_id);
 		if($ro){
-			$connections = $ro->getAllRelatedObjects(true); // allow drafts
+            //$connections = $ro->getConnections();
+            if($ro->class == 'party')
+			    $connections = $ro->getAllRelatedObjects(true, false, false, $party_conn_limit); // allow drafts
+            else
+                $connections = $ro->getAllRelatedObjects(true);
 			foreach($connections AS &$link)
 			{
 				// Reverse the relationship description (note: this reverses to the "readable" version (i.e. not camelcase))
 				if ($link['registry_object_id'] && in_array($link['origin'], array('REVERSE_EXT','REVERSE_INT')))
 				{
-					$link['relation_type'] = format_relationship($link['class'], $link['relation_type'], $link['origin']);
+					$link['relation_type'] = format_relationship($link['class'], $link['relation_type'], $link['origin'], $ro->class);
 				}
 				if($link['status']) $link['readable_status'] = readable($link['status']);
 			}
@@ -1117,17 +1121,70 @@ class Registry_object extends MX_Controller {
 		}
 		return $actions;
 	}
-    
+
     public function exportToEndnote($registry_object_id)
     {
-       $registry_object_id = str_replace(".ris","",$registry_object_id);
-       $this->load->model('registry_objects', 'ro');
-       $ro = $this->ro->getByID($registry_object_id);
-       $data = $ro->transformToEndnote();
+        $registry_object_id = str_replace(".ris","",$registry_object_id);
+        $citations = '';
+        $registry_objects = Array();
+        $CI =& get_instance();
+        $CI->load->model('registry_object/registry_objects', 'rom');
 
-       header('Content-type: application/x-research-info-systems');
-
-       print(strip_tags(html_entity_decode(html_entity_decode(str_replace('&amp;',"&",str_replace('&amp;',"&",$data))))));
+        if(str_replace("-"," ",$registry_object_id)!=$registry_object_id){
+            $registry_objects = explode("-",$registry_object_id);
+        }else{
+            $registry_objects[]=$registry_object_id;
+        }
+        foreach($registry_objects as $id){
+            $cite_ro = $CI->rom->getByID($id);
+            if($cite_ro)
+            {
+                $citations .= use_citation_handle($registry_object_id, $cite_ro);
+            }
+        }
+        header('Content-type: application/x-research-info-systems');
+        print($citations);
 
     }
+
+}
+
+
+function use_citation_handle($registry_object_id, $cite_ro) {
+
+    require_once(REGISTRY_APP_PATH . '/services/method_handlers/registry_object_handlers/citations.php');
+
+    $xml = $cite_ro->getSimpleXML();
+    $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+    $xml = simplexml_load_string($xml);
+    $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()));
+    if ($xml) {
+        $rifDom = new DOMDocument();
+        $rifDom->loadXML( $cite_ro->getRif());
+        $gXPath = new DOMXpath($rifDom);
+        $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
+    }
+
+    $ci =& get_instance();
+    $ci->load->library('solr');
+    $ci->solr->clearOpt('fq');
+    $ci->solr->setOpt('fq', '+id:'.$registry_object_id);
+    $ci->solr->setOpt('fl', 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved');
+    $result = $ci->solr->executeSearch(true);
+
+    if(sizeof($result['response']['docs']) == 1) {
+        $index = $result['response']['docs'][0];
+    }
+
+    $resource = array(
+        'index' => $index,
+        'xml' => $xml,
+        'gXPath' => $gXPath,
+        'ro'=> $cite_ro,
+        'params' => '',
+        'default_params' => ''
+    );
+    $citation_handler = new citations($resource);
+    return $citation_handler->getEndnoteText();
+
 }

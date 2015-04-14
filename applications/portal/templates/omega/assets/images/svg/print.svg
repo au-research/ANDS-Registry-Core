@@ -1,0 +1,16 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+    <polyline display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" points="37.345,62.337
+        31.722,62.337 31.722,44.533 70.141,44.533 70.141,62.337 64.519,62.337   "/>
+    <polyline display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" points="63.895,52.187
+        63.895,69.209 37.969,69.209 37.969,52.187   "/>
+    <polyline display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" points="37.969,44.222
+        37.969,30.791 63.895,30.791 63.895,44.222   "/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="42.654" y1="57.652" x2="59.209" y2="57.652"/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="42.654" y1="62.494" x2="53.587" y2="62.494"/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="67.33" y1="52.187" x2="34.689" y2="52.187"/>
+</g>
+</svg>

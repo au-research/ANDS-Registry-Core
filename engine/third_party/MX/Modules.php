@@ -63,8 +63,11 @@ class Modules
 		}
 
 		if($class = self::load($module)) {
+
 			$ex = explode('/', $method);
 			$method = array_shift($ex);
+            //$method = array_shift(explode("/",$method));
+
 			if (method_exists($class, $method))	{
 				ob_start();
 				$arg = func_get_args();

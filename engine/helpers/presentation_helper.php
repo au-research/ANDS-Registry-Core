@@ -49,6 +49,7 @@ function curl_post($url, $post, $header=false)
 
     $ch = curl_init();
 
+
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -56,20 +57,21 @@ function curl_post($url, $post, $header=false)
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
     curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
     $data = curl_exec($ch);
 	
 	
-    /*if (curl_errno($ch)) {
-       print "curl_error:" . curl_error($ch).'<br/>';
-    } else {
-       curl_close($ch);
-       print "curl exited okay\n";
-       echo "Data returned...\n";
-       echo "------------------------------------\n";
-       echo $data;
-       echo "------------------------------------\n";
-    } */
+    // if (curl_errno($ch)) {
+    //    print "curl_error:" . curl_error($ch).'<br/>';
+    // } else {
+    //    curl_close($ch);
+    //    print "curl exited okay\n";
+    //    echo "Data returned...\n";
+    //    echo "------------------------------------\n";
+    //    echo $data;
+    //    echo "------------------------------------\n";
+    // } 
     return $data;
 }
 
@@ -151,15 +153,22 @@ function pluralise($word, $count)
     else return $word . "s";
 }
 
-function readable($text, $singular = false){
+function readable($text, $altered=false,$class=false,$to_class=false){
+    $relationshipText = $text;
+    $defaultText = sentenceCase($text);
 	$text = trim(strtolower($text));
+
+    if(gettype($altered)=='string'){
+        return format_relationship($class, $relationshipText, $altered, $to_class);
+    }
+
 	switch($text){
         case "all": return 'All'; break;
-		case "draft": return ($singular ? 'Draft' : 'Drafts');break;
+		case "draft": return ($altered ? 'Draft' : 'Drafts');break;
 		case "submitted_for_assessment": return 'Submitted for Assessment';break;
 		case "assessment_in_progress": return 'Assessment In Progress';break;
-		case "approved": return ($singular ? 'Approved' : 'Approved Records');break;
-		case "published": return  ($singular ? 'Published' : 'Published Records');break;
+		case "approved": return ($altered ? 'Approved' : 'Approved Records');break;
+		case "published": return  ($altered ? 'Published' : 'Published Records');break;
 		case "more_work_required": return 'More Work Required';break;
 		case "collection": return 'Collections';break;
 		case "party": return 'Parties';break;
@@ -180,6 +189,25 @@ function readable($text, $singular = false){
         case "getharvester": return "GET Harvester";break;
         case "cswharvester": return "CSW Harvester";break;
         case "ckanharvester": return "CKAN Harvester";break;
+        case 'licence': return 'Licence';break;
+        case 'rights': return 'Rights';break;
+        case 'accessrights': return 'Access rights';break;
+        case 'rightsstatement': return 'Rights Statement';break;
+        case 'full': return 'Full description';break;
+        case 'brief': return 'Brief description';break;
+        case 'note': return 'Notes';break;
+        case 'lineage': return 'Lineage';break;
+        case 'addsvalueto' : return  'Adds value to'; break;
+        case 'describes' : return  'Describes'; break;
+        case 'enriches': return  'Enriches'; break;
+        case 'fundingamount' : return  'Funding Amount'; break;
+        case 'deliverymethod' : return  'Delivery method'; break;
+        case 'researchers' : return  'Researchers'; break;
+        case 'fundingscheme' : return  'Funding Scheme'; break;
+        case 'leadinvestigator' : return  'Lead investigator'; break;
+        case 'principalinvestigator' : return  'Principal investigator'; break;
+        case 'coinvestigator' : return  'Co investigator'; break;
+        default: return $defaultText;
 	}
 }
 
@@ -308,4 +336,147 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
 
 function endsWith($haystack, $needle){
     return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
+}
+
+function is_array_empty($input) {
+   $result = true;
+
+   if (is_array($input) && count($input) > 0) {
+      foreach ($input as $val) {
+         $result = $result && is_array_empty($val);
+      }
+   } else {
+      $result = empty($input);
+   }
+
+   return $result;
+}
+
+function nicifyDate($w3cdtf)
+{
+    utc_timezone();
+
+    $time = strtotime($w3cdtf);
+    if (!$time) {
+        //we need to cater for the instance when someone legitimately enters 1st jan 1970
+        if($w3cdtf == "1970-01-01T00:00:00Z"){
+            return "1970";
+        }else{
+            return false;
+        }
+    }
+
+    if(strlen($w3cdtf)<11){
+        return($w3cdtf);
+    }
+    if (date("H:i:s",$time) == "00:00:00")
+    {
+        if(date("m-d", $time) == "01-01")
+        {
+            // Assume friendly display of just the year
+            return date("Y", $time); // i.e. 2001
+        }
+        elseif(date("d", $time)=="01"){
+            return date("m Y", $time); // i.e. 2001
+        }
+        else
+        {
+            // Assume friendly display of full date (and no time)
+            return date("m Y", $time); 	// i.e.  March 10, 2001
+        }
+    }
+    else
+    {
+        // Assume friendly display of full date
+        return date("d m Y", $time); 	// i.e.  10 03 2001, 5:16 pm
+    }
+
+    reset_timezone();
+
+}
+function sentenceCase($title)
+{
+    $smallwordsarray = array(
+        'of','a','the','and','an','or','nor','but','is','if','then','else','when',
+        'at','from','by','on','off','for','in','out','over','to','into','with'
+    );
+
+    $re = '/(?#! splitCamelCase Rev:20140412)
+    # Split camelCase "words". Two global alternatives. Either g1of2:
+      (?<=[a-z])      # Position is after a lowercase,
+      (?=[A-Z])       # and before an uppercase letter.
+    | (?<=[A-Z])      # Or g2of2; Position is after uppercase,
+      (?=[A-Z][a-z])  # and before upper-then-lower case.
+    /x';
+    $words = explode(' ', $title);
+
+    foreach ($words as $key => $word)
+    {
+        $a = preg_split($re, $word);
+        $count = count($a);
+        if($count>1){
+            $words[$key] = '';
+            for ($i = 0; $i < $count; ++$i) {
+                $a[$i] = strtolower($a[$i]);
+                if($i==0)
+                $words[$key] .= ucwords($a[$i])." ";
+                else
+                $words[$key] .= $a[$i]." ";
+            }
+
+        } else {
+            $word = strtolower($word);
+            if ($key == 0 or !in_array($word, $smallwordsarray))
+                $words[$key] = ucwords($word);
+            else
+                $words[$key] = $word;
+        }
+    }
+
+    $newtitle = implode(' ', $words);
+
+    return $newtitle;
+
+}
+// generic function to title case a given string
+
+function titleCase($title)
+{
+    $smallwordsarray = array(
+        'of','a','the','and','an','or','nor','but','is','if','then','else','when',
+        'at','from','by','on','off','for','in','out','over','to','into','with'
+    );
+
+    $re = '/(?#! splitCamelCase Rev:20140412)
+    # Split camelCase "words". Two global alternatives. Either g1of2:
+      (?<=[a-z])      # Position is after a lowercase,
+      (?=[A-Z])       # and before an uppercase letter.
+    | (?<=[A-Z])      # Or g2of2; Position is after uppercase,
+      (?=[A-Z][a-z])  # and before upper-then-lower case.
+    /x';
+    $words = explode(' ', $title);
+
+    foreach ($words as $key => $word)
+    {
+        $a = preg_split($re, $word);
+        $count = count($a);
+        if($count>1){
+            $words[$key] = '';
+            for ($i = 0; $i < $count; ++$i) {
+                $words[$key] .= ucwords($a[$i])." ";
+            }
+
+        } else {
+            $word = strtolower($word);
+            if ($key == 0 or !in_array($word, $smallwordsarray))
+                $words[$key] = ucwords($word);
+            else
+                $words[$key] = $word;
+        }
+    }
+
+    $newtitle = implode(' ', $words);
+
+    return $newtitle;
+
 }

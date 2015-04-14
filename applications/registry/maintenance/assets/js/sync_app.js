@@ -32,6 +32,18 @@ angular.module('sync_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitiz
 			},
 			sync_ro: function(subject){
 				return $http.post(base_url+'/maintenance/sync/', {idkey:subject}).then(function(response){return response.data;});
+			},
+			list_task : function(){
+				return $http.get(base_url+'tasks/list_task').then(function(response){return response.data;});
+			},
+			clear_pending: function(){
+				return $http.get(base_url+'tasks/clear_pending').then(function(response){return response.data;});	
+			},
+			add_task: function(task, params) {
+				return $http.post(base_url+'tasks/add_task/', {task:task, params:params}).then(function(response){return response.data;});		
+			},
+			solr_search: function(query) {
+				return $http.post(base_url+'maintenance/solr_search/', {query:query}).then(function(response){return response.data;});		
 			}
 		}
 	})
@@ -159,11 +171,61 @@ function indexCtrl($scope, sync_service){
 		});
 	}
 
+	//TASK MANAGER
+	$scope.pendingTaskShow = 5;
+	$scope.refreshTask = function(){
+		$scope.tasks = {};	
+		sync_service.list_task().then(function(data){
+			$scope.tasks = data;
+		});
+	}
+	$scope.refreshTask();
+
+	$scope.clearPendingBGTasks = function(){
+		sync_service.clear_pending().then(function(data){
+			$scope.refreshTask();
+		});
+	}
+
+	$scope.addBGSync = function(id) {
+		sync_service.add_task('sync', 'type=ds&id='+id).then(function(data){
+			$scope.refreshTask();
+		});
+	}
+
+	$scope.massAddBGSync = function(size) {
+		var ids = [];
+		$.each($scope.datasources, function(){
+			if(size == 'small' && this.total_published < 400 && this.total_published != 0){
+				ids.push(this.id);
+			}else if(size == 'medium' && this.total_published >= 400 && this.total_published <= 1000){
+				ids.push(this.id);
+			}else if(size == 'big' && this.total_published > 1000){
+				ids.push(this.id);
+			}
+		});
+		ids = ids.join();
+		sync_service.add_task('sync', 'type=ds&id='+ids).then(function(data){
+			$scope.refreshTask();
+		});
+	}
 
 
-	// $scope.addTask('sync', 32);
-	// $scope.addTask('index', 75);
-	// $scope.addTask('enrich', 86);
+	$scope.solr_search = function() {
+		if($scope.solr_query!='') {
+			sync_service.solr_search($scope.solr_query).then(function(data){
+				$scope.solr_result = data;
+			});
+		}
+	}
+
+	$scope.solr_query_sync = function() {
+		if($scope.solr_query!=''){
+			sync_service.add_task('sync', 'type=solr_query&id='+$scope.solr_query).then(function(data){
+				$scope.refreshTask();
+			});
+		}
+	}
 }
 
 function interrogateDS($scope, $routeParams, sync_service){

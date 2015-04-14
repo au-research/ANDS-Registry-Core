@@ -150,6 +150,28 @@ class User {
 		return substr($id,0, strpos($id, '::'));
 	}
 
+	function ownedDataSourceIDs() {
+		$data_sources = array();
+		$affiliations = $this->affiliations();
+		if ((is_array($affiliations) && count($affiliations) > 0) || $this->hasFunction(AUTH_FUNCTION_SUPERUSER)) {
+			$this->db = $this->CI->load->database('registry', true);
+			if ($this->hasFunction(AUTH_FUNCTION_SUPERUSER)) {
+				$query = $this->db->query("SELECT * FROM data_sources");	
+			} else {
+				$query = $this->db->where_in('record_owner', $affiliations)->get('data_sources');
+			}
+
+			if ($query->num_rows() == 0) {
+				return $data_sources;
+			} else {
+				foreach($query->result_array() AS $ds) {
+					$data_sources[] = $ds['data_source_id'];
+				}
+			}
+		}
+		return $data_sources;
+	}
+
 
 	/**
 	 * 

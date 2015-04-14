@@ -373,14 +373,15 @@ class Registry_objects extends CI_Model {
 	 * array of `_registry_object`s.
 	 * @return array of results, or null if no matching records
 	 */
-	function getIDsByDataSourceID($data_source_id, $make_ro=false, $status='All')
+	function getIDsByDataSourceID($data_source_id, $make_ro=false, $status='All', $offset=0, $limit=99999)
 	{
-		$results =  $this->_get(array(array('args' => array('ds_id'=>$data_source_id, 'status'=>$status),
+		$results =  $this->_get(array(array('args' => array('ds_id'=>$data_source_id, 'status'=>$status, 'offset'=>$offset, 'limit'=>$limit),
 						    'fn' => function($db, $args) {
 							    $db->select("registry_object_id")
 								    ->from("registry_objects")
 								    ->where("data_source_id", $args['ds_id']);
 								if($args['status']!='All') $db->where('status', $args['status']);
+								$db->limit($args['limit'], $args['offset']);
 							    return $db;
 						    })),
 					$make_ro);

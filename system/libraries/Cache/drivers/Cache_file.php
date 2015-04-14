@@ -151,13 +151,15 @@ class CI_Cache_file extends CI_Driver {
 		{
 			return FALSE;
 		}
+
 		
 		$data = read_file($this->_cache_path.$id);		
 		$data = unserialize($data);
 		
+
 		if (is_array($data))
 		{
-			$data = $data['data'];
+			// $data = $data['data'];
 			$mtime = filemtime($this->_cache_path.$id);
 
 			if ( ! isset($data['ttl']))

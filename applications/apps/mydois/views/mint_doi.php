@@ -12,17 +12,14 @@
 	<div class="box-content">
 
 		<p id="mint_result">  </p>
-        <div id="mint_form_div">
-		    <form action="<?=base_url('mydois/uploadFile/');?>" method="POST" class="form-horizontal" id="mint_form" enctype="multipart/form-data">
+        <div id="mint_form">
+		    <form action="<?=base_url('mydois/manualMint/');?>" method="POST" class="form-horizontal" id="mint_form" enctype="multipart/form-data">
                 <div id="loading"></div>
                 <input type="hidden" name="client_id" value="<?php echo $client_id; ?>"/>
                 <input type="hidden" name="app_id" value="<?php echo $app_id; ?>"/>
-                <input type="hidden" name="xml" id="xml" value=""/> <a href="http://schema.datacite.org/meta/kernel-3.0/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
-                <input type="hidden" name="xml_upload" id="xml_upload" value=""/>
+                <input type="hidden" name="xml"/> <a href="http://schema.datacite.org/meta/kernel-3.0/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
             <div class="control-group">
-                <label class="control-label">DOI</label> <div class="controls" style="margin-top:5px"><?php echo $_SESSION['doi']; ?></div>
-
-
+                <label class="control-label">DOI</label> <div class="controls"><input type="text" name="doi" value="<?php echo $doi_id; ?>" readonly="readonly"/></div>
 
             </div>
             <div class="control-group">
@@ -33,10 +30,7 @@
             </div>
         <div class="control-group" id="uploadxml" style="display:none">
             <label class="control-label">File</label> <div class="controls"><input type="file" name="fileupload" id="fileupload"> </div>
-           <!--  <input name="my_hidden" id="hfParam" type="hidden" /> -->
-            <iframe id='my_iframe' name='my_iframe' src="" class="hidden">
-            </iframe>
-            <div id="xmldisplay" class="prettyprint"></div>
+            <div id="xmldisplay"></div>
         </div>
 
        <div class="control-group" id="formxml" style="display:none">
@@ -54,7 +48,7 @@
                .hidden{display:none}.visible{display:block}
                .input-field{margin-bottom:2px;width:89%}
                input.attrib{width:43%}select.attrib{width:45%}
-               .tag{float:left;margin-top:2px;width:80%;background-color: lightblue ;font-weight: bold;font-size:12px}
+               .tag{float:left;margin-top:2px;width:80%}
                /*div.left{float:left;width:38%}*/
                /*div.right{float:right;width:61%}*/
                div.entry{margin-bottom:6px}
@@ -253,13 +247,13 @@
     </div>
 <div class="modal hide fade" id="mintDoiResult" tabindex="-1" role="dialog" aria-labelledby="mintDoiResult" aria-hidden="true">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" id="doi_mint_close_x">×</button>
+        <button type="button" class="close" data-dismiss="modal" id="doi_mint_close">×</button>
 
     </div>
     <div class="modal-body">
         <p>
         <div>
-
+            mint successful
         </div>
         </p>
     </div>

@@ -1,0 +1,30 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+
+<g >
+    <g display="inline">
+
+            <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="63.184" y1="45.664" x2="65.99" y2="45.664"/>
+
+            <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="60.889" y1="40.112" x2="62.873" y2="38.124"/>
+        <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="55.35" y1="37.812" x2="55.35" y2="35"/>
+
+            <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="49.81" y1="40.112" x2="47.825" y2="38.124"/>
+
+            <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="47.515" y1="45.664" x2="44.708" y2="45.664"/>
+
+            <line fill="none"  stroke-width="1" stroke-miterlimit="10" x1="60.889" y1="51.216" x2="62.873" y2="53.205"/>
+        <path fill="none"  stroke-width="1" stroke-miterlimit="10" d="M50.289,48.828
+            c-0.573-0.917-0.903-2.002-0.903-3.164c0-3.301,2.67-5.977,5.963-5.977s5.963,2.676,5.963,5.977c0,3.301-2.67,5.977-5.963,5.977
+            c-0.197,0-0.393-0.01-0.584-0.027"/>
+    </g>
+    <path display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" d="M57.002,53.708
+        c-0.281,0-0.557,0.028-0.822,0.082c-1.13-2.915-3.955-4.981-7.262-4.981c-2.886,0-5.406,1.574-6.75,3.914
+        c-0.111-0.008-0.223-0.012-0.336-0.012c-2.867,0-5.19,2.329-5.19,5.202s2.324,5.202,5.19,5.202c0.768,0,1.496-0.167,2.152-0.467
+        c1.343,1.104,3.062,1.768,4.935,1.768c2.423,0,4.587-1.109,6.015-2.85c0.611,0.349,1.316,0.549,2.069,0.549
+        c2.315,0,4.192-1.883,4.192-4.203C61.195,55.589,59.318,53.708,57.002,53.708z"/>
+    <path display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" d="M56.611,57.812
+        c-0.575,3.739-3.801,6.603-7.693,6.603"/>
+    <path display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" d="M46.831,56.511
+        c0.124,0.445,0.19,0.915,0.19,1.4c0,2.873-2.324,5.202-5.19,5.202"/>
+</g>
+</svg>

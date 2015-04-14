@@ -86,56 +86,29 @@ class Extrif_Extension extends ExtensionBase
 							$extendedMetadata->addChild("extrif:logo", $logoRef, EXTRIF_NAMESPACE);
 							$this->ro->set_metadata('the_logo', $logoRef);
 						}
-						$isHTMLDescription = $this->isHtml(html_entity_decode(html_entity_decode($description_str)) );
-
-						// if($testDescription==true)
-						// {
-						// // Clean the HTML with purifier, but decode entities first (else they wont be picked up in the first place)
-						// 	$clean_html = htmlentities(($this->_CI->purifier->purify_html( html_entity_decode(($description_str)) )), ENT_QUOTES, 'UTF-8');
-						// }else{
-						// 	$clean_html =  htmlentities(htmlentities($description_str));
-						// }
-						$clean_html = $this->_CI->purifier->purify_html($description_str);
-
-						$encoded_html = '';
-
-						// Check if it is HTML
-						if ($isHTMLDescription===true) {
-							$encoded_html = $clean_html;
-							$extrifDescription = $extendedMetadata->addChild("extRif:description", $encoded_html, EXTRIF_NAMESPACE);
-						} else {
-							//If it's not HTML, we change new line chars to BR tags
-							$encoded_html = nl2br($clean_html);
-							$extrifDescription = $extendedMetadata->addChild("extRif:description", $encoded_html, EXTRIF_NAMESPACE);
-						}
-						$extrifDescription->addAttribute("type", $type);
-
 						if($type == 'brief' && $theDescriptionType != 'brief')
 						{
-							$theDescription = $encoded_html;
+							$theDescription = $description_str;
 							$theDescriptionType = $type;
 						}
 						else if($type == 'full' && ($theDescriptionType != 'brief' || $theDescriptionType != 'full'))
 						{
-							$theDescription = $encoded_html;
+							$theDescription = $description_str;
 							$theDescriptionType = $type;
 						}
 						else if($type != '' && $theDescriptionType == '')
 						{
-							$theDescription = $encoded_html;
+							$theDescription = $description_str;
 							$theDescriptionType = $type;
 						}
 						else if($theDescription == '')
 						{
-							$theDescription = $encoded_html;
+							$theDescription = $description_str;
 							$theDescriptionType = $type;
 						}
 					}
-					$theDescription = strip_tags(html_entity_decode(html_entity_decode(str_replace("&"," ",$theDescription))), '<p><br/><br />');
-					$extrifTheDescription = $extendedMetadata->addChild("extRif:the_description", $theDescription, EXTRIF_NAMESPACE);
-					$this->ro->set_metadata('the_description',$theDescription);
-					$theDescription = strip_tags($theDescription);
-					$extrifTheDescription = $extendedMetadata->addChild("extRif:dci_description", $theDescription, EXTRIF_NAMESPACE);
+					$theDescription = htmlentities(strip_tags(html_entity_decode($theDescription)));
+                    $extendedMetadata->addChild("extRif:dci_description", str_replace("&", "&amp;", $theDescription), EXTRIF_NAMESPACE);
 
 				}
 				
@@ -166,23 +139,6 @@ class Extrif_Extension extends ExtensionBase
 					if(isset($right['licence_group']))$theright->addAttribute("licence_group", str_replace("&", "&amp;", $right['licence_group']));
 				}
 
-				//$extendedMetadata->addChild("extRif:reverseLinks", $this->getReverseLinksStatusforEXTRIF($ds) , EXTRIF_NAMESPACE);
-				
-				//$extendedMetadata->addChild("extRif:flag", ($this->ro->flag === DB_TRUE ? '1' : '0'), EXTRIF_NAMESPACE);
-				//$extendedMetadata->addChild("extRif:error_count", $this->ro->error_count, EXTRIF_NAMESPACE);
-				//$extendedMetadata->addChild("extRif:warning_count", $this->ro->warning_count, EXTRIF_NAMESPACE);
-				
-				//$extendedMetadata->addChild("extRif:manually_assessed_flag", ($this->ro->manually_assessed_flag === DB_TRUE ? '1' : '0'), EXTRIF_NAMESPACE);
-				//$extendedMetadata->addChild("extRif:gold_status_flag", ($this->ro->gold_status_flag === DB_TRUE ? '1' : '0'), EXTRIF_NAMESPACE);
-				
-				//$extendedMetadata->addChild("extRif:quality_level", $this->ro->quality_level, EXTRIF_NAMESPACE);
-				//$extendedMetadata->addChild("extRif:feedType", ($this->ro->created_who == 'SYSTEM' ? 'harvest' : 'manual'), EXTRIF_NAMESPACE);
-				//$extendedMetadata->addChild("extRif:lastModifiedBy", $this->ro->created_who, EXTRIF_NAMESPACE);
-				
-				// XXX: TODO: Search base score, displayLogo
-				//$extendedMetadata->addChild("extRif:searchBaseScore", 100, EXTRIF_NAMESPACE);
-				//$extendedMetadata->addChild("extRif:displayLogo", NULL, EXTRIF_NAMESPACE);
-
 				// Include the count of any linked records based on identifier matches
 				if($this->ro->class!='collection') $extendedMetadata->addChild("extRif:matching_identifier_count", sizeof($this->ro->findMatchingRecords()), EXTRIF_NAMESPACE);
 
@@ -208,48 +164,9 @@ class Extrif_Extension extends ExtensionBase
 				
 				// xxx: spatial extents (sanity checking?)
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s4_end');
-				
-				$spatialLocations = $this->ro->getLocationAsLonLats();
-				
-				if($spatialLocations)
-				{
-					$spatialGeometry = $extendedMetadata->addChild("extRif:spatialGeometry", NULL, EXTRIF_NAMESPACE);
-					$sumOfAllAreas = 0;
-					foreach ($spatialLocations AS $lonLat)
-					{
-						//echo "enriching..." . $extent;
-
-						$extents = $this->ro->calcExtent($lonLat);
-						$spatialGeometry->addChild("extRif:extent", $extents['extent'], EXTRIF_NAMESPACE);
-						$sumOfAllAreas += $extents['area'];
-						$spatialGeometry->addChild("extRif:center", $extents['center'], EXTRIF_NAMESPACE);
-                        if( $extents['west'] +  $extents['east'] < 5 &&  $extents['east'] > 175)
-                        {
-                            //need to insert zero bypass
-                            $lonLat = $this->ro->insertZeroBypassCoords($lonLat, $extents['west'], $extents['east']);
-                        }
-                        $spatialGeometry->addChild("extRif:polygon", $lonLat, EXTRIF_NAMESPACE);
-
-					}
-					$spatialGeometry->addChild("extRif:area", $sumOfAllAreas, EXTRIF_NAMESPACE);
-				}
+				// NO spatial in extrif
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s5_end');
-				
-				$temporalCoverageList = $this->ro->processTemporal();
-				
-				if($temporalCoverageList)
-				{
-					$temporals = $extendedMetadata->addChild("extRif:temporal", NULL, EXTRIF_NAMESPACE);
-					foreach ($temporalCoverageList AS $temporal)
-					{
-						if($temporal['type'] == 'dateFrom')
-							$temporals->addChild("extRif:temporal_date_from", $temporal['value'], EXTRIF_NAMESPACE);
-						if($temporal['type'] == 'dateTo')
-							$temporals->addChild("extRif:temporal_date_to", $temporal['value'], EXTRIF_NAMESPACE);
-					}
-					$temporals->addChild("extRif:temporal_earliest_year", $this->ro->getEarliestAsYear(), EXTRIF_NAMESPACE);
-					$temporals->addChild("extRif:temporal_latest_year", $this->ro->getLatestAsYear(), EXTRIF_NAMESPACE);
-				}	
+				// NO temporal in extrif
 				
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s6_end');
 

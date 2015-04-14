@@ -1,0 +1,35 @@
+<div ng-if="result && result.response.numFound > 0 && el.search.style=='list'">
+	<ul class="list-normal">
+		<li ng-repeat="doc in result.response.docs | limitTo:el.search.limit"><a href="{{base_url}}{{doc.slug}}/{{doc.id}}">{{doc.title}}</a></li>
+	</ul>
+	<a href="{{base_url}}search/#!/{{filter_query}}" ng-if="!el.search.view_search_text">View Full Search ({{result.response.numFound}})</a>
+	<a href="{{base_url}}search/#!/{{filter_query}}" ng-if="el.search.view_search_text">{{el.search.view_search_text}} ({{result.response.numFound}})</a>
+</div>
+
+<div ng-if="result && result.response.numFound > 0 && el.search.style=='tile'">
+
+	<div ng-repeat="doc in result.response.docs" ng-if="!doc.hide" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="element-no-top element-no-bottom" ng-class="{'col-md-8':filters.spatial}">
+                    <div class="scontent">
+                        <h2 class="post-title"> <a href="{{base_url}}{{doc.slug}}/{{doc.id}}">{{doc.title}}</a> </h2>
+                        <p><small>{{doc.group}}</small></p>
+
+                        <p ng-if="doc.list_description">
+                            {{ doc.list_description }}
+                        </p>
+                        <p ng-if="!doc.list_description && doc.description">
+                            {{ doc.description }}
+                        </p>
+                    </div>
+                    
+                   <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<a href="{{base_url}}search/#!/{{filter_query}}" ng-if="!el.search.view_search_text">View Full Search ({{result.response.numFound}})</a>
+	<a href="{{base_url}}search/#!/{{filter_query}}" ng-if="el.search.view_search_text">{{el.search.view_search_text}} ({{result.response.numFound}})</a>
+</div>

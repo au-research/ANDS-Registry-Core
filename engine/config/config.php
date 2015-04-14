@@ -50,11 +50,15 @@ $application_directives = array(
 			array(	
 				"base_url" => "%%BASEURL%%/",
 				"active_application" => "portal",
-				"default_controller" => "home/index",
+				"default_controller" => "page",
 				"routes" => array(
+					"home/(:any)" => "page/$1",
 					"topic/(:any)" => "topic/view_topic/$1",
+					"grants" => "page/grants",
 					"themes" => "theme_page/index",
 					"theme/(:any)" => "theme_page/view/$1",
+					"contributors" => "group/index",
+					"contributors/(:any)" => "group/view/$1",
 					"(:any)"=>"core/dispatcher/$1",
 					),
 			),
@@ -269,7 +273,7 @@ $config['directory_trigger']	= 'd'; // experimental not currently in use
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 4;
+$config['log_threshold'] = 0;
 
 /*
 |--------------------------------------------------------------------------
@@ -474,6 +478,7 @@ if (isset($application_directives[$_GET['app']]))
 	$config['default_controller'] = $application_directives[$_GET['app']]['default_controller'];
 	$config['app_routes'] = (isset($application_directives[$_GET['app']]['routes']) ? $application_directives[$_GET['app']]['routes'] : array());
 	define("APP_PATH",'./applications/'.$active_application.'/');
+
 }
 else
 {

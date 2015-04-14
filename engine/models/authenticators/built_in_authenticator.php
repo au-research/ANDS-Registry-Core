@@ -29,4 +29,6 @@ class Built_in_authenticator extends Authenticator {
 		$user = $result->row(1);
 		$this->return_roles($user);
 	}
+
+	public function redirect_hook($to) {}
 }

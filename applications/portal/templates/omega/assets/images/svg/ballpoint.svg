@@ -1,0 +1,22 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+<g>
+    <g display="inline">
+        <path fill="none" stroke-width="1" stroke-miterlimit="10" d="M33.128,62.807
+            c-1.25,3.436-1.25,6.247-1.25,6.247s2.811,0,6.248-1.25"/>
+        <path fill="none" stroke-width="1" stroke-miterlimit="10" d="M35.001,57.496c0,0-1.25,2.499-2.187,5.311
+            l5.309,5.309c2.811-0.936,5.31-2.187,5.31-2.187"/>
+    </g>
+    <polyline display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" points="56.554,52.812
+        43.748,65.617 35.315,57.184 48.121,44.378   "/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="38.125" y1="59.683" x2="48.745" y2="49.062"/>
+
+        <line display="inline" fill="none" stroke-width="1" stroke-miterlimit="10" x1="41.249" y1="62.807" x2="51.557" y2="52.184"/>
+    <g id="cap_2_" display="inline">
+        <path fill="none" stroke-width="1" stroke-miterlimit="10" d="M47.495,43.441
+            c0,0,16.711-16.712,21.709-11.713c4.686,4.686-11.713,21.708-11.713,21.708L47.495,43.441z"/>
+        <path fill="none" stroke-width="1" stroke-miterlimit="10" d="M68.423,39.068
+            c0,0.312,1.25,6.558-6.871,14.993c-5.672,5.889-10.906,6.274-11.713,5.466l6.715-6.715"/>
+    </g>
+</g>
+</svg>

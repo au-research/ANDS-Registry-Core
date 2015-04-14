@@ -1,0 +1,14 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"  preserveaspectratio="none">
+
+    <g>
+
+            <line display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" x1="62.482" y1="50" x2="40.854" y2="50"/>
+        <g display="inline">
+            <polyline fill="none"  stroke-width="1" stroke-miterlimit="10" points="48.477,42.183 40.499,50
+                48.477,57.814       "/>
+        </g>
+
+            <ellipse display="inline" fill="none"  stroke-width="1" stroke-miterlimit="10" cx="51.023" cy="50" rx="14.381" ry="14.414"/>
+    </g>
+
+</svg>

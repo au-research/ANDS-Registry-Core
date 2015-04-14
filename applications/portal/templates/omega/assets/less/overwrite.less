@@ -1,0 +1,194 @@
+/**
+ * Overwrite the default styling class
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
+
+.navbar-brand {
+	font-size:25px;
+	padding: 33px 15px 0px;
+	height:auto;
+	span {
+		color: #eb7700;
+		font-weight:normal;
+		text-decoration:none;
+	}
+}
+
+.panel { word-wrap:break-word; }
+.post { margin-bottom:auto; }
+
+h1 { font-size:30px; }
+
+small {
+	a {
+		color:@primaryColor !important;
+	}
+}
+
+
+
+.alert-info {
+	color:white;
+}
+
+
+.flexslider .slides img {
+	/*height:90px;*/
+	max-height:170px;
+	width:auto;
+	display:block;
+	margin: 0 37px 16px 0px;
+	padding:0 0 15px 15px;
+	float:right;
+}
+.flex-direction-nav a { color:@primaryColor !important; }
+
+.swatch-white {
+	.panel-footer a, .panel-header a, .panel-heading i, .btn i {
+		color:white;
+	}
+	.active {
+		color: #eb7700 !important;
+		a {
+			color: #eb7700 !important;
+		}
+	}
+}
+
+.swatch-gray {
+	.gray-bg {
+		background-color:#e9e9e9 !important;
+	}
+}
+
+.swatch-gray a, .panel a {
+	color: @primaryColor;
+	&:hover{
+		color:@secondaryColor;
+	}
+}
+
+.swatch-black {
+	input:focus {
+		
+	}
+	input {
+		&:focus {
+			-webkit-box-shadow: 0 3px 0 @secondaryColor;
+			-moz-box-shadow: 0 3px 0 @secondaryColor;
+			box-shadow: 0 3px 0 @secondaryColor;
+		}
+		&::selection,  {
+			color: white;
+			background: @primaryColor;
+		}
+		&::-moz-selection {
+			color: white;
+			background: @primaryColor;
+		}
+	}
+}
+
+::selection {
+	color: white;
+	background: @primaryColor;
+}
+
+::-moz-selection {
+	color: white;
+	background: @primaryColor;
+}
+
+
+
+.mce-panel {
+	button {
+		background-color:inherit !important;
+	}
+	i {
+		color: black !important;
+		font-size:inherit !important;
+		display:inline-block;
+		position:relative;
+		left:0;top:0;
+	}
+}
+
+.ta-editor {
+    min-height: 300px;
+    height: auto;
+    overflow: auto;
+    font-family: inherit;
+    font-size: 100%;
+    background: #e9e9e9;
+    &:focus {
+    	-webkit-box-shadow: 0px 3px 0px #84a07b;
+	 	-moz-box-shadow: 0px 3px 0px #84a07b;
+		box-shadow: 0px 3px 0px #84a07b;
+    }
+ }
+
+.btn-primary {
+	background-color:@primaryColor;
+	&:hover {
+		color:white !important;
+		background-color:@secondaryColor !important;
+	}
+}
+
+.btn-default {
+	i {
+		color:white !important;
+	}
+	color:white !important;
+}
+
+.btn-danger {
+	color:white !important;
+	i {
+		color:white !important;
+	}
+}
+
+.btn-info {
+	color:white !important;
+	i {
+		color:white !important;
+	}
+}
+
+
+.swatch-white {
+	background:white;
+	.panel, .panel-primary, .panel-content {
+		background:white !important;
+	}
+	a {
+		color: @primaryColor;
+		&:hover {
+			color: @secondaryColor;
+		}
+	}
+}
+
+.btn-group {
+	.dropdown-menu {
+		li {
+			a {
+				color: #4c4c4c;
+				&:hover {
+					color: white;
+					background: @secondaryColor;
+				}
+			} 
+		}
+	}
+}
+
+
+.open>.btn-primary.dropdown-toggle {
+	background-color: @secondaryColor;
+}
+
+.flex-prev { left:-70px; }
+.flex-next { right:-70px; }

@@ -63,23 +63,23 @@ class Uploader extends MX_Controller {
 			$image->setBackgroundColor(new ImagickPixel('white'));
 			// Create the optimised image
 			// "bestfit" param will ensure that the image is downscaled proportionally if needed
-			if ($image->getImageWidth() >= $image->getImageHeight() 
-				&& $image->getImageWidth() > self::IMAGE_LANDSCAPE_WIDTH || $image->getImageHeight() > self::IMAGE_LANDSCAPE_HEIGHT)
-			{
-				$image->resizeImage(self::IMAGE_LANDSCAPE_WIDTH,self::IMAGE_LANDSCAPE_HEIGHT, Imagick::FILTER_LANCZOS, 1, true);
-			}
-			else if ($image->getImageWidth() > self::IMAGE_PORTRAIT_WIDTH || $image->getImageHeight() > self::IMAGE_PORTRAIT_HEIGHT)
-			{
-				$image->resizeImage(self::IMAGE_PORTRAIT_WIDTH,self::IMAGE_PORTRAIT_HEIGHT, Imagick::FILTER_LANCZOS, 1, true);
-			}
+			// if ($image->getImageWidth() >= $image->getImageHeight() 
+			// 	&& $image->getImageWidth() > self::IMAGE_LANDSCAPE_WIDTH || $image->getImageHeight() > self::IMAGE_LANDSCAPE_HEIGHT)
+			// {
+			// 	$image->resizeImage(self::IMAGE_LANDSCAPE_WIDTH,self::IMAGE_LANDSCAPE_HEIGHT, Imagick::FILTER_LANCZOS, 1, true);
+			// }
+			// else if ($image->getImageWidth() > self::IMAGE_PORTRAIT_WIDTH || $image->getImageHeight() > self::IMAGE_PORTRAIT_HEIGHT)
+			// {
+			// 	$image->resizeImage(self::IMAGE_PORTRAIT_WIDTH,self::IMAGE_PORTRAIT_HEIGHT, Imagick::FILTER_LANCZOS, 1, true);
+			// }
 
 			$flattened = new IMagick();
 			$flattened->newImage($image->getImageWidth(), $image->getImageHeight(), new ImagickPixel("white"));
 			$flattened->compositeImage($image, imagick::COMPOSITE_OVER, 0, 0);
 			$flattened->setImageFormat("jpg");
 			$flattened->setImageCompression(Imagick::COMPRESSION_JPEG);
-			$flattened->setCompression(Imagick::COMPRESSION_JPEG);
-			$flattened->setCompressionQuality(self::COMPRESSION_PERCENTAGE); 
+			// $flattened->setCompression(Imagick::COMPRESSION_JPEG);
+			// $flattened->setCompressionQuality(self::COMPRESSION_PERCENTAGE); 
 			$flattened->writeImage($this->directory . 'img_' . md5($upload_result['file_name']) . ".jpg");
 			$flattened->clear();
 			$flattened->destroy();

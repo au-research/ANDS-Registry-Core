@@ -295,14 +295,14 @@ class Spatial_Extension extends ExtensionBase
 		}
 		if($north == $south && $east == $west){
 			$extents['area'] = 0;
-			$extents['center'] = $west." ".$south;
+			$extents['center'] = $west.",".$south;
 			$extents['extent'] = $west." ".$south;
             $extents['west'] = $west;
             $extents['east'] = $east;
 		}
 		else{
 			$extents['area'] = ($east - $west) * ($north - $south);
-			$extents['center'] = (($east + $west)/2)." ".(($north + $south)/2);
+			$extents['center'] = (($east + $west)/2).",".(($north + $south)/2);
 			$extents['extent'] = $west." ".$south." ".$east." ".$north;
             $extents['west'] = $west;
             $extents['east'] = $east;

@@ -158,7 +158,6 @@ function ListCtrl($scope, pages_factory){
 function ViewPage($scope, $http, $routeParams, pages_factory, $location, search_factory){
 
 	$scope.tinymceOptions = {
-	    selector: "textarea.editor",
 	    theme: "modern",
 	    plugins: [
 	        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
@@ -191,6 +190,7 @@ function ViewPage($scope, $http, $routeParams, pages_factory, $location, search_
 		{value:'data_source_key', title:'Data Source'},
 		{value:'originating_source', title:'Originating Source'},
 		{value:'spatial', title:'Spatial'},
+        {value:'access_rights', title:'Access rights'},
 	];
 
 	$scope.available_headings = [

@@ -7,7 +7,12 @@
  * @param  [type] $reverse           [description]
  * @return [type]                    [description]
  */
-function format_relationship($from_class, $relationship_type, $origin=false){
+function format_relationship($from_class, $relationship_type, $origin=false, $to_class='collection'){
+    // default $to_class to collection in case ro not there!!
+  //  return $origin;
+    if(str_replace('party','',$to_class)!=$to_class){
+            $to_class='party';
+    }
 	$typeArray['collection'] = array(
 		"describes" => array("Describes", "Described by"),
 		"hasAssociationWith" => array("Associated with", "Associated with"),
@@ -50,13 +55,14 @@ function format_relationship($from_class, $relationship_type, $origin=false){
 		"isMemberOf" => array("Member of","Has memeber"),
 		"isOwnedBy" => array("Owned by","Owns"),
 		"isOwnerOf" => array("Owner of", "Owned by"),
-		"isParticipantIn" => array("Participant in","Has participant"),
+		"isParticipantIn" => array("Participant in","Participant"),
 		"isPartOf" => array("Part of","Participant in"),
 		"enriches" =>array("Enriches", "Enriched by"),
 		"makesAvailable" =>array("Makes available", "Available through"),
 		"isEnrichedBy" =>array("Enriched by", "Enriches"),
 		"hasPrincipalInvestigator" =>array("Principal investigator", "Principal investigator of"),
 		"isPrincipalInvestigatorOf" =>array("Principal investigator of", "Principal investigator"),
+        "isPrincipalInvestigator" =>array("Principal investigator of", "Principal investigator"),
 	);
 	$typeArray['service'] = array(
 		"hasAssociationWith" =>  array("Associated with", "Associated with"),
@@ -81,7 +87,8 @@ function format_relationship($from_class, $relationship_type, $origin=false){
 		"hasAssociationWith" =>   array("Associated with", "Associated with"),
 		"hasOutput" => array("Produces","Output of"),
 		"hasPart" => array("Includes","Part of"),
-		"hasParticipant" => array("Undertaken by","Participant in"),
+		"hasParticipant" => array("Participant","Participant in"),
+        "isParticipantIn" => array("Participant in","Undertaken by"),
 		"isFundedBy" => array("Funded by","Funds"),
 		"isManagedBy" => array("Managed by","Manages"),
 		"isOwnedBy" => array("Owned by","Owns"),
@@ -92,10 +99,10 @@ function format_relationship($from_class, $relationship_type, $origin=false){
 		"isPrincipalInvestigator" =>array("Principal investigator of", "Principal investigator"),
 	);
 	
-	$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
+	//$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
 
 	if($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER'){//reverse
-		return (isset($allTypesArray[$relationship_type]) ? $allTypesArray[$relationship_type][1] : $relationship_type);
+		return (isset($typeArray[$to_class][$relationship_type]) ? $typeArray[$to_class][$relationship_type][1] : from_camel_case($relationship_type));
 	}
 	else 
 	{
@@ -110,6 +117,8 @@ function from_camel_case($str) {
     	$func = create_function('$c', 'return " " . strtolower($c[1]);');
     	$newStr = preg_replace_callback('/([A-Z])/', $func, $str);
     	return ucfirst($newStr);
-	}
+	}elseif(is_string($str)){
+        return sentenceCase($str);
+    }
 	else return '';
   }
