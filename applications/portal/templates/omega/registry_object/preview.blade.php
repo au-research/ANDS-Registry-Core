@@ -53,4 +53,5 @@
     @else
         <br/>
 	@endif
-	<a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-p
+    <a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm pull-right">View Record</a>
+</div>
