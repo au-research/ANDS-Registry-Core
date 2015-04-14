@@ -53,7 +53,7 @@
 		@if($l=='jquery-ui')
 			<script type="text/javascript" src="{{asset_url('lib/jquery-ui/jquery-ui.js', 'core')}}"></script>
 		@elseif($l=='dynatree')
-			<script type="text/javascript" src="{{asset_url('lib/dynatree/src/jquery.dynatree.js', 'core')}}"></script>
+			<script type="text/javascript" src="{{asset_url('lib/dynatree/dist/jquery.dynatree.js', 'core')}}"></script>
         @elseif($l=='textAngular')
         	<link rel='stylesheet' href="{{asset_url('lib/textAngular/src/textAngular.css', 'core')}}">
             <script src="{{asset_url('lib/textAngular/dist/textAngular-rangy.min.js', 'core')}}"></script>
