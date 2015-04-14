@@ -8,11 +8,11 @@
 <h3 id="my_rda_video">How to use MyRDA in Research Data Australia</h3>
 <br/>
 <object width="560" height="315">
-    <param name="movie" value="https://www.youtube.com/v/MZGb2tqF2Pw?version=3&hl=en_US"></param>
+    <param name="movie" value="https://www.youtube.com/v/C2HImxMDY3c?version=3&hl=en_US"></param>
     <param name="allowFullScreen" value="true"></param>
     <param name="allowscriptaccess" value="always"></param>
     <embed
-        src="https://www.youtube.com/v/MZGb2tqF2Pw?version=3&hl=en_US"
+        src="https://www.youtube.com/v/C2HImxMDY3c?version=3&hl=en_US"
         type="application/x-shockwave-flash" width="560" height="315"
         allowscriptaccess="always"
         allowfullscreen="true">
