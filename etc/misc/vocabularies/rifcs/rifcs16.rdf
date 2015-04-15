@@ -55,6 +55,7 @@
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSActivityType/event"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSActivityType/program"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSActivityType/project"/>
+    <skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSActivityType/grant"/>
 	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
 </rdf:Description>
 
@@ -105,12 +106,15 @@
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/full"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/logo"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/note"/>
-	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/deliverymethod"/>
+	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/deliveryMethod"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/significanceStatement"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/researchAreas"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/researchDataProfile"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/researchSupport"/>
 	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/lineage"/>
+	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/fundingAmount"/>
+	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/fundingScheme"/>
+	<skos:narrower rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/researchers"/>
 	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
 </rdf:Description>
 
@@ -532,6 +536,14 @@
 	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSActivityType"/>
 </rdf:Description>
 
+<rdf:Description rdf:about="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSActivityType/grant">
+	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+	<skos:prefLabel xml:lang="en">grant</skos:prefLabel>
+	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
+	<skos:definition xml:lang="en">A funding grant awarded to partially or fully fund a research project, research facility, research program, equipment grant, fellowship, traineeship etc</skos:definition>
+	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSActivityType"/>
+</rdf:Description>
+
 <rdf:Description rdf:about="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSCollectionType/catalogueOrIndex">
 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
 	<skos:prefLabel xml:lang="en">catalogueOrIndex</skos:prefLabel>
@@ -740,9 +752,9 @@
 	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType"/>
 </rdf:Description>
 
-<rdf:Description rdf:about="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/deliverymethod">
+<rdf:Description rdf:about="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/deliveryMethod">
 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-	<skos:prefLabel xml:lang="en">deliverymethod</skos:prefLabel>
+	<skos:prefLabel xml:lang="en">deliveryMethod</skos:prefLabel>
 	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
 	<skos:definition xml:lang="en">(services only) Information about how the service is delivered. Should be one of: webservice, software, offline, workflow</skos:definition>
 	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType"/>
@@ -777,6 +789,30 @@
 	<skos:prefLabel xml:lang="en">researchSupport</skos:prefLabel>
 	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
 	<skos:definition xml:lang="en">Text describing the collection lineage</skos:definition>
+	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/fundingAmount">
+	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+	<skos:prefLabel xml:lang="en">fundingAmount</skos:prefLabel>
+	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
+	<skos:definition xml:lang="en">(activities of type 'grant' only) The total amount of funding in Australian dollars approved by the funder for this particular research grant. It can also be used for activity records of type 'project' or 'program' supplied by a research institution or agency, where it would contain the total project budget if this information is available.</skos:definition>
+	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/fundingScheme">
+	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+	<skos:prefLabel xml:lang="en">fundingScheme</skos:prefLabel>
+	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
+	<skos:definition xml:lang="en">(activities of type 'grant' only) The funding scheme under which the research funding was awarded.</skos:definition>
+	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType/researchers">
+	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+	<skos:prefLabel xml:lang="en">researchers</skos:prefLabel>
+	<skos:inScheme rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSVocabulary"/>
+	<skos:definition xml:lang="en">(activities of type 'grant' only) The list of persons participating as a Chief Investigator, Partner Investigator or Fellow. This description type should only be used if the nature of the grant data supplied to ANDS prevents the creation of linked related party records for these researchers.</skos:definition>
 	<skos:broader rdf:resource="http://purl.org/au-research/vocabulary/RIFCS/1.6/RIFCSDescriptionType"/>
 </rdf:Description>
 

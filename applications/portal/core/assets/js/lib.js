@@ -4092,10 +4092,11 @@ CHECKS.ie6 = {
     window.ATL_JQ_PAGE_PROPS =  {
     "triggerFunction": function(showCollectorDialog) {
         //Requries that jQuery is available!
-        jQuery(".feedback_button").click(function(e) {
+        jQuery(".feedback_button, .myCustomTrigger").click(function(e) {
             e.preventDefault();
             showCollectorDialog();
         });
     }};
+
 
 });
