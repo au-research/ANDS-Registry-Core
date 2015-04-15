@@ -425,7 +425,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				$scope.query = '';
 				search_factory.update('query', '');
 				$scope.filters['q'] = '';
-			} else if(type=='description' || type=='title' || type=='identifier' || type == 'related_people' || type == 'related_organisations') {
+			} else if(type=='description' || type=='title' || type=='identifier' || type == 'related_people' || type == 'related_organisations' || type == 'institution' || type == 'researcher') {
 				$scope.query = '';
 				search_factory.update('query', '');
 				delete $scope.filters[type];

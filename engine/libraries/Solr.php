@@ -633,12 +633,16 @@ class Solr {
 					}
 					break;
 				case 'institution':
-					if(!$filters['q']) $this->setOpt('q', $value);
-					$this->setOpt('fq', 'administering_institution_search:('.$value.')');
+					if ($value) {
+						if(!$filters['q']) $this->setOpt('q', $value);
+						$this->setOpt('fq', 'administering_institution_search:('.$value.')');
+					}
 					break;
 				case 'researcher':
-					if(!$filters['q']) $this->setOpt('q', $value);
-					$this->setOpt('fq', 'researchers_search:('.$value.')');
+					if ($value) {
+						if(!$filters['q']) $this->setOpt('q', $value);
+						$this->setOpt('fq', 'researchers_search:('.$value.')');
+					}
 					break;
 				case 'funding_from':
 					$funding_from = $value;
