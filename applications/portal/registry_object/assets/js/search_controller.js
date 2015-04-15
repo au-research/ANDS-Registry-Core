@@ -553,7 +553,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			        			group:i.group
 			        		});
 			        	});
-			        	$log.debug(selected);
 			           	return selected;
 			        }
 			    }
