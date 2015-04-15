@@ -1,3 +1,12 @@
+<?php
+$this->load->library('user_agent');
+$useIFrame = true;
+if ($this->agent->is_browser('Chrome'))
+{
+    $useIFrame = false;
+}
+
+?>
 <ul style="list-style-type: none;">
     <li><a href="#accessing_my_rda">Accessing MyRDA</a></li>
     <li><a href="#saving_searches">Saving Searches</a></li>
@@ -7,7 +16,22 @@
 <br/>
 <h3 id="my_rda_video">How to use MyRDA in Research Data Australia</h3>
 <br/>
+@if($useIFrame)
 <iframe width="560" height="315" src="https://www.youtube.com/embed/C2HImxMDY3c" frameborder="0" allowfullscreen></iframe>
+@else
+<object width="560" height="315">
+    <param name="movie" value="https://www.youtube.com/v/C2HImxMDY3c?version=3&hl=en_US"></param>
+    <param name="allowFullScreen" value="true"></param>
+    <param name="allowscriptaccess" value="always"></param>
+    <embed
+        src="https://www.youtube.com/v/C2HImxMDY3c?version=3&hl=en_US"
+        type="application/x-shockwave-flash" width="560" height="315"
+        allowscriptaccess="always"
+        allowfullscreen="true">
+    </embed>
+</object>
+@endif
+
 <br/><br/>
 <p>MyRDA provides you with a personal account in Research Data Australia. Once logged in you will gain access to additional functionality such as the ability to save searches and records for viewing across separate RDA sessions, and the ability to contribute to the Research Data Australia community by adding tags (keywords) to records to assist in discovery.</p>
 <h3 id="accessing_my_rda">Accessing MyRDA</h3>

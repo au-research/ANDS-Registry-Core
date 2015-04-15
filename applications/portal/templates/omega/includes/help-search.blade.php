@@ -1,4 +1,13 @@
 
+<?php
+$this->load->library('user_agent');
+$useIFrame = true;
+if ($this->agent->is_browser('Chrome'))
+{
+    $useIFrame = false;
+}
+
+?>
 <ul style="list-style-type: none;">
     <li><a href="#performing_search">Performing a Search</a></li>
     <li><a href="#refining_search">Refining a Search – Filters, Keywords &amp; Multi-select</a></li>
@@ -8,7 +17,22 @@
 <br/>
 <h3 id="search_video">How to search in Research Data Australia</h3>
 <br/>
+
+@if($useIFrame)
 <iframe width="560" height="315" src="https://www.youtube.com/embed/MZGb2tqF2Pw" frameborder="0" allowfullscreen></iframe>
+@else
+<object width="560" height="315">
+    <param name="movie" value="https://www.youtube.com/v/MZGb2tqF2Pw?version=3&hl=en_US"></param>
+    <param name="allowFullScreen" value="true"></param>
+    <param name="allowscriptaccess" value="always"></param>
+    <embed
+        src="https://www.youtube.com/v/MZGb2tqF2Pw?version=3&hl=en_US"
+        type="application/x-shockwave-flash" width="560" height="315"
+        allowscriptaccess="always"
+        allowfullscreen="true">
+    </embed>
+</object>
+@endif
 <br/><br/>
 <h3 id="performing_search">Performing a Search</h3>
 <br/><img style="width:460px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/SearchBar.png', 'core')}}" alt="Search Bar"/><br/>
