@@ -2,6 +2,7 @@ CREATE  TABLE `dbs_portal`.`user_data` (
   `role_id` VARCHAR(255) NOT NULL ,
   `user_data` TEXT NULL ,
   PRIMARY KEY (`role_id`) );
+ALTER TABLE `dbs_portal`.`user_data` CHANGE COLUMN `user_data` `user_data` LONGTEXT NULL DEFAULT NULL  ;
 
 CREATE TABLE `dbs_portal`.`contributor_pages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
