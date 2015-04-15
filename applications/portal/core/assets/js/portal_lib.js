@@ -15515,7 +15515,12 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.$watch('query', function(newv,oldv){
 		if(newv!=oldv) {
-			$scope.filters['q'] = newv;
+			if ($scope.search_type=='q') {
+				$scope.filters['q'] = newv;
+			}
+			else if($scope.search_type) {
+				$scope.filters[$scope.search_type] = newv;
+			}
 		}
 	});
 
@@ -15956,7 +15961,16 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			    windowClass: 'modal-center',
 			    resolve: {
 			        id: function () {
-			           	return $scope.selected;
+			        	var selected = [];
+			        	angular.forEach($scope.selected, function(i, index) {
+			        		selected.push({
+			        			id:i.id,
+			        			title:i.title,
+			        			slug:i.slug,
+			        			group:i.group
+			        		});
+			        	});
+			           	return selected;
 			        }
 			    }
 			});
