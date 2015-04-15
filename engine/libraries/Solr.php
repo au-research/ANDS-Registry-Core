@@ -600,20 +600,28 @@ class Solr {
 					$this->setOpt('fq', '+title_search:('.$value.')');
 					break;
 				case 'description':
-					if(!$filters['q']) $this->setOpt('q', $value);
-					$this->setOpt('fq', '+description_value:('.$value.')');
+					if ($value) {
+						if(!$filters['q']) $this->setOpt('q', $value);
+						$this->setOpt('fq', '+description_value:('.$value.')');
+					}
 					break;
 				case 'identifier':
-					if(!$filters['q']) $this->setOpt('q', $value);
-					$this->setOpt('fq', '+identifier_value_search:('.$value.')');
+					if ($value) {
+						if(!$filters['q']) $this->setOpt('q', $value);
+						$this->setOpt('fq', '+identifier_value_search:('.$value.')');
+					}
 					break;
 				case 'related_people':
-					if(!$filters['q']) $this->setOpt('q', $value);
-					$this->setOpt('fq', '+related_party_one_search:('.$value.')');
+					if ($value) {
+						if(!$filters['q']) $this->setOpt('q', $value);
+						$this->setOpt('fq', '+related_party_one_search:('.$value.')');
+					}
 					break;
 				case 'related_organisations':
-					if(!$filters['q']) $this->setOpt('q', $value);
-					$this->setOpt('fq', '+related_party_multi_search:('.$value.')');
+					if ($value) {
+						if(!$filters['q']) $this->setOpt('q', $value);
+						$this->setOpt('fq', '+related_party_multi_search:('.$value.')');
+					}
 					break;
 				case 'administering_institution':
 					if(is_array($value)){
@@ -625,12 +633,16 @@ class Solr {
 					}
 					break;
 				case 'institution':
-					if(!$filters['q']) $this->setOpt('q', $value);
-					$this->setOpt('fq', 'administering_institution_search:('.$value.')');
+					if ($value) {
+						if(!$filters['q']) $this->setOpt('q', $value);
+						$this->setOpt('fq', 'administering_institution_search:('.$value.')');
+					}
 					break;
 				case 'researcher':
-					if(!$filters['q']) $this->setOpt('q', $value);
-					$this->setOpt('fq', 'researchers_search:('.$value.')');
+					if ($value) {
+						if(!$filters['q']) $this->setOpt('q', $value);
+						$this->setOpt('fq', 'researchers_search:('.$value.')');
+					}
 					break;
 				case 'funding_from':
 					$funding_from = $value;
