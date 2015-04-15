@@ -544,7 +544,17 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			    windowClass: 'modal-center',
 			    resolve: {
 			        id: function () {
-			           	return $scope.selected;
+			        	var selected = [];
+			        	angular.forEach($scope.selected, function(i, index) {
+			        		selected.push({
+			        			id:i.id,
+			        			title:i.title,
+			        			slug:i.slug,
+			        			group:i.group
+			        		});
+			        	});
+			        	$log.debug(selected);
+			           	return selected;
 			        }
 			    }
 			});
