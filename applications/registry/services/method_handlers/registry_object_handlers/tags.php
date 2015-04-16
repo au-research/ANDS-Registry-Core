@@ -8,7 +8,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Tags extends ROHandler {
 	function handle() {
 		$result = array();
-        $result = $this->ro->getTags();
+        $result = $this->ro->getTags($pubLicOnly = true);
         return $result;
 	}
 }
