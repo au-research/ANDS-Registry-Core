@@ -1,5 +1,5 @@
 <div class="panel-body swatch-white" ng-if="facet && facet.value.length > 0">
-    <h4>[[facet.name | filter_name]]</h4>
+    <h4>[[facet.name | filter_name]] <i ng-if="facet.name=='access_rights' || facet.name=='license_class'" class="fa fa-info" tip="[[tip()]]"></i></h4>
     <ul class="listy">
         <li ng-repeat="item in facet.value | limitTo:5">
             <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">

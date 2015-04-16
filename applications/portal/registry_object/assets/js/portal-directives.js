@@ -23,6 +23,26 @@ app.directive('facetSearch', function($http, $log){
 				} else return 'not long enough';
 			}
 
+            scope.tip = function() {
+                var text = '';
+                if(scope.facet.name=='access_rights'){
+                    text = "<strong>Open</strong>: Data that is readily accessible and reusable.<br />"
+                    text = text + "<strong>Conditional</strong>: Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required).<br />";
+                    text = text + "<strong>Restricted</strong>: Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location).<br />";
+                    text = text + "<strong>Unknown</strong>: no value or user defined custom value.";
+                }
+
+                if(scope.facet.name=='license_class'){
+                    text = "<strong>Open Licence</strong>: A licence bearing broad permissions that may include a requirement to attribute the source, or share-alike (or both), requiring a derivative work to be licensed on the same or similar terms as the reused material.<br />";
+                    text = text + "<strong>Non-commercial Licence</strong>: As for the Open Licence but also restricting reuse only for non-commercial purposes.<br />";
+                    text = text + "<strong>Non-derivative Licence</strong>: As for the Open Licence but also prohibits adaptation of the material, and in the second case also restricts reuse only for non-commercial purposes.<br />";
+                    text = text + "<strong>Restrictive Licence</strong>: A licence preventing reuse of material unless certain restrictive conditions are satisfied. Note licence restrictions, and contact.<br />";
+                    text = text + "<strong>No Licence</strong>: All rights to reuse, communicate, publish or reproduce the material are reserved, with the exception of specific rights contained within the Copyright Act 1968 or similar laws.  Contact the copyright holder for permission to reuse this material.<br />";
+                    text = text + "<strong>Unknown</strong>: No value or user defined custom value."
+                }
+                return text;
+            }
+
 			scope.filterExists = scope.$parent.filterExists;
 			scope.isFacet = scope.$parent.isFacet;
 			scope.toggleFilter = scope.$parent.toggleFilter;
