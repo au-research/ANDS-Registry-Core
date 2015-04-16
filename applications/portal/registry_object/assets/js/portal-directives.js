@@ -40,6 +40,15 @@ app.directive('facetSearch', function($http, $log){
                     text = text + "<strong>No Licence</strong>: All rights to reuse, communicate, publish or reproduce the material are reserved, with the exception of specific rights contained within the Copyright Act 1968 or similar laws.  Contact the copyright holder for permission to reuse this material.<br />";
                     text = text + "<strong>Unknown</strong>: No value or user defined custom value."
                 }
+                if(scope.facet.name=='administering_institution'){
+                    text = "Please note that adding a Managing Institution filter to your search will restrict your search to only those grants and projects in Research Data Australia which have the managing institution recorded."
+                }
+                if(scope.facet.name=='funders'){
+                    text = "Please note that adding a funder filter to your search will restrict your search to only those grants and projects in Research Data Australia which have the funder recorded."
+                }
+                if(scope.facet.name=='funding_scheme'){
+                    text = "Please note that adding a funding scheme filter to your search will restrict your search to only those grants and projects in Research Data Australia which contain funding scheme information."
+                }
                 return text;
             }
 

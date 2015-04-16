@@ -180,7 +180,7 @@
 
     <!-- Funding Amount for Activity Search-->
     <div class="panel-body swatch-white" ng-show="showFacet('funding_amount')">
-        <h4>Funding Amount <i class="fa fa-info" tip="Funding amount should be entered in whole dollars with no comma or $ sign"></i></h4>
+        <h4>Funding Amount <i class="fa fa-info" tip="Please note that adding a funding amount filter to your search will restrict your search to only those grants and projects in Research Data Australia which contain the funding amount"></i></h4>
         <input type="text" ng-model="filters.funding_from" class="form-control" placeholder="Funding From"/>
         <input type="text" ng-model="filters.funding_to" class="form-control" placeholder="Funding To"/>
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
@@ -188,7 +188,7 @@
 
     <!-- Commencement date for activity search -->
     <div class="panel-body swatch-white" ng-show="showFacet('commencement_from')">
-        <h4>Commencement date</h4>
+        <h4>Commencement date <i class="fa fa-info" tip="Please note that adding this filter will restrict your search to only those project and grants in Research Data Australia which have a start date recorded."></i></h4>
         <input type="text" class="form-control" ng-model="filters.commence_from" placeholder="From Year. eg [[earliest_year]]">
         <input type="text" class="form-control" ng-model="filters.commence_to" placeholder="To Year. eg [[latest_year]]">
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
@@ -196,7 +196,7 @@
 
     <!-- Completion date for activity search -->
     <div class="panel-body swatch-white" ng-show="showFacet('completion_to')">
-        <h4>Completion date</h4>
+        <h4>Completion date <i class="fa fa-info" tip="Please note that adding this filter will restrict your search to only those projects and grants in Research Data Australia which have an end date recorded."></i></h4>
         <input type="text" class="form-control" ng-model="filters.completion_from" placeholder="From Year. eg [[earliest_year]]">
         <input type="text" class="form-control" ng-model="filters.completion_to" placeholder="To Year. eg [[latest_year]]">
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
