@@ -4,7 +4,9 @@
             <div class="row element-normal-top element-normal-bottom">
                 <div class="col-md-8">
                     <p>
-                        Research Data Australia is the data discovery service of the Australian National Data Service (ANDS). ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program. Read more <a href="http://www.ands.org.au/andsbrochurejan2015.pdf">about ANDS</a>...
+                        Research Data Australia is the data discovery service of the Australian National Data Service (ANDS).
+                        ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.
+                        <a href="http://www.ands.org.au/andsbrochurejan2015.pdf" target="_blank" style="color:#84A07B">Read more about ANDS...</a>
                     </p>
                 </div>
                 <div class="col-md-2">
@@ -35,7 +37,7 @@
                         <ul>
                             <li class="cat-item"> <a href="{{portal_url('themes')}}" title="">Themed Collections</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('theme/open-data')}}#!/access_rights=open" title="">Open Data</a> </li>
-                            <li class="cat-item"> <a href="{{portal_url('theme/services')}}#!/class=service" title="">Tools and Services</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('theme/services')}}#!/class=service" title="">Services and Tools</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('grants')}}" title="">Projects and Grants</a> </li>
                         </ul>
                     </div>
