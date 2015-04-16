@@ -206,10 +206,11 @@
 				</div>
 			</div>
 			<div class="modal-footer swatch-white">
-				<div class="btn-group pull-left">
-					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						Search for <span classicon fclass="filters.class"></span> [[ prefilters.class | getLabelFor:class_choices ]] <span class="caret"></span>
-					</button>
+                <div class=" pull-left" style="vertical-align:bottom;padding-right:5px;padding-top:5px"><h4> Search for </h4></div>
+                <div class="btn-group pull-left">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <span classicon fclass="filters.class"></span> [[ prefilters.class | getLabelFor:class_choices ]] <span class="caret"></span>
+                    </button>
 					<ul class="dropdown-menu" role="menu">
 						<li ng-repeat="c in class_choices"><a href="" ng-click="prefilters.class=c.value"><span classicon fclass="c.value"></span> [[c.value | getLabelFor:class_choices ]]</a></li>
 					</ul>

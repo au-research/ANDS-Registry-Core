@@ -180,7 +180,7 @@
 
     <!-- Funding Amount for Activity Search-->
     <div class="panel-body swatch-white" ng-show="showFacet('funding_amount')">
-        <h4>Funding Amount <i class="fa fa-info" tip="Please note that adding a funding amount filter to your search will restrict your search to only those grants and projects in Research Data Australia which contain the funding amount"></i></h4>
+        <h4>Funding Amount <i class="fa fa-info" tip="Please note that adding a funding amount filter to your search will restrict your search to only those grants and projects in Research Data Australia which contain the funding amount.<br />Funding amount should be entered in whole dollars with no comma or $ sign."></i></h4>
         <input type="text" ng-model="filters.funding_from" class="form-control" placeholder="Funding From"/>
         <input type="text" ng-model="filters.funding_to" class="form-control" placeholder="Funding To"/>
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>

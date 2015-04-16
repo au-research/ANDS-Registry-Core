@@ -83,7 +83,7 @@ app.factory('search_factory', function($http, $log){
 
 		advanced_fields_party: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
@@ -92,7 +92,7 @@ app.factory('search_factory', function($http, $log){
 
 		advanced_fields_service: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
