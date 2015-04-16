@@ -75,7 +75,8 @@ class Auth extends CI_Controller {
 		try {
 			$this->load->model('authenticators/'.$authenticator_class, 'auth');
 			$this->auth->load_params($params);
-			$this->auth->authenticate();
+			$response = $this->auth->authenticate();
+			$this->user->refreshAffiliations($this->user->localIdentifier());
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}

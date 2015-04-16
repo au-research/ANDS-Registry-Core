@@ -31,8 +31,7 @@ class User {
 			$this->CI->auth->register_last_login($login_response['user_identifier']);
 			// And extract the functions and affiliations							
 			$this->appendFunction(array_merge(array(AUTH_FUNCTION_LOGGED_IN_ATTRIBUTE),$login_response['functional_roles']));
-			// $this->appendAffiliation($login_response['organisational_roles']);
-			$this->refreshAffiliations($this->localIdentifier());
+			$this->appendAffiliation($login_response['organisational_roles']);
 			return true;
 		} else {
 			throw new Exception("Unable to authenticate user. Login object returned negative response.".$login_response['message']);
@@ -66,9 +65,10 @@ class User {
 	
 
 	public function refreshAffiliations($role_id) {
-		$this->CI->load->model($this->CI->config->item('authentication_class'), 'auth');
-		$roles = $this->CI->auth->getRolesAndActivitiesByRoleID($role_id);
+		$this->CI->load->model($this->CI->config->item('authentication_class'), 'auth_class');
+		$roles = $this->CI->auth_class->getRolesAndActivitiesByRoleID($role_id);
 		if($roles){
+			$this->appendFunction(array_merge(array(AUTH_FUNCTION_LOGGED_IN_ATTRIBUTE),$roles['functional_roles']));
 			$this->appendAffiliation($roles['organisational_roles']);
 		}
 	}
@@ -216,6 +216,7 @@ class User {
 	 */
 	function affiliations()
 	{
+		// $this->refreshAffiliations($this->localIdentifier());
 		return $this->affiliations;
 	}
 		
