@@ -291,12 +291,12 @@ Y2  - '.date("Y-m-d")."
         if($this->gXPath->evaluate("count(//ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi'])")>0) {
             $query = "//ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']";
         }
-        elseif($this->gXPath->evaluate("count(//ro:identifier[@type='doi'])")>0) {
-            $query = "//ro:identifier[@type='doi']";
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='doi'])")>0) {
+            $query = "//ro:collection/ro:identifier[@type='doi']";
         }
 
         if($query!=''){
-            $dois = $this->gXPath->evaluate($query);
+            $dois = $this->gXPath->query($query);
             foreach($dois as $doivalue) {
                 $doi = $doivalue->nodeValue;
             }
