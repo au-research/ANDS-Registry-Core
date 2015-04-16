@@ -10,8 +10,12 @@
 function format_relationship($from_class, $relationship_type, $origin=false, $to_class='collection'){
     // default $to_class to collection in case ro not there!!
   //  return $origin;
+
     if(str_replace('party','',$to_class)!=$to_class){
             $to_class='party';
+    }
+    if(str_replace('party','',$from_class)!=$from_class){
+        $from_class='party';
     }
 	$typeArray['collection'] = array(
 		"describes" => array("Describes", "Described by"),
