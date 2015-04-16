@@ -71,7 +71,7 @@ app.factory('search_factory', function($http, $log){
 
 		advanced_fields: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'subject', 'display':'Subjects'},
+			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'access_rights', 'display':'Access'},
 			{'name':'license_class', 'display':'Licence'},
@@ -84,7 +84,7 @@ app.factory('search_factory', function($http, $log){
 		advanced_fields_party: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
 			{'name':'type', 'display':'Types'},
-			{'name':'subject', 'display':'Subjects'},
+			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
 			{'name':'help', 'display':'<i class="fa fa-question-circle"></i> Help'}
@@ -93,7 +93,7 @@ app.factory('search_factory', function($http, $log){
 		advanced_fields_service: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
 			{'name':'type', 'display':'Types'},
-			{'name':'subject', 'display':'Subjects'},
+			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
 			{'name':'help', 'display':'<i class="fa fa-question-circle"></i> Help'}
