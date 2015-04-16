@@ -114,7 +114,7 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
                     { name: 'title_search', display: 'Title'},
                     { name: 'identifier_value_search', display: 'Identifier'},
                     { name: 'related_party_one_search', display: 'Related People'},
-                    { name: 'related_party_multi_search', display: 'Related Organisations'},
+                    { name: 'related_party_multi_search', display: 'Related Organisation'},
                     { name: 'description_value', display: 'Description'}
                 ]
 
