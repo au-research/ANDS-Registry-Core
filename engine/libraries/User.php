@@ -31,8 +31,8 @@ class User {
 			$this->CI->auth->register_last_login($login_response['user_identifier']);
 			// And extract the functions and affiliations							
 			$this->appendFunction(array_merge(array(AUTH_FUNCTION_LOGGED_IN_ATTRIBUTE),$login_response['functional_roles']));
-			$this->appendAffiliation($login_response['organisational_roles']);
-			
+			// $this->appendAffiliation($login_response['organisational_roles']);
+			$this->refreshAffiliations($this->localIdentifier());
 			return true;
 		} else {
 			throw new Exception("Unable to authenticate user. Login object returned negative response.".$login_response['message']);

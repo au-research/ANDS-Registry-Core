@@ -45,13 +45,20 @@ class Data_source extends MX_Controller {
 
 		$this->load->model("data_sources","ds");
 		if(!$id){
+			// $this->benchmark->mark('code_start');
 			$dataSources = $this->ds->getOwnedDataSources();
+			// $this->benchmark->mark('code_end');
+			// dd($this->benchmark->elapsed_time('code_start', 'code_end'));
 		} elseif ($id && $id!=null) {
+			// $this->benchmark->mark('code_start');
 			ds_acl_enforce($id);
 			$ds = $this->ds->getByID($id);
-			$ds->updateStats();
+			// Should look at updating stats
+			// $ds->updateStats();
 			$dataSources = array();
 			$dataSources[] = $ds;
+			// $this->benchmark->mark('code_end');
+			// dd($this->benchmark->elapsed_time('code_start', 'code_end'));
 		}
 		$this->load->model("registry_object/registry_objects", "ro");
 
