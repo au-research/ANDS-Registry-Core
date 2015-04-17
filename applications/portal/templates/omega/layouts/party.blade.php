@@ -21,7 +21,7 @@
                                             <a href="{{base_url('contributors')}}/{{$group_slug}}" title="Record provided by {{$ro->core['group']}}"><img src="{{$logo}}" alt="logo" class="header-logo animated fadeInDown"></a>
                                         </div>
                                         @endif
-                                        <h1 class="hairline bordered-normal"><span itemprop="name">{{$ro->core['title']}}</span></h1>
+                                        <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{$ro->core['title']}}</span></h1>
                                         @if(isset($ro->core['alt_title']))
                                             <small>Also known as:
                                                 <span>{{implode(', ',$ro->core['alt_title'])}}</span>
