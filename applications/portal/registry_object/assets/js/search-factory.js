@@ -54,7 +54,7 @@ app.factory('search_factory', function($http, $log){
 			{value:'list_title_sort asc',label:'Title A-Z'},
 			{value:'list_title_sort desc',label:'Title Z-A'},
 			// {value:'title desc',label:'Popular'},
-			{value:'record_created_timestamp asc',label:'Date Added'}
+			{value:'record_created_timestamp desc',label:'Date Added  <i class="fa fa-sort-amount-desc"></i>'}
 		],
 
 		activity_sort : [
