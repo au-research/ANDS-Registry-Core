@@ -143,9 +143,17 @@
     <div class="panel-heading">Organisations & Groups</div>
     <div class="panel-body">
         <ul class="listy">
+            <?php $i = 0  ?>
             @foreach($group['groups'] as $gr)
+            @if($i++ < 5)
                 <li><a href="{{base_url()}}{{$gr['slug']}}/{{$gr['id']}}">{{$gr['title']}}</a></li>
+            @else
+                <li class="listItem hidden"><a href="{{base_url()}}{{$gr['slug']}}/{{$gr['id']}}">{{$gr['title']}}</a></li>
+            @endif
             @endforeach
+            @if(sizeof($group['groups']) > 5)
+            <span id="show_all_anchor">Displaying: 5 out of {{sizeof($group['groups'])}} Organisations & Groups. <a href="javascript:$('#show_all_anchor').hide(); $('.listItem').removeClass('hidden');" >View All</a></span>
+            @endif
         </ul>
     </div>
 </div>
