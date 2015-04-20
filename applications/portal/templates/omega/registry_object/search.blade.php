@@ -73,7 +73,8 @@
                             <b>Managing Institution</b>: [[ doc.administering_institution.join(',') | toTitleCase ]]
                         </div>
                         <div ng-if="doc.researchers">
-                            <b>Researchers: </b> [[doc.researchers.join(', ')]]
+                            <b>Researchers: </b>
+                                <span ng-if="doc.researchers.join(',').length > 150" tip="[[doc.researchers.join(', ')]]">[[doc.researchers.join(', ') | truncate:150 ]]</span>
                         </div>
                     </div>
                     
