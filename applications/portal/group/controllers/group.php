@@ -23,11 +23,15 @@ class Group extends MX_Controller {
 
 	function view($slug) {
 		$group = $this->groups->get($slug);
-		
-		$this->blade
-			->set('group', $group)
-			->set('title', $group['title'])
-			->render('group/group_view');
+		if(isset($group) && sizeof($group) > 0){
+            $this->blade
+                ->set('group', $group)
+                ->set('title', $group['title'])
+                ->render('group/group_view');
+        }else{
+            redirect('contributors');
+        }
+
 	}
 
 	function get() {
