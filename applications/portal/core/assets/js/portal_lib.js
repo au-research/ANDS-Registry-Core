@@ -14894,7 +14894,7 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
                     { name: 'title_search', display: 'Title'},
                     { name: 'identifier_value_search', display: 'Identifier'},
                     { name: 'related_party_one_search', display: 'Related People'},
-                    { name: 'related_party_multi_search', display: 'Related Organisations'},
+                    { name: 'related_party_multi_search', display: 'Related Organisation'},
                     { name: 'description_value', display: 'Description'}
                 ]
 
@@ -14990,6 +14990,15 @@ queryBuilder.filter('getDisplayFor', function($log){
                     text = text + "<strong>Restrictive Licence</strong>: A licence preventing reuse of material unless certain restrictive conditions are satisfied. Note licence restrictions, and contact.<br />";
                     text = text + "<strong>No Licence</strong>: All rights to reuse, communicate, publish or reproduce the material are reserved, with the exception of specific rights contained within the Copyright Act 1968 or similar laws.  Contact the copyright holder for permission to reuse this material.<br />";
                     text = text + "<strong>Unknown</strong>: No value or user defined custom value."
+                }
+                if(scope.facet.name=='administering_institution'){
+                    text = "Please note that adding a Managing Institution filter to your search will restrict your search to only those grants and projects in Research Data Australia which have the managing institution recorded."
+                }
+                if(scope.facet.name=='funders'){
+                    text = "Please note that adding a funder filter to your search will restrict your search to only those grants and projects in Research Data Australia which have the funder recorded."
+                }
+                if(scope.facet.name=='funding_scheme'){
+                    text = "Please note that adding a funding scheme filter to your search will restrict your search to only those grants and projects in Research Data Australia which contain funding scheme information."
                 }
                 return text;
             }
@@ -15632,8 +15641,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		//only change the hash at search page, other page will navigate to the search page
 		if ($scope.onSearchPage()) {
 			location.hash = '!/'+hash;
+            $(window).scrollTop(0);
 		} else {
 			location.href = base_url+'search/#' + '!/' + hash;
+            $(window).scrollTop(0);
 		}
 	}
 
@@ -16557,7 +16568,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			{value:'list_title_sort asc',label:'Title A-Z'},
 			{value:'list_title_sort desc',label:'Title Z-A'},
 			// {value:'title desc',label:'Popular'},
-			{value:'record_created_timestamp asc',label:'Date Added'}
+			{value:'record_created_timestamp desc',label:'Date Added  <i class="fa fa-sort-amount-desc"></i>'}
 		],
 
 		activity_sort : [
@@ -16586,7 +16597,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 		advanced_fields_party: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
@@ -16595,7 +16606,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 		advanced_fields_service: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},

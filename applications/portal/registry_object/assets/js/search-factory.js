@@ -54,7 +54,7 @@ app.factory('search_factory', function($http, $log){
 			{value:'list_title_sort asc',label:'Title A-Z'},
 			{value:'list_title_sort desc',label:'Title Z-A'},
 			// {value:'title desc',label:'Popular'},
-			{value:'record_created_timestamp asc',label:'Date Added'}
+			{value:'record_created_timestamp desc',label:'Date Added  <i class="fa fa-sort-amount-desc"></i>'}
 		],
 
 		activity_sort : [
@@ -83,7 +83,7 @@ app.factory('search_factory', function($http, $log){
 
 		advanced_fields_party: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
@@ -92,7 +92,7 @@ app.factory('search_factory', function($http, $log){
 
 		advanced_fields_service: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
