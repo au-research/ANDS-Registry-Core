@@ -20,7 +20,7 @@
 				@foreach($ro->descriptions as $desc)
 					@if($desc['type']==$o)
                         <?php   $type = readable($desc['type']);
-                                if($desc['type']=='researchers'){
+                                if($desc['type']=='Researchers'){
                                     $researchersfound='yes';
                                 }
                                 if(($o == 'fundingAmount'||$o == 'fundingScheme'||$o == 'brief'||$o='full') && $researchersfound=='no'){
