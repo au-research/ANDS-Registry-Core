@@ -118,7 +118,7 @@
 
 @section('sidebar')
 
-@if($group['has_custom_data'])
+@if(isset($group['has_custom_data']))
     @if(isset($group['custom_data']['contact']))
     <div class="panel swatch-white">
         <div class="panel-heading">Contact</div>
@@ -138,7 +138,7 @@
     </div>
 </div>
 
-@if($group['groups'])
+@if(isset($group['groups']))
 <div class="panel swatch-white">
     <div class="panel-heading">Organisations & Groups</div>
     <div class="panel-body">
@@ -159,7 +159,7 @@
 </div>
 @endif
 
-@if($group['latest_collections'])
+@if(isset($group['latest_collections']))
 <div class="panel swatch-white">
     <div class="panel-heading">Last 5 Data Records Added</div>
     <div class="panel-body">
@@ -172,7 +172,7 @@
 </div>
 @endif
 
-@if($group['has_custom_data'])
+@if(isset($group['has_custom_data']))
     @if(isset($group['custom_data']['identifiers']))
     <div class="panel swatch-white">
         <div class="panel-heading">Identifiers</div>

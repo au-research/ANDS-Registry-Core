@@ -205,7 +205,6 @@ class Groups extends CI_Model {
 		} else {
 			$group['has_custom_data'] = false;
 		}
-
 		return $group;
 	}
 
@@ -295,37 +294,28 @@ class Groups extends CI_Model {
 
 
 	function getOwnedGroups() {
-		if($this->user->hasFunction('REGISTRY_SUPERUSER')) {
-			$groups = $this->getAll();
-			$owned_groups = array();
-			foreach($groups as $group) {
-				array_push($owned_groups, $group['title']);
-			}
-		} else {
-			$url = base_url().'registry/services/api/data_sources/';
-			$owned_ds = $this->user->ownedDataSourceIDs();
-			foreach($owned_ds as $ds) {
-				$url.=$ds.'-';
-			}
-			$url.='/groups';
+        $result = array();
+        $owned_groups = array();
+        $this->load->library('solr');
+        $this->solr
+            ->setFacetOpt('facet', 'on')
+            ->setOpt('fq', '+class:collection')
+            ->setFacetOpt('mincount', 1)
+            ->setFacetOpt('field', 'group');
+        if($this->user->hasFunction('REGISTRY_SUPERUSER') == false)
+        {
+            $owned_ds = $this->user->ownedDataSourceIDs();
+            $fq_str = implode('") OR data_source_id:("', $owned_ds);
+            $fq_str = 'data_source_id:("'.$fq_str.'")';
+            $this->solr->setOpt('q', $fq_str);
+        }
+        $this->solr->executeSearch();
+        $result = $this->solr->getFacetResult('group');
 
-			$content = @file_get_contents($url);
-			$content = json_decode($content, true);
-			$owned_groups = array();
-			if ($content['status']=='success') {
-				foreach($owned_ds as $ds) {
-					if(isset($content['message'][$ds])) {
-						foreach($content['message'][$ds]['groups'] as $group) {
-							if(!in_array($group, $owned_groups)) {
-								array_push($owned_groups, $group);
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		
+        foreach($result as $key=>$val) {
+            array_push($owned_groups, $key);
+        }
+        
 		return $owned_groups;
 	}
 
