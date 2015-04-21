@@ -218,6 +218,24 @@ angular.module('portal-filters', [])
 	    if(reverse) filtered.reverse();
 	    return filtered;
 	  };
-});
+
+}).filter('sortObjectBy', function($log) {
+    return function(items, field, reverse) {
+        var sortArray = ['open','conditional','restricted','open licence','non-commercial licence','non-derivative licence','restrictive licence','no licence','other','unknown']
+        var filtered = [];
+        sortArray.forEach(function(element){
+            angular.forEach(items, function(item) {
+                if(item.name==element){
+                filtered.push(item);
+                }
+            });
+        });
+        console.log(filtered);
+        return filtered;
+    };
+
+})
+
+;
 
 ;
