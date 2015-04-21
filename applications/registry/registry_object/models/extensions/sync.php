@@ -5,6 +5,7 @@ class Sync_extension extends ExtensionBase{
     private $party_one_types = array('person','administrativePosition');
     private $party_multi_types = array('group');
 
+
 	function __construct($ro_pointer){
 		parent::__construct($ro_pointer);
 	}
@@ -66,6 +67,8 @@ class Sync_extension extends ExtensionBase{
         $single_values = array(
 			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type'
 		);
+
+        $include_rights_type = array('open','restricted','conditional');
 
 		foreach($single_values as $s){
 			$json[$s] = html_entity_decode($this->ro->{$s}, ENT_QUOTES);
@@ -133,7 +136,7 @@ class Sync_extension extends ExtensionBase{
         $this->ro->set_metadata('the_description',$json['description']);
 
 		//license
-        if($json['class'] == 'collection')
+      /*  if($json['class'] == 'collection')
             $json['access_rights'] = 'Unknown';
 		if($rights = $this->ro->processLicence()){
 			foreach($rights as $right) {
@@ -141,7 +144,21 @@ class Sync_extension extends ExtensionBase{
                 if(isset($right['accessRights_type'])) $json['access_rights'] = $right['accessRights_type'];
 
 			}
-		}
+		} */
+
+
+        if($json['class'] == 'collection')
+            $json['access_rights'] = 'Other';
+        if($rights = $this->ro->processLicence()){
+            foreach($rights as $right) {
+                if(isset($right['licence_group'])) {
+                    $json['license_class'] = strtolower($right['licence_group']);
+                    if($json['license_class']=='unknown') $json['license_class']='Other';
+                }
+                if(isset($right['accessRights_type']) && in_array($right['accessRights_type'], $include_rights_type)) $json['access_rights'] = $right['accessRights_type'];
+
+            }
+        }
 
 		//identifier
 		if($identifiers = $this->ro->getIdentifiers()) {

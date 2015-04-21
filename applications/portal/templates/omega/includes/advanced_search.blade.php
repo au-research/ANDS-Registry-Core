@@ -55,12 +55,17 @@
 
 							<div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in prefacets2">
 								<ul class="list-unstyled" ng-if="facet.name!='subject'">
-									<li ng-repeat="item in facet.value | orderObjectBy:'name'">
+									<li ng-repeat="item in facet.value | orderObjectBy:'name'" ng-if="facet.name!='access_rights' && facet.name!='license_class'">
 										<input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
-										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name!='group'">[[item.name | toTitleCase]] ([[item.value]])</a>  
-										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name=='group'">[[item.name]] ([[item.value]])</a>    
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name!='group'">[[item.name | toTitleCase]] ([[item.value]])</a>
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name=='group'">[[item.name]] ([[item.value]])</a>
 										<span facetinfo infotype="facet.name" infovalue="item.name"></span>
 									</li>
+                                    <li ng-repeat="item in facet.value | sortObjectBy:'name'" ng-if="facet.name=='access_rights' || facet.name=='license_class'">
+                                        <input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
+                                        <a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name | toTitleCase]] ([[item.value]])</a>
+                                        <span facetinfo infotype="facet.name" infovalue="item.name"></span>
+                                    </li>
 								</ul>
 							</div>
 
