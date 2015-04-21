@@ -314,6 +314,7 @@ function initConnectionGraph() {
 			}
 
 	    });
+        window.scrollTo(0,0);
 	}
 
 }
