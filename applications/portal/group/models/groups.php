@@ -323,30 +323,28 @@ class Groups extends CI_Model {
 
 
     function canUserEdit($group_name) {
-        if($this->user->hasFunction('REGISTRY_SUPERUSER')){
-            return true;
-        }else{
-            $this->load->library('solr');
-            $this->solr
-                ->setFacetOpt('facet', 'on')
-                ->setOpt('fq', '+group:("'.urldecode($group_name).'")')
-                ->setOpt('fq', '+class:collection')
-                ->setFacetOpt('mincount', 1)
-                ->setFacetOpt('limit', '-1')
-                ->setFacetOpt('field', 'data_source_id');
-            $this->solr->executeSearch();
-            $result = $this->solr->getFacetResult('data_source_id');
-            if(is_array($result)){
+        $this->load->library('solr');
+        $this->solr
+            ->setFacetOpt('facet', 'on')
+            ->setOpt('fq', '+group:("'.urldecode($group_name).'")')
+            ->setOpt('fq', '+class:collection')
+            ->setFacetOpt('mincount', 1)
+            ->setFacetOpt('limit', '-1')
+            ->setFacetOpt('field', 'data_source_id');
+        $this->solr->executeSearch();
+        $result = $this->solr->getFacetResult('data_source_id');
+        if(is_array($result) && sizeof($result) > 0){
+            if($this->user->hasFunction('REGISTRY_SUPERUSER')){
+                return true;
+            }
+            else{
                 $owned_ds = $this->user->ownedDataSourceIDs();
                 foreach($result as $key=>$val) {
                     if(in_array($key, $owned_ds))
                         return true;
                 }
             }
-
         }
         return false;
     }
-
-
 }
