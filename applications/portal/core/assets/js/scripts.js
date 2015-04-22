@@ -309,20 +309,42 @@ jQuery(document).ready(function( $ ) {
         $('#search_tab').removeClass('active');
         $('#myrda_tab').removeClass('active');
         $('#advsearch_tab').removeClass('active');
+
         $('#overview').removeClass('active');
         $('#search').removeClass('active');
         $('#myrda').removeClass('active');
+        $('#advsearch').removeClass('active');
 
         $('#'+useTab).addClass('active');
         $('#'+useTab+'_tab').addClass('active');
     }).on('click', '.search_help', function(event){
+
         $('#overview_tab').removeClass('active');
         $('#myrda_tab').removeClass('active');
         $('#advsearch_tab').removeClass('active');
+
         $('#overview').removeClass('active');
         $('#myrda').removeClass('active');
+        $('#advsearch').removeClass('active');
+
         $('#search').addClass('active');
         $('#search_tab').addClass('active');
+
+    }).on('click', '.help_link', function(event){
+        var useTab = $(this).attr('id');
+        useTab = useTab.substr(0, useTab.indexOf('_link'));
+        $('#overview_tab').removeClass('active');
+        $('#search_tab').removeClass('active');
+        $('#myrda_tab').removeClass('active');
+        $('#advsearch_tab').removeClass('active');
+
+        $('#overview').removeClass('active');
+        $('#search').removeClass('active');
+        $('#myrda').removeClass('active');
+        $('#advsearch').removeClass('active');
+
+        $('#'+useTab).addClass('active');
+        $('#'+useTab+'_tab').addClass('active');
     });
 
 
