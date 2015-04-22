@@ -37,16 +37,30 @@ class Group extends MX_Controller {
 	function get() {
 		$group_name = $this->input->get('group') ? $this->input->get('group') : false;
 		if($group_name) {
-			$group = $this->groups->fetchData($group_name, 'DRAFT');
-			if(!$group) $group = $this->groups->fetchData($group_name, 'PUBLISHED');
-			if ($group) {
-				$result = $group;
-			} else {
-				$result = array(
-					'name' => $this->input->get('group'),
-					'nodata' => true
-				);
-			}
+            if($this->groups->canUserEdit($group_name) == false)
+            {
+                $result = array(
+                    'status' => 'ERROR',
+                    'message' => 'you are not allowed to edit this contributor page'
+                );
+            }
+			else
+            {
+                $group = $this->groups->fetchData($group_name, 'DRAFT');
+			    if(!$group)
+                    $group = $this->groups->fetchData($group_name, 'PUBLISHED');
+			    if ($group)
+                {
+				    $result = $group;
+			    }
+                else
+                {
+                    $result = array(
+                        'name' => $this->input->get('group'),
+                        'nodata' => true
+                    );
+			    }
+            }
 		} else {
 			$groups = $this->groups->getOwnedGroups();
 			$result = array(
