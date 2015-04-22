@@ -11,7 +11,7 @@ function class_name($text) {
 		case 'collection': return 'Datasets'; break;
 		case 'party': return 'People and Organisations'; break;
 		case 'service': return 'Tools and Services'; break;
-		case 'activity': return 'Projects'; break;
+		case 'activity': return 'Grants and Projects'; break;
 		default: return $text;
 	}
 }

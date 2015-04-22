@@ -230,6 +230,9 @@ jQuery(document).ready(function( $ ) {
         var div = $(this).attr('data-toggle');
         console.log(div, $(div), $(div).length);
         $(div).toggle();
+    }).on('click', '#show_all_anchor', function(e){
+        $('#show_all_span').hide();
+        $('.listItem').removeClass('hidden');
     }).on('mouseover', '*[tip]', function(event){
         // Bind the qTip within the event handler
         var my = $(this).attr('my');
