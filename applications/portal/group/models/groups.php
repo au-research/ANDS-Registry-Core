@@ -301,6 +301,7 @@ class Groups extends CI_Model {
             ->setFacetOpt('facet', 'on')
             ->setOpt('fq', '+class:collection')
             ->setFacetOpt('mincount', 1)
+            ->setFacetOpt('limit', '-1')
             ->setFacetOpt('field', 'group');
         if($this->user->hasFunction('REGISTRY_SUPERUSER') == false)
         {
@@ -315,8 +316,36 @@ class Groups extends CI_Model {
         foreach($result as $key=>$val) {
             array_push($owned_groups, $key);
         }
-        
+
 		return $owned_groups;
 	}
+
+
+    function canUserEdit($group_name) {
+        if($this->user->hasFunction('REGISTRY_SUPERUSER')){
+            return true;
+        }else{
+            $this->load->library('solr');
+            $this->solr
+                ->setFacetOpt('facet', 'on')
+                ->setOpt('fq', '+group:("'.urldecode($group_name).'")')
+                ->setOpt('fq', '+class:collection')
+                ->setFacetOpt('mincount', 1)
+                ->setFacetOpt('limit', '-1')
+                ->setFacetOpt('field', 'data_source_id');
+            $this->solr->executeSearch();
+            $result = $this->solr->getFacetResult('data_source_id');
+            if(is_array($result)){
+                $owned_ds = $this->user->ownedDataSourceIDs();
+                foreach($result as $key=>$val) {
+                    if(in_array($key, $owned_ds))
+                        return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
 
 }

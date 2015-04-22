@@ -34,7 +34,13 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 	$scope.tatoolbar = [['h1','h2','h3'],['bold','italics','underline'],['insertLink'],['ul', 'ol'],['insertImage']];
 
 	groupFactory.get($routeParams.group).then(function(data){
-		$scope.group = data;
+        if(data.status=='ERROR') {
+            $scope.error_upload_msg = data.message;
+            $log.debug(data.message);
+            location.href = 'cms#';
+        }else{
+            $scope.group = data;
+        }
 	});
 
 	profile_factory.get_user().then(function(data){
