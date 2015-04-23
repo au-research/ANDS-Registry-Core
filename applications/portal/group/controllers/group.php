@@ -57,6 +57,7 @@ class Group extends MX_Controller {
                 {
                     $result = array(
                         'name' => $this->input->get('group'),
+                        'status' => "PUBLISHED", //hacky but works
                         'nodata' => true
                     );
 			    }
