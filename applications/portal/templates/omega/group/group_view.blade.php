@@ -138,7 +138,7 @@
     </div>
 </div>
 
-@if(isset($group['groups']))
+@if(isset($group['groups']) && is_array($group['groups']) && sizeof($group['groups']) > 0)
 <div class="panel swatch-white">
     <div class="panel-heading">Organisations & Groups</div>
     <div class="panel-body">
@@ -152,7 +152,7 @@
             @endif
             @endforeach
             @if(sizeof($group['groups']) > 5)
-            <span id="show_all_anchor">Displaying: 5 out of {{sizeof($group['groups'])}} Organisations & Groups. <a href="javascript:$('#show_all_anchor').hide(); $('.listItem').removeClass('hidden');" >View All</a></span>
+            <span id="show_all_span">Displaying: 5 out of {{sizeof($group['groups'])}}. <a href="" id="show_all_anchor">View All</a></span>
             @endif
         </ul>
     </div>

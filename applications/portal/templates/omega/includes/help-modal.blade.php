@@ -12,10 +12,10 @@
 				<div role="tabpanel">
 				  <!-- Nav tabs -->
 				  <ul class="nav nav-tabs" role="tablist">
-				    <li role="presentation" id="overview_tab" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
-				    <li role="presentation" id="search_tab"><a href="#search" aria-controls="search" role="tab" data-toggle="tab">Search</a></li>
-				    <li role="presentation" id="myrda_tab"><a href="#myrda" aria-controls="MyRDA" role="tab" data-toggle="tab">MyRDA</a></li>
-				    <li role="presentation" id="advsearch_tab"><a href="#advsearch" aria-controls="advsearch" role="tab" data-toggle="tab">Advanced Search</a></li>
+				    <li role="presentation" id="overview_tab" class="active"><a href="" class="help_link" id="overview_link">Overview</a></li>
+				    <li role="presentation" id="search_tab"><a href="" class="help_link" id="search_link">Search</a></li>
+				    <li role="presentation" id="myrda_tab"><a href="" class="help_link" id="myrda_link">MyRDA</a></li>
+				    <li role="presentation" id="advsearch_tab"><a href="" class="help_link" id="advsearch_link">Advanced Search</a></li>
 				  </ul>
 
 				  <!-- Tab panes -->
