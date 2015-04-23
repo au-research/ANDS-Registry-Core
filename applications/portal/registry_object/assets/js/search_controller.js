@@ -28,9 +28,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		{value:'keywords', label: 'Keywords'},
 		{value:'scot', label: 'School of Online Thesaurus'},
 		{value:'pont', label: 'Powerhouse Museum Object Name Thesaurus'},
-		{value:'psychit', label: 'Thesaurus of psychological index terms'},
+		{value:'psychit', label: 'Thesaurus of Psychological Index Terms'},
 		{value:'apt', label: 'Australian Pictorial Thesaurus'},
-		{value:'lcsh', label: 'LCSH'}
+		{value:'lcsh', label: 'LCSH'},
+        {value:'gcmd', label: 'Global Change Master Directory Keywords'}
 	];
 
 	$scope.$watch(function(){
