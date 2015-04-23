@@ -62,6 +62,7 @@ class Spatial_Extension extends ExtensionBase
 						}
 						$tok = strtok(" ");
 					}
+					
 				}
 			}
 			elseif($type == 'iso19139dcmiBox')
@@ -293,6 +294,12 @@ class Spatial_Extension extends ExtensionBase
 			}
 			$tok = strtok(" ");
 		}
+
+		if ($east > 180) {$east = 180; }
+		if ($north > 90) {$north = 90; }
+		if ($south < -90) {$south = -90; }
+		if ($west < -180) {$west = -180; }
+
 		if($north == $south && $east == $west){
 			$extents['area'] = 0;
 			$extents['center'] = $west.",".$south;
@@ -303,7 +310,7 @@ class Spatial_Extension extends ExtensionBase
 		else{
 			$extents['area'] = ($east - $west) * ($north - $south);
 			$extents['center'] = (($east + $west)/2).",".(($north + $south)/2);
-			$extents['extent'] = $west." ".$south." ".$east." ".$north;
+			$extents['extent'] = $west." ".$south." ".$east." ".$north." ";
             $extents['west'] = $west;
             $extents['east'] = $east;
 		}	
