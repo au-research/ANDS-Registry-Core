@@ -16013,6 +16013,17 @@ a.noexicon:after {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+h1.bordered:after{
+    width:150px;
+}
+.text-center > h1.bordered:after{
+    width:150px;
+    left:46% !important
+}
+.text-center h1.bordered:after{
+    width:150px;
+    left:46%
 }/**
  * Single Purpose Content Styling
  * This file is for the single purpose styling
