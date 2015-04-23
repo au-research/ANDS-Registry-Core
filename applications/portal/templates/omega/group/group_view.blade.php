@@ -131,9 +131,13 @@
     <!-- <div class="panel-heading">Registry Contents</div> -->
     <div class="panel-body">
         <ul class="listy">
-            @foreach($group['facet']['class'] as $class)
-                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class={{$class['name']}}">{{class_name($class['name'])}} <small>({{$class['num']}})</small></a></li>
-            @endforeach
+            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection')}} <small>({{$group['facet']['class']['collection']}})</small></a></li>
+
+            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=party">{{class_name('party')}} <small>({{$group['facet']['class']['party']}})</small></a></li>
+
+            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=activity}">{{class_name('activity')}} <small>({{$group['facet']['class']['activity']}})</small></a></li>
+
+            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=service">{{class_name('service')}} <small>({{$group['facet']['class']['service']}})</small></a></li>
         </ul>
     </div>
 </div>
