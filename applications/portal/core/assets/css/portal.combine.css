@@ -16007,6 +16007,12 @@ a.noexicon:after {
 .header_title{
     display:inline;
     border:1px white solid;
+}
+.oneLineTruncate{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }/**
  * Single Purpose Content Styling
  * This file is for the single purpose styling

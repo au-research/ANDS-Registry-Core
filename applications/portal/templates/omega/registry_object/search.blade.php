@@ -44,7 +44,7 @@
                     <div class="pull-right" ng-if="filters.class=='activity'">
                         [[ doc.type | toTitleCase ]]
                     </div>
-                    <div class="scontent">
+                    <div class="scontent" myWidth>
                         <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
                         <p><small>[[doc.group]]</small></p>
                         <p ng-if="doc.matching_identifier_count">[[ doc.matching_identifier_count ]] Linked Records</p>
@@ -72,10 +72,9 @@
                         <div ng-if="doc.administering_institution">
                             <b>Managing Institution</b>: [[ doc.administering_institution.join(',') | toTitleCase ]]
                         </div>
-                        <div ng-if="doc.researchers">
+                        <div ng-if="doc.researchers" class="oneLineTruncate">
                             <b>Researchers: </b>
-                                <span ng-if="doc.researchers.join(',').length > 150" tip="[[doc.researchers.join(', ')]]">[[doc.researchers.join(', ') | truncate:150 ]]</span>
-                                <span ng-if="doc.researchers.join(',').length <= 150">[[doc.researchers.join(', ') | truncate:150 ]]</span>
+                                <span tip="[[doc.researchers.join(', ')]]">[[doc.researchers.join(', ')]]</span>
                         </div>
                     </div>
                     
