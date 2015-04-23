@@ -230,7 +230,6 @@ angular.module('portal-filters', [])
                 }
             });
         });
-        console.log(filtered);
         return filtered;
     };
 
