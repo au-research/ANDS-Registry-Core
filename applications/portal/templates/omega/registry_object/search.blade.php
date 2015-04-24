@@ -72,9 +72,8 @@
                         <div ng-if="doc.administering_institution">
                             <b>Managing Institution</b>: [[ doc.administering_institution.join(',') | toTitleCase ]]
                         </div>
-                        <div ng-if="doc.researchers" class="oneLineTruncate">
-                            <b>Researchers: </b>
-                                <span tip="[[doc.researchers.join(', ')]]">[[doc.researchers.join(', ')]]</span>
+                        <div ng-if="doc.researchers" class="oneLineTruncate" tip="[[doc.researchers.join(', ')]]">
+                            <b>Researchers: </b> [[doc.researchers.join(', ')]]
                         </div>
                     </div>
                     
