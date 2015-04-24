@@ -27,6 +27,14 @@ class Core extends ROHandler {
             }
         }
         if(!empty($alt_title)) $result['alt_title'] = $alt_title;
+
+        $result['site_name'] = "Research Data Australia";
+        $result['description'] = $this->index['list_description'];
+
+        if($this->ro->class == 'activity' && strrpos($this->ro->key, 'purl') > 0)
+        {
+            $result['description'] .= NL."PURL: " .$this->ro->key;
+        }
         return $result;
 	}
 }
