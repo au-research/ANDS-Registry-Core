@@ -16692,6 +16692,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 		search: function(filters){
 			this.status = 'loading';
+            filters = this.cleanFilters(filters);
 			// $log.debug('search filters', filters);
 			var promise = $http.post(base_url+'registry_object/filter', {'filters':filters}).then(function(response){
 				this.status = 'idle';
@@ -16704,6 +16705,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			});
 			return promise;
 		},
+
+        cleanFilters: function(filters) {
+          angular.forEach(filters, function(value, index) {
+            if (value=='') delete filters[index];
+          });
+          return filters;
+        },
 
 		search_no_record: function(filters) {
 			var promise = $http.post(base_url+'registry_object/filter/true', {'filters':filters}).then(function(response){
@@ -16727,7 +16735,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			// });
 
 			//other facet fields
-
+            if(result.error)  console.log(result);
 			angular.forEach(result.facet_counts.facet_fields, function(item, index) {
 				facets[index] = [];
 				for (var i = 0; i < result.facet_counts.facet_fields[index].length ; i+=2) {
@@ -16782,7 +16790,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			for (i=0;i<earliest_array.length-1;i+=2) {
 				if (earliest_year && parseInt(earliest_array[i]) < earliest_year) {
 					earliest_year = parseInt(earliest_array[i]);
-				} else if(!earliest_year) {
+				} else if(!earliest_year || earliest_year=='') {
 					earliest_year = parseInt(earliest_array[i]);
 				}
 			}
@@ -16815,8 +16823,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				var t = this.split('=');
 				var term = t[0];
 				var value = t[1];
-				if(term=='rows'||term=='year_from'||term=='year_to') value = parseInt(value);
-				if(term && value && term!=''){
+				if(term=='rows'||term=='year_from'||term=='year_to' && $value!='') value = parseInt(value);
+				if(term && value && term!='' && value!=''){
 
 					if(filters[term]) {
 						if(typeof filters[term]=='string') {

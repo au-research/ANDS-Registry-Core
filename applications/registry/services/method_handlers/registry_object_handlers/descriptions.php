@@ -14,6 +14,9 @@ class Descriptions extends ROHandler {
                 $type = (string) $description['type'];
                 if($type!='rights' && $type!='accessRights'){
                     $description_str = html_entity_decode((string) $description);
+                    if($type=='fundingScheme'||$type=='fundingAmount'){
+                        $description_str = strip_tags($description_str);
+                    }
                     $result[] = array(
                         'type' => $type,
                         'description' => $description_str
