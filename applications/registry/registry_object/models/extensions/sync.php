@@ -69,6 +69,7 @@ class Sync_extension extends ExtensionBase{
 		);
 
         $include_rights_type = array('open','restricted','conditional');
+        $exclude_descriptions = array('fundingScheme','fundingAmount');
 
 		foreach($single_values as $s){
 			$json[$s] = html_entity_decode($this->ro->{$s}, ENT_QUOTES);
@@ -118,9 +119,10 @@ class Sync_extension extends ExtensionBase{
 				$theDescription = (string) $description;
 				$theDescriptionType = $type;
 			}
-
-			$json['description_value'][] = $description_str;
-			$json['description_type'][] = $type;
+            if(!in_array($type,$exclude_descriptions )){
+                $json['description_value'][] = $description_str;
+                $json['description_type'][] = $type;
+            }
 		}
         $listDescription = trim(strip_tags(html_entity_decode(html_entity_decode($theDescription)), ENT_QUOTES));
         $json['list_description'] = $listDescription;
@@ -348,7 +350,7 @@ class Sync_extension extends ExtensionBase{
 
             }
 
-            $activityStatus = 'UNKNOWN';
+            $activityStatus = 'other';
             if ($start || $end){
                 $activityStatus = 'PENDING';
                 if(!$start || $start < $now)
@@ -363,19 +365,23 @@ class Sync_extension extends ExtensionBase{
         if ($this->ro->class=='activity') {
         	$json['administering_institution'] = array();
         	$json['funders'] = array();
-        	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, true, true);
+        	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
         	foreach ($related_objects as $related_object) {
-        		if ($related_object['class']=='party' && $related_object['relation_type']=='isManagedBy') {
-        			$json['administering_institution'][] = $related_object['title'];
-        		} else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
-        			$json['funders'][] = $related_object['title'];
-        		} else if($related_object['class']=='party') {
-        			$tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
-        			if ( $tmp_ro && strtolower($tmp_ro->type)=='person' ) {
-        				$json['researchers'][] = $related_object['title'];
-        			}
-        			unset($tmp_ro);
-        		}
+                if(!isset($related_object['status']) || $related_object['status']!=DRAFT){
+                    if ($related_object['class']=='party' && $related_object['relation_type']=='isManagedBy') {
+                        $json['administering_institution'][] = $related_object['title'];
+                    } else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
+                        $json['funders'][] = $related_object['title'];
+                    } else if($related_object['class']=='party') {
+                        $tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
+                        if ( $tmp_ro && strtolower($tmp_ro->type)=='person' ) {
+                            $json['researchers'][] = $related_object['title'];
+                        }elseif(isset($related_object['related_info_type']) && $related_object['related_info_type']=='party'){
+                            $json['researchers'][] = $related_object['title'];
+                        }
+                        unset($tmp_ro);
+                    }
+                }
         	}
         }
 
