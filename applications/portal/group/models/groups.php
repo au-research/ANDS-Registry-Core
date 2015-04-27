@@ -165,9 +165,10 @@ class Groups extends CI_Model {
 			->setOpt('fq', '+group:("'.$group['title'].'")')
 			->setOpt('fq', '+class:party')
 			->setOpt('fq', '+type_search:group')
-			->setOpt('rows', '10')
+			->setOpt('rows', '5')
 			->setOpt('fl', 'id,slug,title')
 			->executeSearch(true);
+        $group['groups_count'] =  $result['response']['numFound'];
 		foreach($result['response']['docs'] as $doc) {
 			$group['groups'][] = array(
 				'id' => $doc['id'],
@@ -175,7 +176,6 @@ class Groups extends CI_Model {
 				'slug' => isset($doc['slug']) ? $doc['slug']:''
 			);
 		}
-
 		//latest 5 collections
 		$group['latest_collections'] = array();
 		$this->solr

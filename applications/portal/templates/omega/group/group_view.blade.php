@@ -155,8 +155,8 @@
                 <li class="listItem hidden"><a href="{{base_url()}}{{$gr['slug']}}/{{$gr['id']}}">{{$gr['title']}}</a></li>
             @endif
             @endforeach
-            @if(sizeof($group['groups']) > 5)
-            <span id="show_all_span">Displaying: 5 out of {{sizeof($group['groups'])}}. <a href="" id="show_all_anchor">View All</a></span>
+            @if($group['groups_count'] > 5)
+            <span><a href="{{base_url()}}search#!/group={{$group['title']}}/type_search=group/class=party">View All {{$group['groups_count']}}.</a></span>
             @endif
         </ul>
     </div>
