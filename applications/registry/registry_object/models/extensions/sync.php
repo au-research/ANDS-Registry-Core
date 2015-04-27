@@ -119,7 +119,7 @@ class Sync_extension extends ExtensionBase{
 				$theDescription = (string) $description;
 				$theDescriptionType = $type;
 			}
-            if(!in_array($type,$exclude_descriptions )){
+            if(!in_array($type,$exclude_descriptions)){
                 $json['description_value'][] = $description_str;
                 $json['description_type'][] = $type;
             }
@@ -323,7 +323,7 @@ class Sync_extension extends ExtensionBase{
             $json['researchers'][] = strip_tags(html_entity_decode($node->nodeValue));
         }
 
-        $activityStatus = 'UNKNOWN';
+        $activityStatus = 'other';
         foreach ($xml->xpath('//ro:existenceDates') AS $date)
         {
 
