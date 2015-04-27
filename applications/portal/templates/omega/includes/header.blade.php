@@ -5,14 +5,19 @@
     @if(isset($ro->core['title']))
         <meta property="og:title" content="{{$ro->core['title']}}"/>
     @endif
-    <meta property="og:type" content="article"/>
-    @if(isset($ro) && isset($ro->logo) && is_array($ro->logo))
-        <meta property="og:image" content="{{$ro->logo[0]}}"/>
+        <meta property="og:type" content="article"/>
+    @if(isset($logo) && $logo !== false)
+        <meta property="og:image" content="{{$logo}}"/>
     @else
-        <meta property="og:image" content="http://www.ands.org.au/assets/images/ands-full-b.png"/>
+        <meta property="og:image" content="{{get_config_item('default_base_url')}}assets/core/images/ANDS_logo.JPG"/>
     @endif
     @if(isset($ro->core['description']))
         <meta property="og:description" content="{{$ro->core['description']}}"/>
+    @endif
+    @if(isset($ro->core['url']) && get_config_item('default_base_url') == 'https://researchdata.ands.org.au/')
+        <meta property="og:url" content="{{$ro->core['url']}}"/>
+    @else
+        <meta property="og:url" content="{{get_config_item('default_base_url')}}{{$ro->core['slug']}}/{{$ro->core['id']}}"/>
     @endif
     @if(isset($ro->core['site_name']))
         <meta property="og:site_name" content="{{$ro->core['site_name']}}"/>

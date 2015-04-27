@@ -33,7 +33,8 @@ class Core extends ROHandler {
 
         if($this->ro->class == 'activity' && strrpos($this->ro->key, 'purl') > 0)
         {
-            $result['description'] .= NL."PURL: " .$this->ro->key;
+            $result['url'] = $this->ro->key;
+            $result['description'] = "Identifier: " .$this->ro->key.NL.$this->index['list_description'];
         }
         return $result;
 	}
