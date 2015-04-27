@@ -16823,7 +16823,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				var t = this.split('=');
 				var term = t[0];
 				var value = t[1];
-				if(term=='rows'||term=='year_from'||term=='year_to' && $value!='') value = parseInt(value);
+				if(term=='rows'||term=='year_from'||term=='year_to' && value.trim()!='') value = parseInt(value);
 				if(term && value && term!='' && value!=''){
 
 					if(filters[term]) {
