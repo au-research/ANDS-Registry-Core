@@ -51,6 +51,7 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 	});
 
 	$scope.save = function(state){
+
 		$scope.saveMessage = 'loading...';
 		// $log.debug(state);
 		if(state) $scope.group.status = state;
@@ -61,6 +62,7 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 		// $log.debug($scope.group);
 		groupFactory.save($scope.group.name, $scope.group).then(function(data){
 			$scope.saveMessage = data.message;
+            $scope.contributor_form.$setPristine();
 		});
 	}
 
@@ -106,6 +108,15 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 		// $log.debug('removing identifier at index', index);
 		$scope.group.data.identifiers.splice(index, 1);
 	}
+    $scope.$on('$locationChangeStart', function(ev, nextUrl) {
+        if($scope.contributor_form.$dirty)
+        {
+            var r = confirm('You have unsaved changes. Would you like to save these before continuing?')
+            if (r == true) {
+                $scope.save();
+            }
+        }
+    });
 });
 
 app.directive('resolveUser', function($log, $http, profile_factory) {
