@@ -12,7 +12,9 @@ class Directaccess extends ROHandler {
         $relationshipTypeArray = ['isPresentedBy','supports'];
         $classArray = ['service'];
         $services = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
+
         foreach($services as $service){
+
             if($service['relation_url']!='' && $service['status']==PUBLISHED){
                 if($service['relation_description']=='')$service['relation_description']=$service['title'];
                 $download[] = Array(
@@ -32,16 +34,15 @@ class Directaccess extends ROHandler {
         if($this->xml->{$this->ro->class}->relatedInfo){
             foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo){
                 $type = (string) $relatedInfo['type'];
-                $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
-                if($type == 'service'&& $identifier_resolved!=''){
+                if($type == 'service' && in_array($relatedInfo->relation['type'], $relationshipTypeArray) && $relatedInfo->relation->url != ''){
                     $download[] = Array(
                         'access_type' => 'viaService',
                         'contact_type' => 'url',
-                        'access_value' => $identifier_resolved,
+                        'access_value' => (string) $relatedInfo->relation->url,
                         'title'=> (string) $relatedInfo->title,
                         'mediaType'=>'',
                         'byteSize'=>'',
-                        'notes' => (string) $relatedInfo->notes
+                        'notes' => (string) $relatedInfo->relation->description
                     );
                 }
             }
