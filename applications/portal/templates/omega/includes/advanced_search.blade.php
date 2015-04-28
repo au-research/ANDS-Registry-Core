@@ -120,7 +120,9 @@
 										<ul class="dropdown-menu" role="menu">
 											<li ng-repeat="c in vocab_choices"><a href="" ng-click="setVocab(c.value)">[[c.value | getLabelFor:vocab_choices ]]</a></li>
 										</ul>
+										<button type="button" class="btn btn-link" ng-if="loading_subjects"><i class="fa fa-refresh fa-spin"></i></button>
 									</div>
+
 									<div class="clearfix"></div>
 									<ul class="tree" ng-if="vocab_tree_tmp" ng-cloak>
 										<li ng-repeat="item in vocab_tree_tmp | orderObjectBy:'prefLabel'">

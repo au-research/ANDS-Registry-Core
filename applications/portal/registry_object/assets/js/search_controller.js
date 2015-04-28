@@ -834,8 +834,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	//
 	$scope.$watch('vocab', function(newv, oldv){
 		if (newv!=oldv && $scope.isAdvancedSearchActive('subject')) {
+			$scope.loading_subjects = true;
 			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
 				$scope.vocab_tree_tmp = data;
+				$scope.loading_subjects = false;
 			});
 		}
 	});
