@@ -226,21 +226,20 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
 			ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
 		}
+	
+		if (location.href.indexOf('search')>-1) {
+			search_factory.search($scope.filters).then(function(data){
+				$scope.loading = false;
+				$scope.fuzzy = data.fuzzy_result;
+				search_factory.update('result', data);
+				search_factory.update('facets', search_factory.construct_facets(data));
+
+				$scope.sync();
+				$scope.$broadcast('search_complete');
+				$scope.populateCenters($scope.result.response.docs);
+			});
+		}
 		
-
-		search_factory.search($scope.filters).then(function(data){
-			$scope.loading = false;
-			$scope.fuzzy = data.fuzzy_result;
-			// search_factory.updateResult(data);
-			search_factory.update('result', data);
-			search_factory.update('facets', search_factory.construct_facets(data));
-
-			$scope.sync();
-			$scope.$broadcast('search_complete');
-			$scope.populateCenters($scope.result.response.docs);
-			// $log.debug('result', $scope.result);
-			// $log.debug($scope.result, search_factory.result);
-		});
 	}
 
 	$scope.addKeyWord = function(extra_keywords) {
