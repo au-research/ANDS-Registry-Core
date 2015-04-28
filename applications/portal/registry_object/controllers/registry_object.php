@@ -109,17 +109,17 @@ class Registry_object extends MX_Controller {
             //DRAFT Preview are not recorded
             if($ro->core['status'] == 'PUBLISHED') {
                 $ro->event('viewed');
-                ulog_terms(
-                    array(
-                        'event' => 'portal_view',
-                        'roid' => $ro->core['id'],
-                        'roclass' => $ro->core['class'],
-                        'dsid' => $ro->core['data_source_id'],
-                        'group' => $ro->core['group'],
-                        'ip' => $this->input->ip_address(),
-                        'user_agent' => $this->input->user_agent()
-                    ),'portal', 'info'
+                $event = array(
+                    'event' => 'portal_view',
+                    'roid' => $ro->core['id'],
+                    'roclass' => $ro->core['class'],
+                    'dsid' => $ro->core['data_source_id'],
+                    'group' => $ro->core['group'],
+                    'ip' => $this->input->ip_address(),
+                    'user_agent' => $this->input->user_agent()
                 );
+                if ($this->input->get('source')) $event['source'] = $this->input->get('source');
+                ulog_terms($event,'portal', 'info');
             } else {
             	//Handle Draft
             }
@@ -298,12 +298,12 @@ class Registry_object extends MX_Controller {
 		}
 
 		foreach($result as $r){
-			if(ctype_alnum($r['prefLabel'])){
+			//if(ctype_alnum($r['prefLabel'])){
 				$first = strtoupper($r['prefLabel'][0]);
 				if(is_numeric($first)){$first='0-9';}
 				$azTree[$first]['collectionNum']++;
 				array_push($azTree[$first]['subtree'], $r);
-			}
+			//}
 		}
 
 		foreach($azTree as &$com) {

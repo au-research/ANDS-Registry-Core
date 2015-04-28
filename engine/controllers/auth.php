@@ -78,7 +78,8 @@ class Auth extends CI_Controller {
 			$response = $this->auth->authenticate();
 			$this->user->refreshAffiliations($this->user->localIdentifier());
 		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
+			$this->auth->post_authentication_hook();
+			// throw new Exception($e->getMessage());
 		}
 		
 	}
