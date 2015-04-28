@@ -121,7 +121,7 @@
             <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
-                        <span ng-if="name!='related_party_one_id'">[[ value | truncate:30 ]]</span>
+                        <span ng-if="name!='related_party_one_id'">[[ value | truncate:30  ]]</span>
                         <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
                         <small><i class="fa fa-remove" tip="Remove Item"></i></small>
                     </a>

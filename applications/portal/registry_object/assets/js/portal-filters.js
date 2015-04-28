@@ -20,6 +20,8 @@ angular.module('portal-filters', [])
 				case 'year_from': return 'Time Period (from)'; break;
 				case 'year_to': return 'Time Period (to)'; break;
 				case 'funding_scheme': return 'Funding Scheme'; break;
+				case 'funding_from': return 'Funding From'; break;
+				case 'funding_to': return 'Funding To'; break;
 				case 'funders': return 'Funder'; break;
 				case 'administering_institution': return 'Managing Institution'; break;
 				case 'institution': return 'Institution'; break;
