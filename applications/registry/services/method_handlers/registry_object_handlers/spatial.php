@@ -27,11 +27,55 @@ class Spatial extends ROHandler {
                 $coverages = $this->gXPath->query($query);
                 foreach($coverages as $spatial){
                     $type = $spatial->getAttribute('type');
-                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox')
-                    $result[] = array (
-                        'type' => $type,
-                        'value' => $spatial->nodeValue
-                    );
+                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'){
+                        $result[] = array (
+                            'type' => $type,
+                            'value' => $spatial->nodeValue
+                        );
+                    }
+                    elseif($type=='kmlPolyCoords' || $type =='gmlKmlPolyCoords'){
+                        if(!$this->ro->isValidKmlPolyCoords($spatial->nodeValue)){
+                            $result[] = array (
+                                'type' => $type,
+                                'value' => $spatial->nodeValue
+                            );
+                        }
+
+                    }
+                    elseif($type=='iso19139dcmiBox'){
+                        $north = null;
+                        $south = null;
+                        $west  = null;
+                        $east  = null;
+                        $tok = strtok($spatial->nodeValue, ";");
+                        while ($tok !== FALSE)
+                        {
+                            $keyValue = explode("=",$tok);
+                            if(strtolower(trim($keyValue[0])) == 'northlimit' && is_numeric($keyValue[1]))
+                            {
+                                $north = floatval($keyValue[1]);
+                            }
+                            if(strtolower(trim($keyValue[0])) == 'southlimit' && is_numeric($keyValue[1]))
+                            {
+                                $south = floatval($keyValue[1]);
+                            }
+                            if(strtolower(trim($keyValue[0])) == 'westlimit' && is_numeric($keyValue[1]))
+                            {
+                                $west = floatval($keyValue[1]);
+                            }
+                            if(strtolower(trim($keyValue[0])) == 'eastlimit' && is_numeric($keyValue[1]))
+                            {
+                                $east = floatval($keyValue[1]);
+                            }
+                            $tok = strtok(";");
+                        }
+                        if(!$north&&!$south&&!$east&&!$west)
+                        $result[] = array (
+                            'type' => $type,
+                            'value' => $spatial->nodeValue
+                        );
+
+                    }
 
                 }
             }
@@ -40,12 +84,53 @@ class Spatial extends ROHandler {
                 $coverages = $this->gXPath->query($query);
                 foreach($coverages as $spatial){
                     $type = $spatial->getAttribute('type');
-                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox')
+                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'){
                         $result[] = array (
                             'type' => $type,
                             'value' => $spatial->nodeValue
                         );
-
+                    }
+                    elseif($type=='kmlPolyCoords' || $type =='gmlKmlPolyCoords'){
+                        if(!$this->ro->isValidKmlPolyCoords($spatial->nodeValue)){
+                            $result[] = array (
+                                'type' => $type,
+                                'value' => $spatial->nodeValue
+                            );
+                        }
+                    }
+                    elseif($type=='iso19139dcmiBox'){
+                        $north = null;
+                        $south = null;
+                        $west  = null;
+                        $east  = null;
+                        $tok = strtok($spatial->nodeValue, ";");
+                        while ($tok !== FALSE)
+                        {
+                            $keyValue = explode("=",$tok);
+                            if(strtolower(trim($keyValue[0])) == 'northlimit' && is_numeric($keyValue[1]))
+                            {
+                                $north = floatval($keyValue[1]);
+                            }
+                            if(strtolower(trim($keyValue[0])) == 'southlimit' && is_numeric($keyValue[1]))
+                            {
+                                $south = floatval($keyValue[1]);
+                            }
+                            if(strtolower(trim($keyValue[0])) == 'westlimit' && is_numeric($keyValue[1]))
+                            {
+                                $west = floatval($keyValue[1]);
+                            }
+                            if(strtolower(trim($keyValue[0])) == 'eastlimit' && is_numeric($keyValue[1]))
+                            {
+                                $east = floatval($keyValue[1]);
+                            }
+                            $tok = strtok(";");
+                        }
+                        if(!$north&&!$south&&!$east&&!$west)
+                            $result[] = array (
+                                'type' => $type,
+                                'value' => $spatial->nodeValue
+                            );
+                    }
                 }
             }
 
