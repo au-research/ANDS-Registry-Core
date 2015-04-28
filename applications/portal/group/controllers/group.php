@@ -114,15 +114,24 @@ class Group extends MX_Controller {
 		$config['allowed_types'] = 'jpg|png|gif|jpeg';
 		$config['overwrite'] = true;
 		$config['max_size']	= '4000';
+        $this->load->library('upload', $config);
 
-		$this->load->library('upload', $config);
-		if(!$this->upload->do_upload('file')) {
-			echo json_encode(
-				array(
-					'status'=>'ERROR',
-					'message' => $this->upload->display_errors('','')
-				)
-			);
+        if(!$this->upload->do_upload('file')) {
+            $upload_file_exceeds_limit = "The uploaded file exceeds the maximum allowed size in your PHP configuration file.";
+            $upload_invalid_filetype = "The filetype you are attempting to upload is not allowed.";
+            $theError = $this->upload->display_errors();
+            if(strrpos($theError, $upload_file_exceeds_limit) > 0){
+                $theError = "Maximum file size exceeded. Please select a file smaller than 4MB.";
+            }
+            elseif(strrpos($theError, $upload_invalid_filetype) > 0){
+                $theError = "Unsupported file format. Please select a png, jpg or gif.";
+            }
+            echo json_encode(
+                array(
+                    'status'=>'ERROR',
+                    'message' => $theError
+                )
+            );
 		} else {
 			$data = $this->upload->data();
 			$name = $data['orig_name'];

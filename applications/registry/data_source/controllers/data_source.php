@@ -140,13 +140,23 @@ class Data_source extends MX_Controller {
 		$config['upload_path'] = $upload_path;
 		$config['allowed_types'] = 'xml|xsl';
 		$config['overwrite'] = true;
-		$config['max_size']	= '400';
+		$config['max_size']	= '500';
 		$this->load->library('upload', $config);
+
 		if(!$this->upload->do_upload('file')) {
+            $upload_file_exceeds_limit = "The uploaded file exceeds the maximum allowed size in your PHP configuration file.";
+            $upload_invalid_filetype = "The filetype you are attempting to upload is not allowed.";
+            $theError = $this->upload->display_errors();
+            if(strrpos($theError, $upload_file_exceeds_limit) > 0){
+                $theError = "Maximum file size exceeded. Please select a file smaller than 500KB.";
+            }
+            elseif(strrpos($theError, $upload_invalid_filetype) > 0){
+                $theError = "Unsupported file format. Please select an xml or xsl.";
+            }
 			echo json_encode(
 				array(
 					'status'=>'ERROR',
-					'message' => $this->upload->display_errors()
+					'message' => $theError
 				)
 			);
 		} else {
