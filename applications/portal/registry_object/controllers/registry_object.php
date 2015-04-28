@@ -298,12 +298,12 @@ class Registry_object extends MX_Controller {
 		}
 
 		foreach($result as $r){
-			if(ctype_alnum($r['prefLabel'])){
+			//if(ctype_alnum($r['prefLabel'])){
 				$first = strtoupper($r['prefLabel'][0]);
 				if(is_numeric($first)){$first='0-9';}
 				$azTree[$first]['collectionNum']++;
 				array_push($azTree[$first]['subtree'], $r);
-			}
+			//}
 		}
 
 		foreach($azTree as &$com) {
