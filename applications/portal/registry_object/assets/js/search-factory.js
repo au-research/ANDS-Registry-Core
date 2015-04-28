@@ -292,6 +292,10 @@ app.factory('search_factory', function($http, $log){
 				var term = t[0];
 				var value = t[1];
 				if(term=='rows'||term=='year_from'||term=='year_to' && value.trim()!='') value = parseInt(value);
+				if(term=='funding_from' || term=='funding_to') {
+					value = decodeURIComponent(value);
+					value = Number(value.replace(/[^0-9\.-]+/g,""));
+				}
 				if(term && value && term!='' && value!=''){
 
 					if(filters[term]) {
