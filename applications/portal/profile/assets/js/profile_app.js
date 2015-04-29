@@ -15,7 +15,8 @@ app.config(['$routeProvider', '$locationProvider',
 app.controller('dashboardCtrl', function($scope, $rootScope, $log, profile_factory, search_factory, $modal){
 	$scope.hello = 'Hello World';
 	$scope.base_url = base_url;
-
+    $scope.sort_order = 'title';
+    $scope.sort_title = 'Record Title';
     $scope.saved_search_count = 0;
 
     $scope.fetch = function(){
@@ -174,7 +175,12 @@ app.controller('dashboardCtrl', function($scope, $rootScope, $log, profile_facto
         });
     }
 
-    
+
+    $scope.sort_table = function(table, sort_order, sort_title){
+        $scope.sort_order = sort_order;
+        $scope.sort_title = sort_title;
+    }
+
     $scope.modify_user_data = function(type, action, id) {
         var records = [];
         if(action=='refresh') {

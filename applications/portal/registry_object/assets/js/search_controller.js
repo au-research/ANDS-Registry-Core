@@ -562,7 +562,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			        			id:i.id,
 			        			title:i.title,
 			        			slug:i.slug,
-			        			group:i.group
+			        			group:i.group,
+                                class: $scope.filters.class,
+                                type: i.type,
+                                saved_time:parseInt(new Date().getTime() / 1000)
 			        		});
 			        	});
 			           	return selected;

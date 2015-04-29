@@ -73,7 +73,14 @@
 										</div>
 									</td>
 									<td>
-										<span ng-if="selected('saved_record') == 0">Action</span>
+                                        <div class="btn-group" ng-if="selected('saved_record') == 0">
+                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Sort: [[sort_title]]</span></button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li><a href="" ng-click="sort_table('saved_record', 'title', 'Record Title')">Record Title</a></li>
+                                                <li><a href="" ng-click="sort_table('saved_record', 'saved_time', 'Saved Time')">Saved Time</a></li>
+                                                <li><a href="" ng-click="sort_table('saved_record', 'class', 'Record Type')">Record Type</a></li>
+                                            </ul>
+                                        </div>
 										<div class="btn-group" ng-if="selected('saved_record') > 0">
 											<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Bulk Action ([[ selected('saved_record') ]]) <span class="caret"></span></button>
 											<ul class="dropdown-menu" role="menu">
@@ -86,11 +93,16 @@
 								</tr>
 							</thead>
 							<tbody>
-							<tr ng-repeat="record in user.user_data.saved_record" ng-if="folderfilter(record)">
+							<tr ng-repeat="record in user.user_data.saved_record | orderObjectBy:sort_order" ng-if="folderfilter(record)">
 								<td><input type="checkbox" ng-model="record.selected" ng-click="record.selected=!record.selected"></td>
 								<td>
+                                    <i class="fa fa-folder-open icon-portal" ng-if="record.class == 'collection'"></i>
+                                    <i class="fa fa-flask icon-portal" ng-if="record.class == 'activity'"></i>
+                                    <i class="fa fa-wrench icon-portal" ng-if="record.class == 'service'"></i>
+                                    <i class="fa fa-user icon-portal" ng-if="record.class == 'party'"></i>
 									<a href="[[base_url]][[record.slug]]/[[record.id]]">[[ record.title ]]</a><br>
-									<small>Data Provider: [[ record.group ]]</small><br>
+                                    <small>Data Provider: [[ record.group ]]</small><br>
+									<small>saved Time: [[record.saved_time * 1000 | date ]]</small><br>
 									<small>Last Viewed: [[record.last_viewed * 1000 | date ]] ([[record.last_viewed * 1000 | timeago ]])</small>
 								</td>
 								<td>
