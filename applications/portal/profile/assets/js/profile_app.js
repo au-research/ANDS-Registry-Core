@@ -17,6 +17,7 @@ app.controller('dashboardCtrl', function($scope, $rootScope, $log, profile_facto
 	$scope.base_url = base_url;
     $scope.sort_order = 'title';
     $scope.sort_title = 'Record Title';
+    $scope.ascening = false;
     $scope.saved_search_count = 0;
 
     $scope.fetch = function(){
@@ -179,6 +180,7 @@ app.controller('dashboardCtrl', function($scope, $rootScope, $log, profile_facto
     $scope.sort_table = function(table, sort_order, sort_title){
         $scope.sort_order = sort_order;
         $scope.sort_title = sort_title;
+        $scope.ascening = !$scope.ascening;
     }
 
     $scope.modify_user_data = function(type, action, id) {

@@ -93,7 +93,7 @@
 								</tr>
 							</thead>
 							<tbody>
-							<tr ng-repeat="record in user.user_data.saved_record | orderObjectBy:sort_order" ng-if="folderfilter(record)">
+							<tr ng-repeat="record in user.user_data.saved_record | orderObjectBy:sort_order:ascening" ng-if="folderfilter(record)">
 								<td><input type="checkbox" ng-model="record.selected" ng-click="record.selected=!record.selected"></td>
 								<td>
                                     <i class="fa fa-folder-open icon-portal" ng-if="record.class == 'collection'"></i>
