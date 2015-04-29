@@ -99,7 +99,8 @@
                                     <i class="fa fa-folder-open icon-portal" ng-if="record.class == 'collection'"></i>
                                     <i class="fa fa-flask icon-portal" ng-if="record.class == 'activity'"></i>
                                     <i class="fa fa-wrench icon-portal" ng-if="record.class == 'service'"></i>
-                                    <i class="fa fa-user icon-portal" ng-if="record.class == 'party'"></i>
+                                    <i class="fa fa-user icon-portal" ng-if="record.class == 'party' && record.type=='person'"></i>
+                                    <i class="fa fa-group icon-portal" ng-if="record.class == 'party' && record.type=='group'"></i>
 									<a href="[[base_url]][[record.slug]]/[[record.id]]">[[ record.title ]]</a><br>
                                     <small>Data Provider: [[ record.group ]]</small><br>
 									<small>saved Time: [[record.saved_time * 1000 | date ]]</small><br>
