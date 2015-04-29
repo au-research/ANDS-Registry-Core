@@ -74,7 +74,7 @@
 									</td>
 									<td>
                                         <div class="btn-group" ng-if="selected('saved_record') == 0">
-                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Sort: [[sort_title]]</span></button>
+                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Sort: [[sort_title]]</span><span ng-if="ascending">&nbsp;&#9650;</span><span ng-if="!ascending">&nbsp;&#9660;</span></button>
                                             <ul class="dropdown-menu" role="menu">
                                                 <li><a href="" ng-click="sort_table('saved_record', 'title', 'Record Title')">Record Title</a></li>
                                                 <li><a href="" ng-click="sort_table('saved_record', 'saved_time', 'Saved Time')">Saved Time</a></li>
@@ -93,7 +93,7 @@
 								</tr>
 							</thead>
 							<tbody>
-							<tr ng-repeat="record in user.user_data.saved_record | orderObjectBy:sort_order:ascening" ng-if="folderfilter(record)">
+							<tr ng-repeat="record in user.user_data.saved_record | orderObjectBy:sort_order:ascending" ng-if="folderfilter(record)">
 								<td><input type="checkbox" ng-model="record.selected" ng-click="record.selected=!record.selected"></td>
 								<td>
                                     <i class="fa fa-folder-open icon-portal" ng-if="record.class == 'collection'"></i>
