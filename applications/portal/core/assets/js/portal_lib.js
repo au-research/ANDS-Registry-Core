@@ -14578,6 +14578,8 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 				case 'year_from': return 'Time Period (from)'; break;
 				case 'year_to': return 'Time Period (to)'; break;
 				case 'funding_scheme': return 'Funding Scheme'; break;
+				case 'funding_from': return 'Funding From'; break;
+				case 'funding_to': return 'Funding To'; break;
 				case 'funders': return 'Funder'; break;
 				case 'administering_institution': return 'Managing Institution'; break;
 				case 'institution': return 'Institution'; break;
@@ -15684,21 +15686,20 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
 			ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
 		}
+	
+		if (location.href.indexOf('search')>-1) {
+			search_factory.search($scope.filters).then(function(data){
+				$scope.loading = false;
+				$scope.fuzzy = data.fuzzy_result;
+				search_factory.update('result', data);
+				search_factory.update('facets', search_factory.construct_facets(data));
+
+				$scope.sync();
+				$scope.$broadcast('search_complete');
+				$scope.populateCenters($scope.result.response.docs);
+			});
+		}
 		
-
-		search_factory.search($scope.filters).then(function(data){
-			$scope.loading = false;
-			$scope.fuzzy = data.fuzzy_result;
-			// search_factory.updateResult(data);
-			search_factory.update('result', data);
-			search_factory.update('facets', search_factory.construct_facets(data));
-
-			$scope.sync();
-			$scope.$broadcast('search_complete');
-			$scope.populateCenters($scope.result.response.docs);
-			// $log.debug('result', $scope.result);
-			// $log.debug($scope.result, search_factory.result);
-		});
 	}
 
 	$scope.addKeyWord = function(extra_keywords) {
@@ -16292,8 +16293,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	//
 	$scope.$watch('vocab', function(newv, oldv){
 		if (newv!=oldv && $scope.isAdvancedSearchActive('subject')) {
+			$scope.loading_subjects = true;
 			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
 				$scope.vocab_tree_tmp = data;
+				$scope.loading_subjects = false;
 			});
 		}
 	});
@@ -16824,6 +16827,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				var term = t[0];
 				var value = t[1];
 				if(term=='rows'||term=='year_from'||term=='year_to' && value.trim()!='') value = parseInt(value);
+				if(term=='funding_from' || term=='funding_to') {
+					value = decodeURIComponent(value);
+					value = Number(value.replace(/[^0-9\.-]+/g,""));
+				}
 				if(term && value && term!='' && value!=''){
 
 					if(filters[term]) {
