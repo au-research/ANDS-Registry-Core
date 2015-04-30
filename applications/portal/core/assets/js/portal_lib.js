@@ -14317,7 +14317,10 @@ angular.module('uiGmapgoogle-maps.extensions')
                 slug:$scope.record.core.slug,
                 group:$scope.record.core.group,
                 title:$scope.record.core.title,
+                type:$scope.record.core.type,
+                class:$scope.record.core.class,
                 folder:folder,
+                saved_time:parseInt(new Date().getTime() / 1000),
                 last_viewed:parseInt(new Date().getTime() / 1000)
             });
         } else if($scope.records) {
@@ -16022,7 +16025,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			        			id:i.id,
 			        			title:i.title,
 			        			slug:i.slug,
-			        			group:i.group
+			        			group:i.group,
+                                class: $scope.filters.class,
+                                type: i.type,
+                                saved_time:parseInt(new Date().getTime() / 1000)
 			        		});
 			        	});
 			           	return selected;
