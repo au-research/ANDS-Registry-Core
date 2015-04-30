@@ -69,7 +69,7 @@ class Sync_extension extends ExtensionBase{
 		);
 
         $include_rights_type = array('open','restricted','conditional');
-        $exclude_descriptions = array('fundingScheme','fundingAmount');
+        $include_descriptions = array('brief','full');
 
 		foreach($single_values as $s){
 			$json[$s] = html_entity_decode($this->ro->{$s}, ENT_QUOTES);
@@ -119,7 +119,10 @@ class Sync_extension extends ExtensionBase{
 				$theDescription = (string) $description;
 				$theDescriptionType = $type;
 			}
-            if(!in_array($type,$exclude_descriptions)){
+            if($this->ro->class=='activity'&& in_array($type,$include_descriptions)){
+                $json['description_value'][] = $description_str;
+                $json['description_type'][] = $type;
+            }elseif($this->ro->class!='activity'){
                 $json['description_value'][] = $description_str;
                 $json['description_type'][] = $type;
             }
