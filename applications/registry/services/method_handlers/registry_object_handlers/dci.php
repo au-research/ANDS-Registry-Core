@@ -19,10 +19,12 @@ class DCI extends ROHandler {
         $this->DCIRoot = new SimpleXMLElement("<DataRecord></DataRecord>");
         $this->DCIDom = dom_import_simplexml($this->DCIRoot);
         $this->citation_handler = new citations($this->get_resource());
+
         $CI =& get_instance();
         $ds = $CI->ds->getByID($this->ro->data_source_id);
         $exportable = false;
-        if($ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
+
+        if($this->overrideExportable || $ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
             $exportable = true;
         $sourceUrl = $this->citation_handler->getSourceUrl();
         if($sourceUrl == null || !($exportable))
@@ -33,7 +35,8 @@ class DCI extends ROHandler {
         $this->getRightsAndLicencing();
         $this->getParentDataRef();
         $this->getDescriptorsData();
-
+        $this->getFundingInfo();
+        $this->getCitationList();
         return $this->DCIDom->ownerDocument->saveXML($this->DCIDom->ownerDocument->documentElement, LIBXML_NOXMLDECL);
 	}
 
@@ -125,7 +128,26 @@ class DCI extends ROHandler {
     }
 
 
+    private function  getFundingInfo(){
+        $forDCI = true;
+        $relationshipTypeArray = array('isOutputOf');
+        $classArray = array('activity');
+        $grants = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray, $forDCI);
+        if(is_array($grants) && sizeof($grants) > 0)
+            $fundingInfo = $this->DCIRoot->addChild('FundingInfo');
+        foreach($grants as $grant){
+            $parsedFunding = $fundingInfo->addChild('ParsedFunding');
+            $parsedFunding->addChild('GrantNumber',  $grant['key']);
+        }
+    }
+
+    private function  getCitationList(){
+        $citationList = $this->DCIRoot->addChild('CitationList');
+    }
+
     private function getAuthors($authorList){
+        $seq = 0;
+        $tempered = false;
         if(isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor)){
             foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor){
                 $nameParts = Array();
@@ -136,7 +158,23 @@ class DCI extends ROHandler {
                     );
                 }
                 $eAuthor = $authorList->addChild("Author");
-                $eAuthor['seq'] = (string)$contributor['seq'];
+                $cSeq = intval((string)$contributor['seq']);
+                if($cSeq == 0  || $cSeq == '') // if empty or 0 we have to increment the sequence in-house
+                {
+                    $cSeq = ++$seq;
+                    $tempered = true; // was dirty so we're fixin it
+                }
+                elseif($cSeq <= $seq && $tempered == true) // if this number is less than seq AND we are fixin in
+                {
+                    $cSeq = ++$seq;
+                }
+                if($cSeq > $seq){
+                   $seq = $cSeq; //store the largest current sequence number
+                }
+
+
+                $eAuthor['seq'] = $cSeq;
+
                 $eAuthor['AuthorRole'] = "Contributor";
                 $eAuthor->addChild('AuthorName', formatName($nameParts));
             }
@@ -218,8 +256,8 @@ class DCI extends ROHandler {
                 if($rl['type'] == 'licence')
                     $licence .= $rl['value'];
             }
-            $rights_Licensing->addChild('RightsStatement', $rights);
-            $rights_Licensing->addChild('LicenseStatement', $licence);
+            $rights_Licensing->addChild('RightsStatement', str_replace('&', '&amp;', $rights));
+            $rights_Licensing->addChild('LicenseStatement', str_replace('&', '&amp;', $licence));
         }
     }
 

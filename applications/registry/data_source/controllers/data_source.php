@@ -145,9 +145,10 @@ class Data_source extends MX_Controller {
 
 		if(!$this->upload->do_upload('file')) {
             $upload_file_exceeds_limit = "The uploaded file exceeds the maximum allowed size in your PHP configuration file.";
+            $upload_invalid_filesize  = "The file you are attempting to upload is larger than the permitted size.";
             $upload_invalid_filetype = "The filetype you are attempting to upload is not allowed.";
             $theError = $this->upload->display_errors();
-            if(strrpos($theError, $upload_file_exceeds_limit) > 0){
+            if(strrpos($theError, $upload_file_exceeds_limit) > 0 || strrpos($theError, $upload_invalid_filesize) > 0){
                 $theError = "Maximum file size exceeded. Please select a file smaller than 500KB.";
             }
             elseif(strrpos($theError, $upload_invalid_filetype) > 0){
