@@ -221,16 +221,18 @@
                    <p>
                         @foreach($ro->relationships['activity'] as $col)
                        <?php
+                       $funder = '';
                        if(isset($col['relation_description']) && $col['relation_description']!=''){
                            $description = 'tip="'.$col['title']."<br/>".$col['relation_description'].'"';
                        }else{
                            $description = 'tip="'.$col['title'].'"';
                        }
+                       if(isset($col['funder'])) $funder = $col['funder'];
                        ?>
                            @if($col['slug'] && $col['registry_object_id'])
-                           <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" {{$description}} ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a><br />
+                           <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}</small> <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}" class="ro_preview" {{$description}} ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a> {{$funder}}<br />
                            @elseif(isset($col['identifier_relation_id']))
-                           <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
+                           <i class="fa fa-flask icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" class="ro_preview" {{$description}} identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a> {{$funder}}<br/>
                            @endif
                         @endforeach
                         @if($ro->relationships['activity_count'] > $relatedLimit)
