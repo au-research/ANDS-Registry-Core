@@ -45,7 +45,6 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 
 	profile_factory.get_user().then(function(data){
 		$scope.user = data;
-		// $log.debug($scope.user);
 		if($scope.user.function.indexOf('REGISTRY_SUPERUSER')!=-1) $scope.superuser = true;
 		// $log.debug($scope.superuser);
 	});
@@ -59,6 +58,8 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 		
 		if(!$scope.group.data) $scope.group.data = {};
 		if(!$scope.group.status) $scope.group.status = 'DRAFT';
+        $scope.group.date_modified = new Date().toISOString();
+        $scope.group.modified_who = $scope.user.name;
 		// $log.debug($scope.group);
 		groupFactory.save($scope.group.name, $scope.group).then(function(data){
 			$scope.saveMessage = data.message;
