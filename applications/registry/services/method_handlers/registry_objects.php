@@ -246,7 +246,7 @@ class Registry_objectsMethod extends MethodHandler {
         if(isset($relationships['activity'])){
             for($i=0;$i<count($relationships['activity']);$i++){
                 $funder = $this->getFunders($relationships['activity'][$i]['registry_object_id']);
-                if($funder!='') $relationships['activity'][$i]['funder']= "(funded by a ".$funder.")";
+                if($funder!='') $relationships['activity'][$i]['funder']= "(funded by ".$funder.")";
             }
         }
 
