@@ -91,8 +91,30 @@ class DCI extends ROHandler {
     private function  getDescriptorsData(){
         $keyWords = $this->citation_handler->getKeywords();
         $spatialData = $this->citation_handler->getSpatial();
-        $earliestYear = (isset($this->index['earliest_year']) ? $this->index['earliest_year'] : null);
-        $latestYear = (isset($this->index['latest_year']) ? $this->index['latest_year'] : null);
+        $latestYear = false;
+        $earliestYear = false;
+        if(isset($this->xml->{$this->ro->class}->coverage->temporal->date)){
+
+            foreach($this->xml->{$this->ro->class}->coverage->temporal->date as $date){
+                $type = (string)$date['type'];
+                if($type=='dateFrom'){
+                    if(strlen(trim($date)) == 4)
+                        $date = "Jan 01, ".trim($date);
+                    $end = strtotime($date);
+                    if(!$earliestYear || $earliestYear > date("Y",$end))
+                        $earliestYear = date("Y",$end);
+                }
+                if($type=='dateTo')
+                {
+                    if(strlen(trim($date)) == 4)
+                        $date = "Dec 12, ".trim($date);
+                    $end = strtotime($date);
+                    if(!$latestYear || $latestYear < date("Y",$end))
+                        $latestYear = date("Y",$end);
+                }
+            }
+        }
+
         //var_dump($keyWords);
         if($keyWords || $spatialData || $earliestYear || $latestYear)
         {
@@ -133,16 +155,49 @@ class DCI extends ROHandler {
         $relationshipTypeArray = array('isOutputOf');
         $classArray = array('activity');
         $grants = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray, $forDCI);
-        if(is_array($grants) && sizeof($grants) > 0)
+        if(is_array($grants) && sizeof($grants) > 0){
             $fundingInfo = $this->DCIRoot->addChild('FundingInfo');
-        foreach($grants as $grant){
-            $parsedFunding = $fundingInfo->addChild('ParsedFunding');
-            $parsedFunding->addChild('GrantNumber',  $grant['key']);
+            $fundingInfoList = $fundingInfo->addChild('FundingInfoList');
+            foreach($grants as $grant){
+                $parsedFunding = $fundingInfoList->addChild('ParsedFunding');
+                $identifierStr = '';
+                foreach($grant['identifiers'] as $identifier){
+                    $identifierStr .= $this->normaliseIdentifier($identifier[0], $identifier[1]).", ";
+                }
+                $parsedFunding->addChild('GrantNumber', substr($identifierStr, 0, strlen($identifierStr) - 2));
+                $grantIndex = $this->findGrantbyKey($grant['key']);
+                if($grantIndex['funders'])
+                    $parsedFunding->addChild("FundingOrganization",$grantIndex['funders'][0]);
+            }
         }
     }
 
+
     private function  getCitationList(){
-        $citationList = $this->DCIRoot->addChild('CitationList');
+        $publications = $this->gXPath->query("//ro:relatedInfo[@type='publication']");
+        if($publications->length > 0)
+        {
+            $citationList = $this->DCIRoot->addChild('CitationList');
+            foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo) {
+                $citation = $citationList->addChild('Citation');
+                $citation['CitationType'] = "Citing Ref";
+                $citationText = $citation->addChild('CitationText');
+                $text = (string)$relatedInfo->title;
+                if($relatedInfo->identifier['type'] == 'uri')
+                {
+                    $text .= ' &lt;'.$relatedInfo->identifier.'&gt;';
+                }
+                else
+                {
+                    $text .= ' &lt;'.$relatedInfo->identifier['type'].':'.$relatedInfo->identifier.'&gt;';
+                }
+                if(isset($relatedInfo->notes))
+                {
+                    $text .= '('.$relatedInfo->notes.')';
+                }
+                $citationText->addChild('CitationString', $text);
+            }
+        }
     }
 
     private function getAuthors($authorList){
@@ -261,7 +316,64 @@ class DCI extends ROHandler {
         }
     }
 
+    function normaliseIdentifier($value, $type)
+    {
+        $_orcidPrefix = "http://orcid.org/";
+        $_nlaPrefix = "http://nla.gov.au/";
 
+        if ($value == '')
+        {
+            return "";
+        }
+        else{
+            if(strtolower($type) == "orcid")
+            {
+                if (strpos($value, $_orcidPrefix) === FALSE)
+                {
+                    return $_orcidPrefix . $value;
+                }
+                else
+                {
+                    return $value;
+                }
+            }
+            else if ($type == "AU-ANL:PEAU")
+            {
+                if (strpos($value, $_nlaPrefix) === FALSE)
+                {
+                    return $_nlaPrefix . $value;
+                }
+                else
+                {
+                    return $value;
+                }
+            }
+            else if (in_array(strtolower($type), array("uri","purl")))
+            {
+                return $value;
+            }
+            else
+            {
+                return (strtolower($type) . ": " . $value);
+            }
+        }
+    }
+
+    private function findGrantbyKey($key){
+        $CI =& get_instance();
+        $CI->load->library('solr');
+        $CI->solr->init();
+        $CI->solr->setOpt('q','key:"'.$key.'"');
+        $CI->solr->setOpt('rows', 1);
+        $result = $CI->solr->executeSearch(true);
+
+        if ($result['response']['numFound'] > 0) {
+            $record = $result['response']['docs'][0];
+            return $record;
+        } else {
+            return false;
+        }
+    }
 
 }
 
