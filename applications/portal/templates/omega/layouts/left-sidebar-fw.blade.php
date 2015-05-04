@@ -19,7 +19,7 @@
     		    			</div>
                             <div class="col-xs-12 col-md-8 col-lg-9">
                                 @yield('content')
-                            </div>
+                            </div>s
     		    		</div>
     		    	</div>
     		    </section>
