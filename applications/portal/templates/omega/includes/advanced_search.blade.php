@@ -55,12 +55,17 @@
 
 							<div ng-if="isAdvancedSearchActive(facet.name)" ng-repeat="facet in prefacets2">
 								<ul class="list-unstyled" ng-if="facet.name!='subject'">
-									<li ng-repeat="item in facet.value | orderObjectBy:'name'">
+									<li ng-repeat="item in facet.value | orderObjectBy:'name'" ng-if="facet.name!='access_rights' && facet.name!='license_class'">
 										<input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
-										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name!='group'">[[item.name | toTitleCase]] ([[item.value]])</a>  
-										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name=='group'">[[item.name]] ([[item.value]])</a>    
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name!='group'">[[item.name | toTitleCase]] ([[item.value]])</a>
+										<a href="" ng-click="togglePreFilter(facet.name, item.name, false)" ng-if="facet.name=='group'">[[item.name]] ([[item.value]])</a>
 										<span facetinfo infotype="facet.name" infovalue="item.name"></span>
 									</li>
+                                    <li ng-repeat="item in facet.value | sortObjectBy:'name'" ng-if="facet.name=='access_rights' || facet.name=='license_class'">
+                                        <input type="checkbox" ng-checked="isPrefilterFacet(facet.name, item.name)" ng-click="togglePreFilter(facet.name, item.name, false)">
+                                        <a href="" ng-click="togglePreFilter(facet.name, item.name, false)">[[item.name | toTitleCase]] ([[item.value]])</a>
+                                        <span facetinfo infotype="facet.name" infovalue="item.name"></span>
+                                    </li>
 								</ul>
 							</div>
 
@@ -115,7 +120,9 @@
 										<ul class="dropdown-menu" role="menu">
 											<li ng-repeat="c in vocab_choices"><a href="" ng-click="setVocab(c.value)">[[c.value | getLabelFor:vocab_choices ]]</a></li>
 										</ul>
+										<button type="button" class="btn btn-link" ng-if="loading_subjects"><i class="fa fa-refresh fa-spin"></i></button>
 									</div>
+
 									<div class="clearfix"></div>
 									<ul class="tree" ng-if="vocab_tree_tmp" ng-cloak>
 										<li ng-repeat="item in vocab_tree_tmp | orderObjectBy:'prefLabel'">
@@ -165,15 +172,15 @@
 											[[filters]]
 									</div> -->
 									<div class="panel-body swatch-white">
-										<div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name)">
-										    <h4 ng-if="name!='q' || (name=='q' && !prefilters.cq)">[[name | filter_name]]</h4>
+										<div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name, 'advanced')">
+										    <h4 ng-if="(name!='q' && value!='') || (name=='q' && !prefilters.cq) ">[[name | filter_name]]</h4>
 										    <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
 										    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
 										        <li ng-repeat="v in value track by $index"> 
 										            <a href="" ng-click="togglePreFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
 										        </li>
 										    </ul>
-										    <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
+										    <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo') && value!=''">
 										        <li>
 										            <a href="" ng-click="togglePreFilter(name, value, true)">
 										                <span ng-if="name!='related_party_one_id'">[[ value | truncate:30 ]]</span>
@@ -206,10 +213,11 @@
 				</div>
 			</div>
 			<div class="modal-footer swatch-white">
-				<div class="btn-group pull-left">
-					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						Search for <span classicon fclass="filters.class"></span> [[ prefilters.class | getLabelFor:class_choices ]] <span class="caret"></span>
-					</button>
+                <div class=" pull-left" style="vertical-align:bottom;padding-right:5px;padding-top:5px"><h4> Search for </h4></div>
+                <div class="btn-group pull-left">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <span classicon fclass="filters.class"></span> [[ prefilters.class | getLabelFor:class_choices ]] <span class="caret"></span>
+                    </button>
 					<ul class="dropdown-menu" role="menu">
 						<li ng-repeat="c in class_choices"><a href="" ng-click="prefilters.class=c.value"><span classicon fclass="c.value"></span> [[c.value | getLabelFor:class_choices ]]</a></li>
 					</ul>

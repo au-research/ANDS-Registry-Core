@@ -396,9 +396,11 @@ class Solr {
 					$this->setOpt('fq','+latest_year:[* TO '.$date[1].']');
 					break;
 				case 'year_from':
+                    if($value!='')
 					$this->setOpt('fq','earliest_year:['.$value.' TO *]');
 					break;
 				case 'year_to':
+                    if($value!='')
 					$this->setOpt('fq','latest_year:[* TO '.$value.']');
 					break;
 				case 'license_class': 

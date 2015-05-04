@@ -782,41 +782,6 @@
 										</div>
 									</div>
 								<?php endif; ?>
-
-								<div class="control-group">
-									<label class="control-label" for="institution_pages">Contributor Pages
-										<sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#contributor_pages" target="_blank" class="muted">?</a></sup>
-									</label>
-									<div class="controls">
-										<input type="radio" ng-model="ds.institution_pages" value="0"><p class="help-inline">Do not have contributor pages</p><br />
-										<input type="radio" ng-model="ds.institution_pages" value="1"><p class="help-inline">Auto generate Contributor Pages for all my groups</p><br />
-										<input type="radio" ng-model="ds.institution_pages" value="2"><p class="help-inline">Manually manage my Contributor Pages and groups</p><br />
-										<div class="well" ng-show="ds.contributor">
-											<p>{{ds.contributor.contributor_page}}</p>
-											<table class="table table-hover headings-left">
-												<thead><tr><th class="align-left">GROUP</th><th class="align-left">Contributor Page Key</th></tr></thead>
-												<tbody>
-													<tr ng-repeat="item in ds.contributor.items">
-														<td>{{item.group}}</td>
-														<td ng-show="ds.institution_pages=='0'"></td>
-														<td ng-show="ds.institution_pages=='1'">
-															<span ng-show="!item.has_authorative">
-																<a href="{{item.contributor_page_link}}" ng-show="item.contributor_page_key">{{item.contributor_page_key}}</a>
-																<span ng-show="!item.contributor_page_key">Contributor page will be generated upon save</span>
-															</span>
-															<span ng-show="item.has_authorative">(Already managed by {{item.authorative_data_source_title}})</span>
-														</td>
-														<td ng-show="ds.institution_pages=='2'">
-															<input rosearch dsid="ds.id" type="text" name="contributor_pages" class="ro_search" ng-model="item.contributor_page_key" ng-show="!item.has_authorative">
-															<span ng-show="item.has_authorative">(Already managed by {{item.authorative_data_source_title}})</span>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-								
 							</fieldset>
 						</div>
 

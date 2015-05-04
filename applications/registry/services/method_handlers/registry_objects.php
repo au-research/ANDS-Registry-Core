@@ -243,6 +243,13 @@ class Registry_objectsMethod extends MethodHandler {
         $relationships = $this->ro->getConnections(true,null,$limit,0,true);
         $relationships = $relationships[0];
 
+        if(isset($relationships['activity'])){
+            for($i=0;$i<count($relationships['activity']);$i++){
+                $funder = $this->getFunders($relationships['activity'][$i]['registry_object_id']);
+                if($funder!='') $relationships['activity'][$i]['funder']= "(funded by ".$funder.")";
+            }
+        }
+
         //get the correct count in SOLR
         $ci->load->library('solr');
         $search_class = $this->ro->class;
@@ -272,48 +279,28 @@ class Registry_objectsMethod extends MethodHandler {
             }
         }
 
-
-        //THE FOLLOWING CODE ARE FOR SOLR SEARCH, THIS IS UNRELIABLE AND REQUIRE ALL RECORDS TO BE INDEXED CORRECTLY, NOT ADVISABLE
-        // $ci->load->library('solr');
-        // $search_class = $this->ro->class;
-        // if($this->ro->class=='party') {
-        //     if (strtolower($this->ro->type)=='person'){
-        //         $search_class = 'party_one';
-        //     } elseif(strtolower($this->ro->type)=='group') {
-        //         $search_class = 'party_multi';
-        //     }
-        // }
-        // foreach($types as $type) {
-        //     $ci->solr->init();
-        //     $ci->solr
-        //         ->setOpt('fq', '+related_'.$search_class.'_id:'.$this->ro->id)
-        //         ->setOpt('fl', 'id,slug,title,class,type')
-        //         ->setOpt('rows', $limit);
-        //     if ($type=='party_one') {
-        //         $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type_search:person');
-        //     } elseif ($type=='party_multi') {
-        //         $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type_search:group');
-        //     } else {
-        //         $ci->solr->setOpt('fq', '+class:'.$type);
-        //     }
-        //     $result = $ci->solr->executeSearch(true);
-        //     if ($result['response']['numFound'] > 0) {
-        //         $relationships[$type.'_count'] = $result['response']['numFound'];
-        //         $relationships[$type] = array();
-        //         foreach($result['response']['docs'] as $doc) {
-        //             $relationships[$type][] = array(
-        //                 'registry_object_id' => $doc['id'],
-        //                 'slug' => $doc['slug'],
-        //                 'class' => $doc['class'],
-        //                 'type' => $doc['type'],
-        //                 'title' => $doc['title']
-        //             );
-        //         }
-        //     }
-        // }
-
         return $relationships;
     }
+
+    private function getFunders($ro_id)
+    {
+        $CI =& get_instance();
+        $CI->load->model('registry_object/registry_objects', 'mro');
+        $funders = "";
+
+        $grant_object = $CI->mro->getByID($ro_id);
+        if($grant_object->status == PUBLISHED){
+           $related_party = $grant_object->getRelatedObjectsByClassAndRelationshipType(['party'] ,['isFunderOf','isFundedBy']);
+           if (is_array($related_party) && isset($related_party[0]))
+           {
+               foreach($related_party as $aFunder)
+               $funders .= " ".$aFunder['title'];
+           }
+        }
+        return $funders;
+    }
+
+
 }
 
 ///citation formation helper functions
@@ -448,6 +435,8 @@ function identifierResolution($identifier,$type)
             return false;
             break;
     }
+
+
 
 }
 

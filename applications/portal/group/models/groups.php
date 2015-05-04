@@ -127,7 +127,6 @@ class Groups extends CI_Model {
 		$this->solr
 			->setFacetOpt('field','class')
 			->setFacetOpt('field', 'subject_value_resolved')
-			->setFacetOpt('mincount', '1')
 			->setFacetOpt('limit', '-1')
 			->setFacetOpt('sort', 'count')
 			->executeSearch();
@@ -138,12 +137,8 @@ class Groups extends CI_Model {
 		$group['facet']['class'] = array();
 		$classes = $this->solr->getFacetResult('class');
 		foreach ($classes as $class=>$num) {
-			$group['facet']['class'][] = array(
-				'name' => $class,
-				'num'  => $num
-			);
+			$group['facet']['class'][$class] = $num;
 		}
-
 		// dd($this->solr->getFacetResult('subject_value_resolved'));
 
 		$this->solr
@@ -155,10 +150,12 @@ class Groups extends CI_Model {
 		$group['facet']['subjects'] = array();
 		$subjects = $this->solr->getFacetResult('subject_value_resolved');
 		foreach ($subjects as $subject=>$num) {
-			$group['facet']['subjects'][] = array(
-				'name' => $subject,
-				'num'  => $num
-			);
+            if($num > 0){
+                $group['facet']['subjects'][] = array(
+                    'name' => $subject,
+                    'num'  => $num
+                );
+            }
 		}
 
 		//reload and collect groups
@@ -168,9 +165,10 @@ class Groups extends CI_Model {
 			->setOpt('fq', '+group:("'.$group['title'].'")')
 			->setOpt('fq', '+class:party')
 			->setOpt('fq', '+type_search:group')
-			->setOpt('rows', '10')
+			->setOpt('rows', '5')
 			->setOpt('fl', 'id,slug,title')
 			->executeSearch(true);
+        $group['groups_count'] =  $result['response']['numFound'];
 		foreach($result['response']['docs'] as $doc) {
 			$group['groups'][] = array(
 				'id' => $doc['id'],
@@ -178,7 +176,6 @@ class Groups extends CI_Model {
 				'slug' => isset($doc['slug']) ? $doc['slug']:''
 			);
 		}
-
 		//latest 5 collections
 		$group['latest_collections'] = array();
 		$this->solr
@@ -205,7 +202,6 @@ class Groups extends CI_Model {
 		} else {
 			$group['has_custom_data'] = false;
 		}
-
 		return $group;
 	}
 
@@ -295,38 +291,56 @@ class Groups extends CI_Model {
 
 
 	function getOwnedGroups() {
-		if($this->user->hasFunction('REGISTRY_SUPERUSER')) {
-			$groups = $this->getAll();
-			$owned_groups = array();
-			foreach($groups as $group) {
-				array_push($owned_groups, $group['title']);
-			}
-		} else {
-			$url = base_url().'registry/services/api/data_sources/';
-			$owned_ds = $this->user->ownedDataSourceIDs();
-			foreach($owned_ds as $ds) {
-				$url.=$ds.'-';
-			}
-			$url.='/groups';
+        $result = array();
+        $owned_groups = array();
+        $this->load->library('solr');
+        $this->solr
+            ->setFacetOpt('facet', 'on')
+            ->setOpt('fq', '+class:collection')
+            ->setFacetOpt('mincount', 1)
+            ->setFacetOpt('limit', '-1')
+            ->setFacetOpt('field', 'group');
+        if($this->user->hasFunction('REGISTRY_SUPERUSER') == false)
+        {
+            $owned_ds = $this->user->ownedDataSourceIDs();
+            $fq_str = implode('") OR data_source_id:("', $owned_ds);
+            $fq_str = 'data_source_id:("'.$fq_str.'")';
+            $this->solr->setOpt('q', $fq_str);
+        }
+        $this->solr->executeSearch();
+        $result = $this->solr->getFacetResult('group');
 
-			$content = @file_get_contents($url);
-			$content = json_decode($content, true);
-			$owned_groups = array();
-			if ($content['status']=='success') {
-				foreach($owned_ds as $ds) {
-					if(isset($content['message'][$ds])) {
-						foreach($content['message'][$ds]['groups'] as $group) {
-							if(!in_array($group, $owned_groups)) {
-								array_push($owned_groups, $group);
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		
+        foreach($result as $key=>$val) {
+            array_push($owned_groups, $key);
+        }
+
 		return $owned_groups;
 	}
 
+
+    function canUserEdit($group_name) {
+        $this->load->library('solr');
+        $this->solr
+            ->setFacetOpt('facet', 'on')
+            ->setOpt('fq', '+group:("'.urldecode($group_name).'")')
+            ->setOpt('fq', '+class:collection')
+            ->setFacetOpt('mincount', 1)
+            ->setFacetOpt('limit', '-1')
+            ->setFacetOpt('field', 'data_source_id');
+        $this->solr->executeSearch();
+        $result = $this->solr->getFacetResult('data_source_id');
+        if(is_array($result) && sizeof($result) > 0){
+            if($this->user->hasFunction('REGISTRY_SUPERUSER')){
+                return true;
+            }
+            else{
+                $owned_ds = $this->user->ownedDataSourceIDs();
+                foreach($result as $key=>$val) {
+                    if(in_array($key, $owned_ds))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
 }

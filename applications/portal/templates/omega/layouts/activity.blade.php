@@ -17,7 +17,7 @@
                                         @include('registry_object/contents/icon')
                                     </div>
                                     <div class="panel-body {{$ro->core['type']}}">
-                                        <h1 class="hairline bordered-normal">{{$ro->core['title']}}
+                                        <h1 class="hairline bordered-normal" style="line-height:1.1em">{{$ro->core['title']}}
                                             @if($ro->existenceDates)
                                                 [@include('registry_object/contents/existenceDates-list')]
                                             @endif

@@ -140,13 +140,24 @@ class Data_source extends MX_Controller {
 		$config['upload_path'] = $upload_path;
 		$config['allowed_types'] = 'xml|xsl';
 		$config['overwrite'] = true;
-		$config['max_size']	= '400';
+		$config['max_size']	= '500';
 		$this->load->library('upload', $config);
+
 		if(!$this->upload->do_upload('file')) {
+            $upload_file_exceeds_limit = "The uploaded file exceeds the maximum allowed size in your PHP configuration file.";
+            $upload_invalid_filesize  = "The file you are attempting to upload is larger than the permitted size.";
+            $upload_invalid_filetype = "The filetype you are attempting to upload is not allowed.";
+            $theError = $this->upload->display_errors();
+            if(strrpos($theError, $upload_file_exceeds_limit) > 0 || strrpos($theError, $upload_invalid_filesize) > 0){
+                $theError = "Maximum file size exceeded. Please select a file smaller than 500KB.";
+            }
+            elseif(strrpos($theError, $upload_invalid_filetype) > 0){
+                $theError = "Unsupported file format. Please select an xml or xsl.";
+            }
 			echo json_encode(
 				array(
 					'status'=>'ERROR',
-					'message' => $this->upload->display_errors()
+					'message' => $theError
 				)
 			);
 		} else {
@@ -232,16 +243,6 @@ class Data_source extends MX_Controller {
 		$jsonData = array();
 		$this->load->model("data_sources","ds");
 		$ds = $this->ds->getByID($id);
-		if($ds->institution_pages) {
-			$contributorPages = $ds->institution_pages;
-		} else {
-			$contributorPages = 0;
-		}
-		switch($contributorPages) {
-			case 0: $jsonData['contributorPages'] = 'Pages are not managed'; break;
-			case 1: $jsonData['contributorPages'] = 'Pages are automatically managed'; break;
-			case 2: $jsonData['contributorPages'] = 'Pages are manually managed'; break;
-		}
 		$dataSourceGroups = $ds->get_groups();
 		$items = array();
 		if (sizeof($dataSourceGroups) > 0) {
@@ -303,7 +304,6 @@ class Data_source extends MX_Controller {
 		//construct a list of possible attributes, attributes that are not in this list will not get updated
 		$valid_attributes = array_merge(array_keys($ds->attributes()), array_keys($ds->harvesterParams));
 		$valid_attributes = array_merge($valid_attributes, $ds->primaryRelationship);
-		$valid_attributes = array_merge($valid_attributes, $ds->institutionPages);
 		$valid_attributes = array_merge($valid_attributes, array_keys($ds->stockAttributes));
 		$valid_attributes = array_merge($valid_attributes, array_keys($ds->extendedAttributes));
 		$valid_attributes = array_unique($valid_attributes);
@@ -408,22 +408,6 @@ class Data_source extends MX_Controller {
 				);
 			}
 
-		}
-
-		//update the contributor pages
-		if(isset($data['institution_pages'])){
-			$cont_data = array();
-			$cont_data['contributor_pages'] = array();
-			if($data['contributor'] && $data['contributor']['items']){
-				foreach($data['contributor']['items'] as $v){
-					array_push($cont_data['contributor_pages'], $v['contributor_page_key']);
-					$updated_values[] = array(
-						'key' => 'Contributor Page for: '.$v['group'],
-						'value' => $v['contributor_page_key']
-					);
-				}
-			}
-			$ds->setContributorPages($data['institution_pages'], $cont_data);
 		}
 
 		$updated = '';
@@ -1262,170 +1246,6 @@ class Data_source extends MX_Controller {
 		}
 	}
 
-	//dep
-
-	public function getContributorGroupsEdit()
-	{
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		date_default_timezone_set('Australia/Canberra');
-		set_exception_handler('json_exception_handler');
-
-		$POST = $this->input->post();
-		$items = array();
-		
-		if (isset($POST['id'])){
-			$id = (int) $this->input->post('id');
-		}
-		if(!isset($id) || !$id) $id = $this->input->get('id');
-
-		$this->load->model("data_sources","ds");
-		$dataSource = $this->ds->getByID($id);
-		//print($dataSource->attributes['institution_pages']->value);
-		if(isset($dataSource->attributes['institution_pages']->value))
-		{
-			$contributorPages = $dataSource->attributes['institution_pages']->value;
-		} else {
-			$contributorPages = 0;			
-		}
-		if (isset($POST['inst_pages'])){
-			$contributorPages = (int) $this->input->post('inst_pages');
-		}	
-		switch($contributorPages)
-		{
-			case 0:
-				$jsonData['contributorPages'] = "Pages are not managed";	
-				break;
-			case 1:
-				$jsonData['contributorPages'] = "Pages are automatically managed";	
-				break;
-			case 2:
-				$jsonData['contributorPages'] = "Pages are manually managed";;	
-				break;
-		}
-
-		$dataSourceGroups = $dataSource->get_groups();
-		if(sizeof($dataSourceGroups) > 0){
-			foreach($dataSourceGroups as $idx => $group){
-				$item = array();
-				$group_contributor = array();
-				$item['group'] = $group;
-				$group_contributor = $dataSource->get_group_contributor($group);
-				if($contributorPages=="1")
-				{
-					if(isset($group_contributor["key"]))
-					{
-						if($group_contributor["authorative_data_source_id"]==$id)
-						{	
-							//echo "contributor:".$group ." is the key and ".$group_contributor["key"]." is the got key";
-							if($group_contributor["key"]=="Contributor:".$group)
-							{
-								$item['contributor_page'] = "<a href='../registry_object/view/".$group_contributor["registry_object_id"]."'> ".$group_contributor["key"]."</a>";
-							}else{
-								$item['contributor_page'] = 'Page will be auto generated on save';
-							}
-						}else{
-							$other_ds = $this->ds->getByID($group_contributor["authorative_data_source_id"]);
-							$item['contributor_page'] = "(<em>Already managed by ".$other_ds->title ." who is managing the group</em>)";
-						}
-					}else{
-						$item['contributor_page'] = 'Page will be auto generated on save';
-					}	
-				}
-				else if($contributorPages=="2")
-				{
-					if(isset($group_contributor["key"]))
-					{
-						if($group_contributor["authorative_data_source_id"]==$id)
-						{
-							$item['contributor_page'] = "<input type='text' name='contributor_pages[".$idx."]' value='".$group_contributor["key"]."' class='ro_search'/>";
-						}else{
-							$other_ds = $this->ds->getByID($group_contributor["authorative_data_source_id"]);
-							$item['contributor_page'] = "(<em>Already managed by ".$other_ds->title ." who is managing the group</em>)";
-						}
-					}else{
-						$item['contributor_page'] = "<input type='text' name='contributor_pages[".$idx."]' value='' class='ro_search'/>";
-					}
-				
-				}else{
-					$item['contributor_page'] = "";
-				}			
-				array_push($items, $item);
-			}
-			$jsonData['status'] = 'OK';
-			$jsonData['items'] = $items;
-		}		
-		$jsonData = json_encode($jsonData);
-		echo $jsonData;
-	}	
-	public function getContributorGroups()
-	{
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		set_exception_handler('json_exception_handler');
-		reset_timezone();
-
-		$POST = $this->input->post();
-		$items = array();
-		
-		if (isset($POST['id'])){
-			$id = (int) $this->input->post('id');
-		}
-		if(!isset($id) || !$id) $id = $this->input->get('id');
-		$this->load->model("data_sources","ds");
-		$dataSource = $this->ds->getByID($id);
-		//print($dataSource->attributes['institution_pages']->value);
-		if(isset($dataSource->attributes['institution_pages']->value))
-		{
-			$contributorPages = $dataSource->attributes['institution_pages']->value;
-		} else {
-			$contributorPages = 0;			
-		}
-
-		switch($contributorPages)
-		{
-			case 0:
-				$jsonData['contributorPages'] = "Pages are not managed";	
-				break;
-			case 1:
-				$jsonData['contributorPages'] = "Pages are automatically managed";	
-				break;
-			case 2:
-				$jsonData['contributorPages'] = "Pages are manually managed";;	
-				break;
-		}
-
-		$dataSourceGroups = $dataSource->get_groups();
-		if(sizeof($dataSourceGroups) > 0){
-			foreach($dataSourceGroups as $group){
-
-				$item = array();
-				$group_contributor = array();
-				$item['group'] = $group;
-				$group_contributor = $dataSource->get_group_contributor($group);
-				if(isset($group_contributor["key"]))
-				{
-					if($group_contributor["authorative_data_source_id"]==$id)
-					{
-						$theAnchor = anchor('registry_object/view/'.$group_contributor["registry_object_id"]);
-						$item['contributor_page'] = "<a href='../registry_object/view/".$group_contributor["registry_object_id"]."'> ".$group_contributor["key"]."</a>";
-					}else{
-						$item['contributor_page'] = $group_contributor["key"]."(<em>Managed by another datasource</em>)";
-					}
-				}else{
-					$item['contributor_page'] = '<em>Not managed</em>';
-				}
-				
-				array_push($items, $item);
-			}
-			$jsonData['status'] = 'OK';
-			$jsonData['items'] = $items;
-		}		
-		$jsonData = json_encode($jsonData);
-		echo $jsonData;
-	}
-
-
 	/**
 	 * getDataSourceLogs
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -1613,7 +1433,6 @@ class Data_source extends MX_Controller {
 
 			$valid_attributes = array_merge(array_keys($dataSource->attributes()), array_keys($dataSource->harvesterParams));
 			$valid_attributes = array_merge($valid_attributes, $dataSource->primaryRelationship);
-			$valid_attributes = array_merge($valid_attributes, $dataSource->institutionPages);
 			$valid_attributes = array_merge($valid_attributes, array_keys($dataSource->stockAttributes));
 			$valid_attributes = array_merge($valid_attributes, array_keys($dataSource->extendedAttributes));
 			$valid_attributes = array_unique($valid_attributes);
@@ -1780,10 +1599,6 @@ class Data_source extends MX_Controller {
 				{
 					$changed = $new_value !== $dataSource->{$attrib};
 					$dataSource->{$attrib} = $new_value;
-					if($attrib=='institution_pages')
-					{
-						$dataSource->setContributorPages($new_value, $POST, $changed);
-					}
 
 				}
 				$dataSource->updateStats();	

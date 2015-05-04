@@ -68,7 +68,7 @@
 <dt>Open</dt><dd>Data that is readily accessible and reusable.</dd>
 <dt>Conditional</dt><dd>Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required)</dd>
 <dt>Restricted</dt><dd>Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location)</dd>
-<dt>Unknown</dt>
+<dt>Other</dt>
 <dd>&lt;no value&gt; or &lt;user defined custom value&gt;</dd></dl>
 <p>The number of records available in each access type will be displayed at the end of the access literal E.g ‘Open(23)’.</p>
 <p>Access types can be added or removed from your search by using the checkbox displayed with each access literal. </p>
@@ -136,7 +136,7 @@
         </td>
     </tr>
     <tr>
-        <td><strong>Unknown</strong>
+        <td><strong>Other</strong>
         </td>
         <td>&lt;no value&gt; or &lt;user defined custom
             value&gt;

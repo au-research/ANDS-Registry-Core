@@ -17,6 +17,7 @@ class DCIMethod extends MethodHandler
     public $ro = null;
     public $index = null;
     public $xml = null;
+    public $overrideExportable = null;
 	//var $params, $options, $formatter; 
    function handle()
    {
@@ -56,39 +57,26 @@ class DCIMethod extends MethodHandler
 				$CI->load->model('registry_object/registry_objects','ro');
                 $CI->load->model('data_source/data_sources','ds');
                 $this->ro = new _registry_object($result['id']);
-                $this->populate_resource($result['id']);
-
-                $ds = $CI->ds->getByID($this->ro->data_source_id);
-
-                $exportable = false;
-                if($ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
-                    $exportable = true;
-
-				if ($this->ro && $this->ro->class == 'collection' && $exportable)
-				{
-                    $rifcsOutput[] = $this->ro_handle('dci');
-				}
-                else{
-                    $rifcsOutput[] = "not exportable";
-                }
+                $this->populate_resource($result['id'], true);
+                $rifcsOutput[] = $this->ro_handle('dci');
 			}
 		}
 		// Bubble back the output status
 		return $this->formatter->display($rifcsOutput);
    }
 
-    function populate_resource($id) {
+    function populate_resource($id, $overrideExportable = false) {
 
         //local SOLR index for fast searching
         $ci =& get_instance();
         $ci->load->library('solr');
         $ci->solr->clearOpt('fq');
         $ci->solr->setOpt('fq', '+id:'.$id);
+        $this->overrideExportable = $overrideExportable;
         $result = $ci->solr->executeSearch(true);
         if(sizeof($result['response']['docs']) == 1) {
             $this->index = $result['response']['docs'][0];
         }
-
         //local XML resource
         $xml = $this->ro->getSimpleXML();
         $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
@@ -118,7 +106,8 @@ class DCIMethod extends MethodHandler
             'gXPath' => $this->gXPath,
             'ro' => $this->ro,
             'params' => $this->params,
-            'default_params' => $this->default_params
+            'default_params' => $this->default_params,
+            'overrideExportable' => $this->overrideExportable
         );
     }
 

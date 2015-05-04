@@ -26,14 +26,17 @@ class Relationships_Extension extends ExtensionBase
 			$explicit_keys[] = (string)$related_object->key;
 			$class = $this->getRelatedObjectClass((string)$related_object->key);
 
-			$relationship = array("registry_object_id" => (string)$this->ro->id,
-								"related_object_key" => (string)$related_object->key,
-								"related_object_class"=> (string) $class,
-								"relation_type" => (string)$related_object->relation[0]['type'],
-								"relation_description" => (string)$related_object->relation[0]->description,
-								"relation_url" => (string)$related_object->relation[0]->url,
-								"origin" => 'EXPLICIT');
-			$new_relationships[] = json_encode($relationship);
+            foreach($related_object->relation as $arelation){
+
+                $relationship = array("registry_object_id" => (string)$this->ro->id,
+                                    "related_object_key" => (string)$related_object->key,
+                                    "related_object_class"=> (string) $class,
+                                    "relation_type" => (string)$arelation['type'],
+                                    "relation_description" => (string)$arelation->description,
+                                    "relation_url" => (string)$arelation->url,
+                                    "origin" => 'EXPLICIT');
+                $new_relationships[] = json_encode($relationship);
+            }
 
 
 		}

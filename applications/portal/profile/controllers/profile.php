@@ -99,7 +99,7 @@ class Profile extends MX_Controller {
 				if (!$this->portal_user->has_saved_record($d['id'],$d['folder'])){
 					$saved_data = array(
 						'type' => $type,
-						'value' => array('folder'=>$d['folder'], 'id'=>$d['id'], 'slug'=>$d['slug'], 'url' => portal_url($d['slug'].'/'.$d['id']), 'title'=>$d['title'])
+						'value' => array('folder'=>$d['folder'], 'id'=>$d['id'], 'slug'=>$d['slug'], 'class'=>$d['class'], 'type'=>$d['type'], 'url' => portal_url($d['slug'].'/'.$d['id']), 'title'=>$d['title'], 'saved_time'=>$d['saved_time'])
 					);
 					$this->portal_user->add_user_data($saved_data);
 				}

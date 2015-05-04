@@ -5,6 +5,7 @@ class Sync_extension extends ExtensionBase{
     private $party_one_types = array('person','administrativePosition');
     private $party_multi_types = array('group');
 
+
 	function __construct($ro_pointer){
 		parent::__construct($ro_pointer);
 	}
@@ -67,6 +68,9 @@ class Sync_extension extends ExtensionBase{
 			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type'
 		);
 
+        $include_rights_type = array('open','restricted','conditional');
+        $include_descriptions = array('brief','full');
+
 		foreach($single_values as $s){
 			$json[$s] = html_entity_decode($this->ro->{$s}, ENT_QUOTES);
 		}
@@ -108,16 +112,20 @@ class Sync_extension extends ExtensionBase{
 			} else if($type == 'full' && ($theDescriptionType != 'brief' || $theDescriptionType != 'full')) {
 				$theDescription = (string) $description;
 				$theDescriptionType = $type;
-			} else if($type != '' && $theDescriptionType == '') {
+			} else if($type != '' && $theDescriptionType == '' && $this->ro->class!='activity') {
 				$theDescription = (string) $description;
 				$theDescriptionType = $type;
-			} else if($theDescription == '') {
+			} else if($theDescription == '' && $this->ro->class!='activity') {
 				$theDescription = (string) $description;
 				$theDescriptionType = $type;
 			}
-
-			$json['description_value'][] = $description_str;
-			$json['description_type'][] = $type;
+            if($this->ro->class=='activity'&& in_array($type,$include_descriptions)){
+                $json['description_value'][] = $description_str;
+                $json['description_type'][] = $type;
+            }elseif($this->ro->class!='activity'){
+                $json['description_value'][] = $description_str;
+                $json['description_type'][] = $type;
+            }
 		}
         $listDescription = trim(strip_tags(html_entity_decode(html_entity_decode($theDescription)), ENT_QUOTES));
         $json['list_description'] = $listDescription;
@@ -133,7 +141,7 @@ class Sync_extension extends ExtensionBase{
         $this->ro->set_metadata('the_description',$json['description']);
 
 		//license
-        if($json['class'] == 'collection')
+      /*  if($json['class'] == 'collection')
             $json['access_rights'] = 'Unknown';
 		if($rights = $this->ro->processLicence()){
 			foreach($rights as $right) {
@@ -141,7 +149,21 @@ class Sync_extension extends ExtensionBase{
                 if(isset($right['accessRights_type'])) $json['access_rights'] = $right['accessRights_type'];
 
 			}
-		}
+		} */
+
+
+        if($json['class'] == 'collection')
+            $json['access_rights'] = 'Other';
+        if($rights = $this->ro->processLicence()){
+            foreach($rights as $right) {
+                if(isset($right['licence_group'])) {
+                    $json['license_class'] = strtolower($right['licence_group']);
+                    if($json['license_class']=='unknown') $json['license_class']='Other';
+                }
+                if(isset($right['accessRights_type']) && in_array($right['accessRights_type'], $include_rights_type)) $json['access_rights'] = $right['accessRights_type'];
+
+            }
+        }
 
 		//identifier
 		if($identifiers = $this->ro->getIdentifiers()) {
@@ -180,6 +202,7 @@ class Sync_extension extends ExtensionBase{
                 }
                 $json['spatial_coverage_polygons'][] = $lonLat;
 				$json['spatial_coverage_extents'][] = $extents['extent'];
+				// $json['spatial_coverage_extents'] = '-74.093 41.042 -69.347 44.558';
 				$sumOfAllAreas += $extents['area'];
 				$json['spatial_coverage_centres'][] = $extents['center'];
 			}
@@ -303,7 +326,7 @@ class Sync_extension extends ExtensionBase{
             $json['researchers'][] = strip_tags(html_entity_decode($node->nodeValue));
         }
 
-        $activityStatus = 'UNKNOWN';
+        $activityStatus = 'other';
         foreach ($xml->xpath('//ro:existenceDates') AS $date)
         {
 
@@ -330,7 +353,7 @@ class Sync_extension extends ExtensionBase{
 
             }
 
-            $activityStatus = 'UNKNOWN';
+            $activityStatus = 'other';
             if ($start || $end){
                 $activityStatus = 'PENDING';
                 if(!$start || $start < $now)
@@ -345,19 +368,23 @@ class Sync_extension extends ExtensionBase{
         if ($this->ro->class=='activity') {
         	$json['administering_institution'] = array();
         	$json['funders'] = array();
-        	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, true, true);
+        	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
         	foreach ($related_objects as $related_object) {
-        		if ($related_object['class']=='party' && $related_object['relation_type']=='isManagedBy') {
-        			$json['administering_institution'][] = $related_object['title'];
-        		} else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
-        			$json['funders'][] = $related_object['title'];
-        		} else if($related_object['class']=='party') {
-        			$tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
-        			if ( $tmp_ro && strtolower($tmp_ro->type)=='person' ) {
-        				$json['researchers'][] = $related_object['title'];
-        			}
-        			unset($tmp_ro);
-        		}
+                if(!isset($related_object['status']) || $related_object['status']!=DRAFT){
+                    if ($related_object['class']=='party' && $related_object['relation_type']=='isManagedBy') {
+                        $json['administering_institution'][] = $related_object['title'];
+                    } else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
+                        $json['funders'][] = $related_object['title'];
+                    } else if($related_object['class']=='party') {
+                        $tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
+                        if ( $tmp_ro && strtolower($tmp_ro->type)=='person' ) {
+                            $json['researchers'][] = $related_object['title'];
+                        }elseif(isset($related_object['related_info_type']) && $related_object['related_info_type']=='party'){
+                            $json['researchers'][] = $related_object['title'];
+                        }
+                        unset($tmp_ro);
+                    }
+                }
         	}
         }
 
@@ -365,7 +392,7 @@ class Sync_extension extends ExtensionBase{
         if(!isset($json['license_class'])) $json['license_class'] = 'unknown';
 
         //lowercase all facet-able values
-        $lowercase = array('type', 'license_class', 'access_rights', 'activity_status', 'administering_institution', 'funders');
+        $lowercase = array('type', 'license_class', 'access_rights', 'activity_status');
         foreach ($lowercase as $l) {
         	if(isset($json[$l])) {
         		if (is_array($json[$l])) {

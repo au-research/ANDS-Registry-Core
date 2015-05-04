@@ -25,11 +25,12 @@
     </div>
 
     <div class="panel-body swatch-white" ng-if="result.response.docs.length < 1" ng-cloak>
-        <p>The search term <b>[[ query ]]</b> did not return any results</p>
+        <p>Your search did not return any results</p>
         <p>Some suggestion for searching in Research Data Australia</p>
         <ul>
             <li>Make sure that all words are spelled correctly</li>
             <li>Try using different or more general search keywords</li>
+            <li>Try beginning with a broad search, and then gradually apply filters and keywords to narrow down your results.</li>
         </ul>
     </div>
 
@@ -44,7 +45,7 @@
                     <div class="pull-right" ng-if="filters.class=='activity'">
                         [[ doc.type | toTitleCase ]]
                     </div>
-                    <div class="scontent">
+                    <div class="scontent" myWidth>
                         <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
                         <p><small>[[doc.group]]</small></p>
                         <p ng-if="doc.matching_identifier_count">[[ doc.matching_identifier_count ]] Linked Records</p>
@@ -72,7 +73,7 @@
                         <div ng-if="doc.administering_institution">
                             <b>Managing Institution</b>: [[ doc.administering_institution.join(',') | toTitleCase ]]
                         </div>
-                        <div ng-if="doc.researchers">
+                        <div ng-if="doc.researchers" class="oneLineTruncate" tip="[[doc.researchers.join(', ')]]">
                             <b>Researchers: </b> [[doc.researchers.join(', ')]]
                         </div>
                     </div>
@@ -103,8 +104,14 @@
 
 @section('sidebar')
 <div class="panel panel-primary" ng-cloak>
-    <div class="panel-heading">Current Search<div class="pull-right">
-            <span classicon fclass="filters.class"></span>[[ filters.class | getLabelFor:class_choices ]]</div>
+    <div class="panel-heading">
+        <div class="pull-left">
+            Current Search
+        </div>
+        <div class="pull-right">
+            <span classicon fclass="filters.class"></span> [[ filters.class | getLabelFor:class_choices ]]
+        </div>
+        <div class="clearfix"></div>
     </div>
     <!-- <div class="panel-body swatch-white">
         [[filters]]
@@ -121,7 +128,7 @@
             <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
-                        <span ng-if="name!='related_party_one_id'">[[ value | truncate:30 ]]</span>
+                        <span ng-if="name!='related_party_one_id'">[[ value | truncate:30  ]]</span>
                         <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
                         <small><i class="fa fa-remove" tip="Remove Item"></i></small>
                     </a>
@@ -180,7 +187,7 @@
 
     <!-- Funding Amount for Activity Search-->
     <div class="panel-body swatch-white" ng-show="showFacet('funding_amount')">
-        <h4>Funding Amount <i class="fa fa-info" tip="Please note that adding a funding amount filter to your search will restrict your search to only those grants and projects in Research Data Australia which contain the funding amount"></i></h4>
+        <h4>Funding Amount <i class="fa fa-info" tip="Please note that adding a funding amount filter to your search will restrict your search to only those grants and projects in Research Data Australia which contain the funding amount.<br />Funding amount should be entered in whole dollars with no comma or $ sign."></i></h4>
         <input type="text" ng-model="filters.funding_from" class="form-control" placeholder="Funding From"/>
         <input type="text" ng-model="filters.funding_to" class="form-control" placeholder="Funding To"/>
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>

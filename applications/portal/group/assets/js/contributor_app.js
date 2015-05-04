@@ -34,17 +34,23 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 	$scope.tatoolbar = [['h1','h2','h3'],['bold','italics','underline'],['insertLink'],['ul', 'ol'],['insertImage']];
 
 	groupFactory.get($routeParams.group).then(function(data){
-		$scope.group = data;
+        if(data.status=='ERROR') {
+            $scope.error_upload_msg = data.message;
+            $log.debug(data.message);
+            location.href = 'cms#';
+        }else{
+            $scope.group = data;
+        }
 	});
 
 	profile_factory.get_user().then(function(data){
 		$scope.user = data;
-		// $log.debug($scope.user);
 		if($scope.user.function.indexOf('REGISTRY_SUPERUSER')!=-1) $scope.superuser = true;
 		// $log.debug($scope.superuser);
 	});
 
 	$scope.save = function(state){
+
 		$scope.saveMessage = 'loading...';
 		// $log.debug(state);
 		if(state) $scope.group.status = state;
@@ -52,9 +58,12 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 		
 		if(!$scope.group.data) $scope.group.data = {};
 		if(!$scope.group.status) $scope.group.status = 'DRAFT';
+        $scope.group.date_modified = new Date().toISOString();
+        $scope.group.modified_who = $scope.user.name;
 		// $log.debug($scope.group);
 		groupFactory.save($scope.group.name, $scope.group).then(function(data){
 			$scope.saveMessage = data.message;
+            $scope.contributor_form.$setPristine();
 		});
 	}
 
@@ -100,6 +109,15 @@ app.controller('groupCtrl', function($scope, groupFactory, $log, $routeParams, p
 		// $log.debug('removing identifier at index', index);
 		$scope.group.data.identifiers.splice(index, 1);
 	}
+    $scope.$on('$locationChangeStart', function(ev, nextUrl) {
+        if($scope.contributor_form.$dirty)
+        {
+            var r = confirm('You have unsaved changes. Would you like to save these before continuing?')
+            if (r == true) {
+                $scope.save();
+            }
+        }
+    });
 });
 
 app.directive('resolveUser', function($log, $http, profile_factory) {

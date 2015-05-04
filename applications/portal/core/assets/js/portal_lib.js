@@ -14317,7 +14317,10 @@ angular.module('uiGmapgoogle-maps.extensions')
                 slug:$scope.record.core.slug,
                 group:$scope.record.core.group,
                 title:$scope.record.core.title,
+                type:$scope.record.core.type,
+                class:$scope.record.core.class,
                 folder:folder,
+                saved_time:parseInt(new Date().getTime() / 1000),
                 last_viewed:parseInt(new Date().getTime() / 1000)
             });
         } else if($scope.records) {
@@ -14578,6 +14581,8 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 				case 'year_from': return 'Time Period (from)'; break;
 				case 'year_to': return 'Time Period (to)'; break;
 				case 'funding_scheme': return 'Funding Scheme'; break;
+				case 'funding_from': return 'Funding From'; break;
+				case 'funding_to': return 'Funding To'; break;
 				case 'funders': return 'Funder'; break;
 				case 'administering_institution': return 'Managing Institution'; break;
 				case 'institution': return 'Institution'; break;
@@ -14776,7 +14781,24 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 	    if(reverse) filtered.reverse();
 	    return filtered;
 	  };
-});
+
+}).filter('sortObjectBy', function($log) {
+    return function(items, field, reverse) {
+        var sortArray = ['open','conditional','restricted','open licence','non-commercial licence','non-derivative licence','restrictive licence','no licence','other','unknown']
+        var filtered = [];
+        sortArray.forEach(function(element){
+            angular.forEach(items, function(item) {
+                if(item.name==element){
+                filtered.push(item);
+                }
+            });
+        });
+        return filtered;
+    };
+
+})
+
+;
 
 ;;app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
 
@@ -14980,7 +15002,8 @@ queryBuilder.filter('getDisplayFor', function($log){
                     text = "<strong>Open</strong>: Data that is readily accessible and reusable.<br />"
                     text = text + "<strong>Conditional</strong>: Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required).<br />";
                     text = text + "<strong>Restricted</strong>: Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location).<br />";
-                    text = text + "<strong>Unknown</strong>: no value or user defined custom value.";
+                    text = text + "<strong>Other</strong>: no value or user defined custom value.";
+
                 }
 
                 if(scope.facet.name=='license_class'){
@@ -14989,7 +15012,7 @@ queryBuilder.filter('getDisplayFor', function($log){
                     text = text + "<strong>Non-derivative Licence</strong>: As for the Open Licence but also prohibits adaptation of the material, and in the second case also restricts reuse only for non-commercial purposes.<br />";
                     text = text + "<strong>Restrictive Licence</strong>: A licence preventing reuse of material unless certain restrictive conditions are satisfied. Note licence restrictions, and contact.<br />";
                     text = text + "<strong>No Licence</strong>: All rights to reuse, communicate, publish or reproduce the material are reserved, with the exception of specific rights contained within the Copyright Act 1968 or similar laws.  Contact the copyright holder for permission to reuse this material.<br />";
-                    text = text + "<strong>Unknown</strong>: No value or user defined custom value."
+                    text = text + "<strong>Other</strong>: No value or user defined custom value."
                 }
                 if(scope.facet.name=='administering_institution'){
                     text = "Please note that adding a Managing Institution filter to your search will restrict your search to only those grants and projects in Research Data Australia which have the managing institution recorded."
@@ -15032,7 +15055,7 @@ app.directive('facetinfo', function($log) {
 					'open' : 'Data that is readily accessible and reusable.',
 					'conditional' : 'Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required).',
 					'restricted': 'Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location).',
-					'unknown': 'no value or user defined custom value'
+					'other': 'no value or user defined custom value'
 				},
 				'license_class': {
 					'open licence': 'A licence bearing broad permissions that may include a requirement to attribute the source, or share-alike (or both), requiring a derivative work to be licensed on the same or similar terms as the reused material.',
@@ -15040,7 +15063,7 @@ app.directive('facetinfo', function($log) {
 					'non-derivative licence' : 'As for the Open Licence but also prohibits adaptation of the material, and in the second case also restricts reuse only for non-commercial purposes.',
 					'restrictive licence': 'A licence preventing reuse of material unless certain restrictive conditions are satisfied. Note licence restrictions, and contact',
 					'no licence': 'All rights to reuse, communicate, publish or reproduce the material are reserved, with the exception of specific rights contained within the Copyright Act 1968 or similar laws.  Contact the copyright holder for permission to reuse this material.',
-					'unknown': 'no value or user defined custom value'
+					'other': 'no value or user defined custom value'
 				}
 			}
 			// $log.debug(values);
@@ -15469,9 +15492,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		{value:'keywords', label: 'Keywords'},
 		{value:'scot', label: 'School of Online Thesaurus'},
 		{value:'pont', label: 'Powerhouse Museum Object Name Thesaurus'},
-		{value:'psychit', label: 'Thesaurus of psychological index terms'},
+		{value:'psychit', label: 'Thesaurus of Psychological Index Terms'},
 		{value:'apt', label: 'Australian Pictorial Thesaurus'},
-		{value:'lcsh', label: 'LCSH'}
+		{value:'lcsh', label: 'LCSH'},
+        {value:'gcmd', label: 'Global Change Master Directory Keywords'}
 	];
 
 	$scope.$watch(function(){
@@ -15641,8 +15665,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		//only change the hash at search page, other page will navigate to the search page
 		if ($scope.onSearchPage()) {
 			location.hash = '!/'+hash;
+            $(window).scrollTop(0);
 		} else {
 			location.href = base_url+'search/#' + '!/' + hash;
+            $(window).scrollTop(0);
 		}
 	}
 
@@ -15664,21 +15690,20 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
 			ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
 		}
+	
+		if (location.href.indexOf('search')>-1) {
+			search_factory.search($scope.filters).then(function(data){
+				$scope.loading = false;
+				$scope.fuzzy = data.fuzzy_result;
+				search_factory.update('result', data);
+				search_factory.update('facets', search_factory.construct_facets(data));
+
+				$scope.sync();
+				$scope.$broadcast('search_complete');
+				$scope.populateCenters($scope.result.response.docs);
+			});
+		}
 		
-
-		search_factory.search($scope.filters).then(function(data){
-			$scope.loading = false;
-			$scope.fuzzy = data.fuzzy_result;
-			// search_factory.updateResult(data);
-			search_factory.update('result', data);
-			search_factory.update('facets', search_factory.construct_facets(data));
-
-			$scope.sync();
-			$scope.$broadcast('search_complete');
-			$scope.populateCenters($scope.result.response.docs);
-			// $log.debug('result', $scope.result);
-			// $log.debug($scope.result, search_factory.result);
-		});
 	}
 
 	$scope.addKeyWord = function(extra_keywords) {
@@ -15809,14 +15834,17 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else return false;
 	}
 
-	$scope.showFilter = function(filter_name){
+	$scope.showFilter = function(filter_name, mode){
+		if (!mode || mode=='undefined') mode = 'normal';
 		var show = true;
 		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
 			show = false;
 		}
-		if($scope.filters[filter_name]=="")  show = false;
+		if ($scope.filters[filter_name]=="" && mode == 'normal')  show = false;
+		if ($scope.prefilters[filter_name]=="" && mode == 'advanced')  show = false;
 		return show;
 	}
+
 
 	/**
 	 * Filter manipulation
@@ -16001,7 +16029,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			        			id:i.id,
 			        			title:i.title,
 			        			slug:i.slug,
-			        			group:i.group
+			        			group:i.group,
+                                class: $scope.filters.class,
+                                type: i.type,
+                                saved_time:parseInt(new Date().getTime() / 1000)
 			        		});
 			        	});
 			           	return selected;
@@ -16139,8 +16170,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.advancedSearch = function(){
 		$scope.filters = {};
 		angular.copy($scope.prefilters, $scope.filters);
-		if($scope.prefilters.q) $scope.query = $scope.prefilters.q;
-
+		if($scope.prefilters['q']) {
+			$scope.query = $scope.prefilters.q;
+		} else {
+			$scope.query = '';
+			$scope.filters['q'] = '';
+		}
+		$log.debug($scope.filters);
 		$scope.hashChange();
 		$('#advanced_search').modal('hide');
 	}
@@ -16182,6 +16218,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if(typeof $scope.prefilters[type]!='object') {
 			if(type=='q') $scope.q = '';
 			delete $scope.prefilters[type];
+			$scope.prefilters['cq'] = '';
+			$scope.$broadcast('clearSearch');
 		} else if(typeof $scope.prefilters[type]=='object') {
 			var index = $scope.prefilters[type].indexOf(value);
 			$scope.prefilters[type].splice(index, 1);
@@ -16272,8 +16310,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	//
 	$scope.$watch('vocab', function(newv, oldv){
 		if (newv!=oldv && $scope.isAdvancedSearchActive('subject')) {
+			$scope.loading_subjects = true;
 			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
 				$scope.vocab_tree_tmp = data;
+				$scope.loading_subjects = false;
 			});
 		}
 	});
@@ -16566,7 +16606,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			{value:'list_title_sort asc',label:'Title A-Z'},
 			{value:'list_title_sort desc',label:'Title Z-A'},
 			// {value:'title desc',label:'Popular'},
-			{value:'record_created_timestamp asc',label:'Date Added'}
+			{value:'record_created_timestamp desc',label:'Date Added  <i class="fa fa-sort-amount-desc"></i>'}
 		],
 
 		activity_sort : [
@@ -16595,7 +16635,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 		advanced_fields_party: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
@@ -16604,7 +16644,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 		advanced_fields_service: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
@@ -16672,6 +16712,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 		search: function(filters){
 			this.status = 'loading';
+            filters = this.cleanFilters(filters);
 			// $log.debug('search filters', filters);
 			var promise = $http.post(base_url+'registry_object/filter', {'filters':filters}).then(function(response){
 				this.status = 'idle';
@@ -16684,6 +16725,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			});
 			return promise;
 		},
+
+        cleanFilters: function(filters) {
+          angular.forEach(filters, function(value, index) {
+            if (value=='') delete filters[index];
+          });
+          return filters;
+        },
 
 		search_no_record: function(filters) {
 			var promise = $http.post(base_url+'registry_object/filter/true', {'filters':filters}).then(function(response){
@@ -16707,7 +16755,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			// });
 
 			//other facet fields
-
+            if(result.error)  console.log(result);
 			angular.forEach(result.facet_counts.facet_fields, function(item, index) {
 				facets[index] = [];
 				for (var i = 0; i < result.facet_counts.facet_fields[index].length ; i+=2) {
@@ -16762,7 +16810,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			for (i=0;i<earliest_array.length-1;i+=2) {
 				if (earliest_year && parseInt(earliest_array[i]) < earliest_year) {
 					earliest_year = parseInt(earliest_array[i]);
-				} else if(!earliest_year) {
+				} else if(!earliest_year || earliest_year=='') {
 					earliest_year = parseInt(earliest_array[i]);
 				}
 			}
@@ -16795,8 +16843,12 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				var t = this.split('=');
 				var term = t[0];
 				var value = t[1];
-				if(term=='rows'||term=='year_from'||term=='year_to') value = parseInt(value);
-				if(term && value && term!=''){
+				if(term=='rows'||term=='year_from'||term=='year_to' && value.trim()!='') value = parseInt(value);
+				if(term=='funding_from' || term=='funding_to') {
+					value = decodeURIComponent(value);
+					value = Number(value.replace(/[^0-9\.-]+/g,""));
+				}
+				if(term && value && term!='' && value!=''){
 
 					if(filters[term]) {
 						if(typeof filters[term]=='string') {

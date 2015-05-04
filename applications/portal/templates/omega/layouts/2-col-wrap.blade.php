@@ -25,7 +25,7 @@
                                                 </div>
                                                 @endif
                                                 <div class="col-xs-12 col-md-10">
-                                                    <h1 class="hairline bordered-normal"><span itemprop="name">{{$ro->core['title']}}</span></h1>
+                                                    <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{$ro->core['title']}}</span></h1>
                                                     @if(isset($ro->core['alt_title']))
                                                         <small>Also known as:
                                                             <span>{{implode(', ',$ro->core['alt_title'])}}</span>

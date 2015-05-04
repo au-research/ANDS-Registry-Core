@@ -28,9 +28,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		{value:'keywords', label: 'Keywords'},
 		{value:'scot', label: 'School of Online Thesaurus'},
 		{value:'pont', label: 'Powerhouse Museum Object Name Thesaurus'},
-		{value:'psychit', label: 'Thesaurus of psychological index terms'},
+		{value:'psychit', label: 'Thesaurus of Psychological Index Terms'},
 		{value:'apt', label: 'Australian Pictorial Thesaurus'},
-		{value:'lcsh', label: 'LCSH'}
+		{value:'lcsh', label: 'LCSH'},
+        {value:'gcmd', label: 'Global Change Master Directory Keywords'}
 	];
 
 	$scope.$watch(function(){
@@ -200,8 +201,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		//only change the hash at search page, other page will navigate to the search page
 		if ($scope.onSearchPage()) {
 			location.hash = '!/'+hash;
+            $(window).scrollTop(0);
 		} else {
 			location.href = base_url+'search/#' + '!/' + hash;
+            $(window).scrollTop(0);
 		}
 	}
 
@@ -223,21 +226,20 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
 			ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
 		}
+	
+		if (location.href.indexOf('search')>-1) {
+			search_factory.search($scope.filters).then(function(data){
+				$scope.loading = false;
+				$scope.fuzzy = data.fuzzy_result;
+				search_factory.update('result', data);
+				search_factory.update('facets', search_factory.construct_facets(data));
+
+				$scope.sync();
+				$scope.$broadcast('search_complete');
+				$scope.populateCenters($scope.result.response.docs);
+			});
+		}
 		
-
-		search_factory.search($scope.filters).then(function(data){
-			$scope.loading = false;
-			$scope.fuzzy = data.fuzzy_result;
-			// search_factory.updateResult(data);
-			search_factory.update('result', data);
-			search_factory.update('facets', search_factory.construct_facets(data));
-
-			$scope.sync();
-			$scope.$broadcast('search_complete');
-			$scope.populateCenters($scope.result.response.docs);
-			// $log.debug('result', $scope.result);
-			// $log.debug($scope.result, search_factory.result);
-		});
 	}
 
 	$scope.addKeyWord = function(extra_keywords) {
@@ -368,14 +370,17 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else return false;
 	}
 
-	$scope.showFilter = function(filter_name){
+	$scope.showFilter = function(filter_name, mode){
+		if (!mode || mode=='undefined') mode = 'normal';
 		var show = true;
 		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
 			show = false;
 		}
-		if($scope.filters[filter_name]=="")  show = false;
+		if ($scope.filters[filter_name]=="" && mode == 'normal')  show = false;
+		if ($scope.prefilters[filter_name]=="" && mode == 'advanced')  show = false;
 		return show;
 	}
+
 
 	/**
 	 * Filter manipulation
@@ -560,7 +565,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			        			id:i.id,
 			        			title:i.title,
 			        			slug:i.slug,
-			        			group:i.group
+			        			group:i.group,
+                                class: $scope.filters.class,
+                                type: i.type,
+                                saved_time:parseInt(new Date().getTime() / 1000)
 			        		});
 			        	});
 			           	return selected;
@@ -698,8 +706,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.advancedSearch = function(){
 		$scope.filters = {};
 		angular.copy($scope.prefilters, $scope.filters);
-		if($scope.prefilters.q) $scope.query = $scope.prefilters.q;
-
+		if($scope.prefilters['q']) {
+			$scope.query = $scope.prefilters.q;
+		} else {
+			$scope.query = '';
+			$scope.filters['q'] = '';
+		}
+		$log.debug($scope.filters);
 		$scope.hashChange();
 		$('#advanced_search').modal('hide');
 	}
@@ -741,6 +754,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if(typeof $scope.prefilters[type]!='object') {
 			if(type=='q') $scope.q = '';
 			delete $scope.prefilters[type];
+			$scope.prefilters['cq'] = '';
+			$scope.$broadcast('clearSearch');
 		} else if(typeof $scope.prefilters[type]=='object') {
 			var index = $scope.prefilters[type].indexOf(value);
 			$scope.prefilters[type].splice(index, 1);
@@ -831,8 +846,10 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	//
 	$scope.$watch('vocab', function(newv, oldv){
 		if (newv!=oldv && $scope.isAdvancedSearchActive('subject')) {
+			$scope.loading_subjects = true;
 			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
 				$scope.vocab_tree_tmp = data;
+				$scope.loading_subjects = false;
 			});
 		}
 	});

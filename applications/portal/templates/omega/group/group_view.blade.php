@@ -118,7 +118,7 @@
 
 @section('sidebar')
 
-@if($group['has_custom_data'])
+@if(isset($group['has_custom_data']))
     @if(isset($group['custom_data']['contact']))
     <div class="panel swatch-white">
         <div class="panel-heading">Contact</div>
@@ -131,27 +131,39 @@
     <!-- <div class="panel-heading">Registry Contents</div> -->
     <div class="panel-body">
         <ul class="listy">
-            @foreach($group['facet']['class'] as $class)
-                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class={{$class['name']}}">{{class_name($class['name'])}} <small>({{$class['num']}})</small></a></li>
-            @endforeach
+            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection')}} <small>({{$group['facet']['class']['collection']}})</small></a></li>
+
+            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=party">{{class_name('party')}} <small>({{$group['facet']['class']['party']}})</small></a></li>
+
+            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=activity}">{{class_name('activity')}} <small>({{$group['facet']['class']['activity']}})</small></a></li>
+
+            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=service">{{class_name('service')}} <small>({{$group['facet']['class']['service']}})</small></a></li>
         </ul>
     </div>
 </div>
 
-@if($group['groups'])
+@if(isset($group['groups']) && is_array($group['groups']) && sizeof($group['groups']) > 0)
 <div class="panel swatch-white">
     <div class="panel-heading">Organisations & Groups</div>
     <div class="panel-body">
         <ul class="listy">
+            <?php $i = 0  ?>
             @foreach($group['groups'] as $gr)
+            @if($i++ < 5)
                 <li><a href="{{base_url()}}{{$gr['slug']}}/{{$gr['id']}}">{{$gr['title']}}</a></li>
+            @else
+                <li class="listItem hidden"><a href="{{base_url()}}{{$gr['slug']}}/{{$gr['id']}}">{{$gr['title']}}</a></li>
+            @endif
             @endforeach
+            @if($group['groups_count'] > 5)
+            <span><a href="{{base_url()}}search#!/group={{$group['title']}}/type_search=group/class=party">View All {{$group['groups_count']}}.</a></span>
+            @endif
         </ul>
     </div>
 </div>
 @endif
 
-@if($group['latest_collections'])
+@if(isset($group['latest_collections']))
 <div class="panel swatch-white">
     <div class="panel-heading">Last 5 Data Records Added</div>
     <div class="panel-body">
@@ -164,7 +176,7 @@
 </div>
 @endif
 
-@if($group['has_custom_data'])
+@if(isset($group['has_custom_data']))
     @if(isset($group['custom_data']['identifiers']))
     <div class="panel swatch-white">
         <div class="panel-heading">Identifiers</div>

@@ -161,3 +161,20 @@ a.noexicon:after {
     display:inline;
     border:1px white solid;
 }
+.oneLineTruncate{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+h1.bordered:after{
+    width:150px;
+}
+.text-center > h1.bordered:after{
+    width:150px;
+    left:46% !important
+}
+.text-center h1.bordered:after{
+    width:150px;
+    left:46%
+}

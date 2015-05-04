@@ -54,7 +54,7 @@ app.factory('search_factory', function($http, $log){
 			{value:'list_title_sort asc',label:'Title A-Z'},
 			{value:'list_title_sort desc',label:'Title Z-A'},
 			// {value:'title desc',label:'Popular'},
-			{value:'record_created_timestamp asc',label:'Date Added'}
+			{value:'record_created_timestamp desc',label:'Date Added  <i class="fa fa-sort-amount-desc"></i>'}
 		],
 
 		activity_sort : [
@@ -83,7 +83,7 @@ app.factory('search_factory', function($http, $log){
 
 		advanced_fields_party: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
@@ -92,7 +92,7 @@ app.factory('search_factory', function($http, $log){
 
 		advanced_fields_service: [
 			{'name':'terms', 'display':'Search Terms', 'active':true},
-			{'name':'type', 'display':'Types'},
+			{'name':'type', 'display':'Type'},
 			{'name':'subject', 'display':'Subject'},
 			{'name':'group', 'display':'Data Provider'},
 			{'name':'review', 'display':'Review'},
@@ -160,6 +160,7 @@ app.factory('search_factory', function($http, $log){
 
 		search: function(filters){
 			this.status = 'loading';
+            filters = this.cleanFilters(filters);
 			// $log.debug('search filters', filters);
 			var promise = $http.post(base_url+'registry_object/filter', {'filters':filters}).then(function(response){
 				this.status = 'idle';
@@ -172,6 +173,13 @@ app.factory('search_factory', function($http, $log){
 			});
 			return promise;
 		},
+
+        cleanFilters: function(filters) {
+          angular.forEach(filters, function(value, index) {
+            if (value=='') delete filters[index];
+          });
+          return filters;
+        },
 
 		search_no_record: function(filters) {
 			var promise = $http.post(base_url+'registry_object/filter/true', {'filters':filters}).then(function(response){
@@ -195,7 +203,7 @@ app.factory('search_factory', function($http, $log){
 			// });
 
 			//other facet fields
-
+            if(result.error)  console.log(result);
 			angular.forEach(result.facet_counts.facet_fields, function(item, index) {
 				facets[index] = [];
 				for (var i = 0; i < result.facet_counts.facet_fields[index].length ; i+=2) {
@@ -250,7 +258,7 @@ app.factory('search_factory', function($http, $log){
 			for (i=0;i<earliest_array.length-1;i+=2) {
 				if (earliest_year && parseInt(earliest_array[i]) < earliest_year) {
 					earliest_year = parseInt(earliest_array[i]);
-				} else if(!earliest_year) {
+				} else if(!earliest_year || earliest_year=='') {
 					earliest_year = parseInt(earliest_array[i]);
 				}
 			}
@@ -283,8 +291,12 @@ app.factory('search_factory', function($http, $log){
 				var t = this.split('=');
 				var term = t[0];
 				var value = t[1];
-				if(term=='rows'||term=='year_from'||term=='year_to') value = parseInt(value);
-				if(term && value && term!=''){
+				if(term=='rows'||term=='year_from'||term=='year_to' && value.trim()!='') value = parseInt(value);
+				if(term=='funding_from' || term=='funding_to') {
+					value = decodeURIComponent(value);
+					value = Number(value.replace(/[^0-9\.-]+/g,""));
+				}
+				if(term && value && term!='' && value!=''){
 
 					if(filters[term]) {
 						if(typeof filters[term]=='string') {

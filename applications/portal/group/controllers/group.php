@@ -23,26 +23,45 @@ class Group extends MX_Controller {
 
 	function view($slug) {
 		$group = $this->groups->get($slug);
-		
-		$this->blade
-			->set('group', $group)
-			->set('title', $group['title'])
-			->render('group/group_view');
+		if(isset($group) && sizeof($group) > 0){
+            $this->blade
+                ->set('group', $group)
+                ->set('title', $group['title'])
+                ->render('group/group_view');
+        }else{
+            redirect('contributors');
+        }
+
 	}
 
 	function get() {
 		$group_name = $this->input->get('group') ? $this->input->get('group') : false;
 		if($group_name) {
-			$group = $this->groups->fetchData($group_name, 'DRAFT');
-			if(!$group) $group = $this->groups->fetchData($group_name, 'PUBLISHED');
-			if ($group) {
-				$result = $group;
-			} else {
-				$result = array(
-					'name' => $this->input->get('group'),
-					'nodata' => true
-				);
-			}
+            if($this->groups->canUserEdit($group_name) == false)
+            {
+                $result = array(
+                    'status' => 'ERROR',
+                    'message' => 'you are not allowed to edit this contributor page'
+                );
+            }
+			else
+            {
+                $group = $this->groups->fetchData($group_name, 'DRAFT');
+			    if(!$group)
+                    $group = $this->groups->fetchData($group_name, 'PUBLISHED');
+			    if ($group)
+                {
+				    $result = $group;
+			    }
+                else
+                {
+                    $result = array(
+                        'name' => $this->input->get('group'),
+                        'status' => "PUBLISHED", //hacky but works
+                        'nodata' => true
+                    );
+			    }
+            }
 		} else {
 			$groups = $this->groups->getOwnedGroups();
 			$result = array(
@@ -94,16 +113,26 @@ class Group extends MX_Controller {
 		$config['upload_path'] = $upload_path;
 		$config['allowed_types'] = 'jpg|png|gif|jpeg';
 		$config['overwrite'] = true;
-		$config['max_size']	= '4000';
+		$config['max_size']	= '500';
+        $this->load->library('upload', $config);
 
-		$this->load->library('upload', $config);
-		if(!$this->upload->do_upload('file')) {
-			echo json_encode(
-				array(
-					'status'=>'ERROR',
-					'message' => $this->upload->display_errors('','')
-				)
-			);
+        if(!$this->upload->do_upload('file')) {
+            $upload_file_exceeds_limit = "The uploaded file exceeds the maximum allowed size in your PHP configuration file.";
+            $upload_invalid_filesize  = "The file you are attempting to upload is larger than the permitted size.";
+            $upload_invalid_filetype = "The filetype you are attempting to upload is not allowed.";
+            $theError = $this->upload->display_errors();
+            if(strrpos($theError, $upload_file_exceeds_limit) > 0 || strrpos($theError, $upload_invalid_filesize) > 0){
+                $theError = "Maximum file size exceeded. Please select a file smaller than 500KB.";
+            }
+            elseif(strrpos($theError, $upload_invalid_filetype) > 0){
+                $theError = "Unsupported file format. Please select a png, jpg or gif.";
+            }
+            echo json_encode(
+                array(
+                    'status'=>'ERROR',
+                    'message' => $theError
+                )
+            );
 		} else {
 			$data = $this->upload->data();
 			$name = $data['orig_name'];

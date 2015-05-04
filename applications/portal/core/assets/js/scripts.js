@@ -230,6 +230,9 @@ jQuery(document).ready(function( $ ) {
         var div = $(this).attr('data-toggle');
         console.log(div, $(div), $(div).length);
         $(div).toggle();
+    }).on('click', '#show_all_anchor', function(e){
+        $('#show_all_span').hide();
+        $('.listItem').removeClass('hidden');
     }).on('mouseover', '*[tip]', function(event){
         // Bind the qTip within the event handler
         var my = $(this).attr('my');
@@ -306,20 +309,42 @@ jQuery(document).ready(function( $ ) {
         $('#search_tab').removeClass('active');
         $('#myrda_tab').removeClass('active');
         $('#advsearch_tab').removeClass('active');
+
         $('#overview').removeClass('active');
         $('#search').removeClass('active');
         $('#myrda').removeClass('active');
+        $('#advsearch').removeClass('active');
 
         $('#'+useTab).addClass('active');
         $('#'+useTab+'_tab').addClass('active');
     }).on('click', '.search_help', function(event){
+
         $('#overview_tab').removeClass('active');
         $('#myrda_tab').removeClass('active');
         $('#advsearch_tab').removeClass('active');
+
         $('#overview').removeClass('active');
         $('#myrda').removeClass('active');
+        $('#advsearch').removeClass('active');
+
         $('#search').addClass('active');
         $('#search_tab').addClass('active');
+
+    }).on('click', '.help_link', function(event){
+        var useTab = $(this).attr('id');
+        useTab = useTab.substr(0, useTab.indexOf('_link'));
+        $('#overview_tab').removeClass('active');
+        $('#search_tab').removeClass('active');
+        $('#myrda_tab').removeClass('active');
+        $('#advsearch_tab').removeClass('active');
+
+        $('#overview').removeClass('active');
+        $('#search').removeClass('active');
+        $('#myrda').removeClass('active');
+        $('#advsearch').removeClass('active');
+
+        $('#'+useTab).addClass('active');
+        $('#'+useTab+'_tab').addClass('active');
     });
 
 

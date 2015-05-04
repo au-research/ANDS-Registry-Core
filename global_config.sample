@@ -11,9 +11,9 @@
 /*
 /*										    Registry Software Configuration
 /*
-/* 		Release Version :	13
+/* 		Release Version :	15
 /*		Contact Person  :	services@ands.org.au
-/*		Help/support    :	http://researchdata.ands.org.au/developers/
+/*		Help/support    :	http://developers.ands.org.au/
 /*
 /*************************************************************************/
 
@@ -100,9 +100,6 @@ $ENV['ENABLED_MODULES'] = array(
 /*************************************************************************/
 // Optional parameters to enable/disable advanced registry functionality
 
-// Replace this with the URL of your OAI-PMH harvester (if you have one)
-// Consider using the ANDS-Harvester (an OAI-PMH compliant Java web app)
-$ENV['harvester_base_url'] = "";
 
 // Replace this with the URL of your vocabulary server API (if you have one)
 $ENV['sissvoc_url'] = "http://researchdata.ands.org.au:8080/vocab/api/";
@@ -111,17 +108,6 @@ $ENV['sissvoc_url'] = "http://researchdata.ands.org.au:8080/vocab/api/";
 $ENV['vocab_resolving_services'] =  array(
 	'anzsrc-seo' => array('resolvingService' => 'http://researchdata.ands.org.au:8080/vocab/api/anzsrc-seo/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
 	'anzsrc-for' => array('resolvingService' => 'http://researchdata.ands.org.au:8080/vocab/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
-);
-
-// Provider types
-// allow to add different metadataPrefix for OAI harvesting
-// also can be configured to run cross walk if needed. (in the future once we have some)
-$ENV['provider_types'] = array(
-    'ISO 19139-1.4'=>array('prefix'=>'iso19139.mcp-1.4', 'name_space_uri'=>'RIFCS_NAMESPACE', 'cross_walk'=>''),
-    'ISO 19139'=>array('prefix'=>'iso19139.mcp', 'name_space_uri'=>'RIFCS_NAMESPACE', 'cross_walk'=>''),
-    'GDM'=>array('prefix'=>'http://www.isotc211.org/2005/gmd', 'name_space_uri'=>'RIFCS_NAMESPACE', 'cross_walk'=>''),
-    'RIF-CS'=>array('prefix'=>'rif', 'name_space_uri'=>'RIFCS_NAMESPACE', 'cross_walk'=>''),
-    'OAI DC'=>array('prefix'=>'oai_dc', 'name_space_uri'=>'RIFCS_NAMESPACE', 'cross_walk'=>'Dublin Core to RIFCS')
 );
 
 // Session Timeout (how many seconds before the user gets logged out)
@@ -217,6 +203,19 @@ $ENV['DOI_LINK_CHECKER_SCRIPT'] = "<full_path_to_doi_link_checker.py>";
 // suitable linkchecker.ini (see the link checker README) and use the
 // following setting:
 // $ENV['DOI_LINK_CHECKER_SCRIPT'] = "<full_path_to_new_linkchecker.py> --html_output -i <full_path_to_linkchecker.ini> -m DOI";
+
+//Tracking for Google Analytics and Lucky Orange
+$ENV['tracking'] =
+    array(
+            'googleGA' => array(
+                    'enabled' => false,
+                    'keys' => array('id' => '')
+            ),
+            'luckyOrange' => array(
+                    'enabled' => false,
+                    'keys' => array('id' => '')
+            )
+    );
 
 //OAUTH Configuration
 $ENV['oauth_config'] =
