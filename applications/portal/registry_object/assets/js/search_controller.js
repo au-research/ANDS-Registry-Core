@@ -683,6 +683,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else if(newv=='service') {
 			$scope.advanced_fields = search_factory.advanced_fields_service;
 		}
+        $scope.selectAdvancedField('terms');//force them to reload all other tabs!
 		$scope.presearch();
 		$scope.cleanPrefilters();
 	});
