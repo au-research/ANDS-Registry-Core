@@ -195,7 +195,7 @@ class DCI extends ROHandler {
                 {
                     $text .= '('.$relatedInfo->notes.')';
                 }
-                $citationText->addChild('CitationString', $text);
+                $citationText->addChild('CitationString', str_replace('&', '&amp;', $text));
             }
         }
     }
