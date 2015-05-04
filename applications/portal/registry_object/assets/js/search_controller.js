@@ -370,14 +370,17 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else return false;
 	}
 
-	$scope.showFilter = function(filter_name){
+	$scope.showFilter = function(filter_name, mode){
+		if (!mode || mode=='undefined') mode = 'normal';
 		var show = true;
 		if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
 			show = false;
 		}
-		if($scope.filters[filter_name]=="")  show = false;
+		if ($scope.filters[filter_name]=="" && mode == 'normal')  show = false;
+		if ($scope.prefilters[filter_name]=="" && mode == 'advanced')  show = false;
 		return show;
 	}
+
 
 	/**
 	 * Filter manipulation
@@ -746,6 +749,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if(typeof $scope.prefilters[type]!='object') {
 			if(type=='q') $scope.q = '';
 			delete $scope.prefilters[type];
+			$scope.prefilters['cq'] = '';
+			$scope.$broadcast('clearSearch');
 		} else if(typeof $scope.prefilters[type]=='object') {
 			var index = $scope.prefilters[type].indexOf(value);
 			$scope.prefilters[type].splice(index, 1);
