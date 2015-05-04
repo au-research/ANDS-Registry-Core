@@ -25,11 +25,12 @@
     </div>
 
     <div class="panel-body swatch-white" ng-if="result.response.docs.length < 1" ng-cloak>
-        <p>The search term <b>[[ query ]]</b> did not return any results</p>
+        <p>Your search did not return any results</p>
         <p>Some suggestion for searching in Research Data Australia</p>
         <ul>
             <li>Make sure that all words are spelled correctly</li>
             <li>Try using different or more general search keywords</li>
+            <li>Try beginning with a broad search, and then gradually apply filters and keywords to narrow down your results.</li>
         </ul>
     </div>
 

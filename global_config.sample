@@ -11,9 +11,9 @@
 /*
 /*										    Registry Software Configuration
 /*
-/* 		Release Version :	13
+/* 		Release Version :	15
 /*		Contact Person  :	services@ands.org.au
-/*		Help/support    :	http://researchdata.ands.org.au/developers/
+/*		Help/support    :	http://developers.ands.org.au/
 /*
 /*************************************************************************/
 
@@ -203,6 +203,19 @@ $ENV['DOI_LINK_CHECKER_SCRIPT'] = "<full_path_to_doi_link_checker.py>";
 // suitable linkchecker.ini (see the link checker README) and use the
 // following setting:
 // $ENV['DOI_LINK_CHECKER_SCRIPT'] = "<full_path_to_new_linkchecker.py> --html_output -i <full_path_to_linkchecker.ini> -m DOI";
+
+//Tracking for Google Analytics and Lucky Orange
+$ENV['tracking'] =
+    array(
+            'googleGA' => array(
+                    'enabled' => false,
+                    'keys' => array('id' => '')
+            ),
+            'luckyOrange' => array(
+                    'enabled' => false,
+                    'keys' => array('id' => '')
+            )
+    );
 
 //OAUTH Configuration
 $ENV['oauth_config'] =

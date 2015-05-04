@@ -17,7 +17,7 @@
 			<div class="panel-body">
 				<span ng-if="status=='loading'"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
 				<ul ng-if="groups" ng-cloak>
-					<li ng-repeat="group in groups"><a href="#/groups/[[group]]">[[group]]</a></li>
+					<li ng-repeat="group in groups | orderBy:group"><a href="#/groups/[[group]]">[[group]]</a></li>
 				</ul>
 			</div>
 		</div>

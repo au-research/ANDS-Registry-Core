@@ -50,9 +50,9 @@
                     <div id="categories-5" class="sidebar-widget widget_categories">
                         <h3 class="sidebar-header">Share</h3>
                         <ul>
-                            <li class="cat-item"><a class="noexicon" href="http://www.facebook.com/sharer.php?u={{$url}}" target="_blank"><i class="fa fa-facebook"></i> Facebook</a></li>
-                            <li class="cat-item"><a class="noexicon" href="https://twitter.com/share?url={{$url}}&text={{$title}}&hashtags=andsdata" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
-                            <li class="cat-item"><a class="noexicon" href="https://plus.google.com/share?url={{$url}}" target="_blank"><i class="fa fa-google"></i> Google</a></li>
+                            <li class="cat-item"><a class="noexicon social-sharing" href="http://www.facebook.com/sharer.php?u={{$url}}" target="_blank"><i class="fa fa-facebook"></i> Facebook</a></li>
+                            <li class="cat-item"><a class="noexicon social-sharing" href="https://twitter.com/share?url={{$url}}&text={{$title}}&hashtags=andsdata" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
+                            <li class="cat-item"><a class="noexicon social-sharing" href="https://plus.google.com/share?url={{$url}}" target="_blank"><i class="fa fa-google"></i> Google</a></li>
                         </ul>
                     </div>
                 </div>

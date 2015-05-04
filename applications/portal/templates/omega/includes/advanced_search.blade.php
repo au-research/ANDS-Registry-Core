@@ -172,7 +172,7 @@
 											[[filters]]
 									</div> -->
 									<div class="panel-body swatch-white">
-										<div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name)">
+										<div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name, 'advanced')">
 										    <h4 ng-if="(name!='q' && value!='') || (name=='q' && !prefilters.cq) ">[[name | filter_name]]</h4>
 										    <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
 										    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
