@@ -31,8 +31,7 @@ class Core extends ROHandler {
         $result['site_name'] = "Research Data Australia";
         $result['description'] = isset($this->index['list_description']) ? $this->index['list_description'] : 'No description text available.';
 
-        if($this->ro->class == 'activity' && $this->ro->type == 'grant' && strrpos($this->ro->key, 'purl') > 0)
-        {
+        if($this->ro->class == 'activity' && $this->ro->type == 'grant' && strrpos($this->ro->key, 'purl') > 0) {
             $result['url'] = $this->ro->key;
             $result['description'] = "Identifier: " .$this->ro->key.NL.$this->index['list_description'];
         }

@@ -38,8 +38,13 @@ class Registry_object extends MX_Controller {
         //view/{id} => redirect to {slug}/{id}
         if ($id) {
             $ro = $this->ro->getByID($id, null, $useCache);
-            if ($ro && $ro->prop['status'] == 'success' && (!$slug || $slug != $ro->prop['core']['slug'])) {
-                redirect($ro->prop['core']['slug'].'/'.$id);
+            if ($ro && $ro->prop['status'] == 'success') {
+            	if (!$ro->prop['core']['slug']) {
+            		//it's ok
+            	}
+            	else if (!$slug || $slug != $ro->prop['core']['slug']) {
+					redirect($ro->prop['core']['slug'].'/'.$id);
+            	}
             }
         }
 

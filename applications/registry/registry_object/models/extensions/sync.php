@@ -112,10 +112,10 @@ class Sync_extension extends ExtensionBase{
 			} else if($type == 'full' && ($theDescriptionType != 'brief' || $theDescriptionType != 'full')) {
 				$theDescription = (string) $description;
 				$theDescriptionType = $type;
-			} else if($type != '' && $theDescriptionType == '') {
+			} else if($type != '' && $theDescriptionType == '' && $this->ro->class!='activity') {
 				$theDescription = (string) $description;
 				$theDescriptionType = $type;
-			} else if($theDescription == '') {
+			} else if($theDescription == '' && $this->ro->class!='activity') {
 				$theDescription = (string) $description;
 				$theDescriptionType = $type;
 			}
