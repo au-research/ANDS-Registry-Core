@@ -44,12 +44,7 @@ class DCI extends ROHandler {
     {
         $header = $this->DCIRoot->addChild('Header');
         $header->addChild('DateProvided', date('Y-m-d', time()));
-        if(isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->publisher)){
-            $header->addChild('RepositoryName', $this->xml->{$this->ro->class}->citationInfo->citationMetadata->publisher);
-        }
-        else{
-            $header->addChild('RepositoryName', $this->ro->group);
-        }
+        $header->addChild('RepositoryName', $this->ro->group);
         $header->addChild('Owner', $this->ro->group);
         $header->addChild('RecordIdentifier', $this->ro->key);
     }
