@@ -16149,7 +16149,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else if(newv=='service') {
 			$scope.advanced_fields = search_factory.advanced_fields_service;
 		}
-        $scope.selectAdvancedField('terms');//force them to reload all other tabs!
 		$scope.presearch();
 		$scope.cleanPrefilters();
 	});
@@ -16170,8 +16169,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.advancedSearch = function(){
 		$scope.filters = {};
 		angular.copy($scope.prefilters, $scope.filters);
-		if($scope.prefilters.q) $scope.query = $scope.prefilters.q;
-
+		if($scope.prefilters['q']) {
+			$scope.query = $scope.prefilters.q;
+		} else {
+			$scope.query = '';
+			$scope.filters['q'] = '';
+		}
+		$log.debug($scope.filters);
 		$scope.hashChange();
 		$('#advanced_search').modal('hide');
 	}
