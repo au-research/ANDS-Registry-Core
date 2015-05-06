@@ -164,7 +164,7 @@ class Groups extends CI_Model {
 			->init()
 			->setOpt('fq', '+group:("'.$group['title'].'")')
 			->setOpt('fq', '+class:party')
-			->setOpt('fq', '+type_search:group')
+			->setOpt('fq', '+type:group')
 			->setOpt('rows', '5')
 			->setOpt('fl', 'id,slug,title')
 			->executeSearch(true);

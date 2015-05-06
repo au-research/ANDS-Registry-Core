@@ -156,7 +156,7 @@
             @endif
             @endforeach
             @if($group['groups_count'] > 5)
-            <span><a href="{{base_url()}}search#!/group={{$group['title']}}/type_search=group/class=party">View All {{$group['groups_count']}}.</a></span>
+            <span><a href="{{base_url()}}search#!/group={{$group['title']}}/type=group/class=party">View All {{$group['groups_count']}}.</a></span>
             @endif
         </ul>
     </div>
