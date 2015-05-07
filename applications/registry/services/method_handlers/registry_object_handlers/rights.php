@@ -21,7 +21,7 @@ class Rights extends ROHandler {
 
         //if there's a secret tag of SYSTEM_open, assign license_class to open
         $tags = $this->ro->getTags();
-        if($tags && !$skip){
+        if($tags && !$skip && sizeof($tags) > 0){
 			foreach($tags as $tag){
 				if ($tag['name']=='SYSTEM_open') {
 					$rights[] = array(

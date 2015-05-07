@@ -539,7 +539,7 @@ Y2  - '.date("Y-m-d")."
         return $contributors;
     }
 
-    function getFunders()
+    private function getFunders()
     {
         $CI =& get_instance();
         $CI->load->model('registry_object/registry_objects', 'mro');
