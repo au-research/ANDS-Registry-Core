@@ -9,6 +9,8 @@ class Rights extends ROHandler {
 	function handle() {
         $rights = $this->ro->processLicence();
 
+        if(!$rights) $rights = array();
+
         $skip = false;
         foreach($rights as $right) {
         	if($right['type']=='accessRights') $skip = true;

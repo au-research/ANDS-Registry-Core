@@ -31,6 +31,7 @@ class Sync_extension extends ExtensionBase{
 				$r = $this->_CI->solr->add_json(json_encode($docs));
 				$r = $this->_CI->solr->commit();
 			}
+			$this->_dropCache();
 		} catch (Exception $e) {
 			return 'error: '.$e;
 		}
@@ -155,18 +156,18 @@ class Sync_extension extends ExtensionBase{
         if ($json['class'] == 'collection') {
             $json['access_rights'] = 'Other';
         }
-        if ($rights = $this->ro->processLicence()) {
 
-	        //if there's a secret tag of SYSTEM_open, assign license_class to open
-	        $tags = $this->ro->getTags();
-	        if($tags = $this->ro->getTags()){
-				foreach($tags as $tag){
-					if ($tag['name']=='SYSTEM_open') {
-						$json['access_rights'] = 'open';
-					}
+        //if there's a secret tag of SYSTEM_open, assign license_class to open
+        $tags = $this->ro->getTags();
+        if($tags = $this->ro->getTags()){
+			foreach($tags as $tag){
+				if ($tag['name']=='SYSTEM_open') {
+					$json['access_rights'] = 'open';
 				}
 			}
+		}
 
+        if ($rights = $this->ro->processLicence()) {
             foreach($rights as $right) {
                 if(isset($right['licence_group'])) {
                     $json['license_class'] = strtolower($right['licence_group']);
@@ -174,7 +175,6 @@ class Sync_extension extends ExtensionBase{
                 }
                 if(isset($right['accessRights_type']) && in_array($right['accessRights_type'], $include_rights_type)) $json['access_rights'] = $right['accessRights_type'];
             }
-            
         }
 
 		//identifier
