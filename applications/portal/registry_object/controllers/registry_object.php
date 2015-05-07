@@ -293,8 +293,10 @@ class Registry_object extends MX_Controller {
 		$result = array();
 		foreach($list as $l){
 			$result_type = $this->getAllSubjectsForType($l, $filters);
-			$result_list = (isset($result_type['list']) ? $result_type['list'] : array());
-			$result = array_merge($result, $result_list);
+			if(isset($result_type['list'])){
+                $result = array_merge($result, $result_type['list']);
+            }
+
 		}
 		$azTree = array();
 		$azTree['0-9'] = array('subtree'=>array(), 'collectionNum'=>0, 'prefLabel'=>'0-9', 'notation'=>'0-9');
@@ -303,12 +305,16 @@ class Registry_object extends MX_Controller {
 		}
 
 		foreach($result as $r){
-			//if(ctype_alnum($r['prefLabel'])){
-				$first = strtoupper($r['prefLabel'][0]);
-				if(is_numeric($first)){$first='0-9';}
-				$azTree[$first]['collectionNum']++;
-				array_push($azTree[$first]['subtree'], $r);
-			//}
+            if(strlen($r['prefLabel']) > 0){
+                $first = strtoupper($r['prefLabel'][0]);
+                if(is_numeric($first)){
+                    $first='0-9';
+                }
+                if(ctype_alnum($first) && isset($azTree[$first])) {
+                    $azTree[$first]['collectionNum']++;
+                    array_push($azTree[$first]['subtree'], $r);
+                }
+            }
 		}
 
 		foreach($azTree as &$com) {

@@ -76,6 +76,8 @@
 						<ul><li ng-repeat="f in facet_result.group | limitTo:show"><a href="" ng-click="addFilter({name:'group', value:f.name})">{{f.name}} ({{f.value}})</a></li></ul>
 						<h5>Class</h5>
 						<ul><li ng-repeat="f in facet_result.class | limitTo:show"><a href="" ng-click="addFilter({name:'class', value:f.name})">{{f.name}} ({{f.value}})</a></li></ul>
+						<h5>License Class</h5>
+						<ul><li ng-repeat="f in facet_result.license_class | limitTo:show"><a href="" ng-click="addFilter({name:'license_class', value:f.name})">{{f.name}} ({{f.value}})</a></li></ul>
 					</div>
 				</div>
 			</div>

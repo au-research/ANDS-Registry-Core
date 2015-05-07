@@ -45,13 +45,7 @@ class Registry_object_tags extends CI_Model {
 			$ro = $this->ro->getPublishedByKey($key);
 			if($ro){
 				$ro->addTag($tag, $tag_type);
-				$ro->updateExtRif();
-				$solrXML .= '<doc><field name="id">'.$ro->id.'</field><field name="key">'.$ro->key.'</field><field name="data_source_id">'.$ro->data_source_id.'</field><field name="tag" update="add">'.$tag.'</field></doc>';
-				if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1)){
-					$_CI->solr->addDoc("<add>".$solrXML."</add>");
-					$_CI->solr->commit();
-					$solrXML ='';
-				}
+				$ro->sync();
 			}
 			unset($ro);
 		}

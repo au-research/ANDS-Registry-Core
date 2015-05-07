@@ -209,7 +209,7 @@ div.vertical-center span.vertical-center {
 }
 .btn-noaction:hover {
   background: transparent !important;
-  color: #84a07b !important;
+  color: #638363 !important;
 }
 .round {
   padding: 15px;
@@ -432,7 +432,7 @@ h1 {
   font-size: 30px;
 }
 small a {
-  color: #84a07b !important;
+  color: #638363 !important;
 }
 .alert-info {
   color: white;
@@ -447,7 +447,7 @@ small a {
   float: right;
 }
 .flex-direction-nav a {
-  color: #84a07b !important;
+  color: #638363 !important;
 }
 .swatch-white .panel-footer a,
 .swatch-white .panel-header a,
@@ -466,7 +466,7 @@ small a {
 }
 .swatch-gray a,
 .panel a {
-  color: #84a07b;
+  color: #638363;
 }
 .swatch-gray a:hover,
 .panel a:hover {
@@ -479,19 +479,19 @@ small a {
 }
 .swatch-black input::selection {
   color: white;
-  background: #84a07b;
+  background: #638363;
 }
 .swatch-black input::-moz-selection {
   color: white;
-  background: #84a07b;
+  background: #638363;
 }
 ::selection {
   color: white;
-  background: #84a07b;
+  background: #638363;
 }
 ::-moz-selection {
   color: white;
-  background: #84a07b;
+  background: #638363;
 }
 .mce-panel button {
   background-color: inherit !important;
@@ -518,7 +518,7 @@ small a {
   box-shadow: 0px 3px 0px #84a07b;
 }
 .btn-primary {
-  background-color: #84a07b;
+  background-color: #638363;
 }
 .btn-primary:hover {
   color: white !important;
@@ -551,7 +551,7 @@ small a {
   background: white !important;
 }
 .swatch-white a {
-  color: #84a07b;
+  color: #638363;
 }
 .swatch-white a:hover {
   color: #eb7700;

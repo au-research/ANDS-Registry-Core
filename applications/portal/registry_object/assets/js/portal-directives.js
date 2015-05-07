@@ -30,6 +30,7 @@ app.directive('facetSearch', function($http, $log){
                     text = text + "<strong>Conditional</strong>: Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required).<br />";
                     text = text + "<strong>Restricted</strong>: Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location).<br />";
                     text = text + "<strong>Other</strong>: no value or user defined custom value.";
+
                 }
 
                 if(scope.facet.name=='license_class'){

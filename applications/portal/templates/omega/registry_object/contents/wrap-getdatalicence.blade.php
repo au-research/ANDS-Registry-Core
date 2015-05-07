@@ -44,7 +44,11 @@
     <div class="panel-body">
         @if($ro->citations)
             @foreach($ro->citations as $citation)
-                {{ isset($citation['coins']) ? $citation['coins'] : ''}}
+                @if(isset($citation['coins']))
+                <span class="Z3988" ng-non-bindable>
+                    {{ str_replace('"','',$citation['coins']) }}
+                </span>
+                @endif
             @endforeach
         @endif
         @include('registry_object/contents/access')
