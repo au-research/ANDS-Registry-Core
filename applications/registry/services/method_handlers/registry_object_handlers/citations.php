@@ -265,7 +265,7 @@ Y2  - '.date("Y-m-d")."
             $rft_relations .= '&rft.relation='.$relation;
         }
         $rft_place = $this->getPlace();
-        $coins .=  '<span class="Z3988" title="ctx_ver=Z39.88-2004&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc&rfr_id=info%3Asid%2FANDS';
+        $coins .=  'ctx_ver=Z39.88-2004&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc&rfr_id=info%3Asid%2FANDS';
         if($rft_id) $coins .= '&rft_id='.$rft_id;
         $coins .= '&rft.title='.$this->ro->title;
         if($rft_identifier) $coins .= '&rft.identifier='.$rft_identifier;
@@ -279,7 +279,7 @@ Y2  - '.date("Y-m-d")."
         if($rft_subjects) $coins .= $rft_subjects;
         if($rft_place) $coins .= '&rft_place='.$rft_place;
         $coins .= '&rft.type=dataset&rft.language=English';
-        $coins .= '"></span>';
+
 
         return $coins;
     }

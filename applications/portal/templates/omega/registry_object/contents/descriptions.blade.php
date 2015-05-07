@@ -16,7 +16,7 @@
                         $showHeading = false;
                     ?>
 					@if($desc['type']==$o && $desc['description']!='')
-						<div class="description">
+						<div class="description" ng-non-bindable >
                             <?php
                             if($currentHeading != $desc['type']){
                                 $showHeading = true;
@@ -40,7 +40,7 @@
                 $showHeading = false;
                 ?>
 				@if(!in_array($desc['type'], $order) && !in_array($desc['type'], $omit) && $desc['description']!='')
-					<div class="description">
+					<div class="description" ng-non-bindable >
                         <?php
                         if($currentHeading != $desc['type']){
                             $showHeading = true;
