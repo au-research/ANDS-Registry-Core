@@ -14,7 +14,10 @@
             <meta property="og:image" content="{{get_config_item('default_base_url')}}assets/core/images/ANDS_logo.JPG"/>
         @endif
         @if(isset($ro->core['description']))
-            <meta property="og:description" content="{{$ro->core['description']}}"/>
+            <?php 
+                $clean_description = str_replace(array('"','[[',']]'), '', $ro->core['description']);
+            ?>
+            <meta ng-non-bindable property="og:description" content="{{ $clean_description }}"/>
         @else
             <meta property="og:description" content="Find, access, and re-use data for research - from over one hundred Australian research organisations, government agencies, and cultural institutions."/>
         @endif
