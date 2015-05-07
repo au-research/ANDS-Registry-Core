@@ -12,13 +12,16 @@ class Rights extends ROHandler {
         if(!$rights) $rights = array();
 
         $skip = false;
-        foreach($rights as $right) {
-        	if($right['type']=='accessRights') $skip = true;
+        if($rights && sizeof($rights) > 0) {
+        	foreach($rights as $right) {
+        		if($right['type']=='accessRights') $skip = true;
+        	}
         }
+        
 
         //if there's a secret tag of SYSTEM_open, assign license_class to open
         $tags = $this->ro->getTags();
-        if($tags = $this->ro->getTags() && !$skip){
+        if($tags && !$skip){
 			foreach($tags as $tag){
 				if ($tag['name']=='SYSTEM_open') {
 					$rights[] = array(
