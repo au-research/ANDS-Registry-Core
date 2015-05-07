@@ -23,12 +23,15 @@ class DCI extends ROHandler {
         $CI =& get_instance();
         $ds = $CI->ds->getByID($this->ro->data_source_id);
         $exportable = false;
-
+        $lower_type = strtolower($this->ro->type);
+        $allowedType = array('collection', 'repository', 'dataset');
+        if($this->ro->hasTag('excludeDCI'))
+            return "";
         if($this->overrideExportable || $ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
             $exportable = true;
         $sourceUrl = $this->citation_handler->getSourceUrl();
-        if($sourceUrl == null || !($exportable))
-            return "not Exportable";
+        if($sourceUrl == null || !($exportable) && !in_array($lower_type, $allowedType))
+            return "";
         $this->getHeader();
         $this->getBibliographicData($sourceUrl);
         $this->getAbstract();
