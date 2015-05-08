@@ -73,4 +73,3 @@
         </div>
     </section>
 </footer>
-@include('includes/scripts')
