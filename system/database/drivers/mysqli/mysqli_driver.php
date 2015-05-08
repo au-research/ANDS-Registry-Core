@@ -315,7 +315,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 		{
 			$str = mysqli_real_escape_string($this->conn_id, $str);
 		}
-		elseif (function_exists('mysql_real_escape_string'))
+		elseif (function_exists('mysql_real_escape_string') AND is_object($this->conn_id))
 		{
 			$str = mysql_real_escape_string($str);
 		}
