@@ -19,19 +19,14 @@ class Rights extends ROHandler {
         }
         
 
-        //if there's a secret tag of SYSTEM_open, assign license_class to open
-        $tags = $this->ro->getTags();
-        if($tags && !$skip && sizeof($tags) > 0){
-			foreach($tags as $tag){
-				if ($tag['name']=='SYSTEM_open') {
-					$rights[] = array(
-						'value' => '',
-						'type' => 'accessRights',
-						'accessRights_type' =>'open'
-					);
-				}
-			}
-		}
+        //if there's a secret tag of SECRET_TAG_ACCESS_OPEN (defined in constants), add a right of accessRights_type open
+        if (!$skip && $this->ro->hasTag(SECRET_TAG_ACCESS_OPEN)) {
+        	$rights[] = array(
+				'value' => '',
+				'type' => 'accessRights',
+				'accessRights_type' =>'open'
+			);
+        }
         
         return $rights;
 	}

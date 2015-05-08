@@ -157,15 +157,10 @@ class Sync_extension extends ExtensionBase{
             $json['access_rights'] = 'Other';
         }
 
-        //if there's a secret tag of SYSTEM_open, assign license_class to open
-        $tags = $this->ro->getTags();
-        if($tags = $this->ro->getTags()){
-			foreach($tags as $tag){
-				if ($tag['name']=='SYSTEM_open') {
-					$json['access_rights'] = 'open';
-				}
-			}
-		}
+        //if there's a secret tag of SECRET_TAG_ACCESS_OPEN defined in constants, assign access_rights to open
+        if ($this->ro->hasTag(SECRET_TAG_ACCESS_OPEN)) {
+        	$json['access_rights'] = 'open';
+        }
 
         if ($rights = $this->ro->processLicence()) {
             foreach($rights as $right) {

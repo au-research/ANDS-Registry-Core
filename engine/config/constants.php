@@ -147,6 +147,9 @@ define('SEARCH_BOOST_PER_RELATION_EXP', 1.1);
 // Max to allocate based on relations/connectedness
 define('SEARCH_BOOST_RELATION_MAX', 4);
 
+//Secret tag for allowing record to be classified as open
+define('SECRET_TAG_ACCESS_OPEN', 'accessRightsType_open');
+
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
