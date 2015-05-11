@@ -20,12 +20,26 @@ class Rights extends ROHandler {
         
 
         //if there's a secret tag of SECRET_TAG_ACCESS_OPEN (defined in constants), add a right of accessRights_type open
-        if (!$skip && $this->ro->hasTag(SECRET_TAG_ACCESS_OPEN)) {
-        	$rights[] = array(
-				'value' => '',
-				'type' => 'accessRights',
-				'accessRights_type' =>'open'
-			);
+        if (!$skip) {
+            if ($this->ro->hasTag(SECRET_TAG_ACCESS_OPEN)) {
+                $rights[] = array(
+                    'value' => '',
+                    'type' => 'accessRights',
+                    'accessRights_type' =>'open'
+                );
+            } elseif ($this->ro->hasTag(SECRET_TAG_ACCESS_CONDITIONAL)) {
+                $rights[] = array(
+                    'value' => '',
+                    'type' => 'accessRights',
+                    'accessRights_type' =>'conditional'
+                );
+            } elseif ($this->ro->hasTag(SECRET_TAG_ACCESS_RESTRICTED)) {
+                $rights[] = array(
+                    'value' => '',
+                    'type' => 'accessRights',
+                    'accessRights_type' =>'restricted'
+                );
+            }
         }
         
         return $rights;

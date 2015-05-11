@@ -149,6 +149,8 @@ define('SEARCH_BOOST_RELATION_MAX', 4);
 
 //Secret tag for allowing record to be classified as open
 define('SECRET_TAG_ACCESS_OPEN', 'accessRightsType_open');
+define('SECRET_TAG_ACCESS_RESTRICTED', 'accessRightsType_restricted');
+define('SECRET_TAG_ACCESS_CONDITIONAL', 'accessRightsType_conditional');
 
 
 /* End of file constants.php */

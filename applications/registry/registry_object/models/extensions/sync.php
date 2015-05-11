@@ -160,6 +160,10 @@ class Sync_extension extends ExtensionBase{
         //if there's a secret tag of SECRET_TAG_ACCESS_OPEN defined in constants, assign access_rights to open
         if ($this->ro->hasTag(SECRET_TAG_ACCESS_OPEN)) {
         	$json['access_rights'] = 'open';
+        } elseif ($this->ro->hasTag(SECRET_TAG_ACCESS_CONDITIONAL)) {
+        	$json['access_rights'] = 'conditional';
+        } elseif ($this->ro->hasTag(SECRET_TAG_ACCESS_RESTRICTED)) {
+        	$json['access_rights'] = 'restricted';
         }
 
         if ($rights = $this->ro->processLicence()) {
