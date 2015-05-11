@@ -845,6 +845,7 @@
 													</span>
 													<span ng-show="cr.path">
 														<b>{{cr.path}}</b> 
+														<a href="{{real_base_url}}assets/uploads/harvester_crosswalks/{{ds.id}}/{{cr.path}}" target="_blank">View/Download</a>
 													</span>
 												</td>
 												<td>

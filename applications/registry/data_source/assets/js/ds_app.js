@@ -275,6 +275,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 	    	// console.error(data);
 	    });
 	}
+	$scope.real_base_url = real_base_url;
 
 	$scope.save = function() {
 		$scope.msg = {
