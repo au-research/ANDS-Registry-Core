@@ -1,6 +1,6 @@
 <?php
 $config['default_template'] = 'omega';
-$config['default_model'] = 'vocabs';
+$config['default_model'] = 'registry_object';
 
 $config['subjects'] = array(
 	array(

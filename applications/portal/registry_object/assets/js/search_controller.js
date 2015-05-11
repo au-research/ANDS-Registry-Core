@@ -409,6 +409,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		} else {
 			$scope.filters['access_rights'] = 'open';
 		}
+		if ( $scope.onSearchPage() ) {
+			$scope.hashChange();
+		}
 	}
 
 	$scope.addFilter = function(type, value) {
