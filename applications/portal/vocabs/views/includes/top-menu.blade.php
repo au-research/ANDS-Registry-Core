@@ -8,30 +8,25 @@
             </button>
             <div>
                 <a href="{{portal_url()}}" class="navbar-brand">
-                    <span>Vocabularies</span> Portal
+                    Vocabulary Portal
                 </a>
             </div>
             
             @if(current_url()!=base_url())
-            <div class="clear"><small>One liner</small></div>
+           <!--  <div class="clear"><small>One liner</small></div> -->
             @endif
         </div>
         <nav class="collapse navbar-collapse main-navbar" role="navigation">
             <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Explore <i class="fa fa-caret-down"></i></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="{{portal_url('themes')}}"><i class="fa fa-folder-open icon-portal"></i> Themed collections</a></li>
-                        <li><a href="{{portal_url('theme/services')}}"><i class="fa fa-wrench icon-portal"></i> Services and Tools</a></li>
-                        <li><a href="{{portal_url('theme/open-data')}}"><i class="fa fa-unlock icon-portal"></i> Open data</a></li>
-                        <li><a href="{{portal_url('grants')}}"><i class="fa fa-flask icon-portal"></i> Grants and Projects</a></li>
-                    </ul>
+                <li>
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Help </a>
+
                 </li>
-                <li><a href="{{portal_url('page/about')}}">About</a></li>
+                <li><a href="{{portal_url('vocabs/about')}}">About</a></li>
                 @if(!$this->user->loggedIn())
-                    <li><a href="{{portal_url('profile/login')}}" class="login_btn">MyRDA Login</a></li>
+                    <li><a href="{{portal_url('profile/login')}}" class="login_btn">MyVocabs Login</a></li>
                 @else
-                    <li><a href="{{portal_url('profile')}}">MyRDA</a></li>
+                    <li><a href="{{portal_url('profile')}}">MyVocabs</a></li>
                 @endif
 
                 <?php 
