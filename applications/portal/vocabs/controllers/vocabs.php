@@ -15,6 +15,24 @@ class Vocabs extends MX_Controller {
 		$this->blade->render('index');
 	}
 
+	/**
+	 * Viewing a vocabulary by slug
+	 * @return view
+	 */
+	public function view() {
+		//use test records for now
+		$slug = $this->input->get('any');
+		if ($slug) {
+			$test_records = $this->vocab->test_vocabs();
+			$record = $test_records[$slug];
+			if ($record) {
+				$this->blade
+					->set('vocab', $record)
+					->render('vocab');
+			}
+		}
+	}
+
 
 	/**
 	 * About Page

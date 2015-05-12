@@ -101,7 +101,8 @@ $ENV['ENABLED_MODULES'] = array(
 // 	"active_application" => "portal",
 // 	"default_controller" => "vocabs",
 // 	"routes" => array(
-// 		"home/(:any)" => "vocabs/$1"
+// 		"home/(:any)" => "vocabs/$1",
+// 		"(:any)"=>"core/dispatcher/$1"
 // 	),
 // 	"default_model" => "vocabs"
 // );

@@ -6,12 +6,12 @@
 			<div class="row">
 				<div class="col-md-12">
 					<header class="text-center element-short-top element-no-bottom not-condensed os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
-                       <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;"> Vocabulary Portal </h1>
+                       <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;"> {{ $vocab->title }} </h1>
                    </header>
 				</div>
 			</div>
 			<div class="row">
-				Some content for the home page here
+				{{ $vocab }}
 			</div>
 		</div>
 	</section>

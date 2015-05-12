@@ -28,7 +28,11 @@ class Vocabularies extends CI_Model {
 			)
 		);
 
-		$test_records = array($test_vocab1, $test_vocab2);
+		$test_records = array(
+			'anzsrc-for' => $test_vocab1,
+			'anzsrc-seo' => $test_vocab2
+		);
+
 		return $test_records;
 	}
 

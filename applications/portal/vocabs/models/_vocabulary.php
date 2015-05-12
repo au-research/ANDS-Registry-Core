@@ -47,4 +47,12 @@ class _vocabulary {
 	public function __set($property, $value) {
 		$this->prop[$property] = $value;
 	}
+
+	/**
+	 * Magic function to return the object as string
+	 * @return string
+	 */
+	public function __toString() {
+		return json_encode($this->prop);
+	}
 }
