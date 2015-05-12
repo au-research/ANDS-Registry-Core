@@ -26,11 +26,21 @@ class Vocabs extends MX_Controller {
 
 
 	/**
+	 * Automated test functionality
+	 */
+	function test() {
+		$test_records = $this->vocab->test_vocabs();
+		echo json_encode($test_records);
+	}
+
+
+	/**
 	 * Constructor Method
 	 * Autload blade by default
 	 */
 	public function __construct() {
 		parent::__construct();
+		$this->load->model('vocabularies', 'vocab');
 		$this->load->library('blade');
 	}
 }
