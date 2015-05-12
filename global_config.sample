@@ -94,6 +94,18 @@ $ENV['ENABLED_MODULES'] = array(
 
 );
 
+//overwrite the existing application model with a predefined environment model
+// $environment_directives = array();
+// $environment_directives['portal'] = array(
+// 	"base_url" => "%%BASEURL%%/",
+// 	"active_application" => "portal",
+// 	"default_controller" => "vocabs",
+// 	"routes" => array(
+// 		"home/(:any)" => "vocabs/$1"
+// 	),
+// 	"default_model" => "vocabs"
+// );
+
 
 /*************************************************************************/
 /* (SECTION 3) ADDITIONAL REGISTRY CONFIGURATION

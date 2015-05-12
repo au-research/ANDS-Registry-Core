@@ -38,55 +38,61 @@ else
 by the $_GET['app'] which is rewritten in .htaccess. The array key is
 the full match (above). The active_application is the subfolder within 
 applications/ that contains this application's modules.  */
-global $application_directives;
 
-if(!isset($application_directives)) {
-	$application_directives = array(
-		"registry" => 
-				array(	
-					"base_url" => "%%BASEURL%%/registry/",
-					"active_application" => "registry",
-					"default_controller" => "auth/dashboard",
-				),
+//Default application directives
+$application_directives = array(
+	"registry" => 
+		array(	
+			"base_url" => "%%BASEURL%%/registry/",
+			"active_application" => "registry",
+			"default_controller" => "auth/dashboard",
+		),
+	"portal" => 
+		array(	
+			"base_url" => "%%BASEURL%%/",
+			"active_application" => "portal",
+			"default_controller" => "page",
+			"routes" => array(
+				"home/(:any)" => "page/$1",
+				"topic/(:any)" => "topic/view_topic/$1",
+				"grants" => "page/grants",
+				"themes" => "theme_page/index",
+				"theme/(:any)" => "theme_page/view/$1",
+				"contributors" => "group/index",
+				"contributors/(:any)" => "group/view/$1",
+				"(:any)"=>"core/dispatcher/$1",
+			),
+			"default_model" => 'registry_object'
+		),
+	"apps" =>
+			array(
+				"base_url" => "%%BASEURL%%/apps/",
+				"active_application" => "apps",
+				"default_controller" => "uploader/index",
+				"routes" => array(
+                     "apps/mydois/([a-z]+)\.([a-z]+)" => "mydois/$1",
+              	),
+			),
+	"roles" =>
+			array(
+				"base_url" => "%%BASEURL%%/roles/",
+				"active_application" => "roles",
+				"default_controller" => "role/index"
+			),
+	"developers" =>
+			array(
+				"base_url" => "%%BASEURL%%/developers/",
+				"active_application" => "developers",
+				"default_controller" => "documentation/index"
+			)
+);
 
-		"portal" => 
-				array(	
-					"base_url" => "%%BASEURL%%/",
-					"active_application" => "portal",
-					"default_controller" => "page",
-					"routes" => array(
-						"home/(:any)" => "page/$1",
-						"topic/(:any)" => "topic/view_topic/$1",
-						"grants" => "page/grants",
-						"themes" => "theme_page/index",
-						"theme/(:any)" => "theme_page/view/$1",
-						"contributors" => "group/index",
-						"contributors/(:any)" => "group/view/$1",
-						"(:any)"=>"core/dispatcher/$1",
-						),
-				),
-		"apps" =>
-				array(
-					"base_url" => "%%BASEURL%%/apps/",
-					"active_application" => "apps",
-					"default_controller" => "uploader/index",
-					"routes" => array(
-	                     "apps/mydois/([a-z]+)\.([a-z]+)" => "mydois/$1",
-	              	),
-				),
-		"roles" =>
-				array(
-					"base_url" => "%%BASEURL%%/roles/",
-					"active_application" => "roles",
-					"default_controller" => "role/index"
-				),
-		"developers" =>
-				array(
-					"base_url" => "%%BASEURL%%/developers/",
-					"active_application" => "developers",
-					"default_controller" => "documentation/index"
-				)
-	);
+//Overwrite any application directives with environment ones if exist
+global $environment_directives;
+if (isset($environment_directives)) {
+	foreach ($environment_directives as $directive=>$values) {
+		$application_directives[$directive] = $values;
+	}
 }
 
 
