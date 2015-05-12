@@ -1,4 +1,4 @@
-<div class="navbar" role="banner">
+<div class="navbar swatch-black" role="banner">
     <div class="container" style="z-index:10">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".main-navbar">
@@ -18,15 +18,13 @@
         </div>
         <nav class="collapse navbar-collapse main-navbar" role="navigation">
             <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Help </a>
-
-                </li>
-                <li><a href="{{portal_url('vocabs/about')}}">About</a></li>
+                <li><a href="{{portal_url('page/help')}}">Help</a></li>
+                <li><a href="{{portal_url('page/about')}}">About</a></li>
+                <li><a href="{{portal_url('page/contribute')}}">Contribute</a></li>
                 @if(!$this->user->loggedIn())
-                    <li><a href="{{portal_url('profile/login')}}" class="login_btn">MyVocabs Login</a></li>
+                    <li><a href="{{portal_url('profile/login')}}" class="login_btn">My Vocabs Login</a></li>
                 @else
-                    <li><a href="{{portal_url('profile')}}">MyVocabs</a></li>
+                    <li><a href="{{portal_url('profile')}}">My Vocabs</a></li>
                 @endif
 
                 <?php 
@@ -39,4 +37,3 @@
         </nav>
     </div>
 </div>
-<button class="yellow_button feedback_button">Feedback</button>

@@ -11,9 +11,12 @@
 				</div>
 			</div>
 			<div class="row">
-				Some content for the home page here
+				<p class="lead">
+					Vocabulary Portal is the controlled vocabulary discovery service of the Australian National Data Service (ANDS). ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.	
+				</p>
 			</div>
 		</div>
 	</section>
+	@include('includes/search-view')
 </article>
 @stop
