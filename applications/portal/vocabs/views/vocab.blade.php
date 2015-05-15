@@ -91,6 +91,8 @@
         </div>
     </article>
 @stop
+
+
 @section('sidebar')
 
 <div class="panel panel-primary panel-content swatch-white">
@@ -101,16 +103,19 @@
         </ul>
     </div>
 </div>
+
+@if($vocab->versions)
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Versions</div>
     <div class="panel-body">
         <ul>
-            <li><a href="">Version Title</a><br/>Status</li>
-            <li><a href="">Version Title</a><br/>Status</li>
-            <li><a href="">Version Title</a><br/>Status</li>
+            @foreach($vocab->versions as $version)
+
+            <li><a href="">{{$version['title']}}</a><br/>{{$version['status']}}</li>
+            @endforeach
         </ul>
     </div>
 </div>
-
+@endif
 
 @stop

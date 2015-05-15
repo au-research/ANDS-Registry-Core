@@ -16,17 +16,44 @@ class Vocabularies extends CI_Model {
                 'id' =>'test1',
 				'title' => 'ANZSRC Fields of Research',
                 'acronym'=>'ANZSRC-FOR',
+                'note'=>'Just a little notes baout this vocab',
+                'logo'=>'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
+                'creation_date'=>'01-01-2009',
+                'revision_cycle'=>'annual',
+                'language'=>array(0=>'En',1=>'Fr'),
 				'slug' => 'anzsrc-for',
 				'vocab_uri' => 'http://vocabs.ands.org.au/anzsrc-for',
                 'pool_party_id' => '1DCDF7D0-EFB1-0001-4A4A-2C0D1BB3199A',
-                'top_concept'=>'research',
+                'top_concept'=>array(0=>'Research'),
                 'description'=>'',
-                'licence' => 'conditional',
-                'publisher_id'=>'1',
-                'versions'=>array('title'=>'this is a version title',
-                                  'status'=>'current',
-                                  )
-			)
+                'licence' => 'http://creativecommons.org/licenses/by/4.0/',
+                'publisher_id'=>array(  'id'=>'1',
+                    'title'=>'Bureau of Statistics',
+                    'logo'=>'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
+                    'email'=>'services@ands.org.au',
+                    'phone'=>'0224567893',
+                    'address'=>'123 Some Street, Canberra ACT, 2606',
+                    'URL'=>'http://ands.org.au'
+                ),
+                'versions'=>array(0=>array('title'=>'this is a version title','status'=>'current'),
+                                  1=>array('title'=>'this is an older version title','status'=>'2012'),
+                                  2=>array('title'=>'this is an older version title','status'=>'2011')
+                                 ),
+                'related_vocabs'=>array(0=>array('related_type'=>'editionOf','related_vocab_id'=>'EFB1-0001-4A4A-2C0D1BB3199A'),
+                                        1=>array('related_type'=>'versionOf','related_vocab_id'=>'EFB1-0001-4Atr4A-2C0D1BB3199A'),
+                                        2=>array('related_type'=>'subsetOf','related_vocab_id'=>'EFB1-0001-4Avv4A-2C0D1BB3199A')
+                                ),
+
+                'subjects'=>array(0=>array('subject'=>'My subject','subject_source'=>'ANZSRC'),
+                                  1=>array('subject'=>'Earth','subject_source'=>'ANZSRC'),
+                                  2=>array('subject'=>'Fish','subject_source'=>'ANZSRC'),
+                                  3=>array('subject'=>'Water','subject_source'=>'ANZSRC'),
+                                  4=>array('subject'=>'Stars','subject_source'=>'ANZSRC')
+
+                                ),
+
+            )
+
 		);
 
 		$test_vocab2 = new _vocabulary();
@@ -35,17 +62,42 @@ class Vocabularies extends CI_Model {
                 'id' =>'test2',
 				'title' => 'ANZSRC-SEO',
                 'acronym'=>'ANZSRC-SEO',
+                'note'=>'Just a little notes baout this vocab',
+                'logo'=>'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
+                'creation_date'=>'01-01-2009',
+                'revision_cycle'=>'quarterly',
+                'language'=>array(0=>'En',1=>'Fr'),
 				'slug' => 'anzsrc-seo',
 				'vocab_uri' => 'http://vocabs.ands.org.au/anzsrc-seo',
                 'pool_party_id' => '',
-                'top_concept'=>'research',
+                'top_concept'=>array(0=>'Research'),
                 'description'=>'',
-                'licence' => 'restricted',
-                'publisher_id'=>'1',
-                'versions'=>array('title'=>'this is a version title',
-                    'status'=>'current',
+                'licence' => 'http://creativecommons.org/licenses/by/4.0/',
+                'publisher_id'=>array(  'id'=>'1',
+                                        'title'=>'Bureau of Statistics',
+                                        'logo'=>'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
+                                        'email'=>'services@ands.org.au',
+                                        'phone'=>'0224567893',
+                                        'address'=>'123 Some Street, Canberra ACT, 2606',
+                                        'URL'=>'http://ands.org.au'
+                        ),
+                'versions'=>array(0=>array('title'=>'this is a version title','status'=>'current'),
+                                  1=>array('title'=>'this is an older version title','status'=>'2012'),
+                                  2=>array('title'=>'this is an older version title','status'=>'2011')
+                                  ),
+                'related_vocabs'=>array(0=>array('related_type'=>'editionOf','related_vocab_id'=>'EFB1-0001-4A4A-2C0D1BB3199A'),
+                    1=>array('related_type'=>'versionOf','related_vocab_id'=>'EFB1-0001-4Atr4A-2C0D1BB3199A'),
+                    2=>array('related_type'=>'subsetOf','related_vocab_id'=>'EFB1-0001-4Avv4A-2C0D1BB3199A')
+                ),
+                'subjects'=>array(0=>array('subject'=>'My subject','subject_source'=>'ANZSRC'),
+                    1=>array('subject'=>'Earth','subject_source'=>'ANZSRC'),
+                    2=>array('subject'=>'Fish','subject_source'=>'ANZSRC'),
+                    3=>array('subject'=>'Water','subject_source'=>'ANZSRC'),
+                    4=>array('subject'=>'Stars','subject_source'=>'ANZSRC')
+
+                ),
                 )
-			)
+
 		);
 
 
@@ -55,16 +107,40 @@ class Vocabularies extends CI_Model {
                 'id' =>'test3',
                 'title' => 'Registry Interchange Format - Collections and Services',
                 'acronym'=>'RIFCS',
+                'note'=>'Just a little notes baout this vocab',
+                'logo'=>'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
+                'creation_date'=>'01-01-2009',
+                'revision_cycle'=>'annual',
+                'language'=>array(0=>'En',1=>'Fr'),
                 'slug' => 'rifcs',
                 'vocab_uri' => 'http://ands.poolparty.biz/rifcs',
                 'pool_party_id' => '1DCE031F-808F-0001-378D-2D3E15E01889',
-                'top_concept'=>'Data Collections',
+                'top_concept'=>array(0=>'Data Collections',1=>'Linked Data',2=>'Data Management'),
                 'description'=>'The Registry Interchange Format - Collections and Services (RIF-CS) Schema was developed as a data interchange format for supporting the electronic exchange of collection and service descriptions. It organises information about collections and services into the format required by the ANDS Collections Registry.',
-                'licence' => 'open',
-                'publisher_id'=>'1',
-                'versions'=>array('title'=>'this is a version title',
-                    'status'=>'current',
-                )
+                'licence' => 'http://creativecommons.org/licenses/by/4.0/',
+                'publisher_id'=>array(  'id'=>'1',
+                    'title'=>'Bureau of Statistics',
+                    'logo'=>'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
+                    'email'=>'services@ands.org.au',
+                    'phone'=>'0224567893',
+                    'address'=>'123 Some Street, Canberra ACT, 2606',
+                    'URL'=>'http://ands.org.au'
+                ),
+                'versions'=>array(0=>array('title'=>'this is a version title','status'=>'current'),
+                                  1=>array('title'=>'this is an older version title','status'=>'2012'),
+                                  2=>array('title'=>'this is an older version title','status'=>'2011')
+                                  ),
+                'related_vocabs'=>array(0=>array('related_type'=>'editionOf','related_vocab_id'=>'EFB1-0001-4A4A-2C0D1BB3199A'),
+                    1=>array('related_type'=>'versionOf','related_vocab_id'=>'EFB1-0001-4Atr4A-2C0D1BB3199A'),
+                    2=>array('related_type'=>'subsetOf','related_vocab_id'=>'EFB1-0001-4Avv4A-2C0D1BB3199A')
+                ),
+                'subjects'=>array(0=>array('subject'=>'My subject','subject_source'=>'ANZSRC'),
+                    1=>array('subject'=>'Earth','subject_source'=>'ANZSRC'),
+                    2=>array('subject'=>'Fish','subject_source'=>'ANZSRC'),
+                    3=>array('subject'=>'Water','subject_source'=>'ANZSRC'),
+                    4=>array('subject'=>'Stars','subject_source'=>'ANZSRC')
+
+                ),
             )
         );
 
