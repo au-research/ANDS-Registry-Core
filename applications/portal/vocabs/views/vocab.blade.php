@@ -1,22 +1,116 @@
-@extends('layout/vocab_layout')
+@extends('layout/vocab_2col_layout')
 @section('content')
-<article>
-	<section class="section swatch-white element-short-bottom">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-8">
-					<header class="text-center element-short-top element-no-bottom not-condensed os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
-                       <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;"> {{ $vocab->title }} </h1>
-                   </header>
-                    {{ $vocab }}
-				</div>
-
-                <div class="col-md-4">
-                    some stuff for the side
+<article class="post">
+    <div class="post-body">
+        <div class="swatch-gray">
+            <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+                <div class="panel-body swatch-gray">
+                    {{ $vocab->description }}
                 </div>
-			</div>
+             </div>
 
-		</div>
-	</section>
-</article>
+        </div>
+
+        <!-- set up header and content for vocab tree is if exists -->
+        <div class="swatch-gray">
+            <div class="panel panel-primary element-no-top element-no-bottom panel-content">
+                <div class="panel-body swatch-grey element-no-top">
+                    <h3>Browse</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="swatch-gray">
+            <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+                <div class="panel-body swatch-gray">
+                    widget for the tree display vocab concept tree is available
+                </div>
+            </div>
+        </div>
+
+
+        <div class="swatch-gray">
+            <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+                <div class="panel-body swatch-grey">
+
+                    <h3>Top level Concepts</h3>
+                    <p>xxx|xxx|xxxxx|xxxxx</p>
+
+                    <h3>Total number of concepts</h3>
+                    <p>xxx</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="swatch-gray">
+            <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+                <div class="panel-body swatch-gray">
+
+                    <h3>Related organisations</h3>
+                    <p>xxx|xxx|xxxxx|xxxxx</p>
+
+                    <h3>Related people</h3>
+                    <p>xxx</p>
+
+                    <h3>Related vocabularies</h3>
+                    <p>xxx</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="swatch-gray">
+            <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+                <div class="panel-body swatch-grey">
+
+                    <h3>Subjects</h3>
+                    <p>xxx|xxx|xxxxx|xxxxx</p>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="swatch-gray">
+            <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+                <div class="panel-body swatch-gray">
+
+                    <h3>Release date</h3>
+                    <p>xx-xx-xxxx</p>
+
+                    <h3>Version note</h3>
+                    <p>xxx</p>
+
+                    <h3>Languages</h3>
+                    <p>xxx</p>
+
+                    <h3>Notes</h3>
+                    <p>xxx</p>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </article>
+@stop
+@section('sidebar')
+
+<div class="panel panel-primary panel-content swatch-white">
+    <div class="panel-heading">Services that make use of this vocabulary</div>
+    <div class="panel-body">
+        <ul>
+            <li>Supports <a href="">Service 1</a></li>
+        </ul>
+    </div>
+</div>
+<div class="panel panel-primary panel-content swatch-white">
+    <div class="panel-heading">Versions</div>
+    <div class="panel-body">
+        <ul>
+            <li><a href="">Version Title</a><br/>Status</li>
+            <li><a href="">Version Title</a><br/>Status</li>
+            <li><a href="">Version Title</a><br/>Status</li>
+        </ul>
+    </div>
+</div>
+
+
 @stop
