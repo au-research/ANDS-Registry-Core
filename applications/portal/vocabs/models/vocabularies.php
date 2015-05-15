@@ -35,10 +35,40 @@ class Vocabularies extends CI_Model {
                     'address'=>'123 Some Street, Canberra ACT, 2606',
                     'URL'=>'http://ands.org.au'
                 ),
-                'versions'=>array(0=>array('title'=>'this is a version title','status'=>'current'),
-                                  1=>array('title'=>'this is an older version title','status'=>'2012'),
-                                  2=>array('title'=>'this is an older version title','status'=>'2011')
-                                 ),
+                'versions'=>array(0=>array('title'=>'this is a version title',
+                                           'status'=>'current',
+                                            'release_date'=>'01-03-2015',
+                                            'note'=>'Just a little bit more info on the version',
+                                            'id'=>'23',
+                                            'access_point'=>array(
+                                                'access_point_type'=>'webPage',
+                                                'access_point_format'=>'XML',
+                                                'access_point_URI'=>'http://some.web.access/file'
+                                                    )
+                                  ),
+                                  1=>array('title'=>'this is an older version title',
+                                      'status'=>'superceded',
+                                      'release_date'=>'01-03-2015',
+                                      'note'=>'Just a little bit more info on the version',
+                                      'id'=>'23',
+                                      'access_point'=>array(
+                                          'access_point_type'=>'webPage',
+                                          'access_point_format'=>'XML',
+                                          'access_point_URI'=>'http://some.web.access/file'
+                                        )
+                                  ),
+                                  2=>array('title'=>'this is an older version title',
+                                      'status'=>'depreciated',
+                                      'release_date'=>'01-03-2015',
+                                      'note'=>'Just a little bit more info on the version',
+                                      'id'=>'23',
+                                      'access_point'=>array(
+                                          'access_point_type'=>'webPage',
+                                          'access_point_format'=>'XML',
+                                          'access_point_URI'=>'http://some.web.access/file'
+                                      )
+                                  )
+                  ),
                 'related_vocabs'=>array(0=>array('related_type'=>'editionOf','related_vocab_id'=>'EFB1-0001-4A4A-2C0D1BB3199A'),
                                         1=>array('related_type'=>'versionOf','related_vocab_id'=>'EFB1-0001-4Atr4A-2C0D1BB3199A'),
                                         2=>array('related_type'=>'subsetOf','related_vocab_id'=>'EFB1-0001-4Avv4A-2C0D1BB3199A')
@@ -81,10 +111,40 @@ class Vocabularies extends CI_Model {
                                         'address'=>'123 Some Street, Canberra ACT, 2606',
                                         'URL'=>'http://ands.org.au'
                         ),
-                'versions'=>array(0=>array('title'=>'this is a version title','status'=>'current'),
-                                  1=>array('title'=>'this is an older version title','status'=>'2012'),
-                                  2=>array('title'=>'this is an older version title','status'=>'2011')
-                                  ),
+                'versions'=>array(0=>array('title'=>'this is a version title',
+                                        'status'=>'current',
+                                        'release_date'=>'01-03-2015',
+                                        'note'=>'Just a little bit more info on the version',
+                                        'id'=>'23',
+                                        'access_point'=>array(
+                                            'access_point_type'=>'webPage',
+                                            'access_point_format'=>'XML',
+                                            'access_point_URI'=>'http://some.web.access/file'
+                                            )
+                                    ),
+                                    1=>array('title'=>'this is an older version title',
+                                        'status'=>'superceded',
+                                        'release_date'=>'01-03-2015',
+                                        'note'=>'Just a little bit more info on the version',
+                                        'id'=>'23',
+                                        'access_point'=>array(
+                                            'access_point_type'=>'webPage',
+                                            'access_point_format'=>'XML',
+                                            'access_point_URI'=>'http://some.web.access/file'
+                                            )
+                                        ),
+                                        2=>array('title'=>'this is an older version title',
+                                            'status'=>'depreciated',
+                                            'release_date'=>'01-03-2015',
+                                            'note'=>'Just a little bit more info on the version',
+                                            'id'=>'23',
+                                            'access_point'=>array(
+                                                'access_point_type'=>'webPage',
+                                                'access_point_format'=>'XML',
+                                                'access_point_URI'=>'http://some.web.access/file'
+                                            )
+                                        )
+                        ),
                 'related_vocabs'=>array(0=>array('related_type'=>'editionOf','related_vocab_id'=>'EFB1-0001-4A4A-2C0D1BB3199A'),
                     1=>array('related_type'=>'versionOf','related_vocab_id'=>'EFB1-0001-4Atr4A-2C0D1BB3199A'),
                     2=>array('related_type'=>'subsetOf','related_vocab_id'=>'EFB1-0001-4Avv4A-2C0D1BB3199A')
@@ -118,7 +178,8 @@ class Vocabularies extends CI_Model {
                 'top_concept'=>array(0=>'Data Collections',1=>'Linked Data',2=>'Data Management'),
                 'description'=>'The Registry Interchange Format - Collections and Services (RIF-CS) Schema was developed as a data interchange format for supporting the electronic exchange of collection and service descriptions. It organises information about collections and services into the format required by the ANDS Collections Registry.',
                 'licence' => 'http://creativecommons.org/licenses/by/4.0/',
-                'publisher_id'=>array(  'id'=>'1',
+                'publisher'=>array(
+                    'id'=>'1',
                     'title'=>'Bureau of Statistics',
                     'logo'=>'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
                     'email'=>'services@ands.org.au',
@@ -126,10 +187,40 @@ class Vocabularies extends CI_Model {
                     'address'=>'123 Some Street, Canberra ACT, 2606',
                     'URL'=>'http://ands.org.au'
                 ),
-                'versions'=>array(0=>array('title'=>'this is a version title','status'=>'current'),
-                                  1=>array('title'=>'this is an older version title','status'=>'2012'),
-                                  2=>array('title'=>'this is an older version title','status'=>'2011')
-                                  ),
+                'versions'=>array(0=>array('title'=>'this is a version title',
+                    'status'=>'current',
+                    'release_date'=>'01-03-2015',
+                    'note'=>'Just a little bit more info on the version',
+                    'id'=>'23',
+                    'access_point'=>array(
+                        'access_point_type'=>'webPage',
+                        'access_point_format'=>'XML',
+                        'access_point_URI'=>'http://some.web.access/file'
+                    )
+                ),
+                    1=>array('title'=>'this is an older version title',
+                        'status'=>'superceded',
+                        'release_date'=>'01-03-2015',
+                        'note'=>'Just a little bit more info on the version',
+                        'id'=>'23',
+                        'access_point'=>array(
+                            'access_point_type'=>'webPage',
+                            'access_point_format'=>'XML',
+                            'access_point_URI'=>'http://some.web.access/file'
+                        )
+                    ),
+                    2=>array('title'=>'this is an older version title',
+                        'status'=>'depreciated',
+                        'release_date'=>'01-03-2015',
+                        'note'=>'Just a little bit more info on the version',
+                        'id'=>'23',
+                        'access_point'=>array(
+                            'access_point_type'=>'webPage',
+                            'access_point_format'=>'XML',
+                            'access_point_URI'=>'http://some.web.access/file'
+                        )
+                    )
+                ),
                 'related_vocabs'=>array(0=>array('related_type'=>'editionOf','related_vocab_id'=>'EFB1-0001-4A4A-2C0D1BB3199A'),
                     1=>array('related_type'=>'versionOf','related_vocab_id'=>'EFB1-0001-4Atr4A-2C0D1BB3199A'),
                     2=>array('related_type'=>'subsetOf','related_vocab_id'=>'EFB1-0001-4Avv4A-2C0D1BB3199A')
