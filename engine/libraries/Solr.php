@@ -38,6 +38,15 @@ class Solr {
 	}
 
 	/**
+	 * Set SOLR URL, 
+	 * Supports connecting to multiple SOLR core
+	 * @param string $url URL of the SOLR index
+	 */
+	function setUrl($url) {
+		$this->solr_url = $url;
+	}
+
+	/**
 	 * Manually set the option for solr search
 	 * @param string $field 
 	 * @param string $value

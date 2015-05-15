@@ -21,6 +21,19 @@ class _vocabulary {
 		
 	}
 
+	/**
+	 * Returns a flat array of indexable fields
+	 * @return array 
+	 */
+	public function indexable_json() {
+		$json = array();
+		$single_values = array('id', 'title', 'slug', 'licence');
+		foreach ($single_values as $s) {
+			$json[$s] = $this->prop[$s];
+		}
+		return $json;
+	}
+
 
 	public function populate($values = array()) {
 		foreach ($values as $key=>$value) {
