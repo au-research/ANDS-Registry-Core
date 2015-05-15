@@ -33,6 +33,22 @@ class Vocabs extends MX_Controller {
 		}
 	}
 
+	public function add() {
+		$this->blade
+			->set('scripts', array('vocabs_cms'))
+			->render('cms');
+	}
+
+	public function edit($slug=false) {
+
+		if (!$slug) throw new Exception('Require a Vocabulary Slug to edit');
+
+		// $vocab = $this->vocab->getBySlug($slug);
+		$this->blade
+			->set('scripts', array('vocabs_cms'))
+			->render('cms');
+	}
+
 	public function services($class='', $id='', $method='') {
 
 		//header

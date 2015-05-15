@@ -21,3 +21,9 @@
 <script type="text/javascript" src="{{ asset_url('js/vocabs_app.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url('js/vocabs_factory.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url('js/vocabs_search_controller.js') }}"></script>
+
+@if(isset($scripts))
+    @foreach($scripts as $script)
+        <script src="{{asset_url('js/'.$script.'.js')}}"></script>
+    @endforeach
+@endif
