@@ -80,8 +80,22 @@ class Vocabs extends MX_Controller {
 	 * Automated test functionality
 	 */
 	function test() {
+		//test getting the documents
 		$test_records = $this->vocab->test_vocabs();
-		echo json_encode($test_records);
+		// echo json_encode($test_records);
+
+		//test indexing the documents
+		$solr_doc = array();
+		foreach ($test_records as $record) {
+			$solr_doc[] = $record->indexable_json();
+		}
+		$this->load->library('solr');
+		$this->solr->setUrl('http://localhost:8983/solr/vocabs/');
+		$solr_doc = json_encode($solr_doc);
+		$add_result = $this->solr->add_json($solr_doc);
+		$commit_result = $this->solr->commit();
+
+		echo json_encode($add_result);
 	}
 
 
