@@ -26,7 +26,7 @@ class Vocabularies extends CI_Model {
                 'pool_party_id' => '1DCDF7D0-EFB1-0001-4A4A-2C0D1BB3199A',
                 'top_concept'=>array(0=>'Research'),
                 'description'=>'',
-                'licence' => 'http://creativecommons.org/licenses/by/4.0/',
+                'licence' => $this->checkRightsText('http://creativecommons.org/licenses/by/4.0/'),
                 'publisher_id'=>array(  'id'=>'1',
                     'title'=>'Bureau of Statistics',
                     'logo'=>'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
@@ -102,7 +102,7 @@ class Vocabularies extends CI_Model {
                 'pool_party_id' => '',
                 'top_concept'=>array(0=>'Research'),
                 'description'=>'',
-                'licence' => 'http://creativecommons.org/licenses/by/4.0/',
+                'licence' => $this->checkRightsText('http://creativecommons.org/licenses/by/4.0/'),
                 'publisher_id'=>array(  'id'=>'1',
                                         'title'=>'Bureau of Statistics',
                                         'logo'=>'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
@@ -177,7 +177,7 @@ class Vocabularies extends CI_Model {
                 'pool_party_id' => '1DCE031F-808F-0001-378D-2D3E15E01889',
                 'top_concept'=>array(0=>'Data Collections',1=>'Linked Data',2=>'Data Management'),
                 'description'=>'The Registry Interchange Format - Collections and Services (RIF-CS) Schema was developed as a data interchange format for supporting the electronic exchange of collection and service descriptions. It organises information about collections and services into the format required by the ANDS Collections Registry.',
-                'licence' => 'http://creativecommons.org/licenses/by/4.0/',
+                'licence' => $this->checkRightsText('http://creativecommons.org/licenses/by/4.0/'),
                 'publisher'=>array(
                     'id'=>'1',
                     'title'=>'Bureau of Statistics',
@@ -244,6 +244,38 @@ class Vocabularies extends CI_Model {
 
 		return $test_records;
 	}
+    function checkRightsText($value)
+    {
+
+        if(str_replace("http://creativecommons.org/licenses/by/","",$value)!=$value)
+        {
+            return "CC-BY";
+        }
+        elseif(str_replace("http://creativecommons.org/licenses/by-sa/","",$value)!=$value)
+        {
+            return "CC-BY-SA";
+        }
+        elseif(str_replace("http://creativecommons.org/licenses/by-nc/","",$value)!=$value)
+        {
+            return "CC-BY-NC";
+        }
+        elseif(str_replace("http://creativecommons.org/licenses/by-nc-sa/","",$value)!=$value)
+        {
+            return "CC-BY-NC-SA";
+        }
+        elseif(str_replace("http://creativecommons.org/licenses/by-nd/","",$value)!=$value)
+        {
+            return "CC-BY-ND";
+        }
+        elseif(str_replace("http://creativecommons.org/licenses/by-nc-nd/","",$value)!=$value)
+        {
+            return "CC-BY-NC-ND";
+        }
+        else
+        {
+            return $value;
+        }
+    }
 
 	function __construct() {
 		parent::__construct();

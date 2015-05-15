@@ -23,25 +23,28 @@
         <div class="swatch-gray">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <div class="panel-body swatch-gray">
-                    widget for the tree display vocab concept tree is available
+                    <div id="vocab-tree" vocab="{{$vocab->slug}}"></div>
                 </div>
             </div>
         </div>
 
-
+@if($vocab->top_concept)
         <div class="swatch-gray">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <div class="panel-body swatch-grey">
 
                     <h3>Top level Concepts</h3>
-                    <p>xxx|xxx|xxxxx|xxxxx</p>
-
+                    <p>
+                    @foreach($vocab->top_concept as $concept)
+                        {{$concept}} |
+                    @endforeach
+                    </p>
                     <h3>Total number of concepts</h3>
-                    <p>xxx</p>
+                    <p>Not sure what element is actually required to display here</p>
                 </div>
             </div>
         </div>
-
+@endif
         <div class="swatch-gray">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <div class="panel-body swatch-gray">
@@ -57,37 +60,43 @@
                 </div>
             </div>
         </div>
-
+@if($vocab->subjects)
         <div class="swatch-gray">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <div class="panel-body swatch-grey">
 
                     <h3>Subjects</h3>
-                    <p>xxx|xxx|xxxxx|xxxxx</p>
+                    <p>
+                    @foreach($vocab->subjects as $subject)
+                        {{$subject['subject']}}|
+                    @endforeach
+                    </p>
 
                 </div>
             </div>
         </div>
-
+@endif
+@if($vocab->creation_date || $vocab->note)
         <div class="swatch-gray">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <div class="panel-body swatch-gray">
-
-                    <h3>Release date</h3>
-                    <p>xx-xx-xxxx</p>
-
+                     @if($vocab->creation_date)
+                        <h3>Release date</h3>
+                        <p>{{$vocab->creation_date}}</p>
+                    @endif
                     <h3>Version note</h3>
                     <p>xxx</p>
 
                     <h3>Languages</h3>
                     <p>xxx</p>
-
-                    <h3>Notes</h3>
-                    <p>xxx</p>
+                    @if($vocab->note)
+                        <h3>Notes</h3>
+                        <p>{{$vocab->note}}</p>
+                    @endif
                 </div>
             </div>
         </div>
-
+@endif
         </div>
     </article>
 @stop
