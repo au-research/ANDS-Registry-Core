@@ -14,6 +14,15 @@
 
 	<div class="container">
 		<div class="row">
+			<div class="col-md-12">
+				<div class="panel swatch-gray">
+					<div class="panel-heading">PoolParty Integration</div>
+					<div class="panel-body">
+						<input type="text" class="form-control" ng-model="vocab.poolparty_id" placeholder="Pool Party ID">
+						<p class="help-block">Insert PoolParty ID to pre-fill form. <a href="">Search for a PoolParty</a></p>
+					</div>
+				</div>
+			</div>
 			<div class="col-md-8">
 				<div class="panel swatch-gray">
 					<div class="panel-heading">Vocabulary Metadata</div>
@@ -49,16 +58,15 @@
 				<div class="panel swatch-gray">
 					<div class="panel-heading">Vocabulary Logo</div>
 					<div class="panel-body">
-						<input type="text" class="form-control element-shorter-bottom" ng-model="vocab.title" placeholder="Vocabulary Logo URL">
+						<input type="text" class="form-control element-shorter-bottom" ng-model="vocab.logo_url" placeholder="Vocabulary Logo URL">
+						<p class="help-block"><a href="">Upload</a></p>
 					</div>
 				</div>
 				<div class="panel swatch-gray">
-					<div class="panel-heading"></div>
-					<div class="panel-body">
-						<input type="text" class="form-control" ng-model="vocab.poolparty_id" placeholder="Pool Party ID">
-					</div>
+					<div class="panel-heading">Publisher</div>
 					<div class="panel-body">
 						<input type="text" class="form-control" ng-model="vocab.publisher_id" placeholder="Publisher ID">
+						<p class="help-block"><a href="">Search for a Publisher</a></p>
 					</div>
 				</div>
 				<div class="panel swatch-gray">
