@@ -33,10 +33,38 @@ class _vocabulary {
 	 */
 	public function indexable_json() {
 		$json = array();
-		$single_values = array('id', 'title', 'slug', 'licence');
+
+		//index single values
+		$single_values = array('id', 'title', 'slug', 'licence', 'pool_party_id');
 		foreach ($single_values as $s) {
 			$json[$s] = $this->prop[$s];
 		}
+
+		if ($this->prop['data']) {
+			$data = json_decode($this->prop['data'], true);
+
+			if (isset($data['subjects'])) {
+				$json['subjects'] = array();
+				foreach($data['subjects'] as $subject) {
+					$json['subjects'][] = $subject['subject'];
+				}
+			}
+
+			if (isset($data['top_concept'])) {
+				$json['top_concept'] = array();
+				foreach($data['top_concept'] as $s) {
+					$json['top_concept'][] = $s;
+				}
+			}
+
+			if (isset($data['language'])) {
+				$json['language'] = array();
+				foreach($data['language'] as $s) {
+					$json['language'][] = $s;
+				}
+			}
+		}
+
 		return $json;
 	}
 
@@ -93,9 +121,16 @@ class _vocabulary {
 		} else {
 			//add new
 			
+			//check if there's an existing vocab with the same slug
+			$slug = url_title($this->prop['title'], '-', TRUE);
+			$result = $db->get_where('vocabularies', array('slug'=>$slug));
+			if ($result->num_rows() > 0) {
+				return false;
+			}
+
 			$data = array(
 				'title' => $this->prop['title'],
-				'slug' => url_title($this->prop['title'], '-', TRUE),
+				'slug' => $slug,
 				'description' => isset($this->prop['description']) ? $this->prop['description'] : '',
 				'licence' => isset($this->prop['licence']) ? $this->prop['licence'] : '',
 				'pool_party_id' => isset($this->prop['pool_party_id']) ? $this->prop['pool_party_id'] : '',

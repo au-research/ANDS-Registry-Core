@@ -15,8 +15,8 @@ class Vocabularies extends CI_Model {
     }
 
     public function getBySlug($slug) {
-        $this->vocab_id = $this->load->database('vocabs', true);
-        $result = $this->vocab_id->get_where('vocabularies', array('slug'=>$slug));
+        $this->vocab_db = $this->load->database('vocabs', true);
+        $result = $this->vocab_db->get_where('vocabularies', array('slug'=>$slug));
         if ($result->num_rows() > 0) {
             $vocab_result = $result->result_array();
             $vocab_id = $vocab_result[0]['id'];
@@ -24,6 +24,18 @@ class Vocabularies extends CI_Model {
         } else {
             return false;
         }
+    }
+
+    public function getAll() {
+        $this->vocab_db = $this->load->database('vocabs', true);
+        $result = $this->vocab_db->get('vocabularies');
+        if ($result->num_rows() == 0) return false;
+        $res = array();
+        foreach($result->result() as $r) {
+            $vocab = $this->getByID($r->id);
+            array_push($res, $vocab);
+        }
+        return $res;
     }
 
     /**
@@ -37,7 +49,7 @@ class Vocabularies extends CI_Model {
 		$test_vocab1 = new _vocabulary();
 		$test_vocab1->populate(
 			array (
-                'id' =>'test1',
+                'id' =>false,
 				'title' => 'ANZSRC Fields of Research',
                 'acronym'=>'ANZSRC-FOR',
                 'note'=>'Just a little notes baout this vocab',
@@ -141,7 +153,7 @@ class Vocabularies extends CI_Model {
 		$test_vocab2 = new _vocabulary();
 		$test_vocab2->populate(
 			array (
-                'id' =>'test2',
+                'id' =>false,
 				'title' => 'ANZSRC-SEO',
                 'acronym'=>'ANZSRC-SEO',
                 'note'=>'Just a little notes baout this vocab',
@@ -238,7 +250,7 @@ class Vocabularies extends CI_Model {
         $test_vocab3 = new _vocabulary();
         $test_vocab3->populate(
             array (
-                'id' =>'test3',
+                'id' =>false,
                 'title' => 'Registry Interchange Format - Collections and Services',
                 'acronym'=>'RIFCS',
                 'note'=>'Just a little notes baout this vocab',

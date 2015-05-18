@@ -12,8 +12,8 @@ app.controller('addVocabsCtrl', function($log, $scope, vocabs_factory){
 	}
 
 	$scope.save = function() {
-		
 		$scope.error_message = false;
+		$scope.success_message = false;
 		if ($scope.mode=='add') {
 			$log.debug('Adding Vocab', $scope.vocab);
 			vocabs_factory.add($scope.vocab).then(function(data){
@@ -34,11 +34,20 @@ app.controller('addVocabsCtrl', function($log, $scope, vocabs_factory){
 				if(data.status=='ERROR') {
 					$scope.error_message = data.message;
 				} else {//success
-					
+					$scope.success_message = data.message;
 				}
 			});
 		}
-		
+	}
+
+	$scope.additem = function(type) {
+		var obj = {};
+		if (type=='versions') {
+			obj = {title:'New Version'}
+		}
+
+		if (!$scope.vocab[type]) $scope.vocab[type] = [];
+		$scope.vocab[type].push(obj);
 	}
 
 });

@@ -30,3 +30,17 @@
         <script src="{{asset_url('js/'.$script.'.js')}}"></script>
     @endforeach
 @endif
+
+@if(is_dev())
+    <!-- LESS.JS for development only-->
+    <script>
+      less = {
+        env: "development",
+        async: false,
+        fileAsync: false,
+        poll: 1000,
+        logLevel:0
+      };
+    </script>
+    <script src="{{asset_url('lib/less.js/dist/less.min.js', 'core')}}"></script>
+@endif

@@ -121,7 +121,7 @@ class Vocabs extends MX_Controller {
 		if ($id=='') {
 			//get All vocabs listed
 			//use test data for now
-			$vocabs = $this->vocab->test_vocabs();
+			$vocabs = $this->vocab->getAll();
 			$result = $vocabs;
 
 			// POST request, for adding new item
@@ -140,10 +140,10 @@ class Vocabs extends MX_Controller {
 
 			$vocab = $this->vocab->getBySlug($id);
 			if (!$vocab) $vocab = $this->vocab->getByID($id);
+
 			if (!$vocab) throw new Exception('Vocab ID '. $id. ' not found');
 
 			$result = json_decode(json_encode($vocab->prop), true);
-
 			if ($vocab->data) {
 				//dirty hack to convert json into multi dimensional array from an object
 				$ex = json_decode(json_encode(json_decode($vocab->data)), true);
@@ -160,9 +160,14 @@ class Vocabs extends MX_Controller {
 				$result = $vocab->save($data);
 				if (!$result) throw new Exception('Error Saving Vocabulary');
 				if ($result) {
-					$result = 'Success in aving vocabulary';
+					$result = 'Success in saving vocabulary';
 				}
 			}
+
+			if ($method=='index') {
+				$result = $vocab->indexable_json();
+			}
+
 		}
 
 		echo json_encode(
@@ -173,6 +178,24 @@ class Vocabs extends MX_Controller {
 		);
 	}
 
+	public function toolkit() {
+		if (!get_config_item('vocab_toolkit_url')) throw new Exception('Vocab ToolKit URL not configured correctly');
+		$request = $this->input->get('request');
+		if (!$request) throw new Exception('Request Not Found');
+
+		$url = get_config_item('vocab_toolkit_url');
+
+		switch ($request) {
+			case 'listPoolPartyProjects': $url .= 'rest/harvest?provider_type=PoolParty'; break;
+			default : throw new Exception('Request Not Recognised');
+		}
+
+
+		$content = file_get_contents($url);
+		dd($content);
+		echo $content;
+	}
+
 	/**
 	 * Automated test tools
 	 * @version 1.0
@@ -181,12 +204,28 @@ class Vocabs extends MX_Controller {
 	 */
 	function test() {
 		//test getting the documents
-		$test_records = $this->vocab->test_vocabs();
 		// echo json_encode($test_records);
 
 		//test indexing the documents
+		// $solr_doc = array();
+		// foreach ($test_records as $record) {
+		// 	$solr_doc[] = $record->indexable_json();
+		// }
+		// $this->load->library('solr');
+		// $this->solr->setUrl('http://localhost:8983/solr/vocabs/');
+		// $solr_doc = json_encode($solr_doc);
+		// $add_result = $this->solr->add_json($solr_doc);
+		// $commit_result = $this->solr->commit();
+
+		// // echo json_encode($add_result);
+		
+		// $vocab = $this->vocab->getByID(13);
+		// echo json_encode($vocab);
+		$records = $this->vocab->getAll();
+		
+		//Index all vocabulary
 		$solr_doc = array();
-		foreach ($test_records as $record) {
+		foreach ($records as $record) {
 			$solr_doc[] = $record->indexable_json();
 		}
 		$this->load->library('solr');
@@ -195,10 +234,7 @@ class Vocabs extends MX_Controller {
 		$add_result = $this->solr->add_json($solr_doc);
 		$commit_result = $this->solr->commit();
 
-		// echo json_encode($add_result);
-		
-		$vocab = $this->vocab->getByID(13);
-		echo json_encode($vocab);
+		// echo $data;
 	}
 
 
