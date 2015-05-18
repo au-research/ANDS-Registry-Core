@@ -8,9 +8,12 @@ class _vocabulary {
 	//object properties are all located in the same array
 	public $prop;
 
-	function __construct() {
+	function __construct($id = false) {
 		//populate the property as soon as the object is constructed
 		$this->init();
+		if ($id) {
+			$this->populate_from_db($id);
+		}
 	}
 
 	/**
@@ -47,6 +50,67 @@ class _vocabulary {
 	public function populate($values = array()) {
 		foreach ($values as $key=>$value) {
 			$this->prop[$key] = $value;
+		}
+	}
+
+	public function populate_from_db($id) {
+		$ci =& get_instance();
+		$db = $ci->load->database('vocabs', true);
+		if (!$db) throw new Exception('Unable to connect to database');
+		if (!$id) throw new Exception('ID required');
+
+		$query = $db->get_where('vocabularies', array('id'=>$id));
+		$data = $query->first_row();
+		$this->populate($data);
+	}
+
+	public function save($data = false) {
+		$ci =& get_instance();
+		$db = $ci->load->database('vocabs', true);
+		if (!$db) throw new Exception('Unable to connect to database');
+
+		if ($this->id) {
+			//update
+			if ($data) {
+				$saved_data = array(
+					'title' => $data['title'],
+					'licence' => isset($data['licence']) ? $data['licence'] : false,
+					'description' => isset($data['description']) ? $data['description'] : false,
+					'pool_party_id' => isset($data['pool_party_id']) ? $data['pool_party_id'] : false,
+					'modified_date' => date("Y-m-d H:i:s"),
+					'data' => json_encode($data)
+				);
+				$db->where('id', $data['id']);
+				$result = $db->update('vocabularies', $saved_data);
+				if ($result) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else {
+			//add new
+			
+			$data = array(
+				'title' => $this->prop['title'],
+				'slug' => url_title($this->prop['title'], '-', TRUE),
+				'description' => isset($this->prop['description']) ? $this->prop['description'] : '',
+				'licence' => isset($this->prop['licence']) ? $this->prop['licence'] : '',
+				'pool_party_id' => isset($this->prop['pool_party_id']) ? $this->prop['pool_party_id'] : '',
+				'created_date'=> date("Y-m-d H:i:s"),
+				'modified_date' => date("Y-m-d H:i:s"),
+				'data' => json_encode($this->prop)
+			);
+    		$result = $db->insert('vocabularies', $data);
+    		$new_id = $db->insert_id();
+    		if ($result && $new_id) {
+    			$new_vocab = new _vocabulary($new_id);
+    			return $new_vocab;
+    		} else {
+    			return false;
+    		}
 		}
 	}
 

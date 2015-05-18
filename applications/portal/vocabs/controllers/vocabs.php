@@ -62,6 +62,7 @@ class Vocabs extends MX_Controller {
 	public function add() {
 		$this->blade
 			->set('scripts', array('vocabs_cms'))
+			->set('vocab', false)
 			->render('cms');
 	}
 
@@ -76,9 +77,13 @@ class Vocabs extends MX_Controller {
 	 */
 	public function edit($slug=false) {
 		if (!$slug) throw new Exception('Require a Vocabulary Slug to edit');
-		// $vocab = $this->vocab->getBySlug($slug);
+		$vocab = $this->vocab->getBySlug($slug);
+		//do some checking of vocab here, ACL stuff @todo
+		if (!$vocab) throw new Exception('Vocab Slug '.$slug. ' not found');
+
 		$this->blade
 			->set('scripts', array('vocabs_cms'))
+			->set('vocab', $vocab)
 			->render('cms');
 	}
 
@@ -118,13 +123,45 @@ class Vocabs extends MX_Controller {
 			//use test data for now
 			$vocabs = $this->vocab->test_vocabs();
 			$result = $vocabs;
+
+			// POST request, for adding new item
+			$angulardata = json_decode(file_get_contents("php://input"), true);
+			$data = isset($angulardata['data']) ? $angulardata['data'] : false;
+			if ($data) {
+				//deal with POST request, adding new vocabulary
+				$vocab = $this->vocab->addNew($data);
+				if (!$vocab) throw new Exception('Error Adding New Vocabulary');
+				if ($vocab) {
+					$result = $vocab;
+				}
+			}
+
 		} else if($id!='') {
-			$vocabs = $this->vocab->test_vocabs();
-			if (isset($vocabs[$id])) {
-				$vocab = $vocabs[$id];
-				$result = $vocab;
-			} else {
-				throw new Exception('Vocab ID '. $id. ' not found');
+
+			$vocab = $this->vocab->getBySlug($id);
+			if (!$vocab) $vocab = $this->vocab->getByID($id);
+			if (!$vocab) throw new Exception('Vocab ID '. $id. ' not found');
+
+			$result = json_decode(json_encode($vocab->prop), true);
+
+			if ($vocab->data) {
+				//dirty hack to convert json into multi dimensional array from an object
+				$ex = json_decode(json_encode(json_decode($vocab->data)), true);
+				foreach($ex as $key=>$value) {
+					if (!isset($result[$key])) $result[$key] = $value;
+				}
+				unset($result['data']);
+			}
+
+			//POST Request, for saving this vocab
+			$angulardata = json_decode(file_get_contents("php://input"), true);
+			$data = isset($angulardata['data']) ? $angulardata['data'] : false;
+			if ($data) {
+				$result = $vocab->save($data);
+				if (!$result) throw new Exception('Error Saving Vocabulary');
+				if ($result) {
+					$result = 'Success in aving vocabulary';
+				}
 			}
 		}
 
@@ -158,7 +195,10 @@ class Vocabs extends MX_Controller {
 		$add_result = $this->solr->add_json($solr_doc);
 		$commit_result = $this->solr->commit();
 
-		echo json_encode($add_result);
+		// echo json_encode($add_result);
+		
+		$vocab = $this->vocab->getByID(13);
+		echo json_encode($vocab);
 	}
 
 

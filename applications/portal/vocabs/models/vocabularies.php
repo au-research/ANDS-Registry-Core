@@ -9,6 +9,23 @@
 
 class Vocabularies extends CI_Model {
 
+    public function getByID($id) {
+        $vocab = new _vocabulary($id);
+        return $vocab;
+    }
+
+    public function getBySlug($slug) {
+        $this->vocab_id = $this->load->database('vocabs', true);
+        $result = $this->vocab_id->get_where('vocabularies', array('slug'=>$slug));
+        if ($result->num_rows() > 0) {
+            $vocab_result = $result->result_array();
+            $vocab_id = $vocab_result[0]['id'];
+            return $this->getByID($vocab_id);
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Returns a set of test vocabulary used for testing purposes
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -353,6 +370,16 @@ class Vocabularies extends CI_Model {
         else
         {
             return $value;
+        }
+    }
+
+    public function addNew($data) {
+        $vocab = new _vocabulary();
+        $vocab->populate($data);
+        if ($result_vocab = $vocab->save()) {
+            return $result_vocab;
+        } else {
+            return false;
         }
     }
 

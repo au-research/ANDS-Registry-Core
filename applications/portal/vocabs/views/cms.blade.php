@@ -5,12 +5,22 @@
 		<div class="row">
 			<div class="col-md-12">
 				<header class="section-text-shadow section-innder-shadow element-short-top element-short-bottom">
-					<h1 class="hairline bordered-normal">Add a new Vocabulary</h1>
-					[[status]]
+					<h1 class="hairline bordered-normal">
+						@if($vocab)
+							{{ $vocab->title }}
+						@else
+							Add a new Vocabulary
+						@endif
+					</h1>
 				</header>
 			</div>
 		</div>
 	</div>
+
+	@if($vocab)
+		<input type="hidden" type="text" value="{{ $vocab->id }}" id="vocab_id"/>
+		<input type="hidden" type="text" value="{{ $vocab->slug }}" id="vocab_slug"/>
+	@endif
 
 	<div class="container">
 		<div class="row">
@@ -18,7 +28,7 @@
 				<div class="panel swatch-gray">
 					<div class="panel-heading">PoolParty Integration</div>
 					<div class="panel-body">
-						<input type="text" class="form-control" ng-model="vocab.poolparty_id" placeholder="Pool Party ID">
+						<input type="text" class="form-control" ng-model="vocab.pool_party_id" placeholder="Pool Party ID">
 						<p class="help-block">Insert PoolParty ID to pre-fill form. <a href="">Search for a PoolParty</a></p>
 					</div>
 				</div>
@@ -37,7 +47,7 @@
 							<textarea class="form-control" ng-model="vocab.description" placeholder="Vocabulary Description" rows="10"></textarea>
 						</div>
 						<div class="form-group">
-							<input type="text" class="form-control" ng-model="vocab.licence_uri" placeholder="Vocabulary Licence URI">
+							<input type="text" class="form-control" ng-model="vocab.licence" placeholder="Vocabulary Licence URI">
 						</div>
 						<div class="form-group">
 							<input type="text" class="form-control" ng-model="vocab.top_concept" placeholder="Vocabulary Top Concept">
@@ -95,7 +105,8 @@
 			<div class="col-md-12">
 				<div class="panel swatch-gray">
 					<div class="panel-body">
-						<a href="" class="btn btn-large btn-primary">Save</a>
+						<a href="" class="btn btn-large btn-primary" ng-click="save()">Save</a>
+						<div class="alert alert-danger element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="error_message">[[ error_message ]]</div>
 					</div>
 				</div>
 			</div>
