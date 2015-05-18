@@ -4,20 +4,18 @@ CREATE DATABASE `dbs_vocabs` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
 
 --
--- Table structure for table `publishers`
+-- Table structure for table `related entities`
 --
-
-DROP TABLE IF EXISTS `publishers`;
-
-CREATE TABLE `publishers` (
+DROP TABLE IF EXISTS `dbs_vocabs`.`related`;
+CREATE TABLE `dbs_vocabs`.`related` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(45) DEFAULT NULL,
+  `relation` varchar(45) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `slug` varchar(255) DEFAULT NULL,
-  `role_id` varchar(255) DEFAULT NULL,
   `data` text,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 
 
 
@@ -25,9 +23,9 @@ CREATE TABLE `publishers` (
 -- Table structure for table `versions`
 --
 
-DROP TABLE IF EXISTS `versions`;
+DROP TABLE IF EXISTS `dbs_vocabs`.`versions`;
 
-CREATE TABLE `versions` (
+CREATE TABLE `dbs_vocabs`.`versions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `status` varchar(45) DEFAULT NULL,
@@ -43,9 +41,9 @@ CREATE TABLE `versions` (
 -- Table structure for table `vocabularies `
 --
 
-DROP TABLE IF EXISTS `vocabularies`;
+DROP TABLE IF EXISTS `dbs_vocabs`.`vocabularies`;
 
-CREATE TABLE `vocabularies` (
+CREATE TABLE `dbs_vocabs`.`vocabularies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `slug` varchar(255) DEFAULT NULL,
