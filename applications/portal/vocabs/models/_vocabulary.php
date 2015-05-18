@@ -81,6 +81,11 @@ class _vocabulary {
 		}
 	}
 
+	/**
+	 * Populate the _vocabulary props by extracting the data from DB
+	 * @param  int $id 
+	 * @return void     
+	 */
 	public function populate_from_db($id) {
 		$ci =& get_instance();
 		$db = $ci->load->database('vocabs', true);
@@ -92,6 +97,16 @@ class _vocabulary {
 		$this->populate($data);
 	}
 
+	/**
+	 * Saving / Adding Vocabulary
+	 * Requires the vocabs database connection group to be present
+	 * $data is extracted for values to be put into the database and the
+	 * rest is encoded within the data field
+	 * If an ID is present in the _vocabulary, an update is issued
+	 * If there is no ID, this is a new vocabulary and it will be added
+	 * @param  $data 
+	 * @return boolean
+	 */
 	public function save($data = false) {
 		$ci =& get_instance();
 		$db = $ci->load->database('vocabs', true);

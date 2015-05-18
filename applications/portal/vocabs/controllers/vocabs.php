@@ -178,6 +178,13 @@ class Vocabs extends MX_Controller {
 		);
 	}
 
+	/**
+	 * ToolKit Service provider
+	 * To interact with 3rd party application in order to get vocabularies metadata
+	 * Requires a ?GET request 
+	 * @example vocabs/toolkit/?request=listPooLPartyProjects returns all the PoolParty project available
+	 * @return view
+	 */
 	public function toolkit() {
 		if (!get_config_item('vocab_toolkit_url')) throw new Exception('Vocab ToolKit URL not configured correctly');
 		$request = $this->input->get('request');
@@ -190,9 +197,7 @@ class Vocabs extends MX_Controller {
 			default : throw new Exception('Request Not Recognised');
 		}
 
-
 		$content = file_get_contents($url);
-		dd($content);
 		echo $content;
 	}
 

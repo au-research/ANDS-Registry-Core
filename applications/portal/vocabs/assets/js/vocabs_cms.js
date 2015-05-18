@@ -1,8 +1,18 @@
+/**
+ * Primary Controller for the Vocabulary CMS
+ * For adding / editing vocabulary metadata
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
 app.controller('addVocabsCtrl', function($log, $scope, vocabs_factory){
 	
 	$scope.vocab = {};
 	$scope.mode = 'add'; // [add|edit]
 
+	/**
+	 * If there is a slug available, this is an edit view for the CMS
+	 * Proceed to overwrite the vocab object with the one fetched from the vocabs_factory.get()
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 */
 	if ( $('#vocab_slug').val() ) {
 		vocabs_factory.get($('#vocab_slug').val()).then(function(data){
 			$log.debug('Editing ', data.message);
@@ -11,6 +21,11 @@ app.controller('addVocabsCtrl', function($log, $scope, vocabs_factory){
 		});
 	}
 
+	/**
+	 * Saving a vocabulary
+	 * Based on the mode, add and edit will call different service point
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 */
 	$scope.save = function() {
 		$scope.error_message = false;
 		$scope.success_message = false;
@@ -40,6 +55,12 @@ app.controller('addVocabsCtrl', function($log, $scope, vocabs_factory){
 		}
 	}
 
+	/**
+	 * Add an item to an existing vocab
+	 * Primarily used for adding multivalued contents to the vocabulary
+	 * @param enum type
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 */
 	$scope.additem = function(type) {
 		var obj = {};
 		if (type=='versions') {

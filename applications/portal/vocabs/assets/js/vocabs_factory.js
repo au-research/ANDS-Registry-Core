@@ -1,3 +1,8 @@
+/**
+ * Vocabulary ANGULARJS Factory
+ * A component that deals with the vocabulary service point directly
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
 app.factory('vocabs_factory', function($http){
 	return {
 		getAll: function() {

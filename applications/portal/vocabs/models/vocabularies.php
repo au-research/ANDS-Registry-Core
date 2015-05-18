@@ -9,11 +9,25 @@
 
 class Vocabularies extends CI_Model {
 
+    /**
+     * Returns a single _vocabulary object by ID
+     * @param  int $id 
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @return _vocabulary     
+     */
     public function getByID($id) {
         $vocab = new _vocabulary($id);
         return $vocab;
     }
 
+    /**
+     * Returns a single _vocabulary by SLUG
+     * SLUG has to be unique as it maps to ID
+     * This function calls the @getByID function internally
+     * @param  string $slug 
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @return _vocabulary       
+     */
     public function getBySlug($slug) {
         $this->vocab_db = $this->load->database('vocabs', true);
         $result = $this->vocab_db->get_where('vocabularies', array('slug'=>$slug));
@@ -26,6 +40,11 @@ class Vocabularies extends CI_Model {
         }
     }
 
+    /**
+     * Returns all vocabularies we have in the database
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @return array(_vocabulary)
+     */
     public function getAll() {
         $this->vocab_db = $this->load->database('vocabs', true);
         $result = $this->vocab_db->get('vocabularies');
@@ -385,6 +404,14 @@ class Vocabularies extends CI_Model {
         }
     }
 
+    /**
+     * Add a new vocabulary by
+     * Creating a new _vocabulary object
+     * Populate it with data
+     * And then save it
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @param $data data to save to the database
+     */
     public function addNew($data) {
         $vocab = new _vocabulary();
         $vocab->populate($data);
