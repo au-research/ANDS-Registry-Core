@@ -9,6 +9,13 @@
 
 class Vocabularies extends CI_Model {
 
+    /**
+     * Returns a set of test vocabulary used for testing purposes
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Liz Woods <liz.woods@ands.org.au>
+     * @return array(_vocabulary) a PHP array of _vocabulary object
+     * @see applications/vocabs/models/_vocabulary
+     */
 	public function test_vocabs() {
 		$test_vocab1 = new _vocabulary();
 		$test_vocab1->populate(
@@ -35,39 +42,42 @@ class Vocabularies extends CI_Model {
                     'address'=>'123 Some Street, Canberra ACT, 2606',
                     'URL'=>'http://ands.org.au'
                 ),
-                'versions'=>array(0=>array('title'=>'this is a version title',
-                                           'status'=>'current',
-                                            'release_date'=>'01-03-2015',
-                                            'note'=>'Just a little bit more info on the version',
-                                            'id'=>'23',
-                                            'access_point'=>array(
-                                                'access_point_type'=>'webPage',
-                                                'access_point_format'=>'XML',
-                                                'access_point_URI'=>'http://some.web.access/file'
-                                                    )
-                                  ),
-                                  1=>array('title'=>'this is an older version title',
-                                      'status'=>'superceded',
-                                      'release_date'=>'01-03-2015',
-                                      'note'=>'Just a little bit more info on the version',
-                                      'id'=>'23',
-                                      'access_point'=>array(
-                                          'access_point_type'=>'webPage',
-                                          'access_point_format'=>'XML',
-                                          'access_point_URI'=>'http://some.web.access/file'
-                                        )
-                                  ),
-                                  2=>array('title'=>'this is an older version title',
-                                      'status'=>'depreciated',
-                                      'release_date'=>'01-03-2015',
-                                      'note'=>'Just a little bit more info on the version',
-                                      'id'=>'23',
-                                      'access_point'=>array(
-                                          'access_point_type'=>'webPage',
-                                          'access_point_format'=>'XML',
-                                          'access_point_URI'=>'http://some.web.access/file'
-                                      )
-                                  )
+                'versions'=>array(
+                    0=>array(
+                        'title'=>'this is a version title',
+                           'status'=>'current',
+                            'release_date'=>'01-03-2015',
+                            'note'=>'Just a little bit more info on the version',
+                            'id'=>'23',
+                            'access_point'=>array(
+                                'access_point_type'=>'webPage',
+                                'access_point_format'=>'XML',
+                                'access_point_URI'=>'http://some.web.access/file'
+                            )
+                          ),
+                      1=>array(
+                        'title'=>'this is an older version title',
+                        'status'=>'superceded',
+                        'release_date'=>'01-03-2015',
+                        'note'=>'Just a little bit more info on the version',
+                        'id'=>'23',
+                        'access_point'=>array(
+                          'access_point_type'=>'webPage',
+                          'access_point_format'=>'XML',
+                          'access_point_URI'=>'http://some.web.access/file'
+                        )
+                      ),
+                      2=>array('title'=>'this is an older version title',
+                          'status'=>'depreciated',
+                          'release_date'=>'01-03-2015',
+                          'note'=>'Just a little bit more info on the version',
+                          'id'=>'23',
+                          'access_point'=>array(
+                              'access_point_type'=>'webPage',
+                              'access_point_format'=>'XML',
+                              'access_point_URI'=>'http://some.web.access/file'
+                          )
+                      )
                   ),
                 'related_vocabs'=>array(0=>array('related_type'=>'editionOf','related_vocab_id'=>'EFB1-0001-4A4A-2C0D1BB3199A'),
                                         1=>array('related_type'=>'versionOf','related_vocab_id'=>'EFB1-0001-4Atr4A-2C0D1BB3199A'),
@@ -277,6 +287,11 @@ class Vocabularies extends CI_Model {
         }
     }
 
+    /**
+     * Constructor Method
+     * Autoload the _vocabulary class
+     * @ignore
+     */
 	function __construct() {
 		parent::__construct();
 		include_once("_vocabulary.php");

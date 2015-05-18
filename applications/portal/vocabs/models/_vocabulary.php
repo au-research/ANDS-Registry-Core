@@ -15,7 +15,9 @@ class _vocabulary {
 
 	/**
 	 * Initialize a registry object
-	 * @return void           
+	 * @todo
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return void
 	 */
 	function init() {
 		
@@ -23,6 +25,7 @@ class _vocabulary {
 
 	/**
 	 * Returns a flat array of indexable fields
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @return array 
 	 */
 	public function indexable_json() {
@@ -35,6 +38,12 @@ class _vocabulary {
 	}
 
 
+	/**
+	 * Populate the prop array with an array of key=>value pair
+	 * @param  array  $values $key=>$value pair
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return void
+	 */
 	public function populate($values = array()) {
 		foreach ($values as $key=>$value) {
 			$this->prop[$key] = $value;
@@ -44,6 +53,7 @@ class _vocabulary {
 	/**
 	 * Magic function to get an attribute, returns property within the $prop array
 	 * @param  string $property property name
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @return property result           
 	 */
 	public function __get($property) {
@@ -56,13 +66,15 @@ class _vocabulary {
 	 * Magic function to set an attribute
 	 * @param string $property property name
 	 * @param string $value    property value
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
 	public function __set($property, $value) {
 		$this->prop[$property] = $value;
 	}
 
 	/**
-	 * Magic function to return the object as string
+	 * Magic function to return the object as a JSON encoded string
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @return string
 	 */
 	public function __toString() {
