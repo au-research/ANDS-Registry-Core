@@ -2,6 +2,7 @@
 $(document).ready(function() {
 $("#vocab-tree").vocab_widget({
     mode:'tree',
+    display_count:false,
     repository:$("#vocab-tree").attr('vocab')})
     .on('treeselect.vocab.ands', function(event) {
         var target = $(event.target);

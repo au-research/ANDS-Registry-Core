@@ -751,7 +751,7 @@
 		handler._subclick(e);
 	    });
 	    list.append(titem).slideDown(150);
-	},
+	}
 
     });
 	
@@ -1087,7 +1087,7 @@
 			    }
 			});
 		    }
-		},
+		}
 
 	});
 })( jQuery );
