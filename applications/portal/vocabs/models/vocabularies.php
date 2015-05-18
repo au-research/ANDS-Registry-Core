@@ -34,14 +34,16 @@ class Vocabularies extends CI_Model {
                 'top_concept'=>array(0=>'Research'),
                 'description'=>'',
                 'licence' => $this->checkRightsText('http://creativecommons.org/licenses/by/4.0/'),
-                'related_entity'=>array( 0=>array( 'id'=>'1',
+                'related_entity'=>array(
+                    0=>array( 'id'=>'1',
                     'type'=>'publisher',
                     'relationship'=>'publisherOf',
                     'title'=>'Bureau of Statistics',
                     'email'=>'services@ands.org.au',
                     'phone'=>'0224567893',
                     'address'=>'123 Some Street, Canberra ACT, 2606',
-                    'URL'=>'http://ands.org.au'),
+                    'URL'=>'http://ands.org.au'
+                    ),
                     1=>array( 'id'=>'2',
                         'type'=>'contributor',
                         'relationship'=>'hasContributor',
@@ -49,7 +51,8 @@ class Vocabularies extends CI_Model {
                         'email'=>'services@ands.org.au',
                         'phone'=>'0224567893',
                         'address'=>'123 Some Street, Canberra ACT, 2606',
-                        'URL'=>'http://ands.org.au'),
+                        'URL'=>'http://ands.org.au'
+                    ),
                     2=>array( 'id'=>'3',
                         'type'=>'service',
                         'relationship'=>'hasContributor',
@@ -57,12 +60,14 @@ class Vocabularies extends CI_Model {
                         'email'=>'services@ands.org.au',
                         'phone'=>'0224567893',
                         'address'=>'123 Some Street, Canberra ACT, 2606',
-                        'URL'=>'http://ands.org.au'),
+                        'URL'=>'http://ands.org.au'
+                    ),
                     3=>array( 'id'=>'4',
                         'type'=>'vocab',
                         'relationship'=>'derviedFrom',
                         'title'=>'my special vocab',
 
+                    )
                 ),
                 'versions'=>array(
                     0=>array(
@@ -107,11 +112,14 @@ class Vocabularies extends CI_Model {
                                   3=>array('subject'=>'Water','subject_source'=>'ANZSRC'),
                                   4=>array('subject'=>'Stars','subject_source'=>'ANZSRC')
 
-                                ),
+                                )
 
             )
 
 		);
+
+
+
 
 		$test_vocab2 = new _vocabulary();
 		$test_vocab2->populate(
@@ -130,35 +138,39 @@ class Vocabularies extends CI_Model {
                 'top_concept'=>array(0=>'Research'),
                 'description'=>'',
                 'licence' => $this->checkRightsText('http://creativecommons.org/licenses/by/4.0/'),
-                'related_entity'=>array( 0=>array( 'id'=>'1',
+                'related_entity'=>array(
+                    0=>array('id'=>'1',
                     'type'=>'publisher',
                     'relationship'=>'publisherOf',
                     'title'=>'Bureau of Statistics',
                     'email'=>'services@ands.org.au',
                     'phone'=>'0224567893',
                     'address'=>'123 Some Street, Canberra ACT, 2606',
-                    'URL'=>'http://ands.org.au'),
-                    1=>array( 'id'=>'2',
+                    'URL'=>'http://ands.org.au'
+                    ),
+                    1=>array('id'=>'2',
                         'type'=>'contributor',
                         'relationship'=>'hasContributor',
                         'title'=>'Joan Rivers',
                         'email'=>'services@ands.org.au',
                         'phone'=>'0224567893',
                         'address'=>'123 Some Street, Canberra ACT, 2606',
-                        'URL'=>'http://ands.org.au'),
-                    2=>array( 'id'=>'3',
+                        'URL'=>'http://ands.org.au'
+                    ),
+                    2=>array('id'=>'3',
                         'type'=>'service',
                         'relationship'=>'hasContributor',
                         'title'=>'Joan Rivers',
                         'email'=>'services@ands.org.au',
                         'phone'=>'0224567893',
                         'address'=>'123 Some Street, Canberra ACT, 2606',
-                        'URL'=>'http://ands.org.au'),
+                        'URL'=>'http://ands.org.au'
+                    ),
                     3=>array( 'id'=>'4',
                         'type'=>'vocab',
                         'relationship'=>'derviedFrom',
-                        'title'=>'my special vocab',
-
+                        'title'=>'my special vocab'
+                         )
                     ),
                 'versions'=>array(0=>array('title'=>'this is a version title',
                                         'status'=>'current',
@@ -223,14 +235,16 @@ class Vocabularies extends CI_Model {
                 'top_concept'=>array(0=>'Data Collections',1=>'Linked Data',2=>'Data Management'),
                 'description'=>'The Registry Interchange Format - Collections and Services (RIF-CS) Schema was developed as a data interchange format for supporting the electronic exchange of collection and service descriptions. It organises information about collections and services into the format required by the ANDS Collections Registry.',
                 'licence' => $this->checkRightsText('http://creativecommons.org/licenses/by/4.0/'),
-                'related_entity'=>array( 0=>array( 'id'=>'1',
-                    'type'=>'publisher',
-                    'relationship'=>'publisherOf',
-                    'title'=>'Bureau of Statistics',
-                    'email'=>'services@ands.org.au',
-                    'phone'=>'0224567893',
-                    'address'=>'123 Some Street, Canberra ACT, 2606',
-                    'URL'=>'http://ands.org.au'),
+                'related_entity'=>array(
+                    0=>array( 'id'=>'1',
+                        'type'=>'publisher',
+                        'relationship'=>'publisherOf',
+                        'title'=>'Bureau of Statistics',
+                        'email'=>'services@ands.org.au',
+                        'phone'=>'0224567893',
+                        'address'=>'123 Some Street, Canberra ACT, 2606',
+                        'URL'=>'http://ands.org.au'
+                    ),
                     1=>array( 'id'=>'2',
                         'type'=>'contributor',
                         'relationship'=>'hasContributor',
@@ -238,7 +252,8 @@ class Vocabularies extends CI_Model {
                         'email'=>'services@ands.org.au',
                         'phone'=>'0224567893',
                         'address'=>'123 Some Street, Canberra ACT, 2606',
-                        'URL'=>'http://ands.org.au'),
+                        'URL'=>'http://ands.org.au'
+                        ),
                     2=>array( 'id'=>'3',
                         'type'=>'service',
                         'relationship'=>'hasContributor',
@@ -246,11 +261,13 @@ class Vocabularies extends CI_Model {
                         'email'=>'services@ands.org.au',
                         'phone'=>'0224567893',
                         'address'=>'123 Some Street, Canberra ACT, 2606',
-                        'URL'=>'http://ands.org.au'),
+                        'URL'=>'http://ands.org.au'
+                    ),
                     3=>array( 'id'=>'4',
                         'type'=>'vocab',
                         'relationship'=>'derviedFrom',
-                        'title'=>'my special vocab',
+                        'title'=>'my special vocab'
+                    )
 
                     ),
                 'versions'=>array(0=>array('title'=>'this is a version title',
