@@ -7,8 +7,15 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, vocabs_factory){
 	
 	$scope.vocab = {};
 	$scope.mode = 'add'; // [add|edit]
-	$scope.langs = ['En', 'Fr'];
-	$scope.relatedEntityRelations = ['publishedBy', 'hasAuthor', 'hasContributor', 'pointOfContact', 'implementedBy', 'consumerOf'];
+	$scope.langs = ['English', 'German', 'French', 'Spanish', 'Italian', 'Mãori', 'Russian', 'Chinese', 'Japanese'];
+	$scope.opened = false;
+
+	$scope.open = function($event) {
+	    $event.preventDefault();
+	    $event.stopPropagation();
+
+	    $scope.opened = true;
+	  };
 
 	/**
 	 * If there is a slug available, this is an edit view for the CMS
@@ -110,7 +117,12 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, vocabs_factory){
 		});
 		modalInstance.result.then(function(obj){
 			//close
-			
+			if (obj.action=='add') {
+				var newObj = obj.data;
+				$scope.vocab.versions.push(newObj);
+			} else {
+				obj = obj.data;
+			}
 		}, function(){
 			//dismiss
 		});
@@ -122,21 +134,16 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, vocabs_factory){
 	 * @param enum type
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
-	$scope.additem = function(type) {
-		var obj = {};
-		if (type=='versions') {
-			obj = {title:'New Version'}
-		}
-
-		if (!$scope.vocab[type]) $scope.vocab[type] = [];
-		$scope.vocab[type].push(obj);
+	$scope.addtolist = function(list, item) {
+		list.push(item);
 	}
 });
 
 app.controller('versionCtrl', function($scope, $modalInstance, $log, version, action){
 	$scope.versionStatuses = ['current', 'superceded', 'deprecated'];
 	$scope.version = version ? version : false;
-	$scope.action = action;
+	$scope.action = $scope.version ? 'save': 'add';
+
 
 	$scope.addformat = function() {
 		if (!$scope.version.access_points) {
@@ -144,6 +151,18 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 		}
 		$scope.version.access_points.push($scope.newap);
 		$scope.newap = {};
+	}
+
+	$scope.save = function() {
+		var ret = {
+			'intent': $scope.action,
+			'data' : $scope.version
+		}
+		$modalInstance.close(ret);
+	}
+
+	$scope.dismiss = function() {
+		$modalInstance.dismiss();
 	}
 });
 
@@ -167,7 +186,6 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
 	}
 
 	$scope.dismiss = function() {
-		var obj = {id:'1'};
 		$modalInstance.dismiss();
 	}
 });

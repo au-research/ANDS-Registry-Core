@@ -52,33 +52,87 @@
 						<div class="form-group">
 							<input type="text" class="form-control" ng-model="vocab.licence" placeholder="Vocabulary Licence URI">
 						</div>
+						
 						<div class="form-group">
-							<label for="">Vocabulary Top Concepts</label>
-							<ul class="listy">
-								<li ng-repeat="concept in vocab.top_concept track by $index"> <input type="text" ng-model="concept"> <a href="" ng-click="vocab.top_concept.splice($index, 1)"><i class="fa fa-remove"></i></a></li> 
-								<li><a href="" ng-click='vocab.top_concept.push("")'>Add New</a></li>
-							</ul>
+							<label for="">Vocabulary Creation Date</label>
+							<p class="input-group">
+								<input type="text" class="form-control" ng-model="vocab.creation_date" placeholder="Vocabulary Creation Date" datepicker-popup="dd-MM-yyyy" is-open="opened" >
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								</span>
+							</p>
 						</div>
 						<div class="form-group">
-							<label for="">Subjects</label>
-							<ul>
-								<li ng-repeat="subject in vocab.subjects">[[ subject.subject ]]</li>
-							</ul>
-						</div>
-						<div class="form-group">
-							<input type="text" class="form-control" ng-model="vocab.creation_date" placeholder="Vocabulary Creation Date">
-						</div>
-						<div class="form-group">
+							<label for="">Revision Cycle</label>
 							<input type="text" class="form-control" ng-model="vocab.revision_cycle" placeholder="Revision Cycle">
-						</div>
-						<div class="form-group">
-							<label for="">Languages</label>
-							<ul>
-								<li ng-repeat="lang in vocab.language"> <input type="text" ng-model="lang" typeahead="lang for lang in langs | filter:$viewValue | limitTo:8"> </li>
-							</ul>
 						</div>
 					</div>
 				</div>
+
+				<div class="panel">
+					<div class="panel-heading">Top Concepts</div>
+					<div class="panel-body">
+						<ul>
+							<li ng-repeat="concept in vocab.top_concept track by $index"> [[ concept ]] <a href="" ng-click="vocab.top_concept.splice($index, 1)"><i class="fa fa-remove"></i></a></li> 
+						</ul>
+						<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist(vocab.top_concept, newTopConcept)">
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="New Top Concept" ng-model="newTopConcept">
+								<span class="input-group-btn">
+									<button class="btn btn-primary" type="button" ng-click="addtolist(vocab.top_concept, newTopConcept)"><i class="fa fa-plus"></i> Add</button>
+								</span>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<div class="panel">
+					<div class="panel-heading">Languages</div>
+					<div class="panel-body">
+						<ul>
+							<li ng-repeat="ln in vocab.language track by $index"> [[ ln ]] <a href="" ng-click="vocab.language.splice($index, 1)"><i class="fa fa-remove"></i></a></li>
+						</ul>
+						<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist(vocab.language, newLanguage)">
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Language" typeahead="lang for lang in langs | filter:$viewValue | limitTo:8" ng-model="newLanguage">
+								<span class="input-group-btn">
+									<button class="btn btn-primary" type="button" ng-click="addtolist(vocab.language, newLanguage)"><i class="fa fa-plus"></i> Add</button>
+								</span>
+							</div>
+						</form>
+					</div>
+
+				</div>
+
+				<div class="panel swatch-gray">
+					<div class="panel-heading">Subjects</div>
+					<div class="panel-body">
+						<table class="table">
+							<thead>
+								<tr><th>Subject Label</th><th>Source</th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="subject in vocab.subjects">
+									<td>[[ subject.subject ]]</a></td>
+									<td>[[ subject.subject_source ]]</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist(vocab.subjects, newSubject)">
+							<div class="form-group">
+								<label for="">Subject Label</label>
+								<input type="text" class="form-control" placeholder="Subject Label" ng-model="newSubject.subject">
+							</div>
+							<div class="form-group">
+								<label for="">Subject Source</label>
+								<input type="text" class="form-control" placeholder="Subject Source" ng-model="newSubject.subject_source">
+							</div>
+							<button class="btn btn-primary" ng-submit="addtolist(vocab.language, newSubject)"><i class="fa fa-plus"></i> Add Subject</button>
+						</form>
+					</div>
+				</div>
+
 			</div>
 			<div class="col-md-4">
 				
