@@ -58,7 +58,6 @@
 								<li ng-repeat="concept in vocab.top_concept track by $index"> <input type="text" ng-model="concept"> <a href="" ng-click="vocab.top_concept.splice($index, 1)"><i class="fa fa-remove"></i></a></li> 
 								<li><a href="" ng-click='vocab.top_concept.push("")'>Add New</a></li>
 							</ul>
-							<input type="text" class="form-control" ng-model="vocab.top_concept" placeholder="Vocabulary Top Concept">
 						</div>
 						<div class="form-group">
 							<label for="">Subjects</label>
@@ -73,7 +72,10 @@
 							<input type="text" class="form-control" ng-model="vocab.revision_cycle" placeholder="Revision Cycle">
 						</div>
 						<div class="form-group">
-							<input type="text" class="form-control" ng-model="vocab.language" placeholder="Language">
+							<label for="">Languages</label>
+							<ul>
+								<li ng-repeat="lang in vocab.language"> <input type="text" ng-model="lang" typeahead="lang for lang in langs | filter:$viewValue | limitTo:8"> </li>
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -84,10 +86,10 @@
 					<div class="panel-heading">Publishers</div>
 					<div class="panel-body">
 						<ul>
-							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='publisher'">[[ related.title ]]</li>
+							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='publisher'"><a href="" ng-click="relatedmodal('edit', 'publisher', related)">[[ related.title ]]</a></li>
 						</ul>
 						<div class="form-group">
-							<a href="" class="btn btn-primary"><i class="fa fa-plus"></i> Add a related publisher</a>
+							<a href="" class="btn btn-primary" ng-click="relatedmodal('add', 'publisher')"><i class="fa fa-plus"></i> Add a related publisher</a>
 						</div>
 					</div>
 				</div>
@@ -95,10 +97,18 @@
 				<div class="panel swatch-gray">
 					<div class="panel-heading">Versions</div>
 					<div class="panel-body">
-						<ul>
-							<li ng-repeat="version in vocab.versions"><a href="">[[ version.title ]]</a></li>
-						</ul>
-						<a href="" class="btn btn-primary" ng-click="additem('versions')"><i class="fa fa-plus"></i> Add a version</a>
+						<table class="table">
+							<thead>
+								<tr><th>Title</th><th>Status</th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="version in vocab.versions">
+									<td><a href="" ng-click="versionmodal('edit', version)">[[ version.title ]]</a></td>
+									<td><span class="label" ng-class="{'deprecated': 'label-danger', 'current': 'label-success', 'superceded': 'label-info', 'depreciated': 'label-danger'}[version.status]">[[ version.status ]]</span></td>
+								</tr>
+							</tbody>
+						</table>
+						<a href="" class="btn btn-primary" ng-click="versionmodal('add')"><i class="fa fa-plus"></i> Add a version</a>
 					</div>
 				</div>
 
@@ -107,18 +117,25 @@
 					<div class="panel-body">
 						<h4>Related Vocabularies</h4>
 						<ul>
-							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='vocab'"><a href="">[[ related.title ]]</a></li>
+							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='vocab'"><a href="" ng-click="relatedmodal('edit', related.type, related)">[[ related.title ]]</a></li>
 						</ul>
 						<h4>Related Tools</h4>
 						<ul>
-							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='tool'"><a href="">[[ related.title ]]</a></li>
+							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='tool'"><a href="" ng-click="relatedmodal('edit', related.type, related)">[[ related.title ]]</a></li>
 						</ul>
 						<h4>Related Services</h4>
 						<ul>
-							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='service'"><a href="">[[ related.title ]]</a></li>
+							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='service'"><a href="" ng-click="relatedmodal('edit', related.type, related)">[[ related.title ]]</a></li>
 						</ul>
 						<div class="form-group">
-							<a href="" class="btn btn-primary"><i class="fa fa-plus"></i> Add a related item <span class="caret"></span></a>
+							<span class="input-group-btn swatch-gray" style="background:#e9e9e9;">
+								<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Add a related entity <span class="caret"></span></button>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="" ng-click="relatedmodal('add', 'vocab')">Related Vocabulary</a></li>
+									<li><a href="" ng-click="relatedmodal('add', 'tool')">Related Tools</a></li>
+									<li><a href="" ng-click="relatedmodal('add', 'service')">Related </a></li>
+								</ul>
+							</span>
 						</div>
 					</div>
 				</div>

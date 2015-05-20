@@ -28,6 +28,12 @@ app.factory('vocabs_factory', function($http){
 				return response.data;
 			});
 			return promise;
+		},
+		search: function(filters) {
+			var promise = $http.post(base_url+'vocabs/filter', {filters:filters}).then(function(response){
+				return response.data;
+			});
+			return promise;
 		}
 	}
 })

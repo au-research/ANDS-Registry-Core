@@ -29,13 +29,21 @@ class Vocabs extends MX_Controller {
 		//use test records for now
 		$slug = $this->input->get('any');
 		if ($slug) {
+			$record = $this->vocab->getBySlug($slug);
+		}
+
+		//For Development Only
+		if (!$record) {
 			$test_records = $this->vocab->test_vocabs();
 			$record = $test_records[$slug];
-			if ($record) {
-				$this->blade
-					->set('vocab', $record)
-					->render('vocab');
-			}
+		}
+
+		if ($record) {
+			$this->blade
+				->set('vocab', $record)
+				->render('vocab');
+		} else {
+			throw new Exception('No Record found with slug: '.$slug);
 		}
 	}
 
@@ -97,6 +105,46 @@ class Vocabs extends MX_Controller {
 		$this->blade->render($slug);
 	}
 
+	public function filter() {
+		//header
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		$data = json_decode(file_get_contents("php://input"), true);
+		$filters = isset($data['filters']) ? $data['filters'] : false;
+		$this->load->library('solr');
+		$this->solr->setUrl('http://localhost:8983/solr/vocabs/');
+
+		$this->solr
+			->setFacetOpt('field', 'subjects')
+			->setFacetOpt('field', 'language')
+			->setFacetOpt('field', 'licence');
+
+		$this->solr
+			->setOpt('defType', 'edismax')
+			->setOpt('q.alt', '*:*')
+			->setOpt('qf', 'title_search^1 description_search~10^0.01');;
+
+		foreach ($filters as $key=>$value) {
+			switch ($key) {
+				case "q" :
+					if ($value!='') $this->solr->setOpt('q', $value);
+					break;
+				case 'subjects':
+				case 'language':
+				case 'licence':
+					if ($value!='') {
+						$this->solr->setOpt('fq', "+$key:($value)");
+					}
+					break;
+			}
+		}
+
+		// $this->solr->setFilters($filters);
+		$result = $this->solr->executeSearch(true);
+		echo json_encode($result);
+	}
+
 	/**
 	 * Services Controller
 	 * For allowing RESTful API against the Vocabs Portal Database / SOLR
@@ -112,7 +160,6 @@ class Vocabs extends MX_Controller {
 		//header
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
-		set_exception_handler('json_exception_handler');
 		set_exception_handler('json_exception_handler');
 
 		if ($class != 'vocabs') throw new Exception('/vocabs required');
@@ -237,8 +284,10 @@ class Vocabs extends MX_Controller {
 		$this->solr->setUrl('http://localhost:8983/solr/vocabs/');
 		$solr_doc = json_encode($solr_doc);
 		$add_result = $this->solr->add_json($solr_doc);
-		$commit_result = $this->solr->commit();
 
+		$commit_result = $this->solr->commit();
+		var_dump($add_result);
+		var_dump($commit_result);
 		// echo $data;
 	}
 

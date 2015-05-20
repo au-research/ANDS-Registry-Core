@@ -43,25 +43,37 @@ class _vocabulary {
 		if ($this->prop['data']) {
 			$data = json_decode($this->prop['data'], true);
 
+			if (isset($data['description'])) {
+				$json['description'] = $data['description'];
+			}
+
 			if (isset($data['subjects'])) {
 				$json['subjects'] = array();
 				foreach($data['subjects'] as $subject) {
 					$json['subjects'][] = $subject['subject'];
 				}
 			}
-
 			if (isset($data['top_concept'])) {
 				$json['top_concept'] = array();
-				foreach($data['top_concept'] as $s) {
-					$json['top_concept'][] = $s;
+				if (is_array($data['top_concept'])) {
+					foreach($data['top_concept'] as $s) {
+						$json['top_concept'][] = $s;
+					}
+				} else {
+					$json['top_concept'] = $data['top_concept'];
 				}
 			}
 
 			if (isset($data['language'])) {
 				$json['language'] = array();
-				foreach($data['language'] as $s) {
-					$json['language'][] = $s;
+				if (is_array($data['language'])) {
+					foreach($data['language'] as $s) {
+						$json['language'][] = $s;
+					}
+				} else {
+					$json['language'][] = $data['language'];
 				}
+				
 			}
 		}
 

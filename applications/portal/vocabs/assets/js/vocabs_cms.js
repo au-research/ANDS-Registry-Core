@@ -3,10 +3,12 @@
  * For adding / editing vocabulary metadata
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
-app.controller('addVocabsCtrl', function($log, $scope, vocabs_factory){
+app.controller('addVocabsCtrl', function($log, $scope, $modal, vocabs_factory){
 	
 	$scope.vocab = {};
 	$scope.mode = 'add'; // [add|edit]
+	$scope.langs = ['En', 'Fr'];
+	$scope.relatedEntityRelations = ['publishedBy', 'hasAuthor', 'hasContributor', 'pointOfContact', 'implementedBy', 'consumerOf'];
 
 	/**
 	 * If there is a slug available, this is an edit view for the CMS
@@ -20,6 +22,7 @@ app.controller('addVocabsCtrl', function($log, $scope, vocabs_factory){
 			$scope.mode = 'edit';
 		});
 	}
+
 
 	/**
 	 * Saving a vocabulary
@@ -55,6 +58,64 @@ app.controller('addVocabsCtrl', function($log, $scope, vocabs_factory){
 		}
 	}
 
+	$scope.relatedmodal = function(action, type, obj) {
+		var modalInstance = $modal.open({
+			templateUrl: base_url+'assets/vocabs/templates/relatedModal.html',
+			controller: 'relatedCtrl',
+			windowClass: 'modal-center',
+			resolve: {
+				entity: function() {
+					if (action=='edit') {
+						return obj;
+					} else {
+						return false;
+					}
+				},
+				type: function() {
+					return type;
+				}
+			}
+		});
+		modalInstance.result.then(function(obj){
+			//close
+			if (obj.intent=='add') {
+				var newObj = obj.data;
+				newObj['type'] = type;
+				$scope.vocab.related_entity.push(newObj);		
+			} else if (obj.intent=='save') {
+				obj = obj.data;
+			}
+		}, function(){
+			//dismiss
+		});
+	}
+
+	$scope.versionmodal = function(action, obj) {
+		var modalInstance = $modal.open({
+			templateUrl: base_url+'assets/vocabs/templates/versionModal.html',
+			controller: 'versionCtrl',
+			windowClass: 'modal-center',
+			resolve: {
+				version: function() {
+					if (action=='edit') {
+						return obj;
+					} else {
+						return false;
+					}
+				},
+				action: function() {
+					return action;
+				}
+			}
+		});
+		modalInstance.result.then(function(obj){
+			//close
+			
+		}, function(){
+			//dismiss
+		});
+	}
+
 	/**
 	 * Add an item to an existing vocab
 	 * Primarily used for adding multivalued contents to the vocabulary
@@ -70,5 +131,44 @@ app.controller('addVocabsCtrl', function($log, $scope, vocabs_factory){
 		if (!$scope.vocab[type]) $scope.vocab[type] = [];
 		$scope.vocab[type].push(obj);
 	}
-
 });
+
+app.controller('versionCtrl', function($scope, $modalInstance, $log, version, action){
+	$scope.versionStatuses = ['current', 'superceded', 'deprecated'];
+	$scope.version = version ? version : false;
+	$scope.action = action;
+
+	$scope.addformat = function() {
+		if (!$scope.version.access_points) {
+			$scope.version.access_points = [];
+		}
+		$scope.version.access_points.push($scope.newap);
+		$scope.newap = {};
+	}
+});
+
+app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, type){
+	$scope.relatedEntityRelations = ['publisherOf', 'publishedBy', 'hasAuthor', 'hasContributor', 'pointOfContact', 'implementedBy', 'consumerOf'];
+	$scope.relatedEntityTypes = ['publisher', 'vocab', 'tool', 'service'];
+	$scope.entity = false;
+	$scope.intent = 'add';
+	if (entity) {
+		$scope.entity = entity;
+		$scope.intent = 'save';
+	}
+	$scope.type = type;
+
+	$scope.save = function() {
+		var ret = {
+			'intent': $scope.intent,
+			'data' : $scope.entity
+		}
+		$modalInstance.close(ret);
+	}
+
+	$scope.dismiss = function() {
+		var obj = {id:'1'};
+		$modalInstance.dismiss();
+	}
+});
+

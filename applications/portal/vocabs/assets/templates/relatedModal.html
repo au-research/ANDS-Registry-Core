@@ -1,0 +1,66 @@
+<div style="modal-center">
+	<div class="modal-header">
+		<button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<h4 class="modal-title">Add a related Entity</h4>
+	</div>
+	<div class="modal-body swatch-white" ng-cloak>
+		<div ng-if="type=='publisher'">
+			<form action="" class="form">
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Search for publisher">
+					<span class="input-group-btn">
+						<button class="btn btn-primary" type="button"><i class="fa fa-search"></i> Search</button>
+					</span>
+				</div>
+			</form>
+			<hr>
+		</div>
+		<form action="" class="form">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="">Type: </label>
+							<select name="" id="" class="form-control" ng-options="etype for etype in relatedEntityTypes" ng-model="type"></select>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="">Title</label>
+							<input type="text" class="form-control" placeholder="entity Title" ng-model="entity.title">	
+						</div>
+						<div class="form-group">
+							<label for="">ID</label>
+							<input type="text" class="form-control" placeholder="entity ID" ng-model="entity.id">	
+						</div>
+						<div class="form-group">
+							<label for="">Relation</label>
+							<select name="" id="" class="form-control" placeholder="entity Relation" ng-options="relationship for relationship in relatedEntityRelations" ng-model="entity.relationship"></select>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="">URL</label>
+							<input type="text" class="form-control" placeholder="entity URL" ng-model="entity.url">	
+						</div>
+						<div class="form-group">
+							<label for="">Email</label>
+							<input type="text" class="form-control" placeholder="entity Email" ng-model="entity.email">	
+						</div>
+						<div class="form-group">
+							<label for="">Phone</label>
+							<input type="text" class="form-control" placeholder="entity Phone" ng-model="entity.phone">	
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer swatch-white">
+		<button class="btn btn-link" type="button" ng-click="dismiss()">Cancel</button>
+		<button class="btn btn-primary" type="button" ng-if="intent=='add'" ng-click="save()">Add this Related Entity</button>
+		<button class="btn btn-primary" type="button" ng-if="intent=='save'" ng-click="save()">Save</button>
+	</div>
+</div>

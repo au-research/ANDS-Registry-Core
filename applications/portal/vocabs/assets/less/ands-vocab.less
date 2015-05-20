@@ -1,3 +1,39 @@
+@primaryColor : #7F7EFF;
+// @secondaryColor: #5353AA;
+@secondaryColor: #A4B0F5;
+@ternaryColor: #F58F29;
+.swatch-blue {
+	background: @primaryColor;
+	color: white;
+	a {
+		color: white;
+	}
+	.nav {
+		li {
+			a {
+				color:white;
+				&:hover {
+					background: @primaryColor;
+				}
+			}
+		}
+	}
+}
+
+.search-bar {
+	padding: 10px 0 10px 10px;
+}
+
+.navbar { margin-bottom: 0px; }
+.swatch-dark-blue {
+	background: @secondaryColor;
+	color:white;
+	.btn-primary {
+		background-color: @ternaryColor;
+	}
+	
+}
+
 ul.listy {
 	padding-left:0;
 	li {
@@ -24,3 +60,9 @@ ul.listy {
 		}
 	}
 }
+
+.element-shorter-top { margin-top:10px !important; }
+.element-shorter-bottom { margin-bottom:10px !important; }
+.element-shortest-top { margin-top:5px !important; }
+.element-shortest-bottom { margin-bottom:5px !important; }
+.alert-info {color:white; }
