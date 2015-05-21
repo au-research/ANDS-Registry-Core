@@ -39,7 +39,7 @@
 			<div class="col-md-5">
 				<form action="" ng-submit="search()">
 					<div class="input-group">
-						<input type="text" class="form-control" placeholder="Search for a vocabulary or a concept" ng-model="filters.q">
+						<input type="text" class="form-control" placeholder="Search for a vocabulary or a concept" ng-model="filters.q" ng-debounce="500">
 						<span class="input-group-btn">
 							<button class="btn btn-primary" type="button"><i class="fa fa-search"></i> Search</button>
 						</span>
