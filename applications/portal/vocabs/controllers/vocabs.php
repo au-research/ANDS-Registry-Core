@@ -40,7 +40,7 @@ class Vocabs extends MX_Controller {
 
 		if ($record) {
 			$this->blade
-				->set('vocab', $record)
+				->set('vocab', $record->display_array())
 				->render('vocab');
 		} else {
 			throw new Exception('No Record found with slug: '.$slug);
@@ -169,7 +169,11 @@ class Vocabs extends MX_Controller {
 			//get All vocabs listed
 			//use test data for now
 			$vocabs = $this->vocab->getAll();
-			$result = $vocabs;
+			$result = array();
+
+			foreach ($vocabs as $vocab) {
+				$result[] = $vocab->display_array();
+			}
 
 			// POST request, for adding new item
 			$angulardata = json_decode(file_get_contents("php://input"), true);
@@ -190,15 +194,7 @@ class Vocabs extends MX_Controller {
 
 			if (!$vocab) throw new Exception('Vocab ID '. $id. ' not found');
 
-			$result = json_decode(json_encode($vocab->prop), true);
-			if ($vocab->data) {
-				//dirty hack to convert json into multi dimensional array from an object
-				$ex = json_decode(json_encode(json_decode($vocab->data)), true);
-				foreach($ex as $key=>$value) {
-					if (!isset($result[$key])) $result[$key] = $value;
-				}
-				unset($result['data']);
-			}
+			$result = $vocab->display_array();
 
 			//POST Request, for saving this vocab
 			$angulardata = json_decode(file_get_contents("php://input"), true);
