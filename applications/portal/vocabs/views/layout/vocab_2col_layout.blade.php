@@ -14,7 +14,7 @@
                                 <div class="container-fluid">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 swatch-gray">
-                                            <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{ $vocab->title }} </span></h1>
+                                            <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{ $vocab['title'] }} </span></h1>
                                             <small>lets put the peeps in here</small>
                                         </div>
                                     </div>

@@ -1,6 +1,6 @@
 <?php
 
-$cc=$vocab->licence;
+$cc=$vocab['licence'];
 ?>
 <style>
     .img-cc {
@@ -14,7 +14,7 @@ $cc=$vocab->licence;
 <div class="panel panel-primary swatch-white gray-bg">
     <div class="panel-body">
 
-        <a href="{{$vocab->vocab_uri}}"  class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to Vocab</a>
+      <a href="{{$vocab['vocab_uri']}}"  class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to Vocab</a>
 
     	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
             <!--<a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="ro.bookmarked"><i class="fa fa-bookmark"></i> Saved to MyVocabs</a> -->
