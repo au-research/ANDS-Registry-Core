@@ -124,10 +124,11 @@ class Vocabularies extends CI_Model {
                             'release_date'=>'01-03-2015',
                             'note'=>'Just a little bit more info on the version',
                             'id'=>'23',
-                            'access_point'=>array(
+                            'access_point'=>array(0=>array(
                                 'access_point_type'=>'webPage',
                                 'access_point_format'=>'XML',
                                 'access_point_URI'=>'http://some.web.access/file'
+                            )
                             )
                           ),
                       1=>array(
@@ -136,10 +137,11 @@ class Vocabularies extends CI_Model {
                         'release_date'=>'01-03-2015',
                         'note'=>'Just a little bit more info on the version',
                         'id'=>'23',
-                        'access_point'=>array(
+                        'access_point'=>array(0=>array(
                           'access_point_type'=>'webPage',
                           'access_point_format'=>'XML',
                           'access_point_URI'=>'http://some.web.access/file'
+                        )
                         )
                       ),
                       2=>array('title'=>'this is an older version title',
@@ -147,10 +149,12 @@ class Vocabularies extends CI_Model {
                           'release_date'=>'01-03-2015',
                           'note'=>'Just a little bit more info on the version',
                           'id'=>'23',
-                          'access_point'=>array(
+                          'access_point'=>array(0=>array(
                               'access_point_type'=>'webPage',
                               'access_point_format'=>'XML',
                               'access_point_URI'=>'http://some.web.access/file'
+                          )
+
                           )
                       )
                   ),
@@ -225,21 +229,23 @@ class Vocabularies extends CI_Model {
                                         'release_date'=>'01-03-2015',
                                         'note'=>'Just a little bit more info on the version',
                                         'id'=>'23',
-                                        'access_point'=>array(
+                                        'access_point'=>array(0=>array(
                                             'access_point_type'=>'webPage',
                                             'access_point_format'=>'XML',
                                             'access_point_URI'=>'http://some.web.access/file'
                                             )
+                                        )
                                     ),
                                     1=>array('title'=>'this is an older version title',
                                         'status'=>'superceded',
                                         'release_date'=>'01-03-2015',
                                         'note'=>'Just a little bit more info on the version',
                                         'id'=>'23',
-                                        'access_point'=>array(
+                                        'access_point'=>array(0=>array(
                                             'access_point_type'=>'webPage',
                                             'access_point_format'=>'XML',
                                             'access_point_URI'=>'http://some.web.access/file'
+                                            )
                                             )
                                         ),
                                         2=>array('title'=>'this is an older version title',
@@ -247,10 +253,11 @@ class Vocabularies extends CI_Model {
                                             'release_date'=>'01-03-2015',
                                             'note'=>'Just a little bit more info on the version',
                                             'id'=>'23',
-                                            'access_point'=>array(
+                                            'access_point'=>array(0=>array(
                                                 'access_point_type'=>'webPage',
                                                 'access_point_format'=>'XML',
                                                 'access_point_URI'=>'http://some.web.access/file'
+                                            )
                                             )
                                         )
                         ),
@@ -323,32 +330,34 @@ class Vocabularies extends CI_Model {
                     'release_date'=>'01-03-2015',
                     'note'=>'Just a little bit more info on the version',
                     'id'=>'23',
-                    'access_point'=>array(
+                    'access_point'=>array(0=>array(
                         'access_point_type'=>'webPage',
                         'access_point_format'=>'XML',
                         'access_point_URI'=>'http://some.web.access/file'
                         )
+                     )
                     ),
                     1=>array('title'=>'this is an older version title',
                         'status'=>'superceded',
                         'release_date'=>'01-03-2015',
                         'note'=>'Just a little bit more info on the version',
                         'id'=>'23',
-                        'access_point'=>array(
+                        'access_point'=>array(0=>array(
                             'access_point_type'=>'webPage',
                             'access_point_format'=>'XML',
                             'access_point_URI'=>'http://some.web.access/file'
-                        )
+                        ))
                     ),
                     2=>array('title'=>'this is an older version title',
                         'status'=>'depreciated',
                         'release_date'=>'01-03-2015',
                         'note'=>'Just a little bit more info on the version',
                         'id'=>'23',
-                        'access_point'=>array(
+                        'access_point'=>array(0=>array(
                             'access_point_type'=>'webPage',
                             'access_point_format'=>'XML',
                             'access_point_URI'=>'http://some.web.access/file'
+                        )
                         )
                     )
                 ),
