@@ -22,19 +22,18 @@
 		<field name="slug" type="string" indexed="true" stored="true"/>
 		<field name="id" type="string" indexed="true" stored="true" required="true"/>
 		<field name="title" type="string" indexed="true" stored="true" required="true"/>
-		<field name="description" type="string" indexed="true" stored="true" required="false"/>
+		<field name="description" type="text_en_splitting" indexed="true" stored="true" required="false"/>
 		<field name="licence" type="string" indexed="true" stored="true" required="false"/>
 		<field name="pool_party_id" type="string" indexed="true" stored="true" required="false"/>
 
 		<!-- MultiValued -->
 		<field name="subjects" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
-		<field name="top_concept" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
+		<field name="top_concept" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="language" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 
 		<!-- Search Fields -->
-		<field name="title_search" type="text_en_splitting" indexed="true" stored="false" required="false" multiValued="true"/>
-		<field name="description_search" type="text_en_splitting" indexed="true" stored="false" required="false" multiValued="true"/>
-		<field name="subject_search" type="text_en_splitting" indexed="true" stored="false" required="false" multiValued="true"/>
+		<field name="title_search" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
+		<field name="subject_search" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
 
 		<field name="fulltext" type="text_en_splitting" indexed="true" stored="false" required="false" multiValued="true"/>
 		<field name="_version_" type="string" indexed="true" stored="true" multiValued="false"/>
@@ -51,7 +50,6 @@
 	<copyField source="title" dest="title_search"/>
 	<copyField source="subjects" dest="subject_search"/>
 	<copyField source="top_concept" dest="subject_search"/>
-	<copyField source="description" dest="description_search"/>
 
 
 	<types>

@@ -133,7 +133,7 @@ class Vocabs extends MX_Controller {
 		$this->solr
 			->setOpt('defType', 'edismax')
 			->setOpt('q.alt', '*:*')
-			->setOpt('qf', 'title_search^1 description_search~10^0.01 subject_search^0.5 fulltext^0.001');;
+			->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001');;
 
 		foreach ($filters as $key=>$value) {
 			switch ($key) {
