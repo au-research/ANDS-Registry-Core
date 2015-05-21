@@ -24,7 +24,9 @@ app.controller('searchCtrl', function($scope, $log, vocabs_factory){
 	$scope.search();
 
 	$scope.$watch('filters.q', function(newv, oldv) {
-		$scope.search();
+		if (newv || newv=='') {
+			$scope.search();
+		}
 	});
 
 	$scope.toggleFilter = function(type, value, execute) {

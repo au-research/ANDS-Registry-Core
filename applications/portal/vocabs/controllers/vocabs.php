@@ -115,15 +115,25 @@ class Vocabs extends MX_Controller {
 		$this->load->library('solr');
 		$this->solr->setUrl('http://localhost:8983/solr/vocabs/');
 
+		//facets
 		$this->solr
 			->setFacetOpt('field', 'subjects')
 			->setFacetOpt('field', 'language')
 			->setFacetOpt('field', 'licence');
 
+		//highlighting
+		$this->solr
+			->setOpt('hl', 'true')
+			->setOpt('hl.fl', 'description, subjects, title')
+			->setOpt('hl.simple.pre', '&lt;b&gt;')
+			->setOpt('hl.simple.post', '&lt;/b&gt;')
+			->setOpt('hl.snippets', '2');
+
+		//search definition
 		$this->solr
 			->setOpt('defType', 'edismax')
 			->setOpt('q.alt', '*:*')
-			->setOpt('qf', 'title_search^1 description_search~10^0.01');;
+			->setOpt('qf', 'title_search^1 description_search~10^0.01 subject_search^0.5 fulltext^0.001');;
 
 		foreach ($filters as $key=>$value) {
 			switch ($key) {
@@ -133,8 +143,12 @@ class Vocabs extends MX_Controller {
 				case 'subjects':
 				case 'language':
 				case 'licence':
-					if ($value!='') {
-						$this->solr->setOpt('fq', "+$key:($value)");
+					if(is_array($value)){
+						$fq_str = '';
+						foreach($value as $v) $fq_str .= ' '.$key.':("'.$v.'")'; 
+						$this->solr->setOpt('fq', $fq_str);
+					}else{
+						$this->solr->setOpt('fq', '+'.$key.':("'.$value.'")');
 					}
 					break;
 			}
