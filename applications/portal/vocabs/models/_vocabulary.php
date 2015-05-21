@@ -80,6 +80,19 @@ class _vocabulary {
 		return $json;
 	}
 
+	public function display_array() {
+		$result = json_decode(json_encode($this->prop), true);
+		if ($this->data) {
+			//dirty hack to convert json into multi dimensional array from an object
+			$ex = json_decode(json_encode(json_decode($this->data)), true);
+			foreach($ex as $key=>$value) {
+				if (!isset($result[$key])) $result[$key] = $value;
+			}
+			unset($result['data']);
+		}
+		return $result;
+	}
+
 
 	/**
 	 * Populate the prop array with an array of key=>value pair
