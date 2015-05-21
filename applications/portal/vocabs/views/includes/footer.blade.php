@@ -1,5 +1,5 @@
 <footer id="footer" role="contentinfo">
-    <section class="section swatch-black">
+    <section class="section swatch-dark-blue">
         <div class="container">
             <div class="row element-normal-top element-normal-bottom">
                 <div class="col-md-8">
