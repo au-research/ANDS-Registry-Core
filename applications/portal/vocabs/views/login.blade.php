@@ -14,7 +14,7 @@
 			    <div class="col-lg-6 col-lg-offset-3 col-xs-12 col-md-12">
 			        
 
-			        <a href="https://devl.ands.org.au/minh/registry/services/roles/authenticate/aaf_rapid?redirect={{ current_url() }}">Login via shib</a>
+			        <a href="https://test.ands.org.au/registry/services/roles/authenticate/aaf_rapid?redirect={{ current_url() }}">Login via shib</a>
 
 			        <div class="element-small-top">
 			            <p>By logging into Research Data Australia, you will have access to additional features including the ability to save records and searches, and contribute to the Research Data Australia community by adding tags (keywords) to records.</p>

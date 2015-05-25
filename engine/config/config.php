@@ -351,7 +351,7 @@ $config['encryption_key'] = 'dlk;df093uhjnkdfsa94123jknasdjklsda8921kljjlk';
 */
 
 //fix logging out thing, expire in a long time!
-$config['sess_cookie_name']     = 'arms';
+$config['sess_cookie_name']     = 'ands';
 $config['sess_expiration']      = (isset($ENV['session_timeout']) ? $ENV['session_timeout'] : 0);
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']  = FALSE;
@@ -360,6 +360,7 @@ $config['sess_use_database']    = TRUE;
 $config['sess_match_ip']        = FALSE;
 $config['sess_match_useragent'] = FALSE;
 $config['sess_time_to_update']  = 10000;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -372,8 +373,8 @@ $config['sess_time_to_update']  = 10000;
 | 'cookie_secure' =  Cookies will only be set if a secure HTTPS connection exists.
 |
 */
-$config['cookie_prefix']	= "";
-$config['cookie_domain']	= "";
+$config['cookie_prefix']	= "ands_";
+$config['cookie_domain']	= ".ands.org.au";
 $config['cookie_path']		= "/";
 $config['cookie_secure']	= FALSE;
 

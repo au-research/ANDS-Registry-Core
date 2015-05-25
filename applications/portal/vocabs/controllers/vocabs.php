@@ -172,7 +172,9 @@ class Vocabs extends MX_Controller {
 	}
 
 	public function login() {
-		$this->save_auth_cookie();
+		// $this->save_auth_cookie();
+		$result = @file_get_contents('https://devl.ands.org.au/minh/registry/services/roles/current_user');
+		dd($result);
 		$authenticators = array(
 			'built-in' => array(
 				'slug' => 'built_in',
