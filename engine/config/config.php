@@ -351,7 +351,7 @@ $config['encryption_key'] = 'dlk;df093uhjnkdfsa94123jknasdjklsda8921kljjlk';
 */
 
 //fix logging out thing, expire in a long time!
-$config['sess_cookie_name']     = 'ands';
+$config['sess_cookie_name']     = 'authentication';
 $config['sess_expiration']      = (isset($ENV['session_timeout']) ? $ENV['session_timeout'] : 0);
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']  = FALSE;

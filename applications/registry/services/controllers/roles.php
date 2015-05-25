@@ -65,7 +65,7 @@ class Roles extends MX_Controller {
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
 		// dd($this->session->sess_cookie_name());
-		
+		// dd($this->session->all_userdata());
 		if ($this->user->isLoggedIn()) {
 			$result = array(
 				'role_id' => $this->user->localIdentifier(),
