@@ -33,6 +33,9 @@ class Registry_objects extends CI_Model {
         	'slug' => $slug
         );
         $id = $this->findRecord($filters, true);
+
+        if (!$id) $id = $this->findOldMapping($slug);
+
         if($id)
         {
             $props = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
@@ -182,6 +185,16 @@ class Registry_objects extends CI_Model {
             else{
                 return $this->getByID($id);
             }
+		} else {
+			return false;
+		}
+	}
+
+	public function findOldMapping($slug) {
+		$result = $this->db->get_where('url_mappings', array('slug'=>$slug));
+		if ($result->num_rows() > 0) {
+			$r = $result->first_row();
+			return $r->registry_object_id;
 		} else {
 			return false;
 		}
