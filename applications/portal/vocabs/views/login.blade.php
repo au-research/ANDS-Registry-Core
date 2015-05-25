@@ -12,9 +12,14 @@
 			</div>
 			<div class="row" id="main">
 			    <div class="col-lg-6 col-lg-offset-3 col-xs-12 col-md-12">
-			        
 
-			        <a href="https://test.ands.org.au/registry/services/roles/authenticate/aaf_rapid?redirect={{ current_url() }}">Login via shib</a>
+					@if($this->user->isLoggedIn())
+						<h1>{{$this->user->name()}}</h1>
+						<?php var_dump($this->session->all_userdata()) ?>
+					@else
+					<a href="https://test.ands.org.au/registry/auth/login#/?redirect={{ current_url() }}">Login via TEST registry</a>
+					<a href="https://devl.ands.org.au/minh/registry/auth/login#/?redirect={{ current_url() }}">Login via DEVL registry</a>
+					@endif
 
 			        <div class="element-small-top">
 			            <p>By logging into Research Data Australia, you will have access to additional features including the ability to save records and searches, and contribute to the Research Data Australia community by adding tags (keywords) to records.</p>

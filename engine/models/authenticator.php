@@ -79,8 +79,6 @@ class Authenticator extends CI_Model {
 	public function post_authentication_hook(){
 		$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : 'auth/dashboard';
 		
-		
-
 		$this->load->helper('cookie');
 		if(get_cookie('auth_redirect')) {
 			$redirect = get_cookie('auth_redirect');
@@ -90,7 +88,7 @@ class Authenticator extends CI_Model {
 		if ($redirect =='profile' || $redirect == portal_url('profile')) {
 			$redirect = portal_url('profile').'#!/dashboard';
 		}
-
+		ulog($redirect);
 
 		$this->redirect_hook($redirect);
 	}
