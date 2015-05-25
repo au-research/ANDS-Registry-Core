@@ -18,16 +18,9 @@
 				<li><a href="{{portal_url('page/about')}}">About</a></li>
 				<li><a href="{{portal_url('page/contribute')}}">Contribute</a></li>
 				@if(!$this->user->loggedIn())
-					<li><a href="{{portal_url('profile/login')}}" class="login_btn">My Vocabs Login</a></li>
+					<li><a href="{{portal_url('vocabs/login')}}" class="login_btn">My Vocabs Login</a></li>
 				@else
-					<li><a href="{{portal_url('profile')}}">My Vocabs</a></li>
-				@endif
-
-				<?php 
-					$profile_image = profile_image();
-				?>
-				@if($profile_image)
-					<li><a href="{{portal_url('profile')}}"><img src="{{ $profile_image }}" alt="" class="profile_image_small"></a></li>
+					<li><a href="{{portal_url('vocabs/myvocabs')}}">My Vocabs</a></li>
 				@endif
 			</ul>
 		</nav>
@@ -45,7 +38,6 @@
 						</span>
 					</div>
 				</form>
-				
 			</div>
 		</div>
 	</div>

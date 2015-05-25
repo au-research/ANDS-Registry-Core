@@ -46,4 +46,21 @@ class Roles extends MX_Controller {
 		}
 		formatResponse($response, 'json');
 	}
+
+	public function authenticate($method = 'built_in') {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : false;
+		if ($method == 'aaf_rapid') {
+			redirect(get_config_item('aaf_rapidconnect_url'));
+		}
+		
+		if ($redirect) redirect($redirect);
+	}
+
+	public function logout() {
+		$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : false;
+	}
 }	
