@@ -50,6 +50,11 @@ class Auth extends CI_Controller {
 		}
 		if(!$data['default_authenticator']) $data['default_authenticator'] = 'built_in';
 
+		delete_cookie('auth_redirect');
+		if ($this->input->get('redirect')) {
+			setcookie('auth_redirect', $this->input->get('redirect'), time()+3600, '/', $this->config->item('cookie_domain'));
+		}
+
 		$this->load->view('login', $data);
 	}
 

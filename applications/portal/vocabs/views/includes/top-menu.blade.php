@@ -18,7 +18,7 @@
 				<li><a href="{{portal_url('page/about')}}">About</a></li>
 				<li><a href="{{portal_url('page/contribute')}}">Contribute</a></li>
 				@if(!$this->user->loggedIn())
-					<li><a href="{{portal_url('vocabs/login')}}" class="login_btn">My Vocabs Login</a></li>
+					<li><a href="https://test.ands.org.au/registry/auth/login?redirect={{ current_url() }}" class="login_btn">My Vocabs Login</a></li>
 				@else
 					<li><a href="{{portal_url('vocabs/myvocabs')}}">My Vocabs</a></li>
 				@endif
