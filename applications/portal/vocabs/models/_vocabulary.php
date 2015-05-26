@@ -32,6 +32,7 @@ class _vocabulary {
 	 * @return array 
 	 */
 	public function indexable_json() {
+		$this->populate_from_db($this->prop['id']);
 		$json = array();
 
 		//index single values
