@@ -57,6 +57,23 @@ class Vocabularies extends CI_Model {
         return $res;
     }
 
+    public function getOwned() {
+        $result = array();
+        if ($this->user->isLoggedIn()) {
+            $affiliations = $this->user->affiliations();
+            $this->vocab_db = $this->load->database('vocabs', true);
+            $query = $this->vocab_db->where_in('owner', $affiliations)->get('vocabularies');
+            if ($query->num_rows() > 0) {
+                foreach($query->result_array() as $r) {
+                    $result[] = $r;
+                }
+            }
+        } else {
+            //not logged in, no owned vocabularies
+        }
+        return $result;
+    }
+
     /**
      * Returns a set of test vocabulary used for testing purposes
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
