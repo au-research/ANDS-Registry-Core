@@ -94,6 +94,7 @@ class Vocabs extends MX_Controller {
 	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
 	public function edit($slug=false) {
+		if (!$this->user->isLoggedIn()) throw new Exception('User not logged in');
 		if (!$slug) throw new Exception('Require a Vocabulary Slug to edit');
 		$vocab = $this->vocab->getBySlug($slug);
 		//do some checking of vocab here, ACL stuff @todo
@@ -169,46 +170,12 @@ class Vocabs extends MX_Controller {
 		echo json_encode($result);
 	}
 
-	private function save_auth_cookie() {
-		$this->load->helper('cookie');
-		if(isset($_SERVER['HTTP_REFERER'])) {
-			setcookie("auth_redirect", $_SERVER['HTTP_REFERER'], time()+3600, '/', $this->config->item('cookie_domain'));
-		}
-
-		if ($this->input->get('redirect')) {
-			delete_cookie('auth_redirect');
-			setcookie('auth_redirect', $this->input->get('redirect'), time()+3600, '/', $this->config->item('cookie_domain'));
-		}
-	}
-
-	public function login() {
-		$this->save_auth_cookie();
-		$authenticators = array(
-			'built-in' => array(
-				'slug' => 'built_in',
-				'display' => 'Built In'
-			),
-			'ldap' => array(
-				'slug'		=> 'ldap',
-				'display' 	=> 'LDAP',
-			),
-			'social' => array(
-				'slug'		=> 'social',
-				'display'	=> 'Social'
-			),
-			'aaf' => array(
-				'slug' 		=> 'aaf',
-				'display' 	=> 'Shibboleth AAF Rapid Connect'
-			)
-		);
-
-		$this->blade
-			->set('authenticators', $authenticators)
-			->render('login');
-	}
-
 	public function myvocabs() {
-
+		if (!$this->user->isLoggedIn()) throw new Exception('User not logged in');
+		$owned = $this->vocab->getOwned();
+		$this->blade
+			->set('owned_vocabs', $owned)
+			->render('myvocabs');
 	}
 
 	/**
@@ -250,6 +217,9 @@ class Vocabs extends MX_Controller {
 				if (!$vocab) throw new Exception('Error Adding New Vocabulary');
 				if ($vocab) {
 					$result = $vocab;
+
+					//index just added one
+					$this->index_vocab($vocab);
 				}
 			}
 
@@ -270,13 +240,18 @@ class Vocabs extends MX_Controller {
 				if (!$result) throw new Exception('Error Saving Vocabulary');
 				if ($result) {
 					$result = 'Success in saving vocabulary';
+					//index saved one
+					$this->index_vocab($vocab);
+					if ($this->index_vocab($vocab)) {
+						$result .= '. Success in indexing vocabulary';
+					}
 				}
 			}
 
 			if ($method=='index') {
 				$result = $vocab->indexable_json();
+				$this->index_vocab($vocab);
 			}
-
 		}
 
 		echo json_encode(
@@ -285,6 +260,33 @@ class Vocabs extends MX_Controller {
 				'message' => $result
 			)
 		);
+	}
+
+	private function index_vocab($vocab) {
+		
+		//load necessary stuff
+		$this->load->library('solr');
+		$vocab_config = get_config_item('vocab_config');
+		if (!$vocab_config['solr_url']) throw new Exception('Indexer URL for Vocabulary module is not configured correctly');
+		$this->solr->setUrl($vocab_config['solr_url']);
+
+
+		//remove index
+		$this->solr->deleteByID($vocab->id);
+		
+		//index
+		$index = $vocab->indexable_json();
+		$solr_doc = array();
+		$solr_doc[] = $index;
+		$solr_doc = json_encode($solr_doc);
+		$add_result = json_decode($this->solr->add_json_commit($solr_doc), true);
+
+		if ($add_result['responseHeader']['status'] === 0) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 
 	/**

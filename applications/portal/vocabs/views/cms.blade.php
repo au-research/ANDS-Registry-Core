@@ -24,15 +24,6 @@
 
 	<div class="container">
 		<div class="row">
-			<div class="col-md-12">
-				<div class="panel swatch-gray">
-					<div class="panel-heading">PoolParty Integration</div>
-					<div class="panel-body">
-						<input type="text" class="form-control" ng-model="vocab.pool_party_id" placeholder="Pool Party ID">
-						<p class="help-block">Insert PoolParty ID to pre-fill form. <a href="">Search for a PoolParty</a></p>
-					</div>
-				</div>
-			</div>
 			<div class="col-md-8">
 				<div class="panel swatch-gray">
 					<!-- <div class="panel-heading">Vocabulary Metadata</div> -->
@@ -50,6 +41,7 @@
 							<textarea class="form-control" ng-model="vocab.description" placeholder="Vocabulary Description" rows="10"></textarea>
 						</div>
 						<div class="form-group">
+							<label for="">Vocabulary Licence</label>
 							<input type="text" class="form-control" ng-model="vocab.licence" placeholder="Vocabulary Licence URI">
 						</div>
 						
@@ -112,8 +104,8 @@
 								<tr><th>Subject Label</th><th>Source</th></tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="subject in vocab.subjects">
-									<td>[[ subject.subject ]]</a></td>
+								<tr ng-repeat="subject in vocab.subjects track by $index">
+									<td>[[ subject.subject ]] <a href="" ng-click="vocab.subjects.splice($index, 1)"><i class="fa fa-remove"></i></a></td>
 									<td>[[ subject.subject_source ]]</td>
 								</tr>
 							</tbody>
@@ -135,6 +127,17 @@
 
 			</div>
 			<div class="col-md-4">
+
+				<div class="panel swatch-gray">
+					<div class="panel-heading">PoolParty Integration</div>
+					<div class="panel-body">
+						<div class="form-group">
+							<label for="">PoolParty ID</label>
+							<input type="text" class="form-control" placeholder="PoolParty ID" ng-model="vocab.pool_party_id">
+							<p class="help-block">Insert PoolParty ID to pre-fill form <a href="">Search for a PoolParty Project</a></p>
+						</div>
+					</div>
+				</div>
 				
 				<div class="panel swatch-gray">
 					<div class="panel-heading">Publishers</div>
