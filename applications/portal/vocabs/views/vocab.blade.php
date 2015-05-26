@@ -148,18 +148,6 @@ if(isset($vocab['related_entity'])){
     </div>
 </div>
 @endif
-@if($vocab['versions'])
-<div class="panel swatch-white">
-    <div class="panel-heading">Versions</div>
-    <div class="panel-body">
-        <ul>
-            @foreach($vocab['versions'] as $version)
 
-            <li><a href="">{{$version['title']}}</a><br/>{{$version['status']}}</li>
-            @endforeach
-        </ul>
-    </div>
-</div>
-@endif
 
 @stop

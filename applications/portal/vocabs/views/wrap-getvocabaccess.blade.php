@@ -8,11 +8,9 @@ $cc=$vocab['licence'];
 <div class="panel panel-primary swatch-white gray-bg">
     <div class="panel-body">
 
-      <button class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Current Version</button>
+      <button class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Current Version
 
-        <div>
 
-        <h4>Licence</h4>
         @if($cc=='CC-BY')
             <a href="http://creativecommons.org/licenses/by/3.0/au/" tip="Attribution"><img src="{{asset_url('images/icons/CC-BY.png', 'core')}}" class="img-cc" alt="CC-BY"></a> <br/>
             @elseif($cc=='CC-BY-SA')
@@ -26,10 +24,23 @@ $cc=$vocab['licence'];
             @elseif($cc=='CC-BY-NC-ND')
             <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
             @else
-            <span>{{sentenceCase($cc)}}</span>
+            <span>Licence: {{sentenceCase($cc)}}</span>
         @endif
+      </button>
 
-        </div>
+        @if($vocab['versions'])
 
+
+            <div class="panel-body">
+                Versions<br />
+                <ul>
+                    @foreach($vocab['versions'] as $version)
+
+                    <li><a href="">{{$version['title']}}</a><br/>{{$version['status']}}</li>
+                    @endforeach
+                </ul>
+            </div>
+
+        @endif
     </div>
 </div>
