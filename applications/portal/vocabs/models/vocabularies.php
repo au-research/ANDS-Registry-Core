@@ -63,7 +63,7 @@ class Vocabularies extends CI_Model {
             $affiliations = $this->user->affiliations();
             $this->vocab_db = $this->load->database('vocabs', true);
             $query = $this->vocab_db->where_in('owner', $affiliations)->get('vocabularies');
-            if ($query->num_rows() > 0) {
+            if ($query && $query->num_rows() > 0) {
                 foreach($query->result_array() as $r) {
                     $result[] = $r;
                 }

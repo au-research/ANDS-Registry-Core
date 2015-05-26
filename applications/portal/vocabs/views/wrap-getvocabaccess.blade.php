@@ -9,10 +9,6 @@ $cc=$vocab['licence'];
     <div class="panel-body">
 
       <button class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Current Version</button>
-        <p>Formats avaialable:</p>
-        @foreach($vocab['current_version']['access_point'] as $access_point)
-         <a href=" {{$access_point['access_point_URI']}}" >{{$access_point['access_point_URI']}}</a> {{$access_point['access_point_format']}}</br >
-        @endforeach
 
         <div>
 

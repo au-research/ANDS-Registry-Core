@@ -2,6 +2,7 @@
 $(document).ready(function() {
 $("#vocab-tree").vocab_widget({
     mode:'tree',
+    endpoint: 'https://researchdata.ands.org.au/apps/vocab_widget/proxy/',
     display_count:false,
     repository:$("#vocab-tree").attr('vocab')})
     .on('treeselect.vocab.ands', function(event) {

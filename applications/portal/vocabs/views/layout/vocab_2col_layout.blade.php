@@ -20,30 +20,18 @@ if(isset($vocab['related_entity'])){
             <div class="container">
                 <div class="row element-short-top">
                     <div class="col-md-9 view-content" style="padding-right:0">
-                        <div class="panel panel-primary swatch-gray panel-content">
-                            <div class="panel-body swatch-grey">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-xs-12 col-md-12 swatch-gray">
-                                            <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{ $vocab['title'] }} </span></h1>
-                                            <p>{{$vocab['creation_date']}}</p>
-                                            @foreach($publisher as $apub)
-                                            {{$apub['relationship']}} <small>{{$apub['title']}}</small>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="clear"></div>
-                            </div>
 
-                            <div>
-                                <div class="pull-left swatch-gray" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
-                                    @include('wrap-getvocabaccess')
-                                </div>
-                                @yield('content')
-                                <div class="clear"></div>
+                        <div class="panel panel-primary swatch-white panel-content">
+                            <div class="panel-body">
+                                <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{ $vocab['title'] }} </span></h1>
+                                <p>{{$vocab['creation_date']}}</p>
+                                @foreach($publisher as $apub)
+                                    {{$apub['title']}} <small>({{$apub['relationship']}})</small>
+                                @endforeach
                             </div>
                         </div>
+                        @include('wrap-getvocabaccess')
+                        @yield('content')
                     </div>
 
                     <div class="col-md-3">

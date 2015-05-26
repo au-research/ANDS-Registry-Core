@@ -35,7 +35,7 @@ class Vocabs extends MX_Controller {
 		//For Development Only
 		if (!$record) {
 			$test_records = $this->vocab->test_vocabs();
-			$record = $test_records[$slug];
+			$record = $test_records[$slug] ? $test_records[$slug] : false;
 		}
 
 		if ($record) {
