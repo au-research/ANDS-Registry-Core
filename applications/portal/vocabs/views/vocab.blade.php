@@ -32,6 +32,18 @@ if(isset($vocab['related_entity'])){
         <div class="panel swatch-white panel-primary element-no-top element-short-bottom panel-content">
             <div class="panel-body">
                 {{ $vocab['description'] }}
+                @if($vocab['language'])
+                <h3>Languages</h3>
+                <p>
+                    @foreach($vocab['language'] as $language)
+                    {{$language}} |
+                    @endforeach
+                </p>
+                @endif
+                @if($vocab['note'])
+                <h3>Notes</h3>
+                <p>{{$vocab['note']}}</p>
+                @endif
             </div>
          </div>
 
@@ -59,37 +71,7 @@ if(isset($vocab['related_entity'])){
         </div>
         @endif
 
-        @if($related_orgs||$related_people||$related_vocabs)
-        <div class="panel swatch-white">
-            <div class="panel-heading">Related</div>
-            <div class="panel-body">
-                @if($related_orgs)
-                    <h3>Related organisations</h3>
-                    @foreach($related_orgs as $related)
-                        <p>
-                            {{$related['title']}}
-                        </p>
-                    @endforeach
-                @endif
-                @if($related_people)
-                    <h3>Related people</h3>
-                    @foreach($related_people as $related)
-                        <p>
-                            {{$related['title']}}
-                        </p>
-                    @endforeach
-                @endif
-                @if($related_vocabs)
-                    <h3>Related vocabularies</h3>
-                    @foreach($related_vocabs as $related)
-                        <p>
-                            {{$related['title']}}
-                        </p>
-                    @endforeach
-                @endif
-            </div>
-        </div>
-        @endif
+
 
         @if($vocab['subjects'])
         <div class="panel swatch-white">
@@ -98,34 +80,6 @@ if(isset($vocab['related_entity'])){
                 @foreach($vocab['subjects'] as $subject)
                     {{$subject['subject']}}|
                 @endforeach
-            </div>
-        </div>
-        @endif
-
-
-        @if( $current_version['release_date']|| $vocab['note'] || $vocab['language'] || $current_version['note'])
-        <div class="panel swatch-white">
-            <div class="panel-body">
-                @if($current_version['release_date'])
-                    <h3>Release date</h3>
-                    <p>{{$current_version['release_date']}}</p>
-                @endif
-                @if($current_version['note'])
-                    <h3>Version note</h3>
-                    <p>{{$current_version['note']}}</p>
-                @endif
-                @if($vocab['note'])
-                <h3>Languages</h3>
-                <p>
-                    @foreach($vocab['language'] as $language)
-                    {{$language}} |
-                    @endforeach
-                </p>
-                @endif
-                @if($vocab['note'])
-                    <h3>Notes</h3>
-                    <p>{{$vocab['note']}}</p>
-                @endif
             </div>
         </div>
         @endif
@@ -148,6 +102,36 @@ if(isset($vocab['related_entity'])){
     </div>
 </div>
 @endif
-
+@if($related_orgs||$related_people||$related_vocabs)
+<div class="panel swatch-white">
+    <div class="panel-heading">Related</div>
+    <div class="panel-body">
+        @if($related_orgs)
+        <h3>Related organisations</h3>
+        @foreach($related_orgs as $related)
+        <p>
+            {{$related['title']}}
+        </p>
+        @endforeach
+        @endif
+        @if($related_people)
+        <h3>Related people</h3>
+        @foreach($related_people as $related)
+        <p>
+            {{$related['title']}}
+        </p>
+        @endforeach
+        @endif
+        @if($related_vocabs)
+        <h3>Related vocabularies</h3>
+        @foreach($related_vocabs as $related)
+        <p>
+            {{$related['title']}}
+        </p>
+        @endforeach
+        @endif
+    </div>
+</div>
+@endif
 
 @stop

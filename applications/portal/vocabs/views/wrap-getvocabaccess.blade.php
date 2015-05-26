@@ -10,7 +10,6 @@ $cc=$vocab['licence'];
 
       <button class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Current Version
 
-
         @if($cc=='CC-BY')
             <a href="http://creativecommons.org/licenses/by/3.0/au/" tip="Attribution"><img src="{{asset_url('images/icons/CC-BY.png', 'core')}}" class="img-cc" alt="CC-BY"></a> <br/>
             @elseif($cc=='CC-BY-SA')
