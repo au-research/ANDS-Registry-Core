@@ -1,13 +1,6 @@
 <?php
-$current_version = '';
-if(isset($vocab['versions'])){
-    foreach($vocab['versions'] as $version){
-        if($version['status']=='current'){
-            $current_version = $version;
-        }
-    }
-}
-
+$current_version =  $vocab['current_version'] ;
+$publisher = array();
 $related_orgs = array();
 $related_people = array();
 $related_vocabs = array();
@@ -15,7 +8,7 @@ $related_service = array();
 if(isset($vocab['related_entity'])){
     foreach($vocab['related_entity'] as $related){
         if($related['type']=='publisher'){
-            $related_orgs[]=$related;
+            $publisher=$related;
         }
         elseif($related['type']=='contributor'){
             $related_people[] =$related;
@@ -128,13 +121,15 @@ if(isset($vocab['related_entity'])){
             </div>
         </div>
 @endif
-@if($vocab['creation_date'] || $vocab['note'] || $vocab['language'] || $current_version['note'])
+
+
+@if( $current_version['release_date']|| $vocab['note'] || $vocab['language'] || $current_version['note'])
         <div class="swatch-gray">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <div class="panel-body swatch-gray">
-                     @if($vocab['creation_date'])
+                     @if($current_version['release_date'])
                         <h3>Release date</h3>
-                        <p>{{$vocab['creation_date']}}</p>
+                        <p>{{$current_version['release_date']}}</p>
                     @endif
                     @if($current_version['note'])
                         <h3>Version note</h3>
@@ -148,7 +143,6 @@ if(isset($vocab['related_entity'])){
                         @endforeach
                     </p>
                     @endif
-
                     @if($vocab['note'])
                         <h3>Notes</h3>
                         <p>{{$vocab['note']}}</p>

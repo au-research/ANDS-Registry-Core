@@ -39,8 +39,18 @@ class Vocabs extends MX_Controller {
 		}
 
 		if ($record) {
+            $vocab = $record->display_array();
+            $current_version = '';
+            if(isset($vocab['versions'])){
+                foreach($vocab['versions'] as $version){
+                    if($version['status']=='current'){
+                        $current_version = $version;
+                    }
+                }
+            }
+            $vocab['current_version'] = $current_version;
 			$this->blade
-				->set('vocab', $record->display_array())
+				->set('vocab', $vocab)
 				->render('vocab');
 		} else {
 			throw new Exception('No Record found with slug: '.$slug);

@@ -3,6 +3,17 @@
 @include('includes/header')
 <body>
 @include('includes/top-menu')
+<?php
+$publisher = array();
+if(isset($vocab['related_entity'])){
+    foreach($vocab['related_entity'] as $related){
+        if($related['type']=='publisher'){
+            $publisher[]=$related;
+        }
+    }
+}
+//print_r($vocab);
+?>
 <div id="content" >
     <article ng-controller="viewController">
         <section class="section swatch-gray" style="z-index:1">
@@ -15,7 +26,10 @@
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 swatch-gray">
                                             <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{ $vocab['title'] }} </span></h1>
-                                            <small>lets put the peeps in here</small>
+                                            <p>{{$vocab['creation_date']}}</p>
+                                            @foreach($publisher as $apub)
+                                            {{$apub['relationship']}} <small>{{$apub['title']}}</small>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>

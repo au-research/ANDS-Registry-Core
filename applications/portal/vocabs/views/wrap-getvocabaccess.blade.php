@@ -3,23 +3,16 @@
 $cc=$vocab['licence'];
 ?>
 <style>
-    .img-cc {
-        height: 22px;
-    }
-    .img-cc-standard3 {
-        width: auto;
-        height: 48px;
-    }
+
 </style>
 <div class="panel panel-primary swatch-white gray-bg">
     <div class="panel-body">
 
-      <a href="{{$vocab['vocab_uri']}}"  class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to Vocab</a>
-
-    	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
-            <!--<a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="ro.bookmarked"><i class="fa fa-bookmark"></i> Saved to MyVocabs</a> -->
-            <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="!ro.bookmarked"><i class="fa fa-bookmark-o"></i> Save to MyVocabs</a>
-        </div>
+      <button class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Current Version</button>
+        <p>Formats avaialable:</p>
+        @foreach($vocab['current_version']['access_point'] as $access_point)
+         <a href=" {{$access_point['access_point_URI']}}" >{{$access_point['access_point_URI']}}</a> {{$access_point['access_point_format']}}</br >
+        @endforeach
 
         <div>
 
@@ -41,14 +34,6 @@ $cc=$vocab['licence'];
         @endif
 
         </div>
-
-
-            <div id="rightsContent">
-                where does the text come from for this info block
-            </div>
-
-
-
 
     </div>
 </div>
