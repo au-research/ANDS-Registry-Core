@@ -1,3 +1,36 @@
+<?php
+$current_version = '';
+if(isset($vocab['versions'])){
+    foreach($vocab['versions'] as $version){
+        if($version['status']=='current'){
+            $current_version = $version;
+        }
+    }
+}
+
+$related_orgs = array();
+$related_people = array();
+$related_vocabs = array();
+$related_service = array();
+if(isset($vocab['related_entity'])){
+    foreach($vocab['related_entity'] as $related){
+        if($related['type']=='publisher'){
+            $related_orgs[]=$related;
+        }
+        elseif($related['type']=='contributor'){
+            $related_people[] =$related;
+        }
+        elseif($related['type']=='service'){
+            $related_service[]=$related;
+        }
+        elseif($related['type']=='vocab'){
+            $related_vocabs[]=$related;
+        }
+    }
+}
+
+?>
+
 @extends('layout/vocab_2col_layout')
 @section('content')
 
@@ -46,21 +79,39 @@
             </div>
         </div>
 @endif
+        @if($related_orgs||$related_people||$related_vocabs)
         <div class="swatch-gray">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <div class="panel-body swatch-gray">
+                    @if($related_orgs)
+                        <h3>Related organisations</h3>
+                        @foreach($related_orgs as $related)
+                            <p>
+                                {{$related['title']}}
+                            </p>
+                        @endforeach
+                    @endif
+                    @if($related_people)
+                        <h3>Related people</h3>
+                        @foreach($related_people as $related)
+                            <p>
+                                {{$related['title']}}
+                            </p>
+                        @endforeach
+                    @endif
+                    @if($related_vocabs)
+                        <h3>Related vocabularies</h3>
+                        @foreach($related_vocabs as $related)
+                            <p>
+                                {{$related['title']}}
+                            </p>
+                        @endforeach
+                    @endif
 
-                    <h3>Related organisations</h3>
-                    <p>xxx|xxx|xxxxx|xxxxx</p>
-
-                    <h3>Related people</h3>
-                    <p>xxx</p>
-
-                    <h3>Related vocabularies</h3>
-                    <p>xxx</p>
                 </div>
             </div>
         </div>
+        @endif
 @if($vocab['subjects'])
         <div class="swatch-gray">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
@@ -77,7 +128,7 @@
             </div>
         </div>
 @endif
-@if($vocab['creation_date'] || $vocab['note'])
+@if($vocab['creation_date'] || $vocab['note'] || $vocab['language'] || $current_version['note'])
         <div class="swatch-gray">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <div class="panel-body swatch-gray">
@@ -85,11 +136,19 @@
                         <h3>Release date</h3>
                         <p>{{$vocab['creation_date']}}</p>
                     @endif
-                    <h3>Version note</h3>
-                    <p>xxx</p>
-
+                    @if($current_version['note'])
+                        <h3>Version note</h3>
+                        <p>{{$current_version['note']}}</p>
+                    @endif
+                    @if($vocab['note'])
                     <h3>Languages</h3>
-                    <p>xxx</p>
+                    <p>
+                        @foreach($vocab['language'] as $language)
+                        {{$language}} |
+                        @endforeach
+                    </p>
+                    @endif
+
                     @if($vocab['note'])
                         <h3>Notes</h3>
                         <p>{{$vocab['note']}}</p>
@@ -104,16 +163,18 @@
 
 
 @section('sidebar')
-
+@if($related_service)
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Services that make use of this vocabulary</div>
     <div class="panel-body">
         <ul>
-            <li>Supports <a href="">Service 1</a></li>
+            @foreach($related_service as $service)
+            <li>{{$service['relationship']}} <a href="{{$service['URL']}}">{{$service['title']}}</a></li>
+            @endforeach
         </ul>
     </div>
 </div>
-
+@endif
 @if($vocab['versions'])
 <div class="panel panel-primary panel-content swatch-white">
     <div class="panel-heading">Versions</div>
