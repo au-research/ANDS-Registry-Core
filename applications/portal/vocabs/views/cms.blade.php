@@ -22,7 +22,35 @@
 		<input type="hidden" type="text" value="{{ $vocab->slug }}" id="vocab_slug"/>
 	@endif
 
-	<div class="container">
+	<div class="container" ng-if="!decide">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="panel swatch-gray">
+					<div class="panel-heading">PoolParty Integration</div>
+					<div class="panel-body">
+						<div class="form-group">
+							<label for="">PoolParty Search</label>
+							<input type="text" class="form-control" placeholder="PoolParty ID" ng-model="project" typeahead="project as project.title for project in projects | filter:projectSearch($viewValue) | limitTo:8" typeahead-min-length="0">
+							<p class="help-block">Search for a PoolParty Project to pre-fill form</p>
+						</div>
+						<div ng-if="project">
+							<dl class="dl-horizontal">
+								<dt>Title</dt> <dd>[[ project.title ]]</dd>
+								<dt>PoolParty ID</dt> <dd>[[ project.id ]]</dd>
+							</dl>
+						</div>
+					</div>
+					<div class="panel-footer">
+						<a href="" class="btn btn-primary" ng-click="populate(project)">Use this PoolParty</a>
+						<a href="" class="btn btn-link" ng-click="skip()">Skip</a>
+						<p class="help-block">Skipping will start a blank Vocabulary</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container" ng-if="decide">
 		<div class="row">
 			<div class="col-md-8">
 				<div class="panel swatch-gray">
@@ -57,6 +85,10 @@
 						<div class="form-group">
 							<label for="">Revision Cycle</label>
 							<input type="text" class="form-control" ng-model="vocab.revision_cycle" placeholder="Revision Cycle">
+						</div>
+						<div class="form-group">
+							<label for="">Note</label>
+							<textarea class="form-control" ng-model="vocab.note" placeholder="Vocabulary Description" rows="10"></textarea>
 						</div>
 					</div>
 				</div>
@@ -128,16 +160,7 @@
 			</div>
 			<div class="col-md-4">
 
-				<div class="panel swatch-gray">
-					<div class="panel-heading">PoolParty Integration</div>
-					<div class="panel-body">
-						<div class="form-group">
-							<label for="">PoolParty ID</label>
-							<input type="text" class="form-control" placeholder="PoolParty ID" ng-model="vocab.pool_party_id">
-							<p class="help-block">Insert PoolParty ID to pre-fill form <a href="">Search for a PoolParty Project</a></p>
-						</div>
-					</div>
-				</div>
+				
 				
 				<div class="panel swatch-gray">
 					<div class="panel-heading">Publishers</div>

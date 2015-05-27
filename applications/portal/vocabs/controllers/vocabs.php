@@ -304,6 +304,11 @@ class Vocabs extends MX_Controller {
 	 * @return view
 	 */
 	public function toolkit() {
+		//header
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
 		if (!get_config_item('vocab_toolkit_url')) throw new Exception('Vocab ToolKit URL not configured correctly');
 		$request = $this->input->get('request');
 		if (!$request) throw new Exception('Request Not Found');
@@ -311,12 +316,12 @@ class Vocabs extends MX_Controller {
 		$url = get_config_item('vocab_toolkit_url');
 
 		switch ($request) {
-			case 'listPoolPartyProjects': $url .= 'rest/harvest?provider_type=PoolParty'; break;
+			case 'listPoolPartyProjects':
+				$sample = @file_get_contents(asset_url('json/sample_list.json'));
+				echo $sample;
+				break;
 			default : throw new Exception('Request Not Recognised');
 		}
-
-		$content = file_get_contents($url);
-		echo $content;
 	}
 
 	/**

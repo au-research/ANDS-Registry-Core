@@ -9,11 +9,11 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, vocabs_factory){
 	$scope.mode = 'add'; // [add|edit]
 	$scope.langs = ['English', 'German', 'French', 'Spanish', 'Italian', 'Mãori', 'Russian', 'Chinese', 'Japanese'];
 	$scope.opened = false;
+	$scope.decide = false;
 
 	$scope.open = function($event) {
 	    $event.preventDefault();
 	    $event.stopPropagation();
-
 	    $scope.opened = true;
 	  };
 
@@ -27,9 +27,54 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, vocabs_factory){
 			$log.debug('Editing ', data.message);
 			$scope.vocab = data.message;
 			$scope.mode = 'edit';
+			$scope.decide = true;
 		});
 	}
 
+	/**
+	 * Collect All PoolParty Project
+	 */
+	$scope.projects = [];
+	$scope.ppid = {};
+	vocabs_factory.toolkit('listPoolPartyProjects').then(function(data){
+		$scope.projects = data;
+	});
+
+	$scope.projectSearch = function(q) {
+		return function(item) {
+			if (item.title.toLowerCase().indexOf(q.toLowerCase()) > -1 || item['id'].toLowerCase().indexOf(q.toLowerCase()) > -1) {
+				return true;
+			} else return false;
+		}
+	}
+
+
+	$scope.skip = function() {
+		$scope.decide = true;
+	}
+
+	$scope.populate = function(project) {
+		if (project) {
+			$scope.vocab.pool_party_id = project.id;
+			$scope.vocab.title = project.title;
+			$scope.vocab.description = project.description;
+			$scope.vocab.vocab_uri = project.uri;
+			$scope.decide = true;
+			if (project.availableLanguages) {
+				$scope.vocab.language = [];
+				angular.forEach(project.availableLanguages, function(lang){
+					if (lang.toLowerCase() == 'en') lang = 'English';
+					$scope.vocab.language.push(lang);
+				});
+			}
+			if (project.subject) {
+				$scope.vocab.subjects = []
+				$scope.vocab.subjects.push({subject:project.subject,subject_source:'local'});
+			}
+		} else {
+			console.log('no project to decide');
+		}
+	}
 
 	/**
 	 * Saving a vocabulary
