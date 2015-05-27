@@ -3,6 +3,7 @@
 	<div class="panel-body">
 
 		<h3 class="element-short-bottom">{{ $vocab['current_version']['title'] }}</h3>
+        @<?php if(isset($vocab['current_version']['access_points'])){ ?>
 		@foreach($vocab['current_version']['access_points'] as $ap)
 			<div class="current-version-ap-block">
 				<a class="btn btn-lg btn-block btn-primary" href="{{ $ap['uri'] }}"><i class="fa fa-cube"></i> {{ $ap['type'] }}</a>
@@ -11,6 +12,7 @@
 				</div>
 			</div>
 		@endforeach
+        <?php } ?>
 		<div class="clearfix"></div>
 		
 		<p>
