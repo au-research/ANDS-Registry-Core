@@ -13,7 +13,7 @@
     <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap-tpls.min.js', 'core')}}"></script>
     <script src="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.js', 'core')}}"></script>
     <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
-    <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
+
 @else
     <script src="{{ asset_url('js/lib.min.js','core') }}"></script>
 @endif
@@ -22,6 +22,7 @@
 <script type="text/javascript" src="{{ asset_url('js/vocabs_factory.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url('js/vocabs_search_controller.js') }}"></script>
 <script src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.js'></script>
+<script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
 <script type="text/javascript" src="//researchdata.ands.org.au/apps/assets/vocab_widget/js/vocab_widget.js"></script>
 
 

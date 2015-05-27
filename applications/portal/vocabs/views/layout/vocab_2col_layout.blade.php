@@ -12,7 +12,7 @@ if(isset($vocab['related_entity'])){
         }
     }
 }
-//print_r($vocab);
+
 ?>
 <div id="content" >
     <article ng-controller="viewController">
@@ -26,7 +26,7 @@ if(isset($vocab['related_entity'])){
                                 <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{ $vocab['title'] }} </span></h1>
                                 <p>{{$vocab['creation_date']}}</p>
                                 @foreach($publisher as $apub)
-                                    {{$apub['title']}} <small>({{$apub['relationship']}})</small>
+                                    {{$apub['title']}} <small>({{readable($apub['relationship'])}})</small>
                                 @endforeach
                             </div>
                         </div>

@@ -33,7 +33,7 @@ if(isset($vocab['related_entity'])){
             <div class="panel-body">
                 {{ $vocab['description'] }}
                 @if($vocab['language'])
-                <h3>Languages</h3>
+                <h4>Languages</h4>
                 <p>
                     @foreach($vocab['language'] as $language)
                     {{$language}} |
@@ -41,7 +41,7 @@ if(isset($vocab['related_entity'])){
                 </p>
                 @endif
                 @if($vocab['note'])
-                <h3>Notes</h3>
+                <h4>Notes</h4>
                 <p>{{$vocab['note']}}</p>
                 @endif
             </div>
@@ -91,42 +91,42 @@ if(isset($vocab['related_entity'])){
 
 @section('sidebar')
 @if($related_service)
-<div class="panel swatch-white">
+<div class="panel swatch-white  panel-primary element-no-top element-short-bottom panel-content">
     <div class="panel-heading">Services that make use of this vocabulary</div>
     <div class="panel-body">
-        <ul>
+
             @foreach($related_service as $service)
-            <li>{{$service['relationship']}} <a href="{{$service['URL']}}">{{$service['title']}}</a></li>
+            <p><small>({{readable($service['relationship'])}})</small> <a href="{{$service['URL']}}" class="re_preview"  re_id="{{$service['id']}}">{{$service['title']}}</a></p>
             @endforeach
-        </ul>
+
     </div>
 </div>
 @endif
 @if($related_orgs||$related_people||$related_vocabs)
-<div class="panel swatch-white">
+<div class="panel swatch-white  panel-primary element-no-top element-short-bottom panel-content">
     <div class="panel-heading">Related</div>
     <div class="panel-body">
         @if($related_orgs)
-        <h3>Related organisations</h3>
+        <h4>Related organisations</h4>
         @foreach($related_orgs as $related)
         <p>
-            {{$related['title']}}
+            <small>({{readable($related['relationship'])}})</small> <a href="" class="re_preview" re_id="{{$related['id']}}"> {{$related['title']}}</a>
         </p>
         @endforeach
         @endif
         @if($related_people)
-        <h3>Related people</h3>
+        <h4>Related people</h4>
         @foreach($related_people as $related)
         <p>
-            {{$related['title']}}
+            <small>({{readable($related['relationship'])}})</small> <a href="" class="re_preview"  re_id="{{$related['id']}}"> {{$related['title']}}</a>
         </p>
         @endforeach
         @endif
         @if($related_vocabs)
-        <h3>Related vocabularies</h3>
+        <h4>Related vocabularies</h4>
         @foreach($related_vocabs as $related)
         <p>
-            {{$related['title']}}
+            <small>({{readable($related['relationship'])}})</small> <a href="" class="re_preview"  re_id="{{$related['id']}}"> {{$related['title']}}</a>
         </p>
         @endforeach
         @endif
