@@ -54,14 +54,20 @@
 ul.vocab-prev-version-list {
 	margin:5px 0;padding:5px 0;
 	li {
+		padding:15px 0;
+		line-height: 30px;
 		list-style-type:none;
-		border-bottom:1px solid #ccc;
+		&:not(:first-child) {
+			border-top:1px solid #ccc;
+		}
 	}
+
 	ul {
 		margin:0;padding:0;
 		float:right;
 		list-style-type:none;
 		li {
+			padding:0;
 			display:inline-block;
 			list-style-type:none;
 			border:none;
@@ -70,6 +76,10 @@ ul.vocab-prev-version-list {
 			}
 		}
 	}
+}
+
+.version-licence {
+	float:right;
 }
 
 .navbar { margin-bottom: 0px; }
