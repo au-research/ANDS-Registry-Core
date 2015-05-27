@@ -52,7 +52,7 @@
 
 	<div class="container" ng-if="decide">
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-md-8"> 
 				<div class="panel swatch-gray">
 					<!-- <div class="panel-heading">Vocabulary Metadata</div> -->
 					<div class="panel-body">

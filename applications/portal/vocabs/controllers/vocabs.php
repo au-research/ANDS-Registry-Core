@@ -57,13 +57,6 @@ class Vocabs extends MX_Controller {
 		}
 	}
 
-    public function related_preview() {
-        //use test records for now
-
-            $this->blade
-                ->render('related_preview');
-
-    }
 	/**
 	 * Search
 	 * Displaying the search page
@@ -205,7 +198,7 @@ class Vocabs extends MX_Controller {
 		if ($class != 'vocabs') throw new Exception('/vocabs required');
 
 		$result = '';
-		if ($id=='') {
+		if ($id=='all' || $id=='') {
 			//get All vocabs listed
 			//use test data for now
 			$vocabs = $this->vocab->getAll();
@@ -213,6 +206,24 @@ class Vocabs extends MX_Controller {
 
 			foreach ($vocabs as $vocab) {
 				$result[] = $vocab->display_array();
+			}
+
+			if ($method=='related') {
+				$result = array();
+				$type = $this->input->get('type') ? $this->input->get('type') : false;
+				foreach($vocabs as $vocab) {
+					$vocab_array = $vocab->display_array();
+					foreach($vocab_array['related_entity'] as $re) {
+						if ($type) {
+							if ($re['type']==$type) {
+								$re['vocab_id'] = $vocab_array['id'];
+								$result[] = $re;
+							}
+						} else {
+							$result[] = $re;
+						}
+					}
+				}
 			}
 
 			// POST request, for adding new item
