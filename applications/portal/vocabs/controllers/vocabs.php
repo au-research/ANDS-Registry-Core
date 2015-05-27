@@ -57,6 +57,13 @@ class Vocabs extends MX_Controller {
 		}
 	}
 
+    public function related_preview() {
+        //use test records for now
+
+            $this->blade
+                ->render('related_preview');
+
+    }
 	/**
 	 * Search
 	 * Displaying the search page
