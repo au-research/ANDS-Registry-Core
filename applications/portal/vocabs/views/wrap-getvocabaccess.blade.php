@@ -3,18 +3,17 @@
 	<div class="panel-body">
 
 		<h3 class="element-short-bottom">{{ $vocab['current_version']['title'] }}</h3>
-        @<?php if(isset($vocab['current_version']['access_points'])){ ?>
-		@foreach($vocab['current_version']['access_points'] as $ap)
-			<div class="current-version-ap-block">
-				<a class="btn btn-lg btn-block btn-primary" href="{{ $ap['uri'] }}"><i class="fa fa-cube"></i> {{ $ap['type'] }}</a>
-				<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
-					<a class="btn btn-sm btn-default"><i class="fa fa-edit"></i> {{ $ap['format'] }}</a>
-				</div>
-			</div>
-		@endforeach
-        <?php } ?>
+        @if(isset($vocab['current_version']['access_points']))
+            @foreach($vocab['current_version']['access_points'] as $ap)
+                <div class="current-version-ap-block">
+                    <a class="btn btn-lg btn-block btn-primary" href="{{ $ap['uri'] }}"><i class="fa fa-cube"></i> {{ $ap['type'] }}</a>
+                    <div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
+                        <a class="btn btn-sm btn-default"><i class="fa fa-edit"></i> {{ $ap['format'] }}</a>
+                    </div>
+                </div>
+            @endforeach
+        @endif
 		<div class="clearfix"></div>
-		
 		<p>
 			<h4>Note</h4>
 			{{ $vocab['current_version']['note'] }}
