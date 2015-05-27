@@ -99,7 +99,7 @@ if(isset($vocab['related_entity'])){
             <div class="panel-heading">Subjects</div>
             <div class="panel-body">
                 @foreach($vocab['subjects'] as $subject)
-                    {{$subject['subject']}}|
+                   <a  href="{{base_url()}}search/#!/subject={{$subject['subject']}}"> {{$subject['subject']}} </a> |
                 @endforeach
             </div>
         </div>
