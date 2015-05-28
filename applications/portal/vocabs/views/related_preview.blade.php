@@ -1,39 +1,63 @@
-<div style="modal-center">
-    <div class="modal-header">
-
-    </div>
-    <div class="modal-body swatch-white">
-        <form action="" class="form">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
+<div class="modal-body swatch-white">
+    <div class="container-fluid">
+         <div class="row">
+              <div class="col-md-12">
+                   <div class="form-group">
+                        <label for="">Title</label> {{$related['title']}}
+                   </div>
+                   <div class="form-group">
+                        <label for="">Relation</label> {{readable($related['relationship'])}}
+                   </div>
+                   @if(isset($related['URL']))
                         <div class="form-group">
-                            <label for="">Title</label>
-                        </div>
-                        <div class="form-group">
-                            <label for="">ID</label>
-
-                        </div>
-                        <div class="form-group">
-                            <label for="">Relation</label>
+                            <label for="">URL</label> <a href="{{$related['URL']}}">{{$related['URL']}}</a>
 
                         </div>
-
+                   @endif
+                   @if(isset($related['email']))
                         <div class="form-group">
-                            <label for="">URL</label>
+                            <label for="">Email</label> {{$related['email']}}
 
                         </div>
+                   @endif
+                  @if(isset($related['address']))
+                  <div class="form-group">
+                      <label for="">Address</label> {{$related['address']}}
+                  </div>
+                  @endif
+                   @if(isset($related['phone']))
                         <div class="form-group">
-                            <label for="">Email</label>
-
+                            <label for="">Phone</label> {{$related['phone']}}
                         </div>
-                        <div class="form-group">
-                            <label for="">Phone</label>
+                   @endif
 
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
+                  @if(isset($related['other_vocabs'][0]['title']))
+                    @if($related['type']=='publisher')
+                  <div class="form-group">
+                      <label for="">Other vocabs published</label>
+                      @foreach($related['other_vocabs'] as $other_vocab)
+                        <a href="{{base_url().$other_vocab['slug']}}">{{$other_vocab['title']}}</a><br />
+                      @endforeach
+                  </div>
+                    @endif
+                  @if($related['type']=='contributor')
+                  <div class="form-group">
+                      <label for="">Other vocabs contributed to</label>
+                      @foreach($related['other_vocabs'] as $other_vocab)
+                      <a href="{{base_url().$other_vocab['slug']}}">{{$other_vocab['title']}}</a><br />
+                      @endforeach
+                  </div>
+                  @endif
+                  @if($related['type']=='vocab')
+                  <div class="form-group">
+                      <label for="">View related vocabulary</label>
+                      @foreach($related['other_vocabs'] as $other_vocab)
+                      <a href="{{base_url().$other_vocab['slug']}}">{{$other_vocab['title']}}</a><br />
+                      @endforeach
+                  </div>
+                  @endif
+                  @endif
+              </div>
+         </div>
     </div>
 </div>

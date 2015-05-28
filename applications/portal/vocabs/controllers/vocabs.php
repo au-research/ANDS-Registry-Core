@@ -58,9 +58,48 @@ class Vocabs extends MX_Controller {
 	}
 
     public function related_preview() {
-        //use test records for now
 
+        $related = json_decode($this->input->get('related'),true);
+        $v_id = $this->input->get('v_id');
+        $vocabs = $this->vocab->getAll();
+
+        $others = array();
+
+        foreach ($vocabs as $vocab) {
+            $thevocab=$vocab->display_array();
+
+            if($thevocab['id']!=$v_id){
+                if($related['type']=='publisher'){
+                    if(isset($thevocab['related_entity'])){
+                        foreach($thevocab['related_entity'] as $anotherrelated){
+                            if($anotherrelated['type']=='publisher'&& $anotherrelated['id']==$related['id']){
+                                $others[] = $thevocab;
+                            }
+                        }
+                    }
+                }
+                if($related['type']=='contributor'){
+                    if(isset($thevocab['related_entity'])){
+                        foreach($thevocab['related_entity'] as $anotherrelated){
+                            if($anotherrelated['type']=='contributor'&& $anotherrelated['id']==$related['id']){
+                                $others[] = $thevocab;
+                            }
+                        }
+                    }
+                }
+                if($related['type']=='vocab'){
+                    if($related['id']==$thevocab['id']){
+                        $others[]=$thevocab;
+                    }
+                }
+            }
+        }
+
+
+
+        $related['other_vocabs'] = $others;
             $this->blade
+                ->set('related', $related)
                 ->render('related_preview');
 
     }

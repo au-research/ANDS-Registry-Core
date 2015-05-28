@@ -25,9 +25,9 @@ $(document).on('click', '.re_preview', function(event){
         content: {
             text:  function(event, api) {
                 api.elements.content.html('Loading...');
-                if ($(this).attr('re_id')) {
+                if ($(this).attr('related')) {
                    // return "we have some text for re "+$(this).attr('re_id');
-                    var url = base_url+'vocabs/related_preview/?re_id='+$(this).attr('re_id');
+                    var url = base_url+'vocabs/related_preview/?related='+$(this).attr('related')+'&v_id='+$(this).attr('v_id');
                                 }
                 if (url) {
                     return $.ajax({
