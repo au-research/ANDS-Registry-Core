@@ -4,17 +4,6 @@
 		<h4 class="modal-title">Add a related Entity</h4>
 	</div>
 	<div class="modal-body swatch-white" ng-cloak>
-		<div ng-if="type=='publisher'">
-			<form action="" class="form">
-				<div class="input-group">
-					<input type="text" class="form-control" placeholder="Search for publisher">
-					<span class="input-group-btn">
-						<button class="btn btn-primary" type="button"><i class="fa fa-search"></i> Search</button>
-					</span>
-				</div>
-			</form>
-			<hr>
-		</div>
 		<form action="" class="form">
 			<div class="container-fluid">
 				<div class="row">
@@ -26,32 +15,56 @@
 					</div>
 				</div>
 				<div class="row">
+					<div class="col-md-12">
+						
+						
+					</div>
+				</div>
+				<div class="row">
 					<div class="col-md-6">
 						<div class="form-group">
 							<label for="">Title</label>
-							<input type="text" class="form-control" placeholder="entity Title" ng-model="entity.title">	
-						</div>
-						<div class="form-group">
-							<label for="">ID</label>
-							<input type="text" class="form-control" placeholder="entity ID" ng-model="entity.id">	
-						</div>
-						<div class="form-group">
-							<label for="">Relation</label>
-							<select name="" id="" class="form-control" placeholder="entity Relation" ng-options="relationship for relationship in relatedEntityRelations" ng-model="entity.relationship"></select>
-						</div>
-					</div>
-					<div class="col-md-6">
-						<div class="form-group">
-							<label for="">URL</label>
-							<input type="text" class="form-control" placeholder="entity URL" ng-model="entity.url">	
+							<input type="text" class="form-control" placeholder="entity Title" ng-model="entity.title" typeahead="suggest.title as suggest.title for suggest in suggestions | filter:$viewValue | limitTo:8" typeahead-min-length="0" typeahead-on-select="populate($item, $model, $label)">
 						</div>
 						<div class="form-group">
 							<label for="">Email</label>
 							<input type="text" class="form-control" placeholder="entity Email" ng-model="entity.email">	
 						</div>
+					</div>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label for="">Relation</label>
+						<select name="" id="" class="form-control" placeholder="entity Relation" ng-options="relationship for relationship in relatedEntityRelations" ng-model="entity.relationship"></select>
+					</div>
 						<div class="form-group">
 							<label for="">Phone</label>
 							<input type="text" class="form-control" placeholder="entity Phone" ng-model="entity.phone">	
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="">Identifiers</label>
+							<div class="input-group" ng-repeat="ident in entity.identifiers track by $index">
+								<input type="text" class="form-control" placeholder="Identifier" ng-model="ident.url">
+								<span class="input-group-btn" >
+									<button class="btn btn-primary" type="button" ng-click="list_remove('identifiers', $index)"><i class="fa fa-remove"></i></button>
+								</span>
+							</div>
+							<p></p>
+							<button class="btn btn-primary" type="button" ng-click="list_add('identifiers')"><i class="fa fa-plus"></i> Add Identifier</button>
+						</div>
+						<div class="form-group">
+							<label for="">URLs</label>
+							<div class="input-group" ng-repeat="url in entity.urls track by $index">
+								<input type="text" class="form-control" placeholder="URL" ng-model="url.url">
+								<span class="input-group-btn">
+									<button class="btn btn-primary" type="button" ng-click="list_remove('urls', $index)"><i class="fa fa-remove"></i></button>
+								</span>
+							</div>
+							<p></p>
+							<button class="btn btn-primary" type="button" ng-click="list_add('urls')"><i class="fa fa-plus"></i> Add URL</button>
 						</div>
 					</div>
 				</div>
