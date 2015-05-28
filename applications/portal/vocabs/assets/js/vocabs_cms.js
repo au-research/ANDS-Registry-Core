@@ -224,9 +224,13 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
 	$scope.type = type;
 
 	$scope.populate = function(item, model, label) {
+		$log.debug(item);
 		$scope.entity.email = item.email;
 		$scope.entity.phone = item.phone;
 		$scope.entity.id = item.id;
+
+		if (!$scope.entity.urls || $scope.entity.urls.length == 0 ) $scope.entity.urls = item.urls;
+		if (!$scope.entity.identifiers || $scope.entity.identifiers.length == 0 ) $scope.entity.identifiers = item.identifiers;
 	}
 
 	$scope.list_add = function(type) {
