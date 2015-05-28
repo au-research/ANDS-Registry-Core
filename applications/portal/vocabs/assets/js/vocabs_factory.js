@@ -34,6 +34,12 @@ app.factory('vocabs_factory', function($http){
 				return response.data;
 			});
 			return promise;
+		},
+		toolkit: function(req) {
+			var promise = $http.get(base_url+'vocabs/toolkit?request='+req).then(function(response){
+				return response.data;
+			});
+			return promise;
 		}
 	}
 })
