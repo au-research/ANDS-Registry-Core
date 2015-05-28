@@ -57,7 +57,11 @@ class Vocabs extends MX_Controller {
 		}
 	}
 
-
+    /**
+     * Pre viewing a related entity
+     * @return view/html
+     * @author  Liz Woods <liz.woods@ands.org.au>
+     */
     public function related_preview() {
 
         $related = json_decode($this->input->get('related'),true);
@@ -68,8 +72,8 @@ class Vocabs extends MX_Controller {
 
         foreach ($vocabs as $vocab) {
             $thevocab=$vocab->display_array();
-
             if($thevocab['id']!=$v_id){
+                // find all other vocabs that this related entity also published
                 if($related['type']=='publisher'){
                     if(isset($thevocab['related_entity'])){
                         foreach($thevocab['related_entity'] as $anotherrelated){
@@ -79,6 +83,7 @@ class Vocabs extends MX_Controller {
                         }
                     }
                 }
+                // find all other vocabs that this related entity also contributed to
                 if($related['type']=='contributor'){
                     if(isset($thevocab['related_entity'])){
                         foreach($thevocab['related_entity'] as $anotherrelated){
@@ -88,6 +93,7 @@ class Vocabs extends MX_Controller {
                         }
                     }
                 }
+                //if a related entity of type vocab is known to us then provide a link to it
                 if($related['type']=='vocab'){
                     if($related['id']==$thevocab['id']){
                         $others[]=$thevocab;
