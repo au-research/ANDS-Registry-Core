@@ -15,9 +15,9 @@
 		</div>
 		<nav class="collapse navbar-collapse main-navbar" role="navigation">
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="{{portal_url('page/help')}}">Help</a></li>
-				<li><a href="{{portal_url('page/about')}}">About</a></li>
-				<li><a href="{{portal_url('page/contribute')}}">Contribute</a></li>
+				<li><a href="{{portal_url('vocabs/page/help')}}">Help</a></li>
+				<li><a href="{{portal_url('vocabs/page/about')}}">About</a></li>
+				<li><a href="{{portal_url('vocabs/page/contribute')}}">Contribute</a></li>
 				@if(!$this->user->loggedIn())
 					<li><a href="https://test.ands.org.au/registry/auth/login?redirect={{ current_url() }}" class="login_btn">My Vocabs Login</a></li>
 				@else
