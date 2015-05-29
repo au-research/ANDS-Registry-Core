@@ -33,7 +33,12 @@
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="">Release Date</label>
-							<input type="text" class="form-control" placeholder="Release Date" ng-model="version.release_date">	
+							<p class="input-group">
+								<input type="text" class="form-control" ng-model="version.release_date" placeholder="Release Date" datepicker-popup="dd-MM-yyyy" is-open="opened" >
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								</span>
+							</p>
 						</div>
 						<div class="form-group">
 							<label for="">Notes</label>
@@ -46,13 +51,14 @@
 					<div class="col-md-12">
 						<table class="table">
 							<thead>
-								<th>Access Point Format</th> <th>Type</th> <th>URI</th>
+								<th>Access Point</th> <th>Type</th> <th>URI</th> <th></th>
 							</thead>
 							<tbody>
-								<tr ng-repeat="ap in version.access_points">
+								<tr ng-repeat="ap in version.access_points track by $index">
 									<td>[[ ap.format ]]</td>
 									<td>[[ ap.type ]]</td>
 									<td>[[ ap.uri ]]</td>
+									<td><a href="" ng-click="list_remove('access_points', $index)"><i class="fa fa-remove"></i></a></td>
 								</tr>
 							</tbody>
 						</table>

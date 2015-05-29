@@ -278,7 +278,7 @@ class Vocabs extends MX_Controller {
 						}
 					}
 				}
-			}
+			} 
 
 			// POST request, for adding new item
 			$angulardata = json_decode(file_get_contents("php://input"), true);
@@ -323,6 +323,8 @@ class Vocabs extends MX_Controller {
 			if ($method=='index') {
 				$result = $vocab->indexable_json();
 				$this->index_vocab($vocab);
+			} elseif($method=='versions') {
+				$result = $result['versions'];
 			}
 		}
 

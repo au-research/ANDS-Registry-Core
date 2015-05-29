@@ -133,12 +133,13 @@
 					<div class="panel-body">
 						<table class="table">
 							<thead>
-								<tr><th>Subject Label</th><th>Source</th></tr>
+								<tr><th>Subject Label</th><th>Source</th> <th></th></tr>
 							</thead>
 							<tbody>
 								<tr ng-repeat="subject in vocab.subjects track by $index">
-									<td>[[ subject.subject ]] <a href="" ng-click="vocab.subjects.splice($index, 1)"><i class="fa fa-remove"></i></a></td>
+									<td>[[ subject.subject ]]</td>
 									<td>[[ subject.subject_source ]]</td>
+									<td><a href="" ng-click="vocab.subjects.splice($index, 1)"><i class="fa fa-remove"></i></a></td>
 								</tr>
 							</tbody>
 						</table>
@@ -184,7 +185,7 @@
 							<tbody>
 								<tr ng-repeat="version in vocab.versions">
 									<td><a href="" ng-click="versionmodal('edit', version)">[[ version.title ]]</a></td>
-									<td><span class="label" ng-class="{'deprecated': 'label-danger', 'current': 'label-success', 'superceded': 'label-info', 'depreciated': 'label-danger'}[version.status]">[[ version.status ]]</span></td>
+									<td><span class="label" ng-class="{'deprecated': 'label-danger', 'current': 'label-success', 'superseded': 'label-warning', 'depreciated': 'label-danger'}[version.status]">[[ version.status ]]</span></td>
 								</tr>
 							</tbody>
 						</table>

@@ -121,6 +121,28 @@ class _vocabulary {
 		$query = $db->get_where('vocabularies', array('id'=>$id));
 		$data = $query->first_row();
 		$this->populate($data);
+
+		//replace the versions with the one from the database
+		$this->prop['versions'] = array();
+		$query = $db->get_where('versions', array('vocab_id'=>$id));
+		if ($query && $query->num_rows() > 0) {
+			foreach($query->result_array() as $row) {
+				$version = $row;
+
+				//break apart version data
+				if (isset($version['data'])) {
+					$version_data = json_decode($version['data'], true);
+					foreach($version_data as $key=>$value) {
+						if (!isset($version[$key])) {
+							$version[$key] = $value;
+						}
+					}
+					unset($version['data']);
+				}
+
+				$this->prop['versions'][] = $version;
+			}
+		}
 	}
 
 	/**
@@ -151,6 +173,10 @@ class _vocabulary {
 				);
 				$db->where('id', $data['id']);
 				$result = $db->update('vocabularies', $saved_data);
+
+				//deal with versions
+				$this->updateVersions($data, $db);
+
 				if ($result) {
 					return true;
 				} else {
@@ -188,6 +214,40 @@ class _vocabulary {
     			return false;
     		}
 		}
+	}
+
+	private function updateVersions($data, $db) {
+		foreach($data['versions'] as $version) {
+			if (isset($version['id']) && $version['id']!="") {
+				//update the existing version
+				$saved_data = array(
+					'title' => $version['title'],
+					'status' => $version['status'],
+					'release_date' => date('Y-m-d H:i:s',strtotime($version['release_date'])),
+					'vocab_id' => $this->prop['id'],
+					'repository_id' => '',
+					'data' => json_encode($version)
+				);
+				$db->where('id', $version['id']);
+				$result = $db->update('versions', $saved_data);
+				if (!$result) throw new Exception($db->_error_message());
+			} else {
+				//add the version if it doesn't exist
+				$version_data = array(
+					'title' => $version['title'],
+					'status' => $version['status'],
+					'release_date' => date('Y-m-d H:i:s',strtotime($version['release_date'])),
+					'vocab_id' => $this->prop['id'],
+					'repository_id' => '',
+					'data' => json_encode($version)
+				);
+				$result = $db->insert('versions', $version_data);
+				if (!$result) throw new Exception($db->_error_message());
+			}
+		}
+
+		//update the object
+		$this->populate_from_db($this->prop['id']);
 	}
 
 	/**
