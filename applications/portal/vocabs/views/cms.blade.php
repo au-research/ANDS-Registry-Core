@@ -180,12 +180,13 @@
 					<div class="panel-body">
 						<table class="table">
 							<thead>
-								<tr><th>Title</th><th>Status</th></tr>
+								<tr><th>Title</th><th>Status</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="version in vocab.versions">
-									<td><a href="" ng-click="versionmodal('edit', version)">[[ version.title ]]</a></td>
+								<tr ng-repeat="version in vocab.versions track by $index">
+									<td><a href="" ng-click="versionmodal('edit', version)">[[ version.title ]] </a></td>
 									<td><span class="label" ng-class="{'deprecated': 'label-danger', 'current': 'label-success', 'superseded': 'label-warning', 'depreciated': 'label-danger'}[version.status]">[[ version.status ]]</span></td>
+									<td><a href="" ng-click="list_remove('versions', $index)"><i class="fa fa-remove"></i></a></td>
 								</tr>
 							</tbody>
 						</table>

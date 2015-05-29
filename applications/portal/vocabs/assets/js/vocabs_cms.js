@@ -184,6 +184,14 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	$scope.addtolist = function(list, item) {
 		list.push(item);
 	}
+
+	$scope.list_remove = function(type, index) {
+		if (index > 0) {
+			$scope.vocab[type].splice(index, 1);
+		} else {
+			$scope.vocab[type].splice(0, 1);
+		}
+	}
 });
 
 app.controller('versionCtrl', function($scope, $modalInstance, $log, version, action){
@@ -217,7 +225,7 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 
 	$scope.list_remove = function(type, index) {
 		if (index > 0) {
-			$scope.version[type].splice(1, index);
+			$scope.version[type].splice(index, 1);
 		} else {
 			$scope.version[type].splice(0, 1);
 		}
@@ -262,7 +270,7 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
 
 	$scope.list_remove = function(type, index) {
 		if (index > 0) {
-			$scope.entity[type].splice(1, index);
+			$scope.entity[type].splice(index, 1);
 		} else {
 			$scope.entity[type].splice(0, 1);
 		}
