@@ -28,7 +28,7 @@
 					<a href="">{{ titlecase($version['title']) }} </a>
                     <small>({{ $version['status'] }}) </small>
 	                 @if(isset($version['note']))
-                    <a href="" tip="{{ $version['release_date'] }} <hr />{{$version['note']}}"><i class="fa fa-file-text-o"></i></a>
+                    <a href="" tip="{{ $version['release_date'] }} <hr />{{$version['note']}}"><i class="fa fa-info"></i></a>
                     @endif
 					<ul>
 						@if(isset($version['access_points']))
