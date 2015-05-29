@@ -13,6 +13,32 @@ $("#vocab-tree").vocab_widget({
     });
 })
 
+$(document).on('mouseover', 'a[tip]', function(event){
+    $(this).qtip({
+        content:{
+            text:function(e,api){
+                var tip = $(this).attr('tip');
+                var content = tip;
+                if(tip.indexOf('#')==0 || tip.indexOf('.')==0) {
+                    if($(tip.toString()).length) {
+                        content = $(tip.toString()).html();
+                    }
+                }
+                return content;
+            }
+        },
+        show: {
+            event: 'mouseover, click',
+            ready: true
+        },
+        hide: {
+            delay: 1000,
+            fixed: true
+        },
+        position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
+        style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
+    });
+})
 
 $(document).on('click', '.re_preview', function(event){
     event.preventDefault();

@@ -2,7 +2,7 @@
 <div class="panel swatch-white">
 	<div class="panel-body">
 
-		<h3 class="element-short-bottom">{{ $vocab['current_version']['title'] }}</h3>
+		<h3 class="element-short-bottom">{{ titlecase($vocab['current_version']['title']) }}</h3>
         @if(isset($vocab['current_version']['access_points']))
             @foreach($vocab['current_version']['access_points'] as $ap)
                 <div class="current-version-ap-block">
@@ -23,9 +23,13 @@
 		<h4>Previous Versions</h4>
 		<ul class="vocab-prev-version-list">
 			@foreach($vocab['versions'] as $version)
+            @if($version['status']!='current')
 				<li>
-					<a href="">{{ $version['title'] }}</a>
-					<span></span>
+					<a href="">{{ titlecase($version['title']) }} </a>
+                    <small>({{ $version['status'] }}) </small>
+	                 @if(isset($version['note']))
+                    <a href="" tip="{{ $version['release_date'] }} <hr />{{$version['note']}}"><i class="fa fa-file-text-o"></i></a>
+                    @endif
 					<ul>
 						@if(isset($version['access_points']))
 							@foreach($version['access_points'] as $ap)
@@ -34,6 +38,7 @@
 						@endif
 					</ul>
 				</li>
+            @endif
 			@endforeach
 		</ul>
 	</div>
