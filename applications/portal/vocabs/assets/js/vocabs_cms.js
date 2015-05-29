@@ -3,8 +3,8 @@
  * For adding / editing vocabulary metadata
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
-app.controller('addVocabsCtrl', function($log, $scope, $modal, vocabs_factory){
-	
+app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, vocabs_factory){
+
 	$scope.vocab = {};
 	$scope.mode = 'add'; // [add|edit]
 	$scope.langs = ['English', 'German', 'French', 'Spanish', 'Italian', 'Mãori', 'Russian', 'Chinese', 'Japanese'];
@@ -15,7 +15,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, vocabs_factory){
 	    $event.preventDefault();
 	    $event.stopPropagation();
 	    $scope.opened = true;
-	  };
+	};
 
 	/**
 	 * If there is a slug available, this is an edit view for the CMS
@@ -133,6 +133,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, vocabs_factory){
 			if (obj.intent=='add') {
 				var newObj = obj.data;
 				newObj['type'] = type;
+				if (!$scope.vocab.related_entity) $scope.vocab.related_entity = [];
 				$scope.vocab.related_entity.push(newObj);		
 			} else if (obj.intent=='save') {
 				obj = obj.data;
@@ -211,7 +212,7 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 	}
 });
 
-app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, type){
+app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, type, vocabs_factory){
 	$scope.relatedEntityRelations = ['publisherOf', 'publishedBy', 'hasAuthor', 'hasContributor', 'pointOfContact', 'implementedBy', 'consumerOf'];
 	$scope.relatedEntityTypes = ['publisher', 'vocab', 'tool', 'service'];
 	$scope.entity = false;
@@ -221,6 +222,35 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
 		$scope.intent = 'save';
 	}
 	$scope.type = type;
+
+	$scope.populate = function(item, model, label) {
+		$log.debug(item);
+		$scope.entity.email = item.email;
+		$scope.entity.phone = item.phone;
+		$scope.entity.id = item.id;
+
+		if (!$scope.entity.urls || $scope.entity.urls.length == 0 ) $scope.entity.urls = item.urls;
+		if (!$scope.entity.identifiers || $scope.entity.identifiers.length == 0 ) $scope.entity.identifiers = item.identifiers;
+	}
+
+	$scope.list_add = function(type) {
+		var obj = {};
+		if (type=='identifiers') {
+			obj = {id:''};
+		} else if(type=='url') {
+			obj = {url:''};
+		}
+		if (!$scope.entity[type]) $scope.entity[type] = [];
+		$scope.entity[type].push(obj);
+	}
+
+	$scope.list_remove = function(type, index) {
+		if (index > 0) {
+			$scope.entity[type].splice(1, index);
+		} else {
+			$scope.entity[type].splice(0, 1);
+		}
+	}
 
 	$scope.save = function() {
 		var ret = {
@@ -233,5 +263,16 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
 	$scope.dismiss = function() {
 		$modalInstance.dismiss();
 	}
+
+	vocabs_factory.suggest(type).then(function(data){
+		if (data.status=='OK') {
+			$scope.suggestions = data.message;
+		}
+	});
 });
 
+app.run(function($rootScope, $templateCache) {
+   $rootScope.$on('$viewContentLoaded', function() {
+      $templateCache.removeAll();
+   });
+});

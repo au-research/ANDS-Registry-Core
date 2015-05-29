@@ -40,6 +40,12 @@ app.factory('vocabs_factory', function($http){
 				return response.data;
 			});
 			return promise;
+		},
+		suggest: function(type) {
+			var promise = $http.get(base_url+'vocabs/services/vocabs/all/related?type='+type).then(function(response){
+				return response.data;
+			});
+			return promise;
 		}
 	}
 })
