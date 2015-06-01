@@ -14,7 +14,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	$scope.open = function($event) {
 	    $event.preventDefault();
 	    $event.stopPropagation();
-	    $scope.opened = true;
+	    $scope.opened = !$scope.opened;
 	};
 
 	/**
@@ -162,8 +162,9 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 			}
 		});
 		modalInstance.result.then(function(obj){
+
 			//close
-			if (obj.action=='add') {
+			if (obj.intent=='add') {
 				var newObj = obj.data;
 				$scope.vocab.versions.push(newObj);
 			} else {
@@ -183,13 +184,28 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	$scope.addtolist = function(list, item) {
 		list.push(item);
 	}
+
+	$scope.list_remove = function(type, index) {
+		if (index > 0) {
+			$scope.vocab[type].splice(index, 1);
+		} else {
+			$scope.vocab[type].splice(0, 1);
+		}
+	}
 });
 
 app.controller('versionCtrl', function($scope, $modalInstance, $log, version, action){
-	$scope.versionStatuses = ['current', 'superceded', 'deprecated'];
+	$scope.versionStatuses = ['current', 'superseded', 'deprecated'];
 	$scope.version = version ? version : false;
 	$scope.action = $scope.version ? 'save': 'add';
 
+	//calendar operation
+	$scope.opened = false;
+	$scope.open = function($event) {
+	    $event.preventDefault();
+	    $event.stopPropagation();
+	    $scope.opened = !$scope.opened;
+	};
 
 	$scope.addformat = function() {
 		if (!$scope.version.access_points) {
@@ -205,6 +221,14 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 			'data' : $scope.version
 		}
 		$modalInstance.close(ret);
+	}
+
+	$scope.list_remove = function(type, index) {
+		if (index > 0) {
+			$scope.version[type].splice(index, 1);
+		} else {
+			$scope.version[type].splice(0, 1);
+		}
 	}
 
 	$scope.dismiss = function() {
@@ -246,7 +270,7 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
 
 	$scope.list_remove = function(type, index) {
 		if (index > 0) {
-			$scope.entity[type].splice(1, index);
+			$scope.entity[type].splice(index, 1);
 		} else {
 			$scope.entity[type].splice(0, 1);
 		}

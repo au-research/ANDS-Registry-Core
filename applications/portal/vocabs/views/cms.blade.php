@@ -93,12 +93,21 @@
 					</div>
 				</div>
 
-				<div class="panel">
+				<div class="panel swatch-gray">
 					<div class="panel-heading">Top Concepts</div>
 					<div class="panel-body">
-						<ul>
-							<li ng-repeat="concept in vocab.top_concept track by $index"> [[ concept ]] <a href="" ng-click="vocab.top_concept.splice($index, 1)"><i class="fa fa-remove"></i></a></li> 
-						</ul>
+						<table class="table">
+							<thead>
+								<tr><th>Top Concept</th> <th></th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="concept in vocab.top_concept track by $index">
+									<td>[[ concept ]]</td>
+									<td><a href="" ng-click="vocab.top_concept.splice($index, 1)"><i class="fa fa-remove"></i></a></td>
+								</tr>
+							</tbody>
+						</table>
+						
 						<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist(vocab.top_concept, newTopConcept)">
 							<div class="input-group">
 								<input type="text" class="form-control" placeholder="New Top Concept" ng-model="newTopConcept">
@@ -110,12 +119,21 @@
 					</div>
 				</div>
 
-				<div class="panel">
+				<div class="panel swatch-gray">
 					<div class="panel-heading">Languages</div>
 					<div class="panel-body">
-						<ul>
-							<li ng-repeat="ln in vocab.language track by $index"> [[ ln ]] <a href="" ng-click="vocab.language.splice($index, 1)"><i class="fa fa-remove"></i></a></li>
-						</ul>
+						<table class="table">
+							<thead>
+								<tr><th>Language</th> <th></th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="ln in vocab.language track by $index">
+									<td>[[ ln ]]</td>
+									<td><a href="" ng-click="vocab.language.splice($index, 1)"><i class="fa fa-remove"></i></a></td>
+								</tr>
+							</tbody>
+						</table>
+						
 						<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist(vocab.language, newLanguage)">
 							<div class="input-group">
 								<input type="text" class="form-control" placeholder="Language" typeahead="lang for lang in langs | filter:$viewValue | limitTo:8" ng-model="newLanguage">
@@ -133,12 +151,13 @@
 					<div class="panel-body">
 						<table class="table">
 							<thead>
-								<tr><th>Subject Label</th><th>Source</th></tr>
+								<tr><th>Subject Label</th><th>Source</th> <th></th></tr>
 							</thead>
 							<tbody>
 								<tr ng-repeat="subject in vocab.subjects track by $index">
-									<td>[[ subject.subject ]] <a href="" ng-click="vocab.subjects.splice($index, 1)"><i class="fa fa-remove"></i></a></td>
+									<td>[[ subject.subject ]]</td>
 									<td>[[ subject.subject_source ]]</td>
+									<td><a href="" ng-click="list_remove('subjects', $index)"><i class="fa fa-remove"></i></a></td>
 								</tr>
 							</tbody>
 						</table>
@@ -165,9 +184,18 @@
 				<div class="panel swatch-gray">
 					<div class="panel-heading">Publishers</div>
 					<div class="panel-body">
-						<ul>
-							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='publisher'"><a href="" ng-click="relatedmodal('edit', 'publisher', related)">[[ related.title ]]</a></li>
-						</ul>
+						<table class="table">
+							<thead>
+								<tr><th>Publisher</th> <th></th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="related in vocab.related_entity track by $index" ng-if="related.type=='publisher'">
+									<td><a href="" ng-click="relatedmodal('edit', 'publisher', related)">[[ related.title ]]</a></td>
+									<td><a href="" ng-click="list_remove('related_entity', $index)"><i class="fa fa-remove"></i></a></td>
+								</tr>
+							</tbody>
+						</table>
+						
 						<div class="form-group">
 							<a href="" class="btn btn-primary" ng-click="relatedmodal('add', 'publisher')"><i class="fa fa-plus"></i> Add a related publisher</a>
 						</div>
@@ -179,12 +207,13 @@
 					<div class="panel-body">
 						<table class="table">
 							<thead>
-								<tr><th>Title</th><th>Status</th></tr>
+								<tr><th>Title</th><th>Status</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="version in vocab.versions">
-									<td><a href="" ng-click="versionmodal('edit', version)">[[ version.title ]]</a></td>
-									<td><span class="label" ng-class="{'deprecated': 'label-danger', 'current': 'label-success', 'superceded': 'label-info', 'depreciated': 'label-danger'}[version.status]">[[ version.status ]]</span></td>
+								<tr ng-repeat="version in vocab.versions track by $index">
+									<td><a href="" ng-click="versionmodal('edit', version)">[[ version.title ]] </a></td>
+									<td><span class="label" ng-class="{'deprecated': 'label-danger', 'current': 'label-success', 'superseded': 'label-warning', 'depreciated': 'label-danger'}[version.status]">[[ version.status ]]</span></td>
+									<td><a href="" ng-click="list_remove('versions', $index)"><i class="fa fa-remove"></i></a></td>
 								</tr>
 							</tbody>
 						</table>
@@ -195,25 +224,26 @@
 				<div class="panel swatch-gray">
 					<div class="panel-heading">Related</div>
 					<div class="panel-body">
-						<h4>Related Vocabularies</h4>
-						<ul>
-							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='vocab'"><a href="" ng-click="relatedmodal('edit', related.type, related)">[[ related.title ]]</a></li>
-						</ul>
-						<h4>Related Tools</h4>
-						<ul>
-							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='tool'"><a href="" ng-click="relatedmodal('edit', related.type, related)">[[ related.title ]]</a></li>
-						</ul>
-						<h4>Related Services</h4>
-						<ul>
-							<li ng-repeat="related in vocab.related_entity" ng-if="related.type=='service'"><a href="" ng-click="relatedmodal('edit', related.type, related)">[[ related.title ]]</a></li>
-						</ul>
+						<table class="table">
+							<thead>
+								<tr><th>Related</th> <th>Type</th> <th></th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="related in vocab.related_entity track by $index" ng-if="related.type!='publisher'">
+									<td><a href="" ng-click="relatedmodal('edit', related.type, related)">[[ related.title ]]</a></td>
+									<td>[[ related.type ]]</td>
+									<td><a href="" ng-click="list_remove('related_entity', $index)"><i class="fa fa-remove"></i></a></td>
+								</tr>
+							</tbody>
+						</table>
+						
 						<div class="form-group">
 							<span class="input-group-btn swatch-gray" style="background:#e9e9e9;">
 								<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Add a related entity <span class="caret"></span></button>
 								<ul class="dropdown-menu" role="menu">
 									<li><a href="" ng-click="relatedmodal('add', 'vocab')">Related Vocabulary</a></li>
 									<li><a href="" ng-click="relatedmodal('add', 'tool')">Related Tools</a></li>
-									<li><a href="" ng-click="relatedmodal('add', 'service')">Related </a></li>
+									<li><a href="" ng-click="relatedmodal('add', 'service')">Related Service</a></li>
 								</ul>
 							</span>
 						</div>

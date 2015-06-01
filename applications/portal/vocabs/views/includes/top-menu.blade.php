@@ -9,7 +9,7 @@
 			</button>
 			<div>
 				<a href="{{portal_url()}}" class="navbar-brand">
-					Open Vocabularies Australia
+					Research Vocabularies Australia
 				</a>
 			</div>
 		</div>
