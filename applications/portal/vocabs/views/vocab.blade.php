@@ -118,7 +118,7 @@ if(isset($vocab['related_entity'])){
     <div class="panel-body">
 
             @foreach($related_service as $service)
-            <p><small>({{readable($service['relationship'])}})</small> <a href="{{$service['URL']}}" class="re_preview"  related='{{json_encode($service)}}' v_id="{{ $vocab['id'] }}">{{$service['title']}}</a></p>
+            <p><small>({{readable($service['relationship'])}})</small> <a href="" class="re_preview"  related='{{json_encode($service)}}' v_id="{{ $vocab['id'] }}">{{$service['title']}}</a></p>
             @endforeach
 
     </div>
