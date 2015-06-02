@@ -441,11 +441,14 @@ class Vocabularies extends CI_Model {
     public function addNew($data) {
         $vocab = new _vocabulary();
         $vocab->populate($data);
-        if ($result_vocab = $vocab->save()) {
-            return $result_vocab;
-        } else {
-            return false;
+        try {
+
+            $result = $vocab->save();
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
         }
+
     }
 
     /**

@@ -376,7 +376,7 @@ class Vocabs extends MX_Controller {
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
 
-		if (!get_config_item('vocab_toolkit_url')) throw new Exception('Vocab ToolKit URL not configured correctly');
+		//if (!get_config_item('vocab_toolkit_url')) throw new Exception('Vocab ToolKit URL not configured correctly');
 		$request = $this->input->get('request');
 		if (!$request) throw new Exception('Request Not Found');
 

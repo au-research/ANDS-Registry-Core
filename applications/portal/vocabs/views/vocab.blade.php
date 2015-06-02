@@ -79,7 +79,7 @@ if(isset($vocab['related_entity'])){
         </div>
         @else
             <!-- Top Concepts -->
-            @if($vocab['top_concept'])
+            @if(isset($vocab['top_concept']))
             <div class="panel swatch-white">
                 <div class="panel-heading">Top Level Concepts</div>
                 <div class="panel-body">
@@ -95,7 +95,7 @@ if(isset($vocab['related_entity'])){
         @endif
 
 
-        @if($vocab['subjects'])
+        @if(isset($vocab['subjects']))
         <div class="panel swatch-white">
             <div class="panel-heading">Subjects</div>
             <div class="panel-body">

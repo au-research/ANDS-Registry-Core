@@ -5,7 +5,7 @@
  */
 app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, vocabs_factory){
 
-	$scope.vocab = {};
+	$scope.vocab = {top_concept:[],subjects:[]};
 	$scope.mode = 'add'; // [add|edit]
 	$scope.langs = ['English', 'German', 'French', 'Spanish', 'Italian', 'Mãori', 'Russian', 'Chinese', 'Japanese'];
 	$scope.opened = false;
@@ -166,6 +166,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 			//close
 			if (obj.intent=='add') {
 				var newObj = obj.data;
+                if(!$scope.vocab.versions) $scope.vocab.versions = [];
 				$scope.vocab.versions.push(newObj);
 			} else {
 				obj = obj.data;

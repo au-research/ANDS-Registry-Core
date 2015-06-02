@@ -1,4 +1,4 @@
-
+@if(isset($vocab['current_version']['title']))
 <div class="panel swatch-white">
 	<div class="panel-body">
 
@@ -43,3 +43,4 @@
 		</ul>
 	</div>
 </div>
+@endif

@@ -181,6 +181,7 @@ class _vocabulary {
 				);
 				$db->where('id', $data['id']);
 				$result = $db->update('vocabularies', $saved_data);
+                if(!$result) throw new Exception($db->_error_message());
 
 				//deal with versions
 				$this->updateVersions($data, $db);
@@ -188,7 +189,7 @@ class _vocabulary {
 				if ($result) {
 					return true;
 				} else {
-					return false;
+					return $db->_error_message();
 				}
 			} else {
 				return false;
@@ -216,6 +217,7 @@ class _vocabulary {
     		$result = $db->insert('vocabularies', $data);
     		$new_id = $db->insert_id();
 
+
     		//deal with versions
 			$this->updateVersions($data, $db);
 
@@ -223,7 +225,8 @@ class _vocabulary {
     			$new_vocab = new _vocabulary($new_id);
     			return $new_vocab;
     		} else {
-    			return false;
+                return '1111';
+    			return $db->_error_message();
     		}
 		}
 	}
@@ -282,6 +285,9 @@ class _vocabulary {
 					'data' => json_encode($version)
 				);
 				$result = $db->insert('versions', $version_data);
+                $new_id = $db->insert_id();
+                $this->processTask($version_data,$new_id,$db);
+                //throw new Exception($task_result);
 				if (!$result) throw new Exception($db->_error_message());
 			}
 		}
@@ -290,6 +296,40 @@ class _vocabulary {
 		$this->populate_from_db($this->prop['id']);
 	}
 
+    private function processTask($version,$version_id,$db){
+
+        $version_data = json_decode($version['data'],true);
+         if($version_data['status']=='current'){
+
+            $task_array = array();
+
+            $task_array[0]['type'] = 'HARVEST';
+
+            if(isset($this->prop['pool_party_id'])&& $this->prop['pool_party_id']!=''){
+                $task_array[0]['provider_type'] = 'PoolParty';
+                $task_array[0]['project_id'] = $this->prop['pool_party_id'];
+            }
+
+            $task_array[1]['type'] = 'TRANSFORM';
+            $task_array[1]['method'] = 'solr_concepts';
+
+            $task_array[2]['type'] = 'TRANSFORM';
+            $task_array[2]['method'] = 'json_concepts';
+
+            $task_array[3]['type'] = 'IMPORT';
+            $task_array[3]['project_id'] = 'Sesame';
+
+            $task_params = json_encode($task_array);
+
+            $params = array(
+            'vocabulary_id' => $this->prop['id'],
+            'version_id' => $version_id,
+            'params' => $task_params);
+
+            $result = $db->insert('task', $params);
+            if (!$result) throw new Exception($db->_error_message());
+         }
+    }
 	/**
 	 * Magic function to get an attribute, returns property within the $prop array
 	 * @param  string $property property name
