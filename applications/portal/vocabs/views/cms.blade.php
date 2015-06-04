@@ -69,7 +69,7 @@
 						</div>
 						<div class="form-group">
 							<label for="">Vocabulary Licence</label>
-							<input type="text" class="form-control" ng-model="vocab.licence" placeholder="Vocabulary Licence URI">
+                            <select name="" id="" class="form-control" placeholder="vocab Licence" ng-options="lic for lic in licence" ng-model="vocab.licence"></select>
 						</div>
 						
 						<div class="form-group">

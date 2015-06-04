@@ -16,19 +16,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
         {"value":"mi","text":"Māori"},
         {"value":"ru","text":"Russian"},
         {"value":"es","text":"Spanish"}]
-
-      /*  ['English', 'German', 'French', 'Spanish', 'Italian', 'Mãori', 'Russian', 'Chinese', 'Japanese']; */
-    /*
-     [{"value":"zh","text":"Chinese"},
-     {"value":"en","text":"English"},
-     {"value":"fr","text":"French"},
-     {"value":"de","text":"German"},
-     {"value":"it","text":"Italian"},
-     {"value":"ja","text":"Japanese"},
-     {"value":"mi","text":"Māori"},
-     {"value":"ru","text":"Russian"},
-     {"value":"es","text":"Spanish"}]
-     */
+    $scope.licence =["CC-BY","CC-BY-SA","CC-BY-ND","CC-BY-NC","CC-BY-NC-SA","CC-BY-NC-ND","GPL","AusGoalRestrictive","NoLicence","Unknown/Other"]
 	$scope.opened = false;
 	$scope.decide = false;
 
@@ -293,8 +281,6 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
         {"value":"pointOfContact","text":"Point of contact"},
         {"value":"implementedBy","text":"Implementer"},
         {"value":"consumerOf","text":"Consumer"}]
-
-       /* ['publishedBy', 'hasAuthor', 'hasContributor', 'pointOfContact', 'implementedBy', 'consumerOf']; */
 
 	$scope.relatedEntityTypes = ['publisher', 'vocabulary', 'service'];
 	$scope.entity = false;
