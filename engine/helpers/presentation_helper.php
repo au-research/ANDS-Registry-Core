@@ -208,6 +208,11 @@ function readable($text, $altered=false,$class=false,$to_class=false){
         case 'principalinvestigator' : return  'Principal investigator'; break;
         case 'coinvestigator' : return  'Co investigator'; break;
         case 'publishedBy' : return  'Publisher'; break;
+        case 'hasAuthor' : return  'Author'; break;
+        case 'pointOfContact': return  'Point of contact'; break;
+        case 'hasContributor': return  'Contributor'; break;
+        case 'implementedBy': return  'Implementer'; break;
+        case 'consumerOf': return  'Consumer'; break;
         default: return $defaultText;
 	}
 }

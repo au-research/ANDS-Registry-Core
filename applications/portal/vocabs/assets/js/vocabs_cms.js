@@ -238,8 +238,8 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 });
 
 app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, type, vocabs_factory){
-	$scope.relatedEntityRelations = ['publisherOf', 'publishedBy', 'hasAuthor', 'hasContributor', 'pointOfContact', 'implementedBy', 'consumerOf'];
-	$scope.relatedEntityTypes = ['publisher', 'vocab', 'tool', 'service'];
+	$scope.relatedEntityRelations = ['publishedBy', 'hasAuthor', 'hasContributor', 'pointOfContact', 'implementedBy', 'consumerOf'];
+	$scope.relatedEntityTypes = ['publisher', 'vocabulary', 'service'];
 	$scope.entity = false;
 	$scope.intent = 'add';
 	if (entity) {
