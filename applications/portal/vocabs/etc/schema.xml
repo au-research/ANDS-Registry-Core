@@ -30,6 +30,7 @@
 		<field name="subjects" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="top_concept" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="language" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
+		<field name="concept" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 
 		<!-- Search Fields -->
 		<field name="title_search" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>

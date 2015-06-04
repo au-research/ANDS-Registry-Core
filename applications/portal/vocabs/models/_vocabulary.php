@@ -78,6 +78,44 @@ class _vocabulary {
 			}
 		}
 
+		//Index concept
+		//
+		//Find current version
+		$current_version = false;
+		foreach ($this->versions as $version) {
+			if ($version['status']=='current' && !$current_version) {
+				$current_version = $version;
+			}
+		}
+
+		$json['concept'] = array();
+
+		//find the task/file associated with the current version
+		$ci =& get_instance();
+		$db = $ci->load->database('vocabs', true);
+		$query = $db->get_where('task', array('version_id'=>$current_version['id'], 'status'=>'success'));
+		$concept_list_path = false;
+		if ($query->num_rows() > 0) {
+			$result = $query->first_row();
+			$response = $result->response;
+			$response = json_decode($response, true);
+			$concept_list_path = isset($response['concepts_list']) ? $response['concepts_list'] : false;
+		}
+		
+
+		//read the file and then add the concepts to the index
+		if ($concept_list_path) {
+			$content = @file_get_contents($concept_list_path);
+			$content = json_decode($content, true);
+			foreach ($content as $concept) {
+				if (isset($concept['prefLabel'])) {
+					$json['concept'][] = $concept['prefLabel'];
+				}
+			}
+		}
+		
+		
+
 		return $json;
 	}
 
