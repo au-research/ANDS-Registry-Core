@@ -7,7 +7,28 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 
 	$scope.vocab = {top_concept:[],subjects:[]};
 	$scope.mode = 'add'; // [add|edit]
-	$scope.langs = ['English', 'German', 'French', 'Spanish', 'Italian', 'Mãori', 'Russian', 'Chinese', 'Japanese'];
+	$scope.langs = [{"value":"zh","text":"Chinese"},
+        {"value":"en","text":"English"},
+        {"value":"fr","text":"French"},
+        {"value":"de","text":"German"},
+        {"value":"it","text":"Italian"},
+        {"value":"ja","text":"Japanese"},
+        {"value":"mi","text":"Māori"},
+        {"value":"ru","text":"Russian"},
+        {"value":"es","text":"Spanish"}]
+
+      /*  ['English', 'German', 'French', 'Spanish', 'Italian', 'Mãori', 'Russian', 'Chinese', 'Japanese']; */
+    /*
+     [{"value":"zh","text":"Chinese"},
+     {"value":"en","text":"English"},
+     {"value":"fr","text":"French"},
+     {"value":"de","text":"German"},
+     {"value":"it","text":"Italian"},
+     {"value":"ja","text":"Japanese"},
+     {"value":"mi","text":"Māori"},
+     {"value":"ru","text":"Russian"},
+     {"value":"es","text":"Spanish"}]
+     */
 	$scope.opened = false;
 	$scope.decide = false;
 
@@ -265,7 +286,16 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 });
 
 app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, type, vocabs_factory){
-	$scope.relatedEntityRelations = ['publishedBy', 'hasAuthor', 'hasContributor', 'pointOfContact', 'implementedBy', 'consumerOf'];
+	$scope.relatedEntityRelations = [
+        {"value":"publishedBy","text":"Publisher"},
+        {"value":"hasAuthor","text":"Author"},
+        {"value":"hasContributor","text":"Contributor"},
+        {"value":"pointOfContact","text":"Point of contact"},
+        {"value":"implementedBy","text":"Implementer"},
+        {"value":"consumerOf","text":"Consumer"}]
+
+       /* ['publishedBy', 'hasAuthor', 'hasContributor', 'pointOfContact', 'implementedBy', 'consumerOf']; */
+
 	$scope.relatedEntityTypes = ['publisher', 'vocabulary', 'service'];
 	$scope.entity = false;
 	$scope.intent = 'add';

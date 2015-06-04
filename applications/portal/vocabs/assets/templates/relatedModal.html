@@ -7,16 +7,6 @@
 		<form action="" class="form">
 			<div class="container-fluid">
                 <input name="type" value="[[ type ]]" type="hidden"/>
-				<!-- <div class="row">
-					<div class="col-md-12">
-						<div class="form-group">
-							<label for="">Type: </label>
-							<select name="" id="" class="form-control" ng-options="etype for etype in relatedEntityTypes" ng-model="type"></select>
-
-						</div>
-					</div>
-
-				</div> -->
 				<div class="row">
 					<div class="col-md-6">
 						<div class="form-group">
@@ -31,7 +21,7 @@
 					<div class="col-md-6">
 					<div class="form-group" ng-if="type!='publisher'">
 						<label for="">Relation</label>
-						<select name="" id="" class="form-control" placeholder="entity Relation" ng-options="relationship for relationship in relatedEntityRelations" ng-model="entity.relationship"></select>
+						<select name="" id="" class="form-control" placeholder="entity Relation" ng-options="relationship.value as relationship.text for relationship in relatedEntityRelations" ng-model="entity.relationship"></select>
 					</div>
                         <input type="hidden" value="publishedBy" name="relationship" ng-if="type=='publisher'"/>
 						<div class="form-group">

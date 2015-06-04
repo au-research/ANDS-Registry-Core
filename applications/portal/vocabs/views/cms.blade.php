@@ -147,7 +147,7 @@
 						
 						<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist(vocab.language, newLanguage)">
 							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Language" typeahead="lang for lang in langs | filter:$viewValue | limitTo:8" ng-model="newLanguage">
+                                <select class="form-control" placeholder="Language" ng-options="lang.value as lang.text for lang in langs" ng-model="newLanguage"></select>
 								<span class="input-group-btn">
 									<button class="btn btn-primary" type="button" ng-click="addtolist(vocab.language, newLanguage)"><i class="fa fa-plus"></i> Add</button>
 								</span>
