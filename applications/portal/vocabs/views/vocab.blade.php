@@ -12,13 +12,13 @@ if(isset($vocab['related_entity'])){
         if($related['type']=='publisher'){
             $publisher=$related;
         }
-        elseif($related['type']=='contributor'){
+        elseif($related['type']=='party'){
             $related_people[] =$related;
         }
         elseif($related['type']=='service'){
             $related_service[]=$related;
         }
-        elseif($related['type']=='vocab'){
+        elseif($related['type']=='vocabulary'){
             $related_vocabs[]=$related;
         }
     }
