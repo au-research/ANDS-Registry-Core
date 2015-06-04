@@ -49,7 +49,6 @@
 			</div>
 		</div>
 	</div>
-
 	<div class="container" ng-if="decide">
 		<div class="row">
 			<div class="col-md-8"> 

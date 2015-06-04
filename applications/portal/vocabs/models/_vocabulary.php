@@ -215,13 +215,11 @@ class _vocabulary {
 					'description' => isset($data['description']) ? $data['description'] : false,
 					'pool_party_id' => isset($data['pool_party_id']) ? $data['pool_party_id'] : false,
 					'modified_date' => date("Y-m-d H:i:s"),
-                    'owner' => $data['owner'],
-                    'user_owner' => $data['user_owner'],
 					'data' => json_encode($data)
 				);
 				$db->where('id', $data['id']);
 				$result = $db->update('vocabularies', $saved_data);
-                if(!$result) throw new Exception($db->_error_message());
+				if(!$result) throw new Exception($db->_error_message());
 
 				//deal with versions
 				$this->updateVersions($data, $db);
@@ -252,24 +250,22 @@ class _vocabulary {
 				'pool_party_id' => isset($this->prop['pool_party_id']) ? $this->prop['pool_party_id'] : '',
 				'created_date'=> date("Y-m-d H:i:s"),
 				'modified_date' => date("Y-m-d H:i:s"),
-                'owner' => $data['owner'],
-                'user_owner' => $data['user_owner'],
 				'data' => json_encode($this->prop)
 			);
-    		$result = $db->insert('vocabularies', $data);
-    		$new_id = $db->insert_id();
+			$result = $db->insert('vocabularies', $data);
+			$new_id = $db->insert_id();
 
 
-    		//deal with versions
+			//deal with versions
 			$this->updateVersions($data, $db);
 
-    		if ($result && $new_id) {
-    			$new_vocab = new _vocabulary($new_id);
-    			return $new_vocab;
-    		} else {
-                return '1111';
-    			return $db->_error_message();
-    		}
+			if ($result && $new_id) {
+				$new_vocab = new _vocabulary($new_id);
+				return $new_vocab;
+			} else {
+				return '1111';
+				return $db->_error_message();
+			}
 		}
 	}
 
@@ -315,6 +311,7 @@ class _vocabulary {
 				);
 				$db->where('id', $version['id']);
 				$result = $db->update('versions', $saved_data);
+				$this->processTask($saved_data,$version['id'],$db);
 				if (!$result) throw new Exception($db->_error_message());
 			} else {
 				//add the version if it doesn't exist
@@ -327,9 +324,9 @@ class _vocabulary {
 					'data' => json_encode($version)
 				);
 				$result = $db->insert('versions', $version_data);
-                $new_id = $db->insert_id();
-                $this->processTask($version_data,$new_id,$db);
-                //throw new Exception($task_result);
+				$new_id = $db->insert_id();
+				$this->processTask($version_data,$new_id,$db);
+				//throw new Exception($task_result);
 				if (!$result) throw new Exception($db->_error_message());
 			}
 		}
@@ -338,40 +335,69 @@ class _vocabulary {
 		$this->populate_from_db($this->prop['id']);
 	}
 
-    private function processTask($version,$version_id,$db){
+	private function processTask($version,$version_id,$db){
 
-        $version_data = json_decode($version['data'],true);
-         if($version_data['status']=='current'){
+		$version_data = json_decode($version['data'],true);
+		if($version_data['status']=='current'){
 
-            $task_array = array();
+			//task array construction
+			$task_array = array();
+			$task_array[0]['type'] = 'HARVEST';
 
-            $task_array[0]['type'] = 'HARVEST';
+			if(isset($this->prop['pool_party_id'])&& $this->prop['pool_party_id']!=''){
+				$task_array[0]['provider_type'] = 'PoolParty';
+				$task_array[0]['project_id'] = $this->prop['pool_party_id'];
+			}
+			$task_array[1]['type'] = 'TRANSFORM';
+			$task_array[1]['provider_type'] = 'JsonList';
+			$task_array[2]['type'] = 'TRANSFORM';
+			$task_array[2]['provider_type'] = 'JsonTree';
+			// $task_array[3]['type'] = 'IMPORT';
+			// $task_array[3]['project_id'] = 'Sesame';
+			$task_params = json_encode($task_array);
 
-            if(isset($this->prop['pool_party_id'])&& $this->prop['pool_party_id']!=''){
-                $task_array[0]['provider_type'] = 'PoolParty';
-                $task_array[0]['project_id'] = $this->prop['pool_party_id'];
-            }
+			$params = array(
+				'vocabulary_id' => $this->prop['id'],
+				'version_id' => $version_id,
+				'params' => $task_params
+			);
 
-            $task_array[1]['type'] = 'TRANSFORM';
-            $task_array[1]['method'] = 'solr_concepts';
+			$result = $db->insert('task', $params);
+			$task_id = $db->insert_id();
+			if (!$result) throw new Exception($db->_error_message());
 
-            $task_array[2]['type'] = 'TRANSFORM';
-            $task_array[2]['method'] = 'json_concepts';
+			//hit Toolkit
+			$vocab_config = get_config_item('vocab_config');
+			$toolkit_url = $vocab_config['toolkit_url'];
+			$content = @file_get_contents($toolkit_url.'runTask/'.$task_id);
 
-            $task_array[3]['type'] = 'IMPORT';
-            $task_array[3]['project_id'] = 'Sesame';
+			if ($content) {
+				$content = json_decode($content, true);
+				if (isset($content['concepts'])) {
+					//update the access point of type file path to this one
+					$query = $db->get_where('versions', array('id'=>$version_id));
+					if ($query->num_rows() > 0) {
+						$vv = $query->first_row();
+						$vvdata = json_decode($vv->data, true);
+						foreach ($vvdata['access_points'] as &$ap) {
+							if ($ap['type']=='file') {
+								$ap['uri'] = $content['concepts'];
+							}
+						}
+						$saved_data = array(
+							'data' => json_encode($vvdata)
+						);
+						$db->where('id', $version_id);
+						$result = $db->update('versions', $saved_data);
+						if (!$result) throw new Exception($db->_error_message());
+					} else {
+						//cant find version with the id, handle here
+					}
+				}
+			}
 
-            $task_params = json_encode($task_array);
-
-            $params = array(
-            'vocabulary_id' => $this->prop['id'],
-            'version_id' => $version_id,
-            'params' => $task_params);
-
-            $result = $db->insert('task', $params);
-            if (!$result) throw new Exception($db->_error_message());
-         }
-    }
+		}
+	}
 	/**
 	 * Magic function to get an attribute, returns property within the $prop array
 	 * @param  string $property property name

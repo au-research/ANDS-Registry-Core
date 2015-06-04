@@ -12,21 +12,11 @@
 							<label for="">Status: </label>
 							<select name="" id="" class="form-control" ng-options="status for status in versionStatuses" ng-model="version.status"></select>
 						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-8">
 						<div class="form-group">
 							<label for="">Title</label>
 							<input type="text" class="form-control" placeholder="Title" ng-model="version.title">	
 						</div>
 					</div>
-				<!--	<div class="col-md-4">
-						<div class="form-group">
-							<label for="">ID</label>
-							<input type="text" class="form-control" placeholder="ID" ng-model="version.id">	
-						</div>
-					</div> -->
 				</div>
 			
 				<div class="row">
@@ -46,10 +36,15 @@
 						</div>
 					</div>
 				</div>
+
+				<a href="" class="btn btn-primary btn-block" ng-click="importPP()" ng-if="version.provider_type!='poolparty'">Import Version from PoolParty</a>
+				<a href="" class="btn btn-default btn-block" ng-click="version.provider_type='manual'" ng-show="version.provider_type!='manual'">Input Access Points Manually</a>
+				
 				<hr>
+
 				<div class="row">
 					<div class="col-md-12">
-						<table class="table">
+						<table class="table" ng-if="version.access_points">
 							<thead>
 								<th>Access Point</th> <th>Type</th> <th>URI</th> <th></th>
 							</thead>
@@ -62,21 +57,23 @@
 								</tr>
 							</tbody>
 						</table>
-						<form action="">
-							<div class="form-group">
-								<label for="">Access Point</label>
-								<input type="text" class="form-control" placeholder="Release Date" ng-model="newap.format">	
-							</div>
-							<div class="form-group">
-								<label for="">Access Point Type</label>
-								<input type="text" class="form-control" placeholder="Release Date" ng-model="newap.type">	
-							</div>
-							<div class="form-group">
-								<label for="">Access Point URI</label>
-								<input type="text" class="form-control" placeholder="Release Date" ng-model="newap.uri">	
-							</div>
-							<button type="button" class="btn btn-primary" ng-click="addformat()"><i class="fa fa-plus"></i> Add Format</button>
-						</form>
+						<div ng-if="version.provider_type=='manual'">
+							<form action="">
+								<div class="form-group">
+									<label for="">Access Point</label>
+									<input type="text" class="form-control" placeholder="Release Date" ng-model="newap.format">	
+								</div>
+								<div class="form-group">
+									<label for="">Access Point Type</label>
+									<input type="text" class="form-control" placeholder="Release Date" ng-model="newap.type">	
+								</div>
+								<div class="form-group">
+									<label for="">Access Point URI</label>
+									<input type="text" class="form-control" placeholder="Release Date" ng-model="newap.uri">	
+								</div>
+								<button type="button" class="btn btn-primary" ng-click="addformat(newap)"><i class="fa fa-plus"></i> Add Access Point</button>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>

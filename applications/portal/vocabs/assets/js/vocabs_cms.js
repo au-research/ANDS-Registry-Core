@@ -39,6 +39,10 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	vocabs_factory.toolkit('listPoolPartyProjects').then(function(data){
 		$scope.projects = data;
 	});
+
+	/**
+	 * Collect all the user roles, for vocab.owner value
+	 */
     vocabs_factory.user().then(function(data){
         $scope.user_orgs = data.message;
     });
@@ -108,6 +112,9 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 					$scope.error_message = data.message;
 				} else {//success
 					$scope.success_message = data.message;
+					vocabs_factory.get($scope.vocab.slug).then(function(data){
+						$scope.vocab = data.message;
+					});
 				}
 			});
 		}
@@ -159,13 +166,15 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 						return false;
 					}
 				},
+				vocab: function() {
+					return $scope.vocab
+				},
 				action: function() {
 					return action;
 				}
 			}
 		});
 		modalInstance.result.then(function(obj){
-
 			//close
 			if (obj.intent=='add') {
 				var newObj = obj.data;
@@ -198,10 +207,11 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	}
 });
 
-app.controller('versionCtrl', function($scope, $modalInstance, $log, version, action){
+app.controller('versionCtrl', function($scope, $modalInstance, $log, version, action, vocab){
 	$scope.versionStatuses = ['current', 'superseded', 'deprecated'];
-	$scope.version = version ? version : false;
-	$scope.action = $scope.version ? 'save': 'add';
+	$scope.version = version ? version : {provider_type:false};
+	$scope.action = version ? 'save': 'add';
+
 
 	//calendar operation
 	$scope.opened = false;
@@ -211,11 +221,14 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 	    $scope.opened = !$scope.opened;
 	};
 
-	$scope.addformat = function() {
-		if (!$scope.version.access_points) {
-			$scope.version.access_points = [];
+	$scope.addformat = function(obj) {
+		if (!$scope.version) $scope.version = {};
+		if (!$scope.version['access_points'] || $scope.version['access_points']==undefined) {
+			$scope.version['access_points'] = [];
 		}
-		$scope.version.access_points.push($scope.newap);
+		var newobj = {};
+		angular.copy(obj, newobj)
+		$scope.version.access_points.push(newobj);
 		$scope.newap = {};
 	}
 
@@ -225,6 +238,17 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 			'data' : $scope.version
 		}
 		$modalInstance.close(ret);
+	}
+
+	//Import version from PoolParty
+	$scope.importPP = function(){
+		$scope.version.provider_type = 'poolparty';
+		var obj = {
+			format: 'RDF/XML',
+			type: 'file',
+			uri: 'TBD'
+		};
+		$scope.addformat(obj);
 	}
 
 	$scope.list_remove = function(type, index) {

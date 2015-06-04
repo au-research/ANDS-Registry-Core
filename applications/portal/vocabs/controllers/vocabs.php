@@ -280,9 +280,8 @@ class Vocabs extends MX_Controller {
 						}
 					}
 				}
-			}
-            elseif($method=='user') {
-                $result = array_unique($this->user->affiliations());
+			} else if($method=='user') {
+                $result = array_values(array_unique($this->user->affiliations()));
             }
 
 			// POST request, for adding new item
@@ -294,7 +293,6 @@ class Vocabs extends MX_Controller {
 				if (!$vocab) throw new Exception('Error Adding New Vocabulary');
 				if ($vocab) {
 					$result = $vocab;
-
 					//index just added one
 					$this->index_vocab($vocab);
 				}

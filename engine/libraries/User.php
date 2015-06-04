@@ -217,7 +217,22 @@ class User {
 	function affiliations()
 	{
 		// $this->refreshAffiliations($this->localIdentifier());
-		return $this->affiliations;
+		if ($this->hasFunction(AUTH_FUNCTION_SUPERUSER)) {
+			//return all affiliations if you are super user
+			$this->cosi_db = $this->CI->load->database('roles', true);
+			$query = $this->cosi_db->get_where('roles', array('role_type_id'=>gCOSI_AUTH_ROLE_ORGANISATIONAL));
+			if ($query->num_rows() > 0) {
+				$aff = array();
+				foreach ($query->result_array() as $r) {
+					$aff[] = $r['role_id'];
+				}
+				return $aff;
+			} else {
+				return $this->affiliations;
+			}
+		} else {
+			return $this->affiliations;
+		}
 	}
 		
 		
@@ -234,6 +249,7 @@ class User {
 		{
 			$this->CI->session->set_userdata(AUTH_AFFILIATION_ARRAY, $affiliation_list);
 		}
+
 		$this->affiliations = $this->CI->session->userdata(AUTH_AFFILIATION_ARRAY);
 	}
 	
