@@ -46,6 +46,12 @@ app.factory('vocabs_factory', function($http){
 				return response.data;
 			});
 			return promise;
-		}
+		},
+        user: function() {
+            var promise = $http.get(base_url+'vocabs/services/vocabs/all/user').then(function(response){
+                return response.data;
+            });
+            return promise;
+        }
 	}
 })

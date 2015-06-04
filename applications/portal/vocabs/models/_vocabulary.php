@@ -177,6 +177,8 @@ class _vocabulary {
 					'description' => isset($data['description']) ? $data['description'] : false,
 					'pool_party_id' => isset($data['pool_party_id']) ? $data['pool_party_id'] : false,
 					'modified_date' => date("Y-m-d H:i:s"),
+                    'owner' => $data['owner'],
+                    'user_owner' => $data['user_owner'],
 					'data' => json_encode($data)
 				);
 				$db->where('id', $data['id']);
@@ -212,6 +214,8 @@ class _vocabulary {
 				'pool_party_id' => isset($this->prop['pool_party_id']) ? $this->prop['pool_party_id'] : '',
 				'created_date'=> date("Y-m-d H:i:s"),
 				'modified_date' => date("Y-m-d H:i:s"),
+                'owner' => $data['owner'],
+                'user_owner' => $data['user_owner'],
 				'data' => json_encode($this->prop)
 			);
     		$result = $db->insert('vocabularies', $data);

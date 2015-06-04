@@ -90,6 +90,18 @@
 							<label for="">Note</label>
 							<textarea class="form-control" ng-model="vocab.note" placeholder="Vocabulary Description" rows="10"></textarea>
 						</div>
+                        @if(null!=$this->user->affiliations())
+                            <div class="form-group">
+                                <label for="">Owner</label>
+                                <select name="" id="" class="form-control" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
+                            </div>
+                        @else
+                           <input class="form-control" type="hidden" name="owner" value="" ng-model="vocab.owner"/>
+                        @endif
+
+
+                        <input name="user_owner" value="dsgsdgdsgfdsg" type="hidden" class="form-control" placeholder="vocab Owner" />
+
 					</div>
 				</div>
 

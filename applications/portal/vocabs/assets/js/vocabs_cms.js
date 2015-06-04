@@ -39,6 +39,9 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	vocabs_factory.toolkit('listPoolPartyProjects').then(function(data){
 		$scope.projects = data;
 	});
+    vocabs_factory.user().then(function(data){
+        $scope.user_orgs = data.message;
+    });
 
 	$scope.projectSearch = function(q) {
 		return function(item) {

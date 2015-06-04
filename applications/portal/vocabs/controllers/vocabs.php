@@ -258,6 +258,8 @@ class Vocabs extends MX_Controller {
 			$vocabs = $this->vocab->getAll();
 			$result = array();
 
+
+
 			foreach ($vocabs as $vocab) {
 				$result[] = $vocab->display_array();
 			}
@@ -278,7 +280,10 @@ class Vocabs extends MX_Controller {
 						}
 					}
 				}
-			} 
+			}
+            elseif($method=='user') {
+                $result = array_unique($this->user->affiliations());
+            }
 
 			// POST request, for adding new item
 			$angulardata = json_decode(file_get_contents("php://input"), true);
@@ -325,7 +330,7 @@ class Vocabs extends MX_Controller {
 				$this->index_vocab($vocab);
 			} elseif($method=='versions') {
 				$result = $result['versions'];
-			}
+            }
 		}
 
 		echo json_encode(
