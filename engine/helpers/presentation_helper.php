@@ -213,6 +213,16 @@ function readable($text, $altered=false,$class=false,$to_class=false){
         case 'hasContributor': return  'Contributor'; break;
         case 'implementedBy': return  'Implementer'; break;
         case 'consumerOf': return  'Consumer'; break;
+        case 'zh': return  'Chinese'; break;
+        case 'en': return  'English'; break;
+        case 'fr': return  'French'; break;
+        case 'de': return  'German'; break;
+        case 'it': return  'Italian'; break;
+        case 'ja': return  'Japanese'; break;
+        case 'mi': return  'Māori'; break;
+        case 'ru': return  'Russian'; break;
+        case 'es': return  'Spanish'; break;
+
         default: return $defaultText;
 	}
 }

@@ -38,7 +38,7 @@ if(isset($vocab['related_entity'])){
                 <h4>Languages</h4>
                 <p>
                     @foreach($vocab['language'] as $language)
-                    {{$language}} |
+                    {{readable($language)}} |
                     @endforeach
                 </p>
                 @endif
