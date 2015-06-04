@@ -1,19 +1,22 @@
 <div style="modal-center">
 	<div class="modal-header">
 		<button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-		<h4 class="modal-title">Add a related [[ type ]]</h4>
+	        <h4 class="modal-title"><span ng-if="entity.title">Edit</span> <span ng-if="!entity.title">Add a </span> related [[ type ]]</h4>
 	</div>
 	<div class="modal-body swatch-white" ng-cloak>
 		<form action="" class="form">
 			<div class="container-fluid">
-				<div class="row">
+                <input name="type" value="[[ type ]]" type="hidden"/>
+				<!-- <div class="row">
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="">Type: </label>
 							<select name="" id="" class="form-control" ng-options="etype for etype in relatedEntityTypes" ng-model="type"></select>
+
 						</div>
 					</div>
-				</div>
+
+				</div> -->
 				<div class="row">
 					<div class="col-md-6">
 						<div class="form-group">
@@ -26,10 +29,11 @@
 						</div>
 					</div>
 					<div class="col-md-6">
-					<div class="form-group">
+					<div class="form-group" ng-if="type!='publisher'">
 						<label for="">Relation</label>
 						<select name="" id="" class="form-control" placeholder="entity Relation" ng-options="relationship for relationship in relatedEntityRelations" ng-model="entity.relationship"></select>
 					</div>
+                        <input type="hidden" value="publishedBy" name="relationship" ng-if="type=='publisher'"/>
 						<div class="form-group">
 							<label for="">Phone</label>
 							<input type="text" class="form-control" placeholder="entity Phone" ng-model="entity.phone">	
@@ -67,7 +71,7 @@
 	</div>
 	<div class="modal-footer swatch-white">
 		<button class="btn btn-link" type="button" ng-click="dismiss()">Cancel</button>
-		<button class="btn btn-primary" type="button" ng-if="intent=='add'" ng-click="save()">Add this Related Entity</button>
+		<button class="btn btn-primary" type="button" ng-if="intent=='add'" ng-click="save()">Add this Related [[ type ]]</button>
 		<button class="btn btn-primary" type="button" ng-if="intent=='save'" ng-click="save()">Save</button>
 	</div>
 </div>

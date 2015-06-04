@@ -207,6 +207,7 @@ function readable($text, $altered=false,$class=false,$to_class=false){
         case 'leadinvestigator' : return  'Lead investigator'; break;
         case 'principalinvestigator' : return  'Principal investigator'; break;
         case 'coinvestigator' : return  'Co investigator'; break;
+        case 'publishedBy' : return  'Publisher'; break;
         default: return $defaultText;
 	}
 }

@@ -1,7 +1,7 @@
 <div style="modal-center">
 	<div class="modal-header">
 		<button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-		<h4 class="modal-title">Add a new version</h4>
+		<h4 class="modal-title"><span ng-if="version.title">Edit</span> <span ng-if="!version.title">Add a new</span> version</h4>
 	</div>
 	<div class="modal-body swatch-white" ng-cloak>
 		<form action="" class="form">
