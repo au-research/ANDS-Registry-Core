@@ -138,8 +138,8 @@
 								<tr><th>Language</th> <th></th></tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="ln in vocab.language track by $index">
-									<td>[[ ln ]]</td>
+								<tr ng-repeat="ln in vocab.language  track by $index ">
+									<td >[[ ln | languageFilter:langs ]]</td>
 									<td><a href="" ng-click="vocab.language.splice($index, 1)"><i class="fa fa-remove"></i></a></td>
 								</tr>
 							</tbody>

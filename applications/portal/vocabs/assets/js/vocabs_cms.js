@@ -344,3 +344,14 @@ app.run(function($rootScope, $templateCache) {
       $templateCache.removeAll();
    });
 });
+
+app.filter('languageFilter', function() {
+    return function(ln,langs) {
+        for(i=0;i<langs.length;i++){
+           if(ln==langs[i].value){
+               return langs[i].text
+           }
+        }
+        return ln;
+     }
+});
