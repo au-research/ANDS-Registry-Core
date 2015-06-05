@@ -1,0 +1,20 @@
+<div class="panel swatch-white">
+	<div class="panel-heading">Browse</div>
+	<div class="panel-body">
+		<input type="text" ng-model="query">
+	</div>
+	<div class="panel-body element-no-top maxheight500">
+		<ul ng-class="treeclass">
+			<li ng-repeat="concept in tree | filter:query">
+				<a href="" tooltip-placement="right" tooltip="[[concept.uri]]" ng-click="concept.showchild=!concept.showchild">
+					[[concept.value]] ([[concept.num_child]])
+				</a>
+				<ul ng-if="concept.showchild">
+					<li ng-repeat="child in concept.child | filter:query">
+						<a href="" tooltip-placement="right" tooltip="[[concept.uri]]">[[child.value]]</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>

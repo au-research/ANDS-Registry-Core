@@ -138,6 +138,85 @@ class _vocabulary {
 		return $result;
 	}
 
+	public function current_version() {
+		$current_version = false;
+		if ($this->versions) {
+			foreach ($this->versions as $version) {
+				if ($version['status']=='current' && !$current_version) {
+					$current_version = $version;
+				}
+			}
+		}
+		return $current_version;
+	}
+
+
+	public function display_tree($raw = false) {
+		$current_version = $this->current_version();
+		if ($current_version) {
+			$data = $this->get_response_data($current_version['id']);
+			if (!$data) {
+				//no valid data returned, hence no tree
+				return false;
+			}
+			$data = json_decode($data->response, true);
+			$concepts_tree_path = isset($data['concepts_tree']) ? $data['concepts_tree'] : false;
+			if ($concepts_tree_path) {
+				$content = @file_get_contents($concepts_tree_path);
+				if (!$content) {
+					//file doesn't exist
+					return false;
+				}
+
+				$tree_data = json_decode($content, true);
+				if ($raw) return $tree_data;
+
+				//build a tree a little bit nicer
+				$tree = array();
+				foreach($tree_data as $key=>$value) {
+					$node = array(
+						'uri' => $key,
+						'value' => isset($value['prefLabel']) ? $value['prefLabel'] : 'No Title',
+						'child' => array(),
+						'num_child' => 0
+					);
+					$num_child = 0;
+					foreach ($value as $key2=>$value2) {
+						if ($key2!='prefLabel') {
+							$node['child'][] = array(
+								'uri' => $key2,
+								'value' => isset($value2['prefLabel']) ? $value2['prefLabel'] : 'No Title',
+							);
+							$num_child++;
+						}
+					}
+					$node['num_child'] = $num_child;
+					$tree[] = $node;
+				}
+				
+				return $tree;
+			} else {
+				//log: data found but no concept tree
+				return false;
+			}
+		} else {
+			//no current version
+			return false;
+		}
+	}
+
+	private function get_response_data($version_id) {
+		$ci =& get_instance();
+		$db = $ci->load->database('vocabs', true);
+		$query = $db->get_where('task', array('status'=>'success', 'version_id'=>$version_id));
+		if ($query->num_rows() > 0) {
+			$result = $query->first_row();
+			return $result;
+		} else {
+			return false;
+		}
+	}
+
 
 	/**
 	 * Populate the prop array with an array of key=>value pair

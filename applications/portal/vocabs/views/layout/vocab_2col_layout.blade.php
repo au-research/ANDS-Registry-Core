@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 @include('includes/header')
-<body>
+<body ng-app="app">
 @include('includes/top-menu')
 <?php
 $publisher = array();
@@ -17,8 +17,8 @@ $url = base_url().$vocab['slug'];
 $title = $vocab['title'] ;
 
 ?>
-<div id="content" >
-    <article ng-controller="viewController">
+<div id="content">
+    <article >
         <section class="section swatch-gray" style="z-index:1">
             <div class="container">
                 <div class="row element-short-top">

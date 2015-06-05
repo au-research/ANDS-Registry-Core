@@ -40,15 +40,8 @@ class Vocabs extends MX_Controller {
 
 		if ($record) {
             $vocab = $record->display_array();
-            $current_version = '';
-            if(isset($vocab['versions'])){
-                foreach($vocab['versions'] as $version){
-                    if($version['status']=='current'){
-                        $current_version = $version;
-                    }
-                }
-            }
-            $vocab['current_version'] = $current_version;
+            $vocab['current_version'] = $record->current_version();
+
 			$this->blade
 				->set('vocab', $vocab)
 				->render('vocab');
@@ -284,8 +277,6 @@ class Vocabs extends MX_Controller {
 			$vocabs = $this->vocab->getAll();
 			$result = array();
 
-
-
 			foreach ($vocabs as $vocab) {
 				$result[] = $vocab->display_array();
 			}
@@ -354,6 +345,10 @@ class Vocabs extends MX_Controller {
 				$this->index_vocab($vocab);
 			} elseif($method=='versions') {
 				$result = $result['versions'];
+            } else if ($method=='tree') {
+            	$result = $vocab->display_tree();
+            } else if ($method=='tree-raw') {
+            	$result = $vocab->display_tree(true);
             }
 		}
 

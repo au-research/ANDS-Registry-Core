@@ -66,34 +66,9 @@ if(isset($vocab['related_entity'])){
                 </p>
 
             </div>
-         </div>
-
-
-        <!-- set up header and content for vocab tree is if exists -->
-        @if(isset($current_version['repository_id']))
-        <div class="panel swatch-white">
-            <div class="panel-heading">Browse</div>
-            <div class="panel-body element-no-top">
-                <div id="vocab-tree" vocab="{{$vocab['slug']}}"></div>
-            </div>
         </div>
-        @else
-            <!-- Top Concepts -->
-            @if(isset($vocab['top_concept']))
-            <div class="panel swatch-white">
-                <div class="panel-heading">Top Level Concepts</div>
-                <div class="panel-body">
-                    @foreach($vocab['top_concept'] as $concept)
-                        {{$concept}} |
-                    @endforeach
-                    </p>
-                    <h4>Total number of concepts</h4>
-                    <p>Not sure what element is actually required to display here</p>
-                </div>
-            </div>
-            @endif
-        @endif
 
+        <div visualise vocabid="{{ $vocab['id'] }}"></div>
 
         @if(isset($vocab['subjects']))
         <div class="panel swatch-white">
