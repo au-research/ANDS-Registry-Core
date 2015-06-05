@@ -99,7 +99,8 @@ class Auth extends CI_Controller {
 	
 	public function logout(){
 		// Logs the user out and redirects them to the homepage/logout confirmation screen
-		$this->user->logout(); 		
+		$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : false;
+		$this->user->logout($redirect);
 	}
 	
 	//MAYBE DEPRECATED as of R14

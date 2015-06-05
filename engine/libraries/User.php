@@ -54,13 +54,15 @@ class User {
 	/**
 	 * Logout the current user, destroying their current session data
 	 */
-	function logout() {
+	function logout($redirect = false) {
 		if(!session_id()) {
 			session_start();
 		}
 		unset($this->session->userdata); 
 		$this->CI->session->sess_destroy(); //???
-		redirect('/auth/login/');
+		if ($redirect) {
+			redirect($redirect);
+		} else redirect('/auth/login/');
 	}
 	
 
