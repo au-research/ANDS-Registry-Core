@@ -163,6 +163,7 @@ class Vocabs extends MX_Controller {
 	/**
 	 * Page Controller
 	 * For displaying static pages that belongs to the vocabs module
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @param  $slug supported: [help|about|contribute]
 	 * @return view
 	 */
@@ -170,6 +171,12 @@ class Vocabs extends MX_Controller {
 		$this->blade->render($slug);
 	}
 
+	/**
+	 * Primary search functionality
+	 * data is obtained from angularjs php input POST
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return json search result
+	 */
 	public function filter() {
 		//header
 		header('Cache-Control: no-cache, must-revalidate');
@@ -189,7 +196,7 @@ class Vocabs extends MX_Controller {
 		//highlighting
 		$this->solr
 			->setOpt('hl', 'true')
-			->setOpt('hl.fl', 'description, subjects, title')
+			->setOpt('hl.fl', 'description, subjects, title, concept')
 			->setOpt('hl.simple.pre', '&lt;b&gt;')
 			->setOpt('hl.simple.post', '&lt;/b&gt;')
 			->setOpt('hl.snippets', '2');
@@ -198,7 +205,7 @@ class Vocabs extends MX_Controller {
 		$this->solr
 			->setOpt('defType', 'edismax')
 			->setOpt('q.alt', '*:*')
-			->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001');;
+			->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001 concept^0.02');;
 
 		foreach ($filters as $key=>$value) {
 			switch ($key) {
@@ -224,12 +231,30 @@ class Vocabs extends MX_Controller {
 		echo json_encode($result);
 	}
 
+	/**
+	 * MyVocabs functionality
+	 * If the user is not logged in, redirects them to the login screen with redirection back to this page
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return view
+	 */
 	public function myvocabs() {
-		if (!$this->user->isLoggedIn()) throw new Exception('User not logged in');
+		if (!$this->user->isLoggedIn()) {
+			// throw new Exception('User not logged in');
+			redirect(get_vocab_config('auth_url').'login#?redirect='.portal_url('vocabs/myvocabs'));
+		}
 		$owned = $this->vocab->getOwned();
 		$this->blade
 			->set('owned_vocabs', $owned)
 			->render('myvocabs');
+	}
+
+	/**
+	 * Logging the user out via a the auth_url
+	 * Redirects the user back to the home page after logging out
+	 * @return redirection to home page
+	 */
+	public function logout() {
+		redirect(get_vocab_config('auth_url').'logout?redirect='.portal_url());
 	}
 
 	/**
@@ -339,6 +364,12 @@ class Vocabs extends MX_Controller {
 		);
 	}
 
+	/**
+	 * Indexing a single vocab helper method
+	 * @access private
+	 * @param  _vocabulary $vocab
+	 * @return boolean
+	 */
 	private function index_vocab($vocab) {
 		
 		//load necessary stuff
@@ -383,11 +414,12 @@ class Vocabs extends MX_Controller {
 		$request = $this->input->get('request');
 		if (!$request) throw new Exception('Request Not Found');
 
-		$url = get_config_item('vocab_toolkit_url');
+		$url = get_vocab_config('toolkit_url');
+		if (!$url) throw new Exception('Vocab Toolkit URL not configured correctly');
 
 		switch ($request) {
 			case 'listPoolPartyProjects':
-				$sample = @file_get_contents(asset_url('json/sample_list.json'));
+				$sample = @file_get_contents($url.'getInfo/PoolPartyProjects');
 				echo $sample;
 				break;
 			default : throw new Exception('Request Not Recognised');
