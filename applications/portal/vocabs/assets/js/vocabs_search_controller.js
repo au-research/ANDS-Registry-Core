@@ -24,10 +24,16 @@ app.controller('searchCtrl', function($scope, $log, vocabs_factory){
 	$scope.search();
 
 	$scope.$watch('filters.q', function(newv, oldv) {
-		if (newv || newv=='') {
+		if ((newv || newv=='')) {
 			$scope.search();
 		}
 	});
+
+	$scope.getHighlight = function(id){
+		if ($scope.result.highlighting && !$.isEmptyObject($scope.result.highlighting[id])) {
+			return $scope.result.highlighting[id];
+		} else return false;
+	}
 
 	$scope.toggleFilter = function(type, value, execute) {
 		if($scope.filters[type]) {
@@ -95,6 +101,13 @@ app.controller('searchCtrl', function($scope, $log, vocabs_factory){
 	}
 
 });
+
+app.filter('trustAsHtml', ['$sce', function($sce){
+	return function(text){
+		var decoded = $('<div/>').html(text).text();
+		return $sce.trustAsHtml(decoded);
+	}
+}])
 
 app.directive('ngDebounce', function($timeout) {
     return {

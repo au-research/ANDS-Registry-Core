@@ -28,9 +28,14 @@
 
 			<div class="col-md-8 col-lg-9">
 
-				<div ng-repeat="result in result.response.docs" class="animated fadeInLeft vocab-search-result">
-					<h3><a href="[[ base_url ]][[ result.slug ]]">[[ result.title ]]</a></h3>
-					<p>[[ result.description ]]</p>
+				<div ng-repeat="doc in result.response.docs" class="animated fadeInLeft vocab-search-result">
+					<h3><a href="[[ base_url ]][[ doc.slug ]]">[[ doc.title ]]</a></h3>
+					<p ng-if="getHighlight(doc.id)===false">[[ doc.description ]]</p>
+					<div ng-repeat="(index, content) in getHighlight(doc.id)" class="element-shorter-bottom">
+	                    <div ng-repeat="c in content track by $index" class="element-shortest-bottom">
+	                        <span ng-bind-html="c | trustAsHtml"></span> <span class="muted">(in [[index ]])</span>
+	                    </div>
+	                </div>
 				</div>
 
 				<div ng-if="result.response.numFound == 0" class="animated fadeInLeft vocab-search-result">

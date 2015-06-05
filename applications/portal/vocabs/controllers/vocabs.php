@@ -191,12 +191,13 @@ class Vocabs extends MX_Controller {
 		$this->solr
 			->setFacetOpt('field', 'subjects')
 			->setFacetOpt('field', 'language')
-			->setFacetOpt('field', 'licence');
+			->setFacetOpt('field', 'licence')
+			->setFacetOpt('mincount', '1');
 
 		//highlighting
 		$this->solr
 			->setOpt('hl', 'true')
-			->setOpt('hl.fl', 'description, subjects, title, concept')
+			->setOpt('hl.fl', 'description, subject_search, title, concept, language')
 			->setOpt('hl.simple.pre', '&lt;b&gt;')
 			->setOpt('hl.simple.post', '&lt;/b&gt;')
 			->setOpt('hl.snippets', '2');
