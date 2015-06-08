@@ -144,6 +144,12 @@ class Vocabs extends MX_Controller {
 		if (!$this->user->isLoggedIn()) throw new Exception('User not logged in');
 		if (!$slug) throw new Exception('Require a Vocabulary Slug to edit');
 		$vocab = $this->vocab->getBySlug($slug);
+        if($vocab->prop['status']=='published') {
+            $draft_vocab = $this->vocab->getBySlug($slug.'DRAFT');
+            if($draft_vocab) {
+                $vocab = $draft_vocab;
+            }
+        }
 		//do some checking of vocab here, ACL stuff @todo
 		if (!$vocab) throw new Exception('Vocab Slug '.$slug. ' not found');
 
