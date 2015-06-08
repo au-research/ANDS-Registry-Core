@@ -286,6 +286,23 @@ class _vocabulary {
 		if (!$db) throw new Exception('Unable to connect to database');
 
 		if ($this->id) {
+            //if from draft get published id if it exists and override old published
+            if($data['status']=='published'){
+                $publish_slug = substr($data['slug'],0,strlen($data['slug'])-5);
+                $result = $db->get_where('vocabularies', array('slug'=>$publish_slug));
+                if ($result->num_rows() > 0) {
+                    $published= $result->first_row();
+                    $db->where('id', $data['id']);
+                    $result = $db->delete('vocabularies');
+                    $db->where('vocab_id', $data['id']);
+                    $result = $db->delete('versions');
+
+                    $data['id'] = $published->id;
+                    $data['slug'] = $publish_slug;
+                    $this->prop['id'] = $data['id'];
+                }
+            }
+
 			//update
 			if ($data) {
 				$saved_data = array(
@@ -294,6 +311,7 @@ class _vocabulary {
 					'description' => isset($data['description']) ? $data['description'] : false,
 					'pool_party_id' => isset($data['pool_party_id']) ? $data['pool_party_id'] : false,
 					'modified_date' => date("Y-m-d H:i:s"),
+                    'status' => $data['status'],
 					'data' => json_encode($data)
 				);
 				$db->where('id', $data['id']);
@@ -316,9 +334,12 @@ class _vocabulary {
 			
 			//check if there's an existing vocab with the same slug
 			$slug = url_title($this->prop['title'], '-', TRUE);
+            if(isset($this->prop['status']) && $this->prop['status']=='draft'){
+                $slug = $slug.'DRAFT';
+            }
 			$result = $db->get_where('vocabularies', array('slug'=>$slug));
 			if ($result->num_rows() > 0) {
-				return false;
+  				return false;
 			}
 
 			$data = array(
@@ -329,24 +350,39 @@ class _vocabulary {
 				'pool_party_id' => isset($this->prop['pool_party_id']) ? $this->prop['pool_party_id'] : '',
 				'created_date'=> date("Y-m-d H:i:s"),
 				'modified_date' => date("Y-m-d H:i:s"),
+                'status' => $this->prop['status'],
+                'owner' => $this->prop['owner'],
+                'user_owner' => $this->prop['user_owner'],
 				'data' => json_encode($this->prop)
 			);
 			$result = $db->insert('vocabularies', $data);
-			$new_id = $db->insert_id();
 
+
+			$this->prop['id'] = $db->insert_id();
+            $data['id'] = $this->prop['id'];
+            $newdata = array(
+                'data' => json_encode($this->prop)
+            );
+
+            //return(json_encode($this->prop)." is the data");
+            $db->where('id', $this->prop['id']);
+            $result = $db->update('vocabularies', $newdata);
 
 			//deal with versions
+            $data = json_decode($data['data'],true);
 			$this->updateVersions($data, $db);
 
-			if ($result && $new_id) {
-				$new_vocab = new _vocabulary($new_id);
+			if ($result && $this->prop['id']) {
+				$new_vocab = new _vocabulary($this->prop['id']);
 				return $new_vocab;
 			} else {
-				return '1111';
 				return $db->_error_message();
 			}
 		}
 	}
+
+
+
 
 	/**
 	 * Update the versions table according to the data received
@@ -378,7 +414,7 @@ class _vocabulary {
 		}
 
 		foreach($data['versions'] as $version) {
-			if (isset($version['id']) && $version['id']!="") {
+			if (isset($version['id']) && $version['id']!="" && $version['vocab_id']==$this->prop['id']) {
 				//update the existing version
 				$saved_data = array(
 					'title' => $version['title'],
@@ -404,6 +440,7 @@ class _vocabulary {
 				);
 				$result = $db->insert('versions', $version_data);
 				$new_id = $db->insert_id();
+                if($this->prop['status']=='published')
 				$this->processTask($version_data,$new_id,$db);
 				//throw new Exception($task_result);
 				if (!$result) throw new Exception($db->_error_message());

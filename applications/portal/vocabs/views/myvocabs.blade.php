@@ -14,7 +14,7 @@
 								You don't own any vocabulary, start by adding a new one
 							@else
 								@foreach($owned_vocabs as $vocab)
-									<li><a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}">{{ $vocab['title'] }}</a></li>
+									<li><a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}">{{ $vocab['title'] }}</a> <small>{{titleCase($vocab['status'])}}</small></li>
 								@endforeach
 							@endif
 						</div>

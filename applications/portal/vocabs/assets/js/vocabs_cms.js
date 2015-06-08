@@ -97,10 +97,12 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	 * Based on the mode, add and edit will call different service point
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
-	$scope.save = function() {
+	$scope.save = function(status) {
 		$scope.error_message = false;
 		$scope.success_message = false;
-		if ($scope.mode=='add') {
+        //if(status) $scope.vocab.status = status;
+		if ($scope.mode=='add' || ($scope.vocab.status=='published' && status=='draft')) {
+            $scope.vocab.status = status;
 			$log.debug('Adding Vocab', $scope.vocab);
 			vocabs_factory.add($scope.vocab).then(function(data){
 				$log.debug('Data Response from saving vocab', data);
@@ -114,6 +116,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 				}
 			});
 		} else if ($scope.mode=='edit') {
+            $scope.vocab.status = status;
 			$log.debug('Saving Vocab', $scope.vocab);
 			vocabs_factory.modify($scope.vocab.id, $scope.vocab).then(function(data){
 				$log.debug('Data Response from saving vocab (edit)', data);

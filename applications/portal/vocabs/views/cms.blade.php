@@ -1,4 +1,5 @@
 @extends('layout/vocab_layout')
+
 @section('content')
 <section ng-controller="addVocabsCtrl" class="section swatch-white">
 	<div class="container">
@@ -267,9 +268,12 @@
 			<div class="col-md-12">
 				<div class="panel swatch-gray">
 					<div class="panel-body">
-						<a href="" class="btn btn-large btn-primary" ng-click="save()">Save</a>
+						<a href="" class="btn btn-large btn-primary" ng-click="save('draft')">Save to draft</a>
+                        <a href="" class="btn btn-large btn-primary" ng-click="save('published')">Publish</a>
+                        <a href="" class="btn btn-large btn-primary" ng-click="save('requested')">Submit for assessment</a>
 						<div class="alert alert-danger element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="error_message">[[ error_message ]]</div>
 						<div class="alert alert-success element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="success_message">[[ success_message ]]</div>
+                        <div class="pull-right">[[vocab.status]]</div>
 					</div>
 				</div>
 			</div>
