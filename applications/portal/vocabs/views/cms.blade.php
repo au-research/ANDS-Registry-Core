@@ -271,6 +271,8 @@
 						<a href="" class="btn btn-large btn-primary" ng-click="save('draft')">Save to draft</a>
                         <a href="" class="btn btn-large btn-primary" ng-click="save('published')">Publish</a>
                         <a href="" class="btn btn-large btn-primary" ng-click="save('requested')">Submit for assessment</a>
+                        <a href="" class="btn btn-large btn-primary" ng-click="save('deprecated')">Deprecate</a>
+                        <!--<a href="" class="btn btn-large btn-primary" ng-click="save('deleted')">deleted</a> -->
 						<div class="alert alert-danger element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="error_message">[[ error_message ]]</div>
 						<div class="alert alert-success element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="success_message">[[ success_message ]]</div>
                         <div class="pull-right">[[vocab.status]]</div>
