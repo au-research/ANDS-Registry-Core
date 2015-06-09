@@ -18,7 +18,7 @@ $title = $vocab['title'] ;
 
 ?>
 <div id="content">
-    <article >
+    <article>
         <section class="section swatch-gray" style="z-index:1">
             <div class="container">
                 <div class="row element-short-top">
@@ -31,10 +31,12 @@ $title = $vocab['title'] ;
                                 @foreach($publisher as $apub)
                                    <a class="re_preview" related='{{json_encode($apub)}}' v_id="{{ $vocab['id'] }}"> {{$apub['title']}} </a><small>(Publisher of)</small>
                                 @endforeach
-                                <div class="pull-right">{{$vocab['creation_date']}}
+                                <div class="pull-right">
+                                    {{ isset($vocab['creation_date']) ? $vocab['creation_date'] : ''}}
                                     <a href="http://www.facebook.com/sharer.php?u={{$url}}"><i class="fa fa-facebook" style="padding-right:4px"></i></a>
                                     <a href="https://twitter.com/share?url={{$url}}&text={{$title}}&hashtags=andsdata"><i class="fa fa-twitter" style="padding-right:4px"></i></a>
-                                    <a href="https://plus.google.com/share?url={{$url}}"><i class="fa fa-google" style="padding-right:4px"></i></a></div>
+                                    <a href="https://plus.google.com/share?url={{$url}}"><i class="fa fa-google" style="padding-right:4px"></i></a>
+                                </div>
                             </div>
                         </div>
                         @include('wrap-getvocabaccess')

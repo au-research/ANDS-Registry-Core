@@ -13,9 +13,53 @@
 							@if(sizeof($owned_vocabs) == 0)
 								You don't own any vocabulary, start by adding a new one
 							@else
-								@foreach($owned_vocabs as $vocab)
-									<li><a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}">{{ $vocab['title'] }}</a> <small>{{titleCase($vocab['status'])}}</small></li>
-								@endforeach
+								<h4>Published Vocabularies</h4>
+								<table class="table">
+									<thead>
+										<tr><th>Vocabulary</th><th>Status</th><th>Action</th></tr>
+									</thead>
+									<tbody>
+										@foreach($owned_vocabs as $vocab)
+											@if($vocab['status']=='published')
+											<tr>
+												<td><a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}">{{ $vocab['title'] }}</a></td>
+												<td>{{titleCase($vocab['status'])}}</td>
+												<td>
+													<div class="btn-group">
+														<a href="{{ portal_url($vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-search"></i> View</a>
+														<a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+														<a href="" class="btn btn-primary"><i class="fa fa-trash"></i></a>
+													</div>
+												</td>
+											</tr>
+											@endif
+										@endforeach
+									</tbody>
+								</table>
+
+								<h4>Drafts</h4>
+								<table class="table">
+									<thead>
+										<tr><th>Vocabulary</th><th>Status</th><th>Action</th></tr>
+									</thead>
+									<tbody>
+										@foreach($owned_vocabs as $vocab)
+											@if($vocab['status']=='draft')
+											<tr>
+												<td><a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}">{{ $vocab['title'] }}</a></td>
+												<td>{{titleCase($vocab['status'])}}</td>
+												<td>
+													<div class="btn-group">
+														<a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+														<a href="" class="btn btn-primary"><i class="fa fa-trash"></i></a>
+													</div>
+												</td>
+											</tr>
+											@endif
+										@endforeach
+									</tbody>
+								</table>
+								
 							@endif
 						</div>
 					</div>
