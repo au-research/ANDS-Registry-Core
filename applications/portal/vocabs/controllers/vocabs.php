@@ -426,6 +426,12 @@ class Vocabs extends MX_Controller {
 				$sample = @file_get_contents($url.'getInfo/PoolPartyProjects');
 				echo $sample;
 				break;
+			case 'getMetadata':
+				$ppid = $this->input->get('ppid') ? $this->input->get('ppid') : false;
+				if (!$ppid) throw new Exception('Pool Party ID required to get metadata');
+				$metadata = @file_get_contents($url.'getMetadata/poolParty/'.$ppid);
+				echo $metadata;
+				break;
 			default : throw new Exception('Request Not Recognised');
 		}
 	}

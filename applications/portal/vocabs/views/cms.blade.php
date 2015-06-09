@@ -201,7 +201,7 @@
 								<tr><th>Publisher</th> <th></th></tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="related in vocab.related_entity track by $index" ng-if="related.type=='publisher'">
+								<tr ng-repeat="related in vocab.related_entity track by $index" ng-if="related.type=='party' && related.relationship=='publishedBy'">
 									<td><a href="" ng-click="relatedmodal('edit', 'publisher', related)">[[ related.title ]]</a></td>
 									<td><a href="" ng-click="list_remove('related_entity', $index)"><i class="fa fa-remove"></i></a></td>
 								</tr>
@@ -241,7 +241,7 @@
 								<tr><th>Related</th> <th>Type</th> <th></th></tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="related in vocab.related_entity track by $index" ng-if="related.type!='publisher'">
+								<tr ng-repeat="related in vocab.related_entity track by $index" ng-if="related.relationship!='publishedBy'">
 									<td><a href="" ng-click="relatedmodal('edit', related.type, related)">[[ related.title ]]</a></td>
 									<td>[[ related.type ]]</td>
 									<td><a href="" ng-click="list_remove('related_entity', $index)"><i class="fa fa-remove"></i></a></td>
@@ -274,7 +274,7 @@
                         @else
                         <a href="" class="btn btn-large btn-primary" ng-click="save('requested')">Submit for assessment</a>
                         @endif
-                        @if($vocab->prop['status']=='published')
+                        @if($vocab && $vocab->prop['status']=='published')
                         <a href="" class="btn btn-large btn-primary" ng-click="save('deprecated')">Deprecate</a>
                         @endif
                         <!--<a href="" class="btn btn-large btn-primary" ng-click="save('deleted')">deleted</a> -->

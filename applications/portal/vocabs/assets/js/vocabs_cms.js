@@ -87,6 +87,46 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 				$scope.vocab.subjects = []
 				$scope.vocab.subjects.push({subject:project.subject,subject_source:'local'});
 			}
+
+			//populate with metadata from toolkit
+			vocabs_factory.getMetadata($scope.vocab.pool_party_id).then(function(data){
+				if (data) {
+					$log.debug(data);
+					if (data['dcterms:title']) $scope.vocab.title = data['dcterms:title'];
+					if (data['dcterms:description']) $scope.vocab.description = data['dcterms:description'];
+					if (data['dcterms:subject']) {
+						//overwrite the previous ones
+						$scope.vocab.subjects = []
+						$scope.vocab.subjects.push({subject:data['dcterms:subject'],subject_source:'local'});
+					}
+
+					//related entity population
+					if (!$scope.vocab.related_entity) $scope.vocab.related_entity = [];
+					if (data['dcterms:publisher']) {
+						$scope.vocab.related_entity.push({
+							title:data['dcterms:publisher'],
+							type:'party',
+							relationship:'publishedBy'
+						});
+					}
+
+					if (data['dcterms:contributor']) {
+						$scope.vocab.related_entity.push({
+							title:data['dcterms:contributor'],
+							type:'party',
+							relationship:'hasContributor'
+						});
+					}
+
+					if (data['dcterms:creator']) {
+						$scope.vocab.related_entity.push({
+							title:data['dcterms:creator'],
+							type:'party',
+							relationship:'hasAuthor'
+						});
+					}
+				}
+			});
 		} else {
 			console.log('no project to decide');
 		}
