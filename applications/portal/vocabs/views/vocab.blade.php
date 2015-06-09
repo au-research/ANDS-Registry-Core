@@ -34,7 +34,7 @@ if(isset($vocab['related_entity'])){
         <div class="panel swatch-white panel-primary element-no-top element-short-bottom panel-content">
             <div class="panel-body">
                 {{ $vocab['description'] }}
-                @if($vocab['language'])
+                @if(isset($vocab['language']))
                 <h4>Languages</h4>
                 <p>
                     @foreach($vocab['language'] as $language)
@@ -42,7 +42,7 @@ if(isset($vocab['related_entity'])){
                     @endforeach
                 </p>
                 @endif
-                @if($vocab['note'])
+                @if(isset($vocab['note']))
                 <h4>Notes</h4>
                 <p>{{$vocab['note']}}</p>
                 @endif
@@ -87,7 +87,7 @@ if(isset($vocab['related_entity'])){
 
 
 @section('sidebar')
-@if($related_service)
+@if(isset($related_service))
 <div class="panel swatch-white  panel-primary element-no-top element-short-bottom panel-content">
     <div class="panel-heading">Services that make use of this vocabulary</div>
     <div class="panel-body">

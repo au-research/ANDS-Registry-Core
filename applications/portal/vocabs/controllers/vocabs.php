@@ -339,10 +339,12 @@ class Vocabs extends MX_Controller {
 				if ($result) {
 					$result = 'Success in saving vocabulary';
 					//index saved one
-					$this->index_vocab($vocab);
-					if ($this->index_vocab($vocab)) {
-						$result .= '. Success in indexing vocabulary';
-					}
+                    if($vocab->prop['status']=='published'){
+                        $this->index_vocab($vocab);
+                        if ($this->index_vocab($vocab)) {
+                            $result .= '. Success in indexing vocabulary';
+                        }
+                    }
 				}
 			}
 
