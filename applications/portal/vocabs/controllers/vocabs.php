@@ -144,7 +144,7 @@ class Vocabs extends MX_Controller {
 		if (!$this->user->isLoggedIn()) throw new Exception('User not logged in');
 		if (!$slug) throw new Exception('Require a Vocabulary Slug to edit');
 		$vocab = $this->vocab->getBySlug($slug);
-        if($vocab->prop['status']=='published') {
+        if($vocab->prop['status']=='published'||$vocab->prop['status']=='deprecated') {
             $draft_vocab = $this->vocab->getBySlug($slug.'DRAFT');
             if($draft_vocab) {
                 $vocab = $draft_vocab;
@@ -217,7 +217,7 @@ class Vocabs extends MX_Controller {
 				case 'licence':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' '.$key.':("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' '.$key.':("'.$v.'")';
 						$this->solr->setOpt('fq', $fq_str);
 					}else{
 						$this->solr->setOpt('fq', '+'.$key.':("'.$value.'")');
