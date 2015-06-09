@@ -115,7 +115,7 @@ if(isset($vocab['related_entity'])){
         <h4>Related people</h4>
         @foreach($related_people as $related)
         <p>
-            <small>({{readable($related['relationship'])}})</small> <a href="" class="re_preview"  related='{{json_encode($related)}}' v_id="{{ $vocab['id'] }}"> {{$related['title']}}</a>
+            <small>{{ isset($related['relationship']) ? '('.readable($related['relationship']).')': '' }}</small> <a href="" class="re_preview"  related='{{json_encode($related)}}' v_id="{{ $vocab['id'] }}"> {{$related['title']}}</a>
         </p>
         @endforeach
         @endif
