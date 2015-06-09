@@ -193,7 +193,7 @@
 
 				
 				
-				<div class="panel swatch-gray">
+			<!--	<div class="panel swatch-gray">
 					<div class="panel-heading">Publishers</div>
 					<div class="panel-body">
 						<table class="table">
@@ -212,7 +212,7 @@
 							<a href="" class="btn btn-primary" ng-click="relatedmodal('add', 'publisher')"><i class="fa fa-plus"></i> Add a related publisher</a>
 						</div>
 					</div>
-				</div>
+				</div> -->
 
 				<div class="panel swatch-gray">
 					<div class="panel-heading">Versions</div>
@@ -241,7 +241,7 @@
 								<tr><th>Related</th> <th>Type</th> <th></th></tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="related in vocab.related_entity track by $index" ng-if="related.relationship!='publishedBy'">
+								<tr ng-repeat="related in vocab.related_entity track by $index">
 									<td><a href="" ng-click="relatedmodal('edit', related.type, related)">[[ related.title ]]</a></td>
 									<td>[[ related.type ]]</td>
 									<td><a href="" ng-click="list_remove('related_entity', $index)"><i class="fa fa-remove"></i></a></td>
@@ -256,7 +256,7 @@
 									<li><a href="" ng-click="relatedmodal('add', 'vocabulary')">Related Vocabulary</a></li>
 									<li><a href="" ng-click="relatedmodal('add', 'party')">Related Party</a></li>
 									<li><a href="" ng-click="relatedmodal('add', 'service')">Related Service</a></li>
-								</ul>
+  								</ul>
 							</span>
 						</div>
 					</div>
