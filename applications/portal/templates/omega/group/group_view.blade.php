@@ -135,7 +135,7 @@
 
             <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=party">{{class_name('party')}} <small>({{$group['facet']['class']['party']}})</small></a></li>
 
-            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=activity}">{{class_name('activity')}} <small>({{$group['facet']['class']['activity']}})</small></a></li>
+            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=activity">{{class_name('activity')}} <small>({{$group['facet']['class']['activity']}})</small></a></li>
 
             <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=service">{{class_name('service')}} <small>({{$group['facet']['class']['service']}})</small></a></li>
         </ul>
