@@ -295,11 +295,21 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 	//Import version from PoolParty
 	$scope.importPP = function(){
 		$scope.version.provider_type = 'poolparty';
+
+		//add empty file
 		var obj = {
 			format: 'RDF/XML',
 			type: 'file',
 			uri: 'TBD'
 		};
+		$scope.addformat(obj);
+
+		//add empty apiSparql endpoint
+		var obj = {
+			format: 'RDF/XML',
+			type: 'apiSparql',
+			uri: 'TDB'
+		}
 		$scope.addformat(obj);
 	}
 
