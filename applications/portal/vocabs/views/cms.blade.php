@@ -248,17 +248,18 @@
 								</tr>
 							</tbody>
 						</table>
-						
-						<div class="form-group">
-							<span class="input-group-btn swatch-gray" style="background:#e9e9e9;">
-								<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Add a related entity <span class="caret"></span></button>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="" ng-click="relatedmodal('add', 'vocabulary')">Related Vocabulary</a></li>
-									<li><a href="" ng-click="relatedmodal('add', 'party')">Related Party</a></li>
-									<li><a href="" ng-click="relatedmodal('add', 'service')">Related Service</a></li>
-  								</ul>
-							</span>
+
+						<div class="btn-group">
+							<button class="btn btn-primary" ng-click="relatedmodal('add', 'publisher')"><i class="fa fa-plus"></i> Add a publisher</button>
+							<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="" ng-click="relatedmodal('add', 'vocabulary')">Related Vocabulary</a></li>
+								<li><a href="" ng-click="relatedmodal('add', 'party')">Related Party</a></li>
+								<li><a href="" ng-click="relatedmodal('add', 'service')">Related Service</a></li>
+							</ul>
 						</div>
+						
+						
 					</div>
 				</div>
 				

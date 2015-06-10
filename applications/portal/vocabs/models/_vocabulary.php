@@ -470,6 +470,8 @@ class _vocabulary {
 			$task_array[2]['provider_type'] = 'JsonTree';
 			$task_array[3]['type'] = 'IMPORT';
 			$task_array[3]['provider_type'] = 'Sesame';
+			$task_array[3]['type'] = 'PUBLISH';
+			$task_array[3]['provider_type'] = 'SISSVoc';
 			$task_params = json_encode($task_array);
 
 			$params = array(
@@ -490,7 +492,7 @@ class _vocabulary {
 			if ($content) {
 				$content = json_decode($content, true);
 
-				if (isset($content['concepts']) || isset($concept['sparql_endpoint'])) {
+				if (isset($content['concepts']) || isset($concept['sparql_endpoint']) || isset($concept['sissvoc_endpoints'])) {
 					//update the access point of type file, apiSparql path to the respective path
 					$query = $db->get_where('versions', array('id'=>$version_id));
 					if ($query->num_rows() > 0) {
@@ -499,8 +501,10 @@ class _vocabulary {
 						foreach ($vvdata['access_points'] as &$ap) {
 							if ($ap['type']=='file' && $ap['uri']=='TBD') {
 								$ap['uri'] = isset($content['concepts']) ? $concent['concepts'] : 'TBD';
-							} elseif ($ap['type']=='apiSparql' && $ap['uri']=='TDB') {
-								$ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TDB';
+							} elseif ($ap['type']=='apiSparql' && $ap['uri']=='TBD') {
+								$ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TBD';
+							} elseif ($ap['type']=='webPage') {
+								$ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'] : 'TBD';
 							}
 						}
 						$saved_data = array(

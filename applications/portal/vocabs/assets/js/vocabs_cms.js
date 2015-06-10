@@ -195,6 +195,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 			if (obj.intent=='add') {
 				var newObj = obj.data;
 				newObj['type'] = type;
+				if (newObj['type']=='publisher') newObj['type'] = 'party';
 				if (!$scope.vocab.related_entity) $scope.vocab.related_entity = [];
 				$scope.vocab.related_entity.push(newObj);		
 			} else if (obj.intent=='save') {
@@ -308,7 +309,15 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 		var obj = {
 			format: 'RDF/XML',
 			type: 'apiSparql',
-			uri: 'TDB'
+			uri: 'TBD'
+		}
+		$scope.addformat(obj);
+
+		//add empty sissvoc endpoint
+		var obj = {
+			format: 'RDF/XML',
+			type: 'webPage',
+			uri: 'TBD'
 		}
 		$scope.addformat(obj);
 	}
@@ -343,6 +352,15 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
 		$scope.intent = 'save';
 	}
 	$scope.type = type;
+
+	if ($scope.type=='publisher') {
+		$scope.type = 'party';
+		if (!$scope.entity) {
+			$scope.entity = {
+				relationship:'publishedBy'
+			}
+		}
+	}
 
 	$scope.populate = function(item, model, label) {
 		$log.debug(item);

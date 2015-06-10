@@ -141,10 +141,13 @@ class Vocabs extends MX_Controller {
 	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
 	public function edit($slug=false) {
-		if (!$this->user->isLoggedIn()) throw new Exception('User not logged in');
+		if (!$this->user->isLoggedIn()) {
+			// throw new Exception('User not logged in');
+			redirect(get_vocab_config('auth_url').'login#?redirect='.portal_url('vocabs/edit/'.$slug));
+		}
 		if (!$slug) throw new Exception('Require a Vocabulary Slug to edit');
 		$vocab = $this->vocab->getBySlug($slug);
-        if($vocab->prop['status']=='published'||$vocab->prop['status']=='deprecated') {
+        if($vocab->prop['status']=='published') {
             $draft_vocab = $this->vocab->getBySlug($slug.'DRAFT');
             if($draft_vocab) {
                 $vocab = $draft_vocab;
@@ -217,7 +220,7 @@ class Vocabs extends MX_Controller {
 				case 'licence':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' '.$key.':("'.$v.'")';
+						foreach($value as $v) $fq_str .= ' '.$key.':("'.$v.'")'; 
 						$this->solr->setOpt('fq', $fq_str);
 					}else{
 						$this->solr->setOpt('fq', '+'.$key.':("'.$value.'")');
@@ -293,7 +296,12 @@ class Vocabs extends MX_Controller {
 				foreach($vocabs as $vocab) {
 					$vocab_array = $vocab->display_array();
 					foreach($vocab_array['related_entity'] as $re) {
-						if ($type) {
+						if ($type=='publisher') {
+							if ($re['type']=='party' && isset($re['relationship']) && $re['relationship']=='publishedBy') {
+								$re['vocab_id'] = $vocab_array['id'];
+								$result[] = $re;
+							}
+						} elseif ($type) {
 							if ($re['type']==$type) {
 								$re['vocab_id'] = $vocab_array['id'];
 								$result[] = $re;

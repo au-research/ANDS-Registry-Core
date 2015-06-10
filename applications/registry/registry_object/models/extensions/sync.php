@@ -467,8 +467,8 @@ class Sync_extension extends ExtensionBase{
         $ci =& get_instance();
         $ci->load->driver('cache');
         try{
-        $ci->cache->file->delete($api_id);
-        $ci->cache->file->delete($portal_id);
+	        if ($ci->cache->file->get($api_id)) $ci->cache->file->delete($api_id);
+	        if ($ci->cache->file->get($portal_id)) $ci->cache->file->delete($portal_id);
         }
         catch(Exception $e){
 
