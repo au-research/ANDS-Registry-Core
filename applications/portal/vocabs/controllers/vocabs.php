@@ -465,20 +465,23 @@ class Vocabs extends MX_Controller {
 		if (!$vocab_config['solr_url']) throw new Exception('Indexer URL for Vocabulary module is not configured correctly');
 		$this->solr->setUrl($vocab_config['solr_url']);
 
-		//remove index
-		$this->solr->deleteByID($vocab->id);
-		
-		//index
-		$index = $vocab->indexable_json();
-		$solr_doc = array();
-		$solr_doc[] = $index;
-		$solr_doc = json_encode($solr_doc);
-		$add_result = json_decode($this->solr->add_json_commit($solr_doc), true);
+		//only index published records
+		if ($vocab->status=='published') {
+			//remove index
+			$this->solr->deleteByID($vocab->id);
+			
+			//index
+			$index = $vocab->indexable_json();
+			$solr_doc = array();
+			$solr_doc[] = $index;
+			$solr_doc = json_encode($solr_doc);
+			$add_result = json_decode($this->solr->add_json_commit($solr_doc), true);
 
-		if ($add_result['responseHeader']['status'] === 0) {
-			return true;
-		} else {
-			return false;
+			if ($add_result['responseHeader']['status'] === 0) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 	}
