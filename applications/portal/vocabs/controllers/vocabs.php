@@ -226,7 +226,10 @@ class Vocabs extends MX_Controller {
 		//facets
 		$this->solr
 			->setFacetOpt('field', 'subjects')
+			->setFacetOpt('field', 'publisher')
 			->setFacetOpt('field', 'language')
+			->setFacetOpt('field', 'access')
+			->setFacetOpt('field', 'format')
 			->setFacetOpt('field', 'licence')
 			->setFacetOpt('mincount', '1');
 
@@ -242,7 +245,7 @@ class Vocabs extends MX_Controller {
 		$this->solr
 			->setOpt('defType', 'edismax')
 			->setOpt('q.alt', '*:*')
-			->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001 concept^0.02');;
+			->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001 concept^0.02 publisher^0.5');;
 
 		foreach ($filters as $key=>$value) {
 			switch ($key) {
@@ -250,6 +253,9 @@ class Vocabs extends MX_Controller {
 					if ($value!='') $this->solr->setOpt('q', $value);
 					break;
 				case 'subjects':
+				case 'publisher':
+				case 'access':
+				case 'format':
 				case 'language':
 				case 'licence':
 					if(is_array($value)){
@@ -359,6 +365,12 @@ class Vocabs extends MX_Controller {
 				}
 			} else if($method=='user') {
 				$result = array_values(array_unique($this->user->affiliations()));
+			} else if ($method=='index') {
+				$result = array();
+				foreach ($vocabs as $vocab) {
+					$result[] = $vocab->indexable_json();
+					$this->index_vocab($vocab);
+				}
 			}
 
 			// POST request, for adding new item
