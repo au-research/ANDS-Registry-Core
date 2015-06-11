@@ -61,8 +61,15 @@ class Vocabularies extends CI_Model {
         $result = array();
         if ($this->user->isLoggedIn()) {
             $affiliations = $this->user->affiliations();
+            $role_id = $this->user->localIdentifier();
             $this->vocab_db = $this->load->database('vocabs', true);
             $query = $this->vocab_db->where_in('owner', $affiliations)->get('vocabularies');
+            if ($query && $query->num_rows() > 0) {
+                foreach($query->result_array() as $r) {
+                    $result[] = $r;
+                }
+            }
+            $query = $this->vocab_db->where_in('owner', $role_id)->get('vocabularies');
             if ($query && $query->num_rows() > 0) {
                 foreach($query->result_array() as $r) {
                     $result[] = $r;
