@@ -78,6 +78,23 @@ $(document).on('click', '.re_preview', function(event){
     },event);
 });
 
+$(document).on('click', '.deleteVocab', function(e){
+    e.preventDefault();
+    if (confirm('Are you sure you want to delete this vocabulary? This action is irreversible')) {
+        var vocab_id = $(this).attr('vocab_id');
+        $.ajax({
+            url:base_url+'vocabs/delete',
+            type: 'POST',
+            data:{id:vocab_id},
+            success: function(data) {
+                location.reload();
+            }
+        });
+    } else {
+        return false;
+    }
+});
+
 var app = angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'angular-loading-bar']);
 
 app.config(function($interpolateProvider, $locationProvider, $logProvider){

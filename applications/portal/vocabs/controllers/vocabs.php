@@ -502,6 +502,18 @@ class Vocabs extends MX_Controller {
 	}
 
 	/**
+	 * Delete a vocabulary
+	 * @todo Need ACL on this feature
+	 * @param  id $id POST
+	 * @return boolean
+	 */
+	public function delete() {
+		if ($this->user->isLoggedIn() && $this->input->post('id')) {
+			$this->vocab->delete($this->input->post('id'));
+		}
+	}
+
+	/**
 	 * ToolKit Service provider
 	 * To interact with 3rd party application in order to get vocabularies metadata
 	 * Requires a ?GET request 

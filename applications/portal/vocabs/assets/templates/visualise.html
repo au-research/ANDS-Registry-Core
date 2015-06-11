@@ -7,11 +7,27 @@
 		<ul ng-class="treeclass">
 			<li ng-repeat="concept in tree | filter:query">
 				<a href="" tooltip-placement="right" tooltip="[[concept.uri]]" ng-click="concept.showchild=!concept.showchild">
-					[[concept.value]] ([[concept.num_child]])
+					[[concept.value]] <span ng-if="concept.num_child > 0">([[concept.num_child]])</span>
 				</a>
 				<ul ng-if="concept.showchild">
 					<li ng-repeat="child in concept.child | filter:query">
-						<a href="" tooltip-placement="right" tooltip="[[concept.uri]]">[[child.value]]</a>
+						<a href="" tooltip-placement="right" tooltip="[[concept.uri]]" ng-click="child.showchild=!child.showchild">
+							[[child.value]] <span ng-if="child.num_child > 0">([[child.num_child]])</span>
+						</a>
+						<ul ng-if="child.showchild">
+							<li ng-repeat="child2 in child.child | filter:query">
+								<a href="" tooltip-placement="right" tooltip="[[child2.uri]]" ng-click="child2.showchild=!child2.showchild">
+									[[child2.value]] <span ng-if="child2.num_child > 0">([[child2.num_child]])</span>
+								</a>
+								<ul ng-if="child2.showchild">
+									<li ng-repeat="child3 in child2.child | filter:query">
+										<a href="" tooltip-placement="right" tooltip="[[child3.uri]]" ng-click="child3.showchild=!child3.showchild">
+											[[child3.value]] <span ng-if="child3.num_child > 0">([[child3.num_child]])</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</li>

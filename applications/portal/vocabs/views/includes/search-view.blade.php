@@ -5,7 +5,7 @@
 			<div class="col-md-4 col-lg-3 sidebar search-sidebar">
 				
 				<div ng-if="facets.subjects">
-				<h3>Subjects</h3>
+				<h3>Subject</h3>
 					<ul class="list-unstyled">
 						<li ng-repeat="facet in facets.subjects">
 							<a href="" ng-click="toggleFilter('subjects', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
@@ -14,7 +14,7 @@
 					</ul>
 				</div>
 				<div ng-if="facets.publisher">
-				<h3>Publishers</h3>
+				<h3>Publisher</h3>
 					<ul class="list-unstyled">
 						<li ng-repeat="facet in facets.publisher">
 							<a href="" ng-click="toggleFilter('publisher', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
@@ -50,7 +50,7 @@
 					</ul>
 				</div>
 				<div ng-if="facets.licence">
-				<h3>License</h3>
+				<h3>Licence</h3>
 					<ul class="list-unstyled">
 						<li ng-repeat="facet in facets.licence">
 							<a href="" ng-click="toggleFilter('licence', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>

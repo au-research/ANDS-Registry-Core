@@ -455,7 +455,33 @@ class Vocabularies extends CI_Model {
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
+    }
 
+    /**
+     * Delete this vocabulary
+     * - Remove all versions
+     * - Delete the vocabulary
+     * - Clear SOLR index of this record
+     * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @param int $id ID of the vocabulary for deletion
+     * @return boolean 
+     */
+    public function delete($id) {
+        $this->vocab_db = $this->load->database('vocabs', true);
+
+        //delete all versions
+        $this->vocab_db->delete('versions', array('vocab_id'=>$id));
+
+        //delete the vocabulary
+        $this->vocab_db->delete('vocabularies', array('id'=>$id));
+
+        //clear SOLR index
+        $this->load->library('solr');
+        $vocab_config = get_config_item('vocab_config');
+        if (!$vocab_config['solr_url']) throw new Exception('Indexer URL for Vocabulary module is not configured correctly');
+        $this->solr->setUrl($vocab_config['solr_url']);
+
+        $this->solr->deleteByID($id);
     }
 
     /**

@@ -14,10 +14,12 @@
             @endforeach
         @endif
 		<div class="clearfix"></div>
+		@if(isset($vocab['current_version']['note']))
 		<p>
 			<h4>Note</h4>
-			{{ $vocab['current_version']['note'] }}
+			{{ isset($vocab['current_version']['note']) ? $vocab['current_version']['note']: '' }}
 		</p>
+		@endif
 	</div>
 	<div class="panel-body">
 		<h4>Previous Versions</h4>

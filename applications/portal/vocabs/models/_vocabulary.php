@@ -195,27 +195,7 @@ class _vocabulary {
 				if ($raw) return $tree_data;
 
 				//build a tree a little bit nicer
-				$tree = array();
-				foreach($tree_data as $key=>$value) {
-					$node = array(
-						'uri' => $key,
-						'value' => isset($value['prefLabel']) ? $value['prefLabel'] : 'No Title',
-						'child' => array(),
-						'num_child' => 0
-					);
-					$num_child = 0;
-					foreach ($value as $key2=>$value2) {
-						if ($key2!='prefLabel') {
-							$node['child'][] = array(
-								'uri' => $key2,
-								'value' => isset($value2['prefLabel']) ? $value2['prefLabel'] : 'No Title',
-							);
-							$num_child++;
-						}
-					}
-					$node['num_child'] = $num_child;
-					$tree[] = $node;
-				}
+				$tree = $this->buildTree($tree_data);
 				
 				return $tree;
 			} else {
@@ -226,6 +206,29 @@ class _vocabulary {
 			//no current version
 			return false;
 		}
+	}
+
+	private function buildTree($treeData) {
+		$tree = array();
+		if (is_array($treeData)) {
+			foreach($treeData as $key=>$value) {
+				if ($key!='prefLabel') {
+					$node = array(
+						'uri' => $key,
+						'value' => isset($value['prefLabel']) ? $value['prefLabel'] : 'No Title',
+						'child' => array(),
+						'num_child' => 0
+					);
+					$childs = $this->buildTree($value);
+					$node['child'] = $childs;
+					$node['num_child'] = sizeof($childs);
+					$tree[] = $node;
+				}
+				
+			}
+			
+		}
+		return $tree;
 	}
 
 	private function get_response_data($version_id) {
@@ -428,49 +431,48 @@ class _vocabulary {
 		}
 		$incoming = array();
         if(isset($data['versions'])){
-		foreach($data['versions'] as $version) {
-			if (isset($version['id']) && $version['id']!="") {
-				$incoming[] = $version['id'];
+			foreach($data['versions'] as $version) {
+				if (isset($version['id']) && $version['id']!="") {
+					$incoming[] = $version['id'];
+				}
 			}
-		}
-		$deleted = array_diff($existing, $incoming);
-		foreach($deleted as $id) {
-			$db->delete('versions', array('id'=>$id));
-		}
+			$deleted = array_diff($existing, $incoming);
+			foreach($deleted as $id) {
+				$db->delete('versions', array('id'=>$id));
+			}
 
-		foreach($data['versions'] as $version) {
-			if (isset($version['id']) && $version['id']!="" && $version['vocab_id']==$this->prop['id']) {
-				//update the existing version
-				$saved_data = array(
-					'title' => $version['title'],
-					'status' => $version['status'],
-					'release_date' => date('Y-m-d H:i:s',strtotime($version['release_date'])),
-					'vocab_id' => $this->prop['id'],
-					'repository_id' => '',
-					'data' => json_encode($version)
-				);
-				$db->where('id', $version['id']);
-				$result = $db->update('versions', $saved_data);
-				$this->processTask($saved_data,$version['id'],$db);
-				if (!$result) throw new Exception($db->_error_message());
-			} else {
-				//add the version if it doesn't exist
-				$version_data = array(
-					'title' => $version['title'],
-					'status' => $version['status'],
-					'release_date' => date('Y-m-d H:i:s',strtotime($version['release_date'])),
-					'vocab_id' => $this->prop['id'],
-					'repository_id' => '',
-					'data' => json_encode($version)
-				);
-				$result = $db->insert('versions', $version_data);
-				$new_id = $db->insert_id();
-                if($this->prop['status']=='published')
-				$this->processTask($version_data,$new_id,$db);
-				//throw new Exception($task_result);
-				if (!$result) throw new Exception($db->_error_message());
+			foreach($data['versions'] as $version) {
+				if (isset($version['id']) && $version['id']!="" && $version['vocab_id']==$this->prop['id']) {
+					//update the existing version
+					$saved_data = array(
+						'title' => $version['title'],
+						'status' => $version['status'],
+						'release_date' => date('Y-m-d H:i:s',strtotime($version['release_date'])),
+						'vocab_id' => $this->prop['id'],
+						'repository_id' => '',
+						'data' => json_encode($version)
+					);
+					$db->where('id', $version['id']);
+					$result = $db->update('versions', $saved_data);
+					$this->processTask($saved_data,$version['id'],$db);
+					if (!$result) throw new Exception($db->_error_message());
+				} else {
+					//add the version if it doesn't exist
+					$version_data = array(
+						'title' => $version['title'],
+						'status' => $version['status'],
+						'release_date' => date('Y-m-d H:i:s',strtotime($version['release_date'])),
+						'vocab_id' => $this->prop['id'],
+						'repository_id' => '',
+						'data' => json_encode($version)
+					);
+					$result = $db->insert('versions', $version_data);
+					$new_id = $db->insert_id();
+	                if ($this->prop['status']=='published') $this->processTask($version_data,$new_id,$db);
+					//throw new Exception($task_result);
+					if (!$result) throw new Exception($db->_error_message());
+				}
 			}
-		}
         }
 		//update the object
 		$this->populate_from_db($this->prop['id']);
@@ -493,10 +495,10 @@ class _vocabulary {
 			$task_array[1]['provider_type'] = 'JsonList';
 			$task_array[2]['type'] = 'TRANSFORM';
 			$task_array[2]['provider_type'] = 'JsonTree';
-			$task_array[3]['type'] = 'IMPORT';
-			$task_array[3]['provider_type'] = 'Sesame';
 			$task_array[3]['type'] = 'PUBLISH';
 			$task_array[3]['provider_type'] = 'SISSVoc';
+			$task_array[4]['type'] = 'IMPORT';
+			$task_array[4]['provider_type'] = 'Sesame';
 			$task_params = json_encode($task_array);
 
 			$params = array(
@@ -525,11 +527,11 @@ class _vocabulary {
 						$vvdata = json_decode($vv->data, true);
 						foreach ($vvdata['access_points'] as &$ap) {
 							if ($ap['type']=='file' && $ap['uri']=='TBD') {
-								$ap['uri'] = isset($content['concepts']) ? $concent['concepts'] : 'TBD';
+								$ap['uri'] = isset($content['concepts']) ? $content['concepts'] : 'TBD';
 							} elseif ($ap['type']=='apiSparql' && $ap['uri']=='TBD') {
 								$ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TBD';
 							} elseif ($ap['type']=='webPage') {
-								$ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'] : 'TBD';
+								$ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'].'/concept/topConcepts' : 'TBD';
 							}
 						}
 						$saved_data = array(
@@ -547,6 +549,7 @@ class _vocabulary {
 
 		}
 	}
+
 	/**
 	 * Magic function to get an attribute, returns property within the $prop array
 	 * @param  string $property property name

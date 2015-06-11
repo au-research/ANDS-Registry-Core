@@ -43,8 +43,8 @@ if(isset($vocab['related_entity'])){
                 </p>
                 @endif
                 @if(isset($vocab['note']))
-                <h4>Notes</h4>
-                <p>{{$vocab['note']}}</p>
+                    <h4>Notes</h4>
+                    <p>{{ $vocab['note'] }}</p>
                 @endif
                 <h4>Licence</h4>
                 <p>
