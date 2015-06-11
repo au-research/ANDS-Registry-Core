@@ -312,7 +312,8 @@ class Vocabs extends MX_Controller {
 					}
 				}
 			} else if($method=='user') {
-                $result = array_values(array_unique($this->user->affiliations()));
+                $result['affiliations'] = array_values(array_unique($this->user->affiliations()));
+                $result['role_id'] = $this->user->localIdentifier();
             }
 
 			// POST request, for adding new item

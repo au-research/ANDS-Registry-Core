@@ -4,6 +4,9 @@
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, vocabs_factory){
+    vocabs_factory.user().then(function(data){
+        $scope.user_orgs = data.message;
+    });
 
 	$scope.vocab = {top_concept:[],subjects:[]};
 	$scope.mode = 'add'; // [add|edit]
@@ -17,6 +20,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
         {"value":"ru","text":"Russian"},
         {"value":"es","text":"Spanish"}]
     $scope.licence =["CC-BY","CC-BY-SA","CC-BY-ND","CC-BY-NC","CC-BY-NC-SA","CC-BY-NC-ND","GPL","AusGoalRestrictive","NoLicence","Unknown/Other"]
+
 
     $scope.opened = false;
 	$scope.decide = false;
@@ -54,7 +58,8 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	 * Collect all the user roles, for vocab.owner value
 	 */
     vocabs_factory.user().then(function(data){
-        $scope.user_orgs = data.message;
+        $scope.user_orgs = data.message['affiliations'];
+        $scope.vocab.user_owner = data.message['role_id'];
     });
 
 	$scope.projectSearch = function(q) {
@@ -145,6 +150,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 		if ($scope.mode=='add' || ($scope.vocab.status=='published' && status=='draft')) {
             $scope.vocab.status = status;
 			$log.debug('Adding Vocab', $scope.vocab);
+            $log.debug($scope.vocab)
 			vocabs_factory.add($scope.vocab).then(function(data){
 				$log.debug('Data Response from saving vocab', data);
 				if(data.status=='ERROR') {

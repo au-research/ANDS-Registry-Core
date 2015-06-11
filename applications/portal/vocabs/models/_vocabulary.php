@@ -341,6 +341,7 @@ class _vocabulary {
 			if ($result->num_rows() > 0) {
   				return false;
 			}
+            if(!isset($this->prop['owner'])) $this->prop['owner'] = $this->prop['user_owner'];
 
 			$data = array(
 				'title' => $this->prop['title'],
@@ -351,8 +352,8 @@ class _vocabulary {
 				'created_date'=> date("Y-m-d H:i:s"),
 				'modified_date' => date("Y-m-d H:i:s"),
                 'status' => $this->prop['status'],
-                'owner' => $this->prop['owner'],
-                'user_owner' => $this->prop['user_owner'],
+                'owner' => isset($this->prop['owner']) ? $this->prop['owner'] : '',
+                'user_owner' => isset($this->prop['user_owner']) ? $this->prop['user_owner'] : '',
 				'data' => json_encode($this->prop)
 			);
 			$result = $db->insert('vocabularies', $data);
@@ -403,6 +404,7 @@ class _vocabulary {
 			$existing[] = $version['id'];
 		}
 		$incoming = array();
+        if(isset($data['versions'])){
 		foreach($data['versions'] as $version) {
 			if (isset($version['id']) && $version['id']!="") {
 				$incoming[] = $version['id'];
@@ -446,7 +448,7 @@ class _vocabulary {
 				if (!$result) throw new Exception($db->_error_message());
 			}
 		}
-
+        }
 		//update the object
 		$this->populate_from_db($this->prop['id']);
 	}

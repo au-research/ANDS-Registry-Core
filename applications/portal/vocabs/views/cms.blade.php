@@ -95,13 +95,7 @@
                                 <label for="">Owner</label>
                                 <select name="" id="" class="form-control" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
                             </div>
-                        @else
-                           <input class="form-control" type="hidden" name="owner" value="" ng-model="vocab.owner"/>
-                        @endif
-
-
-                        <input name="user_owner" value="dsgsdgdsgfdsg" type="hidden" class="form-control" placeholder="vocab Owner" />
-
+                         @endif
 					</div>
 				</div>
 
