@@ -5,6 +5,14 @@
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<meta content="yes" name="apple-mobile-web-app-capable">
 	@include('includes/styles')
+	<script type="text/javascript">
+		//Fix Facebook return URL
+		if (window.location.hash == '#_=_') {
+		    window.location.hash = ''; // for older browsers, leaves a # behind
+		    history.pushState('', document.title, window.location.pathname); // nice and clean
+		    e.preventDefault(); // no page reload
+		}
+	</script>
 	@include('includes/scripts')
 </head>
 

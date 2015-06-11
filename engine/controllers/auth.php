@@ -16,6 +16,11 @@ class Auth extends CI_Controller {
 				'slug'		=> 'ldap',
 				'display' 	=> 'LDAP',
 				'view' 		=>  $this->load->view('authenticators/ldap', false, true)
+			),
+			'social' => array(
+				'slug' 		=> 'social',
+				'display'	=> 'Social',
+				'view' 		=> $this->load->view('authenticators/social', false, true)
 			)
 		);
 
@@ -83,9 +88,12 @@ class Auth extends CI_Controller {
 			$this->auth->load_params($params);
 			$response = $this->auth->authenticate();
 			$this->user->refreshAffiliations($this->user->localIdentifier());
+
+			if ($this->input->get('redirect')) redirect($redirect);
+
 		} catch (Exception $e) {
-			$this->auth->post_authentication_hook();
-			// throw new Exception($e->getMessage());
+			// $this->auth->post_authentication_hook();
+			throw new Exception($e->getMessage());
 		}
 		
 	}
