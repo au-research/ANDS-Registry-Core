@@ -191,29 +191,6 @@
 			</div>
 			<div class="col-md-4">
 
-				
-				
-			<!--	<div class="panel swatch-gray">
-					<div class="panel-heading">Publishers</div>
-					<div class="panel-body">
-						<table class="table">
-							<thead>
-								<tr><th>Publisher</th> <th></th></tr>
-							</thead>
-							<tbody>
-								<tr ng-repeat="related in vocab.related_entity track by $index" ng-if="related.type=='party' && related.relationship=='publishedBy'">
-									<td><a href="" ng-click="relatedmodal('edit', 'publisher', related)">[[ related.title ]]</a></td>
-									<td><a href="" ng-click="list_remove('related_entity', $index)"><i class="fa fa-remove"></i></a></td>
-								</tr>
-							</tbody>
-						</table>
-						
-						<div class="form-group">
-							<a href="" class="btn btn-primary" ng-click="relatedmodal('add', 'publisher')"><i class="fa fa-plus"></i> Add a related publisher</a>
-						</div>
-					</div>
-				</div> -->
-
 				<div class="panel swatch-gray">
 					<div class="panel-heading">Versions</div>
 					<div class="panel-body">

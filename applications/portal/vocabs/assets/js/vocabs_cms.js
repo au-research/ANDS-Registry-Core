@@ -17,7 +17,8 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
         {"value":"ru","text":"Russian"},
         {"value":"es","text":"Spanish"}]
     $scope.licence =["CC-BY","CC-BY-SA","CC-BY-ND","CC-BY-NC","CC-BY-NC-SA","CC-BY-NC-ND","GPL","AusGoalRestrictive","NoLicence","Unknown/Other"]
-	$scope.opened = false;
+
+    $scope.opened = false;
 	$scope.decide = false;
 
 	$scope.open = function($event) {
@@ -264,8 +265,11 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 	$scope.versionStatuses = ['current', 'superseded', 'deprecated'];
 	$scope.version = version ? version : {provider_type:false};
 	$scope.action = version ? 'save': 'add';
-
-
+    $scope.formats=['RDF/XML','TTL','N-Triples','JSON','TriG','TriX','N3','CSV','TSV','XLS','XLSX','BinaryRDF','ODS','ZIP','XML','TXT']
+    $scope.types=[{"value":"webPage","text":"Web page"},
+        {"value":"apiSparql","text":"API/SPARQL endpoint"},
+        {"value":"file","text":"File"}
+    ]
 	//calendar operation
 	$scope.opened = false;
 	$scope.open = function($event) {

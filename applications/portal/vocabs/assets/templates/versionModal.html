@@ -61,15 +61,15 @@
 							<form action="">
 								<div class="form-group">
 									<label for="">Access Point</label>
-									<input type="text" class="form-control" placeholder="Release Date" ng-model="newap.format">	
+                                    <input type="text" class="form-control" placeholder="Format" ng-model="newap.format" typeahead="format as format for format in formats |  limitTo:8" typeahead-min-length="0">
 								</div>
 								<div class="form-group">
 									<label for="">Access Point Type</label>
-									<input type="text" class="form-control" placeholder="Release Date" ng-model="newap.type">	
+                                    <select class="form-control" ng-options="type.value as type.text for type in types" ng-model="newap.type"></select>
 								</div>
 								<div class="form-group">
 									<label for="">Access Point URI</label>
-									<input type="text" class="form-control" placeholder="Release Date" ng-model="newap.uri">	
+									<input type="text" class="form-control" placeholder="URI" ng-model="newap.uri">
 								</div>
 								<button type="button" class="btn btn-primary" ng-click="addformat(newap)"><i class="fa fa-plus"></i> Add Access Point</button>
 							</form>
