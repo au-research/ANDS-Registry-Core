@@ -59,6 +59,28 @@
 										@endforeach
 									</tbody>
 								</table>
+                            <h4>Requested</h4>
+
+                            <table class="table">
+                                <thead>
+                                <tr><th>Requested</th><th>Status</th><th>Action</th></tr>
+                                </thead>
+                                <tbody>
+                                @foreach($owned_vocabs as $vocab)
+                                @if($vocab['status']=='requested')
+                                <tr>
+                                    <td><a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}">{{ $vocab['title'] }}</a></td>
+                                    <td>{{titleCase($vocab['status'])}}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="" class="btn btn-primary"><i class="fa fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endif
+                                @endforeach
+                                </tbody>
+                            </table>
 								
 							@endif
 						</div>
