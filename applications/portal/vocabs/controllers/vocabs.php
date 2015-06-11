@@ -17,6 +17,13 @@ class Vocabs extends MX_Controller {
 	 */
 	function index(){
 		// header('Content-Type: text/html; charset=utf-8');
+		$event = array(
+			'event'=>'pageview',
+			'page' => 'home',
+			'ip' => $this->input->ip_address(),
+			'user_agent' => $this->input->user_agent()
+		);
+		vocab_log_terms($event);
 		$this->blade->render('index');
 	}
 
@@ -39,9 +46,17 @@ class Vocabs extends MX_Controller {
 		}
 
 		if ($record) {
-            $vocab = $record->display_array();
-            $vocab['current_version'] = $record->current_version();
+			$vocab = $record->display_array();
 
+			$event = array(
+				'event'=>'vocabview',
+				'vocab' => $vocab['title'],
+				'slug' => $vocab['slug'],
+				'id' => $vocab['id']
+			);
+			vocab_log_terms($event);
+
+			$vocab['current_version'] = $record->current_version();
 			$this->blade
 				->set('vocab', $vocab)
 				->render('vocab');
@@ -50,59 +65,59 @@ class Vocabs extends MX_Controller {
 		}
 	}
 
-    /**
-     * Pre viewing a related entity
-     * @return view/html
-     * @author  Liz Woods <liz.woods@ands.org.au>
-     */
-    public function related_preview() {
+	/**
+	 * Pre viewing a related entity
+	 * @return view/html
+	 * @author  Liz Woods <liz.woods@ands.org.au>
+	 */
+	public function related_preview() {
 
-        $related = json_decode($this->input->get('related'),true);
-        $v_id = $this->input->get('v_id');
-        $vocabs = $this->vocab->getAll();
+		$related = json_decode($this->input->get('related'),true);
+		$v_id = $this->input->get('v_id');
+		$vocabs = $this->vocab->getAll();
 
-        $others = array();
+		$others = array();
 
-        foreach ($vocabs as $vocab) {
-            $thevocab=$vocab->display_array();
-            if($thevocab['id']!=$v_id){
-                // find all other vocabs that this related entity also published
-                if($related['type']=='publisher'){
-                    if(isset($thevocab['related_entity'])){
-                        foreach($thevocab['related_entity'] as $anotherrelated){
-                            if($anotherrelated['type']=='publisher'&& $anotherrelated['id']==$related['id']){
-                                $others[] = $thevocab;
-                            }
-                        }
-                    }
-                }
-                // find all other vocabs that this related entity also contributed to
-                if($related['type']=='contributor'){
-                    if(isset($thevocab['related_entity'])){
-                        foreach($thevocab['related_entity'] as $anotherrelated){
-                            if($anotherrelated['type']=='contributor'&& $anotherrelated['id']==$related['id']){
-                                $others[] = $thevocab;
-                            }
-                        }
-                    }
-                }
-                //if a related entity of type vocab is known to us then provide a link to it
-                if($related['type']=='vocab'){
-                    if($related['id']==$thevocab['id']){
-                        $others[]=$thevocab;
-                    }
-                }
-            }
-        }
+		foreach ($vocabs as $vocab) {
+			$thevocab=$vocab->display_array();
+			if($thevocab['id']!=$v_id){
+				// find all other vocabs that this related entity also published
+				if($related['type']=='publisher'){
+					if(isset($thevocab['related_entity'])){
+						foreach($thevocab['related_entity'] as $anotherrelated){
+							if($anotherrelated['type']=='publisher'&& $anotherrelated['id']==$related['id']){
+								$others[] = $thevocab;
+							}
+						}
+					}
+				}
+				// find all other vocabs that this related entity also contributed to
+				if($related['type']=='contributor'){
+					if(isset($thevocab['related_entity'])){
+						foreach($thevocab['related_entity'] as $anotherrelated){
+							if($anotherrelated['type']=='contributor'&& $anotherrelated['id']==$related['id']){
+								$others[] = $thevocab;
+							}
+						}
+					}
+				}
+				//if a related entity of type vocab is known to us then provide a link to it
+				if($related['type']=='vocab'){
+					if($related['id']==$thevocab['id']){
+						$others[]=$thevocab;
+					}
+				}
+			}
+		}
 
 
 
-        $related['other_vocabs'] = $others;
-            $this->blade
-                ->set('related', $related)
-                ->render('related_preview');
+		$related['other_vocabs'] = $others;
+			$this->blade
+				->set('related', $related)
+				->render('related_preview');
 
-    }
+	}
 
 	/**
 	 * Search
@@ -125,6 +140,11 @@ class Vocabs extends MX_Controller {
 	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */	
 	public function add() {
+		$event = array(
+			'event'=>'pageview',
+			'page' => 'add'
+		);
+		vocab_log_terms($event);
 		$this->blade
 			->set('scripts', array('vocabs_cms'))
 			->set('vocab', false)
@@ -147,14 +167,23 @@ class Vocabs extends MX_Controller {
 		}
 		if (!$slug) throw new Exception('Require a Vocabulary Slug to edit');
 		$vocab = $this->vocab->getBySlug($slug);
-        if($vocab->prop['status']=='published') {
-            $draft_vocab = $this->vocab->getBySlug($slug.'DRAFT');
-            if($draft_vocab) {
-                $vocab = $draft_vocab;
-            }
-        }
+		if($vocab->prop['status']=='published') {
+			$draft_vocab = $this->vocab->getBySlug($slug.'DRAFT');
+			if($draft_vocab) {
+				$vocab = $draft_vocab;
+			}
+		}
 		//do some checking of vocab here, ACL stuff @todo
 		if (!$vocab) throw new Exception('Vocab Slug '.$slug. ' not found');
+
+		$event = array(
+			'event'=>'pageview',
+			'page' => 'edit',
+			'vocab'=>$vocab->title,
+			'slug' =>$vocab->slug,
+			'id' => $vocab->id
+		);
+		vocab_log_terms($event);
 
 		$this->blade
 			->set('scripts', array('vocabs_cms'))
@@ -170,6 +199,11 @@ class Vocabs extends MX_Controller {
 	 * @return view
 	 */
 	public function page($slug) {
+		$event = array(
+			'event'=>'pageview',
+			'page' => $slug
+		);
+		vocab_log_terms($event);
 		$this->blade->render($slug);
 	}
 
@@ -231,6 +265,12 @@ class Vocabs extends MX_Controller {
 
 		// $this->solr->setFilters($filters);
 		$result = $this->solr->executeSearch(true);
+		$event = array(
+			'event'=>'search',
+			'filters' => $filters
+		);
+		if($filters) $event = array_merge($event, $filters); 
+		vocab_log_terms($event);
 		echo json_encode($result);
 	}
 
@@ -246,6 +286,12 @@ class Vocabs extends MX_Controller {
 			redirect(get_vocab_config('auth_url').'login#?redirect='.portal_url('vocabs/myvocabs'));
 		}
 		$owned = $this->vocab->getOwned();
+
+		$event = array(
+			'event'=>'pageview',
+			'page'=>'myvocabs'
+		);
+		vocab_log_terms($event);
 		$this->blade
 			->set('owned_vocabs', $owned)
 			->render('myvocabs');
@@ -312,8 +358,8 @@ class Vocabs extends MX_Controller {
 					}
 				}
 			} else if($method=='user') {
-                $result = array_values(array_unique($this->user->affiliations()));
-            }
+				$result = array_values(array_unique($this->user->affiliations()));
+			}
 
 			// POST request, for adding new item
 			$angulardata = json_decode(file_get_contents("php://input"), true);
@@ -326,7 +372,16 @@ class Vocabs extends MX_Controller {
 					$result = $vocab;
 					//index just added one
 					$this->index_vocab($vocab);
+
+					//log
+					$event = array(
+						'event'=>'add',
+						'vocab'=>$vocab->title
+					);
+					vocab_log_terms($event);
 				}
+
+				
 			}
 
 		} else if($id!='') {
@@ -347,12 +402,20 @@ class Vocabs extends MX_Controller {
 				if ($result) {
 					$result = 'Success in saving vocabulary';
 					//index saved one
-                    if($vocab->prop['status']=='published'){
-                        $this->index_vocab($vocab);
-                        if ($this->index_vocab($vocab)) {
-                            $result .= '. Success in indexing vocabulary';
-                        }
-                    }
+					if($vocab->prop['status']=='published'){
+						$this->index_vocab($vocab);
+						if ($this->index_vocab($vocab)) {
+							$result .= '. Success in indexing vocabulary';
+						}
+					}
+
+					//log
+					//log
+					$event = array(
+						'event'=>'edit',
+						'vocab'=>$vocab->title
+					);
+					vocab_log_terms($event);
 				}
 			}
 
@@ -361,11 +424,11 @@ class Vocabs extends MX_Controller {
 				$this->index_vocab($vocab);
 			} elseif($method=='versions') {
 				$result = $result['versions'];
-            } else if ($method=='tree') {
-            	$result = $vocab->display_tree();
-            } else if ($method=='tree-raw') {
-            	$result = $vocab->display_tree(true);
-            }
+			} else if ($method=='tree') {
+				$result = $vocab->display_tree();
+			} else if ($method=='tree-raw') {
+				$result = $vocab->display_tree(true);
+			}
 		}
 
 		echo json_encode(
@@ -389,7 +452,6 @@ class Vocabs extends MX_Controller {
 		$vocab_config = get_config_item('vocab_config');
 		if (!$vocab_config['solr_url']) throw new Exception('Indexer URL for Vocabulary module is not configured correctly');
 		$this->solr->setUrl($vocab_config['solr_url']);
-
 
 		//remove index
 		$this->solr->deleteByID($vocab->id);
