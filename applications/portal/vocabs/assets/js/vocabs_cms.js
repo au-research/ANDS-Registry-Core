@@ -411,7 +411,12 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
         {"value":"hasContributor","text":"Contributor"},
         {"value":"pointOfContact","text":"Point of contact"},
         {"value":"implementedBy","text":"Implementer"},
-        {"value":"consumerOf","text":"Consumer"}]
+        {"value":"consumerOf","text":"Consumer"},
+        {"value":"hasAssociationWith","text":"Association with"},
+        {"value":"isUsedBy","text":"Used by"},
+        {"value":"isDerivedFrom","text":"Derived from"},
+        {"value":"enriches","text":"Enriches"},
+        {"value":"isPartOf","text":"Part of"}]
 
 	$scope.relatedEntityTypes = ['publisher', 'vocabulary', 'service'];
 	$scope.entity = false;
