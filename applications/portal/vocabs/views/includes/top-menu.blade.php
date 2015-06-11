@@ -19,7 +19,7 @@
 				<li><a href="{{portal_url('vocabs/page/about')}}">About</a></li>
 				<li><a href="{{portal_url('vocabs/page/contribute')}}">Contribute</a></li>
 				@if(!$this->user->loggedIn())
-					<li><a href="{{ get_vocab_config('auth_url') }}login#?redirect={{ current_url() }}#/" class="login_btn">My Vocabs Login</a></li>
+					<li><a href="{{ get_vocab_config('auth_url') }}login?redirect={{ current_url() }}#?redirect={{ current_url() }}#/" class="login_btn">My Vocabs Login</a></li>
 				@else
 					<li><a href="{{ portal_url('vocabs/myvocabs') }}">My Vocabs</a></li>
 				@endif
