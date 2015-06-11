@@ -75,8 +75,49 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 		$scope.decide = true;
 	}
 
+
+	/**
+	 * Helper method for helping choosing between the dcterms
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  obj mess a mess to choose an item from
+	 * @return chosen      the chosen one/s
+	 */
+	$scope.choose = function(mess) {
+		
+		//the order we should look
+		var order_trig = ['concepts.trig', 'adms.trig', 'void.trig'];
+		var order_lang = ['value_en', 'value'];
+
+		//find the one with the right trig, default to the first one if none was found
+		var which = false;
+		angular.forEach(order_trig, function(trig){
+			if (mess[trig] && !which) which = mess[trig]; 
+		});
+		if (!which) which = mess[0];
+		// $log.debug(which);
+
+		//find the right value for the right trig, default to the first one
+		var chosen = false;
+		angular.forEach(order_lang, function(lang){
+			if (which[lang] && !chosen) chosen = which[lang];
+		});
+		if (!chosen) chosen = which[0];
+		// $log.debug(trig);
+
+		// $log.debug(chosen);
+		return chosen;
+	}
+
+	/**
+	 * Populate the vocab with data
+	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param suggested project Suggest selected from the typeahead
+	 * @return void         
+	 */
 	$scope.populate = function(project) {
 		if (project) {
+
+			//populate data from the PP API first
 			$scope.vocab.pool_party_id = project.id;
 			$scope.vocab.title = project.title;
 			$scope.vocab.description = project.description;
@@ -94,43 +135,61 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 				$scope.vocab.subjects.push({subject:project.subject,subject_source:'local'});
 			}
 
-			//populate with metadata from toolkit
+			//populate with metadata from toolkit, overwrite the previous data where need be
 			vocabs_factory.getMetadata($scope.vocab.pool_party_id).then(function(data){
+				// $log.debug(data);
 				if (data) {
-					$log.debug(data);
-					if (data['dcterms:title']) $scope.vocab.title = data['dcterms:title'];
-					if (data['dcterms:description']) $scope.vocab.description = data['dcterms:description'];
+
+					if (data['dcterms:title']) {
+						$scope.vocab.title = $scope.choose(data['dcterms:title']);
+					}
+
+
+					if (data['dcterms:description']) {
+						$scope.vocab.description = $scope.choose(data['dcterms:description']);
+					}
+
+					
 					if (data['dcterms:subject']) {
 						//overwrite the previous ones
+						var chosen = $scope.choose(data['dcterms:subject']);
+
 						$scope.vocab.subjects = []
-						$scope.vocab.subjects.push({subject:data['dcterms:subject'],subject_source:'local'});
+						angular.forEach(chosen, function(theone){
+							$scope.vocab.subjects.push({subject:theone,subject_source:'local'});
+						});
 					}
 
 					//related entity population
 					if (!$scope.vocab.related_entity) $scope.vocab.related_entity = [];
-					if (data['dcterms:publisher']) {
-						$scope.vocab.related_entity.push({
-							title:data['dcterms:publisher'],
-							type:'party',
-							relationship:'publishedBy'
-						});
-					}
 
-					if (data['dcterms:contributor']) {
-						$scope.vocab.related_entity.push({
-							title:data['dcterms:contributor'],
-							type:'party',
-							relationship:'hasContributor'
-						});
-					}
+					//Go through the list to determine the related entities to add
+					var rel_ent = [
+						{field:'dcterms:publisher', relationship:'publishedBy'},
+						{field:'dcterms:contributor', relationship:'hasContributor'},
+						{field:'dcterms:creator', relationship:'hasAuthor'},
+					];
+					angular.forEach(rel_ent, function(rel){
+						if (data[rel.field]) {
+							var chosen = $scope.choose(data[rel.field]);
+							var list = [];
+							if (angular.isString(chosen)) {
+								list.push(chosen);
+							} else {
+								angular.forEach(chosen, function(item){
+									list.push(item);
+								});
+							}
+							angular.forEach(list, function(item){
+								$scope.vocab.related_entity.push({
+									title:item,
+									type:'party',
+									relationship:rel.relationship
+								});
+							})
+						}
+					});
 
-					if (data['dcterms:creator']) {
-						$scope.vocab.related_entity.push({
-							title:data['dcterms:creator'],
-							type:'party',
-							relationship:'hasAuthor'
-						});
-					}
 				}
 			});
 		} else {
