@@ -23,6 +23,12 @@
 				@else
 					<li><a href="{{ portal_url('vocabs/myvocabs') }}">My Vocabs</a></li>
 				@endif
+				<?php 
+                    $profile_image = $this->user->profileImage();
+                ?>
+                @if($profile_image)
+                   <li><a href="{{portal_url('profile')}}"><img src="{{ $profile_image }}" alt="" class="profile_image_small"></a></li>
+                @endif
 			</ul>
 		</nav>
 	</div>

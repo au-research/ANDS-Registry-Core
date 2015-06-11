@@ -117,6 +117,26 @@ class User {
 		}
 	}
 
+	function profileImage() {
+		if ( $this->isLoggedIn() ) {
+			$role_db = $this->CI->load->database('roles', TRUE);
+			$result = $role_db->get_where('roles', array('role_id'=>$this->localIdentifier()));
+			if ($result->num_rows() > 0) {
+				$r = $result->first_row();
+				if ($r->oauth_data) {
+					$data = json_decode($r->oauth_data, true);
+					if ($data['photoURL']) return $data['photoURL'];
+				} else {
+					return asset_url('images/generic_user.png', 'core');
+				}
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	 * Return a unique identifier representing the logged in user
 	 */

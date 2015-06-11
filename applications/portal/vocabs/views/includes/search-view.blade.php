@@ -10,11 +10,32 @@
 						<a href="" ng-click="toggleFilter('subjects', facet.name, true)" ng-if="isFacet('subjects',facet.name)"><i class="fa fa-remove"></i></a>
 					</li>
 				</ul>
+				<h3>Publishers</h3>
+				<ul class="list-unstyled">
+					<li ng-repeat="facet in facets.publisher">
+						<a href="" ng-click="toggleFilter('publisher', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
+						<a href="" ng-click="toggleFilter('publisher', facet.name, true)" ng-if="isFacet('publisher',facet.name)"><i class="fa fa-remove"></i></a>
+					</li>
+				</ul>
 				<h3>Language</h3>
 				<ul class="list-unstyled">
 					<li ng-repeat="facet in facets.language">
 						<a href="" ng-click="toggleFilter('language', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
 						<a href="" ng-click="toggleFilter('language', facet.name, true)" ng-if="isFacet('language',facet.name)"><i class="fa fa-remove"></i></a>
+					</li>
+				</ul>
+				<h3>Format</h3>
+				<ul class="list-unstyled">
+					<li ng-repeat="facet in facets.format">
+						<a href="" ng-click="toggleFilter('format', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
+						<a href="" ng-click="toggleFilter('format', facet.name, true)" ng-if="isFacet('format',facet.name)"><i class="fa fa-remove"></i></a>
+					</li>
+				</ul>
+				<h3>Access</h3>
+				<ul class="list-unstyled">
+					<li ng-repeat="facet in facets.access">
+						<a href="" ng-click="toggleFilter('access', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
+						<a href="" ng-click="toggleFilter('access', facet.name, true)" ng-if="isFacet('access',facet.name)"><i class="fa fa-remove"></i></a>
 					</li>
 				</ul>
 				<h3>License</h3>

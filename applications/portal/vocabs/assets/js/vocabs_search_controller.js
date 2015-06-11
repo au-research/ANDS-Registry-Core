@@ -1,7 +1,12 @@
-app.controller('searchCtrl', function($scope, $log, vocabs_factory){
+app.controller('searchCtrl', function($scope, $log, $location, vocabs_factory){
 	
 	$scope.vocabs = [];
 	$scope.filters = {};
+
+	// $log.debug($location.search());
+	// The form of filters value for this will be <base_url>+/#!/?<filter>=<value>
+	// eg. <base_url>+/#!/?q=fish, #!/?q=fish&subjects=Fish
+	$scope.filters = $location.search();
 
 	$scope.search = function() {
 		vocabs_factory.search($scope.filters).then(function(data){
@@ -23,12 +28,15 @@ app.controller('searchCtrl', function($scope, $log, vocabs_factory){
 	}
 	$scope.search();
 
+	// Works with ng-debounce="500" defined in the search field, goes into effect every 500ms 
 	$scope.$watch('filters.q', function(newv, oldv) {
 		if ((newv || newv=='')) {
 			$scope.search();
 		}
 	});
 
+	//Below this line are all the searching directives
+	
 	$scope.getHighlight = function(id){
 		if ($scope.result.highlighting && !$.isEmptyObject($scope.result.highlighting[id])) {
 			return $scope.result.highlighting[id];

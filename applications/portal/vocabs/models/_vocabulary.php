@@ -41,45 +41,58 @@ class _vocabulary {
 			$json[$s] = $this->prop[$s];
 		}
 
-		if ($this->prop['data']) {
-			$data = json_decode($this->prop['data'], true);
+		$data = $this->display_array();
 
-			if (isset($data['description'])) {
-				$json['description'] = $data['description'];
-			}
+		if (isset($data['description'])) {
+			$json['description'] = $data['description'];
+		}
 
-			if (isset($data['subjects'])) {
-				$json['subjects'] = array();
-				foreach($data['subjects'] as $subject) {
-					$json['subjects'][] = $subject['subject'];
+		if (isset($data['language'])) {
+			$json['language'] = array();
+			if (is_array($data['language'])) {
+				foreach($data['language'] as $s) {
+					$json['language'][] = $s;
 				}
-			}
-			if (isset($data['top_concept'])) {
-				$json['top_concept'] = array();
-				if (is_array($data['top_concept'])) {
-					foreach($data['top_concept'] as $s) {
-						$json['top_concept'][] = $s;
-					}
-				} else {
-					$json['top_concept'] = $data['top_concept'];
-				}
-			}
-
-			if (isset($data['language'])) {
-				$json['language'] = array();
-				if (is_array($data['language'])) {
-					foreach($data['language'] as $s) {
-						$json['language'][] = $s;
-					}
-				} else {
-					$json['language'][] = $data['language'];
-				}
-				
+			} else {
+				$json['language'][] = $data['language'];
 			}
 		}
 
+		if (isset($data['subjects'])) {
+			$json['subjects'] = array();
+			foreach($data['subjects'] as $subject) {
+				$json['subjects'][] = $subject['subject'];
+			}
+		}
+		if (isset($data['top_concept'])) {
+			$json['top_concept'] = array();
+			if (is_array($data['top_concept'])) {
+				foreach($data['top_concept'] as $s) {
+					$json['top_concept'][] = $s;
+				}
+			} else {
+				$json['top_concept'] = $data['top_concept'];
+			}
+		}
+
+		if (isset($data['owner'])) {
+			$json['owner'] = $data['owner'];
+		}
+
+		//Index publisher
+		//Publisher is a related entity of type party with the relationship of publishedBy
+		$json['publisher'] = array();
+		if (isset($data['related_entity'])) {
+			foreach($data['related_entity'] as $re) {
+				if ($re['type']=='party' && isset($re['relationship']) && $re['relationship'] == 'publishedBy') {
+					$json['publisher'][] = $re['title'];
+				}
+			}
+		}
+
+
 		//Index concept
-		//
+		
 		//Find current version
 		$current_version = false;
 		foreach ($this->versions as $version) {
@@ -88,31 +101,41 @@ class _vocabulary {
 			}
 		}
 
-		$json['concept'] = array();
-
-		//find the task/file associated with the current version
-		$ci =& get_instance();
-		$db = $ci->load->database('vocabs', true);
-		$query = $db->get_where('task', array('version_id'=>$current_version['id'], 'status'=>'success'));
-		$concept_list_path = false;
-		if ($query->num_rows() > 0) {
-			$result = $query->first_row();
-			$response = $result->response;
-			$response = json_decode($response, true);
-			$concept_list_path = isset($response['concepts_list']) ? $response['concepts_list'] : false;
-		}
 		
-
-		//read the file and then add the concepts to the index
-		if ($concept_list_path) {
-			$content = @file_get_contents($concept_list_path);
-			$content = json_decode($content, true);
-			foreach ($content as $concept) {
-				if (isset($concept['prefLabel'])) {
-					$json['concept'][] = $concept['prefLabel'];
+		$json['concept'] = array();
+		if ($current_version) {
+			//find the task/file associated with the current version
+			$ci =& get_instance();
+			$db = $ci->load->database('vocabs', true);
+			$query = $db->get_where('task', array('version_id'=>$current_version['id'], 'status'=>'success'));
+			$concept_list_path = false;
+			if ($query->num_rows() > 0) {
+				$result = $query->first_row();
+				$response = $result->response;
+				$response = json_decode($response, true);
+				$concept_list_path = isset($response['concepts_list']) ? $response['concepts_list'] : false;
+			}
+			
+			//read the file and then add the concepts to the index
+			if ($concept_list_path) {
+				$content = @file_get_contents($concept_list_path);
+				$content = json_decode($content, true);
+				foreach ($content as $concept) {
+					if (isset($concept['prefLabel'])) {
+						$json['concept'][] = $concept['prefLabel'];
+					}
 				}
 			}
+
+			//accessibility
+			$json['access'] = array();
+			$json['format'] = array();
+			foreach ($current_version['access_points'] as $ap) {
+				$json['access'][] = $ap['type'];
+				$json['format'][] = $ap['format'];
+			}
 		}
+		
 		
 		
 
