@@ -512,7 +512,7 @@ class _vocabulary {
 				array_push($task_array, $transform_task);
 				$transform_task = array('type'=>'TRANSFORM', 'provider_type'=>'JsonTree');
 				array_push($task_array, $transform_task);
-				$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesane');
+				$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesame');
 				array_push($task_array, $import_task);
 				$publish_task = array('type'=>'PUBLISH', 'provider_type'=>'SISSVoc');
 				array_push($task_array, $publish_task);
