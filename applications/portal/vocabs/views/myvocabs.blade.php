@@ -59,41 +59,7 @@
 										@endforeach
 									</tbody>
 								</table>
-                            <h4>Requested</h4>
-
-                            <table class="table">
-                                <thead>
-                                <tr><th>Requested</th><th>Status</th><th>Action</th></tr>
-                                </thead>
-                                <tbody>
-                                @foreach($owned_vocabs as $vocab)
-                                @if($vocab['status']=='requested' && $this->user->hasFunction('REGISTRY_SUPERUSER'))
-                                <tr>
-                                    <td><a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}">{{ $vocab['title'] }}</a></td>
-                                    <td>{{titleCase($vocab['status'])}}</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
-                                            <a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @elseif($vocab['status']=='requested')
-                                <tr>
-                                    <td>{{ $vocab['title'] }}</td>
-                                    <td>{{titleCase($vocab['status'])}}</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endif
-                                @endforeach
-                                </tbody>
-                            </table>
-								
-							@endif
+						@endif
 						</div>
 					</div>
 				</div>

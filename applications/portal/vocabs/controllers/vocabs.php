@@ -412,10 +412,10 @@ class Vocabs extends MX_Controller {
 			$angulardata = json_decode(file_get_contents("php://input"), true);
 			$data = isset($angulardata['data']) ? $angulardata['data'] : false;
 			if ($data) {
-				$result = $vocab->save($data);
-				if (!$result) throw new Exception('Error Saving Vocabulary');
-				if ($result) {
-                    if($vocab->prop['status']=='requested'){
+                if(null==$this->user->affiliations() && $data['status']=='published'){
+                        $data['status'] = 'draft';
+                        $vocab->prop['status'] = 'draft';
+                        $vocab->save($data);
                         $to_email = $this->config->item('site_admin_email');
                         $content = 'Request to publish vocabulary'.$data['title'].NL;
                         $email = $this->load->library('email');
@@ -425,25 +425,26 @@ class Vocabs extends MX_Controller {
                         $email->message($content);
                         $email->send();
                         $result = 'A request to publish this vocabulary has been sent to '.$this->config->item('site_admin_email');
-
-                    }else{
-                        $result = 'Success in saving vocabulary';
-                        //index saved one
-                        if($vocab->prop['status']=='published'){
-                            $this->index_vocab($vocab);
-                            if ($this->index_vocab($vocab)) {
-                                $result .= '. Success in indexing vocabulary';
+                }
+                else{
+                    $result = $vocab->save($data);
+                    if (!$result) throw new Exception('Error Saving Vocabulary');
+                    if ($result) {
+                            $result = 'Success in saving vocabulary';
+                            //index saved one
+                            if($vocab->prop['status']=='published'){
+                                $this->index_vocab($vocab);
+                                if ($this->index_vocab($vocab)) {
+                                    $result .= '. Success in indexing vocabulary';
+                                }
                             }
-                        }
                     }
-					//log
-					//log
-					$event = array(
-						'event'=>'edit',
-						'vocab'=>$vocab->title
-					);
-					vocab_log_terms($event);
-				}
+                        $event = array(
+                            'event'=>'edit',
+                            'vocab'=>$vocab->title
+                        );
+                        vocab_log_terms($event);
+                }
 			}
 
 			if ($method=='index') {

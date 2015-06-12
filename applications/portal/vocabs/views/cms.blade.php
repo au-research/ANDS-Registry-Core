@@ -245,14 +245,12 @@
 
                           <a href="" class="btn btn-large btn-primary" ng-click="save('draft')">Save to draft</a>
 
-                          @if(null!=$this->user->affiliations())
                           <a href="" class="btn btn-large btn-primary" ng-click="save('published')">Publish</a>
-                          @else
-                          <a href="" class="btn btn-large btn-primary" ng-click="save('requested')">Submit for assessment</a>
-                          @endif
+
                           @if($vocab && $vocab->prop['status']=='published')
                           <a href="" class="btn btn-large btn-primary" ng-click="save('deprecated')">Deprecate</a>
                           @endif
+
                           <div class="alert alert-danger element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="error_message">[[ error_message ]]</div>
                           <div class="alert alert-success element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="success_message">[[ success_message ]]</div>
                       </div>
