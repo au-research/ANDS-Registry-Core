@@ -502,8 +502,10 @@ class _vocabulary {
 					if ($ap['type']=='file') $file = $ap; 
 				}
 				if ($file) {
-					$harvest_task = array('type'=>'HARVEST', 'provider_type' => 'File', 'file_path' => get_vocab_config('upload_path').$file['uri']);
+					$harvest_task = array('type'=>'HARVEST', 'provider_type' => 'File', 'file_path' => vocab_uploaded_url($file['uri']));
 					array_push($task_array, $harvest_task);
+					$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesame');
+					array_push($task_array, $import_task);
 				}
 			}
 

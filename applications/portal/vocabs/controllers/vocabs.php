@@ -598,7 +598,7 @@ class Vocabs extends MX_Controller {
 					'status'=>'OK',
 					'message' => 'File uploaded successfully!',
 					'data' => $this->upload->data(),
-					'url' => portal_url('vocabs/download/?file='.$name),
+					'url' => $name,
 				)
 			);
 		}
