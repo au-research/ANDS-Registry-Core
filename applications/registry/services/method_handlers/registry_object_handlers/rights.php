@@ -14,7 +14,7 @@ class Rights extends ROHandler {
         $skip = false;
         if($rights && sizeof($rights) > 0) {
         	foreach($rights as $right) {
-        		if($right['type']=='accessRights') $skip = true;
+        		if($right['type']=='accessRights' && isset($right['accessRights_type'])) $skip = true;
         	}
         }
         
