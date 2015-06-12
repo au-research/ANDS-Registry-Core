@@ -8,7 +8,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
         $scope.user_orgs = data.message;
     });
 
-	$scope.vocab = {top_concept:[],subjects:[]};
+	$scope.vocab = {top_concept:[],subjects:[],language:[]};
 	$scope.mode = 'add'; // [add|edit]
 	$scope.langs = [{"value":"zh","text":"Chinese"},
         {"value":"en","text":"English"},
@@ -167,7 +167,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 					var rel_ent = [
 						{field:'dcterms:publisher', relationship:'publishedBy'},
 						{field:'dcterms:contributor', relationship:'hasContributor'},
-						{field:'dcterms:creator', relationship:'hasAuthor'},
+						{field:'dcterms:creator', relationship:'hasAuthor'}
 					];
 					angular.forEach(rel_ent, function(rel){
 						if (data[rel.field]) {
@@ -314,7 +314,11 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
 	$scope.addtolist = function(list, item) {
-		list.push(item);
+        if(!$scope.vocab[list])
+        {
+            $scope.vocab[list] = [];
+        }
+        $scope.vocab[list].push(item);
 	}
 
 	$scope.list_remove = function(type, index) {
