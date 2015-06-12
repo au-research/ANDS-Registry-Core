@@ -20,8 +20,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
         {"value":"ru","text":"Russian"},
         {"value":"es","text":"Spanish"}]
     $scope.licence =["CC-BY","CC-BY-SA","CC-BY-ND","CC-BY-NC","CC-BY-NC-SA","CC-BY-NC-ND","GPL","AusGoalRestrictive","NoLicence","Unknown/Other"]
-
-
+    $scope.subject_sources=['ANZSRC-FOR','local']
     $scope.opened = false;
 	$scope.decide = false;
 

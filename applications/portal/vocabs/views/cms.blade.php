@@ -177,7 +177,7 @@
                               </div>
                               <div class="form-group">
                                   <label for="">Subject Source</label>
-                                  <input type="text" class="form-control" placeholder="Subject Source" ng-model="newSubject.subject_source">
+                                  <select name="" id="" class="form-control" placeholder="Subject Source" ng-options="source for source in subject_sources" ng-model="newSubject.subject_source"></select>
                               </div>
                               <button class="btn btn-primary" ng-submit="addtolist('subjects', newSubject)"><i class="fa fa-plus"></i> Add Subject</button>
                           </form>
