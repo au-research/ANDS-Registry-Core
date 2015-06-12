@@ -20,7 +20,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
         {"value":"ru","text":"Russian"},
         {"value":"es","text":"Spanish"}]
     $scope.licence =["CC-BY","CC-BY-SA","CC-BY-ND","CC-BY-NC","CC-BY-NC-SA","CC-BY-NC-ND","GPL","AusGoalRestrictive","NoLicence","Unknown/Other"]
-
+    $scope.subject_sources=['ANZSRC-FOR','local']
 
     $scope.opened = false;
 	$scope.decide = false;
@@ -324,7 +324,10 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
 	$scope.addtolist = function(list, item) {
-		list.push(item);
+        if(!$scope.vocab[list]){
+            $scope.vocab[list] = [];
+        }
+        $scope.vocab[list].push(item);
 	}
 
 	$scope.list_remove = function(type, index) {
