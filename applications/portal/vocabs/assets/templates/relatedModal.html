@@ -8,22 +8,20 @@
 			<div class="container-fluid">
                 <input name="type" value="[[ type ]]" type="hidden"/>
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-12">
 						<div class="form-group">
 							<label for="">Title</label>
 							<input type="text" class="form-control" placeholder="entity Title" ng-model="entity.title" typeahead="suggest.title as suggest.title for suggest in suggestions | filter:$viewValue | limitTo:8" typeahead-min-length="0" typeahead-on-select="populate($item, $model, $label)">
 						</div>
-						<div class="form-group">
+					</div>
+					<div class="col-md-6">
+                        <input type="hidden" value="publishedBy" name="relationship" ng-if="type=='publisher'"/>
+                        <div class="form-group">
 							<label for="">Email</label>
 							<input type="text" class="form-control" placeholder="entity Email" ng-model="entity.email">	
 						</div>
 					</div>
 					<div class="col-md-6">
-					<div class="form-group" ng-if="type!='publisher'">
-						<label for="">Relation</label>
-						<select name="" id="" class="form-control" placeholder="entity Relation" ng-options="relationship.value as relationship.text for relationship in relatedEntityRelations" ng-model="entity.relationship"></select>
-					</div>
-                        <input type="hidden" value="publishedBy" name="relationship" ng-if="type=='publisher'"/>
 						<div class="form-group">
 							<label for="">Phone</label>
 							<input type="text" class="form-control" placeholder="entity Phone" ng-model="entity.phone">	
@@ -32,6 +30,22 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12">
+						<div class="form-group" ng-if="type!='publisher'">
+							<label for="">Relation</label>
+							<div class="input-group" ng-repeat="relationship in entity.relationship track by $index">
+								<span class="input form-control uneditable-input" placeholder="Identifier">[[ relationship | languageFilter:relatedEntityRelations]]</span>
+								<span class="input-group-btn" >
+									<button class="btn btn-primary" type="button" ng-click="list_remove('relationship', $index)"><i class="fa fa-remove"></i></button>
+								</span>
+							</div>
+							<p></p>
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Relationship" ng-model="newrel" typeahead="rel.value as rel.text for rel in relatedEntityRelations | limitTo:8">
+								<span class="input-group-btn">
+									<button class="btn btn-primary" type="button" ng-click="list_add('relationship', newrel)"><i class="fa fa-plus"></i> Add Relationship</button>
+								</span>
+							</div>
+						</div>
 						<div class="form-group">
 							<label for="">Identifiers</label>
 							<div class="input-group" ng-repeat="ident in entity.identifiers track by $index">

@@ -69,7 +69,13 @@
 								</div>
 								<div class="form-group">
 									<label for="">Access Point URI</label>
-									<input type="text" class="form-control" placeholder="URI" ng-model="newap.uri">
+									<p class="input-group">
+										<input type="text" class="form-control" placeholder="URI" ng-model="newap.uri">
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-default" ng-file-select ng-file-change="upload($files, newap)"><i class="fa fa-upload"></i> Upload File</button>
+										</span>
+										<div class="alert alert-important" ng-if="error_upload_msg">[[ error_upload_msg ]]</div>
+									</p>
 								</div>
 								<button type="button" class="btn btn-primary" ng-click="addformat(newap)"><i class="fa fa-plus"></i> Add Access Point</button>
 							</form>

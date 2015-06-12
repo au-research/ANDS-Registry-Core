@@ -8,7 +8,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
         $scope.user_orgs = data.message;
     });
 
-	$scope.vocab = {top_concept:[],subjects:[],language:[]};
+	$scope.vocab = {top_concept:[],subjects:[]};
 	$scope.mode = 'add'; // [add|edit]
 	$scope.langs = [{"value":"zh","text":"Chinese"},
         {"value":"en","text":"English"},
@@ -143,12 +143,10 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 						$scope.vocab.title = $scope.choose(data['dcterms:title']);
 					}
 
-
 					if (data['dcterms:description']) {
 						$scope.vocab.description = $scope.choose(data['dcterms:description']);
 					}
 
-					
 					if (data['dcterms:subject']) {
 						//overwrite the previous ones
 						var chosen = $scope.choose(data['dcterms:subject']);
@@ -166,7 +164,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 					var rel_ent = [
 						{field:'dcterms:publisher', relationship:'publishedBy'},
 						{field:'dcterms:contributor', relationship:'hasContributor'},
-						{field:'dcterms:creator', relationship:'hasAuthor'}
+						{field:'dcterms:creator', relationship:'hasAuthor'},
 					];
 					angular.forEach(rel_ent, function(rel){
 						if (data[rel.field]) {
@@ -180,11 +178,23 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 								});
 							}
 							angular.forEach(list, function(item){
-								$scope.vocab.related_entity.push({
-									title:item,
-									type:'party',
-									relationship:rel.relationship
+
+								//check if same item exist
+								var exist = false;
+								angular.forEach($scope.vocab.related_entity, function(entity){
+									if (entity.title==item) exist = entity; 
 								});
+
+								if (exist) {
+									exist.relationship.push(rel.relationship);
+								} else {
+									$scope.vocab.related_entity.push({
+										title:item,
+										type:'party',
+										relationship:[rel.relationship]
+									});
+								}
+								
 							})
 						}
 					});
@@ -313,11 +323,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
 	$scope.addtolist = function(list, item) {
-        if(!$scope.vocab[list])
-        {
-            $scope.vocab[list] = [];
-        }
-        $scope.vocab[list].push(item);
+		list.push(item);
 	}
 
 	$scope.list_remove = function(type, index) {
@@ -329,7 +335,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	}
 });
 
-app.controller('versionCtrl', function($scope, $modalInstance, $log, version, action, vocab){
+app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, version, action, vocab){
 	$scope.versionStatuses = ['current', 'superseded', 'deprecated'];
 	$scope.version = version ? version : {provider_type:false};
 	$scope.action = version ? 'save': 'add';
@@ -394,6 +400,32 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 		$scope.addformat(obj);
 	}
 
+	$scope.upload = function(files, ap) {
+		if (!ap) ap = {};
+		if (files && files.length) {
+			for (var i = 0; i < files.length; i++) {
+				var file = files[i];
+				$scope.uploading = true;
+				delete $scope.error_upload_msg;
+				$upload.upload({
+					url: base_url+'vocabs/upload',
+					file: file
+				}).progress(function (evt) {
+					var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+					$log.debug('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+				}).success(function (data, status, headers, config) {
+					$log.debug(config);
+					$scope.uploading = false;
+					if(data.status == 'OK' && data.url) {
+						ap.uri = data.url;
+					} else if(data.status=='ERROR') {
+						$scope.error_upload_msg = data.message;
+					}
+				});
+			}
+		}
+	}
+
 	$scope.list_remove = function(type, index) {
 		if (index > 0) {
 			$scope.version[type].splice(index, 1);
@@ -414,12 +446,7 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
         {"value":"hasContributor","text":"Contributor"},
         {"value":"pointOfContact","text":"Point of contact"},
         {"value":"implementedBy","text":"Implementer"},
-        {"value":"consumerOf","text":"Consumer"},
-        {"value":"hasAssociationWith","text":"Association with"},
-        {"value":"isUsedBy","text":"Used by"},
-        {"value":"isDerivedFrom","text":"Derived from"},
-        {"value":"enriches","text":"Enriches"},
-        {"value":"isPartOf","text":"Part of"}]
+        {"value":"consumerOf","text":"Consumer"}]
 
 	$scope.relatedEntityTypes = ['publisher', 'vocabulary', 'service'];
 	$scope.entity = false;
@@ -449,8 +476,8 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
 		if (!$scope.entity.identifiers || $scope.entity.identifiers.length == 0 ) $scope.entity.identifiers = item.identifiers;
 	}
 
-	$scope.list_add = function(type) {
-		var obj = {};
+	$scope.list_add = function(type, obj) {
+		if (!obj) var obj = {};
 		if (type=='identifiers') {
 			obj = {id:''};
 		} else if(type=='url') {

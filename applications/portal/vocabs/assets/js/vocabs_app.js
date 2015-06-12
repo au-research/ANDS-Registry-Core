@@ -95,7 +95,7 @@ $(document).on('click', '.deleteVocab', function(e){
     }
 });
 
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'angular-loading-bar']);
+var app = angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'angular-loading-bar', 'angularFileUpload']);
 
 app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$interpolateProvider.startSymbol('[[');

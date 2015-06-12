@@ -14,6 +14,7 @@
     <script src="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.js', 'core')}}"></script>
     <script src="{{asset_url('omega/js/packages.min.js','templates')}}"></script>
 
+    <script type="text/javascript" src="{{asset_url('lib/ng-file-upload/angular-file-upload-all.min.js','core')}}"></script>
 @else
     <script src="{{ asset_url('js/lib.min.js','core') }}"></script>
 @endif
