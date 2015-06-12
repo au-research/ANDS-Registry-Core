@@ -6,6 +6,11 @@ function get_vocab_config($item) {
 	} else return false;
 }
 
+function vocab_uploaded_url($name) {
+	$path = get_vocab_config('upload_path').$name;
+	return $path;
+}
+
 function vocab_log($message, $type='info') {
 	$CI =& get_instance();
 

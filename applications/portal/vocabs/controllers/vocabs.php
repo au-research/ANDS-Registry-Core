@@ -367,8 +367,8 @@ class Vocabs extends MX_Controller {
 					
 				}
 			} else if($method=='user') {
-                $result['affiliations'] = array_values(array_unique($this->user->affiliations()));
-                $result['role_id'] = $this->user->localIdentifier();
+				$result['affiliations'] = array_values(array_unique($this->user->affiliations()));
+				$result['role_id'] = $this->user->localIdentifier();
 
 			} else if ($method=='index') {
 				$result = array();
@@ -418,27 +418,27 @@ class Vocabs extends MX_Controller {
 				$result = $vocab->save($data);
 				if (!$result) throw new Exception('Error Saving Vocabulary');
 				if ($result) {
-                    if($vocab->prop['status']=='requested'){
-                        $to_email = $this->config->item('site_admin_email');
-                        $content = 'Request to publish vocabulary'.$data['title'].NL;
-                        $email = $this->load->library('email');
-                        $email->to($to_email);
-                        $email->from($to_email);
-                        $email->subject('Request to publish vocabulary'.$data['title']);
-                        $email->message($content);
-                        $email->send();
-                        $result = 'A request to publish this vocabulary has been sent to '.$this->config->item('site_admin_email');
+					if($vocab->prop['status']=='requested'){
+						$to_email = $this->config->item('site_admin_email');
+						$content = 'Request to publish vocabulary'.$data['title'].NL;
+						$email = $this->load->library('email');
+						$email->to($to_email);
+						$email->from($to_email);
+						$email->subject('Request to publish vocabulary'.$data['title']);
+						$email->message($content);
+						$email->send();
+						$result = 'A request to publish this vocabulary has been sent to '.$this->config->item('site_admin_email');
 
-                    }else{
-                        $result = 'Success in saving vocabulary';
-                        //index saved one
-                        if($vocab->prop['status']=='published'){
-                            $this->index_vocab($vocab);
-                            if ($this->index_vocab($vocab)) {
-                                $result .= '. Success in indexing vocabulary';
-                            }
-                        }
-                    }
+					}else{
+						$result = 'Success in saving vocabulary';
+						//index saved one
+						if($vocab->prop['status']=='published'){
+							$this->index_vocab($vocab);
+							if ($this->index_vocab($vocab)) {
+								$result .= '. Success in indexing vocabulary';
+							}
+						}
+					}
 					//log
 					//log
 					$event = array(
@@ -551,7 +551,12 @@ class Vocabs extends MX_Controller {
 		}
 	}
 
-	function upload() {
+	/**
+	 * Upload API entry point for uploading a file
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return json response
+	 */
+	public function upload() {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
@@ -565,26 +570,26 @@ class Vocabs extends MX_Controller {
 		$config['allowed_types'] = 'xml|rdf|pdf|nt|json|trig|trix|n3|csv|tsv|xls|xlsx|ods|zip|txt';
 		$config['overwrite'] = true;
 		$config['max_size']	= '50000';
-        $this->load->library('upload', $config);
-        $this->upload->initialize($config);
+		$this->load->library('upload', $config);
+		$this->upload->initialize($config);
 
-        if(!$this->upload->do_upload('file')) {
-            $upload_file_exceeds_limit = "The uploaded file exceeds the maximum allowed size in your PHP configuration file.";
-            $upload_invalid_filesize  = "The file you are attempting to upload is larger than the permitted size.";
-            $upload_invalid_filetype = "The filetype you are attempting to upload is not allowed.";
-            $theError = $this->upload->display_errors();
-            if(strrpos($theError, $upload_file_exceeds_limit) > 0 || strrpos($theError, $upload_invalid_filesize) > 0){
-                $theError = "Maximum file size exceeded. Please select a file smaller than 50MB.";
-            }
-            elseif(strrpos($theError, $upload_invalid_filetype) > 0){
-                $theError = "Unsupported file format. Please select a png, jpg or gif.";
-            }
-            echo json_encode(
-                array(
-                    'status'=>'ERROR',
-                    'message' => $theError
-                )
-            );
+		if(!$this->upload->do_upload('file')) {
+			$upload_file_exceeds_limit = "The uploaded file exceeds the maximum allowed size in your PHP configuration file.";
+			$upload_invalid_filesize  = "The file you are attempting to upload is larger than the permitted size.";
+			$upload_invalid_filetype = "The filetype you are attempting to upload is not allowed.";
+			$theError = $this->upload->display_errors();
+			if(strrpos($theError, $upload_file_exceeds_limit) > 0 || strrpos($theError, $upload_invalid_filesize) > 0){
+				$theError = "Maximum file size exceeded. Please select a file smaller than 50MB.";
+			}
+			elseif(strrpos($theError, $upload_invalid_filetype) > 0){
+				$theError = "Unsupported file format. Please select a png, jpg or gif.";
+			}
+			echo json_encode(
+				array(
+					'status'=>'ERROR',
+					'message' => $theError
+				)
+			);
 		} else {
 			$data = $this->upload->data();
 			$name = $data['orig_name'];
@@ -593,10 +598,31 @@ class Vocabs extends MX_Controller {
 					'status'=>'OK',
 					'message' => 'File uploaded successfully!',
 					'data' => $this->upload->data(),
-					'url' => $name,
+					'url' => portal_url('vocabs/download/?file='.$name),
 				)
 			);
 		}
+	}
+
+	/**
+	 * Download a file from the vocab uploaded directory
+	 * @access public
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return file 
+	 */
+	public function download() {
+		$file = $this->input->get('file');
+		if (!$file) throw new Exception('File (required) not found');
+		if (!file_exists(vocab_uploaded_url($file))) throw new Exception('File not found');
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/octet-stream');
+		header('Content-Disposition: attachment; filename='.basename($file));
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: ' . filesize($file));
+		readfile($file);
+		exit;
 	}
 
 	/**

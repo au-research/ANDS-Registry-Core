@@ -569,7 +569,8 @@ class _vocabulary {
 						$vvdata = json_decode($vv->data, true);
 						foreach ($vvdata['access_points'] as &$ap) {
 							if ($ap['type']=='file') {
-								$ap['uri'] = $content['output_path'];
+								// Dont' update just yet
+								// $ap['uri'] = $content['output_path'];
 							}
 						}
 						$saved_data = array('data' => json_encode($vvdata));
