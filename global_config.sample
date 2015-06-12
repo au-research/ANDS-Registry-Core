@@ -107,6 +107,13 @@ $ENV['ENABLED_MODULES'] = array(
 // 	),
 // 	"default_model" => "vocabs"
 // );
+// $ENV['vocab_config'] = array(
+// 	'toolkit_url' => '',
+// 	'solr_url' => '',
+// 	'auth_url' => '',
+// 	'upload_path' => ''
+// );
+// $ENV['enable_logging'] = true;
 
 
 /*************************************************************************/

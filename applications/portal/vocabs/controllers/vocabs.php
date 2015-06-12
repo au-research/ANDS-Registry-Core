@@ -549,6 +549,54 @@ class Vocabs extends MX_Controller {
 		}
 	}
 
+	function upload() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+
+		$upload_path = get_vocab_config('upload_path');
+		if(!is_dir($upload_path)) {
+			if(!mkdir($upload_path)) throw new Exception('Upload path are not created correctly. Contact server administrator');
+		}
+
+		$config['upload_path'] = $upload_path;
+		$config['allowed_types'] = 'xml|rdf|pdf|nt|json|trig|trix|n3|csv|tsv|xls|xlsx|ods|zip|txt';
+		$config['overwrite'] = true;
+		$config['max_size']	= '50000';
+        $this->load->library('upload', $config);
+        $this->upload->initialize($config);
+
+        if(!$this->upload->do_upload('file')) {
+            $upload_file_exceeds_limit = "The uploaded file exceeds the maximum allowed size in your PHP configuration file.";
+            $upload_invalid_filesize  = "The file you are attempting to upload is larger than the permitted size.";
+            $upload_invalid_filetype = "The filetype you are attempting to upload is not allowed.";
+            $theError = $this->upload->display_errors();
+            if(strrpos($theError, $upload_file_exceeds_limit) > 0 || strrpos($theError, $upload_invalid_filesize) > 0){
+                $theError = "Maximum file size exceeded. Please select a file smaller than 50MB.";
+            }
+            elseif(strrpos($theError, $upload_invalid_filetype) > 0){
+                $theError = "Unsupported file format. Please select a png, jpg or gif.";
+            }
+            echo json_encode(
+                array(
+                    'status'=>'ERROR',
+                    'message' => $theError
+                )
+            );
+		} else {
+			$data = $this->upload->data();
+			$name = $data['orig_name'];
+			echo json_encode(
+				array(
+					'status'=>'OK',
+					'message' => 'File uploaded successfully!',
+					'data' => $this->upload->data(),
+					'url' => $name,
+				)
+			);
+		}
+	}
+
 	/**
 	 * Automated test tools
 	 * @version 1.0

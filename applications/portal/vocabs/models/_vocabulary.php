@@ -478,6 +478,12 @@ class _vocabulary {
 		$this->populate_from_db($this->prop['id']);
 	}
 
+	private function isPoolParty() {
+		if(isset($this->prop['pool_party_id']) && $this->prop['pool_party_id']!=''){
+			return true;
+		} else return false;
+	}
+
 	private function processTask($version,$version_id,$db){
 
 		$version_data = json_decode($version['data'],true);
@@ -485,28 +491,40 @@ class _vocabulary {
 
 			//task array construction
 			$task_array = array();
-			$task_array[0]['type'] = 'HARVEST';
 
-			if(isset($this->prop['pool_party_id'])&& $this->prop['pool_party_id']!=''){
-				$task_array[0]['provider_type'] = 'PoolParty';
-				$task_array[0]['project_id'] = $this->prop['pool_party_id'];
+			if ($this->isPoolParty()) {
+				$harvest_task = array('type'=>'HARVEST', 'provider_type' => 'PoolParty', 'project_id' => $this->prop['pool_party_id']);
+				array_push($task_array, $harvest_task);
+			} else {
+				//is not a poolparty, check for file upload
+				$file = false;
+				foreach($version_data['access_points'] as $ap) {
+					if ($ap['type']=='file') $file = $ap; 
+				}
+				if ($file) {
+					$harvest_task = array('type'=>'HARVEST', 'provider_type' => 'File', 'file_path' => get_vocab_config('upload_path').$file['uri']);
+					array_push($task_array, $harvest_task);
+				}
 			}
-			$task_array[1]['type'] = 'TRANSFORM';
-			$task_array[1]['provider_type'] = 'JsonList';
-			$task_array[2]['type'] = 'TRANSFORM';
-			$task_array[2]['provider_type'] = 'JsonTree';
-			$task_array[3]['type'] = 'PUBLISH';
-			$task_array[3]['provider_type'] = 'SISSVoc';
-			$task_array[4]['type'] = 'IMPORT';
-			$task_array[4]['provider_type'] = 'Sesame';
-			$task_params = json_encode($task_array);
 
+			if ($this->isPoolParty()) {
+				$transform_task = array('type'=>'TRANSFORM', 'provider_type'=>'JsonList');
+				array_push($task_array, $transform_task);
+				$transform_task = array('type'=>'TRANSFORM', 'provider_type'=>'JsonTree');
+				array_push($task_array, $transform_task);
+				$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesane');
+				array_push($task_array, $import_task);
+				$publish_task = array('type'=>'PUBLISH', 'provider_type'=>'SISSVoc');
+				array_push($task_array, $publish_task);
+			}
+
+			//add task array to the task table
+			$task_params = json_encode($task_array);
 			$params = array(
 				'vocabulary_id' => $this->prop['id'],
 				'version_id' => $version_id,
 				'params' => $task_params
 			);
-
 			$result = $db->insert('task', $params);
 			$task_id = $db->insert_id();
 			if (!$result) throw new Exception($db->_error_message());
@@ -516,9 +534,11 @@ class _vocabulary {
 			$toolkit_url = $vocab_config['toolkit_url'];
 			$content = @file_get_contents($toolkit_url.'runTask/'.$task_id);
 
+			//deal with content return
 			if ($content) {
 				$content = json_decode($content, true);
 
+				//pool party stuffs filling
 				if (isset($content['concepts']) || isset($concept['sparql_endpoint']) || isset($concept['sissvoc_endpoints'])) {
 					//update the access point of type file, apiSparql path to the respective path
 					$query = $db->get_where('versions', array('id'=>$version_id));
@@ -543,10 +563,39 @@ class _vocabulary {
 					} else {
 						//cant find version with the id, handle here
 					}
+				} else if(isset($content['output_path'])) {
+					//file upload
+					if ($vv = $this->getVersion($version_id, $db)) {
+						$vvdata = json_decode($vv->data, true);
+						foreach ($vvdata['access_points'] as &$ap) {
+							if ($ap['type']=='file') {
+								$ap['uri'] = $content['output_path'];
+							}
+						}
+						$saved_data = array('data' => json_encode($vvdata));
+						$db->where('id', $version_id);
+						$result = $db->update('versions', $saved_data);
+						if (!$result) throw new Exception($db->_error_message());
+					} else {
+						//cant find version with the id, handle here
+					}
 				}
-
+ 
 			}
 
+		}
+	}
+
+	private function getVersion($id, $db=false) {
+		if (!$db) {
+			$db = $ci->load->database('vocabs', true);
+		}
+		$query = $db->get_where('versions', array('id'=>$id));
+		if ($query->num_rows() > 0) {
+			$version = $query->first_row();
+			return $version;
+		} else {
+			return false;
 		}
 	}
 

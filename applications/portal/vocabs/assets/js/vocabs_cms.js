@@ -149,7 +149,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 						$scope.vocab.description = $scope.choose(data['dcterms:description']);
 					}
 
-					
+
 					if (data['dcterms:subject']) {
 						//overwrite the previous ones
 						var chosen = $scope.choose(data['dcterms:subject']);
@@ -330,7 +330,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	}
 });
 
-app.controller('versionCtrl', function($scope, $modalInstance, $log, version, action, vocab){
+app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, version, action, vocab){
 	$scope.versionStatuses = ['current', 'superseded', 'deprecated'];
 	$scope.version = version ? version : {provider_type:false};
 	$scope.action = version ? 'save': 'add';
@@ -393,6 +393,32 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, version, ac
 			uri: 'TBD'
 		}
 		$scope.addformat(obj);
+	}
+
+	$scope.upload = function(files, ap) {
+		if (!ap) ap = {};
+		if (files && files.length) {
+			for (var i = 0; i < files.length; i++) {
+				var file = files[i];
+				$scope.uploading = true;
+				delete $scope.error_upload_msg;
+				$upload.upload({
+					url: base_url+'vocabs/upload',
+					file: file
+				}).progress(function (evt) {
+					var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+					$log.debug('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+				}).success(function (data, status, headers, config) {
+					$log.debug(config);
+					$scope.uploading = false;
+					if(data.status == 'OK' && data.url) {
+						ap.uri = data.url;
+					} else if(data.status=='ERROR') {
+						$scope.error_upload_msg = data.message;
+					}
+				});
+			}
+		}
 	}
 
 	$scope.list_remove = function(type, index) {
