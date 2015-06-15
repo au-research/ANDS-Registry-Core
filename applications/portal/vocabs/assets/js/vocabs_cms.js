@@ -7,6 +7,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
     vocabs_factory.user().then(function(data){
         $scope.user_orgs = data.message;
     });
+    $scope.form = {};
 
 	$scope.vocab = {top_concept:[],subjects:[]};
 	$scope.mode = 'add'; // [add|edit]
@@ -213,8 +214,14 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
 	$scope.save = function(status) {
+		
 		$scope.error_message = false;
 		$scope.success_message = false;
+
+		if (!$scope.validate()) {
+			return false;
+		}
+
         //if(status) $scope.vocab.status = status;
         console.log($scope.vocab.status + " vocab status")
         console.log(status + " desired status")
@@ -248,6 +255,26 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 					});
 				}
 			});
+		}
+	}
+
+	$scope.validate = function(){
+		$log.debug($scope.vocab);
+
+		$log.debug($scope.form.cms);
+
+		if ($scope.form.cms.$valid) {
+
+			//language
+			if (!$scope.vocab.language)  $scope.error_message = 'Vocabulary must have at least 1 language';
+
+		}
+
+
+		if ($scope.error_message!=false) {
+			return false;
+		} else {
+			return true;
 		}
 	}
 
