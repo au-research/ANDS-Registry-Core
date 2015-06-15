@@ -56,6 +56,10 @@
 				<div class="panel swatch-gray">
 					<!-- <div class="panel-heading">Vocabulary Metadata</div> -->
 					<div class="panel-body">
+                        <div class="form-group">
+                            <label for="">Vocabulary Status</label>
+                            <input class="form-control" ng-model="vocab.status" rows="10"/>
+                        </div>
 						<div class="form-group">
 							<label for="">Vocabulary Title</label>
 							<input type="text" class="form-control" ng-model="vocab.title" placeholder="Vocabulary Title">

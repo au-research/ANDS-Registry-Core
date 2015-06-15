@@ -39,7 +39,25 @@ class Vocabularies extends CI_Model {
             return false;
         }
     }
-
+    /**
+     * Returns a single _vocabulary by SLUG if a draft status exists
+     * SLUG has to be unique as it maps to ID
+     * This function calls the @getByID function internally
+     * @param  string $slug
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @return _vocabulary
+     */
+    public function getDraftBySlug($slug) {
+        $this->vocab_db = $this->load->database('vocabs', true);
+        $result = $this->vocab_db->get_where('vocabularies', array('slug'=>$slug,'status'=>'draft'));
+        if ($result->num_rows() > 0) {
+            $vocab_result = $result->result_array();
+            $vocab_id = $vocab_result[0]['id'];
+            return $this->getByID($vocab_id);
+        } else {
+            return false;
+        }
+    }
     /**
      * Returns all vocabularies we have in the database
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>

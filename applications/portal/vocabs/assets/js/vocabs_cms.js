@@ -37,7 +37,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
 	if ( $('#vocab_slug').val() ) {
-		vocabs_factory.get($('#vocab_slug').val()).then(function(data){
+		vocabs_factory.get($('#vocab_id').val()).then(function(data){
 			$log.debug('Editing ', data.message);
 			$scope.vocab = data.message;
 			$scope.mode = 'edit';
@@ -216,6 +216,8 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 		$scope.error_message = false;
 		$scope.success_message = false;
         //if(status) $scope.vocab.status = status;
+        console.log($scope.vocab.status + " vocab status")
+        console.log(status + " desired status")
 		if ($scope.mode=='add' || ($scope.vocab.status=='published' && status=='draft')) {
             $scope.vocab.status = status;
 			$log.debug('Adding Vocab', $scope.vocab);
@@ -228,7 +230,8 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 					//navigate to the edit form if on the add form
 					// $log.debug(data.message.prop[0].slug);
 					var slug = data.message.prop.slug;
-					window.location.replace(base_url+"vocabs/edit/"+slug);
+                    var id = data.message.prop.id;
+					window.location.replace(base_url+"vocabs/edit/"+id);
 				}
 			});
 		} else if ($scope.mode=='edit') {

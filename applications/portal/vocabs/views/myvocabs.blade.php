@@ -27,7 +27,7 @@
 												<td>
 													<div class="btn-group">
 														<a href="{{ portal_url($vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-search"></i> View</a>
-														<a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
 														<a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
 													</div>
 												</td>
@@ -46,11 +46,11 @@
 										@foreach($owned_vocabs as $vocab)
 											@if($vocab['status']=='draft')
 											<tr>
-												<td><a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}">{{ $vocab['title'] }}</a></td>
+												<td><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}">{{ $vocab['title'] }}</a></td>
 												<td>{{titleCase($vocab['status'])}}</td>
 												<td>
 													<div class="btn-group">
-														<a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
 														<a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
 													</div>
 												</td>

@@ -310,24 +310,27 @@ class _vocabulary {
 		$ci =& get_instance();
 		$db = $ci->load->database('vocabs', true);
 		if (!$db) throw new Exception('Unable to connect to database');
-
 		if ($this->id) {
             //if from draft get published id if it exists and override old published
             if($data['status']=='published'){
-                $publish_slug = substr($data['slug'],0,strlen($data['slug'])-5);
-                $result = $db->get_where('vocabularies', array('slug'=>$publish_slug));
+                $result = $db->get_where('vocabularies', array('slug'=>$data['slug'],'status'=>'published'));
                 if ($result->num_rows() > 0) {
                     $published= $result->first_row();
-                    $db->where('id', $data['id']);
-                    $result = $db->delete('vocabularies');
-                    $db->where('vocab_id', $data['id']);
-                    $result = $db->delete('versions');
+                    if($data['id']!=$published->id)
+                    {
+                        $db->where('id', $data['id']);
+                        $result = $db->delete('vocabularies');
+                        $db->where('vocab_id', $data['id']);
+                        $result = $db->delete('versions');
 
-                    $data['id'] = $published->id;
-                    $data['slug'] = $publish_slug;
-                    $this->prop['id'] = $data['id'];
+                        $data['id'] = $published->id;
+                        $data['slug'] = $data['slug'];
+                        $this->prop['id'] = $data['id'];
+                    }
                 }
             }
+
+
 
 			//update
 			if ($data) {
@@ -357,15 +360,15 @@ class _vocabulary {
 			}
 		} else {
 			//add new
-			
-			//check if there's an existing vocab with the same slug
+			//check if there's an existing vocab with the same slug in draft state
 			$slug = url_title($this->prop['title'], '-', TRUE);
             if(isset($this->prop['status']) && $this->prop['status']=='draft'){
-                $slug = $slug.'DRAFT';
-            }
-			$result = $db->get_where('vocabularies', array('slug'=>$slug));
-			if ($result->num_rows() > 0) {
-  				return false;
+                $result = $db->get_where('vocabularies', array('slug'=>$slug,'status'=>'draft'));
+
+                if ($result->num_rows() > 0) {
+                    $draft_vocab = $result->first_row();
+                    $this->prop['id']= $draft_vocab->id;
+                }
 			}
             if(!isset($this->prop['owner'])) $this->prop['owner'] = $this->prop['user_owner'];
 
@@ -382,16 +385,17 @@ class _vocabulary {
                 'user_owner' => isset($this->prop['user_owner']) ? $this->prop['user_owner'] : '',
 				'data' => json_encode($this->prop)
 			);
-			$result = $db->insert('vocabularies', $data);
 
+            if(!isset($this->prop['id'])){
+                $db->insert('vocabularies', $data);
+                $this->prop['id'] = $db->insert_id();
+            }
 
-			$this->prop['id'] = $db->insert_id();
             $data['id'] = $this->prop['id'];
             $newdata = array(
                 'data' => json_encode($this->prop)
             );
 
-            //return(json_encode($this->prop)." is the data");
             $db->where('id', $this->prop['id']);
             $result = $db->update('vocabularies', $newdata);
 

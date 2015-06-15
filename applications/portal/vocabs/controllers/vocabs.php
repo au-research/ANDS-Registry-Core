@@ -166,11 +166,15 @@ class Vocabs extends MX_Controller {
 			redirect(get_vocab_config('auth_url').'login#?redirect='.portal_url('vocabs/edit/'.$slug));
 		}
 		if (!$slug) throw new Exception('Require a Vocabulary Slug to edit');
-		$vocab = $this->vocab->getBySlug($slug);
+		$vocab = $this->vocab->getByID($slug);
+       // var_dump($vocab);
+      // throw new Exception($vocab->prop['status']);
 		if($vocab->prop['status']=='published') {
-			$draft_vocab = $this->vocab->getBySlug($slug.'DRAFT');
+           // throw new Exception('This is published');
+			$draft_vocab = $this->vocab->getDraftBySlug($vocab->prop['slug']);
 			if($draft_vocab) {
 				$vocab = $draft_vocab;
+                //throw new Exception($vocab->id);
 			}
 		}
 		//do some checking of vocab here, ACL stuff @todo
@@ -409,11 +413,13 @@ class Vocabs extends MX_Controller {
 
 			if (!$vocab) throw new Exception('Vocab ID '. $id. ' not found');
 
+
 			$result = $vocab->display_array();
 
 			//POST Request, for saving this vocab
 			$angulardata = json_decode(file_get_contents("php://input"), true);
 			$data = isset($angulardata['data']) ? $angulardata['data'] : false;
+
             if ($data) {
                 if(null==$this->user->affiliations() && $data['status']=='published'){
                     $data['status'] = 'draft';
@@ -430,6 +436,7 @@ class Vocabs extends MX_Controller {
                     $result = 'A request to publish this vocabulary has been sent to '.$this->config->item('site_admin_email');
                 }
                 else{
+                    //throw new Exception($data['status']);
                     $result = $vocab->save($data);
                     if (!$result) throw new Exception('Error Saving Vocabulary');
                     if ($result) {
