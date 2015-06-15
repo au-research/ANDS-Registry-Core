@@ -222,9 +222,6 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 			return false;
 		}
 
-        //if(status) $scope.vocab.status = status;
-        console.log($scope.vocab.status + " vocab status")
-        console.log(status + " desired status")
 		if ($scope.mode=='add' || ($scope.vocab.status=='published' && status=='draft')) {
             $scope.vocab.status = status;
 			$log.debug('Adding Vocab', $scope.vocab);
