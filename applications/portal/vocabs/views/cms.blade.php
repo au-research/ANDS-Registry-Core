@@ -22,8 +22,7 @@
 	<input type="hidden" type="text" value="{{ $vocab->id }}" id="vocab_id"/>
 	<input type="hidden" type="text" value="{{ $vocab->slug }}" id="vocab_slug"/>
 	@endif
-
-	<div class="container" ng-if="!decide">
+	<div class="container" ng-if="{{$skip}}==false && !decide">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel swatch-gray">
@@ -43,14 +42,14 @@
 					</div>
 					<div class="panel-footer">
 						<a href="" class="btn btn-primary" ng-click="populate(project)">Use this PoolParty</a>
-						<a href="" class="btn btn-link" ng-click="skip()">Skip</a>
-						<p class="help-block">Skipping will start a blank Vocabulary</p>
+					<!--	<a href="" class="btn btn-link" ng-click="skip()">Skip</a>
+						<p class="help-block">Skipping will start a blank Vocabulary</p> -->
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="container" ng-if="decide">
+	<div class="container" ng-if="{{$skip}}==true || decide">
 		<form name="form.cms" novalidate>
 			<div class="row">
 				<div class="col-md-8">

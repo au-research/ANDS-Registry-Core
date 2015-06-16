@@ -140,6 +140,7 @@ class Vocabs extends MX_Controller {
 	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */	
 	public function add() {
+        $skip = $_GET['skip'];
 		$event = array(
 			'event'=>'pageview',
 			'page' => 'add'
@@ -148,6 +149,7 @@ class Vocabs extends MX_Controller {
 		$this->blade
 			->set('scripts', array('vocabs_cms'))
 			->set('vocab', false)
+            ->set('skip',$skip)
 			->render('cms');
 	}
 
