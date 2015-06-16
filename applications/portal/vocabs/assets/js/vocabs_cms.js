@@ -43,6 +43,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 			$scope.vocab = data.message;
 			$scope.mode = 'edit';
 			$scope.decide = true;
+			$log.debug($scope.form.cms);
 		});
 	}
 
@@ -218,6 +219,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 		$scope.error_message = false;
 		$scope.success_message = false;
 
+		//validation
 		if (!$scope.validate()) {
 			return false;
 		}
@@ -225,7 +227,6 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 		if ($scope.mode=='add' || ($scope.vocab.status=='published' && status=='draft')) {
             $scope.vocab.status = status;
 			$log.debug('Adding Vocab', $scope.vocab);
-            $log.debug($scope.vocab)
 			vocabs_factory.add($scope.vocab).then(function(data){
 				$log.debug('Data Response from saving vocab', data);
 				if(data.status=='ERROR') {
@@ -256,17 +257,35 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 	}
 
 	$scope.validate = function(){
-		$log.debug($scope.vocab);
 
 		$log.debug($scope.form.cms);
-
 		if ($scope.form.cms.$valid) {
 
-			//language
-			if (!$scope.vocab.language)  $scope.error_message = 'Vocabulary must have at least 1 language';
+			//language validation
+			if (!$scope.vocab.language || $scope.vocab.language.length == 0) {
+				$scope.error_message = 'There must be at least 1 language';
+			}
+
+			//subject validation
+			if (!$scope.vocab.subjects || $scope.vocab.subjects.length == 0) {
+				$scope.error_message = 'There must be at least 1 subject';
+			}
+
+			//publisher validation
+			if (!$scope.vocab.related_entity) {
+				$scope.error_message = 'There must be at least 1 related entity that is a publisher';
+			} else {
+				var hasPublisher = false;
+				angular.forEach($scope.vocab.related_entity, function(obj){
+					if (obj.relationship == 'publishedBy') hasPublisher = true;
+				});
+				if (!hasPublisher) {
+					$scope.error_message = 'There must be a publisher related to this vocabulary';
+				}
+			}
+			
 
 		}
-
 
 		if ($scope.error_message!=false) {
 			return false;
@@ -560,4 +579,13 @@ app.filter('languageFilter', function() {
         }
         return ln;
      }
+});
+
+app.directive('languageValidation', function(){
+	return {
+		restrict: 'A',
+		link: function(scope, elem, attr, ctrl){
+
+		}
+	}
 });

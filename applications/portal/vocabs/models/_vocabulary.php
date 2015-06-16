@@ -513,16 +513,14 @@ class _vocabulary {
 				}
 			}
 
-			if ($this->isPoolParty()) {
-				$transform_task = array('type'=>'TRANSFORM', 'provider_type'=>'JsonList');
-				array_push($task_array, $transform_task);
-				$transform_task = array('type'=>'TRANSFORM', 'provider_type'=>'JsonTree');
-				array_push($task_array, $transform_task);
-				$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesame');
-				array_push($task_array, $import_task);
-				$publish_task = array('type'=>'PUBLISH', 'provider_type'=>'SISSVoc');
-				array_push($task_array, $publish_task);
-			}
+			$transform_task = array('type'=>'TRANSFORM', 'provider_type'=>'JsonList');
+			array_push($task_array, $transform_task);
+			$transform_task = array('type'=>'TRANSFORM', 'provider_type'=>'JsonTree');
+			array_push($task_array, $transform_task);
+			$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesame');
+			array_push($task_array, $import_task);
+			$publish_task = array('type'=>'PUBLISH', 'provider_type'=>'SISSVoc');
+			array_push($task_array, $publish_task);
 
 			//add task array to the task table
 			$task_params = json_encode($task_array);
