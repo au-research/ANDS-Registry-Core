@@ -296,8 +296,8 @@ class _vocabulary {
 	}
 
 	private function log($message) {
-		if (!$this->import_log) $this->import_log = array();
-		array_push($this->import_log, $message);
+		// if (!$this->import_log) $this->import_log = array();
+		// array_push($this->import_log, $message);
 	}
 
 	/**
