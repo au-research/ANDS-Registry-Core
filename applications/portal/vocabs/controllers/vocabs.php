@@ -141,6 +141,7 @@ class Vocabs extends MX_Controller {
 	 */	
 	public function add() {
         $skip = $_GET['skip'];
+        if(!$skip) $skip = true;
 		$event = array(
 			'event'=>'pageview',
 			'page' => 'add'
@@ -194,6 +195,7 @@ class Vocabs extends MX_Controller {
 		$this->blade
 			->set('scripts', array('vocabs_cms'))
 			->set('vocab', $vocab)
+            ->set('skip',true)
 			->render('cms');
 	}
 
