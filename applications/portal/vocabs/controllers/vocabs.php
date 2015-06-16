@@ -447,7 +447,7 @@ class Vocabs extends MX_Controller {
                         if($vocab->prop['status']=='published'){
                             $this->index_vocab($vocab);
                             if ($this->index_vocab($vocab)) {
-                                $result .= '. Success in indexing vocabulary';
+                                // $result .= '. Success in indexing vocabulary';
                             }
                         }
                     }

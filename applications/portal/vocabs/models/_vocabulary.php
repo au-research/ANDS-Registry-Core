@@ -295,6 +295,11 @@ class _vocabulary {
 		}
 	}
 
+	private function log($message) {
+		// if (!$this->import_log) $this->import_log = array();
+		// array_push($this->import_log, $message);
+	}
+
 	/**
 	 * Saving / Adding Vocabulary
 	 * Requires the vocabs database connection group to be present
@@ -311,13 +316,14 @@ class _vocabulary {
 		$db = $ci->load->database('vocabs', true);
 		if (!$db) throw new Exception('Unable to connect to database');
 		if ($this->id) {
+
             //if from draft get published id if it exists and override old published
             if($data['status']=='published'){
+            	$this->log('Publishing Vocabulary '.$data['title'].'('.$data['id'].')');
                 $result = $db->get_where('vocabularies', array('slug'=>$data['slug'],'status'=>'published'));
                 if ($result->num_rows() > 0) {
                     $published= $result->first_row();
-                    if($data['id']!=$published->id)
-                    {
+                    if($data['id']!=$published->id) {
                         $db->where('id', $data['id']);
                         $result = $db->delete('vocabularies');
                         $db->where('vocab_id', $data['id']);
@@ -330,10 +336,9 @@ class _vocabulary {
                 }
             }
 
-
-
 			//update
 			if ($data) {
+
 				$saved_data = array(
 					'title' => $data['title'],
 					'licence' => isset($data['licence']) ? $data['licence'] : false,
@@ -346,6 +351,7 @@ class _vocabulary {
 				$db->where('id', $data['id']);
 				$result = $db->update('vocabularies', $saved_data);
 				if(!$result) throw new Exception($db->_error_message());
+				$this->log('Successfully updated '.$data['title']);
 
 				//deal with versions
 				$this->updateVersions($data, $db);
@@ -364,14 +370,13 @@ class _vocabulary {
 			$slug = url_title($this->prop['title'], '-', TRUE);
             if(isset($this->prop['status']) && $this->prop['status']=='draft'){
                 $result = $db->get_where('vocabularies', array('slug'=>$slug,'status'=>'draft'));
-
                 if ($result->num_rows() > 0) {
                     $draft_vocab = $result->first_row();
                     $this->prop['id']= $draft_vocab->id;
                 }
 			}
-            if(!isset($this->prop['owner'])) $this->prop['owner'] = $this->prop['user_owner'];
 
+            if(!isset($this->prop['owner'])) $this->prop['owner'] = $this->prop['user_owner'];
 			$data = array(
 				'title' => $this->prop['title'],
 				'slug' => $slug,
@@ -458,7 +463,7 @@ class _vocabulary {
 					);
 					$db->where('id', $version['id']);
 					$result = $db->update('versions', $saved_data);
-					$this->processTask($saved_data,$version['id'],$db);
+					if ($this->prop['status']=='published') $this->processTask($saved_data,$version['id'],$db);
 					if (!$result) throw new Exception($db->_error_message());
 				} else {
 					//add the version if it doesn't exist

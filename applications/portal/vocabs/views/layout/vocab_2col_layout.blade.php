@@ -39,7 +39,6 @@ $title = $vocab['title'] ;
                                 </div>
                             </div>
                         </div>
-                        @include('wrap-getvocabaccess')
                         @yield('content')
                     </div>
 
