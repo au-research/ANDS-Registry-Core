@@ -4,21 +4,23 @@
 	        <h4 class="modal-title"><span ng-if="entity.title">Edit</span> <span ng-if="!entity.title">Add a </span> related [[ type ]]</h4>
 	</div>
 	<div class="modal-body swatch-white" ng-cloak>
-		<form action="" class="form">
+		<form action="" class="form" name="reForm">
 			<div class="container-fluid">
                 <input name="type" value="[[ type ]]" type="hidden"/>
 				<div class="row">
 					<div class="col-md-12">
-						<div class="form-group">
+						<div class="form-group" ng-class="{'has-error':reForm.title.$invalid}">
 							<label for="">Title</label>
-							<input type="text" class="form-control" placeholder="entity Title" ng-model="entity.title" typeahead="suggest.title as suggest.title for suggest in suggestions | filter:$viewValue | limitTo:8" typeahead-min-length="0" typeahead-on-select="populate($item, $model, $label)">
+							<input type="text" required name="title"class="form-control" placeholder="entity Title" ng-model="entity.title" typeahead="suggest.title as suggest.title for suggest in suggestions | filter:$viewValue | limitTo:8" typeahead-min-length="0" typeahead-on-select="populate($item, $model, $label)">
+							<p class="help-block" ng-show="reForm.title.$invalid">Title is required</p>
 						</div>
 					</div>
 					<div class="col-md-6">
                         <input type="hidden" value="publishedBy" name="relationship" ng-if="type=='publisher'"/>
-                        <div class="form-group">
+                        <div class="form-group" ng-class="{'has-error':reForm.email.$invalid}">
 							<label for="">Email</label>
-							<input type="text" class="form-control" placeholder="entity Email" ng-model="entity.email">	
+							<input type="text" required name="email" class="form-control" placeholder="entity Email" ng-model="entity.email">	
+							<p class="help-block" ng-show="reForm.email.$invalid">Email is required</p>
 						</div>
 					</div>
 					<div class="col-md-6">
@@ -74,6 +76,7 @@
 		</form>
 	</div>
 	<div class="modal-footer swatch-white">
+		<div class="alert alert-danger" ng-if="error_message">[[error_message]]</div>
 		<button class="btn btn-link" type="button" ng-click="dismiss()">Cancel</button>
 		<button class="btn btn-primary" type="button" ng-if="intent=='add'" ng-click="save()">Add this Related [[ type ]]</button>
 		<button class="btn btn-primary" type="button" ng-if="intent=='save'" ng-click="save()">Save</button>

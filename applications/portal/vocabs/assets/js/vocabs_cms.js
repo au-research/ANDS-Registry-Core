@@ -568,6 +568,7 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
 		} else if(type=='url') {
 			obj = {url:''};
 		}
+		if (!$scope.entity) $scope.entity = {};
 		if (!$scope.entity[type]) $scope.entity[type] = [];
 		$scope.entity[type].push(obj);
 	}
@@ -581,11 +582,37 @@ app.controller('relatedCtrl', function($scope, $modalInstance, $log, entity, typ
 	}
 
 	$scope.save = function() {
-		var ret = {
-			'intent': $scope.intent,
-			'data' : $scope.entity
+		if($scope.validateEntity()) {
+			var ret = {
+				'intent': $scope.intent,
+				'data' : $scope.entity
+			}
+			$modalInstance.close(ret);
+		} else return false;
+	}
+
+	$scope.validateEntity = function() {
+		delete $scope.error_message;
+		if ($scope.reForm.$valid) {
+
+			//at least 1 relationship
+			if (!$scope.entity || !$scope.entity.relationship || $scope.entity.relationship.length == 0) {
+				$scope.error_message = 'At least 1 relationship is required';
+				return false
+			}
+
+			//at least 1 identifier
+			if (!$scope.entity || !$scope.entity.identifiers || $scope.entity.identifiers.length == 0) {
+				$scope.error_message = 'At least 1 identifier is required';
+				return false
+			}
+
+
+			return true;
+		} else {
+			$scope.error_message = 'Form Validation Failed';
+			return false;
 		}
-		$modalInstance.close(ret);
 	}
 
 	$scope.dismiss = function() {
