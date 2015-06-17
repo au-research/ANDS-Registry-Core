@@ -22,7 +22,7 @@
 	<input type="hidden" type="text" value="{{ $vocab->id }}" id="vocab_id"/>
 	<input type="hidden" type="text" value="{{ $vocab->slug }}" id="vocab_slug"/>
 	@endif
-	<div class="container" ng-if="{{$skip}}==false && !decide">
+	<div class="container" ng-if="!decide">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel swatch-gray">
@@ -49,7 +49,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="container" ng-if="{{$skip}}==true || decide">
+	<div class="container" ng-if="decide">
 		<form name="form.cms" novalidate>
 			<div class="row">
 				<div class="col-md-8">

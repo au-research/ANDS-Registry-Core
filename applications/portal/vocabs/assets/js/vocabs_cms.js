@@ -3,7 +3,7 @@
  * For adding / editing vocabulary metadata
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
-app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, vocabs_factory){
+app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templateCache, vocabs_factory){
     vocabs_factory.user().then(function(data){
         $scope.user_orgs = data.message;
     });
@@ -45,6 +45,10 @@ app.controller('addVocabsCtrl', function($log, $scope, $modal, $templateCache, v
 			$scope.decide = true;
 			$log.debug($scope.form.cms);
 		});
+	}
+
+	if ($location.search('skip')) {
+		$scope.decide = true;
 	}
 
 	/**
@@ -389,7 +393,7 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
 	$scope.versionStatuses = ['current', 'superseded', 'deprecated'];
 	$scope.version = version ? version : {provider_type:false};
 	$scope.action = version ? 'save': 'add';
-    $scope.formats=['RDF/XML','TTL','N-Triples','JSON','TriG','TriX','N3','CSV','TSV','XLS','XLSX','BinaryRDF','ODS','ZIP','XML','TXT']
+    $scope.formats=['RDF/XML','TTL','N-Triples','JSON','TriG','TriX','N3','CSV','TSV','XLS','XLSX','BinaryRDF','ODS','ZIP','XML','TXT','ODT', 'TEXT']
     $scope.types=[{"value":"webPage","text":"Web page"},
         {"value":"apiSparql","text":"API/SPARQL endpoint"},
         {"value":"file","text":"File"}
