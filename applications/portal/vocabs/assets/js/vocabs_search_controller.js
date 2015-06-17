@@ -12,6 +12,8 @@ app.controller('searchCtrl', function($scope, $log, $location, vocabs_factory){
 		if ($scope.searchRedirect()) {
 			window.location = base_url+'?q='+$scope.filters['q'];
 		} else {
+			$location.path('/').replace();
+			window.history.pushState($scope.filters,'ANDS Research Vocabulary', $location.absUrl());
 			vocabs_factory.search($scope.filters).then(function(data){
 				$log.debug(data);
 				$scope.result = data;
