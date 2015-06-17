@@ -17,14 +17,13 @@
 								<h4>Published Vocabularies</h4>
 								<table class="table">
 									<thead>
-										<tr><th>Vocabulary</th><th>Status</th><th>Action</th></tr>
+										<tr><th>Vocabulary</th><th>Action</th></tr>
 									</thead>
 									<tbody>
 										@foreach($owned_vocabs as $vocab)
 											@if($vocab['status']=='published')
 											<tr>
 												<td><a href="{{ portal_url('vocabs/edit/'.$vocab['slug']) }}">{{ $vocab['title'] }}</a></td>
-												<td>{{titleCase($vocab['status'])}}</td>
 												<td>
 													<div class="btn-group">
 														<a href="{{ portal_url($vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-search"></i> View</a>
@@ -41,14 +40,13 @@
 								<h4>Drafts</h4>
 								<table class="table">
 									<thead>
-										<tr><th>Vocabulary</th><th>Status</th><th>Action</th></tr>
+										<tr><th>Vocabulary</th><th>Action</th></tr>
 									</thead>
 									<tbody>
 										@foreach($owned_vocabs as $vocab)
 											@if($vocab['status']=='draft')
 											<tr>
 												<td><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}">{{ $vocab['title'] }}</a></td>
-												<td>{{titleCase($vocab['status'])}}</td>
 												<td>
 													<div class="btn-group">
 														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
