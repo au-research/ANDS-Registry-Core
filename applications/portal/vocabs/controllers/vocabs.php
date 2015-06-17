@@ -58,6 +58,7 @@ class Vocabs extends MX_Controller {
 
 			$vocab['current_version'] = $record->current_version();
 			$this->blade
+				->set('search_redirect', true)
 				->set('vocab', $vocab)
 				->render('vocab');
 		} else {
@@ -140,8 +141,6 @@ class Vocabs extends MX_Controller {
 	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */	
 	public function add() {
-        $skip = $_GET['skip'];
-        if(!$skip) $skip = true;
 		$event = array(
 			'event'=>'pageview',
 			'page' => 'add'
@@ -150,7 +149,6 @@ class Vocabs extends MX_Controller {
 		$this->blade
 			->set('scripts', array('vocabs_cms'))
 			->set('vocab', false)
-            ->set('skip',$skip)
 			->render('cms');
 	}
 
@@ -195,7 +193,6 @@ class Vocabs extends MX_Controller {
 		$this->blade
 			->set('scripts', array('vocabs_cms'))
 			->set('vocab', $vocab)
-            ->set('skip',true)
 			->render('cms');
 	}
 
@@ -578,7 +575,7 @@ class Vocabs extends MX_Controller {
 		}
 
 		$config['upload_path'] = $upload_path;
-		$config['allowed_types'] = 'xml|rdf|pdf|nt|json|trig|trix|n3|csv|tsv|xls|xlsx|ods|zip|txt';
+		$config['allowed_types'] = 'xml|rdf|pdf|nt|json|trig|trix|n3|csv|tsv|xls|xlsx|ods|zip|txt|ttl';
 		$config['overwrite'] = true;
 		$config['max_size']	= '50000';
 		$this->load->library('upload', $config);

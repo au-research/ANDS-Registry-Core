@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 @include('includes/header')
-<body ng-app="app">
+<body ng-app="app" ng-controller="searchCtrl">
 @include('includes/top-menu')
 <?php
 $publisher = array();

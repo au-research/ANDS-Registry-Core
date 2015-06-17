@@ -33,6 +33,9 @@
 		</nav>
 	</div>
 </div>
+@if(isset($search_redirect))
+	<input type="hidden" id="search_redirect" value="true">
+@endif
 <div class="swatch-dark-blue">
 	<div class="container">
 		<div class="row element-shorter-bottom element-shorter-top">

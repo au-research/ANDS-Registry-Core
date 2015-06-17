@@ -9,24 +9,39 @@ app.controller('searchCtrl', function($scope, $log, $location, vocabs_factory){
 	$scope.filters = $location.search();
 
 	$scope.search = function() {
-		vocabs_factory.search($scope.filters).then(function(data){
-			$log.debug(data);
-			$scope.result = data;
-			facets = [];
-			angular.forEach(data.facet_counts.facet_fields, function(item, index) {
-				facets[index] = [];
-				for (var i = 0; i < data.facet_counts.facet_fields[index].length ; i+=2) {
-					var fa = {
-						name: data.facet_counts.facet_fields[index][i],
-						value: data.facet_counts.facet_fields[index][i+1]
+		if ($scope.searchRedirect()) {
+			window.location = base_url+'?q='+$scope.filters['q'];
+		} else {
+			vocabs_factory.search($scope.filters).then(function(data){
+				$log.debug(data);
+				$scope.result = data;
+				facets = [];
+				angular.forEach(data.facet_counts.facet_fields, function(item, index) {
+					facets[index] = [];
+					for (var i = 0; i < data.facet_counts.facet_fields[index].length ; i+=2) {
+						var fa = {
+							name: data.facet_counts.facet_fields[index][i],
+							value: data.facet_counts.facet_fields[index][i+1]
+						}
+						facets[index].push(fa);
 					}
-					facets[index].push(fa);
-				}
+				});
+				$scope.facets = facets;
 			});
-			$scope.facets = facets;
-		});
+		}
 	}
-	$scope.search();
+
+	$scope.searchRedirect = function() {
+		if ($('#search_redirect').length > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	if (!$scope.searchRedirect()) {
+		$scope.search();
+	}
 
 	// Works with ng-debounce="500" defined in the search field, goes into effect every 500ms 
 	$scope.$watch('filters.q', function(newv, oldv) {
