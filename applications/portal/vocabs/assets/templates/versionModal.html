@@ -4,38 +4,44 @@
 		<h4 class="modal-title"><span ng-if="version.title">Edit</span> <span ng-if="!version.title">Add a new</span> version</h4>
 	</div>
 	<div class="modal-body swatch-white" ng-cloak>
-		<form action="" class="form">
+		
 			<div class="container-fluid">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="form-group">
-							<label for="">Status: </label>
-							<select name="" id="" class="form-control" ng-options="status for status in versionStatuses" ng-model="version.status"></select>
-						</div>
-						<div class="form-group">
-							<label for="">Title</label>
-							<input type="text" class="form-control" placeholder="Title" ng-model="version.title">	
-						</div>
-					</div>
-				</div>
-			
-				<div class="row">
-					<div class="col-md-12">
-						<div class="form-group">
-							<label for="">Release Date</label>
-							<p class="input-group">
-								<input type="text" class="form-control" ng-model="version.release_date" placeholder="Release Date" datepicker-popup="dd-MM-yyyy" is-open="opened" >
-								<span class="input-group-btn">
-									<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-								</span>
-							</p>
-						</div>
-						<div class="form-group">
-							<label for="">Notes</label>
-							<textarea ng-model="version.note" class="form-control"></textarea>
+
+				<form action="" class="form" name="versionForm" novalidate>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group" ng-class="{ 'has-error' : versionForm.status.$invalid }">
+								<label for="">Status: </label>
+								<select required name="status" id="" class="form-control" ng-options="status for status in versionStatuses" ng-model="version.status"></select>
+								<p ng-show="versionForm.status.$invalid" class="help-block">Version status is required.</p>
+							</div>
+							<div class="form-group" ng-class="{ 'has-error' : versionForm.title.$invalid }">
+								<label for="">Title</label>
+								<input required type="text" name="title" class="form-control" placeholder="Title" ng-model="version.title">	
+								<p ng-show="versionForm.title.$invalid" class="help-block">Title is required.</p>
+							</div>
 						</div>
 					</div>
-				</div>
+				
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group" ng-class="{ 'has-error' : versionForm.release_date.$invalid }">
+								<label for="">Release Date</label>
+								<p class="input-group">
+									<input required type="text" name="release_date" class="form-control" ng-model="version.release_date" placeholder="Release Date" datepicker-popup="dd-MM-yyyy" is-open="opened" >
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+									</span>
+								</p>
+								<p ng-show="versionForm.release_date.$invalid" class="help-block">Release Date is required.</p>
+							</div>
+							<div class="form-group">
+								<label for="">Notes</label>
+								<textarea ng-model="version.note" class="form-control"></textarea>
+							</div>
+						</div>
+					</div>
+				</form>
 
 				<a href="" class="btn btn-primary btn-block" ng-click="importPP()" ng-if="version.provider_type!='poolparty'">Import Version from PoolParty</a>
 				<a href="" class="btn btn-default btn-block" ng-click="version.provider_type='manual'" ng-show="version.provider_type!='manual'">Input Access Points Manually</a>
@@ -57,26 +63,30 @@
 								</tr>
 							</tbody>
 						</table>
-						<div ng-if="version.provider_type=='manual'">
-							<form action="">
-								<div class="form-group">
+						<div ng-show="version.provider_type=='manual'">
+							<form class="form" action="" name="apForm" novalidate>
+								<div class="form-group" ng-class="{ 'has-error' : apForm.format.$invalid }">
 									<label for="">Access Point</label>
-                                    <input type="text" class="form-control" placeholder="Format" ng-model="newap.format" typeahead="format as format for format in formats |  limitTo:8" typeahead-min-length="0">
+                                    <input type="text" required name="format" class="form-control" placeholder="Format" ng-model="newap.format" typeahead="format as format for format in formats |  limitTo:8" typeahead-min-length="0">
+                                    <p ng-show="apForm.format.$invalid" class="help-block">Format is required.</p>
 								</div>
-								<div class="form-group">
+								<div class="form-group" ng-class="{ 'has-error' : apForm.type.$invalid }">
 									<label for="">Access Point Type</label>
-                                    <select class="form-control" ng-options="type.value as type.text for type in types" ng-model="newap.type"></select>
+                                    <select class="form-control" required name="type" ng-options="type.value as type.text for type in types" ng-model="newap.type"></select>
+                                    <p ng-show="apForm.type.$invalid" class="help-block">Type is required.</p>
 								</div>
-								<div class="form-group">
+								<div class="form-group" ng-class="{ 'has-error' : apForm.uri.$invalid }">
 									<label for="">Access Point URI</label>
 									<p class="input-group">
-										<input type="text" class="form-control" placeholder="URI" ng-model="newap.uri">
+										<input type="text" required name="uri" class="form-control" placeholder="URI" ng-model="newap.uri">
 										<span class="input-group-btn">
 											<button type="button" class="btn btn-default" ng-file-select ng-file-change="upload($files, newap)"><i class="fa fa-upload"></i> Upload File</button>
 										</span>
 										<div class="alert alert-important" ng-if="error_upload_msg">[[ error_upload_msg ]]</div>
 									</p>
+									<p ng-show="apForm.uri.$invalid" class="help-block">URI is required.</p>
 								</div>
+								<div class="alert alert-danger" ng-show="ap_error_message">[[ap_error_message]]</div>
 								<button type="button" class="btn btn-primary" ng-click="addformat(newap)"><i class="fa fa-plus"></i> Add Access Point</button>
 							</form>
 						</div>
@@ -86,6 +96,7 @@
 		</form>
 	</div>
 	<div class="modal-footer swatch-white">
+		<div class="alert alert-danger" ng-show="error_message">[[error_message]]</div>
 		<button class="btn btn-link" type="button" ng-click="dismiss()">Cancel</button>
 		<button class="btn btn-primary" type="button" ng-if="action=='add'" ng-click="save()">Add this Version</button>
 		<button class="btn btn-primary" type="button" ng-if="action=='save'" ng-click="save()">Save</button>

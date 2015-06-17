@@ -407,22 +407,53 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
 	};
 
 	$scope.addformat = function(obj) {
-		if (!$scope.version) $scope.version = {};
-		if (!$scope.version['access_points'] || $scope.version['access_points']==undefined) {
-			$scope.version['access_points'] = [];
+		if ($scope.validateAP()) {
+			if (!$scope.version) $scope.version = {};
+			if (!$scope.version['access_points'] || $scope.version['access_points']==undefined) {
+				$scope.version['access_points'] = [];
+			}
+			var newobj = {};
+			angular.copy(obj, newobj)
+			$scope.version.access_points.push(newobj);
+			$scope.newap = {};
+		} else return false;
+		
+	}
+
+	$scope.validateAP = function(){
+		delete $scope.ap_error_message;
+		if ($scope.apForm.$valid) {
+			return true;
+		} else {
+			return false;
 		}
-		var newobj = {};
-		angular.copy(obj, newobj)
-		$scope.version.access_points.push(newobj);
-		$scope.newap = {};
+	}
+
+	$scope.validateVersion = function() {
+		delete $scope.error_message;
+		if ($scope.versionForm.$valid) {
+
+			//at least 1 access point require
+			if ($scope.version && $scope.version.access_points && $scope.version.access_points.length > 0) {
+				return true;
+			} else {
+				$scope.error_message = 'At least 1 access point is required';
+				return false;
+			}
+		} else {
+			$scope.error_message = 'Form Validation Failed';
+			return false;
+		}
 	}
 
 	$scope.save = function() {
-		var ret = {
-			'intent': $scope.action,
-			'data' : $scope.version
-		}
-		$modalInstance.close(ret);
+		if ($scope.validateVersion()) {
+			var ret = {
+				'intent': $scope.action,
+				'data' : $scope.version
+			}
+			$modalInstance.close(ret);
+		} else return false;
 	}
 
 	//Import version from PoolParty
