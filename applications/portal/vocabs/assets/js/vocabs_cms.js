@@ -47,7 +47,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 		});
 	}
 
-	if ($location.search('skip')) {
+	if ($location.search().skip) {
 		$scope.decide = true;
 	}
 
