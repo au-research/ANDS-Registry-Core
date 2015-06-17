@@ -33,8 +33,8 @@
 		</nav>
 	</div>
 </div>
-@if(isset($search_redirect))
-	<input type="hidden" id="search_redirect" value="true">
+@if(isset($search_app))
+	<input type="hidden" id="search_app" value="true">
 @endif
 <div class="swatch-dark-blue">
 	<div class="container">

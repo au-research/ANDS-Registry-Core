@@ -34,10 +34,10 @@ app.controller('searchCtrl', function($scope, $log, $location, vocabs_factory){
 	}
 
 	$scope.searchRedirect = function() {
-		if ($('#search_redirect').length > 0) {
-			return true;
-		} else {
+		if ($('#search_app').length > 0) {
 			return false;
+		} else {
+			return true;
 		}
 	}
 

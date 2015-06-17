@@ -24,7 +24,9 @@ class Vocabs extends MX_Controller {
 			'user_agent' => $this->input->user_agent()
 		);
 		vocab_log_terms($event);
-		$this->blade->render('index');
+		$this->blade
+			->set('search_app', true)
+			->render('index');
 	}
 
 	/**
@@ -58,7 +60,6 @@ class Vocabs extends MX_Controller {
 
 			$vocab['current_version'] = $record->current_version();
 			$this->blade
-				->set('search_redirect', true)
 				->set('vocab', $vocab)
 				->render('vocab');
 		} else {
@@ -209,7 +210,8 @@ class Vocabs extends MX_Controller {
 			'page' => $slug
 		);
 		vocab_log_terms($event);
-		$this->blade->render($slug);
+		$this->blade
+			->render($slug);
 	}
 
 	/**

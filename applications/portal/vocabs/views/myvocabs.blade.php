@@ -8,7 +8,7 @@
 					<div class="panel swatch-white">
 						<div class="panel-heading">My Vocabs</div>
 						<div class="panel-body">
-							<a href="{{ portal_url('vocabs/add?skip=false') }}" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Add a new Vocabulary from pool party</a>
+							<a href="{{ portal_url('vocabs/add') }}" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Add a new Vocabulary from pool party</a>
                             <a href="{{ portal_url('vocabs/add?skip=true') }}" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Add a new Vocabulary</a>
 							<hr>
 							@if(sizeof($owned_vocabs) == 0)
