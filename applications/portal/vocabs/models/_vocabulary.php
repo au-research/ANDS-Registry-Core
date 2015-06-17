@@ -84,8 +84,13 @@ class _vocabulary {
 		$json['publisher'] = array();
 		if (isset($data['related_entity'])) {
 			foreach($data['related_entity'] as $re) {
-				if ($re['type']=='party' && isset($re['relationship']) && $re['relationship'] == 'publishedBy') {
-					$json['publisher'][] = $re['title'];
+				if ($re['type']=='party') {
+					if (isset($re['relationship'])) {
+						if ((is_array($re['relationship']) && in_array('publishedBy', $re['relationship'])) || ($re['relationship']=='publishedBy')) {
+							$json['publisher'][] = $re['title'];
+						}
+					}
+					
 				}
 			}
 		}

@@ -64,6 +64,9 @@
 
 				<div ng-repeat="doc in result.response.docs" class="animated fadeInLeft vocab-search-result">
 					<h3><a href="[[ base_url ]][[ doc.slug ]]">[[ doc.title ]]</a></h3>
+					<p ng-if="doc.publisher">
+						Publisher: [[ doc.publisher.join(',') ]]
+					</p>
 					<p ng-if="getHighlight(doc.id)===false">[[ doc.description ]]</p>
 					<div ng-repeat="(index, content) in getHighlight(doc.id)" class="element-shorter-bottom">
 	                    <div ng-repeat="c in content track by $index" class="element-shortest-bottom">
