@@ -9,10 +9,7 @@ $related_vocabs = array();
 $related_service = array();
 if(isset($vocab['related_entity'])){
     foreach($vocab['related_entity'] as $related){
-        if($related['type']=='publisher'){
-            $publisher=$related;
-        }
-        elseif($related['type']=='party'){
+        if($related['type']=='party'){
             $related_people[] =$related;
         }
         elseif($related['type']=='service'){
@@ -87,9 +84,18 @@ if(isset($vocab['related_entity'])){
                         @if(isset($vocab['language']))
                         <h4>Languages</h4>
                         <p>
-                            @foreach($vocab['language'] as $language)
-                            {{readable($language)}} |
-                            @endforeach
+                            <?php
+                            $pipe_count = 0;
+                            foreach($vocab['language'] as $language)
+                            {
+                                echo $language;
+                                $pipe_count++;
+                                if($pipe_count<count($vocab['language'])){
+                                    echo " | ";
+                                }
+                            }
+                            ?>
+
                         </p>
                         @endif
                         @if(isset($vocab['note']))
@@ -125,8 +131,10 @@ if(isset($vocab['related_entity'])){
         <div class="panel swatch-white">
             <div class="panel-heading">Subjects</div>
             <div class="panel-body">
+                <?php $sub_count=0; ?>
                 @foreach($vocab['subjects'] as $subject)
-                   <a  href="{{base_url()}}search/#!/subject={{$subject['subject']}}"> {{$subject['subject']}} </a> |
+                <?php $sub_count++; ?>
+                   <a  href="{{base_url()}}search/#!/subject={{$subject['subject']}}"> {{$subject['subject']}} </a> <?php if($sub_count<count($vocab['subjects'])) echo " | "; ?>
                 @endforeach
             </div>
         </div>
