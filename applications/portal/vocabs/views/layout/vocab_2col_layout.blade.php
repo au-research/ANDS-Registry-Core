@@ -7,8 +7,16 @@
 $publisher = array();
 if(isset($vocab['related_entity'])){
     foreach($vocab['related_entity'] as $related){
-        if($related['type']=='publisher'){
-            $publisher[]=$related;
+        if($related['type']=='party'){
+            if(is_array($related['relationship'])){
+                foreach($related['relationship'] as $relationship){
+                    if($relationship=='publishedBy'){
+                        $publisher[]=$related;
+                    }
+                }
+            }elseif($related['relationship']=='publishedBy'){
+                $publisher[]=$related;
+            }
         }
     }
 }
@@ -27,10 +35,11 @@ $title = $vocab['title'] ;
                         <div class="panel panel-primary swatch-white panel-content">
                             <div class="panel-body">
                                 <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{ $vocab['title'] }} </span></h1>
-
+                                @if(isset($publisher))
                                 @foreach($publisher as $apub)
                                    <a class="re_preview" related='{{json_encode($apub)}}' v_id="{{ $vocab['id'] }}"> {{$apub['title']}} </a><small>(Publisher of)</small>
                                 @endforeach
+                                @endif
                                 <div class="pull-right">
                                     {{ isset($vocab['creation_date']) ? "Created: ".date("d-m-Y",strtotime($vocab['creation_date'])) : ''}}
                                     <a href="http://www.facebook.com/sharer.php?u={{$url}}"><i class="fa fa-facebook" style="padding-right:4px"></i></a>
