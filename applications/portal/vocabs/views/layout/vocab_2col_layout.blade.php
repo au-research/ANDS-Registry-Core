@@ -32,7 +32,7 @@ $title = $vocab['title'] ;
                                    <a class="re_preview" related='{{json_encode($apub)}}' v_id="{{ $vocab['id'] }}"> {{$apub['title']}} </a><small>(Publisher of)</small>
                                 @endforeach
                                 <div class="pull-right">
-                                    {{ isset($vocab['creation_date']) ? $vocab['creation_date'] : ''}}
+                                    {{ isset($vocab['creation_date']) ? "Created: ".date("d-m-Y",strtotime($vocab['creation_date'])) : ''}}
                                     <a href="http://www.facebook.com/sharer.php?u={{$url}}"><i class="fa fa-facebook" style="padding-right:4px"></i></a>
                                     <a href="https://twitter.com/share?url={{$url}}&text={{$title}}&hashtags=andsdata"><i class="fa fa-twitter" style="padding-right:4px"></i></a>
                                     <a href="https://plus.google.com/share?url={{$url}}"><i class="fa fa-google" style="padding-right:4px"></i></a>
