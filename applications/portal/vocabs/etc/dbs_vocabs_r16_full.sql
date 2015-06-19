@@ -3,11 +3,8 @@ DROP DATABASE `dbs_vocabs`;
 CREATE DATABASE `dbs_vocabs` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
 
---
--- Table structure for table `related entities`
---
-DROP TABLE IF EXISTS `dbs_vocabs`.`related`;
-CREATE TABLE `dbs_vocabs`.`related` (
+
+CREATE TABLE `related` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(45) DEFAULT NULL,
   `relation` varchar(45) DEFAULT NULL,
@@ -15,35 +12,33 @@ CREATE TABLE `dbs_vocabs`.`related` (
   `slug` varchar(255) DEFAULT NULL,
   `data` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB CHARSET=latin1
 
 
+CREATE TABLE `task` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `vocabulary_id` int(11) NOT NULL,
+  `version_id` int(11) NOT NULL,
+  `params` text,
+  `status` varchar(45) DEFAULT NULL,
+  `response` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
 
---
--- Table structure for table `versions`
---
 
-DROP TABLE IF EXISTS `dbs_vocabs`.`versions`;
-
-CREATE TABLE `dbs_vocabs`.`versions` (
+CREATE TABLE `versions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `status` varchar(45) DEFAULT NULL,
   `release_date` timestamp NULL DEFAULT NULL,
   `vocab_id` int(11) DEFAULT NULL,
   `data` text,
+  `repository_id` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
 
 
-
---
--- Table structure for table `vocabularies `
---
-
-DROP TABLE IF EXISTS `dbs_vocabs`.`vocabularies`;
-
-CREATE TABLE `dbs_vocabs`.`vocabularies` (
+CREATE TABLE `vocabularies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `slug` varchar(255) DEFAULT NULL,
@@ -54,6 +49,12 @@ CREATE TABLE `dbs_vocabs`.`vocabularies` (
   `licence` text,
   `pool_party_id` varchar(45) DEFAULT NULL,
   `data` text,
+  `owner` varchar(255) DEFAULT NULL,
+  `user_owner` varchar(255) DEFAULT NULL,
+  `status` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+
+
+
 

@@ -61,9 +61,10 @@
 								<input type="text" required class="form-control" ng-model="vocab.title" name="title" placeholder="Vocabulary Title">
 								<p ng-show="form.cms.title.$invalid" class="help-block">Vocabulary Title is required.</p>
 							</div>
-							<div class="form-group">
+							<div class="form-group" ng-class="{ 'has-error' : form.cms.acronym.$invalid }">
 								<label for="">Vocabulary Acronym</label>
 								<input type="text" required class="form-control" ng-model="vocab.acronym" name="acronym" placeholder="Vocabulary Acronym">
+								<p ng-show="form.cms.acronym.$invalid" class="help-block">Vocabulary Title is required.</p>
 							</div>
 							<div class="form-group" ng-class="{ 'has-error' : form.cms.description.$invalid }">
 								<label for="">Vocabulary Description</label>
