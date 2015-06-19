@@ -372,7 +372,7 @@ class _vocabulary {
 		} else {
 			//add new
 			//check if there's an existing vocab with the same slug in draft state
-			$slug = url_title($this->title(), '-', TRUE);
+			$slug = url_title($this->prop['title'], '-', TRUE);
             if(isset($this->prop['status']) && $this->prop['status']=='draft'){
                 $result = $db->get_where('vocabularies', array('slug'=>$slug,'status'=>'draft'));
                 if ($result->num_rows() > 0) {
@@ -383,7 +383,7 @@ class _vocabulary {
 
             if(!isset($this->prop['owner'])) $this->prop['owner'] = $ci->user->localIdentifier();
 			$data = array(
-				'title' => $this->title(),
+				'title' => $this->prop['title'],
 				'slug' => $slug,
 				'description' => isset($this->prop['description']) ? $this->prop['description'] : '',
 				'licence' => isset($this->prop['licence']) ? $this->prop['licence'] : '',
@@ -421,19 +421,6 @@ class _vocabulary {
 			}
 		}
 	}
-
-	public function title() {
-		if (isset($this->prop['title'])) {
-			if (is_array($this->prop['title'])) {
-				return $this->prop['title'][0];
-			} else {
-				return $this->prop['title'];
-			}
-		} else {
-			return 'No Title';
-		}
-	}
-
 
 
 	/**
