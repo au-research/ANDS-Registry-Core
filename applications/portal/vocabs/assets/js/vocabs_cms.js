@@ -288,7 +288,6 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 				}
 			}
 			
-
 		}
 
 		if ($scope.error_message!=false) {
