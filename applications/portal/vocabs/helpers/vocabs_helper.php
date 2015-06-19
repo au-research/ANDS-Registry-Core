@@ -70,3 +70,19 @@ function vocab_log_terms($terms=array(), $type='info') {
 
 	vocab_log($msg,$type);
 }
+
+function readable_lang($term) {
+	$match = strtolower($term);
+	switch($match) {
+		case 'en': return 'English'; break;
+		case 'zh': return 'Chinese'; break;
+		case 'fr': return 'French'; break;
+		case 'de': return 'German'; break;
+		case 'it': return 'Italian'; break;
+		case 'ja': return 'Japanese'; break;
+		case 'mi': return 'Māori'; break;
+		case 'ru': return 'Russian'; break;
+		case 'es': return 'Spanish'; break;
+		default: return $term; break;
+	}
+}

@@ -372,12 +372,20 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 	 * @param enum type
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 */
+	
 	$scope.addtolist = function(list, item) {
-        if(!$scope.vocab[list]){
-            $scope.vocab[list] = [];
-        }
+        if(!$scope.vocab[list]) $scope.vocab[list] = [];
         $scope.vocab[list].push(item);
+        $scope.resetValues();
 	}
+
+	$scope.resetValues = function() {
+		$scope.newValue = {
+			language: "",
+			subject: {subject:"", subject_source:"" }
+		}
+	}
+	$scope.resetValues();
 
 	$scope.list_remove = function(type, index) {
 		if (index > 0) {
@@ -406,7 +414,7 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
 	};
 
 	$scope.addformat = function(obj) {
-		if ($scope.validateAP()) {
+		if ($scope.validateAP() || $scope.version.provider_type=='poolparty') {
 			if (!$scope.version) $scope.version = {};
 			if (!$scope.version['access_points'] || $scope.version['access_points']==undefined) {
 				$scope.version['access_points'] = [];

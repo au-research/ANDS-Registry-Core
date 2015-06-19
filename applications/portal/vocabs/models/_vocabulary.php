@@ -51,10 +51,10 @@ class _vocabulary {
 			$json['language'] = array();
 			if (is_array($data['language'])) {
 				foreach($data['language'] as $s) {
-					$json['language'][] = $s;
+					$json['language'][] = readable_lang($s);
 				}
 			} else {
-				$json['language'][] = $data['language'];
+				$json['language'][] = readable_lang($data['language']);
 			}
 		}
 

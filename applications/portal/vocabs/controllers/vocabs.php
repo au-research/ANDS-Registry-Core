@@ -360,6 +360,16 @@ class Vocabs extends MX_Controller {
 					if (isset($vocab_array['related_entity'])) {
 						foreach($vocab_array['related_entity'] as $re) {
 							if ($type=='publisher') {
+								if ($re['type']=='party') {
+									if (isset($re['relationship']) && is_array($re['relationship'])) {
+										foreach($re['relationship'] as $rel) {
+											if ($rel=='publishedBy') {
+												$re['vocab_id'] = $vocab_array['id'];
+												$result[] = $re;
+											}
+										}
+									}
+								}
 								if ($re['type']=='party' && isset($re['relationship']) && $re['relationship']=='publishedBy') {
 									$re['vocab_id'] = $vocab_array['id'];
 									$result[] = $re;
@@ -374,7 +384,6 @@ class Vocabs extends MX_Controller {
 							}
 						}
 					}
-					
 				}
 			} else if($method=='user') {
 				$result['affiliations'] = array_values(array_unique($this->user->affiliations()));

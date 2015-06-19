@@ -146,18 +146,15 @@
 							</table>
 
 
-							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('language', newLanguage)">
+							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('language', newValue.language)">
 								<div class="input-group">
-
-
-									<input type="text" class="form-control" placeholder="Language" typeahead="lang.value as lang.text for lang in langs | filter:$viewValue  |limitTo:8" ng-model="newLanguage"></input>
+									<input type="text" ng-model="newValue.language" class="form-control" placeholder="Language" typeahead="lang.value as lang.text for lang in langs | filter:$viewValue" typeahead-min-length="0" typeahead-on-select="addtolist('language', newValue.language)"></input>
 									<span class="input-group-btn">
-										<button class="btn btn-primary" type="button" ng-click="addtolist('language', newLanguage)"><i class="fa fa-plus"></i> Add</button>
+										<button class="btn btn-primary" type="button" ng-click="addtolist('language', newValue.language)"><i class="fa fa-plus"></i> Add</button>
 									</span>
 								</div>
 							</form>
 						</div>
-
 
 					</div>
 
@@ -177,16 +174,16 @@
 								</tbody>
 							</table>
 
-							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('subjects', newSubject)">
+							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('subjects', newValue.subject)">
 								<div class="form-group">
 									<label for="">Subject Label</label>
-									<input type="text" class="form-control" placeholder="Subject Label" ng-model="newSubject.subject">
+									<input type="text" class="form-control" placeholder="Subject Label" ng-model="newValue.subject.subject">
 								</div>
 								<div class="form-group">
 									<label for="">Subject Source</label>
-									<select name="" id="" class="form-control" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="newSubject.subject_source"></select>
+									<select name="" id="" class="form-control" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="newValue.subject.subject_source"></select>
 								</div>
-								<button class="btn btn-primary" ng-submit="addtolist('subjects', newSubject)"><i class="fa fa-plus"></i> Add Subject</button>
+								<button class="btn btn-primary" ng-submit="addtolist('subjects', newValue.subject)"><i class="fa fa-plus"></i> Add Subject</button>
 							</form>
 						</div>
 					</div>
