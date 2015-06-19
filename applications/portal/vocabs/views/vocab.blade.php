@@ -88,7 +88,7 @@ if(isset($vocab['related_entity'])){
                             $pipe_count = 0;
                             foreach($vocab['language'] as $language)
                             {
-                                echo $language;
+                                echo readable($language);
                                 $pipe_count++;
                                 if($pipe_count<count($vocab['language'])){
                                     echo " | ";
