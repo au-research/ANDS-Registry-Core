@@ -14,7 +14,7 @@
                             <a href="{{ portal_url('vocabs/add#!/?skip=true') }}" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Add a new Vocabulary</a>
 							<hr>
 							@if(sizeof($owned_vocabs) == 0)
-								You don't own any vocabulary, start by adding a new one
+								You don't own any vocabularies, start by adding a new one
 							@else
 								<h4>Published Vocabularies</h4>
 								<table class="table">
