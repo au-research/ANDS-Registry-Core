@@ -110,7 +110,6 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 		if (!chosen) chosen = which[0];
 		// $log.debug(trig);
 
-		// $log.debug(chosen);
 		return chosen;
 	}
 
@@ -148,11 +147,15 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 
 					if (data['dcterms:title']) {
 						$scope.vocab.title = $scope.choose(data['dcterms:title']);
+						if (angular.isArray($scope.vocab.title)) $scope.vocab.title = $scope.vocab.title[0];
 					}
 
 					if (data['dcterms:description']) {
 						$scope.vocab.description = $scope.choose(data['dcterms:description']);
+						if (angular.isArray($scope.vocab.description)) $scope.vocab.description = $scope.vocab.description[0];
 					}
+
+					$log.debug($scope.vocab);
 
 					if (data['dcterms:subject']) {
 						//overwrite the previous ones
@@ -228,6 +231,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 			return false;
 		}
 
+
 		if ($scope.mode=='add' || ($scope.vocab.status=='published' && status=='draft')) {
             $scope.vocab.status = status;
 			$log.debug('Adding Vocab', $scope.vocab);
@@ -281,7 +285,11 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 			} else {
 				var hasPublisher = false;
 				angular.forEach($scope.vocab.related_entity, function(obj){
-					if (obj.relationship == 'publishedBy') hasPublisher = true;
+					if (obj.relationship) {
+						angular.forEach(obj.relationship, function(rel){
+							if (rel=='publishedBy') hasPublisher = true;
+						});
+					}
 				});
 				if (!hasPublisher) {
 					$scope.error_message = 'There must be a publisher related to this vocabulary';
