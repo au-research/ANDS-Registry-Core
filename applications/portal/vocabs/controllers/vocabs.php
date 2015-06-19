@@ -345,9 +345,12 @@ class Vocabs extends MX_Controller {
 			$vocabs = $this->vocab->getAll();
 			$result = array();
 
-			foreach ($vocabs as $vocab) {
-				$result[] = $vocab->display_array();
+			if ($vocabs) {
+				foreach ($vocabs as $vocab) {
+					$result[] = $vocab->display_array();
+				}
 			}
+			
 
 			if ($method=='related') {
 				$result = array();
