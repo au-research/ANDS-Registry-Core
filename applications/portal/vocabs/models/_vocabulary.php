@@ -381,7 +381,7 @@ class _vocabulary {
                 }
 			}
 
-            if(!isset($this->prop['owner'])) $this->prop['owner'] = $this->prop['user_owner'];
+            if(!isset($this->prop['owner'])) $this->prop['owner'] = $ci->user->localIdentifier();
 			$data = array(
 				'title' => $this->prop['title'],
 				'slug' => $slug,
