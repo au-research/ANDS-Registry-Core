@@ -6,7 +6,15 @@
                         <label for="">Title</label> {{$related['title']}}
                    </div>
                    <div class="form-group">
-                        <label for="">Relation</label> {{readable($related['relationship'])}}
+                        <label for="">Relation</label>
+                       <?php
+                       if(is_array($related['relationship'])){
+                       foreach($related['relationship'] as $relationship)
+                            echo readable($relationship);
+                       }else{
+                           echo readable($related['relationship']);
+                       }
+?>
                    </div>
                    @if(isset($related['URL']))
                         <div class="form-group">

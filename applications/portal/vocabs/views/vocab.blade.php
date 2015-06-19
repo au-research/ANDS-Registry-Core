@@ -154,11 +154,11 @@ if(isset($vocab['related_entity'])){
             @foreach($related_service as $service)
             <p><small>
                 <?php 
-                    if (isset($related['relationship'])) {
-                        if (is_array($related['relationship'])) {
-                            echo implode($related['relationship'], ',');
+                    if (isset($service['relationship'])) {
+                        if (is_array($service['relationship'])) {
+                            echo implode($service['relationship'], ',');
                         } else {
-                            echo readable($related['relationship']);
+                            echo readable($service['relationship']);
                         }
                     }
                 ?>
@@ -198,7 +198,7 @@ if(isset($vocab['related_entity'])){
                 <?php 
                     if (isset($related['relationship'])) {
                         if (is_array($related['relationship'])) {
-                            echo implode($related['relationship'], ',');
+                            echo readable(implode($related['relationship'], ','));
                         } else {
                             echo readable($related['relationship']);
                         }
