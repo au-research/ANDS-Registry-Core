@@ -413,6 +413,11 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
         {"value":"apiSparql","text":"API/SPARQL endpoint"},
         {"value":"file","text":"File"}
     ]
+
+    $scope.newValue = {
+    	ap: {}
+    };
+
 	//calendar operation
 	$scope.opened = false;
 	$scope.open = function($event) {

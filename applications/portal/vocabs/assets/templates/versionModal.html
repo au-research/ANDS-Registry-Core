@@ -67,27 +67,27 @@
 							<form class="form" action="" name="apForm" novalidate>
 								<div class="form-group" ng-class="{ 'has-error' : apForm.format.$invalid }">
 									<label for="">Access Point</label>
-                                    <input type="text" required name="format" class="form-control" placeholder="Format" ng-model="newap.format" typeahead="format as format for format in formats |  limitTo:8" typeahead-min-length="0">
+                                    <input type="text" required name="format" class="form-control" placeholder="Format" ng-model="newValue.ap.format" typeahead="format as format for format in formats |  limitTo:8" typeahead-min-length="0">
                                     <p ng-show="apForm.format.$invalid" class="help-block">Format is required.</p>
 								</div>
 								<div class="form-group" ng-class="{ 'has-error' : apForm.type.$invalid }">
 									<label for="">Access Point Type</label>
-                                    <select class="form-control" required name="type" ng-options="type.value as type.text for type in types" ng-model="newap.type"></select>
+                                    <select class="form-control" required name="type" ng-options="type.value as type.text for type in types" ng-model="newValue.ap.type"></select>
                                     <p ng-show="apForm.type.$invalid" class="help-block">Type is required.</p>
 								</div>
 								<div class="form-group" ng-class="{ 'has-error' : apForm.uri.$invalid }">
 									<label for="">Access Point URI</label>
 									<p class="input-group">
-										<input type="text" required name="uri" class="form-control" placeholder="URI" ng-model="newap.uri">
+										<input type="text" required name="uri" class="form-control" placeholder="URI" ng-model="newValue.ap.uri">
 										<span class="input-group-btn">
-											<button type="button" class="btn btn-default" ng-file-select ng-file-change="upload($files, newap)"><i class="fa fa-upload"></i> Upload File</button>
+											<button type="button" class="btn btn-default" ng-file-select ng-file-change="upload($files, newValue.ap)"><i class="fa fa-upload"></i> Upload File</button>
 										</span>
 										<div class="alert alert-important" ng-if="error_upload_msg">[[ error_upload_msg ]]</div>
 									</p>
 									<p ng-show="apForm.uri.$invalid" class="help-block">URI is required.</p>
 								</div>
 								<div class="alert alert-danger" ng-show="ap_error_message">[[ap_error_message]]</div>
-								<button type="button" class="btn btn-primary" ng-click="addformat(newap)"><i class="fa fa-plus"></i> Add Access Point</button>
+								<button type="button" class="btn btn-primary" ng-click="addformat(newValue.ap)"><i class="fa fa-plus"></i> Add Access Point</button>
 							</form>
 						</div>
 					</div>
