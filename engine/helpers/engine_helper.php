@@ -505,7 +505,8 @@ function ulog_email($subject='', $message='', $logger='activity', $type='info') 
 	$siteState = (get_config_item('deployment_state') ? " (".get_config_item('deployment_state').")" : '');
 
 	$email = $_ci->load->library('email');
-	$email->from(get_config_item('site_admin_email'), $siteAdmin);
+	// CC-1201 Remove site_admin_email as the sender, which should defaulted to apache@host
+	// $email->from(get_config_item('site_admin_email'), $siteAdmin);
 	$email->to(get_config_item('site_admin_email')); 
 
 	$email->subject($subject);
