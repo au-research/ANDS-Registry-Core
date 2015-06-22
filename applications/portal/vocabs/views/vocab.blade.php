@@ -25,17 +25,6 @@ if(isset($vocab['related_entity'])){
 
 @extends('layout/vocab_2col_layout')
 @section('content')
-<?php 
-
-    $aps = array();
-
-    //get file
-    foreach($vocab['current_version']['access_points'] as $ap) {
-        if (!isset($aps[$ap['type']])) $aps[$ap['type']] = array();
-        array_push($aps[$ap['type']], $ap);
-    }
-
-?>
 <article class="post">
     <div class="post-body">
         <div class="panel swatch-white panel-primary element-no-top element-short-bottom panel-content">
