@@ -637,6 +637,7 @@ class Vocabs extends MX_Controller {
 	public function download() {
 		$file = $this->input->get('file');
 		if (!$file) throw new Exception('File (required) not found');
+		if (!file_exists($file)) $file = vocab_uploaded_url($file);
 		if (!file_exists(vocab_uploaded_url($file))) throw new Exception('File not found');
 		$file = vocab_uploaded_url($file);
 		header('Content-Description: File Transfer');
