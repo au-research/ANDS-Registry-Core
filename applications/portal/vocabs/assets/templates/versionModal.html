@@ -58,7 +58,7 @@
 								<tr ng-repeat="ap in version.access_points track by $index">
 									<td>[[ ap.format ]]</td>
 									<td>[[ ap.type ]]</td>
-									<td>[[ ap.uri ]]</td>
+									<td><a href="[[ ap.uri ]]">URI</a></td>
 									<td><a href="" ng-click="list_remove('access_points', $index)"><i class="fa fa-remove"></i></a></td>
 								</tr>
 							</tbody>
