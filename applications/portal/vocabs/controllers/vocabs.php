@@ -454,17 +454,21 @@ class Vocabs extends MX_Controller {
                 else{
                     //throw new Exception($data['status']);
                     $result = $vocab->save($data);
-                    if (!$result) throw new Exception('Error Saving Vocabulary');
-                    if ($result) {
-                        $result = 'Success in saving vocabulary';
-                        //index saved one
-                        if($vocab->prop['status']=='published'){
-                            $this->index_vocab($vocab);
-                            if ($this->index_vocab($vocab)) {
-                                // $result .= '. Success in indexing vocabulary';
-                            }
-                        }
+
+                   	//result should be an object
+                   	//result.status = 'OK'
+                   	//result.message = array()
+
+                    if (!$result) throw new Exception('Error while saving vocabulary');
+
+                    if ($result && $vocab->prop['status']=='published') {
+                    	if ($this->index_vocab($vocab)) {
+                    		$vocab->log('Indexing Success');
+                    	}
                     }
+
+                    if ($result) $result = $vocab;
+                   	
                     $event = array(
                         'event'=>'edit',
                         'vocab'=>$vocab->title

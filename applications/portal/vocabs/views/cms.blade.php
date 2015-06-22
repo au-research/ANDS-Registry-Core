@@ -243,7 +243,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel swatch-gray">
-						<div class="panel-body">
+						<div class="panel-body" ng-if="status=='idle'">
 							<a href="" class="btn btn-large btn-primary" ng-click="save('draft')" ng-disabled="form.cms.$invalid">Save to draft</a>
 							<a href="" class="btn btn-large btn-primary" ng-click="save('published')" ng-disabled="form.cms.$invalid">Publish</a>
 							@if($vocab && $vocab->prop['status']=='published')
@@ -251,7 +251,14 @@
 							@endif
 							<div class="alert alert-danger element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="error_message">[[ error_message ]]</div>
 							<div class="alert alert-danger element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-show="form.cms.$invalid">There are validation errors in the form</div>
-							<div class="alert alert-success element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="success_message">[[ success_message ]]</div>
+							<div class="alert alert-success element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="success_message">
+								<ul>
+									<li ng-repeat="msg in success_message" ng-bind-html="msg">[[ msg ]]</li>
+								</ul>
+							</div>
+						</div>
+						<div class="panel-body" ng-if="status=='saving'">
+							<i class="fa fa-refresh fa-spin"></i> Saving...
 						</div>
 					</div>
 				</div>

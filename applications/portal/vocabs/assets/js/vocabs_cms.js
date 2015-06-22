@@ -26,6 +26,8 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
     $scope.opened = false;
 	$scope.decide = false;
 
+	$scope.status = 'idle';
+
 	$scope.open = function($event) {
 	    $event.preventDefault();
 	    $event.stopPropagation();
@@ -225,37 +227,40 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 		
 		$scope.error_message = false;
 		$scope.success_message = false;
+		
 
 		//validation
 		if (!$scope.validate()) {
 			return false;
 		}
 
-
 		if ($scope.mode=='add' || ($scope.vocab.status=='published' && status=='draft')) {
             $scope.vocab.status = status;
+            $scope.status = 'saving';
 			$log.debug('Adding Vocab', $scope.vocab);
 			vocabs_factory.add($scope.vocab).then(function(data){
+				$scope.status = 'idle';
 				$log.debug('Data Response from saving vocab', data);
 				if(data.status=='ERROR') {
 					$scope.error_message = data.message;
 				} else {//success
 					//navigate to the edit form if on the add form
 					// $log.debug(data.message.prop[0].slug);
-					var slug = data.message.prop.slug;
-                    var id = data.message.prop.id;
-					window.location.replace(base_url+"vocabs/edit/"+id);
+					$scope.success_message = data.message.import_log;
+					$scope.success_message.push('Successfully saved to a Draft. <a href="'+base_url+"vocabs/edit/"+data.message.prop.id+'">Click Here edit the draft</a>');
 				}
 			});
 		} else if ($scope.mode=='edit') {
             $scope.vocab.status = status;
+            $scope.status = 'saving';
 			$log.debug('Saving Vocab', $scope.vocab);
 			vocabs_factory.modify($scope.vocab.id, $scope.vocab).then(function(data){
+				$scope.status = 'idle';
 				$log.debug('Data Response from saving vocab (edit)', data);
 				if(data.status=='ERROR') {
 					$scope.error_message = data.message;
 				} else {//success
-					$scope.success_message = data.message;
+					$scope.success_message = data.message.import_log;
 					vocabs_factory.get($scope.vocab.slug).then(function(data){
 						$scope.vocab = data.message;
 					});
