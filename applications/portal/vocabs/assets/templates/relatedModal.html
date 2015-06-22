@@ -17,10 +17,9 @@
 					</div>
 					<div class="col-md-6">
                         <input type="hidden" value="publishedBy" name="relationship" ng-if="type=='publisher'"/>
-                        <div class="form-group" ng-class="{'has-error':reForm.email.$invalid}">
+                        <div class="form-group">
 							<label for="">Email</label>
-							<input type="text" required name="email" class="form-control" placeholder="entity Email" ng-model="entity.email">	
-							<p class="help-block" ng-show="reForm.email.$invalid">Email is required</p>
+							<input type="text" name="email" class="form-control" placeholder="entity Email" ng-model="entity.email">	
 						</div>
 					</div>
 					<div class="col-md-6">

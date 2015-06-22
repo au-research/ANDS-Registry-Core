@@ -238,7 +238,7 @@ class _vocabulary {
 		$tree = array();
 		if (is_array($treeData)) {
 			foreach($treeData as $key=>$value) {
-				if ($key!='prefLabel') {
+				if ($key!='prefLabel' && $key!='notation') {
 					$node = array(
 						'uri' => $key,
 						'value' => isset($value['prefLabel']) ? $value['prefLabel'] : 'No Title',
@@ -250,9 +250,7 @@ class _vocabulary {
 					$node['num_child'] = sizeof($childs);
 					$tree[] = $node;
 				}
-				
 			}
-			
 		}
 		return $tree;
 	}

@@ -31,6 +31,7 @@ if(isset($vocab['related_entity'])){
 
             <div class="container-fluid">
                 <div class="row">
+                    @if($vocab['current_version'])
                     <div class="col-md-4 panel-body text-center">
                         <h4>{{ titlecase($vocab['current_version']['title']) }}</h4>
                         
@@ -62,8 +63,8 @@ if(isset($vocab['related_entity'])){
                             @endif
                             @endforeach
                         </ul>
-                        
                     </div>
+                    @endif
                     <div class="col-md-8 panel-body">
                         {{ $vocab['description'] }}
                         @if(isset($vocab['language']))
