@@ -132,7 +132,8 @@ if(isset($vocab['related_entity'])){
 
 
 @section('sidebar')
-@if(isset($related_service))
+@if(isset($related_service[0]['title']))
+
 <div class="panel swatch-white  panel-primary element-no-top element-short-bottom panel-content">
     <div class="panel-heading">Services that make use of this vocabulary</div>
     <div class="panel-body">
