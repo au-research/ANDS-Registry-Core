@@ -453,6 +453,20 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
 		delete $scope.error_message;
 		if ($scope.versionForm.$valid) {
 
+			//if there's already a current version, this one shouldn't be
+			if ($scope.version.status=='current') {
+				if (vocab.versions) {
+					var vocabhascurrent = false;
+					angular.forEach(vocab.versions, function(ver){
+						if (ver.status=='current') vocabhascurrent = true;
+					});
+					if (vocabhascurrent) {
+						$scope.error_message = 'Vocabulary already has a current version';
+						return false;
+					}
+				}
+			}
+
 			//at least 1 access point require
 			if ($scope.version && $scope.version.access_points && $scope.version.access_points.length > 0) {
 				return true;
@@ -460,6 +474,9 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
 				$scope.error_message = 'At least 1 access point is required';
 				return false;
 			}
+
+
+			return true;
 		} else {
 			$scope.error_message = 'Form Validation Failed';
 			return false;
