@@ -516,6 +516,22 @@ class _vocabulary {
 		} else return false;
 	}
 
+	private function determineAction($version, $action) {
+		$result = false;
+		$version_data = json_decode($version['data'],true);
+
+		foreach ($version_data['access_points'] as $ap) {
+			if ($ap['type']=='apiSparql' && $action=='import') {
+				// $this->log('Found an apiSparql with action import');
+				$result = true;
+			} elseif ($ap['type']=='webPage' && $action=='publish') {
+				// $this->log('Found a webPage with action publish');
+				$result = true;
+			}
+		}
+		return $result;
+	}
+
 	private function processTask($version,$version_id,$db){
 		// $this->log('Task set for version '.$version['title']);
 		$version_data = json_decode($version['data'],true);
@@ -536,8 +552,6 @@ class _vocabulary {
 				if ($file) {
 					$harvest_task = array('type'=>'HARVEST', 'provider_type' => 'File', 'file_path' => vocab_uploaded_url($file['uri']));
 					array_push($task_array, $harvest_task);
-					$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesame');
-					array_push($task_array, $import_task);
 				}
 			}
 
@@ -545,11 +559,17 @@ class _vocabulary {
 			array_push($task_array, $transform_task);
 			$transform_task = array('type'=>'TRANSFORM', 'provider_type'=>'JsonTree');
 			array_push($task_array, $transform_task);
-			$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesame');
-			array_push($task_array, $import_task);
-			$publish_task = array('type'=>'PUBLISH', 'provider_type'=>'SISSVoc');
-			array_push($task_array, $publish_task);
 
+			if ($this->determineAction($version, 'import')) {
+				$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesame');
+				array_push($task_array, $import_task);
+			}
+			
+			if ($this->determineAction($version, 'publish')) {
+				$publish_task = array('type'=>'PUBLISH', 'provider_type'=>'SISSVoc');
+				array_push($task_array, $publish_task);
+			}
+			
 			//add task array to the task table
 			$task_params = json_encode($task_array);
 			$params = array(
@@ -596,6 +616,7 @@ class _vocabulary {
 						if (!$result) throw new Exception($db->_error_message());
 					} else {
 						//cant find version with the id, handle here
+						$this->log('Version with ID: '.$version_id.' not found');
 					}
 				} else if(isset($content['output_path'])) {
 					//file upload
@@ -603,8 +624,11 @@ class _vocabulary {
 						$vvdata = json_decode($vv->data, true);
 						foreach ($vvdata['access_points'] as &$ap) {
 							if ($ap['type']=='file') {
-								// Dont' update just yet
-								// $ap['uri'] = $content['output_path'];
+								// $ap['uri'] = isset($content['concepts']) ? $content['concepts'] : 'TBD';
+							} elseif ($ap['type']=='apiSparql') {
+								$ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TBD';
+							} elseif ($ap['type']=='webPage') {
+								$ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'].'/concept/topConcepts' : 'TBD';
 							}
 						}
 						$saved_data = array('data' => json_encode($vvdata));
@@ -613,6 +637,7 @@ class _vocabulary {
 						if (!$result) throw new Exception($db->_error_message());
 					} else {
 						//cant find version with the id, handle here
+						$this->log('Version with ID: '.$version_id.' not found');
 					}
 				}
  

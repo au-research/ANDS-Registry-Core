@@ -40,11 +40,8 @@ class Vocabs extends MX_Controller {
 		if ($slug) {
 			$record = $this->vocab->getBySlug($slug);
 		}
-
-		//For Development Only
 		if (!$record) {
-			$test_records = $this->vocab->test_vocabs();
-			$record = $test_records[$slug] ? $test_records[$slug] : false;
+			$record = $this->vocab->getByID($slug);
 		}
 
 		if ($record) {

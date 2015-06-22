@@ -440,9 +440,33 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
 			var newobj = {};
 			angular.copy(obj, newobj)
 			$scope.version.access_points.push(newobj);
+
+			
 			$scope.newap = {};
 		} else return false;
-		
+	}
+
+	$scope.addformatform = function(obj) {
+		$scope.addformat(obj);
+		$log.debug(obj.import, obj.publish);
+		if (obj.import) {
+			//add empty apiSparql endpoint
+			var newobj = {
+				format: 'RDF/XML',
+				type: 'apiSparql',
+				uri: 'TBD'
+			}
+			$scope.addformat(newobj);
+		}
+		if (obj.publish) {
+			//add empty sissvoc endpoint
+			var newobj = {
+				format: 'RDF/XML',
+				type: 'webPage',
+				uri: 'TBD'
+			}
+			$scope.addformat(newobj);
+		}
 	}
 
 	$scope.validateAP = function(){
@@ -452,6 +476,16 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
 		} else {
 			return false;
 		}
+	}
+
+	$scope.validFormat = function() {
+		var validFormats = ['TTL', 'TriG', 'Trix', 'N3', 'RDF/XML'];
+		if ($scope.newValue.ap.format && $scope.newValue.ap.type=='file') {
+			if (validFormats.indexOf($scope.newValue.ap.format) > -1) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	$scope.validateVersion = function() {
