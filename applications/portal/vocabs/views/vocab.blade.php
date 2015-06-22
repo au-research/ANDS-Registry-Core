@@ -45,20 +45,16 @@ if(isset($vocab['related_entity'])){
                     <div class="col-md-4 panel-body text-center">
                         <h4>{{ titlecase($vocab['current_version']['title']) }}</h4>
                         
-                        @foreach($aps as $type=>$ap)
-                            @if($type=='file')
-                                @foreach($ap as $a)
-                                    <a class="btn btn-lg btn-block btn-primary" href="{{ $a['uri'] }}"><i class="fa fa-cube"></i> Download File</a>
-                                @endforeach
+                        @foreach($vocab['current_version']['access_points'] as $ap)
+                            @if($ap['type']=='file')
+                                <a class="btn btn-lg btn-block btn-primary" href="{{ portal_url('vocabs/download/?file='.$ap['uri']) }}"><i class="fa fa-cube"></i> Download File</a>
                             @endif
                         @endforeach
-                        @foreach($aps as $type=>$ap)
-                            @if($type!='file')
-                                @foreach($ap as $a)
-                                    <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-                                        <a class="btn btn-sm btn-default" href="{{ $a['uri'] }}"><i class="fa fa-edit"></i> Access {{ $a['type'] }} ({{ $a['format'] }})</a>
-                                    </div>
-                                @endforeach
+                        @foreach($vocab['current_version']['access_points'] as $ap)
+                            @if($ap['type']!='file')
+                                <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
+                                    <a class="btn btn-sm btn-default" href="{{ $ap['uri'] }}"><i class="fa fa-edit"></i> Access {{ $ap['type'] }} ({{ $ap['format'] }})</a>
+                                </div>
                             @endif
                         @endforeach
 

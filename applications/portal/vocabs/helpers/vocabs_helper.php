@@ -86,3 +86,13 @@ function readable_lang($term) {
 		default: return $term; break;
 	}
 }
+
+function vocab_readable($term) {
+	$match = strtolower($term);
+	switch($match) {
+		case 'webpage' : return 'Online'; break;
+		case 'apisparql' : return 'API/SPARQL'; break;
+		case 'file' : return 'Direct Download'; break;
+		default: return $term; break;
+	}
+}

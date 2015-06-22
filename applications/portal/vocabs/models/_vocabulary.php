@@ -8,6 +8,21 @@ class _vocabulary {
 	//object properties are all located in the same array
 	public $prop;
 
+	// Temporary workaround for storing "groupings" of licence identifiers
+	// XXX: Long term solution should use a vocabulary service (such as ANDS's)
+	private static $licence_groups = array(
+        "GPL" => "Open Licence",
+        "CC-BY-SA" => "Open Licence",
+        "CC-BY-ND" => "Non-Derivative Licence",
+        "CC-BY-NC-SA" => "Non-Commercial Licence",
+        "CC-BY-NC-ND" => "Non-Derivative Licence",
+        "CC-BY-NC" => "Non-Commercial Licence",
+        "CC-BY" => "Open Licence",
+        "CSIRO Data Licence" => "Non-Commercial Licence",
+        "AusGoalRestrictive" => "Restrictive Licence",
+        "NoLicence" => "No Licence"
+    );
+
 	function __construct($id = false) {
 		//populate the property as soon as the object is constructed
 		$this->init();
@@ -36,9 +51,15 @@ class _vocabulary {
 		$json = array();
 
 		//index single values
-		$single_values = array('id', 'title', 'slug', 'licence', 'pool_party_id');
+		$single_values = array('id', 'title', 'slug', 'pool_party_id');
 		foreach ($single_values as $s) {
-			$json[$s] = $this->prop[$s];
+			if ($this->prop[$s]) $json[$s] = $this->prop[$s];
+		}
+
+		//licence is done differently
+		if ($this->prop['licence']) {
+			$value = trim($this->prop['licence']);
+			$json['licence'] = (isset(self::$licence_groups[$value])) ? self::$licence_groups[$value] : 'Unknown/Other';
 		}
 
 		$data = $this->display_array();
@@ -136,7 +157,7 @@ class _vocabulary {
 			$json['access'] = array();
 			$json['format'] = array();
 			foreach ($current_version['access_points'] as $ap) {
-				$json['access'][] = $ap['type'];
+				$json['access'][] = vocab_readable($ap['type']);
 				$json['format'][] = $ap['format'];
 			}
 		}
