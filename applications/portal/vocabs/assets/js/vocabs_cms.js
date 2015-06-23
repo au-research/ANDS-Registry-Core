@@ -497,7 +497,7 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
 				if (vocab.versions) {
 					var vocabhascurrent = false;
 					angular.forEach(vocab.versions, function(ver){
-						if (ver.status=='current') vocabhascurrent = true;
+						if (ver.status=='current' && ver.id != $scope.version.id) vocabhascurrent = true;
 					});
 					if (vocabhascurrent) {
 						$scope.error_message = 'Vocabulary already has a current version';
