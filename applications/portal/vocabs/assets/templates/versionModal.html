@@ -70,7 +70,7 @@
 							<form class="form" action="" name="apForm" novalidate>
 								<div class="form-group" ng-class="{ 'has-error' : apForm.format.$invalid }">
 									<label for="">Access Point</label>
-                                    <input type="text" required name="format" class="form-control" placeholder="Format" ng-model="newValue.ap.format" typeahead="format as format for format in formats |  limitTo:8" typeahead-min-length="0">
+                                    <input type="text" required name="format" class="form-control" placeholder="Format" ng-model="newValue.ap.format" typeahead="format as format for format in formats | filter:$viewValue | limitTo:8" typeahead-min-length="1">
                                     <p ng-show="apForm.format.$invalid" class="help-block">Format is required.</p>
 								</div>
 								
