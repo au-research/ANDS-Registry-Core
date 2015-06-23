@@ -247,8 +247,8 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 					//navigate to the edit form if on the add form
 					// $log.debug(data.message.prop[0].slug);
 					$scope.success_message = data.message.import_log;
-					//$scope.success_message.push('Successfully saved to a Draft. <a href="'+base_url+"vocabs/edit/"+data.message.prop.id+'">Click Here edit the draft</a>');
-                    window.location.replace(base_url+"vocabs/edit/"+data.message.prop.id);
+					$scope.success_message.push('Successfully saved to a Draft. <a href="'+base_url+"vocabs/edit/"+data.message.prop.id+'">Click Here edit the draft</a>');
+					window.location.replace(base_url+"vocabs/edit/"+data.message.prop.id);
 				}
 			});
 		} else if ($scope.mode=='edit') {
@@ -389,6 +389,13 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 	
 	$scope.addtolist = function(list, item) {
         if(!$scope.vocab[list]) $scope.vocab[list] = [];
+
+        //some validation
+        if (list=='language' && !item) return false;
+        if (list=='top_concept' && !item) return false;
+        if (list=='subjects' && !(item.subject && item.subject_source)) return false; 
+
+        //pass validation
         $scope.vocab[list].push(item);
         $scope.resetValues();
 	}
@@ -396,7 +403,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 	$scope.resetValues = function() {
 		$scope.newValue = {
 			language: "",
-			subject: {subject:"", subject_source:"" }
+			subject: {subject:'', subject_source:'' }
 		}
 	}
 	$scope.resetValues();
@@ -414,7 +421,7 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
 	$scope.versionStatuses = ['current', 'superseded', 'deprecated'];
 	$scope.version = version ? version : {provider_type:false};
 	$scope.action = version ? 'save': 'add';
-    $scope.formats=['RDF/XML','TTL','N-Triples','JSON','TriG','TriX','N3','CSV','TSV','XLS','XLSX','BinaryRDF','ODS','ZIP','XML','TXT','ODT', 'TEXT']
+    $scope.formats = ['RDF/XML','TTL','N-Triples','JSON','TriG','TriX','N3','CSV','TSV','XLS','XLSX','BinaryRDF','ODS','ZIP','XML','TXT','ODT', 'TEXT']
     $scope.types=[{"value":"webPage","text":"Web page"},
         {"value":"apiSparql","text":"API/SPARQL endpoint"},
         {"value":"file","text":"File"}
@@ -442,7 +449,6 @@ app.controller('versionCtrl', function($scope, $modalInstance, $log, $upload, ve
 			angular.copy(obj, newobj)
 			$scope.version.access_points.push(newobj);
 
-			
 			$scope.newap = {};
 		} else return false;
 	}
