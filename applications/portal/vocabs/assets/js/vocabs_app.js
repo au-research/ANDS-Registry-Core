@@ -78,6 +78,43 @@ $(document).on('click', '.re_preview', function(event){
     },event);
 });
 
+$(document).on('click', '.ver_preview', function(event){
+    event.preventDefault();
+    $(this).qtip({
+        show:{event:'click'},
+        hide: {
+            delay: 1000,
+            fixed: true
+        },
+        content: {
+            text:  function(event, api) {
+                api.elements.content.html('Loading...');
+                if ($(this).attr('version')) {
+                    var url = base_url+'vocabs/version_preview/?version='+$(this).attr('version');
+                }
+                if (url) {
+                    return $.ajax({
+                        url:url
+                    }).then(function(content){
+                        return content;
+                    },function(xhr,status,error){
+                        api.set('content.text', status + ': ' + error);
+                    });
+                } else {
+                    return 'Error displaying preview';
+                }
+
+            }
+        },
+        position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
+        style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'},
+        show: {
+            event:event.type,
+            ready:'true'
+        }
+    },event);
+});
+
 $(document).on('click', '.deleteVocab', function(e){
     e.preventDefault();
     if (confirm('Are you sure you want to delete this vocabulary? This action is irreversible')) {

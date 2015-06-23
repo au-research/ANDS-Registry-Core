@@ -64,7 +64,7 @@ if(isset($vocab['related_entity'])){
                             @foreach($vocab['versions'] as $version)
                             @if($version['status']!='current')
                                 <li>
-                                    <a href="">{{ titlecase($version['title']) }} </a>
+                                    <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}'>{{ titlecase($version['title']) }} </a>
                                     <small>({{ $version['status'] }}) </small>
                                     @if(isset($version['note']))
                                     <a href="" tip="{{ $version['release_date'] }} <hr />{{$version['note']}}"><i class="fa fa-info"></i></a>
