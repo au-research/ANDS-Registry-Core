@@ -7,6 +7,7 @@ class _vocabulary {
 
 	//object properties are all located in the same array
 	public $prop;
+	public $import_log = array();
 
 	// Temporary workaround for storing "groupings" of licence identifiers
 	// XXX: Long term solution should use a vocabulary service (such as ANDS's)
@@ -127,7 +128,6 @@ class _vocabulary {
 			}
 		}
 
-		
 		$json['concept'] = array();
 		if ($current_version) {
 			//find the task/file associated with the current version
@@ -161,9 +161,6 @@ class _vocabulary {
 				$json['format'][] = $ap['format'];
 			}
 		}
-		
-		
-		
 
 		return $json;
 	}
@@ -319,9 +316,8 @@ class _vocabulary {
 		}
 	}
 
-	private function log($message) {
-		// if (!$this->import_log) $this->import_log = array();
-		// array_push($this->import_log, $message);
+	public function log($message) {
+		$this->import_log[] = $message;
 	}
 
 	/**
@@ -468,9 +464,12 @@ class _vocabulary {
 				}
 			}
 			$deleted = array_diff($existing, $incoming);
+
 			foreach($deleted as $id) {
 				$db->delete('versions', array('id'=>$id));
 			}
+
+			if (sizeof($deleted) > 0) $this->log('Removed versions: '.implode(',', $deleted));
 
 			foreach($data['versions'] as $version) {
 				if (isset($version['id']) && $version['id']!="" && $version['vocab_id']==$this->prop['id']) {
@@ -487,6 +486,7 @@ class _vocabulary {
 					$result = $db->update('versions', $saved_data);
 					if ($this->prop['status']=='published') $this->processTask($saved_data,$version['id'],$db);
 					if (!$result) throw new Exception($db->_error_message());
+					$this->log('Updated version '.$saved_data['title'].' successfully');
 				} else {
 					//add the version if it doesn't exist
 					$version_data = array(
@@ -502,6 +502,7 @@ class _vocabulary {
 	                if ($this->prop['status']=='published') $this->processTask($version_data,$new_id,$db);
 					//throw new Exception($task_result);
 					if (!$result) throw new Exception($db->_error_message());
+					$this->log('Added version '.$version_data['title'].' successfully');
 				}
 			}
         }
@@ -515,8 +516,24 @@ class _vocabulary {
 		} else return false;
 	}
 
-	private function processTask($version,$version_id,$db){
+	private function determineAction($version, $action) {
+		$result = false;
+		$version_data = json_decode($version['data'],true);
 
+		foreach ($version_data['access_points'] as $ap) {
+			if ($ap['type']=='apiSparql' && $action=='import') {
+				// $this->log('Found an apiSparql with action import');
+				$result = true;
+			} elseif ($ap['type']=='webPage' && $action=='publish') {
+				// $this->log('Found a webPage with action publish');
+				$result = true;
+			}
+		}
+		return $result;
+	}
+
+	private function processTask($version,$version_id,$db){
+		// $this->log('Task set for version '.$version['title']);
 		$version_data = json_decode($version['data'],true);
 		if($version_data['status']=='current'){
 
@@ -535,8 +552,6 @@ class _vocabulary {
 				if ($file) {
 					$harvest_task = array('type'=>'HARVEST', 'provider_type' => 'File', 'file_path' => vocab_uploaded_url($file['uri']));
 					array_push($task_array, $harvest_task);
-					$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesame');
-					array_push($task_array, $import_task);
 				}
 			}
 
@@ -544,11 +559,17 @@ class _vocabulary {
 			array_push($task_array, $transform_task);
 			$transform_task = array('type'=>'TRANSFORM', 'provider_type'=>'JsonTree');
 			array_push($task_array, $transform_task);
-			$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesame');
-			array_push($task_array, $import_task);
-			$publish_task = array('type'=>'PUBLISH', 'provider_type'=>'SISSVoc');
-			array_push($task_array, $publish_task);
 
+			if ($this->determineAction($version, 'import')) {
+				$import_task = array('type'=>'IMPORT', 'provider_type'=>'Sesame');
+				array_push($task_array, $import_task);
+			}
+			
+			if ($this->determineAction($version, 'publish')) {
+				$publish_task = array('type'=>'PUBLISH', 'provider_type'=>'SISSVoc');
+				array_push($task_array, $publish_task);
+			}
+			
 			//add task array to the task table
 			$task_params = json_encode($task_array);
 			$params = array(
@@ -559,6 +580,7 @@ class _vocabulary {
 			$result = $db->insert('task', $params);
 			$task_id = $db->insert_id();
 			if (!$result) throw new Exception($db->_error_message());
+			$this->log('Task '.$task_id.' added and waiting for toolkit to process');
 
 			//hit Toolkit
 			$vocab_config = get_config_item('vocab_config');
@@ -568,7 +590,8 @@ class _vocabulary {
 			//deal with content return
 			if ($content) {
 				$content = json_decode($content, true);
-
+				$this->log('Task '.$task_id.' completed with status: '. $content['status']);
+				if (isset($content['exception'])) $this->log('Task '.$task_id.' has exception:'.$content['exception']);
 				//pool party stuffs filling
 				if (isset($content['concepts']) || isset($concept['sparql_endpoint']) || isset($concept['sissvoc_endpoints'])) {
 					//update the access point of type file, apiSparql path to the respective path
@@ -593,6 +616,7 @@ class _vocabulary {
 						if (!$result) throw new Exception($db->_error_message());
 					} else {
 						//cant find version with the id, handle here
+						$this->log('Version with ID: '.$version_id.' not found');
 					}
 				} else if(isset($content['output_path'])) {
 					//file upload
@@ -600,8 +624,11 @@ class _vocabulary {
 						$vvdata = json_decode($vv->data, true);
 						foreach ($vvdata['access_points'] as &$ap) {
 							if ($ap['type']=='file') {
-								// Dont' update just yet
-								// $ap['uri'] = $content['output_path'];
+								// $ap['uri'] = isset($content['concepts']) ? $content['concepts'] : 'TBD';
+							} elseif ($ap['type']=='apiSparql') {
+								$ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TBD';
+							} elseif ($ap['type']=='webPage') {
+								$ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'].'/concept/topConcepts' : 'TBD';
 							}
 						}
 						$saved_data = array('data' => json_encode($vvdata));
@@ -610,6 +637,7 @@ class _vocabulary {
 						if (!$result) throw new Exception($db->_error_message());
 					} else {
 						//cant find version with the id, handle here
+						$this->log('Version with ID: '.$version_id.' not found');
 					}
 				}
  

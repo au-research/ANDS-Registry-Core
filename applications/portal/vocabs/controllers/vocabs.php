@@ -40,11 +40,8 @@ class Vocabs extends MX_Controller {
 		if ($slug) {
 			$record = $this->vocab->getBySlug($slug);
 		}
-
-		//For Development Only
 		if (!$record) {
-			$test_records = $this->vocab->test_vocabs();
-			$record = $test_records[$slug] ? $test_records[$slug] : false;
+			$record = $this->vocab->getByID($slug);
 		}
 
 		if ($record) {
@@ -471,17 +468,21 @@ class Vocabs extends MX_Controller {
                 else{
                     //throw new Exception($data['status']);
                     $result = $vocab->save($data);
-                    if (!$result) throw new Exception('Error Saving Vocabulary');
-                    if ($result) {
-                        $result = 'Success in saving vocabulary';
-                        //index saved one
-                        if($vocab->prop['status']=='published'){
-                            $this->index_vocab($vocab);
-                            if ($this->index_vocab($vocab)) {
-                                // $result .= '. Success in indexing vocabulary';
-                            }
-                        }
+
+                   	//result should be an object
+                   	//result.status = 'OK'
+                   	//result.message = array()
+
+                    if (!$result) throw new Exception('Error while saving vocabulary');
+
+                    if ($result && $vocab->prop['status']=='published') {
+                    	if ($this->index_vocab($vocab)) {
+                    		$vocab->log('Indexing Success');
+                    	}
                     }
+
+                    if ($result) $result = $vocab;
+                   	
                     $event = array(
                         'event'=>'edit',
                         'vocab'=>$vocab->title
@@ -653,8 +654,8 @@ class Vocabs extends MX_Controller {
 	public function download() {
 		$file = $this->input->get('file');
 		if (!$file) throw new Exception('File (required) not found');
-		if (!file_exists(vocab_uploaded_url($file))) throw new Exception('File not found');
-		$file = vocab_uploaded_url($file);
+		if (!file_exists($file)) $file = vocab_uploaded_url($file);
+		if (!file_exists($file)) throw new Exception('File not found');
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment; filename='.basename($file));
