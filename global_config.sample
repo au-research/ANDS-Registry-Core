@@ -94,6 +94,27 @@ $ENV['ENABLED_MODULES'] = array(
 
 );
 
+//overwrite the existing application model with a predefined environment model
+// $environment_directives = array();
+// $environment_directives['portal'] = array(
+// 	"base_url" => "%%BASEURL%%/",
+// 	"active_application" => "portal",
+// 	"default_controller" => "vocabs",
+// 	"routes" => array(
+// 		"home/(:any)" => "vocabs/$1",
+// 		"page/(:any)" => "vocabs/page/$1",
+// 		"(:any)"=>"core/dispatcher/$1"
+// 	),
+// 	"default_model" => "vocabs"
+// );
+// $ENV['vocab_config'] = array(
+// 	'toolkit_url' => '',
+// 	'solr_url' => '',
+// 	'auth_url' => '',
+// 	'upload_path' => ''
+// );
+// $ENV['enable_logging'] = true;
+
 
 /*************************************************************************/
 /* (SECTION 3) ADDITIONAL REGISTRY CONFIGURATION

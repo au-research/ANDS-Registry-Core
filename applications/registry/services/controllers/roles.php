@@ -46,4 +46,34 @@ class Roles extends MX_Controller {
 		}
 		formatResponse($response, 'json');
 	}
+
+	public function current_user() {
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
+		// dd($this->session->sess_cookie_name());
+		// dd($this->session->all_userdata());
+		if ($this->user->isLoggedIn()) {
+			$result = array(
+				'role_id' => $this->user->localIdentifier(),
+				'identifier' => $this->user->identifier(),
+				'auth_domain' => $this->user->authDomain(),
+				'auth_method' => $this->user->authMethod(),
+				'affiliations' => $this->user->affiliations()
+				// 'owned_ds' => $this->user->ownedDataSourceIDs()
+			);
+			echo json_encode(
+				array(
+					'status' => 'OK',
+					'message' => $result
+				)
+			);
+		} else {
+			dd('not logged in');
+		}
+	}
+
+	public function logout() {
+		$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : false;
+	}
 }	

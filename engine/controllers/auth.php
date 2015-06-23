@@ -16,6 +16,11 @@ class Auth extends CI_Controller {
 				'slug'		=> 'ldap',
 				'display' 	=> 'LDAP',
 				'view' 		=>  $this->load->view('authenticators/ldap', false, true)
+			),
+			'social' => array(
+				'slug' 		=> 'social',
+				'display'	=> 'Social',
+				'view' 		=> $this->load->view('authenticators/social', false, true)
 			)
 		);
 
@@ -50,6 +55,12 @@ class Auth extends CI_Controller {
 		}
 		if(!$data['default_authenticator']) $data['default_authenticator'] = 'built_in';
 
+		$this->load->helper('cookie');
+		delete_cookie('auth_redirect');
+		if ($this->input->get('redirect')) {
+			setcookie('auth_redirect', $this->input->get('redirect'), time()+3600, '/', $this->config->item('cookie_domain'));
+		}
+
 		$this->load->view('login', $data);
 	}
 
@@ -77,9 +88,12 @@ class Auth extends CI_Controller {
 			$this->auth->load_params($params);
 			$response = $this->auth->authenticate();
 			$this->user->refreshAffiliations($this->user->localIdentifier());
+
+			if ($this->input->get('redirect')) redirect($redirect);
+
 		} catch (Exception $e) {
-			$this->auth->post_authentication_hook();
-			// throw new Exception($e->getMessage());
+			// $this->auth->post_authentication_hook();
+			throw new Exception($e->getMessage());
 		}
 		
 	}
@@ -93,7 +107,8 @@ class Auth extends CI_Controller {
 	
 	public function logout(){
 		// Logs the user out and redirects them to the homepage/logout confirmation screen
-		$this->user->logout(); 		
+		$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : false;
+		$this->user->logout($redirect);
 	}
 	
 	//MAYBE DEPRECATED as of R14

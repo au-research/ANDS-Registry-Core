@@ -70,6 +70,8 @@ foreach($eDBCONF as $groupname=>$value)
 	if(!isset($eDBCONF[$groupname]['save_queries'])) $eDBCONF[$groupname]['save_queries'] = FALSE; 
 }
 
+$eDBCONF['default']['db_debug'] = isset($eDBCONF['default']['db_debug']) ? $eDBCONF['default']['db_debug'] : FALSE;
+
 $db = $eDBCONF;
 
 /* End of file database.php */

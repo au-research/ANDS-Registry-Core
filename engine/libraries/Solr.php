@@ -38,6 +38,15 @@ class Solr {
 	}
 
 	/**
+	 * Set SOLR URL, 
+	 * Supports connecting to multiple SOLR core
+	 * @param string $url URL of the SOLR index
+	 */
+	function setUrl($url) {
+		$this->solr_url = $url;
+	}
+
+	/**
 	 * Manually set the option for solr search
 	 * @param string $field 
 	 * @param string $value
@@ -834,6 +843,10 @@ class Solr {
 
 	function add_json($docs){
 		return curl_post($this->solr_url.'update/?wt=json', $docs, array("Content-Type: application/json; charset=utf-8"));
+	}
+
+	function add_json_commit($docs) {
+		return curl_post($this->solr_url.'update/?wt=json&commit=true', $docs, array("Content-Type: application/json; charset=utf-8"));
 	}
 
 	function commit(){

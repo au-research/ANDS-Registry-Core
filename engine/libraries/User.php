@@ -54,13 +54,15 @@ class User {
 	/**
 	 * Logout the current user, destroying their current session data
 	 */
-	function logout() {
+	function logout($redirect = false) {
 		if(!session_id()) {
 			session_start();
 		}
 		unset($this->session->userdata); 
 		$this->CI->session->sess_destroy(); //???
-		redirect('/auth/login/');
+		if ($redirect) {
+			redirect($redirect);
+		} else redirect('/auth/login/');
 	}
 	
 
@@ -112,6 +114,26 @@ class User {
 		else
 		{
 			return AUTH_DEFAULT_FRIENDLY_NAME;	
+		}
+	}
+
+	function profileImage() {
+		if ( $this->isLoggedIn() ) {
+			$role_db = $this->CI->load->database('roles', TRUE);
+			$result = $role_db->get_where('roles', array('role_id'=>$this->localIdentifier()));
+			if ($result->num_rows() > 0) {
+				$r = $result->first_row();
+				if ($r->oauth_data) {
+					$data = json_decode($r->oauth_data, true);
+					if ($data['photoURL']) return $data['photoURL'];
+				} else {
+					return asset_url('images/generic_user.png', 'core');
+				}
+			} else {
+				return false;
+			}
+		} else {
+			return false;
 		}
 	}
 
@@ -217,7 +239,22 @@ class User {
 	function affiliations()
 	{
 		// $this->refreshAffiliations($this->localIdentifier());
-		return $this->affiliations;
+		if ($this->hasFunction(AUTH_FUNCTION_SUPERUSER)) {
+			//return all affiliations if you are super user
+			$this->cosi_db = $this->CI->load->database('roles', true);
+			$query = $this->cosi_db->get_where('roles', array('role_type_id'=>gCOSI_AUTH_ROLE_ORGANISATIONAL));
+			if ($query->num_rows() > 0) {
+				$aff = array();
+				foreach ($query->result_array() as $r) {
+					$aff[] = $r['role_id'];
+				}
+				return $aff;
+			} else {
+				return $this->affiliations;
+			}
+		} else {
+			return $this->affiliations;
+		}
 	}
 		
 		
@@ -234,6 +271,7 @@ class User {
 		{
 			$this->CI->session->set_userdata(AUTH_AFFILIATION_ARRAY, $affiliation_list);
 		}
+
 		$this->affiliations = $this->CI->session->userdata(AUTH_AFFILIATION_ARRAY);
 	}
 	

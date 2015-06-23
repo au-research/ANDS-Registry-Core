@@ -1,6 +1,12 @@
 <?php
 $config['default_template'] = 'omega';
-$config['default_model'] = 'registry_object';
+global $environment_directives;
+if (isset($environment_directives) && isset($environment_directives['portal'])) {
+	$config['default_model'] = $environment_directives['portal']['default_model'];
+} else {
+	$config['default_model'] = 'registry_object';
+}
+
 
 $config['subjects'] = array(
 	array(

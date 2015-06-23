@@ -561,6 +561,36 @@ class Maintenance extends MX_Controller {
 		echo json_encode($data);
 	}
 
+	function syncMissing($data_source_id=false) {
+		set_exception_handler('json_exception_handler');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Content-type: application/json');
+		$this->load->model('data_source/data_sources', 'ds');
+		$this->load->model('registry_object/registry_objects', 'ro');
+		$this->load->library('solr');
+		$ids = $this->ro->getIDsByDataSourceID(66, false, 'PUBLISHED');
+		
+
+		$this->solr
+			->setOpt('rows', '100000')
+			->setOpt('fl', 'id')
+			->setOpt('q', 'data_source_id:66');
+		$result = $this->solr->executeSearch(true);
+		$solr_ids = array();
+		foreach($result['response']['docs'] as $doc) $solr_ids[] = $doc['id'];
+		$missing = array_diff($ids, $solr_ids);
+
+		if (!$missing) echo 'no missing records found';
+
+		foreach ($missing as $id) {
+			$ro = $this->ro->getByID($id);
+			$ro->sync();
+			unset($ro);
+		}
+
+		echo 'done';
+	}
+
 	function smartSyncDS($task='sync', $data_source_id=false, $chunk_pos=false){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
@@ -712,6 +742,7 @@ class Maintenance extends MX_Controller {
 		header('Content-type: application/json');
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->load->model('registry_object/registry_objects', 'ro');
+		$this->load->library('solr');
 
 		// $ro = $this->ro->getByID(189615);
 
@@ -751,15 +782,32 @@ class Maintenance extends MX_Controller {
 		// $payload = $this->indexer->construct_payload();
 		// echo json_encode($payload);
 		// 
-		// $ids = $this->ro->getIDsByDataSourceID(130, false, 'PUBLISHED');
+		// $ids = $this->ro->getIDsByDataSourceID(66, false, 'PUBLISHED');
 		// foreach($ids as $id) {
 		// 	$ro = $this->ro->getByID($id);
-		// 	echo json_encode($ro->indexable_json());
+		// 	// $doc = $ro->indexable_json();
+		// 	// echo json_encode($doc);
+		// 	$result = $ro->index_solr();
+
 		// 	unset($ro);
 		// }
 
-		$ro = $this->ro->getByID(15144);
-		echo json_encode($ro->indexable_json());
+		//get missing
+		$ids = $this->ro->getIDsByDataSourceID(66, false, 'PUBLISHED');
+		var_dump($ids);
+
+		$this->solr
+			->setOpt('rows', '100000')
+			->setOpt('fl', 'id')
+			->setOpt('q', 'data_source_id:66');
+		$result = $this->solr->executeSearch(true);
+		$solr_ids = array();
+		foreach($result['response']['docs'] as $doc) $solr_ids[] = $doc['id'];
+		var_dump($solr_ids);
+		var_dump(array_diff($ids, $solr_ids));
+
+		// $ro = $this->ro->getByID(15144);
+		// echo json_encode($ro->indexable_json());
 	}
 
 	function fixRelationships($id) {

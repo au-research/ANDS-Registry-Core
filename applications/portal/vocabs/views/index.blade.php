@@ -1,4 +1,6 @@
 @extends('layout/vocab_layout')
 @section('content')
-Vocab Test Index Template for Home Page
+<article>
+	@include('includes/search-view')
+</article>
 @stop

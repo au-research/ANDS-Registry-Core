@@ -1,0 +1,314 @@
+[
+{
+"title": "Example PoolParty Project",
+"uri": "http://ands.poolparty.biz/examplepoolpartyproject",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "examplepoolpartyproject",
+"subject": "teaching tool",
+"description": "An example PoolParty project for the purpose of learning how to use PoolParty",
+"id": "1DCDF7BD-CB11-0001-3B85-16B84500166D"
+},
+{
+"title": "BoM Arcroles via CSIRO. v1.0.2 (Rowan)",
+"uri": "http://ands.poolparty.biz/BoMArcrolesviaCSIRO",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "BoMArcrolesviaCSIRO",
+"subject": null,
+"description": "Not for publication. Testing only. Source file accessed from http://def.seegrid.csiro.au/static/ontology/wdtf/1.0.2/ Processed for Poolparty upload. Relates to a BoM/CSIRO project described at https://www.seegrid.csiro.au/wiki/SISS4BoM/WebHome SISSVoc via http://neiivocab.bom.gov.au/api/meta/ ",
+"id": "1DCE1534-57D3-0001-DAFB-1124142356A0"
+},
+{
+"title": "anzsrc-public",
+"uri": "http://ands.poolparty.biz/anzsrc-public",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "anzsrc-public",
+"subject": "research",
+"description": "file supplied by Adrian & Richard",
+"id": "1DCDF01A-8670-0001-9211-428113C014E0"
+},
+{
+"title": "BoM Interpolation Codes via CSIRO. v1.0.2 (Rowan)",
+"uri": "http://ands.poolparty.biz/Rowan-BoM-InterpolationCodes-via-CSIRO",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "Rowan-BoM-InterpolationCodes-via-CSIRO",
+"subject": null,
+"description": "Not for publication. Testing only. Source file accessed from http://def.seegrid.csiro.au/static/ontology/wdtf/1.0.2/ Processed for Poolparty upload. Relates to a BoM/CSIRO project described at https://www.seegrid.csiro.au/wiki/SISS4BoM/WebHome SISSVoc via http://neiivocab.bom.gov.au/api/meta/ ",
+"id": "1DCE1401-0C8F-0001-4696-89A012E08C00"
+},
+{
+"title": "ANZSRC",
+"uri": "http://ands.poolparty.biz/ANZSRC",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "ANZSRC",
+"subject": "Research Classification",
+"description": null,
+"id": "1DCDEE0B-2A3F-0001-7EFF-66A0122092B0"
+},
+{
+"title": "Vocabularies for Registry Schema",
+"uri": "https://ands.poolparty.biz/VocabsforRegSchema",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "VocabsforRegSchema",
+"subject": null,
+"description": null,
+"id": "1DCE128E-F6BC-0001-BD67-1593C5861EFF"
+},
+{
+"title": "Schema for the description of Controlled Vocabularies",
+"uri": "http://ands.poolparty.biz/vocabschema",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "vocabschema",
+"subject": "Controlled vocabularies",
+"description": null,
+"id": "1DCE0320-FCF3-0001-97E1-93903DA8C760"
+},
+{
+"title": "ANZSRC Fields of Research",
+"uri": "http://ands.poolparty.biz/anzsrcfor",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "anzsrcfor",
+"subject": "research",
+"description": null,
+"id": "1DCDF7D0-EFB1-0001-4A4A-2C0D1BB3199A"
+},
+{
+"title": "BoM Organisations via CSIRO. v1.0.2 (Rowan)",
+"uri": "http://ands.poolparty.biz/BoMOrganisationsviaCSIRO",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "BoMOrganisationsviaCSIRO",
+"subject": null,
+"description": "Not for publication. Testing only. Source file accessed from http://def.seegrid.csiro.au/static/ontology/wdtf/1.0.2/ Processed for Poolparty upload. Relates to a BoM/CSIRO project described at https://www.seegrid.csiro.au/wiki/SISS4BoM/WebHome SISSVoc via http://neiivocab.bom.gov.au/api/meta/ ",
+"id": "1DCE1534-251F-0001-95A9-19F46BF01E2A"
+},
+{
+"title": "Richard's GCMD Test",
+"uri": "http://gcmdservices.gsfc.nasa.gov/RichardsGCMDTest",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "RichardsGCMDTest",
+"subject": null,
+"description": null,
+"id": "1DCE1087-EE6B-0001-57EB-1BDB275055D0"
+},
+{
+"title": "BoM Datum via CSIRO. v1.0.2 (Rowan)",
+"uri": "http://ands.poolparty.biz/BoMDatumviaCSIRO",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "BoMDatumviaCSIRO",
+"subject": null,
+"description": "****Source file contained no preferred labels for concepts**** Not for publication. Testing only. Source file accessed from http://def.seegrid.csiro.au/static/ontology/wdtf/1.0.2/ Processed for Poolparty upload. Relates to a BoM/CSIRO project described at https://www.seegrid.csiro.au/wiki/SISS4BoM/WebHome SISSVoc via http://neiivocab.bom.gov.au/api/meta/ ",
+"id": "1DCE1536-04D4-0001-4321-32071230C480"
+},
+{
+"title": "AODN units of measure vocabulary",
+"uri": "http://vocab.aodn.org.au/unitsofmeasure",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "unitsofmeasure",
+"subject": "unitsofmeasure",
+"description": null,
+"id": "1DCE148E-8A72-0001-BBAE-FCFC341424C0"
+},
+{
+"title": "AODN Organisation Vocabulary",
+"uri": "http://vocab.aodn.org.au/organisation",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "organisation",
+"subject": "organisation",
+"description": "A controlled vocabulary of organisational entities",
+"id": "1DCE1179-4ADE-0001-EAAD-E7FCAA5E1E06"
+},
+{
+"title": "AODN parameter vocabulary",
+"uri": "http://vocab.aodn.org.au/parameter",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "parameter",
+"subject": "parameter",
+"description": null,
+"id": "1DCE15BA-11C8-0001-ED13-BE6010981CC3"
+},
+{
+"title": "BoM Interpolation Codes via Dominic (Rowan)",
+"uri": "http://ands.poolparty.biz/rowanInterpolation",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "rowanInterpolation",
+"subject": null,
+"description": "Not for publication. File supplied by Dominic Lowe. Not for publication. Source file contains an error which is corrected in this version. All of the original BT references are incorrect, referencing a different URI than that used by the BT.",
+"id": "1DCE129A-26CE-0001-5EC4-E4909AF4AB20"
+},
+{
+"title": "Registry Interchange Format - Collections and Services",
+"uri": "http://ands.poolparty.biz/rifcs",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "rifcs",
+"subject": "Data collections",
+"description": null,
+"id": "1DCE031F-808F-0001-378D-2D3E15E01889"
+},
+{
+"title": "AODN parameter category vocabulary",
+"uri": "http://vocab.aodn.org.au/parameter_classes",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "parameter_classes",
+"subject": "parametercategory",
+"description": null,
+"id": "1DCE15B9-F61E-0001-5080-148F746E9750"
+},
+{
+"title": "AODN platform category vocabulary",
+"uri": "http://vocab.aodn.org.au/platform_classes",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "platform_classes",
+"subject": "platformcategory",
+"description": null,
+"id": "1DCE1492-70F2-0001-2F2F-2BA02F2012F8"
+},
+{
+"title": "Geonames Thesaurus",
+"uri": "http://ands.poolparty.biz/Geonames",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "Geonames",
+"subject": "Thesaurus based on Geonames data",
+"description": null,
+"id": "1DBCC62B-FD76-0001-C488-144B199A1F28"
+},
+{
+"title": "AODN Organisation Category Vocabulary",
+"uri": "http://vocab.aodn.org.au/organisation_classes",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "organisation_classes",
+"subject": "organisations",
+"description": "A classification scheme for organisational entities",
+"id": "1DCE1483-1685-0001-99E5-AB4416028530"
+},
+{
+"title": "AODN platform vocabulary",
+"uri": "http://vocab.aodn.org.au/platform",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "platform",
+"subject": "platform",
+"description": null,
+"id": "1DCE1494-A022-0001-FFBD-12DE19E01FEB"
+},
+{
+"title": "GCMD Science Keywords, using NASA URL. (Rowan)",
+"uri": "http://ands.poolparty.biz/rowangcmd2",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "rowangcmd2",
+"subject": null,
+"description": "A test instance of the GCMD Science Keywords, using NASA URL. For testing only - not a published version. May be removed with no notice. For more information, contact services@ands.org.au",
+"id": "1DCE10F5-C6CA-0001-FBFA-52D013101E18"
+},
+{
+"title": "BoM Bore Purpose via CSIRO. v1.0.2 (Rowan)",
+"uri": "http://ands.poolparty.biz/BoMBorePurpose",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "BoMBorePurpose",
+"subject": null,
+"description": "Not for publication. Testing only. Source file accessed from http://def.seegrid.csiro.au/static/ontology/wdtf/1.0.2/ Processed for Poolparty upload. Relates to a BoM/CSIRO project described at https://www.seegrid.csiro.au/wiki/SISS4BoM/WebHome SISSVoc via http://neiivocab.bom.gov.au/api/meta/ ",
+"id": "1DCE1537-438B-0001-2713-F1CE8840A910"
+},
+{
+"title": "ANZSRC Copy",
+"uri": "http://ands.poolparty.biz/ANZSRC-copy",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "ANZSRC-copy",
+"subject": "Research Classification",
+"description": null,
+"id": "1DCDF294-B8AA-0001-48C3-5560104617B9"
+},
+{
+"title": "BoM Coordinate Systems via CSIRO. v1.0.2 (Rowan)",
+"uri": "http://ands.poolparty.biz/BoMCoordinateSystems",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "BoMCoordinateSystems",
+"subject": null,
+"description": "Not for publication. Testing only. Source file accessed from http://def.seegrid.csiro.au/static/ontology/wdtf/1.0.2/ Processed for Poolparty upload. Relates to a BoM/CSIRO project described at https://www.seegrid.csiro.au/wiki/SISS4BoM/WebHome SISSVoc via http://neiivocab.bom.gov.au/api/meta/ ",
+"id": "1DCE1533-DB1D-0001-B22E-188E9E0F1C06"
+},
+{
+"title": "HTTPS for LD frontend testing",
+"uri": "https://ands.poolparty.biz/HTTPSforLDfrontendtesting",
+"defaultLanguage": "en",
+"availableLanguages": [
+"en"
+],
+"uriSupplement": "HTTPSforLDfrontendtesting",
+"subject": null,
+"description": null,
+"id": "1DCE0CCE-C2F7-0001-51DF-43804E401EDE"
+}
+]
