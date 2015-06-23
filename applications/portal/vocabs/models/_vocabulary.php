@@ -7,6 +7,8 @@ class _vocabulary {
 
 	//object properties are all located in the same array
 	public $prop;
+
+	//import log, useful for logging the saving process
 	public $import_log = array();
 
 	// Temporary workaround for storing "groupings" of licence identifiers
@@ -108,7 +110,8 @@ class _vocabulary {
 			foreach($data['related_entity'] as $re) {
 				if ($re['type']=='party') {
 					if (isset($re['relationship'])) {
-						if ((is_array($re['relationship']) && in_array('publishedBy', $re['relationship'])) || ($re['relationship']=='publishedBy')) {
+						if (
+							(is_array($re['relationship']) && in_array('publishedBy', $re['relationship'])) || ($re['relationship']=='publishedBy')) {
 							$json['publisher'][] = $re['title'];
 						}
 					}
@@ -116,7 +119,6 @@ class _vocabulary {
 				}
 			}
 		}
-
 
 		//Index concept
 		
@@ -184,6 +186,11 @@ class _vocabulary {
 		return $result;
 	}
 
+	/**
+	 * Return the current version (if exists) of the vocabulary
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return array $current_version
+	 */
 	public function current_version() {
 		$current_version = false;
 		if ($this->versions) {
@@ -196,7 +203,14 @@ class _vocabulary {
 		return $current_version;
 	}
 
-
+	/**
+	 * Return the tree representation of the current version
+	 * requires the concepts_tree already harvested and transformed
+	 * Recursive to with the BuilTree function
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  boolean $raw raw form of the tree as returned from Toolkit
+	 * @return array $tree
+	 */
 	public function display_tree($raw = false) {
 		$current_version = $this->current_version();
 		if ($current_version) {
@@ -231,6 +245,14 @@ class _vocabulary {
 		}
 	}
 
+	/**
+	 * Helper function for @display_tree
+	 * Recursively called to build the tree when childs exist
+	 * prefLabel and notation child are not considered children
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  array $treeData
+	 * @return array child Tree
+	 */
 	private function buildTree($treeData) {
 		$tree = array();
 		if (is_array($treeData)) {
@@ -252,6 +274,12 @@ class _vocabulary {
 		return $tree;
 	}
 
+	/**
+	 * Return the response data of a version already successfully processed by the Toolkit
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  int $version_id
+	 * @return obj response_data
+	 */
 	private function get_response_data($version_id) {
 		$ci =& get_instance();
 		$db = $ci->load->database('vocabs', true);
@@ -316,6 +344,11 @@ class _vocabulary {
 		}
 	}
 
+	/**
+	 * @public Allow writing of importing logs
+	 * @param  string $message
+	 * @return void
+	 */
 	public function log($message) {
 		$this->import_log[] = $message;
 	}
@@ -510,12 +543,25 @@ class _vocabulary {
 		$this->populate_from_db($this->prop['id']);
 	}
 
+	/**
+	 * Helper function to determine if vocabulary is a PoolParty project or not
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @return boolean
+	 */
 	private function isPoolParty() {
 		if(isset($this->prop['pool_party_id']) && $this->prop['pool_party_id']!=''){
 			return true;
 		} else return false;
 	}
 
+	/**
+	 * Helper function to determine if a version requires a specific action
+	 * Helper for @processTask
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  obj $version
+	 * @param  string $action [import|publish]
+	 * @return boolean
+	 */
 	private function determineAction($version, $action) {
 		$result = false;
 		$version_data = json_decode($version['data'],true);
@@ -532,6 +578,17 @@ class _vocabulary {
 		return $result;
 	}
 
+	/**
+	 * Process a possible task given for a version
+	 * Usually for the current version of a vocabulary
+	 * Interaction with PoolParty requires
+	 * Reading the response and writes to the import log
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  obj $version
+	 * @param  int $version_id
+	 * @param  obj $db Database object so we don't have to recreate it
+	 * @return void
+	 */
 	private function processTask($version,$version_id,$db){
 		// $this->log('Task set for version '.$version['title']);
 		$version_data = json_decode($version['data'],true);
@@ -646,6 +703,14 @@ class _vocabulary {
 		}
 	}
 
+	/**
+	 * Returns a specific version given the ID
+	 * Helper function
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  int $id version id
+	 * @param  boolean|obj $db Database object so we don't have to recreate it
+	 * @return obj version
+	 */
 	private function getVersion($id, $db=false) {
 		if (!$db) {
 			$db = $ci->load->database('vocabs', true);
