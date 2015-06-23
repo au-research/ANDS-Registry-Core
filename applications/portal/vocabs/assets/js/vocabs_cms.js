@@ -248,6 +248,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 					// $log.debug(data.message.prop[0].slug);
 					$scope.success_message = data.message.import_log;
 					$scope.success_message.push('Successfully saved to a Draft. <a href="'+base_url+"vocabs/edit/"+data.message.prop.id+'">Click Here edit the draft</a>');
+					window.location.replace(base_url+"vocabs/edit/"+data.message.prop.id);
 				}
 			});
 		} else if ($scope.mode=='edit') {
