@@ -3,14 +3,24 @@
 $cc=$vocab['licence'];
 $current_version =  $vocab['current_version'] ;
 $publisher = array();
-$related_orgs = array();
 $related_people = array();
 $related_vocabs = array();
 $related_service = array();
 if(isset($vocab['related_entity'])){
     foreach($vocab['related_entity'] as $related){
         if($related['type']=='party'){
-            $related_people[] =$related;
+            if(isset($related['relationship'])){
+                if (is_array($related['relationship'])) {
+                    $relationships = implode($related['relationship'], ',');
+                } else {
+                    $relationships = $related['relationship'];
+                }
+            }
+            if($relationships=='publishedBy'){
+                $publisher[]=$related;
+            }else{
+                $related_people[] =$related;
+            }
         }
         elseif($related['type']=='service'){
             $related_service[]=$related;
@@ -143,7 +153,7 @@ if(isset($vocab['related_entity'])){
                 <?php 
                     if (isset($service['relationship'])) {
                         if (is_array($service['relationship'])) {
-                            echo implode($service['relationship'], ',');
+                            echo readable(implode($service['relationship'], ','));
                         } else {
                             echo readable($service['relationship']);
                         }
@@ -155,32 +165,17 @@ if(isset($vocab['related_entity'])){
     </div>
 </div>
 @endif
-@if($related_orgs||$related_people||$related_vocabs)
+@if($related_people||$related_vocabs)
 <div class="panel swatch-white  panel-primary element-no-top element-short-bottom panel-content">
     <div class="panel-heading">Related</div>
     <div class="panel-body">
-        @if($related_orgs)
-        <h4>Related organisations</h4>
-        @foreach($related_orgs as $related)
-        <p>
-            <small>
-                <?php 
-                    if (isset($related['relationship'])) {
-                        if (is_array($related['relationship'])) {
-                            echo implode($related['relationship'], ',');
-                        } else {
-                            echo readable($related['relationship']);
-                        }
-                    }
-                ?>
-            </small> <a href="" class="re_preview" related='{{json_encode($related)}}' v_id="{{ $vocab['id'] }}"> {{$related['title']}}</a>
-        </p>
-        @endforeach
-        @endif
+
         @if($related_people)
-        <h4>Related people</h4>
+        <h4>Related people and organisations</h4>
         @foreach($related_people as $related)
+
         <p>
+
             <small>
                 <?php 
                     if (isset($related['relationship'])) {

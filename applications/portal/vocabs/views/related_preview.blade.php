@@ -38,25 +38,25 @@
                             <label for="">Phone</label> {{$related['phone']}}
                         </div>
                    @endif
-
-                  @if(isset($related['other_vocabs'][0]['title']))
-                    @if($related['type']=='publisher')
+                   @if(isset($sub_type)&& $sub_type=='publisher')
+                      @if($related['type']=='party' && isset($related['other_vocabs'][0]['title']))
+                      <div class="form-group">
+                          <label for="">Also published</label><br />
+                          @foreach($related['other_vocabs'] as $other_vocab)
+                          <a href="{{base_url().$other_vocab['slug']}}">{{$other_vocab['title']}}</a><br />
+                          @endforeach
+                      </div>
+                  @endif
+                  @elseif(isset($related['other_vocabs'][0]['title']))
+                    @if($related['type']=='party')
                   <div class="form-group">
-                      <label for="">Other vocabs published</label>
-                      @foreach($related['other_vocabs'] as $other_vocab)
-                        <a href="{{base_url().$other_vocab['slug']}}">{{$other_vocab['title']}}</a><br />
-                      @endforeach
-                  </div>
-                    @endif
-                  @if($related['type']=='contributor')
-                  <div class="form-group">
-                      <label for="">Other vocabs contributed to</label>
+                      <label for="">Also related to vocabularies</label><br />
                       @foreach($related['other_vocabs'] as $other_vocab)
                       <a href="{{base_url().$other_vocab['slug']}}">{{$other_vocab['title']}}</a><br />
                       @endforeach
                   </div>
                   @endif
-                  @if($related['type']=='vocab')
+                  @if($related['type']=='vocabulary')
                   <div class="form-group">
                       <label for="">View related vocabulary</label>
                       @foreach($related['other_vocabs'] as $other_vocab)

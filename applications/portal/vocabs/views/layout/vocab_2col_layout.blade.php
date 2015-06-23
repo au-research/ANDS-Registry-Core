@@ -37,7 +37,7 @@ $title = $vocab['title'] ;
                                 <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{ $vocab['title'] }} </span></h1>
                                 @if(isset($publisher))
                                 @foreach($publisher as $apub)
-                                   <a class="re_preview" related='{{json_encode($apub)}}' v_id="{{ $vocab['id'] }}"> {{$apub['title']}} </a><small>(Publisher of)</small>
+                                <small>Publisher </small>  <a class="re_preview" related='{{json_encode($apub)}}' v_id="{{ $vocab['id'] }}" sub_type="publisher"> {{$apub['title']}} </a>
                                 @endforeach
                                 @endif
                                 <div class="pull-right">

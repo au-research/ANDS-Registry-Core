@@ -76,6 +76,7 @@ class Vocabs extends MX_Controller {
 
 		$related = json_decode($this->input->get('related'),true);
 		$v_id = $this->input->get('v_id');
+        $sub_type = $this->input->get('sub_type');
 		$vocabs = $this->vocab->getAll();
 
 		$others = array();
@@ -84,39 +85,55 @@ class Vocabs extends MX_Controller {
 			$thevocab=$vocab->display_array();
 			if($thevocab['id']!=$v_id){
 				// find all other vocabs that this related entity also published
-				if($related['type']=='publisher'){
-					if(isset($thevocab['related_entity'])){
-						foreach($thevocab['related_entity'] as $anotherrelated){
-							if($anotherrelated['type']=='publisher'&& $anotherrelated['id']==$related['id']){
-								$others[] = $thevocab;
-							}
-						}
-					}
-				}
-				// find all other vocabs that this related entity also contributed to
-				if($related['type']=='contributor'){
-					if(isset($thevocab['related_entity'])){
-						foreach($thevocab['related_entity'] as $anotherrelated){
-							if($anotherrelated['type']=='contributor'&& $anotherrelated['id']==$related['id']){
-								$others[] = $thevocab;
-							}
-						}
-					}
-				}
+
+                if($related['type']=='party'){
+                    if(isset($thevocab['related_entity'])){
+                        foreach($thevocab['related_entity'] as $anotherrelated){
+                            if(is_array($anotherrelated['relationship'])){
+                               foreach($anotherrelated['relationship'] as $relation){
+                                   if($relation=='publishedBy' && $anotherrelated['title']==$related['title']){
+                                       $thevocab['sub_type']='publisher';
+                                       $others[] = $thevocab;
+                                   }
+
+                               }
+                               $relationships = implode($anotherrelated['relationship'], ',');
+                               if($relationships!='publishedBy' && $relationships!='publisherOf' && $anotherrelated['title']==$related['title']  ){
+                                   $others[] = $thevocab;
+                               }
+                            }else{
+
+                                if($anotherrelated['relationship']=='publishedBy' && $anotherrelated['title']==$related['title']){
+                                    $thevocab['sub_type']='publisher';
+                                    $others[] = $thevocab;
+
+                                }elseif($anotherrelated['title']==$related['title']){
+                                    $others[] = $thevocab;
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+
+
 				//if a related entity of type vocab is known to us then provide a link to it
-				if($related['type']=='vocab'){
-					if($related['id']==$thevocab['id']){
+				if($related['type']=='vocabulary'){
+					if($related['title']==$thevocab['title']){
 						$others[]=$thevocab;
 					}
 				}
 			}
 		}
+       // print_r($others);
 
-
+        $others = array_unique($others,true);
 
 		$related['other_vocabs'] = $others;
 			$this->blade
 				->set('related', $related)
+                ->set('sub_type', $sub_type)
 				->render('related_preview');
 
 	}
