@@ -15,7 +15,6 @@
 		</div>
 		<nav class="collapse navbar-collapse main-navbar" role="navigation">
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="{{portal_url('vocabs/page/help')}}">Help</a></li>
 				<li><a href="{{portal_url('vocabs/page/about')}}">About</a></li>
 				<li> <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Get Involved <i class="fa fa-caret-down"></i></a>
                     <ul class="dropdown-menu" role="menu">
