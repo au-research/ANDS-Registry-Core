@@ -214,7 +214,7 @@
 						<div class="panel-body">
 							<table class="table">
 								<thead>
-									<tr><th>Related</th> <th>Type</th> <th></th></tr>
+									<tr><th>Title</th> <th>Type</th> <th></th></tr>
 								</thead>
 								<tbody>
 									<tr ng-repeat="related in vocab.related_entity track by $index">
