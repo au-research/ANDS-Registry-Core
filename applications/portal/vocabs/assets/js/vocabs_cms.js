@@ -389,6 +389,13 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 	
 	$scope.addtolist = function(list, item) {
         if(!$scope.vocab[list]) $scope.vocab[list] = [];
+
+        //some validation
+        if (list=='language' && !item) return false;
+        if (list=='top_concept' && !item) return false;
+        if (list=='subjects' && !(item.subject && item.subject_source)) return false; 
+        
+        //pass validation
         $scope.vocab[list].push(item);
         $scope.resetValues();
 	}
@@ -396,7 +403,7 @@ app.controller('addVocabsCtrl', function($log, $scope, $location, $modal, $templ
 	$scope.resetValues = function() {
 		$scope.newValue = {
 			language: "",
-			subject: {subject:"", subject_source:"" }
+			subject: {subject:'', subject_source:'' }
 		}
 	}
 	$scope.resetValues();
