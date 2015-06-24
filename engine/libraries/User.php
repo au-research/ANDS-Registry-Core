@@ -56,7 +56,7 @@ class User {
 			foreach ($query->result_array() as $r) {
 				$aff[] = $r['role_id'];
 			}
-			setcookie('ands_affiliations', json_encode($aff, true), 0, '/', '.ands.org.au', true);
+			set_cookie('affiliations', json_encode($aff, true));
 			// $this->appendAffiliation($aff);
 		}
 
