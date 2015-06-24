@@ -118,6 +118,10 @@ class User {
 	}
 
 	function profileImage() {
+
+		//@todo: need to fix this for servers without roles
+		return false;
+
 		if ( $this->isLoggedIn() ) {
 			$role_db = $this->CI->load->database('roles', TRUE);
 			$result = $role_db->get_where('roles', array('role_id'=>$this->localIdentifier()));
@@ -238,6 +242,9 @@ class User {
 	 */
 	function affiliations()
 	{
+		//@todo: fix this
+		return $this->affiliations;
+
 		// $this->refreshAffiliations($this->localIdentifier());
 		if ($this->hasFunction(AUTH_FUNCTION_SUPERUSER)) {
 			//return all affiliations if you are super user
