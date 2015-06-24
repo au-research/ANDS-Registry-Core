@@ -263,7 +263,7 @@ class User {
 		$this->affiliations = $this->CI->session->userdata(AUTH_AFFILIATION_ARRAY);
 
 		if ($cookie = get_cookie('affiliations')) {
-			$this->affiliations = json_decode($cookie, true);
+			// $this->affiliations = json_decode($cookie, true);
 		}
 
 		return $this->affiliations;
