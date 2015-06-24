@@ -421,6 +421,7 @@ class Vocabs extends MX_Controller {
 					}
 				}
 			} else if($method=='user') {
+				$result = array();
 				$result['affiliations'] = array_values(array_unique($this->user->affiliations()));
 				$result['role_id'] = $this->user->localIdentifier();
 
@@ -431,8 +432,7 @@ class Vocabs extends MX_Controller {
 					$this->index_vocab($vocab);
 				}
 			}
-
-
+			
 			// POST request, for adding new item
 			$angulardata = json_decode(file_get_contents("php://input"), true);
 			$data = isset($angulardata['data']) ? $angulardata['data'] : false;

@@ -47,6 +47,20 @@ class User {
 			AUTH_METHOD 			 =>	$role['authentication_service_id'],
 			AUTH_DOMAIN 			 =>	$role['auth_domain']
 		));			
+		
+		//return all affiliations if you are super user
+		$this->cosi_db = $this->CI->load->database('roles', true);
+		$query = $this->cosi_db->get_where('roles', array('role_type_id'=>gCOSI_AUTH_ROLE_ORGANISATIONAL));
+		if ($query->num_rows() > 0) {
+			$aff = array();
+			foreach ($query->result_array() as $r) {
+				$aff[] = $r['role_id'];
+			}
+			setcookie('ands_affiliations', json_encode($aff, true), 0, '/', '.ands.org.au', true);
+			dd(get_cookie('affiliations'));
+			// $this->appendAffiliation($aff);
+		}
+
 		$this->appendFunction(array_merge(array(AUTH_FUNCTION_LOGGED_IN_ATTRIBUTE),$role['functional_roles']));
 		$this->appendAffiliation($role['organisational_roles']);
     }
@@ -60,6 +74,9 @@ class User {
 		}
 		unset($this->session->userdata); 
 		$this->CI->session->sess_destroy(); //???
+		delete_cookie('redirect');
+		delete_cookie('affiliations');
+		delete_cookie('authentication');
 		if ($redirect) {
 			redirect($redirect);
 		} else redirect('/auth/login/');
@@ -243,6 +260,13 @@ class User {
 	function affiliations()
 	{
 		//@todo: fix this
+		// dd($this->CI->session->all_userdata());
+		$this->affiliations = $this->CI->session->userdata(AUTH_AFFILIATION_ARRAY);
+
+		if ($cookie = get_cookie('affiliations')) {
+			$this->affiliations = json_decode($cookie, true);
+		}
+
 		return $this->affiliations;
 
 		// $this->refreshAffiliations($this->localIdentifier());
@@ -315,6 +339,7 @@ class User {
     {
         $this->CI =& get_instance();
 		$this->CI->load->library('session');
+		$this->CI->load->helper('cookie');
 		$this->init();
     }
 	

@@ -88,7 +88,7 @@ class Authenticator extends CI_Model {
 		if ($redirect =='profile' || $redirect == portal_url('profile')) {
 			$redirect = portal_url('profile').'#!/dashboard';
 		}
-		ulog($redirect);
+		// ulog($redirect);
 
 		$this->redirect_hook($redirect);
 	}
