@@ -30,6 +30,64 @@ class Analytics extends MX_Controller
         echo json_encode($results);
     }
 
+    function summary2()
+    {
+
+        //header
+        $this->output->set_status_header(200);
+        $this->output->set_header('Content-type: application/json');
+
+        $result = array();
+
+        $filters = array(
+            'log' => 'portal',
+            'period' => array('2015-06-01', '2015-06-01'),
+            'dimensions' => array(
+                array('group', 'portal_view'),
+                array('group', 'portal_page'),
+                array('group', 'portal_search'),
+            ),
+            'unique' => false
+        );
+
+        //period is a single date for now
+        $date = $filters['period'][0];
+
+        //setup the result dimensions
+        $result['filters'] = $filters;
+
+        $file_path = 'engine/logs/' . $filters['log'] . '/log-' . $filters['log'] . '-' . $date . '.php';
+        $lines = $this->readfile($file_path);
+
+        foreach ($lines as $line) {
+            $content = $this->read($line);
+            foreach ($filters['dimensions'] as $dimension) {
+                $d1 = $dimension[0];
+                $d2 = $dimension[1];
+
+                if (isset($content[$d1])) {
+                    if (isset($result[$d1][$content[$d1]])) {
+                        $result[$d1][$content[$d1]]['count'] += 1;
+                        if (isset($content['event']) && $content['event'] == $d2) {
+                            if (isset($result[$d1][$content[$d1]][$d2])) {
+                                $result[$d1][$content[$d1]][$d2] += 1;
+                            } else {
+                                $result[$d1][$content[$d1]][$d2] = 1;
+                            }
+                        }
+                    } else {
+                        $result[$d1][$content[$d1]] = array(
+                            'count' => 1,
+                            $d2 => 1
+                        );
+                    }
+                }
+            }
+        }
+
+        echo json_encode($result);
+    }
+
     function summary($dir)
     {
         $this->output->set_status_header(200);
@@ -74,13 +132,13 @@ class Analytics extends MX_Controller
                         if (isset($result[$date][$content['event']])) {
 
                             //increase total
-                            $result[$date][$content['event']]['total'] = $result[$date][$content['event']]['total']+1;
+                            $result[$date][$content['event']]['total'] = $result[$date][$content['event']]['total'] + 1;
 
                             //increase unique if unique by ip
                             if (isset($content['ip'])) {
                                 $ip = $content['ip'];
                                 if (!in_array($ip, $ips)) {
-                                    $result[$date][$content['event']]['unique'] = $result[$date][$content['event']]['unique']+1;
+                                    $result[$date][$content['event']]['unique'] = $result[$date][$content['event']]['unique'] + 1;
                                 }
                                 array_push($ips, $ip);
 
@@ -135,7 +193,7 @@ class Analytics extends MX_Controller
                     } else {
                         if (isset($content['event'])) {
                             if (isset($result[$date][$content['event']])) {
-                                $result[$date][$content['event']] = $result[$date][$content['event']]+1;
+                                $result[$date][$content['event']] = $result[$date][$content['event']] + 1;
                             } else {
                                 $result[$date][$content['event']] = 0;
                             }
