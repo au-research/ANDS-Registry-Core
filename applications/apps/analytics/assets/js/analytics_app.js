@@ -9,22 +9,11 @@
 
     function mainCtrl($log, analyticFactory) {
         var vm = this;
-        vm.types = ['Line', 'Bar', 'Radar'];
-        vm.chartType = 'Line';
-        vm.labels = [];
-        vm.series = ['View', 'Search'];
-        vm.data = [
-            [], []
-        ];
+        vm.types = ['Line', 'Bar'];
+        vm.chartType = vm.types[0];
 
         vm.onClick = function (points, evt) {
-            console.log(points, evt);
-        };
-
-        vm.chartData = {
-            labels: [],
-            series: [],
-            data: [[],[]]
+            $log.debug(points, evt);
         };
 
         getData();
@@ -53,11 +42,11 @@
                 series: ['View', 'Search'],
                 data: [[],[]]
             };
-            angular.forEach(response.data.group, function (i, index) {
+            angular.forEach(response.data.result, function (obj, index) {
                 result.labels.push(index);
-                result.data[0].push(i.portal_view);
-                if (i.portal_search) {
-                    result.data[1].push(i.portal_search)
+                result.data[0].push(obj['portal_view']);
+                if (obj['portal_search']) {
+                    result.data[1].push(obj['portal_search'])
                 } else {
                     result.data[1].push(0);
                 }
