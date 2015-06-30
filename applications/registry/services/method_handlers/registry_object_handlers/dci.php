@@ -234,7 +234,7 @@ class DCI extends ROHandler {
         }
         else{
             $forDCI = true;
-            $relationshipTypeArray = array('hasAssociationWith','hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
+            $relationshipTypeArray = array('IsPrincipalInvestigatorOf','hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
             $classArray = array('party');
             $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray, $forDCI);
             if($authors)
