@@ -693,15 +693,21 @@ class Vocabs extends MX_Controller
         if (!$file) throw new Exception('File (required) not found');
         if (!file_exists($file)) $file = vocab_uploaded_url($file);
         if (!file_exists($file)) throw new Exception('File not found');
-        header('Content-Description: File Transfer');
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename=' . basename($file));
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . filesize($file));
-        readfile($file);
-        exit;
+
+        //Only allow people to get file from this directory
+        if (strpos($file, get_vocab_config('upload_path'))!== false) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename=' . basename($file));
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($file));
+            readfile($file);
+            exit;
+        } else {
+            throw new Exception('Permission Denied');
+        }
     }
 
     /**
