@@ -5,29 +5,26 @@ class Analytics extends MX_Controller
 
     function index()
     {
-        $this->output->set_status_header(200);
-        $this->output->set_header('Content-type: application/json');
+        $data = array(
+          'title' => 'Analytics'
+        );
 
-        $directory = 'engine/logs/portal/';
-        $files = $this->readdir($directory);
-        sort($files);
+        $data['scripts'] = array(
+            'analytics_app'
+        );
 
+        $data['app_js_lib'] = array(
+            'angular/angular.js',
+            'Chart.js/Chart.min.js',
+            'angular-chart.js/angular-chart.js'
+        );
 
-        //from 2015-06-01 to 2015-06-12
-        $ranges = $this->date_range('2015-06-01', '2015-06-12', '+1day', 'Y-m-d');
-        dd($ranges);
+        $data['app_css_lib'] = array(
+            'angular-chart.js/dist/angular-chart.css'
+        );
 
-        array_splice($files, 1);
-
-        $results = array();
-        foreach ($files as $file) {
-            $content = $this->readfile($directory . $file);
-            foreach ($content as $line) {
-                $result = $this->read($line);
-                $results[] = $result;
-            }
-        }
-        echo json_encode($results);
+        $data['js_lib'] = array('core');
+        $this->load->view('analytics_app', $data);
     }
 
     function summary2()
@@ -84,7 +81,6 @@ class Analytics extends MX_Controller
                 }
             }
         }
-
         echo json_encode($result);
     }
 

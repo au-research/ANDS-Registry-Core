@@ -156,7 +156,14 @@ $base_url = str_replace('/apps','/registry',base_url());
     <?php endforeach;?>
 
 
+
 	<!-- Module-specific styles and scripts -->
+    <?php if (isset($app_js_lib)): foreach($app_js_lib as $lib):?>
+        <script src="<?php echo asset_url('js/lib/' . $lib);?>"></script>
+    <?php endforeach; endif; ?>
+    <?php if (isset($app_css_lib)): foreach($app_css_lib as $lib):?>
+        <link rel="stylesheet" href="<?php echo asset_url('js/lib/'. $lib);?>"/>
+    <?php endforeach; endif; ?>
     <?php if (isset($scripts)): foreach($scripts as $script):?>
         <script src="<?php echo asset_url('js/' . $script);?>.js"></script>
     <?php endforeach; endif; ?>
