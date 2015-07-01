@@ -30,7 +30,7 @@ class DCI extends ROHandler {
         if($this->overrideExportable || $ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
             $exportable = true;
         $sourceUrl = $this->citation_handler->getSourceUrl();
-        if($sourceUrl == null || !($exportable) && !in_array($lower_type, $allowedType))
+        if($sourceUrl == null || !($exportable) || !in_array($lower_type, $allowedType))
             return "";
         $this->getHeader();
         $this->getBibliographicData($sourceUrl);
