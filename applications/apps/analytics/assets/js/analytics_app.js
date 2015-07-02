@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module("analytic_app", ['chart.js']);
+    angular.module("analytic_app", ['chart.js', 'daterangepicker']);
 
     angular.module('analytic_app')
         .controller('mainCtrl', mainCtrl)
@@ -12,13 +12,24 @@
         vm.types = ['Line', 'Bar'];
         vm.chartType = vm.types[0];
 
+        vm.filters = {
+            'period': {startDate: null, endDate: null},
+            'group': [
+                {'type':'group', 'value':'State Records Authority of New South Wales'}
+            ],
+            'dimensions': [
+                'portal_view', 'portal_search'
+            ]
+        };
+
+
         vm.onClick = function (points, evt) {
             $log.debug(points, evt);
         };
 
-        getData();
-        function getData() {
-            return analyticFactory.testdata().then(function(data){
+        getData(vm.filters);
+        function getData(filters) {
+            return analyticFactory.summary(filters).then(function(data){
                 vm.chartData = data;
             });
         }
@@ -27,11 +38,18 @@
 
     function analyticFactory($http, $log) {
         return {
+            summary: getSummaryData,
             testdata: getTestData
         };
 
+        function getSummaryData(filters) {
+            return $http.post(apps_url+'analytics/summary', {filters:filters})
+                    .then(returnData)
+                    .catch(handleError);
+        }
+
         function getTestData() {
-            return $http.get(apps_url+'analytics/summary2')
+            return $http.get(apps_url+'analytics/summary')
                         .then(returnData)
                         .catch(handleError);
         }

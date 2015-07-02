@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Analytics Module
+ * for Data Source Report functionality
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
 class Analytics extends MX_Controller
 {
 
@@ -16,35 +21,35 @@ class Analytics extends MX_Controller
         $data['app_js_lib'] = array(
             'angular/angular.js',
             'Chart.js/Chart.min.js',
-            'angular-chart.js/angular-chart.js'
+            'angular-chart.js/angular-chart.js',
+            'moment/moment.js',
+            'bootstrap-daterangepicker/daterangepicker.js',
+            'angular-daterangepicker/js/angular-daterangepicker.js'
         );
 
         $data['app_css_lib'] = array(
-            'angular-chart.js/dist/angular-chart.css'
+            'angular-chart.js/dist/angular-chart.css',
+            'bootstrap-daterangepicker/daterangepicker-bs2.css'
         );
 
         $data['js_lib'] = array('core');
         $this->load->view('analytics_app', $data);
     }
 
-    function summary2()
+
+    function summary()
     {
 
         //header
-        $this->output->set_status_header(200);
+//        $this->output->set_status_header(200);
         $this->output->set_header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
 
-
-
-        $filters = array(
-            'log' => 'portal',
-            'period' => array('2015-06-01', '2015-06-25'),
-            'group' => array('type' => 'group', 'value' => 'State Records Authority of New South Wales'),
-            'dimensions' => array(
-                'portal_view', 'portal_search'
-            ),
-            'unique' => true
-        );
+        //capturing filters from AngularJS POST field
+        $filters = false;
+        $postdata = file_get_contents("php://input");
+        $request = json_decode($postdata, true);
+        $filters = isset($request['filters']) ? $request['filters'] : $filters;
 
         $result = array(
             'result' => array(),
@@ -59,9 +64,11 @@ class Analytics extends MX_Controller
             $result['result'][$date] = array(
                 'total' => 0
             );
+
             foreach ($filters['dimensions'] as $dimension) {
                 $result['result'][$date][$dimension] = 0;
             }
+
             foreach ($lines as $line) {
                 $content = $this->read($line);
                 $group = $filters['group'];
@@ -69,10 +76,10 @@ class Analytics extends MX_Controller
                 $group_value = $group['value'];
 
                 if (isset($content[$group_type]) && $content[$group_type] == $group_value) {
-                    $result['result'][$date]['total']++;
+                    if (!$this->isbot($content['user_agent'])) $result['result'][$date]['total']++;
                     foreach ($filters['dimensions'] as $d) {
                         if (isset($content['event']) && $content['event'] == $d) {
-                            $result['result'][$date][$d]++;
+                            if (!$this->isbot($content['user_agent'])) $result['result'][$date][$d]++;
                         }
                     }
                 }
@@ -84,197 +91,13 @@ class Analytics extends MX_Controller
         echo json_encode($result);
     }
 
-    function summary($dir)
+    function isbot($useragent)
     {
-        $this->output->set_status_header(200);
-        $this->output->set_header('Content-type: application/json');
-
-        if (!$dir) throw new Exception('No Directory Specified');
-        $date = $this->input->get('date') ?: false;
-        $date_from = $this->input->get('date_from') ?: false;
-        $date_to = $this->input->get('date_to') ?: false;
-        $events = $this->input->get('events') ?: false;
-        $extra = $this->input->get('extra') ?: false;
-
-        if ($events) {
-            $events = explode('-', $events);
+        if (preg_match('/bot|crawl|slurp|spider/i', $useragent)) {
+            return true;
+        } else {
+            return false;
         }
-
-        $result = array();
-
-        $ranges = $this->date_range($date_from, $date_to, '+1day', 'Y-m-d');
-        foreach ($ranges as $date) {
-            {
-                $file_path = 'engine/logs/' . $dir . '/log-' . $dir . '-' . $date . '.php';
-                $lines = $this->readfile($file_path);
-                $result[$date] = array();
-                if ($events) {
-                    foreach ($events as $event) {
-                        $result[$date][$event] = array(
-                            'total' => 0,
-                            'unique' => 0
-                        );
-                    }
-                }
-
-                $ips = array();
-                $ip_behaviour = array();
-                foreach ($lines as $line) {
-                    $content = $this->read($line);
-                    if ($events) {
-                        if (isset($content['event']) && in_array($content['event'], $events)) {
-                            $result[$date][$content['event']]++;
-                        }
-                    } else {
-                        if (isset($content['event'])) {
-                            if (isset($result[$date][$content['event']])) {
-
-                                //increase total
-                                $result[$date][$content['event']]['total'] = $result[$date][$content['event']]['total'] + 1;
-
-                                //increase unique if unique by ip
-                                if (isset($content['ip'])) {
-                                    $ip = $content['ip'];
-                                    if (!in_array($ip, $ips)) {
-                                        $result[$date][$content['event']]['unique'] = $result[$date][$content['event']]['unique'] + 1;
-                                    }
-                                    array_push($ips, $ip);
-
-                                    //record ip behaviour
-                                    if (isset($ip_behaviour[$ip])) {
-                                        $ip_behaviour[$ip]['access'] = $ip_behaviour[$ip]['access'] + 1;
-                                        if (!in_array($content['user_agent'], $ip_behaviour[$ip]['user_agents'])) {
-                                            $ip_behaviour[$ip]['user_agents'][] = $content['user_agent'];
-                                        }
-                                    } else {
-                                        $ip_behaviour[$ip] = array(
-                                            'access' => 1,
-                                            'user_agents' => array($content['user_agent'])
-                                        );
-                                    }
-                                }
-                            } else {
-                                $result[$date][$content['event']] = array(
-                                    'total' => 0,
-                                    'unique' => 0
-                                );
-                            }
-                        }
-                    }
-                }
-                if ($extra == 'clients') {
-                    $result['clients'] = [
-                        'total' => sizeof($ips),
-                        'details' => $ip_behaviour
-                    ];
-                }
-
-            }
-        }
-
-        if ($date) {
-            $file_path = 'engine/logs/' . $dir . '/log-' . $dir . '-' . $date . '.php';
-            $lines = $this->readfile($file_path);
-            $result[$date] = array();
-            if ($events) {
-                foreach ($events as $event) {
-                    $result[$date][$event] = array(
-                        'total' => 0,
-                        'unique' => 0
-                    );
-                }
-            }
-
-            $ips = array();
-            $ip_behaviour = array();
-            foreach ($lines as $line) {
-                $content = $this->read($line);
-                if ($events) {
-                    if (isset($content['event']) && in_array($content['event'], $events)) {
-                        $result[$date][$content['event']]++;
-                    }
-                } else {
-                    if (isset($content['event'])) {
-                        if (isset($result[$date][$content['event']])) {
-
-                            //increase total
-                            $result[$date][$content['event']]['total'] = $result[$date][$content['event']]['total'] + 1;
-
-                            //increase unique if unique by ip
-                            if (isset($content['ip'])) {
-                                $ip = $content['ip'];
-                                if (!in_array($ip, $ips)) {
-                                    $result[$date][$content['event']]['unique'] = $result[$date][$content['event']]['unique'] + 1;
-                                }
-                                array_push($ips, $ip);
-
-                                //record ip behaviour
-                                if (isset($ip_behaviour[$ip])) {
-                                    $ip_behaviour[$ip]['access'] = $ip_behaviour[$ip]['access'] + 1;
-                                    if (!in_array($content['user_agent'], $ip_behaviour[$ip]['user_agents'])) {
-                                        $ip_behaviour[$ip]['user_agents'][] = $content['user_agent'];
-                                    }
-                                } else {
-                                    $ip_behaviour[$ip] = array(
-                                        'access' => 1,
-                                        'user_agents' => array($content['user_agent'])
-                                    );
-                                }
-                            }
-                        } else {
-                            $result[$date][$content['event']] = array(
-                                'total' => 0,
-                                'unique' => 0
-                            );
-                        }
-                    }
-                }
-            }
-            if ($extra == 'clients') {
-                $result['clients'] = [
-                    'total' => sizeof($ips),
-                    'details' => $ip_behaviour
-                ];
-            }
-
-        } else if ($date_from && $date_to) {
-
-            $ranges = $this->date_range($date_from, $date_to, '+1day', 'Y-m-d');
-            foreach ($ranges as $date) {
-                $file_path = 'engine/logs/' . $dir . '/log-' . $dir . '-' . $date . '.php';
-                $lines = $this->readfile($file_path);
-                $result[$date] = array();
-                if ($events) {
-                    foreach ($events as $event) {
-                        $result[$date][$event] = 0;
-                    }
-                }
-
-                foreach ($lines as $line) {
-                    $content = $this->read($line);
-                    if ($events) {
-                        if (isset($content['event']) && in_array($content['event'], $events)) {
-                            $result[$date][$content['event']]++;
-                        }
-                    } else {
-                        if (isset($content['event'])) {
-                            if (isset($result[$date][$content['event']])) {
-                                $result[$date][$content['event']] = $result[$date][$content['event']] + 1;
-                            } else {
-                                $result[$date][$content['event']] = 0;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        echo json_encode(
-            array(
-                'status' => 'OK',
-                'message' => $result
-            )
-        );
     }
 
     function get($dir = false)
@@ -287,8 +110,6 @@ class Analytics extends MX_Controller
         $date_from = $this->input->get('date') ?: false;
         $date_to = $this->input->get('date') ?: false;
         $events = $this->input->get('events') ?: false;
-
-        $filters = $this->input->get('events') ?: false;
 
 
         if ($events) {
