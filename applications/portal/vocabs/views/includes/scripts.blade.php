@@ -20,6 +20,8 @@
 @endif
 
 <script type="text/javascript" src="{{ asset_url('js/vocabs_app.js') }}"></script>
+<script type="text/javascript" src="{{ asset_url('js/filters.js') }}"></script>
+<script type="text/javascript" src="{{ asset_url('js/directives.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url('js/vocabs_factory.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url('js/vocabs_search_controller.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url('js/vocabs_visualise_directive.js') }}"></script>

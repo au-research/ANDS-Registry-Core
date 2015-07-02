@@ -1,3 +1,16 @@
+(function(){
+    'use strict';
+
+    angular
+        .module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'angular-loading-bar', 'angularFileUpload'])
+        .config(function($interpolateProvider, $locationProvider, $logProvider){
+            $interpolateProvider.startSymbol('[[');
+            $interpolateProvider.endSymbol(']]');
+            $locationProvider.hashPrefix('!');
+            $logProvider.debugEnabled(true);
+        });
+})();
+
 
 $(document).ready(function() {
 
@@ -132,11 +145,4 @@ $(document).on('click', '.deleteVocab', function(e){
     }
 });
 
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'angular-loading-bar', 'angularFileUpload']);
 
-app.config(function($interpolateProvider, $locationProvider, $logProvider){
-	$interpolateProvider.startSymbol('[[');
-	$interpolateProvider.endSymbol(']]');
-	$locationProvider.hashPrefix('!');
-	$logProvider.debugEnabled(true);
-});
