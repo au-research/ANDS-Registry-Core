@@ -421,24 +421,8 @@ class Sync_extension extends ExtensionBase{
         	}
         }
 
-        //find Minh Module
-        $modules_directory = APP_PATH.'/registry_object/modules/';
-        $modules = scandir($modules_directory);
-        foreach ($modules as $module) {
-            if ($module !='.' && $module!='..') {
-                $configuration = parse_ini_file($modules_directory.'/'.$module.'/config.ini');
-                
-                //If append-index exists in configuration
-                $available_methods = explode(',',$configuration['available']);
-                if (in_array('append_index', $available_methods)) {
-                    require($modules_directory.'/'.$module.'/models/append-index.php');
-                    $class = new TERN\Models\SolrIndex();
-                    $class->inject($this->ro);
-                    $data = $class->append();
-                    $json = array_merge($json, $data);
-                }
-            }
-        }
+        $extra = module_hook('append_index', $this->ro);
+        $json = array_merge($json, $extra);
 
 
         $this->_dropCache();

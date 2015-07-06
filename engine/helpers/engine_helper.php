@@ -538,3 +538,25 @@ function in_array_r($needle, $haystack, $strict = false) {
 function dd($stuff) {
 	die(var_dump($stuff));
 }
+
+function module_hook($action, $ro = false) {
+	$modules_directory = APP_PATH.'/registry_object/modules/';
+    $modules = scandir($modules_directory);
+
+    $result = array();
+    foreach ($modules as $module) {
+        if ($module !='.' && $module!='..') {
+            $conf = parse_ini_file($modules_directory.'/'.$module.'/config.ini');
+            $file = APP_PATH.'/registry_object/modules/'.$module.'/models/'.$conf['module'].'.php';
+            require_once($file);
+            $class_name = $conf['namespace'].'\\'.$conf['module'];
+            
+            $class = new $class_name();
+            if ($ro) $class->injectRo($ro);
+            if (method_exists($class, $action)) {
+                $result = array_merge($result, $class->$action());
+            }
+        }
+    }
+    return $result;
+}
