@@ -19,6 +19,12 @@ class Vocabs extends MX_Controller
      */
     function index()
     {
+        // Redirect /vocabs/ to the root. Without this,
+        // a page is generated that has vocabulary links
+        // that are broken.
+        if (uri_string() == 'vocabs') {
+            redirect('/');
+        }
         // header('Content-Type: text/html; charset=utf-8');
         $event = array(
             'event' => 'pageview',
