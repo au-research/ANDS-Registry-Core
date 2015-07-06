@@ -104,6 +104,23 @@ class Registry_objectsMethod extends MethodHandler {
                 }
             }
 
+            $modules_directory = APP_PATH.'/registry_object/modules/';
+            $modules = scandir($modules_directory);
+            foreach ($modules as $module) {
+                if ($module !='.' && $module!='..') {
+                    $configuration = parse_ini_file($modules_directory.'/'.$module.'/config.ini');
+                    
+                    //If append-index exists in configuration
+                    $available_methods = explode(',',$configuration['available']);
+                    if (in_array('append_roapi', $available_methods)) {
+                        require($modules_directory.'/'.$module.'/models/append-roapi.php');
+                        $class = new RoAPI();
+                        $data = $class->append();
+                        $result = array_merge($result, $data);
+                    }
+                }
+            }
+
             //store result in cache
             $cache_content = json_encode($result, true);
             

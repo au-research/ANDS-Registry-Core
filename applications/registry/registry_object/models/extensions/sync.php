@@ -68,6 +68,9 @@ class Sync_extension extends ExtensionBase{
         $single_values = array(
 			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type'
 		);
+        
+        
+        
 
         $include_rights_type = array('open','restricted','conditional');
         $include_descriptions = array('brief','full');
@@ -417,6 +420,27 @@ class Sync_extension extends ExtensionBase{
         		}
         	}
         }
+
+        //find Minh Module
+        $modules_directory = APP_PATH.'/registry_object/modules/';
+        $modules = scandir($modules_directory);
+        foreach ($modules as $module) {
+            if ($module !='.' && $module!='..') {
+                $configuration = parse_ini_file($modules_directory.'/'.$module.'/config.ini');
+                
+                //If append-index exists in configuration
+                $available_methods = explode(',',$configuration['available']);
+                if (in_array('append_index', $available_methods)) {
+                    require($modules_directory.'/'.$module.'/models/append-index.php');
+                    $class = new TERN\Models\SolrIndex();
+                    $class->inject($this->ro);
+                    $data = $class->append();
+                    $json = array_merge($json, $data);
+                }
+            }
+        }
+
+
         $this->_dropCache();
         $json = array_filter($json);
 		return $json;
