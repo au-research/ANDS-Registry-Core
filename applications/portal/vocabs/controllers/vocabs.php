@@ -19,6 +19,12 @@ class Vocabs extends MX_Controller
      */
     function index()
     {
+        // Redirect /vocabs/ to the root. Without this,
+        // a page is generated that has vocabulary links
+        // that are broken.
+        if (uri_string() == 'vocabs') {
+            redirect('/');
+        }
         // header('Content-Type: text/html; charset=utf-8');
         $event = array(
             'event' => 'pageview',
@@ -234,7 +240,7 @@ class Vocabs extends MX_Controller
         vocab_log_terms($event);
 
         $this->blade
-            ->set('scripts', array('vocabs_cms'))
+            ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl'))
             ->set('vocab', $vocab)
             ->render('cms');
     }
@@ -682,6 +688,17 @@ class Vocabs extends MX_Controller
     }
 
     /**
+     * Does haystack start with needle?
+     * Taken from http://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
+     */
+    function startsWith($haystack, $needle) {
+        // Search backwards starting from haystack length
+        // characters from the end.
+        return $needle === "" ||
+            strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+    }
+
+    /**
      * Download a file from the vocab uploaded directory
      * @access public
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -693,9 +710,12 @@ class Vocabs extends MX_Controller
         if (!$file) throw new Exception('File (required) not found');
         if (!file_exists($file)) $file = vocab_uploaded_url($file);
         if (!file_exists($file)) throw new Exception('File not found');
+        // Canonicalize the path, so that there are no tricky things
+        // such as ".." in it.
+        $file = realpath($file);
 
         //Only allow people to get file from this directory
-        if (strpos($file, get_vocab_config('upload_path'))!== false) {
+        if (self::startsWith($file, get_vocab_config('repository_path'))) {
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
             header('Content-Disposition: attachment; filename=' . basename($file));

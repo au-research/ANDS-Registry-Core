@@ -1,3 +1,16 @@
+(function(){
+    'use strict';
+
+    angular
+        .module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'angular-loading-bar', 'angularFileUpload'])
+        .config(function($interpolateProvider, $locationProvider, $logProvider){
+            $interpolateProvider.startSymbol('[[');
+            $interpolateProvider.endSymbol(']]');
+            $locationProvider.hashPrefix('!');
+            $logProvider.debugEnabled(true);
+        });
+})();
+
 
 $(document).ready(function() {
 
@@ -11,7 +24,7 @@ $("#vocab-tree").vocab_widget({
         var target = $(event.target);
         var data = target.data('vocab');
     });
-})
+});
 
 $(document).on('mouseover', 'a[tip]', function(event){
     $(this).qtip({
@@ -38,7 +51,7 @@ $(document).on('mouseover', 'a[tip]', function(event){
         position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
         style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
     });
-})
+});
 
 $(document).on('click', '.re_preview', function(event){
     event.preventDefault();
@@ -132,11 +145,4 @@ $(document).on('click', '.deleteVocab', function(e){
     }
 });
 
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'angular-loading-bar', 'angularFileUpload']);
 
-app.config(function($interpolateProvider, $locationProvider, $logProvider){
-	$interpolateProvider.startSymbol('[[');
-	$interpolateProvider.endSymbol(']]');
-	$locationProvider.hashPrefix('!');
-	$logProvider.debugEnabled(true);
-});

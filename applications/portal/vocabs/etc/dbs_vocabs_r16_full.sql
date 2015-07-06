@@ -1,8 +1,8 @@
 DROP DATABASE `dbs_vocabs`;
 
-CREATE DATABASE `dbs_vocabs` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE `dbs_vocabs` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-
+USE dbs_vocabs;
 
 CREATE TABLE `related` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -12,7 +12,7 @@ CREATE TABLE `related` (
   `slug` varchar(255) DEFAULT NULL,
   `data` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARSET=latin1
+) ENGINE=InnoDB CHARSET=utf8;
 
 
 CREATE TABLE `task` (
@@ -23,7 +23,7 @@ CREATE TABLE `task` (
   `status` varchar(45) DEFAULT NULL,
   `response` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `versions` (
@@ -35,7 +35,7 @@ CREATE TABLE `versions` (
   `data` text,
   `repository_id` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `vocabularies` (
@@ -53,8 +53,5 @@ CREATE TABLE `vocabularies` (
   `user_owner` varchar(255) DEFAULT NULL,
   `status` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
-
-
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
