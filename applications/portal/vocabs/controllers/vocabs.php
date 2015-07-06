@@ -715,7 +715,7 @@ class Vocabs extends MX_Controller
         $file = realpath($file);
 
         //Only allow people to get file from this directory
-        if (!startsWith($file, get_vocab_config('repository_path'))) {
+        if (self::startsWith($file, get_vocab_config('repository_path'))) {
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
             header('Content-Disposition: attachment; filename=' . basename($file));
