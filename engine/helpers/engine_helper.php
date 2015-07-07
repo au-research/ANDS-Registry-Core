@@ -540,14 +540,14 @@ function dd($stuff) {
 }
 
 function module_hook($action, $ro = false) {
-	$modules_directory = APP_PATH.'/registry_object/modules/';
+	$modules_directory = REGISTRY_APP_PATH.'/registry_object/modules/';
     $modules = scandir($modules_directory);
 
     $result = array();
     foreach ($modules as $module) {
         if ($module !='.' && $module!='..') {
             $conf = parse_ini_file($modules_directory.'/'.$module.'/config.ini');
-            $file = APP_PATH.'/registry_object/modules/'.$module.'/models/'.$conf['module'].'.php';
+            $file = REGISTRY_APP_PATH.'/registry_object/modules/'.$module.'/models/'.$conf['module'].'.php';
             require_once($file);
             $class_name = $conf['namespace'].'\\'.$conf['module'];
             
@@ -559,4 +559,30 @@ function module_hook($action, $ro = false) {
         }
     }
     return $result;
+}
+
+function module_return($namespace, $class, $ro = false) {
+    $modules_directory = REGISTRY_APP_PATH.'/registry_object/modules/';
+    $modules = scandir($modules_directory);
+    foreach ($modules as $module) {
+        if ($module !='.' && $module!='..') {
+            $conf = parse_ini_file($modules_directory.'/'.$module.'/config.ini');
+            if ($namespace == $conf['namespace']) {
+                $file = REGISTRY_APP_PATH.'/registry_object/modules/'.$module.'/models/'.$class.'.php';
+                require_once($file);
+                
+                $class_name = $conf['namespace'] . '\\' . $class;
+                $class = new $class_name();
+                if ($class) {
+                    if ($ro)
+                        $class->injectRo($ro);
+                    return $class;
+                } else {
+                    //handle error here
+                }
+                
+            }
+        }
+    }
+    return false;
 }
