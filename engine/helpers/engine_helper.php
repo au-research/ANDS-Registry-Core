@@ -50,7 +50,7 @@ function get_db_config_item($name) {
 
 function set_config_item($key, $type, $value) {
 	$_ci =& get_instance();
-	if($value=='json' && is_array($value)) $value = json_encode($value); 
+	if($value=='json' && is_array($value)) $value = json_encode($value);
 
 	$action = null;
 
@@ -173,7 +173,7 @@ function default_error_handler($errno, $errstr, $errfile, $errline)
 	}
 	else
 	{
-		// hide E_NOTICE from users 
+		// hide E_NOTICE from users
 		if ($errno == E_NOTICE) { return true; }
 		throw new Exception("An unexpected system error has occured. Please try again or report this error to the system administrator.");
 	}
@@ -209,8 +209,8 @@ function notifySiteAdmin($errno, $errstr, $errfile, $errline)
 {
 	$_ci =& get_instance();
 	if($_ci->config->item('site_admin_email') && $_ci->config->item('site_admin_email') != '<admin @ email>')
-	{		
-		$siteAdmin = (get_config_item('site_admin') ? get_config_item('site_admin') : 'Site Admin'); 
+	{
+		$siteAdmin = (get_config_item('site_admin') ? get_config_item('site_admin') : 'Site Admin');
 
 		$siteInstance = (get_config_item('environment_name') ? get_config_item('environment_name') : 'Site Instance');
 		$siteState = (get_config_item('deployment_state') ? " (".get_config_item('deployment_state').")" : '');
@@ -218,7 +218,7 @@ function notifySiteAdmin($errno, $errstr, $errfile, $errline)
 
 		$email = $_ci->load->library('email');
 		$email->from(get_config_item('site_admin_email'), $siteAdmin);
-		$email->to(get_config_item('site_admin_email')); 
+		$email->to(get_config_item('site_admin_email'));
 		$errDisp = error_level_tostring($errno);
 
 		$email->subject($errDisp.' occured on ' .$siteInstance.$siteState);
@@ -227,7 +227,7 @@ function notifySiteAdmin($errno, $errstr, $errfile, $errline)
 		$serverArr['HTTP_COOKIE'] = 'NOT SHOWING...';
 		$message .= 'SERVER VARIABLES: '.NL.print_r($serverArr, true);
 
-		$email->message($message);	
+		$email->message($message);
 		$email->send();
 	}
 }
@@ -237,15 +237,15 @@ set_error_handler("default_error_handler");
 function default_exception_handler( $e ) {
 
     $_ci =& get_instance(); // CI super object to access load etc.
-    
+
 	$data['js_lib'] = array('core');
 	$data['scripts'] = array();
 	$data['title'] = 'An error occurred!';
 
-    echo $_ci->load->view( 'header' , $data , true); 
-    
+    echo $_ci->load->view( 'header' , $data , true);
+
    	echo $_ci->load->view( 'exception' , array("message" => $e->getMessage()) , true );
-   
+
     echo $_ci->load->view( 'footer' , $data , true);
 }
 set_exception_handler('default_exception_handler');
@@ -466,7 +466,7 @@ function alphasort_byattr_title($a, $b) {
 
 /**
  * Universal log function
- * @param  string $message 
+ * @param  string $message
  * @param  string $logger    [registry|importer|activity|portal|error]
  * @param  string $type    	 [info|debug|warning|error|critical]
  * @return void
@@ -500,17 +500,17 @@ function ulog_email($subject='', $message='', $logger='activity', $type='info') 
 
 	$_ci =& get_instance();
 
-	$siteAdmin = (get_config_item('site_admin') ? get_config_item('site_admin') : 'Site Admin'); 
+	$siteAdmin = (get_config_item('site_admin') ? get_config_item('site_admin') : 'Site Admin');
 	$siteInstance = (get_config_item('environment_name') ? get_config_item('environment_name') : 'Site Instance');
 	$siteState = (get_config_item('deployment_state') ? " (".get_config_item('deployment_state').")" : '');
 
 	$email = $_ci->load->library('email');
 	// CC-1201 Remove site_admin_email as the sender, which should defaulted to apache@host
 	// $email->from(get_config_item('site_admin_email'), $siteAdmin);
-	$email->to(get_config_item('site_admin_email')); 
+	$email->to(get_config_item('site_admin_email'));
 
 	$email->subject($subject);
-	$email->message($message);	
+	$email->message($message);
 	$email->send();
 }
 
@@ -539,6 +539,13 @@ function dd($stuff) {
 	die(var_dump($stuff));
 }
 
+/**
+ * Hooking the functionality for a module
+ * Mainly used for ANDS\RegistryPlugin modules
+ * @param  string  $action append_roapi|append_index
+ * @param  registry_object $ro     Registry Object
+ * @return array          Result
+ */
 function module_hook($action, $ro = false) {
 	$modules_directory = REGISTRY_APP_PATH.'/registry_object/modules/';
     $modules = scandir($modules_directory);
@@ -550,7 +557,7 @@ function module_hook($action, $ro = false) {
             $file = REGISTRY_APP_PATH.'/registry_object/modules/'.$module.'/models/'.$conf['module'].'.php';
             require_once($file);
             $class_name = $conf['namespace'].'\\'.$conf['module'];
-            
+
             $class = new $class_name();
             if ($ro) $class->injectRo($ro);
             if (method_exists($class, $action)) {
@@ -561,6 +568,13 @@ function module_hook($action, $ro = false) {
     return $result;
 }
 
+/**
+ * Return an instance of the module
+ * @param  string  $namespace Name space of the module
+ * @param  string  $class     Class name
+ * @param  registry_object $ro        Registry Object
+ * @return class
+ */
 function module_return($namespace, $class, $ro = false) {
     $modules_directory = REGISTRY_APP_PATH.'/registry_object/modules/';
     $modules = scandir($modules_directory);
@@ -570,7 +584,7 @@ function module_return($namespace, $class, $ro = false) {
             if ($namespace == $conf['namespace']) {
                 $file = REGISTRY_APP_PATH.'/registry_object/modules/'.$module.'/models/'.$class.'.php';
                 require_once($file);
-                
+
                 $class_name = $conf['namespace'] . '\\' . $class;
                 $class = new $class_name();
                 if ($class) {
@@ -580,7 +594,7 @@ function module_return($namespace, $class, $ro = false) {
                 } else {
                     //handle error here
                 }
-                
+
             }
         }
     }
