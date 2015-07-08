@@ -12,8 +12,14 @@
             {"value": "hasContributor", "text": "Contributor"},
             {"value": "pointOfContact", "text": "Point of contact"},
             {"value": "implementedBy", "text": "Implementer"},
-            {"value": "consumerOf", "text": "Consumer"}];
-
+            {"value": "consumerOf", "text": "Consumer"},
+            {"value": "hasAssociationWith", "text": "Associated with"},
+            {"value": "isPresentedBy", "text": "Presented by"},
+            {"value": "isUsedBy", "text": "Used by"},
+            {"value": "isDerivedFrom", "text": "Derived from"},
+            {"value": "enriches", "text": "Enriches"},
+            {"value": "isPartOf", "text": "Part of"}
+        ]
         $scope.relatedEntityTypes = ['publisher', 'vocabulary', 'service'];
         $scope.entity = false;
         $scope.intent = 'add';
@@ -53,6 +59,32 @@
             if (!$scope.entity[type]) $scope.entity[type] = [];
             $scope.entity[type].push(obj);
         };
+
+        $scope.getRelation = function() {
+            if ($scope.type=='party') {
+                return [
+                    {"value": "publishedBy", "text": "Publisher"},
+                    {"value": "hasAuthor", "text": "Author"},
+                    {"value": "hasContributor", "text": "Contributor"},
+                    {"value": "pointOfContact", "text": "Point of contact"},
+                    {"value": "implementedBy", "text": "Implementer"},
+                    {"value": "consumerOf", "text": "Consumer"}
+                ];
+            } else if ($scope.type=='service') {
+                return [
+                    {"value": "hasAssociationWith", "text": "Associated with"},
+                    {"value": "isPresentedBy", "text": "Presented by"},
+                    {"value": "isUsedBy", "text": "Used by"}
+                ];
+            } else if ($scope.type=='vocabulary') {
+                return [
+                    {"value": "hasAssociationWith", "text": "Associated with"},
+                    {"value": "isDerivedFrom", "text": "Derived from"},
+                    {"value": "enriches", "text": "Enriches"},
+                    {"value": "isPartOf", "text": "Part of"}
+                ];
+            }
+        }
 
         $scope.list_remove = function (type, index) {
             if (index > 0) {

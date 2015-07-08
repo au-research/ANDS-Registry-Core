@@ -9,7 +9,7 @@
                 return $sce.trustAsHtml(decoded);
             }
         }])
-        .filter('languageFilter', function () {
+        .filter('languageFilter', function ($log) {
             return function (ln, langs) {
                 for (var i = 0; i < langs.length; i++) {
                     if (ln == langs[i].value) {
