@@ -744,6 +744,9 @@ class Maintenance extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$this->load->library('solr');
 
+		$ro = $this->ro->getByID(15144);
+		echo json_encode($ro->indexable_json());
+
 		// $ro = $this->ro->getByID(189615);
 
 		// echo json_encode($ro->indexable_json());
@@ -793,18 +796,18 @@ class Maintenance extends MX_Controller {
 		// }
 
 		//get missing
-		$ids = $this->ro->getIDsByDataSourceID(66, false, 'PUBLISHED');
-		var_dump($ids);
+		// $ids = $this->ro->getIDsByDataSourceID(66, false, 'PUBLISHED');
+		// var_dump($ids);
 
-		$this->solr
-			->setOpt('rows', '100000')
-			->setOpt('fl', 'id')
-			->setOpt('q', 'data_source_id:66');
-		$result = $this->solr->executeSearch(true);
-		$solr_ids = array();
-		foreach($result['response']['docs'] as $doc) $solr_ids[] = $doc['id'];
-		var_dump($solr_ids);
-		var_dump(array_diff($ids, $solr_ids));
+		// $this->solr
+		// 	->setOpt('rows', '100000')
+		// 	->setOpt('fl', 'id')
+		// 	->setOpt('q', 'data_source_id:66');
+		// $result = $this->solr->executeSearch(true);
+		// $solr_ids = array();
+		// foreach($result['response']['docs'] as $doc) $solr_ids[] = $doc['id'];
+		// var_dump($solr_ids);
+		// var_dump(array_diff($ids, $solr_ids));
 
 		// $ro = $this->ro->getByID(15144);
 		// echo json_encode($ro->indexable_json());

@@ -68,6 +68,9 @@ class Sync_extension extends ExtensionBase{
         $single_values = array(
 			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type'
 		);
+        
+        
+        
 
         $include_rights_type = array('open','restricted','conditional');
         $include_descriptions = array('brief','full');
@@ -417,6 +420,11 @@ class Sync_extension extends ExtensionBase{
         		}
         	}
         }
+
+        $extra = module_hook('append_index', $this->ro);
+        $json = array_merge($json, $extra);
+
+
         $this->_dropCache();
         $json = array_filter($json);
 		return $json;

@@ -17,3 +17,4 @@ etc/misc/python/linkchecker/checkers/__pycache__
 .idea/
 wordpress/
 engine/logs
+applications/registry/registry_object/modules/
