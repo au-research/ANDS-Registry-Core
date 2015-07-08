@@ -490,43 +490,45 @@ class Vocabs extends MX_Controller
             $data = isset($angulardata['data']) ? $angulardata['data'] : false;
 
             if ($data) {
+                $result = $vocab->save($data);
+
                 if (null == $this->user->affiliations() && $data['status'] == 'published') {
                     $data['status'] = 'draft';
                     $vocab->prop['status'] = 'draft';
                     $vocab->save($data);
                     $to_email = $this->config->item('site_admin_email');
-                    $content = 'Request to publish vocabulary' . $data['title'] . NL;
+                    $content = 'Vocabulary' . $data['title'] . ' is published by a user with no affiliations'.NL;
                     $email = $this->load->library('email');
                     $email->to($to_email);
                     $email->from($to_email);
-                    $email->subject('Request to publish vocabulary' . $data['title']);
+                    $email->subject('Vocabulary' . $data['title'] . ' published without an organisational role');
                     $email->message($content);
                     $email->send();
-                    $result = 'A request to publish this vocabulary has been sent to ' . $this->config->item('site_admin_email');
-                } else {
-                    //throw new Exception($data['status']);
-                    $result = $vocab->save($data);
-
-                    //result should be an object
-                    //result.status = 'OK'
-                    //result.message = array()
-
-                    if (!$result) throw new Exception('Error while saving vocabulary');
-
-                    if ($result && $vocab->prop['status'] == 'published') {
-                        if ($this->index_vocab($vocab)) {
-                            $vocab->log('Indexing Success');
-                        }
-                    }
-
-                    if ($result) $result = $vocab;
-
-                    $event = array(
-                        'event' => 'edit',
-                        'vocab' => $vocab->title
-                    );
-                    vocab_log_terms($event);
+                    $vocab->log('An email of this action has been sent to' . $this->config->item('site_admin_email'));
                 }
+
+                //throw new Exception($data['status']);
+
+                //result should be an object
+                //result.status = 'OK'
+                //result.message = array()
+
+                if (!$result) throw new Exception('Error while saving vocabulary');
+
+                if ($result && $vocab->prop['status'] == 'published') {
+                    if ($this->index_vocab($vocab)) {
+                        $vocab->log('Indexing Success');
+                    }
+                }
+
+                if ($result) $result = $vocab;
+
+                $event = array(
+                    'event' => 'edit',
+                    'vocab' => $vocab->title
+                );
+                vocab_log_terms($event);
+
             }
             if ($method == 'index') {
                 $result = $vocab->indexable_json();
