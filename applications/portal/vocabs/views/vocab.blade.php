@@ -33,6 +33,13 @@ if(isset($vocab['related_entity'])){
 
 ?>
 
+@section('title')
+{{ htmlspecialchars($vocab['title']) }}
+@stop
+@section('og-meta')
+<meta property="og:url" content="{{ base_url().$vocab['slug'] }}" />
+<meta property="og:title" content="{{ htmlspecialchars($vocab['title']) }}" />
+@stop
 @extends('layout/vocab_2col_layout')
 @section('content')
 <article class="post">

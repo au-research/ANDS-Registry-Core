@@ -1,9 +1,31 @@
 <head>
 	<meta charset="utf-8">
+	{{-- Add title, if defined, or add a default title if not. --}}
+	{{-- If this were real Laravel, we could/should/would use the two-argument version of yield. --}}
+	@if(isset($this->_sections['title']))
+	<title>@yield('title')</title>
+	@else
 	<title>ANDS Vocabulary Vocabs</title>
-		<meta property="og:type" content="article"/>
+	@endif
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<meta content="yes" name="apple-mobile-web-app-capable">
+	@if(get_config_item('environment_name'))
+	<meta property="og:site_name" content="{{ get_config_item('environment_name') }}" />
+	@else
+	<meta property="og:site_name" content="Research Vocabularies Australia" />
+	@endif
+	<meta property="og:type" content="article" />
+	@if(isset($vocab['description']))
+		<?php
+			$clean_description = htmlspecialchars(substr(str_replace(array('"','[[',']]'), '', $vocab['description']), 0, 200));
+		?>
+		<meta ng-non-bindable property="og:description" content="{{ $clean_description }}" />
+	@else
+		<meta ng-non-bindable property="og:description" content="Find, access, and re-use vocabularies for research" />
+	@endif
+	{{-- Add Additional Facebook metadata, if any. --}}
+	@yield('og-meta')
+	{{-- If more metadata needed, insert more yields here. --}}
 	@include('includes/styles')
 	<script type="text/javascript">
 		//Fix Facebook return URL
