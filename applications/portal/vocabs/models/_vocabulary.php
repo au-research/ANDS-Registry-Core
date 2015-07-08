@@ -680,7 +680,7 @@ class _vocabulary
                                 $ap['uri'] = isset($content['concepts']) ? $content['concepts'] : 'TBD';
                             } elseif ($ap['type'] == 'apiSparql' && $ap['uri'] == 'TBD') {
                                 $ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TBD';
-                            } elseif ($ap['type'] == 'webPage') {
+                            } elseif ($ap['type'] == 'webPage' && $ap['uri'] == 'TBD') {
                                 $ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'] . '/concept/topConcepts' : 'TBD';
                             }
                         }
