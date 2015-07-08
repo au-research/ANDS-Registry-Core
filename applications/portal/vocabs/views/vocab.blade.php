@@ -128,6 +128,21 @@ if(isset($vocab['related_entity'])){
             </div>
         </div>
 
+        @if(isset($vocab['top_concept']))
+        <div class="panel swatch-white">
+            <div class="panel-heading">Top Concepts</div>
+            <div class="panel-body">
+                <table class="table">
+                    <tbody>
+                        @foreach($vocab['top_concept'] as $concept)
+                            <tr><td>{{$concept}}</td></tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @endif
+
         <div visualise vocabid="{{ $vocab['id'] }}"></div>
 
         @if(isset($vocab['subjects']))
