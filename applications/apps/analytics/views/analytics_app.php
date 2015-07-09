@@ -16,8 +16,10 @@
                     <div class="widget-content">
                         <input date-range-picker class="form-control date-picker" type="text" ng-model="vm.filters.period" />
                         <select name="" id="" ng-model="vm.chartType" ng-options="type for type in vm.types"></select>
-                        <button class="btn btn-primary">Go</button>
-                        <span ng-if="!vm.chartData.data || vm.chartData.length == 0">Loading... Please wait...</span>
+                        <button class="btn btn-primary" ng-click="vm.getData()">Go</button>
+                        <span ng-if="!vm.chartData.data || vm.chartData.length == 0 || vm.loading">
+                            Loading... Please wait...
+                        </span>
                         <hr/>
                         <canvas
                             ng-if="vm.chartData"

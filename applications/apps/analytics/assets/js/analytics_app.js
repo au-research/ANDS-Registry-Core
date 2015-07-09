@@ -13,23 +13,29 @@
         vm.chartType = vm.types[0];
 
         vm.filters = {
-            'period': {startDate: null, endDate: null},
-            'group': [
-                {'type':'group', 'value':'State Records Authority of New South Wales'}
-            ],
+            'log': 'portal',
+            'period': {startDate: '2015-06-01', endDate: '2015-06-02'},
+            'group': {
+                'type':'group', 'value':'State Records Authority of New South Wales'
+            },
             'dimensions': [
                 'portal_view', 'portal_search'
             ]
         };
 
-
         vm.onClick = function (points, evt) {
             $log.debug(points, evt);
         };
 
+        vm.getData = function() {
+            getData(vm.filters);
+        }
         getData(vm.filters);
+
         function getData(filters) {
+            vm.loading = true;
             return analyticFactory.summary(filters).then(function(data){
+                vm.loading = false;
                 vm.chartData = data;
             });
         }
