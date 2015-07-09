@@ -15,27 +15,14 @@
 	<meta property="og:site_name" content="Research Vocabularies Australia" />
 	@endif
 	<meta property="og:type" content="article" />
-	@if(isset($vocab))
-		@if(gettype($vocab) == "array" && isset($vocab['description']))
-			{{-- View page --}}
-			<?php $description = $vocab['description']; ?>
-		@elseif(gettype($vocab) == "object" && isset($vocab->prop))
-			{{-- CMS (a.k.a. edit page)--}}
-			<?php $description = $vocab->prop['description']; ?>
-		@else
-			{{-- No idea! --}}
-		@endif
-	@endif
-	@if(isset($description))
-		<?php
-			$clean_description = htmlspecialchars(substr(str_replace(array('"','[[',']]'), '', $description), 0, 200));
-		?>
-		<meta ng-non-bindable property="og:description" content="{{ $clean_description }}" />
+	{{-- Specific handling for og:description --}}
+	@if(isset($this->_sections['og-description']))
+	   @yield('og-description')
 	@else
 		<meta ng-non-bindable property="og:description" content="Find, access, and re-use vocabularies for research" />
 	@endif
 	{{-- Add Additional Facebook metadata, if any. --}}
-	@yield('og-meta')
+	@yield('og-other-meta')
 	{{-- If more metadata needed, insert more yields here. --}}
 	@include('includes/styles')
 	<script type="text/javascript">

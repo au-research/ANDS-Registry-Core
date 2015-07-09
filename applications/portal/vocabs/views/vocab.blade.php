@@ -36,7 +36,19 @@ if(isset($vocab['related_entity'])){
 @section('title')
 {{ htmlspecialchars($vocab['title']) }}
 @stop
-@section('og-meta')
+@section('og-description')
+@if(gettype($vocab) == "array" && isset($vocab['description']))
+	<?php
+		$clean_description = htmlspecialchars(substr(str_replace(array('"','[[',']]'), '', $vocab['description']), 0, 200));
+	?>
+@endif
+@if(isset($clean_description))
+	<meta ng-non-bindable property="og:description" content="{{ $clean_description }}" />
+@else
+	<meta ng-non-bindable property="og:description" content="Find, access, and re-use vocabularies for research" />
+@endif
+@stop
+@section('og-other-meta')
 <meta property="og:url" content="{{ base_url().$vocab['slug'] }}" />
 <meta property="og:title" content="{{ htmlspecialchars($vocab['title']) }}" />
 @stop

@@ -1,5 +1,17 @@
 @extends('layout/vocab_layout')
 
+@section('og-description')
+@if(gettype($vocab) == "object" && isset($vocab->prop))
+	<?php
+		$clean_description = htmlspecialchars(substr(str_replace(array('"','[[',']]'), '', $vocab->prop['description']), 0, 200));
+	?>
+@endif
+@if(isset($clean_description))
+	<meta ng-non-bindable property="og:description" content="{{ $clean_description }}" />
+@else
+	<meta ng-non-bindable property="og:description" content="Find, access, and re-use vocabularies for research" />
+@endif
+@stop
 @section('content')
 <section ng-controller="addVocabsCtrl" class="section swatch-white">
 	<div class="container">
