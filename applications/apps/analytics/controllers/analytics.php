@@ -17,12 +17,14 @@ class Analytics extends MX_Controller
      */
     public function index()
     {
+        acl_enforce('REGISTRY_STAFF');
         $data = array(
             'title' => 'Analytics',
         );
 
         $data['scripts'] = array(
             'analytics_app',
+            'analytics_factory',
         );
 
         $data['app_js_lib'] = array(

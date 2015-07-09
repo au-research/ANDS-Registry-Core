@@ -14,19 +14,52 @@
                         <h5>Analytics</h5>
                     </div>
                     <div class="widget-content">
-                        <input date-range-picker class="form-control date-picker" type="text" ng-model="vm.filters.period" />
-                        <select name="" id="" ng-model="vm.chartType" ng-options="type for type in vm.types"></select>
-                        <button class="btn btn-primary" ng-click="vm.getData()">Go</button>
-                        <span ng-if="!vm.chartData.data || vm.chartData.length == 0 || vm.loading">
-                            Loading... Please wait...
-                        </span>
-                        <hr/>
-                        <canvas
-                            ng-if="vm.chartData"
-                            class="chart chart-line" data="vm.chartData.data"
-                            labels="vm.chartData.labels" legend="false" series="vm.chartData.series"
-                            click="vm.onClick" chart-type="vm.chartType">
-                        </canvas>
+
+                        <div class="container-fluid">
+                            <div class="row-fluid">
+
+                                <div class="span4">
+                                    <span
+                                        ng-if=" !vm.chartData.data
+                                                || vm.chartData.length == 0
+                                                || vm.loading">
+                                        Loading... Please wait...
+                                    </span>
+
+                                    <form  ng-submit="vm.getData()">
+                                        <div class="control-group">
+                                            <label for="">Date Range</label>
+                                            <input date-range-picker class="form-control date-picker" type="text" ng-model="vm.filters.period" />
+                                        </div>
+                                        <div class="control-group">
+                                            <label for="">Group</label>
+                                            <select name="" id="" ng-model="vm.filters.group.value" ng-options="group for group in vm.groups"></select>
+                                        </div>
+                                        <div class="control-group">
+                                            <label for="">Chart Type</label>
+                                            <select name="" id="" ng-model="vm.chartType" ng-options="type for type in vm.types"></select>
+                                        </div>
+                                        <div class="control-group">
+                                            <label for=""></label>
+                                            <div class="controls">
+                                                <input type="submit" class="btn btn-primary" value="Go">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="span8">
+                                    <canvas
+                                        ng-if="vm.chartData"
+                                        class="chart chart-line" data="vm.chartData.data"
+                                        labels="vm.chartData.labels" legend="false" series="vm.chartData.series"
+                                        click="vm.onClick" chart-type="vm.chartType">
+                                    </canvas>
+                                    <div ng-if="!vm.chartData && !vm.loading">No Data!</div>
+                                    <div ng-if="!vm.chartData && vm.loading">Loading Please Wait</div>
+                                </div>
+                            </div>
+                        </div>
+
 
                     </div>
                 </div>
