@@ -76,7 +76,7 @@
 				</div>
 
 				<div ng-if="result.response.numFound == 0" class="animated fadeInLeft vocab-search-result">
-					There are no result!
+					Your search did not return any results
 				</div>
 			</div>
 			
