@@ -62,7 +62,7 @@ if(isset($vocab['related_entity'])){
                 <div class="row">
                     @if($vocab['current_version'])
                     <div class="col-md-4 panel-body text-center">
-                        <h4>{{ titlecase($vocab['current_version']['title']) }}</h4>
+                        <h4>{{ $vocab['current_version']['title'] }}</h4>
                         
                         @foreach($vocab['current_version']['access_points'] as $ap)
                             @if($ap['type']=='file')
@@ -83,7 +83,7 @@ if(isset($vocab['related_entity'])){
                             @foreach($vocab['versions'] as $version)
                             @if($version['status']!='current')
                                 <li>
-                                    <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}'>{{ titlecase($version['title']) }} </a>
+                                    <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}'>{{ $version['title'] }} </a>
                                     <small>({{ $version['status'] }}) </small>
                                     @if(isset($version['note']))
                                     <a href="" tip="{{ $version['release_date'] }} <hr />{{$version['note']}}"><i class="fa fa-info"></i></a>
