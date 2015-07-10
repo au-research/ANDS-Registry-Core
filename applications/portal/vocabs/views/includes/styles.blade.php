@@ -12,5 +12,6 @@
 <!-- LESS file for development only -->
 <link rel="stylesheet/less" type="text/css" href="{{asset_url('less/ands-vocab.less')}}" media="screen" />
 @else
-<link rel="stylesheet" type="text/css" href="{{asset_url('css/portal.combine.css', 'core')}}" media="screen" />
+<link rel="stylesheet" type="text/css" href="{{ asset_url('css/lib.css') }}" media="screen" />
+<link rel="stylesheet" type="text/css" href="{{ asset_url('css/vocab.less.compiled.css') }}" media="screen" />
 @endif
