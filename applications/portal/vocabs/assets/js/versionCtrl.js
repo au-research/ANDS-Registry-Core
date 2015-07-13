@@ -184,5 +184,31 @@
             $modalInstance.dismiss();
         }
 
+        $scope.$watch('newValue.ap.type', function(newVal, oldVal){
+
+            if(newVal == 'file'){
+                $('#ap_upload').show();
+                $('#ap_uri').hide();
+                $('#ap_uri_label').hide();
+            }
+            else if(newVal == 'apiSparql'){
+                $('#ap_upload').hide();
+                $('#ap_uri').show();
+                $('#ap_uri_label').show();
+                $('#ap_uri_label').html("SPARQL endpoint URI");
+            }
+            else if(newVal == 'webPage'){
+                $('#ap_upload').hide();
+                $('#ap_uri').show();
+                $('#ap_uri_label').show()
+                $('#ap_uri_label').html("Webpage URL");
+            }
+            else{
+                $('#ap_upload').hide();
+                $('#ap_uri').hide();
+                $('#ap_uri_label').hide();
+            }
+        });
+
     }
 })();

@@ -119,18 +119,20 @@
                             </div>
 
                             <div class="form-group" ng-class="{ 'has-error' : apForm.uri.$invalid }">
-                                <label for="">Access Point URI</label>
+                                <label id="ap_uri_label" for="">Access Point URI</label>
 
-                                <p class="input-group">
-                                    <input type="text" required name="uri" class="form-control" placeholder="URI"
-                                           ng-model="newValue.ap.uri">
-										<span class="input-group-btn">
-											<button type="button" class="btn btn-default" ng-file-select
-                                                    ng-file-change="upload($files, newValue.ap)"><i
-                                                    class="fa fa-upload"></i> Upload File
-                                            </button>
-										</span>
+                                <p class="input-group" id="ap_uri">
+                                <input type="text" required name="uri" class="form-control" placeholder="URI"
+                                       ng-model="newValue.ap.uri">
                                 <div class="alert alert-important" ng-if="error_upload_msg">[[ error_upload_msg ]]</div>
+                                </p>
+                                <p class="input-group" id="ap_upload">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-file-select
+                                                ng-file-change="upload($files, newValue.ap)"><i
+                                                class="fa fa-upload"></i> Upload File
+                                        </button>
+                                    </span>
                                 </p>
                                 <p ng-show="apForm.uri.$invalid" class="help-block">URI is required.</p>
                             </div>
