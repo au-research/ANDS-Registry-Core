@@ -19,6 +19,7 @@
         $scope.newValue = {
             ap: {}
         };
+        $scope.uploadPercentage = 0;
 
         //calendar operation
         $scope.opened = false;
@@ -159,6 +160,7 @@
                     }).progress(function (evt) {
                         var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
                         $log.debug('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+                        $scope.uploadPercentage = progressPercentage;
                     }).success(function (data, status, headers, config) {
                         $log.debug(config);
                         $scope.uploading = false;
