@@ -53,7 +53,7 @@
 						</div>
 					</div>
 					<div class="panel-footer">
-						<a href="" class="btn btn-primary" ng-click="populate(project)">Use this PoolParty</a>
+						<a href="" class="btn btn-primary" ng-click="populate(project)">Use this PoolParty Project</a>
 					<!--	<a href="" class="btn btn-link" ng-click="skip()">Skip</a>
 						<p class="help-block">Skipping will start a blank Vocabulary</p> -->
 					</div>
