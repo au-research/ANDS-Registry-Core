@@ -63,7 +63,7 @@ if(isset($vocab['related_entity'])){
                     @if($vocab['current_version'])
                     <div class="col-md-4 panel-body text-center">
                         <h4>{{ $vocab['current_version']['title'] }}</h4>
-                        
+
                         @foreach($vocab['current_version']['access_points'] as $ap)
                             @if($ap['type']=='file')
                                 <a class="btn btn-lg btn-block btn-primary" href="{{ portal_url('vocabs/download/?file='.$ap['uri']) }}"><i class="fa fa-cube"></i> Download File</a>
@@ -132,7 +132,7 @@ if(isset($vocab['related_entity'])){
                             @elseif($cc=='CC-BY-NC-ND')
                             <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
                             @else
-                            <span>Licence: {{sentenceCase($cc)}}</span>
+                            <span>Licence: {{ $cc }}</span>
                             @endif
                         </p>
                     </div>
@@ -184,7 +184,7 @@ if(isset($vocab['related_entity'])){
 
             @foreach($related_service as $service)
             <p><small>
-                <?php 
+                <?php
                     if (isset($service['relationship'])) {
                         if (is_array($service['relationship'])) {
                             echo readable(implode($service['relationship'], ','));
@@ -211,7 +211,7 @@ if(isset($vocab['related_entity'])){
         <p>
 
             <small>
-                <?php 
+                <?php
                     if (isset($related['relationship'])) {
                         if (is_array($related['relationship'])) {
                             echo readable(implode($related['relationship'], ','));
@@ -229,7 +229,7 @@ if(isset($vocab['related_entity'])){
         @foreach($related_vocabs as $related)
         <p>
             <small>
-                <?php 
+                <?php
                     if (isset($related['relationship'])) {
                         if (is_array($related['relationship'])) {
                             echo implode($related['relationship'], ',');
