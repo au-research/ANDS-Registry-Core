@@ -22,16 +22,15 @@
                             <p class="help-block" ng-show="reForm.title.$invalid">Title is required</p>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" ng-if="type!='service'">
                         <input type="hidden" value="publishedBy" name="relationship" ng-if="type=='publisher'"/>
-
                         <div class="form-group">
                             <label for="">Email</label>
                             <input type="text" name="email" class="form-control" placeholder="entity Email"
                                    ng-model="entity.email">
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" ng-if="type!='service'">
                         <div class="form-group">
                             <label for="">Phone</label>
                             <input type="text" class="form-control" placeholder="entity Phone" ng-model="entity.phone">
