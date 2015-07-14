@@ -105,6 +105,19 @@ module.exports = function(grunt){
                     '<%= yeoman.templates %>/omega/assets/js/packages.min.js'
                 ],
                 dest:'<%=yeoman.vocab_asset %>/js/lib.js'
+            },
+            vocab_scripts: {
+                options:{separator:';'},
+                nonull: true,
+                src:[
+                    '<%= yeoman.vocab_asset %>/js/vocabs_app.js',
+                    '<%= yeoman.vocab_asset %>/js/filters.js',
+                    '<%= yeoman.vocab_asset %>/js/directives.js',
+                    '<%= yeoman.vocab_asset %>/js/vocabs_factory.js',
+                    '<%= yeoman.vocab_asset %>/js/vocabs_search_controller.js',
+                    '<%= yeoman.vocab_asset %>/js/vocabs_visualise_directive.js'
+                ],
+                dest:'<%= yeoman.vocab_asset %>/js/scripts.js'
             }
         },
         uglify:{
