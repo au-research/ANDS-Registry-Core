@@ -164,7 +164,7 @@ if(isset($vocab['related_entity'])){
                 <?php $sub_count=0; ?>
                 @foreach($vocab['subjects'] as $subject)
                 <?php $sub_count++; ?>
-                   <a  href="{{base_url()}}#!/?subject={{$subject['subject']}}"> {{$subject['subject']}} </a> <?php if($sub_count<count($vocab['subjects'])) echo " | "; ?>
+                   <a  href="{{base_url()}}#!/?subjects={{$subject['subject']}}"> {{$subject['subject']}} </a> <?php if($sub_count<count($vocab['subjects'])) echo " | "; ?>
                 @endforeach
             </div>
         </div>
