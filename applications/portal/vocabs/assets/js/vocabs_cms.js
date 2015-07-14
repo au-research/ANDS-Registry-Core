@@ -271,6 +271,14 @@
                         $scope.error_message = data.message;
                     } else {//success
                         $scope.success_message = data.message.import_log;
+                        $scope.success_message = [
+                            'Successfully saved Vocabulary.'
+                        ];
+                        if ($scope.vocab.status=='published') {
+                            $scope.success_message.push(
+                                '<a href="'+base_url+$scope.vocab.slug+'">View Vocabulary</a>'
+                            )
+                        }
                         vocabs_factory.get($scope.vocab.slug).then(function (data) {
                             $scope.vocab = data.message;
                         });
