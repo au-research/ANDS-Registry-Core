@@ -8,6 +8,7 @@
     function versionCtrl($scope, $modalInstance, $log, $upload, version, action, vocab) {
         $log.debug(action);
         $scope.versionStatuses = ['current', 'superseded', 'deprecated'];
+        $scope.vocab = vocab;
         $scope.version = version ? version : {provider_type: false};
         $scope.action = version ? 'save' : 'add';
         $scope.formats = ['RDF/XML', 'TTL', 'N-Triples', 'JSON', 'TriG', 'TriX', 'N3', 'CSV', 'TSV', 'XLS', 'XLSX', 'BinaryRDF', 'ODS', 'ZIP', 'XML', 'TXT', 'ODT', 'TEXT'];

@@ -204,6 +204,16 @@
 				</div>
 				<div class="col-md-4">
 
+					<div class="panel swatch-gray" ng-if="vocab.pool_party_id">
+						<div class="panel-heading">PoolParty Project Info</div>
+						<div class="panel-body">
+							<dl>
+								<dt>PoolParty Project ID</dt>
+								<dd>[[ vocab.pool_party_id ]]</dd>
+							</dl>
+						</div>
+					</div>
+
 					<div class="panel swatch-gray">
 						<div class="panel-heading">Versions</div>
 						<div class="panel-body">
