@@ -35,6 +35,9 @@ $title = rawurlencode(substr($vocab['title'], 0, 200)) ;
                         <div class="panel panel-primary swatch-white panel-content">
                             <div class="panel-body">
                                 <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name" ng-non-bindable>{{ $vocab['title'] }} </span></h1>
+                                @if (isset($vocab['acronym']))
+                                <small>Acronym: {{ $vocab['acronym'] }}</small><br>
+                                @endif
                                 @if(isset($publisher))
                                 @foreach($publisher as $apub)
                                 <small>Publisher </small>  <a class="re_preview" related='{{json_encode($apub)}}' v_id="{{ $vocab['id'] }}" sub_type="publisher"> {{$apub['title']}} </a>

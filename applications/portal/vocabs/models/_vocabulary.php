@@ -61,7 +61,7 @@ class _vocabulary
         //index single values
         $single_values = array('id', 'title', 'slug', 'pool_party_id');
         foreach ($single_values as $s) {
-            if ($this->prop[$s]) $json[$s] = $this->prop[$s];
+            if (isset($this->prop[$s])) $json[$s] = $this->prop[$s];
         }
 
         //licence is done differently
@@ -71,6 +71,8 @@ class _vocabulary
         }
 
         $data = $this->display_array();
+
+        if (isset($data['acronym'])) $json['acronym'] = $data['acronym'];
 
         if (isset($data['description'])) {
             $json['description'] = $data['description'];

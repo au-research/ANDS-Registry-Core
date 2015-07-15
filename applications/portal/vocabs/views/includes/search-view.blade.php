@@ -1,9 +1,9 @@
 <section class='section swatch-gray'>
 	<div class="container element-short-bottom element-short-top">
 		<div class="row">
-			
+
 			<div class="col-md-4 col-lg-3 sidebar search-sidebar">
-				
+
 				<div ng-if="facets.subjects">
 				<h3>Subject</h3>
 					<ul class="list-unstyled">
@@ -64,6 +64,9 @@
 
 				<div ng-repeat="doc in result.response.docs" class="animated fadeInLeft vocab-search-result">
 					<h3><a href="[[ base_url ]][[ doc.slug ]]">[[ doc.title ]]</a></h3>
+					<p ng-if="doc.acronym">
+						<small>Acronym: [[ doc.acronym ]]</small>
+					</p>
 					<p ng-if="doc.publisher">
 						Publisher: [[ doc.publisher.join(',') ]]
 					</p>
@@ -79,7 +82,7 @@
 					Your search did not return any results
 				</div>
 			</div>
-			
+
 		</div>
 
 	</div>

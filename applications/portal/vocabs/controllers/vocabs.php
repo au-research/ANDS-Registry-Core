@@ -293,7 +293,7 @@ class Vocabs extends MX_Controller
         //highlighting
         $this->solr
             ->setOpt('hl', 'true')
-            ->setOpt('hl.fl', 'description, subject_search, title, concept, language')
+            ->setOpt('hl.fl', '*')
             ->setOpt('hl.simple.pre', '&lt;b&gt;')
             ->setOpt('hl.simple.post', '&lt;/b&gt;')
             ->setOpt('hl.snippets', '2');
