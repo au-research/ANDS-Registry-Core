@@ -154,6 +154,12 @@ module.exports = function(grunt){
         'uglify'
     ]);
 
+    grunt.registerTask('vocab', [
+        'less:vocab_less',
+        'concat:vocab_lib',
+        'concat:vocab_scripts'
+    ]);
+
     grunt.registerTask('core',[
         'watch:core'
     ]);

@@ -53,7 +53,8 @@
                             <p></p>
 
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Relationship" ng-model="newrel"
+                                <span class="caret caret-for-input-suggestion"></span>
+                                <input type="text" class="form-control input-suggestion" placeholder="Relationship" ng-model="newrel"
                                     ng-focus="onFocus($event)"
                                     typeahead="rel.value as rel.text for rel in getRelation()" typeahead-min-length="0"
                                     typeahead-on-select="list_add('relationship', newrel)">

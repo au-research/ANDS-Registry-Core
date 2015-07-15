@@ -19,6 +19,15 @@
   color: white;
   background: #17649a;
 }
+.caret-for-input-suggestion {
+  z-index: 100;
+  position: absolute;
+  top: 50%;
+  left: 9px;
+}
+.input-suggestion {
+  text-indent: 14px !important;
+}
 .swatch-gray .panel-footer,
 [class*="swatch-"] .swatch-gray .panel-footer {
   background: #e9e9e9;

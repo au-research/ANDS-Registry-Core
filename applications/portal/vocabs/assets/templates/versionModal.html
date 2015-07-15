@@ -88,10 +88,14 @@
                         <form class="form" name="form.apForm" novalidate>
                             <div class="form-group" ng-class="{ 'has-error' : form.apForm.format.$invalid }">
                                 <label for="">Access Point</label>
-                                <input type="text" name="format" class="form-control" placeholder="Format"
-                                       ng-model="newValue.ap.format"
-                                       typeahead="format as format for format in formats | filter:$viewValue"
-                                       typeahead-min-length="0">
+                                <div style="position:relative">
+                                    <span class="caret caret-for-input-suggestion"></span>
+                                    <input type="text" name="format" class="form-control input-suggestion" placeholder="Format"
+                                           ng-model="newValue.ap.format"
+                                           typeahead="format as format for format in formats | filter:$viewValue"
+                                           typeahead-min-length="0">
+                                </div>
+
 
                                 <p ng-show="form.apForm.format.$invalid" class="help-block">Format is required.</p>
                             </div>
