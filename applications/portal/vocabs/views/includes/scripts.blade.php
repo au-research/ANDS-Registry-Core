@@ -14,6 +14,7 @@
     <script src="{{ asset_url('js/lib/angular-loading-bar/build/loading-bar.min.js')}}"></script>
     <script type="text/javascript" src="{{ asset_url('js/lib/ng-file-upload/angular-file-upload-all.min.js') }}"></script>
     <script src="{{ asset_url('omega/js/packages.min.js','templates') }}"></script>
+    <script src="{{ asset_url('js/modified-ui-bootstrap-tpls-0.10.0.js') }}"></script>
 @else
     <script src="{{ asset_url('js/lib.js') }}"></script>
 @endif
@@ -21,6 +22,7 @@
 <script src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.js'></script>
 <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
 <script type="text/javascript" src="//researchdata.ands.org.au/apps/assets/vocab_widget/js/vocab_widget.js"></script>
+
 
 @if(is_dev())
     <script type="text/javascript" src="{{ asset_url('js/vocabs_app.js') }}"></script>

@@ -5,7 +5,7 @@
         .module('app')
         .controller('relatedCtrl', relatedCtrl);
 
-    function relatedCtrl($scope, $modalInstance, $log, entity, type, vocabs_factory) {
+    function relatedCtrl($scope, $modalInstance, $log, $timeout, entity, type, vocabs_factory) {
         $scope.relatedEntityRelations = [
             {"value": "publishedBy", "text": "Publisher"},
             {"value": "hasAuthor", "text": "Author"},
@@ -20,6 +20,7 @@
             {"value": "enriches", "text": "Enriches"},
             {"value": "isPartOf", "text": "Part of"}
         ]
+
         $scope.relatedEntityTypes = ['publisher', 'vocabulary', 'service'];
         $scope.entity = false;
         $scope.intent = 'add';
@@ -28,6 +29,11 @@
             $scope.intent = 'save';
         }
         $scope.type = type;
+        $scope.newrel = '';
+
+        $scope.form = {
+            reForm:{}
+        }
 
         if ($scope.type == 'publisher') {
             $scope.type = 'party';
@@ -37,6 +43,13 @@
                 }
             }
         }
+
+        $scope.onFocus = function (e) {
+            $timeout(function () {
+              $(e.target).trigger('input');
+              $(e.target).trigger('change'); // for IE
+            });
+          };
 
         $scope.populate = function (item, model, label) {
             $log.debug(item,model,label);
@@ -106,7 +119,7 @@
 
         $scope.validateEntity = function () {
             delete $scope.error_message;
-            if ($scope.reForm.$valid) {
+            if ($scope.form.reForm.$valid) {
 
                 //at least 1 relationship
                 if (!$scope.entity || !$scope.entity.relationship || $scope.entity.relationship.length == 0) {

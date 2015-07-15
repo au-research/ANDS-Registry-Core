@@ -16,8 +16,13 @@
             {"value": "file", "text": "File"}
         ];
 
+        $scope.form = {
+            apForm:{},
+            versionForm:{}
+        }
+
         $scope.newValue = {
-            ap: {}
+            ap: {format:''}
         };
         $scope.uploadPercentage = 0;
 
@@ -66,7 +71,10 @@
 
         $scope.validateAP = function () {
             delete $scope.ap_error_message;
-            return !!$scope.apForm.$valid;
+            if (!$scope.form.apForm.$valid) {
+                $scope.ap_error_message = 'Form Validation Failed';
+            }
+            return !!$scope.form.apForm.$valid;
         };
 
         $scope.validFormat = function () {
@@ -81,7 +89,7 @@
 
         $scope.validateVersion = function () {
             delete $scope.error_message;
-            if ($scope.versionForm.$valid) {
+            if ($scope.form.versionForm.$valid) {
 
                 //if there's already a current version, this one shouldn't be
                 if ($scope.version.status == 'current') {

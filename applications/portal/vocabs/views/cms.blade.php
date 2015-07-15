@@ -160,10 +160,12 @@
 							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('language', newValue.language)">
 								<div class="input-group">
 									<input type="text" ng-model="newValue.language" class="form-control" placeholder="Language" typeahead="lang.value as lang.text for lang in langs | filter:$viewValue" typeahead-min-length="0" typeahead-on-select="addtolist('language', newValue.language)"></input>
+
 									<span class="input-group-btn">
 										<button class="btn btn-primary" type="button" ng-click="addtolist('language', newValue.language)"><i class="fa fa-plus"></i> Add</button>
 									</span>
 								</div>
+
 							</form>
 						</div>
 

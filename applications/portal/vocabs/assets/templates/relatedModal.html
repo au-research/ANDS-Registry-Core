@@ -6,20 +6,20 @@
             [[ type ]]</h4>
     </div>
     <div class="modal-body swatch-white" ng-cloak>
-        <form action="" class="form" name="reForm">
+        <form action="" class="form" name="form.reForm">
             <div class="container-fluid">
                 <input name="type" value="[[ type ]]" type="hidden"/>
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="form-group" ng-class="{'has-error':reForm.title.$invalid}">
+                        <div class="form-group" ng-class="{'has-error':form.reForm.title.$invalid}">
                             <label for="">Title</label>
                             <input type="text" required name="title" class="form-control" placeholder="entity Title"
                                    ng-model="entity.title"
                                    typeahead="suggest.title as suggest.title for suggest in suggestions | filter:$viewValue | limitTo:8"
                                    typeahead-min-length="0" typeahead-on-select="populate($item, $model, $label)">
 
-                            <p class="help-block" ng-show="reForm.title.$invalid">Title is required</p>
+                            <p class="help-block" ng-show="form.reForm.title.$invalid">Title is required</p>
                         </div>
                     </div>
                     <div class="col-md-6" ng-if="type!='service'">
@@ -54,7 +54,9 @@
 
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Relationship" ng-model="newrel"
-                                       typeahead="rel.value as rel.text for rel in getRelation() | limitTo:8">
+                                    ng-focus="onFocus($event)"
+                                    typeahead="rel.value as rel.text for rel in getRelation()" typeahead-min-length="0"
+                                    typeahead-on-select="list_add('relationship', newrel)">
 								<span class="input-group-btn">
 									<button class="btn btn-primary" type="button"
                                             ng-click="list_add('relationship', newrel)"><i class="fa fa-plus"></i> Add
