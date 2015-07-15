@@ -22,7 +22,7 @@
                             <p class="help-block" ng-show="form.reForm.title.$invalid">Title is required</p>
                         </div>
                     </div>
-                    <div class="col-md-6" ng-if="type!='service'">
+                    <div class="col-md-6" ng-if="type!='service' && type!='vocabulary'">
                         <input type="hidden" value="publishedBy" name="relationship" ng-if="type=='publisher'"/>
                         <div class="form-group">
                             <label for="">Email</label>
@@ -30,7 +30,7 @@
                                    ng-model="entity.email">
                         </div>
                     </div>
-                    <div class="col-md-6" ng-if="type!='service'">
+                    <div class="col-md-6" ng-if="type!='service' && type!='vocabulary'">
                         <div class="form-group">
                             <label for="">Phone</label>
                             <input type="text" class="form-control" placeholder="entity Phone" ng-model="entity.phone">
