@@ -62,15 +62,16 @@
         };
 
         $scope.list_add = function (type, obj) {
-            if (!obj) obj = {};
             if (type == 'identifiers') {
                 obj = {id: ''};
-            } else if (type == 'url') {
+            } else if (type == 'urls') {
                 obj = {url: ''};
             }
             if (!$scope.entity) $scope.entity = {};
             if (!$scope.entity[type]) $scope.entity[type] = [];
-            $scope.entity[type].push(obj);
+            if (obj) {
+                $scope.entity[type].push(obj);
+            }
         };
 
         $scope.getRelation = function() {
