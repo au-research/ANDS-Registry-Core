@@ -32,7 +32,7 @@ class Authenticator extends CI_Model {
 	}
 
 	public function return_roles($user){
-		
+
 		$role = $this->cosi_db->get_where('roles', array('role_id'=>$user->role_id));
 		if($role->result()==0) throw new Exception('Role '.$user->role_id.' not found!');
 
@@ -78,7 +78,7 @@ class Authenticator extends CI_Model {
 
 	public function post_authentication_hook(){
 		$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : 'auth/dashboard';
-		
+
 		$this->load->helper('cookie');
 		if(get_cookie('auth_redirect')) {
 			$redirect = get_cookie('auth_redirect');
@@ -100,7 +100,7 @@ class Authenticator extends CI_Model {
 
 	private function getChildRoles($role_id, $recursive = true, $prev = array()) {
 		$roles = array();
-		
+
 		$related_roles = $this->cosi_db
 				->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
 				->from('role_relations')
@@ -109,7 +109,7 @@ class Authenticator extends CI_Model {
 				->where('enabled', DB_TRUE)
 				->where('role_relations.parent_role_id !=', $role_id)
 				->get();
-		
+
 		foreach($related_roles->result() AS $row)
 		{
 			$roles[] = array("role_id" => $row->parent_role_id, "role_type_id" => $row->role_type_id);
@@ -121,7 +121,7 @@ class Authenticator extends CI_Model {
 				}
 			}
 		}
-		
+
 		return $roles;
 	}
 
