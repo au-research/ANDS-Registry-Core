@@ -517,6 +517,19 @@ function ulog_email($subject='', $message='', $logger='activity', $type='info') 
 function ulog_terms($terms=array(), $logger='activity', $type='info')
 {
 	$msg = '';
+
+	$CI =& get_instance();
+    $msg = '';
+
+    if (!isset($terms['ip'])) $terms['ip'] = $CI->input->ip_address();
+    if (!isset($terms['user_agent'])) $terms['user_agent'] = $CI->input->user_agent();
+
+    //check if user is logged in, then record the current user
+    if ($CI->user->isLoggedIn()) {
+        $terms['username'] = $CI->user->name();
+        $terms['userid'] = $CI->user->localIdentifier();
+    }
+
 	foreach($terms as $key=>$term) {
 		if(!is_array($key) && !is_array($term)) {
 			$msg.='['.$key.':'.$term.']';

@@ -17,8 +17,15 @@ class Vocabularies extends CI_Model
      */
     public function getByID($id)
     {
-        $vocab = new _vocabulary($id);
-        return $vocab;
+        $this->vocab_db = $this->load->database('vocabs', true);
+        $result = $this->vocab_db->get_where('vocabularies', array('id' => $id));
+        if ($result->num_rows() > 0) {
+            $vocab_result = $result->result_array();
+            $vocab_id = $vocab_result[0]['id'];
+            return $this->getByID($vocab_id);
+        } else {
+            return false;
+        }
     }
 
     /**
