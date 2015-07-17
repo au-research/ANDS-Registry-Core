@@ -19,7 +19,7 @@ class Suggest extends ROHandler {
            'spatial_coverage'=>array('boost'=>0.1,'handler'=>'spatial_coverage'),
            'tags'=>array('boost'=>0.1,'handler'=>'tags')
         );
-        
+
         //populate the pool with the different suggestors
         $ci =& get_instance();
 
@@ -48,7 +48,7 @@ class Suggest extends ROHandler {
             }
 
         }
-        
+
         // Normalize rankings and apply boosting
 
         $fullSet = array();
@@ -73,7 +73,14 @@ class Suggest extends ROHandler {
         $limit = $ci->input->get('limit');
         if (!$limit)
             $limit = 5;
-        $subSet = array_slice($fullSet, 0, $limit, true);
+
+        //if Limit is set to 0, return all
+        if ($limit == 0) {
+            $subSet = $fullSet;
+        } else {
+            $subSet = array_slice($fullSet, 0, $limit, true);
+        }
+
 
         // We have only the ID and score, so now get the records
         $result['final'] = array();
