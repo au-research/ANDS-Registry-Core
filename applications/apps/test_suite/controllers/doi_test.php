@@ -87,7 +87,8 @@ $invalidxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 			$data['response_type'] = $this->test_response_type($app_id,$shared_secret,$url,$testDOI,$validxml,$requestURI);
 		}else{
 			$data['test_mint'] = "<span style='color: #C00;'>Failed </span> -  System could not perform initial mint - testing cannot continue.<br />";
-			$data['authentication'] = '';
+            $data['test_functions'] = '';
+            $data['authentication'] = '';
 			$data['valid_xml'] = '';
 			$data['service_point'] = ''; 
 			$data['response_type'] =  '';
