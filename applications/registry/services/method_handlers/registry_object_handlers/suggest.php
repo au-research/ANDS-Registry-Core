@@ -74,8 +74,8 @@ class Suggest extends ROHandler {
         if (!$limit)
             $limit = 5;
 
-        //if Limit is set to 0, return all
-        if ($limit == 0) {
+        //if Limit is set to -1, return all
+        if ($limit == -1) {
             $subSet = $fullSet;
         } else {
             $subSet = array_slice($fullSet, 0, $limit, true);
