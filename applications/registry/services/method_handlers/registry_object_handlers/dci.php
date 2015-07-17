@@ -291,7 +291,8 @@ class DCI extends ROHandler {
         {
             foreach($parentCollections as $parentCollection)
             {
-                if($parentCollection['key'] != ''){
+                if(!($parentCollection['key'] == '' || $parentCollection['origin'] == "REVERSE_INT"
+                    ||  $parentCollection['origin'] == "REVERSE_EXT")){
                     $this->DCIRoot->addChild("ParentDataRef", $parentCollection['key']);
                     break;
                 }
