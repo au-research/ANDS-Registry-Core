@@ -24,34 +24,71 @@ class Doi_test extends MX_Controller {
 		$doiversion_service_points = array('v1.0'=>'https://services.ands.org.au/home/dois/doi_' , 'v1.1'=>'https://services.ands.org.au/doi/1.1/', 'test' => apps_url().'/mydois/');
 
 		$validxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
-<resource xmlns="http://datacite.org/schema/kernel-2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-2.1 http://schema.datacite.org/meta/kernel-2.1/metadata.xsd">
-  <identifier identifierType="DOI"></identifier>
-  <creators>
-    <creator>
-      <creatorName>Woods, Liz</creatorName>
-    </creator>
-  </creators>
-  <titles>
-    <title>Data &amp; Test Example</title>
-  </titles>
-  <publisher>ANDS</publisher>
-  <publicationYear>2014</publicationYear>
+<resource xmlns="http://datacite.org/schema/kernel-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+    <identifier identifierType="DOI">10.5072/example</identifier>
+    <creators>
+        <creator>
+            <creatorName>B.R.Maslin</creatorName>
+            <affiliation>FOA</affiliation>
+        </creator>
+    </creators>
+    <titles>
+        <title>Acacia abrupta</title>
+        <title titleType="Subtitle">Version 42</title>
+    </titles>
+    <publisher>FOA</publisher>
+    <publicationYear>2015</publicationYear>
+    <subjects>
+        <subject>Acacia abrupta</subject>
+    </subjects>
+    <contributors>
+        <contributor contributorType="Editor">
+            <contributorName>Mark Chambers</contributorName>
+            <affiliation>FOA</affiliation>
+        </contributor>
+    </contributors>
+    <dates>
+        <date dateType="Created">2015-07-14</date>
+    </dates>
+    <language>en</language>
+    <resourceType resourceTypeGeneral="Text">Species information</resourceType>
+    <descriptions>
+        <description descriptionType="Other">Taxonomic treatment for Acacia abrupta</description>
+    </descriptions>
 </resource>');
-
+// it's invalid for v.2.1 because the affiliation element was introduced in v.3
 $invalidxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 <resource xmlns="http://datacite.org/schema/kernel-2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-2.1 http://schema.datacite.org/meta/kernel-2.1/metadata.xsd">
-  <identifier identifierType="DOI">adoitotest</identifier>
-  <anelement>dsfdsfgS</anelement>
-  <creators>
-    <creator>
-      <creatorName>Woods, Liz</creatorName>
-    </creator>
-  </creators>
-  <titles>
-    <title>Data Test Example</title>
-  </titles>
-  <publisher>ANDS</publisher>
-  <publicationYear>2014</publicationYear>
+    <identifier identifierType="DOI">10.5072/example</identifier>
+    <creators>
+        <creator>
+            <creatorName>B.R.Maslin</creatorName>
+            <affiliation>FOA</affiliation>
+        </creator>
+    </creators>
+    <titles>
+        <title>Acacia abrupta</title>
+        <title titleType="Subtitle">Version 42</title>
+    </titles>
+    <publisher>FOA</publisher>
+    <publicationYear>2015</publicationYear>
+    <subjects>
+        <subject>Acacia abrupta</subject>
+    </subjects>
+    <contributors>
+        <contributor contributorType="Editor">
+            <contributorName>Mark Chambers</contributorName>
+            <affiliation>FOA</affiliation>
+        </contributor>
+    </contributors>
+    <dates>
+        <date dateType="Created">2015-07-14</date>
+    </dates>
+    <language>en</language>
+    <resourceType resourceTypeGeneral="Text">Species information</resourceType>
+    <descriptions>
+        <description descriptionType="Other">Taxonomic treatment for Acacia abrupta</description>
+    </descriptions>
 </resource>');
 
 		$requestURI = $doiversion_service_points['v1.1'];
@@ -87,7 +124,8 @@ $invalidxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 			$data['response_type'] = $this->test_response_type($app_id,$shared_secret,$url,$testDOI,$validxml,$requestURI);
 		}else{
 			$data['test_mint'] = "<span style='color: #C00;'>Failed </span> -  System could not perform initial mint - testing cannot continue.<br />";
-			$data['authentication'] = '';
+            $data['test_functions'] = '';
+            $data['authentication'] = '';
 			$data['valid_xml'] = '';
 			$data['service_point'] = ''; 
 			$data['response_type'] =  '';

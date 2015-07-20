@@ -29,7 +29,7 @@
             {"value": "ru", "text": "Russian"},
             {"value": "es", "text": "Spanish"}
         ];
-        $scope.licence = ["CC-BY", "CC-BY-SA", "CC-BY-ND", "CC-BY-NC", "CC-BY-NC-SA", "CC-BY-NC-ND", "GPL", "AusGoalRestrictive", "NoLicence", "Unknown/Other"];
+        $scope.licence = ["CC-BY", "CC-BY-SA", "CC-BY-ND", "CC-BY-NC", "CC-BY-NC-SA", "CC-BY-NC-ND", "ODC-By", "GPL", "AusGoalRestrictive", "NoLicence", "Unknown/Other"];
         $scope.subject_sources = ['ANZSRC-FOR', 'local'];
 
         $scope.opened = false;
@@ -271,6 +271,14 @@
                         $scope.error_message = data.message;
                     } else {//success
                         $scope.success_message = data.message.import_log;
+                        $scope.success_message = [
+                            'Successfully saved Vocabulary.'
+                        ];
+                        if ($scope.vocab.status=='published') {
+                            $scope.success_message.push(
+                                '<a href="'+base_url+$scope.vocab.slug+'">View Vocabulary</a>'
+                            )
+                        }
                         vocabs_factory.get($scope.vocab.slug).then(function (data) {
                             $scope.vocab = data.message;
                         });

@@ -1,7 +1,9 @@
 <div class="panel swatch-white" ng-if="tree">
-    <div class="panel-heading">Browse</div>
-    <div class="panel-body">
-        <input type="text" ng-model="query">
+    <div class="panel-heading clearfix">
+        Browse
+        <div class="pull-right">
+            <input type="text" ng-model="query" placeholder='Search' class="form-control">
+        </div>
     </div>
     <div class="panel-body element-no-top maxheight500">
         <ul ng-class="treeclass">

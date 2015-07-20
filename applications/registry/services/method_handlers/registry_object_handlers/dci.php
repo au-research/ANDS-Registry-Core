@@ -113,7 +113,7 @@ class DCI extends ROHandler {
             }
         }
 
-        //var_dump($keyWords);
+        //var_dump($spatialData);
         if($keyWords || $spatialData || $earliestYear || $latestYear)
         {
             $descriptorsData = $this->DCIRoot->addChild('DescriptorsData');
@@ -159,13 +159,16 @@ class DCI extends ROHandler {
             foreach($grants as $grant){
                 $parsedFunding = $fundingInfoList->addChild('ParsedFunding');
                 $identifierStr = '';
-                foreach($grant['identifiers'] as $identifier){
-                    $identifierStr .= $this->normaliseIdentifier($identifier[0], $identifier[1]).", ";
+                if(isset($grant['identifiers']))
+                {
+                    foreach($grant['identifiers'] as $identifier){
+                        $identifierStr .= $this->normaliseIdentifier($identifier[0], $identifier[1]).", ";
+                    }
+                    $parsedFunding->addChild('GrantNumber', substr($identifierStr, 0, strlen($identifierStr) - 2));
+                    $grantIndex = $this->findGrantbyKey($grant['key']);
+                    if($grantIndex['funders'])
+                        $parsedFunding->addChild("FundingOrganization",$grantIndex['funders'][0]);
                 }
-                $parsedFunding->addChild('GrantNumber', substr($identifierStr, 0, strlen($identifierStr) - 2));
-                $grantIndex = $this->findGrantbyKey($grant['key']);
-                if($grantIndex['funders'])
-                    $parsedFunding->addChild("FundingOrganization",$grantIndex['funders'][0]);
             }
         }
     }
@@ -288,7 +291,8 @@ class DCI extends ROHandler {
         {
             foreach($parentCollections as $parentCollection)
             {
-                if($parentCollection['key'] != ''){
+                if(!($parentCollection['key'] == '' || $parentCollection['origin'] == "REVERSE_INT"
+                    ||  $parentCollection['origin'] == "REVERSE_EXT")){
                     $this->DCIRoot->addChild("ParentDataRef", $parentCollection['key']);
                     break;
                 }

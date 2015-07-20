@@ -236,9 +236,9 @@ class Doi extends CI_Controller {
 		$doiValue = strtoupper($datacite_prefix.$client_id2.'/'.uniqid());	//generate a unique suffix for this doi for this client 
 			
 		if($_POST){
-		if(str_replace("<?xml version=","",implode($_Post))==implode($_Post))
+		if(str_replace("<?xml version=","",implode($_POST))==implode($_POST))
 		{
-			$xml = "<?xml version=".implode($_Post); 	// passed as posted content
+			$xml = "<?xml version=".implode($_POST); 	// passed as posted content
 		}
 		else 
 		{
@@ -291,15 +291,27 @@ class Doi extends CI_Controller {
 			{
 				unlink($tempFile);
 			}
-		  
-			$result = $doiObjects->schemaValidate(gCMD_SCHEMA_URI);
+
+            libxml_use_internal_errors(true);
+            $error_string = '';
+
+            $result = $doiObjects->schemaValidate(gCMD_SCHEMA_URI);
+
+
+            if ($result !== TRUE)
+            {
+                $errors = libxml_get_errors();
+                foreach ($errors as $error) {
+                    $error_string .= TAB . "Line " .$error->line . ": " . $error->message;
+                }
+                libxml_clear_errors();
+            }
 			$xml = $doiObjects->saveXML();
-			
-			$errors = error_get_last();
+
 			if( $errors )
 			{
 				$errorMessages .= doisGetUserMessage("MT006", $doi_id=NULL);
-				$errorMessages .= "Document Validation Error: ".$errors['message']."\n";
+				$errorMessages .= "Document Validation Error: ".$error_string."\n";
 				header("HTTP/1.0 500 Internal Server Error");
 			}			
 				

@@ -34,21 +34,21 @@ else
 	die("Must specify an \$ENV['default_base_url'] in global_config.php");
 }
 
-/* For multiple-application environments, this "app" will be matched 
+/* For multiple-application environments, this "app" will be matched
 by the $_GET['app'] which is rewritten in .htaccess. The array key is
-the full match (above). The active_application is the subfolder within 
+the full match (above). The active_application is the subfolder within
 applications/ that contains this application's modules.  */
 
 //Default application directives
 $application_directives = array(
-	"registry" => 
-		array(	
+	"registry" =>
+		array(
 			"base_url" => "%%BASEURL%%/registry/",
 			"active_application" => "registry",
 			"default_controller" => "auth/dashboard",
 		),
-	"portal" => 
-		array(	
+	"portal" =>
+		array(
 			"base_url" => "%%BASEURL%%/",
 			"active_application" => "portal",
 			"default_controller" => "page",
@@ -108,7 +108,7 @@ if (PHP_SAPI == 'cli')
 	{
 		$default_application = 'registry';
 	}
-} 
+}
 else
 {
 	$default_application = 'portal';
@@ -374,7 +374,7 @@ $config['sess_time_to_update']  = 10000;
 |
 */
 $config['cookie_prefix']	= "ands_";
-$config['cookie_domain']	= ".ands.org.au";
+$config['cookie_domain']	= isset($ENV['cookie_domain']) ? $ENV['cookie_domain'] : ".ands.org.au";
 $config['cookie_path']		= "/";
 $config['cookie_secure']	= FALSE;
 

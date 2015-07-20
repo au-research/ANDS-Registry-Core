@@ -1,4 +1,7 @@
 @extends('layout/vocab_layout')
+@section('title')
+About ANDS Vocabulary Services
+@stop
 @section('content')
 <article>
 	<section class="section swatch-white element-short-bottom">

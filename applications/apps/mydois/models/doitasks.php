@@ -200,14 +200,27 @@ class Doitasks extends CI_Model {
                             $theSchema = $this->getXmlSchema($resources->item(0)->attributes->item(0)->nodeValue);
                         }
                     }
-					$result = $doiObjects->schemaValidate(asset_url('schema').$dataciteSchema[$theSchema]);
+
+                    libxml_use_internal_errors(true);
+                    $error_string = '';
+
+                    $result = $doiObjects->schemaValidate(asset_url('schema').$dataciteSchema[$theSchema]);
+
+                    if ($result !== TRUE)
+                    {
+                        $errors = libxml_get_errors();
+                        foreach ($errors as $error) {
+                            $error_string .= TAB . "Line " .$error->line . ": " . $error->message;
+                        }
+                        libxml_clear_errors();
+                    }
 
 					$xml = $doiObjects->saveXML();
 
 					$errors = error_get_last();
 					if( $errors || !$result)
 					{
-						$verbosemessage = "Document Validation Error: ".$errors['message']."\n";						
+						$verbosemessage = "Document Validation Error: ".$error_string."\n";
 						$errorMessages = doisGetUserMessage("MT007", doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
 					}				
 				}	
@@ -463,15 +476,27 @@ class Doitasks extends CI_Model {
 					unlink($tempFile);
 				}
 
-				$result = $doiObjects->schemaValidate(asset_url('schema').$dataciteSchema[$theSchema]);
+                libxml_use_internal_errors(true);
+                $error_string = '';
+
+                $result = $doiObjects->schemaValidate(asset_url('schema').$dataciteSchema[$theSchema]);
+
+                if ($result !== TRUE)
+                {
+                    $errors = libxml_get_errors();
+                    foreach ($errors as $error) {
+                        $error_string .= TAB . "Line " .$error->line . ": " . $error->message;
+                    }
+                    libxml_clear_errors();
+                }
 
 				$xml = $doiObjects->saveXML();
-			
+
 				$errors = error_get_last();
 
 				if( $errors || !$result)
 				{
-					$verbosemessage = "Document Validation Error: ".$errors['message'];
+					$verbosemessage = "Document Validation Error: ".$error_string;
 					$errorMessages = doisGetUserMessage("MT006", $doi_id=NULL, $response_type, $app_id, $verbosemessage,$urlValue);
 				}			
 				

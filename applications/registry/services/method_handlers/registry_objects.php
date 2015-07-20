@@ -104,6 +104,10 @@ class Registry_objectsMethod extends MethodHandler {
                 }
             }
 
+            $extra = module_hook('append_roapi', $this->ro);
+            $result = array_merge($result, $extra);
+
+
             //store result in cache
             $cache_content = json_encode($result, true);
             

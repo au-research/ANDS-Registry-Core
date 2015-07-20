@@ -293,7 +293,7 @@ class Vocabs extends MX_Controller
         //highlighting
         $this->solr
             ->setOpt('hl', 'true')
-            ->setOpt('hl.fl', 'description, subject_search, title, concept, language')
+            ->setOpt('hl.fl', '*')
             ->setOpt('hl.simple.pre', '&lt;b&gt;')
             ->setOpt('hl.simple.post', '&lt;/b&gt;')
             ->setOpt('hl.snippets', '2');
@@ -490,43 +490,45 @@ class Vocabs extends MX_Controller
             $data = isset($angulardata['data']) ? $angulardata['data'] : false;
 
             if ($data) {
+                $result = $vocab->save($data);
+
                 if (null == $this->user->affiliations() && $data['status'] == 'published') {
                     $data['status'] = 'draft';
                     $vocab->prop['status'] = 'draft';
                     $vocab->save($data);
                     $to_email = $this->config->item('site_admin_email');
-                    $content = 'Request to publish vocabulary' . $data['title'] . NL;
+                    $content = 'Vocabulary' . $data['title'] . ' is published by a user with no affiliations'.NL;
                     $email = $this->load->library('email');
                     $email->to($to_email);
                     $email->from($to_email);
-                    $email->subject('Request to publish vocabulary' . $data['title']);
+                    $email->subject('Vocabulary' . $data['title'] . ' published without an organisational role');
                     $email->message($content);
                     $email->send();
-                    $result = 'A request to publish this vocabulary has been sent to ' . $this->config->item('site_admin_email');
-                } else {
-                    //throw new Exception($data['status']);
-                    $result = $vocab->save($data);
-
-                    //result should be an object
-                    //result.status = 'OK'
-                    //result.message = array()
-
-                    if (!$result) throw new Exception('Error while saving vocabulary');
-
-                    if ($result && $vocab->prop['status'] == 'published') {
-                        if ($this->index_vocab($vocab)) {
-                            $vocab->log('Indexing Success');
-                        }
-                    }
-
-                    if ($result) $result = $vocab;
-
-                    $event = array(
-                        'event' => 'edit',
-                        'vocab' => $vocab->title
-                    );
-                    vocab_log_terms($event);
+                    $vocab->log('An email of this action has been sent to' . $this->config->item('site_admin_email'));
                 }
+
+                //throw new Exception($data['status']);
+
+                //result should be an object
+                //result.status = 'OK'
+                //result.message = array()
+
+                if (!$result) throw new Exception('Error while saving vocabulary');
+
+                if ($result && $vocab->prop['status'] == 'published') {
+                    if ($this->index_vocab($vocab)) {
+                        $vocab->log('Indexing Success');
+                    }
+                }
+
+                if ($result) $result = $vocab;
+
+                $event = array(
+                    'event' => 'edit',
+                    'vocab' => $vocab->title
+                );
+                vocab_log_terms($event);
+
             }
             if ($method == 'index') {
                 $result = $vocab->indexable_json();
@@ -714,8 +716,10 @@ class Vocabs extends MX_Controller
         // such as ".." in it.
         $file = realpath($file);
 
-        //Only allow people to get file from this directory
-        if (self::startsWith($file, get_vocab_config('repository_path'))) {
+        // Only allow people to get files from the upload and repository
+        // directories.
+        if (self::startsWith($file, get_vocab_config('upload_path')) ||
+            self::startsWith($file, get_vocab_config('repository_path'))) {
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
             header('Content-Disposition: attachment; filename=' . basename($file));

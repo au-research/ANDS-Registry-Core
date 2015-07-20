@@ -60,7 +60,29 @@
 										@endforeach
 									</tbody>
 								</table>
-						@endif
+
+								<h4>Deprecated</h4>
+								<table class="table">
+									<thead>
+										<tr><th>Vocabulary</th><th>Action</th></tr>
+									</thead>
+									<tbody>
+										@foreach($owned_vocabs as $vocab)
+											@if($vocab['status']=='deprecated')
+											<tr>
+												<td><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}">{{ $vocab['title'] }}</a></td>
+												<td>
+													<div class="btn-group">
+														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+														<a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
+													</div>
+												</td>
+											</tr>
+											@endif
+										@endforeach
+									</tbody>
+								</table>
+							@endif
 						</div>
 					</div>
 				</div>

@@ -1,5 +1,17 @@
 @extends('layout/vocab_layout')
 
+@section('og-description')
+@if(gettype($vocab) == "object" && isset($vocab->prop))
+	<?php
+		$clean_description = htmlspecialchars(substr(str_replace(array('"','[[',']]'), '', $vocab->prop['description']), 0, 200));
+	?>
+@endif
+@if(isset($clean_description))
+	<meta ng-non-bindable property="og:description" content="{{ $clean_description }}" />
+@else
+	<meta ng-non-bindable property="og:description" content="Find, access, and re-use vocabularies for research" />
+@endif
+@stop
 @section('content')
 <section ng-controller="addVocabsCtrl" class="section swatch-white">
 	<div class="container">
@@ -41,7 +53,7 @@
 						</div>
 					</div>
 					<div class="panel-footer">
-						<a href="" class="btn btn-primary" ng-click="populate(project)">Use this PoolParty</a>
+						<a href="" class="btn btn-primary" ng-click="populate(project)">Use this PoolParty Project</a>
 					<!--	<a href="" class="btn btn-link" ng-click="skip()">Skip</a>
 						<p class="help-block">Skipping will start a blank Vocabulary</p> -->
 					</div>
@@ -147,11 +159,13 @@
 
 							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('language', newValue.language)">
 								<div class="input-group">
-									<input type="text" ng-model="newValue.language" class="form-control" placeholder="Language" typeahead="lang.value as lang.text for lang in langs | filter:$viewValue" typeahead-min-length="0" typeahead-on-select="addtolist('language', newValue.language)"></input>
+									<span class="caret caret-for-input-suggestion"></span>
+									<input type="text" ng-model="newValue.language" class="form-control input-suggestion" placeholder="Language" typeahead="lang.value as lang.text for lang in langs | filter:$viewValue" typeahead-min-length="0" typeahead-on-select="addtolist('language', newValue.language)"></input>
 									<span class="input-group-btn">
 										<button class="btn btn-primary" type="button" ng-click="addtolist('language', newValue.language)"><i class="fa fa-plus"></i> Add</button>
 									</span>
 								</div>
+
 							</form>
 						</div>
 
@@ -189,6 +203,16 @@
 
 				</div>
 				<div class="col-md-4">
+
+					<div class="panel swatch-gray" ng-if="vocab.pool_party_id">
+						<div class="panel-heading">PoolParty Project Info</div>
+						<div class="panel-body">
+							<dl>
+								<dt>PoolParty Project ID</dt>
+								<dd>[[ vocab.pool_party_id ]]</dd>
+							</dl>
+						</div>
+					</div>
 
 					<div class="panel swatch-gray">
 						<div class="panel-heading">Versions</div>

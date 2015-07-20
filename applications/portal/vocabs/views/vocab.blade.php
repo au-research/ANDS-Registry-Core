@@ -33,6 +33,25 @@ if(isset($vocab['related_entity'])){
 
 ?>
 
+@section('title')
+{{ htmlspecialchars($vocab['title']) }}
+@stop
+@section('og-description')
+@if(gettype($vocab) == "array" && isset($vocab['description']))
+	<?php
+		$clean_description = htmlspecialchars(substr(str_replace(array('"','[[',']]'), '', $vocab['description']), 0, 200));
+	?>
+@endif
+@if(isset($clean_description))
+	<meta ng-non-bindable property="og:description" content="{{ $clean_description }}" />
+@else
+	<meta ng-non-bindable property="og:description" content="Find, access, and re-use vocabularies for research" />
+@endif
+@stop
+@section('og-other-meta')
+<meta property="og:url" content="{{ base_url().$vocab['slug'] }}" />
+<meta property="og:title" content="{{ htmlspecialchars($vocab['title']) }}" />
+@stop
 @extends('layout/vocab_2col_layout')
 @section('content')
 <article class="post">
@@ -43,15 +62,15 @@ if(isset($vocab['related_entity'])){
                 <div class="row">
                     @if($vocab['current_version'])
                     <div class="col-md-4 panel-body text-center">
-                        <h4>{{ titlecase($vocab['current_version']['title']) }}</h4>
-                        
+                        <h4>{{ $vocab['current_version']['title'] }}</h4>
+
                         @foreach($vocab['current_version']['access_points'] as $ap)
                             @if($ap['type']=='file')
                                 <a class="btn btn-lg btn-block btn-primary" href="{{ portal_url('vocabs/download/?file='.$ap['uri']) }}"><i class="fa fa-cube"></i> Download File</a>
                             @endif
                         @endforeach
                         @foreach($vocab['current_version']['access_points'] as $ap)
-                            @if($ap['type']!='file')
+                            @if($ap['type']!='file' && $ap['uri']!='TBD')
                                 <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
                                     <a class="btn btn-sm btn-default" href="{{ $ap['uri'] }}"><i class="fa fa-edit"></i> Access {{ $ap['type'] }} ({{ $ap['format'] }})</a>
                                 </div>
@@ -64,7 +83,7 @@ if(isset($vocab['related_entity'])){
                             @foreach($vocab['versions'] as $version)
                             @if($version['status']!='current')
                                 <li>
-                                    <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}'>{{ titlecase($version['title']) }} </a>
+                                    <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}'>{{ $version['title'] }} </a>
                                     <small>({{ $version['status'] }}) </small>
                                     @if(isset($version['note']))
                                     <a href="" tip="{{ $version['release_date'] }} <hr />{{$version['note']}}"><i class="fa fa-info"></i></a>
@@ -113,13 +132,28 @@ if(isset($vocab['related_entity'])){
                             @elseif($cc=='CC-BY-NC-ND')
                             <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
                             @else
-                            <span>Licence: {{sentenceCase($cc)}}</span>
+                            <span>Licence: {{ $cc }}</span>
                             @endif
                         </p>
                     </div>
                 </div>
             </div>
         </div>
+
+        @if(isset($vocab['top_concept']))
+        <div class="panel swatch-white">
+            <div class="panel-heading">Top Concepts</div>
+            <div class="panel-body">
+                <table class="table">
+                    <tbody>
+                        @foreach($vocab['top_concept'] as $concept)
+                            <tr><td>{{$concept}}</td></tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @endif
 
         <div visualise vocabid="{{ $vocab['id'] }}"></div>
 
@@ -130,7 +164,7 @@ if(isset($vocab['related_entity'])){
                 <?php $sub_count=0; ?>
                 @foreach($vocab['subjects'] as $subject)
                 <?php $sub_count++; ?>
-                   <a  href="{{base_url()}}#!/?subject={{$subject['subject']}}"> {{$subject['subject']}} </a> <?php if($sub_count<count($vocab['subjects'])) echo " | "; ?>
+                   <a  href="{{base_url()}}#!/?subjects={{$subject['subject']}}"> {{$subject['subject']}} </a> <?php if($sub_count<count($vocab['subjects'])) echo " | "; ?>
                 @endforeach
             </div>
         </div>
@@ -150,7 +184,7 @@ if(isset($vocab['related_entity'])){
 
             @foreach($related_service as $service)
             <p><small>
-                <?php 
+                <?php
                     if (isset($service['relationship'])) {
                         if (is_array($service['relationship'])) {
                             echo readable(implode($service['relationship'], ','));
@@ -177,7 +211,7 @@ if(isset($vocab['related_entity'])){
         <p>
 
             <small>
-                <?php 
+                <?php
                     if (isset($related['relationship'])) {
                         if (is_array($related['relationship'])) {
                             echo readable(implode($related['relationship'], ','));
@@ -195,7 +229,7 @@ if(isset($vocab['related_entity'])){
         @foreach($related_vocabs as $related)
         <p>
             <small>
-                <?php 
+                <?php
                     if (isset($related['relationship'])) {
                         if (is_array($related['relationship'])) {
                             echo implode($related['relationship'], ',');

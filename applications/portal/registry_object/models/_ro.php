@@ -17,7 +17,7 @@ class _ro {
 	 * Initialize a registry object
 	 * @param  int $id       registry object id
 	 * @param  array  $populate a list of attributes to populate, default to just core
-	 * @return void           
+	 * @return void
 	 */
 	function init($id, $populate = array('core'), $useCache) {
 		$this->prop = array(
@@ -29,7 +29,7 @@ class _ro {
 	/**
 	 * Magic function to get an attribute, returns property within the $prop array
 	 * @param  string $property property name
-	 * @return property result           
+	 * @return property result
 	 */
 	public function __get($property) {
 		if(isset($this->prop[$property])) {
@@ -50,7 +50,7 @@ class _ro {
 	 * Construct the API URL based on the amount of data required
 	 * @todo   add support for setting a special API key from the configuration
 	 * @param  array  $params a list of parameter to query
-	 * @return string $url         
+	 * @return string $url
 	 */
 	public function construct_api_url($params = array('core')) {
 		$url = base_url().'registry/services/api/registry_objects/'.$this->id.'/';
@@ -64,10 +64,10 @@ class _ro {
 	 * Fetch data from the Registry API
 	 * @param  array  $params list of parameters to fetch
 	 * @todo  ERROR HANDLING
-	 * @return void         
+	 * @return void
 	 */
 	public function fetch($params = array('core'), $useCache = true) {
-		
+
 		//get the URL
 		$url = $this->construct_api_url($params);
 		$this->prop['api_url'] = $url;
@@ -124,7 +124,7 @@ class _ro {
 	public function stat(){
 		$ci =& get_instance();
     	$db = $ci->load->database('portal', true);
-    	
+
     	$result = $db->get_where('record_stats', array('ro_id' => $this->core['id']));
     	if($result->num_rows() == 0) {
     		//create if not exist
@@ -142,7 +142,7 @@ class _ro {
 	public function cite($class = 'endnote', $type = 'text') {
 		if ($class=='endnote') {
 			if ($type=='text') {
-				return 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.';	
+				return 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.';
 			} elseif ($type=='link') {
 				return base_url('registry_object/'.$this->core['id'].'/cite/endnote');
 			}

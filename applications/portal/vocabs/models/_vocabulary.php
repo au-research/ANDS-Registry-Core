@@ -61,7 +61,7 @@ class _vocabulary
         //index single values
         $single_values = array('id', 'title', 'slug', 'pool_party_id');
         foreach ($single_values as $s) {
-            if ($this->prop[$s]) $json[$s] = $this->prop[$s];
+            if (isset($this->prop[$s])) $json[$s] = $this->prop[$s];
         }
 
         //licence is done differently
@@ -71,6 +71,8 @@ class _vocabulary
         }
 
         $data = $this->display_array();
+
+        if (isset($data['acronym'])) $json['acronym'] = $data['acronym'];
 
         if (isset($data['description'])) {
             $json['description'] = $data['description'];
@@ -680,7 +682,7 @@ class _vocabulary
                                 $ap['uri'] = isset($content['concepts']) ? $content['concepts'] : 'TBD';
                             } elseif ($ap['type'] == 'apiSparql' && $ap['uri'] == 'TBD') {
                                 $ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TBD';
-                            } elseif ($ap['type'] == 'webPage') {
+                            } elseif ($ap['type'] == 'webPage' && $ap['uri'] == 'TBD') {
                                 $ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'] . '/concept/topConcepts' : 'TBD';
                             }
                         }

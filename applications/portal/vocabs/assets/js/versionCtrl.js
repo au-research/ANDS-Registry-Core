@@ -8,6 +8,7 @@
     function versionCtrl($scope, $modalInstance, $log, $upload, version, action, vocab) {
         $log.debug(action);
         $scope.versionStatuses = ['current', 'superseded', 'deprecated'];
+        $scope.vocab = vocab;
         $scope.version = version ? version : {provider_type: false};
         $scope.action = version ? 'save' : 'add';
         $scope.formats = ['RDF/XML', 'TTL', 'N-Triples', 'JSON', 'TriG', 'TriX', 'N3', 'CSV', 'TSV', 'XLS', 'XLSX', 'BinaryRDF', 'ODS', 'ZIP', 'XML', 'TXT', 'ODT', 'TEXT'];
@@ -16,9 +17,15 @@
             {"value": "file", "text": "File"}
         ];
 
+        $scope.form = {
+            apForm:{},
+            versionForm:{}
+        }
+
         $scope.newValue = {
-            ap: {}
+            ap: {format:''}
         };
+        $scope.uploadPercentage = 0;
 
         //calendar operation
         $scope.opened = false;
@@ -65,7 +72,10 @@
 
         $scope.validateAP = function () {
             delete $scope.ap_error_message;
-            return !!$scope.apForm.$valid;
+            if (!$scope.form.apForm.$valid) {
+                $scope.ap_error_message = 'Form Validation Failed';
+            }
+            return !!$scope.form.apForm.$valid;
         };
 
         $scope.validFormat = function () {
@@ -80,7 +90,7 @@
 
         $scope.validateVersion = function () {
             delete $scope.error_message;
-            if ($scope.versionForm.$valid) {
+            if ($scope.form.versionForm.$valid) {
 
                 //if there's already a current version, this one shouldn't be
                 if ($scope.version.status == 'current') {
@@ -159,6 +169,7 @@
                     }).progress(function (evt) {
                         var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
                         $log.debug('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+                        $scope.uploadPercentage = progressPercentage;
                     }).success(function (data, status, headers, config) {
                         $log.debug(config);
                         $scope.uploading = false;
@@ -183,6 +194,32 @@
         $scope.dismiss = function () {
             $modalInstance.dismiss();
         }
+
+        $scope.$watch('newValue.ap.type', function(newVal, oldVal){
+
+            if(newVal == 'file'){
+                $('#ap_upload').show();
+                $('#ap_uri').hide();
+                $('#ap_uri_label').hide();
+            }
+            else if(newVal == 'apiSparql'){
+                $('#ap_upload').hide();
+                $('#ap_uri').show();
+                $('#ap_uri_label').show();
+                $('#ap_uri_label').html("SPARQL endpoint URI");
+            }
+            else if(newVal == 'webPage'){
+                $('#ap_upload').hide();
+                $('#ap_uri').show();
+                $('#ap_uri_label').show()
+                $('#ap_uri_label').html("Webpage URL");
+            }
+            else{
+                $('#ap_upload').hide();
+                $('#ap_uri').hide();
+                $('#ap_uri_label').hide();
+            }
+        });
 
     }
 })();

@@ -26,6 +26,7 @@
 		<field name="licence" type="string" indexed="true" stored="true" required="false"/>
 		<field name="pool_party_id" type="string" indexed="true" stored="true" required="false"/>
 		<field name="owner" type="string" indexed="true" stored="true" required="false"/>
+		<field name="acronym" type="string" indexed="true" stored="true" required="false"/>
 
 		<!-- MultiValued -->
 		<field name="subjects" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
@@ -48,7 +49,7 @@
 	</fields>
 
 
-	<!-- Field to use to determine and enforce document uniqueness. 
+	<!-- Field to use to determine and enforce document uniqueness.
 			Unless this field is marked with required="false", it will be a required field
 	 -->
 	<uniqueKey>id</uniqueKey>
@@ -61,7 +62,7 @@
 
 
 	<types>
-		
+
 		<fieldType name="string" class="solr.StrField" sortMissingLast="true"/>
 
 		<!-- boolean type: "true" or "false" -->
@@ -91,7 +92,7 @@
 		<!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
 		<fieldtype name="binary" class="solr.BinaryField"/>
 
-		
+
 		<fieldType name="random" class="solr.RandomSortField" indexed="true"/>
 
 
@@ -232,7 +233,7 @@
 			</analyzer>
 		</fieldType>
 
-	
+
 		<!-- This is an example of using the KeywordTokenizer along
 				 With various TokenFilterFactories to produce a sortable field
 				 that does not include some properties of the source text
@@ -251,13 +252,13 @@
 				<filter class="solr.TrimFilterFactory"/>
 				<!-- The PatternReplaceFilter gives you the flexibility to use
 						 Java Regular expression to replace any sequence of characters
-						 matching a pattern with an arbitrary replacement string, 
+						 matching a pattern with an arbitrary replacement string,
 						 which may include back references to portions of the original
 						 string matched by the pattern.
-						 
+
 						 See the Java Regular Expression documentation for more
 						 information on pattern and replacement string syntax.
-						 
+
 						 http://java.sun.com/j2se/1.6.0/docs/api/java/util/regex/package-summary.html
 					-->
 				<filter class="solr.PatternReplaceFilterFactory" pattern="([^a-z])" replacement="" replace="all"/>
@@ -270,7 +271,7 @@
 
 		<!-- This point type indexes the coordinates as separate fields (subFields)
 			If subFieldType is defined, it references a type, and a dynamic field
-			definition is created matching *___<typename>.  Alternately, if 
+			definition is created matching *___<typename>.  Alternately, if
 			subFieldSuffix is defined, that is used to create the subFields.
 			Example: if subFieldType="double", then the coordinates would be
 				indexed in fields myloc_0___double,myloc_1___double.
