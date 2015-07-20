@@ -27,6 +27,8 @@
         if (entity) {
             $scope.entity = entity;
             $scope.intent = 'save';
+        } else {
+            $scope.entity = {'relationship':[]};
         }
         $scope.type = type;
         $scope.newrel = '';
@@ -62,6 +64,7 @@
         };
 
         $scope.list_add = function (type, obj) {
+
             if (type == 'identifiers') {
                 obj = {id: ''};
             } else if (type == 'urls') {
