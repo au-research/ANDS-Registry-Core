@@ -19,10 +19,11 @@ class Vocabularies extends CI_Model
     {
         $this->vocab_db = $this->load->database('vocabs', true);
         $result = $this->vocab_db->get_where('vocabularies', array('id' => $id));
+
         if ($result->num_rows() > 0) {
             $vocab_result = $result->result_array();
             $vocab_id = $vocab_result[0]['id'];
-            return $this->getByID($vocab_id);
+            return new _vocabulary($vocab_id);
         } else {
             return false;
         }

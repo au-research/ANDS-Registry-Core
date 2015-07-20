@@ -158,7 +158,18 @@
 
         $scope.upload = function (files, ap) {
             if (!ap) ap = {};
+            var allowContinue = false;
             if (files && files.length) {
+                allowContinue = true;
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    if(file.size > 50000000){
+                        alert("The file '" + file.name + "' size:(" + file.size + ") byte exceeds the limit (50MB) allowed and cannot be saved");
+                        allowContinue = false;
+                    }
+                }
+            }
+            if (allowContinue) {
                 for (var i = 0; i < files.length; i++) {
                     var file = files[i];
                     $scope.uploading = true;

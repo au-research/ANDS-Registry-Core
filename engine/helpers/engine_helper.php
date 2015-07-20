@@ -561,8 +561,11 @@ function dd($stuff) {
  */
 function module_hook($action, $ro = false) {
 	$modules_directory = REGISTRY_APP_PATH.'/registry_object/modules/';
-    $modules = scandir($modules_directory);
 
+	//return empty array if no modules found
+	if (!file_exists($modules_directory)) return array();
+
+    $modules = scandir($modules_directory);
     $result = array();
     foreach ($modules as $module) {
         if ($module !='.' && $module!='..') {
@@ -590,6 +593,10 @@ function module_hook($action, $ro = false) {
  */
 function module_return($namespace, $class, $ro = false) {
     $modules_directory = REGISTRY_APP_PATH.'/registry_object/modules/';
+
+    //return false if no modules found
+	if (!file_exists($modules_directory)) return false;
+
     $modules = scandir($modules_directory);
     foreach ($modules as $module) {
         if ($module !='.' && $module!='..') {
