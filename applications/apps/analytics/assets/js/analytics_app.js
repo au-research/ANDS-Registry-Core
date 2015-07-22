@@ -14,7 +14,7 @@
 
         vm.filters = {
             'log': 'portal',
-            'period': {startDate: '2015-06-01', endDate: '2015-06-06'},
+            'period': {'startDate': '2015-06-01', 'endDate': '2015-06-06'},
             'group': {
                 'type':'group', 'value':'State Records Authority of New South Wales'
             },
