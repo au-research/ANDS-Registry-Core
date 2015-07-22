@@ -210,7 +210,7 @@
 			});
 
 		}
-		
+
 		//before_html
 		if(settings.before_html) obj.before(settings.before_html);
 
@@ -421,7 +421,7 @@
 	/**
 	 * isset equivalent for javascript
 	 * @param  variable something to check
-	 * @return {boolean}       
+	 * @return {boolean}
 	 */
 	function isset(variable){
 		if(typeof(variable) != "undefined" && variable !== null) {
@@ -489,7 +489,7 @@
 
 					});
 					if(settings.tooltip){
-						$('.preview').each(function(){       
+						$('.preview').each(function(){
    								$(this).qtip({
        							 content: {
             						text: $(this).attr('title')
@@ -509,7 +509,7 @@
             						classes: 'ui-tooltip-light ui-tooltip-shadow grantPreview',
             						width: 550
        							 }
-    							}); 
+    							});
     					});
 					}
 				},
@@ -600,6 +600,8 @@
     });
 
     $(document).on("click", ".show_list", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         var theUl = $(this).attr('id');
         if($('#div_'+theUl).css('display')=='none')
         {
@@ -607,8 +609,7 @@
         }else{
             $('#'+theUl).html(' + ')
         }
-        $('#div_'+theUl).slideToggle();
-
+        $('#div_'+theUl).show();
     });
 
 
