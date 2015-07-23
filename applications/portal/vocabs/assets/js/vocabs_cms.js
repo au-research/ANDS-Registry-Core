@@ -243,6 +243,8 @@
                 return false;
             }
 
+            $scope.vocab.creation_date = $('#creation_date').val();
+
             if ($scope.mode == 'add' || ($scope.vocab.status == 'published' && status == 'draft')) {
                 $scope.vocab.status = status;
                 $scope.status = 'saving';
