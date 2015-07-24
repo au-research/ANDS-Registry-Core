@@ -1,0 +1,11 @@
+<canvas class="chart chart-pie"
+        data="chart.data"
+        labels="chart.labels"
+        legend="true">
+</canvas>
+<table class="table">
+    <tr ng-repeat="(pos,label) in chart.labels">
+        <td>{{ label }}</td>
+        <td>{{ chart.data[pos] }}</td>
+    </tr>
+</table>

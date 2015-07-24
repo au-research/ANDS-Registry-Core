@@ -14,6 +14,7 @@ class Summary extends CI_Model
         $this->elasticsearch->init()->setPath('/logs/production/_search');
         $this->elasticsearch
             ->setOpt('from', 0)->setOpt('size', 50000)
+            ->andf('term', 'is_bot', 'false')
             ->andf('term', $filters['group']['type'], $filters['group']['value'])
             ->andf('range', 'date',
                 array (
@@ -31,7 +32,7 @@ class Summary extends CI_Model
                         'format' => 'yyyy-MM-dd',
                         'interval' => 'day',
                         // 'aggs'=>array(
-                        //     'event' => array('terms'=>array('field'=>'event'))
+                        //     'events' => array('value_count'=>array('field'=>'event'))
                         // )
                     )
                 )
@@ -67,15 +68,53 @@ class Summary extends CI_Model
         foreach ($search_result['hits']['hits'] as $hit) {
             $content = $hit['_source'];
             $date = date('Y-m-d', strtotime($content['date']));
-            if (!isbot($content['user_agent'])) {
-                $result[$date]['total']++;
-            }
+            $result[$date]['total']++;
             foreach ($filters['dimensions'] as $dimension) {
-                if (!isbot($content['user_agent']) && $content['event']==$dimension) {
+                if ($content['event']==$dimension) {
                     $result[$date][$dimension]++;
                 }
             }
         }
+        return $result;
+    }
+
+    public function getStat($path, $filters) {
+        $this->load->library('elasticsearch');
+        $this->elasticsearch->init()->setPath($path.'_search');
+
+        if (isset($filters['class'])) {
+            $this->elasticsearch->andf('term', 'class', $filters['class']);
+        }
+
+        if (isset($filters['group'])) {
+            $this->elasticsearch->andf('term', $filters['group']['type'], $filters['group']['value']);
+        }
+
+        if (isset($filters['ctype'])) {
+            if ($filters['ctype']=='doi') {
+                $this->elasticsearch->setAggs(
+                    'missing_doi', array('missing'=>array('field'=>'doi'))
+                );
+            } else if($filters['ctype']=='tr') {
+                $this->elasticsearch->setAggs('portal_cited',
+                    ['terms'=>['field'=>'portal_cited']]
+                );
+            } else if($filters['ctype']=='accessed') {
+                $this->elasticsearch->setAggs('accessed',
+                    ['terms'=>['field'=>'portal_accessed']]
+                );
+            }
+        }
+        $this->elasticsearch->setOpt('size', 0);
+        $search_result = $this->elasticsearch->search();
+
+        return $search_result;
+
+        $result = array(
+            'total' => $search_result['hits']['total'],
+            'missing_doi' => $search_result['aggregations']['missing_doi']['doc_count']
+        );
+        $result['has_doi'] = $result['total'] - $result['missing_doi'];
         return $result;
     }
 

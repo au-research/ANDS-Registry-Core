@@ -15,23 +15,23 @@ class Registry_objects extends CI_Model {
 	public $valid_classes = array("collection","activity","party","service");
 	public $valid_status  = array("MORE_WORK_REQUIRED"=>"MORE_WORK_REQUIRED", "DRAFT"=>"DRAFT", "SUBMITTED_FOR_ASSESSMENT"=>"SUBMITTED_FOR_ASSESSMENT", "ASSESSMENT_IN_PROGRESS"=>"ASSESSMENT_IN_PROGRESS", "APPROVED"=>"APPROVED", "PUBLISHED"=>"PUBLISHED");
 	public $valid_levels  = array("level_1"=>"1", "level_2"=>"2", "level_3"=>"3", "level_4"=>"4" );
-	
+
 	static $status_colors = array(
-		"MORE_WORK_REQUIRED"=>"#6A4A3C", 
-		"DRAFT"=>"#c60", 
-		"SUBMITTED_FOR_ASSESSMENT"=>"#688EDE", 
-		"ASSESSMENT_IN_PROGRESS"=>"#0B2E59", 
-		"APPROVED"=>"#EDD155", 
+		"MORE_WORK_REQUIRED"=>"#6A4A3C",
+		"DRAFT"=>"#c60",
+		"SUBMITTED_FOR_ASSESSMENT"=>"#688EDE",
+		"ASSESSMENT_IN_PROGRESS"=>"#0B2E59",
+		"APPROVED"=>"#EDD155",
 		"PUBLISHED"=>"#32CD32"
 	);
 
 	static $classes = array("collection"=>"Collection", "party"=>"Party", "service"=>"Service", "activity"=>"Activity");
 	static $statuses  = array(
-		"MORE_WORK_REQUIRED"=>"More Work Required", 
-		"DRAFT"=>"Draft", 
-		"SUBMITTED_FOR_ASSESSMENT"=>"Submitted for Assessment", 
-		"ASSESSMENT_IN_PROGRESS"=>"Assessment in Progress", 
-		"APPROVED"=>"Approved", 
+		"MORE_WORK_REQUIRED"=>"More Work Required",
+		"DRAFT"=>"Draft",
+		"SUBMITTED_FOR_ASSESSMENT"=>"Submitted for Assessment",
+		"ASSESSMENT_IN_PROGRESS"=>"Assessment in Progress",
+		"APPROVED"=>"Approved",
 		"PUBLISHED"=>"Published"
 	);
 	static $quality_levels = array(
@@ -40,7 +40,7 @@ class Registry_objects extends CI_Model {
 		"3" => "Quality Level 3",
 		"4" => "Gold Standard Record"
 	);
-	
+
 
 
 	/**
@@ -218,7 +218,7 @@ class Registry_objects extends CI_Model {
 	{
 		// Reduce number of DB calls by avoiding the pipeline
 		// trying to determine the ID (when it was explicitly specified)
-		try 
+		try
 		{
 			$cached_object_reference = RegistryObjectReferenceCache::getById($id);
 			if ($cached_object_reference)
@@ -254,7 +254,7 @@ class Registry_objects extends CI_Model {
 	 * Returns exactly one registry object by URL slug (or NULL)
 	 *
 	 * @param the registry object slug
-	 * @param the status of the registry object we want 
+	 * @param the status of the registry object we want
 	 * @return _registry_object object or NULL
 	 */
 	function getBySlug($slug, $status = "PUBLISHED")
@@ -456,8 +456,8 @@ class Registry_objects extends CI_Model {
 	function getAll($limit=10, $offset=0, $args=null)
 	{
 		return $this->_get(array(array('args' => array(
-									'search'=>$args['search'] ? $args['search'] : false,
-									'sort'=>$args['sort'],
+									'search'=>isset($args['search']) ? $args['search'] : false,
+									'sort'=>isset($args['sort']),
 									'filter'=>$args['filter']
 								),
 					       'fn' => function($db, $args) {
@@ -495,7 +495,7 @@ class Registry_objects extends CI_Model {
 
 		$result = $result->get();
 
-		
+
 		$res = array();
 		foreach($result->result() as $r){
 			array_push($res, array('registry_object_id'=>$r->registry_object_id));
@@ -696,9 +696,9 @@ class Registry_objects extends CI_Model {
 
 	/**
 	 * XXX:
-	 */	
-	function emailAssessor($data_source){		
-		$to = $data_source->getAttribute('assessment_notify_email_addr');	
+	 */
+	function emailAssessor($data_source){
+		$to = $data_source->getAttribute('assessment_notify_email_addr');
 		if($to)
 		{
 			$subject = "Records from ".$data_source->title." are ready for your assessment";
@@ -707,12 +707,12 @@ class Registry_objects extends CI_Model {
 	    	'Reply-To: "ANDS Services" <services@ands.org.au>' . "\r\n" .
 	    	'X-Mailer: PHP/' . phpversion();
 			mail ($to ,$subject ,$message, $headers);
-		}				
-	}	
+		}
+	}
 
 	/**
-	  * XXX: 
-	  */ 
+	  * XXX:
+	  */
 	function cloneToDraft($registry_object)
 	{
 		if (!($registry_object instanceof _registry_object))
@@ -723,7 +723,7 @@ class Registry_objects extends CI_Model {
 		if (!$registry_object) { throw new Exception ("Could not load registry object to create draft."); }
 
 		// Add the XML content of this draft to the published record (and follow enrichment process, etc.)
-		
+
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->importer->_reset();
 		$this->importer->setXML(wrapRegistryObjects(html_entity_decode($registry_object->getRif())));
@@ -773,7 +773,7 @@ class Registry_objects extends CI_Model {
 
 	public function deleteRegistryObjects($target_ro_ids, $finalise = true)
 	{
-		
+
 		$this->load->library('Solr');
 		$this->solr->deleteByIDsCondition($target_ro_ids);
 		$deleted_record_keys = array();
@@ -814,7 +814,7 @@ class Registry_objects extends CI_Model {
 	/**
 	 * batch enrich and index a set of keys, required in multiple places, put in for tag deletion
 	 * @param  [array] $keys [list of registry object keys to enrich and index]
-	 * @return [void]       
+	 * @return [void]
 	 */
 	public function batchIndexKeys($keys){
 		$_CI =& get_instance();
@@ -838,7 +838,7 @@ class Registry_objects extends CI_Model {
 	}
 
 	/**
-	 * Deletes a RegistryObject 
+	 * Deletes a RegistryObject
 	 *
 	 * @param the registry object key
 	 * @return TRUE if delete was successful
@@ -865,25 +865,25 @@ class Registry_objects extends CI_Model {
 
 		if (isPublishedStatus($target_ro->status))
 		{
-			
+
 			$this->load->model('data_source/data_sources', 'ds');
 			$data_source = $this->ds->getByID($target_ro->data_source_id);
-			
+
 			// Handle URL backup
-			
+
 
 
 
 			$this->db->where('registry_object_id', $target_ro->id);
-			$this->db->update('url_mappings', array(	"registry_object_id"=>NULL, 
-														"search_title"=>$target_ro->title, 
+			$this->db->update('url_mappings', array(	"registry_object_id"=>NULL,
+														"search_title"=>$target_ro->title,
 														"updated"=>time()
 													));
 
 			//remore previous records from the deleted_registry_objects table
-			
+
 			$this->db->delete('deleted_registry_objects', array('key'=>$target_ro->key));
-			
+
 			// Add to deleted_records table
 
 
@@ -907,7 +907,7 @@ class Registry_objects extends CI_Model {
 				$result = json_decode($this->solr->deleteByQueryCondition("id:(\"".$target_ro->id."\")"));
 
 				if($result->responseHeader->status != 0)
-				{			
+				{
 					$data_source->append_log("Failed to erase from SOLR: id:" .$target_ro->id , 'error', 'registry_object');
 				}
 				else{
@@ -955,7 +955,7 @@ class Registry_objects extends CI_Model {
 		{
 			return $query->result_array();
 		}
-	
+
 	}
 
 
@@ -970,7 +970,7 @@ class Registry_objects extends CI_Model {
 		{
 			return $query->result_array();
 		}
-	
+
 	}
 
 	public function removeDeletedRegistryObject($id)
@@ -996,7 +996,7 @@ class Registry_objects extends CI_Model {
 		$result = json_decode($this->solr->deleteByQueryCondition("data_source_id:(\"".$data_source_id."\")"));
 
 		if($result->responseHeader->status != 0)
-		{			
+		{
 			$this->load->model('data_source/data_sources', 'ds');
 			$data_source = $this->ds->getByID($data_source_id);
 			$data_source->append_log("Failed to erase from SOLR: ds_id:" .$data_source_id , 'error', 'data_source');

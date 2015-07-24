@@ -113,15 +113,26 @@ class ElasticSearch {
     }
 
     private function execBulk($verb, $content) {
+        // var_dump(memory_get_usage());
+        $data = null;
         $data = "";
-        foreach ($content as $line) {
+        foreach ($content as &$line) {
             $l = json_encode($line);
-            $data.=
-                "{ \"$verb\":  {} } \n".
-                $l."\n";
+            if (isset($line['_id'])) {
+                $id = $line['_id'];
+                unset($line['_id']);
+                $l = json_encode($line);
+                $data.=
+                    "{ \"$verb\":  {\"_id\":\"".$id."\"} } \n".
+                    $l."\n";
+            } else {
+                $data.=
+                    "{ \"$verb\":  {} } \n".
+                    $l."\n";
+            }
         }
         $data.="\n";
-        return $this->exec('POST', $data, true);
+        return $this->exec('POST', $data, false);
     }
 
     function exec($verb, $content = false, $noresponse = false) {

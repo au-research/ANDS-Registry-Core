@@ -8,8 +8,15 @@
         return {
             summary: getSummaryData,
             getGroups: getGroups,
-            testdata: getTestData
+            testdata: getTestData,
+            getEvents: getEvents
         };
+
+        function getEvents(filters) {
+            return $http.post(apps_url+'analytics/getEvents', {filters:filters})
+                    .then(returnRaw)
+                    .catch(handleError);
+        }
 
         function getSummaryData(filters) {
             return $http.post(apps_url+'analytics/summary', {filters:filters})
@@ -21,6 +28,10 @@
             return $http.get(apps_url+'analytics/summary')
                         .then(returnData)
                         .catch(handleError);
+        }
+
+        function returnRaw(response) {
+            return response.data;
         }
 
         function returnData(response) {

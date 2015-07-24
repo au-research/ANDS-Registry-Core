@@ -1,30 +1,44 @@
 (function () {
     'use strict';
 
-    angular.module("analytic_app", ['chart.js', 'daterangepicker']);
+    angular.module("analytic_app", ['chart.js', 'daterangepicker', 'ui.bootstrap']);
 
     angular.module('analytic_app')
         .controller('mainCtrl', mainCtrl)
 
-    function mainCtrl($log, analyticFactory) {
+    function mainCtrl($scope, $log, $modal, analyticFactory, filterService) {
         var vm = this;
         vm.types = ['Line', 'Bar'];
         vm.chartType = vm.types[0];
-        vm.groups = [];
+        vm.filters = filterService.getFilters();
+        $scope.$watch('vm.filters', function(data){
+            if (data) {
+                vm.getData();
+            }
+        }, true);
 
-        vm.filters = {
-            'log': 'portal',
-            'period': {'startDate': '2015-06-01', 'endDate': '2015-06-06'},
-            'group': {
-                'type':'group', 'value':'State Records Authority of New South Wales'
-            },
-            'dimensions': [
-                'portal_view', 'portal_search'
-            ]
-        };
+        vm.showDate = function(data) {
+            $modal.open({
+                templateUrl:apps_url+'assets/analytics/templates/modalDetail.html',
+                controller: 'modalDetailCtrl as vm',
+                resolve : {
+                    data: function() {
+                        return data;
+                    }
+                }
+            });
+        }
 
         vm.onClick = function (points, evt) {
             $log.debug(points, evt);
+            var date = points[0].label;
+            $log.debug('Showing date' + date);
+
+            var data = {
+                date:date,
+                filters:vm.filters
+            }
+            vm.showDate(data);
         };
 
         vm.getData = function() {
@@ -35,10 +49,6 @@
             });
         }
         vm.getData();
-        analyticFactory.getGroups().then(function(data){
-            vm.groups = data;
-        });
-
     }
 
 })();
