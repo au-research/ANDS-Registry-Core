@@ -29,8 +29,13 @@
                 if($right['type']=='licence')  $itemprop = 'itemprop="license"';
                 if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
                 $content .= '<h4>'.readable($right['type']).'</h4><p '.$itemprop.'>';
-                if(isset($right['value']) && trim($right['value'])!='')
-                    $content .= $right['value'].'<br />';
+                if(isset($right['value']) && trim($right['value'])!=''){
+                    $description = html_entity_decode($right['value']);
+                    if(strip_tags($description) == $description)
+                        $description = nl2br($description);
+                    $content .= $description.'<br />';
+
+                }
                 if(isset($right['rightsUri']) && $right['rightsUri']!='')
                     $content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
                 $content .= '</p>';
