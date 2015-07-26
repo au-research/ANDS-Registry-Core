@@ -55,7 +55,7 @@ class LicenceTypes_Extension extends ExtensionBase
 				{
 					
 					$right = array();
-					$right['value']= (string)$theRightsDescription;
+					$right['value']= html_entity_decode((string)$theRightsDescription);
 
 					$right['type'] = (string)$theRightsDescription['type'];
 
