@@ -71,12 +71,13 @@ class Unittest extends MX_Controller
      */
     public function run_tests()
     {
-        $this->testSummaryAPI($this->testdata[0]);
-        $this->testSummaryAPI($this->testdata[1]);
-        $this->testGetStatAPI('doi', $this->testdata[0]);
-        $this->testGetStatAPI('tr', $this->testdata[0]);
-        $this->testGetStatAPI('doi', $this->testdata[1]);
-        $this->testGetStatAPI('tr', $this->testdata[1]);
+        // $this->testSummaryAPI($this->testdata[0]);
+        // $this->testSummaryAPI($this->testdata[1]);
+        // $this->testGetStatAPI('doi', $this->testdata[0]);
+        // $this->testGetStatAPI('tr', $this->testdata[0]);
+        // $this->testGetStatAPI('doi', $this->testdata[1]);
+        // $this->testGetStatAPI('tr', $this->testdata[1]);
+        $this->testGetStatAPI('doi_minted', $this->testdata[1]);
     }
 
     /**
@@ -109,7 +110,9 @@ class Unittest extends MX_Controller
      */
     public function testGetStatAPI($path, $testdata)
     {
+
         $result = $this->callAPI('getStat/' . $path, $testdata);
+        // dd($result);
         //check valid and is JSON
         $this->unit->run($this->isJson($result), true, 'Valid Request');
         $result = json_decode($result, true);
@@ -123,6 +126,11 @@ class Unittest extends MX_Controller
             //has doc count on all result
             foreach ($result as $res) {
                 $this->unit->run($res['doc_count'], 'is_int', 'Has ' . $res['key'] . ' => ' . $res['doc_count']);
+            }
+        } elseif ($path=='doi_minted') {
+            //has minted
+            foreach ($result as $res) {
+                $this->unit->run($res['count'], 'is_int', 'Has ' . $res['activity'] . ' => ' . $res['count']);
             }
         }
     }

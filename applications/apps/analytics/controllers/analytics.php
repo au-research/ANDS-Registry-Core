@@ -125,6 +125,7 @@ class Analytics extends MX_Controller
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
         $this->load->model('summary');
+        $this->load->model('dois');
         $postdata = file_get_contents("php://input");
         $request = json_decode($postdata, true);
         $filters = isset($request['filters']) ? $request['filters'] : $filters;
@@ -145,6 +146,9 @@ class Analytics extends MX_Controller
             case 'tr':
                 $search_results = $this->summary->getStat('/rda/production/', $filters);
                 $result = $search_results['aggregations']['portal_cited']['buckets'];
+                break;
+            case 'doi_minted':
+                $result = $this->dois->getMinted($filters);
                 break;
             default : break;
         }

@@ -10,6 +10,15 @@
 
     <div class="widget-box">
         <div class="widget-title">
+            <h5>Doi Minted Statistics</h5>
+        </div>
+        <div class="widget-container">
+            <chart filters="vm.filters" type="'pie'" ctype="'doi_minted'"></chart>
+        </div>
+    </div>
+
+    <div class="widget-box">
+        <div class="widget-title">
             <h5>Cited Statistics (Thomson Reuters)</h5>
         </div>
         <div class="widget-container">

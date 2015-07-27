@@ -29,6 +29,32 @@ class Dois extends CI_Model
         return $result;
     }
 
+    public function getMinted($filters) {
+        $result = array();
+        $group = $filters['group']['value'];
+
+        //get client id
+        $query = $this->doi_db->get_where('doi_client', array('client_name' => $group))->first_row(true);
+        $client_id = isset($query['client_id']) ? $query['client_id'] : false;
+
+        //get activity by client_id
+        $query = $this->doi_db
+            ->select('activity, count(*) as count')
+            ->from('activity_log')
+            ->where('client_id', $client_id)
+            ->group_by('activity')->get();
+
+        if ($query->num_rows() > 0) {
+            $result = $query->result_array();
+        }
+
+        foreach ($result as &$res) {
+            if (isset($res['count'])) $res['count'] = (int) $res['count'];
+        }
+
+        return $result;
+    }
+
     public function getActivity($offset = 0, $limit = 20) {
         $result = $this->doi_db->get('activity_log', $limit, $offset);
         return $result->result_array();

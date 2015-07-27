@@ -47,6 +47,18 @@
                             });
                             $log.debug(scope.chart);
                         });
+                    } else if (scope.ctype=='doi_minted') {
+                        scope.chart = {
+                            labels: [],
+                            data: []
+                        }
+                        statFactory.getStat(scope.ctype, scope.filters).then(function(data){
+                            angular.forEach(data, function(stat){
+                                scope.chart.labels.push(stat.activity);
+                                scope.chart.data.push(stat.count);
+                            });
+                            $log.debug(scope.chart);
+                        });
                     }
                 }
 
