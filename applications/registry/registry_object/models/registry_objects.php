@@ -600,6 +600,36 @@ class Registry_objects extends CI_Model {
 					       })),$make_ro, $limit, $offset);
 	}
 
+	/**
+	 * Return the registry object attribute, be in core or not
+	 * @todo if $type is an array, return an array of values
+	 * @todo if $type is blank/false, return all values
+	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @param  int  $ro_id existing ro id
+	 * @param  string $type  existing type
+	 * @return mixed
+	 */
+	function getAttribute($ro_id, $type = false) {
+		$core_attrs = array('key', 'class', 'title', 'status', 'slug', 'record_owner');
+		if ($type) {
+			if (in_array($type, $core_attrs)) {
+				$query = $this->db->get_where('registry_objects',
+					array('registry_object_id'=>$ro_id))->first_row(true);
+				return $query[$type];
+			} else {
+				$query = $this->db->get_where('registry_object_attributes',
+					array('registry_object_id'=>$ro_id, 'attribute'=>$type))->first_row(true);
+				return $query['value'];
+			}
+		} else {
+			// return all attributes and other things
+			$result = array();
+
+			//populate the result with attrs core and non core
+			return $result;
+		}
+	}
+
 	function getUnEnriched(){
 		$CI =& get_instance();
 

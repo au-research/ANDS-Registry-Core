@@ -10,8 +10,6 @@ function isDraftStatus($status)
 	return in_array($status, getDraftStatusGroup());
 }
 
-
-
 function getPublishedStatusGroup()
 {
 	return array(PUBLISHED);

@@ -52,7 +52,7 @@ class Sync_extension extends ExtensionBase{
 		}
 		return true;
 	}
-	
+
 	function indexable_json($limit=null) {
 		$xml = $this->ro->getSimpleXML();
         $rifDom = new DOMDocument();
@@ -68,9 +68,9 @@ class Sync_extension extends ExtensionBase{
         $single_values = array(
 			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type'
 		);
-        
-        
-        
+
+
+
 
         $include_rights_type = array('open','restricted','conditional');
         $include_descriptions = array('brief','full');
@@ -385,9 +385,14 @@ class Sync_extension extends ExtensionBase{
         	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
         	foreach ($related_objects as $related_object) {
                 if(!isset($related_object['status']) || $related_object['status']!=DRAFT){
-                    if ($related_object['class']=='party' && $related_object['relation_type']=='isManagedBy') {
+                    if ($related_object['class']=='party'
+                        && $related_object['relation_type']=='isManagedBy'
+                        && $this->_CI->ro->getAttribute(strtolower(trim($related_object['registry_object_id'])), 'type')!='person') {
                         $json['administering_institution'][] = $related_object['title'];
-                    } else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
+                    } else if(
+                        $related_object['class']=='party'
+                        && $related_object['relation_type']=='isFundedBy'
+                        && $this->_CI->ro->getAttribute(strtolower(trim($related_object['registry_object_id'])), 'type')!='person') {
                         $json['funders'][] = $related_object['title'];
                     } else if($related_object['class']=='party') {
                         $tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
