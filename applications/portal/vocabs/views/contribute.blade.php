@@ -25,7 +25,15 @@
             <div class="row">
                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                     <h3 class="normal light bordered">Create or manage a vocabulary</h3>
-                    <p>Research Vocabularies Australia includes an editing tool which allows for the creation and management of vocabularies and the concepts they contain. The editor allows you and your colleagues to collaboratively manage your vocabulary, with optional workflow management. Vocabularies may be uploaded or created from scratch within the editor. Additional features of the editor include: Capture information about your vocabulary and the concepts it contains Browse through the concepts in your vocabulary via the built-in visualisation tool Link concepts in your vocabulary to concepts in other vocabularies Query your vocabulary via the built-in SPARQL endpoint</p>
+                    <p>Research Vocabularies Australia includes an editing tool which allows for the creation and management of vocabularies and the concepts they contain. The editor allows you and your colleagues to collaboratively manage your vocabulary, with optional workflow management. Vocabularies may be uploaded or created from scratch within the editor. Additional features of the editor include:
+                    </p>
+                    <ul>
+                        <li>Capture information about your vocabulary and the concepts it contains </li>
+                        <li>Browse through the concepts in your vocabulary via the built-in visualisation tool </li>
+                        <li>Link concepts in your vocabulary to concepts in other vocabularies </li>
+                        <li>Query your vocabulary via the built-in SPARQL endpoint</li>
+                     </ul>
+
                 </div>
                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                     <h3 class="normal light bordered">Publish and describe a vocabulary</h3>
