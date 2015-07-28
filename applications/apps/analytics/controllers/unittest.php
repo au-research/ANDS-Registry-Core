@@ -51,6 +51,15 @@ class Unittest extends MX_Controller
             ],
             'dimensions' => ['portal_view', 'portal_search'],
         ),
+        array(
+            'log' => 'portal',
+            'period' => ['startDate' => '2015-06-01', 'endDate' => '2015-06-06'],
+            'group' => [
+                'type' => 'group',
+                'value' => 'Curtin University',
+            ],
+            'dimensions' => ['portal_view', 'portal_search'],
+        ),
     );
 
     /**
@@ -97,6 +106,7 @@ class Unittest extends MX_Controller
         $this->testGetStatAPI('tr', $this->testdata[1]);
         $this->testGetStatAPI('doi_minted', $this->testdata[2]);
         $this->testGetStatAPI('doi_client', $this->testdata[3]);
+        $this->testGetStatAPI('doi_client', $this->testdata[4]);
     }
 
     /**

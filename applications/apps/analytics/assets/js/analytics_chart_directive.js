@@ -52,7 +52,7 @@
                             scope.chart = {
                                 labels: [], data: []
                             };
-                            if (data && data.length > 0) {
+                            if (data && data.length != 0) {
                                 scope.chart = {
                                     labels: ['URL', 'Broken URL'],
                                     data: [ data['url_num'], data['url_broken_num'] ]
