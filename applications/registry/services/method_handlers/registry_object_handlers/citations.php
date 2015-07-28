@@ -359,7 +359,13 @@ Y2  - '.date("Y-m-d")."
         if($query!=''){
             $dates = $this->gXPath->query($query);
             foreach($dates as $date) {
-                $publicationDate = date("Y",strtotime($date->nodeValue));
+                //assume only Year is given
+                if(strlen($date->nodeValue) <= 4){
+                    $publicationDate = $date->nodeValue;
+                }
+                else{
+                    $publicationDate = date("Y",strtotime($date->nodeValue));
+                }
             }
         }else{
             $publicationDate = date("Y",$this->ro->created);
