@@ -416,6 +416,7 @@ class _vocabulary
                     'pool_party_id' => isset($data['pool_party_id']) ? $data['pool_party_id'] : false,
                     'modified_date' => date("Y-m-d H:i:s"),
                     'status' => $data['status'],
+                    'owner' => isset($data['owner']) ? $data['owner'] : '',
                     'data' => json_encode($data)
                 );
                 $db->where('id', $data['id']);

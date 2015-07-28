@@ -108,7 +108,7 @@
 							@if(null!=$this->user->affiliations())
 							<div class="form-group">
 								<label for="">Owner</label>
-								<select name="" id="" class="form-control" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
+								<select name="owner" id="owner" class="form-control" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
 							</div>
 							@endif
 						</div>

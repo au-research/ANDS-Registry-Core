@@ -11,12 +11,18 @@
         .controller('addVocabsCtrl', addVocabsCtrl);
 
     function addVocabsCtrl($log, $scope, $location, $modal, vocabs_factory) {
-        vocabs_factory.user().then(function (data) {
-            $scope.user_orgs = data.message;
-        });
+
         $scope.form = {};
 
         $scope.vocab = {top_concept: [], subjects: []};
+        /**
+         * Collect all the user roles, for vocab.owner value
+         */
+        vocabs_factory.user().then(function (data) {
+            $scope.user_orgs = data.message['affiliations'];
+            $scope.user_owner = data.message['role_id'];
+        });
+        $scope.vocab.user_owner = $scope.user_owner;
         $scope.mode = 'add'; // [add|edit]
         $scope.langs = [
             {"value": "zh", "text": "Chinese"},
@@ -52,6 +58,7 @@
             vocabs_factory.get($('#vocab_id').val()).then(function (data) {
                 $log.debug('Editing ', data.message);
                 $scope.vocab = data.message;
+                $scope.vocab.user_owner = $scope.user_owner;
                 $scope.mode = 'edit';
                 $scope.decide = true;
                 $log.debug($scope.form.cms);
@@ -71,13 +78,7 @@
             $scope.projects = data;
         });
 
-        /**
-         * Collect all the user roles, for vocab.owner value
-         */
-        vocabs_factory.user().then(function (data) {
-            $scope.user_orgs = data.message['affiliations'];
-            $scope.vocab.user_owner = data.message['role_id'];
-        });
+
 
         $scope.projectSearch = function (q) {
             return function (item) {
