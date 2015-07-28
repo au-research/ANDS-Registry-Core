@@ -610,16 +610,18 @@ class Registry_objects extends CI_Model {
 	 * @return mixed
 	 */
 	function getAttribute($ro_id, $type = false) {
-		$core_attrs = array('key', 'class', 'title', 'status', 'slug', 'record_owner');
+		$core_attrs = array('key', 'class', 'title', 'status', 'slug', 'record_owner', 'data_source_id');
 		if ($type) {
 			if (in_array($type, $core_attrs)) {
 				$query = $this->db->get_where('registry_objects',
 					array('registry_object_id'=>$ro_id))->first_row(true);
-				return $query[$type];
+
+				return ($query && isset($query_type)) ? $query[$type] : false;
 			} else {
 				$query = $this->db->get_where('registry_object_attributes',
 					array('registry_object_id'=>$ro_id, 'attribute'=>$type))->first_row(true);
-				return $query['value'];
+
+                return ($query && isset($query_type)) ? $query['value'] : false;
 			}
 		} else {
 			// return all attributes and other things

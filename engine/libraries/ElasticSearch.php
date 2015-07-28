@@ -135,6 +135,14 @@ class ElasticSearch {
         return $this->exec('POST', $data, false);
     }
 
+    /**
+     * Execute the Verb
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @param $verb
+     * @param bool $content
+     * @param bool $noresponse
+     * @return bool|mixed
+     */
     function exec($verb, $content = false, $noresponse = false) {
         $this->response = null;
         $ch = curl_init($this->elasticSearchUrl.$this->path);
@@ -142,7 +150,6 @@ class ElasticSearch {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $verb);
         if ($content) {
             if (is_array($content)) $content = json_encode($content, true);
-            // dd($content);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
         }
         $this->response = curl_exec($ch);
