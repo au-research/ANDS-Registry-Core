@@ -5,6 +5,7 @@
  * for Data Source Report functionality
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
+
 class Analytics extends MX_Controller
 {
 
@@ -79,12 +80,13 @@ class Analytics extends MX_Controller
         echo json_encode($result);
     }
 
-    public function getEvents() {
+    public function getEvents()
+    {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
         $postdata = file_get_contents("php://input");
         $request = json_decode($postdata, true);
-        $filters = isset($request['filters']) ? $request['filters'] : $filters;
+        $filters = isset($request['filters']) ? $request['filters'] : false;
 
         $this->elasticsearch->init()->setPath('/logs/production/_search');
         $this->elasticsearch
@@ -92,17 +94,17 @@ class Analytics extends MX_Controller
             ->andf('term', $filters['group']['type'], $filters['group']['value'])
             ->andf('term', 'is_bot', 'false')
             ->andf('range', 'date',
-                array (
+                array(
                     'from' => $filters['period']['startDate'],
                     'to' => $filters['period']['endDate']
                 )
             );
         $this->elasticsearch
             ->setAggs(
-                'rostat', array('terms'=>array('field'=>'roid'))
+                'rostat', array('terms' => array('field' => 'roid'))
             )
             ->setAggs(
-                'qstat', array('terms'=>array('field'=>'q'))
+                'qstat', array('terms' => array('field' => 'q'))
             );
 
         $result = array();
@@ -110,7 +112,8 @@ class Analytics extends MX_Controller
         echo json_encode($search_result);
     }
 
-    public function getDOIStat() {
+    public function getDOIStat()
+    {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
         $this->load->model('dois');
@@ -121,10 +124,12 @@ class Analytics extends MX_Controller
         echo json_encode($stats);
     }
 
-    public function getStat($stat = 'rda') {
+    public function getStat($stat = 'doi')
+    {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
         $this->load->model('summary');
+        $this->load->model('dois');
         $postdata = file_get_contents("php://input");
         $request = json_decode($postdata, true);
         $filters = isset($request['filters']) ? $request['filters'] : $filters;
@@ -133,7 +138,7 @@ class Analytics extends MX_Controller
         $filters['ctype'] = $stat;
 
         $result = array();
-        switch($stat) {
+        switch ($stat) {
             case 'doi':
                 $search_result = $this->summary->getStat('/rda/production/', $filters);
                 $result = array(
@@ -146,13 +151,21 @@ class Analytics extends MX_Controller
                 $search_results = $this->summary->getStat('/rda/production/', $filters);
                 $result = $search_results['aggregations']['portal_cited']['buckets'];
                 break;
-            default : break;
+            case 'doi_minted':
+                $result = $this->dois->getMinted($filters);
+                break;
+            case 'doi_client':
+                $result = $this->dois->getClientStat($filters);
+                break;
+            default :
+                break;
         }
 
         echo json_encode($result);
     }
 
-    public function indexLog($date='2015-06-01') {
+    public function indexLog($date = '2015-06-01')
+    {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
         $this->load->model('summary');
@@ -163,61 +176,80 @@ class Analytics extends MX_Controller
 
         //construct the posting array
         $post = array();
-        $filters = ['log'=>'portal'];
+        $filters = ['log' => 'portal'];
         $lines = $this->summary->getStatFromInternalLog($date, $filters);
-        foreach ($lines as $line) {
-            $content = readString($line);
-            if ($content && is_array($content) && sizeof($content) > 0) {
-                if (isset($content['user_agent'])) {
-                    $content['is_bot'] = isbot($content['user_agent']) ? true : false;
-                } else $content['is_bot'] = false;
-                if (isset($content['roid'])) {
 
-                    //fill it up with group, dsid, slug, path
-                    //TAKES TOO LONG
-                    /*if ($ro = $this->ro->getByID($content['roid'])) {
-                        $content['slug'] = $ro->slug;
-                        $content['dsid'] = $ro->data_source_id;
-                        $content['group'] = $ro->group;
-                        $content['path'] = $ro->slug.'/'.$ro->id;
-                        unset($ro);
-                    }*/
-                }
-
-                //fill ip with geolocation TAKES TOO LONG
-                /*if (isset($content['ip'])) {
-                    if ($geo = getIPLocation($content['ip'])) {
-                        $content['city'] = isset($geo['city']) ? $geo['city'] : false;
-                        $content['country'] = isset($geo['country']) ? $geo['country'] : false;
-                        $content['regionName'] = isset($geo['regionName']) ? $geo['regionName'] : false;
-                    }
-                }*/
-                $post[] = $content;
-            }
-            unset($line);
-            unset($content);
-        }
 
         //delete all data for this date
         $result = $this->elasticsearch
-                    ->init()
-                    ->setPath('/logs/production/_query/?q=date:"'.$date.'"')
-                    ->delete();
+            ->init()
+            ->setPath('/logs/production/_query/?q=date:"' . $date . '"')
+            ->delete();
 
-        //add data for this date
-        $result = $this->elasticsearch
+        //let's do the chunking here instead of in ElasticSearch
+        $chunkSize = 2000;
+        if (sizeof($lines) > $chunkSize) {
+            $chunks = array_chunk($lines, $chunkSize);
+            foreach ($chunks as $key => $chunk) {
+                $post = [];
+                foreach ($chunk as $line) {
+                    $content = readString($line);
+                    if ($content && is_array($content) && sizeof($content) > 0) {
+                        if (isset($content['user_agent'])) {
+                            $content['is_bot'] = isbot($content['user_agent']) ? true : false;
+                        } else $content['is_bot'] = false;
+                        if (isset($content['roid'])) {
+
+                            //fill it up with group, dsid, slug, path
+                            //TAKES TOO LONG
+                            /*$fields = ['group', 'slug', 'data_source_id', 'group'];
+                            foreach ($fields as $field) {
+                                if (!isset($content[$field])) {
+                                    $value = $this->ro->getAttribute($content['roid'], $field);
+                                    if ($value) {
+                                        $content[$field] = $value;
+                                    }
+                                }
+                            }*/
+
+                        }
+
+                        //fill ip with geolocation TAKES TOO LONG
+                        /*if (isset($content['ip'])) {
+                            if ($geo = getIPLocation($content['ip'])) {
+                                $content['city'] = isset($geo['city']) ? $geo['city'] : false;
+                                $content['country'] = isset($geo['country']) ? $geo['country'] : false;
+                                $content['regionName'] = isset($geo['regionName']) ? $geo['regionName'] : false;
+                            }
+                        }*/
+
+                        $post[] = $content;
+                    }
+                    unset($line);
+                    unset($content);
+                }
+
+                //add data for this chunk
+                $result = $this->elasticsearch
                     ->init()
                     ->setPath('/logs/production/_bulk')
                     ->bulk('index', $post);
 
+                if ($result) {
+                    echo 'Done ' . $date . ' chunk ' . $key . " out of " . sizeof($chunks) . "\n";
+                }
+            }
+        }
+
         if ($result) {
             //handle success
-            echo "Done ".$date."\n";
+            echo "Done " . $date . "\n";
         }
 
     }
 
-    public function indexLogs($date_from = '2014-01-01') {
+    public function indexLogs($date_from = '2014-01-01')
+    {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
 
@@ -242,7 +274,8 @@ class Analytics extends MX_Controller
         echo 'Initial: ' . number_format(memory_get_usage(), 0, '.', ',') . " bytes\n";
         foreach ($dates as $date) {
             $this->indexLog($date);
-            ob_flush();flush();
+            ob_flush();
+            flush();
         }
         echo "\n";
         echo 'Peak: ' . number_format(memory_get_peak_usage(), 0, '.', ',') . " bytes\n";
@@ -250,7 +283,8 @@ class Analytics extends MX_Controller
         ob_end_flush();
     }
 
-    public function indexDois() {
+    public function indexDois()
+    {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
         if (ob_get_level() == 0) ob_start();
@@ -273,23 +307,25 @@ class Analytics extends MX_Controller
             }
 
             $result = $this->elasticsearch
-                        ->init()
-                        ->setPath('/logs/dois/_bulk')
-                        ->bulk('index', $post);
+                ->init()
+                ->setPath('/logs/dois/_bulk')
+                ->bulk('index', $post);
 
             if ($result) {
                 //handle success
-                echo "Done ".$offset."\n";
+                echo "Done " . $offset . "\n";
             }
 
             $offset += $chunkSize;
-            ob_flush();flush();
+            ob_flush();
+            flush();
         }
 
         ob_end_flush();
     }
 
-    public function indexROs($offset = 0) {
+    public function indexROs($offset = 0)
+    {
         ini_set('max_execution_time', 3600);
         $this->benchmark->mark('code_start');
         $this->output->set_header('Content-type: application/json');
@@ -323,7 +359,7 @@ class Analytics extends MX_Controller
                     //has doi
                     if ($identifiers = $ro->getIdentifiers()) {
                         foreach ($identifiers as $id) {
-                            if ($id['identifier_type']=='doi') {
+                            if ($id['identifier_type'] == 'doi') {
                                 $data['doi'] = $id['identifier'];
                             }
                         }
@@ -342,23 +378,25 @@ class Analytics extends MX_Controller
             // dd($post);
 
             $result = $this->elasticsearch
-                        ->init()
-                        ->setPath('/rda/production/_bulk')
-                        ->bulk('index', $post);
+                ->init()
+                ->setPath('/rda/production/_bulk')
+                ->bulk('index', $post);
 
             $this->benchmark->mark('batch_end');
             $elapsed = $this->benchmark->elapsed_time('batch_start', 'batch_end');
-            echo "Done ".$offset." Took: ".$elapsed."\n";
+            echo "Done " . $offset . " Took: " . $elapsed . "\n";
             $offset += $chunkSize;
-            ob_flush();flush();
+            ob_flush();
+            flush();
         }
         $this->benchmark->mark('code_end');
-        echo "Took total: ". $this->benchmark->elapsed_time('code_start', 'code_end')."\n";
+        echo "Took total: " . $this->benchmark->elapsed_time('code_start', 'code_end') . "\n";
         ob_end_flush();
 
     }
 
-    public function test4() {
+    public function test4()
+    {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
         $this->load->model('registry/registry_object/registry_objects', 'ro');
@@ -389,37 +427,88 @@ class Analytics extends MX_Controller
         echo json_encode($this->summary->get($filters));
     }
 
-    function test3() {
-        $ip = '130.56.111.125';
-        dd(getIPLocation($ip));
+    public function indexDOIClient()
+    {
+        $this->output->set_header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+
+        if (ob_get_level() == 0) ob_start();
+        $this->load->model('dois');
+
+        $result = array();
+        foreach ($this->dois->getClients() as $client) {
+
+            //delete all data for this client
+            $result = $this->elasticsearch
+                ->init()
+                ->setPath('/report/doi/' . $client['client_id'])
+                ->delete();
+
+            //save
+            $client_result = $client;
+
+            //run report
+            $command = escapeshellcmd('python3 etc/misc/python/linkchecker/linkchecker.py -i etc/misc/python/linkchecker/linkchecker.ini --no_emails -m DOI -c' . $client['client_id']);
+            $output = shell_exec($command);
+            $client_result['linkchecker_report'] = $output;
+
+            $data = [];
+            foreach (explode("\n", $output) as $line) {
+                $bin = explode(":", $line, 2);
+                if (isset($bin[0]) && isset($bin[1])) {
+                    $bin[1] = trim($bin[1]);
+                    $data[$bin[0]] = $bin[1];
+                }
+            }
+
+            $client_result['url_num'] = isset($data['Number of URLs to be tested']) ? $data['Number of URLs to be tested'] : false;
+            $client_result['url_broken_num'] = isset($data['Broken Links Discovered']) ? $data['Broken Links Discovered'] : false;
+            $client_result['error'] = isset($data['ERROR']) ? $data['ERROR'] : false;
+
+            //index client_result
+            $result = $this->elasticsearch
+                ->init()
+                ->setPath('/report/doi/' . $client['client_id'])
+                ->put($client_result);
+
+            //save
+            $result[] = $client_result;
+
+            echo 'Done ' . $client['client_id'] . ": " . $client['client_name'] . "\n";
+            ob_flush();
+            flush();
+        }
+        ob_end_flush();
     }
 
-    public function test2() {
+    public function test2()
+    {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
 
         $this->load->library('ElasticSearch');
         $result = $this->elasticsearch->init()
-                    ->setPath('/rda/production/_search')
-                    // ->setQuery('not', array('term'=>'portal_cited'))
-                    // ->andf('not', 'accessed', '0')
-                    // ->andf('term', 'group', 'University of South Australia')
-                    ->andf('term', 'group', 'Australian Antarctic Data Centre')
-                    // ->andf('range', 'date',
-                    //     [
-                    //         'from'=>'2015-06-01 00:00:00',
-                    //         'to'=>'2015-06-02 00:00:00'
-                    //     ]
-                    // )
-                    ->setAggs('accessed',
-                        ['terms'=>['field'=>'portal_cited']]
-                    )
-                    ->search();
+            ->setPath('/rda/production/_search')
+            // ->setQuery('not', array('term'=>'portal_cited'))
+            // ->andf('not', 'accessed', '0')
+            // ->andf('term', 'group', 'University of South Australia')
+            ->andf('term', 'group', 'Australian Antarctic Data Centre')
+            // ->andf('range', 'date',
+            //     [
+            //         'from'=>'2015-06-01 00:00:00',
+            //         'to'=>'2015-06-02 00:00:00'
+            //     ]
+            // )
+            ->setAggs('accessed',
+                ['terms' => ['field' => 'portal_cited']]
+            )
+            ->search();
 
         dd($result);
     }
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
 
@@ -442,9 +531,9 @@ class Analytics extends MX_Controller
                 array(
                     'properties' => array(
                         'date' => array(
-                            'type'=>'date',
-                            'store'=>true,
-                            'format'=> 'yyyy-MM-dd HH:mm:ss || yyyy-MM-dd || yyyy || yyyy-MM'
+                            'type' => 'date',
+                            'store' => true,
+                            'format' => 'yyyy-MM-dd HH:mm:ss || yyyy-MM-dd || yyyy || yyyy-MM'
                         ),
                         'group' => array(
                             'type' => 'string',

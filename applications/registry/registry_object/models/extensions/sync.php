@@ -385,14 +385,15 @@ class Sync_extension extends ExtensionBase{
         	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
         	foreach ($related_objects as $related_object) {
                 if(!isset($related_object['status']) || $related_object['status']!=DRAFT){
+//
                     if ($related_object['class']=='party'
                         && $related_object['relation_type']=='isManagedBy'
-                        && $this->_CI->ro->getAttribute(strtolower(trim($related_object['registry_object_id'])), 'type')!='person') {
+                        && strtolower(trim($this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type'))) !='person') {
                         $json['administering_institution'][] = $related_object['title'];
                     } else if(
                         $related_object['class']=='party'
                         && $related_object['relation_type']=='isFundedBy'
-                        && $this->_CI->ro->getAttribute(strtolower(trim($related_object['registry_object_id'])), 'type')!='person') {
+                        && strtolower(trim($this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type'))) !='person') {
                         $json['funders'][] = $related_object['title'];
                     } else if($related_object['class']=='party') {
                         $tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);

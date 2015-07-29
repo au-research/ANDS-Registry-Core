@@ -33,6 +33,33 @@ class Unittest extends MX_Controller
             ],
             'dimensions' => ['portal_view', 'portal_search'],
         ),
+        array(
+            'log' => 'portal',
+            'period' => ['startDate' => '2015-06-01', 'endDate' => '2015-06-06'],
+            'group' => [
+                'type' => 'group',
+                'value' => 'N2O Network',
+            ],
+            'dimensions' => ['portal_view', 'portal_search'],
+        ),
+        array(
+            'log' => 'portal',
+            'period' => ['startDate' => '2015-06-01', 'endDate' => '2015-06-06'],
+            'group' => [
+                'type' => 'group',
+                'value' => 'CSIRO',
+            ],
+            'dimensions' => ['portal_view', 'portal_search'],
+        ),
+        array(
+            'log' => 'portal',
+            'period' => ['startDate' => '2015-06-01', 'endDate' => '2015-06-06'],
+            'group' => [
+                'type' => 'group',
+                'value' => 'Curtin University',
+            ],
+            'dimensions' => ['portal_view', 'portal_search'],
+        ),
     );
 
     /**
@@ -40,7 +67,7 @@ class Unittest extends MX_Controller
      * If CLI then just return pass or fail
      * If Browser then return the entire test results
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-     * @return test results
+     * @return mixed results
      */
     public function index()
     {
@@ -77,11 +104,14 @@ class Unittest extends MX_Controller
         $this->testGetStatAPI('tr', $this->testdata[0]);
         $this->testGetStatAPI('doi', $this->testdata[1]);
         $this->testGetStatAPI('tr', $this->testdata[1]);
+        $this->testGetStatAPI('doi_minted', $this->testdata[2]);
+        $this->testGetStatAPI('doi_client', $this->testdata[3]);
+        $this->testGetStatAPI('doi_client', $this->testdata[4]);
     }
 
     /**
      * Test Summary API
-     * @param  data $testdata
+     * @param  mixed $testdata
      * @return void
      */
     public function testSummaryAPI($testdata)
@@ -104,12 +134,14 @@ class Unittest extends MX_Controller
     /**
      * Test GetStat API
      * @param  string $path
-     * @param  data $testdata
+     * @param  mixed $testdata
      * @return void
      */
     public function testGetStatAPI($path, $testdata)
     {
+
         $result = $this->callAPI('getStat/' . $path, $testdata);
+//         dd($result);
         //check valid and is JSON
         $this->unit->run($this->isJson($result), true, 'Valid Request');
         $result = json_decode($result, true);
@@ -124,6 +156,15 @@ class Unittest extends MX_Controller
             foreach ($result as $res) {
                 $this->unit->run($res['doc_count'], 'is_int', 'Has ' . $res['key'] . ' => ' . $res['doc_count']);
             }
+        } elseif ($path=='doi_minted') {
+            //has minted
+            foreach ($result as $res) {
+                $this->unit->run($res['count'], 'is_int', 'Has ' . $res['activity'] . ' => ' . $res['count']);
+            }
+        } elseif ($path=='doi_client') {
+            $this->unit->run($result['client_id'], 'is_string', 'Has Client ID: '. $result['client_id']);
+            $this->unit->run($result['url_num'], 'is_string', 'Has URLs : '. $result['client_id']);
+            $this->unit->run($result['url_broken_num'], 'is_string', 'Has Broken URLs: '. $result['client_id']);
         }
     }
 
@@ -141,8 +182,8 @@ class Unittest extends MX_Controller
     /**
      * Helper function to POST data to the API
      * @param  string $path
-     * @param  data $filters
-     * @return data
+     * @param  mixed $filters
+     * @return mixed
      */
     public function callAPI($path, $filters)
     {

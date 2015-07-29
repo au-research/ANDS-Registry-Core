@@ -44,9 +44,9 @@ class Unittest extends MX_Controller {
 
         //test getAttribute() function
         $this->unit->use_strict(TRUE);
-        $this->unit->run($this->ro->getAttribute('1840', 'group'), 'The University of Sydney');
-        $this->unit->run($this->ro->getAttribute('1840', 'type'), 'search-http');
-        $this->unit->run($this->ro->getAttribute('2019', 'type'), 'person');
+//        $this->unit->run($this->ro->getAttribute('1840', 'group'), 'The University of Sydney');
+//        $this->unit->run($this->ro->getAttribute('1840', 'type'), 'search-http');
+//        $this->unit->run($this->ro->getAttribute('2019', 'type'), 'person');
 
         //these records must not have any administering institution
         $not_have = array(461184, 461184, 461188, 461180, 461182, 461142);

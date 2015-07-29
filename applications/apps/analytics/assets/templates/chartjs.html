@@ -1,4 +1,8 @@
+<div class="widget-content" ng-if="chart.data.length == 0">
+    <p>No data found</p>
+</div>
 <canvas class="chart chart-pie"
+        ng-if="chart.data.length > 0"
         data="chart.data"
         labels="chart.labels"
         legend="true">
