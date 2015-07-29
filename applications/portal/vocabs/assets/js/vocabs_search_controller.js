@@ -81,6 +81,11 @@
             if (execute) $scope.search();
         };
 
+        $scope.toggleFacet = function (facet_type) {
+            $('#more'+facet_type).slideToggle();
+            $('#link'+facet_type).toggle();
+        };
+
         $scope.addFilter = function (type, value) {
             if ($scope.filters[type]) {
                 if (typeof $scope.filters[type] == 'string') {
