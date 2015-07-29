@@ -621,7 +621,7 @@ class Registry_objects extends CI_Model {
 				$query = $this->db->get_where('registry_object_attributes',
 					array('registry_object_id'=>$ro_id, 'attribute'=>$type))->first_row(true);
 
-                return ($query && isset($query_type)) ? $query['value'] : false;
+                return ($query && isset($query['value'])) ? $query['value'] : false;
 			}
 		} else {
 			// return all attributes and other things
