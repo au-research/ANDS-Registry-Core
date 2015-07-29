@@ -42,9 +42,17 @@ angular.module('portal_theme',[]).
 			contructFilterQuery: function(filters) {
 				var filter_query = '';
 				angular.forEach(filters, function(f,key){
+                    //console.log(f, typeof f);
 					if(f){
 						if(key!='limit' && key!='random'){
-							filter_query += key+'='+encodeURIComponent(f)+'/';
+                            if (typeof f != 'object') {
+                                filter_query += key+'='+encodeURIComponent(f)+'/';
+                            } else {
+                                angular.forEach(f, function(x) {
+                                    filter_query += key+'='+encodeURIComponent(x)+'/';
+                                });
+                            }
+
 						}
 					}
 				});
