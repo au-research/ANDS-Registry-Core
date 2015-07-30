@@ -77,7 +77,7 @@
         }
     }
 ?>
-    @if(($hasRelatedCollection && $ro->core['class']!='collection') || $hasRelatedPublication || $hasDerivedCollection || $hasRelatedOrganisation || $hasRelatedGrantsOrProjects || $hasRelatedServices)
+    @if(($hasRelatedCollection && $ro->core['class']!='collection') || $hasRelatedPublication || $hasDerivedCollection || $hasRelatedOrganisation || $hasRelatedGrantsOrProjects || $hasRelatedServices || $hasRelatedWebsite)
         <div class="swatch-white">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <!-- <div class="panel-heading"> Related </div> -->
