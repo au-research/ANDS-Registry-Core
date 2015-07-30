@@ -1,12 +1,8 @@
 <head>
 	<meta charset="utf-8">
-	{{-- Add title, if defined, or add a default title if not. --}}
-	{{-- If this were real Laravel, we could/should/would use the two-argument version of yield. --}}
-	@if(isset($this->_sections['title']))
-	<title>@yield('title')</title>
-	@else
-	<title>ANDS Vocabulary Vocabs</title>
-	@endif
+
+	<title>{{ isset($title) ? $title : 'ANDS Vocabularies Australia' }}</title>
+
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<meta content="yes" name="apple-mobile-web-app-capable">
 	@if(get_config_item('environment_name'))

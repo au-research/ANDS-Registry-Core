@@ -33,9 +33,6 @@ if(isset($vocab['related_entity'])){
 
 ?>
 
-@section('title')
-{{ htmlspecialchars($vocab['title']) }}
-@stop
 @section('og-description')
 @if(gettype($vocab) == "array" && isset($vocab['description']))
 	<?php

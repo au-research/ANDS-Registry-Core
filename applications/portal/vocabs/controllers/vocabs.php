@@ -68,6 +68,7 @@ class Vocabs extends MX_Controller
             $vocab['current_version'] = $record->current_version();
             $this->blade
                 ->set('vocab', $vocab)
+                ->set('title', $vocab['title'].' - Research Vocabularies Australia')
                 ->render('vocab');
         } else {
             throw new Exception('No Record found with slug: ' . $slug);
@@ -242,6 +243,7 @@ class Vocabs extends MX_Controller
         $this->blade
             ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl'))
             ->set('vocab', $vocab)
+            ->set('title', 'Edit - '.$vocab->title.' - Research Vocabularies Australia')
             ->render('cms');
     }
 
@@ -259,7 +261,17 @@ class Vocabs extends MX_Controller
             'page' => $slug
         );
         vocab_log_terms($event);
+        $title = '';
+        switch($slug) {
+            case 'about' : $title = 'About';break;
+            case 'feedback' : $title = 'Feedback';break;
+            case 'contribute' : $title = 'Publish a Vocabulary';break;
+            case 'use' : $title = 'Use a Vocabulary';break;
+            case 'disclaimer': $title = 'Disclaimer'; break;
+            case 'privacy': $title = 'Privacy'; break;
+        }
         $this->blade
+            ->set('title', $title.' - Research Vocabularies Australia')
             ->render($slug);
     }
 
@@ -359,6 +371,7 @@ class Vocabs extends MX_Controller
         vocab_log_terms($event);
         $this->blade
             ->set('owned_vocabs', $owned)
+            ->set('title', 'My Vocabs - Research Vocabularies Australia')
             ->render('myvocabs');
     }
 

@@ -23,11 +23,10 @@
                         <ul>
                             <li class="cat-item"> <a href="{{portal_url()}}" title="">Home</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('vocabs/page/about')}}" title="">About</a> </li>
-                            <li class="cat-item"> <a href="{{portal_url()}}profile" title="">My Vocabs</a> </li>
+                            <li class="cat-item"> <a href="{{portal_url('vocabs/myvocabs')}}" title="">My Vocabs</a> </li>
                             <li class="cat-item myCustomTrigger"> <a href="" title="">Contact us</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('vocabs/page/disclaimer')}}" title="">Disclaimer</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('vocabs/page/privacy')}}" title="">Privacy Policy</a> </li>
-                            <!-- <li class="cat-item"> <a href="{{portal_url('page/help')}}" title="">Help</a> </li> -->
                         </ul>
                     </div>
                 </div>
