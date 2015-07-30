@@ -62,6 +62,7 @@
                 $scope.mode = 'edit';
                 $scope.decide = true;
                 $log.debug($scope.form.cms);
+                $scope.vocab.creation_date = new Date(data.message.creation_date);
             });
         }
 
