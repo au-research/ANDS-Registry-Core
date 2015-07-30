@@ -1,23 +1,28 @@
 <?php
-$relatedSearchQuery = portal_url().'search/#!/related_'.$ro->core['class'].'_id='.$ro->core['id'];
-if($ro->identifiermatch && sizeof($ro->identifiermatch) > 0){
-foreach($ro->identifiermatch as $mm)
-{
-$relatedSearchQuery .= '/related_'.$ro->core['class'].'_id='.$mm['registry_object_id'];
+$class = $ro->core['class'];
+if ($ro->core['class'] == 'party') {
+    if ($ro->core['type'] == 'person') {
+        $class = 'party_one';
+    } elseif ($ro->core['type'] == 'group') {
+        $class = 'party_multi';
+    }
 }
+$relatedSearchQuery = portal_url() . 'search/#!/related_' . $class . '_id=' . $ro->core['id'];
+if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
+    foreach ($ro->identifiermatch as $mm) {
+        $relatedSearchQuery .= '/related_' . $ro->core['class'] . '_id=' . $mm['registry_object_id'];
+    }
 }
 ?>
-
 
 @if($ro->relationships && isset($ro->relationships['party_one']))
     @foreach($ro->relationships['party_one'] as $col)
         @if($col['slug'] && $col['registry_object_id'])
         <?php
-        $description = '';
-        if(isset($col['relation_description']) && $col['relation_description']!='')
-        {
-            $description = 'tip="'.$col['relation_description'].'"';
-        }
+            $description = '';
+            if (isset($col['relation_description']) && $col['relation_description'] != '') {
+                $description = 'tip="' . $col['relation_description'] . '"';
+            }
         ?>
         <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" {{$description}} class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}} <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}) </small></a>
         @elseif(isset($col['identifier_relation_id']))
@@ -33,11 +38,10 @@ $relatedSearchQuery .= '/related_'.$ro->core['class'].'_id='.$mm['registry_objec
     @foreach($ro->relationships['party_multi'] as $col)
         @if($col['slug'] && $col['registry_object_id'])
         <?php
-        $description = '';
-        if(isset($col['relation_description']) && $col['relation_description']!='')
-        {
-            $description = 'tip="'.$col['relation_description'].'"';
-        }
+            $description = '';
+            if (isset($col['relation_description']) && $col['relation_description'] != '') {
+                $description = 'tip="' . $col['relation_description'] . '"';
+            }
         ?>
         <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" {{$description}} class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}} <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}) </small></a>
         @elseif(isset($col['identifier_relation_id']))
