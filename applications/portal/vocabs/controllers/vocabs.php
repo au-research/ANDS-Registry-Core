@@ -300,6 +300,7 @@ class Vocabs extends MX_Controller
             ->setFacetOpt('field', 'access')
             ->setFacetOpt('field', 'format')
             ->setFacetOpt('field', 'licence')
+            ->setFacetOpt('sort', 'index asc')
             ->setFacetOpt('mincount', '1');
 
         //highlighting
