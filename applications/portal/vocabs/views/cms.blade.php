@@ -61,7 +61,11 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="container" ng-if="decide">
+		<div class="alert alert-success element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="success_message">
+			<ul> <li ng-repeat="msg in success_message" ng-bind-html="msg">[[ msg ]]</li> </ul>
+		</div>
 		<form name="form.cms" novalidate>
 			<div class="row">
 				<div class="col-md-8">
