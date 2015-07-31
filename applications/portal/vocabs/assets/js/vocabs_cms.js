@@ -10,6 +10,12 @@
         .module('app')
         .controller('addVocabsCtrl', addVocabsCtrl);
 
+    Date.prototype.isValid = function () {
+        // An invalid date object returns NaN for getTime() and NaN is the only
+        // object not strictly equal to itself.
+        return this.getTime() === this.getTime();
+    };
+
     function addVocabsCtrl($log, $scope, $location, $modal, vocabs_factory) {
 
         $scope.form = {};
@@ -62,7 +68,14 @@
                 $scope.mode = 'edit';
                 $scope.decide = true;
                 $log.debug($scope.form.cms);
-                $scope.vocab.creation_date = new Date(data.message.creation_date);
+                var dateVal = new Date(data.message.creation_date);
+                if(dateVal.isValid()){
+                    $scope.vocab.creation_date = data.message.creation_date;
+                }
+                else{
+                    $scope.vocab.creation_date = new Date();
+                }
+
             });
         }
 
@@ -285,6 +298,13 @@
                         }
                         vocabs_factory.get($scope.vocab.slug).then(function (data) {
                             $scope.vocab = data.message;
+                            var dateVal = new Date(data.message.creation_date);
+                            if(dateVal.isValid()){
+                                $scope.vocab.creation_date = data.message.creation_date;
+                            }
+                            else{
+                                $scope.vocab.creation_date = new Date();
+                            }
                         });
                     }
                 });
