@@ -131,11 +131,11 @@
                     return false
                 }
 
-                //at least 1 identifier
-                if (!$scope.entity || !$scope.entity.identifiers || $scope.entity.identifiers.length == 0) {
-                    $scope.error_message = 'At least 1 identifier is required';
-                    return false
-                }
+                //at least 1 identifier, changed CC-1257, identifier no longer required
+                // if (!$scope.entity || !$scope.entity.identifiers || $scope.entity.identifiers.length == 0) {
+                //     $scope.error_message = 'At least 1 identifier is required';
+                //     return false
+                // }
 
 
                 return true;
