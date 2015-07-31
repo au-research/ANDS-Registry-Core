@@ -164,6 +164,16 @@ class Analytics extends MX_Controller
         echo json_encode($result);
     }
 
+    public function getOrg() {
+        $this->output->set_header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+
+        //get a list of all organisational roles
+        $this->load->model('summary');
+        $result = $this->summary->getOrgs();
+        echo json_encode($result);
+    }
+
     public function indexLog($date = '2015-06-01')
     {
         $this->output->set_header('Content-type: application/json');
