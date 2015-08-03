@@ -10,9 +10,9 @@ class Summary extends CI_Model
     public function get($filters) {
         $this->load->library('ElasticSearch');
 
+        //setup
         $this->elasticsearch->init()->setPath('/logs/production/_search');
-        $this->elasticsearch
-            ->setOpt('from', 0)->setOpt('size', 0)
+        $this->elasticsearch->setOpt('from', 0)->setOpt('size', 0)
             ->mustf('term', 'is_bot', 'false');
 
         //date range
@@ -185,7 +185,7 @@ class Summary extends CI_Model
             //get Data sources
             if ($datasources = $this->get_datasources($row['role_id'])) {
                 $role['groups'] = [];
-                $role['data_sources'][] = $datasources;
+                $role['data_sources'] = $datasources;
                 //get groups by this data source
                 foreach ($datasources as $ds) {
                     $role['groups'] = array_merge($role['groups'], $this->getDataSourceGroups($ds['data_source_id']));

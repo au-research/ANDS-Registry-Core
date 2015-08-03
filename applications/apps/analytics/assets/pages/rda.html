@@ -15,10 +15,12 @@
                     <h5>RDA Analytics</h5>
                 </div>
                 <div class="widget-content">
-                    <form class="form-horizontal" ng-submit="vm.getData()">
+                    <form class="form form-horizontal" ng-submit="vm.getData()">
                         <div class="control-group">
-                            <label for="">Date Range</label>
-                            <input date-range-picker class="form-control date-picker" type="text" ng-model="vm.filters.period" ng-change="vm.getData()"/>
+                            <label for="" class="control-label">Date Range</label>
+                            <div class="controls">
+                                <input date-range-picker class="form-control date-picker" type="text" ng-model="vm.filters.period" ng-change="vm.getData()"/>
+                            </div>
                         </div>
                     </form>
                 </div>
