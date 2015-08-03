@@ -5,11 +5,14 @@
         ng-if="chart.data.length > 0"
         data="chart.data"
         labels="chart.labels"
-        legend="true">
+        legend="false">
 </canvas>
 <table class="table">
-    <tr ng-repeat="(pos,label) in chart.labels">
+    <tr ng-repeat="(pos,label) in chart.labels" ng-if="showzero || chart.data[pos] > 0">
         <td>{{ label }}</td>
         <td>{{ chart.data[pos] }}</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" ng-model="showzero"> Show Zero</td>
     </tr>
 </table>

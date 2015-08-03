@@ -28,7 +28,6 @@ class Dois extends CI_Model
                 'doi', array('terms' => array('field' => 'doi'))
             );
         $search_result = $this->elasticsearch->search();
-        // dd($search_result);
         $result = array(
             'total' => $search_result['hits']['total'],
             'missing_doi' => $search_result['aggregations']['missing_doi']['doc_count']
@@ -44,30 +43,29 @@ class Dois extends CI_Model
      * @param $filters
      * @return array
      */
-    public function getMinted($filters)
+    public function getDOIActivityStat($filters)
     {
         $result = array();
-        $group = $filters['group']['value'];
 
-        //get client id
-        $query = $this->doi_db->get_where('doi_client', array('client_name' => $group))->first_row(true);
-        $client_id = isset($query['client_id']) ? $query['client_id'] : false;
+        if (isset($filters['doi_app_id'])) {
+            foreach ($filters['doi_app_id'] as $app_id) {
+                $query = $this->doi_db->get_where('doi_client', ['app_id'=>$app_id])->first_row(true);
+                $client_id = isset($query['client_id']) ? $query['client_id'] : false;
+                if ($client_id) {
+                    $query = $this->doi_db
+                        ->select('activity, count(*) as count')
+                        ->from('activity_log')
+                        ->where('client_id', $client_id)
+                        ->group_by('activity')->get();
 
+                    if ($query->num_rows() > 0) {
+                        $result[$app_id] = $query->result_array();
+                    }
 
-        //get activity by client_id
-        if ($client_id) {
-            $query = $this->doi_db
-                ->select('activity, count(*) as count')
-                ->from('activity_log')
-                ->where('client_id', $client_id)
-                ->group_by('activity')->get();
-
-            if ($query->num_rows() > 0) {
-                $result = $query->result_array();
-            }
-
-            foreach ($result as &$res) {
-                if (isset($res['count'])) $res['count'] = (int)$res['count'];
+                    foreach ($result[$app_id] as &$res) {
+                        if (isset($res['count'])) $res['count'] = (int)$res['count'];
+                    }
+                }
             }
         }
 
@@ -85,19 +83,22 @@ class Dois extends CI_Model
         $this->load->library('elasticsearch');
 
         $result = [];
-        //get client id
-        $query = $this->doi_db->get_where('doi_client', array('client_name' => $filters['group']['value']))->first_row(true);
-        $client_id = isset($query['client_id']) ? $query['client_id'] : false;
 
-        if ($client_id) {
-            $search_result = $this->elasticsearch->init()->setPath('/report/doi/' . $client_id)->get(false);
-            if (isset($search_result['found']) && $search_result['found']) {
-                return $search_result['_source'];
+        if (isset($filters['doi_app_id'])) {
+            foreach ($filters['doi_app_id'] as $app_id) {
+                $query = $this->doi_db->get_where('doi_client', ['app_id'=>$app_id])->first_row(true);
+                $client_id = isset($query['client_id']) ? $query['client_id'] : false;
+                if ($client_id) {
+                    $search_result = $this->elasticsearch->init()->setPath('/report/doi/' . $client_id)->get(false);
+                    if (isset($search_result['found']) && $search_result['found']) {
+                        $result[$app_id] = $search_result['_source'];
+                    }
+                }
             }
+            return $result;
         } else {
             return $result;
         }
-        return $result;
     }
 
 

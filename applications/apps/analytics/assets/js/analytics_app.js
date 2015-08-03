@@ -29,6 +29,17 @@
                     }
                 }
             })
+            .when('/doi/:role_id', {
+                templateUrl: apps_url+'assets/analytics/pages/doi.html',
+                controller: 'doiCtrl',
+                controllerAs: 'vm',
+                resolve: {
+                    org: function(analyticFactory, $route) {
+                        var id = $route.current.params.role_id;
+                        return analyticFactory.getOrg(id);
+                    }
+                }
+            })
         ;
     }
 

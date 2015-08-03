@@ -126,11 +126,13 @@ class Summary extends CI_Model
         $this->elasticsearch->init()->setPath($path.'_search');
 
         if (isset($filters['class'])) {
-            $this->elasticsearch->andf('term', 'class', $filters['class']);
+            $this->elasticsearch->mustf('term', 'class', $filters['class']);
         }
 
-        if (isset($filters['group'])) {
-            $this->elasticsearch->andf('term', $filters['group']['type'], $filters['group']['value']);
+        if (isset($filters['groups'])) {
+            foreach ($filters['groups'] as $group) {
+                $this->elasticsearch->shouldf('term', 'group', $group);
+            }
         }
 
         if (isset($filters['ctype'])) {

@@ -27,6 +27,7 @@ class Analytics extends MX_Controller
             'analytics_app',
             'main_ctrl',
             'rda_ctrl',
+            'doi_ctrl',
             'analytics_chart_directive',
             'analytics_filter_ctrl',
             'analytics_filter_service',
@@ -162,8 +163,8 @@ class Analytics extends MX_Controller
                 $search_results = $this->summary->getStat('/rda/production/', $filters);
                 $result = $search_results['aggregations']['portal_cited']['buckets'];
                 break;
-            case 'doi_minted':
-                $result = $this->dois->getMinted($filters);
+            case 'doi_activity':
+                $result = $this->dois->getDOIActivityStat($filters);
                 break;
             case 'doi_client':
                 $result = $this->dois->getClientStat($filters);

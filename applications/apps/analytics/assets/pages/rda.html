@@ -66,6 +66,34 @@
 
                 </div>
             </div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <h5>DOI Analytics</h5>
+                </div>
+                <div class="widget-content container-fluid">
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <chart cdata="vm.doiChartData" type="'pie'"></chart>
+                        </div>
+                        <div class="span6">
+                            <h5>DOI Activity Data</h5>
+                            <ul>
+                               <li ng-repeat="doi_app_id in vm.org.doi_app_id">{{ doi_app_id }}</li>
+                            </ul>
+                            <chart cdata="vm.doiActivityChartData" type="'pie'"></chart>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <h5>Link Checker Report: </h5>
+                        <div ng-repeat="report in vm.linkCheckerReport" style="max-height:200px;overflow:auto">
+                            <pre>{{ report }}</pre>
+                        </div>
+                        <a href="" class="btn btn-primary">Re-run link checker report</a>
+                    </div>
+
+                </div>
+            </div>
         </div>
 
         <div class="span4">
@@ -86,6 +114,8 @@
                     <chart cdata="vm.viewGroupAllTimeChartData" type="'pie'"></chart>
                     <h5>All Time Search breakdown by group</h5>
                     <chart cdata="vm.searchGroupAllTimeChartData" type="'pie'"></chart>
+                    <h5>All Time Thomson Reuter cited</h5>
+                    <chart cdata="vm.trChartData" type="'pie'"></chart>
                 </div>
             </div>
 

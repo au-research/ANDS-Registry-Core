@@ -10,6 +10,7 @@
             getGroups: getGroups,
             getEvents: getEvents,
             getOrg: getOrg,
+            getStat: getStat,
             allTimeStats: function(filters){
                 var ff = {};
                 angular.copy(filters, ff);
@@ -21,6 +22,12 @@
         function getOrg(id) {
             var params = id ? '?role_id='+id : '';
             return $http.get(apps_url+'analytics/getOrg/'+params)
+                    .then(returnRaw)
+                    .catch(handleError);
+        }
+
+        function getStat(type, filters) {
+            return $http.post(apps_url+'analytics/getStat/'+type, {filters:filters})
                     .then(returnRaw)
                     .catch(handleError);
         }

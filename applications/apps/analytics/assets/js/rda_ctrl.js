@@ -15,9 +15,10 @@
         vm.org = org;
         vm.filters = filterService.getFilters();
         vm.filters['groups'] = vm.org.groups;
+        vm.filters['doi_app_id'] = vm.org.doi_app_id;
 
         $scope.$watch('vm.filters', function(data){
-            if (data) vm.getRDASummaryData(vm.filters);
+            if (data) vm.getRDASummaryData();
         }, true);
 
         vm.getRDASummaryData = function() {
@@ -53,6 +54,7 @@
                 if (data.aggs.qstat) vm.qstat = data.aggs.qstat;
             });
 
+            //all time stats
             analyticFactory.allTimeStats(vm.filters).then(function(data){
                 vm.alltime = data;
                 //parse groups
@@ -60,11 +62,71 @@
                 vm.searchGroupAllTimeChartData = {labels: [], data: [] }
                 angular.forEach(data.group_event, function(obj, index){
                     vm.viewGroupAllTimeChartData.labels.push(index);
-                    vm.searchGroupAllTimeChartData.labels.push(index);
                     vm.viewGroupAllTimeChartData.data.push(obj['portal_view']);
+                    vm.searchGroupAllTimeChartData.labels.push(index);
                     vm.searchGroupAllTimeChartData.data.push(obj['portal_search']);
                 });
             });
+
+            //get cited
+            analyticFactory.getStat('tr', vm.filters).then(function(data){
+                vm.trChartData = {
+                    labels: [], data: []
+                };
+                angular.forEach(data, function(stat){
+                    vm.trChartData.labels.push(stat.key+' Cited');
+                    vm.trChartData.data.push(stat.doc_count);
+                });
+            });
+
+            //get doi breakdown
+            analyticFactory.getStat('doi', vm.filters).then(function(data){
+                vm.doiChartData = {
+                    labels: ["Missing DOI", "Has DOI"],
+                    data: [data['missing_doi'], data['has_doi']]
+                }
+            });
+
+            //doi activity
+            analyticFactory.getStat('doi_activity', vm.filters).then(function(data){
+                vm.doiActivityChartData = {
+                    labels:[], data:[]
+                }
+                angular.forEach(data, function(doi){
+                    angular.forEach(doi, function(obj, index){
+                        if (vm.doiActivityChartData.labels.indexOf(obj.activity) > -1) {
+                            var index = vm.doiActivityChartData.labels.indexOf(obj.activity);
+                            vm.doiActivityChartData.data[index]+=obj.count;
+                        } else {
+                            vm.doiActivityChartData.labels.push(obj.activity);
+                            vm.doiActivityChartData.data.push(obj.count);
+                        }
+                    });
+                })
+            });
+
+            //link check
+            analyticFactory.getStat('doi_client', vm.filters).then(function(data){
+                vm.brokenLinksByAppID = {
+                    labels:[],data:[]
+                }
+                vm.linkCheckerReport = [];
+                angular.forEach(data, function(obj, index){
+                    vm.brokenLinksByAppID.labels.push('Broken Link for : '+obj.client_name);
+                    vm.brokenLinksByAppID.data.push(obj.url_broken_num);
+                    vm.linkCheckerReport.push(obj.linkchecker_report);
+                });
+            });
+        }
+
+        function removeZero(chartData) {
+            angular.forEach(chartData.data, function(obj, index){
+                if (obj==0 && index > -1) {
+                    chartData.data.splice(index, 1);
+                    chartData.labels.splice(index, 1);
+                }
+            });
+            return chartData;
         }
 
         vm.onClick = function (points, evt) {
