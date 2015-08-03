@@ -122,8 +122,8 @@ class Unittest extends MX_Controller
         $result = json_decode($result, true);
         $this->unit->run($result, 'is_array', 'Array return');
 
-        $this->unit->run($result['result'], 'is_array', 'Has Result');
-        foreach ($result['result'] as $date => $res) {
+        $this->unit->run($result['dates'], 'is_array', 'Has Result');
+        foreach ($result['dates'] as $date => $res) {
             $this->unit->run($res, 'is_array', 'Has result for ' . $date);
             foreach ($res as $key => $data) {
                 $this->unit->run($data, 'is_int', 'Has data for ' . $key . ' ' . $data);

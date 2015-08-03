@@ -18,13 +18,15 @@ class Analytics extends MX_Controller
      */
     public function index()
     {
-        acl_enforce('REGISTRY_STAFF');
+        // acl_enforce('REGISTRY_STAFF');
         $data = array(
             'title' => 'Analytics',
         );
 
         $data['scripts'] = array(
             'analytics_app',
+            'main_ctrl',
+            'rda_ctrl',
             'analytics_chart_directive',
             'analytics_filter_ctrl',
             'analytics_filter_service',
@@ -35,7 +37,8 @@ class Analytics extends MX_Controller
         );
 
         $data['app_js_lib'] = array(
-            'angular/angular.js',
+            'angular/angular.min.js',
+            'angular-route/angular-route.min.js',
             'Chart.js/Chart.min.js',
             'angular-chart.js/angular-chart.js',
             'moment/moment.js',
@@ -73,8 +76,11 @@ class Analytics extends MX_Controller
         $filters = isset($request['filters']) ? $request['filters'] : $filters;
 
         $this->load->model('summary');
+        $summary_result = $this->summary->get($filters);
         $result = array(
-            'result' => $this->summary->get($filters),
+            'dates' => $summary_result['dates'],
+            'group_event' => $summary_result['group_event'],
+            'aggs' => $summary_result['aggs'],
             'filters' => $filters,
         );
         echo json_encode($result);
@@ -91,14 +97,19 @@ class Analytics extends MX_Controller
         $this->elasticsearch->init()->setPath('/logs/production/_search');
         $this->elasticsearch
             ->setOpt('from', 0)->setOpt('size', 20)
-            ->andf('term', $filters['group']['type'], $filters['group']['value'])
-            ->andf('term', 'is_bot', 'false')
-            ->andf('range', 'date',
+            ->mustf('term', 'is_bot', 'false')
+            ->mustf('range', 'date',
                 array(
                     'from' => $filters['period']['startDate'],
                     'to' => $filters['period']['endDate']
                 )
             );
+
+        //groups
+        foreach ($filters['groups'] as $group) {
+            $this->elasticsearch->shouldf('term', 'group', $group);
+        }
+
         $this->elasticsearch
             ->setAggs(
                 'rostat', array('terms' => array('field' => 'roid'))
@@ -184,7 +195,16 @@ class Analytics extends MX_Controller
             $this->cache->file->save($cache_id, $result, 10);
         }
 
-        echo json_encode($result);
+        $role_id = $this->input->get('role_id') ? $this->input->get('role_id') : false;
+        if ($role_id) {
+            foreach ($result as $r) {
+                if ($r['role_id']==$role_id) {
+                    echo json_encode($r);
+                }
+            }
+        } else {
+            echo json_encode($result);
+        }
     }
 
     public function indexLog($date = '2015-06-01')
@@ -422,9 +442,14 @@ class Analytics extends MX_Controller
     {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
-        $this->load->model('registry/registry_object/registry_objects', 'ro');
-        $ro = $this->ro->getByID(340918);
-        echo $ro->getPortalStat('accessed');
+        $filters = array(
+            'log' => 'portal',
+            'period' => ['startDate' => '2015-06-01', 'endDate' => '2015-06-04'],
+            'groups' => ['PARADISEC', 'AuScope', 'Griffith Univesrity'],
+            'dimensions' => ['portal_view', 'portal_search'],
+        );
+        $this->load->model('summary');
+        echo json_encode($this->summary->get($filters));
     }
 
     /**

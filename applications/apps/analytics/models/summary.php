@@ -9,72 +9,115 @@ class Summary extends CI_Model
 
     public function get($filters) {
         $this->load->library('ElasticSearch');
-        $filters['period']['startDate'] = date('Y-m-d', strtotime($filters['period']['startDate']));
-        $filters['period']['endDate'] = date('Y-m-d', strtotime($filters['period']['endDate']));
+
         $this->elasticsearch->init()->setPath('/logs/production/_search');
         $this->elasticsearch
-            ->setOpt('from', 0)->setOpt('size', 50000)
-            ->andf('term', 'is_bot', 'false')
-            ->andf('term', $filters['group']['type'], $filters['group']['value'])
-            ->andf('range', 'date',
-                array (
+            ->setOpt('from', 0)->setOpt('size', 0)
+            ->mustf('term', 'is_bot', 'false');
+
+        //date range
+        // unset($filters['period']);
+        if (isset($filters['period'])) {
+            $filters['period']['startDate'] = date('Y-m-d', strtotime($filters['period']['startDate']));
+            $filters['period']['endDate'] = date('Y-m-d', strtotime($filters['period']['endDate']));
+            $this->elasticsearch->mustf('range', 'date',
+                [
                     'from' => $filters['period']['startDate'],
                     'to' => $filters['period']['endDate']
-                )
+                ]
             );
+        }
 
-        //dimensions
+        //grouping
+        if (isset($filters['groups'])) {
+            foreach ($filters['groups'] as $group) {
+                $this->elasticsearch->shouldf('term', 'group', $group);
+            }
+        }
+
+        //aggregation for stats
         $this->elasticsearch
             ->setAggs('date',
                 array('date_histogram' =>
                     array(
                         'field'=>'date',
                         'format' => 'yyyy-MM-dd',
-                        'interval' => 'day',
-                        // 'aggs'=>array(
-                        //     'events' => array('value_count'=>array('field'=>'event'))
-                        // )
+                        'interval' => 'day'
+                    ),
+                    'aggs'=>array(
+                        'events' => array('terms'=>array('field'=>'event'))
                     )
                 )
             )
             ->setAggs('event',
-                array('value_count'=>array('field'=>'event'))
+                array(
+                    'terms'=>array('field'=>'event'),
+                    'aggs' => [
+                        'events' => ['terms'=>['field'=>'group']]
+                    ]
+                )
             )
-            ;
-        // $this->elasticsearch
-        //     ->setFacet('group', array('terms'=>array('field'=>'group')))
-        //     ->setFacet('event', array('terms'=>array('field'=>'event')));
+            ->setAggs('group',
+                array(
+                    'terms'=>array('field'=>'group'),
+                    'aggs' => [
+                        'event' => ['terms'=>['field'=>'event']]
+                    ]
+                )
+            )
+            ->setAggs(
+                'rostat', array('terms' => array('field' => 'roid'))
+            )
+            ->setAggs(
+                'qstat', array('terms' => array('field' => 'q'))
+            )
+        ;
 
         $search_result = $this->elasticsearch->search();
+        // dd($this->elasticsearch->getOptions());
         // dd($filters);
-        // dd($search_result);
+        // dd($search_result['aggregations']['date']);
 
+        //prepare result
+        $result = [
+            'dates' => [],
+            'group_event' => [],
+            'aggs' => $search_result['aggregations']
+        ];
 
-        $ranges = date_range(
-            $filters['period']['startDate'],
-            $filters['period']['endDate'],
-            '+1day', 'Y-m-d'
-        );
-
-        $result = array();
-
-        foreach ($ranges as $date) {
-            $result[$date] = array('total' => 0);
-            foreach ($filters['dimensions'] as $dimension) {
-                $result[$date][$dimension] = 0;
-            }
-        }
-
-        foreach ($search_result['hits']['hits'] as $hit) {
-            $content = $hit['_source'];
-            $date = date('Y-m-d', strtotime($content['date']));
-            $result[$date]['total']++;
-            foreach ($filters['dimensions'] as $dimension) {
-                if ($content['event']==$dimension) {
-                    $result[$date][$dimension]++;
+        //dates
+        foreach ($search_result['aggregations']['date']['buckets'] as $date) {
+            if (sizeof($date['events']['buckets']) > 0) {
+                foreach ($date['events']['buckets'] as $event) {
+                    $result['dates'][$date['key_as_string']][$event['key']] = $event['doc_count'];
                 }
             }
         }
+
+        //padding for dates
+        foreach ($result['dates'] as &$date) {
+            $date['total'] = 0;
+            foreach ($filters['dimensions'] as $dimension) {
+                if (!isset($date[$dimension])) $date[$dimension] = 0;
+                $date['total'] += $date[$dimension];
+            }
+        }
+
+        //group_event padding
+        foreach ($filters['groups'] as $group) {
+            $result['group_event'][$group] = array();
+            foreach ($filters['dimensions'] as $dimension) {
+                $result['group_event'][$group][$dimension] = 0;
+            }
+        }
+
+        //group_event
+        foreach ($search_result['aggregations']['group']['buckets'] as $group) {
+            foreach ($group['event']['buckets'] as $event) {
+                $result['group_event'][$group['key']][$event['key']] = $event['doc_count'];
+            }
+        }
+
         return $result;
     }
 

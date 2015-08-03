@@ -8,9 +8,22 @@
         return {
             summary: getSummaryData,
             getGroups: getGroups,
-            testdata: getTestData,
-            getEvents: getEvents
+            getEvents: getEvents,
+            getOrg: getOrg,
+            allTimeStats: function(filters){
+                var ff = {};
+                angular.copy(filters, ff);
+                delete ff['period'];
+                return getSummaryData(ff);
+            }
         };
+
+        function getOrg(id) {
+            var params = id ? '?role_id='+id : '';
+            return $http.get(apps_url+'analytics/getOrg/'+params)
+                    .then(returnRaw)
+                    .catch(handleError);
+        }
 
         function getEvents(filters) {
             return $http.post(apps_url+'analytics/getEvents', {filters:filters})
@@ -20,36 +33,12 @@
 
         function getSummaryData(filters) {
             return $http.post(apps_url+'analytics/summary', {filters:filters})
-                    .then(returnData)
+                    .then(returnRaw)
                     .catch(handleError);
-        }
-
-        function getTestData() {
-            return $http.get(apps_url+'analytics/summary')
-                        .then(returnData)
-                        .catch(handleError);
         }
 
         function returnRaw(response) {
             return response.data;
-        }
-
-        function returnData(response) {
-            var result = {
-                labels: [],
-                series: ['View', 'Search'],
-                data: [[],[]]
-            };
-            angular.forEach(response.data.result, function (obj, index) {
-                result.labels.push(index);
-                result.data[0].push(obj['portal_view']);
-                if (obj['portal_search']) {
-                    result.data[1].push(obj['portal_search'])
-                } else {
-                    result.data[1].push(0);
-                }
-            });
-            return result;
         }
 
         function getGroups() {

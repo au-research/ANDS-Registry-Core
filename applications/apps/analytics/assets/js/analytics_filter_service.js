@@ -7,9 +7,6 @@
         var filters = {
             'log': 'portal',
             'period': {'startDate': '2015-06-01', 'endDate': '2015-06-06'},
-            'group': {
-                'type':'group', 'value':'Australian Antarctic Data Centre'
-            },
             'dimensions': [
                 'portal_view', 'portal_search'
             ]

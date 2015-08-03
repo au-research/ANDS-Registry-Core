@@ -1,0 +1,39 @@
+<div class="content-header">
+    <h1>Analytics Home</h1>
+</div>
+<div id="breadcrumb" style="clear:both;">
+    <a href="#/"><i class="icon-home"></i> Home</a>
+    <a href="#/" class="current">Analytics</a>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <form action="" class="form-search">
+            <div class="input-append">
+                <input type="text" class="search-query" ng-model="vm.query" placeholder="Type to filter">
+                <button class="btn">Filter</button>
+            </div>
+        </form>
+    </div>
+    <div class="widget-box" ng-repeat="org in vm.orgs | filter:vm.query">
+        <div class="widget-title">
+            <h5>{{ org.name }}</h5>
+        </div>
+        <div class="widget-content">
+            <div ng-if="org.groups">
+                <h5>Groups: </h5>
+                <ul>
+                   <li ng-repeat="group in org.groups">{{ group }}</li>
+                </ul>
+                <a href="#/rda/{{ org.role_id }}" class="btn btn-primary">View RDA Stats</a>
+            </div>
+            <div ng-if="org.doi_app_id">
+                <h5>DOI App IDs: </h5>
+                <ul>
+                    <li ng-repeat="doi in org.doi_app_id">{{ doi }}</li>
+                </ul>
+                <a href="#" class="btn btn-primary">View DOI Stats</a>
+            </div>
+        </div>
+    </div>
+</div>

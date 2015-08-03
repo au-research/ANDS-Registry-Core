@@ -2,7 +2,25 @@
     'use strict';
     angular.module('analytic_app')
         .directive('chart', chartDirective);
-    function chartDirective($log, statFactory, filterService) {
+
+
+    function chartDirective($log) {
+        return {
+            templateUrl: apps_url + 'assets/analytics/templates/chartjs.html',
+            scope: {
+                cdata: '='
+            },
+            link: function(scope, elem, attr, ngModel) {
+                scope.chart = {};
+                scope.$watch('cdata', function(data){
+                    if (data) scope.chart = data;
+                });
+            }
+        }
+    }
+
+    //deprecated, due for removal
+    function chartDirective_old($log, statFactory, filterService) {
         return {
             templateUrl: apps_url + 'assets/analytics/templates/chartjs.html',
             scope: {

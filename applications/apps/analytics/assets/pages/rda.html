@@ -1,0 +1,95 @@
+<div class="content-header">
+    <h1>RDA Analytics</h1>
+</div>
+<div id="breadcrumb" style="clear:both;">
+    <a href="#/"><i class="icon-home"></i> Home</a>
+    <a href="#/">Analytics</a>
+    <a href="#/{{vm.org.role_id}}" class="current">{{ vm.org.name }} - RDA statistics</a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+
+        <div class="span8">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <h5>RDA Analytics</h5>
+                </div>
+                <div class="widget-content">
+                    <form class="form-horizontal" ng-submit="vm.getData()">
+                        <div class="control-group">
+                            <label for="">Date Range</label>
+                            <input date-range-picker class="form-control date-picker" type="text" ng-model="vm.filters.period" ng-change="vm.getData()"/>
+                        </div>
+                    </form>
+                </div>
+                <div class="widget-content">
+                    <div class="row-fluid">
+                        <canvas
+                            ng-if="vm.rdaChartData"
+                            class="chart chart-line" data="vm.rdaChartData.data"
+                            labels="vm.rdaChartData.labels" legend="false" series="vm.rdaChartData.series"
+                            click="vm.onClick" chart-type="vm.chartType">
+                        </canvas>
+                        <div ng-if="!vm.rdaChartData && !vm.loading">No Data!</div>
+                        <div ng-if="!vm.rdaChartData && vm.loading">Loading Please Wait</div>
+                    </div>
+                </div>
+                <div class="widget-content container-fluid">
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <h5>Page View Breakdown</h5>
+                            <chart cdata="vm.viewGroupChartData" type="'pie'"></chart>
+                        </div>
+                        <div class="span6">
+                            <h5>Search Breakdown</h5>
+                            <chart cdata="vm.searchGroupChartData" type="'pie'"></chart>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-content container-fluid" ng-if="vm.rostat">
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <h5>Popular Record(s) for this period</h5>
+                            <ul>
+                                <li ng-if="vm.rostat.buckets.length == 0">No data found!</li>
+                                <li ng-repeat="ro in vm.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }} times)</li>
+                            </ul>
+                        </div>
+                        <div class="span6">
+                            <h5>Popular Search Term(s) for this period</h5>
+                            <ul>
+                                <li ng-if="vm.qstat.buckets.length == 0">No data found!</li>
+                                <li ng-repeat="q in vm.qstat.buckets">{{ q.key }} (Searched {{ q.doc_count }} times)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="span4">
+            <div class="widget-box">
+                <div class="widget-title"><h5>All Time Statistics</h5></div>
+                <div class="widget-content">
+                    <h5>All time popular record(s) view</h5>
+                    <ul>
+                        <li ng-if="vm.alltime.aggs.rostat.buckets.length == 0">No data found!</li>
+                        <li ng-repeat="ro in vm.alltime.aggs.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }} times)</li>
+                    </ul>
+                    <h5>All time popular search term(s)</h5>
+                    <ul>
+                        <li ng-if="vm.alltime.aggs.qstat.buckets.length == 0">No data found!</li>
+                        <li ng-repeat="ro in vm.alltime.aggs.qstat.buckets">{{ ro.key }} (Searched {{ ro.doc_count }} times)</li>
+                    </ul>
+                    <h5>All Time View breakdown by group</h5>
+                    <chart cdata="vm.viewGroupAllTimeChartData" type="'pie'"></chart>
+                    <h5>All Time Search breakdown by group</h5>
+                    <chart cdata="vm.searchGroupAllTimeChartData" type="'pie'"></chart>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
