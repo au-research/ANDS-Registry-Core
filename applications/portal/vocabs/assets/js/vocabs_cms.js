@@ -72,15 +72,13 @@
                 $scope.decide = true;
                 $log.debug($scope.form.cms);
                 // possible datepicker bug that thinks '2005' means milliseconds since 01/01/1970
-                $scope.creation_date = data.message.creation_date;
                 var dateVal = new Date(data.message.creation_date);
                 if(dateVal.isValid()){
-                    $scope.vocab.creation_date = data.message.creation_date;
+                    $scope.vocab.creation_date = new Date(data.message.creation_date);
                 }
                 else{
-                    $scope.vocab.creation_date = new Date();
+                    $('#creation_date').val(data.message.creation_date);
                 }
-                $('#creation_date').val(data.message.creation_date);
             });
         }
 
@@ -266,7 +264,7 @@
                 return false;
             }
 
-            $scope.vocab.creation_date = $scope.creation_date;
+            $scope.vocab.creation_date = $('#creation_date').val();
 
             if ($scope.mode == 'add' || ($scope.vocab.status == 'published' && status == 'draft')) {
                 $scope.vocab.status = status;
@@ -460,10 +458,6 @@
             } else {
                 $scope.vocab[type].splice(0, 1);
             }
-        }
-
-        $scope.setCreationDate = function() {
-            $scope.creation_date = $('#creation_date').val();
         }
 
     }

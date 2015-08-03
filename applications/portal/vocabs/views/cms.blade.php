@@ -94,7 +94,7 @@
 							<div class="form-group" ng-class="{ 'has-error' : form.cms.creation_date.$invalid }">
 								<label for="">Vocabulary Creation Date</label>
 								<p class="input-group">
-									<input type="text" id="creation_date" class="form-control" name="creation_date" required ng-model="vocab.creation_date" ng-change="setCreationDate()" placeholder="Vocabulary Creation Date" datepicker-popup="dd-MM-yyyy" is-open="$parent.opened" >
+									<input type="text" id="creation_date" class="form-control" name="creation_date" required="false" ng-model="vocab.creation_date" ng-change="setCreationDate()" placeholder="Vocabulary Creation Date" datepicker-popup="dd-MM-yyyy" is-open="$parent.opened" >
 									<span class="input-group-btn">
 										<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 									</span>
