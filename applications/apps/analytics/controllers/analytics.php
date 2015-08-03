@@ -164,13 +164,26 @@ class Analytics extends MX_Controller
         echo json_encode($result);
     }
 
+    /**
+     * Returns a list of organisational roles with groups and doi app id
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @return json
+     */
     public function getOrg() {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
 
-        //get a list of all organisational roles
-        $this->load->model('summary');
-        $result = $this->summary->getOrgs();
+        // check in the cache
+        $this->load->driver('cache');
+        $cache_id = 'org-role-analytics';
+        if(! $result = $this->cache->file->get($cache_id)) {
+            //not in the cache, get it and save it
+            $this->load->model('summary');
+            $result = $this->summary->getOrgs();
+            //save for 10 minutes
+            $this->cache->file->save($cache_id, $result, 10);
+        }
+
         echo json_encode($result);
     }
 
