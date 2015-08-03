@@ -71,6 +71,7 @@
                 $scope.mode = 'edit';
                 $scope.decide = true;
                 $log.debug($scope.form.cms);
+                // possible datepicker bug that thinks '2005' means milliseconds since 01/01/1970
                 $scope.creation_date = data.message.creation_date;
                 var dateVal = new Date(data.message.creation_date);
                 if(dateVal.isValid()){
@@ -264,7 +265,7 @@
             if (!$scope.validate()) {
                 return false;
             }
-            $log.debug($scope.creation_date_changed);
+
             $scope.vocab.creation_date = $scope.creation_date;
 
             if ($scope.mode == 'add' || ($scope.vocab.status == 'published' && status == 'draft')) {
