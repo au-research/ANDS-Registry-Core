@@ -114,6 +114,7 @@ if(isset($vocab['related_entity'])){
                             <h4>Notes</h4>
                             <p>{{ $vocab['note'] }}</p>
                         @endif
+                        @if(isset($cc)&&$cc!='')
                         <h4>Licence</h4>
                         <p>
                             @if($cc=='CC-BY')
@@ -132,6 +133,7 @@ if(isset($vocab['related_entity'])){
                             <span>Licence: {{ $cc }}</span>
                             @endif
                         </p>
+                        @endif
                     </div>
                 </div>
             </div>
