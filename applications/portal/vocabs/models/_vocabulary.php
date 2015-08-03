@@ -501,6 +501,7 @@ class _vocabulary
     {
 
         //pre-update the object to make sure the versions are current
+
         $this->populate_from_db($this->prop['id']);
 
         //deleting the versions that is not in the income feed and not blank
@@ -516,12 +517,15 @@ class _vocabulary
                 }
             }
             $deleted = array_diff($existing, $incoming);
-
-            foreach ($deleted as $id) {
-                $db->delete('versions', array('id' => $id));
+            if(sizeof($deleted) > 0){
+                $ci =& get_instance();
+                $vocab = $ci->load->model('vocabularies', 'vocab');
+                foreach ($deleted as $id) {
+                    $result = $vocab->removeVersion($this->prop['id'], $id);
+                    $this->log('Removed version: ' . $result);
+                }
             }
-
-            if (sizeof($deleted) > 0) $this->log('Removed versions: ' . implode(',', $deleted));
+            //if (sizeof($deleted) > 0) $this->log('Removed versions: ' . implode(',', $deleted));
 
             foreach ($data['versions'] as $version) {
                 if (isset($version['id']) && $version['id'] != "" && $version['vocab_id'] == $this->prop['id']) {
@@ -660,11 +664,9 @@ class _vocabulary
             $task_id = $db->insert_id();
             if (!$result) throw new Exception($db->_error_message());
             $this->log('Task ' . $task_id . ' added and waiting for toolkit to process');
-
-            //hit Toolkit
-            $vocab_config = get_config_item('vocab_config');
-            $toolkit_url = $vocab_config['toolkit_url'];
-            $content = @file_get_contents($toolkit_url . 'runTask/' . $task_id);
+            $ci =& get_instance();
+            $vocab = $ci->load->model('vocabularies', 'vocab');
+            $content = $vocab->runToolkitTask($task_id);
 
             //deal with content return
             if ($content) {
@@ -736,6 +738,7 @@ class _vocabulary
     private function getVersion($id, $db = false)
     {
         if (!$db) {
+            $ci =& get_instance();
             $db = $ci->load->database('vocabs', true);
         }
         $query = $db->get_where('versions', array('id' => $id));
