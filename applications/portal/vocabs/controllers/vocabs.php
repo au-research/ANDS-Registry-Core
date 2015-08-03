@@ -428,32 +428,40 @@ class Vocabs extends MX_Controller
             if ($method == 'related') {
                 $result = array();
                 $type = $this->input->get('type') ? $this->input->get('type') : false;
-                foreach ($vocabs as $vocab) {
-                    $vocab_array = $vocab->display_array();
-                    if (isset($vocab_array['related_entity'])) {
-                        foreach ($vocab_array['related_entity'] as $re) {
-                            if ($type == 'publisher') {
-                                if ($re['type'] == 'party') {
-                                    if (isset($re['relationship']) && is_array($re['relationship'])) {
-                                        foreach ($re['relationship'] as $rel) {
-                                            if ($rel == 'publishedBy') {
-                                                $re['vocab_id'] = $vocab_array['id'];
-                                                $result[] = $re;
+                if($type == 'vocabulary'){
+                    $allVocabs = $this->vocab->getAllVocabs();
+                    foreach($allVocabs as $v){
+                        $result[] = array('title'=>$v['title'],'vocab_id'=>$v['id'],'type'=>'vocabulary','identifiers'=>array('slug'=>$v['slug']));
+                    }
+                }
+                else{
+                    foreach ($vocabs as $vocab) {
+                        $vocab_array = $vocab->display_array();
+                        if (isset($vocab_array['related_entity'])) {
+                            foreach ($vocab_array['related_entity'] as $re) {
+                                if ($type == 'publisher') {
+                                    if ($re['type'] == 'party') {
+                                        if (isset($re['relationship']) && is_array($re['relationship'])) {
+                                            foreach ($re['relationship'] as $rel) {
+                                                if ($rel == 'publishedBy') {
+                                                    $re['vocab_id'] = $vocab_array['id'];
+                                                    $result[] = $re;
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                if ($re['type'] == 'party' && isset($re['relationship']) && $re['relationship'] == 'publishedBy') {
-                                    $re['vocab_id'] = $vocab_array['id'];
+                                    if ($re['type'] == 'party' && isset($re['relationship']) && $re['relationship'] == 'publishedBy') {
+                                        $re['vocab_id'] = $vocab_array['id'];
+                                        $result[] = $re;
+                                    }
+                                } elseif ($type) {
+                                    if ($re['type'] == $type) {
+                                        $re['vocab_id'] = $vocab_array['id'];
+                                        $result[] = $re;
+                                    }
+                                } else {
                                     $result[] = $re;
                                 }
-                            } elseif ($type) {
-                                if ($re['type'] == $type) {
-                                    $re['vocab_id'] = $vocab_array['id'];
-                                    $result[] = $re;
-                                }
-                            } else {
-                                $result[] = $re;
                             }
                         }
                     }

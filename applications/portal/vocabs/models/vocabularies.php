@@ -89,6 +89,21 @@ class Vocabularies extends CI_Model
         return $res;
     }
 
+    /**
+     * Returns all vocabularies as a recordset
+     * @return array()
+     */
+    public function getAllVocabs()
+    {
+        $this->vocab_db = $this->load->database('vocabs', true);
+        $result = $this->vocab_db->get('vocabularies');
+        if ($result->num_rows() == 0)
+            return false;
+        else
+            return $result->result_array();
+
+    }
+
     public function getOwned()
     {
         $result = array();
