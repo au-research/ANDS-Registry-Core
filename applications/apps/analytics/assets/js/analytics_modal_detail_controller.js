@@ -10,7 +10,9 @@
 
         vm.filters = {};
         angular.copy(vm.data.filters, vm.filters);
-        $log.debug(vm.filters);
+
+        // $log.debug(vm.filters);
+
         vm.filters.period = {
             'startDate': vm.data.date,
             'endDate': vm.data.date

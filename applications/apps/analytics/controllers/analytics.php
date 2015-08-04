@@ -30,10 +30,7 @@ class Analytics extends MX_Controller
             'doi_ctrl',
             'analytics_chart_directive',
             'ro_directive',
-            'analytics_filter_ctrl',
             'analytics_filter_service',
-            'analytics_doistat_ctrl',
-            'analytics_statfactory',
             'analytics_factory',
             'analytics_modal_detail_controller',
         );
