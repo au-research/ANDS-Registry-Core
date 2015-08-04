@@ -43,10 +43,19 @@
                 vm.viewGroupChartData = {labels: [], data: [] }
                 vm.searchGroupChartData = {labels: [], data: [] }
                 angular.forEach(data.group_event, function(obj, index){
+                    $log.debug(obj);
                     vm.viewGroupChartData.labels.push(index);
                     vm.searchGroupChartData.labels.push(index);
-                    vm.viewGroupChartData.data.push(obj['portal_view']);
-                    vm.searchGroupChartData.data.push(obj['portal_search']);
+                    if (obj['portal_view']) {
+                        vm.viewGroupChartData.data.push(obj['portal_view']);
+                    } else {
+                        vm.viewGroupChartData.data.push(0);
+                    }
+                    if (obj['portal_search']) {
+                        vm.searchGroupChartData.data.push(obj['portal_search']);
+                    } else {
+                        vm.searchGroupChartData.data.push(0);
+                    }
                 });
 
                 //parse rostat
@@ -115,6 +124,17 @@
                     vm.brokenLinksByAppID.labels.push('Broken Link for : '+obj.client_name);
                     vm.brokenLinksByAppID.data.push(obj.url_broken_num);
                     vm.linkCheckerReport.push(obj.linkchecker_report);
+                });
+            });
+
+            //quality level
+            analyticFactory.getStat('ro_ql', vm.filters).then(function(data){
+                vm.QLChartData = {
+                    labels:[], data:[]
+                }
+                angular.forEach(data, function(obj){
+                    vm.QLChartData.labels.push('Quality Level '+obj.key);
+                    vm.QLChartData.data.push(obj.doc_count);
                 });
             });
         }

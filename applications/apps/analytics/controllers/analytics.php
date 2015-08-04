@@ -180,9 +180,9 @@ class Analytics extends MX_Controller
         $filters['ctype'] = $stat;
 
         $result = array();
+        $search_result = $this->summary->getStat('/rda/production/', $filters);
         switch ($stat) {
             case 'doi':
-                $search_result = $this->summary->getStat('/rda/production/', $filters);
                 $result = array(
                     'total' => $search_result['hits']['total'],
                     'missing_doi' => $search_result['aggregations']['missing_doi']['doc_count']
@@ -190,14 +190,16 @@ class Analytics extends MX_Controller
                 $result['has_doi'] = $result['total'] - $result['missing_doi'];
                 break;
             case 'tr':
-                $search_results = $this->summary->getStat('/rda/production/', $filters);
-                $result = $search_results['aggregations']['portal_cited']['buckets'];
+                $result = $search_result['aggregations']['portal_cited']['buckets'];
                 break;
             case 'doi_activity':
                 $result = $this->dois->getDOIActivityStat($filters);
                 break;
             case 'doi_client':
                 $result = $this->dois->getClientStat($filters);
+                break;
+            case 'ro_ql':
+                $result = $search_result['aggregations']['quality_level']['buckets'];
                 break;
             default :
                 break;
@@ -409,6 +411,13 @@ class Analytics extends MX_Controller
         $total = $this->db->count_all('registry_objects');
         $chunkSize = 500;
         // $offset = 0;
+        //
+
+        //delete all ro here
+        $result = $this->elasticsearch
+            ->init()
+            ->setPath('/rda/production/')
+            ->delete();
 
         if (ob_get_level() == 0) ob_start();
         while ($offset < $total) {
@@ -429,7 +438,7 @@ class Analytics extends MX_Controller
                         'record_owner' => $ro->record_owner,
                         'group' => $ro->group,
                         'quality_level' => $ro->quality_level,
-                        'created' => date('Y-m-d\TH:i:s\Z',$ro->created),
+                        'created' => date('Y-m-d H:i:s',$ro->created),
                         'error_count' => $ro->error_count,
                         'warning_count' => $ro->warning_count,
                         'dsid' => $ro->data_source_id

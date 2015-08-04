@@ -56,6 +56,7 @@ class Dois extends CI_Model
                         ->select('activity, count(*) as count')
                         ->from('activity_log')
                         ->where('client_id', $client_id)
+                        ->like('doi_id', '10.4', 'after')
                         ->group_by('activity')->get();
 
                     if ($query->num_rows() > 0) {
@@ -67,6 +68,22 @@ class Dois extends CI_Model
                     }
                 }
             }
+        } else {
+            //get all
+            $query = $this->doi_db
+                ->select('activity, count(*) as count')
+                ->from('activity_log')
+                ->like('doi_id', '10.4', 'after')
+                ->group_by('activity')->get();
+
+            if ($query->num_rows() > 0) {
+                $result['all'] = $query->result_array();
+            }
+
+            foreach ($result['all'] as &$res) {
+                if (isset($res['count'])) $res['count'] = (int)$res['count'];
+            }
+
         }
 
         return $result;

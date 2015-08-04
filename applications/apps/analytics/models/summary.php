@@ -138,32 +138,26 @@ class Summary extends CI_Model
             }
         }
 
-        if (isset($filters['ctype'])) {
-            if ($filters['ctype']=='doi') {
-                $this->elasticsearch->setAggs(
-                    'missing_doi', array('missing'=>array('field'=>'doi'))
-                );
-            } else if($filters['ctype']=='tr') {
-                $this->elasticsearch->setAggs('portal_cited',
-                    ['terms'=>['field'=>'portal_cited']]
-                );
-            } else if($filters['ctype']=='accessed') {
-                $this->elasticsearch->setAggs('accessed',
-                    ['terms'=>['field'=>'portal_accessed']]
-                );
-            }
-        }
+        //set all the aggs
+        $this->elasticsearch
+            ->setAggs(
+                'missing_doi', array('missing'=>array('field'=>'doi'))
+            )
+            ->setAggs('portal_cited',
+                ['terms'=>['field'=>'portal_cited']]
+            )
+            ->setAggs('accessed',
+                ['terms'=>['field'=>'portal_accessed']]
+            )
+            ->setAggs('quality_level',
+                ['terms'=>['field'=>'quality_level']]
+            )
+        ;
+
         $this->elasticsearch->setOpt('size', 0);
         $search_result = $this->elasticsearch->search();
 
         return $search_result;
-
-        $result = array(
-            'total' => $search_result['hits']['total'],
-            'missing_doi' => $search_result['aggregations']['missing_doi']['doc_count']
-        );
-        $result['has_doi'] = $result['total'] - $result['missing_doi'];
-        return $result;
     }
 
     public function getOrgs() {
