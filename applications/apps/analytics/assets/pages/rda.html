@@ -15,10 +15,12 @@
                     <h5>RDA Analytics</h5>
                 </div>
                 <div class="widget-content">
-                    <form class="form-horizontal" ng-submit="vm.getData()">
+                    <form class="form form-horizontal" ng-submit="vm.getData()">
                         <div class="control-group">
-                            <label for="">Date Range</label>
-                            <input date-range-picker class="form-control date-picker" type="text" ng-model="vm.filters.period" ng-change="vm.getData()"/>
+                            <label for="" class="control-label">Date Range</label>
+                            <div class="controls">
+                                <input date-range-picker class="form-control date-picker" type="text" ng-model="vm.filters.period" ng-change="vm.getData()"/>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -52,7 +54,7 @@
                             <h5>Popular Record(s) for this period</h5>
                             <ul>
                                 <li ng-if="vm.rostat.buckets.length == 0">No data found!</li>
-                                <li ng-repeat="ro in vm.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }} times)</li>
+                                <ro obj="ro" ng-repeat="ro in vm.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }} times)</ro>
                             </ul>
                         </div>
                         <div class="span6">
@@ -103,7 +105,7 @@
                     <h5>All time popular record(s) view</h5>
                     <ul>
                         <li ng-if="vm.alltime.aggs.rostat.buckets.length == 0">No data found!</li>
-                        <li ng-repeat="ro in vm.alltime.aggs.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }} times)</li>
+                        <ro obj="ro" ng-repeat="ro in vm.alltime.aggs.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }} times)</ro>
                     </ul>
                     <h5>All time popular search term(s)</h5>
                     <ul>

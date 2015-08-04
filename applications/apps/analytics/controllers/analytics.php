@@ -29,6 +29,7 @@ class Analytics extends MX_Controller
             'rda_ctrl',
             'doi_ctrl',
             'analytics_chart_directive',
+            'ro_directive',
             'analytics_filter_ctrl',
             'analytics_filter_service',
             'analytics_doistat_ctrl',
@@ -85,6 +86,35 @@ class Analytics extends MX_Controller
             'filters' => $filters,
         );
         echo json_encode($result);
+    }
+
+    public function getRO($id)
+    {
+        $this->output->set_header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+
+        //try get it from the index, faster
+        $result = $this->elasticsearch->init()->setPath('/rda/production/'.$id)->get();
+        if ($result && $result['found']) {
+            echo json_encode($result['_source']);
+        } else {
+            //try and get it from the registry, slower
+            $this->load->model('registry/registry_object/registry_objects', 'ro');
+            $ro = $this->ro->getByID($id);
+            if ($ro) {
+                echo json_encode([
+                    'roid' => $ro->id,
+                    'key' => $ro->id,
+                    'title' => $ro->title,
+                    'slug' => $ro->slug,
+                    'class' => $ro->class,
+                    'group' => $ro->group,
+                    'record_owner' => $ro->record_owner
+                ]);
+            } else {
+                echo json_encode('notfound');
+            }
+        }
     }
 
     public function getEvents()
@@ -397,7 +427,12 @@ class Analytics extends MX_Controller
                         'status' => $ro->status,
                         'slug' => $ro->slug,
                         'record_owner' => $ro->record_owner,
-                        'group' => $ro->group
+                        'group' => $ro->group,
+                        'quality_level' => $ro->quality_level,
+                        'created' => date('Y-m-d\TH:i:s\Z',$ro->created),
+                        'error_count' => $ro->error_count,
+                        'warning_count' => $ro->warning_count,
+                        'dsid' => $ro->data_source_id
                     );
 
                     //has doi
@@ -530,32 +565,6 @@ class Analytics extends MX_Controller
         ob_end_flush();
     }
 
-    public function test2()
-    {
-        $this->output->set_header('Content-type: application/json');
-        set_exception_handler('json_exception_handler');
-
-        $this->load->library('ElasticSearch');
-        $result = $this->elasticsearch->init()
-            ->setPath('/rda/production/_search')
-            // ->setQuery('not', array('term'=>'portal_cited'))
-            // ->andf('not', 'accessed', '0')
-            // ->andf('term', 'group', 'University of South Australia')
-            ->andf('term', 'group', 'Australian Antarctic Data Centre')
-            // ->andf('range', 'date',
-            //     [
-            //         'from'=>'2015-06-01 00:00:00',
-            //         'to'=>'2015-06-02 00:00:00'
-            //     ]
-            // )
-            ->setAggs('accessed',
-                ['terms' => ['field' => 'portal_cited']]
-            )
-            ->search();
-
-        dd($result);
-    }
-
     public function setUp()
     {
         $this->output->set_header('Content-type: application/json');
@@ -587,6 +596,10 @@ class Analytics extends MX_Controller
                         'group' => array(
                             'type' => 'string',
                             'index' => 'not_analyzed'
+                        ),
+                        'q' => array(
+                            'type' => 'string',
+                            'index' => 'not_analyzed'
                         )
                     )
                 )
@@ -603,7 +616,12 @@ class Analytics extends MX_Controller
                         'group' => array(
                             'type' => 'string',
                             'index' => 'not_analyzed'
-                        )
+                        ),
+                        'created' => array(
+                            'type' => 'date',
+                            'store' => true,
+                            'format' => 'yyyy-MM-dd HH:mm:ss || yyyy-MM-dd || yyyy || yyyy-MM'
+                        ),
                     )
                 )
             )

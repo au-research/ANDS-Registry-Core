@@ -119,16 +119,6 @@
             });
         }
 
-        function removeZero(chartData) {
-            angular.forEach(chartData.data, function(obj, index){
-                if (obj==0 && index > -1) {
-                    chartData.data.splice(index, 1);
-                    chartData.labels.splice(index, 1);
-                }
-            });
-            return chartData;
-        }
-
         vm.onClick = function (points, evt) {
             $log.debug(points, evt);
             var date = points[0].label;
@@ -152,8 +142,6 @@
                 }
             });
         }
-
-
 
     }
 

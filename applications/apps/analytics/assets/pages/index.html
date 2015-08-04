@@ -8,32 +8,44 @@
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <form action="" class="form-search">
-            <div class="input-append">
-                <input type="text" class="search-query" ng-model="vm.query" placeholder="Type to filter">
-                <button class="btn">Filter</button>
-            </div>
-        </form>
+        <div class="span6">
+            <form action="" class="form-search">
+                <div class="input-append">
+                    <input type="text" class="search-query" ng-model="vm.query" placeholder="Type to filter">
+                    <button class="btn">Filter</button>
+                </div>
+            </form>
+        </div>
+        <div class="span6">
+            <span class="pull-right">
+                <a href="#/masterview" class="btn btn-primary">Masterview</a>
+            </span>
+        </div>
     </div>
     <div class="widget-box" ng-repeat="org in vm.orgs | filter:vm.query">
         <div class="widget-title">
             <h5>{{ org.name }}</h5>
         </div>
         <div class="widget-content">
+            <div ng-if="org.data_sources">
+                <h5>Data sources:</h5>
+                <ul>
+                    <li ng-repeat="ds in org.data_sources">{{ ds.title }}</li>
+                </ul>
+            </div>
             <div ng-if="org.groups">
                 <h5>Groups: </h5>
                 <ul>
                    <li ng-repeat="group in org.groups">{{ group }}</li>
                 </ul>
-                <a href="#/rda/{{ org.role_id }}" class="btn btn-primary">View RDA Stats</a>
             </div>
             <div ng-if="org.doi_app_id">
                 <h5>DOI App IDs: </h5>
                 <ul>
                     <li ng-repeat="doi in org.doi_app_id">{{ doi }}</li>
                 </ul>
-                <a href="#/doi/{{ org.role_id }}" class="btn btn-primary">View DOI Stats</a>
             </div>
+            <a href="#/rda/{{ org.role_id }}" class="btn btn-primary">View Stat Dashboard</a>
         </div>
     </div>
 </div>
