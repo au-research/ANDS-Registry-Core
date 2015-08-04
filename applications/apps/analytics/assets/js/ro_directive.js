@@ -14,11 +14,14 @@
                 scope.base_url = portal_url;
                 $http.get(apps_url+'/analytics/getRO/'+scope.obj.key)
                     .then(function(response){
-                        $log.debug(response.data);
                         if (response.data!='notfound') {
                             scope.ro = response.data;
                         } else {
-                            scope.ro = false;
+                            scope.ro = {
+                                'title': scope.obj.key,
+                                'slug': '',
+                                'roid': scope.obj.key
+                            };
                         }
                     });
             }
