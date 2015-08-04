@@ -25,7 +25,7 @@ class Sync_extension extends ExtensionBase{
 				$this->ro->update_quality_metadata();
 			}
 			$this->ro->enrich();
-			if($this->ro->status=='PUBLISHED'){
+			if($this->ro->status=='PUBLISHED'&&!($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria")){
 				$docs = array();
 				$docs[] = $this->indexable_json($conn_limit);
 				$r = $this->_CI->solr->add_json(json_encode($docs));
@@ -41,7 +41,7 @@ class Sync_extension extends ExtensionBase{
 	function index_solr() {
 		try{
 			$this->_CI->load->library('solr');
-			if($this->ro->status=='PUBLISHED'){
+			if($this->ro->status=='PUBLISHED'&&!($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria")){
 				$docs = array();
 				$docs[] = $this->indexable_json();
 				$this->_CI->solr->add_json(json_encode($docs));
@@ -61,6 +61,10 @@ class Sync_extension extends ExtensionBase{
         $gXPath->registerNamespace('ro', RIFCS_NAMESPACE);
 		$json = array();
         $party_service_conn_limit = 200;
+
+        if ($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria"){
+            return $json;
+        }
 
         if($limit && (int)$limit > 0)
             $party_service_conn_limit = $limit;
@@ -433,6 +437,7 @@ class Sync_extension extends ExtensionBase{
 
         $this->_dropCache();
         $json = array_filter($json);
+
 		return $json;
 	}
 
