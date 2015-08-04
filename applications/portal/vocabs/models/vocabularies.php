@@ -557,10 +557,8 @@ class Vocabularies extends CI_Model
         $task_id = $this->createDeleteTask($vocab_id, $version_id, $taskList);
         $response = $this->runToolkitTask($task_id);
         $result = json_decode($response, true);
-        if($result['status'] == 'success'){
-            $this->vocab_db->delete('versions', array('id' => $version_id));
-        }
-        return "Version ID:" .$version_id. "status: ". $result['status'];
+        $this->vocab_db->delete('versions', array('id' => $version_id));
+        return "Version ID:" .$version_id. " status: ". $result['status'];
     }
 
 
