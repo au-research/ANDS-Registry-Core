@@ -8,12 +8,19 @@
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <form action="" class="form-search">
-            <div class="input-append">
-                <input type="text" class="search-query" ng-model="vm.query" placeholder="Type to filter">
-                <button class="btn">Filter</button>
-            </div>
-        </form>
+        <div class="span6">
+            <form action="" class="form-search">
+                <div class="input-append">
+                    <input type="text" class="search-query" ng-model="vm.query" placeholder="Type to filter">
+                    <button class="btn">Filter</button>
+                </div>
+            </form>
+        </div>
+        <div class="span6">
+            <span class="pull-right">
+                <a href="#/masterview" class="btn btn-primary">Masterview</a>
+            </span>
+        </div>
     </div>
     <div class="widget-box" ng-repeat="org in vm.orgs | filter:vm.query">
         <div class="widget-title">

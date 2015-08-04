@@ -104,12 +104,15 @@ class Summary extends CI_Model
         }
 
         //group_event padding
-        foreach ($filters['groups'] as $group) {
-            $result['group_event'][$group] = array();
-            foreach ($filters['dimensions'] as $dimension) {
-                $result['group_event'][$group][$dimension] = 0;
+        if (isset($filters['groups'])) {
+            foreach ($filters['groups'] as $group) {
+                $result['group_event'][$group] = array();
+                foreach ($filters['dimensions'] as $dimension) {
+                    $result['group_event'][$group][$dimension] = 0;
+                }
             }
         }
+
 
         //group_event
         foreach ($search_result['aggregations']['group']['buckets'] as $group) {

@@ -165,7 +165,7 @@ class ElasticSearch {
     function post($content) {return $this->exec('POST', $content); }
     function delete() {return $this->exec('DELETE'); }
     function put($content) {return $this->exec('PUT', $content); }
-    function get($content) {return $this->exec('GET', $content); }
+    function get($content = false) {return $this->exec('GET', $content); }
 
     /**
      * Manually unsset the option for solr search

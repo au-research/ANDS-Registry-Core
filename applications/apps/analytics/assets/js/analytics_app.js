@@ -29,14 +29,15 @@
                     }
                 }
             })
-            .when('/doi/:role_id', {
-                templateUrl: apps_url+'assets/analytics/pages/doi.html',
-                controller: 'doiCtrl',
+            .when('/masterview', {
+                templateUrl: apps_url+'assets/analytics/pages/rda.html',
+                controller: 'rdaCtrl',
                 controllerAs: 'vm',
                 resolve: {
-                    org: function(analyticFactory, $route) {
-                        var id = $route.current.params.role_id;
-                        return analyticFactory.getOrg(id);
+                    org: function() {
+                        return {
+                            'name': 'Masterview'
+                        }
                     }
                 }
             })
