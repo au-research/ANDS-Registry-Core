@@ -297,9 +297,10 @@
                                 $scope.vocab = data.message;
                             });
                         } else {
-                            vocabs_factory.get($scope.vocab.slug).then(function (data) {
-                                window.location.replace(base_url + "vocabs/edit/" + data.message.id);
-                            });
+                            //vocabs_factory.get($scope.vocab.slug).then(function (data) {
+                                //window.location.replace(base_url + "vocabs/edit/" + data.message.id);
+                                window.location.replace(base_url + $scope.vocab.slug);
+                            //});
                         }
                     }
                 });
