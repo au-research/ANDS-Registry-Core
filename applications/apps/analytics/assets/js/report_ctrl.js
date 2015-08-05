@@ -176,14 +176,17 @@
 
         vm.onClick = function (points, evt) {
             $log.debug(points, evt);
-            var date = points[0].label;
-            $log.debug('Showing date' + date);
+            if (points.length > 0) {
+                var date = points[0].label;
+                $log.debug('Showing date' + date);
 
-            var data = {
-                date:date,
-                filters:vm.filters
+                var data = {
+                    date:date,
+                    filters:vm.filters
+                }
+                vm.showDate(data);
             }
-            vm.showDate(data);
+
         };
 
         vm.showDate = function(data) {

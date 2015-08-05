@@ -134,9 +134,12 @@ class Analytics extends MX_Controller
             );
 
         //groups
-        foreach ($filters['groups'] as $group) {
-            $this->elasticsearch->shouldf('term', 'group', $group);
+        if (isset($filters['groups'])) {
+            foreach ($filters['groups'] as $group) {
+                $this->elasticsearch->shouldf('term', 'group', $group);
+            }
         }
+
 
         $this->elasticsearch
             ->setAggs(
