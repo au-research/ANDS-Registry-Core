@@ -298,7 +298,7 @@
                             });
                         } else {
                             vocabs_factory.get($scope.vocab.slug).then(function (data) {
-                                $scope.vocab = data.message;
+                                window.location.replace(base_url + "vocabs/edit/" + data.message.id);
                             });
                         }
                     }
