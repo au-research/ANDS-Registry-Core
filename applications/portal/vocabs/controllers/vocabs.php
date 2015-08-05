@@ -224,7 +224,7 @@ class Vocabs extends MX_Controller
             // throw new Exception('This is published');
             $draft_vocab = $this->vocab->getDraftBySlug($vocab->prop['slug']);
             if ($draft_vocab) {
-                $vocab = $draft_vocab;
+                redirect(portal_url('vocabs/edit/').$draft_vocab->id);
                 //throw new Exception($vocab->id);
             }
         }

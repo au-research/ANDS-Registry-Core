@@ -31,7 +31,8 @@ class Vocabularies extends CI_Model
 
     /**
      * Returns a single _vocabulary by SLUG
-     * SLUG has to be unique as it maps to ID
+     * SLUG IS NOT unique can have published and draft
+     * Try to get the published first then fallback to draft
      * This function calls the @getByID function internally
      * @param  string $slug
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -40,13 +41,20 @@ class Vocabularies extends CI_Model
     public function getBySlug($slug)
     {
         $this->vocab_db = $this->load->database('vocabs', true);
-        $result = $this->vocab_db->get_where('vocabularies', array('slug' => $slug));
+        $result = $this->vocab_db->get_where('vocabularies', array('slug' => $slug, 'status'=>'published'));
         if ($result->num_rows() > 0) {
             $vocab_result = $result->result_array();
             $vocab_id = $vocab_result[0]['id'];
             return $this->getByID($vocab_id);
         } else {
-            return false;
+            $result = $this->vocab_db->get_where('vocabularies', array('slug' => $slug));
+            if ($result->num_rows() > 0) {
+                $vocab_result = $result->result_array();
+                $vocab_id = $vocab_result[0]['id'];
+                return $this->getByID($vocab_id);
+            } else {
+                return false;
+            }
         }
     }
 
