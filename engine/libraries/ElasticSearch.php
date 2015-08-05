@@ -51,7 +51,7 @@ class ElasticSearch {
     }
 
     function boolf($cond, $type, $key, $value) {
-        $this->options['query']['filtered']['filter']['bool'][$cond][] = array(
+        $this->options['query']['filtered']['filter']['bool'][$cond] = array(
             $type => array($key=>$value)
         );
         return $this;

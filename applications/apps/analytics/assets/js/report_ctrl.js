@@ -2,9 +2,9 @@
     'use strict';
 
     angular.module('analytic_app')
-        .controller('rdaCtrl', rdaCtrl);
+        .controller('reportCtrl', reportCtrl);
 
-    function rdaCtrl($scope, $log, $modal, analyticFactory, filterService, org) {
+    function reportCtrl($scope, $log, $modal, analyticFactory, filterService, org) {
         var vm = this;
 
         //chart configuration
@@ -43,7 +43,6 @@
                 vm.viewGroupChartData = {labels: [], data: [] }
                 vm.searchGroupChartData = {labels: [], data: [] }
                 angular.forEach(data.group_event, function(obj, index){
-                    $log.debug(obj);
                     vm.viewGroupChartData.labels.push(index);
                     vm.searchGroupChartData.labels.push(index);
                     if (obj['portal_view']) {
@@ -135,6 +134,42 @@
                 angular.forEach(data, function(obj){
                     vm.QLChartData.labels.push('Quality Level '+obj.key);
                     vm.QLChartData.data.push(obj.doc_count);
+                });
+            });
+
+            //class
+            analyticFactory.getStat('ro_class', vm.filters).then(function(data){
+                vm.ClassChartData = {
+                    labels:[], data:[]
+                }
+                angular.forEach(data, function(obj){
+                    vm.ClassChartData.labels.push(obj.key);
+                    vm.ClassChartData.data.push(obj.doc_count);
+                });
+            });
+
+            //group
+            analyticFactory.getStat('ro_group', vm.filters).then(function(data){
+                vm.GroupChartData = {
+                    labels:[], data:[]
+                }
+                angular.forEach(data, function(obj){
+                    vm.GroupChartData.labels.push(obj.key);
+                    vm.GroupChartData.data.push(obj.doc_count);
+                });
+            });
+
+            //group collection
+            var tmpfilters = {};
+            angular.copy(vm.filters, tmpfilters);
+            tmpfilters['class'] = 'collection';
+            analyticFactory.getStat('ro_group', tmpfilters).then(function(data){
+                vm.GroupCollectionChartData = {
+                    labels:[], data:[]
+                }
+                angular.forEach(data, function(obj){
+                    vm.GroupCollectionChartData.labels.push(obj.key);
+                    vm.GroupCollectionChartData.data.push(obj.doc_count);
                 });
             });
         }

@@ -18,9 +18,9 @@
                     }
                 }
             })
-            .when('/rda/:role_id', {
-                templateUrl: apps_url+'assets/analytics/pages/rda.html',
-                controller: 'rdaCtrl',
+            .when('/report/:role_id', {
+                templateUrl: apps_url+'assets/analytics/pages/report.html',
+                controller: 'reportCtrl',
                 controllerAs: 'vm',
                 resolve: {
                     org: function(analyticFactory, $route) {
@@ -30,8 +30,8 @@
                 }
             })
             .when('/masterview', {
-                templateUrl: apps_url+'assets/analytics/pages/rda.html',
-                controller: 'rdaCtrl',
+                templateUrl: apps_url+'assets/analytics/pages/report.html',
+                controller: 'reportCtrl',
                 controllerAs: 'vm',
                 resolve: {
                     org: function() {

@@ -113,7 +113,6 @@ class Summary extends CI_Model
             }
         }
 
-
         //group_event
         foreach ($search_result['aggregations']['group']['buckets'] as $group) {
             foreach ($group['event']['buckets'] as $event) {
@@ -137,6 +136,9 @@ class Summary extends CI_Model
                 $this->elasticsearch->shouldf('term', 'group', $group);
             }
         }
+        // $this->elasticsearch->shouldf('term', 'group', $filters['groups'][0]);
+
+        // echo json_encode($this->elasticsearch->getOptions()); die();
 
         //set all the aggs
         $this->elasticsearch
@@ -152,10 +154,21 @@ class Summary extends CI_Model
             ->setAggs('quality_level',
                 ['terms'=>['field'=>'quality_level']]
             )
+            ->setAggs('class',
+                ['terms'=>['field'=>'class']]
+            )
+            ->setAggs('group',
+                ['terms'=>['field'=>'group']]
+            )
         ;
 
         $this->elasticsearch->setOpt('size', 0);
+
+        // echo json_encode($this->elasticsearch->getOptions()); die();
+
         $search_result = $this->elasticsearch->search();
+
+        // dd($search_result['hits']);
 
         return $search_result;
     }

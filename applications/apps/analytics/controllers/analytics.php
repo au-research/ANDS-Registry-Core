@@ -26,7 +26,7 @@ class Analytics extends MX_Controller
         $data['scripts'] = array(
             'analytics_app',
             'main_ctrl',
-            'rda_ctrl',
+            'report_ctrl',
             'doi_ctrl',
             'analytics_chart_directive',
             'ro_directive',
@@ -173,7 +173,7 @@ class Analytics extends MX_Controller
         $request = json_decode($postdata, true);
         $filters = isset($request['filters']) ? $request['filters'] : $filters;
 
-        $filters['class'] = 'collection';
+        // $filters['class'] = 'collection';
         $filters['ctype'] = $stat;
 
         $result = array();
@@ -198,12 +198,20 @@ class Analytics extends MX_Controller
             case 'ro_ql':
                 $result = $search_result['aggregations']['quality_level']['buckets'];
                 break;
+            case 'ro_class':
+                $result = $search_result['aggregations']['class']['buckets'];
+                break;
+            case 'ro_group':
+                $result = $search_result['aggregations']['group']['buckets'];
+                break;
             default :
                 break;
         }
 
         echo json_encode($result);
     }
+
+
 
     /**
      * Returns a list of organisational roles with groups and doi app id
@@ -221,8 +229,8 @@ class Analytics extends MX_Controller
             //not in the cache, get it and save it
             $this->load->model('summary');
             $result = $this->summary->getOrgs();
-            //save for 10 minutes
-            $this->cache->file->save($cache_id, $result, 10);
+            //save for 30 minutes
+            $this->cache->file->save($cache_id, $result, 30);
         }
 
         $role_id = $this->input->get('role_id') ? $this->input->get('role_id') : false;
@@ -397,7 +405,7 @@ class Analytics extends MX_Controller
         ob_end_flush();
     }
 
-    public function indexROs($offset = 0)
+    public function indexROs($offset = 0, $upper_limit = false)
     {
         ini_set('max_execution_time', 3600);
         $this->benchmark->mark('code_start');
@@ -405,16 +413,13 @@ class Analytics extends MX_Controller
         set_exception_handler('json_exception_handler');
         $this->load->model('registry/registry_object/registry_objects', 'ro');
 
-        $total = $this->db->count_all('registry_objects');
+        $total = $upper_limit ? $upper_limit : $this->db->count_all('registry_objects');
         $chunkSize = 500;
         // $offset = 0;
         //
 
         //delete all ro here
-        $result = $this->elasticsearch
-            ->init()
-            ->setPath('/rda/production/')
-            ->delete();
+        // $this->setUp($core='rda');
 
         if (ob_get_level() == 0) ob_start();
         while ($offset < $total) {
@@ -571,70 +576,86 @@ class Analytics extends MX_Controller
         ob_end_flush();
     }
 
+    public function setUpCore($core='rda') {
+        if ($core=='rda') {
+            $result = $this->elasticsearch
+                ->init()
+                ->setPath('/rda/production/')
+                ->delete();
+            $result = $this->elasticsearch
+                ->init()
+                ->setPath('/rda/production')
+                ->put(array());
+            // var_dump($result);
+            $result = $this->elasticsearch
+                ->init()
+                ->setPath('/rda/production/_mapping/')
+                ->setOpt('production',
+                    array(
+                        'properties' => array(
+                            'group' => array(
+                                'type' => 'string',
+                                'index' => 'not_analyzed'
+                            ),
+                            'created' => array(
+                                'type' => 'date',
+                                'store' => true,
+                                'format' => 'yyyy-MM-dd HH:mm:ss || yyyy-MM-dd || yyyy || yyyy-MM'
+                            ),
+                        )
+                    )
+                )
+                ->put($this->elasticsearch->getOptions());
+            // var_dump($result);
+        } elseif ($core=='logs') {
+            $result = $this->elasticsearch
+                ->init()
+                ->setPath('/logs/')
+                ->delete();
+            // var_dump($result);
+
+            $result = $this->elasticsearch
+                ->init()
+                ->setPath('/logs/')
+                ->put(array());
+            // var_dump($result);
+
+            $result = $this->elasticsearch
+                ->init()
+                ->setPath('/logs/_mapping/production')
+                ->setOpt('production',
+                    array(
+                        'properties' => array(
+                            'date' => array(
+                                'type' => 'date',
+                                'store' => true,
+                                'format' => 'yyyy-MM-dd HH:mm:ss || yyyy-MM-dd || yyyy || yyyy-MM'
+                            ),
+                            'group' => array(
+                                'type' => 'string',
+                                'index' => 'not_analyzed'
+                            ),
+                            'q' => array(
+                                'type' => 'string',
+                                'index' => 'not_analyzed'
+                            )
+                        )
+                    )
+                )
+                ->put($this->elasticsearch->getOptions());
+            // var_dump($result);
+        }
+    }
+
     public function setUp()
     {
         $this->output->set_header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
 
-        $result = $this->elasticsearch
-            ->init()
-            ->setPath('/logs/')
-            ->delete();
-        var_dump($result);
-
-        $result = $this->elasticsearch
-            ->init()
-            ->setPath('/logs/')
-            ->put(array());
-        var_dump($result);
-
-        $result = $this->elasticsearch
-            ->init()
-            ->setPath('/logs/_mapping/production')
-            ->setOpt('production',
-                array(
-                    'properties' => array(
-                        'date' => array(
-                            'type' => 'date',
-                            'store' => true,
-                            'format' => 'yyyy-MM-dd HH:mm:ss || yyyy-MM-dd || yyyy || yyyy-MM'
-                        ),
-                        'group' => array(
-                            'type' => 'string',
-                            'index' => 'not_analyzed'
-                        ),
-                        'q' => array(
-                            'type' => 'string',
-                            'index' => 'not_analyzed'
-                        )
-                    )
-                )
-            )
-            ->put($this->elasticsearch->getOptions());
-        var_dump($result);
-
-        $result = $this->elasticsearch
-            ->init()
-            ->setPath('/rda/_mapping/production')
-            ->setOpt('production',
-                array(
-                    'properties' => array(
-                        'group' => array(
-                            'type' => 'string',
-                            'index' => 'not_analyzed'
-                        ),
-                        'created' => array(
-                            'type' => 'date',
-                            'store' => true,
-                            'format' => 'yyyy-MM-dd HH:mm:ss || yyyy-MM-dd || yyyy || yyyy-MM'
-                        ),
-                    )
-                )
-            )
-            ->put($this->elasticsearch->getOptions());
-        var_dump($result);
-
+        $this->setUpCore('logs');
+        $this->setUpCore('rda');
     }
+
 
     //boring construct
     public function __construct()
