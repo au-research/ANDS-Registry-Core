@@ -125,7 +125,7 @@ class Analytics extends MX_Controller
         $this->elasticsearch->init()->setPath('/logs/production/_search');
         $this->elasticsearch
             ->setOpt('from', 0)->setOpt('size', 20)
-            ->mustf('term', 'is_bot', 'false')
+            ->mustf('term', 'is_bot', false)
             ->mustf('range', 'date',
                 array(
                     'from' => $filters['period']['startDate'],
@@ -147,6 +147,7 @@ class Analytics extends MX_Controller
             );
 
         $result = array();
+        // echo json_encode($this->elasticsearch->getOptions());die();
         $search_result = $this->elasticsearch->search();
         echo json_encode($search_result);
     }
