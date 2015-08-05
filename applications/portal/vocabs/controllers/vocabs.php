@@ -507,7 +507,10 @@ class Vocabs extends MX_Controller
             $vocab = $this->vocab->getBySlug($id);
             if (!$vocab) $vocab = $this->vocab->getByID($id);
 
+
+
             if (!$vocab) throw new Exception('Vocab ID ' . $id . ' not found');
+
 
 
             $result = $vocab->display_array();
@@ -517,6 +520,11 @@ class Vocabs extends MX_Controller
             $data = isset($angulardata['data']) ? $angulardata['data'] : false;
 
             if ($data) {
+                //if id refers to a draft look up to see if there is a published for this draft
+                if($vocab->prop['status'] == 'draft' && $data['status'] == 'published'){
+                    $vocab = $this->vocab->getBySlug($vocab->prop['slug']);
+                }
+
                 $result = $vocab->save($data);
 
                 if (null == $this->user->affiliations() && $data['status'] == 'published') {

@@ -292,9 +292,15 @@
                                 '<a href="'+base_url+$scope.vocab.slug+'">View Vocabulary</a>'
                             )
                         }
-                        vocabs_factory.get($scope.vocab.id).then(function (data) {
-                            $scope.vocab = data.message;
-                        });
+                        if (status == 'draft') {
+                            vocabs_factory.get($scope.vocab.id).then(function (data) {
+                                $scope.vocab = data.message;
+                            });
+                        } else {
+                            vocabs_factory.get($scope.vocab.slug).then(function (data) {
+                                $scope.vocab = data.message;
+                            });
+                        }
                     }
                 });
             }
