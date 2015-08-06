@@ -10,7 +10,7 @@
                         <div class="logo-place">
                             <img src="{{$group['logo']}}" alt="" class="" align="middle"/>
                         </div>
-                        
+
                         @else
                         <div class="logo-placement"><p>{{$group['title']}}</p></div>
                         @endif
@@ -18,7 +18,7 @@
                 </div>
                 <div class="figure-caption text-center">
                     <h3 class="figure-caption-title bordered bordered-small bordered-link">
-                        <a href="{{portal_url('contributors/'.$group['slug'])}}" target="_self" style="word-break:break-all;">{{$group['title']}} ({{$group['counts']}})</a>
+                        <a href="{{portal_url('contributors/'.$group['slug'])}}" target="_self" style="word-break:break-word;">{{$group['title']}} ({{$group['counts']}})</a>
                     </h3>
                 </div>
             </div>
