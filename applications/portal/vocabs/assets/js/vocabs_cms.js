@@ -296,11 +296,11 @@
                             vocabs_factory.get($scope.vocab.id).then(function (data) {
                                 $scope.vocab = data.message;
                             });
-                        } else {
-                            //vocabs_factory.get($scope.vocab.slug).then(function (data) {
-                                //window.location.replace(base_url + "vocabs/edit/" + data.message.id);
-                                window.location.replace(base_url + $scope.vocab.slug);
-                            //});
+                        } else if(status == 'deprecated'){
+                            window.location.replace(base_url + 'vocabs/myvocabs');
+                        }
+                        else{
+                            window.location.replace(base_url + $scope.vocab.slug);
                         }
                     }
                 });
