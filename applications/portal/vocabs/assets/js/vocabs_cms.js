@@ -267,10 +267,15 @@
                         $scope.error_message = data.message;
                     } else {//success
                         //navigate to the edit form if on the add form
+                        if (status == 'published') {
+                            window.location.replace(base_url + data.message.prop.slug);
+                        }
+                        else{
                         // $log.debug(data.message.prop[0].slug);
-                        $scope.success_message = data.message.import_log;
-                        $scope.success_message.push('Successfully saved to a Draft. <a href="' + base_url + "vocabs/edit/" + data.message.prop.id + '">Click Here edit the draft</a>');
-                        window.location.replace(base_url + "vocabs/edit/" + data.message.prop.id+'/#!/?message=saved_draft');
+                            $scope.success_message = data.message.import_log;
+                            $scope.success_message.push('Successfully saved to a Draft. <a href="' + base_url + "vocabs/edit/" + data.message.prop.id + '">Click Here edit the draft</a>');
+                            window.location.replace(base_url + "vocabs/edit/" + data.message.prop.id+'/#!/?message=saved_draft');
+                        }
                     }
                 });
             } else if ($scope.mode == 'edit') {
