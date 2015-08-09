@@ -2,22 +2,60 @@
 
 /**
  * Core Maintenance Dashboard
- * 
- * 
+ *
+ *
  * @author Ben Greenwood <ben.greenwood@ands.org.au>
  * @see ands/datasource/_data_source
  * @package ands/datasource
- * 
+ *
  */
 class Maintenance extends MX_Controller {
 
-	
+
 	public function index(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'Registry Status';
 		$data['scripts'] = array('status_app');
 		$data['js_lib'] = array('core', 'angular');
 		$this->load->view("maintenance_dashboard", $data);
+	}
+
+	public function indexAll($offset = 0, $upper_limit = false) {
+		ini_set('max_execution_time', 3600);
+        $this->benchmark->mark('code_start');
+        $this->output->set_header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+        $this->load->model('registry/registry_object/registry_objects', 'ro');
+        $this->load->library('solr');
+
+        $total = $upper_limit ? $upper_limit : $this->db->count_all('registry_objects');
+        $chunkSize = 500;
+        $docs = array();
+        if (ob_get_level() == 0) ob_start();
+        echo 'Started indexing from '.$offset.' to '.$upper_limit."\n";
+        ob_flush();flush();
+        while ($offset < $total) {
+            $this->benchmark->mark('batch_start');
+            $ros = $this->ro->getAll($chunkSize, $offset);
+            foreach ($ros as $ro) {
+            	if ($ro && $ro->status=='PUBLISHED' &&!($ro->class=='activity' && $ro->group=="Public Record Office Victoria")) {
+            		$docs[] = $ro->indexable_json();
+            	}
+            }
+            $this->benchmark->mark('batch_end');
+            $elapsed = $this->benchmark->elapsed_time('batch_start', 'batch_end');
+            echo "Done " . $offset . " Took: " . $elapsed . "\n";
+            $offset += $chunkSize;
+            ob_flush(); flush();
+        }
+
+        //index work
+        $this->solr->add_json(json_encode($docs));
+        $this->solr->commit();
+
+        $this->benchmark->mark('code_end');
+        echo "Took total: " . $this->benchmark->elapsed_time('code_start', 'code_end') . "\n";
+        ob_end_flush();
 	}
 
 	public function migrate_tags_to_r11(){
@@ -57,7 +95,7 @@ class Maintenance extends MX_Controller {
 		$result = array();
 		$this->db->empty_table('theme_pages');
 		foreach($root as $value){
-			if($value === '.' || $value === '..') {continue;} 
+			if($value === '.' || $value === '..') {continue;}
 			$pieces = explode(".", $value);
 			if(is_file("$directory/$value")) {
 				if($pieces[0].'.json'!=$index_file){
@@ -75,7 +113,7 @@ class Maintenance extends MX_Controller {
 					}else $theme_page['visible'] = 0;
 					$this->db->insert('theme_pages', $theme_page);
 				}
-			} 
+			}
 		}
 		echo 'Done';
 	}
@@ -97,7 +135,7 @@ class Maintenance extends MX_Controller {
 
 	public function migrate_slugs_to_r13($commit = false) {
 		acl_enforce('REGISTRY_STAFF');
-	
+
 		if(!$commit){
 			$result = $this->db->query('SELECT slug,registry_object_id FROM dbs_registry.registry_objects WHERE CHAR_LENGTH(SLUG) > 60;');
 			echo 'There are '.$result->num_rows().' slugs that are longer than 60 characters <br/>';
@@ -146,10 +184,10 @@ class Maintenance extends MX_Controller {
 				if($result){
 					echo 'success<br/>';
 				} else {
-					echo 'failed<br/>'; 
+					echo 'failed<br/>';
 				}
 			}
-			
+
 
 			//generating new slugs
 			$result = $this->db->query('SELECT slug,registry_object_id FROM dbs_registry.registry_objects WHERE CHAR_LENGTH(SLUG) > 60;');
@@ -171,12 +209,12 @@ class Maintenance extends MX_Controller {
 				unset($ro);
 				ob_flush();flush();
 			}
-			ob_end_flush(); 
+			ob_end_flush();
 
 		}
 
 		// $result = $this->db->select('slug, registry_object_id')->from('url_mappings')->where('registry_object_id', NULL)->get();
-		
+
 	}
 
 	public function migrate_ds_to_r13() {
@@ -215,7 +253,7 @@ class Maintenance extends MX_Controller {
 		if($old_harvest_requests->num_rows() > 0) {
 			foreach($old_harvest_requests->result() as $orq){
 				$row = array(
-					'data_source_id' => $orq->data_source_id, 
+					'data_source_id' => $orq->data_source_id,
 					'status' => 'SCHEDULED',
 					'next_run' => date( 'Y-m-d H:i:s', strtotime($orq->next_harvest)) ,
 					'mode' => 'HARVEST',
@@ -299,7 +337,7 @@ class Maintenance extends MX_Controller {
 	public function init(){
 		acl_enforce('REGISTRY_STAFF');
 		$this->load->library('importer');
-		$slogTitle =  'Import from URL completed successfully'.NL;	
+		$slogTitle =  'Import from URL completed successfully'.NL;
 		$elogTitle = 'An error occurred whilst importing from the specified URL'.NL;
 		$log = 'IMPORT LOG' . NL;
 		//$log .= 'URI: ' . $this->input->post('url') . NL;
@@ -323,7 +361,7 @@ class Maintenance extends MX_Controller {
 			$data_source->updateStats();
 			$data_source = $this->ds->getByKey($this->config->item('example_ds_key'));
 		}
-		
+
 		$sampleRecordUrls = array('http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-collection-1.xml',
 			'http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-party-1.xml',
 			'http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-service-1.xml',
@@ -331,7 +369,7 @@ class Maintenance extends MX_Controller {
 
 		$xml = '';
 		foreach($sampleRecordUrls as $recUrl){
-			$xml .= unWrapRegistryObjects(file_get_contents($recUrl));			
+			$xml .= unWrapRegistryObjects(file_get_contents($recUrl));
 		}
 
 		$this->importer->setXML(wrapRegistryObjects($xml));
@@ -569,7 +607,7 @@ class Maintenance extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$this->load->library('solr');
 		$ids = $this->ro->getIDsByDataSourceID(66, false, 'PUBLISHED');
-		
+
 
 		$this->solr
 			->setOpt('rows', '100000')
@@ -595,7 +633,7 @@ class Maintenance extends MX_Controller {
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
-		
+
 		$this->benchmark->mark('start');
 
 		$this->load->model('data_source/data_sources', 'ds');
@@ -656,7 +694,7 @@ class Maintenance extends MX_Controller {
 				$this->benchmark->mark('enrich_ro_end');
 
 				//index
-				
+
 				if($task=='sync' || $task=='index' || $task=='fast_sync'){
 					try{
 						$solr_docs[] = $ro->indexable_json();
@@ -669,7 +707,7 @@ class Maintenance extends MX_Controller {
 				$result[$key] = array(
 					'enrichTime' => $this->benchmark->elapsed_time('enrich_ro_start', 'enrich_ro_end'),
 				);
-				
+
 			}else{
 				$result[$key] = 'Not Found';
 			}
@@ -694,10 +732,10 @@ class Maintenance extends MX_Controller {
 			$this->solr->add_json(json_encode($solr_docs));
 			$this->solr->commit();
 		}
-		
+
 		$this->benchmark->mark('index_end');
 		$totalIndexTime = $this->benchmark->elapsed_time('index_start', 'index_end');
-		
+
 		$this->benchmark->mark('finish');
 
 		$data['benchMark'] = array(
@@ -772,7 +810,7 @@ class Maintenance extends MX_Controller {
 		// }
 		// $this->benchmark->mark('end');
 		// ulog('finished. Took '.$this->benchmark->elapsed_time('start', 'end'));
-		
+
 		// $ro = $this->ro->getByID(425888);
 		// $this->benchmark->mark('code_start');
 		// $matching = $ro->findMatchingRecords(array(), array(), array(), true);
@@ -784,7 +822,7 @@ class Maintenance extends MX_Controller {
 		// $this->indexer->set_ro($ro);
 		// $payload = $this->indexer->construct_payload();
 		// echo json_encode($payload);
-		// 
+		//
 		// $ids = $this->ro->getIDsByDataSourceID(66, false, 'PUBLISHED');
 		// foreach($ids as $id) {
 		// 	$ro = $this->ro->getByID($id);
@@ -862,7 +900,7 @@ class Maintenance extends MX_Controller {
 				echo "<pre>error in: $e" . nl2br($e->getMessage()) . "</pre>" . BR;
 			}
 		}
-		
+
 		//actually delete them from the index
 		$this->load->library('solr');
 		foreach($unset as $id){
@@ -942,7 +980,7 @@ class Maintenance extends MX_Controller {
 	public function __construct(){
 		parent::__construct();
 	}
-	
+
 }
 
 /* End of file vocab_service.php */
