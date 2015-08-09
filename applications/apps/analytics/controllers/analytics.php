@@ -433,37 +433,9 @@ class Analytics extends MX_Controller
             $post = array();
             foreach ($ros as $ro) {
                 if ($ro) {
-                    $data = array(
-                        '_id' => $ro->id,
-                        'roid' => $ro->id,
-                        'key' => $ro->key,
-                        'class' => $ro->class,
-                        'title' => $ro->title,
-                        'status' => $ro->status,
-                        'slug' => $ro->slug,
-                        'record_owner' => $ro->record_owner,
-                        'group' => $ro->group,
-                        'quality_level' => $ro->quality_level,
-                        'created' => date('Y-m-d H:i:s',$ro->created),
-                        'error_count' => $ro->error_count,
-                        'warning_count' => $ro->warning_count,
-                        'dsid' => $ro->data_source_id
-                    );
-
-                    //has doi
-                    if ($identifiers = $ro->getIdentifiers()) {
-                        foreach ($identifiers as $id) {
-                            if ($id['identifier_type'] == 'doi') {
-                                $data['doi'] = $id['identifier'];
-                            }
-                        }
-                    }
-
-                    //portal stats
-                    $stat = $ro->getAllPortalStat();
-                    $data['portal_accessed'] = $stat['accessed'];
-                    $data['portal_cited'] = $stat['cited'];
-
+                    $data = $ro->indexable_json_es();
+                    $data['_id'] = $ro->id;
+                    $data['roid'] = $ro->id;
                     // var_dump($data['_id']);ob_flush();flush();
                     $post[] = $data;
                     unset($ro);

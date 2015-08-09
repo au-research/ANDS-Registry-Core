@@ -143,7 +143,7 @@ class Summary extends CI_Model
         //set all the aggs
         $this->elasticsearch
             ->setAggs(
-                'missing_doi', array('missing'=>array('field'=>'doi'))
+                'missing_doi', array('missing'=>array('field'=>'identifier_doi'))
             )
             ->setAggs('portal_cited',
                 ['terms'=>['field'=>'portal_cited']]
