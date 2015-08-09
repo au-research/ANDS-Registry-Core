@@ -135,6 +135,10 @@ class Registry_object extends MX_Controller
                         $resolvedPartyIdentifiers[] = $rel['related_object_identifier'];
                 }
             }
+            $the_theme = '';
+            if(isset($ro->core['theme_page'])){
+                $the_theme = $this->getTheme($ro->core['theme_page']);
+            }
             //Do the rendering
             $this->blade
                 ->set('scripts', array('view', 'view_app', 'tag_controller'))
@@ -147,6 +151,7 @@ class Registry_object extends MX_Controller
                 ->set('view_headers', $this->components['view_headers'])
                 ->set('url', $ro->construct_api_url())
                 ->set('theme', $theme)
+                ->set('theme_page',  $the_theme)
                 ->set('logo', $logo)
                 ->set('isPublished', $ro->core['status'] == 'PUBLISHED')
                 ->set('banner', $banner)
@@ -724,7 +729,27 @@ class Registry_object extends MX_Controller
         $logo = $this->group->fetchLogo($group);
         return $logo;
     }
+    /**
+     * Get the logo url for a groups logo if it exists!
+     * @param $group
+     * @return string
+     */
+    function getTheme($slug)
+    {
+        $url = registry_url().'services/rda/getThemePageIndex';
+        $all_themes = json_decode(@file_get_contents($url),true);
+        $the_theme = array();
+        foreach($all_themes['items'] as $theme){
 
+            if($theme['slug']==$slug){
+                $the_theme['title'] = $theme['title'];
+                $the_theme['img_src']=$theme['img_src'];
+                return $the_theme;
+            }
+        }
+        return false;
+       // print_r($contents);
+    }
     /**
      * Construction
      * Defines the components that will be displayed and search for within the application

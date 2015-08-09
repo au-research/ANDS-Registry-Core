@@ -32,7 +32,7 @@ class Sync extends Task {
 	}
 
 	function run_task() {
-		if($this->target=='ro') {
+		if($this->target=='ro' || $this->target=='sync') {
 			$list = explode(',', $this->target_id);
 			foreach($list as $ro_id){
 				$this->sync_ro($ro_id);

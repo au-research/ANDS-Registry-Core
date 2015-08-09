@@ -1,3 +1,8 @@
+<?php
+$hasRelatedOrganisation = false;
+$hasRelatedGrantsOrProjects = false;
+$hasRelatedServices = false;
+?>
 @if($ro->relationships)
 
 <?php
@@ -19,6 +24,7 @@
     $hasRelatedGrantsOrProjects = isset($ro->relationships['activity']);
     $hasRelatedServices = isset($ro->relationships['service']);
 ?>
+@endif
     @if($ro->relatedInfo)
         <?php
             $hasRelatedInfo = true;
@@ -77,14 +83,13 @@
         }
     }
 ?>
-    @if(($hasRelatedCollection && $ro->core['class']!='collection') || $hasRelatedPublication || $hasDerivedCollection || $hasRelatedOrganisation || $hasRelatedGrantsOrProjects || $hasRelatedServices)
+    @if(($hasRelatedCollection && $ro->core['class']!='collection') || $hasRelatedPublication || $hasDerivedCollection || $hasRelatedOrganisation || $hasRelatedGrantsOrProjects || $hasRelatedServices || $hasRelatedWebsite)
         <div class="swatch-white">
             <div class="panel panel-primary element-no-top element-short-bottom panel-content">
                 <!-- <div class="panel-heading"> Related </div> -->
                 <div class="panel-body swatch-white">
 
                     @if($ro->relatedInfo)
-
                         @if($hasRelatedPublication)
                             <h4>Related Publications</h4>
                             @foreach($ro->relatedInfo as $relatedInfo)
@@ -134,11 +139,11 @@
                                     @if($relatedInfo['relation']['url'])
                                         <p><small>{{$relationship}} </small>URI : <a href="{{$relatedInfo['relation']['url']}}" {{$description}}>{{$relatedInfo['relation']['url']}}</a></p>
                                     @endif
-                        @if($relatedInfo['notes'])
-                        <p>
-                            {{$relatedInfo['notes']}}
-                        </p>
-                        @endif
+                                    @if($relatedInfo['notes'])
+                                    <p>
+                                        {{$relatedInfo['notes']}}
+                                    </p>
+                                    @endif
                                 @endif
                             @endforeach
                         @endif
@@ -333,4 +338,3 @@
             </div>
         </div>
     @endif
-@endif

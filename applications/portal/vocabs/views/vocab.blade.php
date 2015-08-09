@@ -33,9 +33,6 @@ if(isset($vocab['related_entity'])){
 
 ?>
 
-@section('title')
-{{ htmlspecialchars($vocab['title']) }}
-@stop
 @section('og-description')
 @if(gettype($vocab) == "array" && isset($vocab['description']))
 	<?php
@@ -72,7 +69,7 @@ if(isset($vocab['related_entity'])){
                         @foreach($vocab['current_version']['access_points'] as $ap)
                             @if($ap['type']!='file' && $ap['uri']!='TBD')
                                 <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-                                    <a class="btn btn-sm btn-default" href="{{ $ap['uri'] }}"><i class="fa fa-edit"></i> Access {{ $ap['type'] }} ({{ $ap['format'] }})</a>
+                                    <a class="btn btn-sm btn-default" href="{{ $ap['uri'] }}" target="_blank"><i class="fa fa-edit"></i> Access {{ $ap['type'] }} ({{ $ap['format'] }})</a>
                                 </div>
                             @endif
                         @endforeach
@@ -117,6 +114,7 @@ if(isset($vocab['related_entity'])){
                             <h4>Notes</h4>
                             <p>{{ $vocab['note'] }}</p>
                         @endif
+                        @if(isset($cc)&&$cc!='')
                         <h4>Licence</h4>
                         <p>
                             @if($cc=='CC-BY')
@@ -135,6 +133,7 @@ if(isset($vocab['related_entity'])){
                             <span>Licence: {{ $cc }}</span>
                             @endif
                         </p>
+                        @endif
                     </div>
                 </div>
             </div>

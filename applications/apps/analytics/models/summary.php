@@ -6,12 +6,302 @@
  */
 class Summary extends CI_Model
 {
+
+    public function get($filters) {
+        $this->load->library('ElasticSearch');
+
+        //setup
+        $this->elasticsearch->init()->setPath('/logs/production/_search');
+        $this->elasticsearch->setOpt('from', 0)->setOpt('size', 0)
+            ->mustf('term', 'is_bot', 'false');
+
+        //date range
+        // unset($filters['period']);
+        if (isset($filters['period'])) {
+            $filters['period']['startDate'] = date('Y-m-d', strtotime($filters['period']['startDate']));
+            $filters['period']['endDate'] = date('Y-m-d', strtotime($filters['period']['endDate']));
+            $this->elasticsearch->mustf('range', 'date',
+                [
+                    'from' => $filters['period']['startDate'],
+                    'to' => $filters['period']['endDate']
+                ]
+            );
+        }
+
+        //grouping
+        if (isset($filters['groups'])) {
+            foreach ($filters['groups'] as $group) {
+                $this->elasticsearch->shouldf('term', 'group', $group);
+            }
+        }
+
+        //aggregation for stats
+        $this->elasticsearch
+            ->setAggs('date',
+                array('date_histogram' =>
+                    array(
+                        'field'=>'date',
+                        'format' => 'yyyy-MM-dd',
+                        'interval' => 'day'
+                    ),
+                    'aggs'=>array(
+                        'events' => array('terms'=>array('field'=>'event'))
+                    )
+                )
+            )
+            ->setAggs('event',
+                array(
+                    'terms'=>array('field'=>'event'),
+                    'aggs' => [
+                        'events' => ['terms'=>['field'=>'group']]
+                    ]
+                )
+            )
+            ->setAggs('group',
+                array(
+                    'terms'=>array('field'=>'group'),
+                    'aggs' => [
+                        'event' => ['terms'=>['field'=>'event']]
+                    ]
+                )
+            )
+            ->setAggs(
+                'rostat', array('terms' => array('field' => 'roid'))
+            )
+            ->setAggs(
+                'qstat', array('terms' => array('field' => 'q'))
+            )
+        ;
+
+        $search_result = $this->elasticsearch->search();
+        // dd($this->elasticsearch->getOptions());
+        // dd($filters);
+        // dd($search_result['aggregations']['date']);
+
+        //prepare result
+        $result = [
+            'dates' => [],
+            'group_event' => [],
+            'aggs' => $search_result['aggregations']
+        ];
+
+        //dates
+        foreach ($search_result['aggregations']['date']['buckets'] as $date) {
+            if (sizeof($date['events']['buckets']) > 0) {
+                foreach ($date['events']['buckets'] as $event) {
+                    $result['dates'][$date['key_as_string']][$event['key']] = $event['doc_count'];
+                }
+            }
+        }
+
+        //padding for dates
+        foreach ($result['dates'] as &$date) {
+            $date['total'] = 0;
+            foreach ($filters['dimensions'] as $dimension) {
+                if (!isset($date[$dimension])) $date[$dimension] = 0;
+                $date['total'] += $date[$dimension];
+            }
+        }
+
+        //group_event padding
+        if (isset($filters['groups'])) {
+            foreach ($filters['groups'] as $group) {
+                $result['group_event'][$group] = array();
+                foreach ($filters['dimensions'] as $dimension) {
+                    $result['group_event'][$group][$dimension] = 0;
+                }
+            }
+        }
+
+        //group_event
+        foreach ($search_result['aggregations']['group']['buckets'] as $group) {
+            foreach ($group['event']['buckets'] as $event) {
+                $result['group_event'][$group['key']][$event['key']] = $event['doc_count'];
+            }
+        }
+
+        return $result;
+    }
+
+    public function getStat($path, $filters) {
+        $this->load->library('elasticsearch');
+        $this->elasticsearch->init()->setPath($path.'_search');
+
+        if (isset($filters['class'])) {
+            $this->elasticsearch->mustf('term', 'class', $filters['class']);
+        }
+
+        if (isset($filters['groups'])) {
+            foreach ($filters['groups'] as $group) {
+                $this->elasticsearch->shouldf('term', 'group', $group);
+            }
+        }
+        // $this->elasticsearch->shouldf('term', 'group', $filters['groups'][0]);
+
+        // echo json_encode($this->elasticsearch->getOptions()); die();
+
+        //set all the aggs
+        $this->elasticsearch
+            ->setAggs(
+                'missing_doi', array('missing'=>array('field'=>'identifier_doi'))
+            )
+            ->setAggs('portal_cited',
+                ['terms'=>['field'=>'portal_cited']]
+            )
+            ->setAggs('accessed',
+                ['terms'=>['field'=>'portal_accessed']]
+            )
+            ->setAggs('quality_level',
+                ['terms'=>['field'=>'quality_level']]
+            )
+            ->setAggs('class',
+                ['terms'=>['field'=>'class']]
+            )
+            ->setAggs('group',
+                ['terms'=>['field'=>'group']]
+            )
+        ;
+
+        $this->elasticsearch->setOpt('size', 0);
+
+        // echo json_encode($this->elasticsearch->getOptions()); die();
+
+        $search_result = $this->elasticsearch->search();
+
+        // dd($search_result['hits']);
+
+        return $search_result;
+    }
+
+    public function getOrgs() {
+        $result = array();
+
+        $this->load->model('authenticator', 'auth');
+
+        //get all org role
+        $roles_db = $this->load->database('roles', true);
+        $query = $roles_db->get_where('roles', array('role_type_id'=>'ROLE_ORGANISATIONAL'));
+        foreach ($query->result_array() as $row) {
+            $role = $row;
+            $childs = $this->list_childs($row['role_id']);
+
+            //get DOI APP_ID
+            foreach ($childs as $child) {
+                if ($child->role_type_id=='ROLE_DOI_APPID') {
+                    $role['doi_app_id'][] = $child->role_id;
+                }
+            }
+
+            //get Data sources
+            if ($datasources = $this->get_datasources($row['role_id'])) {
+                $role['groups'] = [];
+                $role['data_sources'] = $datasources;
+                //get groups by this data source
+                foreach ($datasources as $ds) {
+                    $role['groups'] = array_merge($role['groups'], $this->getDataSourceGroups($ds['data_source_id']));
+                    $role['groups'] = array_values(array_unique($role['groups'], SORT_STRING));
+                }
+            }
+
+            $result[] = $role;
+        }
+
+        return $result;
+
+    }
+
+
+    /**
+     * recursive function that goes through and collect all of the (parents) of a role
+     * @param  string $role_id
+     * @return array_object if an object has a child, object->childs will be a list of the child objects
+     */
+    function list_childs($role_id, $include_doi=false, $prev=array()){
+        $res = array();
+        // $role = $this->get_role($role_id);
+        // return $res;
+
+        $roles_db = $this->load->database('roles', true);
+
+        $result = $roles_db
+                ->select('role_relations.parent_role_id, roles.role_type_id, roles.name, roles.role_id')
+                ->from('role_relations')
+                ->join('roles', 'roles.role_id = role_relations.parent_role_id')
+                ->where('role_relations.child_role_id', $role_id)
+                ->where('enabled', DB_TRUE)
+                ->where('role_relations.parent_role_id !=', $role_id)
+                ->get();
+
+        if($result->num_rows() > 0){
+            foreach($result->result() as $r){
+                if(trim($r->role_type_id)=='ROLE_DOI_APPID' && $include_doi){
+                    $res[] = $r;
+                }else if(!$include_doi){
+                    $res[] = $r;
+                }
+                if(!in_array($r->role_id, $prev)) {
+                    array_push($prev, $r->role_id);
+                    $childs = $this->list_childs($r->parent_role_id, $include_doi, $prev);
+                    if(sizeof($childs) > 0){
+                        $r->childs = $childs;
+                    }else{
+                        $r->childs = false;
+                    }
+                }
+            }
+        }
+        return $res;
+    }
+
+    public function get_datasources($role_id) {
+        $registry_db = $this->load->database('registry', true);
+        $query = $registry_db->get_where('data_sources', array('record_owner'=>$role_id));
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns groups which this datasource has objects which are contributed by
+     *
+     * @param the data source ID
+     * @return array of groups or NULL
+     */
+    function getDataSourceGroups($dsid)
+    {
+        $groups = array();
+        $registry_db = $this->load->database('registry', true);
+        $query = $registry_db
+            ->distinct()
+            ->select('value')
+            ->from('registry_object_attributes')
+            ->join('registry_objects', 'registry_objects.registry_object_id = registry_object_attributes.registry_object_id')
+            ->where(
+                array(
+                    'registry_objects.data_source_id' => $dsid,
+                    'registry_object_attributes.attribute' => 'group'
+                )
+            )
+            ->get();
+
+        if ($query->num_rows() == 0) {
+            return $groups;
+        } else {
+            foreach ($query->result_array() AS $group) {
+                $groups[] =  $group['value'];
+            }
+        }
+        return $groups;
+    }
+
     /**
      * Get the summary of a given filter set
      * @param  array $filters
      * @return array
      */
-    public function get($filters)
+    public function get_deprecate($filters)
     {
         $result = array();
 
@@ -35,6 +325,7 @@ class Summary extends CI_Model
 
             //process the lines
             foreach ($lines as $line) {
+                $line = json_encode($line);
                 $content = readString($line);
 
                 $group = $filters['group'];
@@ -60,6 +351,25 @@ class Summary extends CI_Model
         return $result;
     }
 
+    public function getStatFromES($date, $filters = false) {
+        $result = array();
+        $filters = [
+            'query'=> [
+                'match' => [
+                    'date' => $date
+                ]
+            ]
+        ];
+        $response = curl_post('http://localhost:9200/logs/production/_search', json_encode($filters));
+        $response = json_decode($response, true);
+        if (isset($response['hits'])) {
+           foreach($response['hits']['hits'] as $doc) {
+                $result[] = $doc['_source'];
+           }
+        }
+        return $result;
+    }
+
     /**
      * Return the statistic lines from the internal log collected via portal
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -67,7 +377,7 @@ class Summary extends CI_Model
      * @param  array $filters  filters passed down
      * @return array(lines)
      */
-    private function getStatFromInternalLog($date, $filters)
+    public function getStatFromInternalLog($date, $filters)
     {
         $file_path = 'engine/logs/' . $filters['log'] . '/log-' . $filters['log'] . '-' . $date . '.php';
         $lines = readFileToLine($file_path);

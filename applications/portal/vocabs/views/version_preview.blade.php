@@ -15,7 +15,7 @@
                       @foreach($version['access_points'] as $ap)
                       @if($ap['type']!='file')
                       <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-                          <a class="btn btn-sm btn-default" href="{{ $ap['uri'] }}"><i class="fa fa-edit"></i> Access {{ $ap['type'] }} ({{ $ap['format'] }})</a>
+                          <a class="btn btn-sm btn-default" href="{{ $ap['uri'] }}" target="_blank"><i class="fa fa-edit"></i> Access {{ $ap['type'] }} ({{ $ap['format'] }})</a>
                       </div>
                       @endif
                       @endforeach

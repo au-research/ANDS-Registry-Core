@@ -7,6 +7,12 @@
         foreach($ro->rights as $right) {
             if ($right['type']=='licence' && $right['licence_type']!='') {
                 $cc = $right['licence_type'];
+                if(isset($right['rightsUri']) && $right['rightsUri']!=''){
+                   $cc_uri = $right['rightsUri'];
+                }else{
+                    $cc_uri = '';
+                }
+
             } elseif ($right['type']=='accessRights') {
                 if(isset($right['accessRights_type'])){
                     $ar = $right['accessRights_type'];
@@ -76,17 +82,35 @@
             @endif
 
         	@if($cc=='CC-BY')
-        	    <a href="http://creativecommons.org/licenses/by/3.0/au/" tip="Attribution"><img src="{{asset_url('images/icons/CC-BY.png', 'core')}}" class="img-cc" alt="CC-BY"></a> <br/>
+            <?php
+                if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by/3.0/au/";
+             ?>
+        	   <a href="{{$cc_uri}}"><img src="{{asset_url('images/icons/CC-BY.png', 'core')}}" class="img-cc" alt="CC-BY"></a> <br/>
             @elseif($cc=='CC-BY-SA')
-                <a href="http://creativecommons.org/licenses/by-sa/3.0/au/" tip="Attribution-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-SA.png', 'core')}}" class="img-cc" alt="CC-BY-SA"></a> <br/>
+            <?php
+                if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-sa/3.0/au/";
+            ?>
+                <a href="{{$cc_uri}}" tip="Attribution-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-SA.png', 'core')}}" class="img-cc" alt="CC-BY-SA"></a> <br/>
             @elseif($cc=='CC-BY-ND')
-                <a href="http://creativecommons.org/licenses/by-nd/3.0/au/" tip="Attribution-No Derivatives"><img src="{{asset_url('images/icons/CC-BY-ND.png', 'core')}}" class="img-cc" alt="CC-BY-ND"></a> <br/>
+            <?php
+                if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-nd/3.0/au/";
+            ?>
+                <a href="{{$cc_uri}}" tip="Attribution-No Derivatives"><img src="{{asset_url('images/icons/CC-BY-ND.png', 'core')}}" class="img-cc" alt="CC-BY-ND"></a> <br/>
             @elseif($cc=='CC-BY-NC')
-                <a href="http://creativecommons.org/licenses/by-nc/3.0/au/" tip="Attribution-Non Commercial"><img src="{{asset_url('images/icons/CC-BY-NC.png', 'core')}}" class="img-cc" alt="CC-BY-NC"></a> <br/>
+            <?php
+                if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-nc/3.0/au/";
+            ?>
+                <a href="{{$cc_uri}}" tip="Attribution-Non Commercial"><img src="{{asset_url('images/icons/CC-BY-NC.png', 'core')}}" class="img-cc" alt="CC-BY-NC"></a> <br/>
             @elseif($cc=='CC-BY-NC-SA')
-                <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/au/" tip="Attribution-Non Commercial-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-NC-SA.png', 'core')}}" class="img-cc" alt="CC-BY-NC-SA"></a> <br/>
+            <?php
+                if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-nc-sa/3.0/au/";
+            ?>
+            <a href="{{$cc_uri}}" tip="Attribution-Non Commercial-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-NC-SA.png', 'core')}}" class="img-cc" alt="CC-BY-NC-SA"></a> <br/>
             @elseif($cc=='CC-BY-NC-ND')
-                <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
+            <?php
+                if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-nc-nd/3.0/au/";
+            ?>
+                <a href="{{$cc_uri}}" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
             @else 
                 <span>{{sentenceCase($cc)}}</span>
         	@endif

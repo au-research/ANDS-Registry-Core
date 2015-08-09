@@ -31,7 +31,8 @@ class Vocabularies extends CI_Model
 
     /**
      * Returns a single _vocabulary by SLUG
-     * SLUG has to be unique as it maps to ID
+     * SLUG IS NOT unique can have published and draft
+     * Try to get the published first then fallback to draft
      * This function calls the @getByID function internally
      * @param  string $slug
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -40,13 +41,20 @@ class Vocabularies extends CI_Model
     public function getBySlug($slug)
     {
         $this->vocab_db = $this->load->database('vocabs', true);
-        $result = $this->vocab_db->get_where('vocabularies', array('slug' => $slug));
+        $result = $this->vocab_db->get_where('vocabularies', array('slug' => $slug, 'status'=>'published'));
         if ($result->num_rows() > 0) {
             $vocab_result = $result->result_array();
             $vocab_id = $vocab_result[0]['id'];
             return $this->getByID($vocab_id);
         } else {
-            return false;
+            $result = $this->vocab_db->get_where('vocabularies', array('slug' => $slug));
+            if ($result->num_rows() > 0) {
+                $vocab_result = $result->result_array();
+                $vocab_id = $vocab_result[0]['id'];
+                return $this->getByID($vocab_id);
+            } else {
+                return false;
+            }
         }
     }
 
@@ -87,6 +95,21 @@ class Vocabularies extends CI_Model
             array_push($res, $vocab);
         }
         return $res;
+    }
+
+    /**
+     * Returns all vocabularies as a recordset
+     * @return array()
+     */
+    public function getAllVocabs()
+    {
+        $this->vocab_db = $this->load->database('vocabs', true);
+        $result = $this->vocab_db->get('vocabularies');
+        if ($result->num_rows() == 0)
+            return false;
+        else
+            return $result->result_array();
+
     }
 
     public function getOwned()
@@ -502,7 +525,7 @@ class Vocabularies extends CI_Model
         $this->vocab_db = $this->load->database('vocabs', true);
 
         //delete all versions
-        $this->vocab_db->delete('versions', array('vocab_id' => $id));
+        $this->removeAllVersions($id);
 
         //delete the vocabulary
         $this->vocab_db->delete('vocabularies', array('id' => $id));
@@ -514,8 +537,78 @@ class Vocabularies extends CI_Model
         $this->solr->setUrl($vocab_config['solr_url']);
 
         $this->solr->deleteByID($id);
+
     }
 
+    /** Delete all version for the given vocab id
+     * and remove all traces from sissvoc, sesame, and fs
+     * @param $vocab_id
+     */
+    public function removeAllVersions($vocab_id) {
+        $response = "";
+        $this->vocab_db = $this->load->database('vocabs', true);
+        $versions = $this->vocab_db->get_where('versions', array('vocab_id' => $vocab_id));
+        if ($versions->num_rows() == 0) return;
+        foreach ($versions->result_array()  as $r) {
+            $response .= $this->removeVersion($vocab_id, $r['id']);
+        }
+    }
+
+    /** Remove a given Version from toolkit as well as from the DB
+     * @param $vocab_id
+     * @param $version_id
+     * @return string
+     */
+    public function removeVersion($vocab_id, $version_id) {
+        $this->vocab_db = $this->load->database('vocabs', true);
+        $taskList = array('UNPUBLISH'=> 'SISSVoc', 'UNIMPORT'=> 'Sesame' ,'UNHARVEST' => 'File');
+        $task_id = $this->createDeleteTask($vocab_id, $version_id, $taskList);
+        $response = $this->runToolkitTask($task_id);
+        $result = json_decode($response, true);
+        $this->vocab_db->delete('versions', array('id' => $version_id));
+        return "Version ID:" .$version_id. " status: ". $result['status'];
+    }
+
+
+    /** Create a delete task in the tasks table for the toolkit to run
+     * @param $vocab_id
+     * @param $version_id
+     * @param $task_list
+     * @return mixed
+     * @throws Exception
+     */
+    public function createDeleteTask($vocab_id, $version_id, $task_list){
+        $this->vocab_db = $this->load->database('vocabs', true);
+        $task_array = array();
+
+        foreach($task_list as $type=>$provider_type){
+            array_push($task_array, array('type' => $type, 'provider_type' => $provider_type));
+        }
+        $task_params = json_encode($task_array);
+        $params = array(
+            'vocabulary_id' => $vocab_id,
+            'version_id' => $version_id,
+            'params' => $task_params
+        );
+        $result = $this->vocab_db->insert('task', $params);
+        $task_id = $this->vocab_db->insert_id();
+        if (!$result) throw new Exception($this->vocab_db->_error_message());
+        return $task_id;
+    }
+
+    /**
+     * runToolkitTask
+     * call Vocab toolkit to execute the given task
+     * @param $task_id
+     * @return string
+     */
+    function runToolkitTask($task_id){
+        //hit Toolkit
+        $vocab_config = get_config_item('vocab_config');
+        $toolkit_url = $vocab_config['toolkit_url'];
+        $content = @file_get_contents($toolkit_url . 'runTask/' . $task_id);
+        return $content;
+    }
     /**
      * Constructor Method
      * Autoload the _vocabulary class

@@ -130,7 +130,7 @@ $(document).on('click', '.ver_preview', function(event){
 
 $(document).on('click', '.deleteVocab', function(e){
     e.preventDefault();
-    if (confirm('Are you sure you want to delete this vocabulary? This action is irreversible')) {
+    if (confirm('Are you sure you want to delete this vocabulary including all endpoints? This action cannot be reversed.')) {
         var vocab_id = $(this).attr('vocab_id');
         $.ajax({
             url:base_url+'vocabs/delete',
@@ -350,6 +350,11 @@ $(document).on('click', '.deleteVocab', function(e){
             }
             $scope.filters['p'] = 1;
             if (execute) $scope.search();
+        };
+
+        $scope.toggleFacet = function (facet_type) {
+            $('#more'+facet_type).slideToggle();
+            $('#link'+facet_type).toggle();
         };
 
         $scope.addFilter = function (type, value) {

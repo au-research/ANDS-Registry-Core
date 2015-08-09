@@ -715,7 +715,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			$scope.query = '';
 			$scope.filters['q'] = '';
 		}
-		$log.debug($scope.filters);
+		//$log.debug($scope.filters);
+        $scope.filters['p'] = 1;
 		$scope.hashChange();
 		$('#advanced_search').modal('hide');
 	}

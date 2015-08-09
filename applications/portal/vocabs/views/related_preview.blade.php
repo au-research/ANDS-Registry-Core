@@ -41,7 +41,7 @@
                    @if(isset($sub_type)&& $sub_type=='publisher')
                       @if($related['type']=='party' && isset($related['other_vocabs'][0]['title']))
                       <div class="form-group">
-                          <label for="">Also published</label><br />
+                          <label for="">More vocabularies related to {{$related['title']}}</label><br />
                           @foreach($related['other_vocabs'] as $other_vocab)
                           <a href="{{base_url().$other_vocab['slug']}}">{{$other_vocab['title']}}</a><br />
                           @endforeach
@@ -50,7 +50,7 @@
                   @elseif(isset($related['other_vocabs'][0]['title']))
                     @if($related['type']=='party')
                   <div class="form-group">
-                      <label for="">Also related to vocabularies</label><br />
+                      <label for="">More vocabularies related to {{$related['title']}}</label><br />
                       @foreach($related['other_vocabs'] as $other_vocab)
                       <a href="{{base_url().$other_vocab['slug']}}">{{$other_vocab['title']}}</a><br />
                       @endforeach
@@ -58,7 +58,7 @@
                   @endif
                   @if($related['type']=='vocabulary')
                   <div class="form-group">
-                      <label for="">View related vocabulary</label>
+                      <label for="">More vocabularies related to {{$related['title']}}</label>
                       @foreach($related['other_vocabs'] as $other_vocab)
                       <a href="{{base_url().$other_vocab['slug']}}">{{$other_vocab['title']}}</a><br />
                       @endforeach

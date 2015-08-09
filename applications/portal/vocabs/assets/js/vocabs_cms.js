@@ -10,13 +10,25 @@
         .module('app')
         .controller('addVocabsCtrl', addVocabsCtrl);
 
+    Date.prototype.isValid = function () {
+        // An invalid date object returns NaN for getTime() and NaN is the only
+        // object not strictly equal to itself.
+        return this.getTime() === this.getTime();
+    };
+
     function addVocabsCtrl($log, $scope, $location, $modal, vocabs_factory) {
-        vocabs_factory.user().then(function (data) {
-            $scope.user_orgs = data.message;
-        });
+
         $scope.form = {};
 
         $scope.vocab = {top_concept: [], subjects: []};
+        /**
+         * Collect all the user roles, for vocab.owner value
+         */
+        vocabs_factory.user().then(function (data) {
+            $scope.user_orgs = data.message['affiliations'];
+            $scope.user_owner = data.message['role_id'];
+        });
+        $scope.vocab.user_owner = $scope.user_owner;
         $scope.mode = 'add'; // [add|edit]
         $scope.langs = [
             {"value": "zh", "text": "Chinese"},
@@ -29,11 +41,14 @@
             {"value": "ru", "text": "Russian"},
             {"value": "es", "text": "Spanish"}
         ];
-        $scope.licence = ["CC-BY", "CC-BY-SA", "CC-BY-ND", "CC-BY-NC", "CC-BY-NC-SA", "CC-BY-NC-ND", "ODC-By", "GPL", "AusGoalRestrictive", "NoLicence", "Unknown/Other"];
+        $scope.licence = ["CC-BY", "CC-BY-SA", "CC-BY-ND", "CC-BY-NC", "CC-BY-NC-SA", "CC-BY-NC-ND", "ODC-By", "GPL", "AusGoalRestrictive", "NoLicence", "Unknown/Other",""];
         $scope.subject_sources = ['ANZSRC-FOR', 'local'];
 
         $scope.opened = false;
         $scope.decide = false;
+
+        $scope.creation_date = '';
+        $scope.creation_date_changed = false;
 
         $scope.status = 'idle';
 
@@ -52,6 +67,7 @@
             vocabs_factory.get($('#vocab_id').val()).then(function (data) {
                 $log.debug('Editing ', data.message);
                 $scope.vocab = data.message;
+                $scope.vocab.user_owner = $scope.user_owner;
                 $scope.mode = 'edit';
                 $scope.decide = true;
                 $log.debug($scope.form.cms);
@@ -60,6 +76,9 @@
 
         if ($location.search().skip) {
             $scope.decide = true;
+        } else if($location.search().message == 'saved_draft') {
+            $scope.success_message = [];
+            $scope.success_message.push('Successfully saved to a Draft.');
         }
 
         /**
@@ -71,13 +90,7 @@
             $scope.projects = data;
         });
 
-        /**
-         * Collect all the user roles, for vocab.owner value
-         */
-        vocabs_factory.user().then(function (data) {
-            $scope.user_orgs = data.message['affiliations'];
-            $scope.vocab.user_owner = data.message['role_id'];
-        });
+
 
         $scope.projectSearch = function (q) {
             return function (item) {
@@ -254,10 +267,15 @@
                         $scope.error_message = data.message;
                     } else {//success
                         //navigate to the edit form if on the add form
+                        if (status == 'published') {
+                            window.location.replace(base_url + data.message.prop.slug);
+                        }
+                        else{
                         // $log.debug(data.message.prop[0].slug);
-                        $scope.success_message = data.message.import_log;
-                        $scope.success_message.push('Successfully saved to a Draft. <a href="' + base_url + "vocabs/edit/" + data.message.prop.id + '">Click Here edit the draft</a>');
-                        window.location.replace(base_url + "vocabs/edit/" + data.message.prop.id);
+                            $scope.success_message = data.message.import_log;
+                            $scope.success_message.push('Successfully saved to a Draft. <a href="' + base_url + "vocabs/edit/" + data.message.prop.id + '">Click Here edit the draft</a>');
+                            window.location.replace(base_url + "vocabs/edit/" + data.message.prop.id+'/#!/?message=saved_draft');
+                        }
                     }
                 });
             } else if ($scope.mode == 'edit') {
@@ -279,9 +297,16 @@
                                 '<a href="'+base_url+$scope.vocab.slug+'">View Vocabulary</a>'
                             )
                         }
-                        vocabs_factory.get($scope.vocab.slug).then(function (data) {
-                            $scope.vocab = data.message;
-                        });
+                        if (status == 'draft') {
+                            vocabs_factory.get($scope.vocab.id).then(function (data) {
+                                $scope.vocab = data.message;
+                            });
+                        } else if(status == 'deprecated'){
+                            window.location.replace(base_url + 'vocabs/myvocabs');
+                        }
+                        else{
+                            window.location.replace(base_url + $scope.vocab.slug);
+                        }
                     }
                 });
             }

@@ -11,7 +11,7 @@
 /*
 /*										    Registry Software Configuration
 /*
-/* 		Release Version :	15
+/* 		Release Version :	16
 /*		Contact Person  :	services@ands.org.au
 /*		Help/support    :	http://developers.ands.org.au/
 /*
@@ -25,33 +25,38 @@
 $eDBCONF['default']['hostname'] = 'localhost';  // hostname or IP address
 $eDBCONF['default']['username'] = 'webuser';
 $eDBCONF['default']['password'] = '';
-$eDBCONF['default']['dbdriver'] = 'mysql';
+$eDBCONF['default']['dbdriver'] = 'mysqli';
+
+// Name of the database being used for the registry and roles databases
+$eDBCONF['registry']['database'] = 'dbs_registry';
+$eDBCONF['roles']['database'] = 'dbs_roles';
+$eDBCONF['vocabs']['database'] = 'dbs_vocabs';
+$eDBCONF['statistics']['database'] = 'dbs_statistics';
 
 
 // The Server Base URL is the URL via which users access the software installation
 // (for example: http://researchdata.your.org.au/myportal/
 $ENV['protocol'] = 'http://';
-$ENV['default_base_url'] = "{CONFIGURE ME}";
+$ENV['default_base_url'] = $ENV['protocol']."{CONFIGURE ME}";
 
 
 // The SOLR URL is the URL of the search index core which you have installed
 // (for example: http://example.com:8080/solr/registry1/)
 $ENV['solr_url'] = "{CONFIGURE ME}";
 
-
 // The Environment options change the appearance of the software installation
 // Leaving these blank will remove the name and colour-bar from all registry pages
-$ENV['environment_name'] = "My Registry";
-$ENV['environment_colour'] = "#6EBF21";
+// $ENV['environment_name'] = "My Registry";
+// $ENV['environment_colour'] = "#6EBF21";
 
-// registry mode used 'read-only' atm but more mode may follow 
-$ENV['registry_mode'] = "read-only";
+// registry mode used 'read-only' atm but more mode may follow
+$ENV['registry_mode'] = "";
 
 // Who is the administrator of this domain?  		[OPTIONAL]
 // error reports will be emailed to this address
 $ENV['site_admin'] = "Registry System Administrator";
 $ENV['site_admin_email'] = "admin@example.com"; // Will affect the error reporting status
-$ENV['deployment_state'] = "{CONFIGURE ME}";  // either "production" or "development"
+$ENV['deployment_state'] = "development";  // either "production" or "development"
 
 /*************************************************************************/
 /* (SECTION 2) ENABLED MODULES
@@ -123,16 +128,19 @@ $ENV['ENABLED_MODULES'] = array(
 
 
 // Replace this with the URL of your vocabulary server API (if you have one)
-$ENV['sissvoc_url'] = "http://researchdata.ands.org.au:8080/vocab/api/";
+$ENV['sissvoc_url'] = "http://localhost:8080/vocab/api/";
 
 // You can also use a vocab service resolve subjects based on their types
 $ENV['vocab_resolving_services'] =  array(
-	'anzsrc-seo' => array('resolvingService' => 'http://researchdata.ands.org.au:8080/vocab/api/anzsrc-seo/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
-	'anzsrc-for' => array('resolvingService' => 'http://researchdata.ands.org.au:8080/vocab/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
+	'anzsrc-seo' => array('resolvingService' => 'http://localhost:8080/vocab/api/anzsrc-seo/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
+	'anzsrc-for' => array('resolvingService' => 'http://localhost:8080/vocab/api/anzsrc-for/', 'uriprefix' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
 );
 
 // Session Timeout (how many seconds before the user gets logged out)
 $ENV['session_timeout'] = 7200;
+
+//session cookie domain
+$ENV['cookie_domain'] = '';
 
 // Is this installation configured as a Shib Service Provider (AAF)
 // Note: enables AAF login (if Shibboleth 2 is properly configured)
@@ -200,7 +208,7 @@ $ENV['gDOIS_RESPONSE_SUCCESS'] = "OK";
 $ENV['gDOIS_DATACENTRE_PREFIXS'] = array( '10.4225/','10.4226/','10.4227/','10.5072/');
 
 $ENV['gDOIS_TEST_APP_ID'] = "";  // ANDS test datacenter app_id
-$ENV['gDOIS_TEST_SHARED_SECRET'] = "";  // ands test datacentre shared_secret 
+$ENV['gDOIS_TEST_SHARED_SECRET'] = "";  // ands test datacentre shared_secret
 
 
 $eDBCONF['dois']['database'] = 'dbs_dois';
@@ -247,63 +255,33 @@ $ENV['oauth_config'] =
 		"providers" => array (
 			// openid providers
 			"OpenID" => array (
-				"enabled" => true
+				"enabled" => false
 			),
 
 			"Yahoo" => array (
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
 			"Google" => array (
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
 			"Facebook" => array (
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
 			"Twitter" => array (
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "key" => "", "secret" => "" )
 			),
 
 			"LinkedIn" => array (
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "key" => "", "secret" => "" )
 			),
 
 		)
 	);
-
-/*********************************************************************/
-/* (SECTION 5) ADVANCED CONFIGURATION
-/* - only if using non-standard table names or non-mysql DBMS
-/* - other miscelaneous options
-/*********************************************************************/
-
-// Name of the database being used for the registry and roles databases
-$eDBCONF['registry']['database'] = 'dbs_registry';
-$eDBCONF['roles']['database'] = 'dbs_roles';
-$eDBCONF['vocabs']['database'] = 'dbs_vocabs';
-$eDBCONF['statistics']['database'] = 'dbs_statistics';
-
-// If not using mysql (check CodeIgniter for valid values)
-$eDBCONF['default']['dbdriver'] = 'mysql';
-
-// Optional development branch variable, mainly to monitor push state of 
-// test systems (if specified, will report git branch in portal header)
-// $ENV['gitdir_path'] = "/path/to/.git"; 
-
-
-//======================================
-// GOOGLE ANALYTICS (enable FOR PRODUCTION ONLY)
-$enable_google_analytic		= false;
-$google_analytic_code		= 'UA-XXXXXXX-X'; //FOR PRODUCTION ONLY
-$ENV['google_analytic_code'] = 'UA-XXXXXXX-X';
-$ENV['google_key'] = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-$ENV['ga_email'] = 'google_analytics@email.com';
-$ENV['ga_password'] = 'XXXXXXXX';
-$ENV['ga_profile_id'] = 'XXXXXXXXXX';

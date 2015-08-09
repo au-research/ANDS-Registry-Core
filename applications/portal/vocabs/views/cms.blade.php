@@ -61,7 +61,11 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="container" ng-if="decide">
+		<div class="alert alert-success element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="success_message">
+			<ul> <li ng-repeat="msg in success_message" ng-bind-html="msg">[[ msg ]]</li> </ul>
+		</div>
 		<form name="form.cms" novalidate>
 			<div class="row">
 				<div class="col-md-8">
@@ -89,12 +93,7 @@
 
 							<div class="form-group" ng-class="{ 'has-error' : form.cms.creation_date.$invalid }">
 								<label for="">Vocabulary Creation Date</label>
-								<p class="input-group">
-									<input type="text" class="form-control" name="creation_date" required ng-model="vocab.creation_date" placeholder="Vocabulary Creation Date" datepicker-popup="dd-MM-yyyy" is-open="$parent.opened" >
-									<span class="input-group-btn">
-										<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-									</span>
-								</p>
+							    <input type="text" class="form-control" required name="creation_date" ng-model="vocab.creation_date" placeholder="Vocabulary Creation Date">
 								<p ng-show="form.cms.creation_date.$invalid" class="help-block">Vocabulary Creation Date is required.</p>
 							</div>
 							<div class="form-group">
@@ -108,7 +107,7 @@
 							@if(null!=$this->user->affiliations())
 							<div class="form-group">
 								<label for="">Owner</label>
-								<select name="" id="" class="form-control" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
+								<select name="owner" id="owner" class="form-control" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
 							</div>
 							@endif
 						</div>
@@ -160,7 +159,7 @@
 							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('language', newValue.language)">
 								<div class="input-group">
 									<span class="caret caret-for-input-suggestion"></span>
-									<input type="text" ng-model="newValue.language" class="form-control input-suggestion" placeholder="Language" typeahead="lang.value as lang.text for lang in langs | filter:$viewValue" typeahead-min-length="0" typeahead-on-select="addtolist('language', newValue.language)"></input>
+									<input type="text" ng-model="newValue.language" class="form-control input-suggestion" placeholder="Language" typeahead="lang.value as lang.text for lang in langs | filter:$viewValue" typeahead-min-length="0" typeahead-on-select="addtolist('language', newValue.language)"/>
 									<span class="input-group-btn">
 										<button class="btn btn-primary" type="button" ng-click="addtolist('language', newValue.language)"><i class="fa fa-plus"></i> Add</button>
 									</span>

@@ -100,3 +100,13 @@ function readDirectory($directory)
     $scanned_directory = array_diff(scandir($directory), array('..', '.'));
     return $scanned_directory;
 }
+
+function getIPLocation($ip) {
+    $data = @file_get_contents('http://ip-api.com/json/'.$ip);
+    if ($data) {
+        $data = json_decode($data, true);
+        return $data;
+    } else {
+        return false;
+    }
+}

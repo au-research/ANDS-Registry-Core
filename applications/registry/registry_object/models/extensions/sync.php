@@ -25,7 +25,7 @@ class Sync_extension extends ExtensionBase{
 				$this->ro->update_quality_metadata();
 			}
 			$this->ro->enrich();
-			if($this->ro->status=='PUBLISHED'){
+			if($this->ro->status=='PUBLISHED'&&!($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria")){
 				$docs = array();
 				$docs[] = $this->indexable_json($conn_limit);
 				$r = $this->_CI->solr->add_json(json_encode($docs));
@@ -41,7 +41,7 @@ class Sync_extension extends ExtensionBase{
 	function index_solr() {
 		try{
 			$this->_CI->load->library('solr');
-			if($this->ro->status=='PUBLISHED'){
+			if($this->ro->status=='PUBLISHED'&&!($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria")){
 				$docs = array();
 				$docs[] = $this->indexable_json();
 				$this->_CI->solr->add_json(json_encode($docs));
@@ -52,7 +52,7 @@ class Sync_extension extends ExtensionBase{
 		}
 		return true;
 	}
-	
+
 	function indexable_json($limit=null) {
 		$xml = $this->ro->getSimpleXML();
         $rifDom = new DOMDocument();
@@ -62,15 +62,19 @@ class Sync_extension extends ExtensionBase{
 		$json = array();
         $party_service_conn_limit = 200;
 
+        if ($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria"){
+            return $json;
+        }
+
         if($limit && (int)$limit > 0)
             $party_service_conn_limit = $limit;
 
         $single_values = array(
 			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type'
 		);
-        
-        
-        
+
+
+
 
         $include_rights_type = array('open','restricted','conditional');
         $include_descriptions = array('brief','full');
@@ -385,9 +389,15 @@ class Sync_extension extends ExtensionBase{
         	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
         	foreach ($related_objects as $related_object) {
                 if(!isset($related_object['status']) || $related_object['status']!=DRAFT){
-                    if ($related_object['class']=='party' && $related_object['relation_type']=='isManagedBy') {
+//
+                    if ($related_object['class']=='party'
+                        && $related_object['relation_type']=='isManagedBy'
+                        && strtolower(trim($this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type'))) !='person') {
                         $json['administering_institution'][] = $related_object['title'];
-                    } else if($related_object['class']=='party' && $related_object['relation_type']=='isFundedBy') {
+                    } else if(
+                        $related_object['class']=='party'
+                        && $related_object['relation_type']=='isFundedBy'
+                        && strtolower(trim($this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type'))) !='person') {
                         $json['funders'][] = $related_object['title'];
                     } else if($related_object['class']=='party') {
                         $tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
@@ -427,8 +437,102 @@ class Sync_extension extends ExtensionBase{
 
         $this->_dropCache();
         $json = array_filter($json);
+
 		return $json;
 	}
+
+    function indexable_json_es() {
+
+        //prepare
+        $rifDom = new DOMDocument();
+        $rifDom->loadXML($this->ro->getRif());
+        $gXPath = new DOMXpath($rifDom);
+        $gXPath->registerNamespace('ro', RIFCS_NAMESPACE);
+
+        $json = array();
+
+        //single values
+        $single_values = array(
+            'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'title', 'display_title', 'list_title', 'group', 'class', 'type', 'error_count', 'warning_count', 'quality_level'
+        );
+        foreach($single_values as $s){
+            $json[$s] = html_entity_decode($this->ro->{$s}, ENT_QUOTES);
+        }
+        $json['created'] = date('Y-m-d H:i:s',$this->ro->created);
+
+        //identifiers
+        if ($identifiers = $this->ro->getIdentifiers()) {
+            foreach ($identifiers as $id) {
+                $type = strtolower($id['identifier_type']);
+                $json['identifier_'.$type][] = $id['identifier'];
+            }
+        }
+
+        //[PERFORMANCE WARNING] maybe not include this?
+        $json['matching_identifier_count'] = sizeof($this->ro->findMatchingRecords());
+
+        //spatial
+        if ($spatialLocations = $this->ro->getLocationAsLonLats()) {
+            foreach ($spatialLocations AS $lonLat) {
+                $extents = $this->ro->calcExtent($lonLat);
+                $json['spatial_extents'][] = $extents['extent'];
+                $json['spatial_centres'][] = $extents['center'];
+            }
+        }
+
+        //tags
+        if ($tags = $this->ro->getTags()) {
+            foreach ($tags as $tag) {
+                $type = strtolower($tag['type']);
+                $json['tag_'.$type][] = $tag['name'];
+            }
+        }
+
+        //subjects
+        if ($subjects = $this->ro->processSubjects()) {
+            foreach ($subjects as $s) {
+                $type = strtolower($s['type']);
+                $json['subject_'.$type][] = $s['value'];
+            }
+        }
+
+        //access_rights
+        if ($json['class']=='collection') $json['access_rights'] = 'Other';
+        if ($this->ro->hasTag(SECRET_TAG_ACCESS_OPEN)) {
+            $json['access_rights'] = 'open';
+        } elseif ($this->ro->hasTag(SECRET_TAG_ACCESS_CONDITIONAL)) {
+            $json['access_rights'] = 'conditional';
+        } elseif ($this->ro->hasTag(SECRET_TAG_ACCESS_RESTRICTED)) {
+            $json['access_rights'] = 'restricted';
+        }
+
+        //license_class
+        $include_rights_type = array('open','restricted','conditional');
+        if ($rights = $this->ro->processLicence()) {
+            foreach($rights as $right) {
+                if(isset($right['licence_group'])) {
+                    $json['license_class'] = strtolower($right['licence_group']);
+                    if($json['license_class']=='unknown') $json['license_class']='Other';
+                }
+                if (isset($right['accessRights_type']) && in_array($right['accessRights_type'], $include_rights_type)) $json['access_rights'] = $right['accessRights_type'];
+            }
+        }
+
+        //citation info
+        $json['citation_info'] = '';
+        foreach($gXPath->query('//ro:citationInfo') as $node) {
+            $json['citation_info'] .= trim($node->nodeValue);
+        }
+        $json['citation_info'] = trim($json['citation_info']);
+        if ($json['citation_info']=='') unset($json['citation_info']);
+
+        //portal stats
+        $stat = $this->ro->getAllPortalStat();
+        $data['portal_accessed'] = $stat['accessed'];
+        $data['portal_cited'] = $stat['cited'];
+
+        return $json;
+    }
 
 	function update_field_index($field){
 		$json = array();

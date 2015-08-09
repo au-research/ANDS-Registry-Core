@@ -7,7 +7,7 @@ class DCIMethod extends MethodHandler
 		'q' => '*:* +class:("collection")',
         'fl' => 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved,list_description,earliest_year,latest_year',
         'wt' => 'json',
-        'rows' => 200
+        'rows' => 20000
     );
 
     private $valid_methods = array(

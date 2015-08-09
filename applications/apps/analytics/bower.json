@@ -17,6 +17,10 @@
   "dependencies": {
     "angular-chart.js": "~0.7.2",
     "angular-bootstrap": "0.8.0",
-    "angular-daterangepicker": "~0.1.16"
+    "angular-daterangepicker": "~0.1.16",
+    "angular-route": "~1.4.3"
+  },
+  "devDependencies": {
+    "angular-route": "~1.4.3"
   }
 }

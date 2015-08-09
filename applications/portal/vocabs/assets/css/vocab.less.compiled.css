@@ -152,6 +152,10 @@ ul.listy li a small {
 .alert-info {
   color: white;
 }
+.swatch-white a,
+[class*="swatch-"] .swatch-white a {
+  color: #17649a;
+}
 .swatch-white a.btn-danger {
   color: white;
 }

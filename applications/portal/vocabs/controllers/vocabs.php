@@ -68,6 +68,7 @@ class Vocabs extends MX_Controller
             $vocab['current_version'] = $record->current_version();
             $this->blade
                 ->set('vocab', $vocab)
+                ->set('title', $vocab['title'].' - Research Vocabularies Australia')
                 ->render('vocab');
         } else {
             throw new Exception('No Record found with slug: ' . $slug);
@@ -223,7 +224,7 @@ class Vocabs extends MX_Controller
             // throw new Exception('This is published');
             $draft_vocab = $this->vocab->getDraftBySlug($vocab->prop['slug']);
             if ($draft_vocab) {
-                $vocab = $draft_vocab;
+                redirect(portal_url('vocabs/edit/').$draft_vocab->id);
                 //throw new Exception($vocab->id);
             }
         }
@@ -242,6 +243,7 @@ class Vocabs extends MX_Controller
         $this->blade
             ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl'))
             ->set('vocab', $vocab)
+            ->set('title', 'Edit - '.$vocab->title.' - Research Vocabularies Australia')
             ->render('cms');
     }
 
@@ -259,7 +261,17 @@ class Vocabs extends MX_Controller
             'page' => $slug
         );
         vocab_log_terms($event);
+        $title = '';
+        switch($slug) {
+            case 'about' : $title = 'About';break;
+            case 'feedback' : $title = 'Feedback';break;
+            case 'contribute' : $title = 'Publish a Vocabulary';break;
+            case 'use' : $title = 'Use a Vocabulary';break;
+            case 'disclaimer': $title = 'Disclaimer'; break;
+            case 'privacy': $title = 'Privacy'; break;
+        }
         $this->blade
+            ->set('title', $title.' - Research Vocabularies Australia')
             ->render($slug);
     }
 
@@ -288,6 +300,7 @@ class Vocabs extends MX_Controller
             ->setFacetOpt('field', 'access')
             ->setFacetOpt('field', 'format')
             ->setFacetOpt('field', 'licence')
+            ->setFacetOpt('sort', 'index asc')
             ->setFacetOpt('mincount', '1');
 
         //highlighting
@@ -327,6 +340,11 @@ class Vocabs extends MX_Controller
             }
         }
 
+        //CC-1298 If there's no search term, order search result by title asc
+        if (!isset($filters['q']) || trim($filters['q']) =='') {
+            $this->solr->setOpt('sort', 'title asc');
+        }
+
         // $this->solr->setFilters($filters);
         $result = $this->solr->executeSearch(true);
         $event = array(
@@ -359,6 +377,7 @@ class Vocabs extends MX_Controller
         vocab_log_terms($event);
         $this->blade
             ->set('owned_vocabs', $owned)
+            ->set('title', 'My Vocabs - Research Vocabularies Australia')
             ->render('myvocabs');
     }
 
@@ -409,32 +428,40 @@ class Vocabs extends MX_Controller
             if ($method == 'related') {
                 $result = array();
                 $type = $this->input->get('type') ? $this->input->get('type') : false;
-                foreach ($vocabs as $vocab) {
-                    $vocab_array = $vocab->display_array();
-                    if (isset($vocab_array['related_entity'])) {
-                        foreach ($vocab_array['related_entity'] as $re) {
-                            if ($type == 'publisher') {
-                                if ($re['type'] == 'party') {
-                                    if (isset($re['relationship']) && is_array($re['relationship'])) {
-                                        foreach ($re['relationship'] as $rel) {
-                                            if ($rel == 'publishedBy') {
-                                                $re['vocab_id'] = $vocab_array['id'];
-                                                $result[] = $re;
+                if($type == 'vocabulary'){
+                    $allVocabs = $this->vocab->getAllVocabs();
+                    foreach($allVocabs as $v){
+                        $result[] = array('title'=>$v['title'],'vocab_id'=>$v['id'],'type'=>'vocabulary','identifiers'=>array('slug'=>$v['slug']));
+                    }
+                }
+                else{
+                    foreach ($vocabs as $vocab) {
+                        $vocab_array = $vocab->display_array();
+                        if (isset($vocab_array['related_entity'])) {
+                            foreach ($vocab_array['related_entity'] as $re) {
+                                if ($type == 'publisher') {
+                                    if ($re['type'] == 'party') {
+                                        if (isset($re['relationship']) && is_array($re['relationship'])) {
+                                            foreach ($re['relationship'] as $rel) {
+                                                if ($rel == 'publishedBy') {
+                                                    $re['vocab_id'] = $vocab_array['id'];
+                                                    $result[] = $re;
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                if ($re['type'] == 'party' && isset($re['relationship']) && $re['relationship'] == 'publishedBy') {
-                                    $re['vocab_id'] = $vocab_array['id'];
+                                    if ($re['type'] == 'party' && isset($re['relationship']) && $re['relationship'] == 'publishedBy') {
+                                        $re['vocab_id'] = $vocab_array['id'];
+                                        $result[] = $re;
+                                    }
+                                } elseif ($type) {
+                                    if ($re['type'] == $type) {
+                                        $re['vocab_id'] = $vocab_array['id'];
+                                        $result[] = $re;
+                                    }
+                                } else {
                                     $result[] = $re;
                                 }
-                            } elseif ($type) {
-                                if ($re['type'] == $type) {
-                                    $re['vocab_id'] = $vocab_array['id'];
-                                    $result[] = $re;
-                                }
-                            } else {
-                                $result[] = $re;
                             }
                         }
                     }
@@ -480,7 +507,10 @@ class Vocabs extends MX_Controller
             $vocab = $this->vocab->getBySlug($id);
             if (!$vocab) $vocab = $this->vocab->getByID($id);
 
+
+
             if (!$vocab) throw new Exception('Vocab ID ' . $id . ' not found');
+
 
 
             $result = $vocab->display_array();
@@ -490,6 +520,11 @@ class Vocabs extends MX_Controller
             $data = isset($angulardata['data']) ? $angulardata['data'] : false;
 
             if ($data) {
+                //if id refers to a draft look up to see if there is a published for this draft
+                if($vocab->prop['status'] == 'draft' && $data['status'] == 'published'){
+                    $vocab = $this->vocab->getBySlug($vocab->prop['slug']);
+                }
+
                 $result = $vocab->save($data);
 
                 if (null == $this->user->affiliations() && $data['status'] == 'published') {

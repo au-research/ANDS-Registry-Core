@@ -46,7 +46,9 @@
                         [[ doc.type | toTitleCase ]]
                     </div>
                     <div class="scontent" myWidth>
-                        <h2 class="post-title"> <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]">[[doc.title]]</a> </h2>
+                        <h2 class="post-title">
+                            <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]" ng-bind-html="doc.title"></a>
+                        </h2>
                         <p><small>[[doc.group]]</small></p>
                         <p ng-if="doc.matching_identifier_count">[[ doc.matching_identifier_count ]] Linked Records</p>
                         <p ng-if="doc.identifiermatch">

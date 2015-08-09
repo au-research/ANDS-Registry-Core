@@ -52,21 +52,21 @@
 						</a>
 					</p>
 
-					<? if mod_enabled('twitter'): ?>
+					<?php if (mod_enabled('twitter')): ?>
 					<p>
 						<a href="<?=apps_url('twitter/tweet/activityUpdatesBySubject/true');?>" alt="API Log">
 							Run Twitter feed update (Manual Trigger)
 						</a>
 					</p>
-					<? endif; ?>
+					<?php endif; ?>
 
-					<? if mod_enabled('doi_test'): ?>
+					<?php if (mod_enabled('doi_test')): ?>
 					<p>
 						<a href="<?=apps_url('test_suite/doi_test');?>" alt="DOI test">
 							Test DOI Functions
 						</a>
 					</p>
-					<? endif; ?>
+					<?php endif; ?>
 			    </div>
 			    
 			</div>

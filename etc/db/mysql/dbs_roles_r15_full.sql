@@ -78,7 +78,7 @@ CREATE TABLE `roles` (
   `persistent_id` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `oauth_access_token` varchar(255) DEFAULT NULL,
-  `oauth_data` text,
+  `oauth_data` text DEFAULT NULL,
   PRIMARY KEY (`id`,`role_id`),
   KEY `roleid_index` (`role_id`),
   KEY `roletypeid_index` (`role_type_id`)
