@@ -1,20 +1,22 @@
 <?php
-$relatedSearchQuery = portal_url() . 'search/#!/related_' . $ro->core['class'] . '_id=' . $ro->core['id'];
 
+if ($ro->core['class']=='party') {
+    if ($ro->core['type']=='person') {
+        $class = 'party_one';
+    } elseif ($ro->core['type']=='group') {
+        $class = 'party_multi';
+    }
+} else {
+    $class = $ro->core['class'];
+}
+
+$relatedSearchQuery = portal_url() . 'search/#!/related_' . $class . '_id=' . $ro->core['id'];
 if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
     foreach ($ro->identifiermatch as $mm) {
-        if ($ro->core['class']=='party') {
-            if ($ro->core['type']=='person') {
-                $class = 'party_one';
-            } elseif ($ro->core['type']=='group') {
-                $class = 'party_multi';
-            }
-        } else {
-            $class = $ro->core['class'];
-        }
         $relatedSearchQuery .= '/related_' . $class . '_id=' . $mm['registry_object_id'];
     }
 }
+
 ?>
 
 
