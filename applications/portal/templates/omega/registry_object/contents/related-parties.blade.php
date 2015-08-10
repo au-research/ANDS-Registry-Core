@@ -3,14 +3,14 @@ $relatedSearchQuery = portal_url() . 'search/#!/related_' . $ro->core['class'] .
 
 if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
     foreach ($ro->identifiermatch as $mm) {
-        if ($ro['class']=='party') {
-            if ($ro['type']=='person') {
+        if ($ro->core['class']=='party') {
+            if ($ro->core['type']=='person') {
                 $class = 'party_one';
-            } elseif ($ro['type']=='group') {
+            } elseif ($ro->core['type']=='group') {
                 $class = 'party_multi';
             }
         } else {
-            $class = $ro['class'];
+            $class = $ro->core['class'];
         }
         $relatedSearchQuery .= '/related_' . $class . '_id=' . $mm['registry_object_id'];
     }
