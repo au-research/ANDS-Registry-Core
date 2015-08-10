@@ -63,6 +63,12 @@ class Citations extends ROHandler {
                     }else{
                         $publisher_text = '';
                     }
+
+                    $publicationDate = (string)$citationMetadata->date;
+                    if(strlen($citationMetadata->date) > 4){
+                        $publicationDate = date("Y",strtotime($citationMetadata->date));
+                    }
+
                     $result[] = array(
                         'type'=> 'metadata',
                         'identifier' => (string)$citationMetadata->identifier,
@@ -75,7 +81,7 @@ class Citations extends ROHandler {
                         'placePublished' => (string)$citationMetadata->placePublished,
                         'title' => (string)$citationMetadata->title,
                         'date_type' => (string)$citationMetadata->date['type'],
-                        'date' => date("Y",strtotime((string)$citationMetadata->date)),
+                        'date' =>  $publicationDate,
                         'contributors' => $displayNames,
                         'coins' =>$coins
                     );
