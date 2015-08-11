@@ -35,6 +35,7 @@ class Vocabs extends MX_Controller
         vocab_log_terms($event);
         $this->blade
             ->set('search_app', true)
+            ->set('title', 'Research Vocabularies Australia')
             ->render('index');
     }
 
