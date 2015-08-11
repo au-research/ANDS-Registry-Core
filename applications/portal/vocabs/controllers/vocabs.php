@@ -343,7 +343,7 @@ class Vocabs extends MX_Controller
 
         //CC-1298 If there's no search term, order search result by title asc
         if (!isset($filters['q']) || trim($filters['q']) =='') {
-            $this->solr->setOpt('sort', 'title asc');
+            $this->solr->setOpt('sort', 'title_sort asc');
         }
 
         // $this->solr->setFilters($filters);
