@@ -474,6 +474,15 @@ class Vocabs extends MX_Controller
 
             } else if ($method == 'index') {
                 $result = array();
+
+                //clear all vocabs before adding
+                $this->load->library('solr');
+                $vocab_config = get_config_item('vocab_config');
+                if (!$vocab_config['solr_url']) throw new Exception('Indexer URL for Vocabulary module is not configured correctly');
+                $this->solr->setUrl($vocab_config['solr_url']);
+                $this->solr->deleteByQueryCondition('*:*');
+
+                //index each vocab one by one
                 foreach ($vocabs as $vocab) {
                     $result[] = $vocab->indexable_json();
                     $this->index_vocab($vocab);
