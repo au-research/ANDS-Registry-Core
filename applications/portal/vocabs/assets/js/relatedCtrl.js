@@ -24,27 +24,30 @@
         $scope.relatedEntityTypes = ['publisher', 'vocabulary', 'service'];
         $scope.entity = false;
         $scope.intent = 'add';
+        $scope.type = type;
+
         if (entity) {
             $scope.entity = entity;
             $scope.intent = 'save';
         } else {
             $scope.entity = {'relationship':[]};
         }
-        $scope.type = type;
+
+        if ($scope.type == "publisher") {
+            $scope.type = 'party';
+            $scope.entity = {
+                'relationship': ['publishedBy']
+            }
+        }
+
+
+
         $scope.newrel = '';
 
         $scope.form = {
             reForm:{}
         }
 
-        if ($scope.type == 'publisher') {
-            $scope.type = 'party';
-            if (!$scope.entity) {
-                $scope.entity = {
-                    relationship: ['publishedBy']
-                }
-            }
-        }
 
         $scope.onFocus = function (e) {
             $timeout(function () {
