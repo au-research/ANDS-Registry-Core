@@ -28,14 +28,14 @@
 				window.history.pushState("", document.title, window.location.pathname);
 			} else {
 				// Prevent scrolling by storing the page's current scroll offset
-				var scroll = {
+				var scrollTarget = {
 					top: document.body.scrollTop,
 					left: document.body.scrollLeft
 				};
 				window.location.hash = '';
 				// Restore the scroll offset, should be flicker free
-				document.body.scrollTop = scroll.top;
-				document.body.scrollLeft = scroll.left;
+				document.body.scrollTop = scrollTarget.top;
+				document.body.scrollLeft = scrollTarget.left;
 			}
 		}
 	</script>
