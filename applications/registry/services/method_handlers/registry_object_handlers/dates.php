@@ -13,18 +13,22 @@ class Dates extends ROHandler {
                 $eachDate = Array();
                 $displayType = titleCase(str_replace("dc.","",(string) $dates['type']));
                 foreach($dates as $date) {
+                  if((string)($date)!=''){
                    $eachDate[] = Array(
                        'type'=>(string)$date['type'],
                        'dateFormat'=>(string)$date['dateFormat'],
                        'date'=>(string)($date)
 
                    );
+                  }
                 }
-                $result[] = Array(
-                    'type' => (string) $dates['type'],
-                    'displayType' => $displayType,
-                    'date' => $eachDate
-                );
+                if($eachDate){
+                    $result[] = Array(
+                        'type' => (string) $dates['type'],
+                        'displayType' => $displayType,
+                        'date' => $eachDate
+                    );
+                }
             }
         }
         return $result;

@@ -27,13 +27,13 @@ class Spatial extends ROHandler {
                 $coverages = $this->gXPath->query($query);
                 foreach($coverages as $spatial){
                     $type = $spatial->getAttribute('type');
-                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'){
+                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox' && $spatial->nodeValue!=''){
                         $result[] = array (
                             'type' => $type,
                             'value' => $spatial->nodeValue
                         );
                     }
-                    elseif($type=='kmlPolyCoords' || $type =='gmlKmlPolyCoords'){
+                    elseif(($type=='kmlPolyCoords' || $type =='gmlKmlPolyCoords') && $spatial->nodeValue!=''){
                         if(!$this->ro->isValidKmlPolyCoords($spatial->nodeValue)){
                             $result[] = array (
                                 'type' => $type,
@@ -42,7 +42,7 @@ class Spatial extends ROHandler {
                         }
 
                     }
-                    elseif($type=='iso19139dcmiBox'){
+                    elseif($type=='iso19139dcmiBox' && $spatial->nodeValue!=''){
                         $north = null;
                         $south = null;
                         $west  = null;
@@ -84,13 +84,13 @@ class Spatial extends ROHandler {
                 $coverages = $this->gXPath->query($query);
                 foreach($coverages as $spatial){
                     $type = $spatial->getAttribute('type');
-                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'){
+                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'&& $spatial->nodeValue!=''){
                         $result[] = array (
                             'type' => $type,
                             'value' => $spatial->nodeValue
                         );
                     }
-                    elseif($type=='kmlPolyCoords' || $type =='gmlKmlPolyCoords'){
+                    elseif(($type=='kmlPolyCoords' || $type =='gmlKmlPolyCoords') && $spatial->nodeValue!=''){
                         if(!$this->ro->isValidKmlPolyCoords($spatial->nodeValue)){
                             $result[] = array (
                                 'type' => $type,
@@ -98,7 +98,7 @@ class Spatial extends ROHandler {
                             );
                         }
                     }
-                    elseif($type=='iso19139dcmiBox'){
+                    elseif($type=='iso19139dcmiBox'&& $spatial->nodeValue!=''){
                         $north = null;
                         $south = null;
                         $west  = null;
@@ -142,7 +142,7 @@ class Spatial extends ROHandler {
                 $coverages = $this->gXPath->query($query);
                 foreach($coverages as $spatial){
                     $type = $spatial->getAttribute('type');
-                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'){
+                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'&& $spatial->nodeValue!=''){
                         $result[] = array (
                             'type' => $type,
                             'value' => $spatial->nodeValue
@@ -155,7 +155,7 @@ class Spatial extends ROHandler {
                 $coverages = $this->gXPath->query($query);
                 foreach($coverages as $spatial){
                     $type = $spatial->getAttribute('type');
-                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'){
+                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'&& $spatial->nodeValue!=''){
                         $result[] = array (
                             'type' => $type,
                             'value' => $spatial->nodeValue
