@@ -13,14 +13,24 @@ class relatedInfo extends ROHandler {
         if ($this->xml) {
             foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo){
                 $type = (string) $relatedInfo['type'];
-                $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
+
+                $identifier = array();
+
+                if($relatedInfo->identifier!=''){
+                    $identifier_resolved = identifierResolution((string) $relatedInfo->identifier, (string) $relatedInfo->identifier['type']);
+                    $identifier['identifier_type']=(string) $relatedInfo->identifier['type'];
+                    $identifier['identifier_value']=(string) $relatedInfo->identifier;
+                    $identifier['identifier_href']=$identifier_resolved;
+                }
+                if($relatedInfo->title!='' || $relatedInfo->identifier!='' || $relatedInfo->notes!='' ||(string) $relatedInfo->relation->description!='' || (string) $relatedInfo->relation->url!=''){
                 $result[] = array(
                     'type' => $type,
                     'title' =>  (string) $relatedInfo->title,
-                    'identifier' => Array('identifier_type'=>(string) $relatedInfo->identifier['type'],'identifier_value'=>(string) $relatedInfo->identifier,'identifier_href'=>$identifier_resolved),
+                    'identifier' => $identifier,
                     'relation' =>Array('relation_type'=>(string) $relatedInfo->relation['type'],'description'=>(string) $relatedInfo->relation->description,'url'=>(string) $relatedInfo->relation->url),
                     'notes' => (string) $relatedInfo->notes
-                );
+                     );
+                }
             }
         }
         return $result;
