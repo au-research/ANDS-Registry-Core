@@ -67,7 +67,9 @@
                         </div>
                         <div class="form-group">
                             <label for="">Identifiers</label>
-
+                            <div class="alert alert-danger">
+                                At least 1 identifier is highly recommended
+                            </div>
                             <div class="input-group" ng-repeat="ident in entity.identifiers track by $index">
                                 <input type="text" class="form-control" placeholder="Identifier" ng-model="ident.url">
 								<span class="input-group-btn">
