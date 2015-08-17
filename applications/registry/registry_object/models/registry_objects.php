@@ -755,13 +755,13 @@ class Registry_objects extends CI_Model {
 		if (!$registry_object) { throw new Exception ("Could not load registry object to create draft."); }
 
 		// Add the XML content of this draft to the published record (and follow enrichment process, etc.)
-
 		$this->load->model('data_source/data_sources', 'ds');
 		$this->importer->_reset();
 		$this->importer->setXML(wrapRegistryObjects(html_entity_decode($registry_object->getRif())));
 		//echo $registry_object->getRif();
 		$this->importer->setDatasource($this->ds->getByID($registry_object->data_source_id));
 		$this->importer->forceDraft();
+		$this->importer->statusAlreadyChanged = true;
 		$this->importer->commit();
 
 		if ($error_log = $this->importer->getErrors())

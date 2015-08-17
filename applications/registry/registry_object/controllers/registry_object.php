@@ -3,11 +3,11 @@ define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 
 /**
  * Registry Object controller
- * 
- * 
+ *
+ *
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  * @package ands/registryobject
- * 
+ *
  */
 class Registry_object extends MX_Controller {
 
@@ -32,7 +32,7 @@ class Registry_object extends MX_Controller {
 			$data['ro_id'] = $ro_id;
 			$data['ds'] = $ds;
 			$data['revision'] = $revision;
-			$data['action_bar'] = array(); // list of status actions which can be performed 
+			$data['action_bar'] = array(); // list of status actions which can be performed
 
 			$data['tags'] = $ro->getTags();
 
@@ -49,7 +49,7 @@ class Registry_object extends MX_Controller {
 				if($revRecord[0]['current'] == TRUE)
 					$data['revisionInfo'] = 'Current Version: '.$time;
 				else
-					$data['revisionInfo'] = 'Revision: '.$time;	
+					$data['revisionInfo'] = 'Revision: '.$time;
 
 				if($ro->getNativeFormat($revision) != 'rif')
 				{
@@ -57,7 +57,7 @@ class Registry_object extends MX_Controller {
 				}
 
 			}
-			else 
+			else
 			{
 				$data['viewing_revision'] = false;
 				$data['rif_html'] = $ro->transformForHtml('', $ds->title);
@@ -162,7 +162,7 @@ class Registry_object extends MX_Controller {
 		$data['extrif'] = $extRif;
 		$data['content'] = $ro->transformCustomForFORM($data['extrif']);
 		$data['ds'] = $ds;
-		
+
 		$data['title'] = 'Edit: '.$ro->title;
 		$data['scripts'] = array('add_registry_object');
 		$data['js_lib'] = array('core', 'tinymce', 'ands_datepicker', 'prettyprint','vocab_widget','orcid_widget', 'google_map','location_capture_widget');
@@ -248,7 +248,7 @@ class Registry_object extends MX_Controller {
 		$ds = $this->ds->getByID($ro->data_source_id);
 
 		$this->importer->forceDraft();
-		
+
 		$error_log = '';
 		$status = 'success';
 		//echo wrapRegistryObjects($xml);
@@ -278,12 +278,12 @@ class Registry_object extends MX_Controller {
 		if($ro->key != $this->input->post('key')){
 			$ro = $this->ro->getAllByKey($this->input->post('key'));
 			$ro = $ro[0];
-		} 
+		}
 
 		$qa = $ds->qa_flag==DB_TRUE ? true : false;
 		$manual_publish = $ds->manual_publish==DB_TRUE ? true: false;
 
-		$result = 
+		$result =
 			array(
 				"status"=>$status,
 				"ro_status"=>"DRAFT",
@@ -315,7 +315,7 @@ class Registry_object extends MX_Controller {
 
 		acl_enforce('REGISTRY_USER');
 		ds_acl_enforce($data['data_source_id']);
-		
+
 		$this->load->model('registry_objects', 'ro');
 		$record_owner = $this->user->identifier();
 		$this->load->model('data_source/data_sources', 'ds');
@@ -326,8 +326,8 @@ class Registry_object extends MX_Controller {
 		$jsondata['ro_id'] = null;
 		if(!$ds){
 			$jsondata['message'] = 'do datasource';
-		} 
-		else{	
+		}
+		else{
 			$ro = $this->ro->getDraftByKey($data['registry_object_key']);
 			if($ro)
 			{
@@ -355,16 +355,16 @@ class Registry_object extends MX_Controller {
 			$error_log = $this->importer->getErrors();
 			if($error_log)
 			{
-				throw new Exception($error_log);			
+				throw new Exception($error_log);
 			}
 			else
 			{
 				$jsondata['success'] = true;
 				$ro = $this->ro->getDraftByKey($data['registry_object_key']);
 				$jsondata['ro_id'] = $ro->id;
-				$jsondata['message'] = 'new Registry Object with id ' . $ro->id . ' was created';	
+				$jsondata['message'] = 'new Registry Object with id ' . $ro->id . ' was created';
 			}
-		} 
+		}
  		echo json_encode($jsondata);
 	}
 
@@ -450,7 +450,7 @@ class Registry_object extends MX_Controller {
 		if($data_source_id){
 			$data_source = $this->ds->getByID($data_source_id);
 			if(!$data_source) show_error("Unable to retrieve data source id = ".$data_source_id, 404);
-			
+
 			$data_source->updateStats();//TODO: XXX
 
 			//$data['data_source'] = $data_source;
@@ -481,7 +481,7 @@ class Registry_object extends MX_Controller {
 				'count_PUBLISHED'=>0
 			);
 			//show_error('No Data Source ID provided. use all data source view for relevant roles');
-			
+
 		}
 		$data['scripts'] = array('manage_my_record');
 		$data['js_lib'] = array('core', 'tinymce', 'datepicker', 'dataTables');
@@ -559,13 +559,13 @@ class Registry_object extends MX_Controller {
 
 	/**
 	 * Get A Record
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @package ands/registryobject
 	 * @param registry object ID
 	 * @return [JSON] of a single registry object
-	 * 
+	 *
 	 */
 	public function get_record($id){
 		$this->load->model('registry_objects', 'ro');
@@ -632,7 +632,7 @@ class Registry_object extends MX_Controller {
 				$jsonData['status'] = 'success';
 			}else $jsonData['status'] = 'error';
 		}
-		
+
 		echo json_encode($jsonData);
 	}
 
@@ -697,7 +697,7 @@ class Registry_object extends MX_Controller {
 
 		foreach($affected_ids as $id){
 			$ro = $this->ro->getByID($id);
-	
+
 			foreach($attributes as $a){
 				if($a['name']=='status' && $ro->status == 'DRAFT' && $ro->error_count > 0)
 				{
@@ -715,11 +715,11 @@ class Registry_object extends MX_Controller {
 						$ro->setAttribute($a['name'], $a['value']);
 						if($a['name']=='gold_status_flag'&&$a['value']=='t')
 						{
-							$ro->setAttribute('quality_level',4);						
+							$ro->setAttribute('quality_level',4);
 						}
 						if($a['name']=='gold_status_flag'&&$a['value']=='f')
 						{
-							$ro->update_quality_metadata();						
+							$ro->update_quality_metadata();
 						}
 						if($a['name']=='status')
 						{
@@ -757,11 +757,11 @@ class Registry_object extends MX_Controller {
 											$sentMail = true;
 										}
 									}
-									elseif ($ds->count_SUBMITTED_FOR_ASSESSMENT > 0 && !$sentMail) 
+									elseif ($ds->count_SUBMITTED_FOR_ASSESSMENT > 0 && !$sentMail)
 									{
 										$jsondata['success_message'] .= '<strong>Note:</strong> You should contact your ANDS Client Liaison Officer to let them know your records are ready for assessment.</li>';
 										$sentMail = true;
-									}	
+									}
 								}
 							}
 
@@ -807,13 +807,13 @@ class Registry_object extends MX_Controller {
 		$this->load->model('registry_objects', 'ro');
 		$this->load->model('data_source/data_sources', 'ds');
 
-		
+
 
 		if($select_all && $select_all != "false"){
 
 			$filters = $this->input->post('filters');
 
-			
+
 			$args = array();
 
 			$args['sort'] = isset($filters['sort']) ? $filters['sort'] : array('updated'=>'desc');
@@ -845,7 +845,7 @@ class Registry_object extends MX_Controller {
 				$ds->append_log('delete Log '.NL.$taskLog, "IMPORTER_INFO", "harvester", "IMPORTER_INFO");
 			}
 		}
-		
+
 
 
 		$ds->updateStats();
@@ -853,7 +853,7 @@ class Registry_object extends MX_Controller {
 		echo json_encode(array("status"=>"success"));
 	}
 
-	
+
 
 	function get_solr_doc($id, $limit=null){
         set_exception_handler('json_exception_handler');
@@ -869,13 +869,13 @@ class Registry_object extends MX_Controller {
 
 	/**
 	 * Get the edit form of a Record
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @package ands/registryobject
 	 * @param registry object ID
 	 * @return [HTML] transformed form from extrif
-	 * 
+	 *
 	 */
 
 	public function get_edit_form($id){
@@ -883,7 +883,7 @@ class Registry_object extends MX_Controller {
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
 		$data['extrif'] = $ro->getExtRif();
-		
+
 		$data['preview_link'] = 'http://demo.ands.org.au/'.$ro->slug;
 		$data['transform'] = $ro->transformForFORM();
 		echo $data['transform'];
@@ -893,27 +893,27 @@ class Registry_object extends MX_Controller {
 
 	/**
 	 * Get the edit form of a Record
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @package ands/registryobject
 	 * @param registry object ID, [POST] custom RIFCS
 	 * @return [HTML] transformed form from extrif
-	 * 
+	 *
 	 */
 	public function get_edit_form_custom($id){
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
 		$rifcs = $this->input->post('rifcs');
-		
+
 		$data['transform'] = $ro->transformCustomForFORM($rifcs);
 		echo $data['transform'];
 	}
 
 	/**
 	 * Get a list of records based on the filters
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @package ands/registryobject
 	 * @param [POST] Filters(Fields), [POST] sorts, [POST] page
@@ -930,7 +930,7 @@ class Registry_object extends MX_Controller {
 		if($fields){
 			foreach($fields as $field=>$val){
 				if($i!=0)$q.=' AND ';
-				
+
 				if($field=='list_title'){
 					$q .=$field.':(*'.$val.'*)';
 				}else{
@@ -955,7 +955,7 @@ class Registry_object extends MX_Controller {
 		}
 		$facets = '&facet=true&facet.sort=index&facet.mincount=1&facet.field=class&facet.field=status&facet.field=quality_level';
 		$solr_search_result = $this->solr->fireSearch($fields, $facets);*/
-		
+
 		$this->load->library('solr');
 		$this->solr->setOpt('q',$q);
 		$this->solr->setOpt('start',$start);
@@ -1019,7 +1019,7 @@ class Registry_object extends MX_Controller {
 				$facets[$field][$field_name] = $value;
 			}
 		}
-		
+
 		//Putting them all together and return
 		$jsonData['status'] = 'OK';
 		$jsonData['q'] = $solr_header;
@@ -1029,7 +1029,7 @@ class Registry_object extends MX_Controller {
 
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
-		
+
 	}
 
 	public function getConnections($ro_id, $limit=null)
@@ -1074,7 +1074,7 @@ class Registry_object extends MX_Controller {
 
 			switch($ro->status){
 
-				case 'DRAFT': 
+				case 'DRAFT':
 					if($qa)
 					{
 						$actions[] = 'SUBMITTED_FOR_ASSESSMENT';
@@ -1086,21 +1086,21 @@ class Registry_object extends MX_Controller {
 					else
 					{
 						$actions[] = 'PUBLISHED';
-					}	
+					}
 				break;
 
-				case 'MORE_WORK_REQUIRED': 
+				case 'MORE_WORK_REQUIRED':
 					$actions[] = 'DRAFT';
 				break;
 
-				case 'SUBMITTED_FOR_ASSESSMENT': 
-					if($this->user->hasFunction('REGISTRY_STAFF')) { 
+				case 'SUBMITTED_FOR_ASSESSMENT':
+					if($this->user->hasFunction('REGISTRY_STAFF')) {
 						$actions[] = 'DRAFT';
 						$actions[] = 'ASSESSMENT_IN_PROGRESS';
-					} 
+					}
 				break;
-				case 'ASSESSMENT_IN_PROGRESS': 
-					if($this->user->hasFunction('REGISTRY_STAFF')) { 
+				case 'ASSESSMENT_IN_PROGRESS':
+					if($this->user->hasFunction('REGISTRY_STAFF')) {
 						$actions[] = 'MORE_WORK_REQUIRED';
 						if ($manual_publish)
 						{
@@ -1109,13 +1109,13 @@ class Registry_object extends MX_Controller {
 						else
 						{
 							$actions[] = 'PUBLISHED';
-						}	
-					} 
+						}
+					}
 				break;
-				case 'APPROVED': 
+				case 'APPROVED':
 					$actions[] = 'PUBLISHED';
 					break;
-				case 'PUBLISHED': 
+				case 'PUBLISHED':
 				break;
 			}
 		}
