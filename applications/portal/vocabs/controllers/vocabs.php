@@ -326,7 +326,7 @@ class Vocabs extends MX_Controller
              ->setOpt('defType', 'edismax')
              ->setOpt('rows', '250')
              ->setOpt('q.alt', '*:*')
-             ->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001 concept^0.02 publisher^0.5');
+             ->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001 concept_search^0.02 publisher^0.5');
 
         foreach ($filters as $key => $value) {
             switch ($key) {

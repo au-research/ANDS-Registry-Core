@@ -19,5 +19,10 @@
                 return ln;
             }
         })
+        .filter('removeSearchTail', function(){
+            return function (text) {
+                return text.replace("_search", "");
+            }
+        })
     ;
 })();

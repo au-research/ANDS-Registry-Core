@@ -38,6 +38,7 @@
 		<field name="format" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 
 		<!-- Search Fields -->
+		<field name="concept_search" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="title_search" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="subject_search" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="publisher_search" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
@@ -62,6 +63,7 @@
 	<copyField source="title" dest="title_sort"/>
 	<copyField source="subjects" dest="subject_search"/>
 	<copyField source="top_concept" dest="subject_search"/>
+	<copyField source="concept" dest="concept_search"/>
 
 
 	<types>
