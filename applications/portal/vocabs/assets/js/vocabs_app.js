@@ -90,6 +90,15 @@ $(document).on('click', '.re_preview', function(event){
         }
     },event);
 });
+//Feedback button
+window.ATL_JQ_PAGE_PROPS =  {
+    "triggerFunction": function(showCollectorDialog) {
+        //Requries that jQuery is available!
+        jQuery(".feedback_button, .myCustomTrigger").click(function(e) {
+            e.preventDefault();
+            showCollectorDialog();
+        });
+    }};
 
 $(document).on('click', '.ver_preview', function(event){
     event.preventDefault();

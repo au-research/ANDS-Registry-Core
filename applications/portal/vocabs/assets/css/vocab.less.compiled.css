@@ -165,6 +165,35 @@ ul.listy li a small {
 .alert-success a {
   color: white;
 }
+.feedback_button {
+  box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 2px 0px 0px;
+  position: fixed;
+  display: block;
+  white-space: nowrap;
+  text-decoration: none !important;
+  font-family: arial, FreeSans, Helvetica, sans-serif;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 99;
+  bottom: 0;
+  right: 10px;
+}
+.yellow_button {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  background: #f58000;
+  border: none;
+  padding: 5px 5px;
+  margin: 10px 0;
+  width: 105px;
+  text-decoration: none;
+}
+.yellow_button:hover {
+  background: #F58072;
+  color: #fff;
+}
 .classic-tree ul {
   margin-left: 20px;
 }
