@@ -8,7 +8,7 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
 
     function computed(group) {
         if (!group || group.rules.length == 0) return "";
-        
+
         // if(!group.root) {
         //     var hasdata = true;
         //     for (var i=0;i < group.rules.length; i++) {
@@ -18,7 +18,7 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
         //     }
         //     if (!hasdata) return "";
         // }
-        
+
         for (var str = "", i = 0; i < group.rules.length; i++) {
             if(group.rules[i].data!='' && group.rules[i]!==undefined){
                 i > 0 && (str += " " + group.operator + " ");
@@ -53,8 +53,12 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
         $scope.filter = $scope.parse(data);
     });
 
-    $scope.$on('cq', function(e, data){
-        $scope.filter = JSON.parse(LZString.decompressFromEncodedURIComponent(data));
+    $scope.$on('cq', function(e, cqdata){
+        if (cqdata) {
+            $scope.filter = JSON.parse(LZString.decompressFromEncodedURIComponent(cqdata));
+        } else {
+            $scope.filter = JSON.parse(data);
+        }
     });
 
     $scope.$on('clearSearch', function(e){
