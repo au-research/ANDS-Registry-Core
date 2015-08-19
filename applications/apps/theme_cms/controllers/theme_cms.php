@@ -43,8 +43,8 @@ class Theme_cms extends MX_Controller {
 	}
 
 	public function delete_page(){
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
+		$this->output->set_header('Content-type: application/json');
+		set_exception_handler('json_exception_handler');
 		$data = file_get_contents("php://input");
 		echo $this->theme_pages->delete($data);
 	}
@@ -83,7 +83,7 @@ class Theme_cms extends MX_Controller {
 	}
 
 
-	
+
 	// Initialise
 	function __construct(){
 		parent::__construct();

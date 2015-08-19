@@ -70,6 +70,33 @@ class Theme_pages extends CI_Model {
 
 	function delete($data){
 		$json = json_decode($data);
+		$record = $this->get($json->slug);
+		$record = $record[0];
+		// remove all secret tag left over
+		if ($record && $record['secret_tag']) {
+			$query = $this->db->where('tag', $record['secret_tag'])->get('registry_object_tags');
+			if ($query->num_rows() > 0) {
+
+				//collect the keys to be resync
+				$keys = array();
+				foreach ($query->result() as $row) {
+					$keys[] = $row->key;
+				}
+
+				//delete tag relation
+				$query = $this->db->where('tag', $record['secret_tag'])->delete('registry_object_tags');
+
+				//resync records
+				$CI =& get_instance();
+				foreach ($keys as $key) {
+					$CI->load->model('registry/registry_object/registry_objects', 'ro');
+					$ro = $CI->ro->getPublishedByKey($key);
+					$ro->sync(false);
+					unset($ro);
+				}
+			}
+		}
+
 		$this->db->delete($this->table, array('slug'=>$json->slug));
 		echo 1;
 	}
