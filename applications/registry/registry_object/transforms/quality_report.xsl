@@ -9,7 +9,7 @@
     <xsl:template match="/">
         <xsl:apply-templates/>
     </xsl:template>
-    
+
     <xsl:template match="ro:registryObjects">
 	    <xsl:choose>
 		    <xsl:when test="$output = 'script'">
@@ -25,7 +25,7 @@
 		    </xsl:otherwise>
 	    </xsl:choose>
     </xsl:template>
-     
+
     <!-- REGISTRY OBJECT CHECKS -->
     <xsl:template match="ro:registryObject">
         <xsl:if test="string-length(ro:collection/@type) = 0 and string-length(ro:activity/@type) = 0 and string-length(ro:party/@type) = 0 and string-length(ro:service/@type) = 0">
@@ -36,7 +36,7 @@
 			    <xsl:otherwise>
 					<span class="error">Registry Object Type must be specified</span>
 			    </xsl:otherwise>
-	    	</xsl:choose>           
+	    	</xsl:choose>
         </xsl:if>
         <xsl:if test="string-length(ro:collection/@type) &gt; 32 or string-length(ro:activity/@type) &gt; 32 or string-length(ro:party/@type) &gt; 32 or string-length(ro:service/@type) &gt; 32">
             <xsl:choose>
@@ -46,7 +46,7 @@
 			    <xsl:otherwise>
 					<span class="error">Registry Object Type must be less than 32 characters</span>
 			    </xsl:otherwise>
-	    	</xsl:choose>          
+	    	</xsl:choose>
         </xsl:if>
         <xsl:if test="string-length($dataSource) = 0">
             <xsl:choose>
@@ -98,10 +98,10 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:apply-templates select="ro:collection | ro:activity | ro:party | ro:service" />
     </xsl:template>
-    
+
     <!--  COLLECTION/PARTY/ACTIVITY LEVEL CHECKS -->
     <xsl:template match="ro:collection">
     <xsl:variable name="CP_roError_cont">
@@ -124,7 +124,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(ro:description[@type='brief']) and not(ro:description[@type='full'])">
         	<xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -154,7 +154,7 @@
 					<span class="warning">At least one location address is required for the Collection.</span>
 			    </xsl:otherwise>
 	    	</xsl:choose>
-        </xsl:if>  
+        </xsl:if>
         <xsl:if test="not(ro:dates/ro:date)">
         	<xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -168,19 +168,19 @@
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Activity') or ro:relatedObject/ro:key[@roclass = 'Activity']) and $output = 'script'">
             <xsl:text>SetInfos("tab_relatedObjects","The Collection must be related to at least one Activity record where available.</xsl:text><xsl:value-of select="$CA_roError_cont"/><xsl:text>","REC_RELATED_OBJECT_ACTIVITY");</xsl:text>
 		</xsl:if>
-		
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Activity') or ro:relatedObject/ro:key[@roclass = 'Activity'] or ro:relatedObject/ro:key[@roclass = 'activity']) and $output = 'html'">
 			<span class="info">The Collection must be related to at least one Activity record where available.<xsl:value-of select="$CA_roError_cont"/></span>
         </xsl:if>
-        
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Party') or ro:relatedObject/ro:key[@roclass = 'Party']) and $output = 'script'">
             <xsl:text>SetWarnings("tab_relatedObjects","The Collection must be related to at least one Party record.</xsl:text><xsl:value-of select="$CP_roError_cont"/><xsl:text>","REQ_RELATED_OBJECT_PARTY");</xsl:text>
         </xsl:if>
-        
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Party') or ro:relatedObject/ro:key[@roclass = 'Party'] or ro:relatedObject/ro:key[@roclass = 'party']) and $output = 'html'">
 			<span class="warning">The Collection must be related to at least one Party record.<xsl:value-of select="$CP_roError_cont"/></span>
         </xsl:if>
-  	
+
         <xsl:if test="not(ro:identifier)">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -191,7 +191,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(ro:subject) or not(ro:subject[string-length(.) &gt; 0] and ro:subject[string-length(@type) &gt; 0])">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -202,7 +202,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(ro:coverage/ro:spatial)">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -213,7 +213,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(ro:coverage/ro:temporal/ro:date[@type='dateFrom']) and not(ro:coverage/ro:temporal/ro:date[@type = 'dateTo'])">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -233,10 +233,10 @@
 					<span class="info">Citation data for the collection is recommended.</span>
 			    </xsl:otherwise>
 	    	</xsl:choose>
-        </xsl:if>         
+        </xsl:if>
         <xsl:apply-templates select="ro:description | ro:coverage | ro:location | ro:name | ro:identifier | ro:subject | ro:relatedObject | ro:relatedInfo | ro:accessPolicy | ro:rights | ro:existenceDates | ro:citationInfo | ro:dates"/>
    </xsl:template>
-    
+
     <xsl:template match="ro:party">
     <xsl:variable name="PC_roError_cont">
 	<xsl:if test="$reverseLinks = 'true'">
@@ -259,7 +259,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(ro:identifier)">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -270,7 +270,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(ro:location/ro:address)">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -280,24 +280,24 @@
 					<span class="info">At least one location address is recommended for the Party.</span>
 			    </xsl:otherwise>
 	    	</xsl:choose>
-        </xsl:if>    
-               
+        </xsl:if>
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Activity') or ro:relatedObject/ro:key[@roclass = 'Activity']) and $output = 'script'">
             <xsl:text>SetInfos("tab_relatedObjects","It is recommended that the Party be related to at least one Activity record.</xsl:text><xsl:value-of select="$PA_roError_cont"/><xsl:text>","REC_RELATED_OBJECT_ACTIVITY");</xsl:text>
 		</xsl:if>
-		
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Activity') or ro:relatedObject/ro:key[@roclass = 'Activity'] or ro:relatedObject/ro:key[@roclass = 'activity']) and $output = 'html'">
 			<span class="info">It is recommended that the Party be related to at least one Activity record.<xsl:value-of select="$PA_roError_cont"/></span>
         </xsl:if>
-        
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Collection') or ro:relatedObject/ro:key[@roclass = 'Collection']) and $output = 'script'">
             <xsl:text>SetWarnings("tab_relatedObjects","The Party must be related to at least one Collection record.</xsl:text><xsl:value-of select="$PC_roError_cont"/><xsl:text>","REQ_RELATED_OBJECT_COLLECTION");</xsl:text>
         </xsl:if>
-        
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Collection') or ro:relatedObject/ro:key[@roclass = 'Collection'] or ro:relatedObject/ro:key[@roclass = 'collection']) and $output = 'html'">
 			<span class="warning">The Party must be related to at least one Collection record.<xsl:value-of select="$PC_roError_cont"/></span>
         </xsl:if>
-                      
+
         <xsl:if test="not(ro:description[@type='brief']) and not(ro:description[@type='full'])">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -308,7 +308,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(ro:subject) or not(ro:subject[string-length(.) &gt; 0] and ro:subject[string-length(@type) &gt; 0])">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -328,11 +328,11 @@
 					<span class="info">Existence dates are recommended for the Party.</span>
 			    </xsl:otherwise>
 	    	</xsl:choose>
-        </xsl:if>        
+        </xsl:if>
         <xsl:apply-templates select="ro:description | ro:coverage | ro:location | ro:name | ro:identifier | ro:subject | ro:relatedObject | ro:relatedInfo | ro:relatedInfo | ro:rights | ro:existenceDates  | ro:dates"/>
     </xsl:template>
-    
-    
+
+
     <xsl:template match="ro:activity">
     <xsl:variable name="AC_roError_cont">
 	<xsl:if test="$reverseLinks = 'true'">
@@ -354,7 +354,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(ro:description[@type='brief']) and not(ro:description[@type='full'])">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -365,7 +365,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(ro:location/ro:address)">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -375,23 +375,23 @@
 					<span class="info">At least one location address is recommended for the Activity.</span>
 			    </xsl:otherwise>
 	    	</xsl:choose>
-        </xsl:if>    
-        
+        </xsl:if>
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Party') or ro:relatedObject/ro:key[@roclass = 'Party']) and $output = 'script'">
             <xsl:text>SetWarnings("tab_relatedObjects","The Activity must be related to at least one Party record.</xsl:text><xsl:value-of select="$AP_roError_cont"/><xsl:text>","REQ_RELATED_OBJECT_PARTY");</xsl:text>
 		</xsl:if>
-		
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Party') or ro:relatedObject/ro:key[@roclass = 'Party'] or ro:relatedObject/ro:key[@roclass = 'party']) and $output = 'html'">
 			<span class="warning">The Activity must be related to at least one Party record.<xsl:value-of select="$AP_roError_cont"/></span>
         </xsl:if>
-              
+
        <xsl:if test="not(contains($relatedObjectClassesStr, 'Collection') or ro:relatedObject/ro:key[@roclass = 'Collection']) and $output = 'script'">
             <xsl:text>SetInfos("tab_relatedObjects","The Activity must be related to at least one Collection record if available.</xsl:text><xsl:value-of select="$AC_roError_cont"/><xsl:text>","REC_RELATED_OBJECT_COLLECTION");</xsl:text>
         </xsl:if>
-        
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Collection') or ro:relatedObject/ro:key[@roclass = 'Collection'] or ro:relatedObject/ro:key[@roclass = 'collection']) and $output = 'html'">
 			<span class="info">The Activity must be related to at least one Collection record if available.<xsl:value-of select="$AC_roError_cont"/></span>
-        </xsl:if>             
+        </xsl:if>
         <xsl:if test="not(ro:subject) or not(ro:subject[string-length(.) &gt; 0] and ro:subject[string-length(@type) &gt; 0])">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -411,11 +411,11 @@
 					<span class="info">Existence dates are recommended for the Activity.</span>
 			    </xsl:otherwise>
 	    	</xsl:choose>
-        </xsl:if>              
+        </xsl:if>
          <xsl:apply-templates select="ro:description | ro:coverage | ro:location | ro:name | ro:identifier | ro:subject | ro:relatedObject | ro:relatedInfo | ro:relatedInfo | ro:rights | ro:existenceDates  | ro:dates"/>
     </xsl:template>
-    
-    
+
+
     <xsl:template match="ro:service">
     <xsl:variable name="SC_roError_cont">
 	<xsl:if test="$reverseLinks = 'true'">
@@ -437,23 +437,23 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Party') or ro:relatedObject/ro:key[@roclass = 'Party']) and $output = 'script'">
             <xsl:text>SetInfos("tab_relatedObjects","It is recommended that the Service be related to at least one Party record.</xsl:text><xsl:value-of select="$SP_roError_cont"/><xsl:text>", "REC_RELATED_OBJECT_PARTY");</xsl:text>
 		</xsl:if>
-		
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Party') or ro:relatedObject/ro:key[@roclass = 'Party'] or ro:relatedObject/ro:key[@roclass = 'party']) and $output = 'html'">
 			<span class="info">It is recommended that the Service be related to at least one Party record.<xsl:value-of select="$SP_roError_cont"/></span>
         </xsl:if>
-        
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Collection') or ro:relatedObject/ro:key[@roclass = 'Collection']) and $output = 'script'">
             <xsl:text>SetWarnings("tab_relatedObjects","The Service must be related to at least one Collection record.</xsl:text><xsl:value-of select="$SC_roError_cont"/><xsl:text>","REQ_RELATED_OBJECT_COLLECTION");</xsl:text>
         </xsl:if>
-        
+
         <xsl:if test="not(contains($relatedObjectClassesStr, 'Collection') or ro:relatedObject/ro:key[@roclass = 'Collection'] or ro:relatedObject/ro:key[@roclass = 'collection']) and $output = 'html'">
 			<span class="warning">The Service must be related to at least one Collection record.<xsl:value-of select="$SC_roError_cont"/></span>
-        </xsl:if> 
-               
+        </xsl:if>
+
         <xsl:if test="not(ro:description[@type='brief']) and not(ro:description[@type='full'])">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -464,7 +464,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        
+
         <xsl:if test="not(ro:location/ro:address/ro:electronic)">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -474,8 +474,8 @@
 					<span class="info">At least one electronic address is required for the Service if available.</span>
 			    </xsl:otherwise>
 	    	</xsl:choose>
-        </xsl:if>    
-     <!--    
+        </xsl:if>
+     <!--
         <xsl:if test="not(ro:accessPolicy)">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -485,13 +485,13 @@
 					<span class="warning">At least one Access Policy URL is recommended for the Service record.</span>
 			    </xsl:otherwise>
 	    	</xsl:choose>
-        </xsl:if> --> 
-        
+        </xsl:if> -->
+
          <xsl:apply-templates select="ro:description | ro:coverage | ro:location | ro:name | ro:identifier | ro:subject | ro:relatedObject | ro:relatedInfo | ro:accessPolicy | ro:rights | ro:existenceDates  | ro:dates"/>
     </xsl:template>
-    
+
     <!-- SERVICE LEVEL CHECKS -->
-    
+
     <!--  SUBJECT CHECKS -->
     <xsl:template match="ro:subject">
         <xsl:choose>
@@ -551,8 +551,8 @@
             </xsl:when>
         </xsl:choose>
     </xsl:template>
-    
-    
+
+
     <!-- DESCRIPTION CHECKS -->
     <xsl:template match="ro:collection/ro:description | ro:party/ro:description | ro:activity/ro:description | ro:service/ro:description">
         <xsl:choose>
@@ -610,8 +610,8 @@
             </xsl:when-->
         </xsl:choose>
     </xsl:template>
-    
-    
+
+
     <!-- NAME CHECKS -->
     <xsl:template match="ro:name">
         <xsl:if test="not(ro:namePart)">
@@ -624,7 +624,7 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        <!-- 
+        <!--
         <xsl:if test="string-length(@type) = 0">
             <xsl:text>SetErrors("</xsl:text><xsl:value-of select="@field_id"/><xsl:text>","Name must have a type");</xsl:text>
         </xsl:if>
@@ -641,7 +641,7 @@
         </xsl:if>
         <xsl:apply-templates select="ro:namePart" />
     </xsl:template>
-    
+
     <xsl:template match="ro:namePart">
         <!--xsl:if test="string-length(@type) = 0 and ancestor::ro:party[@type = 'person']">
             <xsl:choose>
@@ -656,12 +656,12 @@
         <xsl:if test="string-length(@type) &gt; 512">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
-					<xsl:text>SetWarnings("</xsl:text><xsl:value-of select="@field_id"/><xsl:text>","Name Part type must be less than 512 characters","type");</xsl:text>          							
+					<xsl:text>SetWarnings("</xsl:text><xsl:value-of select="@field_id"/><xsl:text>","Name Part type must be less than 512 characters","type");</xsl:text>
 			    </xsl:when>
 			    <xsl:otherwise>
 					<span class="warning">Name Part type must be less than 512 characters.</span>
 			    </xsl:otherwise>
-	    	</xsl:choose>	    	
+	    	</xsl:choose>
         </xsl:if>
         <xsl:if test="string-length(.) = 0">
             <xsl:choose>
@@ -693,8 +693,8 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
-    
+
+
     <!--  IDENTIFIER CHECKS -->
     <xsl:template match="ro:identifier">
         <xsl:if test="string-length(.) &gt; 512">
@@ -738,16 +738,16 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <!-- LOCATION CHECKS -->
-    <xsl:template match="ro:location">   
+    <xsl:template match="ro:location">
     	<xsl:apply-templates select="ro:address | ro:spatial"/>
     </xsl:template>
-    
+
     <xsl:template match="ro:address">
-    	<xsl:apply-templates select="ro:electronic | ro:physical"/>   	
+    	<xsl:apply-templates select="ro:electronic | ro:physical"/>
     </xsl:template>
-    
+
     <xsl:template match="ro:electronic">
         <xsl:if test="string-length(ro:value) &gt; 512">
             <xsl:choose>
@@ -781,8 +781,8 @@
         </xsl:if>
     	<xsl:apply-templates select="ro:arg"/>
     </xsl:template>
-   
-   
+
+
        <xsl:template match="ro:physical">
         <xsl:if test="string-length(@lang) &gt; 512">
             <xsl:choose>
@@ -816,8 +816,8 @@
         </xsl:if>
     	<xsl:apply-templates select="ro:addressPart"/>
     </xsl:template>
-   
-   
+
+
     <xsl:template match="ro:addressPart">
         <xsl:if test="string-length(.) &gt; 512">
             <xsl:choose>
@@ -860,11 +860,11 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
    <xsl:template match="ro:coverage">
     	<xsl:apply-templates select="ro:temporal| ro:spatial"/>
     </xsl:template>
-    
+
     <xsl:template match="ro:arg">
     	<xsl:if test="not(@required = 'true' or @required = 'false')">
             <xsl:choose>
@@ -927,8 +927,8 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-  
-    
+
+
     <!-- RELATED OBJECT CHECKS -->
     <xsl:template match="ro:relatedObject">
         <xsl:if test="not(ro:key)">
@@ -953,7 +953,7 @@
         </xsl:if>
         <xsl:apply-templates select="ro:key | ro:relation"/>
     </xsl:template>
-  
+
     <xsl:template match="ro:relatedObject/ro:key">
         <xsl:if test="string-length(.) &gt; 512">
             <xsl:choose>
@@ -976,9 +976,9 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:relation">
-    
+
         <xsl:if test="string-length(@type) = 0">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
@@ -1001,7 +1001,7 @@
         </xsl:if>
         <xsl:apply-templates select="ro:description | ro:url"/>
     </xsl:template>
-    
+
     <xsl:template match="ro:relation/ro:description">
         <xsl:if test="string-length(.) &gt; 512">
             <xsl:choose>
@@ -1014,7 +1014,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:relation/ro:url">
         <xsl:if test="string-length(.) &gt; 512">
             <xsl:choose>
@@ -1027,8 +1027,8 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
-    
+
+
     <!-- RELATED INFO CHECKS -->
     <xsl:template match="ro:relatedInfo">
         <!--xsl:if test="string-length(@type) = 0">
@@ -1046,7 +1046,7 @@
         </xsl:if>
         <xsl:apply-templates select="ro:identifier | ro:relation | ro:title | ro:notes | ro:format"/>
     </xsl:template>
-    
+
     <xsl:template match="ro:relatedInfo/ro:identifier">
         <xsl:if test="string-length(.) = 0">
             <xsl:choose>
@@ -1089,7 +1089,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:relatedInfo/ro:title">
         <xsl:if test="string-length(.) &gt; 512">
             <xsl:choose>
@@ -1172,8 +1172,8 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
-    
+
+
     <!--  SERVICE ACCESS POLICY CHECKS -->
     <xsl:template match="ro:accessPolicy">
         <xsl:if test="string-length(.) &gt; 512">
@@ -1197,11 +1197,11 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
      <xsl:template match="ro:coverage/ro:temporal">
-        <xsl:apply-templates select="ro:date|ro:text" /> 
+        <xsl:apply-templates select="ro:date|ro:text" />
      </xsl:template>
-    
+
     <xsl:template match="ro:coverage/ro:temporal/ro:date">
     	<xsl:if test="string-length(.) = 0">
             <xsl:choose>
@@ -1264,7 +1264,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:coverage/ro:temporal/ro:text">
         <xsl:if test="string-length(.) &gt; 512">
             <xsl:choose>
@@ -1277,7 +1277,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:coverage/ro:spatial">
         <xsl:if test="string-length(.) = 0">
             <xsl:choose>
@@ -1310,7 +1310,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:location/ro:spatial">
         <xsl:if test="string-length(.) = 0">
             <xsl:choose>
@@ -1343,11 +1343,11 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:citationInfo">
     	<xsl:apply-templates select="ro:fullCitation | ro:citationMetadata"/>
     </xsl:template>
-    
+
     <xsl:template match="ro:fullCitation">
     	<xsl:if test="string-length(.) = 0">
             <xsl:choose>
@@ -1380,11 +1380,11 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:existenceDates">
 		<xsl:apply-templates select="ro:startDate | ro:endDate"/>
     </xsl:template>
-    
+
     <xsl:template match="ro:existenceDates/ro:startDate">
 
 		<xsl:if test="string-length(@dateFormat) &gt; 0">
@@ -1435,7 +1435,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:existenceDates/ro:endDate">
     	<xsl:if test="string-length(@dateFormat) &gt; 0">
 	    	<xsl:if test="string-length(.) = 0">
@@ -1484,8 +1484,8 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
-    
+
+
     <xsl:template match="ro:rights">
 		<xsl:apply-templates select="ro:rightsStatement | ro:licence | ro:accessRights"/>
     </xsl:template>
@@ -1526,7 +1526,8 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        <xsl:if test="string-length(.) = 0">
+        <!-- Remove checking for empty value, this enable open ended date range without validation error CC-1226 -->
+        <!-- <xsl:if test="string-length(.) = 0">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
             		<xsl:text>SetErrors("</xsl:text><xsl:value-of select="@field_id"/><xsl:text>","Date Must have a Value","value");</xsl:text>
@@ -1535,7 +1536,7 @@
 					<span class="error">Date Must have a Value.</span>
 			    </xsl:otherwise>
 	    	</xsl:choose>
-        </xsl:if>
+        </xsl:if> -->
     </xsl:template>
 
 
@@ -1561,7 +1562,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-        
+
     <xsl:template match="ro:rights/ro:rightsStatement">
         <xsl:if test="string-length(.) &gt; 12000">
             <xsl:choose>
@@ -1584,7 +1585,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:rights/ro:licence">
         <xsl:if test="string-length(.) &gt; 12000">
             <xsl:choose>
@@ -1607,7 +1608,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:rights/ro:accessRights">
         <xsl:if test="string-length(.) &gt; 12000">
             <xsl:choose>
@@ -1630,7 +1631,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:citationMetadata">
         <xsl:if test="not(ro:contributor)">
             <xsl:choose>
@@ -1644,8 +1645,8 @@
         </xsl:if>
 		<xsl:apply-templates select="ro:identifier | ro:contributor | ro:title | ro:publisher | ro:date"/>
     </xsl:template>
-    
-    
+
+
     <xsl:template match="ro:citationMetadata/ro:identifier">
         <xsl:if test="string-length(.) = 0">
             <xsl:choose>
@@ -1688,7 +1689,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
- 
+
     <xsl:template match="ro:citationMetadata/ro:contributor">
     	<xsl:if test="not(number(@seq)) and @seq != ''">
 	        <xsl:choose>
@@ -1712,7 +1713,7 @@
         </xsl:if>
         <xsl:apply-templates select="ro:namePart"/>
     </xsl:template>
-    
+
     <xsl:template match="ro:citationMetadata/ro:contributor/ro:namePart">
          <xsl:if test="string-length(.) = 0">
             <xsl:choose>
@@ -1745,7 +1746,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:citationMetadata/ro:date">
         <xsl:if test="string-length(.) = 0">
             <xsl:choose>
@@ -1788,7 +1789,7 @@
 	    	</xsl:choose>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:citationMetadata/ro:title">
 	    <xsl:if test="string-length(.) = 0">
 	        <xsl:choose>
@@ -1811,7 +1812,7 @@
 	    	</xsl:choose>
 	    </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:citationMetadata/ro:url">
 	    <xsl:if test="string-length(.) = 0">
 	        <xsl:choose>
@@ -1834,7 +1835,7 @@
 	    	</xsl:choose>
 	    </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:citationMetadata/ro:context">
 	    <xsl:if test="string-length(.) = 0">
 	        <xsl:choose>
@@ -1857,7 +1858,7 @@
 	    	</xsl:choose>
 	    </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:citationMetadata/ro:version">
 	  <!--  <xsl:if test="string-length(.) = 0">
 	        <xsl:choose>
@@ -1880,7 +1881,7 @@
 	    	</xsl:choose>
 	    </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:citationMetadata/ro:publisher">
     	<xsl:if test="string-length(.) = 0">
 	        <xsl:choose>
@@ -1903,7 +1904,7 @@
 	    	</xsl:choose>
 	    </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="ro:citationMetadata/ro:placePublished">
 	    <xsl:if test="string-length(.) = 0">
 	        <xsl:choose>
@@ -1926,8 +1927,8 @@
 	    	</xsl:choose>
 	    </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="@* | node()" />
-    
-    
+
+
 </xsl:stylesheet>
