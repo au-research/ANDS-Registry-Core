@@ -761,8 +761,9 @@ class Registry_objects extends CI_Model {
 		//echo $registry_object->getRif();
 		$this->importer->setDatasource($this->ds->getByID($registry_object->data_source_id));
 		$this->importer->forceDraft();
+		$this->importer->forceClone();
 		$this->importer->statusAlreadyChanged = true;
-		$this->importer->commit();
+		$this->importer->commit(false);
 
 		if ($error_log = $this->importer->getErrors())
 		{

@@ -355,7 +355,7 @@ class Importer {
 						$record_owner = $this->CI->user->name() . " (" . $this->CI->user->localIdentifier() . ")";
 					}
 
-					if (is_null($revision_record_id))
+					if (is_null($revision_record_id) || $this->forceClone)
 					{
 						// We are creating a new registryObject
 						$ro = $this->CI->ro->create($this->dataSource, (string)$registryObject->key, $class, "", $this->status, "temporary_slug-" . md5((string) $registryObject->key) . "-" . time(), $record_owner, $this->harvestID);
@@ -1122,6 +1122,11 @@ class Importer {
 		$this->forceDraft = TRUE;
 	}
 
+	public function forceClone()
+	{
+		$this->forceClone = TRUE;
+	}
+
 	//public function cleanSchemaLocation($string)
 	//{
 	//	return preg_replace('/ xsi:schemaLocation=".*?"/sm','', $string);
@@ -1408,6 +1413,7 @@ class Importer {
 		$this->solr_queue = array();
 		$this->forcePublish = false;
 		$this->forceDraft = false;
+		$this->forceClone = false;
 		$this->statusAlreadyChanged = false;
 		$this->ingest_attempts = 0;
 		$this->ingest_successes = 0;
