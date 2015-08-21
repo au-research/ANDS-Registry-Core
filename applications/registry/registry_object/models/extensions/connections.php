@@ -314,9 +314,9 @@ class Connections_Extension extends ExtensionBase
 		// Recheck the unordered connections and remove Draft records if allow_drafts is false
 		if ($allow_drafts==false) {
 			foreach ($unordered_connections as $key=>$row) {
-				//if ($row['status']=='DRAFT') {
-				//	unset($unordered_connections[$key]);
-				//}
+				if ($row['status']=='DRAFT') {
+					unset($unordered_connections[$key]);
+				}
 			}
 		}
 
