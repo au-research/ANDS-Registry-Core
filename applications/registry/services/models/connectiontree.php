@@ -183,7 +183,14 @@ class ConnectionTree extends CI_Model
 		$depth--;
 
 		$this->load->model('registry_object/registry_objects','ro');
+
 		$root_registry_object = $this->ro->getByID($root_registry_object_id);
+        $nested_collection = $root_registry_object->getConnections(true, 'nested_collection');
+        if(isset($nested_collection[0]['collection'])){
+            $collections = $nested_collection[0]['collection'];
+        }else{
+           $collections=Array();
+        }
 
 		if (!$root_registry_object) { return array(); }
 
@@ -193,18 +200,19 @@ class ConnectionTree extends CI_Model
 						 ->join('registry_objects r','rr.related_object_key = r.key')
 						 ->where('rr.registry_object_id',$root_registry_object->id)
 						 ->where_in('rr.relation_type',$this->child_relationships);
-		if ($this->published_only) 
+		if ($this->published_only)
 		{
 			$this->db->where('r.status', PUBLISHED);
 		}
 		if ($this->collections_only) { $this->db->where('r.class', 'collection'); }
 		$query = $this->db->get();
 
-		foreach ($query->result_array() AS $row)
+		foreach ($collections AS $row)
 		{
 
 			if ($depth > 0 && !isset($accumulated_ids[$row['registry_object_id']]))
 			{
+
 				// If we're over the widget limit (and this isn't the target RO), then add more...
 				if (count($my_children) >= $this->max_width) 
 				{
@@ -215,11 +223,11 @@ class ConnectionTree extends CI_Model
 					}
 				}
 
-				$row['children'] = $this->getChildren($row['registry_object_id'], $depth, $accumulated_ids, $target_id);
+				$row['children'] = Array();
+                $row['children'] = $this->getChildren($row['registry_object_id'], $depth, $accumulated_ids, $target_id);
 				$accumulated_ids[$row['registry_object_id']] = true;
 				
 				$my_children[] = array(
-					//"id"=>$row['registry_object_id'],
 					"title"=>$row['title'],
 					"registry_object_id"=>$row['registry_object_id'],
 					"class"=>$row['class'],
@@ -230,51 +238,6 @@ class ConnectionTree extends CI_Model
 				);
 			}
 			
-		}
-		$query->free_result();
-
-		/* Inverse relationships (i.e. `b` isPartOf `a`) */
-		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type')
-						 ->from('registry_object_relationships rr')
-						 ->join('registry_objects r','rr.registry_object_id = r.registry_object_id')
-						 ->where('rr.related_object_key',$root_registry_object->key)
-						 ->where_in('rr.relation_type',$this->parent_relationships);
-		if ($this->published_only) 
-		{
-			$this->db->where('r.status', PUBLISHED);
-		}
-		if ($this->collections_only) { $this->db->where('r.class', 'collection'); }
-		$query = $this->db->get();
-
-		foreach ($query->result_array() AS $row)
-		{
-
-			if ($depth > 0 && !isset($accumulated_ids[$row['registry_object_id']]))
-			{
-				// If we're over the widget limit (and this isn't the target RO), then add more...
-				if (count($my_children) >= $this->max_width) 
-				{
-					if ($row['registry_object_id'] != $target_id)
-					{
-						$overflow_ids[] = $row['registry_object_id'];
-						continue;
-					}
-				}
-
-				$row['children'] = $this->getChildren($row['registry_object_id'], $depth, $accumulated_ids, $target_id);
-				$accumulated_ids[$row['registry_object_id']] = true;
-
-				$my_children[] = array(
-					//"id"=>$row['registry_object_id'],
-					"title"=>$row['title'],
-					"registry_object_id"=>$row['registry_object_id'],
-					"class"=>$row['class'],
-					"slug"=>$row['slug'],
-					"status"=>$row['status'],
-					"relation_type"=>$row['relation_type'],
-					"children" => $row['children']
-				);
-			}
 		}
 
 		$overflow_ids = array_unique($overflow_ids);

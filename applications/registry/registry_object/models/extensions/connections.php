@@ -98,9 +98,9 @@ class Connections_Extension extends ExtensionBase
 				if ($specific_type == "nested_collection")
 				{
 					$class_valid = ($connection['class'] == "collection" &&
-						($connection['origin'] == "EXPLICIT" && $connection['relation_type'] == "hasPart")
+						(in_array($connection['origin'],array("EXPLICIT","IDENTIFIER")) && $connection['relation_type'] == "hasPart")
 						||
-						(in_array($connection['origin'], array("REVERSE_INT","REVERSE_EXT")) && $connection['relation_type'] == "isPartOf")
+						(in_array($connection['origin'], array("REVERSE_INT","REVERSE_EXT","IDENTIFIER REVERSE",)) && $connection['relation_type'] == "isPartOf")
 					);
 				}
 				else
