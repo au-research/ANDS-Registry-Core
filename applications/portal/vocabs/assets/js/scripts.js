@@ -176,6 +176,11 @@ $(document).on('click', '.deleteVocab', function(e){
                 return ln;
             }
         })
+        .filter('removeSearchTail', function(){
+            return function (text) {
+                return text.replace("_search", "");
+            }
+        })
     ;
 })();;(function () {
     'use strict';

@@ -15538,7 +15538,7 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 	})
 	.filter('toTitleCase', function($log){
 		return function(str){
-			return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});	
+			return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 		}
 	})
 	.filter('getLabelFor', function($log){
@@ -15577,6 +15577,17 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 			// return decoded;
 		}
 	}])
+	.filter('extractSentence', function($log){
+		return function(text) {
+			var sentences = text.match(/(.*?(?:\.|\?|!))(?: |$)/g);
+			// $log.debug(sentences);
+			if (sentences) {
+				return sentences;
+			} else {
+				return text;
+			}
+		}
+	})
 	.filter('trustAsHtml', ['$sce', function($sce){
 		return function(text){
 			var decoded = $('<div/>').html(text).text();
@@ -15589,12 +15600,12 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 	    //raw: wheter you want in a format of "5 minutes ago", or "5 minutes"
 	    return function (time, local, raw) {
 	        if (!time) return "never";
-	 
+
 	        if (!local) {
 	            (local = Date.now())
 	        }
 
-	 
+
 	        if (angular.isDate(time)) {
 	            time = time.getTime();
 	        } else if (typeof time === "string") {
@@ -15604,7 +15615,7 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 				time = date.getTime();
 	        }
 
-	     
+
 	        if (angular.isDate(local)) {
 	            local = local.getTime();
 	        }else if (typeof local === "string") {
@@ -15612,11 +15623,11 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 	        }
 
 	        // console.log(local, time);
-	 
+
 	        if (typeof time !== 'number' || typeof local !== 'number' || isNaN(time) || isNaN(local)) {
 	            return;
 	        }
-	 
+
 	        var
 	            offset = Math.abs((local - time) / 1000),
 	            span = [],
@@ -15627,8 +15638,8 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 	            MONTH = 2629744,
 	            YEAR = 31556926,
 	            DECADE = 315569260;
-	        
-	 
+
+
 	        if (offset <= MINUTE)              span = [ '', raw ? 'now' : parseInt(offset) + ' seconds' ];
 	        else if (offset < (MINUTE * 60))   span = [ Math.round(Math.abs(offset / MINUTE)), 'min' ];
 	        else if (offset < (HOUR * 24))     span = [ Math.round(Math.abs(offset / HOUR)), 'hr' ];
@@ -15638,10 +15649,10 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 	        else if (offset < (DECADE * 100))  span = [ Math.round(Math.abs(offset / DECADE)), 'decade' ];
 	        else if (isNaN(offset))			   span = [''];
 	        else                               span = [ '', 'a long time' ];
-	 
+
 	        span[1] += (span[0] === 0 || span[0] > 1) ? 's' : '';
 	        span = span.join(' ');
-	 
+
 	        if (raw === true) {
 	            return span;
 	        }
@@ -15691,7 +15702,7 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 
     function computed(group) {
         if (!group || group.rules.length == 0) return "";
-        
+
         // if(!group.root) {
         //     var hasdata = true;
         //     for (var i=0;i < group.rules.length; i++) {
@@ -15701,7 +15712,7 @@ app.config(function(uiGmapGoogleMapApiProvider) {
         //     }
         //     if (!hasdata) return "";
         // }
-        
+
         for (var str = "", i = 0; i < group.rules.length; i++) {
             if(group.rules[i].data!='' && group.rules[i]!==undefined){
                 i > 0 && (str += " " + group.operator + " ");
@@ -15736,8 +15747,12 @@ app.config(function(uiGmapGoogleMapApiProvider) {
         $scope.filter = $scope.parse(data);
     });
 
-    $scope.$on('cq', function(e, data){
-        $scope.filter = JSON.parse(LZString.decompressFromEncodedURIComponent(data));
+    $scope.$on('cq', function(e, cqdata){
+        if (cqdata) {
+            $scope.filter = JSON.parse(LZString.decompressFromEncodedURIComponent(cqdata));
+        } else {
+            $scope.filter = JSON.parse(data);
+        }
     });
 
     $scope.$on('clearSearch', function(e){
@@ -16343,7 +16358,7 @@ app.directive('focusMe', function($timeout, $parse) {
 			});
 		}
 	}
-});;app.controller('searchCtrl', 
+});;app.controller('searchCtrl',
 function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
 
 	$scope.sf = search_factory;
@@ -16419,7 +16434,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.$on('toggleFilter', function(e, data){
 		$scope.toggleFilter(data.type, data.value, data.execute);
 	});
-	
+
 	$scope.$on('togglePreFilter', function(e, data){
 		$scope.togglePreFilter(data.type, data.value, data.execute);
 	});
@@ -16518,7 +16533,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			return true;
 		} else return false;
 	}
-	
+
 	$scope.newSearch = function(query) {
 		if(query!='' && query!=undefined) {
 			$scope.query = query;
@@ -16541,7 +16556,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		var hash = search_factory.filters_to_hash(search_factory.filters)
 		// $log.debug('changing hash to ', hash);
 		// return false;
-		
+
 
 		//only change the hash at search page, other page will navigate to the search page
 		if ($scope.onSearchPage()) {
@@ -16571,7 +16586,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
 			ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
 		}
-	
+
 		if (location.href.indexOf('search')>-1) {
 			search_factory.search($scope.filters).then(function(data){
 				$scope.loading = false;
@@ -16584,7 +16599,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				$scope.populateCenters($scope.result.response.docs);
 			});
 		}
-		
+
 	}
 
 	$scope.addKeyWord = function(extra_keywords) {
@@ -16687,7 +16702,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				}
 			});
 		}
-		
+
 		$scope.hidedoc = function(id) {
 			if ($scope.result) {
 				angular.forEach($scope.result.response.docs, function(doc){
@@ -16778,6 +16793,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				$scope.query = '';
 				search_factory.update('query', '');
 				$scope.filters['q'] = '';
+				delete $scope.filters['cq'];
+				$scope.$broadcast('cq');
 			} else if(type=='description' || type=='title' || type=='identifier' || type == 'related_people' || type == 'related_organisations' || type == 'institution' || type == 'researcher') {
 				$scope.query = '';
 				search_factory.update('query', '');
@@ -16972,7 +16989,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		// $scope.prefilters = {};
 		// $scope.preresult = {};
 		angular.copy($scope.filters, $scope.prefilters);
-		
+
 		//get all facets by deleting the existing facets restrain from the filters
 		var filters_no_facet = {};
 		angular.copy($scope.filters, filters_no_facet);
@@ -17111,8 +17128,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		}
 		if(execute) $scope.presearch();
 	}
-	
-	
+
+
 
 	$scope.isAdvancedSearchActive = function(type) {
 		if($scope.advanced_fields.length){
@@ -17127,7 +17144,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.sizeofField = function(type) {
-		
+
 		var ret = 0;
 
 		if(type=='subject') {
@@ -17216,7 +17233,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				$scope.vocab_tree_tmp = $scope.vocab_tree;
 			});
 		}
-		
+
 
 		// DEPRECATED. getting vocabulary in configuration, mainly for matching isSelected
 		// if(!angular.equals(vocab_factory.subjects, {})) {
@@ -17234,7 +17251,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			});
 		}
 	}
-	
+
 	$scope.isVocabSelected = function(item, filters) {
 		if(!filters) filters = $scope.filters;
 		var found = vocab_factory.isSelected(item, filters);
@@ -17246,7 +17263,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.isVocabParentSelected = function(item) {
 		var found = false;
-		
+
 		if($scope.filters['subject']){
 			var subjects = vocab_factory.subjects;
 			angular.forEach(subjects[$scope.filters['subject']], function(uri){
@@ -17281,9 +17298,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		return found;
 	}
 	// $scope.advanced('subject');
-	// 
-	// 
-	
+	//
+	//
+
 	//MAP
 	$scope.clearMap = function() {
 		$scope.searchBox.setMap(null);
@@ -17344,7 +17361,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				  	// $log.debug($scope.geoCodeRectangle);
 				  	$scope.searchBox.setMap($scope.mapInstance);
 				}
-				
+
 			  	google.maps.event.trigger($scope.mapInstance, 'resize');
 			}
 		});
@@ -17400,7 +17417,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		}
 
 	});
-	
+
 	$scope.centres = [];
 	$scope.populateCenters = function(results){
 		angular.forEach(results, function(doc){
@@ -17411,7 +17428,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 					if (split.length == 1) {
 						split = pair.split(',');
 					}
-					
+
 					if(split.length > 1 && split[0]!=0 && split[1]!=0){
 
 						var lon = split[0];
@@ -17431,7 +17448,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 						}
 					}
 				}
-				
+
 			}
 		});
 	}
