@@ -59,6 +59,7 @@ $application_directives = array(
 				"themes" => "theme_page/index",
 				"theme/(:any)" => "theme_page/view/$1",
 				"contributors" => "group/index",
+				"contributors-list" => "group/indexList",
 				"contributors/(:any)" => "group/view/$1",
 				"(:any)"=>"core/dispatcher/$1",
 			),

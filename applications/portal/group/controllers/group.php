@@ -21,6 +21,13 @@ class Group extends MX_Controller {
 		}
 	}
 
+    function indexList() {
+        $groups = $this->groups->getAll();
+        $this->blade
+            ->set('contributors', $groups)
+            ->render('group/group_index_list');
+    }
+
 	function view($slug) {
 		$group = $this->groups->get($slug);
 		if(isset($group) && sizeof($group) > 0){

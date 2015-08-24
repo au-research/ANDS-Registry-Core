@@ -59,7 +59,7 @@ jQuery(document).ready(function( $ ) {
                     $items.find('.figure,.post-masonry-inner').css( 'padding', padding / 2 + 'px' );
 
                     // wait for possible flexsliders to render before rendering isotope
-                    $container.isotope( {
+                    $grid = $container.isotope( {
                         itemSelector: '.masonry-item',
                         getSortData : {
                             default: function ( $elem ) {
@@ -87,6 +87,7 @@ jQuery(document).ready(function( $ ) {
                         $.waypoints('refresh');
                         $container.removeClass( 'no-transition' );
                     });
+
                 },200);
             });
         });
