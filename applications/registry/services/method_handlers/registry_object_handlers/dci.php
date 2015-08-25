@@ -21,6 +21,7 @@ class DCI extends ROHandler {
         $this->citation_handler = new citations($this->get_resource());
 
         $CI =& get_instance();
+        $CI->load->model('data_source/data_sources','ds');
         $ds = $CI->ds->getByID($this->ro->data_source_id);
         $exportable = false;
         $lower_type = strtolower($this->ro->type);
@@ -67,7 +68,7 @@ class DCI extends ROHandler {
         $authorList = $bibliographicData->addChild('AuthorList');
         $this->getAuthors($authorList);
         $titleList = $bibliographicData->addChild('TitleList');
-        $title = $titleList->addChild("ItemTitle", $this->ro->title);
+        $title = $titleList->addChild("ItemTitle", str_replace('&', '&amp;', $this->ro->title));
         $title['TitleType'] = "English title";
         $source = $bibliographicData->addChild('Source');
         $source->addChild("SourceURL", $sourceUrl);
