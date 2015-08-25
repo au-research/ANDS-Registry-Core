@@ -443,6 +443,8 @@ class Sync_extension extends ExtensionBase{
 
     function indexable_json_es() {
 
+        if (!$this->ro->getRif()) return false;
+
         //prepare
         $rifDom = new DOMDocument();
         $rifDom->loadXML($this->ro->getRif());
