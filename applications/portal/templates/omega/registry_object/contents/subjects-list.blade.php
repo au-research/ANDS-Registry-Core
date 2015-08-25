@@ -22,14 +22,14 @@ foreach($ro->subjects as $col){
                 @foreach($subjects as $col)
                     @if(isset($col['resolved']) && $col['subject']!='')
                         @if($col['type']=='anzsrc-for')
-                            <a href="{{base_url().'search/#!/anzsrc-for='.$col['subject'].$classSearchComp}}" itemprop="about keywords">{{$col['resolved']}}</a> |
+                            <a href="{{base_url().'search/#!/anzsrc-for='.$col['subject'].$classSearchComp}}"><span  itemprop="about keywords">{{$col['resolved']}}</span></a> |
                         @elseif($col['type']=='anzsrc-seo')
-                            <a href="{{base_url().'search/#!/anzsrc-seo='.$col['subject'].$classSearchComp}}" itemprop="about keywords">{{$col['resolved']}}</a> |
+                            <a href="{{base_url().'search/#!/anzsrc-seo='.$col['subject'].$classSearchComp}}"><span  itemprop="about keywords">{{$col['resolved']}}</span></a> |
                         @else
                             <a href="{{base_url().'search/#!/subject_value_resolved='.rawurlencode($col['resolved']).$classSearchComp}}" itemprop="about keywords">{{$col['resolved']}}</a> |
                         @endif
                     @elseif($col['subject']!='')
-                    <a href="{{base_url().'search/#!/subject_value='.rawurlencode($col['subject']).$classSearchComp}}" itemprop="about keywords">{{$col['subject']}}</a> |
+                    <a href="{{base_url().'search/#!/subject_value='.rawurlencode($col['subject']).$classSearchComp}}"><span  itemprop="about keywords">{{$col['subject']}}</span></a> |
                     @endif
                 @endforeach
             </div>
