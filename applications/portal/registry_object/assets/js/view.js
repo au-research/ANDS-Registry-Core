@@ -3,7 +3,7 @@ $(document).ready(function() {
     // drawMap();
     setTimeout( "drawMap()",500 );
     //console.log($.browser)
-    
+
 	$('#rightsContent').hide();
 	$('#dataformats').hide();
 	$(document).on('click', '#toggleRightsContent', function(e){
@@ -15,7 +15,7 @@ $(document).ready(function() {
 	});
 
 
-    
+
 	// $('.panel-body').readmore();
 
 
@@ -101,7 +101,7 @@ $(document).on('click', '.ro_preview', function(event){
 				} else {
 					return 'Error displaying preview';
 				}
-				
+
 			}
 		},
 		position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
@@ -123,7 +123,7 @@ function traverseAndSelectChildren(tree, select_id) {
 			tree[i].focus = true;
            		   // tree[i].activate = true;
 		} else {
-			if (tree[i].children) {            
+			if (tree[i].children) {
 				tree[i].children = traverseAndSelectChildren(tree[i].children, select_id);
 			}
 		}
@@ -152,7 +152,7 @@ function drawMap(){//drawing the map on the left side
 
         $.each(coverages, function(){
             // setTimeout('500');
-            
+
             coverage = $(this).text();
             if (coverage!='') {
 	            split = coverage.split(' ');
@@ -214,7 +214,7 @@ function drawMap(){//drawing the map on the left side
                 if (map2.getZoom() > 3) map2.setZoom(3);
             });
         }
-        
+
         google.maps.event.trigger(map2, 'resize');
         map2.setZoom( map2.getZoom() );
     }
@@ -283,7 +283,7 @@ function initConnectionGraph() {
 				{
 					$(nodeSpan).find("span.dynatree-icon").css("background-position", "-57px -155px");
 				}
-				
+
 				$('a',$(nodeSpan)).attr('title', $(nodeSpan).text());
 				$('a',$(nodeSpan)).attr('href', base_url + node.data.slug +"/"+node.data.registry_object_id);
                 $('a',$(nodeSpan)).attr('ro_id', node.data.registry_object_id);
@@ -309,13 +309,14 @@ function initConnectionGraph() {
 
 					a.attr('relation_type','nested_collection');
 					a.attr('page', 2);
-
-				}
+                }
 			}
 
 	    });
         window.scrollTo(0,0);
 	}
+
+
 
 }
 
