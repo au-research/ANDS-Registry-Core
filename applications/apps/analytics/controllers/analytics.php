@@ -420,7 +420,6 @@ class Analytics extends MX_Controller
         $total = $upper_limit ? $upper_limit : $this->db->count_all('registry_objects');
         $chunkSize = 500;
         // $offset = 0;
-        //
 
         //delete all ro here
         // $this->setUp($core='rda');
@@ -437,6 +436,12 @@ class Analytics extends MX_Controller
                     $data['_id'] = $ro->id;
                     $data['roid'] = $ro->id;
                     // var_dump($data['_id']);ob_flush();flush();
+                    //
+
+                    //get portal_cited
+                    $data['portal_cited'] = $ro->getPortalStat('cited');
+
+                    //add to post
                     $post[] = $data;
                     unset($ro);
                 }
