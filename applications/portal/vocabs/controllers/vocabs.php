@@ -51,7 +51,8 @@ class Vocabs extends MX_Controller
         if ($slug) {
             $record = $this->vocab->getBySlug($slug);
         }
-        if (!$record) {
+        // Be careful; $record not necessarily set yet.
+        if ((!isset($record)) || (!$record)) {
             $record = $this->vocab->getByID($slug);
         }
 
@@ -72,7 +73,13 @@ class Vocabs extends MX_Controller
                  ->set('title', $vocab['title'] . ' - Research Vocabularies Australia')
                  ->render('vocab');
         } else {
-            throw new Exception('No Record found with slug: ' . $slug);
+            // No longer throw an exception, like this:
+            // throw new Exception('No Record found with slug: ' . $slug);
+            // But instead, show the soft 404 page.
+            $message = '';
+            $this->blade
+                 ->set('message', $message)
+                 ->render('soft_404');
         }
     }
 
