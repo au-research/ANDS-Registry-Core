@@ -16,18 +16,32 @@
 class Dispatcher extends MX_Controller {
 
 	public function __construct()
-    {
-         parent::__construct();
-    }
+	{
+		parent::__construct();
+	}
 
 	public function _remap($method, $params = array())
 	{
+		// At this point, $method is in fact the module name,
+		// and $params contains the name of the method.
 		// Put the method back together and try and locate a matching controller
 		array_unshift($params, $method);
 		$requested_controller = CI::$APP->router->locate($params);
 		if(!is_null($requested_controller)) {
-			echo Modules::run(implode("/",$params));
-			return;
+			// We want to use Modules::run, but this doesn't help us
+			// if the method doesn't exist. So we copy in here some
+			// code from Modules::run that checks for the existence
+			// of the method.
+			$module = $params[0];
+			if($class = Modules::load($module)) {
+				$method = (count($params) > 1) ? $params[1] : 'index';
+				if (method_exists($class, $method))	{
+					echo Modules::run(implode("/",$params));
+					return;
+				}
+			}
+			// Fell through; no method found, so show the 404 page.
+			show_404(); 
 		} else if ($params[0] == "preview") {
 			if(sizeof($params) > 2) {
 				$_GET['slug'] = $params[1];
