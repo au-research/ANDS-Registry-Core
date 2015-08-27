@@ -15,7 +15,7 @@
            </div>
            <div class="row">
             <?php uasort($contributors, 'alphasort_byattr_title'); ?>
-              <ul>
+              <ul class="col3">
                 @foreach($contributors as $group)
                 <li>
                   <a href="{{portal_url('contributors/'.$group['slug'])}}" target="_self">{{$group['title']}}</a>
