@@ -217,31 +217,36 @@ class Oai extends MX_Controller
 		$details = $this->_do_list_resumable(OAI::LIST_I, $token);
 		$response = $details['response'];
 		$newtoken = $details['token'];
+        $format = $details['format'];
 		if ($response['count'] > 0)
 		{
 			$this->output->append_output("\t<ListIndentifiers>\n");
 			foreach ($response['records'] as $rec)
 			{
-				$header = $rec->header();
-				$status = $rec->is_deleted() ? " status='deleted'" : "";
-				$this->output->append_output(sprintf("\t\t<header%s>\n", $status));
-				$this->output->append_output("\t\t\t<identifier>" .
-							     sprintf($header['identifier'],
-								     "ands.org.au") .
-							     "</identifier>\n");
-				$this->output->append_output("\t\t\t<datestamp>" .
-							     $header['datestamp'] .
-							     "</datestamp>\n");
-				if (array_key_exists('sets', $header))
-				{
-					foreach ($header['sets'] as $set)
-					{
-						$this->output->append_output("\t\t\t" .
-									     $set->asRef() .
-									     "\n");
-					}
-				}
-				$this->output->append_output("\t\t</header>\n");
+                // if format is 'dci' only collections' Identifiers should be included
+                if($format != 'dci' || $rec->is_collection())
+                    {
+                        $header = $rec->header();
+                        $status = $rec->is_deleted() ? " status='deleted'" : "";
+                        $this->output->append_output(sprintf("\t\t<header%s>\n", $status));
+                        $this->output->append_output("\t\t\t<identifier>" .
+                                         sprintf($header['identifier'],
+                                             "ands.org.au") .
+                                         "</identifier>\n");
+                        $this->output->append_output("\t\t\t<datestamp>" .
+                                         $header['datestamp'] .
+                                         "</datestamp>\n");
+                        if (array_key_exists('sets', $header))
+                        {
+                            foreach ($header['sets'] as $set)
+                            {
+                                $this->output->append_output("\t\t\t" .
+                                                 $set->asRef() .
+                                                 "\n");
+                            }
+                        }
+                        $this->output->append_output("\t\t</header>\n");
+                    }
 			}
 			$this->_inject_token($newtoken, $response['count'], $response['cursor']);
 			$this->output->append_output("\t</ListIndentifiers>\n");
