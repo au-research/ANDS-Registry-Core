@@ -17,10 +17,12 @@ if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
     }
 }
 
+$showRelatedParties = ($ro->core['type']=='person' || $ro->core['type']=='group') ? false : true;
+
 ?>
 
 
-@if($ro->relationships && isset($ro->relationships['party_one']))
+@if($ro->relationships && isset($ro->relationships['party_one']) && $showRelatedParties)
     @foreach($ro->relationships['party_one'] as $col)
         @if($col['slug'] && $col['registry_object_id'])
             <?php
@@ -45,7 +47,7 @@ if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
     @endif
 @endif
 
-@if($ro->relationships && !(isset($ro->relationships['party_one'])) && isset($ro->relationships['party_multi']))
+@if($ro->relationships && !(isset($ro->relationships['party_one'])) && isset($ro->relationships['party_multi']) && $showRelatedParties)
     @foreach($ro->relationships['party_multi'] as $col)
         @if($col['slug'] && $col['registry_object_id'])
             <?php
