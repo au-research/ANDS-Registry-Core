@@ -7,7 +7,11 @@
             @if($ro->dates)
                 @foreach($ro->dates as $date)
                 <p>
+
+
                     {{$date['displayType']}}:
+                    <?php if($date['displayType']=="Available"||$date['displayType']=="Issued"){ ?> <span itemprop="datePublished"><?php }?>
+                    <?php if($date['displayType']=="Created"){ ?> <span itemprop="dateCreated"><?php }?>
                     <?php
                     $prev_date=Array();
                     foreach($date['date'] as $each_date)
@@ -21,13 +25,14 @@
                     }
                     $prev_date='';
                     ?>
+                    <?php if($date['displayType']=="Available"||$date['displayType']=="Issued"||$date['displayType']=="Created"){ ?></span> <?php }?>
                 </p>
                 @endforeach
 
             @endif
             @if($ro->temporal)
                 @foreach($ro->temporal as $date)
-                <p>
+                <p itemprop="temporal">
 
                     Data time period:
                     <?php

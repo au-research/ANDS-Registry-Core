@@ -28,7 +28,7 @@
                                                     <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{$ro->core['title']}}</span></h1>
                                                     @if(isset($ro->core['alt_title'])&& trim(implode($ro->core['alt_title']))!='')
                                                         <small>Also known as:
-                                                            <span>{{implode(', ',$ro->core['alt_title'])}}</span>
+                                                            <span itemprop="alternateName alternativeHeadline" >{{implode(', ',$ro->core['alt_title'])}}</span>
                                                         </small><br/>
                                                     @endif
                                                     @if(!$logo)

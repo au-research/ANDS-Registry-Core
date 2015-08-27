@@ -30,7 +30,13 @@ if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
             }
             ?>
             <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" {{$description}}
-               class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}}
+               class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">
+            <?php
+            if($col['relation_type']=="hasCollector"||$col['relation_type']=="IsPrincipalInvestigatorOf"||$col['relation_type']=="author") {
+                ?> <span itemprop="author creator"> {{$col['title']}} </span> <?php;
+            } else {
+                ?> {{$col['title']}} <?php ;
+            }?>
                 <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}})</small>
             </a>
         @elseif(isset($col['identifier_relation_id']))
