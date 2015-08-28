@@ -221,8 +221,8 @@ class Analytics extends MX_Controller
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @return json
      */
-    public function getOrg() {
-        $this->output->set_header('Content-type: application/json');
+    public function getOrg($format = 'json') {
+
         set_exception_handler('json_exception_handler');
 
         // check in the cache
@@ -244,7 +244,41 @@ class Analytics extends MX_Controller
                 }
             }
         } else {
-            echo json_encode($result);
+            if ($format=='csv-download') {
+
+                header( 'Content-Type: text/csv' );
+                header( 'Content-Disposition: attachment;filename=organisations.csv');
+                ob_end_clean();
+                $out = fopen('php://output', 'w');
+                $header = array('id', 'name', 'data_sources', 'groups', 'doi_app_id');
+                fputcsv($out, $header);
+
+                foreach ($result as $row) {
+                    $datasources = array();
+                    if (isset($row['data_sources'])) {
+                        foreach ($row['data_sources'] as $ds) {
+                            $datasources[] = $ds['title'] . '('.$ds['data_source_id'].')';
+                        }
+                    }
+
+                    $groups = isset($row['groups']) ? $row['groups'] : array();
+                    $doi_app_id = isset($row['doi_app_id']) ? $row['doi_app_id'] : array();
+
+
+                    fputcsv($out, array(
+                        $row['id'],
+                        $row['name'],
+                        implode(';;', $datasources),
+                        implode(';;', $groups),
+                        implode(';;', $doi_app_id)
+                    ));
+                }
+
+                fclose($out);
+            } elseif ($format=='json') {
+                $this->output->set_header('Content-type: application/json');
+                echo json_encode($result);
+            }
         }
     }
 
