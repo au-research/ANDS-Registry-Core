@@ -35,8 +35,10 @@ $showRelatedParties = ($ro->core['type']=='person' || $ro->core['type']=='group'
                class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">
             <?php
             if($col['relation_type']=="hasCollector"||$col['relation_type']=="IsPrincipalInvestigatorOf"||$col['relation_type']=="author") {
-                ?> <span itemprop="author creator"> {{$col['title']}} </span> <?php;
-            } else {
+                ?> <span itemprop="author creator"> {{$col['title']}} </span> <?php
+            }elseif($col['relation_type']=="isParticipantIn") {
+                ?> <span itemprop="contributor"> {{$col['title']}} </span> <?php
+            }else {
                 ?> {{$col['title']}} <?php ;
             }?>
                 <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}})</small>
