@@ -2,15 +2,15 @@
 
 /**
  * Administration controller
- * 
+ *
  * Base stub for administrative control of the registry
- * 
+ *
  * @author Ben Greenwood <ben.greenwood@ands.org.au>
  * @package ands/services
- * 
+ *
  */
 class Administration extends MX_Controller {
-	
+
 	public function index()
 	{
 		$data['js_lib'] = array('core');
@@ -35,7 +35,7 @@ class Administration extends MX_Controller {
 		$data['js_lib'] = array('core');
 		$data['scripts'] = array();
 		$data['title'] = 'Registry Administration - NLA Party Pullback';
-		
+
 		$this->load->config('nla_pullback');
 		$this->load->model('data_source/data_sources', 'ds');
 
@@ -110,11 +110,11 @@ class Administration extends MX_Controller {
 
 			$api_keys[] = array_merge($result, array(
 				"queries_ever"=>$queries_ever,
-				"queries_this_month"=>$queries_this_month 
+				"queries_this_month"=>$queries_this_month
 			));
 		}
 		$data['api_keys'] = $api_keys;
-		
+
 		$this->load->view('api_keys', $data);
 	}
 
@@ -134,7 +134,7 @@ class Administration extends MX_Controller {
 		$data['js_lib'] = array('core');
 		$data['scripts'] = array();
 		$data['title'] = 'Registry Administration - ORCID Party Pullback';
-		
+
 		$this->load->config('orcid_pullback');
 		$this->load->model('data_source/data_sources', 'ds');
 
@@ -190,15 +190,15 @@ class Administration extends MX_Controller {
 
 		$query = $this->db->get();
 
-		if ($query->num_rows()) 
-		{ 
+		if ($query->num_rows())
+		{
 			echo "We have found ".$query->num_rows()." records which have the extRif:annotations element in the rifcs <br />";
 			$emptycount=0;
 			$embeddedcount=0;
 
 			foreach($query->result() as $result){
 				$olddata = $result->data;
-				
+
 				// The majority of hits is expected to be the empty extrif:annotations element
 				$newdata = preg_replace($pattern,"",$result->data);
 
@@ -206,7 +206,7 @@ class Administration extends MX_Controller {
 				{
 					//the element  is not an empty element
   					$newdata = preg_replace($pattern2,"",$result->data);
-  						
+
   					if($newdata==$olddata){
   						//might be the case that it is an extRif element rather than extrif
   						$newdata = preg_replace($pattern3,"",$result->data);
@@ -222,10 +222,10 @@ class Administration extends MX_Controller {
   						$embeddedcount++;
   					}
 
-				} 
-				else 
+				}
+				else
 				{
-					$emptycount++;				
+					$emptycount++;
 				}
 
 				$data = array(
@@ -237,7 +237,18 @@ class Administration extends MX_Controller {
 			}
 			//just a summary of what we did
 			echo "We needed to clean ".$emptycount. "empty annotaion elements and ".$embeddedcount." embedded elements.<br />";
-		} 
+		}
+	}
+
+	public function contributor_page_list() {
+		$data['js_lib'] = array('core');
+		$data['scripts'] = array();
+		$data['title'] = 'Registry Administration - Clean rif of unnesessary extrif:annotations element';
+
+		$db = $this->load->database('portal', true);
+		$data['page_requested'] = $db->get_where('contributor_pages', array('status'=>'REQUESTED'));
+		$data['page_all'] = $db->get('contributor_pages');
+		$this->load->view('contributor_page_list', $data);
 	}
 
 	public function __construct()
