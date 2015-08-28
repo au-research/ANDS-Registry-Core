@@ -158,17 +158,21 @@ div.vertical-center span.vertical-center {
   -webkit-column-count: 2;
   -moz-column-count: 2;
   column-count: 2;
-  -webkit-column-width: 200px;
-  -moz-column-width: 200px;
-  column-width: 200px;
+  -webkit-column-width: 300px;
+  -moz-column-width: 300px;
+  column-width: 300px;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 .col3 {
   -webkit-column-count: 3;
   -moz-column-count: 3;
   column-count: 3;
-  -webkit-column-width: 200px;
-  -moz-column-width: 200px;
-  column-width: 200px;
+  -webkit-column-width: 300px;
+  -moz-column-width: 300px;
+  column-width: 300px;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 /**
  * Modules used mainly in view page

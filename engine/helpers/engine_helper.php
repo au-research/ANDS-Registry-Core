@@ -506,7 +506,8 @@ function ulog_email($subject='', $message='', $logger='activity', $type='info') 
 
 	$email = $_ci->load->library('email');
 	// CC-1201 Remove site_admin_email as the sender, which should defaulted to apache@host
-	// $email->from(get_config_item('site_admin_email'), $siteAdmin);
+	// CC-1201 Default sender to noreply@host
+	$email->from('noreply@researchdata.ands.org.au', $siteAdmin);
 	$email->to(get_config_item('site_admin_email'));
 
 	$email->subject($subject);
