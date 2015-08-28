@@ -20,14 +20,13 @@ class Analytics extends MX_Controller
     {
         // acl_enforce('REGISTRY_STAFF');
         $data = array(
-            'title' => 'Analytics',
+            'title' => 'ANDS Services Analytics',
         );
 
         $data['scripts'] = array(
             'analytics_app',
             'main_ctrl',
             'report_ctrl',
-            'doi_ctrl',
             'analytics_chart_directive',
             'ro_directive',
             'analytics_filter_service',
