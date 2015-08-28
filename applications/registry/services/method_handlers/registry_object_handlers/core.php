@@ -16,7 +16,7 @@ class Core extends ROHandler {
             if(!$attr) $attr = null;
             $result[$f] = $attr;
         }
-        
+
         $alt_title = array();
         if($this->xml) {
             foreach($this->xml->{$this->ro->class}->name as $name) {
@@ -43,7 +43,14 @@ class Core extends ROHandler {
 
         if($this->ro->class == 'activity' && $this->ro->type == 'grant' && strrpos($this->ro->key, 'purl') > 0) {
             $result['url'] = $this->ro->key;
-            $result['description'] = "Identifier: " .$this->ro->key.NL.$this->index['list_description'];
+
+            /**
+             * Check if list_description exists in the index
+             * @todo default description?
+             */
+            if ($this->index['list_description']) {
+                $result['description'] = "Identifier: " .$this->ro->key.NL.$this->index['list_description'];
+            }
         }
         return $result;
 	}
