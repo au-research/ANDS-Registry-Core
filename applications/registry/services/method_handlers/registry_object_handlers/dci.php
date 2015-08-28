@@ -122,7 +122,7 @@ class DCI extends ROHandler {
                 $keywordsList = $descriptorsData->addChild("KeywordsList");
                 foreach($keyWords as $keyWord)
                 {
-                    $keywordsList->addChild("Keyword" , htmlentities($keyWord, ENT_DISALLOWED));
+                    $keywordsList->addChild("Keyword" , str_replace('&', '&amp;', $keyWord));
                 }
             }
             if($spatialData){
