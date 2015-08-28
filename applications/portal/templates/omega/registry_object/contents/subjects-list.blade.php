@@ -26,7 +26,7 @@ foreach($ro->subjects as $col){
                         @elseif($col['type']=='anzsrc-seo')
                             <a href="{{base_url().'search/#!/anzsrc-seo='.$col['subject'].$classSearchComp}}"><span  itemprop="about keywords">{{$col['resolved']}}</span></a> |
                         @else
-                            <a href="{{base_url().'search/#!/subject_value_resolved='.rawurlencode($col['resolved']).$classSearchComp}}" itemprop="about keywords">{{$col['resolved']}}</a> |
+                            <a href="{{base_url().'search/#!/subject_value_resolved='.rawurlencode($col['resolved']).$classSearchComp}}" ><span  itemprop="about keywords">{{$col['resolved']}}</span></a> |
                         @endif
                     @elseif($col['subject']!='')
                     <a href="{{base_url().'search/#!/subject_value='.rawurlencode($col['subject']).$classSearchComp}}"><span  itemprop="about keywords">{{$col['subject']}}</span></a> |

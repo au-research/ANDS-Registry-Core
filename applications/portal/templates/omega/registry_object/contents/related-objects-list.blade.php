@@ -162,6 +162,9 @@ $hasRelatedServices = false;
                     @if($hasDerivedCollection && $ro->core['class']=='collection')
                     <h4>Related Data</h4>
                     <p>
+
+                     <span itemprop="isBasedOnUrl">
+
                         @foreach($ro->relationships['collection'] as $col)
                         <?php
                         $description = '';
@@ -177,6 +180,7 @@ $hasRelatedServices = false;
                             <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" {{$description}} class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
+                         </span>
                     </p>
                     @endif
                     @if($hasRelatedCollection && $ro->core['class']!='collection')

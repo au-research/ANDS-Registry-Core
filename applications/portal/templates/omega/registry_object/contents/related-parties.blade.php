@@ -19,8 +19,15 @@ if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
 
 $showRelatedParties = ($ro->core['type']=='person' || $ro->core['type']=='group') ? false : true;
 
-?>
+$rightsStatement = false;
 
+if($ro->rights){
+    foreach($ro->rights as $right){
+        if($right['type']=='rightsStatement') $rightsStatement=true;
+    }
+}
+
+?>
 
 @if($ro->relationships && isset($ro->relationships['party_one']) && $showRelatedParties)
     @foreach($ro->relationships['party_one'] as $col)
@@ -38,6 +45,11 @@ $showRelatedParties = ($ro->core['type']=='person' || $ro->core['type']=='group'
                 ?> <span itemprop="author creator"> {{$col['title']}} </span> <?php
             }elseif($col['relation_type']=="isParticipantIn") {
                 ?> <span itemprop="contributor"> {{$col['title']}} </span> <?php
+            }elseif($col['relation_type']=="isOwnerOf" && $rightsStatement) {
+                ?> <span itemprop="copyrightHolder"> {{$col['title']}} </span> <?php
+            }
+            elseif($col['relation_type']=="isOwnedBy") {
+                ?> <span itemprop="accountablePerson"> {{$col['title']}} </span> <?php
             }else {
                 ?> {{$col['title']}} <?php ;
             }?>
