@@ -178,11 +178,12 @@
             $log.debug(points, evt);
             if (points.length > 0) {
                 var date = points[0].label;
-                $log.debug('Showing date' + date);
+                $log.debug('Showing date ' + date);
 
                 var data = {
-                    date:date,
-                    filters:vm.filters
+                    type: 'showdate',
+                    value: date,
+                    filters: vm.filters
                 }
                 vm.showDate(data);
             }

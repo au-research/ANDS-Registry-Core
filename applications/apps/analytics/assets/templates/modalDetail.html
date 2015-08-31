@@ -1,11 +1,15 @@
 <div style="modal-center">
     <div class="modal-header">
         <button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{{ vm.data.date }}</h4>
+        <h4 class="modal-title">{{ vm.header }}</h4>
     </div>
     <div class="modal-body swatch-white" ng-cloak>
-
-        <div ng-if="vm.results.aggregations.rostat.buckets.length > 0">
+        <div class="well" ng-repeat="hit in vm.results.hits.hits">
+            <ul ng-repeat="(type,value) in hit._source">
+                <b>{{ type }}</b>: {{ value }}
+            </ul>
+        </div>
+        <!-- <div ng-if="vm.results.aggregations.rostat.buckets.length > 0">
             <h4>Popular View</h4>
             <ul>
                <li ng-repeat="stat in vm.results.aggregations.rostat.buckets">
@@ -21,13 +25,6 @@
                    {{ stat.key }} ({{ stat.doc_count }} occurences)
                </li>
             </ul>
-        </div>
-
-        <div class="well" ng-repeat="hit in vm.results.hits.hits">
-            <ul ng-repeat="(type,value) in hit._source">
-                <b>{{ type }}</b>: {{ value }}
-            </ul>
-        </div>
-
+        </div> -->
     </div>
 </div>

@@ -121,16 +121,40 @@ class Analytics extends MX_Controller
         $request = json_decode($postdata, true);
         $filters = isset($request['filters']) ? $request['filters'] : false;
 
-        $this->elasticsearch->init()->setPath('/logs/production/_search');
-        $this->elasticsearch
-            ->setOpt('from', 0)->setOpt('size', 20)
-            ->mustf('term', 'is_bot', false)
-            ->mustf('range', 'date',
+
+        $log = isset($filters['log']) ? $filters['log'] : 'rdalogs';
+        $this->elasticsearch->init();
+
+        if ($log == 'rdalogs') {
+            $this->elasticsearch->setPath('/logs/production/_search');
+            $this->elasticsearch->mustf('term', 'is_bot', false);
+        } elseif ($log == 'rda') {
+            $this->elasticsearch->setPath('/rda/production/_search');
+        }
+
+        $this->elasticsearch->setOpt('from', 0)->setOpt('size', 20);
+
+        if (isset($filters['type'])) {
+            switch ($filters['type']) {
+                case 'has_doi':
+                    $this->elasticsearch->mustf('exists', 'field', 'identifier_doi');
+                    break;
+                case 'missing_doi':
+                    $this->elasticsearch->mustf('missing', 'field', 'identifier_doi');
+                    break;
+                default: break;
+            }
+        }
+
+        //date range
+        if (isset($filters['period'])) {
+            $this->elasticsearch->mustf('range', 'date',
                 array(
                     'from' => $filters['period']['startDate'],
                     'to' => $filters['period']['endDate']
                 )
             );
+        }
 
         //groups
         if (isset($filters['groups'])) {
