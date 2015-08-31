@@ -205,8 +205,8 @@ class DCI extends ROHandler {
     private function getAuthors($authorList){
         $seq = 0;
         $tempered = false;
-        if(isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor)){
-            foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor){
+        if(count($this->xml->xpath('//citationMetadata/contributor')) > 0){
+            foreach($this->xml->xpath('//citationMetadata/contributor') as $contributor){
                 $nameParts = Array();
                 foreach($contributor->namePart as $namePart){
                     $nameParts[] = array(
