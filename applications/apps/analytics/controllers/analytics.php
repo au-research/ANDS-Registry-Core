@@ -301,6 +301,9 @@ class Analytics extends MX_Controller
                 fclose($out);
             } elseif ($format=='json') {
                 $this->output->set_header('Content-type: application/json');
+
+                //@todo parse this result and get only the user affiliation
+                //for user that doesn't need all orgs
                 echo json_encode($result);
             }
         }

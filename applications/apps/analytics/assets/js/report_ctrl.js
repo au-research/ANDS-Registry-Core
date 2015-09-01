@@ -39,6 +39,9 @@
                     }
                 });
 
+                $log.debug(data);
+                $log.debug(vm.rdaChartData);
+
                 //parse groups
                 vm.viewGroupChartData = {labels: [], data: [] }
                 vm.searchGroupChartData = {labels: [], data: [] }

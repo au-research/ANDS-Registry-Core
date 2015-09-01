@@ -30,6 +30,9 @@
                         } else if (label == 'Has DOI') {
                             type = 'has_doi';
                         }
+                    } else if(scope.type == 'portal_cited') {
+                        var value = label.split(' ')[0];
+
                     }
 
                     var data = {

@@ -10,7 +10,7 @@
 </canvas>
 <table class="table">
     <tr ng-repeat="(pos,label) in chart.labels" ng-if="showzero || chart.data[pos] > 0">
-        <td><a href="" ng-click="openModal(label)">{{ label }}</a></td>
+        <td>{{ label }}</td>
         <td>{{ chart.data[pos] }}</td>
     </tr>
     <tr>

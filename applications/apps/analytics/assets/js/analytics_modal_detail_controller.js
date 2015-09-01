@@ -26,6 +26,11 @@
             delete vm.filters.period;
             vm.filters.log = 'rda';
             vm.filters.type = 'missing_doi';
+        } else if (vm.data.type == 'portal_cited') {
+            delete vm.filters.period;
+            vm.filters.log = 'rda';
+            vm.filters.type = 'portal_cited';
+            vm.filters.data = vm.data.value;
         }
 
 
