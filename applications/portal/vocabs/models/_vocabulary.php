@@ -370,6 +370,27 @@ class _vocabulary
     }
 
     /**
+     * Create a slug for a vocabulary title. The resulting slug
+     * will be no more than 50 characters long. This limit is not
+     * entirely arbitrary; the toolkit implements the same truncation
+     * for version titles. The truncation is needed because (for now,
+     * but for how much longer?) the toolkit uses slugs as directory
+     * names, and we have come up against a limit on the total length
+     * of a path to a file.
+     * @param string $title The title from which to make the slug
+     * @return string The generated slug
+     */
+    public function makeSlug($title)
+    {
+        $slug = url_title($title, '-', TRUE);
+        // Now truncate it.
+        $slug = substr($slug, 0, 50);
+        // Trim again, just in case the truncation left a trailing hyphen.
+        $slug = trim($slug, "-");
+        return $slug;
+    }
+
+    /**
      * Saving / Adding Vocabulary
      * Requires the vocabs database connection group to be present
      * $data is extracted for values to be put into the database and the
@@ -438,7 +459,7 @@ class _vocabulary
         } else {
             //add new
             //check if there's an existing vocab with the same slug in draft state
-            $slug = url_title($this->prop['title'], '-', TRUE);
+            $slug = $this->makeSlug($this->prop['title']);
             if (isset($this->prop['status']) && $this->prop['status'] == 'draft') {
                 $result = $db->get_where('vocabularies', array('slug' => $slug, 'status' => 'draft'));
                 if ($result->num_rows() > 0) {
