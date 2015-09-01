@@ -4,6 +4,11 @@
         <h4 class="modal-title">{{ vm.header }}</h4>
     </div>
     <div class="modal-body swatch-white" ng-cloak>
+
+        <div ng-if="!vm.data.type" class="alert alert-important">
+            This feature is not yet supported
+        </div>
+
         <div class="well" ng-repeat="hit in vm.results.hits.hits">
             <ul ng-repeat="(type,value) in hit._source">
                 <b>{{ type }}</b>: {{ value }}
