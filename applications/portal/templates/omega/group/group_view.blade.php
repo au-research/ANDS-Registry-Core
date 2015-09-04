@@ -165,13 +165,21 @@
 
 @if(isset($group['latest_collections']))
 <div class="panel swatch-white">
-    <div class="panel-heading">Last 5 Data Records Added</div>
+    <?php
+    if($group['counts']>4 ){
+        $count = 5;
+    }else{
+        $count=$group['counts'];
+    } ?>
+    <div class="panel-heading">Last {{$count}} Data Records Added</div>
     <div class="panel-body">
         <ul class="listy">
             @foreach($group['latest_collections'] as $gr)
                 <li><a href="{{base_url()}}{{$gr['slug']}}/{{$gr['id']}}">{{$gr['title']}}</a></li>
             @endforeach
+            <?php if($group['counts']>5) { ?>
             <li><a href="{{ base_url() }}search#!/group={{ $group['title'] }}/class=collection">View All Collections</a></li>
+           <?php ;} ?>
         </ul>
     </div>
 </div>
