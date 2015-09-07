@@ -923,7 +923,7 @@ class Importer {
 
 			$temp_crosswalk_name = $this->crosswalk->metadataFormat();
 			unset($this->crosswalk);
-			$this->setCrosswalk($temp_crosswalk_name);
+			//$this->setCrosswalk($temp_crosswalk_name);
             $fp = fopen($this->filePath.'.xwlk', 'w');
             fwrite($fp, $this->xmlPayload);
             fclose($fp);
@@ -968,38 +968,6 @@ class Importer {
 		return;
 	}
 
-	/**
-	 *
-	 */
-	public function setCrosswalk($crosswalk_metadata_format)
-	{
-        $crosswalk_identity = '';
-        if (!$crosswalk_metadata_format) { return; }
-
-        $predefinedProviderTypes = $this->CI->config->item('provider_types');
-
-        foreach($predefinedProviderTypes as $ppt)
-        {
-            if($ppt['prefix'] == $crosswalk_metadata_format)
-                $crosswalk_identity = $ppt['cross_walk'];
-        }
-
-        $crosswalks= getCrossWalks();
-		foreach ($crosswalks AS $crosswalk)
-		{
-			if ($crosswalk->metadataFormat() == $crosswalk_metadata_format || $crosswalk->identify() == $crosswalk_identity)
-			{
-				$this->crosswalk = $crosswalk;
-			}
-		}
-
-        return;
-        /*if($crosswalk_identity == '') { return;}
-		if (!$this->crosswalk)
-		{
-			throw new Exception("Unable to load crosswalk: " . $crosswalk_metadata_format);
-		}*/
-	}
 
 
 	/**

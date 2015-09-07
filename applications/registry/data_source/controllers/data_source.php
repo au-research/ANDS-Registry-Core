@@ -1823,8 +1823,6 @@ class Data_source extends MX_Controller {
 
                     $this->importer->setXML($data);
 
-					$this->importer->setCrosswalk($dataSource->provider_type);
-
 					$this->importer->setHarvestID($harvestId);
 
 					$this->importer->setDatasource($dataSource);
