@@ -8,10 +8,11 @@
 <link rel="stylesheet" href="{{asset_url('omega/css/fonts.min.css','templates')}}" media="screen" />
 <link rel="stylesheet" href="{{asset_url('lib/qtip2/jquery.qtip.css', 'core')}}" media="screen" />
 <link rel="stylesheet" href="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.css', 'core')}}" />
-<link rel="stylesheet" type="text/css" href="//researchdata.ands.org.au/apps/assets/vocab_widget/css/vocab_widget.css" />
+<link rel="stylesheet" type="text/css" href="{{ base_url() }}apps/assets/vocab_widget/css/vocab_widget.css" media="screen" />
 <!-- LESS file for development only -->
 <link rel="stylesheet/less" type="text/css" href="{{asset_url('less/ands-vocab.less')}}" media="screen" />
 @else
 <link rel="stylesheet" type="text/css" href="{{ asset_url('css/lib.css') }}" media="screen" />
 <link rel="stylesheet" type="text/css" href="{{ asset_url('css/vocab.less.compiled.css') }}" media="screen" />
+
 @endif

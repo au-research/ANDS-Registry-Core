@@ -21,7 +21,7 @@
 
 <script src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.js'></script>
 <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
-<script type="text/javascript" src="//researchdata.ands.org.au/apps/assets/vocab_widget/js/vocab_widget.js"></script>
+<script type="text/javascript" src="{{ base_url() }}apps/assets/vocab_widget/js/vocab_widget.js"></script>
 
 
 @if(is_dev())

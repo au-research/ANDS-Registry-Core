@@ -37,12 +37,12 @@ else {
     // define("BASE_URL", "http://researchdata.ands.org.au:8080/vocab/api/");
 }
 
-define("SEARCH_URL", "/concepts.json?anycontains=");
-define("NARROW_URL", "/concepts/narrower.json?uri=");
-define("INCOLLECTION_URL", "/concepts/inCollection.json?uri=");
-define("ALLNARROW_URL", "/concepts/allNarrower.json?uri=");
-define("BROAD_URL", "/concepts/broader.json?uri="); #future use
-define("TOP_URL", "/concepts/topConcepts.json");
+define("SEARCH_URL", "/concept.json?labelcontains=");
+define("NARROW_URL", "/concept/narrower.json?uri=");
+define("INCOLLECTION_URL", "/concept/inCollection.json?uri=");
+define("ALLNARROW_URL", "/concept/allNarrower.json?uri=");
+define("BROAD_URL", "/concept/broader.json?uri="); #future use
+define("TOP_URL", "/concept/topConcepts.json");
 define("MAX_RESULTS", 200); #sisvoc only returns 200 items
 
 class VocabProxy
