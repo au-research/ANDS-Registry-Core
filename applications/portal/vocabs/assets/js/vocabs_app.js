@@ -16,9 +16,11 @@ $(document).ready(function() {
 
 $("#widget-info").hide();
 
+
 $("#widget-toggle").click(function() {
     $("#widget-info").slideToggle("slow");
 });
+
 
 
 $("#vocab-tree").vocab_widget({

@@ -5,6 +5,18 @@ $publisher = array();
 $related_people = array();
 $related_vocabs = array();
 $related_service = array();
+$sesameFormats = array();
+
+$sesameFormats["rdf"] = "RDF/XML";
+$sesameFormats["nt"] = "N-Triples";
+$sesameFormats["ttl"] = "Turtle";
+$sesameFormats["n3"] = "Notation-3";
+$sesameFormats["nq"] = "N-Quads";
+$sesameFormats["json"] = "RDF/JSON";
+$sesameFormats["trix"] = "TriX";
+$sesameFormats["trig"] = "TriG";
+$sesameFormats["bin"] = "Sesame Binary RDF";
+
 if(isset($vocab['related_entity'])){
     foreach($vocab['related_entity'] as $related){
         if($related['type']=='party'){
@@ -62,13 +74,25 @@ if(isset($vocab['related_entity'])){
 
                         @foreach($vocab['current_version']['access_points'] as $ap)
                             @if($ap['type']=='file')
-                                <a class="btn btn-lg btn-block btn-primary" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-cube"></i> Download File</a>
+                                <a class="btn btn-lg btn-block btn-primary" href="{{ json_decode($ap['portal_data'])->uri }}" title="{{ json_decode($ap['portal_data'])->format }}"><i class="fa fa-cube"></i> Download File</a>
                             @endif
                         @endforeach
                         @foreach($vocab['current_version']['access_points'] as $ap)
-                        @if($ap['type']!='file')
+                            @if($ap['type'] == 'sesameDownload')
+                        <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
+                            <a title="Select Download Formats" href="javascript:;" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-edit"></i>
+                                Access {{ $ap['type'] }}
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach($sesameFormats as $key=>$val)
+                                <li><a href="{{ json_decode($ap['portal_data'])->uri }}.{{$key}}">{{ $val }}</a></li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                            @elseif($ap['type']!='file')
                                 <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-                                    <a class="btn btn-sm btn-default" href="{{ json_decode($ap['portal_data'])->uri }}" target="_blank"><i class="fa fa-edit"></i>
+                                    <a class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}" target="_blank"><i class="fa fa-edit"></i>
                                         Access {{ $ap['type'] }}
                                         @if(isset($ap['format']))
                                         ({{ $ap['format'] }})
