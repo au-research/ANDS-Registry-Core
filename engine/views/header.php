@@ -201,8 +201,9 @@ if(get_config_item('environment_logo')){
                       <li class=""><?php echo anchor(registry_url('administration'), 'Administration Panel');?></li>
                       <li class=""><?php echo anchor(registry_url('maintenance'), 'Maintenance Dashboard');?></li>
                       <?php  if(mod_enabled('statistics')): ?>
-                        <li class=""><?php echo anchor(apps_url('statistics'), 'Statistics');?></li>    
+                        <li class=""><?php echo anchor(apps_url('statistics'), 'Historical Statistics');?></li>
                       <?php endif; ?>
+                      <li class=""><?php echo anchor(apps_url('analytics'), 'Statistics');?></li>
                   <?php endif; ?>
                     <?php if ($this->user->hasFunction('REGISTRY_STAFF')): ?>
                         <li class="divider"></li>

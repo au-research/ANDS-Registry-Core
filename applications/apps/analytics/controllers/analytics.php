@@ -263,7 +263,7 @@ class Analytics extends MX_Controller
         $role_id = $this->input->get('role_id') ? $this->input->get('role_id') : false;
         if ($role_id) {
             foreach ($result as $r) {
-                if ($r['role_id']==$role_id) {
+                if ($r['role_id']==$role_id&&(in_array($role_id,$this->user->affiliations())||$this->user->isSuperAdmin())) {
                     echo json_encode($r);
                 }
             }
@@ -300,11 +300,16 @@ class Analytics extends MX_Controller
 
                 fclose($out);
             } elseif ($format=='json') {
-                $this->output->set_header('Content-type: application/json');
-
-                //@todo parse this result and get only the user affiliation
-                //for user that doesn't need all orgs
-                echo json_encode($result);
+               $this->output->set_header('Content-type: application/json');
+               $filtered_orgs = array();
+               if($this->user->loggedIn()){
+                    for($i=0;$i<count($result);$i++){
+                        if(in_array($result[$i]['role_id'],$this->user->affiliations())||$this->user->isSuperAdmin()){
+                            $filtered_orgs[]=$result[$i];
+                        }
+                    }
+               }
+               echo json_encode($filtered_orgs);
             }
         }
     }
