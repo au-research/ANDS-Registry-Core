@@ -569,6 +569,27 @@ class Vocabularies extends CI_Model
         return "Version ID:" .$version_id. " status: ". $result['status'];
     }
 
+    /**
+     * Returns a access points for a specific vocab version
+     * Helper function
+     * @param  int $versionId
+     * @return array of accesspoints
+     */
+    public function getAccessPoints($versionId, $type = '')
+    {
+        $this->vocab_db = $this->load->database('vocabs', true);
+        $this->vocab_db->select('id, version_id, type, portal_data');
+        if($type == 'all' || $type == '' )
+            $query = $this->vocab_db->get_where('access_points', array('version_id' => $versionId));
+        else
+            $query = $this->vocab_db->get_where('access_points', array('version_id' => $versionId, 'type' => $type));
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return false;
+        }
+    }
+
 
     /** Create a delete task in the tasks table for the toolkit to run
      * @param $vocab_id

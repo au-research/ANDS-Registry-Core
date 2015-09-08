@@ -1,5 +1,4 @@
 <?php
-
 $cc=$vocab['licence'];
 $current_version =  $vocab['current_version'] ;
 $publisher = array();
@@ -63,13 +62,24 @@ if(isset($vocab['related_entity'])){
 
                         @foreach($vocab['current_version']['access_points'] as $ap)
                             @if($ap['type']=='file')
-                                <a class="btn btn-lg btn-block btn-primary" href="{{ portal_url('vocabs/download/?file='.$ap['uri']) }}"><i class="fa fa-cube"></i> Download File</a>
+                                <a class="btn btn-lg btn-block btn-primary" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-cube"></i> Download File</a>
                             @endif
                         @endforeach
                         @foreach($vocab['current_version']['access_points'] as $ap)
-                            @if($ap['type']!='file' && $ap['uri']!='TBD')
+                        @if($ap['type']!='file')
                                 <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-                                    <a class="btn btn-sm btn-default" href="{{ $ap['uri'] }}" target="_blank"><i class="fa fa-edit"></i> Access {{ $ap['type'] }} ({{ $ap['format'] }})</a>
+                                    <a class="btn btn-sm btn-default" href="{{ json_decode($ap['portal_data'])->uri }}" target="_blank"><i class="fa fa-edit"></i>
+                                        Access {{ $ap['type'] }}
+                                        @if(isset($ap['format']))
+                                        ({{ $ap['format'] }})
+                                        @endif
+                                        @if($ap['type'] == 'sissvoc')
+                                        <?php
+                                        $sissvocEndPoint = json_decode($ap['portal_data'])->uri;
+                                        ?>
+                                        @endif
+
+                                    </a>
                                 </div>
                             @endif
                         @endforeach
@@ -154,7 +164,42 @@ if(isset($vocab['related_entity'])){
         </div>
         @endif
 
+        @if(isset($sissvocEndPoint))
         <div visualise vocabid="{{ $vocab['id'] }}"></div>
+        <div id="widget" class="panel swatch-white">
+            <div class="panel-heading">Vocab Widget sample:</div>
+            <div class="panel-body">
+            <input type="text" id="{{$vocab['slug']}}" name="{{$vocab['slug']}}" value="" size="80" autocomplete="off">
+                <script>
+                $("#{{$vocab['slug']}}").vocab_widget({
+                mode: 'search',
+                cache: false,
+                repository: '{{$sissvocEndPoint}}',
+                target_field: 'label',
+                endpoint: '{{ portal_url("apps/vocab_widget/proxy/") }}'
+                });
+                </script>
+            </div>
+            &nbsp;&nbsp;<button id="widget-toggle">Show code</button>
+        </div>
+        <div id="widget-info" class="toggle">
+            <pre class="panel-body prettyprint">
+&lt;input type="text" id="{{$vocab['slug']}}" name="{{$vocab['slug']}}" value="" size="80" autocomplete="off"&gt;
+&lt;script&gt;
+    $("#{{$vocab['slug']}}").vocab_widget({
+        mode: 'search',
+        cache: false,
+        repository: '{{$sissvocEndPoint}}',
+        target_field: 'label',
+        endpoint: '{{ portal_url("apps/vocab_widget/proxy/") }}'
+    });
+&lt;/script&gt;
+            </pre>
+        </div>
+        </div>
+
+
+        @endif
 
         @if(isset($vocab['subjects']))
         <div class="panel swatch-white">

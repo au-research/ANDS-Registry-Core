@@ -4,7 +4,7 @@
  */
 ul.vocab_list {
     z-index: 2000;
-    width: 300px;
+    width: 575px;
     max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;

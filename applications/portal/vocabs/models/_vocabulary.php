@@ -206,12 +206,62 @@ class _vocabulary
         if ($this->versions) {
             foreach ($this->versions as $version) {
                 if ($version['status'] == 'current' && !$current_version) {
+                    $version['access_points'] = $this->getAccessPoints($version['id']);
                     $current_version = $version;
                 }
             }
         }
         return $current_version;
     }
+
+    /**
+     * Returns a access points for a specific vocab version
+     * Helper function
+     * @param  int $versionId
+     * @return array of accesspoints
+     */
+    public function getAccessPoints($versionId, $type = '')
+    {
+
+        $ci =& get_instance();
+        $db = $ci->load->database('vocabs', true);
+        $db->select('id, version_id, type, portal_data');
+        if($type == 'all' || $type == '' )
+            $query = $db->get_where('access_points', array('version_id' => $versionId));
+        else
+            $query = $db->get_where('access_points', array('version_id' => $versionId, 'type' => $type));
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return false;
+        }
+    }
+
+    public function getSPARQLEndpoint($version)
+    {
+        $sissvoc_url = get_config_item('sissvoc_url');
+        if(isset($version['access_points']))
+        {
+            foreach($version['access_points'] as $accessPoint){
+                if($accessPoint['type'] == 'webPage' && strpos($accessPoint['uri'], $sissvoc_url) !== false)
+                {
+                    return $this->get_string_between($accessPoint['uri'], $sissvoc_url, '/concept/topConcepts');
+                }
+            }
+
+        }
+    }
+
+
+    function get_string_between($string, $start, $end){
+        $string = " ".$string;
+        $ini = strpos($string,$start);
+        if ($ini == 0) return "";
+        $ini += strlen($start);
+        $len = strpos($string,$end,$ini) - $ini;
+        return substr($string,$ini,$len);
+    }
+
 
     /**
      * Return the tree representation of the current version
@@ -770,6 +820,7 @@ class _vocabulary
             return false;
         }
     }
+
 
     /**
      * Magic function to get an attribute, returns property within the $prop array

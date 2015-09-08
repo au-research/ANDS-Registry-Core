@@ -68,6 +68,7 @@ class Vocabs extends MX_Controller
             vocab_log_terms($event);
 
             $vocab['current_version'] = $record->current_version();
+
             $this->blade
                  ->set('vocab', $vocab)
                  ->set('title', $vocab['title'] . ' - Research Vocabularies Australia')
@@ -427,7 +428,7 @@ class Vocabs extends MX_Controller
      * @example services/vocabs/ , services/vocabs/anzsrc-for , services/vocabs/rifcs/versions
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      */
-    public function services($class = '', $id = '', $method = '')
+    public function services($class = '', $id = '', $method = '', $type = '')
     {
 
         //header
@@ -437,6 +438,46 @@ class Vocabs extends MX_Controller
 
         if ($class != 'vocabs') {
             throw new Exception('/vocabs required');
+        }
+        //accesspoint service for all or just one vocab(
+        if ($method == 'accessPoints') {
+            $result = array();
+            if($id == 'all' || $id == ''){
+                $vocabs = $this->vocab->getAll();
+            } else{
+                $vocabs[] = $this->vocab->getByID($id);
+            }
+
+            if($vocabs){
+                $status = "OK";
+                foreach ($vocabs as $v) {
+
+                    $vId = $v->prop['id'];
+                    $title = $v->prop['title'];
+
+                    $versions = false;//$v['versions'];
+                    $accessPoints = array();
+
+                        foreach($v->versions as $version){
+                            $versionIds[] =  $version['id'];
+                            $accessPoints = $this->vocab->getAccessPoints($version['id'], $type);
+                        }
+                    if(!($id == 'all' && $accessPoints == false)){
+                        $result[] = array('id' => $vId, 'title' => $title , 'accessPoints'=>$accessPoints);
+                    }
+                }
+
+            }
+            else{
+                $status = "No vocabulary found";
+            }
+            echo json_encode(
+                array(
+                    'status' => $status,
+                    'message' => $result,
+                )
+            );
+            exit();
         }
 
         $result = '';

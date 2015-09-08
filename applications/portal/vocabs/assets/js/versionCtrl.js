@@ -231,6 +231,29 @@
                 $('#ap_uri_label').hide();
             }
         });
+        $scope.setImPubcheckboxes = function (elem) {
 
+            if(elem == 'import'){
+                if(angular.isDefined($scope.newValue.ap.import)){
+                    $scope.newValue.ap.import = !$scope.newValue.ap.import;
+                } else {
+                    $scope.newValue.ap.import = true;
+                }
+                if($scope.newValue.ap.import == false){
+                    $scope.newValue.ap.publish = false;
+                }
+            }
+
+            if(elem == 'publish'){
+               if(angular.isDefined($scope.newValue.ap.publish)){
+                    $scope.newValue.ap.publish = !$scope.newValue.ap.publish;
+                } else{
+                $scope.newValue.ap.publish = true;
+                }
+                if($scope.newValue.ap.publish == true){
+                    $scope.newValue.ap.import = true;
+                }
+            }
+        }
     }
 })();
