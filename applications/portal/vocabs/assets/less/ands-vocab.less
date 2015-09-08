@@ -4,7 +4,9 @@
 @ternaryColor: #F58F29;
 @gray: #e9e9e9;
 @darkGray: #e9e9e9;
-
+@current: #6AA84F;
+@superseded: #F1C232;
+@deprecated: #CC0000;
 //second
 @primaryColor: #17649A;
 @secondaryColor: #46494C;
@@ -246,6 +248,61 @@ ul.listy {
 .yellow_button:hover {
   background: #F58072;
   color: #fff;
+}
+
+span.current{
+  display: block;
+  background-color: @current;
+  color:white;
+  overflow: auto;
+  position: relative;
+  top: -4px;
+}
+
+
+span.superseded{
+  display: block;
+  background-color: @superseded;
+  color: white;
+  overflow: auto;
+  position: relative;
+  top: -4px;
+}
+
+span.deprecated{
+  display: block;
+  background-color: @deprecated;
+  color:white;
+  overflow: auto;
+  position: relative;
+  top: -4px;
+}
+
+small.current{
+  background-color: @current;
+  border-radius: 6px;
+  color: white !important;
+  width: 14em;
+  padding-left:5px;
+  padding-right:5px;
+}
+
+
+small.superseded{
+  background-color: @superseded;
+  border-radius: 6px;
+  font-color: white !important;
+  width: 14em;
+  padding-left:5px;
+  padding-right:5px;
+}
+
+small.deprecated {
+  background-color: @deprecated;
+  border-radius: 6px;
+  color: white !important;
+  padding-left:5px;
+  padding-right:5px;
 }
 
 @import "ands-vocabs-visualise";

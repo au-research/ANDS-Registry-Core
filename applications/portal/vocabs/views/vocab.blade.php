@@ -66,10 +66,11 @@ if(isset($vocab['related_entity'])){
     <div class="post-body">
         <div class="panel swatch-white panel-primary element-no-top element-short-bottom panel-content">
 
-            <div class="container-fluid">
+            <div class="container-fluid" >
                 <div class="row">
                     @if($vocab['current_version'])
-                    <div class="col-md-4 panel-body text-center">
+                    <div class="col-md-4 panel-body text-center" style="border-color:#aaaaaa; solid; border-style: solid; border-width: 5px;">
+                        <span class="current"">current version</span>
                         <h4>{{ $vocab['current_version']['title'] }}</h4>
 
                         @foreach($vocab['current_version']['access_points'] as $ap)
@@ -110,12 +111,12 @@ if(isset($vocab['related_entity'])){
 
                         <p class="element-short-top">{{ isset($vocab['current_version']['note']) ? $vocab['current_version']['note']: '' }}</p>
 
-                        <ul class="">
+                        <ul class="list-unstyled">
                             @foreach($vocab['versions'] as $version)
                             @if($version['status']!='current')
                                 <li>
                                     <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}'>{{ $version['title'] }} </a>
-                                    <small>({{ $version['status'] }}) </small>
+                                    <small class="{{$version['status']}}"> {{ $version['status'] }} </small>
                                     @if(isset($version['note']))
                                     <a href="" tip="{{ $version['release_date'] }} <hr />{{$version['note']}}"><i class="fa fa-info"></i></a>
                                     @endif
