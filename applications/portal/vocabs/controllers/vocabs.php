@@ -835,49 +835,6 @@ class Vocabs extends MX_Controller
     }
 
     /**
-     * Download a file from the vocab uploaded directory
-     * @access public
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-     * @return file
-     */
-    public function download()
-    {
-        $file = $this->input->get('file');
-        if (!$file) {
-            throw new Exception('File (required) not found');
-        }
-
-        if (!file_exists($file)) {
-            $file = vocab_uploaded_url($file);
-        }
-
-        if (!file_exists($file)) {
-            throw new Exception('File not found');
-        }
-
-        // Canonicalize the path, so that there are no tricky things
-        // such as ".." in it.
-        $file = realpath($file);
-
-        // Only allow people to get files from the upload and repository
-        // directories.
-        if (self::startsWith($file, get_vocab_config('upload_path')) ||
-            self::startsWith($file, get_vocab_config('repository_path'))) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename=' . basename($file));
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($file));
-            readfile($file);
-            exit;
-        } else {
-            throw new Exception('Permission Denied');
-        }
-    }
-
-    /**
      * Automated test tools
      * @version 1.0
      * @internal Used as internal testing before rolling out automated test cases
