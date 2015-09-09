@@ -72,7 +72,7 @@ if(isset($vocab['related_entity'])){
                     <div class="col-md-4 panel-body text-center" style="border-color:#aaaaaa; solid; border-style: solid; border-width: 5px;">
                         <span class="current"">current version</span>
                         <h4>{{ $vocab['current_version']['title'] }}</h4>
-
+                        @if(isset($vocab['current_version']['access_points']) && is_array($vocab['current_version']['access_points']))
                         @foreach($vocab['current_version']['access_points'] as $ap)
                             @if($ap['type']=='file')
                                 <a class="btn btn-lg btn-block btn-primary" href="{{ json_decode($ap['portal_data'])->uri }}" title="{{ json_decode($ap['portal_data'])->format }}"><i class="fa fa-cube"></i> Download File</a>
@@ -108,9 +108,9 @@ if(isset($vocab['related_entity'])){
                                 </div>
                             @endif
                         @endforeach
-
+                        @endif
                         <p class="element-short-top">{{ isset($vocab['current_version']['note']) ? $vocab['current_version']['note']: '' }}</p>
-
+                        @if(isset($vocab['versions']) && is_array($vocab['versions']))
                         <ul class="list-unstyled">
                             @foreach($vocab['versions'] as $version)
                             @if($version['status']!='current')
@@ -124,6 +124,7 @@ if(isset($vocab['related_entity'])){
                             @endif
                             @endforeach
                         </ul>
+                        @endif
                     </div>
                     @endif
                     <div class="col-md-8 panel-body">
