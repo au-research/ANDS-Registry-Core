@@ -834,6 +834,68 @@ class Vocabs extends MX_Controller
         strrpos($haystack, $needle, -strlen($haystack)) !== false;
     }
 
+
+    /*
+     * possible future use of migration scripts for release specific data change
+     *
+     */
+    public function migrate($releaseID)
+    {
+        $response = array();
+        $response['releaseID'] = $releaseID;
+        $response["tasks"] = array();
+        // first release after Beta migration scripts
+        if($releaseID > 0){
+            $response[] = $this->taskMigration();
+        }
+        echo json_encode($response);
+
+    }
+
+/*
+ * migrate concepts_list and concept_tree from task's response into version's data where it belongs
+ */
+    private function taskMigration()
+    {
+        $ci =& get_instance();
+        $message = array();
+        $db = $ci->load->database('vocabs', true);
+        $query = $db->order_by("id", "asc")->get_where('task', array('status' => 'success'));
+        if ($query->num_rows() > 0) {
+            $taskArray = $query->result_array();
+            foreach($taskArray as $task){
+                $version_id = $task['version_id'];
+                $response = json_decode($task['response'], true);
+                if(isset($response['concepts_tree']) || isset($response['concepts_list'])){
+                    $v_query = $db->get_where('versions', array('id' => $version_id));
+                    if ($v_query->num_rows() > 0) {
+                        $vv = $v_query->first_row();
+                        $vvdata = json_decode($vv->data, true);
+                        $response = json_decode($task['response'], true);
+                        if(isset($response['concepts_tree'])){
+                            $vvdata['concepts_tree'] = urldecode($response['concepts_tree']);
+                        }
+                        if(isset($response['concepts_list'])){
+                            $vvdata['concepts_list'] = urldecode($response['concepts_list']);
+                        }
+                        $saved_data = array('data' => json_encode($vvdata));
+                        $db->where('id', $version_id);
+                        $result = $db->update('versions', $saved_data);
+
+                        if (!$result){
+                            $message[] = array('version_id' => $version_id , 'error' => $db->_error_message());
+                        }else{
+                            $message[] = array('version_id' => $version_id , 'data' => $vvdata);
+                        }
+                    } else {
+                        //cant find version with the id, handle here
+                        $message[] = 'Version with ID: ' . $version_id . ' not found';
+                    }
+                }
+            }
+        }
+        return array("task" => "taskMigration", "message"=>$message);
+    }
     /**
      * Automated test tools
      * @version 1.0

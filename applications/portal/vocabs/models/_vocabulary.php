@@ -139,30 +139,16 @@ class _vocabulary
         }
 
         $json['concept'] = array();
-        if ($current_version) {
-            //find the task/file associated with the current version
-            $ci =& get_instance();
-            $db = $ci->load->database('vocabs', true);
-            $query = $db->get_where('task', array('version_id' => $current_version['id'], 'status' => 'success'));
-            $concept_list_path = false;
-            if ($query->num_rows() > 0) {
-                $result = $query->first_row();
-                $response = $result->response;
-                $response = json_decode($response, true);
-                $concept_list_path = isset($response['concepts_list']) ? $response['concepts_list'] : false;
-            }
 
-            //read the file and then add the concepts to the index
-            if ($concept_list_path) {
-                $content = @file_get_contents($concept_list_path);
-                $content = json_decode($content, true);
-                foreach ($content as $concept) {
-                    if (isset($concept['prefLabel'])) {
-                        $json['concept'][] = $concept['prefLabel'];
-                    }
+        if ($current_version) {
+            $concept_list_path = isset($current_version['concepts_list']) ? $current_version['concepts_list'] : false;
+            $content = @file_get_contents($concept_list_path);
+            $content = json_decode($content, true);
+            foreach ($content as $concept) {
+                if (isset($concept['prefLabel'])) {
+                    $json['concept'][] = $concept['prefLabel'];
                 }
             }
-
             //accessibility
             $json['access'] = array();
             $json['format'] = array();
@@ -237,32 +223,6 @@ class _vocabulary
         }
     }
 
-    public function getSPARQLEndpoint($version)
-    {
-        $sissvoc_url = get_config_item('sissvoc_url');
-        if(isset($version['access_points']))
-        {
-            foreach($version['access_points'] as $accessPoint){
-                if($accessPoint['type'] == 'webPage' && strpos($accessPoint['uri'], $sissvoc_url) !== false)
-                {
-                    return $this->get_string_between($accessPoint['uri'], $sissvoc_url, '/concept/topConcepts');
-                }
-            }
-
-        }
-    }
-
-
-    function get_string_between($string, $start, $end){
-        $string = " ".$string;
-        $ini = strpos($string,$start);
-        if ($ini == 0) return "";
-        $ini += strlen($start);
-        $len = strpos($string,$end,$ini) - $ini;
-        return substr($string,$ini,$len);
-    }
-
-
     /**
      * Return the tree representation of the current version
      * requires the concepts_tree already harvested and transformed
@@ -275,14 +235,12 @@ class _vocabulary
     {
         $current_version = $this->current_version();
         if ($current_version) {
-            $data = $this->get_response_data($current_version['id']);
-            if (!$data) {
+            $concepts_tree_path = isset($current_version['concepts_tree']) ? $current_version['concepts_tree'] : false;
+            if (!$concepts_tree_path) {
                 //no valid data returned, hence no tree
                 return false;
             }
-            $data = json_decode($data->response, true);
-            $concepts_tree_path = isset($data['concepts_tree']) ? $data['concepts_tree'] : false;
-            if ($concepts_tree_path) {
+            else {
                 $content = @file_get_contents($concepts_tree_path);
                 if (!$content) {
                     //file doesn't exist
@@ -296,9 +254,6 @@ class _vocabulary
                 $tree = $this->buildTree($tree_data);
 
                 return $tree;
-            } else {
-                //log: data found but no concept tree
-                return false;
             }
         } else {
             //no current version
@@ -342,7 +297,7 @@ class _vocabulary
      * @param  int $version_id
      * @return obj response_data
      */
-    private function get_response_data($version_id)
+    private function get_response_data($version_id, $task_id)
     {
         $ci =& get_instance();
         $db = $ci->load->database('vocabs', true);
@@ -745,20 +700,18 @@ class _vocabulary
                 $this->log('Task ' . $task_id . ' completed with status: ' . $content['status']);
                 if (isset($content['exception'])) $this->log('Task ' . $task_id . ' has exception:' . $content['exception']);
                 //pool party stuffs filling
-                if (isset($content['concepts']) || isset($concept['sparql_endpoint']) || isset($concept['sissvoc_endpoints'])) {
+
+                if (isset($content['concepts_tree']) || isset($content['concepts_list'])) {
                     //update the access point of type file, apiSparql path to the respective path
                     $query = $db->get_where('versions', array('id' => $version_id));
                     if ($query->num_rows() > 0) {
                         $vv = $query->first_row();
                         $vvdata = json_decode($vv->data, true);
-                        foreach ($vvdata['access_points'] as &$ap) {
-                            if ($ap['type'] == 'file' && $ap['uri'] == 'TBD') {
-                                $ap['uri'] = isset($content['concepts']) ? $content['concepts'] : 'TBD';
-                            } elseif ($ap['type'] == 'apiSparql' && $ap['uri'] == 'TBD') {
-                                $ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TBD';
-                            } elseif ($ap['type'] == 'webPage' && $ap['uri'] == 'TBD') {
-                                $ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'] . '/concept/topConcepts' : 'TBD';
-                            }
+                        if(isset($content['concepts_tree'])){
+                            $vvdata['concepts_tree'] = $content['concepts_tree'];
+                        }
+                        if(isset($content['concepts_list'])){
+                            $vvdata['concepts_list'] = $content['concepts_list'];
                         }
                         $saved_data = array(
                             'data' => json_encode($vvdata)
@@ -770,29 +723,7 @@ class _vocabulary
                         //cant find version with the id, handle here
                         $this->log('Version with ID: ' . $version_id . ' not found');
                     }
-                } else if (isset($content['output_path'])) {
-                    //file upload
-                    if ($vv = $this->getVersion($version_id, $db)) {
-                        $vvdata = json_decode($vv->data, true);
-                        foreach ($vvdata['access_points'] as &$ap) {
-                            if ($ap['type'] == 'file') {
-                                // $ap['uri'] = isset($content['concepts']) ? $content['concepts'] : 'TBD';
-                            } elseif ($ap['type'] == 'apiSparql') {
-                                $ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TBD';
-                            } elseif ($ap['type'] == 'webPage') {
-                                $ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'] . '/concept/topConcepts' : 'TBD';
-                            }
-                        }
-                        $saved_data = array('data' => json_encode($vvdata));
-                        $db->where('id', $version_id);
-                        $result = $db->update('versions', $saved_data);
-                        if (!$result) throw new Exception($db->_error_message());
-                    } else {
-                        //cant find version with the id, handle here
-                        $this->log('Version with ID: ' . $version_id . ' not found');
-                    }
                 }
-
             }
 
         }
