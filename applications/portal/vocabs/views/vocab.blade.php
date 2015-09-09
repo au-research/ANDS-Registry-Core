@@ -86,7 +86,7 @@ if(isset($vocab['related_entity'])){
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach($sesameFormats as $key=>$val)
-                                <li><a href="{{ json_decode($ap['portal_data'])->uri }}.{{$key}}">{{ $val }}</a></li>
+                                <li><a href="{{ json_decode($ap['portal_data'])->uri }}{{$key}}">{{ $val }}</a></li>
                                 @endforeach
                             </ul>
                         </div>
