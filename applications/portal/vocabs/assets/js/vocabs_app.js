@@ -18,6 +18,12 @@ $("#widget-info").hide();
 
 
 $("#widget-toggle").click(function() {
+
+    if($("#widget-info").is( ":visible" ))
+        $("#widget-toggle").text("Show code");
+    else
+        $("#widget-toggle").text("Hide code");
+
     $("#widget-info").slideToggle("slow");
 });
 
