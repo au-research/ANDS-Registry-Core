@@ -75,7 +75,7 @@ if(isset($vocab['related_entity'])){
                         @if(isset($vocab['current_version']['access_points']) && is_array($vocab['current_version']['access_points']))
                         @foreach($vocab['current_version']['access_points'] as $ap)
                             @if($ap['type']=='file')
-                                <a class="btn btn-lg btn-block btn-primary" href="{{ json_decode($ap['portal_data'])->uri }}" title="{{ json_decode($ap['portal_data'])->format }}"><i class="fa fa-cube"></i> Download File</a>
+                                <a class="btn btn-lg btn-block btn-primary" href="{{ json_decode($ap['portal_data'])->uri }}" title="{{ json_decode($ap['portal_data'])->format }}"><i class="fa fa-cube"></i> Download File <span class="small">({{ json_decode($ap['portal_data'])->format }})</span></a>
                             @endif
                         @endforeach
                         @foreach($vocab['current_version']['access_points'] as $ap)
