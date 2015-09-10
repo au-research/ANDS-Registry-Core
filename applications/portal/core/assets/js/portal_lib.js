@@ -15579,11 +15579,53 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 	}])
 	.filter('extractSentence', function($log){
 		return function(text) {
-			var sentences = text.match(/(.*?(?:\.|\?|!))(?: |$)/g);
-			// $log.debug(sentences);
+            var sentences = text.split(/(.*?(?:\.|\?|!))(?: |$)/g);
 			if (sentences) {
-				return sentences;
+                if(sentences.length>0){
+                        for(i=0;i<sentences.length;i++){
+                            if(sentences[i].indexOf("&lt;b&gt")>-1) {
+
+                                var first = sentences[i].trim().charAt(0);
+                                var last = sentences[i].trim().slice(-1);
+                                if (first === first.toLowerCase() && first !== first.toUpperCase())
+                                {
+                                    // first character is a lowercase letter
+                                    sentences[i] =  "..."+sentences[i];
+                                }
+                                if(last!=".")
+                                {
+                                    sentences[i] = sentences[i]+"...";
+                                }
+
+                                return sentences[i];}
+
+                    }
+
+                }
+                var first = sentences[0].trim().charAt(0);
+                var last = sentences[0].trim().slice(-1);
+                if (first === first.toLowerCase() && first !== first.toUpperCase())
+                {
+                    // first character is a lowercase letter
+                    sentences[0] =  "..."+sentences[0];
+                }
+                if(last!=".")
+                {
+                    sentences[0] = sentences[0]+"...";
+                }
+                return sentences[0]
 			} else {
+                var first = text.trim().charAt(0);
+                var last = text.trim().slice(-1);
+                if (first === first.toLowerCase() && first !== first.toUpperCase())
+                {
+                    // first character is a lowercase letter
+                    text =  "..."+text;
+                }
+                if(last!=".")
+                {
+                    text = text+"...";
+                }
 				return text;
 			}
 		}

@@ -14,16 +14,20 @@
 
 $(document).ready(function() {
 
+    $("#widget-info").hide();
 
-$("#vocab-tree").vocab_widget({
-    mode:'tree',
-    endpoint: 'https://researchdata.ands.org.au/apps/vocab_widget/proxy/',
-    display_count:false,
-    repository:$("#vocab-tree").attr('vocab')})
-    .on('treeselect.vocab.ands', function(event) {
-        var target = $(event.target);
-        var data = target.data('vocab');
+
+    $("#widget-toggle").click(function() {
+
+        if($("#widget-info").is( ":visible" ))
+            $("#widget-toggle").text("Show code");
+        else
+            $("#widget-toggle").text("Hide code");
+
+        $("#widget-info").slideToggle("slow");
     });
+
+
 });
 
 $(document).on('mouseover', 'a[tip]', function(event){
