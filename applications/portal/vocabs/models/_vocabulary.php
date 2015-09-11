@@ -142,11 +142,13 @@ class _vocabulary
 
         if ($current_version) {
             $concept_list_path = isset($current_version['concepts_list']) ? $current_version['concepts_list'] : false;
-            $content = @file_get_contents($concept_list_path);
-            $content = json_decode($content, true);
-            foreach ($content as $concept) {
-                if (isset($concept['prefLabel'])) {
-                    $json['concept'][] = $concept['prefLabel'];
+            if($concept_list_path){
+                $content = @file_get_contents($concept_list_path);
+                $content = json_decode($content, true);
+                foreach ($content as $concept) {
+                    if (isset($concept['prefLabel'])) {
+                        $json['concept'][] = $concept['prefLabel'];
+                    }
                 }
             }
             //accessibility
@@ -192,7 +194,7 @@ class _vocabulary
         if ($this->versions) {
             foreach ($this->versions as $version) {
                 if ($version['status'] == 'current' && !$current_version) {
-                    $version['access_points'] = $this->getAccessPoints($version['id']);
+                    $version['version_access_points'] = $this->getAccessPoints($version['id']);
                     $current_version = $version;
                 }
             }
@@ -223,6 +225,51 @@ class _vocabulary
         }
     }
 
+
+    /**
+     * Returns a access points for a specific vocab version
+     * Helper function
+     * @param  int $versionId
+     * @return array of accesspoints
+     */
+
+    public function removePortalDataAccessPoints($versionId){
+        $ci =& get_instance();
+        $db = $ci->load->database('vocabs', true);
+
+        $allAccessPoints = $this->getAccessPoints($versionId);
+
+        foreach ($allAccessPoints as $ap) {
+
+            $delete = false;
+            $id = $ap['id'];
+            if ($ap['type'] != 'file')
+            {
+                if ($ap['type'] == 'webpage')
+                {
+                    $delete = true;
+                }
+                else{
+                    $source = json_decode($ap['portal_data']);
+                    if(isset($source->source) && $source->source == 'local'){
+                        $delete = true;
+                    }
+                }
+            }
+            if($delete){
+
+                $db->delete('access_points', array('id' => $id));
+            }
+        }
+    }
+
+    public function addPortalDataAccessPoint($versionId, $type , $portal_data, $toolkit_data="{}")
+    {
+        $data = array('version_id'=>$versionId, 'type' => $type , 'portal_data'=>$portal_data, 'toolkit_data'=>$toolkit_data);
+        $ci =& get_instance();
+        $db = $ci->load->database('vocabs', true);
+        $db->insert('access_points', $data);
+    }
     /**
      * Return the tree representation of the current version
      * requires the concepts_tree already harvested and transformed
@@ -347,7 +394,7 @@ class _vocabulary
         if ($query && $query->num_rows() > 0) {
             foreach ($query->result_array() as $row) {
                 $version = $row;
-
+                $version['version_access_points'] = $this->getAccessPoints($version['id']);
                 //break apart version data
                 if (isset($version['data'])) {
                     $version_data = json_decode($version['data'], true);
@@ -648,21 +695,27 @@ class _vocabulary
 
             //task array construction
             $task_array = array();
-
+            $this->removePortalDataAccessPoints($version_id);
             if ($this->isPoolParty()) {
                 $harvest_task = array('type' => 'HARVEST', 'provider_type' => 'PoolParty', 'project_id' => $this->prop['pool_party_id']);
                 array_push($task_array, $harvest_task);
-            } else {
-                //is not a poolparty, check for file upload
-                $file = false;
-                foreach ($version_data['access_points'] as $ap) {
-                    if ($ap['type'] == 'file') $file = $ap;
-                }
-                if ($file) {
-                    $harvest_task = array('type' => 'HARVEST', 'provider_type' => 'File', 'file_path' => vocab_uploaded_url($file['uri']));
-                    array_push($task_array, $harvest_task);
-                }
             }
+
+            if(isset($version_data['access_points']))
+            {
+                foreach ($version_data['access_points'] as $ap) {
+
+                    if ($ap['type'] == 'file') {
+                        $harvest_task = array('type' => 'HARVEST', 'provider_type' => 'File', 'file_path' => vocab_uploaded_url($ap['uri']));
+                        array_push($task_array, $harvest_task);
+                    }
+                    else if($ap['uri'] != 'TBD'){ // localy
+                      $portal_data = array('source'=>'local', 'uri'=>$ap['uri'], 'format'=>$ap['format']);
+                      $this->addPortalDataAccessPoint($version_id, $ap['type'] , json_encode($portal_data));
+                    }
+                }
+
+             }
 
             $transform_task = array('type' => 'TRANSFORM', 'provider_type' => 'JsonList');
             array_push($task_array, $transform_task);

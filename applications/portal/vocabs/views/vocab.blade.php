@@ -72,13 +72,13 @@ if(isset($vocab['related_entity'])){
                     <div class="col-md-4 panel-body text-center" style="border-color:#aaaaaa; solid; border-style: solid; border-width: 5px;">
                         <span class="current"">current version</span>
                         <h4>{{ $vocab['current_version']['title'] }}</h4>
-                        @if(isset($vocab['current_version']['access_points']) && is_array($vocab['current_version']['access_points']))
-                        @foreach($vocab['current_version']['access_points'] as $ap)
+                        @if(isset($vocab['current_version']['version_access_points']) && is_array($vocab['current_version']['version_access_points']))
+                        @foreach($vocab['current_version']['version_access_points'] as $ap)
                             @if($ap['type']=='file')
                                 <a class="btn btn-lg btn-block btn-primary" href="{{ json_decode($ap['portal_data'])->uri }}" title="{{ json_decode($ap['portal_data'])->format }}"><i class="fa fa-cube"></i> Download File <span class="small">({{ json_decode($ap['portal_data'])->format }})</span></a>
                             @endif
                         @endforeach
-                        @foreach($vocab['current_version']['access_points'] as $ap)
+                        @foreach($vocab['current_version']['version_access_points'] as $ap)
                             @if($ap['type'] == 'sesameDownload')
                         <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
                             <a title="Select Download Formats" href="javascript:;" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-edit"></i>
@@ -93,17 +93,18 @@ if(isset($vocab['related_entity'])){
 
                             @elseif($ap['type']!='file')
                                 <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-                                    <a class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}" target="_blank"><i class="fa fa-edit"></i>
+                                    <?php
+                                    $url = json_decode($ap['portal_data'])->uri;
+                                    if($ap['type'] == 'sissvoc'){
+                                        $sissvocEndPoint = $url;
+                                        $url = $url.'/concept/topConcepts.json';
+                                    }
+                                    ?>
+                                    <a class="btn btn-sm btn-default {{$ap['type']}}" href="{{ $url }}" target="_blank"><i class="fa fa-edit"></i>
                                         Access {{ $ap['type'] }}
-                                        @if(isset($ap['format']))
-                                        ({{ $ap['format'] }})
+                                        @if(isset(json_decode($ap['portal_data'])->format))
+                                        ({{ json_decode($ap['portal_data'])->format }})
                                         @endif
-                                        @if($ap['type'] == 'sissvoc')
-                                        <?php
-                                        $sissvocEndPoint = json_decode($ap['portal_data'])->uri;
-                                        ?>
-                                        @endif
-
                                     </a>
                                 </div>
                             @endif
