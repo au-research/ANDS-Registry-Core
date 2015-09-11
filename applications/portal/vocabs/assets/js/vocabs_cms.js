@@ -147,26 +147,17 @@
             if (project) {
 
                 //populate data from the PP API first
-                $scope.vocab.pool_party_id = project.id;
-                $scope.vocab.title = project.title;
-                $scope.vocab.description = project.description;
-                $scope.vocab.vocab_uri = project.uri;
-                $scope.decide = true;
-                if (project.availableLanguages) {
-                    $scope.vocab.language = [];
-                    angular.forEach(project.availableLanguages, function (lang) {
-                        if (lang.toLowerCase() == 'en') lang = 'English';
-                        $scope.vocab.language.push(lang);
-                    });
-                }
-                if (project.subject) {
-                    $scope.vocab.subjects = [];
-                    $scope.vocab.subjects.push({subject: project.subject, subject_source: 'local'});
+                //if selection was made
+                //otherwise assume the pooplParty ID is still in the field unprocessed!!!
+                if(typeof project.id != 'undefined'){
+                    $scope.vocab.pool_party_id = project.id;
+                } else {
+                    $scope.vocab.pool_party_id = project;
                 }
 
+                $scope.decide = true;
                 //populate with metadata from toolkit, overwrite the previous data where need be
                 vocabs_factory.getMetadata($scope.vocab.pool_party_id).then(function (data) {
-                    // $log.debug(data);
                     if (data) {
 
                         if (data['dcterms:title']) {
@@ -179,8 +170,6 @@
                             if (angular.isArray($scope.vocab.description)) $scope.vocab.description = $scope.vocab.description[0];
                         }
 
-                        $log.debug($scope.vocab);
-
                         if (data['dcterms:subject']) {
                             //overwrite the previous ones
                             var chosen = $scope.choose(data['dcterms:subject']);
@@ -190,8 +179,15 @@
                                 $scope.vocab.subjects.push({subject: theone, subject_source: 'local'});
                             });
                         }
-
-                        //related entity population
+                        if (data['dcterms:language']) {
+                            var chosen = $scope.choose(data['dcterms:language']);
+                            $scope.vocab.language = [];
+                            angular.forEach(chosen, function (lang) {
+                                if (lang.toLowerCase() == 'en') lang = 'English';
+                                $scope.vocab.language.push(lang);
+                            });
+                        }
+                      //related entity population
                         if (!$scope.vocab.related_entity) $scope.vocab.related_entity = [];
 
                         //Go through the list to determine the related entities to add
