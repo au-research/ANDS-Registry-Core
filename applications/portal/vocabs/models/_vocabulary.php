@@ -233,7 +233,7 @@ class _vocabulary
      * @return array of accesspoints
      */
 
-    public function removePortalDataAccessPoints($versionId){
+    public function removeUserDefinedAccessPoints($versionId){
         $ci =& get_instance();
         $db = $ci->load->database('vocabs', true);
 
@@ -245,16 +245,10 @@ class _vocabulary
             $id = $ap['id'];
             if ($ap['type'] != 'file')
             {
-                if ($ap['type'] == 'webpage')
-                {
-                    $delete = true;
-                }
-                else{
                     $source = json_decode($ap['portal_data']);
-                    if(isset($source->source) && $source->source == 'local'){
+                    if(isset($source->source) && $source->source == 'user'){
                         $delete = true;
                     }
-                }
             }
             if($delete){
 
@@ -695,7 +689,7 @@ class _vocabulary
 
             //task array construction
             $task_array = array();
-            $this->removePortalDataAccessPoints($version_id);
+            $this->removeUserDefinedAccessPoints($version_id);
             if ($this->isPoolParty()) {
                 $harvest_task = array('type' => 'HARVEST', 'provider_type' => 'PoolParty', 'project_id' => $this->prop['pool_party_id']);
                 array_push($task_array, $harvest_task);
@@ -709,8 +703,8 @@ class _vocabulary
                         $harvest_task = array('type' => 'HARVEST', 'provider_type' => 'File', 'file_path' => vocab_uploaded_url($ap['uri']));
                         array_push($task_array, $harvest_task);
                     }
-                    else if($ap['uri'] != 'TBD'){ // localy
-                      $portal_data = array('source'=>'local', 'uri'=>$ap['uri'], 'format'=>$ap['format']);
+                    else if($ap['uri'] != 'TBD'){ // user defined
+                      $portal_data = array('source'=>'user', 'uri'=>$ap['uri'], 'format'=>$ap['format']);
                       $this->addPortalDataAccessPoint($version_id, $ap['type'] , json_encode($portal_data));
                     }
                 }
