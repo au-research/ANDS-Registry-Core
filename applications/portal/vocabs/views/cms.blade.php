@@ -88,7 +88,7 @@
 							</div>
 							<div class="form-group">
 								<label for="">Vocabulary Licence</label>
-								<select name="" id="" class="form-control" placeholder="vocab Licence" ng-options="lic for lic in licence" ng-model="vocab.licence"></select>
+								<select name="" id="" class="form-control" placeholder="vocab Licence" ng-options="lic for lic in licence" ng-model="vocab.licence"><option value="">No selection</option></select>
 							</div>
 
 							<div class="form-group" ng-class="{ 'has-error' : form.cms.creation_date.$invalid }">
@@ -176,26 +176,28 @@
 						<div class="panel-body">
 							<table class="table">
 								<thead>
-									<tr><th>Subject Label</th><th>Source</th> <th></th></tr>
+									<tr><th>Source</th> <th>Subject Label</th><th></th></tr>
 								</thead>
 								<tbody>
 									<tr ng-repeat="subject in vocab.subjects track by $index">
+                                        <td>[[ subject.subject_source ]]</td>
 										<td>[[ subject.subject ]]</td>
-										<td>[[ subject.subject_source ]]</td>
+
 										<td><a href="" ng-click="list_remove('subjects', $index)"><i class="fa fa-remove"></i></a></td>
 									</tr>
 								</tbody>
 							</table>
 
 							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('subjects', newValue.subject)">
-								<div class="form-group">
-									<label for="">Subject Label</label>
-									<input type="text" class="form-control" placeholder="Subject Label" ng-model="newValue.subject.subject">
-								</div>
+
 								<div class="form-group">
 									<label for="">Subject Source</label>
 									<select name="" id="" class="form-control" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="newValue.subject.subject_source"></select>
 								</div>
+                                <div class="form-group">
+                                    <label for="">Subject Label</label>
+                                    <input type="text" class="form-control" placeholder="Subject Label" ng-model="newValue.subject.subject">
+                                </div>
 								<button class="btn btn-primary" ng-submit="addtolist('subjects', newValue.subject)"><i class="fa fa-plus"></i> Add Subject</button>
 							</form>
 						</div>
