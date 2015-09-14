@@ -181,7 +181,7 @@ else
 	}
 	?>
 
-			<div class="box">
+			<!--<div class="box">
 				<div class="box-header clearfix">
 					<h1>My Vocabularies</h1>
 				</div>
@@ -203,7 +203,7 @@ else
 						}
 					?>
 				</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </div>
