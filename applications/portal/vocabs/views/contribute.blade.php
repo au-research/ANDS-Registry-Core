@@ -15,7 +15,7 @@
                     <img src="{{asset_url('images/vocab_process.jpg', 'core')}}" class="element element-short-bottom element-short-top"/>
                     <h3>A service built to support vocabulary development</h3>
                     <p>
-                        ANDS offers several options for our partners to publish vocabularies in Research Vocabularies Australia.
+                        The Australian National Data Service (ANDS) offers several options for our partners to publish vocabularies in Research Vocabularies Australia.
                     </p>
                 </div>
             </div>

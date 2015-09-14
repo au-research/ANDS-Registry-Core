@@ -17,7 +17,7 @@ About ANDS Vocabulary Services
 				<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-md-offset-2 col-lg-offset-2 animated fadeInUp">
 					<h3>A service built on sharing</h3>
 					<p>
-						Research Vocabularies Australia helps you find, access, and reuse vocabularies for research. Some vocabularies are hosted by ANDS and can be accessed directly through Research Vocabularies Australia.  Otherwise Research Vocabularies Australia provides a link to the vocabulary owner’s web page.	
+						Research Vocabularies Australia helps you find, access, and reuse vocabularies for research. Some vocabularies are hosted by the Australian National Data Service (ANDS) and can be accessed directly through Research Vocabularies Australia.  Otherwise Research Vocabularies Australia provides a link to the vocabulary owner’s web page.
 					</p>
 				</div>
 				<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-md-offset-2 col-lg-offset-2 animated fadeInUp">

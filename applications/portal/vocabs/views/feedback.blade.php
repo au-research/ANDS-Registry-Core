@@ -15,7 +15,7 @@
                     <h3 class="text-center hairline bordered animated fadeIn"> A service built on collaboration</h3>
                     <p>
                       Through engagement with the research community, Research Vocabularies Australia will grow to cover a broad spectrum of research fields - across sciences, social sciences, arts and humanities.
-                      ANDS offers several options for our partners to give feedback about vocabularies and vocabulary concepts in Research Vocabularies Australia.
+                      The Australian National Data Service (ANDS) offers several options for our partners to give feedback about vocabularies and vocabulary concepts in Research Vocabularies Australia.
                     </p>
                 </div>
             </div>
