@@ -227,10 +227,9 @@ class _vocabulary
 
 
     /**
-     * Returns a access points for a specific vocab version
-     * Helper function
+     * Delete the access points for a specific vocab version
+     * that the user entered themself. Can be webPage, apiSparql, sissvoc.
      * @param  int $versionId
-     * @return array of accesspoints
      */
 
     public function removeUserDefinedAccessPoints($versionId){
@@ -243,15 +242,23 @@ class _vocabulary
 
             $delete = false;
             $id = $ap['id'];
-            if ($ap['type'] != 'file')
-            {
-                    $source = json_decode($ap['portal_data']);
-                    if(isset($source->source) && $source->source == 'user'){
-                        $delete = true;
-                    }
+            switch ($ap['type']) {
+            case 'file':
+                // File is considered system-entered, as the endpoint
+                // is added by the Toolkit.
+                break;
+            case 'sesameDownload':
+                break;
+            case 'webPage':
+                $delete = true;
+                break;
+            default:
+                $source = json_decode($ap['portal_data']);
+                if(isset($source->source) && $source->source == 'user'){
+                    $delete = true;
+                }
             }
             if($delete){
-
                 $db->delete('access_points', array('id' => $id));
             }
         }
