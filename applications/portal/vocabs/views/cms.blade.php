@@ -105,10 +105,11 @@
 								<textarea class="form-control" ng-model="vocab.note" placeholder="Notes" rows="10"></textarea>
 							</div>
 							@if(null!=$this->user->affiliations())
-							<div class="form-group">
-								<label for="">Owner</label>
-								<select name="owner" id="owner" class="form-control" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
-                                <p><span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i> </span> &nbsp;&nbsp;To give editing rights to others in your organisation, please select the appropriate organisational Owner.</p>
+							<div class="form-group"  ng-class="{ 'has-error' : form.cms.owner.$invalid }">
+								<label for="owner">Owner</label>
+								<select name="owner" id="owner" required class="form-control " placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
+                                <p ng-show="form.cms.owner.$invalid" class="help-block">To give editing rights to others in your organisation, please select the appropriate organisational Owner.</p>
+                                <!--<p><span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i> </span> &nbsp;&nbsp;To give editing rights to others in your organisation, please select the appropriate organisational Owner.</p>-->
 							</div>
 							@endif
 						</div>

@@ -254,6 +254,9 @@ small.deprecated {
   padding-left: 5px;
   padding-right: 5px;
 }
+select {
+  -webkit-appearance: menulist !important;
+}
 .classic-tree ul {
   margin-left: 20px;
 }

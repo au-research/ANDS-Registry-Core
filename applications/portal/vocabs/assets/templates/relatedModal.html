@@ -67,9 +67,7 @@
                         </div>
                         <div class="form-group">
                             <label for="">Identifiers</label>
-                            <div class="alert alert-warning">
-                                At least 1 identifier is highly recommended
-                            </div>
+                            <p><span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i></span> At least 1 identifier is highly recommended </p>
                             <div class="input-group" ng-repeat="ident in entity.identifiers track by $index">
                                 <input type="text" class="form-control" placeholder="Identifier" ng-model="ident.url">
 								<span class="input-group-btn">
