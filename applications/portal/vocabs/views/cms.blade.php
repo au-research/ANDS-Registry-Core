@@ -88,7 +88,7 @@
 							</div>
 							<div class="form-group">
 								<label for="">Vocabulary Licence</label>
-								<select name="" id="" class="form-control" placeholder="vocab Licence" ng-options="lic for lic in licence" ng-model="vocab.licence"><option value="">No selection</option></select>
+								<select name="" id="" class="form-control caret-for-select" placeholder="vocab Licence" ng-options="lic for lic in licence" ng-model="vocab.licence"><option value="">No selection</option></select>
 							</div>
 
 							<div class="form-group" ng-class="{ 'has-error' : form.cms.creation_date.$invalid }">
@@ -107,7 +107,7 @@
 							@if(null!=$this->user->affiliations())
 							<div class="form-group"  ng-class="{ 'has-error' : form.cms.owner.$invalid }">
 								<label for="owner">Owner</label>
-								<select name="owner" id="owner" required class="form-control " placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
+								<select name="owner" id="owner" required class="form-control caret-for-select" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
                                 <p ng-show="form.cms.owner.$invalid" class="help-block">To give editing rights to others in your organisation, please select the appropriate organisational Owner.</p>
                                 <!--<p><span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i> </span> &nbsp;&nbsp;To give editing rights to others in your organisation, please select the appropriate organisational Owner.</p>-->
 							</div>
@@ -193,7 +193,7 @@
 
 								<div class="form-group">
 									<label for="">Subject Source</label>
-									<select name="" id="" class="form-control" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="newValue.subject.subject_source"></select>
+									<select name="" id="" class="form-control caret-for-select" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="newValue.subject.subject_source"></select>
 								</div>
                                 <div class="form-group">
                                     <label for="">Subject Label</label>
