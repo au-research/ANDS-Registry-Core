@@ -64,19 +64,20 @@
 
             <div class="row">
                 <div class="col-md-12">
+                    <label ng-if="version.access_points">Access Points:</label>
                     <table class="table" ng-if="version.access_points">
                         <thead>
-                        <th>Access Point</th>
                         <th>Type</th>
+                        <th>Format</th>
                         <th>URI</th>
                         <th></th>
                         </thead>
                         <tbody>
                         <tr ng-repeat="ap in version.access_points track by $index">
-                            <td>[[ ap.format ]]</td>
                             <td>[[ ap.type ]]</td>
+                            <td>[[ ap.format ]]</td>
                             <td>
-                                <a href="[[ ap.uri ]]" ng-if="ap.uri!='TBD'">URI</a>
+                                <a href="[[ ap.uri ]]" title="[[ ap.uri ]]" ng-if="ap.uri!='TBD'">URI</a>
                                 <span ng-if="ap.uri=='TBD'">[[ ap.uri ]]</span>
                             </td>
                             <td><a href="" ng-click="list_remove('access_points', $index)"><i class="fa fa-remove"></i></a>
