@@ -257,6 +257,10 @@ small.deprecated {
 select {
   -webkit-appearance: menulist !important;
 }
+.btn-discard {
+  float: right;
+  background-color: #f1c232 !important;
+}
 .classic-tree ul {
   margin-left: 20px;
 }
