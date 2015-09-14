@@ -25,6 +25,11 @@
   top: 50%;
   left: 9px;
 }
+.caret-for-select {
+  z-index: 100;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+}
 .input-suggestion {
   text-indent: 14px !important;
 }
@@ -254,12 +259,9 @@ small.deprecated {
   padding-left: 5px;
   padding-right: 5px;
 }
-select {
-  -webkit-appearance: menulist !important;
-}
 .btn-discard {
   float: right;
-  background-color: #f1c232 !important;
+  background-color: #F58000 !important;
 }
 .classic-tree ul {
   margin-left: 20px;
