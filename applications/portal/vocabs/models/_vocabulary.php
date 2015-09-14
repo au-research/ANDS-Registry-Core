@@ -238,28 +238,31 @@ class _vocabulary
 
         $allAccessPoints = $this->getAccessPoints($versionId);
 
-        foreach ($allAccessPoints as $ap) {
-
-            $delete = false;
-            $id = $ap['id'];
-            switch ($ap['type']) {
-            case 'file':
-                // File is considered system-entered, as the endpoint
-                // is added by the Toolkit.
-                break;
-            case 'sesameDownload':
-                break;
-            case 'webPage':
-                $delete = true;
-                break;
-            default:
-                $source = json_decode($ap['portal_data']);
-                if(isset($source->source) && $source->source == 'user'){
-                    $delete = true;
+        if ($allAccessPoints) {
+            foreach ($allAccessPoints as $ap) {
+                $delete = false;
+                $id = $ap['id'];
+                switch ($ap['type']) {
+                    case 'file':
+                        // File is considered system-entered, as the endpoint
+                        // is added by the Toolkit.
+                        break;
+                    case 'sesameDownload':
+                        break;
+                    case 'webPage':
+                        $delete = true;
+                        break;
+                    default:
+                        $source = json_decode($ap['portal_data']);
+                        if (isset($source->source) && $source->source == 'user') {
+                            $delete = true;
+                        }
                 }
-            }
-            if($delete){
-                $db->delete('access_points', array('id' => $id));
+                if ($delete) {
+                    $db->delete('access_points', array(
+                        'id' => $id
+                    ));
+                }
             }
         }
     }
