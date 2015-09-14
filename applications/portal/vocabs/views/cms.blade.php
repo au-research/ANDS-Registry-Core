@@ -282,6 +282,7 @@
 									<li ng-repeat="msg in success_message" ng-bind-html="msg">[[ msg ]]</li>
 								</ul>
 							</div>
+                            <a href="" class="btn btn-large btn-primary btn-discard" ng-click="save('discard')">Exit Without Saving</a>
 						</div>
 						<div class="panel-body" ng-if="status=='saving'">
 							<i class="fa fa-refresh fa-spin"></i> Saving...

@@ -245,8 +245,10 @@
 
             $scope.error_message = false;
             $scope.success_message = false;
-
-
+            if(status == 'discard'){
+                window.location.replace(base_url + 'vocabs/myvocabs');
+                return false;
+            }
             //validation
             if (!$scope.validate()) {
                 return false;
