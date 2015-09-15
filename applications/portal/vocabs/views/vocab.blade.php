@@ -223,7 +223,6 @@ if(isset($vocab['related_entity'])){
 &lt;/script&gt;
             </pre>
         </div>
-        </div>
 
 
         @endif
