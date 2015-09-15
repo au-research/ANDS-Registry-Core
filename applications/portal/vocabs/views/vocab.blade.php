@@ -194,9 +194,10 @@ if(isset($vocab['related_entity'])){
         @if(isset($sissvocEndPoint))
         <div visualise vocabid="{{ $vocab['id'] }}"></div>
         <div id="widget" class="panel swatch-white">
-            <div class="panel-heading">Vocab Widget sample:</div>
+            <div class="panel-heading">Try out the widget <a style="float:right" href="http://developers.ands.org.au/widgets/vocab_widget/">Implement in your own system</a></div>
+
             <div class="panel-body">
-            <input type="text" id="{{$vocab['slug']}}" name="{{$vocab['slug']}}" value="" size="80" autocomplete="off">
+            <input type="text" id="{{$vocab['slug']}}" name="{{$vocab['slug']}}" placeholder="Search" size="80" autocomplete="off">
                 <script>
                 $("#{{$vocab['slug']}}").vocab_widget({
                 mode: 'search',
@@ -208,8 +209,8 @@ if(isset($vocab['related_entity'])){
                 </script>
             </div>
             &nbsp;&nbsp;<button id="widget-toggle">Show code</button>
-        </div>
-        <div id="widget-info" class="toggle">
+            <br/>
+            <div id="widget-info" class="toggle">
             <pre class="panel-body prettyprint">
 &lt;input type="text" id="{{$vocab['slug']}}" name="{{$vocab['slug']}}" value="" size="80" autocomplete="off"&gt;
 &lt;script&gt;
@@ -222,7 +223,9 @@ if(isset($vocab['related_entity'])){
     });
 &lt;/script&gt;
             </pre>
+            </div>
         </div>
+
 
 
         @endif
