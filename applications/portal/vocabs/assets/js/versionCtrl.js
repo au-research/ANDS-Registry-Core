@@ -85,6 +85,8 @@
                     return true;
                 }
             }
+            $scope.newValue.ap.publish = false;
+            $scope.newValue.ap.import = false;
             return false;
         };
 
