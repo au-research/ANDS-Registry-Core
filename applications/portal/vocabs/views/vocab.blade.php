@@ -117,10 +117,10 @@ if(isset($vocab['related_entity'])){
                             @if($version['status']!='current')
                                 <li>
                                     <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}'>{{ $version['title'] }} </a>
-                                    <small class="{{$version['status']}}"> {{ $version['status'] }} </small>
                                     @if(isset($version['note']))
-                                    <a href="" tip="{{ $version['release_date'] }} <hr />{{$version['note']}}"><i class="fa fa-info"></i></a>
+                                    <a href="" tip="{{ $version['release_date'] }} <hr />{{str_replace('"',"'",$version['note'])}}"><i class="fa fa-info"></i></a>
                                     @endif
+                                    <small class="{{$version['status']}}"> {{ $version['status'] }} </small>
                                 </li>
                             @endif
                             @endforeach
