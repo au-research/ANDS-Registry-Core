@@ -18,9 +18,9 @@
 		<div class="row">
 			<div class="col-md-12">
 				<header class="section-text-shadow section-innder-shadow element-short-top element-short-bottom">
-					<h1 class="hairline bordered-normal">
+					<h1 class="hairline bordered-normal" ng-non-bindable>
 						@if($vocab)
-						{{ $vocab->title }}
+						{{ htmlspecialchars($vocab->title) }}
 						@else
 						Add a new Vocabulary
 						@endif

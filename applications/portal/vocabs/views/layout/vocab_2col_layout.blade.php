@@ -34,7 +34,7 @@ $title = rawurlencode(substr($vocab['title'], 0, 200)) ;
 
                         <div class="panel panel-primary swatch-white panel-content">
                             <div class="panel-body">
-                                <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name" ng-non-bindable>{{ $vocab['title'] }} </span></h1>
+                                <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }} </span></h1>
                                 @if (isset($vocab['acronym']))
                                 <small>Acronym: {{ $vocab['acronym'] }}</small><br>
                                 @endif
