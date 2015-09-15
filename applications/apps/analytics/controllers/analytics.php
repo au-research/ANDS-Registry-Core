@@ -340,6 +340,11 @@ class Analytics extends MX_Controller
         $chunkSize = 2000;
         if (sizeof($lines) > $chunkSize) {
             $chunks = array_chunk($lines, $chunkSize);
+        }
+        else{
+            $chunks[] = $lines;
+        }
+
             foreach ($chunks as $key => $chunk) {
                 $post = [];
                 foreach ($chunk as $line) {
@@ -385,11 +390,12 @@ class Analytics extends MX_Controller
                     ->setPath('/logs/production/_bulk')
                     ->bulk('index', $post);
 
+
                 if ($result) {
                     echo 'Done ' . $date . ' chunk ' . $key . " out of " . sizeof($chunks) . "\n";
                 }
             }
-        }
+
 
         if ($result) {
             //handle success
