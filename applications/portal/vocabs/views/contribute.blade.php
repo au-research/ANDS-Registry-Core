@@ -25,33 +25,45 @@
             <div class="row">
                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                     <h3 class="normal light bordered">Create or manage a vocabulary</h3>
-                    <p>Research Vocabularies Australia includes an editing tool which allows for the creation and management of vocabularies and the concepts they contain. The editor allows you and your colleagues to collaboratively manage your vocabulary, with optional workflow management. Vocabularies may be uploaded or created from scratch within the editor. Additional features of the editor include:
+                    <p>  The Research Vocabularies Australia editor allows for the creation and management of vocabularies and the concepts they contain. The RVA editor allows you and your colleagues to collaboratively manage your vocabulary, with optional workflow management. Vocabularies may be uploaded or created from scratch within the editor. Additional features of the RVA editor include:
                     </p>
                     <ul>
-                        <li>Capture information about your vocabulary and the concepts it contains </li>
+                        <li>Capture information about your vocabulary and the concepts it contains</li>
                         <li>Browse through the concepts in your vocabulary via the built-in visualisation tool </li>
-                        <li>Link concepts in your vocabulary to concepts in other vocabularies </li>
+                        <li>Link concepts in your vocabulary to concepts in other vocabularies</li>
                         <li>Query your vocabulary via the built-in SPARQL endpoint</li>
                      </ul>
-
+                   <p>
+                    Contact <a href="mailto:services@ands.org.au">services@ands.org.au</a> to register for the RVA editor.
+                   </p>
+                    <p>
+                    Learn more about the <a href="https://intranet.ands.org.au/pages/viewpage.action?pageId=19529976" target="_blank">RVA editor</a>.
+                    </p>
                 </div>
                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                     <h3 class="normal light bordered">Publish and describe a vocabulary</h3>
                     <p>
-                        Research Vocabularies Australia includes a portal in which you can upload and describe your vocabulary. Vocabulary files may be uploaded in a variety of formats. Additional publishing features of the portal include:
-                    </p>
+                        Using the Research Vocabularies Australia portal you can upload and describe your vocabulary. Vocabulary files may be uploaded in a variety of formats. Additional publishing features of the RVA portal include:</p>
                     <ul>
                         <li>Upload vocabulary files in a variety of formats</li>
                         <li>Describe versions of your vocabulary, their statuses, and changes made between versions</li>
                         <li>Provide contact, access and licencing information about your vocabulary</li>
                         <li>Describe your vocabulary by subject and language</li>
                         <li>Describe individuals who have contributed to the vocabulary’s creation or management</li>
-                        <li>Use the PoolParty Integration tool to quickly publish vocabularies managed in the ANDS vocabulary service editor</li>
+                        <li>Use the PoolParty Integration tool to quickly publish vocabularies managed in the RVA editor</li>
                     </ul>
+                    <p>
+                        Contact <a href="mailto:services@ands.org.au">services@ands.org.au</a> to register for the RVA portal.
+                    </p>
+                    <p>
+                        Learn more about the <a href="https://intranet.ands.org.au/pages/viewpage.action?pageId=19529985" target="_blank">RVA portal</a>.
+                    </p>
                 </div>
                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                     <h3 class="normal light bordered">Store a vocabulary</h3>
-                    <p>Research Vocabularies Australia includes a repository in which vocabulary files and the information about those vocabularies may be stored. The repository allows for the flow of information between the editor and the portal.</p>
+                    <p>The Research Vocabularies Australia includes a repository in which vocabulary files and the information about those vocabularies may be stored. The RVA repository allows for the flow of information between the editor and the portal.</p>
+
+                    <p>  Contact <a href="mailto:services@ands.org.au">services@ands.org.au</a>  to register for the RVA repository.</p>
                 </div>
             </div>
         </div>
