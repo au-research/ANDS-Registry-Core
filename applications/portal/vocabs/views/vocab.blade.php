@@ -69,9 +69,10 @@ if(isset($vocab['related_entity'])){
             <div class="container-fluid" >
                 <div class="row">
                     @if($vocab['current_version'])
-                    <div class="col-md-4 panel-body text-center" style="border-color:#aaaaaa; solid; border-style: solid; border-width: 5px;">
+                    <div class="col-md-4 panel-body text-center">
+                    <div style="border-color:#aaaaaa; solid; border-style: solid; border-width: 5px; padding: 10px;">
                         <span class="current"">current version</span>
-                        <h4>{{ $vocab['current_version']['title'] }}</h4>
+                        <h4 style="margin-top:5px;" ng-non-bindable>{{ htmlspecialchars($vocab['current_version']['title']) }}</h4>
                         @if(isset($vocab['current_version']['version_access_points']) && is_array($vocab['current_version']['version_access_points']))
                         @foreach($vocab['current_version']['version_access_points'] as $ap)
                             @if($ap['type']=='file')
@@ -111,16 +112,17 @@ if(isset($vocab['related_entity'])){
                         @endforeach
                         @endif
                         <p class="element-short-top">{{ isset($vocab['current_version']['note']) ? $vocab['current_version']['note']: '' }}</p>
+                    </div>
                         @if(isset($vocab['versions']) && is_array($vocab['versions']))
-                        <ul class="list-unstyled">
+                        <ul class="list-unstyled text-left" style="margin-top: 12px;">
                             @foreach($vocab['versions'] as $version)
                             @if($version['status']!='current')
                                 <li>
-                                    <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}'>{{ $version['title'] }} </a>
+                                    <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}' ng-non-bindable>{{ htmlspecialchars($version['title']) }} </a>
                                     @if(isset($version['note']))
                                     <a href="" tip="{{ $version['release_date'] }} <hr />{{str_replace('"',"&quot;",$version['note'])}}"><i class="fa fa-info"></i></a>
                                     @endif
-                                    <small class="{{$version['status']}}"> {{ $version['status'] }} </small>
+                                    <small class="{{$version['status']}}" style="float: right;"> {{ $version['status'] }} </small>
                                 </li>
                             @endif
                             @endforeach
