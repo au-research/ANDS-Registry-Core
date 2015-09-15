@@ -89,7 +89,7 @@
                         <form class="form" name="form.apForm" novalidate>
                             <div class="form-group" ng-class="{ 'has-error' : form.apForm.type.$invalid }">
                                 <label for="">Access Point Type</label>
-                                <select class="form-control selectpicker" required name="type"
+                                <select class="form-control caret-for-select" required name="type"
                                         ng-options="type.value as type.text for type in types"
                                         ng-model="newValue.ap.type"></select>
                                 <p ng-show="form.apForm.type.$invalid" class="help-block">Type is required.</p>
@@ -97,21 +97,23 @@
                             <div class="form-group" ng-class="{ 'has-error' : form.apForm.format.$invalid }">
                                 <label for="">Access Point Format</label>
                                 <div style="position:relative">
-                                    <select class="form-control selectpicker" required name="format"
+                                    <select class="form-control caret-for-select" required name="format"
                                             ng-options="format as format for format in formats"
                                             ng-model="newValue.ap.format"></select>
                                 </div>
                                 <p ng-show="form.apForm.format.$invalid" class="help-block">Format is required.</p>
                             </div>
-                            <div class="checkbox" ng-if="validFormat()">
+
+                            <div class="checkbox">
                                 <label>
-                                    <input ng-click="setImPubcheckboxes('import')" type="checkbox" ng-model="newValue.ap.import"> Import vocabulary into the
+                                    <input ng-click="setImPubcheckboxes('import')" ng-disabled="!validFormat()" type="checkbox" ng-model="newValue.ap.import"> Import vocabulary into the
                                     ANDS Vocabulary Repository
                                 </label>
+                                <a class="btn-discard" href="" tip="To Enable Import and Publish options you must select Access Point Type: 'File' <br/>in the following Access Point Formats: 'TTL', 'TriG', 'Trix', 'N3', 'RDF/XML'"><i class="fa fa-info"></i></a>
                             </div>
-                            <div class="checkbox" ng-if="validFormat()">
+                            <div class="checkbox">
                                 <label>
-                                    <input ng-click="setImPubcheckboxes('publish')" type="checkbox" ng-model="newValue.ap.publish"> Publish vocabulary via the
+                                    <input ng-click="setImPubcheckboxes('publish')" ng-disabled="!validFormat()" type="checkbox" ng-model="newValue.ap.publish"> Publish vocabulary via the
                                     ANDS Linked Data API
                                 </label>
                             </div>
@@ -143,7 +145,7 @@
                                 <p ng-show="form.apForm.uri.$invalid" class="help-block">URI is required.</p>
                             </div>
                             <div class="alert alert-danger" ng-show="ap_error_message">[[ap_error_message]]</div>
-                            <button type="button" class="btn btn-primary" ng-click="addformatform(newValue.ap)"><i
+                            <button type="button" ng-disabled="!validateAP()" class="btn btn-primary" ng-click="addformatform(newValue.ap)"><i
                                     class="fa fa-plus"></i> Add Access Point
                             </button>
                         </form>
