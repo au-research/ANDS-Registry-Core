@@ -98,7 +98,7 @@ if(isset($vocab['related_entity'])){
                                     $url = json_decode($ap['portal_data'])->uri;
                                     if($ap['type'] == 'sissvoc'){
                                         $sissvocEndPoint = $url;
-                                        $url = $url.'/concept/topConcepts.json';
+                                        $url = $url.'/concept';
                                     }
                                     ?>
                                     <a class="btn btn-sm btn-default {{$ap['type']}}" href="{{ $url }}" target="_blank"><i class="fa fa-edit"></i>
