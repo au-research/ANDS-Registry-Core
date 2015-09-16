@@ -11,7 +11,7 @@
         $scope.vocab = vocab;
         $scope.version = version ? version : {provider_type: false};
         $scope.action = version ? 'save' : 'add';
-        $scope.formats = ['RDF/XML', 'TTL', 'N-Triples', 'JSON', 'TriG', 'TriX', 'N3', 'CSV', 'TSV', 'XLS', 'XLSX', 'BinaryRDF', 'ODS', 'ZIP', 'XML', 'TXT', 'ODT', 'TEXT'];
+        $scope.formats = ['RDF/XML', 'TTL', 'N-Triples', 'JSON', 'TriG', 'TriX', 'N3', 'CSV', 'TSV', 'XLS', 'XLSX', 'BinaryRDF', 'ODS', 'ZIP', 'XML', 'TXT', 'ODT', 'PDF'];
         $scope.types = [{"value": "webPage", "text": "Web page"},
             {"value": "apiSparql", "text": "API/SPARQL endpoint"},
             {"value": "file", "text": "File"}
