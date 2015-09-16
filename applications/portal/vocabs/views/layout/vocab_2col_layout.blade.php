@@ -34,6 +34,7 @@ $title = rawurlencode(substr($vocab['title'], 0, 200)) ;
 
                         <div class="panel panel-primary swatch-white panel-content">
                             <div class="panel-body">
+                                <a id="widget-link" href="#widget" tip="<b>Widgetable</b><br/>This vocabulary can be accessed using<br/>our vocabulary widget."><span class="btn-widget-link"><img class="widget-icon" height="32" width="32"src="{{asset_url('images/cogwheels.png', 'core')}}"/>widgetable</span></a>
                                 <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }} </span></h1>
                                 @if (isset($vocab['acronym']))
                                 <small>Acronym: {{ $vocab['acronym'] }}</small><br>
@@ -43,6 +44,8 @@ $title = rawurlencode(substr($vocab['title'], 0, 200)) ;
                                 <small>Publisher </small>  <a class="re_preview" related='{{json_encode($apub)}}' v_id="{{ $vocab['id'] }}" sub_type="publisher"> {{$apub['title']}} </a>
                                 @endforeach
                                 @endif
+
+
                                 <div class="pull-right">
                                     {{ isset($vocab['creation_date']) ? "Created: ".$vocab['creation_date'] : ''}}
                                     <a href="http://www.facebook.com/sharer.php?u={{$url}}"><i class="fa fa-facebook" style="padding-right:4px"></i></a>
@@ -57,7 +60,6 @@ $title = rawurlencode(substr($vocab['title'], 0, 200)) ;
                     <div class="col-md-3">
                         @yield('sidebar')
                     </div>
-
                 </div>
             </div>
         </section>

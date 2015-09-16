@@ -16,6 +16,19 @@ $(document).ready(function() {
 
     $("#widget-info").hide();
 
+    if($("#widget-info").length == 0)
+        $("#widget-link").hide();
+
+    $('#widget-link').click(function(){
+        $('html, body').animate({
+            scrollTop: $( $.attr(this, 'href') ).offset().top
+        }, 1000);
+        if($("#widget-info").is( ":hidden" )){
+            $("#widget-toggle").click();
+        }
+
+        return false;
+    });
 
     $("#widget-toggle").click(function() {
 
