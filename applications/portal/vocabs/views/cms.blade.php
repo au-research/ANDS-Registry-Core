@@ -160,8 +160,7 @@
 
 							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('language', newValue.language)">
 								<div class="input-group">
-									<span class="caret caret-for-input-suggestion"></span>
-									<input type="text" ng-model="newValue.language" class="form-control input-suggestion" placeholder="Language" typeahead="lang.value as lang.text for lang in langs | filter:$viewValue" typeahead-min-length="0" typeahead-on-select="addtolist('language', newValue.language)"/>
+                                    <select name="vlanguage" id="vLanguage" class="form-control caret-for-select" placeholder="Select a language" ng-options="lang.value as lang.text for lang in langs" ng-model="newValue.language"><option value="">Select a language</option></select>
 									<span class="input-group-btn">
 										<button class="btn btn-primary" type="button" ng-click="addtolist('language', newValue.language)"><i class="fa fa-plus"></i> Add</button>
 									</span>
@@ -177,7 +176,7 @@
 						<div class="panel-body">
 							<table class="table">
 								<thead>
-									<tr><th>Source</th> <th>Subject Label</th><th></th></tr>
+									<tr><th>Subject Source</th> <th>Subject Label</th><th></th></tr>
 								</thead>
 								<tbody>
 									<tr ng-repeat="subject in vocab.subjects track by $index">

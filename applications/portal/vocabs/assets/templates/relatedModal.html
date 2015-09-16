@@ -52,16 +52,14 @@
                             <p></p>
 
                             <div class="input-group">
-                                <span class="caret caret-for-input-suggestion"></span>
-                                <input type="text" class="form-control input-suggestion" placeholder="Relationship" ng-model="newrel"
-                                    ng-focus="onFocus($event)"
-                                    typeahead="rel.value as rel.text for rel in getRelation()" typeahead-min-length="0"/>
-								<span class="input-group-btn">
+                                <select class="form-control caret-for-select" required name="relationship"
+                                        ng-options="rel.value as rel.text for rel in getRelation()"
+                                        ng-model="newrel"></select>
+                                	<span class="input-group-btn">
 									<button class="btn btn-primary" type="button"
-                                            ng-click="list_add('relationship', newrel);newrel='';"><i class="fa fa-plus"></i> Add
-
-                                    </button>
-								</span>
+                                            ng-click="list_add('relationship', newrel);newrel='';">
+                                        <i class="fa fa-plus"></i> Add</button>
+                                    </span>
                             </div>
                         </div>
                         <div class="form-group">
