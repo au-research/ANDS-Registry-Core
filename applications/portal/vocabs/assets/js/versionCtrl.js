@@ -136,13 +136,6 @@
         $scope.importPP = function () {
             $scope.version.provider_type = 'poolparty';
 
-            //add empty file
-            $scope.addformat({
-                format: 'RDF/XML',
-                type: 'file',
-                uri: 'TBD'
-            });
-
             //add empty apiSparql endpoint
             $scope.addformat({
                 format: 'RDF/XML',
