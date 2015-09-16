@@ -31,8 +31,7 @@
                 <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-offset-2  col-md-offset-2 col-lg-offset-2  os-animation animated fadeInUp">
                     <h3 class="text-center hairline bordered animated fadeIn">Suggest changes to a vocabulary or vocabulary concept</h3>
                     <p>
-                        The vocabulary portal includes a feature called MyVocabs, which allows for the...
-                        If you would like to suggest a change or correction to the information about a vocabulary or a concept within a vocabulary that is included in the Research Vocabularies Australia, you can log in to MyVocabs and...
+                        If you would like to suggest a change or correction to the information about a vocabulary or a concept within a vocabulary that is included in the Research Vocabularies Australia, contact <a href="mailto:services@ands.org.au">services@ands.org.au</a>.
                     </p>
                 </div>
             </div>
