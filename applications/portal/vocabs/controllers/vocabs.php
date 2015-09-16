@@ -371,6 +371,14 @@ class Vocabs extends MX_Controller
 
         // $this->solr->setFilters($filters);
         $result = $this->solr->executeSearch(true);
+
+        // CC-1270 Facet names come back from Solr sorted case-sensitively.
+        // Resort them case-insensitively.
+        foreach ($result['facet_counts']['facet_fields'] as $key => $value) {
+            $result['facet_counts']['facet_fields'][$key] =
+            $this->sortFacetsInsensitively($value);
+        }
+
         $event = array(
             'event' => 'search',
             'filters' => $filters,
@@ -381,6 +389,106 @@ class Vocabs extends MX_Controller
 
         vocab_log_terms($event);
         echo json_encode($result);
+    }
+
+    /** Partition an array based on the location of the first lower-case
+     * element.
+     * The array to be partitioned is treated
+     * as a set of Solr facets, i.e., the values to be examined are only
+     * in the even-numbered indexes of the array; the odd-numbered positions
+     * are facet counts, and are ignored.
+     * @param array $arrayToPartition The array to be partitioned.
+     * @return int If the array is empty, then 0. If non-empty, the index
+     * of the first element beginning with a lower-case value, if there is one.
+     * Otherwise, the size of the array (i.e., the index of the first position
+     * beyond the end of the array. */
+    private function findPartitionPoint($arrayToPartition)
+    {
+        $lower = 0;
+        $upper = count($arrayToPartition) - 2;
+
+        // Binary chop based on
+        // https://terenceyim.wordpress.com/2011/02/01/all-purpose-binary-search-in-php/
+        while ($lower <= $upper) {
+            $mid = (int) (($upper - $lower) / 2) + $lower;
+            if ($mid % 2 == 1) {
+                // $mid is odd, i.e., a count value. So move down
+                // to the preceding index value.
+                $mid = $mid - 1;
+            }
+            // Use "a" as the first possible lower-case value.
+            if ($arrayToPartition[$mid] < "a") {
+                $lower = $mid + 2;
+            } elseif ($arrayToPartition[$mid] > "a") {
+                $upper = $mid - 2;
+            } else {
+                return $mid;
+            }
+        }
+        return $lower;
+    }
+
+    /** Sort facet information case-insensitively. The array is assumed
+     * to be already sorted case-sensitively. The array to be partitioned is
+     * treated
+     * as a set of Solr facets, i.e., the values to be examined are only
+     * in the even-numbered indexes of the array; the odd-numbered positions
+     * are facet counts, and are ignored for sorting purposes, but during
+     * merging, each one is kept together with the preceding array element.
+     * The array is first partitioned
+     * into the upper-case and lower-case sections, then a merge sort is
+     * done on the two sections. *
+     * @param array $arrayToSort The array of facets to be sorted.
+     * @return array The array as sorted.
+     */
+    private function sortFacetsInsensitively($arrayToSort)
+    {
+        $arraySize = count($arrayToSort);
+        $partitionPoint = $this->findPartitionPoint($arrayToSort);
+        if ($partitionPoint == 0 || $partitionPoint == $arraySize) {
+            // Either all upper-case, or all lower-case, so no merging
+            // to be done.
+            return $arrayToSort;
+        }
+        $mergedArray = array();
+        // Index that works through the first part of the array
+        // (with upper-case elements).
+        $counter1 = 0;
+        // Index that works through the second part of the array
+        // (with lower-case elements).
+        $counter2 = $partitionPoint;
+
+        // Merge based on http://www.codexpedia.com/php/merge-sort-example-in-php/
+        // Merge lists as much as possible.
+        while ($counter1 < $partitionPoint && $counter2 < $arraySize) {
+            if (strcasecmp($arrayToSort[$counter1], $arrayToSort[$counter2]) > 0) {
+                $mergedArray[] = $arrayToSort[$counter2];
+                $counter2 ++;
+                $mergedArray[] = $arrayToSort[$counter2];
+                $counter2 ++;
+            } else {
+                $mergedArray[] = $arrayToSort[$counter1];
+                $counter1 ++;
+                $mergedArray[] = $arrayToSort[$counter1];
+                $counter1 ++;
+            }
+        }
+        // Copy the left-overs from the first part of the array.
+        while ($counter1 < $partitionPoint) {
+            $mergedArray[] = $arrayToSort[$counter1];
+            $counter1 ++;
+            $mergedArray[] = $arrayToSort[$counter1];
+            $counter1 ++;
+        }
+        // Copy the left-overs from the second part of the array.
+        while ($counter2 < $arraySize) {
+            $mergedArray[] = $arrayToSort[$counter2];
+            $counter2 ++;
+            $mergedArray[] = $arrayToSort[$counter2];
+            $counter2 ++;
+        }
+
+        return $mergedArray;
     }
 
     /**
