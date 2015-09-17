@@ -6,9 +6,9 @@
     function filterService ($http, $log) {
         var filters = {
             'log': 'portal',
-            'period': {'startDate': '2015-06-01', 'endDate': '2015-06-06'},
+            'period': {'startDate': '2015-06-01', 'endDate': '2015-09-17'},
             'dimensions': [
-                'portal_view', 'portal_search'
+                'portal_view', 'portal_search', 'accessed'
             ]
         }
 

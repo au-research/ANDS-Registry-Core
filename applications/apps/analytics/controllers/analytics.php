@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /*
  * Analytics Module
@@ -18,7 +18,7 @@ class Analytics extends MX_Controller
      */
     public function index()
     {
-        // acl_enforce('REGISTRY_STAFF');
+        acl_enforce('REGISTRY_STAFF');
         $data = array(
             'title' => 'ANDS Services Analytics',
         );
@@ -170,10 +170,17 @@ class Analytics extends MX_Controller
             )
             ->setAggs(
                 'qstat', array('terms' => array('field' => 'q'))
+            )
+            ->setAggs(
+                'accessedstat',
+                array(
+                    'filter' => array('term' => array('event'=>'accessed')),
+                    'aggs'=>array("key"=>array("terms"=>array('field'=>'roid'))))
+
             );
 
         $result = array();
-        // echo json_encode($this->elasticsearch->getOptions());die();
+        echo json_encode($this->elasticsearch->getOptions());die();
         $search_result = $this->elasticsearch->search();
         echo json_encode($search_result);
     }
@@ -545,7 +552,7 @@ class Analytics extends MX_Controller
             'log' => 'portal',
             'period' => ['startDate' => '2015-06-01', 'endDate' => '2015-06-04'],
             'groups' => ['PARADISEC', 'AuScope', 'Griffith Univesrity'],
-            'dimensions' => ['portal_view', 'portal_search'],
+            'dimensions' => ['portal_view', 'portal_search','accessed'],
         );
         $this->load->model('summary');
         echo json_encode($this->summary->get($filters));
@@ -568,7 +575,7 @@ class Analytics extends MX_Controller
                 'type' => 'group',
                 'value' => 'University of South Australia',
             ],
-            'dimensions' => ['portal_view', 'portal_search'],
+            'dimensions' => ['portal_view', 'portal_search', 'accessed'],
         );
         $this->load->model('summary');
         echo json_encode($this->summary->get($filters));
