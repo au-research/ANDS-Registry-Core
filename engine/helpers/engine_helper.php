@@ -621,3 +621,11 @@ function module_return($namespace, $class, $ro = false) {
     }
     return false;
 }
+
+/**
+ * @return the release version
+ */
+function getReleaseVersion(){
+    $CI =& get_instance();
+    return $CI->config->item('release_version');
+}
