@@ -248,7 +248,6 @@ small.superseded {
   background-color: #f1c232;
   border-radius: 6px;
   font-color: white !important;
-  width: 14em;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -262,6 +261,24 @@ small.deprecated {
 .btn-discard {
   float: right;
   background-color: #F58000 !important;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+input:disabled + label {
+  color: #cccccc;
+  cursor: not-allowed !important;
+}
+.btn-widget-link {
+  background-color: #aaaaaa;
+  border-radius: 6px;
+  display: block;
+  color: black;
+  float: right;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.widget-icon {
+  padding-right: 5px;
 }
 .classic-tree ul {
   margin-left: 20px;
