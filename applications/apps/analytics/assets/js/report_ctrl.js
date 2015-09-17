@@ -34,10 +34,13 @@
                     vm.rdaChartData.data[0].push(obj['portal_view']);
                     if (obj['portal_search']) {
                         vm.rdaChartData.data[1].push(obj['portal_search'])
-                    }else if (obj['accessed']){
-                        vm.rdaChartData.data[2].push(obj['accessed'])
                     } else {
                         vm.rdaChartData.data[1].push(0);
+                    }
+                    if (obj['accessed']){
+                        vm.rdaChartData.data[2].push(obj['accessed'])
+                    }else {
+                        vm.rdaChartData.data[2].push(0);
                     }
                 });
 

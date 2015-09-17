@@ -185,7 +185,7 @@
                     <h5>All time popular data accessed</h5>
                     <ul>
                         <li ng-if="vm.alltime.aggs.accessedstat.buckets.length == 0">No data found!</li>
-                        <li ng-repeat="ro in vm.alltime.aggs.accessedstat.buckets">{{ ro.key }} (Accessed {{ ro.doc_count }} times){{ro}}</li>
+                        <da obj="ro" ng-repeat="ro in vm.alltime.aggs.accessedstat.key.buckets">{{ ro.key }} (Accessed {{ ro.doc_count }} times)</da>
                     </ul>
                     <h5>All Time View breakdown by group</h5>
                     <chart cdata="vm.viewGroupAllTimeChartData" type="'pie'"></chart>

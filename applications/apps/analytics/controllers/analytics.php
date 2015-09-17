@@ -180,7 +180,7 @@ class Analytics extends MX_Controller
             );
 
         $result = array();
-        echo json_encode($this->elasticsearch->getOptions());die();
+       // echo json_encode($this->elasticsearch->getOptions());die();
         $search_result = $this->elasticsearch->search();
         echo json_encode($search_result);
     }
