@@ -409,6 +409,9 @@ class _vocabulary
                     }
                     unset($version['data']);
                 }
+                if (isset($version['release_date'])){
+                    $version['release_date'] = date("Y-m-d",strtotime($version['release_date']));
+                }
 
                 $this->prop['versions'][] = $version;
             }
@@ -728,6 +731,11 @@ class _vocabulary
 
             if ($this->determineAction($version, 'import')) {
                 $import_task = array('type' => 'IMPORT', 'provider_type' => 'Sesame');
+                array_push($task_array, $import_task);
+            }
+
+            if (($this->determineAction($version, 'import')) && ($this->isPoolParty())) {
+                $import_task = array('type' => 'TRANSFORM', 'provider_type' => 'SesameInsertMetadata');
                 array_push($task_array, $import_task);
             }
 
