@@ -34,10 +34,10 @@
                     vm.rdaChartData.data[0].push(obj['portal_view']);
                     if (obj['portal_search']) {
                         vm.rdaChartData.data[1].push(obj['portal_search'])
-                    } else {
+                    }else {
                         vm.rdaChartData.data[1].push(0);
                     }
-                    if (obj['accessed']){
+                    if (obj['accessed']) {
                         vm.rdaChartData.data[2].push(obj['accessed'])
                     }else {
                         vm.rdaChartData.data[2].push(0);
@@ -126,6 +126,8 @@
                             var index = vm.doiActivityChartData.labels.indexOf(obj.activity);
                             vm.doiActivityChartData.data[index]+=obj.count;
                         } else {
+                            if(obj.activity=='MINT'){obj.activity='Automatically Minted'}
+                            if(obj.activity=='M_MINT'){obj.activity='Manually Minted'}
                             vm.doiActivityChartData.labels.push(obj.activity);
                             vm.doiActivityChartData.data.push(obj.count);
                         }

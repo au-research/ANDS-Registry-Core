@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /*
  * Analytics Module
@@ -18,7 +18,7 @@ class Analytics extends MX_Controller
      */
     public function index()
     {
-        acl_enforce('REGISTRY_STAFF');
+        // acl_enforce('REGISTRY_STAFF');
         $data = array(
             'title' => 'ANDS Services Analytics',
         );
@@ -180,7 +180,7 @@ class Analytics extends MX_Controller
             );
 
         $result = array();
-       // echo json_encode($this->elasticsearch->getOptions());die();
+        echo json_encode($this->elasticsearch->getOptions());die();
         $search_result = $this->elasticsearch->search();
         echo json_encode($search_result);
     }
@@ -216,9 +216,11 @@ class Analytics extends MX_Controller
             case 'doi':
                 $result = array(
                     'total' => $search_result['hits']['total'],
-                    'missing_doi' => $search_result['aggregations']['missing_doi']['doc_count']
+                    'missing_doi' => $search_result['aggregations']['missing_doi']['doc_count'],
+                    'missing_ands'=> $search_result['aggregations']['missing_ands']['doc_count'],
                 );
                 $result['has_doi'] = $result['total'] - $result['missing_doi'];
+                $result['ands_doi'] = $result['total'] - $result['missing_ands'];
                 break;
             case 'tr':
                 $result = $search_result['aggregations']['portal_cited']['buckets'];
@@ -508,16 +510,30 @@ class Analytics extends MX_Controller
 
             $ros = $this->ro->getAll($chunkSize, $offset);
             $post = array();
+
             foreach ($ros as $ro) {
                 if ($ro) {
                     $data = $ro->indexable_json_es();
                     $data['_id'] = $ro->id;
                     $data['roid'] = $ro->id;
-                    // var_dump($data['_id']);ob_flush();flush();
-                    //
 
                     //get portal_cited
                     $data['portal_cited'] = $ro->getPortalStat('cited');
+
+                    //get ANDS_DOI
+                    if(isset($data['identifier_doi'])){
+                        if(is_array($data['identifier_doi'])){
+                            foreach($data['identifier_doi'] as $doi){
+                                if(strpos($doi,"10.4225/")||strpos($doi,"10.4226/")||strpos($doi,"10.4227/")){
+                                    $data['ands_doi'] = $doi;
+                                }
+                            }
+                        }else{
+                            if(strpos($data['identifier_doi'],"10.4225/")||strpos($data['identifier_doi'],"10.4226/")||strpos($data['identifier_doi'],"10.4227/")){
+                                $data['ands_doi'] = $data['identifier_doi'];
+                            }
+                        }
+                    }
 
                     //add to post
                     $post[] = $data;

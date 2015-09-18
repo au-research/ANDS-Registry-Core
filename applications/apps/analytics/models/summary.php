@@ -152,6 +152,9 @@ class Summary extends CI_Model
             ->setAggs(
                 'missing_doi', array('missing'=>array('field'=>'identifier_doi'))
             )
+            ->setAggs(
+                'missing_ands', array('missing'=>array('field'=>'ands_doi'))
+            )
             ->setAggs('portal_cited',
                 ['terms'=>['field'=>'portal_cited']]
             )
