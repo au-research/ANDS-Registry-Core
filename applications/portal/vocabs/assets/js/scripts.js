@@ -169,7 +169,7 @@ function showWidget()
     if($("#widget-info").is( ":hidden" )){
         $("#widget-toggle").click();
     }
-    return false;
+    void(0);
 };(function () {
     'use strict';
 
