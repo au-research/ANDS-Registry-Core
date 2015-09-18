@@ -210,7 +210,7 @@ if(isset($vocab['related_entity'])){
                 });
                 </script>
             </div>
-            &nbsp;&nbsp;<button id="widget-toggle">Show code</button><div class="pull-right"><a href="http://developers.ands.org.au/widgets/vocab_widget/">Learn more</a></div>
+            &nbsp;&nbsp;<button id="widget-toggle">Show code</button><div class="pull-right"><a target="_blank" href="http://developers.ands.org.au/widgets/vocab_widget/">Learn more</a></div>
             <br/>
             <div id="widget-info" class="toggle">
             <pre class="panel-body prettyprint">
