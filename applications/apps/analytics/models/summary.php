@@ -161,6 +161,9 @@ class Summary extends CI_Model
             ->setAggs('quality_level',
                 ['terms'=>['field'=>'quality_level']]
             )
+			->setAggs('access_rights',
+                ['terms'=>['field'=>'access_rights']]
+            )
             ->setAggs('class',
                 ['terms'=>['field'=>'class']]
             )

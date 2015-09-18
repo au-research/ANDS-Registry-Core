@@ -234,6 +234,9 @@ class Analytics extends MX_Controller
             case 'ro_ql':
                 $result = $search_result['aggregations']['quality_level']['buckets'];
                 break;
+			case 'ro_ar':
+                $result = $search_result['aggregations']['access_rights']['buckets'];
+                break;	
             case 'ro_class':
                 $result = $search_result['aggregations']['class']['buckets'];
                 break;

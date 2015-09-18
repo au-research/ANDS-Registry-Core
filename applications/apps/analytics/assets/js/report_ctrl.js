@@ -110,8 +110,8 @@
             //get doi breakdown
             analyticFactory.getStat('doi', vm.filters).then(function(data){
                 vm.doiChartData = {
-                    labels: ["Missing DOI", "Has DOI"],
-                    data: [data['missing_doi'], data['has_doi']]
+                    labels: ["Missing DOI", "Has DOI", "ANDS DOI"],
+                    data: [data['missing_doi'], data['has_doi'], data['ands_doi']],
                 }
             });
 
@@ -158,7 +158,16 @@
                     vm.QLChartData.data.push(obj.doc_count);
                 });
             });
-
+ 			//access rights
+            analyticFactory.getStat('ro_ar', vm.filters).then(function(data){
+                vm.ARChartData = {
+                    labels:[], data:[]
+                }
+                angular.forEach(data, function(obj){
+                    vm.ARChartData.labels.push('Access rights: '+obj.key);
+                    vm.ARChartData.data.push(obj.doc_count);
+                });
+            });
             //class
             analyticFactory.getStat('ro_class', vm.filters).then(function(data){
                 vm.ClassChartData = {
