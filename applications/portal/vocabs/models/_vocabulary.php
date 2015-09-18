@@ -734,6 +734,11 @@ class _vocabulary
                 array_push($task_array, $import_task);
             }
 
+            if (($this->determineAction($version, 'import')) && ($this->isPoolParty())) {
+                $import_task = array('type' => 'TRANSFORM', 'provider_type' => 'SesameInsertMetadata');
+                array_push($task_array, $import_task);
+            }
+
             if ($this->determineAction($version, 'publish')) {
                 $publish_task = array('type' => 'PUBLISH', 'provider_type' => 'SISSVoc');
                 array_push($task_array, $publish_task);
