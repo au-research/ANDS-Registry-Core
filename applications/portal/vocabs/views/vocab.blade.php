@@ -197,8 +197,9 @@ if(isset($vocab['related_entity'])){
         <div visualise vocabid="{{ $vocab['id'] }}"></div>
         <div id="widget" class="panel swatch-white">
             <div class="panel-body">Use this code snippet to describe or discover resources with {{$vocab['title']}} in your system<span class="btn-widget-link"><img class="widget-icon" height="32" width="32"src="{{asset_url('images/cogwheels.png', 'core')}}"/>widgetable</span>
-            <br/><b>Example:</b> Search for and select concepts in this vocabulary</div>
-            <div class="panel-body">
+
+
+                <br/><br/><b>Example:</b> Search for and select concepts in this vocabulary
             <input type="text" id="{{$vocab['slug']}}" name="{{$vocab['slug']}}" placeholder="Search" size="80" autocomplete="off">
                 <script>
                 $("#{{$vocab['slug']}}").vocab_widget({
@@ -210,7 +211,7 @@ if(isset($vocab['related_entity'])){
                 });
                 </script>
             </div>
-            &nbsp;&nbsp;<button id="widget-toggle">Show code</button><div class="pull-right"><a target="_blank" href="http://developers.ands.org.au/widgets/vocab_widget/">Learn more</a></div>
+            <button id="widget-toggle">Show code</button><div class="pull-right dev-link"><a target="_blank" href="http://developers.ands.org.au/widgets/vocab_widget/">Learn more</a></div>
             <br/>
             <div id="widget-info" class="toggle">
             <pre class="panel-body prettyprint">

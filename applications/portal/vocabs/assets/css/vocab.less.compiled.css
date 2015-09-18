@@ -280,6 +280,13 @@ input:disabled + label {
 .widget-icon {
   padding-right: 5px;
 }
+.dev-link {
+  padding-right: 15px;
+}
+#widget-toggle {
+  margin-left: 15px;
+  margin-bottom: 2px;
+}
 .classic-tree ul {
   margin-left: 20px;
 }
