@@ -196,8 +196,8 @@ if(isset($vocab['related_entity'])){
         @if(isset($sissvocEndPoint))
         <div visualise vocabid="{{ $vocab['id'] }}"></div>
         <div id="widget" class="panel swatch-white">
-            <div class="panel-heading">Try out the widget <a style="float:right" href="http://developers.ands.org.au/widgets/vocab_widget/">Implement in your own system</a></div>
-
+            <div class="panel-body">Use this code snippet to describe or discover resources with {{$vocab['title']}} in your system<span class="btn-widget-link"><img class="widget-icon" height="32" width="32"src="{{asset_url('images/cogwheels.png', 'core')}}"/>widgetable</span></div>
+            <div class="panel-body"><b>Example:</b> Search for and select concepts in this vocabulary<div class="pull-right"><a href="http://developers.ands.org.au/widgets/vocab_widget/">Learn more</a></div></div>
             <div class="panel-body">
             <input type="text" id="{{$vocab['slug']}}" name="{{$vocab['slug']}}" placeholder="Search" size="80" autocomplete="off">
                 <script>
