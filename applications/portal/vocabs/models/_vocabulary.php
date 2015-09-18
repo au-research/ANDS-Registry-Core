@@ -400,6 +400,9 @@ class _vocabulary
                 $version = $row;
                 $version['version_access_points'] = $this->getAccessPoints($version['id']);
                 //break apart version data
+                if (isset($version['release_date'])){
+                    $version['release_date'] = date("d-m-Y",strtotime($version['release_date']));
+                }
                 if (isset($version['data'])) {
                     $version_data = json_decode($version['data'], true);
                     foreach ($version_data as $key => $value) {
