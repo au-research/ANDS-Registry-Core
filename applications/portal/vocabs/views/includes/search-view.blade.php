@@ -34,8 +34,8 @@
                         <a href="" ng-click="toggleFacet('publisher')" ng-if="facets.publisher.length>8" id="linkpublisher"  style="display:block"><small>View More...</small></a>
                         <div id="morepublisher" style="display:none">
                             <li ng-repeat="facet in facets.publisher.slice(8)">
-                                <a href="" ng-click="toggleFilter('subjects', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
-                                <a href="" ng-click="toggleFilter('subjects', facet.name, true)" ng-if="isFacet('publisher',facet.name)"><i class="fa fa-remove"></i></a>
+                                <a href="" ng-click="toggleFilter('publisher', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
+                                <a href="" ng-click="toggleFilter('publisher', facet.name, true)" ng-if="isFacet('publisher',facet.name)"><i class="fa fa-remove"></i></a>
                             </li>
                             <a href="" ng-click="toggleFacet('publisher')" ><small>View Less...</small></a>
                         </div>
