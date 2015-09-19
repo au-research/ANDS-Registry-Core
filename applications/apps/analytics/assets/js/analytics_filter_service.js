@@ -4,9 +4,15 @@
         .service('filterService', filterService)
 
     function filterService ($http, $log) {
+		
+		
+		var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+		var firstDay = new Date(y, m-1, 1);
+		var lastDay = new Date(y, m , 0);
+
         var filters = {
             'log': 'portal',
-            'period': {'startDate': '2015-06-01', 'endDate': '2015-09-17'},
+            'period': {'startDate': firstDay, 'endDate': lastDay},
             'dimensions': [
                 'portal_view', 'portal_search', 'accessed'
             ]
