@@ -1,11 +1,22 @@
 <?php
-
 $cc=$vocab['licence'];
 $current_version =  $vocab['current_version'] ;
 $publisher = array();
 $related_people = array();
 $related_vocabs = array();
 $related_service = array();
+$sesameFormats = array();
+
+$sesameFormats["rdf"] = "RDF/XML";
+$sesameFormats["nt"] = "N-Triples";
+$sesameFormats["ttl"] = "Turtle";
+$sesameFormats["n3"] = "Notation3";
+$sesameFormats["nq"] = "N-Quads";
+$sesameFormats["json"] = "RDF/JSON";
+$sesameFormats["trix"] = "TriX";
+$sesameFormats["trig"] = "TriG";
+$sesameFormats["bin"] = "Sesame Binary RDF";
+
 if(isset($vocab['related_entity'])){
     foreach($vocab['related_entity'] as $related){
         if($related['type']=='party'){
@@ -55,40 +66,68 @@ if(isset($vocab['related_entity'])){
     <div class="post-body">
         <div class="panel swatch-white panel-primary element-no-top element-short-bottom panel-content">
 
-            <div class="container-fluid">
+            <div class="container-fluid" >
                 <div class="row">
                     @if($vocab['current_version'])
                     <div class="col-md-4 panel-body text-center">
-                        <h4>{{ $vocab['current_version']['title'] }}</h4>
-
-                        @foreach($vocab['current_version']['access_points'] as $ap)
+                    <div style="border-color:#aaaaaa; solid; border-style: solid; border-width: 5px; padding: 10px;">
+                        <span class="current"">current version</span>
+                        <h4 style="margin-top:5px;" ng-non-bindable>{{ htmlspecialchars($vocab['current_version']['title']) }}</h4>
+                        @if(isset($vocab['current_version']['version_access_points']) && is_array($vocab['current_version']['version_access_points']))
+                        @foreach($vocab['current_version']['version_access_points'] as $ap)
                             @if($ap['type']=='file')
-                                <a class="btn btn-lg btn-block btn-primary" href="{{ portal_url('vocabs/download/?file='.$ap['uri']) }}"><i class="fa fa-cube"></i> Download File</a>
+                                <a class="btn btn-lg btn-block btn-primary" style="white-space: normal;" href="{{ json_decode($ap['portal_data'])->uri }}" title="{{ json_decode($ap['portal_data'])->format }}"><i class="fa fa-cube"></i> Download File <span class="small">({{ json_decode($ap['portal_data'])->format }})</span></a>
                             @endif
                         @endforeach
-                        @foreach($vocab['current_version']['access_points'] as $ap)
-                            @if($ap['type']!='file' && $ap['uri']!='TBD')
+                        @foreach($vocab['current_version']['version_access_points'] as $ap)
+                            @if($ap['type'] == 'sesameDownload')
+                        <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
+                            <a title="Select Download Formats" href="javascript:;" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-edit"></i>
+                                Access {{ $ap['type'] }}
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach($sesameFormats as $key=>$val)
+                                <li><a href="{{ json_decode($ap['portal_data'])->uri }}{{$key}}">{{ $val }}</a></li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                            @elseif($ap['type']!='file')
                                 <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-                                    <a class="btn btn-sm btn-default" href="{{ $ap['uri'] }}" target="_blank"><i class="fa fa-edit"></i> Access {{ $ap['type'] }} ({{ $ap['format'] }})</a>
+                                    <?php
+                                    $url = json_decode($ap['portal_data'])->uri;
+                                    if($ap['type'] == 'sissvoc'){
+                                        $sissvocEndPoint = $url;
+                                        $url = $url.'/concept';
+                                    }
+                                    ?>
+                                    <a class="btn btn-sm btn-default {{$ap['type']}}" href="{{ $url }}" target="_blank"><i class="fa fa-edit"></i>
+                                        Access {{ $ap['type'] }}
+                                        @if(isset(json_decode($ap['portal_data'])->format))
+                                        ({{ json_decode($ap['portal_data'])->format }})
+                                        @endif
+                                    </a>
                                 </div>
                             @endif
                         @endforeach
-
+                        @endif
                         <p class="element-short-top">{{ isset($vocab['current_version']['note']) ? $vocab['current_version']['note']: '' }}</p>
-
-                        <ul class="">
+                    </div>
+                        @if(isset($vocab['versions']) && is_array($vocab['versions']))
+                        <ul class="list-unstyled text-left" style="margin-top: 12px;">
                             @foreach($vocab['versions'] as $version)
                             @if($version['status']!='current')
                                 <li>
-                                    <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}'>{{ $version['title'] }} </a>
-                                    <small>({{ $version['status'] }}) </small>
+                                    <a href="" class="ver_preview" version='{{json_encode(str_replace("'"," ",$version))}}' ng-non-bindable>{{ htmlspecialchars($version['title']) }} </a>
                                     @if(isset($version['note']))
-                                    <a href="" tip="{{ $version['release_date'] }} <hr />{{$version['note']}}"><i class="fa fa-info"></i></a>
+                                    <a href="" tip="{{ $version['release_date'] }} <hr />{{str_replace('"',"&quot;",$version['note'])}}"><i class="fa fa-info"></i></a>
                                     @endif
+                                    <small class="{{$version['status']}}" style="float: right;"> {{ $version['status'] }} </small>
                                 </li>
                             @endif
                             @endforeach
                         </ul>
+                        @endif
                     </div>
                     @endif
                     <div class="col-md-8 panel-body">
@@ -154,7 +193,45 @@ if(isset($vocab['related_entity'])){
         </div>
         @endif
 
+        @if(isset($sissvocEndPoint))
         <div visualise vocabid="{{ $vocab['id'] }}"></div>
+        <div id="widget" class="panel swatch-white">
+            <div class="panel-body">Use this code snippet to describe or discover resources with {{$vocab['title']}} in your system<span class="btn-widget-link"><img class="widget-icon" height="32" width="32"src="{{asset_url('images/cogwheels.png', 'core')}}"/>widgetable</span>
+
+
+                <br/><br/><b>Example:</b> Search for and select concepts in this vocabulary
+            <input type="text" id="{{$vocab['slug']}}" name="{{$vocab['slug']}}" placeholder="Search" size="80" autocomplete="off">
+                <script>
+                $("#{{$vocab['slug']}}").vocab_widget({
+                mode: 'search',
+                cache: false,
+                repository: '{{$sissvocEndPoint}}',
+                target_field: 'label',
+                endpoint: '{{ portal_url("apps/vocab_widget/proxy/") }}'
+                });
+                </script>
+            </div>
+            <button id="widget-toggle">Show code</button><div class="pull-right dev-link"><a target="_blank" href="http://developers.ands.org.au/widgets/vocab_widget/">Learn more</a></div>
+            <br/>
+            <div id="widget-info" class="toggle">
+            <pre class="panel-body prettyprint">
+&lt;input type="text" id="{{$vocab['slug']}}" name="{{$vocab['slug']}}" value="" size="80" autocomplete="off"&gt;
+&lt;script&gt;
+    $("#{{$vocab['slug']}}").vocab_widget({
+        mode: 'search',
+        cache: false,
+        repository: '{{$sissvocEndPoint}}',
+        target_field: 'label',
+        endpoint: '{{ portal_url("apps/vocab_widget/proxy/") }}'
+    });
+&lt;/script&gt;
+            </pre>
+            </div>
+        </div>
+
+
+
+        @endif
 
         @if(isset($vocab['subjects']))
         <div class="panel swatch-white">

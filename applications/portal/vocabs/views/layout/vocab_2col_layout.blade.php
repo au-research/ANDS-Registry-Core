@@ -34,7 +34,8 @@ $title = rawurlencode(substr($vocab['title'], 0, 200)) ;
 
                         <div class="panel panel-primary swatch-white panel-content">
                             <div class="panel-body">
-                                <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name" ng-non-bindable>{{ $vocab['title'] }} </span></h1>
+                                <a id="widget-link" href="javascript:showWidget()" tip="<b>Widgetable</b><br/>This vocabulary can be readily used for resource description or discovery in your system using our vocabulary widget.<br/><a id='widget-link2' href='javascript:showWidget()'>Learn more</a>"><span class="btn-widget-link"><img class="widget-icon" height="32" width="32"src="{{asset_url('images/cogwheels.png', 'core')}}"/>widgetable</span></a>
+                                <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }} </span></h1>
                                 @if (isset($vocab['acronym']))
                                 <small>Acronym: {{ $vocab['acronym'] }}</small><br>
                                 @endif
@@ -57,7 +58,6 @@ $title = rawurlencode(substr($vocab['title'], 0, 200)) ;
                     <div class="col-md-3">
                         @yield('sidebar')
                     </div>
-
                 </div>
             </div>
         </section>

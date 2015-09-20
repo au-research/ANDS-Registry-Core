@@ -31,6 +31,23 @@
                                             [[child3.value]] <span
                                                 ng-if="child3.num_child > 0">([[child3.num_child]])</span>
                                         </a>
+                                        <ul ng-if="child3.showchild">
+                                            <li ng-repeat="child4 in child3.child | filter:query">
+                                                <a href="" tooltip-placement="right" tooltip="[[child4.uri]]"
+                                                   ng-click="child4.showchild=!child4.showchild">
+                                                    [[child4.value]] <span ng-if="child4.num_child > 0">([[child4.num_child]])</span>
+                                                </a>
+                                                <ul ng-if="child4.showchild">
+                                                    <li ng-repeat="child5 in child4.child | filter:query">
+                                                        <a href="" tooltip-placement="right" tooltip="[[child5.uri]]"
+                                                           ng-click="child5.showchild=!child5.showchild">
+                                                            [[child5.value]] <span
+                                                                ng-if="child4.num_child > 0">([[child5.num_child]])</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
                                     </li>
                                 </ul>
                             </li>

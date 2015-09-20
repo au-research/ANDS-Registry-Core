@@ -17,10 +17,19 @@ if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
     }
 }
 
+$showRelatedParties = ($ro->core['type']=='person' || $ro->core['type']=='group') ? false : true;
+
+$rightsStatement = false;
+
+if($ro->rights){
+    foreach($ro->rights as $right){
+        if($right['type']=='rightsStatement') $rightsStatement=true;
+    }
+}
+
 ?>
 
-
-@if($ro->relationships && isset($ro->relationships['party_one']))
+@if($ro->relationships && isset($ro->relationships['party_one']) && $showRelatedParties)
     @foreach($ro->relationships['party_one'] as $col)
         @if($col['slug'] && $col['registry_object_id'])
             <?php
@@ -30,7 +39,20 @@ if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
             }
             ?>
             <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" {{$description}}
-               class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}}
+               class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">
+            <?php
+            if($col['relation_type']=="hasCollector"||$col['relation_type']=="IsPrincipalInvestigatorOf"||$col['relation_type']=="author") {
+                ?> <span itemprop="author creator"> {{$col['title']}} </span> <?php
+            }elseif($col['relation_type']=="isParticipantIn") {
+                ?> <span itemprop="contributor"> {{$col['title']}} </span> <?php
+            }elseif($col['relation_type']=="isOwnerOf" && $rightsStatement) {
+                ?> <span itemprop="copyrightHolder"> {{$col['title']}} </span> <?php
+            }
+            elseif($col['relation_type']=="isOwnedBy") {
+                ?> <span itemprop="accountablePerson"> {{$col['title']}} </span> <?php
+            }else {
+                ?> {{$col['title']}} <?php ;
+            }?>
                 <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}})</small>
             </a>
         @elseif(isset($col['identifier_relation_id']))
@@ -45,7 +67,7 @@ if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
     @endif
 @endif
 
-@if($ro->relationships && !(isset($ro->relationships['party_one'])) && isset($ro->relationships['party_multi']))
+@if($ro->relationships && !(isset($ro->relationships['party_one'])) && isset($ro->relationships['party_multi']) && $showRelatedParties)
     @foreach($ro->relationships['party_multi'] as $col)
         @if($col['slug'] && $col['registry_object_id'])
             <?php

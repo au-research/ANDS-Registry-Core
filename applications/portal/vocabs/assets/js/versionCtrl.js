@@ -11,7 +11,7 @@
         $scope.vocab = vocab;
         $scope.version = version ? version : {provider_type: false};
         $scope.action = version ? 'save' : 'add';
-        $scope.formats = ['RDF/XML', 'TTL', 'N-Triples', 'JSON', 'TriG', 'TriX', 'N3', 'CSV', 'TSV', 'XLS', 'XLSX', 'BinaryRDF', 'ODS', 'ZIP', 'XML', 'TXT', 'ODT', 'TEXT'];
+        $scope.formats = ['RDF/XML', 'TTL', 'N-Triples', 'JSON', 'TriG', 'TriX', 'N3', 'CSV', 'TSV', 'XLS', 'XLSX', 'BinaryRDF', 'ODS', 'ZIP', 'XML', 'TXT', 'ODT', 'PDF'];
         $scope.types = [{"value": "webPage", "text": "Web page"},
             {"value": "apiSparql", "text": "API/SPARQL endpoint"},
             {"value": "file", "text": "File"}
@@ -85,6 +85,8 @@
                     return true;
                 }
             }
+            $scope.newValue.ap.publish = false;
+            $scope.newValue.ap.import = false;
             return false;
         };
 
@@ -133,13 +135,6 @@
         //Import version from PoolParty
         $scope.importPP = function () {
             $scope.version.provider_type = 'poolparty';
-
-            //add empty file
-            $scope.addformat({
-                format: 'RDF/XML',
-                type: 'file',
-                uri: 'TBD'
-            });
 
             //add empty apiSparql endpoint
             $scope.addformat({
@@ -231,6 +226,29 @@
                 $('#ap_uri_label').hide();
             }
         });
+        $scope.setImPubcheckboxes = function (elem) {
 
+            if(elem == 'import'){
+                if(angular.isDefined($scope.newValue.ap.import)){
+                    $scope.newValue.ap.import = !$scope.newValue.ap.import;
+                } else {
+                    $scope.newValue.ap.import = true;
+                }
+                if($scope.newValue.ap.import == false){
+                    $scope.newValue.ap.publish = false;
+                }
+            }
+
+            if(elem == 'publish'){
+               if(angular.isDefined($scope.newValue.ap.publish)){
+                    $scope.newValue.ap.publish = !$scope.newValue.ap.publish;
+                } else{
+                $scope.newValue.ap.publish = true;
+                }
+                if($scope.newValue.ap.publish == true){
+                    $scope.newValue.ap.import = true;
+                }
+            }
+        }
     }
 })();

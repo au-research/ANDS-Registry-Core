@@ -1,4 +1,4 @@
-app.controller('searchCtrl', 
+app.controller('searchCtrl',
 function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, uiGmapGoogleMapApi){
 
 	$scope.sf = search_factory;
@@ -74,7 +74,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.$on('toggleFilter', function(e, data){
 		$scope.toggleFilter(data.type, data.value, data.execute);
 	});
-	
+
 	$scope.$on('togglePreFilter', function(e, data){
 		$scope.togglePreFilter(data.type, data.value, data.execute);
 	});
@@ -173,7 +173,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			return true;
 		} else return false;
 	}
-	
+
 	$scope.newSearch = function(query) {
 		if(query!='' && query!=undefined) {
 			$scope.query = query;
@@ -196,7 +196,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		var hash = search_factory.filters_to_hash(search_factory.filters)
 		// $log.debug('changing hash to ', hash);
 		// return false;
-		
+
 
 		//only change the hash at search page, other page will navigate to the search page
 		if ($scope.onSearchPage()) {
@@ -226,7 +226,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
 			ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
 		}
-	
+
 		if (location.href.indexOf('search')>-1) {
 			search_factory.search($scope.filters).then(function(data){
 				$scope.loading = false;
@@ -239,7 +239,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				$scope.populateCenters($scope.result.response.docs);
 			});
 		}
-		
+
 	}
 
 	$scope.addKeyWord = function(extra_keywords) {
@@ -342,7 +342,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				}
 			});
 		}
-		
+
 		$scope.hidedoc = function(id) {
 			if ($scope.result) {
 				angular.forEach($scope.result.response.docs, function(doc){
@@ -433,6 +433,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				$scope.query = '';
 				search_factory.update('query', '');
 				$scope.filters['q'] = '';
+				delete $scope.filters['cq'];
+				$scope.$broadcast('cq');
 			} else if(type=='description' || type=='title' || type=='identifier' || type == 'related_people' || type == 'related_organisations' || type == 'institution' || type == 'researcher') {
 				$scope.query = '';
 				search_factory.update('query', '');
@@ -627,7 +629,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		// $scope.prefilters = {};
 		// $scope.preresult = {};
 		angular.copy($scope.filters, $scope.prefilters);
-		
+
 		//get all facets by deleting the existing facets restrain from the filters
 		var filters_no_facet = {};
 		angular.copy($scope.filters, filters_no_facet);
@@ -766,8 +768,8 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		}
 		if(execute) $scope.presearch();
 	}
-	
-	
+
+
 
 	$scope.isAdvancedSearchActive = function(type) {
 		if($scope.advanced_fields.length){
@@ -782,7 +784,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.sizeofField = function(type) {
-		
+
 		var ret = 0;
 
 		if(type=='subject') {
@@ -871,7 +873,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				$scope.vocab_tree_tmp = $scope.vocab_tree;
 			});
 		}
-		
+
 
 		// DEPRECATED. getting vocabulary in configuration, mainly for matching isSelected
 		// if(!angular.equals(vocab_factory.subjects, {})) {
@@ -889,7 +891,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			});
 		}
 	}
-	
+
 	$scope.isVocabSelected = function(item, filters) {
 		if(!filters) filters = $scope.filters;
 		var found = vocab_factory.isSelected(item, filters);
@@ -901,7 +903,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.isVocabParentSelected = function(item) {
 		var found = false;
-		
+
 		if($scope.filters['subject']){
 			var subjects = vocab_factory.subjects;
 			angular.forEach(subjects[$scope.filters['subject']], function(uri){
@@ -936,9 +938,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		return found;
 	}
 	// $scope.advanced('subject');
-	// 
-	// 
-	
+	//
+	//
+
 	//MAP
 	$scope.clearMap = function() {
 		$scope.searchBox.setMap(null);
@@ -999,7 +1001,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				  	// $log.debug($scope.geoCodeRectangle);
 				  	$scope.searchBox.setMap($scope.mapInstance);
 				}
-				
+
 			  	google.maps.event.trigger($scope.mapInstance, 'resize');
 			}
 		});
@@ -1055,7 +1057,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		}
 
 	});
-	
+
 	$scope.centres = [];
 	$scope.populateCenters = function(results){
 		angular.forEach(results, function(doc){
@@ -1066,7 +1068,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 					if (split.length == 1) {
 						split = pair.split(',');
 					}
-					
+
 					if(split.length > 1 && split[0]!=0 && split[1]!=0){
 
 						var lon = split[0];
@@ -1086,7 +1088,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 						}
 					}
 				}
-				
+
 			}
 		});
 	}

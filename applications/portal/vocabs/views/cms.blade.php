@@ -18,9 +18,9 @@
 		<div class="row">
 			<div class="col-md-12">
 				<header class="section-text-shadow section-innder-shadow element-short-top element-short-bottom">
-					<h1 class="hairline bordered-normal">
+					<h1 class="hairline bordered-normal" ng-non-bindable>
 						@if($vocab)
-						{{ $vocab->title }}
+						{{ htmlspecialchars($vocab->title) }}
 						@else
 						Add a new Vocabulary
 						@endif
@@ -88,7 +88,7 @@
 							</div>
 							<div class="form-group">
 								<label for="">Vocabulary Licence</label>
-								<select name="" id="" class="form-control" placeholder="vocab Licence" ng-options="lic for lic in licence" ng-model="vocab.licence"></select>
+								<select name="" id="" class="form-control caret-for-select" placeholder="vocab Licence" ng-options="lic for lic in licence" ng-model="vocab.licence"><option value="">No selection</option></select>
 							</div>
 
 							<div class="form-group" ng-class="{ 'has-error' : form.cms.creation_date.$invalid }">
@@ -105,9 +105,11 @@
 								<textarea class="form-control" ng-model="vocab.note" placeholder="Notes" rows="10"></textarea>
 							</div>
 							@if(null!=$this->user->affiliations())
-							<div class="form-group">
-								<label for="">Owner</label>
-								<select name="owner" id="owner" class="form-control" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
+							<div class="form-group"  ng-class="{ 'has-error' : form.cms.owner.$invalid }">
+								<label for="owner">Owner</label>
+								<select name="owner" id="owner" required class="form-control caret-for-select" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
+                                <p ng-show="form.cms.owner.$invalid" class="help-block">To give editing rights to others in your organisation, please select the appropriate organisational Owner.</p>
+                                <!--<p><span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i> </span> &nbsp;&nbsp;To give editing rights to others in your organisation, please select the appropriate organisational Owner.</p>-->
 							</div>
 							@endif
 						</div>
@@ -158,8 +160,7 @@
 
 							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('language', newValue.language)">
 								<div class="input-group">
-									<span class="caret caret-for-input-suggestion"></span>
-									<input type="text" ng-model="newValue.language" class="form-control input-suggestion" placeholder="Language" typeahead="lang.value as lang.text for lang in langs | filter:$viewValue" typeahead-min-length="0" typeahead-on-select="addtolist('language', newValue.language)"/>
+                                    <select name="vlanguage" id="vLanguage" class="form-control caret-for-select" placeholder="Select a language" ng-options="lang.value as lang.text for lang in langs" ng-model="newValue.language"><option value="">Select a language</option></select>
 									<span class="input-group-btn">
 										<button class="btn btn-primary" type="button" ng-click="addtolist('language', newValue.language)"><i class="fa fa-plus"></i> Add</button>
 									</span>
@@ -175,26 +176,28 @@
 						<div class="panel-body">
 							<table class="table">
 								<thead>
-									<tr><th>Subject Label</th><th>Source</th> <th></th></tr>
+									<tr><th>Subject Source</th> <th>Subject Label</th><th></th></tr>
 								</thead>
 								<tbody>
 									<tr ng-repeat="subject in vocab.subjects track by $index">
+                                        <td>[[ subject.subject_source ]]</td>
 										<td>[[ subject.subject ]]</td>
-										<td>[[ subject.subject_source ]]</td>
+
 										<td><a href="" ng-click="list_remove('subjects', $index)"><i class="fa fa-remove"></i></a></td>
 									</tr>
 								</tbody>
 							</table>
 
 							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('subjects', newValue.subject)">
-								<div class="form-group">
-									<label for="">Subject Label</label>
-									<input type="text" class="form-control" placeholder="Subject Label" ng-model="newValue.subject.subject">
-								</div>
+
 								<div class="form-group">
 									<label for="">Subject Source</label>
-									<select name="" id="" class="form-control" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="newValue.subject.subject_source"></select>
+									<select name="" id="" class="form-control caret-for-select" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="newValue.subject.subject_source"></select>
 								</div>
+                                <div class="form-group">
+                                    <label for="">Subject Label</label>
+                                    <input type="text" class="form-control" placeholder="Subject Label" ng-model="newValue.subject.subject">
+                                </div>
 								<button class="btn btn-primary" ng-submit="addtolist('subjects', newValue.subject)"><i class="fa fa-plus"></i> Add Subject</button>
 							</form>
 						</div>
@@ -279,6 +282,7 @@
 									<li ng-repeat="msg in success_message" ng-bind-html="msg">[[ msg ]]</li>
 								</ul>
 							</div>
+                            <a href="" class="btn btn-large btn-primary btn-discard" ng-click="save('discard')">Exit Without Saving</a>
 						</div>
 						<div class="panel-body" ng-if="status=='saving'">
 							<i class="fa fa-refresh fa-spin"></i> Saving...

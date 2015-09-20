@@ -105,8 +105,8 @@ class Unittest extends MX_Controller
         $this->testGetStatAPI('doi', $this->testdata[1]);
         $this->testGetStatAPI('tr', $this->testdata[1]);
         $this->testGetStatAPI('doi_minted', $this->testdata[2]);
-        $this->testGetStatAPI('doi_client', $this->testdata[3]);
-        $this->testGetStatAPI('doi_client', $this->testdata[4]);
+        // $this->testGetStatAPI('doi_client', $this->testdata[3]);
+        // $this->testGetStatAPI('doi_client', $this->testdata[4]);
     }
 
     /**

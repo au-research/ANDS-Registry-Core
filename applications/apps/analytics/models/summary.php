@@ -71,6 +71,13 @@ class Summary extends CI_Model
             ->setAggs(
                 'qstat', array('terms' => array('field' => 'q'))
             )
+            ->setAggs(
+                'accessedstat',
+                array(
+                    'filter' => array('term' => array('event'=>'accessed')),
+                    'aggs'=>array("key"=>array("terms"=>array('field'=>'roid'))))
+
+            )
         ;
 
         $search_result = $this->elasticsearch->search();
@@ -145,14 +152,17 @@ class Summary extends CI_Model
             ->setAggs(
                 'missing_doi', array('missing'=>array('field'=>'identifier_doi'))
             )
+            ->setAggs(
+                'missing_ands', array('missing'=>array('field'=>'ands_doi'))
+            )
             ->setAggs('portal_cited',
                 ['terms'=>['field'=>'portal_cited']]
             )
-            ->setAggs('accessed',
-                ['terms'=>['field'=>'portal_accessed']]
-            )
             ->setAggs('quality_level',
                 ['terms'=>['field'=>'quality_level']]
+            )
+			->setAggs('access_rights',
+                ['terms'=>['field'=>'access_rights']]
             )
             ->setAggs('class',
                 ['terms'=>['field'=>'class']]

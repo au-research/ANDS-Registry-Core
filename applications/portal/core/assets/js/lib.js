@@ -3824,7 +3824,7 @@ CHECKS.ie6 = {
                     $items.find('.figure,.post-masonry-inner').css( 'padding', padding / 2 + 'px' );
 
                     // wait for possible flexsliders to render before rendering isotope
-                    $container.isotope( {
+                    $grid = $container.isotope( {
                         itemSelector: '.masonry-item',
                         getSortData : {
                             default: function ( $elem ) {
@@ -3852,6 +3852,7 @@ CHECKS.ie6 = {
                         $.waypoints('refresh');
                         $container.removeClass( 'no-transition' );
                     });
+
                 },200);
             });
         });

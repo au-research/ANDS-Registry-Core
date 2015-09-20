@@ -102,7 +102,6 @@ class Import extends MX_Controller {
 
 			$ds->updateHarvestStatus($harvest_id, 'IMPORTING');
 
-			$this->importer->setCrosswalk($ds->provider_type);
 			$this->importer->setDatasource($ds);
 			$this->importer->setHarvestID($batch);
 			// $this->importer->maintainStatus(); //records which already exists are harvested into their same status
@@ -445,7 +444,6 @@ class Import extends MX_Controller {
 				$this->importer->runBenchMark = true;
 				$this->importer->setXML($xml);
 				// $this->importer->maintainStatus(); //records which already exists are harvested into their same status
-				$this->importer->setCrosswalk($ds->provider_type);
 				$this->importer->setDatasource($ds);
 				$this->importer->commit();
 			} catch (Exception $e) {
@@ -516,7 +514,6 @@ class Import extends MX_Controller {
 		if(!$id) throw new Exception('Data Source ID required');
 		$dir = get_config_item('harvested_contents_path');
 		if(!$dir) throw new Exception('Harvested Contents Path not configured');
-
 
 		if($this->input->get('path')){
 			$path = $this->input->get('path');

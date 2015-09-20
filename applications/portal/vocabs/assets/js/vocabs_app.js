@@ -14,16 +14,22 @@
 
 $(document).ready(function() {
 
+    $("#widget-info").hide();
 
-$("#vocab-tree").vocab_widget({
-    mode:'tree',
-    endpoint: 'https://researchdata.ands.org.au/apps/vocab_widget/proxy/',
-    display_count:false,
-    repository:$("#vocab-tree").attr('vocab')})
-    .on('treeselect.vocab.ands', function(event) {
-        var target = $(event.target);
-        var data = target.data('vocab');
+    if($("#widget-info").length == 0)
+        $("#widget-link").hide();
+
+    $("#widget-toggle").click(function() {
+
+        if($("#widget-info").is( ":visible" ))
+            $("#widget-toggle").text("Show code");
+        else
+            $("#widget-toggle").text("Hide code");
+
+        $("#widget-info").slideToggle("slow");
     });
+
+
 });
 
 $(document).on('mouseover', 'a[tip]', function(event){
@@ -90,6 +96,15 @@ $(document).on('click', '.re_preview', function(event){
         }
     },event);
 });
+//Feedback button
+window.ATL_JQ_PAGE_PROPS =  {
+    "triggerFunction": function(showCollectorDialog) {
+        //Requries that jQuery is available!
+        jQuery(".feedback_button, .myCustomTrigger").click(function(e) {
+            e.preventDefault();
+            showCollectorDialog();
+        });
+    }};
 
 $(document).on('click', '.ver_preview', function(event){
     event.preventDefault();
@@ -146,3 +161,13 @@ $(document).on('click', '.deleteVocab', function(e){
 });
 
 
+function showWidget()
+{
+    $('html, body').animate({
+        scrollTop: $('#widget').offset().top
+    }, 1000);
+    if($("#widget-info").is( ":hidden" )){
+        $("#widget-toggle").click();
+    }
+    void(0);
+}

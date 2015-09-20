@@ -1,4 +1,4 @@
-<div class="modal fade" id="citationModal" role="dialog" aria-labelledby="Citation" aria-hidden="true" style="z-index:999999">
+<div class="modal fade" id="citationModal" role="dialog" aria-labelledby="Citation" aria-hidden="false" style="z-index:999999">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

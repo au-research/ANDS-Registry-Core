@@ -4,7 +4,7 @@ class Core_extension extends ExtensionBase
 {
 	// Map of this registry object's current attributes
 	public $attributes = array();		// An array of attributes for this Registry Object
-	
+
 	// Core attributes are stored in the registry_object table (whereas the other attributes require a join to _attributes)
 	private $core_attrs = array('data_source_id', 'registry_object_id', 'key', 'class', 'title', 'status', 'slug', 'record_owner');
 
@@ -14,7 +14,7 @@ class Core_extension extends ExtensionBase
 
 	function init($core_attributes_only = FALSE)
 	{
-		// Initialise the core attributes (these are the attributes from the 
+		// Initialise the core attributes (these are the attributes from the
 		// registry_objects table as opposed to others in _attributes)
 		$query = $this->db->join("`registry_objects` `ro`", 'ro.registry_object_id = ra.registry_object_id')
 							->get_where("`registry_object_attributes` `ra`", array('ra.registry_object_id' => $this->id));
@@ -35,18 +35,18 @@ class Core_extension extends ExtensionBase
 
 				if (!$core_attributes_only)
 				{
-					// _initAttribute has no side-effects (as opposed to setAttribute 
+					// _initAttribute has no side-effects (as opposed to setAttribute
 					// which marks the attribute as dirty)
 					$this->_initAttribute($row['attribute'], $row['value']);
 				}
 			}
 			$query->free_result();
 		}
-		else 
+		else
 		{
 			throw new Exception("Unable to select Registry Object from database ID:".$this->id);
 		}
-			
+
 		// Store the status of the registry object when it was first retrieved so
 		// that we can determine whether it has changed when deciding whether to
 		// "upgrade" it from DRAFT to PUBLISHED
@@ -55,7 +55,7 @@ class Core_extension extends ExtensionBase
 		return $this;
 
 	}
-	
+
 	function setAttribute($name, $value = NULL)
 	{
 		// truncate attributes that are too long
@@ -74,7 +74,7 @@ class Core_extension extends ExtensionBase
 					$this->attributes[$name]->dirty = TRUE;
 				}
 			}
-			else 
+			else
 			{
 				// This is a new attribute that needs to be created when we save
 				$this->attributes[$name] = new _registry_object_attribute($name, $value);
@@ -88,30 +88,30 @@ class Core_extension extends ExtensionBase
 			{
 				$this->attributes[$name]->value = NULL;
 				$this->attributes[$name]->dirty = TRUE;
-			}			
+			}
 		}
-		
+
 		return $this;
 	}
 
 	function getAttributes(){
 		return $this->attributes;
 	}
-	
+
 	function create()
 	{
 
 		$this->setAttribute("original_status", $this->getAttribute("status"));
-		
-		$this->db->insert("registry_objects", array("data_source_id" => $this->getAttribute("data_source_id"), 
+
+		$this->db->insert("registry_objects", array("data_source_id" => $this->getAttribute("data_source_id"),
 
 
-													"key" => (string) $this->getAttribute("key"), 
+													"key" => (string) $this->getAttribute("key"),
 													"class" => $this->getAttribute("class"),
 													"title" => $this->getAttribute("title"),
 													"status" => $this->getAttribute("status"),
 													"slug" => $this->getAttribute("slug"),
-													"record_owner" => $this->getAttribute("record_owner")								
+													"record_owner" => $this->getAttribute("record_owner")
 													));
 
 		$this->ro->id = $this->db->insert_id();
@@ -119,7 +119,7 @@ class Core_extension extends ExtensionBase
 		$this->save();
 		return $this;
 	}
-	
+
 	function save($change_updated = false)
 	{
 		// When saving, trigger special business logic if the record status changed
@@ -141,7 +141,7 @@ class Core_extension extends ExtensionBase
 				// Mark this record as recently updated
 				$this->setAttribute("updated", time());
 			}
-			
+
 			// Perform the actual SQL updates in batches to improve performance impact of multiple queries
 			$update_batch = $this->_initUpdateBatchArray();
 			foreach($this->attributes AS $attribute)
@@ -151,7 +151,7 @@ class Core_extension extends ExtensionBase
 					if ($attribute->core)
 					{
 						$update_batch['core']['update'][$attribute->name] = $attribute->value;
-						$attribute->dirty = FALSE;						
+						$attribute->dirty = FALSE;
 					}
 					else
 					{
@@ -173,7 +173,7 @@ class Core_extension extends ExtensionBase
 						{
 							$update_batch['attr']['delete'][] = $attribute->name;
 							unset($this->attributes[$attribute->name]);
-						}						
+						}
 					}
 				}
 			}
@@ -207,7 +207,7 @@ class Core_extension extends ExtensionBase
 	// Build the initial batch update array
 	function _initUpdateBatchArray()
 	{
-		return array(	'core' =>array('update'=>array()), 
+		return array(	'core' =>array('update'=>array()),
 						'attr'=>array('insert'=>array(), 'update'=>array(), 'delete'=>array())
 		);
 	}
@@ -351,9 +351,9 @@ class Core_extension extends ExtensionBase
 
 	function getAttribute($name, $graceful = TRUE)
 	{
-		if (isset($this->attributes[$name]) && $this->attributes[$name] != NULL) 
+		if (isset($this->attributes[$name]) && $this->attributes[$name] != NULL)
 		{
-			return $this->attributes[$name]->value;			
+			return $this->attributes[$name]->value;
 		}
 		else if (!$graceful)
 		{
@@ -364,13 +364,13 @@ class Core_extension extends ExtensionBase
 			return NULL;
 		}
 	}
-	
+
 	function unsetAttribute($name)
 	{
 		setAttribute($name, NULL);
 	}
-	
-		
+
+
 	function _initAttribute($name, $value, $core=FALSE)
 	{
 		$this->attributes[$name] = new _registry_object_attribute($name, $value);
@@ -379,14 +379,14 @@ class Core_extension extends ExtensionBase
 			$this->attributes[$name]->core = TRUE;
 		}
 	}
-	
+
 	function getID()
 	{
 		return $this->id;
 	}
-	
-	
-		
+
+
+
 	function __construct($ro_pointer)
 	{
 		parent::__construct($ro_pointer);
@@ -409,36 +409,36 @@ class Core_extension extends ExtensionBase
 
 /**
  * Registry Object Attribute
- * 
+ *
  * A representation of attributes of a Registry Object, allowing
  * the state of the attribute to be mainted, so that calls
  * to ->save() only write dirty data to the database.
- * 
+ *
  * @author Ben Greenwood <ben.greenwood@ands.org.au>
  * @version 0.1
  * @package ands/registryobject
  * @subpackage helpers
- * 
+ *
  */
-class _registry_object_attribute 
+class _registry_object_attribute
 {
 	public $name;
 	public $value;
 	public $core = FALSE; 	// Is this attribute part of the core table or the attributes annex
 	public $dirty = FALSE;	// Have we changed it since it was read from the DB
 	public $new = FALSE;	// Is this new since we read from the DB
-	
+
 	function __construct($name, $value)
 	{
 		$this->name = $name;
 		$this->value = $value;
 	}
-	
+
 	/**
 	 * @ignore
 	 */
 	function __toString()
 	{
-		return sprintf("%s: %s", $this->name, $this->value) . ($this->dirty ? " (Dirty)" : "") . ($this->core ? " (Core)" : "") . ($this->new ? " (New)" : "");	
+		return sprintf("%s: %s", $this->name, $this->value) . ($this->dirty ? " (Dirty)" : "") . ($this->core ? " (Core)" : "") . ($this->new ? " (New)" : "");
 	}
 }

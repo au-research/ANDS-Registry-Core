@@ -58,7 +58,8 @@ class Auth extends CI_Controller {
 		$this->load->helper('cookie');
 		delete_cookie('auth_redirect');
 		if ($this->input->get('redirect')) {
-			setcookie('auth_redirect', $this->input->get('redirect'), time()+3600, '/', $this->config->item('cookie_domain'));
+			// CC-1294 Use "set_cookie", not "setcookie".
+			set_cookie('auth_redirect', $this->input->get('redirect'), time()+3600);
 		}
 
 		$this->load->view('login', $data);

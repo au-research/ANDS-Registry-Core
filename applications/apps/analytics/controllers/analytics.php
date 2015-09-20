@@ -18,16 +18,15 @@ class Analytics extends MX_Controller
      */
     public function index()
     {
-        // acl_enforce('REGISTRY_STAFF');
+        acl_enforce('REGISTRY_STAFF');
         $data = array(
-            'title' => 'Analytics',
+            'title' => 'ANDS Services Analytics',
         );
 
         $data['scripts'] = array(
             'analytics_app',
             'main_ctrl',
             'report_ctrl',
-            'doi_ctrl',
             'analytics_chart_directive',
             'ro_directive',
             'analytics_filter_service',
@@ -122,16 +121,40 @@ class Analytics extends MX_Controller
         $request = json_decode($postdata, true);
         $filters = isset($request['filters']) ? $request['filters'] : false;
 
-        $this->elasticsearch->init()->setPath('/logs/production/_search');
-        $this->elasticsearch
-            ->setOpt('from', 0)->setOpt('size', 20)
-            ->mustf('term', 'is_bot', false)
-            ->mustf('range', 'date',
+
+        $log = isset($filters['log']) ? $filters['log'] : 'rdalogs';
+        $this->elasticsearch->init();
+
+        if ($log == 'rdalogs') {
+            $this->elasticsearch->setPath('/logs/production/_search');
+            $this->elasticsearch->mustf('term', 'is_bot', false);
+        } elseif ($log == 'rda') {
+            $this->elasticsearch->setPath('/rda/production/_search');
+        }
+
+        $this->elasticsearch->setOpt('from', 0)->setOpt('size', 20);
+
+        if (isset($filters['type'])) {
+            switch ($filters['type']) {
+                case 'has_doi':
+                    $this->elasticsearch->mustf('exists', 'field', 'identifier_doi');
+                    break;
+                case 'missing_doi':
+                    $this->elasticsearch->mustf('missing', 'field', 'identifier_doi');
+                    break;
+                default: break;
+            }
+        }
+
+        //date range
+        if (isset($filters['period'])) {
+            $this->elasticsearch->mustf('range', 'date',
                 array(
                     'from' => $filters['period']['startDate'],
                     'to' => $filters['period']['endDate']
                 )
             );
+        }
 
         //groups
         if (isset($filters['groups'])) {
@@ -147,10 +170,17 @@ class Analytics extends MX_Controller
             )
             ->setAggs(
                 'qstat', array('terms' => array('field' => 'q'))
+            )
+            ->setAggs(
+                'accessedstat',
+                array(
+                    'filter' => array('term' => array('event'=>'accessed')),
+                    'aggs'=>array("key"=>array("terms"=>array('field'=>'roid'))))
+
             );
 
         $result = array();
-        // echo json_encode($this->elasticsearch->getOptions());die();
+        echo json_encode($this->elasticsearch->getOptions());die();
         $search_result = $this->elasticsearch->search();
         echo json_encode($search_result);
     }
@@ -186,9 +216,11 @@ class Analytics extends MX_Controller
             case 'doi':
                 $result = array(
                     'total' => $search_result['hits']['total'],
-                    'missing_doi' => $search_result['aggregations']['missing_doi']['doc_count']
+                    'missing_doi' => $search_result['aggregations']['missing_doi']['doc_count'],
+                    'missing_ands'=> $search_result['aggregations']['missing_ands']['doc_count'],
                 );
                 $result['has_doi'] = $result['total'] - $result['missing_doi'];
+                $result['ands_doi'] = $result['total'] - $result['missing_ands'];
                 break;
             case 'tr':
                 $result = $search_result['aggregations']['portal_cited']['buckets'];
@@ -202,6 +234,9 @@ class Analytics extends MX_Controller
             case 'ro_ql':
                 $result = $search_result['aggregations']['quality_level']['buckets'];
                 break;
+			case 'ro_ar':
+                $result = $search_result['aggregations']['access_rights']['buckets'];
+                break;	
             case 'ro_class':
                 $result = $search_result['aggregations']['class']['buckets'];
                 break;
@@ -222,8 +257,8 @@ class Analytics extends MX_Controller
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @return json
      */
-    public function getOrg() {
-        $this->output->set_header('Content-type: application/json');
+    public function getOrg($format = 'json') {
+
         set_exception_handler('json_exception_handler');
 
         // check in the cache
@@ -240,12 +275,54 @@ class Analytics extends MX_Controller
         $role_id = $this->input->get('role_id') ? $this->input->get('role_id') : false;
         if ($role_id) {
             foreach ($result as $r) {
-                if ($r['role_id']==$role_id) {
+                if ($r['role_id']==$role_id&&(in_array($role_id,$this->user->affiliations())||$this->user->isSuperAdmin())) {
                     echo json_encode($r);
                 }
             }
         } else {
-            echo json_encode($result);
+            if ($format=='csv-download') {
+
+                header( 'Content-Type: text/csv' );
+                header( 'Content-Disposition: attachment;filename=organisations.csv');
+                ob_end_clean();
+                $out = fopen('php://output', 'w');
+                $header = array('id', 'name', 'data_sources', 'groups', 'doi_app_id');
+                fputcsv($out, $header);
+
+                foreach ($result as $row) {
+                    $datasources = array();
+                    if (isset($row['data_sources'])) {
+                        foreach ($row['data_sources'] as $ds) {
+                            $datasources[] = $ds['title'] . '('.$ds['data_source_id'].')';
+                        }
+                    }
+
+                    $groups = isset($row['groups']) ? $row['groups'] : array();
+                    $doi_app_id = isset($row['doi_app_id']) ? $row['doi_app_id'] : array();
+
+
+                    fputcsv($out, array(
+                        $row['id'],
+                        $row['name'],
+                        implode(';;', $datasources),
+                        implode(';;', $groups),
+                        implode(';;', $doi_app_id)
+                    ));
+                }
+
+                fclose($out);
+            } elseif ($format=='json') {
+               $this->output->set_header('Content-type: application/json');
+               $filtered_orgs = array();
+               if($this->user->loggedIn()){
+                    for($i=0;$i<count($result);$i++){
+                        if(in_array($result[$i]['role_id'],$this->user->affiliations())||$this->user->isSuperAdmin()){
+                            $filtered_orgs[]=$result[$i];
+                        }
+                    }
+               }
+               echo json_encode($filtered_orgs);
+            }
         }
     }
 
@@ -275,6 +352,11 @@ class Analytics extends MX_Controller
         $chunkSize = 2000;
         if (sizeof($lines) > $chunkSize) {
             $chunks = array_chunk($lines, $chunkSize);
+        }
+        else{
+            $chunks[] = $lines;
+        }
+
             foreach ($chunks as $key => $chunk) {
                 $post = [];
                 foreach ($chunk as $line) {
@@ -320,11 +402,12 @@ class Analytics extends MX_Controller
                     ->setPath('/logs/production/_bulk')
                     ->bulk('index', $post);
 
+
                 if ($result) {
                     echo 'Done ' . $date . ' chunk ' . $key . " out of " . sizeof($chunks) . "\n";
                 }
             }
-        }
+
 
         if ($result) {
             //handle success
@@ -420,7 +503,6 @@ class Analytics extends MX_Controller
         $total = $upper_limit ? $upper_limit : $this->db->count_all('registry_objects');
         $chunkSize = 500;
         // $offset = 0;
-        //
 
         //delete all ro here
         // $this->setUp($core='rda');
@@ -431,12 +513,32 @@ class Analytics extends MX_Controller
 
             $ros = $this->ro->getAll($chunkSize, $offset);
             $post = array();
+
             foreach ($ros as $ro) {
                 if ($ro) {
                     $data = $ro->indexable_json_es();
                     $data['_id'] = $ro->id;
                     $data['roid'] = $ro->id;
-                    // var_dump($data['_id']);ob_flush();flush();
+
+                    //get portal_cited
+                    $data['portal_cited'] = $ro->getPortalStat('cited');
+
+                    //get ANDS_DOI
+                    if(isset($data['identifier_doi'])){
+                        if(is_array($data['identifier_doi'])){
+                            foreach($data['identifier_doi'] as $doi){
+                                if(strpos($doi,"10.4225/")||strpos($doi,"10.4226/")||strpos($doi,"10.4227/")){
+                                    $data['ands_doi'] = $doi;
+                                }
+                            }
+                        }else{
+                            if(strpos($data['identifier_doi'],"10.4225/")||strpos($data['identifier_doi'],"10.4226/")||strpos($data['identifier_doi'],"10.4227/")){
+                                $data['ands_doi'] = $data['identifier_doi'];
+                            }
+                        }
+                    }
+
+                    //add to post
                     $post[] = $data;
                     unset($ro);
                 }
@@ -469,7 +571,7 @@ class Analytics extends MX_Controller
             'log' => 'portal',
             'period' => ['startDate' => '2015-06-01', 'endDate' => '2015-06-04'],
             'groups' => ['PARADISEC', 'AuScope', 'Griffith Univesrity'],
-            'dimensions' => ['portal_view', 'portal_search'],
+            'dimensions' => ['portal_view', 'portal_search','accessed'],
         );
         $this->load->model('summary');
         echo json_encode($this->summary->get($filters));
@@ -492,7 +594,7 @@ class Analytics extends MX_Controller
                 'type' => 'group',
                 'value' => 'University of South Australia',
             ],
-            'dimensions' => ['portal_view', 'portal_search'],
+            'dimensions' => ['portal_view', 'portal_search', 'accessed'],
         );
         $this->load->model('summary');
         echo json_encode($this->summary->get($filters));

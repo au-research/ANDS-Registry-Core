@@ -14,12 +14,13 @@ class Temporal extends ROHandler {
             foreach($dates as $date){
                 $eachDate = Array();
                 foreach($date->getElementsByTagName('date') as $adate){
-                   $eachDate[] = Array(
-                        'type'=>$adate->getAttribute('type'),
-                        'dateFormat'=>$adate->getAttribute('dateFormat'),
-                        'date'=>$adate->nodeValue
-                    );
-
+                    if($adate->nodeValue!=''){
+                       $eachDate[] = Array(
+                            'type'=>$adate->getAttribute('type'),
+                            'dateFormat'=>$adate->getAttribute('dateFormat'),
+                            'date'=>$adate->nodeValue
+                        );
+                    }
                 }
                 if(count($eachDate)>0){
                     $result[]= Array(
@@ -31,12 +32,13 @@ class Temporal extends ROHandler {
             foreach($dates as $date){
                 $eachDate = Array();
                 foreach($date->getElementsByTagName('text') as $adate){
-                    $eachDate[] = Array(
-                        'type'=>$adate->getAttribute('type'),
-                        'dateFormat'=>$adate->getAttribute('dateFormat'),
-                        'date'=>$adate->nodeValue
-                    );
-
+                    if($adate->nodeValue!=''){
+                        $eachDate[] = Array(
+                            'type'=>$adate->getAttribute('type'),
+                            'dateFormat'=>$adate->getAttribute('dateFormat'),
+                            'date'=>$adate->nodeValue
+                        );
+                    }
                 }
                 if(count($eachDate)>0){
                     $result[]= Array(

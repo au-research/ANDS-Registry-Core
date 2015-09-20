@@ -14,6 +14,10 @@ class Connectiontrees extends ROHandler {
 
         $trees = array();
 
+        // CC-1417 Increase the max to 100
+        // Refer to applications/registry/services/models/connectiontree.php@getChildren() for detail
+        $ci->connectiontree->max_width = 100;
+
         if ($ro->class == 'collection') {
             $ancestors = $ci->connectiontree->getImmediateAncestors($ro, true);
             $depth = 5;

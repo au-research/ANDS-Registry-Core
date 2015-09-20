@@ -25,6 +25,11 @@
   top: 50%;
   left: 9px;
 }
+.caret-for-select {
+  z-index: 100;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+}
 .input-suggestion {
   text-indent: 14px !important;
 }
@@ -164,6 +169,123 @@ ul.listy li a small {
 }
 .alert-success a {
   color: white;
+}
+.feedback_button {
+  box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 2px 0px 0px;
+  position: fixed;
+  display: block;
+  white-space: nowrap;
+  text-decoration: none !important;
+  font-family: arial, FreeSans, Helvetica, sans-serif;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 99;
+  bottom: 0;
+  right: 10px;
+}
+.yellow_button {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  background: #f58000;
+  border: none;
+  padding: 5px 5px;
+  margin: 10px 0;
+  width: 105px;
+  text-decoration: none;
+}
+.yellow_button:hover {
+  background: #F58072;
+  color: #fff;
+}
+span.current {
+  display: block;
+  background-color: #6aa84f;
+  color: white;
+  overflow: auto;
+  position: relative;
+  top: -4px;
+}
+.yellow_exclamation {
+  box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 2px 0px 0px;
+  text-decoration: none !important;
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  background: #f58000;
+  height: 12px;
+  border: none;
+  margin-top: 10px;
+  padding: 0px 5px 0px 5px;
+}
+span.superseded {
+  display: block;
+  background-color: #f1c232;
+  color: white;
+  overflow: auto;
+  position: relative;
+  top: -4px;
+}
+span.deprecated {
+  display: block;
+  background-color: #cc0000;
+  color: white;
+  overflow: auto;
+  position: relative;
+  top: -4px;
+}
+small.current {
+  background-color: #6aa84f;
+  border-radius: 6px;
+  color: white !important;
+  width: 14em;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+small.superseded {
+  background-color: #f1c232;
+  border-radius: 6px;
+  font-color: white !important;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+small.deprecated {
+  background-color: #cc0000;
+  border-radius: 6px;
+  color: white !important;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.btn-discard {
+  float: right;
+  background-color: #F58000 !important;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+input:disabled + label {
+  color: #cccccc;
+  cursor: not-allowed !important;
+}
+.btn-widget-link {
+  background-color: #aaaaaa;
+  border-radius: 6px;
+  display: block;
+  color: black;
+  float: right;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.widget-icon {
+  padding-right: 5px;
+}
+.dev-link {
+  padding-right: 15px;
+}
+#widget-toggle {
+  margin-left: 15px;
+  margin-bottom: 2px;
 }
 .classic-tree ul {
   margin-left: 20px;

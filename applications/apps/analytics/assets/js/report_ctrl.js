@@ -26,25 +26,35 @@
                 //parse date into data
                 vm.rdaChartData = {
                     labels: [],
-                    series: ['View', 'Search'],
-                    data: [[],[]]
+                    series: ['View', 'Search', 'Accessed'],
+                    data: [[],[],[]]
                 };
                 angular.forEach(data.dates, function (obj, index) {
                     vm.rdaChartData.labels.push(index);
                     vm.rdaChartData.data[0].push(obj['portal_view']);
                     if (obj['portal_search']) {
                         vm.rdaChartData.data[1].push(obj['portal_search'])
-                    } else {
+                    }else {
                         vm.rdaChartData.data[1].push(0);
                     }
+                    if (obj['accessed']) {
+                        vm.rdaChartData.data[2].push(obj['accessed'])
+                    }else {
+                        vm.rdaChartData.data[2].push(0);
+                    }
                 });
+
+                $log.debug(data);
+                $log.debug(vm.rdaChartData);
 
                 //parse groups
                 vm.viewGroupChartData = {labels: [], data: [] }
                 vm.searchGroupChartData = {labels: [], data: [] }
+                vm.accessedGroupChartData = {labels: [], data: [] }
                 angular.forEach(data.group_event, function(obj, index){
                     vm.viewGroupChartData.labels.push(index);
                     vm.searchGroupChartData.labels.push(index);
+                    vm.accessedGroupChartData.labels.push(index);
                     if (obj['portal_view']) {
                         vm.viewGroupChartData.data.push(obj['portal_view']);
                     } else {
@@ -55,11 +65,18 @@
                     } else {
                         vm.searchGroupChartData.data.push(0);
                     }
+                    if (obj['accessed']) {
+                        vm.accessedGroupChartData.data.push(obj['accessed']);
+                    } else {
+                        vm.accessedGroupChartData.data.push(0);
+                    }
                 });
 
                 //parse rostat
                 if (data.aggs.rostat) vm.rostat = data.aggs.rostat;
                 if (data.aggs.qstat) vm.qstat = data.aggs.qstat;
+                if (data.aggs.accessedstat) vm.accessedstat = data.aggs.accessedstat;
+
             });
 
             //all time stats
@@ -68,11 +85,14 @@
                 //parse groups
                 vm.viewGroupAllTimeChartData = {labels: [], data: [] }
                 vm.searchGroupAllTimeChartData = {labels: [], data: [] }
+                vm.accessedGroupAllTimeChartData = {labels: [], data: [] }
                 angular.forEach(data.group_event, function(obj, index){
                     vm.viewGroupAllTimeChartData.labels.push(index);
                     vm.viewGroupAllTimeChartData.data.push(obj['portal_view']);
                     vm.searchGroupAllTimeChartData.labels.push(index);
                     vm.searchGroupAllTimeChartData.data.push(obj['portal_search']);
+                    vm.accessedGroupAllTimeChartData.labels.push(index);
+                    vm.accessedGroupAllTimeChartData.data.push(obj['accessed']);
                 });
             });
 
@@ -90,8 +110,8 @@
             //get doi breakdown
             analyticFactory.getStat('doi', vm.filters).then(function(data){
                 vm.doiChartData = {
-                    labels: ["Missing DOI", "Has DOI"],
-                    data: [data['missing_doi'], data['has_doi']]
+                    labels: ["Missing DOI", "Has DOI", "ANDS DOI"],
+                    data: [data['missing_doi'], data['has_doi'], data['ands_doi']],
                 }
             });
 
@@ -100,12 +120,20 @@
                 vm.doiActivityChartData = {
                     labels:[], data:[]
                 }
+				$log.debug(data)
+					if(data.display){
+						vm.doiUser = true
+					}else{
+						vm.doiUser = false
+					}
                 angular.forEach(data, function(doi){
                     angular.forEach(doi, function(obj, index){
                         if (vm.doiActivityChartData.labels.indexOf(obj.activity) > -1) {
                             var index = vm.doiActivityChartData.labels.indexOf(obj.activity);
                             vm.doiActivityChartData.data[index]+=obj.count;
                         } else {
+                            if(obj.activity=='MINT'){obj.activity='Automatically Minted'}
+                            if(obj.activity=='M_MINT'){obj.activity='Manually Minted'}
                             vm.doiActivityChartData.labels.push(obj.activity);
                             vm.doiActivityChartData.data.push(obj.count);
                         }
@@ -136,7 +164,16 @@
                     vm.QLChartData.data.push(obj.doc_count);
                 });
             });
-
+ 			//access rights
+            analyticFactory.getStat('ro_ar', vm.filters).then(function(data){
+                vm.ARChartData = {
+                    labels:[], data:[]
+                }
+                angular.forEach(data, function(obj){
+                    vm.ARChartData.labels.push('Access rights: '+obj.key);
+                    vm.ARChartData.data.push(obj.doc_count);
+                });
+            });
             //class
             analyticFactory.getStat('ro_class', vm.filters).then(function(data){
                 vm.ClassChartData = {
@@ -178,11 +215,12 @@
             $log.debug(points, evt);
             if (points.length > 0) {
                 var date = points[0].label;
-                $log.debug('Showing date' + date);
+                $log.debug('Showing date ' + date);
 
                 var data = {
-                    date:date,
-                    filters:vm.filters
+                    type: 'showdate',
+                    value: date,
+                    filters: vm.filters
                 }
                 vm.showDate(data);
             }

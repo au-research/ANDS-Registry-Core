@@ -17,7 +17,7 @@ class Vocabs extends MX_Controller
      * @return view/html
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      */
-    function index()
+    public function index()
     {
         // Redirect /vocabs/ to the root. Without this,
         // a page is generated that has vocabulary links
@@ -30,12 +30,13 @@ class Vocabs extends MX_Controller
             'event' => 'pageview',
             'page' => 'home',
             'ip' => $this->input->ip_address(),
-            'user_agent' => $this->input->user_agent()
+            'user_agent' => $this->input->user_agent(),
         );
         vocab_log_terms($event);
         $this->blade
-            ->set('search_app', true)
-            ->render('index');
+             ->set('search_app', true)
+             ->set('title', 'Research Vocabularies Australia')
+             ->render('index');
     }
 
     /**
@@ -50,7 +51,8 @@ class Vocabs extends MX_Controller
         if ($slug) {
             $record = $this->vocab->getBySlug($slug);
         }
-        if (!$record) {
+        // Be careful; $record not necessarily set yet.
+        if ((!isset($record)) || (!$record)) {
             $record = $this->vocab->getByID($slug);
         }
 
@@ -61,17 +63,24 @@ class Vocabs extends MX_Controller
                 'event' => 'vocabview',
                 'vocab' => $vocab['title'],
                 'slug' => $vocab['slug'],
-                'id' => $vocab['id']
+                'id' => $vocab['id'],
             );
             vocab_log_terms($event);
 
             $vocab['current_version'] = $record->current_version();
+
             $this->blade
-                ->set('vocab', $vocab)
-                ->set('title', $vocab['title'].' - Research Vocabularies Australia')
-                ->render('vocab');
+                 ->set('vocab', $vocab)
+                 ->set('title', $vocab['title'] . ' - Research Vocabularies Australia')
+                 ->render('vocab');
         } else {
-            throw new Exception('No Record found with slug: ' . $slug);
+            // No longer throw an exception, like this:
+            // throw new Exception('No Record found with slug: ' . $slug);
+            // But instead, show the soft 404 page.
+            $message = '';
+            $this->blade
+                 ->set('message', $message)
+                 ->render('soft_404');
         }
     }
 
@@ -125,7 +134,6 @@ class Vocabs extends MX_Controller
                     }
                 }
 
-
                 //if a related entity of type vocab is known to us then provide a link to it
                 if ($related['type'] == 'vocabulary') {
                     if ($related['title'] == $thevocab['title']) {
@@ -140,12 +148,11 @@ class Vocabs extends MX_Controller
 
         $related['other_vocabs'] = $others;
         $this->blade
-            ->set('related', $related)
-            ->set('sub_type', $sub_type)
-            ->render('related_preview');
+             ->set('related', $related)
+             ->set('sub_type', $sub_type)
+             ->render('related_preview');
 
     }
-
 
     /**
      * Pre viewing a non current version
@@ -162,8 +169,8 @@ class Vocabs extends MX_Controller
         //$v_id = $this->input->get('v_id');
 
         $this->blade
-            ->set('version', $version)
-            ->render('version_preview');
+             ->set('version', $version)
+             ->render('version_preview');
 
     }
 
@@ -192,13 +199,13 @@ class Vocabs extends MX_Controller
     {
         $event = array(
             'event' => 'pageview',
-            'page' => 'add'
+            'page' => 'add',
         );
         vocab_log_terms($event);
         $this->blade
-            ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl'))
-            ->set('vocab', false)
-            ->render('cms');
+             ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl'))
+             ->set('vocab', false)
+             ->render('cms');
     }
 
     /**
@@ -216,7 +223,10 @@ class Vocabs extends MX_Controller
             // throw new Exception('User not logged in');
             redirect(get_vocab_config('auth_url') . 'login#?redirect=' . portal_url('vocabs/edit/' . $slug));
         }
-        if (!$slug) throw new Exception('Require a Vocabulary Slug to edit');
+        if (!$slug) {
+            throw new Exception('Require a Vocabulary Slug to edit');
+        }
+
         $vocab = $this->vocab->getByID($slug);
         // var_dump($vocab);
         // throw new Exception($vocab->prop['status']);
@@ -224,27 +234,29 @@ class Vocabs extends MX_Controller
             // throw new Exception('This is published');
             $draft_vocab = $this->vocab->getDraftBySlug($vocab->prop['slug']);
             if ($draft_vocab) {
-                redirect(portal_url('vocabs/edit/').$draft_vocab->id);
+                redirect(portal_url('vocabs/edit/') . $draft_vocab->id);
                 //throw new Exception($vocab->id);
             }
         }
         //do some checking of vocab here, ACL stuff @todo
-        if (!$vocab) throw new Exception('Vocab Slug ' . $slug . ' not found');
+        if (!$vocab) {
+            throw new Exception('Vocab Slug ' . $slug . ' not found');
+        }
 
         $event = array(
             'event' => 'pageview',
             'page' => 'edit',
             'vocab' => $vocab->title,
             'slug' => $vocab->slug,
-            'id' => $vocab->id
+            'id' => $vocab->id,
         );
         vocab_log_terms($event);
 
         $this->blade
-            ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl'))
-            ->set('vocab', $vocab)
-            ->set('title', 'Edit - '.$vocab->title.' - Research Vocabularies Australia')
-            ->render('cms');
+             ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl'))
+             ->set('vocab', $vocab)
+             ->set('title', 'Edit - ' . $vocab->title . ' - Research Vocabularies Australia')
+             ->render('cms');
     }
 
     /**
@@ -258,21 +270,27 @@ class Vocabs extends MX_Controller
     {
         $event = array(
             'event' => 'pageview',
-            'page' => $slug
+            'page' => $slug,
         );
         vocab_log_terms($event);
         $title = '';
-        switch($slug) {
-            case 'about' : $title = 'About';break;
-            case 'feedback' : $title = 'Feedback';break;
-            case 'contribute' : $title = 'Publish a Vocabulary';break;
-            case 'use' : $title = 'Use a Vocabulary';break;
-            case 'disclaimer': $title = 'Disclaimer'; break;
-            case 'privacy': $title = 'Privacy'; break;
+        switch ($slug) {
+            case 'about':$title = 'About';
+                break;
+            case 'feedback':$title = 'Feedback';
+                break;
+            case 'contribute':$title = 'Publish a Vocabulary';
+                break;
+            case 'use':$title = 'Use a Vocabulary';
+                break;
+            case 'disclaimer':$title = 'Disclaimer';
+                break;
+            case 'privacy':$title = 'Privacy';
+                break;
         }
         $this->blade
-            ->set('title', $title.' - Research Vocabularies Australia')
-            ->render($slug);
+             ->set('title', $title . ' - Research Vocabularies Australia')
+             ->render($slug);
     }
 
     /**
@@ -294,34 +312,37 @@ class Vocabs extends MX_Controller
 
         //facets
         $this->solr
-            ->setFacetOpt('field', 'subjects')
-            ->setFacetOpt('field', 'publisher')
-            ->setFacetOpt('field', 'language')
-            ->setFacetOpt('field', 'access')
-            ->setFacetOpt('field', 'format')
-            ->setFacetOpt('field', 'licence')
-            ->setFacetOpt('sort', 'index asc')
-            ->setFacetOpt('mincount', '1');
+             ->setFacetOpt('field', 'subjects')
+             ->setFacetOpt('field', 'publisher')
+             ->setFacetOpt('field', 'language')
+             ->setFacetOpt('field', 'access')
+             ->setFacetOpt('field', 'format')
+             ->setFacetOpt('field', 'licence')
+             ->setFacetOpt('sort', 'index asc')
+             ->setFacetOpt('mincount', '1');
 
         //highlighting
         $this->solr
-            ->setOpt('hl', 'true')
-            ->setOpt('hl.fl', '*')
-            ->setOpt('hl.simple.pre', '&lt;b&gt;')
-            ->setOpt('hl.simple.post', '&lt;/b&gt;')
-            ->setOpt('hl.snippets', '2');
+             ->setOpt('hl', 'true')
+             ->setOpt('hl.fl', '*')
+             ->setOpt('hl.simple.pre', '&lt;b&gt;')
+             ->setOpt('hl.simple.post', '&lt;/b&gt;')
+             ->setOpt('hl.snippets', '2');
 
         //search definition
         $this->solr
-            ->setOpt('defType', 'edismax')
-            ->setOpt('rows', '250')
-            ->setOpt('q.alt', '*:*')
-            ->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001 concept^0.02 publisher^0.5');;
+             ->setOpt('defType', 'edismax')
+             ->setOpt('rows', '250')
+             ->setOpt('q.alt', '*:*')
+             ->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001 concept_search^0.02 publisher^0.5');
 
         foreach ($filters as $key => $value) {
             switch ($key) {
-                case "q" :
-                    if ($value != '') $this->solr->setOpt('q', $value);
+                case "q":
+                    if ($value != '') {
+                        $this->solr->setOpt('q', $value);
+                    }
+
                     break;
                 case 'subjects':
                 case 'publisher':
@@ -331,7 +352,10 @@ class Vocabs extends MX_Controller
                 case 'licence':
                     if (is_array($value)) {
                         $fq_str = '';
-                        foreach ($value as $v) $fq_str .= ' ' . $key . ':("' . $v . '")';
+                        foreach ($value as $v) {
+                            $fq_str .= ' ' . $key . ':("' . $v . '")';
+                        }
+
                         $this->solr->setOpt('fq', $fq_str);
                     } else {
                         $this->solr->setOpt('fq', '+' . $key . ':("' . $value . '")');
@@ -341,19 +365,130 @@ class Vocabs extends MX_Controller
         }
 
         //CC-1298 If there's no search term, order search result by title asc
-        if (!isset($filters['q']) || trim($filters['q']) =='') {
-            $this->solr->setOpt('sort', 'title asc');
+        if (!isset($filters['q']) || trim($filters['q']) == '') {
+            $this->solr->setOpt('sort', 'title_sort asc');
         }
 
         // $this->solr->setFilters($filters);
         $result = $this->solr->executeSearch(true);
+
+        // CC-1270 Facet names come back from Solr sorted case-sensitively.
+        // Resort them case-insensitively.
+        foreach ($result['facet_counts']['facet_fields'] as $key => $value) {
+            $result['facet_counts']['facet_fields'][$key] =
+            $this->sortFacetsInsensitively($value);
+        }
+
         $event = array(
             'event' => 'search',
-            'filters' => $filters
+            'filters' => $filters,
         );
-        if ($filters) $event = array_merge($event, $filters);
+        if ($filters) {
+            $event = array_merge($event, $filters);
+        }
+
         vocab_log_terms($event);
         echo json_encode($result);
+    }
+
+    /** Partition an array based on the location of the first lower-case
+     * element.
+     * The array to be partitioned is treated
+     * as a set of Solr facets, i.e., the values to be examined are only
+     * in the even-numbered indexes of the array; the odd-numbered positions
+     * are facet counts, and are ignored.
+     * @param array $arrayToPartition The array to be partitioned.
+     * @return int If the array is empty, then 0. If non-empty, the index
+     * of the first element beginning with a lower-case value, if there is one.
+     * Otherwise, the size of the array (i.e., the index of the first position
+     * beyond the end of the array. */
+    private function findPartitionPoint($arrayToPartition)
+    {
+        $lower = 0;
+        $upper = count($arrayToPartition) - 2;
+
+        // Binary chop based on
+        // https://terenceyim.wordpress.com/2011/02/01/all-purpose-binary-search-in-php/
+        while ($lower <= $upper) {
+            $mid = (int) (($upper - $lower) / 2) + $lower;
+            if ($mid % 2 == 1) {
+                // $mid is odd, i.e., a count value. So move down
+                // to the preceding index value.
+                $mid = $mid - 1;
+            }
+            // Use "a" as the first possible lower-case value.
+            if ($arrayToPartition[$mid] < "a") {
+                $lower = $mid + 2;
+            } elseif ($arrayToPartition[$mid] > "a") {
+                $upper = $mid - 2;
+            } else {
+                return $mid;
+            }
+        }
+        return $lower;
+    }
+
+    /** Sort facet information case-insensitively. The array is assumed
+     * to be already sorted case-sensitively. The array to be partitioned is
+     * treated
+     * as a set of Solr facets, i.e., the values to be examined are only
+     * in the even-numbered indexes of the array; the odd-numbered positions
+     * are facet counts, and are ignored for sorting purposes, but during
+     * merging, each one is kept together with the preceding array element.
+     * The array is first partitioned
+     * into the upper-case and lower-case sections, then a merge sort is
+     * done on the two sections. *
+     * @param array $arrayToSort The array of facets to be sorted.
+     * @return array The array as sorted.
+     */
+    private function sortFacetsInsensitively($arrayToSort)
+    {
+        $arraySize = count($arrayToSort);
+        $partitionPoint = $this->findPartitionPoint($arrayToSort);
+        if ($partitionPoint == 0 || $partitionPoint == $arraySize) {
+            // Either all upper-case, or all lower-case, so no merging
+            // to be done.
+            return $arrayToSort;
+        }
+        $mergedArray = array();
+        // Index that works through the first part of the array
+        // (with upper-case elements).
+        $counter1 = 0;
+        // Index that works through the second part of the array
+        // (with lower-case elements).
+        $counter2 = $partitionPoint;
+
+        // Merge based on http://www.codexpedia.com/php/merge-sort-example-in-php/
+        // Merge lists as much as possible.
+        while ($counter1 < $partitionPoint && $counter2 < $arraySize) {
+            if (strcasecmp($arrayToSort[$counter1], $arrayToSort[$counter2]) > 0) {
+                $mergedArray[] = $arrayToSort[$counter2];
+                $counter2 ++;
+                $mergedArray[] = $arrayToSort[$counter2];
+                $counter2 ++;
+            } else {
+                $mergedArray[] = $arrayToSort[$counter1];
+                $counter1 ++;
+                $mergedArray[] = $arrayToSort[$counter1];
+                $counter1 ++;
+            }
+        }
+        // Copy the left-overs from the first part of the array.
+        while ($counter1 < $partitionPoint) {
+            $mergedArray[] = $arrayToSort[$counter1];
+            $counter1 ++;
+            $mergedArray[] = $arrayToSort[$counter1];
+            $counter1 ++;
+        }
+        // Copy the left-overs from the second part of the array.
+        while ($counter2 < $arraySize) {
+            $mergedArray[] = $arrayToSort[$counter2];
+            $counter2 ++;
+            $mergedArray[] = $arrayToSort[$counter2];
+            $counter2 ++;
+        }
+
+        return $mergedArray;
     }
 
     /**
@@ -372,13 +507,13 @@ class Vocabs extends MX_Controller
 
         $event = array(
             'event' => 'pageview',
-            'page' => 'myvocabs'
+            'page' => 'myvocabs',
         );
         vocab_log_terms($event);
         $this->blade
-            ->set('owned_vocabs', $owned)
-            ->set('title', 'My Vocabs - Research Vocabularies Australia')
-            ->render('myvocabs');
+             ->set('owned_vocabs', $owned)
+             ->set('title', 'My Vocabs - Research Vocabularies Australia')
+             ->render('myvocabs');
     }
 
     /**
@@ -401,7 +536,7 @@ class Vocabs extends MX_Controller
      * @example services/vocabs/ , services/vocabs/anzsrc-for , services/vocabs/rifcs/versions
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      */
-    public function services($class = '', $id = '', $method = '')
+    public function services($class = '', $id = '', $method = '', $type = '')
     {
 
         //header
@@ -409,7 +544,49 @@ class Vocabs extends MX_Controller
         header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
 
-        if ($class != 'vocabs') throw new Exception('/vocabs required');
+        if ($class != 'vocabs') {
+            throw new Exception('/vocabs required');
+        }
+        //accesspoint service for all or just one vocab(
+        if ($method == 'accessPoints') {
+            $result = array();
+            if($id == 'all' || $id == ''){
+                $vocabs = $this->vocab->getAll();
+            } else{
+                $vocabs[] = $this->vocab->getByID($id);
+            }
+
+            if($vocabs){
+                $status = "OK";
+                foreach ($vocabs as $v) {
+
+                    $vId = $v->prop['id'];
+                    $title = $v->prop['title'];
+
+                    $versions = false;//$v['versions'];
+                    $accessPoints = array();
+
+                        foreach($v->versions as $version){
+                            $versionIds[] =  $version['id'];
+                            $accessPoints = $this->vocab->getAccessPoints($version['id'], $type);
+                        }
+                    if(!($id == 'all' && $accessPoints == false)){
+                        $result[] = array('id' => $vId, 'title' => $title , 'accessPoints'=>$accessPoints);
+                    }
+                }
+
+            }
+            else{
+                $status = "No vocabulary found";
+            }
+            echo json_encode(
+                array(
+                    'status' => $status,
+                    'message' => $result,
+                )
+            );
+            exit();
+        }
 
         $result = '';
         if ($id == 'all' || $id == '') {
@@ -424,17 +601,15 @@ class Vocabs extends MX_Controller
                 }
             }
 
-
             if ($method == 'related') {
                 $result = array();
                 $type = $this->input->get('type') ? $this->input->get('type') : false;
-                if($type == 'vocabulary'){
+                if ($type == 'vocabulary') {
                     $allVocabs = $this->vocab->getAllVocabs();
-                    foreach($allVocabs as $v){
-                        $result[] = array('title'=>$v['title'],'vocab_id'=>$v['id'],'type'=>'vocabulary','identifiers'=>array('slug'=>$v['slug']));
+                    foreach ($allVocabs as $v) {
+                        $result[] = array('title' => $v['title'], 'vocab_id' => $v['id'], 'type' => 'vocabulary', 'identifiers' => array('slug' => $v['slug']));
                     }
-                }
-                else{
+                } else {
                     foreach ($vocabs as $vocab) {
                         $vocab_array = $vocab->display_array();
                         if (isset($vocab_array['related_entity'])) {
@@ -473,6 +648,18 @@ class Vocabs extends MX_Controller
 
             } else if ($method == 'index') {
                 $result = array();
+
+                //clear all vocabs before adding
+                $this->load->library('solr');
+                $vocab_config = get_config_item('vocab_config');
+                if (!$vocab_config['solr_url']) {
+                    throw new Exception('Indexer URL for Vocabulary module is not configured correctly');
+                }
+
+                $this->solr->setUrl($vocab_config['solr_url']);
+                $this->solr->deleteByQueryCondition('*:*');
+
+                //index each vocab one by one
                 foreach ($vocabs as $vocab) {
                     $result[] = $vocab->indexable_json();
                     $this->index_vocab($vocab);
@@ -485,7 +672,10 @@ class Vocabs extends MX_Controller
             if ($data) {
                 //deal with POST request, adding new vocabulary
                 $vocab = $this->vocab->addNew($data);
-                if (!$vocab) throw new Exception('Error Adding New Vocabulary');
+                if (!$vocab) {
+                    throw new Exception('Error Adding New Vocabulary');
+                }
+
                 if ($vocab) {
                     $result = $vocab;
                     //index just added one
@@ -494,24 +684,23 @@ class Vocabs extends MX_Controller
                     //log
                     $event = array(
                         'event' => 'add',
-                        'vocab' => $vocab->title
+                        'vocab' => $vocab->title,
                     );
                     vocab_log_terms($event);
                 }
-
 
             }
 
         } else if ($id != '') {
 
             $vocab = $this->vocab->getBySlug($id);
-            if (!$vocab) $vocab = $this->vocab->getByID($id);
+            if (!$vocab) {
+                $vocab = $this->vocab->getByID($id);
+            }
 
-
-
-            if (!$vocab) throw new Exception('Vocab ID ' . $id . ' not found');
-
-
+            if (!$vocab) {
+                throw new Exception('Vocab ID ' . $id . ' not found');
+            }
 
             $result = $vocab->display_array();
 
@@ -521,7 +710,7 @@ class Vocabs extends MX_Controller
 
             if ($data) {
                 //if id refers to a draft look up to see if there is a published for this draft
-                if($vocab->prop['status'] == 'draft' && $data['status'] == 'published'){
+                if ($vocab->prop['status'] == 'draft' && $data['status'] == 'published') {
                     $vocab = $this->vocab->getBySlug($vocab->prop['slug']);
                 }
 
@@ -532,7 +721,7 @@ class Vocabs extends MX_Controller
                     $vocab->prop['status'] = 'draft';
                     $vocab->save($data);
                     $to_email = $this->config->item('site_admin_email');
-                    $content = 'Vocabulary' . $data['title'] . ' is published by a user with no affiliations'.NL;
+                    $content = 'Vocabulary' . $data['title'] . ' is published by a user with no affiliations' . NL;
                     $email = $this->load->library('email');
                     $email->to($to_email);
                     $email->from($to_email);
@@ -548,7 +737,9 @@ class Vocabs extends MX_Controller
                 //result.status = 'OK'
                 //result.message = array()
 
-                if (!$result) throw new Exception('Error while saving vocabulary');
+                if (!$result) {
+                    throw new Exception('Error while saving vocabulary');
+                }
 
                 if ($result && $vocab->prop['status'] == 'published') {
                     if ($this->index_vocab($vocab)) {
@@ -556,11 +747,13 @@ class Vocabs extends MX_Controller
                     }
                 }
 
-                if ($result) $result = $vocab;
+                if ($result) {
+                    $result = $vocab;
+                }
 
                 $event = array(
                     'event' => 'edit',
-                    'vocab' => $vocab->title
+                    'vocab' => $vocab->title,
                 );
                 vocab_log_terms($event);
 
@@ -580,7 +773,7 @@ class Vocabs extends MX_Controller
         echo json_encode(
             array(
                 'status' => 'OK',
-                'message' => $result
+                'message' => $result,
             )
         );
     }
@@ -597,7 +790,10 @@ class Vocabs extends MX_Controller
         //load necessary stuff
         $this->load->library('solr');
         $vocab_config = get_config_item('vocab_config');
-        if (!$vocab_config['solr_url']) throw new Exception('Indexer URL for Vocabulary module is not configured correctly');
+        if (!$vocab_config['solr_url']) {
+            throw new Exception('Indexer URL for Vocabulary module is not configured correctly');
+        }
+
         $this->solr->setUrl($vocab_config['solr_url']);
 
         //only index published records
@@ -650,10 +846,14 @@ class Vocabs extends MX_Controller
 
         //if (!get_config_item('vocab_toolkit_url')) throw new Exception('Vocab ToolKit URL not configured correctly');
         $request = $this->input->get('request');
-        if (!$request) throw new Exception('Request Not Found');
+        if (!$request) {
+            throw new Exception('Request Not Found');
+        }
 
         $url = get_vocab_config('toolkit_url');
-        if (!$url) throw new Exception('Vocab Toolkit URL not configured correctly');
+        if (!$url) {
+            throw new Exception('Vocab Toolkit URL not configured correctly');
+        }
 
         switch ($request) {
             case 'listPoolPartyProjects':
@@ -662,11 +862,14 @@ class Vocabs extends MX_Controller
                 break;
             case 'getMetadata':
                 $ppid = $this->input->get('ppid') ? $this->input->get('ppid') : false;
-                if (!$ppid) throw new Exception('Pool Party ID required to get metadata');
+                if (!$ppid) {
+                    throw new Exception('Pool Party ID required to get metadata');
+                }
+
                 $metadata = @file_get_contents($url . 'getMetadata/poolParty/' . $ppid);
                 echo $metadata;
                 break;
-            default :
+            default:
                 throw new Exception('Request Not Recognised');
         }
     }
@@ -684,7 +887,10 @@ class Vocabs extends MX_Controller
 
         $upload_path = get_vocab_config('upload_path');
         if (!is_dir($upload_path)) {
-            if (!mkdir($upload_path)) throw new Exception('Upload path are not created correctly. Contact server administrator');
+            if (!mkdir($upload_path)) {
+                throw new Exception('Upload path are not created correctly. Contact server administrator');
+            }
+
         }
 
         $config['upload_path'] = $upload_path;
@@ -707,7 +913,7 @@ class Vocabs extends MX_Controller
             echo json_encode(
                 array(
                     'status' => 'ERROR',
-                    'message' => $theError
+                    'message' => $theError,
                 )
             );
         } else {
@@ -728,54 +934,83 @@ class Vocabs extends MX_Controller
      * Does haystack start with needle?
      * Taken from http://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
      */
-    function startsWith($haystack, $needle) {
+    public function startsWith($haystack, $needle)
+    {
         // Search backwards starting from haystack length
         // characters from the end.
         return $needle === "" ||
-            strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+        strrpos($haystack, $needle, -strlen($haystack)) !== false;
     }
 
-    /**
-     * Download a file from the vocab uploaded directory
-     * @access public
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-     * @return file
+
+    /*
+     * possible future use of migration scripts for release specific data change
+     *
      */
-    public function download()
+    public function migrate($releaseID)
     {
-        $file = $this->input->get('file');
-        if (!$file) throw new Exception('File (required) not found');
-        if (!file_exists($file)) $file = vocab_uploaded_url($file);
-        if (!file_exists($file)) throw new Exception('File not found');
-        // Canonicalize the path, so that there are no tricky things
-        // such as ".." in it.
-        $file = realpath($file);
-
-        // Only allow people to get files from the upload and repository
-        // directories.
-        if (self::startsWith($file, get_vocab_config('upload_path')) ||
-            self::startsWith($file, get_vocab_config('repository_path'))) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename=' . basename($file));
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($file));
-            readfile($file);
-            exit;
-        } else {
-            throw new Exception('Permission Denied');
+        $response = array();
+        $response['releaseID'] = $releaseID;
+        $response["tasks"] = array();
+        // first release after Beta migration scripts
+        if($releaseID > 0){
+            $response[] = $this->taskMigration();
         }
+        echo json_encode($response);
+
     }
 
+/*
+ * migrate concepts_list and concept_tree from task's response into version's data where it belongs
+ */
+    private function taskMigration()
+    {
+        $ci =& get_instance();
+        $message = array();
+        $db = $ci->load->database('vocabs', true);
+        $query = $db->order_by("id", "asc")->get_where('task', array('status' => 'success'));
+        if ($query->num_rows() > 0) {
+            $taskArray = $query->result_array();
+            foreach($taskArray as $task){
+                $version_id = $task['version_id'];
+                $response = json_decode($task['response'], true);
+                if(isset($response['concepts_tree']) || isset($response['concepts_list'])){
+                    $v_query = $db->get_where('versions', array('id' => $version_id));
+                    if ($v_query->num_rows() > 0) {
+                        $vv = $v_query->first_row();
+                        $vvdata = json_decode($vv->data, true);
+                        $response = json_decode($task['response'], true);
+                        if(isset($response['concepts_tree'])){
+                            $vvdata['concepts_tree'] = urldecode($response['concepts_tree']);
+                        }
+                        if(isset($response['concepts_list'])){
+                            $vvdata['concepts_list'] = urldecode($response['concepts_list']);
+                        }
+                        $saved_data = array('data' => json_encode($vvdata));
+                        $db->where('id', $version_id);
+                        $result = $db->update('versions', $saved_data);
+
+                        if (!$result){
+                            $message[] = array('version_id' => $version_id , 'error' => $db->_error_message());
+                        }else{
+                            $message[] = array('version_id' => $version_id , 'data' => $vvdata);
+                        }
+                    } else {
+                        //cant find version with the id, handle here
+                        $message[] = 'Version with ID: ' . $version_id . ' not found';
+                    }
+                }
+            }
+        }
+        return array("task" => "taskMigration", "message"=>$message);
+    }
     /**
      * Automated test tools
      * @version 1.0
      * @internal Used as internal testing before rolling out automated test cases
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      */
-    function test()
+    public function test()
     {
         //test getting the documents
         // echo json_encode($test_records);
@@ -783,7 +1018,7 @@ class Vocabs extends MX_Controller
         //test indexing the documents
         // $solr_doc = array();
         // foreach ($test_records as $record) {
-        // 	$solr_doc[] = $record->indexable_json();
+        //     $solr_doc[] = $record->indexable_json();
         // }
         // $this->load->library('solr');
         // $this->solr->setUrl('http://localhost:8983/solr/vocabs/');
@@ -812,7 +1047,6 @@ class Vocabs extends MX_Controller
         var_dump($commit_result);
         // echo $data;
     }
-
 
     /**
      * Constructor Method

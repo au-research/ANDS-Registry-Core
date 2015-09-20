@@ -38,7 +38,9 @@
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                     <h3 class="normal light bordered">Consume a vocabulary in your own system</h3>
                     <p>
-                        Users of Research Vocabularies Australia have several options for using an ANDS-hosted vocabulary in their own data centres, portals, data generation tools, vocabulary services or other applications. The Vocabulary Service API allows developers to integrate with the vocabulary service using HTTP and a variety of data representations (including XML, JSON and RDF) and the vocabulary widget allows you to add Data Classification capabilities to your data capture tools via the Research Vocabularies Australia.
+                        Users of Research Vocabularies Australia have several options for using an Australian National Data Service (ANDS)-hosted vocabulary in their own data centres, portals, data generation tools, vocabulary services or other applications. The Vocabulary API allows developers to integrate with the vocabulary service using HTTP and a variety of data representations (including XML, JSON and RDF) and the Vocabulary Widget allows you to add Data Classification capabilities to your data capture tools via Research Vocabularies Australia.
+</p>
+                   <p>     Learn more about the <a href="http://developers.ands.org.au/services/vocabulary_api/" target="_blank">Vocabulary API</a> and <a href="http://developers.ands.org.au/widgets/vocab_widget/" target="_blank">Vocabulary Widget</a>.
                     </p>
                 </div>
             </div>

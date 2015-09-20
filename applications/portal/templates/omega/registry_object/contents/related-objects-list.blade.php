@@ -116,7 +116,11 @@ $hasRelatedServices = false;
                                     ?>
                                      <?php if($relatedInfo['identifier']['identifier_type'] == 'doi'  && isset($relatedInfo['title']) && $relatedInfo['title']!=''){ ?>
 
-                                    <i class="fa fa-book icon-portal"></i> <small>{{$relationship}} </small> <a  href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}" tip="{{$relatedInfo['title']}}">{{$relatedInfo['title']}}</a><p>
+                                    <i class="fa fa-book icon-portal"></i> <small>{{$relationship}} </small> <a  href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}" tip="{{$relatedInfo['title']}}">{{$relatedInfo['title']}}</a>
+                                    @if($ro->core['class']=='collection')
+                                    <span itemprop="citation">
+                                    @endif
+                                    <p>
                                     <?php }
                                      elseif($relatedInfo['identifier']['identifier_type'] != 'doi' && isset($relatedInfo['title']) && $relatedInfo['title']!=''){ ?>
                                         <i class="fa fa-book icon-portal"></i><small>{{$relationship}} </small> {{$relatedInfo['title']}}.<p>
@@ -143,6 +147,9 @@ $hasRelatedServices = false;
                                     <p>
                                         {{$relatedInfo['notes']}}
                                     </p>
+                                    @if($ro->core['class']=='collection')
+                                    </span>
+                                    @endif
                                     @endif
                                 @endif
                             @endforeach
@@ -155,6 +162,9 @@ $hasRelatedServices = false;
                     @if($hasDerivedCollection && $ro->core['class']=='collection')
                     <h4>Related Data</h4>
                     <p>
+
+                     <span itemprop="isBasedOnUrl">
+
                         @foreach($ro->relationships['collection'] as $col)
                         <?php
                         $description = '';
@@ -170,6 +180,7 @@ $hasRelatedServices = false;
                             <i class="fa fa-folder-open icon-portal"></i> <small>{{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}}</small> <a href="<?php echo base_url()?>" title="{{$col['title']}}" {{$description}} class="ro_preview" identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}</a><br/>
                             @endif
                         @endforeach
+                         </span>
                     </p>
                     @endif
                     @if($hasRelatedCollection && $ro->core['class']!='collection')
@@ -293,6 +304,9 @@ $hasRelatedServices = false;
                         $description = 'tip="'.$relatedInfo['title'].'"';
                     }
                     ?>
+                    @if($ro->core['class']=='collection')
+                    <span itemprop="citation">
+                    @endif
                             @if($relatedInfo['title'])
                             <i class="fa fa-globe icon-portal""></i>  <small>{{$relationship}} </small> {{$relatedInfo['title']}}
                                 <p>
@@ -331,6 +345,9 @@ $hasRelatedServices = false;
                                 {{$relatedInfo['notes']}}
                             </p>
                             @endif
+                         @if($ro->core['class']=='collection')
+                        </span>
+                    @endif
                         @endif
                     @endforeach
                     @endif

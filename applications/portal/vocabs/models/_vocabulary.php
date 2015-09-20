@@ -139,21 +139,10 @@ class _vocabulary
         }
 
         $json['concept'] = array();
-        if ($current_version) {
-            //find the task/file associated with the current version
-            $ci =& get_instance();
-            $db = $ci->load->database('vocabs', true);
-            $query = $db->get_where('task', array('version_id' => $current_version['id'], 'status' => 'success'));
-            $concept_list_path = false;
-            if ($query->num_rows() > 0) {
-                $result = $query->first_row();
-                $response = $result->response;
-                $response = json_decode($response, true);
-                $concept_list_path = isset($response['concepts_list']) ? $response['concepts_list'] : false;
-            }
 
-            //read the file and then add the concepts to the index
-            if ($concept_list_path) {
+        if ($current_version) {
+            $concept_list_path = isset($current_version['concepts_list']) ? $current_version['concepts_list'] : false;
+            if($concept_list_path){
                 $content = @file_get_contents($concept_list_path);
                 $content = json_decode($content, true);
                 foreach ($content as $concept) {
@@ -162,7 +151,6 @@ class _vocabulary
                     }
                 }
             }
-
             //accessibility
             $json['access'] = array();
             $json['format'] = array();
@@ -206,6 +194,7 @@ class _vocabulary
         if ($this->versions) {
             foreach ($this->versions as $version) {
                 if ($version['status'] == 'current' && !$current_version) {
+                    $version['version_access_points'] = $this->getAccessPoints($version['id']);
                     $current_version = $version;
                 }
             }
@@ -213,6 +202,78 @@ class _vocabulary
         return $current_version;
     }
 
+    /**
+     * Returns a access points for a specific vocab version
+     * Helper function
+     * @param  int $versionId
+     * @return array of accesspoints
+     */
+    public function getAccessPoints($versionId, $type = '')
+    {
+
+        $ci =& get_instance();
+        $db = $ci->load->database('vocabs', true);
+        $db->select('id, version_id, type, portal_data');
+        if($type == 'all' || $type == '' )
+            $query = $db->get_where('access_points', array('version_id' => $versionId));
+        else
+            $query = $db->get_where('access_points', array('version_id' => $versionId, 'type' => $type));
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * Delete the access points for a specific vocab version
+     * that the user entered themself. Can be webPage, apiSparql, sissvoc.
+     * @param  int $versionId
+     */
+
+    public function removeUserDefinedAccessPoints($versionId){
+        $ci =& get_instance();
+        $db = $ci->load->database('vocabs', true);
+
+        $allAccessPoints = $this->getAccessPoints($versionId);
+
+        if ($allAccessPoints) {
+            foreach ($allAccessPoints as $ap) {
+                $delete = false;
+                $id = $ap['id'];
+                switch ($ap['type']) {
+                    case 'file':
+                        // File is considered system-entered, as the endpoint
+                        // is added by the Toolkit.
+                        break;
+                    case 'sesameDownload':
+                        break;
+                    case 'webPage':
+                        $delete = true;
+                        break;
+                    default:
+                        $source = json_decode($ap['portal_data']);
+                        if (isset($source->source) && $source->source == 'user') {
+                            $delete = true;
+                        }
+                }
+                if ($delete) {
+                    $db->delete('access_points', array(
+                        'id' => $id
+                    ));
+                }
+            }
+        }
+    }
+
+    public function addPortalDataAccessPoint($versionId, $type , $portal_data, $toolkit_data="{}")
+    {
+        $data = array('version_id'=>$versionId, 'type' => $type , 'portal_data'=>$portal_data, 'toolkit_data'=>$toolkit_data);
+        $ci =& get_instance();
+        $db = $ci->load->database('vocabs', true);
+        $db->insert('access_points', $data);
+    }
     /**
      * Return the tree representation of the current version
      * requires the concepts_tree already harvested and transformed
@@ -225,14 +286,12 @@ class _vocabulary
     {
         $current_version = $this->current_version();
         if ($current_version) {
-            $data = $this->get_response_data($current_version['id']);
-            if (!$data) {
+            $concepts_tree_path = isset($current_version['concepts_tree']) ? $current_version['concepts_tree'] : false;
+            if (!$concepts_tree_path) {
                 //no valid data returned, hence no tree
                 return false;
             }
-            $data = json_decode($data->response, true);
-            $concepts_tree_path = isset($data['concepts_tree']) ? $data['concepts_tree'] : false;
-            if ($concepts_tree_path) {
+            else {
                 $content = @file_get_contents($concepts_tree_path);
                 if (!$content) {
                     //file doesn't exist
@@ -246,9 +305,6 @@ class _vocabulary
                 $tree = $this->buildTree($tree_data);
 
                 return $tree;
-            } else {
-                //log: data found but no concept tree
-                return false;
             }
         } else {
             //no current version
@@ -292,7 +348,7 @@ class _vocabulary
      * @param  int $version_id
      * @return obj response_data
      */
-    private function get_response_data($version_id)
+    private function get_response_data($version_id, $task_id)
     {
         $ci =& get_instance();
         $db = $ci->load->database('vocabs', true);
@@ -342,7 +398,7 @@ class _vocabulary
         if ($query && $query->num_rows() > 0) {
             foreach ($query->result_array() as $row) {
                 $version = $row;
-
+                $version['version_access_points'] = $this->getAccessPoints($version['id']);
                 //break apart version data
                 if (isset($version['data'])) {
                     $version_data = json_decode($version['data'], true);
@@ -352,6 +408,9 @@ class _vocabulary
                         }
                     }
                     unset($version['data']);
+                }
+                if (isset($version['release_date'])){
+                    $version['release_date'] = date("Y-m-d",strtotime($version['release_date']));
                 }
 
                 $this->prop['versions'][] = $version;
@@ -367,6 +426,27 @@ class _vocabulary
     public function log($message)
     {
         $this->import_log[] = $message;
+    }
+
+    /**
+     * Create a slug for a vocabulary title. The resulting slug
+     * will be no more than 50 characters long. This limit is not
+     * entirely arbitrary; the toolkit implements the same truncation
+     * for version titles. The truncation is needed because (for now,
+     * but for how much longer?) the toolkit uses slugs as directory
+     * names, and we have come up against a limit on the total length
+     * of a path to a file.
+     * @param string $title The title from which to make the slug
+     * @return string The generated slug
+     */
+    public function makeSlug($title)
+    {
+        $slug = url_title($title, '-', TRUE);
+        // Now truncate it.
+        $slug = substr($slug, 0, 50);
+        // Trim again, just in case the truncation left a trailing hyphen.
+        $slug = trim($slug, "-");
+        return $slug;
     }
 
     /**
@@ -438,7 +518,7 @@ class _vocabulary
         } else {
             //add new
             //check if there's an existing vocab with the same slug in draft state
-            $slug = url_title($this->prop['title'], '-', TRUE);
+            $slug = $this->makeSlug($this->prop['title']);
             if (isset($this->prop['status']) && $this->prop['status'] == 'draft') {
                 $result = $db->get_where('vocabularies', array('slug' => $slug, 'status' => 'draft'));
                 if ($result->num_rows() > 0) {
@@ -622,21 +702,27 @@ class _vocabulary
 
             //task array construction
             $task_array = array();
-
+            $this->removeUserDefinedAccessPoints($version_id);
             if ($this->isPoolParty()) {
                 $harvest_task = array('type' => 'HARVEST', 'provider_type' => 'PoolParty', 'project_id' => $this->prop['pool_party_id']);
                 array_push($task_array, $harvest_task);
-            } else {
-                //is not a poolparty, check for file upload
-                $file = false;
-                foreach ($version_data['access_points'] as $ap) {
-                    if ($ap['type'] == 'file') $file = $ap;
-                }
-                if ($file) {
-                    $harvest_task = array('type' => 'HARVEST', 'provider_type' => 'File', 'file_path' => vocab_uploaded_url($file['uri']));
-                    array_push($task_array, $harvest_task);
-                }
             }
+
+            if(isset($version_data['access_points']))
+            {
+                foreach ($version_data['access_points'] as $ap) {
+
+                    if ($ap['type'] == 'file') {
+                        $harvest_task = array('type' => 'HARVEST', 'provider_type' => 'File', 'file_path' => vocab_uploaded_url($ap['uri']));
+                        array_push($task_array, $harvest_task);
+                    }
+                    else if($ap['uri'] != 'TBD'){ // user defined
+                      $portal_data = array('source'=>'user', 'uri'=>$ap['uri'], 'format'=>$ap['format']);
+                      $this->addPortalDataAccessPoint($version_id, $ap['type'] , json_encode($portal_data));
+                    }
+                }
+
+             }
 
             $transform_task = array('type' => 'TRANSFORM', 'provider_type' => 'JsonList');
             array_push($task_array, $transform_task);
@@ -645,6 +731,11 @@ class _vocabulary
 
             if ($this->determineAction($version, 'import')) {
                 $import_task = array('type' => 'IMPORT', 'provider_type' => 'Sesame');
+                array_push($task_array, $import_task);
+            }
+
+            if (($this->determineAction($version, 'import')) && ($this->isPoolParty())) {
+                $import_task = array('type' => 'TRANSFORM', 'provider_type' => 'SesameInsertMetadata');
                 array_push($task_array, $import_task);
             }
 
@@ -674,20 +765,18 @@ class _vocabulary
                 $this->log('Task ' . $task_id . ' completed with status: ' . $content['status']);
                 if (isset($content['exception'])) $this->log('Task ' . $task_id . ' has exception:' . $content['exception']);
                 //pool party stuffs filling
-                if (isset($content['concepts']) || isset($concept['sparql_endpoint']) || isset($concept['sissvoc_endpoints'])) {
+
+                if (isset($content['concepts_tree']) || isset($content['concepts_list'])) {
                     //update the access point of type file, apiSparql path to the respective path
                     $query = $db->get_where('versions', array('id' => $version_id));
                     if ($query->num_rows() > 0) {
                         $vv = $query->first_row();
                         $vvdata = json_decode($vv->data, true);
-                        foreach ($vvdata['access_points'] as &$ap) {
-                            if ($ap['type'] == 'file' && $ap['uri'] == 'TBD') {
-                                $ap['uri'] = isset($content['concepts']) ? $content['concepts'] : 'TBD';
-                            } elseif ($ap['type'] == 'apiSparql' && $ap['uri'] == 'TBD') {
-                                $ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TBD';
-                            } elseif ($ap['type'] == 'webPage' && $ap['uri'] == 'TBD') {
-                                $ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'] . '/concept/topConcepts' : 'TBD';
-                            }
+                        if(isset($content['concepts_tree'])){
+                            $vvdata['concepts_tree'] = $content['concepts_tree'];
+                        }
+                        if(isset($content['concepts_list'])){
+                            $vvdata['concepts_list'] = $content['concepts_list'];
                         }
                         $saved_data = array(
                             'data' => json_encode($vvdata)
@@ -699,29 +788,7 @@ class _vocabulary
                         //cant find version with the id, handle here
                         $this->log('Version with ID: ' . $version_id . ' not found');
                     }
-                } else if (isset($content['output_path'])) {
-                    //file upload
-                    if ($vv = $this->getVersion($version_id, $db)) {
-                        $vvdata = json_decode($vv->data, true);
-                        foreach ($vvdata['access_points'] as &$ap) {
-                            if ($ap['type'] == 'file') {
-                                // $ap['uri'] = isset($content['concepts']) ? $content['concepts'] : 'TBD';
-                            } elseif ($ap['type'] == 'apiSparql') {
-                                $ap['uri'] = isset($content['sparql_endpoint']) ? $content['sparql_endpoint'] : 'TBD';
-                            } elseif ($ap['type'] == 'webPage') {
-                                $ap['uri'] = isset($content['sissvoc_endpoints']) ? $content['sissvoc_endpoints'] . '/concept/topConcepts' : 'TBD';
-                            }
-                        }
-                        $saved_data = array('data' => json_encode($vvdata));
-                        $db->where('id', $version_id);
-                        $result = $db->update('versions', $saved_data);
-                        if (!$result) throw new Exception($db->_error_message());
-                    } else {
-                        //cant find version with the id, handle here
-                        $this->log('Version with ID: ' . $version_id . ' not found');
-                    }
                 }
-
             }
 
         }
@@ -749,6 +816,7 @@ class _vocabulary
             return false;
         }
     }
+
 
     /**
      * Magic function to get an attribute, returns property within the $prop array

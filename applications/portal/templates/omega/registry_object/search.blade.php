@@ -37,7 +37,7 @@
     <div ng-repeat="doc in result.response.docs" ng-if="!doc.hide" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
         <div class="container-fluid">
             <div class="row">
-                
+
                 <div class="element-no-top element-no-bottom" ng-class="{'col-md-8':filters.spatial}">
                     <div class="stoolbar">
                         <input type="checkbox" ng-model="doc.select" ng-change="toggleResult(doc)">
@@ -59,10 +59,11 @@
                                 </li>
                             </ul>
                         </p>
-                        
+
                         <div ng-repeat="(index, content) in getHighlight(doc.id)" class="element-shorter-bottom">
                             <div ng-repeat="c in content track by $index" class="element-shortest-bottom">
-                                <span ng-bind-html="c | trustAsHtml"></span> <span class="muted">(in [[index | highlightreadable]])</span>
+                                <span ng-bind-html="c | extractSentence | trustAsHtml" ng-if="index=='description_value'"> </span>
+                                <span ng-bind-html="c | trustAsHtml" ng-if="index!='description_value'"> </span> <span class="muted">(in [[index | highlightreadable]])</span>
                             </div>
                         </div>
 
@@ -79,7 +80,7 @@
                             <b>Researchers: </b> [[doc.researchers.join(', ')]]
                         </div>
                     </div>
-                    
+
                    <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
                 </div>
                 <div class="col-md-4" ng-if="filters.spatial">
@@ -123,14 +124,15 @@
             <h4 ng-if="name!='q' || (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
             <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
             <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
-                <li ng-repeat="v in value track by $index"> 
+                <li ng-repeat="v in value track by $index">
                     <a href="" ng-click="toggleFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
                 </li>
             </ul>
             <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
-                        <span ng-if="name!='related_party_one_id'">[[ value | truncate:30  ]]</span>
+                        <span ng-if="name!='related_party_one_id'&&name!='q'">[[ value | truncate:30  ]]</span>
+                        <span ng-if="name!='related_party_one_id'&&name=='q'" tip="<b>Query</b>:[[value]]">[[ value | truncate:30  ]]</span>
                         <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
                         <small><i class="fa fa-remove" tip="Remove Item"></i></small>
                     </a>
@@ -218,8 +220,8 @@
             <input type="text" class="form-control" ng-model="filters.year_from" placeholder="From Year. eg [[earliest_year]]">
             <input type="text" class="form-control" ng-model="filters.year_to" placeholder="To Year. eg [[latest_year]]">
         </form>
-        
-        
+
+
         <button class="btn btn-primary" ng-click="hashChange()"><i class="fa fa-search"></i> Go</button>
     </div>
 
@@ -230,7 +232,7 @@
             <li> <a href="" ng-click="advanced('spatial')">View Map <i class="fa fa-globe"></i></a></li>
         </ul>
     </div>
-    
+
 </div>
-    
+
 @stop

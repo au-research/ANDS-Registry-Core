@@ -343,6 +343,14 @@ class Sync_extension extends ExtensionBase{
         foreach($gXPath->query('//ro:description[@type="researchers"]') as $node) {
             $json['researchers'][] = strip_tags(html_entity_decode($node->nodeValue));
         }
+        $json['alt_list_title'] = [];
+        $json['alt_display_title'] = [];
+        foreach($gXPath->query('//ro:name[@type!="primary"]') as $node) {
+            $json['alt_list_title'][] = trim(strip_tags(html_entity_decode($node->nodeValue)));
+		    $json['alt_display_title'][] = trim(strip_tags(html_entity_decode($node->nodeValue)));
+        }
+
+
 
         $activityStatus = 'other';
         foreach ($xml->xpath('//ro:existenceDates') AS $date)
@@ -442,6 +450,8 @@ class Sync_extension extends ExtensionBase{
 	}
 
     function indexable_json_es() {
+
+        if (!$this->ro->getRif()) return false;
 
         //prepare
         $rifDom = new DOMDocument();

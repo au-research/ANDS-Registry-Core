@@ -7,6 +7,14 @@
 </div>
 
 <div class="container-fluid">
+ <div class="row-fluid">
+        <div class="span12">
+       <p> Welcome to the first version of an analytics tool which enables data administrators/registry users access to a statistical dashboard which summarises their organisation's data and it's usage. The information currently available indicates page views, searches performed and data accessed through Research Data Australia as well as data quality and accessibility. </p>
+        <p>Please select from the following list of your affiliated organisations to access the tool. </p>
+        <p>Feedback is welcomed and can be provided to services@ands.org.au.</p>
+        
+        </div>
+    </div>
     <div class="row-fluid">
         <div class="span6">
             <form action="" class="form-search">
@@ -19,6 +27,7 @@
         <div class="span6">
             <span class="pull-right">
                 <a href="#/masterview" class="btn btn-primary">Masterview</a>
+                <a href="{{ vm.apps_url }}analytics/getOrg/csv-download " class="btn">Export to CSV</a>
             </span>
         </div>
     </div>

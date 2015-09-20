@@ -46,7 +46,13 @@ class Dois extends CI_Model
     public function getDOIActivityStat($filters)
     {
         $result = array();
-
+	
+		if($this->user->hasFunction('DOI_USER')){
+			$result['display'] = true;
+		}else{
+			$result['display'] = false;
+		}
+		
         if (isset($filters['doi_app_id'])) {
             foreach ($filters['doi_app_id'] as $app_id) {
                 $query = $this->doi_db->get_where('doi_client', ['app_id'=>$app_id])->first_row(true);
@@ -56,6 +62,8 @@ class Dois extends CI_Model
                         ->select('activity, count(*) as count')
                         ->from('activity_log')
                         ->where('client_id', $client_id)
+                        ->like('activity','MINT')
+                        ->like('result','SUCCESS')
                         ->like('doi_id', '10.4', 'after')
                         ->group_by('activity')->get();
 
@@ -73,6 +81,8 @@ class Dois extends CI_Model
             $query = $this->doi_db
                 ->select('activity, count(*) as count')
                 ->from('activity_log')
+                ->like('activity','MINT')
+                ->like('result','SUCCESS')
                 ->like('doi_id', '10.4', 'after')
                 ->group_by('activity')->get();
 
@@ -86,6 +96,7 @@ class Dois extends CI_Model
 
         }
 
+	
         return $result;
     }
 

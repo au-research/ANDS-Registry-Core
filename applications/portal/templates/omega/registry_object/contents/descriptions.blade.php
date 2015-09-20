@@ -21,6 +21,8 @@
                             if($currentHeading != $desc['type']){
                                 $showHeading = true;
                                 $currentHeading = $desc['type'];
+
+
                             }
                             $description = html_entity_decode($desc['description']);
                             if(strip_tags($description) == $description)
@@ -29,7 +31,13 @@
                             @if($showHeading)
 							<h4>{{readable($currentHeading)}}</h4>
                             @endif
+                            <?php if($desc['type']=='full'||$desc['type']=='brief'){ ?>
+                                <span itemprop="description">
+                            <?php } ?>
 							{{$description ? $description : ''}}
+                                    <?php if($desc['type']=='full'||$desc['type']=='brief'){ ?>
+                                    </span>
+                            <?php } ?>
 						</div>
 						
 					@endif

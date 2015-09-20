@@ -1,9 +1,9 @@
 <div class="content-header">
-    <h1>RDA Analytics</h1>
+    <h1>ANDS Services Analytics</h1>
 </div>
 <div id="breadcrumb" style="clear:both;">
     <a href="#/"><i class="icon-home"></i> Home</a>
-    <a href="#/">Analytics</a>
+    <a href="#/">ANDS Services Analytics</a>
     <a href="#/{{vm.org.role_id}}" class="current">{{ vm.org.name }} - RDA statistics</a>
 </div>
 <div class="container-fluid">
@@ -12,7 +12,7 @@
         <div class="span8">
             <div class="widget-box">
                 <div class="widget-title">
-                    <h5>RDA Analytics</h5>
+                    <h5>Research Data Australia Analytics</h5>
                 </div>
                 <div class="widget-content">
                     <form class="form form-horizontal" ng-submit="vm.getData()">
@@ -29,7 +29,7 @@
                         <canvas
                             ng-if="vm.rdaChartData"
                             class="chart chart-line" data="vm.rdaChartData.data"
-                            labels="vm.rdaChartData.labels" legend="false" series="vm.rdaChartData.series"
+                            labels="vm.rdaChartData.labels" legend="true" series="vm.rdaChartData.series"
                             click="vm.onClick" chart-type="vm.chartType">
                         </canvas>
                         <div ng-if="!vm.rdaChartData && !vm.loading">No Data!</div>
@@ -38,30 +38,42 @@
                 </div>
                 <div class="widget-content container-fluid">
                     <div class="row-fluid">
-                        <div class="span6">
+                        <div class="span4">
                             <h5>Page View Breakdown</h5>
                             <chart cdata="vm.viewGroupChartData" type="'pie'"></chart>
                         </div>
-                        <div class="span6">
+                        <div class="span4">
                             <h5>Search Breakdown</h5>
                             <chart cdata="vm.searchGroupChartData" type="'pie'"></chart>
+                        </div>
+                        <div class="span4">
+                            <h5>Data Accessed Breakdown</h5>
+                            <chart cdata="vm.accessedGroupChartData" type="'pie'"></chart>
                         </div>
                     </div>
                 </div>
                 <div class="widget-content container-fluid" ng-if="vm.rostat">
                     <div class="row-fluid">
-                        <div class="span6">
+                        <div class="span4">
                             <h5>Popular Record(s) for this period</h5>
                             <ul>
                                 <li ng-if="vm.rostat.buckets.length == 0">No data found!</li>
                                 <ro obj="ro" ng-repeat="ro in vm.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }} times)</ro>
                             </ul>
                         </div>
-                        <div class="span6">
+                        <div class="span4">
                             <h5>Popular Search Term(s) for this period</h5>
                             <ul>
                                 <li ng-if="vm.qstat.buckets.length == 0">No data found!</li>
-                                <li ng-repeat="q in vm.qstat.buckets">{{ q.key }} (Searched {{ q.doc_count }} times)</li>
+                                <li ng-repeat="q in vm.qstat.buckets" ng-if="q.key!=''">{{ q.key }} (Searched {{ q.doc_count }} times)</li>
+                                <li ng-repeat="q in vm.qstat.buckets" ng-if="q.key==''">{{ q.key }} (Searched {{ q.doc_count }} times)</li>
+                            </ul>
+                        </div>
+                        <div class="span4">
+                            <h5>Popular Data Accessed for this period</h5>
+                            <ul>
+                                <li ng-if="vm.accessedstat.buckets.length == 0">No data found!</li>
+                                <da obj="da" ng-repeat="da in vm.accessedstat.key.buckets">{{ da.key }} (Data accessed {{ da.doc_count }} times)</da>
                             </ul>
                         </div>
                     </div>
@@ -69,17 +81,16 @@
                 </div>
             </div>
 
-            <div class="widget-box">
+            <div class="widget-box" ng-if="vm.doiUser">
                 <div class="widget-title">
-                    <h5>DOI Analytics</h5>
+                    <h5>Digital Object Identifiers Analytics</h5>
                 </div>
                 <div class="widget-content container-fluid">
                     <div class="row-fluid">
                         <div class="span6">
-                            <chart cdata="vm.doiChartData" type="'pie'"></chart>
+                            <chart cdata="vm.doiChartData" type="'doiChartData'"></chart>
                         </div>
                         <div class="span6">
-                            <h5>DOI Activity Data</h5>
                             <ul>
                                <li ng-repeat="doi_app_id in vm.org.doi_app_id">{{ doi_app_id }}</li>
                             </ul>
@@ -91,7 +102,7 @@
                         <div ng-repeat="report in vm.linkCheckerReport" style="max-height:200px;overflow:auto">
                             <pre>{{ report }}</pre>
                         </div>
-                        <a href="" class="btn btn-primary">Re-run link checker report</a>
+                       <!-- <a href="" class="btn btn-primary">Re-run link checker report</a> -->
                     </div>
 
                 </div>
@@ -99,19 +110,9 @@
 
             <div class="widget-box">
                 <div class="widget-title">
-                    <h5>Business Intelligence</h5>
+                    <h5>Summary Information</h5>
                 </div>
                 <div class="widget-content container-fluid">
-                    <div class="row-fluid">
-                        <div class="span6">
-                            <h5>Quality Level</h5>
-                            <chart cdata="vm.QLChartData" type="'pie'"></chart>
-                        </div>
-                        <div class="span6">
-                            <h5>Class</h5>
-                            <chart cdata="vm.ClassChartData" type="'pie'"></chart>
-                        </div>
-                    </div>
                     <div class="row-fluid">
                         <div class="span6">
                             <h5>Group Record Distribution</h5>
@@ -122,13 +123,54 @@
                             <chart cdata="vm.GroupCollectionChartData" type="'pie'"></chart>
                         </div>
                     </div>
-
+                    <div class="row-fluid">
+                        <div class="span4">
+                            <h5>Quality Level</h5>
+                            <chart cdata="vm.QLChartData" type="'pie'"></chart>
+                        </div>
+                        <div class="span4">
+                            <h5>Class</h5>
+                            <chart cdata="vm.ClassChartData" type="'pie'"></chart>
+                        </div>
+                         <div class="span4">
+                            <h5>Rights</h5>
+                            <chart cdata="vm.ARChartData" type="'pie'"></chart>
+                        </div>
+                    </div>
                 </div>
             </div>
 
         </div>
 
         <div class="span4">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <h5>{{ vm.org.name }} - Details</h5>
+                </div>
+                <div class="widget-content">
+                    <div ng-if="vm.org.name=='Masterview'">
+                        <p>This is a masterview of all data sources and group</p>
+                    </div>
+                    <div ng-if="vm.org.data_sources">
+                        <h5>Data sources:</h5>
+                        <ul>
+                            <li ng-repeat="ds in vm.org.data_sources">{{ ds.title }}</li>
+                        </ul>
+                    </div>
+                    <div ng-if="vm.org.groups">
+                        <h5>Groups: </h5>
+                        <ul>
+                           <li ng-repeat="group in vm.org.groups">{{ group }}</li>
+                        </ul>
+                    </div>
+                    <div ng-if="vm.org.doi_app_id">
+                        <h5>DOI App IDs: </h5>
+                        <ul>
+                            <li ng-repeat="doi in vm.org.doi_app_id">{{ doi }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
             <div class="widget-box">
                 <div class="widget-title"><h5>All Time Statistics</h5></div>
                 <div class="widget-content">
@@ -140,14 +182,22 @@
                     <h5>All time popular search term(s)</h5>
                     <ul>
                         <li ng-if="vm.alltime.aggs.qstat.buckets.length == 0">No data found!</li>
-                        <li ng-repeat="ro in vm.alltime.aggs.qstat.buckets">{{ ro.key }} (Searched {{ ro.doc_count }} times)</li>
+                        <li ng-repeat="q in vm.alltime.aggs.qstat.buckets" ng-if="q.key!=''">{{ q.key }} (Searched {{ q.doc_count }} times)</li>
+                        <li ng-repeat="q in vm.alltime.aggs.qstat.buckets" ng-if="q.key==''">{{ q.key }} (Searched {{ q.doc_count }} times)</li>
+                    </ul>
+                    <h5>All time popular data accessed</h5>
+                    <ul>
+                        <li ng-if="vm.alltime.aggs.accessedstat.buckets.length == 0">No data found!</li>
+                        <da obj="ro" ng-repeat="ro in vm.alltime.aggs.accessedstat.key.buckets">{{ ro.key }} (Accessed {{ ro.doc_count }} times)</da>
                     </ul>
                     <h5>All Time View breakdown by group</h5>
                     <chart cdata="vm.viewGroupAllTimeChartData" type="'pie'"></chart>
                     <h5>All Time Search breakdown by group</h5>
                     <chart cdata="vm.searchGroupAllTimeChartData" type="'pie'"></chart>
+                    <h5>All Time Data Accessed breakdown by group</h5>
+                    <chart cdata="vm.accessedGroupAllTimeChartData" type="'pie'"></chart>
                     <h5>All Time Thomson Reuter cited</h5>
-                    <chart cdata="vm.trChartData" type="'pie'"></chart>
+                    <chart cdata="vm.trChartData" type="'portal_cited'"></chart>
                 </div>
             </div>
 

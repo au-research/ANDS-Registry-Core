@@ -79,33 +79,63 @@ class Registry_widget extends MX_Controller{
 		return $r;
 	}
 
-	private function search($query, $custom = false){
-		$q = urldecode($query);
-		$r = array();
-		$this->load->library('solr');
-		if(!$custom){
-			$filters = array('q'=>$q);
-			$this->solr->setFilters($filters);
-		}else{
-			$this->solr->setCustomQuery($q);
-		}
-		
-		$this->solr->executeSearch();
-		$result = $this->solr->getResult();
+    private function search($query, $custom = false){
+        $q = urldecode($query);
+        $r = array();
+        $this->load->library('solr');
+        if(!$custom){
+            $filters = array('q'=>$q);
+            $this->solr->setFilters($filters);
+        }else{
+            $this->solr->setCustomQuery($q);
+        }
 
-		$r['result'] = $this->solr->getResult();
-		$r['numFound'] = $this->solr->getNumFound();
+        $this->solr->executeSearch();
 
-		if($r['numFound'] > 0){
-			$r['status']=0;
-		}else{
-			$r['status']=1;
-			$r['message'] = 'No Result Found!';
-		}
-		$r['solr_header'] = $this->solr->getHeader();
-		$r['timeTaken'] = $r['solr_header']->{'QTime'} / 1000;
-		return $r;
-	}
+        $r['numFound'] = $this->solr->getNumFound();
+
+        if($r['numFound'] > 0){
+            $r['status']=0;
+            $solrResult = $this->solr->getResult();
+            if($custom){
+                $r['result'] = $this->addExtraContent($solrResult);
+            }else{
+                $r['result'] = $solrResult;
+            }
+
+        }else{
+            $r['status']=1;
+            $r['message'] = 'No Result Found!';
+        }
+        $r['solr_header'] = $this->solr->getHeader();
+        $r['timeTaken'] = $r['solr_header']->{'QTime'} / 1000;
+        return $r;
+    }
+
+
+    private function addExtraContent($solrResult)
+    {
+
+        foreach($solrResult->docs as $doc)
+        {
+            //var_dump($doc);
+            $id = $doc->id;
+
+            $this->db->select('data')
+                ->from('record_data')
+                ->where('registry_object_id',$id)
+                ->where('scheme','rif')
+                ->where('current',true)
+                ->limit(1);
+            $query = $this->db->get();
+            foreach ($query->result_array() AS $row)
+            {
+                $doc->rif = simplexml_load_string($row['data']);
+            }
+
+        }
+        return $solrResult;
+    }
 
 	function download($min=''){
 		$this->load->library('zip');

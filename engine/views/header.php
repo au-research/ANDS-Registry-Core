@@ -201,11 +201,13 @@ if(get_config_item('environment_logo')){
                       <li class=""><?php echo anchor(registry_url('administration'), 'Administration Panel');?></li>
                       <li class=""><?php echo anchor(registry_url('maintenance'), 'Maintenance Dashboard');?></li>
                       <?php  if(mod_enabled('statistics')): ?>
-                        <li class=""><?php echo anchor(apps_url('statistics'), 'Statistics');?></li>    
+                        <li class=""><?php echo anchor(apps_url('statistics'), 'Historical Statistics');?></li>
                       <?php endif; ?>
+                      
                   <?php endif; ?>
                     <?php if ($this->user->hasFunction('REGISTRY_STAFF')): ?>
                         <li class="divider"></li>
+                        <li class=""><?php echo anchor(apps_url('analytics'), 'Analytics <sup style="color:red;">new!</sup>');?></li>
                         <li class=""><?php echo anchor(registry_url('maintenance/registrySummary'), 'Registry Quality Summary');?></li>
                     <?php endif; ?> 
                     <?php if($this->user->hasFunction('SUPERUSER')): ?>

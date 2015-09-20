@@ -15,7 +15,7 @@
                     <h3 class="text-center hairline bordered animated fadeIn"> A service built on collaboration</h3>
                     <p>
                       Through engagement with the research community, Research Vocabularies Australia will grow to cover a broad spectrum of research fields - across sciences, social sciences, arts and humanities.
-                      ANDS offers several options for our partners to give feedback about vocabularies and vocabulary concepts in Research Vocabularies Australia.
+                      The Australian National Data Service (ANDS) offers several options for our partners to give feedback about vocabularies and vocabulary concepts in Research Vocabularies Australia.
                     </p>
                 </div>
             </div>
@@ -31,8 +31,7 @@
                 <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-offset-2  col-md-offset-2 col-lg-offset-2  os-animation animated fadeInUp">
                     <h3 class="text-center hairline bordered animated fadeIn">Suggest changes to a vocabulary or vocabulary concept</h3>
                     <p>
-                        The vocabulary portal includes a feature called MyVocabs, which allows for the...
-                        If you would like to suggest a change or correction to the information about a vocabulary or a concept within a vocabulary that is included in the Research Vocabularies Australia, you can log in to MyVocabs and...
+                        If you would like to suggest a change or correction to the information about a vocabulary or a concept within a vocabulary that is included in the Research Vocabularies Australia, contact <a href="mailto:services@ands.org.au">services@ands.org.au</a>.
                     </p>
                 </div>
             </div>

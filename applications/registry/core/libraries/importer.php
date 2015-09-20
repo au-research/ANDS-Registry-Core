@@ -1,10 +1,10 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 include_once("applications/registry/registry_object/models/_transforms.php");
 /**
- * 
+ *
  */
 class Importer {
-	
+
 	private $CI;
 	private $db;
 
@@ -18,7 +18,7 @@ class Importer {
 	private $start_time;
 	private $partialCommitOnly;
 	private $forcePublish; // used when changing from DRAFT to PUBLISHED (ignore the QA flags, etc)
-	private $forceDraft; 
+	private $forceDraft;
 	private $maintainStatus;
 	public $registryMode;
 	public $runBenchMark = false;
@@ -37,7 +37,7 @@ class Importer {
 	public $ingest_new_record;
 
 	public $reindexed_records;
-	
+
 	public $imported_record_keys;
 	public $affected_record_keys;
 	public $deleted_record_keys;
@@ -80,7 +80,7 @@ class Importer {
 	{
 		$this->CI =& get_instance();
 
-		// This is not a perfect science... the web server can still 
+		// This is not a perfect science... the web server can still
 		// reclaim the worker thread and terminate the PHP script execution....
 		ini_set('memory_limit', '2048M');
 		ini_set('max_execution_time',5*ONE_HOUR);
@@ -97,7 +97,7 @@ class Importer {
 
 
 	/**
-	 * 
+	 *
 	 */
 	public function commit($finalise = true)
 	{
@@ -139,7 +139,7 @@ class Importer {
 		}
 
 		// Set a a default HarvestID if necessary
-		if (is_null($this->harvestID)) 
+		if (is_null($this->harvestID))
 		{
 			$this->harvestID = "MANUAL-".time();
 		}
@@ -172,7 +172,7 @@ class Importer {
                 $payload = str_replace("&", "&amp;", $payload);
 
 
-				$continueIngest = true;				
+				$continueIngest = true;
 				// Build a SimpleXML object from the converted data
 				// We will throw an exception here if the payload isn't well-formed XML (which, by now, it should be)
 				try
@@ -203,7 +203,7 @@ class Importer {
 
 					$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
 
-					// Right then, lets start parsing each registryObject & importing! 
+					// Right then, lets start parsing each registryObject & importing!
 					foreach($sxml->xpath('//ro:registryObject') AS $registryObject)
 					{
 
@@ -290,7 +290,7 @@ class Importer {
 		if ($this->ingest_duplicate_ignore) {
 			$this->message_log[] = "Registry Object duplicates: " . $this->ingest_duplicate_ignore;
 		}
-		
+
 		if($this->CI->user->hasFunction('REGISTRY_SUPERUSER')) {
 			$this->message_log[] = "Reindexed record count: " . $this->reindexed_records;
 		}
@@ -300,7 +300,7 @@ class Importer {
 
 
 	/**
-	 * 
+	 *
 	 */
 	public function _ingestRecord($registryObject)
 	{
@@ -311,11 +311,11 @@ class Importer {
 		{
 			if (property_exists($registryObject, $class))
 			{
-				
-				$ro_xml =& $registryObject->{$class}[0];
-	
 
-				// Choose whether or not to harvest this record and whether this should overwrite 
+				$ro_xml =& $registryObject->{$class}[0];
+
+
+				// Choose whether or not to harvest this record and whether this should overwrite
 				// the existing entry or just create a new revision
 				list($reharvest, $revision_record_id) = $this->decideHarvestability($registryObject);
 
@@ -355,7 +355,7 @@ class Importer {
 						$record_owner = $this->CI->user->name() . " (" . $this->CI->user->localIdentifier() . ")";
 					}
 
-					if (is_null($revision_record_id))
+					if (is_null($revision_record_id) || $this->forceClone)
 					{
 						// We are creating a new registryObject
 						$ro = $this->CI->ro->create($this->dataSource, (string)$registryObject->key, $class, "", $this->status, "temporary_slug-" . md5((string) $registryObject->key) . "-" . time(), $record_owner, $this->harvestID);
@@ -373,13 +373,13 @@ class Importer {
 						$ro = $this->CI->ro->getByID($revision_record_id);
 
 						if (!$this->maintainStatus)
-						{	
+						{
 							// GEt rid of status change recursion on DRAFT->PUBLISHED
 							if($this->statusAlreadyChanged)
 							{
 								$ro->original_status = $this->status;
 							}
-							
+
 							// Records which have already progressed through the QA workflow will be reharvested back to existing status
 							// i.e. if the record already exists, leave it's status unchanged
 							$ro->status = $this->status;
@@ -477,7 +477,7 @@ class Importer {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function _enrichRecords($directly_affected_records = array())
 	{
@@ -506,7 +506,7 @@ class Importer {
 				}
 			}
 		}
-		
+
 		else if(is_array($this->importedRecords) && count($this->importedRecords) > 0)
 		{
 
@@ -638,7 +638,7 @@ class Importer {
 						$this->roEnrichS5Time += $this->CI->benchmark->elapsed_time('ro_enrich_s4_end','ro_enrich_s5_end');
 						$this->roEnrichS6Time += $this->CI->benchmark->elapsed_time('ro_enrich_s5_end','ro_enrich_s6_end');
 						$this->roEnrichS7Time += $this->CI->benchmark->elapsed_time('ro_enrich_s6_end','ro_enrich_end');
-					}		
+					}
 
 					unset($ro);
 					clean_cycles();
@@ -664,7 +664,7 @@ class Importer {
 
 		foreach ($this->affected_record_keys AS $ro_key)
 		{
-			
+
 			if($this->runBenchMark)
 			{
 				$this->roBuildCount++;
@@ -690,9 +690,9 @@ class Importer {
 							$this->solrTransFormCount++;
 							$this->CI->benchmark->mark('solr_transform_start');
 						}
-						
+
 						$this->queueSOLRAdd($ro->indexable_json());
-						
+
 						if($this->runBenchMark)
 						{
 							$this->CI->benchmark->mark('solr_transform_end');
@@ -704,10 +704,10 @@ class Importer {
 						$this->gcCyclesCount++;
 						$this->CI->benchmark->mark('gc_cycles_start');
 					}
-				
+
 					unset($ro);
 			//gc_collect_cycles();
-				
+
 					if($this->runBenchMark)
 					{
 						$this->CI->benchmark->mark('gc_cycles_end');
@@ -723,9 +723,9 @@ class Importer {
 		{
 			$this->CI->benchmark->mark('solr_commit_start');
 		}
-		
+
 		$this->commitSOLR();
-		
+
 		if($this->runBenchMark)
 		{
 			$this->CI->benchmark->mark('solr_commit_end');
@@ -738,7 +738,7 @@ class Importer {
 	 */
 	function _reindexRecords($specific_target_keys = array())
 	{
-		
+
 
 		$this->CI->load->model('registry_object/registry_objects', 'ro');
 		$this->CI->load->model('data_source/data_sources', 'ds');
@@ -754,20 +754,20 @@ class Importer {
 			}
 
 			foreach ($specific_target_keys AS $key)
-			{				
+			{
 				if($this->runBenchMark)
 				{
 					$this->roBuildCount++;
 					$this->CI->benchmark->mark('ro_build_start');
 				}
-				
+
 				$ro = $this->CI->ro->getPublishedByKey($key);
-				
+
 				if($this->runBenchMark)
 				{
 					$this->CI->benchmark->mark('ro_build_end');
 					$this->roBuildTime += $this->CI->benchmark->elapsed_time('ro_build_start','ro_build_end');
-				}			
+				}
 				if ($ro)
 				{
 					if($this->runBenchMark)
@@ -775,9 +775,9 @@ class Importer {
 						$this->solrTransFormCount++;
 						$this->CI->benchmark->mark('solr_transform_start');
 					}
-					
+
 					$this->queueSOLRAdd($ro->indexable_json());
-					
+
 					if($this->runBenchMark)
 					{
 						$this->CI->benchmark->mark('solr_transform_end');
@@ -790,7 +790,7 @@ class Importer {
 					$this->gcCyclesCount++;
 					$this->CI->benchmark->mark('gc_cycles_start');
 				}
-					
+
 				unset($ro);
 
 				gc_collect_cycles();
@@ -803,33 +803,33 @@ class Importer {
 
 
 			}
-			
+
 			$this->flushSOLRAdd();
-			
+
 			if($this->runBenchMark)
 			{
 				$this->CI->benchmark->mark('solr_commit_start');
 			}
-			
+
 			$this->commitSOLR();
-			
+
 			if($this->runBenchMark)
 			{
 				$this->CI->benchmark->mark('solr_commit_end');
 			}
-			
+
 			if($this->runBenchMark){
 				$this->CI->benchmark->mark('ingest_reindex_end');
 			}
 
 			return array("count"=>$this->reindexed_records, "errors"=>array());
-		}		
-		//gc_collect_cycles();	
+		}
+		//gc_collect_cycles();
 		return true;
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function decideHarvestability($registryObject)
 	{
@@ -867,9 +867,9 @@ class Importer {
 			}
 
 			if($existingRegistryObject->data_source_id == $this->dataSource->id)
-			{	
-				if ($this->statusAlreadyChanged || 
-					((isDraftStatus($this->status) && isDraftStatus($existingRegistryObject->status)) || 
+			{
+				if ($this->statusAlreadyChanged ||
+					((isDraftStatus($this->status) && isDraftStatus($existingRegistryObject->status)) ||
 					(isPublishedStatus($this->status) && isPublishedStatus($existingRegistryObject->status))))
 				{
 					// Add a new revision to this existing registry object
@@ -894,8 +894,8 @@ class Importer {
 			// Harvest this as a new registry object
 			$revision_record_id = null;
 		}
-	
-	
+
+
 		return array($reharvest, $revision_record_id);
 
 	}
@@ -903,7 +903,7 @@ class Importer {
 
 
 	/**
-	 * 
+	 *
 	 */
 	private function _executeCrosswalk()
 	{
@@ -912,7 +912,7 @@ class Importer {
 		{
 			// At this point, $this->xmlPayload is actually the native payload (which might
 			// not even be XML!) -- the crosswalk should implement a validate method (throwing
-			// an exception on failure -- the entire harvest will be aborted as a partial 
+			// an exception on failure -- the entire harvest will be aborted as a partial
 			// transform might be erroneous if assumed at this point.
 
 			// Throws an exception up if unable to validate in the payload's native schema
@@ -923,7 +923,7 @@ class Importer {
 
 			$temp_crosswalk_name = $this->crosswalk->metadataFormat();
 			unset($this->crosswalk);
-			$this->setCrosswalk($temp_crosswalk_name);
+			//$this->setCrosswalk($temp_crosswalk_name);
             $fp = fopen($this->filePath.'.xwlk', 'w');
             fwrite($fp, $this->xmlPayload);
             fclose($fp);
@@ -931,7 +931,7 @@ class Importer {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function setXML($payload)
 	{
@@ -940,7 +940,7 @@ class Importer {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function setDataSource(_data_source $data_source)
 	{
@@ -960,7 +960,7 @@ class Importer {
 
 
 	/**
-	 * 
+	 *
 	 */
 	public function setHarvestID($harvestID)
 	{
@@ -968,42 +968,10 @@ class Importer {
 		return;
 	}
 
-	/**
-	 * 
-	 */
-	public function setCrosswalk($crosswalk_metadata_format)
-	{
-        $crosswalk_identity = '';
-        if (!$crosswalk_metadata_format) { return; }
-
-        $predefinedProviderTypes = $this->CI->config->item('provider_types');
-
-        foreach($predefinedProviderTypes as $ppt)
-        {
-            if($ppt['prefix'] == $crosswalk_metadata_format)
-                $crosswalk_identity = $ppt['cross_walk'];
-        }
-
-        $crosswalks= getCrossWalks();
-		foreach ($crosswalks AS $crosswalk)
-		{
-			if ($crosswalk->metadataFormat() == $crosswalk_metadata_format || $crosswalk->identify() == $crosswalk_identity)
-			{
-				$this->crosswalk = $crosswalk;
-			}
-		}
-
-        return;
-        /*if($crosswalk_identity == '') { return;}
-		if (!$this->crosswalk)
-		{
-			throw new Exception("Unable to load crosswalk: " . $crosswalk_metadata_format);
-		}*/
-	}
 
 
 	/**
-	 * 
+	 *
 	 */
 	public function setPartialCommitOnly($bool)
 	{
@@ -1012,7 +980,7 @@ class Importer {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function validateRIFCS($xml)
 	{
@@ -1029,7 +997,7 @@ class Importer {
 		libxml_use_internal_errors(true);
 		$validation_status = $doc->schemaValidate(REGISTRY_APP_PATH . "registry_object/schema/registryObjects.xsd");
 
-		if ($validation_status === TRUE) 
+		if ($validation_status === TRUE)
 		{
 			libxml_use_internal_errors(false);
 			return TRUE;
@@ -1069,14 +1037,14 @@ class Importer {
         		$exception_message .= "    " . $error->message;
 			}
 			libxml_use_internal_errors(false);
-			throw new Exception($exception_message);	
+			throw new Exception($exception_message);
 		}
 		return $xml;
 	}
 
 
 	/**
- 	 * 
+ 	 *
  	 */
 	private function _getDefaultRecordStatusForDataSource(_data_source $data_source)
 	{
@@ -1122,6 +1090,11 @@ class Importer {
 		$this->forceDraft = TRUE;
 	}
 
+	public function forceClone()
+	{
+		$this->forceClone = TRUE;
+	}
+
 	//public function cleanSchemaLocation($string)
 	//{
 	//	return preg_replace('/ xsi:schemaLocation=".*?"/sm','', $string);
@@ -1143,7 +1116,7 @@ class Importer {
 	}
 
 	public function getBenchMarkLogs()
-	{	
+	{
 		if($this->runBenchMark)
 		{
 			$totalTime = $this->CI->benchmark->elapsed_time('ingest_start', 'ingest_end');
@@ -1204,7 +1177,7 @@ class Importer {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function getRifcsFromFeed($oai_feed)
 	{
@@ -1215,7 +1188,7 @@ class Importer {
 			$sxml = $this->_getSimpleXMLFromString($oai_feed);
 			if($sxml)
 			{
-				
+
 				@$sxml->registerXPathNamespace("oai", OAI_NAMESPACE);
 				@$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
 
@@ -1247,7 +1220,7 @@ class Importer {
 		{
 			$deletedRegistryObject = $deletedRegistryObjectList->item($i);
 			$registryObjectKey = substr($gXPath->evaluate($xs.":identifier", $deletedRegistryObject)->item(0)->nodeValue, 0, 512);
-			$this->addToDeletedList($registryObjectKey);			
+			$this->addToDeletedList($registryObjectKey);
 		}
 	}
 
@@ -1297,7 +1270,7 @@ class Importer {
 				$log .= "  $error" . NL;
 			}
 			$log .= NL;
-			
+
 		}
 
 		if ($log) return $log; else return FALSE;
@@ -1311,15 +1284,15 @@ class Importer {
 			foreach ($this->message_log AS $msg)
 			{
 				$log .= "  $msg" . NL;
-			}			
+			}
 		}
 
 		if ($log) return $log; else return FALSE;
 	}
 
 
-	/* * * * 
-	 * SOLR UPDATE FUNCTIONS 
+	/* * * *
+	 * SOLR UPDATE FUNCTIONS
 	 * * * */
 
 	var $solr_queue = array();
@@ -1374,7 +1347,7 @@ class Importer {
 		}
 		catch (Exception $e)
 		{
-			$this->error_log[] = "[INDEX] Error during reindex of registry object..." . BR . "<pre>" . nl2br($e) . "</pre>";	
+			$this->error_log[] = "[INDEX] Error during reindex of registry object..." . BR . "<pre>" . nl2br($e) . "</pre>";
 		}
 
 		$this->solr_queue = array();
@@ -1389,7 +1362,7 @@ class Importer {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function _reset()
 	{
@@ -1407,7 +1380,8 @@ class Importer {
 		$this->isImporting = false;
 		$this->solr_queue = array();
 		$this->forcePublish = false;
-		$this->forceDraft = false; 
+		$this->forceDraft = false;
+		$this->forceClone = false;
 		$this->statusAlreadyChanged = false;
 		$this->ingest_attempts = 0;
 		$this->ingest_successes = 0;

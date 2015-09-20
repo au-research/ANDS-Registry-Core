@@ -6,14 +6,14 @@ class Connections_Extension extends ExtensionBase
 
 	private $party_one_types = array('person','administrativePosition');
 	private $party_multi_types = array('group','Group');
-	
+
 	function __construct($ro_pointer)
 	{
 		parent::__construct($ro_pointer);
-	}		
-	
+	}
+
 	/**
-	 * Get a list of connections, returning the details needed to 
+	 * Get a list of connections, returning the details needed to
 	 * display the relationship:
 	 *
 	 * Business Rules:
@@ -21,21 +21,21 @@ class Connections_Extension extends ExtensionBase
 	 *
 	 * 2) If INTERNAL LINKS are enabled and `b` is related to `a`
 	 *    AND `b` and `a` are in the same data source, display the
-	 *    connection. 
+	 *    connection.
 	 *
 	 * 3) If EXTERNAL LINKS are enabled and `b` is related to `a`
 	 *    AND `b` and `a` are in different data sources, display
-	 *    the connection. 
+	 *    the connection.
 	 *
-	 * 4) If the group of `a` has a contributor page, infer and 
+	 * 4) If the group of `a` has a contributor page, infer and
 	 *    display the connection.
 	 *
 	 * 5) If this record is 'not published', then allow links to other
-	 *    'not published' records. 
+	 *    'not published' records.
 	 *
-	 * 6) If requested (flagged in getConnections()), 
+	 * 6) If requested (flagged in getConnections()),
 	 *
-	 * @return 	array ( 
+	 * @return 	array (
 	 *					array(
 	 *						origin (of inference)
 	 *						key
@@ -59,7 +59,7 @@ class Connections_Extension extends ExtensionBase
 		foreach($unordered_connections AS $connection)
 		{
 
-			// some witchcraft to disambiguate between single researchers 
+			// some witchcraft to disambiguate between single researchers
 			// and groups (based on registry object type)
 			if ($connection['class'] == "party")
 			{
@@ -97,10 +97,10 @@ class Connections_Extension extends ExtensionBase
 			{
 				if ($specific_type == "nested_collection")
 				{
-					$class_valid = ($connection['class'] == "collection" && 
-						($connection['origin'] == "EXPLICIT" && $connection['relation_type'] == "hasPart")
+					$class_valid = ($connection['class'] == "collection" &&
+						(in_array($connection['origin'],array("EXPLICIT","IDENTIFIER")) && $connection['relation_type'] == "hasPart")
 						||
-						(in_array($connection['origin'], array("REVERSE_INT","REVERSE_EXT")) && $connection['relation_type'] == "isPartOf")
+						(in_array($connection['origin'], array("REVERSE_INT","REVERSE_EXT","IDENTIFIER REVERSE",)) && $connection['relation_type'] == "isPartOf")
 					);
 				}
 				else
@@ -139,7 +139,7 @@ class Connections_Extension extends ExtensionBase
 						$ordered_connections[$connection['class']][(int)$connection['registry_object_id']] = $connection;
 						$ordered_connections[$connection['class'] . '_count']++;
 					}
-				}				
+				}
 
 			}
 		}
@@ -153,7 +153,7 @@ class Connections_Extension extends ExtensionBase
 					$ordered_connections[$name] = array_slice($list, $offset, $limit);
 					foreach($ordered_connections[$name] as &$connection){
 						$connection['description'] = $this->_getDescription($connection['registry_object_id']);
-						$connection['logo'] = $this->_getLogo($connection['registry_object_id']);					
+						$connection['logo'] = $this->_getLogo($connection['registry_object_id']);
 					}
 				}
 			}
@@ -174,7 +174,7 @@ class Connections_Extension extends ExtensionBase
 						}
 					}
 				}
-				
+
 				//build a remove list, remove records that fail to be chosen
 				foreach($matches as $title=>$ulist) {
 					$chosen = false;
@@ -208,7 +208,7 @@ class Connections_Extension extends ExtensionBase
 						}
 					}
 				}
-				
+
 				//remove records that fail to be chosen
 				foreach($list as &$conn){
 					if(in_array($conn['registry_object_id'], $remove_list)){
@@ -311,6 +311,16 @@ class Connections_Extension extends ExtensionBase
 			}
 		}
 
+		// Recheck the unordered connections and remove Draft records if allow_drafts is false
+		if ($allow_drafts==false) {
+			foreach ($unordered_connections as $key=>$row) {
+				if (!isset($row['status'])|| $row['status']!='PUBLISHED') {
+					unset($unordered_connections[$key]);
+				}
+
+			}
+		}
+
 		return $unordered_connections;
 	}
 
@@ -368,14 +378,14 @@ class Connections_Extension extends ExtensionBase
 		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type','left')
-				 ->join('registry_objects r','r.registry_object_id = ri.registry_object_id','left')			 
+				 ->join('registry_objects r','r.registry_object_id = ri.registry_object_id','left')
 				 ->where('rir.registry_object_id',$this->id)
                   ->limit($limit);
 		$query = $this->db->get();
 
 		foreach ($query->result_array() AS $row)
 		{
-			
+
 			if(($row['status'] == null || $row['status'] == 'PUBLISHED') && !in_array($row['related_object_identifier'], $processed_identifiers))
 			{
                 if($row['class'] == 'party') // avoid duplicated parties those will be merged later...
@@ -383,9 +393,9 @@ class Connections_Extension extends ExtensionBase
                     $processed_identifiers[] = $row['related_object_identifier'];
                 }
                 $row['origin'] = "IDENTIFIER";
-				if($row['class'] == null) 
+				if($row['class'] == null)
 					$row['class'] = $row['related_info_type'];
-				if($row['title'] == null) 
+				if($row['title'] == null)
 					$row['title'] = $row['related_title'];
 				if($row['relation_type'] == null || $row['relation_type'] == '')
 					$row['relation_type'] = 'hasAssociationWith';
@@ -407,7 +417,7 @@ class Connections_Extension extends ExtensionBase
 			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
-				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 
+				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')
 				 ->where('ri.registry_object_id',$this->id)
 				 ->where('r.status','PUBLISHED')
                 ->limit($limit);
@@ -417,7 +427,7 @@ class Connections_Extension extends ExtensionBase
 			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
-				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 
+				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')
 				 ->where('ri.registry_object_id',$this->id)
 				 ->where('r.data_source_id',$this->ro->data_source_id)
 				 ->where('r.status','PUBLISHED')
@@ -428,7 +438,7 @@ class Connections_Extension extends ExtensionBase
 			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
-				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')			 
+				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')
 				 ->where('ri.registry_object_id',$this->id)
 				 ->where('r.data_source_id !=',$this->ro->data_source_id)
 				 ->where('r.status','PUBLISHED')
@@ -437,7 +447,7 @@ class Connections_Extension extends ExtensionBase
 		else{
 			return $my_connections;
 		}
-		
+
 		$query = $this->db->get();
 
 		foreach ($query->result_array() AS $row)
@@ -488,7 +498,7 @@ class Connections_Extension extends ExtensionBase
 						 ->where('rr.origin =','PRIMARY')
                         ->limit($limit);
 		$query = $this->db->get();
-		
+
 		foreach ($query->result_array() AS $row)
 		{
 			$row['origin'] = "PRIMARY";
@@ -661,5 +671,5 @@ class Connections_Extension extends ExtensionBase
 		return $my_connections;
 	}
 
-	
+
 }

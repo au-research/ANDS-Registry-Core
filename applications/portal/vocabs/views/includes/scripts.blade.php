@@ -16,12 +16,12 @@
     <script src="{{ asset_url('omega/js/packages.min.js','templates') }}"></script>
     <script src="{{ asset_url('js/modified-ui-bootstrap-tpls-0.10.0.js') }}"></script>
 @else
-    <script src="{{ asset_url('js/lib.js') }}"></script>
+    <script src="{{ asset_url('js/lib.js').'?'.getReleaseVersion() }}"></script>
 @endif
 
 <script src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.js'></script>
 <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
-<script type="text/javascript" src="//researchdata.ands.org.au/apps/assets/vocab_widget/js/vocab_widget.js"></script>
+<script type="text/javascript" src="{{ base_url() }}apps/assets/vocab_widget/js/vocab_widget.js"></script>
 
 
 @if(is_dev())
@@ -32,16 +32,17 @@
     <script type="text/javascript" src="{{ asset_url('js/vocabs_search_controller.js') }}"></script>
     <script type="text/javascript" src="{{ asset_url('js/vocabs_visualise_directive.js') }}"></script>
 @else
-    <script type="text/javascript" src="{{ asset_url('js/scripts.js') }}"></script>
+    <script type="text/javascript" src="{{ asset_url('js/scripts.js').'?'.getReleaseVersion() }}"></script>
 @endif
 
 
 
 @if(isset($scripts))
     @foreach($scripts as $script)
-        <script src="{{asset_url('js/'.$script.'.js')}}"></script>
+        <script src="{{asset_url('js/'.$script.'.js').'?'.getReleaseVersion()}}"></script>
     @endforeach
 @endif
+<script type="text/javascript" src="https://jira.ands.org.au/s/d41d8cd98f00b204e9800998ecf8427e/en_AUc8oc9c-1988229788/6265/77/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d9610dcf"></script>
 
 @if(is_dev())
     <!-- LESS.JS for development only-->

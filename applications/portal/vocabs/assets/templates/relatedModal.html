@@ -39,9 +39,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="form-group" ng-if="type!='publisher'">
-                            <label for="">Relation</label>
-
+                        <div class="form-group">
+                            <label for="">Relationship</label>
                             <div class="input-group" ng-repeat="relationship in entity.relationship track by $index">
                                 <span class="input form-control uneditable-input" placeholder="Identifier">[[ relationship | languageFilter:relatedEntityRelations ]]</span>
 								<span class="input-group-btn">
@@ -55,20 +54,19 @@
                             <div class="input-group">
                                 <span class="caret caret-for-input-suggestion"></span>
                                 <input type="text" class="form-control input-suggestion" placeholder="Relationship" ng-model="newrel"
-                                    ng-focus="onFocus($event)"
-                                    typeahead="rel.value as rel.text for rel in getRelation()" typeahead-min-length="0"
-                                    typeahead-on-select="list_add('relationship', newrel)">
+                                       ng-focus="onFocus($event)"
+                                       typeahead="rel.value as rel.text for rel in getRelation()">
 								<span class="input-group-btn">
 									<button class="btn btn-primary" type="button"
-                                            ng-click="list_add('relationship', newrel)"><i class="fa fa-plus"></i> Add
-                                        Relationship
+                                            ng-click="list_add('relationship', newrel);newrel='';"><i class="fa fa-plus"></i> Add
+
                                     </button>
 								</span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="">Identifiers</label>
-
+                            <p><span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i></span> At least 1 identifier is highly recommended </p>
                             <div class="input-group" ng-repeat="ident in entity.identifiers track by $index">
                                 <input type="text" class="form-control" placeholder="Identifier" ng-model="ident.url">
 								<span class="input-group-btn">

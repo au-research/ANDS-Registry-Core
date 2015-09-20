@@ -5,7 +5,7 @@
         <div class="panel swatch-white">
             <div class="panel-body">
                 <header> <div class="header_title">
-                    <?php 
+                    <?php
 
                         $logo = false;
 
@@ -29,7 +29,7 @@
                   <h1 class="big hairline os-animation animated fadeIn">{{$group['title']}}</h1>
                     </div>  </header>
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -69,8 +69,8 @@
     <div class="panel swatch-white">
         <div class="panel-heading">Research Data Profile</div>
         <div class="panel-body">
-            To date, {{$group['title']}} has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a> in Research Data Australia, which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}. {{sizeof($group['groups'])}} research group(s) 
-            have been actively involved in collecting data and creating metadata records for the data.  All the data records, people, projects, grants and services associated with {{$group['title']}} 
+            To date, {{$group['title']}} has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a> in Research Data Australia, which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}. {{sizeof($group['groups'])}} research group(s)
+            have been actively involved in collecting data and creating metadata records for the data.  All the data records, people, projects, grants and services associated with {{$group['title']}}
             can be accessed from the box on the right hand side of this page.
         </div>
         @if($group['has_custom_data'])
@@ -97,14 +97,14 @@
         <div class="panel-body widget_tag_cloud">
             <div class="tag-cloud">
                 <ul>
-                    <?php 
+                    <?php
                         if(sizeof($group['facet']['subjects'] > 50)) {
                             $orig = sizeof($group['facet']['subjects']);
                         }
-                        if($this->input->get('m')!='allsubjects') array_splice($group['facet']['subjects'], 50); 
+                        if($this->input->get('m')!='allsubjects') array_splice($group['facet']['subjects'], 50);
                     ?>
                     @foreach($group['facet']['subjects'] as $subject)
-                        <li><a href="{{base_url()}}search#!/group={{$group['title']}}/subject_value_resolved={{$subject['name']}}">{{$subject['name']}} <span>({{$subject['num']}})</span></a></li>
+                        <li><a href="{{base_url()}}search#!/group={{$group['title']}}/subject_value_resolved={{$subject['name']}}">{{ ucwords(strtolower($subject['name'])) }} <span>({{$subject['num']}})</span></a></li>
                     @endforeach
                 </ul>
                 @if($orig > sizeof($group['facet']['subjects']))
@@ -165,12 +165,21 @@
 
 @if(isset($group['latest_collections']))
 <div class="panel swatch-white">
-    <div class="panel-heading">Last 5 Data Records Added</div>
+    <?php
+    if($group['counts']>4 ){
+        $count = 5;
+    }else{
+        $count=$group['counts'];
+    } ?>
+    <div class="panel-heading">Last {{$count}} Data Records Added</div>
     <div class="panel-body">
         <ul class="listy">
             @foreach($group['latest_collections'] as $gr)
                 <li><a href="{{base_url()}}{{$gr['slug']}}/{{$gr['id']}}">{{$gr['title']}}</a></li>
             @endforeach
+            <?php if($group['counts']>5) { ?>
+            <li><a href="{{ base_url() }}search#!/group={{ $group['title'] }}/class=collection">View All Collections</a></li>
+           <?php ;} ?>
         </ul>
     </div>
 </div>

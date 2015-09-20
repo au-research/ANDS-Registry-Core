@@ -8,5 +8,7 @@
         var vm = this;
         vm.query = '';
         vm.orgs = orgs;
+
+        vm.apps_url = apps_url;
     }
 })();

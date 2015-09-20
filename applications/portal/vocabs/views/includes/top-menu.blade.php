@@ -23,7 +23,7 @@
                         <li><a href="{{portal_url('vocabs/page/feedback')}}">Give feedback on vocabularies</a></li>
                     </ul></li>
 				@if(!$this->user->loggedIn())
-					<li><a href="{{ get_vocab_config('auth_url') }}login?redirect={{ current_url() }}#?redirect={{ current_url() }}#/" class="login_btn">My Vocabs Login</a></li>
+					<li><a href="{{ get_vocab_config('auth_url') }}login?redirect={{ portal_url('vocabs/myvocabs') }}#?redirect={{ portal_url('vocabs/myvocabs') }}#/" class="login_btn">My Vocabs Login</a></li>
 				@else
 					<li><a href="{{ portal_url('vocabs/myvocabs') }}">My Vocabs</a></li>
 				@endif
@@ -56,3 +56,4 @@
 		</div>
 	</div>
 </div>
+<button class="yellow_button feedback_button">Feedback</button>
