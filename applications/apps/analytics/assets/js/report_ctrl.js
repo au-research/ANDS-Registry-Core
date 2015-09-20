@@ -120,6 +120,12 @@
                 vm.doiActivityChartData = {
                     labels:[], data:[]
                 }
+				$log.debug(data)
+					if(data.display){
+						vm.doiUser = true
+					}else{
+						vm.doiUser = false
+					}
                 angular.forEach(data, function(doi){
                     angular.forEach(doi, function(obj, index){
                         if (vm.doiActivityChartData.labels.indexOf(obj.activity) > -1) {

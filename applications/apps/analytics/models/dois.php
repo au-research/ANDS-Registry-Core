@@ -46,7 +46,13 @@ class Dois extends CI_Model
     public function getDOIActivityStat($filters)
     {
         $result = array();
-
+	
+		if($this->user->hasFunction('DOI_USER')){
+			$result['display'] = true;
+		}else{
+			$result['display'] = false;
+		}
+		
         if (isset($filters['doi_app_id'])) {
             foreach ($filters['doi_app_id'] as $app_id) {
                 $query = $this->doi_db->get_where('doi_client', ['app_id'=>$app_id])->first_row(true);
@@ -90,6 +96,7 @@ class Dois extends CI_Model
 
         }
 
+	
         return $result;
     }
 

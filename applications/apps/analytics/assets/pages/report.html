@@ -81,7 +81,7 @@
                 </div>
             </div>
 
-            <div class="widget-box">
+            <div class="widget-box" ng-if="vm.doiUser">
                 <div class="widget-title">
                     <h5>Digital Object Identifiers Analytics</h5>
                 </div>
@@ -102,7 +102,7 @@
                         <div ng-repeat="report in vm.linkCheckerReport" style="max-height:200px;overflow:auto">
                             <pre>{{ report }}</pre>
                         </div>
-                        <a href="" class="btn btn-primary">Re-run link checker report</a>
+                       <!-- <a href="" class="btn btn-primary">Re-run link checker report</a> -->
                     </div>
 
                 </div>
