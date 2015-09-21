@@ -8,6 +8,13 @@
 					<div class="panel swatch-white">
 						<div class="panel-heading">My Vocabs</div>
 						<div class="panel-body">
+                            <div align="center">
+                                <p class="small center"> <span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i></span>
+                                    Please review the <a href="https://documentation.ands.org.au/display/DOC/Research+Vocabularies+Australia+participant+agreement" target="_blank">Research Vocabularies Australia participant agreement</a> before you proceed.<br />
+                                    If you have questions, please email <a href="mailto:services.ands.org.au">services.ands.org.au</a>.
+                                </p>
+
+                            </div>
                             @if($this->user->affiliations())
 							<a href="{{ portal_url('vocabs/add') }}" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Add a new vocabulary from PoolParty</a>
                             @endif
