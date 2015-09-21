@@ -1201,6 +1201,9 @@ function initSubjectWidget(elem){
 			style: {classes: 'ui-tooltip-shadow ui-tooltip-bootstrap ui-tooltip-large'}
 		});
 	}
+    if(vocab == 'GCMD'){
+        $(vocab_value).vocab_widget({mode:'search', repository:'gcmd-sci', target_field: 'label'});
+    }
 }
 
 function initMapWidget(container){
