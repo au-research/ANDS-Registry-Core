@@ -135,7 +135,7 @@
 								<div class="input-group">
 									<input type="text" class="form-control" placeholder="New Top Concept" ng-model="newTopConcept">
 									<span class="input-group-btn">
-										<button class="btn btn-primary" type="button" ng-click="addtolist('top_concept', newTopConcept)"><i class="fa fa-plus"></i> Add</button>
+										<button class="btn btn-primary" type="submit" ng-click="addtolist('top_concept', newTopConcept)"><i class="fa fa-plus"></i> Add</button>
 									</span>
 								</div>
 							</form>
@@ -162,7 +162,7 @@
 								<div class="input-group">
                                     <select name="vlanguage" id="vLanguage" class="form-control caret-for-select" placeholder="Select a language" ng-options="lang.value as lang.text for lang in langs" ng-model="newValue.language"><option value="">Select a language</option></select>
 									<span class="input-group-btn">
-										<button class="btn btn-primary" type="button" ng-click="addtolist('language', newValue.language)"><i class="fa fa-plus"></i> Add</button>
+										<button class="btn btn-primary" type="submit" ng-click="addtolist('language', newValue.language)"><i class="fa fa-plus"></i> Add</button>
 									</span>
 								</div>
 
@@ -198,7 +198,7 @@
                                     <label for="">Subject Label</label>
                                     <input type="text" class="form-control" placeholder="Subject Label" ng-model="newValue.subject.subject">
                                 </div>
-								<button class="btn btn-primary" ng-submit="addtolist('subjects', newValue.subject)"><i class="fa fa-plus"></i> Add Subject</button>
+								<button class="btn btn-primary" type="submit" ng-submit="addtolist('subjects', newValue.subject)"><i class="fa fa-plus"></i> Add Subject</button>
 							</form>
 						</div>
 					</div>
