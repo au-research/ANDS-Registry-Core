@@ -291,7 +291,8 @@ class Summary extends CI_Model
             ->where(
                 array(
                     'registry_objects.data_source_id' => $dsid,
-                    'registry_object_attributes.attribute' => 'group'
+                    'registry_object_attributes.attribute' => 'group',
+                    'registry_objects.status' => 'PUBLISHED'
                 )
             )
             ->get();
