@@ -864,7 +864,8 @@ class Vocab_service extends MX_Controller {
 	 */
 	public function __construct()
 	{
-		parent::__construct();
+        redirect("https://vocabs.ands.org.au");
+        exit();
 	}
 	
 }
