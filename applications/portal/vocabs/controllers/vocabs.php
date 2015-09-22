@@ -363,12 +363,13 @@ class Vocabs extends MX_Controller
                         break;
                 }
             }
-
-            //CC-1298 If there's no search term, order search result by title asc
-            if (!isset($filters['q']) || trim($filters['q']) == '') {
-                $this->solr->setOpt('sort', 'title_sort asc');
-            }
         }
+            //CC-1298 If there's no search term, order search result by title asc
+        if (!$filters || !isset($filters['q']) || trim($filters['q']) == '') {
+            $this->solr->setOpt('sort', 'title_sort asc')
+                ->setOpt('rows', '250');
+        }
+
         // $this->solr->setFilters($filters);
         $result = $this->solr->executeSearch(true);
 
