@@ -320,55 +320,55 @@ class Vocabs extends MX_Controller
              ->setFacetOpt('field', 'licence')
              ->setFacetOpt('sort', 'index asc')
              ->setFacetOpt('mincount', '1');
+        if($filters){
+            //highlighting
+            $this->solr
+                 ->setOpt('hl', 'true')
+                 ->setOpt('hl.fl', '*')
+                 ->setOpt('hl.simple.pre', '&lt;b&gt;')
+                 ->setOpt('hl.simple.post', '&lt;/b&gt;')
+                 ->setOpt('hl.snippets', '2');
 
-        //highlighting
-        $this->solr
-             ->setOpt('hl', 'true')
-             ->setOpt('hl.fl', '*')
-             ->setOpt('hl.simple.pre', '&lt;b&gt;')
-             ->setOpt('hl.simple.post', '&lt;/b&gt;')
-             ->setOpt('hl.snippets', '2');
+            //search definition
+            $this->solr
+                 ->setOpt('defType', 'edismax')
+                 ->setOpt('rows', '250')
+                 ->setOpt('q.alt', '*:*')
+                 ->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001 concept_search^0.02 publisher^0.5');
 
-        //search definition
-        $this->solr
-             ->setOpt('defType', 'edismax')
-             ->setOpt('rows', '250')
-             ->setOpt('q.alt', '*:*')
-             ->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001 concept_search^0.02 publisher^0.5');
-
-        foreach ($filters as $key => $value) {
-            switch ($key) {
-                case "q":
-                    if ($value != '') {
-                        $this->solr->setOpt('q', $value);
-                    }
-
-                    break;
-                case 'subjects':
-                case 'publisher':
-                case 'access':
-                case 'format':
-                case 'language':
-                case 'licence':
-                    if (is_array($value)) {
-                        $fq_str = '';
-                        foreach ($value as $v) {
-                            $fq_str .= ' ' . $key . ':("' . $v . '")';
+            foreach ($filters as $key => $value) {
+                switch ($key) {
+                    case "q":
+                        if ($value != '') {
+                            $this->solr->setOpt('q', $value);
                         }
 
-                        $this->solr->setOpt('fq', $fq_str);
-                    } else {
-                        $this->solr->setOpt('fq', '+' . $key . ':("' . $value . '")');
-                    }
-                    break;
+                        break;
+                    case 'subjects':
+                    case 'publisher':
+                    case 'access':
+                    case 'format':
+                    case 'language':
+                    case 'licence':
+                        if (is_array($value)) {
+                            $fq_str = '';
+                            foreach ($value as $v) {
+                                $fq_str .= ' ' . $key . ':("' . $v . '")';
+                            }
+
+                            $this->solr->setOpt('fq', $fq_str);
+                        } else {
+                            $this->solr->setOpt('fq', '+' . $key . ':("' . $value . '")');
+                        }
+                        break;
+                }
+            }
+
+            //CC-1298 If there's no search term, order search result by title asc
+            if (!isset($filters['q']) || trim($filters['q']) == '') {
+                $this->solr->setOpt('sort', 'title_sort asc');
             }
         }
-
-        //CC-1298 If there's no search term, order search result by title asc
-        if (!isset($filters['q']) || trim($filters['q']) == '') {
-            $this->solr->setOpt('sort', 'title_sort asc');
-        }
-
         // $this->solr->setFilters($filters);
         $result = $this->solr->executeSearch(true);
 
