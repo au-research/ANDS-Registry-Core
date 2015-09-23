@@ -165,6 +165,9 @@
 										<button class="btn btn-primary" type="submit" ng-click="addtolist('language', newValue.language)"><i class="fa fa-plus"></i> Add</button>
 									</span>
 								</div>
+								<div class="form-group has-error" ng-show="vocab.language === undefined || vocab.language.length == 0">
+									<p class="help-block">At least one language must be provided.</p>
+								</div>
 
 							</form>
 						</div>
@@ -199,6 +202,9 @@
                                     <input type="text" class="form-control" placeholder="Subject Label" ng-model="newValue.subject.subject">
                                 </div>
 								<button class="btn btn-primary" type="submit" ng-submit="addtolist('subjects', newValue.subject)"><i class="fa fa-plus"></i> Add Subject</button>
+								<div class="has-error" ng-show="vocab.subjects.length == 0">
+									<p class="help-block">At least one subject must be provided.</p>
+								</div>
 							</form>
 						</div>
 					</div>
@@ -261,6 +267,9 @@
 								</ul>
 							</div>
 
+							<div class="has-error" ng-show="vocab.related_entity === undefined || (vocab.related_entity | filter:getPublishers).length == 0">
+								<p class="help-block">At least one publisher must be provided.</p>
+							</div>
 						</div>
 					</div>
 

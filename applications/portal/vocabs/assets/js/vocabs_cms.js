@@ -347,6 +347,19 @@
             return $scope.error_message == false;
         };
 
+        /**
+         * Filter for finding publishers. Used for instant validation.
+         */
+        $scope.getPublishers = function (relEntity) {
+            var hasPublisher = false;
+            if (relEntity.relationship) {
+                angular.forEach(relEntity.relationship, function (rel) {
+                    if (rel == 'publishedBy') hasPublisher = true;
+                });
+            }
+            return hasPublisher;
+        };
+
         $scope.relatedmodal = function (action, type, obj) {
             var modalInstance = $modal.open({
                 templateUrl: base_url + 'assets/vocabs/templates/relatedModal.html',
