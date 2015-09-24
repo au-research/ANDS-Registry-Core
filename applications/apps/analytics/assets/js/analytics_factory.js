@@ -11,6 +11,8 @@
             getEvents: getEvents,
             getOrg: getOrg,
             getStat: getStat,
+            getUser: getUser,
+
             allTimeStats: function(filters){
                 var ff = {};
                 angular.copy(filters, ff);
@@ -18,6 +20,12 @@
                 return getSummaryData(ff);
             }
         };
+
+        function getUser() {
+               return $http.get(apps_url+'analytics/getUser')
+                .then(returnRaw)
+                .catch(handleError);
+        }
 
         function getOrg(id) {
             var params = id ? '?role_id='+id : '';

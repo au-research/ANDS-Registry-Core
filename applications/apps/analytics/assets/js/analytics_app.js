@@ -13,6 +13,11 @@
                 controller: 'mainCtrl',
                 controllerAs: 'vm',
                 resolve: {
+
+                    superUser : function(analyticFactory) {
+                        return analyticFactory.getUser();
+                    },
+
                     orgs: function(analyticFactory) {
                         return analyticFactory.getOrg();
                     }

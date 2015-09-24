@@ -84,6 +84,15 @@ class Analytics extends MX_Controller
         echo json_encode($result);
     }
 
+    public function getUser(){
+        if($this->user->isSuperAdmin()){
+            $superUser="TRUE";
+        }else{
+            $superUser=null;
+        }
+        echo json_encode($superUser);
+    }
+
     public function getRO($id)
     {
         $this->output->set_header('Content-type: application/json');
