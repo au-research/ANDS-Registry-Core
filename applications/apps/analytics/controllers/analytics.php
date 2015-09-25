@@ -86,11 +86,12 @@ class Analytics extends MX_Controller
 
     public function getUser(){
         if($this->user->isSuperAdmin()){
-            $superUser="TRUE";
+           // var_dump($this->user);
+            $superUser=true;
         }else{
-            $superUser=null;
+            $superUser=false;
         }
-        echo json_encode($superUser);
+        echo $superUser;
     }
 
     public function getRO($id)

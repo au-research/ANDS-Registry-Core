@@ -42,8 +42,9 @@
         <script src="{{asset_url('js/'.$script.'.js').'?'.getReleaseVersion()}}"></script>
     @endforeach
 @endif
-<script type="text/javascript" src="https://jira.ands.org.au/s/d41d8cd98f00b204e9800998ecf8427e/en_AUc8oc9c-1988229788/6265/77/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d9610dcf"></script>
-
+<!--<script type="text/javascript" src="https://jira.ands.org.au/s/d41d8cd98f00b204e9800998ecf8427e/en_AUc8oc9c-1988229788/6265/77/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d9610dcf"></script>
+-->
+<script type="text/javascript" src="https://jira.ands.org.au/s/01fd9bb1ce5277a93ad5fbd528238627-T/en_UK-6dwrtz/64021/60/1.4.25/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs.js?locale=en-UK&collectorId=0d307b22"></script>
 @if(is_dev())
     <!-- LESS.JS for development only-->
     <script>

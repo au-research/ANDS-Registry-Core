@@ -29,7 +29,7 @@
                 </div>
             </form>
         </div>
-        <div class="span6"ng-if="vm.superUser">
+        <div class="span6"ng-if="vm.superUser==true">
             <span class="pull-right">
                 <a href="#/masterview" class="btn btn-primary">Masterview</a>
                 <a href="{{ vm.apps_url }}analytics/getOrg/csv-download " class="btn">Export to CSV</a>
