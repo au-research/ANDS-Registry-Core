@@ -7,7 +7,7 @@
 
     function versionCtrl($scope, $modalInstance, $log, $upload, version, action, vocab) {
         $log.debug(action);
-        $scope.versionStatuses = ['current', 'superseded', 'deprecated'];
+        $scope.versionStatuses = ['current', 'superseded'];
         $scope.vocab = vocab;
         $scope.version = version ? version : {provider_type: false};
         $scope.action = version ? 'save' : 'add';
