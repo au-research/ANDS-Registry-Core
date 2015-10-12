@@ -517,8 +517,18 @@ class _vocabulary
             }
         } else {
             //add new
-            //check if there's an existing vocab with the same slug in draft state
+
             $slug = $this->makeSlug($this->prop['title']);
+
+            //CC-1460
+            //check if there's an existing vocab with the same slug in published state
+            $result = $db->get_where('vocabularies', array('slug'=> $slug, 'status' => 'published'));
+            if ($result->num_rows() > 0) {
+                throw new Exception('Another published vocabulary already has this slug.');
+                return false;
+            }
+
+            //check if there's an existing vocab with the same slug in draft state
             if (isset($this->prop['status']) && $this->prop['status'] == 'draft') {
                 $result = $db->get_where('vocabularies', array('slug' => $slug, 'status' => 'draft'));
                 if ($result->num_rows() > 0) {
