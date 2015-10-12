@@ -139,7 +139,7 @@ app.factory('search_factory', function($http, $log){
 					}
 				});
 			}
-		
+
 			return this.filters;
 		},
 
@@ -237,7 +237,7 @@ app.factory('search_factory', function($http, $log){
 			});
 
 			// $log.debug(result.facet_counts.facet_fields.earliest_year);
-			
+
 
 			// $log.debug('orderedfacet', orderedfacets);
 			// $log.debug('facets', facets);
@@ -296,6 +296,11 @@ app.factory('search_factory', function($http, $log){
 					value = decodeURIComponent(value);
 					value = Number(value.replace(/[^0-9\.-]+/g,""));
 				}
+
+				if (term=='subject_value_resolved') {
+					value = decodeURIComponent(value);
+				}
+
 				if(term && value && term!='' && value!=''){
 
 					if(filters[term]) {
@@ -320,7 +325,7 @@ app.factory('search_factory', function($http, $log){
 			//auto switch to activity search in grants
 			if(location.href.indexOf('grants')>-1) {
 				filters['class'] = 'activity';
-				
+
 			}
 
 			if(filters['class']=='activity' && location.href.indexOf('search')>-1) {
