@@ -6,8 +6,30 @@
  * The dispatcher catches all requests that pass through the (:any) filter
  * in the routes.php configuration for this application.
  *
+ * This controller is primarily used for the API application of the software
+ * and should not be reused for any other purpose
+ *
+ * Support the following URL structure
+ * http://api.ands.org.au/
+ * {optional:api}/
+ * {optional:version}/
+ * {module}/
+ * {submodule}/
+ * {object_identifier}/
+ * {object_module}/
+ * {optional:object_submodule}/
+ * ?api_key={api_key}&{PARAMS}
+ *
+ * eg:
+ * http://localhost/
+ * http://localhost/v1.0/
+ * http://localhost/registry/
+ * http://localhost/v1.0/registry/
+ * http://localhost/registry/object/1234
+ * http://localhost/registry/object/1234/relationships
  *
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @link https://intranet.ands.org.au/display/~mnguyen/api.ands.org.au
  */
 class Dispatcher extends MX_Controller
 {
@@ -15,13 +37,27 @@ class Dispatcher extends MX_Controller
     private $formatter;
     private $default_format = 'json';
 
+    /**
+     * Class construction
+     * Sets the default header to the default formatting
+     */
     public function __construct()
     {
         parent::__construct();
-        $this->output->set_header('Content-type: application/json');
+        $this->output->set_content_type('application/json');
         set_exception_handler('json_exception_handler');
     }
 
+    /**
+     * _remap magic function
+     * Deal with the URL parameters and direct the request to the right
+     * handler
+     * @todo    API Key restriction and authenticating
+     * @todo    Logging
+     * @param   string $method The primary method called
+     * @param   array  $params The URL parameters
+     * @return  response
+     */
     public function _remap($method, $params = array())
     {
         // Put the method back together and try and locate a matching controller
@@ -33,13 +69,16 @@ class Dispatcher extends MX_Controller
         }
 
         //check for versions
+        /**
+         * @todo regex for matching version number
+         */
         if (strpos($params[0], "v") !== false) {
             $api_version = $params[0];
             array_shift($params);
         } else {
             //use latest version from application directive
             $directives = $this->config->item('application_directives');
-            if ($directives['portal'] && $directives['portal']['api_version']) {
+            if ($directives['portal'] && isset($directives['portal']['api_version'])) {
                 $api_version = $directives['portal']['api_version'];
             } else {
                 $api_version = "v1.0"; //default
@@ -54,9 +93,11 @@ class Dispatcher extends MX_Controller
             $format = isset($_GET['format']) ? $_GET['format'] : false;
         }
 
-        //check for formatting in method
-        //in the form of module.format
-        //eg: registry.xml
+        /**
+         * check for formatting in method
+         * in the form of module.format
+         * eg: registry.xml
+         */
         if (!$format) {
             if (isset($params[0]) && strpos($params[0], ".")) {
                 $called = explode(".", $params[0]);
@@ -67,14 +108,20 @@ class Dispatcher extends MX_Controller
             }
         }
 
-        //check for formatting in global config
-        //else use the default formatting option specified in this file
+        /**
+         * check for formatting in global config
+         * else use the default formatting option specified in this file
+         */
         if (!$format) {
             $format = $this->config->item('api_default_format') ? $this->config->item('api_default_format') : $this->default_format;
         }
 
+        //obtain the formatter
         $this->formatter = $this->getFormater($format);
-        // set_exception_handler($format.'_exception_handler');
+        $this->output->set_content_type($this->formatter->output_mimetype());
+        set_exception_handler(function($exception) {
+            $this->formatter->error($exception->getMessage());
+        });
 
         //check and require API Key only if method is not index (default)
         $api_key = $this->input->get('api_key') ? $this->input->get('api_key') : false;
@@ -82,6 +129,7 @@ class Dispatcher extends MX_Controller
             $api_key = isset($_GET['api_key']) ? $_GET['api_key'] : false;
         }
 
+        //throw exception if there's no API Key provided
         if (!$api_key && $method != 'index') {
             throw new Exception('An API Key is required to access this service');
         }
@@ -89,18 +137,24 @@ class Dispatcher extends MX_Controller
         //setting api version for the formatter for display purpose
         $this->formatter->set_api_version($api_version);
 
+        //SETUP FINISHED
+        //Time to do some real routing process
+        ob_start();
         //home page index
         if (sizeof($params) == 1 && $params[0] == 'index') {
             $this->index($api_key, $api_version, $params);
-            return;
         } else {
             //finally route the request
             $this->route($api_key, $api_version, $params);
-            return;
         }
-
+        $this->output->set_output(ob_get_clean());
     }
 
+    /**
+     * Returns the formatter for use with the response
+     * @param  string $format json|xml
+     * @return formatter
+     */
     public function getFormater($format)
     {
         $formatter = null;
@@ -120,6 +174,14 @@ class Dispatcher extends MX_Controller
         return $formatter;
     }
 
+    /**
+     * Primary index function for use when access the root
+     * Welcome messages and instructions
+     * @param  string $api_key
+     * @param  string $api_version
+     * @param  array $params
+     * @return response
+     */
     public function index($api_key, $api_version, $params)
     {
         $response = [
@@ -128,9 +190,18 @@ class Dispatcher extends MX_Controller
         $this->formatter->display($response);
     }
 
+    /**
+     * Primary routing function to call the handler located in directories
+     * eg registry handler is located in /applications/api/registry/
+     * All handler must have ANDS as a namespace
+     *
+     * @param  string $api_key
+     * @param  string $api_version
+     * @param  array $params
+     * @return response
+     */
     public function route($api_key, $api_version, $params)
     {
-        // set_exception_handler($this->formatter->error);
         try {
             $namespace = 'ANDS';
             $class_name = $params[0].'_api';

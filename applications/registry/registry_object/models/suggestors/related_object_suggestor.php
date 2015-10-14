@@ -1,5 +1,5 @@
 <?php
-require_once(APP_PATH. 'registry_object/models/_GenericSuggestor.php');
+require_once(REGISTRY_APP_PATH. 'registry_object/models/_GenericSuggestor.php');
 
 /**
  * Class Related object Suggestor
@@ -171,9 +171,9 @@ class Related_object_suggestor extends _GenericSuggestor
             ->setOpt('fq', '-id:'.$this->ro->id)
             ->setOpt('fq', 'class:collection')
             ->setOpt('defType', 'edismax');
-        
+
         $result = $ci->solr->executeSearch(true);
-                
+
         return $result;
     }
 

@@ -4,15 +4,26 @@
 
 require_once APP_PATH . 'interfaces/_interface.php';
 
+/**
+ * Formatter for XML interface
+ * for use with the API application
+ *
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
 class XMLInterface extends FormatHandler
 {
-    public $params, $options, $formatter;
 
-    public function __construct() {
-        $ci =& get_instance();
+    public function __construct()
+    {
+        $ci = &get_instance();
         $ci->output->set_header('Content-type: application/xml');
     }
 
+    /**
+    * display a normal message
+    * @param  mixed $payload
+    * @return application/xml
+    */
     public function display($payload)
     {
         echo "<?xml version=\"1.0\"?>" . NL;
@@ -21,6 +32,11 @@ class XMLInterface extends FormatHandler
         echo "</response>";
     }
 
+    /**
+    * display an error message
+    * @param  mixed $payload
+    * @return application/xml
+    */
     public function error($message)
     {
         echo '<?xml version="1.0" ?>' . NL;
@@ -29,11 +45,20 @@ class XMLInterface extends FormatHandler
         echo '</response>';
     }
 
+    /**
+     * Application mimetype
+     * @return string
+     */
     public function output_mimetype()
     {
         return 'application/xml';
     }
 
+    /**
+     * Transform an object to XML
+     * @param  mixed $obj
+     * @return xml
+     */
     private function json_to_xml($obj)
     {
         $str = "";
