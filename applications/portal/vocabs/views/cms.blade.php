@@ -266,15 +266,6 @@
 					<div class="panel swatch-gray">
 						<div class="panel-heading">Related
 							<span ng-bind-html="confluenceTip('RelatedMetadata')"></span>
-						<!-- a href="" tip="#RelatedTip"><span class="fa fa-info-circle" style="color: #17649a; font-size: 13px" aria-hidden="true"></span></a>
-						<div id="RelatedTip" style="display: none;">
-						You may provide information about entities related to your vocabulary, including parties, services and other vocabularies.
-						<ul>
-						<li>Party: An individual or organisation related to the vocabulary. At least one Party of type “Publisher” is required.</li>
-						<li>Service: A database or collection of resources which may use or reference the vocabulary.</li>
-						<li>Vocabulary: A vocabulary related to the vocabulary.</li>
-						</ul>
-						</div -->
 						</div>
 						<div class="panel-body">
 							<table class="table">
