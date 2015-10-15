@@ -73,40 +73,56 @@
 						<!-- <div class="panel-heading">Vocabulary Metadata</div> -->
 						<div class="panel-body">
 							<div class="form-group" ng-class="{ 'has-error' : form.cms.title.$invalid }">
-								<label for="">Vocabulary Title</label>
+								<label for="">Vocabulary Title
+									<span ng-bind-html="confluenceTip('VocabularyTitle')"></span>
+								</label>
 								<input type="text" required class="form-control" ng-model="vocab.title" name="title" placeholder="Vocabulary Title">
 								<p ng-show="form.cms.title.$invalid" class="help-block">Vocabulary Title is required.</p>
 							</div>
 							<div class="form-group">
-								<label for="">Vocabulary Acronym</label>
+								<label for="">Vocabulary Acronym
+									<span ng-bind-html="confluenceTip('VocabularyAcronym')"></span>
+								</label>
 								<input type="text" class="form-control" ng-model="vocab.acronym" name="acronym" placeholder="Vocabulary Acronym">
 							</div>
 							<div class="form-group" ng-class="{ 'has-error' : form.cms.description.$invalid }">
-								<label for="">Vocabulary Description</label>
+								<label for="">Vocabulary Description
+									<span ng-bind-html="confluenceTip('VocabularyDescription')"></span>
+								</label>
 								<textarea class="form-control" ng-model="vocab.description" placeholder="Vocabulary Description" rows="10" required name="description"></textarea>
 								<p ng-show="form.cms.description.$invalid" class="help-block">Vocabulary Description is required.</p>
 							</div>
 							<div class="form-group">
-								<label for="">Vocabulary Licence</label>
+								<label for="">Vocabulary Licence
+									<span ng-bind-html="confluenceTip('VocabularyLicence')"></span>
+								</label>
 								<select name="" id="" class="form-control caret-for-select" placeholder="vocab Licence" ng-options="lic for lic in licence" ng-model="vocab.licence"><option value="">No selection</option></select>
 							</div>
 
 							<div class="form-group" ng-class="{ 'has-error' : form.cms.creation_date.$invalid }">
-								<label for="">Vocabulary Creation Date</label>
+								<label for="">Vocabulary Creation Date
+									<span ng-bind-html="confluenceTip('VocabularyCreationDate')"></span>
+								</label>
 							    <input type="text" class="form-control" required name="creation_date" ng-model="vocab.creation_date" placeholder="Vocabulary Creation Date">
 								<p ng-show="form.cms.creation_date.$invalid" class="help-block">Vocabulary Creation Date is required.</p>
 							</div>
 							<div class="form-group">
-								<label for="">Revision Cycle</label>
+								<label for="">Revision Cycle
+									<span ng-bind-html="confluenceTip('RevisionCycle')"></span>
+								</label>
 								<input type="text" class="form-control" ng-model="vocab.revision_cycle" placeholder="Revision Cycle">
 							</div>
 							<div class="form-group">
-								<label for="">Note</label>
+								<label for="">Note
+									<span ng-bind-html="confluenceTip('Note')"></span>
+								</label>
 								<textarea class="form-control" ng-model="vocab.note" placeholder="Notes" rows="10"></textarea>
 							</div>
 							@if(null!=$this->user->affiliations())
 							<div class="form-group"  ng-class="{ 'has-error' : form.cms.owner.$invalid }">
-								<label for="owner">Owner</label>
+								<label for="owner">Owner
+									<span ng-bind-html="confluenceTip('Owner')"></span>
+								</label>
 								<select name="owner" id="owner" required class="form-control caret-for-select" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-model="vocab.owner"></select>
                                 <p ng-show="form.cms.owner.$invalid" class="help-block">To give editing rights to others in your organisation, please select the appropriate organisational Owner.</p>
                                 <!--<p><span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i> </span> &nbsp;&nbsp;To give editing rights to others in your organisation, please select the appropriate organisational Owner.</p>-->
@@ -116,7 +132,9 @@
 					</div>
 
 					<div class="panel swatch-gray">
-						<div class="panel-heading">Top Concepts</div>
+						<div class="panel-heading">Top Concepts
+							<span ng-bind-html="confluenceTip('TopConcepts')"></span>
+						</div>
 						<div class="panel-body">
 							<table class="table">
 								<thead>
@@ -143,7 +161,9 @@
 					</div>
 
 					<div class="panel swatch-gray">
-						<div class="panel-heading">Languages</div>
+						<div class="panel-heading">Languages
+							<span ng-bind-html="confluenceTip('Languages')"></span>
+						</div>
 						<div class="panel-body">
 							<table class="table">
 								<thead>
@@ -175,7 +195,9 @@
 					</div>
 
 					<div class="panel swatch-gray">
-						<div class="panel-heading">Subjects</div>
+						<div class="panel-heading">Subjects
+							<span ng-bind-html="confluenceTip('Subjects')"></span>
+						</div>
 						<div class="panel-body">
 							<table class="table">
 								<thead>
@@ -242,7 +264,18 @@
 					</div>
 
 					<div class="panel swatch-gray">
-						<div class="panel-heading">Related</div>
+						<div class="panel-heading">Related
+							<span ng-bind-html="confluenceTip('RelatedMetadata')"></span>
+						<!-- a href="" tip="#RelatedTip"><span class="fa fa-info-circle" style="color: #17649a; font-size: 13px" aria-hidden="true"></span></a>
+						<div id="RelatedTip" style="display: none;">
+						You may provide information about entities related to your vocabulary, including parties, services and other vocabularies.
+						<ul>
+						<li>Party: An individual or organisation related to the vocabulary. At least one Party of type “Publisher” is required.</li>
+						<li>Service: A database or collection of resources which may use or reference the vocabulary.</li>
+						<li>Vocabulary: A vocabulary related to the vocabulary.</li>
+						</ul>
+						</div -->
+						</div>
 						<div class="panel-body">
 							<table class="table">
 								<thead>
@@ -302,5 +335,8 @@
 		</div>
 	</form>
 </section>
+
+<!-- Placeholder for help page imported from Confluence. -->
+<div id="all_help" style="display: none;"></div>
 
 @stop

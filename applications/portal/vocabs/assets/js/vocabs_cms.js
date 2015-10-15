@@ -16,7 +16,7 @@
         return this.getTime() === this.getTime();
     };
 
-    function addVocabsCtrl($log, $scope, $location, $modal, vocabs_factory) {
+    function addVocabsCtrl($log, $scope, $sce, $location, $modal, vocabs_factory) {
 
         $scope.form = {};
 
@@ -360,6 +360,24 @@
             return hasPublisher;
         };
 
+        /** Create a tooltip that points to Confluence documentation.
+            Because of the use of a confluence_tip attribute, which
+            would otherwise be stripped out during processing of
+            ng-bind-html, we need to use $sce.trustAsHtml.
+            confluenceTip() is used not only on the main CMS page, but it is also
+            injected (using resolve) into the relatedmodal and versionmodal
+            modal dialogs.
+            Unfortunately, the name of the page (which determines the
+            beginning of all the anchor names) is hard-coded here. :-(
+            Is there a better way?
+        */
+        $scope.confluenceTip = function (anchor) {
+            return $sce.trustAsHtml('<a href="" confluence_tip="' +
+              'PopulatingRVAPortalMetadataFields(OptimisedforRVATooltips)-' +
+              anchor + '"><span class="fa fa-info-circle" ' +
+              'style="color: #17649a; font-size: 13px"></span></a>');
+        };
+
         $scope.relatedmodal = function (action, type, obj) {
             var modalInstance = $modal.open({
                 templateUrl: base_url + 'assets/vocabs/templates/relatedModal.html',
@@ -375,6 +393,9 @@
                     },
                     type: function () {
                         return type;
+                    },
+                    confluenceTip: function () {
+                        return $scope.confluenceTip;
                     }
                 }
             });
@@ -412,6 +433,9 @@
                     },
                     action: function () {
                         return action;
+                    },
+                    confluenceTip: function () {
+                        return $scope.confluenceTip;
                     }
                 }
             });
@@ -467,4 +491,40 @@
         }
 
     }
+
+    /* Load help document containing the tooltips.
+       Note the URL: configure the web server to
+       proxy the pages.  Here is a suitable rva_doc.conf to go
+       into /etc/httpd/conf.d:
+
+SSLProxyEngine on
+
+# Use /ands_doc/tooltips in the code as the location of the RVA portal tooltips.
+# Then rewrite it here to point to the appropriate Confluence page.
+# Doing it here means you don't have to change the code if the original
+# page moves.
+
+RewriteRule ^/ands_doc/tooltips$  /ands_doc/pages/viewpage.action?pageId=22478849  [PT]
+
+# Need to proxy the Confluence pages so as to be able to get images too.
+<Location /ands_doc>
+
+  ProxyPass https://documentation.ands.org.au/
+  ProxyPassReverse https://documentation.ands.org.au/
+
+  # Confluence adds this header. Once you view such a page in Firefox,
+  # it "infects" access to _this_ server, preventing non-SSL access via
+  # browser to all ports (e.g., including 8080).
+  Header unset Strict-Transport-Security
+</Location>
+
+    */
+    $(document).ready(function() {
+        $.get("/ands_doc/tooltips", function (data) {
+        var data_replaced = data.replace(/src="/gi, 'src="/ands_doc');
+        var html = $(data_replaced).find('#content-column-0');
+            $('#all_help').html(html);
+        });
+    });
+
 })();

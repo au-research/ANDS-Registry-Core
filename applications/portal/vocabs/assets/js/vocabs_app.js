@@ -59,6 +59,39 @@ $(document).on('mouseover', 'a[tip]', function(event){
     });
 });
 
+/* Display tooltips where the content comes from a Confluence page
+   structured in a particular way. The content of the confluence_tip
+   attribute is the name of an anchor into the already-loaded content.
+   But (because of the way Confluence positions anchors) we have to navigate
+   to get to the "real" beginning of the content. (See repeated calls to
+   parent() and next().)
+   Note use of adjust method shift which helps dealing with the larger tooltips.
+*/
+$(document).on('mouseover', 'a[confluence_tip]', function(event){
+    $(this).qtip({
+        content:{
+            text:function(e,api){
+                var tip = $(this).attr('confluence_tip');
+                var content = tip;
+                    if($('h2[id="'+ tip.toString() + '"]').length) {
+                        content = $('h2[id="'+ tip.toString() + '"]').parent().parent().parent().next().html();
+                    }
+                return content;
+            }
+        },
+        show: {
+            event: 'mouseover, click',
+            ready: true
+        },
+        hide: {
+            delay: 1000,
+            fixed: true
+        },
+        position: {target:'mouse', adjust: { mouse: false, method: 'shift' }, viewport: $(window) },
+        style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap cms-help-tip'}
+    });
+});
+
 $(document).on('click', '.re_preview', function(event){
     event.preventDefault();
     $(this).qtip({
