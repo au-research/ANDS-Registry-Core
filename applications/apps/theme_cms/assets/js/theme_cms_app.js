@@ -39,6 +39,7 @@ angular.module('theme_cms_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSa
 	factory('search_factory', function($http){
 		return{
 			search: function(filters){
+               // console.log(filters);
 				var promise = $http.post(real_base_url+'registry/services/registry/post_solr_search', {'filters':filters}).then(function(response){
 					return response.data;
 				});
@@ -345,7 +346,15 @@ function ViewPage($scope, $http, $routeParams, pages_factory, $location, search_
 				filter_query ='';
 				$.each(filters, function(i, k){
 					if(k instanceof Array || (typeof(k)==='string' || k instanceof String)){
-						if(i!='fl') filter_query +=i+'='+encodeURIComponent(k)+'/';
+						if(i!='fl') {
+                           if(k instanceof Array ){
+                               k.forEach(function(entry){
+                                   filter_query +=i+'='+encodeURIComponent(entry)+'/';
+                               })
+                           } else {
+                            filter_query +=i+'='+encodeURIComponent(k)+'/';
+                           }
+                        }
 					}
 				});
 				$scope.search_result[c.search.id] = {name:c.title, data:data, search_id:c.search.id, filter_query:filter_query};
@@ -385,15 +394,19 @@ function ViewPage($scope, $http, $routeParams, pages_factory, $location, search_
 		$(c.search.fq).each(function(){
 			if(this.name){
 				if(filters[this.name]){
+
 					if(filters[this.name] instanceof Array){
+
 						filters[this.name].push(this.value);
 					}else{
+
 						placeholder = filters[this.name];
 						filters[this.name] = [];
 						filters[this.name].push(placeholder);
 						filters[this.name].push(this.value);
+
 					}
-				}else filters[this.name] = this.value;
+				}else {filters[this.name] = this.value;}
 			}
 		});
 		return filters;
