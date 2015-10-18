@@ -5,7 +5,7 @@
         .module('app')
         .controller('relatedCtrl', relatedCtrl);
 
-    function relatedCtrl($scope, $modalInstance, $log, $timeout, entity, type, vocabs_factory) {
+    function relatedCtrl($scope, $modalInstance, $log, $timeout, entity, type, vocabs_factory, confluenceTip) {
         $scope.relatedEntityRelations = [
             {"value": "publishedBy", "text": "Publisher"},
             {"value": "hasAuthor", "text": "Author"},
@@ -25,6 +25,7 @@
         $scope.entity = false;
         $scope.intent = 'add';
         $scope.type = type;
+        $scope.confluenceTip = confluenceTip;
 
         if (entity) {
             $scope.entity = entity;

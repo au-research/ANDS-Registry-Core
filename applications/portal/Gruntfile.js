@@ -85,7 +85,8 @@ module.exports = function(grunt){
                     '<%= yeoman.templates %>/omega/assets/css/swatch-black.min.css',
                     '<%= yeoman.templates %>/omega/assets/css/fonts.min.css',
                     '<%= yeoman.assets %>/lib/qtip2/jquery.qtip.css',
-                    '<%= yeoman.vocab_asset %>/js/lib/angular-loading-bar/build/loading-bar.min.css'
+                    '<%= yeoman.vocab_asset %>/js/lib/angular-loading-bar/build/loading-bar.min.css',
+                    '<%= yeoman.vocab_asset %>/css/aui-just-lozenges.css'
                 ],
                 dest:'<%=yeoman.vocab_asset %>/css/lib.css'
             },
