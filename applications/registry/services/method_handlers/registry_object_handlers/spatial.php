@@ -8,8 +8,6 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Spatial extends ROHandler {
 	function handle() {
 		$result = array();
-        if($this->ro->status == 'PUBLISHED')
-        {
             if($this->index && isset($this->index['spatial_coverage_extents'])) {
                 //spatial_coverage_extents, spatial_coverage_polygons, spatial_coverage_centres, spatial_coverage_area_sum
                 foreach($this->index['spatial_coverage_extents'] as $key=>$sub) {
@@ -19,6 +17,16 @@ class Spatial extends ROHandler {
                         'center' => $this->index['spatial_coverage_centres'][$key],
                     );
                     if(isset($this->index['spatial_coverage_area_sum'])) $result['area_sum'] = $this->index['spatial_coverage_area_sum'];
+                }
+            }else{
+                $coords = $this->ro->getLocationAsLonLats();
+                foreach($coords as $polygon) {
+                    $extent = $this->ro->calcExtent($polygon);
+                    $result[] = array(
+                        'extent' => $extent['extent'],
+                        'polygon' => $polygon,
+                        'center' => $extent['center'],
+                    );
                 }
             }
 
@@ -133,47 +141,6 @@ class Spatial extends ROHandler {
                     }
                 }
             }
-
-
-        }
-        else{
-            if ($this->gXPath->evaluate("count(//ro:location/ro:spatial)")>0) {
-                $query = "//ro:location/ro:spatial";
-                $coverages = $this->gXPath->query($query);
-                foreach($coverages as $spatial){
-                    $type = $spatial->getAttribute('type');
-                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'&& $spatial->nodeValue!=''){
-                        $result[] = array (
-                            'type' => $type,
-                            'value' => $spatial->nodeValue
-                        );
-                    }
-                }
-            }
-            if ($this->gXPath->evaluate("count(//ro:coverage/ro:spatial)")>0) {
-                $query = "//ro:coverage/ro:spatial";
-                $coverages = $this->gXPath->query($query);
-                foreach($coverages as $spatial){
-                    $type = $spatial->getAttribute('type');
-                    if($type!='kmlPolyCoords' && $type !='gmlKmlPolyCoords' && $type !='iso19139dcmiBox'&& $spatial->nodeValue!=''){
-                        $result[] = array (
-                            'type' => $type,
-                            'value' => $spatial->nodeValue
-                        );
-                    }
-                }
-            }
-            $coords = $this->ro->getLocationAsLonLats();
-            foreach($coords as $polygon) {
-                $extent = $this->ro->calcExtent($polygon);
-                $result[] = array(
-                    'extent' => $extent['extent'],
-                    'polygon' => $polygon,
-                    'center' => $extent['center'],
-                );
-            }
-        }
-
         return $result;
 	}
 }
