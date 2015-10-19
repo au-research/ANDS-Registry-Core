@@ -8,7 +8,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Spatial extends ROHandler {
 	function handle() {
 		$result = array();
-        if($this->ro->status == 'PUBLISHED' || $this->ro->status == 'DRAFT' )
+        if($this->ro->status == 'PUBLISHED')
         {
             if($this->index && isset($this->index['spatial_coverage_extents'])) {
                 //spatial_coverage_extents, spatial_coverage_polygons, spatial_coverage_centres, spatial_coverage_area_sum
@@ -134,7 +134,7 @@ class Spatial extends ROHandler {
                 }
             }
 
-            
+
         }
         else{
             if ($this->gXPath->evaluate("count(//ro:location/ro:spatial)")>0) {
