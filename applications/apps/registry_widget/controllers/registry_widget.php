@@ -10,7 +10,7 @@ class Registry_widget extends MX_Controller{
 
 	/**
 	 * Display Documentation
-	 * @return HTML 
+	 * @return HTML
 	 */
 	function index(){
 		$data['title'] = 'Registry Widget - ANDS';

@@ -41,8 +41,6 @@ class Registry_api
      */
     public function handle($method = array())
     {
-        $gets = $this->ci->input->get();
-
         $this->params = array(
             'submodule' => isset($method[1]) ? $method[1] : false,
             'identifier' => isset($method[2]) ? $method[2] : false,
@@ -84,6 +82,101 @@ class Registry_api
     }
 
     /**
+     * Handles registry/lookup
+     * Lookup a registry object based on anything
+     * Used mainly for registry widget
+     * @return array
+     */
+    private function lookup()
+    {
+        $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
+
+        $query = $this->ci->input->get('q');
+        $query = urldecode($query);
+
+        $ro = $this->ci->ro->getByID($query);
+        if (!$ro) {
+            $ro = $this->ci->ro->getBySlug($query);
+        }
+
+        if (!$ro) {
+            $ro = $this->ci->ro->getPublishedByKey($query);
+        }
+
+        if (!$ro) {
+            throw new Exception('No Registry Object Found');
+        }
+
+        $result = array(
+            'id' => $ro->id,
+            'rda_link' => portal_url($ro->slug),
+            'key' => $ro->key,
+            'slug' => $ro->slug,
+            'title' => $ro->title,
+            'class' => $ro->class,
+            'type' => $ro->type,
+            'group' => $ro->group,
+        );
+        if ($ro->getMetadata('the_description')) {
+            $result['description'] = $ro->getMetadata('the_description');
+        } else {
+            $result['description'] = '';
+        }
+
+        return $result;
+    }
+
+    /**
+     * Handles registry/search
+     * Search the registry
+     * Used mainly for registry widget
+     * @return array
+     */
+    private function search()
+    {
+        $query = $this->ci->input->get('q');
+        $custom_query = $this->ci->input->get('custom_q');
+        $query = urldecode($query);
+
+        $this->ci->load->library('solr');
+        $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
+
+        //custom query handling
+        if ($custom_query) {
+            $this->ci->solr->setCustomQuery($custom_query);
+        } else {
+            $this->ci->solr->setFilters(array('q'=>$query));
+        }
+
+        $result = $this->ci->solr->executeSearch(true);
+
+        //add entire rif document if custom_query is defined
+        if ($custom_query) {
+            foreach ($result['response']['docs'] as &$doc) {
+                $this->ci->db->select('data')
+                    ->from('record_data')
+                    ->where('registry_object_id',$doc['id'])
+                    ->where('scheme','rif')
+                    ->where('current',true)
+                    ->limit(1);
+                $query = $this->ci->db->get();
+                foreach ($query->result_array() as $row) {
+                    $doc['rif'] = simplexml_load_string($row['data']);
+                }
+            }
+        }
+
+        $data = array(
+            'numFound' => $result['response']['numFound'],
+            'result' => $result['response'],
+            'solr_header' => $result['responseHeader'],
+            'status' => 0
+        );
+
+        return $data;
+    }
+
+    /**
      * Handles registry/object/{id}
      * called via @object
      * @return array
@@ -96,6 +189,15 @@ class Registry_api
             $method1s = explode('-', $this->params['object_module']);
         } else {
             $method1s = $this->valid_methods;
+        }
+
+        $id = $this->params['identifier'] ? $this->params['identifier'] : false;
+        if (!$id) {
+            $id = $this->ci->input->get('id') ? $this->ci->input->get('id') : false;
+        }
+
+        if (!$id) {
+            $id = $this->ci->input->get('q') ? $this->ci->input->get('q') : false;
         }
 
         $resource = $this->populate_resource($this->params['identifier']);
