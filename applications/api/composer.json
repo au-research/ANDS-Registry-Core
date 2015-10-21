@@ -1,0 +1,8 @@
+{
+    "autoload" : {
+        "psr-4": {
+            "ANDS\\Registry\\": "registry",
+            "ANDS\\Registry\\Handler\\": "registry/handlers/"
+        }
+    }
+}
