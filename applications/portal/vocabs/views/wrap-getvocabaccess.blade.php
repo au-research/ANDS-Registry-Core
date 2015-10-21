@@ -129,7 +129,16 @@
 			@foreach($version['version_access_points'] as $ap)
 			    @if($ap['type']=='apiSparql')
 			    <div class="text-center">
-			        <small><a href="{{ json_decode($ap['portal_data'])->uri }}">Show SPARQL Endpoint</a></small>
+			        <small><a class="showsp" href="{{ json_decode($ap['portal_data'])->uri }}">Show SPARQL Endpoint</a></small>
+			    </div>
+			    <div class="sp text-center collapse">
+			    	<small>SPARQL Endpoint:</small>
+			    	<p style="word-break:break-all">
+			    		<small>{{ json_decode($ap['portal_data'])->uri }}</small>
+			    	</p>
+			    	<p>
+			    		<a href="https://documentation.ands.org.au/display/DOC/SPARQL+endpoint">Learn More</a>
+			    	</p>
 			    </div>
 			    @endif
 			@endforeach
