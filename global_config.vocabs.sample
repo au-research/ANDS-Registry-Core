@@ -36,6 +36,10 @@ $eDBCONF['vocabs']['database'] = 'dbs_vocabs';
 // $active_group = 'registry'.
 $eDBCONF['registry']['database'] = 'dbs_registry';
 
+// Also need this setting, if the $ENV['vocab_config']['auth_url']
+// setting points back here. If the setting points elsewhere,
+// you won't need this.
+$eDBCONF['roles']['database'] = 'dbs_roles';
 
 // The Server Base URL is the URL via which users access the software installation
 // (for example: http://vocabs.your.org.au/myportal/
