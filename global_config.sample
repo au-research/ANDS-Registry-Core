@@ -12,7 +12,7 @@
 /*
 /*										    Registry Software Configuration
 /*
-/* 		Release Version :	17
+/* 		Release Version :	17.1
 /*		Contact Person  :	services@ands.org.au
 /*		Help/support    :	http://developers.ands.org.au/
 /*
@@ -22,7 +22,7 @@
 /* (SECTION 1) REQUIRED CONFIGURATION OPTIONS
 /*************************************************************************/
 // The Release Version
-$ENV['release_version'] = 'r17';
+$ENV['release_version'] = 'r17.1';
 
 // Details of your database server (note: advanced settings can be modified in Sect 4)
 $eDBCONF['default']['hostname'] = 'localhost';  // hostname or IP address
