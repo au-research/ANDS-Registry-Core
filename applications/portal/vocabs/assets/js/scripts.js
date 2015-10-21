@@ -32,6 +32,18 @@ $(document).ready(function() {
 
 });
 
+$('.box-content:not(:first-child)').hide();
+
+$(document).on('click', '.box-title', function(event){
+    var box = $(this).siblings('.box-content');
+    if (box.is(":visible")) {
+        return false;
+    }
+    // console.log($(this).siblings('.box-content').length);
+    $('.box-content:visible').slideUp('fast');
+    $(this).siblings('.box-content').slideToggle('fast');
+});
+
 $(document).on('mouseover', 'a[tip]', function(event){
     $(this).qtip({
         content:{
@@ -57,6 +69,40 @@ $(document).on('mouseover', 'a[tip]', function(event){
         position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
         style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
     });
+});
+
+$(document).on('click', '.download-chooser', function(event){
+    event.preventDefault();
+    $(this).qtip({
+        show:{event:'click'},
+        hide: {
+            delay: 1000,
+            fixed: true
+        },
+        content: {
+            text:  function(event, api) {
+                var box = $(this).parents('.box-content');
+                var content = $('.download-content', box);
+                return content.html();
+            }
+        },
+        position:{
+            my:'center left',
+            at: 'center right',
+            adjust: { mouse: false }
+        },
+        style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'},
+        show: {
+            event:event.type,
+            ready:'true'
+        }
+    },event);
+}).on('click', '.showsp', function(event){
+    event.preventDefault();
+    $(this).hide();
+    var box = $(this).parents('.box-content');
+    var content = $('.sp', box);
+    content.slideDown('fast');
 });
 
 /* Display tooltips where the content comes from a Confluence page
