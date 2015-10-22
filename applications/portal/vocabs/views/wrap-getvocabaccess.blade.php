@@ -25,14 +25,15 @@
 <div class="box" ng-non-bindable>
 	<div class="box-title">
 		<h4> {{ htmlspecialchars($vocab['current_version']['title']) }} </h4>
-		<span class="box-tag box-tag-green"> Current </span>
+		<span class="box-tag box-tag-green"> current </span>
 	</div>
 	<div class="clearfix"></div>
 	<div class="box-content">
 
 		@foreach($vocab['current_version']['version_access_points'] as $ap)
-		    @if($ap['type']=='file' && !$singleFile)
+		    @if(($ap['type']=='file' && !$singleFile) || ($hasSesameDownloads))
 		        <a class="btn btn-lg btn-block btn-primary download-chooser"><i class="fa fa-download"></i> Download <i class="fa fa-caret-right"></i></a>
+		        <?php break; ?>
 		    @endif
 		@endforeach
 
@@ -47,7 +48,7 @@
 		@foreach($vocab['current_version']['version_access_points'] as $ap)
 		    @if($ap['type']=='webPage')
 		    <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-		        <a class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-external-link"></i> Access Web Page</a>
+		        <a target="_blank" class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-external-link"></i> Access Web Page</a>
 		    </div>
 		    @endif
 		@endforeach
@@ -55,7 +56,7 @@
 		@foreach($vocab['current_version']['version_access_points'] as $ap)
 		    @if($ap['type']=='sissvoc')
 		    <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-		        <a class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-external-link"></i> Access Linked Data API</a>
+		        <a target="_blank" class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}/concept"><i class="fa fa-external-link"></i> Access Linked Data API</a>
 		    </div>
 		    @endif
 		@endforeach
@@ -71,7 +72,7 @@
 		    		<a href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->uri }}</a>
 		    	</p>
 		    	<p>
-		    		<a href="https://documentation.ands.org.au/display/DOC/SPARQL+endpoint">Learn More</a>
+		    		<a target="_blank" href="https://documentation.ands.org.au/display/DOC/SPARQL+endpoint">Learn More</a>
 		    	</p>
 		    </div>
 		    @endif
@@ -80,17 +81,21 @@
 		<p class="element element-short-top">{{ isset($vocab['current_version']['note']) ? $vocab['current_version']['note']: '' }}</p>
 
 		<div class="download-content hidden">
+		@if($hasFile)
+			Original:
+		@endif
+		<ul>
 		@foreach($vocab['current_version']['version_access_points'] as $ap)
 		    @if($ap['type']=='file')
-		    	Original:
-		        <ul>
-		        	<li><a href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->format }}</a></li>
-		        </ul>
+	        	<li><a href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->format }}</a></li>
 		    @endif
 		@endforeach
+		</ul>
 		@foreach($vocab['current_version']['version_access_points'] as $ap)
 		    @if($ap['type'] == 'sesameDownload')
-		    	Other Formats:
+		    	@if($hasFile)
+		    		Other Formats:
+		    	@endif
 		    	<ul>
 		    		<?php
 		    			$sesameFormats = array(
@@ -106,7 +111,7 @@
 		    			);
 		    		?>
 		    		@foreach($sesameFormats as $key=>$val)
-		    		<li><a href="{{ json_decode($ap['portal_data'])->uri }}{{$key}}">{{ $val }}</a></li>
+		    		<li><a target="_blank" href="{{ json_decode($ap['portal_data'])->uri }}{{$key}}">{{ $val }}</a></li>
 		    		@endforeach
 		    	</ul>
 		    @endif
@@ -116,8 +121,10 @@
 </div>
 @endif
 
+
+
 @foreach($vocab['versions'] as $version)
-	@if($version['status']!='current')
+	@if($version['status']!='current' && $version['version_access_points'])
 	<?php
 		$hasFile = false;
 		$hasSesameDownloads = false;
@@ -141,7 +148,7 @@
 		<div class="box-content collapse">
 
 			@foreach($version['version_access_points'] as $ap)
-			    @if($ap['type']=='file' && !$singleFile)
+			    @if(($ap['type']=='file' && !$singleFile) || ($hasSesameDownloads))
 			        <a class="btn btn-lg btn-block btn-primary download-chooser"><i class="fa fa-download"></i> Download <i class="fa fa-caret-right"></i></a>
 			    @endif
 			@endforeach
@@ -157,7 +164,7 @@
 			@foreach($version['version_access_points'] as $ap)
 			    @if($ap['type']=='webPage')
 			    <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-			        <a class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-external-link"></i> Access Web Page</a>
+			        <a target="_blank" class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-external-link"></i> Access Web Page</a>
 			    </div>
 			    @endif
 			@endforeach
@@ -165,7 +172,7 @@
 			@foreach($version['version_access_points'] as $ap)
 			    @if($ap['type']=='sissvoc')
 			    <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-			        <a class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-external-link"></i> Access Linked Data API</a>
+			        <a target="_blank" class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-external-link"></i> Access Linked Data API</a>
 			    </div>
 			    @endif
 			@endforeach
@@ -178,10 +185,10 @@
 			    <div class="sp text-center collapse">
 			    	<small>SPARQL Endpoint:</small>
 			    	<p style="word-break:break-all">
-			    		<a href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->uri }}</a>
+			    		<a target="_blank" href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->uri }}</a>
 			    	</p>
 			    	<p>
-			    		<a href="https://documentation.ands.org.au/display/DOC/SPARQL+endpoint">Learn More</a>
+			    		<a target="_blank" href="https://documentation.ands.org.au/display/DOC/SPARQL+endpoint">Learn More</a>
 			    	</p>
 			    </div>
 			    @endif
@@ -194,13 +201,15 @@
 			    @if($ap['type']=='file')
 			    	Original:
 			        <ul>
-			        	<li><a href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->format }}</a></li>
+			        	<li><a target="_blank" href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->format }}</a></li>
 			        </ul>
 			    @endif
 			@endforeach
 			@foreach($version['version_access_points'] as $ap)
 			    @if($ap['type'] == 'sesameDownload')
-			    	Other Formats:
+			    	@if($hasFile)
+			    		Other Formats:
+			    	@endif
 			    	<ul>
 			    		<?php
 			    			$sesameFormats = array(
@@ -216,7 +225,7 @@
 			    			);
 			    		?>
 			    		@foreach($sesameFormats as $key=>$val)
-			    		<li><a href="{{ json_decode($ap['portal_data'])->uri }}{{$key}}">{{ $val }}</a></li>
+			    		<li><a target="_blank" href="{{ json_decode($ap['portal_data'])->uri }}{{$key}}">{{ $val }}</a></li>
 			    		@endforeach
 			    	</ul>
 			    @endif
