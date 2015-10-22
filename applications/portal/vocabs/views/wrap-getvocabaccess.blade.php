@@ -81,7 +81,7 @@
 		    <div class="sp text-center collapse">
 		    	<small>SPARQL Endpoint:</small>
 		    	<p style="word-break:break-all">
-		    		<a href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->uri }}</a>
+		    		<a target="_blank" href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->uri }}</a>
 		    	</p>
 		    	<p>
 		    		<a target="_blank" href="https://documentation.ands.org.au/display/DOC/SPARQL+endpoint">Learn More</a>
