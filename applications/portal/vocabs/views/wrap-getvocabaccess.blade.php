@@ -21,9 +21,17 @@
 	if ($hasFile && !$hasSesameDownloads) {
 		$singleFile = true;
 	}
+
+	//check if there's not current version
+	$hasNotCurrentVersion = false;
+	foreach ($vocab['versions'] as $version) {
+		if ($version['status']!='current' && $version['version_access_points']) {
+			$hasNotCurrentVersion = true;
+		}
+	}
 ?>
 <div class="box" ng-non-bindable>
-	<div class="box-title">
+	<div class="box-title {{ $hasNotCurrentVersion ? 'box-title-collapsible' : '' }}">
 		<h4> {{ htmlspecialchars($vocab['current_version']['title']) }} </h4>
 		<span class="box-tag box-tag-green"> current </span>
 	</div>
@@ -140,7 +148,7 @@
 		}
 	?>
 	<div class="box" ng-non-bindable>
-		<div class="box-title">
+		<div class="box-title {{ $hasNotCurrentVersion ? 'box-title-collapsible' : '' }}">
 			<h4> {{ htmlspecialchars($version['title']) }} </h4>
 			<span class="box-tag box-tag box-tag-{{ $version['status'] }}"> {{htmlspecialchars($version['status'])}} </span>
 		</div>
