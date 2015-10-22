@@ -160,6 +160,16 @@
                 vocabs_factory.getMetadata($scope.vocab.pool_party_id).then(function (data) {
                     if (data) {
 
+                        // CC-1447. Provide some feedback, if the Toolkit
+                        // returned with either an error or an exception.
+                        // This can happen, e.g., if the PP project does
+                        // not exist, or if the RDF data is invalid (and
+                        // therefore can not be parsed to extract metadata).
+                        if (("error" in data) || ("exception" in data)) {
+                            alert("Unable to get project metadata from PoolParty. Fields will not be pre-filled.");
+                            return;
+                        }
+
                         if (data['dcterms:title']) {
                             $scope.vocab.title = $scope.choose(data['dcterms:title']);
                             if (angular.isArray($scope.vocab.title)) $scope.vocab.title = $scope.vocab.title[0];

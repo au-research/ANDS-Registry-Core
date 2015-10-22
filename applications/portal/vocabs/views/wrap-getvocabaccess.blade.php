@@ -7,6 +7,20 @@
 		if (!isset($aps[$ap['type']])) $aps[$ap['type']] = array();
 		array_push($aps[$ap['type']], $ap);
 	}
+
+	//checking if current version has a file download and has a sesame downloads
+	$hasFile = false;
+	$hasSesameDownloads = false;
+	foreach ($vocab['current_version']['version_access_points'] as $ap) {
+		if ($ap['type']=='file') $hasFile = true;
+		if ($ap['type']=='sesameDownload') $hasSesameDownloads = true;
+	}
+
+	//single file happens when there is only 1 download for a file and no other formats
+	$singleFile = false;
+	if ($hasFile && !$hasSesameDownloads) {
+		$singleFile = true;
+	}
 ?>
 <div class="box" ng-non-bindable>
 	<div class="box-title">
@@ -17,10 +31,18 @@
 	<div class="box-content">
 
 		@foreach($vocab['current_version']['version_access_points'] as $ap)
-		    @if($ap['type']=='file')
+		    @if($ap['type']=='file' && !$singleFile)
 		        <a class="btn btn-lg btn-block btn-primary download-chooser"><i class="fa fa-download"></i> Download <i class="fa fa-caret-right"></i></a>
 		    @endif
 		@endforeach
+
+		@if($singleFile)
+			@foreach($vocab['current_version']['version_access_points'] as $ap)
+			    @if($ap['type']=='file')
+			        <a class="btn btn-lg btn-block btn-primary" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-download"></i> Download ({{ json_decode($ap['portal_data'])->format }})</a>
+			    @endif
+			@endforeach
+		@endif
 
 		@foreach($vocab['current_version']['version_access_points'] as $ap)
 		    @if($ap['type']=='webPage')
@@ -46,7 +68,7 @@
 		    <div class="sp text-center collapse">
 		    	<small>SPARQL Endpoint:</small>
 		    	<p style="word-break:break-all">
-		    		<small>{{ json_decode($ap['portal_data'])->uri }}</small>
+		    		<a href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->uri }}</a>
 		    	</p>
 		    	<p>
 		    		<a href="https://documentation.ands.org.au/display/DOC/SPARQL+endpoint">Learn More</a>
@@ -96,6 +118,20 @@
 
 @foreach($vocab['versions'] as $version)
 	@if($version['status']!='current')
+	<?php
+		$hasFile = false;
+		$hasSesameDownloads = false;
+		foreach ($version['version_access_points'] as $ap) {
+			if ($ap['type']=='file') $hasFile = true;
+			if ($ap['type']=='sesameDownload') $hasSesameDownloads = true;
+		}
+
+		//single file happens when there is only 1 download for a file and no other formats
+		$singleFile = false;
+		if ($hasFile && !$hasSesameDownloads) {
+			$singleFile = true;
+		}
+	?>
 	<div class="box" ng-non-bindable>
 		<div class="box-title">
 			<h4> {{ htmlspecialchars($version['title']) }} </h4>
@@ -105,10 +141,18 @@
 		<div class="box-content collapse">
 
 			@foreach($version['version_access_points'] as $ap)
-			    @if($ap['type']=='file')
+			    @if($ap['type']=='file' && !$singleFile)
 			        <a class="btn btn-lg btn-block btn-primary download-chooser"><i class="fa fa-download"></i> Download <i class="fa fa-caret-right"></i></a>
 			    @endif
 			@endforeach
+
+			@if($singleFile)
+				@foreach($version['version_access_points'] as $ap)
+				    @if($ap['type']=='file')
+				        <a class="btn btn-lg btn-block btn-primary" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-download"></i> Download ({{ json_decode($ap['portal_data'])->format }})</a>
+				    @endif
+				@endforeach
+			@endif
 
 			@foreach($version['version_access_points'] as $ap)
 			    @if($ap['type']=='webPage')
@@ -134,7 +178,7 @@
 			    <div class="sp text-center collapse">
 			    	<small>SPARQL Endpoint:</small>
 			    	<p style="word-break:break-all">
-			    		<small>{{ json_decode($ap['portal_data'])->uri }}</small>
+			    		<a href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->uri }}</a>
 			    	</p>
 			    	<p>
 			    		<a href="https://documentation.ands.org.au/display/DOC/SPARQL+endpoint">Learn More</a>
