@@ -158,6 +158,7 @@
 			@foreach($version['version_access_points'] as $ap)
 			    @if(($ap['type']=='file' && !$singleFile) || ($hasSesameDownloads))
 			        <a class="btn btn-lg btn-block btn-primary download-chooser"><i class="fa fa-download"></i> Download <i class="fa fa-caret-right"></i></a>
+			        <?php break; ?>
 			    @endif
 			@endforeach
 
