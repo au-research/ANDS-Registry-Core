@@ -1,5 +1,5 @@
 <?php
-namespace ANDS\Registry\Handler;
+namespace ANDS\API\Registry\Handler;
 use \Exception as Exception;
 
 /**

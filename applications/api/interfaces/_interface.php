@@ -5,6 +5,7 @@
 /**
  * Formatter Superclass
  * For use as a super class for all formatter support by the API application
+ * @todo psr-4 all format interface handlers
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 class FormatHandler

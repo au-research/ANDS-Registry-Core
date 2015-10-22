@@ -197,6 +197,7 @@ class Dispatcher extends MX_Controller
      * eg registry handler is located in /applications/api/registry/
      * All handler must have ANDS as a namespace
      *
+     * @todo make ANDS\API class to handle routing instead of the dispatcher
      * @param  string $api_key
      * @param  string $api_version
      * @param  array $params
@@ -205,7 +206,7 @@ class Dispatcher extends MX_Controller
     public function route($api_key, $api_version, $params)
     {
         try {
-            $namespace = 'ANDS';
+            $namespace = 'ANDS\API';
             $class_name = $params[0].'_api';
             $file = APP_PATH.$params[0].'/'.$class_name.'.'.$api_version.'.php';
             if (!file_exists($file)) {

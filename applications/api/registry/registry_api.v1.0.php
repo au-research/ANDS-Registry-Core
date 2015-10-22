@@ -1,9 +1,9 @@
 <?php
-namespace ANDS;
+namespace ANDS\API;
 
 use \Exception as Exception;
 
-define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
+
 
 /**
  * ANDS\Registry_api
@@ -42,7 +42,7 @@ class Registry_api
 
         if ($this->params['submodule']) {
             try {
-                $class_name = 'ANDS\Registry\Handler\\' . ucfirst($this->params['submodule']) . 'Handler';
+                $class_name = 'ANDS\API\Registry\Handler\\' . ucfirst($this->params['submodule']) . 'Handler';
                 $handler = new $class_name($this->params);
                 return $handler->handle();
             } catch (Exception $e) {

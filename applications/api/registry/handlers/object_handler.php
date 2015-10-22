@@ -1,6 +1,8 @@
 <?php
-namespace ANDS\Registry\Handler;
+namespace ANDS\API\Registry\Handler;
 use \Exception as Exception;
+
+define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
 
 /**
  * Handles registry/object
