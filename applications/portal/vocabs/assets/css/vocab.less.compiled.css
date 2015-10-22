@@ -484,7 +484,6 @@ Thanks :)*/
   display: inline-block;
   width: 100%;
   background: #d0d0d0;
-  cursor: pointer;
 }
 .box .box-title h4 {
   font-size: 14px;
@@ -513,7 +512,10 @@ Thanks :)*/
   background: #f1c232;
   color: white;
 }
-.box .box-title:hover {
+.box .box-title-collapsible {
+  cursor: pointer;
+}
+.box .box-title-collapsible:hover {
   background: #e9e9e9;
 }
 .box .box-content {
