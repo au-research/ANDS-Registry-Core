@@ -11,14 +11,18 @@
 	//checking if current version has a file download and has a sesame downloads
 	$hasFile = false;
 	$hasSesameDownloads = false;
+	$fileCounter = 0;
 	foreach ($vocab['current_version']['version_access_points'] as $ap) {
-		if ($ap['type']=='file') $hasFile = true;
+		if ($ap['type']=='file') {
+			$hasFile = true;
+			$fileCounter++;
+		}
 		if ($ap['type']=='sesameDownload') $hasSesameDownloads = true;
 	}
 
 	//single file happens when there is only 1 download for a file and no other formats
 	$singleFile = false;
-	if ($hasFile && !$hasSesameDownloads) {
+	if ($hasFile && !$hasSesameDownloads && $fileCounter < 2) {
 		$singleFile = true;
 	}
 
@@ -89,7 +93,7 @@
 		<p class="element element-short-top">{{ isset($vocab['current_version']['note']) ? $vocab['current_version']['note']: '' }}</p>
 
 		<div class="download-content hidden">
-		@if($hasFile)
+		@if($hasFile && $hasSesameDownloads)
 			Original:
 		@endif
 		<ul>
@@ -101,7 +105,7 @@
 		</ul>
 		@foreach($vocab['current_version']['version_access_points'] as $ap)
 		    @if($ap['type'] == 'sesameDownload')
-		    	@if($hasFile)
+		    	@if($hasFile && $hasSesameDownloads)
 		    		Other Formats:
 		    	@endif
 		    	<ul>
@@ -136,14 +140,18 @@
 	<?php
 		$hasFile = false;
 		$hasSesameDownloads = false;
+		$fileCounter = 0;
 		foreach ($version['version_access_points'] as $ap) {
-			if ($ap['type']=='file') $hasFile = true;
+			if ($ap['type']=='file') {
+				$hasFile = true;
+				$fileCounter++;
+			}
 			if ($ap['type']=='sesameDownload') $hasSesameDownloads = true;
 		}
 
 		//single file happens when there is only 1 download for a file and no other formats
 		$singleFile = false;
-		if ($hasFile && !$hasSesameDownloads) {
+		if ($hasFile && !$hasSesameDownloads && $fileCounter < 2) {
 			$singleFile = true;
 		}
 	?>
@@ -208,7 +216,9 @@
 			<div class="download-content hidden">
 			@foreach($version['version_access_points'] as $ap)
 			    @if($ap['type']=='file')
-			    	Original:
+			    	@if($hasFile && $hasSesameDownloads)
+			    		Original:
+			    	@endif
 			        <ul>
 			        	<li><a target="_blank" href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->format }}</a></li>
 			        </ul>
@@ -216,7 +226,7 @@
 			@endforeach
 			@foreach($version['version_access_points'] as $ap)
 			    @if($ap['type'] == 'sesameDownload')
-			    	@if($hasFile)
+			    	@if($hasFile && $hasSesameDownloads)
 			    		Other Formats:
 			    	@endif
 			    	<ul>
