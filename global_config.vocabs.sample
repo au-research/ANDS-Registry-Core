@@ -81,6 +81,9 @@ $ENV['ENABLED_MODULES'] = array(
 //overwrite the existing application model with a predefined environment model
 $environment_directives = array();
 // No need to touch this setting of $environment_directives.
+// (Note: the addition of the "page/(:any)" route happened in
+//   commit 70c0b5cc, but isn't currently used by the code.
+//   Existing internal links use vocabs/page/... directly.)
 $environment_directives['portal'] = array(
 	"base_url" => "%%BASEURL%%/",
 	"active_application" => "portal",

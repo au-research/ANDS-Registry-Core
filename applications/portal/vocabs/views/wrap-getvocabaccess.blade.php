@@ -189,7 +189,7 @@
 			@foreach($version['version_access_points'] as $ap)
 			    @if($ap['type']=='sissvoc')
 			    <div class="btn-group btn-group-justified element element-no-bottom element-no-top" role="group" aria-label="...">
-			        <a target="_blank" class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}"><i class="fa fa-external-link"></i> Access Linked Data API</a>
+			        <a target="_blank" class="btn btn-sm btn-default {{$ap['type']}}" href="{{ json_decode($ap['portal_data'])->uri }}/concept"><i class="fa fa-external-link"></i> Access Linked Data API</a>
 			    </div>
 			    @endif
 			@endforeach
