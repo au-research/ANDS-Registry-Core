@@ -56,3 +56,4 @@ class SearchHandler extends Handler{
 
         return $data;
     }
+}

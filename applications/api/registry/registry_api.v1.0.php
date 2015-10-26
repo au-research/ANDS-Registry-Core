@@ -43,6 +43,9 @@ class Registry_api
         if ($this->params['submodule']) {
             try {
                 $class_name = 'ANDS\API\Registry\Handler\\' . ucfirst($this->params['submodule']) . 'Handler';
+                if (!class_exists($class_name)) {
+                    throw new Exception("Method " . $this->params['submodule'] . " is not supported");
+                }
                 $handler = new $class_name($this->params);
                 return $handler->handle();
             } catch (Exception $e) {
