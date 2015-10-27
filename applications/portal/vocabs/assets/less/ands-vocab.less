@@ -244,10 +244,26 @@ ul.listy {
   font-weight: bold;
   background: #f58000;
   border: none;
-  padding: 5px 5px;
+  padding: 5px 10px;
   margin: 10px 0;
   width: 105px;
   text-decoration: none;
+}
+
+.help_button {
+  box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 2px 0px 0px;
+  position: fixed;
+  display: block;
+  white-space: nowrap;
+  text-decoration: none !important;
+  font-family: arial,FreeSans,Helvetica,sans-serif;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 99;
+  bottom:0;
+  right:126px;
+  width:69px !important;
 }
 
 .yellow_button:hover {
@@ -359,4 +375,10 @@ input:disabled+label{
   margin-bottom:2px;
 }
 
+/* Allow Confluence help tooltips to be much wider than usual. */
+.cms-help-tip{
+  max-width: 460px;
+}
+
 @import "ands-vocabs-visualise";
+@import "ands-vocabs-box";

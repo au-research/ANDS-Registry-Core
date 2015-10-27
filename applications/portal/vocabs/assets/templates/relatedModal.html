@@ -13,7 +13,9 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group" ng-class="{'has-error':form.reForm.title.$invalid}">
-                            <label for="">Title</label>
+                            <label for="">Title
+                                <span ng-bind-html="confluenceTip('RelatedTitle')"></span>
+                            </label>
                             <input type="text" required name="title" class="form-control" placeholder="entity Title"
                                    ng-model="entity.title"
                                    typeahead="suggest.title as suggest.title for suggest in suggestions | filter:$viewValue | limitTo:8"
@@ -25,14 +27,18 @@
                     <div class="col-md-6" ng-if="type!='service' && type!='vocabulary'">
                         <input type="hidden" value="publishedBy" name="relationship" ng-if="type=='publisher'"/>
                         <div class="form-group">
-                            <label for="">Email</label>
+                            <label for="">Email
+                                <span ng-bind-html="confluenceTip('Email')"></span>
+                            </label>
                             <input type="text" name="email" class="form-control" placeholder="entity Email"
                                    ng-model="entity.email">
                         </div>
                     </div>
                     <div class="col-md-6" ng-if="type!='service' && type!='vocabulary'">
                         <div class="form-group">
-                            <label for="">Phone</label>
+                            <label for="">Phone
+                                <span ng-bind-html="confluenceTip('Phone')"></span>
+                            </label>
                             <input type="text" class="form-control" placeholder="entity Phone" ng-model="entity.phone">
                         </div>
                     </div>
@@ -40,7 +46,9 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="">Relationship</label>
+                            <label for="">Relationship
+                                <span ng-bind-html="confluenceTip('Relation')"></span>
+                            </label>
                             <div class="input-group" ng-repeat="relationship in entity.relationship track by $index">
                                 <span class="input form-control uneditable-input" placeholder="Identifier">[[ relationship | languageFilter:relatedEntityRelations ]]</span>
 								<span class="input-group-btn">
@@ -65,7 +73,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="">Identifiers</label>
+                            <label for="">Identifiers
+                                <span ng-bind-html="confluenceTip('Identifiers')"></span>
+                            </label>
                             <p><span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i></span> At least 1 identifier is highly recommended </p>
                             <div class="input-group" ng-repeat="ident in entity.identifiers track by $index">
                                 <input type="text" class="form-control" placeholder="Identifier" ng-model="ident.url">
@@ -81,7 +91,9 @@
                             </button>
                         </div>
                         <div class="form-group">
-                            <label for="">Websites</label>
+                            <label for="">Websites
+                                <span ng-bind-html="confluenceTip('Websites')"></span>
+                            </label>
 
                             <div class="input-group" ng-repeat="url in entity.urls track by $index">
                                 <input type="text" class="form-control" placeholder="URL" ng-model="url.url">

@@ -27,7 +27,7 @@
 				@else
 					<li><a href="{{ portal_url('vocabs/myvocabs') }}">My Vocabs</a></li>
 				@endif
-				<?php 
+				<?php
                     $profile_image = $this->user->profileImage();
                 ?>
                 @if($profile_image)
@@ -57,3 +57,4 @@
 	</div>
 </div>
 <button class="yellow_button feedback_button">Feedback</button>
+<a href="https://documentation.ands.org.au/display/DOC/Research+Vocabularies" target="_blank" class="yellow_button help_button"><i class="fa fa-question-circle"></i> Help</a>

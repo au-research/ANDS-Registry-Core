@@ -17635,7 +17635,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 					}
 				});
 			}
-		
+
 			return this.filters;
 		},
 
@@ -17733,7 +17733,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			});
 
 			// $log.debug(result.facet_counts.facet_fields.earliest_year);
-			
+
 
 			// $log.debug('orderedfacet', orderedfacets);
 			// $log.debug('facets', facets);
@@ -17792,6 +17792,11 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 					value = decodeURIComponent(value);
 					value = Number(value.replace(/[^0-9\.-]+/g,""));
 				}
+
+				if (term=='subject_value_resolved') {
+					value = decodeURIComponent(value);
+				}
+
 				if(term && value && term!='' && value!=''){
 
 					if(filters[term]) {
@@ -17816,7 +17821,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			//auto switch to activity search in grants
 			if(location.href.indexOf('grants')>-1) {
 				filters['class'] = 'activity';
-				
+
 			}
 
 			if(filters['class']=='activity' && location.href.indexOf('search')>-1) {

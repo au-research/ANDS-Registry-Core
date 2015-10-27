@@ -1,0 +1,189 @@
+<?php
+/*************************************************************************/
+/*
+/*           _   _ _____   _____  __      __             _
+/*     /\   | \ | |  __ \ / ____| \ \    / /            | |
+/*    /  \  |  \| | |  | | (___    \ \  / /__   ___ __ _| |__  ___
+/*   / /\ \ | . ` | |  | |\___ \    \ \/ / _ \ / __/ _` | '_ \/ __|
+/*  / ____ \| |\  | |__| |____) |    \  / (_) | (_| (_| | |_) \__ \
+/* /_/    \_\_| \_|_____/|_____/      \/ \___/ \___\__,_|_.__/|___/
+/*
+/*					Vocabs Software Configuration
+/*
+/*		Release Version :	17.1
+/*		Contact Person  :	services@ands.org.au
+/*		Help/support    :	http://developers.ands.org.au/
+/*
+/*************************************************************************/
+
+/*************************************************************************/
+/* (SECTION 1) REQUIRED CONFIGURATION OPTIONS
+/*************************************************************************/
+// The Release Version
+$ENV['release_version'] = 'r17.1';
+
+// Details of your database server (note: advanced settings can be modified in Sect 4)
+$eDBCONF['default']['hostname'] = 'localhost';  // hostname or IP address
+$eDBCONF['default']['username'] = 'webuser';
+$eDBCONF['default']['password'] = '';
+$eDBCONF['default']['dbdriver'] = 'mysqli';
+
+// Name of the database being used for the vocabs
+$eDBCONF['vocabs']['database'] = 'dbs_vocabs';
+
+// Even for vocabs, need to define this; sorry.
+// This is because engine/config/database.php defines
+// $active_group = 'registry'.
+$eDBCONF['registry']['database'] = 'dbs_registry';
+
+// Also need this setting, if the $ENV['vocab_config']['auth_url']
+// setting points back here. If the setting points elsewhere,
+// you won't need this.
+$eDBCONF['roles']['database'] = 'dbs_roles';
+
+// The Server Base URL is the URL via which users access the software installation
+// (for example: http://vocabs.your.org.au/myportal/
+$ENV['protocol'] = 'http://';
+$ENV['default_base_url'] = $ENV['protocol']."{CONFIGURE ME}";
+
+
+// The Environment options change the appearance of the software installation
+// Leaving these blank will remove the name and colour-bar from all portal pages
+// $ENV['environment_name'] = "My Vocabs Portal";
+// $ENV['environment_colour'] = "#6EBF21";
+
+// registry mode used 'read-only' atm but more mode may follow
+$ENV['registry_mode'] = "";
+
+// Who is the administrator of this domain?  		[OPTIONAL]
+// error reports will be emailed to this address
+$ENV['site_admin'] = "Registry System Administrator";
+$ENV['site_admin_email'] = "admin@example.com"; // Will affect the error reporting status
+$ENV['deployment_state'] = "development";  // either "production" or "development"
+
+/*************************************************************************/
+/* (SECTION 2) ENABLED MODULES
+/*************************************************************************/
+// Use this section to enable/disable software modules as you require.
+
+// Note: Most of the non-default modules require additional configuration
+//       and installation (such as installing additional database or code
+//       packages). Refer to their installation notes for details.
+
+$ENV['ENABLED_MODULES'] = array(
+
+	// Default modules (simply installs the registry, access control and portal)
+		'roles',
+		'registry',
+		'portal'
+);
+
+//overwrite the existing application model with a predefined environment model
+$environment_directives = array();
+// No need to touch this setting of $environment_directives.
+// (Note: the addition of the "page/(:any)" route happened in
+//   commit 70c0b5cc, but isn't currently used by the code.
+//   Existing internal links use vocabs/page/... directly.)
+$environment_directives['portal'] = array(
+	"base_url" => "%%BASEURL%%/",
+	"active_application" => "portal",
+	"default_controller" => "vocabs",
+	"routes" => array(
+		"home/(:any)" => "vocabs/$1",
+		"page/(:any)" => "vocabs/page/$1",
+		"(:any)"=>"core/dispatcher/$1"
+	),
+	"default_model" => "vocabs"
+);
+
+// Definitely _do_ need to make modifications below; at least,
+// to auth_url.
+$ENV['vocab_config'] = array(
+	// This must resolve to the Vocabs toolkit. Use web server
+	// configuration to proxy, if necessary.
+	'toolkit_url' => 'http://localhost/repository/api/toolkit/',
+	// Location of the Solr search index core which you have installed
+	'solr_url' => 'http://localhost:8983/solr/vocabs/',
+	// This can point to localhost, or to another installation
+	// of the ANDS Registry.
+	'auth_url' => 'https://{CONFIGURE ME}/registry/auth/',
+	// This should be a subdirectory within the Vocab Toolkit's
+	// Toolkit.tempPath setting.
+	'upload_path' => '/var/vocab-files/toolkit-data/temp/uploads/',
+	// This should match the Vocab Toolkit's Toolkit.storagePath
+	// setting.
+	'repository_path' => '/var/vocab-files/toolkit-data/vocabs/'
+);
+// $ENV['enable_logging'] = true;
+
+
+/*************************************************************************/
+/* (SECTION 3) ADDITIONAL REGISTRY CONFIGURATION
+/*************************************************************************/
+// Optional parameters to enable/disable advanced registry functionality
+
+// Session Timeout (how many seconds before the user gets logged out)
+$ENV['session_timeout'] = 7200;
+
+// Is this installation configured as a Shib Service Provider (AAF)
+// Note: enables AAF login (if Shibboleth 2 is properly configured)
+$ENV['shibboleth_sp'] = false;
+
+
+/*********************************************************************/
+/* (SECTION 4) OPTIONAL MODULES / EXTRA CONFIGURATION
+/* - only if using additional modules
+/*********************************************************************/
+
+//Tracking for Google Analytics and Lucky Orange
+$ENV['tracking'] =
+    array(
+            'googleGA' => array(
+                    'enabled' => false,
+                    'keys' => array('id' => '')
+            ),
+            'luckyOrange' => array(
+                    'enabled' => false,
+                    'keys' => array('id' => '')
+            )
+    );
+
+//OAUTH Configuration
+$ENV['oauth_config'] =
+	array(
+		// set on "base_url" the relative url that point to HybridAuth Endpoint
+		'base_url' => $ENV['default_base_url'].'auth/oauth',
+
+		"providers" => array (
+			// openid providers
+			"OpenID" => array (
+				"enabled" => false
+			),
+
+			"Yahoo" => array (
+				"enabled" => false,
+				"keys"    => array ( "id" => "", "secret" => "" ),
+			),
+
+			"Google" => array (
+				"enabled" => false,
+				"keys"    => array ( "id" => "", "secret" => "" ),
+			),
+
+			"Facebook" => array (
+				"enabled" => false,
+				"keys"    => array ( "id" => "", "secret" => "" ),
+			),
+
+			"Twitter" => array (
+				"enabled" => false,
+				"keys"    => array ( "key" => "", "secret" => "" )
+			),
+
+			"LinkedIn" => array (
+				"enabled" => false,
+				"keys"    => array ( "key" => "", "secret" => "" )
+			),
+
+		)
+	);

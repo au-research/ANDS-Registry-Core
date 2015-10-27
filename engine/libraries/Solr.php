@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * SOLR class for use globally
@@ -38,7 +38,7 @@ class Solr {
 	}
 
 	/**
-	 * Set SOLR URL, 
+	 * Set SOLR URL,
 	 * Supports connecting to multiple SOLR core
 	 * @param string $url URL of the SOLR index
 	 */
@@ -48,7 +48,7 @@ class Solr {
 
 	/**
 	 * Manually set the option for solr search
-	 * @param string $field 
+	 * @param string $field
 	 * @param string $value
 	 */
 	function setOpt($field, $value){
@@ -70,11 +70,11 @@ class Solr {
 
    /**
 	 * Manually unsset the option for solr search
-	 * @param string $field 
+	 * @param string $field
 	 * @param string $value
 	 */
 	function clearOpt($field){
-		if(isset($this->options[$field])){          
+		if(isset($this->options[$field])){
 		   unset($this->options[$field]);
 		}
 		return $this;
@@ -82,8 +82,8 @@ class Solr {
 
 	/**
 	 * get the existing option
-	 * @param  string $field 
-	 * @return value 
+	 * @param  string $field
+	 * @return value
 	 */
 	function getOpt($field){
 		if(isset($this->options[$field])){
@@ -93,7 +93,7 @@ class Solr {
 
 	/**
 	 * Pass in a custom query to use, ignore all filters
-	 * @param string $query 
+	 * @param string $query
 	 */
 	function setCustomQuery($query){
 		$this->custom_query = $query.'&wt=json';
@@ -118,7 +118,7 @@ class Solr {
 
 	 /**
 	 * Manually set the facet option for solr search (and enable the facet functionality)
-	 * @param string $field 
+	 * @param string $field
 	 * @param string $value
 	 */
 	function setFacetOpt($field, $value=null){
@@ -154,7 +154,7 @@ class Solr {
 
 	/**
 	 * get SOLR result header
-	 * @return array 
+	 * @return array
 	 */
 	function getHeader(){
 		return $this->result->{'responseHeader'};
@@ -162,7 +162,7 @@ class Solr {
 
 	/**
 	 * get SOLR result response
-	 * @return array 
+	 * @return array
 	 */
 	function getResult(){
 		if(isset($this->result->{'response'})){
@@ -181,7 +181,7 @@ class Solr {
 	/**
 	 * get SOLR facet query response by field name
 	 * @param  string $facet_field the name of a facet field (earlier instantiated with setOpt())
-	 * @return array 
+	 * @return array
 	 */
 	function getFacetResult($facet_field){
 		if (isset($this->result->facet_counts->facet_fields->{$facet_field}))
@@ -202,7 +202,7 @@ class Solr {
 			return array();
 		}
 	}
-	
+
 	/**
 	 * Sample simple search
 	 * @param  string $term a full text search on this term
@@ -227,7 +227,7 @@ class Solr {
 		}else{
 			$this->options['bq'] = $condition;
 		}
-		
+
 	}
 
 	function setBrowsingFilter(){
@@ -254,12 +254,12 @@ class Solr {
 
 		// Default query if none specified (fetches all records)
 		$this->setOpt('q.alt', '*:*');
-		
+
 
 		if (isset($filters['q']))
 		{
 			$this->setOpt('sort', "score desc");
-		} 
+		}
 		else
 		{
 			$filters['q'] = "";
@@ -275,7 +275,7 @@ class Solr {
 
 
 		// By default, also bring back the score in results (overridden if fl filter set)
-		$this->setOpt('fl', '*, score'); 
+		$this->setOpt('fl', '*, score');
 
 		// Remove variations of "Australia" from the search query unless the query contains quotes
 		if ($filters['q'] && substr_count('"', $filters['q']) == 0)
@@ -291,10 +291,10 @@ class Solr {
 		if($filters['q'] && substr_count('"', $filters['q']) != 0){
 			$this->setOpt('qs', '1');
 		}
-		
+
 		// $this->setOpt('q.op', 'AND');
-		
-		
+
+
 		// Score boosting applied to phrases based on how many parts of the phrase match
 		$this->setOpt('pf', 'title_search^5 alt_title_search^4 description_value^0.5 related_party_one_search^1');
 		$this->setOpt('pf2', 'title_search^20 alt_title_search^18 description_value^5 description_value~5^3 related_party_one_search^2');
@@ -310,13 +310,13 @@ class Solr {
 		foreach($filters as $key=>$value){
 			if(!is_array($value) && $key!='q'){
 				$value = $this->escapeInvalidXmlChars($value);
-			} 
+			}
 			switch($key){
 				case 'rq':
 					$this->clearOpt('defType');//returning to the default deftype
 					$this->setOpt('q', $value);
 				break;
-				case 'q': 
+				case 'q':
 					// $value = $this->escapeSolrValue($value);
 					// if(trim($value)!="") $this->setOpt('q', 'fulltext:('.$value.') OR simplified_title:('.iconv('UTF-8', 'ASCII//TRANSLIT', $value).')');
 					if((strpos($value, 'AND')!==false) && (strpos($value, 'OR')!==false)) {
@@ -335,50 +335,57 @@ class Solr {
                     $date = date("Y-m-d\TH:i:s\Z",$value);
                     $this->setOpt('fq', 'record_modified_timestamp:[* TO '.$date.']');
                     break;
-				case 'p': 
+				case 'p':
 					$page = (int)$value;
 					if($page>1){
 						$start = $pp * ($page-1);
 					}
 					$this->setOpt('start', $start);
 					break;
-				case 'class': 
+				case 'class':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' class:('.$v.')'; 
+						foreach($value as $v) $fq_str .= ' class:('.$v.')';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						if($value!='all') $this->setOpt('fq', '+class:('.$value.')');
 					}
 					break;
-				case 'group': 
+				case 'group':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' group:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' +group:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						$this->setOpt('fq', '+group:("'.$value.'")');
 					}
 					break;
-				case 'type': 
+				case 'type':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' type:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' type:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						if($value!='all') $this->setOpt('fq', '+type:("'.$value.'")');
 					}
 					break;
-				case 'subject_value_resolved': 
+				case 'subject_value_resolved':
 				   if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' subject_value_resolved:('.$v.')'; 
+						foreach($value as $v) $fq_str .= ' subject_value_resolved:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
-					   if($value!='all') $this->setOpt('fq', '+s_subject_value_resolved:("'.$value.'")');
+
+						if($value!='all') {
+							//CC-1416 fix for things with `>` in them
+							if (strpos(html_entity_decode($value), ">") !== false) {
+								$value = html_entity_decode($value);
+							}
+							$this->setOpt('fq', '+subject_value_resolved:("'.$value.'")');
+						}
 					}
 					break;
-				case 's_subject_value_resolved': 
+				case 's_subject_value_resolved':
 					$this->setOpt('fq', '+s_subject_value_resolved:("'.$value.'")');
 					break;
 				case 'subject_vocab_uri':
@@ -386,7 +393,7 @@ class Solr {
 						$fq_str = '';
 						foreach($value as $v) {
 							$v = rawurldecode($v);
-							$fq_str .= ' subject_vocab_uri:("'.$v.'")'; 
+							$fq_str .= ' subject_vocab_uri:("'.$v.'")';
 						}
 						$this->setOpt('fq', $fq_str);
 					}else{
@@ -412,10 +419,10 @@ class Solr {
                     if($value!='')
 					$this->setOpt('fq','latest_year:[* TO '.$value.']');
 					break;
-				case 'license_class': 
+				case 'license_class':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' license_class:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' license_class:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						if($value!='all') $this->setOpt('fq', '+license_class:("'.$value.'")');
@@ -456,7 +463,7 @@ class Solr {
 				case 'tag':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' tag:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' tag:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						$resolved_url = $CI->vocab->resolveLabel($value, 'anzsrc-for');
@@ -475,7 +482,7 @@ class Solr {
 				case 'originating_source':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' originating_source:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' originating_source:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						if($value!='all') $this->setOpt('fq', '+originating_source:("'.$value.'")');
@@ -503,7 +510,7 @@ class Solr {
 						$this->setOpt('fq', '+identifier_value:("'.$value.'")');
 					}
 					break;
-				case 'keywords': 
+				case 'keywords':
 				case 'scot':
 				case 'pont':
 				case 'psychit':
@@ -548,7 +555,7 @@ class Solr {
 				case 'access_rights':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' access_rights:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' access_rights:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						if($value!='all') $this->setOpt('fq', '+access_rights:("'.$value.'")');
@@ -585,7 +592,7 @@ class Solr {
 						$this->setOpt('fq', $this->formatSubjectsArrayFilters($value));
 					}
 					break;
-				case 'anzsrc-for': 
+				case 'anzsrc-for':
 					if(is_array($value)) {
 						$fq_str = '(';
 						foreach($value as $v) $fq_str .= ' subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$v.'")';
@@ -595,7 +602,7 @@ class Solr {
 						$this->setOpt('fq', '+subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$value.'")');
 					}
 					break;
-				case 'anzsrc-seo': 
+				case 'anzsrc-seo':
 					if(is_array($value)) {
 						$fq_str = '(';
 						foreach($value as $v) $fq_str .= ' subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'.$v.'")';
@@ -637,7 +644,7 @@ class Solr {
 				case 'administering_institution':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' administering_institution:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' administering_institution:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						if($value!='all') $this->setOpt('fq', '+administering_institution:("'.$value.'")');
@@ -692,7 +699,7 @@ class Solr {
 				case 'funding_scheme':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' funding_scheme:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' funding_scheme:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						if($value!='all') $this->setOpt('fq', '+funding_scheme:("'.$value.'")');
@@ -701,7 +708,7 @@ class Solr {
 				case 'funders':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' funders:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' funders:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						if($value!='all') $this->setOpt('fq', '+funders:("'.$value.'")');
@@ -710,7 +717,7 @@ class Solr {
 				case 'activity_status':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' activity_status:("'.$v.'")'; 
+						foreach($value as $v) $fq_str .= ' activity_status:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						if($value!='all') $this->setOpt('fq', '+activity_status:("'.$value.'")');
@@ -737,11 +744,11 @@ class Solr {
 			foreach($subject['codes'] as $code) {
 				$fq.='subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$code.'") ';
 			}
-			
+
 			$fq.=')';
 			return $fq;
 		}
-		
+
 	}
 
 	function formatSolrArray($array, $type) {
@@ -821,7 +828,7 @@ class Solr {
 
 	/**
 	 * Post a set of documents to SOLR
-	 * @param  string of xml $docs   
+	 * @param  string of xml $docs
 	 * @param  string $handle [select|update]
 	 * @return json|xml return values
 	 */
@@ -858,7 +865,7 @@ class Solr {
 		if ($query_condition)
 		{
 			$result = curl_post($this->solr_url.'update?commit=true&wt=json',
-									 '<delete><query>'.$query_condition.'</query></delete>');    
+									 '<delete><query>'.$query_condition.'</query></delete>');
 			return $result;
 		}
 	}
@@ -868,13 +875,13 @@ class Solr {
 	{
 		$counter = 0;
 		$result = '';
-		$query = '';    
+		$query = '';
 
 		if (is_array($ids))
 		{
 			$chunkSize = 1000;
 			$arraySize = count($ids);
-	
+
 			foreach($ids as $id)
 			{
 				$counter++;
@@ -907,9 +914,9 @@ class Solr {
 			$query = '*:*';
 		}
 
-		$result = curl_post($this->solr_url.'update?commit=true&wt=json', '<delete><query>'.$query.'</query></delete>');    
+		$result = curl_post($this->solr_url.'update?commit=true&wt=json', '<delete><query>'.$query.'</query></delete>');
 		//$result .= curl_post($this->solr_url.'update?optimize=true', '<optimize waitFlush="false" waitSearcher="false"/>');
-		return $result; 
+		return $result;
 		//return curl_post($this->solr_url.'update?wt=json&commit=true', '<delete>'.$query.'</delete>');
 	}
 }
