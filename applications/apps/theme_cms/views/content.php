@@ -9,7 +9,6 @@
 					<h5>{{c.title}} <small>{{c.type}}</small></h5>
 					<select ng-model="c.type">
 						<option value="html">HTML Contents</option>
-						<option value="gallery">Image Gallery</option>
 						<option value="list_ro">List of Registry Objects</option>
 						<option value="separator">Separator</option>
 						<option value="search">Search Results</option>
@@ -20,6 +19,8 @@
 				<div class="widget-content">
 					<div ng-hide="c.editing">
 						<div ng-bind-html="c.content" ng-show="c.type == 'html'"></div>
+
+						<!-- Image Gallery Option, Removed as of CC-1345 -->
 						<div ng-show="c.type=='gallery'">
 							<a colorbox ng-repeat="img in c.gallery" href="{{img.src}}" rel="{{c.title}}"><img src="{{img.src}}" alt="" style="width:100px;" rel="{{c.title}}"></a>
 							<br/><span class="label label-info">{{c.gallery_type}}</span>
@@ -75,6 +76,7 @@
 								<textarea ui-tinymce="tinymceOptions" ng-model="c.content"></textarea>
 							</div>
 
+							<!-- Image Gallery, Deprecated as of CC-1345 -->
 							<div ng-show="c.type == 'gallery'">
 								<select ng-model="c.gallery_type" ng-options="f.value as f.name for f in gallery_types"></select>
 								<div ng-repeat="img in c.gallery">
@@ -139,7 +141,7 @@
 										<button type="submit" class="btn" ng-click="preview_search(c)">Preview Search</button>
 										<a href="" class="btn" ng-click="addToList(c, c.search.fq)"><i class="icon icon-plus"></i> Add Filter</a>
 									</div>
-									
+
 									<div class="input-prepend input-append" ng-repeat="f in c.search.fq">
 
 										<div class="btn-group" style="display:inline-block;">
