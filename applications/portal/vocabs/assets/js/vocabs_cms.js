@@ -26,6 +26,11 @@
          */
         vocabs_factory.user().then(function (data) {
             $scope.user_orgs = data.message['affiliations'];
+            $scope.user_orgs_names = [];
+            for (var i=0; i<data.message['affiliations'].length; ++i)
+            {
+                    $scope.user_orgs_names.push({'id':data.message['affiliations'][i],'name': data.message['affiliationsNames'][i]});
+            }
             $scope.user_owner = data.message['role_id'];
         });
         $scope.vocab.user_owner = $scope.user_owner;

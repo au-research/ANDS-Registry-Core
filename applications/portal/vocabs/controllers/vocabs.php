@@ -645,6 +645,7 @@ class Vocabs extends MX_Controller
             } else if ($method == 'user') {
                 $result = array();
                 $result['affiliations'] = array_values(array_unique($this->user->affiliations()));
+                $result['affiliationsNames'] = array_values(array_unique($this->user->affiliationsNames()));
                 $result['role_id'] = $this->user->localIdentifier();
 
             } else if ($method == 'index') {

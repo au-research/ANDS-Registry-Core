@@ -286,8 +286,28 @@ class User {
 			return $this->affiliations;
 		}
 	}
-		
-		
+
+    /**
+     *
+     */
+    function affiliationsNames()
+    {
+        //@todo: fix this
+        // dd($this->CI->session->all_userdata());
+        $this->affiliationsName = $this->CI->session->userdata(AUTH_AFFILIATION_ARRAY);
+        $this->cosi_db = $this->CI->load->database('roles', true);
+        $affNames = array();
+        foreach($this->affiliationsName as $affiliation){
+            $query = $this->cosi_db->get_where('roles', array('role_id'=>$affiliation));
+            if ($query->num_rows() > 0) {
+                foreach ($query->result_array() as $r) {
+                    $affNames[] = $r['name'];
+                }
+            }
+        }
+        return $affNames;
+    }
+
 	/**
 	 * 
 	 */
