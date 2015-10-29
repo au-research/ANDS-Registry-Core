@@ -783,6 +783,14 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		return false;
 	}
 
+	$scope.clearSubject = function() {
+		var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh'];
+		angular.forEach(fields_array, function(ss){
+			delete $scope.prefilters[ss];
+		});
+		$scope.presearch();
+	}
+
 	$scope.sizeofField = function(type) {
 
 		var ret = 0;

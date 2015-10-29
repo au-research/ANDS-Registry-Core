@@ -31,6 +31,20 @@ if(isset($vocab['related_entity'])){
     }
 }
 
+// Determine whether or not to show the concept tree and widgetableness.
+// Set $sissvocEndPoint if they are to be shown.
+foreach ($vocab['versions'] as $version) {
+    if ($version['status']=='current' && $version['version_access_points']) {
+        foreach($version['version_access_points'] as $ap)
+        {
+            if($ap['type'] == 'sissvoc'){
+                $url = json_decode($ap['portal_data'])->uri;
+                $sissvocEndPoint = $url;
+            }
+        }
+    }
+}
+
 ?>
 
 @section('og-description')
