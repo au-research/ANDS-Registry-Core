@@ -116,6 +116,7 @@
 											<select name="" id="" ng-model="c.search.style">
 												<option value="tile">Tile</option>
 												<option value="list">List</option>
+												<option value="name_group">Name (Group) List</option>
 											</select>
 										</div>
 									</div>
