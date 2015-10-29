@@ -310,6 +310,9 @@ class Vocabs extends MX_Controller
         $this->load->library('solr');
         $this->solr->setUrl('http://localhost:8983/solr/vocabs/');
 
+        $pp = 10;
+        $start = 0;
+
         //facets
         $this->solr
              ->setFacetOpt('field', 'subjects')
@@ -332,7 +335,7 @@ class Vocabs extends MX_Controller
             //search definition
             $this->solr
                  ->setOpt('defType', 'edismax')
-                 ->setOpt('rows', '250')
+                 ->setOpt('rows', $pp)
                  ->setOpt('q.alt', '*:*')
                  ->setOpt('qf', 'title_search^1 subject_search^0.5 description_search~10^0.01 fulltext^0.001 concept_search^0.02 publisher^0.5');
 
@@ -343,6 +346,13 @@ class Vocabs extends MX_Controller
                             $this->solr->setOpt('q', $value);
                         }
 
+                        break;
+                    case "p":
+                        $page = (int)$value;
+                        if($page>1){
+                            $start = $pp * ($page-1);
+                        }
+                        $this->solr->setOpt('start', $start);
                         break;
                     case 'subjects':
                     case 'publisher':
@@ -364,10 +374,12 @@ class Vocabs extends MX_Controller
                 }
             }
         }
-            //CC-1298 If there's no search term, order search result by title asc
+
+        //CC-1298 If there's no search term, order search result by title asc
         if (!$filters || !isset($filters['q']) || trim($filters['q']) == '') {
-            $this->solr->setOpt('sort', 'title_sort asc')
-                ->setOpt('rows', '250');
+            $this->solr
+                ->setOpt('sort', 'title_sort asc')
+                ->setOpt('rows', $pp);
         }
 
         // $this->solr->setFilters($filters);
