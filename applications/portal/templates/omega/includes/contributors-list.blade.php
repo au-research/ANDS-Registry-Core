@@ -1,4 +1,7 @@
-<?php uasort($contributors, 'alphasort_byattr_title'); ?>
+<?php
+	uasort($contributors, 'alphasort_byattr_title');
+	shuffle($contributors);
+?>
 <div class="flexslider" id="slider">
 	<ul class="slides">
 		@foreach($contributors as $group)
@@ -11,7 +14,7 @@
 							<div class="logo-place">
 								<img src="{{$group['logo']}}" alt="" class="" align="middle"/>
 							</div>
-							
+
 							@else
 							<div class="logo-placement"><p>{{$group['title']}}</p></div>
 							@endif
