@@ -27,6 +27,7 @@
 		<field name="pool_party_id" type="string" indexed="true" stored="true" required="false"/>
 		<field name="owner" type="string" indexed="true" stored="true" required="false"/>
 		<field name="acronym" type="string" indexed="true" stored="true" required="false"/>
+		<field name="status" type="string" indexed="true" stored="true" required="false"/>
 
 		<!-- MultiValued -->
 		<field name="subjects" type="string" indexed="true" stored="true" required="false" multiValued="true"/>

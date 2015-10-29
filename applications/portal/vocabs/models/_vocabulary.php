@@ -59,7 +59,7 @@ class _vocabulary
         $json = array();
 
         //index single values
-        $single_values = array('id', 'title', 'slug', 'pool_party_id');
+        $single_values = array('id', 'title', 'slug', 'pool_party_id', 'status');
         foreach ($single_values as $s) {
             if (isset($this->prop[$s])) $json[$s] = $this->prop[$s];
         }

@@ -810,7 +810,8 @@ class Vocabs extends MX_Controller
         $this->solr->setUrl($vocab_config['solr_url']);
 
         //only index published records
-        if ($vocab->status == 'published') {
+        // CC-1255 and CC-1328, index deprecated vocabulary as well
+        if ($vocab->status == 'published' || $vocab->status == 'deprecated') {
             //remove index
             $this->solr->deleteByID($vocab->id);
 

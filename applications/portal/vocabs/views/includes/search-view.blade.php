@@ -98,7 +98,9 @@
                 <div class="clearfix"></div>
 
 				<div ng-repeat="doc in result.response.docs" class="animated fadeInLeft vocab-search-result">
+                    <span class="label label-default pull-right" ng-if="doc.status=='deprecated'">[[ doc.status ]]</span>
 					<h3><a href="[[ base_url ]][[ doc.slug ]]">[[ doc.title ]]</a></h3>
+
 					<p ng-if="doc.acronym">
 						<small>Acronym: [[ doc.acronym ]]</small>
 					</p>
