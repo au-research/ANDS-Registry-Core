@@ -21,7 +21,7 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
         }
     };
 
-    
+
     $scope.check = function() {
         profile_factory.check_is_bookmarked($scope.ro.id).then(function(data){
            if (data.status=='OK') {
@@ -54,9 +54,13 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
 
 
 	$scope.openCitationModal = function(){
-		$log.debug('open');
-		$log.debug($('#citationModal'));
+		// $log.debug('open');
+		// $log.debug($('#citationModal'));
 		$('#citationModal').modal();
 	}
+
+    $scope.openAccessPolicyModal = function() {
+        $('#accessPolicyModal').modal();
+    }
 
 });

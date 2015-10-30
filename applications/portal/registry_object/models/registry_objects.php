@@ -6,6 +6,9 @@
  */
 class Registry_objects extends CI_Model {
 
+    //array of properties required from the Registry point for RDA purpose
+    public $rdaProperties = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch', 'accessPolicy');
+
 	/**
 	 * get an _ro by ID
 	 * @param  int $id registry object id
@@ -13,14 +16,14 @@ class Registry_objects extends CI_Model {
 	 */
 	public function getByID($id, $props = array(), $useCache = true) {
 		if (empty($props)) {
-			$props = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
+			$props = $this->rdaProperties;
 		}
 		return new _ro($id, $props, $useCache);
 	}
 
 	/**
 	 * get an _ro by SLUG
-	 * @param  string $slug 
+	 * @param  string $slug
 	 * @todo
 	 * @return _ro
 	 */
@@ -38,7 +41,7 @@ class Registry_objects extends CI_Model {
 
         if($id)
         {
-            $props = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
+            $props = $this->rdaProperties;
             return new _ro($id, $props, $useCache);
         }
         return false;
@@ -64,7 +67,7 @@ class Registry_objects extends CI_Model {
 	/**
 	 * get an _ro by ANY
 	 * detects the query to see if it's a slug or an id and then handle accordingly
-	 * @param  string $slug 
+	 * @param  string $slug
 	 * @todo
 	 * @return _ro
 	 */
@@ -74,9 +77,9 @@ class Registry_objects extends CI_Model {
 
 	/**
 	 * Resolve an Identifier and return the "pull back" resource
-	 * @param  string $type       
-	 * @param  string $identifier 
-	 * @return array             
+	 * @param  string $type
+	 * @param  string $identifier
+	 * @return array
 	 */
 	public function resolveIdentifier($type = 'orcid', $identifier) {
 		if (!$identifier) throw new Exception('No Identifier Provided');

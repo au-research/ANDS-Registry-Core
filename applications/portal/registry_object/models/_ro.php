@@ -78,6 +78,12 @@ class _ro {
 		$cache_id = 'ro-portal-'.$this->id;
 		$ci =& get_instance();
 		$ci->load->driver('cache');
+
+        //refresh the cache when required
+        if ($ci->input->get('refresh')) {
+            $ci->cache->file->delete($cache_id);
+        }
+
         if($useCache)
         {
             if(! $content = $ci->cache->file->get($cache_id))
