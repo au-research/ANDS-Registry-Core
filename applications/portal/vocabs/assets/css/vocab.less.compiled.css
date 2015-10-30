@@ -306,6 +306,26 @@ input:disabled + label {
 .cms-help-tip {
   max-width: 460px;
 }
+ul.pagi {
+  margin: 0 auto;
+  padding: 0;
+}
+ul.pagi li {
+  list-style-type: none;
+  display: inline;
+  margin: 0px 5px;
+}
+ul.pagi li:active {
+  color: #eb7700 !important;
+}
+.published_title {
+  word-wrap: break-word;
+  max-width: 510px;
+}
+.draft_title {
+  word-wrap: break-word;
+  max-width: 580px;
+}
 .classic-tree ul {
   margin-left: 20px;
 }

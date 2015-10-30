@@ -15937,10 +15937,12 @@ queryBuilder.filter('getDisplayFor', function($log){
             scope.tip = function() {
                 var text = '';
                 if(scope.facet.name=='access_rights'){
-                    text = "<strong>Open</strong>: Data that is readily accessible and reusable.<br />"
-                    text = text + "<strong>Conditional</strong>: Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required).<br />";
-                    text = text + "<strong>Restricted</strong>: Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location).<br />";
-                    text = text + "<strong>Other</strong>: no value or user defined custom value.";
+                    text = "<strong>Open</strong>: Data is publicly accessible online.<br />"
+                    text = text + "<strong>Conditional</strong>: Data is publicly accessible subject to certain conditions. For example:";
+                    text = text + "<ul><li>a fee applies</li><li>the data is only accessible at a specific physical location</li></ul>";
+                    text = text + "<strong>Restricted</strong>: Data access is limited.  For example.<br />";
+                    text = text + "<ul><li>following an embargo period;</li><li>to a particular group of users;</li><li>where formal permission is granted.</li></ul>";
+                    text = text + "<strong>Other</strong>: No value or user defined custom value.";
 
                 }
 
@@ -15971,7 +15973,7 @@ queryBuilder.filter('getDisplayFor', function($log){
 			scope.advanced = function(active) {
 				scope.$emit('advanced', active);
 			}
-			
+
 			scope.hashChange = scope.$parent.hashChange;
 		}
 	}
@@ -16088,7 +16090,7 @@ app.directive('classicon', function($log) {
 				}
 				// scope.class += ' icon-white';
 			});
-			
+
 		}
 	}
 });
@@ -16193,7 +16195,7 @@ app.directive('mappreview', function($log, uiGmapGoogleMapApi){
 						});
 						src +='&center='+lat+','+lon;
 					}
-					
+
 
 					//markers
 					var markers = [];
@@ -16266,7 +16268,7 @@ app.directive('mappreview', function($log, uiGmapGoogleMapApi){
 
 				function extendBounds(bounds, coordinates) {
 				    for (b in coordinates) {
-				        bounds.extend(coordinates[b]);            
+				        bounds.extend(coordinates[b]);
 				    };
 				    console.log(bounds.toString());
 				};
@@ -16300,7 +16302,7 @@ app.directive('mappreview', function($log, uiGmapGoogleMapApi){
 				}
 			});
 			// $log.debug(scope.centres);
-			
+
 			scope.advanced = function(active) {
 				scope.$emit('advanced', active);
 			}
@@ -16314,9 +16316,9 @@ app.directive('focusMe', function($timeout, $parse) {
     link: function(scope, element, attrs) {
       var model = $parse(attrs.focusMe);
       scope.$watch(model, function(value) {
-        if(value === true) { 
+        if(value === true) {
           $timeout(function() {
-            element[0].focus(); 
+            element[0].focus();
           });
         }
       });
@@ -17183,6 +17185,14 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			}
 		}
 		return false;
+	}
+
+	$scope.clearSubject = function() {
+		var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh'];
+		angular.forEach(fields_array, function(ss){
+			delete $scope.prefilters[ss];
+		});
+		$scope.presearch();
 	}
 
 	$scope.sizeofField = function(type) {
