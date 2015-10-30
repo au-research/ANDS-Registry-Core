@@ -326,6 +326,9 @@ ul.pagi li:active {
   word-wrap: break-word;
   max-width: 580px;
 }
+.break {
+  word-wrap: break-word;
+}
 .classic-tree ul {
   margin-left: 20px;
 }

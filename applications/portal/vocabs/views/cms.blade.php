@@ -18,7 +18,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<header class="section-text-shadow section-innder-shadow element-short-top element-short-bottom">
-					<h1 class="hairline bordered-normal" ng-non-bindable>
+					<h1 class="hairline bordered-normal break" ng-non-bindable>
 						@if($vocab)
 						{{ htmlspecialchars($vocab->title) }}
 						@else
