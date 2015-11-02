@@ -126,7 +126,7 @@ foreach ($vocab['versions'] as $version) {
         </div>
 
         @if(isset($vocab['top_concept']))
-        <div class="panel swatch-white">
+        <div class="panel swatch-white" id="concept">
             <div class="panel-heading">Top Concepts</div>
             <div class="panel-body">
                 <table class="table">

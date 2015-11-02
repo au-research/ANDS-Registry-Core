@@ -29,7 +29,6 @@ $(document).ready(function() {
         $("#widget-info").slideToggle("slow");
     });
 
-
 });
 
 $('.box-content:not(:first-child)').hide();

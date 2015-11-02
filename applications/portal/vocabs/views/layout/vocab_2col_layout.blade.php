@@ -38,7 +38,7 @@ $title = rawurlencode(substr($vocab['title'], 0, 200)) ;
                                 @if($vocab['status']=='deprecated')
                                     <span class="label label-default pull-right">{{ $vocab['status'] }}</span>
                                 @endif
-                                <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }} </span></h1>
+                                <h1 class="hairline bordered-normal break" style="line-height:1.1em"><span itemprop="name" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }} </span></h1>
                                 @if (isset($vocab['acronym']))
                                 <small>Acronym: {{ $vocab['acronym'] }}</small><br>
                                 @endif
