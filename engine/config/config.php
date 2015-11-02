@@ -85,6 +85,15 @@ $application_directives = array(
 				"base_url" => "%%BASEURL%%/developers/",
 				"active_application" => "developers",
 				"default_controller" => "documentation/index"
+			),
+	"api" =>
+			array(
+				"base_url" => "%%BASEURL%%/api/",
+				"active_application" => "api",
+				"default_controller" => "core/dispatcher",
+				"routes" => array(
+                     "(:any)"=>"core/dispatcher/$1"
+              	),
 			)
 );
 
