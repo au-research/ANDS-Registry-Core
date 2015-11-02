@@ -99,8 +99,9 @@
 
 				<div ng-repeat="doc in result.response.docs" class="animated fadeInLeft vocab-search-result">
                     <span class="label label-default pull-right" ng-if="doc.status=='deprecated'">[[ doc.status ]]</span>
-					<h3><a href="[[ base_url ]][[ doc.slug ]]">[[ doc.title ]]</a></h3>
+					<h3 class="break"><a href="[[ base_url ]][[ doc.slug ]]">[[ doc.title ]]</a></h3>
 
+                   <a id="widget-link" href="javascript:showWidget()" ng-if="doc.widgetable" tip="<b>Widgetable</b><br/>This vocabulary can be readily used for resource description or discovery in your system using our vocabulary widget.<br/><a id='widget-link2' href='javascript:showWidget()'>Learn more</a>"><span class="btn-widget-link"><img class="widget-icon" height="32" width="32"src="{{asset_url('images/cogwheels.png', 'core')}}"/>widgetable</span></a>
 					<p ng-if="doc.acronym">
 						<small>Acronym: [[ doc.acronym ]]</small>
 					</p>

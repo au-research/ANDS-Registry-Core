@@ -139,7 +139,7 @@ class _vocabulary
         }
 
         $json['concept'] = array();
-
+        $json['widgetable']=false;
         if ($current_version) {
             $concept_list_path = isset($current_version['concepts_list']) ? $current_version['concepts_list'] : false;
             if($concept_list_path){
@@ -157,6 +157,14 @@ class _vocabulary
             foreach ($current_version['access_points'] as $ap) {
                 $json['access'][] = vocab_readable($ap['type']);
                 $json['format'][] = $ap['format'];
+            }
+            foreach($current_version['version_access_points'] as $ap)
+            {
+                if($ap['type'] == 'sissvoc'){
+                    $url = json_decode($ap['portal_data'])->uri;
+                    $json['sissvoc_end_point'] = $url;
+                    $json['widgetable']=true;
+                }
             }
         }
 

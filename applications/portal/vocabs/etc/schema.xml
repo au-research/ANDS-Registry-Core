@@ -28,7 +28,8 @@
 		<field name="owner" type="string" indexed="true" stored="true" required="false"/>
 		<field name="acronym" type="string" indexed="true" stored="true" required="false"/>
 		<field name="status" type="string" indexed="true" stored="true" required="false"/>
-
+        <field name="sissvoc_end_point" type="string" indexed="true" stored="true" required="false"/>
+        <field name="widgetable" type="boolean" indexed="true" stored="true" required="false"/>
 		<!-- MultiValued -->
 		<field name="subjects" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="top_concept" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
@@ -37,6 +38,7 @@
 		<field name="publisher" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="access" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="format" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
+
 
 		<!-- Search Fields -->
 		<field name="concept_search" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
