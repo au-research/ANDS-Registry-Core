@@ -1,5 +1,5 @@
 <?php
-require_once(APP_PATH. 'registry_object/models/_GenericSuggestor.php');
+require_once(REGISTRY_APP_PATH. 'registry_object/models/_GenericSuggestor.php');
 
 /**
  * Class Shared text Suggestor
@@ -7,7 +7,7 @@ require_once(APP_PATH. 'registry_object/models/_GenericSuggestor.php');
  * @author Richard Walker <Richard.Walker@ands.org.au>
  */
 class Shared_text_suggestor extends _GenericSuggestor {
-	
+
     /**
      * Suggest Records based on the title or description
      * containing similar text, using the Solr's mlt search.
@@ -33,7 +33,7 @@ class Shared_text_suggestor extends _GenericSuggestor {
             ->setOpt('mlt', 'true')
             ->setOpt('mlt.fl', 'description_value,title_search')
             ->setOpt('mlt.count', $maxRows);
-        
+
         $suggestions = array();
 
         $result = $ci->solr->executeSearch(true);
@@ -52,7 +52,7 @@ class Shared_text_suggestor extends _GenericSuggestor {
                 }
             }
         }
-        
+
         return $suggestions;
     }
 

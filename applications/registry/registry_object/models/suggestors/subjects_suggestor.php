@@ -1,5 +1,5 @@
 <?php
-require_once(APP_PATH. 'registry_object/models/_GenericSuggestor.php');
+require_once(REGISTRY_APP_PATH. 'registry_object/models/_GenericSuggestor.php');
 
 /**
  * Class Subjects Suggestor
@@ -8,7 +8,7 @@ require_once(APP_PATH. 'registry_object/models/_GenericSuggestor.php');
  * @author Richard Walker <Richard.Walker@ands.org.au>
  */
 class Subjects_suggestor extends _GenericSuggestor {
-	
+
     /**
      * Suggest Records based on subject_value_unresolved value
      * from the local SOLR core.
@@ -23,7 +23,7 @@ class Subjects_suggestor extends _GenericSuggestor {
         if ($sxml->registryObject) {
             $sxml = $sxml->registryObject;
         }
-	
+
         // Subject matches
         $my_subjects = array();
         if ($sxml->{strtolower($this->ro->class)}->subject) {

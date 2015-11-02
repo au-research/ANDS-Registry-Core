@@ -1,5 +1,5 @@
 <?php
-require_once(APP_PATH. 'registry_object/models/_GenericSuggestor.php');
+require_once(REGISTRY_APP_PATH. 'registry_object/models/_GenericSuggestor.php');
 
 /**
  * Class Temporal coverage Suggestor
