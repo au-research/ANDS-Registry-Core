@@ -393,7 +393,10 @@
               'style="color: #17649a; font-size: 13px"></span></a>');
         };
 
-        $scope.relatedmodal = function (action, type, obj) {
+        // CC-1518 Need the related entity index, because we send a
+        // copy of the related entity to the modal, and then need to
+        // copy it back into the correct place after a Save.
+        $scope.relatedmodal = function (action, type, index) {
             var modalInstance = $modal.open({
                 templateUrl: base_url + 'assets/vocabs/templates/relatedModal.html',
                 controller: 'relatedCtrl',
@@ -401,7 +404,8 @@
                 resolve: {
                     entity: function () {
                         if (action == 'edit') {
-                            return obj;
+                            // CC-1518 Operate on a copy of the related entity.
+                            return angular.copy($scope.vocab.related_entity[index]);
                         } else {
                             return false;
                         }
@@ -423,7 +427,8 @@
                     if (!$scope.vocab.related_entity) $scope.vocab.related_entity = [];
                     $scope.vocab.related_entity.push(newObj);
                 } else if (obj.intent == 'save') {
-                    obj = obj.data;
+                    // CC-1518 Copy the modified related entity back into place.
+                    $scope.vocab.related_entity[index] = obj.data;
                 }
             }, function () {
                 //dismiss

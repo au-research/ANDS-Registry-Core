@@ -275,7 +275,7 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="related in vocab.related_entity track by $index">
-										<td><a href="" ng-click="relatedmodal('edit', related.type, related)" tooltip="[[ related.relationship.join() ]]">[[ related.title ]]</a></td>
+										<td><a href="" ng-click="relatedmodal('edit', related.type, $index)" tooltip="[[ related.relationship.join() ]]">[[ related.title ]]</a></td>
 										<td>[[ related.type ]]</td>
 										<td><a href="" ng-click="list_remove('related_entity', $index)"><i class="fa fa-remove"></i></a></td>
 									</tr>
