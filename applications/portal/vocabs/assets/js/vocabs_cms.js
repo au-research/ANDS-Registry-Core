@@ -536,9 +536,13 @@ RewriteRule ^/ands_doc/tooltips$  /ands_doc/pages/viewpage.action?pageId=2247884
     */
     $(document).ready(function() {
         $.get("/ands_doc/tooltips", function (data) {
-        var data_replaced = data.replace(/src="/gi, 'src="/ands_doc');
-        var html = $(data_replaced).find('#content-column-0');
+            var data_replaced = data.replace(/src="/gi, 'src="/ands_doc');
+            var html = $(data_replaced).find('#content-column-0');
             $('#all_help').html(html);
+            // Make all external links in these tooltips open a new
+            // tab/window. Courtesy of:
+            // https://confluence.atlassian.com/display/CONFKB/How+to+force+links+to+open+in+a+new+window
+            $('#all_help').find(".external-link").attr("target", "_blank");
         });
     });
 
