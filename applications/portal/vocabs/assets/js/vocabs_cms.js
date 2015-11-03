@@ -430,7 +430,10 @@
             });
         };
 
-        $scope.versionmodal = function (action, obj) {
+        // CC-1518 Need the version index, because we send a copy of the version
+        // to the modal, and then need to copy it back into the correct place
+        // after a Save.
+        $scope.versionmodal = function (action, index) {
             var modalInstance = $modal.open({
                 templateUrl: base_url + 'assets/vocabs/templates/versionModal.html',
                 controller: 'versionCtrl',
@@ -438,7 +441,8 @@
                 resolve: {
                     version: function () {
                         if (action == 'edit') {
-                            return obj;
+                            // CC-1518 Operate on a copy of the version.
+                            return angular.copy($scope.vocab.versions[index]);
                         } else {
                             return false;
                         }
@@ -461,7 +465,8 @@
                     if (!$scope.vocab.versions) $scope.vocab.versions = [];
                     $scope.vocab.versions.push(newObj);
                 } else {
-                    obj = obj.data;
+                    // CC-1518 Copy the modified version back into place.
+                    $scope.vocab.versions[index] = obj.data;
                 }
             }, function () {
                 //dismiss
