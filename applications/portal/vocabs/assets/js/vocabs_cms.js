@@ -387,10 +387,10 @@
             Is there a better way?
         */
         $scope.confluenceTip = function (anchor) {
-            return $sce.trustAsHtml('<a href="" confluence_tip="' +
+            return $sce.trustAsHtml('<span confluence_tip="' +
               'PopulatingRVAPortalMetadataFields(OptimisedforRVATooltips)-' +
               anchor + '"><span class="fa fa-info-circle" ' +
-              'style="color: #17649a; font-size: 13px"></span></a>');
+              'style="color: #17649a; font-size: 13px"></span></span>');
         };
 
         // CC-1518 Need the related entity index, because we send a

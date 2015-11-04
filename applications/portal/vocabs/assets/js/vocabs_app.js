@@ -112,7 +112,7 @@ $(document).on('click', '.download-chooser', function(event){
    parent() and next().)
    Note use of adjust method shift which helps dealing with the larger tooltips.
 */
-$(document).on('mouseover', 'a[confluence_tip]', function(event){
+$(document).on('mouseover', 'span[confluence_tip]', function(event){
     $(this).qtip({
         content:{
             text:function(e,api){
