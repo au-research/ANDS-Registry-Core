@@ -168,12 +168,11 @@ class Doitasks extends CI_Model {
 				$doiObjects = new DOMDocument();
 						
 				$result = $doiObjects->loadXML($xml);
-		
-				$errors = error_get_last();
-			
-				if( $errors )
+
+				if( !$result)
 				{
-					$errorMessages = "Document Load Error: ".$errors['message']."\n";
+                    $errors = error_get_last();
+                    $errorMessages = "Document Load Error: ".$errors['message']."\n";
 
 				}
 				else 
@@ -386,6 +385,16 @@ class Doitasks extends CI_Model {
 				$verbosemessage = 'You must post xml when minting a doi.';							
 				$errorMessages = doisGetUserMessage("MT010", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
 			}
+            $doiObjects = new DOMDocument();
+
+            $result = $doiObjects->loadXML($xml);
+
+            if(!$result)
+            {
+                $errors = error_get_last();
+                $errorMessages = "Document Load Error: ".$errors['message']."\n";
+
+            }
 		}
 		if(!$errorMessages)
 		{
@@ -412,10 +421,6 @@ class Doitasks extends CI_Model {
 			}
 
             if(!$manual_mint) $doiValue = strtoupper($datacite_prefix.$client_id2.'/'.uniqid());	//generate a unique suffix for this doi for this client
-
-			$doiObjects = new DOMDocument();
-						
-			$result = $doiObjects->loadXML($xml);
 			$resources = $doiObjects->getElementsByTagName('resource');
 			$theSchema = 'unknown';
 			if($resources->length>0)
@@ -578,8 +583,8 @@ class Doitasks extends CI_Model {
 		$outstr = '';
 		$urlValue = '';
 		$verbosemessage = '';	
-		$client_id ='';	
-
+		$client_id ='';
+        $response = '';
 		if ( isset($_SERVER["HTTP_X_FORWARDED_FOR"]) )    {
 			$ip=$_SERVER["HTTP_X_FORWARDED_FOR"];
 		} else if ( isset($_SERVER["HTTP_CLIENT_IP"]) )    {
@@ -1059,7 +1064,7 @@ class Doitasks extends CI_Model {
         $output= '';
         $data = file_get_contents("php://input");
 
-        parse_str($data, $output);
+        parse_str(htmlentities($data), $output);
         if(isset($output['xml']) )
         {
             return trim($output['xml']);
