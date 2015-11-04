@@ -1,16 +1,16 @@
-<?php 
+<?php
 
 /**
  * DOI Listing Screen
- * 
+ *
  * @author Ben Greenwood <ben.greenwood@ands.org.au>
  * @see ands/mydois/controllers/mydois
  * @package ands/mydois
- * 
+ *
  */
 ?>
-<?php 
-$this->load->view('header'); 
+<?php
+$this->load->view('header');
 $testDoiPrefix =  $this->config->item('test_doi_prefix');
 ?>
 
@@ -49,7 +49,7 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
 					</tr>
 				</thead>
 				<tbody>
-				<?php foreach($dois AS $doi): 
+				<?php foreach($dois AS $doi):
 				$doiTitle = getDoiTitle($doi->datacite_xml);
 				?>
 					<tr>
@@ -67,7 +67,7 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
 						<td><?=$doi->status;?>
 						</td>
 						<td><?=date('Y-m-d H:i:s', strtotime($doi->updated_when));?></td>
-					</tr>	
+					</tr>
 				<?php endforeach; ?>
 				</tbody>
 			</table>
@@ -80,9 +80,9 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
 				<thead>
 					<tr>
 						<th>Service</th>
-						<th>Date</th>	
+						<th>Date</th>
 						<th>DOI</th>
-						<th>Message</th>		
+						<th>Message</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -96,7 +96,7 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
 							<small><?=$act->doi_id;?></small>
 						</td>
 						<td width="60%"><pre><small><?=nl2br($act->message);?></small></pre></td>
-					</tr>	
+					</tr>
 				<?php endforeach; ?>
 				</tbody>
 			</table>
@@ -164,7 +164,7 @@ $testDoiPrefix =  $this->config->item('test_doi_prefix');
 </div>
 
 <?php $this->load->view('footer');?>
-<?php 
+<?php
 if(isset($doi_update))
 {
 	//echo (substr($doi_update,0,5));
@@ -176,17 +176,17 @@ if(isset($doi_update))
 	<div class="modal-header">
 		 <button type="button" class="close" data-dismiss="modal">×</button>
 		  <h3><?php if(isset($error)) { echo "Alert"; } else { echo '&nbsp;';}?></h3>
-	</div>	
+	</div>
   	<div class="modal-body">
    		<p>
     	<div>
-    		<?php 
+    		<?php
     		if(isset($error))
     		{
     		?>
     			<p>An error has occurred:</p>
     			<p>Update of the doi was unsuccessful. The following error message was returned:</p>
-    		<?php 
+    		<?php
     		}
     		?>
     		<p><?=$doi_update?></p>
@@ -204,21 +204,21 @@ $("#updateDoiResult").modal();
 </script>
 
 
-<?php 
+<?php
 }
 ?>
-<?php 
+<?php
 
 function getDoiTitle($doiXml)
 {
-	
+
 	$doiObjects = new DOMDocument();
 	$titleFragment = 'No Title';
 	if(strpos($doiXml ,'<') === 0)
-	{			
+	{
 		$result = $doiObjects->loadXML(trim($doiXml));
 		$titles = $doiObjects->getElementsByTagName('title');
-		
+
 		if($titles->length > 0)
 		{
 			$titleFragment = '';
@@ -239,9 +239,9 @@ function getDoiTitle($doiXml)
 	else{
 		$titleFragment = $doiXml;
 	}
-		
+
 	return $titleFragment;
-	
+
 }
 
 
