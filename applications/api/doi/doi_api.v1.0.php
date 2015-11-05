@@ -13,13 +13,16 @@ class Doi_api
         $this->ci = &get_instance();
         $this->dois_db = $this->ci->load->database('dois', true);
 
-        $this->getClient();
+
 
         $this->params = array(
             'submodule' => isset($method[1]) ? $method[1] : 'list',
             'identifier' => isset($method[2]) ? $method[2] : false,
             'object_module' => isset($method[3]) ? $method[3] : false,
         );
+
+        //everything under here requires a client, app_id
+        $this->getClient();
 
         //get a potential DOI
         if ($this->params['object_module']) {
@@ -43,6 +46,29 @@ class Doi_api
             throw new Exception($e->getMessage());
         }
 
+    }
+
+    private function getAssociateAppID($role_id)
+    {
+        if (!$role_id) throw new Exception('role id required');
+        $result = array();
+        $roles_db = $this->ci->load->database('roles', true);
+        $user_affiliations = array('1');
+        $roles_db->distinct()->select('*')
+                // ->where_in('child_role_id', $user_affiliations)
+                ->where('role_type_id', 'ROLE_DOI_APPID      ', 'after')
+                ->join('roles', 'role_id = parent_role_id')
+                ->from('role_relations');
+        $query = $roles_db->get();
+
+        dd($query->result());
+
+        if ($query->num_rows() > 0) {
+            foreach ($query->result() AS $r) {
+                $result[] = $r->parent_role_id;
+            }
+        }
+        return $result;
     }
 
     private function getDOI($doi)

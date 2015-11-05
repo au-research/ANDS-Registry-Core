@@ -37,7 +37,11 @@ class Mydois extends MX_Controller {
 
 	}
 
-	function index()
+	function index() {
+		$this->app();
+	}
+
+	function index2()
 	{
 		acl_enforce('DOI_USER');
 
