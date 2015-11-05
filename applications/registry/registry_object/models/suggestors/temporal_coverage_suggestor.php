@@ -1,5 +1,5 @@
 <?php
-require_once(APP_PATH. 'registry_object/models/_GenericSuggestor.php');
+require_once(REGISTRY_APP_PATH. 'registry_object/models/_GenericSuggestor.php');
 
 /**
  * Class Temporal coverage Suggestor
@@ -7,7 +7,7 @@ require_once(APP_PATH. 'registry_object/models/_GenericSuggestor.php');
  * @author Richard Walker <Richard.Walker@ands.org.au>
  */
 class Temporal_coverage_suggestor extends _GenericSuggestor {
-	
+
     /**
      * Suggest Records based on related object ids, using the Solr's mlt search.
      * Rely on Solr's score.

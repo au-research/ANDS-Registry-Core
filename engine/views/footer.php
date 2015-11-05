@@ -32,6 +32,7 @@ $base_url = str_replace('/apps','/registry',base_url());
         var base_url = '<?php echo $base_url;?>';
         var portal_url = '<?php echo portal_url();?>';
         var apps_url = '<?php echo apps_url();?>';
+        var api_url = '<?php echo api_url();?>';
         var real_base_url = "<?php echo $this->config->item('default_base_url');?>";
         var suffix = '<?php echo url_suffix();?>';
         var editor = '';
@@ -42,7 +43,7 @@ $base_url = str_replace('/apps','/registry',base_url());
     <script type="text/javascript" src="<?php echo$base_url;?>assets/js/arms.scripts.js"></script>
 
     <?php foreach($js_lib as $lib):?>
-            
+
         <?php if($lib=='graph'):?>
             <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="excanvas.js"></script><![endif]-->
             <script language="javascript" type="text/javascript" src="<?php echo$base_url;?>assets/lib/jqplot/jquery.jqplot.min.js"></script>

@@ -311,6 +311,12 @@ function apps_url($suffix=''){
 	return $CI->config->item('default_base_url') . 'apps/'. $suffix;
 }
 
+function api_url($suffix=''){
+	$CI =& get_instance();
+
+	return $CI->config->item('default_base_url') . 'api/'. $suffix;
+}
+
 function identifier_url($suffix=''){
 	$CI =& get_instance();
 

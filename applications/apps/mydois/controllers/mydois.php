@@ -3,14 +3,14 @@
 
 /**
  * Services controller
- * 
+ *
  * Abstract services controller allows for easy extension of the
  * services module and logging and access management of requests
- * via the API key system. 
- * 
+ * via the API key system.
+ *
  * @author Ben Greenwood <ben.greenwood@ands.org.au>
  * @package ands/services
- * 
+ *
  */
 class Mydois extends MX_Controller {
 
@@ -18,16 +18,16 @@ class Mydois extends MX_Controller {
 	{
 		$authstr =  '313ba574c47f1cdd8f626942dd8b6509441f23a9:2959ce543222';
 		$context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($authstr));
-		//$context = array('Content-Type: application/xml;charset=UTF-8');		
-		$requestURI = 'http://devl.ands.org.au/workareas/liz/ands/apps/mydois/mint/?url=sdfjds.sdfds.dsfdsf&app_id=313ba574c47f1cdd8f626942dd8b6509441f23a9';	
+		//$context = array('Content-Type: application/xml;charset=UTF-8');
+		$requestURI = 'http://devl.ands.org.au/workareas/liz/ands/apps/mydois/mint/?url=sdfjds.sdfds.dsfdsf&app_id=313ba574c47f1cdd8f626942dd8b6509441f23a9';
 
 		$postdata = 'xml=<xml><identifier>10.5046/dghjfgg</identifier></xml>';
-	
+
 		$newch = curl_init();
 		curl_setopt($newch, CURLOPT_URL, $requestURI);
 		curl_setopt($newch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($newch, CURLOPT_POST, 1);
-		curl_setopt($newch, CURLOPT_POSTFIELDS,$postdata);				
+		curl_setopt($newch, CURLOPT_POSTFIELDS,$postdata);
 		curl_setopt($newch, CURLOPT_HTTPHEADER,$context);
 
 		$result = curl_exec($newch);
@@ -103,11 +103,11 @@ class Mydois extends MX_Controller {
 		$posted = $this->input->post('jsonData');
 		$ip = trim(urlencode($posted['ip_address']));
 		$client_name = trim(urlencode($posted['client_name']));
-		$client_contact_name = trim(urlencode($posted['client_contact_name']));	
+		$client_contact_name = trim(urlencode($posted['client_contact_name']));
 		$client_contact_email = trim(urlencode($posted['client_contact_email']));
 		$domainList = trim(urlencode($posted['domainList']));
 		$datacite_prefix = 	trim(urlencode($posted['datacite_prefix']));
-		$shared_secret = trim(urlencode($posted['shared_secret']))	;			
+		$shared_secret = trim(urlencode($posted['shared_secret']))	;
 		$response = $this->mydois->addTrustedClient($ip, $client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix, $shared_secret);
 		echo json_encode($response);
 	}
@@ -126,14 +126,24 @@ class Mydois extends MX_Controller {
 		$ip = trim(urlencode($posted['ip_address']));
 		$client_id = trim(urlencode($posted['client_id']));
 		$client_name = trim(urlencode($posted['client_name']));
-		$client_contact_name = trim(urlencode($posted['client_contact_name']));	
+		$client_contact_name = trim(urlencode($posted['client_contact_name']));
 		$client_contact_email = trim(urlencode($posted['client_contact_email']));
 		$domainList = trim(urlencode($posted['domainList']));
 		$datacite_prefix = 	trim(urlencode($posted['datacite_prefix']));
-		$shared_secret = trim(urlencode($posted['shared_secret']))	;						
+		$shared_secret = trim(urlencode($posted['shared_secret']))	;
 		$response = $this->mydois->editTrustedClient($ip, $client_id, $client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix, $shared_secret);
 		echo json_encode($response);
 	}
+
+	function app()
+	{
+		acl_enforce('DOI_USER');
+		$data['js_lib'] = array('core', 'angular129', 'prettyprint');
+		$data['scripts'] = array('doi_cms_app', 'doi_cms_mainCtrl', 'angular_datacite_xml_builder');
+		$data['title'] = 'ANDS DOI Management App';
+		$this->load->view('doi_cms_app', $data);
+	}
+
 
 	function show($app_id=null)
 	{
@@ -142,7 +152,7 @@ class Mydois extends MX_Controller {
 		$data['js_lib'] = array('core');
 		$data['scripts'] = array('mydois','datacite_form');
 		$data['title'] = 'DOI Query Tool';
-		
+
 		// Validate the appId
 		$appId = $this->input->get_post('app_id');
 		$doi_update = $this->input->get_post('doi_update');
@@ -159,32 +169,32 @@ class Mydois extends MX_Controller {
 		$data['doi_appids'] = $this->user->doiappids();
 		if($doi_update)
 		{
-				$data['doi_update'] = $doi_update;	
+				$data['doi_update'] = $doi_update;
 		}
 		if($error)
 		{
-				$data['error'] = $error;	
+				$data['error'] = $error;
 		}
-		if (!$appId) throw new Exception ('Invalid App ID');  
-		
+		if (!$appId) throw new Exception ('Invalid App ID');
+
 		if(!in_array($appId, $data['doi_appids'] ))
 		{
-			throw new Exception ('You do not have authorisation to view dois associated with application id '.$appId);  
+			throw new Exception ('You do not have authorisation to view dois associated with application id '.$appId);
 		}
 
 		$doi_db = $this->load->database('dois', TRUE);
-		
+
 		$query = $doi_db->where('app_id',$appId)->select('*')->get('doi_client');
-		if (!$client_obj = $query->result()) throw new Exception ('Invalid App ID');  
+		if (!$client_obj = $query->result()) throw new Exception ('Invalid App ID');
 		$client_obj = array_pop($client_obj);
-		
+
 		// Store the recently used app id in the client cookie
 		$this->input->set_cookie('last_used_doi_appid', $appId, 9999999);
 		//087391e742ee920e4428aa6e4ca548b190138b89
 
 		$query = $doi_db->order_by('updated_when', 'desc')->order_by('created_when', 'desc')->where('client_id',$client_obj->client_id)->where('status !=','REQUESTED')->select('*')->get('doi_objects');
 
-		
+
 		$data['dois'] = array();
 		foreach ($query->result() AS $doi)
 		{
@@ -207,7 +217,7 @@ class Mydois extends MX_Controller {
         $data['client_id'] = $client_obj->client_id;
         $data['doi_id'] = $client_obj->datacite_prefix.$doi_client_id."/".uniqid();
         $data['app_id'] = $appId;
-		
+
 		$data['client'] = $client_obj;
 		$this->load->view('list_dois', $data);
 	}
@@ -215,20 +225,20 @@ class Mydois extends MX_Controller {
 	function getActivityLog()
 	{
 		acl_enforce('DOI_USER');
-		
+
 		$doi_db = $this->load->database('dois', TRUE);
-		
+
 		// Validate the appId
 		$appId = $this->input->get_post('app_id');
-		if (!$appId) throw new Exception ('Invalid App ID');  
-		
+		if (!$appId) throw new Exception ('Invalid App ID');
+
 		$query = $doi_db->where('app_id',$appId)->select('*')->get('doi_client');
-		if (!$client_obj = $query->result()) throw new Exception ('Invalid App ID');  
+		if (!$client_obj = $query->result()) throw new Exception ('Invalid App ID');
 		$client_obj = array_pop($client_obj);
-		
+
 		$query = $doi_db->order_by('timestamp', 'desc')->where('client_id',$client_obj->client_id)->select('*')->limit(50)->get('activity_log');
 		$this->load->view('view_activity_log',array("activities"=>$query->result()));
-		
+
 
 	}
 
@@ -238,9 +248,9 @@ class Mydois extends MX_Controller {
 		acl_enforce('DOI_USER');
 		$appId = $this->input->get_post('app_id');
 		$doi_db = $this->load->database('dois', TRUE);
-		if (!$appId) throw new Exception ('Invalid App ID'); 
+		if (!$appId) throw new Exception ('Invalid App ID');
 		$query = $doi_db->where('app_id',$appId)->select('*')->get('doi_client');
-		if (!$client_obj = $query->result()) throw new Exception ('Invalid App ID');  
+		if (!$client_obj = $query->result()) throw new Exception ('Invalid App ID');
 		$client_obj = array_pop($client_obj);
 		$client_id = $client_obj->client_id;
 		$pythonBin = $this->config->item('PYTHON_BIN');
@@ -257,56 +267,56 @@ class Mydois extends MX_Controller {
 	function getDoiXml()
 	{
 		acl_enforce('DOI_USER');
-		
+
 		$doi_db = $this->load->database('dois', TRUE);
-		
+
 		// Validate the doi_id
 		$doi_id = rawurldecode($this->input->get_post('doi_id'));
-		if (!$doi_id) throw new Exception ('Invalid DOI ID');  
-		
+		if (!$doi_id) throw new Exception ('Invalid DOI ID');
+
 		$query = $doi_db->where('doi_id',$doi_id)->select('doi_id, datacite_xml')->get('doi_objects');
-		if (!$doi_obj = $query->result_array()) throw new Exception ('Invalid DOI ID');  
+		if (!$doi_obj = $query->result_array()) throw new Exception ('Invalid DOI ID');
 		$doi_obj = array_pop($doi_obj);
 
 		$this->load->view('view_datacite_xml',$doi_obj);
-		
+
 	}
-	
+
 	function updateDoi()
 	{
 		acl_enforce('DOI_USER');
-		
+
 		$doi_db = $this->load->database('dois', TRUE);
 		// Validate the doi_id
 		$doi_id = rawurldecode($this->input->get_post('doi_id'));
         $appId = $this->input->get_post('app_id');
         if (!$appId) throw new Exception ('Invalid App ID');
 
-		if (!$doi_id) throw new Exception ('Invalid DOI ID');  
-		
+		if (!$doi_id) throw new Exception ('Invalid DOI ID');
+
 		$query = $doi_db->where('doi_id',$doi_id)->select('doi_id, url,client_id, datacite_xml')->get('doi_objects');
-		if (!$doi_obj = $query->result_array()) throw new Exception ('Invalid DOI ID');  
+		if (!$doi_obj = $query->result_array()) throw new Exception ('Invalid DOI ID');
 		$doi_obj = array_pop($doi_obj);
         $doi_obj['app_id'] = $appId;
 		$this->load->view('update_doi',$doi_obj);
-		
+
 	}
 
 
 	function getAppIDConfig()
 	{
 		acl_enforce('DOI_USER');
-		
+
 		$doi_db = $this->load->database('dois', TRUE);
-		
+
 		// Validate the appId
 		$appId = $this->input->get_post('app_id');
-		if (!$appId) throw new Exception ('Invalid App ID');  
-		
+		if (!$appId) throw new Exception ('Invalid App ID');
+
 		$query = $doi_db->where('app_id',$appId)->select('*')->get('doi_client');
-		if (!$client_obj = $query->result_array()) throw new Exception ('Invalid App ID');  
+		if (!$client_obj = $query->result_array()) throw new Exception ('Invalid App ID');
 		$client_obj = array_pop($client_obj);
-		
+
 		$query = $doi_db->where('client_id',$client_obj['client_id'])->select('client_domain')->get('doi_client_domains');
 		foreach ($query->result_array() AS $domain)
 		{
@@ -314,8 +324,8 @@ class Mydois extends MX_Controller {
 		}
 
 		$this->load->view('view_app_id_config', $client_obj);
-		
-		
+
+
 	}
 
     /*function manualMintForm(){
@@ -364,6 +374,5 @@ class Mydois extends MX_Controller {
 		acl_enforce('DOI_USER');
 		$this->load->model('_mydois', 'mydois');
 	}
-		
+
 }
-	

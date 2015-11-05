@@ -254,7 +254,7 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="version in vocab.versions track by $index">
-										<td><a href="" ng-click="versionmodal('edit', version)">[[ version.title ]] </a></td>
+										<td><a href="" ng-click="versionmodal('edit', $index)">[[ version.title ]] </a></td>
 										<td><span class="label" ng-class="{'deprecated': 'label-danger', 'current': 'label-success', 'superseded': 'label-warning', 'depreciated': 'label-danger'}[version.status]">[[ version.status ]]</span></td>
 										<td><a href="" ng-click="list_remove('versions', $index)"><i class="fa fa-remove"></i></a></td>
 									</tr>
@@ -275,7 +275,7 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="related in vocab.related_entity track by $index">
-										<td><a href="" ng-click="relatedmodal('edit', related.type, related)" tooltip="[[ related.relationship.join() ]]">[[ related.title ]]</a></td>
+										<td><a href="" ng-click="relatedmodal('edit', related.type, $index)" tooltip="[[ related.relationship.join() ]]">[[ related.title ]]</a></td>
 										<td>[[ related.type ]]</td>
 										<td><a href="" ng-click="list_remove('related_entity', $index)"><i class="fa fa-remove"></i></a></td>
 									</tr>

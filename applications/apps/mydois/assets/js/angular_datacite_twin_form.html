@@ -1,0 +1,17 @@
+<div class="input-prepend input-append">
+    <span class="add-on" ng-if="label">{{ label }}</span>
+    <span class="add-on" ng-if="readonly && item._attr[optiontype]['_value']"> {{ item._attr[optiontype]['_value'] }}</span>
+    <div class="btn-group" style="display:inline-block;" ng-if="optiontype && !readonly">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">
+            {{ item._attr[optiontype]['_value'] ? item._attr[optiontype]['_value'] : 'Type' }} <span class="caret"></span>
+        </button>
+
+        <ul class="dropdown-menu">
+            <li ng-repeat="j in availableOptions[optiontype]">
+                <a href="" ng-click="setOption(item, optiontype, j)">{{ j }}</a>
+            </li>
+        </ul>
+    </div>
+    <input type="text" ng-model="item._text" placeholder="{{ label ? label : 'Value' }}" ng-readonly="readonly">
+    <a ng-hide="label" href="" class="btn btn-link" ng-click="remove()" ng-if="!readonly"><i class="icon icon-remove"></i></a>
+</div>
