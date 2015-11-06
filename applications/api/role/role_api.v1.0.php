@@ -18,7 +18,7 @@ class Role_api
         try {
             $roleId = ($this->params['identifier'] ? $this->params['identifier'] : false);
             if (!$roleId) {
-                $roleId = ($this->ci->get('roleId') ? $this->ci->get('roleId') : false);
+                $roleId = ($this->ci->input->get('roleId') ? $this->ci->input->get('roleId') : false);
             }
 
             if ($roleId) {

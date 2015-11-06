@@ -165,7 +165,8 @@
             get:get,
             mint: mint,
             update:update,
-            getClient: getClient
+            getClient: getClient,
+            getAppIDs: getAppIDs
         }
 
         function mint(data)
@@ -229,6 +230,13 @@
             return $http.get(api_url+'doi/client/?app_id='+app_id)
                 .then(returnRaw)
                 .catch(handleError);
+        }
+
+        function getAppIDs(user_id)
+        {
+            return $http.get(api_url+'role/?roleId='+user_id+'&include=assoc_doi_app_id')
+                .then(returnRaw)
+                .catch(handleError)
         }
 
         function uniqid(prefix, more_entropy) {
