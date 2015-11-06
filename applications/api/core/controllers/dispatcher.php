@@ -84,7 +84,7 @@ class Dispatcher extends MX_Controller
                 $api_version = "v1.0"; //default
             }
             //overwrite with application level configuration
-            $api_version = $this->config->item('api_version') ? $this->config->item('api_version') : false;
+            $api_version = $this->config->item('api_version') ? $this->config->item('api_version') : $api_version;
         }
 
         //check for formatting in GET
