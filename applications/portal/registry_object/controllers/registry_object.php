@@ -649,7 +649,7 @@ class Registry_object extends MX_Controller
 
 
         //flags, these are the only fields that will be returned in the search
-        $this->solr->setOpt('fl', 'id,type,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons,administering_institution,researchers,matching_identifier_count,list_description');
+        $this->solr->setOpt('fl', 'id,type,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons,administering_institution,researchers,matching_identifier_count,list_description,earliest_year, latest_year');
 
         //highlighting
         $this->solr->setOpt('hl', 'true');
