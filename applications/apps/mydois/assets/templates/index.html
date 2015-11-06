@@ -1,177 +1,29 @@
 <div class="content-header">
-    <h1>{{ vm.client.client_name }}</h1>
+    <h1>DOI Query Tool</h1>
 </div>
 <div id="breadcrumb" style="clear:both;">
     <a href="{{ base_url }}"><i class="icon-home"></i> Home</a>
-    <a href="{{ base_url}}mydois">Digital Object Identifiers</a>
-    <a href="{{ base_url}}mydois/app/#/?app_id={{ vm.client.client_id }}" class="current">
-        {{ vm.client.client_name }} <small class="muted">({{ vm.client.app_id }})</small>
-    </a>
+    <a href="{{ base_url}}mydois" class="current">Digital Object Identifiers</a>
 </div>
 <div class="container-fluid">
-    <div class="widget-box">
-        <div class="widget-title">
-            <ul class="nav nav-tabs">
-                <li ng-class="{'active': vm.tab=='list'}"><a href="" ng-click="vm.tab = 'list'">My DOIs</a></li>
-                <li ng-class="{'active': vm.tab=='view'}" ng-if="vm.viewdoi"><a href="" ng-click="vm.view(vm.viewdoi.doi_id)">{{ vm.viewdoi.doi_id  }}</a></li>
-                <li ng-class="{'active': vm.tab=='mint'}"><a href="" ng-click="vm.tab = 'mint'">Mint DOI</a></li>
-                <li ng-class="{'active': vm.tab=='log'}"><a href="" ng-click="vm.tab = 'log'">Activity Log</a></li>
-                <li ng-class="{'active': vm.tab=='detail'}"><a href="" ng-click="vm.tab = 'detail'">App ID Configuration</a></li>
-                <li ng-class="{'active': vm.tab=='check'}"><a href="" ng-click="vm.tab = 'check'">Check DOI Links</a></li>
-            </ul>
-        </div>
-        <div class="widget-content" ng-if="vm.tab=='list'">
-            <h3>Listing DOIs for {{ vm.client.client_name }} <small>({{ vm.client.app_id }})</small></h3>
-            <form class="form-search">
-                <input type="text" ng-model="filter" placeholder="Filter" class="input-medium search-query">
-            </form>
-            <br/>
-            <table class="table table-hover table-condensed">
-                <thead>
-                    <tr>
-                        <th style="text-align:left">Title</th>
-                        <th style="text-align:left">DOI</th>
-                        <th style="text-align:left"></th>
-                        <th style="text-align:left">Status</th>
-                        <th style="text-align:left">Last Updated</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="doi in vm.dois | filter:filter">
-                        <td>
-                            <small><strong>{{ doi.title }}</strong></small><br/>
-                            <a target="_blank" href="{{ doi.url }}">{{ doi.url }}</a>
-                        </td>
-                        <td>
-                            <a target="_blank" href="http://dx.doi.org/{{ doi.doi_id }}">{{ doi.doi_id }}</a>
-                        </td>
-                        <td>
-                            <div class="btn-group">
-                                <a href="" class="btn btn-small" ng-click="vm.view(doi.doi_id)"><i class="icon-search"></i> View</a>
-                                <a href="" class="btn btn-small" ng-click="vm.update(doi.doi_id)"><i class="icon-edit"></i> Update</a>
-                            </div>
-                        </td>
-                        <td>
-                            {{ doi.status }}
-                        </td>
-                        <td>
-                            {{ doi.updated_when }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="widget-content" ng-if="vm.tab=='detail'">
-            <dl class="dl-vertical">
-                <dt>Client Name</dt>
-                <dd>{{ vm.client.client_name }}</dd>
-                <dt>Client Contact Name</dt>
-                <dd>{{ vm.client.client_contact_name }}</dd>
-                <dt>Client Contact Email</dt>
-                <dd>{{ vm.client.client_contact_email }}</dd>
-            </dl>
-            <dl>
-                <dt>Authorised IP Address</dt>
-                <dd><pre>{{ vm.client.ip_address }}</pre></dd>
-                <dt>DataCite Prefix</dt>
-                <dd><pre>{{ vm.client.datacite_prefix }}</pre></dd>
-                <dt>Permitted URL Domains</dt>
-                <dd><pre>{{ vm.client.permitted_url_domains.join(', ') }}</pre></dd>
-            </dl>
-            <p class="alert">To request a change to any of the information related to this DOI AppID, please contact <a href="mailto:services@ands.org.au">services@ands.org.au</a></p>
-        </div>
-
-        <div class="widget-content" ng-if="vm.tab=='check'">
-            <div class="alert alert-info">
-                The DOI Link report will be sent to the registered Client Contact Email.
-            </div>
-            <a href="javascript:;" class="btn btn-primary">Check DOI Links</a>
-            <hr>
-            <div id="linkChecker_result"></div>
-        </div>
-
-        <div class="widget-content nopadding" ng-if="vm.tab=='log'">
-            <ul class="activity-list">
-                <li ng-repeat="log in vm.logs" ng-class="{'error': log.result=='FAILURE'}">
-                    <a href="" ng-click="log.show=!log.show" class="expand_log" ng-class="{'error': log.result=='FAILURE'}">
-                        <i class="icon-list-alt"></i> {{ log.activity }}
-                        <span class="label">{{log.timestamp}}</span>
-                    </a>
-                    <div class="log" ng-show="log.show">
-                        <pre>{{ log.message }}</pre>
-                    </div>
-                </li>
-            </ul>
-        </div>
-
-        <div class="widget-content" ng-if="vm.tab=='mint'">
-            <form class="form">
-                <div class="input-prepend input-append">
-                    <span class="add-on">DOI</span>
-                    <input type="text" ng-model="vm.newdoi_id" readonly="readonly">
+    <div class="rows">
+        <div class="span6 offset4">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <h5>DOI Query Tool</h5>
                 </div>
-                <div class="input-prepend input-append">
-                    <span class="add-on">URL</span>
-                    <input type="text" ng-model="vm.newdoi_url" >
+                <div class="widget-content" ng-repeat="app_id in vm.client.assoc_doi_app_id track by $index">
+                    <dl>
+                        <dt>Name</dt>
+                        <dd>{{ app_id.client_name }}</dd>
+                        <dt>Contact</dt>
+                        <dd>{{ app_id.client_contact_name }}</dd>
+                        <dt>Datacite prefix</dt>
+                        <dd>{{ app_id.datacite_prefix }}</dd>
+                    </dl>
+                    <a href="#/manage/{{ app_id.app_id }}" class="btn btn-primary">Manage</a>
                 </div>
-                <div class="control-group">
-                    <label class="control-label">Metadata</label>
-                    <div class="controls container-fluid">
-                        <div class="row-fluid">
-                            <div class="span6">
-                                <datacite-xml-builder xml="vm.newdoixml"></datacite-xml-builder>
-                            </div>
-                            <div class="span6">
-                                <pre class="prettyprint xml">{{ vm.formatXml(vm.newdoixml) }}</pre>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-            <a href="" class="btn btn-primary" ng-click="vm.mint()">Mint</a>
-            <a href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
-            <div class="alert alert-info" ng-if="vm.response">
-                <b>{{ vm.response.message }}</b><br>
-                {{ vm.response.verbosemessage }}
             </div>
         </div>
-
-        <div class="widget-content" ng-if="vm.tab=='view'">
-            <div class="alert alert-info" ng-if="vm.response">
-                <b>{{ vm.response.message }}</b><br>
-                {{ vm.response.verbosemessage }}
-            </div>
-            <form class="form">
-                <div class="input-prepend input-append">
-                    <span class="add-on">DOI</span>
-                    <input type="text" ng-model="vm.viewdoi.doi_id" readonly="readonly">
-                </div>
-                <div class="input-prepend input-append">
-                    <span class="add-on">URL</span>
-                    <input type="text" ng-model="vm.viewdoi.url" >
-                </div>
-                <div ng-if="vm.readonly" class="alert alert-warning">This is a readonly view to the XML. Please <a href="" ng-click="vm.readonly=!vm.readonly">Enable Editing</a> to start editting</div>
-                <div class="container-fluid" ng-if="vm.viewdoi">
-                    <div class="row-fluid">
-                        <div class="span6">
-                            <datacite-xml-builder xml="vm.viewdoi.datacite_xml" readonly="vm.readonly"></datacite-xml-builder>
-                        </div>
-                        <div class="span6">
-                            <pre class="prettyprint xml">{{ vm.formatXml(vm.viewdoi.datacite_xml) }}</pre>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
-
-            <a href="" class="btn btn-primary" ng-click="vm.doupdate()">Update</a>
-            <a href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
-            <div class="alert alert-info" ng-if="vm.response">
-                <b>{{ vm.response.message }}</b><br>
-                {{ vm.response.verbosemessage }}
-            </div>
-        </div>
-
     </div>
 </div>
