@@ -5,6 +5,7 @@ $(document).ready(function() {
     //console.log($.browser)
 
 	$('#rightsContent').hide();
+    $('#licenceContent').hide();
 	$('#dataformats').hide();
 	$(document).on('click', '#toggleRightsContent', function(e){
 		e.preventDefault();
@@ -12,11 +13,10 @@ $(document).ready(function() {
 	}).on('click', '#gotodata', function(e){
 		e.preventDefault();
 		$('#dataformats').slideToggle();
-	});
-
-
-
-	// $('.panel-body').readmore();
+	}).on('click', '#toggleLicenceContent', function(e){
+        e.preventDefault();
+        $('#licenceContent').slideToggle();
+    });
 
 
 

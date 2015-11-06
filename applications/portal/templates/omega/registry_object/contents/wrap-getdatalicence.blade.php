@@ -1,16 +1,30 @@
 <?php
     //preparation
-    $cc = false;
+
     $ar = false;
-    $detail = false;
+    $access_detail = false;
+
+    $cc = false;
+    $licence_detail = false;
+    $licence_group = false;
+
     if ($ro->rights) {
         foreach($ro->rights as $right) {
             if ($right['type']=='licence' && $right['licence_type']!='') {
                 $cc = $right['licence_type'];
+                $licence_detail = true;
+                $licence_group = $right['licence_group'];
                 if(isset($right['rightsUri']) && $right['rightsUri']!=''){
                    $cc_uri = $right['rightsUri'];
                 }else{
                     $cc_uri = '';
+                }
+                if(isset($right['value'])) {
+                    if($right['value']!='') $licence_detail = true;
+                }
+
+                if(isset($right['rightsUri'])) {
+                    if($right['rightsUri']!='') $licence_detail = true;
                 }
 
             } elseif ($right['type']=='accessRights') {
@@ -20,31 +34,52 @@
             }
 
             if(isset($right['value'])) {
-                if($right['value']!='') $detail = true;
+                if($right['value']!='') $access_detail = true;
             }
 
             if(isset($right['rightsUri'])) {
-                if($right['rightsUri']!='') $detail = true;
+                if($right['rightsUri']!='') $access_detail = true;
             }
 
         }
-        if ($detail) {
-            $content = '';
+        if ($licence_detail) {
+            $licence_content = '';
             foreach ($ro->rights as $right) {
-                $itemprop = '';
-                if($right['type']=='licence')  $itemprop = 'itemprop="license"';
-                if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
-                $content .= '<h4>'.readable($right['type']).'</h4><p '.$itemprop.'>';
-                if(isset($right['value']) && trim($right['value'])!=''){
-                    $description = html_entity_decode($right['value']);
-                    if(strip_tags($description) == $description)
-                        $description = nl2br($description);
-                    $content .= $description.'<br />';
+                if($right['type']=='licence'){
+                    $itemprop = 'itemprop="license"';
+                    if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
+                        $licence_content .= '<p '.$itemprop.'>';
+                    if(isset($right['value']) && trim($right['value'])!=''){
+                        $description = html_entity_decode($right['value']);
+                        if(strip_tags($description) == $description)
+                            $description = nl2br($description);
+                        $licence_content .= $description.'<br />';
 
+                    }
+                    if(isset($right['rightsUri']) && $right['rightsUri']!='')
+                        $licence_content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
+                    $licence_content .= '</p>';
                 }
-                if(isset($right['rightsUri']) && $right['rightsUri']!='')
-                    $content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
-                $content .= '</p>';
+            }
+        }
+        if ($access_detail) {
+            $access_content = '';
+            foreach ($ro->rights as $right) {
+                if($right['type']!='licence'){
+                    if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
+                        $access_content .= '<p '.$itemprop.'>';
+                    if(isset($right['value']) && trim($right['value'])!=''){
+                        $description = html_entity_decode($right['value']);
+                        if(strip_tags($description) == $description)
+                            $description = nl2br($description);
+                        $access_content .= $description.'<br />';
+
+                    }
+                    if(isset($right['rightsUri']) && $right['rightsUri']!='')
+                        $access_content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
+                    if($access_content!='')
+                    $access_content .= '</p>';
+                }
             }
         }
     }
@@ -70,59 +105,80 @@
         </div>
 
         <div>
-            @if($ar || $cc || $detail)
-                <h4>Licence & Rights</h4>
+            @if( $cc || $licence_group || $licence_detail)
+                <h4>Licence & Rights: </h4>
             @endif
-        	@if($ar=='open')
-        	    <a href="" tip="Data that is readily accessible and reusable"><span class="label  label-{{$ar}}" for="">OPEN</span></a>
-        	@elseif($ar=='conditional')
-                <a href="" tip="Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required)"><span class="label label-{{$ar}}" for="">CONDITIONAL</span></a>
-            @elseif($ar=='restricted')
-                <a href="" tip="Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location)"><span class="label label-{{$ar}}" for="">RESTRICTED</span></a>
+            @if($licence_group=='Open Licence')
+            <i class="fa fa-check" style="color:forestgreen"></i>
+            @endif
+            {{$licence_group}}
+
+            @if(isset($licence_content))
+            <a href="javascript:;" id="toggleLicenceContent" class="small">View details</a>
             @endif
 
-        	@if($cc=='CC-BY')
-            <?php
+            @if(isset($licence_content))
+            <div id="licenceContent">
+                @if($cc=='CC-BY')
+                <?php
                 if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by/3.0/au/";
-             ?>
-        	   <a href="{{$cc_uri}}"><img src="{{asset_url('images/icons/CC-BY.png', 'core')}}" class="img-cc" alt="CC-BY"></a> <br/>
-            @elseif($cc=='CC-BY-SA')
-            <?php
+                ?>
+                <a href="{{$cc_uri}}"><img src="{{asset_url('images/icons/CC-BY.png', 'core')}}" class="img-cc" alt="CC-BY"></a> <br/>
+                @elseif($cc=='CC-BY-SA')
+                <?php
                 if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-sa/3.0/au/";
-            ?>
+                ?>
                 <a href="{{$cc_uri}}" tip="Attribution-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-SA.png', 'core')}}" class="img-cc" alt="CC-BY-SA"></a> <br/>
-            @elseif($cc=='CC-BY-ND')
-            <?php
+                @elseif($cc=='CC-BY-ND')
+                <?php
                 if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-nd/3.0/au/";
-            ?>
+                ?>
                 <a href="{{$cc_uri}}" tip="Attribution-No Derivatives"><img src="{{asset_url('images/icons/CC-BY-ND.png', 'core')}}" class="img-cc" alt="CC-BY-ND"></a> <br/>
-            @elseif($cc=='CC-BY-NC')
-            <?php
+                @elseif($cc=='CC-BY-NC')
+                <?php
                 if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-nc/3.0/au/";
-            ?>
+                ?>
                 <a href="{{$cc_uri}}" tip="Attribution-Non Commercial"><img src="{{asset_url('images/icons/CC-BY-NC.png', 'core')}}" class="img-cc" alt="CC-BY-NC"></a> <br/>
-            @elseif($cc=='CC-BY-NC-SA')
-            <?php
+                @elseif($cc=='CC-BY-NC-SA')
+                <?php
                 if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-nc-sa/3.0/au/";
-            ?>
-            <a href="{{$cc_uri}}" tip="Attribution-Non Commercial-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-NC-SA.png', 'core')}}" class="img-cc" alt="CC-BY-NC-SA"></a> <br/>
-            @elseif($cc=='CC-BY-NC-ND')
-            <?php
+                ?>
+                <a href="{{$cc_uri}}" tip="Attribution-Non Commercial-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-NC-SA.png', 'core')}}" class="img-cc" alt="CC-BY-NC-SA"></a> <br/>
+                @elseif($cc=='CC-BY-NC-ND')
+                <?php
                 if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-nc-nd/3.0/au/";
-            ?>
+                ?>
                 <a href="{{$cc_uri}}" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
-            @else 
+                @else
                 <span>{{sentenceCase($cc)}}</span>
-        	@endif
+                @endif
+                @if($licence_content) {{$licence_content}} @endif
+            </div>
+            @endif
 
-        	@if(isset($content))
-        	   <a href="javascript:;" id="toggleRightsContent">View details</a>
+            @if($ar || $access_detail )
+            <h4>Access: </h4>
+            @endif
+            @if($ar=='open')
+
+            <i class="fa fa-check" style="color:forestgreen"></i>
+
+            <a href="" tip="Data that is readily accessible and reusable">Open </a>
+            @elseif($ar=='conditional')
+            <a href="" tip="Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required)">Conditions apply </span></a>
+            @elseif($ar=='restricted')
+            <a href="" tip="Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location)">Restrictions apply</a>
+            @endif
+
+        	@if($access_content!='')
+        	   <a href="javascript:;" id="toggleRightsContent" class="small"> View details</a>
         	@endif
         </div>
-        
-        @if(isset($content))
+
+        @if(isset($access_content))
             <div id="rightsContent">
-                @if($content) {{$content}} @endif
+
+                @if($access_content) {{$access_content}}@endif
             </div>
         @endif
 
