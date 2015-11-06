@@ -12,13 +12,16 @@
                 <div class="widget-title">
                     <h5>DOI Query Tool</h5>
                 </div>
-                <div class="widget-content">
-                    Associated DOI App IDs:
-                    <ul>
-                        <li ng-repeat="app_id in vm.client.assoc_doi_app_id track by $index">
-                            <a href="#/manage/{{ app_id }}">{{ app_id }}</a>
-                        </li>
-                    </ul>
+                <div class="widget-content" ng-repeat="app_id in vm.client.assoc_doi_app_id track by $index">
+                    <dl>
+                        <dt>Name</dt>
+                        <dd>{{ app_id.client_name }}</dd>
+                        <dt>Contact</dt>
+                        <dd>{{ app_id.client_contact_name }}</dd>
+                        <dt>Datacite prefix</dt>
+                        <dd>{{ app_id.datacite_prefix }}</dd>
+                    </dl>
+                    <a href="#/manage/{{ app_id.app_id }}" class="btn btn-primary">Manage</a>
                 </div>
             </div>
         </div>

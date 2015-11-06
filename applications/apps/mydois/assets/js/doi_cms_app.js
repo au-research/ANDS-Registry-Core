@@ -34,9 +34,19 @@
         ;
     }
 
-    function indexCtrl(client, $scope, $log) {
+    function indexCtrl(client, doiFactory, $scope, $log) {
         var vm = this;
         vm.client = client.data;
+
+
+        vm.getClientDetails = function(){
+            angular.forEach(vm.client.assoc_doi_app_id, function(app_id, index){
+                doiFactory.getClient(app_id).then(function(data){
+                    vm.client.assoc_doi_app_id[index] = data.data.client;
+                });
+            });
+        }
+        vm.getClientDetails();
     }
 
 })();

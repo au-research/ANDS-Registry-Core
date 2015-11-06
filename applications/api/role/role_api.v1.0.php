@@ -48,9 +48,25 @@ class Role_api
             } elseif ($inc=='assoc_doi_app_id') {
                 $role->roles = $this->getRolesAndActivitiesByRoleID($role->role_id);
                 $role->assoc_doi_app_id = $this->getAssociatedDOIAppId($role);
+            } elseif ($inc=='doi_client') {
+                //for ROLE_APP_ID
+                $role->client = $this->getClientForDOIAPPID($role);
             }
         }
         return $role;
+    }
+
+    private function getClientForDOIAPPID($role)
+    {
+        $result = array();
+        $this->doiDB = $this->ci->load->database('dois', true);
+        $query = $this->doiDB
+            ->where('app_id', $role->role_id)
+            ->get('doi_client');
+        if ($query && $query->num_rows() > 0) {
+            $result = $query->first_row();
+        }
+        return $result;
     }
 
     private function getAssociatedDOIAppId($role)
@@ -60,11 +76,11 @@ class Role_api
         $query = $this->roleDB
                 ->distinct()->select('*')
                 ->where_in('child_role_id', $user_affiliations)
-                ->where('role_type_id', 'ROLE_DOI_APPID      ', 'after')
+                ->where('role_type_id', 'ROLE_DOI_APPID', 'after')
                 ->join('roles', 'role_id = parent_role_id')
                 ->from('role_relations')->get();
 
-        if ($query->num_rows() > 0) {
+        if ($query && $query->num_rows() > 0) {
             foreach ($query->result() AS $r) {
                 $result[] = $r->parent_role_id;
             }
@@ -99,8 +115,6 @@ class Role_api
             // function getOnlyRoleIds(&$item, $key) {$item = $item['role_id'];}
             $orgRoles = $this->getAllOrganisationalRoles();
             // array_walk($orgRoles, 'getOnlyRoleIds');
-            //
-
             $ret['organisational_roles'] = array_merge($ret['organisational_roles'], $orgRoles);
         }
 
