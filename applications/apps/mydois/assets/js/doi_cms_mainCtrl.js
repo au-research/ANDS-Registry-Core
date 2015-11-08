@@ -7,7 +7,7 @@
         .factory('doiFactory', doiFactory)
     ;
 
-    function mainCtrl(doiFactory, client, $scope, $location, $log) {
+    function mainCtrl(doiFactory, client, $scope, $location, $log, $sce) {
         var vm = this;
         vm.tab = "list";
         $scope.base_url = apps_url;
@@ -100,6 +100,14 @@
             });
         }
 
+        vm.dolinkcheck = function() {
+            vm.linkchecking = true;
+            doiFactory.checkLinks(vm.client.app_id).then(function(response){
+                vm.linkchecking = false;
+                vm.link_checker_result = $sce.trustAsHtml(response.message);
+            });
+        }
+
         vm.formatXml = function(xml) {
             var reg = /(>)\s*(<)(\/*)/g; // updated Mar 30, 2015
             var wsexp = / *(.*) +\n/g;
@@ -166,7 +174,20 @@
             mint: mint,
             update:update,
             getClient: getClient,
-            getAppIDs: getAppIDs
+            getAppIDs: getAppIDs,
+            checkLinks: checkLinks
+        }
+
+        function checkLinks(app_id)
+        {
+            return $http({
+                method  : 'POST',
+                url     : apps_url+'mydois/runDoiLinkChecker',
+                data    : $.param({
+                    app_id:app_id
+                }),
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).then(returnRaw).catch(handleError);
         }
 
         function mint(data)

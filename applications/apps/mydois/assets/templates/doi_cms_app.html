@@ -86,9 +86,10 @@
             <div class="alert alert-info">
                 The DOI Link report will be sent to the registered Client Contact Email.
             </div>
-            <a href="javascript:;" class="btn btn-primary">Check DOI Links</a>
+            <a href="" class="btn btn-primary" ng-click="vm.dolinkcheck()" ng-if="!vm.linkchecking">Check DOI Links</a>
+            <a href="" disable class="btn btn-primary disabled" ng-if="vm.linkchecking">Loading...</a>
             <hr>
-            <div id="linkChecker_result"></div>
+            <div ng-if="vm.link_checker_result" ng-bind-html="vm.link_checker_result"> </div>
         </div>
 
         <div class="widget-content nopadding" ng-if="vm.tab=='log'">
@@ -145,6 +146,7 @@
                     <span class="add-on">DOI</span>
                     <input type="text" ng-model="vm.viewdoi.doi_id" readonly="readonly">
                 </div>
+
                 <div class="input-prepend input-append" style="display:inline-block">
                     <span class="add-on">URL</span>
                     <input type="text" ng-model="vm.viewdoi.url" >

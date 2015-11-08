@@ -38,7 +38,6 @@
         var vm = this;
         vm.client = client.data;
 
-
         vm.getClientDetails = function(){
             angular.forEach(vm.client.assoc_doi_app_id, function(app_id, index){
                 doiFactory.getClient(app_id).then(function(data){
