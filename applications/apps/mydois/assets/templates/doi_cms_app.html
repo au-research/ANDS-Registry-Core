@@ -161,11 +161,12 @@
                         </div>
                         <div class="span6">
                             <pre class="prettyprint xml">{{ vm.formatXml(vm.viewdoi.datacite_xml) }}</pre>
+                            <textarea ng-model="vm.viewdoi.datacite_xml" style="width:100%" rows="10" ng-if="vm.editxml"></textarea>
+                            <a href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
                         </div>
                     </div>
                 </div>
             </form>
-
 
             <a href="" class="btn btn-primary" ng-click="vm.doupdate()">Update</a>
             <a href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
