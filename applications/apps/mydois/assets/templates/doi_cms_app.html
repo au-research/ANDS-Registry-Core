@@ -123,6 +123,8 @@
                         </div>
                         <div class="span6">
                             <pre class="prettyprint xml">{{ vm.formatXml(vm.newdoixml) }}</pre>
+                            <textarea ng-model="vm.newdoixml" style="width:100%" rows="10" ng-if="vm.editxml"></textarea>
+                            <a href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
                         </div>
                     </div>
                 </div>
