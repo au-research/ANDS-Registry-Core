@@ -107,24 +107,21 @@
 
         <div class="widget-content" ng-if="vm.tab=='mint'">
             <form class="form">
-                <div class="input-prepend input-append">
+                <div class="input-prepend input-append" style="display:inline-block">
                     <span class="add-on">DOI</span>
                     <input type="text" ng-model="vm.newdoi_id" readonly="readonly">
                 </div>
-                <div class="input-prepend input-append">
+                <div class="input-prepend input-append" style="display:inline-block">
                     <span class="add-on">URL</span>
                     <input type="text" ng-model="vm.newdoi_url" >
                 </div>
-                <div class="control-group">
-                    <label class="control-label">Metadata</label>
-                    <div class="controls container-fluid">
-                        <div class="row-fluid">
-                            <div class="span6">
-                                <datacite-xml-builder xml="vm.newdoixml"></datacite-xml-builder>
-                            </div>
-                            <div class="span6">
-                                <pre class="prettyprint xml">{{ vm.formatXml(vm.newdoixml) }}</pre>
-                            </div>
+                <div class="container-fluid" style="padding-left:0;">
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <datacite-xml-builder xml="vm.newdoixml"></datacite-xml-builder>
+                        </div>
+                        <div class="span6">
+                            <pre class="prettyprint xml">{{ vm.formatXml(vm.newdoixml) }}</pre>
                         </div>
                     </div>
                 </div>
@@ -142,17 +139,18 @@
                 <b>{{ vm.response.message }}</b><br>
                 {{ vm.response.verbosemessage }}
             </div>
+            <div ng-if="vm.readonly" class="alert alert-warning">This is a readonly view to the XML. Please <a href="" ng-click="vm.readonly=!vm.readonly">Enable Editing</a> to start editting</div>
             <form class="form">
-                <div class="input-prepend input-append">
+                <div class="input-prepend input-append" style="display:inline-block">
                     <span class="add-on">DOI</span>
                     <input type="text" ng-model="vm.viewdoi.doi_id" readonly="readonly">
                 </div>
-                <div class="input-prepend input-append">
+                <div class="input-prepend input-append" style="display:inline-block">
                     <span class="add-on">URL</span>
                     <input type="text" ng-model="vm.viewdoi.url" >
                 </div>
-                <div ng-if="vm.readonly" class="alert alert-warning">This is a readonly view to the XML. Please <a href="" ng-click="vm.readonly=!vm.readonly">Enable Editing</a> to start editting</div>
-                <div class="container-fluid" ng-if="vm.viewdoi">
+
+                <div class="container-fluid" style="padding-left:0;" ng-if="vm.viewdoi">
                     <div class="row-fluid">
                         <div class="span6">
                             <datacite-xml-builder xml="vm.viewdoi.datacite_xml" readonly="vm.readonly"></datacite-xml-builder>
