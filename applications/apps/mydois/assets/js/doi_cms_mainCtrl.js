@@ -26,9 +26,7 @@
         vm.changeTab = function(tab) {
             switch (tab) {
                 case 'list':
-                    doiFactory.getDOI(vm.client.app_id).then(function(data){
-                        vm.dois = data.data.dois;
-                    });
+                    vm.refreshDOIs();
                     break;
                 case 'log':
                     doiFactory.getLog(vm.client.app_id).then(function(data){
@@ -44,6 +42,12 @@
                     vm.newdoixml = doiFactory.getBlankXML(vm.newdoi_id);
                     break;
             }
+        }
+
+        vm.refreshDOIs = function() {
+            doiFactory.getDOI(vm.client.app_id).then(function(data){
+                vm.dois = data.data.dois;
+            });
         }
 
         vm.view = function(doi) {
@@ -97,6 +101,32 @@
             vm.response = {};
             doiFactory.update(data).then(function(response){
                 vm.response = response.response;
+            });
+        }
+
+        vm.dodeactivate = function(doi_id) {
+            var data = {
+                app_id : vm.client.app_id,
+                doi : doi_id,
+                client_id: vm.client.client_id
+            }
+            vm.response = {};
+            doiFactory.deactivate(data).then(function(response){
+                alert(response.response.message);
+                vm.refreshDOIs();
+            });
+        }
+
+        vm.doactivate = function(doi_id) {
+            var data = {
+                app_id : vm.client.app_id,
+                doi : doi_id,
+                client_id: vm.client.client_id
+            }
+            vm.response = {};
+            doiFactory.activate(data).then(function(response){
+                alert(response.response.message);
+                vm.refreshDOIs();
             });
         }
 
@@ -173,6 +203,8 @@
             get:get,
             mint: mint,
             update:update,
+            activate: activate,
+            deactivate: deactivate,
             getClient: getClient,
             getAppIDs: getAppIDs,
             checkLinks: checkLinks
@@ -197,6 +229,32 @@
                 url     : apps_url+'mydois/mint.json/?manual_mint=true&url='+data.url+'&app_id='+data.app_id,
                 data    : $.param({
                     xml:data.xml,
+                    doi_id:data.doi,
+                    client_id:data.client_id
+                }),
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).then(returnRaw).catch(handleError);
+        }
+
+        function deactivate(data)
+        {
+            return $http({
+                method  : 'POST',
+                url     : apps_url+'mydois/deactivate.json/?app_id='+data.app_id+'&doi='+data.doi,
+                data    : $.param({
+                    doi_update:data.doi,
+                    client_id:data.client_id
+                }),
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).then(returnRaw).catch(handleError);
+        }
+
+        function activate(data)
+        {
+            return $http({
+                method  : 'POST',
+                url     : apps_url+'mydois/activate.json/?app_id='+data.app_id+'&doi='+data.doi,
+                data    : $.param({
                     doi_id:data.doi,
                     client_id:data.client_id
                 }),
