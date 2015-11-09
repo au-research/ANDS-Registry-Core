@@ -1,5 +1,4 @@
-<!-- <a href="" ng-click="update()">Update</a> -->
-<div class="widget-box" style="margin-top:0">
+<div class="widget-box" style="margin-top:0" ng-click="update()">
     <div class="widget-title">
         <h5>Mandatory Elements</h5>
     </div>
@@ -69,7 +68,7 @@
 
 </div>
 
-<div class="widget-box">
+<div class="widget-box" ng-click="update()">
     <div class="widget-title" ng-click="show_recommended=!show_recommended">
         <span class="icon">
             <i class="icon-plus" ng-class="{false:'icon-plus',true: 'icon-minus'}[show_recommended]"></i>
@@ -263,7 +262,7 @@
     </div>
 </div>
 
-<div class="widget-box">
+<div class="widget-box" ng-click="update()">
     <div class="widget-title" ng-click="show_other=!show_other">
         <span class="icon">
             <i class="icon-plus" ng-class="{false:'icon-plus',true: 'icon-minus'}[show_other]"></i>

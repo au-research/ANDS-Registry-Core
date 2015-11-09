@@ -31,7 +31,7 @@
 
                 scope.$watch('objectModel', function(newv, oldv){
                     if (newv && newv!=oldv) {
-                        scope.update();
+                        // scope.update();
                     }
                 }, true);
 
@@ -106,11 +106,15 @@
                 }
 
                 scope.safe_tags_replace = function (str) {
-                    return str.replace(/[&<>]/g, scope.replaceTag);
+                    if (typeof str=='string' ) {
+                        return str.replace(/[&<>]/g, scope.replaceTag);
+                    } else {
+                        return str;
+                    }
                 }
 
                 scope.fixValues = function() {
-                    var valuesToFix = ['publisher', 'publicationYear', 'resourceType', 'language'];
+                    var valuesToFix = ['publisher', 'publicationYear', 'resourceType', 'language', 'version'];
                     angular.forEach(valuesToFix, function(val){
                         if (!scope.objectModel.resource[0][val]) {
                             scope.objectModel.resource[0][val] = [];
@@ -194,7 +198,7 @@
                                             }
                                             xml+='>';
                                             if (subitem[0] && subitem[0]['_text']) {
-                                                xml+=(subitem[0]['_text']);
+                                                xml+=scope.safe_tags_replace(subitem[0]['_text']);
                                             }
                                             xml+='</'+subitemkey+'>';
                                         }
