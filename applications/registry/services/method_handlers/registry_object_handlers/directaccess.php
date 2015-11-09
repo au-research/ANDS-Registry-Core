@@ -62,7 +62,7 @@ class Directaccess extends ROHandler {
                     foreach($directaccess->getElementsByTagName('value') as $url){
                         $url_link = trim($url->nodeValue);
                     }
-                    if(strpos($url_link, 'http') === false && strpos($url_link, 'ftp://') === false)
+                    if(strpos($url_link, '://') === false)
                     {
                         $url_link = 'http://'.$url_link;
                     }
