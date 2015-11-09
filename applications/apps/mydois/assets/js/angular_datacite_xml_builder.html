@@ -12,6 +12,18 @@
     </div>
 
     <div class="widget-content">
+        <label class="control-label">Title</label>
+        <datacite-twin-item-form
+            ng-repeat="title in objectModel.resource[0].titles[0].title track by $index"
+            item="title"
+            readonly="readonly"
+            list="objectModel.resource[0].titles[0].title"
+            index="$index"
+            optiontype="'titleType'"></datacite-twin-item-form>
+        <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].titles[0], 'title')"><i class="icon-plus"></i> Add Title</a>
+    </div>
+
+    <div class="widget-content">
         <datacite-twin-item-form
             item="objectModel.resource[0].publisher[0]"
             label="'Publisher'"
@@ -25,25 +37,30 @@
     </div>
 
     <div class="widget-content">
-        <datacite-twin-item-form
-            ng-repeat="title in objectModel.resource[0].titles[0].title track by $index"
-            item="title"
-            readonly="readonly"
-            list="objectModel.resource[0].titles[0].title"
-            index="$index"
-            optiontype="'titleType'"></datacite-twin-item-form>
-        <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].titles[0], 'title')"><i class="icon-plus"></i> Add Title</a>
-    </div>
-
-    <div class="widget-content">
         <div class="control-group" ng-repeat="creator in objectModel.resource[0].creators[0].creator track by $index">
             <label class="control-label">Creator</label>
             <div class="controls">
-                <input type="text" placeholder="Creator Name"  ng-model="creator.creatorName[0]._text" ng-readonly="readonly"/>
-                <input type="text" placeholder="Creator Affiliations" ng-model="creator.affiliation[0]._text" ng-readonly="readonly"/>
-                <br>
-                <input type="text" placeholder="Creator Name Identifier" ng-model="creator.nameIdentifier[0]._text" ng-readonly="readonly"/>
-                <input type="text" placeholder="Creator Name Identifier Scheme" ng-model="creator.nameIdentifier[0]._attr.nameIdentifierScheme._value" ng-readonly="readonly"/>
+                <div class="input-prepend input-append">
+                    <span class="add-on">Creator Name</span>
+                    <input type="text" placeholder="Creator Name"  ng-model="creator.creatorName[0]._text" ng-readonly="readonly"/>
+                </div>
+                <div class="input-prepend input-append">
+                    <span class="add-on">Creator Affiliations</span>
+                    <input type="text" placeholder="Creator Affiliations" ng-model="creator.affiliation[0]._text" ng-readonly="readonly"/>
+                </div>
+                <div class="input-prepend input-append">
+                    <span class="add-on">Name Identifier</span>
+                    <input type="text" placeholder="Creator Name Identifier" ng-model="creator.nameIdentifier[0]._text" ng-readonly="readonly"/>
+                </div>
+                <div class="input-prepend input-append">
+                    <span class="add-on">Name Identifier Scheme</span>
+                    <input type="text" placeholder="Creator Name Identifier Scheme" ng-model="creator.nameIdentifier[0]._attr.nameIdentifierScheme._value" ng-readonly="readonly"/>
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">Scheme URI</span>
+                    <input type="text" placeholder="Scheme URI" ng-model="creator.nameIdentifier[0]._attr.schemeURI._value" ng-readonly="readonly"/>
+                </div>
+
                 <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].creators[0].creator, $index)"><i class="icon-remove"></i></a>
             </div>
         </div>
@@ -65,10 +82,21 @@
             <div class="control-group" ng-repeat="subject in objectModel.resource[0].subjects[0].subject track by $index">
                 <label class="control-label">Subject</label>
                 <div class="controls">
-                    <input ng-readonly="readonly" type="text" placeholder="Subject"  ng-model="subject._text"/>
-                    <br>
-                    <input ng-readonly="readonly" type="text" placeholder="Subject Scheme" ng-model="subject._attr.subjectScheme._value"/>
-                    <input ng-readonly="readonly" type="text" placeholder="Subject Scheme URI" ng-model="subject._attr.schemeURI._value"/>
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Subject</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Subject"  ng-model="subject._text"/>
+                    </div>
+
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Subject Scheme</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Subject Scheme" ng-model="subject._attr.subjectScheme._value"/>
+                    </div>
+
+                    <div class="input-prepend input-append" style="display:inline-block">
+                        <span class="add-on">Subject Scheme URI</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Subject Scheme URI" ng-model="subject._attr.schemeURI._value"/>
+                    </div>
+
                     <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].subjects[0].subject, $index)"><i class="icon-remove"></i></a>
                 </div>
             </div>
@@ -80,25 +108,39 @@
                 <label class="control-label">Contributor</label>
                 <div class="controls">
                     <div class="input-prepend input-append">
+                        <span class="add-on">Contributor</span>
                         <div class="btn-group" style="display:inline-block;">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
-                                {{ contributor._attr.contributorType._value }} <span class="caret"></span>
+                                {{ contributor._attr.contributorType._value ? contributor._attr.contributorType._value : 'Type'}} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                                <!-- <li ng-repeat="j in availableOptions[optiontype]">
-                                    <a href="" ng-click="setOption(item, optiontype, j)">{{ j }}</a>
-                                </li> -->
+                                <li ng-repeat="j in availableOptions['contributorType']">
+                                    <a href="" ng-click="setOption(contributor, 'contributorType', j)">{{ j }}</a>
+                                </li>
                             </ul>
                         </div>
                         <input ng-readonly="readonly" type="text" ng-model="contributor.contributorName[0]._text" placeholder="Contributor Name">
                     </div>
-                    <input ng-readonly="readonly" type="text" placeholder="Affiliation" ng-model="contributor.affiliation[0]._text"/>
-                    <br>
-                    <input ng-readonly="readonly" type="text" placeholder="Name Identifier" ng-model="contributor.nameIdentifier[0]._text"/>
-                    <br>
-                    <input ng-readonly="readonly" type="text" placeholder="Name Identifier Scheme" ng-model="contributor.nameIdentifier[0]._attr.nameIdentifierScheme._value"/>
-                    <br>
-                    <input ng-readonly="readonly" type="text" placeholder="Name Identifier Scheme URI" ng-model="contributor.nameIdentifier[0]._attr.schemeURI._value"/>
+
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Affiliation</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Affiliation" ng-model="contributor.affiliation[0]._text"/>
+                    </div>
+
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Name Identifier</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Name Identifier" ng-model="contributor.nameIdentifier[0]._text"/>
+                    </div>
+
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Name Identifier Scheme</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Name Identifier Scheme" ng-model="contributor.nameIdentifier[0]._attr.nameIdentifierScheme._value"/>
+                    </div>
+
+                    <div class="input-prepend input-append" style="display:inline-block;">
+                        <span class="add-on">Name Identifier Scheme URI</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Name Identifier Scheme URI" ng-model="contributor.nameIdentifier[0]._attr.schemeURI._value"/>
+                    </div>
 
                     <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].contributors[0].contributor, $index)"><i class="icon-remove"></i></a>
                 </div>
@@ -119,7 +161,7 @@
 
         <div class="widget-content">
             <datacite-twin-item-form
-                item="objectModel.resource[0].resourceType"
+                item="objectModel.resource[0].resourceType[0]"
                 index="$index"
                 label="'Resource'"
                 readonly="readonly"
@@ -130,9 +172,51 @@
             <div class="control-group" ng-repeat="relatedIdentifier in objectModel.resource[0].relatedIdentifiers[0].relatedIdentifier track by $index">
                 <label class="control-label">Related Identifier</label>
                 <div class="controls">
-                    <input ng-readonly="readonly" type="text" placeholder="Related Identifier"  ng-model="relatedIdentifier._text"/>
-                    <br>
-                    <input ng-readonly="readonly" type="text" placeholder="Related Identifier Type" ng-model="relatedIdentifier._attr.relatedIdentifierType._value"/>
+
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Related Identifier</span>
+                        <div class="btn-group" style="display:inline-block;">
+                            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                {{ relatedIdentifier._attr.relatedIdentifierType._value ? relatedIdentifier._attr.relatedIdentifierType._value : 'Type' }} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="j in availableOptions['relatedIdentifierType']">
+                                    <a href="" ng-click="setOption(relatedIdentifier, 'relatedIdentifierType', j)">{{ j }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <input ng-readonly="readonly" type="text" ng-model="relatedIdentifier._text" placeholder="Related Identifier">
+                    </div>
+
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Relation Type</span>
+                        <div class="btn-group" style="display:inline-block;">
+                            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                {{ relatedIdentifier._attr.relationType._value ? relatedIdentifier._attr.relationType._value : 'Type' }} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="j in availableOptions['relationType']">
+                                    <a href="" ng-click="setOption(relatedIdentifier, 'relationType', j)">{{ j }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Related Metadata Scheme</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Related Metadata Scheme" ng-model="relatedIdentifier._attr.relatedMetadataScheme._value"/>
+                    </div>
+
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Scheme Type</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Scheme Type" ng-model="relatedIdentifier._attr.schemeType._value"/>
+                    </div>
+
+                    <div class="input-prepend input-append" style="display:inline-block;">
+                        <span class="add-on">Scheme URI</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Scheme URI" ng-model="relatedIdentifier._attr.schemeURI._value"/>
+                    </div>
+
                     <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].relatedIdentifiers[0].relatedIdentifier, $index)"><i class="icon-remove"></i></a>
                 </div>
             </div>
@@ -146,6 +230,7 @@
                 list="objectModel.resource[0].descriptions[0].description"
                 index="$index"
                 readonly="readonly"
+                optiontype="'descriptionType'"
                 ></datacite-twin-item-form>
             <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].descriptions[0], 'description')"><i class="icon-plus"></i> Add Description</a>
         </div>
@@ -154,11 +239,22 @@
             <div class="control-group" ng-repeat="geoLocation in objectModel.resource[0].geoLocations[0].geoLocation track by $index">
                 <label class="control-label">geoLocation</label>
                 <div class="controls">
-                    <input ng-readonly="readonly" type="text" placeholder="geoLocation Point"  ng-model="geoLocation.geoLocationPoint[0]._text"/>
-                    <br>
-                    <input ng-readonly="readonly" type="text" placeholder="geoLocation Box" ng-model="geoLocation.geoLocationBox[0]._text"/>
-                    <br>
-                    <input ng-readonly="readonly" type="text" placeholder="geoLocation Place" ng-model="geoLocation.geoLocationPlace[0]._text"/>
+
+                    <div class="input-prepend input-append">
+                        <span class="add-on">geoLocation Point</span>
+                        <input ng-readonly="readonly" type="text" placeholder="geoLocation Point"  ng-model="geoLocation.geoLocationPoint[0]._text"/>
+                    </div>
+
+                    <div class="input-prepend input-append">
+                        <span class="add-on">geoLocation Box</span>
+                        <input ng-readonly="readonly" type="text" placeholder="geoLocation Box" ng-model="geoLocation.geoLocationBox[0]._text"/>
+                    </div>
+
+                    <div class="input-prepend input-append" style="display:inline-block;">
+                        <span class="add-on">geoLocation Place</span>
+                        <input ng-readonly="readonly" type="text" placeholder="geoLocation Place" ng-model="geoLocation.geoLocationPlace[0]._text"/>
+                    </div>
+
                     <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].geoLocations[0].geoLocation, $index)"><i class="icon-remove"></i></a>
                 </div>
             </div>
@@ -178,7 +274,7 @@
     <div ng-if="show_other">
         <div class="widget-content">
             <datacite-twin-item-form
-                item="objectModel.resource[0].language"
+                item="objectModel.resource[0].language[0]"
                 label="'Language'"
                 readonly="readonly"
                 ></datacite-twin-item-form>
@@ -186,11 +282,18 @@
 
         <div class="widget-content">
             <div class="control-group" ng-repeat="alternateIdentifier in objectModel.resource[0].alternateIdentifiers[0].alternateIdentifier track by $index">
-                <label class="control-label">Alternative Identifier</label>
                 <div class="controls">
-                    <input ng-readonly="readonly" type="text" placeholder="Alternative Identifier"  ng-model="alternateIdentifier._text"/>
-                    <br>
-                    <input ng-readonly="readonly" type="text" placeholder="Alternative Identifier Type" ng-model="alternateIdentifier._attr.alternateIdentifierType._value"/>
+                    <div class="input-prepend input-append" style="display:inline-block;">
+                        <span class="add-on">Alternative Identifier</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Alternative Identifier"  ng-model="alternateIdentifier._text"/>
+                    </div>
+                    <div class="input-prepend input-append" style="display:inline-block;">
+                        <span class="add-on">Type</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Alternative Identifier Type" ng-model="alternateIdentifier._attr.alternateIdentifierType._value"/>
+                    </div>
+
+
+
                     <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].alternateIdentifiers[0].alternateIdentifier, $index)"><i class="icon-remove"></i></a>
                 </div>
             </div>
@@ -205,6 +308,7 @@
                 list="objectModel.resource[0].sizes[0].size"
                 index="$index"
                 readonly="readonly"
+                label="'Size'"
                 ></datacite-twin-item-form>
             <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].sizes[0], 'size')"><i class="icon-plus"></i> Add Size</a>
         </div>
@@ -215,6 +319,7 @@
                 item="format"
                 list="objectModel.resource[0].formats[0].format"
                 index="$index"
+                label="'Format'"
                 readonly="readonly"
                 ></datacite-twin-item-form>
             <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].formats[0], 'format')"><i class="icon-plus"></i> Add Format</a>
@@ -229,13 +334,22 @@
         </div>
 
         <div class="widget-content">
-            <datacite-twin-item-form
-                ng-repeat="rights in objectModel.resource[0].rightsList[0].rights track by $index"
-                item="rights"
-                list="objectModel.resource[0].rightsList[0].rights"
-                index="$index"
-                readonly="readonly"
-                ></datacite-twin-item-form>
+            <div class="control-group" ng-repeat="rights in objectModel.resource[0].rightsList[0].rights track by $index">
+                <label class="control-label">Rights</label>
+                <div class="controls">
+                    <div class="input-prepend input-append" style="display:inline-block;">
+                        <span class="add-on">Rights</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Rights"  ng-model="rights._text"/>
+                    </div>
+                    <div class="input-prepend input-append" style="display:inline-block;">
+                        <span class="add-on">Rights URI</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Rights URI" ng-model="rights._attr.rightsURI._value"/>
+                    </div>
+
+                    <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].rightsList[0].rights, $index)"><i class="icon-remove"></i></a>
+                </div>
+            </div>
+
             <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].rightsList[0], 'rights')"><i class="icon-plus"></i> Add rights</a>
         </div>
     </div>

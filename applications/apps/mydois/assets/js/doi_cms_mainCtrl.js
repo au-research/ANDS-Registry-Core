@@ -9,7 +9,7 @@
 
     function mainCtrl(doiFactory, client, $scope, $location, $log, $sce) {
         var vm = this;
-        vm.tab = "list";
+        vm.tab = "mint";
         $scope.base_url = apps_url;
         vm.newdoixml = "";
 
@@ -101,6 +101,9 @@
             vm.response = {};
             doiFactory.update(data).then(function(response){
                 vm.response = response.response;
+                if (vm.response.doi) {
+                    vm.view(vm.response.doi);
+                }
             });
         }
 
@@ -278,7 +281,7 @@
 
         function getBlankXML(doi)
         {
-            var xml ='<?xml version="1.0" encoding="utf-8"?><resource xmlns="http://datacite.org/schema/kernel-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"><identifier identifierType="DOI">'+doi+'</identifier>';
+            var xml ='<?xml version="1.0" encoding="utf-8"?><resource xmlns="http://datacite.org/schema/kernel-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"><identifier identifierType="DOI">'+doi+'</identifier><creators><creator> <creatorName></creatorName> <nameIdentifier></nameIdentifier> <affiliation></affiliation> </creator> </creators><titles> <title></title> </titles>';
             xml+='</resource>';
             return xml;
         }
