@@ -97,7 +97,7 @@
                 }
 
                 scope.fixValues = function() {
-                    var valuesToFix = ['publisher', 'publicationYear', 'resourceType'];
+                    var valuesToFix = ['publisher', 'publicationYear', 'resourceType', 'language'];
                     angular.forEach(valuesToFix, function(val){
                         if (!scope.objectModel.resource[0][val]) {
                             scope.objectModel.resource[0][val] = [];
@@ -162,7 +162,9 @@
                                     xml+='<'+module;
                                     if (item['_attr']) {
                                         angular.forEach(item['_attr'], function(value, key) {
-                                            xml+=' '+key+'="'+value['_value']+'"';
+                                            if (value['_value']) {
+                                                xml+=' '+key+'="'+value['_value']+'"';
+                                            }
                                         });
                                     }
                                     xml+='>';

@@ -13,5 +13,5 @@
         </ul>
     </div>
     <input type="text" ng-model="item._text" placeholder="{{ label ? label : 'Value' }}" ng-readonly="readonly">
-    <a ng-hide="label" href="" class="btn btn-link" ng-click="remove()" ng-if="!readonly"><i class="icon icon-remove"></i></a>
+    <a ng-if="list" href="" class="btn btn-link" ng-click="remove()" ng-if="!readonly"><i class="icon icon-remove"></i></a>
 </div>

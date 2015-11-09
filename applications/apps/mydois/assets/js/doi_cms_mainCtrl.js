@@ -101,6 +101,9 @@
             vm.response = {};
             doiFactory.update(data).then(function(response){
                 vm.response = response.response;
+                if (vm.response.doi) {
+                    vm.view(vm.response.doi);
+                }
             });
         }
 
