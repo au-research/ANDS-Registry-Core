@@ -12,7 +12,15 @@
                 <div class="widget-title">
                     <h5>DOI Query Tool</h5>
                 </div>
-                <div class="widget-content" ng-repeat="app_id in vm.client.assoc_doi_app_id track by $index">
+                <div class="widget-content">
+                    <form action="" class="form-search">
+                        <div class="input-append">
+                            <input type="text" class="search-query" ng-model="vm.filter " placeholder="Type to filter">
+                            <button class="btn">Filter</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="widget-content" ng-repeat="app_id in vm.client.assoc_doi_app_id | filter:vm.filter track by $index">
                     <dl>
                         <dt>Name</dt>
                         <dd>{{ app_id.client_name }}</dd>
