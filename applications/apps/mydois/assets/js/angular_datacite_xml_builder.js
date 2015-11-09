@@ -38,6 +38,13 @@
                 scope.availableOptions = {
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
                 }
+
+                scope.availableOptions['contributorType'] = ['ContactPerson', 'DataCollector', 'DataCurator', 'DataManager', 'Distributor', 'Editor', 'Funder', 'HostingInstitution', 'Producer', 'ProjectLeader', 'ProjectManager', 'ProjectMember', 'RegistrationAgency', 'RegistrationAuthority', 'RelatedPerson', 'Researcher', 'ResearchGroup', 'RightsHolder', 'Sponsor', 'Supervisor', 'WorkPackageLeader', 'Other'];
+
+                scope.availableOptions['relatedIdentifierType'] = ['ARK', 'arXiv', 'bibcode', 'DOI', 'EAN13', 'EISSN', 'Handle', 'ISBN', 'ISSN', 'ISTC', 'LISSN', 'LSID', 'PMID', 'PURL', 'UPC', 'URL', 'URN  '];
+
+                scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf'];
+
                 scope.setOption = function(item, attr, value) {
                     if (!item._attr) item._attr = {};
                     if (!item._attr[attr]) item._attr[attr] = {};
@@ -49,6 +56,18 @@
                     if (elem=='creator') {
                         obj = {
                             'creatorName':[{}],
+                            'nameIdentifier':[{}],
+                            'affiliation':[{}]
+                        }
+                    } else if (elem=='geoLocation') {
+                        obj = {
+                            'geoLocationPoint':[{}],
+                            'geoLocationBox':[{}],
+                            'geoLocationPlace':[{}]
+                        }
+                    } else if (elem=='contributor') {
+                        obj = {
+                            'contributorName':[{}],
                             'nameIdentifier':[{}],
                             'affiliation':[{}]
                         }
@@ -78,7 +97,7 @@
                 }
 
                 scope.fixValues = function() {
-                    var valuesToFix = ['publisher', 'publicationYear'];
+                    var valuesToFix = ['publisher', 'publicationYear', 'resourceType'];
                     angular.forEach(valuesToFix, function(val){
                         if (!scope.objectModel.resource[0][val]) {
                             scope.objectModel.resource[0][val] = [];
@@ -153,7 +172,9 @@
                                             xml+='<'+subitemkey;
                                             if (subitem[0]['_attr']) {
                                                 angular.forEach(subitem[0]['_attr'], function(subitemvalue, subitemkey) {
-                                                    xml+=' '+subitemkey+'="'+subitemvalue['_value']+'"';
+                                                    if (subitemvalue['_value']) {
+                                                        xml+=' '+subitemkey+'="'+subitemvalue['_value']+'"';
+                                                    }
                                                 });
                                             }
                                             xml+='>';
@@ -226,6 +247,7 @@
                 scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle'];
                 scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid'];
                 scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
+                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other', ]
 
                 scope.remove = function() {
                     scope.list.splice(scope.index, '1');
