@@ -95,6 +95,20 @@
                     scope.xml = scope.jsonToXml(scope.objectModel);
                 }
 
+                scope.tagsToReplace = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;'
+                };
+
+                scope.replaceTag = function(tag) {
+                    return scope.tagsToReplace[tag] || tag;
+                }
+
+                scope.safe_tags_replace = function (str) {
+                    return str.replace(/[&<>]/g, scope.replaceTag);
+                }
+
                 scope.fixValues = function() {
                     var valuesToFix = ['publisher', 'publicationYear', 'resourceType', 'language'];
                     angular.forEach(valuesToFix, function(val){
@@ -144,7 +158,7 @@
                                 }
                                 xml+='>';
                                 if (item['_text']) {
-                                    xml+=item['_text'];
+                                    xml+=scope.safe_tags_replace(item['_text']);
                                 }
                                 xml+='</'+module+'>';
                             }
@@ -162,7 +176,7 @@
                                     if (item['_attr']) {
                                         angular.forEach(item['_attr'], function(value, key) {
                                             if (value['_value']) {
-                                                xml+=' '+key+'="'+value['_value']+'"';
+                                                xml+=' '+key+'="'+scope.safe_tags_replace(value['_value'])+'"';
                                             }
                                         });
                                     }
@@ -174,13 +188,13 @@
                                             if (subitem[0]['_attr']) {
                                                 angular.forEach(subitem[0]['_attr'], function(subitemvalue, subitemkey) {
                                                     if (subitemvalue['_value']) {
-                                                        xml+=' '+subitemkey+'="'+subitemvalue['_value']+'"';
+                                                        xml+=' '+subitemkey+'="'+scope.safe_tags_replace(subitemvalue['_value'])+'"';
                                                     }
                                                 });
                                             }
                                             xml+='>';
                                             if (subitem[0] && subitem[0]['_text']) {
-                                                xml+=subitem[0]['_text'];
+                                                xml+=(subitem[0]['_text']);
                                             }
                                             xml+='</'+subitemkey+'>';
                                         }
@@ -205,19 +219,7 @@
 
                 }
 
-                scope.tagsToReplace = {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;'
-                };
 
-                scope.replaceTag = function(tag) {
-                    return scope.tagsToReplace[tag] || tag;
-                }
-
-                scope.safe_tags_replace = function (str) {
-                    return str.replace(/[&<>]/g, scope.replaceTag);
-                }
 
                 scope.xmlToJson = function(xml) {
                     var options = {
