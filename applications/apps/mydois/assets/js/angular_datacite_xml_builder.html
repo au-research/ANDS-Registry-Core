@@ -36,8 +36,6 @@
             ></datacite-twin-item-form>
     </div>
 
-
-
     <div class="widget-content">
         <div class="control-group" ng-repeat="creator in objectModel.resource[0].creators[0].creator track by $index">
             <label class="control-label">Creator</label>
@@ -192,7 +190,16 @@
 
                     <div class="input-prepend input-append">
                         <span class="add-on">Relation Type</span>
-                        <select ng-options="item as item for item in availableOptions['relationType']" ng-model="relatedIdentifier._attr.relationType._value" placeholder="relationType"></select>
+                        <div class="btn-group" style="display:inline-block;">
+                            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                {{ relatedIdentifier._attr.relationType._value ? relatedIdentifier._attr.relationType._value : 'Type' }} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="j in availableOptions['relationType']">
+                                    <a href="" ng-click="setOption(relatedIdentifier, 'relationType', j)">{{ j }}</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="input-prepend input-append">
@@ -200,11 +207,15 @@
                         <input ng-readonly="readonly" type="text" placeholder="Related Metadata Scheme" ng-model="relatedIdentifier._attr.relatedMetadataScheme._value"/>
                     </div>
 
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Scheme Type</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Scheme Type" ng-model="relatedIdentifier._attr.schemeType._value"/>
+                    </div>
+
                     <div class="input-prepend input-append" style="display:inline-block;">
                         <span class="add-on">Scheme URI</span>
                         <input ng-readonly="readonly" type="text" placeholder="Scheme URI" ng-model="relatedIdentifier._attr.schemeURI._value"/>
                     </div>
-
 
                     <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].relatedIdentifiers[0].relatedIdentifier, $index)"><i class="icon-remove"></i></a>
                 </div>
