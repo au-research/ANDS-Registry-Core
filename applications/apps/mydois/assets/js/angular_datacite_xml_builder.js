@@ -92,7 +92,6 @@
                 }
 
                 scope.update = function(){
-                    // $log.debug(scope.objectModel);
                     scope.xml = scope.jsonToXml(scope.objectModel);
                 }
 
@@ -187,8 +186,11 @@
                                         }
                                     });
 
+
+
                                     if (item['_text']) {
-                                        xml+=item['_text'];
+                                        // xml+=item['_text'];
+                                        xml+=scope.safe_tags_replace(item['_text']);
                                     }
                                     xml+='</'+module+'>';
                                 });
@@ -203,7 +205,19 @@
 
                 }
 
+                scope.tagsToReplace = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;'
+                };
 
+                scope.replaceTag = function(tag) {
+                    return scope.tagsToReplace[tag] || tag;
+                }
+
+                scope.safe_tags_replace = function (str) {
+                    return str.replace(/[&<>]/g, scope.replaceTag);
+                }
 
                 scope.xmlToJson = function(xml) {
                     var options = {
