@@ -64,6 +64,28 @@ class nlaPullback extends MX_Controller
 			}
 		}
 
+
+        /* Get a list of related info parties with NLA identifiers */
+
+        $this->db->select("registry_object_id, related_object_identifier")->like("related_object_identifier", $this->nlaPartyPrefix, 'after')->from("registry_object_identifier_relationships");
+        $query = $this->db->get();
+
+		if (!$query->num_rows())
+        {
+            echo "Found no matching records...aborting." .NL;
+            return;
+        }
+
+        echo " Found ".$query->num_rows(). " related info NLA parties";
+
+		/* Check that they are parties and queue up the list of NLA identifiers */
+		foreach ($query->result_array() AS $result)
+        {
+            $pullback_queue[$result['related_object_identifier']] = $result['related_object_identifier'];
+        }
+
+
+
 		echo "Queued " . count($pullback_queue) . " record(s) for pullback from NLA" . NL;
 
 		$xml_fragments = $this->extractRIFCSfromQueue($pullback_queue);
