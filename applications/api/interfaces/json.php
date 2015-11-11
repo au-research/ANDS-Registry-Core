@@ -62,6 +62,10 @@ class JSONInterface extends FormatHandler
      */
     public function error($payload)
     {
+        $ci = &get_instance();
+        $ci->output->set_header('Content-type: application/json');
+        $ci->output->set_content_type('Content-type: application/json');
+        $ci->output->set_status_header('500');
         $response = [
             'status' => 'ERROR',
             'code' => '400',

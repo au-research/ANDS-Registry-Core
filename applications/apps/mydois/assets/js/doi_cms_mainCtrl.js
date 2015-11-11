@@ -4,12 +4,11 @@
     angular
         .module('doi_cms_app')
         .controller('mainCtrl', mainCtrl)
-        .factory('doiFactory', doiFactory)
     ;
 
-    function mainCtrl(doiFactory, client, $scope, $location, $log, $sce) {
+    function mainCtrl(APIDOIService, client, $scope, $location, $log, $sce) {
         var vm = this;
-        vm.tab = "mint";
+        vm.tab = "list";
         $scope.base_url = apps_url;
         vm.newdoixml = "";
 
@@ -29,7 +28,7 @@
                     vm.refreshDOIs();
                     break;
                 case 'log':
-                    doiFactory.getLog(vm.client.app_id).then(function(data){
+                    APIDOIService.getLog(vm.client.app_id).then(function(data){
                         vm.logs = data.data.activities;
                     });
                     break;
@@ -38,21 +37,21 @@
                     if (vm.client.client_id < 10) {
                         doi_client_id = 0+""+vm.client.client_id;
                     }
-                    vm.newdoi_id = vm.client.datacite_prefix + doi_client_id +'/'+ doiFactory.uniqid();
-                    vm.newdoixml = doiFactory.getBlankXML(vm.newdoi_id);
+                    vm.newdoi_id = vm.client.datacite_prefix + doi_client_id +'/'+ vm.uniqid();
+                    vm.newdoixml = APIDOIService.getBlankDataciteXML(vm.newdoi_id);
                     break;
             }
         }
 
         vm.refreshDOIs = function() {
-            doiFactory.getDOI(vm.client.app_id).then(function(data){
+            APIDOIService.getDOIList(vm.client.app_id).then(function(data){
                 vm.dois = data.data.dois;
             });
         }
 
         vm.view = function(doi) {
             vm.tab = 'view';
-            doiFactory.get(doi, vm.client.app_id).then(function(data){
+            APIDOIService.getDOI(doi, vm.client.app_id).then(function(data){
                 vm.readonly = true;
                 $scope.$broadcast('readonly', vm.readonly);
                 vm.viewdoi = data.data;
@@ -61,7 +60,7 @@
 
         vm.update = function(doi) {
             vm.tab = 'view';
-            doiFactory.get(doi, vm.client.app_id).then(function(data){
+            APIDOIService.getDOI(doi, vm.client.app_id).then(function(data){
                 vm.readonly = false;
                 $scope.$broadcast('readonly', vm.readonly);
                 vm.viewdoi = data.data;
@@ -77,7 +76,7 @@
                 client_id: vm.client.client_id
             }
             vm.response = {};
-            doiFactory.mint(data).then(function(response){
+            APIDOIService.mint(data).then(function(response){
                 vm.response = response.response;
                 if (vm.response.doi) {
                     vm.view(vm.response.doi);
@@ -99,7 +98,7 @@
                 client_id: vm.client.client_id
             }
             vm.response = {};
-            doiFactory.update(data).then(function(response){
+            APIDOIService.update(data).then(function(response){
                 vm.response = response.response;
                 if (vm.response.doi) {
                     vm.view(vm.response.doi);
@@ -114,7 +113,7 @@
                 client_id: vm.client.client_id
             }
             vm.response = {};
-            doiFactory.deactivate(data).then(function(response){
+            APIDOIService.deactivate(data).then(function(response){
                 alert(response.response.message);
                 vm.refreshDOIs();
             });
@@ -127,7 +126,7 @@
                 client_id: vm.client.client_id
             }
             vm.response = {};
-            doiFactory.activate(data).then(function(response){
+            APIDOIService.activate(data).then(function(response){
                 alert(response.response.message);
                 vm.refreshDOIs();
             });
@@ -135,10 +134,65 @@
 
         vm.dolinkcheck = function() {
             vm.linkchecking = true;
-            doiFactory.checkLinks(vm.client.app_id).then(function(response){
+            APIDOIService.checkLinks(vm.client.app_id).then(function(response){
                 vm.linkchecking = false;
                 vm.link_checker_result = $sce.trustAsHtml(response.message);
             });
+        }
+
+        vm.uniqid = function(prefix, more_entropy) {
+          //  discuss at: http://phpjs.org/functions/uniqid/
+          // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+          //  revised by: Kankrelune (http://www.webfaktory.info/)
+          //        note: Uses an internal counter (in php_js global) to avoid collision
+          //        test: skip
+          //   example 1: uniqid();
+          //   returns 1: 'a30285b160c14'
+          //   example 2: uniqid('foo');
+          //   returns 2: 'fooa30285b1cd361'
+          //   example 3: uniqid('bar', true);
+          //   returns 3: 'bara20285b23dfd1.31879087'
+
+          if (typeof prefix === 'undefined') {
+            prefix = '';
+          }
+
+          var retId;
+          var formatSeed = function(seed, reqWidth) {
+            seed = parseInt(seed, 10)
+              .toString(16); // to hex str
+            if (reqWidth < seed.length) { // so long we split
+              return seed.slice(seed.length - reqWidth);
+            }
+            if (reqWidth > seed.length) { // so short we pad
+              return Array(1 + (reqWidth - seed.length))
+                .join('0') + seed;
+            }
+            return seed;
+          };
+
+          // BEGIN REDUNDANT
+          if (!this.php_js) {
+            this.php_js = {};
+          }
+          // END REDUNDANT
+          if (!this.php_js.uniqidSeed) { // init seed with big random int
+            this.php_js.uniqidSeed = Math.floor(Math.random() * 0x75bcd15);
+          }
+          this.php_js.uniqidSeed++;
+
+          retId = prefix; // start with prefix, add current milliseconds hex string
+          retId += formatSeed(parseInt(new Date()
+            .getTime() / 1000, 10), 8);
+          retId += formatSeed(this.php_js.uniqidSeed, 5); // add seed hex string
+          if (more_entropy) {
+            // for more entropy we add a float lower to 10
+            retId += (Math.random() * 10)
+              .toFixed(8)
+              .toString();
+          }
+
+          return retId;
         }
 
         vm.formatXml = function(xml) {
@@ -194,194 +248,5 @@
             return formatted;
         }
 
-    }
-
-    function doiFactory($http, $log) {
-        return {
-            getClient: getClient,
-            getDOI: getDOI,
-            getLog: getLog,
-            uniqid: uniqid,
-            getBlankXML: getBlankXML,
-            get:get,
-            mint: mint,
-            update:update,
-            activate: activate,
-            deactivate: deactivate,
-            getClient: getClient,
-            getAppIDs: getAppIDs,
-            checkLinks: checkLinks
-        }
-
-        function checkLinks(app_id)
-        {
-            return $http({
-                method  : 'POST',
-                url     : apps_url+'mydois/runDoiLinkChecker',
-                data    : $.param({
-                    app_id:app_id
-                }),
-                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-            }).then(returnRaw).catch(handleError);
-        }
-
-        function mint(data)
-        {
-            return $http({
-                method  : 'POST',
-                url     : apps_url+'mydois/mint.json/?manual_mint=true&url='+data.url+'&app_id='+data.app_id,
-                data    : $.param({
-                    xml:data.xml,
-                    doi_id:data.doi,
-                    client_id:data.client_id
-                }),
-                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-            }).then(returnRaw).catch(handleError);
-        }
-
-        function deactivate(data)
-        {
-            return $http({
-                method  : 'POST',
-                url     : apps_url+'mydois/deactivate.json/?app_id='+data.app_id+'&doi='+data.doi,
-                data    : $.param({
-                    doi_update:data.doi,
-                    client_id:data.client_id
-                }),
-                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-            }).then(returnRaw).catch(handleError);
-        }
-
-        function activate(data)
-        {
-            return $http({
-                method  : 'POST',
-                url     : apps_url+'mydois/activate.json/?app_id='+data.app_id+'&doi='+data.doi,
-                data    : $.param({
-                    doi_id:data.doi,
-                    client_id:data.client_id
-                }),
-                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-            }).then(returnRaw).catch(handleError);
-        }
-
-        function update(data)
-        {
-            return $http({
-                method  : 'POST',
-                url     : apps_url+'mydois/update.json/?manual_update=true&doi='+data.doi+'&url='+data.url+'&app_id='+data.app_id,
-                data    : $.param({
-                    xml:data.xml,
-                    doi_id:data.doi,
-                    client_id:data.client_id
-                }),
-                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-            }).then(returnRaw).catch(handleError);
-        }
-
-        function getBlankXML(doi)
-        {
-            var xml ='<?xml version="1.0" encoding="utf-8"?><resource xmlns="http://datacite.org/schema/kernel-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"><identifier identifierType="DOI">'+doi+'</identifier><creators><creator> <creatorName></creatorName> <nameIdentifier></nameIdentifier> <affiliation></affiliation> </creator> </creators><titles> <title></title> </titles>';
-            xml+='</resource>';
-            return xml;
-        }
-
-        function get(doi, app_id)
-        {
-            return $http.get(api_url+'doi/'+doi+'?app_id='+app_id)
-                .then(returnRaw)
-                .catch(handleError);
-        }
-
-        function getLog(app_id)
-        {
-            return $http.get(api_url+'doi/log/?app_id='+app_id)
-                .then(returnRaw)
-                .catch(handleError);
-        }
-
-        function getDOI(app_id)
-        {
-            return $http.get(api_url+'doi/list/?app_id='+app_id)
-                .then(returnRaw)
-                .catch(handleError);
-        }
-
-        function getClient(app_id)
-        {
-            return $http.get(api_url+'doi/client/?app_id='+app_id)
-                .then(returnRaw)
-                .catch(handleError);
-        }
-
-        function getAppIDs(user_id)
-        {
-            return $http.get(api_url+'role/?roleId='+user_id+'&include=assoc_doi_app_id')
-                .then(returnRaw)
-                .catch(handleError)
-        }
-
-        function uniqid(prefix, more_entropy) {
-          //  discuss at: http://phpjs.org/functions/uniqid/
-          // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-          //  revised by: Kankrelune (http://www.webfaktory.info/)
-          //        note: Uses an internal counter (in php_js global) to avoid collision
-          //        test: skip
-          //   example 1: uniqid();
-          //   returns 1: 'a30285b160c14'
-          //   example 2: uniqid('foo');
-          //   returns 2: 'fooa30285b1cd361'
-          //   example 3: uniqid('bar', true);
-          //   returns 3: 'bara20285b23dfd1.31879087'
-
-          if (typeof prefix === 'undefined') {
-            prefix = '';
-          }
-
-          var retId;
-          var formatSeed = function(seed, reqWidth) {
-            seed = parseInt(seed, 10)
-              .toString(16); // to hex str
-            if (reqWidth < seed.length) { // so long we split
-              return seed.slice(seed.length - reqWidth);
-            }
-            if (reqWidth > seed.length) { // so short we pad
-              return Array(1 + (reqWidth - seed.length))
-                .join('0') + seed;
-            }
-            return seed;
-          };
-
-          // BEGIN REDUNDANT
-          if (!this.php_js) {
-            this.php_js = {};
-          }
-          // END REDUNDANT
-          if (!this.php_js.uniqidSeed) { // init seed with big random int
-            this.php_js.uniqidSeed = Math.floor(Math.random() * 0x75bcd15);
-          }
-          this.php_js.uniqidSeed++;
-
-          retId = prefix; // start with prefix, add current milliseconds hex string
-          retId += formatSeed(parseInt(new Date()
-            .getTime() / 1000, 10), 8);
-          retId += formatSeed(this.php_js.uniqidSeed, 5); // add seed hex string
-          if (more_entropy) {
-            // for more entropy we add a float lower to 10
-            retId += (Math.random() * 10)
-              .toFixed(8)
-              .toString();
-          }
-
-          return retId;
-        }
-
-        function returnRaw(response) {
-            return response.data;
-        }
-
-        function handleError(error) {
-            $log.error(error);
-        }
     }
 })();

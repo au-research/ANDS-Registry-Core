@@ -133,7 +133,7 @@ class Dispatcher extends MX_Controller
         //throw exception if there's no API Key provided
         //disabled for development for now
         if (!$api_key && $method != 'index') {
-            // throw new Exception('An API Key is required to access this service');
+             throw new Exception('An API Key is required to access this service');
         }
 
         //setting api version for the formatter for display purpose
