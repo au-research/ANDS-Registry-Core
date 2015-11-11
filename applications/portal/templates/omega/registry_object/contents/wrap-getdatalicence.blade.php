@@ -3,6 +3,7 @@
 
     $ar = false;
     $access_detail = false;
+    $access_content = '';
 
     $cc = false;
     $licence_detail = false;
