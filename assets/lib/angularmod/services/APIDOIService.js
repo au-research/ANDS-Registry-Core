@@ -33,14 +33,14 @@
                 return xml;
             },
             checkLinks: function(app_id) {
-                return APIService.post(
+                return APIService.postlegacy(
                     apps_url+'mydois/runDoiLinkChecker', {
                         app_id:app_id
                     }
                 );
             },
             mint: function (data) {
-                return APIService.post(
+                return APIService.postlegacy(
                     apps_url+'mydois/mint.json/?manual_mint=true&url='+data.url+'&app_id='+data.app_id, {
                         xml:data.xml,
                         doi_id:data.doi,
@@ -49,7 +49,7 @@
                 );
             },
             update: function (data) {
-                return APIService.post(
+                return APIService.postlegacy(
                     apps_url+'mydois/update.json/?manual_update=true&doi='+data.doi+'&url='+data.url+'&app_id='+data.app_id, {
                         xml:data.xml,
                         doi_id:data.doi,
@@ -58,7 +58,7 @@
                 );
             },
             activate: function (data) {
-                return APIService.post(
+                return APIService.postlegacy(
                     apps_url+'mydois/activate.json/?app_id='+data.app_id+'&doi='+data.doi, {
                         doi_id:data.doi,
                         client_id:data.client_id
@@ -66,7 +66,7 @@
                 );
             },
             deactivate: function (data) {
-                return APIService.post(
+                return APIService.postlegacy(
                     apps_url+'mydois/deactivate.json/?app_id='+data.app_id+'&doi='+data.doi, {
                         doi_update:data.doi,
                         client_id:data.client_id
