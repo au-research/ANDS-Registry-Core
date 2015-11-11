@@ -2,7 +2,10 @@
     "autoload" : {
         "psr-4": {
             "ANDS\\API\\Registry\\": "registry",
-            "ANDS\\API\\Registry\\Handler\\": "registry/handlers/"
+            "ANDS\\API\\Registry\\Handler\\": "registry/handlers/",
+            "ANDS\\API\\Log\\": "log",
+            "ANDS\\API\\Log\\Handler\\": "log/handlers/",
+            "ANDS\\API\\Log\\Indexer\\": "log/indexers/"
         }
     }
 }

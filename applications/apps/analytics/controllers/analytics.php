@@ -246,7 +246,7 @@ class Analytics extends MX_Controller
                 break;
 			case 'ro_ar':
                 $result = $search_result['aggregations']['access_rights']['buckets'];
-                break;	
+                break;
             case 'ro_class':
                 $result = $search_result['aggregations']['class']['buckets'];
                 break;
@@ -412,7 +412,6 @@ class Analytics extends MX_Controller
                     ->setPath('/logs/production/_bulk')
                     ->bulk('index', $post);
 
-
                 if ($result) {
                     echo 'Done ' . $date . ' chunk ' . $key . " out of " . sizeof($chunks) . "\n";
                 }
@@ -441,6 +440,7 @@ class Analytics extends MX_Controller
 
         $dates = date_range(reset($dates), end($dates), '+1day', 'Y-m-d');
 
+        $dates = array_reverse($dates);
         // $date_from = "2015-07-01";
         if ($date_from) {
             $key = array_search($date_from, $dates);

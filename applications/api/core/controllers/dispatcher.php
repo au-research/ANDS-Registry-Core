@@ -130,6 +130,10 @@ class Dispatcher extends MX_Controller
             $api_key = isset($_GET['api_key']) ? $_GET['api_key'] : false;
         }
 
+        if ($this->input->is_cli_request()) {
+            $api_key = 'api';
+        }
+
         //throw exception if there's no API Key provided
         //disabled for development for now
         if (!$api_key && $method != 'index') {
