@@ -45,7 +45,7 @@ class Dispatcher extends MX_Controller
     {
         parent::__construct();
         $this->output->set_content_type('application/json');
-        set_exception_handler('json_exception_handler');
+        set_exception_handler('api_exception_handler');
     }
 
     /**
@@ -216,6 +216,15 @@ class Dispatcher extends MX_Controller
             $class_name = $namespace.'\\'.$class_name;
             $class = new $class_name();
             $result = $class->handle($params);
+
+            $terms = array(
+                'event' => 'api_hit',
+                'api_key' => $api_key,
+                'api_version' => $api_version,
+                'path' => implode('/', $params)
+            );
+            api_log_terms($terms);
+
             $this->formatter->display($result);
         } catch (Exception $e) {
             $this->formatter->error($e->getMessage());

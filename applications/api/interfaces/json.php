@@ -79,6 +79,9 @@ class JSONInterface extends FormatHandler
 
         $ci = &get_instance();
 
+        $terms = array_merge(array('event'=>'api_error'), $response);
+        api_log_terms($terms);
+
         if ($ci->input->get('pretty')) {
             echo json_encode($response, JSON_PRETTY_PRINT);
         } else {
