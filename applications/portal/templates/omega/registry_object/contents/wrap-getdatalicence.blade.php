@@ -68,7 +68,7 @@
             foreach ($ro->rights as $right) {
                 if($right['type']!='licence'){
                     if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
-                        $access_content .= '<p '.$itemprop.'>';
+                        $access_content .= '<p>';
                     if(isset($right['value']) && trim($right['value'])!=''){
                         $description = html_entity_decode($right['value']);
                         if(strip_tags($description) == $description)
