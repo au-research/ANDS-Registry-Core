@@ -124,8 +124,8 @@
 									<span ng-bind-html="confluenceTip('Owner')"></span>
 								</label>
      							<select name="owner" id="owner" required class="form-control caret-for-select" placeholder="vocab Owner" ng-options="owner.id as owner.name for owner in user_orgs_names" ng-model="vocab.owner" ng-if="user_orgs.length>1"></select>
-                                <select name="owner" id="owner" required class="form-control" placeholder="vocab Owner"  ng-if="user_orgs.length==1 && !vocab.owner" ng-model="vocab.owner" ng-options="owner for owner in user_orgs" ng-init="vocab.owner=user_orgs.0"/> </select>
-                                <select name="owner" id="owner" required class="form-control" placeholder="vocab Owner" ng-options="owner for owner in user_orgs" ng-if="user_orgs.length==1 && vocab.owner.length > 0" ng-model="vocab.owner"/></select>
+                                <select name="owner" id="owner" required class="form-control" placeholder="vocab Owner"  ng-if="user_orgs.length==1 && !vocab.owner" ng-model="vocab.owner" ng-options="owner.id as owner.name for owner in user_orgs_names" ng-init="vocab.owner=user_orgs[0]"/> </select>
+                                <select name="owner" id="owner" required class="form-control" placeholder="vocab Owner" ng-options="owner.id as owner.name for owner in user_orgs_names" ng-if="user_orgs.length==1 && vocab.owner.length > 0" ng-model="vocab.owner"/></select>
                                 <p ng-show="form.cms.owner.$invalid" class="help-block">To give editing rights to others in your organisation, please select the appropriate organisational Owner.</p>
 							</div>
 							@endif
