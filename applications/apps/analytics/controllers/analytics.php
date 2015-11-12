@@ -166,12 +166,7 @@ class Analytics extends MX_Controller
             );
         }
 
-        //groups
-        if (isset($filters['groups'])) {
-            foreach ($filters['groups'] as $group) {
-                $this->elasticsearch->shouldf('term', 'group', $group);
-            }
-        }
+        $this->elasticsearch->setFilters($filters);
 
 
         $this->elasticsearch
@@ -190,7 +185,6 @@ class Analytics extends MX_Controller
             );
 
         $result = array();
-        echo json_encode($this->elasticsearch->getOptions());die();
         $search_result = $this->elasticsearch->search();
         echo json_encode($search_result);
     }

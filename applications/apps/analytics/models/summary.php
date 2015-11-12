@@ -28,12 +28,7 @@ class Summary extends CI_Model
             );
         }
 
-        //grouping
-        if (isset($filters['groups'])) {
-            foreach ($filters['groups'] as $group) {
-                $this->elasticsearch->shouldf('term', 'group', $group);
-            }
-        }
+        $this->elasticsearch->setFilters($filters);
 
         //aggregation for stats
         $this->elasticsearch
@@ -54,6 +49,14 @@ class Summary extends CI_Model
                     'terms'=>array('field'=>'event'),
                     'aggs' => [
                         'events' => ['terms'=>['field'=>'group']]
+                    ]
+                )
+            )
+            ->setAggs('class',
+                array(
+                    'terms'=>array('field'=>'class'),
+                    'aggs' => [
+                        'classes' => ['terms'=>['field'=>'class']]
                     ]
                 )
             )
@@ -134,15 +137,7 @@ class Summary extends CI_Model
         $this->load->library('elasticsearch');
         $this->elasticsearch->init()->setPath($path.'_search');
 
-        if (isset($filters['class'])) {
-            $this->elasticsearch->mustf('term', 'class', $filters['class']);
-        }
-
-        if (isset($filters['groups'])) {
-            foreach ($filters['groups'] as $group) {
-                $this->elasticsearch->shouldf('term', 'group', $group);
-            }
-        }
+        $this->elasticsearch->setFilters($filters);
         // $this->elasticsearch->shouldf('term', 'group', $filters['groups'][0]);
 
         // echo json_encode($this->elasticsearch->getOptions()); die();

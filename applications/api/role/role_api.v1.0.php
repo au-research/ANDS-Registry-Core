@@ -43,17 +43,71 @@ class Role_api
         $includes = explode('-', $include);
 
         foreach ($includes as $inc) {
-            if ($inc=='roles') {
+            if ($inc == 'roles') {
                 $role->roles = $this->getRolesAndActivitiesByRoleID($role->role_id);
-            } elseif ($inc=='assoc_doi_app_id') {
+            } elseif ($inc == 'assoc_doi_app_id') {
                 $role->roles = $this->getRolesAndActivitiesByRoleID($role->role_id);
                 $role->assoc_doi_app_id = $this->getAssociatedDOIAppId($role);
-            } elseif ($inc=='doi_client') {
+            } elseif ($inc == 'doi_client') {
                 //for ROLE_APP_ID
                 $role->client = $this->getClientForDOIAPPID($role);
+            } elseif ($inc == 'data_sources') {
+                $role->data_sources = $this->getDataSourceForRoleID($role->role_id);
+            } elseif ($inc== 'group') {
+                if (!isset($role->datasource)) $role->datasource = $this->getDataSourceForRoleID($role->role_id);
+                $role->group = $this->getGroupsForRole($role);
             }
         }
         return $role;
+    }
+
+    private function getGroupsForRole($role)
+    {
+        $groups = array();
+        foreach ($role->data_sources as $ds) {
+            $groups = array_merge($groups, $this->getDataSourceGroups($ds['data_source_id']));
+            $groups = array_values(array_unique($groups, SORT_STRING));
+        }
+        return $groups;
+    }
+
+    private function getDataSourceGroups($dsid)
+    {
+        $groups = array();
+        $registry_db = $this->ci->load->database('registry', true);
+        $query = $registry_db
+            ->distinct()
+            ->select('value')
+            ->from('registry_object_attributes')
+            ->join('registry_objects', 'registry_objects.registry_object_id = registry_object_attributes.registry_object_id')
+            ->where(
+                array(
+                    'registry_objects.data_source_id' => $dsid,
+                    'registry_object_attributes.attribute' => 'group',
+                    'registry_objects.status' => 'PUBLISHED'
+                )
+            )
+            ->get();
+
+        if ($query->num_rows() == 0) {
+            return $groups;
+        } else {
+            foreach ($query->result_array() AS $group) {
+                $groups[] =  $group['value'];
+            }
+        }
+        return $groups;
+    }
+
+    private function getDataSourceForRoleID($role_id)
+    {
+        $registry_db = $this->ci->load->database('registry', true);
+        $query = $registry_db->get_where('data_sources', array('record_owner'=>$role_id));
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return false;
+        }
     }
 
     private function getClientForDOIAPPID($role)
@@ -74,11 +128,11 @@ class Role_api
         $result = array();
         $user_affiliations = $role->roles['organisational_roles'];
         $query = $this->roleDB
-                ->distinct()->select('*')
-                ->where_in('child_role_id', $user_affiliations)
-                ->where('role_type_id', 'ROLE_DOI_APPID', 'after')
-                ->join('roles', 'role_id = parent_role_id')
-                ->from('role_relations')->get();
+            ->distinct()->select('*')
+            ->where_in('child_role_id', $user_affiliations)
+            ->where('role_type_id', 'ROLE_DOI_APPID', 'after')
+            ->join('roles', 'role_id = parent_role_id')
+            ->from('role_relations')->get();
 
         if ($query && $query->num_rows() > 0) {
             foreach ($query->result() AS $r) {
