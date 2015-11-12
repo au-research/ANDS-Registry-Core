@@ -29,7 +29,9 @@
             $scope.user_orgs_names = [];
             for (var i=0; i<data.message['affiliations'].length; ++i)
             {
-                    $scope.user_orgs_names.push({'id':data.message['affiliations'][i],'name': data.message['affiliationsNames'][i]});
+                // Use the affiliation as the 'id', and then use the affiliation
+                // to look up the full name, and use that as the 'name'.
+                $scope.user_orgs_names.push({'id':data.message['affiliations'][i],'name': data.message['affiliationsNames'][ data.message['affiliations'][i] ]});
             }
             $scope.user_owner = data.message['role_id'];
         });
