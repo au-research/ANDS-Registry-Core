@@ -912,6 +912,8 @@ class Vocabs extends MX_Controller
         $config['allowed_types'] = 'xml|rdf|pdf|nt|json|trig|trix|n3|csv|tsv|xls|xlsx|ods|zip|txt|ttl';
         $config['overwrite'] = true;
         $config['max_size'] = '50000';
+        // CC-1450 Don't mess with the filenames of uploaded files
+        // unnecessarily.  Relies on updated Upload.php.
         $config['mod_mime_fix'] = false;
         $this->load->library('upload', $config);
         $this->upload->initialize($config);
