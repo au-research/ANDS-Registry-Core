@@ -912,6 +912,7 @@ class Vocabs extends MX_Controller
         $config['allowed_types'] = 'xml|rdf|pdf|nt|json|trig|trix|n3|csv|tsv|xls|xlsx|ods|zip|txt|ttl';
         $config['overwrite'] = true;
         $config['max_size'] = '50000';
+        $config['mod_mime_fix'] = false;
         $this->load->library('upload', $config);
         $this->upload->initialize($config);
 
@@ -923,7 +924,7 @@ class Vocabs extends MX_Controller
             if (strrpos($theError, $upload_file_exceeds_limit) > 0 || strrpos($theError, $upload_invalid_filesize) > 0) {
                 $theError = "Maximum file size exceeded. Please select a file smaller than 50MB.";
             } elseif (strrpos($theError, $upload_invalid_filetype) > 0) {
-                $theError = "Unsupported file format. Please select a png, jpg or gif.";
+                $theError = "Unsupported file format.";
             }
             echo json_encode(
                 array(
