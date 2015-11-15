@@ -16,9 +16,9 @@
                 'portal_view', 'portal_search', 'accessed'
             ],
             'class': ["collection", "party", "service", "activity"]
-        }
+        };
 
-        var availableFilters = {}
+        var availableFilters = {};
 
         return {
             getFilters: function () {

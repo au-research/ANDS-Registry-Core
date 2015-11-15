@@ -39,10 +39,8 @@
                 controller: 'reportCtrl',
                 controllerAs: 'vm',
                 resolve: {
-                    org: function () {
-                        return {
-                            'name': 'Masterview'
-                        }
+                    org: function (analyticFactory) {
+                        return analyticFactory.getOrgAPI("Masterview");
                     }
                 }
             })

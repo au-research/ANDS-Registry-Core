@@ -16,6 +16,10 @@
         vm.filters = filterService.getFilters();
         vm.filters['groups'] = vm.org.groups;
 
+        if (vm.org.name=='Masterview') {
+            vm.filters['Masterview'] = true;
+        }
+
         var dsids = [];
         angular.forEach(vm.org.data_sources, function(ds){
             dsids.push(ds.data_source_id);

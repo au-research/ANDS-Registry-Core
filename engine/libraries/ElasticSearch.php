@@ -43,6 +43,9 @@ class ElasticSearch {
         return $this;
     }
 
+    /**
+     * @param $filters
+     */
     function setFilters($filters) {
 
         //groups
@@ -74,8 +77,8 @@ class ElasticSearch {
         }
         $this->mustf('bool', 'should', $data_source_ids);
 
-        if (sizeof($groups)==0 || sizeof($classes)==0 || sizeof($data_source_ids)==0) {
-//            $this->mustf('term', 'norecord', 'norecord');
+        if ((sizeof($groups)==0 || sizeof($classes)==0 || sizeof($data_source_ids)==0) && (!isset($filters['Masterview']))) {
+            $this->mustf('term', 'norecord', 'norecord');
         }
 
     }
@@ -201,6 +204,7 @@ class ElasticSearch {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
         }
         $this->response = curl_exec($ch);
+
         if ($noresponse) {
             return true;
         } else {

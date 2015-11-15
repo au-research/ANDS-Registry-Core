@@ -11,10 +11,13 @@
     <div class="row-fluid">
         <div class="span12">
             <div class="widget-box">
-                <div class="widget-title">
+                <div class="widget-title" ng-click="vm.filters.open=!vm.filters.open">
+                    <span class="icon">
+                        <i class="icon" ng-class="{true: 'icon-plus',false: 'icon-minus', undefined:'icon-plus'}[vm.filters.open]"></i>
+                    </span>
                     <h5>Filters</h5>
                 </div>
-                <div class="widget-content">
+                <div class="widget-content" ng-if="vm.filters.open">
                     <form class="form">
                         <div class="control-group">
                             <label for="" class="control-label">Date Range</label>

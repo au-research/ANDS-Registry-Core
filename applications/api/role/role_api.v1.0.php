@@ -21,12 +21,34 @@ class Role_api
                 $roleId = ($this->ci->input->get('roleId') ? $this->ci->input->get('roleId') : false);
             }
 
+            if ($roleId && $roleId=='Masterview') {
+                return $this->getMasterview();
+            }
+
             if ($roleId) {
                 return $this->getRole($roleId);
             }
         } catch (Exception $e) {
             return new Exception($e->getMessage());
         }
+    }
+
+    private function getMasterview() {
+        $role = array(
+            "role_id" => "Masterview",
+            "role_type_id" => "ROLE_USER",
+            "name" => "Masterview"
+        );
+        $include = $this->ci->input->get('include') ? $this->ci->input->get('include') : false;
+        $includes = explode('-', $include);
+        foreach ($includes as $inc) {
+            if ($inc=='data_sources') {
+                $role['data_sources'] = $this->getDataSourceForRoleID();
+            } elseif ($inc=='group') {
+                $role['group'] = $this->getGroupsForRole();
+            }
+        }
+        return $role;
     }
 
     public function getRole($roleId)
@@ -61,12 +83,37 @@ class Role_api
         return $role;
     }
 
-    private function getGroupsForRole($role)
+    private function getGroupsForRole($role = false)
     {
         $groups = array();
-        foreach ($role->data_sources as $ds) {
-            $groups = array_merge($groups, $this->getDataSourceGroups($ds['data_source_id']));
-            $groups = array_values(array_unique($groups, SORT_STRING));
+        if ($role) {
+            foreach ($role->data_sources as $ds) {
+                $groups = array_merge($groups, $this->getDataSourceGroups($ds['data_source_id']));
+            }
+        } else {
+            $groups = $this->getAllGroups();
+        }
+        $groups = array_values(array_unique($groups, SORT_STRING));
+        return $groups;
+    }
+
+    private function getAllGroups() {
+        $groups = array();
+        $registry_db = $this->ci->load->database('registry', true);
+        $query = $registry_db
+            ->distinct()->select('value')->from('registry_object_attributes')
+            ->where(
+                array(
+                    'registry_object_attributes.attribute' => 'group'
+                )
+            )->get();
+
+        if ($query->num_rows() == 0) {
+            return $groups;
+        } else {
+            foreach ($query->result_array() AS $group) {
+                $groups[] =  $group['value'];
+            }
         }
         return $groups;
     }
@@ -99,10 +146,14 @@ class Role_api
         return $groups;
     }
 
-    private function getDataSourceForRoleID($role_id)
+    private function getDataSourceForRoleID($role_id = false)
     {
         $registry_db = $this->ci->load->database('registry', true);
-        $query = $registry_db->get_where('data_sources', array('record_owner'=>$role_id));
+        if ($role_id) {
+            $registry_db->where('record_owner', $role_id);
+        }
+        $query = $registry_db->get('data_sources');
+
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
