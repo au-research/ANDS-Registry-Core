@@ -563,6 +563,28 @@ class Registry_object extends MX_Controller
     }
 
     /**
+     * Search View
+     * Displaying the search view for the current component
+     * @return HTML
+     */
+    function subjects()
+    {
+
+        //redirect to the correct URL if q is used in the search query
+        if ($this->input->get('q')) {
+            redirect('subjects/#!/q=' . $this->input->get('q'));
+        }
+
+        $this->load->library('blade');
+        $this->blade
+            ->set('lib', array('ui-events', 'angular-ui-map'))
+            // ->set('scripts', array('search_app'))
+            // ->set('facets', $this->components['facet'])
+            ->set('search', true)//to disable the global search
+            ->render('registry_object/subjects');
+    }
+
+    /**
      * Main search function
      * SOLR search
      * @param bool $no_record
