@@ -55,7 +55,6 @@ class ElasticSearch {
                 $groups[] = ['term' => ['group' => $group]];
             }
         }
-//        $this->boolff('must', 'bool', 'should', $groups);
         $this->mustf('bool', 'should', $groups);
 
         //classes
@@ -63,7 +62,6 @@ class ElasticSearch {
         if (isset($filters['class']) && sizeof($filters['class']) > 0) {
             foreach ($filters['class'] as $class) {
                 $classes[] = ['term' => ['class'=>$class]];
-                $classes[] = ['term' => ['roclass'=>$class]];
             }
         }
         $this->mustf('bool', 'should', $classes);
@@ -75,9 +73,9 @@ class ElasticSearch {
                 $data_source_ids[] = ['term' => ['dsid' => $ds_id]];
             }
         }
-        $this->mustf('bool', 'should', $data_source_ids);
+//        $this->mustf('bool', 'should', $data_source_ids);
 
-        if ((sizeof($groups)==0 || sizeof($classes)==0 || sizeof($data_source_ids)==0) && (!isset($filters['Masterview']))) {
+        if ((sizeof($groups)==0 || sizeof($classes)==0) && (!isset($filters['Masterview']))) {
             $this->mustf('term', 'norecord', 'norecord');
         }
 

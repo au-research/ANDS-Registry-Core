@@ -45,7 +45,7 @@ class Role_api
             if ($inc=='data_sources') {
                 $role['data_sources'] = $this->getDataSourceForRoleID();
             } elseif ($inc=='group') {
-                $role['group'] = $this->getGroupsForRole();
+                $role['groups'] = $this->getGroupsForRole();
             }
         }
         return $role;

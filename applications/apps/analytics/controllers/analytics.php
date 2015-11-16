@@ -366,10 +366,27 @@ class Analytics extends MX_Controller
                 foreach ($chunk as $line) {
                     $content = readString($line);
                     if ($content && is_array($content) && sizeof($content) > 0) {
+
+                        if (isset($content['date'])) {
+                            $content['day'] = date("Y-m-d", strtotime($content['date']));
+                        }
+
+                        if (isset($content['q'])) {
+                            $content['q_lowercase'] = strtolower($content['q']);
+                        }
+
                         if (isset($content['user_agent'])) {
                             $content['is_bot'] = isbot($content['user_agent']) ? true : false;
                         } else $content['is_bot'] = false;
                         if (isset($content['roid'])) {
+
+                            if (isset($content['roclass']) && !isset($content['class'])) {
+                                $content['class'] = $content['roclass'];
+                            }
+
+                            if (isset($content['dsid']) && !isset($content['data_source_id'])) {
+                                $content['data_source_id'] = $content['dsid'];
+                            }
 
                             //fill it up with group, dsid, slug, path
                             //TAKES TOO LONG
@@ -708,6 +725,11 @@ class Analytics extends MX_Controller
                 ->setOpt('production',
                     array(
                         'properties' => array(
+                            'day' => array(
+                                'type' => 'date',
+                                'store' => true,
+                                'format' => 'yyyy-MM-dd'
+                            ),
                             'date' => array(
                                 'type' => 'date',
                                 'store' => true,
@@ -718,6 +740,10 @@ class Analytics extends MX_Controller
                                 'index' => 'not_analyzed'
                             ),
                             'q' => array(
+                                'type' => 'string',
+                                'index' => 'not_analyzed'
+                            ),
+                            'q_lowercase' => array(
                                 'type' => 'string',
                                 'index' => 'not_analyzed'
                             )
