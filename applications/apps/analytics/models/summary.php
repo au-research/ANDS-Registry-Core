@@ -72,7 +72,7 @@ class Summary extends CI_Model
                 'rostat', array('terms' => array('field' => 'roid'))
             )
             ->setAggs(
-                'qstat', array('terms' => array('field' => 'q'))
+                'qstat', array('terms' => array('field' => 'q_lowercase'))
             )
             ->setAggs(
                 'accessedstat',
