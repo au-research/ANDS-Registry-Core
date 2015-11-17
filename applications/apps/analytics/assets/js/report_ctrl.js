@@ -20,6 +20,16 @@
             vm.filters['Masterview'] = true;
         }
 
+        vm.all_time_views = [
+            {id:'popular_records', label:'Popular Record(s)'},
+            {id:'popular_search', label:'Popular Search Term(s)'},
+            {id:'popular_data', label:'Popular Data accessed'},
+            {id:'view_by_group', label:'View Breakdown By Group'},
+            {id:'search_by_group', label:'Search Breakdown By Group'},
+            {id:'tr_cited', label:'Thomson Reuter cited'}
+        ]
+        vm.all_time_view = vm.all_time_views[0];
+
         var dsids = [];
         angular.forEach(vm.org.data_sources, function(ds){
             dsids.push(ds.data_source_id);
