@@ -255,8 +255,13 @@
                 </div>
             </div>
             <div class="widget-box">
-                <div class="widget-title"><h5>All Time Statistics</h5></div>
-                <div class="widget-content">
+                <div class="widget-title">
+                    <h5>All Time Statistics</h5>
+                    <div class="controls">
+                        <select ng-options="item as item.label for item in vm.all_time_views track by item.id" ng-model="vm.all_time_view"></select>
+                    </div>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='popular_records'">
                     <h5>All time popular record(s) view</h5>
                     <ul>
                         <li ng-if="vm.alltime.aggs.rostat.buckets.length == 0">No data found!</li>
@@ -264,6 +269,8 @@
                             ro.doc_count }} times)
                         </ro>
                     </ul>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='popular_search'">
                     <h5>All time popular search term(s)</h5>
                     <ul>
                         <li ng-if="vm.alltime.aggs.qstat.buckets.length == 0">No data found!</li>
@@ -274,6 +281,8 @@
                             q.doc_count }} times)
                         </li>
                     </ul>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='popular_data'">
                     <h5>All time popular data accessed</h5>
                     <ul>
                         <li ng-if="vm.alltime.aggs.accessedstat.buckets.length == 0">No data found!</li>
@@ -281,14 +290,23 @@
                             {{ ro.doc_count }} times)
                         </da>
                     </ul>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='view_by_group'">
                     <h5>All Time View breakdown by group</h5>
                     <chart cdata="vm.viewGroupAllTimeChartData" type="'pie'"></chart>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='search_by_group'">
                     <h5>All Time Search breakdown by group</h5>
                     <chart cdata="vm.searchGroupAllTimeChartData" type="'pie'"></chart>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='accessed_by_group'">
                     <h5>All Time Data Accessed breakdown by group</h5>
                     <chart cdata="vm.accessedGroupAllTimeChartData" type="'pie'"></chart>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='tr_cited'">
                     <h5>All Time Thomson Reuter cited</h5>
                     <chart cdata="vm.trChartData" type="'portal_cited'"></chart>
+                </div>
                 </div>
             </div>
 
