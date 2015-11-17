@@ -46,15 +46,16 @@ class Dois extends CI_Model
     public function getDOIActivityStat($filters)
     {
         $result = array();
-	
-		if($this->user->hasFunction('DOI_USER')){
-			$result['display'] = true;
-		}else{
-			$result['display'] = false;
-		}
-		
+
         if (isset($filters['doi_app_id'])) {
+           // echo "we here";
+            if($this->user->hasFunction('DOI_USER')){
+                $result['display'] = true;
+            }else{
+                $result['display'] = false;
+            }
             foreach ($filters['doi_app_id'] as $app_id) {
+               // echo "is the app_id";
                 $query = $this->doi_db->get_where('doi_client', ['app_id'=>$app_id])->first_row(true);
                 $client_id = isset($query['client_id']) ? $query['client_id'] : false;
                 if ($client_id) {
@@ -69,15 +70,23 @@ class Dois extends CI_Model
 
                     if ($query->num_rows() > 0) {
                         $result[$app_id] = $query->result_array();
+                    }else{
+                        $result[$app_id] =[];
                     }
 
-                    foreach ($result[$app_id] as &$res) {
+                    foreach ($result[$app_id] as $res) {
                         if (isset($res['count'])) $res['count'] = (int)$res['count'];
                     }
                 }
             }
         } else {
+            if(isset($filters['Masterview'])){
+                $result['display']=true;
+            }else{
+                $result['display']=false;
+            }
             //get all
+
             $query = $this->doi_db
                 ->select('activity, count(*) as count')
                 ->from('activity_log')
