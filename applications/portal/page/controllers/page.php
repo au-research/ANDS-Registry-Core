@@ -151,16 +151,27 @@ class Page extends MX_Controller
         }
 
         //contributors
-        $this->load->model('group/groups', 'groups');
-        $contributors = $this->groups->getFunders();
+        // Removed funders in favor of CC-1519
+        // $this->load->model('group/groups', 'groups');
+        // $contributors = $this->groups->getFunders();
 
         $banner = asset_url('images/activity_banner.jpg', 'core');
+
+        // CC-1519
+        // parties with identifier_type:fundref returned instead of funders
+        $this->load->library('solr');
+        $this->solr->init()->setOpt('rows', 25)
+                ->setOpt('fq', '+class:party')
+                ->setOpt('fq', '+identifier_type:fundref');
+
+        $result = $this->solr->executeSearch(true);
+        $parties = $result['response']['docs'];
 
         $this->blade
              ->set('scripts', array('home'))
              ->set('highlevel', $highlevel)
              ->set('banner', $banner)
-             ->set('contributors', $contributors)
+             ->set('contributors', $parties)
              ->render('grants');
     }
 
