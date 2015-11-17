@@ -21,6 +21,7 @@
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Explore <i class="fa fa-caret-down"></i></a>
                     <ul class="dropdown-menu" role="menu">
+                        <li><a href="{{portal_url('subjects')}}"><i class="fa fa-eye icon-portal"></i> Browse By Subjects</a></li>
                         <li><a href="{{portal_url('themes')}}"><i class="fa fa-folder-open icon-portal"></i> Themed collections</a></li>
                         <li><a href="{{portal_url('theme/services')}}"><i class="fa fa-wrench icon-portal"></i> Services and Tools</a></li>
                         <li><a href="{{portal_url('theme/open-data')}}"><i class="fa fa-unlock icon-portal"></i> Open data</a></li>

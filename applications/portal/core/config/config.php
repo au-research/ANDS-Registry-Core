@@ -22,22 +22,32 @@ $config['subjects'] = array(
 	array(
 		'display' => 'Medical and Health Sciences',
 		'slug' => 'medical-and-health-sciences',
-		'codes' => array('11','0707'),
+		'codes' => array('11'),
 		'img' => 'Medical_1.jpg'
 	),
 	array(
-		'display' => 'Engineering, Built Environment, Computing and Technology',
-		'codes' => array('08','09','10','12'),
+		'display' => 'Engineering, Computing and Technology',
+		'codes' => array('08','09','10'),
 		'img' => 'Engineering_1.jpg'
 	),
+    array(
+        'display'=>'Built Environment and Design',
+        'codes' => array('12'),
+        'img' => 'BuiltEnvDesign_1.jpg'
+    ),
 	array(
 		'display' => 'Biological Sciences',
-		'codes' => array('0601','0603','0604','0605','0606','0607','0608','0699','0701','0702','0703','0704','0706','0799'),
+		'codes' => array('06'),
 		'img' => 'Biological_1.jpg'
 	),
+    array(
+        'display'=>'Agricultural and Veterinary Sciences',
+        'codes' => array('07'),
+        'img' => 'AgriCultAndVet_1.jpg'
+    ),
 	array(
-		'display' => 'Environmental Sciences and Ecology',
-		'codes' => array('05','0602'),
+		'display' => 'Environmental Sciences',
+		'codes' => array('05'),
 		'img' => 'Environmental_1.jpg'
 	),
 	array(
