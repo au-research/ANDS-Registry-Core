@@ -8,7 +8,7 @@
 
     function mainCtrl(APIDOIService, client, $scope, $location, $log, $sce) {
         var vm = this;
-        vm.tab = "list";
+        vm.tab = "mint";
         $scope.base_url = apps_url;
         vm.newdoixml = "";
 
@@ -69,7 +69,7 @@
 
         vm.mint = function() {
             var data = {
-                xml : vm.newdoixml,
+                xml : vm.stripBlankElements(vm.newdoixml),
                 app_id : vm.client.app_id,
                 url : vm.newdoi_url,
                 doi : vm.newdoi_id,
@@ -91,7 +91,7 @@
 
         vm.doupdate = function() {
             var data = {
-                xml : vm.viewdoi.datacite_xml,
+                xml : vm.stripBlankElements(vm.viewdoi.datacite_xml),
                 app_id : vm.client.app_id,
                 url : vm.viewdoi.url,
                 doi : vm.viewdoi.doi_id,
@@ -246,6 +246,15 @@
             }
 
             return formatted;
+        }
+
+        vm.stripBlankElements = function(xml) {
+            var dom = $.parseXML(xml);
+            $('*:empty', dom).remove();
+            $("*", dom).filter(function(){
+                return $.trim(this.textContent) === ""
+            }).remove();
+            return (new XMLSerializer()).serializeToString(dom);
         }
 
     }

@@ -157,6 +157,10 @@ $base_url = str_replace('/apps','/registry',base_url());
         <?php elseif($lib=='APIDOIService'): ?>
             <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/services/APIDOIService.js', 'base') ?>"></script>
 
+        <?php elseif($lib=='xmlToJson'): ?>
+            <script type="text/javascript" src="<?php echo asset_url('lib/xmlToJson.js', 'base') ?>"></script>
+
+
         <?php elseif($lib=='colorbox'):?>
             <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
             <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
