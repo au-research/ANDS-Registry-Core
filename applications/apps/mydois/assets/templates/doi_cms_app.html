@@ -153,7 +153,7 @@
 
                 <div class="input-prepend input-append" style="display:inline-block">
                     <span class="add-on">URL</span>
-                    <input type="text" ng-model="vm.viewdoi.url" >
+                    <input type="text" ng-model="vm.viewdoi.url" ng-readonly="vm.readonly">
                 </div>
 
                 <div class="container-fluid" style="padding-left:0;" ng-if="vm.viewdoi">
@@ -162,16 +162,16 @@
                             <datacite-xml-builder xml="vm.viewdoi.datacite_xml" readonly="vm.readonly"></datacite-xml-builder>
                         </div>
                         <div class="span6">
-                            <pre class="prettyprint xml">{{ vm.formatXml(vm.viewdoi.datacite_xml) }}</pre>
+                            <pre class="prettyprint xml">{{ vm.formatXml(vm.stripBlankElements(vm.viewdoi.datacite_xml)) }}</pre>
                             <textarea ng-model="vm.viewdoi.datacite_xml" style="width:100%" rows="10" ng-if="vm.editxml"></textarea>
-                            <a href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
+                            <a ng-if="!vm.readonly" href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
                         </div>
                     </div>
                 </div>
             </form>
 
-            <a href="" class="btn btn-primary" ng-click="vm.doupdate()">Update</a>
-            <a href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
+            <a ng-if="!vm.readonly" href="" class="btn btn-primary" ng-click="vm.doupdate()">Update</a>
+            <a ng-if="!vm.readonly" href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
             <div class="alert alert-info" ng-if="vm.response">
                 <b>{{ vm.response.message }}</b><br>
                 {{ vm.response.verbosemessage }}
