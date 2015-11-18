@@ -794,7 +794,7 @@
 								<div class="control-group">
 									<label class="control-label" for="harvest_method">Harvest Method</label>
 									<div class="controls">
-										<select ng-model="ds.harvest_method" ng-options="item.id as item.title for item in ds.harvester_methods.harvester_config.harvester_methods"></select>
+										<select ng-model="ds.harvest_method"  ng-options="item.id as item.title for item in ds.harvester_methods.harvester_config.harvester_methods"></select>
 										<p class="help-inline">{{harvest_method_desc}}</p>
 									</div>
 								</div>
@@ -812,6 +812,36 @@
 										<input type="text" class="input-xxlarge" name="uri" ng-model="ds.uri">
 									</div>
 								</div>
+
+
+                                <div class="control-group" ng-show="ds.harvest_method=='CSWHarvester'" id="user_defined_params">
+                                    <label class="control-label" for="user_defined_params">Harvest Params</label>
+                                    <div class="controls">
+                                        <table>
+                                            <tr ng-repeat="udp in ds.user_defined_params">
+                                                <td>
+                                                    <input style="margin-left:5px;" type="text" ng-model="udp.name">
+                                                </td>
+                                                <td>
+                                                    <input style="margin-left:5px;" type="text" ng-model="udp.value">
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:void(0);" tip="Remove" ng-click="removeFromList(ds.user_defined_params, $index)"><i class="icon icon-remove"></i></a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+
+
+                                <div class="control-group" ng-show="ds.harvest_method=='CSWHarvester'">
+                                    <div class="controls">
+                                        <a class="btn btn-primary" ng-click="addHarvestParam(ds)"><i class="icon icon-white icon-plus"></i> Add Parameters</a>
+                                        <a href="javascript:void(0);"><i class="icon icon-question-sign" tip="url parameters required by provider (name:value)"></i></a>
+                                    </div>
+                                </div>
+
+
 
 								<div class="control-group" ng-show="harvest_params.oai_set">
 									<label class="control-label" for="oai_set">OAI Set</label>

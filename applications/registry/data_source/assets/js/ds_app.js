@@ -192,6 +192,24 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 		{name:'Incremental Mode', value:'INCREMENTAL'},
 		{name:'Full Refresh Mode', value:'REFRESH'}
 	];
+
+
+    $scope.csw_harvest_params = [
+        {name:'request', value:'GetRecords'},
+        {name:'service', value:'CSW'},
+        {name:'version', value:'2.0.2'},
+        {name:'namespace', value:'xmlns(csw=http://www.opengis.net/cat/csw)'},
+        {name:'resultType', value:'results'},
+        {name:'outputFormat', value:'application/xml'},
+        {name:'typeNames', value:'csw:Record'},
+        {name:'elementSetName', value:'full'},
+        {name:'constraintLanguage', value:'CQL_TEXT'},
+        {name:'constraint_language_version', value:'1.1.0v'}
+    ];
+
+
+
+
 	$scope.provider_types = [
 		{name: 'RIF-CS',value:'rif'}
 	];
@@ -240,6 +258,10 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 		if($scope.ds.crosswalks) {
 			$scope.ds.crosswalks = JSON.parse($scope.ds.crosswalks);
 		}
+
+        if($scope.ds.user_defined_params) {
+            $scope.ds.user_defined_params = JSON.parse($scope.ds.user_defined_params);
+        }
 	}
 
 	$scope.addCrosswalk = function(ds, type) {
@@ -254,6 +276,16 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			}
 		)
 	}
+
+    $scope.addHarvestParam = function(ds) {
+        if(!ds.user_defined_params) ds.user_defined_params = [];
+        ds.user_defined_params.push(
+            {
+                'name':'',
+                'value':''
+            }
+        )
+    }
 
 	$scope.uploadFile = function(files) {
 		var cr = angular.element(this)[0].cr;
@@ -317,6 +349,19 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 				}
 			});
 		}
+        if($scope.ds.harvest_method=='CSWHarvester') {
+            if(!$scope.ds.user_defined_params)$scope.ds.user_defined_params = [];
+
+            $.each($scope.csw_harvest_params, function(){
+                if(!isParamSet(this.name)){
+                    $scope.ds.user_defined_params.push({
+                        name:this.name, value:this.value
+                    });
+                }
+            });
+
+        }
+
 		if($scope.ds.harvest_method=='PMHHarvester') {
 			$scope.adv_harvest_modes = [
 				{name:'Standard Mode', value:'STANDARD'},
@@ -436,6 +481,14 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			}
 		}
 	});
+
+    function isParamSet(paramName){
+        var exists = false;
+        $.each($scope.ds.user_defined_params, function(){
+            if(this.name == paramName) exists = true;
+        });
+        return exists;
+    }
 }
 
 function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
