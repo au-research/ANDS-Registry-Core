@@ -16,6 +16,8 @@
         app_id = $location.search().app_id;
         if (!app_id) app_id = $location.search().app_id_select;
 
+        if ($location.search().tab) vm.tab = $location.search().tab;
+
         vm.client = client.data.client;
 
         $scope.$watch('vm.tab', function(newv){
@@ -37,6 +39,8 @@
                     if (vm.client.client_id < 10) {
                         doi_client_id = 0+""+vm.client.client_id;
                     }
+                    vm.editxml = false;
+                    vm.newdoi_url = '';
                     vm.newdoi_id = vm.client.datacite_prefix + doi_client_id +'/'+ vm.uniqid();
                     vm.newdoixml = APIDOIService.getBlankDataciteXML(vm.newdoi_id);
                     break;
@@ -49,7 +53,11 @@
             });
         }
 
-        vm.view = function(doi) {
+        vm.view = function(doi, keep) {
+            if (!keep) {
+                vm.response = false;
+            }
+            vm.editxml = false;
             vm.tab = 'view';
             APIDOIService.getDOI(doi, vm.client.app_id).then(function(data){
                 vm.readonly = true;
@@ -59,6 +67,7 @@
         }
 
         vm.update = function(doi) {
+            vm.editxml = false;
             vm.tab = 'view';
             APIDOIService.getDOI(doi, vm.client.app_id).then(function(data){
                 vm.readonly = false;
@@ -68,18 +77,19 @@
         }
 
         vm.mint = function() {
+            $scope.$broadcast('update');
             var data = {
-                xml : vm.newdoixml,
+                xml : vm.stripBlankElements(vm.newdoixml),
                 app_id : vm.client.app_id,
                 url : vm.newdoi_url,
                 doi : vm.newdoi_id,
                 client_id: vm.client.client_id
             }
-            vm.response = {};
+            vm.response = false;
             APIDOIService.mint(data).then(function(response){
                 vm.response = response.response;
                 if (vm.response.doi) {
-                    vm.view(vm.response.doi);
+                    vm.view(vm.response.doi, true);
                 }
             });
         }
@@ -90,18 +100,19 @@
         }
 
         vm.doupdate = function() {
+            $scope.$broadcast('update');
             var data = {
-                xml : vm.viewdoi.datacite_xml,
+                xml : vm.stripBlankElements(vm.viewdoi.datacite_xml),
                 app_id : vm.client.app_id,
                 url : vm.viewdoi.url,
                 doi : vm.viewdoi.doi_id,
                 client_id: vm.client.client_id
             }
-            vm.response = {};
+            vm.response = false;
             APIDOIService.update(data).then(function(response){
                 vm.response = response.response;
-                if (vm.response.doi) {
-                    vm.view(vm.response.doi);
+                if (response.response.type!='failure' && vm.response.doi) {
+                    vm.view(vm.response.doi, true);
                 }
             });
         }
@@ -246,6 +257,20 @@
             }
 
             return formatted;
+        }
+
+        vm.stripBlankElements = function(xml) {
+            try {
+                var dom = $.parseXML(xml);
+                $('*:empty', dom).remove();
+                $("*", dom).filter(function(){
+                    return $.trim(this.textContent) === ""
+                }).remove();
+                return (new XMLSerializer()).serializeToString(dom);
+            } catch (e) {
+                return xml;
+            }
+
         }
 
     }

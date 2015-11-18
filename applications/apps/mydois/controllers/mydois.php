@@ -142,7 +142,7 @@ class Mydois extends MX_Controller {
 	function app()
 	{
 		acl_enforce('DOI_USER');
-		$data['js_lib'] = array('core', 'angular129', 'prettyprint', 'APIService', 'APIRoleService', 'APIDOIService');
+		$data['js_lib'] = array('core', 'angular129', 'prettyprint', 'APIService', 'APIRoleService', 'APIDOIService', 'xmlToJson');
 		$data['scripts'] = array('doi_cms_app', 'doi_cms_mainCtrl', 'angular_datacite_xml_builder');
 		$data['title'] = 'ANDS DOI Management App';
 		$this->load->view('doi_cms_app', $data);

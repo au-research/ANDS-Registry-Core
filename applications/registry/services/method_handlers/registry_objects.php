@@ -101,6 +101,11 @@ class Registry_objectsMethod extends MethodHandler {
                             break;
 
                     }
+                } else {
+                    //special case
+                    if ($m1 == 'solr_index') {
+                        $result[$m1] = $this->ro->indexable_json();
+                    }
                 }
             }
 

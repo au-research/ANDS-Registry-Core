@@ -15,7 +15,8 @@
         // eg. <base_url>+/#!/?q=fish, #!/?q=fish&subjects=Fish
         $scope.filters = $location.search();
 
-        $scope.search = function () {
+        $scope.search = function (isPagination) {
+            if (!isPagination || isPagination == undefined) $scope.filters['p'] = 1;
             if ($scope.searchRedirect()) {
                 window.location = base_url + '#!/?q=' + $scope.filters['q'];
             } else {
@@ -55,7 +56,7 @@
 
         $scope.goto = function(x) {
             $scope.filters['p'] = ''+x;
-            $scope.search();
+            $scope.search(true);
             $("html, body").animate({ scrollTop: 0 }, 500);
         }
 

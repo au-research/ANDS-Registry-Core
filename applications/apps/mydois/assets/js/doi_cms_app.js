@@ -19,7 +19,7 @@
                     }
                 }
             })
-            .when('/manage/:app_id', {
+            .when('/manage/:app_id/', {
                 templateUrl: apps_url+'assets/mydois/templates/doi_cms_app.html',
                 controller: 'mainCtrl',
                 controllerAs: 'vm',

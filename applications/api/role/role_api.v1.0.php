@@ -190,6 +190,7 @@ class Role_api
                 $result[] = $r->parent_role_id;
             }
         }
+        $result = array_values(array_unique($result));
         return $result;
     }
 
@@ -220,7 +221,8 @@ class Role_api
             // function getOnlyRoleIds(&$item, $key) {$item = $item['role_id'];}
             $orgRoles = $this->getAllOrganisationalRoles();
             // array_walk($orgRoles, 'getOnlyRoleIds');
-            $ret['organisational_roles'] = array_merge($ret['organisational_roles'], $orgRoles);
+            $ret['organisational_roles'] = array_values(array_merge($ret['organisational_roles'], $orgRoles));
+            $ret['organisational_roles'] = array_values(array_unique($ret['organisational_roles']));
         }
 
         return $ret;
