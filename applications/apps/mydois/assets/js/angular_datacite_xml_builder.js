@@ -29,9 +29,13 @@
                     }
                 });
 
+                scope.$on('update', function(){
+                    scope.update();
+                });
+
                 scope.$watch('objectModel', function(newv, oldv){
                     if (newv && newv!=oldv) {
-                        scope.update();
+                        // scope.update();
                     }
                 }, true);
 
@@ -186,21 +190,23 @@
                                     }
                                     xml+='>';
 
-                                    angular.forEach(item, function(subitem, subitemkey){
+                                    angular.forEach(item, function(sitem, subitemkey){
                                         if (subitemkey!='_ns' && subitemkey!='_attr' && subitemkey!='_text') {
-                                            xml+='<'+subitemkey;
-                                            if (subitem[0]['_attr']) {
-                                                angular.forEach(subitem[0]['_attr'], function(subitemvalue, subitemkey) {
-                                                    if (subitemvalue['_value']) {
-                                                        xml+=' '+subitemkey+'="'+scope.safe_tags_replace(subitemvalue['_value'])+'"';
-                                                    }
-                                                });
-                                            }
-                                            xml+='>';
-                                            if (subitem[0] && subitem[0]['_text']) {
-                                                xml+=scope.safe_tags_replace(subitem[0]['_text']);
-                                            }
-                                            xml+='</'+subitemkey+'>';
+                                            angular.forEach(sitem, function(subitem){
+                                                xml+='<'+subitemkey;
+                                                if (subitem['_attr']) {
+                                                    angular.forEach(subitem['_attr'], function(subitemvalue, subitemkey) {
+                                                        if (subitemvalue['_value']) {
+                                                            xml+=' '+subitemkey+'="'+scope.safe_tags_replace(subitemvalue['_value'])+'"';
+                                                        }
+                                                    });
+                                                }
+                                                xml+='>';
+                                                if (subitem && subitem['_text']) {
+                                                    xml+=scope.safe_tags_replace(subitem['_text']);
+                                                }
+                                                xml+='</'+subitemkey+'>';
+                                            });
                                         }
                                     });
 

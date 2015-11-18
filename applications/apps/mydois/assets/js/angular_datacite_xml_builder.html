@@ -43,10 +43,12 @@
                     <span class="add-on">Creator Name</span>
                     <input type="text" placeholder="Creator Name"  ng-model="creator.creatorName[0]._text" ng-readonly="readonly"/>
                 </div>
-                <div class="input-prepend input-append">
+                <div class="input-prepend input-append" ng-repeat="affiliation in objectModel.resource[0].creators[0].creator[0].affiliation">
                     <span class="add-on">Creator Affiliations</span>
-                    <input type="text" placeholder="Creator Affiliations" ng-model="creator.affiliation[0]._text" ng-readonly="readonly"/>
+                    <input type="text" placeholder="Creator Affiliations" ng-model="affiliation._text" ng-readonly="readonly"/>
                 </div>
+                <a href="" ng-click="add(objectModel.resource[0].creators[0].creator[0], 'affiliation')"><i class="icon-plus"></i> Add Affiliation</a>
+
                 <div class="input-prepend input-append">
                     <span class="add-on">Name Identifier</span>
                     <input type="text" placeholder="Creator Name Identifier" ng-model="creator.nameIdentifier[0]._text" ng-readonly="readonly"/>
@@ -121,10 +123,12 @@
                         <input ng-readonly="readonly" type="text" ng-model="contributor.contributorName[0]._text" placeholder="Contributor Name">
                     </div>
 
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append" ng-repeat="affiliation in contributor.affiliation">
                         <span class="add-on">Affiliation</span>
-                        <input ng-readonly="readonly" type="text" placeholder="Affiliation" ng-model="contributor.affiliation[0]._text"/>
+                        <input type="text" placeholder="Affiliation" ng-model="affiliation._text" ng-readonly="readonly"/>
                     </div>
+                    <a href="" ng-click="add(contributor, 'affiliation')"><i class="icon-plus"></i> Add Affiliation</a>
+
 
                     <div class="input-prepend input-append">
                         <span class="add-on">Name Identifier</span>
