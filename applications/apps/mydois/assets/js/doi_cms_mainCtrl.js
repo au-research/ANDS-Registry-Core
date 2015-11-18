@@ -8,7 +8,7 @@
 
     function mainCtrl(APIDOIService, client, $scope, $location, $log, $sce) {
         var vm = this;
-        vm.tab = "mint";
+        vm.tab = "list";
         $scope.base_url = apps_url;
         vm.newdoixml = "";
 
@@ -97,10 +97,10 @@
                 doi : vm.viewdoi.doi_id,
                 client_id: vm.client.client_id
             }
-            vm.response = {};
+            vm.response = false;
             APIDOIService.update(data).then(function(response){
                 vm.response = response.response;
-                if (vm.response.doi) {
+                if (response.response.type!='failure' && vm.response.doi) {
                     vm.view(vm.response.doi);
                 }
             });
