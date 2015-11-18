@@ -39,6 +39,8 @@
                     if (vm.client.client_id < 10) {
                         doi_client_id = 0+""+vm.client.client_id;
                     }
+                    vm.editxml = false;
+                    vm.newdoi_url = '';
                     vm.newdoi_id = vm.client.datacite_prefix + doi_client_id +'/'+ vm.uniqid();
                     vm.newdoixml = APIDOIService.getBlankDataciteXML(vm.newdoi_id);
                     break;
@@ -51,7 +53,12 @@
             });
         }
 
-        vm.view = function(doi) {
+        vm.view = function(doi, keep) {
+            if (!keep) {
+                $log.debug(keep);
+                vm.response = false;
+            }
+            vm.editxml = false;
             vm.tab = 'view';
             APIDOIService.getDOI(doi, vm.client.app_id).then(function(data){
                 vm.readonly = true;
@@ -61,6 +68,7 @@
         }
 
         vm.update = function(doi) {
+            vm.editxml = false;
             vm.tab = 'view';
             APIDOIService.getDOI(doi, vm.client.app_id).then(function(data){
                 vm.readonly = false;
@@ -78,11 +86,11 @@
                 doi : vm.newdoi_id,
                 client_id: vm.client.client_id
             }
-            vm.response = {};
+            vm.response = false;
             APIDOIService.mint(data).then(function(response){
                 vm.response = response.response;
                 if (vm.response.doi) {
-                    vm.view(vm.response.doi);
+                    vm.view(vm.response.doi, true);
                 }
             });
         }
@@ -102,12 +110,12 @@
                 client_id: vm.client.client_id
             }
             vm.response = false;
-            // APIDOIService.update(data).then(function(response){
-            //     vm.response = response.response;
-            //     if (response.response.type!='failure' && vm.response.doi) {
-            //         vm.view(vm.response.doi);
-            //     }
-            // });
+            APIDOIService.update(data).then(function(response){
+                vm.response = response.response;
+                if (response.response.type!='failure' && vm.response.doi) {
+                    vm.view(vm.response.doi, true);
+                }
+            });
         }
 
         vm.dodeactivate = function(doi_id) {
