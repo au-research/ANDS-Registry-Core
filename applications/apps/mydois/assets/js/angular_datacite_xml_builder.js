@@ -31,7 +31,7 @@
 
                 scope.$watch('objectModel', function(newv, oldv){
                     if (newv && newv!=oldv) {
-                        // scope.update();
+                        scope.update();
                     }
                 }, true);
 
