@@ -55,7 +55,6 @@
 
         vm.view = function(doi, keep) {
             if (!keep) {
-                $log.debug(keep);
                 vm.response = false;
             }
             vm.editxml = false;
