@@ -25,7 +25,7 @@ class DCI extends ROHandler {
         $ds = $CI->ds->getByID($this->ro->data_source_id);
         $exportable = false;
         $lower_type = strtolower($this->ro->type);
-        $allowedType = array('collection', 'repository', 'dataset');
+        $allowedType = array('collection', 'repository', 'dataset', 'software');
         if($this->ro->hasTag('excludeDCI'))
             return "";
         if($this->overrideExportable || $ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
