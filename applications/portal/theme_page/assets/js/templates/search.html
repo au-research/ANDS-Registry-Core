@@ -8,7 +8,7 @@
 
 <div ng-if="result && result.response.numFound > 0 && el.search.style=='name_group'">
     <ul class="list-normal">
-        <li ng-repeat="doc in result.response.docs | limitTo:el.search.limit"><a href="{{base_url}}{{doc.slug}}/{{doc.id}}">{{doc.title}} ({{doc.group}})</a></li>
+        <li ng-repeat="doc in result.response.docs | limitTo:el.search.limit"><a href="{{base_url}}{{doc.slug}}/{{doc.id}}">{{doc.title}} </a> ({{doc.group}}) </li>
     </ul>
     <a href="{{base_url}}search/#!/{{filter_query}}" ng-if="!el.search.view_search_text">View Full Search ({{result.response.numFound}})</a>
     <a href="{{base_url}}search/#!/{{filter_query}}" ng-if="el.search.view_search_text">{{el.search.view_search_text}} ({{result.response.numFound}})</a>
