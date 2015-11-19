@@ -761,6 +761,12 @@ class Vocabs extends MX_Controller
                     }
                 }
 
+                if ($result && $vocab->prop['status'] == 'deprecated') {
+                    if ($this->index_vocab($vocab)) {
+                        $vocab->log('Indexing Success');
+                    }
+                }
+
                 if ($result) {
                     $result = $vocab;
                 }
