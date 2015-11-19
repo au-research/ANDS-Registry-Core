@@ -15992,9 +15992,9 @@ app.directive('facetinfo', function($log) {
 
 			var values = {
 				'access_rights' : {
-					'open' : 'Data that is readily accessible and reusable.',
-					'conditional' : 'Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required).',
-					'restricted': 'Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location).',
+					'open' : 'Data is publicly accessible online.',
+					'conditional' : 'Data is publicly accessible subject to certain conditions. For example: <br/>- a fee applies<br/>- the data is only accessible at a specific physical location.',
+					'restricted': 'Data access is limited. For example: <br/>- following an embargo period<br/>- to a particular group of users<br/>- where formal permission is granted.',
 					'other': 'no value or user defined custom value'
 				},
 				'license_class': {
@@ -16606,7 +16606,11 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if ($scope.onSearchPage()) {
 			location.hash = '!/'+hash;
             $(window).scrollTop(0);
-		} else {
+		}else if ($scope.onBrowsePage()) {
+            location.hash = '!/'+hash;
+            //$(window).scrollTop(0);
+        }
+        else {
 			location.href = base_url+'search/#' + '!/' + hash;
             $(window).scrollTop(0);
 		}
@@ -16620,6 +16624,14 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		return ret;
 	}
 
+    $scope.onBrowsePage = function() {
+        var ret = false;
+        if (location.href.indexOf(base_url+'subjects')==0) {
+            ret = true;
+        }
+        return ret;
+    }
+
 	$scope.filters_to_hash = function() {
 		return search_factory.filters_to_hash($scope.filters);
 	}
@@ -16630,8 +16642,22 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
 			ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
 		}
+        if (location.href.indexOf('subjects')>-1) {
+            console.log("browsing");
+            search_factory.search($scope.filters).then(function(data){
+                $scope.loading = false;
+                $scope.fuzzy = data.fuzzy_result;
+                search_factory.update('result', data);
+                search_factory.update('facets', search_factory.construct_facets(data));
 
-		if (location.href.indexOf('search')>-1) {
+                $scope.syncSubjectBrowse();
+                $scope.$broadcast('search_complete');
+                $scope.populateCenters($scope.result.response.docs);
+
+
+            });
+        }
+		else if (location.href.indexOf('search')>-1) {
 			search_factory.search($scope.filters).then(function(data){
 				$scope.loading = false;
 				$scope.fuzzy = data.fuzzy_result;
@@ -16641,10 +16667,22 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 				$scope.sync();
 				$scope.$broadcast('search_complete');
 				$scope.populateCenters($scope.result.response.docs);
+
+
 			});
 		}
 
+
+
 	}
+
+    $scope.openBranches = function() {
+        angular.forEach($scope.vocab_tree, function(item){
+            if ($scope.isVocabSelected(item)) {
+                $scope.getSubTree(item)
+            }
+        });
+    }
 
 	$scope.addKeyWord = function(extra_keywords) {
 		$scope.toggleFilter('refine', extra_keywords, true);
@@ -16661,6 +16699,105 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			});
 		});
 	}
+
+    $scope.syncSubjectBrowse = function(){
+        $scope.filters = search_factory.filters;
+
+        $scope.query = search_factory.query;
+        $scope.search_type = search_factory.search_type;
+
+        // $scope.$broadcast('query', {query:$scope.query, search_type:$scope.search_type});
+
+        $scope.result = search_factory.result;
+        $scope.facets = search_factory.facets;
+        $scope.pp = search_factory.pp;
+        $scope.sort = search_factory.sort;
+        $scope.advanced_fields = search_factory.advanced_fields;
+
+        if($scope.filters['class']=='activity') {
+            $scope.advanced_fields = search_factory.advanced_fields_activity;
+            $scope.sort = search_factory.activity_sort;
+        }
+
+        if($scope.filters['class']=='activity') {
+            $scope.advanced_fields = search_factory.advanced_fields_activity;
+        } else if($scope.filters['class']=='collection') {
+            $scope.advanced_fields = search_factory.advanced_fields;
+        } else if($scope.filters['class']=='party') {
+            $scope.advanced_fields = search_factory.advanced_fields_party;
+        } else if($scope.filters['class']=='service') {
+            $scope.advanced_fields = search_factory.advanced_fields_service;
+        }
+
+        //construct the pagination
+        if ($scope.result) {
+            // $log.debug($scope.result);
+            $scope.page = {
+                cur: ($scope.filters['p'] ? parseInt($scope.filters['p']) : 1),
+                rows: ($scope.filters['rows'] ? parseInt($scope.filters['rows']) : 15),
+                range: 3,
+                pages: []
+            }
+            $scope.page.end = Math.ceil($scope.result.response.numFound / $scope.page.rows);
+            for (var x = ($scope.page.cur - $scope.page.range); x < (($scope.page.cur + $scope.page.range)+1);x++ ) {
+                if (x > 0 && x <= $scope.page.end) {
+                    $scope.page.pages.push(x);
+                }
+            }
+
+            // $scope.temp
+
+            $scope.temporal_range = search_factory.temporal_range($scope.result);
+            $scope.earliest_year = $scope.temporal_range[0];
+            $scope.latest_year = $scope.temporal_range[$scope.temporal_range.length - 1];
+
+            //get temporal range
+            // search_factory.search_no_record($scope.filters).then(function(data){
+            // 	$scope.temporal_range = search_factory.temporal_range(data);
+            // 	$log.debug(data);
+            // 	$scope.earliest_year = $scope.temporal_range[0];
+            // 	$scope.latest_year = $scope.temporal_range[$scope.temporal_range.length - 1];
+            // });
+        }
+
+        //duplicate record matching
+        if ($scope.result) {
+            var matchingdoc = [];
+            angular.forEach($scope.result.response.docs, function(doc){
+                if (doc.matching_identifier_count) {
+                    matchingdoc.push(doc);
+                }
+            });
+            // $log.debug(matchingdoc);
+            angular.forEach(matchingdoc, function(doc) {
+                if(!doc.hide) {
+                    search_factory.get_matching_records(doc.id).then(function(data){
+                        if (doc && !doc.hide) {
+                            doc.identifiermatch = data.message.identifiermatch;
+                            if(doc && !doc.hide) {
+                                angular.forEach(doc.identifiermatch, function(idd){
+                                    $scope.hidedoc(idd.registry_object_id);
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        $scope.hidedoc = function(id) {
+            if ($scope.result) {
+                angular.forEach($scope.result.response.docs, function(doc){
+                    if (doc.id==id && !doc.hide) {
+                        doc.hide = true;
+                    }
+                });
+            }
+        }
+
+        // $log.debug('sync result', $scope.result);
+    }
+
 
 	$scope.sync = function(){
 		$scope.filters = search_factory.filters;
@@ -16790,22 +16927,91 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	 * Filter manipulation
 	 */
 	$scope.toggleFilter = function(type, value, execute) {
-		if($scope.filters[type]) {
-			if($scope.filters[type]==value) {
-				$scope.clearFilter(type,value);
-			} else {
-				if($scope.filters[type].indexOf(value)==-1) {
-					$scope.addFilter(type, value);
-				} else {
-					$scope.clearFilter(type,value);
-				}
-			}
-		} else {
-			$scope.addFilter(type, value);
-		}
-		$scope.filters['p'] = 1;
-		if(execute) $scope.hashChange();
+
+        $scope.filters['p'] = 1;
+        if(location.href.indexOf('subjects')>-1){
+            if($scope.isSubjectSelected(value)) {
+                $scope.clearSubjectFilter(type,value);
+                console.log("CLEAR:" + type, value, execute);
+
+            } else {
+                console.log("ADD:" + type, value, execute);
+                $scope.addSubjectFilter(type, value);
+            }
+            if(execute) $scope.search();
+         }
+        else{
+            if($scope.filters[type]) {
+                if($scope.filters[type]==value) {
+                    $scope.clearFilter(type,value);
+                } else {
+                    if($scope.filters[type].indexOf(value)==-1) {
+                        $scope.addFilter(type, value, false);
+                    } else {
+                        $scope.clearFilter(type,value, false);
+                    }
+                }
+            } else {
+                $scope.addFilter(type, value);
+            }
+
+            if(execute) $scope.hashChange();
+        }
+
 	}
+
+    $scope.clearSubjectFilter = function(type, value){
+        if(typeof $scope.filters[type]=='object') {
+            var index = $scope.filters[type].indexOf(value);
+            $scope.filters[type].splice(index, 1);
+        }
+    }
+
+    $scope.addSubjectFilter = function (type, value){
+            if($scope.filters[type]){
+                if(typeof $scope.filters[type]=='string') {
+                    var old = $scope.filters[type];
+                    $scope.filters[type] = [];
+                    $scope.filters[type].push(old);
+                    $scope.filters[type].push(value);
+                } else if(typeof $scope.filters[type]=='object') {
+                    $scope.filters[type].push(value);
+                }
+            } else $scope.filters[type] = value;
+    }
+
+    $scope.isSubjectSelected = function(notation) {
+        var found = false;
+        if($scope.filters['anzsrc-for']) {
+            if (angular.isArray($scope.filters['anzsrc-for'])) {
+                angular.forEach($scope.filters['anzsrc-for'], function(code){
+                    console.log(code, notation);
+                    if(!found && code == notation) {
+                        console.log("found it");
+                        found = true;
+                    }
+                });
+            }
+        }
+        return found;
+    }
+
+    $scope.isSubjectParentSelected = function(notation) {
+        var found = false;
+        if($scope.filters['anzsrc-for']) {
+            if (angular.isArray($scope.filters['anzsrc-for'])) {
+                angular.forEach($scope.filters['anzsrc-for'], function(code){
+                    console.log(code, notation);
+                    if(indexOf(code ,notation) == 0) {
+                        console.log("found it");
+                        found = true;
+                    }
+                });
+            }
+        }
+        return found;
+    }
+
 
 	$scope.toggleAccessRights = function() {
 		if ($scope.filters['access_rights']) {
@@ -16832,6 +17038,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.clearFilter = function(type, value, execute) {
+        console.log(type, value, execute);
 		if(typeof $scope.filters[type]!='object') {
 			if(type=='q') {
 				$scope.query = '';
@@ -17100,17 +17307,27 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	});
 
 	$scope.cleanPrefilters = function() {
-		// var cleanout = [];
-		// if ($scope.prefilters['class']=='activity') {
-		// 	cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial'];
-		// } else {
-		// 	cleanout = ['type', 'subject', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
-		// }
-		var cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial', 'type', 'subject', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
-		angular.forEach(cleanout, function(f) {
-			delete $scope.prefilters[f];
-		});
-	}
+        // var cleanout = [];
+        // if ($scope.prefilters['class']=='activity') {
+        // 	cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial'];
+        // } else {
+        // 	cleanout = ['type', 'subject', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
+        // }
+        var cleanout = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial', 'type', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
+        angular.forEach(cleanout, function(f) {
+            delete $scope.prefilters[f];
+        });
+    }
+
+    $scope.cleanfiltersForSubjectBrowse = function() {
+        $scope.prefilters = {};
+        angular.forEach($scope.filters, function(f) {
+            if(f != 'anzsrc-for'){
+                delete $scope.filters[f];
+            }
+        });
+        $scope.filters['class']=='collection';
+    }
 
 	$scope.advancedSearch = function(){
 		$scope.filters = {};
@@ -17279,12 +17496,20 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.vocab = 'anzsrc-for';
 
 		//only loads in search page, other page don't have subject facet (yet)
-		if ( $scope.onSearchPage() ) {
+		if ( $scope.onSearchPage()) {
 			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
 				$scope.vocab_tree = data;
 				$scope.vocab_tree_tmp = $scope.vocab_tree;
+                $scope.openBranches();
 			});
 		}
+
+        //only loads in search page, other page don't have subject facet (yet)
+        if ($scope.onBrowsePage()) {
+            vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
+                $scope.vocab_tree = data;
+            });
+        }
 
 
 		// DEPRECATED. getting vocabulary in configuration, mainly for matching isSelected
@@ -17296,15 +17521,21 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
 	$scope.getSubTree = function(item) {
-		item['showsubtree'] = !item['showsubtree'];
+        item['showsubtree'] = !item['showsubtree'];
 		if(!item['subtree'] && ($scope.vocab=='anzsrc-for' || $scope.vocab=='anzsrc-seo')) {
 			vocab_factory.get(item.uri, $scope.filters, $scope.vocab).then(function(data){
 				item['subtree'] = data;
+                angular.forEach(item['subtree'], function(x){
+                   if ($scope.isVocabSelected(x)){
+                       $scope.getSubTree(x);
+                   }
+                });
 			});
 		}
 	}
 
 	$scope.isVocabSelected = function(item, filters) {
+        //console.log(item);
 		if(!filters) filters = $scope.filters;
 		var found = vocab_factory.isSelected(item, filters);
 		if (found) {
@@ -17315,7 +17546,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 
 	$scope.isVocabParentSelected = function(item) {
 		var found = false;
-
+        //console.log(item);
 		if($scope.filters['subject']){
 			var subjects = vocab_factory.subjects;
 			angular.forEach(subjects[$scope.filters['subject']], function(uri){

@@ -9,13 +9,26 @@ $(document).ready(function() {
 	$('#dataformats').hide();
 	$(document).on('click', '#toggleRightsContent', function(e){
 		e.preventDefault();
+        if($('#toggleRightsContent').html()=='view details')
+        {
+            $('#toggleRightsContent').html('hide details')
+        }else{
+            $('#toggleRightsContent').html('view details')
+        };
 		$('#rightsContent').slideToggle();
 	}).on('click', '#gotodata', function(e){
 		e.preventDefault();
 		$('#dataformats').slideToggle();
 	}).on('click', '#toggleLicenceContent', function(e){
         e.preventDefault();
+        if($('#toggleLicenceContent').html()=='view details')
+        {
+            $('#toggleLicenceContent').html('hide details')
+        }else{
+            $('#toggleLicenceContent').html('view details')
+        };
         $('#licenceContent').slideToggle();
+
     });
 
 

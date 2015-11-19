@@ -172,7 +172,7 @@
             @endif
 
         	@if($access_content!='')
-        	   <a href="javascript:;" id="toggleRightsContent" class="small" style="padding-left:15px;"> view details</a>
+        	   <a href="javascript:;" id="toggleRightsContent" class="small" style="padding-left:15px;">view details</a>
         	@endif
         </div>
 
