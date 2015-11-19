@@ -51,27 +51,41 @@
 
         vm.getRDASummaryData = function() {
             analyticFactory.summary(vm.filters).then(function(data){
-                //parse date into data
-                vm.rdaChartData = {
-                    labels: [],
-                    series: ['View', 'Search', 'Accessed'],
-                    data: [[],[],[]]
-                };
 
-                angular.forEach(data.dates, function (obj, index) {
-                    vm.rdaChartData.labels.push(index);
-                    vm.rdaChartData.data[0].push(obj['portal_view']);
-                    if (obj['portal_search']) {
-                        vm.rdaChartData.data[1].push(obj['portal_search'])
-                    }else {
-                        vm.rdaChartData.data[1].push(0);
-                    }
-                    if (obj['accessed']) {
-                        vm.rdaChartData.data[2].push(obj['accessed'])
-                    }else {
-                        vm.rdaChartData.data[2].push(0);
-                    }
-                });
+
+
+                if (data.dates.length == 0) {
+                    //no data, set existing data dates to 0
+                    angular.forEach(vm.rdaChartData.data, function(obj){
+                        for (var i=0; i< obj.length ;i++) {
+                            obj[i] = 0;
+                        }
+                    });
+                } else {
+                    //some data, set some data to graph
+                    vm.rdaChartData = {
+                        labels: [],
+                        series: ['View', 'Search', 'Accessed'],
+                        data: [[],[],[]]
+                    };
+
+                    angular.forEach(data.dates, function (obj, index) {
+                        vm.rdaChartData.labels.push(index);
+                        vm.rdaChartData.data[0].push(obj['portal_view']);
+                        if (obj['portal_search']) {
+                            vm.rdaChartData.data[1].push(obj['portal_search'])
+                        }else {
+                            vm.rdaChartData.data[1].push(0);
+                        }
+                        if (obj['accessed']) {
+                            vm.rdaChartData.data[2].push(obj['accessed'])
+                        }else {
+                            vm.rdaChartData.data[2].push(0);
+                        }
+                    });
+                }
+
+
 
                 //$log.debug(data);
                 //$log.debug(vm.rdaChartData);
@@ -80,6 +94,8 @@
                 vm.viewGroupChartData = {labels: [], data: [] }
                 vm.searchGroupChartData = {labels: [], data: [] }
                 vm.accessedGroupChartData = {labels: [], data: [] }
+
+
                 angular.forEach(data.group_event, function(obj, index){
                     vm.viewGroupChartData.labels.push(index);
                     vm.searchGroupChartData.labels.push(index);
@@ -100,6 +116,8 @@
                         vm.accessedGroupChartData.data.push(0);
                     }
                 });
+
+
 
                 //parse rostat
                 if (data.aggs.rostat) vm.rostat = data.aggs.rostat;
