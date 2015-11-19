@@ -68,9 +68,9 @@
                                 <p>
                                   {{ strlen($con['list_description']) > 300 ? substr($con['list_description'],0,300)."..." : $con['list_description']; }}
                                 </p>
-                                <h3 class="">
-                                  <a href="{{ portal_url($con['slug'].'/'.$con['id']) }}" target="_self">Read more</a>
-                                </h3>
+
+                                  <a href="{{ portal_url($con['slug'].'/'.$con['id']) }}" target="_self">read more</a>
+
                             </div>
                         </div>
                     </div>
