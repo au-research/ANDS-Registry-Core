@@ -33,7 +33,9 @@
         @include('registry_object/contents/access')
         @if($ro->accessPolicy)
         <div class="btn-group btn-group-justified element element-no-top" role="group" aria-label="...">
-            <a class="btn btn-sm btn-default" ng-click="openAccessPolicyModal()"><i class="fa fa-external-link"></i> View Access Policy</a>
+            @foreach($ro->accessPolicy as $accessPolicy)
+                <a class="btn btn-sm btn-default" href="{{$ro->accessPolicy[0]}}" target="_blank"><i class="fa fa-external-link"></i> View Access Policy</a>
+            @endforeach
         </div>
         @endif
     	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
