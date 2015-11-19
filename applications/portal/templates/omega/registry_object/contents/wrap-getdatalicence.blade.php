@@ -32,14 +32,23 @@
                 if(isset($right['accessRights_type'])){
                     $ar = $right['accessRights_type'];
                 }
+                if(isset($right['value'])) {
+                    if($right['value']!='') $access_detail = true;
+                }
+
+                if(isset($right['rightsUri'])) {
+                    if($right['rightsUri']!='') $access_detail = true;
+                }
             }
 
-            if(isset($right['value'])) {
-                if($right['value']!='') $access_detail = true;
-            }
+            if(($right['type']=='licence' && $right['licence_type']=='')||( $right['type']!='licence' && $right['type']!='accessRights')){
+                if(isset($right['value'])) {
+                    if($right['value']!='') $access_detail = true;
+                }
 
-            if(isset($right['rightsUri'])) {
-                if($right['rightsUri']!='') $access_detail = true;
+                if(isset($right['rightsUri'])) {
+                    if($right['rightsUri']!='') $access_detail = true;
+                }
             }
 
         }
