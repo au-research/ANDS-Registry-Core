@@ -81,9 +81,9 @@ app.directive('facetinfo', function($log) {
 
 			var values = {
 				'access_rights' : {
-					'open' : 'Data that is readily accessible and reusable.',
-					'conditional' : 'Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required).',
-					'restricted': 'Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location).',
+					'open' : 'Data is publicly accessible online.',
+					'conditional' : 'Data is publicly accessible subject to certain conditions. For example: <br/>- a fee applies<br/>- the data is only accessible at a specific physical location.',
+					'restricted': 'Data access is limited. For example: <br/>- following an embargo period<br/>- to a particular group of users<br/>- where formal permission is granted.',
 					'other': 'no value or user defined custom value'
 				},
 				'license_class': {
