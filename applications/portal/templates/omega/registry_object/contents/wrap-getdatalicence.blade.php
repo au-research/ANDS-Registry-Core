@@ -175,6 +175,8 @@
                 Conditions apply
             @elseif($ar=='restricted')
                 Restrictions apply
+            @else
+                Other
             @endif
 
         	@if($access_content!='')
