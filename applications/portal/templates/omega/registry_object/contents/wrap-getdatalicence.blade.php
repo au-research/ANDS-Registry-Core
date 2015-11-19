@@ -161,14 +161,11 @@
             <h4>Access: </h4>
             @endif
             @if($ar=='open')
-
-            <i class="fa fa-check" style="color:forestgreen"></i>
-
-            <a href="" tip="Data that is readily accessible and reusable">Open </a>
+                <i class="fa fa-check" style="color:forestgreen"></i> Open
             @elseif($ar=='conditional')
-            <a href="" tip="Data that is accessible and reusable, providing certain conditions are met (e.g. free registration is required)">Conditions apply </span></a>
+                Conditions apply
             @elseif($ar=='restricted')
-            <a href="" tip="Data access is limited in some way (e.g. only available to a particular group of users or at a specific physical location)">Restrictions apply</a>
+                Restrictions apply
             @endif
 
         	@if($access_content!='')
