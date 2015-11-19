@@ -3,7 +3,7 @@
     angular.module('analytic_app')
         .controller('modalDetailCtrl', modalDetailCtrl)
 
-    function modalDetailCtrl($log, data, analyticFactory) {
+    function modalDetailCtrl($log, $modalInstance, data, analyticFactory) {
 
         var vm = this;
         vm.data = data;
@@ -40,6 +40,10 @@
             })
         }
         vm.getEvents();
+
+        vm.dismiss = function() {
+            $modalInstance.dismiss();
+        }
 
     }
 })();
