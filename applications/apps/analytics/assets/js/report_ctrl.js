@@ -85,8 +85,6 @@
                     });
                 }
 
-
-
                 //$log.debug(data);
                 //$log.debug(vm.rdaChartData);
 
@@ -94,8 +92,6 @@
                 vm.viewGroupChartData = {labels: [], data: [] }
                 vm.searchGroupChartData = {labels: [], data: [] }
                 vm.accessedGroupChartData = {labels: [], data: [] }
-
-
                 angular.forEach(data.group_event, function(obj, index){
                     vm.viewGroupChartData.labels.push(index);
                     vm.searchGroupChartData.labels.push(index);
