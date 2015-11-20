@@ -103,8 +103,13 @@
 								<label for="">Vocabulary Creation Date
 									<span ng-bind-html="confluenceTip('VocabularyCreationDate')"></span>
 								</label>
-							    <input type="text" class="form-control" required name="creation_date" ng-model="vocab.creation_date" placeholder="Vocabulary Creation Date">
-								<p ng-show="form.cms.creation_date.$invalid" class="help-block">Vocabulary Creation Date is required.</p>
+								<p class="input-group">
+									<input type="text" id="creation_date" class="form-control" required name="creation_date" placeholder="Vocabulary Creation Date (supported formats: YYYY-MM-DD, YYYY-MM, YYYY)" ng-model="vocab.creation_date" datepicker-popup="yyyy-MM-dd" is-open="$parent.opened" >
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+									</span>
+								</p>
+								<p ng-show="form.cms.creation_date.$invalid" class="help-block">Vocabulary Creation Date is required. Supported formats: YYYY-MM-DD, YYYY-MM, YYYY.</p>
 							</div>
 							<div class="form-group">
 								<label for="">Revision Cycle
