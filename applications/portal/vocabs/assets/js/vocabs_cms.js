@@ -16,7 +16,7 @@
         return this.getTime() === this.getTime();
     };
 
-    function addVocabsCtrl($log, $scope, $sce, $location, $modal, vocabs_factory) {
+    function addVocabsCtrl($log, $scope, $sce, $timeout, $location, $modal, vocabs_factory) {
 
         $scope.form = {};
 
@@ -73,13 +73,75 @@
         if ($('#vocab_slug').val()) {
             vocabs_factory.get($('#vocab_id').val()).then(function (data) {
                 $log.debug('Editing ', data.message);
-                $scope.vocab = data.message;
+                // Preserve the original data for later. We need this
+                // specifically for the creation_date value.
+                $scope.original_data = data.message;
+                // Make a deep copy. This used to be
+                //    $scope.vocab = data.message;
+                // But that is a copy by reference ... subsequent changes
+                // to $scope.vocab affect data.message too, making
+                // it impossible to refer to the original values.
+                $scope.vocab = angular.copy(data.message);
                 $scope.vocab.user_owner = $scope.user_owner;
                 $scope.mode = 'edit';
                 $scope.decide = true;
+                // Special handling for creation date.
+                $scope.set_creation_date_textfield($scope);
                 $log.debug($scope.form.cms);
             });
         }
+
+        // Now follows all the code for special treatment of the creation date.
+        // See also versionCtrl.js, which has a modified version of all of
+        // this for version release dates.
+
+        /* Flag to determine when to reset the content of the creation date
+           text field. Set by set_creation_date_textfield() and reset by the
+           watcher put on vocab.creation_date. */
+        $scope.restore_creation_date_value = false;
+
+        /* Special handling for the creation date field. Needed because of the
+           combination of the text field, the off-the-shelf datepicker,
+           and the desire to allow partial dates (e.g., year only). */
+        $scope.set_creation_date_textfield = function (scope) {
+            // In some browser JS engines, the Date constructor interprets
+            // "2005" not as though it were "2005-01-01", but as 2005 seconds
+            // into the Unix epoch. But Date.parse() seems to cope better,
+            // so pass the date field through Date.parse() first. If that
+            // succeeds, it can then go through the Date constructor.
+            var dateValParsed = Date.parse($scope.original_data.creation_date);
+            if (!isNaN(dateValParsed)) {
+                var dateVal = new Date(dateValParsed);
+                $scope.vocab.creation_date = dateVal;
+                // Set this flag, so that the watcher on the vocab.creation_date
+                // field knows to reset the text field to the value we got
+                // from the database.
+                $scope.restore_creation_date_value = true;
+            }
+            else {
+                $scope.vocab.creation_date = new Date();
+            }
+        };
+
+        /* Callback function used by the watcher on vocab.creation_date.
+           It overrides the content of the creation date text field with
+           the value we got from the database. */
+        $scope.do_restore_creation_date = function() {
+            $('#creation_date').val($scope.original_data.creation_date);
+        }
+
+        /* Watcher for the vocab.creation_data field. If we got notification
+           (via the restore_creation_date_value flag) to reset the text
+           field value, schedule the reset. Need to use $timeout
+           so that the reset happens after the current round of
+           AngularJS model value propagation. */
+        $scope.$watch('vocab.creation_date', function() {
+            if ($scope.restore_creation_date_value) {
+                $scope.restore_creation_date_value = false;
+                $timeout($scope.do_restore_creation_date, 0);
+            }
+        });
+
 
         if ($location.search().skip) {
             $scope.decide = true;
@@ -270,6 +332,10 @@
             if (!$scope.validate()) {
                 return false;
             }
+
+            // Save the date as it actually is in the input's textarea, not
+            // as it is in the model.
+            $scope.vocab.creation_date = $('#creation_date').val();
 
             if ($scope.mode == 'add' || ($scope.vocab.status == 'published' && status == 'draft')) {
                 $scope.vocab.status = status;

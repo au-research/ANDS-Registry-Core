@@ -158,6 +158,23 @@ class _vocabulary
                 $json['access'][] = vocab_readable($ap['type']);
                 $json['format'][] = $ap['format'];
             }
+            /* The following fails, if there are no access points for
+               the current version. There really should be access points, but
+               e.g., if they were supposed to be added by the Toolkit,
+               and (for whatever reason) the Toolkit failed to add
+               them, then $current_version['version_access_points']
+               has the Boolean value false, i.e., it is not an array!
+               (See implementations of current_version() and getAccessPoints()
+               to see this.) So you get an error:
+               "Invalid argument supplied for foreach() on line ..."
+               If, in future, we want to be somewhat more defensive,
+               put this sort of thing as a wrapper around the foreach:
+                if (array_key_exists('version_access_points', $current_version)
+                  && is_array($current_version['version_access_points'])) {
+               Or, as an alternative, change the way getAccessPoints() works
+               so that it doesn't return an array on success and a Boolean
+               on failure!
+            */
             foreach($current_version['version_access_points'] as $ap)
             {
                 if($ap['type'] == 'sissvoc'){
@@ -406,6 +423,9 @@ class _vocabulary
         if ($query && $query->num_rows() > 0) {
             foreach ($query->result_array() as $row) {
                 $version = $row;
+                // Legacy: don't use any release_date value from such a column;
+                // release_date must come from the data column.
+                unset($version['release_date']);
                 $version['version_access_points'] = $this->getAccessPoints($version['id']);
                 //break apart version data
                 if (isset($version['data'])) {
@@ -416,9 +436,6 @@ class _vocabulary
                         }
                     }
                     unset($version['data']);
-                }
-                if (isset($version['release_date'])){
-                    $version['release_date'] = date("Y-m-d",strtotime($version['release_date']));
                 }
 
                 $this->prop['versions'][] = $version;
@@ -631,7 +648,6 @@ class _vocabulary
                     $saved_data = array(
                         'title' => $version['title'],
                         'status' => $version['status'],
-                        'release_date' => date('Y-m-d H:i:s', strtotime($version['release_date'])),
                         'vocab_id' => $this->prop['id'],
                         'repository_id' => '',
                         'data' => json_encode($version)
@@ -646,7 +662,6 @@ class _vocabulary
                     $version_data = array(
                         'title' => $version['title'],
                         'status' => $version['status'],
-                        'release_date' => date('Y-m-d H:i:s', strtotime($version['release_date'])),
                         'vocab_id' => $this->prop['id'],
                         'repository_id' => '',
                         'data' => json_encode($version)
