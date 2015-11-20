@@ -223,7 +223,7 @@
 
 								<div class="form-group">
 									<label for="">Subject Source</label>
-									<select name="" id="" class="form-control caret-for-select" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="newValue.subject.subject_source"></select>
+									<select name="" id="" class="form-control caret-for-select" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="newValue.subject.subject_source"><option value="">Select a source</option></select>
 								</div>
                                 <div class="form-group">
                                     <label for="">Subject Label</label>

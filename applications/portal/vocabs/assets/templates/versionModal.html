@@ -18,7 +18,8 @@
                             </label>
                             <select required name="status" id="" class="form-control caret-for-select"
                                     ng-options="status for status in versionStatuses"
-                                    ng-model="version.status"></select>
+                                    ng-model="version.status"><option value="">Select
+                                    a version status</option></select>
 
                             <p ng-show="form.versionForm.status.$invalid" class="help-block">Version status is required.</p>
                         </div>
