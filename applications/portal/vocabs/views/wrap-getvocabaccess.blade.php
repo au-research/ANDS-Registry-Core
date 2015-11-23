@@ -100,7 +100,7 @@ if(isset($vocab['current_version']['release_date'])){
 		    @endif
 		@endforeach
         <div class="text-center">
-		{{ isset($vocab['current_version']['release_date']) ? '<span class="small"><em>released: '. $display_date."</em></span>": '' }}{{ isset($vocab['current_version']['note']) ? ' <a href="" tip="'.$vocab['current_version']['note'].'">Note</a>': '' }}
+		{{ isset($vocab['current_version']['release_date']) ? '<span class="small"><em>released: '. $display_date."</em></span>": '' }}{{ isset($vocab['current_version']['note']) ? ' <a href="" tip="'.$vocab['current_version']['note'].'">view notes</a>': '' }}
 </div>
 		<div class="download-content hidden">
 		@if($hasFile && $hasSesameDownloads)
