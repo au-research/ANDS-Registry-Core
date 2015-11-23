@@ -239,13 +239,13 @@ class Analytics extends MX_Controller
                 $result = $search_result['aggregations']['quality_level']['buckets'];
                 break;
 			case 'ro_ar':
-                $result = $search_result['aggregations']['access_rights']['buckets'];
+                $result = $this->summary->getSolrStat('access_rights', $filters);
                 break;
             case 'ro_class':
-                $result = $search_result['aggregations']['class']['buckets'];
+                $result = $this->summary->getSolrStat('class', $filters);
                 break;
             case 'ro_group':
-                $result = $search_result['aggregations']['group']['buckets'];
+                $result = $this->summary->getSolrStat('group', $filters);
                 break;
             default :
                 break;

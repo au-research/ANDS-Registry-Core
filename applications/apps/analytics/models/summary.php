@@ -178,6 +178,25 @@ class Summary extends CI_Model
         return $search_result;
     }
 
+    public function getSolrStat($content, $filters) {
+        $result = array();
+        $this->load->library('solr');
+        $this->solr->setFilters($filters);
+        $this->solr->setOpt('rows', 0)->setOpt('fl', "group");
+        $this->solr->setFacetOpt('field', $content);
+        $this->solr->setFacetOpt('mincount', 1);
+        $solr_result = $this->solr->executeSearch(true);
+
+        $facet_result = $solr_result['facet_counts']['facet_fields'][$content];
+        for ($i = 0; $i < sizeof($facet_result) -1 ; $i+=2) {
+            $result[] = array(
+                'key' => $facet_result[$i],
+                'doc_count' => $facet_result[$i+1]
+            );
+        }
+        return $result;
+    }
+
     public function getOrgs() {
         $result = array();
 
