@@ -14,7 +14,11 @@
             if ($right['type']=='licence' && $right['licence_type']!='') {
                 $cc = $right['licence_type'];
                 $licence_detail = true;
-                $licence_group = $right['licence_group'];
+                //$licence_group = $right['licence_group'];
+
+                $group = strtolower($right['licence_group']);
+                if($group=='unknown') $licence_group='Other';
+
                 if(isset($right['rightsUri']) && $right['rightsUri']!=''){
                    $cc_uri = $right['rightsUri'];
                 }else{
