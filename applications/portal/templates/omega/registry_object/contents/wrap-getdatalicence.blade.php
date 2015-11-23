@@ -172,20 +172,22 @@
 
             @if($ar || $access_detail )
             <h4>Access: </h4>
-            @endif
+
             @if($ar=='open')
                 <i class="fa fa-check" style="color:forestgreen"></i> Open
             @elseif($ar=='conditional')
                 Conditions apply
             @elseif($ar=='restricted')
                 Restrictions apply
-            @elseif($ar!='')
+            @else
                 Other
             @endif
 
         	@if($access_content!='')
         	   <a href="javascript:;" id="toggleRightsContent" class="small" style="padding-left:15px;">view details</a>
         	@endif
+
+            @endif
         </div>
 
         @if(isset($access_content))
