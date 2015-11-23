@@ -70,7 +70,7 @@ class Sync_extension extends ExtensionBase{
             $party_service_conn_limit = $limit;
 
         $single_values = array(
-			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type'
+			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type', 'quality_level'
 		);
 
         $include_rights_type = array('open','restricted','conditional');
