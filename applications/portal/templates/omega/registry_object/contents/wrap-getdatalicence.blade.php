@@ -14,10 +14,10 @@
             if ($right['type']=='licence' && $right['licence_type']!='') {
                 $cc = $right['licence_type'];
                 $licence_detail = true;
-                //$licence_group = $right['licence_group'];
+                $licence_group = $right['licence_group'];
 
-                $group = strtolower($right['licence_group']);
-                if($group=='unknown') $licence_group='Other';
+                $thegroup = strtolower($right['licence_group']);
+                if($thegroup=='unknown') $licence_group='Other';
 
                 if(isset($right['rightsUri']) && $right['rightsUri']!=''){
                    $cc_uri = $right['rightsUri'];
@@ -76,7 +76,7 @@
                 }
             }
         }
-        if ($access_detail) {
+        if ($access_detail && $access_detail!='') {
             $access_content = '';
             foreach ($ro->rights as $right) {
                 if($right['type']!='licence'){
@@ -179,7 +179,7 @@
                 Conditions apply
             @elseif($ar=='restricted')
                 Restrictions apply
-            @else
+            @elseif($ar!='')
                 Other
             @endif
 
