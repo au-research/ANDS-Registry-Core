@@ -351,6 +351,7 @@ class Solr {
 						if($value!='all') $this->setOpt('fq', '+class:('.$value.')');
 					}
 					break;
+				case 'groups':
 				case 'group':
 					if(is_array($value)){
 						$fq_str = '';
