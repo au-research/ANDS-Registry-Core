@@ -9,19 +9,21 @@
 	}
     //set current version display date
     if(isset($vocab['current_version']['release_date'])){
-  $display_date = $vocab['current_version']['release_date'];
-   if(strlen($vocab['current_version']['release_date'])==4){
-       $display_date = $vocab['current_version']['release_date'];
-   }elseif(strlen($vocab['current_version']['release_date'])==7) {
-      $display_date = date("M Y",strtotime($vocab['current_version']['release_date']));
-    }elseif(strlen(trim(str_replace(" 00:00:00","",$vocab['current_version']['release_date'])))==10)  {
-      $display_date = date(" d M Y",strtotime($vocab['current_version']['release_date']));
-  }elseif(strlen(trim(str_replace("T00:00:00.000Z","",$vocab['current_version']['release_date'])))==10)  {
-      $display_date = date(" d M Y",strtotime($vocab['current_version']['release_date']));
-  }elseif(strlen($vocab['current_version']['release_date']>0) && date(" d M Y",strtotime(substr($vocab['current_version']['release_date'],0,10)))!='1 Sep 1970'){
-      $display_date = date(" d M Y",strtotime(substr($vocab['current_version']['release_date'],0,10)));
-  }
-}
+
+        $display_date = $vocab['current_version']['release_date'];
+
+        if(strlen(trim($vocab['current_version']['release_date'])==4){
+           $display_date = $vocab['current_version']['release_date'];
+        }elseif(strlen($vocab['current_version']['release_date'])==7) {
+          $display_date = date("M Y",strtotime($vocab['current_version']['release_date']));
+        }elseif(strlen(trim(str_replace(" 00:00:00","",$vocab['current_version']['release_date'])))==10)  {
+          $display_date = date(" d M Y",strtotime($vocab['current_version']['release_date']));
+        }elseif(strlen(trim(str_replace("T00:00:00.000Z","",$vocab['current_version']['release_date'])))==10)  {
+          $display_date = date(" d M Y",strtotime($vocab['current_version']['release_date']));
+        }elseif(strlen($vocab['current_version']['release_date']>0) && date(" d M Y",strtotime(substr($vocab['current_version']['release_date'],0,10)))!='1 Sep 1970'){
+          $display_date = date(" d M Y",strtotime(substr($vocab['current_version']['release_date'],0,10)));
+        }
+    }
 	//checking if current version has a file download and has a sesame downloads
 	$hasFile = false;
 	$hasSesameDownloads = false;
