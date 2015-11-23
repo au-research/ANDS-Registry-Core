@@ -128,7 +128,7 @@
 
                     if (scope.objectModel.resource[0].creators) {
                         angular.forEach(scope.objectModel.resource[0].creators[0].creator, function(creator){
-                            var fields = ['creatorName', 'affiliation', 'nameIdentifier'];
+                            var fields = ['creatorName', 'nameIdentifier', 'affiliation'];
                             angular.forEach(fields, function(fi){
                                 if (!creator[fi]) creator[fi] = [{}];
                             });

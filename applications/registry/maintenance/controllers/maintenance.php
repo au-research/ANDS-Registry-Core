@@ -731,7 +731,7 @@ class Maintenance extends MX_Controller {
 
 		if($task=='sync' || $task=='index' || $task=='fast_sync'){
 			$this->solr->add_json(json_encode($solr_docs));
-			// $this->solr->commit();
+			$this->solr->commit();
 		}
 
 		$this->benchmark->mark('index_end');
