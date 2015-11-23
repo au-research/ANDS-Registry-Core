@@ -31,6 +31,7 @@ class Directaccess extends ROHandler {
 
         }
 
+
         if($this->xml->{$this->ro->class}->relatedInfo){
             foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo){
                 $type = (string) $relatedInfo['type'];
