@@ -95,7 +95,7 @@ class Registry_objectsMethod extends MethodHandler {
                                 }
 
                             } catch (Exception $e) {
-                                $result[$m1] = array();
+                                $result[$m1] = $e->getMessage();
                             }
 
                             break;
@@ -104,6 +104,7 @@ class Registry_objectsMethod extends MethodHandler {
                 } else {
                     //special case
                     if ($m1 == 'solr_index') {
+                        $this->ro->sync();
                         $result[$m1] = $this->ro->indexable_json();
                     }
                 }

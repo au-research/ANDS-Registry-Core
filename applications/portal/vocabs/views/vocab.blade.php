@@ -140,8 +140,8 @@ foreach ($vocab['versions'] as $version) {
         </div>
         @endif
 
-        @if(isset($sissvocEndPoint))
         <div visualise vocabid="{{ $vocab['id'] }}"></div>
+        @if(isset($sissvocEndPoint))
         <div id="widget" class="panel swatch-white">
             <div class="panel-body">Use this code snippet to describe or discover resources with {{$vocab['title']}} in your system
                 <a id="widget-link" class="pull-right" href="javascript:showWidget()" tip="<b>Widgetable</b><br/>This vocabulary can be readily used for resource description or discovery in your system using our vocabulary widget.<br/><a id='widget-link2' href='javascript:showWidget()'>Learn more</a>">
