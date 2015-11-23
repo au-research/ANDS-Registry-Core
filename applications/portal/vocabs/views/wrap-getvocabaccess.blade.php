@@ -16,6 +16,8 @@ if(isset($vocab['current_version']['release_date'])){
       $display_date = date(" d M Y",strtotime($vocab['current_version']['release_date']));
   }elseif(strlen(trim(str_replace("T00:00:00.000Z","",$vocab['current_version']['release_date'])))==10)  {
       $display_date = date(" d M Y",strtotime($vocab['current_version']['release_date']));
+  }elseif(date(" d M Y",strtotime(substr($vocab['current_version']['release_date'],0,10)))!='1 Sep 1970'){
+      $display_date = date(" d M Y",strtotime(substr($vocab['current_version']['release_date'],0,10)));
   }
 }
 	//checking if current version has a file download and has a sesame downloads
