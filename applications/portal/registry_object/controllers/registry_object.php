@@ -614,23 +614,6 @@ class Registry_object extends MX_Controller
 
         $this->solr->setFilters($filters);
 
-        //test
-        // $this->solr->setOpt('fq', '+spatial_coverage_centres:*');
-
-        //not recording a hit for the quick search done for advanced search
-        if (!$no_log) {
-            $event = array(
-                'event' => 'portal_search',
-                'ip' => $this->input->ip_address(),
-                'user_agent' => $this->input->user_agent()
-            );
-            if ($filters) {
-                $event = array_merge($event, $filters);
-            }
-
-            ulog_terms($event, 'portal');
-        }
-
 
         //returns this set of Facets
 
@@ -671,7 +654,7 @@ class Registry_object extends MX_Controller
 
 
         //flags, these are the only fields that will be returned in the search
-        $this->solr->setOpt('fl', 'id,type,title,description,group,slug,spatial_coverage_centres,spatial_coverage_polygons,administering_institution,researchers,matching_identifier_count,list_description,earliest_year, latest_year');
+        $this->solr->setOpt('fl', 'id,type,title,description,group,data_source_id,slug,spatial_coverage_centres,spatial_coverage_polygons,administering_institution,researchers,matching_identifier_count,list_description,earliest_year, latest_year');
 
         //highlighting
         $this->solr->setOpt('hl', 'true');
@@ -713,6 +696,42 @@ class Registry_object extends MX_Controller
             if ($this->solr->getNumFound() > 0) {
                 $result['fuzzy_result'] = true;
             }
+        }
+
+        //not recording a hit for the quick search done for advanced search
+        if (!$no_log) {
+            $event = array(
+                'event' => 'portal_search',
+                'ip' => $this->input->ip_address(),
+                'user_agent' => $this->input->user_agent()
+            );
+            if ($filters) {
+                $event = array_merge($event, $filters);
+            }
+
+            //record search result set
+
+            $result_roid = array();
+            $result_group = array();
+            $result_dsid = array();
+
+            foreach ($result['response']['docs'] as $doc) {
+                $result_roid[] = $doc['id'];
+                $result_group[] = $doc['group'];
+                $result_dsid[] = $doc['data_source_id'];
+            }
+            $result_group = array_unique($result_group);
+            $result_dsid = array_unique($result_dsid);
+
+            // glue is ,, split at reading time
+            $event = array_merge($event, array(
+                    'result_roid' => implode(',,', $result_roid),
+                    'result_group' => implode(',,', $result_group),
+                    'result_dsid' => implode(',,', $result_dsid)
+                )
+            );
+
+            ulog_terms($event, 'portal');
         }
 
         $result['url'] = $this->solr->constructFieldString();
