@@ -329,7 +329,10 @@ class Maintenance extends MX_Controller {
 			foreach ($rr['response']['docs'] as $doc) {
 				$ro = $this->ro->getByID($doc['id']);
 				$solrdoc = $ro->indexable_json();
-				$docs[] = $solrdoc;
+				$docs[] = array(
+					'id' => $doc['id'],
+					$field => array('set' => $ro->getAttribute($field) )
+				);
 				unset($ro);
 			}
 
@@ -346,7 +349,6 @@ class Maintenance extends MX_Controller {
 
 		echo 'Done';
 		ob_end_flush();
-
 	}
 
 	public function fix_trim_roles_type_id() {

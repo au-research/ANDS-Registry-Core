@@ -40,6 +40,7 @@
                         doi_client_id = 0+""+vm.client.client_id;
                     }
                     vm.editxml = false;
+                    vm.response = false;
                     vm.newdoi_url = '';
                     vm.newdoi_id = vm.client.datacite_prefix + doi_client_id +'/'+ vm.uniqid();
                     vm.newdoixml = APIDOIService.getBlankDataciteXML(vm.newdoi_id);
