@@ -47,7 +47,7 @@
                     <span class="add-on">Creator Affiliations</span>
                     <input type="text" placeholder="Creator Affiliations" ng-model="affiliation._text" ng-readonly="readonly"/>
                 </div>
-                <a href="" ng-click="add(objectModel.resource[0].creators[0].creator[$index], 'affiliation')"><i class="icon-plus"></i> Add Affiliation</a>
+                <a href="" ng-click="add(objectModel.resource[0].creators[0].creator[$index], 'affiliation')" ng-show="!readonly"><i class="icon-plus"></i> Add Affiliation</a>
 
                 <div class="input-prepend input-append">
                     <span class="add-on">Name Identifier</span>
@@ -110,7 +110,7 @@
                 <div class="controls">
                     <div class="input-prepend input-append">
                         <span class="add-on">Contributor</span>
-                        <div class="btn-group" style="display:inline-block;">
+                        <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
                                 {{ contributor._attr.contributorType._value ? contributor._attr.contributorType._value : 'Type'}} <span class="caret"></span>
                             </button>
@@ -127,7 +127,7 @@
                         <span class="add-on">Affiliation</span>
                         <input type="text" placeholder="Affiliation" ng-model="affiliation._text" ng-readonly="readonly"/>
                     </div>
-                    <a href="" ng-click="add(contributor, 'affiliation')"><i class="icon-plus"></i> Add Affiliation</a>
+                    <a href="" ng-show="!readonly" ng-click="add(contributor, 'affiliation')"><i class="icon-plus"></i> Add Affiliation</a>
 
 
                     <div class="input-prepend input-append">
@@ -178,7 +178,7 @@
 
                     <div class="input-prepend input-append">
                         <span class="add-on">Related Identifier</span>
-                        <div class="btn-group" style="display:inline-block;">
+                        <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
                                 {{ relatedIdentifier._attr.relatedIdentifierType._value ? relatedIdentifier._attr.relatedIdentifierType._value : 'Type' }} <span class="caret"></span>
                             </button>
@@ -193,7 +193,7 @@
 
                     <div class="input-prepend input-append">
                         <span class="add-on">Relation Type</span>
-                        <div class="btn-group" style="display:inline-block;">
+                        <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
                                 {{ relatedIdentifier._attr.relationType._value ? relatedIdentifier._attr.relationType._value : 'Type' }} <span class="caret"></span>
                             </button>
