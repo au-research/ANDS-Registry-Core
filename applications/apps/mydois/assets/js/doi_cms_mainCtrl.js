@@ -69,6 +69,7 @@
         vm.update = function(doi) {
             vm.editxml = false;
             vm.tab = 'view';
+            vm.response = false;
             APIDOIService.getDOI(doi, vm.client.app_id).then(function(data){
                 vm.readonly = false;
                 $scope.$broadcast('readonly', vm.readonly);
@@ -96,6 +97,7 @@
 
         vm.cancel = function() {
             vm.viewdoi = false;
+            vm.response = false;
             vm.tab = 'list';
         }
 
