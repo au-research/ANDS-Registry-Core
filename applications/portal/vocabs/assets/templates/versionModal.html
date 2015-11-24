@@ -155,7 +155,12 @@
                                     <b>[[uploadPercentage]]%</b>
                                 </progressbar>
 
-                                <p ng-show="form.apForm.uri.$invalid" class="help-block">URI is required.</p>
+                                <!-- Only show an error message at all
+                                here, if a type has been
+                                selected. Show a type-specific error
+                                message. -->
+                                <p ng-show="newValue.ap.type && newValue.ap.type == 'file' && form.apForm.uri.$invalid" class="help-block">File is required.</p>
+                                <p ng-show="newValue.ap.type && newValue.ap.type != 'file' && form.apForm.uri.$invalid" class="help-block">URI is required.</p>
                             </div>
                             <div class="alert alert-danger" ng-show="ap_error_message">[[ap_error_message]]</div>
                             <button type="button" ng-disabled="!validateAP()" class="btn btn-primary" ng-click="addformatform(newValue.ap)"><i
