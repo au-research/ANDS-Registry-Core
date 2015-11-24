@@ -77,10 +77,6 @@ $ENV['ENABLED_MODULES'] = array(
 		'registry',
 		'portal',
 
-	// These modules require: ANDS-Registry-Contrib to be installed:
-	// 	- 	Vocabulary catalogue module
-	// 			'vocab_service',
-
 	//  - 	Identifier service modules
 	//			'mydois',
 	//			'pids',
@@ -168,12 +164,6 @@ $ENV['svc_urchin_id'] = ''; // enable analytics on registry pages
 //    - requires dbs_portal database to be setup and configured (see misc/)
 $ENV['collect_stats'] = false;
 $eDBCONF['portal']['database'] = 'dbs_portal';
-
-/*
-// => VOCABULARY CATALOG
-//    - used by the vocabulary catalogue application
-$eDBCONF['vocabs']['database'] = 'dbs_vocabs';
-*/
 
 /*
 // => ORCID PULLBACK
