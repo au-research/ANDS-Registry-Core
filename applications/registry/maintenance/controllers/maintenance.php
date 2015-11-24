@@ -308,6 +308,45 @@ class Maintenance extends MX_Controller {
 		}
 	}
 
+	public function index_missing_byfield($field = 'quality_level') {
+		$this->load->model('registry_object/registry_objects', 'ro');
+		$this->load->library('solr');
+		$this->solr->setOpt('rows', 0)->setOpt('fl', 'id')->setOpt('fq', '-'.$field.':*');
+		$result = $this->solr->executeSearch(true);
+		$chunk = 200;
+		if (ob_get_level() == 0) ob_start();
+
+		ob_flush();flush();
+		$remain = $result['response']['numFound'];
+		while ($remain > 0) {
+			echo 'Remaining: '. $remain."\n";
+
+			//do stuff
+			$this->solr->init()->setOpt('rows', $chunk)->setOpt('fl', 'id')->setOpt('fq', '-'.$field.':*');
+			$rr = $this->solr->executeSearch(true);
+			$docs = array();
+			foreach ($rr['response']['docs'] as $doc) {
+				$ro = $this->ro->getByID($doc['id']);
+				$solrdoc = $ro->indexable_json();
+				$docs[] = $solrdoc;
+				unset($ro);
+			}
+
+			$this->solr->add_json(json_encode($docs));
+			$this->solr->commit();
+			echo "Indexed $chunk \n";
+			ob_flush();flush();
+
+			//update remain
+			$this->solr->init()->setOpt('rows', $chunk)->setOpt('fl', 'id')->setOpt('fq', '-'.$field.':*');
+			$rr = $this->solr->executeSearch(true);
+			$remain = $rr['response']['numFound'];
+		}
+
+		echo 'Done';
+
+	}
+
 	public function fix_trim_roles_type_id() {
 		$cosi_db = $this->load->database('roles', TRUE);
 		$query = $cosi_db->get('roles');
