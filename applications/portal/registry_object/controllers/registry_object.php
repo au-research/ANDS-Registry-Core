@@ -714,6 +714,7 @@ class Registry_object extends MX_Controller
             $result_roid = array();
             $result_group = array();
             $result_dsid = array();
+            $event['result_numFound'] = $result['response']['numFound'];
 
             foreach ($result['response']['docs'] as $doc) {
                 $result_roid[] = $doc['id'];
@@ -724,12 +725,15 @@ class Registry_object extends MX_Controller
             $result_dsid = array_unique($result_dsid);
 
             // glue is ,, split at reading time
-            $event = array_merge($event, array(
-                    'result_roid' => implode(',,', $result_roid),
-                    'result_group' => implode(',,', $result_group),
-                    'result_dsid' => implode(',,', $result_dsid)
-                )
-            );
+            if (sizeof($result_roid) > 0) {
+                $event = array_merge($event, array('result_roid'=>implode(',,', $result_roid)));
+            }
+            if (sizeof($result_group) > 0) {
+                $event = array_merge($event, array('result_group'=>implode(',,', $result_group)));
+            }
+            if (sizeof($result_dsid) > 0) {
+                $event = array_merge($event, array('result_dsid'=>implode(',,', $result_dsid)));
+            }
 
             ulog_terms($event, 'portal');
         }
