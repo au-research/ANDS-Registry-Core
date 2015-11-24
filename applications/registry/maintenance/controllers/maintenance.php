@@ -313,7 +313,7 @@ class Maintenance extends MX_Controller {
 		$this->load->library('solr');
 		$this->solr->setOpt('rows', 0)->setOpt('fl', 'id')->setOpt('fq', '-'.$field.':*');
 		$result = $this->solr->executeSearch(true);
-		$chunk = 500;
+		$chunk = 1000;
 		if (ob_get_level() == 0) ob_start();
 
 		ob_flush();flush();
@@ -327,13 +327,10 @@ class Maintenance extends MX_Controller {
 			$rr = $this->solr->executeSearch(true);
 			$docs = array();
 			foreach ($rr['response']['docs'] as $doc) {
-				$ro = $this->ro->getByID($doc['id']);
-				$solrdoc = $ro->indexable_json();
 				$docs[] = array(
 					'id' => $doc['id'],
-					$field => array('set' => $ro->getAttribute($field) )
+					$field => array('set' => $this->ro->getAttribute($doc['id'], $field) )
 				);
-				unset($ro);
 			}
 
 			$this->solr->add_json(json_encode($docs));
