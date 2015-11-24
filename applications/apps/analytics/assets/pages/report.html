@@ -179,7 +179,7 @@
                             <chart cdata="vm.doiActivityChartData" type="'pie'"></chart>
                         </div>
                     </div>
-                    <div class="row-fluid">
+                    <div class="row-fluid" ng-if="vm.linkCheckerReport.length > 0">
                         <h5>Link Checker Report: </h5>
 
                         <div ng-repeat="report in vm.linkCheckerReport" style="max-height:200px;overflow:auto">

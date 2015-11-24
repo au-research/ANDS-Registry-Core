@@ -218,16 +218,10 @@ class Analytics extends MX_Controller
         $search_result = $this->summary->getStat('/rda/production/', $filters);
         switch ($stat) {
             case 'doi':
-                $result = array(
-                    'total' => $search_result['hits']['total'],
-                    'missing_doi' => $search_result['aggregations']['missing_doi']['doc_count'],
-                    'missing_ands'=> $search_result['aggregations']['missing_ands']['doc_count'],
-                );
-                $result['has_doi'] = $result['total'] - $result['missing_doi'];
-                $result['ands_doi'] = $result['total'] - $result['missing_ands'];
+                $result = $this->summary->getSolrDOIStat($filters);
                 break;
             case 'tr':
-                $result = $search_result['aggregations']['portal_cited']['buckets'];
+                $result = $this->summary->getSolrStat('tr_cited', $filters);
                 break;
             case 'doi_activity':
                 $result = $this->dois->getDOIActivityStat($filters);
@@ -236,7 +230,7 @@ class Analytics extends MX_Controller
                 $result = $this->dois->getClientStat($filters);
                 break;
             case 'ro_ql':
-                $result = $search_result['aggregations']['quality_level']['buckets'];
+                $result = $this->summary->getSolrStat('quality_level', $filters);
                 break;
 			case 'ro_ar':
                 $result = $this->summary->getSolrStat('access_rights', $filters);

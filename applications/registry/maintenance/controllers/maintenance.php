@@ -309,6 +309,7 @@ class Maintenance extends MX_Controller {
 	}
 
 	public function index_missing_byfield($field = 'quality_level') {
+		set_exception_handler('json_exception_handler');
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$this->load->library('solr');
 		$this->solr->setOpt('rows', 0)->setOpt('fl', 'id')->setOpt('fq', '-'.$field.':*');
@@ -327,10 +328,14 @@ class Maintenance extends MX_Controller {
 			$rr = $this->solr->executeSearch(true);
 			$docs = array();
 			foreach ($rr['response']['docs'] as $doc) {
-				$docs[] = array(
-					'id' => $doc['id'],
-					$field => array('set' => $this->ro->getAttribute($doc['id'], $field) )
-				);
+				$document = array();
+				$document['id'] = $doc['id'];
+				if ($field=='tr_cited') {
+					$document[$field] = array('set' => $this->ro->getPortalStat($doc['id'], 'cited') );
+				} else {
+					$document[$field] = array('set' => $this->ro->getAttribute($doc['id'], $field) );
+				}
+				$docs[] = $document;
 			}
 
 			$this->solr->add_json(json_encode($docs));

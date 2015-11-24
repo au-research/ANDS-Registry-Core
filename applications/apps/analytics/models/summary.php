@@ -197,6 +197,25 @@ class Summary extends CI_Model
         return $result;
     }
 
+    public function getSolrDOIStat($filters) {
+        $result = array();
+        $this->load->library('solr');
+        $this->solr
+            ->setFilters($filters)->setOpt('rows', 0)->setOpt('fl', '')
+            ->setFacetOpt('query', '{!ex=dt key=hasdoi} identifier_type:(doi)')
+            ->setFacetOpt('query', '{!ex=dt key=hasandsdoi} identifier_value:(10.4225/*) OR identifier_value:(10.4226/*) identifier_value:(10.4227/*)')
+            ;
+        $solr_result = $this->solr->executeSearch(true);
+
+        $result = array(
+            // 'has_doi' => $solr_result['facet_counts']['facet_queries']['hasdoi'],
+            'missing_doi' => $solr_result['response']['numFound'] - $solr_result['facet_counts']['facet_queries']['hasdoi'],
+            'has_ands_doi' => $solr_result['facet_counts']['facet_queries']['hasandsdoi'],
+            'has_non_ands_doi' => $solr_result['facet_counts']['facet_queries']['hasdoi'] - $solr_result['facet_counts']['facet_queries']['hasandsdoi']
+        );
+        return $result;
+    }
+
     public function getOrgs() {
         $result = array();
 

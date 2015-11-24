@@ -153,8 +153,8 @@
             //get doi breakdown
             analyticFactory.getStat('doi', vm.filters).then(function(data){
                 vm.doiChartData = {
-                    labels: ["Missing DOI", "Has DOI", "ANDS DOI"],
-                    data: [data['missing_doi'], data['has_doi'], data['ands_doi']],
+                    labels: ["Missing DOI", "ANDS DOI", "Non-ANDS DOI"],
+                    data: [data['missing_doi'], data['has_ands_doi'], data['has_non_ands_doi']],
                 }
             });
 
