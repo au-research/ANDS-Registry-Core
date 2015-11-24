@@ -16,7 +16,27 @@ function display_date($timestamp=0)
     return date("j F Y, g:i a", $timestamp);
 }
 
-	
+function display_release_date($date){
+    if(isset($date)){
+
+        $display_date = $date;
+
+        if(strlen(trim($date))==4){
+            $display_date = $date;
+        }elseif(strlen($date)==7) {
+            $display_date = date("M Y",strtotime($date));
+        }elseif(strlen(trim(str_replace(" 00:00:00","",$date)))==10)  {
+            $display_date = date(" d M Y",strtotime($date));
+        }elseif(strlen(trim(str_replace("T00:00:00.000Z","",$date)))==10)  {
+            $display_date = date(" d M Y",strtotime($date));
+        }elseif(strlen($date>10) && date(" d M Y",strtotime(substr($date,0,10)))!='01 Jan 1970'){
+            $display_date = date(" d M Y",strtotime(substr($date,0,10)));
+        }
+    }
+
+    return($display_date);
+}
+
 $BENCHMARK_TIME = array();
 function bench($idx = 0)
 {

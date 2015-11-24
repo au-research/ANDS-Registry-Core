@@ -7,23 +7,7 @@
 		if (!isset($aps[$ap['type']])) $aps[$ap['type']] = array();
 		array_push($aps[$ap['type']], $ap);
 	}
-    //set current version display date
-    if(isset($vocab['current_version']['release_date'])){
 
-        $display_date = $vocab['current_version']['release_date'];
-
-        if(strlen(trim($vocab['current_version']['release_date']))==4){
-           $display_date = $vocab['current_version']['release_date'];
-        }elseif(strlen($vocab['current_version']['release_date'])==7) {
-          $display_date = date("M Y",strtotime($vocab['current_version']['release_date']));
-        }elseif(strlen(trim(str_replace(" 00:00:00","",$vocab['current_version']['release_date'])))==10)  {
-          $display_date = date(" d M Y",strtotime($vocab['current_version']['release_date']));
-        }elseif(strlen(trim(str_replace("T00:00:00.000Z","",$vocab['current_version']['release_date'])))==10)  {
-          $display_date = date(" d M Y",strtotime($vocab['current_version']['release_date']));
-        }elseif(strlen($vocab['current_version']['release_date']>0) && date(" d M Y",strtotime(substr($vocab['current_version']['release_date'],0,10)))!='01 Jan 1970'){
-          $display_date = date(" d M Y",strtotime(substr($vocab['current_version']['release_date'],0,10)));
-        }
-    }
 	//checking if current version has a file download and has a sesame downloads
 	$hasFile = false;
 	$hasSesameDownloads = false;
@@ -106,7 +90,7 @@
 		    @endif
 		@endforeach
         <div class="text-center">
-		{{ isset($vocab['current_version']['release_date']) ? '<span class="small"><em>released: '. $display_date."</em></span>": '' }}{{ isset($vocab['current_version']['note']) ? ' <a href="" tip="'.htmlentities($vocab['current_version']['note']).'">view notes</a>': '' }}
+		{{ isset($vocab['current_version']['release_date']) ? '<span class="small"><em>released: '. display_release_date($vocab['current_version']['release_date'])."</em></span>": '' }}{{ isset($vocab['current_version']['note']) ? '<span class="small"> <a href="" tip="'.htmlentities($vocab['current_version']['note']).'">view notes</a></span>': '' }}
 </div>
 		<div class="download-content hidden">
 		@if($hasFile && $hasSesameDownloads)
@@ -226,9 +210,9 @@
 			    </div>
 			    @endif
 			@endforeach
-
-			<p>{{ isset($version['note']) ? $version['note']: '' }}</p>
-
+            <div class="text-center">
+                {{ isset($version['release_date']) ? '<span class="small"><em>released: '. display_release_date($version['release_date'])."</em></span>": '' }}{{ isset($version['note']) ? '<span class="small"> <a href="" tip="'.htmlentities($version['note']).'">view notes</a></span>': '' }}
+            </div>
 			<div class="download-content hidden">
 			@foreach($version['version_access_points'] as $ap)
 			    @if($ap['type']=='file')
