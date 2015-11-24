@@ -313,13 +313,14 @@ class Maintenance extends MX_Controller {
 		$this->load->library('solr');
 		$this->solr->setOpt('rows', 0)->setOpt('fl', 'id')->setOpt('fq', '-'.$field.':*');
 		$result = $this->solr->executeSearch(true);
-		$chunk = 200;
+		$chunk = 500;
 		if (ob_get_level() == 0) ob_start();
 
 		ob_flush();flush();
 		$remain = $result['response']['numFound'];
 		while ($remain > 0) {
 			echo 'Remaining: '. $remain."\n";
+			ob_flush();flush();
 
 			//do stuff
 			$this->solr->init()->setOpt('rows', $chunk)->setOpt('fl', 'id')->setOpt('fq', '-'.$field.':*');
@@ -344,6 +345,7 @@ class Maintenance extends MX_Controller {
 		}
 
 		echo 'Done';
+		ob_end_flush();
 
 	}
 
