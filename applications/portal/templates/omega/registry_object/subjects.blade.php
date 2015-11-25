@@ -108,7 +108,7 @@
 @section('sidebar')
 <div class="panel panel-primary panel-green element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
     <div class="panel-heading">
-        <h3 class="panel-title"><span tip="Australia and New Zealand Standard Research Classification - Fields of Research (ANZSRC-FOR). <a href='http://google.com'>Learn more...</a>">Subjects</span></h3>
+        <h3 class="panel-title"><span tip="Australia and New Zealand Standard Research Classification - Fields of Research (ANZSRC-FOR). <a href='http://google.com'>Learn more...</a>">ANZSRC-FOR Subjects</span></h3>
     </div>
     <div facet-search facets="facets" type="type" ng-if="showFacet('type')"></div>
     <div facet-search facets="facets" type="activity_status" ng-if="showFacet('activity_status')"></div>
@@ -116,28 +116,40 @@
     <!-- Subject Facet -->
     <div class="panel-body swatch-white" ng-if="showFacet('subjects')">
 
-
-            <ul class="tree" ng-if="vocab_tree" ng-cloak>
-                <li ng-repeat="item in vocab_tree | orderObjectBy:'prefLabel'">
-                    <span class="caret" ng-click="getSubTree(item)"> </span><input type="checkbox" ng-checked="isVocabSelected(item, filters)" ui-indeterminate="isVocabParentSelected(item)" ng-click="toggleFilter(vocab, item.notation, true);">
-                    <a href="" ng-click="getSubTree(item)" ng-if="item.has_narrower">[[item.prefLabel | toTitleCase]] ([[ item.collectionNum ]])</a>
-                    <span ng-click="getSubTree(item)" ng-if="!item.has_narrower">[[item.prefLabel | toTitleCase]] ([[ item.collectionNum ]])</span>
-                    <ul ng-if="(isVocabSelected(item, filters)) || isVocabParentSelected(item)">
-                        <li ng-repeat="item2 in item.subtree">
-                            <span class="caret" ng-click="getSubTree(item2)"> </span><input type="checkbox" ng-checked="isVocabSelected(item2, filters)" ui-indeterminate="isVocabParentSelected(item2)" ng-click="toggleFilter(vocab, item2.notation, true);">
-                            <a href="" ng-click="getSubTree(item2)" ng-if="item2.has_narrower">[[item2.prefLabel | toTitleCase]] ([[ item2.collectionNum ]])</a>
-                            <span ng-if="!item2.has_narrower">[[item2.prefLabel | toTitleCase]] ([[ item2.collectionNum ]])</span>
-                            <ul ng-if="item2.subtree && item2.showsubtree">
-                                <li ng-repeat="item3 in item2.subtree">
-                                    <input type="checkbox" ng-checked="isVocabSelected(item3, filters)" ui-indeterminate="isVocabParentSelected(item3, filters)" ng-click="toggleFilter(vocab, item3.notation, true);">
-                                    <a href="" ng-click="getSubTree(item3)" ng-if="item3.has_narrower">[[item3.prefLabel | toTitleCase]] ([[ item3.collectionNum ]])</a>
-                                    <span ng-if="!item3.has_narrower">[[item3.prefLabel | toTitleCase]] ([[ item3.collectionNum ]])</span>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+        <ul class="tree" ng-if="vocab_tree" ng-cloak>
+            <li ng-repeat="item in vocab_tree | orderObjectBy:'prefLabel'"
+                ng-class="{true:'selected'}[isVocabSelected(item)]">
+                <a href="" ng-click="getSubTree(item)">
+                    <i class="fa"
+                        ng-class="{undefined: 'fa-plus', false: 'fa-plus', true: 'fa-minus'}[item.showsubtree]"
+                        ng-if="item.has_narrower"></i>
+                </a>
+                <a href="" ng-click="toggleFilter('anzsrc-for', item.notation, false)">
+                    [[item.prefLabel | toTitleCase]] ([[ item.collectionNum ]])
+                </a>
+                <ul ng-if="item.subtree && item.showsubtree">
+                    <li ng-repeat="item2 in item.subtree"
+                        ng-class="{true:'selected'}[isVocabSelected(item2)]">
+                        <a href="" ng-click="getSubTree(item2)">
+                            <i class="fa"
+                                ng-class="{undefined: 'fa-plus', false: 'fa-plus', true: 'fa-minus'}[item2.showsubtree]"
+                                ng-if="item2.has_narrower"></i>
+                        </a>
+                        <a href="" ng-click="toggleFilter('anzsrc-for', item2.notation, false)">
+                            [[item2.prefLabel | toTitleCase]] ([[ item2.collectionNum ]])
+                        </a>
+                        <ul ng-if="item2.subtree && item2.showsubtree">
+                            <li ng-repeat="item3 in item2.subtree"
+                                ng-class="{true:'selected'}[isVocabSelected(item3)]">
+                                <a href="" ng-click="toggleFilter('anzsrc-for', item3.notation, false)">
+                                    [[item3.prefLabel | toTitleCase]] ([[ item3.collectionNum ]])
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
 
     </div>
 </div>

@@ -238,44 +238,30 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
 			ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
 		}
-        if (location.href.indexOf('subjects')>-1) {
-            console.log("browsing");
+
+
+        if ($scope.onBrowsePage() || $scope.onSearchPage()) {
             search_factory.search($scope.filters).then(function(data){
                 $scope.loading = false;
                 $scope.fuzzy = data.fuzzy_result;
                 search_factory.update('result', data);
                 search_factory.update('facets', search_factory.construct_facets(data));
-
-                $scope.syncSubjectBrowse();
+                if ($scope.onSearchPage()) {
+                    $scope.sync();
+                } else if($scope.onBrowsePage()) {
+                    $scope.syncSubjectBrowse();
+                }
                 $scope.$broadcast('search_complete');
                 $scope.populateCenters($scope.result.response.docs);
-
-
             });
         }
-		else if (location.href.indexOf('search')>-1) {
-			search_factory.search($scope.filters).then(function(data){
-				$scope.loading = false;
-				$scope.fuzzy = data.fuzzy_result;
-				search_factory.update('result', data);
-				search_factory.update('facets', search_factory.construct_facets(data));
-
-				$scope.sync();
-				$scope.$broadcast('search_complete');
-				$scope.populateCenters($scope.result.response.docs);
-
-
-			});
-		}
-
-
-
 	}
 
     $scope.openBranches = function() {
         angular.forEach($scope.vocab_tree, function(item){
-            if ($scope.isVocabSelected(item)) {
-                $scope.getSubTree(item)
+            if ($scope.isVocabSelected(item) || $scope.isVocabParentSelected(item)) {
+                $scope.getSubTree(item);
+                item.showsubtree = true;
             }
         });
     }
@@ -308,22 +294,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
         $scope.facets = search_factory.facets;
         $scope.pp = search_factory.pp;
         $scope.sort = search_factory.sort;
-        $scope.advanced_fields = search_factory.advanced_fields;
-
-        if($scope.filters['class']=='activity') {
-            $scope.advanced_fields = search_factory.advanced_fields_activity;
-            $scope.sort = search_factory.activity_sort;
-        }
-
-        if($scope.filters['class']=='activity') {
-            $scope.advanced_fields = search_factory.advanced_fields_activity;
-        } else if($scope.filters['class']=='collection') {
-            $scope.advanced_fields = search_factory.advanced_fields;
-        } else if($scope.filters['class']=='party') {
-            $scope.advanced_fields = search_factory.advanced_fields_party;
-        } else if($scope.filters['class']=='service') {
-            $scope.advanced_fields = search_factory.advanced_fields_service;
-        }
 
         //construct the pagination
         if ($scope.result) {
@@ -339,55 +309,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
                 if (x > 0 && x <= $scope.page.end) {
                     $scope.page.pages.push(x);
                 }
-            }
-
-            // $scope.temp
-
-            $scope.temporal_range = search_factory.temporal_range($scope.result);
-            $scope.earliest_year = $scope.temporal_range[0];
-            $scope.latest_year = $scope.temporal_range[$scope.temporal_range.length - 1];
-
-            //get temporal range
-            // search_factory.search_no_record($scope.filters).then(function(data){
-            // 	$scope.temporal_range = search_factory.temporal_range(data);
-            // 	$log.debug(data);
-            // 	$scope.earliest_year = $scope.temporal_range[0];
-            // 	$scope.latest_year = $scope.temporal_range[$scope.temporal_range.length - 1];
-            // });
-        }
-
-        //duplicate record matching
-        if ($scope.result) {
-            var matchingdoc = [];
-            angular.forEach($scope.result.response.docs, function(doc){
-                if (doc.matching_identifier_count) {
-                    matchingdoc.push(doc);
-                }
-            });
-            // $log.debug(matchingdoc);
-            angular.forEach(matchingdoc, function(doc) {
-                if(!doc.hide) {
-                    search_factory.get_matching_records(doc.id).then(function(data){
-                        if (doc && !doc.hide) {
-                            doc.identifiermatch = data.message.identifiermatch;
-                            if(doc && !doc.hide) {
-                                angular.forEach(doc.identifiermatch, function(idd){
-                                    $scope.hidedoc(idd.registry_object_id);
-                                });
-                            }
-                        }
-                    });
-                }
-            });
-        }
-
-        $scope.hidedoc = function(id) {
-            if ($scope.result) {
-                angular.forEach($scope.result.response.docs, function(doc){
-                    if (doc.id==id && !doc.hide) {
-                        doc.hide = true;
-                    }
-                });
             }
         }
 
@@ -525,35 +446,28 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	$scope.toggleFilter = function(type, value, execute) {
 
         $scope.filters['p'] = 1;
-        if(location.href.indexOf('subjects')>-1){
-            if($scope.isSubjectSelected(value)) {
-                $scope.clearSubjectFilter(type,value);
-                console.log("CLEAR:" + type, value, execute);
 
+        if($scope.filters[type]) {
+            if($scope.filters[type]==value) {
+                $scope.clearFilter(type,value);
             } else {
-                console.log("ADD:" + type, value, execute);
-                $scope.addSubjectFilter(type, value);
-            }
-            if(execute) $scope.search();
-         }
-        else{
-            if($scope.filters[type]) {
-                if($scope.filters[type]==value) {
-                    $scope.clearFilter(type,value);
+                if($scope.filters[type].indexOf(value)==-1) {
+                    $scope.addFilter(type, value, false);
                 } else {
-                    if($scope.filters[type].indexOf(value)==-1) {
-                        $scope.addFilter(type, value, false);
-                    } else {
-                        $scope.clearFilter(type,value, false);
-                    }
+                    $scope.clearFilter(type,value, false);
                 }
-            } else {
-                $scope.addFilter(type, value);
             }
-
-            if(execute) $scope.hashChange();
+        } else {
+            $scope.addFilter(type, value);
         }
 
+        //hashChange event only on search page,
+        //on browse page, no page refresh
+        if ($scope.onBrowsePage()) {
+            $scope.search();
+        } else if (execute) {
+            $scope.hashChange();
+        }
 	}
 
     $scope.clearSubjectFilter = function(type, value){
@@ -1092,7 +1006,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.vocab = 'anzsrc-for';
 
 		//only loads in search page, other page don't have subject facet (yet)
-		if ( $scope.onSearchPage()) {
+		if ( $scope.onSearchPage() || $scope.onBrowsePage()) {
 			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
 				$scope.vocab_tree = data;
 				$scope.vocab_tree_tmp = $scope.vocab_tree;
@@ -1121,11 +1035,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		if(!item['subtree'] && ($scope.vocab=='anzsrc-for' || $scope.vocab=='anzsrc-seo')) {
 			vocab_factory.get(item.uri, $scope.filters, $scope.vocab).then(function(data){
 				item['subtree'] = data;
-                angular.forEach(item['subtree'], function(x){
-                   if ($scope.isVocabSelected(x)){
-                       $scope.getSubTree(x);
-                   }
-                });
 			});
 		}
 	}
