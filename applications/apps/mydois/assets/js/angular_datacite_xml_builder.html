@@ -227,14 +227,20 @@
         </div>
 
         <div class="widget-content">
-            <datacite-twin-item-form
-                ng-repeat="description in objectModel.resource[0].descriptions[0].description track by $index"
-                item="description"
-                list="objectModel.resource[0].descriptions[0].description"
-                index="$index"
-                readonly="readonly"
-                optiontype="'descriptionType'"
-                ></datacite-twin-item-form>
+            <div class="control-group" ng-repeat="description in objectModel.resource[0].descriptions[0].description track by $index">
+                <div class="btn-group" ng-if="!readonly">
+                    <button class="btn dropdown-toggle" data-toggle="dropdown">
+                        {{ description._attr['descriptionType']['_value'] ? description._attr['descriptionType']['_value'] : 'Type' }} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="j in availableOptions['descriptionType']">
+                            <a href="" ng-click="setOption(description, 'descriptionType', j)">{{ j }}</a>
+                        </li>
+                    </ul>
+                </div>
+                <textarea ng-model="description._text" cols="30" rows="10" ng-readonly="readonly"></textarea>
+            </div>
+
             <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].descriptions[0], 'description')"><i class="icon-plus"></i> Add Description</a>
         </div>
 

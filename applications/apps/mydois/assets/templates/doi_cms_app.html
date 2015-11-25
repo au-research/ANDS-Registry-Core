@@ -132,7 +132,8 @@
                     </div>
                 </div>
             </form>
-            <a href="" class="btn btn-primary" ng-click="vm.mint()">Mint</a>
+            <a href="" ng-hide="vm.loading" class="btn btn-primary" ng-click="vm.mint()">Mint</a>
+            <a ng-if="vm.loading" href="" class="btn btn-primary disabled">Loading...</a>
             <a href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
             <div class="alert alert-info" ng-if="vm.response">
                 <b>{{ vm.response.message }}</b><br>
@@ -171,7 +172,8 @@
                 </div>
             </form>
 
-            <a ng-if="!vm.readonly" href="" class="btn btn-primary" ng-click="vm.doupdate()">Update</a>
+            <a ng-if="!vm.readonly" ng-hide="vm.loading" href="" class="btn btn-primary" ng-click="vm.doupdate()">Update</a>
+            <a ng-if="vm.loading" href="" class="btn btn-primary disabled">Loading...</a>
             <a ng-if="!vm.readonly" href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
             <div class="alert alert-info" ng-if="vm.response">
                 <b>{{ vm.response.message }}</b><br>

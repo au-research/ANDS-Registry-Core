@@ -87,8 +87,10 @@
                 doi : vm.newdoi_id,
                 client_id: vm.client.client_id
             }
+            vm.loading = true;
             vm.response = false;
             APIDOIService.mint(data).then(function(response){
+                vm.loading = false;
                 vm.response = response.response;
                 if (vm.response.doi) {
                     vm.view(vm.response.doi, true);
@@ -111,8 +113,10 @@
                 doi : vm.viewdoi.doi_id,
                 client_id: vm.client.client_id
             }
+            vm.loading = true;
             vm.response = false;
             APIDOIService.update(data).then(function(response){
+                vm.loading = false;
                 vm.response = response.response;
                 if (response.response.type!='failure' && vm.response.doi) {
                     vm.view(vm.response.doi, true);
