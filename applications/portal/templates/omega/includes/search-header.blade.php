@@ -3,14 +3,15 @@
 		<div class="col-md-2 col-lg-3">
 			<p ng-hide="loading" ng-cloak ><b>[[result.response.numFound]]</b> results ([[result.responseHeader.QTime]] milliseconds)</p>
 		</div>
-		<div class="col-md-5 col-lg-4">
+		<div class="col-md-5 col-lg-6">
 			<div class="animated fadeInDown">
 				<span style="margin-right:10px">Records selected: [[selected.length]]</span>
 				<a href="" class="btn btn-primary btn-sm btn-icon-right" ng-click="add_user_data('saved_record')">Save Records <span><i class="fa fa-bookmark-o"></i></span></a>
 				<a href="" class="btn btn-primary btn-sm btn-icon-right" ng-click="add_user_data('export')" ng-if="filters.class=='collection'">Export <span><i class="fa fa-download"></i></span></a>
+				<a href="" class="btn btn-link btn-sm" ng-if="onBrowsePage()" ng-click="switchToSearch()">Switch to full search</a>
 			</div>
 		</div>
-		<div class="col-md-5 col-lg-5 sort-box">
+		<div class="col-md-5 col-lg-3 sort-box">
 			<span class="btn-group">
 				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Sort by: <span ng-bind-html="filters.sort | getLabelFor:sort"></span><span class="caret"></span></button>
 				<ul class="dropdown-menu" role="menu">

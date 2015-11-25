@@ -183,6 +183,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.hashChange();
 	}
 
+    //change to search page
+    $scope.switchToSearch = function(){
+        search_factory.update('filters', $scope.filters);
+        var hash = search_factory.filters_to_hash(search_factory.filters);
+        location.href = base_url+'search/#' + '!/' + hash;
+    }
+
 	$scope.hashChange = function(){
 		// $log.debug('query', $scope.query, search_factory.query);
 		// $scope.filters.q = $scope.query;
@@ -469,6 +476,13 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
             $scope.hashChange();
         }
 	}
+
+    //special function for only 1 subject at 1 time
+    $scope.toggleSubjectFilter = function(type, value, execute) {
+        delete ($scope.filters[type]);
+        $scope.filters[type] = value;
+        $scope.search();
+    }
 
     $scope.clearSubjectFilter = function(type, value){
         if(typeof $scope.filters[type]=='object') {
@@ -1006,7 +1020,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 		$scope.vocab = 'anzsrc-for';
 
 		//only loads in search page, other page don't have subject facet (yet)
-		if ( $scope.onSearchPage() || $scope.onBrowsePage()) {
+		if ( $scope.onSearchPage() ) {
 			vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
 				$scope.vocab_tree = data;
 				$scope.vocab_tree_tmp = $scope.vocab_tree;
@@ -1014,20 +1028,12 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 			});
 		}
 
-        //only loads in search page, other page don't have subject facet (yet)
+        //only loads in browse page, other page don't have subject facet (yet)
         if ($scope.onBrowsePage()) {
             vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
                 $scope.vocab_tree = data;
             });
         }
-
-
-		// DEPRECATED. getting vocabulary in configuration, mainly for matching isSelected
-		// if(!angular.equals(vocab_factory.subjects, {})) {
-		// 	vocab_factory.getSubjects().then(function(data){
-		// 		vocab_factory.subjects = data;
-		// 	});
-		// }
 	}
 
 	$scope.getSubTree = function(item) {

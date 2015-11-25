@@ -12,11 +12,13 @@
                 </section>
     		    <section class="section swatch-white" style="z-index:1;background:#e9e9e9">
     		    	<div class="container-fluid">
-    		    		<div class="row element-short-top">
-    		    			<div class="col-xs-12 col-md-4 col-lg-4 sidebar">
+    		    		<div class="row element-short-top element-short-bottom">
+    		    			<div
+                                class="col-xs-12 col-md-5 col-lg-4 sidebar"
+                                ng-class="{false:'col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3'}[hasFilter('anzsrc-for')]">
     		    				@yield('sidebar')
     		    			</div>
-                            <div class="col-xs-12 col-md-8 col-lg-8 content">
+                            <div class="col-xs-12 col-md-7 col-lg-8 content">
                                 @yield('content')
                             </div>
     		    		</div>

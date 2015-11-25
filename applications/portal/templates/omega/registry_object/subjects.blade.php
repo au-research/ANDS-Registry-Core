@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="panel element-no-top element-small-bottom animated slideInleft">
+<div class="panel element-no-top element-small-bottom animated slideInleft" ng-if="hasFilter('anzsrc-for')">
 
     <div class="panel-body swatch-white" ng-if="fuzzy" ng-cloak>
         Your search for '<b>[[ query ]]</b>' returned 0 results. Below are some alternatives which closely match your query.
@@ -106,17 +106,19 @@
 @stop
 
 @section('sidebar')
-<div class="panel panel-primary panel-green element-no-top element-no-bottom os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0.2s" style="-webkit-animation: 0.2s;">
+<div class="panel panel-primary panel-green element-no-top element-no-bottom os-animation animated fadeInUp">
     <div class="panel-heading">
-        <h3 class="panel-title"><span tip="Australia and New Zealand Standard Research Classification - Fields of Research (ANZSRC-FOR). <a href='http://google.com'>Learn more...</a>">ANZSRC-FOR Subjects</span></h3>
+        <h3 class="panel-title"><span tip="Australia and New Zealand Standard Research Classification - Fields of Research (ANZSRC-FOR). <a href='http://www.abs.gov.au/ausstats/abs@.nsf/Latestproducts/1297.0Main%20Features32008?opendocument&tabname=Summary&prodno=1297.0&issue=2008'>Learn more...</a>">ANZSRC-FOR Subjects</span></h3>
     </div>
-    <div facet-search facets="facets" type="type" ng-if="showFacet('type')"></div>
-    <div facet-search facets="facets" type="activity_status" ng-if="showFacet('activity_status')"></div>
 
     <!-- Subject Facet -->
-    <div class="panel-body swatch-white" ng-if="showFacet('subjects')">
+    <div class="panel-body swatch-white">
 
-        <ul class="tree" ng-if="vocab_tree" ng-cloak>
+        <span ng-if="!vocab_tree">
+            <i class="fa fa-refresh fa-spin"></i> Loading...
+        </span>
+
+        <ul class="tree animated fadeInUp" ng-if="vocab_tree" ng-cloak>
             <li ng-repeat="item in vocab_tree | orderObjectBy:'prefLabel'"
                 ng-class="{true:'selected'}[isVocabSelected(item)]">
                 <a href="" ng-click="getSubTree(item)">
@@ -124,7 +126,7 @@
                         ng-class="{undefined: 'fa-plus', false: 'fa-plus', true: 'fa-minus'}[item.showsubtree]"
                         ng-if="item.has_narrower"></i>
                 </a>
-                <a href="" ng-click="toggleFilter('anzsrc-for', item.notation, false)">
+                <a href="" ng-click="toggleSubjectFilter('anzsrc-for', item.notation, false)">
                     [[item.prefLabel | toTitleCase]] ([[ item.collectionNum ]])
                 </a>
                 <ul ng-if="item.subtree && item.showsubtree">
@@ -135,13 +137,13 @@
                                 ng-class="{undefined: 'fa-plus', false: 'fa-plus', true: 'fa-minus'}[item2.showsubtree]"
                                 ng-if="item2.has_narrower"></i>
                         </a>
-                        <a href="" ng-click="toggleFilter('anzsrc-for', item2.notation, false)">
+                        <a href="" ng-click="toggleSubjectFilter('anzsrc-for', item2.notation, false)">
                             [[item2.prefLabel | toTitleCase]] ([[ item2.collectionNum ]])
                         </a>
                         <ul ng-if="item2.subtree && item2.showsubtree">
                             <li ng-repeat="item3 in item2.subtree"
                                 ng-class="{true:'selected'}[isVocabSelected(item3)]">
-                                <a href="" ng-click="toggleFilter('anzsrc-for', item3.notation, false)">
+                                <a href="" ng-click="toggleSubjectFilter('anzsrc-for', item3.notation, false)">
                                     [[item3.prefLabel | toTitleCase]] ([[ item3.collectionNum ]])
                                 </a>
                             </li>
