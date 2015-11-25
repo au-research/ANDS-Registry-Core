@@ -121,29 +121,29 @@
         <ul class="tree animated fadeInUp" ng-if="vocab_tree" ng-cloak>
             <li ng-repeat="item in vocab_tree | orderObjectBy:'prefLabel'"
                 ng-class="{true:'selected'}[isVocabSelected(item)]">
-                <a href="" ng-click="getSubTree(item)">
+                <!-- <a href="" ng-click="getSubTree(item)">
                     <i class="fa"
                         ng-class="{undefined: 'fa-plus', false: 'fa-plus', true: 'fa-minus'}[item.showsubtree]"
                         ng-if="item.has_narrower"></i>
-                </a>
-                <a href="" ng-click="toggleSubjectFilter('anzsrc-for', item.notation, false)">
+                </a> -->
+                <a href="" ng-click="toggleSubject(item)" ng-if="item.collectionNum > 0">
                     [[item.prefLabel | toTitleCase]] ([[ item.collectionNum ]])
                 </a>
                 <ul ng-if="item.subtree && item.showsubtree">
                     <li ng-repeat="item2 in item.subtree"
                         ng-class="{true:'selected'}[isVocabSelected(item2)]">
-                        <a href="" ng-click="getSubTree(item2)">
+                        <!-- <a href="" ng-click="getSubTree(item2)">
                             <i class="fa"
                                 ng-class="{undefined: 'fa-plus', false: 'fa-plus', true: 'fa-minus'}[item2.showsubtree]"
                                 ng-if="item2.has_narrower"></i>
-                        </a>
-                        <a href="" ng-click="toggleSubjectFilter('anzsrc-for', item2.notation, false)">
+                        </a> -->
+                        <a href="" ng-click="toggleSubject(item2)" ng-if="item2.collectionNum > 0">
                             [[item2.prefLabel | toTitleCase]] ([[ item2.collectionNum ]])
                         </a>
                         <ul ng-if="item2.subtree && item2.showsubtree">
                             <li ng-repeat="item3 in item2.subtree"
                                 ng-class="{true:'selected'}[isVocabSelected(item3)]">
-                                <a href="" ng-click="toggleSubjectFilter('anzsrc-for', item3.notation, false)">
+                                <a href="" ng-click="toggleSubject(item3)" ng-if="item3.collectionNum > 0">
                                     [[item3.prefLabel | toTitleCase]] ([[ item3.collectionNum ]])
                                 </a>
                             </li>

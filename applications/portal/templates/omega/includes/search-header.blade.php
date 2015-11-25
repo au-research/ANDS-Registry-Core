@@ -8,7 +8,7 @@
 				<span style="margin-right:10px">Records selected: [[selected.length]]</span>
 				<a href="" class="btn btn-primary btn-sm btn-icon-right" ng-click="add_user_data('saved_record')">Save Records <span><i class="fa fa-bookmark-o"></i></span></a>
 				<a href="" class="btn btn-primary btn-sm btn-icon-right" ng-click="add_user_data('export')" ng-if="filters.class=='collection'">Export <span><i class="fa fa-download"></i></span></a>
-				<a href="" class="btn btn-link btn-sm" ng-if="onBrowsePage()" ng-click="switchToSearch()">Switch to full search</a>
+				<a href="" class="btn btn-link btn-sm" ng-if="onBrowsePage()" ng-click="switchToSearch()">Refine your results in Search mode</a>
 			</div>
 		</div>
 		<div class="col-md-5 col-lg-3 sort-box">

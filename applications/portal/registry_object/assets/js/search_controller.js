@@ -478,10 +478,28 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
 	}
 
     //special function for only 1 subject at 1 time
-    $scope.toggleSubjectFilter = function(type, value, execute) {
-        delete ($scope.filters[type]);
-        $scope.filters[type] = value;
-        $scope.search();
+    $scope.toggleSubject = function(item) {
+
+        //close all tree that doesn't need to be open
+        angular.forEach($scope.vocab_tree, function(i){
+            if (item.notation.indexOf(i.notation) == -1) {
+                i.showsubtree = false;
+            }
+        });
+
+        if (!item.subtree) {
+            $scope.getSubTree(item);
+            item.showsubtree = true;
+        } else {
+            item.showsubtree = !item.showsubtree;
+        }
+
+        if ($scope.filters['anzsrc-for'] != item.notation) {
+            delete ($scope.filters['anzsrc-for']);
+            $scope.filters['anzsrc-for'] = item.notation;
+            $scope.search();
+        }
+
     }
 
     $scope.clearSubjectFilter = function(type, value){
@@ -511,7 +529,6 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
                 angular.forEach($scope.filters['anzsrc-for'], function(code){
                     console.log(code, notation);
                     if(!found && code == notation) {
-                        console.log("found it");
                         found = true;
                     }
                 });
