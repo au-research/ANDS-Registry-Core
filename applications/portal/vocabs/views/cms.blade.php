@@ -67,6 +67,8 @@
 			<ul> <li ng-repeat="msg in success_message" ng-bind-html="msg">[[ msg ]]</li> </ul>
 		</div>
 		<form name="form.cms" novalidate>
+			<!-- Because of custom handling of the Enter key for Top Concepts,
+				do not use _any_ buttons with type="submit" in this form. -->
 			<div class="row">
 				<div class="col-md-8">
 					<div class="panel swatch-gray">
@@ -142,27 +144,18 @@
 							<span ng-bind-html="confluenceTip('TopConcepts')"></span>
 						</div>
 						<div class="panel-body">
-							<table class="table">
-								<thead>
-									<tr><th>Top Concept</th> <th></th></tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="concept in vocab.top_concept track by $index">
-										<td>[[ concept ]]</td>
-										<td><a href="" ng-click="vocab.top_concept.splice($index, 1)"><i class="fa fa-remove"></i></a></td>
-									</tr>
-								</tbody>
-							</table>
+							<div class="input-group" ng-repeat="concept in vocab.top_concept track by $index" top-concepts-enter>
+								<input type="text" class="form-control" placeholder="New Top Concept" ng-model="vocab.top_concept[$index]">
+								<span class="input-group-btn">
+									<button class="btn btn-primary" type="button"
+										ng-click="vocab.top_concept.splice($index, 1)"><i class="fa fa-remove"></i></button>
+								</span>
+							</div>
 
+							<p></p>
 
-							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('top_concept', newTopConcept)">
-								<div class="input-group">
-									<input type="text" class="form-control" placeholder="New Top Concept" ng-model="newTopConcept">
-									<span class="input-group-btn">
-										<button class="btn btn-primary" type="submit" ng-click="addtolist('top_concept', newTopConcept)"><i class="fa fa-plus"></i> Add</button>
-									</span>
-								</div>
-							</form>
+							<button class="btn btn-primary" type="button" ng-click="addtolist('top_concept')"><i class="fa fa-plus"></i> Add Top Concept</button>
+
 						</div>
 					</div>
 
@@ -171,31 +164,31 @@
 							<span ng-bind-html="confluenceTip('Languages')"></span>
 						</div>
 						<div class="panel-body">
-							<table class="table">
-								<thead>
-									<tr><th>Language</th> <th></th></tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="ln in vocab.language  track by $index ">
-										<td >[[ ln | languageFilter:langs ]]</td>
-										<td><a href="" ng-click="vocab.language.splice($index, 1)"><i class="fa fa-remove"></i></a></td>
-									</tr>
-								</tbody>
-							</table>
+
+							<!-- Show one language field. Doesn't use input-group. -->
+							<div ng-repeat="ln in vocab.language track by $index" ng-show="vocab.language.length == 1">
+								<select name="vlanguage" id="vLanguage" class="form-control caret-for-select"
+									placeholder="Select a language" ng-options="lang.value as lang.text for lang in langs" ng-model="vocab.language[$index]"><option value="">Select a language</option></select>
+							</div>
+
+							<!-- Show more than one language field. Does use input-group. -->
+							<div class="input-group" ng-repeat="ln in vocab.language track by $index" ng-show="vocab.language.length > 1">
+								<select name="vlanguage" id="vLanguage" class="form-control caret-for-select"
+									placeholder="Select a language" ng-options="lang.value as lang.text for lang in langs" ng-model="vocab.language[$index]"><option value="">Select a language</option></select>
+								<span class="input-group-btn">
+									<button class="btn btn-primary" type="button"
+										ng-click="list_remove('language', $index)"><i class="fa fa-remove"></i></button>
+								</span>
+							</div>
 
 
-							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('language', newValue.language)">
-								<div class="input-group">
-                                    <select name="vlanguage" id="vLanguage" class="form-control caret-for-select" placeholder="Select a language" ng-options="lang.value as lang.text for lang in langs" ng-model="newValue.language"><option value="">Select a language</option></select>
-									<span class="input-group-btn">
-										<button class="btn btn-primary" type="submit" ng-click="addtolist('language', newValue.language)"><i class="fa fa-plus"></i> Add</button>
-									</span>
-								</div>
-								<div class="form-group has-error" ng-show="vocab.language === undefined || vocab.language.length == 0">
-									<p class="help-block">At least one language must be provided.</p>
-								</div>
+							<p></p>
+							<button class="btn btn-primary" type="button" ng-click="addtolist('language')"><i class="fa fa-plus"></i> Add Language</button>
 
-							</form>
+							<div class="form-group has-error" ng-show="vocab.language === undefined || array_has_no_nonempty_strings(vocab.language)">
+								<p class="help-block">At least one language must be provided.</p>
+							</div>
+
 						</div>
 
 					</div>
@@ -209,31 +202,30 @@
 								<thead>
 									<tr><th>Subject Source</th> <th>Subject Label</th><th></th></tr>
 								</thead>
-								<tbody>
-									<tr ng-repeat="subject in vocab.subjects track by $index">
-                                        <td>[[ subject.subject_source ]]</td>
-										<td>[[ subject.subject ]]</td>
-
-										<td><a href="" ng-click="list_remove('subjects', $index)"><i class="fa fa-remove"></i></a></td>
-									</tr>
-								</tbody>
+								<tr ng-repeat="subject in vocab.subjects track by $index">
+									<td style="border:none">
+										<select name="" id="" class="form-control caret-for-select" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="vocab.subjects[$index].subject_source">
+											<option value="">Select a source</option>
+										</select>
+									</td>
+									<td style="border:none">
+										<input type="text" class="form-control" placeholder="Subject Label" ng-model="vocab.subjects[$index].subject">
+									</td>
+									<td style="border:none">
+										<span ng-show="vocab.subjects.length > 1">
+											<button class="btn btn-primary" type="button"
+											ng-click="list_remove('subjects', $index)"><i class="fa fa-remove"></i></button>
+										</span>
+									</td>
+								</tr>
 							</table>
 
-							<form action="" class="form swatch-gray col-md-8" ng-submit="addtolist('subjects', newValue.subject)">
+							<button class="btn btn-primary" type="button" ng-click="addtolist('subjects')"><i class="fa fa-plus"></i> Add Subject</button>
 
-								<div class="form-group">
-									<label for="">Subject Source</label>
-									<select name="" id="" class="form-control caret-for-select" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="newValue.subject.subject_source"><option value="">Select a source</option></select>
-								</div>
-                                <div class="form-group">
-                                    <label for="">Subject Label</label>
-                                    <input type="text" class="form-control" placeholder="Subject Label" ng-model="newValue.subject.subject">
-                                </div>
-								<button class="btn btn-primary" type="submit" ng-submit="addtolist('subjects', newValue.subject)"><i class="fa fa-plus"></i> Add Subject</button>
-								<div class="has-error" ng-show="vocab.subjects.length == 0">
-									<p class="help-block">At least one subject must be provided.</p>
-								</div>
-							</form>
+							<div class="form-group has-error" ng-show="vocab.subjects === undefined || subjects_has_no_nonempty_elements()">
+								<p class="help-block">At least one subject must be provided. Select a value from the Subject Source dropdown and enter a Subject Label.</p>
+							</div>
+
 						</div>
 					</div>
 
@@ -288,7 +280,7 @@
 							</table>
 
 							<div class="btn-group">
-								<button class="btn btn-primary" ng-click="relatedmodal('add', 'publisher')"><i class="fa fa-plus"></i> Add a publisher</button>
+								<button class="btn btn-primary" type="button" ng-click="relatedmodal('add', 'publisher')"><i class="fa fa-plus"></i> Add a publisher</button>
 								<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
 								<ul class="dropdown-menu" role="menu">
 									<li><a href="" ng-click="relatedmodal('add', 'vocabulary')">Related Vocabulary</a></li>
@@ -315,7 +307,7 @@
 							<a href="" class="btn btn-large btn-primary" ng-click="save('deprecated')">Deprecate</a>
 							@endif
 							<div class="alert alert-danger element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="error_message">[[ error_message ]]</div>
-							<div class="alert alert-danger element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-show="form.cms.$invalid">There are validation errors in the form</div>
+							<div class="alert alert-danger element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-show="form.cms.$invalid">There are validation errors in the form.</div>
 							<div class="alert alert-success element-short-top os-animation animated fadeInUp" data-os-animation="fadeInUp" ng-if="success_message">
 								<ul>
 									<li ng-repeat="msg in success_message" ng-bind-html="msg">[[ msg ]]</li>

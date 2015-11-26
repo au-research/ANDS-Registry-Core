@@ -20,7 +20,10 @@
 
         $scope.form = {};
 
-        $scope.vocab = {top_concept: [], subjects: []};
+        // Initialize sections that can have multiple instances.
+        // Note the distinction between sections which are optional,
+        // and those for which there must be at least one instance.
+        $scope.vocab = {top_concept: [], subjects: [{ subject_source: "", subject:"" }], language: [""]};
         /**
          * Collect all the user roles, for vocab.owner value
          */
@@ -328,8 +331,20 @@
                 window.location.replace(base_url + 'vocabs/myvocabs');
                 return false;
             }
-            //validation
+            // Tidy up empty fields before validation.
+            $scope.tidy_empty();
+
+            // Validation.
+            // First, rely on Angular's error handling.
+            if ($scope.form.cms.$invalid) {
+                // Put back the multi-value lists ready for more editing.
+                $scope.ensure_all_minimal_lists();
+                return false;
+            }
+            // Then, do our own validation.
             if (!$scope.validate()) {
+                // Put back the multi-value lists ready for more editing.
+                $scope.ensure_all_minimal_lists();
                 return false;
             }
 
@@ -404,8 +419,11 @@
                 }
 
                 //subject validation
-                if (!$scope.vocab.subjects || $scope.vocab.subjects.length == 0) {
+                if (!$scope.vocab.subjects || $scope.vocab.subjects.length == 0 || $scope.subjects_has_no_nonempty_elements()) {
                     $scope.error_message = 'There must be at least 1 subject';
+                }
+                if ($scope.subjects_has_an_only_partially_valid_element()) {
+                    $scope.error_message = 'There is a partially-completed subject. Either complete it or remove it.';
                 }
 
                 //publisher validation
@@ -546,42 +564,155 @@
             });
         };
 
+        /** A list of the multi-valued elements that are the elements
+            of $scope.vocab. Useful when iterating over all of these. */
+        $scope.multi_valued_lists = [ 'language', 'subjects', 'top_concept' ];
+
         /**
          * Add an item to an existing vocab
          * Primarily used for adding multivalued contents to the vocabulary
-         * @param list
-         * @param item enum
-         * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+         * @param name of list: one of the values in $scope.multi_valued_lists,
+         *   e.g., 'top_concept'.
          */
-
-        $scope.addtolist = function (list, item) {
+        $scope.addtolist = function (list) {
             if (!$scope.vocab[list]) $scope.vocab[list] = [];
 
-            //some validation
-            if (list == 'language' && !item) return false;
-            if (list == 'top_concept' && !item) return false;
-            if (list == 'subjects' && !(item.subject && item.subject_source)) return false;
-
-            //pass validation
-            $scope.vocab[list].push(item);
-            $scope.resetValues();
-        };
-
-        $scope.resetValues = function () {
-            $scope.newValue = {
-                language: "",
-                subject: {subject: '', subject_source: ''}
+            var newValue;
+            // 'subjects' has two parts; special treatment.
+            if (list == 'subjects') {
+                newValue = {subject_source: '', subject: ''};
+            } else {
+                // Otherwise ('language' and 'top_concept') ...
+                newValue = '';
             }
-        };
-        $scope.resetValues();
 
+            // Add new blank item to list.
+            $scope.vocab[list].push(newValue);
+        };
+
+        /**
+         * Remove an item from a multi-valued list. The list
+         * is left in good condition: specifically,
+         * $scope.ensure_minimal_list is called after the item
+         * is removed.
+         * @param name of list: one of the values in $scope.multi_valued_lists,
+         *   e.g., 'top_concept'.
+         * @param index of the item to be removed.
+         */
         $scope.list_remove = function (type, index) {
             if (index > 0) {
                 $scope.vocab[type].splice(index, 1);
             } else {
                 $scope.vocab[type].splice(0, 1);
             }
+            $scope.ensure_minimal_list(type);
         }
+
+        /** Ensure that a multi-value field has a minimal content, ready
+            for editing. For some types, this could be an empty list;
+            for others, a list with one (blank) element. */
+        $scope.ensure_minimal_list = function (type) {
+            if ($scope.vocab[type].length == 0) {
+                // Now an empty list. Do we put back a placeholder?
+                switch (type) {
+                case 'language':
+                    $scope.vocab[type] = [""];
+                    break;
+                case 'subjects':
+                    $scope.vocab[type] = [{ subject_source: "", subject:"" }];
+                    break;
+                default:
+                }
+            }
+        }
+
+        /** Ensure that all multi-value fields have minimal content, ready
+            for editing. For some types, this could be an empty list;
+            for others, a list with one (blank) element. */
+        $scope.ensure_all_minimal_lists = function () {
+            angular.forEach($scope.multi_valued_lists, function (type) {
+                $scope.ensure_minimal_list(type);
+            });
+        }
+
+        /** Tidy up all empty fields. To be used before saving.
+            Note that this does not guarantee validity.
+            To be specific, this does not remove subjects that are
+            only partially valid.
+         */
+        $scope.tidy_empty = function() {
+            $scope.vocab.top_concept = $scope.vocab.top_concept.filter(Boolean);
+            $scope.vocab.language = $scope.vocab.language.filter(Boolean);
+            $scope.vocab.subjects = $scope.vocab.subjects.filter($scope.partially_valid_subject_filter);
+        }
+
+        /** Utility function for validation of fields that can have
+            multiple entries. The list is supposed to have at least one
+            element that is a non-empty string. This method returns true
+            if this is not the case. */
+        $scope.array_has_no_nonempty_strings = function (list) {
+            return list === undefined || list.filter(Boolean).length == 0;
+        }
+
+        /** Utility function for testing if a value is a non-empty
+            string. It is careful not to fail on non-string values. */
+        $scope.is_non_empty_string = function(str) {
+            return (typeof str != "undefined") &&
+                (str != null) &&
+                (typeof str.valueOf() == "string") &&
+                (str.length > 0);
+        }
+
+        /** Filter function for one subject object. Returns true
+            if the subject is valid, i.e., contains both a non-empty
+            source and a non-empty subject. */
+        $scope.valid_subject_filter = function(el) {
+            return ('subject_source' in el) &&
+                ($scope.is_non_empty_string(el.subject_source)) &&
+                ('subject' in el) &&
+                ($scope.is_non_empty_string(el.subject));
+        }
+
+        /** Filter function for one subject object. Returns true
+            if the subject has at least one part valid,
+            i.e., contains either a non-empty
+            source or a non-empty subject. */
+        $scope.partially_valid_subject_filter = function(el) {
+            return (('subject_source' in el) &&
+                    ($scope.is_non_empty_string(el.subject_source))) ||
+                (('subject' in el) &&
+                 ($scope.is_non_empty_string(el.subject)));
+        }
+
+        /** Filter function for one subject object. Returns true
+            if the subject has exactly one part valid,
+            i.e., contains either a non-empty
+            source or a non-empty subject, but not both. */
+        $scope.only_partially_valid_subject_filter = function(el) {
+            return (('subject_source' in el) &&
+                    ($scope.is_non_empty_string(el.subject_source))) !=
+                (('subject' in el) &&
+                 ($scope.is_non_empty_string(el.subject)));
+        }
+
+        /** Utility function for validation of subjects. In order
+            to help the user not lose a partially-complete subject,
+            call this function to check if the user has a subject for
+            which there is only a source or a subject, but not both. */
+        $scope.subjects_has_an_only_partially_valid_element = function () {
+            return $scope.vocab.subjects.filter($scope.only_partially_valid_subject_filter).length > 0;
+        }
+
+        /** Utility function for validation of subjects. The list
+            of subjects is supposed to have at least one
+            element that has both a non-empty source and a non-empty
+            subject. This method returns true
+            if this is not the case. */
+        $scope.subjects_has_no_nonempty_elements = function () {
+            return $scope.vocab.subjects == undefined ||
+                $scope.vocab.subjects.filter($scope.valid_subject_filter) == 0;
+        }
+
 
     }
 
@@ -625,3 +756,31 @@ RewriteRule ^/ands_doc/tooltips$  /ands_doc/pages/viewpage.action?pageId=2247884
     });
 
 })();
+
+
+// Directive based on:
+// http://stackoverflow.com/questions/26278711/using-the-enter-key-as-tab-using-only-angularjs-and-jqlite
+
+angular.module('app').directive('topConceptsEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if (event.which === 13) {
+                // User pressed Enter. Inhibit default behaviour.
+                event.preventDefault();
+                var elementToFocus = element.next().find('input')[0];
+                if (angular.isDefined(elementToFocus)) {
+                    elementToFocus.focus();
+                } else {
+                    // Add a new row to the model. We are not in the Angular
+                    // execution cycle at this point, so we need $apply
+                    // so that the change is propagated to the DOM.
+                    scope.$apply(function() { scope.addtolist('top_concept'); });
+                    // We should now have a new element. Move the focus to it.
+                    var newelementToFocus = element.next('tr').find('input')[0];
+                    if (angular.isDefined(newelementToFocus))
+                        newelementToFocus.focus();
+                }
+            }
+        });
+    };
+});
