@@ -548,9 +548,15 @@ class _vocabulary
             //CC-1460
             //check if there's an existing vocab with the same slug in published state
             $result = $db->get_where('vocabularies', array('slug'=> $slug, 'status' => 'published'));
+            
+            isset($this->prop['from_vocab_id']) ? $draft_base = $this->prop['from_vocab_id'] :$draft_base = 0 ;
+
             if ($result->num_rows() > 0) {
-                throw new Exception('A vocabulary with the specified title already exists. Please specify a unique title.');
-                return false;
+                $published_vocab = $result->first_row();
+                if($published_vocab->id!=$draft_base){
+                    throw new Exception('A vocabulary with the specified title already exists. Please specify a unique title.');
+                    return false;
+                }
             }
 
             //check if there's an existing vocab with the same slug in draft state

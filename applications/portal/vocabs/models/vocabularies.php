@@ -501,7 +501,10 @@ class Vocabularies extends CI_Model
     public function addNew($data)
     {
         $vocab = new _vocabulary();
-        if (isset($data['id'])) unset($data['id']);
+        if (isset($data['id'])) {
+            $data['from_vocab_id'] = $data['id'];
+            unset($data['id']);
+        }
         $vocab->populate($data);
         try {
             $result = $vocab->save();
