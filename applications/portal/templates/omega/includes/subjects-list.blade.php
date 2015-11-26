@@ -5,7 +5,7 @@
             <div class="figure portfolio-os-animation element-no-top element-no-bottom text-center figcaption-middle normalwidth image-filter-sepia fade-in image-filter-onhover animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s">
                 <div class="element-no-top element-no-bottom text-center figcaption-middle normalwidth image-filter-sepia image-filter-onhover">
                    <a href="{{base_url('subjects').'#!'.$item['query']}}" class="figure-image magnific-vimeo" data-links="" target="_self">
-                       <img src="{{asset_url('images/subjects/'.$item['img'], 'core')}}" alt="" class="normalwidth" style="height:190px">
+                       <img src="{{asset_url('images/subjects/'.$item['img'], 'core')}}" alt="" class="normalwidth">
                     </a>
                 </div>
                 <div class="figure-caption text-center">
