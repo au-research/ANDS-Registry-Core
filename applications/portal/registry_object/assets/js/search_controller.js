@@ -1049,6 +1049,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
         if ($scope.onBrowsePage()) {
             vocab_factory.get(false, $scope.filters, $scope.vocab).then(function(data){
                 $scope.vocab_tree = data;
+                $scope.openBranches();
             });
         }
 	}
