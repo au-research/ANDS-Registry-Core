@@ -310,8 +310,20 @@ class _vocabulary
     public function display_tree($raw = false)
     {
         $current_version = $this->current_version();
+        $sissvoc_end_point = "";
         if ($current_version) {
             $concepts_tree_path = isset($current_version['concepts_tree']) ? $current_version['concepts_tree'] : false;
+
+            foreach($current_version['version_access_points'] as $ap)
+            {
+                if($ap['type'] == 'sissvoc'){
+                    $sissvoc_end_point = json_decode($ap['portal_data'])->uri;
+                }
+            }
+
+
+
+
             if (!$concepts_tree_path) {
                 //no valid data returned, hence no tree
                 return false;
@@ -327,7 +339,7 @@ class _vocabulary
                 if ($raw) return $tree_data;
 
                 //build a tree a little bit nicer
-                $tree = $this->buildTree($tree_data);
+                $tree = $this->buildTree($tree_data, $sissvoc_end_point);
 
                 return $tree;
             }
@@ -345,19 +357,29 @@ class _vocabulary
      * @param  array $treeData
      * @return array child Tree
      */
-    private function buildTree($treeData)
+    private function buildTree($treeData, $sissvoc_end_point = '')
     {
         $tree = array();
         if (is_array($treeData)) {
             foreach ($treeData as $key => $value) {
-                if ($key != 'prefLabel' && $key != 'notation') {
+                if ($key != 'prefLabel' && $key != 'notation' && $key != 'definition') {
+                    $title = isset($value['prefLabel']) ? $value['prefLabel'] : 'No Title';
+                    $tipText = '<p><b>'. $title . '<br/>IRI: </b>'. $key;
+
+                    if(isset($value['definition']))
+                        $tipText .= '<br/><b>Definition: </b>' . $value['definition'];
+                    if(isset($value['notation']))
+                        $tipText .= '<br/><b>Notation: </b>' .$value['notation'];
+                    if($sissvoc_end_point != '')
+                        $tipText .= '<br/><a class="pull-right" target="_blank" href="' .$sissvoc_end_point . '/resource?uri=' . $key . '">View as linked data</a>';
                     $node = array(
                         'uri' => $key,
-                        'value' => isset($value['prefLabel']) ? $value['prefLabel'] : 'No Title',
+                        'value' => $title,
                         'child' => array(),
+                        'tip' => $tipText. '</p>',
                         'num_child' => 0
                     );
-                    $childs = $this->buildTree($value);
+                    $childs = $this->buildTree($value, $sissvoc_end_point);
                     $node['child'] = $childs;
                     $node['num_child'] = sizeof($childs);
                     $tree[] = $node;
