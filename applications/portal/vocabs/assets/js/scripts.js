@@ -70,6 +70,44 @@ $(document).on('mouseover', 'a[tip]', function(event){
     });
 });
 
+$(document).on('mouseover', 'a[concept-tip]', function(event){
+    console.log("tipping like a boss");
+    $(this).qtip({
+        content:{
+            text:function(e,api){
+                var tip = $(this).attr('concept-tip');
+                var content = tip;
+                if(tip.indexOf('#')==0 || tip.indexOf('.')==0) {
+                    if($(tip.toString()).length) {
+                        content = $(tip.toString()).html();
+                    }
+                }
+                return content;
+            }
+        },
+        show: {
+            event: 'mouseover',
+            ready: true
+        },
+        hide: {
+            delay: 500,
+            leave:false,
+            fixed: true
+        },
+        position: {
+            target: this,
+            my:'center left',
+            at:'center right',
+            adjust: {
+                mouse: false,
+                screen: false,
+                resize: false
+            }
+        },
+        style: {classes: 'qtip-rounded qtip-blue concept-tip'}
+    });
+});
+
 $(document).on('click', '.download-chooser', function(event){
     event.preventDefault();
     $(this).qtip({
