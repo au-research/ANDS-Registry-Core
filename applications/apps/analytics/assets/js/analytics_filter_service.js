@@ -10,6 +10,7 @@
         var lastDay = new Date(y, m, 0);
 
         var filters = {
+            'open' : false,
             'log': 'portal',
             'period': {'startDate': firstDay, 'endDate': lastDay},
             'dimensions': [
