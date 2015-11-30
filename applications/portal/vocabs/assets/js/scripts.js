@@ -71,7 +71,9 @@ $(document).on('mouseover', 'a[tip]', function(event){
 });
 
 $(document).on('mouseover', 'a[concept-tip]', function(event){
-    console.log("tipping like a boss");
+    $('.qtip').each(function(){
+        $(this).data('qtip').destroy();
+    })
     $(this).qtip({
         content:{
             text:function(e,api){
