@@ -59,7 +59,7 @@ class _vocabulary
         $json = array();
 
         //index single values
-        $single_values = array('id', 'title', 'slug', 'pool_party_id');
+        $single_values = array('id', 'title', 'slug', 'pool_party_id', 'status');
         foreach ($single_values as $s) {
             if (isset($this->prop[$s])) $json[$s] = $this->prop[$s];
         }
@@ -139,7 +139,7 @@ class _vocabulary
         }
 
         $json['concept'] = array();
-
+        $json['widgetable']=false;
         if ($current_version) {
             $concept_list_path = isset($current_version['concepts_list']) ? $current_version['concepts_list'] : false;
             if($concept_list_path){
@@ -157,6 +157,31 @@ class _vocabulary
             foreach ($current_version['access_points'] as $ap) {
                 $json['access'][] = vocab_readable($ap['type']);
                 $json['format'][] = $ap['format'];
+            }
+            /* The following fails, if there are no access points for
+               the current version. There really should be access points, but
+               e.g., if they were supposed to be added by the Toolkit,
+               and (for whatever reason) the Toolkit failed to add
+               them, then $current_version['version_access_points']
+               has the Boolean value false, i.e., it is not an array!
+               (See implementations of current_version() and getAccessPoints()
+               to see this.) So you get an error:
+               "Invalid argument supplied for foreach() on line ..."
+               If, in future, we want to be somewhat more defensive,
+               put this sort of thing as a wrapper around the foreach:
+                if (array_key_exists('version_access_points', $current_version)
+                  && is_array($current_version['version_access_points'])) {
+               Or, as an alternative, change the way getAccessPoints() works
+               so that it doesn't return an array on success and a Boolean
+               on failure!
+            */
+            foreach($current_version['version_access_points'] as $ap)
+            {
+                if($ap['type'] == 'sissvoc'){
+                    $url = json_decode($ap['portal_data'])->uri;
+                    $json['sissvoc_end_point'] = $url;
+                    $json['widgetable']=true;
+                }
             }
         }
 
@@ -285,8 +310,20 @@ class _vocabulary
     public function display_tree($raw = false)
     {
         $current_version = $this->current_version();
+        $sissvoc_end_point = "";
         if ($current_version) {
             $concepts_tree_path = isset($current_version['concepts_tree']) ? $current_version['concepts_tree'] : false;
+
+            foreach($current_version['version_access_points'] as $ap)
+            {
+                if($ap['type'] == 'sissvoc'){
+                    $sissvoc_end_point = json_decode($ap['portal_data'])->uri;
+                }
+            }
+
+
+
+
             if (!$concepts_tree_path) {
                 //no valid data returned, hence no tree
                 return false;
@@ -302,7 +339,7 @@ class _vocabulary
                 if ($raw) return $tree_data;
 
                 //build a tree a little bit nicer
-                $tree = $this->buildTree($tree_data);
+                $tree = $this->buildTree($tree_data, $sissvoc_end_point);
 
                 return $tree;
             }
@@ -320,19 +357,29 @@ class _vocabulary
      * @param  array $treeData
      * @return array child Tree
      */
-    private function buildTree($treeData)
+    private function buildTree($treeData, $sissvoc_end_point = '')
     {
         $tree = array();
         if (is_array($treeData)) {
             foreach ($treeData as $key => $value) {
-                if ($key != 'prefLabel' && $key != 'notation') {
+                if ($key != 'prefLabel' && $key != 'notation' && $key != 'definition') {
+                    $title = isset($value['prefLabel']) ? $value['prefLabel'] : 'No Title';
+                    $tipText = '<p><b>'. $title . '<br/>IRI: </b>'. $key;
+
+                    if(isset($value['definition']))
+                        $tipText .= '<br/><b>Definition: </b>' . $value['definition'];
+                    if(isset($value['notation']))
+                        $tipText .= '<br/><b>Notation: </b>' .$value['notation'];
+                    if($sissvoc_end_point != '')
+                        $tipText .= '<br/><a class="pull-right" target="_blank" href="' .$sissvoc_end_point . '/resource?uri=' . $key . '">View as linked data</a>';
                     $node = array(
                         'uri' => $key,
-                        'value' => isset($value['prefLabel']) ? $value['prefLabel'] : 'No Title',
+                        'value' => $title,
                         'child' => array(),
+                        'tip' => $tipText. '</p>',
                         'num_child' => 0
                     );
-                    $childs = $this->buildTree($value);
+                    $childs = $this->buildTree($value, $sissvoc_end_point);
                     $node['child'] = $childs;
                     $node['num_child'] = sizeof($childs);
                     $tree[] = $node;
@@ -398,6 +445,9 @@ class _vocabulary
         if ($query && $query->num_rows() > 0) {
             foreach ($query->result_array() as $row) {
                 $version = $row;
+                // Legacy: don't use any release_date value from such a column;
+                // release_date must come from the data column.
+                unset($version['release_date']);
                 $version['version_access_points'] = $this->getAccessPoints($version['id']);
                 //break apart version data
                 if (isset($version['data'])) {
@@ -408,9 +458,6 @@ class _vocabulary
                         }
                     }
                     unset($version['data']);
-                }
-                if (isset($version['release_date'])){
-                    $version['release_date'] = date("Y-m-d",strtotime($version['release_date']));
                 }
 
                 $this->prop['versions'][] = $version;
@@ -523,9 +570,15 @@ class _vocabulary
             //CC-1460
             //check if there's an existing vocab with the same slug in published state
             $result = $db->get_where('vocabularies', array('slug'=> $slug, 'status' => 'published'));
+            
+            isset($this->prop['from_vocab_id']) ? $draft_base = $this->prop['from_vocab_id'] :$draft_base = 0 ;
+
             if ($result->num_rows() > 0) {
-                throw new Exception('A vocabulary with the specified title already exists. Please specify a unique title.');
-                return false;
+                $published_vocab = $result->first_row();
+                if($published_vocab->id!=$draft_base){
+                    throw new Exception('A vocabulary with the specified title already exists. Please specify a unique title.');
+                    return false;
+                }
             }
 
             //check if there's an existing vocab with the same slug in draft state
@@ -623,7 +676,6 @@ class _vocabulary
                     $saved_data = array(
                         'title' => $version['title'],
                         'status' => $version['status'],
-                        'release_date' => date('Y-m-d H:i:s', strtotime($version['release_date'])),
                         'vocab_id' => $this->prop['id'],
                         'repository_id' => '',
                         'data' => json_encode($version)
@@ -638,7 +690,6 @@ class _vocabulary
                     $version_data = array(
                         'title' => $version['title'],
                         'status' => $version['status'],
-                        'release_date' => date('Y-m-d H:i:s', strtotime($version['release_date'])),
                         'vocab_id' => $this->prop['id'],
                         'repository_id' => '',
                         'data' => json_encode($version)

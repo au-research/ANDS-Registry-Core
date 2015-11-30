@@ -28,12 +28,7 @@ class Summary extends CI_Model
             );
         }
 
-        //grouping
-        if (isset($filters['groups'])) {
-            foreach ($filters['groups'] as $group) {
-                $this->elasticsearch->shouldf('term', 'group', $group);
-            }
-        }
+        $this->elasticsearch->setFilters($filters);
 
         //aggregation for stats
         $this->elasticsearch
@@ -57,6 +52,14 @@ class Summary extends CI_Model
                     ]
                 )
             )
+            ->setAggs('class',
+                array(
+                    'terms'=>array('field'=>'class'),
+                    'aggs' => [
+                        'classes' => ['terms'=>['field'=>'class']]
+                    ]
+                )
+            )
             ->setAggs('group',
                 array(
                     'terms'=>array('field'=>'group'),
@@ -69,7 +72,7 @@ class Summary extends CI_Model
                 'rostat', array('terms' => array('field' => 'roid'))
             )
             ->setAggs(
-                'qstat', array('terms' => array('field' => 'q'))
+                'qstat', array('terms' => array('field' => 'q_lowercase'))
             )
             ->setAggs(
                 'accessedstat',
@@ -134,15 +137,7 @@ class Summary extends CI_Model
         $this->load->library('elasticsearch');
         $this->elasticsearch->init()->setPath($path.'_search');
 
-        if (isset($filters['class'])) {
-            $this->elasticsearch->mustf('term', 'class', $filters['class']);
-        }
-
-        if (isset($filters['groups'])) {
-            foreach ($filters['groups'] as $group) {
-                $this->elasticsearch->shouldf('term', 'group', $group);
-            }
-        }
+        $this->elasticsearch->setFilters($filters);
         // $this->elasticsearch->shouldf('term', 'group', $filters['groups'][0]);
 
         // echo json_encode($this->elasticsearch->getOptions()); die();
@@ -181,6 +176,44 @@ class Summary extends CI_Model
         // dd($search_result['hits']);
 
         return $search_result;
+    }
+
+    public function getSolrStat($content, $filters) {
+        $result = array();
+        $this->load->library('solr');
+        $this->solr->setFilters($filters);
+        $this->solr->setOpt('rows', 0)->setOpt('fl', "group");
+        $this->solr->setFacetOpt('field', $content);
+        $this->solr->setFacetOpt('mincount', 1);
+        $solr_result = $this->solr->executeSearch(true);
+
+        $facet_result = $solr_result['facet_counts']['facet_fields'][$content];
+        for ($i = 0; $i < sizeof($facet_result) -1 ; $i+=2) {
+            $result[] = array(
+                'key' => $facet_result[$i],
+                'doc_count' => $facet_result[$i+1]
+            );
+        }
+        return $result;
+    }
+
+    public function getSolrDOIStat($filters) {
+        $result = array();
+        $this->load->library('solr');
+        $this->solr
+            ->setFilters($filters)->setOpt('rows', 0)->setOpt('fl', '')
+            ->setFacetOpt('query', '{!ex=dt key=hasdoi} identifier_type:(doi)')
+            ->setFacetOpt('query', '{!ex=dt key=hasandsdoi} identifier_value:(10.4225/*) OR identifier_value:(10.4226/*) identifier_value:(10.4227/*)')
+            ;
+        $solr_result = $this->solr->executeSearch(true);
+
+        $result = array(
+            // 'has_doi' => $solr_result['facet_counts']['facet_queries']['hasdoi'],
+            'missing_doi' => $solr_result['response']['numFound'] - $solr_result['facet_counts']['facet_queries']['hasdoi'],
+            'has_ands_doi' => $solr_result['facet_counts']['facet_queries']['hasandsdoi'],
+            'has_non_ands_doi' => $solr_result['facet_counts']['facet_queries']['hasdoi'] - $solr_result['facet_counts']['facet_queries']['hasandsdoi']
+        );
+        return $result;
     }
 
     public function getOrgs() {

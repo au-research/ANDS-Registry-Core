@@ -306,6 +306,36 @@ input:disabled + label {
 .cms-help-tip {
   max-width: 460px;
 }
+.concept-tip {
+  font-size: 16px;
+  max-width: 520px;
+  line-height: 2em;
+  word-wrap: break-word;
+  color: #808080;
+}
+ul.pagi {
+  margin: 0 auto;
+  padding: 0;
+}
+ul.pagi li {
+  list-style-type: none;
+  display: inline;
+  margin: 0px 5px;
+}
+ul.pagi li a.active {
+  color: #46494c !important;
+}
+.published_title {
+  word-wrap: break-word;
+  max-width: 510px;
+}
+.draft_title {
+  word-wrap: break-word;
+  max-width: 580px;
+}
+.break {
+  word-wrap: break-word;
+}
 .classic-tree ul {
   margin-left: 20px;
 }

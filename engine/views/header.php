@@ -109,7 +109,11 @@ if(get_config_item('environment_logo')){
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Data <b class="caret"></b></a>
                   <ul class="dropdown-menu pull-right">
                     <li class=""><?php echo anchor(registry_url('data_source/manage'), 'Manage My Data Sources');?></li>
-                    <li class=""><?php echo anchor(apps_url('analytics'), 'Analytics <sup style="color:red;">new!</sup>');?></li>
+                     <?php if(count($this->user->affiliations())==1){
+                            echo '<li class="">'.anchor(apps_url('analytics#/report/'.$this->user->affiliations()[0]), 'Analytics <sup style="color:red;">new!</sup>').'</li>';
+                        }else {
+                            echo '<li class="">'.anchor(apps_url('analytics'), 'Analytics <sup style="color:red;">new!</sup>').'</li>';
+                        } ?>
                     <li class=""><?php echo anchor(registry_url('registry_object/add'), '<i class="icon icon-plus"></i> Add New Record');?></li>
                     <li class="divider"></li>
                     <li class=""><?php echo anchor(portal_url(), '<i class="icon-globe icon"></i> Research Data Australia',array("target"=>"_blank"));?></li>
@@ -260,5 +264,4 @@ if(get_config_item('environment_logo')){
           echo BR.'<div class="alert alert-success"><strong>Message: </strong>'. $this->session->flashdata('message') . '</div>';
         }
         ?>
-
-    <?php } catch (Exception $e) {} ?> 
+    <?php } catch (Exception $e) {} ?>

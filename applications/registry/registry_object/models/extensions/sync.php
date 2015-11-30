@@ -70,11 +70,8 @@ class Sync_extension extends ExtensionBase{
             $party_service_conn_limit = $limit;
 
         $single_values = array(
-			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type'
+			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type', 'quality_level'
 		);
-
-
-
 
         $include_rights_type = array('open','restricted','conditional');
         $include_descriptions = array('brief','full');
@@ -182,6 +179,28 @@ class Sync_extension extends ExtensionBase{
                 if(isset($right['accessRights_type']) && in_array($right['accessRights_type'], $include_rights_type)) $json['access_rights'] = $right['accessRights_type'];
             }
         }
+
+        //if there's a direct downloads, assign access_rights to open
+        defined('SERVICES_MODULE_PATH') or define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
+        require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/directaccess.php');
+        $nsxml = $this->ro->getSimpleXML();
+        $nsxml = addXMLDeclarationUTF8(($nsxml->registryObject ? $nsxml->registryObject->asXML() : $nsxml->asXML()));
+        $nsxml = simplexml_load_string($nsxml);
+        $nsxml = simplexml_load_string( addXMLDeclarationUTF8($nsxml->asXML()) );
+        $handler = new Directaccess(array(
+            'xml' => $nsxml,
+            'ro' => $this->ro,
+            'gXPath' => $gXPath
+        ));
+        $downloads = $handler->handle();
+        foreach ($downloads as $download) {
+            if ($download['access_type'] == 'directDownload') {
+                $json['access_rights'] = 'open';
+            }
+        }
+        unset($handler);
+
+
 
 		//identifier
 		if($identifiers = $this->ro->getIdentifiers()) {

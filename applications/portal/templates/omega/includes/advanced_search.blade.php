@@ -7,7 +7,7 @@
 				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 				<h4 class="modal-title" id="myModalLabel">Advanced Search</h4>
 			</div>
-			
+
 			<div class="modal-body">
 				<div class="container-fluid">
 					<div class="row">
@@ -121,6 +121,7 @@
 											<li ng-repeat="c in vocab_choices"><a href="" ng-click="setVocab(c.value)">[[c.value | getLabelFor:vocab_choices ]]</a></li>
 										</ul>
 										<button type="button" class="btn btn-link" ng-if="loading_subjects"><i class="fa fa-refresh fa-spin"></i></button>
+										<button class="btn btn-link" ng-if="sizeofField('subject') > 0" ng-click="clearSubject()">Clear All <i class="fa fa-remove"></i></button>
 									</div>
 
 									<div class="clearfix"></div>
@@ -157,7 +158,7 @@
 										<li>Click on the map and drag the mouse to draw a rectangle.</li>
 										<li>Release the mouse to finish.</li>
 									</ul>
-								"></i> 
+								"></i>
 								<a href="" ng-click="clearMap()" ng-if="searchBox">Clear Map</a>
 								@include('registry_object/facet/map')
 								<div class="alert alert-info">
@@ -176,7 +177,7 @@
 										    <h4 ng-if="(name!='q' && value!='') || (name=='q' && !prefilters.cq) ">[[name | filter_name]]</h4>
 										    <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
 										    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
-										        <li ng-repeat="v in value track by $index"> 
+										        <li ng-repeat="v in value track by $index">
 										            <a href="" ng-click="togglePreFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
 										        </li>
 										    </ul>

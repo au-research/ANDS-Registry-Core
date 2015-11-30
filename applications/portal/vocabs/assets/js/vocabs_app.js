@@ -29,7 +29,6 @@ $(document).ready(function() {
         $("#widget-info").slideToggle("slow");
     });
 
-
 });
 
 $('.box-content:not(:first-child)').hide();
@@ -68,6 +67,46 @@ $(document).on('mouseover', 'a[tip]', function(event){
         },
         position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
         style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
+    });
+});
+
+$(document).on('mouseover', 'a[concept-tip]', function(event){
+    $('.qtip').each(function(){
+        $(this).data('qtip').destroy();
+    })
+    $(this).qtip({
+        content:{
+            text:function(e,api){
+                var tip = $(this).attr('concept-tip');
+                var content = tip;
+                if(tip.indexOf('#')==0 || tip.indexOf('.')==0) {
+                    if($(tip.toString()).length) {
+                        content = $(tip.toString()).html();
+                    }
+                }
+                return content;
+            }
+        },
+        show: {
+            event: 'mouseover',
+            ready: true
+        },
+        hide: {
+            delay: 500,
+            leave:false,
+            fixed: true
+        },
+        position: {
+            target: this,
+            my:'center left',
+            at:'center right',
+            adjust: {
+                mouse: false,
+                screen: false,
+                resize: false
+            }
+        },
+        style: {classes: 'qtip-rounded qtip-blue concept-tip'}
     });
 });
 
@@ -113,7 +152,7 @@ $(document).on('click', '.download-chooser', function(event){
    parent() and next().)
    Note use of adjust method shift which helps dealing with the larger tooltips.
 */
-$(document).on('mouseover', 'a[confluence_tip]', function(event){
+$(document).on('mouseover', 'span[confluence_tip]', function(event){
     $(this).qtip({
         content:{
             text:function(e,api){

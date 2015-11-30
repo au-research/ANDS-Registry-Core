@@ -36,7 +36,7 @@
             </span>
         </div>
     </div>
-    <div class="widget-box" ng-repeat="org in vm.orgs | filter:vm.query">
+    <div class="widget-box" ng-repeat="org in vm.orgs | orderBy : 'name' | filter:vm.query">
         <div class="widget-title">
             <h5>{{ org.name }}</h5>
         </div>

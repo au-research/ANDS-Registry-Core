@@ -126,7 +126,7 @@ foreach ($vocab['versions'] as $version) {
         </div>
 
         @if(isset($vocab['top_concept']))
-        <div class="panel swatch-white">
+        <div class="panel swatch-white" id="concept">
             <div class="panel-heading">Top Concepts</div>
             <div class="panel-body">
                 <table class="table">
@@ -140,12 +140,13 @@ foreach ($vocab['versions'] as $version) {
         </div>
         @endif
 
-        @if(isset($sissvocEndPoint))
         <div visualise vocabid="{{ $vocab['id'] }}"></div>
+        @if(isset($sissvocEndPoint))
         <div id="widget" class="panel swatch-white">
-            <div class="panel-body">Use this code snippet to describe or discover resources with {{$vocab['title']}} in your system<span class="btn-widget-link"><img class="widget-icon" height="32" width="32"src="{{asset_url('images/cogwheels.png', 'core')}}"/>widgetable</span>
-
-
+            <div class="panel-body">Use this code snippet to describe or discover resources with {{$vocab['title']}} in your system
+                <a id="widget-link" class="pull-right" href="javascript:showWidget()" tip="<b>Widgetable</b><br/>This vocabulary can be readily used for resource description or discovery in your system using our vocabulary widget.<br/><a id='widget-link2' href='javascript:showWidget()'>Learn more</a>">
+                    <span class="label label-default pull-right"><img class="widget-icon" height="16" width="16"src="{{asset_url('images/cogwheels_white.png', 'core')}}"/> widgetable</span>
+                </a>
                 <br/><br/><b>Example:</b> Search for and select concepts in this vocabulary
             <input type="text" id="{{$vocab['slug']}}" name="{{$vocab['slug']}}" placeholder="Search" size="80" autocomplete="off">
                 <script>

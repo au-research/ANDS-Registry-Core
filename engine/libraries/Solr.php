@@ -351,10 +351,11 @@ class Solr {
 						if($value!='all') $this->setOpt('fq', '+class:('.$value.')');
 					}
 					break;
+				case 'groups':
 				case 'group':
 					if(is_array($value)){
 						$fq_str = '';
-						foreach($value as $v) $fq_str .= ' +group:("'.$v.'")';
+						foreach($value as $v) $fq_str .= ' group:("'.$v.'")';
 						$this->setOpt('fq', $fq_str);
 					}else{
 						$this->setOpt('fq', '+group:("'.$value.'")');

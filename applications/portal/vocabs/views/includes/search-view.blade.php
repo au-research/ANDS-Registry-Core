@@ -89,9 +89,23 @@
 
 			<div class="col-md-8 col-lg-9">
 
+                <ul class="pagi element element-shorter-bottom pull-right" ng-if="result">
+                    <li><small>Page [[ page.cur ]] / [[ page.end ]]</small></li>
+                    <li ng-if="page.cur!=1"><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">First</span></a></li>
+                    <li ng-repeat="x in page.pages"><a ng-class="{'active':page.cur==x}" href="" ng-click="goto(x)">[[x]]</a></li>
+                    <li ng-if="page.cur!=page.end"><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Last</span></a></li>
+                </ul>
+                <div class="clearfix"></div>
+
 				<div ng-repeat="doc in result.response.docs" class="animated fadeInLeft vocab-search-result">
-					<h3><a href="[[ base_url ]][[ doc.slug ]]">[[ doc.title ]]</a></h3>
-					<p ng-if="doc.acronym">
+                    <span class="label label-default pull-right" ng-if="doc.status=='deprecated'"  style="margin-left:5px">[[ doc.status ]]</span>
+                    <a id="widget-link" class="pull-right" href="javascript:showWidget()" ng-if="doc.widgetable" tip="<b>Widgetable</b><br/>This vocabulary can be readily used for resource description or discovery in your system using our vocabulary widget.<br/><a id='widget-link2' href='javascript:showWidget()'>Learn more</a>">
+                       <span class="label label-default pull-right"><img class="widget-icon" height="16" width="16"src="{{asset_url('images/cogwheels_white.png', 'core')}}"/> widgetable</span>
+                    </a>
+
+                    <h3 class="break"><a href="[[ base_url ]][[ doc.slug ]]">[[ doc.title ]]</a></h3>
+
+                   	<p ng-if="doc.acronym">
 						<small>Acronym: [[ doc.acronym ]]</small>
 					</p>
 					<p ng-if="doc.publisher">
@@ -104,6 +118,14 @@
 	                    </div>
 	                </div>
 				</div>
+
+                <div class="clearfix"></div>
+                <ul class="pagi element element-shorter-top pull-right" ng-if="result">
+                    <li><small>Page [[ page.cur ]] / [[ page.end ]]</small></li>
+                    <li ng-if="page.cur!=1"><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">First</span></a></li>
+                    <li ng-repeat="x in page.pages"><a ng-class="{'active':page.cur==x}" href="" ng-click="goto(x)">[[x]]</a></li>
+                    <li ng-if="page.cur!=page.end"><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Last</span></a></li>
+                </ul>
 
 				<div ng-if="result.response.numFound == 0" class="animated fadeInLeft vocab-search-result">
 					Your search did not return any results

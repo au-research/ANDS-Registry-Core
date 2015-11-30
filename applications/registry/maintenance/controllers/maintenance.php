@@ -308,6 +308,51 @@ class Maintenance extends MX_Controller {
 		}
 	}
 
+	public function index_missing_byfield($field = 'quality_level') {
+		set_exception_handler('json_exception_handler');
+		$this->load->model('registry_object/registry_objects', 'ro');
+		$this->load->library('solr');
+		$this->solr->setOpt('rows', 0)->setOpt('fl', 'id')->setOpt('fq', '-'.$field.':*');
+		$result = $this->solr->executeSearch(true);
+		$chunk = 1000;
+		if (ob_get_level() == 0) ob_start();
+
+		ob_flush();flush();
+		$remain = $result['response']['numFound'];
+		while ($remain > 0) {
+			echo 'Remaining: '. $remain."\n";
+			ob_flush();flush();
+
+			//do stuff
+			$this->solr->init()->setOpt('rows', $chunk)->setOpt('fl', 'id')->setOpt('fq', '-'.$field.':*');
+			$rr = $this->solr->executeSearch(true);
+			$docs = array();
+			foreach ($rr['response']['docs'] as $doc) {
+				$document = array();
+				$document['id'] = $doc['id'];
+				if ($field=='tr_cited') {
+					$document[$field] = array('set' => $this->ro->getPortalStat($doc['id'], 'cited') );
+				} else {
+					$document[$field] = array('set' => $this->ro->getAttribute($doc['id'], $field) );
+				}
+				$docs[] = $document;
+			}
+
+			$this->solr->add_json(json_encode($docs));
+			$this->solr->commit();
+			echo "Indexed $chunk \n";
+			ob_flush();flush();
+
+			//update remain
+			$this->solr->init()->setOpt('rows', $chunk)->setOpt('fl', 'id')->setOpt('fq', '-'.$field.':*');
+			$rr = $this->solr->executeSearch(true);
+			$remain = $rr['response']['numFound'];
+		}
+
+		echo 'Done';
+		ob_end_flush();
+	}
+
 	public function fix_trim_roles_type_id() {
 		$cosi_db = $this->load->database('roles', TRUE);
 		$query = $cosi_db->get('roles');
@@ -362,10 +407,10 @@ class Maintenance extends MX_Controller {
 			$data_source = $this->ds->getByKey($this->config->item('example_ds_key'));
 		}
 
-		$sampleRecordUrls = array('http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-collection-1.xml',
-			'http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-party-1.xml',
-			'http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-service-1.xml',
-			'http://services.ands.org.au/documentation/rifcs/1.6/examples/eg-activity-1.xml');
+		$sampleRecordUrls = array('http://services.ands.org.au/documentation/rifcs/1.6.1/examples/eg-collection-1.xml',
+			'http://services.ands.org.au/documentation/rifcs/1.6.1/examples/eg-party-1.xml',
+			'http://services.ands.org.au/documentation/rifcs/1.6.1/examples/eg-service-1.xml',
+			'http://services.ands.org.au/documentation/rifcs/1.6.1/examples/eg-activity-1.xml');
 
 		$xml = '';
 		foreach($sampleRecordUrls as $recUrl){
@@ -719,6 +764,7 @@ class Maintenance extends MX_Controller {
 				));
 			}
 			array_push($results, $result);
+			$ro->_dropCache();
 			unset($ro);
 		}
 

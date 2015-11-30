@@ -34,8 +34,13 @@ $title = rawurlencode(substr($vocab['title'], 0, 200)) ;
 
                         <div class="panel panel-primary swatch-white panel-content">
                             <div class="panel-body">
-                                <a id="widget-link" href="javascript:showWidget()" tip="<b>Widgetable</b><br/>This vocabulary can be readily used for resource description or discovery in your system using our vocabulary widget.<br/><a id='widget-link2' href='javascript:showWidget()'>Learn more</a>"><span class="btn-widget-link"><img class="widget-icon" height="32" width="32"src="{{asset_url('images/cogwheels.png', 'core')}}"/>widgetable</span></a>
-                                <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }} </span></h1>
+                                @if($vocab['status']=='deprecated')
+                                <span class="label label-default pull-right" style="margin-left:5px">{{ $vocab['status'] }}</span>
+                                @endif
+                                <a id="widget-link" class="pull-right" href="javascript:showWidget()" tip="<b>Widgetable</b><br/>This vocabulary can be readily used for resource description or discovery in your system using our vocabulary widget.<br/><a id='widget-link2' href='javascript:showWidget()'>Learn more</a>">
+                                    <span class="label label-default pull-right"><img class="widget-icon" height="16" width="16"src="{{asset_url('images/cogwheels_white.png', 'core')}}"/> widgetable</span>
+                                </a>
+                                <h1 class="hairline bordered-normal break" style="line-height:1.1em"><span itemprop="name" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }} </span></h1>
                                 @if (isset($vocab['acronym']))
                                 <small>Acronym: {{ $vocab['acronym'] }}</small><br>
                                 @endif
@@ -45,7 +50,7 @@ $title = rawurlencode(substr($vocab['title'], 0, 200)) ;
                                 @endforeach
                                 @endif
                                 <div class="pull-right">
-                                    {{ isset($vocab['creation_date']) ? "Created: ".$vocab['creation_date'] : ''}}
+                                    {{ isset($vocab['creation_date']) ? "Created: ".display_release_date($vocab['creation_date']) : ''}}
                                     <a href="http://www.facebook.com/sharer.php?u={{$url}}"><i class="fa fa-facebook" style="padding-right:4px"></i></a>
                                     <a href="https://twitter.com/share?url={{$url}}&text={{$title}}&hashtags=andsdata"><i class="fa fa-twitter" style="padding-right:4px"></i></a>
                                     <a href="https://plus.google.com/share?url={{$url}}"><i class="fa fa-google" style="padding-right:4px"></i></a>

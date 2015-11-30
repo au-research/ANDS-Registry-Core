@@ -15698,10 +15698,10 @@ div.vertical-center span.vertical-center {
   border-left: 1px solid;
 }
 .tree li {
-  margin: 0;
-  padding: 0 1.5em;
+  margin: 0.5em 0em 0.5em 0em;
+  padding: 0 1em;
   /* indentation + .5em */
-  line-height: 2em;
+  line-height: 1.5em;
   /* default list item's `line-height` */
   font-weight: normal;
   position: relative;
@@ -15736,6 +15736,9 @@ div.vertical-center span.vertical-center {
   list-style-position: inside;
   text-indent: -1em;
   padding-left: 1em;
+}
+.tree li.selected a {
+  font-weight: bold;
 }
 .logo-homepage {
   height: 175px;

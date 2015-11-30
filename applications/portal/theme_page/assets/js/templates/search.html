@@ -6,6 +6,14 @@
 	<a href="{{base_url}}search/#!/{{filter_query}}" ng-if="el.search.view_search_text">{{el.search.view_search_text}} ({{result.response.numFound}})</a>
 </div>
 
+<div ng-if="result && result.response.numFound > 0 && el.search.style=='name_group'">
+    <ul class="list-normal">
+        <li ng-repeat="doc in result.response.docs | limitTo:el.search.limit"><a href="{{base_url}}{{doc.slug}}/{{doc.id}}">{{doc.title}} </a> ({{doc.group}}) </li>
+    </ul>
+    <a href="{{base_url}}search/#!/{{filter_query}}" ng-if="!el.search.view_search_text">View Full Search ({{result.response.numFound}})</a>
+    <a href="{{base_url}}search/#!/{{filter_query}}" ng-if="el.search.view_search_text">{{el.search.view_search_text}} ({{result.response.numFound}})</a>
+</div>
+
 <div ng-if="result && result.response.numFound > 0 && el.search.style=='tile'">
 
 	<div ng-repeat="doc in result.response.docs" ng-if="!doc.hide" style="border-bottom:1px solid #eaeaea" class="panel-body swatch-white os-animation animated fadeInLeft sresult" ng-cloak>
@@ -23,7 +31,7 @@
                             {{ doc.description }}
                         </p>
                     </div>
-                    
+
                    <!--  <p data-ng-bind-html="doc.description" ng-show="!doc.hl"></p> -->
                 </div>
             </div>

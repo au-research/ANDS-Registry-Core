@@ -335,6 +335,10 @@ class Data_source extends MX_Controller {
 			$data['crosswalks'] = json_encode($data['crosswalks']);
 		}
 
+        if(isset($data['user_defined_params'])) {
+            $data['user_defined_params'] = json_encode($data['user_defined_params']);
+        }
+
 		$updated_values = array();
 
 		//update each attribute

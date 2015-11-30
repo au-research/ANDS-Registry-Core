@@ -10,13 +10,13 @@ class Registry_objectsMethod extends MethodHandler {
         'rows' => 20
     );
 
-    private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
+    private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch', 'accessPolicy');
 
     public $ro = null;
     public $index = null;
     public $xml = null;
-    
-    //var $params, $options, $formatter; 
+
+    //var $params, $options, $formatter;
     function handle($params=''){
         $ci =& get_instance();
 
@@ -83,23 +83,29 @@ class Registry_objectsMethod extends MethodHandler {
                 if($m1 && in_array($m1, $this->valid_methods)) {
                     switch($m1) {
 
-                        case 'get':             
+                        case 'get':
                         case 'registry':           $result[$m1] = $this->ro_handle('core'); break;
                         case 'relationships'    :  $result[$m1] = $this->relationships_handler(); break;
 
-                        default : 
+                        default :
                             try {
                                 $r = $this->ro_handle($m1);
                                 if (!is_array_empty($r)) {
                                      $result[$m1] = $r;
                                 }
-                               
+
                             } catch (Exception $e) {
-                                $result[$m1] = array();
+                                $result[$m1] = $e->getMessage();
                             }
-                            
+
                             break;
 
+                    }
+                } else {
+                    //special case
+                    if ($m1 == 'solr_index') {
+                        $this->ro->sync();
+                        $result[$m1] = $this->ro->indexable_json();
                     }
                 }
             }
@@ -110,7 +116,7 @@ class Registry_objectsMethod extends MethodHandler {
 
             //store result in cache
             $cache_content = json_encode($result, true);
-            
+
             $ci->cache->file->save($cache_id, $cache_content, 36000);
 
         } else {
@@ -127,7 +133,7 @@ class Registry_objectsMethod extends MethodHandler {
     /**
      * Handle an RO handler
      * @param  string $handler NOT NULL
-     * @return handler          
+     * @return handler
      */
     private function ro_handle($handler) {
         require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/'.$handler.'.php');
@@ -138,7 +144,7 @@ class Registry_objectsMethod extends MethodHandler {
     /**
      * populate the SOLR index for fast searching on normalized fields and the commonly used Simple XML
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-     * @param  registry_object_id $id 
+     * @param  registry_object_id $id
      * @return [populated $this->index and $this->xml]
      */
     private function populate_resource($id) {
@@ -148,7 +154,7 @@ class Registry_objectsMethod extends MethodHandler {
         $ci->load->library('solr');
         $ci->solr->setOpt('fq', '+id:'.$id);
         $result = $ci->solr->executeSearch(true);
-        
+
         if(sizeof($result['response']['docs']) == 1) {
             $this->index = $result['response']['docs'][0];
         }
@@ -242,7 +248,7 @@ class Registry_objectsMethod extends MethodHandler {
 
         $types = array('collection','party_one', 'party_multi', 'activity', 'service');
 
-        
+
 
         $relationships = $this->ro->getConnections(true,null,$limit,0,true);
         $relationships = $relationships[0];

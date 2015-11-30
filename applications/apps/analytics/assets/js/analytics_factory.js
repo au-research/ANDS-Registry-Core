@@ -10,6 +10,7 @@
             getGroups: getGroups,
             getEvents: getEvents,
             getOrg: getOrg,
+            getOrgAPI: getOrgAPI,
             getStat: getStat,
             getUser: getUser,
 
@@ -32,6 +33,20 @@
             return $http.get(apps_url+'analytics/getOrg/'+params)
                     .then(returnRaw)
                     .catch(handleError);
+        }
+
+        function getOrgAPI(id) {
+            var data = {
+                'api_key': internal_api_key,
+                'include': 'data_sources-group'
+            };
+            return $http({
+                url: api_url+'role/'+id,
+                method: "GET",
+                params: data
+            }).then(function(response){
+                return response.data.data;
+            }, handleError);
         }
 
         function getStat(type, filters) {

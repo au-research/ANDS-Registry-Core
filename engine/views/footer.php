@@ -32,8 +32,10 @@ $base_url = str_replace('/apps','/registry',base_url());
         var base_url = '<?php echo $base_url;?>';
         var portal_url = '<?php echo portal_url();?>';
         var apps_url = '<?php echo apps_url();?>';
+        var api_url = '<?php echo api_url();?>';
         var real_base_url = "<?php echo $this->config->item('default_base_url');?>";
         var suffix = '<?php echo url_suffix();?>';
+        var internal_api_key = 'api';
         var editor = '';
         //urchin code
         <?php echo urchin_for($this->config->item('svc_urchin_id')); ?>
@@ -42,7 +44,7 @@ $base_url = str_replace('/apps','/registry',base_url());
     <script type="text/javascript" src="<?php echo$base_url;?>assets/js/arms.scripts.js"></script>
 
     <?php foreach($js_lib as $lib):?>
-            
+
         <?php if($lib=='graph'):?>
             <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="excanvas.js"></script><![endif]-->
             <script language="javascript" type="text/javascript" src="<?php echo$base_url;?>assets/lib/jqplot/jquery.jqplot.min.js"></script>
@@ -145,6 +147,18 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script type="text/javascript" src="<?php echo asset_url('lib/angular129.min.js', 'base') ?>"></script>
             <script type="text/javascript" src="<?php echo asset_url('lib/angular129-route.min.js', 'base') ?>"></script>
             <script type="text/javascript" src="<?php echo asset_url('lib/angular129-resource.min.js', 'base') ?>"></script>
+
+         <?php elseif($lib=='APIService'): ?>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/services/APIService.js', 'base') ?>"></script>
+
+        <?php elseif($lib=='APIRoleService'): ?>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/services/APIRoleService.js', 'base') ?>"></script>
+
+        <?php elseif($lib=='APIDOIService'): ?>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/services/APIDOIService.js', 'base') ?>"></script>
+
+        <?php elseif($lib=='xmlToJson'): ?>
+            <script type="text/javascript" src="<?php echo asset_url('lib/xmlToJson.js', 'base') ?>"></script>
 
 
         <?php elseif($lib=='colorbox'):?>

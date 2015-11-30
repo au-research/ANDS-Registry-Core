@@ -18,7 +18,8 @@
                             </label>
                             <select required name="status" id="" class="form-control caret-for-select"
                                     ng-options="status for status in versionStatuses"
-                                    ng-model="version.status"></select>
+                                    ng-model="version.status"><option value="">Select
+                                    a version status</option></select>
 
                             <p ng-show="form.versionForm.status.$invalid" class="help-block">Version status is required.</p>
                         </div>
@@ -42,16 +43,16 @@
                             </label>
 
                             <p class="input-group">
-                                <input required type="text" name="release_date" class="form-control"
-                                       ng-model="version.release_date" placeholder="Release Date"
-                                       datepicker-popup="yyyy-MM-dd" is-open="opened">
-									<span class="input-group-btn">
-										<button type="button" class="btn btn-default" ng-click="open($event)"><i
+                                <input required type="text" id="release_date" name="release_date" class="form-control"
+                                       ng-model="version.release_date" placeholder="Release Date (supported formats: YYYY-MM-DD, YYYY-MM, YYYY)"
+                                       datepicker-popup="yyyy-MM-dd" is-open="$parent.opened">
+                                <span class="input-group-btn">
+                                  <button type="button" class="btn btn-default" ng-click="open($event)"><i
                                                 class="glyphicon glyphicon-calendar"></i></button>
-									</span>
+                                </span>
                             </p>
                             <p ng-show="form.versionForm.release_date.$invalid" class="help-block">Release Date is
-                                required.</p>
+                                required. Supported formats: YYYY-MM-DD, YYYY-MM, YYYY.</p>
                         </div>
                         <div class="form-group">
                             <label for="">Notes
@@ -101,7 +102,10 @@
                                 </label>
                                 <select class="form-control caret-for-select" required name="type"
                                         ng-options="type.value as type.text for type in types"
-                                        ng-model="newValue.ap.type"></select>
+                                        ng-model="newValue.ap.type">
+                                  <option value="">Select an access
+                                  point type</option>
+                                </select>
                                 <p ng-show="form.apForm.type.$invalid" class="help-block">Type is required.</p>
                             </div>
                             <div class="form-group" ng-class="{ 'has-error' : form.apForm.format.$invalid }">
@@ -109,7 +113,10 @@
                                 <div style="position:relative">
                                     <select class="form-control caret-for-select" required name="format"
                                             ng-options="format as format for format in formats"
-                                            ng-model="newValue.ap.format"></select>
+                                            ng-model="newValue.ap.format">
+                                      <option value="">Select an
+                                      access point format</option>
+                                    </select>
                                 </div>
                                 <p ng-show="form.apForm.format.$invalid" class="help-block">Format is required.</p>
                             </div>
@@ -154,7 +161,12 @@
                                     <b>[[uploadPercentage]]%</b>
                                 </progressbar>
 
-                                <p ng-show="form.apForm.uri.$invalid" class="help-block">URI is required.</p>
+                                <!-- Only show an error message at all
+                                here, if a type has been
+                                selected. Show a type-specific error
+                                message. -->
+                                <p ng-show="newValue.ap.type && newValue.ap.type == 'file' && form.apForm.uri.$invalid" class="help-block">File is required.</p>
+                                <p ng-show="newValue.ap.type && newValue.ap.type != 'file' && form.apForm.uri.$invalid" class="help-block">URI is required.</p>
                             </div>
                             <div class="alert alert-danger" ng-show="ap_error_message">[[ap_error_message]]</div>
                             <button type="button" ng-disabled="!validateAP()" class="btn btn-primary" ng-click="addformatform(newValue.ap)"><i

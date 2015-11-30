@@ -286,8 +286,32 @@ class User {
 			return $this->affiliations;
 		}
 	}
-		
-		
+
+    /**
+     * Construct an array that maps affiliations to
+     * pretty affiliation names, each with both full name and abbreviation,
+     * e.g., "ANDS" => "Australian National Data Service (ANDS)".
+     */
+    function affiliationsNames()
+    {
+        //@todo: fix this
+        // dd($this->CI->session->all_userdata());
+        $this->affiliationsName = $this->CI->session->userdata(AUTH_AFFILIATION_ARRAY);
+        $this->cosi_db = $this->CI->load->database('roles', true);
+        $affNames = array();
+        foreach($this->affiliationsName as $affiliation){
+            $query = $this->cosi_db->get_where('roles', array('role_id'=>$affiliation));
+            if ($query->num_rows() > 0) {
+                // There _can_ be more than one full name, so just pick the first for now.
+                $affNames[$affiliation] = $query->result_array()[0]['name'] . ' (' . $affiliation . ')';
+            } else {
+                // No full name, so use the abbreviation only.
+                $affNames[$affiliation] = $affiliation;
+            }
+        }
+        return $affNames;
+    }
+
 	/**
 	 * 
 	 */

@@ -25,7 +25,6 @@ class Dispatcher extends MX_Controller {
 		// Put the method back together and try and locate a matching controller
 		array_unshift($params, $method);
 		$requested_controller = CI::$APP->router->locate($params);
-
 		if(!is_null($requested_controller)) {
 			echo Modules::run(implode("/",$params));
 			return;
@@ -53,7 +52,12 @@ class Dispatcher extends MX_Controller {
 			$params = array($action_model);
 			echo Modules::run(implode("/",$params));
 			return;
-		} else {
+		}else if($params[0]=='subjects') {
+            $action_model = $this->config->item('default_model').'/subjects';
+            $params = array($action_model);
+            echo Modules::run(implode("/",$params));
+            return;
+        } else {
 
 			// If no match, assume it is a SLUG view request
 			if(sizeof($params) > 1) {

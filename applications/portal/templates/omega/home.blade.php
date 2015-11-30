@@ -70,7 +70,7 @@
                                  </div>
                              </div>
                              <h3 class="normal bold bordered bordered-small ">Themed Collections</h3>
-                             <p class="">Discover data in themed collections</p>
+                             <p class="">Explore selected resources by theme</p>
                          </div>
                         </a>
                        </div>

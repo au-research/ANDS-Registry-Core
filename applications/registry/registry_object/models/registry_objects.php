@@ -632,6 +632,25 @@ class Registry_objects extends CI_Model {
 		}
 	}
 
+	function getPortalStat($ro_id, $type = false) {
+		if ($type) {
+			$portal_db = $this->load->database('portal', true);
+			$stat = $portal_db->get_where('record_stats', array('ro_id'=>$ro_id));
+			if ($stat->num_rows() > 0) {
+			    $result = $stat->first_row('array');
+			    if (isset($result[$type])) {
+			        return $result[$type];
+			    } else {
+			        return 0;
+			    }
+			} else {
+			    return 0;
+			}
+		} else {
+			return array();
+		}
+	}
+
 	function getUnEnriched(){
 		$CI =& get_instance();
 

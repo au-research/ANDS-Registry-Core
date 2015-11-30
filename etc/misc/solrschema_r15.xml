@@ -31,6 +31,9 @@
 		<field name="contributor_page" type="string" indexed="true" stored="true"/>
 		<field name="originating_source" type="string" indexed="true" stored="true"/>
 
+		<field name="quality_level" type="string" indexed="true" stored="true"/>
+		<field name="tr_cited" type="string" indexed="true" stored="true"/>
+
 		<field name="update_timestamp" type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
 		<field name="record_created_timestamp" type="date" indexed="true" stored="true" multiValued="false"/>
 		<field name="record_modified_timestamp" type="date" indexed="true" stored="true" multiValued="false"/>

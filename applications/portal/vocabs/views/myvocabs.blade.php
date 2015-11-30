@@ -32,9 +32,9 @@
 										@foreach($owned_vocabs as $vocab)
 											@if($vocab['status']=='published')
 											<tr>
-												<td><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></td>
-												<td>
-													<div class="btn-group">
+												<td><div class="published_title"><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></td>
+												</div><td>
+													<div class="btn-group pull-right">
 														<a href="{{ portal_url($vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-search"></i> View</a>
 														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
 														<a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
@@ -55,9 +55,9 @@
 										@foreach($owned_vocabs as $vocab)
 											@if($vocab['status']=='draft')
 											<tr>
-												<td><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></td>
-												<td>
-													<div class="btn-group">
+												<td><div class="draft_title"><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></td>
+                        </div><td>
+													<div class="btn-group pull-right">
 														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
 														<a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
 													</div>
@@ -77,9 +77,9 @@
 										@foreach($owned_vocabs as $vocab)
 											@if($vocab['status']=='deprecated')
 											<tr>
-												<td><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></td>
-												<td>
-													<div class="btn-group">
+												<td><div class="draft_title"><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></td>
+												</div><td>
+													<div class="btn-group pull-right">
 														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
 														<a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
 													</div>

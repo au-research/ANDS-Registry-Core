@@ -89,9 +89,9 @@
 		    </div>
 		    @endif
 		@endforeach
-
-		<p class="element element-short-top">{{ isset($vocab['current_version']['note']) ? $vocab['current_version']['note']: '' }}</p>
-
+        <div class="text-center">
+		{{ isset($vocab['current_version']['release_date']) ? '<span class="small"><em>released: '. display_release_date($vocab['current_version']['release_date'])."</em></span>": '' }}{{ isset($vocab['current_version']['note']) ? '<span class="small"> <a href="" tip="'.htmlentities($vocab['current_version']['note']).'">view notes</a></span>': '' }}
+</div>
 		<div class="download-content hidden">
 		@if($hasFile && $hasSesameDownloads)
 			Original:
@@ -210,9 +210,9 @@
 			    </div>
 			    @endif
 			@endforeach
-
-			<p>{{ isset($version['note']) ? $version['note']: '' }}</p>
-
+            <div class="text-center">
+                {{ isset($version['release_date']) ? '<span class="small"><em>released: '. display_release_date($version['release_date'])."</em></span>": '' }}{{ isset($version['note']) ? '<span class="small"> <a href="" tip="'.htmlentities($version['note']).'">view notes</a></span>': '' }}
+            </div>
 			<div class="download-content hidden">
 			@foreach($version['version_access_points'] as $ap)
 			    @if($ap['type']=='file')

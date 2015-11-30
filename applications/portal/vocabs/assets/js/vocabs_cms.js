@@ -16,16 +16,26 @@
         return this.getTime() === this.getTime();
     };
 
-    function addVocabsCtrl($log, $scope, $sce, $location, $modal, vocabs_factory) {
+    function addVocabsCtrl($log, $scope, $sce, $timeout, $location, $modal, vocabs_factory) {
 
         $scope.form = {};
 
-        $scope.vocab = {top_concept: [], subjects: []};
+        // Initialize sections that can have multiple instances.
+        // Note the distinction between sections which are optional,
+        // and those for which there must be at least one instance.
+        $scope.vocab = {top_concept: [], subjects: [{ subject_source: "", subject:"" }], language: [""]};
         /**
          * Collect all the user roles, for vocab.owner value
          */
         vocabs_factory.user().then(function (data) {
             $scope.user_orgs = data.message['affiliations'];
+            $scope.user_orgs_names = [];
+            for (var i=0; i<data.message['affiliations'].length; ++i)
+            {
+                // Use the affiliation as the 'id', and then use the affiliation
+                // to look up the full name, and use that as the 'name'.
+                $scope.user_orgs_names.push({'id':data.message['affiliations'][i],'name': data.message['affiliationsNames'][ data.message['affiliations'][i] ]});
+            }
             $scope.user_owner = data.message['role_id'];
         });
         $scope.vocab.user_owner = $scope.user_owner;
@@ -66,13 +76,75 @@
         if ($('#vocab_slug').val()) {
             vocabs_factory.get($('#vocab_id').val()).then(function (data) {
                 $log.debug('Editing ', data.message);
-                $scope.vocab = data.message;
+                // Preserve the original data for later. We need this
+                // specifically for the creation_date value.
+                $scope.original_data = data.message;
+                // Make a deep copy. This used to be
+                //    $scope.vocab = data.message;
+                // But that is a copy by reference ... subsequent changes
+                // to $scope.vocab affect data.message too, making
+                // it impossible to refer to the original values.
+                $scope.vocab = angular.copy(data.message);
                 $scope.vocab.user_owner = $scope.user_owner;
                 $scope.mode = 'edit';
                 $scope.decide = true;
+                // Special handling for creation date.
+                $scope.set_creation_date_textfield($scope);
                 $log.debug($scope.form.cms);
             });
         }
+
+        // Now follows all the code for special treatment of the creation date.
+        // See also versionCtrl.js, which has a modified version of all of
+        // this for version release dates.
+
+        /* Flag to determine when to reset the content of the creation date
+           text field. Set by set_creation_date_textfield() and reset by the
+           watcher put on vocab.creation_date. */
+        $scope.restore_creation_date_value = false;
+
+        /* Special handling for the creation date field. Needed because of the
+           combination of the text field, the off-the-shelf datepicker,
+           and the desire to allow partial dates (e.g., year only). */
+        $scope.set_creation_date_textfield = function (scope) {
+            // In some browser JS engines, the Date constructor interprets
+            // "2005" not as though it were "2005-01-01", but as 2005 seconds
+            // into the Unix epoch. But Date.parse() seems to cope better,
+            // so pass the date field through Date.parse() first. If that
+            // succeeds, it can then go through the Date constructor.
+            var dateValParsed = Date.parse($scope.original_data.creation_date);
+            if (!isNaN(dateValParsed)) {
+                var dateVal = new Date(dateValParsed);
+                $scope.vocab.creation_date = dateVal;
+                // Set this flag, so that the watcher on the vocab.creation_date
+                // field knows to reset the text field to the value we got
+                // from the database.
+                $scope.restore_creation_date_value = true;
+            }
+            else {
+                $scope.vocab.creation_date = new Date();
+            }
+        };
+
+        /* Callback function used by the watcher on vocab.creation_date.
+           It overrides the content of the creation date text field with
+           the value we got from the database. */
+        $scope.do_restore_creation_date = function() {
+            $('#creation_date').val($scope.original_data.creation_date);
+        }
+
+        /* Watcher for the vocab.creation_data field. If we got notification
+           (via the restore_creation_date_value flag) to reset the text
+           field value, schedule the reset. Need to use $timeout
+           so that the reset happens after the current round of
+           AngularJS model value propagation. */
+        $scope.$watch('vocab.creation_date', function() {
+            if ($scope.restore_creation_date_value) {
+                $scope.restore_creation_date_value = false;
+                $timeout($scope.do_restore_creation_date, 0);
+            }
+        });
+
 
         if ($location.search().skip) {
             $scope.decide = true;
@@ -259,10 +331,26 @@
                 window.location.replace(base_url + 'vocabs/myvocabs');
                 return false;
             }
-            //validation
-            if (!$scope.validate()) {
+            // Tidy up empty fields before validation.
+            $scope.tidy_empty();
+
+            // Validation.
+            // First, rely on Angular's error handling.
+            if ($scope.form.cms.$invalid) {
+                // Put back the multi-value lists ready for more editing.
+                $scope.ensure_all_minimal_lists();
                 return false;
             }
+            // Then, do our own validation.
+            if (!$scope.validate()) {
+                // Put back the multi-value lists ready for more editing.
+                $scope.ensure_all_minimal_lists();
+                return false;
+            }
+
+            // Save the date as it actually is in the input's textarea, not
+            // as it is in the model.
+            $scope.vocab.creation_date = $('#creation_date').val();
 
             if ($scope.mode == 'add' || ($scope.vocab.status == 'published' && status == 'draft')) {
                 $scope.vocab.status = status;
@@ -331,8 +419,11 @@
                 }
 
                 //subject validation
-                if (!$scope.vocab.subjects || $scope.vocab.subjects.length == 0) {
+                if (!$scope.vocab.subjects || $scope.vocab.subjects.length == 0 || $scope.subjects_has_no_nonempty_elements()) {
                     $scope.error_message = 'There must be at least 1 subject';
+                }
+                if ($scope.subjects_has_an_only_partially_valid_element()) {
+                    $scope.error_message = 'There is a partially-completed subject. Either complete it or remove it.';
                 }
 
                 //publisher validation
@@ -382,13 +473,16 @@
             Is there a better way?
         */
         $scope.confluenceTip = function (anchor) {
-            return $sce.trustAsHtml('<a href="" confluence_tip="' +
+            return $sce.trustAsHtml('<span confluence_tip="' +
               'PopulatingRVAPortalMetadataFields(OptimisedforRVATooltips)-' +
               anchor + '"><span class="fa fa-info-circle" ' +
-              'style="color: #17649a; font-size: 13px"></span></a>');
+              'style="color: #17649a; font-size: 13px"></span></span>');
         };
 
-        $scope.relatedmodal = function (action, type, obj) {
+        // CC-1518 Need the related entity index, because we send a
+        // copy of the related entity to the modal, and then need to
+        // copy it back into the correct place after a Save.
+        $scope.relatedmodal = function (action, type, index) {
             var modalInstance = $modal.open({
                 templateUrl: base_url + 'assets/vocabs/templates/relatedModal.html',
                 controller: 'relatedCtrl',
@@ -396,7 +490,8 @@
                 resolve: {
                     entity: function () {
                         if (action == 'edit') {
-                            return obj;
+                            // CC-1518 Operate on a copy of the related entity.
+                            return angular.copy($scope.vocab.related_entity[index]);
                         } else {
                             return false;
                         }
@@ -418,14 +513,18 @@
                     if (!$scope.vocab.related_entity) $scope.vocab.related_entity = [];
                     $scope.vocab.related_entity.push(newObj);
                 } else if (obj.intent == 'save') {
-                    obj = obj.data;
+                    // CC-1518 Copy the modified related entity back into place.
+                    $scope.vocab.related_entity[index] = obj.data;
                 }
             }, function () {
                 //dismiss
             });
         };
 
-        $scope.versionmodal = function (action, obj) {
+        // CC-1518 Need the version index, because we send a copy of the version
+        // to the modal, and then need to copy it back into the correct place
+        // after a Save.
+        $scope.versionmodal = function (action, index) {
             var modalInstance = $modal.open({
                 templateUrl: base_url + 'assets/vocabs/templates/versionModal.html',
                 controller: 'versionCtrl',
@@ -433,7 +532,8 @@
                 resolve: {
                     version: function () {
                         if (action == 'edit') {
-                            return obj;
+                            // CC-1518 Operate on a copy of the version.
+                            return angular.copy($scope.vocab.versions[index]);
                         } else {
                             return false;
                         }
@@ -456,49 +556,163 @@
                     if (!$scope.vocab.versions) $scope.vocab.versions = [];
                     $scope.vocab.versions.push(newObj);
                 } else {
-                    obj = obj.data;
+                    // CC-1518 Copy the modified version back into place.
+                    $scope.vocab.versions[index] = obj.data;
                 }
             }, function () {
                 //dismiss
             });
         };
 
+        /** A list of the multi-valued elements that are the elements
+            of $scope.vocab. Useful when iterating over all of these. */
+        $scope.multi_valued_lists = [ 'language', 'subjects', 'top_concept' ];
+
         /**
          * Add an item to an existing vocab
          * Primarily used for adding multivalued contents to the vocabulary
-         * @param list
-         * @param item enum
-         * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+         * @param name of list: one of the values in $scope.multi_valued_lists,
+         *   e.g., 'top_concept'.
          */
-
-        $scope.addtolist = function (list, item) {
+        $scope.addtolist = function (list) {
             if (!$scope.vocab[list]) $scope.vocab[list] = [];
 
-            //some validation
-            if (list == 'language' && !item) return false;
-            if (list == 'top_concept' && !item) return false;
-            if (list == 'subjects' && !(item.subject && item.subject_source)) return false;
-
-            //pass validation
-            $scope.vocab[list].push(item);
-            $scope.resetValues();
-        };
-
-        $scope.resetValues = function () {
-            $scope.newValue = {
-                language: "",
-                subject: {subject: '', subject_source: ''}
+            var newValue;
+            // 'subjects' has two parts; special treatment.
+            if (list == 'subjects') {
+                newValue = {subject_source: '', subject: ''};
+            } else {
+                // Otherwise ('language' and 'top_concept') ...
+                newValue = '';
             }
-        };
-        $scope.resetValues();
 
+            // Add new blank item to list.
+            $scope.vocab[list].push(newValue);
+        };
+
+        /**
+         * Remove an item from a multi-valued list. The list
+         * is left in good condition: specifically,
+         * $scope.ensure_minimal_list is called after the item
+         * is removed.
+         * @param name of list: one of the values in $scope.multi_valued_lists,
+         *   e.g., 'top_concept'.
+         * @param index of the item to be removed.
+         */
         $scope.list_remove = function (type, index) {
             if (index > 0) {
                 $scope.vocab[type].splice(index, 1);
             } else {
                 $scope.vocab[type].splice(0, 1);
             }
+            $scope.ensure_minimal_list(type);
         }
+
+        /** Ensure that a multi-value field has a minimal content, ready
+            for editing. For some types, this could be an empty list;
+            for others, a list with one (blank) element. */
+        $scope.ensure_minimal_list = function (type) {
+            if ($scope.vocab[type].length == 0) {
+                // Now an empty list. Do we put back a placeholder?
+                switch (type) {
+                case 'language':
+                    $scope.vocab[type] = [""];
+                    break;
+                case 'subjects':
+                    $scope.vocab[type] = [{ subject_source: "", subject:"" }];
+                    break;
+                default:
+                }
+            }
+        }
+
+        /** Ensure that all multi-value fields have minimal content, ready
+            for editing. For some types, this could be an empty list;
+            for others, a list with one (blank) element. */
+        $scope.ensure_all_minimal_lists = function () {
+            angular.forEach($scope.multi_valued_lists, function (type) {
+                $scope.ensure_minimal_list(type);
+            });
+        }
+
+        /** Tidy up all empty fields. To be used before saving.
+            Note that this does not guarantee validity.
+            To be specific, this does not remove subjects that are
+            only partially valid.
+         */
+        $scope.tidy_empty = function() {
+            $scope.vocab.top_concept = $scope.vocab.top_concept.filter(Boolean);
+            $scope.vocab.language = $scope.vocab.language.filter(Boolean);
+            $scope.vocab.subjects = $scope.vocab.subjects.filter($scope.partially_valid_subject_filter);
+        }
+
+        /** Utility function for validation of fields that can have
+            multiple entries. The list is supposed to have at least one
+            element that is a non-empty string. This method returns true
+            if this is not the case. */
+        $scope.array_has_no_nonempty_strings = function (list) {
+            return list === undefined || list.filter(Boolean).length == 0;
+        }
+
+        /** Utility function for testing if a value is a non-empty
+            string. It is careful not to fail on non-string values. */
+        $scope.is_non_empty_string = function(str) {
+            return (typeof str != "undefined") &&
+                (str != null) &&
+                (typeof str.valueOf() == "string") &&
+                (str.length > 0);
+        }
+
+        /** Filter function for one subject object. Returns true
+            if the subject is valid, i.e., contains both a non-empty
+            source and a non-empty subject. */
+        $scope.valid_subject_filter = function(el) {
+            return ('subject_source' in el) &&
+                ($scope.is_non_empty_string(el.subject_source)) &&
+                ('subject' in el) &&
+                ($scope.is_non_empty_string(el.subject));
+        }
+
+        /** Filter function for one subject object. Returns true
+            if the subject has at least one part valid,
+            i.e., contains either a non-empty
+            source or a non-empty subject. */
+        $scope.partially_valid_subject_filter = function(el) {
+            return (('subject_source' in el) &&
+                    ($scope.is_non_empty_string(el.subject_source))) ||
+                (('subject' in el) &&
+                 ($scope.is_non_empty_string(el.subject)));
+        }
+
+        /** Filter function for one subject object. Returns true
+            if the subject has exactly one part valid,
+            i.e., contains either a non-empty
+            source or a non-empty subject, but not both. */
+        $scope.only_partially_valid_subject_filter = function(el) {
+            return (('subject_source' in el) &&
+                    ($scope.is_non_empty_string(el.subject_source))) !=
+                (('subject' in el) &&
+                 ($scope.is_non_empty_string(el.subject)));
+        }
+
+        /** Utility function for validation of subjects. In order
+            to help the user not lose a partially-complete subject,
+            call this function to check if the user has a subject for
+            which there is only a source or a subject, but not both. */
+        $scope.subjects_has_an_only_partially_valid_element = function () {
+            return $scope.vocab.subjects.filter($scope.only_partially_valid_subject_filter).length > 0;
+        }
+
+        /** Utility function for validation of subjects. The list
+            of subjects is supposed to have at least one
+            element that has both a non-empty source and a non-empty
+            subject. This method returns true
+            if this is not the case. */
+        $scope.subjects_has_no_nonempty_elements = function () {
+            return $scope.vocab.subjects == undefined ||
+                $scope.vocab.subjects.filter($scope.valid_subject_filter) == 0;
+        }
+
 
     }
 
@@ -531,10 +745,41 @@ RewriteRule ^/ands_doc/tooltips$  /ands_doc/pages/viewpage.action?pageId=2247884
     */
     $(document).ready(function() {
         $.get("/ands_doc/tooltips", function (data) {
-        var data_replaced = data.replace(/src="/gi, 'src="/ands_doc');
-        var html = $(data_replaced).find('#content-column-0');
+            var data_replaced = data.replace(/src="/gi, 'src="/ands_doc');
+            var html = $(data_replaced).find('#content-column-0');
             $('#all_help').html(html);
+            // Make all external links in these tooltips open a new
+            // tab/window. Courtesy of:
+            // https://confluence.atlassian.com/display/CONFKB/How+to+force+links+to+open+in+a+new+window
+            $('#all_help').find(".external-link").attr("target", "_blank");
         });
+    });
+
+    // Directive based on:
+    // http://stackoverflow.com/questions/26278711/using-the-enter-key-as-tab-using-only-angularjs-and-jqlite
+
+    angular.module('app').directive('topConceptsEnter', function () {
+        return function (scope, element, attrs) {
+            element.bind("keydown keypress", function (event) {
+                if (event.which === 13) {
+                    // User pressed Enter. Inhibit default behaviour.
+                    event.preventDefault();
+                    var elementToFocus = element.next().find('input')[0];
+                    if (angular.isDefined(elementToFocus)) {
+                        elementToFocus.focus();
+                    } else {
+                        // Add a new row to the model. We are not in the Angular
+                        // execution cycle at this point, so we need $apply
+                        // so that the change is propagated to the DOM.
+                        scope.$apply(function() { scope.addtolist('top_concept'); });
+                        // We should now have a new element. Move the focus to it.
+                        var newelementToFocus = element.next('tr').find('input')[0];
+                        if (angular.isDefined(newelementToFocus))
+                            newelementToFocus.focus();
+                    }
+                }
+            });
+        };
     });
 
 })();

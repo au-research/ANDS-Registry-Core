@@ -6,7 +6,7 @@
         <div id="content" ng-controller="searchCtrl">
             @include('includes/hidden-metadata')
             @include('includes/search-section')
-        	<article ng-controller="viewController">	
+        	<article ng-controller="viewController">
     		    <section class="section swatch-gray" style="z-index:1">
     		    	<div class="container">
     		    		<div class="row element-short-top">
@@ -50,7 +50,7 @@
                                         @endif
 
                                         <div class="clear"></div>
-                                     
+
                                                     @include('registry_object/contents/related-parties')
                                                 </div>
                                             </div>
@@ -88,11 +88,12 @@
     		    	</div>
     		    </section>
         	</article>
+            @include('registry_object/service_contents/accessPolicyModal')
             @include('registry_object/contents/citation-modal')
             @include('includes/advanced_search')
             @include('includes/my-rda')
         </div>
-        
+
         @include('includes/footer')
     </body>
 </html>

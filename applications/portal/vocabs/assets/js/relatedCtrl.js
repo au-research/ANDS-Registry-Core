@@ -6,20 +6,25 @@
         .controller('relatedCtrl', relatedCtrl);
 
     function relatedCtrl($scope, $modalInstance, $log, $timeout, entity, type, vocabs_factory, confluenceTip) {
-        $scope.relatedEntityRelations = [
-            {"value": "publishedBy", "text": "Publisher"},
-            {"value": "hasAuthor", "text": "Author"},
-            {"value": "hasContributor", "text": "Contributor"},
-            {"value": "pointOfContact", "text": "Point of contact"},
-            {"value": "implementedBy", "text": "Implementer"},
-            {"value": "consumerOf", "text": "Consumer"},
-            {"value": "hasAssociationWith", "text": "Associated with"},
-            {"value": "isPresentedBy", "text": "Presented by"},
-            {"value": "isUsedBy", "text": "Used by"},
-            {"value": "isDerivedFrom", "text": "Derived from"},
-            {"value": "enriches", "text": "Enriches"},
-            {"value": "isPartOf", "text": "Part of"}
-        ]
+
+        /* Define all the relationships, per type. The "types" value
+           is an array of the types for which this relation is valid.
+           For now, only "hasAssociationWith" has more than one supported
+           type. */
+        $scope.allRelatedEntityRelations = [
+            {"value": "publishedBy", "text": "Publisher", "types": ["party"]},
+            {"value": "hasAuthor", "text": "Author", "types": ["party"]},
+            {"value": "hasContributor", "text": "Contributor", "types": ["party"]},
+            {"value": "pointOfContact", "text": "Point of contact", "types": ["party"]},
+            {"value": "implementedBy", "text": "Implementer", "types": ["party"]},
+            {"value": "consumerOf", "text": "Consumer", "types": ["party"]},
+            {"value": "hasAssociationWith", "text": "Associated with", "types": ["service", "vocabulary"]},
+            {"value": "isPresentedBy", "text": "Presented by", "types": ["service"]},
+            {"value": "isUsedBy", "text": "Used by", "types": ["service"]},
+            {"value": "isDerivedFrom", "text": "Derived from", "types": ["vocabulary"]},
+            {"value": "enriches", "text": "Enriches", "types": ["vocabulary"]},
+            {"value": "isPartOf", "text": "Part of", "types": ["vocabulary"]}
+        ];
 
         $scope.relatedEntityTypes = ['publisher', 'vocabulary', 'service'];
         $scope.entity = false;
@@ -31,9 +36,13 @@
             $scope.entity = entity;
             $scope.intent = 'save';
         } else {
-            $scope.entity = {'relationship':[]};
+            // Add a placeholder for one relationship.
+            $scope.entity = {'relationship':['']};
         }
 
+        /* Please note behaviour here. Magic value for type
+           "publisher": this sets up a relationship in which
+           the type is in fact "party'. */
         if ($scope.type == "publisher") {
             $scope.type = 'party';
             $scope.entity = {
@@ -41,9 +50,17 @@
             }
         }
 
+        /* Filter the entity relations based on type. */
+        $scope.getRelation = function() {
+            return $scope.allRelatedEntityRelations.filter(
+                function(rel) { return rel.types.indexOf($scope.type) != -1; }
+            );
+        }
 
-
-        $scope.newrel = '';
+        /* Set valid relations for this type. Note that this statement
+           must occur _after_ the preceding "if" statement because
+           of the treatment of type="publisher". */
+        $scope.relatedEntityRelations = $scope.getRelation();
 
         $scope.form = {
             reForm:{}
@@ -80,39 +97,85 @@
             }
         };
 
-        $scope.getRelation = function() {
-            if ($scope.type=='party') {
-                return [
-                    {"value": "publishedBy", "text": "Publisher"},
-                    {"value": "hasAuthor", "text": "Author"},
-                    {"value": "hasContributor", "text": "Contributor"},
-                    {"value": "pointOfContact", "text": "Point of contact"},
-                    {"value": "implementedBy", "text": "Implementer"},
-                    {"value": "consumerOf", "text": "Consumer"}
-                ];
-            } else if ($scope.type=='service') {
-                return [
-                    {"value": "hasAssociationWith", "text": "Associated with"},
-                    {"value": "isPresentedBy", "text": "Presented by"},
-                    {"value": "isUsedBy", "text": "Used by"}
-                ];
-            } else if ($scope.type=='vocabulary') {
-                return [
-                    {"value": "hasAssociationWith", "text": "Associated with"},
-                    {"value": "isDerivedFrom", "text": "Derived from"},
-                    {"value": "enriches", "text": "Enriches"},
-                    {"value": "isPartOf", "text": "Part of"}
-                ];
-            }
-        }
+        /** A list of the multi-valued elements that are the elements
+            of $scope.vocab. Useful when iterating over all of these. */
+        $scope.multi_valued_lists = [ 'relationship' ];
+        // For future work:
+        // $scope.multi_valued_lists = [ 'relationship', 'identifiers', 'urls' ];
 
+        /**
+         * Add an item to a multi-valued list.
+         * @param name of list: for now, should be 'relationship'.
+         */
+        $scope.addtolist = function (list) {
+            if (!$scope.entity[list]) $scope.entity[list] = [];
+
+            var newValue;
+            newValue = '';
+
+            // Add new blank item to list.
+            $scope.entity[list].push(newValue);
+        };
+
+        /**
+         * Remove an item from a multi-valued list. The list
+         * is left in good condition: specifically,
+         * $scope.ensure_minimal_list is called after the item
+         * is removed.
+         * @param name of list: one of the values in $scope.multi_valued_lists,
+         *   e.g., 'top_concept'.
+         * @param index of the item to be removed.
+         */
         $scope.list_remove = function (type, index) {
             if (index > 0) {
                 $scope.entity[type].splice(index, 1);
             } else {
                 $scope.entity[type].splice(0, 1);
             }
+            $scope.ensure_minimal_list(type);
         };
+
+        /** Ensure that a multi-value field has a minimal content, ready
+            for editing. For some types, this could be an empty list;
+            for others, a list with one (blank) element. */
+        $scope.ensure_minimal_list = function (type) {
+            if ($scope.entity[type].length == 0) {
+                // Now an empty list. Do we put back a placeholder?
+                switch (type) {
+                case 'relationship':
+                    $scope.entity[type] = [""];
+                    break;
+                default:
+                }
+            }
+        }
+
+        /** Ensure that all multi-value fields have minimal content, ready
+            for editing. For some types, this could be an empty list;
+            for others, a list with one (blank) element. */
+        $scope.ensure_all_minimal_lists = function () {
+            angular.forEach($scope.multi_valued_lists, function (type) {
+                $scope.ensure_minimal_list(type);
+            });
+        }
+
+        /** Utility function for validation of fields that can have
+            multiple entries. The list is supposed to have at least one
+            element that is a non-empty string. This method returns true
+            if this is not the case. */
+        $scope.array_has_no_nonempty_strings = function (list) {
+            return list === undefined || list.filter(Boolean).length == 0;
+        }
+
+        /** Tidy up all empty fields. To be used before saving.
+            Note that this does not guarantee validity.
+         */
+        $scope.tidy_empty = function() {
+            $scope.entity.relationship = $scope.entity.relationship.filter(Boolean);
+            // For future work:
+            // $scope.entity.identifiers = $scope.entity.identifiers.filter(Boolean);
+            // $scope.entity.urls = $scope.entity.urls.filter(Boolean);
+        }
 
         $scope.save = function () {
             if ($scope.validateEntity()) {
@@ -121,11 +184,19 @@
                     'data': $scope.entity
                 };
                 $modalInstance.close(ret);
-            } else return false;
+            } else {
+                // Put back the multi-value lists ready for more editing.
+                $scope.ensure_all_minimal_lists();
+                return false;
+            }
         };
 
         $scope.validateEntity = function () {
             delete $scope.error_message;
+
+            // Tidy up empty fields before validation.
+            $scope.tidy_empty();
+
             if ($scope.form.reForm.$valid) {
 
                 //at least 1 relationship
@@ -159,4 +230,5 @@
         });
 
     }
+
 })();

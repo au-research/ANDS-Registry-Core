@@ -34,7 +34,7 @@ class Doi_test extends MX_Controller {
     </creators>
     <titles>
         <title>Acacia abrupta</title>
-        <title titleType="Subtitle">Version 42</title>
+        <title titleType="Subtitle">Version 42 &#x3C; 43</title>
     </titles>
     <publisher>FOA</publisher>
     <publicationYear>2015</publicationYear>

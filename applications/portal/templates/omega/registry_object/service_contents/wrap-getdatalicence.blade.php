@@ -31,6 +31,13 @@
 <div class="panel swatch-white gray-bg">
     <div class="panel-body">
         @include('registry_object/contents/access')
+        @if($ro->accessPolicy)
+        <div class="btn-group btn-group-justified element element-no-top" role="group" aria-label="...">
+            @foreach($ro->accessPolicy as $accessPolicy)
+                <a class="btn btn-sm btn-default" href="{{$ro->accessPolicy[0]}}" target="_blank"><i class="fa fa-external-link"></i> View Access Policy</a>
+            @endforeach
+        </div>
+        @endif
     	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
             <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="ro.bookmarked"><i class="fa fa-bookmark"></i> Saved to MyRDA</a>
             <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="!ro.bookmarked"><i class="fa fa-bookmark-o"></i> Save to MyRDA</a>
@@ -60,7 +67,7 @@
                 <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/au/" tip="Attribution-Non Commercial-Shared Alike"><img src="{{asset_url('images/icons/CC-BY-NC-SA.png', 'core')}}" class="img-cc" alt="CC-BY-NC-SA"></a> <br/>
             @elseif($cc=='CC-BY-NC-ND')
                 <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
-            @else 
+            @else
                 <span>{{$cc}}</span>
         	@endif
 
@@ -68,7 +75,7 @@
         	   <a href="javascript:;" id="toggleRightsContent">View details</a>
         	@endif
         </div>
-        
+
         @if($detail)
             <div id="rightsContent">
                 @if($content) {{$content}} @endif

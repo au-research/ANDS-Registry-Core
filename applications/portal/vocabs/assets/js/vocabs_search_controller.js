@@ -15,7 +15,8 @@
         // eg. <base_url>+/#!/?q=fish, #!/?q=fish&subjects=Fish
         $scope.filters = $location.search();
 
-        $scope.search = function () {
+        $scope.search = function (isPagination) {
+            if (!isPagination || isPagination == undefined) $scope.filters['p'] = 1;
             if ($scope.searchRedirect()) {
                 window.location = base_url + '#!/?q=' + $scope.filters['q'];
             } else {
@@ -36,9 +37,28 @@
                         }
                     });
                     $scope.facets = facets;
+
+                    $scope.page = {
+                        cur: ($scope.filters['p'] ? parseInt($scope.filters['p']) : 1),
+                        rows: ($scope.filters['rows'] ? parseInt($scope.filters['rows']) : 10),
+                        range: 3,
+                        pages: []
+                    }
+                    $scope.page.end = Math.ceil($scope.result.response.numFound / $scope.page.rows);
+                    for (var x = ($scope.page.cur - $scope.page.range); x < (($scope.page.cur + $scope.page.range)+1);x++ ) {
+                        if (x > 0 && x <= $scope.page.end) {
+                            $scope.page.pages.push(x);
+                        }
+                    }
                 });
             }
         };
+
+        $scope.goto = function(x) {
+            $scope.filters['p'] = ''+x;
+            $scope.search(true);
+            $("html, body").animate({ scrollTop: 0 }, 500);
+        }
 
         $scope.searchRedirect = function () {
             return $('#search_app').length <= 0;

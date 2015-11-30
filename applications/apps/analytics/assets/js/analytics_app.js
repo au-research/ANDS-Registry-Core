@@ -9,46 +9,43 @@
     function configuration($routeProvider, $locationProvider) {
         $routeProvider
             .when('/', {
-                templateUrl: apps_url+'assets/analytics/pages/index.html',
+                templateUrl: apps_url + 'assets/analytics/pages/index.html',
                 controller: 'mainCtrl',
                 controllerAs: 'vm',
                 resolve: {
 
-                    superUser : function(analyticFactory) {
+                    superUser: function (analyticFactory) {
                         return analyticFactory.getUser();
                     },
 
-                    orgs: function(analyticFactory) {
+                    orgs: function (analyticFactory) {
                         return analyticFactory.getOrg();
                     }
                 }
             })
             .when('/report/:role_id', {
-                templateUrl: apps_url+'assets/analytics/pages/report.html',
+                templateUrl: apps_url + 'assets/analytics/pages/report.html',
                 controller: 'reportCtrl',
                 controllerAs: 'vm',
                 resolve: {
-                    org: function(analyticFactory, $route) {
+                    org: function (analyticFactory, $route) {
                         var id = $route.current.params.role_id;
                         return analyticFactory.getOrg(id);
                     }
                 }
             })
             .when('/masterview', {
-                templateUrl: apps_url+'assets/analytics/pages/report.html',
+                templateUrl: apps_url + 'assets/analytics/pages/report.html',
                 controller: 'reportCtrl',
                 controllerAs: 'vm',
                 resolve: {
-                    org: function() {
-                        return {
-                            'name': 'Masterview'
-                        }
+                    org: function (analyticFactory) {
+                        return analyticFactory.getOrgAPI("Masterview");
                     }
                 }
             })
         ;
     }
-
 
 
 })();

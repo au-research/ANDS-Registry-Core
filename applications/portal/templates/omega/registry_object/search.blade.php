@@ -49,7 +49,7 @@
                         <h2 class="post-title">
                             <a href="{{base_url()}}[[doc.slug]]/[[doc.id]]/?refer_q=[[filters_to_hash()]]" ng-bind-html="doc.title"></a>
                         </h2>
-                        <p><small>[[doc.group]]</small></p>
+                        <p><small>[[doc.group]]</small> <small ng-if="filters.class=='activity' && doc.earliest_year"><span style="padding-left:15px"></span><strong>[[doc.earliest_year]] to [[doc.latest_year]]</strong></small></p>
                         <p ng-if="doc.matching_identifier_count">[[ doc.matching_identifier_count ]] Linked Records</p>
                         <p ng-if="doc.identifiermatch">
                             <ul>

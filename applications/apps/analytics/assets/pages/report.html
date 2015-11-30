@@ -7,6 +7,78 @@
     <a href="#/{{vm.org.role_id}}" class="current">{{ vm.org.name }} - RDA statistics</a>
 </div>
 <div class="container-fluid">
+
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title" ng-click="vm.filters.open=!vm.filters.open">
+                    <span class="icon">
+                        <i class="icon" ng-class="{false: 'icon-plus',true: 'icon-minus', undefined:'icon-plus'}[vm.filters.open]"></i>
+                    </span>
+                    <h5>Filters</h5>
+                </div>
+                <div class="widget-content" ng-if="vm.filters.open">
+                    <form class="form">
+                        <div class="control-group">
+                            <label for="" class="control-label">Date Range</label>
+                            <div class="controls">
+                                <input
+                                    date-range-picker
+                                    class="form-control date-picker"
+                                    type="text"
+                                    ng-model="vm.filters.period"
+                                    ng-change="vm.getData()"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label for="" class="control-label">Class</label>
+                            <div class="controls">
+                                <label ng-repeat="class in vm.classNames">
+                                    <input
+                                            type="checkbox"
+                                            name="selectClasses[]"
+                                            value="{{class}}"
+                                            ng-checked="vm.filters.class.indexOf(class) > -1"
+                                            ng-click="vm.toggleSelection(class, 'class')"
+                                    > {{class}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label for="" class="control-label">Groups</label>
+                            <div class="controls">
+                                <label ng-repeat="group in vm.availableFilters.groups">
+                                    <input
+                                            type="checkbox"
+                                            name="selectGroups[]"
+                                            value="{{group}}"
+                                            ng-checked="vm.filters.groups.indexOf(group) > -1"
+                                            ng-click="vm.toggleSelection(group, 'groups')"
+                                    > {{group}}
+                                </label>
+                            </div>
+                        </div>
+                        <!-- <div class="control-group">
+                            <label for="" class="control-label">Data Sources</label>
+                            <div class="controls">
+                                <label ng-repeat="ds in vm.availableFilters.data_sources">
+                                    <input
+                                            type="checkbox"
+                                            name="selectDS[]"
+                                            value="{{ds.title}}"
+                                            ng-checked="vm.filters.data_sources.indexOf(ds.data_source_id) > -1"
+                                            ng-click="vm.toggleSelection(ds.data_source_id, 'data_sources')"
+                                    > {{ ds.title }}
+                                </label>
+                            </div>
+                        </div>-->
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row-fluid">
 
         <div class="span8">
@@ -18,8 +90,10 @@
                     <form class="form form-horizontal" ng-submit="vm.getData()">
                         <div class="control-group">
                             <label for="" class="control-label">Date Range</label>
+
                             <div class="controls">
-                                <input date-range-picker class="form-control date-picker" type="text" ng-model="vm.filters.period" ng-change="vm.getData()"/>
+                                <input date-range-picker class="form-control date-picker" type="text"
+                                       ng-model="vm.filters.period" ng-change="vm.getData()"/>
                             </div>
                         </div>
                     </form>
@@ -27,10 +101,10 @@
                 <div class="widget-content">
                     <div class="row-fluid">
                         <canvas
-                            ng-if="vm.rdaChartData"
-                            class="chart chart-line" data="vm.rdaChartData.data"
-                            labels="vm.rdaChartData.labels" legend="true" series="vm.rdaChartData.series"
-                            click="vm.onClick" chart-type="vm.chartType">
+                                ng-if="vm.rdaChartData"
+                                class="chart chart-line" data="vm.rdaChartData.data"
+                                labels="vm.rdaChartData.labels" legend="true" series="vm.rdaChartData.series"
+                                click="vm.onClick" chart-type="vm.chartType">
                         </canvas>
                         <div ng-if="!vm.rdaChartData && !vm.loading">No Data!</div>
                         <div ng-if="!vm.rdaChartData && vm.loading">Loading Please Wait</div>
@@ -58,22 +132,30 @@
                             <h5>Popular Record(s) for this period</h5>
                             <ul>
                                 <li ng-if="vm.rostat.buckets.length == 0">No data found!</li>
-                                <ro obj="ro" ng-repeat="ro in vm.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }} times)</ro>
+                                <ro obj="ro" ng-repeat="ro in vm.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }}
+                                    times)
+                                </ro>
                             </ul>
                         </div>
                         <div class="span4">
                             <h5>Popular Search Term(s) for this period</h5>
                             <ul>
                                 <li ng-if="vm.qstat.buckets.length == 0">No data found!</li>
-                                <li ng-repeat="q in vm.qstat.buckets" ng-if="q.key!=''">{{ q.key }} (Searched {{ q.doc_count }} times)</li>
-                                <li ng-repeat="q in vm.qstat.buckets" ng-if="q.key==''">{{ q.key }} (Searched {{ q.doc_count }} times)</li>
+                                <li ng-repeat="q in vm.qstat.buckets" ng-if="q.key!=''">{{ q.key }} (Searched {{
+                                    q.doc_count }} times)
+                                </li>
+                                <li ng-repeat="q in vm.qstat.buckets" ng-if="q.key==''">{{ q.key }} (Searched {{
+                                    q.doc_count }} times)
+                                </li>
                             </ul>
                         </div>
                         <div class="span4">
                             <h5>Popular Data Accessed for this period</h5>
                             <ul>
                                 <li ng-if="vm.accessedstat.buckets.length == 0">No data found!</li>
-                                <da obj="da" ng-repeat="da in vm.accessedstat.key.buckets">{{ da.key }} (Data accessed {{ da.doc_count }} times)</da>
+                                <da obj="da" ng-repeat="da in vm.accessedstat.key.buckets">{{ da.key }} (Data accessed
+                                    {{ da.doc_count }} times)
+                                </da>
                             </ul>
                         </div>
                     </div>
@@ -92,17 +174,18 @@
                         </div>
                         <div class="span6">
                             <ul>
-                               <li ng-repeat="doi_app_id in vm.org.doi_app_id">{{ doi_app_id }}</li>
+                                <li ng-repeat="doi_app_id in vm.org.doi_app_id">{{ doi_app_id }}</li>
                             </ul>
                             <chart cdata="vm.doiActivityChartData" type="'pie'"></chart>
                         </div>
                     </div>
-                    <div class="row-fluid">
+                    <div class="row-fluid" ng-if="vm.linkCheckerReport.length > 0">
                         <h5>Link Checker Report: </h5>
+
                         <div ng-repeat="report in vm.linkCheckerReport" style="max-height:200px;overflow:auto">
                             <pre>{{ report }}</pre>
                         </div>
-                       <!-- <a href="" class="btn btn-primary">Re-run link checker report</a> -->
+                        <!-- <a href="" class="btn btn-primary">Re-run link checker report</a> -->
                     </div>
 
                 </div>
@@ -132,7 +215,7 @@
                             <h5>Class</h5>
                             <chart cdata="vm.ClassChartData" type="'pie'"></chart>
                         </div>
-                         <div class="span4">
+                        <div class="span4">
                             <h5>Rights</h5>
                             <chart cdata="vm.ARChartData" type="'pie'"></chart>
                         </div>
@@ -160,7 +243,7 @@
                     <div ng-if="vm.org.groups">
                         <h5>Groups: </h5>
                         <ul>
-                           <li ng-repeat="group in vm.org.groups">{{ group }}</li>
+                            <li ng-repeat="group in vm.org.groups">{{ group }}</li>
                         </ul>
                     </div>
                     <div ng-if="vm.org.doi_app_id">
@@ -172,32 +255,58 @@
                 </div>
             </div>
             <div class="widget-box">
-                <div class="widget-title"><h5>All Time Statistics</h5></div>
-                <div class="widget-content">
+                <div class="widget-title">
+                    <h5>All Time Statistics</h5>
+                    <div class="controls">
+                        <select ng-options="item as item.label for item in vm.all_time_views track by item.id" ng-model="vm.all_time_view"></select>
+                    </div>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='popular_records'">
                     <h5>All time popular record(s) view</h5>
                     <ul>
                         <li ng-if="vm.alltime.aggs.rostat.buckets.length == 0">No data found!</li>
-                        <ro obj="ro" ng-repeat="ro in vm.alltime.aggs.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }} times)</ro>
+                        <ro obj="ro" ng-repeat="ro in vm.alltime.aggs.rostat.buckets">{{ ro.key }} (Viewed {{
+                            ro.doc_count }} times)
+                        </ro>
                     </ul>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='popular_search'">
                     <h5>All time popular search term(s)</h5>
                     <ul>
                         <li ng-if="vm.alltime.aggs.qstat.buckets.length == 0">No data found!</li>
-                        <li ng-repeat="q in vm.alltime.aggs.qstat.buckets" ng-if="q.key!=''">{{ q.key }} (Searched {{ q.doc_count }} times)</li>
-                        <li ng-repeat="q in vm.alltime.aggs.qstat.buckets" ng-if="q.key==''">{{ q.key }} (Searched {{ q.doc_count }} times)</li>
+                        <li ng-repeat="q in vm.alltime.aggs.qstat.buckets" ng-if="q.key!=''">{{ q.key }} (Searched {{
+                            q.doc_count }} times)
+                        </li>
+                        <li ng-repeat="q in vm.alltime.aggs.qstat.buckets" ng-if="q.key==''">{{ q.key }} (Searched {{
+                            q.doc_count }} times)
+                        </li>
                     </ul>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='popular_data'">
                     <h5>All time popular data accessed</h5>
                     <ul>
                         <li ng-if="vm.alltime.aggs.accessedstat.buckets.length == 0">No data found!</li>
-                        <da obj="ro" ng-repeat="ro in vm.alltime.aggs.accessedstat.key.buckets">{{ ro.key }} (Accessed {{ ro.doc_count }} times)</da>
+                        <da obj="ro" ng-repeat="ro in vm.alltime.aggs.accessedstat.key.buckets">{{ ro.key }} (Accessed
+                            {{ ro.doc_count }} times)
+                        </da>
                     </ul>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='view_by_group'">
                     <h5>All Time View breakdown by group</h5>
                     <chart cdata="vm.viewGroupAllTimeChartData" type="'pie'"></chart>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='search_by_group'">
                     <h5>All Time Search breakdown by group</h5>
                     <chart cdata="vm.searchGroupAllTimeChartData" type="'pie'"></chart>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='accessed_by_group'">
                     <h5>All Time Data Accessed breakdown by group</h5>
                     <chart cdata="vm.accessedGroupAllTimeChartData" type="'pie'"></chart>
+                </div>
+                <div class="widget-content" ng-if="vm.all_time_view.id=='tr_cited'">
                     <h5>All Time Thomson Reuter cited</h5>
                     <chart cdata="vm.trChartData" type="'portal_cited'"></chart>
+                </div>
                 </div>
             </div>
 

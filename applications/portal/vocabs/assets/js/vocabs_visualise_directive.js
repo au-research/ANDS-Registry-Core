@@ -15,6 +15,7 @@
                 $http.get(base_url + 'vocabs/services/vocabs/' + scope.vocabid + '/tree')
                     .then(function (response) {
                         scope.tree = response.data.message;
+                        if(scope.tree.length>1){$("#concept").hide();}
                     });
             }
         }

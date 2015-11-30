@@ -116,6 +116,16 @@ $ENV['vocab_config'] = array(
 );
 // $ENV['enable_logging'] = true;
 
+// This configuration supports the display of counts from RDA
+// in the tree mode of the vocab widget when displaying ANZSRC vocabularies.
+// Even if you don't want to support this, you must have this setting.
+// This setting does not have to be valid, but it has to be a non-empty string.
+$ENV['solr_url'] = "http://localhost:8983/solr/";
+// Additional configuration required to support legacy use of the vocab widget,
+// in which only the vocabulary name is provided, not a full URL. For
+// such use, this URL is prepended to get to the SISSVoc endpoints.
+// This setting does not have to be valid, but it has to be a non-empty string.
+$ENV['sissvoc_url'] = "http://localhost/repository/api/lda/";
 
 /*************************************************************************/
 /* (SECTION 3) ADDITIONAL REGISTRY CONFIGURATION

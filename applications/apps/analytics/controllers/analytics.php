@@ -166,12 +166,7 @@ class Analytics extends MX_Controller
             );
         }
 
-        //groups
-        if (isset($filters['groups'])) {
-            foreach ($filters['groups'] as $group) {
-                $this->elasticsearch->shouldf('term', 'group', $group);
-            }
-        }
+        $this->elasticsearch->setFilters($filters);
 
 
         $this->elasticsearch
@@ -190,7 +185,6 @@ class Analytics extends MX_Controller
             );
 
         $result = array();
-        echo json_encode($this->elasticsearch->getOptions());die();
         $search_result = $this->elasticsearch->search();
         echo json_encode($search_result);
     }
@@ -224,16 +218,10 @@ class Analytics extends MX_Controller
         $search_result = $this->summary->getStat('/rda/production/', $filters);
         switch ($stat) {
             case 'doi':
-                $result = array(
-                    'total' => $search_result['hits']['total'],
-                    'missing_doi' => $search_result['aggregations']['missing_doi']['doc_count'],
-                    'missing_ands'=> $search_result['aggregations']['missing_ands']['doc_count'],
-                );
-                $result['has_doi'] = $result['total'] - $result['missing_doi'];
-                $result['ands_doi'] = $result['total'] - $result['missing_ands'];
+                $result = $this->summary->getSolrDOIStat($filters);
                 break;
             case 'tr':
-                $result = $search_result['aggregations']['portal_cited']['buckets'];
+                $result = $this->summary->getSolrStat('tr_cited', $filters);
                 break;
             case 'doi_activity':
                 $result = $this->dois->getDOIActivityStat($filters);
@@ -242,16 +230,16 @@ class Analytics extends MX_Controller
                 $result = $this->dois->getClientStat($filters);
                 break;
             case 'ro_ql':
-                $result = $search_result['aggregations']['quality_level']['buckets'];
+                $result = $this->summary->getSolrStat('quality_level', $filters);
                 break;
 			case 'ro_ar':
-                $result = $search_result['aggregations']['access_rights']['buckets'];
-                break;	
+                $result = $this->summary->getSolrStat('access_rights', $filters);
+                break;
             case 'ro_class':
-                $result = $search_result['aggregations']['class']['buckets'];
+                $result = $this->summary->getSolrStat('class', $filters);
                 break;
             case 'ro_group':
-                $result = $search_result['aggregations']['group']['buckets'];
+                $result = $this->summary->getSolrStat('group', $filters);
                 break;
             default :
                 break;
@@ -372,10 +360,27 @@ class Analytics extends MX_Controller
                 foreach ($chunk as $line) {
                     $content = readString($line);
                     if ($content && is_array($content) && sizeof($content) > 0) {
+
+                        if (isset($content['date'])) {
+                            $content['day'] = date("Y-m-d", strtotime($content['date']));
+                        }
+
+                        if (isset($content['q'])) {
+                            $content['q_lowercase'] = strtolower($content['q']);
+                        }
+
                         if (isset($content['user_agent'])) {
                             $content['is_bot'] = isbot($content['user_agent']) ? true : false;
                         } else $content['is_bot'] = false;
                         if (isset($content['roid'])) {
+
+                            if (isset($content['roclass']) && !isset($content['class'])) {
+                                $content['class'] = $content['roclass'];
+                            }
+
+                            if (isset($content['dsid']) && !isset($content['data_source_id'])) {
+                                $content['data_source_id'] = $content['dsid'];
+                            }
 
                             //fill it up with group, dsid, slug, path
                             //TAKES TOO LONG
@@ -412,7 +417,6 @@ class Analytics extends MX_Controller
                     ->setPath('/logs/production/_bulk')
                     ->bulk('index', $post);
 
-
                 if ($result) {
                     echo 'Done ' . $date . ' chunk ' . $key . " out of " . sizeof($chunks) . "\n";
                 }
@@ -441,6 +445,7 @@ class Analytics extends MX_Controller
 
         $dates = date_range(reset($dates), end($dates), '+1day', 'Y-m-d');
 
+        $dates = array_reverse($dates);
         // $date_from = "2015-07-01";
         if ($date_from) {
             $key = array_search($date_from, $dates);
@@ -714,6 +719,11 @@ class Analytics extends MX_Controller
                 ->setOpt('production',
                     array(
                         'properties' => array(
+                            'day' => array(
+                                'type' => 'date',
+                                'store' => true,
+                                'format' => 'yyyy-MM-dd'
+                            ),
                             'date' => array(
                                 'type' => 'date',
                                 'store' => true,
@@ -724,6 +734,10 @@ class Analytics extends MX_Controller
                                 'index' => 'not_analyzed'
                             ),
                             'q' => array(
+                                'type' => 'string',
+                                'index' => 'not_analyzed'
+                            ),
+                            'q_lowercase' => array(
                                 'type' => 'string',
                                 'index' => 'not_analyzed'
                             )

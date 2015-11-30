@@ -5,11 +5,14 @@
         .module('app')
         .controller('versionCtrl', versionCtrl);
 
-    function versionCtrl($scope, $modalInstance, $log, $upload, version, action, vocab, confluenceTip) {
+    function versionCtrl($scope, $timeout, $modalInstance, $log, $upload, version, action, vocab, confluenceTip) {
         $log.debug(action);
         $scope.versionStatuses = ['current', 'superseded'];
         $scope.vocab = vocab;
         $scope.confluenceTip = confluenceTip;
+        // Preserve the original data for later. We need this
+        // specifically for the release_date value.
+        $scope.original_version = angular.copy(version);
         $scope.version = version ? version : {provider_type: false};
         $scope.action = version ? 'save' : 'add';
         $scope.formats = ['RDF/XML', 'TTL', 'N-Triples', 'JSON', 'TriG', 'TriX', 'N3', 'CSV', 'TSV', 'XLS', 'XLSX', 'BinaryRDF', 'ODS', 'ZIP', 'XML', 'TXT', 'ODT', 'PDF'];
@@ -36,6 +39,61 @@
             $scope.opened = !$scope.opened;
         };
 
+        // Now follows all the code for special treatment of the release date.
+        // See also vocabs_cms.js, which has a modified version of all of
+        // this for vocabulary creation dates.
+
+        /* Flag to determine when to reset the content of the release date
+           text field. Set by set_release_date_textfield() and reset by the
+           watcher put on vocab.release_date. */
+        $scope.restore_release_date_value = false;
+
+        /* Special handling for the release date field. Needed because of the
+           combination of the text field, the off-the-shelf datepicker,
+           and the desire to allow partial dates (e.g., year only). */
+        $scope.set_release_date_textfield = function (scope) {
+            // In some browser JS engines, the Date constructor interprets
+            // "2005" not as though it were "2005-01-01", but as 2005 seconds
+            // into the Unix epoch. But Date.parse() seems to cope better,
+            // so pass the date field through Date.parse() first. If that
+            // succeeds, it can then go through the Date constructor.
+            var dateValParsed = Date.parse($scope.original_version.release_date);
+            if (!isNaN(dateValParsed)) {
+                var dateVal = new Date(dateValParsed);
+                $scope.vocab.release_date = dateVal;
+                // Set this flag, so that the watcher on the vocab.release_date
+                // field knows to reset the text field to the value we got
+                // from the database.
+                $scope.restore_release_date_value = true;
+            }
+            else {
+                $scope.vocab.release_date = new Date();
+            }
+        };
+
+        /* Callback function used by the watcher on vocab.release_date.
+           It overrides the content of the release date text field with
+           the value we got from the database. */
+        $scope.do_restore_release_date = function() {
+            $('#release_date').val($scope.original_version.release_date);
+        }
+
+        /* Watcher for the vocab.release_data field. If we got notification
+           (via the restore_release_date_value flag) to reset the text
+           field value, schedule the reset. Need to use $timeout
+           so that the reset happens after the current round of
+           AngularJS model value propagation. */
+        $scope.$watch('vocab.release_date', function() {
+            if ($scope.restore_release_date_value) {
+                $scope.restore_release_date_value = false;
+                $timeout($scope.do_restore_release_date, 0);
+            }
+        });
+
+        // Now invoke the special handling for release date.
+        $scope.set_release_date_textfield($scope);
+
+
         $scope.addformat = function (obj) {
             if ($scope.validateAP() || $scope.version.provider_type == 'poolparty') {
                 if (!$scope.version) $scope.version = {};
@@ -46,7 +104,12 @@
                 angular.copy(obj, newobj);
                 $scope.version.access_points.push(newobj);
 
-                $scope.newap = {};
+                // Clear out existing values.
+                // If new fields are added to the form, please
+                // add appropriate delete/reset statements here.
+                obj.type = '';
+                obj.format = '';
+                obj.uri = '';
             } else return false;
         };
 
@@ -124,7 +187,18 @@
         };
 
         $scope.save = function () {
+            // CC-1267 "Work in progress".
+            // If the access point details are filled out
+            // correctly, and the Access Point Button is
+            // active, then click it on behalf of the user.
+            if (!!$scope.form.apForm.$valid) {
+                $scope.addformatform($scope.newValue.ap);
+            }
+
             if ($scope.validateVersion()) {
+                // Save the date as it actually is in the input's textarea, not
+                // as it is in the model.
+                $scope.version.release_date = $('#release_date').val();
                 var ret = {
                     'intent': $scope.action,
                     'data': $scope.version
