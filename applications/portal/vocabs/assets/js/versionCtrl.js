@@ -104,7 +104,12 @@
                 angular.copy(obj, newobj);
                 $scope.version.access_points.push(newobj);
 
-                $scope.newap = {};
+                // Clear out existing values.
+                // If new fields are added to the form, please
+                // add appropriate delete/reset statements here.
+                obj.type = '';
+                obj.format = '';
+                obj.uri = '';
             } else return false;
         };
 
@@ -182,6 +187,14 @@
         };
 
         $scope.save = function () {
+            // CC-1267 "Work in progress".
+            // If the access point details are filled out
+            // correctly, and the Access Point Button is
+            // active, then click it on behalf of the user.
+            if (!!$scope.form.apForm.$valid) {
+                $scope.addformatform($scope.newValue.ap);
+            }
+
             if ($scope.validateVersion()) {
                 // Save the date as it actually is in the input's textarea, not
                 // as it is in the model.

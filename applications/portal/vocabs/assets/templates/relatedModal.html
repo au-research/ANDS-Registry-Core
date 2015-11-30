@@ -49,28 +49,52 @@
                             <label for="">Relationship
                                 <span ng-bind-html="confluenceTip('Relation')"></span>
                             </label>
-                            <div class="input-group" ng-repeat="relationship in entity.relationship track by $index">
-                                <span class="input form-control uneditable-input" placeholder="Identifier">[[ relationship | languageFilter:relatedEntityRelations ]]</span>
-								<span class="input-group-btn">
-									<button class="btn btn-primary" type="button"
-                                            ng-click="list_remove('relationship', $index)"><i class="fa fa-remove"></i>
-                                    </button>
-								</span>
+
+                            <!-- Show one relationship field. Doesn't use input-group. -->
+                            <div ng-repeat="relationship in entity.relationship track by $index" ng-show="entity.relationship.length == 1">
+                              <select name="rel" id="rel" class="form-control caret-for-select"
+                                      placeholder="Select a
+                                                   relationship"
+                                      ng-options="rel.value as
+                                      rel.text for rel in
+                                      relatedEntityRelations"
+                                      options-disabled="rel.value as
+                                      rel.text for rel in
+                                      relatedEntityRelations"
+                                      ng-model="entity.relationship[$index]"
+                                      >
+                                <option value="">Select a
+                                  relationship</option>
+                              </select>
                             </div>
+
+                            <!-- Show more than one relationship field. Does use input-group. -->
+                            <div class="input-group" ng-repeat="relationship in entity.relationship track by $index" ng-show="entity.relationship.length > 1">
+                              <select name="rel" id="rel" class="form-control caret-for-select"
+                                      placeholder="Select a
+                                                   relationship"
+                                      ng-options="rel.value as
+                                      rel.text for rel in
+                                      relatedEntityRelations"
+                                      ng-model="entity.relationship[$index]"
+                                      >
+                                <option value="">Select a
+                                  relationship</option>
+                              </select>
+                              <span class="input-group-btn">
+                                <button class="btn btn-primary" type="button"
+                                        ng-click="list_remove('relationship', $index)"><i class="fa fa-remove"></i></button>
+                              </span>
+                            </div>
+
                             <p></p>
+                            <button class="btn btn-primary" type="button" ng-click="addtolist('relationship')"><i class="fa fa-plus"></i> Add Relationship</button>
 
-                            <div class="input-group">
-                                <span class="caret caret-for-input-suggestion"></span>
-                                <input type="text" class="form-control input-suggestion" placeholder="Relationship" ng-model="newrel"
-                                       ng-focus="onFocus($event)"
-                                       typeahead="rel.value as rel.text for rel in getRelation()">
-								<span class="input-group-btn">
-									<button class="btn btn-primary" type="button"
-                                            ng-click="list_add('relationship', newrel);newrel='';"><i class="fa fa-plus"></i> Add
-
-                                    </button>
-								</span>
+                            <div class="form-group has-error" ng-show="entity.relationship === undefined || array_has_no_nonempty_strings(entity.relationship)">
+                              <p class="help-block">At least one
+                              relationship must be provided.</p>
                             </div>
+
                         </div>
                         <div class="form-group">
                             <label for="">Identifiers
@@ -79,11 +103,11 @@
                             <p><span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i></span> At least 1 identifier is highly recommended </p>
                             <div class="input-group" ng-repeat="ident in entity.identifiers track by $index">
                                 <input type="text" class="form-control" placeholder="Identifier" ng-model="ident.url">
-								<span class="input-group-btn">
-									<button class="btn btn-primary" type="button"
+                                <span class="input-group-btn">
+                                  <button class="btn btn-primary" type="button"
                                             ng-click="list_remove('identifiers', $index)"><i class="fa fa-remove"></i>
                                     </button>
-								</span>
+                                </span>
                             </div>
                             <p></p>
                             <button class="btn btn-primary" type="button" ng-click="list_add('identifiers')"><i
@@ -97,10 +121,10 @@
 
                             <div class="input-group" ng-repeat="url in entity.urls track by $index">
                                 <input type="text" class="form-control" placeholder="URL" ng-model="url.url">
-								<span class="input-group-btn">
-									<button class="btn btn-primary" type="button"
+                                <span class="input-group-btn">
+                                  <button class="btn btn-primary" type="button"
                                             ng-click="list_remove('urls', $index)"><i class="fa fa-remove"></i></button>
-								</span>
+                                </span>
                             </div>
                             <p></p>
                             <button class="btn btn-primary" type="button" ng-click="list_add('urls')"><i
