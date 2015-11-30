@@ -92,7 +92,7 @@
                 <ul class="pagi element element-shorter-bottom pull-right" ng-if="result">
                     <li><small>Page [[ page.cur ]] / [[ page.end ]]</small></li>
                     <li ng-if="page.cur!=1"><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">First</span></a></li>
-                    <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
+                    <li ng-repeat="x in page.pages"><a ng-class="{'active':page.cur==x}" href="" ng-click="goto(x)">[[x]]</a></li>
                     <li ng-if="page.cur!=page.end"><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Last</span></a></li>
                 </ul>
                 <div class="clearfix"></div>
@@ -123,7 +123,7 @@
                 <ul class="pagi element element-shorter-top pull-right" ng-if="result">
                     <li><small>Page [[ page.cur ]] / [[ page.end ]]</small></li>
                     <li ng-if="page.cur!=1"><a href="" ng-click="goto(1)"><span aria-hidden="true">&laquo;</span><span class="sr-only">First</span></a></li>
-                    <li ng-repeat="x in page.pages" ng-class="{'active':page.cur==x}"><a href="" ng-click="goto(x)">[[x]]</a></li>
+                    <li ng-repeat="x in page.pages"><a ng-class="{'active':page.cur==x}" href="" ng-click="goto(x)">[[x]]</a></li>
                     <li ng-if="page.cur!=page.end"><a href="" ng-click="goto(page.end)"><span aria-hidden="true">&raquo;</span><span class="sr-only">Last</span></a></li>
                 </ul>
 

@@ -322,8 +322,8 @@ ul.pagi li {
   display: inline;
   margin: 0px 5px;
 }
-ul.pagi li:active {
-  color: #eb7700 !important;
+ul.pagi li a.active {
+  color: #46494c !important;
 }
 .published_title {
   word-wrap: break-word;
