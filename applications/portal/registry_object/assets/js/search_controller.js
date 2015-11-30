@@ -497,6 +497,7 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
         if ($scope.filters['anzsrc-for'] != item.notation) {
             delete ($scope.filters['anzsrc-for']);
             $scope.filters['anzsrc-for'] = item.notation;
+            $scope.filters['p'] = 1; //reset the pagination
             $scope.search();
         }
 
