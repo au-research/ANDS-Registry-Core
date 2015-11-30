@@ -755,32 +755,31 @@ RewriteRule ^/ands_doc/tooltips$  /ands_doc/pages/viewpage.action?pageId=2247884
         });
     });
 
-})();
+    // Directive based on:
+    // http://stackoverflow.com/questions/26278711/using-the-enter-key-as-tab-using-only-angularjs-and-jqlite
 
-
-// Directive based on:
-// http://stackoverflow.com/questions/26278711/using-the-enter-key-as-tab-using-only-angularjs-and-jqlite
-
-angular.module('app').directive('topConceptsEnter', function () {
-    return function (scope, element, attrs) {
-        element.bind("keydown keypress", function (event) {
-            if (event.which === 13) {
-                // User pressed Enter. Inhibit default behaviour.
-                event.preventDefault();
-                var elementToFocus = element.next().find('input')[0];
-                if (angular.isDefined(elementToFocus)) {
-                    elementToFocus.focus();
-                } else {
-                    // Add a new row to the model. We are not in the Angular
-                    // execution cycle at this point, so we need $apply
-                    // so that the change is propagated to the DOM.
-                    scope.$apply(function() { scope.addtolist('top_concept'); });
-                    // We should now have a new element. Move the focus to it.
-                    var newelementToFocus = element.next('tr').find('input')[0];
-                    if (angular.isDefined(newelementToFocus))
-                        newelementToFocus.focus();
+    angular.module('app').directive('topConceptsEnter', function () {
+        return function (scope, element, attrs) {
+            element.bind("keydown keypress", function (event) {
+                if (event.which === 13) {
+                    // User pressed Enter. Inhibit default behaviour.
+                    event.preventDefault();
+                    var elementToFocus = element.next().find('input')[0];
+                    if (angular.isDefined(elementToFocus)) {
+                        elementToFocus.focus();
+                    } else {
+                        // Add a new row to the model. We are not in the Angular
+                        // execution cycle at this point, so we need $apply
+                        // so that the change is propagated to the DOM.
+                        scope.$apply(function() { scope.addtolist('top_concept'); });
+                        // We should now have a new element. Move the focus to it.
+                        var newelementToFocus = element.next('tr').find('input')[0];
+                        if (angular.isDefined(newelementToFocus))
+                            newelementToFocus.focus();
+                    }
                 }
-            }
-        });
-    };
-});
+            });
+        };
+    });
+
+})();

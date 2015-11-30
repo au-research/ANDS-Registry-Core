@@ -46,10 +46,10 @@
                                 <input required type="text" id="release_date" name="release_date" class="form-control"
                                        ng-model="version.release_date" placeholder="Release Date (supported formats: YYYY-MM-DD, YYYY-MM, YYYY)"
                                        datepicker-popup="yyyy-MM-dd" is-open="$parent.opened">
-									<span class="input-group-btn">
-										<button type="button" class="btn btn-default" ng-click="open($event)"><i
+                                <span class="input-group-btn">
+                                  <button type="button" class="btn btn-default" ng-click="open($event)"><i
                                                 class="glyphicon glyphicon-calendar"></i></button>
-									</span>
+                                </span>
                             </p>
                             <p ng-show="form.versionForm.release_date.$invalid" class="help-block">Release Date is
                                 required. Supported formats: YYYY-MM-DD, YYYY-MM, YYYY.</p>
