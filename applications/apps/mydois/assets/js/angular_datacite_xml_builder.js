@@ -1,4 +1,4 @@
-(function(){
+(function () {
     'use strict';
     angular
         .module('ngDataciteXMLBuilder', [])
@@ -6,42 +6,42 @@
         .directive('dataciteTwinItemForm', dataciteTwinItemForm)
     ;
 
-    function dataciteXMLBuilder($log) {
+    function dataciteXMLBuilder() {
         return {
             restrict: 'ACME',
             scope: {
                 ngModel: '=',
                 xml: '=',
-                readonly:'='
+                readonly: '='
             },
             transclude: true,
-            templateUrl: apps_url+'assets/mydois/js/angular_datacite_xml_builder.html',
-            link: function(scope) {
+            templateUrl: apps_url + 'assets/mydois/js/angular_datacite_xml_builder.html',
+            link: function (scope) {
 
-                scope.$watch('readonly', function(newv){
+                scope.$watch('readonly', function () {
                     scope.$broadcast('readonly', scope.readonly);
                 });
 
-                scope.$watch('xml', function(newv, oldv){
+                scope.$watch('xml', function (newv) {
                     if (newv) {
                         scope.objectModel = scope.xmlToJson(newv);
                         scope.fixValues();
                     }
                 });
 
-                scope.$on('update', function(){
+                scope.$on('update', function () {
                     scope.update();
                 });
 
-                scope.$watch('objectModel', function(newv, oldv){
-                    if (newv && newv!=oldv) {
+                scope.$watch('objectModel', function (newv, oldv) {
+                    if (newv && newv != oldv) {
                         // scope.update();
                     }
                 }, true);
 
                 scope.availableOptions = {
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
-                }
+                };
 
                 scope.availableOptions['contributorType'] = ['ContactPerson', 'DataCollector', 'DataCurator', 'DataManager', 'Distributor', 'Editor', 'Funder', 'HostingInstitution', 'Producer', 'ProjectLeader', 'ProjectManager', 'ProjectMember', 'RegistrationAgency', 'RegistrationAuthority', 'RelatedPerson', 'Researcher', 'ResearchGroup', 'RightsHolder', 'Sponsor', 'Supervisor', 'WorkPackageLeader', 'Other'];
 
@@ -49,38 +49,38 @@
 
                 scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf'];
 
-                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other', ]
+                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
 
-                scope.setOption = function(item, attr, value) {
+                scope.setOption = function (item, attr, value) {
                     if (!item._attr) item._attr = {};
                     if (!item._attr[attr]) item._attr[attr] = {};
                     item._attr[attr]._value = value;
-                }
+                };
 
-                scope.add = function(list, elem) {
-                    var obj={};
-                    if (elem=='creator') {
+                scope.add = function (list, elem) {
+                    var obj = {};
+                    if (elem == 'creator') {
                         obj = {
-                            'creatorName':[{}],
-                            'nameIdentifier':[{}],
-                            'affiliation':[{}]
+                            'creatorName': [{}],
+                            'nameIdentifier': [{}],
+                            'affiliation': [{}]
                         }
-                    } else if (elem=='geoLocation') {
+                    } else if (elem == 'geoLocation') {
                         obj = {
-                            'geoLocationPoint':[{}],
-                            'geoLocationBox':[{}],
-                            'geoLocationPlace':[{}]
+                            'geoLocationPoint': [{}],
+                            'geoLocationBox': [{}],
+                            'geoLocationPlace': [{}]
                         }
-                    } else if (elem=='contributor') {
+                    } else if (elem == 'contributor') {
                         obj = {
-                            'contributorName':[{}],
-                            'nameIdentifier':[{}],
-                            'affiliation':[{}]
+                            'contributorName': [{}],
+                            'nameIdentifier': [{}],
+                            'affiliation': [{}]
                         }
                     }
                     if (!list) {
-                        var parent = elem+'s'; //title becomes titles
-                        if (elem=='rights') parent = 'rightsList';
+                        var parent = elem + 's'; //title becomes titles
+                        if (elem == 'rights') parent = 'rightsList';
                         scope.objectModel.resource[0][parent] = [{}];
                         if (!scope.objectModel.resource[0][parent][0][elem]) {
                             scope.objectModel.resource[0][parent][0][elem] = [];
@@ -90,16 +90,15 @@
                         if (!list[elem]) list[elem] = [];
                         list[elem].push(obj);
                     }
+                };
 
-                }
-
-                scope.remove = function(list, index) {
+                scope.remove = function (list, index) {
                     list.splice(index, 1);
-                }
+                };
 
-                scope.update = function(){
+                scope.update = function () {
                     scope.xml = scope.jsonToXml(scope.objectModel);
-                }
+                };
 
                 scope.tagsToReplace = {
                     '&': '&amp;',
@@ -107,21 +106,21 @@
                     '>': '&gt;'
                 };
 
-                scope.replaceTag = function(tag) {
+                scope.replaceTag = function (tag) {
                     return scope.tagsToReplace[tag] || tag;
-                }
+                };
 
                 scope.safe_tags_replace = function (str) {
-                    if (typeof str=='string' ) {
+                    if (typeof str == 'string') {
                         return str.replace(/[&<>]/g, scope.replaceTag);
                     } else {
                         return str;
                     }
-                }
+                };
 
-                scope.fixValues = function() {
+                scope.fixValues = function () {
                     var valuesToFix = ['publisher', 'publicationYear', 'resourceType', 'language', 'version'];
-                    angular.forEach(valuesToFix, function(val){
+                    angular.forEach(valuesToFix, function (val) {
                         if (!scope.objectModel.resource[0][val]) {
                             scope.objectModel.resource[0][val] = [];
                             scope.objectModel.resource[0][val].push({});
@@ -129,17 +128,16 @@
                     });
 
                     if (scope.objectModel.resource[0].creators) {
-                        angular.forEach(scope.objectModel.resource[0].creators[0].creator, function(creator){
+                        angular.forEach(scope.objectModel.resource[0].creators[0].creator, function (creator) {
                             var fields = ['creatorName', 'nameIdentifier', 'affiliation'];
-                            angular.forEach(fields, function(fi){
+                            angular.forEach(fields, function (fi) {
                                 if (!creator[fi]) creator[fi] = [{}];
                             });
                         });
                     }
+                };
 
-                }
-
-                scope.jsonToXml = function(json) {
+                scope.jsonToXml = function (json) {
                     if (json) {
                         var xml = '';
                         xml += '<?xml version="1.0" encoding="utf-8"?>';
@@ -148,92 +146,94 @@
                         var xmlns = json.resource[0]['_attr']['xmlns']['_value'];
                         var xmlnsxsi = json.resource[0]['_attr']['xmlns:xsi']['_value'];
                         var xsischemaLocation = json.resource[0]['_attr']['schemaLocation']['_value'];
-                        // $log.debug(xmlns, xmlnsxsi, xsischemaLocation);
-                        xml += '<resource xmlns="'+xmlns+'" xmlns:xsi="'+xmlnsxsi+'" xsi:schemaLocation="'+xsischemaLocation+'">';
 
-                        xml += '<identifier identifierType="'+json.resource[0].identifier[0]['_attr']['identifierType']['_value']+'">'+json.resource[0].identifier[0]['_text']+'</identifier>';
+                        //convert all schema level to 3
+                        xmlns = xmlns.replace(/kernel-2.1/g, 'kernel-3').replace(/kernel-2.2/g, 'kernel-3');
+                        xmlnsxsi = xmlnsxsi.replace(/kernel-2.1/g, 'kernel-3').replace(/kernel-2.2/g, 'kernel-3');
+                        xsischemaLocation = xsischemaLocation.replace(/kernel-2.1/g, 'kernel-3').replace(/kernel-2.2/g, 'kernel-3');
 
+                        xml += '<resource xmlns="' + xmlns + '" xmlns:xsi="' + xmlnsxsi + '" xsi:schemaLocation="' + xsischemaLocation + '">';
+
+                        xml += '<identifier identifierType="' + json.resource[0].identifier[0]['_attr']['identifierType']['_value'] + '">' + json.resource[0].identifier[0]['_text'] + '</identifier>';
 
 
                         //single values
                         var singleValues = ['publisher', 'publicationYear', 'language', 'version', 'resourceType'];
-                        angular.forEach(singleValues, function(module){
+                        angular.forEach(singleValues, function (module) {
                             if (json.resource[0][module] && json.resource[0][module].length && json.resource[0][module][0]['_text']) {
                                 var item = json.resource[0][module][0];
-                                xml+='<'+module;
+                                xml += '<' + module;
                                 if (item['_attr']) {
-                                    angular.forEach(item['_attr'], function(value, key) {
-                                        xml+=' '+key+'="'+value['_value']+'"';
+                                    angular.forEach(item['_attr'], function (value, key) {
+                                        xml += ' ' + key + '="' + value['_value'] + '"';
                                     });
                                 }
-                                xml+='>';
+                                xml += '>';
                                 if (item['_text']) {
-                                    xml+=scope.safe_tags_replace(item['_text']);
+                                    xml += scope.safe_tags_replace(item['_text']);
                                 }
-                                xml+='</'+module+'>';
+                                xml += '</' + module + '>';
                             }
                         });
 
                         //similar modules
                         var modules = ['title', 'subject', 'date', 'alternateIdentifier', 'relatedIdentifier', 'size', 'format', 'description', 'rights', 'geoLocation', 'creator', 'contributor'];
-                        angular.forEach(modules, function(module){
-                            var container = module+'s';
+                        angular.forEach(modules, function (module) {
+                            var container = module + 's';
                             if (module == 'rights') container = 'rightsList';
                             if (json.resource[0][container] && json.resource[0][container][0][module].length > 0) {
-                                xml+='<'+container+'>';
-                                angular.forEach(json.resource[0][container][0][module], function(item){
-                                    xml+='<'+module;
+                                xml += '<' + container + '>';
+                                angular.forEach(json.resource[0][container][0][module], function (item) {
+                                    xml += '<' + module;
                                     if (item['_attr']) {
-                                        angular.forEach(item['_attr'], function(value, key) {
+                                        angular.forEach(item['_attr'], function (value, key) {
                                             if (value['_value']) {
-                                                xml+=' '+key+'="'+scope.safe_tags_replace(value['_value'])+'"';
+                                                xml += ' ' + key + '="' + scope.safe_tags_replace(value['_value']) + '"';
                                             }
                                         });
                                     }
-                                    xml+='>';
+                                    xml += '>';
 
-                                    angular.forEach(item, function(sitem, subitemkey){
-                                        if (subitemkey!='_ns' && subitemkey!='_attr' && subitemkey!='_text') {
-                                            angular.forEach(sitem, function(subitem){
-                                                xml+='<'+subitemkey;
+                                    angular.forEach(item, function (sitem, subitemkey) {
+                                        if (subitemkey != '_ns' && subitemkey != '_attr' && subitemkey != '_text') {
+                                            angular.forEach(sitem, function (subitem) {
+                                                xml += '<' + subitemkey;
                                                 if (subitem['_attr']) {
-                                                    angular.forEach(subitem['_attr'], function(subitemvalue, subitemkey) {
+                                                    angular.forEach(subitem['_attr'], function (subitemvalue, subitemkey) {
                                                         if (subitemvalue['_value']) {
-                                                            xml+=' '+subitemkey+'="'+scope.safe_tags_replace(subitemvalue['_value'])+'"';
+                                                            xml += ' ' + subitemkey + '="' + scope.safe_tags_replace(subitemvalue['_value']) + '"';
                                                         }
                                                     });
                                                 }
-                                                xml+='>';
+                                                xml += '>';
                                                 if (subitem && subitem['_text']) {
-                                                    xml+=scope.safe_tags_replace(subitem['_text']);
+                                                    xml += scope.safe_tags_replace(subitem['_text']);
                                                 }
-                                                xml+='</'+subitemkey+'>';
+                                                xml += '</' + subitemkey + '>';
                                             });
                                         }
                                     });
 
 
-
                                     if (item['_text']) {
                                         // xml+=item['_text'];
-                                        xml+=scope.safe_tags_replace(item['_text']);
+                                        xml += scope.safe_tags_replace(item['_text']);
                                     }
-                                    xml+='</'+module+'>';
+                                    xml += '</' + module + '>';
                                 });
-                                xml+='</'+container+'>';
+                                xml += '</' + container + '>';
                             }
                         });
 
-                        xml+='</resource>';
+                        xml += '</resource>';
 
                         return xml;
                     }
 
-                }
+                };
 
 
-
-                scope.xmlToJson = function(xml) {
+                scope.xmlToJson = function (xml) {
                     var options = {
                         mergeCDATA: true,   // extract cdata and merge with text nodes
                         grokAttr: true,     // convert truthy attributes to boolean, etc
@@ -257,7 +257,7 @@
         }
     }
 
-    function dataciteTwinItemForm($log) {
+    function dataciteTwinItemForm() {
         return {
             restrict: 'ACME',
             scope: {
@@ -269,20 +269,20 @@
                 'readonly': '='
             },
             transclude: true,
-            templateUrl: apps_url+'assets/mydois/js/angular_datacite_twin_form.html',
-            link: function(scope) {
+            templateUrl: apps_url + 'assets/mydois/js/angular_datacite_twin_form.html',
+            link: function (scope) {
                 scope.availableOptions = {
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
-                }
+                };
                 scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle'];
                 scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid'];
                 scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
-                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other', ]
+                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
 
-                scope.remove = function() {
+                scope.remove = function () {
                     scope.list.splice(scope.index, '1');
-                }
-                scope.setOption = function(item, attr, value) {
+                };
+                scope.setOption = function (item, attr, value) {
                     if (!item) item = {};
                     if (!item._attr) item._attr = {};
                     if (!item._attr[attr]) item._attr[attr] = {};
