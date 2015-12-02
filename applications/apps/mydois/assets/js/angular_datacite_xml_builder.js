@@ -181,7 +181,9 @@
                         angular.forEach(modules, function (module) {
                             var container = module + 's';
                             if (module == 'rights') container = 'rightsList';
-                            if (json.resource[0][container] && json.resource[0][container][0][module].length > 0) {
+                            if (json.resource[0][container]
+                                && json.resource[0][container][0][module]
+                                && json.resource[0][container][0][module].length > 0) {
                                 xml += '<' + container + '>';
                                 angular.forEach(json.resource[0][container][0][module], function (item) {
                                     xml += '<' + module;
