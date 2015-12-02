@@ -261,7 +261,9 @@ function($scope, $log, $modal, search_factory, vocab_factory, profile_factory, u
                 $scope.$broadcast('search_complete');
                 $scope.populateCenters($scope.result.response.docs);
             });
-        }
+        } else {
+			$scope.loading = false;
+		}
 	}
 
     $scope.openBranches = function() {
