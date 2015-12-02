@@ -10,7 +10,12 @@ class GrantsHandler extends Handler
 {
 
     private $defaultGroups = '"National Health and Medical Research Council","Australian Research Council"';
+    private $defaultType = "grant";
 
+    /**
+     * Handling the grants method
+     * @return array
+     */
     public function handle()
     {
 
@@ -20,7 +25,6 @@ class GrantsHandler extends Handler
         $this->ci->load->library('solr');
         $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
 
-        $gets = $this->ci->input->get();
         foreach ($this->ci->input->get() as $name => $value) {
 
             $institution = ($name == 'institution') ? $value : null;
@@ -28,7 +32,7 @@ class GrantsHandler extends Handler
 
             //Determine which groups we are searching against
             if ($name == 'group' && $value != "") {
-                $defaultGroups = '"' . $value . '"';
+                $this->defaultGroups = '"' . $value . '"';
             }
 
             //display_title,researcher,year,institution
@@ -39,8 +43,13 @@ class GrantsHandler extends Handler
                 }
             }
 
+            //type
+            if ($name == 'type' && ($value!='' || $value!='all')) {
+                $this->defaultType = $value;
+            }
+
             //identifier
-            if ($name == 'id' && $value != '') {
+            if (($name == 'id' || $name=='purl') && $value != '') {
                 $this->ci->solr->setOpt('fq', '+identifier_value:*' . $value . '*');
             }
 
@@ -50,10 +59,12 @@ class GrantsHandler extends Handler
                     $this->ci->solr->setOpt('fq', '+description:(' . $word . ')');
                 }
             }
+
             if ($name == 'institution' && $value != '') {
                 $this->ci->solr->setOpt('fq', '+related_party_multi_search:"' . $value . '"');
                 //$this->ci->solr->setOpt('fq','+related_object_relation:"isManagedBy"');
             }
+
             if ($name == 'person' && $value != '') {
                 $words = $this->getWords($value);
                 foreach ($words as $word) {
@@ -61,6 +72,7 @@ class GrantsHandler extends Handler
                 }
                 //$this->ci->solr->setOpt('fq','+related_object_class:"party"');
             }
+
             if ($name == 'principalInvestigator' && $value != '') {
                 $words = $this->getWords($value);
                 foreach ($words as $word) {
@@ -70,32 +82,49 @@ class GrantsHandler extends Handler
             }
         }
 
+        //type
+        if ($this->defaultType != "grant") {
+            $this->ci->solr->setOpt('fq', '+type:(' .$this->defaultType .')');
+        }
+
         //execute
-        $this->ci->solr->setOpt('fq', '+class:"activity"')->setOpt('rows', '999');
+        $this->ci->solr->setOpt('fq', '+class:"activity"')->setOpt('rows', '20');
         $result = $this->ci->solr->executeSearch(true);
 
         //response setup
         $response = array(
             'numFound' => 0,
-            'recordData' => array()
+            'recordData' => array(),
+            'query' => $this->ci->solr->constructFieldString()
         );
 
+        /**
+         * Populate the response based on the result returned
+         *
+         */
         foreach ($result['response']['docs'] as $result) {
             $ro = $this->ci->ro->getByID($result['id']);
-            if (!$ro) {
-                break;
-            }
 
+            //if Object doesn't exist
+            if (!$ro) break;
+
+            //build relationships array of the object
+            $relationships = false;
             $related = $ro->getRelatedObjectsByClassAndRelationshipType(array('party'), array());
             if (isset($related)) {
                 $relationships = $this->processRelated($related);
             }
 
+            //build identifiers array of the object
+            $identifiers = false;
             if (isset($result['identifier_value'])) {
                 $identifiers = $this->processIdentifiers($result['identifier_value'], $result['identifier_type']);
             }
 
-            //filtering
+            /**
+             * Filter, canPass will determine if this object can enter the final array
+             * todo Update business rule here for inline comment
+             */
             $canPass = true;
 
             if (isset($institution) && isset($relationships['isManagedBy'])) {
@@ -140,13 +169,15 @@ class GrantsHandler extends Handler
                 }
             }
 
+            //If this object pass the test, add it to the response array
             if ($canPass) {
                 $response['numFound'] += 1;
                 $response['recordData'][] = array(
                     'key' => $result['key'],
                     'slug' => $result['slug'],
-                    'title' =>  $result['display_title'],
-                    'description' => $result['description'],
+                    'title' => $result['display_title'],
+                    'type' => $result['type'],
+                    'description' => isset($result['description']) ? $result['description'] : "",
                     'identifiers' => $result['identifier_value'],
                     'identifier_type' => $identifiers,
                     'relations' => $relationships
@@ -157,8 +188,15 @@ class GrantsHandler extends Handler
         return $response;
     }
 
+    /**
+     * Helper method for handle()
+     * Returns the relationships array filtered with additional information
+     * @param $related
+     * @return array
+     */
     private function processRelated($related)
     {
+        //build the relationship and only construct relationship for PUBLISHED records
         $relationships = array();
         for ($i = 0; $i < sizeof($related); $i++) {
             if (isset($related[$i]['relation_type']) && $related[$i]['status'] == 'PUBLISHED') {
@@ -172,6 +210,7 @@ class GrantsHandler extends Handler
             }
         }
 
+        //verify relationship count
         foreach ($relationships as $key => $relationship) {
             if (count($relationship) == 1) {
                 $relationships[$key] = $relationship[0];
@@ -180,6 +219,13 @@ class GrantsHandler extends Handler
         return $relationships;
     }
 
+    /**
+     * Helper method for handle()
+     * Returns the identifiers array in a better format
+     * @param $value
+     * @param $type
+     * @return array
+     */
     private function processIdentifiers($value, $type)
     {
         $identifiers = array();
@@ -195,6 +241,12 @@ class GrantsHandler extends Handler
         return $identifiers;
     }
 
+    /**
+     * Helper method
+     * Returns words without the stop words
+     * @param $string
+     * @return array
+     */
     private function getWords($string)
     {
         $invalid_characters = array("$", "%", "#", "<", ">", "|", '"', "'", "(", ")");
