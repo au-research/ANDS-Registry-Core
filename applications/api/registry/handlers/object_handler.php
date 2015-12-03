@@ -138,7 +138,7 @@ class ObjectHandler extends Handler{
                 //special case
                 if ($m1 == 'solr_index') {
                     $ro = $resource['ro'];
-//                    $ro->sync();
+                    $ro->sync();
                     return $ro->indexable_json();
                 }
             }

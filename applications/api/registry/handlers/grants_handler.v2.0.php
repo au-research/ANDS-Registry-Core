@@ -9,9 +9,6 @@ namespace ANDS\API\Registry\Handler;
 class GrantsHandlerV2 extends Handler
 {
 
-//    private $defaultGroups = '"National Health and Medical Research Council","Australian Research Council"';
-//    private $defaultType = "grant";
-
     /**
      * Handling the grants method
      * @return array
@@ -59,7 +56,10 @@ class GrantsHandlerV2 extends Handler
             $this->ci->solr->setOpt('fq', '+administering_institution_search:"' . $institution . '"');
         }
 
-        //todo principalInvestigator param
+        //principalInvestigator
+        if ($principalInvestigator = (isset($params['principalInvestigator'])) ? $params['principalInvestigator'] : null) {
+            $this->ci->solr->setOpt('fq', '+principal_investigator_search:"' . $principalInvestigator . '"');
+        }
 
         //person
         if ($person = (isset($params['person'])) ? $params['person'] : null) {
@@ -86,7 +86,8 @@ class GrantsHandlerV2 extends Handler
         }
 
         //rows
-        if ($rows = (isset($params['rows'])) ? $params['rows'] : 999) {
+        //default to 30
+        if ($rows = (isset($params['rows'])) ? $params['rows'] : 30) {
             $this->ci->solr->setOpt('rows', $rows);
         }
 
@@ -102,9 +103,12 @@ class GrantsHandlerV2 extends Handler
         $response = array(
             'totalFound' => $result['response']['numFound'],
             'numFound' => 0,
-            'recordData' => array(),
-            'query' => $this->ci->solr->constructFieldString()
+            'recordData' => array()
         );
+
+        if ($this->ci->input->get('debug')) {
+            $response['query'] = $this->ci->solr->constructFieldString();
+        }
 
         /**
          * Populate the response based on the result returned
@@ -115,49 +119,6 @@ class GrantsHandlerV2 extends Handler
             //if Object doesn't exist
             if (!$ro) break;
 
-            //build relationships array of the object
-            //todo check if we actually need to do a canPass here
-//            $relationships = false;
-//            $related = $ro->getRelatedObjectsByClassAndRelationshipType(array('party'), array());
-//            if (isset($related)) {
-//                $relationships = $this->processRelated($related);
-//            }
-
-            /**
-             * Filter, canPass will determine if this object can enter the final array
-             * due to limitation on the SOLR indexing
-             */
-            $canPass = true;
-
-            //todo fix
-//            if (isset($principalInvestigator) && isset($relationships['isPrincipalInvestigatorOf'])) {
-//                $canPass = false;
-//                if (is_array($relationships['isPrincipalInvestigatorOf'])) {
-//                    for ($i = 0; $i < sizeof($relationships['isPrincipalInvestigatorOf']); $i++) {
-//                        $words = $this->getWords($relationships['isPrincipalInvestigatorOf'][$i]);
-//                        for ($i = 0; $i < sizeof($principalInvestigator); $i++) {
-//                            if (!$canPass) {
-//                                $canPass = in_array($principalInvestigator[$i], $words);
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    $words = $this->getWords($relationships['isPrincipalInvestigatorOf']);
-//                    for ($i = 0; $i < sizeof($principalInvestigator); $i++) {
-//                        if (!$canPass) {
-//                            $canPass = in_array($principalInvestigator[$i], $words);
-//                        }
-//                    }
-//                }
-//            }
-
-
-            // End searching logic
-            // do not put the response in if record does not meet criteria
-            if (!$canPass) break;
-
-
-            //start displaying logic
 
             //data is the response object to add to the response array
             $data = array(
@@ -189,9 +150,11 @@ class GrantsHandlerV2 extends Handler
              * nameType=primary of a relatedObject party type=group with relation isFundedBy
              * or
              * title of a relatedInfo party with relation isFundedBy
-             * todo implement funder
              */
-            $funder = null;
+            $funder = $ro->getFunders();
+            if (sizeof($funder) > 0) {
+                $data['funder'] = $funder;
+            }
 
             /**
              * Getting grant id
@@ -209,6 +172,15 @@ class GrantsHandlerV2 extends Handler
             }
             $data['grantid'] = $grantid;
 
+            //cache relatedObjects for passing into functions that needed it, to save processing time
+            $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
+
+            //cache gXPath
+            $gXPath = $ro->getGXPath();
+
+            //cache XML
+            $xml = $ro->getSimpleXML();
+
             /**
              * Researchers
              * A list of researchers named on the awarded grant
@@ -217,9 +189,12 @@ class GrantsHandlerV2 extends Handler
              * semicolon-separated list of names generated from
              * name[type=primary] of relatedObject with relation=hasPrincipalInvestigator or relation=hasParticipant
              * title of relatedInfo with relation=hasPrincipalInvestigator or relation=hasParticipant
-             * todo implement Researchers
              */
-            $researchers = null;
+            $researchers = $ro->getResearchers($gXPath, $relatedObjects);
+            if (sizeof($researchers) > 0) {
+                $data['researchers'] = $researchers;
+            }
+
 
             /**
              * PrincipalInvestigator
@@ -227,7 +202,10 @@ class GrantsHandlerV2 extends Handler
              * title of relatedInfo with relation=hasPrincipalInvestigator or relation=hasParticipant
              * todo implement PrincipalInvestigator
              */
-            $principalInvestigator = null;
+            $principalInvestigator = $ro->getPrincipalInvestigator($relatedObjects);
+            if (sizeof($principalInvestigator) > 0) {
+                $data['principalInvestigator'] = $principalInvestigator;
+            }
 
             /**
              * Institution
@@ -236,51 +214,64 @@ class GrantsHandlerV2 extends Handler
              * name[type=primary] of relatedObject party group with relation=isManagedBy or relation=hasParticipant
              * todo implement Institution
              */
-            $institution = null;
+            $institution = $ro->getAdministeringInstitution($relatedObjects);
+            if (sizeof($institution) > 0) {
+                $data['institution'] = $institution;
+            }
 
             /**
              * Managing Institution
              * name[type=primary] of relatedObject party group with relation=isManagedBy
-             * todo implement $managingInstitution
              */
-            $managingInstitution = null;
+            $managingInstitution = $ro->getAdministeringInstitution($relatedObjects);
+            if (sizeof($managingInstitution) > 0) {
+                $data['managingInstitution'] = $managingInstitution;
+            }
 
             /**
              * fundingAmount
              * description[type=fundingAmount]
-             * todo implement fundingAmount
              */
-            $fundingAmount = null;
+            $fundingAmount = $ro->getFundingAmount($gXPath);
+            $data['fundingAmount'] = $fundingAmount;
 
             /**
              * fundingScheme
              * description[type=fundingScheme]
-             * todo implement fundingScheme
              */
-            $fundingScheme = null;
+            $fundingScheme = $ro->getFundingScheme($gXPath);
+            $data['fundingScheme'] = $fundingScheme;
 
             /**
              * startDate
              * Format W3DTF
              * existenceDate/startDate
-             * todo implement startDate
+             * todo W3DTF
              */
-            $startDate = null;
+            $startDate = $ro->getExistenceDateEarliestYear($xml);
+            $data['startDate'] = $startDate;
 
             /**
              * endDate
+             * existenceDate/endDate
+             * todo W3DTF
              */
-            $endDate = null;
+            $endDate = $ro->getExistenceDateLatestYear($xml);
+            $data['endDate'] = $endDate;
 
             /**
              * dateTimeCreated
+             * todo W3DTF
              */
-            $dateTimeCreated = null;
+            $dateTimeCreated = $ro->created;
+            $data['dateTimeCreated'] = $dateTimeCreated;
 
             /**
              * dateTimeModified
+             * todo W3DTF
              */
-            $dateTimeModified = null;
+            $dateTimeModified = $ro->updated;
+            $data['dateTimeModified'] = $dateTimeModified;
 
             /**
              * Backward compatibility
@@ -291,12 +282,8 @@ class GrantsHandlerV2 extends Handler
              * todo backward compatibility
              */
 
-            //sanity check again
-            if ($canPass) {
-                $response['numFound'] += 1;
-                $response['recordData'][] = $data;
-
-            }
+            $response['numFound'] += 1;
+            $response['recordData'][] = $data;
 
             //save memory by clearing the ro object
             unset($ro);
