@@ -200,8 +200,6 @@ class Sync_extension extends ExtensionBase{
         }
         unset($handler);
 
-
-
 		//identifier
 		if($identifiers = $this->ro->getIdentifiers()) {
 			$fields = array('identifier_value', 'identifier_type');
@@ -349,19 +347,8 @@ class Sync_extension extends ExtensionBase{
             }
 		}
 
-        foreach($gXPath->query('//ro:description[@type="fundingAmount"]') as $node) {
-            $json['funding_amount'] = preg_replace("/[^\d\.]+/","",$node->nodeValue);
-        }
 
-        foreach($gXPath->query('//ro:description[@type="fundingScheme"]') as $node) {
-            $json['funding_scheme'] = strip_tags(html_entity_decode($node->nodeValue));
-        }
 
-        //researchers for activity
-        $json['researchers'] = [];
-        foreach($gXPath->query('//ro:description[@type="researchers"]') as $node) {
-            $json['researchers'][] = strip_tags(html_entity_decode($node->nodeValue));
-        }
         $json['alt_list_title'] = [];
         $json['alt_display_title'] = [];
         foreach($gXPath->query('//ro:name[@type!="primary"]') as $node) {
@@ -371,72 +358,94 @@ class Sync_extension extends ExtensionBase{
 
 
 
-        $activityStatus = 'other';
-        foreach ($xml->xpath('//ro:existenceDates') AS $date)
-        {
 
-            $now = time();
-            $start = false;
-            $end = false;
-            //$date->startDate = NaN;
-            //$date->endDate = NaN;
-            if ($date->startDate){
-
-                if(strlen(trim($date->startDate)) == 4)
-                    $date->startDate = "Jan 1, ".$date->startDate;
-                $start = strtotime($date->startDate);
-                $json['earliest_year'] = date("Y",$start);
-
-
-            }
-
-            if ($date->endDate){
-                if(strlen(trim($date->endDate)) == 4)
-                    $date->endDate = "Dec 31, ".$date->endDate;
-                $end = strtotime($date->endDate);
-                $json['latest_year'] = date("Y",$end);
-
-            }
-
-            $activityStatus = 'other';
-            if ($start || $end){
-                $activityStatus = 'PENDING';
-                if(!$start || $start < $now)
-                    $activityStatus = 'ACTIVE';
-                if($end && $end < $now)
-                    $activityStatus = 'CLOSED';
-            }
-        }
-        $json['activity_status'] = $activityStatus;
 
         //Administering Institution, Funders and Researchers from related objects for activities
+//        if ($this->ro->class=='activity') {
+//        	$json['administering_institution'] = array();
+//        	$json['funders'] = array();
+//        	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
+//        	foreach ($related_objects as $related_object) {
+//                if(!isset($related_object['status']) || $related_object['status']!=DRAFT){
+////
+//                    if ($related_object['class']=='party'
+//                        && $related_object['relation_type']=='isManagedBy'
+//                        && strtolower(trim($this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type'))) !='person') {
+//                        $json['administering_institution'][] = $related_object['title'];
+//                    } else if(
+//                        $related_object['class']=='party'
+//                        && $related_object['relation_type']=='isFundedBy'
+//                        && strtolower(trim($this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type'))) !='person') {
+//                        $json['funders'][] = $related_object['title'];
+//                    } else if($related_object['class']=='party') {
+//                        $tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
+//                        if ( $tmp_ro && strtolower($tmp_ro->type)=='person' ) {
+//                            $json['researchers'][] = $related_object['title'];
+//                        }elseif(isset($related_object['related_info_type']) && $related_object['related_info_type']=='party'){
+//                            $json['researchers'][] = $related_object['title'];
+//                        }
+//                        unset($tmp_ro);
+//                    }
+//                }
+//        	}
+//        }
+
+
+        /**
+         * special logic for activity only
+         * Refer to activity_grants.php extension
+         */
         if ($this->ro->class=='activity') {
-        	$json['administering_institution'] = array();
-        	$json['funders'] = array();
-        	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
-        	foreach ($related_objects as $related_object) {
-                if(!isset($related_object['status']) || $related_object['status']!=DRAFT){
-//
-                    if ($related_object['class']=='party'
-                        && $related_object['relation_type']=='isManagedBy'
-                        && strtolower(trim($this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type'))) !='person') {
-                        $json['administering_institution'][] = $related_object['title'];
-                    } else if(
-                        $related_object['class']=='party'
-                        && $related_object['relation_type']=='isFundedBy'
-                        && strtolower(trim($this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type'))) !='person') {
-                        $json['funders'][] = $related_object['title'];
-                    } else if($related_object['class']=='party') {
-                        $tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
-                        if ( $tmp_ro && strtolower($tmp_ro->type)=='person' ) {
-                            $json['researchers'][] = $related_object['title'];
-                        }elseif(isset($related_object['related_info_type']) && $related_object['related_info_type']=='party'){
-                            $json['researchers'][] = $related_object['title'];
-                        }
-                        unset($tmp_ro);
-                    }
-                }
-        	}
+
+            //earliest year
+            if ($earliestYear = $this->ro->getExistenceDateEarliestYear($xml)) {
+                $json['earliest_year'] = $earliestYear;
+            }
+
+            //latest year
+            if ($latestYear = $this->ro->getExistenceDateLatestYear($xml)) {
+                $json['earliest_year'] = $latestYear;
+            }
+
+            //activity status
+            $json['activity_status'] = $this->ro->getActivityStatus($xml);
+
+            //funding amount
+            if ($fundingAmount = $this->ro->getFundingAmount($gXPath)) {
+                $json['funding_amount'] = $fundingAmount;
+            }
+
+            //funding scheme
+            if ($fundingScheme = $this->ro->getFundingScheme($gXPath)) {
+                $json['funding_scheme'] = $fundingScheme;
+            }
+
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+
+            //administering inst
+            $administeringInstitution = $this->ro->getAdministeringInstitution($relatedObjects);
+            if (sizeof($administeringInstitution) > 0) {
+                $json['administering_institution'] = $administeringInstitution;
+            }
+
+            //funders
+            $funders = $this->ro->getFunders($relatedObjects);
+            if (sizeof($funders) > 0) {
+                $json['funders'] = $funders;
+            }
+
+            //researchers
+            $researchers = $this->ro->getResearchers($gXPath, $relatedObjects);
+            if (sizeof($researchers) > 0) {
+                $json['researchers'] = $researchers;
+            }
+
+            //principal investigator
+            $principalInvestigators = $this->ro->getPrincipalInvestigator($relatedObjects);
+            if (sizeof($principalInvestigators) > 0) {
+                $json['principal_investigator'] = $principalInvestigators;
+            }
+
         }
 
 
