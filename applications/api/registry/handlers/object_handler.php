@@ -1,6 +1,7 @@
 <?php
 namespace ANDS\API\Registry\Handler;
 use \Exception as Exception;
+use \XSLTProcessor as XSLTProcessor;
 
 define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
 
@@ -113,22 +114,33 @@ class ObjectHandler extends Handler{
         $resource = $this->populate_resource($this->params['identifier']);
 
         foreach ($method1s as $m1) {
-            switch ($m1) {
-                case 'get':
-                case 'registry':$result[$m1] = $this->ro_handle('core');
-                    break;
-                case 'relationships':$result[$m1] = $this->relationships_handler();
-                    break;
-                default:
-                    try {
-                        $r = $this->ro_handle($m1, $resource);
-                        if (!is_array_empty($r)) {
-                            $result[$m1] = $r;
+            if ($m1 && in_array($m1, $this->valid_methods)) {
+                switch ($m1) {
+                    case 'get':
+                    case 'registry':
+                        $result[$m1] = $this->ro_handle('core');
+                        break;
+                    case 'relationships':
+                        $result[$m1] = $this->relationships_handler();
+                        break;
+                    default:
+                        try {
+                            $r = $this->ro_handle($m1, $resource);
+                            if (!is_array_empty($r)) {
+                                $result[$m1] = $r;
+                            }
+                        } catch (Exception $e) {
+                            $result[$m1] = $e->getMessage();
                         }
-                    } catch (Exception $e) {
-                        $result[$m1] = $e->getMessage();
-                    }
-                    break;
+                        break;
+                }
+            } else {
+                //special case
+                if ($m1 == 'solr_index') {
+                    $ro = $resource['ro'];
+//                    $ro->sync();
+                    return $ro->indexable_json();
+                }
             }
         }
 
