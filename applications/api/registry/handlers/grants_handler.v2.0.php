@@ -52,8 +52,8 @@ class GrantsHandlerV2 extends Handler
         }
 
         //institution
-        if ($institution = (isset($params['institution'])) ? $params['institution'] : null) {
-            $this->ci->solr->setOpt('fq', '+administering_institution_search:"' . $institution . '"');
+        if ($institutions = (isset($params['institution'])) ? $params['institution'] : null) {
+            $this->ci->solr->setOpt('fq', '+administering_institution_search:"' . $institutions . '"');
         }
 
         //principalInvestigator
@@ -200,7 +200,6 @@ class GrantsHandlerV2 extends Handler
              * PrincipalInvestigator
              * name[type=primary] of relatedObject with relation=hasPrincipalInvestigator or relation=hasParticipant
              * title of relatedInfo with relation=hasPrincipalInvestigator or relation=hasParticipant
-             * todo implement PrincipalInvestigator
              */
             $principalInvestigator = $ro->getPrincipalInvestigator($relatedObjects);
             if (sizeof($principalInvestigator) > 0) {
@@ -212,11 +211,10 @@ class GrantsHandlerV2 extends Handler
              * semicolon-separated list of org names
              * from
              * name[type=primary] of relatedObject party group with relation=isManagedBy or relation=hasParticipant
-             * todo implement Institution
              */
-            $institution = $ro->getAdministeringInstitution($relatedObjects);
-            if (sizeof($institution) > 0) {
-                $data['institution'] = $institution;
+            $institutions = $ro->getInstitutions($relatedObjects);
+            if (sizeof($institutions) > 0) {
+                $data['institutions'] = $institutions;
             }
 
             /**
@@ -246,32 +244,28 @@ class GrantsHandlerV2 extends Handler
              * startDate
              * Format W3DTF
              * existenceDate/startDate
-             * todo W3DTF
              */
-            $startDate = $ro->getExistenceDateEarliestYear($xml);
+            $startDate = $ro->getExistenceDate("startDate", "Y-m-d", $xml);
             $data['startDate'] = $startDate;
 
             /**
              * endDate
              * existenceDate/endDate
-             * todo W3DTF
              */
-            $endDate = $ro->getExistenceDateLatestYear($xml);
+            $endDate = $ro->getExistenceDate("endDate", "Y-m-d", $xml);
             $data['endDate'] = $endDate;
 
             /**
              * dateTimeCreated
-             * todo W3DTF
              */
             $dateTimeCreated = $ro->created;
-            $data['dateTimeCreated'] = $dateTimeCreated;
+            $data['dateTimeCreated'] = date("Y-m-d", $dateTimeCreated);
 
             /**
              * dateTimeModified
-             * todo W3DTF
              */
             $dateTimeModified = $ro->updated;
-            $data['dateTimeModified'] = $dateTimeModified;
+            $data['dateTimeModified'] = date("Y-m-d", $dateTimeModified);
 
             /**
              * Backward compatibility

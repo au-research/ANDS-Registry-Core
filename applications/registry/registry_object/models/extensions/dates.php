@@ -244,18 +244,40 @@ class Dates_Extension extends ExtensionBase
      * @param bool|false $xml
      * @return bool|string
      */
-    function getExistenceDateLatestYear($xml = false) {
+    function getExistenceDateLatestYear($xml = false)
+    {
         $latestYear = false;
         if (!$xml) $xml = $this->ro->getSimpleXML();
         foreach ($xml->xpath('//ro:existenceDates') AS $date) {
-            if ($date->endDate){
-                if(strlen(trim($date->endDate)) == 4)
-                    $date->endDate = "Dec 31, ".$date->endDate;
+            if ($date->endDate) {
+                if (strlen(trim($date->endDate)) == 4)
+                    $date->endDate = "Dec 31, " . $date->endDate;
                 $end = strtotime($date->endDate);
-                $latestYear = date("Y",$end);
+                $latestYear = date("Y", $end);
             }
         }
         return $latestYear;
+    }
+
+    /**
+     * Return the existenceDate
+     * @param $point
+     * @param string $format
+     * @param $xml
+     * @return bool|string
+     */
+    function getExistenceDate($point, $format='Y-m-d', $xml)
+    {
+        if (!$xml) $xml = $this->ro->getSimpleXML();
+        foreach ($xml->xpath('//ro:existenceDates') AS $date) {
+            if ($date->{$point}) {
+                if (strlen(trim($date->{$point})) == 4) {
+                    $date->{$point} = "Dec 31, " . $date->{$point};
+                }
+                $date = date(strtotime($date->{$point}));
+                return date($format, $date);
+            }
+        }
     }
 
 }

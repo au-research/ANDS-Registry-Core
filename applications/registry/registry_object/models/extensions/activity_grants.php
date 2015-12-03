@@ -80,6 +80,31 @@ class Activity_grants_extension extends ExtensionBase
     }
 
     /**
+     * Returns all the institutions participating in this research grant
+     * relatedObject[relation=isManagedBy|hasParticipant][type=group][class=party]
+     * @param bool|false $relatedObjects
+     * @return array
+     */
+    function getInstitutions($relatedObjects = false)
+    {
+        $institutions = array();
+        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        if ($relatedObjects) {
+            foreach ($relatedObjects as $relatedObject) {
+                if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
+                    if ($relatedObject['class'] == 'party'
+                        && ($relatedObject['relation_type'] == 'isManagedBy' || $relatedObject['relation_type'] == 'hasParticipant')
+                        && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'], 'type'))) == 'group'
+                    ) {
+                        $institutions[] = $relatedObject['title'];
+                    }
+                }
+            }
+        }
+        return $institutions;
+    }
+
+    /**
      * Returns the Administering Institution
      * relatedObject[relation=isManagedBy][class=party][type!=person]
      * @param bool|false $relatedObjects
