@@ -56,7 +56,7 @@ class GrantsHandlerV2 extends Handler
 
         //institution
         if ($institution = (isset($params['institution'])) ? $params['institution'] : null) {
-            $this->ci->solr->setOpt('fq', '+administering_institution:("' . $institution . '")');
+            $this->ci->solr->setOpt('fq', '+administering_institution_search:"' . $institution . '"');
         }
 
         //todo principalInvestigator param
