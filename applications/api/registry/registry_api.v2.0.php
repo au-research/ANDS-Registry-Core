@@ -4,6 +4,7 @@ namespace ANDS\API;
 use \Exception as Exception;
 
 
+
 /**
  * ANDS\Registry_api
  * for use with the ANDS API application
@@ -15,7 +16,7 @@ class Registry_api
 {
     private $ci;
     private $params;
-    private $version = "1.0";
+    private $version = "2.0";
 
     public function __construct()
     {
@@ -25,7 +26,7 @@ class Registry_api
 
     /**
      * Primary handle function
-     * @param  array $method list of URL parameters
+     * @param  array  $method list of URL parameters
      * @return array          response
      */
     public function handle($method = array())
@@ -43,6 +44,10 @@ class Registry_api
         if ($this->params['submodule']) {
             try {
                 $class_name = 'ANDS\API\Registry\Handler\\' . ucfirst($this->params['submodule']) . 'Handler';
+                $v2_class_name = $class_name.'V2';
+                if (class_exists($v2_class_name)) {
+                    $class_name = $v2_class_name;
+                }
                 if (!class_exists($class_name)) {
                     throw new Exception("Method " . $this->params['submodule'] . " is not supported (Version = ".$this->version.")");
                 }

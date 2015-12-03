@@ -6,7 +6,7 @@ namespace ANDS\API\Registry\Handler;
  * getGrants API
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
-class GrantsHandler extends Handler
+class GrantsHandlerV2 extends Handler
 {
 
 //    private $defaultGroups = '"National Health and Medical Research Council","Australian Research Council"';
@@ -54,16 +54,15 @@ class GrantsHandler extends Handler
             $this->ci->solr->setOpt('fq', 'title_search:(' . $title . ')');
         }
 
-        //institution without stopwords
-        if ($institution = (isset($params['institution'])) ? implode(' ', $this->getWords($params['institution'])) : null) {
-            $this->ci->solr->setOpt('fq', '+administering_institution_search:(' . $institution . ')');
+        //institution
+        if ($institution = (isset($params['institution'])) ? $params['institution'] : null) {
+            $this->ci->solr->setOpt('fq', '+administering_institution:("' . $institution . '")');
         }
 
         //todo principalInvestigator param
 
-
-        //person without stopwords
-        if ($person = (isset($params['person'])) ? implode(' ', $this->getWords($params['person'])) : null) {
+        //person
+        if ($person = (isset($params['person'])) ? $params['person'] : null) {
             $this->ci->solr->setOpt('fq', '+researchers:(' . $person . ')');
         }
 
@@ -101,6 +100,7 @@ class GrantsHandler extends Handler
 
         //response setup
         $response = array(
+            'totalFound' => $result['response']['numFound'],
             'numFound' => 0,
             'recordData' => array(),
             'query' => $this->ci->solr->constructFieldString()
@@ -295,6 +295,7 @@ class GrantsHandler extends Handler
             if ($canPass) {
                 $response['numFound'] += 1;
                 $response['recordData'][] = $data;
+
             }
 
             //save memory by clearing the ro object
