@@ -9,8 +9,8 @@ namespace ANDS\API\Registry\Handler;
 class GrantsHandler extends Handler
 {
 
-    private $defaultGroups = '"National Health and Medical Research Council","Australian Research Council"';
-    private $defaultType = "grant";
+//    private $defaultGroups = '"National Health and Medical Research Council","Australian Research Council"';
+//    private $defaultType = "grant";
 
     /**
      * Handling the grants method
@@ -18,77 +18,85 @@ class GrantsHandler extends Handler
      */
     public function handle()
     {
-
-        $principalInvestigator = null;
-        $institution = null;
-
+        //load libraries for use
         $this->ci->load->library('solr');
         $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
 
-        foreach ($this->ci->input->get() as $name => $value) {
+        $params = $this->ci->input->get();
 
-            $institution = ($name == 'institution') ? $value : null;
-            $principalInvestigator = ($name == 'principalInvestigator') ? $value : null;
+        //Only search for activity
+        $this->ci->solr->setOpt('fq', '+class:"activity"');
 
-            //Determine which groups we are searching against
-            if ($name == 'group' && $value != "") {
-                $this->defaultGroups = '"' . $value . '"';
-            }
-
-            //display_title,researcher,year,institution
-            if ($name == 'title' && $value != '') {
-                $words = $this->getWords($value);
-                foreach ($words as $word) {
-                    $this->ci->solr->setOpt('fq', '+title_search:(' . $word . ')');
-                }
-            }
-
-            //type
-            if ($name == 'type' && ($value!='' || $value!='all')) {
-                $this->defaultType = $value;
-            }
-
-            //identifier
-            if (($name == 'id' || $name=='purl') && $value != '') {
-                $this->ci->solr->setOpt('fq', '+identifier_value:*' . $value . '*');
-            }
-
-            if ($name == 'description' && $value != '') {
-                $words = $this->getWords($value);
-                foreach ($words as $word) {
-                    $this->ci->solr->setOpt('fq', '+description:(' . $word . ')');
-                }
-            }
-
-            if ($name == 'institution' && $value != '') {
-                $this->ci->solr->setOpt('fq', '+related_party_multi_search:"' . $value . '"');
-                //$this->ci->solr->setOpt('fq','+related_object_relation:"isManagedBy"');
-            }
-
-            if ($name == 'person' && $value != '') {
-                $words = $this->getWords($value);
-                foreach ($words as $word) {
-                    $this->ci->solr->setOpt('fq', ' related_party_one_search:(' . $word . ') OR researchers:(' . $word . ')');
-                }
-                //$this->ci->solr->setOpt('fq','+related_object_class:"party"');
-            }
-
-            if ($name == 'principalInvestigator' && $value != '') {
-                $words = $this->getWords($value);
-                foreach ($words as $word) {
-                    $this->ci->solr->setOpt('fq', '+related_party_one_search:(' . $word . ')');
-                }
-                //$this->ci->solr->setOpt('fq','+related_object_relation:"isPrincipalInvestigatorOf"');
-            }
+        //purl
+        if ($purl = (isset($params['purl'])) ? $params['purl'] : null) {
+            $this->ci->solr->setOpt('fq', '+identifier_value_search:(' . $purl . ')');
         }
 
         //type
-        if ($this->defaultType != "grant") {
-            $this->ci->solr->setOpt('fq', '+type:(' .$this->defaultType .')');
+        if ($type = (isset($params['type'])) ? $params['type'] : null) {
+            $this->ci->solr->setOpt('fq', '+type:("' . $type . '")');
         }
 
-        //execute
-        $this->ci->solr->setOpt('fq', '+class:"activity"')->setOpt('rows', '20');
+        //funder
+        if ($funder = (isset($params['funder'])) ? $params['funder'] : null) {
+            $this->ci->solr->setOpt('fq', '+funders_search:(' . $funder . ')');
+        }
+
+        //grantid
+        $grantid = (isset($params['grantid'])) ? $params['grantid'] : null;
+        if ($grantid) {
+            $this->ci->solr->setOpt('fq', '+identifier_value:("' . $grantid . '")');
+        }
+
+        //title without stopwords
+        $title = (isset($params['title'])) ? implode(' ', $this->getWords($params['title'])) : null;
+        if ($title) {
+            $this->ci->solr->setOpt('fq', 'title_search:(' . $title . ')');
+        }
+
+        //institution without stopwords
+        if ($institution = (isset($params['institution'])) ? implode(' ', $this->getWords($params['institution'])) : null) {
+            $this->ci->solr->setOpt('fq', '+administering_institution_search:(' . $institution . ')');
+        }
+
+        //todo principalInvestigator param
+
+
+        //person without stopwords
+        if ($person = (isset($params['person'])) ? implode(' ', $this->getWords($params['person'])) : null) {
+            $this->ci->solr->setOpt('fq', '+researchers:(' . $person . ')');
+        }
+
+        //status
+        if ($status = (isset($params['status'])) ? $params['status'] : null) {
+            $this->ci->solr->setOpt('fq', '+activity_status:(' . $status . ')');
+        }
+
+        //addedSince
+        if ($addedSince = (isset($params['addedSince'])) ? $params['addedSince'] : null) {
+            //convert to SOLR timestamp
+            $addedSince = date('c', strtotime($addedSince)) . 'Z';
+            $this->ci->solr->setOpt('fq', '+record_created_timestamp:[' . $addedSince . ' TO *]');
+        }
+
+        //modifiedSince
+        if ($modifiedSince = (isset($params['modifiedSince'])) ? $params['modifiedSince'] : null) {
+            //convert to SOLR timestamp
+            $modifiedSince = date('c', strtotime($modifiedSince)) . 'Z';
+            $this->ci->solr->setOpt('fq', '+record_modified_timestamp:[' . $modifiedSince . ' TO *]');
+        }
+
+        //rows
+        if ($rows = (isset($params['rows'])) ? $params['rows'] : 999) {
+            $this->ci->solr->setOpt('rows', $rows);
+        }
+
+        //start
+        if ($start = (isset($params['start'])) ? $params['start'] : 0) {
+            $this->ci->solr->setOpt('start', $start);
+        }
+
+        //execute search and store the result
         $result = $this->ci->solr->executeSearch(true);
 
         //response setup
@@ -100,7 +108,6 @@ class GrantsHandler extends Handler
 
         /**
          * Populate the response based on the result returned
-         *
          */
         foreach ($result['response']['docs'] as $result) {
             $ro = $this->ci->ro->getByID($result['id']);
@@ -109,137 +116,194 @@ class GrantsHandler extends Handler
             if (!$ro) break;
 
             //build relationships array of the object
-            $relationships = false;
-            $related = $ro->getRelatedObjectsByClassAndRelationshipType(array('party'), array());
-            if (isset($related)) {
-                $relationships = $this->processRelated($related);
-            }
-
-            //build identifiers array of the object
-            $identifiers = false;
-            if (isset($result['identifier_value'])) {
-                $identifiers = $this->processIdentifiers($result['identifier_value'], $result['identifier_type']);
-            }
+            //todo check if we actually need to do a canPass here
+//            $relationships = false;
+//            $related = $ro->getRelatedObjectsByClassAndRelationshipType(array('party'), array());
+//            if (isset($related)) {
+//                $relationships = $this->processRelated($related);
+//            }
 
             /**
              * Filter, canPass will determine if this object can enter the final array
-             * todo Update business rule here for inline comment
+             * due to limitation on the SOLR indexing
              */
             $canPass = true;
 
-            if (isset($institution) && isset($relationships['isManagedBy'])) {
-                $canPass = false;
-                if (is_array($relationships['isManagedBy'])) {
-                    for ($i = 0; $i < sizeof($relationships['isManagedBy']); $i++) {
-                        $words = $this->getWords($relationships['isManagedBy'][$i]);
-                        for ($i = 0; $i < sizeof($institution); $i++) {
-                            if (!$canPass) {
-                                $canPass = in_array($institution[$i], $words);
-                            }
-                        }
-                    }
-                } else {
-                    $words = $this->getWords($relationships['isManagedBy']);
-                    for ($i = 0; $i < sizeof($institution); $i++) {
-                        if (!$canPass) {
-                            $canPass = in_array($institution[$i], $words);
-                        }
+            //todo fix
+//            if (isset($principalInvestigator) && isset($relationships['isPrincipalInvestigatorOf'])) {
+//                $canPass = false;
+//                if (is_array($relationships['isPrincipalInvestigatorOf'])) {
+//                    for ($i = 0; $i < sizeof($relationships['isPrincipalInvestigatorOf']); $i++) {
+//                        $words = $this->getWords($relationships['isPrincipalInvestigatorOf'][$i]);
+//                        for ($i = 0; $i < sizeof($principalInvestigator); $i++) {
+//                            if (!$canPass) {
+//                                $canPass = in_array($principalInvestigator[$i], $words);
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    $words = $this->getWords($relationships['isPrincipalInvestigatorOf']);
+//                    for ($i = 0; $i < sizeof($principalInvestigator); $i++) {
+//                        if (!$canPass) {
+//                            $canPass = in_array($principalInvestigator[$i], $words);
+//                        }
+//                    }
+//                }
+//            }
+
+
+            // End searching logic
+            // do not put the response in if record does not meet criteria
+            if (!$canPass) break;
+
+
+            //start displaying logic
+
+            //data is the response object to add to the response array
+            $data = array(
+                'title' => $result['display_title'],
+                'key' => $result['key']
+            );
+
+            /**
+             * Getting the purl for the object to display in response
+             * content of identifier[type=purl]
+             */
+            $purl = null;
+            if ($identifiers = $ro->getIdentifiers()) {
+                foreach ($identifiers as $identifier) {
+                    $purl = (!$purl && $identifier['identifier_type'] == 'purl') ? $identifier['identifier'] : $purl;
+                }
+            }
+            $data['purl'] = $purl;
+
+            /**
+             * Description
+             * description[type=brief] or description[type=full]
+             * todo implement Description based on ro description
+             */
+            $data['description'] = isset($result['description']) ? $result['description'] : "";
+
+            /**
+             * Getting the funder for the object
+             * nameType=primary of a relatedObject party type=group with relation isFundedBy
+             * or
+             * title of a relatedInfo party with relation isFundedBy
+             * todo implement funder
+             */
+            $funder = null;
+
+            /**
+             * Getting grant id
+             * identifier[type=local] or identifier[type=arc] or identifier[type=nhmrc]
+             */
+            $grantid = null;
+            //identifiers should've been generated from before
+            if ($identifiers) {
+                foreach ($identifiers as $identifier) {
+                    if (!$grantid) {
+                        $type = $identifier['identifier_type'];
+                        $grantid = ($type == 'nhmrc' || $type == 'arc' || $type == 'local') ? $identifier['identifier'] : $grantid;
                     }
                 }
             }
+            $data['grantid'] = $grantid;
 
-            if (isset($principalInvestigator) && isset($relationships['isPrincipalInvestigatorOf'])) {
-                $canPass = false;
-                if (is_array($relationships['isPrincipalInvestigatorOf'])) {
-                    for ($i = 0; $i < sizeof($relationships['isPrincipalInvestigatorOf']); $i++) {
-                        $words = $this->getWords($relationships['isPrincipalInvestigatorOf'][$i]);
-                        for ($i = 0; $i < sizeof($principalInvestigator); $i++) {
-                            if (!$canPass) {
-                                $canPass = in_array($principalInvestigator[$i], $words);
-                            }
-                        }
-                    }
-                } else {
-                    $words = $this->getWords($relationships['isPrincipalInvestigatorOf']);
-                    for ($i = 0; $i < sizeof($principalInvestigator); $i++) {
-                        if (!$canPass) {
-                            $canPass = in_array($principalInvestigator[$i], $words);
-                        }
-                    }
-                }
-            }
+            /**
+             * Researchers
+             * A list of researchers named on the awarded grant
+             * description[type=researchers]
+             * or
+             * semicolon-separated list of names generated from
+             * name[type=primary] of relatedObject with relation=hasPrincipalInvestigator or relation=hasParticipant
+             * title of relatedInfo with relation=hasPrincipalInvestigator or relation=hasParticipant
+             * todo implement Researchers
+             */
+            $researchers = null;
 
-            //If this object pass the test, add it to the response array
+            /**
+             * PrincipalInvestigator
+             * name[type=primary] of relatedObject with relation=hasPrincipalInvestigator or relation=hasParticipant
+             * title of relatedInfo with relation=hasPrincipalInvestigator or relation=hasParticipant
+             * todo implement PrincipalInvestigator
+             */
+            $principalInvestigator = null;
+
+            /**
+             * Institution
+             * semicolon-separated list of org names
+             * from
+             * name[type=primary] of relatedObject party group with relation=isManagedBy or relation=hasParticipant
+             * todo implement Institution
+             */
+            $institution = null;
+
+            /**
+             * Managing Institution
+             * name[type=primary] of relatedObject party group with relation=isManagedBy
+             * todo implement $managingInstitution
+             */
+            $managingInstitution = null;
+
+            /**
+             * fundingAmount
+             * description[type=fundingAmount]
+             * todo implement fundingAmount
+             */
+            $fundingAmount = null;
+
+            /**
+             * fundingScheme
+             * description[type=fundingScheme]
+             * todo implement fundingScheme
+             */
+            $fundingScheme = null;
+
+            /**
+             * startDate
+             * Format W3DTF
+             * existenceDate/startDate
+             * todo implement startDate
+             */
+            $startDate = null;
+
+            /**
+             * endDate
+             */
+            $endDate = null;
+
+            /**
+             * dateTimeCreated
+             */
+            $dateTimeCreated = null;
+
+            /**
+             * dateTimeModified
+             */
+            $dateTimeModified = null;
+
+            /**
+             * Backward compatibility
+             * relations/isFundedBy
+             * relations/isManagedBy
+             * relations/isPrincipalInvestigatorOf
+             * relations/isParticipantIn
+             * todo backward compatibility
+             */
+
+            //sanity check again
             if ($canPass) {
                 $response['numFound'] += 1;
-                $response['recordData'][] = array(
-                    'key' => $result['key'],
-                    'slug' => $result['slug'],
-                    'title' => $result['display_title'],
-                    'type' => $result['type'],
-                    'description' => isset($result['description']) ? $result['description'] : "",
-                    'identifiers' => $result['identifier_value'],
-                    'identifier_type' => $identifiers,
-                    'relations' => $relationships
-                );
+                $response['recordData'][] = $data;
             }
+
+            //save memory by clearing the ro object
+            unset($ro);
         }
 
         return $response;
     }
 
-    /**
-     * Helper method for handle()
-     * Returns the relationships array filtered with additional information
-     * @param $related
-     * @return array
-     */
-    private function processRelated($related)
-    {
-        //build the relationship and only construct relationship for PUBLISHED records
-        $relationships = array();
-        for ($i = 0; $i < sizeof($related); $i++) {
-            if (isset($related[$i]['relation_type']) && $related[$i]['status'] == 'PUBLISHED') {
-                if (isset($relationships[$related[$i]['relation_type']])) {
-                    $relationships[$related[$i]['relation_type']][] = $related[$i]['title'];
-                } else {
-                    $firstTitle = $related[$i]['title'];
-                    $relationships[$related[$i]['relation_type']] = array();
-                    $relationships[$related[$i]['relation_type']][] = $firstTitle;
-                }
-            }
-        }
-
-        //verify relationship count
-        foreach ($relationships as $key => $relationship) {
-            if (count($relationship) == 1) {
-                $relationships[$key] = $relationship[0];
-            }
-        }
-        return $relationships;
-    }
-
-    /**
-     * Helper method for handle()
-     * Returns the identifiers array in a better format
-     * @param $value
-     * @param $type
-     * @return array
-     */
-    private function processIdentifiers($value, $type)
-    {
-        $identifiers = array();
-        for ($i = 0; $i < sizeof($type); $i++) {
-            if (isset($identifiers[$type[$i]])) {
-                if (is_array($identifiers[$type[$i]])) {
-                    $identifiers[$type[$i]][] = $value[$i];
-                }
-            } else {
-                $identifiers[$type[$i]] = $value[$i];
-            }
-        }
-        return $identifiers;
-    }
 
     /**
      * Helper method
