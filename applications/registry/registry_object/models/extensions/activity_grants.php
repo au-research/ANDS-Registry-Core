@@ -51,7 +51,8 @@ class Activity_grants_extension extends ExtensionBase
      * Returns Researchers
      * description[type=researchers]
      * relatedObject[class=party][type=person]
-     * todo relatedInfo[type=party][relation=hasPrincipalInvestigator|hasParticipant]
+     * relatedInfo[type=party][relation=hasPrincipalInvestigator|hasParticipant]
+     * todo check for multiple relatedInfo, multiple relatedObject and merge them
      * @param bool|false $gXPath
      * @param bool|false $relatedObjects
      * @return array
@@ -61,10 +62,25 @@ class Activity_grants_extension extends ExtensionBase
         if (!$gXPath) $gXPath = $this->getGXPath();
 
         $researchers = array();
+
+        //description[type=researchers]
         foreach ($gXPath->query('//ro:description[@type="researchers"]') as $node) {
             $researchers[] = strip_tags(html_entity_decode($node->nodeValue));
         }
 
+        //relatedInfo[type=party][relation=hasPrincipalInvestigator|hasParticipant]
+        foreach($gXPath->query('//ro:relatedInfo[@type="party"]') as $node) {
+            foreach ($node->getElementsByTagName("relation") as $relationNode) {
+                $type = $relationNode->getAttribute("type");
+                if ($type == "hasPrincipalInvestigator" || $type == "hasParticipant") {
+                    if ($titleNode = $node->getElementsByTagName("title")->item(0)) {
+                        $researchers[] = strip_tags(html_entity_decode($titleNode->nodeValue));
+                    }
+                }
+            }
+        }
+
+        //relatedObject[class=party][type=person]
         if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         foreach ($relatedObjects as $relatedObject) {
             if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
@@ -132,13 +148,30 @@ class Activity_grants_extension extends ExtensionBase
     /**
      * Returns the Funder of a record
      * relatedObject[relation=isFundedBy][class=party][type!=person]
-     * todo relatedInfo[type=party][relation=isFundedBy]
+     * relatedInfo[type=party][relation=isFundedBy]
+     * @param bool|false $gXPath
      * @param bool|false $relatedObjects
      * @return array
      */
-    function getFunders($relatedObjects = false)
+    function getFunders($gXPath = false, $relatedObjects = false)
     {
+
         $funders = array();
+
+        //relatedInfo[type=party][relation=isFundedBy]
+        if (!$gXPath) $gXPath = $this->getGXPath();
+        foreach($gXPath->query("//ro:relatedInfo") as $node) {
+            foreach ($node->getElementsByTagName("relation") as $relationNode) {
+                $type = $relationNode->getAttribute("type");
+                if ($type == "isFundedBy") {
+                    if ($titleNode = $node->getElementsByTagName("title")->item(0)) {
+                        $funders[] = strip_tags(html_entity_decode($titleNode->nodeValue));
+                    }
+                }
+            }
+        }
+
+        //relatedObject[relation=isFundedBy][class=party][type!=person]
         if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
@@ -159,13 +192,29 @@ class Activity_grants_extension extends ExtensionBase
     /**
      * Return the principal investigator
      * relatedObject[class=party][type=person][relation=hasPrincipalInvestigator]
-     * todo relatedInfo[type=party][relation=hasPrincipalInvestigator]
+     * relatedInfo[type=party][relation=hasPrincipalInvestigator]
+     * @param bool|false $gXPath
      * @param bool|false $relatedObjects
      * @return array
      */
-    function getPrincipalInvestigator($relatedObjects = false)
+    function getPrincipalInvestigator($gXPath = false, $relatedObjects = false)
     {
         $principalInvestigator = array();
+
+        //relatedInfo[type=party][relation=hasPrincipalInvestigator]
+        if (!$gXPath) $gXPath = $this->getGXPath();
+        foreach($gXPath->query("//ro:relatedInfo") as $node) {
+            foreach ($node->getElementsByTagName("relation") as $relationNode) {
+                $type = $relationNode->getAttribute("type");
+                if ($type == "hasPrincipalInvestigator") {
+                    if ($titleNode = $node->getElementsByTagName("title")->item(0)) {
+                        $principalInvestigator[] = strip_tags(html_entity_decode($titleNode->nodeValue));
+                    }
+                }
+            }
+        }
+
+        //relatedObject[class=party][type=person][relation=hasPrincipalInvestigator]
         if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {

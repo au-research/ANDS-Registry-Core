@@ -119,6 +119,15 @@ class GrantsHandlerV2 extends Handler
             //if Object doesn't exist
             if (!$ro) break;
 
+            //cache relatedObjects for passing into functions that needed it, to save processing time
+            $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
+
+            //cache gXPath
+            $gXPath = $ro->getGXPath();
+
+            //cache XML
+            $xml = $ro->getSimpleXML();
+
 
             //data is the response object to add to the response array
             $data = array(
@@ -151,7 +160,7 @@ class GrantsHandlerV2 extends Handler
              * or
              * title of a relatedInfo party with relation isFundedBy
              */
-            $funder = $ro->getFunders();
+            $funder = $ro->getFunders($gXPath, $relatedObjects);
             if (sizeof($funder) > 0) {
                 $data['funder'] = $funder;
             }
@@ -172,14 +181,7 @@ class GrantsHandlerV2 extends Handler
             }
             $data['grantid'] = $grantid;
 
-            //cache relatedObjects for passing into functions that needed it, to save processing time
-            $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
 
-            //cache gXPath
-            $gXPath = $ro->getGXPath();
-
-            //cache XML
-            $xml = $ro->getSimpleXML();
 
             /**
              * Researchers
@@ -201,7 +203,7 @@ class GrantsHandlerV2 extends Handler
              * name[type=primary] of relatedObject with relation=hasPrincipalInvestigator or relation=hasParticipant
              * title of relatedInfo with relation=hasPrincipalInvestigator or relation=hasParticipant
              */
-            $principalInvestigator = $ro->getPrincipalInvestigator($relatedObjects);
+            $principalInvestigator = $ro->getPrincipalInvestigator($gXPath, $relatedObjects);
             if (sizeof($principalInvestigator) > 0) {
                 $data['principalInvestigator'] = $principalInvestigator;
             }
@@ -267,15 +269,8 @@ class GrantsHandlerV2 extends Handler
             $dateTimeModified = $ro->updated;
             $data['dateTimeModified'] = date("Y-m-d", $dateTimeModified);
 
-            /**
-             * Backward compatibility
-             * relations/isFundedBy
-             * relations/isManagedBy
-             * relations/isPrincipalInvestigatorOf
-             * relations/isParticipantIn
-             * todo backward compatibility
-             */
 
+            //add data to the response array
             $response['numFound'] += 1;
             $response['recordData'][] = $data;
 
