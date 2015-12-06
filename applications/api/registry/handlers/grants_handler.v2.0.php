@@ -285,6 +285,7 @@ class GrantsHandlerV2 extends Handler
     /**
      * Helper method
      * Returns words without the stop words
+     * todo move to presentation_helper or some other helper for global usage
      * @param $string
      * @return array
      */
