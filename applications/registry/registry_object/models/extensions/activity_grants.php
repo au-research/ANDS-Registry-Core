@@ -37,13 +37,23 @@ class Activity_grants_extension extends ExtensionBase
      * @param bool|false $gXPath
      * @return bool|string
      */
-    function getFundingScheme($gXPath = false)
+    function getFundingScheme($gXPath = false, $relatedObjects = false)
     {
-        if (!$gXPath) $gXPath = $this->getGXPath();
         $fundingScheme = false;
+
+        //description[type=fundingScheme]
+        if (!$gXPath) $gXPath = $this->getGXPath();
         foreach ($gXPath->query('//ro:description[@type="fundingScheme"]') as $node) {
             $fundingScheme = strip_tags(html_entity_decode($node->nodeValue));
         }
+
+        /**
+         * relatedObject[type=activity|program][relation=isPartOf|isFundedBy]
+         * fundingScheme is currently a single String, having repeated would require some BI work and change of the schema
+         * 7/12/2015 checking with BI for solution
+         */
+
+
         return $fundingScheme;
     }
 
@@ -69,7 +79,7 @@ class Activity_grants_extension extends ExtensionBase
         }
 
         //relatedInfo[type=party][relation=hasPrincipalInvestigator|hasParticipant]
-        foreach($gXPath->query('//ro:relatedInfo[@type="party"]') as $node) {
+        foreach ($gXPath->query('//ro:relatedInfo[@type="party"]') as $node) {
             foreach ($node->getElementsByTagName("relation") as $relationNode) {
                 $type = $relationNode->getAttribute("type");
                 if ($type == "hasPrincipalInvestigator" || $type == "hasParticipant") {
@@ -91,6 +101,9 @@ class Activity_grants_extension extends ExtensionBase
                 }
             }
         }
+
+        //remove duplicates
+        $researchers = array_values(array_unique($researchers));
 
         return $researchers;
     }
@@ -160,7 +173,7 @@ class Activity_grants_extension extends ExtensionBase
 
         //relatedInfo[type=party][relation=isFundedBy]
         if (!$gXPath) $gXPath = $this->getGXPath();
-        foreach($gXPath->query("//ro:relatedInfo") as $node) {
+        foreach ($gXPath->query("//ro:relatedInfo") as $node) {
             foreach ($node->getElementsByTagName("relation") as $relationNode) {
                 $type = $relationNode->getAttribute("type");
                 if ($type == "isFundedBy") {
@@ -185,6 +198,10 @@ class Activity_grants_extension extends ExtensionBase
                 }
             }
         }
+
+        //remove duplicates
+        $funders = array_values(array_unique($funders));
+
         return $funders;
     }
 
@@ -203,7 +220,7 @@ class Activity_grants_extension extends ExtensionBase
 
         //relatedInfo[type=party][relation=hasPrincipalInvestigator]
         if (!$gXPath) $gXPath = $this->getGXPath();
-        foreach($gXPath->query("//ro:relatedInfo") as $node) {
+        foreach ($gXPath->query("//ro:relatedInfo") as $node) {
             foreach ($node->getElementsByTagName("relation") as $relationNode) {
                 $type = $relationNode->getAttribute("type");
                 if ($type == "hasPrincipalInvestigator") {
@@ -228,6 +245,10 @@ class Activity_grants_extension extends ExtensionBase
                 }
             }
         }
+
+        //remove duplicates
+        $principalInvestigator = array_values(array_unique($principalInvestigator));
+
         return $principalInvestigator;
     }
 
