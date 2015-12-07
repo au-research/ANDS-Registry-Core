@@ -1067,10 +1067,16 @@ class Doitasks extends CI_Model {
         parse_str(htmlentities($data), $output);
         if(isset($output['xml']) )
         {
-            return trim($output['xml']);
+          return trim($output['xml']);
+
         }elseif(count($output)>1)
         {
-            return trim(implode($output));
+          //hotfix to return XML that is not empty,
+          //implode($output) returns empty for no reason
+          //todo verify and check
+          return trim($data);
+          //return trim(implode($output));
+
         }else{
             return trim($data);
         }
