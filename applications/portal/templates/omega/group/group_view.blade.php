@@ -67,12 +67,11 @@
     @endif
 
     <div class="panel swatch-white">
-        <div class="panel-heading">Research Data Profile</div>
-        <div class="panel-body">
-            To date, {{$group['title']}} has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a> in Research Data Australia, which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}.
-            <a href="{{base_url()}}search#!/group={{$group['title']}}/type=group/class=party">{{$group['groups_count']}} research group(s)</a>
-            have been actively involved in collecting data and creating metadata records for the data.  All the data records, people, projects, grants and services associated with {{$group['title']}}
-            can be accessed from the box on the right hand side of this page.
+        <div class="panel-heading">Data Profile</div>
+        <div  class="panel-body">
+            {{$group['title']}}  has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a>  in Research Data Australia,
+            which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}} and involve  <a href="{{base_url()}}search#!/group={{$group['title']}}/type=group/class=party">{{$group['groups_count']}} group(s)</a>.
+            All of the information provided by  {{$group['title']}} can be accessed from the box on the right hand side of this page.
         </div>
         @if($group['has_custom_data'])
             @if(isset($group['custom_data']['researchdataprofile']))
