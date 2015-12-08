@@ -40,7 +40,7 @@ class GrantsHandlerV2 extends Handler
         }
 
         //grantid
-        $grantid = (isset($params['grantid'])) ? $params['grantid'] : null;
+        $grantid = (isset($params['id'])) ? $params['id'] : null;
         if ($grantid) {
             $this->ci->solr->setOpt('fq', '+identifier_value:("' . $grantid . '")');
         }

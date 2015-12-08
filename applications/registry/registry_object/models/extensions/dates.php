@@ -275,7 +275,7 @@ class Dates_Extension extends ExtensionBase
                     $date->{$point} = "Dec 31, " . $date->{$point};
                 }
                 $date = date(strtotime($date->{$point}));
-                return date($format, $date);
+                return date($format, strtotime($date));
             }
         }
     }
