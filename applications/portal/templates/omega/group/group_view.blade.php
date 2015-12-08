@@ -131,13 +131,18 @@
     <!-- <div class="panel-heading">Registry Contents</div> -->
     <div class="panel-body">
         <ul class="listy">
-            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection')}} <small>({{$group['facet']['class']['collection']}})</small></a></li>
-
-            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=party">{{class_name('party')}} <small>({{$group['facet']['class']['party']}})</small></a></li>
-
-            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=activity">{{class_name('activity')}} <small>({{$group['facet']['class']['activity']}})</small></a></li>
-
-            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=service">{{class_name('service')}} <small>({{$group['facet']['class']['service']}})</small></a></li>
+            @if($group['facet']['class']['collection']!=0)
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection')}} <small>({{$group['facet']['class']['collection']}})</small></a></li>
+            @endif
+            @if($group['facet']['class']['party']!=0)
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=party">{{class_name('party')}} <small>({{$group['facet']['class']['party']}})</small></a></li>
+            @endif
+            @if($group['facet']['class']['activity']!=0)
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=activity">{{class_name('activity')}} <small>({{$group['facet']['class']['activity']}})</small></a></li>
+            @endif
+            @if($group['facet']['class']['service']!=0)
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=service">{{class_name('service')}} <small>({{$group['facet']['class']['service']}})</small></a></li>
+            @endif
         </ul>
     </div>
 </div>
