@@ -130,6 +130,10 @@ class Activity_grants_extension extends ExtensionBase
                 }
             }
         }
+
+        //remove duplicates
+        $institutions = array_values(array_unique($institutions));
+
         return $institutions;
     }
 
