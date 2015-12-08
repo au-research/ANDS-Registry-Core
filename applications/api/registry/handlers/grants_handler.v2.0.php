@@ -45,8 +45,8 @@ class GrantsHandlerV2 extends Handler
             $this->ci->solr->setOpt('fq', '+identifier_value:("' . $identifier . '")');
         }
 
-        //title without stopwords
-        $title = (isset($params['title'])) ? implode(' ', $this->getWords($params['title'])) : null;
+        //title
+        $title = (isset($params['title'])) ? $params['title'] : null;
         if ($title) {
             $this->ci->solr->setOpt('fq', 'title_search:(' . $title . ')');
         }
