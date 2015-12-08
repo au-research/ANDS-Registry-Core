@@ -188,6 +188,7 @@
     <copyField source="administering_institution" dest="administering_institution_search"/>
     <copyField source="researchers" dest="researchers_search"/>
     <copyField source="funders" dest="funders_search"/>
+    <copyField source="principal_investigator" dest="principal_investigator_search"/>
 
 
     <!-- DEPRECATED: The defaultSearchField is consulted by various query parsers when
