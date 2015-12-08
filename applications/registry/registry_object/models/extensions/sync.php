@@ -429,7 +429,7 @@ class Sync_extension extends ExtensionBase{
             }
 
             //funders
-            $funders = $this->ro->getFunders($relatedObjects);
+            $funders = $this->ro->getFunders($gXPath, $relatedObjects);
             if (sizeof($funders) > 0) {
                 $json['funders'] = $funders;
             }
@@ -441,7 +441,7 @@ class Sync_extension extends ExtensionBase{
             }
 
             //principal investigator
-            $principalInvestigators = $this->ro->getPrincipalInvestigator($relatedObjects);
+            $principalInvestigators = $this->ro->getPrincipalInvestigator($gXPath, $relatedObjects);
             if (sizeof($principalInvestigators) > 0) {
                 $json['principal_investigator'] = $principalInvestigators;
             }
