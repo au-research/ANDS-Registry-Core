@@ -63,7 +63,7 @@ class GrantsHandlerV2 extends Handler
 
         //person
         if ($person = (isset($params['person'])) ? $params['person'] : null) {
-            $this->ci->solr->setOpt('fq', '+researchers:(' . $person . ')');
+            $this->ci->solr->setOpt('fq', '+researchers_search:"' . $person . '"');
         }
 
         //status
@@ -107,7 +107,7 @@ class GrantsHandlerV2 extends Handler
         );
 
         if ($this->ci->input->get('debug')) {
-            $response['query'] = $this->ci->solr->constructFieldString();
+            $response['query'] = urldecode($this->ci->solr->constructFieldString());
         }
 
         /**
