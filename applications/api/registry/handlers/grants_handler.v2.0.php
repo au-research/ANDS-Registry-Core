@@ -39,10 +39,10 @@ class GrantsHandlerV2 extends Handler
             $this->ci->solr->setOpt('fq', '+funders_search:(' . $funder . ')');
         }
 
-        //grantid
-        $grantid = (isset($params['id'])) ? $params['id'] : null;
-        if ($grantid) {
-            $this->ci->solr->setOpt('fq', '+identifier_value:("' . $grantid . '")');
+        //identifier
+        $identifier = (isset($params['identifier'])) ? $params['identifier'] : null;
+        if ($identifier) {
+            $this->ci->solr->setOpt('fq', '+identifier_value:("' . $identifier . '")');
         }
 
         //title without stopwords
@@ -166,21 +166,17 @@ class GrantsHandlerV2 extends Handler
             }
 
             /**
-             * Getting grant id
-             * identifier[type=local] or identifier[type=arc] or identifier[type=nhmrc]
+             * Getting Identifiers
+             * identifier of all type
              */
-            $grantid = null;
+            $id = array();
             //identifiers should've been generated from before
             if ($identifiers) {
                 foreach ($identifiers as $identifier) {
-                    if (!$grantid) {
-                        $type = $identifier['identifier_type'];
-                        $grantid = ($type == 'nhmrc' || $type == 'arc' || $type == 'local') ? $identifier['identifier'] : $grantid;
-                    }
+                    $id[] = $identifier['identifier'];
                 }
             }
-            $data['grantid'] = $grantid;
-
+            $data['identifier'] = $id;
 
 
             /**
