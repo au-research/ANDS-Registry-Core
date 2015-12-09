@@ -60,7 +60,8 @@ class Activity_grants_extension extends ExtensionBase
     /**
      * Returns Researchers
      * description[type=researchers]
-     * relatedObject[class=party][type=person][relation=hasPrincipalInvestigator|relation=hasParticipant]
+     * DEPRECATED: relatedObject[class=party][type=person][relation=hasPrincipalInvestigator|relation=hasParticipant]
+     * INSTEAD: relatedObject[class=party][type=person]
      * relatedInfo[type=party][relation=hasPrincipalInvestigator|hasParticipant]
      * @param bool|false $gXPath
      * @param bool|false $relatedObjects
@@ -89,13 +90,12 @@ class Activity_grants_extension extends ExtensionBase
             }
         }
 
-        //relatedObject[class=party][type=person][relation=hasPrincipalInvestigator|relation=hasParticipant]
+        //relatedObject[class=party][type=person]
         if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         foreach ($relatedObjects as $relatedObject) {
             if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                 if ($relatedObject['class'] == 'party'
                     && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'], 'type'))) == 'person'
-                    && ($relatedObject['relation_type'] == 'hasPrincipalInvestigator' || $relatedObject['relation_type'] == 'hasParticipant')
                 ) {
                     $researchers[] = $relatedObject['title'];
                 }

@@ -238,32 +238,34 @@ class GrantsHandlerV2 extends Handler
             $fundingScheme = $ro->getFundingScheme($gXPath);
             $data['fundingScheme'] = $fundingScheme;
 
+            $dateFormat = "Y-m-d H:i:s";
+
             /**
              * startDate
              * Format W3DTF
              * existenceDate/startDate
              */
-            $startDate = $ro->getExistenceDate("startDate", "Y-m-d", $xml);
+            $startDate = $ro->getExistenceDate("startDate", $dateFormat, $xml);
             $data['startDate'] = $startDate;
 
             /**
              * endDate
              * existenceDate/endDate
              */
-            $endDate = $ro->getExistenceDate("endDate", "Y-m-d", $xml);
+            $endDate = $ro->getExistenceDate("endDate", $dateFormat, $xml);
             $data['endDate'] = $endDate;
 
             /**
              * dateTimeCreated
              */
             $dateTimeCreated = $ro->created;
-            $data['dateTimeCreated'] = date("Y-m-d", $dateTimeCreated);
+            $data['dateTimeCreated'] = date($dateFormat, $dateTimeCreated);
 
             /**
              * dateTimeModified
              */
             $dateTimeModified = $ro->updated;
-            $data['dateTimeModified'] = date("Y-m-d", $dateTimeModified);
+            $data['dateTimeModified'] = date($dateFormat, $dateTimeModified);
 
 
             //add data to the response array
