@@ -116,24 +116,26 @@
         </div>
         <div class="clearfix"></div>
     </div>
-    <!-- <div class="panel-body swatch-white">
-        [[filters]]
+   <!-- <div class="panel-body swatch-white">
+         [[filters]]
     </div> -->
     <div class="panel-body swatch-white">
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
-            <h4 ng-if="name!='q' || (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
+            <h4 ng-if="name!='q' && name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_activity_id'&& name!='related_service_id'|| (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
+            <h4 ng-if="name=='related_collection_id'||name=='related_party_one_id'||name=='related_party_multi_id' ||name=='related_service_id' ||name=='related_activity_id'" >Related to</h4>
             <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
             <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
-                <li ng-repeat="v in value track by $index">
-                    <a href="" ng-click="toggleFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
+                <li ng-repeat="v in value track by $index"  class="listTruncate">
+                    <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name=='related_collection_id'|| name=='related_party_one_id'||name=='related_party_multi_id' || name=='related_service_id' || name=='related_activity_id'"><span resolve-ro roid="v"></span><small><i class="fa fa-remove" tip="Remove Item"></i></small>  </a>
+                    <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_service_id' && name!='related_activity_id'">[[ v|truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
                 </li>
             </ul>
             <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo')">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
-                        <span ng-if="name!='related_party_one_id'&&name!='q'">[[ value | truncate:30  ]]</span>
+                        <span ng-if="name!='related_party_one_id'&&name!='q'&&name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_service_id' && name!='related_activity_id'">[[ value | truncate:30  ]]</span>
                         <span ng-if="name!='related_party_one_id'&&name=='q'" tip="<b>Query</b>:[[value]]">[[ value | truncate:30  ]]</span>
-                        <span ng-if="name=='related_party_one_id'" resolve-ro roid="value">[[value]]</span>
+                        <span ng-if="name=='related_collection_id' || name=='related_party_one_id' || name=='related_party_multi_id' || name=='related_service_id' || name=='related_activity_id' " resolve-ro roid="value">[[value | truncate:30 ]]</span>
                         <small><i class="fa fa-remove" tip="Remove Item"></i></small>
                     </a>
                 </li>
