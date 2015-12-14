@@ -104,7 +104,7 @@ $(document).on('mouseover', 'a[tip]', function(event){
             delay: 1000,
             fixed: true
         },
-        position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
+        position: {target:'mouse', adjust: { mouse: false, method: 'shift' }, viewport: $(window) },
         style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
     });
 });
