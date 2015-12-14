@@ -29,18 +29,57 @@ $(document).ready(function() {
         $("#widget-info").slideToggle("slow");
     });
 
+    var caretRightElements = $('h4').children('.fa-caret-right');
+    // The right/down carets all start out hidden, which
+    // is correct if there is only one version.
+    // If there is more than one version, show the
+    // appropriate carets (triangles): pointing down for the
+    // first version, pointing right for all others.
+    if (caretRightElements.length > 1) {
+        // Only do this if there is more than one version
+        // being displayed.
+        $($('h4').children('.fa-caret-down')[0]).show();
+        caretRightElements.each(function (index) {
+            if (index != 0) {
+                $(this).show();
+            }
+        });
+    }
 });
 
+// Richard's note: I think this next statement has no effect,
+// because it is not inside the document ready() above.
+// The second and later versions are hidden in the first
+// case by the blade HTML itself.
 $('.box-content:not(:first-child)').hide();
 
 $(document).on('click', '.box-title', function(event){
-    var box = $(this).siblings('.box-content');
+    var this_element = $(this);
+    var box = this_element.siblings('.box-content');
     if (box.is(":visible")) {
         return false;
     }
-    // console.log($(this).siblings('.box-content').length);
+    // console.log(this_element.siblings('.box-content').length);
     $('.box-content:visible').slideUp('fast');
-    $(this).siblings('.box-content').slideToggle('fast');
+    this_element.siblings('.box-content').slideToggle('fast');
+    // Now do the little carets next to version titles
+    // to guide the user.
+    // Nota bene: if we reached this point, there is more
+    // than one version, so some little carets
+    // _are_ already visible, and it is OK to be
+    // showing/hiding them. (Cf. the case where there
+    // is only one version, in which case all carets should
+    // remain hidden.)
+    var all_caret_right = $('h4').children('.fa-caret-right');
+    var all_caret_down = $('h4').children('.fa-caret-down');
+    all_caret_right.show();
+    all_caret_down.hide();
+    var box_caret_right = this_element.children('h4').
+        children('.fa-caret-right');
+    var box_caret_down = this_element.children('h4').
+        children('.fa-caret-down');
+    box_caret_right.hide();
+    box_caret_down.show();
 });
 
 $(document).on('mouseover', 'a[tip]', function(event){

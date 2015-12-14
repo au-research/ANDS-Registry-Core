@@ -36,7 +36,7 @@
 ?>
 <div class="box" ng-non-bindable>
 	<div class="box-title {{ $hasNotCurrentVersion ? 'box-title-collapsible' : '' }}">
-		<h4> {{ htmlspecialchars($vocab['current_version']['title']) }} </h4>
+		<h4><i class="fa fa-lg fa-caret-down" style="display: none;">&nbsp;</i><i class="fa fa-lg fa-caret-right" style="display: none;">&nbsp;</i> {{ htmlspecialchars($vocab['current_version']['title']) }} </h4>
 		<span class="box-tag box-tag-green"> current </span>
 	</div>
 	<div class="clearfix"></div>
@@ -157,7 +157,7 @@
 	?>
 	<div class="box" ng-non-bindable>
 		<div class="box-title {{ $hasNotCurrentVersion ? 'box-title-collapsible' : '' }}">
-			<h4> {{ htmlspecialchars($version['title']) }} </h4>
+			<h4><i class="fa fa-lg fa-caret-down" style="display: none;"></i>&nbsp;<i class="fa fa-lg fa-caret-right" style="display: none;">&nbsp;</i> {{ htmlspecialchars($version['title']) }} </h4>
 			<span class="box-tag box-tag box-tag-{{ $version['status'] }}"> {{htmlspecialchars($version['status'])}} </span>
 		</div>
 		<div class="clearfix"></div>
