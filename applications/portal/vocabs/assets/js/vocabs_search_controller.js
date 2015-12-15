@@ -5,7 +5,7 @@
         .module('app')
         .controller('searchCtrl', searchController);
 
-    function searchController($scope, $log, $location, vocabs_factory) {
+    function searchController($scope, $timeout, $log, $location, vocabs_factory) {
 
         $scope.vocabs = [];
         $scope.filters = {};
@@ -103,7 +103,16 @@
 
         $scope.toggleFacet = function (facet_type) {
             $('#more'+facet_type).slideToggle();
-            $('#link'+facet_type).toggle();
+            //$('#link'+facet_type).toggle();
+            // The slide toggle does not happen instantaneously,
+            // and the visibility of the "View More..." text
+            // depends on the visibility of the "#more..."
+            // element. So after a suitable timeout,
+            // force a recalculation of the visibility of
+            // the "View More..." text.
+            $timeout(function() {
+                // A no-op is enough.
+            }, 500);
         };
 
         $scope.addFilter = function (type, value) {
@@ -149,6 +158,11 @@
                 return false;
             }
             return false;
+        }
+
+        // Utility to support hide/display of "View More..." links.
+        $scope.isMoreVisible = function (type) {
+            return $("#more" + type ).is(":visible");
         }
     }
 
