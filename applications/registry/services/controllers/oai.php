@@ -106,7 +106,7 @@ class Oai extends MX_Controller
 			catch (Exception $ee)
 			{
 				$this->_do_error(Oai::ERROR,
-						 $e->getMessage());
+						 $ee->getMessage());
 				return;
 			}
 
@@ -578,7 +578,8 @@ class Oai extends MX_Controller
 			$response = $this->records->get($set,
 							$from,
 							$until,
-							$start);
+                            $start,
+                            $supplied_format);
 			if ($from instanceof DateTime)
 			{
 				$from = $from->format('U');

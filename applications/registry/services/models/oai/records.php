@@ -15,7 +15,8 @@ class Records extends CI_Model
 	public function get($set,
 			    $after=false,
 			    $before=false,
-			    $start=0)
+                $start=0,
+                $supplied_format='rif')
 	{
 		$this->load->model('oai/Sets', 'sets');
 		$this->load->model('registry_object/Registry_objects', 'ro');
@@ -24,6 +25,8 @@ class Records extends CI_Model
 		$args['rawclause'] = array('registry_objects.status' => "'PUBLISHED'");
 		$args['clause'] = array();
 		$args['wherein'] = false;
+        $args["allowedclass"] = false;
+        $args["allowedType"] = false;
 		$count = '';
 		$deleted_records = array();
 		if ($after)
@@ -49,6 +52,12 @@ class Records extends CI_Model
 			$delArgs[$set->source] = $set->val;
 		}
 
+        if($supplied_format == 'dci')
+        {
+            $args["allowedclass"] = 'collection';
+            $args["allowedType"] = array('collection', 'repository', 'dataset', 'software');
+        }
+
 		if(!($set&&!$args["wherein"]))
 		{
 		$count = $this->ro->_get(array(array('args' => $args,
@@ -68,6 +77,16 @@ class Records extends CI_Model
 								     $db->where_in("registry_objects.registry_object_id",
 										   $args['wherein']);
 							     }
+                                 if ($args["allowedclass"])
+                                 {
+                                    $db->where_in("registry_objects.class",
+                                    $args["allowedclass"]);
+                                 }
+                                 if ($args["allowedType"])
+                                 {
+                                     $db->where_in("registry_object_attributes.value",
+                                         $args["allowedType"]);
+                                 }
 							     return $db;
 						     })),
 					 false);
@@ -112,6 +131,16 @@ class Records extends CI_Model
 								       $db->where_in("registry_objects.registry_object_id",
 										     $args['wherein']);
 							       }
+                                   if ($args["allowedclass"])
+                                   {
+                                       $db->where_in("registry_objects.class",
+                                           $args["allowedclass"]);
+                                   }
+                                   if ($args["allowedType"])
+                                   {
+                                           $db->where_in("registry_object_attributes.value",
+                                               $args["allowedType"]);
+                                   }
 							       $db->order_by("registry_objects.registry_object_id", "asc");
 							       return $db;
 						       })),
