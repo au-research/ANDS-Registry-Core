@@ -25,6 +25,8 @@ class Records extends CI_Model
 		$args['rawclause'] = array('registry_objects.status' => "'PUBLISHED'");
 		$args['clause'] = array();
 		$args['wherein'] = false;
+        $args["allowedclass"] = false;
+        $args["allowedType"] = false;
 		$count = '';
 		$deleted_records = array();
 		if ($after)
@@ -53,6 +55,7 @@ class Records extends CI_Model
         if($supplied_format == 'dci')
         {
             $args["allowedclass"] = 'collection';
+            $args["allowedType"] = array('collection', 'repository', 'dataset', 'software');
         }
 
 		if(!($set&&!$args["wherein"]))
@@ -78,6 +81,11 @@ class Records extends CI_Model
                                  {
                                     $db->where_in("registry_objects.class",
                                     $args["allowedclass"]);
+                                 }
+                                 if ($args["allowedType"])
+                                 {
+                                     $db->where_in("registry_object_attributes.value",
+                                         $args["allowedType"]);
                                  }
 							     return $db;
 						     })),
@@ -123,9 +131,15 @@ class Records extends CI_Model
 								       $db->where_in("registry_objects.registry_object_id",
 										     $args['wherein']);
 							       }
+                                   if ($args["allowedclass"])
                                    {
                                        $db->where_in("registry_objects.class",
                                            $args["allowedclass"]);
+                                   }
+                                   if ($args["allowedType"])
+                                   {
+                                       $db->where_in("registry_object_attributes.value",
+                                           $args["allowedType"]);
                                    }
 							       $db->order_by("registry_objects.registry_object_id", "asc");
 							       return $db;
