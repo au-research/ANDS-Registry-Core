@@ -1,29 +1,22 @@
-var app = angular.module('app', ['ngRoute', 'ui.bootstrap', 'ngSanitize', 'search_components', 'profile_components', 'uiGmapgoogle-maps', 'ui.utils', 'portal-filters', 'record_components'], function($interpolateProvider){
-	$interpolateProvider.startSymbol('[[');
-	$interpolateProvider.endSymbol(']]');
-});
+(function () {
+    'use strict';
 
-app.config(function($routeProvider, $locationProvider) {
-	// $locatonProvider.html5Mode(false);
-    $locationProvider.hashPrefix('!');
-});
+    angular
+        .module('app',
+            ['ngRoute', 'ui.bootstrap', 'ngSanitize', 'search_components',
+                'profile_components', 'uiGmapgoogle-maps', 'ui.utils', 'portal-filters', 'record_components'] )
+        .config(configuration);
 
-// Dangerous hack, don't use
-// app.config( ['$provide', function ($provide){
-//     $provide.decorator('$browser', ['$delegate', function ($delegate) {
-//         $delegate.onUrlChange = function () {};
-//         $delegate.url = function () { return ""};
-//         return $delegate;
-//     }]);
-// }]);
 
-app.config(function(uiGmapGoogleMapApiProvider) {
-    uiGmapGoogleMapApiProvider.configure({
-        //    key: 'your api key',
-        v: '3.17',
-        libraries: 'weather,geometry,visualization'
-    });
-});
+    function configuration($interpolateProvider, $routeProvider, $locationProvider, uiGmapGoogleMapApiProvider) {
+        $interpolateProvider.startSymbol('[[');
+        $interpolateProvider.endSymbol(']]');
+        $locationProvider.hashPrefix('!');
 
-app.controller('searchController', searchController);
-app.controller('mainController', mainSearchController);
+        uiGmapGoogleMapApiProvider.configure({
+            //    key: 'your api key',
+            v: '3.17',
+            libraries: 'weather,geometry,visualization'
+        });
+    }
+})();

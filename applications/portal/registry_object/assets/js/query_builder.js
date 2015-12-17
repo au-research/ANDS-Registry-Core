@@ -9,16 +9,6 @@ app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
     function computed(group) {
         if (!group || group.rules.length == 0) return "";
 
-        // if(!group.root) {
-        //     var hasdata = true;
-        //     for (var i=0;i < group.rules.length; i++) {
-        //         if (group.rules[i].data!='') {
-        //             hasdata = false;
-        //         }
-        //     }
-        //     if (!hasdata) return "";
-        // }
-
         for (var str = "", i = 0; i < group.rules.length; i++) {
             if(group.rules[i].data!='' && group.rules[i]!==undefined){
                 i > 0 && (str += " " + group.operator + " ");
