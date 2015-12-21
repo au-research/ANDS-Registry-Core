@@ -234,7 +234,7 @@ class Spatial_Extension extends ExtensionBase
 				$west  = 180;
 				$east  = -180;
 
-				$gCoords = $this->getExtentFromGoogle(trim($value));
+				$gCoords = $this->getExtentFromGoogle(trim($value), $type);
 
 				if($gCoords)
 				{
@@ -372,11 +372,18 @@ class Spatial_Extension extends ExtensionBase
 			return true;
 	}
 
-	function getExtentFromGoogle($value)
+	function getExtentFromGoogle($value, $type)
 	{
 		
-		$url = "http://maps.google.com/maps/api/geocode/json?sensor=false&address=";
-		$url = $url.urlencode($value);      
+		if($type == 'iso31662' && strpos($value, '-') !== false){
+            $hypenPos = strpos($value, '-');
+            $countryCode = substr($value, 0, $hypenPos);
+            $administrativeArea = substr($value, $hypenPos + 1);
+            $url = "http://maps.google.com/maps/api/geocode/json?components=country:".urlencode($countryCode)."|administrative_area:".urlencode($administrativeArea);
+        }
+        else{
+            $url = "http://maps.google.com/maps/api/geocode/json?components=country:".urlencode($value);
+        }
 		$resp_json = curl_file_get_contents($url);
 		$resp = json_decode($resp_json, true);
 		$coords = array();
