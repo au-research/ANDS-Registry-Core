@@ -430,7 +430,22 @@ class Solr {
 					}
 					break;
 				case 'spatial':
-					$this->setOpt('fq','+spatial_coverage_extents:"Within('.$value.')"');
+
+					$literals = explode(' ', $value);
+					$west = $literals[0];
+					$south = $literals[1];
+					$east = $literals[2];
+					$north = $literals[3];
+					$points = [
+						[$west, $north], [$east, $north], [$east, $south], [$west, $south], [$west, $north]
+					];
+					$newPoints = [];
+					foreach ($points as $point) {
+						$newPoints[] = implode(' ', $point);
+					}
+					$newPoints = 'POLYGON(('.implode(', ', $newPoints).'))';
+
+					$this->setOpt('fq','+spatial_coverage_extents:"Intersects('.$newPoints.')"');
 					break;
 				case 'map':
 					$this->setOpt('fq','+spatial_coverage_area_sum:[0.00001 TO *]');
@@ -535,7 +550,7 @@ class Solr {
 					$this->setOpt('fq', '-related_object_id:'.$value.'');
 					break;
 				case 'sort':
-					$this->setOpt('sort', $value);
+//					$this->setOpt('sort', $value);
 					break;
 				case 'limit':
 					$this->setOpt('rows', $value);
@@ -851,6 +866,10 @@ class Solr {
 
 	function add_json($docs){
 		return curl_post($this->solr_url.'update/?wt=json', $docs, array("Content-Type: application/json; charset=utf-8"));
+	}
+
+	function schema($fields) {
+		return curl_post($this->solr_url.'schema/?wt=json', json_encode($fields), array("Content-Type: application/json; charset=utf-8"));
 	}
 
 	function add_json_commit($docs) {

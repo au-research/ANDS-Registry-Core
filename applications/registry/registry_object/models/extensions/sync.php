@@ -237,7 +237,15 @@ class Sync_extension extends ExtensionBase{
                 }
                 $json['spatial_coverage_polygons'][] = $lonLat;
 				$json['spatial_coverage_extents'][] = $extents['extent'];
-				// $json['spatial_coverage_extents'] = '-74.093 41.042 -69.347 44.558';
+
+                $points = explode(' ', $lonLat);
+                foreach ($points as &$point) {
+                    $point = implode( ' ', explode(',', $point) );
+                }
+                $polygonStr = implode(', ', $points);
+
+//				$json['spatial_coverage_extents'][] = 'POLYGON(('.$polygonStr.'))';
+
 				$sumOfAllAreas += $extents['area'];
 				$json['spatial_coverage_centres'][] = $extents['center'];
 			}
