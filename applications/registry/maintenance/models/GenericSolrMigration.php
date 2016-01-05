@@ -8,18 +8,13 @@ class GenericSolrMigration implements \GenericMigration
 
     public $ci;
     private $fields;
+    private $copyFields;
 
     function __construct()
     {
         $this->ci =& get_instance();
-    }
-
-    function setFields($fields) {
-        $this->fields = $fields;
-    }
-
-    function getFields() {
-        return $this->fields;
+        $this->fields = array();
+        $this->copyFields = array();
     }
 
     function up()
@@ -34,5 +29,37 @@ class GenericSolrMigration implements \GenericMigration
             $delete_fields[] = ['name' => $field['name']];
         }
         return $this->ci->solr->schema(['delete-field' => $delete_fields]);
+    }
+
+    /**
+     * @param array $fields
+     */
+    function setFields($fields)
+    {
+        $this->fields = $fields;
+    }
+
+    /**
+     * @return array
+     */
+    function getFields()
+    {
+        return $this->fields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCopyFields()
+    {
+        return $this->copyFields;
+    }
+
+    /**
+     * @param array $copyFields
+     */
+    public function setCopyFields($copyFields)
+    {
+        $this->copyFields = $copyFields;
     }
 }

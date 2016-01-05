@@ -18,29 +18,31 @@ class SolrIdentifiers extends GenericSolrMigration
     public function __construct()
     {
         parent::__construct();
-        $this->setFields(
+        $this->setFields([
             [
-                [
-                    'name' => 'identifier_value',
-                    'type' => 'string',
-                    'stored' => 'true',
-                    'indexed' => true,
-                    'multiValued' => true
-                ],
-                [
-                    'name' => 'identifier_type',
-                    'type' => 'string',
-                    'stored' => 'true',
-                    'indexed' => true,
-                    'multiValued' => true
-                ],
-                [
-                    'name' => 'identifier_value_search',
-                    'type' => 'text_en_splitting',
-                    'stored' => 'true',
-                    'indexed' => true
-                ],
-            ]
-        );
+                'name' => 'identifier_value',
+                'type' => 'string',
+                'stored' => 'true',
+                'indexed' => true,
+                'multiValued' => true
+            ],
+            [
+                'name' => 'identifier_type',
+                'type' => 'string',
+                'stored' => 'true',
+                'indexed' => true,
+                'multiValued' => true
+            ],
+            [
+                'name' => 'identifier_value_search',
+                'type' => 'text_en_splitting',
+                'stored' => 'true',
+                'indexed' => true
+            ],
+        ]);
+
+        $this->setCopyFields([
+            ['source' => 'identifier_value', 'dest' => ['identifier_value_search']]
+        ]);
     }
 }

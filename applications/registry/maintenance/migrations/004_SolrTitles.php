@@ -8,24 +8,28 @@ class SolrTitles extends GenericSolrMigration
     function __construct()
     {
         parent::__construct();
-        $this->setFields(
+        $this->setFields([
+            ['name' => 'title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'title_search', 'type' => 'text_en_splitting', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'display_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'list_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'list_title_sort', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'simplified_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
             [
-                ['name' => 'title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-                ['name' => 'title_search', 'type' => 'text_en_splitting', 'stored' => 'true', 'indexed' => true],
-                ['name' => 'display_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-                ['name' => 'list_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-                ['name' => 'list_title_sort', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-                ['name' => 'simplified_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-                [
-                    'name' => 'simplified_title_search',
-                    'type' => 'text_en_splitting',
-                    'stored' => 'true',
-                    'indexed' => true
-                ],
-                ['name' => 'alt_list_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-                ['name' => 'alt_display_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-                ['name' => 'alt_title_search', 'type' => 'text_en_splitting', 'stored' => 'true', 'indexed' => true],
-            ]
-        );
+                'name' => 'simplified_title_search',
+                'type' => 'text_en_splitting',
+                'stored' => 'true',
+                'indexed' => true
+            ],
+            ['name' => 'alt_list_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'alt_display_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'alt_title_search', 'type' => 'text_en_splitting', 'stored' => 'true', 'indexed' => true],
+        ]);
+        $this->setCopyFields([
+            ['source' => 'display_title', 'dest' => ['title', 'title_search']],
+            ['source' => 'list_Title', 'dest' => ['title_search']],
+            ['source' => 'alt_list_title', 'dest' => ['title_search']],
+            ['source' => 'alt_display_title', 'dest' => ['title_search']]
+        ]);
     }
 }

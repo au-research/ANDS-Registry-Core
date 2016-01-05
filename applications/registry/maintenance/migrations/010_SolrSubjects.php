@@ -83,5 +83,12 @@ class SolrSubjects extends GenericSolrMigration
                 'multiValued' => true
             ],
         ]);
+
+        $this->setCopyFields([
+            [
+                'source' => 'subject_value_resolved',
+                'dest' => ['s_subject_value_resolved', 'subject_value_resolved_search', 'subject_value_resolved_sort']
+            ]
+        ]);
     }
 }

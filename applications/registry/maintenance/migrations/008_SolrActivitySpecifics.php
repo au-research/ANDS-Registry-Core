@@ -30,5 +30,11 @@ class SolrActivitySpecifics extends GenericSolrMigration
             ['name' => 'funder', 'type' => 'string', 'stored' => true, 'indexed' => true],
             ['name' => 'funders_search', 'type' => 'text_en_splitting', 'stored' => true, 'indexed' => true],
         ]);
+
+        $this->setCopyFields([
+            ['source' => 'administering_institution', 'dest' => ['title', 'administering_institution_search']],
+            ['source' => 'researchers', 'dest' => ['title', 'researchers_search']],
+            ['source' => 'funders', 'dest' => ['title', 'funders_search']]
+        ]);
     }
 }

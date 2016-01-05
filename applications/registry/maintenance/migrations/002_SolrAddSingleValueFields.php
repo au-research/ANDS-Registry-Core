@@ -55,6 +55,12 @@ class SolrAddSingleValueFields extends GenericSolrMigration
                 'multiValued' => true
             ],
         ]);
+
+        $this->setCopyFields([
+            ['source' => '*', 'dest' => 'fulltext'],
+            ['source' => 'group', 'dest' => ['group_sort', 'group_search']],
+            ['source' => 'type', 'dest' => ['type_sort', 'type_search']]
+        ]);
     }
 
 }

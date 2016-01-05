@@ -20,5 +20,9 @@ class SolrTags extends GenericSolrMigration
                 'multiValued' => true
             ]
         ]);
+
+        $this->setCopyFields([
+            ['source' => 'tag', 'dest' => ['tag_sort', 'tag_search']]
+        ]);
     }
 }

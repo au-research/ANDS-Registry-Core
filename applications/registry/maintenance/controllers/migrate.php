@@ -4,21 +4,18 @@
  * Class Migrate
  * Doing migration on the Registry
  * Usage: php index.php registry maintenance migrate <module>
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 class Migrate extends MX_Controller
 {
 
     /**
      * Migrate SOLR
-     * Usage: php index.php registry maintenance migrate solr
-     * todo move to own declaration with migration files
+     * Should run from shell
+     * Usage: php index.php registry maintenance migrate solr [up|down] [until="000"]
      */
     function solr($method = 'up', $until = false)
     {
-        set_exception_handler('json_exception_handler');
-        header('Cache-Control: no-cache, must-revalidate');
-        header('Content-type: application/json');
-
         require_once APP_PATH . 'maintenance/models/GenericMigration.php';
         require_once APP_PATH . 'maintenance/models/GenericSolrMigration.php';
 
@@ -47,6 +44,7 @@ class Migrate extends MX_Controller
             echo "No previous migration found. Starts at 000" . "\n";
         }
 
+        //remove files that does not satisfy from latest to until
         foreach ($files as $key => $file) {
             $file_path = $migration_dir . $file;
             $exploded = explode('_', basename($file_path, ".php"));
@@ -72,25 +70,27 @@ class Migrate extends MX_Controller
             exit();
         }
 
+        // run each migration file separately, in the right order
         foreach ($files as $file) {
             $file_path = $migration_dir . $file;
             $exploded = explode('_', basename($file_path, ".php"));
-
             $file_state = $exploded[0];
             $file_name = $exploded[1];
-
             $class_name = $namespace . '\\' . $file_name;
 
-            require_once $file_path;
-            $migration = new $class_name;
-
             try {
+                require_once $file_path;
+                $migration = new $class_name;
                 $migrationResult = json_decode($migration->$method(), true);
+
+                //parse SOLR response and decide if there's any error
                 $status = $migrationResult['responseHeader']['status'];
                 if ($status == "0" && !isset($migrationResult['errors'])) {
+                    //success handler, increment the latestSuccess to this file state
                     echo $file . " " . $method . " Success" . "\n";
                     $latestSuccess = $file_state;
                 } else {
+                    //error handler, if the migration is going up, should break away
                     echo $file . " " . $method . " Failed" . "\n";
                     if (isset($migrationResult['errors'])) {
                         foreach ($migrationResult['errors'] as $error) {
@@ -102,11 +102,13 @@ class Migrate extends MX_Controller
                     }
                 }
             } catch (Exception $e) {
-                echo $file . " " . $method . " Failed" . "\n";
+                //exception in one of the migration file
+                echo $file . " " . $method . " Failed with exception" . "\n";
                 $latestSuccess = $file_state;
                 throw new Exception ($e);
                 break;
             } finally {
+                //write the latestSuccess state for later retrieval
 
                 if ($method == 'down' && !$until) {
                     $latestSuccess = "000";
@@ -119,10 +121,13 @@ class Migrate extends MX_Controller
             }
         }
 
-
         echo "Done. latest migration state : " . $latestSuccess . "\n";
     }
 
+    /**
+     * Give the current migration status
+     * @return array|bool
+     */
     private function readMigrationStatus()
     {
         $file = '/tmp/migrationStatus';
@@ -134,6 +139,10 @@ class Migrate extends MX_Controller
         }
     }
 
+    /**
+     * Write the migration status to file
+     * @param $migrationStatus
+     */
     private function writeMigrationStatus($migrationStatus)
     {
         $file = '/tmp/migrationStatus';
@@ -141,6 +150,13 @@ class Migrate extends MX_Controller
     }
 
 
+    /**
+     * Helper function to write a PHP array to an ini file
+     * @param $assoc_arr
+     * @param $path
+     * @param bool|FALSE $has_sections
+     * @return bool|int
+     */
     function write_ini_file($assoc_arr, $path, $has_sections = FALSE)
     {
         $content = "";
