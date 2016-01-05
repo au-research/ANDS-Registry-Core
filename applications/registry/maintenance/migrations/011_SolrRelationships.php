@@ -40,11 +40,11 @@ class SolrRelationships extends GenericSolrMigration
         ]);
 
         $this->setCopyFields([
-            ['source' => 'related_collection_title', 'dest' => ['title', 'related_collection_search']],
-            ['source' => 'related_party_one_title', 'dest' => ['title', 'related_party_one_search']],
-            ['source' => 'related_party_multi_title', 'dest' => ['title', 'related_party_multi_search']],
-            ['source' => 'related_activity_title', 'dest' => ['title', 'related_activity_search']],
-            ['source' => 'related_service_title', 'dest' => ['title', 'related_service_search']]
+            ['source' => 'related_collection_title', 'dest' => ['related_collection_search']],
+            ['source' => 'related_party_one_title', 'dest' => ['related_party_one_search']],
+            ['source' => 'related_party_multi_title', 'dest' => ['related_party_multi_search']],
+            ['source' => 'related_activity_title', 'dest' => ['related_activity_search']],
+            ['source' => 'related_service_title', 'dest' => ['related_service_search']]
         ]);
     }
 }

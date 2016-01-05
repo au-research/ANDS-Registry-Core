@@ -16,6 +16,10 @@ class Migrate extends MX_Controller
      */
     function solr($method = 'up', $until = false)
     {
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+
         require_once APP_PATH . 'maintenance/models/GenericMigration.php';
         require_once APP_PATH . 'maintenance/models/GenericSolrMigration.php';
 
@@ -51,14 +55,14 @@ class Migrate extends MX_Controller
             $file_state = (int)$exploded[0];
             if ($until) {
                 $untilInt = (int)$until;
-                if ($file_state > $untilInt && $method=='up') {
+                if ($file_state > $untilInt && $method == 'up') {
                     unset($files[$key]);
-                } else if ($file_state <= $untilInt && $method =='down') {
+                } else if ($file_state <= $untilInt && $method == 'down') {
                     unset($files[$key]);
                 }
             }
             if ($latestSuccess) {
-                if ($file_state <= (int) $latestSuccess && $method == 'up') {
+                if ($file_state <= (int)$latestSuccess && $method == 'up') {
                     unset($files[$key]);
                 }
             }
@@ -94,12 +98,14 @@ class Migrate extends MX_Controller
                     echo $file . " " . $method . " Failed" . "\n";
                     if (isset($migrationResult['errors'])) {
                         foreach ($migrationResult['errors'] as $error) {
-                            echo join(' ', $error['errorMessages']);
+                            if (is_array($error['errorMessages'])) {
+                                echo join(' ', $error['errorMessages']);
+                            } else {
+                                echo $error['errorMessages'] . "\n";
+                            }
                         }
                     }
-                    if ($method == 'up') {
-                        break;
-                    }
+                    if ($method == 'up') break;
                 }
             } catch (Exception $e) {
                 //exception in one of the migration file
@@ -112,7 +118,7 @@ class Migrate extends MX_Controller
 
                 if ($method == 'down' && !$until) {
                     $latestSuccess = "000";
-                } else if ($method=='down' && $until) {
+                } else if ($method == 'down' && $until) {
                     $latestSuccess = $until;
                 }
 
@@ -122,6 +128,15 @@ class Migrate extends MX_Controller
         }
 
         echo "Done. latest migration state : " . $latestSuccess . "\n";
+    }
+
+    /**
+     * Print the migration status on the shell screen
+     * Usage: php index.php maintenance migrate printMigrationStatus
+     */
+    public function printMigrationStatus()
+    {
+        print_r($this->readMigrationStatus());
     }
 
     /**

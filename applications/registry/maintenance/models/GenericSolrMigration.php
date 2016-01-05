@@ -19,7 +19,13 @@ class GenericSolrMigration implements \GenericMigration
 
     function up()
     {
-        return $this->ci->solr->schema(['add-field' => $this->fields]);
+        $data = [
+            'add-field' => $this->fields
+        ];
+        if (sizeof($this->getCopyFields()) > 0) {
+            $data['add-copy-field'] = $this->getCopyFields();
+        }
+        return $this->ci->solr->schema($data);
     }
 
     function down()
@@ -28,6 +34,14 @@ class GenericSolrMigration implements \GenericMigration
         foreach ($this->fields as $field) {
             $delete_fields[] = ['name' => $field['name']];
         }
+
+        //delete copyFields first
+        // todo error handling
+        if (sizeof($this->getCopyFields()) > 0) {
+            $this->ci->solr->schema(['delete-copy-field'=>$this->getCopyFields()]);
+        }
+
+        //then delete the fields
         return $this->ci->solr->schema(['delete-field' => $delete_fields]);
     }
 

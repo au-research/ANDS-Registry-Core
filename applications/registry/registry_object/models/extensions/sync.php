@@ -244,7 +244,7 @@ class Sync_extension extends ExtensionBase{
                 }
                 $polygonStr = implode(', ', $points);
 
-//				$json['spatial_coverage_extents'][] = 'POLYGON(('.$polygonStr.'))';
+				$json['spatial_coverage_extents_wkt'][] = 'POLYGON(('.$polygonStr.'))';
 
 				$sumOfAllAreas += $extents['area'];
 				$json['spatial_coverage_centres'][] = $extents['center'];

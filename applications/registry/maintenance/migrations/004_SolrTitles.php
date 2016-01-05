@@ -10,7 +10,7 @@ class SolrTitles extends GenericSolrMigration
         parent::__construct();
         $this->setFields([
             ['name' => 'title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-            ['name' => 'title_search', 'type' => 'text_en_splitting', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'title_search', 'type' => 'text_en_splitting', 'stored' => 'true', 'indexed' => true, 'multiValued'=>true, 'termVectors' => true],
             ['name' => 'display_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
             ['name' => 'list_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
             ['name' => 'list_title_sort', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
@@ -27,7 +27,7 @@ class SolrTitles extends GenericSolrMigration
         ]);
         $this->setCopyFields([
             ['source' => 'display_title', 'dest' => ['title', 'title_search']],
-            ['source' => 'list_Title', 'dest' => ['title_search']],
+            ['source' => 'list_title', 'dest' => ['title_search']],
             ['source' => 'alt_list_title', 'dest' => ['title_search']],
             ['source' => 'alt_display_title', 'dest' => ['title_search']]
         ]);

@@ -28,6 +28,13 @@ class SolrSpatial extends GenericSolrMigration
             ],
             [
                 'name' => 'spatial_coverage_extents',
+                'type' => 'string',
+                'stored' => 'true',
+                'indexed' => true,
+                'multiValued' => true
+            ],
+            [
+                'name' => 'spatial_coverage_extents_wkt',
                 'type' => 'location_rpt',
                 'stored' => 'true',
                 'indexed' => true,
@@ -46,6 +53,7 @@ class SolrSpatial extends GenericSolrMigration
 
     /**
      * Replacing the default field type of location_rpt as well
+     * @Note requires jts-1.8.0.jar installed in SOLR lib directory
      * @Override
      * @return mixed
      */

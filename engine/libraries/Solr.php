@@ -445,7 +445,7 @@ class Solr {
 					}
 					$newPoints = 'POLYGON(('.implode(', ', $newPoints).'))';
 
-					$this->setOpt('fq','+spatial_coverage_extents:"Intersects('.$newPoints.')"');
+					$this->setOpt('fq','+spatial_coverage_extents_wkt:"Intersects('.$newPoints.')"');
 					break;
 				case 'map':
 					$this->setOpt('fq','+spatial_coverage_area_sum:[0.00001 TO *]');
@@ -856,8 +856,11 @@ class Solr {
 		curl_setopt($ch,CURLOPT_POSTFIELDS,$docs);//post the field strings
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//return to variable
 		$content = curl_exec($ch);//execute the curl
+        if (!$content) {
+            return curl_error($ch);
+        }
 		curl_close($ch);//close the curl
-		return $content;
+        return $content;
 	}
 
 	function addDoc($docs){
@@ -871,6 +874,7 @@ class Solr {
 	function schema($fields) {
 		return curl_post($this->solr_url.'schema/?wt=json', json_encode($fields), array("Content-Type: application/json; charset=utf-8"));
 	}
+
 
 	function add_json_commit($docs) {
 		return curl_post($this->solr_url.'update/?wt=json&commit=true', $docs, array("Content-Type: application/json; charset=utf-8"));

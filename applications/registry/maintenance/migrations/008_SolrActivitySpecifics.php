@@ -32,9 +32,9 @@ class SolrActivitySpecifics extends GenericSolrMigration
         ]);
 
         $this->setCopyFields([
-            ['source' => 'administering_institution', 'dest' => ['title', 'administering_institution_search']],
-            ['source' => 'researchers', 'dest' => ['title', 'researchers_search']],
-            ['source' => 'funders', 'dest' => ['title', 'funders_search']]
+            ['source' => 'administering_institution', 'dest' => ['administering_institution_search']],
+            ['source' => 'researcher', 'dest' => ['researchers_search']],
+            ['source' => 'funder', 'dest' => ['funders_search']]
         ]);
     }
 }

@@ -1,5 +1,6 @@
 (function () {
     'use strict';
+
     angular
         .module('app')
         .factory('search_factory', searchFactory);
@@ -176,7 +177,6 @@
             },
 
             search: function (filters) {
-                this.status = 'loading';
                 filters = this.cleanFilters(filters);
                 // $log.debug('search filters', filters);
                 return $http.post(base_url + 'registry_object/filter', {'filters': filters}).then(function (response) {
@@ -198,7 +198,6 @@
 
             search_no_record: function (filters) {
                 return $http.post(base_url + 'registry_object/filter/true', {'filters': filters}).then(function (response) {
-                    this.status = 'idle';
                     return response.data;
                 });
             },
@@ -333,6 +332,7 @@
 
                 return filters;
             },
+
             filters_to_hash: function (filters) {
                 var hash = '';
                 $.each(filters, function (i, k) {
@@ -346,14 +346,14 @@
                 });
                 return hash;
             },
+
             get_matching_records: function (id) {
-                return $http.get(registry_url + 'services/api/registry_objects/' + id + '/identifiermatch').then(function (response) {
-                    this.status = 'idle';
-                    return response.data;
-                });
+                return $http
+                    .get(registry_url + 'services/api/registry_objects/' + id + '/identifiermatch')
+                    .then(function (response) {
+                        return response.data;
+                    });
             }
         }
-
     }
-
 })();
