@@ -828,8 +828,14 @@ class Maintenance extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$this->load->library('solr');
 
-		$ro = $this->ro->getByID(15144);
-		echo json_encode($ro->indexable_json());
+//		$ro = $this->ro->getByID(15144);
+		$ro = $this->ro->getByID(416708);
+//		echo json_encode($ro->indexable_json());
+
+		$docs = [$ro->indexable_json()];
+		$result = $this->solr->add_json_commit(json_encode($docs));
+
+		echo ($result);
 
 		// $ro = $this->ro->getByID(189615);
 

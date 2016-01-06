@@ -14,8 +14,9 @@
             <meta property="og:image" content="{{get_config_item('default_base_url')}}assets/core/images/ANDS_logo.JPG"/>
         @endif
         @if(isset($ro->core['description']))
-            <?php 
-                $clean_description = str_replace(array('"','[[',']]'), '', $ro->core['description']);
+            <?php
+                $description = is_array($ro->core['description']) ? implode(" ", $ro->core['description']) : $ro->core['description'];
+                $clean_description = str_replace(array('"','[[',']]'), '', $description);
             ?>
             <meta ng-non-bindable property="og:description" content="{{ $clean_description }}"/>
         @else
