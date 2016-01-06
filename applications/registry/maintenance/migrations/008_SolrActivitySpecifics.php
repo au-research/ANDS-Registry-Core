@@ -22,13 +22,13 @@ class SolrActivitySpecifics extends GenericSolrMigration
             ['name' => 'activity_status', 'type' => 'string', 'stored' => true, 'indexed' => true],
             ['name' => 'funding_amount', 'type' => 'float', 'stored' => true, 'indexed' => true],
             ['name' => 'funding_scheme', 'type' => 'string', 'stored' => true, 'indexed' => true],
-            ['name' => 'funding_scheme_search', 'type' => 'text_en_splitting', 'stored' => true, 'indexed' => true],
+            ['name' => 'funding_scheme_search', 'type' => 'text_en_splitting', 'stored' => false, 'indexed' => true],
             ['name' => 'researcher', 'type' => 'string', 'stored' => true, 'indexed' => true],
-            ['name' => 'researchers_search', 'type' => 'text_en_splitting', 'stored' => true, 'indexed' => true],
+            ['name' => 'researchers_search', 'type' => 'text_en_splitting', 'stored' => false, 'indexed' => true],
             ['name' => 'administering_institution', 'type' => 'string', 'stored' => true, 'indexed' => true],
-            ['name' => 'administering_institution_search', 'type' => 'text_en_splitting', 'stored' => true, 'indexed' => true],
+            ['name' => 'administering_institution_search', 'type' => 'text_en_splitting', 'stored' => false, 'indexed' => true],
             ['name' => 'funder', 'type' => 'string', 'stored' => true, 'indexed' => true],
-            ['name' => 'funders_search', 'type' => 'text_en_splitting', 'stored' => true, 'indexed' => true],
+            ['name' => 'funders_search', 'type' => 'text_en_splitting', 'stored' => false, 'indexed' => true],
         ]);
 
         $this->setCopyFields([

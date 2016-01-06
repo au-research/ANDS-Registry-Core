@@ -28,11 +28,11 @@ class SolrAddSingleValueFields extends GenericSolrMigration
 
             ['name' => 'group', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
             ['name' => 'group_sort', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-            ['name' => 'group_search', 'type' => 'text_en_splitting', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'group_search', 'type' => 'text_en_splitting', 'stored' => 'false', 'indexed' => true],
 
             ['name' => 'type', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
             ['name' => 'type_sort', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-            ['name' => 'type_search', 'type' => 'text_en_splitting', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'type_search', 'type' => 'text_en_splitting', 'stored' => 'false', 'indexed' => true],
 
             ['name' => 'license_class', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
             ['name' => 'access_rights', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
@@ -41,16 +41,33 @@ class SolrAddSingleValueFields extends GenericSolrMigration
             ['name' => 'matching_identifier_count', 'type' => 'int', 'stored' => 'true', 'indexed' => true],
 
             [
-                'name' => 'text',
+                'name' => 'citation_info_search',
                 'type' => 'text_en_splitting',
-                'stored' => 'true',
+                'stored' => 'false',
                 'indexed' => true,
                 'multiValued' => true
             ],
+
+            [
+                'name' => 'related_info_search',
+                'type' => 'text_en_splitting',
+                'stored' => 'false',
+                'indexed' => true,
+                'multiValued' => true
+            ],
+
+            [
+                'name' => 'text',
+                'type' => 'text_en_splitting',
+                'stored' => 'false',
+                'indexed' => true,
+                'multiValued' => true
+            ],
+
             [
                 'name' => 'fulltext',
                 'type' => 'text_en_splitting',
-                'stored' => 'true',
+                'stored' => 'false',
                 'indexed' => true,
                 'multiValued' => true
             ],

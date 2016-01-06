@@ -10,7 +10,7 @@ class SolrTitles extends GenericSolrMigration
         parent::__construct();
         $this->setFields([
             ['name' => 'title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-            ['name' => 'title_search', 'type' => 'text_en_splitting', 'stored' => 'true', 'indexed' => true, 'multiValued'=>true, 'termVectors' => true],
+            ['name' => 'title_search', 'type' => 'text_en_splitting', 'stored' => 'false', 'indexed' => true, 'multiValued'=>true, 'termVectors' => true],
             ['name' => 'display_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
             ['name' => 'list_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
             ['name' => 'list_title_sort', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
@@ -18,12 +18,12 @@ class SolrTitles extends GenericSolrMigration
             [
                 'name' => 'simplified_title_search',
                 'type' => 'text_en_splitting',
-                'stored' => 'true',
+                'stored' => 'false',
                 'indexed' => true
             ],
             ['name' => 'alt_list_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
             ['name' => 'alt_display_title', 'type' => 'string', 'stored' => 'true', 'indexed' => true],
-            ['name' => 'alt_title_search', 'type' => 'text_en_splitting', 'stored' => 'true', 'indexed' => true],
+            ['name' => 'alt_title_search', 'type' => 'text_en_splitting', 'stored' => 'false', 'indexed' => true],
         ]);
         $this->setCopyFields([
             ['source' => 'display_title', 'dest' => ['title', 'title_search']],

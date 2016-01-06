@@ -29,7 +29,7 @@ class SolrSubjects extends GenericSolrMigration
             [
                 'name' => 'subject_value_resolved_search',
                 'type' => 'text_en_splitting',
-                'stored' => 'true',
+                'stored' => 'false',
                 'indexed' => true,
                 'multiValued' => true
             ],

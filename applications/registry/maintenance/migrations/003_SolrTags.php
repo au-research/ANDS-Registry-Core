@@ -15,7 +15,7 @@ class SolrTags extends GenericSolrMigration
             [
                 'name' => 'tag_search',
                 'type' => 'text_en_splitting',
-                'stored' => 'true',
+                'stored' => 'false',
                 'indexed' => true,
                 'multiValued' => true
             ]
