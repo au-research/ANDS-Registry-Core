@@ -116,8 +116,7 @@ class SyncTask extends Task
                         $this->log('Sync error DSID:' . $dsID . ' ROID:' . $ro_id . ' Message: RO not found');
                     }
                 } catch (Exception $e) {
-                    $this->log('Sync error DSID:' . $dsID . ' ROID:' . $ro_id . ' Message: ' . $e->getMessage());
-                    $this->save();
+                    throw new Exception('Sync error DSID:' . $dsID . ' ROID:' . $ro_id . ' Message: ' . $e->getMessage());
                 }
             }
         }
@@ -126,17 +125,20 @@ class SyncTask extends Task
             try {
                 $add_result = json_decode($this->ci->solr->add_json(json_encode($solr_docs)), true);
                 if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
-                    $this->log("Adding to SOLR successful");
-                    $this->log('Task finishes successfully');
-                    $this->save();
+                    $this->log("Adding to SOLR successful")
+                        ->log('Task finishes successfully')
+                        ->save();
                 } else {
-                    $this->log("Problems adding to SOLR. Error: " . json_encode($add_result));
-                    $this->save();
+                    throw new Exception(json_encode($add_result));
                 }
-                $this->ci->solr->commit();
+                $commit_result = $this->ci->solr->commit();
+                if (isset($commit_result['responseHeader']) && $commit_result['responseHeader']['status'] === 0) {
+                    $this->log("Commit to Indexed successful")->save();
+                } else {
+                    throw new Exception(json_encode($commit_result));
+                }
             } catch (Exception $e) {
-                $this->log("Index error " . $e->getMessage());
-                $this->save();
+                throw new Exception($e->getMessage());
             }
         }
 
@@ -155,7 +157,7 @@ class SyncTask extends Task
 
         $this->indexOnly = true;
 
-        $this->log('Task parameters: '. http_build_query($params));
+        $this->log('Task parameters: '. http_build_query($params))->save();
 
         //analyze if there is no chunkPosition
         if (isset($params['chunkPos'])) {

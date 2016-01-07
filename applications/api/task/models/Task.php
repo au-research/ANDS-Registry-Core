@@ -51,17 +51,18 @@ class Task
         //overwrite this method
         try {
             $this->run_task();
-            $this->setStatus('COMPLETED');
-            $this->update_db(['message' => json_encode($this->getMessage())]);
+        } catch (Exception $e) {
+            $this
+                ->setStatus("STOPPED")
+                ->log("Task stopped with error " . $e->getMessage())
+                ->save();
+        } finally {
             $this->hook_end();
             $end = microtime(true);
-            $this->log("Task finished at " . date($this->dateFormat, $end));
-            $this->log("Took: " . $this->formatPeriod($end, $start));
-            $this->save();
-        } catch (Exception $e) {
-            $this->setStatus("STOPPED");
-            $this->log("Task stopped with error " . $e->getMessage());
-            $this->save();
+            $this->setStatus('COMPLETED')
+                ->log("Task finished at " . date($this->dateFormat, $end))
+                ->log("Took: " . $this->formatPeriod($end, $start))
+                ->save();
         }
 
         return $this;
@@ -107,11 +108,7 @@ class Task
     public function setStatus($status)
     {
         $this->status = ucwords($status);
-        $this->update_db(
-            $stuff = [
-                'status' => $status,
-            ]
-        );
+        return $this;
     }
 
     //hooks for some particular reason
