@@ -35,9 +35,10 @@ class TaskManager
      * Add a task to the database
      * @param $task
      */
-    public function addTask($task) {
-        if(!isset($task['priority'])) $task['priority'] = 1;
-        $task['date_added'] = date('Y-m-d H:i:s',time());
+    public function addTask($task)
+    {
+        if (!isset($task['priority'])) $task['priority'] = 1;
+        $task['date_added'] = date('Y-m-d H:i:s', time());
         $task['status'] = 'PENDING';
         $this->db->insert('tasks', $task);
     }
@@ -47,11 +48,11 @@ class TaskManager
      * Returns the first task that is pending of highest priority
      * @return mixed|bool
      */
-    public function findPendingTask() {
-
+    public function findPendingTask()
+    {
         //get a list of pending task ordered by priority
         $query = $this->db->where('status', 'PENDING')->order_by('priority')->get('tasks');
-        if($query->num_rows() > 0) {
+        if ($query->num_rows() > 0) {
             return $query->first_row(true);
         }
 
