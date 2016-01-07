@@ -131,7 +131,7 @@ class SyncTask extends Task
                 } else {
                     throw new Exception(json_encode($add_result));
                 }
-                $commit_result = $this->ci->solr->commit();
+                $commit_result = json_decode($this->ci->solr->commit(), true);
                 if (isset($commit_result['responseHeader']) && $commit_result['responseHeader']['status'] === 0) {
                     $this->log("Commit to Indexed successful")->save();
                 } else {
