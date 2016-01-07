@@ -15,6 +15,7 @@ class SyncTask extends Task
     private $target_id = false;
     private $chunkSize = 100;
     private $chunkPos = 0;
+    private $indexOnly = false;
     private $mode = 'sync';
 
     private $taskManager;
@@ -57,11 +58,13 @@ class SyncTask extends Task
      */
     private function analyzeDS($dsID)
     {
+        $this->log('Analyzing Data Source ' . $dsID);
         $ids = $this->ci->ro->getIDsByDataSourceID($dsID, false, 'PUBLISHED');
         $data['total'] = sizeof($ids);
         $data['chunkSize'] = $this->chunkSize;
         $data['numChunk'] = ceil(($this->chunkSize < $data['total'] ? ($data['total'] / $this->chunkSize) : 1));
 
+        $this->log('Analyzing Data Source ' . $dsID);
         //spawn new tasks
         for ($i = 1; $i <= $data['numChunk']; $i++) {
             $task = array(
@@ -71,7 +74,7 @@ class SyncTask extends Task
             $this->taskManager->addTask($task);
         }
 
-        $this->log('[success][task:queued][size:' . $data['total'] . ']');
+        $this->log('Analyzed Data Source ' . $dsID . " spawned " . $data['numChunk'] . " sync tasks for " . $data['total'] . ' records');
     }
 
     /**
@@ -86,36 +89,43 @@ class SyncTask extends Task
         $limit = $this->chunkSize;
         $ids = $this->ci->ro->getIDsByDataSourceID($dsID, false, 'PUBLISHED', $offset, $limit);
 
+        $this->log('Syncing chunk ' . $this->chunkPos . ' of Data Source ' . $dsID . ' for ' . sizeof($ids) .' records');
+
         $solr_docs = array();
 
         foreach ($ids as $ro_id) {
             try {
                 $ro = $this->ci->ro->getByID($ro_id);
                 if ($ro) {
-                    $ro->processIdentifiers();
-                    $ro->addRelationships();
-                    $ro->update_quality_metadata();
-                    $ro->enrich();
+                    if (!$this->indexOnly) {
+                        $ro->processIdentifiers();
+                        $ro->addRelationships();
+                        $ro->update_quality_metadata();
+                        $ro->enrich();
+                    }
                     $solr_docs[] = $ro->indexable_json();
                     unset($ro);
                 } else {
-                    $this->log('[error][notfound][ro_id:' . $ro_id . ']');
+                    $this->log('Sync error DSID:'.$dsID.' ROID:'.$ro_id. ' Message: RO not found');
                 }
             } catch (Exception $e) {
-                $this->log('[error][sync][ds_id:' . $dsID . '][message:' . $e->getMessage() . '][ro_id:' . $ro_id . ']');
+                $this->log('Sync error DSID:'.$dsID.' ROID:'.$ro_id. ' Message: '. $e->getMessage());
             }
         }
 
         try {
-            $add_result = $this->ci->solr->add_json(json_encode($solr_docs));
-            $this->log($add_result);
-            $commit_result = $this->ci->solr->commit();
-            $this->log($commit_result);
+            $add_result = json_decode($this->ci->solr->add_json(json_encode($solr_docs)), true);
+            if ($add_result['responseHeader']['status'] === 0) {
+                $this->log("Adding to SOLR successful");
+            } else {
+                $this->log("Problems adding to SOLR. Error: " . json_encode($add_result));
+            }
+            $this->ci->solr->commit();
         } catch (Exception $e) {
-            $this->log('[error][sync][ds_id:' . $dsID . '][index:' . $e->getMessage() . ']');
+            $this->log("Index error ". $e->getMessage());
         }
 
-        $this->log('[task:success]');
+        $this->log('Task finishes successfully');
     }
 
     /**
@@ -125,8 +135,11 @@ class SyncTask extends Task
     {
         //parsing parameters
         parse_str($this->params, $params);
-        $this->target = $params['type'] ? $params['type'] : false;
-        $this->target_id = $params['id'] ? $params['id'] : false;
+        $this->target = isset($params['type']) ? $params['type'] : false;
+        $this->target_id = isset($params['id']) ? $params['id'] : false;
+        $this->indexOnly = isset($params['indexOnly']) ? $params['indexOnly'] : false;
+
+        $this->log('Task parameters: '. http_build_query($params));
 
         //analyze if there is no chunkPosition
         if (isset($params['chunkPos'])) {

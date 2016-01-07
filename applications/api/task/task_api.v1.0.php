@@ -41,6 +41,15 @@ class Task_api
         );
 
         switch (strtolower($this->params['submodule'])) {
+            case 'run':
+                $someTask = $this->taskManager->findPendingTask();
+                if ($someTask) {
+                    return $this->exe($someTask['id']);
+                } else {
+                    //find something else to do
+                    return "Nothing to do";
+                }
+                break;
             case 'exe' :
                 if ($this->params['identifier']) {
                     return $this->exe($this->params['identifier']);
@@ -83,6 +92,8 @@ class Task_api
 
         $result = [
             'task' => $task->getId(),
+            'status' => $task->getStatus(),
+            'params' => $task->getParams(),
             'message' => $task->getMessage()
         ];
         return $result;

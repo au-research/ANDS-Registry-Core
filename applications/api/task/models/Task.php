@@ -16,7 +16,7 @@ class Task
     public $status;
     public $priority;
     public $params;
-    public $message = ['log'=>[]];
+    public $message = ['log' => []];
 
     private $db;
 
@@ -27,7 +27,10 @@ class Task
         $this->status = isset($task['status']) ? $task['status'] : false;
         $this->priority = isset($task['priority']) ? $task['priority'] : false;
         $this->params = isset($task['params']) ? $task['params'] : false;
-        $this->message = isset($task['message']) ? json_decode($task['message'], true) : ['log'=>[]];
+        $this->message = isset($task['message']) ? json_decode($task['message'], true) : ['log' => []];
+
+        $this->dateFormat = 'Y-m-d | h:i:sa';
+
         return $this;
     }
 
@@ -39,23 +42,35 @@ class Task
 
     public function run()
     {
-//        $this->benchmark->mark('code_start');
-//        $this->hook_start();
+        $start = microtime(true);
 
+        $this->hook_start();
         $this->setStatus('RUNNING');
+        $this->log("Task run at " . date($this->dateFormat, $start));
 
         //overwrite this method
-        $this->run_task();
-
-//        $this->hook_end();
-//        $this->benchmark->mark('code_end');
-//        $this->elapsed = $this->benchmark->elapsed_time('code_start', 'code_end');
-//        $this->messages['elapsed'] = $this->elapsed;
-
-        $this->setStatus('COMPLETED');
-        $this->update_db(['message' => json_encode($this->getMessage())]);
+        try {
+            $this->run_task();
+            $this->setStatus('COMPLETED');
+            $this->update_db(['message' => json_encode($this->getMessage())]);
+            $this->hook_end();
+            $end = microtime(true);
+            $this->log("Task finished at " . date($this->dateFormat, $end));
+            $this->log("Took: " . $this->formatPeriod($end, $start));
+        } catch (Exception $e) {
+            $this->log("Task stopped with error " . $e->getMessage());
+        }
 
         return $this;
+    }
+
+    function formatPeriod($endtime, $starttime)
+    {
+        $duration = $endtime - $starttime;
+        $hours = (int)($duration / 60 / 60);
+        $minutes = (int)($duration / 60) - $hours * 60;
+        $seconds = (int)$duration - $hours * 60 * 60 - $minutes * 60;
+        return ($hours == 0 ? "00" : $hours) . ":" . ($minutes == 0 ? "00" : ($minutes < 10 ? "0" . $minutes : $minutes)) . ":" . ($seconds == 0 ? "00" : ($seconds < 10 ? "0" . $seconds : $seconds));
     }
 
     public function setDb($db)
@@ -64,7 +79,8 @@ class Task
         return $this;
     }
 
-    public function setCI($ci) {
+    public function setCI($ci)
+    {
         $this->ci = $ci;
     }
 
@@ -118,6 +134,14 @@ class Task
     public function getDb()
     {
         return $this->db;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 
     //overwrite these methods
