@@ -5,7 +5,8 @@
             "ANDS\\API\\Registry\\Handler\\": "registry/handlers/",
             "ANDS\\API\\Log\\": "log",
             "ANDS\\API\\Log\\Handler\\": "log/handlers/",
-            "ANDS\\API\\Log\\Indexer\\": "log/indexers/"
+            "ANDS\\API\\Log\\Indexer\\": "log/indexers/",
+            "ANDS\\API\\Task\\": "task/models"
         }
     }
 }

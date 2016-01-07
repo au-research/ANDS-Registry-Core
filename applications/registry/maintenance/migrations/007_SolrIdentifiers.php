@@ -37,7 +37,8 @@ class SolrIdentifiers extends GenericSolrMigration
                 'name' => 'identifier_value_search',
                 'type' => 'text_en_splitting',
                 'stored' => 'false',
-                'indexed' => true
+                'indexed' => true,
+                'multiValued' => true
             ],
         ]);
 
