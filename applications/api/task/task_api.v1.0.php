@@ -60,6 +60,7 @@ class Task_api
             case 'pending' :
             case 'completed' :
             case 'running' :
+            case 'stopped':
                 $status = strtoupper($this->params['submodule']);
                 return $this->taskManager->listTasks($status, $this->ci->input->get('limit'), $this->ci->input->get('offset'));
                 break;
@@ -70,16 +71,16 @@ class Task_api
 
     public function exe($taskId)
     {
-        $query = $this->db->get_where('tasks', ['id'=>$taskId]);
-        if ($query->num_rows() == 0) throw new Exception("Task ". $taskId. " not found!");
+        $query = $this->db->get_where('tasks', ['id' => $taskId]);
+        if ($query->num_rows() == 0) throw new Exception("Task " . $taskId . " not found!");
         $taskResult = $query->first_row(true);
 
         $taskType = ucfirst($taskResult['name']);
-        $className = "ANDS\\API\\Task\\".$taskType.'Task';
+        $className = "ANDS\\API\\Task\\" . $taskType . 'Task';
         $task = new $className($taskId);
         $task->init($taskResult);
 
-        if ($taskType=='Sync') {
+        if ($taskType == 'Sync') {
             $task
                 ->setDb($this->db)
                 ->setCI($this->ci);
@@ -87,7 +88,16 @@ class Task_api
         try {
             $task->run();
         } catch (Exception $e) {
-            throw new Exception($e);
+            $task->setStatus("STOPPED");
+            $task->log("Error: " . $e->getMessage());
+            $task->save();
+            $result = [
+                'task' => $task->getId(),
+                'status' => $task->getStatus(),
+                'params' => $task->getParams(),
+                'message' => $task->getMessage()
+            ];
+            return $result;
         }
 
         $result = [

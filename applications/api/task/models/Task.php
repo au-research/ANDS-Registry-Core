@@ -57,8 +57,11 @@ class Task
             $end = microtime(true);
             $this->log("Task finished at " . date($this->dateFormat, $end));
             $this->log("Took: " . $this->formatPeriod($end, $start));
+            $this->save();
         } catch (Exception $e) {
+            $this->setStatus("STOPPED");
             $this->log("Task stopped with error " . $e->getMessage());
+            $this->save();
         }
 
         return $this;
@@ -73,15 +76,12 @@ class Task
         return ($hours == 0 ? "00" : $hours) . ":" . ($minutes == 0 ? "00" : ($minutes < 10 ? "0" . $minutes : $minutes)) . ":" . ($seconds == 0 ? "00" : ($seconds < 10 ? "0" . $seconds : $seconds));
     }
 
-    public function setDb($db)
-    {
-        $this->db = $db;
-        return $this;
-    }
-
-    public function setCI($ci)
-    {
-        $this->ci = $ci;
+    public function save() {
+        $data = [
+            'status' => $this->getStatus(),
+            'message' => json_encode($this->getMessage())
+        ];
+        return $this->update_db($data);
     }
 
     public function update_db($stuff)
@@ -91,6 +91,17 @@ class Task
             ->update('tasks', $stuff);
 
         return $this;
+    }
+
+    public function setDb($db)
+    {
+        $this->db = $db;
+        return $this;
+    }
+
+    public function setCI($ci)
+    {
+        $this->ci = $ci;
     }
 
     public function setStatus($status)

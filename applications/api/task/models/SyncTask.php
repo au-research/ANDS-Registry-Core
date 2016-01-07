@@ -7,7 +7,7 @@
  */
 
 namespace ANDS\API\Task;
-
+use \Exception as Exception;
 
 class SyncTask extends Task
 {
@@ -85,6 +85,7 @@ class SyncTask extends Task
     private function syncDS($dsID)
     {
         if (!$this->chunkSize) throw new Exception("No chunk defined for this sync task");
+        if (!$dsID) throw new Exception("Data Source ID required");
         $offset = ($this->chunkPos - 1) * $this->chunkSize;
         $limit = $this->chunkSize;
         $ids = $this->ci->ro->getIDsByDataSourceID($dsID, false, 'PUBLISHED', $offset, $limit);
@@ -93,39 +94,48 @@ class SyncTask extends Task
 
         $solr_docs = array();
 
-        foreach ($ids as $ro_id) {
-            try {
-                $ro = $this->ci->ro->getByID($ro_id);
-                if ($ro) {
-                    if (!$this->indexOnly) {
-                        $ro->processIdentifiers();
-                        $ro->addRelationships();
-                        $ro->update_quality_metadata();
-                        $ro->enrich();
+
+        if (sizeof($ids) > 0) {
+            foreach ($ids as $ro_id) {
+                try {
+                    $ro = $this->ci->ro->getByID($ro_id);
+                    if ($ro) {
+                        if (!$this->indexOnly) {
+                            $ro->processIdentifiers();
+                            $ro->addRelationships();
+                            $ro->update_quality_metadata();
+                            $ro->enrich();
+                        }
+                        $solr_docs[] = $ro->indexable_json();
+                        unset($ro);
+                    } else {
+                        $this->log('Sync error DSID:' . $dsID . ' ROID:' . $ro_id . ' Message: RO not found');
                     }
-                    $solr_docs[] = $ro->indexable_json();
-                    unset($ro);
-                } else {
-                    $this->log('Sync error DSID:'.$dsID.' ROID:'.$ro_id. ' Message: RO not found');
+                } catch (Exception $e) {
+                    $this->log('Sync error DSID:' . $dsID . ' ROID:' . $ro_id . ' Message: ' . $e->getMessage());
+                    $this->save();
                 }
+            }
+        }
+
+        if (sizeof($solr_docs) > 0) {
+            try {
+                $add_result = json_decode($this->ci->solr->add_json(json_encode($solr_docs)), true);
+                if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
+                    $this->log("Adding to SOLR successful");
+                    $this->log('Task finishes successfully');
+                    $this->save();
+                } else {
+                    $this->log("Problems adding to SOLR. Error: " . json_encode($add_result));
+                    $this->save();
+                }
+                $this->ci->solr->commit();
             } catch (Exception $e) {
-                $this->log('Sync error DSID:'.$dsID.' ROID:'.$ro_id. ' Message: '. $e->getMessage());
+                $this->log("Index error " . $e->getMessage());
+                $this->save();
             }
         }
 
-        try {
-            $add_result = json_decode($this->ci->solr->add_json(json_encode($solr_docs)), true);
-            if ($add_result['responseHeader']['status'] === 0) {
-                $this->log("Adding to SOLR successful");
-            } else {
-                $this->log("Problems adding to SOLR. Error: " . json_encode($add_result));
-            }
-            $this->ci->solr->commit();
-        } catch (Exception $e) {
-            $this->log("Index error ". $e->getMessage());
-        }
-
-        $this->log('Task finishes successfully');
     }
 
     /**
@@ -138,6 +148,8 @@ class SyncTask extends Task
         $this->target = isset($params['type']) ? $params['type'] : false;
         $this->target_id = isset($params['id']) ? $params['id'] : false;
         $this->indexOnly = isset($params['indexOnly']) ? $params['indexOnly'] : false;
+
+        $this->indexOnly = true;
 
         $this->log('Task parameters: '. http_build_query($params));
 
