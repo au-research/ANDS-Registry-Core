@@ -39,10 +39,14 @@ class SyncTask extends Task
             case 'ds' :
                 $list = explode(',', $this->target_id);
                 foreach ($list as $dsID) {
-                    if ($this->mode == 'analyze') {
-                        $this->analyzeDS($dsID);
-                    } else if ($this->mode == 'sync') {
-                        $this->syncDS($dsID);
+                    if ($dsID) {
+                        if ($this->mode == 'analyze') {
+                            $this->analyzeDS($dsID);
+                        } else if ($this->mode == 'sync') {
+                            $this->syncDS($dsID);
+                        }
+                    } else {
+                        throw new Exception("No valid Data Source ID found");
                     }
                 }
                 break;
