@@ -1,0 +1,4 @@
+ALTER TABLE `dbs_registry`.`tasks`
+ADD COLUMN `type` VARCHAR(45) NULL COMMENT '' AFTER `name`,
+ADD COLUMN `next_run` TIMESTAMP NULL DEFAULT NULL COMMENT '' AFTER `date_added`,
+ADD COLUMN `frequency` VARCHAR(45) NULL COMMENT '' AFTER `priority`;
