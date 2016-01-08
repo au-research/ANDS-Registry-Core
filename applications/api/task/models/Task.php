@@ -17,7 +17,7 @@ class Task
     public $message = ['log' => []];
 
     private $db;
-    private $memoryLimit = '256MB';
+    private $memoryLimit = '256M';
 
     /**
      * Intialisation of this task
@@ -51,10 +51,6 @@ class Task
         $this->log("Task run at " . date($this->dateFormat, $start));
 
         ini_set('memory_limit', $this->getMemoryLimit());
-
-        register_shutdown_function(function () {
-            $this->stoppedWithError(error_get_last());
-        });
 
         //overwrite this method
         try {
