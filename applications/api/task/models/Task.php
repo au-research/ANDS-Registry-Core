@@ -17,6 +17,7 @@ class Task
     public $message = ['log' => []];
 
     private $db;
+    private $memoryLimit = '256MB';
 
     /**
      * Intialisation of this task
@@ -48,6 +49,8 @@ class Task
         $this->hook_start();
         $this->setStatus('RUNNING');
         $this->log("Task run at " . date($this->dateFormat, $start));
+
+        ini_set('memory_limit', $this->getMemoryLimit());
 
         register_shutdown_function(function () {
             $this->stoppedWithError(error_get_last());
@@ -235,5 +238,21 @@ class Task
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMemoryLimit()
+    {
+        return $this->memoryLimit;
+    }
+
+    /**
+     * @param string $memoryLimit
+     */
+    public function setMemoryLimit($memoryLimit)
+    {
+        $this->memoryLimit = $memoryLimit;
     }
 }

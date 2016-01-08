@@ -1,23 +1,24 @@
 <?php
+/**
+ * Class:  ANDS\API\Task_api
+ * Returns response for localhost/api/task/ based requests
+ *
+ * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
 namespace ANDS\API;
 
 use \Exception as Exception;
 
 
-/**
- * ANDS\Task_api
- * for use with the ANDS API application
- *
- * Returns response for localhost/api/task/ based requests
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
- */
 class Task_api
 {
     private $ci;
     private $params;
-
     private $taskManager;
 
+    /**
+     * Task_api constructor.
+     */
     public function __construct()
     {
         $this->ci = &get_instance();
@@ -69,6 +70,12 @@ class Task_api
         }
     }
 
+    /**
+     * Execute a specific task
+     * @param $taskId
+     * @return array
+     * @throws Exception
+     */
     public function exe($taskId)
     {
         $query = $this->db->get_where('tasks', ['id' => $taskId]);
@@ -109,6 +116,10 @@ class Task_api
         return $result;
     }
 
+    /**
+     * Display a report of all the tasks
+     * @return mixed
+     */
     public function report()
     {
         $query = $this->db
