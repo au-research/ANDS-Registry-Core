@@ -366,8 +366,8 @@ class Maintenance extends MX_Controller {
 	public function syncmenu(){
 		acl_enforce('REGISTRY_STAFF');
 		$data['title'] = 'ARMS SyncMenu';
-		$data['scripts'] = array('sync_app');
-		$data['js_lib'] = array('core', 'angular', 'dataTables');
+		$data['scripts'] = array('sync_app', 'sync_indexController');
+		$data['js_lib'] = array('core', 'angular', 'dataTables', 'APIService', 'APITaskService', 'APIDataSourceService');
 		$this->load->view("syncmenu_index", $data);
 	}
 

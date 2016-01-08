@@ -12,7 +12,7 @@
 		<?php echo anchor(registry_url('maintenance'), 'Maintenance'); ?>
 		<a href="#/" class="current">Sync Menu</a>
 	</div>
-	
+
 	<div class="container-fluid">
 
 		<div class="row-fluid" ng-show="loading_detailed_stat">
@@ -90,10 +90,10 @@
 											</ul>
 										</div>
 										<div class="btn-group">
-											
+
 										</div>
 									</td>
-								</tr>							
+								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -235,11 +235,11 @@
 					</div>
 				</div>
 			</div>
-			
-			
+
+
 		</div>
 
-		
+
 	</div>
 </div>
 
