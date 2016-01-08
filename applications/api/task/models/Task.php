@@ -14,6 +14,7 @@ class Task
     public $status;
     public $priority;
     public $params;
+    public $lastRun;
     public $message = ['log' => []];
 
     private $db;
@@ -32,6 +33,7 @@ class Task
         $this->priority = isset($task['priority']) ? $task['priority'] : false;
         $this->params = isset($task['params']) ? $task['params'] : false;
         $this->message = isset($task['message']) ? json_decode($task['message'], true) : ['log' => []];
+        $this->lastRun = isset($task['last_run']) ? $task['last_run'] : false;
 
         $this->dateFormat = 'Y-m-d | h:i:sa';
 
@@ -47,8 +49,11 @@ class Task
         $start = microtime(true);
 
         $this->hook_start();
-        $this->setStatus('RUNNING');
-        $this->log("Task run at " . date($this->dateFormat, $start));
+        $this
+            ->setStatus('RUNNING')
+            ->setLastRun(date('Y-m-d H:i:s', time()))
+            ->log("Task run at " . date($this->dateFormat, $start))
+            ->save();
 
         ini_set('memory_limit', $this->getMemoryLimit());
 
@@ -121,8 +126,10 @@ class Task
         $data = [
             'status' => $this->getStatus(),
             'priority' => $this->getPriority(),
-            'message' => json_encode($this->getMessage())
+            'message' => json_encode($this->getMessage()),
         ];
+        if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
+
         return $this->update_db($data);
     }
 
@@ -267,5 +274,24 @@ class Task
     public function setPriority($priority)
     {
         $this->priority = $priority;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastRun()
+    {
+        return $this->lastRun;
+    }
+
+
+    /**
+     * @param $lastRun
+     * @return $this
+     */
+    public function setLastRun($lastRun)
+    {
+        $this->lastRun = $lastRun;
+        return $this;
     }
 }

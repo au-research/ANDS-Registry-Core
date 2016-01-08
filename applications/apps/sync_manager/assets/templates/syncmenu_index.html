@@ -9,6 +9,7 @@
 </div>
 
 <div class="container-fluid">
+
     <div class="row-fluid">
         <div class="span8">
             <div class="widget-box">
@@ -23,13 +24,10 @@
                         <tr>
                             <th ng-click="predicate = 'id';reverse=!reverse">ID</th>
                             <th ng-click="predicate = 'title';reverse=!reverse">Title</th>
+                            <th>Sync Status</th>
                             <th ng-click="predicate = 'count_PUBLISHED';reverse=!reverse">Total Published</th>
-                            <th ng-click="predicate = 'count_INDEXED';reverse=!reverse">Total
-                                Indexed
-                            </th>
-                            <th ng-click="predicate = 'count_MISSING';reverse=!reverse">Total
-                                Missing
-                            </th>
+                            <!--<th ng-click="predicate = 'count_INDEXED';reverse=!reverse">Total Indexed</th>-->
+                            <!--<th ng-click="predicate = 'count_MISSING';reverse=!reverse">Total Missing</th>-->
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -37,9 +35,19 @@
                             <tr ng-repeat="ds in datasources | orderBy:predicate:reverse | filter: filters.title " ng-show="ds.count_PUBLISHED > 0">
                                 <td>{{ ds.id }}</td>
                                 <td>{{ ds.title }}</td>
-                                <td>{{ ds.count_PUBLISHED }}</td>
-                                <td>{{ ds.count_INDEXED }}</td>
-                                <td>{{ ds.count_MISSING }}</td>
+                                <td style="min-width:250px">
+                                    <progress animate="false">
+                                        <bar ng-click="predicate = 'count_INDEXED';reverse=!reverse" value="ds.count_INDEXED / ds.count_PUBLISHED * 100" type="success">
+                                            {{ ds.count_INDEXED | number}} Indexed
+                                        </bar>
+                                        <bar ng-click="predicate = 'count_MISSING';reverse=!reverse" value="ds.count_MISSING / ds.count_PUBLISHED * 100" type="danger">
+                                            {{ ds.count_MISSING | number }} Missing
+                                        </bar>
+                                    </progress>
+                                </td>
+                                <td>{{ ds.count_PUBLISHED | number }}</td>
+                                <!--<td>{{ ds.count_INDEXED | number }}</td>-->
+                                <!--<td>{{ ds.count_MISSING | number }}</td>-->
                                 <td>
                                     <div class="btn-group">
                                         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Queue <span class="caret"></span></button>
