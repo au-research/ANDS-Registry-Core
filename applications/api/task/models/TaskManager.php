@@ -48,7 +48,6 @@ class TaskManager
      */
     public function findPendingTask()
     {
-
         //get a list of pending task ordered by priority
         $query = $this->db->where('status', 'PENDING')->order_by('priority')->get('tasks');
         if ($query->num_rows() > 0) {
