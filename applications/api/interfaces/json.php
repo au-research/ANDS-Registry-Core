@@ -47,9 +47,9 @@ class JSONInterface extends FormatHandler
         }
 
         if ($ci->input->get('pretty')) {
-            echo json_encode($response, JSON_PRETTY_PRINT);
+            echo json_encode(utf8ize($response), JSON_PRETTY_PRINT);
         } else {
-            echo json_encode($response);
+            echo json_encode(utf8ize($response));
         }
 
         return true;
