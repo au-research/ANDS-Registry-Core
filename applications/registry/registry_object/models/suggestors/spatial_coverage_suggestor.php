@@ -47,7 +47,7 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
                     ->setOpt('rows', $maxRows)
                     ->setOpt('fq', '-id:'.$this->ro->id)
                     ->setOpt('fq', 'class:collection')
-                    ->setOpt('fq', '{!geofilt pt='.$latLon[1].','.$latLon[0].' sfield=spatial_coverage_extents d=50}')
+                    ->setOpt('fq', '{!geofilt pt='.$latLon[1].','.$latLon[0].' sfield=spatial_coverage_extents_wkt d=50}')
                     ->setOpt('fl', 'id,key,slug,title,score');
 
                 $result = $ci->solr->executeSearch(true);

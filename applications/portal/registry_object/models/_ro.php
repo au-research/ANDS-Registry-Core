@@ -106,7 +106,7 @@ class _ro {
         $this->prop['status'] = $content['status'];
 		if ($content['status']=='success') {
 			foreach($params as $par) {
-				if(isset($content['message'][$par])) {
+				if(isset($content['message'][$par]) && is_array($content['message'][$par])) {
 					foreach($content['message'][$par] as $attr=>$val) {
 						$this->prop[$par][$attr] = $val;
 					}
