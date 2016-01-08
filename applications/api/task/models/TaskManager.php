@@ -2,8 +2,6 @@
 /**
  * Class:  TaskManager
  * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
- * Date: 7/01/2016
- * Time: 11:41 AM
  */
 
 namespace ANDS\API\Task;
@@ -74,6 +72,5 @@ class TaskManager
     {
         $this->db = $db;
     }
-
 
 }

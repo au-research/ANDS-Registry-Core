@@ -2,8 +2,6 @@
 /**
  * Class:  SyncTask
  * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
- * Date: 7/01/2016
- * Time: 10:49 AM
  */
 
 namespace ANDS\API\Task;
@@ -21,6 +19,8 @@ class SyncTask extends Task
     private $taskManager;
 
     /**
+     * todo sync Registry Objects
+     * todo sync by SOLR query
      * Run the actual task
      * Loads CodeIgniter models and libraries as required
      * @throws Exception
@@ -33,7 +33,7 @@ class SyncTask extends Task
         $this->ci->load->model('registry/data_source/data_sources', 'ds');
         $this->ci->load->library('solr');
 
-        $this->taskManager = new \ANDS\API\Task\TaskManager($this->getDb());
+        $this->taskManager = new TaskManager($this->getDb());
 
         switch ($this->target) {
             case 'ds' :
@@ -98,7 +98,7 @@ class SyncTask extends Task
 
         $solr_docs = array();
 
-
+        // sync and getting indexable_json for SOLR indexing
         if (sizeof($ids) > 0) {
             foreach ($ids as $ro_id) {
                 try {
@@ -119,8 +119,11 @@ class SyncTask extends Task
                     throw new Exception('Sync error DSID:' . $dsID . ' ROID:' . $ro_id . ' Message: ' . $e->getMessage());
                 }
             }
+        } else {
+            throw new Exception("No records found");
         }
 
+        //indexing in SOLR
         if (sizeof($solr_docs) > 0) {
             try {
                 $add_result = json_decode($this->ci->solr->add_json(json_encode($solr_docs)), true);
@@ -145,6 +148,7 @@ class SyncTask extends Task
     }
 
     /**
+     * Helper method
      * Analyze the parameters and load them into this object
      */
     private function loadParams()

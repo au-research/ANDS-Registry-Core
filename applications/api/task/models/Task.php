@@ -2,8 +2,6 @@
 /**
  * Class:  Task
  * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
- * Date: 7/01/2016
- * Time: 10:49 AM
  */
 
 namespace ANDS\API\Task;
@@ -20,6 +18,11 @@ class Task
 
     private $db;
 
+    /**
+     * Intialisation of this task
+     * @param $task
+     * @return $this
+     */
     function init($task)
     {
         $this->id = isset($task['id']) ? $task['id'] : false;
@@ -34,12 +37,10 @@ class Task
         return $this;
     }
 
-    public function log($log)
-    {
-        $this->message['log'][] = $log;
-        return $this;
-    }
-
+    /**
+     * Primary task running function
+     * @return $this
+     */
     public function run()
     {
         $start = microtime(true);
@@ -48,14 +49,15 @@ class Task
         $this->setStatus('RUNNING');
         $this->log("Task run at " . date($this->dateFormat, $start));
 
+        register_shutdown_function(function () {
+            $this->stoppedWithError(error_get_last());
+        });
+
         //overwrite this method
         try {
             $this->run_task();
         } catch (Exception $e) {
-            $this
-                ->setStatus("STOPPED")
-                ->log("Task stopped with error " . $e->getMessage())
-                ->save();
+            $this->stoppedWithError($e->getMessage());
         } finally {
             $this->hook_end();
             $end = microtime(true);
@@ -68,7 +70,41 @@ class Task
         return $this;
     }
 
-    function formatPeriod($endtime, $starttime)
+    /**
+     * Add a log message to the internal log array
+     * Can chain save() after
+     * @param $log
+     * @return $this
+     */
+    public function log($log)
+    {
+        $this->message['log'][] = $log;
+        return $this;
+    }
+
+    /**
+     * Stop a task when an error is encountered
+     * Log the error and save
+     * @param $error
+     * @return $this
+     */
+    public function stoppedWithError($error)
+    {
+        $this
+            ->setStatus("STOPPED")
+            ->log("Task stopped with error " . $error)
+            ->save();
+        return $this;
+    }
+
+    /**
+     * Helper method
+     * Format a time period nicely
+     * @param $endtime
+     * @param $starttime
+     * @return string
+     */
+    private function formatPeriod($endtime, $starttime)
     {
         $duration = $endtime - $starttime;
         $hours = (int)($duration / 60 / 60);
@@ -77,7 +113,12 @@ class Task
         return ($hours == 0 ? "00" : $hours) . ":" . ($minutes == 0 ? "00" : ($minutes < 10 ? "0" . $minutes : $minutes)) . ":" . ($seconds == 0 ? "00" : ($seconds < 10 ? "0" . $seconds : $seconds));
     }
 
-    public function save() {
+    /**
+     * Save the status and the message of this task
+     * @return Task
+     */
+    public function save()
+    {
         $data = [
             'status' => $this->getStatus(),
             'message' => json_encode($this->getMessage())
@@ -85,6 +126,11 @@ class Task
         return $this->update_db($data);
     }
 
+    /**
+     * Update the database with task information
+     * @param $stuff
+     * @return $this
+     */
     public function update_db($stuff)
     {
         $this->db
@@ -94,30 +140,60 @@ class Task
         return $this;
     }
 
-    public function setDb($db)
+    /**
+     * @Overwrite
+     */
+    public function run_task()
     {
-        $this->db = $db;
-        return $this;
     }
 
-    public function setCI($ci)
-    {
-        $this->ci = $ci;
-    }
-
-    public function setStatus($status)
-    {
-        $this->status = ucwords($status);
-        return $this;
-    }
-
-    //hooks for some particular reason
+    /**
+     * Hooks
+     */
     public function hook_start()
     {
     }
 
     public function hook_end()
     {
+    }
+
+    /**
+     * Setters and Getters
+     */
+
+    /**
+     * Set the database for use
+     * Works with Codeigniter DB class
+     * @param $db
+     * @return $this
+     */
+    public function setDb($db)
+    {
+        $this->db = $db;
+        return $this;
+    }
+
+    /**
+     * Set the Codeigniter instance
+     * @param $ci
+     * @return $this
+     */
+    public function setCI($ci)
+    {
+        $this->ci = $ci;
+        return $this;
+    }
+
+    /**
+     * Set the status of the task
+     * @param $status
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->status = ucwords($status);
+        return $this;
     }
 
     /**
@@ -152,15 +228,10 @@ class Task
         return $this->status;
     }
 
-    //overwrite these methods
-    private function load_params($task)
-    {
-    }
 
-    public function run_task()
-    {
-    }
-
+    /**
+     * @return array
+     */
     public function getMessage()
     {
         return $this->message;
