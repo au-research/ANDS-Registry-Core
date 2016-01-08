@@ -25,6 +25,11 @@
               return APIService.post(
                   'task', params
               );
+            },
+            runTask: function(id) {
+                return APIService.get(
+                    'task/exe/'+id, {}
+                );
             }
         }
 

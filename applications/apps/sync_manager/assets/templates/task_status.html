@@ -4,6 +4,32 @@
         <h4 class="modal-title">{{ header }}</h4>
     </div>
     <div class="modal-body swatch-white" ng-cloak>
-        {{ tasks }}
+        <div class="well" ng-if="tasks.length == 0">
+            No tasks to display!
+        </div>
+        <ul class="activity-list" ng-if="tasks.length > 0">
+            <li ng-repeat="task in tasks">
+                <a href="" ng-click="task.show=!task.show" class="expand_log"
+                   ng-class="{'error': task.status=='STOPPED'}">
+                    <i class="icon-list-alt"></i> {{ task.id}} | {{ task.name }} | {{ task.params | limitTo:10 }}
+                    <span class="label">{{ task.date_added }}</span>
+                </a>
+                <div class="log" ng-show="task.show">
+                    <button
+                        class="btn btn-small"
+                        ng-disabled="task.running"
+                        ng-click="runTask(task)">
+                        <i class="icon icon-play"></i> Run Task
+                    </button>
+                    <span ng-if="task.running">Loading...</span>
+                    <hr>
+                    <strong>Params: </strong>
+                    <pre>{{ task.params }}</pre>
+                    <strong ng-if="task.message">Message Log: </strong>
+                    <pre ng-if="task.message"><span ng-repeat="log in task.message.log track by $index">{{ log }}<br/></span></pre>
+                </div>
+            </li>
+        </ul>
+
     </div>
 </div>

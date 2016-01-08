@@ -24,9 +24,17 @@ class TaskManager
         $limit = $limit ? $limit : 10;
         $offset = $offset ? $offset : 0;
         if ($status) $this->db->where('status', $status);
-        $query = $this->db->limit($limit, $offset)->get('tasks');
+        $query = $this->db
+            ->order_by('id desc')
+            ->limit($limit, $offset)
+            ->get('tasks');
         if ($query->num_rows() == 0) return "No task found!";
         $result = $query->result_array();
+        foreach ($result as &$row) {
+            if ($row['message']) {
+                $row['message'] = json_decode($row['message'], true);
+            }
+        }
         return $result;
     }
 
