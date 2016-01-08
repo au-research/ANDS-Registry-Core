@@ -7,3 +7,85 @@
     <a href="{{ base_url }}maintenance">Maintenance</a>
     <a href="#/" class="current">Sync Menu</a>
 </div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span8">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon" ng-click="refreshDataSources()"><i class="icon icon-refresh"></i></span>
+                    <h5>Data Sources</h5>
+                    <input type="text" style="float:right;margin:3px 10px;" placeholder="Filter" ng-model="filters.title">
+                </div>
+                <div class="widget-content nopadding">
+                    <table class="table table-bordered data-table">
+                        <thead>
+                        <tr>
+                            <th ng-click="predicate = 'id';reverse=!reverse">ID</th>
+                            <th ng-click="predicate = 'title';reverse=!reverse">Title</th>
+                            <th ng-click="predicate = 'count_PUBLISHED';reverse=!reverse">Total Published</th>
+                            <th ng-click="predicate = 'count_INDEXED';reverse=!reverse">Total
+                                Indexed
+                            </th>
+                            <th ng-click="predicate = 'count_MISSING';reverse=!reverse">Total
+                                Missing
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="ds in datasources | orderBy:predicate:reverse | filter: filters.title " ng-show="ds.count_PUBLISHED > 0">
+                                <td>{{ ds.id }}</td>
+                                <td>{{ ds.title }}</td>
+                                <td>{{ ds.count_PUBLISHED }}</td>
+                                <td>{{ ds.count_INDEXED }}</td>
+                                <td>{{ ds.count_MISSING }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Queue <span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="" ng-click="addTask('index', ds)">Index</a></li>
+                                            <li><a href="" ng-click="addTask('index_missing', ds)">Index Missing</a></li>
+                                            <li><a href="" ng-click="addTask('clear_index', ds)">Clear Index</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="" ng-click="addTask('sync', ds)">Full Sync</a></li>
+                                            <li><a href="" ng-click="addTask('sync_missing', ds)">Sync Missing</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="span4">
+
+            <div class="widget-box">
+                <div class="widget-content">
+                    <form class="form-search pull-left" ng-submit="syncRO()">
+                        <div class="input-prepend">
+                            <button type="submit" class="btn">Sync</button>
+                            <input type="text" class="input-medium search-query" placeholder="Key, ID or Slug" ng-model="subject">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon" ng-click="refreshTasks()"><i class="icon icon-refresh"></i></span>
+                    <h5>Tasks</h5>
+                </div>
+                <div class="widget-content">
+                    <dl ng-repeat="(task,count) in tasks" class="dl-horizontal">
+                        <dt>{{ task }}</dt>
+                        <dd>{{ count }}</dd>
+                    </dl>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

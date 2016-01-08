@@ -70,7 +70,7 @@
 									<th>Actions</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody style="overflow:auto;height:500px;">
 								<tr ng-repeat="ds in datasources | orderBy:predicate:reverse | filter: filters.title " ng-show="ds.total_published > 0">
 									<td>{{ds.id}}</td>
 									<td>{{ds.title}}</td>

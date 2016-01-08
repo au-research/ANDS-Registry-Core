@@ -4,14 +4,68 @@
         .module('sync_app')
         .controller('indexCtrl', indexCtrl);
 
-    function indexCtrl($scope, APITaskService, APIDataSourceService) {
+
+    function indexCtrl(APITaskService, APIDataSourceService, $interval, $scope) {
+
         $scope.base_url = base_url;
-        APITaskService.getTasksReport().then(function(data){
-            console.log(data);
-        });
-        APIDataSourceService.getDataSources().then(function(data){
-            console.log(data);
-        });
+
+        // function declaration
+        $scope.refreshTasks = refreshTasks;
+        $scope.refreshDataSources = refreshDataSources;
+        $scope.addTask = addTask;
+
+        //init
+        $scope.refreshTasks();
+        $scope.refreshDataSources();
+
+        $interval(refreshTasks, 5000);
+        $interval(refreshDataSources, 60000);
+
+        /**
+         * Adding a task
+         * @param name
+         * @param ds
+         */
+        function addTask(name, ds) {
+            var params = {
+                name: name,
+                type: 'ds',
+                id: ds.id,
+                params: []
+            };
+            switch (name) {
+                case 'index':
+                    params.name = 'sync';
+                    params.params.push({indexOnly: true});
+                    break;
+            }
+            APITaskService.addTask(params).then(function (data) {
+                console.log(data);
+            });
+        }
+
+        /**
+         * Refreshing the data sources report
+         */
+        function refreshDataSources() {
+            APIDataSourceService.getDataSources().then(function (data) {
+                $scope.datasources = data.data;
+                angular.forEach($scope.datasources, function (ds) {
+                    ds.count_PUBLISHED = parseInt(ds.count_PUBLISHED);
+                    ds.count_INDEXED = parseInt(ds.count_INDEXED);
+                    ds.count_MISSING = ds.count_PUBLISHED - ds.count_INDEXED;
+                });
+            });
+        }
+
+        /**
+         * Refreshing the tasks report
+         */
+        function refreshTasks() {
+            APITaskService.getTasksReport().then(function (data) {
+                $scope.tasks = data.data;
+            });
+        }
     }
 
 })();

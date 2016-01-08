@@ -18,7 +18,7 @@
             post: function(path, data) {
                 data['api_key'] = internal_api_key;
                 return $http({
-                    url: api_url+path,
+                    url: api_url+path+'/?api_key='+data['api_key'],
                     method: "POST",
                     data: $.param(data),
                     headers : { 'Content-Type': 'application/x-www-form-urlencoded' }

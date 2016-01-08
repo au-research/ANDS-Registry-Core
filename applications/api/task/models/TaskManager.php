@@ -26,7 +26,8 @@ class TaskManager
         if ($status) $this->db->where('status', $status);
         $query = $this->db->limit($limit, $offset)->get('tasks');
         if ($query->num_rows() == 0) return "No task found!";
-        return $query->result_array();
+        $result = $query->result_array();
+        return $result;
     }
 
     /**
@@ -38,7 +39,22 @@ class TaskManager
         if (!isset($task['priority'])) $task['priority'] = 1;
         $task['date_added'] = date('Y-m-d H:i:s', time());
         $task['status'] = 'PENDING';
-        $this->db->insert('tasks', $task);
+        if ($this->db->insert('tasks', $task)) {
+            $id = $this->db->insert_id();
+            return $this->getTask($id);
+        } else {
+            return false;
+        }
+    }
+
+    public function getTask($id)
+    {
+        $query = $this->db->get_where('tasks', ['id'=>$id]);
+        if ($query->num_rows() > 0) {
+            return $query->first_row(true);
+        } else {
+            return false;
+        }
     }
 
     /**

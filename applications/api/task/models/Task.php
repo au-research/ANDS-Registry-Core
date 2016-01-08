@@ -120,6 +120,7 @@ class Task
     {
         $data = [
             'status' => $this->getStatus(),
+            'priority' => $this->getPriority(),
             'message' => json_encode($this->getMessage())
         ];
         return $this->update_db($data);
@@ -250,5 +251,21 @@ class Task
     public function setMemoryLimit($memoryLimit)
     {
         $this->memoryLimit = $memoryLimit;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * @param mixed $priority
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
     }
 }

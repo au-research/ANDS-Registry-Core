@@ -5,6 +5,7 @@
  */
 
 namespace ANDS\API\Task;
+
 use \Exception as Exception;
 
 class SyncTask extends Task
@@ -71,9 +72,18 @@ class SyncTask extends Task
         $this->log('Analyzing Data Source ' . $dsID);
         //spawn new tasks
         for ($i = 1; $i <= $data['numChunk']; $i++) {
+            $params = [
+                'type' => 'ds',
+                'id' => $dsID,
+                'chunkPos' => $i
+            ];
+            if ($this->indexOnly) $params['indexOnly'] = true;
             $task = array(
                 'name' => 'sync',
-                'params' => 'type=ds&id=' . $dsID . '&chunkPos=' . $i,
+                'priority' => $this->getPriority(),
+                'frequency' => 'ONCE',
+                'type' => 'POKE',
+                'params' => http_build_query($params),
             );
             $this->taskManager->addTask($task);
         }
@@ -94,7 +104,7 @@ class SyncTask extends Task
         $limit = $this->chunkSize;
         $ids = $this->ci->ro->getIDsByDataSourceID($dsID, false, 'PUBLISHED', $offset, $limit);
 
-        $this->log('Syncing chunk ' . $this->chunkPos . ' of Data Source ' . $dsID . ' for ' . sizeof($ids) .' records');
+        $this->log('Syncing chunk ' . $this->chunkPos . ' of Data Source ' . $dsID . ' for ' . sizeof($ids) . ' records');
 
         $solr_docs = array();
 
@@ -159,9 +169,7 @@ class SyncTask extends Task
         $this->target_id = isset($params['id']) ? $params['id'] : false;
         $this->indexOnly = isset($params['indexOnly']) ? $params['indexOnly'] : false;
 
-        $this->indexOnly = true;
-
-        $this->log('Task parameters: '. http_build_query($params))->save();
+        $this->log('Task parameters: ' . http_build_query($params))->save();
 
         //analyze if there is no chunkPosition
         if (isset($params['chunkPos'])) {

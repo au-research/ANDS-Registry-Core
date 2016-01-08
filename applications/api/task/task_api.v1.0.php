@@ -66,7 +66,11 @@ class Task_api
                 return $this->taskManager->listTasks($status, $this->ci->input->get('limit'), $this->ci->input->get('offset'));
                 break;
             default:
-                return $this->report();
+                if ($this->ci->input->post('name')) {
+                    return $this->handleAddingTask();
+                } else {
+                    return $this->report();
+                }
         }
     }
 
@@ -117,6 +121,29 @@ class Task_api
     }
 
     /**
+     * POST to api/task
+     * Adding a new task on command
+     * @return bool|Task
+     */
+    public function handleAddingTask()
+    {
+        $post = $this->ci->input->post();
+        $params = [
+            'type' => $post['type'],
+            'id' => $post['id']
+        ];
+        if (isset($post['chunkPos'])) $params['chunkPos'] = $post['chunkPos'];
+        $task = [
+            'name' => $post['name'],
+            'type' => 'POKE',
+            'frequency' => 'ONCE',
+            'priority' => isset($post['priority']) ? $post['priority'] : 1,
+            'params' => http_build_query($params)
+        ];
+        return $this->taskManager->addTask($task);
+    }
+
+    /**
      * Display a report of all the tasks
      * @return mixed
      */
@@ -126,6 +153,17 @@ class Task_api
             ->select(['status', 'count(*) as count'])
             ->group_by('status')
             ->get('tasks');
-        return $query->result_array();
+        $queryResult = $query->result_array();
+
+        $result = array();
+        foreach($queryResult as $row) {
+            $result[$row['status']] = $row['count'];
+        }
+        if (!isset($result['PENDING'])) $result['PENDING'] = 0;
+        if (!isset($result['RUNNING'])) $result['RUNNING'] = 0;
+        if (!isset($result['COMPLETED'])) $result['COMPLETED'] = 0;
+        if (!isset($result['STOPPED'])) $result['STOPPED'] = 0;
+        ksort($result);
+        return $result;
     }
 }

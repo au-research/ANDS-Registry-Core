@@ -12,7 +12,9 @@
     function APIDataSourceService(APIService) {
         return {
             getDataSources: function() {
-                return APIService.get('registry/datasource/', {});
+                return APIService.get('registry/datasource/', {
+                    includes: 'count'
+                });
             },
             getDataSource: function(id) {
                 return APIService.get('registry/datasource/'+id, {})

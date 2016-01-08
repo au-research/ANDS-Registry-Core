@@ -15,6 +15,11 @@
                 return APIService.get(
                     'task', {}
                 );
+            },
+            addTask: function(params) {
+              return APIService.post(
+                  'task', params
+              );
             }
         }
 
