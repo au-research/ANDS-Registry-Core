@@ -15,23 +15,13 @@ class JSONInterface extends FormatHandler
 
     protected $message_version = 'v1.0';
 
-    public function __construct()
-    {
-
-    }
-
     /**
-     * display a normal message
-     * @param  mixed $payload
-     * @param  array  $benchmark
-     * @return application/json
+     * Display a normal response
+     * @param $payload
+     * @param array $benchmark
      */
     public function display($payload, $benchmark = array())
     {
-        $ci = &get_instance();
-        $ci->output->set_header('Content-type: application/json');
-        $ci->output->set_content_type('Content-type: application/json');
-
         $response = [
             'status' => 'OK',
             'code' => '200',
@@ -46,26 +36,15 @@ class JSONInterface extends FormatHandler
             $response['benchmark'] = $benchmark;
         }
 
-        if ($ci->input->get('pretty')) {
-            echo json_encode(utf8ize($response), JSON_PRETTY_PRINT);
-        } else {
-            echo json_encode(utf8ize($response));
-        }
-
-        return true;
+        echo $this->formatResponse($response);
     }
 
     /**
-     * display an error message
-     * @param  mixed $payload
-     * @return application/json
+     * Error message
+     * @param $payload
      */
     public function error($payload)
     {
-        $ci = &get_instance();
-        $ci->output->set_header('Content-type: application/json');
-        $ci->output->set_content_type('Content-type: application/json');
-        $ci->output->set_status_header('500');
         $response = [
             'status' => 'ERROR',
             'code' => '400',
@@ -77,17 +56,28 @@ class JSONInterface extends FormatHandler
             'data' => $payload,
         ];
 
-        $ci = &get_instance();
-
-        $terms = array_merge(array('event'=>'api_error'), $response);
+        $terms = array_merge(array('event' => 'api_error'), $response);
         api_log_terms($terms);
+        echo $this->formatResponse($response, "400");
+    }
 
+    /**
+     * Format the response along with the header information
+     * @param $response
+     * @param string $status
+     * @return string
+     */
+    public function formatResponse($response, $status = "200")
+    {
+        $ci = &get_instance();
+        header('Content-type: application/json');
+        $ci->output->set_content_type('Content-type: application/json');
+        $ci->output->set_status_header($status);
         if ($ci->input->get('pretty')) {
-            echo json_encode($response, JSON_PRETTY_PRINT);
+            return json_encode($response, JSON_PRETTY_PRINT);
         } else {
-            echo json_encode($response);
+            return json_encode($response);
         }
-        return false;
     }
 
     /**
@@ -97,6 +87,14 @@ class JSONInterface extends FormatHandler
     public function output_mimetype()
     {
         return 'application/json';
+    }
+
+    /**
+     * JSONInterface constructor.
+     */
+    public function __construct()
+    {
+
     }
 
 }

@@ -64,12 +64,20 @@
 
             <div class="widget-box">
                 <div class="widget-content">
-                    <form class="form-search pull-left" ng-submit="syncRO()">
+                    <form class="form-search pull-left" ng-submit="">
                         <div class="input-prepend">
                             <button type="submit" class="btn">Sync</button>
                             <input type="text" class="input-medium search-query" placeholder="Key, ID or Slug" ng-model="subject">
                         </div>
                     </form>
+                    <hr>
+                    <div class="btn-group">
+                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Mass Queue <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="">Index All</a></li>
+                            <li><a href="">Sync All</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
