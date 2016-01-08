@@ -5,7 +5,7 @@
         .controller('indexCtrl', indexCtrl);
 
 
-    function indexCtrl(APITaskService, APIDataSourceService, $interval, $scope) {
+    function indexCtrl(APITaskService, APIDataSourceService, $interval, $scope, $modal) {
 
         $scope.base_url = base_url;
 
@@ -13,13 +13,14 @@
         $scope.refreshTasks = refreshTasks;
         $scope.refreshDataSources = refreshDataSources;
         $scope.addTask = addTask;
+        $scope.showTaskStatus = showTaskStatus;
 
         //init
         $scope.refreshTasks();
         $scope.refreshDataSources();
 
-        $interval(refreshTasks, 5000);
-        $interval(refreshDataSources, 60000);
+        //$interval(refreshTasks, 5000);
+        //$interval(refreshDataSources, 60000);
 
         /**
          * Adding a task
@@ -64,6 +65,18 @@
         function refreshTasks() {
             APITaskService.getTasksReport().then(function (data) {
                 $scope.tasks = data.data;
+            });
+        }
+
+        function showTaskStatus(status) {
+            return $modal.open({
+                templateUrl:apps_url+'assets/sync_manager/templates/task_status.html',
+                controller: 'taskStatusController',
+                resolve : {
+                    status: function() {
+                        return status;
+                    }
+                }
             });
         }
     }

@@ -18,7 +18,7 @@ class Analytics extends MX_Controller
      */
     public function index()
     {
-        acl_enforce('REGISTRY_USER');
+//        acl_enforce('REGISTRY_USER');
         $data = array(
             'title' => 'ANDS Services Analytics',
         );

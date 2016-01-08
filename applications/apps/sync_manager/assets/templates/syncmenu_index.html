@@ -86,11 +86,13 @@
                     <span class="icon" ng-click="refreshTasks()"><i class="icon icon-refresh"></i></span>
                     <h5>Tasks</h5>
                 </div>
-                <div class="widget-content">
-                    <dl ng-repeat="(task,count) in tasks" class="dl-horizontal">
-                        <dt>{{ task }}</dt>
-                        <dd>{{ count }}</dd>
-                    </dl>
+                <div class="widget-content nopadding">
+                    <ul class="ro-list">
+                        <li ng-repeat="(status,count) in tasks" ng-click="showTaskStatus(status)">
+                            <span class="name">{{ status }}</span>
+                            <span class="num">{{ count }}</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
 

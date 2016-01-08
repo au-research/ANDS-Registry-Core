@@ -16,6 +16,11 @@
                     'task', {}
                 );
             },
+            getTasksByStatus: function(status) {
+                return APIService.get(
+                    'task/'+status, {}
+                );
+            },
             addTask: function(params) {
               return APIService.post(
                   'task', params
