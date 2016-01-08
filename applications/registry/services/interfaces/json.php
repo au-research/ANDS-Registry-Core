@@ -19,13 +19,17 @@ class JSONInterface extends FormatHandler
 
     function utf8ize($d)
     {
-        if (is_array($d)) {
-            foreach ($d as $k => $v) {
+        if (is_array($d))
+            foreach ($d as $k => $v)
                 $d[$k] = $this->utf8ize($v);
-            }
-        } else if (is_string($d)) {
+
+        else if (is_object($d))
+            foreach ($d as $k => $v)
+                $d->$k = $this->utf8ize($v);
+
+        else
             return utf8_encode($d);
-        }
+
         return $d;
     }
 
