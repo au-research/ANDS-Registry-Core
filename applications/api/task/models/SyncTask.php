@@ -15,6 +15,7 @@ class SyncTask extends Task
     private $chunkSize = 100;
     private $chunkPos = 0;
     private $indexOnly = false;
+    private $missingOnly = false;
     private $mode = 'sync';
 
     private $taskManager;
@@ -40,10 +41,12 @@ class SyncTask extends Task
                 $list = explode(',', $this->target_id);
                 foreach ($list as $dsID) {
                     if ($dsID) {
-                        if ($this->mode == 'analyze') {
+                        if ($this->mode == 'analyze' && $this->target == 'ds') {
                             $this->analyzeDS($dsID);
-                        } else if ($this->mode == 'sync') {
-                            $this->syncDS($dsID);
+                        } else {
+                            if ($this->mode == 'sync') {
+                                $this->syncDS($dsID);
+                            }
                         }
                     } else {
                         throw new Exception("No valid Data Source ID found");
@@ -67,20 +70,42 @@ class SyncTask extends Task
     private function analyzeDS($dsID)
     {
         $this->log('Analyzing Data Source ' . $dsID);
-        $ids = $this->ci->ro->getIDsByDataSourceID($dsID, false, 'PUBLISHED');
+
+        if ($this->missingOnly) {
+            $ids = $this->getMissingIDs($dsID);
+        } else {
+            $ids = $this->ci->ro->getIDsByDataSourceID($dsID, false, 'PUBLISHED');
+        }
+
         $data['total'] = sizeof($ids);
         $data['chunkSize'] = $this->chunkSize;
         $data['numChunk'] = ceil(($this->chunkSize < $data['total'] ? ($data['total'] / $this->chunkSize) : 1));
 
+
         $this->log('Analyzing Data Source ' . $dsID);
         //spawn new tasks
         for ($i = 1; $i <= $data['numChunk']; $i++) {
-            $params = [
-                'type' => 'ds',
-                'id' => $dsID,
-                'chunkPos' => $i
-            ];
-            if ($this->indexOnly) $params['indexOnly'] = true;
+
+            $params = array();
+
+            if ($this->indexOnly) {
+                $params['indexOnly'] = 'true';
+            }
+
+            if ($this->missingOnly) {
+                $offset = ($i - 1) * $this->chunkSize;
+                $end = $i * $this->chunkSize;
+                if ($end > sizeof($ids)) $end = sizeof($ids) - 1;
+                $chunkArray = array_slice($ids, $offset, $end);
+                $params['type'] = 'ro';
+                $params['id'] = implode(',',$chunkArray);
+            } else {
+                $params['type'] = 'ds';
+                $params['id'] = $dsID;
+                $params['chunkPos'] = $i;
+            }
+
+
             $task = array(
                 'name' => 'sync',
                 'priority' => $this->getPriority(),
@@ -88,10 +113,29 @@ class SyncTask extends Task
                 'type' => 'POKE',
                 'params' => http_build_query($params),
             );
+
             $this->taskManager->addTask($task);
         }
 
         $this->log('Analyzed Data Source ' . $dsID . " spawned " . $data['numChunk'] . " sync tasks for " . $data['total'] . ' records');
+    }
+
+    private function getMissingIDs($dsID)
+    {
+        //get all ids
+        $databaseIDs = $this->ci->ro->getIDsByDataSourceID($dsID, false, 'PUBLISHED');
+        $solrIDs = array();
+        $solrQuery = $this->ci->solr
+            ->init()
+            ->setOpt('fq', '+data_source_id:' . $this->getID())
+            ->setOpt('fl', 'id')
+            ->setOpt('rows', '50000')
+            ->executeSearch(true);
+        foreach ($solrQuery['response']['docs'] as $doc) {
+            $solrIDs[] = $doc['id'];
+        }
+        $result = array_diff($databaseIDs, $solrIDs);
+        return $result;
     }
 
     /**
@@ -101,8 +145,12 @@ class SyncTask extends Task
      */
     private function syncDS($dsID)
     {
-        if (!$this->chunkSize) throw new Exception("No chunk defined for this sync task");
-        if (!$dsID) throw new Exception("Data Source ID required");
+        if (!$this->chunkSize) {
+            throw new Exception("No chunk defined for this sync task");
+        }
+        if (!$dsID) {
+            throw new Exception("Data Source ID required");
+        }
         $offset = ($this->chunkPos - 1) * $this->chunkSize;
         $limit = $this->chunkSize;
         $ids = $this->ci->ro->getIDsByDataSourceID($dsID, false, 'PUBLISHED', $offset, $limit);
@@ -139,10 +187,10 @@ class SyncTask extends Task
                         $solr_docs[] = $ro->indexable_json();
                         unset($ro);
                     } else {
-                        $this->log('Error: roid:'. $ro_id. ' not found');
+                        $this->log('Error: roid:' . $ro_id . ' not found');
                     }
                 } catch (Exception $e) {
-                    throw new Exception('Error: roid:'. $ro_id. ' Message: '.$e->getMessage());
+                    throw new Exception('Error: roid:' . $ro_id . ' Message: ' . $e->getMessage());
                 }
             }
             $this->log('Importing Post Process and SOLR doc generation completed');
@@ -182,6 +230,10 @@ class SyncTask extends Task
         $this->target = isset($params['type']) ? $params['type'] : false;
         $this->target_id = isset($params['id']) ? $params['id'] : false;
         $this->indexOnly = isset($params['indexOnly']) ? $params['indexOnly'] : false;
+        $this->missingOnly = isset($params['missingOnly']) ? $params['missingOnly'] : false;
+
+        if ($this->indexOnly === 'true') $this->indexOnly = true;
+        if ($this->missingOnly === 'true') $this->missingOnly = true;
 
         $this->log('Task parameters: ' . http_build_query($params))->save();
 

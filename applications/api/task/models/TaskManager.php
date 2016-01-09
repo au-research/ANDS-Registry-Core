@@ -33,7 +33,7 @@ class TaskManager
             ->limit($limit, $offset)
             ->get('tasks');
         if ($query->num_rows() == 0) {
-            return "No task found!";
+            return [];
         }
         $result = $query->result_array();
         foreach ($result as &$row) {
@@ -42,6 +42,24 @@ class TaskManager
             }
         }
         return $result;
+    }
+
+    /**
+     * Delete tasks by status
+     * @param $status
+     * @return string
+     */
+    public function deleteTasks($status)
+    {
+        if ($status != 'all') {
+            $this->db->where('status', $status);
+        }
+        $query = $this->db->delete('tasks');
+        if ($query) {
+            return $this->listTasks($status);
+        } else {
+            return $this->db->_error_message();
+        }
     }
 
     /**

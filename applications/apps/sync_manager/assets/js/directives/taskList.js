@@ -33,8 +33,8 @@
             APITaskService.runTask(task.id).then(function (data) {
                 task.running = false;
                 if (data.code=="200") {
-                    tasks.status = data.data.status;
-                    tasks.last_run = data.data.last_run;
+                    task.status = data.data.status;
+                    task.last_run = data.data.last_run;
                     task.message = data.data.message;
                 } else {
                     $scope.refresh();

@@ -78,8 +78,17 @@
                     params.name = 'sync';
                     params.params.push({indexOnly: true});
                     break;
+                case 'index_missing':
+                    params.name = 'sync';
+                    params.params.push({missingOnly: true, indexOnly: true});
+                    break;
+                case 'sync_missing':
+                    params.name = 'sync';
+                    params.params.push({missingOnly: true});
+                    break;
             }
             return APITaskService.addTask(params).then(function (data) {
+                console.log(data);
                 $scope.refreshTasks();
                 if (showTask) {
                     return data.data;

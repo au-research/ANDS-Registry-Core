@@ -66,6 +66,9 @@ class Task_api
             case 'stopped':
                 $status = strtoupper($this->params['submodule']);
                 if ($status=='ALL') $status = false;
+                if ($this->params['identifier'] == 'clear') {
+                    return $this->taskManager->deleteTasks($status);
+                }
                 return $this->taskManager->listTasks($status, $this->ci->input->get('limit'), $this->ci->input->get('offset'));
                 break;
             default:
@@ -106,11 +109,11 @@ class Task_api
     public function handleAddingTask()
     {
         $post = $this->ci->input->post();
-        $params = [
-            'type' => $post['type'],
-            'id' => $post['id']
-        ];
-        if (isset($post['chunkPos'])) $params['chunkPos'] = $post['chunkPos'];
+
+        $params = $post['params'][0];
+        $params['type'] = $post['type'];
+        $params['id'] = $post['id'];
+
         $task = [
             'name' => $post['name'],
             'type' => 'POKE',
@@ -118,6 +121,7 @@ class Task_api
             'priority' => isset($post['priority']) ? $post['priority'] : 1,
             'params' => http_build_query($params)
         ];
+
         return $this->taskManager->addTask($task);
     }
 
