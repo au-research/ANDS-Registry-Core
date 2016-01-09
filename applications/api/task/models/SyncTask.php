@@ -20,8 +20,7 @@ class SyncTask extends Task
     private $taskManager;
 
     /**
-     * todo sync Registry Objects
-     * todo sync by SOLR query
+     * todo sync by SOLR query (analyze)
      * Run the actual task
      * Loads CodeIgniter models and libraries as required
      * @throws Exception
@@ -50,6 +49,10 @@ class SyncTask extends Task
                         throw new Exception("No valid Data Source ID found");
                     }
                 }
+                break;
+            case 'ro':
+                $list = explode(',', $this->target_id);
+                $this->syncRo($list);
                 break;
             default:
                 throw new Exception("No valid target found for TaskID: " . $this->getId() . " check parameters: " . $this->getParams());
@@ -105,10 +108,23 @@ class SyncTask extends Task
         $ids = $this->ci->ro->getIDsByDataSourceID($dsID, false, 'PUBLISHED', $offset, $limit);
 
         $this->log('Syncing chunk ' . $this->chunkPos . ' of Data Source ' . $dsID . ' for ' . sizeof($ids) . ' records');
+        try {
+            $this->syncRO($ids);
+        } catch (Exception $e) {
+            throw new Exception('Error DSID:' . $dsID . ' Message: ' . $e->getMessage());
+        }
 
+    }
+
+    /**
+     * Sync a list of registry objects
+     * Used by syncDS as well
+     * @param $ids
+     * @throws Exception
+     */
+    private function syncRO($ids)
+    {
         $solr_docs = array();
-
-        // sync and getting indexable_json for SOLR indexing
         if (sizeof($ids) > 0) {
             foreach ($ids as $ro_id) {
                 try {
@@ -123,12 +139,13 @@ class SyncTask extends Task
                         $solr_docs[] = $ro->indexable_json();
                         unset($ro);
                     } else {
-                        $this->log('Sync error DSID:' . $dsID . ' ROID:' . $ro_id . ' Message: RO not found');
+                        $this->log('Error: roid:'. $ro_id. ' not found');
                     }
                 } catch (Exception $e) {
-                    throw new Exception('Sync error DSID:' . $dsID . ' ROID:' . $ro_id . ' Message: ' . $e->getMessage());
+                    throw new Exception('Error: roid:'. $ro_id. ' Message: '.$e->getMessage());
                 }
             }
+            $this->log('Importing Post Process and SOLR doc generation completed');
         } else {
             throw new Exception("No records found");
         }
@@ -138,9 +155,7 @@ class SyncTask extends Task
             try {
                 $add_result = json_decode($this->ci->solr->add_json(json_encode($solr_docs)), true);
                 if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
-                    $this->log("Adding to SOLR successful")
-                        ->log('Task finishes successfully')
-                        ->save();
+                    $this->log("Adding to SOLR successful")->save();
                 } else {
                     throw new Exception(json_encode($add_result));
                 }
@@ -154,7 +169,6 @@ class SyncTask extends Task
                 throw new Exception($e->getMessage());
             }
         }
-
     }
 
     /**

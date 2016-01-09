@@ -14,24 +14,63 @@
         $scope.refreshDataSources = refreshDataSources;
         $scope.addTask = addTask;
         $scope.showTaskStatus = showTaskStatus;
+        $scope.syncRo = syncRo;
+        $scope.showTask = showTask;
+
+        $scope.$on('showTask', function(event, data){
+            $scope.showTask(data.id);
+        });
 
         //init
-        $scope.refreshTasks();
-        $scope.refreshDataSources();
+        //$scope.refreshTasks();
+        //$scope.refreshDataSources();
 
         //$interval(refreshTasks, 5000);
         //$interval(refreshDataSources, 60000);
 
+        function syncRo(subject) {
+            if (subject && !$scope.syncing) {
+                $scope.syncing = true;
+                addTask('sync', 'ro', subject, true).then(function (data) {
+                    var task = data;
+                    if (task.id) {
+                        APITaskService.runTask(task.id).then(function (data) {
+                            $scope.syncing = false;
+                            var task = data.data;
+                            console.log(task);
+                            $scope.refreshTasks();
+                            $scope.showTask(task.id);
+                        });
+                    }
+                });
+            }
+        }
+
+        function showTask(id) {
+            return $modal.open({
+                templateUrl: apps_url + 'assets/sync_manager/templates/taskDetail.html',
+                controller: 'taskDetailController',
+                resolve: {
+                    id: function() {
+                        return id;
+                    }
+                }
+            });
+        }
+
+
         /**
          * Adding a task
          * @param name
-         * @param ds
+         * @param type
+         * @param id
+         * @param showTask
          */
-        function addTask(name, ds) {
+        function addTask(name, type, id, showTask) {
             var params = {
                 name: name,
-                type: 'ds',
-                id: ds.id,
+                type: type,
+                id: id,
                 params: []
             };
             switch (name) {
@@ -40,8 +79,11 @@
                     params.params.push({indexOnly: true});
                     break;
             }
-            APITaskService.addTask(params).then(function (data) {
-                console.log(data);
+            return APITaskService.addTask(params).then(function (data) {
+                $scope.refreshTasks();
+                if (showTask) {
+                    return data.data;
+                }
             });
         }
 
@@ -64,16 +106,19 @@
          */
         function refreshTasks() {
             APITaskService.getTasksReport().then(function (data) {
-                $scope.tasks = data.data;
+                $scope.tasksStatus = data.data;
             });
+            APITaskService.getTasksByStatus('all').then(function (data) {
+                $scope.tasks = data.data;
+            })
         }
 
         function showTaskStatus(status) {
             return $modal.open({
-                templateUrl:apps_url+'assets/sync_manager/templates/task_status.html',
+                templateUrl: apps_url + 'assets/sync_manager/templates/task_status.html',
                 controller: 'taskStatusController',
-                resolve : {
-                    status: function() {
+                resolve: {
+                    status: function () {
                         return status;
                     }
                 }

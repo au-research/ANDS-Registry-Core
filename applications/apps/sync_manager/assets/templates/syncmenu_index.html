@@ -52,12 +52,12 @@
                                     <div class="btn-group">
                                         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Queue <span class="caret"></span></button>
                                         <ul class="dropdown-menu">
-                                            <li><a href="" ng-click="addTask('index', ds)">Index</a></li>
-                                            <li><a href="" ng-click="addTask('index_missing', ds)">Index Missing</a></li>
-                                            <li><a href="" ng-click="addTask('clear_index', ds)">Clear Index</a></li>
+                                            <li><a href="" ng-click="addTask('index', 'ds', ds.id)">Index</a></li>
+                                            <li><a href="" ng-click="addTask('index_missing', 'ds', ds.id)">Index Missing</a></li>
+                                            <li><a href="" ng-click="addTask('clear_index', 'ds', ds.id)">Clear Index</a></li>
                                             <li class="divider"></li>
-                                            <li><a href="" ng-click="addTask('sync', ds)">Full Sync</a></li>
-                                            <li><a href="" ng-click="addTask('sync_missing', ds)">Sync Missing</a></li>
+                                            <li><a href="" ng-click="addTask('sync', 'ds', ds.id)">Full Sync</a></li>
+                                            <li><a href="" ng-click="addTask('sync_missing', 'ds', ds.id)">Sync Missing</a></li>
                                         </ul>
                                     </div>
                                 </td>
@@ -72,11 +72,12 @@
 
             <div class="widget-box">
                 <div class="widget-content">
-                    <form class="form-search pull-left" ng-submit="">
+                    <form class="form-search pull-left" ng-submit="syncRo(subject)">
                         <div class="input-prepend">
-                            <button type="submit" class="btn">Sync</button>
+                            <button type="submit" class="btn" ng-disabled="syncing">Sync</button>
                             <input type="text" class="input-medium search-query" placeholder="Key, ID or Slug" ng-model="subject">
                         </div>
+                        <span ng-if="syncing">Loading...</span>
                     </form>
                     <hr>
                     <div class="btn-group">
@@ -92,15 +93,25 @@
             <div class="widget-box">
                 <div class="widget-title">
                     <span class="icon" ng-click="refreshTasks()"><i class="icon icon-refresh"></i></span>
-                    <h5>Tasks</h5>
+                    <h5>Tasks Report</h5>
                 </div>
                 <div class="widget-content nopadding">
                     <ul class="ro-list">
-                        <li ng-repeat="(status,count) in tasks" ng-click="showTaskStatus(status)">
+                        <li ng-repeat="(status,count) in tasksStatus" ng-click="showTaskStatus(status)">
                             <span class="name">{{ status }}</span>
                             <span class="num">{{ count }}</span>
                         </li>
                     </ul>
+                </div>
+            </div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon" ng-click="refreshTasks()"><i class="icon icon-refresh"></i></span>
+                    <h5>Tasks</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <task-list tasks="tasks"></task-list>
                 </div>
             </div>
 

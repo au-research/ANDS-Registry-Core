@@ -30,6 +30,11 @@
                 return APIService.get(
                     'task/exe/'+id, {}
                 );
+            },
+            getTask: function(id) {
+                return APIService.get(
+                    'task/'+id, {}
+                )
             }
         }
 

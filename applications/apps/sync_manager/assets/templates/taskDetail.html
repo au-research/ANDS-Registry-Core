@@ -1,0 +1,25 @@
+<div>
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{{ header }}</h4>
+    </div>
+    <div class="modal-body swatch-white" ng-cloak>
+        <div ng-if="task">
+            <dl class="dl-horizontal">
+                <dt>ID</dt><dd>{{ task.id }}</dd>
+                <dt>Name</dt><dd>{{ task.name }}</dd>
+                <dt>Status</dt><dd>{{ task.status }}</dd>
+                <dt>Type</dt><dd>{{ task.type }}</dd>
+                <dt>Type</dt><dd>{{ task.date_added }}</dd>
+                <dt>Type</dt><dd>{{ task.next_run }}</dd>
+                <dt>Type</dt><dd>{{ task.last_run }}</dd>
+                <dt>Type</dt><dd>{{ task.priority }}</dd>
+                <dt>Type</dt><dd>{{ task.frequency }}</dd>
+            </dl>
+            <strong>Params</strong>
+            <pre>{{ task.params }}</pre>
+            <strong ng-if="task.message">Message Log: </strong>
+            <pre ng-if="task.message"><span ng-repeat="log in task.message.log track by $index">{{ log }}<br/></span></pre>
+        </div>
+    </div>
+</div>

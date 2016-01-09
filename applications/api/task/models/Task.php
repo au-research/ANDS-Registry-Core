@@ -141,7 +141,7 @@ class Task
     public function update_db($stuff)
     {
         $this->db
-            ->where('id', $this->id)
+            ->where('id', $this->getId())
             ->update('tasks', $stuff);
 
         return $this;
@@ -292,6 +292,16 @@ class Task
     public function setLastRun($lastRun)
     {
         $this->lastRun = $lastRun;
+        return $this;
+    }
+
+    /**
+     * @param array $message
+     */
+    public function setMessage($message = false)
+    {
+        if (!$message) $message = ['log'=>[]];
+        $this->message = $message;
         return $this;
     }
 }

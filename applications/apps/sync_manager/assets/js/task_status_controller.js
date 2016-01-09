@@ -9,10 +9,9 @@
         .module('sync_app')
         .controller('taskStatusController', taskStatusController);
 
-    function taskStatusController(status, APITaskService, $scope, $modalInstance) {
+    function taskStatusController(status, APITaskService, $scope, $modalInstance, $modal) {
         $scope.header = status + " Tasks";
 
-        $scope.runTask = runTask;
         $scope.refresh = refresh;
         $scope.refresh();
 
@@ -26,17 +25,17 @@
             });
         }
 
-        function runTask(task) {
-            task.running = true;
-            APITaskService.runTask(task.id).then(function (data) {
-                task.running = false;
-                if (data.code=="200") {
-                    task.message = data.data.message;
-                } else {
-                    $scope.refresh();
+        $scope.$on('showTask', function(event, data){
+            return $modal.open({
+                templateUrl: apps_url + 'assets/sync_manager/templates/taskDetail.html',
+                controller: 'taskDetailController',
+                resolve: {
+                    id: function() {
+                        return data.id;
+                    }
                 }
-            })
-        }
+            });
+        });
 
         $scope.dismiss = function () {
             $modalInstance.dismiss();

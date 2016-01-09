@@ -22,6 +22,8 @@ class Sync_manager extends MX_Controller
             'sync_app',
             'sync_index_controller',
             'task_status_controller',
+            'task_detail_controller',
+            'directives/taskList'
         );
 
         $data['app_js_lib'] = array(

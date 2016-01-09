@@ -25,7 +25,7 @@ class Task_api
         $this->db = $this->ci->load->database('registry', true);
         require_once APP_PATH . 'vendor/autoload.php';
 
-        $this->taskManager = new \ANDS\API\Task\TaskManager($this->db);
+        $this->taskManager = new \ANDS\API\Task\TaskManager($this->db, $this->ci);
     }
 
     /**
@@ -44,28 +44,50 @@ class Task_api
         switch (strtolower($this->params['submodule'])) {
             case 'run':
                 $someTask = $this->taskManager->findPendingTask();
-                if ($someTask) {
-                    return $this->exe($someTask['id']);
-                } else {
-                    //find something else to do
+                if (!$someTask) $someTask = $this->taskManager->findRandomTask();
+                if (!$someTask) {
                     return "Nothing to do";
+                } else {
+                    return $this->taskManager->runTask($someTask['id']);
                 }
+
                 break;
             case 'exe' :
                 if ($this->params['identifier']) {
-                    return $this->exe($this->params['identifier']);
+                    return $this->taskManager->runTask($this->params['identifier']);
                 } else {
                     throw new Exception("A task ID is required");
                 }
                 break;
+            case 'all' :
             case 'pending' :
             case 'completed' :
             case 'running' :
             case 'stopped':
                 $status = strtoupper($this->params['submodule']);
+                if ($status=='ALL') $status = false;
                 return $this->taskManager->listTasks($status, $this->ci->input->get('limit'), $this->ci->input->get('offset'));
                 break;
             default:
+
+                //return task api/task/:id if exists
+                if ($task = $this->taskManager->getTask($this->params['submodule'])) {
+                    /**
+                     * api/task/:id/message/clear
+                     * Clear the message log
+                     */
+                    if ($this->params['identifier'] == 'message' && $this->params['object_module'] == 'clear') {
+                        $taskObject = $this->taskManager->getTaskObject($task);
+                        $taskObject
+                            ->setDb($this->db)
+                            ->setMessage()
+                            ->save();
+                        $task = $this->taskManager->getTask($taskObject->getId());
+                    }
+                    if ($task['message']) $task['message'] = json_decode($task['message'], true);
+                    return $task;
+                }
+
                 if ($this->ci->input->post('name')) {
                     return $this->handleAddingTask();
                 } else {
@@ -74,51 +96,7 @@ class Task_api
         }
     }
 
-    /**
-     * Execute a specific task
-     * @param $taskId
-     * @return array
-     * @throws Exception
-     */
-    public function exe($taskId)
-    {
-        $query = $this->db->get_where('tasks', ['id' => $taskId]);
-        if ($query->num_rows() == 0) throw new Exception("Task " . $taskId . " not found!");
-        $taskResult = $query->first_row(true);
 
-        $taskType = ucfirst($taskResult['name']);
-        $className = "ANDS\\API\\Task\\" . $taskType . 'Task';
-        $task = new $className($taskId);
-        $task->init($taskResult);
-
-        if ($taskType == 'Sync') {
-            $task
-                ->setDb($this->db)
-                ->setCI($this->ci);
-        }
-        try {
-            $task->run();
-        } catch (Exception $e) {
-            $task->setStatus("STOPPED");
-            $task->log("Error: " . $e->getMessage());
-            $task->save();
-            $result = [
-                'task' => $task->getId(),
-                'status' => $task->getStatus(),
-                'params' => $task->getParams(),
-                'message' => $task->getMessage()
-            ];
-            return $result;
-        }
-
-        $result = [
-            'task' => $task->getId(),
-            'status' => $task->getStatus(),
-            'params' => $task->getParams(),
-            'message' => $task->getMessage()
-        ];
-        return $result;
-    }
 
     /**
      * POST to api/task
