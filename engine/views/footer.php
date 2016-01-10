@@ -50,9 +50,7 @@ $base_url = str_replace('/apps','/registry',base_url());
     <?php if (isset($app_css_lib)): foreach($app_css_lib as $lib):?>
         <link rel="stylesheet" href="<?php echo asset_url('js/lib/'. $lib);?>"/>
     <?php endforeach; endif; ?>
-    <?php if (isset($scripts)): foreach($scripts as $script):?>
-        <script src="<?php echo asset_url('js/' . $script);?>.js"></script>
-    <?php endforeach; endif; ?>
+
 
 
     <?php foreach($js_lib as $lib):?>
@@ -189,7 +187,9 @@ $base_url = str_replace('/apps','/registry',base_url());
     <?php endforeach;?>
 
 
-
+    <?php if (isset($scripts)): foreach($scripts as $script):?>
+        <script src="<?php echo asset_url('js/' . $script);?>.js"></script>
+    <?php endforeach; endif; ?>
 
 
 	<!-- Bootstrap javascripts, need to be placed after all else -->
