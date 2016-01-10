@@ -110,7 +110,7 @@ class Task_api
     {
         $post = $this->ci->input->post();
 
-        $params = $post['params'][0];
+        $params = isset($post['params']) ? $post['params'][0] : array();
         $params['type'] = $post['type'];
         $params['id'] = $post['id'];
 

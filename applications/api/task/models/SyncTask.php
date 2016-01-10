@@ -81,7 +81,6 @@ class SyncTask extends Task
         $data['chunkSize'] = $this->chunkSize;
         $data['numChunk'] = ceil(($this->chunkSize < $data['total'] ? ($data['total'] / $this->chunkSize) : 1));
 
-
         $this->log('Analyzing Data Source ' . $dsID);
         //spawn new tasks
         for ($i = 1; $i <= $data['numChunk']; $i++) {
@@ -240,6 +239,7 @@ class SyncTask extends Task
         //analyze if there is no chunkPosition
         if (isset($params['chunkPos'])) {
             $this->chunkPos = $params['chunkPos'];
+            $this->mode = 'sync';
         } else {
             $this->mode = 'analyze';
         }
