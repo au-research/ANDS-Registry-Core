@@ -9,6 +9,11 @@
 
         $scope.base_url = base_url;
 
+        // default options
+        $scope.options = {
+            'autorefresh': true
+        };
+
         // function declaration
         $scope.refreshTasks = refreshTasks;
         $scope.refreshDataSources = refreshDataSources;
@@ -17,16 +22,35 @@
         $scope.syncRo = syncRo;
         $scope.showTask = showTask;
 
-        $scope.$on('showTask', function(event, data){
+        // function declaration for options
+        $scope.toggleOption = toggleOption;
+        $scope.getOption = getOption;
+
+        $scope.$on('showTask', function (event, data) {
             $scope.showTask(data.id);
         });
 
-        //init
-        //$scope.refreshTasks();
-        //$scope.refreshDataSources();
+        //init intervals
+        var refreshTasksInterval, refreshDataSourcesInterval;
+        $scope.refreshTasks();
+        $scope.refreshDataSources();
+        $scope.$watch('options', function () {
+            if ($scope.getOption('autorefresh') === false) {
+                console.log('cancelling');
+                $interval.cancel(refreshTasksInterval);
+                $interval.cancel(refreshDataSourcesInterval);
+            } else {
+                refreshTasksInterval = $interval(refreshTasks, 5000);
+                refreshDataSourcesInterval = $interval(refreshDataSources, 60000);
+            }
+        }, true);
 
-        //$interval(refreshTasks, 5000);
-        //$interval(refreshDataSources, 60000);
+        $scope.$on('destroy', function () {
+            $interval.cancel(refreshTasksInterval);
+            $interval.cancel(refreshDataSourcesInterval);
+        });
+
+
 
         function syncRo(subject) {
             if (subject && !$scope.syncing) {
@@ -51,7 +75,7 @@
                 templateUrl: apps_url + 'assets/sync_manager/templates/taskDetail.html',
                 controller: 'taskDetailController',
                 resolve: {
-                    id: function() {
+                    id: function () {
                         return id;
                     }
                 }
@@ -132,6 +156,14 @@
                     }
                 }
             });
+        }
+
+        function getOption(option) {
+            return $scope.options[option];
+        }
+
+        function toggleOption(option) {
+            $scope.options[option] = !$scope.options[option];
         }
     }
 
