@@ -252,7 +252,7 @@ class Sync_extension extends ExtensionBase{
 
                     //fix last point
                     if ($points[0] != end($points)) {
-                        $json['spatial_coverage_extents_wkt'][] = 'LINESTRING((' . implode(', ', $points) . '))';
+                        $json['spatial_coverage_extents_wkt'][] = 'LINESTRING(' . implode(', ', $points) . ')';
                     } else if(!$this->ro->isSelfIntersectPolygon($points)) {
                         foreach ($points as &$point) {
                             $point = (is_array($point)) ? implode(' ', $point) : $point;
