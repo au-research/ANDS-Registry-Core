@@ -242,17 +242,26 @@ class Sync_extension extends ExtensionBase{
                 foreach ($points as &$point) {
                     $point = implode( ' ', explode(',', $point) );
                 }
-                $polygonStr = implode(', ', $points);
                 $uniquePoints = array_unique($points);
 
                 if (sizeof($uniquePoints) < 2) {
-                    $json['spatial_coverage_extents_wkt'][] = 'POINT('.implode(', ', $uniquePoints).')';
-                } else if (sizeof($uniquePoints) == 2) {
-                    $json['spatial_coverage_extents_wkt'][] = 'LINESTRING('.implode(', ', $uniquePoints).')';
-                } else if (sizeof($points) >= 2) {
-                    $json['spatial_coverage_extents_wkt'][] = 'POLYGON(('.$polygonStr.'))';
+                    $json['spatial_coverage_extents_wkt'][] = 'POINT(' . implode(', ', $uniquePoints) . ')';
+                } else if (sizeof($uniquePoints) < 3) {
+                    $json['spatial_coverage_extents_wkt'][] = 'LINESTRING(' . implode(', ', $uniquePoints) . ')';
+                } else if (sizeof($points) > 2  && sizeof($uniquePoints) != 3) {
+
+                    //fix last point
+                    if ($points[0] != end($points)) {
+                        $json['spatial_coverage_extents_wkt'][] = 'LINESTRING((' . implode(', ', $points) . '))';
+                    } else if(!$this->ro->isSelfIntersectPolygon($points)) {
+                        foreach ($points as &$point) {
+                            $point = (is_array($point)) ? implode(' ', $point) : $point;
+                        }
+                        $json['spatial_coverage_extents_wkt'][] = 'POLYGON((' . implode(', ', $points) . '))';
+                    }
+
                 } else if (sizeof($points) < 2) {
-                    $json['spatial_coverage_extents_wkt'][] = 'POINT('.$polygonStr.')';
+                    $json['spatial_coverage_extents_wkt'][] = 'POINT(' . implode(', ', $points) . ')';
                 }
 
 				$sumOfAllAreas += $extents['area'];

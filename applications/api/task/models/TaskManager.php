@@ -62,6 +62,22 @@ class TaskManager
         }
     }
 
+    public function changeTasksStatus($byStatus, $status){
+        if (strtolower($byStatus) == 'all') {
+            throw new Exception("Cannot change status of all tasks");
+        }
+
+        $result = $this->db
+            ->where('status', $byStatus)
+            ->update('tasks', ['status' => $status]);
+
+        if ($result) {
+            return $this->listTasks($status);
+        } else {
+            return $this->db->_error_message();
+        }
+    }
+
     /**
      * Add a task to the database
      * @param $task

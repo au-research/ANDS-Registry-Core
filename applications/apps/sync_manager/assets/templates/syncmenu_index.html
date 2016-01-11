@@ -14,15 +14,7 @@
     <a href="#/" class="current">Sync Menu</a>
 
     <div class="pull-right">
-        <form action="" class="form">
-            <div class="control-group">
-                <div class="controls">
-                    <label class="checkbox">
-                        <input type="checkbox" title="Auto Refresh" ng-model="options.autorefresh"/> Auto Refresh
-                    </label>
-                </div>
-            </div>
-        </form>
+        <input type="checkbox" title="Auto Refresh" ng-model="options.autorefresh"/> Auto Refresh
     </div>
 </div>
 
@@ -113,6 +105,9 @@
                     <span class="icon" ng-click="refreshTasks()"><i class="icon icon-refresh"></i></span>
                     <h5>Tasks Report</h5>
                 </div>
+                <!--<div class="widget-content">-->
+                    <!--Task Manager is Running-->
+                <!--</div>-->
                 <div class="widget-content nopadding">
                     <ul class="ro-list">
                         <li ng-repeat="(status,count) in tasksStatus" ng-click="showTaskStatus(status)">

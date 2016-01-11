@@ -188,7 +188,8 @@ class SyncTask extends Task
         if (sizeof($ids) > 0) {
             foreach ($ids as $ro_id) {
                 try {
-                    $ro = $this->ci->ro->getByID($ro_id);
+                    $ro = false;
+                    if ($ro_id) $ro = $this->ci->ro->getByID($ro_id);
                     if ($ro) {
                         if (!$this->indexOnly) {
                             $ro->processIdentifiers();

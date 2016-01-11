@@ -68,6 +68,8 @@ class Task_api
                 if ($status=='ALL') $status = false;
                 if ($this->params['identifier'] == 'clear') {
                     return $this->taskManager->deleteTasks($status);
+                } elseif($this->params['identifier'] == 'reschedule') {
+                    return $this->taskManager->changeTasksStatus($status, 'PENDING');
                 }
                 return $this->taskManager->listTasks($status, $this->ci->input->get('limit'), $this->ci->input->get('offset'));
                 break;

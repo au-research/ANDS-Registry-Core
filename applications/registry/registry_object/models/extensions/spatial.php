@@ -410,7 +410,71 @@ class Spatial_Extension extends ExtensionBase
 		}
 		return $coords;
 	}
-	
+
+	function isSelfIntersectPolygon($polygon)
+	{
+		$NumPoints = count($polygon);
+
+		foreach ($polygon as &$v) {
+			$pp = explode(' ', $v);
+			$v = array($pp[0], $pp[1]);
+		}
+
+		if ($polygon[$NumPoints - 1] == $polygon[0]) {
+			unset($polygon[$NumPoints - 1]);
+			$NumPoints--;
+		}
+
+		for ($i = 0; $i < $NumPoints; ++$i) {
+			if ($i < $NumPoints - 1) {
+				for ($h = $i + 1; $h < $NumPoints; ++$h) {
+					// Do two vertices lie on top of one another?
+					if ($polygon[$i] == $polygon[$h]) {
+						return true;
+					}
+				}
+			}
+
+			$j = ($i + 1) % $NumPoints;
+			$iToj = vertice::sub($polygon[$j], $polygon[$i]);
+			$iTojNormal = array($iToj[1], -$iToj[0]);
+			// i is the first vertex and j is the second
+			$startK = ($j + 1) % $NumPoints;
+			$endK = ($i - 1 + $NumPoints) % $NumPoints;
+			$endK += $startK < $endK ? 0 : $startK + 1;
+			$k = $startK;
+			$iTok = vertice::sub($polygon[$k], $polygon[$i]);
+			$onLeftSide = (vertice::multiple($iTok, $iTojNormal) >= 0);
+			$prevK = $polygon[$k];
+			++$k;
+			for (; $k <= $endK; ++$k) {
+				$modK = $k % $NumPoints;
+				$iTok = vertice::sub($polygon[$modK], $polygon[$i]);
+				if ($onLeftSide != vertice::multiple($iTok, $iTojNormal) >= 0) {
+					$prevKtoK = vertice::sub($polygon[$modK], $prevK);
+					$prevKtoKNormal = array($prevKtoK[1], -$prevKtoK[0]);
+					if ((vertice::multiple(vertice::sub($polygon[$i], $prevK), $prevKtoKNormal) >= 0) != (vertice::multiple(vertice::sub($polygon[$j], $prevK), $prevKtoKNormal) >= 0)) {
+						return true;
+					}
+				}
+				$onLeftSide = (vertice::multiple($iTok, $iTojNormal) > 0);
+				$prevK = $polygon[$modK];
+			}
+		}
+		return false;
+	}
 }
-	
+
+
+class vertice{
+	static function multiple($v1, $v2){
+		return $v1[0]*$v2[0] + $v1[1]*$v2[1];
+	}
+	static function add($v1, $v2){
+		return array($v1[0]+$v2[0] , $v1[1]+$v2[1]);
+	}
+	static function sub($v1, $v2){
+		return array($v1[0]-$v2[0] , $v1[1]-$v2[1]);
+	}
+}
 	
