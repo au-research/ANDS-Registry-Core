@@ -22,6 +22,9 @@
         $scope.syncRo = syncRo;
         $scope.showTask = showTask;
 
+        //clearing the index of a DS
+        $scope.clearIndex = clearIndex;
+
         // function declaration for options
         $scope.toggleOption = toggleOption;
         $scope.getOption = getOption;
@@ -50,8 +53,10 @@
             $interval.cancel(refreshDataSourcesInterval);
         });
 
-
-
+        /**
+         * Sync a Registry Object based on ID
+         * @param subject
+         */
         function syncRo(subject) {
             if (subject && !$scope.syncing) {
                 $scope.syncing = true;
@@ -70,6 +75,26 @@
             }
         }
 
+        function clearIndex(id) {
+            if (id) {
+                addTask('clear_index', 'ds', id, true).then(function (data) {
+                    var task = data;
+                    if (task.id) {
+                        APITaskService.runTask(task.id).then(function (data) {
+                            var task = data.data;
+                            $scope.refreshTasks();
+                            $scope.refreshDataSources();
+                            $scope.showTask(task.id);
+                        });
+                    }
+                });
+            }
+        }
+
+        /**
+         * Show a Task based on ID in a modal
+         * @param id
+         */
         function showTask(id) {
             return $modal.open({
                 templateUrl: apps_url + 'assets/sync_manager/templates/taskDetail.html',
@@ -110,6 +135,10 @@
                     params.name = 'sync';
                     params.params.push({missingOnly: true});
                     break;
+                case 'clear_index':
+                    params.name = 'sync';
+                    params.params.push({clearIndex: true});
+                    break;
             }
             return APITaskService.addTask(params).then(function (data) {
                 console.log(data);
@@ -146,6 +175,10 @@
             })
         }
 
+        /**
+         * Show a list of tasks grouped by a status in a modal
+         * @param status
+         */
         function showTaskStatus(status) {
             return $modal.open({
                 templateUrl: apps_url + 'assets/sync_manager/templates/task_status.html',
@@ -158,12 +191,30 @@
             });
         }
 
+        /**
+         * Returns an option
+         * @param option
+         * @returns {*}
+         */
         function getOption(option) {
             return $scope.options[option];
         }
 
+        /**
+         * Toggle an option, true|false value
+         * @param option
+         */
         function toggleOption(option) {
-            $scope.options[option] = !$scope.options[option];
+            $scope.setOption(option, !$scope.getOption(option));
+        }
+
+        /**
+         * Sets an option
+         * @param option
+         * @param value
+         */
+        function setOption(option, value) {
+            $scope.options[option] = value
         }
     }
 

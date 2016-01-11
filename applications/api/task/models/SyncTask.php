@@ -43,6 +43,8 @@ class SyncTask extends Task
                     if ($dsID) {
                         if ($this->mode == 'analyze' && $this->target == 'ds') {
                             $this->analyzeDS($dsID);
+                        } elseif($this->mode == 'clearIndex') {
+                            $this->clearIndexDS($dsID);
                         } else {
                             if ($this->mode == 'sync') {
                                 $this->syncDS($dsID);
@@ -135,6 +137,17 @@ class SyncTask extends Task
         }
         $result = array_diff($databaseIDs, $solrIDs);
         return $result;
+    }
+
+    private function clearIndexDS($dsID){
+        $this->log('deleting the index of data source '.$dsID);
+        $queryCondition = 'data_source_id:"'.$dsID.'"';
+        $deleteResult = json_decode($this->ci->solr->deleteByQueryCondition($queryCondition),true);
+        if (isset($deleteResult['responseHeader']) && $deleteResult['responseHeader']['status'] === 0) {
+            $this->log("Delete Index Successful")->save();
+        } else {
+            throw new Exception(json_encode($deleteResult));
+        }
     }
 
     /**
@@ -240,6 +253,8 @@ class SyncTask extends Task
         if (isset($params['chunkPos'])) {
             $this->chunkPos = $params['chunkPos'];
             $this->mode = 'sync';
+        } elseif (isset($params['clearIndex'])) {
+            $this->mode = 'clearIndex';
         } else {
             $this->mode = 'analyze';
         }
