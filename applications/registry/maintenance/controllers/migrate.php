@@ -105,7 +105,7 @@ class Migrate extends MX_Controller
                             }
                         }
                     }
-                    if ($method == 'up') break;
+                    break;
                 }
             } catch (Exception $e) {
                 //exception in one of the migration file
