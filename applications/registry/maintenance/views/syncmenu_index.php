@@ -1,3 +1,4 @@
+<!--This file is marked for deletion-->
 <?php $this->load->view('header'); ?>
 <div ng-app="sync_app">
 	<div ng-view></div>
@@ -12,7 +13,7 @@
 		<?php echo anchor(registry_url('maintenance'), 'Maintenance'); ?>
 		<a href="#/" class="current">Sync Menu</a>
 	</div>
-	
+
 	<div class="container-fluid">
 
 		<div class="row-fluid" ng-show="loading_detailed_stat">
@@ -70,7 +71,7 @@
 									<th>Actions</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody style="overflow:auto;height:500px;">
 								<tr ng-repeat="ds in datasources | orderBy:predicate:reverse | filter: filters.title " ng-show="ds.total_published > 0">
 									<td>{{ds.id}}</td>
 									<td>{{ds.title}}</td>
@@ -90,10 +91,10 @@
 											</ul>
 										</div>
 										<div class="btn-group">
-											
+
 										</div>
 									</td>
-								</tr>							
+								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -235,11 +236,11 @@
 					</div>
 				</div>
 			</div>
-			
-			
+
+
 		</div>
 
-		
+
 	</div>
 </div>
 

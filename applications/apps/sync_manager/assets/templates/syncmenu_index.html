@@ -1,0 +1,138 @@
+<div class="content-header">
+    <h1>Sync Menu</h1>
+    <div class="btn-group">
+        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Options <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+            <li><a href="" ng-click="toggleOption('autorefresh')">Auto Refresh</a> {{ getOption('autorefresh') }}</li>
+        </ul>
+    </div>
+</div>
+
+<div id="breadcrumb" style="clear:both;">
+    <a href="{{ base_url }}"><i class="icon-home"></i> Home</a>
+    <a href="{{ base_url }}maintenance">Maintenance</a>
+    <a href="#/" class="current">Sync Menu</a>
+
+    <div class="pull-right">
+        <form action="" class="form">
+            <div class="control-group">
+                <div class="controls">
+                    <label class="checkbox">
+                        <input type="checkbox" title="Auto Refresh" ng-model="options.autorefresh"/> Auto Refresh
+                    </label>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container-fluid">
+
+    <div class="row-fluid">
+        <div class="span8">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon" ng-click="refreshDataSources()"><i class="icon icon-refresh"></i></span>
+                    <h5>Data Sources</h5>
+                    <input type="text" style="float:right;margin:3px 10px;" placeholder="Filter" ng-model="filters.title">
+                </div>
+                <div class="widget-content nopadding">
+                    <table class="table table-bordered data-table">
+                        <thead>
+                        <tr>
+                            <th ng-click="predicate = 'id';reverse=!reverse">ID</th>
+                            <th ng-click="predicate = 'title';reverse=!reverse">Title</th>
+                            <th>Sync Status</th>
+                            <th ng-click="predicate = 'count_PUBLISHED';reverse=!reverse">Total Published</th>
+                            <!--<th ng-click="predicate = 'count_INDEXED';reverse=!reverse">Total Indexed</th>-->
+                            <!--<th ng-click="predicate = 'count_MISSING';reverse=!reverse">Total Missing</th>-->
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="ds in datasources | orderBy:predicate:reverse | filter: filters.title " ng-show="ds.count_PUBLISHED > 0">
+                                <td>{{ ds.id }}</td>
+                                <td>{{ ds.title }}</td>
+                                <td style="min-width:250px">
+                                    <progress animate="false">
+                                        <bar ng-click="predicate = 'count_INDEXED';reverse=!reverse" value="ds.count_INDEXED / ds.count_PUBLISHED * 100" type="success">
+                                            {{ ds.count_INDEXED | number}} Indexed
+                                        </bar>
+                                        <bar ng-click="predicate = 'count_MISSING';reverse=!reverse" value="ds.count_MISSING / ds.count_PUBLISHED * 100" type="danger">
+                                            {{ ds.count_MISSING | number }} Missing
+                                        </bar>
+                                    </progress>
+                                </td>
+                                <td>{{ ds.count_PUBLISHED | number }}</td>
+                                <!--<td>{{ ds.count_INDEXED | number }}</td>-->
+                                <!--<td>{{ ds.count_MISSING | number }}</td>-->
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Queue <span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="" ng-click="addTask('index', 'ds', ds.id)">Index</a></li>
+                                            <li><a href="" ng-click="addTask('index_missing', 'ds', ds.id)">Index Missing</a></li>
+                                            <li><a href="" ng-click="clearIndex(ds.id)">Clear Index</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="" ng-click="addTask('sync', 'ds', ds.id)">Full Sync</a></li>
+                                            <li><a href="" ng-click="addTask('sync_missing', 'ds', ds.id)">Sync Missing</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="span4">
+
+            <div class="widget-box">
+                <div class="widget-content">
+                    <form class="form-search pull-left" ng-submit="syncRo(subject)">
+                        <div class="input-prepend">
+                            <button type="submit" class="btn" ng-disabled="syncing">Sync</button>
+                            <input type="text" class="input-medium search-query" placeholder="Key, ID or Slug" ng-model="subject">
+                        </div>
+                        <span ng-if="syncing">Loading...</span>
+                    </form>
+                    <hr>
+                    <div class="btn-group">
+                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Mass Queue <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="">Index All</a></li>
+                            <li><a href="">Sync All</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon" ng-click="refreshTasks()"><i class="icon icon-refresh"></i></span>
+                    <h5>Tasks Report</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <ul class="ro-list">
+                        <li ng-repeat="(status,count) in tasksStatus" ng-click="showTaskStatus(status)">
+                            <span class="name">{{ status }}</span>
+                            <span class="num">{{ count }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon" ng-click="refreshTasks()"><i class="icon icon-refresh"></i></span>
+                    <h5>Tasks</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <task-list tasks="tasks"></task-list>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
