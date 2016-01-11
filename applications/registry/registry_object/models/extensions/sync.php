@@ -243,13 +243,17 @@ class Sync_extension extends ExtensionBase{
                     $point = implode( ' ', explode(',', $point) );
                 }
                 $polygonStr = implode(', ', $points);
+                $uniquePoints = array_unique($points);
 
-                if (sizeof($points) >= 2) {
+                if (sizeof($uniquePoints) < 2) {
+                    $json['spatial_coverage_extents_wkt'][] = 'POINT('.implode(', ', $uniquePoints).')';
+                } else if (sizeof($uniquePoints) == 2) {
+                    $json['spatial_coverage_extents_wkt'][] = 'LINESTRING('.implode(', ', $uniquePoints).')';
+                } else if (sizeof($points) >= 2) {
                     $json['spatial_coverage_extents_wkt'][] = 'POLYGON(('.$polygonStr.'))';
                 } else if (sizeof($points) < 2) {
                     $json['spatial_coverage_extents_wkt'][] = 'POINT('.$polygonStr.')';
                 }
-
 
 				$sumOfAllAreas += $extents['area'];
 				$json['spatial_coverage_centres'][] = $extents['center'];
