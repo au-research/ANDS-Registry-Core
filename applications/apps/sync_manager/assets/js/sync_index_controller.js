@@ -29,17 +29,18 @@
         $scope.toggleOption = toggleOption;
         $scope.getOption = getOption;
 
+        //allow child scope to ask this controller to show a task in a modal
         $scope.$on('showTask', function (event, data) {
             $scope.showTask(data.id);
         });
 
         //init intervals
-        var refreshTasksInterval, refreshDataSourcesInterval;
         $scope.refreshTasks();
         $scope.refreshDataSources();
+
+        var refreshTasksInterval, refreshDataSourcesInterval;
         $scope.$watch('options', function () {
             if ($scope.getOption('autorefresh') === false) {
-                console.log('cancelling');
                 $interval.cancel(refreshTasksInterval);
                 $interval.cancel(refreshDataSourcesInterval);
             } else {
@@ -48,6 +49,7 @@
             }
         }, true);
 
+        //destroy the interval upon unloading of this controller
         $scope.$on('destroy', function () {
             $interval.cancel(refreshTasksInterval);
             $interval.cancel(refreshDataSourcesInterval);
@@ -141,7 +143,7 @@
                     break;
             }
             return APITaskService.addTask(params).then(function (data) {
-                console.log(data);
+
                 $scope.refreshTasks();
                 if (showTask) {
                     return data.data;

@@ -1,3 +1,4 @@
+<!--This file is marked for deletion-->
 <?php $this->load->view('header'); ?>
 <div ng-app="sync_app">
 	<div ng-view></div>
