@@ -48,13 +48,44 @@ class Api_key_api
 
     private function registerAPIKeys()
     {
-        return $this->ci->input->post();
+       // return $this->ci->input->post();
+        if (!$this->ci->input->post('organisation') || !$this->ci->input->post('contact_email'))
+        {
+            throw new Exception("One of the mandatory fields (Organisation name or Contact Email) were not entered. Please try again.");
+        }
+        else
+        {
+            // Generate a random API key hash
+            $api_key = substr(md5(mt_rand()), 0, 12);
+
+            $query = $this->db->get_where('api_keys', array('api_key'=>$api_key));
+            if ($query->num_rows == 0)
+            {
+                $this->db->insert('api_keys',
+                    array(	'api_key' => $api_key,
+                        'owner_email'=>$this->ci->input->post('contact_email'),
+                        'owner_organisation'=>$this->ci->input->post('organisation'),
+                        'owner_purpose'=>$this->ci->input->post('purpose'),
+                        'created'=>time()
+                    ));
+            }
+            else
+            {
+                throw new Exception("API Key could not be generated (numeric error = ".$api_key."). Please try again.");
+            }
+
+            $data["api_key"] = $api_key;
+            $data["organisation"] = $this->ci->input->post('organisation');
+
+            return $data;
+
+        }
     }
 
     private function getAPIKey($apiKey)
     {
         $query = $this->db->get_where('api_keys', ['api_key' => $apiKey]);
-        if (!$query || $query->num_rows() == 0) throw new Exception("No API Keys found");
+        if (!$query || $query->num_rows() == 0) throw new Exception("API Key ".$apiKey." not found");
         return $query->result_array();
     }
 
