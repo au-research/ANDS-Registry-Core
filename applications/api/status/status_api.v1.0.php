@@ -27,9 +27,21 @@ class Status_api
 
         switch (strtolower($this->params['submodule'])) {
             default:
-                return $this->report();
+                if ($this->params['submodule']) {
+                    return $this->reportFor($this->params['submodule']);
+                } else {
+                    return $this->report();
+                }
                 break;
         }
+    }
+
+    private function reportFor($module)
+    {
+        if ($module == 'harvester' || $module == 'task') {
+           return $this->getDaemonStatus($module);
+        }
+        return false;
     }
 
     private function report()
@@ -59,6 +71,7 @@ class Status_api
 
         $lastReportSince = (int)$status['last_report_timestamp'];
         $lastReport = (time() - $lastReportSince) / 1000;
-        return ($lastReport > 60) ? false : true;
+        $status['RUNNING'] = ($lastReport > 60) ? false : true;
+        return $status;
     }
 }
