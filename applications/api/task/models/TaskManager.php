@@ -29,7 +29,7 @@ class TaskManager
             $this->db->where('status', $status);
         }
         $query = $this->db
-            ->order_by('date_added desc')
+            ->order_by('last_run desc')
             ->limit($limit, $offset)
             ->get('tasks');
         if ($query->num_rows() == 0) {

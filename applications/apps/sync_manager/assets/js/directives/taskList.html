@@ -3,7 +3,7 @@
         <a href="" ng-click="task.show=!task.show" class="expand_log"
            >
             <i class="icon-list-alt"></i> {{task.status}}
-            <span class="label" ng-if="task.date_added">{{ task.date_added }}</span>
+            <span class="label" ng-if="task.last_run">{{ task.last_run }}</span>
         </a>
         <div class="log" ng-show="task.show">
             <button
