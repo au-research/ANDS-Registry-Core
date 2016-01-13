@@ -1018,5 +1018,6 @@ class Solr
     public function setCore($core)
     {
         $this->core = $core;
+        return $this;
     }
 }

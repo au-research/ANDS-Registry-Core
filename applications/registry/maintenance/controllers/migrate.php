@@ -8,23 +8,40 @@
  */
 class Migrate extends MX_Controller
 {
-
     /**
-     * Migrate SOLR
-     * Should run from shell
-     * Usage: php index.php registry maintenance migrate solr [up|down] [until="000"]
+     * Migrate constructor.
      */
-    function solr($method = 'up', $until = false)
+    public function __construct()
     {
+        parent::__construct();
+
         set_exception_handler('json_exception_handler');
         header('Cache-Control: no-cache, must-revalidate');
         header('Content-type: application/json');
 
         require_once APP_PATH . 'maintenance/models/GenericMigration.php';
         require_once APP_PATH . 'maintenance/models/GenericSolrMigration.php';
+    }
 
-        //load all Solr migration files
+
+    /**
+     * Migrate
+     * Should run from shell
+     * @usage php index.php registry maintenance migrate registryIndex [up|down] [until="000"]
+     * @param $context
+     * @param string $method
+     * @param bool|false $until
+     * @throws Exception
+     */
+    function doMigration($context, $method = 'up', $until = false)
+    {
+        //Load required migration file
         $migration_dir = APP_PATH . 'maintenance/migrations/';
+        if ($context == 'registryIndex') {
+            $migration_dir.='registry_index/';
+        } else if ($context == 'vocabIndex') {
+            $migration_dir.='vocab_index/';
+        }
         $namespace = 'ANDS';
         $files = array_diff(scandir($migration_dir), array('..', '.'));
 
@@ -35,14 +52,15 @@ class Migrate extends MX_Controller
             rsort($files);
         }
 
+
         //getting the latest migration state
         $latestSuccess = "000";
         if ($migrationStatus = $this->readMigrationStatus()) {
-            if (isset($migrationStatus['solr'])) {
-                $latestSuccess = $migrationStatus['solr'];
-                echo "Found latest migration for SOLR at " . $latestSuccess . "\n";
+            if (isset($migrationStatus[$context])) {
+                $latestSuccess = $migrationStatus[$context];
+                echo "Found latest migration for $context at " . $latestSuccess . "\n";
             } else {
-                echo "Found migration file but no entry for SOLR. Starts at " . $latestSuccess . "\n";
+                echo "Found migration file but no entry for $context. Starts at " . $latestSuccess . "\n";
             }
         } else {
             echo "No previous migration found. Starts at 000" . "\n";
@@ -52,9 +70,9 @@ class Migrate extends MX_Controller
         foreach ($files as $key => $file) {
             $file_path = $migration_dir . $file;
             $exploded = explode('_', basename($file_path, ".php"));
-            $file_state = (int)$exploded[0];
+            $file_state = (int) $exploded[0];
             if ($until) {
-                $untilInt = (int)$until;
+                $untilInt = (int) $until;
                 if ($file_state > $untilInt && $method == 'up') {
                     unset($files[$key]);
                 } else if ($file_state <= $untilInt && $method == 'down') {
@@ -70,7 +88,7 @@ class Migrate extends MX_Controller
 
         // if there's nothing to do, stop
         if (sizeof($files) == 0) {
-            echo "Nothing to do" . "\n";
+            echo "No files found. Nothing to do" . "\n";
             exit();
         }
 
@@ -85,28 +103,40 @@ class Migrate extends MX_Controller
             try {
                 require_once $file_path;
                 $migration = new $class_name;
-                $migrationResult = json_decode($migration->$method(), true);
-
-                //parse SOLR response and decide if there's any error
-                $status = $migrationResult['responseHeader']['status'];
-                if ($status == "0" && !isset($migrationResult['errors'])) {
-                    //success handler, increment the latestSuccess to this file state
-                    echo $file . " " . $method . " Success" . "\n";
-                    $latestSuccess = $file_state;
+                $results = $migration->$method();
+                $migrationResults = array();
+                if (is_array($results)) {
+                    foreach ($results as $result) {
+                        $migrationResults[] = json_decode($result, true);
+                    }
                 } else {
-                    //error handler, if the migration is going up, should break away
-                    echo $file . " " . $method . " Failed" . "\n";
-                    if (isset($migrationResult['errors'])) {
-                        foreach ($migrationResult['errors'] as $error) {
-                            if (is_array($error['errorMessages'])) {
-                                echo join(' ', $error['errorMessages']);
-                            } else {
-                                echo $error['errorMessages'] . "\n";
+                    $migrationResults[] = json_decode($results, true);
+                }
+
+                foreach ($migrationResults as $key=>$migrationResult) {
+                    //parse SOLR response and decide if there's any error
+                    $status = $migrationResult['responseHeader']['status'];
+                    if ($status == "0" && !isset($migrationResult['errors'])) {
+                        //success handler, increment the latestSuccess to this file state
+                        echo $file . " stage " . ($key + 1) . " " .$method . " Success" . "\n";
+                        $latestSuccess = $file_state;
+                    } else {
+                        //error handler, if the migration is going up, should break away
+                        echo $file . " " . $method . " Failed" . "\n";
+                        if (isset($migrationResult['errors'])) {
+                            foreach ($migrationResult['errors'] as $error) {
+                                if (is_array($error['errorMessages'])) {
+                                    echo join(' ', $error['errorMessages']);
+                                } else {
+                                    echo $error['errorMessages'] . "\n";
+                                }
                             }
                         }
+                        break;
                     }
-                    break;
                 }
+
+
             } catch (Exception $e) {
                 //exception in one of the migration file
                 echo $file . " " . $method . " Failed with exception" . "\n";
@@ -131,7 +161,7 @@ class Migrate extends MX_Controller
                 $latestSuccess = $until;
             }
 
-            $migrationStatus['solr'] = $latestSuccess;
+            $migrationStatus[$context] = $latestSuccess;
             $this->writeMigrationStatus($migrationStatus);
         }
 
@@ -216,5 +246,7 @@ class Migrate extends MX_Controller
 
         return $success;
     }
+
+
 
 }

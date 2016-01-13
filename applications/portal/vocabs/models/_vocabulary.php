@@ -145,9 +145,11 @@ class _vocabulary
             if($concept_list_path){
                 $content = @file_get_contents($concept_list_path);
                 $content = json_decode($content, true);
-                foreach ($content as $concept) {
-                    if (isset($concept['prefLabel'])) {
-                        $json['concept'][] = $concept['prefLabel'];
+                if ($content) {
+                    foreach ($content as $concept) {
+                        if (isset($concept['prefLabel'])) {
+                            $json['concept'][] = $concept['prefLabel'];
+                        }
                     }
                 }
             }
