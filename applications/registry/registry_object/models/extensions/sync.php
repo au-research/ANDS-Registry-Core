@@ -230,12 +230,13 @@ class Sync_extension extends ExtensionBase{
 			$sumOfAllAreas = 0;
 			foreach ($spatialLocations AS $lonLat) {
                 $extents = $this->ro->calcExtent($lonLat);
-                if( $extents['west'] +  $extents['east'] < 5 &&  $extents['east'] > 175)
-                {
+                if( $extents['west'] +  $extents['east'] < 5 &&  $extents['east'] > 175) {
                     //need to insert zero bypass
-                    $lonLat = $this->ro->insertZeroBypassCoords($lonLat, $extents['west'], $extents['east']);
+                    $lonLatPolygonFixed = $this->ro->insertZeroBypassCoords($lonLat, $extents['west'], $extents['east']);
+                } else {
+                    $lonLatPolygonFixed = $lonLat;
                 }
-                $json['spatial_coverage_polygons'][] = $lonLat;
+                $json['spatial_coverage_polygons'][] = $lonLatPolygonFixed;
 				$json['spatial_coverage_extents'][] = $extents['extent'];
 
                 $points = explode(' ', $lonLat);
