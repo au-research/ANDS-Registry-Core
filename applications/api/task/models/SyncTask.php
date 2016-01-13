@@ -192,12 +192,18 @@ class SyncTask extends Task
                     if ($ro_id) $ro = $this->ci->ro->getByID($ro_id);
                     if ($ro) {
                         if (!$this->indexOnly) {
-                            $ro->processIdentifiers();
-                            $ro->addRelationships();
-                            $ro->update_quality_metadata();
-                            $ro->enrich();
+//                            $ro->processIdentifiers();
+//                            $ro->addRelationships();
+//                            $ro->update_quality_metadata();
+//                            $ro->enrich();
                         }
-                        $solr_docs[] = $ro->indexable_json();
+                        $solr_doc = $ro->indexable_json();
+                        if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
+                            $solr_docs[] = $ro->indexable_json();
+                        } else {
+                            $this->log('Empty doc found for ROID:'.$ro->id);
+                        }
+
                         unset($ro);
                     } else {
                         $this->log('Error: roid:' . $ro_id . ' not found');
@@ -218,13 +224,13 @@ class SyncTask extends Task
                 if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
                     $this->log("Adding to SOLR successful")->save();
                 } else {
-                    throw new Exception(json_encode($add_result));
+                    throw new Exception("Adding to SOLR failed: ". json_encode($add_result));
                 }
                 $commit_result = json_decode($this->ci->solr->commit(), true);
                 if (isset($commit_result['responseHeader']) && $commit_result['responseHeader']['status'] === 0) {
                     $this->log("Commit to Indexed successful")->save();
                 } else {
-                    throw new Exception(json_encode($commit_result));
+                    throw new Exception("Commit to SOLR failed: ". json_encode($commit_result));
                 }
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());
