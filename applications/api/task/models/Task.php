@@ -62,15 +62,15 @@ class Task
             $this->run_task();
         } catch (Exception $e) {
             $this->stoppedWithError($e->getMessage());
-            $this->finally();
+            $this->finalize($start);
         }
 
-        $this->finally();
+        $this->finally($start);
 
         return $this;
     }
 
-    public function finally(){
+    public function finalize($start){
         $this->hook_end();
         $end = microtime(true);
         $this->setStatus('COMPLETED')
