@@ -66,7 +66,6 @@ class Task
         }
 
         $this->finalize($start);
-
         return $this;
     }
 

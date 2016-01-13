@@ -131,7 +131,7 @@ class Registry_object extends MX_Controller
 
             if (isset($ro->relationships['party_one'])) {
                 foreach ($ro->relationships['party_one'] as $rel) {
-                    if (($rel['origin'] == 'IDENTIFIER' || $rel['origin'] == 'IDENTIFIER REVERSE') && $rel['registry_object_id'] != '')
+                    if (is_array($rel) && ($rel['origin'] == 'IDENTIFIER' || $rel['origin'] == 'IDENTIFIER REVERSE') && $rel['registry_object_id'] != '')
                         $resolvedPartyIdentifiers[] = $rel['related_object_identifier'];
                 }
             }
