@@ -413,11 +413,13 @@ class Registry_object extends MX_Controller
         ];
 
         foreach ($facets as $facet) {
-            if ($facet && $facet[0] && $facet[1]) {
+            for($i = 0; $i < sizeof($facet)-1;$i+=2) {
+                $name = $facet[$i];
+                $count = $facet[$i+1];
                 $result['list'][] = [
-                    'prefLabel' => $facet[0],
-                    'collectionNum' => $facet[1],
-                    'notation' => $facet[0]
+                    'prefLabel' => $name,
+                    'collectionNum' => $count,
+                    'notation' => $name
                 ];
             }
         }
