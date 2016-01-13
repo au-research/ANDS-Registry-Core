@@ -90,6 +90,7 @@ class Task_api
                         $task = $this->taskManager->getTask($taskObject->getId());
                     }
                     if ($task['message']) $task['message'] = json_decode($task['message'], true);
+                    $task['params'] = urldecode($task['params']);
                     return $task;
                 }
 

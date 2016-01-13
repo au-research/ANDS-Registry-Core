@@ -111,10 +111,6 @@ class Migrate extends MX_Controller
                 //exception in one of the migration file
                 echo $file . " " . $method . " Failed with exception" . "\n";
                 $latestSuccess = $file_state;
-                throw new Exception ($e);
-                break;
-            } finally {
-                //write the latestSuccess state for later retrieval
 
                 if ($method == 'down' && !$until) {
                     $latestSuccess = "000";
@@ -124,11 +120,24 @@ class Migrate extends MX_Controller
 
                 $migrationStatus['solr'] = $latestSuccess;
                 $this->writeMigrationStatus($migrationStatus);
+
+                throw new Exception ($e);
+                break;
             }
+
+            if ($method == 'down' && !$until) {
+                $latestSuccess = "000";
+            } else if ($method == 'down' && $until) {
+                $latestSuccess = $until;
+            }
+
+            $migrationStatus['solr'] = $latestSuccess;
+            $this->writeMigrationStatus($migrationStatus);
         }
 
         echo "Done. latest migration state : " . $latestSuccess . "\n";
     }
+
 
     /**
      * Print the migration status on the shell screen

@@ -250,9 +250,13 @@ class Sync_extension extends ExtensionBase{
                 foreach($points as &$point) {
                     $predicate = explode(' ', $point);
                     foreach ($predicate as &$pred) {
-                        if ($pred >= 180) $pred = 179.99;
-                        if ($pred <= -180) $pred = -179.99;
+                        if ((float) $pred >= 179) {
+                            $pred = 178;
+                        } elseif ($pred <= -179) {
+                            $pred = -178;
+                        }
                     }
+                    $point = implode(' ', $predicate);
                 }
 
                 $uniquePoints = array_unique($points);
