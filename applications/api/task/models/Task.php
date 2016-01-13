@@ -65,7 +65,7 @@ class Task
             $this->finalize($start);
         }
 
-        $this->finally($start);
+        $this->finalize($start);
 
         return $this;
     }
