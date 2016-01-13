@@ -239,9 +239,22 @@ class Sync_extension extends ExtensionBase{
 				$json['spatial_coverage_extents'][] = $extents['extent'];
 
                 $points = explode(' ', $lonLat);
-                foreach ($points as &$point) {
+                foreach ($points as $key => &$point) {
                     $point = implode( ' ', explode(',', $point) );
+                    if (trim($point) == "") {
+                        unset($points[$key]);
+                    }
                 }
+
+                //make it smaller if it's too big
+                foreach($points as &$point) {
+                    $predicate = explode(' ', $point);
+                    foreach ($predicate as &$pred) {
+                        if ($pred >= 180) $pred = 179.99;
+                        if ($pred <= -180) $pred = -179.99;
+                    }
+                }
+
                 $uniquePoints = array_unique($points);
 
                 if (sizeof($uniquePoints) < 2) {
