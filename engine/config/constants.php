@@ -118,6 +118,7 @@ define('CONTRIBUTOR_PAGE_TEMPLATE', 'contributor');
 define('CONTRIBUTOR_PAGE_KEY_PREFIX', 'a61e9d0d');
 
 define('REGISTRY_APP_PATH', 'applications/registry/');
+define('PORTAL_APP_PATH', 'applications/portal/');
 
 define('NATIVE_HARVEST_FORMAT_TYPE','nativeHarvestData');
 

@@ -575,6 +575,14 @@ class Solr
                 case 'apt':
                 case 'gcmd':
                 case 'lcsh':
+                    if (is_array($value)) {
+                        $subject_search_query = join('" OR tsubject_'.$key.':"', $value);
+                        $subject_search_query = "(tsubject_'.$key.'':\"" . $subject_search_query . "\")";
+                        $this->setOpt('fq', $subject_search_query);
+                    } else {
+                        $this->setOpt('fq', '+tsubject_'.$key.':("' . $value . '")');
+                    }
+                    break;
                 case 'subject_value':
                     if (is_array($value)) {
                         $subject_search_query = join('" OR subject_value_resolved_search:"', $value);

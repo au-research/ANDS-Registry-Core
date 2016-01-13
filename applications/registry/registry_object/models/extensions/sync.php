@@ -319,7 +319,7 @@ class Sync_extension extends ExtensionBase{
 			// }
 
 
-            $type = strtolower($s['type']);
+            $type = $this->ro->getPortalTypes($s['type']);
             $json['tsubject_'.$type][] = $s['value'];
 		}
 

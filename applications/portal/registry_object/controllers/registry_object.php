@@ -327,16 +327,12 @@ class Registry_object extends MX_Controller
 
     function getSubjectsVocab($vocab_type, $filters)
     {
-        $subjects_categories = $this->config->item('subjects_categories');
-        $list = $subjects_categories[$vocab_type]['list'];
         $result = array();
-        foreach ($list as $l) {
-            $result_type = $this->getAllSubjectsForType($l, $filters);
-            if (isset($result_type['list'])) {
-                $result = array_merge($result, $result_type['list']);
-            }
-
+        $result_type = $this->getAllSubjectsForType($vocab_type, $filters);
+        if (isset($result_type['list'])) {
+            $result = array_merge($result, $result_type['list']);
         }
+
         $azTree = array();
         $azTree['0-9'] = array('subtree' => array(), 'collectionNum' => 0, 'prefLabel' => '0-9', 'notation' => '0-9');
         foreach (range('A', 'Z') as $i) {
@@ -370,26 +366,28 @@ class Registry_object extends MX_Controller
     function getAllSubjectsForType($type, $filters)
     {
         $this->load->library('solr');
-        $this->solr->setOpt('q', '*:*');
-        $this->solr->setOpt('defType', 'edismax');
-        $this->solr->setOpt('mm', '3');
-        $this->solr->setOpt('q.alt', '*:*');
-        $this->solr->setOpt('fl', '*, score');
-        $this->solr->setOpt('qf', 'id^1 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2');
-        $this->solr->setOpt('rows', '0');
-
-        $this->solr->clearOpt('fq');
+        $this->solr
+            ->setOpt('q', '*:*')
+            ->setOpt('defType', 'edismax')
+            ->setOpt('mm', '3')
+            ->setOpt('q.alt', '*:*')
+            ->setOpt('fl', '*, score')
+            ->setOpt('qf', 'id^1 group^0.8 display_title^0.5 list_title^0.5 fulltext^0.2')
+            ->setOpt('rows', '0')
+            ->clearOpt('fq');
 
         if ($filters) {
             $this->solr->setFilters($filters);
         } else {
             $this->solr->setBrowsingFilter();
         }
-        $this->solr->addQueryCondition('+subject_type:"' . $type . '"');
-        $this->solr->setFacetOpt('pivot', 'subject_type,subject_value_resolved');
-        $this->solr->setFacetOpt('sort', 'subject_value_resolved');
-        $this->solr->setFacetOpt('limit', '25000');
-        $content = $this->solr->executeSearch();
+
+        $this->solr
+            ->setOpt('fq', '+tsubject_'.$type.':*')
+            ->setFacetOpt('field', 'tsubject_'.$type)
+            ->setFacetOpt('limit', '25000');
+
+        $content = $this->solr->executeSearch(true);
 
         //if still no result is found, do a fuzzy search, store the old search term and search again
         if ($this->solr->getNumFound() == 0) {
@@ -401,26 +399,30 @@ class Registry_object extends MX_Controller
             }
             // $new_search_term = $data['search_term'].'~0.7';
             $this->solr->setOpt('q', 'fulltext:(' . $new_search_term . ') OR simplified_title:(' . iconv('UTF-8', 'ASCII//TRANSLIT', $new_search_term) . ')');
-            $this->solr->executeSearch();
+            $content = $this->solr->executeSearch(true);
         }
 
-        $facets = $this->solr->getFacet();
-        $facet_pivots = $facets->{'facet_pivot'}->{'subject_type,subject_value_resolved'};
-        //echo json_encode($facet_pivots);
-        $result = array();
-        $result[$type] = array();
+        if (isset($content['facet_counts']) && isset($content['facet_counts']['facet_fields'])) {
+            $facets = $content['facet_counts']['facet_fields'];
+        } else {
+            return false;
+        }
 
-        foreach ($facet_pivots as $p) {
-            if ($p->{'value'} == $type) {
-                $result[$type] = array('count' => $p->{'count'}, 'list' => array());
-                foreach ($p->{'pivot'} as $pivot) {
-                    array_push($result[$type]['list'], array('prefLabel' => $pivot->{'value'}, 'collectionNum' => $pivot->{'count'}, 'notation' => url_title($pivot->{'value'}, '-', true)));
-                }
-                $result[$type]['size'] = sizeof($result[$type]['list']);
-                // echo json_encode($p->{'pivot'});
+        $result = [
+            'list' => []
+        ];
+
+        foreach ($facets as $facet) {
+            if ($facet && $facet[0] && $facet[1]) {
+                $result['list'][] = [
+                    'prefLabel' => $facet[0],
+                    'collectionNum' => $facet[1],
+                    'notation' => $facet[0]
+                ];
             }
         }
-        return $result[$type];
+
+        return $result;
     }
 
     function getSubjects()
