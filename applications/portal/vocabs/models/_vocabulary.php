@@ -177,14 +177,18 @@ class _vocabulary
                so that it doesn't return an array on success and a Boolean
                on failure!
             */
-            foreach($current_version['version_access_points'] as $ap)
-            {
-                if($ap['type'] == 'sissvoc'){
-                    $url = json_decode($ap['portal_data'])->uri;
-                    $json['sissvoc_end_point'] = $url;
-                    $json['widgetable']=true;
+            if (array_key_exists('version_access_points', $current_version)
+                && is_array($current_version['version_access_points'])) {
+                foreach($current_version['version_access_points'] as $ap)
+                {
+                    if($ap['type'] == 'sissvoc'){
+                        $url = json_decode($ap['portal_data'])->uri;
+                        $json['sissvoc_end_point'] = $url;
+                        $json['widgetable']=true;
+                    }
                 }
             }
+
         }
 
         return $json;
@@ -572,7 +576,7 @@ class _vocabulary
             //CC-1460
             //check if there's an existing vocab with the same slug in published state
             $result = $db->get_where('vocabularies', array('slug'=> $slug, 'status' => 'published'));
-            
+
             isset($this->prop['from_vocab_id']) ? $draft_base = $this->prop['from_vocab_id'] :$draft_base = 0 ;
 
             if ($result->num_rows() > 0) {
