@@ -14,7 +14,7 @@ class SolrDynamicSubjects extends GenericSolrMigration
         $this->ci->solr->setCore('portal');
         return $this->ci->solr->schema([
             'add-dynamic-field' => [
-                ['name' => 'tsubject_*', 'type' => 'string', 'stored' => 'true', 'indexed' => true]
+                ['name' => 'tsubject_*', 'type' => 'string', 'stored' => 'true', 'indexed' => true, 'multiValued' => true]
             ]
         ]);
     }

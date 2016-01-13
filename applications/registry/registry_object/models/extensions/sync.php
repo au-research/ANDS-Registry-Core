@@ -317,6 +317,10 @@ class Sync_extension extends ExtensionBase{
 			// } else if(trim(strtolower($s['type']))=='anzsrc-seo') {
 			// 	$json['subject_anzsrcseo'][] = $s['resolved'];
 			// }
+
+
+            $type = strtolower($s['type']);
+            $json['tsubject_'.$type][] = $s['value'];
 		}
 
 		//related objects
