@@ -62,16 +62,21 @@ class Task
             $this->run_task();
         } catch (Exception $e) {
             $this->stoppedWithError($e->getMessage());
-        } finally {
-            $this->hook_end();
-            $end = microtime(true);
-            $this->setStatus('COMPLETED')
-                ->log("Task finished at " . date($this->dateFormat, $end))
-                ->log("Took: " . $this->formatPeriod($end, $start))
-                ->save();
+            $this->finally();
         }
 
+        $this->finally();
+
         return $this;
+    }
+
+    public function finally(){
+        $this->hook_end();
+        $end = microtime(true);
+        $this->setStatus('COMPLETED')
+            ->log("Task finished at " . date($this->dateFormat, $end))
+            ->log("Took: " . $this->formatPeriod($end, $start))
+            ->save();
     }
 
     /**
