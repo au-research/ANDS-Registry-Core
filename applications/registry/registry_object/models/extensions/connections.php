@@ -213,7 +213,7 @@ class Connections_Extension extends ExtensionBase
 				foreach($list as &$conn){
 					if(in_array($conn['registry_object_id'], $remove_list)){
 						$conn = false;
-						// if ($key=array_search($conn, $list)!==false) unset($list[$key]);
+						if ($key=array_search($conn, $list)!==false) unset($list[$key]);
 					}
 				}
 
