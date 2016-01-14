@@ -25,7 +25,6 @@
 	
 		
 			<div>	
-				<!-- getRIFCS -->
 			    <div class="box-content">
 			    	
 				    <form action="#" method="POST">
@@ -40,11 +39,9 @@
 					  <label><strong>Purpose of this API key</strong></label>
 					  <input name="purpose" type="text" class="input-xlarge" placeholder="What cool things are you doing?">
 					  <br/>
-					  <!--
-					  <label class="checkbox">
-					    <input type="checkbox"> I agree to the Web Services Terms of Use
-					  </label>
-					  -->
+                        <label><strong>Sector you come from</strong></label>
+                        <input name="sector" type="text" class="input-xlarge" placeholder="E.g. Industry, Government, Research">
+                        <br/>
 					  <input type="submit" name="submit" class="btn" value="Register my API key" />
 					</form>
 					
@@ -66,6 +63,11 @@
 					ANDS uses your API key as a method for keeping you informed of changes to
 					our services as well monitor the system for quality purposes. 
 				</p>
+                <p><em>
+                    Note that if you have previously registered for an API key you do not need to register again.
+                    Your ANDS API key is reusable with any of our widgets and services.
+                    </em>
+                </p>
 			</div>
 		</div>    
 	</div>

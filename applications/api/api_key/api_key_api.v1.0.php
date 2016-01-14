@@ -66,6 +66,8 @@ class Api_key_api
                         'owner_email'=>$this->ci->input->post('contact_email'),
                         'owner_organisation'=>$this->ci->input->post('organisation'),
                         'owner_purpose'=>$this->ci->input->post('purpose'),
+                        'owner_sector'=>$this->ci->input->post('sector'),
+                        'owner_ip'=>$this->ci->input->post('ip'),
                         'created'=>time()
                     ));
             }
