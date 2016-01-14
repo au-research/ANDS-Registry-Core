@@ -35,6 +35,21 @@
                 return APIService.get(
                     'task/'+id, {}
                 )
+            },
+            rescheduleTask: function(id) {
+                return APIService.get(
+                    'task/'+id+'/reschedule', {}
+                )
+            },
+            deleteTask: function(id) {
+                return APIService.get(
+                    'task/'+id+'/clear', {}
+                )
+            },
+            clearTaskMessage: function(id) {
+                return APIService.get(
+                    'task/'+id+'/message/clear', {}
+                )
             }
         }
 

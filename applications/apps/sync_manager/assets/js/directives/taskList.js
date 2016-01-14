@@ -21,25 +21,40 @@
         };
 
         function link(scope, element, attrs) {
-            scope.runTask = runTask;
-
+            scope.taskOperation = taskOperation;
             scope.showTask = function(task){
                 scope.$emit('showTask', {id:task.id});
             };
         }
 
-        function runTask(task) {
+        function taskOperation(op, task) {
             task.running = true;
-            APITaskService.runTask(task.id).then(function (data) {
-                task.running = false;
-                if (data.code=="200") {
-                    task.status = data.data.status;
-                    task.last_run = data.data.last_run;
-                    task.message = data.data.message;
-                } else {
-                    $scope.refresh();
-                }
-            })
+            if (op=='run') {
+                APITaskService.runTask(task.id).then(function(data){
+                    refreshTask(task, data);
+                });
+            } else if (op=='delete') {
+                APITaskService.deleteTask(task.id).then(function(data){
+                    refreshTask(task, data);
+                });
+            } else if (op=='clearMessage') {
+                APITaskService.clearTaskMessage(task.id).then(function(data){
+                    refreshTask(task, data);
+                });
+            } else if (op=='reschedule') {
+                APITaskService.rescheduleTask(task.id).then(function(data){
+                    refreshTask(task, data);
+                });
+            }
+        }
+
+        function refreshTask(task, data) {
+            task.running = false;
+            if (data.code=="200") {
+                task.status = data.data.status;
+                task.last_run = data.data.last_run;
+                task.message = data.data.message;
+            }
         }
 
     }

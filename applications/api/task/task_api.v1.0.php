@@ -81,13 +81,21 @@ class Task_api
                      * api/task/:id/message/clear
                      * Clear the message log
                      */
+                    $taskObject = $this->taskManager->getTaskObject($task);
                     if ($this->params['identifier'] == 'message' && $this->params['object_module'] == 'clear') {
-                        $taskObject = $this->taskManager->getTaskObject($task);
                         $taskObject
                             ->setDb($this->db)
                             ->setMessage()
                             ->save();
                         $task = $this->taskManager->getTask($taskObject->getId());
+                    } elseif ($this->params['identifier'] == 'reschedule') {
+                        $taskObject
+                            ->setDb($this->db)
+                            ->setStatus('PENDING')
+                            ->save();
+                        $task = $this->taskManager->getTask($taskObject->getId());
+                    } elseif ($this->params['identifier'] == 'clear') {
+                        return $this->taskManager->deleteTask($taskObject->getId());
                     }
                     if ($task['message']) $task['message'] = json_decode($task['message'], true);
                     $task['params'] = urldecode($task['params']);

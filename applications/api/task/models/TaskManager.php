@@ -62,6 +62,20 @@ class TaskManager
         }
     }
 
+    /**
+     * Delete a task by ID
+     * @param $id
+     * @return bool
+     */
+    public function deleteTask($id){
+        $query = $this->db->where('id', $id)->delete('tasks');
+        if ($query) {
+            return true;
+        } else {
+            return $this->db->_error_message();
+        }
+    }
+
     public function changeTasksStatus($byStatus, $status){
         if (strtolower($byStatus) == 'all') {
             throw new Exception("Cannot change status of all tasks");
