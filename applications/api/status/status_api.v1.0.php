@@ -93,9 +93,12 @@ class Status_api
 
         if (!$status) throw new Exception ('No status found for ' . $daemon . ' daemon');
 
-        $lastReportSince = (int)$status['last_report_timestamp'];
-        $lastReport = (time() - $lastReportSince) / 1000;
+        $lastReportSince = (int) $status['last_report_timestamp'];
+        $lastReport = (time() - $lastReportSince);
+
+        $status['lastReport'] = $lastReport .' seconds ago';
         $status['RUNNING'] = ($lastReport > 60) ? false : true;
+
         return $status;
     }
 
