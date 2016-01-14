@@ -254,12 +254,12 @@ class SyncTask extends Task
                 } else {
                     throw new Exception("Adding to SOLR failed: ". json_encode($add_result));
                 }
-                $commit_result = json_decode($this->ci->solr->commit(), true);
-                if (isset($commit_result['responseHeader']) && $commit_result['responseHeader']['status'] === 0) {
-                    $this->log("Commit to Indexed successful")->save();
-                } else {
-                    throw new Exception("Commit to SOLR failed: ". json_encode($commit_result));
-                }
+//                $commit_result = json_decode($this->ci->solr->commit(), true);
+//                if (isset($commit_result['responseHeader']) && $commit_result['responseHeader']['status'] === 0) {
+//                    $this->log("Commit to Indexed successful")->save();
+//                } else {
+//                    throw new Exception("Commit to SOLR failed: ". json_encode($commit_result));
+//                }
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());
             }
