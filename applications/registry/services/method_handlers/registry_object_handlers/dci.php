@@ -181,23 +181,26 @@ class DCI extends ROHandler {
         {
             $citationList = $this->DCIRoot->addChild('CitationList');
             foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo) {
-                $citation = $citationList->addChild('Citation');
-                $citation['CitationType'] = "Citing Ref";
-                $citationText = $citation->addChild('CitationText');
-                $text = (string)$relatedInfo->title;
-                if($relatedInfo->identifier['type'] == 'uri')
-                {
-                    $text .= ' &lt;'.$relatedInfo->identifier.'&gt;';
+                if($relatedInfo['type'] == 'publication'){
+                    $citation = $citationList->addChild('Citation');
+                    $citation['CitationType'] = "Citing Ref";
+                    $citationText = $citation->addChild('CitationText');
+                    $text = (string)$relatedInfo->title;
+                    if($relatedInfo->identifier['type'] == 'uri')
+                    {
+                        $text .= ' &lt;'.$relatedInfo->identifier.'&gt;';
+                    }
+                    else
+                    {
+                        $text .= ' &lt;'.$relatedInfo->identifier['type'].':'.$relatedInfo->identifier.'&gt;';
+                    }
+                    if(isset($relatedInfo->notes))
+                    {
+                        $text .= '('.$relatedInfo->notes.')';
+                    }
+                    $citationText->addChild('CitationString', str_replace('&', '&amp;', $text));
                 }
-                else
-                {
-                    $text .= ' &lt;'.$relatedInfo->identifier['type'].':'.$relatedInfo->identifier.'&gt;';
-                }
-                if(isset($relatedInfo->notes))
-                {
-                    $text .= '('.$relatedInfo->notes.')';
-                }
-                $citationText->addChild('CitationString', str_replace('&', '&amp;', $text));
+
             }
         }
     }
