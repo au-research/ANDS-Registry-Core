@@ -220,7 +220,7 @@ class Data_sources extends CI_Model {
 	 * @param the offset value
 	 * @return array(_data_source) or empty array
 	 */
-	function getAll($limit = 16, $offset =0)
+	function getAll($limit = 16, $offset =0, $idOnly = false)
 	{
 		$matches = array();
 		if($limit==0){
@@ -234,7 +234,12 @@ class Data_sources extends CI_Model {
 		{
 			foreach ($query->result_array() AS $result)
 			{
-				$matches[] = new _data_source($result['data_source_id']);
+				if (!$idOnly) {
+					$matches[] = new _data_source($result['data_source_id']);
+				} else {
+					$matches[] = $result['data_source_id'];
+				}
+
 			}
 		}
 		

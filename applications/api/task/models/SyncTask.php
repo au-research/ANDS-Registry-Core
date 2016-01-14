@@ -59,10 +59,38 @@ class SyncTask extends Task
                 $list = explode(',', $this->target_id);
                 $this->syncRo($list);
                 break;
+            case 'all':
+                $this->analyzeAll();
+                break;
             default:
                 throw new Exception("No valid target found for TaskID: " . $this->getId() . " check parameters: " . $this->getParams());
                 break;
         }
+    }
+
+    private function analyzeAll(){
+        $dataSourceIDs = $this->ci->ds->getAll(0,0, true);
+        foreach ($dataSourceIDs as $dsID) {
+
+            $params = array();
+
+            if ($this->indexOnly) {
+                $params['indexOnly'] = 'true';
+            }
+            $params['type'] = 'ds';
+            $params['id'] = $dsID;
+
+            $task = array(
+                'name' => 'sync',
+                'priority' => $this->getPriority(),
+                'frequency' => 'ONCE',
+                'type' => 'POKE',
+                'params' => http_build_query($params),
+            );
+
+            $this->taskManager->addTask($task);
+        }
+        $this->log('Analyzed All spawned ' . sizeof($dataSourceIDs) . ' tasks');
     }
 
     /**
