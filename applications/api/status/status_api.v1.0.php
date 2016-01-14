@@ -17,6 +17,11 @@ class Status_api
         $this->db = $this->ci->load->database('registry', true);
     }
 
+    /**
+     * Handling api/status
+     * @param array $method
+     * @return array|bool|mixed
+     */
     public function handle($method = array())
     {
         $this->params = array(
@@ -36,23 +41,42 @@ class Status_api
         }
     }
 
+    /**
+     * Handling api/status/:module
+     * @param $module
+     * @return bool|mixed
+     * @throws Exception
+     */
     private function reportFor($module)
     {
         if ($module == 'harvester' || $module == 'task') {
-           return $this->getDaemonStatus($module);
+            return $this->getDaemonStatus($module);
         }
         return false;
     }
 
+    /**
+     * Handle for api/status/
+     * @return array
+     * @throws Exception
+     */
     private function report()
     {
         $result = [
             'harvester' => $this->getDaemonStatus('harvester'),
-            'task' => $this->getDaemonStatus('task')
+            'task' => $this->getDaemonStatus('task'),
+            'solr' => $this->getSOLRStatus()
         ];
         return $result;
     }
 
+    /**
+     * Handle for api/status/:daemon
+     * Supported daemon are harvester|task
+     * @param $daemon
+     * @return bool|mixed
+     * @throws Exception
+     */
     private function getDaemonStatus($daemon)
     {
         if ($daemon == 'harvester') {
@@ -73,5 +97,20 @@ class Status_api
         $lastReport = (time() - $lastReportSince) / 1000;
         $status['RUNNING'] = ($lastReport > 60) ? false : true;
         return $status;
+    }
+
+    /**
+     * Returns the all core status for SOLR
+     * Hitting admin/cores?action=status
+     * @return mixed|bool
+     */
+    private function getSOLRStatus()
+    {
+        $url = get_config_item('solr_url') . 'admin/cores?action=status&wt=json';
+        $contents = @file_get_contents($url);
+        if ($contents) {
+            $contents = json_decode($contents, true);
+        }
+        return isset($contents['status']) ? $contents['status'] : false;
     }
 }
