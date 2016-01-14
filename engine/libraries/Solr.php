@@ -935,6 +935,11 @@ class Solr
         return curl_post($this->getSolrUrl() . 'schema/?wt=json', json_encode($fields), array("Content-Type: application/json; charset=utf-8"));
     }
 
+    function config($fields)
+    {
+        return curl_post($this->getSolrUrl() . 'config/?wt=json', json_encode($fields), array("Content-Type: application/json; charset=utf-8"));
+    }
+
 
     function add_json_commit($docs)
     {
