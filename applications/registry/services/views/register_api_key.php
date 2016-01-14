@@ -53,7 +53,7 @@
 
 	<div class="span6" style="margin-top:70px;">
 		<div class="box">
-			<p><span class="label label-warning">What is this????</span></p>
+			<p><span class="label label-warning">What is this?</span></p>
 			<div>
 				<p>
 					All requests to our web services require the use of an API key (in the URL)
