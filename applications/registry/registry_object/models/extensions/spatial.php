@@ -15,7 +15,7 @@ class Spatial_Extension extends ExtensionBase
 		$sxml = $this->ro->getSimpleXML();	
 		$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
 		$spatial_elts = $sxml->xpath('//ro:spatial');
-		
+
 		foreach ($spatial_elts AS $spatial)
 		{
 			$north = null;
@@ -154,7 +154,7 @@ class Spatial_Extension extends ExtensionBase
 		$sxml = $this->ro->getSimpleXML();	
 		$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);	
 		$spatial_elts = $sxml->xpath('//ro:spatial');
-		
+
 		foreach ($spatial_elts AS $spatial)
 		{
 			
@@ -193,6 +193,7 @@ class Spatial_Extension extends ExtensionBase
 					}
 				  	$tok = strtok(";");
 				}
+
 				if($this->isValidWSEN($west, $south, $east, $north)){
 					if($north == $south && $east == $west){
 						$coords[] = $east.",".$north;	
@@ -359,14 +360,13 @@ class Spatial_Extension extends ExtensionBase
 
 	function isValidWSEN($west = null, $south = null, $east = null, $north = null)
 	{
-
-		if($west == null || $west < -180 || $west > 180)
+		if($west === null || $west < -180 || $west > 180)
 			return false; 
-		else if($east == null || $east < -180 || $east > 180)
+		else if($east === null || $east < -180 || $east > 180)
 			return false;
-		else if($north == null || $north < -90 || $north > 90)
+		else if($north === null || $north < -90 || $north > 90)
 			return false;
-		else if($south == null || $south < -90 || $south > 90)
+		else if($south === null || $south < -90 || $south > 90)
 			return false;
 		else
 			return true;
