@@ -113,12 +113,16 @@ class Services extends MX_Controller {
 
             $params = array('contact_email'=>$this->input->post('contact_email'),
                 'organisation'=>$this->input->post('organisation'),
-                'purpose'=>$this->input->post('purpose'));
+                'purpose'=>$this->input->post('purpose'),
+                'sector'=>$this->input->post('sector'),
+                'ip'=>$this->input->ip_address());
+
+            $base_url=$this->config->item('default_base_url');
 
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_URL => 'http://devl.ands.org.au/workareas/liz/core/api/api_key/register/?api_key=api',
+                CURLOPT_URL => $base_url.'api/api_key/register/?api_key=api',
                 CURLOPT_POST => 1,
                 CURLOPT_POSTFIELDS => $params,
             ));
@@ -129,7 +133,6 @@ class Services extends MX_Controller {
             curl_close($curl);
 
 			$this->load->view('show_api_key', $data['data']);
-
 		}
 	}
 
