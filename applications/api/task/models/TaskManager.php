@@ -197,7 +197,15 @@ class TaskManager
          * Fix bad records (records that are in the index but not in database)
          */
         $limit = 50;
-        $records = $this->findRandomRecords($limit);
+
+        //find random records that are not indexed yet
+        $records = $this->findUnIndexedRecords($limit);
+        //find random bad indices
+        if (!$records || sizeof($records)==0) $records = $this->findBadIndicies($limit);
+        //find random records as last resort
+        if (!$records || sizeof($records)==0) $records = $this->findRandomRecords($limit);
+
+        // sync records
         if ($records && sizeof($records) > 0) {
             $params = [
                 'type' => 'ro',
@@ -233,6 +241,47 @@ class TaskManager
         } else {
             throw new Exception($this->db->_error_message());
         }
+    }
+
+    /**
+     * Find bad index
+     * take a sample of 1000 records in SOLR
+     * find if they exist in the DB and has status of PUBLISHED
+     * @param int $limit
+     * @return array
+     */
+    private function findBadIndicies($limit = 50){
+        $this->ci->load->library('solr');
+        $solrResult = $this->ci->solr
+            ->setOpt('rows', 10000)
+            ->setOpt('fl', 'id')
+            ->setOpt('sort', 'random_'.time().' desc')
+            ->executeSearch(true);
+        $idSOLR = array();
+        foreach($solrResult['response']['docs'] as $doc) {
+            $idSOLR[] = $doc['id'];
+        }
+
+
+        $dbResult = $this->db->select('registry_object_id')
+            ->from('registry_objects')
+            ->where('status', 'PUBLISHED')
+            ->where_in('registry_object_id', $idSOLR)
+            ->get();
+        $idDB = array();
+        foreach($dbResult->result_array() as $row) {
+            $idDB[] = $row['registry_object_id'];
+        }
+
+        $badIndicies = array_diff($idDB, $idSOLR);
+        $badIndicies = array_splice($badIndicies, 0, $limit);
+        return $badIndicies;
+
+    }
+
+    private function findUnIndexedRecords($limit = 50) {
+        //require last_sync in registry_objects
+        return false;
     }
 
     /**
