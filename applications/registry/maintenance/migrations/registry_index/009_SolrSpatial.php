@@ -59,8 +59,9 @@ class SolrSpatial extends GenericSolrMigration
      */
     function up()
     {
-        return $this->ci->solr->schema([
-            'add-field' => $this->getFields(),
+        $result = array();
+        $result[] = parent::up();
+        $result[] = $this->ci->solr->schema([
             'replace-field-type' => [
                 'name' => 'location_rpt',
                 'class' => 'solr.SpatialRecursivePrefixTreeFieldType',
@@ -71,6 +72,7 @@ class SolrSpatial extends GenericSolrMigration
                 'units' => 'degrees'
             ]
         ]);
+        return $result;
     }
 
     /**
@@ -79,12 +81,9 @@ class SolrSpatial extends GenericSolrMigration
      */
     function down()
     {
-        $delete_fields = [];
-        foreach ($this->getFields() as $field) {
-            $delete_fields[] = ['name' => $field['name']];
-        }
-        return $this->ci->solr->schema([
-            'delete-field' => $delete_fields,
+        $result = array();
+        $result[] = parent::up();
+        $result[] = $this->ci->solr->schema([
             'replace-field-type' => [
                 'name' => 'location_rpt',
                 'class' => 'solr.SpatialRecursivePrefixTreeFieldType',
@@ -93,6 +92,7 @@ class SolrSpatial extends GenericSolrMigration
                 'maxDistErr' => '0.001'
             ]
         ]);
+        return $result;
     }
 
 

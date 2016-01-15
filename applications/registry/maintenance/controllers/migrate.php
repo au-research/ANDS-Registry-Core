@@ -52,7 +52,6 @@ class Migrate extends MX_Controller
             rsort($files);
         }
 
-
         //getting the latest migration state
         $latestSuccess = "000";
         if ($migrationStatus = $this->readMigrationStatus()) {

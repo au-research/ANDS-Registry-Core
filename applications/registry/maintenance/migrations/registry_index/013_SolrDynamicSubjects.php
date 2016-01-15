@@ -9,23 +9,15 @@ namespace ANDS;
 
 class SolrDynamicSubjects extends GenericSolrMigration
 {
-    public function up(){
-        $this->ci->load->library('solr');
-        $this->ci->solr->setCore('portal');
-        return $this->ci->solr->schema([
-            'add-dynamic-field' => [
-                ['name' => 'tsubject_*', 'type' => 'string', 'stored' => 'true', 'indexed' => true, 'multiValued' => true]
-            ]
-        ]);
-    }
 
-    public function down(){
-        $this->ci->load->library('solr');
-        $this->ci->solr->setCore('portal');
-        return $this->ci->solr->schema([
-            'delete-dynamic-field' => [
-                ['name' => 'tsubject_*']
-            ]
+    /**
+     * SolrDynamicSubjects constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setDynamicFields([
+            ['name' => 'tsubject_*', 'type' => 'string', 'stored' => 'true', 'indexed' => true, 'multiValued' => true]
         ]);
     }
 }
