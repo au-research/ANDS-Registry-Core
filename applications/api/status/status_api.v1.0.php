@@ -51,6 +51,8 @@ class Status_api
     {
         if ($module == 'harvester' || $module == 'task') {
             return $this->getDaemonStatus($module);
+        } else if($module == 'solr') {
+            return $this->getSOLRStatus() ? array_merge($this->getSOLRStatus(), ['RUNNING'=>true]) : ['RUNNING'=>false];
         }
         return false;
     }
@@ -65,7 +67,7 @@ class Status_api
         $result = [
             'harvester' => $this->getDaemonStatus('harvester'),
             'task' => $this->getDaemonStatus('task'),
-            'solr' => $this->getSOLRStatus()
+            'solr' => $this->getSOLRStatus() ? array_merge($this->getSOLRStatus(), ['RUNNING'=>true]) : ['RUNNING'=>false]
         ];
         return $result;
     }
