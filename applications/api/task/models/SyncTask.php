@@ -213,28 +213,36 @@ class SyncTask extends Task
     private function syncRO($ids)
     {
         $solr_docs = array();
+        $remove_ids = array();
         if (sizeof($ids) > 0) {
             foreach ($ids as $ro_id) {
                 try {
                     $ro = false;
                     if ($ro_id) $ro = $this->ci->ro->getByID($ro_id);
-                    if ($ro) {
+                    if ($ro && $ro->status != 'PUBLISHED') {
+                        $this->log('roid:' . $ro_id . ' is a '.$ro->status.' record and should be removed from the index');
+                        $remove_ids[] = $ro_id;
+                    }
+                    if ($ro && $ro->status == 'PUBLISHED') {
+
                         if (!$this->indexOnly) {
-//                            $ro->processIdentifiers();
-//                            $ro->addRelationships();
-//                            $ro->update_quality_metadata();
-//                            $ro->enrich();
+                            $ro->processIdentifiers();
+                            $ro->addRelationships();
+                            $ro->update_quality_metadata();
+                            $ro->enrich();
                         }
+
                         $solr_doc = $ro->indexable_json();
                         if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
                             $solr_docs[] = $ro->indexable_json();
                         } else {
                             $this->log('Empty doc found for ROID:'.$ro->id);
                         }
-
                         unset($ro);
                     } else {
+                        //doesn't exist in the database, queue it to be remove from SOLR
                         $this->log('Error: roid:' . $ro_id . ' not found');
+                        $remove_ids[] = $ro_id;
                     }
                 } catch (Exception $e) {
                     throw new Exception('Error: roid:' . $ro_id . ' Message: ' . $e->getMessage());
@@ -254,12 +262,34 @@ class SyncTask extends Task
                 } else {
                     throw new Exception("Adding to SOLR failed: ". json_encode($add_result));
                 }
-//                $commit_result = json_decode($this->ci->solr->commit(), true);
-//                if (isset($commit_result['responseHeader']) && $commit_result['responseHeader']['status'] === 0) {
-//                    $this->log("Commit to Indexed successful")->save();
-//                } else {
-//                    throw new Exception("Commit to SOLR failed: ". json_encode($commit_result));
-//                }
+
+                /**
+                 * Commenting out the following code because:
+                 * If SOLR is set to auto soft commit, we don't need to do a hard commit here
+                 */
+                /*
+                $commit_result = json_decode($this->ci->solr->commit(), true);
+                if (isset($commit_result['responseHeader']) && $commit_result['responseHeader']['status'] === 0) {
+                    $this->log("Commit to Indexed successful")->save();
+                } else {
+                    throw new Exception("Commit to SOLR failed: ". json_encode($commit_result));
+                }
+                */
+
+            } catch (Exception $e) {
+                throw new Exception($e->getMessage());
+            }
+        }
+
+        //remove records
+        if (sizeof($remove_ids) > 0) {
+            try {
+                $remove_result = json_decode($this->ci->solr->deleteByIDsCondition($remove_ids), true);
+                if (isset($remove_result['responseHeader']) && $remove_result['responseHeader']['status'] === 0) {
+                    $this->log("Remove IDS". implode(', ', $remove_ids). ' successful')->save();
+                } else {
+                    throw new Exception("Remove IDS: ". implode(', ', $remove_ids). ' FAILED: '. json_encode($remove_result));
+                }
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());
             }

@@ -62,6 +62,7 @@ class Sync_extension extends ExtensionBase{
 		$json = array();
         $party_service_conn_limit = 200;
 
+        // Not indexing PROV group
         if ($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria"){
             return $json;
         }

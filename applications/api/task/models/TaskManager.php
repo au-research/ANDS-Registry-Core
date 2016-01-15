@@ -15,11 +15,10 @@ class TaskManager
 
     /**
      * List all the tasks that satisfy the status
-     * @param string $status
+     * @param bool|string $status
      * @param int $limit
      * @param int $offset
      * @return string
-     * @throws Exception
      */
     public function listTasks($status = false, $limit = 10, $offset = 0)
     {
@@ -67,7 +66,8 @@ class TaskManager
      * @param $id
      * @return bool
      */
-    public function deleteTask($id){
+    public function deleteTask($id)
+    {
         $query = $this->db->where('id', $id)->delete('tasks');
         if ($query) {
             return true;
@@ -76,7 +76,16 @@ class TaskManager
         }
     }
 
-    public function changeTasksStatus($byStatus, $status){
+    /**
+     * Update all tasks with a status to another status
+     * Useful for mass reassigning, mass rescheduling
+     * @param $byStatus
+     * @param $status
+     * @return string
+     * @throws Exception
+     */
+    public function changeTasksStatus($byStatus, $status)
+    {
         if (strtolower($byStatus) == 'all') {
             throw new Exception("Cannot change status of all tasks");
         }
@@ -95,6 +104,7 @@ class TaskManager
     /**
      * Add a task to the database
      * @param $task
+     * @return bool
      */
     public function addTask($task)
     {
@@ -111,6 +121,12 @@ class TaskManager
         }
     }
 
+    /**
+     * Get a particular task from the database
+     * Returns as a mysql row
+     * @param $id
+     * @return bool
+     */
     public function getTask($id)
     {
         $query = $this->db->get_where('tasks', ['id' => $id]);
@@ -164,6 +180,11 @@ class TaskManager
         return $result;
     }
 
+    /**
+     * Generate a Task object based on the task mysql row
+     * @param $taskResult
+     * @return mixed
+     */
     public function getTaskObject($taskResult)
     {
         $taskType = ucfirst($taskResult['name']);
@@ -189,6 +210,11 @@ class TaskManager
         return false;
     }
 
+    /**
+     * Random maintenance task
+     * @return bool
+     * @throws Exception
+     */
     public function findRandomTask()
     {
         /**
@@ -198,12 +224,23 @@ class TaskManager
          */
         $limit = 50;
 
+        $this->ci->load->library('solr');
+
+        //find records in the index that is not PUBLISHED (bad workflow?)
+        $type = 'Records not PUBLISHED getting indexed';
+        $records = $this->findNonPublishedIndexedRecords($limit);
+
         //find random records that are not indexed yet
-        $records = $this->findUnIndexedRecords($limit);
-        //find random bad indices
-        if (!$records || sizeof($records)==0) $records = $this->findBadIndicies($limit);
+        if (!$records || sizeof($records) == 0) {
+            $type = 'UnIndexed Records and/or bad indices';
+            $records = $this->findUnIndexedRecords($limit);
+        }
+
         //find random records as last resort
-        if (!$records || sizeof($records)==0) $records = $this->findRandomRecords($limit);
+        if (!$records || sizeof($records) == 0) {
+            $type = 'Syncing ' .$limit. ' Random PUBLISHED Records';
+            $records = $this->findRandomRecords($limit);
+        }
 
         // sync records
         if ($records && sizeof($records) > 0) {
@@ -211,26 +248,58 @@ class TaskManager
                 'type' => 'ro',
                 'id' => implode(',', $records)
             ];
-            $taskId = $this->addTask(
-                [
-                    'name' => 'sync',
-                    'type' => 'POKE',
-                    'frequency' => 'ONCE',
-                    'priority' => 1,
-                    'params' => http_build_query($params)
+            $message = [
+                'log' => [
+                    'Random Maintenance Task',
+                    $type
                 ]
-            );
+            ];
+
+            $taskId = $this->addTask([
+                'name' => 'sync',
+                'type' => 'POKE',
+                'frequency' => 'ONCE',
+                'priority' => 1,
+                'params' => http_build_query($params),
+                'message' => json_encode($message, true)
+            ]);
             return $taskId;
         }
         return false;
     }
 
+    /**
+     * Find records that are not PUBLISHED in the index
+     * @param $limit
+     * @return array|bool
+     */
+    private function findNonPublishedIndexedRecords($limit){
+        $solrResult = $this->ci->solr->init()
+            ->setOpt('fl', 'id')
+            ->setOpt('rows', $limit)
+            ->setOpt('q', '-status:PUBLISHED')
+            ->executeSearch(true);
+        if ($solrResult['response']['numFound'] == 0) return false;
+        $ids = array();
+        foreach ($solrResult['response']['docs'] as $doc) {
+            $ids[] = $doc['id'];
+        }
+        return $ids;
+    }
+
+    /**
+     * Find Random Records from the database
+     * @param int $limit
+     * @return array
+     * @throws Exception
+     */
     private function findRandomRecords($limit = 50)
     {
         $query = $this->db
             ->select('registry_object_id')
             ->limit($limit)
             ->order_by('registry_object_id', 'random')
+            ->where('status', 'PUBLISHED')
             ->get('registry_objects');
         if ($query) {
             $result = array();
@@ -244,49 +313,113 @@ class TaskManager
     }
 
     /**
-     * Find bad index
-     * take a sample of 1000 records in SOLR
-     * find if they exist in the DB and has status of PUBLISHED
+     * Find records that are missing/unindexed/bad
      * @param int $limit
      * @return array
      */
-    private function findBadIndicies($limit = 50){
-        $this->ci->load->library('solr');
+    private function findUnIndexedRecords($limit = 50)
+    {
+        $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
+        $this->ci->load->model('registry/data_source/data_sources', 'ds');
+
+        //collect database counts
+        $query = $this->db->select('data_source_id, value')
+            ->from('data_source_attributes')
+            ->where('attribute', 'count_PUBLISHED')
+            ->where('value >', 0)->get();
+        $dbData = array();
+        foreach ($query->result_array() as $row) {
+            $dbData[$row['data_source_id']] = $row['value'];
+        }
+
+        //collect SOLR count via facets
         $solrResult = $this->ci->solr
-            ->setOpt('rows', 10000)
+            ->init()
+            ->setOpt('rows', 0)
             ->setOpt('fl', 'id')
-            ->setOpt('sort', 'random_'.time().' desc')
+            ->setFacetOpt('field', 'data_source_id')
+            ->setFacetOpt('limit', '-1')
             ->executeSearch(true);
-        $idSOLR = array();
-        foreach($solrResult['response']['docs'] as $doc) {
-            $idSOLR[] = $doc['id'];
+        $solrData = array();
+        $solrFacetResult = $solrResult['facet_counts']['facet_fields']['data_source_id'];
+        for ($i = 0; $i < sizeof($solrFacetResult) - 1; $i += 2) {
+            $solrData[$solrFacetResult[$i]] = $solrFacetResult[$i + 1];
         }
 
-
-        $dbResult = $this->db->select('registry_object_id')
-            ->from('registry_objects')
-            ->where('status', 'PUBLISHED')
-            ->where_in('registry_object_id', $idSOLR)
-            ->get();
-        $idDB = array();
-        foreach($dbResult->result_array() as $row) {
-            $idDB[] = $row['registry_object_id'];
+        //get the differences
+        $diff = array_diff($dbData, $solrData);
+        if (sizeof($diff) == 0) $diff = array_diff($solrData, $dbData);
+        $result = array();
+        foreach ($diff as $key => $value) {
+            $result[$key] = [
+                'dbCount' => $dbData[$key],
+                'solrCount' => $solrData[$key],
+                'missing' => $dbData[$key] - $solrData[$key]
+            ];
         }
 
-        $badIndicies = array_diff($idDB, $idSOLR);
-        $badIndicies = array_splice($badIndicies, 0, $limit);
-        return $badIndicies;
+        // Populate the return IDs with the right differences
+        // This requires generating a list of IDs from SOLR and from DBs and compare them
+        $ids = array();
+        if (sizeof($result) > 0) {
+            foreach ($result as $key => $value) {
+                if ((int)$value['missing'] != 0 && sizeof($ids) < $limit) {
+                    $solrIDs = $this->getIDsFromSOLRByDataSource($key);
+                    $dataSourceIDs = $this->ci->ro->getIDsByDataSourceID($key, false, 'PUBLISHED');
+                    $difference = array_diff($solrIDs, $dataSourceIDs);
+                    if (sizeof($difference) == 0) $difference = array_diff($dataSourceIDs, $solrIDs);
+                    if (sizeof($difference) == 0) {
+                        //need a recount
+                        $dataSource = $this->ci->ds->getByID($key);
+                        $dataSource->updateStats();
+                        unset($dataSource);
+                    } else {
+                        $ids = array_merge($ids, $difference);
+                    }
+                }
+            }
+        }
 
+        /*
+         * Hard coded
+         * Reason: not indexing PROV group, refer to indexable_json
+         */
+        foreach ($ids as $key=>$id) {
+            $ro = $this->ci->ro->getByID($id);
+            if ($ro) {
+                if ($ro->class=='activity' && $ro->group=="Public Record Office Victoria") {
+                    unset($ids[$key]);
+                }
+            }
+            unset($ro);
+        }
+
+        return $ids;
     }
 
-    private function findUnIndexedRecords($limit = 50) {
-        //require last_sync in registry_objects
-        return false;
+    /**
+     * Returns a list of ID that belongs to a data source
+     * @param $dataSourceID
+     * @return array
+     */
+    private function getIDsFromSOLRByDataSource($dataSourceID)
+    {
+        $solrResult = $this->ci->solr
+            ->init()
+            ->setOpt('rows', 100000)
+            ->setOpt('fl', 'id')
+            ->setOpt('fq', '+data_source_id:' . $dataSourceID)->executeSearch(true);
+        $result = array();
+        foreach ($solrResult['response']['docs'] as $doc) {
+            $result[] = $doc['id'];
+        }
+        return $result;
     }
 
     /**
      * TaskManager constructor.
      * @param $db
+     * @param bool $ci
      */
     public function __construct($db, $ci = false)
     {
@@ -297,6 +430,7 @@ class TaskManager
 
     /**
      * @param mixed $db
+     * @return $this
      */
     public function setDb($db)
     {
@@ -314,6 +448,7 @@ class TaskManager
 
     /**
      * @param mixed $ci
+     * @return $this
      */
     public function setCi($ci)
     {
