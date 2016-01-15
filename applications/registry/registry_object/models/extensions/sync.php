@@ -255,6 +255,10 @@ class Sync_extension extends ExtensionBase{
                             $pred = 178;
                         } elseif ($pred <= -179) {
                             $pred = -178;
+                        } elseif ($pred == 90) {
+                            $pred = 86;
+                        } elseif ($pred == -90) {
+                            $pred = -86;
                         }
                     }
                     $point = implode(' ', $predicate);
@@ -265,6 +269,7 @@ class Sync_extension extends ExtensionBase{
                 if (sizeof($uniquePoints) < 2) {
                     $json['spatial_coverage_extents_wkt'][] = 'POINT(' . implode(', ', $uniquePoints) . ')';
                 } else if (sizeof($uniquePoints) < 3) {
+
                     $json['spatial_coverage_extents_wkt'][] = 'LINESTRING(' . implode(', ', $uniquePoints) . ')';
                 } else if (sizeof($points) > 2  && sizeof($uniquePoints) != 3) {
 
@@ -286,6 +291,12 @@ class Sync_extension extends ExtensionBase{
 				$json['spatial_coverage_centres'][] = $extents['center'];
 			}
 			$json['spatial_coverage_area_sum'] = $sumOfAllAreas;
+
+            //too big of a polygon, possibly covering the entire world, which is not useful and make JTS choke
+
+
+//            unset($json['spatial_coverage_extents_wkt']);
+
 		}
 
 		//temporal
