@@ -359,7 +359,7 @@ Y2  - '.date("Y-m-d")."
             $query = "//ro:collection/@dateModified";
         }
         elseif($this->gXPath->evaluate("count(//ro:collection/@dateAccessioned)")>0) {
-            $query = "ro:collection/@dateAccessioned";
+            $query = "//ro:collection/@dateAccessioned";
         }
 
         if($query!=''){

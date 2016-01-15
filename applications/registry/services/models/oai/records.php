@@ -138,8 +138,8 @@ class Records extends CI_Model
                                    }
                                    if ($args["allowedType"])
                                    {
-                                           $db->where_in("registry_object_attributes.value",
-                                               $args["allowedType"]);
+                                       $db->where_in("registry_object_attributes.value",
+                                           $args["allowedType"]);
                                    }
 							       $db->order_by("registry_objects.registry_object_id", "asc");
 							       return $db;
