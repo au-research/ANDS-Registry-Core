@@ -242,7 +242,7 @@ class SyncTask extends Task
                     } else {
                         //doesn't exist in the database, queue it to be remove from SOLR
                         $this->log('Error: roid:' . $ro_id . ' not found');
-                        $remove_ids[] = $ro_id;
+                        if ($ro_id) $remove_ids[] = $ro_id;
                     }
                 } catch (Exception $e) {
                     throw new Exception('Error: roid:' . $ro_id . ' Message: ' . $e->getMessage());

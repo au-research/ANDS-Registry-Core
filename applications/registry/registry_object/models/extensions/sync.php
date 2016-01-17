@@ -254,13 +254,16 @@ class Sync_extension extends ExtensionBase{
                     foreach ($predicate as &$pred) {
                         if ((float) $pred >= 179) {
                             $pred = 178;
-                        } elseif ($pred <= -179) {
+                        } elseif ((float) $pred <= -179) {
                             $pred = -178;
-                        } elseif ($pred == 90) {
+                        } elseif ((float) $pred == 90) {
                             $pred = 86;
-                        } elseif ($pred == -90) {
+                        } elseif ((float) $pred == -90) {
                             $pred = -86;
                         }
+                    }
+                    if (isset($predicate[1]) && (float) $predicate[1] > 90) {
+                        $predicate[1] = 86;
                     }
                     $point = implode(' ', $predicate);
                 }
@@ -285,7 +288,7 @@ class Sync_extension extends ExtensionBase{
                 } elseif (sizeof($uniqueLonLat['lat']) == 1) {
                     sort($uniqueLonLat['lon'], SORT_NUMERIC);
                     $points = array(
-                        $uniqueLonLat['lat'][0] . ' ' . $uniqueLonLat['lat'][0],
+                        $uniqueLonLat['lat'][0] . ' ' . $uniqueLonLat['lon'][0],
                         $uniqueLonLat['lat'][0] . ' ' . end($uniqueLonLat['lon'])
                     );
                 }
