@@ -234,7 +234,7 @@ class SyncTask extends Task
 
                         $solr_doc = $ro->indexable_json();
                         if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
-                            $solr_docs[] = $ro->indexable_json();
+                            $solr_docs[] = $solr_doc;
                         } else {
                             $this->log('Empty doc found for ROID:'.$ro->id);
                         }

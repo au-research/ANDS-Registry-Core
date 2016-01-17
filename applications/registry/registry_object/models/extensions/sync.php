@@ -265,6 +265,31 @@ class Sync_extension extends ExtensionBase{
                     $point = implode(' ', $predicate);
                 }
 
+                // Fix straight line, if all Lat or all Lons are the same
+                $uniqueLonLat = array('lat' => [], 'lon' => []);
+                foreach ($points as &$point) {
+                    $predicate = explode(' ', $point);
+                    $uniqueLonLat['lat'][] = $predicate[0] ? $predicate[0] : '';
+                    $uniqueLonLat['lon'][] = $predicate[1] ? $predicate[1] : '';
+                }
+                $uniqueLonLat['lat'] = array_unique($uniqueLonLat['lat']);
+                $uniqueLonLat['lon'] = array_unique($uniqueLonLat['lon']);
+
+                //Simplify to a straight line
+                if (sizeof($uniqueLonLat['lon']) == 1) {
+                    sort($uniqueLonLat['lat'], SORT_NUMERIC);
+                    $points = array(
+                        $uniqueLonLat['lat'][0] . ' ' . $uniqueLonLat['lon'][0],
+                        end($uniqueLonLat['lat']) . ' ' . $uniqueLonLat['lon'][0]
+                    );
+                } elseif (sizeof($uniqueLonLat['lat']) == 1) {
+                    sort($uniqueLonLat['lon'], SORT_NUMERIC);
+                    $points = array(
+                        $uniqueLonLat['lat'][0] . ' ' . $uniqueLonLat['lat'][0],
+                        $uniqueLonLat['lat'][0] . ' ' . end($uniqueLonLat['lon'])
+                    );
+                }
+
                 $uniquePoints = array_unique($points);
 
                 if (sizeof($uniquePoints) < 2) {
@@ -292,11 +317,6 @@ class Sync_extension extends ExtensionBase{
 				$json['spatial_coverage_centres'][] = $extents['center'];
 			}
 			$json['spatial_coverage_area_sum'] = $sumOfAllAreas;
-
-            //too big of a polygon, possibly covering the entire world, which is not useful and make JTS choke
-
-
-//            unset($json['spatial_coverage_extents_wkt']);
 
 		}
 
