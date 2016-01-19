@@ -1,5 +1,5 @@
 <?php
-	$order = array('researchers','fundingAmount','fundingScheme','brief', 'full');
+	$order = array('researchers','brief', 'fundingAmount','fundingScheme','full');
 	$omit = array('logo');
     $researchersfound='no';
     $prev_type = '';
@@ -10,7 +10,12 @@
 		<!-- <div class="panel-heading"> Descriptions </div> -->
 		<div class="panel-body swatch-white">
             @if($ro->core['type']=='grant')
-            <h2>Research Grant</h2>
+            <h2 style="display:inline;">Research Grant</h2>
+            @foreach($ro->identifiers as $col)
+                @if($col['type']=='purl' && isset($col['identifier']['href']) && $col['identifier']['href'] != '')
+                <?php echo '<span style="display:inline;padding-left:10px;">[Cite as <a href="' . $col['identifier']['href'] . '" title="'.$col['identifier']['href'].'">' . $col['value'] . '</a>]</span><br/><br/>';?>
+                @endif
+            @endforeach
             @endif
             @if($ro->core['type']=='project')
             <h2>Research Project</h2>
