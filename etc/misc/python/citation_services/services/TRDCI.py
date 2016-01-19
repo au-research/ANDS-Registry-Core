@@ -44,6 +44,7 @@ import xml.dom.minidom
 import xml.sax.saxutils
 
 import pymysql
+import pymysql.constants.CLIENT
 
 # The base module contains the BaseService class.
 from . import base
@@ -474,6 +475,9 @@ class TRDCIService(base.BaseService):
                                 [r[self.CITATION_RESULT_KEY]
                                  ['timesCitedAllDB'],
                                  r['registry_object_id']])
+                    # This use of cur.rowcount relies on the FOUND_ROWS
+                    # setting on the connection. (See the comment in
+                    # open_portal_db_connection() below.)
                     if cur.rowcount == 0:
                         # The row is missing, so insert it
                         cur.execute(self.PORTAL_INSERT_TEMPLATE,
@@ -502,11 +506,18 @@ class TRDCIService(base.BaseService):
         all those needed to establish the connection.
         """
         try:
+            # Note the use of the FOUND_ROWS setting. This makes
+            # UPDATE statements return the number of rows matched
+            # by the WHERE clause, rather than the number of rows
+            # with changed values. (E.g., updating the value "1" to "1"
+            # does not "normally" count as an update. With this setting,
+            # it does.)
             return pymysql.connect(
                 host=self._params['database_host'],
                 user=self._params['database_user'],
                 passwd=self._params['database_password'],
-                db=self._params['portal_database_name'])
+                db=self._params['portal_database_name'],
+                client_flag=pymysql.constants.CLIENT.FOUND_ROWS)
         except Exception as e:
             print("Database Exception:", e)
             sys.exit(1)
