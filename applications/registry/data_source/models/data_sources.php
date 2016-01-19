@@ -223,7 +223,7 @@ class Data_sources extends CI_Model {
 	function getAll($limit = 16, $offset =0, $idOnly = false)
 	{
 		$matches = array();
-        $this->db->order_by('slug');
+        $this->db->order_by('title');
 		if($limit==0){
 			$query = $this->db->select("data_source_id")->get('data_sources');
 		}else{
