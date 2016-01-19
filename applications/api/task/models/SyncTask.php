@@ -195,11 +195,15 @@ class SyncTask extends Task
         $limit = $this->chunkSize;
         $ids = $this->ci->ro->getIDsByDataSourceID($dsID, false, 'PUBLISHED', $offset, $limit);
 
-        $this->log('Syncing chunk ' . $this->chunkPos . ' of Data Source ' . $dsID . ' for ' . sizeof($ids) . ' records');
-        try {
-            $this->syncRO($ids);
-        } catch (Exception $e) {
-            throw new Exception('Error DSID:' . $dsID . ' Message: ' . $e->getMessage());
+        if (sizeof($ids) > 0) {
+            $this->log('Syncing chunk ' . $this->chunkPos . ' of Data Source ' . $dsID . ' for ' . sizeof($ids) . ' records');
+            try {
+                $this->syncRO($ids);
+            } catch (Exception $e) {
+                throw new Exception('Error DSID:' . $dsID . ' Message: ' . $e->getMessage());
+            }
+        } else {
+            $this->log('No records to sync for data source: '.$dsID);
         }
 
     }
