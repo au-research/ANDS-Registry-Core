@@ -3,7 +3,7 @@
 /**
  * Class Migrate
  * Doing migration on the Registry
- * Usage: php index.php registry maintenance migrate <module>
+ * Usage: php index.php registry maintenance migrate doMigration <module>
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 class Migrate extends MX_Controller
@@ -27,7 +27,7 @@ class Migrate extends MX_Controller
     /**
      * Migrate
      * Should run from shell
-     * @usage php index.php registry maintenance migrate registryIndex [up|down] [until="000"]
+     * @usage php index.php registry maintenance migrate doMigration registryIndex [up|down] [until="000"]
      * @param $context
      * @param string $method
      * @param bool|false $until

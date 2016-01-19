@@ -293,28 +293,43 @@ class Sync_extension extends ExtensionBase{
                     );
                 }
 
+                //final check of points, make sure they have value
+                foreach ($points as $key=>&$point) {
+                    $predicate = explode(' ', $point);
+                    if (!isset($predicate[0])
+                        || !isset($predicate[1])
+                        || trim($predicate[0]) == ''
+                        || trim($predicate[0]) != ''
+                    ) {
+                        unset($points[$key]);
+                    }
+                }
+
                 $uniquePoints = array_unique($points);
 
-                if (sizeof($uniquePoints) < 2) {
-                    $json['spatial_coverage_extents_wkt'][] = 'POINT(' . implode(', ', $uniquePoints) . ')';
-                } else if (sizeof($uniquePoints) < 3) {
+                if (sizeof($points) > 0) {
+                    if (sizeof($uniquePoints) < 2) {
+                        $json['spatial_coverage_extents_wkt'][] = 'POINT(' . implode(', ', $uniquePoints) . ')';
+                    } else if (sizeof($uniquePoints) < 3) {
 
-                    $json['spatial_coverage_extents_wkt'][] = 'LINESTRING(' . implode(', ', $uniquePoints) . ')';
-                } else if (sizeof($points) > 2  && sizeof($uniquePoints) != 3) {
+                        $json['spatial_coverage_extents_wkt'][] = 'LINESTRING(' . implode(', ', $uniquePoints) . ')';
+                    } else if (sizeof($points) > 2  && sizeof($uniquePoints) != 3) {
 
-                    //fix last point
-                    if ($points[0] != end($points)) {
-                        $json['spatial_coverage_extents_wkt'][] = 'LINESTRING(' . implode(', ', $points) . ')';
-                    } else if(!$this->ro->isSelfIntersectPolygon($points)) {
-                        foreach ($points as &$point) {
-                            $point = (is_array($point)) ? implode(' ', $point) : $point;
+                        //fix last point
+                        if ($points[0] != end($points)) {
+                            $json['spatial_coverage_extents_wkt'][] = 'LINESTRING(' . implode(', ', $points) . ')';
+                        } else if(!$this->ro->isSelfIntersectPolygon($points)) {
+                            foreach ($points as &$point) {
+                                $point = (is_array($point)) ? implode(' ', $point) : $point;
+                            }
+                            $json['spatial_coverage_extents_wkt'][] = 'POLYGON((' . implode(', ', $points) . '))';
                         }
-                        $json['spatial_coverage_extents_wkt'][] = 'POLYGON((' . implode(', ', $points) . '))';
-                    }
 
-                } else if (sizeof($points) < 2) {
-                    $json['spatial_coverage_extents_wkt'][] = 'POINT(' . implode(', ', $points) . ')';
+                    } else if (sizeof($points) < 2) {
+                        $json['spatial_coverage_extents_wkt'][] = 'POINT(' . implode(', ', $points) . ')';
+                    }
                 }
+
 
 				$sumOfAllAreas += $extents['area'];
 				$json['spatial_coverage_centres'][] = $extents['center'];

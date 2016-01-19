@@ -253,6 +253,7 @@ class SyncTask extends Task
             throw new Exception("No records found");
         }
 
+
         //indexing in SOLR
         if (sizeof($solr_docs) > 0) {
             try {
