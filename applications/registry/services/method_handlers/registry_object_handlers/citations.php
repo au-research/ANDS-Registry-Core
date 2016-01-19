@@ -355,14 +355,14 @@ Y2  - '.date("Y-m-d")."
         elseif($this->gXPath->evaluate("count(//ro:collection/ro:dates[@type='dc.created'])")>0) {
             $query = "//ro:collection/ro:dates[@type='dc.created']";
         }
-        elseif($this->gXPath->evaluate("count(//ro:collection/@dateModified)")>0) {
+        elseif($this->gXPath->evaluate("count(//ro:collection/@dateModified[. != ''])")>0) {
             $query = "//ro:collection/@dateModified";
         }
-        elseif($this->gXPath->evaluate("count(//ro:collection/@dateAccessioned)")>0) {
+        elseif($this->gXPath->evaluate("count(//ro:collection/@dateAccessioned[. != ''])")>0) {
             $query = "//ro:collection/@dateAccessioned";
         }
-
         if($query!=''){
+
             $dates = $this->gXPath->query($query);
             foreach($dates as $date) {
                 //assume only Year is given
