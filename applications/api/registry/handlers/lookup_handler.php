@@ -34,8 +34,8 @@ class LookupHandler extends Handler
         if (!$ro) {
             throw new Exception('No Registry Object Found');
         }
-
-        $result = array(
+        $r['status'] = 0;
+        $r['result'] = array(
             'id' => $ro->id,
             'rda_link' => portal_url($ro->slug),
             'key' => $ro->key,
@@ -46,11 +46,11 @@ class LookupHandler extends Handler
             'group' => $ro->group,
         );
         if ($ro->getMetadata('the_description')) {
-            $result['description'] = $ro->getMetadata('the_description');
+            $r['result']['description'] = $ro->getMetadata('the_description');
         } else {
-            $result['description'] = '';
+            $r['result']['description'] = '';
         }
 
-        return $result;
+        return $r;
     }
 }
