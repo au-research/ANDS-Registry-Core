@@ -294,6 +294,65 @@ class Activity_grants_extension extends ExtensionBase
     }
 
     /**
+     * Recursively get all of the activities that are related to this object via a specific relation
+     * Use for getting all funded activities for a funder to get all programs
+     * @param bool|false $relatedObjects
+     * @param string $relation
+     * @param array $processed
+     * @return array
+     */
+    public function getChildActivities($relatedObjects = false, $relation = 'isFundedBy', $processed = array()){
+        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        if ($this->ro->class == 'party') {
+            $relation = 'isFundedBy';
+        } elseif ($this->ro->class == 'activity') {
+            $relation = 'isPartOf';
+        }
+        $result = array();
+        if ($relatedObjects) {
+            foreach ($relatedObjects as $relatedObject) {
+                if ($relatedObject['relation_type'] == $relation
+                    && !in_array($relatedObject['registry_object_id'], $processed)
+                ) {
+                    $result[] = $relatedObject;
+                    array_push($processed, $relatedObject['registry_object_id']);
+                    $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
+                    $childs = $record->getChildActivities(false, 'isPartOf', $processed);
+                    if (sizeof($childs) > 0) {
+                        $result = array_merge($result, $childs);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Get all of the data output from an activity
+     * relatedObject[class=collection][relation=isOutputOf] from a recursively generated list of child activities
+     * @param bool|false $childActivities
+     * @param bool|false $relatedObjects
+     * @return array
+     */
+    public function getDataOutput($childActivities = false, $relatedObjects = false){
+        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        if (!$childActivities) $childActivities = $this->ro->getChildActivities($relatedObjects);
+
+        $result = array();
+        foreach ($childActivities as $activity) {
+            $activityObject = $this->_CI->ro->getByID($activity['registry_object_id']);
+            $related = $activityObject->getAllRelatedObjects(false, false, true);
+            foreach ($related as $relatedObject) {
+                if ($relatedObject['relation_type'] == 'isOutputOf') {
+                    $result[] = $relatedObject;
+                }
+            }
+        }
+        return $result;
+    }
+
+
+    /**
      * Helper method to return the gXPath
      * @return DOMXpath
      */

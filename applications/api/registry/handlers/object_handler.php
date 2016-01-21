@@ -118,10 +118,10 @@ class ObjectHandler extends Handler{
                 switch ($m1) {
                     case 'get':
                     case 'registry':
-                        $result[$m1] = $this->ro_handle('core');
+                        $result[$m1] = $this->ro_handle('core', $resource);
                         break;
                     case 'relationships':
-                        $result[$m1] = $this->relationships_handler();
+                        $result[$m1] = $this->relationships_handler($resource);
                         break;
                     default:
                         try {
@@ -171,28 +171,27 @@ class ObjectHandler extends Handler{
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @return array
      */
-    private function relationships_handler()
+    private function relationships_handler($resource = false)
     {
-        $relationships = array();
+        if (!$resource) throw new Exception("No resource constructed for relationship handler");
 
-        $ci = &get_instance();
         $this->ci->load->model('registry_object/registry_objects', 'ro');
 
         $limit = isset($_GET['related_object_limit']) ? $_GET['related_object_limit'] : 5;
         $types = array('collection', 'party_one', 'party_multi', 'activity', 'service');
 
-        $record = $this->ci->ro->getByID($this->params['identifier']);
-
-        $relationships = $record->getConnections(true, null, $limit, 0, true);
+        $record = $resource['ro'];
+        $relationships = $record->getConnections(true, null, $limit, 0, false);
         $relationships = $relationships[0];
 
         if (isset($relationships['activity'])) {
+            //fix array key values
+            $relationships['activity'] = array_values($relationships['activity']);
             for ($i = 0; $i < count($relationships['activity']); $i++) {
                 $funder = $this->getFunders($relationships['activity'][$i]['registry_object_id']);
                 if ($funder != '') {
                     $relationships['activity'][$i]['funder'] = "(funded by " . $funder . ")";
                 }
-
             }
         }
 
@@ -200,9 +199,9 @@ class ObjectHandler extends Handler{
         $this->ci->load->library('solr');
         $search_class = $record->class;
         if ($record->class == 'party') {
-            if (strtolower($this->ro->type) == 'person') {
+            if (strtolower($record->type) == 'person') {
                 $search_class = 'party_one';
-            } elseif (strtolower($this->ro->type) == 'group') {
+            } elseif (strtolower($record->type) == 'group') {
                 $search_class = 'party_multi';
             }
         }
@@ -224,9 +223,22 @@ class ObjectHandler extends Handler{
                 $relationships[$type . '_count_solr'] = $result['response']['numFound'];
             }
         }
+        
+        if ($this->params['object_submodule']) {
+            if ($this->params['object_submodule'] == 'grants') {
+                $relatedObjects = $record->getAllRelatedObjects(false, false, true);
+                $childActivities = $record->getChildActivities($relatedObjects);
+                $relationships['grants'] = [
+                    'programs' => $childActivities,
+                    'data_output' => $record->getDataOutput($childActivities, $relatedObjects),
+                    'funders' => $record->getFunders()
+                ];
+            }
+        }
 
         return $relationships;
     }
+
 
     /**
      * Helper method for relationship_handlers
