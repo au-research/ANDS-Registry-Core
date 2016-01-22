@@ -343,11 +343,74 @@ class Activity_grants_extension extends ExtensionBase
             $activityObject = $this->_CI->ro->getByID($activity['registry_object_id']);
             $related = $activityObject->getAllRelatedObjects(false, false, true);
             foreach ($related as $relatedObject) {
-                if ($relatedObject['relation_type'] == 'isOutputOf') {
+                if ($relatedObject['relation_type'] == 'isOutputOf'
+                    || $relatedObject['relation_type'] == 'hasOutput') {
                     $result[] = $relatedObject;
+                }
+                //todo relatedInfo of relation_type isOutputOf type activity
+            }
+        }
+
+        //remove duplicates
+        $result = array_values(array_map("unserialize", array_unique(array_map("serialize", $result))));
+
+        return $result;
+    }
+
+    /**
+     * Get all the publications from an activity and all of it's child activities
+     * For each of the listed activity, get the purl assigned to it
+     * For each of the purl, query Trove API to get the publication
+     * @param bool|false $childActivitites
+     * @param bool|false $relatedObjects
+     * @return array
+     */
+    public function getPublications($childActivitites = false, $relatedObjects = false){
+        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        if (!$childActivitites) $childActivitites = $this->ro->getChildActivities($relatedObjects);
+
+        // Construct a list of purls from all the child activities
+        $purls = array();
+        if ($childActivitites) {
+            foreach ($childActivitites as $activity) {
+                //find all identifier type purl
+                $record = $this->_CI->ro->getByID($activity['registry_object_id']);
+                $identifiers = $record->getIdentifiers();
+                foreach ($identifiers as $identifier) {
+                    if ($identifier['identifier_type'] == 'purl') {
+                        $purls[] = $identifier['identifier'];
+                    }
+                }
+                unset($record);
+            }
+        }
+
+        /**
+         * Probably need a refactor
+         * TroveAPI possibly need a function that resolves a list of purls into publications
+         * Instead of doing them here
+         */
+        $this->_CI->load->library('TroveAPI');
+        $result = array();
+        foreach ($purls as $purl) {
+            $troveAPIResponse = $this->_CI->troveapi->resolveQuery('"'.$purl.'"', 'article', 'workverions');
+            if ($troveAPIResponse) {
+                foreach ($troveAPIResponse['response']['zone'] as $zone) {
+                    if ($zone['name']=='article' && isset($zone['records']) && isset($zone['records']['work'])) {
+                        foreach ($zone['records']['work'] as $work) {
+                            $result[] = [
+                                'purl' => $purl,
+                                'id' => $work['id'],
+                                'troveUrl' => $work['troveUrl'],
+                                'title' => $work['title'],
+                                'identifier' => $work['identifier']
+                            ];
+                        }
+                    }
                 }
             }
         }
+
         return $result;
     }
 

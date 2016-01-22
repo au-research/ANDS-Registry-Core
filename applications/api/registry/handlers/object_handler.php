@@ -231,7 +231,8 @@ class ObjectHandler extends Handler{
                 $relationships['grants'] = [
                     'programs' => $childActivities,
                     'data_output' => $record->getDataOutput($childActivities, $relatedObjects),
-                    'funders' => $record->getFunders()
+                    'funders' => $record->getFunders(),
+                    'publications' => $record->getPublications($childActivities, $relatedObjects)
                 ];
             }
         }
