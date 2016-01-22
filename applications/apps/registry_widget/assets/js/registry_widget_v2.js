@@ -253,6 +253,10 @@
 	//catch all .registry_widget and apply registry_widget() with default settings on
 	$('.registry_widget').each(function(){
 		var elem = $(this);
+        var api_key = (elem.attr('api_key'));
+        if(api_key === 'undefined'){
+            api_key='public';
+        }
 		var widget = elem.registry_widget({api_key: 'public'});
 	});
 })( jQuery );

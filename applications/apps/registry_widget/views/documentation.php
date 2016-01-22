@@ -22,8 +22,8 @@
                 <input type="text" class="registry_widget">
             </form>
 
-            <div id="display_mode" data-query="AODN:93f4e867-0bac-45fa-acca-2881680627f7"></div>
-            <iframe width="100%" height="300" src="http://jsfiddle.net/sparkinson/tspPU/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+            <div id="display_mode" data-query="AODN:93f4e867-0bac-45fa-acca-2881680627f7"  api_key="sfhsdkfsdfsdsf"></div>
+            <iframe width="100%" height="300" src="//jsfiddle.net/apd7fxmh/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
             <h2>License</h2>
             <p>
