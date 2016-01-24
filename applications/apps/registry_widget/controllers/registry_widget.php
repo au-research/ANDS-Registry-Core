@@ -24,6 +24,18 @@ class Registry_widget extends MX_Controller{
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		$callback = (isset($_GET['callback'])? $_GET['callback']: '?');
+
+        //log the usage of this widget with a public api_key
+
+        require_once (API_APP_PATH.'core/helpers/api_helper.php');
+        $terms = array(
+            'event' => 'api_hit',
+            'widget' => 'registry_widget',
+            'api_key' => 'public',
+            'api_version' => 'legacy'
+        );
+        api_log_terms($terms);
+
 		if($action=='lookup'){
 			if(isset($_GET['q'])){
 				$r = $this->lookup($_GET['q']);
