@@ -223,7 +223,7 @@ class ObjectHandler extends Handler{
                 $relationships[$type . '_count_solr'] = $result['response']['numFound'];
             }
         }
-        
+
         if ($this->params['object_submodule']) {
             if ($this->params['object_submodule'] == 'grants') {
                 $relatedObjects = $record->getAllRelatedObjects(false, false, true);
@@ -233,8 +233,13 @@ class ObjectHandler extends Handler{
                     'data_output' => $record->getDataOutput($childActivities, $relatedObjects),
                     'funders' => $record->getFunders(),
                     'publications' => $record->getPublications($childActivities, $relatedObjects),
-                    'structure' => $record->getStructuredGrants($relatedObjects)
+                    'structure' => $record->getStructuredGrantsAtNode($relatedObjects)
                 ];
+
+                //useful for debugging
+                if ($only = $this->ci->input->get('only')) {
+                    $relationships = $relationships['grants'][$only];
+                }
             }
         }
 

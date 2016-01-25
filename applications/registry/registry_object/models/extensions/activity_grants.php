@@ -13,7 +13,6 @@ class Activity_grants_extension extends ExtensionBase
         parent::__construct($ro_pointer);
     }
 
-
     /**
      * Return the Funding Amount of the activity
      * description[type=fundingAmount]
@@ -52,7 +51,6 @@ class Activity_grants_extension extends ExtensionBase
          * fundingScheme is currently a single String, having repeated would require some BI work and change of the schema
          * 7/12/2015 checking with BI for solution
          */
-
 
         return $fundingScheme;
     }
@@ -104,7 +102,6 @@ class Activity_grants_extension extends ExtensionBase
 
         //remove duplicates
         $researchers = array_values(array_unique($researchers));
-
         return $researchers;
     }
 
@@ -133,7 +130,6 @@ class Activity_grants_extension extends ExtensionBase
 
         //remove duplicates
         $institutions = array_values(array_unique($institutions));
-
         return $institutions;
     }
 
@@ -159,6 +155,7 @@ class Activity_grants_extension extends ExtensionBase
                 }
             }
         }
+
         return $administeringInstitution;
     }
 
@@ -170,7 +167,7 @@ class Activity_grants_extension extends ExtensionBase
      * @param bool|false $relatedObjects
      * @return array
      */
-    function getFunders($gXPath = false, $relatedObjects = false)
+    function getFunders($gXPath = false, $relatedObjects = false, $recursive = true, $processed = array())
     {
 
         $funders = array();
@@ -192,6 +189,7 @@ class Activity_grants_extension extends ExtensionBase
         if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
+
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                     if ($relatedObject['class'] == 'party'
                         && $relatedObject['relation_type'] == 'isFundedBy'
@@ -200,12 +198,27 @@ class Activity_grants_extension extends ExtensionBase
                         $funders[] = $relatedObject['title'];
                     }
                 }
+
+                // recursively find all funders that this node `isPartOf`
+                if ($recursive
+                    && $relatedObject['relation_type'] == 'isPartOf'
+                    && !in_array($relatedObject['registry_object_id'], $processed)
+                    ) {
+                    array_push($processed, $relatedObject['registry_object_id']);
+                    $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
+                    $relatedFunders = $record->getFunders(false, false, $recursive, $processed);
+
+                    if (sizeof($relatedFunders) > 0) {
+                        $funders = array_merge($funders, $relatedFunders);
+                    }
+                    unset($record);
+                }
+
             }
         }
 
         //remove duplicates
         $funders = array_values(array_unique($funders));
-
         return $funders;
     }
 
@@ -252,7 +265,6 @@ class Activity_grants_extension extends ExtensionBase
 
         //remove duplicates
         $principalInvestigator = array_values(array_unique($principalInvestigator));
-
         return $principalInvestigator;
     }
 
@@ -290,6 +302,7 @@ class Activity_grants_extension extends ExtensionBase
                     $activityStatus = 'CLOSED';
             }
         }
+
         return $activityStatus;
     }
 
@@ -326,6 +339,32 @@ class Activity_grants_extension extends ExtensionBase
                 }
             }
         }
+
+        return $result;
+    }
+
+    public function getStructuredGrantsAtNode($relatedObjects = false)
+    {
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
+
+        $dataOutputs = array();
+        foreach ($relatedObjects as $relatedObject) {
+            if ($relatedObject['relation_type'] == 'isOutputOf') {
+                $dataOutputs[] = $relatedObject;
+            }
+        }
+
+        $result = array();
+        $structure = $this->getStructuredGrants($relatedObjects);
+        if (sizeof($structure) > 0) {
+            $result['program'] = $structure;
+        }
+        if (sizeof($dataOutputs) > 0) {
+            $result['data_output'] = $dataOutputs;
+        }
+
         return $result;
     }
 
@@ -348,19 +387,43 @@ class Activity_grants_extension extends ExtensionBase
             if (!in_array($childActivity['registry_object_id'], $processed)) {
                 array_push($processed, $childActivity['registry_object_id']);
                 $record = $this->_CI->ro->getByID($childActivity['registry_object_id']);
-                $children = $record->getStructuredGrants(false, $processed);
-                $dataOutputs = $record->getDataOutput(false, false, false);
-                if (sizeof($children) > 0) {
-                    $childActivity['program'] = $children;
+
+                //get data outputs
+                $dataOutputs = array();
+                $related = $record->getAllRelatedObjects(false, false, true);
+                foreach ($related as $relatedObject) {
+                    if ($relatedObject['relation_type'] == 'isOutputOf') {
+                        $dataOutputs[] = $relatedObject;
+                    }
                 }
                 if (sizeof($dataOutputs) > 0) {
                     $childActivity['data_output'] = $dataOutputs;
                 }
+
+                //get nested activities
+                $children = $record->getStructuredGrants(false, $processed);
+                if (sizeof($children) > 0) {
+                    $childActivity['program'] = $children;
+                }
+
                 unset($record);
                 unset($children);
                 unset($dataOutputs);
                 array_push($result, $childActivity);
             }
+        }
+
+        //get data outputs
+        $dataOutputs = array();
+
+        foreach ($relatedObjects as $relatedObject) {
+            if ($relatedObject['relation_type'] == 'isOutputOf') {
+                $dataOutputs[] = $relatedObject;
+            }
+        }
+
+        if (sizeof($dataOutputs) > 0) {
+            $record['data_output'] = $dataOutputs;
         }
 
         return $result;
