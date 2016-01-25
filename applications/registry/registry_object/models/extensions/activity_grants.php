@@ -301,7 +301,7 @@ class Activity_grants_extension extends ExtensionBase
      * @param array $processed
      * @return array
      */
-    public function getChildActivities($relatedObjects = false, $relation = 'isFundedBy', $processed = array()){
+    public function getChildActivities($relatedObjects = false, $relation = 'isFundedBy', $processed = array(), $recursive = true){
         if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         if ($this->ro->class == 'party') {
             $relation = 'isFundedBy';
@@ -316,14 +316,53 @@ class Activity_grants_extension extends ExtensionBase
                 ) {
                     $result[] = $relatedObject;
                     array_push($processed, $relatedObject['registry_object_id']);
-                    $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
-                    $childs = $record->getChildActivities(false, 'isPartOf', $processed);
-                    if (sizeof($childs) > 0) {
-                        $result = array_merge($result, $childs);
+                    if ($recursive) {
+                        $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
+                        $childs = $record->getChildActivities(false, 'isPartOf', $processed, true);
+                        if (sizeof($childs) > 0) {
+                            $result = array_merge($result, $childs);
+                        }
                     }
                 }
             }
         }
+        return $result;
+    }
+
+    /**
+     * Generate a strucutred grants
+     * Recursively
+     * Displaying all the program and data outputs that belongs to the node in a tree
+     * @param bool|false $relatedObjects
+     * @param array $processed
+     * @return array
+     */
+    public function getStructuredGrants($relatedObjects = false, $processed = array())
+    {
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
+        $result = array();
+        $childActivities = $this->getChildActivities($relatedObjects, 'isFundedBy', array(), false);
+        foreach ($childActivities as &$childActivity) {
+            if (!in_array($childActivity['registry_object_id'], $processed)) {
+                array_push($processed, $childActivity['registry_object_id']);
+                $record = $this->_CI->ro->getByID($childActivity['registry_object_id']);
+                $children = $record->getStructuredGrants(false, $processed);
+                $dataOutputs = $record->getDataOutput(false, false, false);
+                if (sizeof($children) > 0) {
+                    $childActivity['program'] = $children;
+                }
+                if (sizeof($dataOutputs) > 0) {
+                    $childActivity['data_output'] = $dataOutputs;
+                }
+                unset($record);
+                unset($children);
+                unset($dataOutputs);
+                array_push($result, $childActivity);
+            }
+        }
+
         return $result;
     }
 
@@ -334,9 +373,9 @@ class Activity_grants_extension extends ExtensionBase
      * @param bool|false $relatedObjects
      * @return array
      */
-    public function getDataOutput($childActivities = false, $relatedObjects = false){
+    public function getDataOutput($childActivities = false, $relatedObjects = false, $recursive = true){
         if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
-        if (!$childActivities) $childActivities = $this->ro->getChildActivities($relatedObjects);
+        if (!$childActivities) $childActivities = $this->ro->getChildActivities($relatedObjects, 'isPartOf', array(), $recursive);
 
         $result = array();
         foreach ($childActivities as $activity) {

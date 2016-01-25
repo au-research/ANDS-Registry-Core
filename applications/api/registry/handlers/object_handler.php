@@ -232,7 +232,8 @@ class ObjectHandler extends Handler{
                     'programs' => $childActivities,
                     'data_output' => $record->getDataOutput($childActivities, $relatedObjects),
                     'funders' => $record->getFunders(),
-                    'publications' => $record->getPublications($childActivities, $relatedObjects)
+                    'publications' => $record->getPublications($childActivities, $relatedObjects),
+                    'structure' => $record->getStructuredGrants($relatedObjects)
                 ];
             }
         }
