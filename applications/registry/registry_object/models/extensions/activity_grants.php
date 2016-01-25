@@ -21,7 +21,9 @@ class Activity_grants_extension extends ExtensionBase
      */
     function getFundingAmount($gXPath = false)
     {
-        if (!$gXPath) $gXPath = $this->getGXPath();
+        if (!$gXPath) {
+            $gXPath = $this->getGXPath();
+        }
         $fundingAmount = false;
         foreach ($gXPath->query('//ro:description[@type="fundingAmount"]') as $node) {
             $fundingAmount = preg_replace("/[^\d\.]+/", "", $node->nodeValue);
@@ -36,12 +38,14 @@ class Activity_grants_extension extends ExtensionBase
      * @param bool|false $gXPath
      * @return bool|string
      */
-    function getFundingScheme($gXPath = false, $relatedObjects = false)
+    function getFundingScheme($gXPath = false)
     {
         $fundingScheme = false;
 
         //description[type=fundingScheme]
-        if (!$gXPath) $gXPath = $this->getGXPath();
+        if (!$gXPath) {
+            $gXPath = $this->getGXPath();
+        }
         foreach ($gXPath->query('//ro:description[@type="fundingScheme"]') as $node) {
             $fundingScheme = strip_tags(html_entity_decode($node->nodeValue));
         }
@@ -67,7 +71,9 @@ class Activity_grants_extension extends ExtensionBase
      */
     function getResearchers($gXPath = false, $relatedObjects = false)
     {
-        if (!$gXPath) $gXPath = $this->getGXPath();
+        if (!$gXPath) {
+            $gXPath = $this->getGXPath();
+        }
 
         $researchers = array();
 
@@ -89,11 +95,14 @@ class Activity_grants_extension extends ExtensionBase
         }
 
         //relatedObject[class=party][type=person]
-        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
         foreach ($relatedObjects as $relatedObject) {
             if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                 if ($relatedObject['class'] == 'party'
-                    && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'], 'type'))) == 'person'
+                    && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
+                        'type'))) == 'person'
                 ) {
                     $researchers[] = $relatedObject['title'];
                 }
@@ -114,13 +123,16 @@ class Activity_grants_extension extends ExtensionBase
     function getInstitutions($relatedObjects = false)
     {
         $institutions = array();
-        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                     if ($relatedObject['class'] == 'party'
                         && ($relatedObject['relation_type'] == 'isManagedBy' || $relatedObject['relation_type'] == 'hasParticipant')
-                        && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'], 'type'))) == 'group'
+                        && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
+                            'type'))) == 'group'
                     ) {
                         $institutions[] = $relatedObject['title'];
                     }
@@ -142,13 +154,16 @@ class Activity_grants_extension extends ExtensionBase
     function getAdministeringInstitution($relatedObjects = false)
     {
         $administeringInstitution = array();
-        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                     if ($relatedObject['class'] == 'party'
                         && $relatedObject['relation_type'] == 'isManagedBy'
-                        && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'], 'type'))) != 'person'
+                        && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
+                            'type'))) != 'person'
                     ) {
                         $administeringInstitution[] = $relatedObject['title'];
                     }
@@ -165,6 +180,8 @@ class Activity_grants_extension extends ExtensionBase
      * relatedInfo[type=party][relation=isFundedBy]
      * @param bool|false $gXPath
      * @param bool|false $relatedObjects
+     * @param bool $recursive
+     * @param array $processed
      * @return array
      */
     function getFunders($gXPath = false, $relatedObjects = false, $recursive = true, $processed = array())
@@ -173,7 +190,9 @@ class Activity_grants_extension extends ExtensionBase
         $funders = array();
 
         //relatedInfo[type=party][relation=isFundedBy]
-        if (!$gXPath) $gXPath = $this->getGXPath();
+        if (!$gXPath) {
+            $gXPath = $this->getGXPath();
+        }
         foreach ($gXPath->query("//ro:relatedInfo") as $node) {
             foreach ($node->getElementsByTagName("relation") as $relationNode) {
                 $type = $relationNode->getAttribute("type");
@@ -186,14 +205,17 @@ class Activity_grants_extension extends ExtensionBase
         }
 
         //relatedObject[relation=isFundedBy][class=party][type!=person]
-        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
 
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                     if ($relatedObject['class'] == 'party'
                         && $relatedObject['relation_type'] == 'isFundedBy'
-                        && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'], 'type'))) != 'person'
+                        && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
+                            'type'))) != 'person'
                     ) {
                         $funders[] = $relatedObject['title'];
                     }
@@ -203,7 +225,7 @@ class Activity_grants_extension extends ExtensionBase
                 if ($recursive
                     && $relatedObject['relation_type'] == 'isPartOf'
                     && !in_array($relatedObject['registry_object_id'], $processed)
-                    ) {
+                ) {
                     array_push($processed, $relatedObject['registry_object_id']);
                     $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
                     $relatedFunders = $record->getFunders(false, false, $recursive, $processed);
@@ -236,7 +258,9 @@ class Activity_grants_extension extends ExtensionBase
         $principalInvestigator = array();
 
         //relatedInfo[type=party][relation=hasPrincipalInvestigator]
-        if (!$gXPath) $gXPath = $this->getGXPath();
+        if (!$gXPath) {
+            $gXPath = $this->getGXPath();
+        }
         foreach ($gXPath->query("//ro:relatedInfo") as $node) {
             foreach ($node->getElementsByTagName("relation") as $relationNode) {
                 $type = $relationNode->getAttribute("type");
@@ -249,13 +273,16 @@ class Activity_grants_extension extends ExtensionBase
         }
 
         //relatedObject[class=party][type=person][relation=hasPrincipalInvestigator]
-        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                     if ($relatedObject['class'] == 'party'
                         && $relatedObject['relation_type'] == 'hasPrincipalInvestigator'
-                        && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'], 'type'))) == 'person'
+                        && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
+                            'type'))) == 'person'
                     ) {
                         $principalInvestigator[] = $relatedObject['title'];
                     }
@@ -277,29 +304,35 @@ class Activity_grants_extension extends ExtensionBase
     function getActivityStatus($xml = false)
     {
         $activityStatus = 'other';
-        if (!$xml) $xml = $this->ro->getSimpleXML();
+        if (!$xml) {
+            $xml = $this->ro->getSimpleXML();
+        }
         foreach ($xml->xpath('//ro:existenceDates') AS $date) {
             $now = time();
             $start = false;
             $end = false;
             if ($date->startDate) {
-                if (strlen(trim($date->startDate)) == 4)
+                if (strlen(trim($date->startDate)) == 4) {
                     $date->startDate = "Jan 1, " . $date->startDate;
+                }
                 $start = strtotime($date->startDate);
             }
 
             if ($date->endDate) {
-                if (strlen(trim($date->endDate)) == 4)
+                if (strlen(trim($date->endDate)) == 4) {
                     $date->endDate = "Dec 31, " . $date->endDate;
+                }
                 $end = strtotime($date->endDate);
             }
 
             if ($start || $end) {
                 $activityStatus = 'PENDING';
-                if (!$start || $start < $now)
+                if (!$start || $start < $now) {
                     $activityStatus = 'ACTIVE';
-                if ($end && $end < $now)
+                }
+                if ($end && $end < $now) {
                     $activityStatus = 'CLOSED';
+                }
             }
         }
 
@@ -312,10 +345,18 @@ class Activity_grants_extension extends ExtensionBase
      * @param bool|false $relatedObjects
      * @param string $relation
      * @param array $processed
+     * @param bool $recursive
      * @return array
      */
-    public function getChildActivities($relatedObjects = false, $relation = 'isFundedBy', $processed = array(), $recursive = true){
-        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+    public function getChildActivities(
+        $relatedObjects = false,
+        $relation = 'isFundedBy',
+        $processed = array(),
+        $recursive = true
+    ) {
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
         if ($this->ro->class == 'party') {
             $relation = 'isFundedBy';
         } elseif ($this->ro->class == 'activity') {
@@ -343,26 +384,30 @@ class Activity_grants_extension extends ExtensionBase
         return $result;
     }
 
+    /**
+     * get the Grants Structured Data for this object
+     * @param bool|false $relatedObjects
+     * @return array
+     */
     public function getStructuredGrantsAtNode($relatedObjects = false)
     {
         if (!$relatedObjects) {
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
 
-        $dataOutputs = array();
-        foreach ($relatedObjects as $relatedObject) {
-            if ($relatedObject['relation_type'] == 'isOutputOf') {
-                $dataOutputs[] = $relatedObject;
-            }
-        }
+        $dataOutputs = $this->ro->getDirectDataOutput($relatedObjects);
+        $structure = $this->getStructuredGrants($relatedObjects);
+        $publications = $this->getDirectPublication();
 
         $result = array();
-        $structure = $this->getStructuredGrants($relatedObjects);
         if (sizeof($structure) > 0) {
             $result['program'] = $structure;
         }
         if (sizeof($dataOutputs) > 0) {
             $result['data_output'] = $dataOutputs;
+        }
+        if (sizeof($publications) > 0) {
+            $result['publications'] = $publications;
         }
 
         return $result;
@@ -390,15 +435,20 @@ class Activity_grants_extension extends ExtensionBase
 
                 //get data outputs
                 $dataOutputs = array();
+                $publications = array();
                 $related = $record->getAllRelatedObjects(false, false, true);
                 foreach ($related as $relatedObject) {
-                    if ($relatedObject['relation_type'] == 'isOutputOf') {
-                        $dataOutputs[] = $relatedObject;
-                    }
+                    $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
+                    $dataOutputs = array_merge($dataOutputs, $record->getDirectDataOutput());
+                    $publications = array_merge($publications, $record->getDirectPublication());
                 }
                 if (sizeof($dataOutputs) > 0) {
                     $childActivity['data_output'] = $dataOutputs;
                 }
+                if (sizeof($publications) > 0) {
+                    $childActivity['publications'] = $publications;
+                }
+
 
                 //get nested activities
                 $children = $record->getStructuredGrants(false, $processed);
@@ -413,17 +463,15 @@ class Activity_grants_extension extends ExtensionBase
             }
         }
 
-        //get data outputs
-        $dataOutputs = array();
-
-        foreach ($relatedObjects as $relatedObject) {
-            if ($relatedObject['relation_type'] == 'isOutputOf') {
-                $dataOutputs[] = $relatedObject;
-            }
-        }
+        //add stuff for the current node
+        $dataOutputs = $this->ro->getDirectDataOutput($relatedObjects);
+        $publications = $this->getDirectPublication();
 
         if (sizeof($dataOutputs) > 0) {
-            $record['data_output'] = $dataOutputs;
+            $result['data_output'] = $dataOutputs;
+        }
+        if (sizeof($publications) > 0) {
+            $result['publications'] = $publications;
         }
 
         return $result;
@@ -434,28 +482,55 @@ class Activity_grants_extension extends ExtensionBase
      * relatedObject[class=collection][relation=isOutputOf] from a recursively generated list of child activities
      * @param bool|false $childActivities
      * @param bool|false $relatedObjects
+     * @param bool $recursive
      * @return array
      */
-    public function getDataOutput($childActivities = false, $relatedObjects = false, $recursive = true){
-        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
-        if (!$childActivities) $childActivities = $this->ro->getChildActivities($relatedObjects, 'isPartOf', array(), $recursive);
+    public function getDataOutput($childActivities = false, $relatedObjects = false, $recursive = true)
+    {
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
+        if (!$childActivities) {
+            $childActivities = $this->ro->getChildActivities($relatedObjects, 'isPartOf', array(), $recursive);
+        }
 
         $result = array();
         foreach ($childActivities as $activity) {
             $activityObject = $this->_CI->ro->getByID($activity['registry_object_id']);
-            $related = $activityObject->getAllRelatedObjects(false, false, true);
-            foreach ($related as $relatedObject) {
-                if ($relatedObject['relation_type'] == 'isOutputOf'
-                    || $relatedObject['relation_type'] == 'hasOutput') {
-                    $result[] = $relatedObject;
-                }
-                //todo relatedInfo of relation_type isOutputOf type activity
+            $dataOutputs = $activityObject->getDirectDataOutput();
+            if (sizeof($dataOutputs) > 0) {
+                $result = array_merge($result, $dataOutputs);
             }
+        }
+
+        //self
+        $directOutput = $this->ro->getDirectDataOutput($relatedObjects);
+        if (sizeof($directOutput) > 0) {
+            $result = array_merge($result, $directOutput);
         }
 
         //remove duplicates
         $result = array_values(array_map("unserialize", array_unique(array_map("serialize", $result))));
 
+        return $result;
+    }
+
+    public function getDirectDataOutput($relatedObjects = false)
+    {
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        } else {
+            $relatedObjects = array();
+        }
+        $result = array();
+        foreach ($relatedObjects as $relatedObject) {
+            if ($relatedObject['relation_type'] == 'isOutputOf'
+                || $relatedObject['relation_type'] == 'hasOutput'
+            ) {
+                $result[] = $relatedObject;
+            }
+            //todo relatedInfo of relation_type isOutputOf type activity
+        }
         return $result;
     }
 
@@ -467,38 +542,54 @@ class Activity_grants_extension extends ExtensionBase
      * @param bool|false $relatedObjects
      * @return array
      */
-    public function getPublications($childActivitites = false, $relatedObjects = false){
-        if (!$relatedObjects) $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
-        if (!$childActivitites) $childActivitites = $this->ro->getChildActivities($relatedObjects);
+    public function getPublications($childActivitites = false, $relatedObjects = false)
+    {
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
+        if (!$childActivitites) {
+            $childActivitites = $this->ro->getChildActivities($relatedObjects);
+        }
 
+        $result = array();
         // Construct a list of purls from all the child activities
-        $purls = array();
         if ($childActivitites) {
             foreach ($childActivitites as $activity) {
                 //find all identifier type purl
                 $record = $this->_CI->ro->getByID($activity['registry_object_id']);
-                $identifiers = $record->getIdentifiers();
-                foreach ($identifiers as $identifier) {
-                    if ($identifier['identifier_type'] == 'purl') {
-                        $purls[] = $identifier['identifier'];
-                    }
-                }
+                $result = array_merge($result, $record->getDirectPublication());
                 unset($record);
             }
         }
 
-        /**
-         * Probably need a refactor
-         * TroveAPI possibly need a function that resolves a list of purls into publications
-         * Instead of doing them here
-         */
+        //self
+        $directPublication = $this->ro->getDirectPublication($relatedObjects);
+        if (sizeof($directPublication) > 0) {
+            $result = array_merge($result, $directPublication);
+        }
+
+        return $result;
+    }
+
+    public function getDirectPublication(){
+
+        //collect all the purls
+        $purls = array();
+        $identifiers = $this->ro->getIdentifiers();
+        foreach ($identifiers as $identifier) {
+            if ($identifier['identifier_type'] == 'purl') {
+                $purls[] = $identifier['identifier'];
+            }
+        }
+
+        //resolve purls
         $this->_CI->load->library('TroveAPI');
         $result = array();
         foreach ($purls as $purl) {
-            $troveAPIResponse = $this->_CI->troveapi->resolveQuery('"'.$purl.'"', 'article', 'workverions');
+            $troveAPIResponse = $this->_CI->troveapi->resolveQuery('"' . $purl . '"', 'article', 'workverions');
             if ($troveAPIResponse) {
                 foreach ($troveAPIResponse['response']['zone'] as $zone) {
-                    if ($zone['name']=='article' && isset($zone['records']) && isset($zone['records']['work'])) {
+                    if ($zone['name'] == 'article' && isset($zone['records']) && isset($zone['records']['work'])) {
                         foreach ($zone['records']['work'] as $work) {
                             $result[] = [
                                 'purl' => $purl,
@@ -513,6 +604,7 @@ class Activity_grants_extension extends ExtensionBase
             }
         }
 
+        $result = array_values(array_map("unserialize", array_unique(array_map("serialize", $result))));
         return $result;
     }
 
