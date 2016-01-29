@@ -31,7 +31,8 @@ class Task_api
     /**
      * Primary handle function
      * @param  array $method list of URL parameters
-     * @return array          response
+     * @return array response
+     * @throws Exception
      */
     public function handle($method = array())
     {
@@ -110,8 +111,6 @@ class Task_api
         }
     }
 
-
-
     /**
      * POST to api/task
      * Adding a new task on command
@@ -121,7 +120,8 @@ class Task_api
     {
         $post = $this->ci->input->post();
 
-        $params = isset($post['params']) ? $post['params'][0] : array();
+        $params = isset($post['params']) ? $post['params'] : array();
+
         $params['type'] = $post['type'];
         $params['id'] = $post['id'];
 

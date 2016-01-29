@@ -122,26 +122,37 @@
                 name: name,
                 type: type,
                 id: id,
-                params: []
+                params: {}
             };
             switch (name) {
+                case 'sync':
+                    params.name = "Sync ";
+                    break;
                 case 'index':
-                    params.name = 'sync';
-                    params.params.push({indexOnly: true});
+                    params.name = "Index ";
+                    params.params.indexOnly = true;
                     break;
                 case 'index_missing':
-                    params.name = 'sync';
-                    params.params.push({missingOnly: true, indexOnly: true});
+                    params.name = "Index Missing ";
+                    params.params.missingOnly = true;
+                    params.params.indexOnly =  true;
                     break;
                 case 'sync_missing':
-                    params.name = 'sync';
-                    params.params.push({missingOnly: true});
+                    params.name = "Sync Missing ";
+                    params.params.missingOnly = true;
                     break;
                 case 'clear_index':
-                    params.name = 'sync';
-                    params.params.push({clearIndex: true});
+                    params.name = "Clear Index ";
+                    params.params.clearIndex = true;
                     break;
             }
+            if (params.type == 'ds') {
+                params.name += "Data Source " + params.id;
+            } else if(params.type == 'all') {
+                params.name += "Everything ";
+            }
+            params.params['class'] = 'sync' ;
+
             return APITaskService.addTask(params).then(function (data) {
 
                 $scope.refreshTasks();

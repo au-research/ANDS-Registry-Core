@@ -8,6 +8,11 @@ namespace ANDS\API\Task;
 
 use \Exception as Exception;
 
+/**
+ * Class SyncTask
+ *
+ * @package ANDS\API\Task
+ */
 class SyncTask extends Task
 {
     private $target = false; //ds or ro
@@ -43,7 +48,7 @@ class SyncTask extends Task
                     if ($dsID) {
                         if ($this->mode == 'analyze' && $this->target == 'ds') {
                             $this->analyzeDS($dsID);
-                        } elseif($this->mode == 'clearIndex') {
+                        } elseif ($this->mode == 'clearIndex') {
                             $this->clearIndexDS($dsID);
                         } else {
                             if ($this->mode == 'sync') {
@@ -68,20 +73,23 @@ class SyncTask extends Task
         }
     }
 
-    private function analyzeAll(){
-        $dataSourceIDs = $this->ci->ds->getAll(0,0, true);
+    private function analyzeAll()
+    {
+        $dataSourceIDs = $this->ci->ds->getAll(0, 0, true);
         foreach ($dataSourceIDs as $dsID) {
 
-            $params = array();
+            $params = array(
+                'class' => 'sync',
+                'type' => 'ds',
+                'id' => $dsID
+            );
 
             if ($this->indexOnly) {
                 $params['indexOnly'] = 'true';
             }
-            $params['type'] = 'ds';
-            $params['id'] = $dsID;
 
             $task = array(
-                'name' => 'sync',
+                'name' => 'Analyze DataSource '. $dsID,
                 'priority' => $this->getPriority(),
                 'frequency' => 'ONCE',
                 'type' => 'POKE',
@@ -115,28 +123,46 @@ class SyncTask extends Task
         //spawn new tasks
         for ($i = 1; $i <= $data['numChunk']; $i++) {
 
-            $params = array();
+            //determine the class to use is the SyncTask
+            $params = array(
+                'class' => 'sync'
+            );
 
             if ($this->indexOnly) {
                 $params['indexOnly'] = 'true';
             }
 
+            //define chunking for ro only
+            $chunkArray = array();
             if ($this->missingOnly) {
                 $offset = ($i - 1) * $this->chunkSize;
                 $end = $i * $this->chunkSize;
-                if ($end > sizeof($ids)) $end = sizeof($ids) - 1;
+                if ($end > sizeof($ids)) {
+                    $end = sizeof($ids) - 1;
+                }
                 $chunkArray = array_slice($ids, $offset, $end);
                 $params['type'] = 'ro';
-                $params['id'] = implode(',',$chunkArray);
+                $params['id'] = implode(',', $chunkArray);
             } else {
                 $params['type'] = 'ds';
                 $params['id'] = $dsID;
                 $params['chunkPos'] = $i;
             }
 
+            //construct a human readable name
+            $name = $this->indexOnly ? "Index " : "Sync ";
+            if ($this->missingOnly) {
+                $name .= "Missing ";
+            }
+
+            if ($params['type'] == 'ds') {
+                $name .= " Data Source ". $params['id']. '('.$i.'/'.$data['numChunk'].')';
+            } elseif ($params['type']=='ro') {
+                $name .= sizeof($chunkArray). " Records";
+            }
 
             $task = array(
-                'name' => 'sync',
+                'name' => $name,
                 'priority' => $this->getPriority(),
                 'frequency' => 'ONCE',
                 'type' => 'POKE',
@@ -149,6 +175,12 @@ class SyncTask extends Task
         $this->log('Analyzed Data Source ' . $dsID . " spawned " . $data['numChunk'] . " sync tasks for " . $data['total'] . ' records');
     }
 
+
+    /**
+     * Returns a list of un indexed registry object from a given data source ID
+     * @param $dsID
+     * @return array
+     */
     private function getMissingIDs($dsID)
     {
         //get all ids
@@ -167,10 +199,16 @@ class SyncTask extends Task
         return $result;
     }
 
-    private function clearIndexDS($dsID){
-        $this->log('deleting the index of data source '.$dsID);
-        $queryCondition = 'data_source_id:"'.$dsID.'"';
-        $deleteResult = json_decode($this->ci->solr->deleteByQueryCondition($queryCondition),true);
+    /**
+     * Clear the index of a particular data source
+     * @param $dsID
+     * @throws Exception
+     */
+    private function clearIndexDS($dsID)
+    {
+        $this->log('deleting the index of data source ' . $dsID);
+        $queryCondition = 'data_source_id:"' . $dsID . '"';
+        $deleteResult = json_decode($this->ci->solr->deleteByQueryCondition($queryCondition), true);
         if (isset($deleteResult['responseHeader']) && $deleteResult['responseHeader']['status'] === 0) {
             $this->log("Delete Index Successful")->save();
         } else {
@@ -203,7 +241,7 @@ class SyncTask extends Task
                 throw new Exception('Error DSID:' . $dsID . ' Message: ' . $e->getMessage());
             }
         } else {
-            $this->log('No records to sync for data source: '.$dsID);
+            $this->log('No records to sync for data source: ' . $dsID);
         }
 
     }
@@ -222,9 +260,11 @@ class SyncTask extends Task
             foreach ($ids as $ro_id) {
                 try {
                     $ro = false;
-                    if ($ro_id) $ro = $this->ci->ro->getByID($ro_id);
+                    if ($ro_id) {
+                        $ro = $this->ci->ro->getByID($ro_id);
+                    }
                     if ($ro && $ro->status != 'PUBLISHED') {
-                        $this->log('roid:' . $ro_id . ' is a '.$ro->status.' record and should be removed from the index');
+                        $this->log('roid:' . $ro_id . ' is a ' . $ro->status . ' record and should be removed from the index');
                         $remove_ids[] = $ro_id;
                     }
                     if ($ro && $ro->status == 'PUBLISHED') {
@@ -240,13 +280,15 @@ class SyncTask extends Task
                         if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
                             $solr_docs[] = $solr_doc;
                         } else {
-                            $this->log('Empty doc found for ROID:'.$ro->id);
+                            $this->log('Empty doc found for ROID:' . $ro->id);
                         }
                         unset($ro);
                     } else {
                         //doesn't exist in the database, queue it to be remove from SOLR
                         $this->log('Error: roid:' . $ro_id . ' not found');
-                        if ($ro_id) $remove_ids[] = $ro_id;
+                        if ($ro_id) {
+                            $remove_ids[] = $ro_id;
+                        }
                     }
                 } catch (Exception $e) {
                     throw new Exception('Error: roid:' . $ro_id . ' Message: ' . $e->getMessage());
@@ -264,7 +306,7 @@ class SyncTask extends Task
                 if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
                     $this->log("Adding to SOLR successful")->save();
                 } else {
-                    throw new Exception("Adding to SOLR failed: ". json_encode($add_result));
+                    throw new Exception("Adding to SOLR failed: " . json_encode($add_result));
                 }
 
                 /**
@@ -290,9 +332,10 @@ class SyncTask extends Task
             try {
                 $remove_result = json_decode($this->ci->solr->deleteByIDsCondition($remove_ids), true);
                 if (isset($remove_result['responseHeader']) && $remove_result['responseHeader']['status'] === 0) {
-                    $this->log("Remove IDS". implode(', ', $remove_ids). ' successful')->save();
+                    $this->log("Remove IDS" . implode(', ', $remove_ids) . ' successful')->save();
                 } else {
-                    throw new Exception("Remove IDS: ". implode(', ', $remove_ids). ' FAILED: '. json_encode($remove_result));
+                    throw new Exception("Remove IDS: " . implode(', ',
+                            $remove_ids) . ' FAILED: ' . json_encode($remove_result));
                 }
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());
@@ -313,8 +356,12 @@ class SyncTask extends Task
         $this->indexOnly = isset($params['indexOnly']) ? $params['indexOnly'] : false;
         $this->missingOnly = isset($params['missingOnly']) ? $params['missingOnly'] : false;
 
-        if ($this->indexOnly === 'true') $this->indexOnly = true;
-        if ($this->missingOnly === 'true') $this->missingOnly = true;
+        if ($this->indexOnly === 'true') {
+            $this->indexOnly = true;
+        }
+        if ($this->missingOnly === 'true') {
+            $this->missingOnly = true;
+        }
 
         $this->log('Task parameters: ' . http_build_query($params))->save();
 

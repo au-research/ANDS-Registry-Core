@@ -151,11 +151,10 @@ class TaskManager
 
         $task = $this->getTaskObject($taskResult);
 
-        if (ucfirst($taskResult['name']) == 'Sync') {
-            $task
-                ->setDb($this->db)
-                ->setCI($this->ci);
-        }
+        $task
+            ->setDb($this->db)
+            ->setCI($this->ci);
+
         try {
             $task->run();
         } catch (Exception $e) {
@@ -182,16 +181,32 @@ class TaskManager
 
     /**
      * Generate a Task object based on the task mysql row
+     * Checks the params for the `class` first
+     * then refer to the `name` column to determine the class type
      * @param $taskResult
      * @return mixed
+     * @throws Exception
      */
     public function getTaskObject($taskResult)
     {
-        $taskType = ucfirst($taskResult['name']);
+        parse_str($taskResult['params'], $params);
+
+        $taskType = isset($params['class']) ? $params['class'] : false;
+
+        if (!$taskType) {
+            $taskType = ucfirst($taskResult['name']);
+        }
+
         $className = "ANDS\\API\\Task\\" . $taskType . 'Task';
-        $task = new $className($taskResult['id']);
-        $task->init($taskResult);
-        return $task;
+        if (class_exists($className)) {
+            $className = "ANDS\\API\\Task\\" . $taskType . 'Task';
+            $task = new $className($taskResult['id']);
+            $task->init($taskResult);
+            return $task;
+        } else {
+            throw new Exception("Task type ".$taskType. " not found!");
+        }
+
     }
 
     /**
@@ -246,7 +261,8 @@ class TaskManager
         if ($records && sizeof($records) > 0) {
             $params = [
                 'type' => 'ro',
-                'id' => implode(',', $records)
+                'id' => implode(',', $records),
+                'class' => 'sync'
             ];
             $message = [
                 'log' => [
@@ -256,7 +272,7 @@ class TaskManager
             ];
 
             $taskId = $this->addTask([
-                'name' => 'sync',
+                'name' => 'Maintenance SyncTask',
                 'type' => 'POKE',
                 'frequency' => 'ONCE',
                 'priority' => 1,

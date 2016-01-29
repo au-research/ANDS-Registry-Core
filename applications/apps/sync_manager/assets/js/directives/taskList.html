@@ -2,7 +2,7 @@
     <li ng-repeat="task in tasks" ng-class="{'error': task.status=='STOPPED'}">
         <a href="" ng-click="task.show=!task.show" class="expand_log"
         >
-            <i class="icon-list-alt"></i> {{task.status}}
+            <i class="icon-list-alt"></i> {{task.name}}
             <span class="label" ng-if="task.last_run">{{ task.last_run }}</span>
         </a>
 
