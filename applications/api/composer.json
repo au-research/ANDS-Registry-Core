@@ -8,5 +8,8 @@
             "ANDS\\API\\Log\\Indexer\\": "log/indexers/",
             "ANDS\\API\\Task\\": "task/models"
         }
+    },
+    "require": {
+        "graphaware/neo4j-php-client": "^3.3"
     }
 }
