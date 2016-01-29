@@ -296,10 +296,11 @@ class Sync_extension extends ExtensionBase{
                 //final check of points, make sure they have value
                 foreach ($points as $key=>&$point) {
                     $predicate = explode(' ', $point);
+
                     if (!isset($predicate[0])
                         || !isset($predicate[1])
                         || trim($predicate[0]) == ''
-                        || trim($predicate[0]) != ''
+                        || trim($predicate[1]) == ''
                     ) {
                         unset($points[$key]);
                     }
@@ -323,6 +324,14 @@ class Sync_extension extends ExtensionBase{
                                 $point = (is_array($point)) ? implode(' ', $point) : $point;
                             }
                             $json['spatial_coverage_extents_wkt'][] = 'POLYGON((' . implode(', ', $points) . '))';
+                        } else if (!$this->ro->isSelfIntersectPolygon($uniquePoints)) {
+                            foreach ($uniquePoints as &$point) {
+                                $point = (is_array($point)) ? implode(' ', $point) : $point;
+                            }
+
+                            //putting end point back
+                            $uniquePoints[] = $uniquePoints[0];
+                            $json['spatial_coverage_extents_wkt'][] = 'POLYGON((' . implode(', ', $uniquePoints) . '))';
                         }
 
                     } else if (sizeof($points) < 2) {
@@ -453,41 +462,6 @@ class Sync_extension extends ExtensionBase{
             $json['alt_list_title'][] = trim(strip_tags(html_entity_decode($node->nodeValue)));
 		    $json['alt_display_title'][] = trim(strip_tags(html_entity_decode($node->nodeValue)));
         }
-
-
-
-
-
-        //Administering Institution, Funders and Researchers from related objects for activities
-//        if ($this->ro->class=='activity') {
-//        	$json['administering_institution'] = array();
-//        	$json['funders'] = array();
-//        	if(!isset($related_objects)) $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
-//        	foreach ($related_objects as $related_object) {
-//                if(!isset($related_object['status']) || $related_object['status']!=DRAFT){
-////
-//                    if ($related_object['class']=='party'
-//                        && $related_object['relation_type']=='isManagedBy'
-//                        && strtolower(trim($this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type'))) !='person') {
-//                        $json['administering_institution'][] = $related_object['title'];
-//                    } else if(
-//                        $related_object['class']=='party'
-//                        && $related_object['relation_type']=='isFundedBy'
-//                        && strtolower(trim($this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type'))) !='person') {
-//                        $json['funders'][] = $related_object['title'];
-//                    } else if($related_object['class']=='party') {
-//                        $tmp_ro = $this->_CI->ro->getByID($related_object['registry_object_id']);
-//                        if ( $tmp_ro && strtolower($tmp_ro->type)=='person' ) {
-//                            $json['researchers'][] = $related_object['title'];
-//                        }elseif(isset($related_object['related_info_type']) && $related_object['related_info_type']=='party'){
-//                            $json['researchers'][] = $related_object['title'];
-//                        }
-//                        unset($tmp_ro);
-//                    }
-//                }
-//        	}
-//        }
-
 
         /**
          * special logic for activity only

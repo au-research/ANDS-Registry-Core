@@ -487,7 +487,7 @@ class Solr
                     }
                     $newPoints = 'POLYGON((' . implode(', ', $newPoints) . '))';
 
-                    $this->setOpt('fq', '+spatial_coverage_extents_wkt:"Intersects(' . $newPoints . ')"');
+                    $this->setOpt('fq', '+spatial_coverage_extents_wkt:"IsWithin(' . $newPoints . ')"');
                     break;
                 case 'map':
                     $this->setOpt('fq', '+spatial_coverage_area_sum:[0.00001 TO *]');

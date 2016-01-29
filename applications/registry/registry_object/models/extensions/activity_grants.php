@@ -189,6 +189,11 @@ class Activity_grants_extension extends ExtensionBase
 
         $funders = array();
 
+
+
+        if (sizeof($processed) == 0) {
+            array_push($processed, $this->ro->id);
+        }
         //relatedInfo[type=party][relation=isFundedBy]
         if (!$gXPath) {
             $gXPath = $this->getGXPath();
@@ -211,7 +216,7 @@ class Activity_grants_extension extends ExtensionBase
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
 
-                if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
+                if (isset($relatedObject['status']) && $relatedObject['status'] == PUBLISHED) {
                     if ($relatedObject['class'] == 'party'
                         && $relatedObject['relation_type'] == 'isFundedBy'
                         && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
@@ -222,8 +227,9 @@ class Activity_grants_extension extends ExtensionBase
                 }
 
                 // recursively find all funders that this node `isPartOf`
-                if ($recursive
+                if ($recursive === true
                     && $relatedObject['relation_type'] == 'isPartOf'
+                    && $relatedObject['origin'] != 'REVERSE_INT'
                     && !in_array($relatedObject['registry_object_id'], $processed)
                 ) {
                     array_push($processed, $relatedObject['registry_object_id']);
@@ -366,6 +372,7 @@ class Activity_grants_extension extends ExtensionBase
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
                 if ($relatedObject['relation_type'] == $relation
+                    && $relatedObject['origin'] != 'REVERSE_INT'
                     && !in_array($relatedObject['registry_object_id'], $processed)
                 ) {
                     $result[] = $relatedObject;

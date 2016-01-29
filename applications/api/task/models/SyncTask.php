@@ -219,6 +219,7 @@ class SyncTask extends Task
         $solr_docs = array();
         $remove_ids = array();
         if (sizeof($ids) > 0) {
+            $ids = array_splice($ids, 2, 1);
             foreach ($ids as $ro_id) {
                 try {
                     $ro = false;
@@ -256,7 +257,6 @@ class SyncTask extends Task
         } else {
             throw new Exception("No records found");
         }
-
 
         //indexing in SOLR
         if (sizeof($solr_docs) > 0) {
