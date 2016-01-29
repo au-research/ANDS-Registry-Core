@@ -191,7 +191,7 @@ class TaskManager
     {
         parse_str($taskResult['params'], $params);
 
-        $taskType = isset($params['class']) ? $params['class'] : false;
+        $taskType = isset($params['class']) ? ucfirst($params['class']) : false;
 
         if (!$taskType) {
             $taskType = ucfirst($taskResult['name']);
