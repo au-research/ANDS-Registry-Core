@@ -111,8 +111,8 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script src="<?php echo apps_url('assets/orcid_widget/js/orcid_widget.js');?>" type="text/javascript"></script>
 
        <?php elseif($lib=='grant_widget'):?>
-            <link href="<?php echo apps_url('assets/grant_widget/css/grant_widget.css');?>" rel="stylesheet" type="text/css">
-            <script src="<?php echo apps_url('assets/grant_widget/js/grant_widget.js');?>" type="text/javascript"></script>
+            <link href="<?php echo apps_url('assets/grant_widget/css/grant_widget_v2.css');?>" rel="stylesheet" type="text/css">
+            <script src="<?php echo apps_url('assets/grant_widget/js/grant_widget_v2.js');?>" type="text/javascript"></script>
 
         <?php elseif($lib=='location_capture_widget'):?>
             <link href="<?php echo apps_url('assets/location_capture_widget/css/location_capture_widget.css');?>" rel="stylesheet" type="text/css">
