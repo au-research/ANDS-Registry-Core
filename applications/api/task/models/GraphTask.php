@@ -12,6 +12,7 @@ use Neoxygen\NeoClient\ClientBuilder;
 
 /**
  * Class SyncTask
+ * todo extends RegistryTask
  *
  * @package ANDS\API\Task
  */
@@ -54,7 +55,15 @@ class GraphTask extends Task
         }
     }
 
-    private function syncDS($dsID){
+    /**
+     * `Sync` a chunk of the Data Source by ID
+     * Calls syncRO internally
+     *
+     * @param $dsID
+     * @throws Exception
+     */
+    private function syncDS($dsID)
+    {
         if (!$this->chunkSize) {
             throw new Exception("No chunk defined for this sync task");
         }
@@ -77,12 +86,22 @@ class GraphTask extends Task
         }
     }
 
-    private function syncRO($ids){
+    /**
+     * `Sync` a list of registry object IDs
+     * Syncing in the graph context involves creating nodes
+     * for itself and for everything that it is relate to
+     * and the relationship itself
+     *
+     * @param $ids
+     */
+    private function syncRO($ids)
+    {
         foreach ($ids as $id) {
             try {
                 $record = $this->ci->ro->getByID($id);
                 $this->addNode($record);
                 $relatedObjects = $record->getAllRelatedObjects(false, false, true);
+                $this->log('Adding ' . sizeof($relatedObjects) . ' relationships for record ' . $record->id)->save();
                 foreach ($relatedObjects as $related) {
                     $relatedObject = $this->ci->ro->getByID($related['registry_object_id']);
                     $this->addNode($relatedObject);
@@ -91,12 +110,16 @@ class GraphTask extends Task
                 }
                 unset($record);
             } catch (Exception $e) {
-                $this->log("Error generating graph for RO: ".$id.' -> '.$e->getMessage());
+                $this->log("Error generating graph for RO: " . $id . ' -> ' . $e->getMessage());
             }
         }
     }
 
-    public function loadParams(){
+    /**
+     * Loading the parameter so that the object can use them as local properties
+     */
+    public function loadParams()
+    {
         parse_str($this->params, $params);
         $this->target = isset($params['type']) ? $params['type'] : false;
         $this->target_id = isset($params['id']) ? $params['id'] : false;
@@ -124,6 +147,14 @@ class GraphTask extends Task
     }
 
 
+    /**
+     * Adding a node to Neo4j
+     * Using MERGE to ensure the record is generated or matched
+     * todo more detail about the node
+     *
+     * @param $record
+     * @return mixed
+     */
     public function addNode($record)
     {
         $recordTitle = addslashes($record->title);
@@ -133,11 +164,21 @@ class GraphTask extends Task
         $q = "MERGE (n:RegistryObject:$recordClass $encodedRecordData)";
         $q .= " RETURN n";
         if ($this->ci->input->get('debug')) {
-            $this->log($q);
+            $this->log('Added node ' . $record->id)->log($q)->save();
         }
         return $this->client->sendCypherQuery($q);
     }
 
+    /**
+     * Adding a relationship between 2 nodes to Neo4j
+     * Using CREATE UNIQUE for unique relationship
+     * todo relationship properties
+     * todo relationship direction
+     *
+     * @param $record
+     * @param $related
+     * @return mixed
+     */
     public function addRelationship($record, $related)
     {
         $relatedID = $related['registry_object_id'];
@@ -147,12 +188,20 @@ class GraphTask extends Task
         $q .= " CREATE UNIQUE (n1)-[r:$relationType]-(n2)";
         $q .= " RETURN r";
         if ($this->ci->input->get('debug')) {
-            $this->log($q);
+            $this->log("Added relationship $relationType between $record->id and $relatedID")->log($q)->save();;
         }
         $result = $this->client->sendCypherQuery($q);
         return $result;
     }
 
+    /**
+     * Convert a string into camel case
+     * todo move to helper
+     *
+     * @param       $str
+     * @param array $noStrip
+     * @return mixed|string
+     */
     public static function camelCase($str, array $noStrip = [])
     {
         // non-alpha and non-numeric characters become spaces
