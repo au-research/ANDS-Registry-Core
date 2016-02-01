@@ -391,6 +391,9 @@ class Spatial_Extension extends ExtensionBase
             $NumPoints--;
         }
 
+        //fix polygon array values
+        $polygon = array_values($polygon);
+
         for ($i = 0; $i < $NumPoints; ++$i) {
             if ($i < $NumPoints - 1) {
                 for ($h = $i + 1; $h < $NumPoints; ++$h) {
