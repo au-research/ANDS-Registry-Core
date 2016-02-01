@@ -11,6 +11,7 @@ engine/cache/
 etc/misc/python/myconfig.py
 etc/misc/python/cert.pem
 etc/misc/python/__*
+etc/misc/python/citation_services/update_citation_data.ini
 etc/misc/python/linkchecker/linkchecker.ini
 etc/misc/python/linkchecker/__pycache__
 etc/misc/python/linkchecker/checkers/__pycache__
