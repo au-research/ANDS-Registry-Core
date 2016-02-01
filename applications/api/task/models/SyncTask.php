@@ -161,6 +161,7 @@ class SyncTask extends Task
                 $name .= sizeof($chunkArray). " Records";
             }
 
+            //adding normal sync task
             $task = array(
                 'name' => $name,
                 'priority' => $this->getPriority(),
@@ -168,7 +169,17 @@ class SyncTask extends Task
                 'type' => 'POKE',
                 'params' => http_build_query($params),
             );
+            $this->taskManager->addTask($task);
 
+            //adding a graph generation task
+            $params['class'] = 'graph';
+            $task = array(
+                'name' => $name,
+                'priority' => $this->getPriority(),
+                'frequency' => 'ONCE',
+                'type' => 'POKE',
+                'params' => http_build_query($params),
+            );
             $this->taskManager->addTask($task);
         }
 

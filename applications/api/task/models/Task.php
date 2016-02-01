@@ -62,7 +62,6 @@ class Task
             $this->run_task();
         } catch (Exception $e) {
             $this->stoppedWithError($e->getMessage());
-            $this->finalize($start);
         }
 
         $this->finalize($start);

@@ -43,6 +43,9 @@ class Task_api
         );
 
         switch (strtolower($this->params['submodule'])) {
+            case 'test':
+                return $this->test();
+                break;
             case 'run':
                 $someTask = $this->taskManager->findPendingTask();
                 if (!$someTask) $someTask = $this->taskManager->findRandomTask();
@@ -109,6 +112,11 @@ class Task_api
                     return $this->report();
                 }
         }
+    }
+
+    private function test(){
+        $task = new \ANDS\API\Task\GraphTask();
+        $task->run_task();
     }
 
     /**
