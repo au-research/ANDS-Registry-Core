@@ -100,7 +100,14 @@ class GraphTask extends Task
             try {
                 $record = $this->ci->ro->getByID($id);
                 $this->addNode($record);
-                $relatedObjects = $record->getAllRelatedObjects(false, false, true);
+
+//                Experiment for future usage, do not remove
+//                $relatedObjects = $record->getAllRelatedObjects(false, false, false);
+                $relatedObjects = $record->_getExplicitLinks();
+//                $relatedObjects = array_merge($relatedObjects, $record->_getContributorLinks());
+//                $relatedObjects = array_merge($relatedObjects, $record->_getIdentifierLinks());
+//                $relatedObjects = array_merge($relatedObjects, $record->_getReverseIdentifierLinks());
+
                 $this->log('Adding ' . sizeof($relatedObjects) . ' relationships for record ' . $record->id)->save();
                 foreach ($relatedObjects as $related) {
                     $relatedObject = $this->ci->ro->getByID($related['registry_object_id']);

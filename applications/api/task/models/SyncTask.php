@@ -171,16 +171,17 @@ class SyncTask extends Task
             );
             $this->taskManager->addTask($task);
 
-            //adding a graph generation task
-            $params['class'] = 'graph';
-            $task = array(
-                'name' => $name,
-                'priority' => $this->getPriority(),
-                'frequency' => 'ONCE',
-                'type' => 'POKE',
-                'params' => http_build_query($params),
-            );
-            $this->taskManager->addTask($task);
+//            adding a graph generation task
+//            Placeholder for future usage, do not remove for now
+//            $params['class'] = 'graph';
+//            $task = array(
+//                'name' => $name,
+//                'priority' => $this->getPriority(),
+//                'frequency' => 'ONCE',
+//                'type' => 'POKE',
+//                'params' => http_build_query($params),
+//            );
+//            $this->taskManager->addTask($task);
         }
 
         $this->log('Analyzed Data Source ' . $dsID . " spawned " . $data['numChunk'] . " sync tasks for " . $data['total'] . ' records');

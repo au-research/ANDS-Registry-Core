@@ -379,6 +379,9 @@ class Spatial_Extension extends ExtensionBase
     {
         $NumPoints = count($polygon);
 
+        //fix polygon array values
+        $polygon = array_values($polygon);
+
         //polygon comes in as a list of string, convert to a list of array of vertices
         foreach ($polygon as &$v) {
             $pp = explode(' ', $v);
