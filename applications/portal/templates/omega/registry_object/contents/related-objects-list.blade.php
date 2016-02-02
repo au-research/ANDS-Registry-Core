@@ -1,3 +1,15 @@
+<div class="panel panel-primary element-no-top element-short-bottom panel-content">
+    <div class="panel-body swatch-white">
+
+        {{--Related Publications--}}
+        @if (sizeof($related['publication']) > 0)
+            @include('registry_object/contents/related-publications')
+        @endif
+
+    </div>
+</div>
+
+
 <?php
 $hasRelatedOrganisation = false;
 $hasRelatedGrantsOrProjects = false;

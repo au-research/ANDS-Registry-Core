@@ -188,6 +188,9 @@ class Registry_object extends MX_Controller
         }
         $fl = '?fl';
 
+        //construct displayable relationship array with business logic built in
+        $related = $this->getRelationship($ro);
+
         //Do the rendering
         $this->blade
             ->set('scripts', array('view', 'view_app', 'tag_controller'))
@@ -207,7 +210,59 @@ class Registry_object extends MX_Controller
             ->set('group_slug', $group_slug)
             ->set('fl', $fl)
             ->set('show_dup_identifier_qtip', $show_dup_identifier_qtip)
+            ->set('related', $related)
             ->render($render);
+    }
+
+    /**
+     * Returns the relationship array primed for display
+     * @param $ro
+     * @return array
+     */
+    private function getRelationship($ro)
+    {
+        $related = [
+            'publication' => [], 'website' => []
+        ];
+
+        //related publications
+        if ($ro->relatedInfo) {
+            foreach ($ro->relatedInfo as $relatedInfo) {
+
+                //ensure
+                if (!isset($relatedInfo['title'])) $relatedInfo['title'] = '';
+
+                if ($relatedInfo['type'] == 'publication') {
+
+                    // publication display relationship
+                    if (isset($relatedInfo['relation']['relation_type']) && $relatedInfo['relation']['relation_type'] != '') {
+                        $relatedInfo['display_relationship'] = readable($relatedInfo['relation']['relation_type']);
+                    } else {
+                        $relatedInfo['display_relationship'] = '';
+                    }
+
+                    //publication description
+                    $description = '';
+                    if (isset($relatedInfo['relation']['description'])) {
+                        $description .= $relatedInfo['relation']['description'];
+                    } elseif (isset($relatedInfo['identifier']['identifier_href']['hover_text'])) {
+                        $description = $relatedInfo['identifier']['identifier_href']['hover_text'];
+                    } elseif (isset($relatedInfo['identifier']['identifier_value'])) {
+                        $description = $relatedInfo['identifier']['identifier_value'];
+                    } else {
+                        $description = $relatedInfo['title'];
+                    }
+                    $relatedInfo['display_description'] = $description;
+
+                    $related['publication'][] = $relatedInfo;
+                } elseif ($relatedInfo['type'] == 'website') {
+                    $related['website'][] = $relatedInfo;
+                }
+
+            }
+        }
+
+        return $related;
     }
 
     /**

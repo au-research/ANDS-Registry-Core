@@ -93,7 +93,7 @@ class _ro
     public function fetch($params = array('core'))
     {
         //get the URL
-        $url = $this->construct_api_url($params);
+        $url = $this->construct_api_url();
         $this->prop['api_url'] = $url;
         $this->prop['message'] = "OK";
         $this->prop['fromCache'] = $this->useCache;
