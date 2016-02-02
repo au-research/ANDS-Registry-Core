@@ -1,9 +1,12 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) {
+    exit('No direct script access allowed');
+}
 
 /**
  * Vocabularies CI Model
  *
- * Used for creating vocabularies, viewing vocabularies and extending vocabularies metadata
+ * Used for creating vocabularies, viewing vocabularies and extending
+ * vocabularies metadata
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 class Vocabularies extends CI_Model
@@ -18,7 +21,10 @@ class Vocabularies extends CI_Model
     public function getByID($id)
     {
         $this->vocab_db = $this->load->database('vocabs', true);
-        $result = $this->vocab_db->get_where('vocabularies', array('id' => $id));
+        $result = $this->vocab_db->get_where(
+            'vocabularies',
+            array('id' => $id)
+        );
 
         if ($result->num_rows() > 0) {
             $vocab_result = $result->result_array();
@@ -41,13 +47,20 @@ class Vocabularies extends CI_Model
     public function getBySlug($slug)
     {
         $this->vocab_db = $this->load->database('vocabs', true);
-        $result = $this->vocab_db->get_where('vocabularies', array('slug' => $slug, 'status'=>'published'));
+        $result = $this->vocab_db->get_where(
+            'vocabularies',
+            array('slug' => $slug,
+                  'status'=>'published')
+        );
         if ($result->num_rows() > 0) {
             $vocab_result = $result->result_array();
             $vocab_id = $vocab_result[0]['id'];
             return $this->getByID($vocab_id);
         } else {
-            $result = $this->vocab_db->get_where('vocabularies', array('slug' => $slug));
+            $result = $this->vocab_db->get_where(
+                'vocabularies',
+                array('slug' => $slug)
+            );
             if ($result->num_rows() > 0) {
                 $vocab_result = $result->result_array();
                 $vocab_id = $vocab_result[0]['id'];
@@ -69,7 +82,11 @@ class Vocabularies extends CI_Model
     public function getDraftBySlug($slug)
     {
         $this->vocab_db = $this->load->database('vocabs', true);
-        $result = $this->vocab_db->get_where('vocabularies', array('slug' => $slug, 'status' => 'draft'));
+        $result = $this->vocab_db->get_where(
+            'vocabularies',
+            array('slug' => $slug,
+                  'status' => 'draft')
+        );
         if ($result->num_rows() > 0) {
             $vocab_result = $result->result_array();
             $vocab_id = $vocab_result[0]['id'];
@@ -88,7 +105,9 @@ class Vocabularies extends CI_Model
     {
         $this->vocab_db = $this->load->database('vocabs', true);
         $result = $this->vocab_db->get('vocabularies');
-        if ($result->num_rows() == 0) return false;
+        if ($result->num_rows() == 0) {
+            return false;
+        }
         $res = array();
         foreach ($result->result() as $r) {
             $vocab = $this->getByID($r->id);
@@ -105,10 +124,11 @@ class Vocabularies extends CI_Model
     {
         $this->vocab_db = $this->load->database('vocabs', true);
         $result = $this->vocab_db->get('vocabularies');
-        if ($result->num_rows() == 0)
+        if ($result->num_rows() == 0) {
             return false;
-        else
+        } else {
             return $result->result_array();
+        }
 
     }
 
@@ -128,13 +148,19 @@ class Vocabularies extends CI_Model
                 $affiliations = $this->user->affiliations();
                 $role_id = $this->user->localIdentifier();
 
-                $query = $this->vocab_db->where_in('owner', $affiliations)->get('vocabularies');
+                $query = $this->vocab_db->where_in(
+                    'owner',
+                    $affiliations
+                )->get('vocabularies');
                 if ($query && $query->num_rows() > 0) {
                     foreach ($query->result_array() as $r) {
                         $result[] = $r;
                     }
                 }
-                $query = $this->vocab_db->where_in('owner', $role_id)->get('vocabularies');
+                $query = $this->vocab_db->where_in(
+                    'owner',
+                    $role_id
+                )->get('vocabularies');
                 if ($query && $query->num_rows() > 0) {
                     foreach ($query->result_array() as $r) {
                         $result[] = $r;
@@ -154,7 +180,7 @@ class Vocabularies extends CI_Model
      * @return array(_vocabulary) a PHP array of _vocabulary object
      * @see applications/vocabs/models/_vocabulary
      */
-    public function test_vocabs()
+    public function testVocabs()
     {
         $test_vocab1 = new _vocabulary();
         $test_vocab1->populate(
@@ -163,7 +189,8 @@ class Vocabularies extends CI_Model
                 'title' => 'ANZSRC Fields of Research',
                 'acronym' => 'ANZSRC-FOR',
                 'note' => 'Just a little notes baout this vocab',
-                'logo' => 'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
+                'logo' => 'https://devl.ands.org.au/workareas/liz/'
+                    . 'core/assets/core/images/footer_logo_rev.png',
                 'creation_date' => '01-01-2009',
                 'revision_cycle' => 'annual',
                 'language' => array(0 => 'En', 1 => 'Fr'),
@@ -172,7 +199,9 @@ class Vocabularies extends CI_Model
                 'pool_party_id' => '1DCDF7D0-EFB1-0001-4A4A-2C0D1BB3199A',
                 'top_concept' => array(0 => 'Research'),
                 'description' => '',
-                'licence' => $this->checkRightsText('http://creativecommons.org/licenses/by/4.0/'),
+                'licence' => $this->checkRightsText(
+                    'http://creativecommons.org/licenses/by/4.0/'
+                ),
                 'related_entity' => array(
                     0 => array('id' => '1',
                         'type' => 'publisher',
@@ -249,16 +278,21 @@ class Vocabularies extends CI_Model
                         )
                     )
                 ),
-                'subjects' => array(0 => array('subject' => 'My subject', 'subject_source' => 'ANZSRC'),
-                    1 => array('subject' => 'Earth', 'subject_source' => 'ANZSRC'),
-                    2 => array('subject' => 'Fish', 'subject_source' => 'ANZSRC'),
-                    3 => array('subject' => 'Water', 'subject_source' => 'ANZSRC'),
-                    4 => array('subject' => 'Stars', 'subject_source' => 'ANZSRC')
+                'subjects' => array(
+                    0 => array('subject' => 'My subject',
+                               'subject_source' => 'ANZSRC'),
+                    1 => array('subject' => 'Earth',
+                               'subject_source' => 'ANZSRC'),
+                    2 => array('subject' => 'Fish',
+                               'subject_source' => 'ANZSRC'),
+                    3 => array('subject' => 'Water',
+                               'subject_source' => 'ANZSRC'),
+                    4 => array('subject' => 'Stars',
+                               'subject_source' => 'ANZSRC')
 
                 )
 
             )
-
         );
 
 
@@ -269,7 +303,8 @@ class Vocabularies extends CI_Model
                 'title' => 'ANZSRC-SEO',
                 'acronym' => 'ANZSRC-SEO',
                 'note' => 'Just a little notes baout this vocab',
-                'logo' => 'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
+                'logo' => 'https://devl.ands.org.au/workareas/liz/'
+                    . 'core/assets/core/images/footer_logo_rev.png',
                 'creation_date' => '01-01-2009',
                 'revision_cycle' => 'quarterly',
                 'language' => array(0 => 'En', 1 => 'Fr'),
@@ -278,7 +313,9 @@ class Vocabularies extends CI_Model
                 'pool_party_id' => '',
                 'top_concept' => array(0 => 'Research'),
                 'description' => '',
-                'licence' => $this->checkRightsText('http://creativecommons.org/licenses/by/4.0/'),
+                'licence' => $this->checkRightsText(
+                    'http://creativecommons.org/licenses/by/4.0/'
+                ),
                 'related_entity' => array(
                     0 => array('id' => '1',
                         'type' => 'publisher',
@@ -313,7 +350,8 @@ class Vocabularies extends CI_Model
                         'title' => 'my special vocab'
                     )
                 ),
-                'versions' => array(0 => array('title' => 'this is a version title',
+                'versions' => array(0 => array('title' =>
+                                               'this is a version title',
                     'status' => 'current',
                     'release_date' => '01-03-2015',
                     'note' => 'Just a little bit more info on the version',
@@ -350,15 +388,20 @@ class Vocabularies extends CI_Model
                         )
                     )
                 ),
-                'subjects' => array(0 => array('subject' => 'My subject', 'subject_source' => 'ANZSRC'),
-                    1 => array('subject' => 'Earth', 'subject_source' => 'ANZSRC'),
-                    2 => array('subject' => 'Fish', 'subject_source' => 'ANZSRC'),
-                    3 => array('subject' => 'Water', 'subject_source' => 'ANZSRC'),
-                    4 => array('subject' => 'Stars', 'subject_source' => 'ANZSRC')
+                'subjects' => array(
+                    0 => array('subject' => 'My subject',
+                               'subject_source' => 'ANZSRC'),
+                    1 => array('subject' => 'Earth',
+                               'subject_source' => 'ANZSRC'),
+                    2 => array('subject' => 'Fish',
+                               'subject_source' => 'ANZSRC'),
+                    3 => array('subject' => 'Water',
+                               'subject_source' => 'ANZSRC'),
+                    4 => array('subject' => 'Stars',
+                               'subject_source' => 'ANZSRC')
 
                 ),
             )
-
         );
 
 
@@ -366,19 +409,32 @@ class Vocabularies extends CI_Model
         $test_vocab3->populate(
             array(
                 'id' => false,
-                'title' => 'Registry Interchange Format - Collections and Services',
+                'title' => 'Registry Interchange Format - '
+                    . 'Collections and Services',
                 'acronym' => 'RIFCS',
                 'note' => 'Just a little notes baout this vocab',
-                'logo' => 'https://devl.ands.org.au/workareas/liz/core/assets/core/images/footer_logo_rev.png',
+                'logo' => 'https://devl.ands.org.au/workareas/liz/'
+                    . 'core/assets/core/images/footer_logo_rev.png',
                 'creation_date' => '01-01-2009',
                 'revision_cycle' => 'annual',
                 'language' => array(0 => 'En', 1 => 'Fr'),
                 'slug' => 'rifcs',
                 'vocab_uri' => 'http://ands.poolparty.biz/rifcs',
                 'pool_party_id' => '1DCE031F-808F-0001-378D-2D3E15E01889',
-                'top_concept' => array(0 => 'Data Collections', 1 => 'Linked Data', 2 => 'Data Management'),
-                'description' => 'The Registry Interchange Format - Collections and Services (RIF-CS) Schema was developed as a data interchange format for supporting the electronic exchange of collection and service descriptions. It organises information about collections and services into the format required by the ANDS Collections Registry.',
-                'licence' => $this->checkRightsText('http://creativecommons.org/licenses/by/4.0/'),
+                'top_concept' => array(
+                    0 => 'Data Collections',
+                    1 => 'Linked Data',
+                    2 => 'Data Management'),
+                'description' => 'The Registry Interchange Format - '
+                    . 'Collections and Services (RIF-CS) Schema was '
+                    . 'developed as a data interchange format for '
+                    . 'supporting the electronic exchange of collection '
+                    . 'and service descriptions. It organises information '
+                    . 'about collections and services into the format '
+                    . 'required by the ANDS Collections Registry.',
+                'licence' => $this->checkRightsText(
+                    'http://creativecommons.org/licenses/by/4.0/'
+                ),
                 'related_entity' => array(
                     0 => array('id' => '1',
                         'type' => 'publisher',
@@ -414,18 +470,19 @@ class Vocabularies extends CI_Model
                     )
 
                 ),
-                'versions' => array(0 => array('title' => 'this is a version title',
-                    'status' => 'current',
-                    'release_date' => '01-03-2015',
-                    'note' => 'Just a little bit more info on the version',
-                    'id' => '23',
-                    'access_point' => array(0 => array(
-                        'access_point_type' => 'webPage',
-                        'access_point_format' => 'XML',
-                        'access_point_URI' => 'http://some.web.access/file'
-                    )
-                    )
-                ),
+                'versions' => array(
+                    0 => array('title' => 'this is a version title',
+                        'status' => 'current',
+                        'release_date' => '01-03-2015',
+                        'note' => 'Just a little bit more info on the version',
+                        'id' => '23',
+                        'access_point' => array(0 => array(
+                            'access_point_type' => 'webPage',
+                            'access_point_format' => 'XML',
+                            'access_point_URI' => 'http://some.web.access/file'
+                        )
+                        )
+                    ),
                     1 => array('title' => 'this is an older version title',
                         'status' => 'superceded',
                         'release_date' => '01-03-2015',
@@ -450,11 +507,17 @@ class Vocabularies extends CI_Model
                         )
                     )
                 ),
-                'subjects' => array(0 => array('subject' => 'My subject', 'subject_source' => 'ANZSRC'),
-                    1 => array('subject' => 'Earth', 'subject_source' => 'ANZSRC'),
-                    2 => array('subject' => 'Fish', 'subject_source' => 'ANZSRC'),
-                    3 => array('subject' => 'Water', 'subject_source' => 'ANZSRC'),
-                    4 => array('subject' => 'Stars', 'subject_source' => 'ANZSRC')
+                'subjects' => array(
+                    0 => array('subject' => 'My subject',
+                               'subject_source' => 'ANZSRC'),
+                    1 => array('subject' => 'Earth',
+                               'subject_source' => 'ANZSRC'),
+                    2 => array('subject' => 'Fish',
+                               'subject_source' => 'ANZSRC'),
+                    3 => array('subject' => 'Water',
+                               'subject_source' => 'ANZSRC'),
+                    4 => array('subject' => 'Stars',
+                               'subject_source' => 'ANZSRC')
 
                 ),
             )
@@ -470,20 +533,44 @@ class Vocabularies extends CI_Model
         return $test_records;
     }
 
-    function checkRightsText($value)
+    private function checkRightsText($value)
     {
 
-        if (str_replace("http://creativecommons.org/licenses/by/", "", $value) != $value) {
+        if (str_replace(
+            "http://creativecommons.org/licenses/by/",
+            "",
+            $value
+        ) != $value) {
             return "CC-BY";
-        } elseif (str_replace("http://creativecommons.org/licenses/by-sa/", "", $value) != $value) {
+        } elseif (str_replace(
+            "http://creativecommons.org/licenses/by-sa/",
+            "",
+            $value
+        ) != $value) {
             return "CC-BY-SA";
-        } elseif (str_replace("http://creativecommons.org/licenses/by-nc/", "", $value) != $value) {
+        } elseif (str_replace(
+            "http://creativecommons.org/licenses/by-nc/",
+            "",
+            $value
+        ) != $value) {
             return "CC-BY-NC";
-        } elseif (str_replace("http://creativecommons.org/licenses/by-nc-sa/", "", $value) != $value) {
+        } elseif (str_replace(
+            "http://creativecommons.org/licenses/by-nc-sa/",
+            "",
+            $value
+        ) != $value) {
             return "CC-BY-NC-SA";
-        } elseif (str_replace("http://creativecommons.org/licenses/by-nd/", "", $value) != $value) {
+        } elseif (str_replace(
+            "http://creativecommons.org/licenses/by-nd/",
+            "",
+            $value
+        ) != $value) {
             return "CC-BY-ND";
-        } elseif (str_replace("http://creativecommons.org/licenses/by-nc-nd/", "", $value) != $value) {
+        } elseif (str_replace(
+            "http://creativecommons.org/licenses/by-nc-nd/",
+            "",
+            $value
+        ) != $value) {
             return "CC-BY-NC-ND";
         } else {
             return $value;
@@ -536,7 +623,10 @@ class Vocabularies extends CI_Model
         //clear SOLR index
         $this->load->library('solr');
         $vocab_config = get_config_item('vocab_config');
-        if (!$vocab_config['solr_url']) throw new Exception('Indexer URL for Vocabulary module is not configured correctly');
+        if (!$vocab_config['solr_url']) {
+            throw new Exception('Indexer URL for Vocabulary module '
+                                . 'is not configured correctly');
+        }
         $this->solr->setUrl($vocab_config['solr_url']);
 
         $this->solr->deleteByID($id);
@@ -547,12 +637,18 @@ class Vocabularies extends CI_Model
      * and remove all traces from sissvoc, sesame, and fs
      * @param $vocab_id
      */
-    public function removeAllVersions($vocab_id) {
+    public function removeAllVersions($vocab_id)
+    {
         $response = "";
         $this->vocab_db = $this->load->database('vocabs', true);
-        $versions = $this->vocab_db->get_where('versions', array('vocab_id' => $vocab_id));
-        if ($versions->num_rows() == 0) return;
-        foreach ($versions->result_array()  as $r) {
+        $versions = $this->vocab_db->get_where(
+            'versions',
+            array('vocab_id' => $vocab_id)
+        );
+        if ($versions->num_rows() == 0) {
+            return;
+        }
+        foreach ($versions->result_array() as $r) {
             $response .= $this->removeVersion($vocab_id, $r['id']);
         }
     }
@@ -562,9 +658,12 @@ class Vocabularies extends CI_Model
      * @param $version_id
      * @return string
      */
-    public function removeVersion($vocab_id, $version_id) {
+    public function removeVersion($vocab_id, $version_id)
+    {
         $this->vocab_db = $this->load->database('vocabs', true);
-        $taskList = array('UNPUBLISH'=> 'SISSVoc', 'UNIMPORT'=> 'Sesame' ,'UNHARVEST' => 'File');
+        $taskList = array('UNPUBLISH'=> 'SISSVoc',
+                          'UNIMPORT'=> 'Sesame',
+                          'UNHARVEST' => 'File');
         $task_id = $this->createDeleteTask($vocab_id, $version_id, $taskList);
         $response = $this->runToolkitTask($task_id);
         $result = json_decode($response, true);
@@ -582,10 +681,20 @@ class Vocabularies extends CI_Model
     {
         $this->vocab_db = $this->load->database('vocabs', true);
         $this->vocab_db->select('id, version_id, type, portal_data');
-        if($type == 'all' || $type == '' )
-            $query = $this->vocab_db->get_where('access_points', array('version_id' => $versionId));
-        else
-            $query = $this->vocab_db->get_where('access_points', array('version_id' => $versionId, 'type' => $type));
+        if ($type == 'all' || $type == '') {
+            $query = $this->vocab_db->
+                   get_where(
+                       'access_points',
+                       array('version_id' => $versionId)
+                   );
+        } else {
+            $query = $this->vocab_db->
+                   get_where(
+                       'access_points',
+                       array('version_id' => $versionId,
+                       'type' => $type)
+                   );
+        }
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
@@ -601,12 +710,14 @@ class Vocabularies extends CI_Model
      * @return mixed
      * @throws Exception
      */
-    public function createDeleteTask($vocab_id, $version_id, $task_list){
+    public function createDeleteTask($vocab_id, $version_id, $task_list)
+    {
         $this->vocab_db = $this->load->database('vocabs', true);
         $task_array = array();
 
-        foreach($task_list as $type=>$provider_type){
-            array_push($task_array, array('type' => $type, 'provider_type' => $provider_type));
+        foreach ($task_list as $type => $provider_type) {
+            array_push($task_array, array('type' => $type,
+                                          'provider_type' => $provider_type));
         }
         $task_params = json_encode($task_array);
         $params = array(
@@ -616,7 +727,9 @@ class Vocabularies extends CI_Model
         );
         $result = $this->vocab_db->insert('task', $params);
         $task_id = $this->vocab_db->insert_id();
-        if (!$result) throw new Exception($this->vocab_db->_error_message());
+        if (!$result) {
+            throw new Exception($this->vocab_db->_error_message());
+        }
         return $task_id;
     }
 
@@ -626,7 +739,8 @@ class Vocabularies extends CI_Model
      * @param $task_id
      * @return string
      */
-    function runToolkitTask($task_id){
+    public function runToolkitTask($task_id)
+    {
         //hit Toolkit
         $vocab_config = get_config_item('vocab_config');
         $toolkit_url = $vocab_config['toolkit_url'];
@@ -638,7 +752,7 @@ class Vocabularies extends CI_Model
      * Autoload the _vocabulary class
      * @ignore
      */
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         include_once("_vocabulary.php");
