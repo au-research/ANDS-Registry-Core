@@ -699,8 +699,8 @@ class Registry_object extends MX_Controller
         // facets configuration
         $this->solr
             ->setFacetOpt('mincount', '1')
-            ->solr->setFacetOpt('limit', '100')
-            ->solr->setFacetOpt('sort', 'count');
+            ->setFacetOpt('limit', '100')
+            ->setFacetOpt('sort', 'count');
 
         //temporal facet
         $this->solr
@@ -747,6 +747,7 @@ class Registry_object extends MX_Controller
         }
 
         //not recording a hit for the quick search done for advanced search
+        /** @var boolean $no_log */
         if (!$no_log) {
             $event = array(
                 'event' => 'portal_search',
