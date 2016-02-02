@@ -224,24 +224,43 @@ class ObjectHandler extends Handler{
             }
         }
 
-        if ($this->params['object_submodule']) {
-            if ($this->params['object_submodule'] == 'grants') {
-                $relatedObjects = $record->getAllRelatedObjects(false, false, true);
-                $childActivities = $record->getChildActivities($relatedObjects);
-                $relationships['grants'] = [
-                    'programs' => $childActivities,
-                    'data_output' => $record->getDataOutput($childActivities, $relatedObjects),
-                    'funders' => $record->getFunders(),
-                    'publications' => $record->getPublications($childActivities, $relatedObjects),
-                    'structure' => $record->getStructuredGrantsAtNode($relatedObjects)
-                ];
+        $includes = explode(',', $this->ci->input->get('includes'));
 
-                //useful for debugging
-                if ($only = $this->ci->input->get('only')) {
-                    $relationships = $relationships['grants'][$only];
+
+        if (in_array('grants', $includes)) {
+            $relatedObjects = $record->getAllRelatedObjects(false, false, true);
+            $childActivities = $record->getChildActivities($relatedObjects);
+            $grants = [];
+            $programs = [];
+            if ($childActivities && sizeof($childActivities) > 0) {
+                foreach ($childActivities as $childActivity) {
+                    if (isset($childActivity['type'])) {
+                        if (trim(strtolower($childActivity['type'])) == 'program') {
+                            $programs[] = $childActivity;
+                        } elseif (trim(strtolower($childActivity['type'])) == 'grant') {
+                            $grants[] = $childActivity;
+                        }
+                    }
                 }
             }
+            $relationships['grants'] = [
+                'programs' => $programs,
+                'grants' => $grants,
+                'data_output' => $record->getDataOutput($childActivities, $relatedObjects),
+                'funders' => $record->getFunders(),
+//                    'structure' => $record->getStructuredGrantsAtNode($relatedObjects)
+            ];
+
+            if ($record->class == 'activity') {
+                $relationships['grants']['publications'] = $record->getPublications($childActivities, $relatedObjects);
+            }
+
+            //useful for debugging
+            if ($only = $this->ci->input->get('only')) {
+                $relationships = $relationships['grants'][$only];
+            }
         }
+
 
         return $relationships;
     }

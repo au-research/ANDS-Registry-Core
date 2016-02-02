@@ -69,97 +69,10 @@ class Registry_object extends MX_Controller
             }
         }
 
-        //Decide whethere to show the duplicate identifier
-        $show_dup_identifier_qtip = true;
-        if ($this->input->get('fl') !== false) {
-            $show_dup_identifier_qtip = false;
-        }
-        $fl = '?fl';
-
 
         if ($ro && $ro->prop['status'] == 'success') {
             //Found the record, handle rendering of normal view page
-
-            //Setup the common variables
-            $banner = asset_url('images/collection_banner.jpg', 'core');
-            $theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
-            $logo = $this->getLogo($ro->core['group']);
-            $group_slug = url_title($ro->core['group'], '-', true);
-
-            //Depends on the class of the record, show different view
-            switch ($ro->core['class']) {
-                case 'collection':
-                    $render = 'registry_object/view';
-                    break;
-                case 'activity':
-                    $render = 'registry_object/activity';
-                    $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'activity');
-                    $banner = asset_url('images/activity_banner.jpg', 'core');
-                    break;
-                case 'party':
-                    $render = 'registry_object/party';
-                    $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'party');
-                    break;
-                case 'service':
-                    $render = 'registry_object/service';
-                    $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'service');
-                    break;
-                default:
-                    $render = 'registry_object/view';
-                    break;
-            }
-
-            //Record a successful view only if the record is PUBLISHED
-            //DRAFT Preview are not recorded
-            if ($ro->core['status'] == 'PUBLISHED') {
-                $ro->event('viewed');
-                $event = array(
-                    'event' => 'portal_view',
-                    'roid' => $ro->core['id'],
-                    'roclass' => $ro->core['class'],
-                    'dsid' => $ro->core['data_source_id'],
-                    'group' => $ro->core['group'],
-                    'ip' => $this->input->ip_address(),
-                    'user_agent' => $this->input->user_agent()
-                );
-                if ($this->input->get('source')) $event['source'] = $this->input->get('source');
-                ulog_terms($event, 'portal', 'info');
-            } else {
-                //Handle Draft
-            }
-            $resolvedPartyIdentifiers = array();
-
-            if (isset($ro->relationships['party_one'])) {
-                foreach ($ro->relationships['party_one'] as $rel) {
-                    if (is_array($rel) && ($rel['origin'] == 'IDENTIFIER' || $rel['origin'] == 'IDENTIFIER REVERSE') && $rel['registry_object_id'] != '')
-                        $resolvedPartyIdentifiers[] = $rel['related_object_identifier'];
-                }
-            }
-            $the_theme = '';
-            if(isset($ro->core['theme_page'])){
-                $the_theme = $this->getTheme($ro->core['theme_page']);
-            }
-            //Do the rendering
-            $this->blade
-                ->set('scripts', array('view', 'view_app', 'tag_controller'))
-                ->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
-                ->set('relatedLimit', 5)
-                ->set('ro', $ro)
-                ->set('resolvedPartyIdentifiers', $resolvedPartyIdentifiers)
-                ->set('contents', $this->components['view'])
-                ->set('aside', $this->components['aside'])
-                ->set('view_headers', $this->components['view_headers'])
-                ->set('url', $ro->construct_api_url())
-                ->set('theme', $theme)
-                ->set('theme_page',  $the_theme)
-                ->set('logo', $logo)
-                ->set('isPublished', $ro->core['status'] == 'PUBLISHED')
-                ->set('banner', $banner)
-                ->set('group_slug', $group_slug)
-                ->set('fl', $fl)
-                ->set('show_dup_identifier_qtip', $show_dup_identifier_qtip)
-                ->render($render);
-
+            $this->displayRecord($ro);
         } elseif (strpos($key, 'http://purl.org/au-research/grants/nhmrc/') !== false || strpos($key, 'http://purl.org/au-research/grants/arc/') !== false) {
 
             //[SPECIAL] Handle Soft 404 for grants
@@ -186,9 +99,7 @@ class Registry_object extends MX_Controller
 
             //No Record or Error
 
-
             $message = ($ro ? $ro->prop['status'] . NL . $ro->prop['message'] : false);
-
             $this->blade
                 // ->set('scripts', array('view'))
                 ->set('id', $this->input->get('id'))
@@ -197,6 +108,106 @@ class Registry_object extends MX_Controller
                 ->set('message', $message)
                 ->render('soft_404');
         }
+    }
+
+    /**
+     * Using blade to display the record
+     * Construct the data that needs to be pre generated so that the render is seamless
+     *
+     * @param $ro
+     */
+    private function displayRecord($ro){
+
+        //Setup the common variables
+        $banner = asset_url('images/collection_banner.jpg', 'core');
+        $theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
+        $logo = $this->getLogo($ro->core['group']);
+        $group_slug = url_title($ro->core['group'], '-', true);
+
+        //Depends on the class of the record, show different view
+        switch ($ro->core['class']) {
+            case 'collection':
+                $render = 'registry_object/view';
+                break;
+            case 'activity':
+                $render = 'registry_object/activity';
+                $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'activity');
+                $banner = asset_url('images/activity_banner.jpg', 'core');
+                break;
+            case 'party':
+                $render = 'registry_object/party';
+                $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'party');
+                break;
+            case 'service':
+                $render = 'registry_object/service';
+                $theme = ($this->input->get('theme') ? $this->input->get('theme') : 'service');
+                break;
+            default:
+                $render = 'registry_object/view';
+                break;
+        }
+
+        //Record a successful view only if the record is PUBLISHED
+
+        if ($ro->core['status'] == 'PUBLISHED') {
+            $ro->event('viewed');
+            $event = array(
+                'event' => 'portal_view',
+                'roid' => $ro->core['id'],
+                'roclass' => $ro->core['class'],
+                'dsid' => $ro->core['data_source_id'],
+                'group' => $ro->core['group'],
+                'ip' => $this->input->ip_address(),
+                'user_agent' => $this->input->user_agent()
+            );
+            if ($this->input->get('source')) $event['source'] = $this->input->get('source');
+            ulog_terms($event, 'portal', 'info');
+        } else {
+            //DRAFT Preview are not recorded, or should they?
+        }
+
+        // Determine resolved party identifiers
+        $resolvedPartyIdentifiers = array();
+        if (isset($ro->relationships['party_one'])) {
+            foreach ($ro->relationships['party_one'] as $rel) {
+                if (is_array($rel) && ($rel['origin'] == 'IDENTIFIER' || $rel['origin'] == 'IDENTIFIER REVERSE') && $rel['registry_object_id'] != '')
+                    $resolvedPartyIdentifiers[] = $rel['related_object_identifier'];
+            }
+        }
+
+        // Theme Page
+        $the_theme = '';
+        if(isset($ro->core['theme_page'])){
+            $the_theme = $this->getTheme($ro->core['theme_page']);
+        }
+
+        //Decide whethere to show the duplicate identifier
+        $show_dup_identifier_qtip = true;
+        if ($this->input->get('fl') !== false) {
+            $show_dup_identifier_qtip = false;
+        }
+        $fl = '?fl';
+
+        //Do the rendering
+        $this->blade
+            ->set('scripts', array('view', 'view_app', 'tag_controller'))
+            ->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
+            ->set('relatedLimit', 5)
+            ->set('ro', $ro)
+            ->set('resolvedPartyIdentifiers', $resolvedPartyIdentifiers)
+            ->set('contents', $this->components['view'])
+            ->set('aside', $this->components['aside'])
+            ->set('view_headers', $this->components['view_headers'])
+            ->set('url', $ro->construct_api_url())
+            ->set('theme', $theme)
+            ->set('theme_page',  $the_theme)
+            ->set('logo', $logo)
+            ->set('isPublished', $ro->core['status'] == 'PUBLISHED')
+            ->set('banner', $banner)
+            ->set('group_slug', $group_slug)
+            ->set('fl', $fl)
+            ->set('show_dup_identifier_qtip', $show_dup_identifier_qtip)
+            ->render($render);
     }
 
     /**
@@ -284,6 +295,11 @@ class Registry_object extends MX_Controller
         }
     }
 
+    /**
+     * Returns the vocabulary element
+     * todo move to the vocab component
+     * @param string $vocab
+     */
     function vocab($vocab = 'anzsrc-for')
     {
         $uri = $this->input->get('uri');
@@ -325,6 +341,14 @@ class Registry_object extends MX_Controller
         }
     }
 
+    /**
+     * Returns the subject list for vocab
+     * Used for Advanced Search
+     * todo move to the vocab component
+     * @param $vocab_type
+     * @param $filters
+     * @return array
+     */
     function getSubjectsVocab($vocab_type, $filters)
     {
         $result = array();
@@ -363,7 +387,15 @@ class Registry_object extends MX_Controller
         return $result;
     }
 
-    function getAllSubjectsForType($type, $filters)
+    /**
+     * Returns all subjects for a particular subject type
+     * Used by getSubjectsVocab
+     * todo move to vocab component
+     * @param $type
+     * @param $filters
+     * @return array|bool
+     */
+    private function getAllSubjectsForType($type, $filters)
     {
         $this->load->library('solr');
         $this->solr
@@ -427,7 +459,12 @@ class Registry_object extends MX_Controller
         return $result;
     }
 
-    function getSubjects()
+    /**
+     * Returns a list of subjects with their slug
+     * todo find out where this is needed
+     * todo move to vocab component if it is needed, refactor required
+     */
+    public function getSubjects()
     {
         header('Cache-Control: no-cache, must-revalidate');
         header('Content-type: application/json');
@@ -442,6 +479,12 @@ class Registry_object extends MX_Controller
         echo json_encode($result);
     }
 
+    /**
+     * Resolves subjects
+     * todo find out if this is needed
+     * todo move to vocab component if needed, refactor
+     * @param $vocab
+     */
     function resolveSubjects($vocab)
     {
         header('Cache-Control: no-cache, must-revalidate');
@@ -468,6 +511,11 @@ class Registry_object extends MX_Controller
         echo json_encode($result);
     }
 
+    /**
+     * Adding a tag to a record API end point
+     * todo move to the api/registry/object/:id/tag REST API endpoint instead
+     * todo update AJAX call
+     */
     function addTag()
     {
         header('Cache-Control: no-cache, must-revalidate');
@@ -495,6 +543,8 @@ class Registry_object extends MX_Controller
 
     /**
      * Returns the stat of a record
+     * todo move to the api/registry/object/:id/stat REST API endpoint instead
+     * todo update AJAX call
      * @param  int $id
      * @return json
      */
@@ -513,6 +563,8 @@ class Registry_object extends MX_Controller
     /**
      * increment the stats for a specified type by the value given
      * Returns the stat of a record
+     * todo move to the api/registry/object/:id/stat REST API endpoint instead
+     * todo update AJAX call
      * @param  int $id
      * @return json
      */
@@ -551,7 +603,6 @@ class Registry_object extends MX_Controller
      */
     function search()
     {
-
         //redirect to the correct URL if q is used in the search query
         if ($this->input->get('q')) {
             redirect('search/#!/q=' . $this->input->get('q'));
@@ -567,13 +618,12 @@ class Registry_object extends MX_Controller
     }
 
     /**
-     * Search View
+     * Search View for Subjects Browser
      * Displaying the search view for the current component
      * @return HTML
      */
     function subjects()
     {
-
         //redirect to the correct URL if q is used in the search query
         if ($this->input->get('q')) {
             redirect('subjects/#!/q=' . $this->input->get('q'));
@@ -591,9 +641,9 @@ class Registry_object extends MX_Controller
     /**
      * Main search function
      * SOLR search
-     * @param bool $no_record
+     *
+     * @param bool $no_log
      * @return json
-     * @internal param string $class class restriction
      */
     function filter($no_log = false)
     {
@@ -602,7 +652,6 @@ class Registry_object extends MX_Controller
         set_exception_handler('json_exception_handler');
 
         $data = json_decode(file_get_contents("php://input"), true);
-
         $filters = isset($data['filters']) ? $data['filters'] : false;
 
         // experiment with delayed response time
@@ -619,8 +668,52 @@ class Registry_object extends MX_Controller
         $this->solr->setFilters($filters);
 
 
-        //returns this set of Facets
 
+
+        //flags, these are the only fields that will be returned in the search
+        $flags = [
+            'id','type','title','description','group','data_source_id',
+            'slug','spatial_coverage_centres','spatial_coverage_polygons',
+            'administering_institution','researchers','matching_identifier_count',
+            'list_description','earliest_year','latest_year'
+        ];
+        $this->solr->setOpt('fl', implode(',', $flags));
+
+        //highlighting
+        $this->solr
+            ->setOpt('hl', 'true')
+            ->setOpt('hl.fl', 'identifier_value_search, related_party_one_search, related_party_multi_search, related_activity_search, related_service_search, group_search, related_info_search, subject_value_resolved_search, description_value, date_to, date_from, citation_info_search')
+            ->setOpt('hl.simple.pre', '&lt;b&gt;')
+            ->setOpt('hl.simple.post', '&lt;/b&gt;')
+            ->setOpt('hl.snippets', '2');
+
+        //extract sentence
+        $this->solr
+            ->setOpt('hl.fragmenter', 'regex')
+            ->setOpt('hl.fragsize', '140')
+            ->setOpt('hl.regex.slop', '1.0')
+            ->setOpt('hl.regex.pattern', "\w[^.!?]{400,600}[.!?]")
+            ->setOpt('hl.bs.type', "SENTENCE")
+            ->setOpt('hl.bs.maxScan', "30");
+
+        // facets configuration
+        $this->solr
+            ->setFacetOpt('mincount', '1')
+            ->solr->setFacetOpt('limit', '100')
+            ->solr->setFacetOpt('sort', 'count');
+
+        //temporal facet
+        $this->solr
+            ->setFacetOpt('field', 'earliest_year')
+            ->setFacetOpt('field', 'latest_year')
+            ->setOpt('f.earliest_year.facet.sort', 'count asc')
+            ->setOpt('f.latest_year.facet.sort', 'count');
+
+
+        /**
+         * Set facets based on class
+         * todo clean this up
+         */
         if ($default_class == 'activity') {
             foreach ($this->components['activity_facet'] as $facet) {
                 if ($facet != 'temporal' && $facet != 'spatial') $this->solr->setFacetOpt('field', $facet);
@@ -635,59 +728,10 @@ class Registry_object extends MX_Controller
             }
         }
 
-
-        //high level subjects facet
-        // $subjects = $this->config->item('subjects');
-        // foreach ($subjects as $subject) {
-        // 	$fq = '(';
-        // 	foreach($subject['codes'] as $code) {
-        // 		$fq .= 'subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/'.$code.'") ';
-        // 	}
-        // 	$fq.=')';
-        // 	$this->solr->setFacetOpt('query',
-        // 		'{! key='.url_title($subject['display'], '-', true).'}'.$fq
-        // 	);
-        // }
-
-        //temporal facet
-        $this->solr
-            ->setFacetOpt('field', 'earliest_year')
-            ->setFacetOpt('field', 'latest_year')
-            ->setOpt('f.earliest_year.facet.sort', 'count asc')
-            ->setOpt('f.latest_year.facet.sort', 'count');
-
-
-        //flags, these are the only fields that will be returned in the search
-        $this->solr->setOpt('fl', 'id,type,title,description,group,data_source_id,slug,spatial_coverage_centres,spatial_coverage_polygons,administering_institution,researchers,matching_identifier_count,list_description,earliest_year, latest_year');
-
-        //highlighting
-        $this->solr->setOpt('hl', 'true');
-        $this->solr->setOpt('hl.fl', 'identifier_value_search, related_party_one_search, related_party_multi_search, related_activity_search, related_service_search, group_search, related_info_search, subject_value_resolved_search, description_value, date_to, date_from, citation_info_search');
-        $this->solr->setOpt('hl.simple.pre', '&lt;b&gt;');
-        $this->solr->setOpt('hl.simple.post', '&lt;/b&gt;');
-        $this->solr->setOpt('hl.snippets', '2');
-
-        //extract sentence
-        $this->solr->setOpt('hl.fragmenter', 'regex');
-        $this->solr->setOpt('hl.fragsize', '140');
-        $this->solr->setOpt('hl.regex.slop', '1.0');
-        $this->solr->setOpt('hl.regex.pattern', "\w[^.!?]{400,600}[.!?]");
-        $this->solr->setOpt('hl.bs.type', "SENTENCE");
-        $this->solr->setOpt('hl.bs.maxScan', "30");
-        // $this->solr->setOpt('hl.useFastVectorHighlighter', "true");
-
-        //experiment hl attrs
-        // $this->solr->setOpt('hl.alternateField', 'description');
-        // $this->solr->setOpt('hl.alternateFieldLength', '100');
-        // $this->solr->setOpt('hl.fragsize', '300');
-        // $this->solr->setOpt('hl.snippets', '100');
-
-        $this->solr->setFacetOpt('mincount', '1');
-        $this->solr->setFacetOpt('limit', '100');
-        $this->solr->setFacetOpt('sort', 'count');
+        // Finally execute the search and get the result
         $result = $this->solr->executeSearch(true);
 
-        //fuzzy search
+        //fuzzy search only if there's no result found
         if ($this->solr->getNumFound() == 0 && isset($filters['q'])) {
             $new_search_term_array = explode(' ', escapeSolrValue($filters['q']));
             $new_search_term = '';
@@ -709,17 +753,18 @@ class Registry_object extends MX_Controller
                 'ip' => $this->input->ip_address(),
                 'user_agent' => $this->input->user_agent()
             );
-            if ($filters) {
-                $event = array_merge($event, $filters);
-            }
+
+            //merge event and filter so that in the event we have all the selected filters for analysis later on
+            $event = $filters ? array_merge($event, $filters) : $event;
+
+
+
+            $event['result_numFound'] = $result['response']['numFound'];
 
             //record search result set
-
             $result_roid = array();
             $result_group = array();
             $result_dsid = array();
-            $event['result_numFound'] = $result['response']['numFound'];
-
             foreach ($result['response']['docs'] as $doc) {
                 $result_roid[] = $doc['id'];
                 $result_group[] = $doc['group'];
@@ -742,6 +787,7 @@ class Registry_object extends MX_Controller
             ulog_terms($event, 'portal');
         }
 
+        // sanity check on the Query String we use SOLR to search
         $result['url'] = $this->solr->constructFieldString();
 
         echo json_encode($result);
@@ -749,7 +795,10 @@ class Registry_object extends MX_Controller
 
     /**
      * List all attribute of a registry object
+     * todo find out if this is necessary, act accordingly
+     *
      * @param $id
+     * @param string $params
      * @return json
      */
     function get($id, $params = '')
@@ -761,7 +810,6 @@ class Registry_object extends MX_Controller
         $params = explode('-', $params);
         if (empty($params)) $params = array('core');
 
-
         $this->load->model('registry_objects', 'ro');
         $ro = $this->ro->getByID($id, $params);
         echo json_encode($ro->prop);
@@ -769,6 +817,7 @@ class Registry_object extends MX_Controller
 
     /**
      * Get the logo url for a groups logo if it exists!
+     * todo refactor to use registry api instead
      * @param $group
      * @return string
      */
@@ -778,27 +827,30 @@ class Registry_object extends MX_Controller
         $logo = $this->group->fetchLogo($group);
         return $logo;
     }
+
     /**
-     * Get the logo url for a groups logo if it exists!
-     * @param $group
+     * Get the theme page of the record
+     *
+     * @param $slug
      * @return string
      */
     function getTheme($slug)
     {
-        $url = registry_url().'services/rda/getThemePageIndex';
-        $all_themes = json_decode(@file_get_contents($url),true);
+        $url = registry_url() . 'services/rda/getThemePageIndex';
+        $all_themes = json_decode(@file_get_contents($url), true);
         $the_theme = array();
-        foreach($all_themes['items'] as $theme){
+        foreach ($all_themes['items'] as $theme) {
 
-            if($theme['slug']==$slug){
+            if ($theme['slug'] == $slug) {
                 $the_theme['title'] = $theme['title'];
-                $the_theme['img_src']=$theme['img_src'];
+                $the_theme['img_src'] = $theme['img_src'];
                 return $the_theme;
             }
         }
         return false;
-       // print_r($contents);
+        // print_r($contents);
     }
+
     /**
      * Construction
      * Defines the components that will be displayed and search for within the application
@@ -816,6 +868,11 @@ class Registry_object extends MX_Controller
         );
     }
 
+    /**
+     * Dropping the cache of this registry object ID
+     * todo determine the nessessity of this function
+     * @param $ro_id
+     */
     function _dropCache($ro_id)
     {
         $api_id = 'ro-api-' . $ro_id . '-portal';

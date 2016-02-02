@@ -321,6 +321,13 @@ class Connections_Extension extends ExtensionBase
 			}
 		}
 
+		//add type to unordered connections
+		foreach ($unordered_connections as &$conn) {
+			if (isset($conn['registry_object_id'])) {
+				$conn['type'] =  $this->_CI->ro->getAttribute($conn['registry_object_id'], 'type');
+			}
+		}
+
 		return $unordered_connections;
 	}
 
