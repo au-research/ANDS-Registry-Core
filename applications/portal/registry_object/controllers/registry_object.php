@@ -235,7 +235,8 @@ class Registry_object extends MX_Controller
             'data' => [],
             'publications' => [],
             'website' => [],
-            'programs' => []
+            'programs' => [],
+            'service' => []
         ];
 
         //related publications and websites
@@ -277,12 +278,12 @@ class Registry_object extends MX_Controller
         }
 
         //data
-        if ($ro->relationships['collection']) {
+        if (isset($ro->relationships['collection'])) {
             $related['data'] = $ro->relationships['collection'];
         }
 
         //service
-        if ($ro->relationships['service']) {
+        if (isset($ro->relationships['service'])) {
             $related['service'] = $ro->relationships['service'];
             foreach ($related['service'] as &$col) {
                 if (isset($col['relation_description']) && $col['relation_description'] != '') {
@@ -294,9 +295,17 @@ class Registry_object extends MX_Controller
         }
 
         //activity
-        if ($ro->relationships['activity']) {
+        if (isset($ro->relationships['activity'])) {
             $related['activity'] = $ro->relationships['activity'];
         }
+
+        //orgnisation
+        if (isset($ro->relationships['party_multi'])) {
+            $related['organisation'] = $ro->relationships['party_multi'];
+        }
+
+
+
 
         // additional grants stuff
         if ($ro->relationships['grants']) {
@@ -306,7 +315,18 @@ class Registry_object extends MX_Controller
                 && sizeof($ro->relationships['grants']['programs']) > 0) {
                 $related['programs'] = $ro->relationships['grants']['programs'];
 
-                //todo sort related programs, bring all the isPartOf relation first
+                // sort related programs, bring all the isPartOf relation first
+                usort($related['programs'], function($a, $b){
+                    if ($a['relation_type'] == 'isPartOf') {
+                        if ($b['relation_type'] == 'isPartOf') {
+                            return 0;
+                        } else {
+                            return -1;
+                        }
+                    } else {
+                        return 1;
+                    }
+                });
             }
 
             if (isset($ro->relationships['grants']['grants'])
@@ -336,8 +356,7 @@ class Registry_object extends MX_Controller
             if (isset($ro->relationships['grants']['publications'])
                 && is_array($ro->relationships['grants']['publications'])
                 && sizeof($ro->relationships['grants']['publications']) > 0) {
-                $related['publications'] = array_merge($related['publications'], $ro->relationship['grants']['publications']);
-                //todo display of publication from trove
+                $related['publications'] = array_merge($related['publications'], $ro->relationships['grants']['publications']);
             }
         }
 
@@ -364,6 +383,8 @@ class Registry_object extends MX_Controller
             }
         }
 
+
+
         //fix relation description and title
         foreach ($related as &$rel) {
             if ($rel && is_array($rel)) {
@@ -373,17 +394,52 @@ class Registry_object extends MX_Controller
                             $col['title'] = '';
                         }
                         if (!isset($col['display_description'])) {
+
+                            //for things that have a relation_description and/or title
                             if (isset($col['relation_description']) && $col['relation_description'] != '') {
                                 $col['display_description'] = $col['title'] . "<br/>" . $col['relation_description'];
-                            } else {
+                            }  else if (isset($col['title'])) {
                                 $col['display_description'] = $col['title'];
+                            } else {
+                                $col['display_description'] = "";
                             }
+                        }
+
+                        if (!isset($col['display_relationship'])) {
+                            if (isset($col['purl'])) {
+                                //is a purl resolved from trove
+                                $col['display_relationship'] = 'Referenced in Trove by';
+                                if (isset($col['identifier'])
+                                    && is_array($col['identifier'])
+                                    && sizeof($col['identifier']) > 0) {
+                                    $col['identifier'] = $col['identifier'][0];
+                                    $col['identifier'] = [
+                                        'identifier_type' => 'purl',
+                                        'identifier_value' => $col['purl'],
+                                        'identifier_href' => ['href'=>$col['identifier']['value']]
+                                    ];
+                                } else {
+                                    $col['identifier'] = [
+                                        'identifier_type' => '',
+                                        'identifier_value' => '',
+                                        'identifier_href' => ['href'=>'']
+                                    ];
+                                }
+                            } else {
+                                $col['display_relationship'] = '';
+                            }
+                        } else {
+                            $col['display_relationship'] = '';
                         }
                     }
 
                 }
             }
         }
+
+//        dd($related['organisation']);
+
+//        dd($related);
 
 
         return $related;

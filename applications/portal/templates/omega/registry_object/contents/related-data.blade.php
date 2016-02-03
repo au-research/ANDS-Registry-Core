@@ -1,6 +1,11 @@
 <h4>Related Data</h4>
 @foreach($related['data'] as $col)
 
+    <span
+        @if($ro->core['class'] == 'collection')
+        itemprop="isBasedOnUrl"
+        @endif
+    >
     @if($col['slug'] && $col['registry_object_id'])
         <i class="fa fa-folder-open icon-portal"></i>
         <small>{{ readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class']) }}</small>
@@ -29,5 +34,6 @@
             <a href="{{ $related['searchQuery'] }}/class=collection">View all {{ $ro->relationships['collection_count'] }} related data</a>
         </p>
     @endif
+    </span>
 
 @endforeach

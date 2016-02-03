@@ -1,5 +1,10 @@
 <h4>Related Websites</h4>
 @foreach($related['website'] as $col)
+    <span
+        @if($ro->core['class'] == 'collection')
+        itemprop="citation"
+        @endif
+    >
     <i class="fa fa-globe icon-portal"></i>
     <small>{{ $col['display_relationship'] }} </small>
     {{ isset($col['title']) ? $col['title'] : '' }}
@@ -16,4 +21,5 @@
             {{$col['identifier']['identifier_value']}}
         @endif
     </p>
+    </span>
 @endforeach
