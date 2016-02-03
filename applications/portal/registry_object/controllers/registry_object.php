@@ -224,35 +224,34 @@ class Registry_object extends MX_Controller
             'data' => [], 'publications' => [], 'website' => []
         ];
 
-        //related publications
+        //related publications and websites
         if ($ro->relatedInfo) {
             foreach ($ro->relatedInfo as $relatedInfo) {
 
                 //ensure
                 if (!isset($relatedInfo['title'])) $relatedInfo['title'] = '';
 
+                //display relationship logic for both publications and websites
+                if (isset($relatedInfo['relation']['relation_type']) && $relatedInfo['relation']['relation_type'] != '') {
+                    $relatedInfo['display_relationship'] = readable($relatedInfo['relation']['relation_type']);
+                } else {
+                    $relatedInfo['display_relationship'] = '';
+                }
+
+                //display description logic for both publications and websites
+                $description = '';
+                if (isset($relatedInfo['relation']['description'])) {
+                    $description .= $relatedInfo['relation']['description'];
+                } elseif (isset($relatedInfo['identifier']['identifier_href']['hover_text'])) {
+                    $description = $relatedInfo['identifier']['identifier_href']['hover_text'];
+                } elseif (isset($relatedInfo['identifier']['identifier_value'])) {
+                    $description = $relatedInfo['identifier']['identifier_value'];
+                } else {
+                    $description = $relatedInfo['title'];
+                }
+                $relatedInfo['display_description'] = $description;
+
                 if ($relatedInfo['type'] == 'publication') {
-
-                    // publication display relationship
-                    if (isset($relatedInfo['relation']['relation_type']) && $relatedInfo['relation']['relation_type'] != '') {
-                        $relatedInfo['display_relationship'] = readable($relatedInfo['relation']['relation_type']);
-                    } else {
-                        $relatedInfo['display_relationship'] = '';
-                    }
-
-                    //publication description
-                    $description = '';
-                    if (isset($relatedInfo['relation']['description'])) {
-                        $description .= $relatedInfo['relation']['description'];
-                    } elseif (isset($relatedInfo['identifier']['identifier_href']['hover_text'])) {
-                        $description = $relatedInfo['identifier']['identifier_href']['hover_text'];
-                    } elseif (isset($relatedInfo['identifier']['identifier_value'])) {
-                        $description = $relatedInfo['identifier']['identifier_value'];
-                    } else {
-                        $description = $relatedInfo['title'];
-                    }
-                    $relatedInfo['display_description'] = $description;
-
                     $related['publications'][] = $relatedInfo;
                 } elseif ($relatedInfo['type'] == 'website') {
                     $related['website'][] = $relatedInfo;
@@ -275,6 +274,17 @@ class Registry_object extends MX_Controller
                 }
             }
         }
+
+        //service
+        if ($ro->relationships['service']) {
+            $related['services'] = $ro->relationships['service'];
+        }
+
+        //programs
+
+        //grants
+
+        //data outputs
 
         // search class
         $search_class = $ro->core['class'];

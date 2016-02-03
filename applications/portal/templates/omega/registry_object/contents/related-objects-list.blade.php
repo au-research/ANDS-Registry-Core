@@ -10,6 +10,14 @@
             @include('registry_object/contents/related-data')
         @endif
 
+        @if (isset($related['service']) && sizeof($related['service']) > 0)
+            @include('registry_object/contents/related-service')
+        @endif
+
+        @if (isset($related['website']) && sizeof($related['website']) > 0)
+            @include('registry_object/contents/related-website')
+        @endif
+
     </div>
 </div>
 
