@@ -28,7 +28,7 @@
           })();
         </script>
     @endif
-    
+
 @endif
 
 <!-- Include the angularJS library since every page will needs it for the search script -->
@@ -72,7 +72,7 @@
 @endif
 
 @if(is_dev())
-    <script src="{{asset_url('lib/lodash/lodash.min.js', 'core')}}"></script>
+    <script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script>
     <script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.js', 'core')}}"></script>
     <script src="{{asset_url('lib/angular-lz-string/angular-lz-string.js', 'core')}}"></script>
     <script src="{{asset_url('registry_object/js/record_components.js', 'full_base_path')}}"></script>

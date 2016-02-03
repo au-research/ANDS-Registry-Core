@@ -38,9 +38,10 @@ class Registry_object extends MX_Controller
         //view/{id} => redirect to {slug}/{id}
         if ($id) {
             $ro = $this->ro->getByID($id, null, $useCache);
-            if ($ro && $ro->prop['status'] == 'success') {
-                if (!$ro->prop['core']['slug']) {
+            if ($ro && $ro->prop['status'] == 'OK') {
+                if ($ro->prop['core']['slug']) {
                     //it's ok
+
                 } else {
                     if (!$slug || $slug != $ro->prop['core']['slug']) {
                         redirect($ro->prop['core']['slug'] . '/' . $id);
@@ -57,24 +58,24 @@ class Registry_object extends MX_Controller
             if ($ro == 'MULTIPLE') {
                 redirect('search/#!/slug=' . $slug);
             }
-            if ($ro && $ro->prop['status'] == 'success') {
+            if ($ro && $ro->prop['status'] == 'OK') {
                 redirect($slug . '/' . $ro->prop['core']['id']);
             }
         }
 
         //If a key is provided
         //view/?key={key} => redirect to {slug}/{id}
-        if ((!$ro || $ro->prop['status'] == 'error') && $key) {
+        if ((!$ro || $ro->prop['status'] == 'ERROR') && $key) {
             $ro = $this->ro->getByKey($key, $useCache);
-            if ($ro && $ro->prop['status'] == 'success') {
+            if ($ro && $ro->prop['status'] == 'OK') {
                 redirect($ro->prop['core']['slug'] . '/' . $ro->prop['core']['id']);
             }
         }
 
-
-        if ($ro && $ro->prop['status'] == 'success') {
+        if ($ro && $ro->prop['status'] == 'OK') {
             //Found the record, handle rendering of normal view page
             $this->displayRecord($ro);
+
         } elseif (strpos($key, 'http://purl.org/au-research/grants/nhmrc/') !== false || strpos($key,
                 'http://purl.org/au-research/grants/arc/') !== false
         ) {
@@ -122,7 +123,6 @@ class Registry_object extends MX_Controller
      */
     private function displayRecord($ro)
     {
-
         //Setup the common variables
         $banner = asset_url('images/collection_banner.jpg', 'core');
         $theme = ($this->input->get('theme') ? $this->input->get('theme') : '2-col-wrap');
@@ -277,16 +277,6 @@ class Registry_object extends MX_Controller
         //data
         if ($ro->relationships['collection']) {
             $related['data'] = $ro->relationships['collection'];
-            foreach ($related['data'] as &$col) {
-
-                //display_description
-                $col['display_description'] = '';
-                if (isset($col['relation_description']) && $col['relation_description'] != '') {
-                    $col['display_description'] = $col['title'] . "<br/>" . $col['relation_description'];
-                } else {
-                    $col['display_description'] = $col['title'];
-                }
-            }
         }
 
         //service
@@ -301,11 +291,28 @@ class Registry_object extends MX_Controller
             }
         }
 
-        //programs
+        if ($ro->relationships['grants']) {
 
-        //grants
+            if (isset($ro->relationships['grants']['programs']) && is_array($ro->relationships['grants']['programs'])) {
+                $related['programs'] = $ro->relationships['grants']['programs'];
+            }
 
-        //data outputs
+            if (isset($ro->relationships['grants']['grants']) && is_array($ro->relationships['grants']['grants'])) {
+                $related['grants'] = $ro->relationships['grants']['grants'];
+            }
+
+            if (isset($ro->relationships['grants']['data_output']) && is_array($ro->relationships['grants']['data_output'])) {
+                $related['data_output'] = $ro->relationships['grants']['data_output'];
+            }
+
+
+
+            if (isset($ro->relationships['grants']['publications']) && is_array($ro->relationships['grants']['publications'])) {
+                $related['publications'] = $ro->relationship['grants']['publications'];
+            }
+
+        }
+
 
         // search class
         $search_class = $ro->core['class'];
@@ -324,6 +331,28 @@ class Registry_object extends MX_Controller
                 $related['searchQuery'] .= '/related_' . $search_class . '_id=' . $mm['registry_object_id'];
             }
         }
+
+        //fix relation description and title
+        foreach ($related as &$rel) {
+            if ($rel && is_array($rel)) {
+                foreach ($rel as &$col) {
+                    if (is_array($col)) {
+                        if (!isset($col['title'])) {
+                            $col['title'] = '';
+                        }
+                        if (!isset($col['display_description'])) {
+                            if (isset($col['relation_description']) && $col['relation_description'] != '') {
+                                $col['display_description'] = $col['title'] . "<br/>" . $col['relation_description'];
+                            } else {
+                                $col['display_description'] = $col['title'];
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
 
         return $related;
     }

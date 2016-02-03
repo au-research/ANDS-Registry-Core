@@ -248,7 +248,7 @@ class ObjectHandler extends Handler{
                 'grants' => $grants,
                 'data_output' => $record->getDataOutput($childActivities, $relatedObjects),
                 'funders' => $record->getFunders(),
-//                    'structure' => $record->getStructuredGrantsAtNode($relatedObjects)
+//                'structure' => $record->getStructuredGrantsAtNode($relatedObjects)
             ];
 
             if ($record->class == 'activity') {

@@ -10,6 +10,10 @@
             @include('registry_object/contents/related-data')
         @endif
 
+        @if (isset($related['data_output']) && sizeof($related['data_output']) > 0)
+            @include('registry_object/contents/related-data_output')
+        @endif
+
         @if (isset($related['service']) && sizeof($related['service']) > 0)
             @include('registry_object/contents/related-service')
         @endif
