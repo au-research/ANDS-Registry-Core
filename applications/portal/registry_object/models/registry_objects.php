@@ -57,7 +57,7 @@ class Registry_objects extends CI_Model {
         $id = $this->findRecord(array('key'=>$key), true);
         if($id)
         {
-            $props = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
+            $props = $this->rdaProperties;
             return new _ro($id, $props, $useCache);
         }
         return false;

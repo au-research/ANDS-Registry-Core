@@ -363,14 +363,17 @@ class Activity_grants_extension extends ExtensionBase
         if (!$relatedObjects) {
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
+
         if ($this->ro->class == 'party') {
             $relation = 'isFundedBy';
         } elseif ($this->ro->class == 'activity') {
             $relation = 'isPartOf';
         }
+
         $result = array();
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
+
                 if ($relatedObject['relation_type'] == $relation
                     && $relatedObject['origin'] != 'REVERSE_INT'
                     && !in_array($relatedObject['registry_object_id'], $processed)
@@ -510,14 +513,18 @@ class Activity_grants_extension extends ExtensionBase
             }
         }
 
+
         //self
-        $directOutput = $this->ro->getDirectDataOutput($relatedObjects);
+        $directOutput = $this->ro->getDirectDataOutput();
         if (sizeof($directOutput) > 0) {
             $result = array_merge($result, $directOutput);
         }
 
+
         //remove duplicates
         $result = array_values(array_map("unserialize", array_unique(array_map("serialize", $result))));
+
+
 
         return $result;
     }
@@ -529,10 +536,12 @@ class Activity_grants_extension extends ExtensionBase
         } else {
             $relatedObjects = array();
         }
+
         $result = array();
         foreach ($relatedObjects as $relatedObject) {
             if ($relatedObject['relation_type'] == 'isOutputOf'
                 || $relatedObject['relation_type'] == 'hasOutput'
+                || $relatedObject['relation_type'] == 'outputs'
             ) {
                 $result[] = $relatedObject;
             }

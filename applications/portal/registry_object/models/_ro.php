@@ -41,6 +41,7 @@ class _ro
         $this->prop = array(
             'id' => $id
         );
+
         $this->fetch($populate);
     }
 
@@ -79,7 +80,8 @@ class _ro
      */
     public function construct_api_url()
     {
-        $url = base_url() . 'registry/services/api/registry_objects/' . $this->id . '/';
+        $url = api_url() . 'registry/object/' . $this->id . '/';
+        $url.='?includes=grants';
         return $url;
     }
 
@@ -93,7 +95,7 @@ class _ro
     public function fetch($params = array('core'))
     {
         //get the URL
-        $url = $this->construct_api_url($params);
+        $url = $this->construct_api_url();
         $this->prop['api_url'] = $url;
         $this->prop['message'] = "OK";
         $this->prop['fromCache'] = $this->useCache;
@@ -124,10 +126,13 @@ class _ro
         //Fetch the data and populate as per the result
         $content = json_decode($content, true);
         $this->prop['status'] = $content['status'];
-        if ($content['status'] == 'success') {
+        if (isset($content['data']) && is_array($content['data']) && sizeof($content['data'] == 1)) {
+            $content['data'] = $content['data'][0];
+        }
+        if ($content['status'] == 'OK') {
             foreach ($params as $par) {
-                if (isset($content['message'][$par]) && is_array($content['message'][$par])) {
-                    foreach ($content['message'][$par] as $attr => $val) {
+                if (isset($content['data'][$par]) && is_array($content['data'][$par])) {
+                    foreach ($content['data'][$par] as $attr => $val) {
                         $this->prop[$par][$attr] = $val;
                     }
                 }
