@@ -16,7 +16,6 @@ class Registry_object extends MX_Controller
     function view()
     {
         $this->load->library('blade');
-
         //Setup the variables
         $ro = null;
         $id = $this->input->get('id');
@@ -222,7 +221,7 @@ class Registry_object extends MX_Controller
     private function getRelationship($ro)
     {
         $related = [
-            'publication' => [], 'website' => []
+            'data' => [], 'publications' => [], 'website' => []
         ];
 
         //related publications
@@ -254,11 +253,44 @@ class Registry_object extends MX_Controller
                     }
                     $relatedInfo['display_description'] = $description;
 
-                    $related['publication'][] = $relatedInfo;
+                    $related['publications'][] = $relatedInfo;
                 } elseif ($relatedInfo['type'] == 'website') {
                     $related['website'][] = $relatedInfo;
                 }
 
+            }
+        }
+
+        //data
+        if ($ro->relationships['collection']) {
+            $related['data'] = $ro->relationships['collection'];
+            foreach ($related['data'] as &$col) {
+
+                //display_description
+                $col['display_description'] = '';
+                if (isset($col['relation_description']) && $col['relation_description']!=''){
+                    $col['display_description'] = $col['title']."<br/>".$col['relation_description'];
+                } else {
+                    $col['display_description'] = $col['title'];
+                }
+            }
+        }
+
+        // search class
+        $search_class = $ro->core['class'];
+        if($ro->core['class']=='party') {
+            if (strtolower($ro->core['type'])=='person'){
+                $search_class = 'party_one';
+            } elseif(strtolower($ro->core['type'])=='group') {
+                $search_class = 'party_multi';
+            }
+        }
+
+        // search query
+        $related['searchQuery'] = portal_url().'search/#!/related_'.$search_class.'_id='.$ro->core['id'];
+        if($ro->identifiermatch && sizeof($ro->identifiermatch) > 0){
+            foreach($ro->identifiermatch as $mm) {
+                $related['searchQuery'] .= '/related_'.$search_class.'_id='.$mm['registry_object_id'];
             }
         }
 

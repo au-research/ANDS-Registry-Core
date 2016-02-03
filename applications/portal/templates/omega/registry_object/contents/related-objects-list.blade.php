@@ -2,8 +2,12 @@
     <div class="panel-body swatch-white">
 
         {{--Related Publications--}}
-        @if (sizeof($related['publication']) > 0)
+        @if (isset($related['publications']) &&sizeof($related['publications']) > 0)
             @include('registry_object/contents/related-publications')
+        @endif
+
+        @if (isset($related['data']) && sizeof($related['data']) > 0)
+            @include('registry_object/contents/related-data')
         @endif
 
     </div>

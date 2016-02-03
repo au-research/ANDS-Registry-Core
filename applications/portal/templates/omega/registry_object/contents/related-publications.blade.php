@@ -1,5 +1,5 @@
 <h4>Related Publications</h4>
-@foreach($related['publication'] as $relatedInfo)
+@foreach($related['publications'] as $relatedInfo)
 
     {{--Display citation itemprop for collection with related identifier not DOI--}}
     <span
