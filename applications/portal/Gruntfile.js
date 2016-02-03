@@ -59,7 +59,7 @@ module.exports = function(grunt){
             portal_lib: {
                 options:{separator:';'},
                 src:[
-                    '<%=yeoman.assets %>/lib/lodash/lodash.min.js',
+                    '<%=yeoman.assets %>/lib/lodash/dist/lodash.min.js',
                     '<%=yeoman.assets %>/lib/angular-google-maps/dist/angular-google-maps.js',
                     '<%=yeoman.assets %>/lib/angular-lz-string/angular-lz-string.js',
                     'registry_object/assets/js/record_components.js',
