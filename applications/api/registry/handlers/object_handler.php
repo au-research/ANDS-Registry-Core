@@ -230,6 +230,7 @@ class ObjectHandler extends Handler{
         if (in_array('grants', $includes)) {
             $relatedObjects = $record->getAllRelatedObjects(false, false, true);
             $childActivities = $record->getChildActivities($relatedObjects);
+
             $grants = [];
             $programs = [];
             if ($childActivities && sizeof($childActivities) > 0) {
@@ -243,6 +244,9 @@ class ObjectHandler extends Handler{
                     }
                 }
             }
+
+
+
             $relationships['grants'] = [
                 'programs' => $programs,
                 'grants' => $grants,

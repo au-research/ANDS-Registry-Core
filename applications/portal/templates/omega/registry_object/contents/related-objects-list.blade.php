@@ -10,8 +10,12 @@
             @include('registry_object/contents/related-data')
         @endif
 
-        @if (isset($related['data_output']) && sizeof($related['data_output']) > 0)
-            @include('registry_object/contents/related-data_output')
+        @if (isset($related['programs']) && sizeof($related['programs']) > 0)
+            @include('registry_object/contents/related-program')
+        @endif
+
+        @if (isset($related['grants_projects']) && sizeof($related['grants_projects']) > 0)
+            @include('registry_object/contents/related-grants_projects')
         @endif
 
         @if (isset($related['service']) && sizeof($related['service']) > 0)

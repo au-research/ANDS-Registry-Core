@@ -363,14 +363,17 @@ class Activity_grants_extension extends ExtensionBase
         if (!$relatedObjects) {
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
+
         if ($this->ro->class == 'party') {
             $relation = 'isFundedBy';
         } elseif ($this->ro->class == 'activity') {
             $relation = 'isPartOf';
         }
+
         $result = array();
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
+
                 if ($relatedObject['relation_type'] == $relation
                     && $relatedObject['origin'] != 'REVERSE_INT'
                     && !in_array($relatedObject['registry_object_id'], $processed)

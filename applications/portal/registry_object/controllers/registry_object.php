@@ -230,10 +230,12 @@ class Registry_object extends MX_Controller
      */
     private function getRelationship($ro)
     {
+        //initialisation to prevent logic error
         $related = [
             'data' => [],
             'publications' => [],
-            'website' => []
+            'website' => [],
+            'programs' => []
         ];
 
         //related publications and websites
@@ -291,27 +293,57 @@ class Registry_object extends MX_Controller
             }
         }
 
+        //activity
+        if ($ro->relationships['activity']) {
+            $related['activity'] = $ro->relationships['activity'];
+        }
+
+        // additional grants stuff
         if ($ro->relationships['grants']) {
 
-            if (isset($ro->relationships['grants']['programs']) && is_array($ro->relationships['grants']['programs'])) {
+            if (isset($ro->relationships['grants']['programs'])
+                && is_array($ro->relationships['grants']['programs'])
+                && sizeof($ro->relationships['grants']['programs']) > 0) {
                 $related['programs'] = $ro->relationships['grants']['programs'];
+
+                //todo sort related programs, bring all the isPartOf relation first
             }
 
-            if (isset($ro->relationships['grants']['grants']) && is_array($ro->relationships['grants']['grants'])) {
+            if (isset($ro->relationships['grants']['grants'])
+                && is_array($ro->relationships['grants']['grants'])
+                && sizeof($ro->relationships['grants']['grants']) > 0) {
                 $related['grants'] = $ro->relationships['grants']['grants'];
             }
 
-            if (isset($ro->relationships['grants']['data_output']) && is_array($ro->relationships['grants']['data_output'])) {
+            if (isset($ro->relationships['grants']['data_output'])
+                && is_array($ro->relationships['grants']['data_output'])
+                && sizeof($ro->relationships['grants']['data_output']) > 0) {
                 $related['data_output'] = $ro->relationships['grants']['data_output'];
+
+                //data output overlaps with data, so merge them and only display related data instead
+                $related['data'] = array_merge($related['data'], $related['data_output']);
+
+                //remove unique by registry_object_id
+                $temp_array = array();
+                foreach ($related['data'] as &$v) {
+                    if (!isset($temp_array[$v['registry_object_id']])) {
+                        $temp_array[$v['registry_object_id']] =& $v;
+                    }
+                }
+                $related['data'] = $temp_array;
             }
 
-
-
-            if (isset($ro->relationships['grants']['publications']) && is_array($ro->relationships['grants']['publications'])) {
-                $related['publications'] = $ro->relationship['grants']['publications'];
+            if (isset($ro->relationships['grants']['publications'])
+                && is_array($ro->relationships['grants']['publications'])
+                && sizeof($ro->relationships['grants']['publications']) > 0) {
+                $related['publications'] = array_merge($related['publications'], $ro->relationship['grants']['publications']);
+                //todo display of publication from trove
             }
-
         }
+
+        $related['grants_projects'] = array_udiff($related['activity'], $related['programs'], function ($a, $b) {
+            return $a['registry_object_id'] - $b['registry_object_id'];
+        });
 
 
         // search class
