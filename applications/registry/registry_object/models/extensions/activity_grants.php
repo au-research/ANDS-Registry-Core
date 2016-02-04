@@ -358,14 +358,13 @@ class Activity_grants_extension extends ExtensionBase
      * Use for getting all funded activities for a funder to get all programs
      *
      * @param bool|false $relatedObjects
-     * @param string     $relation
      * @param array      $processed
      * @param bool       $recursive
      * @return array
+     * @internal param string $relation
      */
     public function getChildActivities(
         $relatedObjects = false,
-        $relation = 'isFundedBy',
         $processed = array(),
         $recursive = true
     ) {
@@ -389,12 +388,12 @@ class Activity_grants_extension extends ExtensionBase
                 if ($this->ro->class == 'party') {
                     //for a party, find all EXPLICIT funds and REVERSE_INT isFundedBy
                     $isValidChild = (($relatedObject['relation_type'] == 'funds' && $relatedObject['origin'] == 'EXPLICIT')
-                            || ($relatedObject['relation_type'] == 'isFundedBy' && $relatedObject['origin'] == 'REVERSE_INT'))
+                            || ($relatedObject['relation_type'] == 'isFundedBy' && startsWith($relatedObject['origin'], "REVERSE")))
                     ;
                 } elseif ($this->ro->class == 'activity') {
                     //for an activity, find all explicit partOf and reverse isPartOf
                     $isValidChild = (($relatedObject['relation_type'] == 'hasPart' && $relatedObject['origin'] == 'EXPLICIT')
-                            || ($relatedObject['relation_type'] == 'isPartOf' && $relatedObject['origin'] == 'REVERSE_INT'))
+                            || ($relatedObject['relation_type'] == 'isPartOf' && startsWith($relatedObject['origin'], "REVERSE")))
                     ;
                 }
 
@@ -406,28 +405,13 @@ class Activity_grants_extension extends ExtensionBase
                     array_push($processed, $relatedObject['registry_object_id']);
                     if ($recursive) {
                         $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
-                        $childs = $record->getChildActivities(false, 'isPartOf', $processed, true);
+                        $childs = $record->getChildActivities(false, $processed, true);
                         if (sizeof($childs) > 0) {
                             $result = array_merge($result, $childs);
                         }
                     }
                 }
 
-                if ($relatedObject['relation_type'] == $relation
-//                    && $relatedObject['origin'] != 'REVERSE_INT'
-                    && !in_array($relatedObject['registry_object_id'], $processed)
-                ) {
-
-                    $result[] = $relatedObject;
-                    array_push($processed, $relatedObject['registry_object_id']);
-                    if ($recursive) {
-                        $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
-                        $childs = $record->getChildActivities(false, 'isPartOf', $processed, true);
-                        if (sizeof($childs) > 0) {
-                            $result = array_merge($result, $childs);
-                        }
-                    }
-                }
             }
         }
 
@@ -480,7 +464,7 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
         $result = array();
-        $childActivities = $this->getChildActivities($relatedObjects, 'isFundedBy', array(), false);
+        $childActivities = $this->getChildActivities($relatedObjects, array(), false);
         foreach ($childActivities as &$childActivity) {
             if (!in_array($childActivity['registry_object_id'], $processed)) {
                 array_push($processed, $childActivity['registry_object_id']);
@@ -501,7 +485,6 @@ class Activity_grants_extension extends ExtensionBase
                 if (sizeof($publications) > 0) {
                     $childActivity['publications'] = $publications;
                 }
-
 
                 //get nested activities
                 $children = $record->getStructuredGrants(false, $processed);
@@ -545,7 +528,7 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
         if (!$childActivities) {
-            $childActivities = $this->ro->getChildActivities($relatedObjects, 'isPartOf', array(), $recursive);
+            $childActivities = $this->ro->getChildActivities($relatedObjects, array(), $recursive);
         }
 
         $result = array();
@@ -557,13 +540,11 @@ class Activity_grants_extension extends ExtensionBase
             }
         }
 
-
         //self
         $directOutput = $this->ro->getDirectDataOutput();
         if (sizeof($directOutput) > 0) {
             $result = array_merge($result, $directOutput);
         }
-
 
         //remove duplicates
         $result = array_values(array_map("unserialize", array_unique(array_map("serialize", $result))));
@@ -584,7 +565,7 @@ class Activity_grants_extension extends ExtensionBase
         foreach ($relatedObjects as $relatedObject) {
 
             if (($relatedObject['relation_type'] == 'hasOutput' && $relatedObject['origin'] == 'EXPLICIT')
-                || ($relatedObject['relation_type'] == 'isOutputOf' && $relatedObject['origin'] == 'REVERSE_INT')
+                || ($relatedObject['relation_type'] == 'isOutputOf' && startsWith($relatedObject['origin'], "REVERSE"))
                 || ($relatedObject['relation_type'] == 'outputs' && $relatedObject['origin'] == 'EXPLICIT')
             ) {
                 $result[] = $relatedObject;

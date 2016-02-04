@@ -370,6 +370,11 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
     return $nextHarvest;
 }
 
+function startsWith($haystack, $needle) {
+    // search backwards starting from haystack length characters from the end
+    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+}
+
 function endsWith($haystack, $needle){
     return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 }
