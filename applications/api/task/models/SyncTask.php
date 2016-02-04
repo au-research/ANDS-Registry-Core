@@ -326,10 +326,9 @@ class SyncTask extends Task
                     $this->log("Adding to SOLR successful")->save();
                 } else {
                     $this
-                        ->log("Adding to SOLR failed: " . json_encode($add_result))->save();
+                        ->log("Adding to SOLR failed: " . json_encode($add_result))
+                        ->log("Attempting to POST each document separately")->save();
 
-
-                    $this->log("Attempting to POST each document separately")->save();
                     $this->separateSolrIndexing($solr_docs);
 
                 }
@@ -366,10 +365,6 @@ class SyncTask extends Task
                 throw new Exception($e->getMessage());
             }
         }
-
-        if (isset($this->errored) && $this->errored === true) {
-            throw new Exception("Task failed");
-        }
     }
 
     /**
@@ -395,8 +390,6 @@ class SyncTask extends Task
                         $this->indexRecordWithout($doc, 'spatial_coverage_extents_wkt');
                     }
                 }
-
-                $this->errored = true;
             }
         }
     }

@@ -339,7 +339,6 @@ class Sync_extension extends ExtensionBase{
                     }
                 }
 
-
 				$sumOfAllAreas += $extents['area'];
 				$json['spatial_coverage_centres'][] = $extents['center'];
 			}
@@ -389,11 +388,11 @@ class Sync_extension extends ExtensionBase{
 			$json['subject_value_resolved'][] = html_entity_decode($s['resolved'], ENT_QUOTES);
 			$json['subject_vocab_uri'][] = $s['uri'];
 			$json['subject_type'][] = $s['type'];
-			// if (trim(strtolower($s['type']))=='anzsrc-for') {
-			// 	$json['subject_anzsrcfor'][] = $s['resolved'];
-			// } else if(trim(strtolower($s['type']))=='anzsrc-seo') {
-			// 	$json['subject_anzsrcseo'][] = $s['resolved'];
-			// }
+			 if (trim(strtolower($s['type']))=='anzsrc-for') {
+			 	$json['subject_anzsrcfor'][] = $s['resolved'];
+			 } else if(trim(strtolower($s['type']))=='anzsrc-seo') {
+			 	$json['subject_anzsrcseo'][] = $s['resolved'];
+			 }
 
 
             $type = $this->ro->getPortalTypes($s['type']);
