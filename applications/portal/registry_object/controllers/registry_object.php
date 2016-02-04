@@ -299,13 +299,10 @@ class Registry_object extends MX_Controller
             $related['activity'] = $ro->relationships['activity'];
         }
 
-        //orgnisation
+        //organisation
         if (isset($ro->relationships['party_multi'])) {
             $related['organisation'] = $ro->relationships['party_multi'];
         }
-
-
-
 
         // additional grants stuff
         if ($ro->relationships['grants']) {
@@ -315,10 +312,32 @@ class Registry_object extends MX_Controller
                 && sizeof($ro->relationships['grants']['programs']) > 0) {
                 $related['programs'] = $ro->relationships['grants']['programs'];
 
+                //remove unique by registry_object_id
+                $temp_array = array();
+                foreach ($related['programs'] as &$v) {
+                    if (!isset($temp_array[$v['registry_object_id']])) {
+                        $temp_array[$v['registry_object_id']] =& $v;
+                    }
+                }
+                $related['programs'] = $temp_array;
+
                 // sort related programs, bring all the isPartOf relation first
                 usort($related['programs'], function($a, $b){
                     if ($a['relation_type'] == 'isPartOf') {
                         if ($b['relation_type'] == 'isPartOf') {
+                            return 0;
+                        } else {
+                            return -1;
+                        }
+                    } else {
+                        return 1;
+                    }
+                });
+
+                // sort related programs, bring all the EXPLICIT relation first
+                usort($related['programs'], function($a, $b){
+                    if ($a['origin'] == 'EXPLICIT') {
+                        if ($b['origin'] == 'EXPLICIT') {
                             return 0;
                         } else {
                             return -1;

@@ -166,10 +166,13 @@ class ObjectHandler extends Handler{
 
     /**
      * Relationships handler
-     * @todo  migrate to own handler at registry_object_handlers
-     * @todo  migrate along with getFunders()
+     *
+     * @todo   migrate to own handler at registry_object_handlers
+     * @todo   migrate along with getFunders()
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @param bool $resource
      * @return array
+     * @throws Exception
      */
     private function relationships_handler($resource = false)
     {
@@ -245,8 +248,6 @@ class ObjectHandler extends Handler{
                 }
             }
 
-
-
             $relationships['grants'] = [
                 'programs' => $programs,
                 'grants' => $grants,
@@ -256,7 +257,7 @@ class ObjectHandler extends Handler{
             ];
 
             if ($record->class == 'activity') {
-                $relationships['grants']['publications'] = $record->getPublications($childActivities, $relatedObjects);
+                $relationships['grants']['publications'] = $record->getDirectPublication();
             }
 
             //useful for debugging

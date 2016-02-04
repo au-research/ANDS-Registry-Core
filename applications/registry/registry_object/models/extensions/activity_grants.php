@@ -3,6 +3,7 @@
 /**
  * Class Activity_grants_extension
  * To extract all activity only sync values out
+ *
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 class Activity_grants_extension extends ExtensionBase
@@ -16,6 +17,7 @@ class Activity_grants_extension extends ExtensionBase
     /**
      * Return the Funding Amount of the activity
      * description[type=fundingAmount]
+     *
      * @param bool|false $gXPath
      * @return bool|mixed
      */
@@ -35,6 +37,7 @@ class Activity_grants_extension extends ExtensionBase
      * Return the Funding Scheme of the activity
      * description[type=fundingScheme]
      * todo relatedObject[type=activity|program][relation=isPartOf|isFundedBy]
+     *
      * @param bool|false $gXPath
      * @return bool|string
      */
@@ -65,6 +68,7 @@ class Activity_grants_extension extends ExtensionBase
      * DEPRECATED: relatedObject[class=party][type=person][relation=hasPrincipalInvestigator|relation=hasParticipant]
      * INSTEAD: relatedObject[class=party][type=person]
      * relatedInfo[type=party][relation=hasPrincipalInvestigator|hasParticipant]
+     *
      * @param bool|false $gXPath
      * @param bool|false $relatedObjects
      * @return array
@@ -117,6 +121,7 @@ class Activity_grants_extension extends ExtensionBase
     /**
      * Returns all the institutions participating in this research grant
      * relatedObject[relation=isManagedBy|hasParticipant][type=group][class=party]
+     *
      * @param bool|false $relatedObjects
      * @return array
      */
@@ -148,6 +153,7 @@ class Activity_grants_extension extends ExtensionBase
     /**
      * Returns the Administering Institution
      * relatedObject[relation=isManagedBy][class=party][type!=person]
+     *
      * @param bool|false $relatedObjects
      * @return array
      */
@@ -178,17 +184,17 @@ class Activity_grants_extension extends ExtensionBase
      * Returns the Funder of a record
      * relatedObject[relation=isFundedBy][class=party][type!=person]
      * relatedInfo[type=party][relation=isFundedBy]
+     *
      * @param bool|false $gXPath
      * @param bool|false $relatedObjects
-     * @param bool $recursive
-     * @param array $processed
+     * @param bool       $recursive
+     * @param array      $processed
      * @return array
      */
     function getFunders($gXPath = false, $relatedObjects = false, $recursive = true, $processed = array())
     {
 
         $funders = array();
-
 
 
         if (sizeof($processed) == 0) {
@@ -255,6 +261,7 @@ class Activity_grants_extension extends ExtensionBase
      * Return the principal investigator
      * relatedObject[class=party][type=person][relation=hasPrincipalInvestigator]
      * relatedInfo[type=party][relation=hasPrincipalInvestigator]
+     *
      * @param bool|false $gXPath
      * @param bool|false $relatedObjects
      * @return array
@@ -304,6 +311,7 @@ class Activity_grants_extension extends ExtensionBase
     /**
      * Returns the Activity Status
      * Works off the earliest and latest dates in existenceDates
+     *
      * @param bool|false $xml
      * @return string
      */
@@ -348,10 +356,11 @@ class Activity_grants_extension extends ExtensionBase
     /**
      * Recursively get all of the activities that are related to this object via a specific relation
      * Use for getting all funded activities for a funder to get all programs
+     *
      * @param bool|false $relatedObjects
-     * @param string $relation
-     * @param array $processed
-     * @param bool $recursive
+     * @param string     $relation
+     * @param array      $processed
+     * @param bool       $recursive
      * @return array
      */
     public function getChildActivities(
@@ -370,14 +379,21 @@ class Activity_grants_extension extends ExtensionBase
             $relation = 'isPartOf';
         }
 
+        //hard limit on how many node will be processed for child activities
+        $limit = 300;
+        if (sizeof($processed) > $limit) {
+            return array();
+        }
+
         $result = array();
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
 
                 if ($relatedObject['relation_type'] == $relation
-                    && $relatedObject['origin'] != 'REVERSE_INT'
+//                    && $relatedObject['origin'] != 'REVERSE_INT'
                     && !in_array($relatedObject['registry_object_id'], $processed)
                 ) {
+
                     $result[] = $relatedObject;
                     array_push($processed, $relatedObject['registry_object_id']);
                     if ($recursive) {
@@ -391,11 +407,13 @@ class Activity_grants_extension extends ExtensionBase
             }
         }
 
+
         return $result;
     }
 
     /**
      * get the Grants Structured Data for this object
+     *
      * @param bool|false $relatedObjects
      * @return array
      */
@@ -427,8 +445,9 @@ class Activity_grants_extension extends ExtensionBase
      * Generate a strucutred grants
      * Recursively
      * Displaying all the program and data outputs that belongs to the node in a tree
+     *
      * @param bool|false $relatedObjects
-     * @param array $processed
+     * @param array      $processed
      * @return array
      */
     public function getStructuredGrants($relatedObjects = false, $processed = array())
@@ -490,9 +509,10 @@ class Activity_grants_extension extends ExtensionBase
     /**
      * Get all of the data output from an activity
      * relatedObject[class=collection][relation=isOutputOf] from a recursively generated list of child activities
+     *
      * @param bool|false $childActivities
      * @param bool|false $relatedObjects
-     * @param bool $recursive
+     * @param bool       $recursive
      * @return array
      */
     public function getDataOutput($childActivities = false, $relatedObjects = false, $recursive = true)
@@ -525,7 +545,6 @@ class Activity_grants_extension extends ExtensionBase
         $result = array_values(array_map("unserialize", array_unique(array_map("serialize", $result))));
 
 
-
         return $result;
     }
 
@@ -554,6 +573,7 @@ class Activity_grants_extension extends ExtensionBase
      * Get all the publications from an activity and all of it's child activities
      * For each of the listed activity, get the purl assigned to it
      * For each of the purl, query Trove API to get the publication
+     *
      * @param bool|false $childActivitites
      * @param bool|false $relatedObjects
      * @return array
@@ -587,7 +607,8 @@ class Activity_grants_extension extends ExtensionBase
         return $result;
     }
 
-    public function getDirectPublication(){
+    public function getDirectPublication()
+    {
 
         //collect all the purls
         $purls = array();
@@ -627,6 +648,7 @@ class Activity_grants_extension extends ExtensionBase
 
     /**
      * Helper method to return the gXPath
+     *
      * @return DOMXpath
      */
     public function getGXPath()
