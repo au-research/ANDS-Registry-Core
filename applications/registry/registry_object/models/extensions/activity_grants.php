@@ -373,11 +373,6 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
 
-        if ($this->ro->class == 'party') {
-            $relation = 'isFundedBy';
-        } elseif ($this->ro->class == 'activity') {
-            $relation = 'isPartOf';
-        }
 
         //hard limit on how many node will be processed for child activities
         $limit = 300;
@@ -388,6 +383,35 @@ class Activity_grants_extension extends ExtensionBase
         $result = array();
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
+
+                //setting the condition
+                $isValidChild = false;
+                if ($this->ro->class == 'party') {
+                    //for a party, find all EXPLICIT funds and REVERSE_INT isFundedBy
+                    $isValidChild = (($relatedObject['relation_type'] == 'funds' && $relatedObject['origin'] == 'EXPLICIT')
+                            || ($relatedObject['relation_type'] == 'isFundedBy' && $relatedObject['origin'] == 'REVERSE_INT'))
+                    ;
+                } elseif ($this->ro->class == 'activity') {
+                    //for an activity, find all explicit partOf and reverse isPartOf
+                    $isValidChild = (($relatedObject['relation_type'] == 'hasPart' && $relatedObject['origin'] == 'EXPLICIT')
+                            || ($relatedObject['relation_type'] == 'isPartOf' && $relatedObject['origin'] == 'REVERSE_INT'))
+                    ;
+                }
+
+                //do not want to check recursively this child again
+                $isValidChild = $isValidChild && !in_array($relatedObject['registry_object_id'], $processed);
+
+                if ($isValidChild) {
+                    $result[] = $relatedObject;
+                    array_push($processed, $relatedObject['registry_object_id']);
+                    if ($recursive) {
+                        $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
+                        $childs = $record->getChildActivities(false, 'isPartOf', $processed, true);
+                        if (sizeof($childs) > 0) {
+                            $result = array_merge($result, $childs);
+                        }
+                    }
+                }
 
                 if ($relatedObject['relation_type'] == $relation
 //                    && $relatedObject['origin'] != 'REVERSE_INT'
