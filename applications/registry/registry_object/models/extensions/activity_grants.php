@@ -582,12 +582,14 @@ class Activity_grants_extension extends ExtensionBase
 
         $result = array();
         foreach ($relatedObjects as $relatedObject) {
-            if ($relatedObject['relation_type'] == 'isOutputOf'
-                || $relatedObject['relation_type'] == 'hasOutput'
-                || $relatedObject['relation_type'] == 'outputs'
+
+            if (($relatedObject['relation_type'] == 'hasOutput' && $relatedObject['origin'] == 'EXPLICIT')
+                || ($relatedObject['relation_type'] == 'isOutputOf' && $relatedObject['origin'] == 'REVERSE_INT')
+                || ($relatedObject['relation_type'] == 'outputs' && $relatedObject['origin'] == 'EXPLICIT')
             ) {
                 $result[] = $relatedObject;
             }
+
             //todo relatedInfo of relation_type isOutputOf type activity
         }
         return $result;
