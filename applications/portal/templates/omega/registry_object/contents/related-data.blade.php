@@ -29,11 +29,13 @@
     @endif
     <br/>
 
-    @if($ro->relationships['collection_count'] > $relatedLimit)
+    </span>
+
+    @if(isset($ro->relationships['collection_count']) && $ro->relationships['collection_count'] > $relatedLimit)
         <p>
             <a href="{{ $related['searchQuery'] }}/class=collection">View all {{ $ro->relationships['collection_count'] }} related data</a>
         </p>
     @endif
-    </span>
+
 
 @endforeach
