@@ -1,6 +1,7 @@
 <?php
 /**
  * Class:  SyncTask
+ *
  * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 
@@ -29,6 +30,7 @@ class SyncTask extends Task
      * todo sync by SOLR query (analyze)
      * Run the actual task
      * Loads CodeIgniter models and libraries as required
+     *
      * @throws Exception
      */
     function run_task()
@@ -89,7 +91,7 @@ class SyncTask extends Task
             }
 
             $task = array(
-                'name' => 'Analyze DataSource '. $dsID,
+                'name' => 'Analyze DataSource ' . $dsID,
                 'priority' => $this->getPriority(),
                 'frequency' => 'ONCE',
                 'type' => 'POKE',
@@ -103,6 +105,7 @@ class SyncTask extends Task
 
     /**
      * Analyze a Data Source and spawn Sync task per chunk
+     *
      * @param $dsID
      */
     private function analyzeDS($dsID)
@@ -156,9 +159,9 @@ class SyncTask extends Task
             }
 
             if ($params['type'] == 'ds') {
-                $name .= " Data Source ". $params['id']. '('.$i.'/'.$data['numChunk'].')';
-            } elseif ($params['type']=='ro') {
-                $name .= sizeof($chunkArray). " Records";
+                $name .= " Data Source " . $params['id'] . '(' . $i . '/' . $data['numChunk'] . ')';
+            } elseif ($params['type'] == 'ro') {
+                $name .= sizeof($chunkArray) . " Records";
             }
 
             //adding normal sync task
@@ -190,6 +193,7 @@ class SyncTask extends Task
 
     /**
      * Returns a list of un indexed registry object from a given data source ID
+     *
      * @param $dsID
      * @return array
      */
@@ -213,6 +217,7 @@ class SyncTask extends Task
 
     /**
      * Clear the index of a particular data source
+     *
      * @param $dsID
      * @throws Exception
      */
@@ -230,6 +235,7 @@ class SyncTask extends Task
 
     /**
      * Sync a Data Source based on the Chunk Position
+     *
      * @param $dsID
      * @throws Exception
      */
@@ -261,6 +267,7 @@ class SyncTask extends Task
     /**
      * Sync a list of registry objects
      * Used by syncDS as well
+     *
      * @param $ids
      * @throws Exception
      */
@@ -318,7 +325,13 @@ class SyncTask extends Task
                 if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
                     $this->log("Adding to SOLR successful")->save();
                 } else {
-                    throw new Exception("Adding to SOLR failed: " . json_encode($add_result));
+                    $this
+                        ->log("Adding to SOLR failed: " . json_encode($add_result))->save();
+
+
+                    $this->log("Attempting to POST each document separately")->save();
+                    $this->separateSolrIndexing($solr_docs);
+
                 }
 
                 /**
@@ -352,6 +365,59 @@ class SyncTask extends Task
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());
             }
+        }
+
+        if (isset($this->errored) && $this->errored === true) {
+            throw new Exception("Task failed");
+        }
+    }
+
+    /**
+     * Attempt to index into SOLR the documents separately
+     * If a document failed, the entire task is recorded as failed
+     * Records that aren't supposed to fail, shouldn't fail
+     *
+     * @param $docs
+     */
+    private function separateSolrIndexing($docs)
+    {
+        foreach ($docs as $doc) {
+            $solr_docs = [$doc];
+            $add_result = json_decode($this->ci->solr->add_json(json_encode($solr_docs)), true);
+            if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
+                $this->log("Success for document : " . $doc['id'])->save();
+            } else {
+                $this->log("Error for document " . $doc['id'] . " Error: " . json_encode($add_result));
+                //get error message and repost it without the troublesome field, namely spatial_coverage_extents_wkt
+                if (isset($doc['spatial_coverage_extents_wkt'])) {
+                    $message = $add_result['error']['msg'];
+                    if (strpos($message, "Couldn't parse shape") >= 0) {
+                        $this->indexRecordWithout($doc, 'spatial_coverage_extents_wkt');
+                    }
+                }
+
+                $this->errored = true;
+            }
+        }
+    }
+
+    /**
+     * Index a record in SOLR without a particular field
+     * as a last resort
+     *
+     * @param $doc
+     * @param $field
+     */
+    private function indexRecordWithout($doc, $field)
+    {
+        unset($doc[$field]);
+        $solr_docs = [$doc];
+        $add_result = json_decode($this->ci->solr->add_json(json_encode($solr_docs)), true);
+        if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
+            $this->log("Success for document : " . $doc['id'] . ' without field: ' . $field)->save();
+        } else {
+            $this->log("Error for document " . $doc['id'] . " Error: " . json_encode($add_result));
+            $this->errored = true;
         }
     }
 
