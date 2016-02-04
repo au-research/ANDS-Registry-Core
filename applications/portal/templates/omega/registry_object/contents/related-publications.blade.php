@@ -36,7 +36,7 @@
         <br/>
 
         {{--Relation URL display--}}
-        @if(isset($col['relation']['url']))
+        @if(isset($col['relation']['url']) && $col['relation']['url']!='')
             <p>
                 <small>{{ $col['display_relationship'] }}</small>
                 URI :
@@ -51,9 +51,7 @@
         @if(isset($col['notes']))
             <p> {{ $col['notes'] }} </p>
         @endif
-        <br/>
 
         {{--Close the span for the itemprop--}}
     </span>
-
 @endforeach
