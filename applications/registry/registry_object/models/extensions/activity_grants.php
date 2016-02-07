@@ -372,7 +372,6 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
 
-
         //hard limit on how many node will be processed for child activities
         $limit = 300;
         if (sizeof($processed) > $limit) {
@@ -415,7 +414,78 @@ class Activity_grants_extension extends ExtensionBase
             }
         }
 
+        return $result;
+    }
 
+    /**
+     * Returns the list of all parents node in the grant structure
+     *
+     * @param bool|false $relatedObjects
+     * @param array      $processed
+     * @param bool|true  $recursive
+     * @return array
+     */
+    public function getParentsGrants($relatedObjects = false, $processed = array(), $recursive = true){
+
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
+
+        //hard limit on how many node will be processed for child activities
+        $limit = 300;
+        if (sizeof($processed) > $limit) {
+            return array();
+        }
+
+        $result = array();
+
+        foreach ($relatedObjects as $relatedObject) {
+
+            $isValidParent = false;
+
+            if ($this->ro->class == 'collection') {
+                if ($relatedObject['class'] == 'collection') {
+                    //find all explicit isPartOf collection or reverse hasPart
+                    $isValidParent = (($relatedObject['relation_type'] == 'isPartOf' && $relatedObject['origin'] == 'EXPLICIT')
+                            || ($relatedObject['relation_type'] == 'hasPart' && startsWith($relatedObject['origin'], "REVERSE")));
+                } else if($relatedObject['class'] == 'activity' || $relatedObject['class'] == 'party') {
+                    //find all explicit isOutputOf (activity or party) or reverse hasOutput
+                    $isValidParent = (($relatedObject['relation_type'] == 'isOutputOf' && $relatedObject['origin'] == 'EXPLICIT')
+                        || ($relatedObject['relation_type'] == 'hasOutput' && startsWith($relatedObject['origin'], "REVERSE")));
+                }
+            } else if ($this->ro->class == 'activity') {
+                if ($relatedObject['class'] == 'activity') {
+                    //find all explicit isPartOf activity or reverse hasPart
+                    $isValidParent = (($relatedObject['relation_type'] == 'isPartOf' && $relatedObject['origin'] == 'EXPLICIT')
+                        || ($relatedObject['relation_type'] == 'hasPart' && startsWith($relatedObject['origin'], "REVERSE")));
+                } else if($relatedObject['class'] == 'party') {
+                    //find all explicit isFundedBy activity or reverse funds
+                    $isValidParent = (($relatedObject['relation_type'] == 'isFundedBy' && $relatedObject['origin'] == 'EXPLICIT')
+                        || ($relatedObject['relation_type'] == 'funds' && startsWith($relatedObject['origin'], "REVERSE")));
+                }
+            }
+
+            if ($isValidParent) {
+                $result[] = $relatedObject;
+                array_push($processed, $relatedObject['registry_object_id']);
+                if ($recursive) {
+                    $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
+                    $parents = $record->getParentsGrants(false, $processed, true);
+                    if (sizeof($parents) > 0) {
+                        $result = array_merge($result, $parents);
+                    }
+                }
+            }
+        }
+
+        //remove unique by registry_object_id
+        $temp_array = array();
+        foreach ($result as &$v) {
+            if (!isset($temp_array[$v['registry_object_id']])) {
+                $temp_array[$v['registry_object_id']] =& $v;
+            }
+        }
+        $result = $temp_array;
         return $result;
     }
 
