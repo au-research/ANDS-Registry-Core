@@ -37,7 +37,7 @@
 
 
             search_endpoint: 'http://researchdata.ands.org.au/api/registry.jsonp/grants/?',
-            lookup_endpoint: 'http://researchdata.ands.org.au/api/registry.jsonp/grants/?id=',
+            lookup_endpoint: 'http://researchdata.ands.org.au/api/registry.jsonp/grants/?',
 
             api_key: 'public',
 		    //auto _lookup once init
