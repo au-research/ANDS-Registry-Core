@@ -9,6 +9,11 @@
 class Activity_grants_extension extends ExtensionBase
 {
 
+    /**
+     * Activity_grants_extension constructor.
+     *
+     * @param $ro_pointer
+     */
     function __construct($ro_pointer)
     {
         parent::__construct($ro_pointer);
@@ -387,13 +392,13 @@ class Activity_grants_extension extends ExtensionBase
                 if ($this->ro->class == 'party') {
                     //for a party, find all EXPLICIT funds and REVERSE_INT isFundedBy
                     $isValidChild = (($relatedObject['relation_type'] == 'funds' && $relatedObject['origin'] == 'EXPLICIT')
-                            || ($relatedObject['relation_type'] == 'isFundedBy' && startsWith($relatedObject['origin'], "REVERSE")))
-                    ;
+                        || ($relatedObject['relation_type'] == 'isFundedBy' && startsWith($relatedObject['origin'],
+                                "REVERSE")));
                 } elseif ($this->ro->class == 'activity') {
                     //for an activity, find all explicit partOf and reverse isPartOf
                     $isValidChild = (($relatedObject['relation_type'] == 'hasPart' && $relatedObject['origin'] == 'EXPLICIT')
-                            || ($relatedObject['relation_type'] == 'isPartOf' && startsWith($relatedObject['origin'], "REVERSE")))
-                    ;
+                        || ($relatedObject['relation_type'] == 'isPartOf' && startsWith($relatedObject['origin'],
+                                "REVERSE")));
                 }
 
                 //do not want to check recursively this child again
@@ -425,7 +430,8 @@ class Activity_grants_extension extends ExtensionBase
      * @param bool|true  $recursive
      * @return array
      */
-    public function getParentsGrants($relatedObjects = false, $processed = array(), $recursive = true){
+    public function getParentsGrants($relatedObjects = false, $processed = array(), $recursive = true)
+    {
 
         if (!$relatedObjects) {
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
@@ -447,21 +453,31 @@ class Activity_grants_extension extends ExtensionBase
                 if ($relatedObject['class'] == 'collection') {
                     //find all explicit isPartOf collection or reverse hasPart
                     $isValidParent = (($relatedObject['relation_type'] == 'isPartOf' && $relatedObject['origin'] == 'EXPLICIT')
-                            || ($relatedObject['relation_type'] == 'hasPart' && startsWith($relatedObject['origin'], "REVERSE")));
-                } else if($relatedObject['class'] == 'activity' || $relatedObject['class'] == 'party') {
-                    //find all explicit isOutputOf (activity or party) or reverse hasOutput
-                    $isValidParent = (($relatedObject['relation_type'] == 'isOutputOf' && $relatedObject['origin'] == 'EXPLICIT')
-                        || ($relatedObject['relation_type'] == 'hasOutput' && startsWith($relatedObject['origin'], "REVERSE")));
+                        || ($relatedObject['relation_type'] == 'hasPart' && startsWith($relatedObject['origin'],
+                                "REVERSE")));
+                } else {
+                    if ($relatedObject['class'] == 'activity' || $relatedObject['class'] == 'party') {
+                        //find all explicit isOutputOf (activity or party) or reverse hasOutput
+                        $isValidParent = (($relatedObject['relation_type'] == 'isOutputOf' && $relatedObject['origin'] == 'EXPLICIT')
+                            || ($relatedObject['relation_type'] == 'hasOutput' && startsWith($relatedObject['origin'],
+                                    "REVERSE")));
+                    }
                 }
-            } else if ($this->ro->class == 'activity') {
-                if ($relatedObject['class'] == 'activity') {
-                    //find all explicit isPartOf activity or reverse hasPart
-                    $isValidParent = (($relatedObject['relation_type'] == 'isPartOf' && $relatedObject['origin'] == 'EXPLICIT')
-                        || ($relatedObject['relation_type'] == 'hasPart' && startsWith($relatedObject['origin'], "REVERSE")));
-                } else if($relatedObject['class'] == 'party') {
-                    //find all explicit isFundedBy activity or reverse funds
-                    $isValidParent = (($relatedObject['relation_type'] == 'isFundedBy' && $relatedObject['origin'] == 'EXPLICIT')
-                        || ($relatedObject['relation_type'] == 'funds' && startsWith($relatedObject['origin'], "REVERSE")));
+            } else {
+                if ($this->ro->class == 'activity') {
+                    if ($relatedObject['class'] == 'activity') {
+                        //find all explicit isPartOf activity or reverse hasPart
+                        $isValidParent = (($relatedObject['relation_type'] == 'isPartOf' && $relatedObject['origin'] == 'EXPLICIT')
+                            || ($relatedObject['relation_type'] == 'hasPart' && startsWith($relatedObject['origin'],
+                                    "REVERSE")));
+                    } else {
+                        if ($relatedObject['class'] == 'party') {
+                            //find all explicit isFundedBy activity or reverse funds
+                            $isValidParent = (($relatedObject['relation_type'] == 'isFundedBy' && $relatedObject['origin'] == 'EXPLICIT')
+                                || ($relatedObject['relation_type'] == 'funds' && startsWith($relatedObject['origin'],
+                                        "REVERSE")));
+                        }
+                    }
                 }
             }
 
@@ -494,36 +510,56 @@ class Activity_grants_extension extends ExtensionBase
         return $result;
     }
 
-    public function getGrantsStructureSOLR($processed = array(), $recursive = true){
+    /**
+     * Returns the structure for grants network
+     * Source from SOLR
+     * Funder ->funds (activity->hasPart->activity) -> outputs (collection->hasPart->collection)
+     *
+     * @param array     $processed
+     * @param bool|true $recursive
+     * @return array
+     */
+    public function getGrantsStructureSOLR($processed = array(), $recursive = true)
+    {
         $this->_CI->load->library('solr');
+
+        //hard coded limit
         $limit = 10;
+
         $result = array(
             'counts' => 0,
             'childs' => [],
             'has_more' => false
         );
+
         if ($this->ro->class == 'party') {
             //search for all activity isFundedBy that does not have field isPartOf
             $solrResult = $this->_CI->solr->init()
                 ->setOpt('fl', 'id, title, class')
                 ->setOpt('rows', $limit)
-                ->setOpt('fq', '+relation_grants_isFundedBy_direct:'.$this->ro->id)
-                ->executeSearch(true);
-
-        } else if ($this->ro->class == 'activity') {
-            $solrResult = $this->_CI->solr->init()
-                ->setOpt('fl', 'id, title, class')
-                ->setOpt('rows', $limit)
-                ->setOpt('fq', 'relation_grants_isPartOf_direct:'.$this->ro->id. ' OR relation_grants_isOutputOf_direct:'.$this->ro->id)
-                ->executeSearch(true);
-        } else if($this->ro->class == 'collection') {
-            $solrResult = $this->_CI->solr->init()
-                ->setOpt('fl', 'id, title, class')
-                ->setOpt('rows', $limit)
-                ->setOpt('fq', 'relation_grants_isPartOf_direct:'.$this->ro->id)
+                ->setOpt('fq', '+relation_grants_isFundedBy_direct:' . $this->ro->id)
                 ->executeSearch(true);
         } else {
-            $solrResult = false;
+            if ($this->ro->class == 'activity') {
+                //search for all activity that isPartOf and collection that isOutputOf
+                $solrResult = $this->_CI->solr->init()
+                    ->setOpt('fl', 'id, title, class')
+                    ->setOpt('rows', $limit)
+                    ->setOpt('fq',
+                        'relation_grants_isPartOf_direct:' . $this->ro->id . ' OR relation_grants_isOutputOf_direct:' . $this->ro->id)
+                    ->executeSearch(true);
+            } else {
+                if ($this->ro->class == 'collection') {
+                    //search for all collection that isPartOf
+                    $solrResult = $this->_CI->solr->init()
+                        ->setOpt('fl', 'id, title, class')
+                        ->setOpt('rows', $limit)
+                        ->setOpt('fq', 'relation_grants_isPartOf_direct:' . $this->ro->id)
+                        ->executeSearch(true);
+                } else {
+                    $solrResult = false;
+                }
+            }
         }
 
         if ($solrResult && $solrResult['response']['numFound'] > 0) {
@@ -531,7 +567,9 @@ class Activity_grants_extension extends ExtensionBase
                 if ($recursive && !in_array($doc['id'], $processed)) {
                     $record = $this->_CI->ro->getByID($doc['id']);
                     $childs = $record->getGrantsStructureSOLR($processed);
-                    if (sizeof($childs['childs']) > 0) {
+                    if (isset($childs['childs'])
+                        && is_array($childs['childs'])
+                        && sizeof($childs['childs']) > 0) {
                         $doc['childs'] = [
                             'counts' => $childs['counts'],
                             'childs' => $childs['childs'],
@@ -543,11 +581,7 @@ class Activity_grants_extension extends ExtensionBase
                 $result['childs'][] = $doc;
             }
             $result['counts'] = $solrResult['response']['numFound'];
-            if ($solrResult['response']['numFound'] > $limit) {
-                $result['has_more'] = true;
-            } else {
-                $result['has_more'] = false;
-            }
+            $result['has_more'] = ($solrResult['response']['numFound'] > $limit) ? true : false;
         }
 
         return $result;
@@ -687,6 +721,12 @@ class Activity_grants_extension extends ExtensionBase
         return $result;
     }
 
+    /**
+     * Get relatedObjects that has is a direct data output of this object
+     *
+     * @param bool|false $relatedObjects
+     * @return array
+     */
     public function getDirectDataOutput($relatedObjects = false)
     {
         if (!$relatedObjects) {
@@ -748,6 +788,11 @@ class Activity_grants_extension extends ExtensionBase
         return $result;
     }
 
+    /**
+     * Get direct trove publication
+     *
+     * @return array
+     */
     public function getDirectPublication()
     {
 
