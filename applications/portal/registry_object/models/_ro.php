@@ -81,7 +81,7 @@ class _ro
     public function construct_api_url()
     {
         $url = api_url() . 'registry/object/' . $this->id . '/';
-        $url.='?includes=grants';
+//        $url.='?includes=grants';
         return $url;
     }
 

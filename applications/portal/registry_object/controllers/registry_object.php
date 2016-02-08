@@ -305,7 +305,7 @@ class Registry_object extends MX_Controller
         }
 
         // additional grants stuff
-        if ($ro->relationships['grants']) {
+        if (isset($ro->relationships['grants']) && $ro->relationships['grants']) {
 
             if (isset($ro->relationships['grants']['programs'])
                 && is_array($ro->relationships['grants']['programs'])

@@ -431,7 +431,7 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
 
-        //hard limit on how many node will be processed for child activities
+        //hard limit on how many node will be processed for performance
         $limit = 300;
         if (sizeof($processed) > $limit) {
             return array();
@@ -465,9 +465,13 @@ class Activity_grants_extension extends ExtensionBase
                 }
             }
 
+            //do not want to check recursively this child again
+            $isValidParent = $isValidParent && !in_array($relatedObject['registry_object_id'], $processed);
+
+            array_push($processed, $relatedObject['registry_object_id']);
+
             if ($isValidParent) {
                 $result[] = $relatedObject;
-                array_push($processed, $relatedObject['registry_object_id']);
                 if ($recursive) {
                     $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
                     $parents = $record->getParentsGrants(false, $processed, true);

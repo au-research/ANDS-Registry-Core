@@ -518,8 +518,9 @@ class Sync_extension extends ExtensionBase{
             }
         }
 
-        $grantStructureParents = $this->ro->getParentsGrants();
+        //Grants Structure
 
+        $grantStructureParents = $this->ro->getParentsGrants(false, array(),true);
         if ($grantStructureParents && sizeof($grantStructureParents) > 0) {
             $json['relation_grants_isFundedBy'] = '';
             $json['relation_grants_isPartOf'] = '';
