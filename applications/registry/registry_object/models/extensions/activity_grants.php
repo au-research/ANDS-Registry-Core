@@ -507,16 +507,20 @@ class Activity_grants_extension extends ExtensionBase
             $solrResult = $this->_CI->solr->init()
                 ->setOpt('fl', 'id, title, class')
                 ->setOpt('rows', $limit)
-                ->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro->id)
-                ->setOpt('fq', '-relation_grants_isPartOf:*')
+                ->setOpt('fq', '+relation_grants_isFundedBy_direct:'.$this->ro->id)
                 ->executeSearch(true);
 
         } else if ($this->ro->class == 'activity') {
             $solrResult = $this->_CI->solr->init()
                 ->setOpt('fl', 'id, title, class')
                 ->setOpt('rows', $limit)
-                ->setOpt('fq', '+relation_grants_isPartOf:'.$this->ro->id)
-                ->setOpt('mm', '1')
+                ->setOpt('fq', 'relation_grants_isPartOf_direct:'.$this->ro->id. ' OR relation_grants_isOutputOf_direct:'.$this->ro->id)
+                ->executeSearch(true);
+        } else if($this->ro->class == 'collection') {
+            $solrResult = $this->_CI->solr->init()
+                ->setOpt('fl', 'id, title, class')
+                ->setOpt('rows', $limit)
+                ->setOpt('fq', 'relation_grants_isPartOf_direct:'.$this->ro->id)
                 ->executeSearch(true);
         } else {
             $solrResult = false;
