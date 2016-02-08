@@ -632,6 +632,22 @@ class Registry_objects extends CI_Model {
 		}
 	}
 
+	public function getRelationContent($fromID, $toID){
+		$fromRO = $this->getByID($fromID);
+		$toRO = $this->getByID($toID);
+		$query = $this->db
+				->get_where('registry_object_relationships', array('registry_object_id'=> $fromRO->id, 'related_object_key' => $toRO->key))
+				->first_row(true);
+
+		if (!$query) {
+			$query = $this->db
+					->get_where('registry_object_relationships', array('registry_object_id'=>$toRO->id, 'related_object_key' => $fromRO->key))
+					->first_row(true);
+		}
+
+		return ($query) ? $query : false;
+	}
+
 	function getPortalStat($ro_id, $type = false) {
 		if ($type) {
 			$portal_db = $this->load->database('portal', true);

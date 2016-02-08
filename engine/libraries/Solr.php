@@ -648,6 +648,15 @@ class Solr
                 case 'related_activity_id':
                     $this->setOpt('fq', '+related_activity_id:"' . $value . '"');
                     break;
+                case 'is_output_of':
+                    $this->setOpt('fq', '+relation_grants_isOutputOf:'.$value);
+                    break;
+                case 'is_part_of':
+                    $this->setOpt('fq', '+relation_grants_isPartOf:'.$value);
+                    break;
+                case 'is_funded_by':
+                    $this->setOpt('fq', '+relation_grants_isFundedBy:'.$value);
+                    break;
                 case 'subject':
                     if (is_array($value)) {
                         $fq_str = '';

@@ -304,13 +304,24 @@ class Registry_object extends MX_Controller
             $related['organisation'] = $ro->relationships['party_multi'];
         }
 
-        // additional grants stuff
-        if (isset($ro->relationships['grants']) && $ro->relationships['grants']) {
+        // search class for constructing search queries
+        $search_class = $ro->core['class'];
+        if ($ro->core['class'] == 'party') {
+            if (strtolower($ro->core['type']) == 'person') {
+                $search_class = 'party_one';
+            } elseif (strtolower($ro->core['type']) == 'group') {
+                $search_class = 'party_multi';
+            }
+        }
 
-            if (isset($ro->relationships['grants']['programs'])
-                && is_array($ro->relationships['grants']['programs'])
-                && sizeof($ro->relationships['grants']['programs']) > 0) {
-                $related['programs'] = $ro->relationships['grants']['programs'];
+        // additional grants stuff
+        if (is_array($ro->grantsNetwork)) {
+
+            //programs
+            if (isset($ro->grantsNetwork['programs'])
+                && is_array($ro->grantsNetwork['programs']['result'])
+                && sizeof($ro->grantsNetwork['programs']['result']) > 0) {
+                $related['programs'] = $ro->grantsNetwork['programs']['result'];
 
                 //remove unique by registry_object_id
                 $temp_array = array();
@@ -346,18 +357,40 @@ class Registry_object extends MX_Controller
                         return 1;
                     }
                 });
+
+                $related['programs_count'] = $ro->grantsNetwork['programs']['count'];
+                if ($ro->core['class'] == 'party') {
+                    $related['programs_searchQuery'] = constructPortalSearchQuery([
+                        'is_funded_by' => $ro->core['id'],
+                        'class' => 'activity',
+                        'type' => 'program'
+                    ]);
+                } else {
+                    $related['programs_searchQuery'] = constructPortalSearchQuery([
+                        'is_part_of' => $ro->core['id'],
+                        'class' => 'activity',
+                        'type' => 'program'
+                    ]);
+                }
             }
 
-            if (isset($ro->relationships['grants']['grants'])
-                && is_array($ro->relationships['grants']['grants'])
-                && sizeof($ro->relationships['grants']['grants']) > 0) {
-                $related['grants'] = $ro->relationships['grants']['grants'];
+
+
+            if (isset($ro->grantsNetwork['grants'])
+                && is_array($ro->grantsNetwork['grants']['result'])
+                && sizeof($ro->grantsNetwork['grants']['result']) > 0) {
+                $related['grants'] = $ro->grantsNetwork['grants']['result'];
             }
 
-            if (isset($ro->relationships['grants']['data_output'])
-                && is_array($ro->relationships['grants']['data_output'])
-                && sizeof($ro->relationships['grants']['data_output']) > 0) {
-                $related['data_output'] = $ro->relationships['grants']['data_output'];
+            $related['data_searchQuery'] = constructPortalSearchQuery([
+                $search_class => $ro->core['id'],
+                'class' => 'collection'
+            ]);
+
+            if (isset($ro->grantsNetwork['data_output'])
+                && is_array($ro->grantsNetwork['data_output']['result'])
+                && sizeof($ro->grantsNetwork['data_output']['result']) > 0) {
+                $related['data_output'] = $ro->grantsNetwork['data_output']['result'];
 
                 //data output overlaps with data, so merge them and only display related data instead
                 $related['data'] = array_merge($related['data'], $related['data_output']);
@@ -370,12 +403,27 @@ class Registry_object extends MX_Controller
                     }
                 }
                 $related['data'] = $temp_array;
+                $related['data_count'] = $ro->grantsNetwork['data_output']['count'];
+
+                if ($ro->core['class'] == 'party') {
+                    $related['data_searchQuery'] = constructPortalSearchQuery([
+                        'is_funded_by' => $ro->core['id'],
+                        'class' => 'collection'
+                    ]);
+                } else {
+                    $related['data_searchQuery'] = constructPortalSearchQuery([
+                        'is_output_of' => $ro->core['id'],
+                        'class' => 'collection'
+                    ]);
+                }
+
+
             }
 
-            if (isset($ro->relationships['grants']['publications'])
-                && is_array($ro->relationships['grants']['publications'])
-                && sizeof($ro->relationships['grants']['publications']) > 0) {
-                $related['publications'] = array_merge($related['publications'], $ro->relationships['grants']['publications']);
+            if (isset($ro->grantsNetwork['publications'])
+                && is_array($ro->grantsNetwork['publications'])
+                && sizeof($ro->grantsNetwork['publications']) > 0) {
+                $related['publications'] = array_merge($related['publications'], $ro->grantsNetwork['publications']);
             }
         }
 
@@ -384,15 +432,6 @@ class Registry_object extends MX_Controller
         });
 
 
-        // search class
-        $search_class = $ro->core['class'];
-        if ($ro->core['class'] == 'party') {
-            if (strtolower($ro->core['type']) == 'person') {
-                $search_class = 'party_one';
-            } elseif (strtolower($ro->core['type']) == 'group') {
-                $search_class = 'party_multi';
-            }
-        }
 
         // search query
         $related['searchQuery'] = portal_url() . 'search/#!/related_' . $search_class . '_id=' . $ro->core['id'];

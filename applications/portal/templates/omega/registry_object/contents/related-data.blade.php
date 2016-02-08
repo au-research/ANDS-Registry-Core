@@ -31,11 +31,14 @@
 
     </span>
 
-    @if(isset($ro->relationships['collection_count']) && $ro->relationships['collection_count'] > $relatedLimit)
-        <p>
-            <a href="{{ $related['searchQuery'] }}/class=collection">View all {{ $ro->relationships['collection_count'] }} related data</a>
-        </p>
-    @endif
-
-
 @endforeach
+@if(isset($ro->relationships['collection_count']) && $ro->relationships['collection_count'] > $relatedLimit)
+    <p>
+        <a href="{{ $related['searchQuery'] }}/class=collection">View all {{ $ro->relationships['collection_count'] }} related data</a>
+    </p>
+@endif
+@if(isset($related['data_count']) && $related['data_count'] > 5)
+<p>
+    <a href="{{ $related['data_searchQuery'] }}">View all {{ $related['data_count'] }} related data</a>
+</p>
+@endif

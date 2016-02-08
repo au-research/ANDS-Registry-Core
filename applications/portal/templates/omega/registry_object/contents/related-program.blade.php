@@ -22,3 +22,10 @@
     @endif
     <br />
 @endforeach
+
+@if(isset($related['programs_count']) && $related['programs_count'] > 5)
+    <p>
+        <a href="{{ $related['programs_searchQuery'] }}">View all {{ $related['programs_count'] }} related programs</a>
+    </p>
+@endif
+

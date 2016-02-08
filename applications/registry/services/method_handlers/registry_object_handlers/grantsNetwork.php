@@ -23,12 +23,19 @@ class grantsNetwork extends ROHandler {
         return $result;
     }
 
+    /**
+     * A wrapper allows consistent data return for each relation
+     *
+     * @param     $relation
+     * @param int $limit
+     * @return array|bool
+     */
     private function getByRelation($relation, $limit = 5){
         $ci =& get_instance();
         $ci->load->library('solr');
 
         $ci->solr->init()
-            ->setOpt('fl', 'id, key, title, class, type')
+            ->setOpt('fl', 'id, key, title, class, type, slug')
             ->setOpt('rows', $limit);
 
         switch ($relation) {
@@ -63,10 +70,35 @@ class grantsNetwork extends ROHandler {
         $solrResult = $ci->solr->executeSearch(true);
 
         if ($solrResult) {
+
+            $relationships = array_values($solrResult['response']['docs']);
+            foreach ($relationships as &$relation) {
+                if ($this->ro->class == 'party') {
+                    $relationType = 'funds';
+                } elseif ($this->ro->class == 'activity') {
+                    if ($relation['class'] == 'collection') {
+                        $relationType = 'hasOutput';
+                    } else {
+                        $relationType = 'hasPart';
+                    }
+                } else {
+                    $relationType = 'hasPart';
+                }
+
+                $additionalContent = [
+                    'registry_object_id' => $relation['id'],
+                    'relation_type' => $relationType,
+                    'origin' => 'EXPLICIT',
+                    'relation_description' => ''
+                ];
+
+                $relation = array_merge($relation, $additionalContent);
+            }
+
             return array(
                 'count' => $solrResult['response']['numFound'],
                 'more' => $solrResult['response']['numFound'] > $limit ? true : false,
-                'result' => array_values($solrResult['response']['docs'])
+                'result' => $relationships
             );
         } else {
             return false;
