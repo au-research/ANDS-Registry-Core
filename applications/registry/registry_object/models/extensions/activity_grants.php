@@ -494,6 +494,61 @@ class Activity_grants_extension extends ExtensionBase
         return $result;
     }
 
+    public function getGrantsStructureSOLR($processed = array(), $recursive = true){
+        $this->_CI->load->library('solr');
+        $limit = 10;
+        $result = array(
+            'counts' => 0,
+            'childs' => [],
+            'has_more' => false
+        );
+        if ($this->ro->class == 'party') {
+            //search for all activity isFundedBy that does not have field isPartOf
+            $solrResult = $this->_CI->solr->init()
+                ->setOpt('fl', 'id, title, class')
+                ->setOpt('rows', $limit)
+                ->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro->id)
+                ->setOpt('fq', '-relation_grants_isPartOf:*')
+                ->executeSearch(true);
+
+        } else if ($this->ro->class == 'activity') {
+            $solrResult = $this->_CI->solr->init()
+                ->setOpt('fl', 'id, title, class')
+                ->setOpt('rows', $limit)
+                ->setOpt('fq', '+relation_grants_isPartOf:'.$this->ro->id)
+                ->setOpt('mm', '1')
+                ->executeSearch(true);
+        } else {
+            $solrResult = false;
+        }
+
+        if ($solrResult && $solrResult['response']['numFound'] > 0) {
+            foreach ($solrResult['response']['docs'] as &$doc) {
+                if ($recursive && !in_array($doc['id'], $processed)) {
+                    $record = $this->_CI->ro->getByID($doc['id']);
+                    $childs = $record->getGrantsStructureSOLR($processed);
+                    if (sizeof($childs['childs']) > 0) {
+                        $doc['childs'] = [
+                            'counts' => $childs['counts'],
+                            'childs' => $childs['childs'],
+                            'has_more' => $childs['counts'] > $limit ? true : false
+                        ];
+                    }
+                }
+                $processed[] = $doc['id'];
+                $result['childs'][] = $doc;
+            }
+            $result['counts'] = $solrResult['response']['numFound'];
+            if ($solrResult['response']['numFound'] > $limit) {
+                $result['has_more'] = true;
+            } else {
+                $result['has_more'] = false;
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * get the Grants Structured Data for this object
      *

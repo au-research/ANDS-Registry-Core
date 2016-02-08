@@ -140,6 +140,16 @@ class ObjectHandler extends Handler{
                     $ro = $resource['ro'];
                     $ro->sync();
                     return $ro->indexable_json();
+                } elseif ($m1 == 'grants_structure') {
+                    $this->ci->load->library('solr');
+                    $ro = $resource['ro'];
+                    $result = [
+                        'id' => $ro->id,
+                        'title' => $ro->title,
+                        'childs' => $ro->getGrantsStructureSOLR()
+                    ];
+
+                    return $result;
                 }
             }
         }
