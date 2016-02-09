@@ -19,7 +19,7 @@ class Sync_extension extends ExtensionBase{
 	function sync($full = true, $conn_limit=20){
 		try {
 			$this->_CI->load->library('solr');
-			if($full){
+			if ($full){
 				$this->ro->processIdentifiers();
 				$this->ro->addRelationships();
 				$this->ro->update_quality_metadata();
@@ -383,7 +383,7 @@ class Sync_extension extends ExtensionBase{
 		$subjects = $this->ro->processSubjects();
 		$fields = array('subject_value_resolved', 'subject_value_unresolved', 'subject_type', 'subject_vocab_uri', 'subject_anzsrcfor', 'subject_anzsrcseo');
 		foreach($fields as $f) $json[$f] = array();
-		foreach($subjects as $s){
+		foreach($subjects as $s) {
 			$json['subject_value_unresolved'][] = $s['value'];
 			$json['subject_value_resolved'][] = html_entity_decode($s['resolved'], ENT_QUOTES);
 			$json['subject_vocab_uri'][] = $s['uri'];

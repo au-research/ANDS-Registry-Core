@@ -49,7 +49,7 @@ class Connections_Extension extends ExtensionBase
 	function getConnections($published_only = true, $specific_type = null, $limit = 100, $offset = 0, $include_dupe_connections = false)
 	{
 
-        if ($published_only && $specific_type == null && $limit == 5 && $offset==0 && $include_dupe_connections == false) {
+        if ($published_only && $specific_type == null && $limit == 5 && $offset==0 && $include_dupe_connections === false) {
             $cached = $this->ro->getCachedConnectionsMetadata();
             if ($cached && is_array($cached)) {
                 return $cached;
@@ -129,7 +129,7 @@ class Connections_Extension extends ExtensionBase
 
 				// Stop the same connected object coming from two different sources
 				// NB: this prevents connections from being duplicated (uniqueness property)
-				if($connection['registry_object_id'] === null && $connection['identifier_relation_id'] !== null)
+				if($connection['registry_object_id'] === null && isset($connection['identifier_relation_id']) && $connection['identifier_relation_id'] !== null)
 				{
 					if(!isset($ordered_connections[$connection['class']][$connection['identifier_relation_id']]))
 					{

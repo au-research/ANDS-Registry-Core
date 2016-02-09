@@ -455,6 +455,22 @@ class Maintenance extends MX_Controller
         dd($this->benchmark->elapsed_time('start', 'end'));
     }
 
+    function sync($roID) {
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        $this->load->model('registry_object/registry_objects', 'ro');
+        $this->load->library('solr');
+        $ro = $this->ro->getByID($roID);
+        try {
+            $result = $ro->sync();
+            var_dump($result);
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
+
+    }
+
     function fixRelationships($id)
     {
         $this->load->model('registry_object/registry_objects', 'ro');
