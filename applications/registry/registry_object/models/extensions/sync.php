@@ -24,7 +24,9 @@ class Sync_extension extends ExtensionBase{
 				$this->ro->addRelationships();
 				$this->ro->update_quality_metadata();
 			}
-			$this->ro->enrich();
+            if($this->ro->status == PUBLISHED){
+                $this->ro->processLinks();
+            }
 			if($this->ro->status=='PUBLISHED'&&!($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria")){
 				$docs = array();
 				$docs[] = $this->indexable_json($conn_limit);

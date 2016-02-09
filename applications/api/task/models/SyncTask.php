@@ -292,7 +292,7 @@ class SyncTask extends Task
                             $ro->processIdentifiers();
                             $ro->addRelationships();
                             $ro->update_quality_metadata();
-                            $ro->enrich();
+                            $ro->processLinks();
                         }
 
                         $solr_doc = $ro->indexable_json();
