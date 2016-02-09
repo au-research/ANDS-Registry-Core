@@ -30,9 +30,9 @@ class Registry_widget extends MX_Controller{
         require_once (API_APP_PATH.'core/helpers/api_helper.php');
         $terms = array(
             'event' => 'api_hit',
-            'widget' => 'registry_widget',
             'api_key' => 'public',
-            'api_version' => 'legacy'
+            'api_version' => 'legacy',
+            'path' => 'registry_widget'
         );
         api_log_terms($terms);
 

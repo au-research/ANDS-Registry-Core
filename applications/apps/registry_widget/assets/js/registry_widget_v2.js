@@ -32,7 +32,7 @@
 		var defaults = {
 			//jsonp proxy endpoint
 
-            proxy: 'http://researchdata.ands.org.au/api/registry.jsonp/',
+            proxy: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/',
 
 			//mode: [search, display_single, display_result]
 			mode: 'search',
@@ -61,7 +61,7 @@
 
 		//ANDS Environment
 		if (typeof(window.real_base_url) !== 'undefined'){
-			defaults['proxy'] = window.real_base_url + 'api/registry.jsonp/';
+			defaults['proxy'] = window.real_base_url + 'api/v2.0/registry.jsonp/';
 		}
 
 		//bind and merge the defaults with the given options

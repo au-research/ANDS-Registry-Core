@@ -241,7 +241,6 @@
 					//if there's a predefined handler, use it instead
 					settings.lookup_success_handler(data, obj, settings);
 				}else{
-                    console.log(data);
 					_clean(obj, settings);
 					var html = _constructGrantHTML(data.recordData,settings);
 					var result_div = $('<div>').addClass(settings.result_success_class).html(html);
@@ -272,7 +271,6 @@
 	 */
 
 	function _constructGrantHTML(obj,settings) {
-console.log(obj);
 		var resStr = '';
 		resStr += "<div class='"+settings.info_box_class+"'>"
         if(obj.length==1)
