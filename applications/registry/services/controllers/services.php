@@ -292,6 +292,17 @@ class Services extends MX_Controller {
 		if ($note) { $values['note'] = $note; }
 
 		$this->db->insert('api_requests', $values);
+
+        // logging of calls to legacy version of our services and widgets to flat file logging - added 09/02/2016
+
+        require_once (API_APP_PATH.'core/helpers/api_helper.php');
+        $terms = array(
+            'event' => 'api_hit',
+            'api_key' => $api_key,
+            'api_version' => 'legacy',
+            'path' => implode($params,"&"),
+        );
+        api_log_terms($terms);
 	}
 	
 }	

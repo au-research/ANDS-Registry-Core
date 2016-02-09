@@ -32,12 +32,9 @@
 
 		var defaults = {
 		    //location (absolute URL) of the jsonp proxy
-		    //search_endpoint: 'http://researchdata.ands.org.au/registry/services/api/getGrants/?',
-		   	//lookup_endpoint: 'http://researchdata.ands.org.au/registry/services/api/getGrants/?id=',
 
-
-            search_endpoint: 'http://researchdata.ands.org.au/api/registry.jsonp/grants/?',
-            lookup_endpoint: 'http://researchdata.ands.org.au/api/registry.jsonp/grants/?',
+            search_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/grants/?',
+            lookup_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/grants/?',
 
             api_key: 'public',
 		    //auto _lookup once init
@@ -75,8 +72,7 @@
 		    post_lookup_success_handler: false,
 
 		    //auto close the search box once a value is chosen
-		    auto_close_search: true,
-
+		    auto_close_search: true
 
 		};
 
@@ -84,8 +80,8 @@
 
         //ANDS Environment
         if (typeof(window.real_base_url) !== 'undefined'){
-            defaults['search_endpoint'] = window.real_base_url + 'api/registry.jsonp/grants/?';
-            defaults['lookup_endpoint'] = window.real_base_url + 'api/registry.jsonp/grants/?';
+            defaults['search_endpoint'] = window.real_base_url + 'api/v2.0/registry.jsonp/grants/?';
+            defaults['lookup_endpoint'] = window.real_base_url + 'api/v2.0/registry.jsonp/grants/?';
         }
 
         //bind and merge the defaults with the given options
@@ -245,6 +241,7 @@
 					//if there's a predefined handler, use it instead
 					settings.lookup_success_handler(data, obj, settings);
 				}else{
+                    console.log(data);
 					_clean(obj, settings);
 					var html = _constructGrantHTML(data.recordData,settings);
 					var result_div = $('<div>').addClass(settings.result_success_class).html(html);
@@ -275,7 +272,7 @@
 	 */
 
 	function _constructGrantHTML(obj,settings) {
-
+console.log(obj);
 		var resStr = '';
 		resStr += "<div class='"+settings.info_box_class+"'>"
         if(obj.length==1)
