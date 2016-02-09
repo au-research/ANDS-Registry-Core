@@ -394,7 +394,6 @@ class Sync_extension extends ExtensionBase{
 			 	$json['subject_anzsrcseo'][] = $s['resolved'];
 			 }
 
-
             $type = $this->ro->getPortalTypes($s['type']);
             $json['tsubject_'.$type][] = $s['value'];
 		}
