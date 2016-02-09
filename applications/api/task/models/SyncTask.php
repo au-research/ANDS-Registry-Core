@@ -261,7 +261,6 @@ class SyncTask extends Task
         } else {
             $this->log('No records to sync for data source: ' . $dsID);
         }
-
     }
 
     /**

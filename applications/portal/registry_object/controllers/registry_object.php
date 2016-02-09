@@ -297,11 +297,15 @@ class Registry_object extends MX_Controller
         //activity
         if (isset($ro->relationships['activity'])) {
             $related['activity'] = $ro->relationships['activity'];
+        } else {
+            $related['activity'] = array();
         }
 
         //organisation
         if (isset($ro->relationships['party_multi'])) {
             $related['organisation'] = $ro->relationships['party_multi'];
+        } else {
+            $related['organisation'] = array();
         }
 
         // search class for constructing search queries
@@ -405,18 +409,6 @@ class Registry_object extends MX_Controller
                 $related['data'] = $temp_array;
                 $related['data_count'] = $ro->grantsNetwork['data_output']['count'];
 
-                if ($ro->core['class'] == 'party') {
-                    $related['data_searchQuery'] = constructPortalSearchQuery([
-                        'is_funded_by' => $ro->core['id'],
-                        'class' => 'collection'
-                    ]);
-                } else {
-                    $related['data_searchQuery'] = constructPortalSearchQuery([
-                        'is_output_of' => $ro->core['id'],
-                        'class' => 'collection'
-                    ]);
-                }
-
 
             }
 
@@ -427,21 +419,53 @@ class Registry_object extends MX_Controller
             }
         }
 
+        //grants and projects is everything in activity, but not type=program
         $related['grants_projects'] = array_udiff($related['activity'], $related['programs'], function ($a, $b) {
             return $a['registry_object_id'] - $b['registry_object_id'];
         });
 
+        /**
+         * Construct searchQuery for each related
+         * data [related_data merged with related collections]
+         * program
+         * grants_projects
+         * organisations
+         * service
+         */
 
-
-        // search query
+        // general search query [legacy] todo check if needed
+        $id = array($ro->core['id']);
         $related['searchQuery'] = portal_url() . 'search/#!/related_' . $search_class . '_id=' . $ro->core['id'];
         if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
             foreach ($ro->identifiermatch as $mm) {
                 $related['searchQuery'] .= '/related_' . $search_class . '_id=' . $mm['registry_object_id'];
+                $id[] = $mm['registry_object_id'];
             }
         }
 
+        // grants and projects are ro[class=activity][type!=program][is_funded_by:node]
+        $relatedSearchQueries = ['class' => 'activity', 'nottype' => 'program'];
+        $relatedSearchQueries = array_merge($relatedSearchQueries, array('related_'.$search_class.'_id' => $id));
+        $related['grants_projects_searchQuery'] = constructPortalSearchQuery($relatedSearchQueries);
+        $related['grants_projects_count'] = $this->getSolrCountForQuery($relatedSearchQueries);
 
+        // search query for related data
+        if ($ro->core['class'] == 'party') {
+            $relatedSearchQueries = [
+                'is_funded_by' => $ro->core['id'],
+                'class' => 'collection'
+            ];
+        } else {
+            $relatedSearchQueries = [
+                'is_output_of' => $ro->core['id'],
+                'class' => 'collection'
+            ];
+        }
+        $related['data_searchQuery'] = constructPortalSearchQuery($relatedSearchQueries);
+        $related['data_count'] = $this->getSolrCountForQuery($relatedSearchQueries);
+
+        // search query for related service
+        // uses general search query
 
         //fix relation description and title
         foreach ($related as &$rel) {
@@ -953,6 +977,16 @@ class Registry_object extends MX_Controller
             // ->set('facets', $this->components['facet'])
             ->set('search', true)//to disable the global search
             ->render('registry_object/subjects');
+    }
+
+    /**
+     * Do a quick SOLR search and get the count for said queries
+     * @param $queries
+     */
+    public function getSolrCountForQuery($filters){
+        $this->load->library('solr');
+        $result = $this->solr->init()->setFilters($filters)->executeSearch(true);
+        return $result['response']['numFound'];
     }
 
     /**

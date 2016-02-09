@@ -5,7 +5,13 @@ function constructPortalSearchQuery($queries)
 	$query = portal_url('search');
 	$query .= '#!/';
 	foreach ($queries as $key=>$value) {
-		$query.=$key .'='.$value.'/';
+		if (is_array($value)) {
+            foreach ($value as $v) {
+                $query.= $key .'='.$v.'/';
+            }
+        } else {
+            $query .= $key . '=' . $value . '/';
+        }
 	}
 	return $query;
 }

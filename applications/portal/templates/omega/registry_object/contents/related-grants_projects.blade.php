@@ -22,8 +22,8 @@
     @endif
     <br />
 @endforeach
-@if(isset($ro->relationships['activity_count']) && $ro->relationships['activity_count'] > $relatedLimit)
+@if($related['grants_projects_count'] > 5)
     <p>
-        <a href="{{ $related['searchQuery'] }}/class=activity">View all {{ $ro->relationships['activity_count'] }} related grants and projects</a>
+        <a href="{{ $related['grants_projects_searchQuery'] }}">View all {{ $related['grants_projects_count'] }} related grants and projects</a>
     </p>
 @endif

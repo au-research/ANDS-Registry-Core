@@ -120,6 +120,7 @@ class ObjectHandler extends Handler{
         $resource = $this->populate_resource($this->params['identifier']);
 
         foreach ($method1s as $m1) {
+
             if ($benchmark) {
                 $this->ci->benchmark->mark('start');
             }

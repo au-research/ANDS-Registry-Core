@@ -412,6 +412,9 @@ class Solr
                         if ($value != 'all') $this->setOpt('fq', '+type:("' . $value . '")');
                     }
                     break;
+                case 'nottype':
+                    $this->setOpt('fq', '-type:("'.$value.'")');
+                    break;
                 case 'subject_value_resolved':
                     if (is_array($value)) {
                         $fq_str = '';
@@ -627,10 +630,24 @@ class Solr
                     }
                     break;
                 case 'related_party_one_id':
-                    $this->setOpt('fq', '+related_party_one_id:"' . $value . '"');
+                    if (is_array($value)) {
+                        $fq_str = '';
+                        foreach ($value as $v)
+                            $fq_str .= ' related_party_one_id:("' . $v . '")';
+                        $this->setOpt('fq', $fq_str);
+                    } else {
+                        $this->setOpt('fq', '+related_party_one_id:"' . $value . '"');
+                    }
                     break;
                 case 'related_party_multi_id':
-                    $this->setOpt('fq', '+related_party_multi_id:"' . $value . '"');
+                    if (is_array($value)) {
+                        $fq_str = '';
+                        foreach ($value as $v)
+                            $fq_str .= ' related_party_multi_id:("' . $v . '")';
+                        $this->setOpt('fq', $fq_str);
+                    } else {
+                        $this->setOpt('fq', '+related_party_multi_id:"' . $value . '"');
+                    }
                     break;
                 case 'related_collection_id':
                     if (is_array($value)) {
@@ -643,19 +660,47 @@ class Solr
                     }
                     break;
                 case 'related_service_id':
-                    $this->setOpt('fq', '+related_service_id:"' . $value . '"');
+                    if (is_array($value)) {
+                        $fq_str = '(';
+                        foreach ($value as $v) $fq_str .= ' related_service_id:("' . $v . '")';
+                        $fq_str .= ')';
+                        $this->setOpt('fq', $fq_str);
+                    } else {
+                        $this->setOpt('fq', '+related_service_id:("' . $value . '")');
+                    }
                     break;
                 case 'related_activity_id':
-                    $this->setOpt('fq', '+related_activity_id:"' . $value . '"');
+                    if (is_array($value)) {
+                        $fq_str = '(';
+                        foreach ($value as $v) $fq_str .= ' related_activity_id:("' . $v . '")';
+                        $fq_str .= ')';
+                        $this->setOpt('fq', $fq_str);
+                    } else {
+                        $this->setOpt('fq', '+related_activity_id:("' . $value . '")');
+                    }
                     break;
                 case 'is_output_of':
-                    $this->setOpt('fq', '+relation_grants_isOutputOf:'.$value);
+                    if (is_array($value)) {
+                        $fq_str = '(';
+                        foreach ($value as $v) $fq_str .= ' relation_grants_isOutputOf:("' . $v . '")';
+                        $fq_str .= ')';
+                        $this->setOpt('fq', $fq_str);
+                    } else {
+                        $this->setOpt('fq', '+relation_grants_isOutputOf:("' . $value . '")');
+                    }
                     break;
                 case 'is_part_of':
                     $this->setOpt('fq', '+relation_grants_isPartOf:'.$value);
                     break;
                 case 'is_funded_by':
-                    $this->setOpt('fq', '+relation_grants_isFundedBy:'.$value);
+                    if (is_array($value)) {
+                        $fq_str = '(';
+                        foreach ($value as $v) $fq_str .= ' relation_grants_isFundedBy:("' . $v . '")';
+                        $fq_str .= ')';
+                        $this->setOpt('fq', $fq_str);
+                    } else {
+                        $this->setOpt('fq', '+relation_grants_isFundedBy:("' . $value . '")');
+                    }
                     break;
                 case 'subject':
                     if (is_array($value)) {
