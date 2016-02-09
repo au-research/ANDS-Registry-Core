@@ -215,6 +215,9 @@ class Relationships_Extension extends ExtensionBase
 
         $deleted_keys = $this->removeNonRenewedRelationships($removed_relationships);
 
+        // Cache relationship metadata so that they can be retrieved from the metadata table instead of regenerate all the time
+        $this->cacheRelationshipMetadata();
+
         if (is_array($inserted_keys) && is_array($deleted_keys)) {
             return array_merge($inserted_keys, $deleted_keys);
         } elseif (is_array($deleted_keys)) {
@@ -224,7 +227,44 @@ class Relationships_Extension extends ExtensionBase
         } else {
             return array();
         }
+    }
 
+    /**
+     * Cache the relationship metadata through the metadata extension
+     */
+    public function cacheRelationshipMetadata()
+    {
+        $this->ro->deleteMetadata("allRelationships");
+        $allRelationships = $this->ro->getAllRelatedObjects(false, false, true);
+        if ($allRelationships) {
+            $this->ro->setMetadata("allRelationships", json_encode($allRelationships, true));
+        }
+        $connections = $this->ro->getConnections(true, null, 5, 0, false);
+        if ($connections) {
+            $this->ro->setMetadata("connections", json_encode($connections, true));
+        }
+    }
+
+    /**
+     * Returns the cached version of default getAllRelationships()
+     *
+     * @return mixed
+     */
+    public function getCachedRelationshipMetadata() {
+        $cachedData = $this->ro->getMetadata("allRelationships");
+        $decodedData = json_decode($cachedData, true);
+        return $decodedData;
+    }
+
+    /**
+     * Returns the cached version of default getConnections()
+     *
+     * @return mixed
+     */
+    public function getCachedConnectionsMetadata(){
+        $cachedData = $this->ro->getMetadata("connections");
+        $decodedData = json_decode($cachedData, true);
+        return $decodedData;
     }
 
     /**

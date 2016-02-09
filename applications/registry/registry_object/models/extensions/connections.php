@@ -49,10 +49,14 @@ class Connections_Extension extends ExtensionBase
 	function getConnections($published_only = true, $specific_type = null, $limit = 100, $offset = 0, $include_dupe_connections = false)
 	{
 
+        if ($published_only && $specific_type == null && $limit == 5 && $offset==0 && $include_dupe_connections == false) {
+            $cached = $this->ro->getCachedConnectionsMetadata();
+            if ($cached && is_array($cached)) {
+                return $cached;
+            }
+        }
 
-		$allowed_draft = ($published_only==true ? false : true);
-		$unordered_connections = $this->getAllRelatedObjects(!$allowed_draft, $include_dupe_connections);
-
+		$unordered_connections = $this->getAllRelatedObjects(!$published_only, $include_dupe_connections, true);
 		$ordered_connections = array();
 
 		/* Now sort according to "type" (collection / party_one / party_multi / activity...etc.) */
@@ -240,9 +244,26 @@ class Connections_Extension extends ExtensionBase
 	}
 
 
-	function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false, $allow_all_links = false, $limit=99999)
+    /**
+     * Returns all Related Objects from various sources
+     *
+     * @param bool|false $allow_drafts
+     * @param bool|false $include_dupe_connections
+     * @param bool|false $allow_all_links
+     * @param int        $limit
+     * @return array
+     */
+    public function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false, $allow_all_links = false, $limit=99999)
 	{
 		$unordered_connections = array();
+
+        // if called getAllRelatedObjects(false, false, true), see if it is cached
+		if (!$allow_drafts && !$include_dupe_connections && $allow_all_links) {
+			$cachedRelationships = $this->ro->getCachedRelationshipMetadata();
+            if ($cachedRelationships && is_array($cachedRelationships)) {
+                return $cachedRelationships;
+            }
+		}
 
 
 		$this->_CI->load->model('data_source/data_sources','ds');

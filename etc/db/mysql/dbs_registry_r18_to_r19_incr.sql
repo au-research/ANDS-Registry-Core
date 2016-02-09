@@ -9,3 +9,5 @@ ALTER TABLE `dbs_registry`.`api_keys`
 ADD COLUMN `owner_sector` VARCHAR(45) NULL COMMENT '' AFTER `owner_purpose`,
 ADD COLUMN `owner_ip` VARCHAR(45) NULL COMMENT '' AFTER `owner_sector`;
 
+ALTER TABLE `dbs_registry`.`registry_object_metadata`
+CHANGE COLUMN `value` `value` MEDIUMTEXT NULL DEFAULT NULL COMMENT '' ;

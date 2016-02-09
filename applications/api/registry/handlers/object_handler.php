@@ -111,9 +111,19 @@ class ObjectHandler extends Handler{
             $id = $this->ci->input->get('q') ? $this->ci->input->get('q') : false;
         }
 
+        $benchmark = $this->ci->input->get('benchmark') ? $this->ci->input->get('benchmark') : false;
+
+        if ($benchmark) {
+            $result['benchmark'] = array();
+        }
+
         $resource = $this->populate_resource($this->params['identifier']);
 
         foreach ($method1s as $m1) {
+            if ($benchmark) {
+                $this->ci->benchmark->mark('start');
+            }
+
             if ($m1 && in_array($m1, $this->valid_methods)) {
                 switch ($m1) {
                     case 'get':
@@ -152,6 +162,12 @@ class ObjectHandler extends Handler{
                     return $result;
                 }
             }
+
+            if ($benchmark) {
+                $this->ci->benchmark->mark('end');
+                $result['benchmark'][$m1] = $this->ci->benchmark->elapsed_time('start', 'end');
+            }
+
         }
 
         return $result;
@@ -275,7 +291,6 @@ class ObjectHandler extends Handler{
                 $relationships = $relationships['grants'][$only];
             }
         }
-
 
         return $relationships;
     }
