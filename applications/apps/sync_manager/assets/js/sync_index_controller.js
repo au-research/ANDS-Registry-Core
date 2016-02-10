@@ -132,6 +132,11 @@
                     params.name = "Index ";
                     params.params.indexOnly = true;
                     break;
+                case 'addRelationships':
+                    params.name = "Fix Relationships and Index ";
+                    params.params.indexOnly = true;
+                    params.params.addRelationships = true;
+                    break;
                 case 'index_missing':
                     params.name = "Index Missing ";
                     params.params.missingOnly = true;

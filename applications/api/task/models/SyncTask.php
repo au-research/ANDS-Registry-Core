@@ -90,6 +90,10 @@ class SyncTask extends Task
                 $params['indexOnly'] = 'true';
             }
 
+            if ($this->addRelationships) {
+                $params['addRelationships'] = 'true';
+            }
+
             $task = array(
                 'name' => 'Analyze DataSource ' . $dsID,
                 'priority' => $this->getPriority(),
@@ -294,6 +298,10 @@ class SyncTask extends Task
                             $ro->processLinks();
                         }
 
+                        if ($this->addRelationships) {
+                            $ro->addRelationships();
+                        }
+
                         $solr_doc = $ro->indexable_json();
                         if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
                             $solr_docs[] = $solr_doc;
@@ -424,11 +432,17 @@ class SyncTask extends Task
         $this->target = isset($params['type']) ? $params['type'] : false;
         $this->target_id = isset($params['id']) ? $params['id'] : false;
         $this->indexOnly = isset($params['indexOnly']) ? $params['indexOnly'] : false;
+        $this->addRelationships = isset($params['addRelationships']) ? $params['addRelationships'] : false;
         $this->missingOnly = isset($params['missingOnly']) ? $params['missingOnly'] : false;
 
         if ($this->indexOnly === 'true') {
             $this->indexOnly = true;
         }
+
+        if ($this->addRelationships === 'true') {
+            $this->addRelationships = true;
+        }
+
         if ($this->missingOnly === 'true') {
             $this->missingOnly = true;
         }
