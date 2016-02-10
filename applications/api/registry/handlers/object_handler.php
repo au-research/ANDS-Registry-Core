@@ -161,6 +161,9 @@ class ObjectHandler extends Handler{
                     ];
 
                     return $result;
+                } elseif ($m1 == 'sync') {
+                    $ro = $resource['ro'];
+                    return $ro->sync();
                 }
             }
 

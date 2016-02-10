@@ -587,14 +587,14 @@ class Solr
                     }
                     break;
                 case 'subject_value':
-                    if (is_array($value)) {
-                        $subject_search_query = join('" OR subject_value_resolved_search:"', $value);
-                        $subject_search_query = "(subject_value_resolved_search:\"" . $subject_search_query . "\")";
-                        $this->setOpt('fq', $subject_search_query);
-                    } else {
-                        $this->setOpt('fq', '+subject_value_resolved_search:("' . $value . '")');
-                    }
-                    break;
+                if (is_array($value)) {
+                    $subject_search_query = join('" OR subject_value_resolved_search:"', $value);
+                    $subject_search_query = "(subject_value_resolved_search:\"" . $subject_search_query . "\")";
+                    $this->setOpt('fq', $subject_search_query);
+                } else {
+                    $this->setOpt('fq', '+subject_value_resolved_search:("' . $value . '")');
+                }
+                break;
                 case 'not_id':
                     $this->setOpt('fq', '-id:' . $value . '');
                     break;
@@ -621,33 +621,11 @@ class Solr
                     break;
                 case 'access_right':
                 case 'access_rights':
-                    if (is_array($value)) {
-                        $fq_str = '';
-                        foreach ($value as $v) $fq_str .= ' access_rights:("' . $v . '")';
-                        $this->setOpt('fq', $fq_str);
-                    } else {
-                        if ($value != 'all') $this->setOpt('fq', '+access_rights:("' . $value . '")');
-                    }
+                    $this->setFilterQuery($key, $value, 'access_rights');
                     break;
                 case 'related_party_one_id':
-                    if (is_array($value)) {
-                        $fq_str = '';
-                        foreach ($value as $v)
-                            $fq_str .= ' related_party_one_id:("' . $v . '")';
-                        $this->setOpt('fq', $fq_str);
-                    } else {
-                        $this->setOpt('fq', '+related_party_one_id:"' . $value . '"');
-                    }
-                    break;
                 case 'related_party_multi_id':
-                    if (is_array($value)) {
-                        $fq_str = '';
-                        foreach ($value as $v)
-                            $fq_str .= ' related_party_multi_id:("' . $v . '")';
-                        $this->setOpt('fq', $fq_str);
-                    } else {
-                        $this->setOpt('fq', '+related_party_multi_id:"' . $value . '"');
-                    }
+                    $this->setFilterQuery($key, $value);
                     break;
                 case 'related_collection_id':
                     if (is_array($value)) {
@@ -845,6 +823,19 @@ class Solr
             }
         }
         return $this;
+    }
+
+    private function setFilterQuery($key, $value, $solrField = false) {
+        if ($solrField) {
+            $key = $solrField;
+        }
+        if (is_array($value)) {
+            $fq_str = '';
+            foreach ($value as $v) $fq_str .= ' '.$key.':("' . $v . '")';
+            $this->setOpt('fq', $fq_str);
+        } else {
+            if ($value != 'all') $this->setOpt('fq', '+'.$key.':("' . $value . '")');
+        }
     }
 
     function formatSubjectsArrayFilters($value)

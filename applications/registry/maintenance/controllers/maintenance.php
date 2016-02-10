@@ -448,7 +448,8 @@ class Maintenance extends MX_Controller
 
         $this->benchmark->mark('start');
 //		$ro = $this->ro->getByID(15144);
-        $ro = $this->ro->getByID(518517);
+//        $ro = $this->ro->getByID(518517);
+        $ro = $this->ro->getByID(553796);
         $ro->cacheRelationshipMetadata();
         $rels = $ro->getCachedRelationshipMetadata();
         $this->benchmark->mark('end');

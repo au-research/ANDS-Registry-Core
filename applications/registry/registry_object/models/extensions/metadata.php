@@ -72,7 +72,7 @@ class Metadata_Extension extends ExtensionBase
     {
         $query = $this->db
             ->where('registry_object_id', $this->id)
-            ->where('name',$name)
+            ->where('attribute',$name)
             ->delete('registry_object_metadata');
         if ($query) {
             return true;

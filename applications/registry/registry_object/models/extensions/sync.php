@@ -526,9 +526,9 @@ class Sync_extension extends ExtensionBase{
             $json['relation_grants_isPartOf'] = '';
             $json['relation_grants_isOutputOf'] = '';
             foreach ($grantStructureParents as $parent) {
-                if ($parent['relation_type'] == 'isFundedBy' || $parent['relation_type'] == 'hasPart') {
+                if ($parent['relation_type'] == 'isFundedBy' || $parent['relation_type'] == 'isFunderOf') {
                     $json['relation_grants_isFundedBy'][] = $parent['registry_object_id'];
-                } elseif ($parent['relation_type'] == 'isPartOf' || $parent['relation_type'] == 'hasPart') {
+                }  elseif ($parent['relation_type'] == 'isPartOf' || $parent['relation_type'] == 'hasPart') {
                     $json['relation_grants_isPartOf'][] = $parent['registry_object_id'];
                 } elseif ($parent['relation_type'] == 'isOutputOf' || $parent['relation_type'] == 'hasOutput') {
                     $json['relation_grants_isOutputOf'][] = $parent['registry_object_id'];
@@ -538,14 +538,15 @@ class Sync_extension extends ExtensionBase{
 
         //Grants Structure Direct (helps with tree generation)
         $grantStructureParents = $this->ro->getParentsGrants(false, array(),false);
+
         if ($grantStructureParents && sizeof($grantStructureParents) > 0) {
             $json['relation_grants_isFundedBy_direct'] = '';
             $json['relation_grants_isPartOf_direct'] = '';
             $json['relation_grants_isOutputOf_direct'] = '';
             foreach ($grantStructureParents as $parent) {
-                if ($parent['relation_type'] == 'isFundedBy' || $parent['relation_type'] == 'hasPart') {
+                if ($parent['relation_type'] == 'isFundedBy' || $parent['relation_type'] == 'isFunderOf') {
                     $json['relation_grants_isFundedBy_direct'][] = $parent['registry_object_id'];
-                } elseif ($parent['relation_type'] == 'isPartOf' || $parent['relation_type'] == 'hasPart') {
+                }  elseif ($parent['relation_type'] == 'isPartOf' || $parent['relation_type'] == 'hasPart') {
                     $json['relation_grants_isPartOf_direct'][] = $parent['registry_object_id'];
                 } elseif ($parent['relation_type'] == 'isOutputOf' || $parent['relation_type'] == 'hasOutput') {
                     $json['relation_grants_isOutputOf_direct'][] = $parent['registry_object_id'];

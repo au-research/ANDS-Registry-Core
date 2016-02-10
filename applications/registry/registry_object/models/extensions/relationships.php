@@ -235,13 +235,15 @@ class Relationships_Extension extends ExtensionBase
     public function cacheRelationshipMetadata()
     {
         $this->ro->deleteMetadata("allRelationships");
+        $this->ro->deleteMetadata("connections");
         $allRelationships = $this->ro->getAllRelatedObjects(false, false, true);
         if ($allRelationships) {
-            $this->ro->setMetadata("allRelationships", json_encode($allRelationships, true));
+            $this->ro->setMetadata("allRelationships", json_encode($allRelationships));
         }
+
         $connections = $this->ro->getConnections(true, null, 5, 0, false);
         if ($connections) {
-            $this->ro->setMetadata("connections", json_encode($connections, true));
+            $this->ro->setMetadata("connections", json_encode($connections));
         }
     }
 

@@ -392,8 +392,8 @@ class Activity_grants_extension extends ExtensionBase
                 if ($this->ro->class == 'party') {
                     //for a party, find all EXPLICIT funds and REVERSE_INT isFundedBy
                     $isValidChild = (($relatedObject['relation_type'] == 'funds' && $relatedObject['origin'] == 'EXPLICIT')
-                        || ($relatedObject['relation_type'] == 'isFundedBy' && startsWith($relatedObject['origin'],
-                                "REVERSE")));
+                        || ($relatedObject['relation_type'] == 'isFundedBy' && startsWith($relatedObject['origin'],"REVERSE"))
+                        || ($relatedObject['relation_type'] == 'isFunderOf' && $relatedObject['origin'] == 'EXPLICIT'));
                 } elseif ($this->ro->class == 'activity') {
                     //for an activity, find all explicit partOf and reverse isPartOf
                     $isValidChild = (($relatedObject['relation_type'] == 'hasPart' && $relatedObject['origin'] == 'EXPLICIT')
@@ -474,8 +474,8 @@ class Activity_grants_extension extends ExtensionBase
                         if ($relatedObject['class'] == 'party') {
                             //find all explicit isFundedBy activity or reverse funds
                             $isValidParent = (($relatedObject['relation_type'] == 'isFundedBy' && $relatedObject['origin'] == 'EXPLICIT')
-                                || ($relatedObject['relation_type'] == 'funds' && startsWith($relatedObject['origin'],
-                                        "REVERSE")));
+                                || ($relatedObject['relation_type'] == 'funds' && startsWith($relatedObject['origin'],"REVERSE"))
+                                || ($relatedObject['relation_type'] == 'isFunderOf' && startsWith($relatedObject['origin'],"REVERSE")));
                         }
                     }
                 }
