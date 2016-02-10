@@ -139,6 +139,10 @@ class SyncTask extends Task
                 $params['indexOnly'] = 'true';
             }
 
+            if ($this->addRelationships) {
+                $params['addRelationships'] = 'true';
+            }
+
             //define chunking for ro only
             $chunkArray = array();
             if ($this->missingOnly) {
