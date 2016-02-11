@@ -276,6 +276,7 @@ class Relationships_Extension extends ExtensionBase
      */
     public function getRelationshipIndex(){
         $relationships = $this->ro->getAllRelatedObjects(false, false, true);
+
         $docs = [];
         foreach ($relationships as $rel) {
 
@@ -287,32 +288,41 @@ class Relationships_Extension extends ExtensionBase
                 'from_class' => $this->ro->class,
                 'from_type' => $this->ro->type,
                 'from_slug' => $this->ro->slug,
-                'to_id' => $rel['registry_object_id'],
-                'to_key' => $rel['key'],
-                'to_class' => $rel['class'],
-                'to_type' => $rel['type'],
-                'to_title' => $rel['title'],
-                'to_slug' => $rel['slug']
+                'to_id' => isset($rel['registry_object_id']) && $rel['registry_object_id']!='' ? $rel['registry_object_id'] : false,
+                'to_key' => isset($rel['key']) ? $rel['key'] : false,
+                'to_class' => isset($rel['class']) ? $rel['key'] : false,
+                'to_type' => isset($rel['type']) ? $rel['key'] : false,
+                'to_title' => isset($rel['title']) ? $rel['key'] : false,
+                'to_slug' => isset($rel['slug']) ? $rel['key'] : false
             ];
 
             // to_status, to_identifier, from_identifier
 
             //format relation_type correctly
-            $doc['relation'] = startsWith($rel['origin'], 'REVERSE') ? getReverseRelationshipString($rel['relation_type']) : $rel['relation_type'];
-            $doc['relation_description'] = isset($rel['relation_description']) ? $rel['relation_description']: false;
-            $doc['relation_url'] = isset($rel['relation_url']) ? $rel['relation_url']: false;
-            $doc['relation_origin'] = isset($rel['origin']) ? $rel['origin']: false;
+            $doc['relation'] = startsWith($rel['origin'], 'REVERSE') ? [getReverseRelationshipString($rel['relation_type'])] : [$rel['relation_type']];
+            $doc['relation_description'] = isset($rel['relation_description']) ? [$rel['relation_description']]: false;
+            $doc['relation_url'] = isset($rel['relation_url']) ? [$rel['relation_url']]: false;
+            $doc['relation_origin'] = isset($rel['origin']) ? [$rel['origin']]: false;
 
             // this relation needs a unique id
-            $doc['id'] = $this->ro->key.$doc['relation'].$doc['relation_origin'].$doc['to_key'];
+            $doc['id'] = md5($this->ro->key.$doc['to_key']);
 
             // clean up
             foreach ($doc as $key=>$value) {
                 if ($value == "" || $value === false) unset($doc[$key]);
             }
 
-            $docs[] = $doc;
+            if (array_key_exists($doc['to_id'], $docs)) {
+                $docs[$doc['to_id']]['relation'] = array_merge($docs[$doc['to_id']]['relation'], $doc['relation']);
+                $docs[$doc['to_id']]['relation_description'] = array_merge($docs[$doc['to_id']]['relation_description'], $doc['relation_description']);
+                $docs[$doc['to_id']]['relation_url'] = array_merge($docs[$doc['to_id']]['relation_url'], $doc['relation_url']);
+                $docs[$doc['to_id']]['relation_origin'] = array_merge($docs[$doc['to_id']]['relation_origin'], $doc['relation_origin']);
+            } else {
+                $docs[$doc['to_id']] = $doc;
+            }
         }
+
+        $docs = array_values($docs);
         return $docs;
     }
 

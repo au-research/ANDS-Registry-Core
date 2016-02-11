@@ -343,7 +343,7 @@ class SyncTask extends Task
         $this->log('Indexing SOLR for Portal')->save();
         $this->indexSolr('portal', $solr_docs);
         $this->log('Indexing SOLR for Relations')->save();
-        $this->indexSolr('relations', $relation_docs, true);
+        $this->indexSolr('relations', $relation_docs);
 
         //remove records
         if (sizeof($remove_ids) > 0) {

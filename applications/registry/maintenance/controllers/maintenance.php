@@ -450,14 +450,21 @@ class Maintenance extends MX_Controller
 //		$ro = $this->ro->getByID(15144);
 //        $ro = $this->ro->getByID(518517);
 //        $ro = $this->ro->getByID(553796);
-        $ro = $this->ro->getByID(553497);
+//        $ro = $this->ro->getByID(553497);
+        $ro = $this->ro->getByID(424764);
 
 //        $ro->cacheRelationshipMetadata();
 //        $rels = $ro->getCachedRelationshipMetadata();
 
         $json = $ro->getRelationshipIndex();
-
-        dd($json);
+        $conn = $ro->getCachedConnectionsMetadata();
+//        dd($conn);
+        foreach ($json as $doc) {
+            if (sizeof($doc['relation']) > 1) {
+                var_dump($doc['relation']);
+            }
+        }
+        dd(sizeof($json));
 
         $this->benchmark->mark('end');
         dd($this->benchmark->elapsed_time('start', 'end'));

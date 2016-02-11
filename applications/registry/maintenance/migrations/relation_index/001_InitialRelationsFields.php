@@ -24,13 +24,12 @@ class InitialRelationsFields extends GenericSolrMigration
         $this->setCore('relations');
         $this->setFields([
 
-            ['name' => "id", 'type' => 'string', 'stored' => true, 'indexed' => true],
-
             // from
             ['name' => "from_id", 'type' => 'string', 'stored' => true, 'indexed' => true],
             ['name' => "from_key", 'type' => 'string', 'stored' => true, 'indexed' => true],
             ['name' => "from_status", 'type' => 'string', 'stored' => true, 'indexed' => true],
             ['name' => "from_title", 'type' => 'string', 'stored' => true, 'indexed' => true],
+            ['name' => "from_class", 'type' => 'string', 'stored' => true, 'indexed' => true],
             ['name' => "from_type", 'type' => 'string', 'stored' => true, 'indexed' => true],
             ['name' => "from_slug", 'type' => 'string', 'stored' => true, 'indexed' => true],
 
@@ -42,12 +41,11 @@ class InitialRelationsFields extends GenericSolrMigration
             ['name' => "to_title", 'type' => 'string', 'stored' => true, 'indexed' => true],
             ['name' => "to_slug", 'type' => 'string', 'stored' => true, 'indexed' => true],
 
-
             // relation
-            ['name' => "relation", 'type' => 'string', 'stored' => true, 'indexed' => true],
-            ['name' => "relation_description", 'type' => 'text_en_splitting', 'stored' => true, 'indexed' => true],
-            ['name' => "relation_url", 'type' => 'string', 'stored' => true, 'indexed' => true],
-            ['name' => "relation_origin", 'type' => 'string', 'stored' => true, 'indexed' => true]
+            ['name' => "relation", 'type' => 'string', 'stored' => true, 'indexed' => true, "multiValued" => true],
+            ['name' => "relation_description", 'type' => 'text_en_splitting', 'stored' => true, 'indexed' => true, "multiValued" => true],
+            ['name' => "relation_url", 'type' => 'string', 'stored' => true, 'indexed' => true, "multiValued" => true],
+            ['name' => "relation_origin", 'type' => 'string', 'stored' => true, 'indexed' => true, "multiValued" => true]
 
         ]);
     }
