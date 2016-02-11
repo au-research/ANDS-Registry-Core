@@ -55,7 +55,15 @@ class Sync_extension extends ExtensionBase{
 		return true;
 	}
 
-	function indexable_json($limit=null) {
+    /**
+     * Returns the indexable JSON form
+     * Mainly used for SOLR indexing
+     *
+     * @param null $limit
+     * @return array
+     * @throws Exception
+     */
+    function indexable_json($limit=null) {
 		$xml = $this->ro->getSimpleXML();
         $rifDom = new DOMDocument();
         $rifDom->loadXML($this->ro->getRif());
@@ -402,9 +410,9 @@ class Sync_extension extends ExtensionBase{
 
 		//related objects
         if($limit && (int)$limit > 0 || $json['class'] == 'party' || $json['class'] == 'service')
-		    $related_objects = $this->ro->getAllRelatedObjects(false, true, true, $party_service_conn_limit);
+		    $related_objects = $this->ro->getAllRelatedObjects(false, false, true, $party_service_conn_limit);
         else
-            $related_objects = $this->ro->getAllRelatedObjects(false, true, true);
+            $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
 
 		$fields = array('related_collection_id', 'related_party_one_id', 'related_party_multi_id', 'related_activity_id', 'related_service_id');
 		foreach($fields as $f) $json[$f] = array();
@@ -415,6 +423,18 @@ class Sync_extension extends ExtensionBase{
                 if($related_object['registry_object_id'] == null || !in_array($related_object['registry_object_id'], $processedIds))
                 {
                     $processedIds[] = $related_object['registry_object_id'];
+
+                    //relation
+                    $relationType = $related_object['relation_type'];
+                    if (startsWith($related_object['origin'], 'REVERSE')) {
+                        $relationType = getReverseRelationshipString($related_object['relation_type']);
+                    }
+                    $relationIndexKey = 'relationType_'.$relationType.'_id';
+
+                    if (!array_key_exists($relationType, $json)) {
+                        $json[$relationIndexKey] = array($related_object['registry_object_id']);
+                    }
+
                     if($related_object['class']=='collection') {
                         $json['related_collection_title'][] = $related_object['title'];
                         if($related_object['registry_object_id'])
@@ -428,32 +448,17 @@ class Sync_extension extends ExtensionBase{
                         if($related_object['registry_object_id'])
                             $json['related_service_id'][] = $related_object['registry_object_id'];
                     } else if($related_object['class']=='party' && $related_object['registry_object_id']) {
-
-                        $this->_CI->db->select('value')
-                            ->from('registry_object_attributes')
-                            ->where('attribute', 'type')
-                            ->where('registry_object_id',$related_object['registry_object_id']);
-                        $query = $this->_CI->db->get();
-                            foreach($query->result_array() AS $row)
-                            {
-                                if (isset($row['value']))
-                                {
-                                    if (in_array($row['value'],$this->party_multi_types))
-                                    {
-                                        $json['related_party_multi_title'][] = $related_object['title'];
-                                        $json['related_party_multi_id'][] = $related_object['registry_object_id'];
-                                    }
-                                    else
-                                    {
-                                        $json['related_party_one_title'][] = $related_object['title'];
-                                        $json['related_party_one_id'][] = $related_object['registry_object_id'];
-                                    }
-                                }
+                        $relatedObjectType = $this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type');
+                        if (in_array($relatedObjectType, $this->party_multi_types)) {
+                            $json['related_party_multi_title'][] = $related_object['title'];
+                            $json['related_party_multi_id'][] = $related_object['registry_object_id'];
+                        } else {
+                            $json['related_party_one_title'][] = $related_object['title'];
+                            $json['related_party_one_id'][] = $related_object['registry_object_id'];
                         }
                 }
             }
 		}
-
 
 
         $json['alt_list_title'] = [];
