@@ -300,17 +300,14 @@ class Relationships_Extension extends ExtensionBase
 
             //format relation_type correctly
             $doc['relation'] = startsWith($rel['origin'], 'REVERSE') ? [getReverseRelationshipString($rel['relation_type'])] : [$rel['relation_type']];
-            $doc['relation_description'] = isset($rel['relation_description']) ? [$rel['relation_description']]: false;
-            $doc['relation_url'] = isset($rel['relation_url']) ? [$rel['relation_url']]: false;
-            $doc['relation_origin'] = isset($rel['origin']) ? [$rel['origin']]: false;
+            $doc['relation_description'] = isset($rel['relation_description']) ? [$rel['relation_description']]: [];
+            $doc['relation_url'] = isset($rel['relation_url']) ? [$rel['relation_url']]: [];
+            $doc['relation_origin'] = isset($rel['origin']) ? [$rel['origin']]: [];
 
             // this relation needs a unique id
             $doc['id'] = md5($this->ro->key.$doc['to_key']);
 
-            // clean up
-            foreach ($doc as $key=>$value) {
-                if ($value == "" || $value === false) unset($doc[$key]);
-            }
+
 
             if (array_key_exists($doc['to_id'], $docs)) {
                 $docs[$doc['to_id']]['relation'] = array_merge($docs[$doc['to_id']]['relation'], $doc['relation']);
