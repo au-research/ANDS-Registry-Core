@@ -23,7 +23,6 @@ class Migrate extends MX_Controller
         require_once APP_PATH . 'maintenance/models/GenericSolrMigration.php';
     }
 
-
     /**
      * Migrate
      * Should run from shell
@@ -41,7 +40,10 @@ class Migrate extends MX_Controller
             $migration_dir.='registry_index/';
         } else if ($context == 'vocabIndex') {
             $migration_dir.='vocab_index/';
+        } else if ($context == 'relationIndex') {
+            $migration_dir.='relation_index/';
         }
+
         $namespace = 'ANDS';
         $files = array_diff(scandir($migration_dir), array('..', '.'));
 

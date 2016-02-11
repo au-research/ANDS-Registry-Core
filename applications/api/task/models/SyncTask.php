@@ -281,7 +281,9 @@ class SyncTask extends Task
     private function syncRO($ids)
     {
         $solr_docs = array();
+        $relation_docs = array();
         $remove_ids = array();
+
         if (sizeof($ids) > 0) {
             foreach ($ids as $ro_id) {
                 try {
@@ -306,12 +308,20 @@ class SyncTask extends Task
                             $ro->addRelationships();
                         }
 
+                        // index portal documents
                         $solr_doc = $ro->indexable_json();
                         if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
                             $solr_docs[] = $solr_doc;
                         } else {
                             $this->log('Empty doc found for ROID:' . $ro->id);
                         }
+
+                        // index relation document
+                        $relation_doc = $ro->getRelationshipIndex();
+                        if ($relation_doc && is_array($relation_doc) && sizeof($relation_doc) > 0) {
+                            $relation_docs = array_merge($relation_docs, $relation_doc);
+                        }
+
                         unset($ro);
                     } else {
                         //doesn't exist in the database, queue it to be remove from SOLR
@@ -330,37 +340,10 @@ class SyncTask extends Task
         }
 
         //indexing in SOLR
-        if (sizeof($solr_docs) > 0) {
-            try {
-                $add_result = json_decode($this->ci->solr->add_json(json_encode($solr_docs)), true);
-                if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
-                    $this->log("Adding to SOLR successful")->save();
-                } else {
-                    $this
-                        ->log("Adding to SOLR failed: " . json_encode($add_result))
-                        ->log("Attempting to POST each document separately")->save();
-
-                    $this->separateSolrIndexing($solr_docs);
-
-                }
-
-                /**
-                 * Commenting out the following code because:
-                 * If SOLR is set to auto soft commit, we don't need to do a hard commit here
-                 */
-                /*
-                $commit_result = json_decode($this->ci->solr->commit(), true);
-                if (isset($commit_result['responseHeader']) && $commit_result['responseHeader']['status'] === 0) {
-                    $this->log("Commit to Indexed successful")->save();
-                } else {
-                    throw new Exception("Commit to SOLR failed: ". json_encode($commit_result));
-                }
-                */
-
-            } catch (Exception $e) {
-                throw new Exception($e->getMessage());
-            }
-        }
+        $this->log('Indexing SOLR for Portal')->save();
+        $this->indexSolr('portal', $solr_docs);
+        $this->log('Indexing SOLR for Relations')->save();
+        $this->indexSolr('relations', $relation_docs, true);
 
         //remove records
         if (sizeof($remove_ids) > 0) {
@@ -372,6 +355,56 @@ class SyncTask extends Task
                     throw new Exception("Remove IDS: " . implode(', ',
                             $remove_ids) . ' FAILED: ' . json_encode($remove_result));
                 }
+            } catch (Exception $e) {
+                throw new Exception($e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Index into a SOLR core a set of documents
+     *
+     * @param string $core
+     * @param array  $solr_docs
+     * @throws Exception
+     */
+    private function indexSolr($core = 'portal', $solr_docs = array(), $commit = false) {
+        if (sizeof($solr_docs) > 0) {
+            try {
+                $this->ci->solr->setCore($core);
+
+                $total = sizeof($solr_docs);
+                $chunkSize = 500;
+                $numChunk = ceil(($chunkSize < $total ? ($total / $chunkSize) : 1));
+
+                for ($i = 1; $i <= $numChunk; $i++) {
+                    $offset = ($i == 1) ? 0 : $i * $chunkSize;
+                    $docs = array_slice($solr_docs, $offset, $chunkSize);
+                    $add_result = json_decode($this->ci->solr->add_json(json_encode($docs)), true);
+                    if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
+                        $this->log("Adding to SOLR successful $i/$numChunk")->save();
+                    } else {
+                        $this
+                            ->log("Adding to SOLR failed: " . json_encode($add_result))
+                            ->log("Attempting to POST each document separately")->save();
+                        $this->separateSolrIndexing($docs);
+                    }
+                }
+
+                /**
+                 * Commenting out the following code because:
+                 * If SOLR is set to auto soft commit, we don't need to do a hard commit here
+                 */
+
+                if ($commit) {
+                    $commit_result = json_decode($this->ci->solr->commit(), true);
+                    if (isset($commit_result['responseHeader']) && $commit_result['responseHeader']['status'] === 0) {
+                        $this->log("Commit to Indexed successful")->save();
+                    } else {
+                        throw new Exception("Commit to SOLR failed: " . json_encode($commit_result));
+                    }
+                }
+
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());
             }

@@ -164,6 +164,10 @@ class ObjectHandler extends Handler{
                 } elseif ($m1 == 'sync') {
                     $ro = $resource['ro'];
                     return $ro->sync();
+                } else if($m1 == 'relations_index') {
+                    $ro = $resource['ro'];
+                    $ro->cacheRelationshipMetadata();
+                    return $ro->getRelationshipIndex();
                 }
             }
 

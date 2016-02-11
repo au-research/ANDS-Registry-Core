@@ -82,16 +82,16 @@ function curl_post($url, $post, $header=false)
     $data = curl_exec($ch);
 	
 	
-    // if (curl_errno($ch)) {
-    //    print "curl_error:" . curl_error($ch).'<br/>';
-    // } else {
-    //    curl_close($ch);
-    //    print "curl exited okay\n";
-    //    echo "Data returned...\n";
-    //    echo "------------------------------------\n";
-    //    echo $data;
-    //    echo "------------------------------------\n";
-    // } 
+//     if (curl_errno($ch)) {
+//        print "curl_error:" . curl_error($ch).'<br/>';
+//     } else {
+//        curl_close($ch);
+//        print "curl exited okay\n";
+//        echo "Data returned...\n";
+//        echo "------------------------------------\n";
+//        echo $data;
+//        echo "------------------------------------\n";
+//     }
     return $data;
 }
 

@@ -270,6 +270,53 @@ class Relationships_Extension extends ExtensionBase
     }
 
     /**
+     * Returns an indexable relationship index for this record
+     *
+     * @return mixed
+     */
+    public function getRelationshipIndex(){
+        $relationships = $this->ro->getAllRelatedObjects(false, false, true);
+        $docs = [];
+        foreach ($relationships as $rel) {
+
+            $doc = [
+                'from_id' => $this->ro->id,
+                'from_key' => $this->ro->key,
+                'from_status' => $this->ro->status,
+                'from_title' => $this->ro->title,
+                'from_class' => $this->ro->class,
+                'from_type' => $this->ro->type,
+                'from_slug' => $this->ro->slug,
+                'to_id' => $rel['registry_object_id'],
+                'to_key' => $rel['key'],
+                'to_class' => $rel['class'],
+                'to_type' => $rel['type'],
+                'to_title' => $rel['title'],
+                'to_slug' => $rel['slug']
+            ];
+
+            // to_status, to_identifier, from_identifier
+
+            //format relation_type correctly
+            $doc['relation'] = startsWith($rel['origin'], 'REVERSE') ? getReverseRelationshipString($rel['relation_type']) : $rel['relation_type'];
+            $doc['relation_description'] = isset($rel['relation_description']) ? $rel['relation_description']: false;
+            $doc['relation_url'] = isset($rel['relation_url']) ? $rel['relation_url']: false;
+            $doc['relation_origin'] = isset($rel['origin']) ? $rel['origin']: false;
+
+            // this relation needs a unique id
+            $doc['id'] = $this->ro->key.$doc['relation'].$doc['relation_origin'].$doc['to_key'];
+
+            // clean up
+            foreach ($doc as $key=>$value) {
+                if ($value == "" || $value === false) unset($doc[$key]);
+            }
+
+            $docs[] = $doc;
+        }
+        return $docs;
+    }
+
+    /**
      * Return a list of all registry object keys that this registry object is related to
      *
      * @return array
