@@ -290,10 +290,10 @@ class Relationships_Extension extends ExtensionBase
                 'from_slug' => $this->ro->slug,
                 'to_id' => isset($rel['registry_object_id']) && $rel['registry_object_id']!='' ? $rel['registry_object_id'] : false,
                 'to_key' => isset($rel['key']) ? $rel['key'] : false,
-                'to_class' => isset($rel['class']) ? $rel['key'] : false,
-                'to_type' => isset($rel['type']) ? $rel['key'] : false,
-                'to_title' => isset($rel['title']) ? $rel['key'] : false,
-                'to_slug' => isset($rel['slug']) ? $rel['key'] : false
+                'to_class' => isset($rel['class']) ? $rel['class'] : false,
+                'to_type' => isset($rel['type']) ? $rel['type'] : false,
+                'to_title' => isset($rel['title']) ? $rel['title'] : false,
+                'to_slug' => isset($rel['slug']) ? $rel['slug'] : false
             ];
 
             // to_status, to_identifier, from_identifier
@@ -306,8 +306,6 @@ class Relationships_Extension extends ExtensionBase
 
             // this relation needs a unique id
             $doc['id'] = md5($this->ro->key.$doc['to_key']);
-
-
 
             if (array_key_exists($doc['to_id'], $docs)) {
                 $docs[$doc['to_id']]['relation'] = array_merge($docs[$doc['to_id']]['relation'], $doc['relation']);
