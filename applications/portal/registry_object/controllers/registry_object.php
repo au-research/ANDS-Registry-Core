@@ -248,9 +248,23 @@ class Registry_object extends MX_Controller
             }
         }
 
-        $related['data']['searchUrl'] = constructPortalSearchQuery(['related_data' => $ro->id]);
-        $related['programs']['searchUrl'] = constructPortalSearchQuery(['related_programs' => $ro->id]);
-        $related['grants_projects']['searchUrl'] = constructPortalSearchQuery(['related_grants_projects' => $ro->id]);
+        // search class for constructing search queries
+        $searchClass = $ro->core['class'];
+        if ($ro->core['class'] == 'party') {
+            if (strtolower($ro->core['type']) == 'person') {
+                $searchClass = 'party_one';
+            } elseif (strtolower($ro->core['type']) == 'group') {
+                $searchClass = 'party_multi';
+            }
+        }
+
+        // todo get the correct SOLR count
+
+        $related['data']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'collection']);
+        $related['programs']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'activity', 'type'=>'program']);
+        $related['grants_projects']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'activity', 'nottype'=>'program']);
+        $related['services']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'service']);
+        $related['organisations']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'party', 'type'=>'group']);
 
         return $related;
 
