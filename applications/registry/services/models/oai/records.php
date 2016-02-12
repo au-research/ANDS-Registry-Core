@@ -55,7 +55,7 @@ class Records extends CI_Model
         if($supplied_format == 'dci')
         {
             $args["allowedclass"] = 'collection';
-            $args['checkType'] = false;
+            $args['checkType'] = true;
         }
 
 		if(!($set&&!$args["wherein"]))
