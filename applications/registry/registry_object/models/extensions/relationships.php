@@ -137,7 +137,8 @@ class Relationships_Extension extends ExtensionBase
 
         }
 
-        $processedTypesArray = array('collection', 'party', 'service', 'activity');
+        // this variable determine the type of relatedInfo, allowing publication and website
+        $processedTypesArray = array('collection', 'party', 'service', 'activity', 'publication', 'website');
 
         $this->db->where(array('registry_object_id' => $this->ro->id));
         $this->db->delete('registry_object_identifier_relationships');
@@ -305,16 +306,37 @@ class Relationships_Extension extends ExtensionBase
             $doc['relation_origin'] = isset($rel['origin']) ? [$rel['origin']]: [];
 
             // this relation needs a unique id
-            $doc['id'] = md5($this->ro->key.$doc['to_key']);
+            $doc['id'] = $this->ro->key.$doc['to_key'];
 
-            if (array_key_exists($doc['to_id'], $docs)) {
-                $docs[$doc['to_id']]['relation'] = array_merge($docs[$doc['to_id']]['relation'], $doc['relation']);
-                $docs[$doc['to_id']]['relation_description'] = array_merge($docs[$doc['to_id']]['relation_description'], $doc['relation_description']);
-                $docs[$doc['to_id']]['relation_url'] = array_merge($docs[$doc['to_id']]['relation_url'], $doc['relation_url']);
-                $docs[$doc['to_id']]['relation_origin'] = array_merge($docs[$doc['to_id']]['relation_origin'], $doc['relation_origin']);
-            } else {
-                $docs[$doc['to_id']] = $doc;
+            if (!$doc['to_id']) {
+                // is not a real object, but something from relatedInfo
+                $doc['relation_identifier_identifier'] = $rel['related_object_identifier'];
+                $doc['relation_identifier_type'] = $rel['related_object_identifier_type'];
+                $doc['relation_identifier_id'] = $rel['identifier_relation_id'];
+                $doc['to_type'] = $doc['to_class'];
+
+                //add uniqueness to the relation because to_key does not exist
+                $doc['id'] .= $doc['relation_identifier_identifier'];
             }
+
+            // hash the id to make it easier to locate
+            $doc['id'] = md5($doc['id']);
+
+            if ($doc['to_id']) {
+                //is a real object in our system
+                if (array_key_exists($doc['to_id'], $docs)) {
+                    $docs[$doc['to_id']]['relation'] = array_merge($docs[$doc['to_id']]['relation'], $doc['relation']);
+                    $docs[$doc['to_id']]['relation_description'] = array_merge($docs[$doc['to_id']]['relation_description'], $doc['relation_description']);
+                    $docs[$doc['to_id']]['relation_url'] = array_merge($docs[$doc['to_id']]['relation_url'], $doc['relation_url']);
+                    $docs[$doc['to_id']]['relation_origin'] = array_merge($docs[$doc['to_id']]['relation_origin'], $doc['relation_origin']);
+                } else {
+                    $docs[$doc['to_id']] = $doc;
+                }
+            } else {
+                // is relatedInfo data, add it anyway, accept duplicates if exist
+                $docs[] = $doc;
+            }
+
         }
 
         $docs = array_values($docs);

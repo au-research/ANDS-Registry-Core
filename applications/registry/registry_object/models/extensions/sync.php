@@ -56,6 +56,44 @@ class Sync_extension extends ExtensionBase{
 	}
 
     /**
+     * @return bool|Exception
+     */
+    public function indexRelationship(){
+        try{
+            $this->_CI->load->library('solr');
+            if($this->shouldIndex()){
+                $docs = $this->ro->getRelationshipIndex();
+                $this->_CI->solr->setCore('relations');
+                $this->_CI->solr->deleteByQueryCondition('from_id:'.$this->ro->id);
+                $this->_CI->solr->add_json(json_encode($docs));
+                $this->_CI->solr->commit();
+            }
+        } catch (Exception $e) {
+            return $e;
+        }
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldIndex(){
+        $shouldIndex = true;
+
+        //only index records that are published
+        if ($this->ro->status != "PUBLISHED") {
+            $shouldIndex = false;
+        }
+
+        // [hardcoded] only index records that doesn't come from Public Record Office Victoria
+        if ($this->ro->class == 'activity' && $this->ro->group=="Public Record Office Victoria") {
+            $shouldIndex = false;
+        }
+
+        return $shouldIndex;
+    }
+
+    /**
      * Returns the indexable JSON form
      * Mainly used for SOLR indexing
      *
