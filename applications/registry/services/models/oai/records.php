@@ -25,8 +25,8 @@ class Records extends CI_Model
 		$args['rawclause'] = array('registry_objects.status' => "'PUBLISHED'");
 		$args['clause'] = array();
 		$args['wherein'] = false;
-        $args["allowedclass"] = false;
-        $args["allowedType"] = false;
+        $args['allowedclass'] = false;
+        $args['checkType'] = false;
 		$count = '';
 		$deleted_records = array();
 		if ($after)
@@ -55,7 +55,7 @@ class Records extends CI_Model
         if($supplied_format == 'dci')
         {
             $args["allowedclass"] = 'collection';
-            $args["allowedType"] = array('collection', 'repository', 'dataset', 'software');
+            $args['checkType'] = false;
         }
 
 		if(!($set&&!$args["wherein"]))
@@ -72,6 +72,14 @@ class Records extends CI_Model
 									    "inner")
 								     ->where($args['rawclause'], null, false)
 								     ->where($args['clause']);
+                                 if ($args['checkType'])
+                                 {
+                                     $db->join("registry_object_attributes at",
+                                         "at.registry_object_id = registry_objects.registry_object_id",
+                                         "inner")
+                                         ->where("at.value IN ('collection', 'repository', 'dataset', 'software')")
+                                         ->where("at.attribute = 'type'");
+                                 }
 							     if ($args['wherein'])
 							     {
 								     $db->where_in("registry_objects.registry_object_id",
@@ -82,16 +90,12 @@ class Records extends CI_Model
                                     $db->where_in("registry_objects.class",
                                     $args["allowedclass"]);
                                  }
-                                 if ($args["allowedType"])
-                                 {
-                                     $db->where_in("registry_object_attributes.value",
-                                         $args["allowedType"]);
-                                 }
+
 							     return $db;
 						     })),
 					 false);
-
 		// get the deleted ones! and added to the count...
+
 		if($after && $before)
 		{
 			$deleted_records = $this->ro->getDeletedRegistryObjects($delArgs);
@@ -126,6 +130,14 @@ class Records extends CI_Model
 									      "inner")
 								       ->where($args['rawclause'], null, false)
 								       ->where($args['clause']);
+                                   if ($args['checkType'])
+                                   {
+                                       $db->join("registry_object_attributes at",
+                                           "at.registry_object_id = registry_objects.registry_object_id",
+                                           "inner")
+                                           ->where("at.value IN ('collection', 'repository', 'dataset', 'software')")
+                                           ->where("at.attribute = 'type'");
+                                   }
 							       if ($args['wherein'])
 							       {
 								       $db->where_in("registry_objects.registry_object_id",
@@ -136,11 +148,7 @@ class Records extends CI_Model
                                        $db->where_in("registry_objects.class",
                                            $args["allowedclass"]);
                                    }
-                                   if ($args["allowedType"])
-                                   {
-                                       $db->where_in("registry_object_attributes.value",
-                                           $args["allowedType"]);
-                                   }
+
 							       $db->order_by("registry_objects.registry_object_id", "asc");
 							       return $db;
 						       })),
@@ -165,7 +173,7 @@ class Records extends CI_Model
 			{
 				foreach ($deleted_records as $del_ro)
 				{
-					$del_ro = (object) array('registry_object_id'=>$del_ro['key'], 'status' => 'deleted', 'deleted'=>$del_ro['deleted'], 'sets' => array('class'=>$del_ro['class'],'group'=>$del_ro['group'],'datasource'=>$del_ro['datasource'] )); 
+					$del_ro = (object) array('registry_object_id'=>$del_ro['key'], 'status' => 'deleted', 'deleted'=>$del_ro['deleted'], 'sets' => array('class'=>$del_ro['class'],'group'=>$del_ro['group'],'datasource'=>$del_ro['datasource'] ));
 					$records[] = $del_ro;
 				}
 			}
@@ -179,12 +187,12 @@ class Records extends CI_Model
 				'cursor' => 0,
 				'count' => 0);
 		}
-		
+
 	}
 
 	public function getByIdentifier($identifier)
 	{
-		$this->load->model('registry_object/Registry_objects', 'ro');	
+		$this->load->model('registry_object/Registry_objects', 'ro');
 		$ro = $this->ro->getPublishedByKey($identifier);
 		$deleted = false;
 		$del_ro = null;
@@ -201,7 +209,7 @@ class Records extends CI_Model
 			{
 				foreach ($deleted_records as $del_ro)
 				{
-					$ro = (object) array('registry_object_id'=>$del_ro['key'], 'status' => 'deleted', 'deleted'=>$del_ro['deleted'], 'sets' => array('class'=>$del_ro['class'],'group'=>$del_ro['group'],'datasource'=>$del_ro['datasource'] )); 
+					$ro = (object) array('registry_object_id'=>$del_ro['key'], 'status' => 'deleted', 'deleted'=>$del_ro['deleted'], 'sets' => array('class'=>$del_ro['class'],'group'=>$del_ro['group'],'datasource'=>$del_ro['datasource'] ));
 					$deleted = true;
 				}
 			}
@@ -213,7 +221,7 @@ class Records extends CI_Model
 				return $ro;
 			else
 				return new _record($ro, $this->db);
-		}		
+		}
 		else
 		{
 			throw new Oai_NoRecordsMatch_Exceptions("record not found");

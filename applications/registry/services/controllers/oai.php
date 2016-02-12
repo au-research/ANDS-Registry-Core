@@ -106,7 +106,7 @@ class Oai extends MX_Controller
 			catch (Exception $ee)
 			{
 				$this->_do_error(Oai::ERROR,
-						 $e->getMessage());
+						 $ee->getMessage());
 				return;
 			}
 
@@ -223,30 +223,42 @@ class Oai extends MX_Controller
 			$this->output->append_output("\t<ListIndentifiers>\n");
 			foreach ($response['records'] as $rec)
 			{
+                $deleted = (isset($rec->status) &&  $rec->status == 'deleted') ? true: false;
                 // if format is 'dci' only collections' Identifiers should be included
-                if($format != 'dci' || $rec->is_collection())
+                if($deleted){
+                    $status = isset($rec->status) &&  $rec->status == 'deleted' ? " status='deleted'" : "";
+                    $this->output->append_output(sprintf("\t\t<header%s>\n", $status));
+                    $this->output->append_output("\t\t\t<identifier>" . sprintf($rec->registry_object_id, "ands.org.au") . "</identifier>\n");
+                    $this->output->append_output("\t\t\t<datestamp>" .gmdate('Y-m-d\TH:i:s\+\Z', $rec->deleted) ."</datestamp>\n");
+                    $this->output->append_output("\t\t</header>\n");
+
+
+                }
+                elseif($format != 'dci' || $rec->is_collection()){
+                    $header = $rec->header();
+
+                    $status = isset($rec->status) &&  $rec->status == 'deleted' ? " status='deleted'" : "";
+                    $this->output->append_output(sprintf("\t\t<header%s>\n", $status));
+                    $this->output->append_output("\t\t\t<identifier>" .
+                        sprintf($header['identifier'],
+                            "ands.org.au") .
+                        "</identifier>\n");
+                    $this->output->append_output("\t\t\t<datestamp>" .
+                        $header['datestamp'] .
+                        "</datestamp>\n");
+                    if (array_key_exists('sets', $header))
                     {
-                        $header = $rec->header();
-                        $status = $rec->is_deleted() ? " status='deleted'" : "";
-                        $this->output->append_output(sprintf("\t\t<header%s>\n", $status));
-                        $this->output->append_output("\t\t\t<identifier>" .
-                                         sprintf($header['identifier'],
-                                             "ands.org.au") .
-                                         "</identifier>\n");
-                        $this->output->append_output("\t\t\t<datestamp>" .
-                                         $header['datestamp'] .
-                                         "</datestamp>\n");
-                        if (array_key_exists('sets', $header))
+                        foreach ($header['sets'] as $set)
                         {
-                            foreach ($header['sets'] as $set)
-                            {
-                                $this->output->append_output("\t\t\t" .
-                                                 $set->asRef() .
-                                                 "\n");
-                            }
+                            $this->output->append_output("\t\t\t" .
+                                $set->asRef() .
+                                "\n");
                         }
-                        $this->output->append_output("\t\t</header>\n");
                     }
+                    $this->output->append_output("\t\t</header>\n");
+
+
+                }
 			}
 			$this->_inject_token($newtoken, $response['count'], $response['cursor']);
 			$this->output->append_output("\t</ListIndentifiers>\n");
