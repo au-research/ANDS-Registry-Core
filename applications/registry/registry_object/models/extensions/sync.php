@@ -462,7 +462,7 @@ class Sync_extension extends ExtensionBase{
             $json[$f] = array();
         }
 
-        $related_objects = array_slice($related_objects, 0, 2000);
+        $related_objects = array_slice($related_objects, 0, 4000);
 
         foreach($related_objects as $related_object){
             if($related_object['registry_object_id'] == null || !in_array($related_object['registry_object_id'], $processedIds))

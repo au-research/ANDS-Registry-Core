@@ -820,6 +820,9 @@ class Solr
                         if ($value != 'all') $this->setOpt('fq', '+activity_status:("' . $value . '")');
                     }
                     break;
+                case 'related_data':
+                    $this->setOpt('fq', '+related_party_multi_id:("' . $value . '") +class:collection');
+                    break;
             }
         }
         return $this;

@@ -2,7 +2,7 @@
     <div class="panel-body swatch-white">
 
         {{--Related Publications--}}
-        @if (isset($related['publications']) &&$related['publications']['count'] > 0)
+        @if (isset($related['publications']) && $related['publications']['count'] > 0)
             @include('registry_object/contents/related-publications')
         @endif
 

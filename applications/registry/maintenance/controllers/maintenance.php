@@ -491,6 +491,8 @@ class Maintenance extends MX_Controller
         try {
             $result = $ro->index_solr();
             var_dump($result);
+            $result = $ro->indexRelationship();
+            var_dump($result);
         } catch (Exception $e) {
             dd($e->getMessage());
         }
