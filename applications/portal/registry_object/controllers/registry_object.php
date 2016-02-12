@@ -231,6 +231,29 @@ class Registry_object extends MX_Controller
     private function getRelationship($ro)
     {
         //initialisation to prevent logic error
+        $related = $ro->relationships;
+
+        foreach ($related as &$rel) {
+            foreach ($rel['docs'] as &$doc) {
+
+                $doc['display_relationship'] = [];
+                if (array_key_exists('relation', $doc)) {
+                    foreach ($doc['relation'] as $docRelation) {
+                        $doc['display_relationship'][] = readable($docRelation);
+                    }
+                }
+                $doc['display_relationship'] = array_unique($doc['display_relationship']);
+                $doc['display_relationship'] = implode(', ', $doc['display_relationship']);
+                $doc['display_description'] = '';
+            }
+        }
+
+        $related['data']['searchUrl'] = constructPortalSearchQuery(['related_data' => $ro->id]);
+        $related['programs']['searchUrl'] = constructPortalSearchQuery(['related_programs' => $ro->id]);
+        $related['grants_projects']['searchUrl'] = constructPortalSearchQuery(['related_grants_projects' => $ro->id]);
+
+        return $related;
+
         $related = [
             'data' => [],
             'publications' => [],

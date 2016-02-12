@@ -255,6 +255,9 @@ class Connections_Extension extends ExtensionBase
      */
     public function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false, $allow_all_links = false, $limit=99999)
 	{
+        //since this operation can take a lot of memory, allow PHP to go for a bit
+        ini_set('memory_limit', 256000000);
+
 		$unordered_connections = array();
 
         // if called getAllRelatedObjects(false, false, true), see if it is cached
@@ -264,7 +267,6 @@ class Connections_Extension extends ExtensionBase
                 return $cachedRelationships;
             }
 		}
-
 
 		$this->_CI->load->model('data_source/data_sources','ds');
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);

@@ -242,10 +242,11 @@ class Relationships_Extension extends ExtensionBase
             $this->ro->setMetadata("allRelationships", json_encode($allRelationships));
         }
 
-        $connections = $this->ro->getConnections(true, null, 5, 0, false);
-        if ($connections) {
-            $this->ro->setMetadata("connections", json_encode($connections));
-        }
+        // dont cache getConnections anymore
+        // $connections = $this->ro->getConnections(true, null, 5, 0, false);
+        //  if ($connections) {
+        //    $this->ro->setMetadata("connections", json_encode($connections));
+        // }
     }
 
     /**
@@ -313,10 +314,10 @@ class Relationships_Extension extends ExtensionBase
                 $doc['relation_identifier_identifier'] = $rel['related_object_identifier'];
                 $doc['relation_identifier_type'] = $rel['related_object_identifier_type'];
                 $doc['relation_identifier_id'] = $rel['identifier_relation_id'];
-                $doc['to_type'] = $doc['to_class'];
-
+                $doc['to_type'] = $rel['related_info_type'];
                 //add uniqueness to the relation because to_key does not exist
                 $doc['id'] .= $doc['relation_identifier_identifier'];
+                $doc['relation_identifier_url'] = getIdentifierURL($rel['related_object_identifier_type'], $rel['related_object_identifier']);
             }
 
             // hash the id to make it easier to locate

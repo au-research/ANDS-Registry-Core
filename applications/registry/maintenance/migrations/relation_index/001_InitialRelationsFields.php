@@ -45,7 +45,7 @@ class InitialRelationsFields extends GenericSolrMigration
             ['name' => "relation", 'type' => 'string', 'stored' => true, 'indexed' => true, "multiValued" => true],
             ['name' => "relation_description", 'type' => 'text_en_splitting', 'stored' => true, 'indexed' => true, "multiValued" => true],
             ['name' => "relation_url", 'type' => 'string', 'stored' => true, 'indexed' => true, "multiValued" => true],
-            ['name' => "relation_origin", 'type' => 'string', 'stored' => true, 'indexed' => true, "multiValued" => true]
+            ['name' => "relation_origin", 'type' => 'string', 'stored' => true, 'indexed' => true, "multiValued" => true],
 
         ]);
     }

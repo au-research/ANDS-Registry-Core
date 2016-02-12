@@ -30,6 +30,7 @@ class ObjectHandler extends Handler{
      */
     public function handle()
     {
+        ini_set('memory_limit', 256000000);
         if ($this->params['identifier']) {
             // registry/object/(:id)
             return array(
@@ -131,7 +132,7 @@ class ObjectHandler extends Handler{
                     case 'registry':
                         $result[$m1] = $this->ro_handle('core', $resource);
                         break;
-                    case 'relationships':
+                    case 'relationships-old':
                         $result[$m1] = $this->relationships_handler($resource);
                         break;
                     default:

@@ -1,57 +1,65 @@
-<h4>Related Publications</h4>
-@foreach($related['publications'] as $col)
+<div class="related-publications">
+    <h4>Related Publications</h4>
+    <ul class="list-unstyled">
+        @foreach($related['publications']['docs'] as $col)
+            {{--Display citation itemprop for collection with related identifier not DOI--}}
+            <li>
+            <span
+                    @if($ro->core['class'] == 'collection' && $col['relation_identifier_type'] == 'doi')
+                    itemprop="citation"
+                    @endif
+            >
 
-    {{--Display citation itemprop for collection with related identifier not DOI--}}
-    <span
-        @if($ro->core['class'] == 'collection' && $col['identifier']['identifier_type'] == 'doi')
-        itemprop="citation"
-        @endif
-    >
+                <i class="fa fa-book icon-portal"></i>
+                <small>{{ $col['display_relationship'] }} </small>
 
-        <i class="fa fa-book icon-portal"></i>
-        <small>{{ $col['display_relationship'] }} </small>
+                {{--DOI relatedInfo identifier is resolvable--}}
+                @if($col['relation_identifier_type'] == 'doi')
+                    <a href="" class="ro_preview"
+                       identifier_doi="{{ $col['relation_identifier_identifier'] }}"
+                       tip="{{ $col['to_title'] }}">
+                        {{ $col['to_title'] }}
+                    </a>
+                @else
+                    {{ $col['to_title'] }}
+                @endif
+                <br/>
 
-        {{--DOI relatedInfo identifier is resolvable--}}
-        @if($col['identifier']['identifier_type'] == 'doi')
-            <a href="" class="ro_preview"
-               identifier_doi="{{ $col['identifier']['identifier_value'] }}"
-               tip="{{ $col['title'] }}">
-                {{ $col['title'] }}
-            </a>
-        @else
-            {{ $col['title'] }}
-        @endif
-        <br/>
+                {{--Display the identifiers--}}
+                <b>{{ $col['relation_identifier_type'] }}</b> :
+                @if(isset($col['relation_identifier_url']))
+                    <a href="{{ $col['relation_identifier_url'] }}"
+                       tip="{{ $col['display_description'] }}">
+                        {{ $col['relation_identifier_identifier'] }}
+                    </a>
+                @else
+                    {{ $col['relation_identifier_identifier'] }}
+                @endif
+                <br/>
 
-        {{--Display the identifiers--}}
-        <b>{{ $col['identifier']['identifier_type'] }}</b> :
-        @if(isset($col['identifier']['identifier_href']['href']))
-            <a href="{{ $col['identifier']['identifier_href']['href'] }}"
-               tip="{{ $col['display_description'] }}">
-                {{ $col['identifier']['identifier_value'] }}
-            </a>
-        @else
-            {{ $col['identifier']['identifier_value'] }}
-        @endif
-        <br/>
+                {{--Relation URL display--}}
+                @if(array_key_exists('relation_url', $col))
+                    @foreach ($col['relation_url'] as $url)
+                        <p>
+                            <small>{{ $col['display_relationship'] }}</small>
+                            URI :
+                            <a href="{{ $url }}"
+                               tip="{{ $col['display_description'] }}">
+                                {{ $url }}
+                            </a>
+                        </p>
+                    @endforeach
+                @endif
 
-        {{--Relation URL display--}}
-        @if(isset($col['relation']['url']) && $col['relation']['url']!='')
-            <p>
-                <small>{{ $col['display_relationship'] }}</small>
-                URI :
-                <a href="{{ $col['relation']['url'] }}"
-                   tip="{{ $col['display_description'] }}">
-                    {{ $col['relation']['url'] }}
-                </a>
-            </p>
-        @endif
+                {{--Notes display for this relation--}}
+                @if(isset($col['relation_notes']))
+                    <p> {{ $col['relation_notes'] }} </p>
+                @endif
 
-        {{--Notes display for this relation--}}
-        @if(isset($col['notes']))
-            <p> {{ $col['notes'] }} </p>
-        @endif
+                {{--Close the span for the itemprop--}}
+            </span>
+            </li>
+        @endforeach
+    </li>
+</div>
 
-        {{--Close the span for the itemprop--}}
-    </span>
-@endforeach
