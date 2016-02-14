@@ -1,29 +1,21 @@
-<h4>Related Grants and Projects</h4>
-@foreach($related['grants_projects'] as $col)
-    @if($col['slug'] && $col['registry_object_id'])
-        <i class="fa fa-flask icon-portal"></i>
-        <small>{{ readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class']) }}</small>
-        <a href="{{ base_url() }}{{$col['slug']}}/{{$col['registry_object_id']}}"
-           title="{{ $col['title'] }}"
-           class="ro_preview"
-           tip="{{ $col['display_description'] }}"
-           ro_id="{{ $col['registry_object_id'] }}">
-            {{$col['title']}}</a>
-        {{ isset($col['funder']) ? $col['funder'] : '' }}
-    @elseif(isset($col['identifier_relation_id']))
-        <i class="fa fa-flask icon-portal"></i>
-        <small>{{ readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class']) }}</small>
-        <a href="{{ base_url() }}" title="{{$col['title']}}"
-           class="ro_preview"
-           tip="{{ $col['display_description'] }}"
-           identifier_relation_id="{{ $col['identifier_relation_id'] }}">
-            {{$col['title']}}</a>
-        {{ isset($col['funder']) ? $col['funder'] : '' }}
-    @endif
-    <br />
-@endforeach
-@if($related['grants_projects_count'] > 5)
-    <p>
-        <a href="{{ $related['grants_projects_searchQuery'] }}">View all {{ $related['grants_projects_count'] }} related grants and projects</a>
-    </p>
-@endif
+<div class="related-grants-and-projects">
+    <h4>Related Grants and Projects</h4>
+    <ul class="list-unstyled">
+        @foreach($related['grants_projects']['docs'] as $col)
+            <li>
+                <i class="fa fa-flask icon-portal"></i>
+                <small>{{ $col['display_relationship'] }}</small>
+                <a href="{{ base_url() }}{{$col['to_slug']}}/{{$col['to_id']}}"
+                   title="{{ $col['to_title'] }}"
+                   class="ro_preview"
+                   tip="{{ $col['display_description'] }}"
+                   ro_id="{{ $col['to_id'] }}">
+                    {{$col['to_title']}}</a>
+                {{ isset($col['to_funder']) ? $col['to_funder'] : '' }}
+            </li>
+        @endforeach
+        @if($related['grants_projects']['count'] > 5)
+            <li><a href="{{ $related['grants_projects']['searchUrl'] }}">View all {{ $related['grants_projects']['count'] }} related grants and projects</a></li>
+        @endif
+    </ul>
+</div>

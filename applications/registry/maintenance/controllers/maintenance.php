@@ -449,9 +449,18 @@ class Maintenance extends MX_Controller
         $this->benchmark->mark('start');
 //		$ro = $this->ro->getByID(15144);
 //        $ro = $this->ro->getByID(518517);
-        $ro = $this->ro->getByID(553796);
+//        $ro = $this->ro->getByID(553796);
+//        $ro = $this->ro->getByID(553497);
+//        $ro = $this->ro->getByID(424764);
+        $ro = $this->ro->getByID(400676);
+
         $ro->cacheRelationshipMetadata();
-        $rels = $ro->getCachedRelationshipMetadata();
+//        $rels = $ro->getCachedRelationshipMetadata();
+
+        $conn = $ro->getCachedConnectionsMetadata();
+
+
+
         $this->benchmark->mark('end');
         dd($this->benchmark->elapsed_time('start', 'end'));
     }
@@ -470,6 +479,23 @@ class Maintenance extends MX_Controller
             dd($e->getMessage());
         }
 
+    }
+
+    function indexSolr($roID) {
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        $this->load->model('registry_object/registry_objects', 'ro');
+        $this->load->library('solr');
+        $ro = $this->ro->getByID($roID);
+        try {
+            $result = $ro->index_solr();
+            var_dump($result);
+            $result = $ro->indexRelationship();
+            var_dump($result);
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
     function fixRelationships($id)

@@ -593,9 +593,10 @@ function module_hook($action, $ro = false) {
 
 /**
  * Return an instance of the module
- * @param  string  $namespace Name space of the module
- * @param  string  $class     Class name
- * @param  registry_object $ro        Registry Object
+ *
+ * @param  string              $namespace Name space of the module
+ * @param  string              $class     Class name
+ * @param bool|registry_object $ro        Registry Object
  * @return class
  */
 function module_return($namespace, $class, $ro = false) {

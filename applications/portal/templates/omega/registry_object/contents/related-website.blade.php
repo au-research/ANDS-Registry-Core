@@ -1,25 +1,30 @@
-<h4>Related Websites</h4>
-@foreach($related['website'] as $col)
-    <span
-        @if($ro->core['class'] == 'collection')
-        itemprop="citation"
-        @endif
-    >
-    <i class="fa fa-globe icon-portal"></i>
-    <small>{{ $col['display_relationship'] }} </small>
-    {{ isset($col['title']) ? $col['title'] : '' }}
-    <p>
-        @if($col['identifier']['identifier_href']['display_text'])
-            <b>{{$col['identifier']['identifier_href']['display_text']}}</b> :
-        @else
-            <b>{{$col['identifier']['identifier_type']}}</b>:
-        @endif
+<div class="related-websites">
+    <h4>Related Websites</h4>
+    <ul class="list-unstyled">
+        @foreach($related['websites']['docs'] as $col)
+            <li>
+                <span
+                        @if($ro->core['class'] == 'collection')
+                        itemprop="citation"
+                        @endif
+                >
+                <i class="fa fa-globe icon-portal"></i>
+                <small>{{ $col['display_relationship'] }} </small>
 
-        @if($col['identifier']['identifier_href'])
-            <a href="{{$col['identifier']['identifier_href']['href']}}" {{ $col['display_description'] }}>{{$col['identifier']['identifier_value']}}</a><br />
-        @else
-            {{$col['identifier']['identifier_value']}}
-        @endif
-    </p>
-    </span>
-@endforeach
+                {{--Display the identifiers--}}
+                {{ $col['to_title'] }}
+                    <br/>
+                @if(isset($col['relation_identifier_url']))
+                    <a href="{{ $col['relation_identifier_url'] }}"
+                       tip="{{ $col['display_description'] }}">
+                        {{ $col['relation_identifier_identifier'] }}
+                    </a>
+                @else
+                    {{ $col['relation_identifier_identifier'] }}
+                @endif
+
+                </span>
+            </li>
+        @endforeach
+    </ul>
+</div>

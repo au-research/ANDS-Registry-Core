@@ -30,6 +30,7 @@ class ObjectHandler extends Handler{
      */
     public function handle()
     {
+        ini_set('memory_limit', 256000000);
         if ($this->params['identifier']) {
             // registry/object/(:id)
             return array(
@@ -131,7 +132,7 @@ class ObjectHandler extends Handler{
                     case 'registry':
                         $result[$m1] = $this->ro_handle('core', $resource);
                         break;
-                    case 'relationships':
+                    case 'relationships-old':
                         $result[$m1] = $this->relationships_handler($resource);
                         break;
                     default:
@@ -164,6 +165,12 @@ class ObjectHandler extends Handler{
                 } elseif ($m1 == 'sync') {
                     $ro = $resource['ro'];
                     return $ro->sync();
+                } else if($m1 == 'relations_index') {
+                    $ro = $resource['ro'];
+                    $ro->addRelationships();
+                    $ro->cacheRelationshipMetadata();
+                    $ro->indexRelationship();
+                    return $ro->getRelationshipIndex();
                 }
             }
 
@@ -171,7 +178,6 @@ class ObjectHandler extends Handler{
                 $this->ci->benchmark->mark('end');
                 $result['benchmark'][$m1] = $this->ci->benchmark->elapsed_time('start', 'end');
             }
-
         }
 
         return $result;

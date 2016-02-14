@@ -255,6 +255,9 @@ class Connections_Extension extends ExtensionBase
      */
     public function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false, $allow_all_links = false, $limit=99999)
 	{
+        //since this operation can take a lot of memory, allow PHP to go for a bit
+        ini_set('memory_limit', 256000000);
+
 		$unordered_connections = array();
 
         // if called getAllRelatedObjects(false, false, true), see if it is cached
@@ -264,7 +267,6 @@ class Connections_Extension extends ExtensionBase
                 return $cachedRelationships;
             }
 		}
-
 
 		$this->_CI->load->model('data_source/data_sources','ds');
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
@@ -295,14 +297,12 @@ class Connections_Extension extends ExtensionBase
 			$unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks($allow_drafts, $limit));
 		}
 
-
-
-
 		/* Step 5 - Duplicate Record connections */
 		if ( ($include_dupe_connections || $allow_all_links ) && count($unordered_connections) < $limit)
 		{
 			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections());
 		}
+
 
 		if ( $allow_all_links ) {
 			$identifierMatches = array();
@@ -332,13 +332,15 @@ class Connections_Extension extends ExtensionBase
 			}
 		}
 
+        // getting records that fall into the grantsNetwork
+        $unordered_connections = array_merge($unordered_connections, $this->_getGrantsNetworkConnections($unordered_connections));
+
 		// Recheck the unordered connections and remove Draft records if allow_drafts is false
-		if ($allow_drafts==false) {
+		if ($allow_drafts == false) {
 			foreach ($unordered_connections as $key=>$row) {
-				if (!isset($row['status'])|| $row['status']!='PUBLISHED') {
+				if (isset($row['registry_object_id']) && isset($row['status']) && $row['status']!='PUBLISHED') {
 					unset($unordered_connections[$key]);
 				}
-
 			}
 		}
 
@@ -368,6 +370,39 @@ class Connections_Extension extends ExtensionBase
 			return $row->value;
 		}
 	}
+
+    /**
+     * Returns the records which is in the grants network connections of this record
+     *
+     * @param           $relatedObjects very important to pass in existing related objects here | recursion issue
+     * @param bool|true $publishedOnly
+     * @return mixed
+     */
+    function _getGrantsNetworkConnections($relatedObjects, $publishedOnly = true)
+    {
+        //going down the tree
+        $childs = $this->ro->getChildActivities($relatedObjects);
+        foreach ($childs as &$child) {
+            if ($child['origin'] == 'EXPLICIT') {
+                $child['origin'] = 'GRANTS';
+            } else if (startsWith($child['origin'], 'REVERSE')) {
+                $child['origin'] = "REVERSE_GRANTS";
+            }
+        }
+
+        //going up the tree
+        $parents = $this->ro->getParentsGrants($relatedObjects);
+        foreach ($parents as &$parent) {
+            if ($parent['origin'] == 'EXPLICIT') {
+                $parent['origin'] = 'GRANTS';
+            } else if (startsWith($parent['origin'], 'REVERSE')) {
+                $parent['origin'] = "REVERSE_GRANTS";
+            }
+        }
+
+        $result = array_merge($childs, $parents);
+        return $result;
+    }
 
 	function _getExplicitLinks($allow_unmatched_records = false, $limit=99999)
 	{

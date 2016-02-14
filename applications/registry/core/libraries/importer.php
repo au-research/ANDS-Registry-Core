@@ -562,6 +562,11 @@ class Importer {
 
 	}
 
+	/**
+	 * todo delete them as well
+	 * @return string
+	 * @throws Exception
+     */
 	public function finishImportTasks() {
 		$this->populateMessageLog();
 		$importedRecCount = count($this->importedRecords);

@@ -137,7 +137,8 @@ class Relationships_Extension extends ExtensionBase
 
         }
 
-        $processedTypesArray = array('collection', 'party', 'service', 'activity');
+        // this variable determine the type of relatedInfo, allowing publication and website
+        $processedTypesArray = array('collection', 'party', 'service', 'activity', 'publication', 'website');
 
         $this->db->where(array('registry_object_id' => $this->ro->id));
         $this->db->delete('registry_object_identifier_relationships');
@@ -241,10 +242,11 @@ class Relationships_Extension extends ExtensionBase
             $this->ro->setMetadata("allRelationships", json_encode($allRelationships));
         }
 
-        $connections = $this->ro->getConnections(true, null, 5, 0, false);
-        if ($connections) {
-            $this->ro->setMetadata("connections", json_encode($connections));
-        }
+        // dont cache getConnections anymore
+        // $connections = $this->ro->getConnections(true, null, 5, 0, false);
+        //  if ($connections) {
+        //    $this->ro->setMetadata("connections", json_encode($connections));
+        // }
     }
 
     /**
@@ -267,6 +269,79 @@ class Relationships_Extension extends ExtensionBase
         $cachedData = $this->ro->getMetadata("connections");
         $decodedData = json_decode($cachedData, true);
         return $decodedData;
+    }
+
+    /**
+     * Returns an indexable relationship index for this record
+     *
+     * @return mixed
+     */
+    public function getRelationshipIndex(){
+        $relationships = $this->ro->getAllRelatedObjects(false, false, true);
+
+        $docs = [];
+        foreach ($relationships as $rel) {
+
+            $doc = [
+                'from_id' => $this->ro->id,
+                'from_key' => $this->ro->key,
+                'from_status' => $this->ro->status,
+                'from_title' => $this->ro->title,
+                'from_class' => $this->ro->class,
+                'from_type' => $this->ro->type,
+                'from_slug' => $this->ro->slug,
+                'to_id' => isset($rel['registry_object_id']) && $rel['registry_object_id']!='' ? $rel['registry_object_id'] : false,
+                'to_key' => isset($rel['key']) ? $rel['key'] : false,
+                'to_class' => isset($rel['class']) ? $rel['class'] : false,
+                'to_type' => isset($rel['type']) ? $rel['type'] : false,
+                'to_title' => isset($rel['title']) ? $rel['title'] : false,
+                'to_slug' => isset($rel['slug']) ? $rel['slug'] : false
+            ];
+
+            // to_status, to_identifier, from_identifier
+
+            //format relation_type correctly
+            $doc['relation'] = startsWith($rel['origin'], 'REVERSE') ? [getReverseRelationshipString($rel['relation_type'])] : [$rel['relation_type']];
+            $doc['relation_description'] = isset($rel['relation_description']) ? [$rel['relation_description']]: [];
+            $doc['relation_url'] = isset($rel['relation_url']) ? [$rel['relation_url']]: [];
+            $doc['relation_origin'] = isset($rel['origin']) ? [$rel['origin']]: [];
+
+            // this relation needs a unique id
+            $doc['id'] = $this->ro->key.$doc['to_key'];
+
+            if (!$doc['to_id']) {
+                // is not a real object, but something from relatedInfo
+                $doc['relation_identifier_identifier'] = $rel['related_object_identifier'];
+                $doc['relation_identifier_type'] = $rel['related_object_identifier_type'];
+                $doc['relation_identifier_id'] = $rel['identifier_relation_id'];
+                $doc['to_type'] = $rel['related_info_type'];
+                //add uniqueness to the relation because to_key does not exist
+                $doc['id'] .= $doc['relation_identifier_identifier'];
+                $doc['relation_identifier_url'] = getIdentifierURL($rel['related_object_identifier_type'], $rel['related_object_identifier']);
+            }
+
+            // hash the id to make it easier to locate
+            $doc['id'] = md5($doc['id']);
+
+            if ($doc['to_id']) {
+                //is a real object in our system
+                if (array_key_exists($doc['to_id'], $docs)) {
+                    $docs[$doc['to_id']]['relation'] = array_merge($docs[$doc['to_id']]['relation'], $doc['relation']);
+                    $docs[$doc['to_id']]['relation_description'] = array_merge($docs[$doc['to_id']]['relation_description'], $doc['relation_description']);
+                    $docs[$doc['to_id']]['relation_url'] = array_merge($docs[$doc['to_id']]['relation_url'], $doc['relation_url']);
+                    $docs[$doc['to_id']]['relation_origin'] = array_merge($docs[$doc['to_id']]['relation_origin'], $doc['relation_origin']);
+                } else {
+                    $docs[$doc['to_id']] = $doc;
+                }
+            } else {
+                // is relatedInfo data, add it anyway, accept duplicates if exist
+                $docs[] = $doc;
+            }
+
+        }
+
+        $docs = array_values($docs);
+        return $docs;
     }
 
     /**

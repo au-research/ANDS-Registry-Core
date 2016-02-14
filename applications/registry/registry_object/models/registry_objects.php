@@ -602,11 +602,12 @@ class Registry_objects extends CI_Model {
 
 	/**
 	 * Return the registry object attribute, be in core or not
-	 * @todo if $type is an array, return an array of values
-	 * @todo if $type is blank/false, return all values
+	 *
+	 * @todo   if $type is an array, return an array of values
+	 * @todo   if $type is blank/false, return all values
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-	 * @param  int  $ro_id existing ro id
-	 * @param  string $type  existing type
+	 * @param  int        $ro_id existing ro id
+	 * @param bool|string $type  existing type
 	 * @return mixed
 	 */
 	function getAttribute($ro_id, $type = false) {

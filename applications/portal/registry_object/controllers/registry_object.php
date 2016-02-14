@@ -231,6 +231,43 @@ class Registry_object extends MX_Controller
     private function getRelationship($ro)
     {
         //initialisation to prevent logic error
+        $related = $ro->relationships;
+
+        foreach ($related as &$rel) {
+            foreach ($rel['docs'] as &$doc) {
+
+                $doc['display_relationship'] = [];
+                if (array_key_exists('relation', $doc)) {
+                    foreach ($doc['relation'] as $docRelation) {
+                        $doc['display_relationship'][] = readable($docRelation);
+                    }
+                }
+                $doc['display_relationship'] = array_unique($doc['display_relationship']);
+                $doc['display_relationship'] = implode(', ', $doc['display_relationship']);
+                $doc['display_description'] = '';
+            }
+        }
+
+        // search class for constructing search queries
+        $searchClass = $ro->core['class'];
+        if ($ro->core['class'] == 'party') {
+            if (strtolower($ro->core['type']) == 'person') {
+                $searchClass = 'party_one';
+            } elseif (strtolower($ro->core['type']) == 'group') {
+                $searchClass = 'party_multi';
+            }
+        }
+
+        // todo get the correct SOLR count
+
+        $related['data']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'collection']);
+        $related['programs']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'activity', 'type'=>'program']);
+        $related['grants_projects']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'activity', 'nottype'=>'program']);
+        $related['services']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'service']);
+        $related['organisations']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'party', 'type'=>'group']);
+
+        return $related;
+
         $related = [
             'data' => [],
             'publications' => [],
