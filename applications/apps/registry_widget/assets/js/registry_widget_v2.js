@@ -257,7 +257,7 @@
         if(api_key === 'undefined'){
             api_key='public';
         }
-		var widget = elem.registry_widget({api_key: 'public'});
+		var widget = elem.registry_widget({api_key: api_key});
 	});
 })( jQuery );
 
