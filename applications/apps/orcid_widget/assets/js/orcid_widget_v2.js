@@ -258,7 +258,12 @@
 			if(obj['orcid-bio']['keywords'])
 			{
                 var wordsString = obj['orcid-bio']['keywords']['keyword'];
-                var wordArray = wordsString.split(',');
+
+                if(typeof(wordsString)=='string'){
+                    var wordArray = wordsString.split(',');
+                }else{
+                    var wordArray = wordsString;
+                }
 
 				resStr +="<h6>Keywords</h6>"
 				var count = 0;	
