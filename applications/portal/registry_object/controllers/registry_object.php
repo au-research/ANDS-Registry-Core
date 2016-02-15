@@ -258,13 +258,34 @@ class Registry_object extends MX_Controller
             }
         }
 
-        // todo get the correct SOLR count
+        // construct the correct search query for each type of related
+        $relatedArray = ['data', 'programs', 'grants_projects', 'services', 'organisations'];
+        foreach ($relatedArray as $rr) {
+            $query = [];
+            switch ($rr) {
+                case "data":
+                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'collection'];
+                    break;
+                case "programs":
+                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'activity', 'type'=>'program'];
+                    break;
+                case "grants_projects":
+                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'activity', 'nottype'=>'program'];
+                    break;
+                case "services":
+                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'service'];
+                    break;
+                case "organisations";
+                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'party', 'type'=>'group'];
+                    break;
+            }
+            $related[$rr]['searchUrl'] = constructPortalSearchQuery($query);
 
-        $related['data']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'collection']);
-        $related['programs']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'activity', 'type'=>'program']);
-        $related['grants_projects']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'activity', 'nottype'=>'program']);
-        $related['services']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'service']);
-        $related['organisations']['searchUrl'] = constructPortalSearchQuery(['related_'.$searchClass.'_id' => $ro->id, 'class' => 'party', 'type'=>'group']);
+            // fix count in case not all records are synced correctly
+            if ($related[$rr]['count'] > 5) {
+                $related[$rr]['count'] = $this->getSolrCountForQuery($query);
+            }
+        }
 
         return $related;
 
