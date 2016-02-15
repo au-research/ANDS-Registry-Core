@@ -377,6 +377,8 @@ class Connections_Extension extends ExtensionBase
      */
     public function _getGrantsNetworkConnections($relatedObjects, $publishedOnly = true)
     {
+        $result = [];
+
         //going down the tree
         $childs = $this->ro->getChildActivities($relatedObjects);
         foreach ($childs as &$child) {
@@ -393,6 +395,11 @@ class Connections_Extension extends ExtensionBase
                 $child['relation_type'] = 'isFundedBy';
             }
         }
+        $result = array_merge($result, $childs);
+
+        //going to the collection (to get data output)
+        $dataOutputs = $this->ro->getDataOutput($childs, $relatedObjects);
+        $result = array_merge($result, $dataOutputs);
 
         //going up the tree
         $parents = [];
@@ -406,8 +413,7 @@ class Connections_Extension extends ExtensionBase
                 }
             }
         }
-
-        $result = array_merge($childs, $parents);
+        $result = array_merge($result, $parents);
         return $result;
     }
 

@@ -437,8 +437,8 @@ class Activity_grants_extension extends ExtensionBase
     {
 
         //hard limit on how many node will be processed for performance
-        $limit = 100;
-        if ((sizeof($processed) > $limit) || (in_array($this->ro->id, $processed))) {
+        $limit = 200;
+        if (sizeof($processed) > $limit) {
             return array();
         }
 
