@@ -503,6 +503,7 @@ class Maintenance extends MX_Controller
         $this->load->model('registry_object/registry_objects', 'ro');
         $ro = $this->ro->getByID($id);
         $ro->sync();
+        $ro->cacheRelationshipMetadata();
         $ro->indexRelationship();
         $relationships = $ro->getAllRelatedObjects(false, true, true);
         $already_sync = array();
@@ -510,6 +511,7 @@ class Maintenance extends MX_Controller
             if (!in_array($r['registry_object_id'], $already_sync)) {
                 $rr = $this->ro->getByID($r['registry_object_id']);
                 $rr->sync();
+                $rr->cacheRelationshipMetadata();
                 $rr->indexRelationship();
                 $already_sync[] = $rr->id;
                 echo $rr->id . ' > ' . $rr->class . ' > ' . $rr->title . '<br/>';

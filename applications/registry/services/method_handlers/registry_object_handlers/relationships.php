@@ -16,8 +16,6 @@ class Relationships extends ROHandler {
      */
     public function handle() {
 
-        dd($this->ro->getAllRelatedObjects(false, false, true));
-
         $result = array(
             'data' => $this->getRelatedFromIndex('data'),
             'publications' => $this->getRelatedFromIndex('publications'),

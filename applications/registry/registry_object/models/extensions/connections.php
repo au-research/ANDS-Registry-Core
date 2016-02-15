@@ -333,7 +333,10 @@ class Connections_Extension extends ExtensionBase
 		}
 
         // getting records that fall into the grantsNetwork
-        $unordered_connections = array_merge($unordered_connections, $this->_getGrantsNetworkConnections($unordered_connections));
+
+        if (sizeof($unordered_connections) > 0) {
+            $unordered_connections = array_merge($unordered_connections, $this->_getGrantsNetworkConnections($unordered_connections));
+        }
 
 		// Recheck the unordered connections and remove Draft records if allow_drafts is false
 		if ($allow_drafts == false) {

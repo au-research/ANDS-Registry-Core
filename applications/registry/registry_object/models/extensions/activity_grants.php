@@ -373,7 +373,7 @@ class Activity_grants_extension extends ExtensionBase
         $processed = array(),
         $recursive = true
     ) {
-        if (!$relatedObjects) {
+        if ($relatedObjects === false) {
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
 
@@ -404,6 +404,9 @@ class Activity_grants_extension extends ExtensionBase
                 //do not want to check recursively this child again
                 $isValidChild = $isValidChild && !in_array($relatedObject['registry_object_id'], $processed);
 
+                //only relates to PUBLISHED records
+                $isValidChild = $isValidChild && $relatedObject['status']=='PUBLISHED';
+
                 if ($isValidChild) {
                     $result[] = $relatedObject;
                     array_push($processed, $relatedObject['registry_object_id']);
@@ -433,7 +436,7 @@ class Activity_grants_extension extends ExtensionBase
     public function getParentsGrants($relatedObjects = false, $processed = array(), $recursive = true)
     {
 
-        if (!$relatedObjects) {
+        if ($relatedObjects === false) {
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
 
@@ -483,6 +486,9 @@ class Activity_grants_extension extends ExtensionBase
 
             //do not want to check recursively this child again
             $isValidParent = $isValidParent && !in_array($relatedObject['registry_object_id'], $processed);
+
+            //only relates to PUBLISHED records
+            $isValidParent = $isValidParent && $relatedObject['status']=='PUBLISHED';
 
             array_push($processed, $relatedObject['registry_object_id']);
 
