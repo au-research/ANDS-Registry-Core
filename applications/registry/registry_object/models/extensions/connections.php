@@ -388,6 +388,11 @@ class Connections_Extension extends ExtensionBase
             } else if (startsWith($child['origin'], 'REVERSE')) {
                 $child['origin'] = "REVERSE_GRANTS";
             }
+
+            // if the current node is a party, everything that is underneath the node is isFundedBy
+            if ($this->ro->class == 'party') {
+                $child['relation_type'] = 'isFundedBy';
+            }
         }
 
         //going up the tree
