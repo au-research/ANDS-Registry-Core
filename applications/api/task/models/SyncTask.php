@@ -296,7 +296,7 @@ class SyncTask extends Task
                         $remove_ids[] = $ro_id;
                     }
                     if ($ro && $ro->status == 'PUBLISHED') {
-
+                        // $this->log('Processing record '.$ro->id. ' Memory Usage: '.memory_get_usage())->save();
                         if (!$this->indexOnly) {
                             $ro->processIdentifiers();
                             $ro->addRelationships();
@@ -311,7 +311,21 @@ class SyncTask extends Task
                         // index portal documents
                         $solr_doc = $ro->indexable_json();
                         if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
-                            $solr_docs[] = $solr_doc;
+
+                            $serializedFoo = serialize($solr_doc);
+                            if (function_exists('mb_strlen')) {
+                                $size = mb_strlen($serializedFoo, '8bit');
+                            } else {
+                                $size = strlen($serializedFoo);
+                            }
+
+                            if ($size > 50000) {
+                                $this->log('Document for '. $ro->id. ' too big, flushing this document. Size: '. $size. ' bytes')->save();
+                                $this->indexSolr('portal', [$solr_doc]);
+                            } else {
+                                $solr_docs[] = $solr_doc;
+                            }
+
                         } else {
                             $this->log('Empty doc found for ROID:' . $ro->id);
                         }
@@ -322,7 +336,18 @@ class SyncTask extends Task
                             $relation_docs = array_merge($relation_docs, $relation_doc);
                         }
 
+                        // flush if memory usage is too high, 50 MB
+                        if (memory_get_usage() > 50000000) {
+                            $this->log('Memory usage too high, flushing documents');
+                            $this->indexSolr('portal', $solr_docs);
+                            $solr_docs = [];
+                            $this->indexSolr('relations', $relation_docs);
+                            $relation_docs = [];
+                        }
+
                         unset($ro);
+                        unset($solr_doc);
+                        unset($relation_doc);
                     } else {
                         //doesn't exist in the database, queue it to be remove from SOLR
                         $this->log('Error: roid:' . $ro_id . ' not found');
@@ -338,6 +363,7 @@ class SyncTask extends Task
         } else {
             throw new Exception("No records found");
         }
+
 
         //indexing in SOLR
         $this->log('Indexing SOLR for Portal')->save();
