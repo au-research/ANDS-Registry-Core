@@ -436,14 +436,14 @@ class Activity_grants_extension extends ExtensionBase
     public function getParentsGrants($relatedObjects = false, $processed = array(), $recursive = true)
     {
 
-        if ($relatedObjects === false) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
-        }
-
         //hard limit on how many node will be processed for performance
         $limit = 100;
-        if (sizeof($processed) > $limit) {
+        if ((sizeof($processed) > $limit) || (in_array($this->ro->id, $processed))) {
             return array();
+        }
+
+        if ($relatedObjects === false) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
         }
 
         $result = array();

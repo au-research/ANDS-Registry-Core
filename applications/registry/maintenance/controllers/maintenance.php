@@ -452,9 +452,13 @@ class Maintenance extends MX_Controller
 //        $ro = $this->ro->getByID(553796);
 //        $ro = $this->ro->getByID(553497);
 //        $ro = $this->ro->getByID(424764);
-        $ro = $this->ro->getByID(400676);
+//        $ro = $this->ro->getByID(400676);
+        $ro = $this->ro->getByID(476461);
 
-        $ro->cacheRelationshipMetadata();
+        $parents = $ro->getParentsGrants();
+        dd($parents);
+
+//        $ro->cacheRelationshipMetadata();
 //        $rels = $ro->getCachedRelationshipMetadata();
 
         $conn = $ro->getCachedConnectionsMetadata();

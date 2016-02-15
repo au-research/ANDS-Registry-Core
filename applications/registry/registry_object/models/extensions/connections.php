@@ -332,12 +332,6 @@ class Connections_Extension extends ExtensionBase
 			}
 		}
 
-        // getting records that fall into the grantsNetwork
-
-        if (sizeof($unordered_connections) > 0) {
-            $unordered_connections = array_merge($unordered_connections, $this->_getGrantsNetworkConnections($unordered_connections));
-        }
-
 		// Recheck the unordered connections and remove Draft records if allow_drafts is false
 		if ($allow_drafts == false) {
 			foreach ($unordered_connections as $key=>$row) {
@@ -381,15 +375,17 @@ class Connections_Extension extends ExtensionBase
      * @param bool|true $publishedOnly
      * @return mixed
      */
-    function _getGrantsNetworkConnections($relatedObjects, $publishedOnly = true)
+    public function _getGrantsNetworkConnections($relatedObjects, $publishedOnly = true)
     {
         //going down the tree
         $childs = $this->ro->getChildActivities($relatedObjects);
         foreach ($childs as &$child) {
             if ($child['origin'] == 'EXPLICIT') {
                 $child['origin'] = 'GRANTS';
-            } else if (startsWith($child['origin'], 'REVERSE')) {
-                $child['origin'] = "REVERSE_GRANTS";
+            } else {
+                if (startsWith($child['origin'], 'REVERSE')) {
+                    $child['origin'] = "REVERSE_GRANTS";
+                }
             }
 
             // if the current node is a party, everything that is underneath the node is isFundedBy
@@ -399,12 +395,15 @@ class Connections_Extension extends ExtensionBase
         }
 
         //going up the tree
-        $parents = $this->ro->getParentsGrants($relatedObjects);
-        foreach ($parents as &$parent) {
-            if ($parent['origin'] == 'EXPLICIT') {
-                $parent['origin'] = 'GRANTS';
-            } else if (startsWith($parent['origin'], 'REVERSE')) {
-                $parent['origin'] = "REVERSE_GRANTS";
+        $parents = [];
+        if ($this->ro->class != 'party') {
+            $parents = $this->ro->getParentsGrants($relatedObjects);
+            foreach ($parents as &$parent) {
+                if ($parent['origin'] == 'EXPLICIT') {
+                    $parent['origin'] = 'GRANTS';
+                } else if (startsWith($parent['origin'], 'REVERSE')) {
+                    $parent['origin'] = "REVERSE_GRANTS";
+                }
             }
         }
 

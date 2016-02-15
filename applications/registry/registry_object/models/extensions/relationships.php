@@ -277,7 +277,9 @@ class Relationships_Extension extends ExtensionBase
      * @return mixed
      */
     public function getRelationshipIndex(){
+
         $relationships = $this->ro->getAllRelatedObjects(false, false, true);
+        $relationships = array_merge($relationships, $this->ro->_getGrantsNetworkConnections($relationships));
 
         $docs = [];
         foreach ($relationships as $rel) {
