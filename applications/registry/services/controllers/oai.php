@@ -80,22 +80,25 @@ class Oai extends MX_Controller
 		$this->_header();
 
 
-        // logging of calls to legacy version of our services and widgets to flat file logging - added 09/02/2016
-
-        require_once (API_APP_PATH.'core/helpers/api_helper.php');
-        $terms = array(
-            'event' => 'api_hit',
-            'api_key' => 'public',
-            'api_version' => 'legacy',
-            'path' => 'services/oai'
-        );
-        api_log_terms($terms);
 
 		$verb = $this->input->get_post('verb', TRUE);
 		if (!empty($verb) and
 		    array_key_exists($verb, $this->verbs))
 		{
-			try
+
+           // logging of calls to legacy version of our services and widgets to flat file logging - added 09/02/2016
+
+            require_once (API_APP_PATH.'core/helpers/api_helper.php');
+            $terms = array(
+                'event' => 'api_hit',
+                'api_key' => 'public',
+                'api_version' => 'legacy',
+                'path' => $_SERVER['REQUEST_URI']
+            );
+            api_log_terms($terms);
+
+
+            try
 			{
 				#is this operation resumable?
 				if (array_key_exists('resume', $this->verbs[$verb]))
