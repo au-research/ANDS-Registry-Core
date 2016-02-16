@@ -8,6 +8,11 @@ namespace ANDS\API\Task;
 
 use \Exception as Exception;
 
+/**
+ * Class TaskManager
+ *
+ * @package ANDS\API\Task
+ */
 class TaskManager
 {
     private $db;

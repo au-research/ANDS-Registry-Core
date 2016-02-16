@@ -17,6 +17,8 @@ class Solr
     private $custom_query;
     private $core = 'portal';
 
+    private $coreMapping = [];
+
     /**
      * Construction of this class
      */
@@ -36,6 +38,7 @@ class Solr
     {
         $this->solr_url = get_config_item('solr_url');
         $this->fixSolrUrl();
+        $this->coreMapping = get_config_item('solr_core_mapping');
 
         $this->options = array('q' => '*:*', 'start' => '0', 'indent' => 'on', 'wt' => 'json', 'fl' => '*', 'rows' => '10');
         $this->multi_valued_fields = array('facet.field', 'fq', 'facet.query');
@@ -1071,10 +1074,28 @@ class Solr
 
     /**
      * @param string $core
+     * @return $this
      */
     public function setCore($core)
     {
         $this->core = $core;
+        $mapping = $this->getCoreMapping();
+        if (
+            $mapping
+            && is_array($mapping)
+            && sizeof($mapping) > 0
+            && array_key_exists($core, $mapping)
+        ) {
+            $this->core = $mapping[$core];
+        }
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCoreMapping()
+    {
+        return $this->coreMapping;
     }
 }
