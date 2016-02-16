@@ -453,6 +453,29 @@ class Sync_extension extends ExtensionBase{
 		    $related_objects = $this->ro->getAllRelatedObjects(false, false, true, $party_service_conn_limit);
         else
             $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
+
+        // get only unique related_objects to save memory
+        $temp_array = array();
+        foreach ($related_objects as &$v) {
+            if (!isset($temp_array[$v['registry_object_id']])) {
+                $temp_array[$v['registry_object_id']] =& $v;
+            }
+        }
+        $related_objects = $temp_array;
+        unset($temp_array);
+
+        $related_objects = array_merge($related_objects, $this->ro->_getGrantsNetworkConnections($related_objects));
+
+        // get only unique related_objects to save memory
+        $temp_array = array();
+        foreach ($related_objects as &$v) {
+            if (!isset($temp_array[$v['registry_object_id']])) {
+                $temp_array[$v['registry_object_id']] =& $v;
+            }
+        }
+        $related_objects = $temp_array;
+        unset($temp_array);
+
 		$fields = array('related_collection_id', 'related_party_one_id', 'related_party_multi_id', 'related_activity_id', 'related_service_id');
 		foreach($fields as $f) $json[$f] = array();
         $fields = array('related_collection_search', 'related_party_one_search', 'related_party_multi_search', 'related_activity_search', 'related_service_search');
@@ -462,11 +485,10 @@ class Sync_extension extends ExtensionBase{
             $json[$f] = array();
         }
 
-        $related_objects = array_slice($related_objects, 0, 4000);
+        $related_objects = array_slice($related_objects, 0, 2000);
 
         foreach($related_objects as $related_object){
-            if($related_object['registry_object_id'] == null || !in_array($related_object['registry_object_id'], $processedIds))
-            {
+            if($related_object['registry_object_id'] == null || !in_array($related_object['registry_object_id'], $processedIds)) {
                 $processedIds[] = $related_object['registry_object_id'];
 
                 //relation
@@ -504,6 +526,8 @@ class Sync_extension extends ExtensionBase{
                 }
             }
 		}
+
+
 
         $json['alt_list_title'] = [];
         $json['alt_display_title'] = [];
@@ -585,9 +609,9 @@ class Sync_extension extends ExtensionBase{
             }
         }
 
+
         //Grants Structure Direct (helps with tree generation)
         $grantStructureParents = $this->ro->getParentsGrants(false, array(),false);
-
         if ($grantStructureParents && sizeof($grantStructureParents) > 0) {
             $json['relation_grants_isFundedBy_direct'] = '';
             $json['relation_grants_isPartOf_direct'] = '';

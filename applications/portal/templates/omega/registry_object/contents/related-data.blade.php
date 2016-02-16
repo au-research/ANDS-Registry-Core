@@ -20,6 +20,7 @@
             </span>
             </li>
         @endforeach
+
         @if($related['data']['count'] > 5)
             <li><a href="{{ $related['data']['searchUrl'] }}">View all {{ $related['data']['count'] }} related data</a></li>
         @endif

@@ -712,6 +712,8 @@ class Activity_grants_extension extends ExtensionBase
             if (sizeof($dataOutputs) > 0) {
                 $result = array_merge($result, $dataOutputs);
             }
+            unset($activityObject);
+            unset($dataOutputs);
         }
 
         //self

@@ -502,21 +502,21 @@ class Maintenance extends MX_Controller
 
     function fixRelationships($id)
     {
+        set_exception_handler('json_exception_handler');
         $this->load->model('registry_object/registry_objects', 'ro');
         $ro = $this->ro->getByID($id);
         $ro->sync();
-        $ro->cacheRelationshipMetadata();
         $ro->indexRelationship();
-        $relationships = $ro->getAllRelatedObjects(false, true, true);
+        $relationships = $ro->getAllRelatedObjects(false, false, true);
+        $relationships = array_merge($relationships, $ro->_getGrantsNetworkConnections($relationships));
         $already_sync = array();
         foreach ($relationships as $r) {
             if (!in_array($r['registry_object_id'], $already_sync)) {
                 $rr = $this->ro->getByID($r['registry_object_id']);
+                echo $rr->id . ' > ' . $rr->class . ' > ' . $rr->title . "\n";
                 $rr->sync();
-                $rr->cacheRelationshipMetadata();
-                $rr->indexRelationship();
                 $already_sync[] = $rr->id;
-                echo $rr->id . ' > ' . $rr->class . ' > ' . $rr->title . '<br/>';
+                unset($rr);
             }
         }
         echo 'done';

@@ -73,6 +73,7 @@ class Task
         $end = microtime(true);
         $this->setStatus('COMPLETED')
             ->log("Task finished at " . date($this->dateFormat, $end))
+            ->log("Peak memory usage: ". memory_get_peak_usage(). " bytes")
             ->log("Took: " . $this->formatPeriod($end, $start))
             ->save();
     }

@@ -296,7 +296,8 @@ class SyncTask extends Task
                         $remove_ids[] = $ro_id;
                     }
                     if ($ro && $ro->status == 'PUBLISHED') {
-                        // $this->log('Processing record '.$ro->id. ' Memory Usage: '.memory_get_usage())->save();
+//                         $this->log('Processing record '.$ro->id. ' Memory Usage: '.memory_get_usage())->save();
+
                         if (!$this->indexOnly) {
                             $ro->processIdentifiers();
                             $ro->addRelationships();
@@ -311,24 +312,17 @@ class SyncTask extends Task
                         // index portal documents
                         $solr_doc = $ro->indexable_json();
                         if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
-
-                            $serializedFoo = serialize($solr_doc);
-                            if (function_exists('mb_strlen')) {
-                                $size = mb_strlen($serializedFoo, '8bit');
-                            } else {
-                                $size = strlen($serializedFoo);
-                            }
-
-                            if ($size > 50000) {
+                            $size = $this->getSize($solr_doc);
+                            if ($size > 100000) {
                                 $this->log('Document for '. $ro->id. ' too big, flushing this document. Size: '. $size. ' bytes')->save();
                                 $this->indexSolr('portal', [$solr_doc]);
                             } else {
                                 $solr_docs[] = $solr_doc;
                             }
-
                         } else {
                             $this->log('Empty doc found for ROID:' . $ro->id);
                         }
+
 
                         // index relation document
                         $relation_doc = $ro->getRelationshipIndex();
@@ -338,7 +332,7 @@ class SyncTask extends Task
 
                         // flush if memory usage is too high, 50 MB
                         if (memory_get_usage() > 50000000) {
-                            $this->log('Memory usage too high, flushing documents');
+                            $this->log('Memory usage too high, flushing documents. Memory usage: '. memory_get_usage());
                             $this->indexSolr('portal', $solr_docs);
                             $solr_docs = [];
                             $this->indexSolr('relations', $relation_docs);
@@ -387,6 +381,16 @@ class SyncTask extends Task
         }
     }
 
+    private function getSize($payload){
+        $serializedFoo = serialize($payload);
+        if (function_exists('mb_strlen')) {
+            $size = mb_strlen($serializedFoo, '8bit');
+        } else {
+            $size = strlen($serializedFoo);
+        }
+        return $size;
+    }
+
     /**
      * Index into a SOLR core a set of documents
      *
@@ -408,7 +412,7 @@ class SyncTask extends Task
                     $docs = array_slice($solr_docs, $offset, $chunkSize);
                     $add_result = json_decode($this->ci->solr->add_json(json_encode($docs)), true);
                     if (isset($add_result['responseHeader']) && $add_result['responseHeader']['status'] === 0) {
-                        $this->log("Adding to SOLR successful $i/$numChunk")->save();
+                        $this->log("Adding to SOLR successful $core : $i/$numChunk")->save();
                     } else {
                         $this
                             ->log("Adding to SOLR failed: " . json_encode($add_result))
