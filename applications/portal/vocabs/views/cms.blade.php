@@ -203,6 +203,8 @@
 									<tr><th>Subject Source</th> <th>Subject Label</th><th></th></tr>
 								</thead>
 								<tr ng-repeat="subject in vocab.subjects track by $index">
+
+
 									<td style="border:none">
 										<select name="" id="" class="form-control caret-for-select" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="vocab.subjects[$index].subject_source">
 											<option value="">Select a source</option>
@@ -219,6 +221,13 @@
 									</td>
 								</tr>
 							</table>
+							<div ng-repeat="subject in vocab.subjects track by $index"
+								 subject-directive
+								 subject-type="vocab.subjects[$index].subject_source"
+								 subject-value="vocab.subjects[$index].subject"
+							>
+
+							</div>
 
 							<button class="btn btn-primary" type="button" ng-click="addtolist('subjects')"><i class="fa fa-plus"></i> Add Subject</button>
 

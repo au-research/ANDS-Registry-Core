@@ -212,9 +212,11 @@ class Vocabs extends MX_Controller
      * Edit a vocabulary
      * Displaying a view for editing a vocabulary
      * Using the same CMS as add but directed towards a vocabulary
-     * @todo ACL
-     * @param  string $slug slug of the vocabulary, unique for a vocabulary
+     *
+     * @todo    ACL
+     * @param bool|string $slug slug of the vocabulary, unique for a vocabulary
      * @return view
+     * @throws Exception
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      */
     public function edit($slug = false)
@@ -253,7 +255,7 @@ class Vocabs extends MX_Controller
         vocab_log_terms($event);
 
         $this->blade
-             ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl'))
+             ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl', 'subjectDirective'))
              ->set('vocab', $vocab)
              ->set('title', 'Edit - ' . $vocab->title . ' - Research Vocabularies Australia')
              ->render('cms');
