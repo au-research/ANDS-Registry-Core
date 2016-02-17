@@ -33,7 +33,7 @@ class Sync_extension extends ExtensionBase{
 				$r = $this->_CI->solr->add_json(json_encode($docs));
 				$r = $this->_CI->solr->commit();
 			}
-			$this->_dropCache();
+//			$this->_dropCache();
 		} catch (Exception $e) {
 			return 'error: '.$e;
 		}
@@ -487,6 +487,7 @@ class Sync_extension extends ExtensionBase{
 
         $related_objects = array_slice($related_objects, 0, 2000);
 
+
         foreach($related_objects as $related_object){
             if($related_object['registry_object_id'] == null || !in_array($related_object['registry_object_id'], $processedIds)) {
                 $processedIds[] = $related_object['registry_object_id'];
@@ -526,8 +527,6 @@ class Sync_extension extends ExtensionBase{
                 }
             }
 		}
-
-
 
         $json['alt_list_title'] = [];
         $json['alt_display_title'] = [];
