@@ -196,7 +196,10 @@ $(document).on(
         event.preventDefault();
         $(this).qtip(
             {
-                show: {event: 'click'},
+                show: {
+                    event: event.type,
+                    ready: 'true'
+                },
                 hide: {
                     delay: 1000,
                     fixed: true
@@ -216,10 +219,8 @@ $(document).on(
                     at: 'center right',
                     adjust: { mouse: false }
                 },
-                style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'},
-                show: {
-                    event: event.type,
-                    ready: 'true'
+                style: {
+                    classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
                 }
             },
             event
@@ -290,7 +291,10 @@ $(document).on(
         event.preventDefault();
         $(this).qtip(
             {
-                show: {event: 'click'},
+                show: {
+                    event: event.type,
+                    ready: 'true'
+                },
                 hide: {
                     delay: 1000,
                     fixed: true
@@ -330,10 +334,8 @@ $(document).on(
                 position: {target: 'mouse',
                     adjust: { mouse: false },
                     viewport: $(window) },
-                style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'},
-                show: {
-                    event: event.type,
-                    ready: 'true'
+                style: {
+                    classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
                 }
             },
             event
@@ -360,7 +362,10 @@ $(document).on(
         event.preventDefault();
         $(this).qtip(
             {
-                show: {event: 'click'},
+                show: {
+                    event: event.type,
+                    ready: 'true'
+                },
                 hide: {
                     delay: 1000,
                     fixed: true
@@ -396,10 +401,8 @@ $(document).on(
                 position: {target: 'mouse',
                     adjust: { mouse: false },
                     viewport: $(window) },
-                style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'},
-                show: {
-                    event: event.type,
-                    ready: 'true'
+                style: {
+                    classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
                 }
             },
             event
