@@ -259,7 +259,7 @@ class Registry_object extends MX_Controller
         }
 
         // construct the correct search query for each type of related
-        $relatedArray = ['data', 'programs', 'grants_projects', 'services', 'organisations'];
+        $relatedArray = ['data', 'programs', 'grants_projects', 'services', 'organisations', 'researchers'];
         foreach ($relatedArray as $rr) {
             $query = [];
             switch ($rr) {
@@ -277,6 +277,9 @@ class Registry_object extends MX_Controller
                     break;
                 case "organisations";
                     $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'party', 'type'=>'group'];
+                    break;
+                case "researchers":
+                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'party', 'nottype'=>'group'];
                     break;
             }
             $related[$rr]['searchUrl'] = constructPortalSearchQuery($query);

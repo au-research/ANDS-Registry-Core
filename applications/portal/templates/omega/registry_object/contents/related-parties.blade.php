@@ -1,93 +1,57 @@
-<?php
-
-if ($ro->core['class']=='party') {
-    if ($ro->core['type']=='person') {
-        $class = 'party_one';
-    } elseif ($ro->core['type']=='group') {
-        $class = 'party_multi';
-    }
-} else {
-    $class = $ro->core['class'];
-}
-
-$relatedSearchQuery = portal_url() . 'search/#!/related_' . $class . '_id=' . $ro->core['id'];
-if ($ro->identifiermatch && sizeof($ro->identifiermatch) > 0) {
-    foreach ($ro->identifiermatch as $mm) {
-        $relatedSearchQuery .= '/related_' . $class . '_id=' . $mm['registry_object_id'];
-    }
-}
-
-$showRelatedParties = ($ro->core['type']=='person' || $ro->core['type']=='group') ? false : true;
-
-$rightsStatement = false;
-
-if($ro->rights){
-    foreach($ro->rights as $right){
-        if($right['type']=='rightsStatement') $rightsStatement=true;
-    }
-}
-
-?>
-
-@if($ro->relationships && isset($ro->relationships['party_one']) && $showRelatedParties)
-    @foreach($ro->relationships['party_one'] as $col)
-        @if($col['slug'] && $col['registry_object_id'])
-            <?php
-            $description = '';
-            if (isset($col['relation_description']) && $col['relation_description'] != '') {
-                $description = 'tip="' . $col['relation_description'] . '"';
+@if( $ro->core['class']!='person' && $ro->core['class']!='group' )
+    @foreach($related['researchers']['docs'] as $col)
+        <?php
+            $hasRights = false;
+            if($ro->rights){
+                foreach($ro->rights as $right){
+                    if($right['type']=='rightsStatement') $hasRights=true;
+                }
             }
-            ?>
-            <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" {{$description}}
-               class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">
-            <?php
-            if($col['relation_type']=="hasCollector"||$col['relation_type']=="IsPrincipalInvestigatorOf"||$col['relation_type']=="author") {
-                ?> <span itemprop="author creator"> {{$col['title']}} </span> <?php
-            }elseif($col['relation_type']=="isParticipantIn") {
-                ?> <span itemprop="contributor"> {{$col['title']}} </span> <?php
-            }elseif($col['relation_type']=="isOwnerOf" && $rightsStatement) {
-                ?> <span itemprop="copyrightHolder"> {{$col['title']}} </span> <?php
+            $itemprop = false;
+
+            //construct itemprop
+            if ( in_array('hasCollector', $col['relation'])
+                || in_array('IsPrincipalInvestigatorOf', $col['relation'])
+                || in_array('author', $col['relation'])
+            ) {
+                $itemprop = "author creator";
+            } elseif ( in_array('isParticipantIn', $col['relation']) ) {
+                $itemprop = "contributor";
+            } elseif ( in_array('isOwnerOf', $col['relation']) && $hasRights) {
+                $itemprop = "copyrightHolder";
+            } elseif ( in_array('isOwnedBy', $col['relation']) ) {
+                $itemprop = "accountablePerson";
             }
-            elseif($col['relation_type']=="isOwnedBy") {
-                ?> <span itemprop="accountablePerson"> {{$col['title']}} </span> <?php
-            }else {
-                ?> {{$col['title']}} <?php ;
-            }?>
-                <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}})</small>
-            </a>
-        @elseif(isset($col['identifier_relation_id']))
-            <a href="<?php echo base_url()?>" class="ro_preview"
-               identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}
-            <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}})</small></a>
-        @endif
+        ?>
+
+        <a href="<?php echo base_url()?>{{$col['to_slug']}}/{{$col['to_id']}}"
+           tip="{{ $col['display_description'] }}"
+           class="ro_preview"
+           ro_id="{{$col['to_id']}}"
+           style="margin-right:5px;">
+            <span {{ $itemprop ? 'itemprop="'.$itemprop.'"' : '' }}>
+                {{ $col['to_title'] }}
+                <small>({{ $col['display_relationship'] }})</small>
+            </span>
+        </a>
     @endforeach
-    @if($ro->relationships['party_one_count'] > $relatedLimit)
-        <a href="{{$relatedSearchQuery}}/class=party/type=person">View
-            all {{$ro->relationships['party_one_count_solr']}} related parties</a></li>
+    @if($related['researchers']['count'] > 5)
+        <a href="{{ $related['researchers']['searchUrl'] }}">View all {{ $related['researchers']['count'] }} related researchers</a>
     @endif
-@endif
 
-@if($ro->relationships && !(isset($ro->relationships['party_one'])) && isset($ro->relationships['party_multi']) && $showRelatedParties)
-    @foreach($ro->relationships['party_multi'] as $col)
-        @if($col['slug'] && $col['registry_object_id'])
-            <?php
-            $description = '';
-            if (isset($col['relation_description']) && $col['relation_description'] != '') {
-                $description = 'tip="' . $col['relation_description'] . '"';
-            }
-            ?>
-            <a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" {{$description}}
-               class="ro_preview" ro_id="{{$col['registry_object_id']}}" style="margin-right:5px;">{{$col['title']}}
-                <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}})</small>
-            </a>
-        @elseif(isset($col['identifier_relation_id']))
-            <a href="<?php echo base_url()?>" class="ro_preview"
-               identifier_relation_id="{{$col['identifier_relation_id']}}">{{$col['title']}}
-            <small>({{readable($col['relation_type'],$col['origin'],$ro->core['class'],$col['class'])}})</small></a>
-        @endif
+    @foreach($related['organisations']['docs'] as $col)
+        <a href="<?php echo base_url()?>{{$col['to_slug']}}/{{$col['to_id']}}"
+           tip="{{ $col['display_description'] }}"
+           class="ro_preview"
+           ro_id="{{$col['to_id']}}"
+           style="margin-right:5px;">
+            <span {{ $itemprop ? 'itemprop="'.$itemprop.'"' : '' }}>
+                {{ $col['to_title'] }}
+                <small>({{ $col['display_relationship'] }})</small>
+            </span>
+        </a>
     @endforeach
-    @if($ro->relationships['party_multi_count'] > $relatedLimit)
-        <a href="{{$relatedSearchQuery}}/class=party/type=group">View
-            all {{$ro->relationships['party_multi_count_solr']}} related parties</a></li>
+    @if($related['organisations']['count'] > 5)
+        <a href="{{ $related['organisations']['searchUrl'] }}">View all {{ $related['organisations']['count'] }} related organisations</a>
     @endif
 @endif
