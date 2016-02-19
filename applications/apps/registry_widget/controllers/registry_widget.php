@@ -152,15 +152,15 @@ class Registry_widget extends MX_Controller{
 	function download($min=''){
 		$this->load->library('zip');
 		if($min=='minified'){
-			$this->zip->read_file('./applications/apps/registry_widget/assets/dist/registry_widget.min.css');
-			$this->zip->read_file('./applications/apps/registry_widget/assets/dist/registry_widget.min.js');
+			$this->zip->read_file('./applications/apps/registry_widget/assets/dist/registry_widget_v2.min.css');
+			$this->zip->read_file('./applications/apps/registry_widget/assets/dist/registry_widget_v2.min.js');
 		}elseif($min=='full'){
 			$this->zip->read_dir('./applications/apps/registry_widget/assets/css/', false);
 			$this->zip->read_dir('./applications/apps/registry_widget/assets/js/', false);
 			$this->zip->read_dir('./applications/apps/registry_widget/assets/dist/', false);
 		}else{
-			$this->zip->read_file('./applications/apps/registry_widget/assets/css/registry_widget.css');
-			$this->zip->read_file('./applications/apps/registry_widget/assets/js/registry_widget.js');
+			$this->zip->read_file('./applications/apps/registry_widget/assets/css/registry_widget_v2.css');
+			$this->zip->read_file('./applications/apps/registry_widget/assets/js/registry_widget_v2.js');
 		}
 		$this->zip->download('registry_widget.zip');
 	}
