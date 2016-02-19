@@ -142,7 +142,7 @@ class Registry_object extends MX_Controller
             //Do the rendering
             $this->blade
                 ->set('scripts', array('view', 'view_app', 'tag_controller'))
-                ->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
+                ->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map', 'graph_widget'))
                 ->set('relatedLimit', 5)
                 ->set('ro', $ro)
                 ->set('resolvedPartyIdentifiers', $resolvedPartyIdentifiers)
@@ -804,7 +804,7 @@ class Registry_object extends MX_Controller
         parent::__construct();
         $this->load->model('registry_objects', 'ro');
         $this->components = array(
-            'view' => array('descriptions', 'reuse-list', 'quality-list', 'dates-list', 'connectiontree', 'related-objects-list', 'spatial-info', 'subjects-list', 'related-metadata', 'identifiers-list'),
+            'view' => array('descriptions', 'reuse-list', 'quality-list', 'dates-list', 'graph_widget', 'connectiontree', 'related-objects-list', 'spatial-info', 'subjects-list', 'related-metadata', 'identifiers-list'),
             'aside' => array('rights-info', 'contact-info'),
             'view_headers' => array('title', 'related-parties'),
             'facet' => array('spatial', 'group', 'license_class', 'type', 'temporal', 'access_rights'),

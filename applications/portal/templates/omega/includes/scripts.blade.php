@@ -28,7 +28,7 @@
           })();
         </script>
     @endif
-    
+
 @endif
 
 <!-- Include the angularJS library since every page will needs it for the search script -->
@@ -67,7 +67,12 @@
             <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing&amp;sensor=false"></script>
         @elseif($l=='ngupload')
             <script type="text/javascript" src="{{asset_url('lib/ng-file-upload/angular-file-upload-all.min.js','core')}}"></script>
+        @elseif($l=='graph_widget')
+            <link rel='stylesheet' href="{{asset_url('lib/graph_widget/assets/css/graph_widget.css', 'core')}}">
+            <script type="text/javascript" src="{{asset_url('lib/graph_widget/core/assets/lib/d3/d3.min.js','core')}}"></script>
+            <script type="text/javascript" src="{{asset_url('lib/graph_widget/assets/js/graph_widget.js','core')}}"></script>
         @endif
+
 	@endforeach
 @endif
 
