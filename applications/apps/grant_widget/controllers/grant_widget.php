@@ -17,17 +17,17 @@ class Grant_widget extends MX_Controller {
 	function download($min=''){
 		$this->load->library('zip');
 		if($min=='minified'){
-			$this->zip->read_file('./applications/apps/grant_widget/assets/dist/grant_widget.min.css');
-			$this->zip->read_file('./applications/apps/grant_widget/assets/dist/grant_widget.min.js');
+			$this->zip->read_file('./applications/apps/grant_widget/assets/dist/grant_widget_v2.min.css');
+			$this->zip->read_file('./applications/apps/grant_widget/assets/dist/grant_widget_v2.min.js');
 		}elseif($min=='full'){
 			$this->zip->read_dir('./applications/apps/Grant_widget/assets/css/', false);
 			$this->zip->read_dir('./applications/apps/Grant_widget/assets/js/', false);
 			$this->zip->read_dir('./applications/apps/Grant_widget/assets/dist/', false);
 		}else{
-			$this->zip->read_file('./applications/apps/grant_widget/assets/css/grant_widget.css');
-			$this->zip->read_file('./applications/apps/grant_widget/assets/js/grant_widget.js');
+			$this->zip->read_file('./applications/apps/grant_widget/assets/css/grant_widget_v2.css');
+			$this->zip->read_file('./applications/apps/grant_widget/assets/js/grant_widget_v2.js');
 		}
-		$this->zip->download('Grant_widget.zip');
+		$this->zip->download('Grant_widget_v2.zip');
 	}
 
     private function JSONP($callback, $r){
