@@ -15,7 +15,7 @@ class Location_capture_widget extends MX_Controller {
 	}
 	
 	function demo()	{
-        $data['title'] = 'Grant Widget - ANDS';
+        $data['title'] = 'Location Capture Widget - ANDS';
         $data['js_lib'] = array('core', 'location_capture_widget', 'prettyprint','google_map');
         $data['scripts'] = array('location_capture_widget_loader');
 
