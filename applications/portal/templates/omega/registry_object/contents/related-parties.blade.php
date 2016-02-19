@@ -1,4 +1,4 @@
-@if( $ro->core['class']!='person' && $ro->core['class']!='group' )
+@if( $ro->core['class'] != 'party' && $ro->core['class'] !='group' )
     @foreach($related['researchers']['docs'] as $col)
         <?php
             $hasRights = false;
