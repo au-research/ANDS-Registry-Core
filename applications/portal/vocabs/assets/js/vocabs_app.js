@@ -1,14 +1,12 @@
+/*global location, $, angular, base_url */
 (function () {
     'use strict';
 
     angular
-        .module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'angular-loading-bar', 'angularFileUpload'])
+        .module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap',
+                        'ui.utils', 'angular-loading-bar', 'angularFileUpload'])
         .config(
-            function (
-                $interpolateProvider,
-                $locationProvider,
-                $logProvider
-            ) {
+            function ($interpolateProvider, $locationProvider, $logProvider) {
                 $interpolateProvider.startSymbol('[[');
                 $interpolateProvider.endSymbol(']]');
                 $locationProvider.hashPrefix('!');
@@ -94,6 +92,7 @@ $(document).on(
         children('.fa-caret-down');
         box_caret_right.hide();
         box_caret_down.show();
+        return undefined;
     }
 );
 
@@ -104,10 +103,7 @@ $(document).on(
         $(this).qtip(
             {
                 content: {
-                    text: function (
-                        e,
-                        api
-                    ) {
+                    text: function (e, api) {
                         var tip     = $(this).attr('tip');
                         var content = tip;
                         if (tip.indexOf('#') == 0 || tip.indexOf('.') == 0) {
@@ -127,11 +123,17 @@ $(document).on(
                     delay: 1000,
                     fixed: true
                 },
-                position: {target: 'mouse',
-                    adjust: { mouse: false,
-                        method: 'shift' },
-                    viewport: $(window) },
-                style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'}
+                position: {
+                    target: 'mouse',
+                    adjust: {
+                        mouse: false,
+                        method: 'shift'
+                    },
+                    viewport: $(window)
+                },
+                style: {
+                    classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
+                }
             }
         );
     }
@@ -145,14 +147,11 @@ $(document).on(
             function () {
                 $(this).data('qtip').destroy();
             }
-        )
+        );
         $(this).qtip(
             {
                 content: {
-                    text: function (
-                        e,
-                        api
-                    ) {
+                    text: function (e, api) {
                         var tip     = $(this).attr('concept-tip');
                         var content = tip;
                         if (tip.indexOf('#') == 0 || tip.indexOf('.') == 0) {
@@ -183,7 +182,9 @@ $(document).on(
                         resize: false
                     }
                 },
-                style: {classes: 'qtip-rounded qtip-blue concept-tip'}
+                style: {
+                    classes: 'qtip-rounded qtip-blue concept-tip'
+                }
             }
         );
     }
@@ -205,10 +206,7 @@ $(document).on(
                     fixed: true
                 },
                 content: {
-                    text: function (
-                        event,
-                        api
-                    ) {
+                    text: function (event, api) {
                         var box     = $(this).parents('.box-content');
                         var content = $('.download-content', box);
                         return content.html();
@@ -217,7 +215,9 @@ $(document).on(
                 position: {
                     my: 'center left',
                     at: 'center right',
-                    adjust: { mouse: false }
+                    adjust: {
+                        mouse: false
+                    }
                 },
                 style: {
                     classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
@@ -253,14 +253,13 @@ $(document).on(
         $(this).qtip(
             {
                 content: {
-                    text: function (
-                        e,
-                        api
-                    ) {
+                    text: function (e, api) {
                         var tip     = $(this).attr('confluence_tip');
                         var content = tip;
                         if ($('h2[id="' + tip.toString() + '"]').length) {
-                            content = $('h2[id="' + tip.toString() + '"]').parent().parent().parent().next().html();
+                            content = ($('h2[id="' + tip.toString()
+                                         + '"]').parent().parent().parent()
+                                       .next().html());
                         }
 
                         return content;
@@ -274,11 +273,17 @@ $(document).on(
                     delay: 1000,
                     fixed: true
                 },
-                position: {target: 'mouse',
-                    adjust: { mouse: false,
-                        method: 'shift' },
-                    viewport: $(window) },
-                style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap cms-help-tip'}
+                position: {
+                    target: 'mouse',
+                    adjust: {
+                        mouse: false,
+                        method: 'shift'
+                    },
+                    viewport: $(window)
+                },
+                style: {
+                    classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap cms-help-tip'
+                }
             }
         );
     }
@@ -300,17 +305,16 @@ $(document).on(
                     fixed: true
                 },
                 content: {
-                    text: function (
-                        event,
-                        api
-                    ) {
+                    text: function (event, api) {
                         api.elements.content.html('Loading...');
                         if ($(this).attr('related')) {
                             // return "we have some text for re "+$(this).attr('re_id');
-                            var url = (base_url + 'vocabs/related_preview/?related='
+                            var url = (base_url
+                                       + 'vocabs/related_preview/?related='
                                        + $(this).attr('related')
                                        + '&v_id=' + $(this).attr('v_id')
-                                       + '&sub_type=' + $(this).attr('sub_type'));
+                                       + '&sub_type='
+                                       + $(this).attr('sub_type'));
                         }
 
                         if (url) {
@@ -323,7 +327,8 @@ $(document).on(
                                     return content;
                                 },
                                 function (xhr, status, error) {
-                                    api.set('content.text', status + ': ' + error);
+                                    api.set('content.text',
+                                            status + ': ' + error);
                                 }
                             );
                         } else {
@@ -331,9 +336,13 @@ $(document).on(
                         }
                     }
                 },
-                position: {target: 'mouse',
-                    adjust: { mouse: false },
-                    viewport: $(window) },
+                position: {
+                    target: 'mouse',
+                    adjust: {
+                        mouse: false
+                    },
+                    viewport: $(window)
+                },
                 style: {
                     classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
                 }
@@ -342,18 +351,20 @@ $(document).on(
         );
     }
 );
+
 // Feedback button
 window.ATL_JQ_PAGE_PROPS = {
     "triggerFunction": function (showCollectorDialog) {
-        // Requries that jQuery is available!
-        jQuery(".feedback_button, .myCustomTrigger").click(
+        // Requires that jQuery is available!
+        $(".feedback_button, .myCustomTrigger").click(
             function (e) {
                 e.preventDefault();
                 showCollectorDialog();
             }
         );
 
-    }};
+    }
+};
 
 $(document).on(
     'click',
@@ -371,13 +382,12 @@ $(document).on(
                     fixed: true
                 },
                 content: {
-                    text: function (
-                        event,
-                        api
-                    ) {
+                    text: function (event, api) {
                         api.elements.content.html('Loading...');
                         if ($(this).attr('version')) {
-                            var url = base_url + 'vocabs/version_preview/?version=' + $(this).attr('version');
+                            var url = (base_url
+                                       + 'vocabs/version_preview/?version='
+                                       + $(this).attr('version'));
                         }
 
                         if (url) {
@@ -390,7 +400,8 @@ $(document).on(
                                     return content;
                                 },
                                 function (xhr, status, error) {
-                                    api.set('content.text', status + ': ' + error);
+                                    api.set('content.text',
+                                            status + ': ' + error);
                                 }
                             );
                         } else {
@@ -398,9 +409,13 @@ $(document).on(
                         }
                     }
                 },
-                position: {target: 'mouse',
-                    adjust: { mouse: false },
-                    viewport: $(window) },
+                position: {
+                    target: 'mouse',
+                    adjust: {
+                        mouse: false
+                    },
+                    viewport: $(window)
+                },
                 style: {
                     classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
                 }
