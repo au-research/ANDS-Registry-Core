@@ -20,7 +20,6 @@ class SyncTask extends Task
     private $target_id = false;
     private $chunkSize = 100;
     private $chunkPos = 0;
-    private $indexOnly = false;
     private $missingOnly = false;
     private $mode = 'sync';
 
@@ -116,11 +115,7 @@ class SyncTask extends Task
             $chunkArray = array();
             if ($this->missingOnly) {
                 $offset = ($i - 1) * $this->chunkSize;
-                $end = $i * $this->chunkSize;
-                if ($end > sizeof($ids)) {
-                    $end = sizeof($ids) - 1;
-                }
-                $chunkArray = array_slice($ids, $offset, $end);
+                $chunkArray = array_slice($ids, $offset, $data['chunkSize']);
                 $params['type'] = 'ro';
                 $params['id'] = implode(',', $chunkArray);
             } else {
@@ -318,10 +313,14 @@ class SyncTask extends Task
                             // index relation document
                             $relation_doc = $ro->getRelationshipIndex();
                             if ($relation_doc && is_array($relation_doc) && sizeof($relation_doc) > 0) {
-                                $relation_docs = array_merge($relation_docs, $relation_doc);
+                                if ($size > 100000) {
+                                    $this->log('Relation Document for '. $ro->id. ' too big, flushing this document. Size: '. $size. ' bytes')->save();
+                                    $this->indexSolr('relations', $relation_docs);
+                                } else {
+                                    $relation_docs = array_merge($relation_docs, $relation_doc);
+                                }
                             }
                         }
-
 
                         // flush if memory usage is too high, 50 MB
                         if (memory_get_usage() > 50000000) {

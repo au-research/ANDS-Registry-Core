@@ -372,15 +372,16 @@ class Connections_Extension extends ExtensionBase
      * Returns the records which is in the grants network connections of this record
      *
      * @param           $relatedObjects very important to pass in existing related objects here | recursion issue
-     * @param bool|true $publishedOnly
+     * @param bool      $recursive
      * @return mixed
+     * @internal param bool|true $publishedOnly
      */
-    public function _getGrantsNetworkConnections($relatedObjects, $publishedOnly = true)
+    public function _getGrantsNetworkConnections($relatedObjects, $recursive = false)
     {
         $result = [];
 
         //going down the tree
-        $childs = $this->ro->getChildActivities($relatedObjects);
+        $childs = $this->ro->getChildActivities($relatedObjects, array(), $recursive);
         foreach ($childs as &$child) {
             if ($child['origin'] == 'EXPLICIT') {
                 $child['origin'] = 'GRANTS';

@@ -451,15 +451,16 @@ class Maintenance extends MX_Controller
 //        $ro = $this->ro->getByID(518517);
 //        $ro = $this->ro->getByID(553796);
 //        $ro = $this->ro->getByID(553497);
-        $ro = $this->ro->getByID(189908);
+//        $ro = $this->ro->getByID(189908);
 //        $ro = $this->ro->getByID(400676);
+        $ro = $this->ro->getByID(574424);
 //        $ro = $this->ro->getByID(476461);
 
 //        $parents = $ro->getAllRelatedObjects();
 //        dd($parents);
         $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
-        $conn = $ro->_getGrantsNetworkConnections($relatedObjects);
-        dd($conn);
+        $relatedObjects = array_merge($relatedObjects, $ro->_getGrantsNetworkConnections($relatedObjects));
+        var_dump(sizeof($relatedObjects));
 //        $ro->getRelationshipIndex();
 //        $rels = $ro->getCachedRelationshipMetadata();
 
