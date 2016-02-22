@@ -21,6 +21,7 @@ class GrantsHandlerV2 extends Handler
 
         $params = $this->ci->input->get();
 
+
         //Only search for activity
         $this->ci->solr->setOpt('fq', '+class:"activity"');
 
@@ -44,7 +45,11 @@ class GrantsHandlerV2 extends Handler
         if ($identifier) {
             $this->ci->solr->setOpt('fq', '+identifier_value:("' . $identifier . '")');
         }
-
+        //individual id
+        $id = (isset($params['id'])) ? $params['id'] : null;
+        if ($id) {
+            $this->ci->solr->setOpt('fq', '+identifier_value:*'.urldecode($id).'*');
+        }
         //title
         $title = (isset($params['title'])) ? $params['title'] : null;
         if ($title) {
