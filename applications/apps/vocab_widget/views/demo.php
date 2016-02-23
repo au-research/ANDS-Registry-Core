@@ -52,6 +52,7 @@ $("#anzsrc-vocab").vocab_widget({
 $("#rifcs-idtype").vocab_widget({
     mode:"narrow",
     mode_params:"http://purl.org/au-research/vocabulary/RIFCS/1.4/RIFCSIdentifierType",
+    api_key:"myapikey",
     repository:"rifcs",
     cache: false,
     fields: ['definition'],

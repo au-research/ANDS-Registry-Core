@@ -70,11 +70,13 @@ class Dispatcher extends MX_Controller
 
         //check for versions
         /**
-         * @todo regex for matching version number
+         * @todo regex for matching version number may need improving
          */
-        if (strpos($params[0], "v") !== false) {
+
+        if(preg_match('/v[0-9].[0-9]/',$params[0])){
             $api_version = $params[0];
             array_shift($params);
+
         } else {
             //use latest version from application directive
             $directives = $this->config->item('application_directives');

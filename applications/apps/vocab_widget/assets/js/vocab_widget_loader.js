@@ -19,6 +19,7 @@ $(document).ready(function() {
     $("#rifcs-idtype-input").vocab_widget({mode:"narrow",
 					   mode_params:"http://purl.org/au-research/vocabulary/RIFCS/1.4/RIFCSIdentifierType",
 					   repository:"rifcs",
+                       api_key:"my_api_key",
 					   cache: false,
 					   fields: ['label', 'definition', 'about'],
 					   target_field: 'label'});
