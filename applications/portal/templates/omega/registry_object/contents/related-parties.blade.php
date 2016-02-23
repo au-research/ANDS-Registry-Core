@@ -1,27 +1,29 @@
 @if( $ro->core['class'] != 'party' && $ro->core['class'] !='group' )
     @foreach($related['researchers']['docs'] as $col)
         <?php
-            $hasRights = false;
-            if($ro->rights){
-                foreach($ro->rights as $right){
-                    if($right['type']=='rightsStatement') $hasRights=true;
-                }
+        $hasRights = false;
+        if($ro->rights){
+            foreach($ro->rights as $right){
+                if($right['type']=='rightsStatement') $hasRights=true;
             }
-            $itemprop = false;
+        }
+        $itemprop = false;
 
-            //construct itemprop
-            if ( in_array('hasCollector', $col['relation'])
+        //construct itemprop
+        if ( in_array('hasCollector', $col['relation'])
                 || in_array('IsPrincipalInvestigatorOf', $col['relation'])
                 || in_array('author', $col['relation'])
-            ) {
-                $itemprop = "author creator";
-            } elseif ( in_array('isParticipantIn', $col['relation']) ) {
-                $itemprop = "contributor";
-            } elseif ( in_array('isOwnerOf', $col['relation']) && $hasRights) {
-                $itemprop = "copyrightHolder";
-            } elseif ( in_array('isOwnedBy', $col['relation']) ) {
-                $itemprop = "accountablePerson";
-            }
+        ) {
+            $itemprop = "author creator";
+        } elseif ( in_array('isParticipantIn', $col['relation']) ) {
+            $itemprop = "contributor";
+        } elseif ( in_array('isOwnerOf', $col['relation']) && $hasRights) {
+            $itemprop = "copyrightHolder";
+        } elseif ( in_array('isOwnedBy', $col['relation']) ) {
+            $itemprop = "accountablePerson";
+        } else {
+            $itemprop = false;
+        }
         ?>
 
         <a href="<?php echo base_url()?>{{$col['to_slug']}}/{{$col['to_id']}}"
@@ -40,6 +42,33 @@
     @endif
 
     @foreach($related['organisations']['docs'] as $col)
+
+        <?php
+            $hasRights = false;
+            if($ro->rights){
+                foreach($ro->rights as $right){
+                    if($right['type']=='rightsStatement') $hasRights=true;
+                }
+            }
+            $itemprop = false;
+
+            //construct itemprop
+            if ( in_array('hasCollector', $col['relation'])
+                    || in_array('IsPrincipalInvestigatorOf', $col['relation'])
+                    || in_array('author', $col['relation'])
+            ) {
+                $itemprop = "author creator";
+            } elseif ( in_array('isParticipantIn', $col['relation']) ) {
+                $itemprop = "contributor";
+            } elseif ( in_array('isOwnerOf', $col['relation']) && $hasRights) {
+                $itemprop = "copyrightHolder";
+            } elseif ( in_array('isOwnedBy', $col['relation']) ) {
+                $itemprop = "accountablePerson";
+            } else {
+                $itemprop = false;
+            }
+        ?>
+
         <a href="<?php echo base_url()?>{{$col['to_slug']}}/{{$col['to_id']}}"
            tip="{{ $col['display_description'] }}"
            class="ro_preview"
