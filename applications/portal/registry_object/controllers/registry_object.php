@@ -289,6 +289,8 @@ class Registry_object extends MX_Controller
             // fix count in case not all records are synced correctly
             if (array_key_exists('count', $related[$rr]) && $related[$rr]['count'] > 5) {
                 $related[$rr]['count'] = $this->getSolrCountForQuery($query);
+            } elseif (!array_key_exists('count', $related[$rr])) {
+                $related[$rr]['count'] = 0;
             }
 
             if (!array_key_exists('docs', $related[$rr])) {
