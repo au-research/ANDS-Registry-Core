@@ -133,6 +133,7 @@ function getReverseRelationshipString($relation) {
 		case "isPrincipalInvestigatorOf" : return "hasPrincipalInvestigator"; break;
 		case "isLocatedIn" : return "isLocationFor"; break;
 		case "isLocationFor" : return "isLocatedIn"; break;
+		case "manages": return "isManagedBy" ; break;
 		case "isManagedBy" : return "isManagerOf"; break;
 		case "isManagerOf" : return "isManagedBy"; break;
 		case "isOutputOf" : return "hasOutput"; break;
