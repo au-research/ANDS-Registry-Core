@@ -728,7 +728,7 @@
 		.attr('data-vocab-node', item.about);
 
 		if(this.settings.display_count){
-	    	titem.html('<span>'+item['label']+'</span>' + ' (' + item['count'] + ')');
+	    	titem.html('<span>'+item['label']+'</span>' );
 	    }else{
 	    	titem.html('<span>'+item['label']+'</span>');
 	    }

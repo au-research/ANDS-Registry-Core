@@ -156,11 +156,7 @@ class Vocab_api
                 function($e) {
                     return $e !== false;
                 }));
-            if (is_callable($this->valid_actions[$this->action]['itemprocessor']))
-            {
-                $this->jsonData['items'] = call_user_func($this->valid_actions[$this->action]['itemprocessor'],
-                    $this->jsonData['items']);
-            }
+
             $this->jsonData['count'] = count($this->jsonData['items']);
 
 
