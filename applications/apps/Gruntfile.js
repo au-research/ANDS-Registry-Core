@@ -24,8 +24,11 @@ module.exports = function(grunt){
                 files:{'<%= yeoman.registry_widget %>/dist/registry_widget_v2.min.js':['<%= yeoman.registry_widget %>/js/registry_widget_v2.js']}
             },
 			vocab_widget:{
-				files:{'<%= yeoman.vocab_widget %>/dist/vocab_widget.min.js':['<%= yeoman.vocab_widget %>/js/vocab_widget.js']}
-			},
+                files:{'<%= yeoman.vocab_widget %>/dist/vocab_widget.min.js':['<%= yeoman.vocab_widget %>/js/vocab_widget.js']}
+            },
+            vocab_widget_v2:{
+                files:{'<%= yeoman.vocab_widget %>/dist/vocab_widget_v2.min.js':['<%= yeoman.vocab_widget %>/js/vocab_widget.js']}
+            },
 			location_widget:{
 				files:{'<%= yeoman.location_widget %>/dist/location_capture_widget.min.js':['<%= yeoman.location_widget %>/js/location_capture_widget.js']}
 			},
@@ -58,9 +61,13 @@ module.exports = function(grunt){
                 dest:'<%= yeoman.registry_widget %>/dist/registry_widget_v2.min.css'
             },
 			vocab_widget:{
-				src:'<%= yeoman.vocab_widget %>/css/vocab_widget.css',
-				dest:'<%= yeoman.vocab_widget %>/dist/vocab_widget.min.css'
-			},
+                src:'<%= yeoman.vocab_widget %>/css/vocab_widget.css',
+                dest:'<%= yeoman.vocab_widget %>/dist/vocab_widget.min.css'
+            },
+            vocab_widget_v2:{
+                src:'<%= yeoman.vocab_widget %>/css/vocab_widget_v2.css',
+                dest:'<%= yeoman.vocab_widget %>/dist/vocab_widget_v2.min.css'
+            },
 			location_widget:{
 				src:'<%= yeoman.location_widget %>/css/location_capture_widget.css',
 				dest:'<%= yeoman.location_widget %>/dist/location_capture_widget.min.css'

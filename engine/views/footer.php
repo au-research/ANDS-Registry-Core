@@ -102,7 +102,7 @@ $base_url = str_replace('/apps','/registry',base_url());
 
         <?php elseif($lib=='vocab_widget'):?>
             <link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget.css'); ?>">
-            <script src="<?php echo apps_url('assets/vocab_widget/js/vocab_widget.js'); ?>"></script>
+            <script src="<?php echo apps_url('assets/vocab_widget/js/vocab_widget_v2.js'); ?>"></script>
 
        <?php elseif($lib=='orcid_widget'):?>
             <link href="<?php echo apps_url('assets/orcid_widget/css/orcid_widget_v2.css');?>" rel="stylesheet" type="text/css">
