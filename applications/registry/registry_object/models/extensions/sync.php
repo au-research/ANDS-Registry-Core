@@ -30,8 +30,9 @@ class Sync_extension extends ExtensionBase{
 			if($this->ro->status=='PUBLISHED'&&!($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria")){
 				$docs = array();
 				$docs[] = $this->indexable_json($conn_limit);
-				$r = $this->_CI->solr->add_json(json_encode($docs));
-				$r = $this->_CI->solr->commit();
+                $this->_CI->solr->init()->setCore('portal');
+				$r1 = $this->_CI->solr->add_json(json_encode($docs));
+				$r2 = $this->_CI->solr->commit();
 			}
 //			$this->_dropCache();
 		} catch (Exception $e) {
@@ -497,6 +498,7 @@ class Sync_extension extends ExtensionBase{
                 if (startsWith($related_object['origin'], 'REVERSE')) {
                     $relationType = getReverseRelationshipString($related_object['relation_type']);
                 }
+                $relationType = url_title($relationType);
                 $relationIndexKey = 'relationType_'.$relationType.'_id';
 
                 if (!array_key_exists($relationType, $json)) {
