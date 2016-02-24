@@ -27,13 +27,10 @@ class Sync_extension extends ExtensionBase{
             if($this->ro->status == PUBLISHED){
                 $this->ro->processLinks();
             }
-			if($this->ro->status=='PUBLISHED'&&!($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria")){
-				$docs = array();
-				$docs[] = $this->indexable_json($conn_limit);
-                $this->_CI->solr->init()->setCore('portal');
-				$r1 = $this->_CI->solr->add_json(json_encode($docs));
-				$r2 = $this->_CI->solr->commit();
-			}
+
+            $this->index_solr();
+            $this->indexRelationship();
+
 //			$this->_dropCache();
 		} catch (Exception $e) {
 			return 'error: '.$e;
@@ -44,9 +41,11 @@ class Sync_extension extends ExtensionBase{
 	function index_solr() {
 		try{
 			$this->_CI->load->library('solr');
-			if($this->ro->status=='PUBLISHED'&&!($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria")){
+            $this->_CI->solr->init()->setCore('portal');
+			if($this->shouldIndex()){
 				$docs = array();
 				$docs[] = $this->indexable_json();
+                $this->_CI->solr->deleteByQueryCondition('id:'.$this->ro->id);
 				$this->_CI->solr->add_json(json_encode($docs));
 				$this->_CI->solr->commit();
 			}
@@ -64,7 +63,7 @@ class Sync_extension extends ExtensionBase{
             $this->_CI->load->library('solr');
             if($this->shouldIndex()){
                 $docs = $this->ro->getRelationshipIndex();
-                $this->_CI->solr->setCore('relations');
+                $this->_CI->solr->init()->setCore('relations');
                 $this->_CI->solr->deleteByQueryCondition('from_id:'.$this->ro->id);
                 $this->_CI->solr->add_json(json_encode($docs));
                 $this->_CI->solr->commit();
