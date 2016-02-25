@@ -286,6 +286,7 @@ class Core_extension extends ExtensionBase
 				}
 
 				$this->ro->index_solr();
+                $this->ro->indexRelationship();
 
 				if ($error_log = $this->_CI->importer->getErrors())
 				{
@@ -314,7 +315,7 @@ class Core_extension extends ExtensionBase
 			//remove the record from the index
 			$this->_CI->solr->deleteByQueryCondition('id:'.$this->ro->id);
 		}
-		$this->ro->sync();
+
 		$this->_initAttribute("original_status", $target_status);
 	}
 
