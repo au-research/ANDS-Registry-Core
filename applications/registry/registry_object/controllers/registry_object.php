@@ -280,6 +280,8 @@ class Registry_object extends MX_Controller {
 			$ro = $ro[0];
 		}
 
+		$ro->sync();
+
 		$qa = $ds->qa_flag==DB_TRUE ? true : false;
 		$manual_publish = $ds->manual_publish==DB_TRUE ? true: false;
 
