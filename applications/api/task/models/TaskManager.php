@@ -242,7 +242,7 @@ class TaskManager
          * Find random 50 records and sync them (maintain synchronisity)
          * Fix bad records (records that are in the index but not in database)
          */
-        $limit = 50;
+        $limit = 10;
 
         $this->ci->load->library('solr');
 
