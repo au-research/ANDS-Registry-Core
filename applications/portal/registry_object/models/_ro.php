@@ -105,6 +105,12 @@ class _ro
         $ci =& get_instance();
         $ci->load->driver('cache');
 
+        // special case, we only want to get core, this speeds up various parts of our code
+        // other bit still needs everything for consistency and simplicity
+        if (sizeof($params) == 1 && $params[0] == 'core') {
+            $url.='core';
+        }
+
         //refresh the cache when required
         if ($ci->input->get('refresh')) {
             $ci->cache->file->delete($cache_id);
