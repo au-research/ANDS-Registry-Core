@@ -515,6 +515,11 @@ class SyncTask extends Task
         $this->missingOnly = isset($params['missingOnly']) ? $params['missingOnly'] : false;
         $modules = isset($params['includes']) ? $params['includes'] : false;
 
+        // if no module is defined, include all
+        if (!$modules) {
+            $modules = 'enrich,index';
+        }
+
         $modules = explode(',', $modules);
         if (in_array('enrich', $modules)) {
             $modules = array_merge($modules, ['processIdentifiers', 'addRelationships', 'updateQualityMetadata', 'processLinks']);
