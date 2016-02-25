@@ -314,7 +314,7 @@ class Core_extension extends ExtensionBase
 			//remove the record from the index
 			$this->_CI->solr->deleteByQueryCondition('id:'.$this->ro->id);
 		}
-
+		$this->ro->sync();
 		$this->_initAttribute("original_status", $target_status);
 	}
 
