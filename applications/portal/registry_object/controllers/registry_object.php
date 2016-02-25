@@ -253,7 +253,7 @@ class Registry_object extends MX_Controller
         // search class for constructing search queries
         $searchClass = $ro->core['class'];
         if ($ro->core['class'] == 'party') {
-            if (strtolower($ro->core['type']) == 'person') {
+            if (strtolower($ro->core['type']) == 'person' || strtolower($ro->core['type'])=='administrativeposition') {
                 $searchClass = 'party_one';
             } elseif (strtolower($ro->core['type']) == 'group') {
                 $searchClass = 'party_multi';
