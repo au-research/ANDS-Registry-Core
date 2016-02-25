@@ -282,13 +282,13 @@ class Relationships_Extension extends ExtensionBase
                 'from_key' => $this->ro->key,
                 'from_status' => $this->ro->status,
                 'from_title' => $this->ro->title,
-                'from_class' => $this->ro->class,
-                'from_type' => $this->ro->type,
+                'from_class' => strtolower(trim($this->ro->class)),
+                'from_type' => strtolower(trim($this->ro->type)),
                 'from_slug' => $this->ro->slug,
                 'to_id' => isset($rel['registry_object_id']) && $rel['registry_object_id']!='' ? $rel['registry_object_id'] : false,
                 'to_key' => isset($rel['key']) ? $rel['key'] : false,
-                'to_class' => isset($rel['class']) ? $rel['class'] : false,
-                'to_type' => isset($rel['type']) ? $rel['type'] : false,
+                'to_class' => isset($rel['class']) ? strtolower(trim($rel['class'])) : false,
+                'to_type' => isset($rel['type']) ? strtolower(trim($rel['type'])) : false,
                 'to_title' => isset($rel['title']) ? $rel['title'] : false,
                 'to_slug' => isset($rel['slug']) ? $rel['slug'] : false
             ];
