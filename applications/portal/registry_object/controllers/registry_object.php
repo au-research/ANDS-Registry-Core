@@ -329,6 +329,7 @@ class Registry_object extends MX_Controller
 
             $this->blade
                 ->set('ro', $ro)
+                ->set('related', $this->getRelationship($ro))
                 ->set('omit', $omit)
                 ->render('registry_object/preview');
         } elseif ($this->input->get('identifier_relation_id')) {
