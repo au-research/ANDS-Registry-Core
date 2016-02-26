@@ -124,56 +124,60 @@ class SyncTask extends Task
                 $params['chunkPos'] = $i;
             }
 
-            // spawn an enrich task only
-            $params['includes'] = 'enrich';
-            $name = "Enrich ";
+            /**
+             * Spawn separate enrich and index task if includes contain enrich and index
+             */
 
-            if ($this->missingOnly) {
-                $name .= "Missing ";
+            if ($this->includes('enrich') || $this->includes('index')) {
+                if ($this->includes('enrich')) {
+                    $params['includes'] = 'enrich';
+                    $task = array(
+                        'name' => $this->getName("Enrich", $params, $i, $data['numChunk'], $chunkArray),
+                        'priority' => 8,
+                        'frequency' => 'ONCE',
+                        'type' => 'POKE',
+                        'params' => http_build_query($params),
+                    );
+                    $this->taskManager->addTask($task);
+                    $this->log('Added an enrich task for Data Source '.$dsID. " for ".$data['total']. 'records');
+                }
+                if ($this->includes('index')) {
+                    $params['includes'] = 'index';
+                    $task = array(
+                        'name' => $this->getName("Index", $params, $i, $data['numChunk'], $chunkArray),
+                        'priority' => 10,
+                        'frequency' => 'ONCE',
+                        'type' => 'POKE',
+                        'params' => http_build_query($params),
+                    );
+                    $this->taskManager->addTask($task);
+                    $this->log('Added an enrich task for Data Source '.$dsID. " for ".$data['total']. 'records');
+                }
+            } else {
+                //spawn task based on available modules
+                $params['includes'] = implode(',', $this->modules);
+                $task = array(
+                    'name' => $this->getName($params['includes'], $params, $i, $data['numChunk'], $chunkArray),
+                    'params' => http_build_query($params),
+                    'priority' => 8, 'frequency' => 'ONCE', 'type' => 'POKE',
+                );
+                $this->taskManager->addTask($task);
+                $this->log('Added a task for Data Source '.$dsID. " for ".$data['total']. 'records');
             }
-            if ($params['type'] == 'ds') {
-                $name .= " Data Source " . $params['id'] . '(' . $i . '/' . $data['numChunk'] . ')';
-            } elseif ($params['type'] == 'ro') {
-                $name .= sizeof($chunkArray) . " Records";
-            }
-
-            //adding enrich task
-            $task = array(
-                'name' => $name,
-                'priority' => 8,
-                'frequency' => 'ONCE',
-                'type' => 'POKE',
-                'params' => http_build_query($params),
-            );
-            $this->taskManager->addTask($task);
-            $this->log('Added an enrich task for Data Source '.$dsID. " for ".$data['total']. 'records');
-
-            // and then spawn an index task only
-            $params['includes'] = 'index';
-            // spawn an enrich task only
-            $params['includes'] = 'index';
-            $name = "Index ";
-
-            if ($this->missingOnly) {
-                $name .= "Missing ";
-            }
-
-            if ($params['type'] == 'ds') {
-                $name .= " Data Source " . $params['id'] . '(' . $i . '/' . $data['numChunk'] . ')';
-            } elseif ($params['type'] == 'ro') {
-                $name .= sizeof($chunkArray) . " Records";
-            }
-
-            $task = array(
-                'name' => $name,
-                'priority' => 10,
-                'frequency' => 'ONCE',
-                'type' => 'POKE',
-                'params' => http_build_query($params),
-            );
-            $this->taskManager->addTask($task);
-            $this->log('Added an index task for Data Source '.$dsID. " for ".$data['total']. 'records');
         }
+    }
+
+    private function getName($operation, $params, $chunkPos, $numChunk, $chunkArray){
+        $name = $operation. " ";
+        if ($this->missingOnly) {
+            $name .= "Missing ";
+        }
+        if ($params['type'] == 'ds') {
+            $name .= " Data Source " . $params['id'] . '(' . $chunkPos . '/' . $numChunk . ')';
+        } elseif ($params['type'] == 'ro') {
+            $name .= sizeof($chunkArray). " Records";
+        }
+        return $name;
     }
 
 
