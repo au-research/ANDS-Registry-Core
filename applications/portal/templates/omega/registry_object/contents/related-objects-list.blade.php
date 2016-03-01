@@ -1,13 +1,12 @@
 <?php
     $hasRelated = false;
     foreach ($related as $rr) {
-        if (sizeof($rr['docs']) > 0) $hasRelated = true;
+        if ($rr != $related['researchers'] && sizeof($rr['docs']) > 0) $hasRelated = true;
     }
 ?>
 @if($hasRelated)
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
         <div class="panel-body swatch-white">
-
             {{--Related Publications--}}
             @if (isset($related['publications']) && sizeof($related['publications']['docs']) > 0)
                 @include('registry_object/contents/related-publications')

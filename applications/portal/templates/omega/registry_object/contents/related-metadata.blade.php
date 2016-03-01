@@ -70,6 +70,14 @@
             @elseif(!in_array($relatedInfo['type'],$notTypes) && isset($relatedInfo['identifier']['identifier_value']) && !in_array(trim($relatedInfo['identifier']['identifier_value']), $resolvedPartyIdentifiers))
 
                 <h5> {{$relatedInfo['title']}}</h5>
+            <p>
+                <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                @if($relatedInfo['identifier']['identifier_href']['href'])
+                <a href="{{$relatedInfo['identifier']['identifier_href']['href']}}">{{$relatedInfo['identifier']['identifier_value']}}</a>{{$relatedInfo['identifier']['identifier_href']['display_icon']}}<br />
+                @else
+                {{$relatedInfo['identifier']['identifier_value']}}
+                @endif
+            </p>
 
                 @if($relatedInfo['relation']['url'])
                 <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
