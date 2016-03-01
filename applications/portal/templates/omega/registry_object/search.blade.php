@@ -74,7 +74,7 @@
                             [[ doc.description | text | truncate:500 ]]
                         </p>
                         <div ng-if="doc.administering_institution">
-                            <b>Managing Institution</b>: [[ doc.administering_institution.join(',') | toTitleCase ]]
+                            <b>Managing Institution</b>: [[ doc.administering_institution.join(',')]]
                         </div>
                         <div ng-if="doc.researchers" class="oneLineTruncate" tip="[[doc.researchers.join(', ')]]">
                             <b>Researchers: </b> [[doc.researchers.join(', ')]]
