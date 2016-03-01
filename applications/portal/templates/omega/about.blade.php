@@ -61,7 +61,7 @@ $banner = isset($banner) ? $banner : asset_url('images/collection_banner.jpg', '
                 <div class="col-md-2 not-condensed os-animation animated fadeInUp swatch-gray data-os-animation-delay"> </div>
                 <div class="col-md-8 not-condensed os-animation animated fadeInUp swatch-gray data-os-animation-delay" style="-webkit-animation: 0s;padding-top:30px;padding-bottom:50px">
                     <div style="-webkit-animation: 0s;padding-left:50px">
-                        <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;color:#000000">More than just a search engine</h>
+                        <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;color:#000000">More than just a search engine</h1>
                     </div>
                     <div style="padding-left:50px;padding-right:50px">
                         <p>A single search in Research Data Australia retrieves data resources across a wide range of subjects and providers, so that you can: </p>
@@ -89,7 +89,7 @@ $banner = isset($banner) ? $banner : asset_url('images/collection_banner.jpg', '
             </div>
 
 
-        <div class="col-md-12 swatch-black" style="background-image: url({{$banner}}); background-size: cover; background-repeat: no-repeat;" class="background-media skrollable skrollable-between">
+        <div class="col-md-12 swatch-black background-media skrollable skrollable-between" style="background-image: url({{$banner}}); background-size: cover; background-repeat: no-repeat;">
             <div class="col-md-2"> </div>
             <div class="col-md-8 not-condensed os-animation animated fadeInUp" style="-webkit-animation: 0s;padding-top:30px;padding-bottom:50px">
                 <div class="col-md-6 text-center not-condensed os-animation animated fadeInUp">
@@ -112,7 +112,7 @@ $banner = isset($banner) ? $banner : asset_url('images/collection_banner.jpg', '
                 <div class="col-md-2 not-condensed os-animation animated fadeInUp swatch-gray"> </div>
                 <div class="col-md-8 not-condensed os-animation animated fadeInUp swatch-gray" style="-webkit-animation: 0s;padding-top:30px;padding-bottom:50px">
                     <div class="text-center" style="-webkit-animation: 0s;">
-                        <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;color:#000000">Learn more</h>
+                        <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;color:#000000">Learn more</h1>
                     </div>
                     <div class="row " data-os-animation="" data-os-animation-delay="">
                         <div class="col-md-4 ">

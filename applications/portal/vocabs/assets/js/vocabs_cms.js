@@ -23,7 +23,7 @@
         // Initialize sections that can have multiple instances.
         // Note the distinction between sections which are optional,
         // and those for which there must be at least one instance.
-        $scope.vocab = {top_concept: [], subjects: [{ subject_source: "", subject:"" }], language: [""]};
+        $scope.vocab = {top_concept: [], subjects: [{ subject_source: "", subject_label:"" , subject_uri:"" , subject_notation:""}], language: [""]};
         /**
          * Collect all the user roles, for vocab.owner value
          */
@@ -52,7 +52,6 @@
             {"value": "es", "text": "Spanish"}
         ];
         $scope.licence = ["CC-BY", "CC-BY-SA", "CC-BY-ND", "CC-BY-NC", "CC-BY-NC-SA", "CC-BY-NC-ND", "ODC-By", "GPL", "AusGoalRestrictive", "NoLicence", "Unknown/Other"];
-        $scope.subject_sources = ['ANZSRC-FOR', 'local'];
 
         $scope.opened = false;
         $scope.decide = false;
@@ -258,7 +257,7 @@
 
                             $scope.vocab.subjects = [];
                             angular.forEach(chosen, function (theone) {
-                                $scope.vocab.subjects.push({subject: theone, subject_source: 'local'});
+                                $scope.vocab.subjects.push({subject_label: theone, subject_source: 'local'});
                             });
                         }
                         if (data['dcterms:language']) {
@@ -580,7 +579,7 @@
             var newValue;
             // 'subjects' has two parts; special treatment.
             if (list == 'subjects') {
-                newValue = {subject_source: '', subject: ''};
+                newValue = {subject_source: '', subject_label: '', subject_uri: '', subject_notation: ''};
             } else {
                 // Otherwise ('language' and 'top_concept') ...
                 newValue = '';
@@ -588,7 +587,17 @@
 
             // Add new blank item to list.
             $scope.vocab[list].push(newValue);
+            if (list == 'subjects') {
+                $scope.subjectVocabLength = $scope.vocab['subjects'].length;
+            }
+
         };
+
+        $scope.$on('removeVocabSubject', function(ev, data){
+
+           $scope.list_remove('subjects', data);
+           $scope.subjectVocabLength = $scope.vocab['subjects'].length;
+        });
 
         /**
          * Remove an item from a multi-valued list. The list
@@ -619,7 +628,7 @@
                     $scope.vocab[type] = [""];
                     break;
                 case 'subjects':
-                    $scope.vocab[type] = [{ subject_source: "", subject:"" }];
+                    $scope.vocab[type] = [{ subject_source: "", subject_label:"" }];
                     break;
                 default:
                 }
@@ -669,8 +678,8 @@
         $scope.valid_subject_filter = function(el) {
             return ('subject_source' in el) &&
                 ($scope.is_non_empty_string(el.subject_source)) &&
-                ('subject' in el) &&
-                ($scope.is_non_empty_string(el.subject));
+                ('subject_label' in el) &&
+                ($scope.is_non_empty_string(el.subject_label));
         }
 
         /** Filter function for one subject object. Returns true
@@ -680,8 +689,8 @@
         $scope.partially_valid_subject_filter = function(el) {
             return (('subject_source' in el) &&
                     ($scope.is_non_empty_string(el.subject_source))) ||
-                (('subject' in el) &&
-                 ($scope.is_non_empty_string(el.subject)));
+                (('subject_label' in el) &&
+                 ($scope.is_non_empty_string(el.subject_label)));
         }
 
         /** Filter function for one subject object. Returns true
@@ -691,8 +700,8 @@
         $scope.only_partially_valid_subject_filter = function(el) {
             return (('subject_source' in el) &&
                     ($scope.is_non_empty_string(el.subject_source))) !=
-                (('subject' in el) &&
-                 ($scope.is_non_empty_string(el.subject)));
+                (('subject_label' in el) &&
+                 ($scope.is_non_empty_string(el.subject_label)));
         }
 
         /** Utility function for validation of subjects. In order
@@ -781,5 +790,8 @@ RewriteRule ^/ands_doc/tooltips$  /ands_doc/pages/viewpage.action?pageId=2247884
             });
         };
     });
+
+
+
 
 })();

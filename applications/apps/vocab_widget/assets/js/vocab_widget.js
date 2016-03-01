@@ -26,7 +26,7 @@
 
 	var defaults = {
 	    //location (absolute URL) of the jsonp proxy
-	    endpoint: 'http://researchdata.ands.org.au/apps/vocab_widget/proxy/',
+	    endpoint: 'https://researchdata.ands.org.au/apps/vocab_widget/proxy/',
 
 	    //sisvoc repository to query.
 	    repository: '',
@@ -589,6 +589,7 @@
 	    var target = $(event.target);
 	    var data = target.is('li') ? target.data(WIDGET_DATA)
 		: target.parent().data(WIDGET_DATA);
+        $(this._container).trigger('searchselect.vocab.ands', data);
 
 	    if (typeof(data[this.settings.target_field]) !== 'undefined') {
 		this._container.val(data[this.settings.target_field]);
@@ -625,12 +626,14 @@
 	},
 
 	detach: function() {
+        alert("unbinding");
 	    this._container.empty();
 	},
 
 	do_ready: function() {
 	    var handler = this;
 	    var elem = $("<div />");
+
 	    var treelist = $('<ul />').addClass('vocab_tree');
 	    elem.append(treelist);
 
@@ -647,15 +650,21 @@
 		var sublist = $('<ul />');
 		subitem.append(sublist);
 		$.each(data.items, function(idx, item) {
+
 		    handler._treeitems(sublist, idx, item);
 		});
 	    });
 
 	    handler._container.on('top.vocab.ands', function(event, data) {
-		$.each(data.items, function(idx, item) {
-		    handler._treeitems(treelist, idx, item);
-		});
-	    });
+            if(!(data) || !(data.count) || data.count == 0){
+
+                $(handler._container).trigger('error.vocab.ands', data);
+            }
+
+            $.each(data.items, function(idx, item) {
+                handler._treeitems(treelist, idx, item);
+            });
+            });
 
 	    handler._top();
 	    handler._container.append(elem);
@@ -965,6 +974,7 @@
 	},
 
 	detach: function() {
+        alert("detaching");
 	    this._container.unbind("keydown");
 	},
 
