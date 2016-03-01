@@ -289,6 +289,9 @@ class Vocabs extends MX_Controller
                 break;
             case 'privacy':$title = 'Privacy';
                 break;
+            case 'widget_explorer':$title = 'Vocab Widget Explorer';
+                $this->blade->set('scripts', array('widgetDirective', 'vocabDisplayDirective', 'conceptDisplayDirective'));
+                break;
         }
         $this->blade
              ->set('title', $title . ' - Research Vocabularies Australia')
@@ -312,17 +315,18 @@ class Vocabs extends MX_Controller
         $this->load->library('solr');
         $this->solr->setUrl('http://localhost:8983/solr/vocabs/');
 
-        $pp = 10;
+        $pp = array_key_exists('pp', $filters) ? $filters['pp'] : 10;
         $start = 0;
 
         //facets
         $this->solr
-             ->setFacetOpt('field', 'subjects')
+             ->setFacetOpt('field', 'subject_labels')
              ->setFacetOpt('field', 'publisher')
              ->setFacetOpt('field', 'language')
              ->setFacetOpt('field', 'access')
              ->setFacetOpt('field', 'format')
              ->setFacetOpt('field', 'licence')
+             ->setFacetOpt('field', 'widgetable')
              ->setFacetOpt('sort', 'index asc')
              ->setFacetOpt('mincount', '1');
         if($filters){
@@ -356,12 +360,13 @@ class Vocabs extends MX_Controller
                         }
                         $this->solr->setOpt('start', $start);
                         break;
-                    case 'subjects':
+                    case 'subject_labels':
                     case 'publisher':
                     case 'access':
                     case 'format':
                     case 'language':
                     case 'licence':
+                    case 'widgetable':
                         if (is_array($value)) {
                             $fq_str = '';
                             foreach ($value as $v) {
