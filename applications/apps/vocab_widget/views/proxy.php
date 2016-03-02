@@ -45,6 +45,17 @@ define("BROAD_URL", "/concept/broader.json?uri="); #future use
 define("TOP_URL", "/concept/topConcepts.json");
 define("MAX_RESULTS", 200); #sisvoc only returns 200 items
 
+// logging of calls to legacy version of our services and widgets to flat file logging - added 09/02/2016
+
+require_once (API_APP_PATH.'core/helpers/api_helper.php');
+$terms = array(
+    'event' => 'api_hit',
+    'api_key' => 'public',
+    'api_version' => 'legacy',
+    'path' => 'apps/vocab_widget',
+);
+api_log_terms($terms);
+
 class VocabProxy
 {
 
@@ -326,7 +337,8 @@ class VocabProxy
 	 */
 	private function setup() {
 		$this->debug = isset($_REQUEST['debug']);
-
+        $action = $this->input->get('action');
+        var_dump($_REQUEST);
 		if (isset($_REQUEST['sqc']) &&
 		    !empty($_REQUEST['sqc'])) {
 			$this->solr_query_callback = rawurlencode($_REQUEST['sqc']);

@@ -20,7 +20,6 @@ class SyncTask extends Task
     private $target_id = false;
     private $chunkSize = 100;
     private $chunkPos = 0;
-    private $indexOnly = false;
     private $missingOnly = false;
     private $mode = 'sync';
 
@@ -79,30 +78,7 @@ class SyncTask extends Task
     {
         $dataSourceIDs = $this->ci->ds->getAll(0, 0, true);
         foreach ($dataSourceIDs as $dsID) {
-
-            $params = array(
-                'class' => 'sync',
-                'type' => 'ds',
-                'id' => $dsID
-            );
-
-            if ($this->indexOnly) {
-                $params['indexOnly'] = 'true';
-            }
-
-            if ($this->addRelationships) {
-                $params['addRelationships'] = 'true';
-            }
-
-            $task = array(
-                'name' => 'Analyze DataSource ' . $dsID,
-                'priority' => $this->getPriority(),
-                'frequency' => 'ONCE',
-                'type' => 'POKE',
-                'params' => http_build_query($params),
-            );
-
-            $this->taskManager->addTask($task);
+            $this->analyzeDS($dsID);
         }
         $this->log('Analyzed All spawned ' . sizeof($dataSourceIDs) . ' tasks');
     }
@@ -135,23 +111,11 @@ class SyncTask extends Task
                 'class' => 'sync'
             );
 
-            if ($this->indexOnly) {
-                $params['indexOnly'] = 'true';
-            }
-
-            if ($this->addRelationships) {
-                $params['addRelationships'] = 'true';
-            }
-
             //define chunking for ro only
             $chunkArray = array();
             if ($this->missingOnly) {
                 $offset = ($i - 1) * $this->chunkSize;
-                $end = $i * $this->chunkSize;
-                if ($end > sizeof($ids)) {
-                    $end = sizeof($ids) - 1;
-                }
-                $chunkArray = array_slice($ids, $offset, $end);
+                $chunkArray = array_slice($ids, $offset, $data['chunkSize']);
                 $params['type'] = 'ro';
                 $params['id'] = implode(',', $chunkArray);
             } else {
@@ -160,42 +124,60 @@ class SyncTask extends Task
                 $params['chunkPos'] = $i;
             }
 
-            //construct a human readable name
-            $name = $this->indexOnly ? "Index " : "Sync ";
-            if ($this->missingOnly) {
-                $name .= "Missing ";
+            /**
+             * Spawn separate enrich and index task if includes contain enrich and index
+             */
+
+            if ($this->includes('enrich') || $this->includes('index')) {
+                if ($this->includes('enrich')) {
+                    $params['includes'] = 'enrich';
+                    $task = array(
+                        'name' => $this->getName("Enrich", $params, $i, $data['numChunk'], $chunkArray),
+                        'priority' => 8,
+                        'frequency' => 'ONCE',
+                        'type' => 'POKE',
+                        'params' => http_build_query($params),
+                    );
+                    $this->taskManager->addTask($task);
+                    $this->log('Added an enrich task for Data Source '.$dsID. " for ".$data['total']. 'records');
+                }
+                if ($this->includes('index')) {
+                    $params['includes'] = 'index';
+                    $task = array(
+                        'name' => $this->getName("Index", $params, $i, $data['numChunk'], $chunkArray),
+                        'priority' => 10,
+                        'frequency' => 'ONCE',
+                        'type' => 'POKE',
+                        'params' => http_build_query($params),
+                    );
+                    $this->taskManager->addTask($task);
+                    $this->log('Added an enrich task for Data Source '.$dsID. " for ".$data['total']. 'records');
+                }
+            } else {
+                //spawn task based on available modules
+                $params['includes'] = implode(',', $this->modules);
+                $task = array(
+                    'name' => $this->getName($params['includes'], $params, $i, $data['numChunk'], $chunkArray),
+                    'params' => http_build_query($params),
+                    'priority' => 8, 'frequency' => 'ONCE', 'type' => 'POKE',
+                );
+                $this->taskManager->addTask($task);
+                $this->log('Added a task for Data Source '.$dsID. " for ".$data['total']. 'records');
             }
-
-            if ($params['type'] == 'ds') {
-                $name .= " Data Source " . $params['id'] . '(' . $i . '/' . $data['numChunk'] . ')';
-            } elseif ($params['type'] == 'ro') {
-                $name .= sizeof($chunkArray) . " Records";
-            }
-
-            //adding normal sync task
-            $task = array(
-                'name' => $name,
-                'priority' => $this->getPriority(),
-                'frequency' => 'ONCE',
-                'type' => 'POKE',
-                'params' => http_build_query($params),
-            );
-            $this->taskManager->addTask($task);
-
-//            adding a graph generation task
-//            Placeholder for future usage, do not remove for now
-//            $params['class'] = 'graph';
-//            $task = array(
-//                'name' => $name,
-//                'priority' => $this->getPriority(),
-//                'frequency' => 'ONCE',
-//                'type' => 'POKE',
-//                'params' => http_build_query($params),
-//            );
-//            $this->taskManager->addTask($task);
         }
+    }
 
-        $this->log('Analyzed Data Source ' . $dsID . " spawned " . $data['numChunk'] . " sync tasks for " . $data['total'] . ' records');
+    private function getName($operation, $params, $chunkPos, $numChunk, $chunkArray){
+        $name = $operation. " ";
+        if ($this->missingOnly) {
+            $name .= "Missing ";
+        }
+        if ($params['type'] == 'ds') {
+            $name .= " Data Source " . $params['id'] . '(' . $chunkPos . '/' . $numChunk . ')';
+        } elseif ($params['type'] == 'ro') {
+            $name .= sizeof($chunkArray). " Records";
+        }
+        return $name;
     }
 
 
@@ -296,47 +278,65 @@ class SyncTask extends Task
                         $remove_ids[] = $ro_id;
                     }
                     if ($ro && $ro->status == 'PUBLISHED') {
-//                         $this->log('Processing record '.$ro->id. ' Memory Usage: '.memory_get_usage())->save();
 
-                        if (!$this->indexOnly) {
+                        $this->log('Processing record '.$ro->id. ' Memory Usage: '.memory_get_usage())->save();
+
+                        if ($this->includes('processIdentifiers')) {
                             $ro->processIdentifiers();
+                        }
+
+                        if ($this->includes('addRelationships')) {
                             $ro->addRelationships();
+                        }
+
+                        if ($this->includes('updateQualityMetadata')) {
                             $ro->update_quality_metadata();
+                        }
+
+                        if ($this->includes('processLinks')) {
                             $ro->processLinks();
                         }
 
-                        if ($this->addRelationships) {
-                            $ro->addRelationships();
-                        }
-
-                        // index portal documents
-                        $solr_doc = $ro->indexable_json();
-                        if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
-                            $size = $this->getSize($solr_doc);
-                            if ($size > 100000) {
-                                $this->log('Document for '. $ro->id. ' too big, flushing this document. Size: '. $size. ' bytes')->save();
-                                $this->indexSolr('portal', [$solr_doc]);
+                        if ($this->includes('indexPortal')) {
+                            // index portal documents
+                            $solr_doc = $ro->indexable_json();
+                            if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
+                                $size = $this->getSize($solr_doc);
+                                if ($size > 100000) {
+                                    $this->log('Document for '. $ro->id. ' too big, flushing this document. Size: '. $size. ' bytes')->save();
+                                    $this->indexSolr('portal', [$solr_doc]);
+                                } else {
+                                    $solr_docs[] = $solr_doc;
+                                }
                             } else {
-                                $solr_docs[] = $solr_doc;
+                                $this->log('Empty doc found for ROID:' . $ro->id);
                             }
-                        } else {
-                            $this->log('Empty doc found for ROID:' . $ro->id);
                         }
 
-
-                        // index relation document
-                        $relation_doc = $ro->getRelationshipIndex();
-                        if ($relation_doc && is_array($relation_doc) && sizeof($relation_doc) > 0) {
-                            $relation_docs = array_merge($relation_docs, $relation_doc);
+                        if ($this->includes('indexRelations')) {
+                            // index relation document
+                            $relation_doc = $ro->getRelationshipIndex();
+                            if ($relation_doc && is_array($relation_doc) && sizeof($relation_doc) > 0) {
+                                if ($size > 100000) {
+                                    $this->log('Relation Document for '. $ro->id. ' too big, flushing this document. Size: '. $size. ' bytes')->save();
+                                    $this->indexSolr('relations', $relation_docs);
+                                } else {
+                                    $relation_docs = array_merge($relation_docs, $relation_doc);
+                                }
+                            }
                         }
 
                         // flush if memory usage is too high, 50 MB
                         if (memory_get_usage() > 50000000) {
-                            $this->log('Memory usage too high, flushing documents. Memory usage: '. memory_get_usage());
-                            $this->indexSolr('portal', $solr_docs);
-                            $solr_docs = [];
-                            $this->indexSolr('relations', $relation_docs);
-                            $relation_docs = [];
+                            if ($this->includes('indexPortal')) {
+                                $this->log('Memory usage too high, flushing documents. Memory usage: '. memory_get_usage());
+                                $this->indexSolr('portal', $solr_docs);
+                                $solr_docs = [];
+                            }
+                            if ($this->includes('indexRelations')) {
+                                $this->indexSolr('relations', $relation_docs);
+                                $relation_docs = [];
+                            }
                         }
 
                         unset($ro);
@@ -353,17 +353,19 @@ class SyncTask extends Task
                     throw new Exception('Error: roid:' . $ro_id . ' Message: ' . $e->getMessage());
                 }
             }
-            $this->log('Importing Post Process and SOLR doc generation completed');
         } else {
             throw new Exception("No records found");
         }
 
+        if ($this->includes('indexPortal')) {
+            $this->log('Indexing SOLR for Portal')->save();
+            $this->indexSolr('portal', $solr_docs);
+        }
 
-        //indexing in SOLR
-        $this->log('Indexing SOLR for Portal')->save();
-        $this->indexSolr('portal', $solr_docs);
-        $this->log('Indexing SOLR for Relations')->save();
-        $this->indexSolr('relations', $relation_docs);
+        if ($this->includes('indexRelations')) {
+            $this->log('Indexing SOLR for Relations')->save();
+            $this->indexSolr('relations', $relation_docs);
+        }
 
         //remove records
         if (sizeof($remove_ids) > 0) {
@@ -381,6 +383,22 @@ class SyncTask extends Task
         }
     }
 
+    /**
+     * Check if a module is available for running
+     *
+     * @param $module
+     * @return bool
+     */
+    private function includes($module){
+        return in_array($module, $this->modules);
+    }
+
+    /**
+     * Get the size of the payload in bytes
+     *
+     * @param $payload
+     * @return int
+     */
     private function getSize($payload){
         $serializedFoo = serialize($payload);
         if (function_exists('mb_strlen')) {
@@ -498,23 +516,26 @@ class SyncTask extends Task
         parse_str($this->params, $params);
         $this->target = isset($params['type']) ? $params['type'] : false;
         $this->target_id = isset($params['id']) ? $params['id'] : false;
-        $this->indexOnly = isset($params['indexOnly']) ? $params['indexOnly'] : false;
-        $this->addRelationships = isset($params['addRelationships']) ? $params['addRelationships'] : false;
         $this->missingOnly = isset($params['missingOnly']) ? $params['missingOnly'] : false;
+        $modules = isset($params['includes']) ? $params['includes'] : false;
 
-        if ($this->indexOnly === 'true') {
-            $this->indexOnly = true;
+        // if no module is defined, include all
+        if (!$modules) {
+            $modules = 'enrich,index';
         }
 
-        if ($this->addRelationships === 'true') {
-            $this->addRelationships = true;
+        $modules = explode(',', $modules);
+        if (in_array('enrich', $modules)) {
+            $modules = array_merge($modules, ['processIdentifiers', 'addRelationships', 'updateQualityMetadata', 'processLinks']);
+        }
+        if (in_array('index', $modules)) {
+            $modules = array_merge($modules, ['indexPortal', 'indexRelations']);
         }
 
-        if ($this->missingOnly === 'true') {
-            $this->missingOnly = true;
-        }
+        $this->modules = $modules;
 
-        $this->log('Task parameters: ' . http_build_query($params))->save();
+        $this->log('Task parameters: ' . http_build_query($params));
+        $this->log('Task modules: '. implode(', ', $this->modules))->save();
 
         //analyze if there is no chunkPosition
         if (isset($params['chunkPos'])) {

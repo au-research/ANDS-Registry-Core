@@ -40,6 +40,9 @@ class Solr
         $this->fixSolrUrl();
         $this->coreMapping = get_config_item('solr_core_mapping');
 
+        //default to portal core, until told otherwise
+        $this->setCore('portal');
+
         $this->options = array('q' => '*:*', 'start' => '0', 'indent' => 'on', 'wt' => 'json', 'fl' => '*', 'rows' => '10');
         $this->multi_valued_fields = array('facet.field', 'fq', 'facet.query');
         $this->custom_query = false;

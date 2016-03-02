@@ -27,13 +27,11 @@ class Sync_extension extends ExtensionBase{
             if($this->ro->status == PUBLISHED){
                 $this->ro->processLinks();
             }
-			if($this->ro->status=='PUBLISHED'&&!($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria")){
-				$docs = array();
-				$docs[] = $this->indexable_json($conn_limit);
-				$r = $this->_CI->solr->add_json(json_encode($docs));
-				$r = $this->_CI->solr->commit();
-			}
-			$this->_dropCache();
+
+            $this->index_solr();
+            $this->indexRelationship();
+
+//			$this->_dropCache();
 		} catch (Exception $e) {
 			return 'error: '.$e;
 		}
@@ -43,9 +41,11 @@ class Sync_extension extends ExtensionBase{
 	function index_solr() {
 		try{
 			$this->_CI->load->library('solr');
-			if($this->ro->status=='PUBLISHED'&&!($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria")){
+            $this->_CI->solr->init()->setCore('portal');
+			if($this->shouldIndex()){
 				$docs = array();
 				$docs[] = $this->indexable_json();
+                $this->_CI->solr->deleteByQueryCondition('id:'.$this->ro->id);
 				$this->_CI->solr->add_json(json_encode($docs));
 				$this->_CI->solr->commit();
 			}
@@ -63,7 +63,7 @@ class Sync_extension extends ExtensionBase{
             $this->_CI->load->library('solr');
             if($this->shouldIndex()){
                 $docs = $this->ro->getRelationshipIndex();
-                $this->_CI->solr->setCore('relations');
+                $this->_CI->solr->init()->setCore('relations');
                 $this->_CI->solr->deleteByQueryCondition('from_id:'.$this->ro->id);
                 $this->_CI->solr->add_json(json_encode($docs));
                 $this->_CI->solr->commit();
@@ -487,6 +487,7 @@ class Sync_extension extends ExtensionBase{
 
         $related_objects = array_slice($related_objects, 0, 2000);
 
+
         foreach($related_objects as $related_object){
             if($related_object['registry_object_id'] == null || !in_array($related_object['registry_object_id'], $processedIds)) {
                 $processedIds[] = $related_object['registry_object_id'];
@@ -496,6 +497,7 @@ class Sync_extension extends ExtensionBase{
                 if (startsWith($related_object['origin'], 'REVERSE')) {
                     $relationType = getReverseRelationshipString($related_object['relation_type']);
                 }
+                $relationType = url_title($relationType);
                 $relationIndexKey = 'relationType_'.$relationType.'_id';
 
                 if (!array_key_exists($relationType, $json)) {
@@ -526,8 +528,6 @@ class Sync_extension extends ExtensionBase{
                 }
             }
 		}
-
-
 
         $json['alt_list_title'] = [];
         $json['alt_display_title'] = [];

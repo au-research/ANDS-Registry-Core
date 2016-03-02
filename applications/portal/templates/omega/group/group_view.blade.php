@@ -43,7 +43,7 @@
         } elseif (sizeof($group['facet']['subjects']) > 0) {
             $subjects_list = 'including ';
             foreach ($group['facet']['subjects'] as $s) {
-                $subjects_list .= ', '. $s['name'] .'';
+                $subjects_list .= ',  <a href="'.base_url('search').'#!/group='.$group['title'].'/subject_value_resolved='.rawurlencode($s['name']).'">'.$s['name'].'</a> ';
             }
         }
     ?>

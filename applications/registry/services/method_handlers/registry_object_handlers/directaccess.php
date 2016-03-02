@@ -14,7 +14,15 @@ class Directaccess extends ROHandler
         $query = '';
         $relationshipTypeArray = ['isPresentedBy', 'supports'];
         $classArray = ['service'];
-        $services = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray, $relationshipTypeArray);
+
+        // get all relationships is faster than getRelatedObjectsByClassAndRElationshipType, provided that it's cached
+        $relationships = $this->ro->getAllRelatedObjects(false, false, true);
+        $services = array();
+        foreach ($relationships as $rr) {
+            if (in_array($rr['class'], $classArray) && in_array($rr['relation_type'], $relationshipTypeArray)) {
+                array_push($services, $rr);
+            }
+        }
 
         foreach ($services as $service) {
             if (isset($service['relation_url'])

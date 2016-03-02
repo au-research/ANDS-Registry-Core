@@ -130,12 +130,19 @@
                     break;
                 case 'index':
                     params.name = "Index ";
-                    params.params.indexOnly = true;
+                    params.params.includes = "indexPortal,indexRelation"
+                    break;
+                case 'indexPortal':
+                    params.name = "Index Portal ";
+                    params.params.includes = "indexPortal"
+                    break;
+                case 'indexRelations':
+                    params.name = "Index Relations ";
+                    params.params.includes = "indexRelations"
                     break;
                 case 'addRelationships':
                     params.name = "Fix Relationships and Index ";
-                    params.params.indexOnly = true;
-                    params.params.addRelationships = true;
+                    params.params.includes = "addRelationships,indexPortal,indexRelations"
                     break;
                 case 'index_missing':
                     params.name = "Index Missing ";

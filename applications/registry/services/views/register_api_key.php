@@ -30,7 +30,7 @@
 				    <form action="#" method="POST">
 					  <legend>Register for an API key</legend>
 					  
-					  <label>* <strong>Organisation</strong></label>
+					  <label>* <strong>Your Name / Organisation</strong></label>
 					  <input name="organisation" type="text" class="input-xlarge" required="required" placeholder="Name of your project or institution">
 					  
 					  <label>* <strong>Contact Email Address</strong></label>

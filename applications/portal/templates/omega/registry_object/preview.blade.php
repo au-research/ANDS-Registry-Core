@@ -9,16 +9,14 @@
 		}
 	}
     $showMore = false;
-    if($ro->relationships && isset($ro->relationships['collection']))
-    {
+    if(isset($related['data']) && sizeof($related['data']['docs']) > 0) {
         $showMore = true;
-        if(count($ro->relationships['collection']) == 1)
-        {
-            foreach($ro->relationships['collection'] as $col)
-                if($col && $col['registry_object_id'] == $omit)
-                {
+        if(count($related['data']['docs']) == 1) {
+            foreach($related['data']['docs'] as $col) {
+                if($col && $col['to_id'] == $omit) {
                     $showMore = false;
                 }
+            }
         }
     }
 
@@ -34,24 +32,16 @@
 <!-- ||$ro->identifiers -->
 	@if($showMore)
         <h4>More data related to {{$ro->core['title']}}</h4>
-        @if($showMore)
         <ul>
-            @foreach($ro->relationships['collection'] as $col)
-                @if($col && $col['registry_object_id'] != $omit)
-                    <li><a href="<?php echo base_url()?>{{$col['slug']}}/{{$col['registry_object_id']}}" title="{{$col['title']}}"  ro_id="{{$col['registry_object_id']}}">{{$col['title']}}</a></li>
+            @foreach($related['data']['docs'] as $col)
+                @if($col && $col['to_id'] != $omit)
+                    <li><a href="<?php echo base_url()?>{{$col['to_slug']}}/{{$col['to_id']}}" title="{{$col['to_title']}}"  ro_id="{{$col['to_id']}}">{{$col['to_title']}}</a></li>
                 @endif
             @endforeach
-            @if(sizeof($ro->relationships['collection']) < $ro->relationships['collection_count'])
-                <li><a href="{{portal_url()}}search/#!/related_{{$search_class}}_id={{$ro->core['id']}}/class=collection">View all {{$ro->relationships['collection_count']}} related data</a></li>
+            @if($related['data']['count'] > 5)
+                <li><a href="{{ $related['data']['searchUrl'] }}">View all {{ $related['data']['count'] }} related data</a></li>
             @endif
         </ul>
-        @endif
-
-
-       <!-- @include('registry_object/contents/identifiers-list') -->
-
-    @else
-        <br/>
 	@endif
     <a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm pull-right">View Record</a>
 </div>

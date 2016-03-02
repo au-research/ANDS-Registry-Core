@@ -51,8 +51,6 @@ $base_url = str_replace('/apps','/registry',base_url());
         <link rel="stylesheet" href="<?php echo asset_url('js/lib/'. $lib);?>"/>
     <?php endforeach; endif; ?>
 
-
-
     <?php foreach($js_lib as $lib):?>
 
         <?php if($lib=='graph'):?>
@@ -104,7 +102,7 @@ $base_url = str_replace('/apps','/registry',base_url());
 
         <?php elseif($lib=='vocab_widget'):?>
             <link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget.css'); ?>">
-            <script src="<?php echo apps_url('assets/vocab_widget/js/vocab_widget.js'); ?>"></script>
+            <script src="<?php echo apps_url('assets/vocab_widget/js/vocab_widget_v2.js'); ?>"></script>
 
        <?php elseif($lib=='orcid_widget'):?>
             <link href="<?php echo apps_url('assets/orcid_widget/css/orcid_widget_v2.css');?>" rel="stylesheet" type="text/css">
@@ -115,8 +113,8 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script src="<?php echo apps_url('assets/grant_widget/js/grant_widget_v2.js');?>" type="text/javascript"></script>
 
         <?php elseif($lib=='location_capture_widget'):?>
-            <link href="<?php echo apps_url('assets/location_capture_widget/css/location_capture_widget.css');?>" rel="stylesheet" type="text/css">
-            <script src="<?php echo apps_url('assets/location_capture_widget/js/location_capture_widget.js');?>" type="text/javascript"></script>
+            <link href="<?php echo apps_url('assets/location_capture_widget/css/location_capture_widget_v2.css');?>" rel="stylesheet" type="text/css">
+            <script src="<?php echo apps_url('assets/location_capture_widget/js/location_capture_widget_v2.js');?>" type="text/javascript"></script>
 
         <?php elseif($lib=='rosearch_widget'):?>
             <link href="<?php echo apps_url('assets/registry_object_search/css/rosearch_widget.css');?>" rel="stylesheet" type="text/css">

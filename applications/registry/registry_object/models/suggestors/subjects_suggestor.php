@@ -62,6 +62,7 @@ class Subjects_suggestor extends _GenericSuggestor {
                 foreach($result['response']['docs'] as $doc) {
                     $doc['score'] = ($doc['score'] / $maxScore) * (1-($intScore/$maxRows));
                     $intScore++;
+                    if (is_array($doc['slug'])) $doc['slug'] = $doc['slug'][0];
                     $doc['RDAUrl'] = portal_url($doc['slug'].'/'.$doc['id']);
                     $suggestions[] = $doc;
                 }

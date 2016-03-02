@@ -11,9 +11,6 @@ class Orcid_api
     public function handle($method = array())
     {
         $this->ci = &get_instance();
-        $this->dois_db = $this->ci->load->database('dois', true);
-
-
 
         $this->params = array(
             'submodule' => isset($method[1]) ? $method[1] : 'search',

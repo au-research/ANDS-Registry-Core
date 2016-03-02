@@ -233,6 +233,8 @@ class Registry_object extends MX_Controller
         //initialisation to prevent logic error
         $related = $ro->relationships;
 
+        if (!$related) $related = [];
+
         foreach ($related as &$rel) {
             foreach ($rel['docs'] as &$doc) {
 
@@ -251,7 +253,7 @@ class Registry_object extends MX_Controller
         // search class for constructing search queries
         $searchClass = $ro->core['class'];
         if ($ro->core['class'] == 'party') {
-            if (strtolower($ro->core['type']) == 'person') {
+            if (strtolower($ro->core['type']) == 'person' || strtolower($ro->core['type'])=='administrativeposition') {
                 $searchClass = 'party_one';
             } elseif (strtolower($ro->core['type']) == 'group') {
                 $searchClass = 'party_multi';
@@ -259,7 +261,7 @@ class Registry_object extends MX_Controller
         }
 
         // construct the correct search query for each type of related
-        $relatedArray = ['data', 'programs', 'grants_projects', 'services', 'organisations'];
+        $relatedArray = ['data', 'programs', 'grants_projects', 'services', 'organisations', 'researchers'];
         foreach ($relatedArray as $rr) {
             $query = [];
             switch ($rr) {
@@ -278,12 +280,21 @@ class Registry_object extends MX_Controller
                 case "organisations";
                     $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'party', 'type'=>'group'];
                     break;
+                case "researchers":
+                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'party', 'nottype'=>'group'];
+                    break;
             }
             $related[$rr]['searchUrl'] = constructPortalSearchQuery($query);
 
             // fix count in case not all records are synced correctly
-            if ($related[$rr]['count'] > 5) {
+            if (array_key_exists('count', $related[$rr]) && $related[$rr]['count'] > 5) {
                 $related[$rr]['count'] = $this->getSolrCountForQuery($query);
+            } elseif (!array_key_exists('count', $related[$rr])) {
+                $related[$rr]['count'] = 0;
+            }
+
+            if (!array_key_exists('docs', $related[$rr])) {
+                $related[$rr]['docs'] = [];
             }
         }
 
@@ -318,6 +329,7 @@ class Registry_object extends MX_Controller
 
             $this->blade
                 ->set('ro', $ro)
+                ->set('related', $this->getRelationship($ro))
                 ->set('omit', $omit)
                 ->render('registry_object/preview');
         } elseif ($this->input->get('identifier_relation_id')) {

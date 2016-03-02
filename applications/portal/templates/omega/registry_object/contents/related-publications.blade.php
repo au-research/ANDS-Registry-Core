@@ -60,6 +60,6 @@
             </span>
             </li>
         @endforeach
-    </li>
+    </ul>
 </div>
 

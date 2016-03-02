@@ -706,18 +706,32 @@ class Activity_grants_extension extends ExtensionBase
         }
 
         $result = array();
-        foreach ($childActivities as $activity) {
-            $activityObject = $this->_CI->ro->getByID($activity['registry_object_id']);
-            $dataOutputs = $activityObject->getDirectDataOutput();
+
+        $total = sizeof($childActivities);
+        $chunkSize = 200;
+        $numChunk = ceil(($chunkSize < $total ? ($total / $chunkSize) : 1));
+
+        for ($i = 1; $i <= $numChunk; $i++) {
+            $offset = ($i - 1) * $chunkSize;
+            $chunkArray = array_slice($childActivities, $offset, $chunkSize);
+
+            $ids = array();
+            foreach ($chunkArray as $activity) {
+                if ($activity['registry_object_id'] && !in_array($activity['registry_object_id'], $ids)) {
+                    $ids[] = $activity['registry_object_id'];
+                }
+            }
+            $ids = '('.implode(' OR ', $ids).')';
+
+            $dataOutputs = $this->getDirectDataOutputSOLR($ids);
             if (sizeof($dataOutputs) > 0) {
                 $result = array_merge($result, $dataOutputs);
             }
-            unset($activityObject);
-            unset($dataOutputs);
+            unset($ids);
         }
 
         //self
-        $directOutput = $this->ro->getDirectDataOutput();
+        $directOutput = $this->ro->getDirectDataOutput($relatedObjects);
         if (sizeof($directOutput) > 0) {
             $result = array_merge($result, $directOutput);
         }
@@ -725,7 +739,53 @@ class Activity_grants_extension extends ExtensionBase
         //remove duplicates
         $result = array_values(array_map("unserialize", array_unique(array_map("serialize", $result))));
 
+        return $result;
+    }
 
+    /**
+     * Gets the direct data output from SOLR instead of the database
+     * Requires all related objects to be indexed correctly
+     * Faster / Possibly less accurate depends on the index status
+     *
+     * @param bool|false $fromID
+     * @return array
+     */
+    private function getDirectDataOutputSOLR($fromID = false){
+        $result = array();
+        $ci =& get_instance();
+        $ci->load->library('solr');
+        $ci->solr->init()->setCore('relations');
+
+        if ($fromID) {
+            $ci->solr->setOpt('fq', 'from_id:'.$fromID);
+        } else {
+            $ci->solr->setOpt('fq', 'from_id:'.$this->ro->id);
+        }
+
+        $ci->solr
+            ->setOpt('fq', 'to_class:collection')
+            ->setOpt('fq', 'relation:(hasOutput OR isOutputOf OR outputs)');
+
+        $solrResult = $ci->solr->executeSearch(true);
+
+        if ($solrResult
+            && array_key_exists('response', $solrResult)
+            && $solrResult['response']['numFound'] > 0) {
+
+            foreach ($solrResult['response']['docs'] as $doc)
+            $result[] = [
+                'registry_object_id' => $doc['to_id'],
+                'key' => $doc['to_key'],
+                'class' => $doc['to_class'],
+                'title' => $doc['to_title'],
+                'slug' => $doc['to_slug'],
+                'status' => 'PUBLISHED',
+                'relation_type' => $doc['relation'][0],
+                'origin' => $doc['relation_origin'][0],
+                'relation_description' => isset($doc['relation_description']) ? $doc['relation_description'] : "",
+                'type' => $doc['to_type']
+            ];
+        }
         return $result;
     }
 

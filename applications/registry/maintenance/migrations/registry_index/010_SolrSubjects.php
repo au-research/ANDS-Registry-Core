@@ -21,7 +21,7 @@ class SolrSubjects extends GenericSolrMigration
         $this->setFields([
             [
                 'name' => 'subject_value_resolved',
-                'type' => 'text_en_splitting',
+                'type' => 'string',
                 'stored' => 'true',
                 'indexed' => true,
                 'multiValued' => true
@@ -35,49 +35,49 @@ class SolrSubjects extends GenericSolrMigration
             ],
             [
                 'name' => 's_subject_value_resolved',
-                'type' => 'text_en_splitting',
+                'type' => 'string',
                 'stored' => 'true',
                 'indexed' => true,
                 'multiValued' => true
             ],
             [
                 'name' => 'subject_value_resolved_sort',
-                'type' => 'text_en_splitting',
+                'type' => 'string',
                 'stored' => 'true',
                 'indexed' => true,
                 'multiValued' => true
             ],
             [
                 'name' => 'subject_value_unresolved',
-                'type' => 'text_en_splitting',
+                'type' => 'string',
                 'stored' => 'true',
                 'indexed' => true,
                 'multiValued' => true
             ],
             [
                 'name' => 'subject_type',
-                'type' => 'text_en_splitting',
+                'type' => 'string',
                 'stored' => 'true',
                 'indexed' => true,
                 'multiValued' => true
             ],
             [
                 'name' => 'subject_vocab_uri',
-                'type' => 'text_en_splitting',
+                'type' => 'string',
                 'stored' => 'true',
                 'indexed' => true,
                 'multiValued' => true
             ],
             [
                 'name' => 'subject_anzsrcfor',
-                'type' => 'text_en_splitting',
+                'type' => 'string',
                 'stored' => 'true',
                 'indexed' => true,
                 'multiValued' => true
             ],
             [
                 'name' => 'subject_anzsrcseo',
-                'type' => 'text_en_splitting',
+                'type' => 'string',
                 'stored' => 'true',
                 'indexed' => true,
                 'multiValued' => true

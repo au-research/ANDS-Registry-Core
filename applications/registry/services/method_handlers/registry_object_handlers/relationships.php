@@ -38,9 +38,9 @@ class Relationships extends ROHandler {
     {
         $ci =& get_instance();
         $ci->load->library('solr');
-        $ci->solr->setCore('relations');
         $ci->solr
             ->init()
+            ->setCore('relations')
             ->setOpt('rows', 5)
             ->setOpt('fq', '+from_id:'.$this->ro->id);
         switch ($type) {

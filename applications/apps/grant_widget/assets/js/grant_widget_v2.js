@@ -290,25 +290,11 @@
                 description = description.replace(/"/g,'&quot;');
                 resStr +="<p>"+description+"</p>";
             }
-            if(obj[0]['identifiers'])
+            if(obj[0]['identifier'][0])
             {
                 var i;
-                var identifier = '';
+                var identifier = obj[0]['identifier'][0];
 
-                for (i in obj[0]['identifier_type']) {
-                    if (obj[0]['identifier_type'].hasOwnProperty(i)) {
-                        identifier = obj[0]['identifier_type'][i]
-                    }
-                }
-
-                for (j in obj[0]['identifier_type']) {
-                    if (obj[0]['identifier_type'].hasOwnProperty(j)) {
-                        if(j=='purl')
-                        {
-                           identifier = obj[0]['identifier_type'][j]
-                        }
-                    }
-                }
 
                 resStr += "<h6>Identifier</h6>";
 
@@ -392,9 +378,16 @@
     function _getIdentifier(obj,settings) {
         if(obj.length==1)
         {
-            if(obj[0]['identifiers'])
+
+            if(obj[0]['identifier'])
             {
-                var i;
+                //console.log(obj[0]['identifier']);
+                var identifier = '';
+                if(typeof(obj[0]['identifier'])!="string"){
+                    var identifier = obj[0]['identifier'][0];
+                }
+               // console.log(identifier);
+              /*  var i;
                 var identifier = '';
 
                 for (i in obj[0]['identifier_type']) {
@@ -410,7 +403,7 @@
                             identifier = obj[0]['identifier_type'][j]
                         }
                     }
-                }
+                } */
 
             }
 

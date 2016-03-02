@@ -63,6 +63,8 @@
                                         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Queue <span class="caret"></span></button>
                                         <ul class="dropdown-menu">
                                             <li><a href="" ng-click="addTask('index', 'ds', ds.id)">Index</a></li>
+                                            <li><a href="" ng-click="addTask('indexPortal', 'ds', ds.id)">Index Portal</a></li>
+                                            <li><a href="" ng-click="addTask('indexRelations', 'ds', ds.id)">Index Relations</a></li>
                                             <li><a href="" ng-click="addTask('index_missing', 'ds', ds.id)">Index Missing</a></li>
                                             <li><a href="" ng-click="clearIndex(ds.id)">Clear Index</a></li>
                                             <li class="divider"></li>
@@ -95,6 +97,8 @@
                         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Mass Queue <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="" ng-click="addTask('index', 'all')">Index All</a></li>
+                            <li><a href="" ng-click="addTask('indexPortal', 'all')">Index Portal All</a></li>
+                            <li><a href="" ng-click="addTask('indexRelations', 'all')">Index Relations All</a></li>
                             <li><a href="" ng-click="addTask('sync', 'all')">Sync All</a></li>
                             <li><a href="" ng-click="addTask('addRelationships', 'all')">Fix Relationship and Index All</a></li>
                         </ul>

@@ -286,6 +286,7 @@ class Core_extension extends ExtensionBase
 				}
 
 				$this->ro->index_solr();
+                $this->ro->indexRelationship();
 
 				if ($error_log = $this->_CI->importer->getErrors())
 				{

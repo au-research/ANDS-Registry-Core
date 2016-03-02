@@ -49,18 +49,11 @@ class Connections_Extension extends ExtensionBase
 	function getConnections($published_only = true, $specific_type = null, $limit = 100, $offset = 0, $include_dupe_connections = false)
 	{
 
-        if ($published_only && $specific_type == null && $limit == 5 && $offset==0 && $include_dupe_connections === false) {
-            $cached = $this->ro->getCachedConnectionsMetadata();
-            if ($cached && is_array($cached)) {
-                return $cached;
-            }
-        }
-
 		$unordered_connections = $this->getAllRelatedObjects(!$published_only, $include_dupe_connections, true);
 		$ordered_connections = array();
 
 		/* Now sort according to "type" (collection / party_one / party_multi / activity...etc.) */
-		foreach($unordered_connections AS $connection)
+		foreach($unordered_connections AS &$connection)
 		{
 
 			// some witchcraft to disambiguate between single researchers
@@ -116,6 +109,13 @@ class Connections_Extension extends ExtensionBase
 			{
 				$class_valid = true;
 			}
+
+            if (!array_key_exists('status', $connection)) {
+                $conn_ro = $this->_CI->ro->getByID($connection['registry_object_id']);
+                $connection['status'] = $conn_ro->status;
+                unset($conn_ro);
+            }
+
 			$status_valid = (!$published_only || ($connection['status'] == PUBLISHED) || ($connection['registry_object_id'] == null && ($connection['origin'] == 'IDENTIFIER' ||  $connection['origin'] == 'IDENTIFIER REVERSE')));
 			if ($class_valid && $status_valid)
 			{
@@ -322,7 +322,8 @@ class Connections_Extension extends ExtensionBase
 					'title'=>$ii_ro->title,
 					'slug' => $ii_ro->slug,
 					'origin' => 'IDENTIFIER_MATCH',
-					'relation_type' => '(Automatically inferred link from records with matching identifiers)'
+					'relation_type' => '(Automatically inferred link from records with matching identifiers)',
+                    'status' => $ii_ro->status
 				);
 
 				if ($ii_ro->status==PUBLISHED) {
@@ -372,15 +373,16 @@ class Connections_Extension extends ExtensionBase
      * Returns the records which is in the grants network connections of this record
      *
      * @param           $relatedObjects very important to pass in existing related objects here | recursion issue
-     * @param bool|true $publishedOnly
+     * @param bool      $recursive
      * @return mixed
+     * @internal param bool|true $publishedOnly
      */
-    public function _getGrantsNetworkConnections($relatedObjects, $publishedOnly = true)
+    public function _getGrantsNetworkConnections($relatedObjects, $recursive = false)
     {
         $result = [];
 
         //going down the tree
-        $childs = $this->ro->getChildActivities($relatedObjects);
+        $childs = $this->ro->getChildActivities($relatedObjects, array(), $recursive);
         foreach ($childs as &$child) {
             if ($child['origin'] == 'EXPLICIT') {
                 $child['origin'] = 'GRANTS';
