@@ -237,11 +237,12 @@ class Registry_object extends MX_Controller
 
         foreach ($related as &$rel) {
             foreach ($rel['docs'] as &$doc) {
-
                 $doc['display_relationship'] = [];
                 if (array_key_exists('relation', $doc)) {
-                    foreach ($doc['relation'] as $docRelation) {
-                        $doc['display_relationship'][] = readable($docRelation);
+                    foreach ($doc['relation'] as $index=>$docRelation) {
+                        $origin = 'EXPLICIT';
+                        if(isset($doc['relation_origin'][$index])){$origin = $doc['relation_origin'][$index];}
+                        $doc['display_relationship'][] = readable($docRelation,$origin,$doc['from_class'],$doc['to_class']);
                     }
                 }
                 $doc['display_relationship'] = array_unique($doc['display_relationship']);
