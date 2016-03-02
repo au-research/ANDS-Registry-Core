@@ -342,8 +342,7 @@ class VocabProxy
 	 */
 	private function setup() {
 		$this->debug = isset($_REQUEST['debug']);
-        $action = $this->input->get('action');
-        var_dump($_REQUEST);
+      //  $action = $this->input->get('action');
 		if (isset($_REQUEST['sqc']) &&
 		    !empty($_REQUEST['sqc'])) {
 			$this->solr_query_callback = rawurlencode($_REQUEST['sqc']);
