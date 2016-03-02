@@ -187,7 +187,7 @@ class VocabProxy
 								$solr_response = unserialize(file_get_contents($count_url));
 								$e['count'] = $solr_response['response']['numFound'];
 							}
-							catch (Exception $ex)
+							catch (Exception $ee)
 							{
 								$e['count'] = 0;
 							}
@@ -277,11 +277,6 @@ class VocabProxy
 									     function($e) {
 										     return $e !== false;
 									     }));
-			if (is_callable($this->valid_actions[$this->action]['itemprocessor']))
-			{
-				$this->jsonData['items'] = call_user_func($this->valid_actions[$this->action]['itemprocessor'],
-									  $this->jsonData['items']);
-			}
 			$this->jsonData['count'] = count($this->jsonData['items']);
 		}
 	}

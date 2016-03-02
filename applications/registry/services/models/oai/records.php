@@ -25,8 +25,8 @@ class Records extends CI_Model
 		$args['rawclause'] = array('registry_objects.status' => "'PUBLISHED'");
 		$args['clause'] = array();
 		$args['wherein'] = false;
-        $args["allowedclass"] = false;
-        $args["allowedType"] = false;
+        $args['allowedclass'] = false;
+        $args['checkType'] = false;
 		$count = '';
 		$deleted_records = array();
 		if ($after)
@@ -55,7 +55,7 @@ class Records extends CI_Model
         if($supplied_format == 'dci')
         {
             $args["allowedclass"] = 'collection';
-            $args["allowedType"] = array('collection', 'repository', 'dataset', 'software');
+            $args['checkType'] = true;
         }
 
 		if(!($set&&!$args["wherein"]))
@@ -72,6 +72,14 @@ class Records extends CI_Model
 									    "inner")
 								     ->where($args['rawclause'], null, false)
 								     ->where($args['clause']);
+                                 if ($args['checkType'])
+                                 {
+                                     $db->join("registry_object_attributes at",
+                                         "at.registry_object_id = registry_objects.registry_object_id",
+                                         "inner")
+                                         ->where("at.value IN ('collection', 'repository', 'dataset', 'software')")
+                                         ->where("at.attribute = 'type'");
+                                 }
 							     if ($args['wherein'])
 							     {
 								     $db->where_in("registry_objects.registry_object_id",
@@ -82,15 +90,10 @@ class Records extends CI_Model
                                     $db->where_in("registry_objects.class",
                                     $args["allowedclass"]);
                                  }
-                                 if ($args["allowedType"])
-                                 {
-                                     $db->where_in("registry_object_attributes.value",
-                                         $args["allowedType"]);
-                                 }
+
 							     return $db;
 						     })),
 					 false);
-
 		// get the deleted ones! and added to the count...
 		if($after && $before)
 		{
@@ -136,10 +139,13 @@ class Records extends CI_Model
                                        $db->where_in("registry_objects.class",
                                            $args["allowedclass"]);
                                    }
-                                   if ($args["allowedType"])
+                                   if ($args['checkType'])
                                    {
-                                       $db->where_in("registry_object_attributes.value",
-                                           $args["allowedType"]);
+                                       $db->join("registry_object_attributes at",
+                                           "at.registry_object_id = registry_objects.registry_object_id",
+                                           "inner")
+                                           ->where("at.value IN ('collection', 'repository', 'dataset', 'software')")
+                                           ->where("at.attribute = 'type'");
                                    }
 							       $db->order_by("registry_objects.registry_object_id", "asc");
 							       return $db;

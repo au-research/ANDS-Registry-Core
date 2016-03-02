@@ -202,32 +202,17 @@
 								<thead>
 									<tr><th>Subject Source</th> <th>Subject Label</th><th></th></tr>
 								</thead>
-								<tr ng-repeat="subject in vocab.subjects track by $index">
 
-
-									<td style="border:none">
-										<select name="" id="" class="form-control caret-for-select" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="vocab.subjects[$index].subject_source">
-											<option value="">Select a source</option>
-										</select>
-									</td>
-									<td style="border:none">
-										<input type="text" class="form-control" placeholder="Subject Label" ng-model="vocab.subjects[$index].subject">
-									</td>
-									<td style="border:none">
-										<span ng-show="vocab.subjects.length > 1">
-											<button class="btn btn-primary" type="button"
-											ng-click="list_remove('subjects', $index)"><i class="fa fa-remove"></i></button>
-										</span>
-									</td>
+								<tr ng-repeat="subject in vocab.subjects track by $index"
+                                    subject-directive
+                                    index="$index"
+                                    subject_type="vocab.subjects[$index].subject_source"
+                                    subject_label="vocab.subjects[$index].subject_label"
+                                    subject_uri="vocab.subjects[$index].subject_uri"
+                                    subject_notation="vocab.subjects[$index].subject_notation"
+                                    length="subjectVocabLength">
 								</tr>
 							</table>
-							<div ng-repeat="subject in vocab.subjects track by $index"
-								 subject-directive
-								 subject-type="vocab.subjects[$index].subject_source"
-								 subject-value="vocab.subjects[$index].subject"
-							>
-
-							</div>
 
 							<button class="btn btn-primary" type="button" ng-click="addtolist('subjects')"><i class="fa fa-plus"></i> Add Subject</button>
 

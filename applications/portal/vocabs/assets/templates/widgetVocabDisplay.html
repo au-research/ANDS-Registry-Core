@@ -1,0 +1,68 @@
+<div class="sampleWidget panel swatch-gray">
+    <h4>Widget Mode:</h4>
+    <ul style="list-style-type: none;">
+        <li ng-repeat="widgetMode in widgetModes">
+            <input type="radio" checked id="{{widgetMode.name}}" name="{{widgetMode.name}}" value="{{widgetMode.name}}" ng-click="switchMode(widgetMode.name)" ng-if="mode == widgetMode.name"/>
+            <input type="radio" id="{{widgetMode.name}}" name="{{widgetMode.name}}" value="{{widgetMode.name}}" ng-click="switchMode(widgetMode.name)" ng-if="mode != widgetMode.name"/>
+            <label style="margin-left: 6px;" for="{{widgetMode.name}}">{{widgetMode.label}}</label>
+        </li>
+    </ul>
+    <div id="widget" >
+        <label for="sampleWidgetInput">Widget Input/ result Field:</label>
+        <input style="border-color: #9ecaed; box-shadow: 0 0 5px #9ecaed;" size="100" type="text" id="sampleWidgetInput">
+        <br/><br/>
+</div>
+    <div>
+    <concept-display></concept-display>
+    </div>
+<div ng-if="vocab">
+    <div id="widget-script-search" class="toggle" ng-if="mode == 'search'">
+                <pre class="panel-body prettyprint">
+    &lt;input type="text" id="{{vocab.slug}}" name="{{vocab.slug}}" value="" size="80" autocomplete="off"&gt;
+    &lt;script&gt;
+        $("#{{vocab.slug}}").vocab_widget({
+            mode: 'search',
+            cache: false,
+            repository: '{{vocab.sissvoc_end_point}}',
+            target_field: '{{target_field}}',
+            endpoint: '{{endpoint}}'
+        });
+    &lt;/script&gt;
+                </pre>
+    </div>
+    <div id="widget-script-tree" class="toggle" ng-if="mode == 'tree'">
+                <pre class="panel-body prettyprint">
+    &lt;input type="text" id="{{vocab.slug}}" name="{{vocab.slug}}" value="" size="80" autocomplete="off"&gt;
+        &lt;script&gt;
+            $("#{{vocab.slug}}").qtip({
+                content:{text:'&lt;div class="subject_chooser"&gt;&lt;/div&gt;'},
+                prerender:true,
+                position:{
+                    my:'center left',
+                    at: 'center right',
+                    viewport:$(window)
+                },
+                show: {event: 'click',ready:false},
+                hide: {event: 'unfocus'},
+                events: {
+                    render: function(event, api) {
+                        var widget = $(".subject_chooser", this).vocab_widget({mode:'{{mode}}',
+                            repository:'{{vocab.sissvoc_end_point}}',
+                            endpoint:'{{endpoint}}' ,
+                            display_count:false});
+                        widget.on('treeselect.vocab.ands', function(event) {
+                            var target = $(event.target);
+                            var data = target.data('vocab');
+                            $("#{{vocab.slug}}").val(data.{{target_field}});
+                        });
+                        api.elements.content.find('.hasTooltip').qtip('repopsition');
+                        api.elements.content.find('.hasTooltip').qtip('update');
+                    }
+                },
+                style: {classes: 'qtip-bootstrap ui-tooltip-shadow ui-tooltip-bootstrap ui-tooltip-large'}
+            });
+        &lt;/script&gt;
+                </pre>
+    </div>
+    </div>
+</div>

@@ -4,26 +4,26 @@
 
 			<div class="col-md-4 col-lg-3 sidebar search-sidebar">
 
-				<div ng-if="facets.subjects">
+				<div ng-if="facets.subject_labels">
 				<h3>Subject</h3>
 					<ul class="list-unstyled">
-						<li ng-repeat="facet in facets.subjects.slice(0,8)">
+						<li ng-repeat="facet in facets.subject_labels.slice(0,8)">
 
-							<a href="" ng-click="toggleFilter('subjects', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
-							<a href="" ng-click="toggleFilter('subjects', facet.name, true)" ng-if="isFacet('subjects',facet.name)"><i class="fa fa-remove"></i></a>
+							<a href="" ng-click="toggleFilter('subject_labels', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
+							<a href="" ng-click="toggleFilter('subject_labels', facet.name, true)" ng-if="isFacet('subject_labels',facet.name)"><i class="fa fa-remove"></i></a>
 						</li>
 
-                        <div id="moresubjects" style="display:none">
-                            <li ng-repeat="facet in facets.subjects.slice(8)">
-                                <a href="" ng-click="toggleFilter('subjects', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
-                                <a href="" ng-click="toggleFilter('subjects', facet.name, true)" ng-if="isFacet('subjects',facet.name)"><i class="fa fa-remove"></i></a>
+                        <div id="moresubject_labels" style="display:none">
+                            <li ng-repeat="facet in facets.subject_labels.slice(8)">
+                                <a href="" ng-click="toggleFilter('subject_labels', facet.name, true)">[[ facet.name ]] ([[facet.value]])</a>
+                                <a href="" ng-click="toggleFilter('subject_labels', facet.name, true)" ng-if="isFacet('subject_labels',facet.name)"><i class="fa fa-remove"></i></a>
 
                             </li>
                         </div>
-                        <a href="" ng-click="toggleFacet('subjects')" ng-if="facets.subjects.length>8" id="linksubjects"  style="display:block">
+                        <a href="" ng-click="toggleFacet('subject_labels')" ng-if="facets.subject_labels.length>8" id="linksubjects"  style="display:block">
                           <small>View
-                            <span ng-if="isMoreVisible('subjects')">Less...</span>
-                            <span ng-if="!isMoreVisible('subjects')">More...</span>
+                            <span ng-if="isMoreVisible('subject_labels')">Less...</span>
+                            <span ng-if="!isMoreVisible('subject_labels')">More...</span>
                           </small>
                         </a>
                     </ul>

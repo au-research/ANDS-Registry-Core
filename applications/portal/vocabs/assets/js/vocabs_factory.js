@@ -15,6 +15,13 @@
                         return response.data;
                     });
                 },
+                getAllWidgetable: function () {
+                    var filters = {
+                        widgetable: true,
+                        pp: 31
+                    }
+                    return this.search(filters);
+                },
                 add: function (data) {
                     return $http.post(base_url + 'vocabs/services/vocabs', {data: data}).then(function (response) {
                         return response.data;

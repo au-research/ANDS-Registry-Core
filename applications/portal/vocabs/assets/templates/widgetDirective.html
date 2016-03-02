@@ -1,0 +1,22 @@
+<div class="widgetExplorer container-fluid">
+    <div class="vocabListing col-md-4">
+        <ul>
+            <li ng-repeat="vocab in vocabList">
+                <div >
+                    <a href="" ng-click="selectVocab(vocab)">[[ vocab.title ]]</a>
+                    <small>Owner</small>
+                    <p>
+                        [[ vocab.description ]]
+                    </p>
+                </div>
+
+            </li>
+        </ul>
+    </div>
+    <div class="vocabDisplay col-md-8">
+        <widget-display-directive vocab="selectedVocab"></widget-display-directive>
+    </div>
+    <div class="vocabDownload">
+        Download this thingy
+    </div>
+</div>

@@ -1,4 +1,15 @@
-<div>
-    <input class="subject-type" ng-model="subjectType" ng-change="updateVocab(subjectType)"/>
-    <input class="subject-type" ng-model="subjectValue"/>
-</div>
+<td style="border:none">
+    <select
+            class="form-control caret-for-select subject-type" vocab="RIFCSSubjectType"
+            ng-options="item as item.label for item in items track by item.id"
+            ng-model="selected"
+            ng-change="setVocab()" ></select>
+</td>
+<td style="border:none">
+    <input type="text" class="form-control subject-value" vocab="RIFCSSubject" placeholder="Subject Label" ng-model="subjectLabel"/>
+</td>
+<td style="border:none">
+<span ng-show="vocabSubjectLength > 1">
+    <button class="btn btn-primary" type="button" ng-click="deleteSubject()"><i class="fa fa-remove"></i></button>
+</span>
+</td>
