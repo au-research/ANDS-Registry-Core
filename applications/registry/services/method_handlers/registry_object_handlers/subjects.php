@@ -15,7 +15,7 @@ class Subjects extends ROHandler {
                 foreach($this->index['subject_value_unresolved'] as $key=>$sub) {
                     $result[] = array(
                         'subject' => $sub,
-                        'resolved' => titleCase($this->index['subject_value_resolved'][$key]),
+                        'resolved' => $this->index['subject_value_resolved'][$key],
                         'type' => $this->index['subject_type'][$key],
                         'vocab_uri' => isset($this->index['subject_vocab_uri'][$key]) ? $this->index['subject_vocab_uri'][$key] : ''
                     );
