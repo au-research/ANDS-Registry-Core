@@ -61,6 +61,10 @@ class GrantsHandlerV2 extends Handler
             $this->ci->solr->setOpt('fq', '+administering_institution_search:"' . $institutions . '"');
         }
 
+        //description
+        if ($descriptions = (isset($params['description'])) ? $params['description'] : null) {
+            $this->ci->solr->setOpt('fq', '+description:"' . $descriptions . '"');
+        }
         //principalInvestigator
         if ($principalInvestigator = (isset($params['principalInvestigator'])) ? $params['principalInvestigator'] : null) {
             $this->ci->solr->setOpt('fq', '+principal_investigator_search:"' . $principalInvestigator . '"');

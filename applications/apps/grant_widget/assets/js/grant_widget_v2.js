@@ -588,14 +588,17 @@
         location.hash = "#" + hash;
     }
 	//catch all .grant_widget and apply grant_widget() with default settings on
-
-	$('.grant_widget').each(function(){
-	   	var elem = $(this);
-        var api_key = (elem.attr('api_key'));
-        if(api_key === 'undefined'){
-            api_key='public';
-        }
-	   	var widget = elem.grant_widget({api_key:api_key});
+    $(document).ready(function(){
+        $('.grant_widget').each(function(){
+            console.log($(this));
+            console.log('hit');
+            var elem = $(this);
+            var api_key = (elem.attr('api_key'));
+            if(api_key === 'undefined'){
+                api_key='public';
+            }
+            var widget = elem.grant_widget({api_key:api_key});
+        });
     });
 
     $(document).on("click", ".show_list", function(e) {
@@ -610,6 +613,5 @@
         }
         $('#div_'+theUl).show();
     });
-
 
 })( jQuery );
