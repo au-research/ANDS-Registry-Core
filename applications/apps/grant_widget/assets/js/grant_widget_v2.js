@@ -590,8 +590,6 @@
 	//catch all .grant_widget and apply grant_widget() with default settings on
     $(document).ready(function(){
         $('.grant_widget').each(function(){
-            console.log($(this));
-            console.log('hit');
             var elem = $(this);
             var api_key = (elem.attr('api_key'));
             if(api_key === 'undefined'){
