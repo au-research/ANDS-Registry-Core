@@ -53,8 +53,11 @@
 
                 {{--Notes display for this relation--}}
                 @if(isset($col['relation_notes']))
-                    <p> {{ $col['relation_notes'] }} </p>
+                @foreach ($col['relation_notes'] as $note)
+                   <p> {{ $note }} </p>
+                @endforeach
                 @endif
+
 
                 {{--Close the span for the itemprop--}}
             </span>

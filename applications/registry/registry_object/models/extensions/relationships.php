@@ -200,7 +200,8 @@ class Relationships_Extension extends ExtensionBase
                                 "related_title" => $related_info_title,
                                 "related_description" => $related_description,
                                 "related_url" => $related_url,
-                                "connections_preview_div" => $connections_preview_div
+                                "connections_preview_div" => $connections_preview_div,
+                                "notes" => (string) $related_info->notes
                             )
                         );
                     }
@@ -272,6 +273,7 @@ class Relationships_Extension extends ExtensionBase
     public function getRelationshipIndex(){
 
         $relationships = $this->ro->getAllRelatedObjects(false, false, true);
+
         $relationships = array_merge($relationships, $this->ro->_getGrantsNetworkConnections($relationships));
 
         $docs = [];
@@ -285,6 +287,7 @@ class Relationships_Extension extends ExtensionBase
                 'from_class' => strtolower(trim($this->ro->class)),
                 'from_type' => strtolower(trim($this->ro->type)),
                 'from_slug' => $this->ro->slug,
+                'relation_notes' => isset($rel['relation_notes']) ? $rel['relation_notes'] : '',
                 'to_id' => isset($rel['registry_object_id']) && $rel['registry_object_id']!='' ? $rel['registry_object_id'] : false,
                 'to_key' => isset($rel['key']) ? $rel['key'] : false,
                 'to_class' => isset($rel['class']) ? strtolower(trim($rel['class'])) : false,

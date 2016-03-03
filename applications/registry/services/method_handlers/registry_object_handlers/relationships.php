@@ -68,9 +68,11 @@ class Relationships extends ROHandler {
                 break;
             case "publications":
                 $ci->solr->setOpt('fq', '+to_class:publication');
+                $ci->solr->setOpt('rows',999);
                 break;
             case "websites":
                 $ci->solr->setOpt('fq', '+to_class:website');
+                $ci->solr->setOpt('rows',999);
                 break;
             default:
                 // returns 0 for any other case

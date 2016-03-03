@@ -453,7 +453,7 @@ class Connections_Extension extends ExtensionBase
 		/* Step 1 - Straightforward link relationships */
 		$my_connections = array();
         $processed_identifiers = array();
-		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type')
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type ,rir.notes as relation_notes')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type','left')
 				 ->join('registry_objects r','r.registry_object_id = ri.registry_object_id','left')

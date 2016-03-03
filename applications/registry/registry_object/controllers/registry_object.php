@@ -861,7 +861,7 @@ class Registry_object extends MX_Controller {
         header('Content-type: application/json');
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
-		$solrDoc = $ro->indexable_json($limit);
+		$solrDoc = $ro->getRelationshipIndex();
         echo json_encode($solrDoc);
 	}
 
