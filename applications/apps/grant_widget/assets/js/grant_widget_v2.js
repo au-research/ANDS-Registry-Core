@@ -446,7 +446,7 @@
             var html = '';
             for(i=0;i<thefields['search_fields'].length;i++)
             {       $.ajax({
-				    url:settings.search_endpoint+'api_kep='+settings.api_key+'&'+thefields['search_fields'][i]+"="+encodeURIComponent(query)+funder_list+'&start=0&rows=10&callback=?',
+				    url:settings.search_endpoint+'api_key='+settings.api_key+'&'+thefields['search_fields'][i]+"="+encodeURIComponent(query)+funder_list+'&start=0&rows=10&callback=?',
                     indexValue: i,
 				    dataType: 'JSONP',
 				    success: function(data){
