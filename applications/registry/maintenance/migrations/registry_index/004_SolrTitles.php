@@ -27,7 +27,7 @@ class SolrTitles extends GenericSolrMigration
         ]);
         $this->setCopyFields([
             ['source' => 'display_title', 'dest' => ['title', 'title_search']],
-            ['source' => 'list_title', 'dest' => ['title_search']],
+            ['source' => 'list_title', 'dest' => ['title_search', 'list_title_sort']],
             ['source' => 'alt_list_title', 'dest' => ['title_search']],
             ['source' => 'alt_display_title', 'dest' => ['title_search']]
         ]);

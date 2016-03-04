@@ -45,6 +45,7 @@ class Sync_extension extends ExtensionBase{
 			if($this->shouldIndex()){
 				$docs = array();
 				$docs[] = $this->indexable_json();
+                $this->_CI->solr->init()->setCore('portal');
                 $this->_CI->solr->deleteByQueryCondition('id:'.$this->ro->id);
 				$this->_CI->solr->add_json(json_encode($docs));
 				$this->_CI->solr->commit();

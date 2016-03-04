@@ -107,7 +107,9 @@ class GenericSolrMigration implements \GenericMigration
             $data['add-copy-field'] = $addCopyFields;
         }
 
-        return $this->ci->solr->schema($data);
+        if (sizeof($data) > 0) {
+            return $this->ci->solr->schema($data);
+        }
     }
 
     function down()

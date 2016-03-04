@@ -108,7 +108,9 @@ class Migrate extends MX_Controller
                 $migrationResults = array();
                 if (is_array($results)) {
                     foreach ($results as $result) {
-                        $migrationResults[] = json_decode($result, true);
+                        if ($result && !is_array($result)) {
+                            $migrationResults[] = json_decode($result, true);
+                        }
                     }
                 } else {
                     $migrationResults[] = json_decode($results, true);
@@ -116,6 +118,7 @@ class Migrate extends MX_Controller
 
                 foreach ($migrationResults as $key=>$migrationResult) {
                     //parse SOLR response and decide if there's any error
+
                     $status = $migrationResult['responseHeader']['status'];
                     if ($status == "0" && !isset($migrationResult['errors'])) {
                         //success handler, increment the latestSuccess to this file state
@@ -128,10 +131,13 @@ class Migrate extends MX_Controller
                             foreach ($migrationResult['errors'] as $error) {
                                 if (is_array($error['errorMessages'])) {
                                     echo join(' ', $error['errorMessages']);
+
                                 } else {
                                     echo $error['errorMessages'] . "\n";
                                 }
                             }
+                        } else {
+                            var_dump($migrationResult);
                         }
                         break;
                     }
