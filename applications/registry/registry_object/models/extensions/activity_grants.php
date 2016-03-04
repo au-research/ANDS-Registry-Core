@@ -201,7 +201,6 @@ class Activity_grants_extension extends ExtensionBase
 
         $funders = array();
 
-
         if (sizeof($processed) == 0) {
             array_push($processed, $this->ro->id);
         }

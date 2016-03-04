@@ -11,7 +11,7 @@
                    tip="{{ $col['display_description'] }}"
                    ro_id="{{ $col['to_id'] }}">
                     {{$col['to_title']}}</a>
-                {{ isset($col['to_funder']) ? $col['to_funder'] : '' }}
+                {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
             </li>
         @endforeach
         @if($related['services']['count'] > 5)
