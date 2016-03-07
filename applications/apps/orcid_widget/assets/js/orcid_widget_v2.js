@@ -32,8 +32,8 @@
 		var defaults = {
 		    //location (absolute URL) of the jsonp proxy
 		    //search_endpoint: 'https://pub.orcid.org/v1.1/search/orcid-bio?q=',
-            search_endpoint: 'https://devl.ands.org.au/workareas/liz/core/api/orcid.jsonp/search/',
-		   	lookup_endpoint: 'https://devl.ands.org.au/workareas/liz/core/api/orcid.jsonp/lookup/',
+            search_endpoint: 'https://test.ands.org.au/api/orcid.jsonp/search/',
+		   	lookup_endpoint: 'https://test.ands.org.au/workareas/liz/core/api/orcid.jsonp/lookup/',
 
 		    //auto _lookup once init
 		    pre_lookup: false,
@@ -99,6 +99,10 @@
 	 * @return {void}            DOM modification
 	 */
 	function bind_orcid_plugin(obj, settings){
+
+        if(isset(obj[0].attributes.api_key)&&obj[0].attributes.api_key.nodeValue!=''){
+            settings.api_key = obj[0].attributes.api_key.nodeValue;
+        }
 
 		//set obj.p as the parent, this parent is used throughout the plugin as a reference point
 		if(obj.parent().is('span.inputs_group')){
@@ -429,11 +433,7 @@
 
 	$('.orcid_widget').each(function(){
 	   	var elem = $(this);
-        var api_key = (elem.attr('api_key'));
-        if(api_key === 'undefined'){
-            api_key='public';
-        }
-	   	var widget = elem.orcid_widget({api_key: api_key});
+	   	var widget = elem.orcid_widget();
     });
 
 })( jQuery );

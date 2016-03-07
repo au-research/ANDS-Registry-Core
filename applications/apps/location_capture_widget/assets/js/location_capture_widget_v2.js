@@ -18,7 +18,7 @@
     var WIDGET_NAME = "ANDS Location Capture Widget";
     var WIDGET_NS = "location_widget";
     var DEFAULT_PROTOCOL = "https://";
-    var DEFAULT_SERVICE_POINT = DEFAULT_PROTOCOL +	'researchdata.ands.org.au/api/location.jsonp/';
+    var DEFAULT_SERVICE_POINT = DEFAULT_PROTOCOL +	'test.ands.org.au/api/location.jsonp/';
     var ENABLE_GAZETTEER = false;
     //some display constants
     var POLY_COLOUR      = '#008dce';
@@ -46,7 +46,6 @@
 
     //ands environment
     if (typeof(window.real_base_url) !== 'undefined'){
-        console.log(window.real_base_url)
         DEFAULT_SERVICE_POINT =  window.real_base_url +'/api/location.jsonp/'
 
     }

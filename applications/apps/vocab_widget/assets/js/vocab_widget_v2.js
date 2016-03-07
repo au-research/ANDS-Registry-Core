@@ -27,9 +27,9 @@
 
 	var defaults = {
 	    //location (absolute URL) of the jsonp proxy
-	    endpoint: 'http://researchdata.ands.org.au/api/v1.0/vocab.jsonp/',
+	    endpoint: 'http://test.ands.org.au/api/v1.0/vocab.jsonp/',
 
-        //api_key passed as an attribute or when instantiated
+        //api_key set when instantiated
         api_key: 'public',
 
 	    //sisvoc repository to query.
