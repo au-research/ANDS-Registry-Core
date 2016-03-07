@@ -255,9 +255,11 @@
 	};
 
 	//catch all .registry_widget and apply registry_widget() with default settings on
-	$('.registry_widget').each(function(){
-		var elem = $(this);
-		var widget = elem.registry_widget();
-	});
+    $(document).ready(function(){
+        $('.registry_widget').each(function(){
+            var elem = $(this);
+            var widget = elem.registry_widget();
+        });
+    });
 })( jQuery );
 
