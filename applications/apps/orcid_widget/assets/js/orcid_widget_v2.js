@@ -44,7 +44,7 @@
 		    //Text Settings
 		    search: true,
 		    pre_open_search: false,
-		    tooltip:true,
+		    tooltip:false,
 		    info_box_class:'info-box',
 		    search_text: '<i class="icon-search"></i> Search',
 		    search_class: 'orcid_search btn btn-default btn-small',
@@ -431,9 +431,11 @@
 	
 	//catch all .orcid_widget and apply orcid_widget() with default settings on
 
-	$('.orcid_widget').each(function(){
-	   	var elem = $(this);
-	   	var widget = elem.orcid_widget();
+    $(document).ready(function(){
+        $('.orcid_widget').each(function(){
+            var elem = $(this);
+            var widget = elem.orcid_widget();
+        });
     });
 
 })( jQuery );
