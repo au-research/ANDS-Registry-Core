@@ -104,7 +104,6 @@ class GrantsHandlerV2 extends Handler
         if ($start = (isset($params['start'])) ? $params['start'] : 0) {
             $this->ci->solr->setOpt('start', $start);
         }
-
         //execute search and store the result
         $result = $this->ci->solr->executeSearch(true);
 
@@ -122,6 +121,7 @@ class GrantsHandlerV2 extends Handler
         /**
          * Populate the response based on the result returned
          */
+
         foreach ($result['response']['docs'] as $result) {
             $ro = $this->ci->ro->getByID($result['id']);
 

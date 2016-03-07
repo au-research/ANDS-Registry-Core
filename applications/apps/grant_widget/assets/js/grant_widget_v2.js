@@ -116,6 +116,10 @@
 	 */
 	function bind_grant_plugin(obj, settings){
 
+        if(isset(obj[0].attributes.api_key)&&obj[0].attributes.api_key.nodeValue!=''){
+            settings.api_key = obj[0].attributes.api_key.nodeValue;
+        }
+
 		//set obj.p as the parent, this parent is used throughout the plugin as a reference point
 		if(obj.parent().is('span.inputs_group')){
 			//important for local ANDS scripts inputs_groups element
@@ -449,7 +453,7 @@
             var html = '';
             for(i=0;i<thefields['search_fields'].length;i++)
             {       $.ajax({
-				    url:settings.search_endpoint+'api_key='+settings.api_key+'&'+thefields['search_fields'][i]+"="+encodeURIComponent(query)+funder_list+'&start=0&rows=10&callback=?',
+				    url:settings.search_endpoint+'api_key='+settings.api_key+'&'+thefields['search_fields'][i]+"="+encodeURIComponent(query)+funder_list+'&start=0&rows=999&callback=?',
                     indexValue: i,
 				    dataType: 'JSONP',
 				    success: function(data){
@@ -591,11 +595,7 @@
     $(document).ready(function(){
         $('.grant_widget').each(function(){
             var elem = $(this);
-            var api_key = (elem.attr('api_key'));
-            if(api_key === 'undefined'){
-                api_key='public';
-            }
-            var widget = elem.grant_widget({api_key:api_key});
+            var widget = elem.grant_widget();
         });
     });
 
