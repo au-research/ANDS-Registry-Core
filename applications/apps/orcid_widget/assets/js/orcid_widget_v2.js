@@ -33,7 +33,7 @@
 		    //location (absolute URL) of the jsonp proxy
 		    //search_endpoint: 'https://pub.orcid.org/v1.1/search/orcid-bio?q=',
             search_endpoint: 'https://test.ands.org.au/api/orcid.jsonp/search/',
-		   	lookup_endpoint: 'https://devl.ands.org.au/workareas/liz/core/api/orcid.jsonp/lookup/',
+		   	lookup_endpoint: 'https://test.ands.org.au/api/orcid.jsonp/lookup/',
 
 		    //auto _lookup once init
 		    pre_lookup: false,
@@ -225,7 +225,7 @@
 		var orcid = eval(obj['orcid-identifier']);
 		resStr += orcid.path;
 		if(obj['orcid-bio']['biography'])
-		{   
+		{
             if(typeof(obj['orcid-bio']['biography'])=='string')
 			{
 				resStr += "<h6>Biography</h6>";
