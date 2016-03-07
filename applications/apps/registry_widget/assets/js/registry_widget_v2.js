@@ -80,6 +80,10 @@
 					$this.wrap(settings.wrapper);
 					$this.p = $this.parent();
 
+                    if($this[0].attributes.api_key&&$this[0].attributes.api_key.nodeValue!=''){
+                        settings.api_key = $this[0].attributes.api_key.nodeValue;
+                    }
+
 					if($this.attr('data-mode')=='display_single' || $this.attr('data-mode')=='display_result'){
 						settings.mode=$this.attr('data-mode');
 					}
@@ -253,11 +257,7 @@
 	//catch all .registry_widget and apply registry_widget() with default settings on
 	$('.registry_widget').each(function(){
 		var elem = $(this);
-        var api_key = (elem.attr('api_key'));
-        if(api_key === 'undefined'){
-            api_key='public';
-        }
-		var widget = elem.registry_widget({api_key: api_key});
+		var widget = elem.registry_widget();
 	});
 })( jQuery );
 
