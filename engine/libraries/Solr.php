@@ -608,7 +608,7 @@ class Solr
                     $this->setOpt('fq', '-related_object_id:' . $value . '');
                     break;
                 case 'sort':
-//					$this->setOpt('sort', $value);
+					$this->setOpt('sort', $value);
                     break;
                 case 'limit':
                     $this->setOpt('rows', $value);
