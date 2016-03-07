@@ -33,7 +33,7 @@
 		    //location (absolute URL) of the jsonp proxy
 		    //search_endpoint: 'https://pub.orcid.org/v1.1/search/orcid-bio?q=',
             search_endpoint: 'https://test.ands.org.au/api/orcid.jsonp/search/',
-		   	lookup_endpoint: 'https://test.ands.org.au/api/orcid.jsonp/lookup/',
+		   	lookup_endpoint: 'https://devl.ands.org.au/workareas/liz/core/api/orcid.jsonp/lookup/',
 
 		    //auto _lookup once init
 		    pre_lookup: false,
@@ -183,7 +183,6 @@
 		$.ajax({
 			url:settings.lookup_endpoint+encodeURIComponent(value)+'/?api_key='+settings.api_key+'&callback=?',
 			dataType: 'jsonp',
-			timeout: 1000,
 			success: function(data){
 				if(settings.lookup_success_handler && (typeof settings.lookup_success_handler === 'function')){
 					//if there's a predefined handler, use it instead
@@ -226,7 +225,7 @@
 		var orcid = eval(obj['orcid-identifier']);
 		resStr += orcid.path;
 		if(obj['orcid-bio']['biography'])
-		{
+		{   
             if(typeof(obj['orcid-bio']['biography'])=='string')
 			{
 				resStr += "<h6>Biography</h6>";
@@ -246,10 +245,11 @@
 					resStr +="Family name: "+obj['orcid-bio']['personal-details']['family-name']+" <br />";
 				if(obj['orcid-bio']['personal-details']['given-names'])  					    
 					resStr +="Given names: "+obj['orcid-bio']['personal-details']['given-names']+" <br />";
-				if(obj['orcid-bio']['personal-details']['other-names'])
-				{   					    		
+				if(obj['orcid-bio']['personal-details']['other-names'] && obj['orcid-bio']['personal-details']['other-names'].length)
+				{    console.log(obj)
 					resStr +="Other names: ";
-					var count = 0;	
+
+					var count = 0;
 					for(i=0; i< (obj['orcid-bio']['personal-details']['other-names'].length -1);i++)
 					{
 						resStr += obj['orcid-bio']['personal-details']['other-names']['other-name'][i] + ", ";
@@ -279,18 +279,20 @@
 				resStr += wordArray[count] + "<br />";
 			}
 
-			if(obj['orcid-bio']['researcher-urls'])
+			if(obj['orcid-bio']['researcher-urls'] && obj['orcid-bio']['researcher-urls'].length)
 			{ 					    		
 				resStr +="<h6>Research URLs</h6>"
 				var count = 0;
-				for(i=0; i< (obj['orcid-bio']['researcher-urls']['researcher-url'].length -1);i++)
-				{
-					if(obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url']!='')
-						resStr += "URL : " + obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url'] + "<br /> ";
-					if(obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url-name'])
-						resStr += "URL Name : " + obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url-name'] + "<br /> ";
-					count++;
-				}
+                if(obj['orcid-bio']['researcher-urls']['researcher-url']){
+                    for(i=0; i< (obj['orcid-bio']['researcher-urls']['researcher-url'].length -1);i++)
+                    {
+                        if(obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url']!='')
+                            resStr += "URL : " + obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url'] + "<br /> ";
+                        if(obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url-name'])
+                            resStr += "URL Name : " + obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url-name'] + "<br /> ";
+                        count++;
+                    }
+                }
                 if(count===0){
                     if(obj['orcid-bio']['researcher-urls']['researcher-url']['url'])
                     {
@@ -350,7 +352,6 @@
 				url:settings.search_endpoint+'?api_key='+settings.api_key+'&q='+encodeURIComponent(query)+'&start=0&rows=10&wt=json&callback=?',
 				dataType: 'jsonp',
 				success: function(data){
-                  //  console.log(data);
 					if(settings.success_handler && (typeof settings.success_handler === 'function')){
 						settings.success_handler(data, obj, settings);
 					}else{
