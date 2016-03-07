@@ -206,12 +206,22 @@ class Vocabs extends MX_Controller
      * Adding a vocabulary
      * Displaying a view for adding a vocabulary
      * Using the same CMS as edit
-     * @todo  ACL
+     * If not logged in, redirect to login page, then My Vocabs.
+     * We could have done a redirect from login page back to this method,
+     * except that the CMS page relies on the use of a URL fragment
+     * (#!/?skip=true) to distinguish between "normal" and add from PoolParty,
+     * and because fragments are only visible client-side, we can't
+     * pass that on.
      * @return view
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      */
     public function add()
     {
+        if (!$this->user->isLoggedIn()) {
+            // throw new Exception('User not logged in');
+            redirect(get_vocab_config('auth_url')
+                     . 'login#?redirect=' . portal_url('vocabs/myvocabs'));
+        }
         $event = array(
             'event' => 'pageview',
             'page' => 'add',
@@ -227,26 +237,35 @@ class Vocabs extends MX_Controller
      * Edit a vocabulary
      * Displaying a view for editing a vocabulary
      * Using the same CMS as add but directed towards a vocabulary
-     *
-     * @todo    ACL
-     * @param bool|string $slug slug of the vocabulary, unique for a vocabulary
+     * Authorization is checked.
+     * @param  string $id ID of the vocabulary, unique for a vocabulary
      * @return view
      * @throws Exception
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      */
-    public function edit($slug = false)
+    public function edit($id = false)
     {
         if (!$this->user->isLoggedIn()) {
             // throw new Exception('User not logged in');
             redirect(get_vocab_config('auth_url')
                      . 'login#?redirect='
-                     . portal_url('vocabs/edit/' . $slug));
+                     . portal_url('vocabs/edit/' . $id));
         }
-        if (!$slug) {
-            throw new Exception('Require a Vocabulary Slug to edit');
+        if (!$id) {
+            throw new Exception('Require a Vocabulary ID to edit');
         }
 
-        $vocab = $this->vocab->getByID($slug);
+        $vocab = $this->vocab->getByID($id);
+
+        // First, check existence
+        if (!$vocab) {
+            throw new Exception('Vocab ID ' . $id . ' not found');
+        }
+
+        // Then, check authorization.
+        if (!$this->vocab->isOwner($id)) {
+            throw new Exception('Not authorised to edit Vocab ID ' . $id);
+        }
         // var_dump($vocab);
         // throw new Exception($vocab->prop['status']);
         if ($vocab->prop['status'] == 'published') {
@@ -256,10 +275,6 @@ class Vocabs extends MX_Controller
                 redirect(portal_url('vocabs/edit/') . $draft_vocab->id);
                 //throw new Exception($vocab->id);
             }
-        }
-        //do some checking of vocab here, ACL stuff @todo
-        if (!$vocab) {
-            throw new Exception('Vocab Slug ' . $slug . ' not found');
         }
 
         $event = array(
@@ -329,6 +344,8 @@ class Vocabs extends MX_Controller
     /**
      * Primary search functionality
      * data is obtained from angularjs php input POST
+     * vocabs_factory's search(filters)
+     *                calls post('filter', {filters: filters})
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @return json search result
      */
@@ -591,6 +608,36 @@ class Vocabs extends MX_Controller
     /**
      * Services Controller
      * For allowing RESTful API against the Vocabs Portal Database / SOLR
+     * vocabs_factory provides the following:
+     *           getAll()
+     *               get('/services/vocabs')
+     *
+     *            add (data)
+     *               post('/services/vocabs', {data: data})
+     *
+     *            get (slug)
+     *               get('/services/vocabs/' + slug)
+     *
+     *            modify(slug, data)
+     *               post('/services/vocabs/' + slug, {data: data})
+     *
+     *            suggest(type)
+     *               get('/services/vocabs/all/related?type=' + type)
+     *
+     *            user()
+     *               get('/services/vocabs/all/user')
+     *
+     * Other supported services:
+     *       index
+     *
+     *    Used by assets/js/vocabs_visualise_directive.js:
+     *       tree
+     *
+     *    Not currently used:
+     *       accessPoints
+     *       tree-raw
+     *       versions
+     *
      * @param  string $class [vocabs] context
      * @param  string $id [id] of the context
      * @param  string $method [method] description of the query
@@ -645,6 +692,10 @@ class Vocabs extends MX_Controller
                 }
 
             } else {
+                // FIXME if this is ever used: this is
+                // properly a message, not a status.
+                // Use "error" as the status, and assign
+                // the message to $result instead.
                 $status = "No vocabulary found";
             }
             echo json_encode(
@@ -653,8 +704,10 @@ class Vocabs extends MX_Controller
                     'message' => $result,
                 )
             );
+            // FIXME if this is ever used: should this be exit()?
+            // Check if this should be a return statement.
             exit();
-        }
+        } // method accessPoints
 
         $result = '';
         if ($id == 'all' || $id == '') {
@@ -670,6 +723,7 @@ class Vocabs extends MX_Controller
             }
 
             if ($method == 'related') {
+                // related for all vocabs
                 $result = array();
                 $type = $this->input->get('type')
                       ? $this->input->get('type') : false;
@@ -721,6 +775,7 @@ class Vocabs extends MX_Controller
                     }
                 }
             } elseif ($method == 'user') {
+                // user (for all vocabs)
                 $result = array();
                 $result['affiliations'] =
                     array_values(array_unique($this->user->affiliations()));
@@ -728,6 +783,14 @@ class Vocabs extends MX_Controller
                 $result['role_id'] = $this->user->localIdentifier();
 
             } elseif ($method == 'index') {
+                // (re-)index for all vocabs
+                // Require superuser authentication.
+                if (!$this->vocab->isSuperuser()) {
+                    throw new Exception('Must be logged in with a '
+                                        . 'superuser role to do a full '
+                                        . 'reindex.');
+                }
+
                 $result = array();
 
                 //clear all vocabs before adding
@@ -744,23 +807,58 @@ class Vocabs extends MX_Controller
                 //index each vocab one by one
                 foreach ($vocabs as $vocab) {
                     $result[] = $vocab->indexable_json();
+                    // This call to indexVocab() is protected by the
+                    // check of isSuperuser() just above.
                     $this->indexVocab($vocab);
                 }
             }
 
-            // POST request, for adding new item
+            // Fall through from all GET requests to this!
+            // FIXME: Don't fall through to this!
+            // FIXME: use a method name, e.g., "add", for this!
+            // POST request, for adding a new vocabulary
             $angulardata = json_decode(file_get_contents("php://input"), true);
             $data = isset($angulardata['data']) ? $angulardata['data'] : false;
             if ($data) {
                 //deal with POST request, adding new vocabulary
+                // First, require that the user is logged in.
+                if (!$this->user->isLoggedIn()) {
+                    throw new Exception(
+                        'Error adding new vocabulary: not logged in.');
+                }
+
+                // So the user is logged in.
+                // Next, check that an owner has been specified.
+                if (!isset($data['owner'])) {
+                    throw new Exception(
+                      'Error adding new vocabulary: no owner specified.');
+                }
+
+                // Next, get their organisational affiliations.
+                // If they don't have any, then the user's authentication
+                // token ("localIdentifier") must be specified as the owner.
+                // Otherwise if the user has at least one organisational
+                // one of these roles must be specified as the owner
+                // of this new vocabulary.
+                $affiliations = $this->user->affiliations();
+                if ((empty($affiliations)
+                     && ($data['owner'] != $this->user->localIdentifier())) 
+                    || (!empty($affiliations)
+                        && !in_array($data['owner'],$affiliations))) {
+                    throw new Exception(
+                      'Error adding new vocabulary: no valid owner provided.');
+                }
+
                 $vocab = $this->vocab->addNew($data);
                 if (!$vocab) {
-                    throw new Exception('Error Adding New Vocabulary');
+                    throw new Exception('Error adding new vocabulary.');
                 }
 
                 if ($vocab) {
                     $result = $vocab;
                     //index just added one
+                    // This call to indexVocab() is protected by the
+                    // ownership checks just above.
                     $this->indexVocab($vocab);
 
                     //log
@@ -774,6 +872,7 @@ class Vocabs extends MX_Controller
             }
 
         } elseif ($id != '') {
+            // an individual vocab id was specified
 
             $vocab = $this->vocab->getBySlug($id);
             if (!$vocab) {
@@ -787,10 +886,56 @@ class Vocabs extends MX_Controller
             $result = $vocab->display_array();
 
             //POST Request, for saving this vocab
+            // Fall through from all GET requests to this!
+            // FIXME: Don't fall through to this!
+            // FIXME: use a method name, e.g., "add", for this!
             $angulardata = json_decode(file_get_contents("php://input"), true);
             $data = isset($angulardata['data']) ? $angulardata['data'] : false;
 
             if ($data) {
+                // First, require that the user is logged in.
+                if (!$this->user->isLoggedIn()) {
+                    throw new Exception(
+                        'Error adding new vocabulary: not logged in.');
+                }
+
+                // So the user is logged in.
+                // Does the user own the vocabulary being updated?
+                if (!$this->vocab->isOwner($vocab->prop['id'])) {
+                    throw new Exception('Attempt to update Vocab ID '
+                                        . $id . ' not owned by this user');
+                }
+
+                // Does the $data specify the same ID as what was
+                // given in the POST URL?
+                if (!isset($data['id'])
+                    || ($data['id'] != $vocab->prop['id'])) {
+                    throw new Exception(
+                        'POST data does not have the same Vocab ID '
+                        . $id . ' specified in URL');
+                }
+
+                // Next, check that an owner has been specified.
+                if (!isset($data['owner'])) {
+                    throw new Exception(
+                      'Error adding new vocabulary: no owner specified.');
+                }
+
+                // Next, get their organisational affiliations.
+                // If they don't have any, then the user's authentication
+                // token ("localIdentifier") must be specified as the owner.
+                // Otherwise if the user has at least one organisational
+                // one of these roles must be specified as the owner
+                // of this new vocabulary.
+                $affiliations = $this->user->affiliations();
+                if ((empty($affiliations)
+                     && ($data['owner'] != $this->user->localIdentifier())) 
+                    || (!empty($affiliations)
+                        && !in_array($data['owner'],$affiliations))) {
+                    throw new Exception(
+                      'Error adding new vocabulary: no valid owner provided.');
+                }
+
                 // if id refers to a draft look up to see if
                 // there is a published for this draft
                 if ($vocab->prop['status'] == 'draft'
@@ -831,6 +976,8 @@ class Vocabs extends MX_Controller
                 }
 
                 if ($result && $vocab->prop['status'] == 'published') {
+                    // This call to indexVocab() is protected by the
+                    // ownership checks just above.
                     if ($this->indexVocab($vocab)) {
                         $vocab->log('Indexing Success');
                     }
@@ -854,7 +1001,14 @@ class Vocabs extends MX_Controller
 
             }
             if ($method == 'index') {
+                if (!$this->vocab->isSuperuser()) {
+                    throw new Exception('Must be logged in with a '
+                                        . 'superuser role to do a '
+                                        . 'reindex.');
+                }
                 $result = $vocab->indexable_json();
+                // This call to indexVocab() is protected by the
+                // check of isSuperuser() just above.
                 $this->indexVocab($vocab);
             } elseif ($method == 'versions') {
                 $result = $result['versions'];
@@ -875,6 +1029,7 @@ class Vocabs extends MX_Controller
 
     /**
      * Indexing a single vocab helper method
+     * It is the responsibility of the caller to have done authentication.
      * @access private
      * @param  _vocabulary $vocab
      * @return boolean
@@ -918,16 +1073,38 @@ class Vocabs extends MX_Controller
     }
 
     /**
-     * Delete a vocabulary
-     * @todo Need ACL on this feature
+     * Delete a vocabulary.
+     * There user must be logged in, and have ownership rights
+     * on the vocabulary.
+     * The response is echoed as a JSON object.
+     * There are two key/value pairs:
+     * 'status': either 'success' or 'error'
+     * 'message': either 'OK' for status 'success', otherwise
+     *   an error message that can be displayed to the user.
      * @param  id $id POST
      * @return boolean
      */
     public function delete()
     {
-        if ($this->user->isLoggedIn() && $this->input->post('id')) {
+        $response = array();
+
+        if (!$this->input->post('id')) {
+            $response['status'] = 'error';
+            $response['message'] = 'No ID specified.';
+        } elseif ($this->vocab->getByID($this->input->post('id')) === false) {
+            $response['status'] = 'error';
+            $response['message'] = 'No such vocabulary.';
+        } elseif ($this->vocab->isOwner($this->input->post('id'))) {
             $this->vocab->delete($this->input->post('id'));
+            $response['status'] = 'success';
+            $response['message'] = 'OK';
+        } else {
+            $response['status'] = 'error';
+            $response['message'] =
+                'You are not authorized to delete this vocabulary.';
         }
+
+        echo(json_encode($response));
     }
 
     /**
@@ -935,6 +1112,12 @@ class Vocabs extends MX_Controller
      * To interact with 3rd party application in order to get
      * vocabularies metadata
      * Requires a ?GET request
+     * vocabs_factory provides:
+     *           toolkit(req)
+     *               get('toolkit?request=' + req)
+     *
+     *           getMetadata(id)
+     *               get('toolkit?request=getMetadata&ppid=' + id)
      * @example vocabs/toolkit/?request=listPooLPartyProjects returns
      *          all the PoolParty project available
      * @return view
@@ -984,12 +1167,17 @@ class Vocabs extends MX_Controller
     }
 
     /**
-     * Upload API entry point for uploading a file
+     * Upload API entry point for uploading a file.
+     * The user must be logged in.
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @return json response
      */
     public function upload()
     {
+        if (!$this->user->isLoggedIn()) {
+            throw new Exception(
+                'Error uploading file: not logged in.');
+        }
         header('Cache-Control: no-cache, must-revalidate');
         header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
@@ -1071,6 +1259,11 @@ class Vocabs extends MX_Controller
      */
     public function migrate($releaseID)
     {
+        if (!$this->vocab->isSuperuser()) {
+            throw new Exception('Must be logged in with a '
+                                . 'superuser role to do a '
+                                . 'migration.');
+        }
         $response = array();
         $response['releaseID'] = $releaseID;
         $response["tasks"] = array();
@@ -1088,6 +1281,11 @@ class Vocabs extends MX_Controller
  */
     private function taskMigration()
     {
+        if (!$this->vocab->isSuperuser()) {
+            throw new Exception('Must be logged in with a '
+                                . 'superuser role to do a '
+                                . 'task migration.');
+        }
         $ci =& get_instance();
         $message = array();
         $db = $ci->load->database('vocabs', true);
@@ -1182,6 +1380,49 @@ class Vocabs extends MX_Controller
         var_dump($add_result);
         var_dump($commit_result);
         // echo $data;
+    }
+
+    public function testIsOwner($vocab)
+    {
+        var_dump($this->user->affiliations());
+        var_dump($vocab);
+        var_dump($this->vocab->isOwner($vocab));
+    }
+
+    public function testIsOwnerNoSuperuser($vocab)
+    {
+        var_dump($this->user->affiliations());
+        var_dump($vocab);
+        var_dump($this->vocab->isOwner($vocab, false));
+    }
+
+    public function testIsOwnerAll()
+    {
+        var_dump($this->user->affiliations());
+        $allVocabs = $this->vocab->getAllVocabs();
+        $allVocabsIsOwner = array();
+        foreach ($allVocabs as $vocab) {
+            $allVocabsIsOwner[$vocab['id']] =
+                $this->vocab->isOwner($vocab['id']);
+        }
+        var_dump($allVocabsIsOwner);
+    }
+
+    public function testIsOwnerAllNoSuperuser()
+    {
+        var_dump($this->user->affiliations());
+        $allVocabs = $this->vocab->getAllVocabs();
+        $allVocabsIsOwner = array();
+        foreach ($allVocabs as $vocab) {
+            $allVocabsIsOwner[$vocab['id']] =
+                $this->vocab->isOwner($vocab['id'], false);
+        }
+        var_dump($allVocabsIsOwner);
+    }
+
+    public function testIsSuperuser()
+    {
+        var_dump($this->vocab->isSuperuser());
     }
 
     /**

@@ -174,6 +174,78 @@ class Vocabularies extends CI_Model
     }
 
     /**
+     * Returns true if the user is logged in
+     * and has ownership of the given vocab.
+     * This function calls the @getByID function internally.
+     * This method has a precondition: the vocabulary must exist.
+     * @param  int $id Vocabulary ID
+     * @param  bool $allowSuperuser Take superuser privileges
+     *         into account. If true (the default), if the user
+     *         is logged in as a registry superuser, this method
+     *         will always return true. (This test is performed
+     *         _before_ checking the existence of the vocabulary.
+     *         Therefore, note the method's precondition that the
+     *         vocabulary must exist, for this method to give
+     *         a correct result.) If false, superuser privileges
+     *         are ignored; the user must have an appropriate
+     *         affiliation. In general, there is no need to
+     *         pass in a value for this parameter. The presence
+     *         of this parameter is (for now) specifically to support
+     *         unit testing of this method.
+     * @return true if and only the user is logged in
+     * and has ownership of the vocabulary.
+     */
+    public function isOwner($id, $allowSuperuser = true)
+    {
+        if (!$this->user->isLoggedIn()) {
+            // Not even logged in.
+            return false;
+        }
+        // Only take superuser privileges into account if we
+        // are asked to (which is also the default).
+        if ($allowSuperuser) {
+            if ($this->user->hasFunction('REGISTRY_SUPERUSER')) {
+                // Superuser, so definitely authorised.
+                return true;
+        }
+        }
+        $this->vocab_db = $this->load->database('vocabs', true);
+
+        $affiliations = $this->user->affiliations();
+        $role_id = $this->user->localIdentifier();
+
+        $query = $this->vocab_db->where('id', $id)->
+               where_in('owner', $affiliations)->get('vocabularies');
+        if ($query && $query->num_rows() > 0) {
+            // Found it, by affiliation.
+            return true;
+        }
+        $query = $this->vocab_db->where('id', $id)->
+               where_in('owner', $role_id)->get('vocabularies');
+        if ($query && $query->num_rows() > 0) {
+            // Found it, by role.
+            return true;
+        }
+        // Not an owner.
+        return false;
+    }
+
+    /**
+     * Returns true if the user is logged in with superuser
+     * privileges.
+     * @return true if and only the user is logged in with
+     *         superuser privileges.
+     */
+    public function isSuperuser()
+    {
+        if (!$this->user->isLoggedIn()) {
+            // Not even logged in.
+            return false;
+        }
+        return $this->user->hasFunction('REGISTRY_SUPERUSER');
+    }
+
+    /**
      * Returns a set of test vocabulary used for testing purposes
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @author Liz Woods <liz.woods@ands.org.au>
@@ -582,6 +654,8 @@ class Vocabularies extends CI_Model
      * Creating a new _vocabulary object
      * Populate it with data
      * And then save it
+     * NB No authorization checks are performed; this is
+     * the responsibility of the controller.
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @param $data data to save to the database
      */
@@ -606,6 +680,8 @@ class Vocabularies extends CI_Model
      * - Remove all versions
      * - Delete the vocabulary
      * - Clear SOLR index of this record
+     * NB No authorization checks are performed; this is
+     * the responsibility of the controller.
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @param int $id ID of the vocabulary for deletion
      * @return boolean
@@ -635,6 +711,8 @@ class Vocabularies extends CI_Model
 
     /** Delete all version for the given vocab id
      * and remove all traces from sissvoc, sesame, and fs
+     * NB No authorization checks are performed; this is
+     * the responsibility of the controller.
      * @param $vocab_id
      */
     public function removeAllVersions($vocab_id)
@@ -654,6 +732,8 @@ class Vocabularies extends CI_Model
     }
 
     /** Remove a given Version from toolkit as well as from the DB
+     * NB No authorization checks are performed; this is
+     * the responsibility of the controller.
      * @param $vocab_id
      * @param $version_id
      * @return string
@@ -704,13 +784,15 @@ class Vocabularies extends CI_Model
 
 
     /** Create a delete task in the tasks table for the toolkit to run
+     * NB No authorization checks are performed; this is
+     * the responsibility of the caller.
      * @param $vocab_id
      * @param $version_id
      * @param $task_list
      * @return mixed
      * @throws Exception
      */
-    public function createDeleteTask($vocab_id, $version_id, $task_list)
+    private function createDeleteTask($vocab_id, $version_id, $task_list)
     {
         $this->vocab_db = $this->load->database('vocabs', true);
         $task_array = array();

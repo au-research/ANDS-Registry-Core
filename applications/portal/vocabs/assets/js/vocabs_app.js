@@ -430,21 +430,31 @@ $(document).on(
     '.deleteVocab',
     function (e) {
         e.preventDefault();
-        if (confirm('Are you sure you want to delete this vocabulary including all endpoints? This action cannot be reversed.')) {
+        if (confirm('Are you sure you want to delete this vocabulary, '
+              + 'including all endpoints? This action cannot be reversed.')) {
             var vocab_id = $(this).attr('vocab_id');
             $.ajax(
                 {
                     url: base_url + 'vocabs/delete',
                     type: 'POST',
-                    data: {id: vocab_id},
+                    data: {
+                        id: vocab_id
+                    },
+                    dataType: 'json',
                     success: function (data) {
-                        location.reload();
+                        var response = data;
+                        if (data.status == 'success') {
+                            location.reload();
+                        } else {
+                            alert('Delete failed: ' + data.message);
+                        }
                     }
                 }
             );
         } else {
             return false;
-        }
+        } // end if
+        return undefined;
     }
 );
 
@@ -461,6 +471,5 @@ function showWidget()
         $("#widget-toggle").click();
     }
 
-    void(0);
-
+    return undefined;
 }
