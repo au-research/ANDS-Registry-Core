@@ -13,38 +13,31 @@ class Directaccess extends ROHandler
         $download = array();
         $query = '';
         $relationshipTypeArray = ['isPresentedBy', 'supports'];
-        $classArray = ['service'];
+        $classArray = [];
 
-        // get all relationships is faster than getRelatedObjectsByClassAndRElationshipType, provided that it's cached
-        $relationships = $this->ro->getAllRelatedObjects(false, false, true);
-        $services = array();
-        foreach ($relationships as $rr) {
-            if (in_array($rr['class'], $classArray) && in_array($rr['relation_type'], $relationshipTypeArray)) {
-                array_push($services, $rr);
-            }
-        }
-
-        foreach ($services as $service) {
+        $services = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
+        foreach ($services as &$service) {
             if (isset($service['relation_url'])
-                && $service['relation_url'] != ''
-                && $service['status'] == PUBLISHED
+                && sizeof($service['relation_url']) > 0
             ) {
-                if (isset($service['relation_description']) && $service['relation_description'] == '') {
-                    $service['relation_description'] = $service['title'];
+                $relationUrl = $service['relation_url'][0];
+                $relationDescription = $service['to_title'];
+                if (isset($service['relation_description'])
+                    && sizeof($service['relation_description']) > 0
+                    && $service['relation_description'][0] != '') {
+                    $relationDescription = $service['relation_description'][0];
                 }
                 $download[] = Array(
                     'access_type' => 'viaService',
                     'contact_type' => 'url',
-                    'access_value' => $service['relation_url'],
-                    'title' => (string)$service['relation_description'],
+                    'access_value' => $relationUrl,
+                    'title' => $relationDescription,
                     'mediaType' => '',
                     'byteSize' => '',
                     'notes' => 'Visit Service'
                 );
             }
-
         }
-
 
         if ($this->xml->{$this->ro->class}->relatedInfo) {
             foreach ($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo) {

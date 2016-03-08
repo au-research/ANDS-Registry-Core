@@ -164,7 +164,7 @@ class Oai extends MX_Controller
 		$ident_details = array('repositoryName' => Oai::REP_NAME,
 				       'baseUrl' => base_url(),
 				       'protocolVersion' => Oai::PROT_VER,
-				       'earliestTimestamp' => $start,
+				       'earliestDatestamp' => $start,
 				       'deletedRecord' => 'transient', #persistent?
 				       'granularity' => 'YYYY-MM-DDThh:mm:ssZ',
 				       'adminEmail' => Oai::ADMIN_EMAIL);
