@@ -352,6 +352,44 @@ class Relationships_Extension extends ExtensionBase
     }
 
     /**
+     * A fast way to return related objects
+     * For reading, after the relationships have been indexed correctly
+     *
+     * @param array $byClass
+     * @param array $byRelations
+     * @param int   $limit
+     * @return array
+     */
+    public function getRelatedObjectsIndex($byClass = array(), $byRelations = array(), $limit = 20000){
+        $this->_CI->load->library('solr');
+        $this->_CI->solr
+            ->init()->setCore('relations');
+
+        $this->_CI->solr->setOpt('fq','+from_id:'.$this->ro->id);
+
+        $classFq = "";
+        foreach ($byClass as $class) {
+            $classFq .= ' to_class:("'.$class.'")';
+        }
+        $this->_CI->solr->setOpt('fq', $classFq);
+
+        $relationFq = "";
+        foreach ($byRelations as $relation) {
+            $relationFq .= ' relation:('.$relation.')';
+        }
+        $this->_CI->solr->setOpt('fq', $classFq);
+
+        $this->_CI->solr->setOpt('rows', $limit);
+
+        $result = $this->_CI->solr->executeSearch(true);
+        if ($result && $result['response'] && $result['response']['numFound'] > 0) {
+            return $result['response']['docs'];
+        } else {
+            return array();
+        }
+    }
+
+    /**
      * Return a list of all registry object keys that this registry object is related to
      *
      * @return array
