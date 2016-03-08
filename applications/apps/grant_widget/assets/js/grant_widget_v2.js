@@ -278,6 +278,7 @@
 	 */
 
 	function _constructGrantHTML(obj,settings) {
+        console.log(obj);
 		var resStr = '';
 		resStr += "<div class='"+settings.info_box_class+"'>"
         if(obj.length==1)
@@ -308,63 +309,66 @@
                 resStr +="<p>"+identifier+"</p>";
                 obj[0]['identifier'] = identifier
             }
-            if(obj[0]['relations'])
-            {
-                resStr += "<h6>Relationships</h6>";
 
-                if(typeof(obj[0]['relations']['isFundedBy'])=='string')
+            if(obj[0]['funder'] || obj[0]['managingInstitution'] ||obj[0]['researchers'] ||obj[0]['principalInvestigator']  ){
+                resStr += "<h6>Relationships</h6>";
+            }
+                if(obj[0]['funder'] && typeof(obj[0]['funder'])=='string')
                 {
                     resStr +="<p>Is funded by</p>";
-                    resStr +="<p>"+obj[0]['relations']['isFundedBy']+"</p>";
-                }else if (typeof(obj[0]['relations']['isFundedBy'])=='object'){
+                    resStr +="<p>"+obj[0]['funder']+"</p>";
+                }else if (obj[0]['funder'] && typeof(obj[0]['funder'])=='object'){
                     resStr +="<p>Is funded by</p><p>";
-                    for(i=0;i<obj[0]['relations']['isFundedBy'].length;i++)
+                    for(i=0;i<obj[0]['funder'].length;i++)
                     {
-                        resStr +=obj[0]['relations']['isFundedBy'][i]+", ";
+                        resStr +=obj[0]['funder'][i]+", ";
                     }
                     resStr = resStr.replace(/(^\s*,)|(,\s*$)/g, '');
                     resStr +="</p>";
                 }
-                if(typeof(obj[0]['relations']['isManagedBy'])=='string')
+
+            if(obj[0]['managingInstitution'] && typeof(obj[0]['managingInstitution'])=='string')
+            {
+                resStr +="<p>Is managed by</p>";
+                resStr +="<p>"+obj[0]['managingInstitution']+"</p>";
+            }else if (obj[0]['managingInstitution'] && typeof(obj[0]['managingInstitution'])=='object'){
+                resStr +="<p>Is managed by</p><p>";
+                for(i=0;i<obj[0]['managingInstitution'].length;i++)
                 {
-                    resStr +="<p>Is managed by</p>";
-                    resStr +="<p>"+obj[0]['relations']['isManagedBy']+"</p>";
-                }else if (typeof(obj[0]['relations']['isManagedBy'])=='object'){
-                    resStr +="<p>Is managed by</p><p>";
-                    for(i=0;i<obj[0]['relations']['isManagedBy'].length;i++)
-                    {
-                        resStr +=obj[0]['relations']['isManagedBy'][i]+", ";
-                    }
-                    resStr = resStr.replace(/(^\s*,)|(,\s*$)/g, '');
-                    resStr +="</p>";
+                    resStr +=obj[0]['managingInstitution'][i]+", ";
                 }
-                if(typeof(obj[0]['relations']['isParticipantIn'])=='string')
+                resStr = resStr.replace(/(^\s*,)|(,\s*$)/g, '');
+                resStr +="</p>";
+            }
+
+            if(obj[0]['principalInvestigator'] && typeof(obj[0]['principalInvestigator'])=='string')
+            {
+                resStr +="<p>Principal Investigator</p>";
+                resStr +="<p>"+obj[0]['principalInvestigator']+"</p>";
+            }else if (obj[0]['principalInvestigator'] && typeof(obj[0]['principalInvestigator'])=='object'){
+                resStr +="<p>Principal Investigator</p><p>";
+                for(i=0;i<obj[0]['principalInvestigator'].length;i++)
                 {
-                    resStr +="<p>Has participant</p>";
-                    resStr +="<p>"+obj[0]['relations']['isParticipantIn']+"</p>";
-                }else if(typeof(obj[0]['relations']['isParticipantIn'])=='object'){
-                    resStr +="<p>Has participant</p><p>";
-                    for(i=0;i<obj[0]['relations']['isParticipantIn'].length;i++)
-                    {
-                        resStr +=obj[0]['relations']['isParticipantIn'][i]+", ";
-                    }
-                    resStr = resStr.replace(/(^\s*,)|(,\s*$)/g, '');
-                    resStr +="</p>";
+                    resStr +=obj[0]['principalInvestigator'][i]+", ";
                 }
-                if(typeof(obj[0]['relations']['isPrincipalInvestigatorOf'])=='string')
+                resStr = resStr.replace(/(^\s*,)|(,\s*$)/g, '');
+                resStr +="</p>";
+            }
+
+            if(obj[0]['researchers'] && typeof(obj[0]['researchers'])=='string')
+            {
+                resStr +="<p>Researchers</p>";
+                resStr +="<p>"+obj[0]['researchers']+"</p>";
+            }else if (obj[0]['researchers'] && typeof(obj[0]['researchers'])=='object'){
+                resStr +="<p>Researchers</p><p>";
+                for(i=0;i<obj[0]['researchers'].length;i++)
                 {
-                    resStr +="<p>Has principal investigator</p>";
-                    resStr +="<p>"+obj[0]['relations']['isPrincipalInvestigatorOf']+"</p>";
-                }else if (typeof(obj[0]['relations']['isPrincipalInvestigatorOf'])=='object'){
-                    resStr +="<p>Has principal investigator</p><p>";
-                    for(i=0;i<obj[0]['relations']['isPrincipalInvestigatorOf'].length;i++)
-                    {
-                        resStr +=obj[0]['relations']['isPrincipalInvestigatorOf'][i]+", ";
-                    }
-                    resStr = resStr.replace(/(^\s*,)|(,\s*$)/g, '');
-                    resStr +="</p>";
+                    resStr +=obj[0]['researchers'][i]+", ";
                 }
-             }
+                resStr = resStr.replace(/(^\s*,)|(,\s*$)/g, '');
+                resStr +="</p>";
+            }
+
         }
         else if(obj.length==0)
         {
@@ -393,25 +397,6 @@
                 if(typeof(obj[0]['identifier'])!="string"){
                     var identifier = obj[0]['identifier'][0];
                 }
-               // console.log(identifier);
-              /*  var i;
-                var identifier = '';
-
-                for (i in obj[0]['identifier_type']) {
-                    if (obj[0]['identifier_type'].hasOwnProperty(i)) {
-                        identifier = obj[0]['identifier_type'][i]
-                    }
-                }
-
-                for (j in obj[0]['identifier_type']) {
-                    if (obj[0]['identifier_type'].hasOwnProperty(j)) {
-                        if(j=='purl')
-                        {
-                            identifier = obj[0]['identifier_type'][j]
-                        }
-                    }
-                } */
-
             }
 
         }

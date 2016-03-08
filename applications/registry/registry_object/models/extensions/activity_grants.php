@@ -95,7 +95,7 @@ class Activity_grants_extension extends ExtensionBase
         foreach ($gXPath->query('//ro:relatedInfo[@type="party"]') as $node) {
             foreach ($node->getElementsByTagName("relation") as $relationNode) {
                 $type = $relationNode->getAttribute("type");
-                if ($type == "hasPrincipalInvestigator" || $type == "hasParticipant") {
+                if ($type == "isPrincipalInvestigator" || $type == "hasParticipant") {
                     if ($titleNode = $node->getElementsByTagName("title")->item(0)) {
                         $researchers[] = strip_tags(html_entity_decode($titleNode->nodeValue));
                     }
@@ -295,12 +295,11 @@ class Activity_grants_extension extends ExtensionBase
         }
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
-                if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
-                    if ($relatedObject['class'] == 'party'
-                        && $relatedObject['relation_type'] == 'hasPrincipalInvestigator'
-                        && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
-                            'type'))) == 'person'
-                    ) {
+                if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT
+                    && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],'type'))) == 'person') {
+                    $isValidChild = (($relatedObject['relation_type'] == 'hasPrincipalInvestigator' && $relatedObject['origin'] == 'EXPLICIT')
+                        || ($relatedObject['relation_type'] == 'isPrincipalInvestigator' && startsWith($relatedObject['origin'],"REVERSE")));
+                    if ($isValidChild )                     {
                         $principalInvestigator[] = $relatedObject['title'];
                     }
                 }
