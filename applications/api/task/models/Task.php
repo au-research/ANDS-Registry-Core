@@ -19,6 +19,7 @@ class Task
 
     private $db;
     private $memoryLimit = '256M';
+    private $dateFormat = 'Y-m-d | h:i:sa';
 
     /**
      * Intialisation of this task
@@ -32,7 +33,12 @@ class Task
         $this->status = isset($task['status']) ? $task['status'] : false;
         $this->priority = isset($task['priority']) ? $task['priority'] : false;
         $this->params = isset($task['params']) ? $task['params'] : false;
-        $this->message = isset($task['message']) ? json_decode($task['message'], true) : ['log' => []];
+        if (isset($task['message'])) {
+            $this->message = is_array($task['message']) ? $task['message'] : json_decode($task['message'], true);
+        } else {
+            $this->message = ['log' => []];
+        }
+
         $this->lastRun = isset($task['last_run']) ? $task['last_run'] : false;
 
         $this->dateFormat = 'Y-m-d | h:i:sa';
@@ -69,13 +75,13 @@ class Task
     }
 
     public function finalize($start){
-        $this->hook_end();
         $end = microtime(true);
         $this->setStatus('COMPLETED')
             ->log("Task finished at " . date($this->dateFormat, $end))
             ->log("Peak memory usage: ". memory_get_peak_usage(). " bytes")
             ->log("Took: " . $this->formatPeriod($end, $start))
             ->save();
+        $this->hook_end();
     }
 
     /**
@@ -134,7 +140,11 @@ class Task
         ];
         if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
 
-        return $this->update_db($data);
+        if ($this->id) {
+            return $this->update_db($data);
+        } else {
+            return true;
+        }
     }
 
     /**

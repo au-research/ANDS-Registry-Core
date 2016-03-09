@@ -10,6 +10,20 @@ namespace ANDS\API;
 use \Exception as Exception;
 
 
+/**
+ * Class Task_api
+ * The API entry point for task
+ *
+ * Example Usage:
+ * /api/task/
+ * /api/task/{:status}
+ * /api/task/{:id}
+ * /api/task/exe/{:id}
+ * /api/task/run/
+ *
+ *
+ * @package ANDS\API
+ */
 class Task_api
 {
     private $ci;
@@ -114,9 +128,25 @@ class Task_api
         }
     }
 
+    /**
+     * A random test function
+     *
+     * @return bool
+     */
     private function test(){
-        $task = new \ANDS\API\Task\GraphTask();
-        $task->run_task();
+        $params = [
+            'class' => 'import',
+            'ds_id' => '162',
+            'batch_id' => '933610BFDEAE82E70EF6E8D622D9EEA2EFFF5636'
+        ];
+        $task = [
+            'name' => 'Test Importer',
+            'type' => 'POKE',
+            'frequency' => 'ONCE',
+            'priority' => 5,
+            'params' => http_build_query($params)
+        ];
+        return $this->taskManager->addTask($task);
     }
 
     /**

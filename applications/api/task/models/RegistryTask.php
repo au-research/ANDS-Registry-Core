@@ -1,6 +1,8 @@
 <?php
 /**
  * Class:  RegistryTask
+ * @note Not used in anywhere yet
+ *
  * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 
@@ -20,7 +22,7 @@ class RegistryTask extends Task
      */
     public function __construct()
     {
-        parrent::__construct();
+        parent::__construct();
         $this->ci = &get_instance();
         $this->db = $this->ci->load->database('registry', true);
     }

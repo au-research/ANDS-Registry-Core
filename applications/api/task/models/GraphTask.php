@@ -1,6 +1,7 @@
 <?php
 /**
  * Class:  GraphTask
+ * @note Deprecated until Neo4J is a part of the Registry Stack
  *
  * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
