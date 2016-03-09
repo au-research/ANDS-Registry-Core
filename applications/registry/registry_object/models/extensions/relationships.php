@@ -274,6 +274,7 @@ class Relationships_Extension extends ExtensionBase
 
         $relationships = $this->ro->getAllRelatedObjects(false, false, true);
 
+
         $relationships = array_merge($relationships, $this->ro->_getGrantsNetworkConnections($relationships));
 
         $docs = [];

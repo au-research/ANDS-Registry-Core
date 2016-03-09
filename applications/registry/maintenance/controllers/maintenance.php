@@ -511,7 +511,6 @@ class Maintenance extends MX_Controller
         $this->load->model('registry_object/registry_objects', 'ro');
         $ro = $this->ro->getByID($id);
         $ro->sync();
-        $ro->indexRelationship();
         $relationships = $ro->getAllRelatedObjects(false, false, true);
         $relationships = array_merge($relationships, $ro->_getGrantsNetworkConnections($relationships));
         $already_sync = array();
