@@ -333,7 +333,8 @@ class Vocabs extends MX_Controller
             case 'privacy':
                 $title = 'Privacy';
                 break;
-            case 'widget_explorer':$title = 'Vocab Widget Explorer';
+            case 'widget_explorer':
+                $title = 'Vocab Widget Explorer';
                 $this->blade->set('scripts', array('widgetDirective', 'vocabDisplayDirective', 'conceptDisplayDirective'));
                 break;
         }
@@ -359,7 +360,7 @@ class Vocabs extends MX_Controller
         $data = json_decode(file_get_contents("php://input"), true);
         $filters = isset($data['filters']) ? $data['filters'] : false;
         $this->load->library('solr');
-        $this->solr->setUrl('http://localhost:8983/solr/vocabs/');
+        $this->solr->init()->setCore('vocabs');
 
         $pp = array_key_exists('pp', $filters) ? $filters['pp'] : 10;
         $start = 0;

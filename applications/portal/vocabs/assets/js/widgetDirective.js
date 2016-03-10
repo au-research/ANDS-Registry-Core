@@ -4,7 +4,6 @@
 (function () {
     'use strict';
 
-
     angular
         .module('app')
         .directive('widgetDirective', widgetDirective);
@@ -16,24 +15,20 @@
             link: function (scope, elem) {
 
                 scope.vocabList = [];
+                scope.base_url = base_url;
 
-                vocabs_factory.getAllWidgetable().then(function(data){
-                   scope.vocabList = data.response.docs;
+                vocabs_factory.getAllWidgetable().then(function (data) {
+                    scope.vocabList = data.response.docs;
+                    scope.selectVocab(scope.vocabList[0]);
                 });
 
                 scope.items = [];
 
-                scope.selectVocab = function(vocab) {
+                scope.selectVocab = function (vocab) {
                     scope.selectedVocab = vocab;
                 }
-
             }
         }
-
-
-
-
-
     }
 
 })();
