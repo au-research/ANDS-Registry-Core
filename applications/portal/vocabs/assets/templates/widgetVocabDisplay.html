@@ -1,24 +1,51 @@
-<div class="sampleWidget panel swatch-gray"> <!--ng-if="vocab" ??-->
-    <h4>Widget Mode:</h4>
+<div class="sampleWidget panel" ng-if="vocab"> <!--ng-if="vocab" ??-->
+
+    <h3><a href="{{ base_url }}{{ vocab.slug }}" target="_blank">{{ vocab.title }}</a></h3>
+    <small>{{ vocab.owner }}</small>
+    <p>{{ vocab.description }}</p>
+    <a href="{{ base_url }}{{ vocab.slug }}" target="_blank">View Vocabulary</a>
+
+    <h4>Available Widget Mode:</h4>
+
     <ul style="list-style-type: none;">
         <li ng-repeat="widgetMode in widgetModes">
-            <input type="radio" checked id="{{widgetMode.name}}" name="{{widgetMode.name}}" value="{{widgetMode.name}}" ng-click="switchMode(widgetMode.name)" ng-if="mode == widgetMode.name"/>
-            <input type="radio" id="{{widgetMode.name}}" name="{{widgetMode.name}}" value="{{widgetMode.name}}" ng-click="switchMode(widgetMode.name)" ng-if="mode != widgetMode.name"/>
+            <input type="radio" id="{{widgetMode.name}}" name="{{widgetMode.name}}" value="{{widgetMode.name}}"
+                   ng-click="switchMode(widgetMode.name)" ng-checked="widgetMode.name == mode"/>
             <label style="margin-left: 6px;" for="{{widgetMode.name}}">{{widgetMode.label}}</label>
         </li>
     </ul>
-    <div id="widget" >
-        <label for="sampleWidgetInput">Widget Input/ result Field:</label>
-        <input style="border-color: #9ecaed; box-shadow: 0 0 5px #9ecaed;" size="100" type="text" id="sampleWidgetInput">
-        <br/><br/>
-</div>
-    <div>
-    <concept-display></concept-display>
+
+    <div id="widget">
+        <div class="alert alert-info" ng-if="mode == 'tree'">
+            Click on the following input to expand the tree view
+        </div>
+        <div class="alert alert-info" ng-if="mode == 'search'">
+            Start typing on the following input element to start searching
+        </div>
+        <input type="text" id="sampleWidgetInput" placeholder="Sample Input Element">
     </div>
-<div ng-if="vocab">
-    <div id="widget-script-search" class="toggle" ng-if="mode == 'search'">
-                <pre class="panel-body prettyprint">
-    &lt;input type="text" id="{{vocab.slug}}" name="{{vocab.slug}}" value="" size="80" autocomplete="off"&gt;
+
+    <div class="alert alert-danger" ng-if="error">
+        <h4>There's an error loading the vocabulary widget:</h4>
+        <p>
+            {{ error }}
+        </p>
+    </div>
+
+    <concept-display></concept-display>
+
+    <div class="swatch-white">
+        <a href="" class="btn btn-primary"
+           ng-click="showCode=!showCode">
+            <i class="fa" ng-class="{'fa-toggle-on':showCode, 'fa-toggle-off':!showCode}"></i>
+            Show Embedable Code
+        </a>
+        <a href="http://developers.ands.org.au/widgets/vocab_widget/">Learn More</a>
+    </div>
+
+    <div ng-if="vocab && showCode">
+        <div id="widget-script-search" class="toggle" ng-if="mode == 'search'">
+            <pre class="panel-body prettyprint widget-code">&lt;input type="text" id="{{vocab.slug}}" name="{{vocab.slug}}" value="" size="80" autocomplete="off"&gt;
     &lt;script&gt;
         $("#{{vocab.slug}}").vocab_widget({
             mode: 'search',
@@ -28,11 +55,10 @@
             endpoint: '{{endpoint}}'
         });
     &lt;/script&gt;
-                </pre>
-    </div>
-    <div id="widget-script-tree" class="toggle" ng-if="mode == 'tree'">
-                <pre class="panel-body prettyprint">
-    &lt;input type="text" id="{{vocab.slug}}" name="{{vocab.slug}}" value="" size="80" autocomplete="off"&gt;
+            </pre>
+        </div>
+        <div id="widget-script-tree" class="toggle" ng-if="mode == 'tree'">
+            <pre class="panel-body prettyprint widget-code">&lt;input type="text" id="{{vocab.slug}}" name="{{vocab.slug}}" value="" size="80" autocomplete="off"&gt;
         &lt;script&gt;
             $("#{{vocab.slug}}").qtip({
                 content:{text:'&lt;div class="subject_chooser"&gt;&lt;/div&gt;'},
@@ -62,7 +88,7 @@
                 style: {classes: 'qtip-bootstrap ui-tooltip-shadow ui-tooltip-bootstrap ui-tooltip-large'}
             });
         &lt;/script&gt;
-                </pre>
-    </div>
+            </pre>
+        </div>
     </div>
 </div>

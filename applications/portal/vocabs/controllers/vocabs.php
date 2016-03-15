@@ -34,9 +34,9 @@ class Vocabs extends MX_Controller
         );
         vocab_log_terms($event);
         $this->blade
-             ->set('search_app', true)
+             ->set('customSearchBlock', true)
              ->set('title', 'Research Vocabularies Australia')
-             ->render('index');
+             ->render('home');
     }
 
     /**
@@ -192,14 +192,23 @@ class Vocabs extends MX_Controller
     /**
      * Search
      * Displaying the search page
-     * @ignore Not used for now. Home page is a search hybrid
-     * @version 1.0
+     *
      * @return view/html
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      */
     public function search()
     {
-        $this->blade->render('search');
+        $event = array(
+            'event' => 'pageview',
+            'page' => 'search',
+            'ip' => $this->input->ip_address(),
+            'user_agent' => $this->input->user_agent(),
+        );
+        vocab_log_terms($event);
+        $this->blade
+             ->set('search_app', true)
+             ->set('title', 'Research Vocabularies Australia')
+             ->render('index');
     }
 
     /**
@@ -228,7 +237,8 @@ class Vocabs extends MX_Controller
         );
         vocab_log_terms($event);
         $this->blade
-             ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl'))
+             ->set('scripts', array('vocabs_cms', 'versionCtrl', 'relatedCtrl',
+                                    'subjectDirective'))
              ->set('vocab', false)
              ->render('cms');
     }
@@ -332,7 +342,8 @@ class Vocabs extends MX_Controller
             case 'privacy':
                 $title = 'Privacy';
                 break;
-            case 'widget_explorer':$title = 'Vocab Widget Explorer';
+            case 'widget_explorer':
+                $title = 'Vocab Widget Explorer';
                 $this->blade->set('scripts', array('widgetDirective', 'vocabDisplayDirective', 'conceptDisplayDirective'));
                 break;
         }
@@ -358,7 +369,7 @@ class Vocabs extends MX_Controller
         $data = json_decode(file_get_contents("php://input"), true);
         $filters = isset($data['filters']) ? $data['filters'] : false;
         $this->load->library('solr');
-        $this->solr->setUrl('http://localhost:8983/solr/vocabs/');
+        $this->solr->init()->setCore('vocabs');
 
         $pp = array_key_exists('pp', $filters) ? $filters['pp'] : 10;
         $start = 0;
@@ -842,7 +853,7 @@ class Vocabs extends MX_Controller
                 // of this new vocabulary.
                 $affiliations = $this->user->affiliations();
                 if ((empty($affiliations)
-                     && ($data['owner'] != $this->user->localIdentifier())) 
+                     && ($data['owner'] != $this->user->localIdentifier()))
                     || (!empty($affiliations)
                         && !in_array($data['owner'],$affiliations))) {
                     throw new Exception(
@@ -929,7 +940,7 @@ class Vocabs extends MX_Controller
                 // of this new vocabulary.
                 $affiliations = $this->user->affiliations();
                 if ((empty($affiliations)
-                     && ($data['owner'] != $this->user->localIdentifier())) 
+                     && ($data['owner'] != $this->user->localIdentifier()))
                     || (!empty($affiliations)
                         && !in_array($data['owner'],$affiliations))) {
                     throw new Exception(

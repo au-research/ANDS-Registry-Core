@@ -1,9 +1,9 @@
 
 @extends('layout/vocab_layout')
 @section('content')
-<section class="section swatch-white element-short-bottom">
+<section class="section swatch-white element-short-bottom element-short-top">
     <div class="container">
-        <div class="row">
+        <div class="row element-short-bottom">
             <div class="col-md-12">
                 <header class="text-center">
                     <h1 class="bigger hairline bordered bordered-normal">Widget Explorer</h1>
@@ -11,7 +11,10 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-4">
+                <img src="{{ asset_url('images/vocabwidgetexample.png') }}" alt="Vocab Widget Example"/>
+            </div>
+            <div class="col-md-8">
                 <p>The Research Vocabularies Australia widget allows you to add data classification capabilities to your
                     data discovery tools. By incorporating the widget (using a simple jQuery plugin) in a data discovery workflow using your
                     chosen vocabularies, your users can browse and select concepts to aid in their discovery of your resources. In addition, you
@@ -25,16 +28,10 @@
         </div>
     </div>
 </section>
-    <div class="post-body">
-    </div>
-</article>
-<article class="post">
-    <input id=portalUrl" type="hidden" value="{{portal_url('apps/vocab_widget/proxy/')}}"/>
-    <div class="post-body" widget-directive>
 
-
-    </div>
-</article>
+<section class="post">
+    <div widget-directive class="post-body"></div>
+</section>
 @stop
 
 @section('sidebar')

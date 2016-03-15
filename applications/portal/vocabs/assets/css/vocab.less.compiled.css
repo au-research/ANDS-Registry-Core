@@ -1,5 +1,5 @@
 .swatch-blue {
-  background: #17649a;
+  background: #0c415a;
   color: white;
 }
 .swatch-blue a {
@@ -10,14 +10,28 @@
 }
 .swatch-blue .nav li a:hover,
 .swatch-blue .nav li a:focus {
-  background: #17649a;
+  background: #0c415a;
 }
 .swatch-blue .dropdown-menu li a {
   color: grey;
 }
 .swatch-blue .dropdown-menu li a:hover {
   color: white;
-  background: #17649a;
+  background: #0c415a;
+}
+.swatch-blue .box {
+  background: #487577;
+  border: 1px solid #487577;
+}
+.swatch-white .box,
+.swatch-white .box-inner {
+  background: #487577;
+  border: 1px solid #487577;
+  color: white;
+}
+.swatch-white .box i,
+.swatch-white .box-inner i {
+  color: white;
 }
 .caret-for-input-suggestion {
   z-index: 100;
@@ -55,7 +69,7 @@
   margin: 7px 0px;
 }
 .vocab-search-result a {
-  color: #17649a;
+  color: #0c415a;
 }
 .current-version-ap-block {
   width: 25%;
@@ -159,7 +173,7 @@ ul.listy li a small {
 }
 .swatch-white a,
 [class*="swatch-"] .swatch-white a {
-  color: #17649a;
+  color: #0c415a;
 }
 .swatch-white a.btn-danger {
   color: white;
@@ -335,6 +349,12 @@ ul.pagi li a.active {
 }
 .break {
   word-wrap: break-word;
+}
+#banner-image {
+  background-image: url(../images/vocabbanner.jpg);
+  background-size: cover;
+  background-position: 50% 60%;
+  background-repeat: no-repeat;
 }
 .classic-tree ul {
   margin-left: 20px;
@@ -550,4 +570,42 @@ Thanks :)*/
 }
 .box .box-content {
   padding: 10px;
+}
+.widgetExplorer {
+  border: 1px solid #e9e9e9;
+  margin: 10px;
+  padding: 0;
+  height: 650px;
+}
+.widgetExplorer ul.vocabListing {
+  margin: 0;
+  padding: 0;
+  border-right: 1px solid #e9e9e9;
+  height: 100%;
+  overflow: auto;
+}
+.widgetExplorer ul.vocabListing li {
+  margin: 0;
+  padding: 15px;
+  list-style-type: none;
+  border-bottom: 1px solid #e9e9e9;
+  cursor: pointer;
+  word-wrap: break-word;
+}
+.widgetExplorer ul.vocabListing li:hover,
+.widgetExplorer ul.vocabListing li.selected {
+  background: #e9e9e9;
+}
+.widgetExplorer div.vocabDisplay {
+  height: 100%;
+  overflow: auto;
+}
+.widgetExplorer #sampleWidgetInput {
+  border: 1px solid #e9e9e9;
+  padding: 10px;
+  width: 100%;
+}
+.widgetExplorer .widget-code {
+  overflow: auto;
+  word-wrap: inherit;
 }

@@ -134,7 +134,7 @@ class VocabProxy
 		 */
 		foreach (array('top', 'allnarrow') as $action) {
 		    $this->valid_actions[$action]['sortprocessor'] = function($e1, $e2) {
-			if (array_key_exists('notation', $e1))
+			if (array_key_exists('notation', $e1) && array_key_exists('notation', $e2))
 			{
 			    $l1 = (int)$e1['notation'];
 			    $l2 = (int)$e2['notation'];
@@ -148,7 +148,7 @@ class VocabProxy
 		}
 
 		  $this->valid_actions['collection']['sortprocessor'] = function($e1, $e2) {
-			if (array_key_exists('definition', $e1))
+			if (array_key_exists('definition', $e1) && array_key_exists('definition', $e2))
 			{
 			    $l1 = $e1['definition'];
 			    $l2 = $e2['definition'];
@@ -424,7 +424,7 @@ class VocabProxy
 }
 
 function definition_sort ($e1, $e2) {
-	if (array_key_exists('definition', $e1))
+	if (array_key_exists('definition', $e1) && array_key_exists('definition', $e2))
 	{
 	    $l1 = $e1['definition'];
 	    $l2 = $e2['definition'];

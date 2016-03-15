@@ -1,22 +1,23 @@
-<div class="widgetExplorer container-fluid">
-    <div class="vocabListing col-md-4">
-        <ul>
-            <li ng-repeat="vocab in vocabList">
-                <div >
-                    <a href="" ng-click="selectVocab(vocab)">[[ vocab.title ]]</a>
-                    <small>Owner</small>
-                    <p>
-                        [[ vocab.description ]]
-                    </p>
-                </div>
+<div class="widgetExplorer container-fluid" ng-if="vocabList">
 
-            </li>
-        </ul>
-    </div>
+    <ul class="vocabListing col-md-4">
+        <li
+            ng-repeat="vocab in vocabList"
+            ng-click="selectVocab(vocab)"
+            ng-class="{'selected': vocab.id == selectedVocab.id}"
+        >
+            <div >
+                <h4><a href="">[[ vocab.title ]]</a></h4>
+                <small>[[ vocab.owner ]]</small>
+                <p>[[ vocab.description ]]</p>
+            </div>
+        </li>
+    </ul>
+
     <div class="vocabDisplay col-md-8">
         <widget-display-directive vocab="selectedVocab"></widget-display-directive>
     </div>
-    <div class="vocabDownload">
 
-    </div>
+    <div class="vocabDownload"></div>
+
 </div>
