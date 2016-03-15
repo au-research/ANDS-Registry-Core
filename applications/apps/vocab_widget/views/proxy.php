@@ -381,7 +381,10 @@ class VocabProxy
 
 		if ($this->action) {
 			if (isset($_REQUEST['lookfor'])) {
-				$this->lookfor = rawurlencode($_REQUEST['lookfor']);
+				// This was rawurlencode(...), but there's a call
+				// to urlencode() in the queryprocessor for search.
+				// So no longer double-encode the search term.
+				$this->lookfor = $_REQUEST['lookfor'];
 				$this->jsonData['message'] .= " (" . $_REQUEST['lookfor'] . ")";
 			}
 
