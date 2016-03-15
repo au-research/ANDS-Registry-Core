@@ -20,6 +20,7 @@
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="{{portal_url('vocabs/page/contribute')}}">Publish a vocabulary</a></li>
                         <li><a href="{{portal_url('vocabs/page/use')}}">Use a vocabulary</a></li>
+                        <li><a href="{{portal_url('vocabs/page/widget_explorer')}}">Explore Widgetable Vocabularies</a></li>
                         <li><a href="{{portal_url('vocabs/page/feedback')}}">Give feedback on vocabularies</a></li>
                     </ul></li>
                 @if(!$this->user->loggedIn())

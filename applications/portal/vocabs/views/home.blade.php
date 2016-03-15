@@ -1,7 +1,7 @@
 @extends('layout/vocab_layout')
 @section('content')
 
-<section class="section swatch-black search-section section-text-shadow section-inner-shadow">
+<section class="section swatch-dark-blue search-section section-text-shadow section-inner-shadow">
 
     <div id="banner-image" class="background-media" style="">
     </div>
@@ -15,7 +15,7 @@
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Search for a vocabulary or a concept" ng-model="filters.q" ng-debounce="500">
                             <span class="input-group-btn">
-                                <button class="btn btn-primary" type="button"><i class="fa fa-search"></i> Search</button>
+                                <button class="btn btn-primary" type="button" ng-click="search()"><i class="fa fa-search"></i> Search</button>
                             </span>
                         </div>
                     </form>
@@ -40,13 +40,13 @@
        <div id="services" class="row">
            <div class="col-md-12">
                <header class="text-center element-short-top element-no-bottom os-animation condensed animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
-                   <h1 class="big"> Get Started </h1>
+                   <h1 class="big"> Get Involved </h1>
                </header>
                <div class="row " data-os-animation="" data-os-animation-delay="">
                    <div class="col-md-3 ">
                     <a href="{{ portal_url('vocabs/page/contribute') }}">
                      <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".0s" style="-webkit-animation: 0s;">
-                         <div class="box box-round box-medium box-simple">
+                         <div class="box-round box-medium box-simple">
                              <div class="box-dummy"></div>
                              <div class="box-inner grid-overlay-0">
                               <i class="fa fa-cloud-upload icon-portal"></i>
@@ -60,7 +60,7 @@
                    <div class="col-md-3 ">
                     <a href="{{ portal_url('vocabs/page/use') }}">
                      <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".3s" style="-webkit-animation: 0.3s;">
-                         <div class="box box-square box-medium box-simple">
+                         <div class="box-square box-medium box-simple">
                              <div class="box-dummy"></div>
                              <div class="box-inner grid-overlay-0">
                                  <i class="fa fa-language icon-portal"></i>
@@ -74,7 +74,7 @@
                    <div class="col-md-3 ">
                     <a href="{{ portal_url('vocabs/page/widget_explorer') }}">
                      <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".6s" style="-webkit-animation: 0.6s;">
-                         <div class="box box-square box-medium box-simple">
+                         <div class="box-square box-medium box-simple">
                              <div class="box-dummy"></div>
                              <div class="box-inner grid-overlay-0">
                               <i class="fa fa-cogs icon-portal"></i>
@@ -88,7 +88,7 @@
                    <div class="col-md-3 ">
                     <a href="{{ portal_url('vocabs/page/feedback') }}">
                      <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".9s" style="-webkit-animation: 0.9s;">
-                         <div class="box box-square box-medium box-simple">
+                         <div class="box-square box-medium box-simple">
                              <div class="box-dummy"></div>
                              <div class="box-inner grid-overlay-0">
                               <i class="fa fa-comments-o icon-portal"></i>

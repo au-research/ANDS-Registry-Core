@@ -19,17 +19,17 @@
   color: white;
   background: #0c415a;
 }
-.swatch-blue .box {
+.swatch-blue .box-squared {
   background: #487577;
   border: 1px solid #487577;
 }
-.swatch-white .box,
+.swatch-white .box-squared,
 .swatch-white .box-inner {
   background: #487577;
   border: 1px solid #487577;
   color: white;
 }
-.swatch-white .box i,
+.swatch-white .box-squared i,
 .swatch-white .box-inner i {
   color: white;
 }

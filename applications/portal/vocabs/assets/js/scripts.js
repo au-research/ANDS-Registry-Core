@@ -619,6 +619,7 @@ function showWidget()
 
         $scope.vocabs = [];
         $scope.filters = {};
+        $scope.base_url = base_url;
 
         // $log.debug($location.search());
         // The form of filters value for this will be <base_url>+/#!/?<filter>=<value>
@@ -626,6 +627,7 @@ function showWidget()
         $scope.filters = $location.search();
 
         $scope.search = function (isPagination) {
+            if (!$scope.filters['q']) $scope.filters['q'] = '';
             if (!isPagination || isPagination == undefined) $scope.filters['p'] = 1;
             if ($scope.searchRedirect()) {
                 window.location = base_url + 'search/#!/?q=' + $scope.filters['q'];
