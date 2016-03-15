@@ -340,11 +340,8 @@ class Spatial_Extension extends ExtensionBase
     function getExtentFromGoogle($value, $type)
     {
 
-        if (strpos($value, '-') !== false){
-        // ISO-31662 doesn't work (at 2016) with Google geocoder
-        // example: ID-BA doesn't resolve correctly using components:country | admintrative_area
-        // so just do simple address search instead
-            $url = "http://maps.google.com/maps/api/geocode/json?address=" . urlencode($value);
+        if (strpos($value, '-') !== false) {
+            $url = "http://maps.google.com/maps/api/geocode/json?components=administrative_area:" . urlencode($value);
         } else {
             $url = "http://maps.google.com/maps/api/geocode/json?components=country:" . urlencode($value);
         }
