@@ -46,7 +46,7 @@
                    <div class="col-md-3 ">
                     <a href="{{ portal_url('vocabs/page/contribute') }}">
                      <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay=".0s" style="-webkit-animation: 0s;">
-                         <div class="box-round box-medium box-simple">
+                         <div class="box-square box-medium box-simple">
                              <div class="box-dummy"></div>
                              <div class="box-inner grid-overlay-0">
                               <i class="fa fa-cloud-upload icon-portal"></i>
