@@ -22,6 +22,7 @@
                         <ul>
                             <li class="cat-item"> <a href="{{portal_url()}}" title="">Home</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('vocabs/page/about')}}" title="">About</a> </li>
+                            <li><a href="{{portal_url('vocabs/page/widget_explorer')}}">Explore Widgetable Vocabularies</a></li>
                             <li class="cat-item"> <a href="{{portal_url('vocabs/myvocabs')}}" title="">My Vocabs</a> </li>
                             <li class="cat-item myCustomTrigger"> <a href="" title="">Contact us</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('vocabs/page/disclaimer')}}" title="">Disclaimer</a> </li>
@@ -35,7 +36,6 @@
                         <ul>
                             <li><a href="{{portal_url('vocabs/page/contribute')}}">Publish a vocabulary</a></li>
                             <li><a href="{{portal_url('vocabs/page/use')}}">Use a vocabulary</a></li>
-                            <li><a href="{{portal_url('vocabs/page/widget_explorer')}}">Explore Widgetable Vocabularies</a></li>
                             <li><a href="{{portal_url('vocabs/page/feedback')}}">Give feedback on vocabularies</a></li>
                         </ul>
                     </div>
