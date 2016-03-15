@@ -1,4 +1,5 @@
-@primaryColor : #7F7EFF;
+// @primaryColor : #7F7EFF;
+@primaryColor : #487577;
 @secondaryColor: #5353AA;
 @secondaryColor: #A4B0F5;
 @ternaryColor: #F58F29;
@@ -7,9 +8,12 @@
 @current: #6AA84F;
 @superseded: #F1C232;
 @deprecated: #CC0000;
+
 //second
-@primaryColor: #17649A;
+// @primaryColor: #17649A;
+@primaryColor: #0c415a;
 @secondaryColor: #46494C;
+@boxColor: #487577;
 
 .swatch-blue {
     background: @primaryColor;
@@ -38,6 +42,21 @@
             }
         }
     }
+    .box {
+      background: @boxColor;
+      border: 1px solid @boxColor;
+    }
+}
+
+.swatch-white {
+  .box, .box-inner {
+    background: @boxColor;
+    border: 1px solid @boxColor;
+    color:white;
+    i {
+      color:white;
+    }
+  }
 }
 
 .caret-for-input-suggestion {
@@ -415,6 +434,14 @@ ul.pagi {
 .break{
   word-wrap: break-word;
 }
+
+#banner-image {
+  background-image: url(../images/vocabbanner.jpg);
+  background-size: cover;
+  background-position: 50% 60%;
+  background-repeat: no-repeat;
+}
+
 @import "ands-vocabs-visualise";
 @import "ands-vocabs-box";
 @import "ands-vocabs-widget-explorer";

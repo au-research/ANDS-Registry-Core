@@ -18,7 +18,7 @@
         $scope.search = function (isPagination) {
             if (!isPagination || isPagination == undefined) $scope.filters['p'] = 1;
             if ($scope.searchRedirect()) {
-                window.location = base_url + '#!/?q=' + $scope.filters['q'];
+                window.location = base_url + 'search/#!/?q=' + $scope.filters['q'];
             } else {
                 $location.path('/').replace();
                 window.history.pushState($scope.filters, 'ANDS Research Vocabulary', $location.absUrl());

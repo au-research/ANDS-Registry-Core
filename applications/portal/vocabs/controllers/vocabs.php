@@ -34,9 +34,9 @@ class Vocabs extends MX_Controller
         );
         vocab_log_terms($event);
         $this->blade
-             ->set('search_app', true)
+             ->set('customSearchBlock', true)
              ->set('title', 'Research Vocabularies Australia')
-             ->render('index');
+             ->render('home');
     }
 
     /**
@@ -192,14 +192,23 @@ class Vocabs extends MX_Controller
     /**
      * Search
      * Displaying the search page
-     * @ignore Not used for now. Home page is a search hybrid
-     * @version 1.0
+     *
      * @return view/html
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      */
     public function search()
     {
-        $this->blade->render('search');
+        $event = array(
+            'event' => 'pageview',
+            'page' => 'search',
+            'ip' => $this->input->ip_address(),
+            'user_agent' => $this->input->user_agent(),
+        );
+        vocab_log_terms($event);
+        $this->blade
+             ->set('search_app', true)
+             ->set('title', 'Research Vocabularies Australia')
+             ->render('index');
     }
 
     /**
@@ -844,7 +853,7 @@ class Vocabs extends MX_Controller
                 // of this new vocabulary.
                 $affiliations = $this->user->affiliations();
                 if ((empty($affiliations)
-                     && ($data['owner'] != $this->user->localIdentifier())) 
+                     && ($data['owner'] != $this->user->localIdentifier()))
                     || (!empty($affiliations)
                         && !in_array($data['owner'],$affiliations))) {
                     throw new Exception(
@@ -931,7 +940,7 @@ class Vocabs extends MX_Controller
                 // of this new vocabulary.
                 $affiliations = $this->user->affiliations();
                 if ((empty($affiliations)
-                     && ($data['owner'] != $this->user->localIdentifier())) 
+                     && ($data['owner'] != $this->user->localIdentifier()))
                     || (!empty($affiliations)
                         && !in_array($data['owner'],$affiliations))) {
                     throw new Exception(
