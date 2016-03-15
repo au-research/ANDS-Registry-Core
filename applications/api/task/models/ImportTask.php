@@ -26,6 +26,7 @@ class ImportTask extends Task
 
     public function run_task()
     {
+
         $this->loadParams();
         $this->log('Import Task started');
 
@@ -43,12 +44,22 @@ class ImportTask extends Task
             if (sizeof($this->getAffectedRecords()) > 0) {
                 $task->setAffectedRecords($this->getAffectedRecords());
             }
-            $task->run();
+            try {
+                $task->run();
+            } catch (Exception $e) {
+                $task->stoppedWithError($e->getMessage());
+                throw new Exception($e->getMessage());
+            } catch (NonFatalException $e) {
+                $task->addError($e->getMessage());
+            }
+
             if ($ids = $task->getAffectedRecords()) {
                 if (sizeof($ids) > 0) {
                     $this->setAffectedRecords($ids);
                 }
             }
+        } else {
+            $this->log('No Task found');
         }
     }
 
@@ -64,6 +75,7 @@ class ImportTask extends Task
         if ($task) {
             $this->setStatus('PENDING')->save();
         }
+        $this->save();
     }
 
     /**

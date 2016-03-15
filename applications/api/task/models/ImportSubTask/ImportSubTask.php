@@ -71,3 +71,7 @@ class ImportSubTask extends Task
 
 
 }
+
+class NonFatalException extends \Exception {
+
+}

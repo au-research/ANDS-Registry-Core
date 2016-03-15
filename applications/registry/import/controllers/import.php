@@ -76,6 +76,40 @@ class Import extends MX_Controller {
 		}
 	}
 
+
+    /**
+     * Mainly
+     * @param  data_source_id $id
+     * @return json   result
+     */
+    public function scheduleImportTask($id=false) {
+        if(!$id) throw new Exception('Data Source ID must be provided');
+        $this->load->model('data_source/data_sources', 'ds');
+        $ds = $this->ds->getByID($id);
+        if(!$ds) throw new Exception('Data Source Not Found');
+        //$this->ci =& get_instance();
+        $this->db = $this->load->database('registry', true);
+        require_once APP_PATH . '../api/vendor/autoload.php';
+        $this->taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
+        $params = [
+            'class' => 'import',
+            'ds_id' => $id,
+            'status' => $this->input->get('status'),
+            'batch_id' => $this->input->get('batch')
+        ];
+        $task = [
+            'name' => 'HARVESTER INITIATED IMPORT',
+            'type' => 'POKE',
+            'frequency' => 'ONCE',
+            'priority' => 2,
+            'params' => http_build_query($params)
+        ];
+        echo json_encode($this->taskManager->addTask($task), true);
+
+    }
+
+
+
 	/**
 	 * Import into a data source via downloaded file
 	 * @param  data_source_id $id    

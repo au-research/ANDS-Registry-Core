@@ -15,7 +15,7 @@ class Task
     public $priority;
     public $params;
     public $lastRun;
-    public $message = ['log' => []];
+    public $message = ['log' => [], 'error' => []];
 
     private $db;
     private $memoryLimit = '256M';
@@ -36,7 +36,7 @@ class Task
         if (isset($task['message'])) {
             $this->message = is_array($task['message']) ? $task['message'] : json_decode($task['message'], true);
         } else {
-            $this->message = ['log' => []];
+            $this->message = ['log' => [], 'error' => []];
         }
 
         $this->lastRun = isset($task['last_run']) ? $task['last_run'] : false;
@@ -107,7 +107,14 @@ class Task
         $this
             ->setStatus("STOPPED")
             ->log("Task stopped with error " . $error)
+            ->addError($error)
             ->save();
+        return $this;
+    }
+
+    public function addError($log) {
+        if (!array_key_exists('error', $this->message)) $this->message['error'] = [];
+        $this->message['error'][] = $log;
         return $this;
     }
 
@@ -314,7 +321,7 @@ class Task
      */
     public function setMessage($message = false)
     {
-        if (!$message) $message = ['log'=>[]];
+        if (!$message) $message = ['log'=>[], 'error' => []];
         $this->message = $message;
         return $this;
     }
