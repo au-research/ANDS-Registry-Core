@@ -74,6 +74,7 @@ class Importer {
 	private $cCyclesTime;
 
 
+    private $roIDs = array();
 
 
 	public function Importer()
@@ -528,13 +529,16 @@ class Importer {
 	 * @throws Exception
      */
 	public function finishImportTasks() {
-		$this->populateMessageLog();
+        $this->populateMessageLog();
+
 		$importedRecCount = count($this->importedRecords);
 		$this->_enrichRecords();
 		$deletedCount = count($this->deleted_record_keys);
 
 		$this->_enrichAffectedRecords();
 		$this->_indexAllAffectedRecords();
+
+        $this->_backgroundSync();
 
 		$indexedAllCount = count($this->affected_record_keys);
 		return "Finished Import Tasks".NL."imported: ".$importedRecCount.NL."affected/related ".($indexedAllCount - $importedRecCount).NL."total: ".$indexedAllCount.NL."deleted: ".$deletedCount;
@@ -700,6 +704,55 @@ class Importer {
 			$this->CI->benchmark->mark('solr_commit_end');
 			$this->CI->benchmark->mark('ingest_reindex_end');
 		}
+	}
+
+    /**
+     * This function is plan B for the importer rewrite, basically
+     * chuck every found records in a background task that run sync
+     * @opt remove sync relationships from finishImportTask
+     * and do it here instead?
+     */
+    private function _backgroundSync(){
+
+        $roIDs = array();
+
+        // imported records
+        $roIDs = array_merge($roIDs, $this->importedRecords);
+
+        // affected records
+        foreach ($this->affected_record_keys as $key) {
+            $query = $this->CI->db->get_where('registry_objects', ['key' => $key, 'status' => 'PUBLISHED']);
+            if ($query->num_rows() > 0) {
+                $result = $query->first_row(true);
+                $roIDs[] = $result['registry_object_id'];
+            }
+        }
+
+        $roIDs = array_unique($roIDs);
+
+        //adding task
+        if (sizeof($roIDs) > 0) {
+            require_once API_APP_PATH . 'vendor/autoload.php';
+            $params = [
+                'class' => 'sync',
+                'type' => 'ro',
+                'id' => implode(',',$roIDs)
+            ];
+            $task = [
+                'name' => 'Background Finish Import Task',
+                'type' => 'POKE',
+                'frequency' => 'ONCE',
+                'priority' => 5,
+                'params' => http_build_query($params)
+            ];
+            $taskManager = new \ANDS\API\Task\TaskManager($this->CI->db, $this->CI);
+            $taskAdded = $taskManager->addTask($task);
+
+            $this->message_log[] = "Spawn Background Task ID ". $taskAdded['id']. " to Post Process ". sizeof($roIDs). " records";
+        } else {
+            $this->message_log[] = "Size of Affected Records is 0. No background task scheduled";
+        }
+
 	}
 
 	/**
