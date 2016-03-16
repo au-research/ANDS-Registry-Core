@@ -753,8 +753,11 @@ class Importer {
                 'type' => 'ro',
                 'id' => implode(',',$roIDs)
             ];
+            $dataSourceID = $this->dataSource->data_source_id;
+            $dataSourceTitle = $this->dataSource->title;
+            $harvestID = $this->harvestID;
             $task = [
-                'name' => 'Background Finish Import Task',
+                'name' => "BG Post Process for data source: $dataSourceTitle ($dataSourceID), harvestid: $harvestID",
                 'type' => 'POKE',
                 'frequency' => 'ONCE',
                 'priority' => 5,
