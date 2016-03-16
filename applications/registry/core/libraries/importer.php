@@ -529,7 +529,6 @@ class Importer {
 	 * @throws Exception
      */
 	public function finishImportTasks() {
-        $this->populateMessageLog();
 
 		$importedRecCount = count($this->importedRecords);
 		$this->_enrichRecords();
@@ -539,6 +538,8 @@ class Importer {
 		$this->_indexAllAffectedRecords();
 
         $this->_backgroundSync();
+
+        $this->populateMessageLog();
 
 		$indexedAllCount = count($this->affected_record_keys);
 		return "Finished Import Tasks".NL."imported: ".$importedRecCount.NL."affected/related ".($indexedAllCount - $importedRecCount).NL."total: ".$indexedAllCount.NL."deleted: ".$deletedCount;
@@ -729,6 +730,20 @@ class Importer {
         }
 
         $roIDs = array_unique($roIDs);
+
+		//getting all the ids again
+		$this->CI->load->model('registry_object/registry_objects', 'ro');
+		foreach ($roIDs as $id) {
+			$ro = $this->CI->ro->getByID($id, false);
+			$relationships = $ro->getAllRelatedObjects(false, false, true);
+			foreach ($relationships as $relation) {
+				if (isset($relation['registry_object_id']) && !in_array($relation['registry_object_id'], $roIDs)) {
+					$roIDs[] = $relation['registry_object_id'];
+				}
+			}
+			unset($relationships);
+			unset($ro);
+		}
 
         //adding task
         if (sizeof($roIDs) > 0) {
