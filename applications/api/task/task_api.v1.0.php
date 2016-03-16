@@ -48,7 +48,7 @@ class Task_api
                 break;
             case 'run':
                 $someTask = $this->taskManager->findPendingTask();
-                if (!$someTask) $someTask = $this->taskManager->findRandomTask();
+                // if (!$someTask) $someTask = $this->taskManager->findRandomTask();
                 if (!$someTask) {
                     return "Nothing to do";
                 } else {

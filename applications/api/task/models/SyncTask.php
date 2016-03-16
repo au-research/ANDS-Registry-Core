@@ -287,6 +287,7 @@ class SyncTask extends Task
 
                         if ($this->includes('addRelationships')) {
                             $ro->addRelationships();
+                            $ro->cacheRelationshipMetadata();
                         }
 
                         if ($this->includes('updateQualityMetadata')) {
@@ -365,7 +366,7 @@ class SyncTask extends Task
 
         if ($this->includes('indexRelations')) {
             $this->log('Indexing SOLR for Relations')->save();
-            $this->indexSolr('relations', $relation_docs);
+            $this->indexSolr('relations', $relation_docs, true);
         }
 
         //remove records
@@ -415,6 +416,7 @@ class SyncTask extends Task
      *
      * @param string $core
      * @param array  $solr_docs
+     * @param bool   $commit
      * @throws Exception
      */
     private function indexSolr($core = 'portal', $solr_docs = array(), $commit = false) {
