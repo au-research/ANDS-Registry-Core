@@ -84,6 +84,10 @@ class SyncTask extends Task
         }
     }
 
+    /**
+     * Anlyze all data sources and spawn tasks accordingly
+     * uses analyzeDS
+     */
     private function analyzeAll()
     {
         $dataSourceIDs = $this->ci->ds->getAll(0, 0, true);
@@ -93,10 +97,18 @@ class SyncTask extends Task
         $this->log('Analyzed All spawned ' . sizeof($dataSourceIDs) . ' tasks');
     }
 
-    private function analyzeList($list){
+    /**
+     * Analyze a list
+     * if the list size is bigger than the defined chunkSize,
+     * split this task into multiple tasks
+     *
+     * @param $list
+     */
+    private function analyzeList($list)
+    {
         $numChunk = ceil(($this->chunkSize < sizeof($list) ? (sizeof($list) / $this->chunkSize) : 1));
-        $this->log('Size of records to process is too big: '. sizeof($list). ' splitting to '. $numChunk. ' chunks to process');
-        for ($i=1;$i<$numChunk;$i++) {
+        $this->log('Size of records to process is too big: ' . sizeof($list) . ' splitting to ' . $numChunk . ' chunks to process');
+        for ($i = 1; $i < $numChunk; $i++) {
             $offset = ($i - 1) * $this->chunkSize;
             $chunkArray = array_slice($list, $offset, $this->chunkSize);
 
@@ -107,14 +119,14 @@ class SyncTask extends Task
                 'includes' => implode(',', $this->modules)
             );
             $task = array(
-                'name' => "($i/$numChunk)". $this->getName(),
+                'name' => "($i/$numChunk)" . $this->getName(),
                 'priority' => 8,
                 'frequency' => 'ONCE',
                 'type' => 'POKE',
                 'params' => http_build_query($params),
             );
             $taskAdded = $this->taskManager->addTask($task);
-            $this->log('Added task '.$taskAdded['id']);
+            $this->log('Added task ' . $taskAdded['id']);
         }
         $this->log("Added all $numChunk tasks for processing");
     }
@@ -175,7 +187,7 @@ class SyncTask extends Task
                         'params' => http_build_query($params),
                     );
                     $this->taskManager->addTask($task);
-                    $this->log('Added an enrich task for Data Source '.$dsID. " for ".$data['total']. 'records');
+                    $this->log('Added an enrich task for Data Source ' . $dsID . " for " . $data['total'] . 'records');
                 }
                 if ($this->includes('index')) {
                     $params['includes'] = 'index';
@@ -187,7 +199,7 @@ class SyncTask extends Task
                         'params' => http_build_query($params),
                     );
                     $this->taskManager->addTask($task);
-                    $this->log('Added an enrich task for Data Source '.$dsID. " for ".$data['total']. 'records');
+                    $this->log('Added an enrich task for Data Source ' . $dsID . " for " . $data['total'] . 'records');
                 }
             } else {
                 //spawn task based on available modules
@@ -195,23 +207,37 @@ class SyncTask extends Task
                 $task = array(
                     'name' => $this->getChunkName($params['includes'], $params, $i, $data['numChunk'], $chunkArray),
                     'params' => http_build_query($params),
-                    'priority' => 8, 'frequency' => 'ONCE', 'type' => 'POKE',
+                    'priority' => 8,
+                    'frequency' => 'ONCE',
+                    'type' => 'POKE',
                 );
                 $this->taskManager->addTask($task);
-                $this->log('Added a task for Data Source '.$dsID. " for ".$data['total']. 'records');
+                $this->log('Added a task for Data Source ' . $dsID . " for " . $data['total'] . 'records');
             }
         }
     }
 
-    private function getChunkName($operation, $params, $chunkPos, $numChunk, $chunkArray){
-        $name = $operation. " ";
+    /**
+     * Format a human readable form of a chunkName
+     * Uses by analyzeDS mainly
+     *
+     * @param $operation
+     * @param $params
+     * @param $chunkPos
+     * @param $numChunk
+     * @param $chunkArray
+     * @return string
+     */
+    private function getChunkName($operation, $params, $chunkPos, $numChunk, $chunkArray)
+    {
+        $name = $operation . " ";
         if ($this->missingOnly) {
             $name .= "Missing ";
         }
         if ($params['type'] == 'ds') {
-            $name .= " Data Source " . $params['id'] . '(' . $chunkPos . '/' . $numChunk . ')';
+            $name .= " Data Source " . $params['id'] . ' (' . $chunkPos . '/' . $numChunk . ')';
         } elseif ($params['type'] == 'ro') {
-            $name .= sizeof($chunkArray). " Records";
+            $name .= sizeof($chunkArray) . " Records";
         }
         return $name;
     }
@@ -315,7 +341,7 @@ class SyncTask extends Task
                     }
                     if ($ro && $ro->status == 'PUBLISHED') {
 
-                        $this->log('Processing record '.$ro->id. ' Memory Usage: '.memory_get_usage())->save();
+                        $this->log('Processing record ' . $ro->id . ' Memory Usage: ' . memory_get_usage())->save();
 
                         if ($this->includes('processIdentifiers')) {
                             $ro->processIdentifiers();
@@ -340,7 +366,7 @@ class SyncTask extends Task
                             if ($solr_doc && is_array($solr_doc) && sizeof($solr_doc) > 0) {
                                 $size = $this->getSize($solr_doc);
                                 if ($size > 100000) {
-                                    $this->log('Document for '. $ro->id. ' too big, flushing this document. Size: '. $size. ' bytes')->save();
+                                    $this->log('Document for ' . $ro->id . ' too big, flushing this document. Size: ' . $size . ' bytes')->save();
                                     $this->indexSolr('portal', [$solr_doc]);
                                 } else {
                                     $solr_docs[] = $solr_doc;
@@ -356,7 +382,7 @@ class SyncTask extends Task
                             if ($relation_doc && is_array($relation_doc) && sizeof($relation_doc) > 0) {
                                 $size = $this->getSize($relation_doc);
                                 if ($size > 100000) {
-                                    $this->log('Relation Document for '. $ro->id. ' too big, flushing this document. Size: '. $size. ' bytes')->save();
+                                    $this->log('Relation Document for ' . $ro->id . ' too big, flushing this document. Size: ' . $size . ' bytes')->save();
                                     $this->indexSolr('relations', $relation_docs);
                                 } else {
                                     $relation_docs = array_merge($relation_docs, $relation_doc);
@@ -367,7 +393,7 @@ class SyncTask extends Task
                         // flush if memory usage is too high, 50 MB
                         if (memory_get_usage() > 50000000) {
                             if ($this->includes('indexPortal')) {
-                                $this->log('Memory usage too high, flushing documents. Memory usage: '. memory_get_usage());
+                                $this->log('Memory usage too high, flushing documents. Memory usage: ' . memory_get_usage());
                                 $this->indexSolr('portal', $solr_docs);
                                 $solr_docs = [];
                             }
@@ -427,7 +453,8 @@ class SyncTask extends Task
      * @param $module
      * @return bool
      */
-    private function includes($module){
+    private function includes($module)
+    {
         return in_array($module, $this->modules);
     }
 
@@ -437,7 +464,8 @@ class SyncTask extends Task
      * @param $payload
      * @return int
      */
-    private function getSize($payload){
+    private function getSize($payload)
+    {
         $serializedFoo = serialize($payload);
         if (function_exists('mb_strlen')) {
             $size = mb_strlen($serializedFoo, '8bit');
@@ -455,7 +483,8 @@ class SyncTask extends Task
      * @param bool   $commit
      * @throws Exception
      */
-    private function indexSolr($core = 'portal', $solr_docs = array(), $commit = false) {
+    private function indexSolr($core = 'portal', $solr_docs = array(), $commit = false)
+    {
         if (sizeof($solr_docs) > 0) {
             try {
                 $this->ci->solr->setCore($core);
@@ -565,7 +594,8 @@ class SyncTask extends Task
 
         $modules = explode(',', $modules);
         if (in_array('enrich', $modules)) {
-            $modules = array_merge($modules, ['processIdentifiers', 'addRelationships', 'updateQualityMetadata', 'processLinks']);
+            $modules = array_merge($modules,
+                ['processIdentifiers', 'addRelationships', 'updateQualityMetadata', 'processLinks']);
         }
         if (in_array('index', $modules)) {
             $modules = array_merge($modules, ['indexPortal', 'indexRelations']);
@@ -574,7 +604,7 @@ class SyncTask extends Task
         $this->modules = $modules;
 
         $this->log('Task parameters: ' . http_build_query($params));
-        $this->log('Task modules: '. implode(', ', $this->modules))->save();
+        $this->log('Task modules: ' . implode(', ', $this->modules))->save();
 
         //analyze if there is no chunkPosition
         if (isset($params['chunkPos'])) {
