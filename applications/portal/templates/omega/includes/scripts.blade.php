@@ -90,6 +90,16 @@
 
 <script type="text/javascript" src="https://jira.ands.org.au/s/d41d8cd98f00b204e9800998ecf8427e/en_AUc8oc9c-1988229788/6265/77/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d9610dcf"></script>
 
+<!--
+    Minh:
+    Fix for the lodash module that the angular-google-maps: "~2.0.12" component hasn't update yet.
+    Basically lodash >= 4.2.0 renamed the contains function into includes
+    this is for backward compatibility
+-->
+<script>
+    _.contains = _.includes;
+</script>
+
 @if(is_dev())
     <!-- LESS.JS for development only-->
     <script>
