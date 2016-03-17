@@ -308,4 +308,22 @@ class Task
         $this->message = $message;
         return $this;
     }
+
+    /**
+     * @param mixed $name
+     * @return Task
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 }

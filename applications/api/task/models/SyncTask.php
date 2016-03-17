@@ -62,8 +62,18 @@ class SyncTask extends Task
                 }
                 break;
             case 'ro':
-                $list = explode(',', $this->target_id);
-                $this->syncRo($list);
+
+                if (!is_array($this->target_id)) {
+                    $list = explode(',', $this->target_id);
+                } else {
+                    $list = $this->target_id;
+                }
+
+                if (sizeof($list) > $this->chunkSize) {
+                    $this->analyzeList($list);
+                } else {
+                    $this->syncRo($list);
+                }
                 break;
             case 'all':
                 $this->analyzeAll();
@@ -81,6 +91,32 @@ class SyncTask extends Task
             $this->analyzeDS($dsID);
         }
         $this->log('Analyzed All spawned ' . sizeof($dataSourceIDs) . ' tasks');
+    }
+
+    private function analyzeList($list){
+        $numChunk = ceil(($this->chunkSize < sizeof($list) ? (sizeof($list) / $this->chunkSize) : 1));
+        $this->log('Size of records to process is too big: '. sizeof($list). ' splitting to '. $numChunk. ' chunks to process');
+        for ($i=1;$i<$numChunk;$i++) {
+            $offset = ($i - 1) * $this->chunkSize;
+            $chunkArray = array_slice($list, $offset, $this->chunkSize);
+
+            $params = array(
+                'class' => 'sync',
+                'type' => 'ro',
+                'id' => $chunkArray,
+                'includes' => implode(',', $this->modules)
+            );
+            $task = array(
+                'name' => "($i/$numChunk)". $this->getName(),
+                'priority' => 8,
+                'frequency' => 'ONCE',
+                'type' => 'POKE',
+                'params' => http_build_query($params),
+            );
+            $taskAdded = $this->taskManager->addTask($task);
+            $this->log('Added task '.$taskAdded['id']);
+        }
+        $this->log("Added all $numChunk tasks for processing");
     }
 
     /**
@@ -132,7 +168,7 @@ class SyncTask extends Task
                 if ($this->includes('enrich')) {
                     $params['includes'] = 'enrich';
                     $task = array(
-                        'name' => $this->getName("Enrich", $params, $i, $data['numChunk'], $chunkArray),
+                        'name' => $this->getChunkName("Enrich", $params, $i, $data['numChunk'], $chunkArray),
                         'priority' => 8,
                         'frequency' => 'ONCE',
                         'type' => 'POKE',
@@ -144,7 +180,7 @@ class SyncTask extends Task
                 if ($this->includes('index')) {
                     $params['includes'] = 'index';
                     $task = array(
-                        'name' => $this->getName("Index", $params, $i, $data['numChunk'], $chunkArray),
+                        'name' => $this->getChunkName("Index", $params, $i, $data['numChunk'], $chunkArray),
                         'priority' => 10,
                         'frequency' => 'ONCE',
                         'type' => 'POKE',
@@ -157,7 +193,7 @@ class SyncTask extends Task
                 //spawn task based on available modules
                 $params['includes'] = implode(',', $this->modules);
                 $task = array(
-                    'name' => $this->getName($params['includes'], $params, $i, $data['numChunk'], $chunkArray),
+                    'name' => $this->getChunkName($params['includes'], $params, $i, $data['numChunk'], $chunkArray),
                     'params' => http_build_query($params),
                     'priority' => 8, 'frequency' => 'ONCE', 'type' => 'POKE',
                 );
@@ -167,7 +203,7 @@ class SyncTask extends Task
         }
     }
 
-    private function getName($operation, $params, $chunkPos, $numChunk, $chunkArray){
+    private function getChunkName($operation, $params, $chunkPos, $numChunk, $chunkArray){
         $name = $operation. " ";
         if ($this->missingOnly) {
             $name .= "Missing ";
