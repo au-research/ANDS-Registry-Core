@@ -269,6 +269,7 @@ class Connections_Extension extends ExtensionBase
 		}
 
 		$this->_CI->load->model('data_source/data_sources','ds');
+		$this->_CI->load->model('registry_object/registry_objects','ro');
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
 
 		$allow_reverse_internal_links = ($ds->allow_reverse_internal_links == "t" || $ds->allow_reverse_internal_links == 1);
