@@ -16,6 +16,7 @@ class Directaccess extends ROHandler
         $classArray = [];
 
         $services = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
+
         foreach ($services as &$service) {
             if (isset($service['relation_url'])
                 && sizeof($service['relation_url']) > 0
@@ -103,7 +104,6 @@ class Directaccess extends ROHandler
 
                 }
             }
-
         }
 
         return $download;

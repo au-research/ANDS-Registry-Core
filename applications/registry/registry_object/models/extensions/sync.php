@@ -147,7 +147,6 @@ class Sync_extension extends ExtensionBase{
 
         foreach($gXPath->query('//ro:originatingSource') as $node) {
             $json['originating_source'] = htmlspecialchars(trim($node->nodeValue));
-
         }
 
 		//contributor

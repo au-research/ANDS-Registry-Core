@@ -18,7 +18,6 @@ class Rights extends ROHandler {
         	}
         }
 
-
         //if there's a secret tag of SECRET_TAG_ACCESS_OPEN (defined in constants), add a right of accessRights_type open
         if (!$skip) {
             if ($this->ro->hasTag(SECRET_TAG_ACCESS_OPEN)) {
@@ -49,7 +48,9 @@ class Rights extends ROHandler {
             'ro' => $this->ro,
             'gXPath' => $this->gXPath
         ));
+
         $downloads = $handler->handle();
+
         foreach ($downloads as $download) {
             if ($download['access_type'] == 'directDownload') {
                 $rights[] = array(
