@@ -120,7 +120,7 @@ class Sync_extension extends ExtensionBase{
             $party_service_conn_limit = $limit;
 
         $single_values = array(
-			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type', 'quality_level'
+			'id', 'slug', 'key', 'status', 'data_source_id', 'data_source_key', 'display_title', 'list_title', 'group', 'class', 'type', 'quality_level','originating_source'
 		);
 
         $include_rights_type = array('open','restricted','conditional');
@@ -142,6 +142,13 @@ class Sync_extension extends ExtensionBase{
 
 		//macthing identifier count
 		$json['matching_identifier_count'] = sizeof($this->ro->findMatchingRecords());
+
+        //originating source
+
+        foreach($gXPath->query('//ro:originatingSource') as $node) {
+            $json['originating_source'] = htmlspecialchars(trim($node->nodeValue));
+
+        }
 
 		//contributor
 		$is_contributor = false;
