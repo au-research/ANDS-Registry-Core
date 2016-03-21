@@ -495,9 +495,11 @@ class Activity_grants_extension extends ExtensionBase
                 //continue if it's recursive and we haven't reach the fundedBy party yet
                 if ($recursive && $relatedObject['class'] != 'party') {
                     $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
-                    $parents = $record->getParentsGrants(false, $processed, true);
-                    if (sizeof($parents) > 0) {
-                        $result = array_merge($result, $parents);
+                    if ($record) {
+                        $parents = $record->getParentsGrants(false, $processed, true);
+                        if (sizeof($parents) > 0) {
+                            $result = array_merge($result, $parents);
+                        }
                     }
                 }
             }
