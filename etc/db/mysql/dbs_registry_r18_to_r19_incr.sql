@@ -11,3 +11,6 @@ ADD COLUMN `owner_ip` VARCHAR(45) NULL COMMENT '' AFTER `owner_sector`;
 
 ALTER TABLE `dbs_registry`.`registry_object_metadata`
 CHANGE COLUMN `value` `value` MEDIUMTEXT NULL DEFAULT NULL COMMENT '' ;
+
+ALTER TABLE `dbs_registry`.`registry_object_identifier_relationships`
+ADD COLUMN `notes` TEXT NULL AFTER `connections_preview_div`;
