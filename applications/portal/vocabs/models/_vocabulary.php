@@ -191,11 +191,13 @@ class _vocabulary
     }
 
     /**
-     * Process each subjects in the datarecord
-     * find resolvable subjects and include their broader subjects
-     * as well in the solr index
+     * Process each subject in the data record to produce the subject
+     * component of the Solr document for this vocabulary.
+     * Find resolvable subjects and include their broader subjects
+     * as well in the Solr index.
      *
-     * @return the modified json
+     * @return The subjects in JSON format for inclusion in the
+     *         Solr document.
      */
 
     function processSubjects($data, $json)
@@ -217,7 +219,8 @@ class _vocabulary
                 if(isset($subject['subject_label']))
                     $value = $subject['subject_label'];
 
-                if(isset($subject['subject_notation']) && $subject['subject_notation'] != ""){
+                if(isset($subject['subject_notation'])
+                   && $subject['subject_notation'] != ""){
                     $notation = $subject['subject_notation'];
                 }
                 else{
@@ -231,36 +234,46 @@ class _vocabulary
                             $json['subject_types'][] = $type;
                             $json['subject_labels'][] = $value;
                             $json['subject_notations'][] = '';
-                            $json['subjects_uris'][] = 'Label not defined in ' . $type;
+                            $json['subject_uris'][] = '';
+                                // 'Label not defined in ' . $type;
                         }
                     }
                     catch(Exception $e){
                         $json['subject_types'][] = $type;
                         $json['subject_labels'][] = $value;
                         $json['subject_notations'][] = '';
-                        $json['subjects_uris'][] = $e->getMessage();
+                        $json['subject_uris'][] = '';
+                            // $e->getMessage();
                     }
                 }
 
-                if($notation != "" && !array_key_exists($notation, $subjectsResolved))
+                if($notation != ""
+                   && !array_key_exists($notation, $subjectsResolved))
                 {
 
-                    $resolvedValue = $ci->vocab->resolveSubject($notation, $type);
+                    $resolvedValue = $ci->vocab->resolveSubject($notation,
+                                                                $type);
                     $json['subject_types'][] = $type;
                     $json['subject_labels'][] = $value;
                     $json['subject_notations'][] = $resolvedValue['notation'];
-                    $json['subjects_uris'][] = $resolvedValue['about'];
+                    $json['subject_uris'][] = $resolvedValue['about'];
                     $subjectsResolved[$resolvedValue['notation']] = $value;
                     if($resolvedValue['uriprefix'] != 'non-resolvable')
                     {
-                        $broaderSubjects = $ci->vocab->getBroaderSubjects($resolvedValue['uriprefix'], $notation);
+                        $broaderSubjects =
+                            $ci->vocab->getBroaderSubjects(
+                                $resolvedValue['uriprefix'], $notation);
                         foreach($broaderSubjects as $broaderSubject)
                         {
-                            if(!array_key_exists($broaderSubject['notation'], $subjectsResolved)){
+                            if(!array_key_exists($broaderSubject['notation'],
+                                                 $subjectsResolved)){
                                 $json['subject_types'][] = $type;
-                                $json['subject_labels'][] = $broaderSubject['value'];
-                                $json['subject_notations'][] = $broaderSubject['notation'];
-                                $json['subjects_uris'][] = $broaderSubject['about'];
+                                $json['subject_labels'][] =
+                                    $broaderSubject['value'];
+                                $json['subject_notations'][] =
+                                    $broaderSubject['notation'];
+                                $json['subject_uris'][] =
+                                    $broaderSubject['about'];
                             }
                         }
                     }
