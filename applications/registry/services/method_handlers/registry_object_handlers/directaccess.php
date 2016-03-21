@@ -11,11 +11,15 @@ class Directaccess extends ROHandler
     function handle()
     {
         $download = array();
+        if ($this->ro->class != 'collection') {
+            return array();
+        }
         $query = '';
         $relationshipTypeArray = ['isPresentedBy', 'supports'];
         $classArray = [];
 
         $services = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
+
         foreach ($services as &$service) {
             if (isset($service['relation_url'])
                 && sizeof($service['relation_url']) > 0
@@ -103,7 +107,6 @@ class Directaccess extends ROHandler
 
                 }
             }
-
         }
 
         return $download;

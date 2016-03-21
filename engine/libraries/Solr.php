@@ -46,6 +46,7 @@ class Solr
         $this->options = array('q' => '*:*', 'start' => '0', 'indent' => 'on', 'wt' => 'json', 'fl' => '*', 'rows' => '10');
         $this->multi_valued_fields = array('facet.field', 'fq', 'facet.query');
         $this->custom_query = false;
+        $this->result = null;
         return $this;
     }
 

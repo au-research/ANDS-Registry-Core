@@ -197,7 +197,9 @@ class ObjectHandler extends Handler{
     {
         require_once SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/' . $handler . '.php';
         $handler = new $handler($resource);
-        return $handler->handle();
+        $result = $handler->handle();
+        unset($handler);
+        return $result;
     }
 
     /**
