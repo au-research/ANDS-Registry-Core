@@ -11,6 +11,9 @@ class Directaccess extends ROHandler
     function handle()
     {
         $download = array();
+        if ($this->ro->class != 'collection') {
+            return array();
+        }
         $query = '';
         $relationshipTypeArray = ['isPresentedBy', 'supports'];
         $classArray = [];

@@ -42,22 +42,24 @@ class Rights extends ROHandler {
         }
 
         //if there's a direct downloads, assign access_rights to open
-        require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/directaccess.php');
-        $handler = new Directaccess(array(
-            'xml' => $this->xml,
-            'ro' => $this->ro,
-            'gXPath' => $this->gXPath
-        ));
+        if ($this->ro->class == 'collection') {
+            require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/directaccess.php');
+            $handler = new Directaccess(array(
+                'xml' => $this->xml,
+                'ro' => $this->ro,
+                'gXPath' => $this->gXPath
+            ));
 
-        $downloads = $handler->handle();
+            $downloads = $handler->handle();
 
-        foreach ($downloads as $download) {
-            if ($download['access_type'] == 'directDownload') {
-                $rights[] = array(
-                    'value' => '',
-                    'type' => 'accessRights',
-                    'accessRights_type' =>'open'
-                );
+            foreach ($downloads as $download) {
+                if ($download['access_type'] == 'directDownload') {
+                    $rights[] = array(
+                        'value' => '',
+                        'type' => 'accessRights',
+                        'accessRights_type' =>'open'
+                    );
+                }
             }
         }
 
