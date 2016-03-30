@@ -47,17 +47,17 @@ class FixRelationshipTask extends Task
         $ro = $this->ci->ro->getByID($id);
         $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
 
-        // Relationship for this object
-        $relationIndex = $ro->getRelationshipIndex();
-        $this->indexSolr('relations', $relationIndex, false);
-        $this->log('Fixed Relationship for ID: ' . $id);
-        $portalIndex = $ro->indexable_json();
-        $this->indexSolr('portal', [$portalIndex], false);
-        $this->log('Fixed portal index for ID: ' . $id);
+        // Fix this object with a relationship only sync
+        $ro->processIdentifiers();
+        $ro->addRelationships();
+        $ro->index_solr();
+        $ro->indexRelationship();
+        $this->log('Synced Relationship for ID: ' . $id);
 
         $dataSource = $this->ci->ds->getByID($ro->data_source_id);
-
         $allowReverseInternalLinks = ($dataSource->allow_reverse_internal_links == "t" || $dataSource->allow_reverse_internal_links == 1);
+
+        $relationDocs = array();
 
         // Construct the reverse ones
         foreach ($relatedObjects as $related) {
@@ -104,10 +104,11 @@ class FixRelationshipTask extends Task
                     ];
 
                     // additional fields
-                    $relationDoc['relation_description'] = isset($rel['relation_description']) ? [$rel['relation_description']] : [];
-                    $relationDoc['relation_url'] = isset($rel['relation_url']) ? [$rel['relation_url']] : [];
+                    $relationDoc['relation'] = startsWith($related['origin'], 'REVERSE') ? [getReverseRelationshipString($related['relation_type'])] : [$related['relation_type']];
+                    $relationDoc['relation_description'] = isset($related['relation_description']) ? [$related['relation_description']] : [];
+                    $relationDoc['relation_url'] = isset($related['relation_url']) ? [$related['relation_url']] : [];
 
-                    $this->indexSolr('relations', [$relationDoc], false);
+                    $relationDocs[] = $relationDoc;
                     $this->log('Fixed relationship from ' . $related['registry_object_id'] . ' to ' . $ro->id);
 
                     /**
@@ -116,18 +117,20 @@ class FixRelationshipTask extends Task
                      * - intensive/easy = indexSolr the other record
                      * - fast/hard = updateSolr the other record with the missing bits
                      */
-                    if ($this->relationPortalExist($ro, $related['registry_object_id'])) {
-                        $this->log('Relation already exist from ' . $related['registry_object_id'] . ' to ' . $ro->id . ' in portal. No action required');
-                    } else {
+
+                    if (!$this->relationPortalExist($ro, $related['registry_object_id'])) {
                         //syncs the other doc todo updateSolr instead
                         $relatedRo = $this->ci->ro->getByID($related['registry_object_id']);
-                        $relatedIndex = $relatedRo->indexable_json();
-                        $this->indexSolr('portal', [$relatedIndex], false);
+                        $relatedRo->sync();
                         $this->log('Indexed ' . $related['registry_object_id']. ' to portal core');
+                    } else {
+                        // $this->log('Relation already exist from ' . $related['registry_object_id'] . ' to ' . $ro->id . ' in portal. No action required');
                     }
                 }
             }
         }
+
+        $this->indexSolr('relations', $relationDocs, false);
     }
 
     /**
@@ -143,10 +146,10 @@ class FixRelationshipTask extends Task
     {
         $searchClass = $ro->class;
         if ($ro->class == 'party') {
-            if (strtolower(trim($ro->type)) == 'person') {
-                $searchClass = 'party_one';
-            } elseif (strtolower(trim($ro->type)) == 'group') {
+            if (strtolower(trim($ro->type)) == 'group') {
                 $searchClass = 'party_multi';
+            } else {
+                $searchClass = 'party_one';
             }
         }
         $this->ci->solr
@@ -157,7 +160,7 @@ class FixRelationshipTask extends Task
             ->setOpt('fq', '+id:' . $relatedID);
         $solrResult = $this->ci->solr->executeSearch(true);
 
-        if ($solrResult) {
+        if ($solrResult && array_key_exists('response', $solrResult)) {
             if (array_key_exists('response', $solrResult) && $solrResult['response']['numFound'] > 0) {
                 return true;
             } else {
