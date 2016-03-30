@@ -428,7 +428,7 @@ class SyncTask extends Task
 
         if ($this->includes('indexRelations')) {
             $this->log('Indexing SOLR for Relations')->save();
-            $this->indexSolr('relations', $relation_docs, true);
+            $this->indexSolr('relations', $relation_docs);
         }
 
         //remove records

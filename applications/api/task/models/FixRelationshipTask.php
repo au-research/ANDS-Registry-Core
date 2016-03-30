@@ -158,7 +158,7 @@ class FixRelationshipTask extends Task
         $solrResult = $this->ci->solr->executeSearch(true);
 
         if ($solrResult) {
-            if ($solrResult['response']['numFound'] > 0) {
+            if (array_key_exists('response', $solrResult) && $solrResult['response']['numFound'] > 0) {
                 return true;
             } else {
                 return false;
