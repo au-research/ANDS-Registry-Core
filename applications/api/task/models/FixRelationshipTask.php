@@ -123,7 +123,7 @@ class FixRelationshipTask extends Task
                         $relatedRo = $this->ci->ro->getByID($related['registry_object_id']);
                         $relatedIndex = $relatedRo->indexable_json();
                         $this->indexSolr('portal', [$relatedIndex], false);
-                        $this->log('Indexed ' . $related['registry_object_id'], ' to portal core');
+                        $this->log('Indexed ' . $related['registry_object_id']. ' to portal core');
                     }
                 }
             }

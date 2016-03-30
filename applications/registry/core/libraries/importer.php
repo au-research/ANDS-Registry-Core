@@ -710,6 +710,10 @@ class Importer {
     /**
      * This function is plan B for the importer rewrite, basically
      * chuck every found records in a background task that run sync
+	 * Update: Wednesday, 30 March 2016 removed the sync function and replaced with fixRelationship
+	 * Records that are in the importedRecords array will have their relationship fixed
+	 * For detail of implementation, refer to FixRelationShipTask
+	 *
      * @opt remove sync relationships from finishImportTask
      * and do it here instead?
      */
@@ -720,36 +724,11 @@ class Importer {
         // imported records
         $roIDs = array_merge($roIDs, $this->importedRecords);
 
-        // affected records
-        foreach ($this->affected_record_keys as $key) {
-            $query = $this->CI->db->get_where('registry_objects', ['key' => $key, 'status' => 'PUBLISHED']);
-            if ($query->num_rows() > 0) {
-                $result = $query->first_row(true);
-                $roIDs[] = $result['registry_object_id'];
-            }
-        }
-
-        $roIDs = array_unique($roIDs);
-
-		//getting all the ids again
-		$this->CI->load->model('registry_object/registry_objects', 'ro');
-		foreach ($roIDs as $id) {
-			$ro = $this->CI->ro->getByID($id, false);
-			$relationships = $ro->getAllRelatedObjects(false, false, true);
-			foreach ($relationships as $relation) {
-				if (isset($relation['registry_object_id']) && !in_array($relation['registry_object_id'], $roIDs)) {
-					$roIDs[] = $relation['registry_object_id'];
-				}
-			}
-			unset($relationships);
-			unset($ro);
-		}
-
         //adding task
         if (sizeof($roIDs) > 0) {
             require_once API_APP_PATH . 'vendor/autoload.php';
             $params = [
-                'class' => 'sync',
+                'class' => 'fixRelationship',
                 'type' => 'ro',
                 'id' => implode(',',$roIDs)
             ];
@@ -770,7 +749,6 @@ class Importer {
         } else {
             $this->message_log[] = "Size of Affected Records is 0. No background task scheduled";
         }
-
 	}
 
 	/**
