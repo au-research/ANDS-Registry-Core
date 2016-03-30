@@ -54,6 +54,7 @@ class FixRelationshipTask extends Task
         // Fix this object with a relationship only sync
         $ro->processIdentifiers();
         $ro->addRelationships();
+        $ro->cacheRelationshipMetadata();
         $ro->index_solr();
         $ro->indexRelationship();
         $this->log('Synced Relationship for ID: ' . $id);
