@@ -15,6 +15,8 @@ use \Exception as Exception;
  */
 class FixRelationshipTask extends Task
 {
+    private $chunkSize = 100;
+
     public function run_task()
     {
         //load the required CI components
@@ -26,13 +28,53 @@ class FixRelationshipTask extends Task
         //Load parameters
         parse_str($this->params, $params);
         if (array_key_exists('id', $params)) {
-            $ids = explode(',', $params['id']);
-            foreach ($ids as $id) {
-                $this->fixRelationshipRecord($id);
+            $ids = !is_array($params['id']) ? explode(',', $params['id']) : $params['id'];
+
+            if (sizeof($ids) > $this->chunkSize) {
+                $this->analyzeList($ids);
+            } else {
+                foreach ($ids as $id) {
+                    $this->fixRelationshipRecord($id);
+                }
             }
+
         } else {
             throw new Exception("No id presents in params. params=".$this->params);
         }
+    }
+
+    /**
+     * Analyze a list
+     * if the list size is bigger than the defined chunkSize,
+     * split this task into multiple tasks
+     *
+     * @param $list
+     */
+    private function analyzeList($list)
+    {
+        $this->taskManager = new TaskManager($this->getDb());
+        $numChunk = ceil(($this->chunkSize < sizeof($list) ? (sizeof($list) / $this->chunkSize) : 1));
+        $this->log('Size of records to process is too big: ' . sizeof($list) . ' splitting to ' . $numChunk . ' chunks to process');
+        for ($i = 1; $i < $numChunk; $i++) {
+            $offset = ($i - 1) * $this->chunkSize;
+            $chunkArray = array_slice($list, $offset, $this->chunkSize);
+
+            $params = array(
+                'class' => 'fixRelationship',
+                'type' => 'ro',
+                'id' => $chunkArray,
+            );
+            $task = array(
+                'name' => "($i/$numChunk)" . $this->getName(),
+                'priority' => 8,
+                'frequency' => 'ONCE',
+                'type' => 'POKE',
+                'params' => http_build_query($params),
+            );
+            $taskAdded = $this->taskManager->addTask($task);
+            $this->log('Added task ' . $taskAdded['id']);
+        }
+        $this->log("Added all $numChunk tasks for processing");
     }
 
     /**
@@ -116,7 +158,16 @@ class FixRelationshipTask extends Task
                     $relationDoc['relation_description'] = isset($related['relation_description']) ? [$related['relation_description']] : [];
                     $relationDoc['relation_url'] = isset($related['relation_url']) ? [$related['relation_url']] : [];
 
-                    $relationDocs[] = $relationDoc;
+                    if (array_key_exists($relationDoc['id'], $relationDocs)) {
+                        //already exists a relation, add new relation to it
+                        $relationDocs[$relationDoc['id']]['relation'] = array_merge($relationDocs[$relationDoc['id']['relation']], $relationDoc['relation']);
+                        $relationDocs[$relationDoc['id']]['relation_description'] = array_merge($relationDocs[$relationDoc['id']['relation_description']], $relationDoc['relation_description']);
+                        $relationDocs[$relationDoc['id']]['relation_url'] = array_merge($relationDocs[$relationDoc['id']['relation_url']], $relationDoc['relation_url']);
+                    } else {
+                        $relationDocs[$relationDoc['id']] = $relationDoc;
+                    }
+
+
                     $this->log('Fixed relationship from ' . $related['registry_object_id'] . ' to ' . $ro->id);
 
                     /**
@@ -160,14 +211,14 @@ class FixRelationshipTask extends Task
                             }
                         }
 
-
                     } else {
-                        // $this->log('Relation already exist from ' . $related['registry_object_id'] . ' to ' . $ro->id . ' in portal. No action required');
+                         $this->log('Relation already exist from ' . $related['registry_object_id'] . ' to ' . $ro->id . ' in portal. No action required. '.$related['relation'].'( '.$related['origin'].' )');
                     }
                 }
             }
         }
 
+        $relationDocs = array_values($relationDocs);
         $this->indexSolr('relations', $relationDocs, false);
     }
 
