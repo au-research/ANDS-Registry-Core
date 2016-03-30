@@ -62,7 +62,7 @@ class FixRelationshipTask extends Task
         $allowReverseInternalLinks = ($dataSource->allow_reverse_internal_links == "t" || $dataSource->allow_reverse_internal_links == 1);
 
         // delete reverse links to allow readding of correct ones
-        $this->ci->solr->deleteByQueryCondition('to_id:'.$this->ro->id.' AND (relation_origin:REVERSE_INT OR relation_origin:REVERSE_EXT)');
+        $this->ci->solr->deleteByQueryCondition('to_id:'.$ro->id.' AND (relation_origin:REVERSE_INT OR relation_origin:REVERSE_EXT)');
 
         $relationDocs = array();
 
