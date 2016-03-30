@@ -133,8 +133,11 @@ class Task
             'message' => json_encode($this->getMessage()),
         ];
         if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
-
-        return $this->update_db($data);
+        if ($this->getId()) {
+            return $this->update_db($data);
+        } else {
+            return true;
+        }
     }
 
     /**

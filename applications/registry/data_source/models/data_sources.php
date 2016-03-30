@@ -211,7 +211,36 @@ class Data_sources extends CI_Model {
 			}
 		}
 		return $matches;
-	} 
+	}
+
+    /**
+     * Returns the attribute value of the data source
+     *
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @param            $ds_id
+     * @param bool|false $type
+     * @return array|bool
+     */
+    function getAttribute($ds_id, $type = false) {
+        $core_attrs = array('key', 'slug', 'title', 'record_owner');
+        if ($type) {
+            if (in_array($type, $core_attrs)) {
+                $query = $this->db->get_where('data_sources',
+                    array('data_source_id'=>$ds_id))->first_row(true);
+                return ($query && isset($query[$type])) ? $query[$type] : false;
+            } else {
+                $query = $this->db->get_where('data_source_attributes',
+                    array('data_source_id'=>$ds_id, 'attribute'=>$type))->first_row(true);
+                return ($query && isset($query['value'])) ? $query['value'] : false;
+            }
+        } else {
+            // return all attributes and other things
+            $result = array();
+
+            //populate the result with attrs core and non core
+            return $result;
+        }
+    }
 	
 	/**
 	 * Get all datasources

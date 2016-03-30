@@ -115,8 +115,9 @@ class Task_api
     }
 
     private function test(){
-        $task = new \ANDS\API\Task\GraphTask();
+        $task = new \ANDS\API\Task\FixRelationshipTask();
         $task->run_task();
+        dd($task->getMessage());
     }
 
     /**
