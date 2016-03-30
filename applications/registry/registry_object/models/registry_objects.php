@@ -928,7 +928,10 @@ class Registry_objects extends CI_Model {
 		{
 			//delete index
 			$this->load->library('Solr');
+			$this->solr->init()->setCore('portal');
 			$this->solr->deleteByQueryCondition('id:'.$target_ro->id);
+			$this->solr->init()->setCore('relations');
+			$this->solr->deleteByQueryCondition('from_id:'.$target_ro->id. ' OR to_id:'.$target_ro->id);
 		}
 
 		if (isPublishedStatus($target_ro->status))
