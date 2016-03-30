@@ -212,7 +212,7 @@ class FixRelationshipTask extends Task
                         }
 
                     } else {
-                         $this->log('Relation already exist from ' . $related['registry_object_id'] . ' to ' . $ro->id . ' in portal. No action required. '.$related['relation'].'( '.$related['origin'].' )');
+                         $this->log('Relation already exist from ' . $related['registry_object_id'] . ' to ' . $ro->id . ' in portal. No action required. '.$related['relation_type'].'( '.$related['origin'].' )');
                     }
                 }
             }
