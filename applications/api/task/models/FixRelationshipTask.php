@@ -120,9 +120,39 @@ class FixRelationshipTask extends Task
 
                     if (!$this->relationPortalExist($ro, $related['registry_object_id'])) {
                         //syncs the other doc todo updateSolr instead
-                        $relatedRo = $this->ci->ro->getByID($related['registry_object_id']);
-                        $relatedRo->sync();
-                        $this->log('Indexed ' . $related['registry_object_id']. ' to portal core');
+                        $this->ci->solr
+                            ->init()
+                            ->setCore('portal')
+                            ->setOpt('fl', 'id')
+                            ->setOpt('fq', '+id:' . $related['registry_object_id']);
+                        $solrResult = $this->ci->solr->executeSearch(true);
+                        if ($solrResult && array_key_exists('response', $solrResult)) {
+                            if ($solrResult['response']['numFound'] > 0) {
+                                //object exist, just updateSolr
+                                $searchClass = $ro->class;
+                                if ($ro->class == 'party') {
+                                    $searchClass = (strtolower(trim($ro->type)) == 'group') ? 'party_multi' : 'party_one';
+                                }
+                                $updateDoc = [
+                                    'id' => $related['registry_object_id'],
+                                    'related_'.$searchClass.'_id' => ['add' => $ro->id],
+                                    'related_'.$searchClass.'_title' => ['add' => $ro->title],
+                                ];
+                                $this->indexSolr('portal', [$updateDoc], false);
+                                $this->log('Updated portal index of '.$related['registry_object_id']. ' to include reference to '.$ro->id);
+                            } else {
+                                //object does not exist, create the object and sync it
+                                $relatedRo = $this->ci->ro->getByID($related['registry_object_id']);
+                                if ($relatedRo) {
+                                    $relatedRo->sync();
+                                    $this->log('Indexed ' . $related['registry_object_id']. ' to portal core');
+                                } else {
+                                    $this->log($related['registry_object_id']. ' not found!');
+                                }
+                            }
+                        }
+
+
                     } else {
                         // $this->log('Relation already exist from ' . $related['registry_object_id'] . ' to ' . $ro->id . ' in portal. No action required');
                     }
@@ -146,11 +176,7 @@ class FixRelationshipTask extends Task
     {
         $searchClass = $ro->class;
         if ($ro->class == 'party') {
-            if (strtolower(trim($ro->type)) == 'group') {
-                $searchClass = 'party_multi';
-            } else {
-                $searchClass = 'party_one';
-            }
+            $searchClass = (strtolower(trim($ro->type)) == 'group') ? 'party_multi' : 'party_one';
         }
         $this->ci->solr
             ->init()
@@ -161,13 +187,13 @@ class FixRelationshipTask extends Task
         $solrResult = $this->ci->solr->executeSearch(true);
 
         if ($solrResult && array_key_exists('response', $solrResult)) {
-            if (array_key_exists('response', $solrResult) && $solrResult['response']['numFound'] > 0) {
+            if ($solrResult['response']['numFound'] > 0) {
                 return true;
             } else {
                 return false;
             }
         } else {
-            throw new Exception('search for relation failed between ' . $ro->id . ' and ' . $relatedID);
+            // throw new Exception('search for relation failed between ' . $ro->id . ' and ' . $relatedID);
         }
     }
 
