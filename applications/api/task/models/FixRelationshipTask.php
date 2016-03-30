@@ -6,7 +6,7 @@
  */
 
 namespace ANDS\API\Task;
-
+use \Exception as Exception;
 
 /**
  * Class FixRelationshipTask
@@ -23,7 +23,16 @@ class FixRelationshipTask extends Task
         $this->ci->load->model('registry/data_source/data_sources', 'ds');
         $this->ci->load->library('solr');
 
-        $this->fixRelationshipRecord(62506);
+        //Load parameters
+        parse_str($this->params, $params);
+        if (array_key_exists('id', $params)) {
+            $ids = explode(',', $params['id']);
+            foreach ($ids as $id) {
+                $this->fixRelationshipRecord($id);
+            }
+        } else {
+            throw new Exception("No id presents in params. params=".$this->params);
+        }
     }
 
     /**

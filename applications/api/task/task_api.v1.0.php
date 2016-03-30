@@ -116,6 +116,7 @@ class Task_api
 
     private function test(){
         $task = new \ANDS\API\Task\FixRelationshipTask();
+        $task->params = 'class=fixRelationship&id=62506,267873';
         $task->run_task();
         dd($task->getMessage());
     }
