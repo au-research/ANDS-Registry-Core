@@ -45,6 +45,10 @@ class FixRelationshipTask extends Task
     {
 
         $ro = $this->ci->ro->getByID($id);
+        if (!$ro) {
+            $this->log('Registry Object '. $id. ' not found!');
+            return;
+        }
         $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
 
         // Fix this object with a relationship only sync
@@ -56,6 +60,9 @@ class FixRelationshipTask extends Task
 
         $dataSource = $this->ci->ds->getByID($ro->data_source_id);
         $allowReverseInternalLinks = ($dataSource->allow_reverse_internal_links == "t" || $dataSource->allow_reverse_internal_links == 1);
+
+        // delete reverse links to allow readding of correct ones
+        $this->ci->solr->deleteByQueryCondition('to_id:'.$this->ro->id.' AND (relation_origin:REVERSE_INT OR relation_origin:REVERSE_EXT)');
 
         $relationDocs = array();
 
