@@ -94,12 +94,15 @@ class FixRelationshipTask extends Task
         $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
 
         // Fix this object with a relationship only sync
+        $this->ci->benchmark->mark('start_ro');
         $ro->processIdentifiers();
         $ro->addRelationships();
         $ro->cacheRelationshipMetadata();
         $ro->index_solr();
         $ro->indexRelationship();
-        $this->log('Synced Relationship for ID: ' . $id);
+        $this->ci->benchmark->mark('end_ro');
+        $time = $this->ci->benchmark->elapsed_time('start_ro', 'end_ro');
+        $this->log('Synced Relationship for ID: ' . $id. ' took '.$time. ' seconds. Memory usage: ' .memory_get_usage());
 
         $dataSource = $this->ci->ds->getByID($ro->data_source_id);
         $allowReverseInternalLinks = ($dataSource->allow_reverse_internal_links == "t" || $dataSource->allow_reverse_internal_links == 1);
@@ -107,7 +110,7 @@ class FixRelationshipTask extends Task
         // delete reverse links to allow readding of correct ones
         $this->ci->solr->deleteByQueryCondition('to_id:'.$ro->id.' AND (relation_origin:REVERSE_INT OR relation_origin:REVERSE_EXT)');
 
-        $relationDocs = array();
+        $docs = array();
 
         // Construct the reverse ones
         foreach ($relatedObjects as $related) {
@@ -134,7 +137,7 @@ class FixRelationshipTask extends Task
                         $reverseType = 'REVERSE_EXT';
                     }
 
-                    $relationDoc = [
+                    $doc = [
                         'id' => md5($related['key'] . $ro->key),
                         'from_id' => $related['registry_object_id'],
                         'from_key' => $related['key'],
@@ -154,17 +157,18 @@ class FixRelationshipTask extends Task
                     ];
 
                     // additional fields
-                    $relationDoc['relation'] = startsWith($related['origin'], 'REVERSE') ? [getReverseRelationshipString($related['relation_type'])] : [$related['relation_type']];
-                    $relationDoc['relation_description'] = isset($related['relation_description']) ? [$related['relation_description']] : [];
-                    $relationDoc['relation_url'] = isset($related['relation_url']) ? [$related['relation_url']] : [];
+                    $doc['relation'] = startsWith($related['origin'], 'REVERSE') ? [getReverseRelationshipString($related['relation_type'])] : [$related['relation_type']];
+                    $doc['relation_description'] = isset($related['relation_description']) ? [$related['relation_description']] : [];
+                    $doc['relation_url'] = isset($related['relation_url']) ? [$related['relation_url']] : [];
 
-                    if (array_key_exists($relationDoc['id'], $relationDocs)) {
+                    if (array_key_exists($doc['id'], $docs)) {
                         //already exists a relation, add new relation to it
-                        $relationDocs[$relationDoc['id']]['relation'] = array_merge($relationDocs[$relationDoc['id']['relation']], $relationDoc['relation']);
-                        $relationDocs[$relationDoc['id']]['relation_description'] = array_merge($relationDocs[$relationDoc['id']['relation_description']], $relationDoc['relation_description']);
-                        $relationDocs[$relationDoc['id']]['relation_url'] = array_merge($relationDocs[$relationDoc['id']['relation_url']], $relationDoc['relation_url']);
+                        $docs[$doc['id']]['relation'] = array_merge($docs[$doc['id']]['relation'], $doc['relation']);
+                        $docs[$doc['id']]['relation_description'] = array_merge($docs[$doc['id']]['relation_description'], $doc['relation_description']);
+                        $docs[$doc['id']]['relation_url'] = array_merge($docs[$doc['id']]['relation_url'], $doc['relation_url']);
+                        $docs[$doc['id']]['relation_origin'] = array_merge($docs[$doc['id']]['relation_origin'], $doc['relation_origin']);
                     } else {
-                        $relationDocs[$relationDoc['id']] = $relationDoc;
+                        $docs[$doc['id']] = $doc;
                     }
 
 
@@ -218,8 +222,8 @@ class FixRelationshipTask extends Task
             }
         }
 
-        $relationDocs = array_values($relationDocs);
-        $this->indexSolr('relations', $relationDocs, false);
+        $docs = array_values($docs);
+        $this->indexSolr('relations', $docs, false);
     }
 
     /**
