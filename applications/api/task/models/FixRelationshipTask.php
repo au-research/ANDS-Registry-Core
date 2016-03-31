@@ -29,7 +29,7 @@ class FixRelationshipTask extends Task
         parse_str($this->params, $params);
         if (array_key_exists('id', $params)) {
             $ids = !is_array($params['id']) ? explode(',', $params['id']) : $params['id'];
-
+            $ids = [658837];
             if (sizeof($ids) > $this->chunkSize) {
                 $this->analyzeList($ids);
             } else {
@@ -92,6 +92,7 @@ class FixRelationshipTask extends Task
             return;
         }
         $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
+        $this->log('Object '.$id. ' has '.sizeof($relatedObjects). ' relations');
 
         // Fix this object with a relationship only sync
         $this->ci->benchmark->mark('start_ro');
@@ -107,8 +108,10 @@ class FixRelationshipTask extends Task
         $dataSource = $this->ci->ds->getByID($ro->data_source_id);
         $allowReverseInternalLinks = ($dataSource->allow_reverse_internal_links == "t" || $dataSource->allow_reverse_internal_links == 1);
 
+        $this->log($id.'('.$dataSource->id.') --AllowReverseInternal='. $allowReverseInternalLinks);
+
         // delete reverse links to allow readding of correct ones
-        $this->ci->solr->deleteByQueryCondition('to_id:'.$ro->id.' AND (relation_origin:REVERSE_INT OR relation_origin:REVERSE_EXT)');
+        $this->ci->solr->deleteByQueryCondition('to_id:'.$ro->id.' AND (relation_origin:REVERSE_INT OR relation_origin:REVERSE_EXT) AND -relation_origin:EXPLICIT');
 
         $docs = array();
 
@@ -121,7 +124,14 @@ class FixRelationshipTask extends Task
              */
             if (array_key_exists('registry_object_id', $related)) {
                 $relatedDataSourceID = $this->ci->ro->getAttribute($related['registry_object_id'], 'data_source_id');
+                // $this->log($id.'('.$dataSource->id.') -- '.$related['registry_object_id'].'('.$relatedDataSourceID.')'. $allowReverseInternalLinks);
+
                 $allowReverse = ($relatedDataSourceID == $dataSource->id) && $allowReverseInternalLinks;
+
+                //allow explicit to be reversed if allow reverse internal is on
+                $allowReverse = $allowReverse || ($related['origin'] == 'EXPLICIT');
+
+                //allow reverse if reverse external is off, only if it's not allowed at this point
                 if (!$allowReverse) {
                     $relatedDataSourceAllowReverseExternal = $this->ci->ds->getAttribute($relatedDataSourceID,
                         'allow_reverse_external_links');
@@ -170,7 +180,6 @@ class FixRelationshipTask extends Task
                     } else {
                         $docs[$doc['id']] = $doc;
                     }
-
 
                     $this->log('Fixed relationship from ' . $related['registry_object_id'] . ' to ' . $ro->id);
 
