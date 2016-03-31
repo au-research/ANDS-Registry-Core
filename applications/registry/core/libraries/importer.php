@@ -441,6 +441,9 @@ class Importer {
                     if($changed)
                     {
 					    $ro->processIdentifiers();
+						$ro->addRelationships();
+						$ro->cacheRelationshipMetadata();
+						$ro->update_quality_metadata();
 					    // Add this record to our counts, etc.
 					    $this->importedRecords[] = $ro->id;
                     }
@@ -531,11 +534,11 @@ class Importer {
 	public function finishImportTasks() {
 
 		$importedRecCount = count($this->importedRecords);
-		$this->_enrichRecords();
+		// $this->_enrichRecords();
 		$deletedCount = count($this->deleted_record_keys);
 
-		$this->_enrichAffectedRecords();
-		$this->_indexAllAffectedRecords();
+		// $this->_enrichAffectedRecords();
+		// $this->_indexAllAffectedRecords();
 
         $this->_backgroundSync();
 
