@@ -29,7 +29,6 @@ class FixRelationshipTask extends Task
         parse_str($this->params, $params);
         if (array_key_exists('id', $params)) {
             $ids = !is_array($params['id']) ? explode(',', $params['id']) : $params['id'];
-            $ids = [658837];
             if (sizeof($ids) > $this->chunkSize) {
                 $this->analyzeList($ids);
             } else {
