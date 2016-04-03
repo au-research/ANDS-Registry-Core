@@ -69,6 +69,10 @@ ul.vocab_tree li.tree_empty { color: #999;  }
 /**
  * Demonstration styles (not required for normal operation)
  */
+
+/* Commented out because of leakage to all forms!
+   If you need to fix this later, change the selectors
+   so that they apply only to a specific class.
 div.formarea
 {
     width: 500px;
@@ -103,3 +107,4 @@ fieldset legend { font-size: 14px; font-weight: bold; }
 .note pre { color: #ccc; }
 
 .note-toggle { background-color: orange; border-color: orange; border-radius: 5px; font-weight: bold; }
+*/
