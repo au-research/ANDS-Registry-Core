@@ -33,7 +33,7 @@ class Vocab {
     {
         if ($label)
         {
-            if (isset($this->resolvingServices[$vocabType]['uriprefix']))
+            if (isset($this->resolvingServices[$vocabType]['resolvingService']))
             {
                 $vocab_config =  $this->resolvingServices[$vocabType];
             }
@@ -51,7 +51,13 @@ class Vocab {
                     $subject = array();
                     $subject['value'] = $service_response['result']['items'][0]['prefLabel']['_value'];
                     $subject['about'] = $service_response['result']['items'][0]['_about'];
-                    $subject['notation'] = $service_response['result']['items'][0]['notation'];
+                    if (isset($service_response['result']['items'][0]['notation'])) {
+                        $subject['notation'] = $service_response['result']['items'][0]['notation'];
+                    } else {
+                        // No, don't set it. Callers seem to test for
+                        // the value being missing (unset).
+                        // $subject['notation'] = "";
+                    }
                     return $subject;
                 }
             }
@@ -60,10 +66,12 @@ class Vocab {
         return false;
     }
 
+    // Precondition: $vocabType has a resolvingService entry.
+    // (All existing calls seem to satisfy the precondition.)
     function anyContains($term, $vocabType){
         $result = array();
         if($term){
-            $curl_uri = $this->resolvingServices[$vocabType]['resolvingService'].'concepts.json?anycontains='.$term;
+            $curl_uri = $this->resolvingServices[$vocabType]['resolvingService'].'concept.json?anycontains='.$term;
             // echo $curl_uri;
             $ch = curl_init();
             //set the url, number of POST vars, POST data
@@ -84,9 +92,12 @@ class Vocab {
         return $result;
     }
 
+    // NB here: $term is the concept's notation
 	function resolveSubject($term, $vocabType){
 		
-        if($vocabType != '' && is_array($this->resolvingServices) && array_key_exists($vocabType, $this->resolvingServices))
+        if($vocabType != '' && is_array($this->resolvingServices)
+           && array_key_exists($vocabType, $this->resolvingServices)
+           && isset($this->resolvingServices[$vocabType]['resolvingService']))
         {
             $resolvingService = $this->resolvingServices[$vocabType]['resolvingService'];
             $uriprefix = $this->resolvingServices[$vocabType]['uriprefix'];
@@ -135,6 +146,67 @@ class Vocab {
         }
 	}
 
+    // TODO: Future work is to support getting broader subjects
+    // starting with a concept's IRI, rather than notation.
+    // So, this is a copy/paste of resolveSubject(), with
+    // $term changed to $uri. However, other changes may be needed.
+    // When this function is needed, uncomment it and complete
+    // it. See also getBroaderSubjectsByUri().
+    // NB here: $uri is the concept's URI (a.k.a. IRI)
+    // FIXME This is not finished. Don't use!
+	// function resolveSubjectByUri($uri, $vocabType){
+		
+    //     if($vocabType != '' && is_array($this->resolvingServices) && array_key_exists($vocabType, $this->resolvingServices) && isset($this->resolvingServices[$vocabType]['resolvingService']))
+    //     {
+    //         $resolvingService = $this->resolvingServices[$vocabType]['resolvingService'];
+    //         $uriprefix = $this->resolvingServices[$vocabType]['uriprefix'];
+
+    //         if(isset($this->resolvedArray[$uriprefix][$uri]))
+    //         {
+    //             return $this->resolvedArray[$uriprefix][$uri];
+    //         }
+    //         else
+    //         {
+    //             // Use a trick: supply empty string as the second parameter in order
+    //             $content = $this->post($this->constructResorceUriString($resolvingService, '', $uri));
+    // 		    $json = json_decode($content, false);
+    //     		if($json){
+    //     			$this->result = $json;
+                    
+    //                 $subject['uriprefix'] = $uriprefix;
+    //                 $subject['notation'] = '';
+    //                 $subject['value'] = $json->{'result'}->{'primaryTopic'}->{'prefLabel'}->{'_value'};
+    //                 $subject['about'] = $json->{'result'}->{'primaryTopic'}->{'_about'};
+    //                 $this->resolvedArray[$uriprefix][$uri] = $subject;
+    //                 $this->resolvedArray[$uriprefix][$uri]['broaderTerms'] = array();
+    //                 $this->setBroaderSubjects($resolvingService, $uriprefix, $uri, $vocabType);
+    //     			return  $subject;
+    //     		}else{
+    //     			$subject['uriprefix'] = $uriprefix;
+    //                 $subject['notation'] = $uri;
+    //                 $subject['value'] = $uri;
+    //                 $subject['about'] = '';
+    //                 $this->resolvedArray[$uriprefix][$uri] = $subject;
+    //                 return $subject;
+    //     		}
+    //         }
+    //     }
+    //     elseif(isset($this->resolvedArray['non-resolvable'][$uri]))
+    //     {
+    //         return $this->resolvedArray['non-resolvable'][$uri];
+    //     }
+    //     else
+    //     {
+    //         $subject['uriprefix'] = 'non-resolvable';
+    //         $subject['notation'] = $uri;
+    //         $subject['value'] = $uri;
+    //         $subject['about'] = '';
+    //         $this->resolvedArray['non-resolvable'][$uri] = $subject;
+    //         return $subject;
+    //     }
+	// }
+
+
     function post($queryStr){
         $ch = curl_init();
         //set the url, number of POST vars, POST data
@@ -150,9 +222,9 @@ class Vocab {
         if($type=='resource'){
             $resourceQueryComp = 'resource.json?uri=';
         }else if($type=='broader'){
-            $resourceQueryComp = 'concepts/allBroader.json?uri=';
+            $resourceQueryComp = 'concept/allBroader.json?uri=';
         }else if($type=='label'){
-            return $resourceQueryComp = $vocab['resolvingService']. 'concepts.json?anylabel=' . rawurlencode($term);
+            return $resourceQueryComp = $vocab['resolvingService']. 'concept.json?anylabel=' . rawurlencode($term);
         }
         return $vocab['resolvingService'].$resourceQueryComp.$vocab['uriprefix'].$term;
     }
@@ -164,7 +236,7 @@ class Vocab {
     }
 
     function constructBroaderUriString($resolvingService, $uriprefix, $term){
-        $broaderQueryComp = 'concepts/allBroader.json?uri=';
+        $broaderQueryComp = 'concept/allBroader.json?uri=';
         $uri = $resolvingService.$broaderQueryComp.urlencode($uriprefix.$term);
         return $uri;
     }
@@ -213,6 +285,30 @@ class Vocab {
         }
         return $result;
     }
+
+    // TODO: Future work is to support getting broader subjects
+    // starting with a concept's IRI, rather than notation.
+    // So, this is a copy/paste of getBroaderSubjects(), with
+    // $term changed to $uri. However, other changes may be needed.
+    // When this function is needed, uncomment it and complete
+    // it. See also resolveSubjectByUri().
+    // function getBroaderSubjectsByUri($uriprefix, $uri)
+    // {
+    //     $result = array();
+    //     if(is_array($this->resolvingServices) && isset($this->resolvedArray[$uriprefix][$uri]) && isset($this->resolvedArray[$uriprefix][$uri]['broaderTerms']))
+    //     {
+    //         $broaderTerms = $this->resolvedArray[$uriprefix][$uri]['broaderTerms'];
+    //         foreach($broaderTerms as $broaderTerm)
+    //         {
+    //             if(isset($this->resolvedArray[$uriprefix][$broaderTerm]))
+    //             {
+    //                 $broader = $this->resolvedArray[$uriprefix][$broaderTerm];
+    //                 $result[$broaderTerm] = $this->resolvedArray[$uriprefix][$broaderTerm];
+    //             }
+    //         }
+    //     }
+    //     return $result;
+    // }
 
     function getResource($vocab_uri){
         $content = '';
