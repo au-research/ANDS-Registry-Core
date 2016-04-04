@@ -721,12 +721,14 @@ class Activity_grants_extension extends ExtensionBase
                     $ids[] = $activity['registry_object_id'];
                 }
             }
-            $ids = '('.implode(' OR ', $ids).')';
-
-            $dataOutputs = $this->getDirectDataOutputSOLR($ids);
-            if (sizeof($dataOutputs) > 0) {
-                $result = array_merge($result, $dataOutputs);
+            if (sizeof($ids) > 0) {
+                $ids = '(' . implode(' OR ', $ids) . ')';
+                $dataOutputs = $this->getDirectDataOutputSOLR($ids);
+                if (sizeof($dataOutputs) > 0) {
+                    $result = array_merge($result, $dataOutputs);
+                }
             }
+
             unset($ids);
         }
 
