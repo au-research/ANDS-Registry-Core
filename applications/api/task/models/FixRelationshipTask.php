@@ -115,7 +115,7 @@ class FixRelationshipTask extends Task
         $this->log($id.'('.$dataSource->id.') --AllowReverseInternal='. $allowReverseInternalLinks);
 
         // delete reverse links to allow readding of correct ones
-        $this->ci->solr->deleteByQueryCondition('to_id:'.$ro->id.' AND (relation_origin:REVERSE_INT OR relation_origin:REVERSE_EXT) AND -relation_origin:EXPLICIT');
+        $this->ci->solr->init()->setCore('relations')->deleteByQueryCondition('to_id:'.$ro->id.' AND (relation_origin:REVERSE_INT OR relation_origin:REVERSE_EXT) AND -relation_origin:EXPLICIT');
 
         $docs = array();
 
