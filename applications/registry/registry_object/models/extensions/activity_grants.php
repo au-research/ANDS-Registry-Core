@@ -691,8 +691,8 @@ class Activity_grants_extension extends ExtensionBase
      * Get all of the data output from an activity
      * relatedObject[class=collection][relation=isOutputOf] from a recursively generated list of child activities
      *
-     * @param bool|false $childActivities
-     * @param bool|false $relatedObjects
+     * @param array|bool|false $childActivities
+     * @param array|bool|false $relatedObjects
      * @param bool       $recursive
      * @return array
      */
@@ -899,6 +899,45 @@ class Activity_grants_extension extends ExtensionBase
 
         $result = array_values(array_map("unserialize", array_unique(array_map("serialize", $result))));
         return $result;
+    }
+
+    /**
+     * Determine if this node is part of a possible grant network
+     * Useful to check before commiting to massive recursive grant network generation
+     *
+     * @param bool|false $relatedObjects
+     * @return bool
+     */
+    public function isValidGrantNetworkNode($relatedObjects = false)
+    {
+        if (!$relatedObjects) {
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+        }
+
+        if ($this->ro->class == 'activity') {
+            // it has to be a program or a grant to be a valid node in the grant network
+            $type = trim(strtolower($this->ro->type));
+            if ($type == 'program' || $type == 'grant') {
+                return true;
+            }
+        } elseif ($this->ro->class == 'collection') {
+            // it has to be a data output
+            foreach ($relatedObjects as $related) {
+                if ($related['relation_type'] == 'hasOutput' || $related['relation_type']=='isOutputOf' || $related['relation_type'] == 'outputs') {
+                    return true;
+                }
+            }
+        } elseif ($this->ro->class == 'party') {
+            // it has to be a funder
+            foreach ($relatedObjects as $related) {
+                if ($related['relation_type'] == 'funds' || $related['relation_type'] == 'isFundedBy') {
+                    return true;
+                }
+            }
+        } else {
+            return false;
+        }
+        return false;
     }
 
 

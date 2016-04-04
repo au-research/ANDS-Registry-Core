@@ -36,7 +36,6 @@ class FixRelationshipTask extends Task
                     $this->fixRelationshipRecord($id);
                 }
             }
-
         } else {
             throw new Exception("No id presents in params. params=".$this->params);
         }
@@ -91,6 +90,12 @@ class FixRelationshipTask extends Task
             return;
         }
         $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
+
+        //add the grants and network relationships in
+        if ($ro->isValidGrantNetworkNode($relatedObjects)) {
+            $relatedObjects = array_merge($relatedObjects, $ro->_getGrantsNetworkConnections($relatedObjects));
+        }
+
         $this->log('Object '.$id. ' has '.sizeof($relatedObjects). ' relations');
 
         // Fix this object with a relationship only sync
