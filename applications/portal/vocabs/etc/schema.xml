@@ -34,7 +34,7 @@
 		<field name="subject_types" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="subject_labels" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="subject_notations" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
-		<field name="subject_uris" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
+		<field name="subject_iris" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="top_concept" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="language" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="concept" type="string" indexed="true" stored="true" required="false" multiValued="true"/>

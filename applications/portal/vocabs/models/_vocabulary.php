@@ -195,11 +195,13 @@ class _vocabulary
      * component of the Solr document for this vocabulary.
      * Find resolvable subjects and include their broader subjects
      * as well in the Solr index.
-     *
+     * TODO: support getting broader subjects for vocabs that don't
+     * have notations (e.g., GCMD). Preliminary work already done
+     * in engine/libraries/Vocab.php: new (but not yet completed)
+     * functions resolveSubjectByUri() and getBroaderSubjectsByUri().
      * @return The subjects in JSON format for inclusion in the
      *         Solr document.
      */
-
     function processSubjects($data, $json)
     {
 
@@ -212,12 +214,14 @@ class _vocabulary
             foreach ($data['subjects'] as $subject) {
                 $value = "";
                 $notation = "";
+                $iri = "";
                 $type = $subject['subject_source'];
-
                 if(isset($subject['subject']))
                     $value = $subject['subject'];
                 if(isset($subject['subject_label']))
                     $value = $subject['subject_label'];
+                if(isset($subject['subject_iri']))
+                    $iri = $subject['subject_iri'];
 
                 if(isset($subject['subject_notation'])
                    && $subject['subject_notation'] != ""){
@@ -226,7 +230,6 @@ class _vocabulary
                 else{
                     try{
                         $subject = $ci->vocab->resolveLabel($value, $type);
-
                         if(isset($subject['notation'])){
                             $notation = $subject['notation'];
                         }
@@ -234,7 +237,7 @@ class _vocabulary
                             $json['subject_types'][] = $type;
                             $json['subject_labels'][] = $value;
                             $json['subject_notations'][] = '';
-                            $json['subject_uris'][] = '';
+                            $json['subject_iris'][] = $iri;
                                 // 'Label not defined in ' . $type;
                         }
                     }
@@ -242,8 +245,8 @@ class _vocabulary
                         $json['subject_types'][] = $type;
                         $json['subject_labels'][] = $value;
                         $json['subject_notations'][] = '';
-                        $json['subject_uris'][] = '';
-                            // $e->getMessage();
+                        $json['subject_iris'][] = $iri;
+                        // echo( $e->getMessage());
                     }
                 }
 
@@ -256,7 +259,7 @@ class _vocabulary
                     $json['subject_types'][] = $type;
                     $json['subject_labels'][] = $value;
                     $json['subject_notations'][] = $resolvedValue['notation'];
-                    $json['subject_uris'][] = $resolvedValue['about'];
+                    $json['subject_iris'][] = $resolvedValue['about'];
                     $subjectsResolved[$resolvedValue['notation']] = $value;
                     if($resolvedValue['uriprefix'] != 'non-resolvable')
                     {
@@ -272,7 +275,7 @@ class _vocabulary
                                     $broaderSubject['value'];
                                 $json['subject_notations'][] =
                                     $broaderSubject['notation'];
-                                $json['subject_uris'][] =
+                                $json['subject_iris'][] =
                                     $broaderSubject['about'];
                             }
                         }

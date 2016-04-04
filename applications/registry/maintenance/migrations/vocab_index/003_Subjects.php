@@ -27,7 +27,7 @@ class Subjects extends GenericSolrMigration
             ['name' => 'subject_notations',
              'type' => 'string', 'stored' => true, 'indexed' => true,
              'multiValued' => true],
-            ['name' => 'subject_uris',
+            ['name' => 'subject_iris',
              'type' => 'string', 'stored' => true, 'indexed' => true,
              'multiValued' => true],
         ]);
