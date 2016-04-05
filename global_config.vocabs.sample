@@ -136,6 +136,12 @@ $ENV['subject_vocab_proxy'] = $ENV['default_base_url']
 // Based on the RDA-style vocab_resolving_services setting.
 // Note the addition of an entry for 'local'.
 // Supported modes: freetext, tree, and search.
+// Please note: it is an ANDS business rule (CC-1623)
+// that every vocabulary have
+// at least one subject taken from ANZSRC-FOR. This rule is
+// implemented in vocabs_cms.js as a test for the presence of a
+// subject with source = 'anzsrc-for'. Therefore, this list
+// should include an entry with that as the key!
 $ENV['vocab_resolving_services'] =  array(
     'local' => array(
         'label' =>

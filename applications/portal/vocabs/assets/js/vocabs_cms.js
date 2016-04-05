@@ -28,7 +28,7 @@
             top_concept: [],
             subjects: [
                 {
-                    subject_source: "",
+                    subject_source: "anzsrc-for",
                     subject_label: "",
                     subject_iri: "",
                     subject_notation: ""
@@ -476,12 +476,12 @@
 
                 //language validation
                 if (!$scope.vocab.language || $scope.vocab.language.length == 0) {
-                    $scope.error_message = 'There must be at least 1 language';
+                    $scope.error_message = 'There must be at least one language';
                 }
 
                 //subject validation
-                if (!$scope.vocab.subjects || $scope.vocab.subjects.length == 0 || $scope.subjects_has_no_nonempty_elements()) {
-                    $scope.error_message = 'There must be at least 1 subject';
+                if (!$scope.vocab.subjects || $scope.vocab.subjects.length == 0 || $scope.subjects_has_no_complete_anzsrc_for_elements()) {
+                    $scope.error_message = 'There must be at least one subject drawn from the "ANZSRC Field of Research" vocabulary';
                 }
                 if ($scope.subjects_has_an_only_partially_valid_element()) {
                     $scope.error_message = 'There is a partially-completed subject. Either complete it or remove it.';
@@ -489,7 +489,7 @@
 
                 //publisher validation
                 if (!$scope.vocab.related_entity) {
-                    $scope.error_message = 'There must be at least 1 related entity that is a publisher';
+                    $scope.error_message = 'There must be at least one related entity that is a publisher';
                 } else {
                     var hasPublisher = false;
                     angular.forEach($scope.vocab.related_entity, function (obj) {
@@ -641,7 +641,7 @@
             var newValue;
             // 'subjects' has two parts; special treatment.
             if (list == 'subjects') {
-                newValue = {subject_source: '',
+                newValue = {subject_source: 'anzsrc-for',
                             subject_label: '',
                             subject_iri: '',
                             subject_notation: ''};
@@ -685,7 +685,7 @@
                     break;
                 case 'subjects':
                     $scope.vocab[type] = [{
-                        subject_source: "",
+                        subject_source: "anzsrc-for",
                         subject_label: "",
                         subject_iri: "",
                         subject_notation: ""
@@ -744,6 +744,16 @@
         }
 
         /** Filter function for one subject object. Returns true
+            if the subject has both source = 'anzsrc-for' and a
+            non-empty subject label. */
+        $scope.valid_anzsrc_for_subject_filter = function(el) {
+            return ('subject_source' in el) &&
+                (el.subject_source == 'anzsrc-for') &&
+                ('subject_label' in el) &&
+                ($scope.is_non_empty_string(el.subject_label));
+        }
+
+        /** Filter function for one subject object. Returns true
             if the subject has at least one part valid,
             i.e., contains either a non-empty
             source or a non-empty subject. */
@@ -769,7 +779,7 @@
         /** Utility function for validation of subjects. In order
             to help the user not lose a partially-complete subject,
             call this function to check if the user has a subject for
-            which there is only a source or a subject, but not both. */
+            which there is only a source or a subject label, but not both. */
         $scope.subjects_has_an_only_partially_valid_element = function () {
             return $scope.vocab.subjects.filter(
                 $scope.only_partially_valid_subject_filter).length > 0;
@@ -778,13 +788,25 @@
         /** Utility function for validation of subjects. The list
             of subjects is supposed to have at least one
             element that has both a non-empty source and a non-empty
-            subject. This method returns true
+            subject label. This method returns true
             if this is not the case. */
-        $scope.subjects_has_no_nonempty_elements = function () {
+        $scope.subjects_has_no_complete_anzsrc_for_elements = function () {
             return $scope.vocab.subjects == undefined ||
                 $scope.vocab.subjects.filter($scope.valid_subject_filter) == 0;
         }
 
+        /** Utility function for validation of subjects. This function
+            implements a new business rule (CC-1623) that requires that each
+            vocabulary have at least one subject drawn from
+            ANZSRC-FOR.  So, the list of subjects is supposed to have at
+            least one element that has both source = 'anzsrc-for' and
+            a non-empty subject label. This method returns true if
+            this is not the case. */
+        $scope.subjects_has_no_complete_anzsrc_for_elements = function () {
+            return $scope.vocab.subjects == undefined ||
+                $scope.vocab.subjects.filter(
+                    $scope.valid_anzsrc_for_subject_filter) == 0;
+        }
 
     }
 

@@ -222,8 +222,8 @@
 
 							<button id="add_subject_button" class="btn btn-primary" type="button" ng-click="addtolist('subjects')"><i class="fa fa-plus"></i> Add Subject</button>
 
-							<div class="form-group has-error" ng-show="vocab.subjects === undefined || subjects_has_no_nonempty_elements()">
-								<p class="help-block">At least one subject must be provided. Select a value from the Subject Source dropdown and enter a Subject Label.</p>
+							<div class="form-group has-error" ng-show="vocab.subjects === undefined || subjects_has_no_complete_anzsrc_for_elements()">
+								<p class="help-block">At least one subject drawn from the "ANZSRC Field of Research" vocabulary must be provided. Select a value from the Subject Source dropdown and select a Subject Label.</p>
 							</div>
 
 						</div>
