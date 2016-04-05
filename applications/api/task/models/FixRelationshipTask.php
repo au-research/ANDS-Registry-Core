@@ -83,12 +83,15 @@ class FixRelationshipTask extends Task
      */
     private function fixRelationshipRecord($id)
     {
-
+        $this->log('Fixing Relationship for '.$id. ' memory usage: '.memory_get_usage());
         $ro = $this->ci->ro->getByID($id);
+
         if (!$ro) {
             $this->log('Registry Object '. $id. ' not found!');
+            $this->deleteRegistryObjectRelation($id);
             return;
         }
+
         $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
 
         //add the grants and network relationships in
@@ -237,6 +240,50 @@ class FixRelationshipTask extends Task
 
         $docs = array_values($docs);
         $this->indexSolr('relations', $docs, false);
+    }
+
+    /**
+     * Delete references from the index potal and relations
+     * of this particular ID
+     *
+     * @param $id
+     */
+    private function deleteRegistryObjectRelation($id)
+    {
+        // portal core
+        $this->log('Deleting references of '.$id. ' from the portal core');
+        $relationFields = ['related_collection_id','related_activity_id','related_service_id','related_party_one_id','related_party_multi_id'];
+        $fq = '';
+        foreach ($relationFields as $relationField) {
+            $fq .= $relationField.':'.$id.' ';
+        }
+        $this->ci->solr->init()->setCore('portal')
+            ->setOpt('fl', array_merge(['id,title'], $relationFields))
+            ->setOpt('rows', 200)
+            ->setOpt('fq', $fq);
+        $solrResult = $this->ci->solr->executeSearch(true);
+        if ($solrResult && array_key_exists('response', $solrResult)) {
+            $this->log('Found '.$solrResult['response']['numFound']. ' references from the portal core');
+            if ($solrResult['response']['numFound'] > 0) {
+                $docs = array();
+                foreach ($solrResult['response']['docs'] as $doc) {
+                    $updateDoc = ['id' => $doc['id']];
+                    foreach ($relationFields as $relationField) {
+                        if (array_key_exists($relationField, $doc) && in_array($id, $doc[$relationField])) {
+                            $updateDoc[$relationField] = ['remove' => ["".$id]];
+                        }
+                    }
+                    $docs[] = $updateDoc;
+                }
+                $this->indexSolr('portal', $docs, true);
+                $this->log('Deleted '.$solrResult['response']['numFound']. ' references from the portal core');
+            }
+        }
+
+        //relations core
+        $this->log('Deleting references of '.$id.' from the relations core');
+        $this->ci->solr->init()->setCore('relations')->deleteByQueryCondition('to_id:'.$id);
+        $this->log('Deleted references of to_id:'.$id.' from the relations core');
     }
 
     /**

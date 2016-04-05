@@ -391,6 +391,22 @@ class SyncTask extends Task
                             }
                         }
 
+                        if ($this->includes('fixRelationship')) {
+                            //Fix relationship
+                            $fixRelationshipTask = new FixRelationshipTask();
+                            $params = array(
+                                'class' => 'fixRelationship',
+                                'type' => 'ro',
+                                'id' => $ro->id,
+                            );
+                            $fixRelationshipTask->params = http_build_query($params);
+                            $fixRelationshipTask->run_task();
+                            $messages = $fixRelationshipTask->getMessage();
+                            foreach ($messages['log'] as $log) {
+                                $this->log($log);
+                            }
+                        }
+
                         // flush if memory usage is too high, 50 MB
                         if (memory_get_usage() > 50000000) {
                             if ($this->includes('indexPortal')) {

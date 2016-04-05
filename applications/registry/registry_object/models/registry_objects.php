@@ -926,15 +926,6 @@ class Registry_objects extends CI_Model {
 			}
 		}
 
-		// Delete index if finalise and the record is PUBLISHED
-		if($finalise && isPublishedStatus($target_ro->status)) {
-			$this->load->library('Solr');
-			$this->solr->init()->setCore('portal');
-			$this->solr->deleteByQueryCondition('id:'.$target_ro->id);
-			$this->solr->init()->setCore('relations');
-			$this->solr->deleteByQueryCondition('from_id:'.$target_ro->id. ' OR to_id:'.$target_ro->id);
-		}
-
 		// Removing a PUBLISHED record has consequences
 		if (isPublishedStatus($target_ro->status)) {
 			$this->load->model('data_source/data_sources', 'ds');
@@ -980,6 +971,32 @@ class Registry_objects extends CI_Model {
 		$log = $target_ro->eraseFromDatabase($target_ro->id);
 		//if($log)
 		//$data_source->append_log("eraseFromDatabase " . $log, 'info', 'registry_object');
+
+        // Delete index if finalise and the record is PUBLISHED
+        if($finalise && isPublishedStatus($target_ro->status)) {
+            $this->load->library('Solr');
+            $this->solr->init()->setCore('portal');
+            $this->solr->deleteByQueryCondition('id:'.$target_ro->id);
+            $this->solr->init()->setCore('relations');
+            $this->solr->deleteByQueryCondition('from_id:'.$target_ro->id. ' OR to_id:'.$target_ro->id);
+
+            // update the index and relationships of all relatedObjects, by scheduling a FixRelationship
+            require_once API_APP_PATH . 'vendor/autoload.php';
+            $params = [
+                'class' => 'fixRelationship',
+                'type' => 'delete',
+                'id' => $target_ro->id
+            ];
+            $task = [
+                'name' => "Delete Relationship of ".$target_ro->id,
+                'type' => 'POKE',
+                'frequency' => 'ONCE',
+                'priority' => 5,
+                'params' => http_build_query($params)
+            ];
+            $taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
+            $taskManager->addTask($task);
+        }
 
 		return $reenrich_queue;
 	}
