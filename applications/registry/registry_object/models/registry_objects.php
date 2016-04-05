@@ -979,23 +979,6 @@ class Registry_objects extends CI_Model {
             $this->solr->deleteByQueryCondition('id:'.$target_ro->id);
             $this->solr->init()->setCore('relations');
             $this->solr->deleteByQueryCondition('from_id:'.$target_ro->id. ' OR to_id:'.$target_ro->id);
-
-            // update the index and relationships of all relatedObjects, by scheduling a FixRelationship
-            require_once API_APP_PATH . 'vendor/autoload.php';
-            $params = [
-                'class' => 'fixRelationship',
-                'type' => 'delete',
-                'id' => $target_ro->id
-            ];
-            $task = [
-                'name' => "Delete Relationship of ".$target_ro->id,
-                'type' => 'POKE',
-                'frequency' => 'ONCE',
-                'priority' => 5,
-                'params' => http_build_query($params)
-            ];
-            $taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
-            $taskManager->addTask($task);
         }
 
 		return $reenrich_queue;

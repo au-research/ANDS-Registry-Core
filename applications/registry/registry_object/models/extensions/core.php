@@ -254,6 +254,7 @@ class Core_extension extends ExtensionBase
 						$this->ro->harvest_id = $this->getAttribute('harvest_id');
 						$this->ro->save();
 						$this->_CI->ro->deleteRegistryObject($this->id);
+
 						$this->id = $this->ro->id;
 						$this->init();
 					}
@@ -295,9 +296,9 @@ class Core_extension extends ExtensionBase
 				//remove the record from the index
 				$this->_CI->solr->deleteByQueryCondition('id:' . $this->ro->id);
 			}
-		}
 
-		$this->_initAttribute("original_status", $target_status);
+			$this->_initAttribute("original_status", $target_status);
+		}
 	}
 
 	/* Removes all trace of the record from the database (use this wisely...) */

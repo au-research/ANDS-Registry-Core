@@ -695,6 +695,9 @@ class Registry_object extends MX_Controller {
 
 		$sentMail = false;
 
+		// this array contains the published IDs that need taking care of
+		$published = array();
+
 		foreach($affected_ids as $id){
 			$ro = $this->ro->getByID($id);
 
@@ -765,6 +768,11 @@ class Registry_object extends MX_Controller {
 								}
 							}
 
+							// add to the published list if not exists already
+							if (!in_array($ro->id, $published) && $a['name']=='status' && isPublishedStatus($a['value'])) {
+								array_push($published, $ro->id);
+							}
+
 							$jsondata['success_count']++;
 							//$jsondata['success_message'] .= '<li>Updated '.$ro->title.' set '.$a['name'].' to value:'.$a['value']."</li>";
 
@@ -783,6 +791,25 @@ class Registry_object extends MX_Controller {
 					}
 				}
 			}
+		}
+
+		// set a background task to fix the relationship of the published records and sync them
+		if (sizeof($published) > 0) {
+			require_once API_APP_PATH . 'vendor/autoload.php';
+			$params = [
+				'class' => 'fixRelationship',
+				'type' => 'ro',
+				'id' => join(',', $published)
+			];
+			$task = [
+				'name' => "fixRelationship of " . sizeof($published). " records",
+				'type' => 'POKE',
+				'frequency' => 'ONCE',
+				'priority' => 5,
+				'params' => http_build_query($params)
+			];
+			$taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
+			$taskManager->addTask($task);
 		}
 
 		$ds->updateStats();
@@ -847,6 +874,24 @@ class Registry_object extends MX_Controller {
 		}
 
 
+		// set a background task to fix the relationship of the deleted records by removing them
+		if (sizeof($affected_ids) > 0) {
+			require_once API_APP_PATH . 'vendor/autoload.php';
+			$params = [
+				'class' => 'fixRelationship',
+				'type' => 'ro',
+				'id' => join(',', $affected_ids)
+			];
+			$task = [
+				'name' => "fixRelationship of " . sizeof($affected_ids). " records",
+				'type' => 'POKE',
+				'frequency' => 'ONCE',
+				'priority' => 5,
+				'params' => http_build_query($params)
+			];
+			$taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
+			$taskManager->addTask($task);
+		}
 
 		$ds->updateStats();
 

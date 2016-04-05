@@ -25,7 +25,7 @@
         <section class="section swatch-white">
             <div class="container-fluid" style="padding:0px">
 
-                <div class="col-md-12  swatch-gray">
+                <div class="col-md-12 swatch-gray">
                     <div class="col-md-2 not-condensed os-animation animated fadeInUp swatch-gray"></div>
                     <div class="col-md-8 not-condensed os-animation animated fadeInUp swatch-gray"
                          style="-webkit-animation: 0s;padding-top:30px;padding-bottom:50px">
@@ -55,7 +55,7 @@
                 <div class="col-md-4 col-md-offset-2">
                     @include('includes/about-subjects-list')
                 </div>
-                <div class="col-md-6 text-center" style="padding-left:20px;padding-top:30px">
+                <div class="col-md-4 text-center" style="padding-left:20px;padding-top:30px">
                     <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn"
                         data-os-animation="fadeIn" data-os-animation-delay="0s"
                         style="-webkit-animation: 0s;color:#000000">Data for researchers everywhere</h1>
@@ -97,15 +97,13 @@
                             <li class="element-no-top os-animation animated fadeInLeft data-os-animation-delay">
                                 <div class="features-list-icon box-animate" style="background-color:#e9e9e9;"><i
                                             class="fa fa-binoculars fa-4x"></i></div>
-                                <div style="padding-top:20px;font-weight: bold"
-                                ">explore beyond your discipline
+                                <div style="padding-top:20px;font-weight: bold">explore beyond your discipline
                     </div>
                     </li>
                     <li class="element-no-top os-animation animated fadeInLeft data-os-animation-delay">
                         <div class="features-list-icon box-animate" style="background-color:#e9e9e9;"><i
                                     class="fa fa-puzzle-piece fa-4x"></i></div>
-                        <div style="padding-top:20px;font-weight: bold"
-                        ">assemble data resources to solve big problems
+                        <div style="padding-top:20px;font-weight: bold">assemble data resources to solve big problems
                 </div>
                 </li>
                 </ul>
