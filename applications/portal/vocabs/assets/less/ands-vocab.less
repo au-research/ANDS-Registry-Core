@@ -405,9 +405,17 @@ input:disabled+label{
   max-width: 600px;
 }
 
-/* Show a thin border around the CMS subject vocab widget search mode input field. */
+/* Show a thin border around the CMS subject vocab widget
+   search mode input field. */
 .cms-search-widget-tip input {
   border: 1px solid #cccccc;
+}
+
+/* Use this, in combination with .btn-primary, to
+   get the correct warning color. This is needed because
+   swatch-gray tends to override everything with its blue. */
+.btn-primary-warning {
+  background-color: #f18d38 !important;
 }
 
 .concept-tip{

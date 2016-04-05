@@ -151,8 +151,8 @@
 							<div class="input-group" ng-repeat="concept in vocab.top_concept track by $index" top-concepts-enter>
 								<input type="text" class="form-control" placeholder="New Top Concept" ng-model="vocab.top_concept[$index]">
 								<span class="input-group-btn">
-									<button class="btn btn-primary" type="button"
-										ng-click="vocab.top_concept.splice($index, 1)"><i class="fa fa-remove"></i></button>
+									<button class="btn btn-primary btn-primary-warning" type="button"
+										ng-click="vocab.top_concept.splice($index, 1)" title="Remove this top concept"><i class="fa fa-remove"></i></button>
 								</span>
 							</div>
 
@@ -180,8 +180,8 @@
 								<select name="vlanguage" id="vLanguage" class="form-control caret-for-select"
 									placeholder="Select a language" ng-options="lang.value as lang.text for lang in langs" ng-model="vocab.language[$index]"><option value="">Select a language</option></select>
 								<span class="input-group-btn">
-									<button class="btn btn-primary" type="button"
-										ng-click="list_remove('language', $index)"><i class="fa fa-remove"></i></button>
+									<button class="btn btn-primary btn-primary-warning" type="button"
+										ng-click="list_remove('language', $index)" title="Remove this language"><i class="fa fa-remove"></i></button>
 								</span>
 							</div>
 
@@ -253,7 +253,7 @@
 									<tr ng-repeat="version in vocab.versions track by $index">
 										<td><a href="" ng-click="versionmodal('edit', $index)">[[ version.title ]] </a></td>
 										<td><span class="label" ng-class="{'deprecated': 'label-danger', 'current': 'label-success', 'superseded': 'label-warning', 'depreciated': 'label-danger'}[version.status]">[[ version.status ]]</span></td>
-										<td><a href="" ng-click="list_remove('versions', $index)"><i class="fa fa-remove"></i></a></td>
+										<td><a href="" ng-click="list_remove('versions', $index)" title="Remove this version"><i class="fa fa-remove"></i></a></td>
 									</tr>
 								</tbody>
 							</table>
@@ -274,7 +274,7 @@
 									<tr ng-repeat="related in vocab.related_entity track by $index">
 										<td><a href="" ng-click="relatedmodal('edit', related.type, $index)" tooltip="[[ related.relationship.join() ]]">[[ related.title ]]</a></td>
 										<td>[[ related.type ]]</td>
-										<td><a href="" ng-click="list_remove('related_entity', $index)"><i class="fa fa-remove"></i></a></td>
+										<td><a href="" ng-click="list_remove('related_entity', $index)" title="Remove this related entity"><i class="fa fa-remove"></i></a></td>
 									</tr>
 								</tbody>
 							</table>
