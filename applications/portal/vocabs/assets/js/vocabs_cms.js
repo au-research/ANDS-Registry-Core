@@ -641,7 +641,7 @@
             var newValue;
             // 'subjects' has two parts; special treatment.
             if (list == 'subjects') {
-                newValue = {subject_source: 'anzsrc-for',
+                newValue = {subject_source: '',
                             subject_label: '',
                             subject_iri: '',
                             subject_notation: ''};
