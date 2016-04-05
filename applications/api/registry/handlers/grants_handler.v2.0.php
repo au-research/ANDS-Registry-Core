@@ -21,9 +21,23 @@ class GrantsHandlerV2 extends Handler
 
         $params = $this->ci->input->get();
 
+        // q
+        if ($q = (isset($params['q'])) ? $params['q'] : null) {
+            $this->ci->solr->setOpt('q',  $q ) ;
+        }
 
         //Only search for activity
         $this->ci->solr->setOpt('fq', '+class:"activity"');
+
+        //subject
+        if ($subject = (isset($params['subject'])) ? $params['subject'] : null) {
+            $this->ci->solr->setOpt('fq', '+subject_value_resolved_search:(' . $subject . ')');
+        }
+
+        //fundingScheme
+        if ($fundingScheme = (isset($params['fundingScheme'])) ? $params['fundingScheme'] : null) {
+            $this->ci->solr->setOpt('fq', '+funding_scheme_search:(' . $fundingScheme . ')');
+        }
 
         //purl
         if ($purl = (isset($params['purl'])) ? $params['purl'] : null) {
@@ -123,6 +137,7 @@ class GrantsHandlerV2 extends Handler
          */
 
         foreach ($result['response']['docs'] as $result) {
+
             $ro = $this->ci->ro->getByID($result['id']);
 
             //if Object doesn't exist
@@ -162,6 +177,12 @@ class GrantsHandlerV2 extends Handler
              * todo implement Description based on ro description
              */
             $data['description'] = isset($result['description']) ? $result['description'] : "";
+
+            /**
+             * subjects
+             * subject_value_resolved
+             */
+            $data['subjects'] = isset($result['subject_value_resolved']) ? $result['subject_value_resolved'] : "";
 
             /**
              * Getting the funder for the object
@@ -280,6 +301,8 @@ class GrantsHandlerV2 extends Handler
             //add data to the response array
             $response['numFound'] += 1;
             $response['recordData'][] = $data;
+
+
 
             //save memory by clearing the ro object
             unset($ro);

@@ -278,7 +278,6 @@
 	 */
 
 	function _constructGrantHTML(obj,settings) {
-        console.log(obj);
 		var resStr = '';
 		resStr += "<div class='"+settings.info_box_class+"'>"
         if(obj.length==1)

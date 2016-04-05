@@ -124,7 +124,7 @@ class Sync_extension extends ExtensionBase{
 		);
 
         $include_rights_type = array('open','restricted','conditional');
-        $include_descriptions = array('brief','full');
+        $include_descriptions = array('brief','full','fundingScheme');
 
 		foreach($single_values as $s){
 			$json[$s] = html_entity_decode($this->ro->{$s}, ENT_QUOTES);
@@ -570,6 +570,7 @@ class Sync_extension extends ExtensionBase{
             //funding scheme
             if ($fundingScheme = $this->ro->getFundingScheme($gXPath)) {
                 $json['funding_scheme'] = $fundingScheme;
+                $json['funding_scheme_search'] = $fundingScheme;
             }
 
             $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
