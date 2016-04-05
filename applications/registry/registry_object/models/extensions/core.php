@@ -222,98 +222,79 @@ class Core_extension extends ExtensionBase
 		$this->_CI->load->model('data_source/data_sources', 'ds');
 		$data_source = $this->_CI->ds->getByID($this->getAttribute('data_source_id'));
 
-		if (isDraftStatus($this->getAttribute('original_status')) && isDraftStatus($target_status))
-		{
-			if($this->getAttribute('original_status') == 'ASSESSMENT_IN_PROGRESS' && $target_status == 'APPROVED')
+		if (isDraftStatus($this->getAttribute('original_status')) && isDraftStatus($target_status)) {
+			if ($this->getAttribute('original_status') == 'ASSESSMENT_IN_PROGRESS' && $target_status == 'APPROVED') {
 				$this->setAttribute("manually_assessed", 'yes');
-			if($target_status == 'DRAFT')
+			}
+			if ($target_status == 'DRAFT') {
 				$this->setAttribute("manually_assessed", 'no');
-		}
-		// Else, if the draft is being published:
-		else if (isDraftStatus($this->getAttribute('original_status')) && isPublishedStatus($target_status))
-		{
-			$xml = html_entity_decode($this->ro->getRif());
-			$existingRegistryObject = $this->_CI->ro->getPublishedByKey($this->ro->key);
-			if($existingRegistryObject && $existingRegistryObject->getAttribute('data_source_id') != $this->getAttribute('data_source_id'))
-			{
-				$otherDs = $this->_CI->ds->getByID($existingRegistryObject->getAttribute('data_source_id'));
-				throw new Exception("Registry Object with key ".$this->ro->key." already exists in the ".NL.$otherDs->title." Data Source");
 			}
-			else if ($existingRegistryObject)
-			{
-				// Delete this original draft and change this object to point to the PUBLISHED (seamless changeover)
-				$manuallyAssessed = $this->getAttribute('manually_assessed');
-				$this->ro = $this->_CI->ro->getPublishedByKey($this->getAttribute("key"));
+		} else {
+			// Else, if the draft is being published:
+			if (isDraftStatus($this->getAttribute('original_status')) && isPublishedStatus($target_status)) {
+				$xml = html_entity_decode($this->ro->getRif());
 
-				if($this->getAttribute('original_status') === 'ASSESSMENT_IN_PROGRESS' || $manuallyAssessed === 'yes')
-				{
-					$this->ro->setAttribute("manually_assessed", 'yes');
-				}
-				if($this->ro->getAttribute('gold_status_flag') === 't')
-				{
-					$this->ro->setAttribute("gold_status_flag", 'f');
-				}
+				$existingRegistryObject = $this->_CI->ro->getPublishedByKey($this->ro->key);
+				if ($existingRegistryObject && $existingRegistryObject->getAttribute('data_source_id') != $this->getAttribute('data_source_id')) {
+					$otherDs = $this->_CI->ds->getByID($existingRegistryObject->getAttribute('data_source_id'));
+					throw new Exception("Registry Object with key " . $this->ro->key . " already exists in the " . NL . $otherDs->title . " Data Source");
+				} else {
+					if ($existingRegistryObject) {
+						// Delete this original draft and change this object to point to the PUBLISHED (seamless changeover)
+						$manuallyAssessed = $this->getAttribute('manually_assessed');
+						$this->ro = $this->_CI->ro->getPublishedByKey($this->getAttribute("key"));
 
-				$this->ro->harvest_id = $this->getAttribute('harvest_id');
-				$this->ro->save();
+						if ($this->getAttribute('original_status') === 'ASSESSMENT_IN_PROGRESS' || $manuallyAssessed === 'yes') {
+							$this->ro->setAttribute("manually_assessed", 'yes');
+						}
+						if ($this->ro->getAttribute('gold_status_flag') === 't') {
+							$this->ro->setAttribute("gold_status_flag", 'f');
+						}
 
-
-				$this->_CI->ro->deleteRegistryObject($this->id);
-				$this->id = $this->ro->id;
-
-				$this->init();
-			}
-
-
-			// If the importer is already running
-			if ($this->_CI->importer->isImporting)
-			{
-				// other actions will occur in the existing importer run...
-			}
-			else
-			{
-				// Add the XML content of this draft to the published record (and follow enrichment process, etc.)
-				$this->_CI->importer->_reset();
-				$this->_CI->importer->setXML(wrapRegistryObjects($xml));
-				$this->_CI->importer->setDatasource($data_source);
-				$this->_CI->importer->forcePublish();
-				$this->_CI->importer->statusAlreadyChanged = true;
-				$this->_CI->importer->commit();
-				if($this->getAttribute('original_status') == 'ASSESSMENT_IN_PROGRESS' || $this->getAttribute('manually_assessed') == 'yes')
-				{
-					$this->ro = $this->_CI->ro->getPublishedByKey($this->getAttribute("key"));
-					$this->ro->setAttribute("manually_assessed", 'yes');
+						$this->ro->harvest_id = $this->getAttribute('harvest_id');
+						$this->ro->save();
+						$this->_CI->ro->deleteRegistryObject($this->id);
+						$this->id = $this->ro->id;
+						$this->init();
+					}
 				}
 
-				$this->ro->index_solr();
-                $this->ro->indexRelationship();
 
-				if ($error_log = $this->_CI->importer->getErrors())
-				{
-					throw new Exception("Errors occured whilst migrating to PUBLISHED status: " . NL . $error_log);
+				// If the importer is already running
+				if ($this->_CI->importer->isImporting) {
+					// other actions will occur in the existing importer run...
+				} else {
+					// Add the XML content of this draft to the published record (and follow enrichment process, etc.)
+					$this->_CI->importer->_reset();
+					$this->_CI->importer->setXML(wrapRegistryObjects($xml));
+					$this->_CI->importer->setDatasource($data_source);
+					$this->_CI->importer->forcePublish();
+					$this->_CI->importer->statusAlreadyChanged = true;
+					$this->_CI->importer->commit();
+
+					if ($this->getAttribute('original_status') == 'ASSESSMENT_IN_PROGRESS' || $this->getAttribute('manually_assessed') == 'yes') {
+						$this->ro = $this->_CI->ro->getPublishedByKey($this->getAttribute("key"));
+						$this->ro->setAttribute("manually_assessed", 'yes');
+					}
+
+					if ($error_log = $this->_CI->importer->getErrors()) {
+						throw new Exception("Errors occured whilst migrating to PUBLISHED status: " . NL . $error_log);
+					}
 				}
-			}
-		}
-		else // Else, the PUBLISHED record is being converted to a DRAFT
-		{
-			$existingRegistryObject = $this->_CI->ro->getDraftByKey($this->ro->key);
-			if ($existingRegistryObject)
-			{
-				// Delete any existing drafts (effectively overwriting them)
-				$this->_CI->ro->deleteRegistryObject($existingRegistryObject->id);
-			}
+			} else {
+				// Else, the PUBLISHED record is being converted to a DRAFT
+				$existingRegistryObject = $this->_CI->ro->getDraftByKey($this->ro->key);
 
-			// Reenrich related records (reindexes affected records)
-			// XXX: REENRICH RECORDS RELATED TO ME WHEN I CHANGE STATUS
-			/*
-			$reenrich_queue = $target_ro->getRelatedKeys();
-			$this->_CI->importer->_enrichRecords($reenrich_queue);
-			$this->_CI->importer->_reindexRecords($reenrich_queue);
-			*/
-			$this->ro->slug = DRAFT_RECORD_SLUG . $this->ro->id;
+				if ($existingRegistryObject) {
+					// Delete any existing drafts (effectively overwriting them)
+					$this->_CI->ro->deleteRegistryObject($existingRegistryObject->id);
+				}
 
-			//remove the record from the index
-			$this->_CI->solr->deleteByQueryCondition('id:'.$this->ro->id);
+				$this->ro->slug = DRAFT_RECORD_SLUG . $this->ro->id;
+
+				//remove the record from the index
+				$this->_CI->solr->deleteByQueryCondition('id:' . $this->ro->id);
+			}
 		}
 
 		$this->_initAttribute("original_status", $target_status);
