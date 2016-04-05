@@ -377,6 +377,7 @@ class SyncTask extends Task
                         }
 
                         if ($this->includes('indexRelations')) {
+
                             // index relation document
                             $relation_doc = $ro->getRelationshipIndex();
                             if ($relation_doc && is_array($relation_doc) && sizeof($relation_doc) > 0) {
@@ -487,7 +488,7 @@ class SyncTask extends Task
     {
         if (sizeof($solr_docs) > 0) {
             try {
-                $this->ci->solr->setCore($core);
+                $this->ci->solr->init()->setCore($core);
 
                 $total = sizeof($solr_docs);
                 $chunkSize = 500;

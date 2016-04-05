@@ -1122,69 +1122,77 @@ class Registry_object extends MX_Controller {
 		return $actions;
 	}
 
-    public function exportToEndnote($registry_object_id)
-    {
-        $registry_object_id = str_replace(".ris","",$registry_object_id);
-        $citations = '';
-        $registry_objects = Array();
-        $CI =& get_instance();
-        $CI->load->model('registry_object/registry_objects', 'rom');
+	/**
+	 * Export to ENDNote
+	 * Returns an ENDNote file to use for download
+	 * with right content-type header
+	 *
+	 * @param $registry_object_id
+     */
+	public function exportToEndnote($registry_object_id)
+	{
+		$registry_object_id = str_replace(".ris", "", $registry_object_id);
+		$citations = '';
 
-        if(str_replace("-"," ",$registry_object_id)!=$registry_object_id){
-            $registry_objects = explode("-",$registry_object_id);
-        }else{
-            $registry_objects[]=$registry_object_id;
-        }
-        foreach($registry_objects as $id){
-            $cite_ro = $CI->rom->getByID($id);
-            if($cite_ro)
-            {
-                $citations .= use_citation_handle($registry_object_id, $cite_ro);
-            }
-        }
-        header('Content-type: application/x-research-info-systems');
-        print($citations);
+		$CI =& get_instance();
+		$CI->load->model('registry_object/registry_objects', 'rom');
 
-    }
+		// works for single registry_object_id or a list of registry_object_id separated by "-"
+		$registry_objects = explode("-", $registry_object_id);
+		foreach ($registry_objects as $id) {
+			$cite_ro = $CI->rom->getByID($id);
+			if ($cite_ro) {
+				$citations .= use_citation_handle($id, $cite_ro);
+			}
+		}
+		header('Content-type: application/x-research-info-systems');
+		print($citations);
+	}
 
 }
 
 
-function use_citation_handle($registry_object_id, $cite_ro) {
+/**
+ * Returns the citation of a given registry_object
+ * using the citation handler object used by the registry API
+ *
+ * @param $registry_object_id
+ * @param $cite_ro
+ * @return string
+ */
+function use_citation_handle($registry_object_id, $cite_ro)
+{
+	require_once(REGISTRY_APP_PATH . '/services/method_handlers/registry_object_handlers/citations.php');
+	$xml = $cite_ro->getSimpleXML();
+	$xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
+	$xml = simplexml_load_string($xml);
+	$xml = simplexml_load_string(addXMLDeclarationUTF8($xml->asXML()));
+	if ($xml) {
+		$rifDom = new DOMDocument();
+		$rifDom->loadXML($cite_ro->getRif());
+		$gXPath = new DOMXpath($rifDom);
+		$gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
+	}
 
-    require_once(REGISTRY_APP_PATH . '/services/method_handlers/registry_object_handlers/citations.php');
+	$ci =& get_instance();
+	$ci->load->library('solr');
+	$ci->solr->clearOpt('fq');
+	$ci->solr->setOpt('fq', '+id:' . $registry_object_id);
+	$ci->solr->setOpt('fl', 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved');
+	$result = $ci->solr->executeSearch(true);
 
-    $xml = $cite_ro->getSimpleXML();
-    $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
-    $xml = simplexml_load_string($xml);
-    $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()));
-    if ($xml) {
-        $rifDom = new DOMDocument();
-        $rifDom->loadXML( $cite_ro->getRif());
-        $gXPath = new DOMXpath($rifDom);
-        $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
-    }
+	if (sizeof($result['response']['docs']) == 1) {
+		$index = $result['response']['docs'][0];
+	}
 
-    $ci =& get_instance();
-    $ci->load->library('solr');
-    $ci->solr->clearOpt('fq');
-    $ci->solr->setOpt('fq', '+id:'.$registry_object_id);
-    $ci->solr->setOpt('fl', 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved');
-    $result = $ci->solr->executeSearch(true);
-
-    if(sizeof($result['response']['docs']) == 1) {
-        $index = $result['response']['docs'][0];
-    }
-
-    $resource = array(
-        'index' => $index,
-        'xml' => $xml,
-        'gXPath' => $gXPath,
-        'ro'=> $cite_ro,
-        'params' => '',
-        'default_params' => ''
-    );
-    $citation_handler = new citations($resource);
-    return $citation_handler->getEndnoteText();
-
+	$resource = array(
+			'index' => $index,
+			'xml' => $xml,
+			'gXPath' => $gXPath,
+			'ro' => $cite_ro,
+			'params' => '',
+			'default_params' => ''
+	);
+	$citation_handler = new citations($resource);
+	return $citation_handler->getEndnoteText();
 }

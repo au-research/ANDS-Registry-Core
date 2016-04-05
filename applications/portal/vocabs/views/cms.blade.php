@@ -12,6 +12,10 @@
 	<meta ng-non-bindable property="og:description" content="Find, access, and re-use vocabularies for research" />
 @endif
 @stop
+@section('script')
+  var vocab_resolving_services = {{json_encode(get_config_item('vocab_resolving_services'))}};
+  var subject_vocab_proxy = {{json_encode(get_config_item('subject_vocab_proxy'))}};
+@stop
 @section('content')
 <section ng-controller="addVocabsCtrl" class="section swatch-white">
 	<div class="container">
@@ -205,16 +209,18 @@
 
 								<tr ng-repeat="subject in vocab.subjects track by $index"
                                     subject-directive
+                                    id="[['subject_'+$index]]"
                                     index="$index"
                                     subject_type="vocab.subjects[$index].subject_source"
                                     subject_label="vocab.subjects[$index].subject_label"
-                                    subject_uri="vocab.subjects[$index].subject_uri"
+                                    subject_iri="vocab.subjects[$index].subject_iri"
                                     subject_notation="vocab.subjects[$index].subject_notation"
-                                    length="subjectVocabLength">
+                                    on-close="list_remove('subjects', $index)"
+                                    >
 								</tr>
 							</table>
 
-							<button class="btn btn-primary" type="button" ng-click="addtolist('subjects')"><i class="fa fa-plus"></i> Add Subject</button>
+							<button id="add_subject_button" class="btn btn-primary" type="button" ng-click="addtolist('subjects')"><i class="fa fa-plus"></i> Add Subject</button>
 
 							<div class="form-group has-error" ng-show="vocab.subjects === undefined || subjects_has_no_nonempty_elements()">
 								<p class="help-block">At least one subject must be provided. Select a value from the Subject Source dropdown and enter a Subject Label.</p>

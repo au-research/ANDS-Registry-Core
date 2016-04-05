@@ -320,6 +320,15 @@ input:disabled + label {
 .cms-help-tip {
   max-width: 460px;
 }
+/* Ditto for CMS subject vocab widget search mode tooltips. */
+.cms-search-widget-tip {
+  width: 600px;
+  max-width: 600px;
+}
+/* Show a thin border around the CMS subject vocab widget search mode input field. */
+.cms-search-widget-tip input {
+  border: 1px solid #cccccc;
+}
 .concept-tip {
   font-size: 16px;
   max-width: 520px;

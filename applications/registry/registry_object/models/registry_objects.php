@@ -908,25 +908,26 @@ class Registry_objects extends CI_Model {
 	/**
 	 * Deletes a RegistryObject
 	 *
-	 * @param the registry object key
+	 * @param      $target_ro
+	 * @param bool $finalise
 	 * @return TRUE if delete was successful
+	 * @throws Exception
+	 * @internal param registry $the object key
 	 */
 	public function deleteRegistryObject($target_ro, $finalise = true)
 	{
 		$reenrich_queue = array();
 
 		// Check target_ro
-		if (!$target_ro instanceof _registry_object)
-		{
+		if (!$target_ro instanceof _registry_object) {
 			$target_ro = $this->getByID($target_ro);
-			if (!$target_ro)
-			{
+			if (!$target_ro) {
 				throw new Exception("Registry Object targeted for delete does not exist?");
 			}
 		}
-		if($finalise)
-		{
-			//delete index
+
+		// Delete index if finalise and the record is PUBLISHED
+		if($finalise && isPublishedStatus($target_ro->status)) {
 			$this->load->library('Solr');
 			$this->solr->init()->setCore('portal');
 			$this->solr->deleteByQueryCondition('id:'.$target_ro->id);
@@ -934,68 +935,44 @@ class Registry_objects extends CI_Model {
 			$this->solr->deleteByQueryCondition('from_id:'.$target_ro->id. ' OR to_id:'.$target_ro->id);
 		}
 
-		if (isPublishedStatus($target_ro->status))
-		{
-
+		// Removing a PUBLISHED record has consequences
+		if (isPublishedStatus($target_ro->status)) {
 			$this->load->model('data_source/data_sources', 'ds');
 			$data_source = $this->ds->getByID($target_ro->data_source_id);
 
 			// Handle URL backup
-
-
-
-
 			$this->db->where('registry_object_id', $target_ro->id);
-			$this->db->update('url_mappings', array(	"registry_object_id"=>NULL,
-														"search_title"=>$target_ro->title,
-														"updated"=>time()
-													));
+			$this->db->update('url_mappings', array(
+					"registry_object_id" => null,
+					"search_title" => $target_ro->title,
+					"updated" => time()
+			));
 
 			//remore previous records from the deleted_registry_objects table
-
 			$this->db->delete('deleted_registry_objects', array('key'=>$target_ro->key));
 
 			// Add to deleted_records table
-
-
 			$this->db->set(array(
-								'data_source_id'=>$target_ro->data_source_id,
-								'key'=>$target_ro->key,
-								'deleted'=>time(),
-								'title'=>$target_ro->title,
-								'class'=>$target_ro->class,
-								'group'=> str_replace(" ", "0x20", $target_ro->group),
-								'datasource'=> str_replace(" ", "0x20", $data_source->slug),
-								'record_data'=>$target_ro->getRif(),
-							));
+					'data_source_id' => $target_ro->data_source_id,
+					'key' => $target_ro->key,
+					'deleted' => time(),
+					'title' => $target_ro->title,
+					'class' => $target_ro->class,
+					'group' => str_replace(" ", "0x20", $target_ro->group),
+					'datasource' => str_replace(" ", "0x20", $data_source->slug),
+					'record_data' => $target_ro->getRif(),
+			));
 			$this->db->insert('deleted_registry_objects');
-
-			// Re-enrich and reindex related
-			$reenrich_queue = $target_ro->getRelatedKeys();
-			if($finalise)
-			{
-			// Delete from the index
-				$result = json_decode($this->solr->deleteByQueryCondition("id:(\"".$target_ro->id."\")"));
-
-				if($result->responseHeader->status != 0)
-				{
-					$data_source->append_log("Failed to erase from SOLR: id:" .$target_ro->id , 'error', 'registry_object');
-				}
-				else{
-					$this->solr->commit();
-				}
-			}
 		}
 
 		// Also treat identifier matches as affected records which need to be enriched
 		// (to increment their extRif:matching_identifier_count)
-		$related_ids_by_identifier_matches = $target_ro->findMatchingRecords(); // from ro/extensions/identifiers.php
-		$related_keys = array();
-		foreach($related_ids_by_identifier_matches AS $matching_record_id)
-		{
-			$matched_ro = $this->ro->getByID($matching_record_id);
-			$reenrich_queue[] = $matched_ro->key;
-		}
+//		$related_ids_by_identifier_matches = $target_ro->findMatchingRecords(); // from ro/extensions/identifiers.php
+//		$related_keys = array();
+//		foreach($related_ids_by_identifier_matches AS $matching_record_id) {
+//			$matched_ro = $this->ro->getByID($matching_record_id);
+//			$reenrich_queue[] = $matched_ro->key;
+//		}
 
 		// Delete the actual registry object
 		$this->load->model('data_source/data_sources', 'ds');
@@ -1003,14 +980,6 @@ class Registry_objects extends CI_Model {
 		$log = $target_ro->eraseFromDatabase($target_ro->id);
 		//if($log)
 		//$data_source->append_log("eraseFromDatabase " . $log, 'info', 'registry_object');
-
-		if($finalise)
-		{
-			// And then their related records get reindexed...
-			$this->importer->_enrichRecords($reenrich_queue);
-			$this->importer->_reindexRecords($reenrich_queue);
-			//log_message('debug', "Reindexed " . count($reenrich_queue) . " related record(s) when " . $target_ro->key . " was deleted.");
-		}
 
 		return $reenrich_queue;
 	}

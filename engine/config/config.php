@@ -369,7 +369,16 @@ $config['sess_table_name']		= 'sessions';
 $config['sess_use_database']    = FALSE;
 $config['sess_match_ip']        = FALSE;
 $config['sess_match_useragent'] = FALSE;
-$config['sess_time_to_update']  = 10000;
+// The following setting made by Ben 2013-03-27 (commit
+// 9cdcae96d351b4e75dcd0f30c13fa074c160389e of
+// repo ANDS-Online-Services) seems to be the wrong thing
+// to do. If the value of sess_time_to_update is greater
+// than session_timeout, it has the effect of preventing the cookie
+// being updated with a new expiry time, which means logins time
+// out after session_timeout from the time of login,
+// not from the time of last access.
+//$config['sess_time_to_update']  = 10000;
+
 
 
 /*

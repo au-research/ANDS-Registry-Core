@@ -60,11 +60,13 @@ class Relationships extends ROHandler {
                 break;
             case "researchers":
                 $ci->solr->setOpt('fq', '+to_class:party');
-                $ci->solr->setOpt('fq', '+to_type:person');
+                $ci->solr->setOpt('fq', 'to_type:person OR relation_origin:IDENTIFIER');
                 break;
             case "organisations":
                 $ci->solr->setOpt('fq', '+to_class:party');
                 $ci->solr->setOpt('fq', '-to_type:person');
+                //exclude relation with identifier (because they fall into researchers category)
+                $ci->solr->setOpt('fq', '-relation_identifier_identifier:*');
                 break;
             case "publications":
                 $ci->solr->setOpt('fq', '+to_class:publication');
