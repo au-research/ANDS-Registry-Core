@@ -27,6 +27,7 @@
 
 	var defaults = {
 	    //location (absolute URL) of the jsonp proxy
+            // FIXME: After rolling out, change this from test!
 	    endpoint: 'http://test.ands.org.au/api/v1.0/vocab.jsonp/',
 
         //api_key set when instantiated
@@ -594,6 +595,7 @@
 	    var target = $(event.target);
 	    var data = target.is('li') ? target.data(WIDGET_DATA)
 		: target.parent().data(WIDGET_DATA);
+            $(this._container).trigger('searchselect.vocab.ands', data);
 
 	    if (typeof(data[this.settings.target_field]) !== 'undefined') {
 		this._container.val(data[this.settings.target_field]);
@@ -727,11 +729,7 @@
 		.data('vocab', item)
 		.attr('data-vocab-node', item.about);
 
-		if(this.settings.display_count){
-	    	titem.html('<span>'+item['label']+'</span>' );
-	    }else{
-	    	titem.html('<span>'+item['label']+'</span>');
-	    }
+	    titem.html('<span>'+item['label']+'</span>');
 
 	    if (item.narrower === false)
 	    {

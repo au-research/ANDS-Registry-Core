@@ -589,7 +589,7 @@
 	    var target = $(event.target);
 	    var data = target.is('li') ? target.data(WIDGET_DATA)
 		: target.parent().data(WIDGET_DATA);
-        $(this._container).trigger('searchselect.vocab.ands', data);
+            $(this._container).trigger('searchselect.vocab.ands', data);
 
 	    if (typeof(data[this.settings.target_field]) !== 'undefined') {
 		this._container.val(data[this.settings.target_field]);
@@ -626,7 +626,6 @@
 	},
 
 	detach: function() {
-        alert("unbinding");
 	    this._container.empty();
 	},
 
@@ -731,11 +730,7 @@
 		.data('vocab', item)
 		.attr('data-vocab-node', item.about);
 
-		if(this.settings.display_count){
-	    	titem.html('<span>'+item['label']+'</span>' + ' (' + item['count'] + ')');
-	    }else{
-	    	titem.html('<span>'+item['label']+'</span>');
-	    }
+	    titem.html('<span>'+item['label']+'</span>');
 
 	    if (item.narrower === false)
 	    {
@@ -974,7 +969,6 @@
 	},
 
 	detach: function() {
-        alert("detaching");
 	    this._container.unbind("keydown");
 	},
 
