@@ -53,7 +53,7 @@ class FixRelationshipTask extends Task
         $this->taskManager = new TaskManager($this->getDb());
         $numChunk = ceil(($this->chunkSize < sizeof($list) ? (sizeof($list) / $this->chunkSize) : 1));
         $this->log('Size of records to process is too big: ' . sizeof($list) . ' splitting to ' . $numChunk . ' chunks to process');
-        for ($i = 1; $i < $numChunk; $i++) {
+        for ($i = 1; $i <= $numChunk; $i++) {
             $offset = ($i - 1) * $this->chunkSize;
             $chunkArray = array_slice($list, $offset, $this->chunkSize);
 
@@ -63,7 +63,7 @@ class FixRelationshipTask extends Task
                 'id' => $chunkArray,
             );
             $task = array(
-                'name' => "($i/$numChunk)" . $this->getName(),
+                'name' => "($i/$numChunk) " . $this->getName(),
                 'priority' => 8,
                 'frequency' => 'ONCE',
                 'type' => 'POKE',
