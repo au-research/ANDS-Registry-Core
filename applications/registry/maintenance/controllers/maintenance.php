@@ -458,7 +458,7 @@ class Maintenance extends MX_Controller
 
 //        $parents = $ro->getAllRelatedObjects();
 //        dd($parents);
-        $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
+        $relatedObjects = $ro->getAllRelatedObjects();
         $relatedObjects = array_merge($relatedObjects, $ro->_getGrantsNetworkConnections($relatedObjects));
         var_dump(sizeof($relatedObjects));
 //        $ro->getRelationshipIndex();
@@ -511,7 +511,7 @@ class Maintenance extends MX_Controller
         $this->load->model('registry_object/registry_objects', 'ro');
         $ro = $this->ro->getByID($id);
         $ro->sync();
-        $relationships = $ro->getAllRelatedObjects(false, false, true);
+        $relationships = $ro->getAllRelatedObjects();
         $relationships = array_merge($relationships, $ro->_getGrantsNetworkConnections($relationships));
         $already_sync = array();
         foreach ($relationships as $r) {

@@ -572,7 +572,7 @@ Y2  - '.date("Y-m-d")."
                         $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
 
                         $related_party = array();
-                        $relationships = $grant_object->getAllRelatedObjects(false, false, true);
+                        $relationships = $grant_object->getAllRelatedObjects();
                         foreach ($relationships as $rr) {
                             if (in_array($rr['class'], ['party']) && in_array($rr['relation_type'], ['isFunderOf','isFundedBy'])) {
                                 array_push($related_party, $rr);

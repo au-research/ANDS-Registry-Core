@@ -92,7 +92,7 @@ class FixRelationshipTask extends Task
             return;
         }
 
-        $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
+        $relatedObjects = $ro->getAllRelatedObjects();
 
         //add the grants and network relationships in
         if ($ro->isValidGrantNetworkNode($relatedObjects)) {

@@ -237,7 +237,7 @@ class Relationships_Extension extends ExtensionBase
     public function cacheRelationshipMetadata()
     {
         $this->ro->deleteMetadata("allRelationships");
-        $allRelationships = $this->ro->getAllRelatedObjects(false, false, true);
+        $allRelationships = $this->ro->getAllRelatedObjects();
         if ($allRelationships) {
             $this->ro->setMetadata("allRelationships", json_encode($allRelationships));
         }
@@ -272,7 +272,7 @@ class Relationships_Extension extends ExtensionBase
      */
     public function getRelationshipIndex(){
 
-        $relationships = $this->ro->getAllRelatedObjects(false, false, true);
+        $relationships = $this->ro->getAllRelatedObjects();
 
         if ($this->ro->isValidGrantNetworkNode($relationships)) {
             $relationships = array_merge($relationships, $this->ro->_getGrantsNetworkConnections($relationships));

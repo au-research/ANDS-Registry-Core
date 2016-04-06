@@ -241,7 +241,9 @@ class Registry_object extends MX_Controller
                 if (array_key_exists('relation', $doc)) {
                     foreach ($doc['relation'] as $index=>$docRelation) {
                         $origin = 'EXPLICIT';
-                        if(isset($doc['relation_origin'][$index])){$origin = $doc['relation_origin'][$index];}
+                        if (isset($doc['relation_origin'][$index])) {
+                            $origin = $doc['relation_origin'][$index];
+                        }
                         $doc['display_relationship'][] = readable($docRelation,$origin,$doc['from_class'],$doc['to_class']);
                     }
                 }

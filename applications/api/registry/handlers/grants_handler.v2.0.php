@@ -144,7 +144,7 @@ class GrantsHandlerV2 extends Handler
             if (!$ro) break;
 
             //cache relatedObjects for passing into functions that needed it, to save processing time
-            $relatedObjects = $ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $ro->getAllRelatedObjects();
 
             //cache gXPath
             $gXPath = $ro->getGXPath();

@@ -260,8 +260,8 @@ class Connections_Extension extends ExtensionBase
 
 		$unordered_connections = array();
 
-        // if called getAllRelatedObjects(false, false, true), see if it is cached
-		if (!$allow_drafts && !$include_dupe_connections && $allow_all_links) {
+        // if called getAllRelatedObjects(false, false, false), see if it is cached
+		if (!$allow_drafts && !$include_dupe_connections && !$allow_all_links) {
 			$cachedRelationships = $this->ro->getCachedRelationshipMetadata();
             if ($cachedRelationships && is_array($cachedRelationships)) {
                 return $cachedRelationships;

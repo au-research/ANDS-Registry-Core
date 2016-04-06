@@ -457,9 +457,9 @@ class Sync_extension extends ExtensionBase{
 
 		//related objects
         if($limit && (int)$limit > 0 || $json['class'] == 'party' || $json['class'] == 'service')
-		    $related_objects = $this->ro->getAllRelatedObjects(false, false, true, $party_service_conn_limit);
+		    $related_objects = $this->ro->getAllRelatedObjects(false, false, false, $party_service_conn_limit);
         else
-            $related_objects = $this->ro->getAllRelatedObjects(false, false, true);
+            $related_objects = $this->ro->getAllRelatedObjects(false, false, false);
 
         // get only unique related_objects to save memory
         $temp_array = array();
@@ -573,7 +573,7 @@ class Sync_extension extends ExtensionBase{
                 $json['funding_scheme_search'] = $fundingScheme;
             }
 
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, false);
 
             //administering inst
             $administeringInstitution = $this->ro->getAdministeringInstitution($relatedObjects);

@@ -269,7 +269,7 @@ class ObjectHandler extends Handler{
 
 
         if (in_array('grants', $includes)) {
-            $relatedObjects = $record->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $record->getAllRelatedObjects();
             $childActivities = $record->getChildActivities($relatedObjects);
 
             $grants = [];

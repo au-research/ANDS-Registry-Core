@@ -140,7 +140,7 @@ class Activity_grants_extension extends ExtensionBase
 
         //relatedObject[class=party][type=person]
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         foreach ($relatedObjects as $relatedObject) {
             if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
@@ -169,7 +169,7 @@ class Activity_grants_extension extends ExtensionBase
     {
         $institutions = array();
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
@@ -201,7 +201,7 @@ class Activity_grants_extension extends ExtensionBase
     {
         $administeringInstitution = array();
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
@@ -256,7 +256,7 @@ class Activity_grants_extension extends ExtensionBase
 
         //relatedObject[relation=isFundedBy][class=party][type!=person]
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
@@ -326,7 +326,7 @@ class Activity_grants_extension extends ExtensionBase
 
         //relatedObject[class=party][type=person][relation=hasPrincipalInvestigator]
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
@@ -407,7 +407,7 @@ class Activity_grants_extension extends ExtensionBase
         $recursive = true
     ) {
         if ($relatedObjects === false) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
 
         //hard limit on how many node will be processed for child activities
@@ -476,7 +476,7 @@ class Activity_grants_extension extends ExtensionBase
         }
 
         if ($relatedObjects === false) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
 
         $result = array();
@@ -637,7 +637,7 @@ class Activity_grants_extension extends ExtensionBase
     public function getStructuredGrantsAtNode($relatedObjects = false)
     {
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
 
         $dataOutputs = $this->ro->getDirectDataOutput($relatedObjects);
@@ -670,7 +670,7 @@ class Activity_grants_extension extends ExtensionBase
     public function getStructuredGrants($relatedObjects = false, $processed = array())
     {
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         $result = array();
         $childActivities = $this->getChildActivities($relatedObjects, array(), false);
@@ -682,7 +682,7 @@ class Activity_grants_extension extends ExtensionBase
                 //get data outputs
                 $dataOutputs = array();
                 $publications = array();
-                $related = $record->getAllRelatedObjects(false, false, true);
+                $related = $record->getAllRelatedObjects();
                 foreach ($related as $relatedObject) {
                     $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
                     $dataOutputs = array_merge($dataOutputs, $record->getDirectDataOutput());
@@ -734,7 +734,7 @@ class Activity_grants_extension extends ExtensionBase
     public function getDataOutput($childActivities = false, $relatedObjects = false, $recursive = true)
     {
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if (!$childActivities) {
             $childActivities = $this->ro->getChildActivities($relatedObjects, array(), $recursive);
@@ -835,7 +835,7 @@ class Activity_grants_extension extends ExtensionBase
     public function getDirectDataOutput($relatedObjects = false)
     {
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         } else {
             $relatedObjects = array();
         }
@@ -867,7 +867,7 @@ class Activity_grants_extension extends ExtensionBase
     public function getPublications($childActivitites = false, $relatedObjects = false)
     {
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if (!$childActivitites) {
             $childActivitites = $this->ro->getChildActivities($relatedObjects);
@@ -946,7 +946,7 @@ class Activity_grants_extension extends ExtensionBase
     public function isValidGrantNetworkNode($relatedObjects = false)
     {
         if (!$relatedObjects) {
-            $relatedObjects = $this->ro->getAllRelatedObjects(false, false, true);
+            $relatedObjects = $this->ro->getAllRelatedObjects();
         }
 
         if ($this->ro->class == 'activity') {
