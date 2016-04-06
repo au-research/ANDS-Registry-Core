@@ -19,6 +19,9 @@
                             </span>
                         </div>
                     </form>
+                    <div class="pull-right">
+                    <a href="{{ portal_url('search') }}">Browse all vocabularies</a>
+                    </div>
                </div>
 
                 <div class="col-md-6">
@@ -52,7 +55,7 @@
                               <i class="fa fa-cloud-upload icon-portal"></i>
                              </div>
                          </div>
-                         <h3 class="normal bold bordered bordered-small ">Publish a Vocabulary</h3>
+                         <h3 class="normal bold bordered bordered-small ">Publish a vocabulary</h3>
                          <p class="">Upload, describe and publish your vocabularies to Research Vocabularies Australia</p>
                      </div>
                     </a>
@@ -80,7 +83,7 @@
                               <i class="fa fa-cogs icon-portal"></i>
                              </div>
                          </div>
-                         <h3 class="normal bold bordered bordered-small ">Explore Widgetable Vocabularies</h3>
+                         <h3 class="normal bold bordered bordered-small ">Explore widgetable vocabularies</h3>
                          <p class="">Discover vocabularies that can be readily used in your system using our vocabulary widget</p>
                      </div>
                     </a>
@@ -94,7 +97,7 @@
                               <i class="fa fa-comments-o icon-portal"></i>
                              </div>
                          </div>
-                         <h3 class="normal bold bordered bordered-small ">Provide Feedback</h3>
+                         <h3 class="normal bold bordered bordered-small ">Provide feedback</h3>
                          <p class="">Help Research Vocabularies Australia to grow into a comprehensive vocabulary portal</p>
                      </div>
                     </a>
