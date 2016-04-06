@@ -447,8 +447,5 @@ function identifierResolution($identifier,$type)
             return false;
             break;
     }
-
-
-
 }
 

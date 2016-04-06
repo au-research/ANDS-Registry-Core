@@ -32,7 +32,7 @@
 		<div class="panel-heading">Other Information</div>
 		<div class="panel-body swatch-white">
 			@foreach($ro->relatedInfo as $relatedInfo)
-				@if($relatedInfo['type']=='metadata')
+				@if($relatedInfo['type']=='metadata' && isset($relatedInfo['identifier']['identifier_href']))
                     @if(array_key_exists('href', $relatedInfo['identifier']['identifier_href']))
 				    <h5><a href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><img src="<?php echo base_url()?>assets/core/images/icons/publications.png" style="margin-top: -2px; height: 24px; width: 24px;"> {{$relatedInfo['title']}}</a></h5>
 				    <p>
@@ -51,8 +51,7 @@
 			@endforeach
             @foreach($ro->relatedInfo as $relatedInfo)
 
-            @if($relatedInfo['type']=='service' && ($relatedInfo['title']!='' || $relatedInfo['relation']['url']==''))
-            @elseif($relatedInfo['type']=='service' && $relatedInfo['title']=='' && $relatedInfo['relation']['url']!='')
+            @if($relatedInfo['type']=='service' && $relatedInfo['title']=='' && $relatedInfo['relation']['url']!='' && $relatedInfo['identifier']['identifier_href'])
                 @if(array_key_exists('href', $relatedInfo['identifier']['identifier_href']))
                 <p>
                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
@@ -70,9 +69,9 @@
                 @if($relatedInfo['notes'])
                 <p>{{$relatedInfo['notes']}}</p>
                 @endif
-            @elseif(!in_array($relatedInfo['type'],$notTypes) && isset($relatedInfo['identifier']['identifier_value']) && !in_array(trim($relatedInfo['identifier']['identifier_value']), $resolvedPartyIdentifiers))
+            @elseif(!in_array($relatedInfo['type'],$notTypes) && isset($relatedInfo['identifier']['identifier_value']) && !in_array(trim($relatedInfo['identifier']['identifier_value']), $resolvedPartyIdentifiers) )
 
-                @if(array_key_exists('href', $relatedInfo['identifier']['identifier_href']))
+                @if($relatedInfo['identifier']['identifier_href'] && array_key_exists('href', $relatedInfo['identifier']['identifier_href']))
                 <h5> {{$relatedInfo['title']}}</h5>
                 <p>
                     <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
