@@ -42,7 +42,9 @@
     <input type="hidden" id="search_app" value="true">
 @endif
 @if(!isset($customSearchBlock))
-<div class="swatch-dark-blue">
+<div class="swatch-dark-blue" style="position:relative">
+    <div id="banner-image" class="background-media"></div>
+    <div class="background-overlay grid-overlay-30" style="background-color: rgba(0,0,0,0.4)"></div>
     <div class="container">
         <div class="row element-shorter-bottom element-shorter-top">
             <div class="col-md-5">
