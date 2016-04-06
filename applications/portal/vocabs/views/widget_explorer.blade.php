@@ -16,7 +16,8 @@
             </div>
             <div class="col-md-8">
                 <p>The Research Vocabularies Australia widget allows you to add data classification capabilities to your
-                    data discovery tools. By incorporating the widget (using a simple jQuery plugin) in a data discovery workflow using your
+                    data discovery tools. By incorporating the widget (<a href="http://developers.ands.org.au/widgets/vocab_widget/"
+                        target="_blank">using a simple jQuery plugin</a>) in a data discovery workflow using your
                     chosen vocabularies, your users can browse and select concepts to aid in their discovery of your resources. In addition, you
                     can incorporate the widget into your description tools to allow those describing your resources to easily make use of controlled
                     terminology. Below you’ll find a demonstration of how the widget might look in your tools.
