@@ -30,6 +30,7 @@
                 scope.mode = "tree";
                 scope.target_field = "label";
                 scope.showCode = false;
+                scope.concept = null;
 
                 scope.$watch('vocab', function (newVal, oldVal) {
                     if (newVal) {
@@ -49,7 +50,33 @@
                         scope.concept = null;
                         resetVocabWidget(true);
                     }
-                }
+                };
+
+                /* The data that comes from the widget is in object form.
+                   Set up an array so that the properties can be shown
+                   in the order we want.  */
+                /* This whitelist has preferred label first, then
+                   all others in alphabetical order. */
+                var property_whitelist = [
+                    {'key' : 'label', 'description' : 'Preferred label'},
+                    {'key' : 'about', 'description' : 'Concept IRI'},
+                    {'key' : 'notation', 'description' : 'Notation'}
+                ];
+                function set_concept(data) {
+                    scope.concept = [];
+                    if (data == undefined || data == null) {
+                        return;
+                    }
+                    angular.forEach(property_whitelist, function (property) {
+                        if (data.hasOwnProperty(property.key)) {
+                            scope.concept.push({
+                                'key' : property.key,
+                                'description' : property.description,
+                                'value' : data[property.key]
+                            });
+                        }
+                    });
+                };
 
                 function resetVocabWidget(clearField) {
                     scope.error = false;
@@ -99,7 +126,7 @@
                                             });
 
                                             scope.$apply(function () {
-                                                scope.concept = data;
+                                                set_concept(data);
                                             });
                                         });
                                         scope.widget.on('error.vocab.ands', function (event, data) {
@@ -125,7 +152,7 @@
 
                             scope.widget.on('searchselect.vocab.ands', function (event, data) {
                                 scope.$apply(function () {
-                                    scope.concept = data;
+                                    set_concept(data);
                                 });
                             });
 

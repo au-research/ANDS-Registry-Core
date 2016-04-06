@@ -5,7 +5,7 @@
     <p>{{ vocab.description }}</p>
     <a href="{{ base_url }}{{ vocab.slug }}" target="_blank">View Vocabulary</a>
 
-    <h4>Available Widget Mode:</h4>
+    <h4>Available Widget Modes:</h4>
 
     <ul style="list-style-type: none;">
         <li ng-repeat="widgetMode in widgetModes">
@@ -40,7 +40,7 @@
             <i class="fa" ng-class="{'fa-toggle-on':showCode, 'fa-toggle-off':!showCode}"></i>
             Show Embeddable Code
         </a>
-        <a href="http://developers.ands.org.au/widgets/vocab_widget/">Learn More</a>
+        <a href="http://developers.ands.org.au/widgets/vocab_widget/" target="_blank">Learn More</a>
     </div>
 
     <div ng-if="vocab && showCode">
