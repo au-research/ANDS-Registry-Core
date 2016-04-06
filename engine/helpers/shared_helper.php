@@ -1,11 +1,16 @@
 <?php
 /**
  * [format_relationship description]
- * @param  [type] $from_class        [description]
- * @param  [type] $to_class          [description]
- * @param  [type] $relationship_type [description]
- * @param  [type] $reverse           [description]
- * @return [type]                    [description]
+ *
+ * @param        $from_class
+ * @param        $relationship_type
+ * @param bool   $origin
+ * @param string $to_class
+ * @return string [type]                    [description]
+ * @internal param $ [type] $from_class        [description]
+ * @internal param $ [type] $to_class          [description]
+ * @internal param $ [type] $relationship_type [description]
+ * @internal param $ [type] $reverse           [description]
  */
 function format_relationship($from_class, $relationship_type, $origin=false, $to_class='collection'){
     // default $to_class to collection in case ro not there!!
@@ -104,14 +109,12 @@ function format_relationship($from_class, $relationship_type, $origin=false, $to
 		"hasPrincipalInvestigator" =>array("Principal investigator", "Principal investigator of"),
 		"isPrincipalInvestigator" =>array("Principal investigator of", "Principal investigator"),
 	);
-	
-	//$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
 
-	if($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER'){//reverse
+	//$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
+	if ($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER' && $origin!='GRANTS') {
+		//reverse
 		return (isset($typeArray[$to_class][$relationship_type]) ? $typeArray[$to_class][$relationship_type][1] : from_camel_case($relationship_type));
-	}
-	else
-	{
+	} else {
 		return (isset($typeArray[$from_class][$relationship_type]) ? $typeArray[$from_class][$relationship_type][0] : from_camel_case($relationship_type));
 	}
 }
