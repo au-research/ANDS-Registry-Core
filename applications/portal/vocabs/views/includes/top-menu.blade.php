@@ -50,7 +50,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search for a vocabulary or a concept" ng-model="filters.q" ng-debounce="500">
                         <span class="input-group-btn">
-                            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i> Search</button>
+                            <button class="btn btn-primary" type="button" ng-click="search()"><i class="fa fa-search"></i> Search</button>
                         </span>
                     </div>
                 </form>
