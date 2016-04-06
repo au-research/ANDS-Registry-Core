@@ -1,5 +1,6 @@
 <?php
 namespace ANDS\API\Registry\Handler;
+use ANDS\API\Task\FixRelationshipTask;
 use \Exception as Exception;
 use \XSLTProcessor as XSLTProcessor;
 
@@ -171,6 +172,12 @@ class ObjectHandler extends Handler{
                     $ro->cacheRelationshipMetadata();
                     $ro->indexRelationship();
                     return $ro->getRelationshipIndex();
+                } else if ($m1 == 'fixRelationship') {
+                    $task = new FixRelationshipTask();
+                    $ro = $resource['ro'];
+                    $task->params = 'id='.$ro->id;
+                    $task->run_task();
+                    return $task->getMessage();
                 }
             }
 

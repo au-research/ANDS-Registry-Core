@@ -5,6 +5,7 @@
             <ul>
                 <li><a href="{{$ro->api_url}}?benchmark=true">API URL</a></li>
                 <li><a href="{{$ro->api_url}}sync">Sync Record</a></li>
+                <li><a href="{{$ro->api_url}}fixRelationship">Fix Relationship</a></li>
                 <li><a href="{{$ro->api_url}}solr_index">View Portal Index</a></li>
                 <li><a href="{{$ro->api_url}}relations_index">View Relations Index</a></li>
                 <li><a href="{{$ro->api_url}}relationships">View Relationships</a></li>
