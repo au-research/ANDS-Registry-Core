@@ -1,4 +1,4 @@
-@extends('layouts/single')
+@extends('layout/vocab_layout')
 @section('content')
 <article>
 	<section class="section swatch-white element-normal-bottom">
