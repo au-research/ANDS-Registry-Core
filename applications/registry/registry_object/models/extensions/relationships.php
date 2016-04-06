@@ -309,8 +309,8 @@ class Relationships_Extension extends ExtensionBase
 
             // to_status, to_identifier, from_identifier
 
-            //format relation_type correctly
-            $doc['relation'] = startsWith($rel['origin'], 'REVERSE') ? [getReverseRelationshipString($rel['relation_type'])] : [$rel['relation_type']];
+            // does notformat relation_type because it is handled at the front end
+            $doc['relation'] = [$rel['relation_type']];
             $doc['relation_description'] = isset($rel['relation_description']) ? [$rel['relation_description']]: [];
             $doc['relation_url'] = isset($rel['relation_url']) ? [$rel['relation_url']]: [];
             $doc['relation_origin'] = isset($rel['origin']) ? [$rel['origin']]: [];
