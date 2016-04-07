@@ -1,14 +1,13 @@
 <div id="concept">
-    <h4 ng-if="concept">Available Concept Attribute:</h4>
+    <h4 ng-if="concept">Available Concept Attributes:</h4>
 
     <div id="conceptInfo">
         <ul style="list-style-type: none;">
-            <li ng-repeat="(key, value) in concept" ng-if="key == 'label' || key == 'notation' || key == 'about'">
-                <input type="radio" id="{{key}}" checked name="{{key}}" value="{{key}}"
-                       ng-click="switchField(key,value)" ng-if="target_field == key"/>
-                <input type="radio" id="{{key}}" name="{{key}}" value="{{key}}" ng-click="switchField(key,value)"
-                       ng-if="target_field != key"/>
-                <label style="margin-left: 6px;" for="{{key}}">{{key}} ({{value}})</label>
+            <li ng-repeat="c in concept">
+                <input type="radio" id="{{c.key}}" ng-checked="target_field == c.key" name="{{c.key}}" value="{{c.key}}"
+                       ng-click="switchField(c.key,c.value)" />
+                <label style="margin-left: 6px;"
+                for="{{c.key}}">{{c.description}} ({{c.value}})</label>
             </li>
         </ul>
     </div>
