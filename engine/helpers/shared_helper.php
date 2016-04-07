@@ -74,6 +74,7 @@ function format_relationship($from_class, $relationship_type, $origin=false, $to
 		"hasPrincipalInvestigator" =>array("Principal investigator", "Principal investigator of"),
 		"isPrincipalInvestigatorOf" =>array("Principal investigator of", "Principal investigator"),
         "isPrincipalInvestigator" =>array("Principal investigator of", "Principal investigator"),
+        "manages" => array("Manages", "Managed by")
 	);
 	$typeArray['service'] = array(
 		"hasAssociationWith" =>  array("Associated with", "Associated with"),
