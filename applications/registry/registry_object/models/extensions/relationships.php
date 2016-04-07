@@ -36,13 +36,12 @@ class Relationships_Extension extends ExtensionBase
         $new_relationships = array();
         foreach ($sxml->xpath('//ro:relatedObject') AS $related_object) {
             $explicit_keys[] = (string)$related_object->key;
-            $class = $this->getRelatedObjectClass((string)$related_object->key);
-
+            $relatedObjectKey = trim((string)$related_object->key);
+            $class = $this->getRelatedObjectClass(trim($relatedObjectKey));
             foreach ($related_object->relation as $arelation) {
-
                 $relationship = array(
                     "registry_object_id" => (string)$this->ro->id,
-                    "related_object_key" => (string)$related_object->key,
+                    "related_object_key" => $relatedObjectKey,
                     "related_object_class" => (string)$class,
                     "relation_type" => (string)$arelation['type'],
                     "relation_description" => (string)$arelation->description,

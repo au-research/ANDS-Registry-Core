@@ -178,6 +178,11 @@ class ObjectHandler extends Handler{
                     $task->params = 'id='.$ro->id;
                     $task->run_task();
                     return $task->getMessage();
+                } else if ($m1 == 'relatedObjects') {
+                    $ro = $resource['ro'];
+                    $ro->addRelationships();
+                    $ro->cacheRelationshipMetadata();
+                    return $ro->getAllRelatedObjects();
                 }
             }
 
