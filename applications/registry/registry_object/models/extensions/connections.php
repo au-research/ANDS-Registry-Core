@@ -195,7 +195,7 @@ class Connections_Extension extends ExtensionBase
 						foreach($ulist as $conn){
 							$ro = $this->_CI->ro->getByID($conn['registry_object_id']);
 							//chosen are selected based on being a contributor page and/or having the same group as the primary related object
-							if(!$chosen && $this->ro->group == $ro->group){
+							if($ro && !$chosen && $this->ro->group == $ro->group){
 								$chosen = $conn['registry_object_id'];
 							}
 							unset($ro);
