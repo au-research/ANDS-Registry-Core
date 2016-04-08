@@ -28,7 +28,7 @@
 	var defaults = {
 	    //location (absolute URL) of the jsonp proxy
             // FIXME: After rolling out, change this from test!
-	    endpoint: 'http://test.ands.org.au/api/v1.0/vocab.jsonp/',
+	    endpoint: 'http://researchdata.ands.org.au/api/v1.0/vocab.jsonp/',
 
         //api_key set when instantiated
         api_key: 'public',

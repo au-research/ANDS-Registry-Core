@@ -101,7 +101,7 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script src="<?php echo asset_url('lib/bootstrap-contextmenu.js', 'base'); ?>" type="text/javascript"></script>
 
         <?php elseif($lib=='vocab_widget'):?>
-            <link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget.css'); ?>">
+            <link rel="stylesheet" type="text/css" href="<?php echo apps_url('assets/vocab_widget/css/vocab_widget_v2.css'); ?>">
             <script src="<?php echo apps_url('assets/vocab_widget/js/vocab_widget_v2.js'); ?>"></script>
 
        <?php elseif($lib=='orcid_widget'):?>
