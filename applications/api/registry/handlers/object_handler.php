@@ -171,7 +171,6 @@ class ObjectHandler extends Handler{
                     $ro->addRelationships();
                     $ro->cacheRelationshipMetadata();
                     $ro->indexRelationship();
-                    dd('done');
                     return $ro->getRelationshipIndex();
                 } else if ($m1 == 'fixRelationship') {
                     $task = new FixRelationshipTask();

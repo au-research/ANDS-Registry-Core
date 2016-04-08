@@ -389,7 +389,7 @@ class Relationships_Extension extends ExtensionBase
         $this->_CI->solr->setOpt('rows', $limit);
 
         $result = $this->_CI->solr->executeSearch(true);
-        if ($result && $result['response'] && $result['response']['numFound'] > 0) {
+        if ($result && array_key_exists('response', $result) && $result['response']['numFound'] > 0) {
             $response = $result['response']['docs'];
             $this->_CI->solr->init();
             $result = null;

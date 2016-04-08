@@ -9,6 +9,7 @@
                 <li><a href="{{$ro->api_url}}solr_index">View Portal Index</a></li>
                 <li><a href="{{$ro->api_url}}relations_index">View Relations Index</a></li>
                 <li><a href="{{$ro->api_url}}relationships">View Relationships</a></li>
+                <li><a href="{{$ro->api_url}}relatedObjects">View DB relatedObjects</a></li>
             </ul>
         </div>
     </div>

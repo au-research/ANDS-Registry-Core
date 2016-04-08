@@ -90,7 +90,7 @@ class Relationships extends ROHandler {
             'docs' => []
         );
 
-        if ($solrResult && $solrResult['response']['numFound'] > 0) {
+        if ($solrResult && array_key_exists('response', $solrResult) && $solrResult['response']['numFound'] > 0) {
             $result['count'] = $solrResult['response']['numFound'];
             foreach ($solrResult['response']['docs'] as $doc) {
                 $data = $doc;
