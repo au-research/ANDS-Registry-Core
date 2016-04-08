@@ -9,7 +9,12 @@
                    title="{{ $col['to_title'] }}"
                    class="ro_preview"
                    tip="{{ $col['display_description'] }}"
-                   ro_id="{{ $col['to_id'] }}">
+                    @if(isset($col['to_id']) && $col['to_id']!='false')
+                        ro_id="{{ $col['to_id'] }}"
+                    @elseif(isset($col["relation_identifier_id"]))
+                        identifier_relation_id="{{ $col['relation_identifier_id'] }}"
+                    @endif
+                    >
                     {{$col['to_title']}}</a>
                 {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
             </li>
