@@ -611,7 +611,7 @@ class Registry_objects extends CI_Model {
 	 * @return mixed
 	 */
 	function getAttribute($ro_id, $type = false) {
-		$core_attrs = array('key', 'class', 'title', 'status', 'slug', 'record_owner', 'data_source_id');
+		$core_attrs = array('key', 'class', 'title', 'status', 'slug', 'record_owner', 'data_source_id', 'type');
 		if ($type) {
 			if (in_array($type, $core_attrs)) {
 				$query = $this->db->get_where('registry_objects',

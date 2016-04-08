@@ -895,7 +895,7 @@ class Registry_object extends MX_Controller
 
         //not recording a hit for the quick search done for advanced search
         /** @var boolean $no_log */
-        if (!$no_log) {
+        if (!$no_log && array_key_exists('response', $result)) {
             $event = array(
                 'event' => 'portal_search',
                 'ip' => $this->input->ip_address(),

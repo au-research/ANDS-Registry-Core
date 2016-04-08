@@ -14,3 +14,10 @@ CHANGE COLUMN `value` `value` MEDIUMTEXT NULL DEFAULT NULL COMMENT '' ;
 
 ALTER TABLE `dbs_registry`.`registry_object_identifier_relationships`
 ADD COLUMN `notes` TEXT NULL AFTER `connections_preview_div`;
+
+ALTER TABLE `dbs_registry`.`registry_objects`
+ADD COLUMN `type` VARCHAR(45) NULL COMMENT '' AFTER `class`;
+
+UPDATE dbs_registry.registry_objects ro
+INNER JOIN dbs_registry.registry_object_attributes roa ON (roa.registry_object_id = ro.registry_object_id AND roa.`attribute` = 'type')
+SET ro.`type` = roa.`value`;

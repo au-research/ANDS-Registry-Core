@@ -271,10 +271,10 @@ class Relationships_Extension extends ExtensionBase
      */
     public function getRelationshipIndex(){
 
-        $relationships = $this->ro->getAllRelatedObjects();
+        $relationships = $this->ro->getAllRelatedObjects(false, false, false);
 
         if ($this->ro->isValidGrantNetworkNode($relationships)) {
-            $relationships = array_merge($relationships, $this->ro->_getGrantsNetworkConnections($relationships));
+            $relationships = array_merge($relationships, $this->ro->_getGrantsNetworkConnections($relationships, false));
         }
 
         $docs = [];
@@ -299,11 +299,15 @@ class Relationships_Extension extends ExtensionBase
 
             // getting the funders, only 1
             if (isset($rel['registry_object_id']) && $rel['class'] == 'activity') {
-                $toRO = $this->_CI->ro->getByID($rel['registry_object_id']);
-                if ($toRO) {
-                    $funders = $toRO->getFunders(false, false, false, array());
-                    if ($funders && is_array($funders) && sizeof($funders) > 0) {
-                        $doc['to_funder'] = $funders[0];
+                if (($rel['relation_type'] == 'funds') || ($rel['relation_type']=='isFundedBy')) {
+                    $doc['to_funder'] = $this->ro->title;
+                } else {
+                    $toRO = $this->_CI->ro->getByID($rel['registry_object_id']);
+                    if ($toRO) {
+                        $funders = $toRO->getFunders(false, false, false, array());
+                        if ($funders && is_array($funders) && sizeof($funders) > 0) {
+                            $doc['to_funder'] = $funders[0];
+                        }
                     }
                 }
             }

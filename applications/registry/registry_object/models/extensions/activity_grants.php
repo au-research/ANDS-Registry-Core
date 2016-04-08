@@ -448,10 +448,11 @@ class Activity_grants_extension extends ExtensionBase
                     array_push($processed, $relatedObject['registry_object_id']);
                     if ($recursive) {
                         $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
-                        $childs = $record->getChildActivities(false, $processed, true);
+                        $childs = $record->getChildActivities(false, $processed, $recursive);
                         if (sizeof($childs) > 0) {
                             $result = array_merge($result, $childs);
                         }
+                        unset($record);
                     }
                 }
 

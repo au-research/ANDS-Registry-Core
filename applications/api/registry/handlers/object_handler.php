@@ -171,6 +171,7 @@ class ObjectHandler extends Handler{
                     $ro->addRelationships();
                     $ro->cacheRelationshipMetadata();
                     $ro->indexRelationship();
+                    dd('done');
                     return $ro->getRelationshipIndex();
                 } else if ($m1 == 'fixRelationship') {
                     $task = new FixRelationshipTask();
@@ -186,6 +187,11 @@ class ObjectHandler extends Handler{
                 } else if ($m1 == 'relatedGrantsNetwork') {
                     $ro = $resource['ro'];
                     return $ro->_getGrantsNetworkConnections($ro->getAllRelatedObjects());
+                } else if ($m1 == 'relatedObjectsIndex') {
+                    $this->ci->benchmark->mark('start');
+                    $ro = $resource['ro'];
+                    $relatedObjects = $ro->getAllRelatedObjects();
+                    return $relatedObjects;
                 }
             }
 

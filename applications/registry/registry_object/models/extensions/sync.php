@@ -459,7 +459,7 @@ class Sync_extension extends ExtensionBase{
         if($limit && (int)$limit > 0 || $json['class'] == 'party' || $json['class'] == 'service')
 		    $related_objects = $this->ro->getAllRelatedObjects(false, false, false, $party_service_conn_limit);
         else
-            $related_objects = $this->ro->getAllRelatedObjects(false, false, false);
+            $related_objects = $this->ro->getAllRelatedObjects();
 
         // get only unique related_objects to save memory
         $temp_array = array();
@@ -524,8 +524,7 @@ class Sync_extension extends ExtensionBase{
                     if($related_object['registry_object_id'])
                         $json['related_service_id'][] = $related_object['registry_object_id'];
                 } else if($related_object['class']=='party' && $related_object['registry_object_id']) {
-                    $relatedObjectType = $this->_CI->ro->getAttribute($related_object['registry_object_id'], 'type');
-                    if (in_array($relatedObjectType, $this->party_multi_types)) {
+                    if (in_array($related_object['type'], $this->party_multi_types)) {
                         $json['related_party_multi_title'][] = $related_object['title'];
                         $json['related_party_multi_id'][] = $related_object['registry_object_id'];
                     } else {

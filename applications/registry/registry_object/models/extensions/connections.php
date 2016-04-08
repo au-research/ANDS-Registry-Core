@@ -343,13 +343,6 @@ class Connections_Extension extends ExtensionBase
 			}
 		}
 
-		//add type to unordered connections
-		foreach ($unordered_connections as &$conn) {
-			if (isset($conn['registry_object_id'])) {
-				$conn['type'] =  $this->_CI->ro->getAttribute($conn['registry_object_id'], 'type');
-			}
-		}
-
 		return $unordered_connections;
 	}
 
@@ -425,7 +418,7 @@ class Connections_Extension extends ExtensionBase
 		/* Step 1 - Straightforward link relationships */
 		$my_connections = array();
 
-		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type, rr.relation_description,  rr.relation_url, rr.origin')
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type, rr.relation_description,  rr.relation_url, rr.origin, r.type')
 				 ->from('registry_object_relationships rr')
 				 ->join('registry_objects r','rr.related_object_key = r.key', ($allow_unmatched_records ? 'left' : ''))
 				 ->where('rr.registry_object_id',$this->id)
@@ -454,7 +447,7 @@ class Connections_Extension extends ExtensionBase
 		/* Step 1 - Straightforward link relationships */
 		$my_connections = array();
         $processed_identifiers = array();
-		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type ,rir.notes as relation_notes')
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type ,rir.notes as relation_notes, r.type')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type','left')
 				 ->join('registry_objects r','r.registry_object_id = ri.registry_object_id','left')
@@ -493,7 +486,7 @@ class Connections_Extension extends ExtensionBase
 		$my_connections = array();
 		if($allow_reverse_internal_links && $allow_reverse_external_links)
 		{
-			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type')
+			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type, r.type')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
 				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')
@@ -503,7 +496,7 @@ class Connections_Extension extends ExtensionBase
 		}
 		else if($allow_reverse_internal_links)
 		{
-			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type')
+			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type, r.type')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
 				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')
@@ -514,7 +507,7 @@ class Connections_Extension extends ExtensionBase
 		}
 		else if($allow_reverse_external_links)
 		{
-			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type')
+			$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rir.relation_type, rir.related_info_type, rir.related_title, rir.related_description as relation_description, rir.related_url as relation_url, rir.id as identifier_relation_id, rir.related_object_identifier, rir.related_object_identifier_type, r.type')
 				 ->from('registry_object_identifier_relationships rir')
 				 ->join('registry_object_identifiers ri','rir.related_object_identifier = ri.identifier and rir.related_object_identifier_type = ri.identifier_type')
 				 ->join('registry_objects r','rir.registry_object_id = r.registry_object_id')
@@ -546,7 +539,7 @@ class Connections_Extension extends ExtensionBase
 		/* Step 2 - Internal reverse links */
 		$my_connections = array();
 
-		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type, rr.relation_description')
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type, rr.relation_description, r.type')
 						 ->from('registry_object_relationships rr')
 						 ->join('registry_objects r','rr.registry_object_id = r.registry_object_id', ($allow_unmatched_records ? 'left' : ''))
 						 ->where('rr.related_object_key',$this->ro->key)
@@ -569,7 +562,7 @@ class Connections_Extension extends ExtensionBase
 		/* Step 2 - Internal reverse links */
 		$my_connections = array();
 
-		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type, rr.relation_description')
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type, rr.relation_description, r.type')
 						 ->from('registry_object_relationships rr')
 						 ->join('registry_objects r','r.key = rr.related_object_key', ($allow_unmatched_records ? 'left' : ''))
 						 ->where('rr.registry_object_id',$this->ro->id)
@@ -592,7 +585,7 @@ class Connections_Extension extends ExtensionBase
 		/* Step 3 - External reverse links */
 		$my_connections = array();
 
-		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type, rr.relation_description')
+		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type, rr.relation_description, r.type')
 						 ->from('registry_object_relationships rr')
 						 ->join('registry_objects r','rr.registry_object_id = r.registry_object_id', ($allow_unmatched_records ? 'left' : ''))
 						 ->where('rr.related_object_key',$this->ro->key)
@@ -706,7 +699,7 @@ class Connections_Extension extends ExtensionBase
 		/* Step 4 - Contributor */
 		$my_connections = array();
 
-		$this->db->select('r.registry_object_id, r.class, r.title, r.slug, r.status, r.key')
+		$this->db->select('r.registry_object_id, r.class, r.title, r.slug, r.status, r.key, r.type')
 						 ->from('institutional_pages i')
 						 ->join('registry_objects r','i.registry_object_id = r.registry_object_id')
 						 ->where('i.group',$this->ro->group);

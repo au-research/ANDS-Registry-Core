@@ -6,7 +6,7 @@ class Core_extension extends ExtensionBase
 	public $attributes = array();		// An array of attributes for this Registry Object
 
 	// Core attributes are stored in the registry_object table (whereas the other attributes require a join to _attributes)
-	private $core_attrs = array('data_source_id', 'registry_object_id', 'key', 'class', 'title', 'status', 'slug', 'record_owner');
+	private $core_attrs = array('data_source_id', 'registry_object_id', 'key', 'class', 'title', 'status', 'slug', 'record_owner', 'type');
 
 	// Some limits on attributes
 	const MAX_NAME_LEN = 32;
