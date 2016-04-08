@@ -300,9 +300,11 @@ class Relationships_Extension extends ExtensionBase
             // getting the funders, only 1
             if (isset($rel['registry_object_id']) && $rel['class'] == 'activity') {
                 $toRO = $this->_CI->ro->getByID($rel['registry_object_id']);
-                $funders = $toRO->getFunders(false, false, false, array());
-                if ($funders && is_array($funders) && sizeof($funders) > 0) {
-                    $doc['to_funder'] = $funders[0];
+                if ($toRO) {
+                    $funders = $toRO->getFunders(false, false, false, array());
+                    if ($funders && is_array($funders) && sizeof($funders) > 0) {
+                        $doc['to_funder'] = $funders[0];
+                    }
                 }
             }
 
