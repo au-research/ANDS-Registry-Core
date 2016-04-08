@@ -836,8 +836,6 @@ class Activity_grants_extension extends ExtensionBase
     {
         if (!$relatedObjects) {
             $relatedObjects = $this->ro->getAllRelatedObjects();
-        } else {
-            $relatedObjects = array();
         }
 
         $result = array();

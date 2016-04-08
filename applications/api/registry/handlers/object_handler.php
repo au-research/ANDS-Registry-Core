@@ -183,6 +183,9 @@ class ObjectHandler extends Handler{
                     $ro->addRelationships();
                     $ro->cacheRelationshipMetadata();
                     return $ro->getAllRelatedObjects();
+                } else if ($m1 == 'relatedGrantsNetwork') {
+                    $ro = $resource['ro'];
+                    return $ro->_getGrantsNetworkConnections($ro->getAllRelatedObjects());
                 }
             }
 
