@@ -753,7 +753,7 @@ class Activity_grants_extension extends ExtensionBase
             $offset = ($i - 1) * $chunkSize;
             $chunkArray = array_slice($childActivities, $offset, $chunkSize);
 
-            $ids = array();
+            $ids = array($this->ro->id);
             foreach ($chunkArray as $activity) {
                 if ($activity['registry_object_id'] && !in_array($activity['registry_object_id'], $ids)) {
                     $ids[] = $activity['registry_object_id'];
