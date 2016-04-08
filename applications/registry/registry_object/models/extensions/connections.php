@@ -310,7 +310,7 @@ class Connections_Extension extends ExtensionBase
 			foreach($unordered_connections as $cc){
 				if($cc['class']=='party'){
 					$cc_ro = $this->_CI->ro->getByID($cc['registry_object_id']);
-					$identifierMatches = array_merge($identifierMatches, $cc_ro->findMatchingRecords());
+					$identifierMatches = $cc_ro ? array_merge($identifierMatches, $cc_ro->findMatchingRecords()) : [];
 				}
 			}
 			foreach ($identifierMatches as $ii){
