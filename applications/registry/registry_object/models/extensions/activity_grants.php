@@ -427,6 +427,9 @@ class Activity_grants_extension extends ExtensionBase
                     $isValidChild = (($relatedObject['relation_type'] == 'funds' && $relatedObject['origin'] == 'EXPLICIT')
                         || ($relatedObject['relation_type'] == 'isFundedBy' && startsWith($relatedObject['origin'],"REVERSE"))
                         || ($relatedObject['relation_type'] == 'isFunderOf' && $relatedObject['origin'] == 'EXPLICIT'));
+
+                    $isValidChild = $isValidChild || ($relatedObject['relation_type'] == 'isFundedBy' && $relatedObject['origin'] == "IDENTIFIER REVERSE");
+
                 } elseif ($this->ro->class == 'activity') {
                     //for an activity, find all explicit partOf and reverse isPartOf
                     $isValidChild = (($relatedObject['relation_type'] == 'hasPart' && $relatedObject['origin'] == 'EXPLICIT')
