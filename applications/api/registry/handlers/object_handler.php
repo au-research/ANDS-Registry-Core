@@ -175,9 +175,25 @@ class ObjectHandler extends Handler{
                 } else if ($m1 == 'fixRelationship') {
                     $task = new FixRelationshipTask();
                     $ro = $resource['ro'];
-                    $task->params = 'id='.$ro->id;
+                    $params = [
+                        'id' => $ro->id,
+                    ];
+                    $includes = explode(',', $this->ci->input->get('includes'));
+                    if (sizeof($includes) > 0) {
+                        $params['includes'] = implode(',', $includes);
+                        if (trim($params['includes'])=="") {
+                            unset($params['includes']);
+                        }
+                    }
+                    $task->params = http_build_query($params);
+                    $this->ci->benchmark->mark('start');
                     $task->run_task();
-                    return $task->getMessage();
+                    $this->ci->benchmark->mark('end');
+                    $took = $this->ci->benchmark->elapsed_time('start', 'end');
+                    return [
+                        'took' => $took,
+                        'task' => $task->getMessage()
+                    ];
                 } else if ($m1 == 'relatedObjects') {
                     $ro = $resource['ro'];
                     $ro->addRelationships();
@@ -191,6 +207,31 @@ class ObjectHandler extends Handler{
                     $ro = $resource['ro'];
                     $relatedObjects = $ro->getAllRelatedObjects();
                     return $relatedObjects;
+                } else if ($m1 == 'updatePortalIndex') {
+                    $ro = $resource['ro'];
+                    $includes = explode(',', $this->ci->input->get('includes'));
+                    $index = $ro->getPortalRelationshipIndex($includes);
+                    return $index;
+                } else if ($m1 == 'updateRelationsIndex') {
+                    $this->ci->benchmark->mark('start');
+                    $ro = $resource['ro'];
+                    $includes = explode(',', $this->ci->input->get('includes'));
+                    $index = $ro->getRelationshipIndex($includes);
+
+                    $this->ci->load->library('solr');
+                    $this->ci->solr->init()->setCore('relations');
+                    $add = $this->ci->solr->add_json(json_encode($index), true);
+                    $commit = $this->ci->solr->commit();
+
+                    $this->ci->benchmark->mark('end');
+                    $took = $this->ci->benchmark->elapsed_time('start', 'end');
+
+                    return [
+                        'took' => $took,
+                        'size' => sizeof($index),
+                        'add' => json_decode($add, true),
+                        'commit' => json_decode($commit, true)
+                    ];
                 }
             }
 

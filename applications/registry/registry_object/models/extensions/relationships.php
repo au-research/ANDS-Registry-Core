@@ -267,14 +267,24 @@ class Relationships_Extension extends ExtensionBase
     /**
      * Returns an indexable relationship index for this record
      *
+     * @param array $includes [relatedObjects|grantsNetwork]
      * @return mixed
      */
-    public function getRelationshipIndex(){
+    public function getRelationshipIndex($includes = array('relatedObjects', 'grantsNetwork')){
 
-        $relationships = $this->ro->getAllRelatedObjects(false, false, false);
+        $relationships = array();
 
-        if ($this->ro->isValidGrantNetworkNode($relationships)) {
-            $relationships = array_merge($relationships, $this->ro->_getGrantsNetworkConnections($relationships, false));
+        if (in_array('relatedObjects', $includes)) {
+            $relationships = $this->ro->getAllRelatedObjects();
+        }
+        if (in_array('grantsNetwork', $includes)) {
+            if (!in_array('relatedObjects', $includes)) {
+                // generate relatedObjects only when only grantsNetwork is required
+                $relationships = $this->ro->getAllRelatedObjects();
+            }
+            if ($this->ro->isValidGrantNetworkNode($relationships)) {
+                $relationships = array_merge($relationships, $this->ro->_getGrantsNetworkConnections($relationships, false));
+            }
         }
 
         $docs = [];

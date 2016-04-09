@@ -398,6 +398,7 @@ class SyncTask extends Task
                                 'class' => 'fixRelationship',
                                 'type' => 'ro',
                                 'id' => $ro->id,
+                                'includes' => 'portal,relations'
                             );
                             $fixRelationshipTask->params = http_build_query($params);
                             $fixRelationshipTask->run_task();

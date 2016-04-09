@@ -38,7 +38,7 @@ class Sync_extension extends ExtensionBase{
 		return true;
 	}
 
-	function index_solr() {
+	function index_solr($commit = true) {
 		try{
 			$this->_CI->load->library('solr');
             $this->_CI->solr->init()->setCore('portal');
@@ -48,7 +48,9 @@ class Sync_extension extends ExtensionBase{
                 $this->_CI->solr->init()->setCore('portal');
                 $this->_CI->solr->deleteByQueryCondition('id:'.$this->ro->id);
 				$this->_CI->solr->add_json(json_encode($docs));
-				$this->_CI->solr->commit();
+                if ($commit) {
+                    $this->_CI->solr->commit();
+                }
 			}
 		} catch (Exception $e) {
 			return $e;
@@ -57,9 +59,10 @@ class Sync_extension extends ExtensionBase{
 	}
 
     /**
+     * @param bool $commit
      * @return bool|Exception
      */
-    public function indexRelationship(){
+    public function indexRelationship($commit = true){
         try{
             $this->_CI->load->library('solr');
             if($this->shouldIndex()){
@@ -67,7 +70,9 @@ class Sync_extension extends ExtensionBase{
                 $this->_CI->solr->init()->setCore('relations');
                 $this->_CI->solr->deleteByQueryCondition('from_id:'.$this->ro->id);
                 $this->_CI->solr->add_json(json_encode($docs));
-                $this->_CI->solr->commit();
+                if ($commit) {
+                    $this->_CI->solr->commit();
+                }
             }
         } catch (Exception $e) {
             return $e;
@@ -99,10 +104,11 @@ class Sync_extension extends ExtensionBase{
      * Mainly used for SOLR indexing
      *
      * @param null $limit
+     * @param array $includeRelationships
      * @return array
      * @throws Exception
      */
-    function indexable_json($limit=null) {
+    function indexable_json($limit=null, $includeRelationships = array('relatedObjects', 'grantsNetwork')) {
 		$xml = $this->ro->getSimpleXML();
         $rifDom = new DOMDocument();
         $rifDom->loadXML($this->ro->getRif());
@@ -453,87 +459,10 @@ class Sync_extension extends ExtensionBase{
             $json['tsubject_'.$type][] = $s['value'];
 		}
 
-
-
 		//related objects
-        if($limit && (int)$limit > 0 || $json['class'] == 'party' || $json['class'] == 'service')
-		    $related_objects = $this->ro->getAllRelatedObjects(false, false, false, $party_service_conn_limit);
-        else
-            $related_objects = $this->ro->getAllRelatedObjects();
-
-        // get only unique related_objects to save memory
-        $temp_array = array();
-        foreach ($related_objects as &$v) {
-            if (!isset($temp_array[$v['registry_object_id']])) {
-                $temp_array[$v['registry_object_id']] =& $v;
-            }
+        if (is_array($includeRelationships)) {
+            $json = array_merge($json, $this->getPortalRelationshipIndex($includeRelationships));
         }
-        $related_objects = $temp_array;
-        unset($temp_array);
-
-        $related_objects = array_merge($related_objects, $this->ro->_getGrantsNetworkConnections($related_objects));
-
-        // get only unique related_objects to save memory
-        $temp_array = array();
-        foreach ($related_objects as &$v) {
-            if (!isset($temp_array[$v['registry_object_id']])) {
-                $temp_array[$v['registry_object_id']] =& $v;
-            }
-        }
-        $related_objects = $temp_array;
-        unset($temp_array);
-
-		$fields = array('related_collection_id', 'related_party_one_id', 'related_party_multi_id', 'related_activity_id', 'related_service_id');
-		foreach($fields as $f) $json[$f] = array();
-        $fields = array('related_collection_search', 'related_party_one_search', 'related_party_multi_search', 'related_activity_search', 'related_service_search');
-        $processedIds = array();
-
-        foreach($fields as $f) {
-            $json[$f] = array();
-        }
-
-        $related_objects = array_slice($related_objects, 0, 2000);
-
-
-        foreach($related_objects as $related_object){
-            if($related_object['registry_object_id'] == null || !in_array($related_object['registry_object_id'], $processedIds)) {
-                $processedIds[] = $related_object['registry_object_id'];
-
-                //relation
-                $relationType = $related_object['relation_type'];
-                if (startsWith($related_object['origin'], 'REVERSE')) {
-                    $relationType = getReverseRelationshipString($related_object['relation_type']);
-                }
-                $relationType = url_title($relationType);
-                $relationIndexKey = 'relationType_'.$relationType.'_id';
-
-                if (!array_key_exists($relationType, $json)) {
-                    $json[$relationIndexKey] = array($related_object['registry_object_id']);
-                }
-
-                if($related_object['class']=='collection') {
-                    $json['related_collection_title'][] = $related_object['title'];
-                    if($related_object['registry_object_id'])
-                        $json['related_collection_id'][] = $related_object['registry_object_id'];
-                } else if($related_object['class']=='activity') {
-                    $json['related_activity_title'][] = $related_object['title'];
-                    if($related_object['registry_object_id'])
-                        $json['related_activity_id'][] = $related_object['registry_object_id'];
-                } else if($related_object['class']=='service') {
-                    $json['related_service_title'][] = $related_object['title'];
-                    if($related_object['registry_object_id'])
-                        $json['related_service_id'][] = $related_object['registry_object_id'];
-                } else if($related_object['class']=='party' && $related_object['registry_object_id']) {
-                    if (in_array($related_object['type'], $this->party_multi_types)) {
-                        $json['related_party_multi_title'][] = $related_object['title'];
-                        $json['related_party_multi_id'][] = $related_object['registry_object_id'];
-                    } else {
-                        $json['related_party_one_title'][] = $related_object['title'];
-                        $json['related_party_one_id'][] = $related_object['registry_object_id'];
-                    }
-                }
-            }
-		}
 
         $json['alt_list_title'] = [];
         $json['alt_display_title'] = [];
@@ -660,6 +589,104 @@ class Sync_extension extends ExtensionBase{
 
 		return $json;
 	}
+
+    /**
+     * Returns the formatted SOLR index for just the relationship provided
+     * Useful for records with a huge number of relationships
+     * Split the relationships into relatedObjects and grantsNetwork
+     *
+     * @todo provide pagination and chunking capability
+     * @param array $includes [relatedObjects|grantsNetwork]
+     * @return array
+     */
+    public function getPortalRelationshipIndex($includes = array('relatedObjects', 'grantsNetwork'))
+    {
+        $relatedObjects = array();
+        if (in_array('relatedObjects', $includes)) {
+            $relatedObjects = $this->ro->getAllRelatedObjects();
+        }
+        if (in_array('grantsNetwork', $includes)) {
+            if (!in_array('relatedObjects', $includes)) {
+                // generate relatedObjects only when only grantsNetwork is required
+                $relatedObjects = $this->ro->getAllRelatedObjects();
+            }
+            $relatedObjects = array_merge($relatedObjects, $this->ro->_getGrantsNetworkConnections($relatedObjects, false));
+        }
+
+        // get only unique registry_object_id to save memory
+        $temp_array = array();
+        foreach ($relatedObjects as &$v) {
+            if (!isset($temp_array[$v['registry_object_id']])) {
+                $temp_array[$v['registry_object_id']] =& $v;
+            }
+        }
+        $relatedObjects = $temp_array;
+
+        unset($temp_array);
+        return $this->formatPortalRelationshipIndex($relatedObjects);
+    }
+
+    /**
+     * Returns the SOLR index for just the relationship provided
+     *
+     * @param array $relatedObjects
+     * @return array
+     */
+    private function formatPortalRelationshipIndex($relatedObjects = array())
+    {
+        $json = array();
+
+        //prepare the fields, just in case PHP errors out when field is not generated yet
+        $fields = array('related_collection_id', 'related_party_one_id', 'related_party_multi_id', 'related_activity_id', 'related_service_id');
+        foreach($fields as $f) $json[$f] = array();
+        $fields = array('related_collection_search', 'related_party_one_search', 'related_party_multi_search', 'related_activity_search', 'related_service_search');
+        foreach($fields as $f) {
+            $json[$f] = array();
+        }
+
+        // make sure record is only processed onced, to save memory
+        $processedIds = array();
+
+        foreach ($relatedObjects as $relatedObject) {
+            if ($relatedObject['registry_object_id'] == null
+                || !in_array($relatedObject['registry_object_id'], $processedIds)
+            ) {
+                $processedIds[] = $relatedObject['registry_object_id'];
+
+                //relation
+                $relationType = $relatedObject['relation_type'];
+                if (startsWith($relatedObject['origin'], 'REVERSE')) {
+                    $relationType = getReverseRelationshipString($relatedObject['relation_type']);
+                }
+                $relationType = url_title($relationType);
+                $relationIndexKey = 'relationType_' . $relationType . '_id';
+
+                // provide relationType_{relationType}_id kind of relationship, useful for querying
+                // eg. relationType_isFunderOf_id = :id
+                if (!array_key_exists($relationType, $json)) {
+                    $json[$relationIndexKey] = array($relatedObject['registry_object_id']);
+                }
+
+                // find out the right type, only party will have to become party_multi or party_one
+                $relatedObjectType = $relatedObject['class'];
+                if ($relatedObjectType == 'party') {
+                    if (in_array($relatedObject['type'], $this->party_multi_types)) {
+                        $relatedObjectType = 'party_multi';
+                    } else {
+                        $relatedObjectType = 'party_one';
+                    }
+                }
+
+
+                if ($relatedObject['registry_object_id']) {
+                    $json['related_'.$relatedObjectType.'_id'][] = $relatedObject['registry_object_id'];
+                    $json['related_'.$relatedObjectType.'_title'][] = $relatedObject['title'];
+                }
+
+            }
+        }
+        return $json;
+    }
 
     function indexable_json_es() {
 

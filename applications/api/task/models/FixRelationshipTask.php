@@ -16,6 +16,7 @@ use \Exception as Exception;
 class FixRelationshipTask extends Task
 {
     private $chunkSize = 100;
+    private $includes = array('sync', 'relations', 'portal');
 
     public function run_task()
     {
@@ -25,8 +26,13 @@ class FixRelationshipTask extends Task
         $this->ci->load->model('registry/data_source/data_sources', 'ds');
         $this->ci->load->library('solr');
 
+
         //Load parameters
         parse_str($this->params, $params);
+        if (array_key_exists('includes', $params)) {
+            $this->includes = explode(',', $params['includes']);
+        }
+
         if (array_key_exists('id', $params)) {
             $ids = !is_array($params['id']) ? explode(',', $params['id']) : $params['id'];
             if (sizeof($ids) > $this->chunkSize) {
@@ -102,15 +108,13 @@ class FixRelationshipTask extends Task
         $this->log('Object '.$id. ' has '.sizeof($relatedObjects). ' relations');
 
         // Fix this object with a relationship only sync
-        $this->ci->benchmark->mark('start_ro');
-        $ro->processIdentifiers();
-        $ro->addRelationships();
-        $ro->cacheRelationshipMetadata();
-        $ro->index_solr();
-        $ro->indexRelationship();
-        $this->ci->benchmark->mark('end_ro');
-        $time = $this->ci->benchmark->elapsed_time('start_ro', 'end_ro');
-        $this->log('Synced Relationship for ID: ' . $id. ' took '.$time. ' seconds. Memory usage: ' .memory_get_usage());
+        if (in_array('sync', $this->includes)) {
+            $this->ci->benchmark->mark('start_ro');
+            $ro->sync();
+            $this->ci->benchmark->mark('end_ro');
+            $time = $this->ci->benchmark->elapsed_time('start_ro', 'end_ro');
+            $this->log('Synced Relationship for ID: ' . $id. ' took '.$time. ' seconds. Memory usage: ' .memory_get_usage());
+        }
 
         $dataSource = $this->ci->ds->getByID($ro->data_source_id);
         $allowReverseInternalLinks = ($dataSource->allow_reverse_internal_links == "t" || $dataSource->allow_reverse_internal_links == 1);
@@ -123,6 +127,7 @@ class FixRelationshipTask extends Task
         // RelatedIDs, keep track of the related id
 
         $docs = array();
+        $updateDocs = array();
 
         // Construct the reverse ones
         foreach ($relatedObjects as $related) {
@@ -132,7 +137,13 @@ class FixRelationshipTask extends Task
              * OR different data source but reverse external link is on the related data source
              */
             if (array_key_exists('registry_object_id', $related)) {
-                $relatedDataSourceID = $this->ci->ro->getAttribute($related['registry_object_id'], 'data_source_id');
+
+                // relatedDataSource is the same if it's REVERSE INTERNAL link
+                if ($related['origin']=='REVERSE_INT') {
+                    $relatedDataSourceID = $dataSource->id;
+                } else {
+                    $relatedDataSourceID = $this->ci->ro->getAttribute($related['registry_object_id'], 'data_source_id');
+                }
                 // $this->log($id.'('.$dataSource->id.') -- '.$related['registry_object_id'].'('.$relatedDataSourceID.')'. $allowReverseInternalLinks);
 
                 $allowReverse = ($relatedDataSourceID == $dataSource->id) && $allowReverseInternalLinks;
@@ -141,6 +152,7 @@ class FixRelationshipTask extends Task
                 $allowReverse = $allowReverse || ($related['origin'] == 'EXPLICIT');
 
                 //allow reverse if reverse external is off, only if it's not allowed at this point
+                // @todo cache the ds attribute in an array if the same external ds is reference again
                 if (!$allowReverse) {
                     $relatedDataSourceAllowReverseExternal = $this->ci->ds->getAttribute($relatedDataSourceID,
                         'allow_reverse_external_links');
@@ -150,47 +162,49 @@ class FixRelationshipTask extends Task
                 if ($allowReverse) {
 
                     //Fix relationsIndex by replacing existing or add new relations
-                    if ($relatedDataSourceID == $dataSource->id) {
-                        $reverseType = 'REVERSE_INT';
-                    } else {
-                        $reverseType = 'REVERSE_EXT';
+                    if (in_array('relations', $this->includes)) {
+                        if ($relatedDataSourceID == $dataSource->id) {
+                            $reverseType = 'REVERSE_INT';
+                        } else {
+                            $reverseType = 'REVERSE_EXT';
+                        }
+
+                        $doc = [
+                            'id' => md5($related['key'] . $ro->key),
+                            'from_id' => $related['registry_object_id'],
+                            'from_key' => $related['key'],
+                            'from_status' => $related['status'],
+                            'from_title' => $related['title'],
+                            'from_class' => $related['class'],
+                            'from_type' => $related['type'],
+                            'from_slug' => $related['slug'],
+                            'to_id' => $ro->id,
+                            'to_class' => $ro->class,
+                            'to_type' => $ro->type,
+                            'to_key' => $ro->key,
+                            'to_title' => $ro->title,
+                            'to_slug' => $ro->slug,
+                            'relation' => [$related['relation_type']],
+                            'relation_origin' => [$reverseType]
+                        ];
+
+                        // additional fields
+                        $doc['relation'] = startsWith($related['origin'], 'REVERSE') ? [getReverseRelationshipString($related['relation_type'])] : [$related['relation_type']];
+                        $doc['relation_description'] = isset($related['relation_description']) ? [$related['relation_description']] : [];
+                        $doc['relation_url'] = isset($related['relation_url']) ? [$related['relation_url']] : [];
+
+                        if (array_key_exists($doc['id'], $docs)) {
+                            //already exists a relation, add new relation to it
+                            $docs[$doc['id']]['relation'] = array_merge($docs[$doc['id']]['relation'], $doc['relation']);
+                            $docs[$doc['id']]['relation_description'] = array_merge($docs[$doc['id']]['relation_description'], $doc['relation_description']);
+                            $docs[$doc['id']]['relation_url'] = array_merge($docs[$doc['id']]['relation_url'], $doc['relation_url']);
+                            $docs[$doc['id']]['relation_origin'] = array_merge($docs[$doc['id']]['relation_origin'], $doc['relation_origin']);
+                        } else {
+                            $docs[$doc['id']] = $doc;
+                        }
+
+                        $this->log('Fixed relationship from ' . $related['registry_object_id'] . ' to ' . $ro->id);
                     }
-
-                    $doc = [
-                        'id' => md5($related['key'] . $ro->key),
-                        'from_id' => $related['registry_object_id'],
-                        'from_key' => $related['key'],
-                        'from_status' => $related['status'],
-                        'from_title' => $related['title'],
-                        'from_class' => $related['class'],
-                        'from_type' => $related['type'],
-                        'from_slug' => $related['slug'],
-                        'to_id' => $ro->id,
-                        'to_class' => $ro->class,
-                        'to_type' => $ro->type,
-                        'to_key' => $ro->key,
-                        'to_title' => $ro->title,
-                        'to_slug' => $ro->slug,
-                        'relation' => [$related['relation_type']],
-                        'relation_origin' => [$reverseType]
-                    ];
-
-                    // additional fields
-                    $doc['relation'] = startsWith($related['origin'], 'REVERSE') ? [getReverseRelationshipString($related['relation_type'])] : [$related['relation_type']];
-                    $doc['relation_description'] = isset($related['relation_description']) ? [$related['relation_description']] : [];
-                    $doc['relation_url'] = isset($related['relation_url']) ? [$related['relation_url']] : [];
-
-                    if (array_key_exists($doc['id'], $docs)) {
-                        //already exists a relation, add new relation to it
-                        $docs[$doc['id']]['relation'] = array_merge($docs[$doc['id']]['relation'], $doc['relation']);
-                        $docs[$doc['id']]['relation_description'] = array_merge($docs[$doc['id']]['relation_description'], $doc['relation_description']);
-                        $docs[$doc['id']]['relation_url'] = array_merge($docs[$doc['id']]['relation_url'], $doc['relation_url']);
-                        $docs[$doc['id']]['relation_origin'] = array_merge($docs[$doc['id']]['relation_origin'], $doc['relation_origin']);
-                    } else {
-                        $docs[$doc['id']] = $doc;
-                    }
-
-                    $this->log('Fixed relationship from ' . $related['registry_object_id'] . ' to ' . $ro->id);
 
                     /**
                      * Fix Portal index
@@ -198,43 +212,45 @@ class FixRelationshipTask extends Task
                      * - intensive/easy = indexSolr the other record
                      * - fast/hard = updateSolr the other record with the missing bits
                      */
+                    if (in_array('portal', $this->includes)) {
+                        if (!$this->relationPortalExist($ro, $related['registry_object_id']) || sizeof($relatedObjects) > 1000) {
+                            $this->ci->solr
+                                ->init()
+                                ->setCore('portal')
+                                ->setOpt('fl', 'id')
+                                ->setOpt('fq', '+id:' . $related['registry_object_id']);
+                            $solrResult = $this->ci->solr->executeSearch(true);
+                            if ($solrResult && array_key_exists('response', $solrResult)) {
+                                if ($solrResult['response']['numFound'] > 0) {
+                                    //object exist, just updateSolr
+                                    $searchClass = $ro->class;
+                                    if ($ro->class == 'party') {
+                                        $searchClass = (strtolower(trim($ro->type)) == 'group') ? 'party_multi' : 'party_one';
+                                    }
+                                    $updateDoc = [
+                                        'id' => $related['registry_object_id'],
+                                        'related_'.$searchClass.'_id' => ['add' => $ro->id],
+                                        'related_'.$searchClass.'_title' => ['add' => $ro->title],
+                                    ];
+                                    $updateDocs[] = $updateDoc;
 
-                    if (!$this->relationPortalExist($ro, $related['registry_object_id'])) {
-                        //syncs the other doc todo updateSolr instead
-                        $this->ci->solr
-                            ->init()
-                            ->setCore('portal')
-                            ->setOpt('fl', 'id')
-                            ->setOpt('fq', '+id:' . $related['registry_object_id']);
-                        $solrResult = $this->ci->solr->executeSearch(true);
-                        if ($solrResult && array_key_exists('response', $solrResult)) {
-                            if ($solrResult['response']['numFound'] > 0) {
-                                //object exist, just updateSolr
-                                $searchClass = $ro->class;
-                                if ($ro->class == 'party') {
-                                    $searchClass = (strtolower(trim($ro->type)) == 'group') ? 'party_multi' : 'party_one';
-                                }
-                                $updateDoc = [
-                                    'id' => $related['registry_object_id'],
-                                    'related_'.$searchClass.'_id' => ['add' => $ro->id],
-                                    'related_'.$searchClass.'_title' => ['add' => $ro->title],
-                                ];
-                                $this->indexSolr('portal', [$updateDoc], false);
-                                $this->log('Updated portal index of '.$related['registry_object_id']. ' to include reference to '.$ro->id);
-                            } else {
-                                //object does not exist, create the object and sync it
-                                $relatedRo = $this->ci->ro->getByID($related['registry_object_id']);
-                                if ($relatedRo) {
-                                    $relatedRo->sync();
-                                    $this->log('Indexed ' . $related['registry_object_id']. ' to portal core');
+                                    // $this->log('Updated portal index of '.$related['registry_object_id']. ' to include reference to '.$ro->id);
                                 } else {
-                                    $this->log($related['registry_object_id']. ' not found!');
+                                    //object does not exist, create the object and sync it
+                                    $relatedRo = $this->ci->ro->getByID($related['registry_object_id']);
+                                    if ($relatedRo) {
+                                        // @todo queue this in another sync task instead, maybe
+                                        $relatedRo->index_solr(false);
+                                        $this->log('Indexed ' . $related['registry_object_id']. ' to portal core');
+                                    } else {
+                                        $this->log($related['registry_object_id']. ' not found!');
+                                    }
                                 }
                             }
-                        }
 
-                    } else {
-                         $this->log('Relation already exist from ' . $related['registry_object_id'] . ' to ' . $ro->id . ' in portal. No action required. '.$related['relation_type'].'( '.$related['origin'].' )');
+                        } else {
+                            $this->log('Relation already exist from ' . $related['registry_object_id'] . ' to ' . $ro->id . ' in portal. No action required. '.$related['relation_type'].'( '.$related['origin'].' )');
+                        }
                     }
                 }
             }
@@ -242,6 +258,8 @@ class FixRelationshipTask extends Task
 
         $docs = array_values($docs);
         $this->indexSolr('relations', $docs, false);
+        $this->indexSolr('portal', $updateDocs, false);
+        $this->ci->solr->commit();
     }
 
     /**
