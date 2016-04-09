@@ -1,0 +1,96 @@
+#!/bin/sh
+#
+# ands-solr  Startup script for the ANDS SOLR Service
+# chkconfig: - 86 15
+# description: The ANDS SOLR service provides indexing service.
+
+### BEGIN INIT INFO
+# Provides:
+# Required-Start:
+# Required-Stop:
+# Should-Start:
+# Should-Stop:
+# Default-Start:
+# Default-Stop:
+# Short-Description: This is the ANDS SOLR Service.
+# Description:
+### END INIT INFO
+
+# Source function library.
+. /etc/init.d/functions
+
+solr_bin="/opt/solr-5.4.0/bin/solr"
+solr_param=""
+prog="ands-solr"
+
+[ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
+
+pidfile=/opt/ands-solr.pid
+lockfile=/var/lock/subsys/$prog
+
+start () {
+    if [ $UID -ne 0 ] ; then
+        echo $"User has insufficient privilege."
+        exit 4
+    fi
+    echo -n $"Starting $prog: "
+    $solr_bin start $solr_param
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && touch $lockfile
+}
+
+stop () {
+    if [ $UID -ne 0 ] ; then
+        echo $"User has insufficient privilege."
+        exit 4
+    fi
+    echo -n $"Stopping $prog: "
+    $solr_bin stop -all
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && rm -f $lockfile
+}
+
+restart() {
+    stop
+    start
+}
+
+status() {
+    if [ $UID -ne 0 ] ; then
+        echo $"User has insufficient privilege."
+        exit 4
+    fi
+    $solr_bin status
+    retval=$?
+    echo
+}
+
+usage() {
+    echo $"Usage: $0 {start|stop|status|restart}"
+}
+
+case "$1" in
+    start)
+        $1
+        ;;
+    stop)
+        $1
+        ;;
+    restart)
+        $1
+        ;;
+    status)
+        status
+        ;;
+    usage)
+        usage
+        exit 0
+        ;;
+    *)
+        usage
+        exit 2
+esac
+exit $?
+# vim:syntax=sh
