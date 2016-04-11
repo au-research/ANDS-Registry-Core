@@ -1,6 +1,7 @@
 <script>
 	var base_url = "{{base_url()}}";
 	var registry_url = "{{registry_url()}}";
+@yield('script')
 </script>
 
 @if(is_dev())
@@ -21,10 +22,12 @@
 
 <script src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.js'></script>
 <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
-<script type="text/javascript" src="{{ base_url() }}apps/assets/vocab_widget/js/vocab_widget.js"></script>
+<script type="text/javascript" src="{{ base_url() }}apps/assets/vocab_widget/js/vocab_widget_v2.js"></script>
 
 
 @if(is_dev())
+    <!-- ui-select must be loaded after JQuery. -->
+    <script type="text/javascript" src="{{ asset_url('js/lib/ui-select/dist/select.js') }}"></script>
     <script type="text/javascript" src="{{ asset_url('js/vocabs_app.js') }}"></script>
     <script type="text/javascript" src="{{ asset_url('js/filters.js') }}"></script>
     <script type="text/javascript" src="{{ asset_url('js/directives.js') }}"></script>

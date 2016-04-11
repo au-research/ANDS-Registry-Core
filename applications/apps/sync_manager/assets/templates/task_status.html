@@ -1,0 +1,12 @@
+<div>
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{{ header }}</h4>
+    </div>
+    <div class="modal-body swatch-white" ng-cloak>
+        <div class="well" ng-if="tasks.length == 0">
+            No tasks to display!
+        </div>
+        <task-list tasks="tasks"></task-list>
+    </div>
+</div>

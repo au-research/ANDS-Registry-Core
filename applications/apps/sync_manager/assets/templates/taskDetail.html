@@ -1,0 +1,59 @@
+<div>
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{{ header }}</h4>
+    </div>
+    <div class="modal-body swatch-white" ng-cloak>
+        <div ng-if="task">
+            <dl class="dl-horizontal">
+                <dt>ID</dt><dd>{{ task.id  || '?' }}</dd>
+                <dt>Name</dt><dd>{{ task.name  || '?' }}</dd>
+                <dt>Status</dt><dd>{{ task.status  || '?' }}</dd>
+                <dt>Type</dt><dd>{{ task.type  || '?' }}</dd>
+                <dt>Date Added</dt><dd>{{ task.date_added || '?' }}</dd>
+                <dt>Next Run</dt><dd>{{ task.next_run || '?'  }}</dd>
+                <dt>Last Run</dt><dd>{{ task.last_run  || '?' }}</dd>
+                <dt>Priority</dt><dd>{{ task.priority  || '?' }}</dd>
+                <dt>Frequency</dt><dd>{{ task.frequency  || '?' }}</dd>
+            </dl>
+            <div class="btn-group">
+                <button
+                        class="btn"
+                        ng-disabled="task.running"
+                        ng-click="taskOperation('run', task)">
+                    <i class="icon icon-play"></i> Run {{ task.id }}
+                </button>
+                <button
+                        class="btn"
+                        ng-disabled="task.running"
+                        ng-click="showTask(task)">
+                    <i class="icon icon-search"></i> Detail
+                </button>
+                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a ng-click="taskOperation('reschedule', task)">
+                            <i class="icon icon-refresh"></i> Reschedule
+                        </a>
+                    </li>
+                    <li>
+                        <a ng-click="taskOperation('clearMessage', task)">
+                            <i class="icon icon-trash"></i> Clear Message
+                        </a>
+                    </li>
+                    <li>
+                        <a ng-click="taskOperation('delete', task)">
+                            <i class="icon icon-remove"></i> Delete
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <strong>Params</strong>
+            <pre>{{ task.params }}</pre>
+            <strong ng-if="task.message.log">Message Log: </strong>
+            <pre ng-if="task.message.log"><span ng-repeat="log in task.message.log track by $index">{{ log }}<br/></span></pre>
+        </div>
+    </div>
+</div>

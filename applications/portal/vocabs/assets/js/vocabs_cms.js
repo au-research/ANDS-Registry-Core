@@ -16,14 +16,26 @@
         return this.getTime() === this.getTime();
     };
 
-    function addVocabsCtrl($log, $scope, $sce, $timeout, $location, $modal, vocabs_factory) {
+    function addVocabsCtrl($log, $scope, $sce, $timeout,
+                           $location, $modal, vocabs_factory) {
 
         $scope.form = {};
 
         // Initialize sections that can have multiple instances.
         // Note the distinction between sections which are optional,
         // and those for which there must be at least one instance.
-        $scope.vocab = {top_concept: [], subjects: [{ subject_source: "", subject:"" }], language: [""]};
+        $scope.vocab = {
+            top_concept: [],
+            subjects: [
+                {
+                    subject_source: "anzsrc-for",
+                    subject_label: "",
+                    subject_iri: "",
+                    subject_notation: ""
+                }
+            ],
+            language: [""]
+        };
         /**
          * Collect all the user roles, for vocab.owner value
          */
@@ -51,8 +63,50 @@
             {"value": "ru", "text": "Russian"},
             {"value": "es", "text": "Spanish"}
         ];
-        $scope.licence = ["CC-BY", "CC-BY-SA", "CC-BY-ND", "CC-BY-NC", "CC-BY-NC-SA", "CC-BY-NC-ND", "ODC-By", "GPL", "AusGoalRestrictive", "NoLicence", "Unknown/Other"];
-        $scope.subject_sources = ['ANZSRC-FOR', 'local'];
+        $scope.licence = ["CC-BY", "CC-BY-SA", "CC-BY-ND",
+                          "CC-BY-NC", "CC-BY-NC-SA", "CC-BY-NC-ND",
+                          "ODC-By", "GPL", "AusGoalRestrictive",
+                          "NoLicence", "Unknown/Other"];
+
+        // Initialize subject sources
+        $scope.subject_sources = [];
+        // $scope.subject_sources will be an array of objects; one
+        // for each vocabulary in the subject source dropdown.
+        // Each object has keys "id", "label", and "mode".
+        // For id other than "local", there will also be
+        // keys "resolvingService" and "uriprefix".
+        // The data comes from the top-level global_config.php's
+        // $ENV['vocab_resolving_services'] setting.
+        // For legacy reasons, the resolvingService setting
+        // typically ends with a slash, but the vocab widget
+        // requires a repository setting _without_ a trailing
+        // slash. So we remove such during initialization.
+        // E.g., {"id":"anzsrc-for",
+        //        "label":"ANZSRC Field of Research",
+        //        "mode":"tree",
+        //        "resolvingService":"http://...",
+        //        "uriprefix":"http://purl.org/.../"
+        //       }
+        // See if there are vocab resolving services.
+        if (typeof vocab_resolving_services !== 'object') {
+            alert('Unable to populate subject source dropdown');
+            return;
+        }
+        // Vocab resolving services are available.
+        for (var v in vocab_resolving_services) {
+            var vo = {id: v};
+            $.each(vocab_resolving_services[v],
+                   function (key, value) {
+                       if (key === 'resolvingService') {
+                           // Special treatment. Remove any
+                           // trailing slash(es).
+                           vo[key] = value.replace(/\/$/, "");
+                       } else {
+                           vo[key] = value;
+                       }
+                   });
+            $scope.subject_sources.push(vo);
+        }
 
         $scope.opened = false;
         $scope.decide = false;
@@ -70,7 +124,8 @@
 
         /**
          * If there is a slug available, this is an edit view for the CMS
-         * Proceed to overwrite the vocab object with the one fetched from the vocabs_factory.get()
+         * Proceed to overwrite the vocab object with the one fetched
+         * from the vocabs_factory.get()
          * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
          */
         if ($('#vocab_slug').val()) {
@@ -258,7 +313,12 @@
 
                             $scope.vocab.subjects = [];
                             angular.forEach(chosen, function (theone) {
-                                $scope.vocab.subjects.push({subject: theone, subject_source: 'local'});
+                                $scope.vocab.subjects.push(
+                                    {subject_source: 'local',
+                                     subject_label: theone,
+                                     subject_iri: '',
+                                     subject_notation: ''
+                                     });
                             });
                         }
                         if (data['dcterms:language']) {
@@ -352,7 +412,8 @@
             // as it is in the model.
             $scope.vocab.creation_date = $('#creation_date').val();
 
-            if ($scope.mode == 'add' || ($scope.vocab.status == 'published' && status == 'draft')) {
+            if ($scope.mode == 'add' ||
+                ($scope.vocab.status == 'published' && status == 'draft')) {
                 $scope.vocab.status = status;
                 $scope.status = 'saving';
                 $log.debug('Adding Vocab', $scope.vocab);
@@ -415,12 +476,12 @@
 
                 //language validation
                 if (!$scope.vocab.language || $scope.vocab.language.length == 0) {
-                    $scope.error_message = 'There must be at least 1 language';
+                    $scope.error_message = 'There must be at least one language';
                 }
 
                 //subject validation
-                if (!$scope.vocab.subjects || $scope.vocab.subjects.length == 0 || $scope.subjects_has_no_nonempty_elements()) {
-                    $scope.error_message = 'There must be at least 1 subject';
+                if (!$scope.vocab.subjects || $scope.vocab.subjects.length == 0 || $scope.subjects_has_no_complete_anzsrc_for_elements()) {
+                    $scope.error_message = 'There must be at least one subject drawn from the "ANZSRC Field of Research" vocabulary';
                 }
                 if ($scope.subjects_has_an_only_partially_valid_element()) {
                     $scope.error_message = 'There is a partially-completed subject. Either complete it or remove it.';
@@ -428,7 +489,7 @@
 
                 //publisher validation
                 if (!$scope.vocab.related_entity) {
-                    $scope.error_message = 'There must be at least 1 related entity that is a publisher';
+                    $scope.error_message = 'There must be at least one related entity that is a publisher';
                 } else {
                     var hasPublisher = false;
                     angular.forEach($scope.vocab.related_entity, function (obj) {
@@ -580,7 +641,10 @@
             var newValue;
             // 'subjects' has two parts; special treatment.
             if (list == 'subjects') {
-                newValue = {subject_source: '', subject: ''};
+                newValue = {subject_source: '',
+                            subject_label: '',
+                            subject_iri: '',
+                            subject_notation: ''};
             } else {
                 // Otherwise ('language' and 'top_concept') ...
                 newValue = '';
@@ -588,6 +652,7 @@
 
             // Add new blank item to list.
             $scope.vocab[list].push(newValue);
+
         };
 
         /**
@@ -619,7 +684,12 @@
                     $scope.vocab[type] = [""];
                     break;
                 case 'subjects':
-                    $scope.vocab[type] = [{ subject_source: "", subject:"" }];
+                    $scope.vocab[type] = [{
+                        subject_source: "anzsrc-for",
+                        subject_label: "",
+                        subject_iri: "",
+                        subject_notation: ""
+                    }];
                     break;
                 default:
                 }
@@ -665,12 +735,22 @@
 
         /** Filter function for one subject object. Returns true
             if the subject is valid, i.e., contains both a non-empty
-            source and a non-empty subject. */
+            source and a non-empty subject label. */
         $scope.valid_subject_filter = function(el) {
             return ('subject_source' in el) &&
                 ($scope.is_non_empty_string(el.subject_source)) &&
-                ('subject' in el) &&
-                ($scope.is_non_empty_string(el.subject));
+                ('subject_label' in el) &&
+                ($scope.is_non_empty_string(el.subject_label));
+        }
+
+        /** Filter function for one subject object. Returns true
+            if the subject has both source = 'anzsrc-for' and a
+            non-empty subject label. */
+        $scope.valid_anzsrc_for_subject_filter = function(el) {
+            return ('subject_source' in el) &&
+                (el.subject_source == 'anzsrc-for') &&
+                ('subject_label' in el) &&
+                ($scope.is_non_empty_string(el.subject_label));
         }
 
         /** Filter function for one subject object. Returns true
@@ -680,39 +760,53 @@
         $scope.partially_valid_subject_filter = function(el) {
             return (('subject_source' in el) &&
                     ($scope.is_non_empty_string(el.subject_source))) ||
-                (('subject' in el) &&
-                 ($scope.is_non_empty_string(el.subject)));
+                (('subject_label' in el) &&
+                 ($scope.is_non_empty_string(el.subject_label)));
         }
 
         /** Filter function for one subject object. Returns true
             if the subject has exactly one part valid,
             i.e., contains either a non-empty
-            source or a non-empty subject, but not both. */
+            source or a non-empty subject label,
+            but not both. */
         $scope.only_partially_valid_subject_filter = function(el) {
             return (('subject_source' in el) &&
                     ($scope.is_non_empty_string(el.subject_source))) !=
-                (('subject' in el) &&
-                 ($scope.is_non_empty_string(el.subject)));
+                (('subject_label' in el) &&
+                 ($scope.is_non_empty_string(el.subject_label)));
         }
 
         /** Utility function for validation of subjects. In order
             to help the user not lose a partially-complete subject,
             call this function to check if the user has a subject for
-            which there is only a source or a subject, but not both. */
+            which there is only a source or a subject label, but not both. */
         $scope.subjects_has_an_only_partially_valid_element = function () {
-            return $scope.vocab.subjects.filter($scope.only_partially_valid_subject_filter).length > 0;
+            return $scope.vocab.subjects.filter(
+                $scope.only_partially_valid_subject_filter).length > 0;
         }
 
         /** Utility function for validation of subjects. The list
             of subjects is supposed to have at least one
             element that has both a non-empty source and a non-empty
-            subject. This method returns true
+            subject label. This method returns true
             if this is not the case. */
-        $scope.subjects_has_no_nonempty_elements = function () {
+        $scope.subjects_has_no_complete_anzsrc_for_elements = function () {
             return $scope.vocab.subjects == undefined ||
                 $scope.vocab.subjects.filter($scope.valid_subject_filter) == 0;
         }
 
+        /** Utility function for validation of subjects. This function
+            implements a new business rule (CC-1623) that requires that each
+            vocabulary have at least one subject drawn from
+            ANZSRC-FOR.  So, the list of subjects is supposed to have at
+            least one element that has both source = 'anzsrc-for' and
+            a non-empty subject label. This method returns true if
+            this is not the case. */
+        $scope.subjects_has_no_complete_anzsrc_for_elements = function () {
+            return $scope.vocab.subjects == undefined ||
+                $scope.vocab.subjects.filter(
+                    $scope.valid_anzsrc_for_subject_filter) == 0;
+        }
 
     }
 
@@ -781,5 +875,8 @@ RewriteRule ^/ands_doc/tooltips$  /ands_doc/pages/viewpage.action?pageId=2247884
             });
         };
     });
+
+
+
 
 })();

@@ -110,37 +110,29 @@ class Services extends MX_Controller {
 		}
 		else
 		{
-			if (!$this->input->post('organisation') || !$this->input->post('contact_email'))
-			{
-				throw new Exception("One of the mandatory fields (Organisation name or Contact Email) were not entered. Please try again.");
-			}
-			else
-			{
-				// Generate a random API key hash
-				$api_key = substr(md5(mt_rand()), 0, 12);
 
-				$query = $this->db->get_where('api_keys', array('api_key'=>$api_key));
-				if ($query->num_rows == 0)
-				{
-					$this->db->insert('api_keys',
-						array(	'api_key' => $api_key, 
-								'owner_email'=>$this->input->post('contact_email'),
-								'owner_organisation'=>$this->input->post('organisation'),
-								'owner_purpose'=>$this->input->post('purpose'),
-								'created'=>time()
-					));
-				}
-				else
-				{
-					throw new Exception("API Key could not be generated (numeric error = ".$api_key."). Please try again.");
-				}
+            $params = array('contact_email'=>$this->input->post('contact_email'),
+                'organisation'=>$this->input->post('organisation'),
+                'purpose'=>$this->input->post('purpose'),
+                'sector'=>$this->input->post('sector'),
+                'ip'=>$this->input->ip_address());
 
-				$data["api_key"] = $api_key;
-				$data["organisation"] = $this->input->post('organisation');
+            $base_url=$this->config->item('default_base_url');
 
-				$this->load->view('show_api_key', $data);
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_URL => $base_url.'api/api_key/register/?api_key=api',
+                CURLOPT_POST => 1,
+                CURLOPT_POSTFIELDS => $params,
+            ));
 
-			}
+            $response = curl_exec($curl);
+            $data = json_decode($response,true);
+
+            curl_close($curl);
+
+			$this->load->view('show_api_key', $data['data']);
 		}
 	}
 
@@ -300,6 +292,17 @@ class Services extends MX_Controller {
 		if ($note) { $values['note'] = $note; }
 
 		$this->db->insert('api_requests', $values);
+
+        // logging of calls to legacy version of our services and widgets to flat file logging - added 09/02/2016
+
+        require_once (API_APP_PATH.'core/helpers/api_helper.php');
+        $terms = array(
+            'event' => 'api_hit',
+            'api_key' => $api_key,
+            'api_version' => 'legacy',
+            'path' => implode($params,"&"),
+        );
+        api_log_terms($terms);
 	}
 	
 }	

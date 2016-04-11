@@ -82,16 +82,16 @@ function curl_post($url, $post, $header=false)
     $data = curl_exec($ch);
 	
 	
-    // if (curl_errno($ch)) {
-    //    print "curl_error:" . curl_error($ch).'<br/>';
-    // } else {
-    //    curl_close($ch);
-    //    print "curl exited okay\n";
-    //    echo "Data returned...\n";
-    //    echo "------------------------------------\n";
-    //    echo $data;
-    //    echo "------------------------------------\n";
-    // } 
+//     if (curl_errno($ch)) {
+//        print "curl_error:" . curl_error($ch).'<br/>';
+//     } else {
+//        curl_close($ch);
+//        print "curl exited okay\n";
+//        echo "Data returned...\n";
+//        echo "------------------------------------\n";
+//        echo $data;
+//        echo "------------------------------------\n";
+//     }
     return $data;
 }
 
@@ -370,6 +370,11 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
     return $nextHarvest;
 }
 
+function startsWith($haystack, $needle) {
+    // search backwards starting from haystack length characters from the end
+    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+}
+
 function endsWith($haystack, $needle){
     return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 }
@@ -515,4 +520,48 @@ function titleCase($title)
 
     return $newtitle;
 
+}
+
+function getIdentifierURL($type, $identifier) {
+    $url = '';
+    switch ($type) {
+        case 'doi':
+            if(!strpos($identifier,"doi.org/")) {
+                $url ="http://dx.doi.org/".$identifier;
+            } else {
+                $url = "http://dx.doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
+            }
+            break;
+        case 'orcid':
+            if(!strpos($identifier,"orcid.org/")) $url ="http://orcid.org/".$identifier;
+            else $url = "http://orcid.org/".substr($identifier,strpos($identifier,"orcid.org/")+10);
+            break;
+        case 'handle':
+            if(strpos($identifier,"dl:")>0) {
+                $url ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
+            } else if(strpos($identifier,"dl.handle.net/")>0) {
+                $url ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl.handle.net/")+15);
+            }
+            break;
+        case 'ark':
+        case "uri":
+        case "url":
+            $url = $identifier;
+            break;
+        case 'purl':
+            if(strpos($identifier,"url.org/")<1) {
+                $url ="http://purl.org/".$identifier;
+            } else {
+                $url = "http://purl.org/".substr($identifier,strpos($identifier,"purl.org/")+9);
+            }
+            break;
+        case 'AU-ANL:PEAU':
+            if(!strpos($identifier,"nla.gov.au/")) {
+                $url ="http://nla.gov.au/".$identifier;
+            } else {
+                $url = "http://nla.gov.au/".substr($identifier,strpos($identifier,"nla.gov.au/")+11);
+            }
+            break;
+    }
+    return $url;
 }

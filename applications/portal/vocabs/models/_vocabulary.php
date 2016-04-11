@@ -89,12 +89,8 @@ class _vocabulary
             }
         }
 
-        if (isset($data['subjects'])) {
-            $json['subjects'] = array();
-            foreach ($data['subjects'] as $subject) {
-                $json['subjects'][] = $subject['subject'];
-            }
-        }
+        $json = $this->processSubjects($data, $json);
+
         if (isset($data['top_concept'])) {
             $json['top_concept'] = array();
             if (is_array($data['top_concept'])) {
@@ -145,9 +141,11 @@ class _vocabulary
             if($concept_list_path){
                 $content = @file_get_contents($concept_list_path);
                 $content = json_decode($content, true);
-                foreach ($content as $concept) {
-                    if (isset($concept['prefLabel'])) {
-                        $json['concept'][] = $concept['prefLabel'];
+                if ($content) {
+                    foreach ($content as $concept) {
+                        if (isset($concept['prefLabel'])) {
+                            $json['concept'][] = $concept['prefLabel'];
+                        }
                     }
                 }
             }
@@ -175,18 +173,120 @@ class _vocabulary
                so that it doesn't return an array on success and a Boolean
                on failure!
             */
-            foreach($current_version['version_access_points'] as $ap)
-            {
-                if($ap['type'] == 'sissvoc'){
-                    $url = json_decode($ap['portal_data'])->uri;
-                    $json['sissvoc_end_point'] = $url;
-                    $json['widgetable']=true;
+            if (array_key_exists('version_access_points', $current_version)
+                && is_array($current_version['version_access_points'])) {
+                foreach($current_version['version_access_points'] as $ap)
+                {
+                    if($ap['type'] == 'sissvoc'){
+                        $url = json_decode($ap['portal_data'])->uri;
+                        $json['sissvoc_end_point'] = $url;
+                        $json['widgetable']=true;
+                    }
                 }
             }
+
         }
 
         return $json;
     }
+
+    /**
+     * Process each subject in the data record to produce the subject
+     * component of the Solr document for this vocabulary.
+     * Find resolvable subjects and include their broader subjects
+     * as well in the Solr index.
+     * TODO: support getting broader subjects for vocabs that don't
+     * have notations (e.g., GCMD). Preliminary work already done
+     * in engine/libraries/Vocab.php: new (but not yet completed)
+     * functions resolveSubjectByUri() and getBroaderSubjectsByUri().
+     * @return The subjects in JSON format for inclusion in the
+     *         Solr document.
+     */
+    function processSubjects($data, $json)
+    {
+
+        $subjectsResolved = array();
+
+        if (isset($data['subjects'])) {
+            $ci =& get_instance();
+            $ci->load->library('vocab');
+
+            foreach ($data['subjects'] as $subject) {
+                $value = "";
+                $notation = "";
+                $iri = "";
+                $type = $subject['subject_source'];
+                if(isset($subject['subject']))
+                    $value = $subject['subject'];
+                if(isset($subject['subject_label']))
+                    $value = $subject['subject_label'];
+                if(isset($subject['subject_iri']))
+                    $iri = $subject['subject_iri'];
+
+                if(isset($subject['subject_notation'])
+                   && $subject['subject_notation'] != ""){
+                    $notation = $subject['subject_notation'];
+                }
+                else{
+                    try{
+                        $subject = $ci->vocab->resolveLabel($value, $type);
+                        if(isset($subject['notation'])){
+                            $notation = $subject['notation'];
+                        }
+                        else{
+                            $json['subject_types'][] = $type;
+                            $json['subject_labels'][] = $value;
+                            $json['subject_notations'][] = '';
+                            $json['subject_iris'][] = $iri;
+                                // 'Label not defined in ' . $type;
+                        }
+                    }
+                    catch(Exception $e){
+                        $json['subject_types'][] = $type;
+                        $json['subject_labels'][] = $value;
+                        $json['subject_notations'][] = '';
+                        $json['subject_iris'][] = $iri;
+                        // echo( $e->getMessage());
+                    }
+                }
+
+                if($notation != ""
+                   && !array_key_exists($notation, $subjectsResolved))
+                {
+
+                    $resolvedValue = $ci->vocab->resolveSubject($notation,
+                                                                $type);
+                    $json['subject_types'][] = $type;
+                    $json['subject_labels'][] = $value;
+                    $json['subject_notations'][] = $resolvedValue['notation'];
+                    $json['subject_iris'][] = $resolvedValue['about'];
+                    $subjectsResolved[$resolvedValue['notation']] = $value;
+                    if($resolvedValue['uriprefix'] != 'non-resolvable')
+                    {
+                        $broaderSubjects =
+                            $ci->vocab->getBroaderSubjects(
+                                $resolvedValue['uriprefix'], $notation);
+                        foreach($broaderSubjects as $broaderSubject)
+                        {
+                            if(!array_key_exists($broaderSubject['notation'],
+                                                 $subjectsResolved)){
+                                $json['subject_types'][] = $type;
+                                $json['subject_labels'][] =
+                                    $broaderSubject['value'];
+                                $json['subject_notations'][] =
+                                    $broaderSubject['notation'];
+                                $json['subject_iris'][] =
+                                    $broaderSubject['about'];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $json;
+    }
+
+
 
     /**
      * Return the current object as a displayable array, with the data attribute break apart
@@ -570,7 +670,7 @@ class _vocabulary
             //CC-1460
             //check if there's an existing vocab with the same slug in published state
             $result = $db->get_where('vocabularies', array('slug'=> $slug, 'status' => 'published'));
-            
+
             isset($this->prop['from_vocab_id']) ? $draft_base = $this->prop['from_vocab_id'] :$draft_base = 0 ;
 
             if ($result->num_rows() > 0) {

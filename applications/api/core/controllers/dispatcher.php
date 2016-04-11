@@ -70,11 +70,13 @@ class Dispatcher extends MX_Controller
 
         //check for versions
         /**
-         * @todo regex for matching version number
+         * @todo regex for matching version number may need improving
          */
-        if (strpos($params[0], "v") !== false) {
+
+        if(preg_match('/v[0-9].[0-9]/',$params[0])){
             $api_version = $params[0];
             array_shift($params);
+
         } else {
             //use latest version from application directive
             $directives = $this->config->item('application_directives');
@@ -134,10 +136,12 @@ class Dispatcher extends MX_Controller
             $api_key = 'api';
         }
 
-        //throw exception if there's no API Key provided
-        //disabled for development for now
+        /**
+         * If no api_key is presented, api_key is set to public
+         */
         if (!$api_key && $method != 'index') {
-             throw new Exception('An API Key is required to access this service');
+            $api_key = 'public';
+            // throw new Exception('An API Key is required to access this service');
         }
 
         //setting api version for the formatter for display purpose
@@ -210,6 +214,11 @@ class Dispatcher extends MX_Controller
     public function route($api_key, $api_version, $params)
     {
         try {
+
+
+                $this->benchmark->mark('code_start');
+
+
             $namespace = 'ANDS\API';
             $class_name = $params[0].'_api';
             $file = APP_PATH.$params[0].'/'.$class_name.'.'.$api_version.'.php';
@@ -221,14 +230,19 @@ class Dispatcher extends MX_Controller
             $class = new $class_name();
             $result = $class->handle($params);
 
-            $terms = array(
+
+            $this->benchmark->mark('code_end');
+            $elapsed = $this->benchmark->elapsed_time('code_start', 'code_end');
+
+            $terms = array (
                 'event' => 'api_hit',
                 'api_key' => $api_key,
                 'api_version' => $api_version,
-                'path' => implode('/', $params)
+                'path' => implode('/', $params),
+                'elapsed' => $elapsed
             );
-            api_log_terms($terms);
 
+            api_log_terms($terms);
             $this->formatter->display($result);
         } catch (Exception $e) {
             $this->formatter->error($e->getMessage());

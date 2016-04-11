@@ -148,7 +148,14 @@ class Records extends CI_Model
                                        $db->where_in("registry_objects.class",
                                            $args["allowedclass"]);
                                    }
-
+                                   if ($args['checkType'])
+                                   {
+                                       $db->join("registry_object_attributes at",
+                                           "at.registry_object_id = registry_objects.registry_object_id",
+                                           "inner")
+                                           ->where("at.value IN ('collection', 'repository', 'dataset', 'software')")
+                                           ->where("at.attribute = 'type'");
+                                   }
 							       $db->order_by("registry_objects.registry_object_id", "asc");
 							       return $db;
 						       })),

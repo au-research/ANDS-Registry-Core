@@ -1,4 +1,21 @@
 <?php
+
+function constructPortalSearchQuery($queries)
+{
+	$query = portal_url('search');
+	$query .= '#!/';
+	foreach ($queries as $key=>$value) {
+		if (is_array($value)) {
+            foreach ($value as $v) {
+                $query.= $key .'='.$v.'/';
+            }
+        } else {
+            $query .= $key . '=' . $value . '/';
+        }
+	}
+	return $query;
+}
+
 function subjectSortResolved($a, $b) {
     if ($a['resolved'] == $b['resolved']) {
         return 0;
@@ -36,5 +53,7 @@ function profile_image() {
 		return false;
 	}
 }
+
+
 
 ?>

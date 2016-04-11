@@ -141,7 +141,7 @@ app.directive('resolve', function($http, $log, vocab_factory){
 
 app.directive('resolveRo', function($log, $http, record_factory) {
 	return {
-		template: '{{title}}',
+		template: '<span tip="{{title}}">{{title}}</span>',
 		scope: {
 			roid: '='
 		},

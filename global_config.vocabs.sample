@@ -10,7 +10,7 @@
 /*
 /*					Vocabs Software Configuration
 /*
-/*		Release Version :	17.1
+/*		Release Version :	19
 /*		Contact Person  :	services@ands.org.au
 /*		Help/support    :	http://developers.ands.org.au/
 /*
@@ -20,7 +20,7 @@
 /* (SECTION 1) REQUIRED CONFIGURATION OPTIONS
 /*************************************************************************/
 // The Release Version
-$ENV['release_version'] = 'r17.1';
+$ENV['release_version'] = 'r19';
 
 // Details of your database server (note: advanced settings can be modified in Sect 4)
 $eDBCONF['default']['hostname'] = 'localhost';  // hostname or IP address
@@ -126,6 +126,56 @@ $ENV['solr_url'] = "http://localhost:8983/solr/";
 // such use, this URL is prepended to get to the SISSVoc endpoints.
 // This setting does not have to be valid, but it has to be a non-empty string.
 $ENV['sissvoc_url'] = "http://localhost/repository/api/lda/";
+
+// Proxy setting for the vocab widget.  Used on the Vocabs CMS page
+// to access vocab widgets for subject selection.
+$ENV['subject_vocab_proxy'] = $ENV['default_base_url']
+                            . 'apps/vocab_widget/proxy/';
+
+// Definition of the entries in the Vocabs CMS subject dropdown.
+// Based on the RDA-style vocab_resolving_services setting.
+// Note the addition of an entry for 'local'.
+// Supported modes: freetext, tree, and search.
+// Please note: it is an ANDS business rule (CC-1623)
+// that every vocabulary have
+// at least one subject taken from ANZSRC-FOR. This rule is
+// implemented in vocabs_cms.js as a test for the presence of a
+// subject with source = 'anzsrc-for'. Therefore, this list
+// should include an entry with that as the key!
+$ENV['vocab_resolving_services'] =  array(
+    'local' => array(
+        'label' =>
+            'Local Keyword',
+        'mode' =>
+            'freetext'),
+    'anzsrc-for' => array(
+        'label' =>
+            'ANZSRC Field of Research',
+        'mode' =>
+            'tree',
+        'resolvingService' =>
+            'http://localhost/repository/api/lda/anzsrc-for/',
+        'uriprefix' =>
+            'http://purl.org/au-research/vocabulary/anzsrc-for/2008/'),
+    'anzsrc-seo' => array(
+        'label' =>
+            'ANZSRC Socio-economic Objective',
+        'mode' =>
+            'tree',
+        'resolvingService' =>
+            'http://localhost/repository/api/lda/anzsrc-seo/',
+        'uriprefix' =>
+            'http://purl.org/au-research/vocabulary/anzsrc-seo/2008/'),
+    'GCMD' => array(
+        'label' =>
+            'GCMD',
+        'mode' =>
+            'search',
+        'resolvingService' =>
+            'http://localhost/repository/api/lda/gcmd-sci/',
+        'uriprefix' =>
+            'http://gcmdservices.gsfc.nasa.gov/kms/concept/'),
+);
 
 /*************************************************************************/
 /* (SECTION 3) ADDITIONAL REGISTRY CONFIGURATION

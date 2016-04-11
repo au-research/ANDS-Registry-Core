@@ -179,3 +179,9 @@ h1.bordered:after{
     width:150px;
     left:46%
 }
+.listTruncate {
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

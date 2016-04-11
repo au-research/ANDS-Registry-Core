@@ -37,7 +37,7 @@
 													<div class="btn-group pull-right">
 														<a href="{{ portal_url($vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-search"></i> View</a>
 														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
-														<a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
+														<a href="javascript:;" class="btn btn-primary btn-primary-warning deleteVocab" vocab_id="{{ $vocab['id'] }}" title="Delete this vocabulary"><i class="fa fa-trash"></i></a>
 													</div>
 												</td>
 											</tr>
@@ -59,7 +59,7 @@
                         </div><td>
 													<div class="btn-group pull-right">
 														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
-														<a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
+														<a href="javascript:;" class="btn btn-primary btn-primary-warning deleteVocab" vocab_id="{{ $vocab['id'] }}" title="Delete this vocabulary"><i class="fa fa-trash"></i></a>
 													</div>
 												</td>
 											</tr>
@@ -81,7 +81,7 @@
 												</div><td>
 													<div class="btn-group pull-right">
 														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
-														<a href="javascript:;" class="btn btn-primary deleteVocab" vocab_id="{{ $vocab['id'] }}"><i class="fa fa-trash"></i></a>
+														<a href="javascript:;" class="btn btn-primary btn-primary-warning deleteVocab" vocab_id="{{ $vocab['id'] }}" title="Delete this vocabulary"><i class="fa fa-trash"></i></a>
 													</div>
 												</td>
 											</tr>

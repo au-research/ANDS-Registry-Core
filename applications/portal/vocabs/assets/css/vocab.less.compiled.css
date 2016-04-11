@@ -1,5 +1,5 @@
 .swatch-blue {
-  background: #17649a;
+  background: #0c415a;
   color: white;
 }
 .swatch-blue a {
@@ -10,14 +10,28 @@
 }
 .swatch-blue .nav li a:hover,
 .swatch-blue .nav li a:focus {
-  background: #17649a;
+  background: #0c415a;
 }
 .swatch-blue .dropdown-menu li a {
   color: grey;
 }
 .swatch-blue .dropdown-menu li a:hover {
   color: white;
-  background: #17649a;
+  background: #0c415a;
+}
+.swatch-blue .box-square {
+  background: #487577;
+  border: 1px solid #487577;
+}
+.swatch-white .box-square,
+.swatch-white .box-inner {
+  background: #487577;
+  border: 1px solid #487577;
+  color: white;
+}
+.swatch-white .box-square i,
+.swatch-white .box-inner i {
+  color: white;
 }
 .caret-for-input-suggestion {
   z-index: 100;
@@ -45,6 +59,43 @@
 .search-bar {
   padding: 10px 0 10px 10px;
 }
+/* Search Bar. Copied from
+   applications/portal/templates/omega/assets/less/page-search.less
+   But most of it commented out.
+   Uncomment more as needed.
+   @lightGray: #f5f5f5;
+*/
+.search-section {
+  /*
+        color:white;
+        i {
+                color: white !important;
+        }
+        .btn {
+                background:@lightGray;
+                color:black;
+                i {color:black !important;}
+                &:hover{
+                        background:@lightGray;
+                        color:black !important;
+                }
+        }
+        */
+  /*
+        h1 {
+                color:white;
+        }
+        h1.bordered:after {
+                background-color:white;
+        }
+        */
+}
+.search-section a {
+  color: white;
+}
+.search-section a:hover {
+  color: #e9e9e9;
+}
 .vocab-search-result {
   background: white;
   padding: 10px;
@@ -55,7 +106,7 @@
   margin: 7px 0px;
 }
 .vocab-search-result a {
-  color: #17649a;
+  color: #0c415a;
 }
 .current-version-ap-block {
   width: 25%;
@@ -159,7 +210,7 @@ ul.listy li a small {
 }
 .swatch-white a,
 [class*="swatch-"] .swatch-white a {
-  color: #17649a;
+  color: #0c415a;
 }
 .swatch-white a.btn-danger {
   color: white;
@@ -306,6 +357,22 @@ input:disabled + label {
 .cms-help-tip {
   max-width: 460px;
 }
+/* Ditto for CMS subject vocab widget search mode tooltips. */
+.cms-search-widget-tip {
+  width: 600px;
+  max-width: 600px;
+}
+/* Show a thin border around the CMS subject vocab widget
+   search mode input field. */
+.cms-search-widget-tip input {
+  border: 1px solid #cccccc;
+}
+/* Use this, in combination with .btn-primary, to
+   get the correct warning color. This is needed because
+   swatch-gray tends to override everything with its blue. */
+.btn-primary-warning {
+  background-color: #f18d38 !important;
+}
 .concept-tip {
   font-size: 16px;
   max-width: 520px;
@@ -335,6 +402,12 @@ ul.pagi li a.active {
 }
 .break {
   word-wrap: break-word;
+}
+#banner-image {
+  background-image: url(../images/vocabbanner.jpg);
+  background-size: cover;
+  background-position: 50% 60%;
+  background-repeat: no-repeat;
 }
 .classic-tree ul {
   margin-left: 20px;
@@ -505,7 +578,7 @@ right connector from last child*/
 /*Thats all. I hope you enjoyed it.
 Thanks :)*/
 .box {
-  border: 1px solid #ccc;
+  border: 1px solid #bbb;
   background: #e9e9e9;
 }
 .box .box-title {
@@ -550,4 +623,30 @@ Thanks :)*/
 }
 .box .box-content {
   padding: 10px;
+}
+.widgetExplorer ul.vocabListing {
+  overflow: auto;
+}
+.widgetExplorer ul.vocabListing li {
+  list-style-type: none;
+  cursor: pointer;
+  word-wrap: break-word;
+}
+.widgetExplorer ul.vocabListing li:hover,
+.widgetExplorer ul.vocabListing li.selected {
+  background: #e9e9e9;
+}
+.widgetExplorer #sampleWidgetInput {
+  border: 1px solid #e9e9e9;
+  padding: 10px;
+  width: 50%;
+}
+.widgetExplorer .widget-code {
+  overflow: auto;
+  word-wrap: inherit;
+}
+#widgetExplorerStep3 .label {
+  font-size: 100%;
+  font-weight: 400;
+  color: #65625d;
 }

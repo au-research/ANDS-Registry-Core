@@ -1,4 +1,5 @@
-@primaryColor : #7F7EFF;
+// @primaryColor : #7F7EFF;
+@primaryColor : #487577;
 @secondaryColor: #5353AA;
 @secondaryColor: #A4B0F5;
 @ternaryColor: #F58F29;
@@ -7,9 +8,12 @@
 @current: #6AA84F;
 @superseded: #F1C232;
 @deprecated: #CC0000;
+
 //second
-@primaryColor: #17649A;
+// @primaryColor: #17649A;
+@primaryColor: #0c415a;
 @secondaryColor: #46494C;
+@boxColor: #487577;
 
 .swatch-blue {
     background: @primaryColor;
@@ -38,6 +42,21 @@
             }
         }
     }
+    .box-square {
+      background: @boxColor;
+      border: 1px solid @boxColor;
+    }
+}
+
+.swatch-white {
+  .box-square, .box-inner {
+    background: @boxColor;
+    border: 1px solid @boxColor;
+    color:white;
+    i {
+      color:white;
+    }
+  }
 }
 
 .caret-for-input-suggestion {
@@ -70,6 +89,45 @@
 .search-bar {
     padding: 10px 0 10px 10px;
 }
+
+/* Search Bar. Copied from
+   applications/portal/templates/omega/assets/less/page-search.less
+   But most of it commented out.
+   Uncomment more as needed.
+   @lightGray: #f5f5f5;
+*/
+.search-section {
+        /*
+        color:white;
+        i {
+                color: white !important;
+        }
+        .btn {
+                background:@lightGray;
+                color:black;
+                i {color:black !important;}
+                &:hover{
+                        background:@lightGray;
+                        color:black !important;
+                }
+        }
+        */
+        a {
+                color:white;
+                &:hover{
+                        color:@gray;
+                }
+        }
+        /*
+        h1 {
+                color:white;
+        }
+        h1.bordered:after {
+                background-color:white;
+        }
+        */
+}
+
 
 .vocab-search-result {
     background: white;
@@ -380,6 +438,25 @@ input:disabled+label{
   max-width: 460px;
 }
 
+/* Ditto for CMS subject vocab widget search mode tooltips. */
+.cms-search-widget-tip{
+  width: 600px;
+  max-width: 600px;
+}
+
+/* Show a thin border around the CMS subject vocab widget
+   search mode input field. */
+.cms-search-widget-tip input {
+  border: 1px solid #cccccc;
+}
+
+/* Use this, in combination with .btn-primary, to
+   get the correct warning color. This is needed because
+   swatch-gray tends to override everything with its blue. */
+.btn-primary-warning {
+  background-color: #f18d38 !important;
+}
+
 .concept-tip{
   font-size: 16px;
   max-width: 520px;
@@ -415,5 +492,14 @@ ul.pagi {
 .break{
   word-wrap: break-word;
 }
+
+#banner-image {
+  background-image: url(../images/vocabbanner.jpg);
+  background-size: cover;
+  background-position: 50% 60%;
+  background-repeat: no-repeat;
+}
+
 @import "ands-vocabs-visualise";
 @import "ands-vocabs-box";
+@import "ands-vocabs-widget-explorer";

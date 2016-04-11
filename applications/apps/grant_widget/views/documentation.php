@@ -20,7 +20,7 @@
 
             <form action="" class="form-inline well">
                 <h1>Grant Widget</h1>
-                <input type="text" name="name" value="" size="40" class="grant_widget"/>
+                <input type="text" name="name" value="" size="40" class="grant_widget" api_key="liztest"/>
             </form>
             <?php echo anchor(apps_url('grant_widget/download/'), '<i class="icon-white icon-download"></i> Download Now', array('class'=>'btn btn-large btn-success')) ?>
 

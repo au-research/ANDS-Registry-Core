@@ -21,7 +21,7 @@ class Importer {
 	private $forceDraft;
 	private $maintainStatus;
 	public $registryMode;
-	public $runBenchMark = false;
+	public $runBenchMark = true;
 	private $status; // status of the currently ingested record
 
 	private $benchMarkLog;
@@ -74,6 +74,7 @@ class Importer {
 	private $cCyclesTime;
 
 
+    private $roIDs = array();
 
 
 	public function Importer()
@@ -293,6 +294,7 @@ class Importer {
 
 		if($this->CI->user->hasFunction('REGISTRY_SUPERUSER')) {
 			$this->message_log[] = "Reindexed record count: " . $this->reindexed_records;
+            $this->message_log[] = "Relation Reindexed count: " . $this->relation_reindexed_records;
 		}
 
 		$this->message_log[] = $this->standardLog;
@@ -389,6 +391,7 @@ class Importer {
 						}
 
 						$ro->record_owner = $record_owner;
+                        $this->addToAffectedList([$ro->key]);
                         $this->ingest_new_revision++;
 					}
 
@@ -434,31 +437,13 @@ class Importer {
 					// Save all our attributes to the object
                     //TODO:
 					$ro->save($changed);
-                    /*
-					//All related objects by any means are affected regardless
-					$related_objects = $ro->getAllRelatedObjects(false, true, true);
-					$related_keys = array();
-					foreach($related_objects as $rr){
-						$related_keys[] = $rr['key'];
-					}
-					$this->addToAffectedList($related_keys);
 
-					// Also treat identifier matches as affected records which need to be enriched
-					// (to increment their extRif:matching_identifier_count)
-					$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
-					$related_keys = array();
-					foreach($related_ids_by_identifier_matches AS $matching_record_id){
-						$matched_ro = $this->CI->ro->getByID($matching_record_id);
-						$related_keys[] = $matched_ro->key;
-					}
-					if (count($related_keys)){
-						$this->addToAffectedList($related_keys);
-					}
-*/
-                    // if the rif-cs didn't change we don't need to enrich record.
                     if($changed)
                     {
 					    $ro->processIdentifiers();
+						$ro->addRelationships();
+						$ro->cacheRelationshipMetadata();
+						$ro->update_quality_metadata();
 					    // Add this record to our counts, etc.
 					    $this->importedRecords[] = $ro->id;
                     }
@@ -521,31 +506,10 @@ class Importer {
 				{
 					$ro->addRelationships();
 					$related_keys = $ro->getRelatedKeys();
-					// directly affected records are re-enriched below (and reindexed...)
-					// we consider any related record keys to be directly affected and reindex them...
-					//$this->addToAffectedList($related_keys);
 
-					// All related objects by any means are affected
-					//$related_objects = $ro->getAllRelatedObjects(false, true, true);
-					//$related_keys = array();
-					//foreach($related_objects as $rr){
-					//	$related_keys[] = $rr['key'];
-					//}
-					//$this->addToAffectedList($related_keys);
-
-					// Also treat identifier matches as affected records which need to be enriched
-					// (to increment their extRif:matching_identifier_count)
-					//$related_ids_by_identifier_matches = $ro->findMatchingRecords(); // from ro/extensions/identifiers.php
-					//$related_keys = array();
-					//foreach($related_ids_by_identifier_matches AS $matching_record_id){
-					//	$matched_ro = $this->CI->ro->getByID($matching_record_id);
-					//	$related_keys[] = $matched_ro->key;
-					//}
 					if (count($related_keys)){
 						$this->addToAffectedList($related_keys);
 					}
-
-
 
 					// Keep track of our imported keys...
 					$this->imported_record_keys[] = $ro->key;
@@ -562,13 +526,24 @@ class Importer {
 
 	}
 
+	/**
+	 * todo delete them as well
+	 * @return string
+	 * @throws Exception
+     */
 	public function finishImportTasks() {
-		$this->populateMessageLog();
+
 		$importedRecCount = count($this->importedRecords);
-		$this->_enrichRecords();
+		// $this->_enrichRecords();
 		$deletedCount = count($this->deleted_record_keys);
-		$this->_enrichAffectedRecords();
-		$this->_indexAllAffectedRecords();
+
+		// $this->_enrichAffectedRecords();
+		// $this->_indexAllAffectedRecords();
+
+        $this->_backgroundSync();
+
+        $this->populateMessageLog();
+
 		$indexedAllCount = count($this->affected_record_keys);
 		return "Finished Import Tasks".NL."imported: ".$importedRecCount.NL."affected/related ".($indexedAllCount - $importedRecCount).NL."total: ".$indexedAllCount.NL."deleted: ".$deletedCount;
 	}
@@ -691,7 +666,8 @@ class Importer {
 							$this->CI->benchmark->mark('solr_transform_start');
 						}
 
-						$this->queueSOLRAdd($ro->indexable_json());
+						$this->queueSOLRAdd($ro->indexable_json(), 'portal');
+                        $this->queueSOLRAdd($ro->getRelationshipIndex(), 'relations');
 
 						if($this->runBenchMark)
 						{
@@ -718,7 +694,8 @@ class Importer {
 		}
 
 		// Push through the last chunk...
-		$this->flushSOLRAdd();
+		$this->flushSOLRAdd('portal');
+        $this->flushSOLRAdd('relations');
 		if($this->runBenchMark)
 		{
 			$this->CI->benchmark->mark('solr_commit_start');
@@ -733,8 +710,52 @@ class Importer {
 		}
 	}
 
-	/**
+    /**
+     * This function is plan B for the importer rewrite, basically
+     * chuck every found records in a background task that run sync
+	 * Update: Wednesday, 30 March 2016 removed the sync function and replaced with fixRelationship
+	 * Records that are in the importedRecords array will have their relationship fixed
+	 * For detail of implementation, refer to FixRelationShipTask
 	 *
+     * @opt remove sync relationships from finishImportTask
+     * and do it here instead?
+     */
+    private function _backgroundSync(){
+
+        $roIDs = array();
+
+        // imported records
+        $roIDs = array_merge($roIDs, $this->importedRecords);
+
+        //adding task
+        if (sizeof($roIDs) > 0) {
+            require_once API_APP_PATH . 'vendor/autoload.php';
+            $params = [
+                'class' => 'fixRelationship',
+                'type' => 'ro',
+                'id' => implode(',',$roIDs)
+            ];
+            $dataSourceID = $this->dataSource->data_source_id;
+            $dataSourceTitle = $this->dataSource->title;
+            $harvestID = $this->harvestID;
+            $task = [
+                'name' => "BG Post Process for data source: $dataSourceTitle ($dataSourceID), harvestid: $harvestID",
+                'type' => 'POKE',
+                'frequency' => 'ONCE',
+                'priority' => 5,
+                'params' => http_build_query($params)
+            ];
+            $taskManager = new \ANDS\API\Task\TaskManager($this->CI->db, $this->CI);
+            $taskAdded = $taskManager->addTask($task);
+
+            $this->message_log[] = "Spawn Background Task ID ". $taskAdded['id']. " to Post Process ". sizeof($roIDs). " records";
+        } else {
+            $this->message_log[] = "Size of Affected Records is 0. No background task scheduled";
+        }
+	}
+
+	/**
+	 * todo check if used
 	 */
 	function _reindexRecords($specific_target_keys = array())
 	{
@@ -776,7 +797,8 @@ class Importer {
 						$this->CI->benchmark->mark('solr_transform_start');
 					}
 
-					$this->queueSOLRAdd($ro->indexable_json());
+                    $this->queueSOLRAdd($ro->indexable_json(), 'portal');
+                    $this->queueSOLRAdd($ro->getRelationshipIndex(), 'relations');
 
 					if($this->runBenchMark)
 					{
@@ -1296,49 +1318,70 @@ class Importer {
 	 * * * */
 
 	var $solr_queue = array();
-	const SOLR_CHUNK_SIZE = 400;
+    var $relationQueue = array();
+	const SOLR_CHUNK_SIZE = 100;
 	const SOLR_RESPONSE_CODE_OK = 0;
 	//var $solrReqCount = 0;
 	//var $solrReqTime = 0;
-	/**
-	 * Queue up a request to send to SOLR ("chunking" of <add><doc> statements)
-	 */
-	function queueSOLRAdd($doc_statement)
+
+    /**
+     * Queue up a request to send to SOLR ("chunking" of <add><doc> statements)
+     *
+     * @param        $doc_statement
+     * @param string $core
+     */
+	function queueSOLRAdd($doc_statement, $core = 'portal')
 	{
-		$this->solr_queue[] = $doc_statement;
-		if (count($this->solr_queue) > self::SOLR_CHUNK_SIZE)
-		{
+        if ($core == 'portal') {
+            $this->solr_queue[] = $doc_statement;
+        } elseif ($core == 'relations') {
+            $this->relationQueue = $doc_statement;
+        }
+
+		if (count($this->solr_queue) > self::SOLR_CHUNK_SIZE) {
 			$this->solrReqCount++;
-			if($this->runBenchMark)
-			{
-				$this->CI->benchmark->mark('solr_flush_start');
+			if($this->runBenchMark) {
+                $this->CI->benchmark->mark('solr_flush_start');
 			}
-			$this->flushSOLRAdd();
-			if($this->runBenchMark)
-			{
-				$this->CI->benchmark->mark('solr_flush_end');
+			$this->flushSOLRAdd('portal');
+			if($this->runBenchMark) {
+                $this->CI->benchmark->mark('solr_flush_end');
 				$this->solrReqTime += $this->CI->benchmark->elapsed_time('solr_flush_start','solr_flush_end');
 			}
-		}
+		} elseif (sizeof($this->relationQueue) > self::SOLR_CHUNK_SIZE) {
+            $this->flushSOLRAdd('relations');
+        }
 	}
 
-	/**
-	 * Send an update request to SOLR for all <add><doc> statements in the queue...
-	 */
-	function flushSOLRAdd()
+    /**
+     * Send an update request to SOLR for all <add><doc> statements in the queue...
+     *
+     * @param string $core
+     * @return bool
+     */
+	function flushSOLRAdd($core = 'portal')
 	{
-		if (sizeof($this->solr_queue) == 0) return;
-
-		$solrUrl = get_config_item('solr_url');
-		$solrUpdateUrl = $solrUrl.'update/?wt=json';
 
 		$this->CI->load->library('solr');
+        $this->CI->solr->init()->setCore($core);
 
 		try{
 			// $result = json_decode(curl_post($solrUpdateUrl, json_encode($this->solr_queue)), true);
-			$result = json_decode($this->CI->solr->add_json(json_encode($this->solr_queue)), true);
+            if ($core == 'portal') {
+                if (sizeof($this->solr_queue) == 0) return;
+                $indexData = $this->solr_queue;
+            } elseif ($core == 'relations') {
+                if (sizeof($this->relationQueue) == 0) return;
+                $indexData = $this->relationQueue;
+            }
+
+            $result = json_decode($this->CI->solr->add_json(json_encode($indexData)), true);
 			if($result['responseHeader']['status'] == self::SOLR_RESPONSE_CODE_OK) {
-				$this->reindexed_records += sizeof($this->solr_queue);
+                if ($core == 'portal') {
+                    $this->reindexed_records += sizeof($this->solr_queue);
+                } elseif ($core == 'relations') {
+                    $this->relation_reindexed_records += sizeof($this->relationQueue);
+                }
 			} else {
 				// Throw back the SOLR response...
 				throw new Exception(var_export((isset($result['error']['msg']) ? $result['error']['msg'] : $result),true));
@@ -1350,15 +1393,20 @@ class Importer {
 			$this->error_log[] = "[INDEX] Error during reindex of registry object..." . BR . "<pre>" . nl2br($e) . "</pre>";
 		}
 
-		$this->solr_queue = array();
+        if ($core == 'portal') {
+            $this->solr_queue = array();
+        } elseif ($core =='relations') {
+            $this->relationQueue = array();
+        }
+
 		return true;
 	}
 
 	function commitSOLR()
 	{
-		$solrUrl = get_config_item('solr_url');
-		$solrUpdateUrl = $solrUrl.'update/?wt=json';
-		return curl_post($solrUpdateUrl.'?commit=true', '<commit waitSearcher="false"/>');
+        $this->CI->load->library('solr');
+        $this->CI->solr->init()->setCore('portal')->commit();
+        $this->CI->solr->init()->setCore('relations')->commit();
 	}
 
 	/**
@@ -1390,6 +1438,7 @@ class Importer {
 		$this->ingest_new_revision = 0;
 		$this->ingest_new_record = 0;
 		$this->reindexed_records = 0;
+        $this->relation_reindexed_records = 0;
 		$this->maintainStatus = false;
 		$this->error_log = array();
 		$this->message_log = array();

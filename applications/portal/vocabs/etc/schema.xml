@@ -16,7 +16,7 @@
  limitations under the License.
 -->
 
-<schema name="rda" version="1.5">
+<schema name="vocabs" version="1.5">
 
 	<fields>
 		<field name="slug" type="string" indexed="true" stored="true"/>
@@ -28,10 +28,13 @@
 		<field name="owner" type="string" indexed="true" stored="true" required="false"/>
 		<field name="acronym" type="string" indexed="true" stored="true" required="false"/>
 		<field name="status" type="string" indexed="true" stored="true" required="false"/>
-        <field name="sissvoc_end_point" type="string" indexed="true" stored="true" required="false"/>
-        <field name="widgetable" type="boolean" indexed="true" stored="true" required="false"/>
+		<field name="sissvoc_end_point" type="string" indexed="true" stored="true" required="false"/>
+		<field name="widgetable" type="boolean" indexed="true" stored="true" required="false"/>
 		<!-- MultiValued -->
-		<field name="subjects" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
+		<field name="subject_types" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
+		<field name="subject_labels" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
+		<field name="subject_notations" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
+		<field name="subject_iris" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="top_concept" type="text_en_splitting" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="language" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
 		<field name="concept" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
@@ -64,7 +67,8 @@
 	<copyField source="*" dest="fulltext"/>
 	<copyField source="title" dest="title_search"/>
 	<copyField source="title" dest="title_sort"/>
-	<copyField source="subjects" dest="subject_search"/>
+	<copyField source="subject_labels" dest="subject_search"/>
+	<copyField source="subject_notations" dest="subject_search"/>
 	<copyField source="top_concept" dest="subject_search"/>
 	<copyField source="concept" dest="concept_search"/>
 

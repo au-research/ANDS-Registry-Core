@@ -13,6 +13,7 @@ class Vocab_widget extends MX_Controller {
 	}
 
 	function proxy(){
+
 		$solr_base = get_config_item('solr_url');
 		$sissvoc_base = get_config_item('sissvoc_url');
 		$this->load->view("proxy", array('solr_base' => $solr_base,
@@ -37,15 +38,15 @@ class Vocab_widget extends MX_Controller {
 	function download($min=''){
 		$this->load->library('zip');
 		if($min=='minified'){
-			$this->zip->read_file('./applications/apps/vocab_widget/assets/dist/vocab_widget.min.css');
-			$this->zip->read_file('./applications/apps/vocab_widget/assets/dist/vocab_widget.min.js');
+			$this->zip->read_file('./applications/apps/vocab_widget/assets/dist/vocab_widget.min_v2.css');
+			$this->zip->read_file('./applications/apps/vocab_widget/assets/dist/vocab_widget.min_v2.js');
 		}elseif($min=='full'){
 			$this->zip->read_dir('./applications/apps/vocab_widget/assets/css/', false);
 			$this->zip->read_dir('./applications/apps/vocab_widget/assets/js/', false);
 			$this->zip->read_dir('./applications/apps/vocab_widget/assets/dist/', false);
 		}else{
-			$this->zip->read_file('./applications/apps/vocab_widget/assets/css/vocab_widget.css');
-			$this->zip->read_file('./applications/apps/vocab_widget/assets/js/vocab_widget.js');
+			$this->zip->read_file('./applications/apps/vocab_widget/assets/css/vocab_widget_v2.css');
+			$this->zip->read_file('./applications/apps/vocab_widget/assets/js/vocab_widget_v2.js');
 		}
 		$this->zip->download('vocab_widget.zip');
 

@@ -83,7 +83,7 @@
             @include('includes/advanced_search')
             @include('includes/my-rda')
         </div>
-        
+
         @include('includes/footer')
     </body>
 </html>

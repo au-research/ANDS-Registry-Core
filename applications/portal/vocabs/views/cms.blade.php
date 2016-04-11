@@ -12,6 +12,10 @@
 	<meta ng-non-bindable property="og:description" content="Find, access, and re-use vocabularies for research" />
 @endif
 @stop
+@section('script')
+  var vocab_resolving_services = {{json_encode(get_config_item('vocab_resolving_services'))}};
+  var subject_vocab_proxy = {{json_encode(get_config_item('subject_vocab_proxy'))}};
+@stop
 @section('content')
 <section ng-controller="addVocabsCtrl" class="section swatch-white">
 	<div class="container">
@@ -147,8 +151,8 @@
 							<div class="input-group" ng-repeat="concept in vocab.top_concept track by $index" top-concepts-enter>
 								<input type="text" class="form-control" placeholder="New Top Concept" ng-model="vocab.top_concept[$index]">
 								<span class="input-group-btn">
-									<button class="btn btn-primary" type="button"
-										ng-click="vocab.top_concept.splice($index, 1)"><i class="fa fa-remove"></i></button>
+									<button class="btn btn-primary btn-primary-warning" type="button"
+										ng-click="vocab.top_concept.splice($index, 1)" title="Remove this top concept"><i class="fa fa-remove"></i></button>
 								</span>
 							</div>
 
@@ -176,8 +180,8 @@
 								<select name="vlanguage" id="vLanguage" class="form-control caret-for-select"
 									placeholder="Select a language" ng-options="lang.value as lang.text for lang in langs" ng-model="vocab.language[$index]"><option value="">Select a language</option></select>
 								<span class="input-group-btn">
-									<button class="btn btn-primary" type="button"
-										ng-click="list_remove('language', $index)"><i class="fa fa-remove"></i></button>
+									<button class="btn btn-primary btn-primary-warning" type="button"
+										ng-click="list_remove('language', $index)" title="Remove this language"><i class="fa fa-remove"></i></button>
 								</span>
 							</div>
 
@@ -202,28 +206,24 @@
 								<thead>
 									<tr><th>Subject Source</th> <th>Subject Label</th><th></th></tr>
 								</thead>
-								<tr ng-repeat="subject in vocab.subjects track by $index">
-									<td style="border:none">
-										<select name="" id="" class="form-control caret-for-select" placeholder="Subject Source" ng-options="subject_source for subject_source in subject_sources" ng-model="vocab.subjects[$index].subject_source">
-											<option value="">Select a source</option>
-										</select>
-									</td>
-									<td style="border:none">
-										<input type="text" class="form-control" placeholder="Subject Label" ng-model="vocab.subjects[$index].subject">
-									</td>
-									<td style="border:none">
-										<span ng-show="vocab.subjects.length > 1">
-											<button class="btn btn-primary" type="button"
-											ng-click="list_remove('subjects', $index)"><i class="fa fa-remove"></i></button>
-										</span>
-									</td>
+
+								<tr ng-repeat="subject in vocab.subjects track by $index"
+                                    subject-directive
+                                    id="[['subject_'+$index]]"
+                                    index="$index"
+                                    subject_type="vocab.subjects[$index].subject_source"
+                                    subject_label="vocab.subjects[$index].subject_label"
+                                    subject_iri="vocab.subjects[$index].subject_iri"
+                                    subject_notation="vocab.subjects[$index].subject_notation"
+                                    on-close="list_remove('subjects', $index)"
+                                    >
 								</tr>
 							</table>
 
-							<button class="btn btn-primary" type="button" ng-click="addtolist('subjects')"><i class="fa fa-plus"></i> Add Subject</button>
+							<button id="add_subject_button" class="btn btn-primary" type="button" ng-click="addtolist('subjects')"><i class="fa fa-plus"></i> Add Subject</button>
 
-							<div class="form-group has-error" ng-show="vocab.subjects === undefined || subjects_has_no_nonempty_elements()">
-								<p class="help-block">At least one subject must be provided. Select a value from the Subject Source dropdown and enter a Subject Label.</p>
+							<div class="form-group has-error" ng-show="vocab.subjects === undefined || subjects_has_no_complete_anzsrc_for_elements()">
+								<p class="help-block">At least one subject drawn from the "ANZSRC Field of Research" vocabulary must be provided. Select a value from the Subject Source dropdown and select a Subject Label.</p>
 							</div>
 
 						</div>
@@ -253,7 +253,7 @@
 									<tr ng-repeat="version in vocab.versions track by $index">
 										<td><a href="" ng-click="versionmodal('edit', $index)">[[ version.title ]] </a></td>
 										<td><span class="label" ng-class="{'deprecated': 'label-danger', 'current': 'label-success', 'superseded': 'label-warning', 'depreciated': 'label-danger'}[version.status]">[[ version.status ]]</span></td>
-										<td><a href="" ng-click="list_remove('versions', $index)"><i class="fa fa-remove"></i></a></td>
+										<td><a href="" ng-click="list_remove('versions', $index)" title="Remove this version"><i class="fa fa-remove"></i></a></td>
 									</tr>
 								</tbody>
 							</table>
@@ -274,7 +274,7 @@
 									<tr ng-repeat="related in vocab.related_entity track by $index">
 										<td><a href="" ng-click="relatedmodal('edit', related.type, $index)" tooltip="[[ related.relationship.join() ]]">[[ related.title ]]</a></td>
 										<td>[[ related.type ]]</td>
-										<td><a href="" ng-click="list_remove('related_entity', $index)"><i class="fa fa-remove"></i></a></td>
+										<td><a href="" ng-click="list_remove('related_entity', $index)" title="Remove this related entity"><i class="fa fa-remove"></i></a></td>
 									</tr>
 								</tbody>
 							</table>

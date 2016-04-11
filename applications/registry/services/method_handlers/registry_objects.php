@@ -241,6 +241,7 @@ class Registry_objectsMethod extends MethodHandler {
     private function relationships_handler() {
         $relationships = array();
 
+
         $ci =& get_instance();
         $ci->load->model('registry_object/registry_objects', 'ro');
 
@@ -252,6 +253,7 @@ class Registry_objectsMethod extends MethodHandler {
 
         $relationships = $this->ro->getConnections(true,null,$limit,0,true);
         $relationships = $relationships[0];
+
 
         if(isset($relationships['activity'])){
             for($i=0;$i<count($relationships['activity']);$i++){
@@ -445,8 +447,5 @@ function identifierResolution($identifier,$type)
             return false;
             break;
     }
-
-
-
 }
 

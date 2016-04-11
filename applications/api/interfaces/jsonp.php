@@ -17,7 +17,7 @@ class JSONPInterface extends FormatHandler
 
     public function __construct()
     {
-
+        header("Content: ". $this->output_mimetype());
     }
 
     /**
@@ -51,7 +51,7 @@ class JSONPInterface extends FormatHandler
      */
     public function output_mimetype()
     {
-        return 'application/json';
+        return 'application/javascript';
     }
 
 }

@@ -5,10 +5,11 @@
         .module('app')
         .controller('searchCtrl', searchController);
 
-    function searchController($scope, $log, $location, vocabs_factory) {
+    function searchController($scope, $timeout, $log, $location, vocabs_factory) {
 
         $scope.vocabs = [];
         $scope.filters = {};
+        $scope.base_url = base_url;
 
         // $log.debug($location.search());
         // The form of filters value for this will be <base_url>+/#!/?<filter>=<value>
@@ -16,9 +17,10 @@
         $scope.filters = $location.search();
 
         $scope.search = function (isPagination) {
+            if (!$scope.filters['q']) $scope.filters['q'] = '';
             if (!isPagination || isPagination == undefined) $scope.filters['p'] = 1;
             if ($scope.searchRedirect()) {
-                window.location = base_url + '#!/?q=' + $scope.filters['q'];
+                window.location = base_url + 'search/#!/?q=' + $scope.filters['q'];
             } else {
                 $location.path('/').replace();
                 window.history.pushState($scope.filters, 'ANDS Research Vocabulary', $location.absUrl());
@@ -103,7 +105,16 @@
 
         $scope.toggleFacet = function (facet_type) {
             $('#more'+facet_type).slideToggle();
-            $('#link'+facet_type).toggle();
+            //$('#link'+facet_type).toggle();
+            // The slide toggle does not happen instantaneously,
+            // and the visibility of the "View More..." text
+            // depends on the visibility of the "#more..."
+            // element. So after a suitable timeout,
+            // force a recalculation of the visibility of
+            // the "View More..." text.
+            $timeout(function() {
+                // A no-op is enough.
+            }, 500);
         };
 
         $scope.addFilter = function (type, value) {
@@ -149,6 +160,11 @@
                 return false;
             }
             return false;
+        }
+
+        // Utility to support hide/display of "View More..." links.
+        $scope.isMoreVisible = function (type) {
+            return $("#more" + type ).is(":visible");
         }
     }
 

@@ -24,6 +24,18 @@ class Registry_widget extends MX_Controller{
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		$callback = (isset($_GET['callback'])? $_GET['callback']: '?');
+
+        //log the usage of this widget with a public api_key
+
+        require_once (API_APP_PATH.'core/helpers/api_helper.php');
+        $terms = array(
+            'event' => 'api_hit',
+            'api_key' => 'public',
+            'api_version' => 'legacy',
+            'path' => 'registry_widget'
+        );
+        api_log_terms($terms);
+
 		if($action=='lookup'){
 			if(isset($_GET['q'])){
 				$r = $this->lookup($_GET['q']);
@@ -140,15 +152,15 @@ class Registry_widget extends MX_Controller{
 	function download($min=''){
 		$this->load->library('zip');
 		if($min=='minified'){
-			$this->zip->read_file('./applications/apps/registry_widget/assets/dist/registry_widget.min.css');
-			$this->zip->read_file('./applications/apps/registry_widget/assets/dist/registry_widget.min.js');
+			$this->zip->read_file('./applications/apps/registry_widget/assets/dist/registry_widget_v2.min.css');
+			$this->zip->read_file('./applications/apps/registry_widget/assets/dist/registry_widget_v2.min.js');
 		}elseif($min=='full'){
 			$this->zip->read_dir('./applications/apps/registry_widget/assets/css/', false);
 			$this->zip->read_dir('./applications/apps/registry_widget/assets/js/', false);
 			$this->zip->read_dir('./applications/apps/registry_widget/assets/dist/', false);
 		}else{
-			$this->zip->read_file('./applications/apps/registry_widget/assets/css/registry_widget.css');
-			$this->zip->read_file('./applications/apps/registry_widget/assets/js/registry_widget.js');
+			$this->zip->read_file('./applications/apps/registry_widget/assets/css/registry_widget_v2.css');
+			$this->zip->read_file('./applications/apps/registry_widget/assets/js/registry_widget_v2.js');
 		}
 		$this->zip->download('registry_widget.zip');
 	}

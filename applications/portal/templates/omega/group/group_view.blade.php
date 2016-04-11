@@ -43,7 +43,7 @@
         } elseif (sizeof($group['facet']['subjects']) > 0) {
             $subjects_list = 'including ';
             foreach ($group['facet']['subjects'] as $s) {
-                $subjects_list .= ', '. $s['name'] .'';
+                $subjects_list .= ',  <a href="'.base_url('search').'#!/group='.$group['title'].'/subject_value_resolved='.rawurlencode($s['name']).'">'.$s['name'].'</a> ';
             }
         }
     ?>
@@ -67,11 +67,11 @@
     @endif
 
     <div class="panel swatch-white">
-        <div class="panel-heading">Research Data Profile</div>
-        <div class="panel-body">
-            To date, {{$group['title']}} has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a> in Research Data Australia, which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}}. {{sizeof($group['groups'])}} research group(s)
-            have been actively involved in collecting data and creating metadata records for the data.  All the data records, people, projects, grants and services associated with {{$group['title']}}
-            can be accessed from the box on the right hand side of this page.
+        <div class="panel-heading">Data Profile</div>
+        <div  class="panel-body">
+            {{$group['title']}}  has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a>  in Research Data Australia,
+            which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}} and involve  <a href="{{base_url()}}search#!/group={{$group['title']}}/type=group/class=party">{{$group['groups_count']}} group(s)</a>.
+            All of the information provided by  {{$group['title']}} can be accessed from the box on the right hand side of this page.
         </div>
         @if($group['has_custom_data'])
             @if(isset($group['custom_data']['researchdataprofile']))
@@ -131,13 +131,18 @@
     <!-- <div class="panel-heading">Registry Contents</div> -->
     <div class="panel-body">
         <ul class="listy">
-            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection')}} <small>({{$group['facet']['class']['collection']}})</small></a></li>
-
-            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=party">{{class_name('party')}} <small>({{$group['facet']['class']['party']}})</small></a></li>
-
-            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=activity">{{class_name('activity')}} <small>({{$group['facet']['class']['activity']}})</small></a></li>
-
-            <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=service">{{class_name('service')}} <small>({{$group['facet']['class']['service']}})</small></a></li>
+            @if($group['facet']['class']['collection']!=0)
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection')}} <small>({{$group['facet']['class']['collection']}})</small></a></li>
+            @endif
+            @if($group['facet']['class']['party']!=0)
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=party">{{class_name('party')}} <small>({{$group['facet']['class']['party']}})</small></a></li>
+            @endif
+            @if($group['facet']['class']['activity']!=0)
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=activity">{{class_name('activity')}} <small>({{$group['facet']['class']['activity']}})</small></a></li>
+            @endif
+            @if($group['facet']['class']['service']!=0)
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=service">{{class_name('service')}} <small>({{$group['facet']['class']['service']}})</small></a></li>
+            @endif
         </ul>
     </div>
 </div>

@@ -11,29 +11,37 @@ class Directaccess extends ROHandler
     function handle()
     {
         $download = array();
+        if ($this->ro->class != 'collection') {
+            return array();
+        }
         $query = '';
         $relationshipTypeArray = ['isPresentedBy', 'supports'];
-        $classArray = ['service'];
-        $services = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray, $relationshipTypeArray);
+        $classArray = [];
 
-        foreach ($services as $service) {
+        $services = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
 
-            if ($service['relation_url'] != '' && $service['status'] == PUBLISHED) {
-                if ($service['relation_description'] == '') $service['relation_description'] = $service['title'];
+        foreach ($services as &$service) {
+            if (isset($service['relation_url'])
+                && sizeof($service['relation_url']) > 0
+            ) {
+                $relationUrl = $service['relation_url'][0];
+                $relationDescription = $service['to_title'];
+                if (isset($service['relation_description'])
+                    && sizeof($service['relation_description']) > 0
+                    && $service['relation_description'][0] != '') {
+                    $relationDescription = $service['relation_description'][0];
+                }
                 $download[] = Array(
                     'access_type' => 'viaService',
                     'contact_type' => 'url',
-                    'access_value' => $service['relation_url'],
-                    'title' => (string)$service['relation_description'],
+                    'access_value' => $relationUrl,
+                    'title' => $relationDescription,
                     'mediaType' => '',
                     'byteSize' => '',
                     'notes' => 'Visit Service'
                 );
             }
-
-
         }
-
 
         if ($this->xml->{$this->ro->class}->relatedInfo) {
             foreach ($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo) {
@@ -99,7 +107,6 @@ class Directaccess extends ROHandler
 
                 }
             }
-
         }
 
         return $download;

@@ -7,7 +7,7 @@
 class Registry_objects extends CI_Model {
 
     //array of properties required from the Registry point for RDA purpose
-    public $rdaProperties = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch', 'accessPolicy');
+    public $rdaProperties = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch', 'accessPolicy', 'grantsNetwork');
 
 	/**
 	 * get an _ro by ID
@@ -57,7 +57,7 @@ class Registry_objects extends CI_Model {
         $id = $this->findRecord(array('key'=>$key), true);
         if($id)
         {
-            $props = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch');
+            $props = $this->rdaProperties;
             return new _ro($id, $props, $useCache);
         }
         return false;
@@ -211,7 +211,6 @@ class Registry_objects extends CI_Model {
         $this->solr->setOpt('fl', 'id');
         $result = $this->solr->executeSearch(true);
         return $result['response']['numFound'];
-
     }
 
 	function __construct() {

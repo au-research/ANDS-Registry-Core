@@ -14,17 +14,32 @@ module.exports = function(grunt){
 			orcid_widget:{
 				files:{'<%= yeoman.orcid_widget %>/dist/orcid_widget.min.js':['<%= yeoman.orcid_widget %>/js/orcid_widget.js']}
 			},
+            orcid_widget_v2:{
+                files:{'<%= yeoman.orcid_widget %>/dist/orcid_widget_v2.min.js':['<%= yeoman.orcid_widget %>/js/orcid_widget.js']}
+            },
 			registry_widget:{
 				files:{'<%= yeoman.registry_widget %>/dist/registry_widget.min.js':['<%= yeoman.registry_widget %>/js/registry_widget.js']}
 			},
+            registry_widget_v2:{
+                files:{'<%= yeoman.registry_widget %>/dist/registry_widget_v2.min.js':['<%= yeoman.registry_widget %>/js/registry_widget_v2.js']}
+            },
 			vocab_widget:{
-				files:{'<%= yeoman.vocab_widget %>/dist/vocab_widget.min.js':['<%= yeoman.vocab_widget %>/js/vocab_widget.js']}
-			},
+                files:{'<%= yeoman.vocab_widget %>/dist/vocab_widget.min.js':['<%= yeoman.vocab_widget %>/js/vocab_widget.js']}
+            },
+            vocab_widget_v2:{
+                files:{'<%= yeoman.vocab_widget %>/dist/vocab_widget_v2.min.js':['<%= yeoman.vocab_widget %>/js/vocab_widget.js']}
+            },
 			location_widget:{
 				files:{'<%= yeoman.location_widget %>/dist/location_capture_widget.min.js':['<%= yeoman.location_widget %>/js/location_capture_widget.js']}
 			},
+            location_widget_v2:{
+                files:{'<%= yeoman.location_widget %>/dist/location_capture_widget_v2.min.js':['<%= yeoman.location_widget %>/js/location_capture_widget.js']}
+            },
             grant_widget:{
                 files:{'<%= yeoman.grant_widget %>/dist/grant_widget.min.js':['<%= yeoman.grant_widget %>/js/grant_widget.js']}
+            },
+            grant_widget_v2:{
+                files:{'<%= yeoman.grant_widget %>/dist/grant_widget_v2.min.js':['<%= yeoman.grant_widget %>/js/grant_widget.js']}
             }
 		},
 		cssmin:{
@@ -33,21 +48,41 @@ module.exports = function(grunt){
 				src:'<%= yeoman.orcid_widget %>/css/orcid_widget.css',
 				dest:'<%= yeoman.orcid_widget %>/dist/orcid_widget.min.css'
 			},
+            orcid_widget_v2:{
+                src:'<%= yeoman.orcid_widget %>/css/orcid_widget_v2.css',
+                dest:'<%= yeoman.orcid_widget %>/dist/orcid_widget_v2.min.css'
+            },
 			registry_widget:{
 				src:'<%= yeoman.registry_widget %>/css/registry_widget.css',
 				dest:'<%= yeoman.registry_widget %>/dist/registry_widget.min.css'
 			},
+            registry_widget_v2:{
+                src:'<%= yeoman.registry_widget %>/css/registry_widget_v2.css',
+                dest:'<%= yeoman.registry_widget %>/dist/registry_widget_v2.min.css'
+            },
 			vocab_widget:{
-				src:'<%= yeoman.vocab_widget %>/css/vocab_widget.css',
-				dest:'<%= yeoman.vocab_widget %>/dist/vocab_widget.min.css'
-			},
+                src:'<%= yeoman.vocab_widget %>/css/vocab_widget.css',
+                dest:'<%= yeoman.vocab_widget %>/dist/vocab_widget.min.css'
+            },
+            vocab_widget_v2:{
+                src:'<%= yeoman.vocab_widget %>/css/vocab_widget_v2.css',
+                dest:'<%= yeoman.vocab_widget %>/dist/vocab_widget_v2.min.css'
+            },
 			location_widget:{
 				src:'<%= yeoman.location_widget %>/css/location_capture_widget.css',
 				dest:'<%= yeoman.location_widget %>/dist/location_capture_widget.min.css'
 			},
+            location_widget_v2:{
+                src:'<%= yeoman.location_widget %>/css/location_capture_widget.css',
+                dest:'<%= yeoman.location_widget %>/dist/location_capture_widget_v2.min.css'
+            },
             grant_widget:{
                 src:'<%= yeoman.grant_widget %>/css/grant_widget.css',
                 dest:'<%= yeoman.grant_widget %>/dist/grant_widget.min.css'
+            },
+            grant_widget_v2:{
+                src:'<%= yeoman.grant_widget %>/css/grant_widget.css',
+                dest:'<%= yeoman.grant_widget %>/dist/grant_widget_v2.min.css'
             }
 		}
 	});

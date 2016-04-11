@@ -211,7 +211,36 @@ class Data_sources extends CI_Model {
 			}
 		}
 		return $matches;
-	} 
+	}
+
+    /**
+     * Returns the attribute value of the data source
+     *
+     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @param            $ds_id
+     * @param bool|false $type
+     * @return array|bool
+     */
+    function getAttribute($ds_id, $type = false) {
+        $core_attrs = array('key', 'slug', 'title', 'record_owner');
+        if ($type) {
+            if (in_array($type, $core_attrs)) {
+                $query = $this->db->get_where('data_sources',
+                    array('data_source_id'=>$ds_id))->first_row(true);
+                return ($query && isset($query[$type])) ? $query[$type] : false;
+            } else {
+                $query = $this->db->get_where('data_source_attributes',
+                    array('data_source_id'=>$ds_id, 'attribute'=>$type))->first_row(true);
+                return ($query && isset($query['value'])) ? $query['value'] : false;
+            }
+        } else {
+            // return all attributes and other things
+            $result = array();
+
+            //populate the result with attrs core and non core
+            return $result;
+        }
+    }
 	
 	/**
 	 * Get all datasources
@@ -220,7 +249,7 @@ class Data_sources extends CI_Model {
 	 * @param the offset value
 	 * @return array(_data_source) or empty array
 	 */
-	function getAll($limit = 16, $offset =0)
+	function getAll($limit = 16, $offset =0, $idOnly = false)
 	{
 		$matches = array();
         $this->db->order_by('title');
@@ -235,7 +264,12 @@ class Data_sources extends CI_Model {
 		{
 			foreach ($query->result_array() AS $result)
 			{
-				$matches[] = new _data_source($result['data_source_id']);
+				if (!$idOnly) {
+					$matches[] = new _data_source($result['data_source_id']);
+				} else {
+					$matches[] = $result['data_source_id'];
+				}
+
 			}
 		}
 		

@@ -45,6 +45,17 @@ define("BROAD_URL", "/concept/broader.json?uri="); #future use
 define("TOP_URL", "/concept/topConcepts.json");
 define("MAX_RESULTS", 200); #sisvoc only returns 200 items
 
+// logging of calls to legacy version of our services and widgets to flat file logging - added 09/02/2016
+
+require_once (API_APP_PATH.'core/helpers/api_helper.php');
+$terms = array(
+    'event' => 'api_hit',
+    'api_key' => 'public',
+    'api_version' => 'legacy',
+    'path' => 'apps/vocab_widget',
+);
+api_log_terms($terms);
+
 class VocabProxy
 {
 
@@ -123,7 +134,7 @@ class VocabProxy
 		 */
 		foreach (array('top', 'allnarrow') as $action) {
 		    $this->valid_actions[$action]['sortprocessor'] = function($e1, $e2) {
-			if (array_key_exists('notation', $e1))
+			if (array_key_exists('notation', $e1) && array_key_exists('notation', $e2))
 			{
 			    $l1 = (int)$e1['notation'];
 			    $l2 = (int)$e2['notation'];
@@ -137,7 +148,7 @@ class VocabProxy
 		}
 
 		  $this->valid_actions['collection']['sortprocessor'] = function($e1, $e2) {
-			if (array_key_exists('definition', $e1))
+			if (array_key_exists('definition', $e1) && array_key_exists('definition', $e2))
 			{
 			    $l1 = $e1['definition'];
 			    $l2 = $e2['definition'];
@@ -176,7 +187,7 @@ class VocabProxy
 								$solr_response = unserialize(file_get_contents($count_url));
 								$e['count'] = $solr_response['response']['numFound'];
 							}
-							catch (Exception $e)
+							catch (Exception $ee)
 							{
 								$e['count'] = 0;
 							}
@@ -266,11 +277,6 @@ class VocabProxy
 									     function($e) {
 										     return $e !== false;
 									     }));
-			if (is_callable($this->valid_actions[$this->action]['itemprocessor']))
-			{
-				$this->jsonData['items'] = call_user_func($this->valid_actions[$this->action]['itemprocessor'],
-									  $this->jsonData['items']);
-			}
 			$this->jsonData['count'] = count($this->jsonData['items']);
 		}
 	}
@@ -331,7 +337,7 @@ class VocabProxy
 	 */
 	private function setup() {
 		$this->debug = isset($_REQUEST['debug']);
-
+      //  $action = $this->input->get('action');
 		if (isset($_REQUEST['sqc']) &&
 		    !empty($_REQUEST['sqc'])) {
 			$this->solr_query_callback = rawurlencode($_REQUEST['sqc']);
@@ -375,7 +381,10 @@ class VocabProxy
 
 		if ($this->action) {
 			if (isset($_REQUEST['lookfor'])) {
-				$this->lookfor = rawurlencode($_REQUEST['lookfor']);
+				// This was rawurlencode(...), but there's a call
+				// to urlencode() in the queryprocessor for search.
+				// So no longer double-encode the search term.
+				$this->lookfor = $_REQUEST['lookfor'];
 				$this->jsonData['message'] .= " (" . $_REQUEST['lookfor'] . ")";
 			}
 
@@ -418,7 +427,7 @@ class VocabProxy
 }
 
 function definition_sort ($e1, $e2) {
-	if (array_key_exists('definition', $e1))
+	if (array_key_exists('definition', $e1) && array_key_exists('definition', $e2))
 	{
 	    $l1 = $e1['definition'];
 	    $l2 = $e2['definition'];

@@ -1,6 +1,8 @@
 <?php
 namespace ANDS\API\Registry\Handler;
+use ANDS\API\Task\FixRelationshipTask;
 use \Exception as Exception;
+use \XSLTProcessor as XSLTProcessor;
 
 define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
 
@@ -18,7 +20,7 @@ class ObjectHandler extends Handler{
         'indent' => 'on',
         'rows' => 20,
     );
-    private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal', 'citations', 'dates', 'connectiontrees', 'relatedInfo', 'identifiers', 'rights', 'contact', 'directaccess', 'logo', 'tags', 'existenceDates', 'identifiermatch');
+    private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal', 'citations', 'dates', 'connectiontrees', 'relatedInfo', 'identifiers', 'rights', 'contact', 'directaccess', 'logo', 'tags', 'existenceDates', 'identifiermatch', 'suggest');
 
     private $valid_filters = array('q', 'fq', 'fl', 'sort', 'start', 'rows', 'int_ref_id', 'facet_field', 'facet_mincount', 'facet');
 
@@ -29,6 +31,7 @@ class ObjectHandler extends Handler{
      */
     public function handle()
     {
+        ini_set('memory_limit', 256000000);
         if ($this->params['identifier']) {
             // registry/object/(:id)
             return array(
@@ -110,25 +113,131 @@ class ObjectHandler extends Handler{
             $id = $this->ci->input->get('q') ? $this->ci->input->get('q') : false;
         }
 
+        $benchmark = $this->ci->input->get('benchmark') ? $this->ci->input->get('benchmark') : false;
+
+        if ($benchmark) {
+            $result['benchmark'] = array();
+        }
+
         $resource = $this->populate_resource($this->params['identifier']);
 
         foreach ($method1s as $m1) {
-            switch ($m1) {
-                case 'get':
-                case 'registry':$result[$m1] = $this->ro_handle('core');
-                    break;
-                case 'relationships':$result[$m1] = $this->relationships_handler();
-                    break;
-                default:
-                    try {
-                        $r = $this->ro_handle($m1, $resource);
-                        if (!is_array_empty($r)) {
-                            $result[$m1] = $r;
+
+            if ($benchmark) {
+                $this->ci->benchmark->mark('start');
+            }
+
+            if ($m1 && in_array($m1, $this->valid_methods)) {
+                switch ($m1) {
+                    case 'get':
+                    case 'registry':
+                        $result[$m1] = $this->ro_handle('core', $resource);
+                        break;
+                    case 'relationships-old':
+                        $result[$m1] = $this->relationships_handler($resource);
+                        break;
+                    default:
+                        try {
+                            $r = $this->ro_handle($m1, $resource);
+                            if (!is_array_empty($r)) {
+                                $result[$m1] = $r;
+                            }
+                        } catch (Exception $e) {
+                            $result[$m1] = $e->getMessage();
                         }
-                    } catch (Exception $e) {
-                        $result[$m1] = $e->getMessage();
+                        break;
+                }
+            } else {
+                //special case
+                if ($m1 == 'solr_index') {
+                    $ro = $resource['ro'];
+                    $ro->sync();
+                    return $ro->indexable_json();
+                } elseif ($m1 == 'grants_structure') {
+                    $this->ci->load->library('solr');
+                    $ro = $resource['ro'];
+                    $result = [
+                        'id' => $ro->id,
+                        'title' => $ro->title,
+                        'childs' => $ro->getGrantsStructureSOLR()
+                    ];
+
+                    return $result;
+                } elseif ($m1 == 'sync') {
+                    $ro = $resource['ro'];
+                    return $ro->sync();
+                } else if($m1 == 'relations_index') {
+                    $ro = $resource['ro'];
+                    $ro->addRelationships();
+                    $ro->cacheRelationshipMetadata();
+                    $ro->indexRelationship();
+                    return $ro->getRelationshipIndex();
+                } else if ($m1 == 'fixRelationship') {
+                    $task = new FixRelationshipTask();
+                    $ro = $resource['ro'];
+                    $params = [
+                        'id' => $ro->id,
+                    ];
+                    $includes = explode(',', $this->ci->input->get('includes'));
+                    if (sizeof($includes) > 0) {
+                        $params['includes'] = implode(',', $includes);
+                        if (trim($params['includes'])=="") {
+                            unset($params['includes']);
+                        }
                     }
-                    break;
+                    $task->params = http_build_query($params);
+                    $this->ci->benchmark->mark('start');
+                    $task->run_task();
+                    $this->ci->benchmark->mark('end');
+                    $took = $this->ci->benchmark->elapsed_time('start', 'end');
+                    return [
+                        'took' => $took,
+                        'task' => $task->getMessage()
+                    ];
+                } else if ($m1 == 'relatedObjects') {
+                    $ro = $resource['ro'];
+                    $ro->addRelationships();
+                    $ro->cacheRelationshipMetadata();
+                    return $ro->getAllRelatedObjects();
+                } else if ($m1 == 'relatedGrantsNetwork') {
+                    $ro = $resource['ro'];
+                    return $ro->_getGrantsNetworkConnections($ro->getAllRelatedObjects());
+                } else if ($m1 == 'relatedObjectsIndex') {
+                    $this->ci->benchmark->mark('start');
+                    $ro = $resource['ro'];
+                    $relatedObjects = $ro->getAllRelatedObjects();
+                    return $relatedObjects;
+                } else if ($m1 == 'updatePortalIndex') {
+                    $ro = $resource['ro'];
+                    $includes = explode(',', $this->ci->input->get('includes'));
+                    $index = $ro->getPortalRelationshipIndex($includes);
+                    return $index;
+                } else if ($m1 == 'updateRelationsIndex') {
+                    $this->ci->benchmark->mark('start');
+                    $ro = $resource['ro'];
+                    $includes = explode(',', $this->ci->input->get('includes'));
+                    $index = $ro->getRelationshipIndex($includes);
+
+                    $this->ci->load->library('solr');
+                    $this->ci->solr->init()->setCore('relations');
+                    $add = $this->ci->solr->add_json(json_encode($index), true);
+                    $commit = $this->ci->solr->commit();
+
+                    $this->ci->benchmark->mark('end');
+                    $took = $this->ci->benchmark->elapsed_time('start', 'end');
+
+                    return [
+                        'took' => $took,
+                        'size' => sizeof($index),
+                        'add' => json_decode($add, true),
+                        'commit' => json_decode($commit, true)
+                    ];
+                }
+            }
+
+            if ($benchmark) {
+                $this->ci->benchmark->mark('end');
+                $result['benchmark'][$m1] = $this->ci->benchmark->elapsed_time('start', 'end');
             }
         }
 
@@ -149,38 +258,42 @@ class ObjectHandler extends Handler{
     {
         require_once SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/' . $handler . '.php';
         $handler = new $handler($resource);
-        return $handler->handle();
+        $result = $handler->handle();
+        unset($handler);
+        return $result;
     }
 
     /**
      * Relationships handler
-     * @todo  migrate to own handler at registry_object_handlers
-     * @todo  migrate along with getFunders()
+     *
+     * @todo   migrate to own handler at registry_object_handlers
+     * @todo   migrate along with getFunders()
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @param bool $resource
      * @return array
+     * @throws Exception
      */
-    private function relationships_handler()
+    private function relationships_handler($resource = false)
     {
-        $relationships = array();
+        if (!$resource) throw new Exception("No resource constructed for relationship handler");
 
-        $ci = &get_instance();
         $this->ci->load->model('registry_object/registry_objects', 'ro');
 
         $limit = isset($_GET['related_object_limit']) ? $_GET['related_object_limit'] : 5;
         $types = array('collection', 'party_one', 'party_multi', 'activity', 'service');
 
-        $record = $this->ci->ro->getByID($this->params['identifier']);
-
-        $relationships = $record->getConnections(true, null, $limit, 0, true);
+        $record = $resource['ro'];
+        $relationships = $record->getConnections(true, null, $limit, 0, false);
         $relationships = $relationships[0];
 
         if (isset($relationships['activity'])) {
+            //fix array key values
+            $relationships['activity'] = array_values($relationships['activity']);
             for ($i = 0; $i < count($relationships['activity']); $i++) {
                 $funder = $this->getFunders($relationships['activity'][$i]['registry_object_id']);
                 if ($funder != '') {
                     $relationships['activity'][$i]['funder'] = "(funded by " . $funder . ")";
                 }
-
             }
         }
 
@@ -188,9 +301,9 @@ class ObjectHandler extends Handler{
         $this->ci->load->library('solr');
         $search_class = $record->class;
         if ($record->class == 'party') {
-            if (strtolower($this->ro->type) == 'person') {
+            if (strtolower($record->type) == 'person') {
                 $search_class = 'party_one';
-            } elseif (strtolower($this->ro->type) == 'group') {
+            } elseif (strtolower($record->type) == 'group') {
                 $search_class = 'party_multi';
             }
         }
@@ -213,8 +326,48 @@ class ObjectHandler extends Handler{
             }
         }
 
+        $includes = explode(',', $this->ci->input->get('includes'));
+
+
+        if (in_array('grants', $includes)) {
+            $relatedObjects = $record->getAllRelatedObjects();
+            $childActivities = $record->getChildActivities($relatedObjects);
+
+            $grants = [];
+            $programs = [];
+            if ($childActivities && sizeof($childActivities) > 0) {
+                foreach ($childActivities as $childActivity) {
+                    if (isset($childActivity['type'])) {
+                        if (trim(strtolower($childActivity['type'])) == 'program') {
+                            $programs[] = $childActivity;
+                        } elseif (trim(strtolower($childActivity['type'])) == 'grant') {
+                            $grants[] = $childActivity;
+                        }
+                    }
+                }
+            }
+
+            $relationships['grants'] = [
+                'programs' => $programs,
+                'grants' => $grants,
+                'data_output' => $record->getDataOutput($childActivities, $relatedObjects),
+                'funders' => $record->getFunders(),
+//                'structure' => $record->getStructuredGrantsAtNode($relatedObjects)
+            ];
+
+            if ($record->class == 'activity') {
+                $relationships['grants']['publications'] = $record->getDirectPublication();
+            }
+
+            //useful for debugging
+            if ($only = $this->ci->input->get('only')) {
+                $relationships = $relationships['grants'][$only];
+            }
+        }
+
         return $relationships;
     }
+
 
     /**
      * Helper method for relationship_handlers

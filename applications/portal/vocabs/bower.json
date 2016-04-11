@@ -23,6 +23,7 @@
     "angular-ui-utils": "~0.2.1",
     "angular-bootstrap": "~0.12.0",
     "angular-loading-bar": "~0.7.0",
-    "ng-file-upload": "~3.1.0"
+    "ng-file-upload": "~3.1.0",
+    "ui-select": "https://github.com/angular-ui/ui-select.git#0.16.1"
   }
 }

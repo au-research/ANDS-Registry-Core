@@ -48,7 +48,7 @@ class Core extends ROHandler {
              * Check if list_description exists in the index
              * @todo default description?
              */
-            if ($this->index['list_description']) {
+            if (isset($this->index['list_description'])) {
                 $result['description'] = "Identifier: " .$this->ro->key.NL.$this->index['list_description'];
             }
         }

@@ -1,0 +1,18 @@
+.rowidget_search, .rowidget_lookup{
+	margin-left:5px;
+}
+
+.rowidget_single{
+	border:1px solid #ccc;
+	padding:10px;
+	margin:5px 0;
+}
+.rowidget_single div.description{
+	text-overflow:ellipsis;
+	max-height:150px;
+	overflow:auto;
+}
+
+.rowidget_results{
+	margin: 5px 0;
+}

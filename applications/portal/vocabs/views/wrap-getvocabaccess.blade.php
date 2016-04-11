@@ -36,7 +36,7 @@
 ?>
 <div class="box" ng-non-bindable>
 	<div class="box-title {{ $hasNotCurrentVersion ? 'box-title-collapsible' : '' }}">
-		<h4> {{ htmlspecialchars($vocab['current_version']['title']) }} </h4>
+		<h4><i class="fa fa-lg fa-caret-down" style="display: none;">&nbsp;</i><i class="fa fa-lg fa-caret-right" style="display: none;">&nbsp;</i> {{ htmlspecialchars($vocab['current_version']['title']) }} </h4>
 		<span class="box-tag box-tag-green"> current </span>
 	</div>
 	<div class="clearfix"></div>
@@ -44,7 +44,7 @@
 
 		@foreach($vocab['current_version']['version_access_points'] as $ap)
 		    @if(($ap['type']=='file' && !$singleFile) || ($hasSesameDownloads))
-		        <a class="btn btn-lg btn-block btn-primary download-chooser"><i class="fa fa-download"></i> Download <i class="fa fa-caret-right"></i></a>
+		        <a class="btn btn-lg btn-block btn-primary download-chooser"><i class="fa fa-download"></i> Download <i class="fa fa-chevron-right"></i></a>
 		        <?php break; ?>
 		    @endif
 		@endforeach
@@ -157,7 +157,7 @@
 	?>
 	<div class="box" ng-non-bindable>
 		<div class="box-title {{ $hasNotCurrentVersion ? 'box-title-collapsible' : '' }}">
-			<h4> {{ htmlspecialchars($version['title']) }} </h4>
+			<h4><i class="fa fa-lg fa-caret-down" style="display: none;"></i>&nbsp;<i class="fa fa-lg fa-caret-right" style="display: none;">&nbsp;</i> {{ htmlspecialchars($version['title']) }} </h4>
 			<span class="box-tag box-tag box-tag-{{ $version['status'] }}"> {{htmlspecialchars($version['status'])}} </span>
 		</div>
 		<div class="clearfix"></div>
@@ -165,7 +165,7 @@
 
 			@foreach($version['version_access_points'] as $ap)
 			    @if(($ap['type']=='file' && !$singleFile) || ($hasSesameDownloads))
-			        <a class="btn btn-lg btn-block btn-primary download-chooser"><i class="fa fa-download"></i> Download <i class="fa fa-caret-right"></i></a>
+			        <a class="btn btn-lg btn-block btn-primary download-chooser"><i class="fa fa-download"></i> Download <i class="fa fa-chevron-right"></i></a>
 			        <?php break; ?>
 			    @endif
 			@endforeach

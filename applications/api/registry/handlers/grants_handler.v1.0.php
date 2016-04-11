@@ -20,7 +20,6 @@ class GrantsHandler extends Handler
         $this->ci->load->library('solr');
         $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
 
-        $gets = $this->ci->input->get();
         foreach ($this->ci->input->get() as $name => $value) {
 
             $institution = ($name == 'institution') ? $value : null;
@@ -146,7 +145,7 @@ class GrantsHandler extends Handler
                     'key' => $result['key'],
                     'slug' => $result['slug'],
                     'title' =>  $result['display_title'],
-                    'description' => $result['description'],
+                    'description' => isset($result['description']) ? $result['description'] : null,
                     'identifiers' => $result['identifier_value'],
                     'identifier_type' => $identifiers,
                     'relations' => $relationships

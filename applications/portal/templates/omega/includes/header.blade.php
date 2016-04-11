@@ -3,7 +3,10 @@
     <meta charset="utf-8">
     <title>{{ isset($ro->core['title']) ? $ro->core['title']: 'Research Data Australia'}}</title>
 
-        <meta property="og:type" content="article"/>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,200italic,300,300italic,400italic,600,600italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+
+    <meta property="og:type" content="article"/>
+
     @if(isset($ro))
         @if(isset($ro->core['title']))
         <meta property="og:title" content="{{$ro->core['title']}}"/>
@@ -14,8 +17,9 @@
             <meta property="og:image" content="{{get_config_item('default_base_url')}}assets/core/images/ANDS_logo.JPG"/>
         @endif
         @if(isset($ro->core['description']))
-            <?php 
-                $clean_description = str_replace(array('"','[[',']]'), '', $ro->core['description']);
+            <?php
+                $description = is_array($ro->core['description']) ? implode(" ", $ro->core['description']) : $ro->core['description'];
+                $clean_description = str_replace(array('"','[[',']]'), '', $description);
             ?>
             <meta ng-non-bindable property="og:description" content="{{ $clean_description }}"/>
         @else

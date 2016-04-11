@@ -40,7 +40,7 @@ print $ds->save();
 class _data_source {
 	
 	private $id; 	// the unique ID for this data source
-	private $_CI; 	// an internal reference to the CodeIgniter Engine 
+	private $_CI; 	// an internal reference to the CodeIgniter Engine
 	private $db; 	// another internal reference to save typing!
 	
 	public $attributes = array();		// An array of attributes for this Data Source
@@ -839,6 +839,23 @@ class _data_source {
         }
         $this->save();
         return $this;
+    }
+
+    /**
+     * Get the SOLR Indexed count for this data source
+     * @return mixed
+     * @throws Exception
+     */
+    public function getIndexedCount()
+    {
+        $this->_CI->load->library('solr');
+        $this->_CI->solr->init()->setOpt('fq', '+data_source_id:'.$this->getID());
+        $result = $this->_CI->solr->executeSearch(true);
+        if ($result && isset($result['response'])) {
+            return $result['response']['numFound'];
+        } else {
+            throw new Exception ("Failed getting indexed count for data source ". $this->getID());
+        }
     }
 
     /*

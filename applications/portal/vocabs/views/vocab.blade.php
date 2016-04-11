@@ -188,7 +188,11 @@ foreach ($vocab['versions'] as $version) {
                 <?php $sub_count=0; ?>
                 @foreach($vocab['subjects'] as $subject)
                 <?php $sub_count++; ?>
-                   <a  href="{{base_url()}}#!/?subjects={{$subject['subject']}}"> {{$subject['subject']}} </a> <?php if($sub_count<count($vocab['subjects'])) echo " | "; ?>
+                    @if(isset($subject['subject_label']))
+                        <a  href="{{base_url()}}search/#!/?subject_labels={{rawurlencode($subject['subject_label'])}}"> {{$subject['subject_label']}} </a> <?php if($sub_count<count($vocab['subjects'])) echo " | "; ?>
+                    @else
+                        <a  href="{{base_url()}}search/#!/?subject_labels={{rawurlencode($subject['subject'])}}"> {{$subject['subject']}} </a> <?php if($sub_count<count($vocab['subjects'])) echo " | "; ?>
+                    @endif
                 @endforeach
             </div>
         </div>

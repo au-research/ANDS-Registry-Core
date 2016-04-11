@@ -197,6 +197,11 @@ function readDirectory($directory)
     return $scanned_directory;
 }
 
+/**
+ * Return the Spatial information for an IP Address using the ip-api api
+ * @param $ip
+ * @return bool|mixed|string
+ */
 function getIPLocation($ip)
 {
     $data = @file_get_contents('http://ip-api.com/json/' . $ip);
@@ -206,4 +211,26 @@ function getIPLocation($ip)
     } else {
         return false;
     }
+}
+
+
+/**
+ * Convert string to UTF8 encoded
+ * @param $d
+ * @return array|string
+ */
+function utf8ize($d)
+{
+    if (is_array($d))
+        foreach ($d as $k => $v)
+            $d[$k] = utf8ize($v);
+
+    else if (is_object($d))
+        foreach ($d as $k => $v)
+            $d->$k = utf8ize($v);
+
+    else
+        return utf8_encode($d);
+
+    return $d;
 }

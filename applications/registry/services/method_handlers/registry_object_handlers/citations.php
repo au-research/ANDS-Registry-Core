@@ -120,6 +120,7 @@ Content:text/plain; charset="utf-8"
 TY  - DATA
 Y2  - '.date("Y-m-d")."
 ";
+
         $doi = $this->getDoi();
         if($doi!=''){
             $endNote .= "DO  - ".$doi."
@@ -224,6 +225,7 @@ Y2  - '.date("Y-m-d")."
     private function getCoinsSpan()
     {
         $coins = '';
+
 
         $rft_id =  $this->getSourceUrl($output='coins');
         $rft_identifier = $this->getIdentifier();
@@ -505,49 +507,50 @@ Y2  - '.date("Y-m-d")."
     function getContributors()
     {
         $contributors = Array();
-        if(isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor)){
-           foreach($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor){
-                 $nameParts = Array();
-                 foreach($contributor->namePart as $namePart){
-                        $nameParts[] = array(
-                                'namePart_type' => (string)$namePart['type'],
-                                'name' => (string)$namePart
-                            );
-                 }
+        if (isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor)) {
+            foreach ($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor) {
+                $nameParts = Array();
+                foreach ($contributor->namePart as $namePart) {
+                    $nameParts[] = array(
+                        'namePart_type' => (string)$namePart['type'],
+                        'name' => (string)$namePart
+                    );
+                }
 
-                 $contributors[] =array(
-                       'name' => formatName($nameParts),
-                        'seq' => (string)$contributor['seq']
-                 );
+                $contributors[] = array(
+                    'name' => formatName($nameParts),
+                    'seq' => (string)$contributor['seq']
+                );
             }
         }
 
-       if(!$contributors){
-            $relationshipTypeArray = array('hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
+        if (!$contributors) {
+            $relationshipTypeArray = array(
+                'hasPrincipalInvestigator',
+                'principalInvestigator',
+                'author',
+                'coInvestigator',
+                'isOwnedBy',
+                'hasCollector'
+            );
             $classArray = array('party');
-            $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
-            if(count($authors)>0)
-            {
-                foreach($authors as $author)
-                {
-                    if($author['status']==PUBLISHED)
-                    {
-                        $contributors[] =array(
-                            'name' => $author['title'],
-                            'seq' => ''
-                        );
-
-                    }
+            $authors = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
+            if (sizeof($authors) > 0) {
+                foreach ($authors as $author) {
+                    $contributors[] = array(
+                        'name' => $author['to_title'],
+                        'seq' => ''
+                    );
                 }
             }
-       }
-        if(!$contributors){
-            $contributors[] =array(
+        }
+        if (!$contributors) {
+            $contributors[] = array(
                 'name' => 'Anonymous',
                 'seq' => ''
             );
         }
-        usort($contributors,"seq");
+        usort($contributors, "seq");
         return $contributors;
     }
 
@@ -567,7 +570,15 @@ Y2  - '.date("Y-m-d")."
                     $grant_sxml = $grant_object->getSimpleXML(NULL, true);
                     if($grant_object->status == PUBLISHED){
                         $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
-                        $related_party = $grant_object->getRelatedObjectsByClassAndRelationshipType(['party'] ,['isFunderOf','isFundedBy']);
+
+                        $related_party = array();
+                        $relationships = $grant_object->getAllRelatedObjects();
+                        foreach ($relationships as $rr) {
+                            if (in_array($rr['class'], ['party']) && in_array($rr['relation_type'], ['isFunderOf','isFundedBy'])) {
+                                array_push($related_party, $rr);
+                            }
+                        }
+
                         if (is_array($grant_id))
                         {
                             if (is_array($related_party) && isset($related_party[0]))
