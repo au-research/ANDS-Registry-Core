@@ -211,7 +211,6 @@ class Registry_objects extends CI_Model {
         $this->solr->setOpt('fl', 'id');
         $result = $this->solr->executeSearch(true);
         return $result['response']['numFound'];
-
     }
 
 	function __construct() {

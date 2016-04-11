@@ -545,6 +545,7 @@ function getIdentifierURL($type, $identifier) {
             break;
         case 'ark':
         case "uri":
+        case "url":
             $url = $identifier;
             break;
         case 'purl':
