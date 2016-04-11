@@ -219,6 +219,7 @@ class Registry_object extends MX_Controller
             ->set('fl', $fl)
             ->set('show_dup_identifier_qtip', $show_dup_identifier_qtip)
             ->set('related', $related)
+            ->set('debugOn', $this->input->get('debug') == 'on' ? true : false)
             ->render($render);
     }
 
@@ -847,7 +848,6 @@ class Registry_object extends MX_Controller
             ->setFacetOpt('field', 'latest_year')
             ->setOpt('f.earliest_year.facet.sort', 'count asc')
             ->setOpt('f.latest_year.facet.sort', 'count');
-
 
         /**
          * Set facets based on class

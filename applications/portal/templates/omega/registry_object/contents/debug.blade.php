@@ -1,4 +1,4 @@
-@if(is_dev())
+@if(is_dev() || $debugOn)
     <div class="panel panel-primary panel-content swatch-white">
         <div class="panel-heading">Debug Menu</div>
         <div class="panel-body">
