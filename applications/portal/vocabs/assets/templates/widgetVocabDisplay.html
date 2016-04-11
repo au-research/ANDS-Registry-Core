@@ -1,94 +1,56 @@
-<div class="sampleWidget panel" ng-if="vocab"> <!--ng-if="vocab" ??-->
+<div class="panel" ng-show="vocab"> <!--ng-if="vocab" ??-->
 
-    <h3><a href="{{ base_url }}{{ vocab.slug }}" target="_blank">{{ vocab.title }}</a></h3>
-    <small>{{ vocab.owner }}</small>
-    <p>{{ vocab.description }}</p>
-    <a href="{{ base_url }}{{ vocab.slug }}" target="_blank">View Vocabulary</a>
-
-    <h4>Available Widget Modes:</h4>
-
-    <ul style="list-style-type: none;">
-        <li ng-repeat="widgetMode in widgetModes">
-            <input type="radio" id="{{widgetMode.name}}" name="{{widgetMode.name}}" value="{{widgetMode.name}}"
-                   ng-click="switchMode(widgetMode.name)" ng-checked="widgetMode.name == mode"/>
-            <label style="margin-left: 6px;" for="{{widgetMode.name}}">{{widgetMode.label}}</label>
-        </li>
-    </ul>
-
-    <div id="widget">
-        <div class="alert alert-info" ng-if="mode == 'tree'">
-            Click on the following input to expand the tree view
-        </div>
-        <div class="alert alert-info" ng-if="mode == 'search'">
-            Start typing on the following input element to start searching
-        </div>
-        <input type="text" id="sampleWidgetInput" placeholder="Sample Input Element">
+  <div class="row">
+    <div class="col-md-12">
+      <h3><a href="{{ base_url }}{{ vocab.slug }}" target="_blank">{{ vocab.title }}</a></h3>
+      <!-- small>{{ vocab.owner }}</small> -->
+      <p>{{ vocab.description }}</p>
+      <a href="{{ base_url }}{{ vocab.slug }}" target="_blank">View Vocabulary</a>
     </div>
+  </div>
 
-    <div class="alert alert-danger" ng-if="error">
+  <!-- Section 2: Select a widget mode -->
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <h3>2. Select a widget mode</h3>
+
+      <ul style="list-style-type: none;">
+        <li ng-repeat="widgetMode in widgetModes">
+          <input type="radio" id="{{widgetMode.name}}" name="{{widgetMode.name}}" value="{{widgetMode.name}}"
+                 ng-click="switchMode(widgetMode.name)" ng-checked="widgetMode.name == mode"/>
+          <label style="margin-left: 6px;" for="{{widgetMode.name}}">{{widgetMode.label}}</label>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 3: Try out the widget -->
+
+  <div class="row">
+    <div class="col-md-12">
+      <h3>3. Try out the widget</h3>
+      <div id="widgetExplorerStep3">
+        <span class="label label-warning" ng-if="mode == 'tree'">
+          Click on the following input to expand the tree view
+        </span>
+        <span class="label label-warning" ng-if="mode == 'search'">
+          Start typing on the following input element to start searching
+        </span>
+        <br /><br />
+        <input type="text" id="sampleWidgetInput" placeholder="Sample Input Element">
+      </div>
+
+      <div class="alert alert-danger" ng-if="error">
         <h4>There's an error loading the vocabulary widget:</h4>
         <p>
-            {{ error }}
+          {{ error }}
         </p>
+      </div>
     </div>
+  </div>
 
-    <concept-display></concept-display>
-
-    <div class="swatch-white">
-        <a href="" class="btn btn-primary"
-           ng-click="showCode=!showCode">
-            <i class="fa" ng-class="{'fa-toggle-on':showCode, 'fa-toggle-off':!showCode}"></i>
-            Show Embeddable Code
-        </a>
-        <a href="http://developers.ands.org.au/widgets/vocab_widget/" target="_blank">Learn More</a>
-    </div>
-
-    <div ng-if="vocab && showCode">
-        <div id="widget-script-search" class="toggle" ng-if="mode == 'search'">
-            <pre class="panel-body prettyprint widget-code">&lt;input type="text" id="{{vocab.slug}}" name="{{vocab.slug}}" value="" size="80" autocomplete="off"&gt;
-    &lt;script&gt;
-        $("#{{vocab.slug}}").vocab_widget({
-            mode: 'search',
-            cache: false,
-            repository: '{{vocab.sissvoc_end_point}}',
-            target_field: '{{target_field}}',
-            endpoint: '{{endpoint}}'
-        });
-    &lt;/script&gt;
-            </pre>
-        </div>
-        <div id="widget-script-tree" class="toggle" ng-if="mode == 'tree'">
-            <pre class="panel-body prettyprint widget-code">&lt;input type="text" id="{{vocab.slug}}" name="{{vocab.slug}}" value="" size="80" autocomplete="off"&gt;
-        &lt;script&gt;
-            $("#{{vocab.slug}}").qtip({
-                content:{text:'&lt;div class="subject_chooser"&gt;&lt;/div&gt;'},
-                prerender:true,
-                position:{
-                    my:'center left',
-                    at: 'center right',
-                    viewport:$(window)
-                },
-                show: {event: 'click',ready:false},
-                hide: {event: 'unfocus'},
-                events: {
-                    render: function(event, api) {
-                        var widget = $(".subject_chooser", this).vocab_widget({mode:'{{mode}}',
-                            repository:'{{vocab.sissvoc_end_point}}',
-                            endpoint:'{{endpoint}}' ,
-                            display_count:false});
-                        widget.on('treeselect.vocab.ands', function(event) {
-                            var target = $(event.target);
-                            var data = target.data('vocab');
-                            $("#{{vocab.slug}}").val(data.{{target_field}});
-                        });
-                        api.elements.content.find('.hasTooltip').qtip('repopsition');
-                        api.elements.content.find('.hasTooltip').qtip('update');
-                    }
-                },
-                style: {classes: 'qtip-bootstrap ui-tooltip-shadow ui-tooltip-bootstrap ui-tooltip-large'}
-            });
-        &lt;/script&gt;
-            </pre>
-        </div>
-    </div>
+  <!-- Sections 4 and 5 -->
+  <concept-display></concept-display>
 </div>

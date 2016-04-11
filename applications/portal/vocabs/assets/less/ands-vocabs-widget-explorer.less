@@ -1,19 +1,8 @@
 .widgetExplorer {
-  border: 1px solid @gray;
-  margin: 10px;
-  padding:0;
-  height:650px;
   ul.vocabListing {
-    margin:0;
-    padding:0;
-    border-right:1px solid @darkGray;
-    height:100%;
     overflow:auto;
     li {
-      margin:0;
-      padding:15px;
       list-style-type: none;
-      border-bottom:1px solid @darkGray;
       cursor: pointer;
       word-wrap: break-word;
       &:hover, &.selected {
@@ -21,17 +10,18 @@
       }
     }
   }
-  div.vocabDisplay {
-    height:100%;
-    overflow:auto;
-  }
   #sampleWidgetInput {
     border: 1px solid @darkGray;
     padding: 10px;
-    width: 100%;
+    width: 50%;
   }
   .widget-code {
     overflow:auto;
     word-wrap:inherit;
   }
+}
+#widgetExplorerStep3 .label {
+    font-size: 100%;
+    font-weight: 400;
+    color: #65625d;
 }

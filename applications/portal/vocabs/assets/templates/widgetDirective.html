@@ -1,23 +1,38 @@
-<div class="widgetExplorer container-fluid" ng-if="vocabList">
+<div class="widgetExplorer container" ng-if="vocabList">
 
-    <ul class="vocabListing col-md-4">
-        <li
-            ng-repeat="vocab in vocabList"
-            ng-click="selectVocab(vocab)"
-            ng-class="{'selected': vocab.id == selectedVocab.id}"
-        >
-            <div >
-                <h4><a href="">[[ vocab.title ]]</a></h4>
-                <small>[[ vocab.owner ]]</small>
-                <p>[[ vocab.description ]]</p>
-            </div>
-        </li>
-    </ul>
+  <!-- Section 1: Select a widgetable vocabulary -->
 
-    <div class="vocabDisplay col-md-8">
-        <widget-display-directive vocab="selectedVocab"></widget-display-directive>
+  <div class="row">
+    <div class="col-md-12">
+      <h3>1. Select a widgetable vocabulary</h3>
+
+      <ui-select append-to-body="true" ng-model="selectedVocab" on-select="selectVocab($select.selected)">
+        <ui-select-match placeholder="Select a vocabulary">{{$select.selected.title}}</ui-select-match>
+        <ui-select-choices
+           repeat="vocab in vocabList | filter: $select.search "> <!--  | filter: {title: $select.search} -->
+          <div>
+            [[ vocab.title ]]
+            <br />
+            <!-- small>[[ vocab.owner ]]</small>-->
+            <!-- br /> -->
+            [[ vocab.description ]]
+          </div>
+        </ui-select-choices>
+      </ui-select>
+
     </div>
+  </div>
 
-    <div class="vocabDownload"></div>
+
+  <!-- Sections 2-5 -->
+
+  <div class="vocabDisplay">
+    <widget-display-directive vocab="selectedVocab"></widget-display-directive>
+  </div>
+
+  <!-- For future thought: provide some sort of download
+       facility to get what you see.
+       <div class="vocabDownload"></div>
+  -->
 
 </div>

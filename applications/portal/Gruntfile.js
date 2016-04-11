@@ -86,7 +86,8 @@ module.exports = function(grunt){
                     '<%= yeoman.templates %>/omega/assets/css/fonts.min.css',
                     '<%= yeoman.assets %>/lib/qtip2/jquery.qtip.css',
                     '<%= yeoman.vocab_asset %>/js/lib/angular-loading-bar/build/loading-bar.min.css',
-                    '<%= yeoman.vocab_asset %>/css/aui-just-lozenges.css'
+                    '<%= yeoman.vocab_asset %>/css/aui-just-lozenges.css',
+                    '<%= yeoman.vocab_asset %>/js/lib/ui-select/dist/select.css'
                 ],
                 dest:'<%=yeoman.vocab_asset %>/css/lib.css'
             },
@@ -112,6 +113,8 @@ module.exports = function(grunt){
                 options:{separator:';'},
                 nonull: true,
                 src:[
+                    // ui-select must be loaded after JQuery.
+                    '<%= yeoman.vocab_asset %>/js/lib/ui-select/dist/select.js',
                     '<%= yeoman.vocab_asset %>/js/vocabs_app.js',
                     '<%= yeoman.vocab_asset %>/js/filters.js',
                     '<%= yeoman.vocab_asset %>/js/directives.js',

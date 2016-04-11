@@ -4,7 +4,9 @@
 
     angular
         .module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap',
-                        'ui.utils', 'angular-loading-bar', 'angularFileUpload'])
+                        'ui.utils', 'angular-loading-bar', 'angularFileUpload',
+                        'ui.select'
+                       ])
         .config(
             function ($interpolateProvider, $locationProvider, $logProvider) {
                 $interpolateProvider.startSymbol('[[');
