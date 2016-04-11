@@ -32,8 +32,8 @@
 		var defaults = {
 		    //location (absolute URL) of the jsonp proxy
 		    //search_endpoint: 'https://pub.orcid.org/v1.1/search/orcid-bio?q=',
-            search_endpoint: 'https://test.ands.org.au/api/orcid.jsonp/search/',
-		   	lookup_endpoint: 'https://test.ands.org.au/api/orcid.jsonp/lookup/',
+            search_endpoint: 'https://researchdata.ands.org.au/api/orcid.jsonp/search/',
+		   	lookup_endpoint: 'https://researchdata.ands.org.au/api/orcid.jsonp/lookup/',
 
 		    //auto _lookup once init
 		    pre_lookup: false,

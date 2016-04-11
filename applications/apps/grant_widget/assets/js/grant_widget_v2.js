@@ -37,8 +37,8 @@
            // lookup_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/grants/?',
             // this has been inserted just for testing purposes
 
-            search_endpoint: 'http://test.ands.org.au/api/v2.0/registry.jsonp/grants/?',
-            lookup_endpoint: 'http://test.ands.org.au/api/v2.0/registry.jsonp/grants/?',
+            search_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/grants/?',
+            lookup_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/grants/?',
             api_key: 'public',
 		    //auto _lookup once init
 		    pre_lookup: false,
