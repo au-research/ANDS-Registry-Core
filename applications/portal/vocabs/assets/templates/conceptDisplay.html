@@ -56,10 +56,15 @@
         document’s &lt;head&gt;&lt;/head&gt; section.</p>
 
         <div class="swatch-white">
-          <div id="widget-script-head">
-            <pre class="panel-body prettyprint widget-code" ng-non-bindable>&lt;script src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.js'&gt;&lt;/script&gt;
-&lt;script type="text/javascript" src="//researchdata.ands.org.au/apps/assets/vocab_widget/js/vocab_widget_v2.js"&gt;&lt;/script&gt;
-&lt;link rel="stylesheet" type="text/css" href="//researchdata.ands.org.au/apps/assets/vocab_widget/css/vocab_widget.css" /&gt;</pre>
+          <div id="widget-script-head" ng-switch="mode">
+            <pre class="panel-body prettyprint toggle widget-code" ng-switch-when="tree">&lt;script src='https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.js'&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="https://researchdata.ands.org.au/apps/assets/vocab_widget/js/vocab_widget_v2.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" type="text/css" href="https://researchdata.ands.org.au/apps/assets/vocab_widget/css/vocab_widget.css" /&gt;
+&lt;script type="text/javascript" src="https://researchdata.ands.org.au/assets/core/lib/qtip2/jquery.qtip.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/qtip2/2.2.1/basic/jquery.qtip.min.css" media="screen" /&gt;</pre>
+            <pre class="panel-body prettyprint toggle widget-code" ng-switch-default>&lt;script src='https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.js'&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="https://researchdata.ands.org.au/apps/assets/vocab_widget/js/vocab_widget_v2.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" type="text/css" href="https://researchdata.ands.org.au/apps/assets/vocab_widget/css/vocab_widget.css" /&gt;</pre>
           </div>
         </div>
 
