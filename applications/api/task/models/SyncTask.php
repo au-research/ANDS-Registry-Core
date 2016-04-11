@@ -327,18 +327,25 @@ class SyncTask extends Task
         $solr_docs = array();
         $relation_docs = array();
         $remove_ids = array();
+        $exclude_ids = $this->ci->input->get('exclude') ? explode(',',$this->ci->input->get('exclude')) : array();
 
         if (sizeof($ids) > 0) {
             foreach ($ids as $ro_id) {
                 try {
                     $ro = false;
                     if ($ro_id) {
+                        if (in_array($ro_id, $exclude_ids)) {
+                            $this->log('Excluding '. $ro_id);
+                            continue;
+                        }
                         $ro = $this->ci->ro->getByID($ro_id);
                     }
+
                     if ($ro && $ro->status != 'PUBLISHED') {
                         $this->log('roid:' . $ro_id . ' is a ' . $ro->status . ' record and should be removed from the index');
                         $remove_ids[] = $ro_id;
                     }
+
                     if ($ro && $ro->status == 'PUBLISHED') {
 
                         $this->log('Processing record ' . $ro->id . ' Memory Usage: ' . memory_get_usage())->save();

@@ -38,7 +38,12 @@ class FixRelationshipTask extends Task
             if (sizeof($ids) > $this->chunkSize) {
                 $this->analyzeList($ids);
             } else {
+                $exclude_ids = $this->ci->input->get('exclude') ? explode(',',$this->ci->input->get('exclude')) : array();
                 foreach ($ids as $id) {
+                    if (in_array($id, $exclude_ids)) {
+                        $this->log('Excluding '. $id);
+                        continue;
+                    }
                     $this->fixRelationshipRecord($id);
                 }
             }
