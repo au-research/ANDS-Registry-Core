@@ -328,7 +328,6 @@ class SyncTask extends Task
         $relation_docs = array();
         $remove_ids = array();
         $exclude_ids = $this->ci->input->get('exclude') ? explode(',',$this->ci->input->get('exclude')) : array();
-
         if (sizeof($ids) > 0) {
             foreach ($ids as $ro_id) {
                 try {
