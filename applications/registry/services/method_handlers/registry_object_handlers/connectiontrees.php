@@ -20,7 +20,7 @@ class Connectiontrees extends ROHandler {
 
         if ($ro->class == 'collection') {
             $ancestors = $ci->connectiontree->getImmediateAncestors($ro, true);
-            $depth = 0;
+            $depth = 5;
             if ($ancestors) {
                 foreach ($ancestors AS $ancestor_element) {
                     if($ro->id != $ancestor_element['registry_object_id']){
