@@ -1064,6 +1064,16 @@
                         $scope.$apply(function () {
                             $scope.mapInstance = map;
                         });
+                    },
+                    bounds_changed: function (map) {
+                        $scope.$apply(function () {
+                            $scope.mapInstance = map;
+                        });
+                    },
+                    click: function(map) {
+                        $scope.$apply(function () {
+                            $scope.mapInstance = map;
+                        });
                     }
                 }
             };
@@ -1098,7 +1108,9 @@
                         // $log.debug($scope.geoCodeRectangle);
                         $scope.searchBox.setMap($scope.mapInstance);
                     }
+                }
 
+                if (newv) {
                     google.maps.event.trigger($scope.mapInstance, 'resize');
                 }
             });
@@ -1188,6 +1200,9 @@
 
                 }
             });
+            if ($scope.mapInstance) {
+                google.maps.event.trigger($scope.mapInstance, 'resize');
+            }
         }
     }
 

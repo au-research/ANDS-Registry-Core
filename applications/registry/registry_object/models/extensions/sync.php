@@ -370,6 +370,7 @@ class Sync_extension extends ExtensionBase{
                 $uniquePoints = array_unique($points);
 
                 if (sizeof($points) > 0) {
+                    $points = array_values($points);
                     if (sizeof($uniquePoints) < 2) {
                         $json['spatial_coverage_extents_wkt'][] = 'POINT(' . implode(', ', $uniquePoints) . ')';
                     } else if (sizeof($uniquePoints) < 3) {

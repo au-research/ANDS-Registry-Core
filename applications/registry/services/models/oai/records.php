@@ -95,6 +95,7 @@ class Records extends CI_Model
 						     })),
 					 false);
 		// get the deleted ones! and added to the count...
+
 		if($after && $before)
 		{
 			$deleted_records = $this->ro->getDeletedRegistryObjects($delArgs);
@@ -129,6 +130,14 @@ class Records extends CI_Model
 									      "inner")
 								       ->where($args['rawclause'], null, false)
 								       ->where($args['clause']);
+                                   if ($args['checkType'])
+                                   {
+                                       $db->join("registry_object_attributes at",
+                                           "at.registry_object_id = registry_objects.registry_object_id",
+                                           "inner")
+                                           ->where("at.value IN ('collection', 'repository', 'dataset', 'software')")
+                                           ->where("at.attribute = 'type'");
+                                   }
 							       if ($args['wherein'])
 							       {
 								       $db->where_in("registry_objects.registry_object_id",
@@ -171,7 +180,7 @@ class Records extends CI_Model
 			{
 				foreach ($deleted_records as $del_ro)
 				{
-					$del_ro = (object) array('registry_object_id'=>$del_ro['key'], 'status' => 'deleted', 'deleted'=>$del_ro['deleted'], 'sets' => array('class'=>$del_ro['class'],'group'=>$del_ro['group'],'datasource'=>$del_ro['datasource'] )); 
+					$del_ro = (object) array('registry_object_id'=>$del_ro['key'], 'status' => 'deleted', 'deleted'=>$del_ro['deleted'], 'sets' => array('class'=>$del_ro['class'],'group'=>$del_ro['group'],'datasource'=>$del_ro['datasource'] ));
 					$records[] = $del_ro;
 				}
 			}
@@ -185,12 +194,12 @@ class Records extends CI_Model
 				'cursor' => 0,
 				'count' => 0);
 		}
-		
+
 	}
 
 	public function getByIdentifier($identifier)
 	{
-		$this->load->model('registry_object/Registry_objects', 'ro');	
+		$this->load->model('registry_object/Registry_objects', 'ro');
 		$ro = $this->ro->getPublishedByKey($identifier);
 		$deleted = false;
 		$del_ro = null;
@@ -207,7 +216,7 @@ class Records extends CI_Model
 			{
 				foreach ($deleted_records as $del_ro)
 				{
-					$ro = (object) array('registry_object_id'=>$del_ro['key'], 'status' => 'deleted', 'deleted'=>$del_ro['deleted'], 'sets' => array('class'=>$del_ro['class'],'group'=>$del_ro['group'],'datasource'=>$del_ro['datasource'] )); 
+					$ro = (object) array('registry_object_id'=>$del_ro['key'], 'status' => 'deleted', 'deleted'=>$del_ro['deleted'], 'sets' => array('class'=>$del_ro['class'],'group'=>$del_ro['group'],'datasource'=>$del_ro['datasource'] ));
 					$deleted = true;
 				}
 			}
@@ -219,7 +228,7 @@ class Records extends CI_Model
 				return $ro;
 			else
 				return new _record($ro, $this->db);
-		}		
+		}
 		else
 		{
 			throw new Oai_NoRecordsMatch_Exceptions("record not found");
