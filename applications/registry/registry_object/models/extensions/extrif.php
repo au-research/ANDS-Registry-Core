@@ -33,9 +33,7 @@ class Extrif_Extension extends ExtensionBase
 		}
 
 		$xml = simplexml_load_string(addXMLDeclarationUTF8($xml->asXML()), 'SimpleXMLElement', LIBXML_NOENT);
-		// Cannot enrich already enriched RIFCS!!
-		if(true)//!isset($rifNS[EXTRIF_NAMESPACE])) //! (string) $attributes['enriched'])//! (string) $attributes['enriched'])
-		{
+
 			$xml->addAttribute("extRif:enriched","true",EXTRIF_NAMESPACE);
 			if (count($xml->key) == 1)
 			{
@@ -170,131 +168,25 @@ class Extrif_Extension extends ExtensionBase
 				
 				if($runBenchMark) $this->_CI->benchmark->mark('ro_enrich_s6_end');
 
-				// Friendlify dates =)
+
 				$xml = $this->ro->extractDatesForDisplay($xml);
 
-//				$allRelatedObjects = array();
-				/* 
-				Add some logic to boost highly connected records & contributor pages
-				*/
+
 				if($is_contributor_page)
 				{
 					$this->ro->search_boost = SEARCH_BOOST_CONTRIBUTOR_PAGE;
 				}
-//				elseif (count($allRelatedObjects) > 0)
-//				{
-//					// Give credit to "highly connected" records (but limit to 10)
-//					$this->ro->search_boost = min(pow(SEARCH_BOOST_PER_RELATION_EXP,count($allRelatedObjects)), SEARCH_BOOST_RELATION_MAX);
-//				}
 
-				/* Names EXTRIF */
-				//$descriptions = $xml->xpath('//'.$this->ro->class.'/description');
-				
-				//$ds->append_log(var_export($xml->asXML(), true));
-				$this->ro->pruneExtrif();
-				$this->ro->updateXML($xml->asXML(),TRUE,'extrif');
-                if($this->ro->status == PUBLISHED){
-                    $this->ro->processLinks();
-                }
-
-				//return $this;
+				return $xml->asXML();
 			}
 			else
 			{
 				throw new Exception ("Unable to enrich RIFCS. Not valid RIFCS XML");
 			}
-		}
+
 	}
 
-	function updateExtRif(){
-		$this->_CI->load->model('data_source/data_sources','ds');
 
-		$options = array(
-			'single_values' => true,
-			'theme_pages' => true,
-			'tags' => true,
-			'subjects' => true,
-			'relationships' => true
-		);
-
-		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
-
-		$extRif = $this->ro->getSimpleXML(null, true);
-		$namespaces = $extRif->getNameSpaces();
-		$extRifNameSpace = $namespaces['extRif'];
-
-		$ext = $extRif->children($extRifNameSpace);
-
-		if ($options['single_values']) {
-			$ext->extendedMetadata->slug = $this->ro->slug;
-			$ext->extendedMetadata->dataSourceKey = $ds->key;
-			$ext->extendedMetadata->status = $this->ro->status;
-			$ext->extendedMetadata->id = $this->ro->id;
-			$ext->extendedMetadata->dataSourceTitle = $ds->title;
-			$ext->extendedMetadata->dataSourceID = $this->ro->data_source_id;
-			$ext->extendedMetadata->updateTimestamp = $this->ro->updated;
-			$ext->extendedMetadata->displayTitle = str_replace('&', '&amp;' , $this->ro->title);
-			$ext->extendedMetadata->listTitle = str_replace('&', '&amp;' , $this->ro->list_title);
-			try{
-				$ext->extendedMetadata->simplifiedTitle = iconv('UTF-8', 'ASCII//IGNORE', str_replace('&', '&amp;' , $this->ro->list_title));
-			}catch(Exception $e){
-				throw new Exception ('iconv installation/configuration required for simplified title');
-			}
-			$ext->extendedMetadata->matching_identifier_count = sizeof($this->ro->findMatchingRecords());
-		}
-
-		if ($options['theme_pages']) {
-			unset($ext->extendedMetadata->theme_page);
-			if($own_themepages = $this->ro->getThemePages()){
-				foreach($own_themepages as $t){
-					$ext->extendedMetadata->theme_page[] = $t['slug'];
-				}
-			}
-		}
-
-		if ($options['tags']) {
-			if($tags = $this->ro->getTags()) {
-				unset($ext->extendedMetadata->annotations);
-				$ext->extendedMetadata->addChild('annotations', null, EXTRIF_NAMESPACE);
-				$ext->extendedMetadata->annotations->addChild('tags', null, EXTRIF_NAMESPACE);
-				foreach($tags as $tag) {
-					$tag_node = $ext->extendedMetadata->annotations->tags->addChild('extRif:tag', str_replace('&', '&amp;' , $tag['name']), EXTRIF_NAMESPACE);
-					$tag_node->addAttribute('type', $tag['type']);
-				}
-			}
-		}
-
-		if ($options['subjects']) {
-			if($subjects = $this->ro->processSubjects()){
-				unset($ext->extendedMetadata->subjects);
-				$ext->extendedMetadata->addChild('subjects');
-				foreach ($subjects AS $subject) {
-					$subject_node = $ext->extendedMetadata->subjects->addChild("extRif:subject", "", EXTRIF_NAMESPACE);
-					$subject_node->addChild("extRif:subject_value", $subject['value'], EXTRIF_NAMESPACE);
-					$subject_node->addChild("extRif:subject_type", $subject['type'], EXTRIF_NAMESPACE);
-					$subject_node->addChild("extRif:subject_resolved", $subject['resolved'], EXTRIF_NAMESPACE);
-					$subject_node->addChild("extRif:subject_uri", $subject['uri'], EXTRIF_NAMESPACE);
-				}
-			}
-		}
-
-		if ($options['relationships']) {
-			$allRelatedObjects = $this->ro->getAllRelatedObjects(false, true, true);
-			unset($ext->extendedMetadata->related_object);
-			foreach ($allRelatedObjects AS $relatedObject) {
-				$relatedObj = $ext->extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);
-				$relatedObj->addChild("extRif:related_object_key", $relatedObject['key'], EXTRIF_NAMESPACE);
-				$relatedObj->addChild("extRif:related_object_id", $relatedObject['registry_object_id'], EXTRIF_NAMESPACE);
-				$relatedObj->addChild("extRif:related_object_class", $relatedObject['class'], EXTRIF_NAMESPACE);
-				$relatedObj->addChild("extRif:related_object_display_title", str_replace('&', '&amp;' , $relatedObject['title']), EXTRIF_NAMESPACE);
-				$relatedObj->addChild("extRif:related_object_relation", $relatedObject['relation_type'], EXTRIF_NAMESPACE);
-			}
-		}
-
-		$this->ro->pruneExtrif();
-		$this->ro->updateXML($extRif->asXML(),TRUE,'extrif');
-	}
-	
 	function getLogoUrl($str)
 	{
 		$urlStr = '';

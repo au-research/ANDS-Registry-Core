@@ -350,12 +350,16 @@ class Transforms_Extension extends ExtensionBase
 		}
 	}
 
-	function transformCustomForFORM($rifcs){
+	function transformCustomForFORM($rifcs, $registry_object_id, $dataSourceID, $dataSourceTitle, $display_title){
 		try{
-			$xslt_processor = Transforms::get_extrif_to_form_transformer();
+			$xslt_processor = Transforms::get_rif_to_form_transformer();
 			$dom = new DOMDocument();
 			$dom->loadXML($rifcs, LIBXML_NOENT);
 			$xslt_processor->setParameter('','base_url',base_url());
+            $xslt_processor->setParameter('','registry_object_id', $registry_object_id);
+            $xslt_processor->setParameter('','dataSourceID', $dataSourceID);
+            $xslt_processor->setParameter('','dataSourceTitle', $dataSourceTitle);
+            $xslt_processor->setParameter('','display_title', $display_title);
 			return html_entity_decode($xslt_processor->transformToXML($dom));
 		} catch (Exception $e) {
 			echo "UNABLE TO TRANSFORM" . BR;

@@ -20,7 +20,6 @@ class ImportSubTask extends Task
     public $name;
     private $requireIDs = false;
     private $affectedRecords = [];
-
     /**
      * @return mixed
      */
@@ -66,7 +65,20 @@ class ImportSubTask extends Task
      */
     public function setAffectedRecords($affectedRecords)
     {
-        $this->affectedRecords = $affectedRecords;
+        if(is_array($affectedRecords))
+        {
+            foreach($affectedRecords as $record_key)
+            {
+                if(!in_array($record_key, $this->affectedRecords)){
+                    array_push($this->affectedRecords, $record_key);
+                }
+            }
+        }
+        else{
+            if(!in_array($affectedRecords, $this->affectedRecords)){
+                array_push($this->affectedRecords, $affectedRecords);
+            }
+        }
     }
 
 

@@ -614,10 +614,10 @@ function initEditForm(){
 				
 
 				xml+='</'+ro_class+'>';
-				if($('#annotations')[0].value != '')
-				{
-					xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
-				}
+				//if($('#annotations')[0].value != '')
+				//{
+				//	xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
+				//}
 
 				xml+='</registryObject>';
                 //log(xml);
@@ -797,10 +797,10 @@ function validate(){
 	});
 
 	xml+='</'+ro_class+'>';
-	if($('#annotations')[0].value != '')
-	{
-		xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
-	}
+	//if($('#annotations')[0].value != '')
+	//{
+	//	xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
+	//}
 	xml+='</registryObject>';
 	prettyPrint();
 	//validate

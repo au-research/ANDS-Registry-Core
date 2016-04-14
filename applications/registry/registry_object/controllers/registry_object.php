@@ -123,7 +123,7 @@ class Registry_object extends MX_Controller {
 		$this->load->view("add_registry_objects", $data);
 	}
 
-	public function edit($registry_object_id){
+	public function edit($registry_object_id, $revision_id = null){
 		$this->load->model('registry_objects', 'ro');
 		$this->load->model("data_source/data_sources","ds");
 
@@ -135,32 +135,9 @@ class Registry_object extends MX_Controller {
 		ds_acl_enforce($ro->data_source_id);
 		$ds = $this->ds->getByID($ro->data_source_id);
 
-		if($ro->status == PUBLISHED)
-		{
-			if(!($ro = $this->ro->getDraftByKey($ro->key)))
-			{
-				$ro = $this->ro->cloneToDraft($registry_object_id);
-			}
-		}
-
-		if ($ro->status != DRAFT)
-		{
-			$ro->status = DRAFT;
-			$ro->save();
-		}
-
-		if ($ro->id != $registry_object_id)
-		{
-			header("Location: " . registry_url('registry_object/edit/' . $ro->id));
-		}
-		$extRif = $ro->getExtRif();
-		if(!$extRif)
-		{
-			$ro->enrich();
-			$extRif = $ro->getExtRif();
-		}
-		$data['extrif'] = $extRif;
-		$data['content'] = $ro->transformCustomForFORM($data['extrif']);
+		$rif = $ro->getRif();
+		$data['rif'] = $rif;
+		$data['content'] = $ro->transformCustomForFORM($data['rif'], $ro->id, $ds->id, $ds->title, $ro->title);
 		$data['ds'] = $ds;
 
 		$data['title'] = 'Edit: '.$ro->title;
@@ -232,7 +209,8 @@ class Registry_object extends MX_Controller {
 		set_exception_handler('json_exception_handler');
 
 		$xml = $this->input->post('xml');
-		$this->load->library('importer');
+        $key = $this->input->post('key');
+        $inserter = new \ANDS\API\Task\ImportSubTask\Insert();
 
 		$this->load->model('registry_objects', 'ro');
 		$this->load->model('data_source/data_sources', 'ds');
@@ -247,7 +225,7 @@ class Registry_object extends MX_Controller {
 
 		$ds = $this->ds->getByID($ro->data_source_id);
 
-		$this->importer->forceDraft();
+
 
 		$error_log = '';
 		$status = 'success';
@@ -256,8 +234,12 @@ class Registry_object extends MX_Controller {
 		try{
 			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
             $xml = wrapRegistryObjects($xml);
-            $this->importer->validateRIFCS($xml);
-            $this->importer->setXML($xml);
+            $this->inserter->validateRIFCS($xml);
+            $this->inserter->ingestRecord($xml);
+
+
+
+
 			$this->importer->setDatasource($ds);
 			$this->importer->commit();
 		}
@@ -280,8 +262,6 @@ class Registry_object extends MX_Controller {
 			$ro = $ro[0];
 		}
 
-		$qa = $ds->qa_flag==DB_TRUE ? true : false;
-		$manual_publish = $ds->manual_publish==DB_TRUE ? true: false;
 
 		$result =
 			array(
@@ -568,11 +548,12 @@ class Registry_object extends MX_Controller {
 	 *
 	 */
 	public function get_record($id){
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
-		$ro->enrich();
 		$data['xml'] = html_entity_decode($ro->getRif());
-		$data['extrif'] = html_entity_decode($ro->getExtRif());
+		$data['extrif'] = html_entity_decode($ro->enrich());
 		$data['solr'] = json_encode($ro->indexable_json());
 		//$data['view'] = $ro->transformForHtml();
 		$data['id'] = $ro->id;

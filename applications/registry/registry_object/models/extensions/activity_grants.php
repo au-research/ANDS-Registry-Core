@@ -244,10 +244,11 @@ class Activity_grants_extension extends ExtensionBase
                 ) {
                     array_push($processed, $relatedObject['registry_object_id']);
                     $record = $this->_CI->ro->getByID($relatedObject['registry_object_id']);
-                    $relatedFunders = $record->getFunders(false, false, $recursive, $processed);
-
-                    if (sizeof($relatedFunders) > 0) {
-                        $funders = array_merge($funders, $relatedFunders);
+                    if($record){ // not all related object have registry_object or an ro_object in the registry
+                        $relatedFunders = $record->getFunders(false, false, $recursive, $processed);
+                        if (sizeof($relatedFunders) > 0) {
+                            $funders = array_merge($funders, $relatedFunders);
+                        }
                     }
                     unset($record);
                 }

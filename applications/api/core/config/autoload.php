@@ -1,2 +1,2 @@
 <?php
-$autoload['helper'] = array('api');
+$autoload['helper'] = array('api','registry');

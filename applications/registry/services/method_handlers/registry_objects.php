@@ -2,7 +2,7 @@
 require_once(SERVICES_MODULE_PATH . 'method_handlers/_method_handler.php');
 
 class Registry_objectsMethod extends MethodHandler {
-    private $default_params = array(
+    public $default_params = array(
         'q' => '*:*',
         'fl' => 'id,key,slug,title,class,type,data_source_id,group,created,status',
         'wt' => 'json',

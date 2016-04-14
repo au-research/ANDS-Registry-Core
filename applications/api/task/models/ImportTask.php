@@ -178,12 +178,28 @@ class ImportTask extends Task
     }
 
     /**
-     * @param array $affectedRecords
+     * @param  $affectedRecords
      */
     public function setAffectedRecords($affectedRecords)
     {
-        $this->affectedRecords = $affectedRecords;
-        $this->message['affected_records'] = $affectedRecords;
+
+        if(is_array($affectedRecords))
+        {
+            foreach($affectedRecords as $record_key)
+            {
+                if(!in_array($record_key, $this->affectedRecords)){
+                    array_push($this->affectedRecords, $record_key);
+                }
+            }
+        }
+        else{
+            if(!in_array($affectedRecords, $this->affectedRecords)){
+                array_push($this->affectedRecords, $affectedRecords);
+            }
+        }
+
+        $this->message['affected_records'] = $this->affectedRecords;
+
     }
 
     /**

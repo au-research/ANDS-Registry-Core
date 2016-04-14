@@ -120,27 +120,9 @@ class Core_extension extends ExtensionBase
 		return $this;
 	}
 
-	function save($change_updated = false)
+	function save()
 	{
-		// When saving, trigger special business logic if the record status changed
 
-		// If going from PUBLISHED to DRAFT, create a new draft clone
-		if($this->getAttribute("status") == 'DRAFT' && $this->getAttribute("original_status") == 'PUBLISHED')
-		{
-			$draftRecord = $this->_CI->ro->cloneToDraft($this->id);
-		}
-		else
-		{
-			if ($this->getAttribute("status") != $this->getAttribute("original_status"))
-			{
-				$this->handleStatusChange($this->getAttribute("status"));
-			}
-
-			if ($change_updated)
-			{
-				// Mark this record as recently updated
-				$this->setAttribute("updated", time());
-			}
 
 			// Perform the actual SQL updates in batches to improve performance impact of multiple queries
 			$update_batch = $this->_initUpdateBatchArray();
@@ -179,7 +161,7 @@ class Core_extension extends ExtensionBase
 			}
 			$this->_execBatchUpdateQueries($update_batch);
 
-		}
+
 		return $this;
 	}
 

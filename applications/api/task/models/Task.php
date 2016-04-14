@@ -16,7 +16,7 @@ class Task
     public $params;
     public $lastRun;
     public $message = ['log' => [], 'error' => []];
-
+    public $taskData = [];
     private $db;
     private $memoryLimit = '256M';
     private $dateFormat = 'Y-m-d | h:i:sa';
@@ -33,6 +33,9 @@ class Task
         $this->status = isset($task['status']) ? $task['status'] : false;
         $this->priority = isset($task['priority']) ? $task['priority'] : false;
         $this->params = isset($task['params']) ? $task['params'] : false;
+        if (isset($task['data'])) {
+            $this->taskData = is_array($task['data']) ? $task['data'] : json_decode($task['data'], true);
+        }
         if (isset($task['message'])) {
             $this->message = is_array($task['message']) ? $task['message'] : json_decode($task['message'], true);
         } else {
@@ -74,11 +77,12 @@ class Task
         return $this;
     }
 
-    public function finalize($start){
+    public function finalize($start)
+    {
         $end = microtime(true);
         $this->setStatus('COMPLETED')
             ->log("Task finished at " . date($this->dateFormat, $end))
-            ->log("Peak memory usage: ". memory_get_peak_usage(). " bytes")
+            ->log("Peak memory usage: " . memory_get_peak_usage() . " bytes")
             ->log("Took: " . $this->formatPeriod($end, $start))
             ->save();
         $this->hook_end();
@@ -112,12 +116,33 @@ class Task
         return $this;
     }
 
-    public function addError($log) {
+    public function addError($log)
+    {
         if (!array_key_exists('error', $this->message)) $this->message['error'] = [];
         $this->message['error'][] = $log;
         return $this;
     }
 
+
+    public function setTaskData($key, $val)
+    {
+        $this->taskData[$key] = $val;
+    }
+
+    public function getTaskData($key)
+    {
+        return $this->taskData[$key];
+    }
+
+
+    public function printTaskData()
+    {
+        $message = "DETAILS:".NL;
+        foreach($this->taskData as $key => $value){
+            $message .= $key.": ".$value.NL;
+        }
+        return $message;
+    }
     /**
      * Helper method
      * Format a time period nicely
@@ -141,9 +166,10 @@ class Task
     public function save()
     {
         $data = [
-            'status' => $this->getStatus(),
-            'priority' => $this->getPriority(),
-            'message' => json_encode($this->getMessage()),
+            'status' => $this->status,
+            'priority' => $this->priority,
+            'message' => json_encode($this->message),
+            'data' => json_encode($this->taskData)
         ];
         if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
 
@@ -321,8 +347,9 @@ class Task
      */
     public function setMessage($message = false)
     {
-        if (!$message) $message = ['log'=>[], 'error' => []];
+        if (!$message) $message = ['log' => [], 'error' => []];
         $this->message = $message;
         return $this;
     }
+
 }

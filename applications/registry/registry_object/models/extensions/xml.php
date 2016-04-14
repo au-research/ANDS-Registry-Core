@@ -18,15 +18,16 @@ class XML_Extension extends ExtensionBase
 	 */
 	function cleanupPreviousVersions()
 	{
-		$this->db->where(array('registry_object_id'=>$this->ro->id));
-		$this->db->update('record_data', array('current'=>DB_FALSE));
+		$this->db->where(array('registry_object_id'=>$this->ro->id, 'status'=>'PUBLISHED'));
+		$this->db->update('record_data', array('current'=>DB_FALSE, 'status'=>'SUPERSEDED'));
 
-		$this->pruneExtrif();
+		//$this->pruneExtrif();
 	}
 
 
 	/**
 	 *  Clean up all previous versions (set = FALSE, "prune" extRif)
+     * WE SHOULDN'T HAVE EXTRIF
 	 */
 	function pruneExtrif()
 	{
@@ -60,14 +61,8 @@ class XML_Extension extends ExtensionBase
 		else
 		{
 
-			if ($extRif)
-			{
-				$xml = $this->getExtRif($record_data_id);
-			}
-			else
-			{
-				$xml = $this->getRif($record_data_id);
-			}
+		    $xml = $this->getRif($record_data_id);
+
 			$this->_simplexml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOENT);
 
 			$namespaces = $this->_simplexml->getNamespaces(true);
@@ -77,17 +72,15 @@ class XML_Extension extends ExtensionBase
 			}
 
 			$this->_simplexml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-			$this->_simplexml->registerXPathNamespace("extRif", EXTRIF_NAMESPACE);
-            $this->_simplexml->registerXPathNamespace("extrif", EXTRIF_NAMESPACE);
 			return $this->_simplexml;
 		}
 	}
 	
 		 
-	function updateXML($data, $current = TRUE, $scheme = NULL)
+	function updateXML($data, $current = TRUE, $scheme = NULL, $status)
 	{
 		$_xml = new _xml($this->ro->id);
-		$changed = $_xml->update($data, $current, $scheme);
+		$changed = $_xml->update($data, $current, $scheme, $status);
 
 		if (is_null($scheme))
 		{
@@ -95,10 +88,9 @@ class XML_Extension extends ExtensionBase
 			if (is_null($scheme)) {
 				$this->_rif =& $_xml;
 			}
-
 			$this->_simplexml = simplexml_load_string($_xml->xml);
 			$this->_simplexml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-			$this->_simplexml->registerXPathNamespace("extRif", EXTRIF_NAMESPACE);
+
 		}
         return $changed;
 	}
@@ -136,50 +128,19 @@ class XML_Extension extends ExtensionBase
 			foreach($result->result_array() AS $row) {
 				$data = $row['data'];
 				if($row['timestamp'] < $latest_rif_timestamp) {
-					$data = $this->ro->enrichAndGetExtrif();
+					$data = $this->ro->enrich();
 				}
 			}
 		} else {
-            $data = $this->ro->enrichAndGetExtrif();
+            $data = $this->ro->enrich();
         }
 		$result->free_result();
 		return $data;
 	}
 
-    function enrichAndGetExtRif()
-    {
-        $this->ro->enrich();
-        $data = false;
-        $result = $this->db->select('data')->order_by('timestamp','desc')->limit(1)->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'scheme'=>EXTRIF_SCHEME));
-        if ($result->num_rows() > 0)
-        {
-            foreach($result->result_array() AS $row)
-            {
-                $data = $row['data'];
-            }
-        }
-        $result->free_result();
-        return $data;
-    }
-
-
-
-	function getExtRifDataRecord($id){
-		$data = false;
-		$result = $this->db->select('data')->limit(1)->get_where('record_data', array('id'=>$id, 'scheme'=>EXTRIF_SCHEME));
-		if ($result->num_rows() > 0)
-		{
-			foreach($result->result_array() AS $row)
-			{
-				$data = $row['data'];
-			}
-		}
-		$result->free_result();
-		return $data;
-	}
 
 	function getRif($revision_id = null){
-
+        var_dump($revision_id);
 		if ($revision_id)
 		{
 			$result = $this->db->select('data')->get_where('record_data', array('id'=>$revision_id, 'scheme'=>RIFCS_SCHEME));
@@ -324,7 +285,7 @@ class _xml
 		return $this;
 	}
 	
-	function update($xml, $current = TRUE, $scheme = NULL)
+	function update($xml, $current = TRUE, $scheme = NULL, $status = 'DRAFT')
 	{
 		if (is_null($scheme)) { $scheme = self::DEFAULT_SCHEME; }
 		
@@ -350,14 +311,15 @@ class _xml
 													'registry_object_id'=>$this->registry_object_id,
 													'data' => $xml,
 													'timestamp' => time(),
-													'current' => ($current ? "TRUE" : "FALSE"),
+													'current' => "TRUE",
 													'scheme' => $scheme,
-													'hash' => $newHash
+													'hash' => $newHash,
+                                                    'status' => $status
 												));
 			}
 			else
 			{
-				$this->db->where('id', $result['id'])->update('record_data',array('current'=>"TRUE"));
+				$this->db->where('id', $result['id'])->update('record_data',array('current'=>"TRUE", 'status' => $status));
 			}
 		}
 		else
@@ -366,9 +328,10 @@ class _xml
 												'registry_object_id'=>$this->registry_object_id,
 												'data' => $xml,
 												'timestamp' => time(),
-												'current' => ($current ? "TRUE" : "FALSE"),
+												'current' => "FALSE",
 												'scheme' => $scheme,
-												'hash' => $newHash
+                                                'hash' => $newHash,
+                                                'status' => $status
 											));
 
 		}

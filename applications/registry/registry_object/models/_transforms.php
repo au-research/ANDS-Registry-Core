@@ -8,7 +8,7 @@ class Transforms {
 	static $qa_level_transformer = NULL;
 	static $extrif_to_solr_transformer = NULL;
 	static $extrif_to_html_transformer = NULL;
-	static $extrif_to_form_transformer = NULL;
+	static $rif_to_form_transformer = NULL;
 	static $feed_to_rif_transformer = NULL;
 	static $extrif_to_dc_transformer = NULL;
 	static $form_to_cleanrif_transformer = NULL;
@@ -88,18 +88,18 @@ class Transforms {
 		return self::$extrif_to_html_transformer;
 	}
 	
-	static function get_extrif_to_form_transformer()
+	static function get_rif_to_form_transformer()
 	{
-		if (is_null(self::$extrif_to_form_transformer))
+		if (is_null(self::$rif_to_form_transformer))
 		{
-			$extRifToForm = new DomDocument();
-			$extRifToForm->load(REGISTRY_APP_PATH.'registry_object/transforms/extrif_to_new_form.xsl');
-			$extRifToFormproc = new XSLTProcessor();
-			$extRifToFormproc->importStyleSheet($extRifToForm);
-			self::$extrif_to_form_transformer =	$extRifToFormproc;
+			$rifToForm = new DomDocument();
+			$rifToForm->load(REGISTRY_APP_PATH.'registry_object/transforms/rif_to_form.xsl');
+			$rifToFormproc = new XSLTProcessor();
+			$rifToFormproc->importStyleSheet($rifToForm);
+			self::$rif_to_form_transformer =	$rifToFormproc;
 		}
 
-		return self::$extrif_to_form_transformer;
+		return self::$rif_to_form_transformer;
 	}
 	
 	static function get_feed_to_rif_transformer()
