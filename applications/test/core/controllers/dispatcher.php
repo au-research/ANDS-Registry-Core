@@ -37,6 +37,8 @@ class Dispatcher extends MX_Controller
         $elapsed = $this->benchmark->elapsed_time('start', 'end');
         $memory = memory_get_peak_usage(true);
 
+        dd($results);
+
         $pass = 0;
         $fail = 0;
         $assertions = 0;
