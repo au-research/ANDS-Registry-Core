@@ -1,7 +1,7 @@
 {
   "autoload" : {
     "psr-4": {
-      "ANDS\\Test\\Case\\": "core/models"
+      "ANDS\\Test\\": "core/models"
     }
   }
 }

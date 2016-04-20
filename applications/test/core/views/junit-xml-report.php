@@ -1,0 +1,38 @@
+<?php
+$pass = 0;
+$fail = 0;
+$assertions = 0;
+$failedTest = array();
+$testNames = array();
+foreach ($results as $result) {
+    if ($result['Result'] == 'Passed') {
+        $pass++;
+    } elseif ($result['Result'] == 'Failed') {
+        $fail++;
+        $failedTest[] = $result;
+    }
+    if (!in_array($result['Test Name'], $testNames)) {
+        $testNames[] = $result['Test Name'];
+    }
+    $assertions++;
+}
+$testCount = sizeof($testNames);
+
+$testSuite = new SimpleXMLElement("<testsuite></testsuite>");
+$testSuite->addAttribute('errors', $fail);
+$testSuite->addAttribute('tests', $testCount);
+$testSuite->addAttribute('time', $elapsed);
+
+foreach ($results as $result) {
+    $test = $testSuite->addChild('testcase');
+    $test->addAttribute('name', $result['Test Name']);
+    if ($result['Result'] == 'Failed') {
+        $failure = $test->addChild('failure');
+        $failure->addAttribute('message', $result['Notes']);
+    }
+}
+
+Header('Content-type: text/xml');
+$dom = dom_import_simplexml($testSuite)->ownerDocument;
+$dom->formatOutput = true;
+echo $dom->saveXML();
