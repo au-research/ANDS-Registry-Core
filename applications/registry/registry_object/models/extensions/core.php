@@ -20,6 +20,7 @@ class Core_extension extends ExtensionBase
 							->get_where("`registry_object_attributes` `ra`", array('ra.registry_object_id' => $this->id));
 		//echo $this->id;
         //echo "hello world";
+
 		if ($query->num_rows() > 0)
 		{
 			foreach ($query->result_array() AS $row)
@@ -51,7 +52,6 @@ class Core_extension extends ExtensionBase
 		// that we can determine whether it has changed when deciding whether to
 		// "upgrade" it from DRAFT to PUBLISHED
 		$this->_initAttribute("original_status", $this->attributes['status']->value);
-
 		return $this;
 
 	}
@@ -144,6 +144,7 @@ class Core_extension extends ExtensionBase
 
 			// Perform the actual SQL updates in batches to improve performance impact of multiple queries
 			$update_batch = $this->_initUpdateBatchArray();
+
 			foreach($this->attributes AS $attribute)
 			{
 				if ($attribute->dirty)
@@ -356,10 +357,16 @@ class Core_extension extends ExtensionBase
 
 	function _initAttribute($name, $value, $core=FALSE)
 	{
-		$this->attributes[$name] = new _registry_object_attribute($name, $value);
-		if ($core)
-		{
-			$this->attributes[$name]->core = TRUE;
+		// set if it's not already set
+		if (!isset($this->attributes[$name])) {
+			$this->attributes[$name] = new _registry_object_attribute($name, $value);
+			if ($core){
+				$this->attributes[$name]->core = TRUE;
+			}
+		} else {
+			// it is already set, update the value
+			$attribute = $this->attributes[$name];
+			$attribute->setValue($value);
 		}
 	}
 
@@ -414,6 +421,10 @@ class _registry_object_attribute
 	function __construct($name, $value)
 	{
 		$this->name = $name;
+		$this->value = $value;
+	}
+
+	public function setValue($value){
 		$this->value = $value;
 	}
 

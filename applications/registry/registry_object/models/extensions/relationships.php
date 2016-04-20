@@ -290,6 +290,8 @@ class Relationships_Extension extends ExtensionBase
         $docs = [];
         foreach ($relationships as $rel) {
 
+
+
             $doc = [
                 'from_id' => $this->ro->id,
                 'from_key' => $this->ro->key,
@@ -306,6 +308,15 @@ class Relationships_Extension extends ExtensionBase
                 'to_title' => isset($rel['title']) ? $rel['title'] : false,
                 'to_slug' => isset($rel['slug']) ? $rel['slug'] : false
             ];
+
+            // sanity check, for relation to an object, this shouldn't execute too much if the type is set
+            // @todo remove once all types have already been set in the core attributes
+            if ($doc['to_id'] && $doc['to_class'] && !$doc['to_type']) {
+                $toRO = $this->_CI->ro->getByID($rel['registry_object_id']);
+                if ($toRO) {
+                    $doc['to_type'] = $toRO->type;
+                }
+            }
 
             // getting the funders, only 1
             if (isset($rel['registry_object_id']) && $rel['class'] == 'activity') {
