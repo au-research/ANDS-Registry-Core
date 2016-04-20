@@ -42,7 +42,7 @@ class Relationships extends ROHandler {
             ->init()
             ->setCore('relations')
             ->setOpt('rows', 5)
-            ->setOpt('fq', '+from_id:'.$this->ro->id);
+            ->setOpt('fq', '+from_id:'.$this->ro_id);
         switch ($type) {
             case "data":
                 $ci->solr->setOpt('fq', '+to_class:collection');

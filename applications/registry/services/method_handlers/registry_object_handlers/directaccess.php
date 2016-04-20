@@ -15,7 +15,7 @@ class Directaccess extends ROHandler
         $relationshipTypeArray = ['isPresentedBy', 'supports'];
         $classArray = [];
 
-        $services = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
+        $services = $this->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
         foreach ($services as &$service) {
             if (isset($service['relation_url'])
                 && sizeof($service['relation_url']) > 0
@@ -39,8 +39,8 @@ class Directaccess extends ROHandler
             }
         }
 
-        if ($this->xml->{$this->ro->class}->relatedInfo) {
-            foreach ($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo) {
+        if ($this->xml->registryObject->{$this->index['class']}->relatedInfo) {
+            foreach ($this->xml->registryObject->{$this->index['class']}->relatedInfo as $relatedInfo) {
                 $type = (string)$relatedInfo['type'];
                 if ($type == 'service' && in_array($relatedInfo->relation['type'], $relationshipTypeArray) && $relatedInfo->relation->url != '') {
                     $download[] = Array(
@@ -108,4 +108,34 @@ class Directaccess extends ROHandler
 
         return $download;
     }
+
+    private function getRelatedObjectsIndex($byClass = array(), $byRelations = array(), $limit = 20000){
+    $ci = &get_instance();
+    $solr = $ci->load->library('solr');
+    $solr->init()->setCore('relations');
+
+    $solr->setOpt('fq','+from_id:'.$this->ro_id);
+
+    $classFq = "";
+    foreach ($byClass as $class) {
+        $classFq .= ' to_class:("'.$class.'")';
+    }
+    $solr->setOpt('fq', $classFq);
+
+    $relationFq = "";
+    foreach ($byRelations as $relation) {
+        $relationFq .= ' relation:('.$relation.')';
+    }
+    $solr->setOpt('fq', $classFq);
+
+    $solr->setOpt('rows', $limit);
+
+    $result = $solr->executeSearch(true);
+    // var_dump($result);
+    if ($result && isset($result['response']) && $result['response']['numFound'] > 0) {
+        return $result['response']['docs'];
+    } else {
+        return array();
+    }
+}
 }

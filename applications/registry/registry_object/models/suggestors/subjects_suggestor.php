@@ -19,7 +19,7 @@ class Subjects_suggestor extends _GenericSuggestor {
 
         //Get subjects from the XML
         $suggestions = array();
-        $sxml = $this->ro->getSimpleXML();
+        $sxml = $this->xml;
         if ($sxml->registryObject) {
             $sxml = $sxml->registryObject;
         }
@@ -49,7 +49,7 @@ class Subjects_suggestor extends _GenericSuggestor {
                 ->setOpt('q', $str)
                 ->setOpt('rows', $maxRows)
                 ->setOpt('fl', 'id,key,slug,title,score')
-                ->setOpt('fq', '-id:'.$this->ro->id)
+                ->setOpt('fq', '-id:'.$this->ro_id)
                 ->setOpt('fq', 'class:collection')
                 ->setOpt('defType', 'edismax');
 

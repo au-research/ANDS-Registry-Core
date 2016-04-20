@@ -20,20 +20,8 @@ class XML_Extension extends ExtensionBase
 	{
 		$this->db->where(array('registry_object_id'=>$this->ro->id, 'status'=>'PUBLISHED'));
 		$this->db->update('record_data', array('current'=>DB_FALSE, 'status'=>'SUPERSEDED'));
-
-		//$this->pruneExtrif();
 	}
 
-
-	/**
-	 *  Clean up all previous versions (set = FALSE, "prune" extRif)
-     * WE SHOULDN'T HAVE EXTRIF
-	 */
-	function pruneExtrif()
-	{
-		$this->db->where(array('registry_object_id'=>$this->ro->id, 'scheme'=>EXTRIF_SCHEME));
-		$this->db->delete('record_data');
-	}
 
 	/*
 	 * Record data methods
@@ -94,8 +82,149 @@ class XML_Extension extends ExtensionBase
 		}
         return $changed;
 	}
-	
-	
+
+    function createVersion($xml, $scheme = NULL, $status, $harvest_id)
+    {
+
+        $oldHash = "";
+        $newHash = md5($xml);
+        if(isDraftStatus($status)){
+            $version = getDraftVersion();
+            if($version){
+                $oldHash = $version['hash'];
+                if($oldHash != $newHash){
+                    $this->db->where('id', $version['id'])->update('record_data',array('data' => $xml,
+                        'timestamp' => time(),
+                        'scheme' => $scheme,
+                        'hash' => $newHash,
+                        'status' => $status,
+                        'harvest_id' => $harvest_id));
+                }
+                elseif($version['status'] != $status){
+                    $this->db->where('id', $version['id'])->update('record_data',array('current'=>"TRUE", 'status' => $status));
+                }
+            }
+            else{
+                $this->db->insert('record_data', array(
+                    'registry_object_id'=>$this->registry_object_id,
+                    'data' => $xml,
+                    'timestamp' => time(),
+                    'scheme' => $scheme,
+                    'hash' => $newHash,
+                    'status' => $status,
+                    'harvest_id' => $harvest_id
+                ));
+            }
+        }
+        elseif(isPublishedStatus($status)){
+            $version = getCurrentPublishedVersion();
+            if($version){
+                $oldHash = $version['hash'];
+                if($oldHash != $newHash){
+                    $this->db->insert('record_data', array(
+                        'registry_object_id'=>$this->registry_object_id,
+                        'data' => $xml,
+                        'timestamp' => time(),
+                        'scheme' => $scheme,
+                        'hash' => $newHash,
+                        'status' => $status,
+                        'harvest_id' => $harvest_id
+                    ));
+                }
+                else
+                {
+                    $this->db->where('id', $version['id'])->update('record_data',array('current'=>"TRUE", 'status' => $status));
+                }
+            }
+        }
+        return $oldHash != $newHash;
+    }
+
+
+
+    function update($xml, $current = TRUE, $scheme = NULL, $status = 'DRAFT')
+    {
+        if (is_null($scheme)) { $scheme = self::DEFAULT_SCHEME; }
+
+        $this->xml = $xml;
+        $newHash = md5($xml);
+        $oldHash = '';
+        $this->current = $current;
+        $this->scheme = $scheme;
+        if($current == TRUE)
+        {
+
+            $query = $this->db->select('*')->from('record_data')->where(array('registry_object_id' => $this->registry_object_id, 'scheme'=>$scheme))->order_by('id DESC')->limit(1)->get();
+            if ($query->num_rows() > 0)
+            {
+                $results = $query->result_array();
+                $result = $results[0];
+                $query->free_result();
+                $oldHash = $result['hash'];
+            }
+
+            if($oldHash != $newHash){
+                $this->db->insert('record_data', array(
+                    'registry_object_id'=>$this->registry_object_id,
+                    'data' => $xml,
+                    'timestamp' => time(),
+                    'current' => "TRUE",
+                    'scheme' => $scheme,
+                    'hash' => $newHash,
+                    'status' => $status
+                ));
+            }
+            else
+            {
+                $this->db->where('id', $result['id'])->update('record_data',array('current'=>"TRUE", 'status' => $status));
+            }
+        }
+        else
+        {
+            $this->db->insert('record_data', array(
+                'registry_object_id'=>$this->registry_object_id,
+                'data' => $xml,
+                'timestamp' => time(),
+                'current' => "FALSE",
+                'scheme' => $scheme,
+                'hash' => $newHash,
+                'status' => $status
+            ));
+
+        }
+        return ($oldHash != $newHash);
+    }
+
+
+    function getCurrentPublishedVersion(){
+        $version = null;
+        $result = $this->db->select('id, timestamp, scheme, current, hash, status')->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'status'=>'PUBLISHED'));
+        if ($result->num_rows() > 0)
+        {
+            foreach($result->result_array() AS $row)
+            {
+                $version = $row;
+            }
+        }
+        $result->free_result();
+        return $version;
+    }
+
+    function getDraftVersion(){
+        $version = null;
+        $result = $this->db->select('id, timestamp, scheme, current, hash, status')->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'status'=>['DRAFT','MORE_WORK_REQUIRED', 'DRAFT', 'SUBMITTED_FOR_ASSESSMENT', 'ASSESSMENT_IN_PROGRESS', 'APPROVED']));
+        if ($result->num_rows() > 0)
+        {
+            foreach($result->result_array() AS $row)
+            {
+                $version = $row;
+            }
+        }
+        $result->free_result();
+        return $version;
+    }
+
+
 	function getXMLVersions()
 	{
 		$versions = array();
@@ -140,7 +269,6 @@ class XML_Extension extends ExtensionBase
 
 
 	function getRif($revision_id = null){
-        var_dump($revision_id);
 		if ($revision_id)
 		{
 			$result = $this->db->select('data')->get_where('record_data', array('id'=>$revision_id, 'scheme'=>RIFCS_SCHEME));

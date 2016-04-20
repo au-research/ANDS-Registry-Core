@@ -18,7 +18,7 @@ class Spatial extends ROHandler {
                     );
                     if(isset($this->index['spatial_coverage_area_sum'])) $result['area_sum'] = $this->index['spatial_coverage_area_sum'];
                 }
-            }else{
+            }elseif(!$this->index){
                 $coords = $this->ro->getLocationAsLonLats();
                 foreach($coords as $polygon) {
                     $extent = $this->ro->calcExtent($polygon);

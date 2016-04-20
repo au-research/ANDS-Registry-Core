@@ -836,14 +836,14 @@ class Registry_object extends MX_Controller {
 
 
 
-	function get_solr_doc($id, $limit=null){
+	function get_solr_doc($id, $version_id){
         set_exception_handler('json_exception_handler');
         header('Cache-Control: no-cache, must-revalidate');
         header('Content-type: application/json');
 		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($id);
+		$ro = $this->ro->getByID($id, $version_id);
 		$solrDoc = $ro->getRelationshipIndex();
-        echo json_encode($solrDoc);
+        echo json_encode($ro);
 	}
 
 	//-----------DEPRECATED AFTER THIS LINE -----------------------//

@@ -117,8 +117,7 @@ class ObjectHandler extends Handler{
         if ($benchmark) {
             $result['benchmark'] = array();
         }
-
-        $resource = $this->populate_resource($this->params['identifier']);
+        $resource = $this->populate_resource($this->params['identifier'], $this->params['version_identifier']);
 
         foreach ($method1s as $m1) {
 
@@ -127,10 +126,14 @@ class ObjectHandler extends Handler{
             }
 
             if ($m1 && in_array($m1, $this->valid_methods)) {
+
                 switch ($m1) {
                     case 'get':
                     case 'registry':
+
                         $result[$m1] = $this->ro_handle('core', $resource);
+
+                        exit();
                         break;
                     case 'relationships-old':
                         $result[$m1] = $this->relationships_handler($resource);
@@ -334,13 +337,13 @@ class ObjectHandler extends Handler{
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @param  registry_object_id $id
      */
-    private function populate_resource($id)
+    private function populate_resource_oldDONTUSEIT($id, $version)
     {
 
         $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
-        $record = $this->ci->ro->getByID($id);
+        $record = $this->ci->ro->getVersionByID($id, $version);
         if (!$record) {
-            throw new Exception('No record with ID ' . $this->params['identifier'] . ' found');
+            throw new Exception('No record with ID ' . $id . ' found');
         }
 
         $resource = array();
@@ -357,6 +360,8 @@ class ObjectHandler extends Handler{
 
         //local XML resource
         $xml = $record->getSimpleXML();
+
+
         $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
         $xml = simplexml_load_string($xml);
         $xml = simplexml_load_string(addXMLDeclarationUTF8($xml->asXML()));
@@ -374,6 +379,69 @@ class ObjectHandler extends Handler{
         $resource['default_params'] = $this->default_params;
 
         return $resource;
+    }
+
+    private function populate_resource($id, $version_id)
+    {
+
+
+
+
+        $resource = array();
+
+        //local SOLR index for fast searching
+        $ci = &get_instance();
+        $ci->load->library('solr');
+        $ci->solr->setOpt('fq', '+id:' . $id);
+        $result = $ci->solr->executeSearch(true);
+
+        if (sizeof($result['response']['docs']) == 1) {
+            $resource['index'] = $result['response']['docs'][0];
+        }
+        else{
+            throw new Exception('No record with ID Indexed' . $id . ' found');
+        }
+        $record = $this->getRecordDataByID($id, $version_id);
+        if (!$record) {
+            throw new Exception('No record with ID in DB' . $id . ' found');
+        }
+
+        $xml = simplexml_load_string($record['data'], 'SimpleXMLElement', LIBXML_NOENT);
+
+        if ($xml) {
+            $resource['xml'] = $xml;
+            $rifDom = new \DOMDocument();
+            $rifDom->loadXML($record['data']);
+            $gXPath = new \DOMXpath($rifDom);
+            $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
+            $resource['gXPath'] = $gXPath;
+        }
+        $resource['ro'] = $record;
+        $resource['ro_key'] = $resource['index']['key'];
+        $resource['ro_id'] = $record["registry_object_id"];
+        $resource['ro_version_id'] = $record["id"];
+        $resource['params'] = array();
+        $resource['default_params'] = $this->default_params;
+
+        return $resource;
+    }
+
+
+    private function getRecordDataByID($id, $version_id){
+        $db = $this->ci->load->database('registry', true);
+
+        if($version_id == 'current'){
+            $query = $db->get_where("record_data", array("registry_object_id"=>$id, "current"=>'TRUE'));
+        }
+        else{
+            $query = $db->get_where("record_data", array("registry_object_id"=>$id, "id"=>$version_id));
+        }
+        if($query->num_rows() > 0){
+            return $query->row_array();
+        }
+        else{
+            return null;
+        }
     }
 
 }

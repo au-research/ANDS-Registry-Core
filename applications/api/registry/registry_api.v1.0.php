@@ -33,8 +33,9 @@ class Registry_api
         $this->params = array(
             'submodule' => isset($method[1]) ? $method[1] : false,
             'identifier' => isset($method[2]) ? $method[2] : false,
-            'object_module' => isset($method[3]) ? $method[3] : false,
-            'object_submodule' => isset($method[4]) ? $method[4] : false,
+            'version_identifier' => isset($method[3]) ? $method[3] : 'current',
+            'object_module' => isset($method[4]) ? $method[5] : false,
+            'object_submodule' => isset($method[5]) ? $method[5] : false,
         );
 
         if (!$this->params['submodule']) {

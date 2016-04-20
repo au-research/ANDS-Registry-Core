@@ -8,23 +8,23 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Identifiermatch extends ROHandler {
 	function handle() {
 		$result = array();
-        
-        $matching = $this->ro->findMatchingRecords();
-
-        $ci =& get_instance();
-        $ci->load->model('registry_object/registry_objects', 'ro');
-        foreach($matching as $m) {
-            $ro = $ci->ro->getByID($m);
-            if($ro){
-                $result[] = array(
-                    'registry_object_id' => $ro->id,
-                    'slug' => $ro->slug,
-                    'title' => $ro->title,
-                    'group' => $ro->group
-                );
-            }
-            unset($ro);
-        }
+       // TODO: FIX IT LATER
+//        $matching = $this->ro->findMatchingRecords();
+//
+//        $ci =& get_instance();
+//        $ci->load->model('registry_object/registry_objects', 'ro');
+//        foreach($matching as $m) {
+//            $ro = $ci->ro->getByID($m);
+//            if($ro){
+//                $result[] = array(
+//                    'registry_object_id' => $ro->id,
+//                    'slug' => $ro->slug,
+//                    'title' => $ro->title,
+//                    'group' => $ro->group
+//                );
+//            }
+//            unset($ro);
+//        }
 
         return $result;
 	}

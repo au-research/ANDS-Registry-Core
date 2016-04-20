@@ -11,7 +11,7 @@ class relatedInfo extends ROHandler {
 	function handle() {
         $result = array();
         if ($this->xml) {
-            foreach($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo){
+            foreach($this->xml->registryObject->{$this->index['class']}->relatedInfo as $relatedInfo){
                 $type = (string) $relatedInfo['type'];
 
                 $identifier = array();

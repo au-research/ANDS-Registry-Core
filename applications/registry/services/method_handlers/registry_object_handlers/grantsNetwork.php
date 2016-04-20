@@ -17,11 +17,11 @@ class grantsNetwork extends ROHandler {
         $ci->load->library('solr');
 
         $result = array(
-            'tree' => $this->ro->getGrantsStructureSOLR(),
+           // 'tree' => $this->ro->getGrantsStructureSOLR(),
             'data_output' => $this->getByRelation('data_output'),
             'programs' => $this->getByRelation('programs'),
             'grants' => $this->getByRelation('grants'),
-            'publications' => $this->ro->getDirectPublication()
+         //   'publications' => $this->ro->getDirectPublication()
         );
 
         return $result;
@@ -45,28 +45,28 @@ class grantsNetwork extends ROHandler {
         switch ($relation) {
             case "data_output":
                 $ci->solr->setOpt('fq', '+class:collection');
-                if ($this->ro->class == 'party') {
-                    $ci->solr->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro->id);
+                if ($this->index['class'] == 'party') {
+                    $ci->solr->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro_id);
                 } else {
-                    $ci->solr->setOpt('fq', '+relation_grants_isOutputOf:'.$this->ro->id);
+                    $ci->solr->setOpt('fq', '+relation_grants_isOutputOf:'.$this->ro_id);
                 }
                 break;
             case "programs":
                 $ci->solr->setOpt('fq', '+class:activity');
                 $ci->solr->setOpt('fq', '+type:program');
-                if ($this->ro->class == 'party') {
-                    $ci->solr->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro->id);
+                if ($this->index['class'] == 'party') {
+                    $ci->solr->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro_id);
                 } else {
-                    $ci->solr->setOpt('fq', '+relation_grants_isPartOf:'.$this->ro->id);
+                    $ci->solr->setOpt('fq', '+relation_grants_isPartOf:'.$this->ro_id);
                 }
                 break;
             case "grants":
                 $ci->solr->setOpt('fq', '+class:activity');
                 $ci->solr->setOpt('fq', '+type:grant');
-                if ($this->ro->class == 'party') {
-                    $ci->solr->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro->id);
+                if ($this->index['class'] == 'party') {
+                    $ci->solr->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro_id);
                 } else {
-                    $ci->solr->setOpt('fq', '+relation_grants_isPartOf:'.$this->ro->id);
+                    $ci->solr->setOpt('fq', '+relation_grants_isPartOf:'.$this->ro_id);
                 }
                 break;
         }
@@ -77,7 +77,7 @@ class grantsNetwork extends ROHandler {
 
             $relationships = array_values($solrResult['response']['docs']);
             foreach ($relationships as &$relation) {
-                if ($this->ro->class == 'party') {
+                if ($this->index['class'] == 'party') {
                     $relationType = 'funds';
                 } elseif ($this->ro->class == 'activity') {
                     if ($relation['class'] == 'collection') {

@@ -31,6 +31,7 @@ class Insert extends ImportSubTask
     private $payloads;
     private $ds_id;
     private $default_record_status;
+    private $record_owner;
     private $batch_id;
     private $valid_classes = ['collection', 'party', 'activity', 'service'];
 
@@ -65,6 +66,10 @@ class Insert extends ImportSubTask
         $this->setTaskData('ingest_duplicate_ignore', $this->ingest_duplicate_ignore);
         $this->setTaskData('default_record_status', $this->default_record_status);
         $this->setTaskData('maintainStatus', $this->maintainStatus);
+        // if this is ds has the qa flag set  email the notify address
+        if ($this->ds->qa_flag === DB_TRUE && $this->ingest_new_record < 1 && $this->ds->assessment_notify_email_addr) {
+            $this->roM->emailAssessor($this->ds);
+        }
         $this->ds->append_log('INSERTING RECORDS:' . NL . $this->printTaskData(), "IMPORTER_INFO", "importer", "IMPORTER_INFO");
 
 
@@ -90,6 +95,7 @@ class Insert extends ImportSubTask
         $this->ingest_duplicate_ignore = 0;
         $this->maintainStatus = true;
         $this->forceClone = false;
+        $this->record_owner = "SYSTEM";
         $this->payloads = [];
         $this->roM = $this->_CI->load->model('registry/registry_object/registry_objects', 'ro');
     }
@@ -106,7 +112,9 @@ class Insert extends ImportSubTask
         $dsM = $this->_CI->load->model('registry/data_source/data_sources', 'ds');
         $this->ds = $dsM->getByID($this->ds_id);
         $package = array("registry_object" => $xml, "file_path" => $key, "ro_id"=>$ro_id);
-
+        if ($this->_CI->user->isLoggedIn()) {
+            $this->record_owner  = $this->_CI->user->name() . " (" . $this->_CI->user->localIdentifier() . ")";
+        }
         $this->ingestRecord($package);
 
         $this->setTaskData('ingest_new_record', $this->ingest_new_record);
@@ -177,7 +185,7 @@ class Insert extends ImportSubTask
             try {
                 $payload = $this->cleanNameSpace($payload);
                 $sxml = $this->_getSimpleXMLFromString($payload);
-            } catch (Exception $e) {
+            } catch (NonFatalException $e) {
                 $continueIngest = false;
                 $this->setTaskData('ingest_failures', ++$ingest_failures);
                 //throw new Exception("Unable to parse XML into object".NL.$e->getMessage());
@@ -187,7 +195,7 @@ class Insert extends ImportSubTask
                 $reValidateBeforeIngest = false;
                 try {
                     $this->validateRIFCS($payload);
-                } catch (Exception $e) {
+                } catch (NonFatalException $e) {
                     $reValidateBeforeIngest = true;
                     // no need to report validation error here!!
                 }
@@ -202,7 +210,7 @@ class Insert extends ImportSubTask
                     if ($reValidateBeforeIngest) {
                         try {
                             $this->validateRIFCS(wrapRegistryObjects($registryObject->asXML()));
-                        } catch (Exception $e) {
+                        } catch (NonFatalException $e) {
                             $continueWithIngest = false;
                             $this->error_log[] = "Error whilst ingesting record #" . $this->ingest_attempts . ": " . $e->getMessage() . NL;
                         }
@@ -248,69 +256,60 @@ class Insert extends ImportSubTask
         $filePath = $package['file_path'];
         $existing_record_id = null;
         if(isset($package['ro_id'])){
-            $existing_record_id = $package['ro_id'];
+            $preferred_record_id = $package['ro_id'];
         }
+        try{
+            $ro_id = decideHarvestability($registryObject);
+            if($preferred_record_id != $ro_id)
+            {
+                $this->error_log[] = "given RO_ID:".$preferred_record_id." doesn't mach given RO_ID".$ro_id;
+            }
+            foreach ($this->valid_classes AS $class) {
+                if (property_exists($registryObject, $class)) {
 
-        foreach ($this->valid_classes AS $class) {
-            if (property_exists($registryObject, $class)) {
+                    $ro_xml =& $registryObject->{$class}[0];
 
-
-                $ro_xml =& $registryObject->{$class}[0];
-
-
-                // Choose whether or not to harvest this record and whether this should overwrite
-                // the existing entry or just create a new revision
-
-
-                // Clean up crosswalk XML if applicable
-                if ($reharvest) {
                     $ro_xml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-
-
-                    //  Record owner should only be system if this is a harvest
-                    $record_owner = "SYSTEM";
-                    if ($this->_CI->user->isLoggedIn()) {
-                        $record_owner = $this->_CI->user->name() . " (" . $this->_CI->user->localIdentifier() . ")";
-                    }
 
                     if (is_null($ro_id)) {
                         // We are creating a new registryObject
-                        $ro = $this->roM->create($this->ds, (string)$registryObject->key, $class, "", $status, "temporary_slug-" . md5((string)$registryObject->key) . "-" . time(), $record_owner, $this->batch_id);
+                        $ro = $this->roM->create($this->ds, (string)$registryObject->key, $class, "", $this->default_record_status, "temporary_slug-" . md5((string)$registryObject->key) . "-" . time(), $this->record_owner, $this->batch_id);
 
-                        // if this is ds has the qa flag set we need to check if this is the first submitted for assesmment record and if so email the notify address
-                        if ($this->ds->qa_flag === DB_TRUE && $this->ingest_new_record < 1 && !$this->forceDraft && $this->ds->assessment_notify_email_addr) {
-                            $this->roM->emailAssessor($this->ds);
-                        }
+                        $ro->class = $class;
+                        $ro->data_source_key = $this->ds->key;
+                        $ro->created_who = $this->record_owner;
+                        $ro->record_owner = $this->record_owner;
+
                         $this->ingest_new_record++;
                     } else {
                         // The registryObject exists, just add a new revision to it?
-                        $ro = $this->roM->getByID($ro_id);
-                        $ro->status = $status;
-                        $ro->record_owner = $record_owner;
 
+                        $ro = $this->roM->getByID($ro_id);
+                        $ro->cleanupPreviousVersions();
+                        $ro->status = $this->default_record_status;
                     }
 
-                    $ro->class = $class;
-                    $ro->created_who = $record_owner;
-                    $ro->data_source_key = $this->ds->key;
+                    $changed = $ro->createVersion(wrapRegistryObjects($registryObject->asXML()), 'rif', $this->default_record_status, $this->batch_id);
+
+
                     $ro->group = (string)$registryObject['group'];
                     $ro->type = (string)$ro_xml['type'];
-
                     $ro->file_path = $filePath;
+                    $ro->setAttribute("harvest_id", $this->batch_id);
+
 
                     // Clean up all previous versions (set = FALSE, "prune" extRif)
-                    $ro->cleanupPreviousVersions();
+
 
                     // Order is important here!
-                    $changed = $ro->updateXML(wrapRegistryObjects($registryObject->asXML()),$current = TRUE, 'rif', $status);
 
                     // Generate the list and display titles first, then the SLUG
                     $ro->updateTitles($ro->getSimpleXML());
 
                     // Only generate SLUGs for published records
-                    $ro->setAttribute("harvest_id", $this->batch_id);
+
                     $ro->generateSlug();
-                    if (in_array($status, getPublishedStatusGroup())) {
+                    if (isPublishedStatus($this->default_record_status)) {
                         $ro->generateSlug();
                     } else {
                         $ro->slug = DRAFT_RECORD_SLUG . $ro->id;
@@ -320,6 +319,7 @@ class Insert extends ImportSubTask
                     $ro->save($changed);
 
                     if ($changed) {
+
                         $this->setAffectedRecords($ro->key);
                         $this->ingest_new_revision++;
                     }
@@ -332,41 +332,32 @@ class Insert extends ImportSubTask
                 unset($ro_xml);
             }
         }
+        catch(NonFatalException $e){
+            $this->error_log[] = $e->getMessage . NL;
+        }
     }
     // HELPER FUNCTIONS
+
 
 
     /**
      *
      */
-    public function decideHarvestability($registryObject)
+    public function getExistingRecordId($registryObject)
     {
-        $reharvest = true;
-        $revision_record_id = null;
-        $status = $this->default_record_status;
+        $record_id = null;
         $existingRegistryObjectRecords = $this->getRegistryObjectByKey((string)$registryObject->key);
-
         if ($existingRegistryObjectRecords) {
+            // should be ONLY 1 since key must be unique!!
             foreach ($existingRegistryObjectRecords as $registryObjectRecord) {
-                if ($registryObjectRecord['status'] == PUBLISHED && isPublishedStatus($status)) {
-                    //check if registry object belong to the same datasource
-                    // Duplicate key in alternate data source
-                    if ($registryObjectRecord['data_source_id'] != $this->ds->id) {
-                        $reharvest = false;
-                        $this->log("Ignored a record already existing in a different data source: " . $registryObject->key);
-                        $this->ingest_duplicate_ignore++;
-                    } else {
-                        $revision_record_id = $registryObjectRecord['registry_object_id'];
-                    }
-                }
-                if ($registryObjectRecord['status'] != PUBLISHED && isDraftStatus($status)) {
-                    $status = $registryObjectRecord['status'];
-                    $revision_record_id = $registryObjectRecord['registry_object_id'];
+                if ($registryObjectRecord['data_source_id'] != $this->ds->id) {
+                    throw new NonFatalException("Record with key ".(string)$registryObject->key." already exist in a different data source");
+                } else {
+                    $record_id = $registryObjectRecord['registry_object_id'];
                 }
             }
         }
-        return array($reharvest, $status, $revision_record_id);
-
+        return $record_id;
     }
 
 

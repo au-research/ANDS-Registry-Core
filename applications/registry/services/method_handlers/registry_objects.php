@@ -13,6 +13,9 @@ class Registry_objectsMethod extends MethodHandler {
     private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch', 'accessPolicy');
 
     public $ro = null;
+    public $ro_key = null;
+    public $ro_id = null;
+    public $ro_version_id = null;
     public $index = null;
     public $xml = null;
 

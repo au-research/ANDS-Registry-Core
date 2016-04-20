@@ -8,7 +8,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Connectiontrees extends ROHandler {
 	function handle() {
         $ci =& get_instance();
-        $ci->load->model('registry_object/registry_objects','thisro');
+        $ci->load->model('registry/registry_object/registry_objects','thisro');
         $ci->load->model('services/connectiontree','connectiontree');
         $ro = $ci->thisro->getByID($this->ro->id);
 
