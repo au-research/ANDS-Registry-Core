@@ -290,8 +290,6 @@ class Relationships_Extension extends ExtensionBase
         $docs = [];
         foreach ($relationships as $rel) {
 
-
-
             $doc = [
                 'from_id' => $this->ro->id,
                 'from_key' => $this->ro->key,
@@ -314,7 +312,7 @@ class Relationships_Extension extends ExtensionBase
             if ($doc['to_id'] && $doc['to_class'] && !$doc['to_type']) {
                 $toRO = $this->_CI->ro->getByID($rel['registry_object_id']);
                 if ($toRO) {
-                    $doc['to_type'] = $toRO->type;
+                    $doc['to_type'] = strtolower(trim($toRO->type));
                 }
             }
 
