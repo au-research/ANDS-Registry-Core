@@ -62,12 +62,10 @@ class Dispatcher extends MX_Controller
 
         $JUnitXML = $this->load->view('junit-xml-report', $data, true);
         if (!file_exists('test-reports/')) {
-            mkdir('test-reports/', 0777, true);
+            mkdir('test-reports/', 0744, true);
         }
-        if (file_exists('test-reports/junit-xml-report.xml')) {
-            unlink('test-reports/junit-xml-report.xml');
-        }
-        file_put_contents('test-reports/' . 'junit-xml-report.xml', $JUnitXML, FILE_APPEND);
+
+        file_put_contents('test-reports/' . 'junit-xml-report.xml', $JUnitXML);
     }
 
     /**
