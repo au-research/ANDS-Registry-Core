@@ -137,7 +137,7 @@ class Vocabularies extends CI_Model
         $result = array();
         if ($this->user->isLoggedIn()) {
             $this->vocab_db = $this->load->database('vocabs', true);
-            if ($this->user->hasFunction('REGISTRY_SUPERUSER')) {
+            if ($this->user->isSuperAdmin()) {
                 $query = $this->vocab_db->get('vocabularies');
                 if ($query && $query->num_rows() > 0) {
                     foreach ($query->result_array() as $r) {
@@ -204,7 +204,7 @@ class Vocabularies extends CI_Model
         // Only take superuser privileges into account if we
         // are asked to (which is also the default).
         if ($allowSuperuser) {
-            if ($this->user->hasFunction('REGISTRY_SUPERUSER')) {
+            if ($this->user->isSuperAdmin()) {
                 // Superuser, so definitely authorised.
                 return true;
         }
@@ -228,21 +228,6 @@ class Vocabularies extends CI_Model
         }
         // Not an owner.
         return false;
-    }
-
-    /**
-     * Returns true if the user is logged in with superuser
-     * privileges.
-     * @return true if and only the user is logged in with
-     *         superuser privileges.
-     */
-    public function isSuperuser()
-    {
-        if (!$this->user->isLoggedIn()) {
-            // Not even logged in.
-            return false;
-        }
-        return $this->user->hasFunction('REGISTRY_SUPERUSER');
     }
 
     /**
