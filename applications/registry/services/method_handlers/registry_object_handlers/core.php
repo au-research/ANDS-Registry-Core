@@ -52,6 +52,7 @@ class Core extends ROHandler {
                 $result['description'] = "Identifier: " .$this->ro->key.NL.$this->index['list_description'];
             }
         }
+        $this->ro->save();
         return $result;
 	}
 }

@@ -15,7 +15,7 @@
             </li>
         @endforeach
         @if($related['organisations']['count'] > 5)
-            <li><a href="{{ $related['organisations']['searchUrl'] }}">View all {{ $related['organisations']['count'] }} related services</a></li>
+            <li><a href="{{ $related['organisations']['searchUrl'] }}">View all {{ $related['organisations']['count'] }} related organisations</a></li>
         @endif
     </ul>
 </div>
