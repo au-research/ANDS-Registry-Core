@@ -35,9 +35,8 @@ class Dispatcher extends MX_Controller
             $testableModules[$module] = $this->getTestsInModule($this->testPath, $module);
         }
 
-        //index, all tests
+        // Selective testing if params is specified that is not index or test
         $testSuites = array();
-
         if(sizeof($params) > 0) {
             if ($params[0]!='index' && $params[0]!='test') {
                 foreach ($params as $suite) {
@@ -52,6 +51,7 @@ class Dispatcher extends MX_Controller
             $testSuites = $testableModules;
         }
 
+        // create the test result path if not exists, prime for writing
         if (!file_exists($this->testResultPath)) {
             mkdir($this->testResultPath, 0744, true);
         }
@@ -78,14 +78,23 @@ class Dispatcher extends MX_Controller
         ];
 
         // display
-        if ($this->input->is_cli_request()) {
-            $this->load->view('cli-test-report', $results);
-        } else {
-            echo json_encode($results, true);
+        if (sizeof($testSuites) > 0) {
+            if ($this->input->is_cli_request()) {
+                $this->load->view('cli-test-report', $results);
+            } else {
+                echo json_encode($results, true);
+            }
         }
-
     }
 
+    /**
+     * Run a particular testSuites given all the testcases
+     * Returns results, elapsed and memory usage
+     *
+     * @param $testSuite
+     * @param $tests
+     * @return array
+     */
     private function run($testSuite, $tests) {
         $this->benchmark->mark('start');
 
@@ -111,8 +120,6 @@ class Dispatcher extends MX_Controller
         ];
 
         return $data;
-
-
     }
 
 
