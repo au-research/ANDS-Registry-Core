@@ -61,6 +61,7 @@ class UnitTest
     {
         $this->setUp();
         $this->ci->load->library('unit_test');
+        $this->ci->unit->init();
         $testableFunctions = get_class_methods($this);
         foreach ($testableFunctions as $function) {
             if (startsWith($function, 'test')) {

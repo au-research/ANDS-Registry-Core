@@ -52,6 +52,10 @@ class CI_Unit_test {
 		// log_message('debug', "Unit Testing Class Initialized");
 	}
 
+	public function init() {
+		$this->results = array();
+	}
+
 	// --------------------------------------------------------------------
 
 	/**

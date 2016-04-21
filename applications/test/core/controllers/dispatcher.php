@@ -106,6 +106,8 @@ class Dispatcher extends MX_Controller
             $className = $namespace . $testName;
             $testObject = new $className();
             $results = array_merge($results, $testObject->runTests());
+            unset($testObject);
+            $testObject = null;
         }
 
         $this->benchmark->mark('end');
