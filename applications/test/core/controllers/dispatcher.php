@@ -2,6 +2,9 @@
 
 class Dispatcher extends MX_Controller
 {
+    private $testPath;
+    private $testResultPath;
+
     /**
      * Dispatcher constructor.
      */
@@ -9,6 +12,8 @@ class Dispatcher extends MX_Controller
     {
         parent::__construct();
         set_exception_handler('json_exception_handler');
+        $this->testPath = APP_PATH;
+        $this->testResultPath = 'test-reports';
     }
 
     /**
@@ -23,20 +28,24 @@ class Dispatcher extends MX_Controller
         $this->load->library('unit_test');
         require_once(APP_PATH . 'vendor/autoload.php');
 
+        $this->run();
+    }
+
+    private function run() {
         $this->benchmark->mark('start');
 
         //list directories and find testable modules
         $testableModules = array();
-        $modules = $this->getTestableModule(APP_PATH);
+        $modules = $this->getTestableModule($this->testPath);
         foreach ($modules as $module) {
-            $testableModules[$module] = $this->getTestsInModule(APP_PATH, $module);
+            $testableModules[$module] = $this->getTestsInModule($this->testPath, $module);
         }
 
         // collect testable modules and run tests on them, append results
         $results = array();
         foreach ($testableModules as $module => $tests) {
             foreach ($tests as $testName) {
-                require_once(APP_PATH . $module . '/' . $testName . '.php');
+                require_once($this->testPath . $module . '/' . $testName . '.php');
                 $namespace = "ANDS\\Test\\";
                 $className = $namespace . $testName;
                 $testObject = new $className();
@@ -61,12 +70,13 @@ class Dispatcher extends MX_Controller
         }
 
         $JUnitXML = $this->load->view('junit-xml-report', $data, true);
-        if (!file_exists('test-reports/')) {
-            mkdir('test-reports/', 0744, true);
+        if (!file_exists($this->testResultPath)) {
+            mkdir($this->testResultPath, 0744, true);
         }
 
-        file_put_contents('test-reports/' . 'junit-xml-report.xml', $JUnitXML);
+        file_put_contents($this->testResultPath . '/junit-xml-report.xml', $JUnitXML);
     }
+
 
     /**
      * Returns a list of testable modules as an array

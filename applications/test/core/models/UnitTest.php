@@ -12,7 +12,7 @@ use \ReflectionMethod as ReflectionMethod;
 class UnitTest
 {
 
-    private $ci;
+    public $ci;
     private $name;
     private $note;
 
@@ -23,6 +23,17 @@ class UnitTest
     {
         $this->ci =& get_instance();
         $this->reset();
+        $this->setUp();
+    }
+
+    public function setUp()
+    {
+
+    }
+
+    public function tearDown()
+    {
+
     }
 
     /**
@@ -54,6 +65,7 @@ class UnitTest
                 $this->$function();
             }
         }
+        $this->tearDown();
         return $this->ci->unit->result();
     }
 
@@ -77,6 +89,14 @@ class UnitTest
     {
         $this->getReflectorInfo();
         $this->ci->unit->run($left, $right, $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
+    public function assertInstanceOf($obj, $instance){
+        $this->getReflectorInfo();
+        $result = $obj instanceof $instance;
+        $this->ci->unit->run($result, 'is_true', $this->getName(), $this->getNote());
         $this->reset();
         return $this;
     }
