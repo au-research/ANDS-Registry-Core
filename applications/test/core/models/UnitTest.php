@@ -309,6 +309,8 @@ class UnitTest
             if ($docBlock['note']) {
                 $this->setNote($docBlock['note']);
             }
+        } else {
+            $this->reset();
         }
     }
 
