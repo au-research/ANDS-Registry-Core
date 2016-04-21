@@ -1,4 +1,5 @@
 <?php
+
 $pass = 0;
 $fail = 0;
 $assertions = 0;
@@ -22,7 +23,7 @@ $testSuite = new SimpleXMLElement("<testsuite></testsuite>");
 $testSuite->addAttribute('failures', $fail);
 $testSuite->addAttribute('tests', $testCount);
 $testSuite->addAttribute('time', $elapsed);
-$testSuite->addAttribute('name', 'ANDS.Registry.UnitTest');
+$testSuite->addAttribute('name', $testSuiteName);
 
 foreach ($results as $result) {
     $test = $testSuite->addChild('testcase');
@@ -35,7 +36,6 @@ foreach ($results as $result) {
     }
 }
 
-Header('Content-type: text/xml');
 $dom = dom_import_simplexml($testSuite)->ownerDocument;
 $dom->formatOutput = true;
 echo $dom->saveXML();

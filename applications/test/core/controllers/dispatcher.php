@@ -28,29 +28,75 @@ class Dispatcher extends MX_Controller
         $this->load->library('unit_test');
         require_once(APP_PATH . 'vendor/autoload.php');
 
-        $this->run();
-    }
-
-    private function run() {
-        $this->benchmark->mark('start');
-
-        //list directories and find testable modules
+        //get all testable modules (testsuites)
         $testableModules = array();
         $modules = $this->getTestableModule($this->testPath);
         foreach ($modules as $module) {
             $testableModules[$module] = $this->getTestsInModule($this->testPath, $module);
         }
 
+        //index, all tests
+        $testSuites = array();
+
+        if(sizeof($params) > 0) {
+            if ($params[0]!='index' && $params[0]!='test') {
+                foreach ($params as $suite) {
+                    if (array_key_exists($suite, $testableModules)) {
+                        $testSuites[$suite] = $testableModules[$suite];
+                    }
+                }
+            } else {
+                $testSuites = $testableModules;
+            }
+        } else {
+            $testSuites = $testableModules;
+        }
+
+        if (!file_exists($this->testResultPath)) {
+            mkdir($this->testResultPath, 0744, true);
+        }
+
+        $this->benchmark->mark('start_testing');
+        $results = array(
+            'benchmark' => array(),
+            'tests' => array()
+        );
+        if (sizeof($testSuites) > 0) {
+            foreach ($testSuites as $testSuite=>$tests) {
+                $this->benchmark->mark('start_testing');
+                $result = $this->run($testSuite, $tests);
+                $results['tests'][$testSuite] = $result;
+                $result['testSuiteName'] = $testSuite;
+                $JUnitXML = $this->load->view('junit-xml-report', $result, true);
+                file_put_contents($this->testResultPath . '/'.$testSuite.'.xml', $JUnitXML);
+            }
+        }
+        $this->benchmark->mark('end_testing');
+        $results['benchmark'] = [
+            'time' =>  $this->benchmark->elapsed_time('start_testing', 'end_testing'),
+            'memory' => $this->benchmark->memory_usage()
+        ];
+
+        // display
+        if ($this->input->is_cli_request()) {
+            $this->load->view('cli-test-report', $results);
+        } else {
+            echo json_encode($results, true);
+        }
+
+    }
+
+    private function run($testSuite, $tests) {
+        $this->benchmark->mark('start');
+
         // collect testable modules and run tests on them, append results
         $results = array();
-        foreach ($testableModules as $module => $tests) {
-            foreach ($tests as $testName) {
-                require_once($this->testPath . $module . '/' . $testName . '.php');
-                $namespace = "ANDS\\Test\\";
-                $className = $namespace . $testName;
-                $testObject = new $className();
-                $results = array_merge($results, $testObject->runTests());
-            }
+        foreach ($tests as $testName) {
+            require_once($this->testPath . $testSuite . '/' . $testName . '.php');
+            $namespace = "ANDS\\Test\\";
+            $className = $namespace . $testName;
+            $testObject = new $className();
+            $results = array_merge($results, $testObject->runTests());
         }
 
         $this->benchmark->mark('end');
@@ -64,17 +110,9 @@ class Dispatcher extends MX_Controller
             'memory' => $memory
         ];
 
-        // display
-        if ($this->input->is_cli_request()) {
-            $this->load->view('cli-test-report', $data);
-        }
+        return $data;
 
-        $JUnitXML = $this->load->view('junit-xml-report', $data, true);
-        if (!file_exists($this->testResultPath)) {
-            mkdir($this->testResultPath, 0744, true);
-        }
 
-        file_put_contents($this->testResultPath . '/junit-xml-report.xml', $JUnitXML);
     }
 
 

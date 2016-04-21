@@ -1,26 +1,29 @@
 <?php
 
+
 $pass = 0;
 $fail = 0;
 $assertions = 0;
 $failedTest = array();
 $testNames = array();
-foreach ($results as $result) {
-    if ($result['Result'] == 'Passed') {
-        $pass++;
-    } elseif ($result['Result'] == 'Failed') {
-        $fail++;
-        $failedTest[] = $result;
+foreach ($tests as $module=>$results) {
+    foreach ($results['results'] as $result) {
+        if ($result['Result'] == 'Passed') {
+            $pass++;
+        } elseif ($result['Result'] == 'Failed') {
+            $fail++;
+            $failedTest[] = $result;
+        }
+        if (!in_array($result['Test Name'], $testNames)) {
+            $testNames[] = $result['Test Name'];
+        }
+        $assertions++;
     }
-    if (!in_array($result['Test Name'], $testNames)) {
-        $testNames[] = $result['Test Name'];
-    }
-    $assertions++;
 }
 $testCount = sizeof($testNames);
 
 // formating
-
+echo "Testsuites: " . implode(', ', array_keys($tests)). "\n";
 echo "Time: $elapsed, Memory: $memory\n\n";
 
 if (sizeof($failedTest) > 0) {

@@ -1,14 +1,16 @@
 <?php
-/**
- * Class:  UnitTest
- *
- * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
- */
 
 namespace ANDS\Test;
+
 use \ReflectionClass as ReflectionClass;
 use \ReflectionMethod as ReflectionMethod;
 
+/**
+ * Class UnitTest
+ *
+ * @package ANDS\Test
+ * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
 class UnitTest
 {
 
@@ -23,7 +25,6 @@ class UnitTest
     {
         $this->ci =& get_instance();
         $this->reset();
-        $this->setUp();
     }
 
     public function setUp()
@@ -58,17 +59,32 @@ class UnitTest
      */
     public function runTests()
     {
+        $this->setUp();
         $this->ci->load->library('unit_test');
         $testableFunctions = get_class_methods($this);
         foreach ($testableFunctions as $function) {
             if (startsWith($function, 'test')) {
-                $this->$function();
+                try {
+                    $this->ci->benchmark->mark('start');
+                    $this->$function();
+                    $this->ci->benchmark->mark('end');
+                    $time = $this->ci->benchmark->elapsed_time('start', 'end', 5);
+                    $this->ci->unit->set_test_items(array('time', $time));
+                } catch (\Exception $e) {
+                    $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
+                }
             }
         }
         $this->tearDown();
         return $this->ci->unit->result();
     }
 
+    /**
+     * Assert if the input is true/exists
+     *
+     * @param $input
+     * @return $this
+     */
     public function assertTrue($input)
     {
         $this->getReflectorInfo();
@@ -77,6 +93,12 @@ class UnitTest
         return $this;
     }
 
+    /**
+     * Assert if the input is false
+     *
+     * @param $input
+     * @return $this
+     */
     public function assertFalse($input)
     {
         $this->getReflectorInfo();
@@ -85,6 +107,13 @@ class UnitTest
         return $this;
     }
 
+    /**
+     * Assert if left and right is equals
+     *
+     * @param $left
+     * @param $right
+     * @return $this
+     */
     public function assertEquals($left, $right)
     {
         $this->getReflectorInfo();
@@ -93,13 +122,171 @@ class UnitTest
         return $this;
     }
 
-    public function assertInstanceOf($obj, $instance){
+    /**
+     * Assert object is of a right instance
+     *
+     * @param $obj
+     * @param $instance
+     * @return $this
+     */
+    public function assertInstanceOf($obj, $instance)
+    {
         $this->getReflectorInfo();
         $result = $obj instanceof $instance;
         $this->ci->unit->run($result, 'is_true', $this->getName(), $this->getNote());
         $this->reset();
         return $this;
     }
+
+    /**
+     * Assert left is greater than right
+     *
+     * @param $left
+     * @param $right
+     * @return $this
+     */
+    public function assertGreaterThan($left, $right)
+    {
+        $this->getReflectorInfo();
+        $this->ci->unit->run($left > $right, 'is_true', $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
+    /**
+     * Assert left is less than right
+     *
+     * @param $left
+     * @param $right
+     * @return $this
+     */
+    public function assertLessThan($left, $right)
+    {
+        $this->getReflectorInfo();
+        $this->ci->unit->run($left < $right, 'is_true', $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
+    /**
+     * Assert left is less than or equals to right
+     * @param $left
+     * @param $right
+     * @return $this
+     */
+    public function assertLessThanOrEqual($left, $right)
+    {
+        $this->getReflectorInfo();
+        $this->ci->unit->run($left <= $right, 'is_true', $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
+    /**
+     * Assert input is null
+     *
+     * @param $input
+     * @return $this
+     */
+    public function assertNull($input)
+    {
+        $this->getReflectorInfo();
+        $this->ci->unit->run(is_null($input), 'is_true', $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
+    /**
+     * Assert left is the same as right
+     *
+     * @param $left
+     * @param $right
+     * @return $this
+     */
+    public function assertSame($left, $right)
+    {
+        $this->getReflectorInfo();
+        $this->ci->unit->run($left === $right, 'is_true', $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
+
+    /**
+     * Assert left is greater than or equals to right
+     *
+     * @param $left
+     * @param $right
+     * @return $this
+     */
+    public function assertGreaterThanOrEqual($left, $right)
+    {
+        $this->getReflectorInfo();
+        $this->ci->unit->run($left >= $right, 'is_true', $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
+    /**
+     * Assert if the input array is empty
+     *
+     * @param $input
+     * @return $this
+     */
+    public function assertEmpty($input)
+    {
+        $this->getReflectorInfo();
+        $this->ci->unit->run(is_array_empty($input), 'is_true', $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
+    /**
+     * Assert if the input array count is equals to
+     *
+     * @param $count
+     * @param $input
+     * @return $this
+     */
+    public function assertCount($count, $input)
+    {
+        $this->getReflectorInfo();
+        $this->ci->unit->run(sizeof($input), $count, $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
+
+    /**
+     * Assert that needle is contain in the haystack
+     *
+     * @param $needle
+     * @param $haystack
+     * @return $this
+     */
+    public function assertContains($needle, $haystack)
+    {
+        $this->getReflectorInfo();
+        $this->ci->unit->run(in_array($needle, $haystack), 'is_true', $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
+    /**
+     * Assert that an array has a key
+     *
+     * @param $key
+     * @param $array
+     * @return $this
+     */
+    public function assertArrayHasKey($key, $array)
+    {
+        $this->getReflectorInfo();
+        $this->ci->input->run(array_key_exists($key, $array), 'is_true', $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
 
     /**
      * Setting the Name and Note of the caller function
