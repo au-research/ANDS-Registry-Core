@@ -233,12 +233,8 @@ class Sync_extension extends ExtensionBase{
         //if there's a direct downloads, assign access_rights to open
         defined('SERVICES_MODULE_PATH') or define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
         require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/directaccess.php');
-        $nsxml = $this->ro->getSimpleXML();
-        $nsxml = addXMLDeclarationUTF8(($nsxml->registryObject ? $nsxml->registryObject->asXML() : $nsxml->asXML()));
-        $nsxml = simplexml_load_string($nsxml);
-        $nsxml = simplexml_load_string( addXMLDeclarationUTF8($nsxml->asXML()) );
         $handler = new Directaccess(array(
-            'xml' => $nsxml,
+            'xml' => $xml,
             'ro' => $this->ro,
             'gXPath' => $gXPath
         ));

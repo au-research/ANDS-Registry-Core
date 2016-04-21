@@ -148,13 +148,15 @@ class ObjectHandler extends Handler{
                 }
             } else {
                 //special case
+                $this->ci->load->model('registry/registry_object/registry_objects', 'roModel');
+
+                $ro = $this->ci->roModel->getByID($this->params['identifier']);
+                //var_dump($ro);
                 if ($m1 == 'solr_index') {
-                    $ro = $resource['ro'];
                     $ro->sync();
                     return $ro->indexable_json();
                 } elseif ($m1 == 'grants_structure') {
                     $this->ci->load->library('solr');
-                    $ro = $resource['ro'];
                     $result = [
                         'id' => $ro->id,
                         'title' => $ro->title,
@@ -163,10 +165,8 @@ class ObjectHandler extends Handler{
 
                     return $result;
                 } elseif ($m1 == 'sync') {
-                    $ro = $resource['ro'];
                     return $ro->sync();
                 } else if($m1 == 'relations_index') {
-                    $ro = $resource['ro'];
                     $ro->addRelationships();
                     $ro->cacheRelationshipMetadata();
                     $ro->indexRelationship();

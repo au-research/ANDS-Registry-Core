@@ -217,9 +217,9 @@ class Extrif_Extension extends ExtensionBase
 	{
 
 		// Get the RO instance for this registry object so we can fetch its contributor datat
-		//$this->load->model('registry_object/registry_objects', 'ro');
+		$this->_CI->load->model('registry_object/registry_objects', 'roMod');
 
-		$registry_object = $this->_CI->ro->getByID($ro_id);
+		$registry_object = $this->_CI->roMod->getByID($ro_id);
 	
 		$contributor_details = array();
 

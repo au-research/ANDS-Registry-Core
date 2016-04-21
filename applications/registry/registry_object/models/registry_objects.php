@@ -223,7 +223,7 @@ class Registry_objects extends CI_Model {
 			$cached_object_reference = RegistryObjectReferenceCache::getById($id);
 			if ($cached_object_reference)
 			{
-				return $cached_object_reference;
+                return $cached_object_reference;
 			}
 			else
 			{
