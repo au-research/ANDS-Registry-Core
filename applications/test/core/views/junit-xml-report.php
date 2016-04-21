@@ -2,7 +2,6 @@
 $pass = 0;
 $fail = 0;
 $assertions = 0;
-$skipped = 0;
 $failedTest = array();
 $testNames = array();
 foreach ($results as $result) {
@@ -22,13 +21,13 @@ $testCount = sizeof($testNames);
 $testSuite = new SimpleXMLElement("<testsuite></testsuite>");
 $testSuite->addAttribute('failures', $fail);
 $testSuite->addAttribute('tests', $testCount);
-$testSuite->addAttribute('time', $skipped);
+$testSuite->addAttribute('time', $elapsed);
 $testSuite->addAttribute('name', 'ANDS.Registry.UnitTest');
 
 foreach ($results as $result) {
     $test = $testSuite->addChild('testcase');
     $test->addAttribute('name', $result['Test Name']);
-    $test->addAttribute('time', '0.0');
+    $test->addAttribute('time', $result['Time']);
     if ($result['Result'] == 'Failed') {
         $failure = $test->addChild('failure');
         $failure->addAttribute('type', 'junit.framework.AssertionFailedError');
