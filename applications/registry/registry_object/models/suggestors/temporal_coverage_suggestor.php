@@ -13,17 +13,20 @@ class Temporal_coverage_suggestor extends _GenericSuggestor {
      * Rely on Solr's score.
      * @return array suggested_records
      */
+    private $minYear = 9999999;
+    private $maxYear = 0;
+
     function suggest() {
 
         //construct the query string
-        $str = 'id:'.$this->ro->id;
-        $this->ro->processTemporal();
+        $str = 'id:'.$this->index['id'];
+        $this->processTemporal();
 		$earliest = '*';
         $latest = '*';
-        if($this->ro->getEarliestAsYear() != 9999999)
+        if($this->getEarliestAsYear() != 9999999)
             $earliest = $this->ro->getEarliestAsYear();
-        if($this->ro->getLatestAsYear() != 0)
-            $latest = $this->ro->getLatestAsYear();
+        if($this->getLatestAsYear() != 0)
+            $latest = $this->getLatestAsYear();
 
         //call SOLR library
         $suggestions = array();
@@ -40,7 +43,7 @@ class Temporal_coverage_suggestor extends _GenericSuggestor {
                 ->init()
                 ->setOpt('q', $str)
                 ->setOpt('rows', '50')
-                ->setOpt('fq', '-id:'.$this->ro->id)
+                ->setOpt('fq', '-id:'.$this->index['id'])
                 ->setOpt('fq', 'class:collection')
                 ->setOpt('fl', 'id,key,slug,title,score');
 
@@ -57,6 +60,60 @@ class Temporal_coverage_suggestor extends _GenericSuggestor {
             }
         }
         return $suggestions;
+    }
+
+    function processTemporal()
+    {
+        $this->minYear = 9999999;
+        $this->maxYear = 0;
+        $temporalArray = array();
+        $sxml = simplexml_load_string($this->ro['data'], 'SimpleXMLElement', LIBXML_NOENT);
+        $sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
+        $temporals = $sxml->xpath('//ro:temporal/ro:date');
+        foreach ($temporals AS $temporal) {
+            $type = (string)$temporal["type"];
+            $value = $this->getWTCdate((string)$temporal);
+            if ($value)
+                $temporalArray[] = array('type' => $type, 'value' => $value);
+        }
+        return $temporalArray;
+    }
+
+    function getEarliestAsYear()
+    {
+        //TODO: write the function :-)
+        return $this->minYear;
+    }
+
+    function getLatestAsYear()
+    {
+        //TODO: write the function :-)
+        return $this->maxYear;
+    }
+
+    function getWTCdate($value)
+    {
+        utc_timezone();
+        // "Year and only year" (i.e. 1960) will be treated as HH SS by default
+        if (strlen($value) == 4) {
+            // Assume this is a year:
+            $value = "Jan 1 " . $value;
+        } else if (preg_match("/\d{4}\-\d{2}/", $value) === 1) {
+            $value = $value . "-01";
+        }
+
+        if (($timestamp = strtotime($value)) === false) {
+            return false;
+        } else {
+            $date = getDate($timestamp);
+            if ($date['year'] > $this->maxYear)
+                $this->maxYear = $date['year'];
+            if ($date['year'] < $this->minYear)
+                $this->minYear = $date['year'];
+            return date('Y-m-d\TH:i:s\Z', $timestamp);
+        }
+
+        reset_timezone();
     }
 
     function __construct() {

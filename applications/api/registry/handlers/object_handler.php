@@ -130,10 +130,7 @@ class ObjectHandler extends Handler{
                 switch ($m1) {
                     case 'get':
                     case 'registry':
-
                         $result[$m1] = $this->ro_handle('core', $resource);
-
-                        exit();
                         break;
                     case 'relationships-old':
                         $result[$m1] = $this->relationships_handler($resource);

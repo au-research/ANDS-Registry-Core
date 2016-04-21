@@ -57,8 +57,8 @@ class Related_object_suggestor extends _GenericSuggestor
         foreach($this->relationship_types as $class=>$typeArray)
         {
             $nextOverRide = 0;
-            $connections = $this->ro->getRelatedObjectsByClassAndRelationshipType(
-            array($class),$typeArray);
+            $connections = array();//$this->ro->getRelatedObjectsByClassAndRelationshipType(
+           // array($class),$typeArray);
             if($class == 'collection') // get them from DB only
             {
 
@@ -168,7 +168,7 @@ class Related_object_suggestor extends _GenericSuggestor
             ->setOpt('q', $query)
             ->setOpt('rows', $maxRows)
             ->setOpt('fl', 'id,key,slug,title,score')
-            ->setOpt('fq', '-id:'.$this->ro->id)
+            ->setOpt('fq', '-id:'.$this->index['id'])
             ->setOpt('fq', 'class:collection')
             ->setOpt('defType', 'edismax');
 

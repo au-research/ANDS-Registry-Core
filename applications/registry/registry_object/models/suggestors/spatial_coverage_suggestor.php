@@ -19,7 +19,7 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
         $ci =& get_instance();
         $ci->load->library('solr');
         $ci->solr->init();
-        $str = 'id:'.$this->ro->id;
+        $str = 'id:'.$this->index['id'];
         $centers = array();
         $suggestions = array();
         $ci->solr

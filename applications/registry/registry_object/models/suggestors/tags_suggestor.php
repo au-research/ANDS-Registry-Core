@@ -19,7 +19,7 @@ class Tags_suggestor extends _GenericSuggestor {
 
         $ci->db->select('tag')
             ->from('registry_object_tags')
-            ->where('key',$this->ro->key);
+            ->where('key',$this->index['key']);
 
         $query = $ci->db->get();
         $str = '';
@@ -41,7 +41,7 @@ class Tags_suggestor extends _GenericSuggestor {
                 ->setOpt('q', $str)
                 ->setOpt('rows', $maxRows)
                 ->setOpt('fl', 'id,key,slug,title,score')
-                ->setOpt('fq', '-id:'.$this->ro->id)
+                ->setOpt('fq', '-id:'.$this->index['id'])
                 ->setOpt('fq', 'class:collection')
                 ->setOpt('defType', 'edismax');
 

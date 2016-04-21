@@ -31,6 +31,7 @@ class Suggest extends ROHandler {
 
         // Get results from each suggestor
         foreach ($suggestors as $key=>$val) {
+
             // Can't load a model on top of an existing field, so
             // create a different field name for each suggestor.
             $suggestor_field = 'ss_'.$key;
@@ -39,6 +40,7 @@ class Suggest extends ROHandler {
                 $suggestor_field
             );
             $ci->$suggestor_field->set_ro($this->ro);
+            $ci->$suggestor_field->set_index($this->index);
             // Override boost parameters from request URL.
             $boost = $ci->input->get($key);
             if ($boost){

@@ -19,15 +19,11 @@ class Subjects_suggestor extends _GenericSuggestor {
 
         //Get subjects from the XML
         $suggestions = array();
-        $sxml = $this->xml;
-        if ($sxml->registryObject) {
-            $sxml = $sxml->registryObject;
-        }
-
+        $sxml = simplexml_load_string($this->ro['data'], 'SimpleXMLElement', LIBXML_NOENT);
         // Subject matches
         $my_subjects = array();
-        if ($sxml->{strtolower($this->ro->class)}->subject) {
-            foreach ($sxml->{strtolower($this->ro->class)}->subject as $subject) {
+        if ($sxml->registryObject->{strtolower($this->index['class'])}->subject) {
+            foreach ($sxml->registryObject->{strtolower($this->index['class'])}->subject as $subject) {
                 $my_subjects[] = (string) removeBadValue($subject);
             }
         }
@@ -49,7 +45,7 @@ class Subjects_suggestor extends _GenericSuggestor {
                 ->setOpt('q', $str)
                 ->setOpt('rows', $maxRows)
                 ->setOpt('fl', 'id,key,slug,title,score')
-                ->setOpt('fq', '-id:'.$this->ro_id)
+                ->setOpt('fq', '-id:'.$this->index['id'])
                 ->setOpt('fq', 'class:collection')
                 ->setOpt('defType', 'edismax');
 
