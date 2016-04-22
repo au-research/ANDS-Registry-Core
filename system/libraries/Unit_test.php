@@ -56,6 +56,14 @@ class CI_Unit_test {
 		$this->results = array();
 	}
 
+	public function set_test_item_by_name($name, $key, $value) {
+		foreach ($this->results as $resultKey=>&$result) {
+			if ($result[0]['test_name']==$name) {
+				$result[0][$key] = $value;
+			}
+		}
+	}
+
 	// --------------------------------------------------------------------
 
 	/**

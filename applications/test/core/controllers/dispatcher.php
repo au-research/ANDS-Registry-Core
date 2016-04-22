@@ -63,7 +63,6 @@ class Dispatcher extends MX_Controller
         );
         if (sizeof($testSuites) > 0) {
             foreach ($testSuites as $testSuite=>$tests) {
-                $this->benchmark->mark('start_testing');
                 $result = $this->run($testSuite, $tests);
                 $results['tests'][$testSuite] = $result;
                 $result['testSuiteName'] = $testSuite;
@@ -73,7 +72,7 @@ class Dispatcher extends MX_Controller
         }
         $this->benchmark->mark('end_testing');
         $results['benchmark'] = [
-            'time' =>  $this->benchmark->elapsed_time('start_testing', 'end_testing'),
+            'time' =>  $this->benchmark->elapsed_time('start_testing', 'end_testing', 5),
             'memory' => $this->benchmark->memory_usage()
         ];
 

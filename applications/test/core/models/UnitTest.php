@@ -17,6 +17,7 @@ class UnitTest
     public $ci;
     private $name;
     private $note;
+    public $benchmark;
 
     /**
      * UnitTest constructor.
@@ -24,6 +25,7 @@ class UnitTest
     public function __construct()
     {
         $this->ci =& get_instance();
+        $this->benchmark = array();
         $this->reset();
     }
 
@@ -45,6 +47,7 @@ class UnitTest
      */
     public function reset()
     {
+
         $this->setName(get_class($this));
         $this->setNote("");
     }
@@ -70,8 +73,7 @@ class UnitTest
                         $this->ci->benchmark->mark('start');
                         $this->$function();
                         $this->ci->benchmark->mark('end');
-                        $time = $this->ci->benchmark->elapsed_time('start', 'end', 5);
-                        $this->ci->unit->set_test_items(array('time', $time));
+                        $this->benchmark[$function] = $this->ci->benchmark->elapsed_time('start', 'end', 5);
                     } catch (\Exception $e) {
                         $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
                     }
@@ -81,9 +83,16 @@ class UnitTest
         } catch (\Exception $e) {
             $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
         }
-        return $this->ci->unit->result();
 
-
+        // returns the correct time value for the function executed
+        $CIUnitTestResult = $this->ci->unit->result();
+        foreach ($CIUnitTestResult as &$result) {
+            if (array_key_exists($result['Test Name'], $this->nameMapping)) {
+                $methodName = $this->nameMapping[$result['Test Name']];
+                $result["Time"] = $this->benchmark[$methodName];
+            }
+        }
+        return $CIUnitTestResult;
     }
 
     /**
@@ -312,6 +321,7 @@ class UnitTest
         if ($docBlock) {
             if ($docBlock['name']) {
                 $this->setName($docBlock['name']);
+                $this->nameMapping[$docBlock['name']] = $methodCalled;
             }
             if ($docBlock['note']) {
                 $this->setNote($docBlock['note']);
@@ -373,7 +383,6 @@ class UnitTest
                         $phpDoc['return'] = array('type' => $matches3[2]);
                     }
                 }
-
                 $parsedDocComment = str_replace($matches[1] . $matches[2], '', $parsedDocComment);
             }
         }
@@ -416,6 +425,15 @@ class UnitTest
     {
         $this->note = $note;
         return $this;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getBenchmark()
+    {
+        return $this->benchmark;
     }
 
 }
