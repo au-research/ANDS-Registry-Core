@@ -1,13 +1,13 @@
 <?php
 
-/**
- * Class:  TestRegistryObjectModel
- *
- * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
- */
-
 namespace ANDS\Test;
 
+/**
+ * Class TestRegistryObjectModel
+ *
+ * @package ANDS\Test
+ * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ */
 class TestRegistryObjectModel extends UnitTest
 {
     /**
@@ -16,7 +16,7 @@ class TestRegistryObjectModel extends UnitTest
      */
     public function testGetRegistryObjectByID()
     {
-        $ro = $this->ci->ro->getByID(319959);
+        $ro = $this->ci->ro->getByID(437095);
         $this->assertInstanceOf($ro, new \_registry_object());
     }
 
@@ -26,7 +26,7 @@ class TestRegistryObjectModel extends UnitTest
      */
     public function testGetRegistryObjectByKey()
     {
-        $ro = $this->ci->ro->getPublishedByKey("AODN:metadata@aad.gov.au");
+        $ro = $this->ci->ro->getPublishedByKey("AUTCollection1");
         $this->assertInstanceOf($ro, new \_registry_object());
     }
 
@@ -36,30 +36,28 @@ class TestRegistryObjectModel extends UnitTest
      */
     public function testGetRegistryObjectBySlug()
     {
-        $ro = $this->ci->ro->getBySlug("aadc-officer");
+        $ro = $this->ci->ro->getBySlug("collection-rif-v16-elements-primaryname");
         $this->assertInstanceOf($ro, new \_registry_object());
     }
 
     /**
-     * @throws \Exception
      * @name param 319959 must have related objects
      * @note relatedObjects must be a non empty array
      */
     public function testGetRelatedObjects()
     {
-        $ro = $this->ci->ro->getByID(319959);
-        if ($ro) {
-            $relatedObjects = $ro->getAllRelatedObjects();
-            $this->assertTrue(is_array($relatedObjects));
-            $this->assertGreaterThan(sizeof($relatedObjects), 0);
-        } else {
-            throw new \Exception("Record 319959 does not exist");
-        }
+        $relatedObjects = $this->ro->getAllRelatedObjects();
+        $this->assertTrue(is_array($relatedObjects));
+        $this->assertGreaterThan(sizeof($relatedObjects), 0);
     }
 
     public function setUp()
     {
         $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
+        $this->ro = $this->ci->ro->getByID(437095);
+        if (!$this->ro) {
+            throw new \Exception("Record 437095 does not exist. Various test cases will be skipped");
+        }
     }
 
     public function tearDown()

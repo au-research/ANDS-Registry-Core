@@ -59,25 +59,31 @@ class UnitTest
      */
     public function runTests()
     {
-        $this->setUp();
-        $this->ci->load->library('unit_test');
-        $this->ci->unit->init();
-        $testableFunctions = get_class_methods($this);
-        foreach ($testableFunctions as $function) {
-            if (startsWith($function, 'test')) {
-                try {
-                    $this->ci->benchmark->mark('start');
-                    $this->$function();
-                    $this->ci->benchmark->mark('end');
-                    $time = $this->ci->benchmark->elapsed_time('start', 'end', 5);
-                    $this->ci->unit->set_test_items(array('time', $time));
-                } catch (\Exception $e) {
-                    $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
+        try {
+            $this->setUp();
+            $this->ci->load->library('unit_test');
+            $this->ci->unit->init();
+            $testableFunctions = get_class_methods($this);
+            foreach ($testableFunctions as $function) {
+                if (startsWith($function, 'test')) {
+                    try {
+                        $this->ci->benchmark->mark('start');
+                        $this->$function();
+                        $this->ci->benchmark->mark('end');
+                        $time = $this->ci->benchmark->elapsed_time('start', 'end', 5);
+                        $this->ci->unit->set_test_items(array('time', $time));
+                    } catch (\Exception $e) {
+                        $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
+                    }
                 }
             }
+            $this->tearDown();
+        } catch (\Exception $e) {
+            $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
         }
-        $this->tearDown();
         return $this->ci->unit->result();
+
+
     }
 
     /**
