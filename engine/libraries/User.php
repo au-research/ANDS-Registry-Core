@@ -72,6 +72,9 @@ class User {
 			session_start();
 		}
 		unset($this->session->userdata); 
+		// clear local caches
+		unset($this->functions);
+		unset($this->affiliations);
 		$this->CI->session->sess_destroy(); //???
 		delete_cookie('redirect');
 		delete_cookie('affiliations');

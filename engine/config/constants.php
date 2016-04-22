@@ -120,6 +120,7 @@ define('CONTRIBUTOR_PAGE_KEY_PREFIX', 'a61e9d0d');
 define('REGISTRY_APP_PATH', 'applications/registry/');
 define('PORTAL_APP_PATH', 'applications/portal/');
 define('API_APP_PATH', 'applications/api/');
+define('APPS_APP_PATH', 'applications/apps/');
 
 define('NATIVE_HARVEST_FORMAT_TYPE','nativeHarvestData');
 

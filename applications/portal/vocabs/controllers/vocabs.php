@@ -796,7 +796,7 @@ class Vocabs extends MX_Controller
             } elseif ($method == 'index') {
                 // (re-)index for all vocabs
                 // Require superuser authentication.
-                if (!$this->vocab->isSuperuser()) {
+                if (!$this->user->isSuperAdmin()) {
                     throw new Exception('Must be logged in with a '
                                         . 'superuser role to do a full '
                                         . 'reindex.');
@@ -819,7 +819,7 @@ class Vocabs extends MX_Controller
                 foreach ($vocabs as $vocab) {
                     $result[] = $vocab->indexable_json();
                     // This call to indexVocab() is protected by the
-                    // check of isSuperuser() just above.
+                    // check of isSuperAdmin() just above.
                     $this->indexVocab($vocab);
                 }
             }
@@ -1012,14 +1012,14 @@ class Vocabs extends MX_Controller
 
             }
             if ($method == 'index') {
-                if (!$this->vocab->isSuperuser()) {
+                if (!$this->user->isSuperAdmin()) {
                     throw new Exception('Must be logged in with a '
                                         . 'superuser role to do a '
                                         . 'reindex.');
                 }
                 $result = $vocab->indexable_json();
                 // This call to indexVocab() is protected by the
-                // check of isSuperuser() just above.
+                // check of isSuperAdmin() just above.
                 $this->indexVocab($vocab);
             } elseif ($method == 'versions') {
                 $result = $result['versions'];
@@ -1270,7 +1270,7 @@ class Vocabs extends MX_Controller
      */
     public function migrate($releaseID)
     {
-        if (!$this->vocab->isSuperuser()) {
+        if (!$this->user->isSuperAdmin()) {
             throw new Exception('Must be logged in with a '
                                 . 'superuser role to do a '
                                 . 'migration.');
@@ -1292,7 +1292,7 @@ class Vocabs extends MX_Controller
  */
     private function taskMigration()
     {
-        if (!$this->vocab->isSuperuser()) {
+        if (!$this->user->isSuperAdmin()) {
             throw new Exception('Must be logged in with a '
                                 . 'superuser role to do a '
                                 . 'task migration.');
@@ -1433,7 +1433,7 @@ class Vocabs extends MX_Controller
 
     public function testIsSuperuser()
     {
-        var_dump($this->vocab->isSuperuser());
+        var_dump($this->user->isSuperAdmin());
     }
 
     /**
