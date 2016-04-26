@@ -485,7 +485,7 @@ class Sync_extension extends ExtensionBase{
 
             //latest year
             if ($latestYear = $this->ro->getExistenceDateLatestYear($xml)) {
-                $json['earliest_year'] = $latestYear;
+                $json['latest_year'] = $latestYear;
             }
 
             //activity status
