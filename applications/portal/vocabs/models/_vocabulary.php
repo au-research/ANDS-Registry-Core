@@ -777,7 +777,6 @@ class _vocabulary
                         'title' => $version['title'],
                         'status' => $version['status'],
                         'vocab_id' => $this->prop['id'],
-                        'repository_id' => '',
                         'data' => json_encode($version)
                     );
                     $db->where('id', $version['id']);
@@ -791,7 +790,6 @@ class _vocabulary
                         'title' => $version['title'],
                         'status' => $version['status'],
                         'vocab_id' => $this->prop['id'],
-                        'repository_id' => '',
                         'data' => json_encode($version)
                     );
                     $result = $db->insert('versions', $version_data);
