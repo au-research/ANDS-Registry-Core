@@ -885,7 +885,7 @@ class Registry_object extends MX_Controller
             }
             // $new_search_term = $data['search_term'].'~0.7';
             $this->solr->setOpt('q',
-                'fulltext:(' . $new_search_term . ') OR simplified_title:(' . iconv('UTF-8', 'ASCII//TRANSLIT',
+                '_text_:(' . $new_search_term . ') OR simplified_title:(' . iconv('UTF-8', 'ASCII//TRANSLIT',
                     $new_search_term) . ')');
             $result = $this->solr->executeSearch(true);
             if ($this->solr->getNumFound() > 0) {
