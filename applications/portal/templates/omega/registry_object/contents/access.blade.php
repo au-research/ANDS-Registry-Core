@@ -9,7 +9,7 @@ if($ro->core['class']=='service'){
 
 ?>
 @if($ro->directaccess)
-    @if($ro->directaccess[0]['access_type']=='url')
+    @if($ro->directaccess[0]['access_type']=='url' && count($ro->directaccess) == 1)
         @if(isset($ro->directaccess[0]['access_value']['href']))
             <a href="{{trim($ro->directaccess[0]['access_value']['href'])}}" ng-click="$event.preventDefault();access($event)" class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to {{$buttonStr}}</a>
         @elseif(isset($ro->directaccess[0]['access_value']))
@@ -18,7 +18,7 @@ if($ro->core['class']=='service'){
 
     @endif
 
-    @if($ro->directaccess[0]['access_type']!='url')
+    @if($ro->directaccess[0]['access_type']!='url' || count($ro->directaccess) > 1 )
         <a href="" class="btn btn-lg btn-primary btn-block" id="gotodata"><i class="fa fa-cube"></i> Go to Data Providers</a>
         <div id="dataformats">
         @foreach($ro->directaccess as $access)
