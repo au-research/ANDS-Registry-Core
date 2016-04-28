@@ -32,7 +32,19 @@
                     if($right['rightsUri']!='') $licence_detail = true;
                 }
 
-            } elseif ($right['type']=='accessRights') {
+            }
+            elseif ($right['type']=='rightsStatement') {
+                if(isset($right['accessRights_type'])){
+                    $ar = $right['accessRights_type'];
+                }
+                if(isset($right['value'])) {
+                    if($right['value']!='') $licence_detail = true;
+                }
+
+                if(isset($right['rightsUri'])) {
+                    if($right['rightsUri']!='') $licence_detail = true;
+                }
+            }elseif ($right['type']=='accessRights') {
                 if(isset($right['accessRights_type'])){
                     $ar = $right['accessRights_type'];
                 }
@@ -74,12 +86,26 @@
                         $licence_content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
                     $licence_content .= '</p>';
                 }
+                if($right['type']=='rightsStatement'){
+                    if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
+                        $licence_content .= '<p>';
+                    if(isset($right['value']) && trim($right['value'])!=''){
+                        $description = html_entity_decode($right['value']);
+                        if(strip_tags($description) == $description)
+                            $description = nl2br($description);
+                        $licence_content .= $description.'<br />';
+
+                    }
+                    if(isset($right['rightsUri']) && $right['rightsUri']!='')
+                        $licence_content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
+                    $licence_content .= '</p>';
+                }
             }
         }
         if ($access_detail && $access_detail!='') {
             $access_content = '';
             foreach ($ro->rights as $right) {
-                if($right['type']!='licence'){
+                if($right['type']!='licence' && $right['type']!='rightsStatement'){
                     if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
                         $access_content .= '<p>';
                     if(isset($right['value']) && trim($right['value'])!=''){
