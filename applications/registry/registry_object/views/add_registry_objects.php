@@ -25,7 +25,7 @@
 		<form action="#" method="get" class="form-vertical" autocomplete="off">
 			<div class="control-group" style="background-color:#ffffff;margin-bottom:10px;padding:0em">
 				<label class="control-label" for="key">Key 
-					<span class="label"><a href="http://www.ands.org.au/guides/cpguide/cpgkey.html" target="_blank" title="View Content Providers' Guide">?</a></span>
+					<span class="label"><a href="http://guides.ands.org.au/rda-cpg/key" target="_blank" title="View Content Providers' Guide">?</a></span>
 				</label>
 				<div class="controls">
 					<div class="input-append">
@@ -56,7 +56,7 @@
 
 			<div class="control-group" style="background-color:#ffffff;margin-bottom:10px;padding:0em">
 				<label class="control-label" for="key">Group
-					<span class="label"><a href="http://www.ands.org.au/guides/cpguide/cpggroup.html" target="_blank" title="View Content Providers' Guide">?</a></span>
+					<span class="label"><a href="http://guides.ands.org.au/rda-cpg/group" target="_blank" title="View Content Providers' Guide">?</a></span>
 				</label>
 				<div class="controls">
 					<input required type="text" class="input-xlarge rifcs-type" vocab="GroupSuggestor" name="group" value="" autocomplete="off">
@@ -87,7 +87,7 @@
 			<div class="span3">
 				<div class="widget-box">
 					<div class="widget-content">
-						<div class="pull-right label"><a href="http://ands.org.au/guides/cpguide/cpgcollection.html" target="_blank" title="View Content Providers' Guide">?</a></div>
+						<div class="pull-right label"><a href="http://guides.ands.org.au/rda-cpg/describecpas#collection" target="_blank" title="View Content Providers' Guide">?</a></div>
 						<img src="assets/img/collection.png" alt="Collection" />
 						<span>Research datasets or collections of research materials.</span>
 						<div class="clearfix"></div>
@@ -98,7 +98,7 @@
 			<div class="span3">
 				<div class="widget-box">
 					<div class="widget-content">
-						<div class="pull-right label"><a href="http://ands.org.au/guides/cpguide/cpgparty.html" target="_blank" title="View Content Providers' Guide">?</a></div>
+						<div class="pull-right label"><a href="http://guides.ands.org.au/rda-cpg/describecpas#party" target="_blank" title="View Content Providers' Guide">?</a></div>
 						<img src="assets/img/party.png" alt="Party"/>
 						<span>Researchers or research organisations that create or maintain research datasets or collections.</span>
 						<div class="clearfix"></div>
@@ -109,7 +109,7 @@
 			<div class="span3">
 				<div class="widget-box">
 					<div class="widget-content">
-						<div class="pull-right label"><a href="http://ands.org.au/guides/cpguide/cpgactivity.html" target="_blank" title="View Content Providers' Guide">?</a></div>
+						<div class="pull-right label"><a href="http://guides.ands.org.au/rda-cpg/describecpas#activity" target="_blank" title="View Content Providers' Guide">?</a></div>
 						<img src="assets/img/activity.png" alt="Activity" />
 						<span>Projects or programs that create research datasets or collections.</span>
 						<div class="clearfix"></div>
@@ -120,7 +120,7 @@
 			<div class="span3">
 				<div class="widget-box">
 					<div class="widget-content">
-						<div class="pull-right label"><a href="http://ands.org.au/guides/cpguide/cpgservice.html" target="_blank" title="View Content Providers' Guide">?</a></div>
+						<div class="pull-right label"><a href="http://guides.ands.org.au/rda-cpg/describecpas#service" target="_blank" title="View Content Providers' Guide">?</a></div>
 						<img src="assets/img/service.png" alt="Service"/>
 						<span>Services that support the creation or use of research datasets or collections.</span>
 						<div class="clearfix"></div>
