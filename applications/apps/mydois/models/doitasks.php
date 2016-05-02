@@ -601,6 +601,11 @@ class Doitasks extends CI_Model {
 		{
 			$this->debugOn();
 		}
+        $manual_activate = $this->input->get('manual_activate');
+        if($manual_activate)
+        {
+            $client_id = rawurldecode($this->input->get_post('client_id'));
+        }
 		//$app_id = $this->input->get('app_id');		//passed as a parameter
 		$app_id = $this->getAppId();
 		if(substr($app_id,0,4)=='TEST')
@@ -625,7 +630,8 @@ class Doitasks extends CI_Model {
 		//first up, lets check that this client is permitted to update this doi.
 		if($errorMessages =='')
 		{
-		$client_id = checkDoisValidClient($ip,$app_id);
+        if(!$manual_activate) $client_id = checkDoisValidClient($ip,$app_id);
+		//$client_id = checkDoisValidClient($ip,$app_id);
 		if($client_id===false)
 		{
 			$verbosemessage = '';
@@ -743,6 +749,11 @@ class Doitasks extends CI_Model {
 			$this->debugOn();
 		}
 		//$app_id = $this->input->get('app_id');		//passed as a parameter
+        $manual_deactivate = $this->input->get('manual_deactivate');
+        if($manual_deactivate)
+        {
+            $client_id = rawurldecode($this->input->get_post('client_id'));
+        }
 		$app_id = $this->getAppId();
 		if(substr($app_id,0,4)=='TEST')
 		{
@@ -766,7 +777,7 @@ class Doitasks extends CI_Model {
 		//first up, lets check that this client is permitted to update this doi.
 		if($errorMessages =='')
 		{
-		$client_id = checkDoisValidClient($ip,$app_id);
+		if(!$manual_deactivate) $client_id = checkDoisValidClient($ip,$app_id);
 		if($client_id===false)
 		{
 			$verbosemessage = '';

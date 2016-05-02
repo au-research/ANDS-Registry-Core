@@ -59,7 +59,7 @@
             },
             activate: function (data) {
                 return APIService.postlegacy(
-                    apps_url+'mydois/activate.json/?app_id='+data.app_id+'&doi='+data.doi, {
+                    apps_url+'mydois/activate.json/?manual_activate=true&app_id='+data.app_id+'&doi='+data.doi, {
                         doi_id:data.doi,
                         client_id:data.client_id
                     }
@@ -67,7 +67,7 @@
             },
             deactivate: function (data) {
                 return APIService.postlegacy(
-                    apps_url+'mydois/deactivate.json/?app_id='+data.app_id+'&doi='+data.doi, {
+                    apps_url+'mydois/deactivate.json/?manual_deactivate=true&app_id='+data.app_id+'&doi='+data.doi, {
                         doi_update:data.doi,
                         client_id:data.client_id
                     }
