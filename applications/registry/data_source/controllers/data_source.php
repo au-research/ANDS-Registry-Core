@@ -2030,7 +2030,13 @@ class Data_source extends MX_Controller {
 					$ro = $this->ro->getByID($ro_id);
 					if($formatString == 'dci')
                     {
-                        $dciOutput .= $ro->transformToDCI(false);
+                        defined('SERVICES_MODULE_PATH') or define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
+                        require_once(SERVICES_MODULE_PATH . 'method_handlers/dci.php');
+                        $dci_handler = new DCIMethod();
+                        $dci_handler->ro = $ro;
+                        $dci_handler->populate_resource($ro_id,true);
+                        $dciOutput .= $dci_handler->ro_handle('dci');
+                        dd($dci_handler->ro_handle);
                     }
                     elseif($ro && (strpos($classString, $ro->class) !== false) && (strpos($statusString, $ro->status) !== false))
 					{
