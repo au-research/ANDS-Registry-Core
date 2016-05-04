@@ -41,7 +41,7 @@ class GrantsHandlerV2 extends Handler
 
         //purl
         if ($purl = (isset($params['purl'])) ? $params['purl'] : null) {
-            $this->ci->solr->setOpt('fq', '+identifier_value_search:(' . $purl . ')');
+            $this->ci->solr->setOpt('fq', '+identifier_value_search:("' . $purl . '")');
         }
 
         //type
@@ -118,8 +118,38 @@ class GrantsHandlerV2 extends Handler
         if ($start = (isset($params['start'])) ? $params['start'] : 0) {
             $this->ci->solr->setOpt('start', $start);
         }
+
+        //facet setup
+        $this->ci->solr->setFacetOpt('mincount', 1);
+        if ($this->ci->input->get('facets')) {
+            $facets = explode(',', $this->ci->input->get('facets'));
+            foreach ($facets as $facet) {
+                switch ($facet) {
+                    case "institutions":
+                        $this->ci->solr->setFacetOpt('field', 'administering_institution');
+                        break;
+                    case "funders":
+                        $this->ci->solr->setFacetOpt('field', 'funders');
+                        break;
+                }
+            }
+        }
+
         //execute search and store the result
         $result = $this->ci->solr->executeSearch(true);
+
+        //clean up facet
+        $facets = array();
+
+        foreach ($result['facet_counts']['facet_fields'] as $facetField=>$facetValues) {
+            $facets[$facetField] = array();
+            for ($i=0;$i<sizeof($facetValues)-1;$i+=2) {
+                $facets[$facetField][] = [
+                    'key' => $facetValues[$i],
+                    'value' => $facetValues[$i+1]
+                ];
+            }
+        }
 
         //response setup
         $response = array(
@@ -127,6 +157,11 @@ class GrantsHandlerV2 extends Handler
             'numFound' => 0,
             'recordData' => array()
         );
+
+        if ($this->ci->input->get('facets')) {
+            $response['facets'] = $facets;
+        }
+
 
         if ($this->ci->input->get('debug')) {
             $response['query'] = urldecode($this->ci->solr->constructFieldString());
@@ -301,7 +336,6 @@ class GrantsHandlerV2 extends Handler
             //add data to the response array
             $response['numFound'] += 1;
             $response['recordData'][] = $data;
-
 
 
             //save memory by clearing the ro object
