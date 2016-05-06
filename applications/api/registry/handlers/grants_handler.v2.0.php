@@ -187,10 +187,27 @@ class GrantsHandlerV2 extends Handler
             //cache XML
             $xml = $ro->getSimpleXML();
 
+            //deterime if we want to get all of the available tiles back - for search testing
+            //flags
+
+            $fl = (isset($params['fl'])) ? $params['fl'] : null;
+            if ($fl) {
+                $titles = $result['display_title'];
+                if(isset($result['alt_list_title']) && $result['alt_list_title']!='') {
+                    foreach($result['alt_list_title'] as $title)
+                        $titles .=" , ".$title;
+                }
+                if(isset($result['alt_display_title'])&& $result['alt_display_title']!='') {
+                    foreach($result['alt_display_title'] as $title)
+                        $titles .=" , ".$title;
+                }
+            }else{
+                $titles = $result['display_title'];
+            }
 
             //data is the response object to add to the response array
             $data = array(
-                'title' => $result['display_title'],
+                'title' => $titles,
                 'key' => $result['key']
             );
 
