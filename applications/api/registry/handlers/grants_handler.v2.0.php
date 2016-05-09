@@ -131,6 +131,12 @@ class GrantsHandlerV2 extends Handler
                     case "funders":
                         $this->ci->solr->setFacetOpt('field', 'funders');
                         break;
+                    case "type":
+                        $this->ci->solr->setFacetOpt('field', 'type');
+                        break;
+                    case "fundingScheme":
+                        $this->ci->solr->setFacetOpt('field', 'funding_scheme');
+                        break;
                 }
             }
         }
