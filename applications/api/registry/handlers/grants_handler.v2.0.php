@@ -320,21 +320,21 @@ class GrantsHandlerV2 extends Handler
             $fundingScheme = $ro->getFundingScheme($gXPath);
             $data['fundingScheme'] = $fundingScheme;
 
-            $dateFormat = "Y-m-d H:i:s";
+            $dateFormat = "Y";
 
             /**
              * startDate
              * Format W3DTF
              * existenceDate/startDate
              */
-            $startDate = $ro->getExistenceDate("startDate", $dateFormat, $xml);
+            $startDate = $ro->getExistenceDateEarliestYear($xml);
             $data['startDate'] = $startDate;
 
             /**
              * endDate
              * existenceDate/endDate
              */
-            $endDate = $ro->getExistenceDate("endDate", $dateFormat, $xml);
+            $endDate = $ro->getExistenceDateLatestYear($xml);
             $data['endDate'] = $endDate;
 
             /**
