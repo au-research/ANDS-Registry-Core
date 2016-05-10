@@ -429,21 +429,24 @@ Y2  - '.date("Y-m-d")."
         if($query!=''){
             $urls = $this->gXPath->query($query);
             foreach($urls as $url) {
-                $sourceUrl = $url->nodeValue;
-                if($output=='endNote'){
+                $sourceUrl = trim($url->nodeValue);
+                 if($output=='endNote' && $type!="url"){
                     $resolved = identifierResolution($sourceUrl,$type);
-                    $sourceUrl = $resolved['href'];
+                    $sourceUrl = trim($resolved['href']);
                 }elseif($output == 'coins'){
                     if(strpos($sourceUrl,"doi.org/")) $sourceUrl ="info:doi".substr($sourceUrl,strpos($sourceUrl,"doi.org/")+8);
                     elseif($type=='doi') $sourceUrl = "info:doi".$sourceUrl;
                 }
             }
-        } else {
-            if($output=='endNote'){
-                $sourceUrl = portal_url();
-            }
         }
 
+        if($output=='endNote'){
+            if($sourceUrl == ''){
+                $sourceUrl = portal_url().$this->ro->slug;
+            }else{
+                $sourceUrl .= ",".portal_url().$this->ro->slug;
+            }
+        }
         return  $sourceUrl;
     }
 
