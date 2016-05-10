@@ -6,7 +6,7 @@ namespace ANDS\API\Registry\Handler;
  * getGrants API
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
-class GrantsHandlerV2 extends Handler
+class ActivitiesHandlerV2 extends Handler
 {
 
     /**
@@ -59,11 +59,13 @@ class GrantsHandlerV2 extends Handler
         if ($identifier) {
             $this->ci->solr->setOpt('fq', '+identifier_value:("' . $identifier . '")');
         }
+
         //individual id
         $id = (isset($params['id'])) ? $params['id'] : null;
         if ($id) {
             $this->ci->solr->setOpt('fq', '+identifier_value:*'.urldecode($id).'*');
         }
+
         //title
         $title = (isset($params['title'])) ? $params['title'] : null;
         if ($title) {

@@ -43,6 +43,12 @@ class Registry_api
         }
 
         if ($this->params['submodule']) {
+
+            // backward compatible with grants api v2 only
+            if ($this->params['submodule'] === "grants") {
+                $this->params['submodule'] = "activities";
+            }
+
             try {
                 $class_name = 'ANDS\API\Registry\Handler\\' . ucfirst($this->params['submodule']) . 'Handler';
                 $v2_class_name = $class_name.'V2';
