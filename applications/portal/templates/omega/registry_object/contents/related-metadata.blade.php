@@ -81,7 +81,15 @@
                     {{$relatedInfo['identifier']['identifier_value']}}
                     @endif
                 </p>
+                @elseif(!$relatedInfo['identifier']['identifier_href'])
+                <h5> {{$relatedInfo['title']}}</h5>
+                <p>
+                    <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :
+                   {{$relatedInfo['identifier']['identifier_value']}}
+                   
+                </p>
                 @endif
+
 
                 @if($relatedInfo['relation']['url'])
                 <p>URI : <a href="{{$relatedInfo['relation']['url']}}">{{$relatedInfo['relation']['url']}}</a></p>
