@@ -15508,7 +15508,7 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 
 ;;app.controller('QueryBuilderCtrl', function ($scope, $log, LZString ) {
 
-    var data = '{"group":{"root": true, "operator":"AND","rules":[{"group":{"operator":"AND","rules":[{"condition":":","field":"fulltext","data":"","$$hashKey":"064"},{"condition":":","field":"fulltext","data":""}]},"$$hashKey":"05Z"}]}}';
+    var data = '{"group":{"root": true, "operator":"AND","rules":[{"group":{"operator":"AND","rules":[{"condition":":","field":"_text_","data":"","$$hashKey":"064"},{"condition":":","field":"_text_","data":""}]},"$$hashKey":"05Z"}]}}';
 
     function htmlEntities(str) {
         return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -15575,7 +15575,7 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 
     $scope.convertType = function(type) {
         switch(type) {
-            case 'q': return 'fulltext';break;
+            case 'q': return '_text_';break;
         }
         return type;
     }
@@ -15612,7 +15612,7 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
                 ];
 
                 scope.fields = [
-                    { name: 'fulltext', display: 'All Fields'},
+                    { name: '_text_', display: 'All Fields'},
                     { name: 'title_search', display: 'Title'},
                     { name: 'identifier_value_search', display: 'Identifier'},
                     { name: 'related_party_one_search', display: 'Related People'},
@@ -15628,7 +15628,7 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
                 scope.addCondition = function () {
                     scope.group.rules.push({
                         condition: ':',
-                        field: 'fulltext',
+                        field: '_text_',
                         data: ''
                     });
                 };
@@ -15642,7 +15642,7 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile, $log, se
                         group: {
                             operator: 'AND',
                             rules: [
-                                {condition:":", field:'fulltext', data:''}
+                                {condition:":", field:'_text_', data:''}
                             ]
                         }
                     });

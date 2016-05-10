@@ -2652,7 +2652,10 @@ function showWidget()
                 getAllWidgetable: function () {
                     var filters = {
                         widgetable: true,
-                        pp: 31
+                        // FIXME change the controller to
+                        // support a "no limit" option, rather
+                        // than having to specify this here.
+                        pp: 1000000
                     }
                     return this.search(filters);
                 },
@@ -2698,7 +2701,8 @@ function showWidget()
                 }
             }
         });
-})();;(function () {
+})();
+;(function () {
     'use strict';
 
     angular
