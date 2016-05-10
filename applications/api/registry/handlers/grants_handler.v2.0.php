@@ -84,9 +84,9 @@ class GrantsHandlerV2 extends Handler
             $this->ci->solr->setOpt('fq', '+principal_investigator_search:"' . $principalInvestigator . '"');
         }
 
-        //person
-        if ($person = (isset($params['person'])) ? $params['person'] : null) {
-            $this->ci->solr->setOpt('fq', '+researchers_search:"' . $person . '"');
+        //researcher
+        if ($researcher = (isset($params['researcher'])) ? $params['researcher'] : null) {
+            $this->ci->solr->setOpt('fq', '+researchers_search:"' . $researcher . '"');
         }
 
         //status
@@ -193,29 +193,53 @@ class GrantsHandlerV2 extends Handler
             //cache XML
             $xml = $ro->getSimpleXML();
 
-            //deterime if we want to get all of the available tiles back - for search testing
-            //flags
-
-            $fl = (isset($params['fl'])) ? $params['fl'] : null;
-            if ($fl) {
-                $titles = $result['display_title'];
-                if(isset($result['alt_list_title']) && $result['alt_list_title']!='') {
-                    foreach($result['alt_list_title'] as $title)
-                        $titles .=" , ".$title;
-                }
-                if(isset($result['alt_display_title'])&& $result['alt_display_title']!='') {
-                    foreach($result['alt_display_title'] as $title)
-                        $titles .=" , ".$title;
-                }
-            }else{
-                $titles = $result['display_title'];
-            }
 
             //data is the response object to add to the response array
             $data = array(
-                'title' => $titles,
+                'title' => $result['display_title'],
                 'key' => $result['key']
             );
+
+            // Flags determine the additional information we would want
+            // that is not covered in the default response
+            // mainly use for testing
+            $fl = (isset($params['fl'])) ? $params['fl'] : false;
+            if ($fl) {
+                $flags = explode(',', $fl);
+                foreach ($flags as $flag) {
+                    switch ($flag) {
+                        case "title":
+                            $titles = [
+                                $result['display_title'],
+                                $result['list_title'],
+                                $result['title']
+                            ];
+                            if (array_key_exists('alt_list_title', $result)) {
+                                foreach ($result['alt_list_title'] as $title) {
+                                    $titles[] = $title;
+                                }
+                            }
+                            if (array_key_exists('alt_display_title', $result)) {
+                                foreach ($result['alt_display_title'] as $title) {
+                                    $titles[] = $title;
+                                }
+                            }
+                            $data['titles'] = $titles;
+                            break;
+                    }
+                }
+            }
+
+            /**
+             * status
+             * activity_status
+             */
+            $data['status'] = isset($result['activity_status']) ? $result['activity_status'] : "";
+
+            /**
+             * type
+             */
+            $data['type'] = isset($result['type']) ? $result['type'] : "";
 
             /**
              * Getting the purl for the object to display in response
