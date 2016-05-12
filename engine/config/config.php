@@ -94,8 +94,17 @@ $application_directives = array(
 				"routes" => array(
                      "(:any)"=>"core/dispatcher/$1"
               	),
+			),
+	"test" => array(
+			"base_url" => "%%BASEURL%%/test/",
+			"active_application" => "test",
+			"default_controller" => "core/dispatcher",
+			"routes" => array(
+					"(:any)"=>"core/dispatcher/$1"
 			)
+	)
 );
+//die('here');
 
 //Overwrite any application directives with environment ones if exist
 global $environment_directives;
