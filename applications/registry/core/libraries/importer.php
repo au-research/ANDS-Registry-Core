@@ -739,7 +739,7 @@ class Importer {
             $dataSourceTitle = $this->dataSource->title;
             $harvestID = $this->harvestID;
             $task = [
-                'name' => "BG Post Process for data source: $dataSourceTitle ($dataSourceID), harvestid: $harvestID",
+                'name' => "BG FixRelationship Post Process for data source: $dataSourceTitle ($dataSourceID), harvestid: $harvestID",
                 'type' => 'POKE',
                 'frequency' => 'ONCE',
                 'priority' => 5,
@@ -748,7 +748,23 @@ class Importer {
             $taskManager = new \ANDS\API\Task\TaskManager($this->CI->db, $this->CI);
             $taskAdded = $taskManager->addTask($task);
 
-            $this->message_log[] = "Spawn Background Task ID ". $taskAdded['id']. " to Post Process ". sizeof($roIDs). " records";
+			$this->message_log[] = "Spawn Fix Relationship Background Task ID ". $taskAdded['id']. " to Post Process ". sizeof($roIDs). " records";
+
+			$task = [
+					'name' => "BG Index Post Process for data source: $dataSourceTitle ($dataSourceID), harvestid: $harvestID",
+					'type' => 'POKE',
+					'frequency' => 'ONCE',
+					'priority' => 6,
+					'params' => http_build_query([
+							'class' => 'sync',
+							'type' => 'ro',
+							'id' => implode(',', $roIDs)
+					])
+			];
+			$taskAdded = $taskManager->addTask($task);
+
+			$this->message_log[] = "Spawn Sync Background Task ID ". $taskAdded['id']. " to Post Process ". sizeof($roIDs). " records";
+
         } else {
             $this->message_log[] = "Size of Affected Records is 0. No background task scheduled";
         }

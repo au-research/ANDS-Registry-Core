@@ -17,7 +17,7 @@ class ConnectionTree extends CI_Model
 	{
 		$this->published_only = $published_only;
 
-		if ($root_registry_object)
+		if ($root_registry_object && $root_registry_object->id)
 		{
 			$this->root_ro_key = $root_registry_object->key;
 			$this->recursed_children[$root_registry_object->id] = true;
@@ -185,6 +185,16 @@ class ConnectionTree extends CI_Model
 		$this->load->model('registry_object/registry_objects','ro');
 
 		$root_registry_object = $this->ro->getByID($root_registry_object_id);
+
+		/**
+		 * getByID can return null object if there's an exception
+		 * but returns a valid object with a null id
+		 * that can result in bad circumstances
+		 */
+		if ($root_registry_object == NULL || $root_registry_object->id == NULL) {
+			return array();
+		}
+
         $nested_collection = $root_registry_object->getConnections(true, 'nested_collection');
         if(isset($nested_collection[0]['collection'])){
             $collections = $nested_collection[0]['collection'];
@@ -192,7 +202,6 @@ class ConnectionTree extends CI_Model
            $collections=Array();
         }
 
-		if (!$root_registry_object) { return array(); }
 
 		/* Explicit relationships (i.e. `a` hasPart `b`) */
 		$this->db->select('r.registry_object_id, r.key, r.class, r.title, r.slug, r.status, rr.relation_type')
@@ -210,7 +219,7 @@ class ConnectionTree extends CI_Model
 		foreach ($collections AS $row)
 		{
 
-			if ($depth > 0 && !isset($accumulated_ids[$row['registry_object_id']]))
+			if ($row && $depth > 0 && !isset($accumulated_ids[$row['registry_object_id']]))
 			{
 
 				// If we're over the widget limit (and this isn't the target RO), then add more...
