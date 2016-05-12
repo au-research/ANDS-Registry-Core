@@ -75,7 +75,7 @@ class Oai extends MX_Controller
 	 */
 	public function index()
 	{
-		$this->responseDate = gmmktime();
+		$this->responseDate = time();
 		$token = false;
 		$this->_header();
 

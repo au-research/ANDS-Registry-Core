@@ -24,14 +24,12 @@ class DCI extends ROHandler {
         $CI->load->model('data_source/data_sources','ds');
         $ds = $CI->ds->getByID($this->ro->data_source_id);
         $exportable = false;
-        $lower_type = strtolower($this->ro->type);
-        $allowedType = array('collection', 'repository', 'dataset', 'software');
         if($this->ro->hasTag('excludeDCI'))
             return "";
         if($this->overrideExportable || $ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
             $exportable = true;
         $sourceUrl = $this->citation_handler->getSourceUrl();
-        if($sourceUrl == null || !($exportable) || !in_array($lower_type, $allowedType))
+        if($sourceUrl == null || !($exportable))
             return "";
         $this->getHeader();
         $this->getBibliographicData($sourceUrl);
@@ -41,6 +39,7 @@ class DCI extends ROHandler {
         $this->getDescriptorsData();
         $this->getFundingInfo();
         $this->getCitationList();
+
         return $this->DCIDom->ownerDocument->saveXML($this->DCIDom->ownerDocument->documentElement, LIBXML_NOXMLDECL);
 	}
 
