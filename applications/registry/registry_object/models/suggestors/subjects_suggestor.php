@@ -22,8 +22,8 @@ class Subjects_suggestor extends _GenericSuggestor {
         $sxml = simplexml_load_string($this->ro['data'], 'SimpleXMLElement', LIBXML_NOENT);
         // Subject matches
         $my_subjects = array();
-        if ($sxml->registryObject->{strtolower($this->index['class'])}->subject) {
-            foreach ($sxml->registryObject->{strtolower($this->index['class'])}->subject as $subject) {
+        if ($sxml->registryObject->{strtolower($this->ro_class)}->subject) {
+            foreach ($sxml->registryObject->{strtolower($this->ro_class)}->subject as $subject) {
                 $my_subjects[] = (string) removeBadValue($subject);
             }
         }
@@ -45,12 +45,11 @@ class Subjects_suggestor extends _GenericSuggestor {
                 ->setOpt('q', $str)
                 ->setOpt('rows', $maxRows)
                 ->setOpt('fl', 'id,key,slug,title,score')
-                ->setOpt('fq', '-id:'.$this->index['id'])
+                ->setOpt('fq', '-id:'.$this->ro['registry_object_id'])
                 ->setOpt('fq', 'class:collection')
                 ->setOpt('defType', 'edismax');
 
             $result = $ci->solr->executeSearch(true);
-
             if($result['response']['numFound'] > 0) {
 
                 $maxScore = floatval($result['response']['maxScore']);

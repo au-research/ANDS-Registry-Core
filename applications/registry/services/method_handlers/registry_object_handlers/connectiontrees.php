@@ -10,7 +10,7 @@ class Connectiontrees extends ROHandler {
         $ci =& get_instance();
         $ci->load->model('registry/registry_object/registry_objects','thisro');
         $ci->load->model('services/connectiontree','connectiontree');
-        $ro = $ci->thisro->getByID($this->ro->id);
+        $ro = $ci->thisro->getByID($this->index['id']);
 
         $trees = array();
 

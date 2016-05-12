@@ -25,7 +25,7 @@ class Insert extends ImportSubTask
     private $ingest_new_record;
     private $ingest_duplicate_ignore;
     private $maintainStatus;
-    private $forceDraft;
+    private $importstatus;
     private $ds; // data_source Object (single ds)
     private $roM; // registry_objects_model (multiple ro so use the model)
     private $payloads;
@@ -93,11 +93,13 @@ class Insert extends ImportSubTask
         $this->ingest_successes = 0;
         $this->ingest_new_revision = 0;
         $this->ingest_duplicate_ignore = 0;
-        $this->maintainStatus = true;
-        $this->forceClone = false;
         $this->record_owner = "SYSTEM";
         $this->payloads = [];
         $this->roM = $this->_CI->load->model('registry/registry_object/registry_objects', 'ro');
+    }
+
+    public function getImportStatus(){
+        return $this->importstatus;
     }
 
     /**
@@ -105,13 +107,16 @@ class Insert extends ImportSubTask
      * @throws Exception
      * @return json
      */
-    public function saveDraft($ro_id, $xml, $key, $ds_id ){
+    public function saveDraft($ro_id, $xml, $key, $ds_id){
         $this->ds_id = $ds_id;
+        $this->importstatus = "SUCCESS";
         $this->default_record_status = "DRAFT";
         $this->batch_id = "MANUAL-".time();
         $dsM = $this->_CI->load->model('registry/data_source/data_sources', 'ds');
         $this->ds = $dsM->getByID($this->ds_id);
-        $package = array("registry_object" => $xml, "file_path" => $key, "ro_id"=>$ro_id);
+        $xml = $this->cleanRIFCSofEmptyTags($xml);
+        $registry_object = $this->_getSimpleXMLFromString($xml);
+        $package = array("registry_object" => $registry_object, "file_path" => $key, "ro_id"=>$ro_id);
         if ($this->_CI->user->isLoggedIn()) {
             $this->record_owner  = $this->_CI->user->name() . " (" . $this->_CI->user->localIdentifier() . ")";
         }
@@ -124,11 +129,22 @@ class Insert extends ImportSubTask
         $this->setTaskData('ingest_new_revision', $this->ingest_new_revision);
         $this->setTaskData('ingest_duplicate_ignore', $this->ingest_duplicate_ignore);
         $this->setTaskData('default_record_status', $this->default_record_status);
-        $this->setTaskData('maintainStatus', $this->maintainStatus);
         $this->ds->append_log('INSERTING RECORDS:' . NL . $this->printTaskData(), "IMPORTER_INFO", "importer", "IMPORTER_INFO");
+    }
+
+
+    // get the DRAFT (type) of the given RO ID and make it current PUBLISHED (IF draft has no errors!!!)
+    // change the previous PUBLISHED version (if exist to DEPRECATED)
+    public function publish($ro_id, $version_id){
 
     }
 
+
+    public function delete($ro_id, $version_id){
+        if($version_id == NULL){
+
+        }
+    }
 
     private function loadContent()
     {
@@ -255,16 +271,17 @@ class Insert extends ImportSubTask
         $registryObject = $package['registry_object'];
         $filePath = $package['file_path'];
         $existing_record_id = null;
-        if(isset($package['ro_id'])){
-            $preferred_record_id = $package['ro_id'];
-        }
+
         try{
-            $ro_id = decideHarvestability($registryObject);
-            if($preferred_record_id != $ro_id)
+
+            $ro_id = $this->getExistingRecordId($registryObject);
+
+            if(isset($package['ro_id']) && $package['ro_id'] != $ro_id)
             {
-                $this->error_log[] = "given RO_ID:".$preferred_record_id." doesn't mach given RO_ID".$ro_id;
+                $this->error_log[] = "given RO_ID:".$package['ro_id']." doesn't mach given RO_ID".$ro_id;
             }
             foreach ($this->valid_classes AS $class) {
+
                 if (property_exists($registryObject, $class)) {
 
                     $ro_xml =& $registryObject->{$class}[0];
@@ -274,49 +291,33 @@ class Insert extends ImportSubTask
                     if (is_null($ro_id)) {
                         // We are creating a new registryObject
                         $ro = $this->roM->create($this->ds, (string)$registryObject->key, $class, "", $this->default_record_status, "temporary_slug-" . md5((string)$registryObject->key) . "-" . time(), $this->record_owner, $this->batch_id);
-
                         $ro->class = $class;
                         $ro->data_source_key = $this->ds->key;
                         $ro->created_who = $this->record_owner;
                         $ro->record_owner = $this->record_owner;
-
+                        $ro->status = $this->default_record_status;
                         $this->ingest_new_record++;
                     } else {
                         // The registryObject exists, just add a new revision to it?
-
                         $ro = $this->roM->getByID($ro_id);
-                        $ro->cleanupPreviousVersions();
-                        $ro->status = $this->default_record_status;
                     }
+                    $changed = $ro->createVersion($ro_id, wrapRegistryObjects(removeXMLDeclaration($registryObject->asXML())), 'rif', $this->default_record_status, $this->batch_id);
 
-                    $changed = $ro->createVersion(wrapRegistryObjects($registryObject->asXML()), 'rif', $this->default_record_status, $this->batch_id);
-
-
-                    $ro->group = (string)$registryObject['group'];
-                    $ro->type = (string)$ro_xml['type'];
-                    $ro->file_path = $filePath;
-                    $ro->setAttribute("harvest_id", $this->batch_id);
-
-
-                    // Clean up all previous versions (set = FALSE, "prune" extRif)
-
-
-                    // Order is important here!
-
-                    // Generate the list and display titles first, then the SLUG
-                    $ro->updateTitles($ro->getSimpleXML());
-
-                    // Only generate SLUGs for published records
-
-                    $ro->generateSlug();
                     if (isPublishedStatus($this->default_record_status)) {
+                        $ro->group = (string)$registryObject['group'];
+                        $ro->type = (string)$ro_xml['type'];
+                        $ro->file_path = $filePath;
+                        $ro->setAttribute("harvest_id", $this->batch_id);
                         $ro->generateSlug();
+                        $ro->updateTitles($ro->getSimpleXML());
+                        $ro->status = $this->default_record_status;
+                        $ro->save($changed);
                     } else {
-                        $ro->slug = DRAFT_RECORD_SLUG . $ro->id;
-                        $ro->setAttribute("manually_assessed", 'no');
+                        // create all metadata for the DRAFT status
+
                     }
 
-                    $ro->save($changed);
+
 
                     if ($changed) {
 
@@ -338,6 +339,12 @@ class Insert extends ImportSubTask
     }
     // HELPER FUNCTIONS
 
+// DRAFT's metadata is captured as json in the record table while
+// published ones are kept it the registry_objects attributes table
+
+    public function updateMetadata($version_id, $status){
+
+    }
 
 
     /**
@@ -363,7 +370,6 @@ class Insert extends ImportSubTask
 
     private function getDefaultRecordStatusForDataSource()
     {
-
         /*
          * Harvest to the correct record mode
          * QA = SUBMIT FOR ASSESSMENT
@@ -371,7 +377,6 @@ class Insert extends ImportSubTask
          * !QA, !AP = APPROVED
          */
         $status = '';
-
         if ($this->ds->qa_flag === DB_TRUE) {
             $status = 'SUBMITTED_FOR_ASSESSMENT';
         } else {
@@ -381,7 +386,6 @@ class Insert extends ImportSubTask
                 $status = 'PUBLISHED';
             }
         }
-
         return $status;
     }
 
@@ -393,6 +397,17 @@ class Insert extends ImportSubTask
             $dom->loadXML($rifcs);
             return $xslt_processor->transformToXML($dom);
         } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    function cleanRIFCSofEmptyTags($rifcs){
+        try{
+            $xslt_processor = Transforms::get_form_to_cleanrif_transformer();
+            $dom = new DOMDocument();
+            $dom->loadXML(str_replace('&', '&amp;' , $rifcs), LIBXML_NOENT);
+            return $xslt_processor->transformToXML($dom);
+        }catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
     }
@@ -459,5 +474,4 @@ class Insert extends ImportSubTask
             return false;
         }
     }
-
 }

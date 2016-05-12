@@ -10,7 +10,7 @@ class Descriptions extends ROHandler {
 	function handle() {
 		$result = array();
         if ($this->xml) {
-            foreach($this->xml->registryObject->{$this->index['class']}->description as $description){
+            foreach($this->xml->registryObject->{$this->ro_class}->description as $description){
                 $type = (string) $description['type'];
                 if($type!='rights' && $type!='accessRights'){
                     $description_str = html_entity_decode((string) $description);

@@ -19,12 +19,12 @@ class Temporal_coverage_suggestor extends _GenericSuggestor {
     function suggest() {
 
         //construct the query string
-        $str = 'id:'.$this->index['id'];
+        $str = 'id:'.$this->ro['registry_object_id'];
         $this->processTemporal();
 		$earliest = '*';
         $latest = '*';
         if($this->getEarliestAsYear() != 9999999)
-            $earliest = $this->ro->getEarliestAsYear();
+            $earliest = $this->getEarliestAsYear();
         if($this->getLatestAsYear() != 0)
             $latest = $this->getLatestAsYear();
 
@@ -43,7 +43,7 @@ class Temporal_coverage_suggestor extends _GenericSuggestor {
                 ->init()
                 ->setOpt('q', $str)
                 ->setOpt('rows', '50')
-                ->setOpt('fq', '-id:'.$this->index['id'])
+                ->setOpt('fq', '-id:'.$this->ro['registry_object_id'])
                 ->setOpt('fq', 'class:collection')
                 ->setOpt('fl', 'id,key,slug,title,score');
 

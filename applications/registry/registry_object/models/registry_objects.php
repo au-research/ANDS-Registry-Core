@@ -778,38 +778,6 @@ class Registry_objects extends CI_Model {
 		}
 	}
 
-	/**
-	  * XXX:
-	  */
-	function cloneToDraft($registry_object)
-	{
-		if (!($registry_object instanceof _registry_object))
-		{
-			// Then this is a registry object ID
-			$registry_object = $this->getByID($registry_object);
-		}
-		if (!$registry_object) { throw new Exception ("Could not load registry object to create draft."); }
-
-		// Add the XML content of this draft to the published record (and follow enrichment process, etc.)
-		$this->load->model('data_source/data_sources', 'ds');
-		$this->importer->_reset();
-		$this->importer->setXML(wrapRegistryObjects(html_entity_decode($registry_object->getRif())));
-		//echo $registry_object->getRif();
-		$this->importer->setDatasource($this->ds->getByID($registry_object->data_source_id));
-		$this->importer->forceDraft();
-		$this->importer->forceClone();
-		$this->importer->statusAlreadyChanged = true;
-		$this->importer->commit(false);
-
-		if ($error_log = $this->importer->getErrors())
-		{
-			throw new Exception("Errors occured whilst cloning the record to DRAFT status: " . NL . $error_log);
-		}
-
-		return $this->getDraftByKey($registry_object->key);
-	}
-
-
     function erase($id)
     {
         $log ='';

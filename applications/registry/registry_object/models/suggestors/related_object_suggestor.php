@@ -168,7 +168,7 @@ class Related_object_suggestor extends _GenericSuggestor
             ->setOpt('q', $query)
             ->setOpt('rows', $maxRows)
             ->setOpt('fl', 'id,key,slug,title,score')
-            ->setOpt('fq', '-id:'.$this->index['id'])
+            ->setOpt('fq', '-id:'.$this->ro['registry_object_id'])
             ->setOpt('fq', 'class:collection')
             ->setOpt('defType', 'edismax');
 

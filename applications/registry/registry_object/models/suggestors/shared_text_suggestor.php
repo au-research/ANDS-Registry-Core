@@ -17,7 +17,7 @@ class Shared_text_suggestor extends _GenericSuggestor {
     function suggest() {
 
         //construct the query string
-        $str = 'id:'.$this->index['id'];
+        $str = 'id:'.$this->ro['registry_object_id'];
         $maxRows = 50;
         //call SOLR library
         $ci =& get_instance();
@@ -38,10 +38,10 @@ class Shared_text_suggestor extends _GenericSuggestor {
 
         $result = $ci->solr->executeSearch(true);
 
-        if(isset($result['moreLikeThis'][$this->index['id']]) &&  $result['moreLikeThis'][$this->index['id']]['numFound'] > 0) {
+        if(isset($result['moreLikeThis'][$this->ro['registry_object_id']]) &&  $result['moreLikeThis'][$this->ro['registry_object_id']]['numFound'] > 0) {
             $maxScore = false;
             $intScore = 0;
-            foreach($result['moreLikeThis'][$this->index['id']]['docs'] as $doc) {
+            foreach($result['moreLikeThis'][$this->ro['registry_object_id']]['docs'] as $doc) {
                 if($doc['class'] == 'collection'){
                     if(!$maxScore)
                         $maxScore = floatval($doc['score']);

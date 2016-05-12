@@ -54,8 +54,8 @@ class Records extends CI_Model
 
         if($supplied_format == 'dci')
         {
-            $args["allowedclass"] = 'collection';
-            $args['checkType'] = true;
+            $args["allowedClass"] = 'collection';
+            $args['allowedType'] = array('collection', 'repository', 'dataset', 'software');
         }
 
 		if(!($set&&!$args["wherein"]))
@@ -72,23 +72,20 @@ class Records extends CI_Model
 									    "inner")
 								     ->where($args['rawclause'], null, false)
 								     ->where($args['clause']);
-                                 if ($args['checkType'])
-                                 {
-                                     $db->join("registry_object_attributes at",
-                                         "at.registry_object_id = registry_objects.registry_object_id",
-                                         "inner")
-                                         ->where("at.value IN ('collection', 'repository', 'dataset', 'software')")
-                                         ->where("at.attribute = 'type'");
-                                 }
 							     if ($args['wherein'])
 							     {
 								     $db->where_in("registry_objects.registry_object_id",
 										   $args['wherein']);
 							     }
-                                 if ($args["allowedclass"])
+                                 if ($args["allowedClass"])
                                  {
                                     $db->where_in("registry_objects.class",
-                                    $args["allowedclass"]);
+                                    $args["allowedClass"]);
+                                 }
+                                 if ($args['allowedType'])
+                                 {
+                                     $db->where_in("registry_objects.type",
+                                     $args["allowedType"]);
                                  }
 
 							     return $db;

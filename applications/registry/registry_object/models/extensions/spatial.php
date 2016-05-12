@@ -108,7 +108,7 @@ class Spatial_Extension extends ExtensionBase
                 $west = null;
                 $east = null;
 
-                $gCoords = $this->getExtentFromGoogle(trim($value));
+                $gCoords = $this->getExtentFromGoogle(trim($value), $type);
 
                 if ($gCoords) {
                     $north = floatval($gCoords['north']);

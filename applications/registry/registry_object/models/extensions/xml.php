@@ -13,14 +13,7 @@ class XML_Extension extends ExtensionBase
 	}		
 	
 	
-	/**
-	 *  Clean up all previous versions (set = FALSE, "prune" extRif)
-	 */
-	function cleanupPreviousVersions()
-	{
-		$this->db->where(array('registry_object_id'=>$this->ro->id, 'status'=>'PUBLISHED'));
-		$this->db->update('record_data', array('current'=>DB_FALSE, 'status'=>'SUPERSEDED'));
-	}
+
 
 
 	/*
@@ -40,7 +33,7 @@ class XML_Extension extends ExtensionBase
 		}
 	}
 	
-	function getSimpleXML($record_data_id = NULL, $extRif = false)
+	function getSimpleXML($record_data_id = NULL)
 	{
 		if (!is_null($this->_simplexml) && (is_null($record_data_id) || (!is_null($this->_xml) && ($this->_xml->record_data_id == $record_data_id))))
 		{
@@ -48,9 +41,7 @@ class XML_Extension extends ExtensionBase
 		}
 		else
 		{
-
 		    $xml = $this->getRif($record_data_id);
-
 			$this->_simplexml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOENT);
 
 			$namespaces = $this->_simplexml->getNamespaces(true);
@@ -65,7 +56,7 @@ class XML_Extension extends ExtensionBase
 	}
 	
 		 
-	function updateXML($data, $current = TRUE, $scheme = NULL, $status)
+	function updateXML($data, $current = TRUE, $scheme = NULL, $status=DRAFT)
 	{
 		$_xml = new _xml($this->ro->id);
 		$changed = $_xml->update($data, $current, $scheme, $status);
@@ -83,13 +74,15 @@ class XML_Extension extends ExtensionBase
         return $changed;
 	}
 
-    function createVersion($xml, $scheme = NULL, $status, $harvest_id)
+    function createVersion($ro_id, $xml, $scheme = NULL, $status, $harvest_id)
     {
 
         $oldHash = "";
         $newHash = md5($xml);
+
         if(isDraftStatus($status)){
-            $version = getDraftVersion();
+            $version = $this->getDraftVersion();
+
             if($version){
                 $oldHash = $version['hash'];
                 if($oldHash != $newHash){
@@ -101,12 +94,12 @@ class XML_Extension extends ExtensionBase
                         'harvest_id' => $harvest_id));
                 }
                 elseif($version['status'] != $status){
-                    $this->db->where('id', $version['id'])->update('record_data',array('current'=>"TRUE", 'status' => $status));
+                    $this->db->where('id', $version['id'])->update('record_data',array('harvest_id' => $harvest_id, 'status' => $status));
                 }
             }
             else{
                 $this->db->insert('record_data', array(
-                    'registry_object_id'=>$this->registry_object_id,
+                    'registry_object_id'=>$ro_id,
                     'data' => $xml,
                     'timestamp' => time(),
                     'scheme' => $scheme,
@@ -114,28 +107,35 @@ class XML_Extension extends ExtensionBase
                     'status' => $status,
                     'harvest_id' => $harvest_id
                 ));
+                $version_id = $this->db->insert_id();
             }
         }
         elseif(isPublishedStatus($status)){
-            $version = getCurrentPublishedVersion();
+
+            $version = $this->getCurrentPublishedVersion();
+
             if($version){
                 $oldHash = $version['hash'];
-                if($oldHash != $newHash){
-                    $this->db->insert('record_data', array(
-                        'registry_object_id'=>$this->registry_object_id,
-                        'data' => $xml,
-                        'timestamp' => time(),
-                        'scheme' => $scheme,
-                        'hash' => $newHash,
-                        'status' => $status,
-                        'harvest_id' => $harvest_id
-                    ));
-                }
-                else
-                {
-                    $this->db->where('id', $version['id'])->update('record_data',array('current'=>"TRUE", 'status' => $status));
-                }
             }
+            if(!$version || $oldHash != $newHash){
+                $this->db->insert('record_data', array(
+                    'registry_object_id'=>$ro_id,
+                    'data' => $xml,
+                    'timestamp' => time(),
+                    'scheme' => $scheme,
+                    'hash' => $newHash,
+                    'status' => $status,
+                    'harvest_id' => $harvest_id
+                ));
+                $version_id = $this->db->insert_id();
+                $this->ro->setCurrentPublishedVersion($ro_id, $version_id);
+
+            }
+            else
+            {
+                $this->db->where('id', $version['id'])->update('record_data',array('current'=>"TRUE", 'status' => $status, 'harvest_id' => $harvest_id));
+            }
+
         }
         return $oldHash != $newHash;
     }
@@ -145,7 +145,6 @@ class XML_Extension extends ExtensionBase
     function update($xml, $current = TRUE, $scheme = NULL, $status = 'DRAFT')
     {
         if (is_null($scheme)) { $scheme = self::DEFAULT_SCHEME; }
-
         $this->xml = $xml;
         $newHash = md5($xml);
         $oldHash = '';
@@ -153,7 +152,7 @@ class XML_Extension extends ExtensionBase
         $this->scheme = $scheme;
         if($current == TRUE)
         {
-
+// TODO FIX ME TOMORROW LEO PLEEEESE!!
             $query = $this->db->select('*')->from('record_data')->where(array('registry_object_id' => $this->registry_object_id, 'scheme'=>$scheme))->order_by('id DESC')->limit(1)->get();
             if ($query->num_rows() > 0)
             {
@@ -168,7 +167,7 @@ class XML_Extension extends ExtensionBase
                     'registry_object_id'=>$this->registry_object_id,
                     'data' => $xml,
                     'timestamp' => time(),
-                    'current' => "TRUE",
+                    'current' => DB_TRUE,
                     'scheme' => $scheme,
                     'hash' => $newHash,
                     'status' => $status
@@ -176,7 +175,7 @@ class XML_Extension extends ExtensionBase
             }
             else
             {
-                $this->db->where('id', $result['id'])->update('record_data',array('current'=>"TRUE", 'status' => $status));
+                $this->db->where('id', $result['id'])->update('record_data',array('current'=>DB_TRUE, 'status' => $status));
             }
         }
         else
@@ -185,7 +184,7 @@ class XML_Extension extends ExtensionBase
                 'registry_object_id'=>$this->registry_object_id,
                 'data' => $xml,
                 'timestamp' => time(),
-                'current' => "FALSE",
+                'current' => DB_FALSE,
                 'scheme' => $scheme,
                 'hash' => $newHash,
                 'status' => $status
@@ -212,7 +211,7 @@ class XML_Extension extends ExtensionBase
 
     function getDraftVersion(){
         $version = null;
-        $result = $this->db->select('id, timestamp, scheme, current, hash, status')->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'status'=>['DRAFT','MORE_WORK_REQUIRED', 'DRAFT', 'SUBMITTED_FOR_ASSESSMENT', 'ASSESSMENT_IN_PROGRESS', 'APPROVED']));
+        $result = $this->db->select('id, timestamp, scheme, current, hash, status')->from('record_data')->where('registry_object_id',$this->ro->id)->where_in('status',array('DRAFT','MORE_WORK_REQUIRED', 'DRAFT', 'SUBMITTED_FOR_ASSESSMENT', 'ASSESSMENT_IN_PROGRESS', 'APPROVED'))->get();
         if ($result->num_rows() > 0)
         {
             foreach($result->result_array() AS $row)

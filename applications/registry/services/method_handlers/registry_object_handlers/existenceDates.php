@@ -10,7 +10,7 @@ class ExistenceDates extends ROHandler {
 	function handle() {
 		$result = array();
         if ($this->xml) {
-            foreach($this->xml->registryObject->{$this->index['class']}->existenceDates as $dates){
+            foreach($this->xml->registryObject->{$this->ro_class}->existenceDates as $dates){
                 $dateStr = '';
                 if($dates->startDate)
                 {

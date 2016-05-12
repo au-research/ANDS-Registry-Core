@@ -71,7 +71,7 @@ class Rights extends ROHandler
         $rights = array();
         $sxml = $this->xml;
         $sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-        foreach ($sxml->xpath('//ro:' . $this->index['class'] . '/ro:rights') AS $theRights) {
+        foreach ($sxml->xpath('//ro:' . $this->ro_class . '/ro:rights') AS $theRights) {
             $right = array();
             foreach ($theRights as $key => $theRight) {
                 $right['value'] = (string)$theRight;
@@ -98,8 +98,7 @@ class Rights extends ROHandler
             }
 
         }
-        $sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-        foreach ($sxml->xpath('//ro:' . $this->index['class'] . '/ro:description') AS $theRightsDescription) {
+        foreach ($sxml->xpath('//ro:' . $this->ro_class . '/ro:description') AS $theRightsDescription) {
 
             if ($theRightsDescription['type'] == 'rights' || $theRightsDescription['type'] == 'accessRights') {
 

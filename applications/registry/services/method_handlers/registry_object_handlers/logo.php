@@ -13,7 +13,7 @@ class Logo extends ROHandler {
         $logo = false;
         //get logo from description type logo
         if ($this->xml) {
-            foreach ($this->xml->registryObject->{$this->index['class']}->description as $description) {
+            foreach ($this->xml->registryObject->{$this->ro_class}->description as $description) {
                 if (strtolower((string) $description['type'])=='logo') {
                     $logo = html_entity_decode((string) $description);
                 }

@@ -19,7 +19,7 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
         $ci =& get_instance();
         $ci->load->library('solr');
         $ci->solr->init();
-        $str = 'id:'.$this->index['id'];
+        $str = 'id:'.$this->ro['registry_object_id'];
         $centers = array();
         $suggestions = array();
         $ci->solr
@@ -45,7 +45,7 @@ class Spatial_coverage_suggestor extends _GenericSuggestor {
                     ->init()
                     ->setOpt('q', '*:*')
                     ->setOpt('rows', $maxRows)
-                    ->setOpt('fq', '-id:'.$this->ro->id)
+                    ->setOpt('fq', '-id:'.$this->ro['registry_object_id'])
                     ->setOpt('fq', 'class:collection')
                     ->setOpt('fq', '{!geofilt pt='.$latLon[1].','.$latLon[0].' sfield=spatial_coverage_extents_wkt d=50}')
                     ->setOpt('fl', 'id,key,slug,title,score');

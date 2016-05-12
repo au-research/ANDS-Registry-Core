@@ -39,8 +39,8 @@ class Directaccess extends ROHandler
             }
         }
 
-        if ($this->xml->registryObject->{$this->index['class']}->relatedInfo) {
-            foreach ($this->xml->registryObject->{$this->index['class']}->relatedInfo as $relatedInfo) {
+        if ($this->xml->registryObject->{$this->ro_class}->relatedInfo) {
+            foreach ($this->xml->registryObject->{$this->ro_class}->relatedInfo as $relatedInfo) {
                 $type = (string)$relatedInfo['type'];
                 if ($type == 'service' && in_array($relatedInfo->relation['type'], $relationshipTypeArray) && $relatedInfo->relation->url != '') {
                     $download[] = Array(

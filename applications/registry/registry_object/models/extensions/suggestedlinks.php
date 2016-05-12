@@ -35,6 +35,7 @@ class Suggestedlinks_Extension extends ExtensionBase
 		{
 			$classname = "Suggestor_" . $suggestor;
 			$suggestor = new $classname();
+            echo($classname);
 			$suggested_links = $suggestor->getSuggestedLinksForRegistryObject($this->ro, $start, $rows);
 		}
 		else

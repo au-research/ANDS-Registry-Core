@@ -13,9 +13,13 @@ class Registry_objectsMethod extends MethodHandler {
     private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','connectiontrees','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch', 'accessPolicy');
 
     public $ro = null;
+    public $ro_record = null;
     public $ro_key = null;
     public $ro_id = null;
     public $ro_version_id = null;
+    public $ro_class = null;
+    public $ro_type = null;
+    public $ro_title = null;
     public $index = null;
     public $xml = null;
 
@@ -52,7 +56,8 @@ class Registry_objectsMethod extends MethodHandler {
         if ($id){
             $ci->load->model('registry_object/registry_objects', 'ro');
             $this->ro = new _registry_object($id);
-
+            $this->ro_class = $this->ro->class;
+            $this->ro_type = $this->ro->type;
             //check in cache
             $ci->load->driver('cache');
 //            $cache_id = $id.'-'.$method1;
@@ -157,13 +162,15 @@ class Registry_objectsMethod extends MethodHandler {
         $ci->load->library('solr');
         $ci->solr->setOpt('fq', '+id:'.$id);
         $result = $ci->solr->executeSearch(true);
-
         if(sizeof($result['response']['docs']) == 1) {
             $this->index = $result['response']['docs'][0];
         }
 
         //local XML resource
         $xml = $this->ro->getSimpleXML();
+        $this->ro_class = $this->index['class'];
+        $this->ro_type = $this->index['type'];
+        $this->$ro_title = $this->index['title'];
         $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));
         $xml = simplexml_load_string($xml);
         $xml = simplexml_load_string( addXMLDeclarationUTF8($xml->asXML()) );
@@ -174,6 +181,7 @@ class Registry_objectsMethod extends MethodHandler {
             $gXPath = new DOMXpath($rifDom);
             $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
             $this->gXPath = $gXPath;
+
         }
     }
 
@@ -189,6 +197,7 @@ class Registry_objectsMethod extends MethodHandler {
             'xml' => $this->xml,
             'gXPath' => $this->gXPath,
             'ro' => $this->ro,
+            'ro_record' => $this->ro_record,
             'params' => $this->params,
             'default_params' => $this->default_params
         );

@@ -8,6 +8,24 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  * @return array
  */
 class Citations extends ROHandler {
+
+
+    // Temporary workaround for storing "groupings" of licence identifiers
+    // XXX: Long term solution should use a vocabulary service (such as ANDS's)
+    private static $licence_groups = array(
+        "GPL" => "Open Licence",
+        "CC-BY-SA" => "Open Licence",
+        "CC-BY-ND" => "Non-Derivative Licence",
+        "CC-BY-NC-SA" => "Non-Commercial Licence",
+        "CC-BY-NC-ND" => "Non-Derivative Licence",
+        "CC-BY-NC" => "Non-Commercial Licence",
+        "CC-BY" => "Open Licence",
+        "CSIRO Data Licence" => "Non-Commercial Licence",
+        "AusGoalRestrictive" => "Restrictive Licence",
+        "NoLicence" => "No Licence"
+
+    );
+
 	function handle() {
 
         $result = array();
@@ -18,7 +36,7 @@ class Citations extends ROHandler {
             $coins = $this->getCoinsSpan();
 
 
-            foreach($this->xml->registryObject->{$this->index['class']}->citationInfo as $citation){
+            foreach($this->xml->registryObject->{$this->ro_class}->citationInfo as $citation){
                 foreach($citation->citationMetadata as $citationMetadata){
                     $contributors = Array();
                     foreach($citationMetadata->contributor as $contributor)
@@ -151,7 +169,7 @@ Y2  - '.date("Y-m-d")."
 ";
         }
 
-        $endNote .= "TI  - ".$this->ro->title."
+        $endNote .= "TI  - ".$this->ro_title."
 ";
 
         $sourceUrl = $this->getSourceUrl($output='endNote');
@@ -275,7 +293,7 @@ Y2  - '.date("Y-m-d")."
         $rft_place = $this->getPlace();
         $coins .=  'ctx_ver=Z39.88-2004&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc&rfr_id=info%3Asid%2FANDS';
         if($rft_id) $coins .= '&rft_id='.$rft_id;
-        $coins .= '&rft.title='.$this->index['title'];
+        $coins .= '&rft.title='.$this->ro_title;
         if($rft_identifier) $coins .= '&rft.identifier='.$rft_identifier;
         if($rft_publisher) $coins .= '&rft.publisher='.$rft_publisher;
         $coins .= '&rft.description='.$rft_description.$rft_creators;
@@ -507,8 +525,8 @@ Y2  - '.date("Y-m-d")."
     function getContributors()
     {
         $contributors = Array();
-        if (isset($this->xml->registryObject->{$this->index['class']}->citationInfo->citationMetadata->contributor)) {
-            foreach ($this->xml->registryObject->{$this->index['class']}->citationInfo->citationMetadata->contributor as $contributor) {
+        if (isset($this->xml->registryObject->{$this->ro_class}->citationInfo->citationMetadata->contributor)) {
+            foreach ($this->xml->registryObject->{$this->ro_class}->citationInfo->citationMetadata->contributor as $contributor) {
                 $nameParts = Array();
                 foreach ($contributor->namePart as $namePart) {
                     $nameParts[] = array(
@@ -560,7 +578,7 @@ Y2  - '.date("Y-m-d")."
         $CI->load->model('registry_object/registry_objects', 'mro');
         $funders = Array();
 
-        foreach($this->xml->registryObject->{$this->index['class']}->relatedObject as $partyFunder){
+        foreach($this->xml->registryObject->{$this->ro_class}->relatedObject as $partyFunder){
             if($partyFunder->relation['type']=='isOutputOf'){
                 $key = $partyFunder->key;
 
@@ -659,8 +677,8 @@ Y2  - '.date("Y-m-d")."
 
     function getDates(){
         $dates = Array();
-        if(isset($this->xml->registryObject->{$this->index['class']}->coverage->temporal->date)){
-            foreach($this->xml->registryObject->{$this->index['class']}->coverage->temporal->date as $date){
+        if(isset($this->xml->registryObject->{$this->ro_class}->coverage->temporal->date)){
+            foreach($this->xml->registryObject->{$this->ro_class}->coverage->temporal->date as $date){
                 $type = '';
                 $type = (string)$date['type'];
                 if($type=='dateFrom') $type = 'From';
@@ -712,7 +730,7 @@ Y2  - '.date("Y-m-d")."
     function getRelation(){
 
         $relations = Array();
-        foreach($this->xml->registryObject->{$this->index['class']}->relatedInfo as $relation){
+        foreach($this->xml->registryObject->{$this->ro_class}->relatedInfo as $relation){
 
           if($relation['type']=='publication'){
               $relations[] =  (string) $relation->identifier;
@@ -727,7 +745,7 @@ Y2  - '.date("Y-m-d")."
         $rights = array();
         $sxml = $this->xml;
         $sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-        foreach ($sxml->xpath('//ro:' . $this->index['class'] . '/ro:rights') AS $theRights) {
+        foreach ($sxml->xpath('//ro:' . $this->ro_class . '/ro:rights') AS $theRights) {
             $right = array();
             foreach ($theRights as $key => $theRight) {
                 $right['value'] = (string)$theRight;
@@ -755,7 +773,7 @@ Y2  - '.date("Y-m-d")."
 
         }
         $sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-        foreach ($sxml->xpath('//ro:' . $this->index['class'] . '/ro:description') AS $theRightsDescription) {
+        foreach ($sxml->xpath('//ro:' . $this->ro_class . '/ro:description') AS $theRightsDescription) {
 
             if ($theRightsDescription['type'] == 'rights' || $theRightsDescription['type'] == 'accessRights') {
 
@@ -789,6 +807,21 @@ Y2  - '.date("Y-m-d")."
         } else {
             return false;
         }
+    }
+
+
+
+    function getLicenceGroup($licence_type)
+    {
+        if (isset(self::$licence_groups[(string)$licence_type]))
+        {
+            return self::$licence_groups[(string)$licence_type];
+        }
+        else
+        {
+            return '';
+        }
+
     }
 }
 

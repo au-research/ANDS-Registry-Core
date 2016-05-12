@@ -8,11 +8,11 @@
  * @subpackage helpers
  */
 class _registry_object extends ExtensionBoilerplate {
-	
+
 	public static $extensions = array(); // temporary reference to this class's extension(s)
-	
+
 	// Minimum set of fields here, let our extensions handle most of the fields?
-	private $_CI; 	// an internal reference to the CodeIgniter Engine 
+	private $_CI; 	// an internal reference to the CodeIgniter Engine
 	public $id;
 	
 	function __construct($id = NULL, $core_attributes_only = FALSE)
@@ -41,9 +41,9 @@ class _registry_object extends ExtensionBoilerplate {
 				}
 			}
 		}
-		
+
 		parent::__construct();
-		
+
 		// Setup our object id
 		if (!is_numeric($id) && !is_null($id)) 
 		{
@@ -56,7 +56,7 @@ class _registry_object extends ExtensionBoilerplate {
 		{
 			$this->_extends($extension);
 		}
-		
+
 		// Initialise the object if we haven't done so yet!
 		if (!is_null($id))
 		{
@@ -71,9 +71,9 @@ class _registry_object extends ExtensionBoilerplate {
 abstract class ExtensionBoilerplate
 {
 	public $extended_objects = array();
-    
+
     public function __construct() {
-    
+
     }
 
     public function __destruct() {
@@ -83,7 +83,7 @@ abstract class ExtensionBoilerplate
 			unset($this->extended_objects[$class]);
     	}
     }
-	
+
     protected function _extends($class) { //the $class is put to enforce passing class name (otherwise class name can be ommited and no error would be rased)
         $args = func_get_args();
         $class = array_shift($args);
@@ -95,9 +95,9 @@ abstract class ExtensionBoilerplate
         $this->extended_objects[$class] = $reflection_object->newInstanceArgs(array($this));
 		//var_dump($this->extended_objects);
     }
-	    
+
     public function __get($property) {
-    	
+
         foreach ($this->extended_objects as $object) {
             if (isset($object->$property)) {
                 return $object->$property;
@@ -112,7 +112,7 @@ abstract class ExtensionBoilerplate
         //it is good to be strict...
         throw new \Exception(sprintf('Trying to get %s property on object of class %s.',$property,get_class($this)));
     }
-    
+
     public function __set($property,$value) {
         foreach ($this->extended_objects as $object) {
             if (isset($object->$property)) { //variable variable
@@ -130,7 +130,7 @@ abstract class ExtensionBoilerplate
         //it is good to be strict...
         throw new \Exception(sprintf('Trying to set %s property on object of class %s.',$property,get_class($this)));
     }
-    
+
     public function __isset($property) {
         foreach ($this->extended_objects as $object) {
             if (isset($object->$property)) {
@@ -139,12 +139,12 @@ abstract class ExtensionBoilerplate
         }
         return false;
     }
-    
+
     public function __unset($property) {
         //it is good to be strict...
         throw new \Exception(sprintf('Trying to unset %s property on object of class %s. In strict classes unsetting is nto allowed.',$property,get_class($this)));
     }
-    
+
     public function __call($method,$args) {
         foreach ($this->extended_objects as $object) {
             if (method_exists($object,$method)) {
@@ -154,7 +154,7 @@ abstract class ExtensionBoilerplate
 		//echo "NSM: $method() "; var_dump($args);
         throw new \Exception(sprintf('Dynamic call of unexistant method %s on instance of class %s.',$method,get_class($this)));
     }
-    
+
     public static function __callStatic($method,$args) {
         $class = get_called_class();//late static binding
         if (isset($class::$_extends)) { //then there is static extension
@@ -166,7 +166,7 @@ abstract class ExtensionBoilerplate
         }
         throw new \Exception(sprintf('Static call of unexistant method %s on instance of class %s.',$method,$class));
     }
-    
+
     public function __invoke() {
         $args = func_get_args();
         foreach ($this->extended_objects as $object) {
@@ -176,13 +176,13 @@ abstract class ExtensionBoilerplate
         }
         throw new \Exception(sprintf('Invoking an instance of %s as function.',get_class($this)));
     }
-	
+
 	public function __toString()
 	{
 		$return = '';
-		
+
 		$return = sprintf("%s (%s) [%d]", $this->getAttribute("key", TRUE), $this->getAttribute("status", TRUE),$this->id) . BR;
-		
+
 		if (isset($this->attributes) && !is_null($this->attributes))
 		{
 			foreach ($this->attributes AS $attribute)
@@ -190,8 +190,8 @@ abstract class ExtensionBoilerplate
 				$return .= sprintf("%s", $attribute) . BR;
 			}
 		}
-		
-		return $return;	
+
+		return $return;
 	}
-	
-} 
+
+}

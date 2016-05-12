@@ -10,7 +10,7 @@ class Suggest extends ROHandler {
     function handle() {
         $result = array();
 
-        if ($this->index['class'] != 'collection') return $result;
+        if ($this->ro_class != 'collection') return $result;
 
         $result['message'] = 'No Suggested Collection was found';
         //pools
@@ -39,7 +39,9 @@ class Suggest extends ROHandler {
                 'registry_object/suggestors/'.$key.'_suggestor',
                 $suggestor_field
             );
-            $ci->$suggestor_field->set_ro($this->ro);
+            $ci->$suggestor_field->set_ro($this->ro_record);
+            $ci->$suggestor_field->set_ro_class($this->ro_class);
+            $ci->$suggestor_field->set_ro_key($this->ro_key);
             $ci->$suggestor_field->set_index($this->index);
             // Override boost parameters from request URL.
             $boost = $ci->input->get($key);

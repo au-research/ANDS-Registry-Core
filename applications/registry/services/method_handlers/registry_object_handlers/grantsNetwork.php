@@ -45,7 +45,7 @@ class grantsNetwork extends ROHandler {
         switch ($relation) {
             case "data_output":
                 $ci->solr->setOpt('fq', '+class:collection');
-                if ($this->index['class'] == 'party') {
+                if ($this->ro_class == 'party') {
                     $ci->solr->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro_id);
                 } else {
                     $ci->solr->setOpt('fq', '+relation_grants_isOutputOf:'.$this->ro_id);
@@ -54,7 +54,7 @@ class grantsNetwork extends ROHandler {
             case "programs":
                 $ci->solr->setOpt('fq', '+class:activity');
                 $ci->solr->setOpt('fq', '+type:program');
-                if ($this->index['class'] == 'party') {
+                if ($this->ro_class == 'party') {
                     $ci->solr->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro_id);
                 } else {
                     $ci->solr->setOpt('fq', '+relation_grants_isPartOf:'.$this->ro_id);
@@ -63,7 +63,7 @@ class grantsNetwork extends ROHandler {
             case "grants":
                 $ci->solr->setOpt('fq', '+class:activity');
                 $ci->solr->setOpt('fq', '+type:grant');
-                if ($this->index['class'] == 'party') {
+                if ($this->ro_class == 'party') {
                     $ci->solr->setOpt('fq', '+relation_grants_isFundedBy:'.$this->ro_id);
                 } else {
                     $ci->solr->setOpt('fq', '+relation_grants_isPartOf:'.$this->ro_id);
@@ -77,9 +77,9 @@ class grantsNetwork extends ROHandler {
 
             $relationships = array_values($solrResult['response']['docs']);
             foreach ($relationships as &$relation) {
-                if ($this->index['class'] == 'party') {
+                if ($this->ro_class == 'party') {
                     $relationType = 'funds';
-                } elseif ($this->ro->class == 'activity') {
+                } elseif ($this->ro_class == 'activity') {
                     if ($relation['class'] == 'collection') {
                         $relationType = 'hasOutput';
                     } else {

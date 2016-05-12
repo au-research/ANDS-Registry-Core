@@ -19,7 +19,7 @@ class Tags_suggestor extends _GenericSuggestor {
 
         $ci->db->select('tag')
             ->from('registry_object_tags')
-            ->where('key',$this->index['key']);
+            ->where('key',$this->ro_key);
 
         $query = $ci->db->get();
         $str = '';

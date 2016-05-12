@@ -207,81 +207,37 @@ class Registry_object extends MX_Controller {
 
 	public function save($registry_object_id){
 		set_exception_handler('json_exception_handler');
-
 		$xml = $this->input->post('xml');
         $key = $this->input->post('key');
+        $ds_id = $this->input->post('ds_id');
+        require_once(API_APP_PATH.'task/models/Task.php');
+        require_once(API_APP_PATH.'task/models/ImportSubTask/ImportSubTask.php');
+        require_once(API_APP_PATH.'task/models/ImportSubTask/Insert.php');
         $inserter = new \ANDS\API\Task\ImportSubTask\Insert();
-
-		$this->load->model('registry_objects', 'ro');
-		$this->load->model('data_source/data_sources', 'ds');
-		$ro = $this->ro->getByID($registry_object_id);
-
-		if (!$ro){
-			throw new Exception("No registry object exists with that ID!");
-		}
-
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce($ro->data_source_id);
-
-		$ds = $this->ds->getByID($ro->data_source_id);
-
-
-
-		$error_log = '';
-		$status = 'success';
-		//echo wrapRegistryObjects($xml);
-		//exit();
-		try{
-			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
-            $xml = wrapRegistryObjects($xml);
-            $this->inserter->validateRIFCS($xml);
-            $this->inserter->ingestRecord($xml);
-
-
-
-
-			$this->importer->setDatasource($ds);
-			$this->importer->commit();
-		}
-		catch(Exception $e)
-		{
-			$status = 'error';
-			$error_log = $e->getMessage();
-		}
-		//if ($error_log){
-		//	throw new Exception("Errors during saving this registry object! " . BR . implode($error_log, BR));
-		//}
-		//else{
-		// Fetch updated registry object!
-		// $ro = $this->ro->getByID($registry_object_id);
-		$ro = $this->ro->getByID($registry_object_id);
-
-		//if the key has changed
-		if($ro->key != $this->input->post('key')){
-			$ro = $this->ro->getAllByKey($this->input->post('key'));
-			$ro = $ro[0];
-		}
-
+        $inserter->saveDraft($registry_object_id, $xml, $key, $ds_id);
+        $status = $inserter->getImportStatus();
+        $this->load->model('registry_objects', 'ro');
+        $ro = $this->ro->getDraftByKey($key);
 
 		$result =
 			array(
 				"status"=>$status,
 				"ro_status"=>"DRAFT",
-				"title"=>$ro->title,
-				"qa_required"=>$qa,
-				"data_source_id" => $ro->data_source_id,
-				"approve_required"=>$manual_publish,
-				"error_count"=> (int) $ro->error_count,
-				"ro_id"=>$ro->id,
-				"ro_quality_level"=>$ro->quality_level,
-				"ro_quality_class"=>($ro->quality_level >= 2 ? "success" : "important"),
-				"qa_$ro->quality_level"=>true,
-				"message"=>$error_log,
-				"qa"=>$ro->get_quality_text()
+				//"title"=>$ro->title,
+				//"qa_required"=>$qa,
+				//"data_source_id" => $ro->data_source_id,
+				//"approve_required"=>$manual_publish,
+				//"error_count"=> (int) $ro->error_count,
+				//"ro_id"=>$ro->id,
+				//"ro_quality_level"=>$ro->quality_level,
+				//"ro_quality_class"=>($ro->quality_level >= 2 ? "success" : "important"),
+				//"qa_$ro->quality_level"=>true,
+				"message"=>$inserter->printTaskData()
+				//"qa"=>$ro->get_quality_text()
 				);
 			//if($qa) $result['qa'] = true;
 			echo json_encode($result);
-		//}
+
 	}
 
 

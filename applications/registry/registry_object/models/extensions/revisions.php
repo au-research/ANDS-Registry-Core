@@ -41,4 +41,27 @@ class Revisions_extension extends ExtensionBase
 		$revision = $this->db->get();	
 		return $revision->result_array();
 	}
+
+    function setCurrentPublishedVersion($ro_id, $version_id)
+    {
+        $this->db->where(array('registry_object_id'=>$ro_id));
+        $this->db->where_not_in('status', array(MORE_WORK_REQUIRED, DRAFT, SUBMITTED_FOR_ASSESSMENT, ASSESSMENT_IN_PROGRESS, APPROVED));
+        $this->db->update('record_data', array('current'=>DB_FALSE, 'status'=>SUPERSEDED));
+        $this->db->where(array('id'=>$version_id));
+        $this->db->update('record_data', array('current'=>DB_TRUE, 'status'=>PUBLISHED));
+    }
+
+    function deleteCurrentPublishedVersion($ro_id, $version_id)
+    {
+        $this->db->where(array('registry_object_id'=>$ro_id, 'status'=>PUBLISHED));
+        $this->db->update('record_data', array('current'=>DB_FALSE, 'status'=>DELETED));
+        $this->db->where(array('id'=>$version_id));
+        $this->db->update('record_data', array('current'=>DB_TRUE, 'status'=>DELETED));
+    }
+
+    function removeVersion($ro_id, $version_id)
+    {
+        $this->db->delete('record_data', array('registry_object_id'=>$ro_id, 'id'=>$version_id));
+    }
+
 }

@@ -424,8 +424,17 @@ class Sync_extension extends ExtensionBase{
 			}
 		}
 
-		//subjects
-		$subjects = $this->ro->processSubjects();
+
+        defined('SERVICES_MODULE_PATH') or define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
+        require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/subjects.php');
+        $handler = new Subjects(array(
+            'xml' => $xml,
+            'ro' => $this->ro,
+            'gXPath' => $gXPath
+        ));
+        $subjects  = $handler->processSubjects();
+
+
 		$fields = array('subject_value_resolved', 'subject_value_unresolved', 'subject_type', 'subject_vocab_uri', 'subject_anzsrcfor', 'subject_anzsrcseo');
 		foreach($fields as $f) $json[$f] = array();
 		foreach($subjects as $s) {

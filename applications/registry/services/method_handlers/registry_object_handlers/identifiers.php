@@ -8,7 +8,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Identifiers extends ROHandler {
     function handle() {
         $result = array();
-        if($this->index['status'] == 'PUBLISHED')
+        if(isset($this->index['status']) && $this->index['status'] == 'PUBLISHED')
         {
             if($this->index && isset($this->index['identifier_type'])) {
                 //identifier_type, identifier_value
@@ -21,8 +21,8 @@ class Identifiers extends ROHandler {
                 }
             }
         }
-        else{// TODO FIX DRAFTS
-            $identifiers = $this->ro->getIdentifiers();
+        else{
+            $identifiers = $this->getIdentifiers();
             foreach($identifiers as $identifier) {
                 $result[] = array(
                     'type' => $identifier['identifier_type'],
@@ -33,6 +33,18 @@ class Identifiers extends ROHandler {
         }
 
         return $result;
+    }
+
+    function getIdentifiers() {
+        foreach($this->xml->registryObject->{$this->ro_class}->identifier AS $identifier) {
+            if((string)$identifier != '') {
+                $identifiersArray[] = array(
+                    'identifier' => (string) $identifier,
+                    'identifier_type' => (string) $identifier['type']
+                );
+            }
+        }
+        return $identifiersArray;
     }
 
 }

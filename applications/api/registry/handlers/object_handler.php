@@ -96,7 +96,6 @@ class ObjectHandler extends Handler{
     private function record_api()
     {
         $result = array();
-
         if ($this->params['object_module']) {
             $method1s = explode('-', $this->params['object_module']);
         } else {
@@ -118,7 +117,6 @@ class ObjectHandler extends Handler{
             $result['benchmark'] = array();
         }
         $resource = $this->populate_resource($this->params['identifier'], $this->params['version_identifier']);
-
         foreach ($method1s as $m1) {
 
             if ($benchmark) {
@@ -126,9 +124,8 @@ class ObjectHandler extends Handler{
             }
 
             if ($m1 && in_array($m1, $this->valid_methods)) {
-
                 switch ($m1) {
-                    case 'get':
+                    case 'get': var_dump($this);
                     case 'registry':
                         $result[$m1] = $this->ro_handle('core', $resource);
                         break;
@@ -138,6 +135,7 @@ class ObjectHandler extends Handler{
                     default:
                         try {
                             $r = $this->ro_handle($m1, $resource);
+
                             if (!is_array_empty($r)) {
                                 $result[$m1] = $r;
                             }
@@ -395,28 +393,33 @@ class ObjectHandler extends Handler{
         if (sizeof($result['response']['docs']) == 1) {
             $resource['index'] = $result['response']['docs'][0];
         }
-        else{
-            throw new Exception('No record with ID Indexed' . $id . ' found');
+        $registryObject = $this->getRegistryObjectByID($id);
+        if (!$registryObject) {
+            throw new Exception('No record with ID in DB ' . $id . ' found');
         }
-        $record = $this->getRecordDataByID($id, $version_id);
-        if (!$record) {
-            throw new Exception('No record with ID in DB' . $id . ' found');
+        $registryObjectRecord = $this->getRecordDataByID($id, $version_id);
+        if (!$registryObjectRecord) {
+            throw new Exception('No record_data with ID in DB ' . $id . ' found');
         }
 
-        $xml = simplexml_load_string($record['data'], 'SimpleXMLElement', LIBXML_NOENT);
+        $xml = simplexml_load_string($registryObjectRecord['data'], 'SimpleXMLElement', LIBXML_NOENT);
 
         if ($xml) {
             $resource['xml'] = $xml;
             $rifDom = new \DOMDocument();
-            $rifDom->loadXML($record['data']);
+            $rifDom->loadXML($registryObjectRecord['data']);
             $gXPath = new \DOMXpath($rifDom);
             $gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
             $resource['gXPath'] = $gXPath;
         }
-        $resource['ro'] = $record;
-        $resource['ro_key'] = $resource['index']['key'];
-        $resource['ro_id'] = $record["registry_object_id"];
-        $resource['ro_version_id'] = $record["id"];
+        $resource['ro'] = $registryObject;
+        $resource['ro_record'] = $registryObjectRecord;
+        $resource['ro_key'] = (string)$xml->registryObject->key;
+        $resource['ro_class'] = $registryObject['class'];
+        $resource['ro_type'] = $registryObject['type'];
+        $resource['ro_id'] = $id;
+        $resource['ro_title'] = $registryObject['title'];
+        $resource['ro_version_id'] = $version_id;
         $resource['params'] = array();
         $resource['default_params'] = $this->default_params;
 
@@ -433,6 +436,17 @@ class ObjectHandler extends Handler{
         else{
             $query = $db->get_where("record_data", array("registry_object_id"=>$id, "id"=>$version_id));
         }
+        if($query->num_rows() > 0){
+            return $query->row_array();
+        }
+        else{
+            return null;
+        }
+    }
+
+    private function getRegistryObjectByID($id){
+        $db = $this->ci->load->database('registry', true);
+        $query = $db->get_where("registry_objects", array("registry_object_id"=>$id));
         if($query->num_rows() > 0){
             return $query->row_array();
         }

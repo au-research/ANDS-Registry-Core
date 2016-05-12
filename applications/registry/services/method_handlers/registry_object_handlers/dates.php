@@ -9,7 +9,7 @@ class Dates extends ROHandler {
 	function handle() {
 		$result = array();
         if ($this->xml) {
-            foreach($this->xml->registryObject->{$this->index['class']}->dates as $dates){
+            foreach($this->xml->registryObject->{'*'}->dates as $dates){
                 $eachDate = Array();
                 $displayType = titleCase(str_replace("dc.","",(string) $dates['type']));
                 foreach($dates as $date) {

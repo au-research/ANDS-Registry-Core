@@ -645,10 +645,11 @@ function initEditForm(){
 
 				//saving
 				var ro_key = $('#admin input[name=key]').val();
+                var data_source_id = $('#data_source_id').val();
 				$.ajax({
 					url:base_url+'registry_object/save/'+ro_id, 
 					type: 'POST',
-					data: {xml:xml,key:ro_key},
+					data: {xml:xml,key:ro_key,ds_id:data_source_id},
 					success: function(data){
 						if(data.status=='success')
 						{

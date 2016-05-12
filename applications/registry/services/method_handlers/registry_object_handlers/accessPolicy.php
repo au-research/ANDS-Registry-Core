@@ -9,8 +9,8 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class AccessPolicy extends ROHandler {
     function handle() {
         $result = array();
-        if($accessPolicy = $this->xml->{$this->ro->class}->accessPolicy){
-            foreach($this->xml->{$this->ro->class}->accessPolicy as $policy){
+        if($this->xml->registryObject->{$this->index['class']}->accessPolicy){
+            foreach($this->xml->registryObject->{$this->index['class']} as $policy){
                 $result[] = (string) $policy;
             }
         }
