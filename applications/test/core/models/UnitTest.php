@@ -86,12 +86,17 @@ class UnitTest
 
         // returns the correct time value for the function executed
         $CIUnitTestResult = $this->ci->unit->result();
-        foreach ($CIUnitTestResult as &$result) {
-            if (array_key_exists($result['Test Name'], $this->nameMapping)) {
-                $methodName = $this->nameMapping[$result['Test Name']];
-                $result["Time"] = $this->benchmark[$methodName];
+        try {
+            foreach ($CIUnitTestResult as &$result) {
+                if (array_key_exists($result['Test Name'], $this->nameMapping)) {
+                    $methodName = $this->nameMapping[$result['Test Name']];
+                    $result["Time"] = $this->benchmark[$methodName];
+                }
             }
+        } catch (\Exception $e) {
+            $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
         }
+
         return $CIUnitTestResult;
     }
 

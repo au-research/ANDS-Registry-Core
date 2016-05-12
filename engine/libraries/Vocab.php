@@ -16,6 +16,7 @@ class Vocab {
 	 */
 	function __construct(){
         $this->CI =& get_instance();
+        $this->CI->load->driver('cache');
 		$this->init();
     }
 
@@ -208,13 +209,27 @@ class Vocab {
 
 
     function post($queryStr){
+
+        $cacheId = $this->getCacheID($queryStr);
+        if ($cached = $this->CI->cache->file->get($cacheId)) {
+            return $cached;
+        }
+
         $ch = curl_init();
         //set the url, number of POST vars, POST data
         curl_setopt($ch,CURLOPT_URL,$queryStr);//post to SOLR
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//return to variable
         $content = curl_exec($ch);//execute the curl
         curl_close($ch);//close the curl
+
+        $this->CI->cache->file->save($cacheId, $content, 36000);
+
         return $content;
+    }
+
+    public function getCacheID($url)
+    {
+        return 'vocabLib-'.md5($url);
     }
 
     function constructUriString($type, $vocab, $term){
