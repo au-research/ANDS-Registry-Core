@@ -226,6 +226,11 @@ class Vocab {
         return $content;
     }
 
+    public function getCacheID($url)
+    {
+        return 'vocabLib-'.md5($url);
+    }
+
     function constructUriString($type, $vocab, $term){
         //$type can be resource or concept
         if($type=='resource'){
