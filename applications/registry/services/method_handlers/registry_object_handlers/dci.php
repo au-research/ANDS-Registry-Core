@@ -70,7 +70,7 @@ class DCI extends ROHandler {
         $title = $titleList->addChild("ItemTitle", str_replace('&', '&amp;', $this->ro->title));
         $title['TitleType'] = "English title";
         $source = $bibliographicData->addChild('Source');
-        $source->addChild("SourceURL", $sourceUrl);
+        $source->addChild("SourceURL", str_replace('&', '&amp;', $sourceUrl));
         $source->addChild("SourceRepository" , $this->citation_handler->getPublisher());
         $publicationDate = $this->citation_handler->getPublicationDate();
         if($publicationDate)
@@ -166,7 +166,7 @@ class DCI extends ROHandler {
                     }
                     $parsedFunding->addChild('GrantNumber', substr($identifierStr, 0, strlen($identifierStr) - 2));
                     $grantIndex = $this->findGrantbyKey($grant['key']);
-                    if($grantIndex['funders'])
+                    if($grantIndex && isset($grantIndex['funders']))
                         $parsedFunding->addChild("FundingOrganization",$grantIndex['funders'][0]);
                 }
             }
@@ -271,7 +271,7 @@ class DCI extends ROHandler {
                     if(isset($author['identifiers']) && sizeof($author['identifiers'] > 0))
                     {
                         foreach($author['identifiers'] as $id){
-                            $authorId = $eAuthor->addChild('AuthorID', trim($id[0]));
+                            $authorId = $eAuthor->addChild('AuthorID', trim(str_replace('&', '&amp;', $id[0])));
                             $authorId['type'] = $id[1];
                         }
                     }
