@@ -3,4 +3,5 @@ Disallow: /cgi-bin/
 Disallow: /etc/
 Disallow: /engine/
 Disallow: /registry/
+Disallow: /search/
 Disallow: /view/
