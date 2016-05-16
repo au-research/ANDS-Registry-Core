@@ -53,7 +53,7 @@ class links_Extension extends ExtensionBase
         {
             $type = 'electronic_'.(string)$address["type"];
             $value = (string)$address->value[0];
-            array_push($eaLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
+            array_push($eaLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($value),'status'=>'NEW')));
         }
         return $eaLinks;
     }
@@ -69,7 +69,7 @@ class links_Extension extends ExtensionBase
         {
             $type = 'citation_metadata_url';
             $value = (string)$cm->url[0];
-            array_push($cUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
+            array_push($cUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($value),'status'=>'NEW')));
         }
         return $cUrls;
     }
@@ -86,7 +86,7 @@ class links_Extension extends ExtensionBase
             preg_match_all($regex, html_entity_decode($desc), $matches);
             $type = 'description_link';
             foreach($matches[0] as $url){
-                array_push($descLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$url,'status'=>'NEW')));
+                array_push($descLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($url),'status'=>'NEW')));
             }
         }
         return $descLinks;
@@ -104,7 +104,7 @@ class links_Extension extends ExtensionBase
                 $link = $this->getResolvedLinkForIdentifier($vType, (string) $identifier);
                 if($link != '')
                 {
-                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$link,'status'=>'NEW')));
+                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($link),'status'=>'NEW')));
                 }
             }
         }
@@ -115,7 +115,7 @@ class links_Extension extends ExtensionBase
                 $link = $this->getResolvedLinkForIdentifier($vType, (string) $identifier);
                 if($link != '')
                 {
-                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$link,'status'=>'NEW')));
+                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($link),'status'=>'NEW')));
                 }
             }
         }
@@ -126,7 +126,7 @@ class links_Extension extends ExtensionBase
                 $link = $this->getResolvedLinkForIdentifier($vType, (string) $identifier);
                 if($link != '')
                 {
-                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$link,'status'=>'NEW')));
+                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($link),'status'=>'NEW')));
                 }
             }
         }
@@ -150,13 +150,14 @@ class links_Extension extends ExtensionBase
             $rType = strtolower((string) $rm['type']);
             $type = $rmParent[0]->getName() . '_relation_' . $rType. '_url';
             $value = (string)$rm->url[0];
-            array_push($rUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
+            array_push($rUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($value),'status'=>'NEW')));
         }
         return $rUrls;
     }
 
     function getResolvedLinkForIdentifier($type, $value)
     {
+        $value = trim($value);
         switch ($type){
             case 'handle':
                 if (strpos($value,'http://hdl.handle.net/') === false){
