@@ -802,6 +802,7 @@
             angular.copy($scope.prefilters, $scope.filters);
             if($scope.prefilters['q']) {
                 $scope.query = $scope.prefilters.q;
+                $scope.filters['sort'] = 'score desc';
             } else {
                 $scope.query = '';
                 $scope.filters['q'] = '';
