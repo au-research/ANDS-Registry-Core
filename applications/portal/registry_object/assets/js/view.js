@@ -93,31 +93,33 @@ $(document).on('click', '.ro_preview', function(event){
             delay: 1000,
             fixed: true,
         },
-		content: {
-			text: function(event, api) {
+		content: "Loading...",
+		events: {
+			show: function( event, api ) {
+				api.reposition();
 				api.elements.content.html('Loading...');
-				if ($(this).attr('ro_id')) {
-					var url = base_url+'registry_object/preview/?ro_id='+$(this).attr('ro_id')+'&omit='+$('#ro_id').val();
-				} else if($(this).attr('identifier_relation_id')) {
-					var url = base_url+'registry_object/preview/?identifier_relation_id='+$(this).attr('identifier_relation_id')
-				} else if($(this).attr('identifier_doi')) {
-					var url = base_url+'registry_object/preview/?identifier_doi='+$(this).attr('identifier_doi')
+				var element = api.elements.target;
+				if ($(element).attr('ro_id')) {
+					var url = base_url+'registry_object/preview/?ro_id='+$(element).attr('ro_id')+'&omit='+$('#ro_id').val();
+				} else if($(element).attr('identifier_relation_id')) {
+					var url = base_url+'registry_object/preview/?identifier_relation_id='+$(element).attr('identifier_relation_id')
+				} else if($(element).attr('identifier_doi')) {
+					var url = base_url+'registry_object/preview/?identifier_doi='+$(element).attr('identifier_doi')
 				}
 				if (url) {
-					return $.ajax({
-						url:url
-					}).then(function(content){
-						return content;
-					},function(xhr,status,error){
-						api.set('content.text', status + ': ' + error);
+					$.ajax({
+						url: url,
+						success: function(content) {
+							api.elements.content.html(content);
+							api.reposition();
+						}
 					});
 				} else {
 					return 'Error displaying preview';
 				}
-
 			}
 		},
-		position: {target:'mouse', adjust: { mouse: false }, viewport: $(window) },
+		position: {target:'mouse', adjust: { mouse: false }, viewport: $('body') },
 		style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'},
 		show: {
 			event:event.type,
