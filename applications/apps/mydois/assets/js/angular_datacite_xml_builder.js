@@ -135,6 +135,7 @@
                             });
                         });
                     }
+
                 };
 
                 scope.jsonToXml = function (json) {
@@ -160,7 +161,13 @@
                         //single values
                         var singleValues = ['publisher', 'publicationYear', 'language', 'version', 'resourceType'];
                         angular.forEach(singleValues, function (module) {
-                            if (json.resource[0][module] && json.resource[0][module].length && json.resource[0][module][0]['_text']) {
+                            if (json.resource[0][module] &&
+                                json.resource[0][module].length &&
+                                (
+                                    json.resource[0][module][0]['_text'] ||
+                                    (module== 'resourceType' && json.resource[0][module][0]['_attr'])
+                                )
+                            ) {
                                 var item = json.resource[0][module][0];
                                 xml += '<' + module;
                                 if (item['_attr']) {
