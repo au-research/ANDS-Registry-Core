@@ -94,6 +94,9 @@ class Registry_object extends MX_Controller
             $grantId = substr($key, $grantIdPos);
             $purl = $key;
 
+            // Set 404 HTTP Status code (CC-1633, CC-1712)
+            $this->output->set_status_header('404');
+
             $this->blade
                 ->set('scripts', array('grant_form'))
                 ->set('institution', $institution)
@@ -105,6 +108,10 @@ class Registry_object extends MX_Controller
             //No Record or Error
 
             $message = ($ro ? $ro->prop['status'] . NL . $ro->prop['message'] : false);
+
+            // Set 404 HTTP Status code (CC-1633, CC-1712)
+            $this->output->set_status_header('404');
+
             $this->blade
                 // ->set('scripts', array('view'))
                 ->set('id', $this->input->get('id'))
