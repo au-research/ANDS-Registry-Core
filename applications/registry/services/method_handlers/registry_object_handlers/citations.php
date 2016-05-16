@@ -444,7 +444,7 @@ Y2  - '.date("Y-m-d")."
             if($sourceUrl == ''){
                 $sourceUrl = portal_url().$this->ro->slug;
             }else{
-                $sourceUrl .= ",".portal_url().$this->ro->slug;
+                $sourceUrl .= ", ".portal_url().$this->ro->slug;
             }
         }
         return  $sourceUrl;
