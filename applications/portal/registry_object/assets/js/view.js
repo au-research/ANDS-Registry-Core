@@ -96,7 +96,6 @@ $(document).on('click', '.ro_preview', function(event){
 		content: "Loading...",
 		events: {
 			show: function( event, api ) {
-				api.reposition();
 				api.elements.content.html('Loading...');
 				var element = api.elements.target;
 				if ($(element).attr('ro_id')) {
@@ -111,7 +110,6 @@ $(document).on('click', '.ro_preview', function(event){
 						url: url,
 						success: function(content) {
 							api.elements.content.html(content);
-							api.reposition();
 						}
 					});
 				} else {
