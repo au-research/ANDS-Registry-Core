@@ -108,6 +108,7 @@ class Core_extension extends ExtensionBase
 
 													"key" => (string) $this->getAttribute("key"),
 													"class" => $this->getAttribute("class"),
+                                                    "type" => $this->getAttribute("type"),
 													"title" => $this->getAttribute("title"),
 													"status" => $this->getAttribute("status"),
 													"slug" => $this->getAttribute("slug"),
@@ -149,7 +150,7 @@ class Core_extension extends ExtensionBase
 			{
 				if ($attribute->dirty)
 				{
-					if ($attribute->core)
+					if (in_array($attribute->name , $this->core_attrs))
 					{
 						$update_batch['core']['update'][$attribute->name] = $attribute->value;
 						$attribute->dirty = FALSE;
@@ -358,7 +359,7 @@ class Core_extension extends ExtensionBase
 	function _initAttribute($name, $value, $core=FALSE)
 	{
 		// set if it's not already set
-		if (!isset($this->attributes[$name])) {
+        if (!isset($this->attributes[$name])) {
 			$this->attributes[$name] = new _registry_object_attribute($name, $value);
 			if ($core){
 				$this->attributes[$name]->core = TRUE;
@@ -367,6 +368,7 @@ class Core_extension extends ExtensionBase
 			// it is already set, update the value
 			$attribute = $this->attributes[$name];
 			$attribute->setValue($value);
+            $this->attributes[$name]->dirty = TRUE;
 		}
 	}
 

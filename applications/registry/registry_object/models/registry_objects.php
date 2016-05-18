@@ -714,7 +714,7 @@ class Registry_objects extends CI_Model {
 	 * XXX:
 	 * @return array(_data_source) or NULL
 	 */
-	function create(_data_source $data_source, $registry_object_key, $class, $title, $status, $slug, $record_owner, $harvestID)
+	function create(_data_source $data_source, $registry_object_key, $class, $title, $status, $slug, $record_owner, $harvestID, $type)
 	{
 		$ro = new _registry_object();
 		$ro->_initAttribute("data_source_id", $data_source->getAttribute('data_source_id'), TRUE);
@@ -726,6 +726,7 @@ class Registry_objects extends CI_Model {
 		$ro->_initAttribute("status",$status, TRUE);
 		$ro->_initAttribute("slug",$slug, TRUE);
 		$ro->_initAttribute("record_owner",$record_owner, TRUE);
+        $ro->_initAttribute("type", $type, TRUE);
 		$ro->create();
 
 		// Some extras
