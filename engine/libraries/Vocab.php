@@ -211,18 +211,28 @@ class Vocab {
     function post($queryStr){
 
         $cacheId = $this->getCacheID($queryStr);
+
+        // return cached version
         if ($cached = $this->CI->cache->file->get($cacheId)) {
             return $cached;
         }
 
+        //execute curl
         $ch = curl_init();
-        //set the url, number of POST vars, POST data
-        curl_setopt($ch,CURLOPT_URL,$queryStr);//post to SOLR
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//return to variable
-        $content = curl_exec($ch);//execute the curl
-        curl_close($ch);//close the curl
+        curl_setopt($ch,CURLOPT_URL,$queryStr);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $content = curl_exec($ch);
 
-        $this->CI->cache->file->save($cacheId, $content, 36000);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        // only log if the response is 200
+        if ($http_code === 200) {
+            $this->CI->cache->file->save($cacheId, $content, 36000);
+        } else {
+            ulog("vocab response error: " . $http_code . " (" . $queryStr .")", "error", "error");
+        }
 
         return $content;
     }

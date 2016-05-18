@@ -269,9 +269,12 @@
         vm.stripBlankElements = function(xml) {
             try {
                 var dom = $.parseXML(xml);
-                $('*:empty', dom).remove();
+                //$('*:empty', dom).remove();
                 $("*", dom).filter(function(){
-                    return $.trim(this.textContent) === ""
+                    var tagName = $( this ).prop( "tagName" );
+                    if (tagName !== "resourceType") {
+                        return $.trim(this.textContent) === "";
+                    }
                 }).remove();
                 return (new XMLSerializer()).serializeToString(dom);
             } catch (e) {
