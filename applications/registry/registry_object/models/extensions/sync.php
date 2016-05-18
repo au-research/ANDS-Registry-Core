@@ -392,6 +392,7 @@ class Sync_extension extends ExtensionBase{
                             }
 
                             //putting end point back
+                            $uniquePoints = array_values($uniquePoints);
                             $uniquePoints[] = $uniquePoints[0];
                             $json['spatial_coverage_extents_wkt'][] = 'POLYGON((' . implode(', ', $uniquePoints) . '))';
                         }
