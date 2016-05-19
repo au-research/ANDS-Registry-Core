@@ -86,7 +86,7 @@ class Import extends CI_Model {
 								$record_owner = "SYSTEM";
 	
 								// Create a frame instance of the registryObject
-								$ro = $this->ro->create($data_source, (string)$registryObject->key, $ro_class, "", $status, "defaultSlug", $record_owner, $harvestID);
+								$ro = $this->ro->create($data_source, (string)$registryObject->key, $ro_class, "", $status, "defaultSlug", $record_owner, $harvestID, (string) $ro_xml['type']);
 								$ro->created_who = $record_owner;
 								$ro->data_source_key = $data_source->key;
 								$ro->group = (string) $registryObject['group'];

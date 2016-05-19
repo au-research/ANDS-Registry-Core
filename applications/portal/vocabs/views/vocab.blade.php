@@ -31,8 +31,8 @@ if(isset($vocab['related_entity'])){
     }
 }
 
-// Determine whether or not to show the concept tree and widgetableness.
-// Set $sissvocEndPoint if they are to be shown.
+// Determine whether or not to show the widgetableness.
+// Set $sissvocEndPoint if it is to be shown.
 foreach ($vocab['versions'] as $version) {
     if ($version['status']=='current' && $version['version_access_points']) {
         foreach($version['version_access_points'] as $ap)
@@ -140,7 +140,10 @@ foreach ($vocab['versions'] as $version) {
         </div>
         @endif
 
+        {{-- The concept tree is shown if there is one to show. --}}
+        {{-- There is one to show, if the "tree" service returns one. --}}
         <div visualise vocabid="{{ $vocab['id'] }}"></div>
+        {{-- Show widgetable status based on $sissVocEndPoint. --}}
         @if(isset($sissvocEndPoint))
         <div id="widget" class="panel swatch-white">
             <div class="panel-body">Use this code snippet to describe or discover resources with {{$vocab['title']}} in your system

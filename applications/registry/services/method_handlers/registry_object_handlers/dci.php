@@ -24,14 +24,12 @@ class DCI extends ROHandler {
         $CI->load->model('data_source/data_sources','ds');
         $ds = $CI->ds->getByID($this->ro->data_source_id);
         $exportable = false;
-        $lower_type = strtolower($this->ro->type);
-        $allowedType = array('collection', 'repository', 'dataset', 'software');
         if($this->ro->hasTag('excludeDCI'))
             return "";
         if($this->overrideExportable || $ds->export_dci == DB_TRUE || $ds->export_dci == 1 || $ds->export_dci == 't')
             $exportable = true;
         $sourceUrl = $this->citation_handler->getSourceUrl();
-        if($sourceUrl == null || !($exportable) || !in_array($lower_type, $allowedType))
+        if($sourceUrl == null || !($exportable))
             return "";
         $this->getHeader();
         $this->getBibliographicData($sourceUrl);
@@ -41,6 +39,7 @@ class DCI extends ROHandler {
         $this->getDescriptorsData();
         $this->getFundingInfo();
         $this->getCitationList();
+
         return $this->DCIDom->ownerDocument->saveXML($this->DCIDom->ownerDocument->documentElement, LIBXML_NOXMLDECL);
 	}
 
@@ -71,7 +70,7 @@ class DCI extends ROHandler {
         $title = $titleList->addChild("ItemTitle", str_replace('&', '&amp;', $this->ro->title));
         $title['TitleType'] = "English title";
         $source = $bibliographicData->addChild('Source');
-        $source->addChild("SourceURL", $sourceUrl);
+        $source->addChild("SourceURL", str_replace('&', '&amp;', $sourceUrl));
         $source->addChild("SourceRepository" , $this->citation_handler->getPublisher());
         $publicationDate = $this->citation_handler->getPublicationDate();
         if($publicationDate)
@@ -167,7 +166,7 @@ class DCI extends ROHandler {
                     }
                     $parsedFunding->addChild('GrantNumber', substr($identifierStr, 0, strlen($identifierStr) - 2));
                     $grantIndex = $this->findGrantbyKey($grant['key']);
-                    if($grantIndex['funders'])
+                    if($grantIndex && isset($grantIndex['funders']))
                         $parsedFunding->addChild("FundingOrganization",$grantIndex['funders'][0]);
                 }
             }
@@ -272,7 +271,7 @@ class DCI extends ROHandler {
                     if(isset($author['identifiers']) && sizeof($author['identifiers'] > 0))
                     {
                         foreach($author['identifiers'] as $id){
-                            $authorId = $eAuthor->addChild('AuthorID', trim($id[0]));
+                            $authorId = $eAuthor->addChild('AuthorID', trim(str_replace('&', '&amp;', $id[0])));
                             $authorId['type'] = $id[1];
                         }
                     }

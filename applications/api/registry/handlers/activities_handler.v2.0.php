@@ -352,11 +352,11 @@ class ActivitiesHandlerV2 extends Handler
             $fundingScheme = $ro->getFundingScheme($gXPath);
             $data['fundingScheme'] = $fundingScheme;
 
-            $dateFormat = "Y";
+            $W3DTF = "Y-m-dTh:i:sO";
 
             /**
              * startDate
-             * Format W3DTF
+             * Format W3DTF with no time component
              * existenceDate/startDate
              */
             $startDate = $ro->getExistenceDateEarliestYear($xml);
@@ -364,6 +364,7 @@ class ActivitiesHandlerV2 extends Handler
 
             /**
              * endDate
+             * Format W3DTF with no time component
              * existenceDate/endDate
              */
             $endDate = $ro->getExistenceDateLatestYear($xml);
@@ -371,15 +372,17 @@ class ActivitiesHandlerV2 extends Handler
 
             /**
              * dateTimeCreated
+             * Format W3DTF
              */
             $dateTimeCreated = $ro->created;
-            $data['dateTimeCreated'] = date($dateFormat, $dateTimeCreated);
+            $data['dateTimeCreated'] = date($W3DTF, $dateTimeCreated);
 
             /**
              * dateTimeModified
+             * Format W3DTF
              */
             $dateTimeModified = $ro->updated;
-            $data['dateTimeModified'] = date($dateFormat, $dateTimeModified);
+            $data['dateTimeModified'] = date($W3DTF, $dateTimeModified);
 
 
             //add data to the response array

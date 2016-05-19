@@ -360,7 +360,7 @@ class Importer {
 					if (is_null($revision_record_id) || $this->forceClone)
 					{
 						// We are creating a new registryObject
-						$ro = $this->CI->ro->create($this->dataSource, (string)$registryObject->key, $class, "", $this->status, "temporary_slug-" . md5((string) $registryObject->key) . "-" . time(), $record_owner, $this->harvestID);
+						$ro = $this->CI->ro->create($this->dataSource, (string)$registryObject->key, $class, "", $this->status, "temporary_slug-" . md5((string) $registryObject->key) . "-" . time(), $record_owner, $this->harvestID, (string) $ro_xml['type']);
 
 						// if this is ds has the qa flag set we need to check if this is the first submitted for assesmment record and if so email the notify address
 						if($this->dataSource->qa_flag===DB_TRUE && $this->ingest_new_record<1 && !$this->forceDraft && $this->dataSource->assessment_notify_email_addr)
@@ -400,7 +400,7 @@ class Importer {
 					$ro->data_source_key = $this->dataSource->key;
 					$ro->group = (string) $registryObject['group'];
 					$ro->type = (string) $ro_xml['type'];
-
+                    $ro->setAttribute("type", (string) $ro_xml['type']);
 					if($this->filePath) $ro->file_path = $this->filePath;
 					if($this->nativePath) $ro->native_path = $this->nativePath;
 
