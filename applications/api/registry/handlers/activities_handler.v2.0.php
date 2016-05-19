@@ -358,7 +358,6 @@ class ActivitiesHandlerV2 extends Handler
         //response setup
         $response = array(
             'numFound' => $result['response']['numFound'],
-            'rows' => sizeof($result['response']['docs']),
             'offset' => $offset,
             'limit' => (int) $limit,
             'records' => $records
