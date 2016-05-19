@@ -191,8 +191,7 @@ class ActivitiesHandlerV2 extends Handler
 
         // q
         if ($q = (isset($params['q'])) ? $params['q'] : null) {
-            $q = "*".str_replace(" ", "*", $q)."*";
-            $this->ci->solr->setOpt('q', $q);
+            $this->ci->solr->setOpt('q', $this->canbeFuzzy($q));
             $this->ci->solr->setOpt('defType', 'edismax');
             $this->ci->solr->setOpt('qf', '_text_ identifier_value title title_search subject_value_resolved subject_value_search identifier_value_search researchers researchers_search principal_investitagor');
         }
@@ -225,15 +224,15 @@ class ActivitiesHandlerV2 extends Handler
         //purl
         if ($purl = (isset($params['purl'])) ? $params['purl'] : null) {
             $this->ci->solr->setOpt('fq',
-                '+identifier_value_search:("' . $purl . '")');
+                '+identifier_value:("' . $purl . '")');
         }
 
         //identifier
         $identifier = (isset($params['identifier'])) ? $params['identifier'] : null;
         if ($identifier) {
-            $identifier = "*".str_replace(" ", "*", $identifier)."*";
+            $identifier = $this->canbeFuzzy($identifier);
             $this->ci->solr->setOpt('fq',
-                '+identifier_value:(*' . $identifier . '*)');
+                '+identifier_value_search:(' . $identifier . ')');
         }
 
         //individual id
@@ -257,8 +256,9 @@ class ActivitiesHandlerV2 extends Handler
 
         //description
         if ($descriptions = (isset($params['description'])) ? $params['description'] : null) {
+            $descriptions = $this->canbeFuzzy($descriptions);
             $this->ci->solr->setOpt('fq',
-                '+description:"' . $descriptions . '"');
+                '+description:(' . $descriptions . ')');
         }
 
         //principalInvestigator
@@ -269,6 +269,7 @@ class ActivitiesHandlerV2 extends Handler
 
         //researcher
         if ($researcher = (isset($params['researcher'])) ? $params['researcher'] : null) {
+            $researcher = $this->canbeFuzzy($researcher);
             $this->ci->solr->setOpt('fq',
                 '+researchers_search:"' . $researcher . '"');
         }
@@ -513,6 +514,13 @@ class ActivitiesHandlerV2 extends Handler
         }
 
         return $record;
+    }
+
+    private function canbeFuzzy($field){
+        if (!strpos($field, '"') > -1) {
+            $field = "*".str_replace(" ", "*", $field)."*";
+        }
+        return $field;
     }
 
 
