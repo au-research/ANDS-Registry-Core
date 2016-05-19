@@ -232,7 +232,7 @@ class ActivitiesHandlerV2 extends Handler
         if ($identifier) {
             $identifier = $this->canbeFuzzy($identifier);
             $this->ci->solr->setOpt('fq',
-                '+identifier_value_search:(' . $identifier . ')');
+                '+(identifier_value:(' . $identifier . ') OR identifier_value_search:('.$identifier.'))');
         }
 
         //individual id
@@ -333,6 +333,10 @@ class ActivitiesHandlerV2 extends Handler
 
         //execute search and store the result
         $result = $this->ci->solr->executeSearch(true);
+
+        if (array_key_exists('error', $result)) {
+            throw new Exception($result['error']['msg']);
+        }
 
         $solrURL = $this->ci->solr->getSolrUrl().'select?'.$this->ci->solr->constructFieldString();
 
@@ -517,8 +521,21 @@ class ActivitiesHandlerV2 extends Handler
     }
 
     private function canbeFuzzy($field){
-        if (!strpos($field, '"') > -1) {
-            $field = "*".str_replace(" ", "*", $field)."*";
+        //fuzzyable if not exact
+        if (strpos($field, '"') === false) {
+
+            //replace bad char
+            $field = str_replace(":", "", $field);
+            $field = str_replace("(", "", $field);
+            $field = str_replace(")", "", $field);
+
+            // fuzzy
+            $field = str_replace(" ", "*", $field);
+
+            //for purl or uri search, don't put fuzzy
+            if (strpos($field, "http") === false) {
+                $field = "*".$field."*";
+            }
         }
         return $field;
     }
