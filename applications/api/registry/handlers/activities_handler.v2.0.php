@@ -212,7 +212,7 @@ class ActivitiesHandlerV2 extends Handler
         //subject
         if ($subject = (isset($params['subject'])) ? $params['subject'] : null) {
             $this->ci->solr->setOpt('fq',
-                '+subject_value_resolved_search:(' . $subject . ')');
+                '+(subject_value_resolved_search:(' . $subject . ') OR subject_value_unresolved:('.$subject.'))');
         }
 
         //fundingScheme
