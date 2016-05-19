@@ -302,7 +302,7 @@ class ActivitiesHandlerV2 extends Handler
 
         // offset, default to 0
         $offset = (isset($params['offset'])) ? $params['offset'] : 0;
-        $this->ci->solr->setOpt('offset', $offset);
+        $this->ci->solr->setOpt('start', $offset);
 
         // facet setup
         $this->ci->solr->setFacetOpt('mincount', 1);
@@ -363,7 +363,7 @@ class ActivitiesHandlerV2 extends Handler
         //response setup
         $response = array(
             'numFound' => $result['response']['numFound'],
-            'offset' => $offset,
+            'offset' => (int) $offset,
             'limit' => (int) $limit,
             'records' => $records
         );
