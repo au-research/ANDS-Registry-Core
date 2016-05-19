@@ -439,9 +439,9 @@ class _vocabulary
                 if ($raw) return $tree_data;
 
                 //build a tree a little bit nicer
-                $tree = $this->buildTree($tree_data, $sissvoc_end_point);
+                $this->buildTree($tree_data, $sissvoc_end_point);
 
-                return $tree;
+                return $tree_data;
             }
         } else {
             //no current version
@@ -450,43 +450,40 @@ class _vocabulary
     }
 
     /**
-     * Helper function for @display_tree
-     * Recursively called to build the tree when childs exist
-     * prefLabel and notation child are not considered children
+     * Helper function for @display_tree.
+     * Recursively called to build the tree when there are child concepts.
+     * See Toolkit class ...provider.transform.JsonTreeTransformProvider
+     * for a description of the structure of the input tree data.
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @param  array $treeData
-     * @return array child Tree
      */
-    private function buildTree($treeData, $sissvoc_end_point = '')
+    private function buildTree(&$treeData, $sissvoc_end_point = '')
     {
-        $tree = array();
         if (is_array($treeData)) {
-            foreach ($treeData as $key => $value) {
-                if ($key != 'prefLabel' && $key != 'notation' && $key != 'definition') {
-                    $title = isset($value['prefLabel']) ? $value['prefLabel'] : 'No Title';
-                    $tipText = '<p><b>'. $title . '<br/>IRI: </b>'. $key;
+            foreach ($treeData as &$concept) {
+                $uri = $concept['iri'];
+                $title = isset($concept['prefLabel']) ?
+                       $concept['prefLabel'] : 'No Title';
+                $tipText = '<p><b>'. $title . '<br/>IRI: </b>'. $uri;
 
-                    if(isset($value['definition']))
-                        $tipText .= '<br/><b>Definition: </b>' . $value['definition'];
-                    if(isset($value['notation']))
-                        $tipText .= '<br/><b>Notation: </b>' .$value['notation'];
-                    if($sissvoc_end_point != '')
-                        $tipText .= '<br/><a class="pull-right" target="_blank" href="' .$sissvoc_end_point . '/resource?uri=' . $key . '">View as linked data</a>';
-                    $node = array(
-                        'uri' => $key,
-                        'value' => $title,
-                        'child' => array(),
-                        'tip' => $tipText. '</p>',
-                        'num_child' => 0
-                    );
-                    $childs = $this->buildTree($value, $sissvoc_end_point);
-                    $node['child'] = $childs;
-                    $node['num_child'] = sizeof($childs);
-                    $tree[] = $node;
+                if(isset($concept['definition']))
+                    $tipText .= '<br/><b>Definition: </b>'
+                             . $concept['definition'];
+                if(isset($concept['notation']))
+                    $tipText .= '<br/><b>Notation: </b>' .$concept['notation'];
+                if($sissvoc_end_point != '')
+                    $tipText .= '<br/><a class="pull-right" target="_blank" href="' .$sissvoc_end_point . '/resource?uri=' . $uri . '">View as linked data</a>';
+                $concept['value'] = $title;
+                $concept['tip'] = $tipText. '</p>';
+                if (isset($concept['narrower'])) {
+                    $this->buildTree($concept['narrower'],
+                                     $sissvoc_end_point);
+                    $concept['num_child'] = sizeof($concept['narrower']);
+                } else {
+                    $concept['num_child'] = 0;
                 }
             }
         }
-        return $tree;
     }
 
     /**
