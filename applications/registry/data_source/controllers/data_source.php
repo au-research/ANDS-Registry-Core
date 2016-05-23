@@ -2018,19 +2018,23 @@ class Data_source extends MX_Controller {
 		$dataSource = $this->ds->getByID($id);
 		$dsSlug = $dataSource->getAttribute('slug');
 		$rifcs = '';
+        $dci_handler = null;
         $dciOutput = '';
 		$ids = $this->ro->getIDsByDataSourceID($id, false, 'All');
 		if($ids)
 		{
 			$i = 0;
+            if($formatString == 'dci')
+            {
+                defined('SERVICES_MODULE_PATH') or define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
+                require_once(SERVICES_MODULE_PATH . 'method_handlers/dci.php');
+                $dci_handler = new DCIMethod();
+            }
 			foreach($ids as $idx => $ro_id){
 				try{
 					$ro = $this->ro->getByID($ro_id);
 					if($formatString == 'dci')
                     {
-                        defined('SERVICES_MODULE_PATH') or define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
-                        require_once(SERVICES_MODULE_PATH . 'method_handlers/dci.php');
-                        $dci_handler = new DCIMethod();
                         $dci_handler->ro = $ro;
                         $dci_handler->populate_resource($ro_id,true);
                         $dciOutput .= $dci_handler->ro_handle('dci');
