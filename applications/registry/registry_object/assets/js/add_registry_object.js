@@ -1827,7 +1827,7 @@ function updateHelpLink()
     if(active_tab=='relatedinfos'){the_active_tab='relatedinfo'}
     if(active_tab=='citationInfos'){the_active_tab='citationinfo'}
     if(active_tab=='qa'){the_active_tab='savedraft'}
-    if(active_tab=='accesspolicies' ||active_tab=='existencedates' ){
+    if(active_tab=='accesspolicies'|| active_tab=='existencedates' ){
       the_active_tab = "no_tab_help"
     }
 
@@ -1835,7 +1835,10 @@ function updateHelpLink()
 	{
 		$('#aro_help_link').attr("href", default_help_link+the_active_tab+"tab");
 	}
-	else
+	else if(active_tab=='accesspolicies'){
+        $('#aro_help_link').attr("href", default_help_link+"service-accesspolicy");
+    }
+    else
 	{
 		$('#aro_help_link').attr("href", default_help_link);
 	}
