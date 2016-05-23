@@ -219,7 +219,7 @@ class ConnectionTree extends CI_Model
 		foreach ($collections AS $row)
 		{
 
-			if ($row && $depth > 0 && !isset($accumulated_ids[$row['registry_object_id']]))
+			if ($row && $depth > 0 && !isset($accumulated_ids[$row['registry_object_id']]) && $row['registry_object_id'])
 			{
 
 				// If we're over the widget limit (and this isn't the target RO), then add more...
