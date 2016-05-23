@@ -145,9 +145,16 @@ class ActivitiesHandlerV2 extends Handler
 
         $params = $this->ci->input->get();
 
-        //flags setup
+
+        /**
+         * flags setup
+         * pass in query fl does not affect search query or ranking
+         * so the default fields are still searched correctly
+         * fl only affect the result returned from the API, ommiting things
+         * that are not there
+         */
         $fl = (isset($params['fl'])) ? $params['fl'] : $this->defaultFlags;
-        $this->ci->solr->setOpt('fl', $fl);
+        $this->ci->solr->setOpt('fl', $this->defaultFlags);
         $result = $this->ci->solr->executeSearch(true);
 
         //todo error checking
@@ -337,7 +344,7 @@ class ActivitiesHandlerV2 extends Handler
 
         //flags setup
         $fl = (isset($params['fl'])) ? $params['fl'] : $this->defaultFlags;
-        $this->ci->solr->setOpt('fl', $fl);
+        $this->ci->solr->setOpt('fl', $this->defaultFlags);
 
         if ($debug = isset($params['debug']) ? true : false) {
             $this->ci->solr->setOpt('debug', 'results');
@@ -480,9 +487,9 @@ class ActivitiesHandlerV2 extends Handler
         // that is not covered in the default response
         // mainly use for testing
 
-        $flags = $this->ci->input->get('flags') ? $this->ci->input->get('flags') : false;
-        if ($flags && $flags = explode(',', $flags)) {
-            foreach ($flags as $flag) {
+        $customFlags = $this->ci->input->get('flags') ? $this->ci->input->get('flags') : false;
+        if ($customFlags && $customFlags = explode(',', $customFlags)) {
+            foreach ($customFlags as $flag) {
                 switch ($flag) {
                     case "titles":
                         $titles = [
@@ -529,6 +536,11 @@ class ActivitiesHandlerV2 extends Handler
                 $record['links'][] = $link;
             }
 
+        }
+
+        //setup flags
+        if (implode(',', $flags) !== $this->defaultFlags) {
+            $record = array_intersect_key($record, array_flip($flags));
         }
 
         return $record;
