@@ -191,9 +191,17 @@ class ActivitiesHandlerV2 extends Handler
 
         // q
         if ($q = (isset($params['q'])) ? $params['q'] : null) {
-            $this->ci->solr->setOpt('q', $this->canbeFuzzy($q));
+            // $this->ci->solr->setOpt('q', $this->canbeFuzzy($q));
+            $this->ci->solr->setOpt('q', $q);
             $this->ci->solr->setOpt('defType', 'edismax');
-            $this->ci->solr->setOpt('qf', '_text_ identifier_value title title_search subject_value_resolved subject_value_search identifier_value_search researchers researchers_search principal_investitagor');
+
+            if (isset($params['ranking'])) {
+                $ranking = $params['ranking'];
+            } else {
+                $ranking = 'title_search^1 researchers_search^0.2 identifier_value_search^0.4 description^0.001 _text_^0.000001';
+            }
+
+            $this->ci->solr->setOpt('qf', $ranking);
         }
 
         //Only search for activity
@@ -331,6 +339,11 @@ class ActivitiesHandlerV2 extends Handler
         $fl = (isset($params['fl'])) ? $params['fl'] : $this->defaultFlags;
         $this->ci->solr->setOpt('fl', $fl);
 
+        if ($debug = isset($params['debug']) ? true : false) {
+            $this->ci->solr->setOpt('debug', 'results');
+            $this->ci->solr->setOpt('debug.explain.structured=true', 'true');
+        }
+
         //execute search and store the result
         $result = $this->ci->solr->executeSearch(true);
 
@@ -374,6 +387,7 @@ class ActivitiesHandlerV2 extends Handler
 
         if ($debug = isset($params['debug']) ? true : false) {
             $response['solrURL'] = $solrURL;
+            $response['debug'] = $result['debug'];
         }
 
         // HATEOAS
