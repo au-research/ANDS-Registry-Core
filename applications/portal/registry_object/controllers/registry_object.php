@@ -734,6 +734,9 @@ class Registry_object extends MX_Controller
             redirect('search/#!/q=' . $this->input->get('q'));
         }
 
+        // Prevent indexing of this page by search engines
+        $this->output->set_header('X-Robots-Tag: noindex, nofollow');
+
         $this->load->library('blade');
         $this->blade
             ->set('lib', array('ui-events', 'angular-ui-map', 'google-map'))
