@@ -70,8 +70,8 @@ class DCIMethod extends MethodHandler
         //local SOLR index for fast searching
         $ci =& get_instance();
         $ci->load->library('solr');
-        $ci->solr->clearOpt('fq');
-        $ci->solr->setOpt('fq', '+id:'.$id);
+        $ci->solr->init();
+        $ci->solr->setOpt('q', 'id:'.$id);
         $this->overrideExportable = $overrideExportable;
         $result = $ci->solr->executeSearch(true);
         if(sizeof($result['response']['docs']) == 1) {

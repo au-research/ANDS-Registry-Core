@@ -2034,7 +2034,6 @@ class Data_source extends MX_Controller {
                         $dci_handler->ro = $ro;
                         $dci_handler->populate_resource($ro_id,true);
                         $dciOutput .= $dci_handler->ro_handle('dci');
-                        dd($dci_handler->ro_handle);
                     }
                     elseif($ro && (strpos($classString, $ro->class) !== false) && (strpos($statusString, $ro->status) !== false))
 					{
