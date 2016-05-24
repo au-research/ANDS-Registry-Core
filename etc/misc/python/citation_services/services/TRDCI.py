@@ -151,7 +151,7 @@ class TRDCIService(base.BaseService):
                  "' AND `last_checked` < NOW() - INTERVAL " +
                  str(self._params['update_frequency']) + " DAY")
         if data_source_id is not None:
-            query += " AND `data_source_id`=" + str(data_source_id)
+            query += " AND ro.`data_source_id`=" + str(data_source_id)
         query += ";"
         if self._debug:
             print("DEBUG: _get_ROs_for_checking query:", query,
