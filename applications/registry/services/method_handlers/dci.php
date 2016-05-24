@@ -56,9 +56,15 @@ class DCIMethod extends MethodHandler
 			{
 				$CI->load->model('registry_object/registry_objects','ro');
                 $CI->load->model('data_source/data_sources','ds');
-                $this->ro = new _registry_object($result['id']);
-                $this->populate_resource($result['id'], true);
-                $rifcsOutput[] = $this->ro_handle('dci');
+                try{
+                    $this->ro = new _registry_object($result['id']);
+                    $this->populate_resource($result['id'], true);
+                    $rifcsOutput[] = $this->ro_handle('dci');
+                }
+                catch(Exception $e){
+                    // do nothing
+                }
+
 			}
 		}
 		// Bubble back the output status
