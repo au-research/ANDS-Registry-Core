@@ -54,11 +54,22 @@ class DCI extends ROHandler {
 
     private function getAbstract()
     {
+        $abstract = "Not available";
         if($this->index && isset($this->index['list_description'])) {
             //var_dump($this->index['list_description']);
-            $this->DCIRoot->addChild('Abstract', str_replace('&', '&amp;', $this->index['list_description']));
+            $abstract = $this->index['list_description'];
         }
-
+        else if($abstract == "Not available"){
+            foreach($this->gXPath->query("//ro:description[@type='brief']") as $description){
+                $abstract = (string) $description;
+            }
+        }
+        else if($abstract == "Not available"){
+            foreach($this->gXPath->query("//ro:description[@type='full'") as $description){
+                    $abstract = (string) $description;
+            }
+        }
+        $this->DCIRoot->addChild('Abstract', str_replace('&', '&amp;', $abstract));
     }
 
     private function getBibliographicData($sourceUrl)
