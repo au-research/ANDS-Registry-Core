@@ -110,6 +110,7 @@ $(document).on('click', '.ro_preview', function(event){
 						url: url,
 						success: function(content) {
 							api.elements.content.html(content);
+							api.reposition(null, false);
 						}
 					});
 				} else {
@@ -117,7 +118,12 @@ $(document).on('click', '.ro_preview', function(event){
 				}
 			}
 		},
-		position: {target:'mouse', adjust: { mouse: false }, viewport: $('body') },
+		position: {
+			target:'mouse',
+			adjust: { mouse: false },
+			viewport: $(window),
+			my: 'left center'
+		},
 		style: {classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'},
 		show: {
 			event:event.type,
