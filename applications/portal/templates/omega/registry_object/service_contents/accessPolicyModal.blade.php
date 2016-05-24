@@ -1,3 +1,4 @@
+@if($ro->accessPolicy)
 <div class="modal fade" id="accessPolicyModal" role="dialog" aria-labelledby="Access Policy" aria-hidden="false" style="z-index:999999">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -13,3 +14,4 @@
         </div>
     </div>
 </div>
+@endif
