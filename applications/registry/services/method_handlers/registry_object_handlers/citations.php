@@ -568,25 +568,27 @@ Y2  - '.date("Y-m-d")."
                 $key = $partyFunder->key;
 
                 $grant_objects = $CI->mro->getAllByKey($key);
-                foreach ($grant_objects as $grant_object)
-                {
-                    $grant_sxml = $grant_object->getSimpleXML(NULL, true);
-                    if($grant_object->status == PUBLISHED){
-                        $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
+                if($grant_objects){
+                    foreach ($grant_objects as $grant_object)
+                    {
+                        $grant_sxml = $grant_object->getSimpleXML(NULL, true);
+                        if($grant_object->status == PUBLISHED){
+                            $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
 
-                        $related_party = array();
-                        $relationships = $grant_object->getAllRelatedObjects();
-                        foreach ($relationships as $rr) {
-                            if (in_array($rr['class'], ['party']) && in_array($rr['relation_type'], ['isFunderOf','isFundedBy'])) {
-                                array_push($related_party, $rr);
+                            $related_party = array();
+                            $relationships = $grant_object->getAllRelatedObjects();
+                            foreach ($relationships as $rr) {
+                                if (in_array($rr['class'], ['party']) && in_array($rr['relation_type'], ['isFunderOf','isFundedBy'])) {
+                                    array_push($related_party, $rr);
+                                }
                             }
-                        }
 
-                        if (is_array($grant_id))
-                        {
-                            if (is_array($related_party) && isset($related_party[0]))
+                            if (is_array($grant_id))
                             {
-                                $funders[] = $related_party[0]['title'];
+                                if (is_array($related_party) && isset($related_party[0]))
+                                {
+                                    $funders[] = $related_party[0]['title'];
+                                }
                             }
                         }
                     }
