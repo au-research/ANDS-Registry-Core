@@ -12,7 +12,10 @@ class TestVocabClient extends UnitTest
         $url = "http://vocabs.ands.org.au/repository/api/lda/anzsrc-for/resource.json?uri=http%3A%2F%2Fpurl.org%2Fau-research%2Fvocabulary%2Fanzsrc-for%2F2008%2F2103";
         // $result = $this->ci->vocab->post($url);
         $cacheId = $this->ci->vocab->getCacheID($url);
-        $this->ci->cache->file->delete($cacheId);
+
+        if ($this->ci->cache->file->get($cacheId)) {
+            $this->ci->cache->file->delete($cacheId);
+        }
 
         //confirm cache is gone
         $this->assertFalse($this->ci->cache->file->get($cacheId));
@@ -39,8 +42,9 @@ class TestVocabClient extends UnitTest
         $this->assertEquals($result["about"], "http://purl.org/au-research/vocabulary/anzsrc-for/2008/2103");
     }
 
-    public function testGetBroaderSubjects()
+    public function testGetBroaderSubjects2103()
     {
+        $this->ci->vocab->init()->resolveSubject("2103", "anzsrc-for");
         $result = $this->ci->vocab->getBroaderSubjects("http://purl.org/au-research/vocabulary/anzsrc-for/2008/", "2103");
 
         //has 1 broader that is 21
@@ -48,6 +52,18 @@ class TestVocabClient extends UnitTest
         $broader = array_values($result)[0];
         $this->assertEquals($broader["notation"], "21");
         $this->assertEquals($broader["value"], "HISTORY AND ARCHAEOLOGY");
+    }
+
+    public function testGetBroaderSubjects1505()
+    {
+        $this->ci->vocab->init()->resolveSubject("1505", "anzsrc-for");
+        $result = $this->ci->vocab->getBroaderSubjects("http://purl.org/au-research/vocabulary/anzsrc-for/2008/", "1505");
+
+        //has 1 broader that is 21
+        $this->assertEquals(1, sizeof($result));
+        $broader = array_values($result)[0];
+        $this->assertEquals($broader["notation"], "15");
+        $this->assertEquals($broader["value"], "COMMERCE, MANAGEMENT, TOURISM AND SERVICES");
     }
 
     public function setUp()

@@ -27,7 +27,7 @@ class Vocab {
     function init(){
         $this->resolvingServices = $this->CI->config->item('vocab_resolving_services');
     	$this->resolvedArray = array();
-    	return true;
+    	return $this;
     }
 
     function resolveLabel($label, $vocabType)
@@ -131,19 +131,6 @@ class Vocab {
                     return $subject;
         		}
             }
-        }
-        elseif(isset($this->resolvedArray['non-resolvable'][$term]))
-        {
-            return $this->resolvedArray['non-resolvable'][$term];
-        }
-        else
-        {
-            $subject['uriprefix'] = 'non-resolvable';
-            $subject['notation'] = $term;
-            $subject['value'] = $term;
-            $subject['about'] = '';
-            $this->resolvedArray['non-resolvable'][$term] = $subject;
-            return $subject;
         }
 	}
 
