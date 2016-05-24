@@ -9,6 +9,8 @@
     $licence_detail = false;
     $licence_group = false;
 
+    $display_order = array("licence","rightsStatement");
+
     if ($ro->rights) {
         foreach($ro->rights as $right) {
             if ($right['type']=='licence' && $right['licence_type']!='') {
@@ -70,35 +72,37 @@
         }
         if ($licence_detail) {
             $licence_content = '';
-            foreach ($ro->rights as $right) {
-                if($right['type']=='licence'){
-                    $itemprop = 'itemprop="license"';
-                    if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
-                        $licence_content .= '<p '.$itemprop.'>';
-                    if(isset($right['value']) && trim($right['value'])!=''){
-                        $description = html_entity_decode($right['value']);
-                        if(strip_tags($description) == $description)
-                            $description = nl2br($description);
-                        $licence_content .= $description.'<br />';
+            foreach($display_order as $order){
+                foreach ($ro->rights as $right) {
+                    if($right['type']=='licence' && $right['type']==$order){
+                        $itemprop = 'itemprop="license"';
+                        if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
+                            $licence_content .= '<p '.$itemprop.'>';
+                        if(isset($right['value']) && trim($right['value'])!=''){
+                            $description = html_entity_decode($right['value']);
+                            if(strip_tags($description) == $description)
+                                $description = nl2br($description);
+                            $licence_content .= $description.'<br />';
 
+                        }
+                        if(isset($right['rightsUri']) && $right['rightsUri']!='')
+                            $licence_content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
+                        $licence_content .= '</p>';
                     }
-                    if(isset($right['rightsUri']) && $right['rightsUri']!='')
-                        $licence_content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
-                    $licence_content .= '</p>';
-                }
-                if($right['type']=='rightsStatement'){
-                    if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
-                        $licence_content .= '<p>';
-                    if(isset($right['value']) && trim($right['value'])!=''){
-                        $description = html_entity_decode($right['value']);
-                        if(strip_tags($description) == $description)
-                            $description = nl2br($description);
-                        $licence_content .= $description.'<br />';
+                    if($right['type']=='rightsStatement'&& $right['type']==$order){
+                        if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
+                            $licence_content .= '<p>';
+                        if(isset($right['value']) && trim($right['value'])!=''){
+                            $description = html_entity_decode($right['value']);
+                            if(strip_tags($description) == $description)
+                                $description = nl2br($description);
+                            $licence_content .= $description.'<br />';
 
+                        }
+                        if(isset($right['rightsUri']) && $right['rightsUri']!='')
+                            $licence_content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
+                        $licence_content .= '</p>';
                     }
-                    if(isset($right['rightsUri']) && $right['rightsUri']!='')
-                        $licence_content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
-                    $licence_content .= '</p>';
                 }
             }
         }
