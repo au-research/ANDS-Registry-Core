@@ -14,6 +14,7 @@ class ActivitiesHandlerV2 extends Handler
 
     private $validActivitiesTypes = ['grant', 'program', 'project', 'award', 'dataset'];
     private $defaultFlags = "id,title,list_title,display_title,alt_display_title,alt_list_title,key,activity_status,type,identifier_type,identifier_value,description,subject_type,subject_value_resolved,identifier_type,identifier_value,funding_amount,funding_scheme,earliest_year,latest_year,record_created_timestamp,record_modified_timestamp,funders,administering_institution,researchers,principal_investigator";
+    private $defaultRanking = "title^2 title_search^0.5 identifier_value_search^0.4 researchers_search^0.2 description^0.001 _text_^0.000001";
 
     /**
      * Handling the grants method
@@ -196,22 +197,21 @@ class ActivitiesHandlerV2 extends Handler
         $gets = $this->ci->input->get() ? $this->ci->input->get() : [];
         $params = array_merge($gets, $defaultParams);
 
-        // q
-        if ($q = (isset($params['q'])) ? $params['q'] : null) {
-            // $this->ci->solr->setOpt('q', $this->canbeFuzzy($q));
-            $this->ci->solr->setOpt('q', $q);
-            $this->ci->solr->setOpt('defType', 'edismax');
-
-            if (isset($params['ranking'])) {
-                $ranking = $params['ranking'];
-            } else {
-                $ranking = 'title_search^1 researchers_search^0.2 identifier_value_search^0.4 description^0.001 _text_^0.000001';
-            }
-
-            $this->ci->solr->setOpt('qf', $ranking);
+        $ranking = $this->defaultRanking;
+        if (isset($params['ranking'])) {
+            $ranking = $params['ranking'];
         }
 
-        //Only search for activity
+        $this->ci->solr->setOpt('defType', 'edismax');
+        $this->ci->solr->setOpt('qf', $ranking);
+        $this->ci->solr->setOpt('pf', $ranking);
+
+        // q
+        if ($q = (isset($params['q'])) ? $params['q'] : null) {
+            $this->ci->solr->setOpt('q', $q);
+        }
+
+        // Only search for activity
         $this->ci->solr->setOpt('fq', '+class:"activity"');
 
         // type
@@ -219,40 +219,42 @@ class ActivitiesHandlerV2 extends Handler
             $this->ci->solr->setOpt('fq', '+type:("' . $type . '")');
         }
 
-        //funder
+        // funder
         if ($funder = (isset($params['funder'])) ? $params['funder'] : null) {
-            $this->ci->solr->setOpt('fq', '+funders_search:(' . $funder . ')');
+            $this->ci->solr->setOpt('fq',
+                '+(funders:("'.$funder.'") OR funders_search:(' . $funder . '))'
+            );
+            $this->ci->solr->setOpt('bq', 'funders_search:("'.$funder.'")^10');
         }
 
-        //subject
+        // subject
         if ($subject = (isset($params['subject'])) ? $params['subject'] : null) {
             $this->ci->solr->setOpt('fq',
                 '+(subject_value_resolved_search:(' . $subject . ') OR subject_value_unresolved:('.$subject.'))');
         }
 
-        //fundingScheme
+        // fundingScheme
         if ($fundingScheme = (isset($params['fundingScheme'])) ? $params['fundingScheme'] : null) {
             $this->ci->solr->setOpt('fq',
-                '+funding_scheme_search:(' . $fundingScheme . ')');
+                '+(funding_scheme:("' . $fundingScheme . '") OR funding_scheme_search:('.$fundingScheme.') OR funding_scheme:('.$fundingScheme.'))'
+            );
         }
 
-        //purl
+        // purl, exact match of a purl
         if ($purl = (isset($params['purl'])) ? $params['purl'] : null) {
             $this->ci->solr->setOpt('fq',
                 '+identifier_value:("' . $purl . '")');
         }
 
-        //identifier
-        $identifier = (isset($params['identifier'])) ? $params['identifier'] : null;
-        if ($identifier) {
+        // identifier
+        if ($identifier = (isset($params['identifier'])) ? $params['identifier'] : null) {
             $identifier = $this->canbeFuzzy($identifier);
             $this->ci->solr->setOpt('fq',
                 '+(identifier_value:(' . $identifier . ') OR identifier_value_search:('.$identifier.'))');
         }
 
-        //individual id
-        $id = (isset($params['id'])) ? $params['id'] : null;
-        if ($id) {
+        // individual identifier
+        if ($id = (isset($params['id'])) ? $params['id'] : null) {
             $this->ci->solr->setOpt('fq',
                 '+identifier_value:*' . urldecode($id) . '*');
         }
@@ -260,7 +262,8 @@ class ActivitiesHandlerV2 extends Handler
         //title
         $title = (isset($params['title'])) ? $params['title'] : null;
         if ($title) {
-            $this->ci->solr->setOpt('fq', 'title_search:(' . $title . ')');
+            $this->ci->solr->setOpt('fq', '+title_search:('.$title.')');
+            $this->ci->solr->setOpt('bq', 'title_search:("'.$title.'")^10');
         }
 
         //institution
@@ -271,9 +274,8 @@ class ActivitiesHandlerV2 extends Handler
 
         //description
         if ($descriptions = (isset($params['description'])) ? $params['description'] : null) {
-            $descriptions = $this->canbeFuzzy($descriptions);
-            $this->ci->solr->setOpt('fq',
-                '+description:(' . $descriptions . ')');
+            $this->ci->solr->setOpt('fq', '+description_value:(' . $descriptions . ')');
+            $this->ci->solr->setOpt('bq', 'description_value:("'.$descriptions.'")^10');
         }
 
         //principalInvestigator
@@ -284,30 +286,27 @@ class ActivitiesHandlerV2 extends Handler
 
         //researcher
         if ($researcher = (isset($params['researcher'])) ? $params['researcher'] : null) {
-            $researcher = $this->canbeFuzzy($researcher);
-            $this->ci->solr->setOpt('fq',
-                '+researchers_search:"' . $researcher . '"');
+            $this->ci->solr->setOpt('fq','+researchers_search:(' . $researcher . ')');
+            $this->ci->solr->setOpt('bq', 'researchers_search:("'.$researcher.'")^10');
         }
 
         //status
         if ($status = (isset($params['status'])) ? $params['status'] : null) {
-            $this->ci->solr->setOpt('fq', '+activity_status:(' . $status . ')');
+            $this->ci->solr->setOpt('fq', '+activity_status:("' . $status . '")');
         }
 
         //addedSince
         if ($addedSince = (isset($params['addedSince'])) ? $params['addedSince'] : null) {
             //convert to SOLR timestamp
             $addedSince = date('c', strtotime($addedSince)) . 'Z';
-            $this->ci->solr->setOpt('fq',
-                '+record_created_timestamp:[' . $addedSince . ' TO *]');
+            $this->ci->solr->setOpt('fq', '+record_created_timestamp:[' . $addedSince . ' TO *]');
         }
 
         //modifiedSince
         if ($modifiedSince = (isset($params['modifiedSince'])) ? $params['modifiedSince'] : null) {
             //convert to SOLR timestamp
             $modifiedSince = date('c', strtotime($modifiedSince)) . 'Z';
-            $this->ci->solr->setOpt('fq',
-                '+record_modified_timestamp:[' . $modifiedSince . ' TO *]');
+            $this->ci->solr->setOpt('fq', '+record_modified_timestamp:[' . $modifiedSince . ' TO *]');
         }
 
         //limit
