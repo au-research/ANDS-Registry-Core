@@ -13,7 +13,7 @@ class ActivitiesHandlerV2 extends Handler
 {
 
     private $validActivitiesTypes = ['grant', 'program', 'project', 'award', 'dataset'];
-    private $defaultFlags = "id,title,list_title,display_title,alt_display_title,alt_list_title,key,activity_status,type,identifier_type,identifier_value,description,subject_type,subject_value_resolved,identifier_type,identifier_value,funding_amount,funding_scheme,earliest_year,latest_year,record_created_timestamp,record_modified_timestamp,funders,administering_institution,researchers,principal_investigator";
+    private $defaultFlags = "id,title,list_title,display_title,alt_display_title,alt_list_title,key,activity_status,type,identifier_type,identifier_value,description,subject_type,subject_value_resolved,identifier_type,identifier_value,funding_amount,funding_scheme,earliest_year,latest_year,record_created_timestamp,record_modified_timestamp,funders,institutions,administering_institution,researchers,principal_investigator";
     private $defaultRanking = "title^10 title_search^0.5 identifier_value_search^0.4 researchers_search^0.2 description^0.001 _text_^0.000001";
 
     /**
@@ -291,7 +291,7 @@ class ActivitiesHandlerV2 extends Handler
         //institution
         if ($institutions = (isset($params['institution'])) ? $params['institution'] : null) {
             $this->ci->solr->setOpt('fq',
-                '+administering_institution_search:"' . $institutions . '"');
+                '+institutions_search:"' . $institutions . '"');
         }
 
         //description
@@ -354,7 +354,7 @@ class ActivitiesHandlerV2 extends Handler
                 switch ($facet) {
                     case "institutions":
                         $this->ci->solr->setFacetOpt('field',
-                            'administering_institution');
+                            'institutions');
                         break;
                     case "funders":
                         $this->ci->solr->setFacetOpt('field', 'funders');
@@ -459,6 +459,7 @@ class ActivitiesHandlerV2 extends Handler
             }
         }
 
+
         //fix activity_status
         $record = $this->changeKey($record, 'activity_status', 'status');
         $record = $this->changeKey($record, 'funding_amount',
@@ -473,7 +474,7 @@ class ActivitiesHandlerV2 extends Handler
             'dateTimeCreated');
         $record = $this->changeKey($record, 'funders', 'funder');
         $record = $this->changeKey($record, 'administering_institution',
-            'institutions');
+            'managingInstitution');
         $record = $this->changeKey($record, 'principal_investigator',
             'principalInvestigator');
 
