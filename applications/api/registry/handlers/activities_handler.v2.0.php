@@ -14,7 +14,7 @@ class ActivitiesHandlerV2 extends Handler
 
     private $validActivitiesTypes = ['grant', 'program', 'project', 'award', 'dataset'];
     private $defaultFlags = "id,title,list_title,display_title,alt_display_title,alt_list_title,key,activity_status,type,identifier_type,identifier_value,description,subject_type,subject_value_resolved,identifier_type,identifier_value,funding_amount,funding_scheme,earliest_year,latest_year,record_created_timestamp,record_modified_timestamp,funders,administering_institution,researchers,principal_investigator";
-    private $defaultRanking = "title^2 title_search^0.5 identifier_value_search^0.4 researchers_search^0.2 description^0.001 _text_^0.000001";
+    private $defaultRanking = "title^10 title_search^0.5 identifier_value_search^0.4 researchers_search^0.2 description^0.001 _text_^0.000001";
 
     /**
      * Handling the grants method
@@ -95,10 +95,17 @@ class ActivitiesHandlerV2 extends Handler
         }
 
         //shouldn't get here
-        throw new Exception("Unexpected Error");
+        // throw new Exception("Unexpected Error");
     }
 
-    private function browseFunders(){
+    /**
+     * GET /funders
+     * returns a list of funders object
+     *
+     * @return array
+     */
+    private function browseFunders()
+    {
         $this->ci->load->library('solr');
         $this->ci->solr
             ->init()
@@ -111,14 +118,14 @@ class ActivitiesHandlerV2 extends Handler
 
         //todo error checking
         $funderResult = $result['facet_counts']['facet_fields']['funders'];
-        for ($i = 0; $i < sizeof($funderResult)-1; $i+=2) {
+        for ($i = 0; $i < sizeof($funderResult) - 1; $i += 2) {
             $funderName = $funderResult[$i];
             $this->ci->solr->init()->setCore('portal')
                 ->setOpt('rows', 1)
                 ->setOpt('fl', 'id,title,key,type')
                 ->setOpt('fq', '+class:party')
                 ->setOpt('fq', '+type:group')
-                ->setOpt('fq', 'title:"'.$funderName.'"');
+                ->setOpt('fq', 'title:"' . $funderName . '"');
             $thisFunderResult = $this->ci->solr->executeSearch(true);
 
             if ($thisFunderResult['response']['numFound'] > 0) {
@@ -140,12 +147,19 @@ class ActivitiesHandlerV2 extends Handler
         return $funders;
     }
 
+    /**
+     * Look up a single ID given a type
+     * Currently works for /funder
+     *
+     * @param $id
+     * @param $type
+     * @return mixed
+     */
     private function lookup($id, $type) {
         $this->ci->load->library('solr');
         $this->ci->solr->setOpt('fq', '+id:'.$id);
 
         $params = $this->ci->input->get();
-
 
         /**
          * flags setup
@@ -189,6 +203,14 @@ class ActivitiesHandlerV2 extends Handler
         return $this->formatRecord($record, $flags = explode(',', $fl));
     }
 
+    /**
+     * Returns a result set for the search
+     * Parameters are provided by $_GET
+     *
+     * @param array $defaultParams
+     * @return array
+     * @throws Exception
+     */
     private function search($defaultParams = array())
     {
         $this->ci->load->library('solr');
@@ -259,11 +281,11 @@ class ActivitiesHandlerV2 extends Handler
                 '+identifier_value:*' . urldecode($id) . '*');
         }
 
-        //title
+        // title
         $title = (isset($params['title'])) ? $params['title'] : null;
         if ($title) {
             $this->ci->solr->setOpt('fq', '+title_search:('.$title.')');
-            $this->ci->solr->setOpt('bq', 'title_search:("'.$title.'")^10');
+            $this->ci->solr->setOpt('bq', 'title_search:"'.$title.'"^10 title_search:"'.$title.'"~1000');
         }
 
         //institution
@@ -275,7 +297,7 @@ class ActivitiesHandlerV2 extends Handler
         //description
         if ($descriptions = (isset($params['description'])) ? $params['description'] : null) {
             $this->ci->solr->setOpt('fq', '+description_value:(' . $descriptions . ')');
-            $this->ci->solr->setOpt('bq', 'description_value:("'.$descriptions.'")^10');
+            $this->ci->solr->setOpt('bq', 'description_value:"'.$descriptions.'"^10 description_value:"'.$descriptions.'"~1000');
         }
 
         //principalInvestigator
@@ -287,7 +309,7 @@ class ActivitiesHandlerV2 extends Handler
         //researcher
         if ($researcher = (isset($params['researcher'])) ? $params['researcher'] : null) {
             $this->ci->solr->setOpt('fq','+researchers_search:(' . $researcher . ')');
-            $this->ci->solr->setOpt('bq', 'researchers_search:("'.$researcher.'")^10');
+            $this->ci->solr->setOpt('bq', 'researchers_search:"'.$researcher.'"^10 researchers_search:"'.$researcher.'"~1000');
         }
 
         //status
@@ -379,7 +401,7 @@ class ActivitiesHandlerV2 extends Handler
             $record = $this->formatRecord($record, $flags = explode(',', $fl));
         }
 
-        //response setup
+        // response setup
         $response = array(
             'numFound' => $result['response']['numFound'],
             'offset' => (int) $offset,
@@ -387,16 +409,18 @@ class ActivitiesHandlerV2 extends Handler
             'records' => $records
         );
 
+        // facets setup if required
         if ($this->ci->input->get('facets')) {
             $response['facets'] = $facets;
         }
 
+        // debug response setup if required
         if ($debug = isset($params['debug']) ? true : false) {
             $response['solrURL'] = $solrURL;
             $response['debug'] = $result['debug'];
         }
 
-        // HATEOAS
+        // HATEOAS for various types and funder
         $response['links'] = [];
         foreach ($this->validActivitiesTypes as $type) {
             $link = [
@@ -413,6 +437,13 @@ class ActivitiesHandlerV2 extends Handler
         return $response;
     }
 
+    /**
+     * Format a record to be displayed with business rules
+     *
+     * @param $record
+     * @param $flags
+     * @return mixed
+     */
     private function formatRecord($record, $flags){
 
         // fix values
@@ -545,6 +576,13 @@ class ActivitiesHandlerV2 extends Handler
         return $record;
     }
 
+    /**
+     * Helper function
+     * Return the fuzziable form of a field
+     *
+     * @param $field
+     * @return mixed|string
+     */
     private function canbeFuzzy($field){
         //fuzzyable if not exact
         if (strpos($field, '"') === false) {
@@ -596,7 +634,7 @@ class ActivitiesHandlerV2 extends Handler
     private function getHateOASLink($record = null, $type)
     {
 
-        $current = "http://". $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $current = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         /**
          * hack
@@ -605,10 +643,10 @@ class ActivitiesHandlerV2 extends Handler
          */
         $arr = explode("/activities", $current, 2);
         $first = $arr[0];
-        $current = $first.'/activities';
+        $current = $first . '/activities';
 
         //remove last /
-        if (substr($current, -1) == '/'){
+        if (substr($current, -1) == '/') {
             $current = substr($current, 0, -1);
         }
 
@@ -617,21 +655,23 @@ class ActivitiesHandlerV2 extends Handler
 
         if ($type == "self") {
             if (in_array($record['type'], $this->validActivitiesTypes)) {
-                $fragments[] = $record['type'].'s';
+                $fragments[] = $record['type'] . 's';
             } elseif ($record['type'] === 'group') {
                 $fragments[] = "funders";
             }
             $fragments[] = $record['id'];
-        } elseif (in_array($type, $this->validActivitiesTypes) && $record !== null) {
+        } elseif (in_array($type,
+                $this->validActivitiesTypes) && $record !== null
+        ) {
             if (in_array($record['type'], $this->validActivitiesTypes)) {
-                $fragments[] = $record['type'].'s';
+                $fragments[] = $record['type'] . 's';
             } elseif ($record['type'] === 'group') {
                 $fragments[] = "funders";
             }
             $fragments[] = $record['id'];
-            $fragments[] = $type.'s';
+            $fragments[] = $type . 's';
         } elseif ($record === null) {
-            $fragments[] = $type.'s';
+            $fragments[] = $type . 's';
         }
 
         return implode('/', $fragments);
