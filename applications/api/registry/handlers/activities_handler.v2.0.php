@@ -508,8 +508,8 @@ class ActivitiesHandlerV2 extends Handler
         ) {
             foreach ($record['subject_type'] as $key => $idType) {
                 if (array_key_exists('subject_value_resolved', $record) &&
-                    array_key_exists($key,
-                        $record['subject_value_resolved'])
+                    is_array($record['subject_value_resolved']) &&
+                    array_key_exists($key, $record['subject_value_resolved'])
                 ) {
                     $subjects[] = $record['subject_value_resolved'][$key];
                 }

@@ -511,6 +511,12 @@ class Sync_extension extends ExtensionBase{
                 $json['administering_institution'] = $administeringInstitution;
             }
 
+            //institutions
+            $institutions = $this->ro->getInstitutions($relatedObjects);
+            if (sizeof($institutions) > 0) {
+                $json['institutions'] = $institutions;
+            }
+
             //funders
             $funders = $this->ro->getFunders($gXPath, $relatedObjects);
             if (sizeof($funders) > 0) {

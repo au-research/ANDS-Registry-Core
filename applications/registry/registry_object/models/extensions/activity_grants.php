@@ -123,7 +123,13 @@ class Activity_grants_extension extends ExtensionBase
 
         //description[type=researchers]
         foreach ($gXPath->query('//ro:description[@type="researchers"]') as $node) {
-            $researchers[] = strip_tags(html_entity_decode($node->nodeValue));
+            $researchersString = strip_tags(html_entity_decode($node->nodeValue));
+            $researchersDescriptions = explode(';', $researchersString);
+            foreach ($researchersDescriptions as $key=>&$researcher) {
+                $researcher = trim($researcher);
+                if ($researcher === "") unset($researchersDescriptions[$key]);
+            }
+            $researchers = array_merge($researchers, $researchersDescriptions);
         }
 
         //relatedInfo[type=party][relation=hasPrincipalInvestigator|hasParticipant]
@@ -160,8 +166,8 @@ class Activity_grants_extension extends ExtensionBase
 
     /**
      * Returns all the institutions participating in this research grant
-     * relatedObject[relation=isManagedBy|hasParticipant][type=group][class=party]
-     *
+     * DEPRECATED: relatedObject[relation=isManagedBy|hasParticipant][type=group][class=party]
+     * INSTEAD: relatedObject[type=group][class=party]
      * @param bool|false $relatedObjects
      * @return array
      */
@@ -175,7 +181,6 @@ class Activity_grants_extension extends ExtensionBase
             foreach ($relatedObjects as $relatedObject) {
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                     if ($relatedObject['class'] == 'party'
-                        && ($relatedObject['relation_type'] == 'isManagedBy' || $relatedObject['relation_type'] == 'hasParticipant')
                         && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
                             'type'))) == 'group'
                     ) {
