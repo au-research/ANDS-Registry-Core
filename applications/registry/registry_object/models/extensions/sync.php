@@ -677,7 +677,7 @@ class Sync_extension extends ExtensionBase{
 
                 // find out the right type, only party will have to become party_multi or party_one
                 $relatedObjectType = $relatedObject['class'];
-                if ($relatedObjectType == 'party') {
+                if ($relatedObjectType == 'party' && $relatedObject['registry_object_id']) {
                     if (in_array($relatedObject['type'], $this->party_multi_types)) {
                         $relatedObjectType = 'party_multi';
                     } else {
