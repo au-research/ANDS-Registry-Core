@@ -324,14 +324,14 @@ class DCI extends ROHandler {
             $licence = '';
             $rights_Licensing = $this->DCIRoot->addChild('Rights_Licensing');
             foreach($licencing as $rl){
-                if($rl['type'] == 'rightsStatement' || $rl['type'] == 'accessRights'){
+                if($rl['type'] == 'rightsStatement' || $rl['type'] == 'accessRights' || $rl['type'] == 'rights'){
                     if($rl['value'] != '')
-                        $rights .= $rl['value'].' ';
-                    if($rl['value'] == '' && isset($rl['rightsUri']))
-                        $rights .= $rl['rightsUri'].' ';
+                        $rights .= (string) $rl['value'].' ';
+                    if(isset($rl['rightsUri']))
+                        $rights .= (string) $rl['rightsUri'].' ';
                 }
                 if($rl['type'] == 'licence')
-                    $licence .= $rl['value'];
+                    $licence .= (string) $rl['value'];
             }
             $rights_Licensing->addChild('RightsStatement', str_replace('&', '&amp;', $rights));
             $rights_Licensing->addChild('LicenseStatement', str_replace('&', '&amp;', $licence));
