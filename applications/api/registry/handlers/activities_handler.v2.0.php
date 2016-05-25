@@ -312,22 +312,28 @@ class ActivitiesHandlerV2 extends Handler
             $this->ci->solr->setOpt('bq', 'researchers_search:"'.$researcher.'"^10 researchers_search:"'.$researcher.'"~1000');
         }
 
-        //status
+        // status
         if ($status = (isset($params['status'])) ? $params['status'] : null) {
             $this->ci->solr->setOpt('fq', '+activity_status:("' . $status . '")');
         }
 
-        //addedSince
+        // addedSince
         if ($addedSince = (isset($params['addedSince'])) ? $params['addedSince'] : null) {
-            //convert to SOLR timestamp
+            //convert to SOLR timestamp, if it's only a year component, make it beginning
+            if (strlen($addedSince) === 4) {
+                $addedSince .= '-01-01';
+            }
             $addedSince = date('c', strtotime($addedSince)) . 'Z';
             $this->ci->solr->setOpt('fq', '+record_created_timestamp:[' . $addedSince . ' TO *]');
         }
 
-        //modifiedSince
+        // modifiedSince
         if ($modifiedSince = (isset($params['modifiedSince'])) ? $params['modifiedSince'] : null) {
-            //convert to SOLR timestamp
-            $modifiedSince = date('c', strtotime($modifiedSince)) . 'Z';
+            //convert to SOLR timestamp, if it's only a year component, make it beginning
+            if (strlen($modifiedSince) === 4) {
+                $modifiedSince .= '-01-01';
+            }
+            $modifiedSince = date('Y-m-d\TH:i:s\Z', strtotime($modifiedSince));
             $this->ci->solr->setOpt('fq', '+record_modified_timestamp:[' . $modifiedSince . ' TO *]');
         }
 
