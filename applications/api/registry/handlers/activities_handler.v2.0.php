@@ -365,6 +365,13 @@ class ActivitiesHandlerV2 extends Handler
                     case "fundingScheme":
                         $this->ci->solr->setFacetOpt('field', 'funding_scheme');
                         break;
+                    case "managingInstitution":
+                        $this->ci->solr->setFacetOpt('field',
+                            'administering_institution');
+                        break;
+                    case "status":
+                        $this->ci->solr->setFacetOpt('field', 'activity_status');
+                        break;
                 }
             }
         }
