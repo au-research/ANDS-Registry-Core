@@ -113,7 +113,7 @@ function format_relationship($from_class, $relationship_type, $origin=false, $to
 	);
 
 	//$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
-	if ($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER') {
+	if ($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER' && $origin != 'GRANTS') {
 		//reverse
 		return (isset($typeArray[$to_class][$relationship_type]) ? $typeArray[$to_class][$relationship_type][1] : from_camel_case($relationship_type));
 	} else {
