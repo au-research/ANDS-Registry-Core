@@ -377,8 +377,8 @@ class ActivitiesHandlerV2 extends Handler
         }
 
         // Sorting facets
-        if ($this->ci->input->get('facetsort')) {
-            $this->ci->solr->setFacetOpt('sort', $this->ci->input->get('facetsort'));
+        if ($this->ci->input->get('facetSort')) {
+            $this->ci->solr->setFacetOpt('sort', $this->ci->input->get('facetSort'));
         }
 
         //flags setup
