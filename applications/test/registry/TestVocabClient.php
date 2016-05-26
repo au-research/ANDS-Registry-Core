@@ -66,6 +66,18 @@ class TestVocabClient extends UnitTest
         $this->assertEquals($broader["value"], "COMMERCE, MANAGEMENT, TOURISM AND SERVICES");
     }
 
+    public function testGetBroaderSubjects060410()
+    {
+        $this->ci->vocab->init()->resolveSubject("060410", "anzsrc-for");
+        $result = $this->ci->vocab->getBroaderSubjects("http://purl.org/au-research/vocabulary/anzsrc-for/2008/", "060410");
+
+        //has 1 broader that is 0604 and 06
+        $this->assertEquals(2, sizeof($result));
+        $broaders = array_values($result);
+        $this->assertEquals($broaders[0]["notation"], "0604");
+        $this->assertEquals($broaders[1]["notation"], "06");
+    }
+
     public function setUp()
     {
         $this->ci->load->library('vocab');

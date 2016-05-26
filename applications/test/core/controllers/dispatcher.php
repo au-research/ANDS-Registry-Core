@@ -37,11 +37,18 @@ class Dispatcher extends MX_Controller
 
         // Selective testing if params is specified that is not index or test
         $testSuites = array();
+        $specificTest = null;
         if(sizeof($params) > 0) {
             if ($params[0]!='index' && $params[0]!='test') {
                 foreach ($params as $suite) {
                     if (array_key_exists($suite, $testableModules)) {
                         $testSuites[$suite] = $testableModules[$suite];
+
+                        // if comes in a form of php index.php test <suite> <specific>
+                        if (isset($params[1]) && in_array($params[1], $testSuites[$suite])) {
+                            // set specific test to the <specific> only if it matches
+                            $specificTest = $params[1];
+                        }
                     }
                 }
             } else {
@@ -50,6 +57,7 @@ class Dispatcher extends MX_Controller
         } else {
             $testSuites = $testableModules;
         }
+
 
         // create the test result path if not exists, prime for writing
         if (!file_exists($this->testResultPath)) {
@@ -62,7 +70,14 @@ class Dispatcher extends MX_Controller
             'tests' => array()
         );
         if (sizeof($testSuites) > 0) {
+
             foreach ($testSuites as $testSuite=>$tests) {
+
+                // only run the specific test provided
+                if ($specificTest !== null) {
+                    $tests = [$specificTest];
+                }
+
                 $result = $this->run($testSuite, $tests);
                 $results['tests'][$testSuite] = $result;
                 $result['testSuiteName'] = $testSuite;
