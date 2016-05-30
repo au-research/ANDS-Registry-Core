@@ -1170,7 +1170,7 @@ class Data_source extends MX_Controller {
 			} else $oai_msg = '';
 
 			if($ds->advanced_harvest_mode=='INCREMENTAL') {
-				$incr_msg = 'From date: '.date('Y-m-d H:i:s', strtotime($ds->last_harvest_run_date)).NL.'To date: '.date('Y-m-d H:i:s', $harvestDate).NL;
+				$incr_msg = 'From date: '.date('Y-m-d H:i:s', strtotime($ds->last_harvest_run_date)).NL.'To date: '.date('Y-m-d H:i:s', $nextRun).NL;
 			} else $incr_msg = '';
 
 			$scheduled_date = date( 'Y-m-d H:i:s P', $nextRun);

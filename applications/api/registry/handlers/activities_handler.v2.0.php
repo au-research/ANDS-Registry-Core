@@ -291,7 +291,7 @@ class ActivitiesHandlerV2 extends Handler
         //institution
         if ($institutions = (isset($params['institution'])) ? $params['institution'] : null) {
             $this->ci->solr->setOpt('fq',
-                '+institutions_search:"' . $institutions . '"');
+                '+institutions_search:(' . $institutions . ')');
         }
 
         //description

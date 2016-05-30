@@ -347,9 +347,9 @@ function removeBadValue($string){
 }
 
 function getNextHarvestDate($harvestDate, $harvestFrequency){
-    if($harvestFrequency =='once only' || $harvestFrequency == '')
-        return null;
     $now = time();
+    if($harvestFrequency =='once only' || $harvestFrequency == '')
+        return $now;
     if($harvestDate)
         $nextHarvest = $harvestDate;
     else
