@@ -185,9 +185,15 @@ if(get_config_item('environment_logo')){
                     <?php endif; ?>
 
 					  <?php if(($this->user->hasFunction('REGISTRY_USER')) && (mod_enabled('bulk_tag'))): ?>
-						  <li class=""><?php echo anchor(apps_url('bulk_tag'), '<i class="icon-indent-left icon"></i> Bulk Tag'); ?></li>
+
+                          <li class=""><?php echo anchor(apps_url('bulk_tag'), '<i class="icon-indent-left icon"></i> Bulk Tag'); ?></li>
+                          <li class="divider"></li>
 					  <?php endif; ?>
 
+                      <?php if($this->user->hasFunction('REGISTRY_USER') ):?>
+                          <li class=""><?php echo anchor(apps_url('tr_dci_preview/'), '<i class="icon-indent-left icon"></i> DCI Preview'); ?></li>
+
+                      <?php endif; ?>
                <!--     <?php if (($this->user->hasFunction('PUBLIC')) && mod_enabled('abs_sdmx_querytool')): ?>
                       <li class="divider"></li>
                       <li class=""><?php echo anchor(apps_url('abs_sdmx_querytool'), 'ABS SDMX Query Tool');?></li>

@@ -56,9 +56,15 @@ class DCIMethod extends MethodHandler
 			{
 				$CI->load->model('registry_object/registry_objects','ro');
                 $CI->load->model('data_source/data_sources','ds');
-                $this->ro = new _registry_object($result['id']);
-                $this->populate_resource($result['id'], true);
-                $rifcsOutput[] = $this->ro_handle('dci');
+                try{
+                    $this->ro = new _registry_object($result['id']);
+                    $this->populate_resource($result['id'], true);
+                    $rifcsOutput[] = $this->ro_handle('dci');
+                }
+                catch(Exception $e){
+                    // do nothing
+                }
+
 			}
 		}
 		// Bubble back the output status
@@ -70,8 +76,8 @@ class DCIMethod extends MethodHandler
         //local SOLR index for fast searching
         $ci =& get_instance();
         $ci->load->library('solr');
-        $ci->solr->clearOpt('fq');
-        $ci->solr->setOpt('fq', '+id:'.$id);
+        $ci->solr->init();
+        $ci->solr->setOpt('q', 'id:'.$id);
         $this->overrideExportable = $overrideExportable;
         $result = $ci->solr->executeSearch(true);
         if(sizeof($result['response']['docs']) == 1) {

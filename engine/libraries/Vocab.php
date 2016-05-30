@@ -27,7 +27,7 @@ class Vocab {
     function init(){
         $this->resolvingServices = $this->CI->config->item('vocab_resolving_services');
     	$this->resolvedArray = array();
-    	return true;
+    	return $this;
     }
 
     function resolveLabel($label, $vocabType)
@@ -95,7 +95,8 @@ class Vocab {
 
     // NB here: $term is the concept's notation
 	function resolveSubject($term, $vocabType){
-		
+		$term = trim($term);
+        $vocabType = trim($vocabType);
         if($vocabType != '' && is_array($this->resolvingServices)
            && array_key_exists($vocabType, $this->resolvingServices)
            && isset($this->resolvingServices[$vocabType]['resolvingService']))
@@ -110,10 +111,10 @@ class Vocab {
             else
             {
                 $content = $this->post($this->constructResorceUriString($resolvingService, $uriprefix, $term));
-    		    $json = json_decode($content, false);
-        		if($json){
-        			$this->result = $json;
-                    
+                $json = json_decode($content, false);
+                if($json){
+                    $this->result = $json;
+
                     $subject['uriprefix'] = $uriprefix;
                     $subject['notation'] = $term;
                     $subject['value'] = $json->{'result'}->{'primaryTopic'}->{'prefLabel'}->{'_value'};
@@ -121,18 +122,18 @@ class Vocab {
                     $this->resolvedArray[$uriprefix][$term] = $subject;
                     $this->resolvedArray[$uriprefix][$term]['broaderTerms'] = array();
                     $this->setBroaderSubjects($resolvingService, $uriprefix, $term, $vocabType);
-        			return  $subject;
-        		}else{
-        			$subject['uriprefix'] = $uriprefix;
+                    return  $subject;
+                }else{
+                    $subject['uriprefix'] = $uriprefix;
                     $subject['notation'] = $term;
                     $subject['value'] = $term;
                     $subject['about'] = '';
-                    $this->resolvedArray[$uriprefix][$term] = $subject;
+                    //don't cache errored unresolvable in case it was just a glitch try again next time
+                    //$this->resolvedArray[$uriprefix][$term] = $subject;
                     return $subject;
-        		}
+                }
             }
-        }
-        elseif(isset($this->resolvedArray['non-resolvable'][$term]))
+        }elseif(isset($this->resolvedArray['non-resolvable'][$term]))
         {
             return $this->resolvedArray['non-resolvable'][$term];
         }
@@ -145,7 +146,7 @@ class Vocab {
             $this->resolvedArray['non-resolvable'][$term] = $subject;
             return $subject;
         }
-	}
+    }
 
     // TODO: Future work is to support getting broader subjects
     // starting with a concept's IRI, rather than notation.

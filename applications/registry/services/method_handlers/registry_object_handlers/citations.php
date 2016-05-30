@@ -429,21 +429,24 @@ Y2  - '.date("Y-m-d")."
         if($query!=''){
             $urls = $this->gXPath->query($query);
             foreach($urls as $url) {
-                $sourceUrl = $url->nodeValue;
-                if($output=='endNote'){
+                $sourceUrl = trim($url->nodeValue);
+                 if($output=='endNote' && $type!="url"){
                     $resolved = identifierResolution($sourceUrl,$type);
-                    $sourceUrl = $resolved['href'];
+                    $sourceUrl = trim($resolved['href']);
                 }elseif($output == 'coins'){
                     if(strpos($sourceUrl,"doi.org/")) $sourceUrl ="info:doi".substr($sourceUrl,strpos($sourceUrl,"doi.org/")+8);
                     elseif($type=='doi') $sourceUrl = "info:doi".$sourceUrl;
                 }
             }
-        } else {
-            if($output=='endNote'){
-                $sourceUrl = portal_url();
-            }
         }
 
+        if($output=='endNote'){
+            if($sourceUrl == ''){
+                $sourceUrl = portal_url().$this->ro->slug;
+            }else{
+                $sourceUrl .= ", ".portal_url().$this->ro->slug;
+            }
+        }
         return  $sourceUrl;
     }
 
@@ -565,25 +568,27 @@ Y2  - '.date("Y-m-d")."
                 $key = $partyFunder->key;
 
                 $grant_objects = $CI->mro->getAllByKey($key);
-                foreach ($grant_objects as $grant_object)
-                {
-                    $grant_sxml = $grant_object->getSimpleXML(NULL, true);
-                    if($grant_object->status == PUBLISHED){
-                        $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
+                if($grant_objects){
+                    foreach ($grant_objects as $grant_object)
+                    {
+                        $grant_sxml = $grant_object->getSimpleXML(NULL, true);
+                        if($grant_object->status == PUBLISHED){
+                            $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
 
-                        $related_party = array();
-                        $relationships = $grant_object->getAllRelatedObjects();
-                        foreach ($relationships as $rr) {
-                            if (in_array($rr['class'], ['party']) && in_array($rr['relation_type'], ['isFunderOf','isFundedBy'])) {
-                                array_push($related_party, $rr);
+                            $related_party = array();
+                            $relationships = $grant_object->getAllRelatedObjects();
+                            foreach ($relationships as $rr) {
+                                if (in_array($rr['class'], ['party']) && in_array($rr['relation_type'], ['isFunderOf','isFundedBy'])) {
+                                    array_push($related_party, $rr);
+                                }
                             }
-                        }
 
-                        if (is_array($grant_id))
-                        {
-                            if (is_array($related_party) && isset($related_party[0]))
+                            if (is_array($grant_id))
                             {
-                                $funders[] = $related_party[0]['title'];
+                                if (is_array($related_party) && isset($related_party[0]))
+                                {
+                                    $funders[] = $related_party[0]['title'];
+                                }
                             }
                         }
                     }

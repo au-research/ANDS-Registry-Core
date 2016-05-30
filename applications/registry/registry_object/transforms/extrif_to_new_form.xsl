@@ -84,7 +84,7 @@
 			<a href="{$base_url}registry_object/view/{$registry_object_id}" title="" class="current"><xsl:value-of select="$display_title"/></a>
 			<a href="#" class="">Edit</a>
 			<div class="pull-right"><span class="label"><i class="icon-question-sign icon-white"></i><a class="youtube" href="http://www.youtube.com/watch?v=noeAISwMkNE" style="color:white;" > New to this screen? Take a tour!</a></span>	<xsl:text> </xsl:text>			
-				<span class="label"><i class="icon-question-sign icon-white"></i> <a id="aro_help_link" target="_blank" style="color:white;" href="http://ands.org.au/guides/cpguide/"> Help</a></span>
+				<span class="label"><i class="icon-question-sign icon-white"></i> <a id="aro_help_link" target="_blank" style="color:white;" href="http://guides.ands.org.au/rda-cpg/"> Help</a></span>
 			</div>
 		</div>
 		<form class="form-horizontal" id="edit-form" autocomplete="off">
@@ -375,7 +375,7 @@
 		<!-- Record Admin-->
 		<div id="admin" class="pane">
 			<fieldset>
-				<legend>Record Administration  <sup><a class="muted" href=" http://ands.org.au/guides/cpguide/" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Record Administration  <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/recordadmintab" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 				<xsl:variable name="ro_type">
 					<xsl:apply-templates select="ro:collection/@type | ro:activity/@type | ro:party/@type  | ro:service/@type"/>
 				</xsl:variable>
@@ -386,7 +386,7 @@
 				<div class="control-group">
 					<label class="control-label" for="ds">
 						Data Source
-						<sup><a class="muted" href="http://ands.org.au/guides/cpguide/cpgdsaaccount.html" target="_blank" title="View Content Providers' Guide">?</a></sup>
+						<sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/dsaccount" target="_blank" title="View Content Providers' Guide">?</a></sup>
 					</label>
 					<div class="controls">
 						<input type="text" id="data_source_title" class="input-large" name="ds" value="{$dataSourceTitle}" disabled="disabled"/>
@@ -396,7 +396,7 @@
 				<div class="control-group warning">
 					<label class="control-label" for="key">						
 						Key
-						<sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgkey.html" target="_blank" title="View Content Providers' Guide">?</a></sup>
+						<sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/key" target="_blank" title="View Content Providers' Guide">?</a></sup>
 					</label>
 					<div class="controls">
 						<input type="text" class="input-xlarge" required="" name="key" value="{ro:key}"/>
@@ -421,7 +421,7 @@
 				<div class="control-group">
 					<label class="control-label" for="class">
 						Class
-						<sup><a class="muted" href="http://ands.org.au/guides/cpguide/cpgdsaaccount.html" target="_blank" title="View Content Providers' Guide">?</a></sup>
+						<sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/describecpas" target="_blank" title="View Content Providers' Guide">?</a></sup>
 					</label>
 
 					<div class="controls">
@@ -442,7 +442,7 @@
 				<div class="control-group">
 					<label class="control-label" for="group">
 						Group
-						<sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpggroup.html" target="_blank" title="View Content Providers' Guide">?</a></sup>
+						<sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/group" target="_blank" title="View Content Providers' Guide">?</a></sup>
 					</label>
 					<div class="controls">
 						<input type="text" class="rifcs-type rifcs-type-loading" vocab="GroupSuggestor" name="group" required="" value="{@group}"/>
@@ -453,7 +453,7 @@
 				<div class="control-group">
 					<label class="control-label" for="date_modified">
 						Date Modified
-						<sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgdatemod.html" target="_blank" title="View Content Providers' Guide">?</a></sup>
+						<sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/datemod" target="_blank" title="View Content Providers' Guide">?</a></sup>
 					</label>
 					<div class="controls">
 						<div class="input-append">
@@ -466,7 +466,7 @@
 					<div class="control-group">
 						<label class="control-label" for="date_accessioned">
 							Date Accessioned
-							<sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgdateaccessioned.html" target="_blank" title="View Content Providers' Guide">?</a></sup>
+							<sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/dateaccessioned" target="_blank" title="View Content Providers' Guide">?</a></sup>
 						</label>
 						<div class="controls">
 							<div class="input-append">
@@ -494,7 +494,7 @@
 	<xsl:template name="namesTab">
 		<div id="names" class="pane">
 			<fieldset>
-				<legend>Names <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgname.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Names <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/name" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 
 				<xsl:apply-templates
 					select="ro:collection/ro:name | ro:activity/ro:name | ro:party/ro:name  | ro:service/ro:name"/>
@@ -510,7 +510,7 @@
 	<xsl:template name="datesTab">
 		<div id="dates" class="pane">
 			<fieldset>
-				<legend>Dates <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgdates.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Dates <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/dates" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 
 				<xsl:apply-templates
 					select="ro:collection/ro:dates | ro:activity/ro:dates | ro:party/ro:dates  | ro:service/ro:dates"/>
@@ -614,7 +614,7 @@
 	<xsl:template name="descriptionRightsTab">
 		<div id="descriptions_rights" class="pane">
 			<fieldset>
-				<legend>Descriptions  <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgdescription.html" target="_blank" title="View Content Providers' Guide">?</a></sup> / Rights <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgrights.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Descriptions  <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/description" target="_blank" title="View Content Providers' Guide">?</a></sup> / Rights <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/rights" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 				<xsl:apply-templates
 					select="ro:collection/ro:description | ro:activity/ro:description | ro:party/ro:description  | ro:service/ro:description"/>
 				<xsl:apply-templates
@@ -632,7 +632,7 @@
 	<xsl:template name="accesspolicyTab">
 		<div id="accesspolicies" class="pane">
 			<fieldset>
-				<legend>Access Policy <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgservice-accesspolicy.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Access Policy <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/service-accesspolicy" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 				<xsl:apply-templates select="ro:service/ro:accessPolicy"/>
 				<div class="separate_line"/>
 				<button class="btn btn-primary addNew" type="accessPolicy" add_new_type="accessPolicy">
@@ -646,7 +646,7 @@
 	<xsl:template name="citationInfoTab">
 		<div id="citationInfos" class="pane">
 			<fieldset>
-				<legend>Citation Information <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgcitation.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Citation Information <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/citation" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 				<xsl:apply-templates select="ro:collection/ro:citationInfo"/>
 				<div class="separate_line"/>
 				<div class="btn-group">
@@ -859,7 +859,7 @@
 	<xsl:template name="subjectsTab">
 		<div id="subjects" class="pane">
 			<fieldset>
-				<legend>Subjects <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgsubject.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Subjects <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/subject" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 				<xsl:apply-templates
 					select="ro:collection/ro:subject | ro:activity/ro:subject | ro:party/ro:subject  | ro:service/ro:subject"/>
 				<div class="separate_line"/>
@@ -874,7 +874,7 @@
 	<xsl:template name="identifiersTab">
 		<div id="identifiers" class="pane">
 			<fieldset>
-				<legend>Identifiers <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgidentifiers.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Identifiers <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/identifiers" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 				<xsl:apply-templates
 					select="ro:collection/ro:identifier | ro:activity/ro:identifier | ro:party/ro:identifier  | ro:service/ro:identifier"/>
 				<div class="separate_line"/>
@@ -892,7 +892,7 @@
 					<xsl:if test="count(//ro:relatedObject) > $maxRelatedDisp">
 					(<xsl:value-of select="count(//ro:relatedObject)"/>) <br/> No More than <xsl:value-of select="$maxRelatedDisp"/> related Objects can be displayed
 					</xsl:if>
-					<sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgrelatedobject.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+					<sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/relatedobject" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 					<xsl:for-each select="ro:collection/ro:relatedObject | ro:activity/ro:relatedObject | ro:party/ro:relatedObject  | ro:service/ro:relatedObject">
 						<xsl:if test="position() &lt;= $maxRelatedDisp">
 							<xsl:apply-templates select="." mode="form"/>
@@ -918,7 +918,7 @@
 	<xsl:template name="relatedinfosTab">
 		<div id="relatedinfos" class="pane">
 			<fieldset>
-				<legend>Related Information <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgrelatedinfo.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Related Information <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/relatedinfo" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 				<xsl:apply-templates
 					select="ro:collection/ro:relatedInfo | ro:activity/ro:relatedInfo | ro:party/ro:relatedInfo | ro:service/ro:relatedInfo"/>
 				<div class="separate_line"/>
@@ -935,7 +935,7 @@
 				Do not describe collection coverage here. Please use the Coverage tab instead.
 			</div>
 			<fieldset>
-				<legend>Locations <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpglocationintro.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Locations <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/locationintro" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 				<xsl:apply-templates
 					select="ro:collection/ro:location | ro:activity/ro:location | ro:party/ro:location  | ro:service/ro:location"/>
 				<div class="separate_line"/>
@@ -953,7 +953,7 @@
 				To record dates associated with an event in the life cycle of the collection (eg. date created) please use the Dates tab.
 			</div>
 			<fieldset>
-				<legend>Coverage <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgcoverage.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Coverage <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/coverage" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 				<xsl:apply-templates
 				select="ro:collection/ro:coverage | ro:activity/ro:coverage | ro:party/ro:coverage | ro:service/ro:coverage"/>
 				<div class="aro_box" type="coverage">
@@ -970,7 +970,7 @@
 	<xsl:template name="ExistenceDatesTab">
 		<div id="existencedates" class="pane">
 			<fieldset>
-				<legend>Existence Dates <sup><a class="muted" href="http://www.ands.org.au/guides/cpguide/cpgexistencedates.html" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
+				<legend>Existence Dates <sup><a class="muted" href="http://guides.ands.org.au/rda-cpg/existencedates" target="_blank" title="View Content Providers' Guide">?</a></sup></legend>
 				<xsl:apply-templates select="ro:activity/ro:existenceDates | ro:party/ro:existenceDates  | ro:service/ro:existenceDates"/>
 				<div class="separate_line"/>
 				<button class="btn btn-primary addNew" type="existenceDates" add_new_type="existenceDates">

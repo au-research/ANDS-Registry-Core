@@ -59,7 +59,7 @@ class Relationships_Extension extends ExtensionBase
                 $explicit_keys[] = (string)$ds->primary_key_1;
                 $relatedClass = (string)$this->getRelatedObjectClass((string)$ds->primary_key_1);
                 $this_relationship = format_relationship($this->ro->class,
-                    $ds->{strtolower($this->ro->class) . "_rel_1"}, PRIMARY_RELATIONSHIP, $relatedClass);
+                    $ds->{$relatedClass . "_rel_1"}, PRIMARY_RELATIONSHIP, strtolower($this->ro->class));
                 $relationship = array(
                     "registry_object_id" => (string)$this->ro->id,
                     "related_object_key" => (string)$ds->primary_key_1,
@@ -77,7 +77,7 @@ class Relationships_Extension extends ExtensionBase
                 $explicit_keys[] = (string)$ds->primary_key_2;
                 $relatedClass = (string)$this->getRelatedObjectClass((string)$ds->primary_key_2);
                 $this_relationship = format_relationship($this->ro->class,
-                    $ds->{strtolower($this->ro->class) . "_rel_2"}, PRIMARY_RELATIONSHIP, $relatedClass);
+                    $ds->{$relatedClass . "_rel_2"}, PRIMARY_RELATIONSHIP, strtolower($this->ro->class));
                 $relationship = array(
                     "registry_object_id" => $this->ro->id,
                     "related_object_key" => (string)$ds->primary_key_2,
@@ -97,7 +97,7 @@ class Relationships_Extension extends ExtensionBase
                 $all = $this->_CI->ro->getIDsByDataSourceID($ds->id, true);
                 foreach ($all as $r) {
                     if ($r->key != $this->ro->key) {
-                        $this_relationship = $ds->{strtolower($this->ro->class) . "_rel_1"};
+                        $this_relationship = $ds->{(string)$r->class . "_rel_1"};
                         $relationship = array(
                             "registry_object_id" => $this->ro->id,
                             "related_object_key" => (string)$r->key,
@@ -119,7 +119,7 @@ class Relationships_Extension extends ExtensionBase
                 $all = $this->_CI->ro->getIDsByDataSourceID($ds->id, true);
                 foreach ($all as $r) {
                     if ($r->key != $this->ro->key) {
-                        $this_relationship = $ds->{strtolower($this->ro->class) . "_rel_2"};
+                        $this_relationship = $ds->{(string)$r->class . "_rel_2"};
                         $relationship = array(
                             "registry_object_id" => $this->ro->id,
                             "related_object_key" => (string)$r->key,
@@ -210,6 +210,7 @@ class Relationships_Extension extends ExtensionBase
 
         // do we even used unchanged relationships, commenting it out because it is not used in the code
         // $unchanged_relationships = array_intersect($existing_relatinships, $new_relationships); // leave them
+
         $removed_relationships = array_diff($existing_relatinships, $new_relationships);
         $new_or_changed_relationships = array_diff($new_relationships, $existing_relatinships); //
         $inserted_keys = $this->insertNewRelationships($new_or_changed_relationships);

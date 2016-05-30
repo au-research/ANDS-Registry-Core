@@ -38,9 +38,21 @@
             <header class="text-center element-normal-top element-short-bottom not-condensed os-animation animated fadeInUp" data-os-animation="fadeInUp" data-os-animation-delay="0s" style="-webkit-animation: 0s;">
                 <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">About Exploring Research Grants and Projects</h1>
             </header>
-            <p>Research Data Australia aggregates research grant information supplied by multiple funders and research project information supplied by some of our data contributors.</p>
-            <p>Grant descriptions are the responsibility of the <b>funder</b> who contributed the information. Some also provide open access to their history of funding grants through downloads in either PDF or Excel formats. Each funder has their own format and structure for describing grants and their downloads may have detail absent from the description in RDA. Further information about their grant data can be found by reading the "Terms of Use" document - click on the funder's logo below.</p>
-            <p>Research Project descriptions are the responsibility of the <b>institution</b> who contributed the information. They may share the same identifier with a grant record in which case both descriptions will appear together in search results.</p>
+
+            <p> Research Data Australia aggregates research grant information supplied by
+                some  funders and research project information supplied by some of our
+                research institutions.</p>
+            <p>Grant descriptions are the responsibility of the funder who contributed the
+                information. Some provide open access to their funding grants on their own
+                web sites. Their own web site may provide detail absent from the
+                description in RDA. Further information about each funder's grant data,
+                including the currency of the information, can be found by following the
+                'read more' link under their entry below.</p>
+            <p> Research Project descriptions are the responsibility of the institution who
+                contributed the information. RDA can contain both a description of the
+                project and a description of the grant that funded it, in which case both
+                descriptions will appear together in search results if they share the same
+                grant identifier.</p>
           </div>
 	       </div>
 	   </div>

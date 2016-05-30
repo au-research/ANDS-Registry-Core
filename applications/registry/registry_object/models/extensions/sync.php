@@ -392,6 +392,7 @@ class Sync_extension extends ExtensionBase{
                             }
 
                             //putting end point back
+                            $uniquePoints = array_values($uniquePoints);
                             $uniquePoints[] = $uniquePoints[0];
                             $json['spatial_coverage_extents_wkt'][] = 'POLYGON((' . implode(', ', $uniquePoints) . '))';
                         }
@@ -508,6 +509,12 @@ class Sync_extension extends ExtensionBase{
             $administeringInstitution = $this->ro->getAdministeringInstitution($relatedObjects);
             if (sizeof($administeringInstitution) > 0) {
                 $json['administering_institution'] = $administeringInstitution;
+            }
+
+            //institutions
+            $institutions = $this->ro->getInstitutions($relatedObjects);
+            if (sizeof($institutions) > 0) {
+                $json['institutions'] = $institutions;
             }
 
             //funders
@@ -670,7 +677,7 @@ class Sync_extension extends ExtensionBase{
 
                 // find out the right type, only party will have to become party_multi or party_one
                 $relatedObjectType = $relatedObject['class'];
-                if ($relatedObjectType == 'party') {
+                if ($relatedObjectType == 'party' && $relatedObject['registry_object_id']) {
                     if (in_array($relatedObject['type'], $this->party_multi_types)) {
                         $relatedObjectType = 'party_multi';
                     } else {

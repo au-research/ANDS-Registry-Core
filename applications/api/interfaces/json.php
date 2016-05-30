@@ -71,7 +71,7 @@ class JSONInterface extends FormatHandler
     {
         $ci = &get_instance();
         header('Content-type: application/json');
-        $ci->output->set_content_type('Content-type: application/json');
+        $ci->output->set_content_type('application/json');
         $ci->output->set_status_header($status);
         if ($ci->input->get('pretty')) {
             return json_encode($response, JSON_PRETTY_PRINT);

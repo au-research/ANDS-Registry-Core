@@ -395,6 +395,21 @@ class Connections_Extension extends ExtensionBase
 
         //going to the collection (to get data output)
         $dataOutputs = $this->ro->getDataOutput($childs, $relatedObjects);
+        foreach ($dataOutputs as &$dataOutput) {
+            if ($dataOutput['origin'] == 'EXPLICIT') {
+                $dataOutput['origin'] = 'GRANTS';
+                if ($this->ro->class == 'party') {
+                    $dataOutput['relation_type'] = 'isFunderOf';
+                }
+            } else if (startsWith($dataOutput['origin'], 'IDENTIFIER REVERSE') || startsWith($dataOutput['origin'], 'REVERSE')) {
+                $dataOutput['origin'] = "REVERSE_GRANTS";
+                if ($this->ro->class == 'party') {
+                   $dataOutput['relation_type'] = 'isFundedBy';
+                }
+            }
+        }
+
+        //probably need to set up correct origin and relation_type here///
         $result = array_merge($result, $dataOutputs);
 
         //going up the tree

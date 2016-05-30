@@ -15,7 +15,7 @@
                    ng-click="concept.showchild=!concept.showchild">
                     [[concept.value]]</a>
                 <ul ng-if="concept.showchild">
-                    <li ng-repeat="child in concept.child | filter:query">
+                    <li ng-repeat="child in concept.narrower | filter:query">
                         <a ng-if="child.num_child > 0" href="" concept-tip="[[child.tip]]"
                            ng-click="child.showchild=!child.showchild">
                             [[child.value]] ([[child.num_child]])</a>
@@ -23,7 +23,7 @@
                            ng-click="child.showchild=!child.showchild">
                             [[child.value]]</a>
                         <ul ng-if="child.showchild">
-                            <li ng-repeat="child2 in child.child | filter:query">
+                            <li ng-repeat="child2 in child.narrower | filter:query">
                                 <a ng-if="child2.num_child > 0" href="" concept-tip="[[child2.tip]]"
                                    ng-click="child2.showchild=!child2.showchild">
                                     [[child2.value]] ([[child2.num_child]])</a>
@@ -31,7 +31,7 @@
                                    ng-click="child2.showchild=!child2.showchild">
                                     [[child2.value]]</a>
                                 <ul ng-if="child2.showchild">
-                                    <li ng-repeat="child3 in child2.child | filter:query">
+                                    <li ng-repeat="child3 in child2.narrower | filter:query">
                                         <a ng-if="child3.num_child > 0" href="" concept-tip="[[child3.tip]]"
                                            ng-click="child3.showchild=!child3.showchild">
                                             [[child3.value]] ([[child3.num_child]])</a>
@@ -39,7 +39,7 @@
                                            ng-click="child3.showchild=!child3.showchild">
                                             [[child3.value]]</a>
                                         <ul ng-if="child3.showchild">
-                                            <li ng-repeat="child4 in child3.child | filter:query">
+                                            <li ng-repeat="child4 in child3.narrower | filter:query">
                                                 <a ng-if="child4.num_child > 0" href="" concept-tip="[[child4.tip]]"
                                                    ng-click="child4.showchild=!child4.showchild">
                                                     [[child4.value]] ([[child4.num_child]])</a>
@@ -47,7 +47,7 @@
                                                    ng-click="child4.showchild=!child4.showchild">
                                                     [[child4.value]]</a>
                                                 <ul ng-if="child4.showchild">
-                                                    <li ng-repeat="child5 in child4.child | filter:query">
+                                                    <li ng-repeat="child5 in child4.narrower | filter:query">
                                                         <a ng-if="child5.num_child > 0" href="" concept-tip="[[child5.tip]]">
                                                             [[child5.value]] ([[child5.num_child]])</span>
                                                         </a>

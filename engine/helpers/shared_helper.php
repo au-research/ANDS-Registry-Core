@@ -52,6 +52,7 @@ function format_relationship($from_class, $relationship_type, $origin=false, $to
 		"isPrincipalInvestigator" =>array("Principal investigator of", "Principal investigator"),
 		"hasValueAddedBy" =>array("Value added by", "Adds value"),
 		"pointOfContact" =>array("Point of Contact", "Is point of contact for"),
+        "isFundedBy" => array("Funded by","Funds"),
 	);
 	$typeArray['party'] = array(
 		"hasAssociationWith" => array("Associated with", "Associated with"),
@@ -112,7 +113,7 @@ function format_relationship($from_class, $relationship_type, $origin=false, $to
 	);
 
 	//$allTypesArray = array_merge($typeArray['collection'],$typeArray['party'],$typeArray['service'],$typeArray['activity']);
-	if ($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER' && $origin!='GRANTS') {
+	if ($origin != 'EXPLICIT' && $origin != 'CONTRIBUTOR' && $origin != 'IDENTIFIER' && $origin != 'GRANTS') {
 		//reverse
 		return (isset($typeArray[$to_class][$relationship_type]) ? $typeArray[$to_class][$relationship_type][1] : from_camel_case($relationship_type));
 	} else {

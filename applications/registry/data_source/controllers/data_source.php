@@ -652,7 +652,6 @@ class Data_source extends MX_Controller {
 					break;
 				case 'PUBLISHED':
 					$st['ds_count']=$data_source->count_PUBLISHED;
-					array_push($st['menu'], array('action'=>'to_draft', 'display'=>'Create Draft Copy'));
 					$st['connectTo']='';
 					break;
 			}
@@ -929,7 +928,6 @@ class Data_source extends MX_Controller {
 					$menu['preview'] = 'Preview in RDA';
 					break;
 				case 'PUBLISHED':
-					$menu['to_draft'] = 'Create Draft Copy';
 					$menu['edit'] = 'Edit Record';
 					if ($this->user->hasFunction('REGISTRY_STAFF'))
 					{
@@ -1172,7 +1170,7 @@ class Data_source extends MX_Controller {
 			} else $oai_msg = '';
 
 			if($ds->advanced_harvest_mode=='INCREMENTAL') {
-				$incr_msg = 'From date: '.date('Y-m-d H:i:s', strtotime($ds->last_harvest_run_date)).NL.'To date: '.date('Y-m-d H:i:s', $harvestDate).NL;
+				$incr_msg = 'From date: '.date('Y-m-d H:i:s', strtotime($ds->last_harvest_run_date)).NL.'To date: '.date('Y-m-d H:i:s', $nextRun).NL;
 			} else $incr_msg = '';
 
 			$scheduled_date = date( 'Y-m-d H:i:s P', $nextRun);
@@ -2020,17 +2018,26 @@ class Data_source extends MX_Controller {
 		$dataSource = $this->ds->getByID($id);
 		$dsSlug = $dataSource->getAttribute('slug');
 		$rifcs = '';
+        $dci_handler = null;
         $dciOutput = '';
 		$ids = $this->ro->getIDsByDataSourceID($id, false, 'All');
 		if($ids)
 		{
 			$i = 0;
+            if($formatString == 'dci')
+            {
+                defined('SERVICES_MODULE_PATH') or define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
+                require_once(SERVICES_MODULE_PATH . 'method_handlers/dci.php');
+                $dci_handler = new DCIMethod();
+            }
 			foreach($ids as $idx => $ro_id){
 				try{
 					$ro = $this->ro->getByID($ro_id);
 					if($formatString == 'dci')
                     {
-                        $dciOutput .= $ro->transformToDCI(false);
+                        $dci_handler->ro = $ro;
+                        $dci_handler->populate_resource($ro_id,true);
+                        $dciOutput .= $dci_handler->ro_handle('dci');
                     }
                     elseif($ro && (strpos($classString, $ro->class) !== false) && (strpos($statusString, $ro->status) !== false))
 					{

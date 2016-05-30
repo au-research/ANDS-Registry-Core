@@ -45,10 +45,23 @@ class CI_Unit_test {
 							'result',
 							'file',
 							'line',
-							'notes'
+							'notes',
+							'time'
 						);
 
 		// log_message('debug', "Unit Testing Class Initialized");
+	}
+
+	public function init() {
+		$this->results = array();
+	}
+
+	public function set_test_item_by_name($name, $key, $value) {
+		foreach ($this->results as $resultKey=>&$result) {
+			if ($result[0]['test_name']==$name) {
+				$result[0][$key] = $value;
+			}
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -68,6 +81,12 @@ class CI_Unit_test {
 		{
 			$this->_test_items_visible = $items;
 		}
+	}
+
+	function microtime_float()
+	{
+		list($usec, $sec) = explode(" ", microtime());
+		return ((float)$usec + (float)$sec);
 	}
 
 	// --------------------------------------------------------------------
@@ -90,6 +109,8 @@ class CI_Unit_test {
 			return FALSE;
 		}
 
+		$time_start = microtime(true);
+
 		if (in_array($expected, array('is_object', 'is_string', 'is_bool', 'is_true', 'is_false', 'is_int', 'is_numeric', 'is_float', 'is_double', 'is_array', 'is_null'), TRUE))
 		{
 			$expected = str_replace('is_float', 'is_double', $expected);
@@ -108,6 +129,9 @@ class CI_Unit_test {
 
 		$back = $this->_backtrace();
 
+		$time_end = microtime(true);
+		$time = number_format($time_end - $time_start, 5);
+
 		$report[] = array (
 							'test_name'			=> $test_name,
 							'test_datatype'		=> gettype($test),
@@ -115,7 +139,8 @@ class CI_Unit_test {
 							'result'			=> ($result === TRUE) ? 'passed' : 'failed',
 							'file'				=> $back['file'],
 							'line'				=> $back['line'],
-							'notes'				=> $notes
+							'notes'				=> $notes,
+							'time'				=> $time
 						);
 
 		$this->results[] = $report;
@@ -227,6 +252,7 @@ class CI_Unit_test {
 		{
 			$results = $this->results;
 		}
+
 
 		$retval = array();
 		foreach ($results as $result)

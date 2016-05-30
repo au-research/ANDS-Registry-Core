@@ -1,5 +1,9 @@
+<!--
+section links removed as the anchor tags do not work within the modal
+Need to set page up as html and open in a new window or use an iframe
 <ul style="list-style-type: none;">
-    <li><a href="#review_your_adv_search">Reviewing your Advanced Search</a></li>
+
+    <li><a href="#review_your_adv_search" >Reviewing your Advanced Search</a></li>
     <li><a href="#search_term_query_constructor">Search Terms Query Constructor</a></li>
     <li><a href="#subject_filer">Subject Filter</a></li>
     <li><a href="#data_providerz_filer">Data Provider Filter</a></li>
@@ -7,7 +11,9 @@
     <li><a href="#licence_filter">Licence Filter</a></li>
     <li><a href="#time_period_filter">Time Period Filter</a></li>
     <li><a href="#location_filter">Location Filter</a></li>
+
 </ul>
+-->
 <img style="width:460px; display:block; margin-left:auto; margin-right:auto"  src="{{asset_url('images/help/AdvancedSearch.png', 'core')}}" alt="Advanced Search"/>
 <p>The Advanced Search popout allows you to build/refine complex queries all in a single tabbed popout. From within the Advanced Search you can construct boolean searches and apply one or more filter categories to your search.
 </p>
@@ -49,7 +55,7 @@
 </ol>
 
 <h3 id="subject_filer">Subject Filter</h3>
-<p>The Subject tab allows you to refine your search by selecting subjects which have been used to describe data records. The default subject vocabulary in Research Data Australia, and the one which is used consistently by data providers, is the ANZSRC Field of Research. Other supported subject vocabularies are also available and can be selected by using the drop down displayed at the top of the tab (note that these can take a little while to load). 
+<p>The Subject tab allows you to refine your search by selecting subjects which have been used to describe data records. The default subject vocabulary in Research Data Australia, and the one which is used consistently by data providers, is the ANZSRC Field of Research. Other supported subject vocabularies are also available and can be selected by using the drop down displayed at the top of the tab (note that these can take a little while to load).
 </p>
 <img style="width:360px; display:block; margin-left:auto; margin-right:auto" src="{{asset_url('images/help/Subjects.png', 'core')}}" alt="Advanced Search Subjects Filter"/>
 <p>Subject vocabularies are displayed as browsable hierarchical trees. Subject literals displayed as green links can be clicked to display or hide child subjects. </p>
@@ -73,7 +79,7 @@
 <p>The number of records available in each access type will be displayed at the end of the access literal E.g ‘Open(23)’.</p>
 <p>Access types can be added or removed from your search by using the checkbox displayed with each access literal. </p>
 
-<h3 id="licence_filter">Licence Filter</h3>
+<h3 id="licence_filter" class="setheight">Licence Filter</h3>
 <table cellpadding="20" cellspacing="10" border="1px">
     <tbody>
     <tr>

@@ -246,10 +246,10 @@ class Records extends CI_Model
 		}
 		catch (Exception $e)
 		{
-			$oldest = gmdate('Y-m-d\TH:i:s\+\Z', gmmktime());
+			$oldest = 0;
 		}
 
-		return gmdate('Y-m-d\TH:i:s\+\Z', $oldest);
+		return gmdate('Y-m-d\TH:i:s\Z', $oldest);
 
 	}
 

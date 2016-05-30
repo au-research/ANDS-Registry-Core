@@ -91,6 +91,15 @@ class Import extends MX_Controller {
 		$batch_query = $this->db->get_where('harvests', array('data_source_id'=>$id));
 		if($batch_query->num_rows() > 0) {
 			$batch_array = $batch_query->result_array();
+            $message = json_decode($batch_array[0]['message']);
+            if(isset($message->start_utc)){
+                $harvestStarted =  $message->start_utc;
+            }
+            else{
+                date_default_timezone_set('UTC');
+                $harvestStarted =  date("Y-m-d\TH:i:s\Z", time());
+                date_default_timezone_set('Australia/Canberra');
+            }
 			$harvest_id = $batch_array[0]['harvest_id'];
 			$path = $dir.$id.'/'.$batch;
 
@@ -295,15 +304,12 @@ class Import extends MX_Controller {
 					);
 				}
 			}
-
 			if($ds->advanced_harvest_mode == 'INCREMENTAL') {
-				date_default_timezone_set('UTC');
-				$ds->setAttribute("last_harvest_run_date",date("Y-m-d\TH:i:s\Z", time()));
-				date_default_timezone_set('Australia/Canberra');
+				$ds->setAttribute("last_harvest_run_date", $harvestStarted);
 			} else {
 				$ds->setAttribute("last_harvest_run_date",'');
 			}
-	
+            $ds->save();
 			echo json_encode(
 				array(
 					'status' => 'OK',

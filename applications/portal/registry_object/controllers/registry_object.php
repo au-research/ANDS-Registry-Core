@@ -94,6 +94,9 @@ class Registry_object extends MX_Controller
             $grantId = substr($key, $grantIdPos);
             $purl = $key;
 
+            // Set 404 HTTP Status code (CC-1633, CC-1712)
+            $this->output->set_status_header('404');
+
             $this->blade
                 ->set('scripts', array('grant_form'))
                 ->set('institution', $institution)
@@ -105,6 +108,10 @@ class Registry_object extends MX_Controller
             //No Record or Error
 
             $message = ($ro ? $ro->prop['status'] . NL . $ro->prop['message'] : false);
+
+            // Set 404 HTTP Status code (CC-1633, CC-1712)
+            $this->output->set_status_header('404');
+
             $this->blade
                 // ->set('scripts', array('view'))
                 ->set('id', $this->input->get('id'))
@@ -727,6 +734,9 @@ class Registry_object extends MX_Controller
             redirect('search/#!/q=' . $this->input->get('q'));
         }
 
+        // Prevent indexing of this page by search engines
+        $this->output->set_header('X-Robots-Tag: noindex, nofollow');
+
         $this->load->library('blade');
         $this->blade
             ->set('lib', array('ui-events', 'angular-ui-map', 'google-map'))
@@ -885,7 +895,7 @@ class Registry_object extends MX_Controller
             }
             // $new_search_term = $data['search_term'].'~0.7';
             $this->solr->setOpt('q',
-                'fulltext:(' . $new_search_term . ') OR simplified_title:(' . iconv('UTF-8', 'ASCII//TRANSLIT',
+                '_text_:(' . $new_search_term . ') OR simplified_title:(' . iconv('UTF-8', 'ASCII//TRANSLIT',
                     $new_search_term) . ')');
             $result = $this->solr->executeSearch(true);
             if ($this->solr->getNumFound() > 0) {

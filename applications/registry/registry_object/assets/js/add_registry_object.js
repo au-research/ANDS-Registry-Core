@@ -9,7 +9,7 @@ var SIMPLE_MODE = 'simple';
 var ADVANCED_MODE = 'advanced';
 var loading_box = "<div id='loading_box'><img src='"+base_url+"/assets/img/ajax-loader-large.gif' alt='Loading...' />"+
 					"<br/><br/><span id='loading_box_text'>Loading...</span></div>";
-var default_help_link = "http://ands.org.au/guides/cpguide/";
+var default_help_link = "http://guides.ands.org.au/rda-cpg/";
 
 $(function(){
 	$('body').css('background-color', '#454545');
@@ -1817,13 +1817,28 @@ function generateActionBar(data_response)
 
 function updateHelpLink()
 {
-	// Update the help link
-	var tab_help_link = $("sup a.muted", $('#'+active_tab)).first().attr("href");
-	if (tab_help_link)
+	// Update the help link - hard coded values to cater for change to new cpg (29/04/16) which has no default naming standards for the tabs
+
+    the_active_tab=active_tab;
+
+    if(active_tab=='admin'){the_active_tab='recordadmin'}
+    if(active_tab=='descriptions_rights'){the_active_tab='description'}
+    if(active_tab=='coverages'){the_active_tab='coverage'}
+    if(active_tab=='relatedinfos'){the_active_tab='relatedinfo'}
+    if(active_tab=='citationInfos'){the_active_tab='citationinfo'}
+    if(active_tab=='qa'){the_active_tab='savedraft'}
+    if(active_tab=='accesspolicies'|| active_tab=='existencedates' ){
+      the_active_tab = "no_tab_help"
+    }
+
+    if (the_active_tab!="no_tab_help")
 	{
-		$('#aro_help_link').attr("href", tab_help_link);
+		$('#aro_help_link').attr("href", default_help_link+the_active_tab+"tab");
 	}
-	else
+	else if(active_tab=='accesspolicies'){
+        $('#aro_help_link').attr("href", default_help_link+"service-accesspolicy");
+    }
+    else
 	{
 		$('#aro_help_link').attr("href", default_help_link);
 	}

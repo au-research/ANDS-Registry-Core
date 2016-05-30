@@ -128,6 +128,7 @@ function doisGetUserMessage($responseCode, $doi_id,$response_type="string",$app_
 			break;	
 						
 		case "json":
+            header('Content-type: application/json');
 			$response = array();
 			$response['type'] = $type;
 			$response['responsecode'] = $responseCode;

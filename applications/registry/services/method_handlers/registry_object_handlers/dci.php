@@ -47,18 +47,29 @@ class DCI extends ROHandler {
     {
         $header = $this->DCIRoot->addChild('Header');
         $header->addChild('DateProvided', date('Y-m-d', time()));
-        $header->addChild('RepositoryName', $this->ro->group);
-        $header->addChild('Owner', $this->ro->group);
-        $header->addChild('RecordIdentifier', $this->ro->key);
+        $header->addChild('RepositoryName', str_replace('&', '&amp;', $this->ro->group));
+        $header->addChild('Owner', str_replace('&', '&amp;', $this->ro->group));
+        $header->addChild('RecordIdentifier', str_replace('&', '&amp;', $this->ro->key));
     }
 
     private function getAbstract()
     {
+        $abstract = "Not available";
         if($this->index && isset($this->index['list_description'])) {
             //var_dump($this->index['list_description']);
-            $this->DCIRoot->addChild('Abstract', str_replace('&', '&amp;', $this->index['list_description']));
+            $abstract = $this->index['list_description'];
         }
-
+        else if($abstract == "Not available"){
+            foreach($this->gXPath->query("//ro:description[@type='brief']") as $description){
+                $abstract = (string) $description;
+            }
+        }
+        else if($abstract == "Not available"){
+            foreach($this->gXPath->query("//ro:description[@type='full'") as $description){
+                    $abstract = (string) $description;
+            }
+        }
+        $this->DCIRoot->addChild('Abstract', str_replace('&', '&amp;', $abstract));
     }
 
     private function getBibliographicData($sourceUrl)
@@ -71,7 +82,7 @@ class DCI extends ROHandler {
         $title['TitleType'] = "English title";
         $source = $bibliographicData->addChild('Source');
         $source->addChild("SourceURL", str_replace('&', '&amp;', $sourceUrl));
-        $source->addChild("SourceRepository" , $this->citation_handler->getPublisher());
+        $source->addChild("SourceRepository" , str_replace('&', '&amp;',$this->citation_handler->getPublisher()));
         $publicationDate = $this->citation_handler->getPublicationDate();
         if($publicationDate)
         {
@@ -88,6 +99,7 @@ class DCI extends ROHandler {
 
     private function  getDescriptorsData(){
         $keyWords = $this->citation_handler->getKeywords();
+
         $spatialData = $this->citation_handler->getSpatial();
         $latestYear = false;
         $earliestYear = false;
@@ -113,38 +125,36 @@ class DCI extends ROHandler {
             }
         }
 
-        //var_dump($spatialData);
-        if($keyWords || $spatialData || $earliestYear || $latestYear)
-        {
-            $descriptorsData = $this->DCIRoot->addChild('DescriptorsData');
-            if($keyWords){
-                $keywordsList = $descriptorsData->addChild("KeywordsList");
-                foreach($keyWords as $keyWord)
-                {
-                    $keywordsList->addChild("Keyword" , str_replace('&', '&amp;', htmlentities($keyWord, ENT_DISALLOWED)));
-                }
-            }
-            if($spatialData){
-                $geographicalData = $descriptorsData->addChild("GeographicalData");
-                foreach($spatialData as $sData)
-                {
-                    $geographicalData->addChild("GeographicalLocation" , $sData);
-                }
-            }
-            if($earliestYear || $latestYear)
+        $descriptorsData = $this->DCIRoot->addChild('DescriptorsData');
+        if($keyWords){
+            $keywordsList = $descriptorsData->addChild("KeywordsList");
+            foreach($keyWords as $keyWord)
             {
-                $timeperiodList = $descriptorsData->addChild("TimeperiodList");
-                if($earliestYear){
-                    $timePeriod = $timeperiodList->addChild("TimePeriod", $earliestYear);
-                    $timePeriod['TimeSpan'] = 'Start';
-                }
-
-                if($latestYear){
-                    $timePeriod = $timeperiodList->addChild("TimePeriod",$latestYear);
-                    $timePeriod['TimeSpan'] = 'End';
-                }
+                $keywordsList->addChild("Keyword" , str_replace('&', '&amp;', htmlentities($keyWord, ENT_DISALLOWED)));
             }
         }
+        $descriptorsData->addChild("DataType", $this->xml->{$this->ro->class}["type"]);
+        if($spatialData){
+            $geographicalData = $descriptorsData->addChild("GeographicalData");
+            foreach($spatialData as $sData)
+            {
+                $geographicalData->addChild("GeographicalLocation" , $sData);
+            }
+        }
+        if($earliestYear || $latestYear)
+        {
+            $timeperiodList = $descriptorsData->addChild("TimeperiodList");
+            if($earliestYear){
+                $timePeriod = $timeperiodList->addChild("TimePeriod", $earliestYear);
+                $timePeriod['TimeSpan'] = 'Start';
+            }
+
+            if($latestYear){
+                $timePeriod = $timeperiodList->addChild("TimePeriod",$latestYear);
+                $timePeriod['TimeSpan'] = 'End';
+            }
+        }
+
     }
 
 
@@ -154,20 +164,23 @@ class DCI extends ROHandler {
         $classArray = array('activity');
         $grants = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray, $forDCI);
         if(is_array($grants) && sizeof($grants) > 0){
-            $fundingInfo = $this->DCIRoot->addChild('FundingInfo');
-            $fundingInfoList = $fundingInfo->addChild('FundingInfoList');
             foreach($grants as $grant){
-                $parsedFunding = $fundingInfoList->addChild('ParsedFunding');
-                $identifierStr = '';
-                if(isset($grant['identifiers']))
-                {
-                    foreach($grant['identifiers'] as $identifier){
-                        $identifierStr .= $this->normaliseIdentifier($identifier[0], $identifier[1]).", ";
+                if($grant['type'] == 'grant'){
+                    $identifierStr = '';
+                    if(isset($grant['identifiers']))
+                    {
+                        foreach($grant['identifiers'] as $identifier){
+                            $identifierStr .= $this->normaliseIdentifier($identifier[0], $identifier[1]).", ";
+                        }
+                        $grantIndex = $this->findGrantbyKey($grant['key']);
+                        if($grantIndex && isset($grantIndex['funders'])){
+                            $fundingInfo = $this->DCIRoot->addChild('FundingInfo');
+                            $fundingInfoList = $fundingInfo->addChild('FundingInfoList');
+                            $parsedFunding = $fundingInfoList->addChild('ParsedFunding');
+                            $parsedFunding->addChild('GrantNumber', substr($identifierStr, 0, strlen($identifierStr) - 2));
+                            $parsedFunding->addChild("FundingOrganization", str_replace('&', '&amp;', $grantIndex['funders'][0]));
+                        }
                     }
-                    $parsedFunding->addChild('GrantNumber', substr($identifierStr, 0, strlen($identifierStr) - 2));
-                    $grantIndex = $this->findGrantbyKey($grant['key']);
-                    if($grantIndex && isset($grantIndex['funders']))
-                        $parsedFunding->addChild("FundingOrganization",$grantIndex['funders'][0]);
                 }
             }
         }
@@ -235,7 +248,7 @@ class DCI extends ROHandler {
                 $eAuthor['seq'] = $cSeq;
 
                 $eAuthor['AuthorRole'] = "Contributor";
-                $eAuthor->addChild('AuthorName', formatName($nameParts));
+                $eAuthor->addChild('AuthorName', str_replace('&', '&amp;',formatName($nameParts)));
             }
         }
         else{
@@ -257,14 +270,14 @@ class DCI extends ROHandler {
                     {
                         $authorAddress = $eAuthor->addChild('AuthorAddress');
                         foreach($author['addresses'] as $addr){
-                            $authorAddress->addChild('AddressString', (string) $addr);
+                            $authorAddress->addChild('AddressString', str_replace('&', '&amp;',(string) $addr));
                             break;
                         }
                     }
                     if(isset($author['electronic_addresses']))
                     {
                         foreach($author['electronic_addresses'] as $addr){
-                            $eAuthor->addChild('AuthorEmail', (string) $addr);
+                            $eAuthor->addChild('AuthorEmail', str_replace('&', '&amp;', (string) $addr));
                             break;
                         }
                     }
@@ -280,7 +293,7 @@ class DCI extends ROHandler {
             else{
                 $eAuthor = $authorList->addChild("Author");
                 $eAuthor['seq'] = '1';
-                $eAuthor->addChild('AuthorName', $this->ro->group);
+                $eAuthor->addChild('AuthorName', str_replace('&', '&amp;', $this->ro->group));
             }
         }
     }
@@ -296,7 +309,7 @@ class DCI extends ROHandler {
             {
                 if(!($parentCollection['key'] == '' || $parentCollection['origin'] == "REVERSE_INT"
                     ||  $parentCollection['origin'] == "REVERSE_EXT")){
-                    $this->DCIRoot->addChild("ParentDataRef", $parentCollection['key']);
+                    $this->DCIRoot->addChild("ParentDataRef", str_replace('&', '&amp;', $parentCollection['key']));
                     break;
                 }
             }
@@ -311,10 +324,14 @@ class DCI extends ROHandler {
             $licence = '';
             $rights_Licensing = $this->DCIRoot->addChild('Rights_Licensing');
             foreach($licencing as $rl){
-                if($rl['type'] == 'rightsStatement' || $rl['type'] == 'accessRights')
-                  $rights .= $rl['value'].' ';
+                if($rl['type'] == 'rightsStatement' || $rl['type'] == 'accessRights' || $rl['type'] == 'rights'){
+                    if($rl['value'] != '')
+                        $rights .= (string) $rl['value'].' ';
+                    if(isset($rl['rightsUri']))
+                        $rights .= (string) $rl['rightsUri'].' ';
+                }
                 if($rl['type'] == 'licence')
-                    $licence .= $rl['value'];
+                    $licence .= (string) $rl['value'];
             }
             $rights_Licensing->addChild('RightsStatement', str_replace('&', '&amp;', $rights));
             $rights_Licensing->addChild('LicenseStatement', str_replace('&', '&amp;', $licence));
@@ -371,7 +388,6 @@ class DCI extends ROHandler {
         $CI->solr->setOpt('q','key:"'.$key.'"');
         $CI->solr->setOpt('rows', 1);
         $result = $CI->solr->executeSearch(true);
-
         if ($result['response']['numFound'] > 0) {
             $record = $result['response']['docs'][0];
             return $record;
