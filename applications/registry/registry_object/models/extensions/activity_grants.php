@@ -167,7 +167,8 @@ class Activity_grants_extension extends ExtensionBase
     /**
      * Returns all the institutions participating in this research grant
      * DEPRECATED: relatedObject[relation=isManagedBy|hasParticipant][type=group][class=party]
-     * INSTEAD: relatedObject[type=group][class=party]
+     * DEPRECATED: relatedObject[type=group][class=party]
+     * INSTEAD: relatedObject[type=group][class=party][relation!=isFundedBy][relation!=isFunderBy]
      * @param bool|false $relatedObjects
      * @return array
      */
@@ -183,6 +184,9 @@ class Activity_grants_extension extends ExtensionBase
                     if ($relatedObject['class'] == 'party'
                         && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
                             'type'))) == 'group'
+                        && $relatedObject['relation_type'] != 'isFundedBy'
+                        && $relatedObject['relation_type'] != 'isFunderOf'
+                        && $relatedObject['relation_type'] != 'funds'
                     ) {
                         $institutions[] = $relatedObject['title'];
                     }
