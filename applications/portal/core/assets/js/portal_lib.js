@@ -16968,6 +16968,7 @@ app.directive('focusMe', function($timeout, $parse) {
             angular.copy($scope.prefilters, $scope.filters);
             if($scope.prefilters['q']) {
                 $scope.query = $scope.prefilters.q;
+                $scope.filters['sort'] = 'score desc';
             } else {
                 $scope.query = '';
                 $scope.filters['q'] = '';
