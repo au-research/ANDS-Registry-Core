@@ -28,6 +28,8 @@ class Records extends CI_Model
         $args["allowedClass"] = false;
         $args['allowedType'] = false;
 		$count = '';
+        $batch_size = 100;
+        $ro_count = 0;
 		$deleted_records = array();
 		if ($after)
 		{
@@ -98,7 +100,7 @@ class Records extends CI_Model
 		}
 		if (is_array($count) && isset($count[0]["count(distinct(registry_objects.registry_object_id))"]))
 		{
-			$count[0]["count(distinct(registry_objects.registry_object_id))"] = (int)$count[0]["count(distinct(registry_objects.registry_object_id))"] + sizeof($deleted_records);
+            $count[0]["count(distinct(registry_objects.registry_object_id))"] = (int)$count[0]["count(distinct(registry_objects.registry_object_id))"] + sizeof($deleted_records);
 		}
 		else{
 			$count[0]["count(distinct(registry_objects.registry_object_id))"] = sizeof($deleted_records);
@@ -112,7 +114,6 @@ class Records extends CI_Model
 		{
 			$count = $count[0]["count(distinct(registry_objects.registry_object_id))"];
 		}
-
 		$records = $this->ro->_get(array(array('args' => $args,
 						       'fn' => function($db, $args) {
 							       $db->distinct()
@@ -145,12 +146,13 @@ class Records extends CI_Model
 							       return $db;
 						       })),
 					   true,
-					   100,
+                       $batch_size,
 					   $start);
 
 		if (isset($records) || isset($deleted_records))
 		{
-			if(isset($records))
+            $ro_count = count($records);
+            if(isset($records))
 			{
 				foreach ($records as &$ro)
 				{
@@ -161,9 +163,10 @@ class Records extends CI_Model
 			else{
 				$records = array();
 			}
-			if(isset($deleted_records))
+
+			if(isset($deleted_records) && $ro_count < $batch_size)
 			{
-				foreach ($deleted_records as $del_ro)
+                foreach ($deleted_records as $del_ro)
 				{
 					$del_ro = (object) array('registry_object_id'=>$del_ro['key'], 'status' => 'deleted', 'deleted'=>$del_ro['deleted'], 'sets' => array('class'=>$del_ro['class'],'group'=>$del_ro['group'],'datasource'=>$del_ro['datasource'] ));
 					$records[] = $del_ro;
