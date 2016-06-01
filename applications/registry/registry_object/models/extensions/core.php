@@ -368,7 +368,6 @@ class Core_extension extends ExtensionBase
 			// it is already set, update the value
 			$attribute = $this->attributes[$name];
 			$attribute->setValue($value);
-            $this->attributes[$name]->dirty = TRUE;
 		}
 	}
 
