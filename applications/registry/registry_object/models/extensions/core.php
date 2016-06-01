@@ -254,7 +254,7 @@ class Core_extension extends ExtensionBase
 						}
 
 						$this->ro->harvest_id = $this->getAttribute('harvest_id');
-						$this->ro->save();
+						$this->ro->save(true);
 						$this->_CI->ro->deleteRegistryObject($this->id);
 
 						$this->id = $this->ro->id;
@@ -368,7 +368,6 @@ class Core_extension extends ExtensionBase
 			// it is already set, update the value
 			$attribute = $this->attributes[$name];
 			$attribute->setValue($value);
-            $this->attributes[$name]->dirty = TRUE;
 		}
 	}
 

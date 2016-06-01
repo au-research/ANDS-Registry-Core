@@ -926,9 +926,11 @@ class Registry_objects extends CI_Model {
 				throw new Exception("Registry Object targeted for delete does not exist?");
 			}
 		}
-
+        $status = $target_ro->getAttribute("original_status", true);
+        if(is_null($status ))
+            $status = $target_ro->status;
 		// Removing a PUBLISHED record has consequences
-		if (isPublishedStatus($target_ro->status)) {
+		if (isPublishedStatus($status)) {
 			$this->load->model('data_source/data_sources', 'ds');
 			$data_source = $this->ds->getByID($target_ro->data_source_id);
 
@@ -974,7 +976,7 @@ class Registry_objects extends CI_Model {
 		//$data_source->append_log("eraseFromDatabase " . $log, 'info', 'registry_object');
 
         // Delete index if finalise and the record is PUBLISHED
-        if($finalise && isPublishedStatus($target_ro->status)) {
+        if($finalise && isPublishedStatus($status)) {
             $this->load->library('Solr');
             $this->solr->init()->setCore('portal');
             $this->solr->deleteByQueryCondition('id:'.$target_ro->id);

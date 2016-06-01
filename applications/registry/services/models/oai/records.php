@@ -94,7 +94,7 @@ class Records extends CI_Model
 						     })),
 					 false);
 		// get the deleted ones! and added to the count...
-		if($after && $before)
+		if($after && $before && !($supplied_format == 'dci'))
 		{
 			$deleted_records = $this->ro->getDeletedRegistryObjects($delArgs);
 		}
