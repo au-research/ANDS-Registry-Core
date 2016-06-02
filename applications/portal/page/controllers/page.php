@@ -202,9 +202,59 @@ class Page extends MX_Controller
                 base_url(),
                 base_url('home/about'),
                 base_url('home/contact'),
-                base_url('home/privacy_policy'),
+                base_url('home/privacy'),
+                base_url('home/disclaimer'),
                 base_url('themes'),
+                base_url('subjects'),
+                base_url('theme/services'),
+                base_url('theme/open-data'),
+                base_url('theme/grants'),
             );
+
+            header("Content-Type: text/xml");
+            echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+            foreach ($pages as $p) {
+                echo '<url>';
+                echo '<loc>' . $p . '</loc>';
+                echo '<changefreq>weekly</changefreq>';
+                echo '<lastmod>' . date('Y-m-d') . '</lastmod>';
+                echo '</url>';
+            }
+            echo '</urlset>';
+        } elseif($page == 'themes') {
+            $pages = [];
+            $url = registry_url().'services/rda/getThemePageIndex/';
+    		$contents = @file_get_contents($url);
+
+            $themePages = json_decode($contents, true);
+
+            if (is_array($themePages) && array_key_exists('items', $themePages)) {
+                foreach ($themePages['items'] as $item) {
+                    $pages[] = portal_url('theme/'.$item['slug']);
+                }
+            }
+
+            header("Content-Type: text/xml");
+            echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+            foreach ($pages as $p) {
+                echo '<url>';
+                echo '<loc>' . $p . '</loc>';
+                echo '<changefreq>weekly</changefreq>';
+                echo '<lastmod>' . date('Y-m-d') . '</lastmod>';
+                echo '</url>';
+            }
+            echo '</urlset>';
+
+
+        } elseif($page == 'contributors') {
+
+            $pages = [];
+            $this->load->model('group/groups');
+            $groups = $this->groups->getAll();
+
+            foreach ($groups as $group) {
+                $pages[] = portal_url('contributors/'.$group['slug']);
+            }
 
             header("Content-Type: text/xml");
             echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
@@ -232,6 +282,8 @@ class Page extends MX_Controller
                 header("Content-Type: text/xml");
                 echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
                 echo '<sitemap><loc>' . base_url('home/sitemap/main') . '</loc><lastmod>' . date('Y-m-d') . '</lastmod></sitemap>';
+                echo '<sitemap><loc>' . base_url('home/sitemap/contributors') . '</loc><lastmod>' . date('Y-m-d') . '</lastmod></sitemap>';
+                echo '<sitemap><loc>' . base_url('home/sitemap/themes') . '</loc><lastmod>' . date('Y-m-d') . '</lastmod></sitemap>';
                 for ($i = 0; $i < sizeof($dsfacet); $i += 2) {
                     echo '<sitemap>';
                     echo '<loc>' . base_url() . 'home/sitemap/?ds=' . urlencode($dsfacet[$i]) . '</loc>';
@@ -243,7 +295,7 @@ class Page extends MX_Controller
             } elseif ($ds != '') {
 
                 $this->load->library('solr');
-                $filters = array('data_source_key' => $ds, 'rows' => 50000, 'fl' => 'key, id, update_timestamp, slug');
+                $filters = array('data_source_key' => $ds, 'rows' => 50000, 'fl' => 'key, id, record_modified_timestamp, slug');
                 $this->solr->setFilters($filters);
                 $this->solr->executeSearch();
                 $res = $this->solr->getResult();
@@ -257,7 +309,6 @@ class Page extends MX_Controller
                 header("Content-Type: text/xml");
                 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
                 foreach ($keys as $k) {
-                    //var_dump($k);
                     echo '<url>';
                     if ($k->{'slug'}) {
                         echo '<loc>' . base_url() . $k->{'slug'} . '/' . $k->{'id'} . '</loc>';
@@ -265,7 +316,7 @@ class Page extends MX_Controller
                         echo '<loc>' . base_url() . 'view/?key=' . urlencode($k->{'key'}) . '</loc>';
                     }
                     echo '<changefreq>' . $freq . '</changefreq>';
-                    echo '<lastmod>' . date('Y-m-d', strtotime($k->{'update_timestamp'})) . '</lastmod>';
+                    echo '<lastmod>' . date('Y-m-d', strtotime($k->{'record_modified_timestamp'})) . '</lastmod>';
                     echo '</url>';
                 }
                 echo '</urlset>';
