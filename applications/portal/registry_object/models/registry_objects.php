@@ -39,10 +39,7 @@ class Registry_objects extends CI_Model {
 
         if (!$id) $id = $this->findOldMapping($slug);
 
-
-
-        if($id)
-        {
+        if ($id) {
             $props = $this->rdaProperties;
             return new _ro($id, $props, $useCache);
         }

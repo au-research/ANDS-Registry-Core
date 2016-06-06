@@ -50,7 +50,9 @@ class Registry_object extends MX_Controller
             } elseif ($slug) {
                 // view/{slug}/{id} where {id} not found, attempt to resolve slug
                 $ro = $this->ro->getBySlug($slug, null, $useCache);
-                if ($ro && $ro->prop['status'] == 'OK') {
+                if ($ro === "MULTIPLE") {
+                    redirect('search/#!/slug=' . $slug);
+                } elseif ($ro && $ro->prop['status'] == 'OK') {
                     //redirect to correct url
                     redirect($ro->prop['core']['slug'].'/'.$ro->prop['core']['id']);
                 }
@@ -63,10 +65,9 @@ class Registry_object extends MX_Controller
         //if there are multiple records => redirect to a search page
         if ((!$ro || $ro->prop['status'] == 'error') && $slug) {
             $ro = $this->ro->getBySlug($slug, null, $useCache);
-            if ($ro == 'MULTIPLE') {
+            if ($ro === 'MULTIPLE') {
                 redirect('search/#!/slug=' . $slug);
-            }
-            if ($ro && $ro->prop['status'] == 'OK') {
+            } elseif ($ro && $ro->prop['status'] == 'OK') {
                 redirect($slug . '/' . $ro->prop['core']['id']);
             }
 
