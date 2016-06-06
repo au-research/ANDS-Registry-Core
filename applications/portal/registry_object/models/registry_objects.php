@@ -39,6 +39,8 @@ class Registry_objects extends CI_Model {
 
         if (!$id) $id = $this->findOldMapping($slug);
 
+
+
         if($id)
         {
             $props = $this->rdaProperties;
@@ -197,7 +199,20 @@ class Registry_objects extends CI_Model {
 		$result = $this->db->get_where('url_mappings', array('slug'=>$slug));
 		if ($result->num_rows() > 0) {
 			$r = $result->first_row();
-			return $r->registry_object_id;
+            $id = $r->registry_object_id;
+
+            // if registry_object_id = null, attempt to match via search title
+            // match record with exactly the same title
+            // todo business rules when there are multiple match of different class
+            if ($r && $r->registry_object_id === null && $r->search_title) {
+                $titleSearch = $this->db->get_where('registry_objects', ['title' => $r->search_title]);
+                if ($titleSearch->num_rows() > 0) {
+                    $titleMatch = $titleSearch->first_row();
+                    $id = $titleMatch->registry_object_id;
+                }
+            }
+
+			return $id;
 		} else {
 			return false;
 		}
