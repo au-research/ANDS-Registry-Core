@@ -193,7 +193,7 @@ class Registry_objects extends CI_Model {
 	}
 
 	public function findOldMapping($slug) {
-		$result = $this->db->get_where('url_mappings', array('slug'=>$slug));
+		$result = $this->db->order_by('registry_object_id desc')->get_where('url_mappings', array('slug'=>$slug));
 		if ($result->num_rows() > 0) {
 			$r = $result->first_row();
             $id = $r->registry_object_id;
