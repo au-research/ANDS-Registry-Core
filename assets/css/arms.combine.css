@@ -9481,6 +9481,12 @@ div.tags .btn-group {
 .icon-activity {
   background-image: url("../img/activity.png");
 }
+
+.word-wrap {
+    word-wrap: break-word;
+    white-space: -webkit-pre-wrap;
+    word-break: break-all;
+}
 /**
  * Core / Styling / Less
  * 
