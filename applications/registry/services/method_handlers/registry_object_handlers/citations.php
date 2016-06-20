@@ -604,7 +604,7 @@ Y2  - '.date("Y-m-d")."
         $keywords = Array();
         if($this->index && isset($this->index['subject_value_resolved'])) {
             foreach($this->index['subject_value_resolved'] as $key=>$sub) {
-                $keywords[] = titleCase($this->index['subject_value_resolved'][$key]);
+                $keywords[] = htmlentities(titleCase($this->index['subject_value_resolved'][$key]));
             }
         }
 
