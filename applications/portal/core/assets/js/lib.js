@@ -4061,6 +4061,13 @@ CHECKS.ie6 = {
         var redirect = window.location.href;
         location.href = url+'?redirect='+encodeURIComponent(redirect);
     }).on('click', '.help_button', function(event){
+
+        var $loadModal = $('#help_modal')
+        $.get( base_url + "page/help", function( data ) {
+            $loadModal
+                .find('.modal-body').html(data).end()
+        });
+
         var urlStr = window.location.href;
         var useTab = 'overview';
         if(urlStr.indexOf('/search/#!') > 0)
