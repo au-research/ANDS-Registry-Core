@@ -311,6 +311,7 @@ class ROChecker(base.BaseChecker):
         A link is to be tested if either:
         * The link_type ends with "_url"
         * The link_type is "description_link"
+        * The link_type is "identifier_uri_link"
         * The link begins with "http"
 
         Arguments:
@@ -323,6 +324,7 @@ class ROChecker(base.BaseChecker):
         link_type = rol['link_type']
         return (link_type.endswith('_url') or
                 link_type == 'description_link' or
+                link_type == 'identifier_uri_link' or
                 rol['link'].startswith('http'))
         pass
 
