@@ -1,29 +1,30 @@
-@extends('layouts/right-sidebar')
-@section('header')
-  <div class="row element element-short-top"></div>
-@stop
-
+@extends('layouts/modal')
 @section('content')
-<div class="panel swatch-white">
-  <div class="panel-heading">Search</div>
-  <div class="panel-body">
-  </div>
-</div>
-<div class="panel swatch-white">
-  <div class="panel-heading">Advanced Search</div>
-  <div class="panel-body">
-    @include('includes/help-adv-search')
-  </div>
+<div role="tabpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" id="overview_tab" class="active"><a href="" class="help_link" id="overview_link">Overview</a></li>
+        <li role="presentation" id="search_tab"><a href="" class="help_link" id="search_link">Search</a></li>
+        <li role="presentation" id="myrda_tab"><a href="" class="help_link" id="myrda_link">MyRDA</a></li>
+        <li role="presentation" id="advsearch_tab"><a href="" class="help_link" id="advsearch_link">Advanced Search</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="overview">
+            @include('includes/help-overview')
+        </div>
+        <div role="tabpanel" class="tab-pane" id="search">
+            @include('includes/help-search')
+        </div>
+        <div role="tabpanel" class="tab-pane" id="myrda">
+            @include('includes/help-my-rda')
+        </div>
+        <div role="tabpanel" class="tab-pane" id="advsearch">
+            @include('includes/help-adv-search')
+        </div>
+    </div>
+
 </div>
 @stop
 
-@section('sidebar')
-<div class="panel swatch-white">
-  <div class="panel-heading">Search</div>
-  <div class="panel-body">
-    <ul>
-      <li><a href="#perform_a_search">Performing a Search</a></li>
-    </ul>
-  </div>
-</div>
-@stop
