@@ -39,6 +39,7 @@ error_count: dict
 import asyncio
 import asyncio.futures
 import datetime
+import distutils.util
 import socket
 import sys
 import time
@@ -214,10 +215,22 @@ class DOIChecker(base.BaseChecker):
     """
 
     def _get_DOI_links(self, doi_list, client_id=None):
-        """Get all production DOIs to be tested.
+        """Get all DOIs to be tested.
+
+        The user may select whether to test all production DOIs,
+        or only those which are active.
 
         Production DOIs are those which have a status other than
         "REQUESTED", and which have a doi_id beginning with "10.4".
+
+        Active production DOIs are those production DOIs which have
+        a status of "ACTIVE".
+
+        The user specifies whether to test all production DOIs
+        or only those which are active, by setting the
+        "active_only" parameter in the INI file.
+        For backward compatibility, if the parameter is not set,
+        the value is taken to be "False".
 
         The doi_list array is updated in situ.
 
@@ -226,14 +239,22 @@ class DOIChecker(base.BaseChecker):
         client_id -- A client_id to use for searching the database,
             or None, if the DOIs of all clients are to be returned.
         """
+        active_only = False
+        if 'active_only' in self._params:
+            active_only = bool(distutils.util.strtobool(
+                self._params['active_only']))
         cur = self._conn.cursor()
         query = ("SELECT " + self.DOI_OBJECTS_COLUMNS +
                  " FROM doi_objects WHERE ")
         if client_id is not None:
             query += "`client_id`=" + str(client_id) + " AND "
-        query += ("`identifier_type`='DOI'"
-                  " AND `status`!='REQUESTED'"
-                  " AND `doi_id` LIKE '10.4%';")
+        query += "`identifier_type`='DOI'"
+        if active_only:
+            query += " AND `status`='ACTIVE'"
+        else:
+            # All production DOIs.
+            query += " AND `status`!='REQUESTED'"
+        query += " AND `doi_id` LIKE '10.4%';"
         if self._debug:
             print("DEBUG: _get_DOI_links query:", query, file=sys.stderr)
         cur.execute(query)
