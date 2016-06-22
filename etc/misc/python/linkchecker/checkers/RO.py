@@ -368,6 +368,12 @@ class ROChecker(base.BaseChecker):
         Record a log entry if an exception occurs, or the server
         returns a 400/500 error.
 
+        Note the extreme care to close all opened sockets: the calls to
+        writer.close() all throughout the body. If any sockets were to
+        remain open, the asyncio system attempts to close them at
+        the end of the program, and this fails, causing
+        exceptions to be generated.
+
         Arguments:
         ssl_context -- The SSL context to use when making HTTP requests.
         timestamp -- The timestamp to use when storing the test result.
@@ -414,6 +420,9 @@ class ROChecker(base.BaseChecker):
                                            testing_array,
                                            counter,
                                            test_results)
+                    if self._debug:
+                        print("DEBUG:", counter, "Not opening writer",
+                              file=sys.stderr)
                     return
                 if not url.hostname:
                     # Something wrong with the parsing of the URL,
@@ -424,6 +433,9 @@ class ROChecker(base.BaseChecker):
                                            testing_array,
                                            counter,
                                            test_results)
+                    if self._debug:
+                        print("DEBUG:", counter, "Not opening writer",
+                              file=sys.stderr)
                     return
                 # Scheme OK, so now construct the query path to be sent to the
                 # server in a HEAD request.
@@ -468,7 +480,16 @@ class ROChecker(base.BaseChecker):
                     print("DEBUG:", counter, "Sending query string: ",
                           query,
                           file=sys.stderr)
-                writer.write(query.encode("utf-8"))
+                try:
+                    writer.write(query.encode("utf-8"))
+                except Exception as e:
+                    if self._debug:
+                        print("DEBUG:", counter, "Got exception attempting "
+                              "to write", file=sys.stderr)
+                        print("DEBUG:", counter, "Closing writer",
+                              file=sys.stderr)
+                    writer.close()
+                    return
 
                 # Await and read the response.
                 while True:
@@ -513,6 +534,10 @@ class ROChecker(base.BaseChecker):
                                            testing_array,
                                            counter,
                                            test_results)
+                    if self._debug:
+                        print("DEBUG:", counter, "Closing writer",
+                              file=sys.stderr)
+                    writer.close()
                     return
                 if mStatus:
                     # The status line is "HTTP/1.x 300 ....", so the status
@@ -529,6 +554,10 @@ class ROChecker(base.BaseChecker):
                                                testing_array,
                                                counter,
                                                test_results)
+                        if self._debug:
+                            print("DEBUG:", counter, "Closing writer",
+                                  file=sys.stderr)
+                        writer.close()
                         return
                     elif status_code == 301 or status_code == 302:
                         # Handle a redirection.
@@ -550,6 +579,10 @@ class ROChecker(base.BaseChecker):
                                                    testing_array,
                                                    counter,
                                                    test_results)
+                            if self._debug:
+                                print("DEBUG:", counter, "Closing writer",
+                                      file=sys.stderr)
+                            writer.close()
                             return
                     else:
                         # Success. This is indicated by deleting
@@ -561,7 +594,18 @@ class ROChecker(base.BaseChecker):
                             del testing_array[counter]
                         except KeyError:
                             pass
+                        if self._debug:
+                            print("DEBUG:", counter, "Closing writer",
+                                  file=sys.stderr)
+                        writer.close()
                         return
+                # Broken out of the loop: we may be about to follow a
+                # redirect. Close the existing writer.
+                if self._debug:
+                    print("DEBUG:", counter, "Closing writer",
+                          file=sys.stderr)
+                writer.close()
+
             # "Successful" conclusion of the for loop. But this means
             # we have now followed too many redirects.
             self._handle_one_error(url_str_original,
@@ -571,6 +615,10 @@ class ROChecker(base.BaseChecker):
                                    testing_array,
                                    counter,
                                    test_results)
+            if self._debug:
+                print("DEBUG:", counter, "Closing writer",
+                      file=sys.stderr)
+            writer.close()
             return
         # An UnboundLocalError occurs if mStatus is tested without
         # having been set. Handle this using the catch-all handler
@@ -584,8 +632,19 @@ class ROChecker(base.BaseChecker):
         except asyncio.futures.CancelledError:
             # This is caused by _run_tests() cancelling the task
             # because of a timeout.
-            pass
+            print("DEBUG:", counter, "Cancelled task due to timeout",
+                  file=sys.stderr)
+            if 'writer' in locals():
+                if self._debug:
+                    print("DEBUG:", counter, "Closing writer",
+                          file=sys.stderr)
+                writer.close()
         except Exception as e:
+            if 'writer' in locals():
+                if self._debug:
+                    print("DEBUG:", counter, "Closing writer",
+                          file=sys.stderr)
+                writer.close()
             self._handle_one_error(url_str_original,
                                    EXCEPTION_FORMAT.format(e),
                                    timestamp,
