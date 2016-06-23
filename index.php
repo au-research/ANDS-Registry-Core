@@ -47,7 +47,7 @@ if (defined('ENVIRONMENT'))
 			error_reporting(E_ALL & ~E_STRICT);
 			ini_set('display_errors', '1');
 		break;
-	
+
 		case 'testing':
 		case 'production':
 			error_reporting(0);
@@ -212,6 +212,7 @@ if (defined('ENVIRONMENT'))
  *
  */
 require_once APPPATH.'libraries/RegistryPlugin.php';
+require_once dirname(__FILE__).'/vendor/autoload.php';
 require_once BASEPATH.'core/CodeIgniter.php';
 
 /* End of file index.php */

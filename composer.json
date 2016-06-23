@@ -1,0 +1,13 @@
+{
+    "name": "mnguyen/core",
+    "authors": [
+        {
+            "name": "Minh Duc Nguyen",
+            "email": "minh.nguyen@ands.org.au"
+        }
+    ],
+    "require": {
+        "monolog/monolog": "^1.19",
+        "jaybizzle/crawler-detect": "1.*"
+    }
+}

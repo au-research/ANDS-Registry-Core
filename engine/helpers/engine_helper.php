@@ -470,6 +470,30 @@ function alphasort_byattr_title($a, $b) {
 	return (strtolower($a['title']) < strtolower($b['title'])) ? -1 : 1;
 }
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Formatter\LogstashFormatter;
+
+function ulog($message, $logger="activity", $type = "info")
+{
+
+	require_once dirname(BASEPATH).'/vendor/autoload.php';
+
+	// create a log channel
+	$log = new Logger($logger);
+	$formatter = new LogstashFormatter($logger);
+	$handler = new StreamHandler('logs/'.$logger.'.log');
+
+	$handler->setFormatter($formatter);
+	$log->pushHandler($handler);
+
+
+	// $log->addInfo($message['event'], $message);
+
+	// add records to the log
+	// $log->$type(json_encode($message));
+}
+
 /**
  * Universal log function
  * @param  string $message
@@ -477,7 +501,7 @@ function alphasort_byattr_title($a, $b) {
  * @param  string $type    	 [info|debug|warning|error|critical]
  * @return void
  */
-function ulog($message='', $logger='activity', $type='info') {
+function ulog_deprecate($message='', $logger='activity', $type='info') {
 	$CI =& get_instance();
 
 	//check if the logging class is loaded, if not, load it
@@ -542,6 +566,9 @@ function ulog_terms($terms=array(), $logger='activity', $type='info')
 			$msg.='['.$key.':'.$term.']';
 		}
 	}
+
+	$msg = $terms;
+
 	ulog($msg,$logger,$type);
 }
 
