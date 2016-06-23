@@ -22,11 +22,18 @@
         </div>
         <div class="widget-content" ng-if="vm.tab=='list'">
             <h3>Listing DOIs for {{ vm.client.client_name }} <small>({{ vm.client.app_id }})</small></h3>
-            <form class="form-search">
-                <input type="text" ng-model="filter" placeholder="Filter" class="input-medium search-query">
+
+            <form class="form-search" ng-submit="vm.refreshDOIs(vm.filter)">
+                <div class="input-append">
+                    <input type="text" ng-model="vm.filter" placeholder="Search for DOI" class="input-medium search-query">
+                    <button type="submit" class="btn">Search</button>
+                </div>
             </form>
             <br/>
-            <table class="table table-hover table-condensed">
+            <div class="alert alert-warning" ng-if="vm.dois.length === 0">
+                There are no DOIs available for viewing
+            </div>
+            <table class="table table-hover table-condensed" ng-if="vm.dois.length">
                 <thead>
                     <tr>
                         <th style="text-align:left">Title</th>
@@ -37,7 +44,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="doi in vm.dois | filter:filter">
+                    <tr ng-repeat="doi in vm.dois">
                         <td>
                             <small><strong>{{ doi.title }}</strong></small><br/>
                             <a target="_blank" href="{{ doi.url }}">{{ doi.url }}</a>
@@ -62,6 +69,13 @@
                     </tr>
                 </tbody>
             </table>
+            <a href=""
+                class="btn btn-default btn-block"
+                ng-click="vm.doisListNext(vm.offset)"
+                ng-if="vm.offset < vm.total"
+                >
+                Displaying ({{ vm.offset }} / {{ vm.total }}) View More <i class="caret"></i>
+            </a>
         </div>
 
         <div class="widget-content" ng-if="vm.tab=='detail'">
