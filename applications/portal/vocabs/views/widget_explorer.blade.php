@@ -23,7 +23,7 @@ That directive pulls in the template         applications/portal/vocabs/assets/t
         <div class="row">
             <div class="col-md-12">
                 <p>The Research Vocabularies Australia widget allows you to add data classification capabilities to your
-                    data discovery tools. By incorporating the widget (<a href="http://developers.ands.org.au/widgets/vocab_widget/"
+                    data discovery tools. By incorporating the widget (<a href="http://developers.ands.org.au/widgets/controlled-vocabulary-widget-v2/"
                         target="_blank">using a simple jQuery plugin</a>) in a data discovery workflow using your
                     chosen vocabularies, your users can browse and select concepts to aid in their discovery of your resources. In addition, you
                     can incorporate the widget into your description tools to allow those describing your resources to easily make use of controlled

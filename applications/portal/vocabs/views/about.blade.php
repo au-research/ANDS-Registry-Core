@@ -33,7 +33,7 @@ About ANDS Vocabulary Services
 						Through engagement with the research community, Research Vocabularies Australia will grow to cover a broad spectrum of research fields - across sciences, social sciences, arts and humanities. Many of the vocabularies you can discover here are immediately accessible, either directly through Research Vocabularies Australia or via partners and publishers, and are free to use (subject to licence conditions).
 					</p>
 		            <p>
-                        For more background information on this service see <a href="http://ands.org.au/services/controlled-vocabulary.html"  target="_blank">http://ands.org.au/services/controlled-vocabulary.html</a>.
+                        For more background information on this service see <a href="http://www.ands.org.au/online-services/research-vocabularies-australia"  target="_blank">http://www.ands.org.au/online-services/research-vocabularies-australia</a>.
                     </p>
 				</div>
                 <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-md-offset-2 col-lg-offset-2 animated fadeInUp">
