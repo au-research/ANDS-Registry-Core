@@ -9,16 +9,16 @@ require_once(REGISTRY_APP_PATH . "services/interfaces/_GenericPortalEndpoint.php
  *
  */
 
-class Rda extends MX_Controller implements GenericPortalEndpoint 
+class Rda extends MX_Controller implements GenericPortalEndpoint
 {
-	// Some internal defaults 
+	// Some internal defaults
 	const response_format = "application/json";
 	const default_retrieval_scheme = "extrif";
 	const default_retrieval_status = PUBLISHED;
 
 
 	/**
-	 * Fetch a registry object from the registry by "SLUG"	
+	 * Fetch a registry object from the registry by "SLUG"
 	 *
 	 * Responds with a JSON array containing the data of the record's extrif
 	 * (or a JSON-formatted error response, if no matching data is available)
@@ -27,11 +27,11 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 	 * @param $_GET[status] A specific status to select (default is PUBLISHED)
 	 */
 	public function getRegistryObject()
-	{	
+	{
 		$this->load->model('registry_object/Registry_objects', 'ro');
 
 		// Some validation on input
-		if (!$this->input->get('slug') && !$this->input->get('registry_object_id') && !$this->input->get('any')) { 
+		if (!$this->input->get('slug') && !$this->input->get('registry_object_id') && !$this->input->get('any')) {
 			throw new Exception("No valid URL SLUG or registry_object_id specified.");
 		}
 
@@ -81,7 +81,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			//see if this group has a contributor page
 			$contributor = $this->db->get_where('institutional_pages',array('group' => $theObject->getAttribute('group')));
 			if ($contributor->num_rows() >0)
-			{				
+			{
 				//if there is a contributor page see if the key of the page is this one (to cater for when a draft and published contibutor page exists)
 				$contributorRecord = array_pop($contributor->result_array());
 				$theContributor = $this->ro->getByID($contributorRecord['registry_object_id']);
@@ -89,7 +89,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 				{
 					$record[0]['template'] = CONTRIBUTOR_PAGE_TEMPLATE;
 				}
-				
+
 			}
 
 			$result = json_encode($record[0]);
@@ -122,7 +122,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			$result = array();
 			$this->load->model('data_source/data_sources', 'ds');
 			$contributor = $this->db->get_where('institutional_pages',array('group' => $ro->getAttribute('group')));
-			if ($contributor->num_rows() >0) {				
+			if ($contributor->num_rows() >0) {
 				$contributorRecord = array_pop($contributor->result_array());
 				$theContributor = $this->ro->getByID($contributorRecord['registry_object_id']);
 				if($theContributor && $theContributor->getAttribute('key')==$ro->key){
@@ -142,7 +142,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 				// Check for redirects from old slugs
 				$query = $this->db->query("SELECT * FROM url_mappings u JOIN registry_objects r ON r.registry_object_id = u.registry_object_id WHERE u.slug = ?", $this->input->get('slug'));
-				
+
 				if ($query->num_rows() > 0)
 				{
 					$orphan_slug = array_pop($query->result_array());
@@ -150,7 +150,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 					{
 						throw new Exception("Error: Unable to fetch extRif, despite active SLUG mapping.");
 					}
-					
+
 					$contents = array('redirect_registry_object_slug' => $orphan_slug['slug']);
 					echo json_encode($contents);
 					return;
@@ -159,7 +159,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 				// Check for orphans! (SLUGS whose registry_object has been deleted)
 				$query = $this->db->select('search_title')->get_where('url_mappings',
 											array("slug"=> $this->input->get('slug'), "registry_object_id IS NULL" => null));
-				
+
 				if ($query->num_rows() > 0)
 				{
 					$orphan_slug = array_pop($query->result_array());
@@ -243,7 +243,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 	/**
 	* Fetch a list of connections from the registry
-	* 
+	*
 	* XXX: TODO
 	* XXX: Must have limit/offset (20 per "class" of connection)
 	* XXX: must deal with draft records (so need to be able to specify a specific ID)
@@ -256,7 +256,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 		// Some validation on input
 		if (!($this->input->get('slug') || $this->input->get('registry_object_id') || $this->input->get('registry_object_key')))
-		{ 
+		{
 			throw new Exception("Invalid URL SLUG, registry_object_id or registry_object_key specified.");
 		}
 
@@ -298,7 +298,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		header('Content-type: application/json');
 		$result = array();
 		if (!($this->input->get('id')))
-		{ 
+		{
 			$result['message'] = "Invalid URL 'id' not specified.";
 		}
 		else{
@@ -383,7 +383,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 		// Some validation on the target registry object
 		if (! $this->input->get('slug') && !$this->input->get('id'))
-		{ 
+		{
 			throw new Exception("Invalid URL SLUG or registry_object_id specified.");
 		}
 
@@ -419,7 +419,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 		// Get the RO instance for this registry object so we can fetch its contributor datat
 		$this->load->model('registry_object/registry_objects', 'ro');
-		
+
 		if ($this->input->get('id')) {
 			$registry_object = $this->ro->getByID($this->input->get('id'));
 		} elseif ($this->input->get('slug')){
@@ -429,7 +429,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		if (!$registry_object) {
 			throw new Exception("Unable to fetch contributor data registry object.");
 		}
-		
+
 
 		// XXX: TODO: LIMIT and offset (pass to getSuggestedLinks...)
 		$this->load->library('solr');
@@ -461,7 +461,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 				));
 			}
 		}
-		
+
 		echo json_encode(array("contents"=>$fresult));
 	}
 
@@ -502,7 +502,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 		// Get the RO instance for this registry object so we can fetch its contributor datat
 		$this->load->model('registry_object/registry_objects', 'ro');
-		
+
 		if ($this->input->get('slug'))
 		{
 			$registry_object = $this->ro->getBySlug($this->input->get('slug'));
@@ -516,10 +516,10 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		{
 			throw new Exception("Unable to fetch suggested links for this registry object.");
 		}
-		
+
 
 		// XXX: TODO: LIMIT and offset (pass to getSuggestedLinks...)
-	
+
 		$cannedText = $registry_object->getContributorText();
 
 		echo json_encode(array("theText"=>$cannedText));
@@ -577,7 +577,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 	 */
 	public function getWhoContributes()
 	{
-		$contributors = array(); 
+		$contributors = array();
 
 		// Get an array of groups in the registry using SOLR facets
 		$this->load->library('solr');
@@ -640,14 +640,14 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 
 	/**
-	 * Return a tree/hierarchical structure of ancestors and descendent records of 
+	 * Return a tree/hierarchical structure of ancestors and descendent records of
 	 * a specified record (inferred from the isPartOf/partOf relationships).
 	 *
 	 * If the registry object ID is specified, draft connections will be included.
 	 *
 	 * @param $_GET[slug] "SLUG" of the registry object to retrieve
 	 * @param $_GET[registry_object_id] A specific registry object ID to fetch
-	 * 
+	 *
 	 */
 	public function getAncestryGraph()
 	{
@@ -656,7 +656,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 		$depth = 5;
 		$this_registry_object = null;
-		
+
 		// Get the RO instance for this registry object so we can fetch its graphs
 		if ($this->input->get('slug'))
 		{
@@ -727,7 +727,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 	public function getSlugFromKey()
 	{
 		$key = $this->input->get("key");
-		
+
 		$this->db->select("slug,registry_object_id,status")->from("registry_objects")->where("key",$key);
 		$query = $this->db->get();
 
@@ -742,7 +742,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		}
 	}
 
-	public function getThemePageIndex(){	
+	public function getThemePageIndex(){
 		$this->output->set_content_type(rda::response_format);
 		$results = array();
 		$this->load->model('apps/theme_cms/theme_pages');
@@ -868,7 +868,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		// echo $user.' from '.$user_from.' adding tag '.$tag.' to '.$key;
 
 		if(!$key || !$tag || !$user || !$user_from){
-			throw new Exception("An error has occured");
+			throw new Exception("An error has occured. Missing required fields");
 		}
 
 		$this->load->model('registry_object/registry_objects','ro');

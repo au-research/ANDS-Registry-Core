@@ -160,6 +160,10 @@
             location.href = base_url+'search/#' + '!/' + hash;
         };
 
+        $scope.filters_to_hash = function() {
+            return search_factory.filters_to_hash(search_factory.filters);
+        };
+
         $scope.hashChange = function(){
             // $log.debug('query', $scope.query, search_factory.query);
             // $scope.filters.q = $scope.query;

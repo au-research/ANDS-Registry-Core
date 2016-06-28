@@ -159,7 +159,11 @@ function ds_acl_enforce($ds_id, $message = ''){
 
 function default_error_handler($errno, $errstr, $errfile, $errline)
 {
-	ulog($errstr . " > on line " . $errline . " (" . $errfile .")". 'Error: '.error_level_tostring($errno), 'error', 'error');
+	$event = [
+		'event' => 'error',
+		'message' => $errstr . " > on line " . $errline . " (" . $errfile .")". 'Error: '.error_level_tostring($errno)
+	];
+	ulog($event, 'error', 'error');
 
 	// Ignore when error_reporting is turned off (sometimes inline with @ symbol)
 	if (error_reporting() == 0) { return true; }
@@ -470,59 +474,11 @@ function alphasort_byattr_title($a, $b) {
 	return (strtolower($a['title']) < strtolower($b['title'])) ? -1 : 1;
 }
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Monolog\Formatter\LogstashFormatter;
-
 function ulog($message, $logger="activity", $type = "info")
 {
-
-	require_once dirname(BASEPATH).'/vendor/autoload.php';
-
-	// create a log channel
-	$log = new Logger($logger);
-	$formatter = new LogstashFormatter($logger);
-	$handler = new StreamHandler('logs/'.$logger.'.log');
-
-	$handler->setFormatter($formatter);
-	$log->pushHandler($handler);
-
-
-	// $log->addInfo($message['event'], $message);
-
-	// add records to the log
-	// $log->$type(json_encode($message));
-}
-
-/**
- * Universal log function
- * @param  string $message
- * @param  string $logger    [registry|importer|activity|portal|error]
- * @param  string $type    	 [info|debug|warning|error|critical]
- * @return void
- */
-function ulog_deprecate($message='', $logger='activity', $type='info') {
 	$CI =& get_instance();
-
-	//check if the logging class is loaded, if not, load it
-	if (!class_exists('Logging')) {
-		$CI->load->library('logging');
-	}
-	$CI->load->library('logging');
-
-	try {
-		$logger = $CI->logging->get_logger($logger);
-		switch($type) {
-			case 'info' : $logger->info($message);break;
-			case 'debug' : $logger->debug($message);break;
-			case 'warning' : $logger->warning($message);break;
-			case 'error' : $logger->error($message);break;
-			case 'critical' : $logger->critical($message);break;
-		}
-	} catch (Exception $e) {
-		throw new Exception($e);
-		// log_message('error', $e->getMessage());
-	}
+	$CI->load->library('ANDSLogging');
+	ANDSLogging::log($message, $logger, $type);
 }
 
 function ulog_email($subject='', $message='', $logger='activity', $type='info') {
@@ -547,29 +503,7 @@ function ulog_email($subject='', $message='', $logger='activity', $type='info') 
 
 function ulog_terms($terms=array(), $logger='activity', $type='info')
 {
-	$msg = '';
-
-	$CI =& get_instance();
-    $msg = '';
-
-    if (!isset($terms['ip'])) $terms['ip'] = $CI->input->ip_address();
-    if (!isset($terms['user_agent'])) $terms['user_agent'] = $CI->input->user_agent();
-
-    //check if user is logged in, then record the current user
-    if ($CI->user->isLoggedIn()) {
-        $terms['username'] = $CI->user->name();
-        $terms['userid'] = $CI->user->localIdentifier();
-    }
-
-	foreach($terms as $key=>$term) {
-		if(!is_array($key) && !is_array($term)) {
-			$msg.='['.$key.':'.$term.']';
-		}
-	}
-
-	$msg = $terms;
-
-	ulog($msg,$logger,$type);
+	ulog($terms, $logger, $type);
 }
 
 function in_array_r($needle, $haystack, $strict = false) {

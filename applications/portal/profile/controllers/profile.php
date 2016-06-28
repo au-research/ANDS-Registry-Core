@@ -184,14 +184,17 @@ class Profile extends MX_Controller
         $data = json_decode(file_get_contents("php://input"), true);
         $data = $data['data'];
         $this->load->model('portal_user');
-
-        $event = $data;
-        $event['event'] = 'portal_modify_user_data';
-        $event['action'] = $action;
-        $event['raw'] = json_encode($data);
-        ulog_terms($event, 'portal', 'info');
-
         $message = $this->portal_user->modify_user_data($type, $action, $data);
+
+        ulog_terms([
+            'event' => 'portal_modify_user_data',
+            'profile_action' => [
+                'type' => $type,
+                'action' => $action,
+                'data' => $data
+            ]
+        ],'portal', 'info');
+
         echo json_encode($message);
     }
 
