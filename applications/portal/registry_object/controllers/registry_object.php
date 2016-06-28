@@ -750,7 +750,7 @@ class Registry_object extends MX_Controller
         $ro->event($type, $value);
 
         $event = [
-            'event' => $type
+            'event' => 'portal_'.$type
         ];
 
         $event['record'] = $this->getRecordFields($ro);
