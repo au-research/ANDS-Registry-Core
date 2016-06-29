@@ -19,7 +19,7 @@ class Profile extends MX_Controller
             $this->load->model('portal_user');
             // $user = $this->portal_user->getCurrentUser();
 
-            ulog_terms(
+            monolog(
                 array(
                     'event' => 'portal_dashboard'
                 ),'portal', 'info'
@@ -142,7 +142,7 @@ class Profile extends MX_Controller
                 'event' => 'portal_save_search',
             );
             $event = array_merge($event, $saved_data);
-            ulog_terms($event, 'portal', 'info');
+            monolog($event, 'portal', 'info');
 
             $this->portal_user->add_user_data($saved_data);
         }if ($type == 'saved_record') {
@@ -157,7 +157,7 @@ class Profile extends MX_Controller
                         'event' => 'portal_save_record',
                         'roid' => $d['id']
                     );
-                    ulog_terms($event,'portal', 'info');
+                    monolog($event,'portal', 'info');
 
                     $this->portal_user->add_user_data($saved_data);
                 } else {
@@ -186,7 +186,7 @@ class Profile extends MX_Controller
         $this->load->model('portal_user');
         $message = $this->portal_user->modify_user_data($type, $action, $data);
 
-        ulog_terms([
+        monolog([
             'event' => 'portal_modify_user_data',
             'profile_action' => [
                 'type' => $type,

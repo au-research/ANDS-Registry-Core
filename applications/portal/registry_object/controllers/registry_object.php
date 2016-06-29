@@ -97,7 +97,7 @@ class Registry_object extends MX_Controller
             // Set 404 HTTP Status code (CC-1633, CC-1712)
             $this->output->set_status_header('404');
 
-            ulog_terms([
+            monolog([
                 'event' => 'portal_view_notfound',
                 'request' => [
                     'purl' => $purl,
@@ -121,7 +121,7 @@ class Registry_object extends MX_Controller
             // Set 404 HTTP Status code (CC-1633, CC-1712)
             $this->output->set_status_header('404');
 
-            ulog_terms([
+            monolog([
                 'event' => 'portal_view_notfound',
                 'request' => [
                     'id' => $this->input->get('id'),
@@ -206,7 +206,7 @@ class Registry_object extends MX_Controller
                 $event['refer_q'] = $this->input->get('refer_q');
             }
 
-            ulog_terms($event, 'portal', 'info');
+            monolog($event, 'portal', 'info');
         } else {
             //DRAFT Preview are not recorded, or should they?
         }
@@ -368,7 +368,7 @@ class Registry_object extends MX_Controller
             $ro = $this->ro->getByID($this->input->get('ro_id'));
             $omit = $this->input->get('omit') ? $this->input->get('omit') : false;
 
-            ulog_terms(
+            monolog(
                 array(
                     'event' => 'portal_preview',
                     'record' => $this->getRecordFields($ro)
@@ -403,7 +403,7 @@ class Registry_object extends MX_Controller
                     $ro = $this->ro->findRecord($filters);
                 }
 
-                ulog_terms(
+                monolog(
                     array(
                         'event' => 'portal_preview_identifier',
                         'record' => $this->getRecordFields($ro),
@@ -426,7 +426,7 @@ class Registry_object extends MX_Controller
                 $pullback = $this->ro->resolveIdentifier('doi', $identifier);
                 $ro = $this->ro->findRecord(array('identifier_value' => $identifier));
 
-                ulog_terms(
+                monolog(
                     array(
                         'event' => 'portal_preview_doi',
                         'record' => $this->getRecordFields($ro),
@@ -699,7 +699,7 @@ class Registry_object extends MX_Controller
             array('header' => 'multipart/form-data'));
         $this->_dropCache($data['id']);
 
-        ulog_terms([
+        monolog([
             'event' => 'portal_tag_add',
             'tag' => ['value' => $data['tag'] ],
             'record' => ['key' => $data['key'] ]
@@ -755,7 +755,7 @@ class Registry_object extends MX_Controller
 
         $event['record'] = $this->getRecordFields($ro);
 
-        ulog_terms($event, 'portal', 'info');
+        monolog($event, 'portal', 'info');
 
         $stats = $ro->stat();
 
@@ -974,7 +974,7 @@ class Registry_object extends MX_Controller
                 'result_dsid' => $result_dsid
             ];
 
-            ulog_terms($event, 'portal', 'info');
+            monolog($event, 'portal', 'info');
         }
 
         // sanity check on the Query String we use SOLR to search

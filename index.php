@@ -212,7 +212,6 @@ if (defined('ENVIRONMENT'))
  *
  */
 require_once APPPATH.'libraries/RegistryPlugin.php';
-require_once dirname(__FILE__).'/vendor/autoload.php';
 require_once BASEPATH.'core/CodeIgniter.php';
 
 /* End of file index.php */

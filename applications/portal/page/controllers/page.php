@@ -195,7 +195,7 @@ class Page extends MX_Controller
             'ip' => $this->input->ip_address(),
             'user_agent' => $this->input->user_agent(),
         );
-        ulog_terms($event, 'portal');
+        monolog($event, 'portal');
 
         if ($page == 'main') {
             $pages = array(
@@ -303,7 +303,7 @@ class Page extends MX_Controller
             'ip' => $this->input->ip_address(),
             'user_agent' => $this->input->user_agent(),
         );
-        ulog_terms($event, 'portal');
+        monolog($event, 'portal');
     }
 
     public function __construct()

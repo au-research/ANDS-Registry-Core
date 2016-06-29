@@ -2,6 +2,10 @@
     exit('No direct script access allowed');
 }
 
+if (!file_exists(dirname(BASEPATH).'/vendor/autoload.php')) {
+    throw new \Exception("Installation incompleted. vendor directory missing. Try running composer install");
+}
+
 require_once dirname(BASEPATH).'/vendor/autoload.php';
 
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
@@ -11,14 +15,6 @@ use Monolog\Logger;
 
 class ANDSLogging
 {
-    protected $logger;
-    private $CI;
-
-    public function __construct()
-    {
-        $this->CI =& get_instance();
-    }
-
     /**
      * Log an event using Monolog
      *
