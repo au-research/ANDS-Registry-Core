@@ -105,6 +105,14 @@ $(document).on('click', '.ro_preview', function(event){
 				} else if($(element).attr('identifier_doi')) {
 					var url = base_url+'registry_object/preview/?identifier_doi='+$(element).attr('identifier_doi')
 				}
+
+                if (url && $(element).attr('href').indexOf('source=')) {
+                    var source = $(element).attr('href').split('source=')[1];
+                    url += '&source='+source;
+                }
+
+                console.log(url);
+
 				if (url) {
 					$.ajax({
 						url: url,

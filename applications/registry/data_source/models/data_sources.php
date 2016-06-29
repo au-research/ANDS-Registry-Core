@@ -2,22 +2,22 @@
 
 /**
  * Core Data Sources model
- * 
- * This model allows the reference and initialisation 
- * of Data Sources. All instances of the _data_source 
- * PHP class should be invoked through this model. 
- * 
+ *
+ * This model allows the reference and initialisation
+ * of Data Sources. All instances of the _data_source
+ * PHP class should be invoked through this model.
+ *
  * @author Ben Greenwood <ben.greenwood@ands.org.au>
  * @see ands/datasource/_data_source
  * @package ands/datasource
- * 
+ *
  */
 
 class Data_sources extends CI_Model {
 
 	/**
 	 * Returns exactly one data source by Key (or NULL)
-	 * 
+	 *
 	 * @param the data source key
 	 * @return _data_source object or NULL
 	 */
@@ -48,11 +48,11 @@ class Data_sources extends CI_Model {
 			}
 
 		}
-	} 	
-	
+	}
+
 	/**
 	 * Returns exactly one data source by ID (or NULL)
-	 * 
+	 *
 	 * @param the data source ID
 	 * @return _data_source object or NULL
 	 */
@@ -85,10 +85,10 @@ class Data_sources extends CI_Model {
 			}
 		}
 	}
-	
+
 		/**
 	 * Returns exactly one data source by ID (or NULL)
-	 * 
+	 *
 	 * @param the data source ID
 	 * @return _data_source object or NULL
 	 */
@@ -109,7 +109,7 @@ class Data_sources extends CI_Model {
 	/**
 	 * Returns data sources which this user has ownership of by virtue of their
 	 * affiliation (organisational roles)
-	 * 
+	 *
 	 * @param the data source ID
 	 * @return _data_source object or NULL
 	 */
@@ -119,7 +119,7 @@ class Data_sources extends CI_Model {
 		$affiliations = $this->user->affiliations();
 		if ((is_array($affiliations) && count($affiliations) > 0) || $this->user->hasFunction(AUTH_FUNCTION_SUPERUSER)) {
 			if ($this->user->hasFunction(AUTH_FUNCTION_SUPERUSER)) {
-				$query = $this->db->query("SELECT * FROM data_sources");	
+				$query = $this->db->query("SELECT * FROM data_sources");
 			} else {
 				$query = $this->db->where_in('record_owner', $affiliations)->get('data_sources');
 			}
@@ -136,7 +136,7 @@ class Data_sources extends CI_Model {
 					}else{
 						$data_sources[] =  new _data_source($ds['data_source_id']);
 					}
-					
+
 				}
 			}
 		}
@@ -145,7 +145,7 @@ class Data_sources extends CI_Model {
 
 	/**
 	 * Returns groups which this datasource has objects which are contributed by
-	 * 
+	 *
 	 * @param the data source ID
 	 * @return array of groups or NULL
 	 */
@@ -159,20 +159,20 @@ class Data_sources extends CI_Model {
 				return $groups;
 			}
 			else
-			{				
+			{
 				foreach($query->result_array() AS $group)
 				{
 					$groups[] =  $group['group'];
 				}
 			}
-		return $groups;	
-	} 	
+		return $groups;
+	}
 
 
 
 	/**
 	 * Returns exactly one data source by URL slug (or NULL)
-	 * 
+	 *
 	 * @param the data source slug
 	 * @return _data_source object or NULL
 	 */
@@ -188,11 +188,11 @@ class Data_sources extends CI_Model {
 			$id = $query->result_array();
 			return new _data_source($id[0]['data_source_id']);
 		}
-	} 	
-	
+	}
+
 	/**
 	 * Get a number of datasources that match the attribute requirement (or an empty array)
-	 * 
+	 *
 	 * @param the name of the attribute to match by
 	 * @param the value that the attribute must match
 	 * @return array(_data_source)
@@ -204,7 +204,7 @@ class Data_sources extends CI_Model {
 		} else {
 			$query = $this->db->select("data_source_id")->get_where('data_source_attributes', array("attribute"=>$attribute_name, "value"=>$value));
 		}
-		
+
 		if ($query->num_rows() > 0) {
 			foreach ($query->result_array() AS $result) {
 				$matches[] = new _data_source($result['data_source_id']);
@@ -241,10 +241,10 @@ class Data_sources extends CI_Model {
             return $result;
         }
     }
-	
+
 	/**
 	 * Get all datasources
-	 * 
+	 *
 	 * @param limit by value
 	 * @param the offset value
 	 * @return array(_data_source) or empty array
@@ -258,8 +258,8 @@ class Data_sources extends CI_Model {
 		}else{
 			$query = $this->db->select("data_source_id")->get('data_sources', $limit, $offset);
 		}
-		
-		
+
+
 		if ($query->num_rows() > 0)
 		{
 			foreach ($query->result_array() AS $result)
@@ -272,9 +272,10 @@ class Data_sources extends CI_Model {
 
 			}
 		}
-		
+
 		return $matches;
-	} 
+	}
+
 
 	/** get 2 groups by size
 
@@ -294,27 +295,27 @@ class Data_sources extends CI_Model {
 		}
 		return $matches;
 	}
-	
+
 
 	/**
-	 * XXX: 
+	 * XXX:
 	 * @return array(_data_source) or NULL
 	 */
 	function create($key, $slug)
 	{
 		$ds = new _data_source();
-		
+
 		// Compulsory attributes
 		$ds->_initAttribute("key",$key, TRUE);
 		$ds->_initAttribute("slug",$slug, TRUE);
-		
+
 		// Some extras
 		$ds->setAttribute("created",time());
 
 		$ds->create();
 		return $ds;
-	} 	
-	
+	}
+
 	/**
 	 * @ignore
 	 */
@@ -322,8 +323,8 @@ class Data_sources extends CI_Model {
 	{
 		parent::__construct();
 		require_once("_data_source.php");
-	}	
-		
+	}
+
 }
 
 /* Avoid hammering the database if the last accessed

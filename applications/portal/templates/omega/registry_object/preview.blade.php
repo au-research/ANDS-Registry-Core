@@ -20,10 +20,14 @@
         }
     }
 
+    if (!isset($source)) {
+        $source = 'preview';
+    }
+
 ?>
 <div class="swatch-white">
 	<h2 class="bordered bold">@include('includes/icon')
-      <a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}">  {{$ro->core['title']}}</a>
+      <a href="{{ portal_url($ro->core['slug'].'/'.$ro->core['id'].'?source='.$source) }}">  {{$ro->core['title']}}</a>
     </h2>
 	<p>@include('registry_object/contents/the-description')</p>
     @include('registry_object/contents/identifiers-preview')
@@ -44,5 +48,5 @@
             @endif
         </ul>
 	@endif
-    <a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm pull-right">View Record</a>
+    <a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'].'?source='.$source)}}" class="btn btn-primary btn-link btn-sm pull-right">View Record</a>
 </div>

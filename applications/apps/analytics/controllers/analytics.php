@@ -6,6 +6,8 @@
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
+
 class Analytics extends MX_Controller
 {
 
@@ -429,6 +431,130 @@ class Analytics extends MX_Controller
         }
 
     }
+
+    public function processLegacyLog($date_from = '2014-01-01')
+    {
+        $this->output->set_header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+        $this->load->model('summary');
+        $this->load->model('registry/registry_object/registry_objects', 'ro');
+        $this->load->library('ElasticSearch');
+
+        $CrawlerDetect = new CrawlerDetect();
+
+        $legacyLogs = '/Users/mnguyen/dev/elk/logs/';
+
+        $dates = readDirectory($legacyLogs. 'portal');
+        foreach ($dates as &$date) {
+            $date = str_replace("log-portal-", "", $date);
+            $date = str_replace(".php", "", $date);
+        }
+        $dates = array_values($dates);
+
+        natsort($dates);
+
+        $dates = date_range(reset($dates), end($dates), '+1day', 'Y-m-d');
+        $dates = array_reverse($dates);
+
+        if ($date_from) {
+            $key = array_search($date_from, $dates);
+            $dates = array_slice($dates, $key);
+        }
+
+        foreach ($dates as $date) {
+            $filters = ['log' => 'portal'];
+
+            $file_path = $legacyLogs . $filters['log'] . '/log-' . $filters['log'] . '-' . $date . '.php';
+            $lines = readFileToLine($file_path);
+
+            //create the date file in the processed
+            $processed_file_path = $legacyLogs . 'processed_'. $filters['log'] . '/'.$date.'.log';
+
+            foreach ($lines as $line) {
+                $content = readString($line);
+
+                if ($content && count($content) > 0 && array_key_exists('date', $content)) {
+
+                    $timestamp = date("c", strtotime($content['date']));
+                    $event = array_key_exists('event', $content) ? $content['event'] : 'unknown_event';
+
+                    $content['user_agent'] = array_key_exists('user_agent', $content) ? $content['user_agent'] : 'dude';
+
+                    if($CrawlerDetect->isCrawler($content['user_agent'])) {
+                        $content['is_bot'] = true;
+                    } else {
+                        $content['is_bot'] = false;
+                    }
+
+                    if (!$content['is_bot']) {
+                        $parsed = [
+                            '@timestamp' => $timestamp, //todo
+                            '@source' => 'localhost',
+                            '@message' => $event,
+                            '@tags' => ['portal', $event],
+                            '@type' => 'portal'
+                        ];
+
+                        if (array_key_exists('roid', $content)) {
+                            if (isset($content['roclass']) && !isset($content['class'])) {
+                                $content['class'] = $content['roclass'];
+                            }
+
+                            if (isset($content['dsid']) && !isset($content['data_source_id'])) {
+                                $content['data_source_id'] = $content['dsid'];
+                            }
+
+                            //fill the record up with group, dsid, slug, path
+                            $fields = ['group', 'slug', 'data_source_id', 'group', 'key'];
+                            foreach ($fields as $field) {
+                                if (!isset($content[$field])) {
+                                    $value = $this->ro->getAttribute($content['roid'], $field);
+                                    if ($value) {
+                                        $content[$field] = $value;
+                                    } else {
+                                        $content['unknown_'.$field] = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        // split
+                        $splittableFields = ['result_roid', 'result_group', 'result_dsid'];
+                        foreach ($splittableFields as $field) {
+                            if (array_key_exists($field, $content)) {
+                                $content[$field] = explode(',,', $content[$field]);
+                            }
+                        }
+
+                        $parsed['@fields'] = [
+                            'channel' => 'portal',
+                            'level' => 200
+                        ];
+
+                        foreach ($content as $key=>$value) {
+                            $parsed['@fields']['ctxt_'.$key] = $value;
+                        }
+
+                        $message = json_encode($parsed);
+
+                        if (file_exists($processed_file_path)) {
+                          $fh = fopen($processed_file_path, 'a');
+                          fwrite($fh, $message."\n");
+                        } else {
+                          $fh = fopen($processed_file_path, 'w');
+                          fwrite($fh, $message."\n");
+                        }
+                        fclose($fh);
+                    }
+                    unset($content);
+                    unset($parsed);
+                }
+            }
+            echo "Done $date\n";
+        }
+
+    }
+
 
     public function indexLogs($date_from = '2014-01-01')
     {
