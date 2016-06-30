@@ -159,6 +159,13 @@ module.exports = function(grunt){
         'uglify'
     ]);
 
+    grunt.registerTask('portal', [
+        'less:core',
+        'concat:lib',
+        'concat:portal_lib',
+        'uglify'
+    ]);
+
     grunt.registerTask('vocab', [
         'less:vocab_less',
         'concat:vocab_lib',
