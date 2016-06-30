@@ -272,6 +272,56 @@ class Registry_object extends MX_Controller
     }
 
     /**
+     * Export Controller
+     * @param  string $type endnote|endnote_web
+     * @param  string  $ids  "-" separated list of ids. eg 5435-23443
+     * @return redirect
+     */
+    public function export($type = 'endnote', $ids)
+    {
+        // capture the event
+        $ids = explode('-', $ids);
+        $event = [
+            'event' => 'portal_export',
+            'record_ids' => $ids,
+            'export_type' => $type,
+        ];
+
+        // determine single record
+        if (count($ids) == 1  &&
+            $ro = $this->ro->getByID($ids[0], ['core'], false)
+            ) {
+            $event['record'] = $this->getRecordFields($ro);
+        }
+
+        //determine source
+        if ($source = $this->input->get('source')) {
+            $event['source'] = $source;
+        }
+
+        monolog($event, 'portal', 'info');
+
+        /**
+         * forward them to
+         * registry/registry_object@exportToEndNote/{:ids}.ris?foo=timestamp
+         * @todo make export a portal only functionality
+         * @todo investigate in making an export registry API instead
+         */
+        $exportUrl = registry_url('registry_object/exportToEndNote/'. implode('-',$ids).'.ris?foo='.time());
+
+        // Redirection switchboard
+        switch ($type) {
+            case "endnote":
+                redirect($exportUrl);
+                break;
+            case "endnote_web":
+                $endNoteWebUrl = "http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl=".$exportUrl;
+                redirect($endNoteWebUrl);
+                break;
+        }
+    }
+
+    /**
      * Returns the relationship array primed for display
      *
      * @param $ro
