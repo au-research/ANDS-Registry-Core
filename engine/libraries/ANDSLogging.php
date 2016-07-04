@@ -89,8 +89,13 @@ class ANDSLogging
             ];
         }
 
+        // Load the user library if it's not loaded already
+        if (!class_exists('User') || $CI->user === null) {
+            $CI->load->library('user');
+        }
+
         // Logged In user via the User Library
-        if ($CI->user->isLoggedIn()) {
+        if ($CI->user && $CI->user->isLoggedIn()) {
             $event['user']['username'] = $CI->user->name();
             $event['user']['userid'] = $CI->user->localIdentifier();
             $event['user']['source'] = $CI->user->authDomain() ?: $CI->user->authMethod();
