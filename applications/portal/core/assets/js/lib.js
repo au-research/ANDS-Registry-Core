@@ -3857,11 +3857,6 @@ CHECKS.ie6 = {
             });
         });
 
-        if(readCookie('help_shown') != 'true')
-        {
-            $('.help_button').click();
-        }
-
         $('#help_modal').on('hidden.bs.modal', function () {
             if(readCookie('help_shown') != 'true')
             {
