@@ -1,4 +1,4 @@
-@if(isset($ro->core['theme_page']) and isset($theme_page))
+@if(isset($ro->core['theme_page']) && isset($theme_page) && $theme_page !== false)
 <div class="panel swatch-white">
     <div class="panel-heading"></div>
     <div class="panel-body">

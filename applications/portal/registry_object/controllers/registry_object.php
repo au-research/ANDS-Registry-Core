@@ -233,11 +233,11 @@ class Registry_object extends MX_Controller
         }
 
         // Theme Page
-        $the_theme = '';
+        $the_theme = false;
         if (isset($ro->core['theme_page'])) {
             $the_theme = $this->getTheme($ro->core['theme_page']);
         }
-
+        
         //Decide whethere to show the duplicate identifier
         $show_dup_identifier_qtip = true;
         if ($this->input->get('fl') !== false) {
