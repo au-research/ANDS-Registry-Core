@@ -647,10 +647,16 @@ function getReleaseVersion(){
 }
 
 /**
- * global helper function to check if the user agent string contains "bot"
- * probably not a really accurate check, but good enough for the use case
- * @return boolean
+ * Check if an useragent is a bot
+ * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @param  string $useragent
+ * @return bool
  */
-function isBot() {
-    return strstr(strtolower($_SERVER['HTTP_USER_AGENT']), "bot");
+function isbot($useragent)
+{
+	if (preg_match('/bot|crawl|slurp|spider/i', $useragent)) {
+		return true;
+	} else {
+		return false;
+	}
 }
