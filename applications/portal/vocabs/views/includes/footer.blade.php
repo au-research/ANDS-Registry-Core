@@ -5,7 +5,7 @@
                 <div class="col-md-8">
                     <p>
                         Research Vocabularies Australia is the controlled vocabulary discovery service of the Australian National Data Service (ANDS). ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.
-                        <a href="http://www.ands.org.au/andsbrochurejan2015.pdf" target="_blank" style="color:#84A07B">Read more about ANDS...</a>
+                        <a href="http://www.ands.org.au/about-us" target="_blank" style="color:#84A07B">Read more about ANDS...</a>
                     </p>
                 </div>
                 <div class="col-md-2">

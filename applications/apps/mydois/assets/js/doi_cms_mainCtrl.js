@@ -11,6 +11,7 @@
         vm.tab = "list";
         $scope.base_url = apps_url;
         vm.newdoixml = "";
+        vm.pp = 50;
 
         var app_id = "";
         app_id = $location.search().app_id;
@@ -48,11 +49,23 @@
             }
         }
 
-        vm.refreshDOIs = function() {
-            APIDOIService.getDOIList(vm.client.app_id).then(function(data){
+        vm.refreshDOIs = function(search) {
+            if (!search) search = false;
+            APIDOIService.getDOIList(vm.client.app_id, vm.pp, 0, search).then(function(data){
                 vm.dois = data.data.dois;
+                vm.total = data.data.total;
+                vm.offset = vm.pp;
             });
         }
+
+        vm.doisListNext = function(offset) {
+            APIDOIService.getDOIList(vm.client.app_id, vm.pp, offset).then(function(data){
+                vm.dois = vm.dois.concat(data.data.dois);
+                vm.total = data.data.total;
+                vm.offset += vm.pp;
+            });
+        }
+
 
         vm.view = function(doi, keep) {
             if (!keep) {

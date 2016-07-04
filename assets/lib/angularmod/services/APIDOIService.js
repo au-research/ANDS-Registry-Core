@@ -12,9 +12,17 @@
                     'doi/client/', {'app_id': app_id, }
                 );
             },
-            getDOIList: function (app_id) {
+            getDOIList: function (app_id, limit, offset, search) {
+                if (!limit) limit = 5;
+                if (!offset) offset = 0;
+                if (!search) search = '';
                 return APIService.get(
-                    'doi/list/', {'app_id': app_id, }
+                    'doi/list/', {
+                        'app_id': app_id,
+                        'limit': limit,
+                        'offset': offset,
+                        'search' : search
+                    }
                 );
             },
             getDOI: function (doi, app_id) {

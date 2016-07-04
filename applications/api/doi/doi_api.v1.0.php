@@ -119,12 +119,23 @@ class Doi_api
 
     private function listDois()
     {
+        $limit = $this->ci->input->get('limit') ?: 50;
+        $offset = $this->ci->input->get('offset') ?: 0;
+        $search = $this->ci->input->get('search') ?: '';
+
         $query = $this->dois_db
             ->order_by('updated_when', 'desc')
             ->order_by('created_when', 'desc')
             ->where('client_id', $this->client->client_id)
+            ->limit($limit, $offset)
             ->where('status !=', 'REQUESTED')
-            ->select('*')
+            ->select('*');
+
+        if ($search) {
+            $query = $this->dois_db->where("doi_id LIKE '%{$search}%'");
+        }
+
+        $query = $this->dois_db
             ->get('doi_objects');
 
         $data['dois'] = array();
@@ -133,6 +144,13 @@ class Doi_api
             $obj->title = $this->getDoiTitle($doi->datacite_xml);
             $data['dois'][] = $obj;
         }
+
+        $data['total'] = $this->dois_db
+            ->where('client_id', $this->client->client_id)
+            ->where('status !=', 'REQUESTED')
+            ->where("doi_id LIKE '%{$search}%'")
+            ->count_all_results('doi_objects');
+
         return $data;
     }
 
