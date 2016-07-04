@@ -11,7 +11,7 @@
                     <span>Research Data</span> Australia
                 </a>
             </div>
-            
+
             @if(current_url()!=base_url())
             <div class="clear"><small>Find data for research</small></div>
             @endif
@@ -35,7 +35,7 @@
                     <li><a href="{{portal_url('profile')}}">MyRDA</a></li>
                 @endif
 
-                <?php 
+                <?php
                     $profile_image = profile_image();
                 ?>
                 @if($profile_image)
@@ -45,6 +45,8 @@
         </nav>
     </div>
 </div>
-<button class="yellow_button feedback_button">Feedback</button>
-<button class="yellow_button help_button" data-toggle="modal" data-target="#help_modal"><i class="fa fa-question-circle"></i> Help</button>
-@include('includes/help-modal')
+@if(!isBot())
+    <button class="yellow_button feedback_button">Feedback</button>
+    <button class="yellow_button help_button" data-toggle="modal" data-target="#help_modal"><i class="fa fa-question-circle"></i> Help</button>
+    @include('includes/help-modal')
+@endif

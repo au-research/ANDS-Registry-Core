@@ -1,3 +1,4 @@
+@if(!isBot())
 <div class="col-md-2">
   <div class="pull-right">
   @if($this->input->get('refer_q'))
@@ -41,5 +42,5 @@
             <a href="" ng-click="advanced('spatial')" ng-if="filters.class=='collection'">Map Search</a>
         </div>
     </form>
-
 </div>
+@endif

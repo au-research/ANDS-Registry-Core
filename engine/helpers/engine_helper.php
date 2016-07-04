@@ -645,3 +645,12 @@ function getReleaseVersion(){
     $CI =& get_instance();
     return $CI->config->item('release_version');
 }
+
+/**
+ * global helper function to check if the user agent string contains "bot"
+ * probably not a really accurate check, but good enough for the use case
+ * @return boolean
+ */
+function isBot() {
+    return strstr(strtolower($_SERVER['HTTP_USER_AGENT']), "bot");
+}

@@ -1,4 +1,4 @@
-<!-- Modal -->
+@if(!isBot())
 <div class="modal advanced-search-modal fade" id="advanced_search" role="dialog" aria-labelledby="Advanced Search" aria-hidden="true" style="z-index:9999">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -228,3 +228,4 @@
 		</div>
 	</div>
 </div>
+@endif
