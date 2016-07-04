@@ -22,11 +22,10 @@
 // Pull in the global imports
 $eDBCONF = array();
 require_once('./global_config.php');
-
 if(
 	(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "") &&
 	$ENV['protocol'] == 'https://' &&
-	preg_match('/bot|crawl|slurp|spider/i', $_SERVER['HTTP_USER_AGENT']) === false
+	preg_match('/bot|crawl|slurp|spider/i', $_SERVER['HTTP_USER_AGENT']) === 0
 ) {
     $redirect = "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
     header("HTTP/1.1 301 Moved Permanently");
