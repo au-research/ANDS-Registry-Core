@@ -299,9 +299,7 @@ class Page extends MX_Controller
     {
         $event = array(
             'event' => 'portal_page',
-            'page' => $page,
-            'ip' => $this->input->ip_address(),
-            'user_agent' => $this->input->user_agent(),
+            'page' => $page
         );
         monolog($event, 'portal');
     }
