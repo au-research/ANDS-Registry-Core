@@ -577,8 +577,9 @@ class DOIChecker(base.BaseChecker):
         except asyncio.futures.CancelledError:
             # This is caused by _run_tests() cancelling the task
             # because of a timeout.
-            print("DEBUG:", counter, "Cancelled task due to timeout",
-                  file=sys.stderr)
+            if self._debug:
+                print("DEBUG:", counter, "Cancelled task due to timeout",
+                      file=sys.stderr)
             if 'writer' in locals():
                 if self._debug:
                     print("DEBUG:", counter, "Closing writer",
