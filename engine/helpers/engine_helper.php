@@ -652,8 +652,11 @@ function getReleaseVersion(){
  * @param  string $useragent
  * @return bool
  */
-function isbot($useragent)
+function isbot($useragent = false)
 {
+	if (!$useragent) {
+		$useragent = $_SERVER['HTTP_USER_AGENT'];
+	}
 	if (preg_match('/bot|crawl|slurp|spider/i', $useragent)) {
 		return true;
 	} else {

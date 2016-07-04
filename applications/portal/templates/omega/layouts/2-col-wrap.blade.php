@@ -93,9 +93,11 @@
     		    	</div>
     		    </section>
         	</article>
-            @include('registry_object/contents/citation-modal')
-            @include('includes/advanced_search')
-            @include('includes/my-rda')
+            @if(isbot())
+                @include('registry_object/contents/citation-modal')
+                @include('includes/advanced_search')
+                @include('includes/my-rda')
+            @endif
         </div>
         @include('includes/footer')
     </body>
