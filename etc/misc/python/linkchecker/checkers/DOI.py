@@ -68,6 +68,9 @@ class DOIChecker(base.BaseChecker):
                         int(self._params['link_timeout']),
                         int(self._params['batch_size']),
                         result_list, error_count)
+        # Database connection may have gone away in the mean time,
+        # so ping to refresh the connection.
+        self._conn.ping(True)
         self._process_result_lists(client_list, result_list, error_count,
                                    self._params['client_id'],
                                    self._params['admin_email'])

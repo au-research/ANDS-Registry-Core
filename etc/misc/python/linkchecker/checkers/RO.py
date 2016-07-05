@@ -104,6 +104,9 @@ class ROChecker(base.BaseChecker):
         if self._debug:
             print("DEBUG: test_results:", test_results, file=sys.stderr)
 
+        # Database connection may have gone away in the mean time,
+        # so ping to refresh the connection.
+        self._conn.ping(True)
         self._process_results(data_sources, test_results,
                               self._params['client_id'],
                               self._params['admin_email'])
