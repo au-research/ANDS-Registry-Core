@@ -12,6 +12,8 @@
 <link rel="stylesheet" href="{{asset_url('omega/css/ands.css','templates')}}" media="screen">
 <!-- LESS file for development only -->
 <link rel="stylesheet/less" type="text/css" href="{{asset_url('omega/less/ands-portal.less','templates')}}" media="screen">
+<link rel="stylesheet/less" type="text/css" href="{{asset_url('omega/less/print.less','templates')}}" media="print">
 @else
 <link rel="stylesheet" type="text/css" href="{{asset_url('css/portal.combine.css', 'core')}}" media="screen">
+<link rel="stylesheet" type="text/css" href="{{asset_url('css/print.css', 'core')}}" media="print">
 @endif

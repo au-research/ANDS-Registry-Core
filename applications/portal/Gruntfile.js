@@ -140,7 +140,8 @@ module.exports = function(grunt){
         less: {
             core:{
                 files:{
-                    "<%= yeoman.assets %>/css/portal.less.compiled.css": "<%= yeoman.templates %>/omega/assets/less/ands-portal.less"
+                    "<%= yeoman.assets %>/css/portal.less.compiled.css": "<%= yeoman.templates %>/omega/assets/less/ands-portal.less",
+                    "<%= yeoman.assets %>/css/print.css": "<%= yeoman.templates %>/omega/assets/less/print.less"
                 }
             },
             vocab_less: {
