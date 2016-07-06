@@ -103,7 +103,7 @@ class Analytics extends MX_Controller
 
         //try get it from the index, faster
         $result = $this->elasticsearch->init()->setPath('/rda/production/'.$id)->get();
-        if ($result && $result['found']) {
+        if ($result && array_key_exists('found', $result) && $result['found']) {
             echo json_encode($result['_source']);
         } else {
             //try and get it from the registry, slower
@@ -731,10 +731,7 @@ class Analytics extends MX_Controller
         $filters = array(
             'log' => 'portal',
             'period' => ['startDate' => '2015-03-01', 'endDate' => '2015-03-05'],
-            'group' => [
-                'type' => 'group',
-                'value' => 'University of South Australia',
-            ],
+            'record_owner' => 'ANDS',
             'dimensions' => ['portal_view', 'portal_search', 'accessed'],
         );
         $this->load->model('summary');

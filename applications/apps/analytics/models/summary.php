@@ -11,16 +11,21 @@ class Summary extends CI_Model
         $this->load->library('ElasticSearch');
 
         //setup
-        $this->elasticsearch->init()->setPath('/logs/production/_search');
-        $this->elasticsearch->setOpt('from', 0)->setOpt('size', 0)
-            ->mustf('term', 'is_bot', 'false');
+        $this->elasticsearch->init()->setPath('/logstash-*/_search');
+        $this->elasticsearch->setOpt('from', 0)->setOpt('size', 0);
+        // $this->elasticsearch->mustf('term', 'doc.@fields.user.is_bot', 'false');
+
+        // record owner
+        if ($owners = isset($filters['record_owner'])) {
+            $this->elasticsearch->mustf('term', 'doc.@fields.record.record_owners.raw', 'ANDS');
+        }
 
         //date range
         // unset($filters['period']);
         if (isset($filters['period'])) {
-            $filters['period']['startDate'] = date('Y-m-d', strtotime($filters['period']['startDate']));
-            $filters['period']['endDate'] = date('Y-m-d', strtotime($filters['period']['endDate']));
-            $this->elasticsearch->mustf('range', 'date',
+            $filters['period']['startDate'] = date('c', strtotime($filters['period']['startDate']));
+            $filters['period']['endDate'] = date('c', strtotime($filters['period']['endDate']));
+            $this->elasticsearch->mustf('range', 'doc.@timestamp',
                 [
                     'from' => $filters['period']['startDate'],
                     'to' => $filters['period']['endDate']
@@ -35,41 +40,41 @@ class Summary extends CI_Model
             ->setAggs('date',
                 array('date_histogram' =>
                     array(
-                        'field'=>'date',
+                        'field'=>'doc.@timestamp',
                         'format' => 'yyyy-MM-dd',
                         'interval' => 'day'
                     ),
                     'aggs'=>array(
-                        'events' => array('terms'=>array('field'=>'event'))
+                        'events' => array('terms'=>array('field'=>'doc.@fields.event.raw'))
                     )
                 )
             )
             ->setAggs('event',
                 array(
-                    'terms'=>array('field'=>'event'),
+                    'terms'=>array('field'=>'doc.@fields.event.raw'),
                     'aggs' => [
-                        'events' => ['terms'=>['field'=>'group']]
+                        'events' => ['terms'=>['field'=>'doc.@fields.record.group.raw']]
                     ]
                 )
             )
             ->setAggs('class',
                 array(
-                    'terms'=>array('field'=>'class'),
+                    'terms'=>array('field'=>'doc.@fields.record.class.raw'),
                     'aggs' => [
-                        'classes' => ['terms'=>['field'=>'class']]
+                        'classes' => ['terms'=>['field'=>'doc.@fields.record.class.raw']]
                     ]
                 )
             )
             ->setAggs('group',
                 array(
-                    'terms'=>array('field'=>'group'),
+                    'terms'=>array('field'=>'doc.@fields.record.group.raw'),
                     'aggs' => [
-                        'event' => ['terms'=>['field'=>'event']]
+                        'event' => ['terms'=>['field'=>'doc.@fields.event.raw']]
                     ]
                 )
             )
             ->setAggs(
-                'rostat', array('terms' => array('field' => 'roid'))
+                'rostat', array('terms' => array('field' => 'doc.@fields.record.id.raw'))
             )
             ->setAggs(
                 'qstat', array('terms' => array('field' => 'q_lowercase'))
@@ -77,14 +82,16 @@ class Summary extends CI_Model
             ->setAggs(
                 'accessedstat',
                 array(
-                    'filter' => array('term' => array('event'=>'accessed')),
-                    'aggs'=>array("key"=>array("terms"=>array('field'=>'roid'))))
+                    'filter' => array('term' => array('doc.@fields.event'=>'portal_accessed')),
+                    'aggs'=>array("key"=>array("terms"=>array('field'=>'doc.@fields.record.id.raw'))))
 
             )
         ;
 
         $search_result = $this->elasticsearch->search();
         // dd($this->elasticsearch->getOptions());
+        // dd(json_encode($this->elasticsearch->getOptions()));
+        // dd($search_result);
         // dd($filters);
         // dd($search_result['aggregations']['date']);
 
@@ -122,6 +129,8 @@ class Summary extends CI_Model
                 }
             }
         }
+
+        // dd($search_result['aggregations']['group']);
 
         //group_event
         foreach ($search_result['aggregations']['group']['buckets'] as $group) {

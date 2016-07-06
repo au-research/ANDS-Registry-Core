@@ -52,31 +52,31 @@ class ElasticSearch {
         $groups = [];
         if (isset($filters['groups'])) {
             foreach ($filters['groups'] as $group) {
-                $groups[] = ['term' => ['group' => $group]];
+                $groups[] = ['term' => ['doc.@fields.record.group' => $group]];
             }
         }
-        $this->mustf('bool', 'should', $groups);
+        // $this->mustf('bool', 'should', $groups);
 
         //classes
         $classes = [];
         if (isset($filters['class']) && sizeof($filters['class']) > 0) {
             foreach ($filters['class'] as $class) {
-                $classes[] = ['term' => ['class'=>$class]];
+                $classes[] = ['term' => ['doc.@fields.record.class'=>$class]];
             }
         }
-        $this->mustf('bool', 'should', $classes);
+        // $this->mustf('bool', 'should', $classes);
 
         //data source
         $data_source_ids = [];
         if (isset($filters['data_sources']) && sizeof($filters['data_sources']) > 0) {
             foreach ($filters['data_sources'] as $ds_id) {
-                $data_source_ids[] = ['term' => ['dsid' => $ds_id]];
+                $data_source_ids[] = ['term' => ['doc.@fields.record.data_source_id' => $ds_id]];
             }
         }
-//        $this->mustf('bool', 'should', $data_source_ids);
+       $this->mustf('bool', 'should', $data_source_ids);
 
         if ((sizeof($groups)==0 || sizeof($classes)==0) && (!isset($filters['Masterview']))) {
-            $this->mustf('term', 'norecord', 'norecord');
+            // $this->mustf('term', 'norecord', 'norecord');
         }
 
     }
@@ -196,7 +196,7 @@ class ElasticSearch {
         $ch = curl_init($this->elasticSearchUrl.$this->path);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $verb);
-//        dd($content);
+
         if ($content) {
             if (is_array($content)) $content = json_encode($content, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $content);

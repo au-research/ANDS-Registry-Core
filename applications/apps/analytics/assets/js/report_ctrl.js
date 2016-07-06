@@ -14,7 +14,10 @@
         //filters configuration based on current org
         vm.org = org;
         vm.filters = filterService.getFilters();
+
         vm.filters['groups'] = vm.org.groups;
+        // console.log( vm.org );
+        vm.filters['record_owner'] = org.role_id;
 
         if (vm.org.name=='Masterview') {
             vm.filters['Masterview'] = true;
@@ -51,7 +54,6 @@
 
         vm.getRDASummaryData = function() {
             analyticFactory.summary(vm.filters).then(function(data){
-
 
 
                 if (data.dates.length == 0) {
