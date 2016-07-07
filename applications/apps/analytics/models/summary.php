@@ -77,7 +77,7 @@ class Summary extends CI_Model
                 'rostat', array('terms' => array('field' => 'doc.@fields.record.id.raw'))
             )
             ->setAggs(
-                'qstat', array('terms' => array('field' => 'q_lowercase'))
+                'qstat', array('terms' => array('field' => 'doc.@fields.filters.q.raw'))
             )
             ->setAggs(
                 'accessedstat',
