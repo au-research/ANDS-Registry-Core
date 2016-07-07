@@ -14,10 +14,11 @@ angular.module('record_components',['profile_components'])
 			});
 			return promise;
 		},
-        add_stat: function(id, type, value) {
+        add_stat: function(id, type, value, url) {
             var data = {
                 type:type,
-                value:value
+                value:value, 
+                url: url
             };
             var promise = $http.post(base_url+'registry_object/add_stat/'+id, {data:data}).then(function(response){
                 return response.data;

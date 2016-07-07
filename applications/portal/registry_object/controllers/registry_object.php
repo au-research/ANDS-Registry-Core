@@ -808,6 +808,7 @@ class Registry_object extends MX_Controller
         $value = intval($data['data']['value']);
         $this->load->model('registry_objects', 'ro');
         $ro = $this->ro->getByID($id);
+
         $ro->event($type, $value);
 
         $event = [
@@ -815,6 +816,9 @@ class Registry_object extends MX_Controller
         ];
 
         $event['record'] = $this->getRecordFields($ro);
+        if (isset($data['data']['url'])) {
+            $event['accessed_url'] = $data['data']['url'];
+        }
 
         monolog($event, 'portal', 'info');
 
