@@ -53,9 +53,12 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
 	};
 
 
+    /**
+     * Opening the citation modal
+     * Bootstrap v3 modal
+     * @todo move to own controller
+     */
 	$scope.openCitationModal = function(){
-		// $log.debug('open');
-		// $log.debug($('#citationModal'));
 		$('#citationModal').modal();
 	}
 

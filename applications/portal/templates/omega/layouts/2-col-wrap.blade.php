@@ -93,7 +93,7 @@
     		    	</div>
     		    </section>
         	</article>
-            @if(isbot())
+            @if(!isbot())
                 @include('registry_object/contents/citation-modal')
                 @include('includes/advanced_search')
                 @include('includes/my-rda')
