@@ -32,8 +32,8 @@ class Orcid_api
 
     private function searchOrcid()
     {
-        $query = $this->ci->input->get('q');
-        $search_endpoint = 'https://pub.orcid.org/v1.1/search/orcid-bio?q='.$query;
+        $query = urldecode($this->ci->input->get('q'));
+        $search_endpoint = 'https://pub.orcid.org/v1.1/search/orcid-bio?q='.urlencode($query);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $search_endpoint);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
