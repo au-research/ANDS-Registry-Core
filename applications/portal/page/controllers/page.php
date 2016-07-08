@@ -355,6 +355,48 @@ class Page extends MX_Controller
         monolog($event, 'portal');
     }
 
+    /**
+     * Share to a selected Social Network
+     * Provide logging via monolog
+     * @todo If a record ID is provided, log the record as event.record
+     * @param  string $social facebook|twitter|google
+     * @return redirect
+     */
+    public function share($social = "facebook")
+    {
+        // Collect the Data
+        $url = $this->input->get('url');
+        $title = $this->input->get('title') ?: "Research Data Australia";
+        if (!$url) throw new Exception("No URL provided");
+
+        // Log the event
+        $event = [
+            'event' => 'portal_social_share',
+            'share' => [
+                'url' => $url,
+                'type' => $social
+            ]
+        ];
+        monolog($event, 'portal', 'info');
+
+        // Decide the sharing URL
+        $shareUrl = "http://researchdata.ands.org.au";
+        switch ($social) {
+            case "facebook":
+                $shareUrl = "http://www.facebook.com/sharer.php?u=".$url;
+                break;
+            case "twitter":
+                $shareUrl = "https://twitter.com/share?url=".$url."&text=".$title."&hashtags=andsdata";
+                break;
+            case "google":
+                $shareUrl = "https://plus.google.com/share?url=".$url;
+                break;
+        }
+
+        // Do the Redirect
+        redirect($shareUrl);
+    }
+
     public function __construct()
     {
         parent::__construct();
