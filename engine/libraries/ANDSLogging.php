@@ -15,6 +15,7 @@ use Monolog\Logger;
 
 class ANDSLogging
 {
+
     /**
      * Log an event using Monolog
      *
@@ -38,7 +39,10 @@ class ANDSLogging
         $title = is_array($event) && array_key_exists('event', $event) ? $event['event'] : $event;
 
         // record the event
-        $logger->$type($title, $event);
+        if ($event['is_bot'] === false) {
+            $logger->$type($title, $event);
+        }
+
     }
 
     /**
