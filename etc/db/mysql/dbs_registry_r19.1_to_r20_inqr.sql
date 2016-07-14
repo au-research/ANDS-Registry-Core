@@ -6,6 +6,8 @@ UPDATE registry_objects ro
   INNER JOIN registry_object_attributes roa ON (roa.registry_object_id = ro.registry_object_id AND roa.`attribute` = 'group')
 SET ro.`group` = roa.`value`;
 
+DELETE FROM registry_object_attributes WHERE attribute = 'group';
+
 create view `relationships` as
   select ros.key as `origin_key`,
     ros.group as `origin_group` ,
