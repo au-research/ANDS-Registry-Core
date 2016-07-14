@@ -28,14 +28,14 @@ class TestGroupCoreAttribute extends UnitTest
      */
     public function test_that_existing_object_has_group_as_core_attribute()
     {
-        $ro = $this->ci->ro->getByID(719497);
+        $ro = $this->ci->ro->getPublishedByKey('AUTestingRecords3/grants/AUT/Hub2');
         $groupAttribute = $ro->attributes['group'];
         $this->assertTrue($groupAttribute->core === TRUE);
     }
 
     public function test_if_edit_an_existing_object_the_value_get_stored_correctly()
     {
-        $ro = $this->ci->ro->getByID(719497);
+        $ro = $this->ci->ro->getPublishedByKey('AUTestingRecords3/grants/AUT/Hub2');
 
         $oldGroup = $ro->group;
 
@@ -44,8 +44,7 @@ class TestGroupCoreAttribute extends UnitTest
         $ro->save();
 
         // test in the database here
-        $sql = 'select group from registry_objects where registry_object_id = ?';
-        $query = $this->ci->db->get_where('registry_objects', ['registry_object_id' => 719497]);
+        $query = $this->ci->db->get_where('registry_objects', ['key' => 'AUTestingRecords3/grants/AUT/Hub2', 'status' => 'PUBLISHED']);
         $group = $query->first_row()->group;
         $this->assertTrue($group == $newGroup);
 
@@ -54,8 +53,7 @@ class TestGroupCoreAttribute extends UnitTest
         $ro->save();
 
         // test it again
-        $sql = 'select group from registry_objects where registry_object_id = ?';
-        $query = $this->ci->db->get_where('registry_objects', ['registry_object_id' => 719497]);
+        $query = $this->ci->db->get_where('registry_objects', ['key' => 'AUTestingRecords3/grants/AUT/Hub2', 'status' => 'PUBLISHED']);
         $group = $query->first_row()->group;
         $this->assertTrue($group == $oldGroup);
     }
