@@ -39,7 +39,7 @@ class ANDSLogging
         $title = is_array($event) && array_key_exists('event', $event) ? $event['event'] : $event;
 
         // record the event
-        if ($event['is_bot'] === false) {
+        if ($event['user']['is_bot'] === false) {
             $logger->$type($title, $event);
         }
 
