@@ -98,10 +98,24 @@ class TestConnections extends UnitTest
             ->setLimit(99999)
             ->get();
 
-            // dd($links);
-        dd(sizeof($links));
+        $this->assertEquals(1257, count($links));
+    }
+    
 
-        // AODN:metadata@aad.gov.au
+    // 'eAtlas/AustralianInstituteofMarineScience(AIMS)' to key
+
+    public function test_stringFilterWithLimit()
+    {
+        $conn = new Connections(new Repository($this->ci->db));
+        $conn
+            ->setLimit(10)
+            ->setFilter('from_data_source_id != to_data_source_id');
+        $links = $conn->get();
+
+        foreach ($links as $link) {
+            $prop = $link->getProperties();
+            $this->assertTrue($prop['from_data_source_id'] != $prop['to_data_source_id']);
+        }
     }
 
     /**
