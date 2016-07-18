@@ -3,10 +3,10 @@
 <div role="tabpanel">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" id="overview_tab" class="active"><a href="" class="help_link" id="overview_link">Overview</a></li>
-        <li role="presentation" id="search_tab"><a href="" class="help_link" id="search_link">Search</a></li>
-        <li role="presentation" id="myrda_tab"><a href="" class="help_link" id="myrda_link">MyRDA</a></li>
-        <li role="presentation" id="advsearch_tab"><a href="" class="help_link" id="advsearch_link">Advanced Search</a></li>
+        <li role="presentation" id="overview_tab" class="active"><a href="#" onclick="return false;" class="help_link" id="overview_link">Overview</a></li>
+        <li role="presentation" id="search_tab"><a href="#" onclick="return false;" class="help_link" id="search_link">Search</a></li>
+        <li role="presentation" id="myrda_tab"><a href="#" onclick="return false;" class="help_link" id="myrda_link">MyRDA</a></li>
+        <li role="presentation" id="advsearch_tab"><a href="#" onclick="return false;" class="help_link" id="advsearch_link">Advanced Search</a></li>
     </ul>
 
     <!-- Tab panes -->
