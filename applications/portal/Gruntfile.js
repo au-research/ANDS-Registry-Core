@@ -23,7 +23,7 @@ module.exports = function(grunt){
             styles:{
                 options:{separator:''},
                 src:[
-                    '<%= yeoman.templates %>/omega/assets/css/bootstrap.min.css',
+                    '<%= yeoman.templates %>/omega/assets/css/bootstrap2.min.css',
                     '<%= yeoman.templates %>/omega/assets/css/theme.css',
                     '<%= yeoman.templates %>/omega/assets/css/swatch-gray.css',
                     '<%= yeoman.templates %>/omega/assets/css/swatch-black.min.css',

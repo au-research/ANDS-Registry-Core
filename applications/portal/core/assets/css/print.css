@@ -137,6 +137,17 @@
     float: none !important;
     margin: 0 !important;
   }
+  .ro-getdatalicence a:after {
+    content: " (" attr(href) ") ";
+    text-decoration: underline;
+    display: inline;
+  }
+  .ro-getdatalicence .btn-group,
+  .ro-getdatalicence a#toggleLicenceContent,
+  .ro-getdatalicence a#toggleRightsContent {
+    visibility: hidden;
+    display: none;
+  }
   #licenceContent,
   #rightsContent,
   #dataformats {

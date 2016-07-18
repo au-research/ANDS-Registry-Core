@@ -18,6 +18,15 @@
     width:100%;
     float:none !important;
     margin: 0 !important;
+    a:after {
+      content: " (" attr(href) ") ";
+      text-decoration: underline;
+      display: inline;
+    }
+    .btn-group, a#toggleLicenceContent, a#toggleRightsContent {
+      visibility: hidden;
+      display: none;
+    }
   }
 
   // Shows
