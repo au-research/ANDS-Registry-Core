@@ -5,12 +5,34 @@
 
   // Hides
   .environment, .navbar, .search-section, #footer, .panel-tools, .yellow_button,
-  .ro-getdatalicence,
+  .Z3988,
   .sidebar-widget .post-icon,
   .modal
   {
     visibility: hidden;
     display: none;
+  }
+
+  .ro-getdatalicence {
+    display:block;
+    width:100%;
+    float:none !important;
+    margin: 0 !important;
+    a:after {
+      content: " (" attr(href) ") ";
+      text-decoration: underline;
+      display: inline;
+    }
+    .btn-group, a#toggleLicenceContent, a#toggleRightsContent {
+      visibility: hidden;
+      display: none;
+    }
+  }
+
+  // Shows
+  #licenceContent, #rightsContent, #dataformats {
+    visibility: visible !important;
+    display: block !important;
   }
 
 }

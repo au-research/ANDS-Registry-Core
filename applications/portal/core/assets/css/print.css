@@ -125,10 +125,33 @@
   #footer,
   .panel-tools,
   .yellow_button,
-  .ro-getdatalicence,
+  .Z3988,
   .sidebar-widget .post-icon,
   .modal {
     visibility: hidden;
     display: none;
+  }
+  .ro-getdatalicence {
+    display: block;
+    width: 100%;
+    float: none !important;
+    margin: 0 !important;
+  }
+  .ro-getdatalicence a:after {
+    content: " (" attr(href) ") ";
+    text-decoration: underline;
+    display: inline;
+  }
+  .ro-getdatalicence .btn-group,
+  .ro-getdatalicence a#toggleLicenceContent,
+  .ro-getdatalicence a#toggleRightsContent {
+    visibility: hidden;
+    display: none;
+  }
+  #licenceContent,
+  #rightsContent,
+  #dataformats {
+    visibility: visible !important;
+    display: block !important;
   }
 }
