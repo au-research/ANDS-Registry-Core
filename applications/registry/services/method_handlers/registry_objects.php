@@ -414,7 +414,8 @@ function identifierResolution($identifier,$type)
             return  $identifiers;
             break;
         case 'purl':
-            if(strpos($identifier,"url.org/")<1) $identifier_href ="http://purl.org/".$identifier;
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            elseif(strpos($identifier,"url.org/")<1) $identifier_href ="http://purl.org/".$identifier;
             else $identifier_href = "http://purl.org/".substr($identifier,strpos($identifier,"purl.org/")+9);
             $identifiers['href'] = $identifier_href;
             $identifiers['display_text'] = 'PURL';
