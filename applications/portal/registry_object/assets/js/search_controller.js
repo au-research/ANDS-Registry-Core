@@ -226,6 +226,9 @@
                     }
                     $scope.$broadcast('search_complete');
                     $scope.populateCenters($scope.result.response.docs);
+
+                    //clear advanced flag if on
+                    delete $scope.filters['advanced'];
                 });
             } else {
                 $scope.loading = false;
@@ -813,6 +816,7 @@
             }
             //$log.debug($scope.filters);
             $scope.filters['p'] = 1;
+            $scope.filters['advanced'] = 1;
             $scope.hashChange();
             $('#advanced_search').modal('hide');
         };
