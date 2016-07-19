@@ -13,7 +13,8 @@ angular.module('portal_theme',[]).
 	factory('searches', function($http){
 		return{
 			search: function(filters){
-				var promise = $http.post(base_url+'registry_object/filter', {'filters':filters}).then(function(response){
+				// not logging this search event
+				var promise = $http.post(base_url+'registry_object/filter/true', {'filters':filters}).then(function(response){
 					return response.data;
 				});
 				return promise;

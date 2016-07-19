@@ -13,6 +13,12 @@ class Theme_page extends MX_Controller {
 	 */
 	function index(){
 		$theme_pages = json_decode($this->getThemePageIndex(),true);
+
+        monolog([
+            'event' => 'portal_page',
+            'page' => 'themes/index'
+        ], 'portal', 'info');
+
 		$this->blade
 			->set('theme_pages', $theme_pages)
 			->render('theme_page/index');
@@ -20,6 +26,12 @@ class Theme_page extends MX_Controller {
 
 	function view($theme) {
 		$theme = json_decode($this->fetch_theme_page_by_slug($theme), true);
+
+        monolog([
+            'event' => 'portal_page',
+            'page' => 'themes/'.$theme['slug']
+        ], 'portal', 'info');
+
 		$this->blade
 			->set('lib', array('colorbox', 'mustache'))
 			->set('scripts', array('theme_page'))

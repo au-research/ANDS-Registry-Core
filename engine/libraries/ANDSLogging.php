@@ -120,6 +120,9 @@ class ANDSLogging
             $event['http_referer'] = $_SERVER['HTTP_REFERER'];
         }
 
+        // current_url
+        $event['url'] = current_url();
+
         return $event;
     }
 

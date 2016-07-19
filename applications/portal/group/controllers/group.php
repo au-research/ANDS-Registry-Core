@@ -15,6 +15,12 @@ class Group extends MX_Controller {
 				->render('group/group_view');
 		} else {
 			$groups = $this->groups->getAll();
+
+            monolog([
+                'event' => 'portal_page',
+                'page' => 'contributors/index'
+            ], 'portal', 'info');
+
 			$this->blade
 				->set('contributors', $groups)
 				->render('group/group_index');
@@ -23,6 +29,12 @@ class Group extends MX_Controller {
 
     function indexList() {
         $groups = $this->groups->getAll();
+
+        monolog([
+            'event' => 'portal_page',
+            'page' => 'contributors/index-list'
+        ], 'portal', 'info');
+
         $this->blade
             ->set('contributors', $groups)
             ->render('group/group_index_list');
@@ -31,6 +43,12 @@ class Group extends MX_Controller {
 	function view($slug) {
 		$group = $this->groups->get($slug);
 		if(isset($group) && sizeof($group) > 0){
+
+            monolog([
+                'event' => 'portal_page',
+                'page' => 'contributors/'.$slug
+            ], 'portal', 'info');
+
             $this->blade
                 ->set('group', $group)
                 ->set('title', $group['title'])

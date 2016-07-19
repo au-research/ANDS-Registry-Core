@@ -167,6 +167,7 @@ class Page extends MX_Controller
         $result = $this->solr->executeSearch(true);
         $parties = $result['response']['docs'];
 
+        $this->record_hit('grants');
         $this->blade
              ->set('scripts', array('home'))
              ->set('highlevel', $highlevel)
