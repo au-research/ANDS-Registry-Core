@@ -178,9 +178,10 @@ class ANDSLogging
         }
 
         $CI->load->model('registry/data_source/data_sources', 'ds');
-        $result = [];
-        $recordOwner = $CI->ds->getAttribute($dataSourceID, 'record_owner');
-        $result = array_merge([$recordOwner], self::getParentRoles($recordOwner));
+        if ($recordOwner = $CI->ds->getAttribute($dataSourceID, 'record_owner')) {
+            $result = array_merge([$recordOwner], self::getParentRoles($recordOwner));
+        }
+
         $CI->cache->file->save($cacheID, $result, 36000);
         return $result;
     }
