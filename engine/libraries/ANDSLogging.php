@@ -135,7 +135,7 @@ class ANDSLogging
     public static function populateWithRecordOwners($event)
     {
         // view event
-        if ($event['event'] == 'portal_view'
+        if ( ( $event['event'] == 'portal_view' || $event['event'] == 'portal_accessed' )
             && isset($event['record']['id'])
             && isset($event['record']['data_source_id'])
             ) {
