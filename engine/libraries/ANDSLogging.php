@@ -134,11 +134,12 @@ class ANDSLogging
      */
     public static function populateWithRecordOwners($event)
     {
-        // view event
-        if ( ( $event['event'] == 'portal_view' || $event['event'] == 'portal_accessed' )
+
+        // record owner where record exists
+        if (array_key_exists('record', $event)
             && isset($event['record']['id'])
             && isset($event['record']['data_source_id'])
-            ) {
+        ) {
             $event['record']['record_owners'] = self::getRecordOwners($event['record']['data_source_id']);
         }
 
