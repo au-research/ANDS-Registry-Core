@@ -406,6 +406,8 @@ class Relationships_Extension extends ExtensionBase
         }
         $this->_CI->solr->setOpt('fq', $classFq);
 
+        $this->_CI->solr->setOpt('fq', $relationFq);
+
         $this->_CI->solr->setOpt('rows', $limit);
 
         $result = $this->_CI->solr->executeSearch(true);
