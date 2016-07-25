@@ -24,7 +24,7 @@ class ANDSLogging
      * @param  string $type
      * @return void
      */
-    public static function log($event, $log="activity", $type="info")
+    public static function log($event, $log="activity", $type="info", $allowBot = false)
     {
         // set up the logger
         $logger = new Logger($log);
@@ -38,8 +38,9 @@ class ANDSLogging
 
         $title = is_array($event) && array_key_exists('event', $event) ? $event['event'] : $event;
 
+
         // record the event
-        if ($event['user']['is_bot'] === false) {
+        if ($event['user']['is_bot'] === false || $allowBot === true) {
             $logger->$type($title, $event);
         }
 

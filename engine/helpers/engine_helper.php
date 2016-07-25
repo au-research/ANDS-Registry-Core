@@ -476,13 +476,13 @@ function alphasort_byattr_title($a, $b) {
 	return (strtolower($a['title']) < strtolower($b['title'])) ? -1 : 1;
 }
 
-function monolog($message, $logger = "activity", $type = "info") {
+function monolog($message, $logger = "activity", $type = "info", $allowBot = false) {
 	$CI =& get_instance();
 	if (!class_exists('ANDSLogging')) {
         $CI->load->library('ANDSLogging');
     }
 
-    \ANDSLogging::log($message, $logger, $type);
+    \ANDSLogging::log($message, $logger, $type, $allowBot);
 
 }
 
