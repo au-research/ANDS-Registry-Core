@@ -174,6 +174,8 @@ class ANDSLogging
         $CI =& get_instance();
         $CI->load->driver('cache');
 
+        $result = array();
+
         $cacheID = 'record-owners.ds.'.$dataSourceID;
         if ($cached = $CI->cache->file->get($cacheID)) {
             return $cached;
