@@ -79,8 +79,8 @@
                         }else {
                             vm.rdaChartData.data[1].push(0);
                         }
-                        if (obj['accessed']) {
-                            vm.rdaChartData.data[2].push(obj['accessed'])
+                        if (obj['portal_accessed']) {
+                            vm.rdaChartData.data[2].push(obj['portal_accessed'])
                         }else {
                             vm.rdaChartData.data[2].push(0);
                         }
@@ -108,14 +108,12 @@
                     } else {
                         vm.searchGroupChartData.data.push(0);
                     }
-                    if (obj['accessed']) {
-                        vm.accessedGroupChartData.data.push(obj['accessed']);
+                    if (obj['portal_accessed']) {
+                        vm.accessedGroupChartData.data.push(obj['portal_accessed']);
                     } else {
                         vm.accessedGroupChartData.data.push(0);
                     }
                 });
-
-
 
                 //parse rostat
                 if (data.aggs.rostat) vm.rostat = data.aggs.rostat;

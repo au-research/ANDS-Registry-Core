@@ -11,27 +11,8 @@ class Summary extends CI_Model
         $this->load->library('ElasticSearch');
 
         //setup
-        $this->elasticsearch->init()->setPath('/logstash-*/_search');
-        $this->elasticsearch->setOpt('from', 0)->setOpt('size', 0);
-        // $this->elasticsearch->mustf('term', 'doc.@fields.user.is_bot', 'false');
-
-        // record owner
-        if ($owners = isset($filters['record_owner'])) {
-            $this->elasticsearch->mustf('term', 'doc.@fields.record.record_owners.raw', 'ANDS');
-        }
-
-        //date range
-        // unset($filters['period']);
-        if (isset($filters['period'])) {
-            $filters['period']['startDate'] = date('c', strtotime($filters['period']['startDate']));
-            $filters['period']['endDate'] = date('c', strtotime($filters['period']['endDate']));
-            $this->elasticsearch->mustf('range', 'doc.@timestamp',
-                [
-                    'from' => $filters['period']['startDate'],
-                    'to' => $filters['period']['endDate']
-                ]
-            );
-        }
+        $this->elasticsearch->init()->setPath('/portal-*/_search');
+        $this->elasticsearch->setOpt('from', 0)->setOpt('size', 1);
 
         $this->elasticsearch->setFilters($filters);
 
@@ -57,6 +38,14 @@ class Summary extends CI_Model
                     ]
                 )
             )
+            ->setAggs('search_event',
+                array(
+                    'terms'=>array('field'=>'doc.@fields.event.raw'),
+                    'aggs' => [
+                        'events' => ['terms'=>['field'=>'doc.@fields.filters.group.raw']]
+                    ]
+                )
+            )
             ->setAggs('class',
                 array(
                     'terms'=>array('field'=>'doc.@fields.record.class.raw'),
@@ -73,6 +62,14 @@ class Summary extends CI_Model
                     ]
                 )
             )
+            ->setAggs('search_group',
+                array(
+                    'terms'=>array('field'=>'doc.@fields.filters.group.raw'),
+                    'aggs' => [
+                        'event' => ['terms'=>['field'=>'doc.@fields.event.raw']]
+                    ]
+                )
+            )
             ->setAggs(
                 'rostat', array('terms' => array('field' => 'doc.@fields.record.id.raw'))
             )
@@ -82,18 +79,20 @@ class Summary extends CI_Model
             ->setAggs(
                 'accessedstat',
                 array(
-                    'filter' => array('term' => array('doc.@fields.event'=>'portal_accessed')),
+                    'filter' => array('term' => array('doc.@fields.event.raw'=>'portal_accessed')),
                     'aggs'=>array("key"=>array("terms"=>array('field'=>'doc.@fields.record.id.raw'))))
 
             )
         ;
 
         $search_result = $this->elasticsearch->search();
-        // dd($this->elasticsearch->getOptions());
-        // dd(json_encode($this->elasticsearch->getOptions()));
-        // dd($search_result);
+//         dd($this->elasticsearch->getOptions());
+//         dd(json_encode($this->elasticsearch->getOptions()));
+//         dd($search_result);
         // dd($filters);
         // dd($search_result['aggregations']['date']);
+//         dd($search_result['aggregations']['search_event']);
+//         dd($search_result['aggregations']['group']);
 
         //prepare result
         $result = [
@@ -134,6 +133,12 @@ class Summary extends CI_Model
 
         //group_event
         foreach ($search_result['aggregations']['group']['buckets'] as $group) {
+            foreach ($group['event']['buckets'] as $event) {
+                $result['group_event'][$group['key']][$event['key']] = $event['doc_count'];
+            }
+        }
+
+        foreach ($search_result['aggregations']['search_group']['buckets'] as $group) {
             foreach ($group['event']['buckets'] as $event) {
                 $result['group_event'][$group['key']][$event['key']] = $event['doc_count'];
             }
@@ -327,14 +332,11 @@ class Summary extends CI_Model
         $registry_db = $this->load->database('registry', true);
         $query = $registry_db
             ->distinct()
-            ->select('value')
-            ->from('registry_object_attributes')
-            ->join('registry_objects', 'registry_objects.registry_object_id = registry_object_attributes.registry_object_id')
+            ->select('group')
+            ->from('registry_objects')
             ->where(
                 array(
-                    'registry_objects.data_source_id' => $dsid,
-                    'registry_object_attributes.attribute' => 'group',
-                    'registry_objects.status' => 'PUBLISHED'
+                    'data_source_id' => $dsid
                 )
             )
             ->get();
@@ -343,7 +345,7 @@ class Summary extends CI_Model
             return $groups;
         } else {
             foreach ($query->result_array() AS $group) {
-                $groups[] =  $group['value'];
+                $groups[] =  $group['group'];
             }
         }
         return $groups;

@@ -138,8 +138,7 @@ class Analytics extends MX_Controller
         $this->elasticsearch->init();
 
         if ($log == 'rdalogs') {
-            $this->elasticsearch->setPath('/logs/production/_search');
-            $this->elasticsearch->mustf('term', 'is_bot', false);
+            $this->elasticsearch->setPath('/portal-*/_search');
         } elseif ($log == 'rda') {
             $this->elasticsearch->setPath('/rda/production/_search');
         }
@@ -158,18 +157,8 @@ class Analytics extends MX_Controller
             }
         }
 
-        //date range
-        if (isset($filters['period'])) {
-            $this->elasticsearch->mustf('range', 'date',
-                array(
-                    'from' => $filters['period']['startDate'],
-                    'to' => $filters['period']['endDate']
-                )
-            );
-        }
 
         $this->elasticsearch->setFilters($filters);
-
 
         $this->elasticsearch
             ->setAggs(
@@ -710,8 +699,9 @@ class Analytics extends MX_Controller
         set_exception_handler('json_exception_handler');
         $filters = array(
             'log' => 'portal',
-            'period' => ['startDate' => '2015-06-01', 'endDate' => '2015-06-04'],
-            'groups' => ['PARADISEC', 'AuScope', 'Griffith Univesrity'],
+            'period' => ['startDate' => '2016-07-01', 'endDate' => '2016-07-28'],
+            'record_owner' => 'ANDS',
+//            'groups' => ['PARADISEC', 'AuScope', 'Griffith Univesrity'],
             'dimensions' => ['portal_view', 'portal_search','accessed'],
         );
         $this->load->model('summary');

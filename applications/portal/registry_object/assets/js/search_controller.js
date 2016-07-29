@@ -816,7 +816,7 @@
             }
             //$log.debug($scope.filters);
             $scope.filters['p'] = 1;
-            $scope.filters['advanced'] = 1;
+            $scope.filters['advanced'] = true;
             $scope.hashChange();
             $('#advanced_search').modal('hide');
         };

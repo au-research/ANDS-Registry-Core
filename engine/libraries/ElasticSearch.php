@@ -4,7 +4,7 @@ class ElasticSearch {
 
     private $CI;
     private $elasticSearchUrl;
-    private $options;
+    public $options;
     private $path;
     private $response;
 
@@ -48,6 +48,31 @@ class ElasticSearch {
      */
     function setFilters($filters) {
 
+        // record owner
+        if (isset($filters['record_owner'])) {
+            $this->options['query']['bool']['must'][]['multi_match'] = [
+                'query' => $filters['record_owner'],
+                'fields' => ['doc.@fields.record.record_owners.raw', 'doc.@fields.result.record_owners.raw']
+            ];
+        }
+
+        // date range
+        if (isset($filters['period'])) {
+            $filters['period']['startDate'] = date('c', strtotime($filters['period']['startDate']));
+            $filters['period']['endDate'] = date('c', strtotime($filters['period']['endDate']));
+
+            if ($filters['period']['startDate'] == $filters['period']['endDate']) {
+                $filters['period']['endDate'] = date('c', strtotime($filters['period']['startDate']. ' +1 day'));
+            }
+
+            $this->mustf('range', 'doc.@timestamp',
+                [
+                    'from' => $filters['period']['startDate'],
+                    'to' => $filters['period']['endDate']
+                ]
+            );
+        }
+
         //groups
         $groups = [];
         if (isset($filters['groups'])) {
@@ -73,7 +98,7 @@ class ElasticSearch {
                 $data_source_ids[] = ['term' => ['doc.@fields.record.data_source_id' => $ds_id]];
             }
         }
-       $this->mustf('bool', 'should', $data_source_ids);
+//       $this->mustf('bool', 'should', $data_source_ids);
 
         if ((sizeof($groups)==0 || sizeof($classes)==0) && (!isset($filters['Masterview']))) {
             // $this->mustf('term', 'norecord', 'norecord');
@@ -89,7 +114,7 @@ class ElasticSearch {
     }
 
     function boolf($cond, $type, $key, $value) {
-        $this->options['query']['filtered']['filter']['bool'][$cond][] = array(
+        $this->options['query']['bool'][$cond][] = array(
             $type => array($key=>$value)
         );
         return $this;
