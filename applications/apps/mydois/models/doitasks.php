@@ -88,7 +88,7 @@ class Doitasks extends CI_Model {
                 $log_response = doisGetUserMessage("MT011", $doi_id, $log_type,$app_id=NULL, "",$urlValue=NULL);
 			}
 		}
-        $this->doilog($log_response,"doi_xml");
+        $this->doilog($log_response,"doi_XML");
 		echo $xml;
 
 	}
@@ -1202,11 +1202,12 @@ class Doitasks extends CI_Model {
         return false;
     }
 
-    function doilog($log_response,$event="doi_xml"){
+    function doilog($log_response,$event="doi_XML"){
 
         $message = array();
         $message["event"] = $event;
         $message["response"]= $log_response;
+        $message["doi"]["id"] = '';
         $doidata = getxml($log_response["doi"]);
         if($doidata->num_rows() > 0){
             foreach($doidata->result() as $row)
@@ -1215,10 +1216,12 @@ class Doitasks extends CI_Model {
                 $message["doi"]["client"] = $row->client_id;
             }
         }
+        $test_check = strpos($log_response["doi"],'10.5072');
+        if($test_check||$test_check===0) $message["event"] = $event.'_TEST';
 
         $message["api_key"] = $log_response["app_id"];
 
-        monolog($message,"doi", "info", true) ;
+        monolog($message,"doi_api", "info", true) ;
 
     }
 
