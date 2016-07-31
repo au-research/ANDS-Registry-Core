@@ -49,7 +49,7 @@ class ElasticSearch {
     function setFilters($filters) {
 
         // record owner
-        if (isset($filters['record_owner'])) {
+        if (isset($filters['record_owner']) && $filters['record_owner'] != "Masterview") {
             $this->options['query']['bool']['must'][]['multi_match'] = [
                 'query' => $filters['record_owner'],
                 'fields' => ['doc.@fields.record.record_owners.raw', 'doc.@fields.result.record_owners.raw']
