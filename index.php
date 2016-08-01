@@ -22,7 +22,7 @@
 // Pull in the global imports
 $eDBCONF = array();
 require_once('./global_config.php');
-if(preg_match('/bot|crawl|slurp|spider/i', $_SERVER['HTTP_USER_AGENT']) === 0)
+if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider/i', $_SERVER['HTTP_USER_AGENT']) === 0)
 {
     if($ENV['protocol'] == 'https://'){
         if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on"){
