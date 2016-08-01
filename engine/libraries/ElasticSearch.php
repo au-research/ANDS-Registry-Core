@@ -77,10 +77,10 @@ class ElasticSearch {
         $groups = [];
         if (isset($filters['groups'])) {
             foreach ($filters['groups'] as $group) {
-                $groups[] = ['term' => ['doc.@fields.record.group' => $group]];
+                $groups[] = ['term' => ['doc.@fields.record.group.raw' => $group]];
             }
         }
-        // $this->mustf('bool', 'should', $groups);
+        $this->mustf('bool', 'should', $groups);
 
         //classes
         $classes = [];
@@ -89,7 +89,7 @@ class ElasticSearch {
                 $classes[] = ['term' => ['doc.@fields.record.class'=>$class]];
             }
         }
-        // $this->mustf('bool', 'should', $classes);
+        $this->mustf('bool', 'should', $classes);
 
         //data source
         $data_source_ids = [];
@@ -98,7 +98,7 @@ class ElasticSearch {
                 $data_source_ids[] = ['term' => ['doc.@fields.record.data_source_id' => $ds_id]];
             }
         }
-//       $this->mustf('bool', 'should', $data_source_ids);
+      // $this->mustf('bool', 'should', $data_source_ids);
 
         if ((sizeof($groups)==0 || sizeof($classes)==0) && (!isset($filters['Masterview']))) {
             // $this->mustf('term', 'norecord', 'norecord');
