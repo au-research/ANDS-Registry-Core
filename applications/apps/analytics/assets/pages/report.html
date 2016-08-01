@@ -131,8 +131,8 @@
                         <div class="span4">
                             <h5>Popular Record(s) for this period</h5>
                             <ul>
-                                <li ng-if="vm.rostat.buckets.length == 0">No data found!</li>
-                                <ro obj="ro" ng-repeat="ro in vm.rostat.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }}
+                                <li ng-if="vm.viewedstat.key.buckets.length == 0">No data found!</li>
+                                <ro obj="ro" ng-repeat="ro in vm.viewedstat.key.buckets">{{ ro.key }} (Viewed {{ ro.doc_count }}
                                     times)
                                 </ro>
                             </ul>
@@ -264,8 +264,8 @@
                 <div class="widget-content" ng-if="vm.all_time_view.id=='popular_records'">
                     <h5>All time popular record(s) view</h5>
                     <ul>
-                        <li ng-if="vm.alltime.aggs.rostat.buckets.length == 0">No data found!</li>
-                        <ro obj="ro" ng-repeat="ro in vm.alltime.aggs.rostat.buckets">{{ ro.key }} (Viewed {{
+                        <li ng-if="vm.alltime.aggs.viewedstat.key.buckets.length == 0">No data found!</li>
+                        <ro obj="ro" ng-repeat="ro in vm.alltime.aggs.viewedstat.key.buckets">{{ ro.key }} (Viewed {{
                             ro.doc_count }} times)
                         </ro>
                     </ul>

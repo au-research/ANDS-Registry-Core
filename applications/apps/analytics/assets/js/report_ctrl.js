@@ -23,6 +23,7 @@
             vm.filters['Masterview'] = true;
         }
 
+
         vm.all_time_views = [
             {id:'popular_records', label:'Popular Record(s)'},
             {id:'popular_search', label:'Popular Search Term(s)'},
@@ -54,7 +55,6 @@
 
         vm.getRDASummaryData = function() {
             analyticFactory.summary(vm.filters).then(function(data){
-
 
                 if (data.dates.length == 0) {
                     //no data, set existing data dates to 0
@@ -117,6 +117,7 @@
 
                 //parse rostat
                 if (data.aggs.rostat) vm.rostat = data.aggs.rostat;
+                if (data.aggs.viewedstat) vm.viewedstat = data.aggs.viewedstat;
                 if (data.aggs.qstat) vm.qstat = data.aggs.qstat;
                 if (data.aggs.accessedstat) vm.accessedstat = data.aggs.accessedstat;
 

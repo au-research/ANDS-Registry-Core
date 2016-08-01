@@ -74,14 +74,21 @@ class Summary extends CI_Model
                 'rostat', array('terms' => array('field' => 'doc.@fields.record.id.raw'))
             )
             ->setAggs(
+                'viewedstat',
+                array(
+                    'filter' => array('term' => array('doc.@fields.event.raw'=>'portal_view')),
+                    'aggs'=>array("key"=>array("terms"=>array('field'=>'doc.@fields.record.id.raw')))
+                )
+            )
+            ->setAggs(
                 'qstat', array('terms' => array('field' => 'doc.@fields.filters.q.raw'))
             )
             ->setAggs(
                 'accessedstat',
                 array(
                     'filter' => array('term' => array('doc.@fields.event.raw'=>'portal_accessed')),
-                    'aggs'=>array("key"=>array("terms"=>array('field'=>'doc.@fields.record.id.raw'))))
-
+                    'aggs'=>array("key"=>array("terms"=>array('field'=>'doc.@fields.record.id.raw')))
+                )
             )
         ;
 

@@ -82,6 +82,7 @@ class Analytics extends MX_Controller
             'group_event' => $summary_result['group_event'],
             'aggs' => $summary_result['aggs'],
             'filters' => $filters,
+            'query' => json_encode($this->elasticsearch->getOptions())
         );
         echo json_encode($result);
     }
