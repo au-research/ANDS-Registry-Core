@@ -14,8 +14,7 @@ class TestConnections extends UnitTest
      */
     public function test_basic_get()
     {
-        $repository = new Repository($this->ci->db);
-        $conn = new Connections($repository);
+        $conn = new Connections(new Repository($this->ci->db));
         $explicitLinks = $conn->get();
         $this->assertTrue(sizeof($explicitLinks) > 0);
     }

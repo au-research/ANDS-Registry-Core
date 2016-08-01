@@ -9,7 +9,6 @@ class CIActiveRecordConnectionsRepository
     {
         $this->db->select('*');
         foreach ($filters as $key => $value) {
-
             if ($value === null) {
                 $this->db->where($key);
             } else {
@@ -21,8 +20,8 @@ class CIActiveRecordConnectionsRepository
                     }
                 }
             }
-
         }
+
         $this->db->limit($limit, $offset);
         $result = $this->db->from('relationships')->get();
 

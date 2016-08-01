@@ -7,26 +7,7 @@ use ANDS\Registry\Connections\Relation as Relation;
 class Connections {
 
     private $filters = [];
-    private $flags = [
-        'from_id',
-        'from_key',
-        'from_title',
-        'from_slug',
-        'from_class',
-        'from_type',
-        'from_data_source_id',
-        'relation_type',
-        'relation_description',
-        'relation_url',
-        'relation_origin',
-        'to_id',
-        'to_key',
-        'to_title',
-        'to_slug',
-        'to_class',
-        'to_type',
-        'to_data_source_id'
-    ];
+    private $flags = [];
     private $limit = 10;
     private $offset = 0;
     private $extractReverse = false;
@@ -43,6 +24,17 @@ class Connections {
     {
         $this->flags = $flags;
         return $this;
+    }
+
+    public function setReverse($value)
+    {
+        $this->extractReverse = $value;
+        return $this;
+    }
+
+    public function getFlags()
+    {
+        return $this->flags;
     }
 
     public function setLimit($limit) {
@@ -79,6 +71,7 @@ class Connections {
             // @todo extend for reverse link to_key
             if ($this->extractReverse) {
                 $key = md5($row['to_key'].$row['from_key']);
+                $relation = $relation->flip();
             } else {
                 $key = md5($row['from_key'].$row['to_key']);
             }
@@ -122,35 +115,41 @@ class Connections {
         return $result;
     }
 
-    /**
-     * return a list of nested collections with children
-     *
-     * @todo reverse relationship
-     * @param $key
-     * @return array
-     */
-    public function getNestedCollections($key)
-    {
-        $links = $this
-            ->setFlag(['from_key', 'to_key', 'relation_type','from_title', 'to_title', 'to_class', 'to_status'])
-            ->setFilter('from_key', $key)
-            ->setFilter('to_class', 'collection')
-            ->setFilter('to_status', 'PUBLISHED')
-            ->setFilter('relation_type', 'hasPart')
-            ->get();
 
-        foreach ($links as $key=>$relation) {
-            $nested = $this->getNestedCollections($relation->getProperty('to_key'));
-            if (sizeof($nested) > 0) {
-                $links[$key]->setProperty('children', $nested);
-            }
-        }
-        return $links;
-    }
 
     public function __construct($repository) {
         $this->repo = $repository;
+        $this->init();
         require_once(REGISTRY_APP_PATH.'connections/Relation.php');
+    }
+
+    public function init()
+    {
+        $this->filters = [];
+        $this->flags = [
+            'from_id',
+            'from_key',
+            'from_title',
+            'from_slug',
+            'from_class',
+            'from_type',
+            'from_data_source_id',
+            'relation_type',
+            'relation_description',
+            'relation_url',
+            'relation_origin',
+            'to_id',
+            'to_key',
+            'to_title',
+            'to_slug',
+            'to_class',
+            'to_type',
+            'to_data_source_id'
+        ];
+        $this->limit = 10;
+        $this->offset = 0;
+        $this->extractReverse = false;
+        return $this;
     }
 
     /**

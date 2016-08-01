@@ -58,6 +58,7 @@ class Dispatcher extends MX_Controller
             $testSuites = $testableModules;
         }
 
+        $aSpecificTest = isset($params[2]) ? $params[2] : false;
 
         // create the test result path if not exists, prime for writing
         if (!file_exists($this->testResultPath)) {
@@ -78,7 +79,7 @@ class Dispatcher extends MX_Controller
                     $tests = [$specificTest];
                 }
 
-                $result = $this->run($testSuite, $tests);
+                $result = $this->run($testSuite, $tests, $aSpecificTest);
                 $results['tests'][$testSuite] = $result;
                 $result['testSuiteName'] = $testSuite;
                 $JUnitXML = $this->load->view('junit-xml-report', $result, true);
@@ -109,7 +110,7 @@ class Dispatcher extends MX_Controller
      * @param $tests
      * @return array
      */
-    private function run($testSuite, $tests) {
+    private function run($testSuite, $tests, $specificTest = false) {
         $this->benchmark->mark('start');
 
         // collect testable modules and run tests on them, append results
@@ -119,7 +120,7 @@ class Dispatcher extends MX_Controller
             $namespace = "ANDS\\Test\\";
             $className = $namespace . $testName;
             $testObject = new $className();
-            $results = array_merge($results, $testObject->runTests());
+            $results = array_merge($results, $testObject->runTests($specificTest));
             unset($testObject);
             $testObject = null;
         }

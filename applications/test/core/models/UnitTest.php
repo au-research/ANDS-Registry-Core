@@ -58,15 +58,21 @@ class UnitTest
      * Run all the function that starts with test (case sensitive)
      * and run all their assertions
      *
+     * @param bool $aSpecificTestFunction
      * @return mixed
      */
-    public function runTests()
+    public function runTests($aSpecificTestFunction = false)
     {
         try {
             $this->setUp();
             $this->ci->load->library('unit_test');
             $this->ci->unit->init();
-            $testableFunctions = get_class_methods($this);
+            if ($aSpecificTestFunction !== false) {
+                $testableFunctions = [$aSpecificTestFunction];
+            } else {
+                $testableFunctions = get_class_methods($this);
+            }
+
             foreach ($testableFunctions as $function) {
                 if (startsWith($function, 'test')) {
                     try {

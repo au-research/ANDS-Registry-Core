@@ -58,4 +58,47 @@ class Relation
         }
         return $this;
     }
+
+    /**
+     * Takes in a mapping, returns an array display with the mapping applied
+     *
+     * @param $mapping
+     * @return array
+     */
+    public function format($mapping = [])
+    {
+        $result = [];
+
+        foreach ($this->getProperties() as $key=>$value) {
+            if (array_key_exists($key, $mapping)) {
+                $result[$mapping[$key]] = $value;
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    public function flip()
+    {
+        $relation = new static;
+        foreach ($this->getProperties() as $key=>$value) {
+
+            // if it starts with from
+            if (strpos($key, 'from_') === 0) {
+                $replace = str_replace("from_", "to_", $key);
+                $relation->setProperty($replace, $value);
+            } elseif (strpos($key, 'to_') === 0) {
+                $replace = str_replace("to_", "from_", $key);
+                $relation->setProperty($replace, $value);
+            } else {
+                $relation->setProperty($key, $value);
+            }
+
+            // @todo flip relation_type as well
+        }
+
+        return $relation;
+    }
 }
