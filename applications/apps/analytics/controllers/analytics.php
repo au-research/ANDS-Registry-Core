@@ -67,6 +67,7 @@ class Analytics extends MX_Controller
     public function summary()
     {
         $this->output->set_header('Content-type: application/json');
+        header('Content-type: application/json');
         set_exception_handler('json_exception_handler');
 
         //capturing filters from AngularJS POST field

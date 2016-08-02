@@ -74,6 +74,7 @@ class ElasticSearch {
 
         // date range
         if (isset($filters['period'])) {
+
             $filters['period']['startDate'] = date('c', strtotime($filters['period']['startDate']));
             $filters['period']['endDate'] = date('c', strtotime($filters['period']['endDate']));
 
@@ -92,25 +93,33 @@ class ElasticSearch {
         //groups
         $groups = [];
         if (isset($filters['groups'])) {
+            $groupFilters = [];
             foreach ($filters['groups'] as $group) {
-                $this->options['query']['bool']['should'][]['multi_match'] = [
-                    'query' => $group,
-                    'fields' => ['doc.@fields.record.group.raw', 'doc.@fields.filters.group.raw']
+                $groupFilters[] = [
+                    'multi_match' => [
+                        'query' => $group,
+                        'fields' => ['doc.@fields.record.group.raw', 'doc.@fields.filters.group.raw'],
+                    ]
                 ];
                 $groups[] = $group;
             }
+            $this->options['query']['bool']['must'][] = ['bool'=>['should' =>$groupFilters]];
         }
 
         //classes
         $classes = [];
         if (isset($filters['class']) && sizeof($filters['class']) > 0) {
+            $classFilters = [];
             foreach ($filters['class'] as $class) {
-                $this->options['query']['bool']['should'][]['multi_match'] = [
-                    'query' => $class,
-                    'fields' => ['doc.@fields.record.class.raw', 'doc.@fields.filters.class.raw']
+                $classFilters[] = [
+                    'multi_match' => [
+                        'query' => $class,
+                        'fields' => ['doc.@fields.record.class.raw', 'doc.@fields.filters.class.raw'],
+                    ]
                 ];
+                $classes[] = $class;
             }
-            $classes[] = $class;
+            $this->options['query']['bool']['must'][] = ['bool'=>['should' =>$classFilters]];
         }
 
         //data source

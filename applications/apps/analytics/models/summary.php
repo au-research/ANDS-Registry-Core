@@ -23,7 +23,8 @@ class Summary extends CI_Model
                     array(
                         'field'=>'doc.@timestamp',
                         'format' => 'yyyy-MM-dd',
-                        'interval' => 'day'
+                        'interval' => 'day',
+                        "time_zone" => "+10:00"
                     ),
                     'aggs'=>array(
                         'events' => array('terms'=>array('field'=>'doc.@fields.event.raw'))
