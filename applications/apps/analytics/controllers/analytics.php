@@ -77,6 +77,7 @@ class Analytics extends MX_Controller
 
         $this->load->model('summary');
         $summary_result = $this->summary->get($filters);
+
         $result = array(
             'dates' => $summary_result['dates'],
             'group_event' => $summary_result['group_event'],
