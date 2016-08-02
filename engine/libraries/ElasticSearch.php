@@ -98,7 +98,7 @@ class ElasticSearch {
                 $groupFilters[] = [
                     'multi_match' => [
                         'query' => $group,
-                        'fields' => ['doc.@fields.record.group.raw', 'doc.@fields.filters.group.raw'],
+                        'fields' => ['doc.@fields.record.group.raw', 'doc.@fields.result.result_group.raw'],
                     ]
                 ];
                 $groups[] = $group;
