@@ -93,19 +93,25 @@ class ElasticSearch {
         $groups = [];
         if (isset($filters['groups'])) {
             foreach ($filters['groups'] as $group) {
-                $groups[] = ['term' => ['doc.@fields.record.group.raw' => $group]];
+                $this->options['query']['bool']['should'][]['multi_match'] = [
+                    'query' => $group,
+                    'fields' => ['doc.@fields.record.group.raw', 'doc.@fields.filters.group.raw']
+                ];
+                $groups[] = $group;
             }
         }
-        $this->mustf('bool', 'should', $groups);
 
         //classes
         $classes = [];
         if (isset($filters['class']) && sizeof($filters['class']) > 0) {
             foreach ($filters['class'] as $class) {
-                $classes[] = ['term' => ['doc.@fields.record.class'=>$class]];
+                $this->options['query']['bool']['should'][]['multi_match'] = [
+                    'query' => $class,
+                    'fields' => ['doc.@fields.record.class.raw', 'doc.@fields.filters.class.raw']
+                ];
             }
+            $classes[] = $class;
         }
-        $this->mustf('bool', 'should', $classes);
 
         //data source
         $data_source_ids = [];
@@ -117,7 +123,7 @@ class ElasticSearch {
       // $this->mustf('bool', 'should', $data_source_ids);
 
         if ((sizeof($groups)==0 || sizeof($classes)==0) && (!isset($filters['Masterview']))) {
-            // $this->mustf('term', 'norecord', 'norecord');
+             $this->mustf('term', 'norecord', 'norecord');
         }
 
     }
