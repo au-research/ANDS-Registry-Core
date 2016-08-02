@@ -295,13 +295,13 @@ class Doitasks extends CI_Model {
 						$verbosemessage = '';
 						if($response1!=gDOIS_RESPONSE_SUCCESS) $verbosemessage .= $response1;
 						if($response2!=gDOIS_RESPONSE_SUCCESS) $verbosemessage .= $response2;
-						$errorMessages = doisGetUserMessage("MT005", $doi=NULL,$response_type,$app_id, $verbosemessage,$urlValue);
-                        $log_response = doisGetUserMessage("MT005", $doi=NULL,$log_type,$app_id, $verbosemessage,$urlValue);
+						$errorMessages = doisGetUserMessage("MT005",  $doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                        $log_response = doisGetUserMessage("MT005",  $doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 					}
 				}else{
 					$verbosemessage = $updateError;
-					$errorMessages = doisGetUserMessage("MT010", $doi=NULL,$response_type,$app_id, $verbosemessage,$urlValue);
-                    $log_response = doisGetUserMessage("MT010", $doi=NULL,$log_type,$app_id, $verbosemessage,$urlValue);
+					$errorMessages = doisGetUserMessage("MT010",  $doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                    $log_response = doisGetUserMessage("MT010",  $doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 				}
 			}
 		}else{
@@ -408,8 +408,8 @@ class Doitasks extends CI_Model {
 			if($client_id===false)
 			{
 				$verbosemessage = 'Client with app_id '.$app_id.' from ip address '.$ip. ' is not a registered doi client.';
-				$errorMessages = doisGetUserMessage("MT009", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
-                $log_response = doisGetUserMessage("MT009", $doi_id=NULL, $log_type,$app_id, $verbosemessage,$urlValue);
+				$errorMessages = doisGetUserMessage("MT009",  $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT009",  $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 			}
 
 			$xml = $this->getXmlInput();
@@ -417,8 +417,8 @@ class Doitasks extends CI_Model {
 			if(!$xml){
 				$xml = '';
 				$verbosemessage = 'You must post xml when minting a doi.';
-				$errorMessages = doisGetUserMessage("MT010", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
-                $log_response = doisGetUserMessage("MT010", $doi_id=NULL, $log_type,$app_id, $verbosemessage,$urlValue);
+				$errorMessages = doisGetUserMessage("MT010",  $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT010",  $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 			}
             $doiObjects = new DOMDocument();
 
@@ -539,8 +539,8 @@ class Doitasks extends CI_Model {
 				if( $errors || !$result)
 				{
 					$verbosemessage = "Document Validation Error: ".$error_string;
-					$errorMessages = doisGetUserMessage("MT006", $doi_id=NULL, $response_type, $app_id, $verbosemessage,$urlValue);
-                    $log_response = doisGetUserMessage("MT006", $doi_id=NULL, $log_type, $app_id, $verbosemessage,$urlValue);
+					$errorMessages = doisGetUserMessage("MT006",  $doiValue, $response_type, $app_id, $verbosemessage,$urlValue);
+                    $log_response = doisGetUserMessage("MT006",  $doiValue, $log_type, $app_id, $verbosemessage,$urlValue);
 				}
 
 			}
@@ -898,14 +898,14 @@ class Doitasks extends CI_Model {
 					}
 					else
 					{
-						$errorMessages .= doisGetUserMessage("MT010", $doi=NULL, $response_type,$app_id, $response,$urlValue);
-                        $log_response = doisGetUserMessage("MT010", $doi=NULL, $log_type,$app_id, $response,$urlValue);;
+						$errorMessages .= doisGetUserMessage("MT010", $doiValue, $response_type,$app_id, $response,$urlValue);
+                        $log_response = doisGetUserMessage("MT010", $doiValue, $log_type,$app_id, $response,$urlValue);;
 					}
 				}
 				else
 				{
-					$errorMessages .= doisGetUserMessage("MT005", $doi=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
-                    $log_response = doisGetUserMessage("MT005", $doi=NULL, $log_type,$app_id, $verbosemessage,$urlValue);
+					$errorMessages .= doisGetUserMessage("MT005", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                    $log_response = doisGetUserMessage("MT005", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 				}
 			}else{
 
@@ -1209,7 +1209,7 @@ class Doitasks extends CI_Model {
         $message["response"]= $log_response;
         $message["doi"]["id"] = $log_response["doi"];
         $message["doi"]["client"] = $client_id;
-        $message["doi"]["production"] = true;
+
       //  $doidata = getxml($log_response["doi"]);
       //  if($doidata->num_rows() > 0){
       //      foreach($doidata->result() as $row)
@@ -1219,7 +1219,11 @@ class Doitasks extends CI_Model {
         //    }
        // }
         $test_check = strpos($log_response["doi"],'10.5072');
-        if($test_check||$test_check===0) $message["doi"]["production"] = false;
+        if($test_check||$test_check===0) {
+            $message["doi"]["production"] = false;
+        }else{
+            $message["doi"]["production"] = true;
+        }
 
         $message["api_key"] = $log_response["app_id"];
 
