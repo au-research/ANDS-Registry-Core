@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Class ElasticSearch
+ */
 class ElasticSearch {
 
     private $CI;
@@ -8,23 +11,36 @@ class ElasticSearch {
     private $path;
     private $response;
 
+    /**
+     * ElasticSearch constructor.
+     */
     function __construct() {
         $this->CI =& get_instance();
         $this->init();
     }
 
+    /**
+     * @return $this
+     */
     function init() {
         $this->elasticSearchUrl = 'http://localhost:9200';
         $this->options = array();
         $this->path = '/';
         $this->chunkSize = 5000;
+
+        if (get_config_item('elasticsearch_url')) {
+            $this->setUrl(get_config_item('elasticsearch_url'));
+        }
+
         return $this;
     }
+
 
     /**
      * Manually set the option for solr search
      * @param string $field
      * @param string $value
+     * @return $this
      */
     function setOpt($field, $value){
         if(isset($this->options[$field])){
@@ -106,6 +122,12 @@ class ElasticSearch {
 
     }
 
+    /**
+     * @param $type
+     * @param $key
+     * @param $value
+     * @return $this
+     */
     function andf($type, $key, $value) {
         $this->options['query']['filtered']['filter']['and'][] = array(
             $type => array($key=>$value)
@@ -113,6 +135,13 @@ class ElasticSearch {
         return $this;
     }
 
+    /**
+     * @param $cond
+     * @param $type
+     * @param $key
+     * @param $value
+     * @return $this
+     */
     function boolf($cond, $type, $key, $value) {
         $this->options['query']['bool'][$cond][] = array(
             $type => array($key=>$value)
@@ -120,6 +149,13 @@ class ElasticSearch {
         return $this;
     }
 
+    /**
+     * @param $cond
+     * @param $type
+     * @param $key
+     * @param $value
+     * @return $this
+     */
     function boolff($cond, $type, $key, $value) {
         $this->options['filter']['bool'][$cond][] = array(
             $type => array($key=>$value)
@@ -128,36 +164,73 @@ class ElasticSearch {
     }
 
 
+    /**
+     * @param $type
+     * @param $key
+     * @param $value
+     * @return ElasticSearch
+     */
     function mustf($type, $key, $value) {
         return $this->boolf('must', $type, $key, $value);
     }
 
+    /**
+     * @param $type
+     * @param $key
+     * @param $value
+     * @return ElasticSearch
+     */
     function shouldf($type, $key, $value) {
         return $this->boolf('should', $type, $key, $value);
     }
 
+    /**
+     * @param $type
+     * @param $key
+     * @param $value
+     * @return ElasticSearch
+     */
     function must_notf($type, $key, $value) {
         return $this->boolf('must_not', $type, $key, $value);
     }
 
+    /**
+     * @param $type
+     * @param $value
+     * @return $this
+     */
     function setQuery($type, $value) {
         if (!isset($this->options['query'])) $this->options['query'] = array();
         $this->options['query'][$type] = $value;
         return $this;
     }
 
+    /**
+     * @param $type
+     * @param $value
+     * @return $this
+     */
     function setAggs($type, $value) {
         if (!isset($this->options['aggs'])) $this->options['aggs'] = array();
         $this->options['aggs'][$type] = $value;
         return $this;
     }
 
+    /**
+     * @param $type
+     * @param $value
+     * @return $this
+     */
     function setFacet($type, $value) {
         if (!isset($this->options['facets'])) $this->options['facets'] = array();
         $this->options['facets'][$type] = $value;
         return $this;
     }
 
+    /**
+     * @param bool $content
+     * @return bool|mixed
+     */
     function search($content = false) {
 //        dd($this->options);
         if (!$content) {
@@ -167,6 +240,11 @@ class ElasticSearch {
         return $this->exec('GET', $content);
     }
 
+    /**
+     * @param $verb
+     * @param $content
+     * @return array|bool
+     */
     function bulk($verb, $content) {
         if ($content && is_array($content) && sizeof($content) > 0) {
             $response = array();
@@ -185,6 +263,11 @@ class ElasticSearch {
         }
     }
 
+    /**
+     * @param $verb
+     * @param $content
+     * @return bool|mixed
+     */
     private function execBulk($verb, $content) {
         // var_dump(memory_get_usage());
         $data = null;
@@ -245,7 +328,7 @@ class ElasticSearch {
     /**
      * Manually unsset the option for solr search
      * @param string $field
-     * @param string $value
+     * @return $this
      */
     function clearOpt($field){
         if(isset($this->options[$field])){
@@ -276,12 +359,17 @@ class ElasticSearch {
     /**
      * Manually set the solr url
      * @param string $value http link for solr url, defaults to be the value in the config
+     * @return $this
      */
     function setUrl($value){
         $this->elasticSearchUrl = $value;
         return $this;
     }
 
+    /**
+     * @param $value
+     * @return $this
+     */
     function setPath($value) {
         $this->path = $value;
         return $this;
