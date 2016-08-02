@@ -1208,7 +1208,13 @@ class Doitasks extends CI_Model {
         $message["event"] = strtolower($event);
         $message["response"]= $log_response;
         $message["doi"]["id"] = $log_response["doi"];
-        $message["doi"]["client"] = $client_id;
+        $message["client"]["id"] = $client_id;
+        if(strtolower(substr($event,0,6))=='doi_m_'){
+            $message['request']['manual']= true;
+            $message["event"] = str_replace("_m_","_", $message["event"]);
+        }else{
+            $message['request']['manual']= false;
+        }
 
       //  $doidata = getxml($log_response["doi"]);
       //  if($doidata->num_rows() > 0){

@@ -9,6 +9,7 @@ function doisGetUserMessage($responseCode, $doi_id,$response_type="string",$app_
 {
 	$message = '';
 	$htmlHeader = '';
+    $code = 200;
 	global $api_version;
 	switch($responseCode)
 	{
@@ -31,7 +32,8 @@ function doisGetUserMessage($responseCode, $doi_id,$response_type="string",$app_
 		case "MT005":
 			$message = "The ANDS Cite My Data service is currently unavailable. Please try again at a later time. If you continue to experience problems please contact services@ands.org.au.";	
 			$type = "failure";		
-			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";	
+			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";
+            $code = 500;
 			break;
 		case "MT006":
 			$message = "The metadata you have provided to mint a new DOI has failed the schema validation. 
@@ -40,7 +42,8 @@ function doisGetUserMessage($responseCode, $doi_id,$response_type="string",$app_
 			please visit the ANDS website http://ands.org.au. 
 			Detailed information about the validation errors can be found below.";
 			$type = "failure";	
-			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";		
+			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";
+            $code = 500;
 			break;
 		case "MT007":
 			$message = "The metadata you have provided to update DOI ".$doi_id." has failed the schema validation. 
@@ -49,22 +52,26 @@ function doisGetUserMessage($responseCode, $doi_id,$response_type="string",$app_
 			please visit the ANDS website http://ands.org.au. 
 			Detailed information about the validation errors can be found below.";
 			$type = "failure";
-			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";			
+			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";
+            $code = 500;
 			break;
 		case "MT008":
 			$message = "You do not appear to be the owner of DOI ".$doi_id.". If you believe this to be incorrect please contact services@ands.org.au.";
 			$type = "failure";	
-			$htmlHeader = "HTTP/1.0 415 Authentication Error";	
+			$htmlHeader = "HTTP/1.0 415 Authentication Error";
+            $code = 415;
 			break;								
 		case "MT009":
 			$message = "You are not authorised to use this service. For more information or to request access to the service please contact services@ands.org.au.";
 			$type = "failure";
-			$htmlHeader = "HTTP/1.0 415 Authentication Error";			
+			$htmlHeader = "HTTP/1.0 415 Authentication Error";
+            $code = 415;
 			break;
 		case "MT010":
 			$message = "There has been an unexpected error processing your doi request. For more information please contact services@ands.org.au.";	
 			$type = "failure";	
-			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";				
+			$htmlHeader	= "HTTP/1.0 500 Internal Server Error";
+            $code = 500;
 			break;
 		case "MT011":
 			$message = "DOI ".$doi_id." does not exist in the ANDS Cite My Data service.";
@@ -143,6 +150,7 @@ function doisGetUserMessage($responseCode, $doi_id,$response_type="string",$app_
         case "array":
             $response = array();
             $response['type'] = $type;
+            $response['code'] = $code;
             $response['responsecode'] = $responseCode;
             $response['message'] = $message;
             $response['doi'] = $doi_id;
