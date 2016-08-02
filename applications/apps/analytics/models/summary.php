@@ -65,7 +65,7 @@ class Summary extends CI_Model
             )
             ->setAggs('search_group',
                 array(
-                    'terms'=>array('field'=>'doc.@fields.filters.group.raw'),
+                    'terms'=>array('field'=>'doc.@fields.result.result_group.raw'),
                     'aggs' => [
                         'event' => ['terms'=>['field'=>'doc.@fields.event.raw']]
                     ]
@@ -149,6 +149,15 @@ class Summary extends CI_Model
         foreach ($search_result['aggregations']['search_group']['buckets'] as $group) {
             foreach ($group['event']['buckets'] as $event) {
                 $result['group_event'][$group['key']][$event['key']] = $event['doc_count'];
+            }
+        }
+
+        //removing groups not in the filters out of the group event
+        if (array_key_exists('groups', $filters)) {
+            foreach ($result['group_event'] as $key=>$value) {
+                if (!in_array($key, $filters['groups'])) {
+                    unset($result['group_event'][$key]);
+                }
             }
         }
 
