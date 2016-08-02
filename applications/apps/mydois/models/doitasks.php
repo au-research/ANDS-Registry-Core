@@ -241,16 +241,16 @@ class Doitasks extends CI_Model {
 					if( $errors || !$result)
 					{
 						$verbosemessage = "Document Validation Error: ".$error_string."\n";
-						$errorMessages = doisGetUserMessage("MT007", doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
-                        $log_response = doisGetUserMessage("MT007", doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
+						$errorMessages = doisGetUserMessage("MT007", $doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                        $log_response = doisGetUserMessage("MT007", $doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 					}
 				}
 			}
 
             if(!$this->validDomain($urlValue,$client_domains)){
                 $verbosemessage = 'URL not permitted.';
-                $errorMessages = doisGetUserMessage("MT014", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
-                $log_response = doisGetUserMessage("MT014", $doi_id=NULL, $log_type,$app_id, $verbosemessage,$urlValue);
+                $errorMessages = doisGetUserMessage("MT014", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT014", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
             }
 
 			if( $errorMessages == '' )
@@ -319,14 +319,14 @@ class Doitasks extends CI_Model {
 		{
 			//We need to log this activity as errorred
 			insertDoiActivity($update,$doiValue,"FAILURE",$client_id,$errorMessages);
-            $this->doilog($log_response,"doi_".$update);
+            $this->doilog($log_response,"doi_".$update,$client_id);
 		}
 
 		if($notifyMessage)
 		{
 			//We need to log this activity
 			insertDoiActivity($update,$doiValue,"SUCCESS",$client_id,$notifyMessage);
-            $this->doilog($log_response,"doi_".$update);
+            $this->doilog($log_response,"doi_".$update,$client_id);
 		}
 
 		echo $errorMessages;
@@ -350,7 +350,7 @@ class Doitasks extends CI_Model {
 		}
 
 		$xml ='';
-		$client_id = '';
+		$client_id = 0;
 		$errorMessages = '';
 		$notifyMessage = '';
 		$log_type = 'array';
@@ -392,15 +392,15 @@ class Doitasks extends CI_Model {
 					//first up, lets check that this client is permitted to update this doi.
 		if(!$app_id)
 		{
-			$errorMessages = doisGetUserMessage("MT010", $doiValue=NULL ,$response_type,$app_id, "You must provide an app id to mint a doi",$urlValue);
-            $log_response = doisGetUserMessage("MT010", $doiValue=NULL ,$log_type,$app_id, "You must provide an app id to mint a doi",$urlValue);
+			$errorMessages = doisGetUserMessage("MT010", $doiValue ,$response_type,$app_id, "You must provide an app id to mint a doi",$urlValue);
+            $log_response = doisGetUserMessage("MT010", $doiValue ,$log_type,$app_id, "You must provide an app id to mint a doi",$urlValue);
 
 		}
 		if($urlValue=='' && $errorMessages == '')
 		{
 			$verbosemessage = 'You must provide a url when minting a doi.';
-			$errorMessages = doisGetUserMessage("MT010", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);//"URL is a mandatory value to mint a doi.<br />";
-            $log_response = doisGetUserMessage("MT010", $doi_id=NULL, $log_type,$app_id, $verbosemessage,$urlValue);
+			$errorMessages = doisGetUserMessage("MT010", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);//"URL is a mandatory value to mint a doi.<br />";
+            $log_response = doisGetUserMessage("MT010", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
         }
 		if($errorMessages == '')
 		{
@@ -474,8 +474,8 @@ class Doitasks extends CI_Model {
 			{
 
 				$verbosemessage = "Document Load Error: ".$errors['message'];
-				$errorMessages .= doisGetUserMessage("MT010", $doi_id=NULL, $response_type, $app_id, $verbosemessage,$urlValue);
-                $log_response  = doisGetUserMessage("MT010", $doi_id=NULL, $log_type, $app_id, $verbosemessage,$urlValue);
+				$errorMessages .= doisGetUserMessage("MT010", $doiValue, $response_type, $app_id, $verbosemessage,$urlValue);
+                $log_response  = doisGetUserMessage("MT010", $doiValue, $log_type, $app_id, $verbosemessage,$urlValue);
 			}
 			else{
 				$errors = error_get_last();
@@ -497,8 +497,8 @@ class Doitasks extends CI_Model {
 			{
 
 				$verbosemessage = "Document Load Error: ".$errors['message'];
-				$errorMessages  = doisGetUserMessage("MT010", $doi_id=NULL, $response_type, $app_id, $verbosemessage,$urlValue);
-                $log_response  = doisGetUserMessage("MT010", $doi_id=NULL, $log_type, $app_id, $verbosemessage,$urlValue);
+				$errorMessages  = doisGetUserMessage("MT010", $doiValue, $response_type, $app_id, $verbosemessage,$urlValue);
+                $log_response  = doisGetUserMessage("MT010", $doiValue, $log_type, $app_id, $verbosemessage,$urlValue);
 			}else{
 				// Validate it against the datacite schema.
 				error_reporting(0);
@@ -549,8 +549,8 @@ class Doitasks extends CI_Model {
 
                 if(!$this->validDomain($urlValue,$client_domains)){
                     $verbosemessage = 'URL not permitted.';
-                    $errorMessages = doisGetUserMessage("MT014", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
-                    $log_response = doisGetUserMessage("MT014", $doi_id=NULL, $log_type,$app_id, $verbosemessage,$urlValue);
+                    $errorMessages = doisGetUserMessage("MT014", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                    $log_response = doisGetUserMessage("MT014", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
                 }
 
             }
@@ -610,15 +610,15 @@ class Doitasks extends CI_Model {
 
 			//We need to log this activity as errorred
 
-			insertDoiActivity($mint,$doiValue,"FAILURE",$client_id=0,$errorMessages);
-            $this->doilog($log_response,"doi_".$mint);
+			insertDoiActivity($mint,$doiValue,"FAILURE",$client_id,$errorMessages);
+            $this->doilog($log_response,"doi_".$mint,$client_id);
 		}
 
 		if($notifyMessage)
 		{
 			//We need to log this activity
 			insertDoiActivity($mint,$doiValue,"SUCCESS",$client_id,$notifyMessage);
-            $this->doilog($log_response,"doi_".$mint);
+            $this->doilog($log_response,"doi_".$mint,$client_id);
 			$outstr = $notifyMessage;
 		}
 
@@ -777,7 +777,7 @@ class Doitasks extends CI_Model {
 
 			insertDoiActivity($activate,$doiValue,"FAILURE",$client_id,$errorMessages);
 
-            $this->doilog($log_response,"doi_".$activate);
+            $this->doilog($log_response,"doi_".$activate,$client_id);
 
 		}
 
@@ -786,7 +786,7 @@ class Doitasks extends CI_Model {
 			//We need to log this activity as successful
 			insertDoiActivity($activate,$doiValue,"SUCCESS",$client_id,$notifyMessage);
 
-            $this->doilog($log_response,"doi_".$activate);
+            $this->doilog($log_response,"doi_".$activate,$client_id);
 
 			$outstr = $notifyMessage;
 		}
@@ -930,7 +930,7 @@ class Doitasks extends CI_Model {
 
 			insertDoiActivity($deactivate,$doiValue,"FAILURE",$client_id,$errorMessages);
 
-            $this->doilog($log_response,"doi_".$deactivate);
+            $this->doilog($log_response,"doi_".$deactivate,$client_id);
 
 		}
 
@@ -939,7 +939,7 @@ class Doitasks extends CI_Model {
 			//We need to log this activity
 			insertDoiActivity($deactivate,$doiValue,"SUCCESS",$client_id,$notifyMessage);
 
-            $this->doilog($log_response,"doi_".$deactivate);
+            $this->doilog($log_response,"doi_".$deactivate, $client_id);
 
 			$outstr = $notifyMessage;
 		}
@@ -1202,22 +1202,24 @@ class Doitasks extends CI_Model {
         return false;
     }
 
-    function doilog($log_response,$event="doi_XML"){
+    function doilog($log_response,$event="doi_xml",$client_id=NULL){
 
         $message = array();
-        $message["event"] = $event;
+        $message["event"] = strtolower($event);
         $message["response"]= $log_response;
-        $message["doi"]["id"] = '';
-        $doidata = getxml($log_response["doi"]);
-        if($doidata->num_rows() > 0){
-            foreach($doidata->result() as $row)
-            {
-                $message["doi"]["id"]= $row->doi_id;
-                $message["doi"]["client"] = $row->client_id;
-            }
-        }
+        $message["doi"]["id"] = $log_response["doi"];
+        $message["doi"]["client"] = $client_id;
+        $message["doi"]["production"] = true;
+      //  $doidata = getxml($log_response["doi"]);
+      //  if($doidata->num_rows() > 0){
+      //      foreach($doidata->result() as $row)
+       //     {
+       //         $message["doi"]["id"]= $row->doi_id;
+       //         $message["doi"]["client"] = $row->client_id;
+        //    }
+       // }
         $test_check = strpos($log_response["doi"],'10.5072');
-        if($test_check||$test_check===0) $message["event"] = $event.'_TEST';
+        if($test_check||$test_check===0) $message["doi"]["production"] = false;
 
         $message["api_key"] = $log_response["app_id"];
 
