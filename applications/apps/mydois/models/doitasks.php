@@ -1012,9 +1012,6 @@ class Doitasks extends CI_Model {
 		return !(curl_errno($curl) || curl_getinfo($curl, CURLINFO_HTTP_CODE) != "200");
 	}
 
-
-
-
 	function checkurl(){
 		$unavailableCount = 0;
 		$message = '';
@@ -1047,9 +1044,6 @@ class Doitasks extends CI_Model {
 		$message .= $notifyMessage;
 		mail($recipient,$subject,$message);
 	}
-
-
-
 
 	function doisRequest($service, $doi, $url, $metadata,$client_id)
 	{
@@ -1158,7 +1152,6 @@ class Doitasks extends CI_Model {
 
 		$app_id = $this->input->get('app_id');		//passed as a parameter
 		//or app_id might be passed as part of the authstr
-
 		if(!$app_id && isset($_SERVER['PHP_AUTH_USER']))
 		{
    			$app_id = $_SERVER['PHP_AUTH_USER'];
@@ -1209,21 +1202,24 @@ class Doitasks extends CI_Model {
         $message["response"]= $log_response;
         $message["doi"]["id"] = $log_response["doi"];
         $message["client"]["id"] = $client_id;
+        $message["client"]["name"] = NULL;
+		
+		//determine client name
+		if($client_id || $client_id==="0"){
+            $client = getDoisClientDetails($client_id);
+            $clientName = $client->result();
+            $message["client"]["name"] = $clientName[0]->client_name;
+        }
+		
+		//determine if event is manual or m2m		
         if(strtolower(substr($event,0,6))=='doi_m_'){
             $message['request']['manual']= true;
             $message["event"] = str_replace("_m_","_", $message["event"]);
         }else{
             $message['request']['manual']= false;
         }
-
-      //  $doidata = getxml($log_response["doi"]);
-      //  if($doidata->num_rows() > 0){
-      //      foreach($doidata->result() as $row)
-       //     {
-       //         $message["doi"]["id"]= $row->doi_id;
-       //         $message["doi"]["client"] = $row->client_id;
-        //    }
-       // }
+		
+		//determine if doi is a test doi
         $test_check = strpos($log_response["doi"],'10.5072');
         if($test_check||$test_check===0) {
             $message["doi"]["production"] = false;
