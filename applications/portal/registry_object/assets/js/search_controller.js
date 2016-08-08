@@ -385,7 +385,7 @@
         $scope.showFilter = function(filter_name, mode){
             if (!mode || mode=='undefined') mode = 'normal';
             var show = true;
-            if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
+            if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class' || filter_name == 'advanced') {
                 show = false;
             }
             if ($scope.filters[filter_name]=="" && mode == 'normal')  show = false;
