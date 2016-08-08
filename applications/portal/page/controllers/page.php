@@ -362,6 +362,7 @@ class Page extends MX_Controller
      * @todo If a record ID is provided, log the record as event.record
      * @param  string $social facebook|twitter|google
      * @return redirect
+     * @throws Exception
      */
     public function share($social = "facebook")
     {
@@ -378,6 +379,16 @@ class Page extends MX_Controller
                 'type' => $social
             ]
         ];
+
+        // if there's an accompany id, record more metadata to the log
+        // @todo optimize so that we don't need to call the model and reprocess the id
+        if ($id = $this->input->get('id') ?: false) {
+            $this->load->model('registry_object/registry_objects', 'ro');
+            if ($record = $this->ro->getByID($id)) {
+                $event['record'] = $this->ro->getRecordFields($record);
+            }
+        }
+
         monolog($event, 'portal', 'info');
 
         // Decide the sharing URL

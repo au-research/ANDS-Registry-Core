@@ -16552,7 +16552,7 @@ app.directive('focusMe', function($timeout, $parse) {
         $scope.showFilter = function(filter_name, mode){
             if (!mode || mode=='undefined') mode = 'normal';
             var show = true;
-            if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
+            if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class' || filter_name == 'advanced') {
                 show = false;
             }
             if ($scope.filters[filter_name]=="" && mode == 'normal')  show = false;
@@ -16983,7 +16983,7 @@ app.directive('focusMe', function($timeout, $parse) {
             }
             //$log.debug($scope.filters);
             $scope.filters['p'] = 1;
-            $scope.filters['advanced'] = 1;
+            $scope.filters['advanced'] = true;
             $scope.hashChange();
             $('#advanced_search').modal('hide');
         };

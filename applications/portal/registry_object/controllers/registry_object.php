@@ -272,14 +272,14 @@ class Registry_object extends MX_Controller
             ->render($render);
     }
 
+    /**
+     * @todo update internal mapping to call ro model directly
+     * @param _ro $ro
+     * @return array
+     */
     private function getRecordFields(_ro $ro)
     {
-        $result = [];
-        $recordFields = ['id', 'key', 'class', 'type', 'data_source_id', 'slug', 'group'];
-        foreach ($recordFields as $field) {
-            $result[$field] = $ro->core[$field];
-        }
-        return $result;
+        return $this->ro->getRecordFields($ro);
     }
 
     /**

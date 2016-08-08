@@ -43,15 +43,24 @@
                 </div>
                 <div class="col-md-3">
                     <?php
-                        $url = ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? base_url().$ro->core['slug'].'/'.$ro->core['id'] : current_url() );
-                        $title = ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? $ro->core['title']. ' - Research Data Australia' : 'Research Data Australia' );
+
+                        $params = [
+                            'url' => ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? base_url().$ro->core['slug'].'/'.$ro->core['id'] : current_url() ),
+                            'title' => ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? $ro->core['title']. ' - Research Data Australia' : 'Research Data Australia' )
+                        ];
+
+                        if (isset($ro) && isset($ro->core['id'])) {
+                            $params['id'] = $ro->core['id'];
+                        }
+
+                        $params = http_build_query($params);
                     ?>
                     <div id="categories-5" class="sidebar-widget widget_categories">
                         <h3 class="sidebar-header">Share</h3>
                         <ul>
-                            <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/facebook?url='.$url) }}" target="_blank"><i class="fa fa-facebook"></i> Facebook</a></li>
-                            <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/twitter/?url='.$url.'&title='.$title) }}" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
-                            <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/google?url='.$url) }}" target="_blank"><i class="fa fa-google"></i> Google</a></li>
+                            <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/facebook?'.$params) }}" target="_blank"><i class="fa fa-facebook"></i> Facebook</a></li>
+                            <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/twitter/?'.$params) }}" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
+                            <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/google?'.$params) }}" target="_blank"><i class="fa fa-google"></i> Google</a></li>
                         </ul>
                     </div>
                 </div>

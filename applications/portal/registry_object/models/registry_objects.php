@@ -74,6 +74,22 @@ class Registry_objects extends CI_Model {
 
 	}
 
+    /**
+     * return just the analytical record fields
+     *
+     * @param _ro $ro
+     * @return array
+     */
+    public function getRecordFields(_ro $ro)
+    {
+        $result = [];
+        $recordFields = ['id', 'key', 'class', 'type', 'data_source_id', 'slug', 'group'];
+        foreach ($recordFields as $field) {
+            $result[$field] = $ro->core[$field];
+        }
+        return $result;
+    }
+
 	/**
 	 * Resolve an Identifier and return the "pull back" resource
 	 * @param  string $type
