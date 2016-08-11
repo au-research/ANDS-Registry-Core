@@ -26,6 +26,7 @@ class UnitTest
     {
         $this->ci =& get_instance();
         $this->benchmark = array();
+        $this->nameMapping = array();
         $this->reset();
     }
 
@@ -47,7 +48,6 @@ class UnitTest
      */
     public function reset()
     {
-
         $this->setName(get_class($this));
         $this->setNote("");
     }

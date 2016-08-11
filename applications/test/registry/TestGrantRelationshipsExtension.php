@@ -28,7 +28,8 @@ class TestGrantRelationshipsExtension extends UnitTest
                     && $item['to_key'] == "www.ballarat.edu.au/coll/15";
             });
             $this->assertEquals(count($relation), 1);
-            $relation = array_pop(array_values($relation));
+            $relation = array_values($relation);
+            $relation = array_pop($relation);
             $this->assertContains("REVERSE_GRANTS", $relation['relation_origin']);
 
 
