@@ -216,9 +216,15 @@ class Registry_objects extends CI_Model {
 	 */
 	function getByID($id)
 	{
+	    try {
+            return new _registry_object($id);
+        } catch (Exception $e) {
+            return null;
+        }
+
 		// Reduce number of DB calls by avoiding the pipeline
 		// trying to determine the ID (when it was explicitly specified)
-		try
+		/*try
 		{
 			$cached_object_reference = RegistryObjectReferenceCache::getById($id);
 			if ($cached_object_reference)
@@ -232,8 +238,9 @@ class Registry_objects extends CI_Model {
 		}
 		catch (Exception $e)
 		{
+//		    dd($e->getMessage());
 			return null;
-		}
+		}*/
 
 		/*
 		$results = $this->_get(array(array('args' => $id,
