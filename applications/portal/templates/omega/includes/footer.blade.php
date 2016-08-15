@@ -13,7 +13,7 @@
                    <a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris" target="_blank" class="gov_logo"><img style="height:75px;" src="<?php echo asset_url('images/NCRIS_PROVIDER_rev.png','core');?>" alt="National Collaborative Research Infrastructure Strategy (NCRIS)" /></a>
                 </div>
                 <div class="col-md-2">
-                    <a href="http://www.ands.org.au/" class="footer_logo"><img src="{{asset_url('images/footer_logo_rev.png', 'core')}}" alt="" style="height:75px;"/></a>    
+                    <a href="http://www.ands.org.au/" class="footer_logo"><img src="{{asset_url('images/footer_logo_rev.png', 'core')}}" alt="" style="height:75px;"/></a>
                 </div>
             </div>
             <div class="row element-normal-top element-normal-bottom">
@@ -27,7 +27,6 @@
                             <li class="cat-item myCustomTrigger"> <a href="" title="">Contact us</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('page/disclaimer')}}" title="">Disclaimer</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('page/privacy')}}" title="">Privacy Policy</a> </li>
-                            <!-- <li class="cat-item"> <a href="{{portal_url('page/help')}}" title="">Help</a> </li> -->
                         </ul>
                     </div>
                 </div>
@@ -44,15 +43,24 @@
                 </div>
                 <div class="col-md-3">
                     <?php
-                        $url = ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? base_url().$ro->core['slug'].'/'.$ro->core['id'] : current_url() );
-                        $title = ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? $ro->core['title']. ' - Research Data Australia' : 'Research Data Australia' );
+
+                        $params = [
+                            'url' => ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? base_url().$ro->core['slug'].'/'.$ro->core['id'] : current_url() ),
+                            'title' => ((isset($ro) && isset($ro->core['slug']) && isset($ro->core['id'])) ? $ro->core['title']. ' - Research Data Australia' : 'Research Data Australia' )
+                        ];
+
+                        if (isset($ro) && isset($ro->core['id'])) {
+                            $params['id'] = $ro->core['id'];
+                        }
+
+                        $params = http_build_query($params);
                     ?>
                     <div id="categories-5" class="sidebar-widget widget_categories">
                         <h3 class="sidebar-header">Share</h3>
                         <ul>
-                            <li class="cat-item"><a class="noexicon social-sharing" href="http://www.facebook.com/sharer.php?u={{$url}}" target="_blank"><i class="fa fa-facebook"></i> Facebook</a></li>
-                            <li class="cat-item"><a class="noexicon social-sharing" href="https://twitter.com/share?url={{$url}}&text={{$title}}&hashtags=andsdata" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
-                            <li class="cat-item"><a class="noexicon social-sharing" href="https://plus.google.com/share?url={{$url}}" target="_blank"><i class="fa fa-google"></i> Google</a></li>
+                            <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/facebook?'.$params) }}" target="_blank"><i class="fa fa-facebook"></i> Facebook</a></li>
+                            <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/twitter/?'.$params) }}" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
+                            <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/google?'.$params) }}" target="_blank"><i class="fa fa-google"></i> Google</a></li>
                         </ul>
                     </div>
                 </div>

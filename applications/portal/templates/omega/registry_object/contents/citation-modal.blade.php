@@ -32,7 +32,6 @@
                                 {{$citation['contributors']}}
                                 ({{$citation['date']}}): {{$citation['title']}}.
                                 <span itemprop="publisher">{{$citation['publisher']}}</span>.
-                                {{$citation['identifier_type']}} :{{$citation['identifier']}}
                                 @if(isset($citation['identifierResolved']['href']))
                                 <br /><a href="{{$citation['identifierResolved']['href']}}">{{$citation['identifier']}}</a>
                                 @else
@@ -47,10 +46,10 @@
                             @endif
                         </dl>
                 <div class="btn-group btn-link">
-                	<a title="Export to EndNote" href="<?=base_url()."registry/registry_object/exportToEndnote/".$ro->core['id'].".ris?foo=".time()?>">EndNote</a>
+                	<a title="Export to EndNote" href="{{ base_url('registry_object/export/endnote/'.$ro->core['id']).'?source=portal_view' }}">EndNote</a>
                 </div>
                 <div class="btn-group btn-link" style="padding-left:40px">
-                    <a title="Export to EndNote Web" href="http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl=<?=base_url()."registry/registry_object/exportToEndnote/".$ro->core['id']."?foo=".time()?>" target="_blank">EndNote Web</a>
+                    <a title="Export to EndNote Web" href="{{ base_url('registry_object/export/endnote_web/'.$ro->core['id']).'?source=portal_view' }}" target="_blank">EndNote Web</a>
                 </div>
                 <div class="btn-group btn-link" style="padding-left:40px">
                     <a title="EndNote Help" href="http://services.ands.org.au/documentation/EndNoteHelp" target="_blank">EndNote Help</a>

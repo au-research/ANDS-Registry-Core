@@ -14,11 +14,15 @@
         //filters configuration based on current org
         vm.org = org;
         vm.filters = filterService.getFilters();
+
         vm.filters['groups'] = vm.org.groups;
+        // console.log( vm.org );
+        vm.filters['record_owner'] = org.role_id;
 
         if (vm.org.name=='Masterview') {
             vm.filters['Masterview'] = true;
         }
+
 
         vm.all_time_views = [
             {id:'popular_records', label:'Popular Record(s)'},
@@ -52,8 +56,6 @@
         vm.getRDASummaryData = function() {
             analyticFactory.summary(vm.filters).then(function(data){
 
-
-
                 if (data.dates.length == 0) {
                     //no data, set existing data dates to 0
                     angular.forEach(vm.rdaChartData.data, function(obj){
@@ -77,8 +79,8 @@
                         }else {
                             vm.rdaChartData.data[1].push(0);
                         }
-                        if (obj['accessed']) {
-                            vm.rdaChartData.data[2].push(obj['accessed'])
+                        if (obj['portal_accessed']) {
+                            vm.rdaChartData.data[2].push(obj['portal_accessed'])
                         }else {
                             vm.rdaChartData.data[2].push(0);
                         }
@@ -106,17 +108,16 @@
                     } else {
                         vm.searchGroupChartData.data.push(0);
                     }
-                    if (obj['accessed']) {
-                        vm.accessedGroupChartData.data.push(obj['accessed']);
+                    if (obj['portal_accessed']) {
+                        vm.accessedGroupChartData.data.push(obj['portal_accessed']);
                     } else {
                         vm.accessedGroupChartData.data.push(0);
                     }
                 });
 
-
-
                 //parse rostat
                 if (data.aggs.rostat) vm.rostat = data.aggs.rostat;
+                if (data.aggs.viewedstat) vm.viewedstat = data.aggs.viewedstat;
                 if (data.aggs.qstat) vm.qstat = data.aggs.qstat;
                 if (data.aggs.accessedstat) vm.accessedstat = data.aggs.accessedstat;
 

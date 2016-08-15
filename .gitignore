@@ -20,3 +20,5 @@ wordpress/
 engine/logs
 applications/registry/registry_object/modules/
 test-reports/
+/vendor/
+logs/

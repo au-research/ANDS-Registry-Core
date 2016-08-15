@@ -13,7 +13,7 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
 	});
 
     $scope.access = function(event) {
-        record_factory.add_stat($scope.ro.id, 'accessed', 1).then(function(data){
+        record_factory.add_stat($scope.ro.id, 'accessed', 1, event.target.href).then(function(data){
             location.href = event.target.href;
         });
         if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='') {
@@ -53,9 +53,12 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
 	};
 
 
+    /**
+     * Opening the citation modal
+     * Bootstrap v3 modal
+     * @todo move to own controller
+     */
 	$scope.openCitationModal = function(){
-		// $log.debug('open');
-		// $log.debug($('#citationModal'));
 		$('#citationModal').modal();
 	}
 

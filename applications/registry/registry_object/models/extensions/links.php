@@ -52,8 +52,10 @@ class links_Extension extends ExtensionBase
         foreach ($electronic_address AS $address)
         {
             $type = 'electronic_'.(string)$address["type"];
-            $value = (string)$address->value[0];
-            array_push($eaLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($value),'status'=>'NEW')));
+            $value = trim((string)$address->value[0]);
+            if ($value != '') {
+                array_push($eaLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
+            }
         }
         return $eaLinks;
     }
@@ -68,8 +70,10 @@ class links_Extension extends ExtensionBase
         foreach ($citation_metadata AS $cm)
         {
             $type = 'citation_metadata_url';
-            $value = (string)$cm->url[0];
-            array_push($cUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($value),'status'=>'NEW')));
+            $value = trim((string)$cm->url[0]);
+            if ($value != '') {
+                array_push($cUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
+            }
         }
         return $cUrls;
     }
@@ -86,7 +90,10 @@ class links_Extension extends ExtensionBase
             preg_match_all($regex, html_entity_decode($desc), $matches);
             $type = 'description_link';
             foreach($matches[0] as $url){
-                array_push($descLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($url),'status'=>'NEW')));
+                $url = trim($url);
+                if ($url != '') {
+                    array_push($descLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$url,'status'=>'NEW')));
+                }
             }
         }
         return $descLinks;
@@ -101,10 +108,10 @@ class links_Extension extends ExtensionBase
             if((string)$identifier != '') {
                 $vType = strtolower((string) $identifier['type']);
                 $type = 'identifier_'.$vType.'_link';
-                $link = $this->getResolvedLinkForIdentifier($vType, (string) $identifier);
+                $link = trim($this->getResolvedLinkForIdentifier($vType, (string) $identifier));
                 if($link != '')
                 {
-                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($link),'status'=>'NEW')));
+                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$link,'status'=>'NEW')));
                 }
             }
         }
@@ -112,10 +119,10 @@ class links_Extension extends ExtensionBase
             if((string)$identifier != '') {
                 $vType = strtolower((string) $identifier['type']);
                 $type = 'identifier_'.$vType.'_link';
-                $link = $this->getResolvedLinkForIdentifier($vType, (string) $identifier);
+                $link = trim($this->getResolvedLinkForIdentifier($vType, (string) $identifier));
                 if($link != '')
                 {
-                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($link),'status'=>'NEW')));
+                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$link,'status'=>'NEW')));
                 }
             }
         }
@@ -123,10 +130,10 @@ class links_Extension extends ExtensionBase
             if((string)$identifier != '') {
                 $vType = strtolower((string) $identifier['type']);
                 $type = 'citation_metadata_identifier_'.$vType.'_link';
-                $link = $this->getResolvedLinkForIdentifier($vType, (string) $identifier);
+                $link = trim($this->getResolvedLinkForIdentifier($vType, (string) $identifier));
                 if($link != '')
                 {
-                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($link),'status'=>'NEW')));
+                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$link,'status'=>'NEW')));
                 }
             }
         }
@@ -149,8 +156,10 @@ class links_Extension extends ExtensionBase
             $rmParent = $rm->xpath('..');
             $rType = strtolower((string) $rm['type']);
             $type = $rmParent[0]->getName() . '_relation_' . $rType. '_url';
-            $value = (string)$rm->url[0];
-            array_push($rUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>trim($value),'status'=>'NEW')));
+            $value = trim ((string)$rm->url[0]);
+            if ($value != '') {
+                array_push($rUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
+            }
         }
         return $rUrls;
     }

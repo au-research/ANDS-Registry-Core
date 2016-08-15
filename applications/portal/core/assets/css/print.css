@@ -1,0 +1,157 @@
+@media print {
+  /**
+ * Modules used mainly in view page
+ */
+  .panel-content {
+    position: relative;
+    z-index: 9;
+    overflow: visible;
+  }
+  .panel-content .panel-heading {
+    float: right;
+    background: #6c6c6c !important;
+    color: white !important;
+    font-size: 12px;
+    padding: 4px 11px;
+  }
+  .panel-content .panel-tools {
+    float: right;
+    padding: 2px 11px 2px 0;
+  }
+  .panel-content .panel-body {
+    padding-top: 30px;
+  }
+  .panel-content .panel-footer {
+    width: auto;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+  .description p {
+    font-size: 16px;
+  }
+  .view-content .panel {
+    margin-bottom: 15px !important;
+  }
+  .label-ar {
+    width: 50%;
+    height: 54px;
+    padding: 14px 40px 19px;
+    font-size: 18px;
+    font-variant: small-caps;
+  }
+  .img-cc {
+    height: 22px;
+  }
+  .img-cc-standard3 {
+    width: auto;
+    height: 48px;
+  }
+  .header_title {
+    clear: both;
+  }
+  .header_title h1.big {
+    float: left;
+    line-height: 110px;
+  }
+  .header-logo {
+    margin: 0px 20px 0px 0px;
+    max-height: 110px;
+    float: left;
+  }
+  .btn-noaction:hover {
+    background: transparent !important;
+    color: #638363 !important;
+  }
+  .round {
+    padding: 15px;
+    border-radius: 50%;
+  }
+  .view-page-metadata {
+    background: #6c6c6c;
+    width: auto;
+    position: absolute;
+    top: 0;
+    color: white;
+  }
+  .view-page-metadata ul {
+    margin: 0;
+    padding: 0;
+  }
+  .view-page-metadata ul li {
+    list-style-type: none;
+    display: inline-block;
+  }
+  .logo-placement {
+    height: 170px;
+  }
+  .logo-placement p {
+    position: relative;
+    top: 50%;
+    font-size: 25px;
+    color: #cccccc;
+  }
+  .logo-place {
+    margin: 0 auto;
+    height: 170px;
+    width: 170px;
+    position: relative;
+    overflow: visible;
+    text-align: center;
+    vertical-align: bottom;
+  }
+  .logo-place img {
+    max-height: 170px;
+    max-width: 170px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+  .figure .figure-caption {
+    word-break: break-word;
+  }
+  .carousel img {
+    height: 160px !important;
+  }
+  #colorbox {
+    z-index: 9999;
+  }
+  .environment,
+  .navbar,
+  .search-section,
+  #footer,
+  .panel-tools,
+  .yellow_button,
+  .Z3988,
+  .sidebar-widget .post-icon,
+  .modal {
+    visibility: hidden;
+    display: none;
+  }
+  .ro-getdatalicence {
+    display: block;
+    width: 100%;
+    float: none !important;
+    margin: 0 !important;
+  }
+  .ro-getdatalicence a:after {
+    content: " (" attr(href) ") ";
+    text-decoration: underline;
+    display: inline;
+  }
+  .ro-getdatalicence .btn-group,
+  .ro-getdatalicence a#toggleLicenceContent,
+  .ro-getdatalicence a#toggleRightsContent {
+    visibility: hidden;
+    display: none;
+  }
+  #licenceContent,
+  #rightsContent,
+  #dataformats {
+    visibility: visible !important;
+    display: block !important;
+  }
+}

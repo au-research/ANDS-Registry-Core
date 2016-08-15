@@ -105,7 +105,7 @@
             APIDOIService.mint(data).then(function(response){
                 vm.loading = false;
                 vm.response = response.response;
-                if (vm.response.doi) {
+                if (vm.response.doi && vm.response.type!="failure") {
                     vm.view(vm.response.doi, true);
                 }
             });

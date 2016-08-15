@@ -32,12 +32,12 @@
 										@foreach($owned_vocabs as $vocab)
 											@if($vocab['status']=='published')
 											<tr>
-												<td><div class="published_title"><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></td>
-												</div><td>
-													<div class="btn-group pull-right">
-														<a href="{{ portal_url($vocab['slug']) }}" class="btn btn-primary"><i class="fa fa-search"></i> View</a>
-														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
-														<a href="javascript:;" class="btn btn-primary btn-primary-warning deleteVocab" vocab_id="{{ $vocab['id'] }}" title="Delete this vocabulary"><i class="fa fa-trash"></i></a>
+												<td style="width:90%"><div class="published_title"><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></div></td>
+												<td>
+													<div class="btn-group" style="display:inline-flex">
+														<a href="{{ portal_url($vocab['slug']) }}" class="btn btn-primary" style="float:none"><i class="fa fa-search"></i> View</a>
+														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary" style="float:none"><i class="fa fa-edit"></i> Edit</a>
+														<a href="javascript:;" class="btn btn-primary btn-primary-warning deleteVocab" style="float:none" vocab_id="{{ $vocab['id'] }}" title="Delete this vocabulary"><i class="fa fa-trash"></i></a>
 													</div>
 												</td>
 											</tr>
@@ -55,11 +55,11 @@
 										@foreach($owned_vocabs as $vocab)
 											@if($vocab['status']=='draft')
 											<tr>
-												<td><div class="draft_title"><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></td>
-                        </div><td>
-													<div class="btn-group pull-right">
-														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
-														<a href="javascript:;" class="btn btn-primary btn-primary-warning deleteVocab" vocab_id="{{ $vocab['id'] }}" title="Delete this vocabulary"><i class="fa fa-trash"></i></a>
+												<td style="width:90%"><div class="draft_title"><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></div></td>
+                        <td>
+													<div class="btn-group" style="display:inline-flex">
+														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary" style="float:none"><i class="fa fa-edit"></i> Edit</a>
+														<a href="javascript:;" class="btn btn-primary btn-primary-warning deleteVocab" style="float:none" vocab_id="{{ $vocab['id'] }}" title="Delete this vocabulary"><i class="fa fa-trash"></i></a>
 													</div>
 												</td>
 											</tr>
@@ -77,11 +77,11 @@
 										@foreach($owned_vocabs as $vocab)
 											@if($vocab['status']=='deprecated')
 											<tr>
-												<td><div class="draft_title"><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></td>
-												</div><td>
-													<div class="btn-group pull-right">
-														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
-														<a href="javascript:;" class="btn btn-primary btn-primary-warning deleteVocab" vocab_id="{{ $vocab['id'] }}" title="Delete this vocabulary"><i class="fa fa-trash"></i></a>
+												<td style="width:90%"><div class="draft_title"><a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" ng-non-bindable>{{ htmlspecialchars($vocab['title']) }}</a></div></td>
+												<td>
+													<div class="btn-group" style="display:inline-flex">
+														<a href="{{ portal_url('vocabs/edit/'.$vocab['id']) }}" class="btn btn-primary" style="float:none"><i class="fa fa-edit"></i> Edit</a>
+														<a href="javascript:;" class="btn btn-primary btn-primary-warning deleteVocab" style="float:none" vocab_id="{{ $vocab['id'] }}" title="Delete this vocabulary"><i class="fa fa-trash"></i></a>
 													</div>
 												</td>
 											</tr>

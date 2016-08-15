@@ -152,7 +152,9 @@
                                         </button>
                                     </span>
                                 </p>
-                                <div class="alert alert-important" ng-if="error_upload_msg">[[ error_upload_msg ]]</div>
+                                <div class="alert alert-important" ng-if="error_upload_msg">
+                                    <span ng-bind-html="error_upload_msg"></span>
+                                </div>
                                 <progressbar
                                     ng-if="newValue.ap.type=='file' && uploadPercentage != 0"
                                     animate="true"

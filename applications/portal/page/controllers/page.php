@@ -167,6 +167,7 @@ class Page extends MX_Controller
         $result = $this->solr->executeSearch(true);
         $parties = $result['response']['docs'];
 
+        $this->record_hit('grants');
         $this->blade
              ->set('scripts', array('home'))
              ->set('highlevel', $highlevel)
@@ -195,7 +196,7 @@ class Page extends MX_Controller
             'ip' => $this->input->ip_address(),
             'user_agent' => $this->input->user_agent(),
         );
-        ulog_terms($event, 'portal');
+        monolog($event, 'portal');
 
         if ($page == 'main') {
             $pages = array(
@@ -350,11 +351,62 @@ class Page extends MX_Controller
     {
         $event = array(
             'event' => 'portal_page',
-            'page' => $page,
-            'ip' => $this->input->ip_address(),
-            'user_agent' => $this->input->user_agent(),
+            'page' => $page
         );
-        ulog_terms($event, 'portal');
+        monolog($event, 'portal');
+    }
+
+    /**
+     * Share to a selected Social Network
+     * Provide logging via monolog
+     * @todo If a record ID is provided, log the record as event.record
+     * @param  string $social facebook|twitter|google
+     * @return redirect
+     * @throws Exception
+     */
+    public function share($social = "facebook")
+    {
+        // Collect the Data
+        $url = $this->input->get('url');
+        $title = $this->input->get('title') ?: "Research Data Australia";
+        if (!$url) throw new Exception("No URL provided");
+
+        // Log the event
+        $event = [
+            'event' => 'portal_social_share',
+            'share' => [
+                'url' => $url,
+                'type' => $social
+            ]
+        ];
+
+        // if there's an accompany id, record more metadata to the log
+        // @todo optimize so that we don't need to call the model and reprocess the id
+        if ($id = $this->input->get('id') ?: false) {
+            $this->load->model('registry_object/registry_objects', 'ro');
+            if ($record = $this->ro->getByID($id)) {
+                $event['record'] = $this->ro->getRecordFields($record);
+            }
+        }
+
+        monolog($event, 'portal', 'info');
+
+        // Decide the sharing URL
+        $shareUrl = "http://researchdata.ands.org.au";
+        switch ($social) {
+            case "facebook":
+                $shareUrl = "http://www.facebook.com/sharer.php?u=".$url;
+                break;
+            case "twitter":
+                $shareUrl = "https://twitter.com/share?url=".$url."&text=".$title."&hashtags=andsdata";
+                break;
+            case "google":
+                $shareUrl = "https://plus.google.com/share?url=".$url;
+                break;
+        }
+
+        // Do the Redirect
+        redirect($shareUrl);
     }
 
     public function __construct()

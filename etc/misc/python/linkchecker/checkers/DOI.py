@@ -39,6 +39,7 @@ error_count: dict
 import asyncio
 import asyncio.futures
 import datetime
+import distutils.util
 import socket
 import sys
 import time
@@ -67,6 +68,9 @@ class DOIChecker(base.BaseChecker):
                         int(self._params['link_timeout']),
                         int(self._params['batch_size']),
                         result_list, error_count)
+        # Database connection may have gone away in the mean time,
+        # so ping to refresh the connection.
+        self._conn.ping(True)
         self._process_result_lists(client_list, result_list, error_count,
                                    self._params['client_id'],
                                    self._params['admin_email'])
@@ -214,10 +218,22 @@ class DOIChecker(base.BaseChecker):
     """
 
     def _get_DOI_links(self, doi_list, client_id=None):
-        """Get all production DOIs to be tested.
+        """Get all DOIs to be tested.
+
+        The user may select whether to test all production DOIs,
+        or only those which are active.
 
         Production DOIs are those which have a status other than
         "REQUESTED", and which have a doi_id beginning with "10.4".
+
+        Active production DOIs are those production DOIs which have
+        a status of "ACTIVE".
+
+        The user specifies whether to test all production DOIs
+        or only those which are active, by setting the
+        "active_only" parameter in the INI file.
+        For backward compatibility, if the parameter is not set,
+        the value is taken to be "False".
 
         The doi_list array is updated in situ.
 
@@ -226,14 +242,22 @@ class DOIChecker(base.BaseChecker):
         client_id -- A client_id to use for searching the database,
             or None, if the DOIs of all clients are to be returned.
         """
+        active_only = False
+        if 'active_only' in self._params:
+            active_only = bool(distutils.util.strtobool(
+                self._params['active_only']))
         cur = self._conn.cursor()
         query = ("SELECT " + self.DOI_OBJECTS_COLUMNS +
                  " FROM doi_objects WHERE ")
         if client_id is not None:
             query += "`client_id`=" + str(client_id) + " AND "
-        query += ("`identifier_type`='DOI'"
-                  " AND `status`!='REQUESTED'"
-                  " AND `doi_id` LIKE '10.4%';")
+        query += "`identifier_type`='DOI'"
+        if active_only:
+            query += " AND `status`='ACTIVE'"
+        else:
+            # All production DOIs.
+            query += " AND `status`!='REQUESTED'"
+        query += " AND `doi_id` LIKE '10.4%';"
         if self._debug:
             print("DEBUG: _get_DOI_links query:", query, file=sys.stderr)
         cur.execute(query)
@@ -285,6 +309,12 @@ class DOIChecker(base.BaseChecker):
         if it is resolvable.
         Record a log entry if an exception occurs, or the server
         returns a 400/500 error.
+
+        Note the extreme care to close all opened sockets: the calls to
+        writer.close() all throughout the body. If any sockets were to
+        remain open, the asyncio system attempts to close them at
+        the end of the program, and this fails, causing
+        exceptions to be generated.
 
         Arguments:
         ssl_context -- The SSL context to use when making HTTP requests.
@@ -338,6 +368,9 @@ class DOIChecker(base.BaseChecker):
                                                doi_id,
                                                url_str),
                                            counter)
+                    if self._debug:
+                        print("DEBUG:", counter, "Not opening writer",
+                              file=sys.stderr)
                     return
                 if not url.hostname:
                     # Something wrong with the parsing of the URL,
@@ -349,6 +382,9 @@ class DOIChecker(base.BaseChecker):
                                                doi_id,
                                                url_str),
                                            counter)
+                    if self._debug:
+                        print("DEBUG:", counter, "Not opening writer",
+                              file=sys.stderr)
                     return
                 # Scheme OK, so now construct the query path to be sent to the
                 # server in a HEAD request.
@@ -393,7 +429,16 @@ class DOIChecker(base.BaseChecker):
                     print("DEBUG:", counter, "Sending query string: ",
                           query,
                           file=sys.stderr)
-                writer.write(query.encode("utf-8"))
+                try:
+                    writer.write(query.encode("utf-8"))
+                except Exception as e:
+                    if self._debug:
+                        print("DEBUG:", counter, "Got exception attempting "
+                              "to write", file=sys.stderr)
+                        print("DEBUG:", counter, "Closing writer",
+                              file=sys.stderr)
+                    writer.close()
+                    return
 
                 # Await and read the response.
                 while True:
@@ -437,6 +482,10 @@ class DOIChecker(base.BaseChecker):
                                            creator,
                                            NO_STATUS_ERROR_FORMAT,
                                            counter)
+                    if self._debug:
+                        print("DEBUG:", counter, "Closing writer",
+                              file=sys.stderr)
+                    writer.close()
                     return
                 if mStatus:
                     # The status line is "HTTP/1.x 300 ....", so the status
@@ -454,6 +503,10 @@ class DOIChecker(base.BaseChecker):
                                                    url_str,
                                                    mStatus),
                                                counter)
+                        if self._debug:
+                            print("DEBUG:", counter, "Closing writer",
+                                  file=sys.stderr)
+                        writer.close()
                         return
                     elif status_code == 301 or status_code == 302:
                         # Handle a redirection.
@@ -477,6 +530,10 @@ class DOIChecker(base.BaseChecker):
                                     doi_id,
                                     url_str),
                                 counter)
+                            if self._debug:
+                                print("DEBUG:", counter, "Closing writer",
+                                      file=sys.stderr)
+                            writer.close()
                             return
                     else:
                         # Success. This is indicated by deleting
@@ -485,7 +542,18 @@ class DOIChecker(base.BaseChecker):
                             del testing_array[counter]
                         except KeyError:
                             pass
+                        if self._debug:
+                            print("DEBUG:", counter, "Closing writer",
+                                  file=sys.stderr)
+                        writer.close()
                         return
+                # Broken out of the loop: we may be about to follow a
+                # redirect. Close the existing writer.
+                if self._debug:
+                    print("DEBUG:", counter, "Closing writer",
+                          file=sys.stderr)
+                writer.close()
+
             # "Successful" conclusion of the for loop. But this means
             # we have now followed too many redirects.
             self._handle_one_error(result_list, error_count, testing_array,
@@ -495,6 +563,10 @@ class DOIChecker(base.BaseChecker):
                                        url_str_original,
                                        url_str),
                                    counter)
+            if self._debug:
+                print("DEBUG:", counter, "Closing writer",
+                      file=sys.stderr)
+            writer.close()
             return
         # An UnboundLocalError occurs if mStatus is tested without
         # having been set. Handle this using the catch-all handler
@@ -508,8 +580,20 @@ class DOIChecker(base.BaseChecker):
         except asyncio.futures.CancelledError:
             # This is caused by _run_tests() cancelling the task
             # because of a timeout.
-            pass
+            if self._debug:
+                print("DEBUG:", counter, "Cancelled task due to timeout",
+                      file=sys.stderr)
+            if 'writer' in locals():
+                if self._debug:
+                    print("DEBUG:", counter, "Closing writer",
+                          file=sys.stderr)
+                writer.close()
         except Exception as e:
+            if 'writer' in locals():
+                if self._debug:
+                    print("DEBUG:", counter, "Closing writer",
+                          file=sys.stderr)
+                writer.close()
             self._handle_one_error(result_list, error_count, testing_array,
                                    creator,
                                    EXCEPTION_FORMAT.format(

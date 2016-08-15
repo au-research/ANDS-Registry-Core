@@ -358,7 +358,8 @@ function identifierResolution($identifier,$type)
     switch($type)
     {
         case 'doi':
-            if(!strpos($identifier,"doi.org/")) $identifier_href ="http://dx.doi.org/".$identifier;
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            elseif(!strpos($identifier,"doi.org/")) $identifier_href ="http://dx.doi.org/".$identifier;
             else $identifier_href = "http://dx.doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
             $identifiers['href'] = $identifier_href;
             $identifiers['display_text'] = strtoupper($type);
@@ -382,7 +383,8 @@ function identifierResolution($identifier,$type)
             return $identifiers;
             break;
         case 'orcid':
-            if(!strpos($identifier,"orcid.org/")) $identifier_href ="http://orcid.org/".$identifier;
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            elseif(!strpos($identifier,"orcid.org/")) $identifier_href ="http://orcid.org/".$identifier;
             else $identifier_href = "http://orcid.org/".substr($identifier,strpos($identifier,"orcid.org/")+10);
             $identifiers['href'] = $identifier_href;
             $identifiers['display_text'] = 'ORCID';
@@ -391,7 +393,8 @@ function identifierResolution($identifier,$type)
             return  $identifiers;
             break;
         case 'AU-ANL:PEAU':
-            if(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            elseif(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
             else $identifier_href = "http://nla.gov.au/".substr($identifier,strpos($identifier,"nla.gov.au/")+11);
             $identifiers['href'] = $identifier_href;
             $identifiers['display_text'] = 'NLA';
@@ -400,7 +403,8 @@ function identifierResolution($identifier,$type)
             return  $identifiers;
             break;
         case 'handle':
-            if(strpos($identifier,"dl:")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            elseif(strpos($identifier,"dl:")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
             elseif(strpos($identifier,"dl.handle.net/")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl.handle.net/")+15);
             else $identifier_href = "http://hdl.handle.net/".$identifier;
             $identifiers['href'] = $identifier_href;
@@ -410,7 +414,8 @@ function identifierResolution($identifier,$type)
             return  $identifiers;
             break;
         case 'purl':
-            if(strpos($identifier,"url.org/")<1) $identifier_href ="http://purl.org/".$identifier;
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            elseif(strpos($identifier,"url.org/")<1) $identifier_href ="http://purl.org/".$identifier;
             else $identifier_href = "http://purl.org/".substr($identifier,strpos($identifier,"purl.org/")+9);
             $identifiers['href'] = $identifier_href;
             $identifiers['display_text'] = 'PURL';

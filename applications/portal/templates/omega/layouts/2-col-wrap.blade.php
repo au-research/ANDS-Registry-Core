@@ -75,7 +75,7 @@
 
                                 <div>
 
-                                    <div class="pull-left swatch-gray" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
+                                    <div class="pull-left swatch-gray ro-getdatalicence" style="position:relative;z-index:9999;margin:35px 15px 15px 15px;width:350px;">
                                         @include('registry_object/contents/wrap-getdatalicence')
                                     </div>
                                     
@@ -93,9 +93,11 @@
     		    	</div>
     		    </section>
         	</article>
-            @include('registry_object/contents/citation-modal')
-            @include('includes/advanced_search')
-            @include('includes/my-rda')
+            @if(!isbot())
+                @include('registry_object/contents/citation-modal')
+                @include('includes/advanced_search')
+                @include('includes/my-rda')
+            @endif
         </div>
         @include('includes/footer')
     </body>

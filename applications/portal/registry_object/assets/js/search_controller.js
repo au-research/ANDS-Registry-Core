@@ -160,6 +160,10 @@
             location.href = base_url+'search/#' + '!/' + hash;
         };
 
+        $scope.filters_to_hash = function() {
+            return search_factory.filters_to_hash(search_factory.filters);
+        };
+
         $scope.hashChange = function(){
             // $log.debug('query', $scope.query, search_factory.query);
             // $scope.filters.q = $scope.query;
@@ -222,6 +226,9 @@
                     }
                     $scope.$broadcast('search_complete');
                     $scope.populateCenters($scope.result.response.docs);
+
+                    //clear advanced flag if on
+                    delete $scope.filters['advanced'];
                 });
             } else {
                 $scope.loading = false;
@@ -378,7 +385,7 @@
         $scope.showFilter = function(filter_name, mode){
             if (!mode || mode=='undefined') mode = 'normal';
             var show = true;
-            if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
+            if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class' || filter_name == 'advanced') {
                 show = false;
             }
             if ($scope.filters[filter_name]=="" && mode == 'normal')  show = false;
@@ -809,6 +816,7 @@
             }
             //$log.debug($scope.filters);
             $scope.filters['p'] = 1;
+            $scope.filters['advanced'] = true;
             $scope.hashChange();
             $('#advanced_search').modal('hide');
         };

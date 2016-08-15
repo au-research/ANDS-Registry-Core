@@ -1,21 +1,6 @@
 <?php
 
 /**
- * Check if an useragent is a bot
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
- * @param  string $useragent
- * @return bool
- */
-function isbot($useragent)
-{
-    if (preg_match('/bot|crawl|slurp|spider/i', $useragent)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/**
  * Read a local file path and return the lines
  * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
  * @param  string $file File Path Local

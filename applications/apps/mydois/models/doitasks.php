@@ -37,6 +37,8 @@ class Doitasks extends CI_Model {
 	function xml(){
 		global $api_version;
 		$xml = '';
+        $log_response =array();
+
 		$debug = $this->input->get('debug');
 
 		if($debug && $debug == 'true')
@@ -50,9 +52,20 @@ class Doitasks extends CI_Model {
 		if(!$response_type)	$response_type = 'string';
 		$api_version = $this->input->get('api_version');
 		if(!$api_version)	$api_version = '1.0';
+
+        $log_type = "array";
+        $log_response['type'] = "log";
+        $log_response['responsecode'] = "MT000";
+        $log_response['message'] = "Request for xml";
+        $log_response['doi'] = $doi_id;
+        $log_response['url'] = "";
+        $log_response['app_id'] = "public";
+        $log_response['verbosemessage'] = "XML has been provided";
+
 		if(!$doi_id)
 		{
 			$xml = doisGetUserMessage("MT010", $doi_id ,$response_type,$app_id=NULL, "You must provide the doi value to obtain it's xml",$urlValue=NULL);
+            $log_response = doisGetUserMessage("MT010", $doi_id ,$log_type,$app_id=NULL, "You must provide the doi value to obtain it's xml",$urlValue=NULL);
 		}
 		if($xml=='')
 		{
@@ -66,14 +79,18 @@ class Doitasks extends CI_Model {
 						header('Content-type: text/xml');
 					}else{
 						$xml = doisGetUserMessage("MT012", $doi_id, $response_type,$app_id=NULL, "",$urlValue=NULL);
+                        $log_response = doisGetUserMessage("MT012", $doi_id, $log_type,$app_id=NULL, "",$urlValue=NULL);
 					}
 				}
 
 			}else{
 				$xml = doisGetUserMessage("MT011", $doi_id, $response_type,$app_id=NULL, "",$urlValue=NULL);
+                $log_response = doisGetUserMessage("MT011", $doi_id, $log_type,$app_id=NULL, "",$urlValue=NULL);
 			}
 		}
+        $this->doilog($log_response,"doi_XML");
 		echo $xml;
+
 	}
 
 	function update(){
@@ -88,6 +105,7 @@ class Doitasks extends CI_Model {
 		$response1 = "OK";
 		$response2 = "OK";
 		$testing = 'no';
+        $log_type = "array";
         $dataciteSchema = $this->config->item('gCMD_SCHEMA_URIS');
 		$debug = $this->input->get('debug');
 
@@ -117,10 +135,12 @@ class Doitasks extends CI_Model {
 		if(!$app_id)
 		{
 			$errorMessages = doisGetUserMessage("MT010", $doiValue ,$response_type,$app_id, "You must provide an app id to update a doi",$urlValue);
+            $log_response = doisGetUserMessage("MT010", $doiValue ,$log_type,$app_id, "You must provide an app id to update a doi",$urlValue);
 		}
 		if(!$doiValue)
 		{
 			$errorMessages = doisGetUserMessage("MT010", $doiValue ,$response_type,$app_id, "You must provide the doi value to update a doi",$urlValue);
+            $log_response = doisGetUserMessage("MT010", $doiValue ,$log_type,$app_id, "You must provide the doi value to update a doi",$urlValue);
 		}
 		if ( isset($_SERVER["HTTP_X_FORWARDED_FOR"]) )    {
 			$ip=$_SERVER["HTTP_X_FORWARDED_FOR"];
@@ -140,11 +160,12 @@ class Doitasks extends CI_Model {
 			if($client_id===false)
 			{
 				$errorMessages = doisGetUserMessage("MT009", $doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
-
+                $log_response = doisGetUserMessage("MT009", $doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 			}else{
 				if(checkDoisClientDoi($doiValue,$client_id)===false)
 				{
 					$errorMessages = doisGetUserMessage("MT008", $doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                    $log_response = doisGetUserMessage("MT008", $doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 				}
 			}
 		}
@@ -220,14 +241,16 @@ class Doitasks extends CI_Model {
 					if( $errors || !$result)
 					{
 						$verbosemessage = "Document Validation Error: ".$error_string."\n";
-						$errorMessages = doisGetUserMessage("MT007", doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+						$errorMessages = doisGetUserMessage("MT007", $doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                        $log_response = doisGetUserMessage("MT007", $doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 					}
 				}
 			}
 
             if(!$this->validDomain($urlValue,$client_domains)){
                 $verbosemessage = 'URL not permitted.';
-                $errorMessages = doisGetUserMessage("MT014", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
+                $errorMessages = doisGetUserMessage("MT014", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT014", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
             }
 
 			if( $errorMessages == '' )
@@ -258,11 +281,13 @@ class Doitasks extends CI_Model {
 							// We have successfully updated the doi through datacite.
 							$verbosemessage = $response1." / ".$response2;
 							$notifyMessage = doisGetUserMessage("MT002", $doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                            $log_response = doisGetUserMessage("MT002", $doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 						}
 						else
 						{
 							$verbosemessage = $response1." / ".$response2;
 							$errorMessages = doisGetUserMessage("MT010", $doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                            $log_response = doisGetUserMessage("MT010", $doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 						}
 					}
 					else
@@ -270,32 +295,38 @@ class Doitasks extends CI_Model {
 						$verbosemessage = '';
 						if($response1!=gDOIS_RESPONSE_SUCCESS) $verbosemessage .= $response1;
 						if($response2!=gDOIS_RESPONSE_SUCCESS) $verbosemessage .= $response2;
-						$errorMessages = doisGetUserMessage("MT005", $doi=NULL,$response_type,$app_id, $verbosemessage,$urlValue);
+						$errorMessages = doisGetUserMessage("MT005",  $doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                        $log_response = doisGetUserMessage("MT005",  $doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 					}
 				}else{
 					$verbosemessage = $updateError;
-					$errorMessages = doisGetUserMessage("MT010", $doi=NULL,$response_type,$app_id, $verbosemessage,$urlValue);
+					$errorMessages = doisGetUserMessage("MT010",  $doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                    $log_response = doisGetUserMessage("MT010",  $doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 				}
 			}
 		}else{
 			$errorMessages = doisGetUserMessage("MT011", $doi_id=$doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+            $log_response = doisGetUserMessage("MT011", $doi_id=$doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 		}
 		}
-
+        if($manual_update){
+             $update = "M_UPDATE";
+        }else{
+             $update = "UPDATE";
+        }
 
 		if($errorMessages)
 		{
-			$outstr =  $errorMessages;
 			//We need to log this activity as errorred
-
-			insertDoiActivity("UPDATE",$doiValue,"FAILURE",$client_id,$errorMessages);
+			insertDoiActivity($update,$doiValue,"FAILURE",$client_id,$errorMessages);
+            $this->doilog($log_response,"doi_".$update,$client_id);
 		}
 
 		if($notifyMessage)
 		{
 			//We need to log this activity
-			insertDoiActivity("UPDATE",$doiValue,"SUCCESS",$client_id,$notifyMessage);
-			$outstr = $notifyMessage;
+			insertDoiActivity($update,$doiValue,"SUCCESS",$client_id,$notifyMessage);
+            $this->doilog($log_response,"doi_".$update,$client_id);
 		}
 
 		echo $errorMessages;
@@ -319,10 +350,10 @@ class Doitasks extends CI_Model {
 		}
 
 		$xml ='';
-		$client_id = '';
+		$client_id = 0;
 		$errorMessages = '';
 		$notifyMessage = '';
-		$logMessage = '';
+		$log_type = 'array';
 		$outstr = '';
 		$doiValue = '';
 		$verbosemessage = '';
@@ -361,21 +392,24 @@ class Doitasks extends CI_Model {
 					//first up, lets check that this client is permitted to update this doi.
 		if(!$app_id)
 		{
-			$errorMessages = doisGetUserMessage("MT010", $doiValue=NULL ,$response_type,$app_id, "You must provide an app id to mint a doi",$urlValue);
+			$errorMessages = doisGetUserMessage("MT010", $doiValue ,$response_type,$app_id, "You must provide an app id to mint a doi",$urlValue);
+            $log_response = doisGetUserMessage("MT010", $doiValue ,$log_type,$app_id, "You must provide an app id to mint a doi",$urlValue);
 
 		}
 		if($urlValue=='' && $errorMessages == '')
 		{
 			$verbosemessage = 'You must provide a url when minting a doi.';
-			$errorMessages = doisGetUserMessage("MT010", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);//"URL is a mandatory value to mint a doi.<br />";
-		}
+			$errorMessages = doisGetUserMessage("MT010", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);//"URL is a mandatory value to mint a doi.<br />";
+            $log_response = doisGetUserMessage("MT010", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
+        }
 		if($errorMessages == '')
 		{
 			if(!$manual_mint) $client_id = checkDoisValidClient($ip,trim($app_id));
 			if($client_id===false)
 			{
 				$verbosemessage = 'Client with app_id '.$app_id.' from ip address '.$ip. ' is not a registered doi client.';
-				$errorMessages = doisGetUserMessage("MT009", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
+				$errorMessages = doisGetUserMessage("MT009",  $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT009",  $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 			}
 
 			$xml = $this->getXmlInput();
@@ -383,7 +417,8 @@ class Doitasks extends CI_Model {
 			if(!$xml){
 				$xml = '';
 				$verbosemessage = 'You must post xml when minting a doi.';
-				$errorMessages = doisGetUserMessage("MT010", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
+				$errorMessages = doisGetUserMessage("MT010",  $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT010",  $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 			}
             $doiObjects = new DOMDocument();
 
@@ -439,7 +474,8 @@ class Doitasks extends CI_Model {
 			{
 
 				$verbosemessage = "Document Load Error: ".$errors['message'];
-				$errorMessages .= doisGetUserMessage("MT010", $doi_id=NULL, $response_type, $app_id, $verbosemessage,$urlValue);
+				$errorMessages .= doisGetUserMessage("MT010", $doiValue, $response_type, $app_id, $verbosemessage,$urlValue);
+                $log_response  = doisGetUserMessage("MT010", $doiValue, $log_type, $app_id, $verbosemessage,$urlValue);
 			}
 			else{
 				$errors = error_get_last();
@@ -461,7 +497,8 @@ class Doitasks extends CI_Model {
 			{
 
 				$verbosemessage = "Document Load Error: ".$errors['message'];
-				$errorMessages  = doisGetUserMessage("MT010", $doi_id=NULL, $response_type, $app_id, $verbosemessage,$urlValue);
+				$errorMessages  = doisGetUserMessage("MT010", $doiValue, $response_type, $app_id, $verbosemessage,$urlValue);
+                $log_response  = doisGetUserMessage("MT010", $doiValue, $log_type, $app_id, $verbosemessage,$urlValue);
 			}else{
 				// Validate it against the datacite schema.
 				error_reporting(0);
@@ -502,7 +539,8 @@ class Doitasks extends CI_Model {
 				if( $errors || !$result)
 				{
 					$verbosemessage = "Document Validation Error: ".$error_string;
-					$errorMessages = doisGetUserMessage("MT006", $doi_id=NULL, $response_type, $app_id, $verbosemessage,$urlValue);
+					$errorMessages = doisGetUserMessage("MT006",  $doiValue, $response_type, $app_id, $verbosemessage,$urlValue);
+                    $log_response = doisGetUserMessage("MT006",  $doiValue, $log_type, $app_id, $verbosemessage,$urlValue);
 				}
 
 			}
@@ -511,7 +549,8 @@ class Doitasks extends CI_Model {
 
                 if(!$this->validDomain($urlValue,$client_domains)){
                     $verbosemessage = 'URL not permitted.';
-                    $errorMessages = doisGetUserMessage("MT014", $doi_id=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
+                    $errorMessages = doisGetUserMessage("MT014", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                    $log_response = doisGetUserMessage("MT014", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
                 }
 
             }
@@ -539,35 +578,47 @@ class Doitasks extends CI_Model {
 						if(doisGetResponseType($response) == gDOIS_RESPONSE_SUCCESS )
 						{
 							$notifyMessage = doisGetUserMessage("MT001", $doiValue, $response_type, $app_id,$response,$urlValue);
+                            $log_response = doisGetUserMessage("MT001", $doiValue, $log_type, $app_id,$response,$urlValue);
 							$status = "ACTIVE";
 							$activateResult = setDoiStatus($doiValue,$status);
 						}else{
 							$errorMessages .=  doisGetUserMessage("MT010", $doiValue, $response_type, $app_id,$response,$urlValue);
+                            $log_response =  doisGetUserMessage("MT010", $doiValue, $log_type, $app_id,$response,$urlValue);
 						}
 					}else{
 						$errorMessages .=  doisGetUserMessage("MT010", $doiValue, $response_type, $app_id,$response,$urlValue);
+                        $log_response =  doisGetUserMessage("MT010", $doiValue, $log_type, $app_id,$response,$urlValue);
 					}
 				}else{
 					$errorMessages .=  doisGetUserMessage("MT005", $doiValue, $response_type, $app_id,$response,$urlValue);
+                    $log_response =  doisGetUserMessage("MT005", $doiValue, $log_type, $app_id,$response,$urlValue);
 				}
 			}else{
 				$errorMessages .= '..<br />'.$insertResult;
 
 			}
 		}
+        if($manual_mint){
+            $mint = "M_MINT";
+        }else{
+            $mint = "MINT";
+        }
 
 		if($errorMessages)
 		{
 			$outstr =  $errorMessages;
+
 			//We need to log this activity as errorred
 
-			insertDoiActivity("MINT",$doiValue,"FAILURE",$client_id=0,$errorMessages);
+			insertDoiActivity($mint,$doiValue,"FAILURE",$client_id,$errorMessages);
+            $this->doilog($log_response,"doi_".$mint,$client_id);
 		}
 
 		if($notifyMessage)
 		{
 			//We need to log this activity
-			insertDoiActivity("MINT",$doiValue,"SUCCESS",$client_id,$notifyMessage);
+			insertDoiActivity($mint,$doiValue,"SUCCESS",$client_id,$notifyMessage);
+            $this->doilog($log_response,"doi_".$mint,$client_id);
 			$outstr = $notifyMessage;
 		}
 
@@ -585,6 +636,7 @@ class Doitasks extends CI_Model {
 		$verbosemessage = '';
 		$client_id ='';
         $response = '';
+        $log_type='array';
 		if ( isset($_SERVER["HTTP_X_FORWARDED_FOR"]) )    {
 			$ip=$_SERVER["HTTP_X_FORWARDED_FOR"];
 		} else if ( isset($_SERVER["HTTP_CLIENT_IP"]) )    {
@@ -622,10 +674,12 @@ class Doitasks extends CI_Model {
 		if(!$app_id)
 		{
 			$errorMessages = doisGetUserMessage("MT010", $doiValue ,$response_type,$app_id, "You must provide an app id to update a doi",$urlValue);
+            $log_response = doisGetUserMessage("MT010", $doiValue ,$log_type,$app_id, "You must provide an app id to update a doi",$urlValue);
 		}
 		if(!$doiValue)
 		{
 			$errorMessages = doisGetUserMessage("MT010", $doiValue ,$response_type,$app_id, "You must provide the doi value to update a doi",$urlValue);
+            $log_response = doisGetUserMessage("MT010", $doiValue ,$log_type,$app_id, "You must provide the doi value to update a doi",$urlValue);
 		}
 		//first up, lets check that this client is permitted to update this doi.
 		if($errorMessages =='')
@@ -636,12 +690,14 @@ class Doitasks extends CI_Model {
 		{
 			$verbosemessage = '';
 			$errorMessages = doisGetUserMessage("MT009", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+            $log_response = doisGetUserMessage("MT009", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 
 		}else{
 			if(checkDoisClientDoi($doiValue,$client_id)===false)
 			{
 				$verbosemessage = '';
 				$errorMessages = doisGetUserMessage("MT008", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT008", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 			}
 		}
 		}
@@ -654,6 +710,7 @@ class Doitasks extends CI_Model {
 		{
 			$verbosemessage = "DOI ".$doiValue." is not set to inactive so cannot activate it.<br />";
 			$errorMessages = doisGetUserMessage("MT010", $doiValue ,$response_type,$app_id, $verbosemessage,$urlValue);
+            $log_response = doisGetUserMessage("MT010", $doiValue ,$log_type,$app_id, $verbosemessage,$urlValue);
 		}
 
 		if( $errorMessages == '' )
@@ -680,6 +737,7 @@ class Doitasks extends CI_Model {
 					{
 						// We have successfully activated the doi through datacite.
 						$notifyMessage = doisGetUserMessage("MT004", $doiValue,$response_type,$app_id, $response,$urlValue);
+                        $log_response = doisGetUserMessage("MT004", $doiValue,$log_type,$app_id, $response,$urlValue);
 
 
 					}
@@ -687,35 +745,49 @@ class Doitasks extends CI_Model {
 					{
 						$activateResult = setDoiStatus($doiValue,'INACTIVE');
 						$errorMessages = doisGetUserMessage("MT010", $doiValue,$response_type,$app_id, $response,$urlValue);
+                        $log_response = doisGetUserMessage("MT010", $doiValue,$log_type,$app_id, $response,$urlValue);
 
 					}
 				}
 				else
 				{
 					$errorMessages = doisGetUserMessage("MT005",$doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                    $log_response = doisGetUserMessage("MT005",$doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 
 				}
 			}else{
 
 				$verbosemessage = $response;
 				$errorMessages = doisGetUserMessage("MT010",$doiValue,$response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT010",$doiValue,$log_type,$app_id, $verbosemessage,$urlValue);
 			}
 		}
 		}
+
+        if($manual_activate){
+            $activate = "M_ACTIVATE";
+        }else{
+            $activate = "ACTIVATE";
+        }
 		if($errorMessages)
 		{
 
 			$outstr =  $errorMessages;
 			//We need to log this activity as errorred
 
-			insertDoiActivity("ACTIVATE",$doiValue,"FAILURE",$client_id,$errorMessages);
+			insertDoiActivity($activate,$doiValue,"FAILURE",$client_id,$errorMessages);
+
+            $this->doilog($log_response,"doi_".$activate,$client_id);
 
 		}
 
 		if($notifyMessage)
 		{
 			//We need to log this activity as successful
-			insertDoiActivity("ACTIVATE",$doiValue,"SUCCESS",$client_id,$notifyMessage);
+			insertDoiActivity($activate,$doiValue,"SUCCESS",$client_id,$notifyMessage);
+
+            $this->doilog($log_response,"doi_".$activate,$client_id);
+
 			$outstr = $notifyMessage;
 		}
 
@@ -731,6 +803,7 @@ class Doitasks extends CI_Model {
 		$urlValue = '';
 		$verbosemessage = '';
 		$client_id ='';
+        $log_type = 'array';
 
 		if ( isset($_SERVER["HTTP_X_FORWARDED_FOR"]) )    {
 			$ip=$_SERVER["HTTP_X_FORWARDED_FOR"];
@@ -769,10 +842,12 @@ class Doitasks extends CI_Model {
 		if(!$app_id)
 		{
 			$errorMessages = doisGetUserMessage("MT010", $doiValue ,$response_type,$app_id, "You must provide an app id to update a doi",$urlValue);
+            $log_response = doisGetUserMessage("MT010", $doiValue ,$log_type,$app_id, "You must provide an app id to update a doi",$urlValue);
 		}
 		if(!$doiValue)
 		{
 			$errorMessages = doisGetUserMessage("MT010", $doiValue ,$response_type,$app_id, "You must provide the doi value to update a doi",$urlValue);
+            $log_response = doisGetUserMessage("MT010", $doiValue ,$log_type,$app_id, "You must provide the doi value to update a doi",$urlValue);
 		}
 		//first up, lets check that this client is permitted to update this doi.
 		if($errorMessages =='')
@@ -782,12 +857,14 @@ class Doitasks extends CI_Model {
 		{
 			$verbosemessage = '';
 			$errorMessages = doisGetUserMessage("MT009", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+            $log_response = doisGetUserMessage("MT009", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 
 		}else{
 			if(checkDoisClientDoi($doiValue,$client_id)===false)
 			{
 				$verbosemessage = '';
 				$errorMessages = doisGetUserMessage("MT008", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT008", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 			}
 		}
 		}
@@ -799,6 +876,7 @@ class Doitasks extends CI_Model {
 		{
 				$verbosemessage = "DOI ".$doiValue." is not set to active so cannot deactivate it.";
 				$errorMessages = doisGetUserMessage("MT010", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT010", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 		}
 
 		if( $errorMessages == '' )
@@ -816,38 +894,52 @@ class Doitasks extends CI_Model {
 					{
 						// We have successfully deactivated the doi through datacite.
 						$notifyMessage .= doisGetUserMessage("MT003", $doiValue, $response_type,$app_id, $response,$urlValue);
+                        $log_response = doisGetUserMessage("MT003", $doiValue, $log_type,$app_id, $response,$urlValue);
 					}
 					else
 					{
-						$errorMessages .= doisGetUserMessage("MT010", $doi=NULL, $response_type,$app_id, $response,$urlValue);				;
+						$errorMessages .= doisGetUserMessage("MT010", $doiValue, $response_type,$app_id, $response,$urlValue);
+                        $log_response = doisGetUserMessage("MT010", $doiValue, $log_type,$app_id, $response,$urlValue);;
 					}
 				}
 				else
 				{
-					$errorMessages .= doisGetUserMessage("MT005", $doi=NULL, $response_type,$app_id, $verbosemessage,$urlValue);
-
+					$errorMessages .= doisGetUserMessage("MT005", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                    $log_response = doisGetUserMessage("MT005", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 				}
 			}else{
 
 				$verbosemessage = $inactivateResult;
 				$errorMessages = doisGetUserMessage("MT010", $doiValue, $response_type,$app_id, $verbosemessage,$urlValue);
+                $log_response = doisGetUserMessage("MT010", $doiValue, $log_type,$app_id, $verbosemessage,$urlValue);
 			}
 		}
 		}
+
+        if($manual_deactivate){
+            $deactivate = "M_INACTIVATE";
+        }else{
+            $deactivate = "INACTIVATE";
+        }
+
 		if($errorMessages)
 		{
 
 			$outstr =  $errorMessages;
 			//We need to log this activity as errorred
 
-			insertDoiActivity("INACTIVATE",$doiValue,"FAILURE",$client_id,$errorMessages);
+			insertDoiActivity($deactivate,$doiValue,"FAILURE",$client_id,$errorMessages);
+
+            $this->doilog($log_response,"doi_".$deactivate,$client_id);
 
 		}
 
 		if($notifyMessage)
 		{
 			//We need to log this activity
-			insertDoiActivity("INACTIVATE",$doiValue,"SUCCESS",$client_id,$notifyMessage);
+			insertDoiActivity($deactivate,$doiValue,"SUCCESS",$client_id,$notifyMessage);
+
+            $this->doilog($log_response,"doi_".$deactivate, $client_id);
 
 			$outstr = $notifyMessage;
 		}
@@ -873,6 +965,8 @@ class Doitasks extends CI_Model {
 		$response_status = true;
 		$timer_start = microtime(true);
 
+        $status = "CHECK_STATUS";
+
 		// Ping the local DOI database
 		if (!$this->doi_db->simple_query("SELECT 1;"))
 		{
@@ -890,15 +984,17 @@ class Doitasks extends CI_Model {
 		{
 			$response_time = round(microtime(true) - $timer_start, 3) * 1000;
 			echo doisGetUserMessage("MT090", NULL, $response_type, NULL, "(took " . $response_time . "ms)");
+            $log_response = doisGetUserMessage("MT090", NULL, 'array', NULL, "(took " . $response_time . "ms)");
+            $this->doilog($log_response,"doi_".$status);
 			return;
 		}
 		else
 		{
 			echo doisGetUserMessage("MT091", NULL, $response_type);
+            $log_response = doisGetUserMessage("MT091", NULL, 'array');
+            $this->doilog($log_response,"doi_".$status);
 			return;
 		}
-
-
 	}
 
 	/* Ping the DataCite HTTP API, timeout after ~5 seconds (or other if specified) */
@@ -915,9 +1011,6 @@ class Doitasks extends CI_Model {
 
 		return !(curl_errno($curl) || curl_getinfo($curl, CURLINFO_HTTP_CODE) != "200");
 	}
-
-
-
 
 	function checkurl(){
 		$unavailableCount = 0;
@@ -951,9 +1044,6 @@ class Doitasks extends CI_Model {
 		$message .= $notifyMessage;
 		mail($recipient,$subject,$message);
 	}
-
-
-
 
 	function doisRequest($service, $doi, $url, $metadata,$client_id)
 	{
@@ -1062,7 +1152,6 @@ class Doitasks extends CI_Model {
 
 		$app_id = $this->input->get('app_id');		//passed as a parameter
 		//or app_id might be passed as part of the authstr
-
 		if(!$app_id && isset($_SERVER['PHP_AUTH_USER']))
 		{
    			$app_id = $_SERVER['PHP_AUTH_USER'];
@@ -1104,6 +1193,44 @@ class Doitasks extends CI_Model {
             }
         }
         return false;
+    }
+
+    function doilog($log_response,$event="doi_xml",$client_id=NULL){
+
+        $message = array();
+        $message["event"] = strtolower($event);
+        $message["response"]= $log_response;
+        $message["doi"]["id"] = $log_response["doi"];
+        $message["client"]["id"] = $client_id;
+        $message["client"]["name"] = NULL;
+		
+		//determine client name
+		if($client_id || $client_id==="0"){
+            $client = getDoisClientDetails($client_id);
+            $clientName = $client->result();
+            $message["client"]["name"] = $clientName[0]->client_name;
+        }
+		
+		//determine if event is manual or m2m		
+        if(strtolower(substr($event,0,6))=='doi_m_'){
+            $message['request']['manual']= true;
+            $message["event"] = str_replace("_m_","_", $message["event"]);
+        }else{
+            $message['request']['manual']= false;
+        }
+		
+		//determine if doi is a test doi
+        $test_check = strpos($log_response["doi"],'10.5072');
+        if($test_check||$test_check===0) {
+            $message["doi"]["production"] = false;
+        }else{
+            $message["doi"]["production"] = true;
+        }
+
+        $message["api_key"] = $log_response["app_id"];
+
+        monolog($message,"doi_api", "info", true) ;
+
     }
 
 

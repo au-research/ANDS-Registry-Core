@@ -108,6 +108,16 @@ class Registry_object extends MX_Controller
             // Set 404 HTTP Status code (CC-1633, CC-1712)
             $this->output->set_status_header('404');
 
+            monolog([
+                'event' => 'portal_view_notfound',
+                'request' => [
+                    'purl' => $purl,
+                    'grant_id' => $grantId,
+                    'institution' => $institution,
+                    'type' => 'soft_404_activity'
+                ]
+            ], 'portal');
+
             $this->blade
                 ->set('scripts', array('grant_form'))
                 ->set('institution', $institution)
@@ -117,11 +127,22 @@ class Registry_object extends MX_Controller
         } else {
 
             //No Record or Error
-
             $message = ($ro ? $ro->prop['status'] . NL . $ro->prop['message'] : false);
 
             // Set 404 HTTP Status code (CC-1633, CC-1712)
             $this->output->set_status_header('404');
+
+            monolog([
+                'event' => 'portal_view_notfound',
+                'request' => [
+                    'id' => $this->input->get('id'),
+                    'key' => $this->input->get('key'),
+                    'slug' => $this->input->get('slug'),
+                    'any' => $this->input->get('any'),
+                    'url' => current_url(),
+                    'type' => 'soft_404'
+                ]
+            ], 'portal');
 
             $this->blade
                 // ->set('scripts', array('view'))
@@ -173,20 +194,30 @@ class Registry_object extends MX_Controller
         //Record a successful view only if the record is PUBLISHED
 
         if ($ro->core['status'] == 'PUBLISHED') {
+
             $ro->event('viewed');
-            $event = array(
+
+            // record view event for logging
+            $event = [
                 'event' => 'portal_view',
-                'roid' => $ro->core['id'],
-                'roclass' => $ro->core['class'],
-                'dsid' => $ro->core['data_source_id'],
-                'group' => $ro->core['group'],
-                'ip' => $this->input->ip_address(),
-                'user_agent' => $this->input->user_agent()
-            );
+                'record' => $this->getRecordFields($ro),
+                'user' => [
+                    'ip' => $this->input->ip_address(),
+                    'user_agent' => $this->input->user_agent()
+                ]
+            ];
+
+            // Record Source
             if ($this->input->get('source')) {
                 $event['source'] = $this->input->get('source');
             }
-            ulog_terms($event, 'portal', 'info');
+
+            // Record Referal Query
+            if ($this->input->get('refer_q')) {
+                $event['refer_q'] = $this->input->get('refer_q');
+            }
+
+            monolog($event, 'portal', 'info');
         } else {
             //DRAFT Preview are not recorded, or should they?
         }
@@ -202,11 +233,11 @@ class Registry_object extends MX_Controller
         }
 
         // Theme Page
-        $the_theme = '';
+        $the_theme = false;
         if (isset($ro->core['theme_page'])) {
             $the_theme = $this->getTheme($ro->core['theme_page']);
         }
-
+        
         //Decide whethere to show the duplicate identifier
         $show_dup_identifier_qtip = true;
         if ($this->input->get('fl') !== false) {
@@ -239,6 +270,66 @@ class Registry_object extends MX_Controller
             ->set('related', $related)
             ->set('debugOn', $this->input->get('debug') == 'on' ? true : false)
             ->render($render);
+    }
+
+    /**
+     * @todo update internal mapping to call ro model directly
+     * @param _ro $ro
+     * @return array
+     */
+    private function getRecordFields(_ro $ro)
+    {
+        return $this->ro->getRecordFields($ro);
+    }
+
+    /**
+     * Export Controller
+     * @param  string $type endnote|endnote_web
+     * @param  string  $ids  "-" separated list of ids. eg 5435-23443
+     * @return redirect
+     */
+    public function export($type = 'endnote', $ids)
+    {
+        // capture the event
+        $ids = explode('-', $ids);
+        $event = [
+            'event' => 'portal_export',
+            'record_ids' => $ids,
+            'export_type' => $type,
+        ];
+
+        // determine single record
+        if (count($ids) == 1  &&
+            $ro = $this->ro->getByID($ids[0], ['core'], false)
+            ) {
+            $event['record'] = $this->getRecordFields($ro);
+        }
+
+        //determine source
+        if ($source = $this->input->get('source')) {
+            $event['source'] = $source;
+        }
+
+        monolog($event, 'portal', 'info');
+
+        /**
+         * forward them to
+         * registry/registry_object@exportToEndNote/{:ids}.ris?foo=timestamp
+         * @todo make export a portal only functionality
+         * @todo investigate in making an export registry API instead
+         */
+        $exportUrl = registry_url('registry_object/exportToEndNote/'. implode('-',$ids).'.ris?foo='.time());
+
+        // Redirection switchboard
+        switch ($type) {
+            case "endnote":
+                redirect($exportUrl);
+                break;
+            case "endnote_web":
+                $endNoteWebUrl = "http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl=".$exportUrl;
+                redirect($endNoteWebUrl);
+                break;
+        }
     }
 
     /**
@@ -338,13 +429,10 @@ class Registry_object extends MX_Controller
             $ro = $this->ro->getByID($this->input->get('ro_id'));
             $omit = $this->input->get('omit') ? $this->input->get('omit') : false;
 
-            ulog_terms(
+            monolog(
                 array(
                     'event' => 'portal_preview',
-                    'roid' => $ro->core['id'],
-                    'dsid' => $ro->core['data_source_id'],
-                    'group' => $ro->core['group'],
-                    'class' => $ro->core['class']
+                    'record' => $this->getRecordFields($ro)
                 ),
                 'portal', 'info'
             );
@@ -352,6 +440,7 @@ class Registry_object extends MX_Controller
             $this->blade
                 ->set('ro', $ro)
                 ->set('related', $this->getRelationship($ro))
+                ->set('source', $this->input->get('source'))
                 ->set('omit', $omit)
                 ->render('registry_object/preview');
         } elseif ($this->input->get('identifier_relation_id')) {
@@ -375,9 +464,10 @@ class Registry_object extends MX_Controller
                     $ro = $this->ro->findRecord($filters);
                 }
 
-                ulog_terms(
+                monolog(
                     array(
-                        'event' => 'portal_preview',
+                        'event' => 'portal_preview_identifier',
+                        'record' => $this->getRecordFields($ro),
                         'identifier_relation_id' => $this->input->get('identifier_relation_id')
                     ),
                     'portal', 'info'
@@ -397,9 +487,10 @@ class Registry_object extends MX_Controller
                 $pullback = $this->ro->resolveIdentifier('doi', $identifier);
                 $ro = $this->ro->findRecord(array('identifier_value' => $identifier));
 
-                ulog_terms(
+                monolog(
                     array(
-                        'event' => 'portal_preview',
+                        'event' => 'portal_preview_doi',
+                        'record' => $this->getRecordFields($ro),
                         'identifier_doi' => $this->input->get('identifier_doi')
                     ),
                     'portal', 'info'
@@ -660,10 +751,6 @@ class Registry_object extends MX_Controller
         $data['user'] = $this->user->name();
         $data['user_from'] = $this->user->authDomain() ? $this->user->authDomain() : $this->user->authMethod();
 
-        $event = $data;
-        $event['event'] = 'portal_tag_add';
-        ulog_terms($event, 'portal', 'info');
-
         $fields = '';
         foreach ($data as $key => $value) {
             $fields .= $key . '=' . rawurlencode($value) . '&';
@@ -672,6 +759,13 @@ class Registry_object extends MX_Controller
         $content = curl_post(base_url() . 'registry/services/rda/addTag', $fields,
             array('header' => 'multipart/form-data'));
         $this->_dropCache($data['id']);
+
+        monolog([
+            'event' => 'portal_tag_add',
+            'tag' => ['value' => $data['tag'] ],
+            'record' => ['key' => $data['key'] ]
+        ], 'portal', 'info');
+
         echo $content;
     }
 
@@ -714,18 +808,19 @@ class Registry_object extends MX_Controller
         $value = intval($data['data']['value']);
         $this->load->model('registry_objects', 'ro');
         $ro = $this->ro->getByID($id);
+
         $ro->event($type, $value);
 
-        $event = array(
-            'event' => $type,
-            'roid' => $ro->core['id'],
-            'roclass' => $ro->core['class'],
-            'dsid' => $ro->core['data_source_id'],
-            'group' => $ro->core['group'],
-            'ip' => $this->input->ip_address(),
-            'user_agent' => $this->input->user_agent()
-        );
-        ulog_terms($event, 'portal', 'info');
+        $event = [
+            'event' => 'portal_'.$type
+        ];
+
+        $event['record'] = $this->getRecordFields($ro);
+        if (isset($data['data']['url'])) {
+            $event['accessed_url'] = $data['data']['url'];
+        }
+
+        monolog($event, 'portal', 'info');
 
         $stats = $ro->stat();
 
@@ -917,42 +1012,34 @@ class Registry_object extends MX_Controller
         //not recording a hit for the quick search done for advanced search
         /** @var boolean $no_log */
         if (!$no_log && array_key_exists('response', $result)) {
+
             $event = array(
-                'event' => 'portal_search',
-                'ip' => $this->input->ip_address(),
-                'user_agent' => $this->input->user_agent()
+                'event' => 'portal_search'
             );
 
-            //merge event and filter so that in the event we have all the selected filters for analysis later on
-            $event = $filters ? array_merge($event, $filters) : $event;
-
-
-            $event['result_numFound'] = $result['response']['numFound'];
+            $event['filters'] = $filters ? $filters : [];
 
             //record search result set
-            $result_roid = array();
+            $result_id = array();
             $result_group = array();
             $result_dsid = array();
             foreach ($result['response']['docs'] as $doc) {
-                $result_roid[] = $doc['id'];
+                $result_id[] = $doc['id'];
                 $result_group[] = $doc['group'];
                 $result_dsid[] = $doc['data_source_id'];
             }
-            $result_group = array_unique($result_group);
-            $result_dsid = array_unique($result_dsid);
+            $result_group = array_values(array_unique($result_group));
+            $result_dsid = array_values(array_unique($result_dsid));
 
-            // glue is ,, split at reading time
-            if (sizeof($result_roid) > 0) {
-                $event = array_merge($event, array('result_roid' => implode(',,', $result_roid)));
-            }
-            if (sizeof($result_group) > 0) {
-                $event = array_merge($event, array('result_group' => implode(',,', $result_group)));
-            }
-            if (sizeof($result_dsid) > 0) {
-                $event = array_merge($event, array('result_dsid' => implode(',,', $result_dsid)));
-            }
+            // record the search result additional
+            $event['result'] = [
+                'numFound' => $result['response']['numFound'],
+                'result_id' => $result_id,
+                'result_group' => $result_group,
+                'result_dsid' => $result_dsid
+            ];
 
-            ulog_terms($event, 'portal');
+            monolog($event, 'portal', 'info');
         }
 
         // sanity check on the Query String we use SOLR to search

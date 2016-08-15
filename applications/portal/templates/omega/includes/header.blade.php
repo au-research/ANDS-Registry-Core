@@ -3,6 +3,8 @@
     <meta charset="utf-8">
     <title>{{ isset($ro->core['title']) ? $ro->core['title']: 'Research Data Australia'}}</title>
 
+    <meta name="referrer" content="always">
+
     <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,200italic,300,300italic,400italic,600,600italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 
     <meta property="og:type" content="article"/>

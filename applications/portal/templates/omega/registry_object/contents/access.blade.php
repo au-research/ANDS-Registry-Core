@@ -19,7 +19,7 @@ if($ro->core['class']=='service'){
     @endif
 
     @if($ro->directaccess[0]['access_type']!='url' || count($ro->directaccess) > 1 )
-        <a href="" class="btn btn-lg btn-primary btn-block" id="gotodata"><i class="fa fa-cube"></i> Go to Data Providers</a>
+        <a href="" class="btn btn-lg btn-primary btn-block" id="gotodata"><i class="fa fa-cube"></i> Go to {{$buttonStr}}s</a>
         <div id="dataformats">
         @foreach($ro->directaccess as $access)
             <?php

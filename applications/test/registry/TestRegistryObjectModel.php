@@ -10,15 +10,6 @@ namespace ANDS\Test;
  */
 class TestRegistryObjectModel extends UnitTest
 {
-    /**
-     * @name Test getting a registry object by ID
-     * @note result must be of instance _registry_object
-     */
-    public function testGetRegistryObjectByID()
-    {
-        $ro = $this->ci->ro->getByID(437095);
-        $this->assertInstanceOf($ro, new \_registry_object());
-    }
 
     /**
      * @name Test getting a registry object by Key
@@ -54,9 +45,9 @@ class TestRegistryObjectModel extends UnitTest
     public function setUp()
     {
         $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
-        $this->ro = $this->ci->ro->getByID(437095);
+        $this->ro = $this->ci->ro->getPublishedByKey("Casdfsdf34");
         if (!$this->ro) {
-            throw new \Exception("Record 437095 does not exist. Various test cases will be skipped");
+            throw new \Exception("Record Casdfsdf34 does not exist. Various test cases will be skipped");
         }
     }
 

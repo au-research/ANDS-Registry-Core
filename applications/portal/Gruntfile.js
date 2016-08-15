@@ -23,7 +23,7 @@ module.exports = function(grunt){
             styles:{
                 options:{separator:''},
                 src:[
-                    '<%= yeoman.templates %>/omega/assets/css/bootstrap.min.css',
+                    '<%= yeoman.templates %>/omega/assets/css/bootstrap2.min.css',
                     '<%= yeoman.templates %>/omega/assets/css/theme.css',
                     '<%= yeoman.templates %>/omega/assets/css/swatch-gray.css',
                     '<%= yeoman.templates %>/omega/assets/css/swatch-black.min.css',
@@ -140,7 +140,8 @@ module.exports = function(grunt){
         less: {
             core:{
                 files:{
-                    "<%= yeoman.assets %>/css/portal.less.compiled.css": "<%= yeoman.templates %>/omega/assets/less/ands-portal.less"
+                    "<%= yeoman.assets %>/css/portal.less.compiled.css": "<%= yeoman.templates %>/omega/assets/less/ands-portal.less",
+                    "<%= yeoman.assets %>/css/print.css": "<%= yeoman.templates %>/omega/assets/less/print.less"
                 }
             },
             vocab_less: {
@@ -156,6 +157,13 @@ module.exports = function(grunt){
     grunt.registerTask('default', [
         'less',
         'concat',
+        'uglify'
+    ]);
+
+    grunt.registerTask('portal', [
+        'less:core',
+        'concat:lib',
+        'concat:portal_lib',
         'uglify'
     ]);
 

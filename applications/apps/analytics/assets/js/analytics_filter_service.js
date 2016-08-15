@@ -5,14 +5,15 @@
 
     function filterService($http, $log) {
 
-        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-        var firstDay = new Date(y, m - 1, 1);
-        var lastDay = new Date(y, m, 0);
+        var firstDay = new Date();
+        firstDay.setDate(firstDay.getDate() + 1);
+        var lastDay = new Date();
+        lastDay.setMonth(firstDay.getMonth() - 1);
 
         var filters = {
             'open' : false,
             'log': 'portal',
-            'period': {'startDate': firstDay, 'endDate': lastDay},
+            'period': {'startDate': lastDay.toISOString().slice(0, 10), 'endDate': firstDay.toISOString().slice(0, 10)},
             'dimensions': [
                 'portal_view', 'portal_search', 'accessed'
             ],

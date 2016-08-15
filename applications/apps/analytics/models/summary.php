@@ -11,22 +11,8 @@ class Summary extends CI_Model
         $this->load->library('ElasticSearch');
 
         //setup
-        $this->elasticsearch->init()->setPath('/logs/production/_search');
-        $this->elasticsearch->setOpt('from', 0)->setOpt('size', 0)
-            ->mustf('term', 'is_bot', 'false');
-
-        //date range
-        // unset($filters['period']);
-        if (isset($filters['period'])) {
-            $filters['period']['startDate'] = date('Y-m-d', strtotime($filters['period']['startDate']));
-            $filters['period']['endDate'] = date('Y-m-d', strtotime($filters['period']['endDate']));
-            $this->elasticsearch->mustf('range', 'date',
-                [
-                    'from' => $filters['period']['startDate'],
-                    'to' => $filters['period']['endDate']
-                ]
-            );
-        }
+        $this->elasticsearch->init()->setPath('/portal-*/_search');
+        $this->elasticsearch->setOpt('from', 0)->setOpt('size', 1);
 
         $this->elasticsearch->setFilters($filters);
 
@@ -35,58 +21,86 @@ class Summary extends CI_Model
             ->setAggs('date',
                 array('date_histogram' =>
                     array(
-                        'field'=>'date',
+                        'field'=>'doc.@timestamp',
                         'format' => 'yyyy-MM-dd',
-                        'interval' => 'day'
+                        'interval' => 'day',
+                        "time_zone" => "+10:00"
                     ),
                     'aggs'=>array(
-                        'events' => array('terms'=>array('field'=>'event'))
+                        'events' => array('terms'=>array('field'=>'doc.@fields.event.raw'))
                     )
                 )
             )
             ->setAggs('event',
                 array(
-                    'terms'=>array('field'=>'event'),
+                    'terms'=>array('field'=>'doc.@fields.event.raw'),
                     'aggs' => [
-                        'events' => ['terms'=>['field'=>'group']]
+                        'events' => ['terms'=>['field'=>'doc.@fields.record.group.raw']]
+                    ]
+                )
+            )
+            ->setAggs('search_event',
+                array(
+                    'terms'=>array('field'=>'doc.@fields.event.raw'),
+                    'aggs' => [
+                        'events' => ['terms'=>['field'=>'doc.@fields.filters.group.raw']]
                     ]
                 )
             )
             ->setAggs('class',
                 array(
-                    'terms'=>array('field'=>'class'),
+                    'terms'=>array('field'=>'doc.@fields.record.class.raw'),
                     'aggs' => [
-                        'classes' => ['terms'=>['field'=>'class']]
+                        'classes' => ['terms'=>['field'=>'doc.@fields.record.class.raw']]
                     ]
                 )
             )
             ->setAggs('group',
                 array(
-                    'terms'=>array('field'=>'group'),
+                    'terms'=>array('field'=>'doc.@fields.record.group.raw'),
                     'aggs' => [
-                        'event' => ['terms'=>['field'=>'event']]
+                        'event' => ['terms'=>['field'=>'doc.@fields.event.raw']]
+                    ]
+                )
+            )
+            ->setAggs('search_group',
+                array(
+                    'terms'=>array('field'=>'doc.@fields.result.result_group.raw'),
+                    'aggs' => [
+                        'event' => ['terms'=>['field'=>'doc.@fields.event.raw']]
                     ]
                 )
             )
             ->setAggs(
-                'rostat', array('terms' => array('field' => 'roid'))
+                'rostat', array('terms' => array('field' => 'doc.@fields.record.id.raw'))
             )
             ->setAggs(
-                'qstat', array('terms' => array('field' => 'q_lowercase'))
+                'viewedstat',
+                array(
+                    'filter' => array('term' => array('doc.@fields.event.raw'=>'portal_view')),
+                    'aggs'=>array("key"=>array("terms"=>array('field'=>'doc.@fields.record.id.raw')))
+                )
+            )
+            ->setAggs(
+                'qstat', array('terms' => array('field' => 'doc.@fields.filters.q.raw'))
             )
             ->setAggs(
                 'accessedstat',
                 array(
-                    'filter' => array('term' => array('event'=>'accessed')),
-                    'aggs'=>array("key"=>array("terms"=>array('field'=>'roid'))))
-
+                    'filter' => array('term' => array('doc.@fields.event.raw'=>'portal_accessed')),
+                    'aggs'=>array("key"=>array("terms"=>array('field'=>'doc.@fields.record.id.raw')))
+                )
             )
         ;
 
         $search_result = $this->elasticsearch->search();
-        // dd($this->elasticsearch->getOptions());
+//         dd($this->elasticsearch->getOptions());
+//         dd(json_encode($this->elasticsearch->getOptions()));
+//         dd($search_result);
         // dd($filters);
         // dd($search_result['aggregations']['date']);
+//         dd($search_result['aggregations']['search_event']);
+//         dd($search_result['aggregations']['group']);
 
         //prepare result
         $result = [
@@ -123,10 +137,27 @@ class Summary extends CI_Model
             }
         }
 
+        // dd($search_result['aggregations']['group']);
+
         //group_event
         foreach ($search_result['aggregations']['group']['buckets'] as $group) {
             foreach ($group['event']['buckets'] as $event) {
                 $result['group_event'][$group['key']][$event['key']] = $event['doc_count'];
+            }
+        }
+
+        foreach ($search_result['aggregations']['search_group']['buckets'] as $group) {
+            foreach ($group['event']['buckets'] as $event) {
+                $result['group_event'][$group['key']][$event['key']] = $event['doc_count'];
+            }
+        }
+
+        //removing groups not in the filters out of the group event
+        if (array_key_exists('groups', $filters)) {
+            foreach ($result['group_event'] as $key=>$value) {
+                if (!in_array($key, $filters['groups'])) {
+                    unset($result['group_event'][$key]);
+                }
             }
         }
 
@@ -318,14 +349,11 @@ class Summary extends CI_Model
         $registry_db = $this->load->database('registry', true);
         $query = $registry_db
             ->distinct()
-            ->select('value')
-            ->from('registry_object_attributes')
-            ->join('registry_objects', 'registry_objects.registry_object_id = registry_object_attributes.registry_object_id')
+            ->select('group')
+            ->from('registry_objects')
             ->where(
                 array(
-                    'registry_objects.data_source_id' => $dsid,
-                    'registry_object_attributes.attribute' => 'group',
-                    'registry_objects.status' => 'PUBLISHED'
+                    'data_source_id' => $dsid
                 )
             )
             ->get();
@@ -334,7 +362,7 @@ class Summary extends CI_Model
             return $groups;
         } else {
             foreach ($query->result_array() AS $group) {
-                $groups[] =  $group['value'];
+                $groups[] =  $group['group'];
             }
         }
         return $groups;

@@ -14,10 +14,11 @@ angular.module('record_components',['profile_components'])
 			});
 			return promise;
 		},
-        add_stat: function(id, type, value) {
+        add_stat: function(id, type, value, url) {
             var data = {
                 type:type,
-                value:value
+                value:value, 
+                url: url
             };
             var promise = $http.post(base_url+'registry_object/add_stat/'+id, {data:data}).then(function(response){
                 return response.data;
@@ -52,7 +53,7 @@ angular.module('record_components',['profile_components'])
            } else $scope.bookmarked = false;
         });
     }
-    
+
     $scope.fetch = function(){
         $scope.folders = {};
         profile_factory.get_user().then(function(data){
@@ -184,13 +185,13 @@ angular.module('record_components',['profile_components'])
         }
 
         if (type=='endnote') {
-            link = registry_url+'registry_object/exportToEndnote/'+id+'.ris?foo='+Math.floor(Date.now() / 1000);
+            link = base_url + "registry_object/export/endnote/"+id+'?source=portal_search';
         } else if(type=='endnote_web') {
-            link = 'http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl='+registry_url+'registry_object/exportToEndnote/'+id+'.ris?foo='+Math.floor(Date.now() / 1000);
+            link = base_url + "registry_object/export/endnote_web/"+id+'?source=portal_search';
         }
 
         return link;
-        
+
     }
 
     $scope.dismiss = function(){

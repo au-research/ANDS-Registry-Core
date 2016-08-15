@@ -39,6 +39,9 @@ batch_size        = 20
 # (Override) settings for checking DOI links
 [DOI]
 database_name     = <database name for querying DOIs>
+# NB: for backward compatibility, if active_only is unspecified,
+# its setting defaults to "False".
+active_only       = <True or False, whether to check only active DOIs>
 
 # (Override) settings for checking Registry objects
 [RO]

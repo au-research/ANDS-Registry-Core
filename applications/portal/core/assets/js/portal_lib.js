@@ -14909,10 +14909,11 @@ angular.module('uiGmapgoogle-maps.extensions')
 			});
 			return promise;
 		},
-        add_stat: function(id, type, value) {
+        add_stat: function(id, type, value, url) {
             var data = {
                 type:type,
-                value:value
+                value:value, 
+                url: url
             };
             var promise = $http.post(base_url+'registry_object/add_stat/'+id, {data:data}).then(function(response){
                 return response.data;
@@ -14947,7 +14948,7 @@ angular.module('uiGmapgoogle-maps.extensions')
            } else $scope.bookmarked = false;
         });
     }
-    
+
     $scope.fetch = function(){
         $scope.folders = {};
         profile_factory.get_user().then(function(data){
@@ -15079,13 +15080,13 @@ angular.module('uiGmapgoogle-maps.extensions')
         }
 
         if (type=='endnote') {
-            link = registry_url+'registry_object/exportToEndnote/'+id+'.ris?foo='+Math.floor(Date.now() / 1000);
+            link = base_url + "registry_object/export/endnote/"+id+'?source=portal_search';
         } else if(type=='endnote_web') {
-            link = 'http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl='+registry_url+'registry_object/exportToEndnote/'+id+'.ris?foo='+Math.floor(Date.now() / 1000);
+            link = base_url + "registry_object/export/endnote_web/"+id+'?source=portal_search';
         }
 
         return link;
-        
+
     }
 
     $scope.dismiss = function(){
@@ -16326,6 +16327,10 @@ app.directive('focusMe', function($timeout, $parse) {
             location.href = base_url+'search/#' + '!/' + hash;
         };
 
+        $scope.filters_to_hash = function() {
+            return search_factory.filters_to_hash(search_factory.filters);
+        };
+
         $scope.hashChange = function(){
             // $log.debug('query', $scope.query, search_factory.query);
             // $scope.filters.q = $scope.query;
@@ -16388,6 +16393,9 @@ app.directive('focusMe', function($timeout, $parse) {
                     }
                     $scope.$broadcast('search_complete');
                     $scope.populateCenters($scope.result.response.docs);
+
+                    //clear advanced flag if on
+                    delete $scope.filters['advanced'];
                 });
             } else {
                 $scope.loading = false;
@@ -16544,7 +16552,7 @@ app.directive('focusMe', function($timeout, $parse) {
         $scope.showFilter = function(filter_name, mode){
             if (!mode || mode=='undefined') mode = 'normal';
             var show = true;
-            if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class') {
+            if (filter_name=='cq' || filter_name=='rows' || filter_name=='sort' || filter_name=='p' || filter_name=='class' || filter_name == 'advanced') {
                 show = false;
             }
             if ($scope.filters[filter_name]=="" && mode == 'normal')  show = false;
@@ -16975,6 +16983,7 @@ app.directive('focusMe', function($timeout, $parse) {
             }
             //$log.debug($scope.filters);
             $scope.filters['p'] = 1;
+            $scope.filters['advanced'] = true;
             $scope.hashChange();
             $('#advanced_search').modal('hide');
         };

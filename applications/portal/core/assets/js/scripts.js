@@ -92,11 +92,6 @@ jQuery(document).ready(function( $ ) {
             });
         });
 
-        if(readCookie('help_shown') != 'true')
-        {
-            $('.help_button').click();
-        }
-
         $('#help_modal').on('hidden.bs.modal', function () {
             if(readCookie('help_shown') != 'true')
             {
@@ -296,6 +291,13 @@ jQuery(document).ready(function( $ ) {
         var redirect = window.location.href;
         location.href = url+'?redirect='+encodeURIComponent(redirect);
     }).on('click', '.help_button', function(event){
+
+        var $loadModal = $('#help_modal')
+        $.get( base_url + "page/help", function( data ) {
+            $loadModal
+                .find('.modal-body').html(data).end()
+        });
+
         var urlStr = window.location.href;
         var useTab = 'overview';
         if(urlStr.indexOf('/search/#!') > 0)
