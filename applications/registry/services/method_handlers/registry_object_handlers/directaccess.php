@@ -113,9 +113,9 @@ class Directaccess extends ROHandler
         //if the record is a service, remove all access_type viaService
         // @todo don't get it to begin with
         if ($this->ro->class == "service") {
-            $download = array_filter($download, function($d) {
+            $download = array_values(array_filter($download, function($d) {
                 return $d['access_type'] != 'viaService';
-            });
+            }));
         }
         
         return $download;
