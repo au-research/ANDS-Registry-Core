@@ -18,6 +18,7 @@ class Directaccess extends ROHandler
         $relationshipTypeArray = ['isPresentedBy', 'supports'];
         $classArray = [];
 
+        // @todo don't get viaService if the record is a service
         $services = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
 
         foreach ($services as &$service) {
@@ -109,6 +110,14 @@ class Directaccess extends ROHandler
             }
         }
 
+        //if the record is a service, remove all access_type viaService
+        // @todo don't get it to begin with
+        if ($this->ro->class == "service") {
+            $download = array_filter($download, function($d) {
+                return $d['access_type'] != 'viaService';
+            });
+        }
+        
         return $download;
     }
 }

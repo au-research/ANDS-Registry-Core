@@ -1,5 +1,7 @@
 USE `dbs_registry`;
 
+ALTER TABLE `tasks` CHANGE COLUMN `params` `params` longtext;
+
 ALTER TABLE registry_objects ADD `group` varchar(512) NOT NULL default 'not available';
 
 UPDATE registry_objects ro
