@@ -41,7 +41,7 @@ class DataCiteClientTest extends PHPUnit_Framework_TestCase
     public function test_mint_a_new_doi()
     {
         $client = $this->getClient();
-        $xml = file_get_contents("./tests/sample.xml");
+        $xml = file_get_contents(__DIR__."/sample.xml");
 
         $response = $client->mint(
             "10.5072/00/56610ec83d432", "https://devl.ands.org.au/minh/", $xml
@@ -94,15 +94,6 @@ class DataCiteClientTest extends PHPUnit_Framework_TestCase
         $client->setDataciteUrl(getenv('DATACITE_URL'));
 
         return $client;
-    }
-
-    /**
-     * Run Once before all other tests
-     * setup the client
-     */
-    protected function setUp()
-    {
-        require_once(__DIR__ . './../../vendor/autoload.php');
     }
 
 }

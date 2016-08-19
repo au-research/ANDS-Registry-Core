@@ -73,9 +73,4 @@ class DataciteClientRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($authenticate);
         $this->assertNull($repo->getAuthenticatedClient());
     }
-
-    public function setUp()
-    {
-        require_once(__DIR__.'/../../vendor/autoload.php');
-    }
 }
