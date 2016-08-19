@@ -29,6 +29,8 @@ class DataCiteClientTest extends PHPUnit_Framework_TestCase
 
         $actual = new DOMDocument;
         $metadata = $client->getMetadata("10.5072/00/56610ec83d432");
+
+
         $actual->loadXML($metadata);
 
         $this->assertFalse($client->hasError());

@@ -7,7 +7,7 @@
             "ANDS\\API\\Log\\Handler\\": "log/handlers/",
             "ANDS\\API\\Log\\Indexer\\": "log/indexers/",
             "ANDS\\API\\Task\\": "task/models",
-            "ANDS\\API\\DOI\\": "doi"
+            "ANDS\\API\\DOI\\": "doi/src"
         }
     },
     "require": {
