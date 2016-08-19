@@ -6,10 +6,15 @@
             "ANDS\\API\\Log\\": "log",
             "ANDS\\API\\Log\\Handler\\": "log/handlers/",
             "ANDS\\API\\Log\\Indexer\\": "log/indexers/",
-            "ANDS\\API\\Task\\": "task/models"
+            "ANDS\\API\\Task\\": "task/models",
+            "ANDS\\API\\DOI\\": "doi"
         }
     },
     "require": {
-        "graphaware/neo4j-php-client": "^3.3"
+        "graphaware/neo4j-php-client": "^3.3",
+        "vlucas/phpdotenv": "^2.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.8.*"
     }
 }
