@@ -101,6 +101,15 @@ class DataCiteClient
         return $this;
     }
 
+    /**
+     * Do an actual request to the specified URL
+     *
+     * @todo don't use curl, use guzzle
+     * @param $url
+     * @param bool $content
+     * @param bool $customRequest
+     * @return mixed
+     */
     private function request($url, $content = false, $customRequest = false)
     {
 
