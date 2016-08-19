@@ -2,13 +2,14 @@
 
 namespace ANDS\API\Repository;
 
+use ANDS\API\Validator\IPValidator;
 use Dotenv\Dotenv;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class DataciteClientRespository
 {
 
-    private $client = null;
+    private $authenticatedClient = null;
 
     public function getFirst()
     {
@@ -36,11 +37,49 @@ class DataciteClientRespository
             return false;
         }
 
-        if ($client->shared_secret === $sharedSecret) {
+        // shared secret matching
+        if ($sharedSecret &&
+            $client->shared_secret === $sharedSecret) {
+            $this->setAuthenticatedClient($client);
+            return true;
+        }
+
+        // ip address matching
+        if ($ipAddress &&
+            IPValidator::validate($ipAddress, $client->ip_address)) {
+            $this->setAuthenticatedClient($client);
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAuthenticatedClient()
+    {
+        return $this->authenticatedClient;
+    }
+
+    /**
+     * Setting the current authenticated client for this object
+     *
+     * @param $client
+     */
+    public function setAuthenticatedClient($client)
+    {
+        $this->authenticatedClient = $client;
+    }
+
+    /**
+     * Returns if a client is authenticated
+     *
+     * @return bool
+     */
+    public function isClientAuthenticated()
+    {
+        return $this->getAuthenticatedClient() === null ? false : true;
     }
 
     /**
@@ -67,6 +106,9 @@ class DataciteClientRespository
             ], 'default'
         );
         $capsule->setAsGlobal();
+        $capsule->getConnection('default');
         $capsule->bootEloquent();
     }
+
+
 }

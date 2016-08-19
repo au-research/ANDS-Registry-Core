@@ -8,7 +8,8 @@
             "ANDS\\API\\Log\\Indexer\\": "log/indexers/",
             "ANDS\\API\\Task\\": "task/models",
             "ANDS\\API\\DOI\\": "doi/src",
-            "ANDS\\API\\Repository\\": "repository/src"
+            "ANDS\\API\\Repository\\": "repository/src",
+            "ANDS\\API\\Validator\\": "validator/src"
         }
     },
     "require": {
