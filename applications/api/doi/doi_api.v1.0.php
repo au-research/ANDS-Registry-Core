@@ -1,10 +1,17 @@
 <?php
 namespace ANDS\API;
 
+use ANDS\DOI\DataCiteClient;
+use ANDS\DOI\DOIServiceProvider;
+use ANDS\DOI\Formatter\XMLFormatter;
+use ANDS\DOI\Repository\ClientRepository;
 use \Exception as Exception;
 
 class Doi_api
 {
+
+    protected $providesOwnResponse = true;
+    public $outputFormat = "xml";
 
     private $client = null;
 
@@ -14,12 +21,16 @@ class Doi_api
         $this->dois_db = $this->ci->load->database('dois', true);
 
 
-
         $this->params = array(
             'submodule' => isset($method[1]) ? $method[1] : 'list',
             'identifier' => isset($method[2]) ? $method[2] : false,
             'object_module' => isset($method[3]) ? $method[3] : false,
         );
+
+        // common DOI API
+        if (strpos($this->params['submodule'], '.') > 0) {
+            return $this->handleDOIRequest();
+        }
 
         //everything under here requires a client, app_id
         $this->getClient();
@@ -34,6 +45,7 @@ class Doi_api
             }
         }
 
+        // extended DOI API
         try {
             if ($this->params['submodule'] == 'list') {
                 return $this->listDois();
@@ -47,6 +59,100 @@ class Doi_api
         }
 
     }
+
+    /**
+     * Handles all DOI related request
+     */
+    private function handleDOIRequest()
+    {
+        $split = explode('.', $this->params['submodule']);
+        $method = $split[0];
+        $format = $split[1];
+
+        if ($format == "xml") {
+            $this->outputFormat = "text/xml";
+            $formater = new XMLFormatter();
+        }
+
+        $appID = $this->ci->input->get('app_id');
+        $sharedSecret = $this->ci->input->get('shared_secret');
+        if(!$appID && isset($_SERVER['PHP_AUTH_USER'])) {
+            $sharedSecret = $_SERVER["PHP_AUTH_PW"];
+            $appID = $_SERVER['PHP_AUTH_USER'];
+        }
+
+        if (!$appID) {
+            return $formater->format([
+                'responsecode' => 'MT010',
+                'verbosemessage' => 'You must provide an app id to mint a doi'
+            ]);
+        }
+
+        $clientRepository = new ClientRepository(
+            $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
+        );
+
+        $client = $clientRepository->getByAppID($appID);
+
+        $dataciteClient = new DataCiteClient(
+            get_config_item("gDOIS_DATACENTRE_NAME_PREFIX").".".get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE")."-".$client->client_id, get_config_item("gDOIS_DATACITE_PASSWORD")
+        );
+        $dataciteClient->setDataciteUrl(get_config_item("gDOIS_SERVICE_BASE_URI"));
+
+        $doiService = new DOIServiceProvider($clientRepository, $dataciteClient);
+
+        $doiService->authenticate(
+            $appID,
+            $sharedSecret,
+            $this->getIPAddress()
+        );
+
+        // @todo check authenticated client
+
+        switch ($method) {
+            case "mint":
+                $doiService->mint(
+                    $this->ci->input->get('url'),
+                    $this->getPostedXML()
+                );
+                // as well as set the HTTP header here
+                return $formater->format($doiService->getResponse());
+                break;
+        }
+    }
+
+    private function getIPAddress()
+    {
+        if ( isset($_SERVER["HTTP_X_FORWARDED_FOR"]) )    {
+            return $_SERVER["HTTP_X_FORWARDED_FOR"];
+        } else if ( isset($_SERVER["HTTP_CLIENT_IP"]) )    {
+            return $_SERVER["HTTP_CLIENT_IP"];
+        } else if ( isset($_SERVER["REMOTE_ADDR"]) )    {
+            return $_SERVER["REMOTE_ADDR"];
+        } else {
+            // Run by command line??
+            return "127.0.0.1";
+        }
+    }
+
+    private function getPostedXML()
+    {
+        $output= '';
+        $data = file_get_contents("php://input");
+        parse_str(htmlentities($data), $output);
+        if (isset($output['xml'])) {
+            return trim($output['xml']);
+        } elseif (count($output) > 1) {
+            //hotfix to return XML that is not empty,
+            //implode($output) returns empty for no reason
+            //todo verify and check
+            return trim($data);
+            //return trim(implode($output));
+        } else {
+            return trim($data);
+        }
+    }
+
 
     private function getAssociateAppID($role_id)
     {

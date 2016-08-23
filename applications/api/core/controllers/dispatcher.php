@@ -164,6 +164,7 @@ class Dispatcher extends MX_Controller
      * Returns the formatter for use with the response
      * @param  string $format json|xml
      * @return formatter
+     * @throws Exception
      */
     public function getFormater($format)
     {
@@ -215,11 +216,9 @@ class Dispatcher extends MX_Controller
     {
         try {
 
-
-                $this->benchmark->mark('code_start');
-
-
+            $this->benchmark->mark('code_start');
             $namespace = 'ANDS\API';
+
             $class_name = $params[0].'_api';
             $file = APP_PATH.$params[0].'/'.$class_name.'.'.$api_version.'.php';
             if (!file_exists($file)) {
@@ -229,7 +228,6 @@ class Dispatcher extends MX_Controller
             $class_name = $namespace.'\\'.$class_name;
             $class = new $class_name();
             $result = $class->handle($params);
-
 
             $this->benchmark->mark('code_end');
             $elapsed = $this->benchmark->elapsed_time('code_start', 'code_end');
@@ -243,7 +241,14 @@ class Dispatcher extends MX_Controller
             );
 
             api_log_terms($terms);
-            $this->formatter->display($result);
+
+            if (property_exists($class, 'providesOwnResponse')) {
+                $this->output->set_content_type($class->outputFormat);
+                echo $result;
+            } else {
+                $this->formatter->display($result);
+            }
+
         } catch (Exception $e) {
             $this->formatter->error($e->getMessage());
             return;
