@@ -15,10 +15,11 @@ class Task
     public $priority;
     public $params;
     public $lastRun;
-    public $message = ['log' => []];
-
+    public $message = ['log' => [], 'error' => []];
+    public $taskData = [];
     private $db;
     private $memoryLimit = '256M';
+    private $dateFormat = 'Y-m-d | h:i:sa';
 
     /**
      * Intialisation of this task
@@ -32,7 +33,16 @@ class Task
         $this->status = isset($task['status']) ? $task['status'] : false;
         $this->priority = isset($task['priority']) ? $task['priority'] : false;
         $this->params = isset($task['params']) ? $task['params'] : false;
-        $this->message = isset($task['message']) ? json_decode($task['message'], true) : ['log' => []];
+
+        if (isset($task['data'])) {
+            $this->taskData = is_array($task['data']) ? $task['data'] : json_decode($task['data'], true);
+        }
+        if (isset($task['message'])) {
+            $this->message = is_array($task['message']) ? $task['message'] : json_decode($task['message'], true);
+        } else {
+            $this->message = ['log' => [], 'error' => []];
+        }
+
         $this->lastRun = isset($task['last_run']) ? $task['last_run'] : false;
 
         $this->dateFormat = 'Y-m-d | h:i:sa';
@@ -68,14 +78,15 @@ class Task
         return $this;
     }
 
-    public function finalize($start){
-        $this->hook_end();
+    public function finalize($start)
+    {
         $end = microtime(true);
         $this->setStatus('COMPLETED')
             ->log("Task finished at " . date($this->dateFormat, $end))
-            ->log("Peak memory usage: ". memory_get_peak_usage(). " bytes")
+            ->log("Peak memory usage: " . memory_get_peak_usage() . " bytes")
             ->log("Took: " . $this->formatPeriod($end, $start))
             ->save();
+        $this->hook_end();
     }
 
     /**
@@ -101,10 +112,38 @@ class Task
         $this
             ->setStatus("STOPPED")
             ->log("Task stopped with error " . $error)
+            ->addError($error)
             ->save();
         return $this;
     }
 
+    public function addError($log)
+    {
+        if (!array_key_exists('error', $this->message)) $this->message['error'] = [];
+        $this->message['error'][] = $log;
+        return $this;
+    }
+
+
+    public function setTaskData($key, $val)
+    {
+        $this->taskData[$key] = $val;
+    }
+
+    public function getTaskData($key)
+    {
+        return array_key_exists($key, $this->taskData) ? $this->taskData[$key] : false;
+    }
+
+
+    public function printTaskData()
+    {
+        $message = "DETAILS:".NL;
+        foreach($this->taskData as $key => $value){
+            $message .= $key.": ".$value.NL;
+        }
+        return $message;
+    }
     /**
      * Helper method
      * Format a time period nicely
@@ -128,12 +167,14 @@ class Task
     public function save()
     {
         $data = [
-            'status' => $this->getStatus(),
-            'priority' => $this->getPriority(),
-            'message' => json_encode($this->getMessage()),
+            'status' => $this->status,
+            'priority' => $this->priority,
+            'message' => json_encode($this->message),
+            'data' => json_encode($this->taskData)
         ];
         if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
-        if ($this->getId()) {
+
+        if ($this->id) {
             return $this->update_db($data);
         } else {
             return true;
@@ -172,6 +213,15 @@ class Task
     {
     }
 
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'message' => $this->getMessage(),
+            'data' => $this->taskData
+        ];
+    }
+
     /**
      * Setters and Getters
      */
@@ -185,6 +235,12 @@ class Task
     public function setDb($db)
     {
         $this->db = $db;
+        return $this;
+    }
+
+    public function getCI()
+    {
+        return $this->ci;
         return $this;
     }
 
@@ -307,26 +363,9 @@ class Task
      */
     public function setMessage($message = false)
     {
-        if (!$message) $message = ['log'=>[]];
+        if (!$message) $message = ['log' => [], 'error' => []];
         $this->message = $message;
         return $this;
     }
 
-    /**
-     * @param mixed $name
-     * @return Task
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
 }
