@@ -104,6 +104,7 @@ class TestImportTask extends UnitTest
             ->run_task();
         $taskArray = $importTask->toArray();
         $this->assertEquals("PUBLISHED", $taskArray["data"]["dataSourceDefaultStatus"]);
+        dd($taskArray);
     }
 
     public function setUp()
