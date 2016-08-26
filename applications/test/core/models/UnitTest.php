@@ -75,7 +75,7 @@ class UnitTest
                         $this->ci->benchmark->mark('end');
                         $this->benchmark[$function] = $this->ci->benchmark->elapsed_time('start', 'end', 5);
                     } catch (\Exception $e) {
-                        $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
+                        $this->ci->unit->run(false, true, $function, $e->getMessage());
                     }
                 }
             }
@@ -327,6 +327,8 @@ class UnitTest
             if ($docBlock['name']) {
                 $this->setName($docBlock['name']);
                 $this->nameMapping[$docBlock['name']] = $methodCalled;
+            } else {
+                $this->setName($methodCalled);
             }
             if ($docBlock['note']) {
                 $this->setNote($docBlock['note']);

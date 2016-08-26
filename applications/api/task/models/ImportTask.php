@@ -7,6 +7,7 @@
 
 namespace ANDS\API\Task;
 
+use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use \Exception as Exception;
 
 /**
@@ -38,48 +39,107 @@ class ImportTask extends Task
             return true;
         }
 
-        $task = $this->constructTaskObject($nextTask);
         try {
-            $this->log("Running task". $nextTask['name']);
-            $task->run_task();
+            $this->log("Running task". $nextTask->name);
+            $nextTask->run();
         } catch (Exception $e) {
-            $task->stoppedWithError($e->getMessage());
+            $nextTask->stoppedWithError($e->getMessage());
             throw new Exception($e->getMessage());
         } catch (NonFatalException $e) {
-            $task->addError($e->getMessage());
+            $nextTask->addError($e->getMessage());
         }
+
+        $this->saveSubTasks();
     }
 
-    public function constructTaskObject($task)
+    /**
+     * Returns a task object
+     *
+     * @param $name
+     * @return mixed
+     * @throws Exception
+     * @internal param $task
+     */
+    public function constructTaskObject($name)
     {
-        $className = 'ANDS\\API\\Task\\ImportSubTask\\' . $task['name'];
+        if (!is_string($name)) return $name;
+        $className = 'ANDS\\API\\Task\\ImportSubTask\\' . $name;
+        if (!class_exists($className)) {
+            throw new Exception("Class ". $className. " not found");
+        }
         try {
             $taskObject = new $className;
             $taskObject->setParentTask($this);
             return $taskObject;
         } catch (Exception $e) {
-            $task->stoppedWithError($e->getMessage());
+            $this->stoppedWithError($e->getMessage());
             throw new Exception($e->getMessage());
         }
     }
 
+    /**
+     * Load the subTasks to be performed by this import task
+     * If there's no existing subtasks or none defined in the task data,
+     * load a set of default sub tasks
+     *
+     * Existing subtasks will have existing subtask details
+     */
     public function loadSubTasks()
     {
-        if ($this->getTaskData('subtasks')) {
-            $this->setSubtasks($this->getTaskData('subtasks'));
-        } else {
-            $this->setSubtasks($this->getDefaultImportSubtasks());
+        $subTasks = $this->getTaskData('subtasks') ?: $this->getDefaultImportSubtasks();
+
+        /**
+         * Load all the subtask as task object
+         * Reason for this is to allow access to task internal data
+         * like message, log and status
+         */
+        foreach ($subTasks as &$task) {
+            $taskData = $task;
+            $task = $this->constructTaskObject($taskData['name']);
+            $task->init($taskData);
         }
+        $this->setSubtasks($subTasks);
     }
 
+    /**
+     * Requires loadTasks to be done first
+     * @param $name
+     * @return ImportSubTask
+     */
+    public function getTaskByName($name)
+    {
+        foreach ($this->getSubtasks() as $task) {
+            if (($task->name) === $name) {
+                return $task;
+            }
+        }
+        return null;
+    }
+
+    public function saveSubTasks()
+    {
+        $this->setSubtasks($this->getSubtasks());
+    }
+
+    /**
+     * Returns the next task to be performed
+     * null if there is no next task
+     * @return mixed
+     */
     public function getNextTask()
     {
         $pendings = array_filter($this->getSubtasks(), function($task) {
-            return $task['status'] == "PENDING";
+            return $task->status == "PENDING";
         });
         return array_first($pendings);
     }
 
+    /**
+     * Returns a default list of task for an Import Task
+     * Can be overwriten if required
+     *
+     * @return array
+     */
     public function getDefaultImportSubtasks()
     {
         $pipeline = [];
@@ -91,6 +151,27 @@ class ImportTask extends Task
             ];
         }
         return $pipeline;
+    }
+
+    /**
+     * @Override
+     * @return array
+     */
+    public function toArray()
+    {
+        return array_merge(
+            parent::toArray(),
+            [ 'subtasks' => $this->subTasksArray() ]
+        );
+    }
+
+    public function subTasksArray()
+    {
+        $result = [];
+        foreach ($this->getSubtasks() as $task) {
+            $result[] = $task->toArray();
+        }
+        return $result;
     }
 
     /**

@@ -217,6 +217,7 @@ class Task
     {
         return [
             'id' => $this->getId(),
+            'status' => $this->getStatus(),
             'message' => $this->getMessage(),
             'data' => $this->taskData
         ];

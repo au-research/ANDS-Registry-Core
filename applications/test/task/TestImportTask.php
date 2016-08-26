@@ -37,8 +37,9 @@ class TestImportTask extends UnitTest
             'params' => 'ds_id=2&batch_id=1234d'
         ]);
         $importTask->loadSubTasks();
+        $defaultSubTasks = $importTask->getDefaultImportSubtasks();
         $this->assertEquals(
-            $importTask->getSubtasks(), $importTask->getDefaultImportSubtasks()
+            count($defaultSubTasks), count($importTask->getSubtasks())
         );
     }
 
@@ -55,12 +56,9 @@ class TestImportTask extends UnitTest
         ];
         $importTask->setTaskData('subtasks', $sampleTaskState);
         $importTask->loadSubTasks();
-        $this->assertEquals(
-            $importTask->getSubtasks(), $sampleTaskState
-        );
 
         $task = $importTask->getNextTask();
-        $this->assertEquals($task['name'], "ValidatePayload");
+        $this->assertEquals($task->name, "ValidatePayload");
     }
 
     /** @test **/
@@ -89,7 +87,7 @@ class TestImportTask extends UnitTest
             ])
             ->loadParams()
             ->loadSubTasks();
-        $task = $importTask->constructTaskObject($importTask->getNextTask());
+        $task = $importTask->constructTaskObject($importTask->getNextTask()->name);
         $this->assertEquals($importTask, $task->getParentTask());
     }
 
@@ -103,18 +101,10 @@ class TestImportTask extends UnitTest
             ->init([
                 'params' => 'ds_id='.$dataSource->id.'&batch_id=1234d'
             ])
-            ->loadParams()
-            ->loadSubTasks();
-
-        $importTask->run_task();
+            ->run_task();
         $taskArray = $importTask->toArray();
-
         $this->assertEquals("PUBLISHED", $taskArray["data"]["dataSourceDefaultStatus"]);
     }
-
-
-
-
 
     public function setUp()
     {
