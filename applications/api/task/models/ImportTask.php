@@ -24,32 +24,44 @@ class ImportTask extends Task
 
     public $dataSourceID;
     public $batchID;
-    private $payload;
+    private $payloads;
     private $subtasks;
+
+    private $runAll = false;
 
     public function run_task()
     {
         $this->log('Import Task started');
         $this->loadParams();
         $this->loadSubtasks();
-        $nextTask = $this->getNextTask();
 
-        if ($nextTask === null) {
-            $this->setStatus("COMPLETED");
-            return true;
-        }
-
-        try {
-            $this->log("Running task". $nextTask->name);
-            $nextTask->run();
-        } catch (Exception $e) {
-            $nextTask->stoppedWithError($e->getMessage());
-            throw new Exception($e->getMessage());
-        } catch (NonFatalException $e) {
-            $nextTask->addError($e->getMessage());
+        if ($this->runAll) {
+            while ($task = $this->getNextTask()) {
+                $this->runSubTask($task);
+            }
+        } else {
+            $nextTask = $this->getNextTask();
+            if ($nextTask === null) {
+                $this->setStatus("COMPLETED");
+                return true;
+            }
+            $this->runSubTask($nextTask);
         }
 
         $this->saveSubTasks();
+    }
+
+    public function runSubTask($subTask)
+    {
+        try {
+            $this->log("Running task". $subTask->name);
+            $subTask->run();
+        } catch (Exception $e) {
+            $subTask->stoppedWithError($e->getMessage());
+            throw new Exception($e->getMessage());
+        } catch (NonFatalException $e) {
+            $subTask->addError($e->getMessage());
+        }
     }
 
     /**
@@ -143,7 +155,7 @@ class ImportTask extends Task
     public function getDefaultImportSubtasks()
     {
         $pipeline = [];
-        $defaultSubtasks = ["PopulateImportOptions", "ValidatePayload"];
+        $defaultSubtasks = ["PopulateImportOptions", "ValidatePayload", "ProcessPayload", "Ingest"];
         foreach ($defaultSubtasks as $subtaskName) {
             $pipeline[] = [
                 'name' => $subtaskName,
@@ -175,21 +187,28 @@ class ImportTask extends Task
     }
 
     /**
-     * @param $payload
+     * @param $key
+     * @param $value
      * @return mixed
      */
-    public function setPayload($payload)
+    public function setPayload($key, $value)
     {
-        $this->payload = $payload;
-        return $payload;
+        $this->payloads[$key] = $value;
+        return $this;
     }
 
     /**
+     * @param bool $key
      * @return mixed
      */
-    public function getPayload()
+    public function getPayload($key = false)
     {
-        return $this->payload;
+        return array_key_exists($key, $this->payloads) ? $this->payloads[$key] : null;
+    }
+
+    public function getPayloads()
+    {
+        return $this->payloads;
     }
 
     /**
@@ -218,6 +237,12 @@ class ImportTask extends Task
     public function setSubtasks($subtasks)
     {
         $this->subtasks = $subtasks;
+        return $this;
+    }
+
+    public function enableRunAllSubTask()
+    {
+        $this->runAll = true;
         return $this;
     }
 }

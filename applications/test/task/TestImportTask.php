@@ -26,8 +26,8 @@ class TestImportTask extends UnitTest
         $importTask->init([
             'params' => 'ds_id=2&batch_id=1234d'
         ]);
-        $importTask->setPayload("asdf");
-        $this->assertEquals("asdf", $importTask->getPayload());
+        $importTask->setPayload("key", "xmlcontent");
+        $this->assertEquals("xmlcontent", $importTask->getPayload("key"));
     }
 
     /** @test **/
@@ -65,7 +65,7 @@ class TestImportTask extends UnitTest
     public function test_it_should_get_next_subtask_reliably() {
         $importTask = new ImportTask();
         $importTask->init([
-            'params' => 'ds_id=2&batch_id=1234d'
+            'params' => 'ds_id=2&batch_id=593EB384AFFE59EAEB2CADE99E39454361C1C0AC'
         ]);
         $sampleTaskState = [
             [ "name" => "PopulateImportOptions", "status" => "COMPLETED" ],
@@ -83,7 +83,7 @@ class TestImportTask extends UnitTest
         $importTask = new ImportTask();
         $importTask
             ->init([
-                'params' => 'ds_id=2&batch_id=1234d'
+                'params' => 'ds_id=2&batch_id=593EB384AFFE59EAEB2CADE99E39454361C1C0AC'
             ])
             ->loadParams()
             ->loadSubTasks();
@@ -104,7 +104,23 @@ class TestImportTask extends UnitTest
             ->run_task();
         $taskArray = $importTask->toArray();
         $this->assertEquals("PUBLISHED", $taskArray["data"]["dataSourceDefaultStatus"]);
-        dd($taskArray);
+    }
+
+    /** @test **/
+    public function test_it_should_run_all_tasks_when_specified() {
+        $dataSource = $this->ci->ds->getByKey("AUTestingRecords");
+        $importTask = new ImportTask();
+        $importTask
+            ->setCI($this->ci)
+            ->init([
+                'params' => 'ds_id='.$dataSource->id.'&batch_id=1234d'
+            ])
+            ->enableRunAllSubTask()
+            ->run_task();
+        $taskArray = $importTask->toArray();
+        foreach ($taskArray['subtasks'] as $subtask) {
+            $this->assertEquals("COMPLETED", $subtask['status']);
+        }
     }
 
     public function setUp()

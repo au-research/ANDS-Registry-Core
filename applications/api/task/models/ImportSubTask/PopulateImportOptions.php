@@ -12,6 +12,7 @@ class PopulateImportOptions extends ImportSubTask
         $this->log('Sub Task ran');
         $ci->load->model('registry/data_source/data_sources', 'ds');
         $dataSource = $ci->ds->getByID($this->parent()->dataSourceID);
+
         if (!$dataSource) {
             $this->stoppedWithError("Data Source ".$this->dataSourceID." Not Found");
         }
@@ -21,9 +22,21 @@ class PopulateImportOptions extends ImportSubTask
             $this->getDefaultRecordStatusForDataSource($dataSource)
         );
 
+        /**
+         * @todo importDefaultStatus
+         * @todo datasourceRecordCountBefore
+         */
+
         return $this;
     }
 
+    /**
+     * Business Rule
+     * Return the default status for the given data source
+     *
+     * @param $dataSource
+     * @return string
+     */
     private function getDefaultRecordStatusForDataSource($dataSource)
     {
         if ($dataSource->qa_flag === DB_TRUE) {
