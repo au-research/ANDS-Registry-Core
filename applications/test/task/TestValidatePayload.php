@@ -6,6 +6,7 @@ namespace ANDS\Test;
 use ANDS\API\Task\ImportSubTask\PopulateImportOptions;
 use ANDS\API\Task\ImportSubTask\ValidatePayload;
 use ANDS\API\Task\ImportTask;
+use ANDS\Util\XMLUtil;
 
 class TestValidatePayload extends UnitTest
 {
@@ -46,11 +47,11 @@ class TestValidatePayload extends UnitTest
 
         $task->loadPayload();
         $xml = array_first($task->parent()->getPayloads());
-        $this->assertEquals(15, $task->countElement($xml, 'registryObject'));
+        $this->assertEquals(15, XMLUtil::countElementsByName($xml, 'registryObject'));
 
         $task->run();
         $xml = array_first($task->parent()->getPayloads());
-        $this->assertEquals(13, $task->countElement($xml, 'registryObject'));
+        $this->assertEquals(13, XMLUtil::countElementsByName($xml, 'registryObject'));
     }
 
     private function getImportTask()

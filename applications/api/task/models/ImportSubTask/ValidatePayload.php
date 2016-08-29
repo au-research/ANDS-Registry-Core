@@ -3,6 +3,7 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 include_once("applications/registry/registry_object/models/_transforms.php");
+use ANDS\Util\XMLUtil;
 use \Transforms as Transforms;
 use \DOMDocument as DOMDocument;
 use \Exception as Exception;
@@ -14,7 +15,7 @@ class ValidatePayload extends ImportSubTask
         $this->loadPayload();
 
         if (count($this->parent()->getPayloads()) === 0) {
-            $this->stoppedWithError("No payload found");
+            $this->addError("No payload found");
             return;
         }
 
@@ -23,8 +24,8 @@ class ValidatePayload extends ImportSubTask
 
             // validate RIFCS schema
             try {
-                $xml = $this->escapeXML($xml);
-                $xml = $this->cleanNameSpace($xml);
+                $xml = XMLUtil::escapeXML($xml);
+                $xml = XMLUtil::cleanNameSpace($xml);
                 $xml = $this->validatePayloadSchema($xml);
             } catch (Exception $e) {
                 $this->addError("Validation error found: ". $e->getMessage());
@@ -33,7 +34,7 @@ class ValidatePayload extends ImportSubTask
 
             // xml is processed individually and there's none that pass validation
             if ($xml === false) {
-                $this->stoppedWithError("XML does not pass validation");
+                $this->addError("XML does not pass validation");
                 return;
             }
 
@@ -95,10 +96,7 @@ class ValidatePayload extends ImportSubTask
      */
     public function validatePayloadSchema($xml)
     {
-        // @todo once validateRIFCS can be done by an XMLValidator, change this
         $result = $this->validateRIFCS($xml);
-
-        // @todo if not validated, try to form new xml by removing the invalidated one and log them
         return $xml;
     }
 
@@ -112,7 +110,7 @@ class ValidatePayload extends ImportSubTask
     public function attemptIndividualValidation($xml)
     {
         $validated = [];
-        $sxml = $this->getSimpleXMLFromString($xml);
+        $sxml = XMLUtil::getSimpleXMLFromString($xml);
         $sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
 
         $attempt = 0;
@@ -120,7 +118,7 @@ class ValidatePayload extends ImportSubTask
             try {
                 $attempt++;
                 $this->validateRIFCS(
-                    $this->wrapRegistryObject(
+                    XMLUtil::wrapRegistryObject(
                         $registryObject->asXML()
                     )
                 );
@@ -133,46 +131,10 @@ class ValidatePayload extends ImportSubTask
 
         if (sizeof($validated) > 0) {
             //put them together as xml
-            return $this->wrapRegistryObject(implode("", $validated));
+            return XMLUtil::wrapRegistryObject(implode("", $validated));
         }
 
         return false;
-    }
-
-    /**
-     * cleaning the namespace off an xml
-     *
-     * @param $xml
-     * @return string
-     * @throws Exception
-     */
-    public function cleanNameSpace($xml)
-    {
-        try {
-            $xslt_processor = Transforms::get_clean_ns_transformer();
-            $dom = new DOMDocument();
-            $dom->loadXML($xml);
-            return $xslt_processor->transformToXML($dom);
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-    }
-
-    /**
-     * Escape Ampercent before validation
-     *
-     * @param $xml
-     * @return mixed|string
-     */
-    public function escapeXML($xml)
-    {
-        $xml = mb_convert_encoding($xml, "UTF-8");
-        // unescape (some entities are double escaped) first
-        while (strpos($xml, '&amp;') !== false) {
-            $xml = str_replace("&amp;", "&", $xml);
-        }
-        $xml = str_replace("&", "&amp;", $xml);
-        return $xml;
     }
 
     /**
@@ -207,55 +169,4 @@ class ValidatePayload extends ImportSubTask
         }
     }
 
-    public function countElement($xml, $element, $namespace = RIFCS_NAMESPACE)
-    {
-        $sxml = $this->getSimpleXMLFromString($xml);
-        $sxml->registerXPathNamespace("ro", $namespace);
-        return count($sxml->xpath('//ro:'.$element));
-    }
-
-    /**
-     * @todo move to XMLValidator
-     * @param $xml
-     * @return \SimpleXMLElement
-     * @throws Exception
-     */
-    public function getSimpleXMLFromString($xml)
-    {
-        libxml_use_internal_errors(true);
-
-        if (!defined('LIBXML_PARSEHUGE')) {
-            $xml = simplexml_load_string($xml, 'SimpleXMLElement');
-        } else {
-            $xml = simplexml_load_string($xml, 'SimpleXMLElement',
-                LIBXML_PARSEHUGE);
-        }
-
-        if ($xml === false) {
-            $exception_message = "Could not parse Registry Object XML" . NL;
-            foreach (libxml_get_errors() as $error) {
-                $exception_message .= "    " . $error->message;
-            }
-            libxml_use_internal_errors(false);
-            throw new Exception($exception_message);
-        }
-        return $xml;
-    }
-
-    /**
-     * @todo move to XMLValidator
-     * @todo make constants
-     * @param $xml
-     * @return string
-     */
-    private function wrapRegistryObject($xml)
-    {
-        $return = $xml;
-        if (strpos($xml, '<registryObjects') === false) {
-            $return = '<?xml version="1.0" encoding="UTF-8"?>' . NL . '<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">' . NL;
-            $return .= $xml;
-            $return .= '</registryObjects>';
-        }
-        return $return;
-    }
 }

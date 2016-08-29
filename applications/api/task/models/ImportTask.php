@@ -8,7 +8,11 @@
 namespace ANDS\API\Task;
 
 use ANDS\API\Task\ImportSubTask\ImportSubTask;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use \Exception as Exception;
+
+use \Illuminate\Container\Container as Container;
+use \Illuminate\Support\Facades\Facade as Facade;
 
 /**
  * Class ImportTask
@@ -24,7 +28,7 @@ class ImportTask extends Task
 
     public $dataSourceID;
     public $batchID;
-    private $payloads;
+    private $payloads = [];
     private $subtasks;
 
     private $runAll = false;
@@ -32,6 +36,7 @@ class ImportTask extends Task
     public function run_task()
     {
         $this->log('Import Task started');
+        $this->bootEloquentModels();
         $this->loadParams();
         $this->loadSubtasks();
 
@@ -165,6 +170,32 @@ class ImportTask extends Task
         return $pipeline;
     }
 
+    public function initialiseTask()
+    {
+        $this->bootEloquentModels()->loadParams()->loadSubTasks();
+    }
+
+    public function bootEloquentModels()
+    {
+        $capsule = new Capsule;
+        $capsule->addConnection(
+            [
+                'driver' => 'mysql',
+                'host' => $this->getCI()->db->hostname,
+                'database' => $this->getCI()->db->database,
+                'username' => $this->getCI()->db->username,
+                'password' => $this->getCI()->db->password,
+                'charset' => 'utf8',
+                'collation' => 'utf8_unicode_ci',
+                'prefix' => '',
+            ], 'default'
+        );
+        $capsule->setAsGlobal();
+        $capsule->getConnection('default');
+        $capsule->bootEloquent();
+        return $this;
+    }
+
     /**
      * @Override
      * @return array
@@ -206,9 +237,20 @@ class ImportTask extends Task
         return array_key_exists($key, $this->payloads) ? $this->payloads[$key] : null;
     }
 
+    public function getFirstPayload()
+    {
+        return array_first($this->payloads);
+    }
+
     public function getPayloads()
     {
         return $this->payloads;
+    }
+
+    public function deletePayload($key)
+    {
+        unset($this->payloads[$key]);
+        return $this;
     }
 
     /**

@@ -58,7 +58,6 @@ class Dispatcher extends MX_Controller
             $testSuites = $testableModules;
         }
 
-
         // create the test result path if not exists, prime for writing
         if (!file_exists($this->testResultPath)) {
             mkdir($this->testResultPath, 0744, true);
