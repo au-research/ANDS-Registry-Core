@@ -125,7 +125,7 @@ foreach ($vocab['versions'] as $version) {
             </div>
         </div>
 
-        @if(isset($vocab['top_concept']))
+        @if(isset($vocab['top_concept']) && count($vocab['top_concept']) > 0)
         <div class="panel swatch-white" id="concept">
             <div class="panel-heading">Top Concepts</div>
             <div class="panel-body">
