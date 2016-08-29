@@ -58,9 +58,28 @@ class ProcessPayload extends ImportSubTask
      */
     public function checkHarvestability($registryObject)
     {
-        $key = ((string) $registryObject->key);
+        // @todo validate key attributes
+        // key
+        // group
+        // originatingSource
 
-        // find the current record data belongs to the record with the same status as the dataSourceDefaultStatus
+        $key = ((string) $registryObject->key);
+        if ($key == '') {
+            $this->log("Error whilst ingesting record, 'key' must have a value");
+            return false;
+        }
+
+        if ((string)$registryObject->originatingSource == '') {
+            $this->log("Error whilst ingesting record with key " . $key . ": " . "Registry Object 'originatingSource' must have a value");
+            return false;
+        }
+
+        if ((string)$registryObject['group'] == '') {
+            $this->log("Error whilst ingesting record with key " . $key . ": " .  "Registry Object '@group' must have a value");
+            return false;
+        }
+
+            // find the current record data belongs to the record with the same status as the dataSourceDefaultStatus
         $dataSourceDefaultStatus = $this->parent()
             ->getTaskData("dataSourceDefaultStatus");
         $matchingStatusRecords = RegistryObject::where('key', $key)

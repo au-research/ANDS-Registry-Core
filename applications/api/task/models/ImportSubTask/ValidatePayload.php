@@ -37,12 +37,6 @@ class ValidatePayload extends ImportSubTask
                 $this->addError("XML does not pass validation");
                 return;
             }
-
-            // @todo validate key attributes
-            // key
-            // group
-            // originatingSource
-
             // update parent payload to the already validated one
             $this->parent()->setPayload($path, $xml);
 
