@@ -81,7 +81,12 @@ class Task
     public function finalize($start)
     {
         $end = microtime(true);
-        $this->setStatus('COMPLETED')
+        if ($this->getStatus() !== "STOPPED") {
+            $this->setStatus('COMPLETED');
+        } else {
+            $this->log("Task completed with error");
+        }
+        $this
             ->log("Task finished at " . date($this->dateFormat, $end))
             ->log("Peak memory usage: " . memory_get_peak_usage() . " bytes")
             ->log("Took: " . $this->formatPeriod($end, $start))
@@ -217,6 +222,7 @@ class Task
     {
         return [
             'id' => $this->getId(),
+            'name' => $this->name,
             'status' => $this->getStatus(),
             'message' => $this->getMessage(),
             'data' => $this->taskData

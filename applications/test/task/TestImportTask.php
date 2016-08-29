@@ -101,7 +101,7 @@ class TestImportTask extends UnitTest
             ->init([
                 'params' => 'ds_id='.$dataSource->id.'&batch_id=1234d'
             ])
-            ->run_task();
+            ->run();
         $taskArray = $importTask->toArray();
         $this->assertEquals("PUBLISHED", $taskArray["data"]["dataSourceDefaultStatus"]);
     }

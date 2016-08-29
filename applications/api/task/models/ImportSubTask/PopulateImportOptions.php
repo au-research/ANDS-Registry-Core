@@ -9,12 +9,12 @@ class PopulateImportOptions extends ImportSubTask
     {
         $ci = $this->parent()->getCI();
 
-        $this->log('Sub Task ran');
         $ci->load->model('registry/data_source/data_sources', 'ds');
         $dataSource = $ci->ds->getByID($this->parent()->dataSourceID);
 
         if (!$dataSource) {
             $this->stoppedWithError("Data Source ".$this->dataSourceID." Not Found");
+            return;
         }
 
         $this->parent()->setTaskData(
@@ -23,6 +23,7 @@ class PopulateImportOptions extends ImportSubTask
         );
 
         /**
+         * @todo datasourceHarvestMode
          * @todo importDefaultStatus
          * @todo datasourceRecordCountBefore
          */

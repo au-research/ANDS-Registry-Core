@@ -245,4 +245,14 @@ class ImportTask extends Task
         $this->runAll = true;
         return $this;
     }
+
+    /**
+     * @param mixed $batchID
+     * @return ImportTask
+     */
+    public function setBatchID($batchID)
+    {
+        $this->batchID = $batchID;
+        return $this;
+    }
 }
