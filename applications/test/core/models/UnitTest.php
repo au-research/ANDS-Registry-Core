@@ -60,13 +60,16 @@ class UnitTest
      *
      * @return mixed
      */
-    public function runTests()
+    public function runTests($specificTestFunction = false)
     {
         try {
             $this->setUp();
             $this->ci->load->library('unit_test');
             $this->ci->unit->init();
             $testableFunctions = get_class_methods($this);
+            if ($specificTestFunction && method_exists($this, $specificTestFunction)) {
+                $testableFunctions = [$specificTestFunction];
+            }
             foreach ($testableFunctions as $function) {
                 if (startsWith($function, 'test')) {
                     try {
