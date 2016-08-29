@@ -18,10 +18,14 @@ class ProcessPayload extends ImportSubTask
             $processed = [];
             $registryObjects = XMLUtil::getElementsByName($xml, 'registryObject');
             foreach ($registryObjects as $registryObject) {
-                $key = (string) $registryObject->key;
-                if (!in_array($key, $keys)) {
+                $key = trim((string) $registryObject->key);
+                if ($key == '') {
+                    $this->log("Error whilst ingesting record, 'key' must have a value");
+                } elseif (!in_array($key, $keys)) {
                     $processed[] = $registryObject->saveXML();
                     $keys[] = $key;
+                } else {
+                    $this->log("Ignored a record already exists in import list: " . $key);
                 }
             }
             $payload = implode("", $processed);
@@ -58,16 +62,11 @@ class ProcessPayload extends ImportSubTask
      */
     public function checkHarvestability($registryObject)
     {
-        // @todo validate key attributes
-        // key
+        // validate key attributes
         // group
         // originatingSource
 
-        $key = ((string) $registryObject->key);
-        if ($key == '') {
-            $this->log("Error whilst ingesting record, 'key' must have a value");
-            return false;
-        }
+        $key = trim((string) $registryObject->key);
 
         if ((string)$registryObject->originatingSource == '') {
             $this->log("Error whilst ingesting record with key " . $key . ": " . "Registry Object 'originatingSource' must have a value");
