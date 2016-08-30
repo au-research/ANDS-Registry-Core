@@ -721,6 +721,8 @@ class _vocabulary
 
             if ($result && $this->prop['id']) {
                 $new_vocab = new _vocabulary($this->prop['id']);
+                // Copy over the import log so the UI can use it!
+                $new_vocab->import_log = $this->import_log;
                 return $new_vocab;
             } else {
                 return $db->_error_message();
