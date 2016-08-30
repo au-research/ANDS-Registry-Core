@@ -947,6 +947,21 @@ class _vocabulary
                         $this->log('Version with ID: ' . $version_id . ' not found');
                     }
                 }
+
+                // CC-1778 CC-1787
+                // Provide an alert if there will not be a browse tree.
+                if (isset($content['concepts_tree_not_provided'])) {
+                    $this->log('Alert: Either a polyhierarchy or cycle ' .
+                               'was detected in the vocabulary data.<br />' .
+                               'The concept browse tree will not be ' .
+                               'visible for this vocabulary.<br />' .
+                               'For more information, please see ' .
+                               '<a target="_blank" ' .
+                               ' href="https://intranet.ands.org.au/pages/' .
+                               'viewpage.action?pageId=50823217">' .
+                               'Portal concept browsing</a>.');
+                }
+
             }
 
         }

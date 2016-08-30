@@ -379,6 +379,86 @@
         };
 
         /**
+         * Get any alert text to be displayed, after save/publish.
+         * Alert text is found by going through data.message.import_log,
+         * looking for values that begin with the string 'Alert: '.
+         * All such values are concatenated, separated by 'br' tags.
+         * @param data Data returned from the save/publish service.
+         * @return The alert message to be displayed.
+         */
+        $scope.get_alert_text_after_save = function (data) {
+            var alert_message = '';
+            if ((typeof data == 'object')
+                && (typeof data.message == 'object')
+                && (typeof data.message.import_log == 'object')
+                && (data.message.import_log.length > 0)) {
+                alert_message = data.message.import_log.reduce(
+                    function (previousValue, currentValue,
+                              currentIndex, array) {
+                        if (currentValue.startsWith('Alert: ')) {
+                            if (previousValue != '') {
+                                previousValue += '<br />';
+                            }
+                            return previousValue + currentValue;
+                        }
+                        return previousValue;
+                    }, '');
+            }
+            return alert_message;
+        };
+
+        /**
+         * Show any alert, after save/publish. When the alert
+         * is hidden (by the user closing it), invoke the
+         * hide_callback function.
+         * If no alert is to be shown, invoke the hide_callback
+         * function immediately.
+         * @param data Data returned from save/publish service.
+         * @param hide_callback Callback function to be invoked
+         *     when the alert is hidden.
+         */
+        $scope.show_alert_after_save = function (data, hide_callback) {
+            var alert_message = $scope.get_alert_text_after_save(data);
+            if (alert_message != '') {
+                $('body').qtip({
+                    content: {
+                        text: alert_message,
+                        title: 'Alert',
+                        button: 'Close'
+                    },
+                    style: {
+                        classes: 'qtip-bootstrap cms-help-tip'
+                    },
+                    position: {
+                        my: 'center',
+                        at: 'center',
+                        target: $(window)
+                    },
+                    show: {
+                        modal: true,
+                        when : false
+                    },
+                    hide: {
+                        // Overrides the default of 'mouseleave'.
+                        // Otherwise, clicking a link in the
+                        // alert text that has target="_blank"
+                        // opens a new tab/window, but also
+                        // closes the modal. With this setting,
+                        // the user can go back to the original
+                        // tab/window and still see the modal.
+                        event: ''
+                    },
+                    events: {
+                        hide: hide_callback
+                    }
+                });
+                $('body').qtip('show');
+            } else {
+                hide_callback();
+            }
+        };
+
+        /**
          * Saving a vocabulary
          * Based on the mode, add and edit will call different service point
          * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -425,13 +505,23 @@
                     } else {//success
                         //navigate to the edit form if on the add form
                         if (status == 'published') {
-                            window.location.replace(base_url + data.message.prop.slug);
+                            $scope.show_alert_after_save(data,
+                                function() {
+                                    window.location.replace(base_url +
+                                        data.message.prop.slug);
+                                });
                         }
                         else{
                         // $log.debug(data.message.prop[0].slug);
                             $scope.success_message = data.message.import_log;
                             $scope.success_message.push('Successfully saved to a Draft. <a href="' + base_url + "vocabs/edit/" + data.message.prop.id + '">Click Here edit the draft</a>');
-                            window.location.replace(base_url + "vocabs/edit/" + data.message.prop.id+'/#!/?message=saved_draft');
+                            $scope.show_alert_after_save(data,
+                                function() {
+                                    window.location.replace(base_url +
+                                        "vocabs/edit/" +
+                                        data.message.prop.id +
+                                        '/#!/?message=saved_draft');
+                                });
                         }
                     }
                 });
@@ -459,10 +549,16 @@
                                 $scope.vocab = data.message;
                             });
                         } else if(status == 'deprecated'){
-                            window.location.replace(base_url + 'vocabs/myvocabs');
+                            $scope.show_alert_after_save(data, function() {
+                                window.location.replace(base_url +
+                                                        'vocabs/myvocabs');
+                            });
                         }
                         else{
-                            window.location.replace(base_url + $scope.vocab.slug);
+                            $scope.show_alert_after_save(data, function() {
+                                window.location.replace(base_url +
+                                                        $scope.vocab.slug);
+                            });
                         }
                     }
                 });
