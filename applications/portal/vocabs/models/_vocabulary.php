@@ -957,8 +957,9 @@ class _vocabulary
                                'visible for this vocabulary.<br />' .
                                'For more information, please see ' .
                                '<a target="_blank" ' .
-                               ' href="https://intranet.ands.org.au/pages/' .
-                               'viewpage.action?pageId=50823217">' .
+                               ' href="https://documentation.ands.org.au/' .
+                               'display/DOC/Support+for+concept+browsing+' .
+                               'within+the+portal">' .
                                'Portal concept browsing</a>.');
                 }
 
