@@ -3,14 +3,13 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 
+use ANDS\DataSource;
+
 class PopulateImportOptions extends ImportSubTask
 {
     public function run_task()
     {
-        $ci = $this->parent()->getCI();
-
-        $ci->load->model('registry/data_source/data_sources', 'ds');
-        $dataSource = $ci->ds->getByID($this->parent()->dataSourceID);
+        $dataSource = DataSource::find($this->parent()->dataSourceID);
 
         if (!$dataSource) {
             $this->stoppedWithError("Data Source ".$this->dataSourceID." Not Found");
@@ -40,10 +39,10 @@ class PopulateImportOptions extends ImportSubTask
      */
     private function getDefaultRecordStatusForDataSource($dataSource)
     {
-        if ($dataSource->qa_flag === DB_TRUE) {
+        if ($dataSource->attr('qa_flag') === DB_TRUE) {
             return 'SUBMITTED_FOR_ASSESSMENT';
         } else {
-            if ($dataSource->manual_publish === DB_TRUE) {
+            if ($dataSource->attr('manual_publish') === DB_TRUE) {
                 return 'APPROVED';
             } else {
                 return 'PUBLISHED';

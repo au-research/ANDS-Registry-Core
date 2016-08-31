@@ -175,16 +175,23 @@ class ImportTask extends Task
         $this->bootEloquentModels()->loadParams()->loadSubTasks();
     }
 
+    /**
+     * Boot all eloquent model
+     * Set the default connection to match the default CI connection
+     * TODO: (soon) remove reference of CI here because it is not needed
+     * @return $this
+     */
     public function bootEloquentModels()
     {
+        $ci =& get_instance();
         $capsule = new Capsule;
         $capsule->addConnection(
             [
                 'driver' => 'mysql',
-                'host' => $this->getCI()->db->hostname,
-                'database' => $this->getCI()->db->database,
-                'username' => $this->getCI()->db->username,
-                'password' => $this->getCI()->db->password,
+                'host' => $ci->db->hostname,
+                'database' => $ci->db->database,
+                'username' => $ci->db->username,
+                'password' => $ci->db->password,
                 'charset' => 'utf8',
                 'collation' => 'utf8_unicode_ci',
                 'prefix' => '',
