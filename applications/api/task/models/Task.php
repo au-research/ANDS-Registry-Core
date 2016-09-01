@@ -135,6 +135,15 @@ class Task
         $this->taskData[$key] = $val;
     }
 
+    public function addTaskData($key, $val)
+    {
+        if (array_key_exists($key, $this->taskData)) {
+            $this->taskData[$key][] = $val;
+        } else {
+            $this->taskData[$key] = [$val];
+        }
+    }
+
     public function getTaskData($key)
     {
         return array_key_exists($key, $this->taskData) ? $this->taskData[$key] : false;

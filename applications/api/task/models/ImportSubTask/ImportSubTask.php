@@ -37,6 +37,13 @@ class ImportSubTask extends Task
     {
         return $this->getParentTask();
     }
+
+    public function log($log)
+    {
+        $this->message['log'][] = $log;
+        $this->parent()->log(get_class($this) . ": " . $log);
+        return $this;
+    }
 }
 
 //@todo move to ANDS\API\Task\Exception?

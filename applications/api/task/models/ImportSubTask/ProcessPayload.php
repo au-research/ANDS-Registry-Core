@@ -12,6 +12,7 @@ class ProcessPayload extends ImportSubTask
 
     public function run_task()
     {
+
         // remove duplicates
         $keys = [];
         foreach ($this->parent()->getPayloads() as $path=>$xml) {
@@ -42,7 +43,7 @@ class ProcessPayload extends ImportSubTask
             $processed = [];
             $registryObjects = XMLUtil::getElementsByName($xml, 'registryObject');
             foreach ($registryObjects as $registryObject) {
-                if ($this->checkHarvestability($registryObject)){
+                if ($this->checkHarvestability($registryObject) === true){
                     $processed[] = $registryObject->saveXML();
                 }
             }
@@ -78,25 +79,42 @@ class ProcessPayload extends ImportSubTask
             return false;
         }
 
+
+
             // find the current record data belongs to the record with the same status as the dataSourceDefaultStatus
         $dataSourceDefaultStatus = $this->parent()
             ->getTaskData("dataSourceDefaultStatus");
-        $matchingStatusRecords = RegistryObject::where('key', $key)
-            ->where('status', $dataSourceDefaultStatus)->take(1)->get()->first();
+        $matchingStatusRecord = RegistryObject::where('key', $key)
+            ->where('status', $dataSourceDefaultStatus)->first();
 
-        if ($matchingStatusRecords !== null) {
-            $currentRecordData = $matchingStatusRecords->data->filter(function($value){
-                return $value->current == "TRUE";
-            })->first();
+        if ($matchingStatusRecord !== null) {
+            $currentRecordData = $matchingStatusRecord->getCurrentData();
+
+            if ($currentRecordData === null) {
+                $this->log("Record key:($matchingStatusRecord->key) does not have current record data");
+                return true;
+            }
 
             $hash = $currentRecordData->hash;
-            $newHash = md5(XMLUtil::wrapRegistryObject($registryObject->saveXML()));
+            $newHash = md5($registryObject->saveXML());
 
-            if ($hash === $newHash) {
-                // @todo I can say something here for logging, already exists latest version
+            // check matching data source
+            if ($matchingStatusRecord->data_source_id != $this->parent()->dataSourceID) {
+                $this->log("Record key:($matchingStatusRecord->key) exists in a different data source");
                 return false;
             }
+
+            if ((string) $hash === (string) $newHash) {
+                $this->log("Record key:($matchingStatusRecord->key) already has a record data matching payload.");
+                // @todo I can say something here for logging, already exists latest version
+                return false;
+            } else {
+                $this->log("New record data found for $matchingStatusRecord->key, ($hash and $newHash)");
+            }
+
         }
+
+
 
         return true;
 
