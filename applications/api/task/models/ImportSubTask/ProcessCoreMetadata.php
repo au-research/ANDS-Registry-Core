@@ -43,7 +43,12 @@ class ProcessCoreMetadata extends ImportSubTask
             // titles and slug require the ro object
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->updateTitles();
+
+            // TODO only update slug if the defaultStatus is PUBLISHED
             $ro->generateSlug();
+
+            // TODO manually_assessed
+
             unset($ro);
         }
     }

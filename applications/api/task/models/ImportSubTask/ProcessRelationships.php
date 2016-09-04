@@ -11,7 +11,9 @@ class ProcessRelationships extends ImportSubTask
         foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->addRelationships();
-            $ro->cacheRelationshipMetadata();
+            // $ro->cacheRelationshipMetadata();
+
+            // TODO: populate affectedRecords
         }
     }
 }

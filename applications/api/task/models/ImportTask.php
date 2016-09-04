@@ -26,12 +26,13 @@ use \Illuminate\Support\Facades\Facade as Facade;
 class ImportTask extends Task
 {
 
+    use ManagePayload;
+
     public $dataSourceID;
     public $batchID;
-    private $payloads = [];
-    private $subtasks;
-
     private $runAll = false;
+
+    private $subtasks;
 
     public function run_task()
     {
@@ -224,41 +225,7 @@ class ImportTask extends Task
         return $result;
     }
 
-    /**
-     * @param $key
-     * @param $value
-     * @return mixed
-     */
-    public function setPayload($key, $value)
-    {
-        $this->payloads[$key] = $value;
-        return $this;
-    }
 
-    /**
-     * @param bool $key
-     * @return mixed
-     */
-    public function getPayload($key = false)
-    {
-        return array_key_exists($key, $this->payloads) ? $this->payloads[$key] : null;
-    }
-
-    public function getFirstPayload()
-    {
-        return array_first($this->payloads);
-    }
-
-    public function getPayloads()
-    {
-        return $this->payloads;
-    }
-
-    public function deletePayload($key)
-    {
-        unset($this->payloads[$key]);
-        return $this;
-    }
 
     /**
      *
