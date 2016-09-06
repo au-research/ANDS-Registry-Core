@@ -73,6 +73,9 @@ class XMLUtil
             libxml_use_internal_errors(false);
             throw new Exception($exception_message);
         }
+
+        $xml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
+
         return $xml;
     }
 

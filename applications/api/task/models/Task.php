@@ -116,6 +116,16 @@ class Task
         return array_key_exists('error', $this->message) ? $this->message['error'] : null;
     }
 
+    public function hasError()
+    {
+        $error = $this->getError();
+        if ($error != null && count($error) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Stop a task when an error is encountered
      * Log the error and save

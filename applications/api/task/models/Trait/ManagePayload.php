@@ -64,7 +64,7 @@ trait ManagePayload
 
     /**
      * Does this task has a payload
-     *
+     * TODO: check for actual registryObject inside the payload
      * @return bool
      */
     public function hasPayload()

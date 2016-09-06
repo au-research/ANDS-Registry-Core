@@ -4,6 +4,7 @@
 namespace ANDS;
 
 
+use ANDS\RegistryObject\Metadata;
 use Illuminate\Database\Eloquent\Model;
 
 class RegistryObject extends Model
@@ -37,6 +38,24 @@ class RegistryObject extends Model
                 'value' => $value
             ]);
         }
+    }
+
+    public function getRegistryObjectAttribute($key)
+    {
+        return RegistryObjectAttribute::where('registry_object_id', $this->registry_object_id)
+            ->where('attribute', $key)->first();
+    }
+
+    public function getRegistryObjectAttributeValue($key)
+    {
+        $attribute = $this->getRegistryObjectAttribute($key);
+        return $attribute->value;
+    }
+
+    public function getRegistryObjectMetadata($key)
+    {
+        return Metadata::where('registry_object_id', $this->registry_object_id)
+            ->where('attribute', $key)->first();
     }
 
 }

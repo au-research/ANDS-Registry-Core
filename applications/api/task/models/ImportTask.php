@@ -37,9 +37,6 @@ class ImportTask extends Task
     public function run_task()
     {
         $this->log('Import Task started');
-        $this->bootEloquentModels();
-        $this->loadParams();
-        $this->loadSubtasks();
 
         if ($this->runAll) {
             foreach ($this->getSubtasks() as $task){
@@ -164,7 +161,7 @@ class ImportTask extends Task
     public function getDefaultImportSubtasks()
     {
         $pipeline = [];
-        $defaultSubtasks = ["PopulateImportOptions", "ValidatePayload", "ProcessPayload", "Ingest", "ProcessCoreMetadata"];
+        $defaultSubtasks = ["PopulateImportOptions", "ValidatePayload", "ProcessPayload", "Ingest", "ProcessCoreMetadata", "ProcessIdentifiers", "ProcessRelationships", "ProcessQualityMetadata", "IndexPortal"];
         foreach ($defaultSubtasks as $subtaskName) {
             $pipeline[] = [
                 'name' => $subtaskName,

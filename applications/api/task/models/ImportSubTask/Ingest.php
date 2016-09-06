@@ -32,7 +32,10 @@ class Ingest extends ImportSubTask
 
             // add new version in and set it to current
             $newVersion = $this->addNewVersion(
-                $matchingRecord->registry_object_id, $registryObject->saveXML()
+                $matchingRecord->registry_object_id,
+                XMLUtil::wrapRegistryObject(
+                    $registryObject->saveXML()
+                )
             );
             $this->log("Added new Version:$newVersion->id");
 
@@ -53,7 +56,10 @@ class Ingest extends ImportSubTask
 
             // create a new record data
             $newVersion = $this->addNewVersion(
-                $ro->registry_object_id, $registryObject->saveXML()
+                $ro->registry_object_id,
+                XMLUtil::wrapRegistryObject(
+                    $registryObject->saveXML()
+                )
             );
 
             $this->log("Record id:$ro->registry_object_id created, key:$key with record data: id:$newVersion->id");

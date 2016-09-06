@@ -3,14 +3,16 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
-
-class ProcessIdentifier extends ImportSubTask
+class IndexPortal extends ImportSubTask
 {
     public function run_task()
     {
+        // TODO: MAJORLY REFACTOR THIS
         foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
-            $ro->processIdentifiers();
+            $index = $ro->indexable_json();
+            $ro->setMetadata('solr_doc', json_encode($index));
+            $ro->sync();
         }
     }
 }

@@ -23,8 +23,11 @@ class ProcessCoreMetadata extends ImportSubTask
             // determine class, type and group in the record data
             $classes = ['collection', 'party', 'service', 'activity'];
             foreach ($classes as $class) {
-                $registryObjectElement = XMLUtil::getSimpleXMLFromString($recordData->data);
-                $element = $registryObjectElement->xpath('/registryObject/'.$class);
+                $registryObjectsElement = XMLUtil::getSimpleXMLFromString($recordData->data);
+                $element = $registryObjectsElement->xpath('//ro:registryObject/ro:'.$class);
+                $registryObjectElement = array_first(
+                    $registryObjectsElement->xpath('//ro:registryObject')
+                );
                 if (count($element) > 0) {
                     $element = array_first($element);
                     $record->class = $class;
@@ -39,8 +42,11 @@ class ProcessCoreMetadata extends ImportSubTask
             $record->setRegistryObjectAttribute('harvest_id', $this->parent()->batchID);
 
             // TODO: record_owner on RegistryObject model and RegistryObjectAttribute (as created_who)
+            $record->record_owner = "SYSTEM";
+            $record->save();
 
             // titles and slug require the ro object
+            $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->updateTitles();
 
