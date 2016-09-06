@@ -244,7 +244,7 @@ class Dispatcher extends MX_Controller
 
             if (property_exists($class, 'providesOwnResponse')) {
                 $this->output->set_content_type($class->outputFormat);
-                echo $result;
+                $this->formatter->display($result);
             } else {
                 $this->formatter->display($result);
             }

@@ -4,7 +4,9 @@ namespace ANDS\API;
 use ANDS\DOI\DataCiteClient;
 use ANDS\DOI\DOIServiceProvider;
 use ANDS\DOI\Formatter\XMLFormatter;
+use ANDS\DOI\Formatter\Formatter;
 use ANDS\DOI\Repository\ClientRepository;
+use ANDS\DOI\Repository\DoiRepository;
 use \Exception as Exception;
 
 class Doi_api
@@ -28,8 +30,10 @@ class Doi_api
         );
 
         // common DOI API
-        if (strpos($this->params['submodule'], '.') > 0) {
-            return $this->handleDOIRequest();
+        if (strpos($this->params['submodule'], '.' )  > 0 ) {
+            if (strpos($this->params['submodule'],'10.') === false){
+                return $this->handleDOIRequest();
+            }
         }
 
         //everything under here requires a client, app_id
@@ -72,10 +76,14 @@ class Doi_api
         if ($format == "xml") {
             $this->outputFormat = "text/xml";
             $formater = new XMLFormatter();
+        } else if ($format == 'json'){
+            $formater = new Formatter();
         }
 
         $appID = $this->ci->input->get('app_id');
         $sharedSecret = $this->ci->input->get('shared_secret');
+        $manual = $this->ci->input->get('manual_mint');
+
         if(!$appID && isset($_SERVER['PHP_AUTH_USER'])) {
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
             $appID = $_SERVER['PHP_AUTH_USER'];
@@ -92,20 +100,28 @@ class Doi_api
             $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
         );
 
+        $doiRepository = new DoiRepository(
+            $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
+        );
+
         $client = $clientRepository->getByAppID($appID);
 
         $dataciteClient = new DataCiteClient(
-            get_config_item("gDOIS_DATACENTRE_NAME_PREFIX").".".get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE")."-".$client->client_id, get_config_item("gDOIS_DATACITE_PASSWORD")
+            get_config_item("gDOIS_DATACENTRE_NAME_PREFIX").".".get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE").str_pad($client->client_id,2,"-",STR_PAD_LEFT), get_config_item("gDOIS_DATACITE_PASSWORD")
         );
+
+
         $dataciteClient->setDataciteUrl(get_config_item("gDOIS_SERVICE_BASE_URI"));
 
-        $doiService = new DOIServiceProvider($clientRepository, $dataciteClient);
+        $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
 
         $doiService->authenticate(
             $appID,
             $sharedSecret,
-            $this->getIPAddress()
+            $this->getIPAddress(),
+            $manual
         );
+
 
         // @todo check authenticated client
 
@@ -116,7 +132,12 @@ class Doi_api
                     $this->getPostedXML()
                 );
                 // as well as set the HTTP header here
-                return $formater->format($doiService->getResponse());
+                if($format=="xml") {
+                    return $formater->format($doiService->getResponse());
+                }
+                else{
+                    return $formater->fill($doiService->getResponse());
+                }
                 break;
         }
     }
