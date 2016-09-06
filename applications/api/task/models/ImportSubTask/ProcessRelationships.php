@@ -6,6 +6,8 @@ namespace ANDS\API\Task\ImportSubTask;
 
 class ProcessRelationships extends ImportSubTask
 {
+    protected $requireImportedRecords = true;
+
     public function run_task()
     {
         foreach ($this->parent()->getTaskData("importedRecords") as $roID) {

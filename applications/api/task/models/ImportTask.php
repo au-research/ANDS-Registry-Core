@@ -231,8 +231,8 @@ class ImportTask extends Task
     public function loadParams()
     {
         parse_str($this->getParams(), $parameters);
-        $this->dataSourceID = $parameters['ds_id'] ? : null;
-        $this->batchID = $parameters['batch_id'] ? : null;
+        $this->dataSourceID = array_key_exists('ds_id', $parameters) ? $parameters['ds_id']: null;
+        $this->batchID = array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null;
         return $this;
     }
 

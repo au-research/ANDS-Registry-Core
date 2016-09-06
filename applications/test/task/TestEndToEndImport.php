@@ -23,6 +23,7 @@ class TestEndToEndImport extends UnitTest
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport'
         ])->setCI($this->ci)->initialiseTask();
 
+        // PopulateImportOptions
         $importTask->run_task();
 
         $taskArray = $importTask->toArray();
@@ -30,6 +31,7 @@ class TestEndToEndImport extends UnitTest
             "PUBLISHED", $taskArray["data"]["dataSourceDefaultStatus"]
         );
 
+        // ValidatePayload
         $importTask->run_task();
 
         $this->assertFalse(
@@ -37,6 +39,7 @@ class TestEndToEndImport extends UnitTest
         );
         // $this->assertTrue($importTask->hasPayload());
 
+        // ProcessPayload
         $importTask->run_task();
 
         $this->assertFalse(
@@ -44,6 +47,7 @@ class TestEndToEndImport extends UnitTest
         );
         // $this->assertTrue($importTask->hasPayload());
 
+        // Ingest
         $importTask->run_task();
 
         $this->assertTrue(count($importTask->getTaskData('importedRecords') > 0));
@@ -51,6 +55,7 @@ class TestEndToEndImport extends UnitTest
         $record = RegistryObject::where('key', 'minh-test-record-pipeline')->first();
         $this->assertTrue($record);
 
+        // ProcessCoreMetadata
         $importTask->run_task();
 
         unset($record);
@@ -119,7 +124,7 @@ class TestEndToEndImport extends UnitTest
 
         $record = RegistryObject::where('key', 'minh-test-record-pipeline')->first();
 
-        if ($record) {
+        if ($record && false) {
             // delete attributes
             RegistryObjectAttribute::where('registry_object_id', $record->registry_object_id)->delete();
 

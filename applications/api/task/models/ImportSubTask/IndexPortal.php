@@ -5,6 +5,8 @@ namespace ANDS\API\Task\ImportSubTask;
 
 class IndexPortal extends ImportSubTask
 {
+    protected $requireImportedRecords = true;
+
     public function run_task()
     {
         // TODO: MAJORLY REFACTOR THIS

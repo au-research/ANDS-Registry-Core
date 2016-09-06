@@ -43,8 +43,35 @@ class Ingest extends ImportSubTask
 
             $this->parent()->addTaskData("importedRecords", $matchingRecord->registry_object_id);
 
+        } elseif ($deletedRecord = $this->getDeletedRecord($key)) {
+
+            $deletedRecord->status = $this->parent()->getTaskData("dataSourceDefaultStatus");
+            $deletedRecord->save();
+
+            // TODO: check if the latest record data is the same first
+            // TODO: the matchingRecord is similar, refactor to pull this functionality out
+
+            // deal with previous versions
+            RecordData::where('registry_object_id', $deletedRecord->registry_object_id)
+                ->update(['current' => '']);
+
+            // add new version in and set it to current
+            $newVersion = $this->addNewVersion(
+                $deletedRecord->registry_object_id,
+                XMLUtil::wrapRegistryObject(
+                    $registryObject->saveXML()
+                )
+            );
+            $this->log("Added new Version:$newVersion->id");
+
+            $deletedRecord->setRegistryObjectAttribute('modified', time());
+
+            $this->parent()->addTaskData("importedRecords", $deletedRecord->registry_object_id);
+
         } else {
             $this->log("Record $key does not exist. Creating new record and data");
+
+            //find a deleted record and reinstate it
 
             // create new record
             $ro = new RegistryObject;
@@ -85,11 +112,19 @@ class Ingest extends ImportSubTask
         return $newVersion;
     }
 
-    public function getMatchingRecord($key) {
+    public function getMatchingRecord($key)
+    {
         $dataSourceDefaultStatus = $this->parent()
             ->getTaskData("dataSourceDefaultStatus");
         $matchingStatusRecords = RegistryObject::where('key', $key)
             ->where('status', $dataSourceDefaultStatus)->first();
         return $matchingStatusRecords;
+    }
+
+    public function getDeletedRecord($key)
+    {
+        $deletedRecord = RegistryObject::where('key', $key)
+            ->first();
+        return $deletedRecord;
     }
 }

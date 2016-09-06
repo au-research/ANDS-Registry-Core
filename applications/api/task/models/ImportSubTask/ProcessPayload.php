@@ -79,8 +79,6 @@ class ProcessPayload extends ImportSubTask
             return false;
         }
 
-
-
             // find the current record data belongs to the record with the same status as the dataSourceDefaultStatus
         $dataSourceDefaultStatus = $this->parent()
             ->getTaskData("dataSourceDefaultStatus");
@@ -96,7 +94,7 @@ class ProcessPayload extends ImportSubTask
             }
 
             $hash = $currentRecordData->hash;
-            $newHash = md5($registryObject->saveXML());
+            $newHash = md5(XMLUtil::wrapRegistryObject($registryObject->saveXML()));
 
             // check matching data source
             if ($matchingStatusRecord->data_source_id != $this->parent()->dataSourceID) {

@@ -6,6 +6,9 @@ namespace ANDS\API\Task\ImportSubTask;
 
 class ProcessIdentifiers extends ImportSubTask
 {
+    protected $requirePayload = true;
+    protected $requireImportedRecords = true;
+
     public function run_task()
     {
         foreach ($this->parent()->getTaskData("importedRecords") as $roID) {

@@ -9,6 +9,7 @@ class ImportSubTask extends Task
 {
     private $parentTask;
     protected $requirePayload = false;
+    protected $requireImportedRecords = false;
 
     public function run()
     {
@@ -17,6 +18,16 @@ class ImportSubTask extends Task
             $this->setStatus("COMPLETED");
             return;
         }
+
+        if ($this->requireImportedRecords) {
+            $importedRecords = $this->parent()->getTaskData("importedRecords");
+            if ($importedRecords === false) {
+                $this->addError("Imported Records require for this task");
+                $this->setStatus("COMPLETED");
+                return;
+            }
+        }
+
         return parent::run();
     }
 

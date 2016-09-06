@@ -153,6 +153,7 @@ class Task
     public function setTaskData($key, $val)
     {
         $this->taskData[$key] = $val;
+        return $this;
     }
 
     public function addTaskData($key, $val)
