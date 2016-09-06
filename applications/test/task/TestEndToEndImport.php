@@ -155,6 +155,8 @@ class TestEndToEndImport extends UnitTest
         $this->assertTrue($record->getRegistryobjectMetadata("quality_html"));
 
         $this->assertTrue($record->getRegistryobjectMetadata("solr_doc"));
+
+        dd($importTask->toArray());
     }
 
     public function setUp()
