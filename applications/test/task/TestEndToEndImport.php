@@ -16,7 +16,7 @@ use ANDS\RegistryObjectAttribute;
 class TestEndToEndImport extends UnitTest
 {
     /** @test **/
-    public function test_it_should_import_a_record()
+    public function test_it_should_import_a_record_step_by_step()
     {
         $importTask = new ImportTask();
         $importTask->init([
@@ -155,8 +155,6 @@ class TestEndToEndImport extends UnitTest
         $this->assertTrue($record->getRegistryobjectMetadata("quality_html"));
 
         $this->assertTrue($record->getRegistryobjectMetadata("solr_doc"));
-
-        dd($importTask->toArray());
     }
 
     public function setUp()

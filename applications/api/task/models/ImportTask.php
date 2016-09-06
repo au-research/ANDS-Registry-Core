@@ -174,6 +174,7 @@ class ImportTask extends Task
     public function initialiseTask()
     {
         $this->bootEloquentModels()->loadParams()->loadSubTasks()->loadPayload();
+        return $this;
     }
 
     /**
