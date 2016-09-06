@@ -825,6 +825,14 @@ class Registry_object extends MX_Controller {
 		header('Content-type: application/json');
 
 		$affected_ids = $this->input->post('affected_ids');
+
+        foreach ($affected_ids as $id) {
+            \ANDS\Repository\RegistryObjectsRepository::deleteRecord($id);
+        }
+        echo json_encode(array("status"=>"success"));
+        return;
+
+
 		// $select_all is the status, not a boolean?
 		//$select_all = $this->input->post('select_all')=='true' ? true : false;
 

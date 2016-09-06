@@ -224,6 +224,7 @@ if (defined('ENVIRONMENT'))
  *
  */
 require_once APPPATH.'libraries/RegistryPlugin.php';
+require_once './applications/api/vendor/autoload.php';
 require_once BASEPATH.'core/CodeIgniter.php';
 
 /* End of file index.php */

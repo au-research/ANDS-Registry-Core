@@ -117,7 +117,6 @@ class TestEndToEndImport extends UnitTest
 
     public function setUp()
     {
-        require_once(API_APP_PATH . 'vendor/autoload.php');
 
         $importTask = new ImportTask();
         $importTask->bootEloquentModels();

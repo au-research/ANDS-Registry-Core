@@ -3,7 +3,6 @@
 
 namespace ANDS\Test;
 
-
 use ANDS\API\Task\ImportTask;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
