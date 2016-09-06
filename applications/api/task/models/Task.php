@@ -106,6 +106,16 @@ class Task
         return $this;
     }
 
+    public function getLog()
+    {
+        return array_key_exists('log', $this->message) ? $this->message['log'] : null;
+    }
+
+    public function getError()
+    {
+        return array_key_exists('error', $this->message) ? $this->message['error'] : null;
+    }
+
     /**
      * Stop a task when an error is encountered
      * Log the error and save

@@ -8,6 +8,17 @@ use ANDS\API\Task\Task;
 class ImportSubTask extends Task
 {
     private $parentTask;
+    protected $requirePayload = false;
+
+    public function run()
+    {
+        if ($this->requirePayload && $this->parent()->hasPayload() === false) {
+            $this->addError("Payload require for this task");
+            $this->setStatus("COMPLETED");
+            return;
+        }
+        return parent::run();
+    }
 
     /**
      * @param $task
@@ -44,6 +55,17 @@ class ImportSubTask extends Task
         $this->parent()->log(get_class($this) . ": " . $log);
         return $this;
     }
+
+    public function addError($log)
+    {
+        if (!array_key_exists('error', $this->message)) {
+            $this->message['error'] = [];
+        }
+        $this->message['error'][] = $log;
+        $this->parent()->message['error'][] = get_class($this) . "(ERROR) " . $log;
+        return $this;
+    }
+
 }
 
 //@todo move to ANDS\API\Task\Exception?

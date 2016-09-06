@@ -24,7 +24,7 @@ class TestProcessPayload extends UnitTest
     public function test_it_should_run_on_the_third_batch()
     {
         $task = $this->getProcessTask();
-        $task->parent()->setBatchID("AUTestingRecords3");
+        $task->parent()->setBatchID("AUTestingRecords3")->loadPayload();
         $this->runPrerequisite($task->parent());
         $task->run();
         // @todo check something
@@ -34,7 +34,7 @@ class TestProcessPayload extends UnitTest
     public function test_it_should_strip_duplicate()
     {
         $task = $this->getProcessTask();
-        $task->parent()->setBatchID("DuplicateTest");
+        $task->parent()->setBatchID("DuplicateTest")->loadPayload();
         $this->runPrerequisite($task->parent());
         $task->run();
 

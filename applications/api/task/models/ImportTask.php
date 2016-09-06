@@ -42,8 +42,9 @@ class ImportTask extends Task
         $this->loadSubtasks();
 
         if ($this->runAll) {
-            while ($task = $this->getNextTask()) {
+            foreach ($this->getSubtasks() as $task){
                 $this->runSubTask($task);
+                $this->saveSubTasks($task);
             }
         } else {
             $nextTask = $this->getNextTask();
@@ -117,6 +118,8 @@ class ImportTask extends Task
             $task->init($taskData);
         }
         $this->setSubtasks($subTasks);
+
+        return $this;
     }
 
     /**
@@ -173,7 +176,7 @@ class ImportTask extends Task
 
     public function initialiseTask()
     {
-        $this->bootEloquentModels()->loadParams()->loadSubTasks();
+        $this->bootEloquentModels()->loadParams()->loadSubTasks()->loadPayload();
     }
 
     /**
@@ -224,8 +227,6 @@ class ImportTask extends Task
         }
         return $result;
     }
-
-
 
     /**
      *

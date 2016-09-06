@@ -10,15 +10,10 @@ use \Exception as Exception;
 
 class ValidatePayload extends ImportSubTask
 {
+    protected $requirePayload = true;
+
     public function run_task()
     {
-        $this->loadPayload();
-
-        if (count($this->parent()->getPayloads()) === 0) {
-            $this->addError("No payload found");
-            return;
-        }
-
         foreach ($this->parent()->getPayloads() as $path => &$xml) {
             $this->log("Validation started for $path");
 
@@ -44,41 +39,6 @@ class ValidatePayload extends ImportSubTask
 
             $this->log("Validation completed for $path");
         }
-    }
-
-    /**
-     * Load the payload specified in the parent task
-     * to the parent payloads array
-     * @todo need a better file accessor than file_get_contents
-     */
-    public function loadPayload()
-    {
-        $harvestedContentDir = get_config_item('harvested_contents_path');
-        $path = $harvestedContentDir . '/' . $this->parent()->dataSourceID . '/' . $this->parent()->batchID;
-
-        if (!is_dir($path)) {
-            $path = $path . '.xml';
-            if (is_file($path)) {
-                $this->parent()->setPayload(
-                    $path, file_get_contents($path)
-                );
-            }
-        } else {
-            $directory = scandir($path);
-            $files = array();
-            foreach ($directory as $f) {
-                if (endsWith($f, '.xml')) {
-                    $files[] = $f;
-                }
-            }
-            foreach ($files as $index => $f) {
-                $this->parent()->setPayload(
-                    $f, file_get_contents($path . '/' . $f)
-                );
-            }
-        }
-
-        return $this;
     }
 
     /**
