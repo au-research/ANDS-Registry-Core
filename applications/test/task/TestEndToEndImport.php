@@ -115,6 +115,48 @@ class TestEndToEndImport extends UnitTest
 
     }
 
+    /** @test **/
+    public function test_it_should_import_a_record_all_at_once()
+    {
+        $importTask = new ImportTask();
+        $importTask->init([
+            'params'=>'ds_id=209&batch_id=AUTestingRecordsImport'
+        ])->setCI($this->ci)->initialiseTask();
+        $importTask->enableRunAllSubTask()->run();
+
+        $record = RegistryObject::where('key', 'minh-test-record-pipeline')->first();
+
+        $this->assertEquals(
+            2,
+            Identifier::where(
+                'registry_object_id', $record->registry_object_id
+            )->count()
+        );
+
+        $this->assertEquals(
+            10,
+            Relationship::where(
+                'registry_object_id', $record->registry_object_id
+            )->count()
+        );
+
+        $this->assertEquals(
+            4,
+            RelatedInfoRelationship::where(
+                'registry_object_id', $record->registry_object_id
+            )->count()
+        );
+
+        $this->assertEquals(0, $record->getRegistryObjectAttributeValue('warning_count'));
+        $this->assertEquals(0, $record->getRegistryObjectAttributeValue('error_count'));
+        $this->assertEquals(3, $record->getRegistryObjectAttributeValue('quality_level'));
+
+        $this->assertTrue($record->getRegistryobjectMetadata("level_html"));
+        $this->assertTrue($record->getRegistryobjectMetadata("quality_html"));
+
+        $this->assertTrue($record->getRegistryobjectMetadata("solr_doc"));
+    }
+
     public function setUp()
     {
 
