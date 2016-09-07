@@ -27,7 +27,8 @@ trait ManagePayload
      */
     public function getPayload($key = false)
     {
-        return array_key_exists($key, $this->payloads) ? $this->payloads[$key] : null;
+        return array_key_exists($key,
+            $this->payloads) ? $this->payloads[$key] : null;
     }
 
     /**
@@ -87,14 +88,20 @@ trait ManagePayload
         $harvestedContentDir = get_config_item('harvested_contents_path');
         $path = $harvestedContentDir . '/' . $this->dataSourceID . '/' . $this->batchID;
 
+        $this->log("Payload path: ". $path);
+
         if (!is_dir($path)) {
             $path = $path . '.xml';
             if (is_file($path)) {
+                $this->log('Loading payload from file: ' . $path);
                 $this->setPayload(
                     $path, file_get_contents($path)
                 );
+            } else {
+                $this->log("Payload not accessible. Path: ".$path);
             }
         } else {
+            $this->log('Loading payload from directory: ' . $path);
             $directory = scandir($path);
             $files = array();
             foreach ($directory as $f) {
@@ -103,6 +110,7 @@ trait ManagePayload
                 }
             }
             foreach ($files as $index => $f) {
+                $this->log('Loading payload from file: ' . $path . '/' . $f);
                 $this->setPayload(
                     $f, file_get_contents($path . '/' . $f)
                 );

@@ -26,7 +26,7 @@ class Task_api
         $this->db = $this->ci->load->database('registry', true);
         require_once APP_PATH . 'vendor/autoload.php';
 
-        $this->taskManager = new \ANDS\API\Task\TaskManager($this->db, $this->ci);
+        $this->taskManager = new Task\TaskManager($this->db, $this->ci);
     }
 
     /**
@@ -91,6 +91,7 @@ class Task_api
                         $taskObject
                             ->setDb($this->db)
                             ->setMessage()
+                            ->clearTaskData()
                             ->save();
                         $task = $this->taskManager->getTask($taskObject->getId());
                     } elseif ($this->params['identifier'] == 'reschedule') {

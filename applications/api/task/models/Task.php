@@ -156,6 +156,12 @@ class Task
         return $this;
     }
 
+    public function clearTaskData()
+    {
+        $this->taskData = [];
+        return $this;
+    }
+
     public function addTaskData($key, $val)
     {
         if (array_key_exists($key, $this->taskData)) {
