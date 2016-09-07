@@ -8,6 +8,8 @@ use ANDS\Util\XMLUtil;
 
 class Ingest extends ImportSubTask
 {
+    protected $requirePayload = true;
+
     public function run_task()
     {
         foreach ($this->parent()->getPayloads() as $path=>$xml) {

@@ -33,8 +33,6 @@ class TestEndToEndImport extends UnitTest
             "PUBLISHED", $taskArray["data"]["dataSourceDefaultStatus"]
         );
 
-
-
         // ValidatePayload
         $importTask->run_task();
 

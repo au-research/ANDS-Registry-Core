@@ -94,9 +94,8 @@ class TestImportTask extends UnitTest
             ->init([
                 'params' => 'ds_id=2&batch_id=593EB384AFFE59EAEB2CADE99E39454361C1C0AC'
             ])
-            ->loadParams()
-            ->loadSubTasks();
-        $task = $importTask->constructTaskObject($importTask->getNextTask()->name);
+            ->initialiseTask();
+        $task = $importTask->constructTaskObject($importTask->getNextTask()->toArray());
         $this->assertEquals($importTask, $task->getParentTask());
     }
 

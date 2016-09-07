@@ -7,6 +7,7 @@
  */
 namespace ANDS\API;
 
+use ANDS\API\Task\ImportTask;
 use \Exception as Exception;
 
 
@@ -115,10 +116,14 @@ class Task_api
     }
 
     private function test(){
-        $task = new \ANDS\API\Task\FixRelationshipTask();
-        $task->params = 'class=fixRelationship&id=62506,267873';
-        $task->run_task();
-        dd($task->getMessage());
+        $task = [
+            'name' => 'Minh Pipeline Test Task',
+            'type' => 'POKE',
+            'frequency' => 'ONCE',
+            'priority' => 1,
+            'params' => 'class=import&ds_id=209&batch_id=AUTestingRecordsImport'
+        ];
+        return $this->taskManager->addTask($task);
     }
 
     /**
