@@ -5,6 +5,7 @@ namespace ANDS;
 
 
 use ANDS\RegistryObject\Metadata;
+use ANDS\Repository\RegistryObjectsRepository;
 use Illuminate\Database\Eloquent\Model;
 
 class RegistryObject extends Model
@@ -56,6 +57,16 @@ class RegistryObject extends Model
     {
         return Metadata::where('registry_object_id', $this->registry_object_id)
             ->where('attribute', $key)->first();
+    }
+
+    public function isPublishedStatus()
+    {
+        return RegistryObjectsRepository::isPublishedStatus($this->status);
+    }
+
+    public function isDraftStatus()
+    {
+        return RegistryObjectsRepository::isDraftStatus($this->status);
     }
 
 }

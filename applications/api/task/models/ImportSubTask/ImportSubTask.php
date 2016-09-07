@@ -10,6 +10,8 @@ class ImportSubTask extends Task
     private $parentTask;
     protected $requirePayload = false;
     protected $requireImportedRecords = false;
+    protected $requireDeletedRecords = false;
+    protected $requireAffectedRecords = false;
 
     public function run()
     {
@@ -22,6 +24,15 @@ class ImportSubTask extends Task
         if ($this->requireImportedRecords) {
             $importedRecords = $this->parent()->getTaskData("importedRecords");
             if ($importedRecords === false || $importedRecords === null) {
+                $this->addError("Imported Records require for this task");
+                $this->setStatus("COMPLETED");
+                return;
+            }
+        }
+
+        if ($this->requireDeletedRecords) {
+            $deletedRecords = $this->parent()->getTaskData("deletedRecords");
+            if ($deletedRecords === false || $deletedRecords === null) {
                 $this->addError("Imported Records require for this task");
                 $this->setStatus("COMPLETED");
                 return;

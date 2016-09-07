@@ -40,15 +40,14 @@ class RegistryObjectsRepository
     }
 
     /**
-     * Completely erase the existence of a record by key
+     * Completely delete
      *
-     * @param $key
+     * @param $id
      */
-    public static function completelyEraseRecord($key)
+    public static function completelyEraseRecordByID($id)
     {
-        $records = RegistryObject::where('key', $key)->get();
-        foreach ($records as $record) {
-
+        $record = RegistryObject::find($id);
+        if ($record) {
             // delete attributes
             RegistryObjectAttribute::where('registry_object_id', $record->registry_object_id)->delete();
 
@@ -67,7 +66,22 @@ class RegistryObjectsRepository
             // delete record
             $record->delete();
 
-            // TODO: delete Portal and Relation index
+            // TODO: delete Portal and Relation index?
+        }
+    }
+
+
+    /**
+     * Completely erase the existence of a record by key
+     * use with caution, deletes all status of a key
+     *
+     * @param $key
+     */
+    public static function completelyEraseRecord($key)
+    {
+        $records = RegistryObject::where('key', $key)->get();
+        foreach ($records as $record) {
+            self::completelyEraseRecordByID($record->registry_object_id);
         }
     }
 
@@ -95,6 +109,32 @@ class RegistryObjectsRepository
         $importTask->init([])->bootEloquentModels();
 
         return RegistryObject::where('key', $key)->where('status', $status)->first();
+    }
+
+    public static function getDraftStatusGroup()
+    {
+        return [
+            "MORE_WORK_REQUIRED",
+            "DRAFT",
+            "SUBMITTED_FOR_ASSESSMENT",
+            "ASSESSMENT_IN_PROGRESS",
+            "APPROVED"
+        ];
+    }
+
+    public static function isDraftStatus($status)
+    {
+        return in_array($status, self::getDraftStatusGroup());
+    }
+
+    public static function getPublishedStatusGroup()
+    {
+        return ["PUBLISHED"];
+    }
+
+    public static function isPublishedStatus($status)
+    {
+        return in_array($status, self::getPublishedStatusGroup());
     }
 
 

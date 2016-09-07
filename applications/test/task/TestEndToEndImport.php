@@ -33,6 +33,8 @@ class TestEndToEndImport extends UnitTest
             "PUBLISHED", $taskArray["data"]["dataSourceDefaultStatus"]
         );
 
+
+
         // ValidatePayload
         $importTask->run_task();
 
@@ -57,6 +59,12 @@ class TestEndToEndImport extends UnitTest
 
         $record = RegistryObject::where('key', 'minh-test-record-pipeline')->first();
         $this->assertTrue($record);
+
+
+        $this->assertNull($importTask->getTaskData('deletedRecords'));
+
+        // ProcessDelete
+        $importTask->run_task();
 
         // ProcessCoreMetadata
         $importTask->run_task();
@@ -84,6 +92,7 @@ class TestEndToEndImport extends UnitTest
 
         // ProcessRelationships
         $importTask->run_task();
+
 
         $this->assertEquals(
             10,

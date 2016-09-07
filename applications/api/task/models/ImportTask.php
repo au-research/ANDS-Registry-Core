@@ -158,7 +158,7 @@ class ImportTask extends Task
     public function getDefaultImportSubtasks()
     {
         $pipeline = [];
-        $defaultSubtasks = ["PopulateImportOptions", "ValidatePayload", "ProcessPayload", "Ingest", "ProcessCoreMetadata", "ProcessIdentifiers", "ProcessRelationships", "ProcessQualityMetadata", "IndexPortal"];
+        $defaultSubtasks = ["PopulateImportOptions", "ValidatePayload", "ProcessPayload", "Ingest", "ProcessDelete", "ProcessCoreMetadata", "ProcessIdentifiers", "ProcessRelationships", "ProcessQualityMetadata", "IndexPortal"];
         foreach ($defaultSubtasks as $subtaskName) {
             $pipeline[] = [
                 'name' => $subtaskName,
