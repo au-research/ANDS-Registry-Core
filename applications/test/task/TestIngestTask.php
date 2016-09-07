@@ -3,13 +3,16 @@
 
 namespace ANDS\Test;
 
-
+use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use ANDS\API\Task\ImportTask;
-use ANDS\RecordData;
 use ANDS\RegistryObject;
-use ANDS\Util\XMLUtil;
+use ANDS\Repository\RegistryObjectsRepository;
 
 
+/**
+ * Class TestIngestTask
+ * @package ANDS\Test
+ */
 class TestIngestTask extends UnitTest
 {
 
@@ -26,6 +29,11 @@ class TestIngestTask extends UnitTest
         // TODO: check more stuffs
     }
 
+    /**
+     * Helper
+     * Returns an IngestTask for use each test
+     * @return ImportSubTask
+     */
     public function getIngestTask()
     {
         $importTask = new ImportTask();
@@ -37,6 +45,12 @@ class TestIngestTask extends UnitTest
         return $task;
     }
 
+    /**
+     * Helper
+     * Run all prerequisite task before Ingest
+     *
+     * @param $importTask
+     */
     public function runPrerequisite($importTask)
     {
         $populateImportTask = $importTask->getTaskByName("PopulateImportOptions");
@@ -47,24 +61,10 @@ class TestIngestTask extends UnitTest
         $processTask->run();
     }
 
-    public function setUp()
-    {
-        require_once(API_APP_PATH.'vendor/autoload.php');
-    }
-
     public function tearDown()
     {
-        // delete record data with hash c52218f2ed0b1bb623a5f99e6f0d97bb
-        // @todo make sure this runs
-//        RecordData::where('hash', 'c52218f2ed0b1bb623a5f99e6f0d97bb')->first()->delete();
-//        RecordData::find(9875063)->update(['current' => 'TRUE']);
-
-        $records = ['AUTestingRecords3h-dataset-31', 'AUTestingRecords3h-dataset-33', 'AUTestingRecords3h-dataset-36'];
-        foreach ($records as $key) {
-            if ($record = RegistryObject::where('key', $key)->first()) {
-//                RecordData::where('registry_object_id', $record->registry_object_id)->delete();
-                $record->delete();
-            }
-        }
+        RegistryObjectsRepository::completelyEraseRecord('AUTestingRecords3h-dataset-31');
+        RegistryObjectsRepository::completelyEraseRecord('AUTestingRecords3h-dataset-33');
+        RegistryObjectsRepository::completelyEraseRecord('AUTestingRecords3h-dataset-36');
     }
 }

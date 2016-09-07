@@ -79,11 +79,12 @@ class ProcessPayload extends ImportSubTask
             return false;
         }
 
-            // find the current record data belongs to the record with the same status as the dataSourceDefaultStatus
-        $dataSourceDefaultStatus = $this->parent()
-            ->getTaskData("dataSourceDefaultStatus");
+        // find the current record data belongs to the record with the same status as the dataSourceDefaultStatus
+        $targetStatus = $this->parent()
+            ->getTaskData("targetStatus");
         $matchingStatusRecord = RegistryObject::where('key', $key)
-            ->where('status', $dataSourceDefaultStatus)->first();
+            ->where('status', $targetStatus)
+            ->first();
 
         if ($matchingStatusRecord !== null) {
             $currentRecordData = $matchingStatusRecord->getCurrentData();

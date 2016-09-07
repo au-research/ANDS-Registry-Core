@@ -45,7 +45,7 @@ class Ingest extends ImportSubTask
 
         } elseif ($deletedRecord = $this->getDeletedRecord($key)) {
 
-            $deletedRecord->status = $this->parent()->getTaskData("dataSourceDefaultStatus");
+            $deletedRecord->status = $this->parent()->getTaskData("targetStatus");
             $deletedRecord->save();
 
             // TODO: check if the latest record data is the same first
@@ -77,7 +77,7 @@ class Ingest extends ImportSubTask
             $ro = new RegistryObject;
             $ro->key = $key;
             $ro->data_source_id = $this->parent()->dataSourceID;
-            $ro->status = $this->parent()->getTaskData("dataSourceDefaultStatus");
+            $ro->status = $this->parent()->getTaskData("targetStatus");
             $ro->save();
             $ro->setRegistryObjectAttribute('created', time());
 
@@ -114,10 +114,10 @@ class Ingest extends ImportSubTask
 
     public function getMatchingRecord($key)
     {
-        $dataSourceDefaultStatus = $this->parent()
-            ->getTaskData("dataSourceDefaultStatus");
+        $targetStatus = $this->parent()
+            ->getTaskData("targetStatus");
         $matchingStatusRecords = RegistryObject::where('key', $key)
-            ->where('status', $dataSourceDefaultStatus)->first();
+            ->where('status', $targetStatus)->first();
         return $matchingStatusRecords;
     }
 

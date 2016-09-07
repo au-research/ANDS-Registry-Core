@@ -4,9 +4,15 @@
 namespace ANDS\Test;
 
 
+use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use ANDS\API\Task\ImportTask;
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 
+/**
+ * Class TestProcessCoreMetadataTask
+ * @package ANDS\Test
+ */
 class TestProcessCoreMetadataTask extends UnitTest
 {
     /** @test **/
@@ -34,6 +40,11 @@ class TestProcessCoreMetadataTask extends UnitTest
         $this->assertTrue(is_string($record->slug) && !empty($record->slug));
     }
 
+    /**
+     * Helper
+     * Return a ProcessCoreMetadata Task for use each test
+     * @return ImportSubTask
+     */
     public function getProcessCoreMetadataTask()
     {
         $importTask = new ImportTask();
@@ -46,22 +57,33 @@ class TestProcessCoreMetadataTask extends UnitTest
         return $task;
     }
 
+    /**
+     * Helper
+     * Run all prerequisite task before this process task
+     *
+     * @param $importTask
+     */
     public function runPrerequisite($importTask)
     {
         $populateImportTask = $importTask->getTaskByName("PopulateImportOptions");
         $populateImportTask->run();
         $validateTask = $importTask->getTaskByName("ValidatePayload");
         $validateTask->run();
-//        $processTask = $importTask->getTaskByName("ProcessPayload");
-//        $processTask->run();
+        $processTask = $importTask->getTaskByName("ProcessPayload");
+        $processTask->run();
         $ingestTask = $importTask->getTaskByName("Ingest");
         $ingestTask->run();
     }
 
     public function setUp()
     {
-        require_once(API_APP_PATH.'vendor/autoload.php');
 
-        // TODO delete the core metadata from the database and set the records array to test
+    }
+
+    public function tearDown()
+    {
+        RegistryObjectsRepository::completelyEraseRecord('AUTestingRecords3h-dataset-31');
+        RegistryObjectsRepository::completelyEraseRecord('AUTestingRecords3h-dataset-33');
+        RegistryObjectsRepository::completelyEraseRecord('AUTestingRecords3h-dataset-36');
     }
 }

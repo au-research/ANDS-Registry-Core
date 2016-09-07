@@ -21,7 +21,7 @@ class ImportSubTask extends Task
 
         if ($this->requireImportedRecords) {
             $importedRecords = $this->parent()->getTaskData("importedRecords");
-            if ($importedRecords === false) {
+            if ($importedRecords === false || $importedRecords === null) {
                 $this->addError("Imported Records require for this task");
                 $this->setStatus("COMPLETED");
                 return;

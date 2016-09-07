@@ -21,11 +21,14 @@ class PopulateImportOptions extends ImportSubTask
             $this->getDefaultRecordStatusForDataSource($dataSource)
         );
 
-        // the import status is what should be used if it is set
-        $this->parent()->setTaskData(
-            "importStatus",
-            $this->parent()->getTaskData("dataSourceDefaultStatus")
-        );
+        // the targetStatus is the status that the records will go in
+        // if set by the task param itself, it will override the dataSourceDefaultStatus
+        if ($this->parent()->getTaskData("targetStatus") == null) {
+            $this->parent()->setTaskData(
+                "targetStatus",
+                $this->parent()->getTaskData("dataSourceDefaultStatus")
+            );
+        }
 
         /**
          * @todo datasourceHarvestMode

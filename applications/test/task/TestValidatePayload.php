@@ -3,11 +3,14 @@
 namespace ANDS\Test;
 
 
-use ANDS\API\Task\ImportSubTask\PopulateImportOptions;
-use ANDS\API\Task\ImportSubTask\ValidatePayload;
+use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use ANDS\API\Task\ImportTask;
 use ANDS\Util\XMLUtil;
 
+/**
+ * Class TestValidatePayload
+ * @package ANDS\Test
+ */
 class TestValidatePayload extends UnitTest
 {
     /** @test * */
@@ -27,7 +30,6 @@ class TestValidatePayload extends UnitTest
         $this->assertTrue(count($payload) > 0);
         $this->assertTrue(count(array_first($payload)) > 0);
     }
-
 
     /** @test **/
     public function test_it_should_validate_rifcs_xml()
@@ -61,6 +63,12 @@ class TestValidatePayload extends UnitTest
         $this->assertEquals(1, count($task->parent()->getError()));
     }
 
+    /**
+     * Helper
+     * Return an ImportSubTask for ValidatePayload for use each test
+     *
+     * @return ImportSubTask
+     */
     private function getImportTask()
     {
         $importTask = new ImportTask();
@@ -72,16 +80,11 @@ class TestValidatePayload extends UnitTest
         return $task;
     }
 
-    public function setUp()
-    {
-        $this->ci->load->model('registry/data_source/data_sources', 'ds');
-        require_once(API_APP_PATH.'vendor/autoload.php');
-    }
 
     public function tearDown()
     {
-        // @todo delete _validated.xml
-        // @todo delete _processed.xml
+        // @todo delete _validated.xml if exists
+        // @todo delete _processed.xml if exists
     }
 
 }

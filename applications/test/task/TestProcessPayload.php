@@ -2,12 +2,15 @@
 
 namespace ANDS\Test;
 
-use ANDS\API\Task\ImportSubTask\PopulateImportOptions;
-use ANDS\API\Task\ImportSubTask\ValidatePayload;
+use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use ANDS\API\Task\ImportTask;
 use ANDS\Util\XMLUtil;
 
 
+/**
+ * Class TestProcessPayload
+ * @package ANDS\Test
+ */
 class TestProcessPayload extends UnitTest
 {
 
@@ -45,6 +48,12 @@ class TestProcessPayload extends UnitTest
         );
     }
 
+    /**
+     * Helper
+     * Return a process task for each test
+     *
+     * @return ImportSubTask
+     */
     public function getProcessTask()
     {
         $importTask = new ImportTask();
@@ -56,6 +65,12 @@ class TestProcessPayload extends UnitTest
         return $task;
     }
 
+    /**
+     * Helper
+     * Run all prerequisite task before this task can be run
+     *
+     * @param $importTask
+     */
     public function runPrerequisite($importTask)
     {
         $populateImportTask = $importTask->getTaskByName("PopulateImportOptions");
@@ -64,8 +79,4 @@ class TestProcessPayload extends UnitTest
         $validateTask->run();
     }
 
-    public function setUp()
-    {
-        require_once(API_APP_PATH.'vendor/autoload.php');
-    }
 }

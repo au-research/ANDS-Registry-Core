@@ -9,12 +9,10 @@ use ANDS\Util\XMLUtil;
 
 class ProcessCoreMetadata extends ImportSubTask
 {
+    protected $requireImportedRecords = true;
+
     public function run_task()
     {
-        if ($this->parent()->getTaskData("importedRecords") === false) {
-            $this->log("No imported records found");
-            return;
-        }
 
         foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
             $record = RegistryObject::find($roID);

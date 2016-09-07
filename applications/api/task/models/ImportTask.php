@@ -180,6 +180,7 @@ class ImportTask extends Task
             ->loadParams()
             ->loadSubTasks()
             ->loadPayload();
+
         return $this;
     }
 
@@ -233,13 +234,31 @@ class ImportTask extends Task
     }
 
     /**
+     * Load the parameters defined in the task to be reused
      *
+     * @return $this
      */
     public function loadParams()
     {
         parse_str($this->getParams(), $parameters);
+
         $this->dataSourceID = array_key_exists('ds_id', $parameters) ? $parameters['ds_id']: null;
         $this->batchID = array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null;
+
+        $this->setTaskData(
+            'dataSourceID',
+            array_key_exists('ds_id', $parameters) ? $parameters['ds_id']: null
+        );
+
+        $this->setTaskData(
+            'batchID',
+            array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null
+        );
+
+        foreach ($parameters as $key => $value) {
+            $this->setTaskData($key, $value);
+        }
+
         return $this;
     }
 
@@ -274,6 +293,7 @@ class ImportTask extends Task
     public function setBatchID($batchID)
     {
         $this->batchID = $batchID;
+        $this->setTaskData('batchID', $batchID);
         return $this;
     }
 }

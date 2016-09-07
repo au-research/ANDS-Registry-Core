@@ -167,7 +167,7 @@ class Task
 
     public function getTaskData($key)
     {
-        return array_key_exists($key, $this->taskData) ? $this->taskData[$key] : false;
+        return array_key_exists($key, $this->taskData) ? $this->taskData[$key] : null;
     }
 
 

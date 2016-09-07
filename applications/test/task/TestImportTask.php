@@ -4,7 +4,12 @@ namespace ANDS\Test;
 
 
 use ANDS\API\Task\ImportTask;
+use ANDS\Repository\DataSourceRepository;
 
+/**
+ * Class TestImportTask
+ * @package ANDS\Test
+ */
 class TestImportTask extends UnitTest
 {
     /** @test * */
@@ -98,12 +103,11 @@ class TestImportTask extends UnitTest
     /** @test * */
     public function test_it_should_run_the_first_task_found()
     {
-        $dataSource = $this->ci->ds->getByKey("AUTestingRecords");
+        $dataSource = DataSourceRepository::getByKey('AUTestingRecords');
         $importTask = new ImportTask();
         $importTask
-            ->setCI($this->ci)
             ->init([
-                'params' => 'ds_id=' . $dataSource->id . '&batch_id=1234d'
+                'params' => 'ds_id=' . $dataSource->data_source_id . '&batch_id=1234d'
             ])
             ->initialiseTask()
             ->run();
@@ -115,12 +119,11 @@ class TestImportTask extends UnitTest
     /** @test * */
     public function test_it_should_run_all_tasks_when_specified()
     {
-        $dataSource = $this->ci->ds->getByKey("AUTestingRecords");
+        $dataSource = DataSourceRepository::getByKey('AUTestingRecords');
         $importTask = new ImportTask();
         $importTask
-            ->setCI($this->ci)
             ->init([
-                'params' => 'ds_id=' . $dataSource->id . '&batch_id=1234d'
+                'params' => 'ds_id=' . $dataSource->data_source_id . '&batch_id=1234d'
             ])
             ->enableRunAllSubTask()
             ->initialiseTask();
@@ -134,7 +137,7 @@ class TestImportTask extends UnitTest
 
     public function setUp()
     {
-        $this->ci->load->model('registry/data_source/data_sources', 'ds');
-        require_once(API_APP_PATH . 'vendor/autoload.php');
+        $importTask = new ImportTask();
+        $importTask->bootEloquentModels();
     }
 }

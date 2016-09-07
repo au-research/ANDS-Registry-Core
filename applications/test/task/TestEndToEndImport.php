@@ -3,16 +3,18 @@
 
 namespace ANDS\Test;
 
-
 use ANDS\API\Task\ImportTask;
-use ANDS\RecordData;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\RelatedInfoRelationship;
 use ANDS\RegistryObject\Relationship;
-use ANDS\RegistryObjectAttribute;
+use ANDS\Repository\RegistryObjectsRepository;
 
 
+/**
+ * Class TestEndToEndImport
+ * @package ANDS\Test
+ */
 class TestEndToEndImport extends UnitTest
 {
     /** @test **/
@@ -37,7 +39,7 @@ class TestEndToEndImport extends UnitTest
         $this->assertFalse(
             $importTask->getTaskByName("ValidatePayload")->hasError()
         );
-        // $this->assertTrue($importTask->hasPayload());
+         $this->assertTrue($importTask->hasPayload());
 
         // ProcessPayload
         $importTask->run_task();
@@ -45,12 +47,13 @@ class TestEndToEndImport extends UnitTest
         $this->assertFalse(
             $importTask->getTaskByName("ProcessPayload")->hasError()
         );
-        // $this->assertTrue($importTask->hasPayload());
+         $this->assertTrue($importTask->hasPayload());
 
         // Ingest
         $importTask->run_task();
 
-        $this->assertTrue(count($importTask->getTaskData('importedRecords') > 0));
+        $importedRecords = $importTask->getTaskData('importedRecords');
+        $this->assertTrue(count($importedRecords) > 0);
 
         $record = RegistryObject::where('key', 'minh-test-record-pipeline')->first();
         $this->assertTrue($record);
@@ -157,29 +160,29 @@ class TestEndToEndImport extends UnitTest
         $this->assertTrue($record->getRegistryobjectMetadata("solr_doc"));
     }
 
+    /** @test **/
+    public function test_it_should_import_a_record_into_draft_when_required()
+    {
+        // import the record in as draft
+        $importTask = new ImportTask();
+        $importTask->init([
+            'params'=>'ds_id=209&batch_id=AUTestingRecordsImport&targetStatus=DRAFT'
+        ])->setCI($this->ci)->initialiseTask();
+        $importTask->enableRunAllSubTask()->run();
+
+        // make sure it's draft
+        $record = RegistryObjectsRepository::getByKeyAndStatus("minh-test-record-pipeline", "DRAFT");
+        $this->assertEquals("DRAFT", $record->status);
+    }
+
     public function setUp()
     {
-
         $importTask = new ImportTask();
         $importTask->bootEloquentModels();
+    }
 
-        $record = RegistryObject::where('key', 'minh-test-record-pipeline')->first();
-
-        if ($record && false) {
-            // delete attributes
-            RegistryObjectAttribute::where('registry_object_id', $record->registry_object_id)->delete();
-
-            // delete record_data
-            RecordData::where('registry_object_id', $record->registry_object_id)->delete();
-
-            // delete identifiers
-            Identifier::where(
-                'registry_object_id', $record->registry_object_id
-            )->delete();
-
-            // delete record
-            $record->delete();
-        }
-
+    public function tearDown()
+    {
+        RegistryObjectsRepository::completelyEraseRecord('minh-test-record-pipeline');
     }
 }
