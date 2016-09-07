@@ -11,9 +11,6 @@ use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use \Exception as Exception;
 
-use \Illuminate\Container\Container as Container;
-use \Illuminate\Support\Facades\Facade as Facade;
-
 /**
  * Class ImportTask
  * Import a payload into the registry
@@ -171,9 +168,18 @@ class ImportTask extends Task
         return $pipeline;
     }
 
+    /**
+     * Prime the task for execution
+     *
+     * @return $this
+     */
     public function initialiseTask()
     {
-        $this->bootEloquentModels()->loadParams()->loadSubTasks()->loadPayload();
+        $this
+            ->bootEloquentModels()
+            ->loadParams()
+            ->loadSubTasks()
+            ->loadPayload();
         return $this;
     }
 

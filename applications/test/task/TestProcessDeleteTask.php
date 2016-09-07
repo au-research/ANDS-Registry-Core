@@ -23,4 +23,9 @@ class TestProcessDeleteTask extends UnitTest
     {
         require_once(API_APP_PATH.'vendor/autoload.php');
     }
+
+    public function tearDown()
+    {
+        // TODO: reinstate record deleted here
+    }
 }
