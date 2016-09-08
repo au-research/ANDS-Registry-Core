@@ -153,6 +153,15 @@ class Doi_api
                 break;
         }
 
+        if($manual){
+            $manual="m_";
+        } else{
+            $manual='';
+        }
+
+        $this->doilog($doiService->getResponse(),'doi_'.$manual.$method,$client);
+
+
         // as well as set the HTTP header here
         if($format=="xml") {
             return $formater->format($doiService->getResponse());
@@ -351,6 +360,45 @@ class Doi_api
         $data['activities'] = $query->result();
         return $data;
     }
+
+
+    private function doilog($log_response,$event="doi_xml",$client=NULL){
+
+        $message = array();
+        $message["event"] = strtolower($event);
+        $message["response"]= $log_response;
+        $message["doi"]["id"] = $log_response["doi"];
+        $message["client"]["id"] = NULL;
+        $message["client"]["name"] = NULL;
+
+        //determine client name
+        if($client){
+            $message["client"]["name"] = $client->client_name;
+            $message["client"]["id"] = $client->client_id;
+        }
+
+        //determine if event is manual or m2m
+        if(strtolower(substr($event,0,6))=='doi_m_'){
+            $message['request']['manual']= true;
+            $message["event"] = str_replace("_m_","_", $message["event"]);
+        }else{
+            $message['request']['manual']= false;
+        }
+
+        //determine if doi is a test doi
+        $test_check = strpos($log_response["doi"],'10.5072');
+        if($test_check||$test_check===0) {
+            $message["doi"]["production"] = false;
+        }else{
+            $message["doi"]["production"] = true;
+        }
+
+        $message["api_key"] = $log_response["app_id"];
+
+        monolog($message,"doi_api", "info", true) ;
+
+    }
+
 
     public function __construct()
     {
