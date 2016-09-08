@@ -5,6 +5,7 @@ use ANDS\DOI\DataCiteClient;
 use ANDS\DOI\DOIServiceProvider;
 use ANDS\DOI\Formatter\XMLFormatter;
 use ANDS\DOI\Formatter\JSONFormatter;
+use ANDS\DOI\Formatter\StringFormatter;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
 use \Exception as Exception;
@@ -79,6 +80,8 @@ class Doi_api
             $formater = new XMLFormatter();
         } else if ($format == 'json'){
             $formater = new JSONFormatter();
+        }else if ($format == 'string'){
+            $formater = new StringFormatter();
         }
 
         $appID = $this->ci->input->get('app_id');
@@ -172,7 +175,10 @@ class Doi_api
         }
         else if ($format=='json'){
             return $formater->format($doiService->getResponse());
-        } else {
+        }
+        else if ($format=='string'){
+            return $formater->format($doiService->getResponse());
+        }else {
             return $doiService->getResponse();
         }
 
