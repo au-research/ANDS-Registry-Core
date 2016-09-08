@@ -86,8 +86,11 @@ class Doi_api
         $manual = $this->ci->input->get('manual');
 
         if(!$appID && isset($_SERVER['PHP_AUTH_USER'])) {
-            $sharedSecret = $_SERVER["PHP_AUTH_PW"];
             $appID = $_SERVER['PHP_AUTH_USER'];
+        }
+
+        if(!$sharedSecret && isset($_SERVER['PHP_AUTH_USER'])) {
+            $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
 
         if (!$appID) {
@@ -107,6 +110,7 @@ class Doi_api
 
         $client = $clientRepository->getByAppID($appID);
 
+
         $dataciteClient = new DataCiteClient(
             get_config_item("gDOIS_DATACENTRE_NAME_PREFIX").".".get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE").str_pad($client->client_id,2,"-",STR_PAD_LEFT), get_config_item("gDOIS_DATACITE_PASSWORD")
         );
@@ -116,6 +120,7 @@ class Doi_api
 
         $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
 
+
         $doiService->authenticate(
             $appID,
             $sharedSecret,
@@ -123,12 +128,11 @@ class Doi_api
             $manual
         );
 
-
         // @todo check authenticated client
 
         switch ($method) {
             case "mint":
-                $doiService->mint(
+                 $doiService->mint(
                     $this->ci->input->get('url'),
                     $this->getPostedXML()
                 );
@@ -363,6 +367,7 @@ class Doi_api
 
 
     private function doilog($log_response,$event="doi_xml",$client=NULL){
+
 
         $message = array();
         $message["event"] = strtolower($event);
