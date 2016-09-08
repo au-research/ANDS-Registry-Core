@@ -103,7 +103,7 @@
             vm.response = false;
             APIDOIService.mint(data).then(function(response){
                 vm.loading = false;
-                vm.response = response;
+                vm.response = response.response;
                 if (vm.response.doi && vm.response.type!="failure") {
                     vm.view(vm.response.doi, true);
                 }
@@ -129,7 +129,7 @@
             vm.response = false;
             APIDOIService.update(data).then(function(response){
                 vm.loading = false;
-                vm.response = response;
+                vm.response = response.response;
                 if (vm.response.type!='failure' && vm.response.doi) {
                     vm.view(vm.response.doi, true);
                 }
@@ -144,7 +144,7 @@
             }
             vm.response = {};
             APIDOIService.deactivate(data).then(function(response){
-                alert(response.message);
+                alert(response.response.message);
                 vm.refreshDOIs();
             });
         }
@@ -157,7 +157,7 @@
             }
             vm.response = {};
             APIDOIService.activate(data).then(function(response){
-                alert(response.message);
+                alert(response.response.message);
                 vm.refreshDOIs();
             });
         }
