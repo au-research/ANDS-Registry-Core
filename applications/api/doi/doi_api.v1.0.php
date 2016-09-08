@@ -4,7 +4,7 @@ namespace ANDS\API;
 use ANDS\DOI\DataCiteClient;
 use ANDS\DOI\DOIServiceProvider;
 use ANDS\DOI\Formatter\XMLFormatter;
-use ANDS\DOI\Formatter\Formatter;
+use ANDS\DOI\Formatter\JSONFormatter;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
 use \Exception as Exception;
@@ -12,7 +12,7 @@ use \Exception as Exception;
 class Doi_api
 {
 
-    protected $providesOwnResponse = true;
+    protected $providesOwnResponse = false;
     public $outputFormat = "xml";
 
     private $client = null;
@@ -69,6 +69,7 @@ class Doi_api
      */
     private function handleDOIRequest()
     {
+        $this->providesOwnResponse = true;
         $split = explode('.', $this->params['submodule']);
         $method = $split[0];
         $format = $split[1];
@@ -77,7 +78,7 @@ class Doi_api
             $this->outputFormat = "text/xml";
             $formater = new XMLFormatter();
         } else if ($format == 'json'){
-            $formater = new Formatter();
+            $formater = new JSONFormatter();
         }
 
         $appID = $this->ci->input->get('app_id');
@@ -140,18 +141,28 @@ class Doi_api
                     $this->getPostedXML()
                 );
                 break;
-
-
+            case "activate":
+                $doiService->activate(
+                    $this->ci->input->get('doi')
+                );
+                break;
+            case "deactivate":
+                $doiService->deactivate(
+                    $this->ci->input->get('doi')
+                );
+                break;
         }
 
         // as well as set the HTTP header here
         if($format=="xml") {
             return $formater->format($doiService->getResponse());
         }
-        else{
-            return $formater->fill($doiService->getResponse());
+        else if ($format=='json'){
+            return $formater->format($doiService->getResponse());
+        } else {
+            return $doiService->getResponse();
         }
-        break;
+
 
     }
 
@@ -255,6 +266,11 @@ class Doi_api
         return array(
             'client' => $this->client,
         );
+    }
+
+    public function isProvidingOwnResponse()
+    {
+        return $this->providesOwnResponse;
     }
 
     private function listDois()

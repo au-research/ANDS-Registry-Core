@@ -242,12 +242,13 @@ class Dispatcher extends MX_Controller
 
             api_log_terms($terms);
 
-            if (property_exists($class, 'providesOwnResponse')) {
+            if (property_exists($class, 'providesOwnResponse') && $class->isProvidingOwnResponse() === true) {
                 $this->output->set_content_type($class->outputFormat);
-                $this->formatter->display($result);
+                print_r($result);
             } else {
                 $this->formatter->display($result);
             }
+
 
         } catch (Exception $e) {
             $this->formatter->error($e->getMessage());

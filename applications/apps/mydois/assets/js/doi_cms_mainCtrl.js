@@ -20,7 +20,6 @@
         if ($location.search().tab) vm.tab = $location.search().tab;
 
         vm.client = client.data.client;
-
         $scope.$watch('vm.tab', function(newv){
             vm.changeTab(newv);
         });
@@ -104,8 +103,7 @@
             vm.response = false;
             APIDOIService.mint(data).then(function(response){
                 vm.loading = false;
-                vm.response = response.data;
-
+                vm.response = response;
                 if (vm.response.doi && vm.response.type!="failure") {
                     vm.view(vm.response.doi, true);
                 }
@@ -131,7 +129,7 @@
             vm.response = false;
             APIDOIService.update(data).then(function(response){
                 vm.loading = false;
-                vm.response = response.data;
+                vm.response = response;
                 if (vm.response.type!='failure' && vm.response.doi) {
                     vm.view(vm.response.doi, true);
                 }
@@ -146,7 +144,7 @@
             }
             vm.response = {};
             APIDOIService.deactivate(data).then(function(response){
-                alert(response.data.message);
+                alert(response.message);
                 vm.refreshDOIs();
             });
         }
@@ -159,7 +157,7 @@
             }
             vm.response = {};
             APIDOIService.activate(data).then(function(response){
-                alert(response.response.message);
+                alert(response.message);
                 vm.refreshDOIs();
             });
         }
