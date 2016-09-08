@@ -131,8 +131,8 @@
             vm.response = false;
             APIDOIService.update(data).then(function(response){
                 vm.loading = false;
-                vm.response = response.response;
-                if (response.response.type!='failure' && vm.response.doi) {
+                vm.response = response.data;
+                if (vm.response.type!='failure' && vm.response.doi) {
                     vm.view(vm.response.doi, true);
                 }
             });
@@ -146,7 +146,7 @@
             }
             vm.response = {};
             APIDOIService.deactivate(data).then(function(response){
-                alert(response.response.message);
+                alert(response.data.message);
                 vm.refreshDOIs();
             });
         }

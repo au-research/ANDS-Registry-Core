@@ -26,7 +26,6 @@
                 );
             },
             getDOI: function (doi, app_id) {
-                console.log()
                 return APIService.get(
                     'doi/'+doi,{'app_id':app_id }
                 );
@@ -50,7 +49,7 @@
             },
             mint: function (data) {
                 return APIService.postlegacy(
-                    api_url+'doi/mint.json/?manual_mint=true&url='+data.url+'&app_id='+data.app_id, {
+                    api_url+'doi/mint.json/?manual=true&url='+data.url+'&app_id='+data.app_id, {
                         xml:data.xml,
                         doi_id:data.doi,
                         client_id:data.client_id
@@ -59,7 +58,7 @@
             },
             update: function (data) {
                 return APIService.postlegacy(
-                    apps_url+'mydois/update.json/?manual_update=true&doi='+data.doi+'&url='+data.url+'&app_id='+data.app_id, {
+                    api_url+'doi/update.json/?manual=true&doi='+data.doi+'&url='+data.url+'&app_id='+data.app_id, {
                         xml:data.xml,
                         doi_id:data.doi,
                         client_id:data.client_id

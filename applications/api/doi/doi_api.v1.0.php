@@ -82,7 +82,7 @@ class Doi_api
 
         $appID = $this->ci->input->get('app_id');
         $sharedSecret = $this->ci->input->get('shared_secret');
-        $manual = $this->ci->input->get('manual_mint');
+        $manual = $this->ci->input->get('manual');
 
         if(!$appID && isset($_SERVER['PHP_AUTH_USER'])) {
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
@@ -131,15 +131,28 @@ class Doi_api
                     $this->ci->input->get('url'),
                     $this->getPostedXML()
                 );
-                // as well as set the HTTP header here
-                if($format=="xml") {
-                    return $formater->format($doiService->getResponse());
-                }
-                else{
-                    return $formater->fill($doiService->getResponse());
-                }
                 break;
+
+            case "update":
+                $doiService->update(
+                    $this->ci->input->get('doi'),
+                    $this->ci->input->get('url'),
+                    $this->getPostedXML()
+                );
+                break;
+
+
         }
+
+        // as well as set the HTTP header here
+        if($format=="xml") {
+            return $formater->format($doiService->getResponse());
+        }
+        else{
+            return $formater->fill($doiService->getResponse());
+        }
+        break;
+
     }
 
     private function getIPAddress()
