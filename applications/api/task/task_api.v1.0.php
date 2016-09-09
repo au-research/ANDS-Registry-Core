@@ -104,6 +104,7 @@ class Task_api
                         return $this->taskManager->deleteTask($taskObject->getId());
                     }
                     if ($task['message']) $task['message'] = json_decode($task['message'], true);
+                    if ($task['data']) $task['data'] = json_decode($task['data'], true);
                     $task['params'] = urldecode($task['params']);
                     return $task;
                 }

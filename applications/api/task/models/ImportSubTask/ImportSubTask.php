@@ -33,7 +33,7 @@ class ImportSubTask extends Task
         if ($this->requireDeletedRecords) {
             $deletedRecords = $this->parent()->getTaskData("deletedRecords");
             if ($deletedRecords === false || $deletedRecords === null) {
-                $this->addError("Imported Records require for this task");
+                $this->log("Deleted Records require for this task");
                 $this->setStatus("COMPLETED");
                 return;
             }

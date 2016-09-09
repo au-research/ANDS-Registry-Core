@@ -5,6 +5,7 @@ namespace ANDS\Test;
 
 use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use ANDS\API\Task\ImportTask;
+use ANDS\Payload;
 use ANDS\Util\XMLUtil;
 
 /**
@@ -43,14 +44,23 @@ class TestValidatePayload extends UnitTest
     /** @test */
     public function test_it_should_validate_rifcs_xml_but_remove_invalidated_ones()
     {
-        $task = $this->getImportTask();
-        $task->parent()->setBatchID("AUTestingRecords")->loadPayload();
+        $importTask = new ImportTask();
+        $importTask->init([
+            'name' => 'ImportTask',
+            'params' => 'ds_id=209&batch_id=AUTestingRecords'
+        ])->initialiseTask();
+        $task = $importTask->getTaskByName("ValidatePayload");
 
-        $xml = array_first($task->parent()->getPayloads());
+        $payloadInfo = array_first($task->parent()->getTaskData('payloadsInfo'));
+
+        $payload = new Payload($payloadInfo['path']);
+
+        $xml = $payload->getContentByStatus('unvalidated');
         $this->assertEquals(15, XMLUtil::countElementsByName($xml, 'registryObject'));
 
         $task->run();
-        $xml = array_first($task->parent()->getPayloads());
+        $payload->init();
+        $xml = $payload->getContentByStatus('validated');
         $this->assertEquals(13, XMLUtil::countElementsByName($xml, 'registryObject'));
     }
 

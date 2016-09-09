@@ -11,10 +11,17 @@ use \Exception as Exception;
 class ValidatePayload extends ImportSubTask
 {
     protected $requirePayload = true;
+    protected $payloadSource = "unvalidated";
+    protected $payloadOutput = "validated";
 
     public function run_task()
     {
-        foreach ($this->parent()->getPayloads() as $path => &$xml) {
+        foreach ($this->parent()->getPayloads() as &$payload) {
+
+            // this task requires unvalidated payload
+            $path = $payload->getPath();
+            $xml = $payload->getContentByStatus($this->payloadSource);
+
             $this->log("Validation started for $path");
 
             // validate RIFCS schema
@@ -32,11 +39,12 @@ class ValidatePayload extends ImportSubTask
                 $this->addError("XML does not pass validation");
                 return;
             }
-            // update parent payload to the already validated one
-            $this->parent()->setPayload($path, $xml);
 
-            // @todo write path_validated.xml
+            $payload->writeContentByStatus(
+                $this->payloadOutput, XMLUtil::wrapRegistryObject($xml)
+            );
 
+            $payload->init();
             $this->log("Validation completed for $path");
         }
     }

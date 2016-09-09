@@ -9,13 +9,19 @@ use ANDS\Util\XMLUtil;
 class ProcessPayload extends ImportSubTask
 {
     protected $requirePayload = true;
+    protected $payloadSource = "validated";
+    protected $payloadOutput = "processed";
 
     public function run_task()
     {
 
         // remove duplicates
         $keys = [];
-        foreach ($this->parent()->getPayloads() as $path=>$xml) {
+        foreach ($this->parent()->getPayloads() as &$payload) {
+
+            $path = $payload->getPath();
+            $xml = $payload->getContentByStatus($this->payloadSource);
+
             $processed = [];
             $registryObjects = XMLUtil::getElementsByName($xml, 'registryObject');
             foreach ($registryObjects as $registryObject) {
@@ -29,9 +35,12 @@ class ProcessPayload extends ImportSubTask
                     $this->log("Ignored a record already exists in import list: " . $key);
                 }
             }
-            $payload = implode("", $processed);
-            if ($payload) {
-                $this->parent()->setPayload($path, XMLUtil::wrapRegistryObject($payload));
+            $xmlPayload = implode("", $processed);
+            if ($xmlPayload) {
+                $payload->writeContentByStatus(
+                    $this->payloadOutput, XMLUtil::wrapRegistryObject($xmlPayload)
+                );
+                $this->log('Process stage 1 completed for '. $path);
             } else {
                 $this->log("Payload $path contains no importable records");
                 $this->parent()->deletePayload($path);
@@ -39,7 +48,11 @@ class ProcessPayload extends ImportSubTask
         }
 
         // verify harvestability for each registryObject
-        foreach ($this->parent()->getPayloads() as $path=>$xml) {
+        foreach ($this->parent()->getPayloads() as &$payload) {
+
+            $path = $payload->getPath();
+            $xml = $payload->getContentByStatus($this->payloadOutput);
+
             $processed = [];
             $registryObjects = XMLUtil::getElementsByName($xml, 'registryObject');
             foreach ($registryObjects as $registryObject) {
@@ -47,9 +60,11 @@ class ProcessPayload extends ImportSubTask
                     $processed[] = $registryObject->saveXML();
                 }
             }
-            $payload = implode("", $processed);
-            $this->parent()->setPayload($path, XMLUtil::wrapRegistryObject($payload));
-            // @todo write _processed.xml
+            $xmlPayload = implode("", $processed);
+            $payload->writeContentByStatus(
+                $this->payloadOutput, XMLUtil::wrapRegistryObject($xmlPayload)
+            );
+            $this->log('Process stage 2 completed for '. $path);
         }
 
     }

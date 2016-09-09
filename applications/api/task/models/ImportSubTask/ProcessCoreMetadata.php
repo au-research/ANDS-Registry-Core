@@ -13,8 +13,8 @@ class ProcessCoreMetadata extends ImportSubTask
 
     public function run_task()
     {
-
         foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
+            $this->log('Processing record: '.$roID);
             $record = RegistryObject::find($roID);
             $recordData = $record->getCurrentData();
 
@@ -50,6 +50,7 @@ class ProcessCoreMetadata extends ImportSubTask
 
             // TODO only update slug if the defaultStatus is PUBLISHED
             $ro->generateSlug();
+            $ro->save();
 
             // TODO manually_assessed
 

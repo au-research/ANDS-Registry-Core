@@ -63,7 +63,6 @@ class UnitTest
     public function runTests($specificTestFunction = false)
     {
         try {
-            $this->setUp();
             $this->ci->load->library('unit_test');
             $this->ci->unit->init();
             $testableFunctions = get_class_methods($this);
@@ -73,16 +72,17 @@ class UnitTest
             foreach ($testableFunctions as $function) {
                 if (startsWith($function, 'test')) {
                     try {
+                        $this->setUp();
                         $this->ci->benchmark->mark('start');
                         $this->$function();
                         $this->ci->benchmark->mark('end');
                         $this->benchmark[$function] = $this->ci->benchmark->elapsed_time('start', 'end', 5);
+                        $this->tearDown();
                     } catch (\Exception $e) {
                         $this->ci->unit->run(false, true, $function, $e->getMessage());
                     }
                 }
             }
-            $this->tearDown();
         } catch (\Exception $e) {
             $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
         }

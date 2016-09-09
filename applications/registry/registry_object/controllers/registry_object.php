@@ -228,81 +228,70 @@ class Registry_object extends MX_Controller {
 		echo json_encode($response);
 	}
 
-	public function save($registry_object_id){
-		set_exception_handler('json_exception_handler');
+    /**
+     * Save controller
+     * Entry point for ARO Save functionality
+     * POST XML to save/:id with key to save this record to DRAFT
+     *
+     * @param $registry_object_id
+     */
+    public function save($registry_object_id)
+    {
+        set_exception_handler('json_exception_handler');
+        $this->load->model('registry_objects', 'ro');
+        $this->load->model('data_source/data_sources', 'ds');
+        $xml = $this->input->post('xml');
 
-		$xml = $this->input->post('xml');
-		$this->load->library('importer');
+        $ro = $this->ro->getByID($registry_object_id);
+        $ds = $this->ds->getByID($ro->data_source_id);
 
-		$this->load->model('registry_objects', 'ro');
-		$this->load->model('data_source/data_sources', 'ds');
-		$ro = $this->ro->getByID($registry_object_id);
+        acl_enforce('REGISTRY_USER');
+        ds_acl_enforce($ro->data_source_id);
 
-		if (!$ro){
-			throw new Exception("No registry object exists with that ID!");
-		}
+        $xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
 
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce($ro->data_source_id);
+        // TODO: retire wrapRegistryObjects helper in favor of XMLUtil class
+        $xml = wrapRegistryObjects($xml);
 
-		$ds = $this->ds->getByID($ro->data_source_id);
+        // save the xml into the data source/manual-timestamp.xml
+        $batchID = 'MANUAL-' . time();
+        $path = get_config_item('harvested_contents_path') . '/' . $ds->id . '/' . $batchID . '.xml';
+        file_put_contents($path, $xml);
 
-		$this->importer->forceDraft();
+        // construct the importTask for the pipeline
+        // important: make sure runAll parameter is set
+        $taskData = [
+            'name' => 'Manual Entry by ' . $this->user->identifier(),
+            'type' => 'POKE',
+            'frequency' => 'ONCE',
+            'priority' => 1,
+            'params' => 'class=import&ds_id=' . $ds->id . '&batch_id=' . $batchID . '&targetStatus=DRAFT&runAll=true'
+        ];
 
-		$error_log = '';
-		$status = 'success';
-		//echo wrapRegistryObjects($xml);
-		//exit();
-		try{
-			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
-            $xml = wrapRegistryObjects($xml);
-            $this->importer->validateRIFCS($xml);
-            $this->importer->setXML($xml);
-			$this->importer->setDatasource($ds);
-			$this->importer->commit();
-		}
-		catch(Exception $e)
-		{
-			$status = 'error';
-			$error_log = $e->getMessage();
-		}
-		//if ($error_log){
-		//	throw new Exception("Errors during saving this registry object! " . BR . implode($error_log, BR));
-		//}
-		//else{
-		// Fetch updated registry object!
-		// $ro = $this->ro->getByID($registry_object_id);
-		$ro = $this->ro->getByID($registry_object_id);
+        $taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
+        $task = $taskManager->addTask($taskData);
+        $taskResult = $taskManager->runTask($task['id']);
 
-		//if the key has changed
-		if($ro->key != $this->input->post('key')){
-			$ro = $this->ro->getAllByKey($this->input->post('key'));
-			$ro = $ro[0];
-		}
-
-		$qa = $ds->qa_flag==DB_TRUE ? true : false;
-		$manual_publish = $ds->manual_publish==DB_TRUE ? true: false;
-
-		$result =
-			array(
-				"status"=>$status,
-				"ro_status"=>"DRAFT",
-				"title"=>$ro->title,
-				"qa_required"=>$qa,
-				"data_source_id" => $ro->data_source_id,
-				"approve_required"=>$manual_publish,
-				"error_count"=> (int) $ro->error_count,
-				"ro_id"=>$ro->id,
-				"ro_quality_level"=>$ro->quality_level,
-				"ro_quality_class"=>($ro->quality_level >= 2 ? "success" : "important"),
-				"qa_$ro->quality_level"=>true,
-				"message"=>$error_log,
-				"qa"=>$ro->get_quality_text()
-				);
-			//if($qa) $result['qa'] = true;
-			echo json_encode($result);
-		//}
-	}
+        // get the ro again to update the value
+        // TODO: switch to using RegistryObject Eloquent Model
+        $ro = $this->ro->getByID($registry_object_id);
+        $result = [
+            "status" => $taskResult['status'] == 'COMPLETED' ? 'success' : 'error',
+            "ro_status" => "DRAFT",
+            "title" => $ro->title,
+            "qa_required" => $ds->qa_flag == DB_TRUE ? true : false,
+            "data_source_id" => $ro->data_source_id,
+            "approve_required" => $ds->manual_publish == DB_TRUE ? true : false,
+            "error_count" => (int) $ro->error_count,
+            "ro_id" => $ro->id,
+            "ro_quality_level" => $ro->quality_level,
+            "ro_quality_class" => ($ro->quality_level >= 2 ? "success" : "important"),
+            "qa_$ro->quality_level" => true,
+            "message" => $taskResult['message']['error'],
+            "qa" => $ro->get_quality_text()
+        ];
+        echo json_encode($result);
+    }
 
 
 	public function add_new(){

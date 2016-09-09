@@ -39,7 +39,7 @@ class TestEndToEndImport extends UnitTest
         $this->assertFalse(
             $importTask->getTaskByName("ValidatePayload")->hasError()
         );
-         $this->assertTrue($importTask->hasPayload());
+        $this->assertTrue($importTask->hasPayload());
 
         // ProcessPayload
         $importTask->run_task();

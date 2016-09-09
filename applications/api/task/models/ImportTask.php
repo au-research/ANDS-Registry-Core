@@ -209,6 +209,22 @@ class ImportTask extends Task
         return $pipeline;
     }
 
+    public function setPipeline($pipeline)
+    {
+        switch($pipeline) {
+            case "PublishingWorkflow":
+                $this->setTaskData('subtasks',
+                    [
+                        ['name' => "HandleStatusChange", 'status' => 'PENDING']
+                    ]
+                );
+                break;
+            default:
+                $this->setTaskData('subtasks', $this->getDefaultImportSubtasks());
+                break;
+        }
+    }
+
     /**
      * Prime the task for execution
      *
@@ -303,6 +319,11 @@ class ImportTask extends Task
             'batchID',
             array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null
         );
+
+        if (array_key_exists('runAll', $parameters)) {
+            $this->enableRunAllSubTask();
+        }
+
 
         foreach ($parameters as $key => $value) {
             $this->setTaskData($key, $value);

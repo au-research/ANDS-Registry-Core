@@ -43,8 +43,9 @@ class TestProcessPayload extends UnitTest
 
         // there should be only 1 registryObject in this payload
         $payload = array_first($task->parent()->getPayloads());
+        $processedXML = $payload->getContentByStatus('processed');
         $this->assertEquals(
-            1, XMLUtil::countElementsByName($payload, "registryObject")
+            1, XMLUtil::countElementsByName($processedXML, "registryObject")
         );
     }
 

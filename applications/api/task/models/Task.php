@@ -159,7 +159,7 @@ class Task
     public function clearTaskData()
     {
         $this->taskData = [];
-        return $this;
+
     }
 
     public function addTaskData($key, $val)
@@ -215,7 +215,7 @@ class Task
         ];
         if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
 
-        if ($this->id) {
+        if ($this->getId() && $this->getId() != "") {
             return $this->update_db($data);
         } else {
             return true;

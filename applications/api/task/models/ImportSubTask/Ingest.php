@@ -12,7 +12,12 @@ class Ingest extends ImportSubTask
 
     public function run_task()
     {
-        foreach ($this->parent()->getPayloads() as $path=>$xml) {
+        foreach ($this->parent()->getPayloads() as $payload) {
+            $xml = $payload->getContentByStatus('processed');
+            if ($xml === null) {
+                $this->addError("Processed XML not found for ". $payload->getPath());
+                break;
+            }
             $registryObjects = XMLUtil::getElementsByName($xml, 'registryObject');
             foreach ($registryObjects as $registryObject) {
                 $this->insertRegistryObject($registryObject);
@@ -39,7 +44,7 @@ class Ingest extends ImportSubTask
                     $registryObject->saveXML()
                 )
             );
-            $this->log("Added new Version:$newVersion->id");
+            $this->log("Added new Version :$newVersion->id to existing record");
 
             $matchingRecord->setRegistryObjectAttribute('modified', time());
 
@@ -64,7 +69,7 @@ class Ingest extends ImportSubTask
                     $registryObject->saveXML()
                 )
             );
-            $this->log("Added new Version:$newVersion->id");
+            $this->log("Added new Version:$newVersion->id and reinstated record:".$deletedRecord->registry_object_id);
 
             $deletedRecord->setRegistryObjectAttribute('modified', time());
 
@@ -109,6 +114,7 @@ class Ingest extends ImportSubTask
         $newVersion = new RecordData;
         $newVersion->current = true;
         $newVersion->registry_object_id = $registryObjectID;
+        $newVersion->timestamp = time();
         $newVersion->saveData($xml);
         $newVersion->save();
         return $newVersion;
@@ -126,6 +132,7 @@ class Ingest extends ImportSubTask
     public function getDeletedRecord($key)
     {
         $deletedRecord = RegistryObject::where('key', $key)
+            ->where('status', 'DELETED')
             ->first();
         return $deletedRecord;
     }
