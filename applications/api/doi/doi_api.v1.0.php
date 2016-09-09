@@ -80,7 +80,7 @@ class Doi_api
             $formater = new XMLFormatter();
         } else if ($format == 'json'){
             $formater = new JSONFormatter();
-        }else if ($format == 'string'){
+        }else {
             $formater = new StringFormatter();
         }
 
