@@ -113,6 +113,12 @@ class Doi_api
 
         $client = $clientRepository->getByAppID($appID);
 
+        if(!$client){
+            return $formater->format([
+                'responsecode' => 'MT009',
+                'verbosemessage' => 'You are not authorised to use this service'
+            ]);
+        }
 
         $dataciteClient = new DataCiteClient(
             get_config_item("gDOIS_DATACENTRE_NAME_PREFIX").".".get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE").str_pad($client->client_id,2,"-",STR_PAD_LEFT), get_config_item("gDOIS_DATACITE_PASSWORD")
@@ -166,7 +172,7 @@ class Doi_api
             $manual='';
         }
 
-        $this->doilog($doiService->getResponse(),'doi_'.$manual.$method,$client);
+       // $this->doilog($doiService->getResponse(),'doi_'.$manual.$method,$client);
 
 
         // as well as set the HTTP header here
