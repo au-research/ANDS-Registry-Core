@@ -22,10 +22,10 @@
 // Pull in the global imports
 $eDBCONF = array();
 require_once('./global_config.php');
-if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider/i', $_SERVER['HTTP_USER_AGENT']) === 0)
+if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider/i', $_SERVER['HTTP_USER_AGENT']) === 0 && isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !="POST")
 {
     if($ENV['protocol'] == 'https://'){
-        if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on"){
+        if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on")){
             $redirect = $ENV['protocol'].$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
             header("HTTP/1.1 301 Moved Permanently");
             header("Location: $redirect");
@@ -42,6 +42,7 @@ if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider/i',
     }
 }
 define('ENVIRONMENT', $ENV['deployment_state']);
+
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING
