@@ -21,7 +21,7 @@ class Doi_test extends MX_Controller {
 		$url = 'http://devl.ands.org.au/example1.php';
 		$incorrect_url = 'http;//no.domain.exists/example.php';
 
-		$doiversion_service_points = array('v1.0'=>'https://services.ands.org.au/home/dois/doi_' , 'v1.1'=>'https://services.ands.org.au/doi/1.1/', 'test' => apps_url().'/mydois/');
+		$doiversion_service_points = array('v1.0'=>'https://services.ands.org.au/home/dois/doi_' , 'v1.1'=>'https://services.ands.org.au/doi/1.1/', 'test' => api_url().'doi/');
 
 		$validxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 <resource xmlns="http://datacite.org/schema/kernel-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
@@ -256,7 +256,7 @@ $invalidxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 
 		}elseif($response_type=='xml')
 		{
-			$obj = simplexml_load_string($result);
+		    $obj = simplexml_load_string($result);
 			$message_code = $obj->{'responsecode'};
 
 		}else
@@ -272,8 +272,10 @@ $invalidxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 	{
 
 		$context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($app_id.":".$shared_secret));
+
 	
-		$requestURI = $requestURI.$action.'.'.$response_type.'/?url='.$url.'&app_id='.$app_id;	
+		$requestURI = $requestURI.$action.'.'.$response_type.'/?url='.$url.'&app_id='.$app_id;
+
 
 		$newch = curl_init();
 		curl_setopt($newch, CURLOPT_URL, $requestURI);
@@ -289,6 +291,7 @@ $invalidxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 		$obj = json_decode( $result, true );
 
 		$doi = $obj['response']['doi'];
+
 
 		return $doi;
 

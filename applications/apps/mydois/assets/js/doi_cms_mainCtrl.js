@@ -20,7 +20,6 @@
         if ($location.search().tab) vm.tab = $location.search().tab;
 
         vm.client = client.data.client;
-
         $scope.$watch('vm.tab', function(newv){
             vm.changeTab(newv);
         });
@@ -131,7 +130,7 @@
             APIDOIService.update(data).then(function(response){
                 vm.loading = false;
                 vm.response = response.response;
-                if (response.response.type!='failure' && vm.response.doi) {
+                if (vm.response.type!='failure' && vm.response.doi) {
                     vm.view(vm.response.doi, true);
                 }
             });
