@@ -89,6 +89,7 @@
                 vm.viewdoi = data.data;
             });
         }
+        vm.update("10.5072/00/563978d704714");
 
         vm.mint = function() {
             $scope.$broadcast('update');
@@ -296,4 +297,6 @@
         }
 
     }
+
+
 })();
