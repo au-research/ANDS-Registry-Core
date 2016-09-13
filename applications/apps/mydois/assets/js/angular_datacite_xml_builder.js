@@ -25,7 +25,7 @@
                 scope.$watch('xml', function (newv) {
                     if (newv) {
                         scope.objectModel = scope.xmlToJson(newv);
-                        // scope.fixValues();
+                        scope.fixValues();
                     }
                 });
 
@@ -38,6 +38,8 @@
                         // scope.update();
                     }
                 }, true);
+
+                scope.show_recommended = true;
 
                 scope.availableOptions = {
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
@@ -81,7 +83,10 @@
                                 'southBoundLatitude': [{}],
                                 'northBoundLatitude': [{}]
                             }],
-                            'geoLocationPlace': [{}]
+                            'geoLocationPlace': [{}],
+                            'geoLocationPolygon': [
+                                {'polygonPoint': [{}, {}, {}, {}]}
+                            ]
                         }
                     } else if (elem == 'contributor') {
                         obj = {
@@ -97,6 +102,10 @@
                             'funderIdentifier': [{}],
                             'awardNumber': [{}],
                             'awardTitle': [{}]
+                        }
+                    } else if (elem == 'polygonPoint') {
+                        obj = {
+                            'polygonPoint': [{}]
                         }
                     }
                     if (!list) {
@@ -182,24 +191,29 @@
                         });
                     }
 
+                    if (scope.objectModel.resource[0].geoLocations) {
+                        angular.forEach(scope.objectModel.resource[0].geoLocations[0].geoLocation, function(geoLocation, index){
+                            var fields = ['geoLocationPoint', 'geoLocationBox', 'geoLocationPolygon', 'geoLocationPlace'];
+                            var n = {};
+                            angular.forEach(fields, function (fi) {
+                                if (!geoLocation[fi]) geoLocation[fi] = [{}];
+                                n[fi] = geoLocation[fi];
+                            });
+                            angular.forEach(geoLocation.geoLocationPoint, function(point, index){
+                                if (!point['pointLongitude']) point['pointLongitude'] = [{}];
+                                if (!point['pointLatitude']) point['pointLatitude'] = [{}];
+                            })
+                            angular.forEach(geoLocation.geoLocationBox, function(box, index){
+                                if (!box['westBoundLongitude']) box['westBoundLongitude'] = [{}];
+                                if (!box['eastBoundLongitude']) box['eastBoundLongitude'] = [{}];
+                                if (!box['southBoundLatitude']) box['southBoundLatitude'] = [{}];
+                                if (!box['northBoundLatitude']) box['northBoundLatitude'] = [{}];
+                            });
+                            scope.objectModel.resource[0].geoLocations[0].geoLocation[index] = n;
+                        });
+                    }
 
-                    //fix geoLocationPoint for kernel-4
-                    // if (scope.objectModel.resource[0].geoLocations) {
-                    //     angular.forEach(scope.objectModel.resource[0].geoLocations, function(geoLocations, index) {
-                    //        angular.forEach(geoLocations.geoLocation, function(geoLocation, index) {
-                    //            if (typeof geoLocation.geoLocationPoint[0]['_text'] === "string") {
-                    //                var split = geoLocation.geoLocationPoint[0]['_text'].split(" ");
-                    //                var newGeoLocationPoint = {
-                    //                    'pointLongitude': {'_text': split[0]},
-                    //                    'pointLatitude': {'_text': split[1]}
-                    //                };
-                    //                geoLocation.geoLocationPoint[0] = newGeoLocationPoint;
-                    //                geoLocations.geoLocation[index].geoLocationPoint[0] = newGeoLocationPoint;
-                    //            }
-                    //        });
-                    //     });
-                    //     console.log( "result", scope.objectModel.resource[0].geoLocations );
-                    // }
+
 
                 };
 

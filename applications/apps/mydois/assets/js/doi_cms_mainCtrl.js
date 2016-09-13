@@ -9,6 +9,7 @@
     function mainCtrl(APIDOIService, client, $scope, $location, $log, $sce) {
         var vm = this;
         vm.tab = "list";
+        vm.tab = "mint";
         $scope.base_url = apps_url;
         vm.newdoixml = "";
         vm.pp = 50;
@@ -89,7 +90,7 @@
                 vm.viewdoi = data.data;
             });
         }
-        vm.update("10.5072/00/563978d704714");
+        // vm.update("10.5072/00/563978d704714");
 
         vm.mint = function() {
             $scope.$broadcast('update');

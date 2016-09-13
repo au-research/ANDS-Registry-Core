@@ -56,7 +56,7 @@
                     <input type="text" placeholder="Creator Family Name" ng-model="creator.familyName[0]._text" ng-readonly="readonly"/>
                 </div>
 
-                <div class="input-prepend input-append" ng-repeat="affiliation in objectModel.resource[0].creators[0].creator[$index].affiliation">
+                <div class="input-prepend input-append" ng-repeat="affiliation in objectModel.resource[0].creators[0].creator[$index].affiliation track by $index">
                     <span class="add-on">Creator Affiliations</span>
                     <input type="text" placeholder="Creator Affiliations" ng-model="affiliation._text" ng-readonly="readonly"/>
                 </div>
@@ -360,6 +360,17 @@
                                placeholder="northBoundLatitude"
                                ng-model="geoLocation.geoLocationBox[0].northBoundLatitude[0]._text"/>
                     </div>
+
+                    <label for="" class="control-label">geoLocationPolygon</label>
+{{ geoLocation.geoLocationPolygon[0].polygonPoint }}
+                    <div class="input-prepend input-append" ng-repeat="polygonPoint in geoLocation.geoLocationPolygon[0].polygonPoint track by $index">
+                        <span class="add-on">polygonPoint</span>
+                        <input ng-readonly="readonly" type="text"
+                               placeholder="polygonPoint"
+                               ng-model="polygonPoint._text"/>
+                    </div>
+
+                    <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].geoLocations[0].geoLocation.geoLocationPolygon[0], 'polygonPoint')"><i class="icon-plus"></i> Add polygonPoint</a>
 
                     <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].geoLocations[0].geoLocation, $index)"><i class="icon-remove"></i></a>
                 </div>
