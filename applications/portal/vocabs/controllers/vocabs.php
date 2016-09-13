@@ -399,10 +399,17 @@ class Vocabs extends MX_Controller
                  ->setOpt('defType', 'edismax')
                  ->setOpt('rows', $pp)
                  ->setOpt('q.alt', '*:*')
+                // see views/includes/search-view.blade.php
+                // for the fields that must be returned.
+                // NB: highlighting can/does also return snippets
+                // from other fields not listed in fl (which is good!).
+                 ->setOpt('fl',
+                     'id,slug,status,title,acronym,publisher,'
+                          . 'description,widgetable')
                  ->setOpt(
                      'qf',
                      'title_search^1 subject_search^0.5 '
-                          . 'description_search~10^0.01 fulltext^0.001 '
+                          . 'description^0.01 fulltext^0.001 '
                      . 'concept_search^0.02 publisher^0.5'
                  );
 
