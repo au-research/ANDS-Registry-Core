@@ -362,15 +362,22 @@
                     </div>
 
                     <label for="" class="control-label">geoLocationPolygon</label>
-{{ geoLocation.geoLocationPolygon[0].polygonPoint }}
-                    <div class="input-prepend input-append" ng-repeat="polygonPoint in geoLocation.geoLocationPolygon[0].polygonPoint track by $index">
-                        <span class="add-on">polygonPoint</span>
-                        <input ng-readonly="readonly" type="text"
-                               placeholder="polygonPoint"
-                               ng-model="polygonPoint._text"/>
+                    <div ng-repeat="polygonPoint in geoLocation.geoLocationPolygon[0].polygonPoint track by $index">
+                        <div class="input-prepend input-append">
+                            <span class="add-on">pointLongitude</span>
+                            <input ng-readonly="readonly" type="text"
+                                   placeholder="pointLongitude"
+                                   ng-model="polygonPoint.pointLongitude[0]._text"/>
+                        </div>
+                        <div class="input-prepend input-append">
+                            <span class="add-on">pointLatitude</span>
+                            <input ng-readonly="readonly" type="text"
+                                   placeholder="pointLatitude"
+                                   ng-model="polygonPoint.pointLatitude[0]._text"/>
+                        </div>
                     </div>
 
-                    <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].geoLocations[0].geoLocation.geoLocationPolygon[0], 'polygonPoint')"><i class="icon-plus"></i> Add polygonPoint</a>
+                    <a ng-if="!readonly" href="" class="btn" ng-click="addGeoLocationPolygonPoint(geoLocation.geoLocationPolygon[0])"><i class="icon-plus"></i> Add polygonPoint</a>
 
                     <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].geoLocations[0].geoLocation, $index)"><i class="icon-remove"></i></a>
                 </div>

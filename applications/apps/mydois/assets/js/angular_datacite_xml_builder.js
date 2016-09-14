@@ -84,9 +84,14 @@
                                 'northBoundLatitude': [{}]
                             }],
                             'geoLocationPlace': [{}],
-                            'geoLocationPolygon': [
-                                {'polygonPoint': [{}, {}, {}, {}]}
-                            ]
+                            'geoLocationPolygon': [{
+                                'polygonPoint': [
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]}
+                                ]
+                            }]
                         }
                     } else if (elem == 'contributor') {
                         obj = {
@@ -212,9 +217,11 @@
                             scope.objectModel.resource[0].geoLocations[0].geoLocation[index] = n;
                         });
                     }
+                };
 
-
-
+                scope.addGeoLocationPolygonPoint = function(parent) {
+                    if (!parent.polygonPoint) parent.polygonPoint = [];
+                    parent.polygonPoint.push({'pointLongitude':[{}], 'pointLatitude':[{}]});
                 };
 
                 scope.jsonToXml = function (json) {
@@ -320,10 +327,22 @@
                             xml += '>';
 
                             angular.forEach(subitem, function(subsubitem, subsubitemkey){
-                                if (subsubitem && subsubitem[0] && subsubitem[0]["_text"]) {
-                                    xml += "<" + subsubitemkey + ">";
-                                    xml += subsubitem[0]['_text'];
-                                    xml += "</" + subsubitemkey + ">";
+                                if (subsubitem && subsubitem[0] && subsubitemkey!= '_ns' && subsubitemkey!='_text') {
+                                    if (subsubitem[0]['_text']) {
+                                        xml += "<" + subsubitemkey + ">";
+                                        xml += subsubitem[0]['_text'];
+                                        xml += "</" + subsubitemkey + ">";
+                                    } else {
+                                        // even deeper for polygonPoint!
+                                        if (subsubitemkey == 'polygonPoint') {
+                                            angular.forEach(subsubitem, function(point){
+                                                xml +='<polygonPoint>';
+                                                xml += '<pointLongitude>' + point.pointLongitude[0]['_text'] +'</pointLongitude>';
+                                                xml += '<pointLatitude>' + point.pointLatitude[0]['_text'] +'</pointLatitude>';
+                                                xml +='</polygonPoint>';
+                                            });
+                                        }
+                                    }
                                 }
                             });
 
