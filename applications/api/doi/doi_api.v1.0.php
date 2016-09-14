@@ -1,11 +1,14 @@
 <?php
 namespace ANDS\API;
 
+use ANDS\API\DOI\BulkRequest;
+use ANDS\API\Task\TaskManager;
 use ANDS\DOI\DataCiteClient;
 use ANDS\DOI\DOIServiceProvider;
 use ANDS\DOI\Formatter\XMLFormatter;
 use ANDS\DOI\Formatter\JSONFormatter;
 use ANDS\DOI\Formatter\StringFormatter;
+use ANDS\DOI\Model\Doi;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
 use \Exception as Exception;
@@ -58,6 +61,8 @@ class Doi_api
                 return $this->activitiesLog();
             } elseif ($this->params['submodule'] == 'client') {
                 return $this->clientDetail();
+            } elseif ($this->params['submodule'] == 'bulk') {
+                return $this->handleBulkOperation();
             }
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
@@ -221,6 +226,102 @@ class Doi_api
         } else {
             return trim($data);
         }
+    }
+
+    private function handleBulkOperation()
+    {
+        $app_id = $this->ci->input->get('app_id') ? $this->ci->input->get('app_id') : false;
+        if (!$app_id) {
+            throw new Exception('App ID required');
+        }
+
+        $type = $this->ci->input->get('type') ?: false;
+        $from = $this->ci->input->get('from') ?: false;
+        $to = $this->ci->input->get('to') ?: false;
+        $preview = $this->ci->input->get('preview') ?: false;
+        $offset = $this->ci->input->get('offset') ?: 0;
+        $limit = $this->ci->input->get('limit') ?: 30;
+
+        // TODO: verify appID
+
+        // get DOI that can be bulked
+        $matchingDOIs = $this->getMatchingDOIs($type, $from, $offset, $limit);
+
+        $bulkRequest = [];
+        foreach ($matchingDOIs['result'] as $doi) {
+            $bulkRequest[] = [
+                'doi' => $doi->doi_id,
+                'type' => $type,
+                'from' => $doi->url,
+                'to' => str_replace($from, $to, $doi->url)
+            ];
+        }
+
+        if ($preview) {
+            return [
+                'total' => $matchingDOIs['total'],
+                'result' => $bulkRequest
+            ];
+        }
+
+        $client = $this->getClientModel($this->ci->input->get('app_id'));
+
+        $bulkRequest = new BulkRequest;
+        $bulkRequest->client_id = $client->client_id;
+        $bulkRequest->status = "PENDING";
+        $bulkRequest->params = json_encode([
+            'type' => $type,
+            'from' => $from,
+            'to' => $to
+        ]);
+        $bulkRequest->save();
+
+        // create new task
+        $taskManager = new TaskManager($this->ci->db, $this->ci);
+        $task = $taskManager->addTask([
+            'name' => 'DOI Bulk Request: '.$client->client_name,
+            'params' => http_build_query([
+                'class' => 'doiBulk',
+                'bulkID' => $bulkRequest->id
+            ])
+        ]);
+
+        return [
+            'message' => 'bulk request saved',
+            'bulk_id' => $bulkRequest->id,
+            'task_id' => $task['id']
+        ];
+    }
+
+    private function getMatchingDOIs($type, $from, $offset, $limit)
+    {
+        if ($type == 'url') {
+            // get DOIs belongs to this APPID that has a URL matching FROM
+
+            $client = $this->getClientModel($this->ci->input->get('app_id'));
+
+            $query = Doi::query();
+            $query->where('client_id', $client->client_id)
+                ->where('url', 'LIKE', '%'.$from.'%');
+            return [
+                'total' => $query->count(),
+                'result' => $query->take($limit)->skip($offset)->get()
+            ];
+        }
+
+        return [];
+    }
+
+    private function getClientModel($app_id)
+    {
+        $clientRepository = new ClientRepository(
+            $this->dois_db->hostname,
+            'dbs_dois',
+            $this->dois_db->username,
+            $this->dois_db->password
+        );
+        $client = $clientRepository->getByAppID($this->ci->input->get('app_id'));
+        return $client;
     }
 
 
