@@ -80,6 +80,16 @@
                         client_id:data.client_id
                     }
                 );
+            },
+            bulkRequest: function(data) {
+                return APIService.get(
+                    'doi/bulk', data
+                );
+            },
+            bulk: function(data) {
+                return APIService.get(
+                    'doi/bulk/'+data.client_id+'/', {'app_id':data.app_id}
+                );
             }
         }
 

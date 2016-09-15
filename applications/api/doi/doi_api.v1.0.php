@@ -235,6 +235,21 @@ class Doi_api
             throw new Exception('App ID required');
         }
 
+        $client = $this->getClientModel($this->ci->input->get('app_id'));
+
+        if ($this->params['identifier'] !== false) {
+
+            if ($this->params['object_module']!==false) {
+                // get all bulk by ID
+                $bulkRequest = BulkRequest::find((int) $this->params['object_module']);
+                return $bulkRequest;
+            } else {
+                // get all bulk by clientID
+                $bulkRequests = BulkRequest::where('client_id', $this->params['identifier'])->get();
+                return $bulkRequests;
+            }
+        }
+
         $type = $this->ci->input->get('type') ?: false;
         $from = $this->ci->input->get('from') ?: false;
         $to = $this->ci->input->get('to') ?: false;
@@ -264,7 +279,7 @@ class Doi_api
             ];
         }
 
-        $client = $this->getClientModel($this->ci->input->get('app_id'));
+
 
         $bulkRequest = new BulkRequest;
         $bulkRequest->client_id = $client->client_id;
