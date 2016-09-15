@@ -172,7 +172,7 @@ class Doi_api
             $manual='';
         }
 
-       // $this->doilog($doiService->getResponse(),'doi_'.$manual.$method,$client);
+        $this->doilog($doiService->getResponse(),'doi_'.$manual.$method,$client);
 
 
         // as well as set the HTTP header here
@@ -384,9 +384,10 @@ class Doi_api
         $message = array();
         $message["event"] = strtolower($event);
         $message["response"]= $log_response;
-        $message["doi"]["id"] = $log_response["doi"];
+        $message["doi"]["id"] = (isset($log_response["doi"]) ? $log_response["doi"] : "");
         $message["client"]["id"] = NULL;
         $message["client"]["name"] = NULL;
+        $message["api_key"] = (isset($log_response["app_id"]) ? $log_response["app_id"] : "");
 
         //determine client name
         if($client){
@@ -403,14 +404,12 @@ class Doi_api
         }
 
         //determine if doi is a test doi
-        $test_check = strpos($log_response["doi"],'10.5072');
+        $test_check = strpos($message["doi"]["id"],'10.5072');
         if($test_check||$test_check===0) {
             $message["doi"]["production"] = false;
         }else{
             $message["doi"]["production"] = true;
         }
-
-        $message["api_key"] = $log_response["app_id"];
 
         monolog($message,"doi_api", "info", true) ;
 
