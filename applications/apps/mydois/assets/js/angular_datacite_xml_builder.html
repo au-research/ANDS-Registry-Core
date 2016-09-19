@@ -124,6 +124,11 @@
                         <input ng-readonly="readonly" type="text" placeholder="Subject Scheme URI" ng-model="subject._attr.schemeURI._value"/>
                     </div>
 
+                    <div class="input-prepend input-append" style="display:inline-block">
+                        <span class="add-on">Subject Value URI</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Subject Value URI" ng-model="subject._attr.valueURI._value"/>
+                    </div>
+
                     <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].subjects[0].subject, $index)"><i class="icon-remove"></i></a>
                 </div>
             </div>
