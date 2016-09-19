@@ -62,18 +62,22 @@
                 </div>
                 <a href="" ng-click="add(objectModel.resource[0].creators[0].creator[$index], 'affiliation')" ng-show="!readonly"><i class="icon-plus"></i> Add Affiliation</a>
 
-                <div class="input-prepend input-append">
-                    <span class="add-on">Name Identifier</span>
-                    <input type="text" placeholder="Creator Name Identifier" ng-model="creator.nameIdentifier[0]._text" ng-readonly="readonly"/>
+                <div ng-repeat="nameIdentifier in creator.nameIdentifier track by $index">
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Name Identifier</span>
+                        <input type="text" placeholder="Creator Name Identifier" ng-model="nameIdentifier._text" ng-readonly="readonly"/>
+                    </div>
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Name Identifier Scheme</span>
+                        <input type="text" placeholder="Creator Name Identifier Scheme" ng-model="nameIdentifier._attr.nameIdentifierScheme._value" ng-readonly="readonly"/>
+                    </div>
+                    <div class="input-prepend input-append" style="display:inline-block">
+                        <span class="add-on">Scheme URI</span>
+                        <input type="text" placeholder="Scheme URI" ng-model="nameIdentifier._attr.schemeURI._value" ng-readonly="readonly"/>
+                    </div>
+                    <a ng-if="!readonly" href="" ng-click="remove(creator.nameIdentifier, $index)"><i class="icon-remove"></i></a>
                 </div>
-                <div class="input-prepend input-append">
-                    <span class="add-on">Name Identifier Scheme</span>
-                    <input type="text" placeholder="Creator Name Identifier Scheme" ng-model="creator.nameIdentifier[0]._attr.nameIdentifierScheme._value" ng-readonly="readonly"/>
-                </div>
-                <div class="input-prepend input-append" style="display:inline-block">
-                    <span class="add-on">Scheme URI</span>
-                    <input type="text" placeholder="Scheme URI" ng-model="creator.nameIdentifier[0]._attr.schemeURI._value" ng-readonly="readonly"/>
-                </div>
+                <a ng-if="!readonly" href="" class="btn" ng-click="add(creator, 'nameIdentifier')"><i class="icon-plus"></i> Add Name Identifier</a>
 
                 <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].creators[0].creator, $index)"><i class="icon-remove"></i></a>
             </div>
@@ -162,21 +166,22 @@
                     </div>
                     <a href="" ng-show="!readonly" ng-click="add(contributor, 'affiliation')"><i class="icon-plus"></i> Add Affiliation</a>
 
-
-                    <div class="input-prepend input-append">
-                        <span class="add-on">Name Identifier</span>
-                        <input ng-readonly="readonly" type="text" placeholder="Name Identifier" ng-model="contributor.nameIdentifier[0]._text"/>
+                    <div ng-repeat="nameIdentifier in contributor.nameIdentifier track by $index">
+                        <div class="input-prepend input-append">
+                            <span class="add-on">Name Identifier</span>
+                            <input type="text" placeholder="Contributor Name Identifier" ng-model="nameIdentifier._text" ng-readonly="readonly"/>
+                        </div>
+                        <div class="input-prepend input-append">
+                            <span class="add-on">Name Identifier Scheme</span>
+                            <input type="text" placeholder="Contributor Name Identifier Scheme" ng-model="nameIdentifier._attr.nameIdentifierScheme._value" ng-readonly="readonly"/>
+                        </div>
+                        <div class="input-prepend input-append" style="display:inline-block">
+                            <span class="add-on">Scheme URI</span>
+                            <input type="text" placeholder="Scheme URI" ng-model="nameIdentifier._attr.schemeURI._value" ng-readonly="readonly"/>
+                        </div>
+                        <a ng-if="!readonly" href="" ng-click="remove(contributor.nameIdentifier, $index)"><i class="icon-remove"></i></a>
                     </div>
-
-                    <div class="input-prepend input-append">
-                        <span class="add-on">Name Identifier Scheme</span>
-                        <input ng-readonly="readonly" type="text" placeholder="Name Identifier Scheme" ng-model="contributor.nameIdentifier[0]._attr.nameIdentifierScheme._value"/>
-                    </div>
-
-                    <div class="input-prepend input-append" style="display:inline-block;">
-                        <span class="add-on">Name Identifier Scheme URI</span>
-                        <input ng-readonly="readonly" type="text" placeholder="Name Identifier Scheme URI" ng-model="contributor.nameIdentifier[0]._attr.schemeURI._value"/>
-                    </div>
+                    <a ng-if="!readonly" href="" class="btn" ng-click="add(contributor, 'nameIdentifier')"><i class="icon-plus"></i> Add Name Identifier</a>
 
                     <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].contributors[0].contributor, $index)"><i class="icon-remove"></i></a>
                 </div>

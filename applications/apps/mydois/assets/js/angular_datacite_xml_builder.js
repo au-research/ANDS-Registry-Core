@@ -62,7 +62,7 @@
                 };
 
                 scope.add = function (list, elem) {
-                    var obj = {};
+                    var obj = [{}];
                     if (elem == 'creator') {
                         obj = {
                             'creatorName': [{}],
