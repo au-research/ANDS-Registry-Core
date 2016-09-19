@@ -7,11 +7,21 @@
             "ANDS\\API\\Log\\Handler\\": "log/handlers/",
             "ANDS\\API\\Log\\Indexer\\": "log/indexers/",
             "ANDS\\API\\Task\\": "task/models",
-            "ANDS\\": "../ANDS"
+            "ANDS\\": "../ANDS",
+            "ANDS\\API\\DOI\\": "doi"
         }
     },
     "require": {
         "illuminate/database": "5.2.*",
         "graphaware/neo4j-php-client": "^3.3"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/au-research/ANDS-DOI-Service"
+        }
+    ],
+    "require-dev": {
+        "au-research/ANDS-DOI-Service": "dev-develop@dev"
     }
 }

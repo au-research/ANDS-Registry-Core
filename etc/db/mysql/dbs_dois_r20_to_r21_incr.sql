@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS `dbs_dois`.`doi_alternate_identifiers`;
+DROP TABLE IF EXISTS `dbs_dois`.`doi_contributors`;
+DROP TABLE IF EXISTS `dbs_dois`.`doi_creators`;
+DROP TABLE IF EXISTS `dbs_dois`.`doi_dates`;
+DROP TABLE IF EXISTS `dbs_dois`.`doi_descriptions`;
+DROP TABLE IF EXISTS `dbs_dois`.`doi_formats`;
+DROP TABLE IF EXISTS `dbs_dois`.`doi_related_identifiers`;
+DROP TABLE IF EXISTS `dbs_dois`.`doi_sizes`;
+DROP TABLE IF EXISTS `dbs_dois`.`doi_resource_types`;
+DROP TABLE IF EXISTS `dbs_dois`.`doi_subjects`;
+DROP TABLE IF EXISTS `dbs_dois`.`doi_titles`;

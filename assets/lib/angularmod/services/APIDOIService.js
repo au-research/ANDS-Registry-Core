@@ -36,7 +36,7 @@
                 );
             },
             getBlankDataciteXML: function(doi) {
-                var xml ='<?xml version="1.0" encoding="utf-8"?><resource xmlns="http://datacite.org/schema/kernel-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd"><identifier identifierType="DOI">'+doi+'</identifier><creators><creator> <creatorName></creatorName> </creator> </creators><titles> <title></title> </titles>';
+                var xml ='<?xml version="1.0" encoding="utf-8"?><resource xmlns="http://datacite.org/schema/kernel-4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd"><identifier identifierType="DOI">'+doi+'</identifier><creators><creator> <creatorName></creatorName> </creator> </creators><titles> <title></title> </titles>';
                 xml+='</resource>';
                 return xml;
             },
@@ -49,7 +49,7 @@
             },
             mint: function (data) {
                 return APIService.postlegacy(
-                    apps_url+'mydois/mint.json/?manual_mint=true&url='+data.url+'&app_id='+data.app_id, {
+                    api_url+'doi/mint.json/?manual=true&url='+data.url+'&app_id='+data.app_id, {
                         xml:data.xml,
                         doi_id:data.doi,
                         client_id:data.client_id
@@ -58,7 +58,7 @@
             },
             update: function (data) {
                 return APIService.postlegacy(
-                    apps_url+'mydois/update.json/?manual_update=true&doi='+data.doi+'&url='+data.url+'&app_id='+data.app_id, {
+                    api_url+'doi/update.json/?manual=true&doi='+data.doi+'&url='+data.url+'&app_id='+data.app_id, {
                         xml:data.xml,
                         doi_id:data.doi,
                         client_id:data.client_id
@@ -67,7 +67,7 @@
             },
             activate: function (data) {
                 return APIService.postlegacy(
-                    apps_url+'mydois/activate.json/?manual_activate=true&app_id='+data.app_id+'&doi='+data.doi, {
+                    api_url+'doi/activate.json/?manual=true&app_id='+data.app_id+'&doi='+data.doi, {
                         doi_id:data.doi,
                         client_id:data.client_id
                     }
@@ -75,10 +75,20 @@
             },
             deactivate: function (data) {
                 return APIService.postlegacy(
-                    apps_url+'mydois/deactivate.json/?manual_deactivate=true&app_id='+data.app_id+'&doi='+data.doi, {
+                    api_url+'doi/deactivate.json/?manual=true&app_id='+data.app_id+'&doi='+data.doi, {
                         doi_update:data.doi,
                         client_id:data.client_id
                     }
+                );
+            },
+            bulkRequest: function(data) {
+                return APIService.get(
+                    'doi/bulk', data
+                );
+            },
+            bulk: function(data) {
+                return APIService.get(
+                    'doi/bulk/'+data.client_id+'/', {'app_id':data.app_id}
                 );
             }
         }

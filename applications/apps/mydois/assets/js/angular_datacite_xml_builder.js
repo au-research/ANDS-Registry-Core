@@ -39,17 +39,21 @@
                     }
                 }, true);
 
+                scope.show_recommended = true;
+
                 scope.availableOptions = {
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
                 };
 
-                scope.availableOptions['contributorType'] = ['ContactPerson', 'DataCollector', 'DataCurator', 'DataManager', 'Distributor', 'Editor', 'Funder', 'HostingInstitution', 'Producer', 'ProjectLeader', 'ProjectManager', 'ProjectMember', 'RegistrationAgency', 'RegistrationAuthority', 'RelatedPerson', 'Researcher', 'ResearchGroup', 'RightsHolder', 'Sponsor', 'Supervisor', 'WorkPackageLeader', 'Other'];
+                scope.availableOptions['contributorType'] = ['ContactPerson', 'DataCollector', 'DataCurator', 'DataManager', 'Distributor', 'Editor', 'HostingInstitution', 'Producer', 'ProjectLeader', 'ProjectManager', 'ProjectMember', 'RegistrationAgency', 'RegistrationAuthority', 'RelatedPerson', 'Researcher', 'ResearchGroup', 'RightsHolder', 'Sponsor', 'Supervisor', 'WorkPackageLeader', 'Other'];
 
-                scope.availableOptions['relatedIdentifierType'] = ['ARK', 'arXiv', 'bibcode', 'DOI', 'EAN13', 'EISSN', 'Handle', 'ISBN', 'ISSN', 'ISTC', 'LISSN', 'LSID', 'PMID', 'PURL', 'UPC', 'URL', 'URN  '];
+                scope.availableOptions['relatedIdentifierType'] = ['ARK', 'arXiv', 'bibcode', 'DOI', 'EAN13', 'EISSN', 'Handle', 'IGSN', 'ISBN', 'ISSN', 'ISTC', 'LISSN', 'LSID', 'PMID', 'PURL', 'UPC', 'URL', 'URN'];
 
                 scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf'];
 
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
+
+                scope.availableOptions['funderIdentifierType'] = ['ISNI', 'GRID', 'Crossref Funder ID', 'Other'];
 
                 scope.setOption = function (item, attr, value) {
                     if (!item._attr) item._attr = {};
@@ -58,24 +62,55 @@
                 };
 
                 scope.add = function (list, elem) {
-                    var obj = {};
+                    var obj = [{}];
                     if (elem == 'creator') {
                         obj = {
                             'creatorName': [{}],
+                            'givenName': [{}],
+                            'familyName': [{}],
                             'nameIdentifier': [{}],
                             'affiliation': [{}]
                         }
                     } else if (elem == 'geoLocation') {
                         obj = {
-                            'geoLocationPoint': [{}],
-                            'geoLocationBox': [{}],
-                            'geoLocationPlace': [{}]
+                            'geoLocationPoint': [{
+                                'pointLongitude': [{}],
+                                'pointLatitude': [{}]
+                            }],
+                            'geoLocationBox': [{
+                                'westBoundLongitude': [{}],
+                                'eastBoundLongitude': [{}],
+                                'southBoundLatitude': [{}],
+                                'northBoundLatitude': [{}]
+                            }],
+                            'geoLocationPlace': [{}],
+                            'geoLocationPolygon': [{
+                                'polygonPoint': [
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]}
+                                ]
+                            }]
                         }
                     } else if (elem == 'contributor') {
                         obj = {
                             'contributorName': [{}],
+                            'familyName': [{}],
+                            'givenName': [{}],
                             'nameIdentifier': [{}],
                             'affiliation': [{}]
+                        }
+                    } else if (elem == 'fundingReference') {
+                        obj = {
+                            'funderName': [{}],
+                            'funderIdentifier': [{}],
+                            'awardNumber': [{}],
+                            'awardTitle': [{}]
+                        }
+                    } else if (elem == 'polygonPoint') {
+                        obj = {
+                            'polygonPoint': [{}]
                         }
                     }
                     if (!list) {
@@ -114,7 +149,7 @@
                     if (typeof str == 'string') {
                         return str.replace(/[&<>]/g, scope.replaceTag);
                     } else {
-                        return str;
+                        return str+"";
                     }
                 };
 
@@ -128,14 +163,65 @@
                     });
 
                     if (scope.objectModel.resource[0].creators) {
-                        angular.forEach(scope.objectModel.resource[0].creators[0].creator, function (creator) {
-                            var fields = ['creatorName', 'nameIdentifier', 'affiliation'];
+                        angular.forEach(scope.objectModel.resource[0].creators[0].creator, function (creator, index) {
+                            var fields = ['creatorName', 'givenName', 'familyName', 'nameIdentifier', 'affiliation'];
+                            var newCreator = {};
                             angular.forEach(fields, function (fi) {
                                 if (!creator[fi]) creator[fi] = [{}];
+                                newCreator[fi] = creator[fi];
                             });
+
+                            // copy all other stuff over, like _attr
+                            angular.forEach(creator, function(x, key){
+                                if (!newCreator[key]) newCreator[key] = creator[key];
+                            });
+                            scope.objectModel.resource[0].creators[0].creator[index] = newCreator;
                         });
                     }
 
+                    if (scope.objectModel.resource[0].contributors) {
+                        angular.forEach(scope.objectModel.resource[0].contributors[0].contributor, function (contributor, index) {
+                            var fields = ['contributorName', 'givenName', 'familyName', 'nameIdentifier', 'affiliation'];
+                            var newContributor = {};
+                            angular.forEach(fields, function (fi) {
+                                if (!contributor[fi]) contributor[fi] = [{}];
+                                newContributor[fi] = contributor[fi];
+                            });
+
+                            // copy all other stuff over, like _attr
+                            angular.forEach(contributor, function(x, key){
+                                if (!newContributor[key]) newContributor[key] = contributor[key];
+                            });
+                            scope.objectModel.resource[0].contributors[0].contributor[index] = newContributor;
+                        });
+                    }
+
+                    if (scope.objectModel.resource[0].geoLocations) {
+                        angular.forEach(scope.objectModel.resource[0].geoLocations[0].geoLocation, function(geoLocation, index){
+                            var fields = ['geoLocationPoint', 'geoLocationBox', 'geoLocationPolygon', 'geoLocationPlace'];
+                            var n = {};
+                            angular.forEach(fields, function (fi) {
+                                if (!geoLocation[fi]) geoLocation[fi] = [{}];
+                                n[fi] = geoLocation[fi];
+                            });
+                            angular.forEach(geoLocation.geoLocationPoint, function(point, index){
+                                if (!point['pointLongitude']) point['pointLongitude'] = [{}];
+                                if (!point['pointLatitude']) point['pointLatitude'] = [{}];
+                            })
+                            angular.forEach(geoLocation.geoLocationBox, function(box, index){
+                                if (!box['westBoundLongitude']) box['westBoundLongitude'] = [{}];
+                                if (!box['eastBoundLongitude']) box['eastBoundLongitude'] = [{}];
+                                if (!box['southBoundLatitude']) box['southBoundLatitude'] = [{}];
+                                if (!box['northBoundLatitude']) box['northBoundLatitude'] = [{}];
+                            });
+                            scope.objectModel.resource[0].geoLocations[0].geoLocation[index] = n;
+                        });
+                    }
+                };
+
+                scope.addGeoLocationPolygonPoint = function(parent) {
+                    if (!parent.polygonPoint) parent.polygonPoint = [];
+                    parent.polygonPoint.push({'pointLongitude':[{}], 'pointLatitude':[{}]});
                 };
 
                 scope.jsonToXml = function (json) {
@@ -149,14 +235,14 @@
                         var xsischemaLocation = json.resource[0]['_attr']['schemaLocation']['_value'];
 
                         //convert all schema level to 3
-                        xmlns = xmlns.replace(/kernel-2.1/g, 'kernel-3').replace(/kernel-2.2/g, 'kernel-3');
-                        xmlnsxsi = xmlnsxsi.replace(/kernel-2.1/g, 'kernel-3').replace(/kernel-2.2/g, 'kernel-3');
-                        xsischemaLocation = xsischemaLocation.replace(/kernel-2.1/g, 'kernel-3').replace(/kernel-2.2/g, 'kernel-3');
+                        var default_kernel = 'kernel-4';
+                        xmlns = xmlns.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
+                        xmlnsxsi = xmlnsxsi.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
+                        xsischemaLocation = xsischemaLocation.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
 
                         xml += '<resource xmlns="' + xmlns + '" xmlns:xsi="' + xmlnsxsi + '" xsi:schemaLocation="' + xsischemaLocation + '">';
 
                         xml += '<identifier identifierType="' + json.resource[0].identifier[0]['_attr']['identifierType']['_value'] + '">' + json.resource[0].identifier[0]['_text'] + '</identifier>';
-
 
                         //single values
                         var singleValues = ['publisher', 'publicationYear', 'language', 'version', 'resourceType'];
@@ -177,14 +263,14 @@
                                 }
                                 xml += '>';
                                 if (item['_text']) {
-                                    xml += scope.safe_tags_replace(item['_text']);
+                                    xml += scope.safe_tags_replace(item['_text']) + "";
                                 }
                                 xml += '</' + module + '>';
                             }
                         });
 
                         //similar modules
-                        var modules = ['title', 'subject', 'date', 'alternateIdentifier', 'relatedIdentifier', 'size', 'format', 'description', 'rights', 'geoLocation', 'creator', 'contributor'];
+                        var modules = ['title', 'subject', 'date', 'alternateIdentifier', 'relatedIdentifier', 'size', 'format', 'description', 'rights', 'geoLocation', 'creator', 'contributor', 'fundingReference'];
                         angular.forEach(modules, function (module) {
                             var container = module + 's';
                             if (module == 'rights') container = 'rightsList';
@@ -193,6 +279,7 @@
                                 && json.resource[0][container][0][module].length > 0) {
                                 xml += '<' + container + '>';
                                 angular.forEach(json.resource[0][container][0][module], function (item) {
+
                                     xml += '<' + module;
                                     if (item['_attr']) {
                                         angular.forEach(item['_attr'], function (value, key) {
@@ -204,29 +291,12 @@
                                     xml += '>';
 
                                     angular.forEach(item, function (sitem, subitemkey) {
-                                        if (subitemkey != '_ns' && subitemkey != '_attr' && subitemkey != '_text') {
-                                            angular.forEach(sitem, function (subitem) {
-                                                xml += '<' + subitemkey;
-                                                if (subitem['_attr']) {
-                                                    angular.forEach(subitem['_attr'], function (subitemvalue, subitemkey) {
-                                                        if (subitemvalue['_value']) {
-                                                            xml += ' ' + subitemkey + '="' + scope.safe_tags_replace(subitemvalue['_value']) + '"';
-                                                        }
-                                                    });
-                                                }
-                                                xml += '>';
-                                                if (subitem && subitem['_text']) {
-                                                    xml += scope.safe_tags_replace(subitem['_text']);
-                                                }
-                                                xml += '</' + subitemkey + '>';
-                                            });
-                                        }
+                                        xml += scope.getItemXML(sitem, subitemkey);
                                     });
-
 
                                     if (item['_text']) {
                                         // xml+=item['_text'];
-                                        xml += scope.safe_tags_replace(item['_text']);
+                                        xml += scope.safe_tags_replace(item['_text']) + "";
                                     }
                                     xml += '</' + module + '>';
                                 });
@@ -241,12 +311,59 @@
 
                 };
 
+                scope.getItemXML = function(sitem, subitemkey) {
+                    var xml = "";
+
+                    if (subitemkey != '_ns' && subitemkey != '_attr' && subitemkey != '_text') {
+                        angular.forEach(sitem, function (subitem) {
+                            xml += '<' + subitemkey;
+                            if (subitem['_attr']) {
+                                angular.forEach(subitem['_attr'], function (subitemvalue, subitemkey) {
+                                    if (subitemvalue['_value']) {
+                                        xml += ' ' + subitemkey + '="' + scope.safe_tags_replace(subitemvalue['_value']) + '"';
+                                    }
+                                });
+                            }
+                            xml += '>';
+
+                            angular.forEach(subitem, function(subsubitem, subsubitemkey){
+                                if (subsubitem && subsubitem[0] && subsubitemkey!= '_ns' && subsubitemkey!='_text') {
+                                    if (subsubitem[0]['_text']) {
+                                        xml += "<" + subsubitemkey + ">";
+                                        xml += subsubitem[0]['_text'] + "";
+                                        xml += "</" + subsubitemkey + ">";
+                                    } else {
+                                        // even deeper for polygonPoint!
+                                        if (subsubitemkey != 'polygonPoint') {
+                                        } else {
+                                            angular.forEach(subsubitem, function (point) {
+                                                xml += '<polygonPoint>';
+                                                var longitude = point.pointLongitude[0]['_text'] ? point.pointLongitude[0]['_text']: "";
+                                                var lattitude = point.pointLatitude[0]['_text'] ? point.pointLatitude[0]['_text'] : "";
+                                                xml += '<pointLongitude>' + longitude + '</pointLongitude>';
+                                                xml += '<pointLatitude>' + lattitude + '</pointLatitude>';
+                                                xml += '</polygonPoint>';
+                                            });
+                                        }
+                                    }
+                                }
+                            });
+
+                            if (subitem && subitem['_text']) {
+                                xml += scope.safe_tags_replace(subitem['_text'])+"";
+                            }
+                            xml += '</' + subitemkey + '>';
+                        });
+                    }
+                    return xml;
+                };
+
 
                 scope.xmlToJson = function (xml) {
                     var options = {
                         mergeCDATA: true,   // extract cdata and merge with text nodes
-                        grokAttr: true,     // convert truthy attributes to boolean, etc
-                        grokText: true,     // convert truthy text/attr to boolean, etc
+                        grokAttr: false,     // convert truthy attributes to boolean, etc
+                        grokText: false,     // convert truthy text/attr to boolean, etc
                         normalize: true,    // collapse multiple spaces to single space
                         xmlns: true,        // include namespaces as attributes in output
                         namespaceKey: '_ns',    // tag name for namespace objects
@@ -259,7 +376,9 @@
                         stripElemPrefix: true,  // for elements of same name in diff namespaces, you can enable namespaces and access the nskey property
                         childrenAsArray: true   // force children into arrays
                     };
-                    return xmlToJSON.parseString(xml, options);
+                    var result = xmlToJSON.parseString(xml, options);
+                    return result;
+
                 }
 
             }
@@ -287,6 +406,7 @@
                 scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid'];
                 scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
+
 
                 scope.remove = function () {
                     scope.list.splice(scope.index, '1');

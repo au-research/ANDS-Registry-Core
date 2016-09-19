@@ -721,6 +721,8 @@ class _vocabulary
 
             if ($result && $this->prop['id']) {
                 $new_vocab = new _vocabulary($this->prop['id']);
+                // Copy over the import log so the UI can use it!
+                $new_vocab->import_log = $this->import_log;
                 return $new_vocab;
             } else {
                 return $db->_error_message();
@@ -945,6 +947,22 @@ class _vocabulary
                         $this->log('Version with ID: ' . $version_id . ' not found');
                     }
                 }
+
+                // CC-1778 CC-1787
+                // Provide an alert if there will not be a browse tree.
+                if (isset($content['concepts_tree_not_provided'])) {
+                    $this->log('Alert: Either a polyhierarchy or cycle ' .
+                               'was detected in the vocabulary data.<br />' .
+                               'The concept browse tree will not be ' .
+                               'visible for this vocabulary.<br />' .
+                               'For more information, please see ' .
+                               '<a target="_blank" ' .
+                               ' href="https://documentation.ands.org.au/' .
+                               'display/DOC/Support+for+concept+browsing+' .
+                               'within+the+portal">' .
+                               'Portal concept browsing</a>.');
+                }
+
             }
 
         }

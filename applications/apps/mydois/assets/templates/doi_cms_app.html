@@ -18,6 +18,7 @@
                 <li ng-class="{'active': vm.tab=='log'}"><a href="" ng-click="vm.tab = 'log'">Activity Log</a></li>
                 <li ng-class="{'active': vm.tab=='detail'}"><a href="" ng-click="vm.tab = 'detail'">App ID Configuration</a></li>
                 <li ng-class="{'active': vm.tab=='check'}"><a href="" ng-click="vm.tab = 'check'">Check DOI Links</a></li>
+                <li ng-class="{'active': vm.tab=='bulk'}"><a href="" ng-click="vm.tab = 'bulk'">Bulk Update</a></li>
             </ul>
         </div>
         <div class="widget-content" ng-if="vm.tab=='list'">
@@ -193,6 +194,63 @@
                 <b>{{ vm.response.message }}</b><br>
                 {{ vm.response.verbosemessage }}
             </div>
+        </div>
+
+        <div class="widget-content" ng-if="vm.tab=='bulk'">
+
+            <div ng-if="vm.bulkRequests">
+                <div class="alert alert-information">
+                    You have {{ vm.bulkRequests.length }} bulk requests
+                </div>
+            </div>
+
+            <form class="form" ng-submit="vm.bulkPreview()">
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">Type</span>
+                    <select ng-options="bulk.id as bulk.label for bulk in vm.bulk_types" ng-model="vm.bulk_type"></select>
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">From</span>
+                    <input type="text" ng-model="vm.bulk_from">
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">To</span>
+                    <input type="text" ng-model="vm.bulk_to">
+                </div>
+                <div class="controls" style="display:inline-block">
+                    <input type="submit" class="btn btn-default" value="Preview" style="margin-top:14px"/>
+                </div>
+            </form>
+
+            <div ng-if="vm.bulkPreviewResponse">
+                <p>
+                    Showing {{ vm.bulkPreviewResponse.result.length }} of {{ vm.bulkPreviewResponse.total }} possible result(s)
+                </p>
+                <table class="table table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th style="text-align:left">DOI</th>
+                        <th style="text-align:left">From</th>
+                        <th style="text-align:left">To</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="result in vm.bulkPreviewResponse.result">
+                        <td class="word-wrap">{{ result.doi }}</td>
+                        <td>{{result.from}}</td>
+                        <td>{{result.to}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div ng-if="!vm.bulkRequestedResponse">
+                    <a href="" class="btn btn-primary" ng-click="vm.sendBulkRequest()">Send Bulk Request</a>
+                </div>
+                <div class="alert alert-success" ng-if="vm.bulkRequestedResponse">
+                    {{ vm.bulkRequestedResponse.message }}
+                </div>
+            </div>
+
+
         </div>
 
     </div>

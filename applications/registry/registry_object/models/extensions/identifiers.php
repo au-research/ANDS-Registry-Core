@@ -16,12 +16,12 @@ class Identifiers_Extension extends ExtensionBase
 		$this->db->delete('registry_object_identifiers');
 		foreach($sxml->xpath('//ro:'.$this->ro->class.'/ro:identifier') AS $identifier)
 		{
-		   if((string)$identifier != '')
+		   if(trim((string)$identifier) != '')
 		   {
-				$this->db->insert('registry_object_identifiers', 
+				$this->db->insert('registry_object_identifiers',
 					array(
-							"registry_object_id"=>$this->ro->id, 
-							"identifier"=>(string)$identifier,
+							"registry_object_id"=>$this->ro->id,
+							"identifier"=>trim((string)$identifier),
 							"identifier_type"=>(string)$identifier['type']
 					)
 				);
