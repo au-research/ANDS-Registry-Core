@@ -231,6 +231,8 @@
                         <input type="text" placeholder="Award Title" ng-model="awardTitle._text" ng-readonly="readonly"/>
                     </div>
 
+                    <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].fundingReferences[0].fundingReference, $index)"><i class="icon-remove"></i></a>
+
                 </div>
             </div>
             <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].fundingReferences[0], 'fundingReference')"><i class="icon-plus"></i> Add Funding Reference</a>
