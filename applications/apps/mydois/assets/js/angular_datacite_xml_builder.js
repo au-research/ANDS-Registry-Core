@@ -53,7 +53,7 @@
 
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
 
-                scope.availableOptions['funderIdentifierType'] = ['ISNI', 'Other'];
+                scope.availableOptions['funderIdentifierType'] = ['ISNI', 'GRID', 'Crossref Funder ID', 'Other'];
 
                 scope.setOption = function (item, attr, value) {
                     if (!item._attr) item._attr = {};
