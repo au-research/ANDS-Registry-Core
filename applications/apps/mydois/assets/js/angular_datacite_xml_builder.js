@@ -149,7 +149,7 @@
                     if (typeof str == 'string') {
                         return str.replace(/[&<>]/g, scope.replaceTag);
                     } else {
-                        return str;
+                        return str+"";
                     }
                 };
 
@@ -263,7 +263,7 @@
                                 }
                                 xml += '>';
                                 if (item['_text']) {
-                                    xml += scope.safe_tags_replace(item['_text']);
+                                    xml += scope.safe_tags_replace(item['_text']) + "";
                                 }
                                 xml += '</' + module + '>';
                             }
@@ -296,7 +296,7 @@
 
                                     if (item['_text']) {
                                         // xml+=item['_text'];
-                                        xml += scope.safe_tags_replace(item['_text']);
+                                        xml += scope.safe_tags_replace(item['_text']) + "";
                                     }
                                     xml += '</' + module + '>';
                                 });
@@ -330,7 +330,7 @@
                                 if (subsubitem && subsubitem[0] && subsubitemkey!= '_ns' && subsubitemkey!='_text') {
                                     if (subsubitem[0]['_text']) {
                                         xml += "<" + subsubitemkey + ">";
-                                        xml += subsubitem[0]['_text'];
+                                        xml += subsubitem[0]['_text'] + "";
                                         xml += "</" + subsubitemkey + ">";
                                     } else {
                                         // even deeper for polygonPoint!
@@ -350,7 +350,7 @@
                             });
 
                             if (subitem && subitem['_text']) {
-                                xml += scope.safe_tags_replace(subitem['_text']);
+                                xml += scope.safe_tags_replace(subitem['_text'])+"";
                             }
                             xml += '</' + subitemkey + '>';
                         });
@@ -362,8 +362,8 @@
                 scope.xmlToJson = function (xml) {
                     var options = {
                         mergeCDATA: true,   // extract cdata and merge with text nodes
-                        grokAttr: true,     // convert truthy attributes to boolean, etc
-                        grokText: true,     // convert truthy text/attr to boolean, etc
+                        grokAttr: false,     // convert truthy attributes to boolean, etc
+                        grokText: false,     // convert truthy text/attr to boolean, etc
                         normalize: true,    // collapse multiple spaces to single space
                         xmlns: true,        // include namespaces as attributes in output
                         namespaceKey: '_ns',    // tag name for namespace objects
