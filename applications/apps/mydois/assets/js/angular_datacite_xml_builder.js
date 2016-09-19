@@ -334,12 +334,15 @@
                                         xml += "</" + subsubitemkey + ">";
                                     } else {
                                         // even deeper for polygonPoint!
-                                        if (subsubitemkey == 'polygonPoint') {
-                                            angular.forEach(subsubitem, function(point){
-                                                xml +='<polygonPoint>';
-                                                xml += '<pointLongitude>' + point.pointLongitude[0]['_text'] +'</pointLongitude>';
-                                                xml += '<pointLatitude>' + point.pointLatitude[0]['_text'] +'</pointLatitude>';
-                                                xml +='</polygonPoint>';
+                                        if (subsubitemkey != 'polygonPoint') {
+                                        } else {
+                                            angular.forEach(subsubitem, function (point) {
+                                                xml += '<polygonPoint>';
+                                                var longitude = point.pointLongitude[0]['_text'] ? point.pointLongitude[0]['_text']: "";
+                                                var lattitude = point.pointLatitude[0]['_text'] ? point.pointLatitude[0]['_text'] : "";
+                                                xml += '<pointLongitude>' + longitude + '</pointLongitude>';
+                                                xml += '<pointLatitude>' + lattitude + '</pointLatitude>';
+                                                xml += '</polygonPoint>';
                                             });
                                         }
                                     }

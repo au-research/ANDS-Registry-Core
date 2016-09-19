@@ -365,18 +365,20 @@
 
                     <label for="" class="control-label">geoLocationPolygon</label>
                     <div ng-repeat="polygonPoint in geoLocation.geoLocationPolygon[0].polygonPoint track by $index">
+                        <label for="" class="control-label">polygonPoint</label>
                         <div class="input-prepend input-append">
                             <span class="add-on">pointLongitude</span>
                             <input ng-readonly="readonly" type="text"
                                    placeholder="pointLongitude"
-                                   ng-model="polygonPoint.pointLongitude[0]._text"/>
+                                   ng-model="polygonPoint.pointLongitude[0]['_text']"/>
                         </div>
                         <div class="input-prepend input-append">
                             <span class="add-on">pointLatitude</span>
                             <input ng-readonly="readonly" type="text"
                                    placeholder="pointLatitude"
-                                   ng-model="polygonPoint.pointLatitude[0]._text"/>
+                                   ng-model="polygonPoint.pointLatitude[0]['_text']"/>
                         </div>
+                        <a ng-if="!readonly" href="" ng-click="remove(geoLocation.geoLocationPolygon[0].polygonPoint, $index)"><i class="icon-remove"></i></a>
                     </div>
 
                     <a ng-if="!readonly" href="" class="btn" ng-click="addGeoLocationPolygonPoint(geoLocation.geoLocationPolygon[0])"><i class="icon-plus"></i> Add polygonPoint</a>
