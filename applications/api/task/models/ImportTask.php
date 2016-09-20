@@ -70,7 +70,7 @@ class ImportTask extends Task
     public function hook_end()
     {
         if ($nextTask = $this->getNextTask()) {
-            $this->setStatus("PENDING");
+            $this->setStatus("PENDING")->save();
         }
     }
 
