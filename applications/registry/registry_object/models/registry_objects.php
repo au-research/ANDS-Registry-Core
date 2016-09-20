@@ -219,7 +219,6 @@ class Registry_objects extends CI_Model {
 	    try {
             return new _registry_object($id);
         } catch (Exception $e) {
-//            throw new Exception($e->getMessage());
             return null;
         }
 
