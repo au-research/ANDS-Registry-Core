@@ -46,28 +46,32 @@
                     <input type="text" placeholder="Creator Name"  ng-model="creator.creatorName[0]._text" ng-readonly="readonly"/>
                 </div>
 
-                <div class="input-prepend input-append">
+
+                <div class="input-prepend input-append" style="display:inline-block">
+
                     <span class="add-on">Given Name</span>
                     <input type="text" placeholder="Creator Given Name" ng-model="creator.givenName[0]._text" ng-readonly="readonly"/>
                 </div>
-
-                <div class="input-prepend input-append">
+                <div class="input-prepend input-append"  style="display:inline-block">
                     <span class="add-on">Family Name</span>
                     <input type="text" placeholder="Creator Family Name" ng-model="creator.familyName[0]._text" ng-readonly="readonly"/>
+
                 </div>
 
                 <div class="input-prepend input-append" ng-repeat="affiliation in objectModel.resource[0].creators[0].creator[$index].affiliation track by $index">
                     <span class="add-on">Creator Affiliations</span>
                     <input type="text" placeholder="Creator Affiliations" ng-model="affiliation._text" ng-readonly="readonly"/>
+                    <a ng-if="!readonly" href="" ng-click="remove(creator.affiliation, $index)"><i class="icon-remove"></i></a>
+                </div>
                 </div>
                 <a href="" ng-click="add(objectModel.resource[0].creators[0].creator[$index], 'affiliation')" ng-show="!readonly"><i class="icon-plus"></i> Add Affiliation</a>
 
                 <div ng-repeat="nameIdentifier in creator.nameIdentifier track by $index">
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Name Identifier</span>
                         <input type="text" placeholder="Creator Name Identifier" ng-model="nameIdentifier._text" ng-readonly="readonly"/>
                     </div>
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Name Identifier Scheme</span>
                         <input type="text" placeholder="Creator Name Identifier Scheme" ng-model="nameIdentifier._attr.nameIdentifierScheme._value" ng-readonly="readonly"/>
                     </div>
@@ -81,8 +85,9 @@
 
                 <a ng-if="!readonly" href="" ng-click="remove(objectModel.resource[0].creators[0].creator, $index)"><i class="icon-remove"></i></a>
             </div>
+        <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].creators[0], 'creator')"><i class="icon-plus"></i> Add Creator</a></div>
         </div>
-        <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].creators[0], 'creator')"><i class="icon-plus"></i> Add Creator</a>
+
     </div>
 
     <div class="widget-content">
@@ -114,7 +119,7 @@
                         <input ng-readonly="readonly" type="text" placeholder="Subject"  ng-model="subject._text"/>
                     </div>
 
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Subject Scheme</span>
                         <input ng-readonly="readonly" type="text" placeholder="Subject Scheme" ng-model="subject._attr.subjectScheme._value"/>
                     </div>
@@ -154,12 +159,12 @@
                         <input ng-readonly="readonly" type="text" ng-model="contributor.contributorName[0]._text" placeholder="Contributor Name">
                     </div>
 
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Given Name</span>
                         <input type="text" placeholder="Contributor Given Name" ng-model="contributor.givenName[0]._text" ng-readonly="readonly"/>
                     </div>
 
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append" style="display:inline-block">
                         <span class="add-on">Family Name</span>
                         <input type="text" placeholder="Contributor Family Name" ng-model="contributor.familyName[0]._text" ng-readonly="readonly"/>
                     </div>
@@ -168,15 +173,16 @@
                     <div class="input-prepend input-append" ng-repeat="affiliation in contributor.affiliation">
                         <span class="add-on">Affiliation</span>
                         <input type="text" placeholder="Affiliation" ng-model="affiliation._text" ng-readonly="readonly"/>
+                        <a ng-if="!readonly" href="" ng-click="remove(contributor.affiliation, $index)"><i class="icon-remove"></i></a>
                     </div>
-                    <a href="" ng-show="!readonly" ng-click="add(contributor, 'affiliation')"><i class="icon-plus"></i> Add Affiliation</a>
+                   <a href="" ng-show="!readonly" ng-click="add(contributor, 'affiliation')"><i class="icon-plus"></i> Add Affiliation</a>
 
                     <div ng-repeat="nameIdentifier in contributor.nameIdentifier track by $index">
-                        <div class="input-prepend input-append">
+                        <div class="input-prepend input-append" style="display:inline-block">
                             <span class="add-on">Name Identifier</span>
                             <input type="text" placeholder="Contributor Name Identifier" ng-model="nameIdentifier._text" ng-readonly="readonly"/>
                         </div>
-                        <div class="input-prepend input-append">
+                        <div class="input-prepend input-append" style="display:inline-block">
                             <span class="add-on">Name Identifier Scheme</span>
                             <input type="text" placeholder="Contributor Name Identifier Scheme" ng-model="nameIdentifier._attr.nameIdentifierScheme._value" ng-readonly="readonly"/>
                         </div>
@@ -209,12 +215,12 @@
             <div class="control-group" ng-repeat="fundingReference in objectModel.resource[0].fundingReferences[0].fundingReference track by $index">
                 <label class="control-label">Funding Reference</label>
                 <div class="controls">
-                    <div class="input-prepend input-append" ng-repeat="funderName in fundingReference.funderName">
+                    <div class="input-prepend input-append" ng-repeat="funderName in fundingReference.funderName" style="display:inline-block">
                         <span class="add-on">Funder Name</span>
                         <input type="text" placeholder="Funder Name" ng-model="funderName._text" ng-readonly="readonly"/>
                     </div>
 
-                    <div class="input-prepend input-append" ng-repeat="funderIdentifier in fundingReference.funderIdentifier">
+                    <div class="input-prepend input-append" ng-repeat="funderIdentifier in fundingReference.funderIdentifier" style="display:inline-block">
                         <span class="add-on">Funder Identifier</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -228,15 +234,16 @@
                         </div>
                         <input ng-readonly="readonly" type="text" ng-model="funderIdentifier._text" placeholder="Funder Identifier">
                     </div>
-
-                    <div class="input-prepend input-append" ng-repeat="awardNumber in fundingReference.awardNumber">
+<br/>
+                    <div class="input-prepend input-append" ng-repeat="awardNumber in fundingReference.awardNumber"  style="display:inline-block">
                         {{ awardNumber }}
                         <span class="add-on">Award Number</span>
                         <input type="text" placeholder="Award Number" ng-model="awardNumber._text" ng-readonly="readonly"/>
+                        <span class="add-on">Award Number</span>
                         <input type="text" placeholder="Award URI" ng-model="awardNumber._attr.awardURI._value" ng-readonly="readonly"/>
                     </div>
 
-                    <div class="input-prepend input-append" ng-repeat="awardTitle in fundingReference.awardTitle">
+                    <div class="input-prepend input-append" ng-repeat="awardTitle in fundingReference.awardTitle"  style="display:inline-block">
                         <span class="add-on">Award Title</span>
                         <input type="text" placeholder="Award Title" ng-model="awardTitle._text" ng-readonly="readonly"/>
                     </div>
@@ -253,7 +260,7 @@
                 <label class="control-label">Related Identifier</label>
                 <div class="controls">
 
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Related Identifier</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -268,7 +275,7 @@
                         <input ng-readonly="readonly" type="text" ng-model="relatedIdentifier._text" placeholder="Related Identifier">
                     </div>
 
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Relation Type</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -281,13 +288,13 @@
                             </ul>
                         </div>
                     </div>
-
-                    <div class="input-prepend input-append">
+<br />
+                    <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Related Metadata Scheme</span>
                         <input ng-readonly="readonly" type="text" placeholder="Related Metadata Scheme" ng-model="relatedIdentifier._attr.relatedMetadataScheme._value"/>
                     </div>
 
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Scheme Type</span>
                         <input ng-readonly="readonly" type="text" placeholder="Scheme Type" ng-model="relatedIdentifier._attr.schemeType._value"/>
                     </div>
@@ -315,7 +322,7 @@
                         </li>
                     </ul>
                 </div>
-                <textarea ng-model="description._text" cols="30" rows="10" ng-readonly="readonly"></textarea>
+                <textarea ng-model="description._text" cols="30" rows="10" ng-readonly="readonly" style="width:80%"></textarea>
             </div>
 
             <a ng-if="!readonly" href="" class="btn" ng-click="add(objectModel.resource[0].descriptions[0], 'description')"><i class="icon-plus"></i> Add Description</a>
@@ -323,50 +330,47 @@
 
         <div class="widget-content">
             <div class="control-group" ng-repeat="geoLocation in objectModel.resource[0].geoLocations[0].geoLocation track by $index">
-                <label class="control-label">geoLocation</label>
-                <div class="controls">
 
-                    <div class="input-prepend input-append" style="display:inline-block;">
+                <div class="controls">
+                    <label class="control-label">geoLocation</label>
+                    <div class="input-prepend input-append">
                         <span class="add-on">geoLocation Place</span>
                         <input ng-readonly="readonly" type="text" placeholder="geoLocation Place" ng-model="geoLocation.geoLocationPlace[0]._text"/>
+
                     </div>
+                    <label for="" class="">geoLocation Point</label>
+                    <div class="input-prepend input-append"  style="display:inline-block;">
 
-                    <label for="" class="control-label">geoLocation Point</label>
 
-                    <div class="input-prepend input-append">
                         <span class="add-on">pointLongitude</span>
                         <input ng-readonly="readonly" type="text" placeholder="pointLongitude"  ng-model="geoLocation.geoLocationPoint[0].pointLongitude[0]._text"/>
                     </div>
-
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block;">
                         <span class="add-on">pointLatitude</span>
                         <input ng-readonly="readonly" type="text" placeholder="pointLatitude"  ng-model="geoLocation.geoLocationPoint[0].pointLatitude[0]._text"/>
                     </div>
 
                     <label for="" class="control-label">geoLocationBox</label>
 
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block;">
                         <span class="add-on">westBoundLongitude</span>
                         <input ng-readonly="readonly" type="text"
                                placeholder="westBoundLongitude"
                                ng-model="geoLocation.geoLocationBox[0].westBoundLongitude[0]._text"/>
                     </div>
-
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block;">
                         <span class="add-on">eastBoundLongitude</span>
                         <input ng-readonly="readonly" type="text"
                                placeholder="eastBoundLongitude"
                                ng-model="geoLocation.geoLocationBox[0].eastBoundLongitude[0]._text"/>
                     </div>
-
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block;">
                         <span class="add-on">southBoundLatitude</span>
                         <input ng-readonly="readonly" type="text"
                                placeholder="southBoundLatitude"
                                ng-model="geoLocation.geoLocationBox[0].southBoundLatitude[0]._text"/>
                     </div>
-
-                    <div class="input-prepend input-append">
+                    <div class="input-prepend input-append"  style="display:inline-block;">
                         <span class="add-on">northBoundLatitude</span>
                         <input ng-readonly="readonly" type="text"
                                placeholder="northBoundLatitude"
@@ -376,19 +380,20 @@
                     <label for="" class="control-label">geoLocationPolygon</label>
                     <div ng-repeat="polygonPoint in geoLocation.geoLocationPolygon[0].polygonPoint track by $index">
                         <label for="" class="control-label">polygonPoint</label>
-                        <div class="input-prepend input-append">
+                        <div class="input-prepend input-append"  style="display:inline-block;">
                             <span class="add-on">pointLongitude</span>
                             <input ng-readonly="readonly" type="text"
                                    placeholder="pointLongitude"
                                    ng-model="polygonPoint.pointLongitude[0]['_text']"/>
                         </div>
-                        <div class="input-prepend input-append">
+                        <div class="input-prepend input-append"  style="display:inline-block;">
                             <span class="add-on">pointLatitude</span>
                             <input ng-readonly="readonly" type="text"
                                    placeholder="pointLatitude"
                                    ng-model="polygonPoint.pointLatitude[0]['_text']"/>
-                        </div>
+
                         <a ng-if="!readonly" href="" ng-click="remove(geoLocation.geoLocationPolygon[0].polygonPoint, $index)"><i class="icon-remove"></i></a>
+                        </div>
                     </div>
 
                     <a ng-if="!readonly" href="" class="btn" ng-click="addGeoLocationPolygonPoint(geoLocation.geoLocationPolygon[0])"><i class="icon-plus"></i> Add polygonPoint</a>
