@@ -213,11 +213,17 @@ class Task
             'message' => json_encode($this->message),
             'data' => json_encode($this->taskData)
         ];
+
         if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
 
         if ($this->getId() && $this->getId() != "") {
-            return $this->update_db($data);
+            $updateStatus = $this->update_db($data);
+            if (!$updateStatus) {
+                $this->log('Task data failed to update');
+            }
+            return $this;
         } else {
+            $this->log('This task does not have an ID, does not save');
             return true;
         }
     }
@@ -229,11 +235,11 @@ class Task
      */
     public function update_db($stuff)
     {
-        $this->db
+        $result = $this->db
             ->where('id', $this->getId())
             ->update('tasks', $stuff);
 
-        return $this;
+        return $result;
     }
 
     /**

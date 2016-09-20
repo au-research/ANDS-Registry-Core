@@ -279,8 +279,6 @@ class Doi_api
             ];
         }
 
-
-
         $bulkRequest = new BulkRequest;
         $bulkRequest->client_id = $client->client_id;
         $bulkRequest->status = "PENDING";

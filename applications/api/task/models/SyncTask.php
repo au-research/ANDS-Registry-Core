@@ -150,7 +150,6 @@ class SyncTask extends Task
         $data['chunkSize'] = $this->chunkSize;
         $data['numChunk'] = ceil(($this->chunkSize < $data['total'] ? ($data['total'] / $this->chunkSize) : 1));
 
-        $this->log('Analyzing Data Source ' . $dsID);
         //spawn new tasks
         for ($i = 1; $i <= $data['numChunk']; $i++) {
 
@@ -186,8 +185,8 @@ class SyncTask extends Task
                         'type' => 'POKE',
                         'params' => http_build_query($params),
                     );
-                    $this->taskManager->addTask($task);
-                    $this->log('Added an enrich task for Data Source ' . $dsID . " for " . $data['total'] . 'records');
+                    $newTask = $this->taskManager->addTask($task);
+                    $this->log('Added an enrich task('.$newTask['id'].') for Data Source ' . $dsID . " for " . count($chunkArray) . ' records');
                 }
                 if ($this->includes('index')) {
                     $params['includes'] = 'index';
@@ -198,8 +197,8 @@ class SyncTask extends Task
                         'type' => 'POKE',
                         'params' => http_build_query($params),
                     );
-                    $this->taskManager->addTask($task);
-                    $this->log('Added an enrich task for Data Source ' . $dsID . " for " . $data['total'] . 'records');
+                    $newTask = $this->taskManager->addTask($task);
+                    $this->log('Added an index task('.$newTask['id'].') for Data Source ' . $dsID . " for " . count($chunkArray) . ' records');
                 }
             } else {
                 //spawn task based on available modules
@@ -211,8 +210,8 @@ class SyncTask extends Task
                     'frequency' => 'ONCE',
                     'type' => 'POKE',
                 );
-                $this->taskManager->addTask($task);
-                $this->log('Added a task for Data Source ' . $dsID . " for " . $data['total'] . 'records');
+                $newTask = $this->taskManager->addTask($task);
+                $this->log('Added a task('.$newTask['id'].') for Data Source ' . $dsID . " for " . count($chunkArray) . ' records');
             }
         }
     }
