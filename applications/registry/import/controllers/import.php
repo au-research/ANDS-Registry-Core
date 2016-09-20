@@ -89,7 +89,7 @@ class Import extends MX_Controller {
             'class' => 'import',
             'ds_id' => $id,
             'status' => $this->input->get('status'),
-            'batch_id' => $this->input->get('batch')git diff
+            'batch_id' => $this->input->get('batch')
         ];
         $task = [
             'name' => 'HARVESTER INITIATED IMPORT',
