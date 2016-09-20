@@ -284,6 +284,9 @@
                                     if (item['_attr']) {
                                         angular.forEach(item['_attr'], function (value, key) {
                                             if (value['_value']) {
+                                                if (key == 'lang') {
+                                                    key = 'xml:lang';
+                                                }
                                                 xml += ' ' + key + '="' + scope.safe_tags_replace(value['_value']) + '"';
                                             }
                                         });
@@ -320,6 +323,9 @@
                             if (subitem['_attr']) {
                                 angular.forEach(subitem['_attr'], function (subitemvalue, subitemkey) {
                                     if (subitemvalue['_value']) {
+                                        if (subitemkey == "lang") {
+                                            subitemkey = "xml:lang";
+                                        }
                                         xml += ' ' + subitemkey + '="' + scope.safe_tags_replace(subitemvalue['_value']) + '"';
                                     }
                                 });
