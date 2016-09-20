@@ -399,13 +399,19 @@ class Vocabs extends MX_Controller
                  ->setOpt('defType', 'edismax')
                  ->setOpt('rows', $pp)
                  ->setOpt('q.alt', '*:*')
-                // see views/includes/search-view.blade.php
-                // for the fields that must be returned.
+                // see (1) views/includes/search-view.blade.php
+                // for the fields that must be returned for the
+                // "main" search function,
+                // (2) assets/templates/widgetDirective.html and
+                // assets/js/vocabDisplayDirective.js for the
+                // fields needed for the Widget Explorer.
+                // The Widget Explorer's needs add "sissvoc_end_point"
+                // to the list required by the "main" search.
                 // NB: highlighting can/does also return snippets
                 // from other fields not listed in fl (which is good!).
                  ->setOpt('fl',
                      'id,slug,status,title,acronym,publisher,'
-                          . 'description,widgetable')
+                          . 'description,widgetable,sissvoc_end_point')
                  ->setOpt(
                      'qf',
                      'title_search^1 subject_search^0.5 '
