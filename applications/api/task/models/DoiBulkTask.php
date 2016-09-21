@@ -100,7 +100,7 @@ class DoiBulkTask extends Task
                 ],
                 'result' => $bulkRequest->counts
             ],
-            'doi_api', 'info'
+            'doi_api', 'info', true
         );
     }
 
