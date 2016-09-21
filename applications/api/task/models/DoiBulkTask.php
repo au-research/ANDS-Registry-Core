@@ -50,7 +50,6 @@ class DoiBulkTask extends Task
             $bulkRequest->status = 'COMPLETED';
             $bulkRequest->save();
             $this->log('Bulk Request ID: '. $bulkRequest->id. ' is set to COMPLETED');
-            $this->logCompletion($bulkRequest);
             return;
         }
 
@@ -67,7 +66,6 @@ class DoiBulkTask extends Task
             $this->noMore = true;
             $this->log('Last request!');
             $this->logCompletion($bulkRequest);
-
         } else {
             $this->log('There are '. ($totalPending - count($bulks)). ' requests remaining to be executed');
         }
