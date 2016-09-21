@@ -26,7 +26,6 @@ class Doi_api
         $this->ci = &get_instance();
         $this->dois_db = $this->ci->load->database('dois', true);
 
-
         $this->params = array(
             'submodule' => isset($method[1]) ? $method[1] : 'list',
             'identifier' => isset($method[2]) ? $method[2] : false,
@@ -179,7 +178,6 @@ class Doi_api
 
         $this->doilog($doiService->getResponse(),'doi_'.$manual.$method,$client);
 
-
         // as well as set the HTTP header here
         if($format=="xml") {
             return $formater->format($doiService->getResponse());
@@ -192,7 +190,6 @@ class Doi_api
         }else {
             return $doiService->getResponse();
         }
-
 
     }
 
@@ -330,6 +327,40 @@ class Doi_api
             ]),
             'type' => 'POKE'
         ]);
+
+        // log to ELK
+        monolog(
+            [
+                'event' => 'DOI_BULK_REQUEST',
+                'client' => [
+                    'name' => $client->client_name,
+                    'id' => $client->client_id
+                ],
+                'request' => [
+                    'params' => [
+                        'type' => $type,
+                        'from' => $from,
+                        'to' => $to
+                    ],
+                    'result' => [
+                        'bulk_id' => $bulkRequest->id,
+                        'task_id' => $task['id']
+                    ]
+                ]
+            ],
+            "doi_api", "info", true
+        );
+
+        // log to activity_log table
+        $this->dois_db->insert('activity_log',
+            [
+                'activity' => 'DOI_BULK_REQUEST',
+                'doi_id' => null,
+                'result' => 'SUCCESS',
+                'client_id' => $client->client_id,
+                'message' => 'DOI Bulk Request Generated. Type: '.$type. ' From: '. $from. ' To: '.$to.' Affecting '.$matchingDOIs['total']. 'DOI(s)'
+            ]
+        );
 
         return [
             'message' => 'Bulk Request Created!',
