@@ -88,7 +88,7 @@
             },
             bulk: function(data) {
                 return APIService.get(
-                    'doi/bulk/'+data.client_id+'/', {'app_id':data.app_id}
+                    'doi/bulk/'+data.client_id+'/', {'app_id':data.app_id, 'status':'ERROR'}
                 );
             }
         }

@@ -208,12 +208,6 @@
 
         <div class="widget-content" ng-if="vm.tab=='bulk'">
 
-            <div ng-if="vm.bulkRequests">
-                <div class="alert alert-information">
-                    You have {{ vm.bulkRequests.length }} bulk requests
-                </div>
-            </div>
-
             <form class="form" ng-submit="vm.bulkPreview()">
                 <div class="input-prepend input-append" style="display:inline-block">
                     <span class="add-on">Type</span>
@@ -229,6 +223,11 @@
                 </div>
                 <div class="controls" style="display:inline-block">
                     <input type="submit" class="btn btn-default" value="Preview" style="margin-top:14px"/>
+                    <a href="" class="btn btn-primary"
+                       ng-click="vm.sendBulkRequest()"
+                       ng-if="vm.bulkPreviewResponse" style="margin-top:14px">
+                        Send Bulk Request
+                    </a>
                 </div>
             </form>
 
@@ -258,6 +257,33 @@
                 <div class="alert alert-success" ng-if="vm.bulkRequestedResponse">
                     {{ vm.bulkRequestedResponse.message }}
                 </div>
+            </div>
+
+            <div ng-if="vm.bulkRequests" ng-repeat="bulkRequest in vm.bulkRequests">
+                <hr/>
+                <h5>Bulk Request ({{ bulkRequest.counts.PROGRESS }}% Completed) Created {{ bulkRequest.date_created }}</h5>
+                <ul class="nav nav-pills">
+                    <li ng-class="{'active': bulkRequest.activeStatus=='PENDING'}">
+                        <a href="" ng-click="vm.setActiveStatus(bulkRequest, 'PENDING')">Pending <span class="label">{{ bulkRequest.counts.PENDING }}</span></a>
+                    </li>
+                    <li ng-class="{'active': bulkRequest.activeStatus=='COMPLETED'}">
+                        <a href="" ng-click="vm.setActiveStatus(bulkRequest, 'COMPLETED')">Completed <span class="label">{{ bulkRequest.counts.COMPLETED }}</span></a>
+                    </li>
+                    <li ng-class="{'active': bulkRequest.activeStatus=='ERROR'}">
+                        <a href="" ng-click="vm.setActiveStatus(bulkRequest, 'ERROR')">Error <span class="label">{{ bulkRequest.counts.ERROR }}</span></a>
+                    </li>
+                </ul>
+                <ul class="activity-list" ng-if="bulkRequest.activeStatusList">
+                    <li ng-repeat="log in bulkRequest.activeStatusList" ng-class="{'error': log.status=='ERROR'}">
+                        <a href="" ng-click="log.show=!log.show" class="expand_log" ng-class="{'error': log.status=='ERROR'}">
+                            <i class="icon-list-alt"></i> {{ log.doi }}
+                            <span class="label">{{log.status}}</span>
+                        </a>
+                        <div class="log" ng-show="log.show">
+                            <pre>{{ log.message }}</pre>
+                        </div>
+                    </li>
+                </ul>
             </div>
 
 

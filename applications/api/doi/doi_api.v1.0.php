@@ -228,6 +228,12 @@ class Doi_api
         }
     }
 
+    /**
+     * Handles bulk operation
+     * /api/doi/bulk/
+     * @return array
+     * @throws Exception
+     */
     private function handleBulkOperation()
     {
         $app_id = $this->ci->input->get('app_id') ? $this->ci->input->get('app_id') : false;
@@ -237,18 +243,41 @@ class Doi_api
 
         $client = $this->getClientModel($this->ci->input->get('app_id'));
 
+        // api/doi/bulk/:identifier
         if ($this->params['identifier'] !== false) {
 
+            // api/doi/bulk/:identifier/:object_module
             if ($this->params['object_module']!==false) {
                 // get all bulk by ID
                 $bulkRequest = BulkRequest::find((int) $this->params['object_module']);
+
+                // api/doi/bulk/:identfiier/:object_module?status=:status&limit=:limit
+                if ($status = $this->ci->input->get('status')) {
+                    $limit = $this->ci->input->get('limit') ?: 30;
+                    $bulkRequest->$status = $bulkRequest->getBulkByStatus($status)->take($limit)->get();
+                }
+
                 return $bulkRequest;
             } else {
                 // get all bulk by clientID
-                $bulkRequests = BulkRequest::where('client_id', $this->params['identifier'])->get();
+
+                // api/doi/bulk/:identifier
+                $bulkRequests = BulkRequest::where('client_id', $this->params['identifier'])->get()->all();
+
+                $limit = $this->ci->input->get('limit') ?: 30;
+                foreach ($bulkRequests as &$bulkRequest) {
+                    $defaultStatuses = ['PENDING', 'COMPLETED', 'ERROR'];
+                    foreach ($defaultStatuses as $status) {
+                        $bulkRequest->$status = $bulkRequest->getBulkByStatus($status)->take($limit)->get();
+                    }
+                    $bulkRequest = $bulkRequest->toArray();
+                }
+
                 return $bulkRequests;
             }
         }
+
+        // Otherwise do bulk operation
 
         $type = $this->ci->input->get('type') ?: false;
         $from = $this->ci->input->get('from') ?: false;
@@ -272,6 +301,7 @@ class Doi_api
             ];
         }
 
+        // Return preview
         if ($preview) {
             return [
                 'total' => $matchingDOIs['total'],
@@ -279,6 +309,7 @@ class Doi_api
             ];
         }
 
+        // Generate new BulkRequest
         $bulkRequest = new BulkRequest;
         $bulkRequest->client_id = $client->client_id;
         $bulkRequest->status = "PENDING";
@@ -289,18 +320,19 @@ class Doi_api
         ]);
         $bulkRequest->save();
 
-        // create new task
+        // Generate new task do process the BulkRequest
         $taskManager = new TaskManager($this->ci->db, $this->ci);
         $task = $taskManager->addTask([
             'name' => 'DOI Bulk Request: '.$client->client_name,
             'params' => http_build_query([
                 'class' => 'doiBulk',
                 'bulkID' => $bulkRequest->id
-            ])
+            ]),
+            'type' => 'POKE'
         ]);
 
         return [
-            'message' => 'bulk request saved',
+            'message' => 'Bulk Request Created!',
             'bulk_id' => $bulkRequest->id,
             'task_id' => $task['id']
         ];

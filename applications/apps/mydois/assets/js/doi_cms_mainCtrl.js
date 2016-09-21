@@ -9,6 +9,7 @@
     function mainCtrl(APIDOIService, client, $scope, $location, $log, $sce) {
         var vm = this;
         vm.tab = "list";
+        vm.tab = "bulk";
         $scope.base_url = apps_url;
         vm.newdoixml = "";
         vm.pp = 50;
@@ -327,15 +328,32 @@
             APIDOIService.bulkRequest(data).then(function(response){
                 vm.bulkRequestedResponse = response.data;
                 vm.getBulkRequests();
+                delete vm.bulkPreviewResponse;
             });
         }
 
-        vm.getBulkRequests = function() {
-            APIDOIService.bulk({client_id:vm.client.client_id, app_id:vm.client.app_id}).then(function(response){
+        vm.getBulkRequests = function () {
+            delete vm.bulkRequests;
+            APIDOIService.bulk({
+                client_id: vm.client.client_id,
+                app_id: vm.client.app_id
+            }).then(function (response) {
                 vm.bulkRequests = response.data;
+                angular.forEach(vm.bulkRequests, function (bulkRequest) {
+                    if (bulkRequest.counts.ERROR > 0) {
+                        vm.setActiveStatus(bulkRequest, 'ERROR');
+                    } else {
+                        vm.setActiveStatus(bulkRequest, 'PENDING');
+                    }
+                });
             });
         }
         vm.getBulkRequests();
+
+        vm.setActiveStatus = function (bulkRequest, status) {
+            bulkRequest.activeStatus = status;
+            bulkRequest.activeStatusList = bulkRequest[status];
+        }
 
 
     }
