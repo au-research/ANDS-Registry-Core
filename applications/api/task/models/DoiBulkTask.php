@@ -97,7 +97,8 @@ class DoiBulkTask extends Task
                         'type' => $parameters['type'],
                         'from' => $parameters['from'],
                         'to' => $parameters['to']
-                    ]
+                    ],
+                    'bulk' => true
                 ],
                 'result' => $bulkRequest->counts
             ],

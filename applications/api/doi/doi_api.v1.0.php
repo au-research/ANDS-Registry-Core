@@ -345,7 +345,8 @@ class Doi_api
                     'result' => [
                         'bulk_id' => $bulkRequest->id,
                         'task_id' => $task['id']
-                    ]
+                    ],
+                    'bulk' => true
                 ]
             ],
             "doi_api", "info", true
