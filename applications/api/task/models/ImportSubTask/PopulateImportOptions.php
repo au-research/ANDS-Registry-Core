@@ -36,6 +36,14 @@ class PopulateImportOptions extends ImportSubTask
          * @todo datasourceRecordCountBefore
          */
 
+        $this->parent()->setTaskData("recordsCreatedCount", 0);
+        $this->parent()->setTaskData("recordsDeletedCount", 0);
+        $this->parent()->setTaskData("recordsInFeedCount", 0);
+        // calculate this $this->parent()->setTaskData("recordsIngestedCount", 0);
+        $this->parent()->setTaskData("recordsUpdatedCount", 0);
+        $this->parent()->setTaskData("datasourceRecordBeforeCount", 0);
+        $this->parent()->setTaskData("datasourceRecordAfterCount", 0);
+
         return $this;
     }
 

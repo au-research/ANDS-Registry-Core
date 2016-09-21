@@ -27,6 +27,7 @@ class ImportTask extends Task
 
     public $dataSourceID;
     public $batchID;
+    public $harvestID;
     private $runAll = false;
 
     private $subtasks = [];
@@ -199,7 +200,18 @@ class ImportTask extends Task
     public function getDefaultImportSubtasks()
     {
         $pipeline = [];
-        $defaultSubtasks = ["PopulateImportOptions", "ValidatePayload", "ProcessPayload", "Ingest", "ProcessDelete", "ProcessCoreMetadata", "ProcessIdentifiers", "ProcessRelationships", "ProcessQualityMetadata", "IndexPortal"];
+        $defaultSubtasks = ["PopulateImportOptions",
+            "ValidatePayload",
+            "ProcessPayload",
+            "Ingest",
+            "ProcessDelete",
+            "ProcessCoreMetadata",
+            "ProcessIdentifiers",
+            "ProcessRelationships",
+            "ProcessQualityMetadata",
+            "IndexPortal",
+            "FinishImport"];
+//        $defaultSubtasks = ["PopulateImportOptions", "FinishImport"];
         foreach ($defaultSubtasks as $subtaskName) {
             $pipeline[] = [
                 'name' => $subtaskName,
@@ -309,6 +321,7 @@ class ImportTask extends Task
 
         $this->dataSourceID = array_key_exists('ds_id', $parameters) ? $parameters['ds_id']: null;
         $this->batchID = array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null;
+        $this->harvestID = array_key_exists('harvest_id', $parameters) ? $parameters['harvest_id'] : null;
 
         $this->setTaskData(
             'dataSourceID',
@@ -318,6 +331,11 @@ class ImportTask extends Task
         $this->setTaskData(
             'batchID',
             array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null
+        );
+
+        $this->setTaskData(
+            'harvestID',
+            array_key_exists('harvest_id', $parameters) ? $parameters['harvest_id'] : null
         );
 
         if (array_key_exists('runAll', $parameters)) {

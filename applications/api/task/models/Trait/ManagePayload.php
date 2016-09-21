@@ -90,7 +90,7 @@ trait ManagePayload
         $path = $this->getHarvestedPath();
 
         $this->log("Payload path: ". $path);
-
+        
         if (!is_dir($path)) {
             $path = $path . '.xml';
             $this->loadPayloadFromFile($path);
@@ -128,6 +128,10 @@ trait ManagePayload
         $this->setPayload(
             $filePath, $payload
         );
+        
+        if (is_array($this->getTaskData('payloadsInfo')) && in_array($payload->toArray(), $this->getTaskData('payloadsInfo'))) {
+            return;
+        }
 
         $this->addTaskData("payloadsInfo", $payload->toArray());
     }

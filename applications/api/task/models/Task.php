@@ -171,6 +171,16 @@ class Task
         }
     }
 
+    public function incrementTaskData($key, $value = 1)
+    {
+        if (array_key_exists($key, $this->taskData)) {
+            $this->taskData[$key] = $value;
+        } else {
+            $this->taskData[$key] = $this->taskData[$key] + $value;
+        }
+        return $this;
+    }
+
     public function getTaskData($key)
     {
         return array_key_exists($key, $this->taskData) ? $this->taskData[$key] : null;

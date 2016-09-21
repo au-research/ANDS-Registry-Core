@@ -80,16 +80,23 @@ class Import extends MX_Controller {
         if(!$id) throw new Exception('Data Source ID must be provided');
         $this->load->model('data_source/data_sources', 'ds');
         $ds = $this->ds->getByID($id);
+		$harvest_id = null;
         if(!$ds) throw new Exception('Data Source Not Found');
-        //$this->ci =& get_instance();
+
         $this->db = $this->load->database('registry', true);
+		$batch_query = $this->db->get_where('harvests', array('data_source_id'=>$id));
+		if($batch_query->num_rows() > 0) {
+			$batch_array = $batch_query->result_array();
+			$harvest_id = $batch_array[0]['harvest_id'];
+		}
         require_once APP_PATH . '../api/vendor/autoload.php';
         $this->taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
         $params = [
             'class' => 'import',
             'ds_id' => $id,
             'status' => $this->input->get('status'),
-            'batch_id' => $this->input->get('batch')
+            'batch_id' => $this->input->get('batch'),
+			'harvest_id' => $harvest_id
         ];
         $task = [
             'name' => 'HARVESTER INITIATED IMPORT',

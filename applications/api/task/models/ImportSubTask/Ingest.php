@@ -23,6 +23,16 @@ class Ingest extends ImportSubTask
                 $this->insertRegistryObject($registryObject);
             }
         }
+
+        $this->handleAdvancedHarvest($payload);
+    }
+
+    public function handleAdvancedHarvest()
+    {
+        /*
+         * if it's REFRESH, delete every harvest that is not manually entered and has a different batch id
+         *
+         */
     }
 
     public function insertRegistryObject($registryObject)
