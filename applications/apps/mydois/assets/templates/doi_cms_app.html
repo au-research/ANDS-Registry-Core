@@ -259,8 +259,12 @@
                 </div>
             </div>
 
+            <hr>
+            <a class="btn btn-small"
+               ng-click="vm.getBulkRequests()" ng-if="vm.bulkRequests">
+                <i class="icon icon-small icon-refresh"></i>Refresh Bulk Requests
+            </a>
             <div ng-if="vm.bulkRequests" ng-repeat="bulkRequest in vm.bulkRequests">
-                <hr/>
                 <h5>Bulk Request ({{ bulkRequest.counts.PROGRESS }}% Completed) Created {{ bulkRequest.date_created }}</h5>
                 <ul class="nav nav-pills">
                     <li ng-class="{'active': bulkRequest.activeStatus=='PENDING'}">
@@ -284,7 +288,13 @@
                         </div>
                     </li>
                 </ul>
-                <a class="btn btn-danger btn-small" ng-if="bulkRequest.counts.PROGRESS == 100"><i class="icon icon-white icon-remove"></i>Remove Bulk Request</a>
+                <a class="btn btn-danger btn-small"
+                   ng-if="bulkRequest.counts.PROGRESS == 100 && !bulkRequest.deleting"
+                    ng-click="vm.removeBulk(bulkRequest)">
+                    <i class="icon icon-white icon-remove"></i>
+                    Remove Bulk Request
+                </a>
+                <hr/>
             </div>
 
 

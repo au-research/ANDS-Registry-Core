@@ -315,7 +315,9 @@
         };
 
         vm.sendBulkRequest = function() {
-            if(!confirm('Are you sure you want to send a bulk request update? This will affect ' + vm.bulkPreviewResponse.total +' DOI(s)')) {
+            if (!confirm('Are you sure you want to send a bulk request update?' +
+                    ' This will affect ' + vm.bulkPreviewResponse.total + ' DOI(s)')
+            ) {
                 return;
             }
             var data = {
@@ -354,6 +356,20 @@
             bulkRequest.activeStatusList = bulkRequest[status];
         }
 
+        vm.removeBulk = function(bulkRequest) {
+            if (!confirm('Are you sure you want to delete this bulk request? ' +
+                    'The bulk request log is available in the activity log')
+            ) {
+                return;
+            }
+            bulkRequest.deleting = true;
+            APIDOIService.bulkRequest({
+                app_id: vm.client.app_id,
+                'delete': bulkRequest.id
+            }).then(function () {
+                vm.getBulkRequests();
+            });
+        }
 
     }
 

@@ -1,6 +1,7 @@
 <?php
 namespace ANDS\API;
 
+use ANDS\API\DOI\Bulk;
 use ANDS\API\DOI\BulkRequest;
 use ANDS\API\Task\TaskManager;
 use ANDS\DOI\DataCiteClient;
@@ -265,6 +266,7 @@ class Doi_api
             } else {
                 // get all bulk by clientID
 
+
                 // api/doi/bulk/:identifier
                 $bulkRequests = BulkRequest::where('client_id', $this->params['identifier'])
                     ->orderBy('date_created', 'DESC')->get()->all();
@@ -280,6 +282,13 @@ class Doi_api
 
                 return $bulkRequests;
             }
+        }
+
+        // api/doi/bulk/?delete=:bulkRequestID
+        if ($deleteID = $this->ci->input->get('delete')) {
+            BulkRequest::destroy($deleteID);
+            Bulk::where('bulk_id', $deleteID)->delete();
+            return true;
         }
 
         // Otherwise do bulk operation
