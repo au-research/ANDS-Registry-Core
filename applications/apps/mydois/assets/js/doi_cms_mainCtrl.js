@@ -341,6 +341,8 @@
             }).then(function (response) {
                 vm.bulkRequests = response.data;
                 angular.forEach(vm.bulkRequests, function (bulkRequest) {
+                    bulkRequest.params = JSON.parse(bulkRequest.params);
+                    bulkRequest.paramsString = JSON.stringify(bulkRequest.params, null, 2);
                     if (bulkRequest.counts.ERROR > 0) {
                         vm.setActiveStatus(bulkRequest, 'ERROR');
                     } else {

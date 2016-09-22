@@ -208,6 +208,10 @@
 
         <div class="widget-content" ng-if="vm.tab=='bulk'">
 
+            <div class="alert alert-info">
+                Please ensure you have requested the ANDS Services team to add any new URL domains to your account before initiating a bulk URL request.
+            </div>
+
             <form class="form" ng-submit="vm.bulkPreview()">
                 <div class="input-prepend input-append" style="display:inline-block">
                     <span class="add-on">Type</span>
@@ -225,7 +229,7 @@
                     <input type="submit" class="btn btn-default" value="Preview" style="margin-top:14px"/>
                     <a href="" class="btn btn-primary"
                        ng-click="vm.sendBulkRequest()"
-                       ng-if="vm.bulkPreviewResponse" style="margin-top:14px">
+                       ng-if="vm.bulkPreviewResponse && vm.bulkPreviewResponse.result.length" style="margin-top:14px">
                         Send Bulk Request
                     </a>
                 </div>
@@ -252,7 +256,12 @@
                     </tbody>
                 </table>
                 <div ng-if="!vm.bulkRequestedResponse">
-                    <a href="" class="btn btn-primary" ng-click="vm.sendBulkRequest()">Send Bulk Request</a>
+                    <a href=""
+                       class="btn btn-primary"
+                       ng-if="vm.bulkPreviewResponse && vm.bulkPreviewResponse.result.length"
+                       ng-click="vm.sendBulkRequest()">
+                        Send Bulk Request
+                    </a>
                 </div>
                 <div class="alert alert-success" ng-if="vm.bulkRequestedResponse">
                     {{ vm.bulkRequestedResponse.message }}
@@ -264,8 +273,22 @@
                ng-click="vm.getBulkRequests()" ng-if="vm.bulkRequests">
                 <i class="icon icon-small icon-refresh"></i>Refresh Bulk Requests
             </a>
+
             <div ng-if="vm.bulkRequests" ng-repeat="bulkRequest in vm.bulkRequests">
                 <h5>Bulk Request ({{ bulkRequest.counts.PROGRESS }}% Completed) Created {{ bulkRequest.date_created }}</h5>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">Type</span>
+                    <input type="text" disabled ng-model="bulkRequest.params.type">
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">From</span>
+                    <input type="text" disabled ng-model="bulkRequest.params.from">
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">To</span>
+                    <input type="text" disabled ng-model="bulkRequest.params.to">
+                </div>
+
                 <ul class="nav nav-pills">
                     <li ng-class="{'active': bulkRequest.activeStatus=='PENDING'}">
                         <a href="" ng-click="vm.setActiveStatus(bulkRequest, 'PENDING')">Pending <span class="label">{{ bulkRequest.counts.PENDING }}</span></a>
