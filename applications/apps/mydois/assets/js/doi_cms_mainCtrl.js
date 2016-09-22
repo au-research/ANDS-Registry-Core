@@ -9,7 +9,6 @@
     function mainCtrl(APIDOIService, client, $scope, $location, $log, $sce) {
         var vm = this;
         vm.tab = "list";
-        vm.tab = "bulk";
         $scope.base_url = apps_url;
         vm.newdoixml = "";
         vm.pp = 50;

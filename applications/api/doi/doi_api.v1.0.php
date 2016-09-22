@@ -11,6 +11,7 @@ use ANDS\DOI\Formatter\StringFormatter;
 use ANDS\DOI\Model\Doi;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
+use ANDS\DOI\Transformer\XMLTransformer;
 use \Exception as Exception;
 
 class Doi_api
@@ -48,6 +49,12 @@ class Doi_api
             $potential_doi = join('/',$method);
             if ($doi = $this->getDOI($potential_doi)) {
                 $doi->title = $this->getDoiTitle($doi->datacite_xml);
+
+                // transform to kernel-4 for update form
+                if ($this->ci->input->get('request_version') == '4') {
+                    $doi->datacite_xml = XMLTransformer::migrateToKernel4($doi->datacite_xml);
+                }
+
                 return $doi;
             }
         }
