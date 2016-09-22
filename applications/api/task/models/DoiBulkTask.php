@@ -47,6 +47,7 @@ class DoiBulkTask extends Task
 
         if (count($bulks) == 0) {
             $this->log('Nothing to do. There is no PENDING request match this Bulk Request ID: '. $bulkRequest->id);
+            $this->noMore = true;
             $bulkRequest->status = 'COMPLETED';
             $bulkRequest->save();
             $this->log('Bulk Request ID: '. $bulkRequest->id. ' is set to COMPLETED');
@@ -66,6 +67,8 @@ class DoiBulkTask extends Task
             $this->noMore = true;
             $this->log('Last request!');
             $this->logCompletion($bulkRequest);
+            $bulkRequest->status = 'COMPLETED';
+            $bulkRequest->save();
         } else {
             $this->log('There are '. ($totalPending - count($bulks)). ' requests remaining to be executed');
         }

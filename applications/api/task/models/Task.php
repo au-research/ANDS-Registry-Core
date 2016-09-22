@@ -159,7 +159,7 @@ class Task
     public function clearTaskData()
     {
         $this->taskData = [];
-
+        return $this;
     }
 
     public function addTaskData($key, $val)
