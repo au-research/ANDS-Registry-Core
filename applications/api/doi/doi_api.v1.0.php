@@ -266,7 +266,8 @@ class Doi_api
                 // get all bulk by clientID
 
                 // api/doi/bulk/:identifier
-                $bulkRequests = BulkRequest::where('client_id', $this->params['identifier'])->get()->all();
+                $bulkRequests = BulkRequest::where('client_id', $this->params['identifier'])
+                    ->orderBy('date_created', 'DESC')->get()->all();
 
                 $limit = $this->ci->input->get('limit') ?: 30;
                 foreach ($bulkRequests as &$bulkRequest) {
