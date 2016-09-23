@@ -9,6 +9,7 @@ use ANDS\API\DOI\BulkRepository;
 use ANDS\API\DOI\BulkRequest;
 use ANDS\DOI\DataCiteClient;
 use ANDS\DOI\DOIServiceProvider;
+use ANDS\DOI\Formatter\ArrayFormatter;
 use ANDS\DOI\Formatter\JSONFormatter;
 use ANDS\DOI\Formatter\StringFormatter;
 use ANDS\DOI\Model\Doi;
@@ -47,6 +48,7 @@ class DoiBulkTask extends Task
 
         if (count($bulks) == 0) {
             $this->log('Nothing to do. There is no PENDING request match this Bulk Request ID: '. $bulkRequest->id);
+            $this->noMore = true;
             $bulkRequest->status = 'COMPLETED';
             $bulkRequest->save();
             $this->log('Bulk Request ID: '. $bulkRequest->id. ' is set to COMPLETED');
@@ -66,6 +68,8 @@ class DoiBulkTask extends Task
             $this->noMore = true;
             $this->log('Last request!');
             $this->logCompletion($bulkRequest);
+            $bulkRequest->status = 'COMPLETED';
+            $bulkRequest->save();
         } else {
             $this->log('There are '. ($totalPending - count($bulks)). ' requests remaining to be executed');
         }
@@ -73,19 +77,20 @@ class DoiBulkTask extends Task
 
     public function logCompletion($bulkRequest)
     {
+        $parameters = json_decode($bulkRequest->params, true);
+
         // log DOI_BULK_COMPLETED to activity_log
         $this->logToActivityLogTable(
-            "DOI Bulk Operation completed ID(".$bulkRequest->id.")",
+            "DOI Bulk Operation completed ID(".$bulkRequest->id.") Type: ". $parameters['type'] . " From: ". $parameters['from']. " To: ".$parameters['to'].". COMPLETED: ".$bulkRequest->counts['COMPLETED']. ", ERROR: ".$bulkRequest->counts['ERROR'],
             null,
             'SUCCESS',
             'DOI_BULK_COMPLETED'
         );
 
         // log DOI_BULK_COMPLETED to file
-        $parameters = json_decode($bulkRequest->params, true);
         monolog(
             [
-                'event' => 'DOI_BULK_REQUEST_COMPLETED',
+                'event' => 'doi_bulk_request_completed',
                 'client' => [
                     'name' => $this->doiService->getAuthenticatedClient()->client_name,
                     'id' => $this->doiService->getAuthenticatedClient()->client_id
@@ -184,9 +189,12 @@ class DoiBulkTask extends Task
      */
     private function executeBulk($bulk)
     {
-        $this->log('Executing bulk: '.$bulk->id);
         $JSONFormater = new JSONFormatter();
         $stringFormater = new StringFormatter();
+        $arrayFormater = new ArrayFormatter();
+
+        $this->log('Executing bulk: '.$bulk->id .' Updating ('.$bulk->doi.') URL from '.$bulk->from.' to '.$bulk->to);
+
         if ($bulk->target == 'url') {
             $result = $this->doiService->update($bulk->doi, $bulk->to);
             $bulk->message = $JSONFormater->format($this->doiService->getResponse());
@@ -194,7 +202,7 @@ class DoiBulkTask extends Task
                 $bulk->status = 'COMPLETED';
 
                 // log to the task
-                $this->log('Executed('. $bulk->id.') Updated URL from '.$bulk->from.' to '.$bulk->to);
+                $this->log('Success('.$bulk->id.')');
 
                 // log to the activity table
                 $this->logToActivityLogTable(
@@ -203,14 +211,23 @@ class DoiBulkTask extends Task
                     'SUCCESS'
                 );
 
-                // log to file for ELK
-                $this->logToFile($this->doiService->getResponse());
+                $this->logToFile(
+                    array_merge(
+                        $arrayFormater->format($this->doiService->getResponse()),
+                        [
+                            'doi' => [
+                                'id' => $bulk->doi
+                            ],
+                            'app_id' => $this->doiService->getAuthenticatedClient()->app_id
+                        ]
+                    )
+                );
 
             } else {
                 $bulk->status = 'ERROR';
 
                 // log to the task
-                $this->log('Failed to execute('.$bulk->id.')');
+                $this->log('Error('.$bulk->id.'): '.$stringFormater->format($this->doiService->getResponse()));
 
                 // log to the activity table
                 $this->logToActivityLogTable(
@@ -220,7 +237,17 @@ class DoiBulkTask extends Task
                 );
 
                 // log to file for ELK
-                $this->logToFile($this->doiService->getResponse());
+                $this->logToFile(
+                    array_merge(
+                        $arrayFormater->format($this->doiService->getResponse()),
+                        [
+                            'doi' => [
+                                'id' => $bulk->doi
+                            ],
+                            'app_id' => $this->doiService->getAuthenticatedClient()->app_id
+                        ]
+                    )
+                );
             }
             $bulk->save();
         }
@@ -234,9 +261,9 @@ class DoiBulkTask extends Task
     public function logToFile($response)
     {
         $message = array();
-        $message["event"] = 'update';
+        $message["event"] = 'doi_update';
         $message["response"]= $response;
-        $message["doi"]["id"] = (isset($log_response["doi"]) ? $log_response["doi"] : "");
+        $message["doi"]["id"] = (isset($response["doi"]['id']) ? $response["doi"]['id'] : "");
         $message["client"]["id"] = NULL;
         $message["client"]["name"] = NULL;
         $message["api_key"] = (isset($log_response["app_id"]) ? $log_response["app_id"] : "");
@@ -247,6 +274,7 @@ class DoiBulkTask extends Task
 
         $message['request']['manual']= true;
         $message['request']['bulk'] = true;
+
 
         //determine if doi is a test doi
         $test_check = strpos($message["doi"]["id"],'10.5072');

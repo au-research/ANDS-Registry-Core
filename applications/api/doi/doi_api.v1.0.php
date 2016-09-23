@@ -1,6 +1,7 @@
 <?php
 namespace ANDS\API;
 
+use ANDS\API\DOI\Bulk;
 use ANDS\API\DOI\BulkRequest;
 use ANDS\API\Task\TaskManager;
 use ANDS\DOI\DataCiteClient;
@@ -11,6 +12,7 @@ use ANDS\DOI\Formatter\StringFormatter;
 use ANDS\DOI\Model\Doi;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
+use ANDS\DOI\Transformer\XMLTransformer;
 use \Exception as Exception;
 
 class Doi_api
@@ -48,6 +50,12 @@ class Doi_api
             $potential_doi = join('/',$method);
             if ($doi = $this->getDOI($potential_doi)) {
                 $doi->title = $this->getDoiTitle($doi->datacite_xml);
+
+                // transform to kernel-4 for update form
+                if ($this->ci->input->get('request_version') == '4') {
+                    $doi->datacite_xml = XMLTransformer::migrateToKernel4($doi->datacite_xml);
+                }
+
                 return $doi;
             }
         }
@@ -258,8 +266,10 @@ class Doi_api
             } else {
                 // get all bulk by clientID
 
+
                 // api/doi/bulk/:identifier
-                $bulkRequests = BulkRequest::where('client_id', $this->params['identifier'])->get()->all();
+                $bulkRequests = BulkRequest::where('client_id', $this->params['identifier'])
+                    ->orderBy('date_created', 'DESC')->get()->all();
 
                 $limit = $this->ci->input->get('limit') ?: 30;
                 foreach ($bulkRequests as &$bulkRequest) {
@@ -272,6 +282,13 @@ class Doi_api
 
                 return $bulkRequests;
             }
+        }
+
+        // api/doi/bulk/?delete=:bulkRequestID
+        if ($deleteID = $this->ci->input->get('delete')) {
+            BulkRequest::destroy($deleteID);
+            Bulk::where('bulk_id', $deleteID)->delete();
+            return true;
         }
 
         // Otherwise do bulk operation
@@ -331,7 +348,7 @@ class Doi_api
         // log to ELK
         monolog(
             [
-                'event' => 'DOI_BULK_REQUEST',
+                'event' => 'doi_bulk_request',
                 'client' => [
                     'name' => $client->client_name,
                     'id' => $client->client_id
@@ -359,7 +376,7 @@ class Doi_api
                 'doi_id' => null,
                 'result' => 'SUCCESS',
                 'client_id' => $client->client_id,
-                'message' => 'DOI Bulk Request Generated. Type: '.$type. ' From: '. $from. ' To: '.$to.' Affecting '.$matchingDOIs['total']. 'DOI(s)'
+                'message' => 'DOI Bulk Request Generated. Type: '.$type. ' From: '. $from. ' To: '.$to.' Affecting '.$matchingDOIs['total']. ' DOI(s)'
             ]
         );
 
