@@ -77,19 +77,20 @@ class DoiBulkTask extends Task
 
     public function logCompletion($bulkRequest)
     {
+        $parameters = json_decode($bulkRequest->params, true);
+
         // log DOI_BULK_COMPLETED to activity_log
         $this->logToActivityLogTable(
-            "DOI Bulk Operation completed ID(".$bulkRequest->id.")",
+            "DOI Bulk Operation completed ID(".$bulkRequest->id.") Type: ". $parameters['type'] . " From: ". $parameters['from']. " To: ".$parameters['to'].". COMPLETED: ".$bulkRequest->counts['COMPLETED']. ", ERROR: ".$bulkRequest->counts['ERROR'],
             null,
             'SUCCESS',
             'DOI_BULK_COMPLETED'
         );
 
         // log DOI_BULK_COMPLETED to file
-        $parameters = json_decode($bulkRequest->params, true);
         monolog(
             [
-                'event' => 'DOI_BULK_REQUEST_COMPLETED',
+                'event' => 'doi_bulk_request_completed',
                 'client' => [
                     'name' => $this->doiService->getAuthenticatedClient()->client_name,
                     'id' => $this->doiService->getAuthenticatedClient()->client_id

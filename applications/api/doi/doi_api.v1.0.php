@@ -348,7 +348,7 @@ class Doi_api
         // log to ELK
         monolog(
             [
-                'event' => 'DOI_BULK_REQUEST',
+                'event' => 'doi_bulk_request',
                 'client' => [
                     'name' => $client->client_name,
                     'id' => $client->client_id
@@ -376,7 +376,7 @@ class Doi_api
                 'doi_id' => null,
                 'result' => 'SUCCESS',
                 'client_id' => $client->client_id,
-                'message' => 'DOI Bulk Request Generated. Type: '.$type. ' From: '. $from. ' To: '.$to.' Affecting '.$matchingDOIs['total']. 'DOI(s)'
+                'message' => 'DOI Bulk Request Generated. Type: '.$type. ' From: '. $from. ' To: '.$to.' Affecting '.$matchingDOIs['total']. ' DOI(s)'
             ]
         );
 
