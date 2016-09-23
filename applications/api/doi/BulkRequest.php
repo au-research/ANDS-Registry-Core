@@ -47,6 +47,20 @@ class BulkRequest extends Model
     }
 
     /**
+     * Check if the Bulk Request is done
+     *
+     * @return bool
+     */
+    public function isDone()
+    {
+        $pendingCount = $this->getBulkByStatus('PENDING')->count();
+        if ($pendingCount === 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Return all requests by status
      * TODO: refactor into BulkRepository
      * @param $status

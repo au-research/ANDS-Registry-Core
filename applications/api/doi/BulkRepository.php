@@ -13,11 +13,7 @@ class BulkRepository
 
     public static function addBulk($data)
     {
-        $bulk = new Bulk;
-        foreach ($data as $key=>$value) {
-            $bulk->$key = $value;
-        }
-        $bulk->save();
+        return Bulk::create($data);
     }
 
     public static function hasBulkRequestID($id)

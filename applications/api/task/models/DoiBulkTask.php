@@ -38,6 +38,7 @@ class DoiBulkTask extends Task
         // find bulk object that belongs to this bulkRequest
         if (!BulkRepository::hasBulkRequestID($bulkRequest->id)) {
             $this->generateBulk($bulkRequest);
+            return;
         }
 
         $bulks = Bulk::where('bulk_id', $bulkRequest->id)
@@ -64,7 +65,7 @@ class DoiBulkTask extends Task
         }
 
         // check if there is more to do
-        if (count($bulks) >= $totalPending) {
+        if ($bulkRequest->isDone()) {
             $this->noMore = true;
             $this->log('Last request!');
             $this->logCompletion($bulkRequest);
@@ -75,6 +76,9 @@ class DoiBulkTask extends Task
         }
     }
 
+    /**
+     * @param $bulkRequest
+     */
     public function logCompletion($bulkRequest)
     {
         $parameters = json_decode($bulkRequest->params, true);
@@ -164,10 +168,12 @@ class DoiBulkTask extends Task
         $parameters = json_decode($request->params, true);
 
         if ($parameters['type'] == 'url') {
-            $count = 0;
             $dois = Doi::where('client_id', $request->client_id)
                 ->where('url', 'LIKE', '%'.$parameters['from'].'%')
                 ->get();
+
+            $this->log('Found '.count($dois). ' DOI(s) matching request parameters');
+
             foreach ($dois as $doi) {
                 BulkRepository::addBulk([
                     'doi' => $doi->doi_id,
@@ -176,9 +182,10 @@ class DoiBulkTask extends Task
                     'to' => str_replace($parameters['from'], $parameters['to'], $doi->url),
                     'bulk_id' => $request->id
                 ]);
-                $count++;
             }
-            $this->log('Added '.$count.' bulk item to be processed');
+
+            $count = Bulk::where('bulk_id', $request->id)->count();
+            $this->log('Added '.$count.' bulk item(s) to be processed');
         }
     }
 
