@@ -12,6 +12,10 @@
             </li>
         </ul>
     </div>
-    <input type="text" ng-model="item._text" placeholder="{{ label ? label : 'Value' }}" ng-readonly="readonly">
-    <a ng-if="list" href="" class="btn btn-link" ng-click="remove()" ng-show="!readonly"><i class="icon icon-remove"></i></a>
+
+    <input type="text" ng-model="item._text" placeholder="{{ label ? label : 'Value' }}" ng-readonly="readonly" style="{{ custom ? custom : 'width:210px' }}">
+
+    <div style="display:inline-block;padding-left:3px">
+        <a ng-if="list" href="" class="btn btn-warning" ng-click="remove()" ng-show="!readonly"><i class="icon icon-remove"></i></a>
+    </div>
 </div>

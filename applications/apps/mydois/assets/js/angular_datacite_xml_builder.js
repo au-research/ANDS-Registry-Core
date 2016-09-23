@@ -400,6 +400,7 @@
                 'index': '=',
                 'optiontype': '=',
                 'label': '=',
+                'custom': '=',
                 'readonly': '='
             },
             transclude: true,
