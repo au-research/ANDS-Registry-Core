@@ -215,9 +215,7 @@ class DoiBulkTask extends Task
                     array_merge(
                         $arrayFormater->format($this->doiService->getResponse()),
                         [
-                            'doi' => [
-                                'id' => $bulk->doi
-                            ],
+                            'doi' => $bulk->doi,
                             'app_id' => $this->doiService->getAuthenticatedClient()->app_id
                         ]
                     )
@@ -241,9 +239,7 @@ class DoiBulkTask extends Task
                     array_merge(
                         $arrayFormater->format($this->doiService->getResponse()),
                         [
-                            'doi' => [
-                                'id' => $bulk->doi
-                            ],
+                            'doi' => $bulk->doi,
                             'app_id' => $this->doiService->getAuthenticatedClient()->app_id
                         ]
                     )
@@ -262,29 +258,29 @@ class DoiBulkTask extends Task
     {
         $message = array();
         $message["event"] = 'doi_update';
-        $message["response"]= $response;
-        $message["doi"]["id"] = (isset($response["doi"]['id']) ? $response["doi"]['id'] : "");
-        $message["client"]["id"] = NULL;
-        $message["client"]["name"] = NULL;
-        $message["api_key"] = (isset($log_response["app_id"]) ? $log_response["app_id"] : "");
+        $message["response"] = $response;
+        $message["doi"]["id"] = (isset($response["doi"]) ? $response["doi"] : "");
+        $message["client"]["id"] = null;
+        $message["client"]["name"] = null;
+        $message["api_key"] = (isset($response["app_id"]) ? $response["app_id"] : "");
 
         //determine client name
         $message['client']['name'] = $this->doiService->getAuthenticatedClient()->client_name;
         $message['client']['id'] = $this->doiService->getAuthenticatedClient()->client_id;
 
-        $message['request']['manual']= true;
+        $message['request']['manual'] = true;
         $message['request']['bulk'] = true;
 
 
         //determine if doi is a test doi
-        $test_check = strpos($message["doi"]["id"],'10.5072');
+        $test_check = strpos($message["doi"]["id"], '10.5072');
         if ($test_check || $test_check === 0) {
             $message["doi"]["production"] = false;
         } else {
             $message["doi"]["production"] = true;
         }
 
-        monolog($message,"doi_api", "info", true) ;
+        monolog($message, "doi_api", "info", true);
 
     }
 
