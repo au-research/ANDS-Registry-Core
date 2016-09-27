@@ -20,7 +20,7 @@
             index="$index"
             custom="'width:420px'"
             optiontype="'titleType'"></datacite-twin-item-form>
-        <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].titles[0], 'title')"><i class="icon-plus"></i> Add Title</a>
+        <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].titles[0], 'title')"><i class="icon-plus icon-white"></i> Add Title</a>
     </div>
 
     <div class="widget-content">
@@ -46,26 +46,34 @@
                     <span class="add-on">Creator Name</span>
                     <input type="text" placeholder="Creator Name"  ng-model="creator.creatorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
                 </div>
+                <div class="input-prepend input-append">
+                    <div class="input-prepend input-append" style="display:inline-block">
 
+                        <span class="add-on">Given Name</span>
+                        <input type="text" placeholder="Creator Given Name" ng-model="creator.givenName[0]._text" ng-readonly="readonly"/>
+                    </div>
+                    <div class="input-prepend input-append"  style="display:inline-block">
+                        <span class="add-on">Family Name</span>
+                        <input type="text" placeholder="Creator Family Name" ng-model="creator.familyName[0]._text" ng-readonly="readonly"/>
 
-                <div class="input-prepend input-append" style="display:inline-block">
-
-                    <span class="add-on">Given Name</span>
-                    <input type="text" placeholder="Creator Given Name" ng-model="creator.givenName[0]._text" ng-readonly="readonly"/>
+                    </div>
                 </div>
-                <div class="input-prepend input-append"  style="display:inline-block">
-                    <span class="add-on">Family Name</span>
-                    <input type="text" placeholder="Creator Family Name" ng-model="creator.familyName[0]._text" ng-readonly="readonly"/>
+
+                <div ng-repeat="affiliation in objectModel.resource[0].creators[0].creator[$index].affiliation track by $index">
+                    <div class="input-prepend input-append"  style="display:inline-block">
+                        <span class="add-on">Creator Affiliations</span>
+                        <input type="text" placeholder="Creator Affiliations" ng-model="affiliation._text" ng-readonly="readonly"/>
+                    </div>
+
+                    <div class="input-prepend input-append" style="display:inline-block">
+                        <a ng-if="!readonly && !$first" class="btn btn-warning" href="" ng-click="remove(creator.affiliation, $index)"><i class="icon-remove icon-white"></i></a>
+                    </div>
+
+                    <div class="input-prepend input-append" style="display:inline-block">
+                        <a href="" ng-if="$last" class="btn btn-info" ng-click="add(creator, 'affiliation')" ng-show="!readonly"><i class="icon-plus icon-white"></i></a>
+                    </div>
 
                 </div>
-
-                <div class="input-prepend input-append" ng-repeat="affiliation in objectModel.resource[0].creators[0].creator[$index].affiliation track by $index">
-                    <span class="add-on">Creator Affiliations</span>
-                    <input type="text" placeholder="Creator Affiliations" ng-model="affiliation._text" ng-readonly="readonly"/>
-                    <a ng-if="!readonly" href="" ng-click="remove(creator.affiliation, $index)"><i class="icon-remove"></i></a>
-                </div>
-                </div>
-                <a href="" ng-click="add(objectModel.resource[0].creators[0].creator[$index], 'affiliation')" ng-show="!readonly"><i class="icon-plus"></i> Add Affiliation</a>
 
                 <div ng-repeat="nameIdentifier in creator.nameIdentifier track by $index">
                     <div class="input-prepend input-append"  style="display:inline-block">
@@ -79,18 +87,25 @@
                     <div class="input-prepend input-append" style="display:inline-block">
                         <span class="add-on">Scheme URI</span>
                         <input type="text" placeholder="Scheme URI" ng-model="nameIdentifier._attr.schemeURI._value" ng-readonly="readonly"/>
-                        <a ng-if="!readonly" href="" ng-click="remove(creator.nameIdentifier, $index)"><i class="icon-remove"></i></a>
+
+                    </div>
+                    <div class="input-prepend input-append" style="display:inline-block">
+                        <a ng-if="!readonly && !$first" href="" class="btn btn-warning" ng-click="remove(creator.nameIdentifier, $index)"><i class="icon-remove icon-white"></i></a>
+                    </div>
+                    <div class="input-prepend input-append" style="display:inline-block">
+                        <a ng-if="!readonly && $last" class="btn btn-info"  href="" ng-click="add(creator, 'nameIdentifier')"><i class="icon-plus icon-white"></i></a>
                     </div>
 
                 </div>
-                <a ng-if="!readonly" href="" ng-click="add(creator, 'nameIdentifier')"><i class="icon-plus"></i> Add Name Identifier</a>
-                <div class="input-prepend input-append" style="display:inline-block">
-                <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].creators[0].creator, $index)"><i class="icon-remove"></i></a>
-                </div>
-            </div>
-        <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].creators[0], 'creator')"><i class="icon-plus"></i> Add Creator</a></div>
-        </div>
 
+                <div class="input-prepend input-append" style="display:inline-block">
+                 <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].creators[0].creator, $index)"><i class="icon-remove icon-white"></i> Remove Creator</a>
+                </div>
+
+            </div>
+
+        </div>
+        <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].creators[0], 'creator')"><i class="icon-plus icon-white"></i> Add Creator</a></div>
     </div>
 
     <div class="widget-content">
@@ -107,7 +122,7 @@
 <div class="widget-box" ng-mouseleave="update()">
     <div class="widget-title" ng-click="show_recommended=!show_recommended">
         <span class="icon">
-            <i class="icon-plus" ng-class="{false:'icon-plus',true: 'icon-minus'}[show_recommended]"></i>
+            <i class="icon-plus icon-white" ng-class="{false:'icon-plus',true: 'icon-minus'}[show_recommended]"></i>
         </span>
         <h5>Recommended Elements</h5>
     </div>
@@ -138,13 +153,13 @@
 
                     </div>
                     <div class="input-prepend input-append" style="display:inline-block">
-                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].subjects[0].subject, $index)"><i class="icon-remove"></i></a>
+                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].subjects[0].subject, $index)"><i class="icon-remove icon-white"></i></a>
                         </div>
 
 
                 </div>
             </div>
-            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].subjects[0], 'subject')"><i class="icon-plus"></i> Add Subject</a>
+            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].subjects[0], 'subject')"><i class="icon-plus icon-white"></i> Add Subject</a>
         </div>
 
         <div class="widget-content">
@@ -177,12 +192,18 @@
                     </div>
 
 
-                    <div class="input-prepend input-append" ng-repeat="affiliation in contributor.affiliation">
+                    <div ng-repeat="affiliation in contributor.affiliation">
+                        <div class="input-prepend input-append" style="display:inline-block" >
                         <span class="add-on">Affiliation</span>
                         <input type="text" placeholder="Affiliation" ng-model="affiliation._text" ng-readonly="readonly"/>
-                        <a ng-if="!readonly" href="" ng-click="remove(contributor.affiliation, $index)"><i class="icon-remove"></i></a>
+                        </div>
+                        <div class="input-prepend input-append" style="display:inline-block" >
+                            <a ng-if="!readonly && !$first" href="" class="btn btn-warning" ng-click="remove(contributor.affiliation, $index)"><i class="icon-remove icon-white"></i></a>
+                        </div>
+                        <div class="input-prepend input-append"  style="display:inline-block">
+                            <a href="" ng-if="$last" ng-show="!readonly" class="btn btn-info"  ng-click="add(contributor, 'affiliation')"><i class="icon-plus icon-white"></i></a>
+                        </div>
                     </div>
-                   <a href="" ng-show="!readonly" ng-click="add(contributor, 'affiliation')"><i class="icon-plus"></i> Add Affiliation</a>
 
                     <div ng-repeat="nameIdentifier in contributor.nameIdentifier track by $index">
                         <div class="input-prepend input-append" style="display:inline-block">
@@ -196,16 +217,20 @@
                         <div class="input-prepend input-append" style="display:inline-block">
                             <span class="add-on">Scheme URI</span>
                             <input type="text" placeholder="Scheme URI" ng-model="nameIdentifier._attr.schemeURI._value" ng-readonly="readonly"/>
-                            <a ng-if="!readonly" href="" ng-click="remove(contributor.nameIdentifier, $index)"><i class="icon-remove"></i></a>
                         </div>
-
+                        <div class="input-prepend input-append" style="display:inline-block">
+                            <a ng-if="!readonly && !$first" href="" class="btn btn-warning" ng-click="remove(contributor.nameIdentifier, $index)"><i class="icon-remove icon-white"></i></a>
+                        </div>
+                        <div class="input-prepend input-append" style="display:inline-block">
+                            <a ng-if="!readonly && $last" class="btn btn-info" href="" ng-click="add(contributor, 'nameIdentifier')"><i class="icon-plus icon-white"></i></a>
+                        </div>
                     </div>
-                    <a ng-if="!readonly" href="" ng-click="add(contributor, 'nameIdentifier')"><i class="icon-plus"></i> Add Name Identifier</a>
 
-                    <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].contributors[0].contributor, $index)"><i class="icon-remove"></i></a>
+
+                    <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].contributors[0].contributor, $index)"><i class="icon-remove icon-white"></i> Remove Contributor</a>
                 </div>
             </div>
-            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].contributors[0], 'contributor')"><i class="icon-plus"></i> Add Contributor</a>
+            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].contributors[0], 'contributor')"><i class="icon-plus icon-white"></i> Add Contributor</a>
         </div>
 
         <div class="widget-content">
@@ -216,7 +241,7 @@
                 index="$index"
                 readonly="readonly"
                 optiontype="'dateType'"></datacite-twin-item-form>
-            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].dates[0], 'date')"><i class="icon-plus"></i> Add Date</a>
+            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].dates[0], 'date')"><i class="icon-plus icon-white"></i> Add Date</a>
         </div>
 
         <div class="widget-content">
@@ -257,12 +282,12 @@
 
                     </div>
                     <div class="input-prepend input-append"  style="display:inline-block">
-                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].fundingReferences[0].fundingReference, $index)"><i class="icon-remove"></i></a>
+                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].fundingReferences[0].fundingReference, $index)"><i class="icon-remove icon-white"></i></a>
                     </div>
 
                 </div>
             </div>
-            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].fundingReferences[0], 'fundingReference')"><i class="icon-plus"></i> Add Funding Reference</a>
+            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].fundingReferences[0], 'fundingReference')"><i class="icon-plus icon-white"></i> Add Funding Reference</a>
         </div>
 
         <div class="widget-content">
@@ -315,13 +340,13 @@
 
                     </div>
                     <div class="input-prepend input-append" style="display:inline-block;">
-                        <a ng-if="!readonly" class="btn btn-warning" href="" ng-click="remove(objectModel.resource[0].relatedIdentifiers[0].relatedIdentifier, $index)"><i class="icon-remove"></i></a>
+                        <a ng-if="!readonly" class="btn btn-warning" href="" ng-click="remove(objectModel.resource[0].relatedIdentifiers[0].relatedIdentifier, $index)"><i class="icon-remove icon-white"></i></a>
                     </div>
 
 
                 </div>
             </div>
-            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].relatedIdentifiers[0], 'relatedIdentifier')"><i class="icon-plus"></i> Add Related Identifier</a>
+            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].relatedIdentifiers[0], 'relatedIdentifier')"><i class="icon-plus icon-white"></i> Add Related Identifier</a>
         </div>
 
         <div class="widget-content">
@@ -337,10 +362,10 @@
                     </ul>
                 </div>
                 <textarea ng-model="description._text" cols="30" rows="10" ng-readonly="readonly" style="width:80%"></textarea>
-                <a ng-if="!readonly" href=""  style="vertical-align: bottom; margin-bottom: 10px;" class="btn btn-warning" ng-click="remove(objectModel.resource[0].descriptions[0].description, $index)"><i class="icon-remove"></i></a>
+                <a ng-if="!readonly" href=""  style="vertical-align: bottom; margin-bottom: 10px;" class="btn btn-warning" ng-click="remove(objectModel.resource[0].descriptions[0].description, $index)"><i class="icon-remove icon-white"></i></a>
             </div>
 
-            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].descriptions[0], 'description')"><i class="icon-plus"></i> Add Description</a>
+            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].descriptions[0], 'description')"><i class="icon-plus icon-white"></i> Add Description</a>
         </div>
 
         <div class="widget-content">
@@ -392,7 +417,9 @@
                     </div>
 
                     <h5>geoLocationPolygon</h5>
+
                     <div ng-repeat="polygonPoint in geoLocation.geoLocationPolygon[0].polygonPoint track by $index">
+
                         <label for="" class="control-label">polygonPoint</label>
                         <div class="input-prepend input-append"  style="display:inline-block;">
                             <span class="add-on">pointLongitude</span>
@@ -405,17 +432,19 @@
                             <input ng-readonly="readonly" type="text" style="width:100px"
                                    placeholder="pointLatitude"
                                    ng-model="polygonPoint.pointLatitude[0]['_text']"/>
-
-                        <a ng-if="!readonly" href="" ng-click="remove(geoLocation.geoLocationPolygon[0].polygonPoint, $index)"><i class="icon-remove"></i></a>
+                        </div>
+                        <div class="input-prepend input-append"  style="display:inline-block;">
+                            <a ng-if="!readonly && !$first" href="" class="btn btn-warning" ng-click="remove(geoLocation.geoLocationPolygon[0].polygonPoint, $index)"><i class="icon-remove icon-white"></i></a>
+                        </div>
+                        <div class="input-prepend input-append"  style="display:inline-block;">
+                            <a ng-if="!readonly && $last" class="btn btn-info" href="" ng-click="addGeoLocationPolygonPoint(geoLocation.geoLocationPolygon[0])"><i class="icon-plus icon-white"></i></a>
                         </div>
                     </div>
 
-                    <a ng-if="!readonly" href="" ng-click="addGeoLocationPolygonPoint(geoLocation.geoLocationPolygon[0])"><i class="icon-plus"></i> Add polygonPoint</a>
-
-                    <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].geoLocations[0].geoLocation, $index)"><i class="icon-remove"></i></a>
+                    <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].geoLocations[0].geoLocation, $index)"><i class="icon-remove icon-white"></i> Remove geoLocation</a>
                 </div>
             </div>
-            <a ng-if="!readonly" href="" class="btn btn-info " ng-click="add(objectModel.resource[0].geoLocations[0], 'geoLocation')"><i class="icon-plus"></i> Add geoLocation</a>
+            <a ng-if="!readonly" href="" class="btn btn-info " ng-click="add(objectModel.resource[0].geoLocations[0], 'geoLocation')"><i class="icon-plus icon-white"></i> Add geoLocation</a>
         </div>
     </div>
 </div>
@@ -423,7 +452,7 @@
 <div class="widget-box" ng-mouseleave="update()">
     <div class="widget-title" ng-click="show_other=!show_other">
         <span class="icon">
-            <i class="icon-plus" ng-class="{false:'icon-plus',true: 'icon-minus'}[show_other]"></i>
+            <i class="icon-plus icon-white" ng-class="{false:'icon-plus',true: 'icon-minus'}[show_other]"></i>
         </span>
         <h5>Other Elements</h5>
     </div>
@@ -451,11 +480,11 @@
 
                     <div class="input-prepend input-append" style="display:inline-block;">
 
-                    <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].alternateIdentifiers[0].alternateIdentifier, $index)"><i class="icon-remove"></i></a>
+                    <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].alternateIdentifiers[0].alternateIdentifier, $index)"><i class="icon-remove icon-white"></i></a>
                 </div>
                     </div>
             </div>
-            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].alternateIdentifiers[0], 'alternateIdentifier')"><i class="icon-plus"></i> Add Alternative Identifier</a>
+            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].alternateIdentifiers[0], 'alternateIdentifier')"><i class="icon-plus icon-white"></i> Add Alternative Identifier</a>
         </div>
 
 
@@ -468,7 +497,7 @@
                 readonly="readonly"
                 label="'Size'"
                 ></datacite-twin-item-form>
-            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].sizes[0], 'size')"><i class="icon-plus"></i> Add Size</a>
+            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].sizes[0], 'size')"><i class="icon-plus icon-white"></i> Add Size</a>
         </div>
 
         <div class="widget-content">
@@ -480,7 +509,7 @@
                 label="'Format'"
                 readonly="readonly"
                 ></datacite-twin-item-form>
-            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].formats[0], 'format')"><i class="icon-plus"></i> Add Format</a>
+            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].formats[0], 'format')"><i class="icon-plus icon-white"></i> Add Format</a>
         </div>
 
         <div class="widget-content">
@@ -504,12 +533,12 @@
                         <input ng-readonly="readonly" type="text" placeholder="Rights URI" ng-model="rights._attr.rightsURI._value"/>
                     </div>
                     <div class="input-prepend input-append" style="display:inline-block;">
-                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].rightsList[0].rights, $index)"><i class="icon-remove"></i></a>
+                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].rightsList[0].rights, $index)"><i class="icon-remove icon-white"></i></a>
                     </div>
                 </div>
             </div>
 
-            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].rightsList[0], 'rights')"><i class="icon-plus"></i> Add rights</a>
+            <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].rightsList[0], 'rights')"><i class="icon-plus icon-white"></i> Add rights</a>
         </div>
     </div>
 </div>
