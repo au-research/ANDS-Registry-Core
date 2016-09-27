@@ -66,7 +66,7 @@
                     </div>
 
                     <div class="input-prepend input-append" style="display:inline-block">
-                        <a ng-if="!readonly && !$first" class="btn btn-warning" href="" ng-click="remove(creator.affiliation, $index)"><i class="icon-remove icon-white"></i></a>
+                        <a ng-if="!readonly && (!$first || !$last)" class="btn btn-warning" href="" ng-click="remove(creator.affiliation, $index)"><i class="icon-remove icon-white"></i></a>
                     </div>
 
                     <div class="input-prepend input-append" style="display:inline-block">
@@ -90,7 +90,7 @@
 
                     </div>
                     <div class="input-prepend input-append" style="display:inline-block">
-                        <a ng-if="!readonly && !$first" href="" class="btn btn-warning" ng-click="remove(creator.nameIdentifier, $index)"><i class="icon-remove icon-white"></i></a>
+                        <a ng-if="!readonly && (!$first || !$last)" href="" class="btn btn-warning" ng-click="remove(creator.nameIdentifier, $index)"><i class="icon-remove icon-white"></i></a>
                     </div>
                     <div class="input-prepend input-append" style="display:inline-block">
                         <a ng-if="!readonly && $last" class="btn btn-info"  href="" ng-click="add(creator, 'nameIdentifier')"><i class="icon-plus icon-white"></i></a>
@@ -198,7 +198,7 @@
                         <input type="text" placeholder="Affiliation" ng-model="affiliation._text" ng-readonly="readonly"/>
                         </div>
                         <div class="input-prepend input-append" style="display:inline-block" >
-                            <a ng-if="!readonly && !$first" href="" class="btn btn-warning" ng-click="remove(contributor.affiliation, $index)"><i class="icon-remove icon-white"></i></a>
+                            <a ng-if="!readonly && (!$first || !$last)" href="" class="btn btn-warning" ng-click="remove(contributor.affiliation, $index)"><i class="icon-remove icon-white"></i></a>
                         </div>
                         <div class="input-prepend input-append"  style="display:inline-block">
                             <a href="" ng-if="$last" ng-show="!readonly" class="btn btn-info"  ng-click="add(contributor, 'affiliation')"><i class="icon-plus icon-white"></i></a>
@@ -219,7 +219,7 @@
                             <input type="text" placeholder="Scheme URI" ng-model="nameIdentifier._attr.schemeURI._value" ng-readonly="readonly"/>
                         </div>
                         <div class="input-prepend input-append" style="display:inline-block">
-                            <a ng-if="!readonly && !$first" href="" class="btn btn-warning" ng-click="remove(contributor.nameIdentifier, $index)"><i class="icon-remove icon-white"></i></a>
+                            <a ng-if="!readonly && (!$first || !$last)" href="" class="btn btn-warning" ng-click="remove(contributor.nameIdentifier, $index)"><i class="icon-remove icon-white"></i></a>
                         </div>
                         <div class="input-prepend input-append" style="display:inline-block">
                             <a ng-if="!readonly && $last" class="btn btn-info" href="" ng-click="add(contributor, 'nameIdentifier')"><i class="icon-plus icon-white"></i></a>
@@ -434,7 +434,7 @@
                                    ng-model="polygonPoint.pointLatitude[0]['_text']"/>
                         </div>
                         <div class="input-prepend input-append"  style="display:inline-block;">
-                            <a ng-if="!readonly && !$first" href="" class="btn btn-warning" ng-click="remove(geoLocation.geoLocationPolygon[0].polygonPoint, $index)"><i class="icon-remove icon-white"></i></a>
+                            <a ng-if="!readonly && (!$first || !$last)" href="" class="btn btn-warning" ng-click="remove(geoLocation.geoLocationPolygon[0].polygonPoint, $index)"><i class="icon-remove icon-white"></i></a>
                         </div>
                         <div class="input-prepend input-append"  style="display:inline-block;">
                             <a ng-if="!readonly && $last" class="btn btn-info" href="" ng-click="addGeoLocationPolygonPoint(geoLocation.geoLocationPolygon[0])"><i class="icon-plus icon-white"></i></a>
