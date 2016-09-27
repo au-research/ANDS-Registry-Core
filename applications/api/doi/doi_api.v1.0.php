@@ -42,6 +42,13 @@ class Doi_api
             }
         }
 
+        // check for DOI Request protocol, if set, default the format type to string and pass along
+        $validDOIRequests = ['mint', 'update', 'activate', 'deactivate', 'status', 'xml'];
+        if (in_array($this->params['submodule'], $validDOIRequests)) {
+            $this->params['submodule'] .= ".string";
+            return $this->handleDOIRequest();
+        }
+
         //everything under here requires a client, app_id
         $this->getClient();
 
@@ -93,8 +100,10 @@ class Doi_api
             $this->outputFormat = "text/xml";
             $formater = new XMLFormatter();
         } else if ($format == 'json'){
+            $this->outputFormat = "application/json";
             $formater = new JSONFormatter();
         }else {
+            $this->outputFormat = "text";
             $formater = new StringFormatter();
         }
 
