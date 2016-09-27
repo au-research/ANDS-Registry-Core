@@ -267,14 +267,14 @@ class DoiBulkTask extends Task
             'event' => 'doi_update',
             'response' => $response,
             'doi' => [
-                'id' => isset($log_response["doi"]) ? $log_response["doi"] : "",
+                'id' => isset($response["doi"]) ? $response["doi"] : "",
                 'production' => true
             ],
             'client' => [
                 'id' => $this->doiService->getAuthenticatedClient()->client_name,
                 'name' => $this->doiService->getAuthenticatedClient()->client_name
             ],
-            'api_key' => isset($log_response["app_id"]) ? $log_response["app_id"] : "",
+            'api_key' => isset($response["app_id"]) ? $response["app_id"] : "",
             'request' => [
                 'manual' => true,
                 'bulk' => true
@@ -288,8 +288,6 @@ class DoiBulkTask extends Task
         $test_check = strpos($message["doi"]["id"], '10.5072');
         if ($test_check || $test_check === 0) {
             $message["doi"]["production"] = false;
-        } else {
-            $message["doi"]["production"] = true;
         }
 
         monolog($message, "doi_api", "info", true);
