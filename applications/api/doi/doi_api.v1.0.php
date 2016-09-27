@@ -653,7 +653,6 @@ class Doi_api
         $message = [
             'event' => strtolower($event),
             'response' => $log_response,
-            'messagecode' => $log_response['responsecode'],
             'doi' => [
                 'id' => isset($log_response["doi"]) ? $log_response["doi"] : "",
                 'production' => true
@@ -664,6 +663,9 @@ class Doi_api
             ],
             'api_key' => isset($log_response["app_id"]) ? $log_response["app_id"] : ""
         ];
+
+        // Copy the responsecode to messagecode for logging purpose
+        $message['response']['messagecode'] = $message['response']['responsecode'];
 
         //determine client
         if ($client) {
