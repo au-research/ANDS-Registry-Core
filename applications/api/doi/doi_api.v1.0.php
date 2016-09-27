@@ -40,11 +40,7 @@ class Doi_api
             if (strpos($this->params['submodule'],'10.') === false){
                 return $this->handleDOIRequest();
             }
-        } elseif(strpos($this->params['submodule'], '.' )  === false){
-            $this->params['submodule'] = $this->params['submodule'].".string";
-            return $this->handleDOIRequest();
         }
-
 
         //everything under here requires a client, app_id
         $this->getClient();
@@ -90,8 +86,9 @@ class Doi_api
         $this->providesOwnResponse = true;
         $split = explode('.', $this->params['submodule']);
         $method = $split[0];
-        $format = $split[1];
+        $format = array_key_exists(1, $split) ? $split[1] : 'string';
 
+        // setting up the formatter, defaults to string if none is specified
         if ($format == "xml") {
             $this->outputFormat = "text/xml";
             $formater = new XMLFormatter();
@@ -101,8 +98,7 @@ class Doi_api
             $formater = new StringFormatter();
         }
 
-
-
+        // getting the values from GET
         $appID = $this->ci->input->get('app_id');
         $sharedSecret = $this->ci->input->get('shared_secret');
         $manual = $this->ci->input->get('manual');
@@ -115,8 +111,6 @@ class Doi_api
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
 
-
-
         $clientRepository = new ClientRepository(
             $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
         );
@@ -125,6 +119,7 @@ class Doi_api
             $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
         );
 
+        // handles xml.xml
         if($method == 'xml'){
             if ($doi = $this->ci->input->get('doi')) {
                 $doiObject = $doiRepository->getByID($doi);
@@ -134,36 +129,34 @@ class Doi_api
             }
         }
 
-        if($method == 'status'){
+        // handles status method
+        if ($method == 'status') {
 
-                $response_status = true;
+            $response_status = true;
 
-                // Check the local DOI database
-                if (!$doiRepository)
-                {
-                    $response_status = false;
-                }
-                // Check DataCite DOI HTTPS service
-                if (!$response_time = $this->_isDataCiteAlive())
-                {
-                    $response_status = false;
-                }
+            // Check the local DOI database
+            if (!$doiRepository) {
+                $response_status = false;
+            }
 
-                if ($response_status)
-                {
-                    return $formater->format([
-                        'responsecode' => 'MT090',
-                        'verbosemessage' =>  "(took " . $response_time . "ms)"
-                    ]);
-                }
-                else
-                {
-                    return $formater->format([
-                        'responsecode' => 'MT091',
-                    ]);
-                }
+            // Check DataCite DOI HTTPS service
+            if (!$response_time = $this->_isDataCiteAlive()) {
+                $response_status = false;
+            }
 
+            if ($response_status) {
+                return $formater->format([
+                    'responsecode' => 'MT090',
+                    'verbosemessage' => "(took " . $response_time . "ms)"
+                ]);
+            } else {
+                return $formater->format([
+                    'responsecode' => 'MT091',
+                ]);
+            }
         }
+
+        // past this point, an app ID must be provided to continue
         if (!$appID) {
             return $formater->format([
                 'responsecode' => 'MT010',
@@ -171,6 +164,7 @@ class Doi_api
             ]);
         }
 
+        // constructing the client and checking if the client exists and authorised
         $client = $clientRepository->getByAppID($appID);
 
         if(!$client){
@@ -180,16 +174,19 @@ class Doi_api
             ]);
         }
 
+        // constructing the dataciteclient to talk with datacite services
         $dataciteClient = new DataCiteClient(
             get_config_item("gDOIS_DATACENTRE_NAME_PREFIX").".".get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE").str_pad($client->client_id,2,"-",STR_PAD_LEFT), get_config_item("gDOIS_DATACITE_PASSWORD")
         );
 
-
+        // set to the default DOI Service in global config
         $dataciteClient->setDataciteUrl(get_config_item("gDOIS_SERVICE_BASE_URI"));
 
+        // construct the DOIServiceProvider to handle DOI requests
         $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
 
-
+        // authenticate the client
+        // TODO: check authenticated client
         $doiService->authenticate(
             $appID,
             $sharedSecret,
@@ -197,8 +194,7 @@ class Doi_api
             $manual
         );
 
-        // @todo check authenticated client
-
+        // handles mint, update, activate and deactivate
         switch ($method) {
             case "mint":
                  $doiService->mint(
@@ -206,7 +202,6 @@ class Doi_api
                     $this->getPostedXML()
                 );
                 break;
-
             case "update":
                 $doiService->update(
                     $this->ci->input->get('doi'),
@@ -226,31 +221,26 @@ class Doi_api
                 break;
         }
 
-        if($manual){
-            $manual="m_";
-        } else{
-            $manual='';
-        }
-
+        // log is done using ArrayFormatter
         $arrayFormater = new ArrayFormatter();
 
+        // do the logging
         $this->doilog(
             $arrayFormater->format($doiService->getResponse()),
-            'doi_' . $manual . $method,
+            'doi_' . ($manual ? 'm_' : '') . $method,
             $client
         );
 
-        // as well as set the HTTP header here
-        if($format=="xml") {
-            return $formater->format($doiService->getResponse());
-        }
-        else if ($format=='json'){
-            return $formater->format($doiService->getResponse());
-        }
-        else if ($format=='string'){
-            return $formater->format($doiService->getResponse());
-        }else {
-            return $doiService->getResponse();
+        // return the formatted response
+        switch($format) {
+            case "xml":
+            case "json":
+            case "string":
+                return $formater->format($doiService->getResponse());
+                break;
+            default:
+                return $doiService->getResponse();
+                break;
         }
 
     }
