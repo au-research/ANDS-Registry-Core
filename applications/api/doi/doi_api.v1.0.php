@@ -40,7 +40,11 @@ class Doi_api
             if (strpos($this->params['submodule'],'10.') === false){
                 return $this->handleDOIRequest();
             }
+        } elseif(strpos($this->params['submodule'], '.' )  === false){
+            $this->params['submodule'] = $this->params['submodule'].".string";
+            return $this->handleDOIRequest();
         }
+
 
         //everything under here requires a client, app_id
         $this->getClient();
@@ -130,6 +134,36 @@ class Doi_api
             }
         }
 
+        if($method == 'status'){
+
+                $response_status = true;
+
+                // Check the local DOI database
+                if (!$doiRepository)
+                {
+                    $response_status = false;
+                }
+                // Check DataCite DOI HTTPS service
+                if (!$response_time = $this->_isDataCiteAlive())
+                {
+                    $response_status = false;
+                }
+
+                if ($response_status)
+                {
+                    return $formater->format([
+                        'responsecode' => 'MT090',
+                        'verbosemessage' =>  "(took " . $response_time . "ms)"
+                    ]);
+                }
+                else
+                {
+                    return $formater->format([
+                        'responsecode' => 'MT091',
+                    ]);
+                }
+
+        }
         if (!$appID) {
             return $formater->format([
                 'responsecode' => 'MT010',
@@ -668,7 +702,19 @@ class Doi_api
         );
     }
 
+    private function _isDataCiteAlive($timeout = 5)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, (get_config_item("gDOIS_SERVICE_BASE_URI")));
+        curl_setopt($curl, CURLOPT_FILETIME, true);
+        curl_setopt($curl, CURLOPT_NOBODY, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $timeout);
+        curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+        curl_exec($curl);
 
+        return !(curl_errno($curl) || curl_getinfo($curl, CURLINFO_HTTP_CODE) != "200");
+    }
     public function __construct()
     {
         $this->ci = &get_instance();
