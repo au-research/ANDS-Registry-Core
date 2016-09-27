@@ -263,21 +263,26 @@ class DoiBulkTask extends Task
      */
     public function logToFile($response)
     {
-        $message = array();
-        $message["event"] = 'doi_update';
-        $message["response"] = $response;
-        $message["doi"]["id"] = (isset($response["doi"]) ? $response["doi"] : "");
-        $message["client"]["id"] = null;
-        $message["client"]["name"] = null;
-        $message["api_key"] = (isset($response["app_id"]) ? $response["app_id"] : "");
+        $message = [
+            'event' => 'doi_update',
+            'response' => $response,
+            'doi' => [
+                'id' => isset($log_response["doi"]) ? $log_response["doi"] : "",
+                'production' => true
+            ],
+            'client' => [
+                'id' => $this->doiService->getAuthenticatedClient()->client_name,
+                'name' => $this->doiService->getAuthenticatedClient()->client_name
+            ],
+            'api_key' => isset($log_response["app_id"]) ? $log_response["app_id"] : "",
+            'request' => [
+                'manual' => true,
+                'bulk' => true
+            ]
+        ];
 
-        //determine client name
-        $message['client']['name'] = $this->doiService->getAuthenticatedClient()->client_name;
-        $message['client']['id'] = $this->doiService->getAuthenticatedClient()->client_id;
-
-        $message['request']['manual'] = true;
-        $message['request']['bulk'] = true;
-
+        // Copy the responsecode to messagecode for logging purpose
+        $message['response']['messagecode'] = $message['response']['responsecode'];
 
         //determine if doi is a test doi
         $test_check = strpos($message["doi"]["id"], '10.5072');
