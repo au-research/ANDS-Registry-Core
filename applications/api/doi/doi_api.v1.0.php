@@ -600,7 +600,8 @@ class Doi_api
      * @param string $event
      * @param null $client
      */
-    private function doilog($log_response,$event="doi_xml",$client=NULL){
+    private function doilog($log_response, $event = "doi_xml", $client = null)
+    {
 
         // set up logging message
         $message = [
@@ -634,14 +635,24 @@ class Doi_api
             $message['request']['manual'] = false;
         }
 
-
         //determine if doi is a test doi
         $test_check = strpos($message["doi"]["id"], '10.5072');
         if ($test_check || $test_check === 0) {
             $message["doi"]["production"] = false;
         }
 
-        monolog($message,"doi_api", "info", true);
+        monolog($message, "doi_api", "info", true);
+
+        // Insert log entry to the activity log in the database
+        $this->dois_db->insert('activity_log',
+            [
+                'activity' => strtoupper(str_replace("doi_", "", $event)),
+                'doi_id' => isset($log_response["doi"]) ? $log_response["doi"] : "",
+                'result' => strtoupper($log_response["type"]),
+                'client_id' => $client->client_id,
+                'message' => json_encode($log_response, true)
+            ]
+        );
     }
 
 
