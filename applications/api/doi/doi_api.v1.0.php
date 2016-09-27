@@ -96,6 +96,8 @@ class Doi_api
             $formater = new StringFormatter();
         }
 
+
+
         $appID = $this->ci->input->get('app_id');
         $sharedSecret = $this->ci->input->get('shared_secret');
         $manual = $this->ci->input->get('manual');
@@ -108,12 +110,7 @@ class Doi_api
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
 
-        if (!$appID) {
-            return $formater->format([
-                'responsecode' => 'MT010',
-                'verbosemessage' => 'You must provide an app id to mint a doi'
-            ]);
-        }
+
 
         $clientRepository = new ClientRepository(
             $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
@@ -122,6 +119,22 @@ class Doi_api
         $doiRepository = new DoiRepository(
             $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
         );
+
+        if($method == 'xml'){
+            if ($doi = $this->ci->input->get('doi')) {
+                $doiObject = $doiRepository->getByID($doi);
+                return $doiObject->datacite_xml;
+            } else {
+                throw new Exception ("DOI must be provided");
+            }
+        }
+
+        if (!$appID) {
+            return $formater->format([
+                'responsecode' => 'MT010',
+                'verbosemessage' => 'You must provide an app id to mint a doi'
+            ]);
+        }
 
         $client = $clientRepository->getByAppID($appID);
 
