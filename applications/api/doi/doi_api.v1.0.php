@@ -577,6 +577,11 @@ class Doi_api
 
 
         $message = array();
+
+        // Added for logging purpose only
+        // TODO: remove once responsecode is used in its entirety instead of messagecode
+        $message['messagecode'] = $message['responsecode'];
+
         $message["event"] = strtolower($event);
         $message["response"]= $log_response;
         $message["doi"]["id"] = (isset($log_response["doi"]) ? $log_response["doi"] : "");
