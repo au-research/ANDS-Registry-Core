@@ -6,6 +6,7 @@ use ANDS\API\DOI\BulkRequest;
 use ANDS\API\Task\TaskManager;
 use ANDS\DOI\DataCiteClient;
 use ANDS\DOI\DOIServiceProvider;
+use ANDS\DOI\Formatter\ArrayFormatter;
 use ANDS\DOI\Formatter\XMLFormatter;
 use ANDS\DOI\Formatter\JSONFormatter;
 use ANDS\DOI\Formatter\StringFormatter;
@@ -184,7 +185,13 @@ class Doi_api
             $manual='';
         }
 
-        $this->doilog($doiService->getResponse(),'doi_'.$manual.$method,$client);
+        $arrayFormater = new ArrayFormatter();
+
+        $this->doilog(
+            $arrayFormater->format($doiService->getResponse()),
+            'doi_' . $manual . $method,
+            $client
+        );
 
         // as well as set the HTTP header here
         if($format=="xml") {
@@ -585,46 +592,56 @@ class Doi_api
     }
 
 
+    /**
+     * Perform a logging operation on this new end point api/doi
+     * Logs using monolog functionality
+     *
+     * @param $log_response
+     * @param string $event
+     * @param null $client
+     */
     private function doilog($log_response,$event="doi_xml",$client=NULL){
 
+        // set up logging message
+        $message = [
+            'event' => strtolower($event),
+            'response' => $log_response,
+            'messagecode' => $log_response['responsecode'],
+            'doi' => [
+                'id' => isset($log_response["doi"]) ? $log_response["doi"] : "",
+                'production' => true
+            ],
+            'client' => [
+                'id' => null,
+                'name' => null
+            ],
+            'api_key' => isset($log_response["app_id"]) ? $log_response["app_id"] : ""
+        ];
 
-        $message = array();
-
-        // Added for logging purpose only
-        // TODO: remove once responsecode is used in its entirety instead of messagecode
-        $message['messagecode'] = $message['responsecode'];
-
-        $message["event"] = strtolower($event);
-        $message["response"]= $log_response;
-        $message["doi"]["id"] = (isset($log_response["doi"]) ? $log_response["doi"] : "");
-        $message["client"]["id"] = NULL;
-        $message["client"]["name"] = NULL;
-        $message["api_key"] = (isset($log_response["app_id"]) ? $log_response["app_id"] : "");
-
-        //determine client name
-        if($client){
-            $message["client"]["name"] = $client->client_name;
-            $message["client"]["id"] = $client->client_id;
+        //determine client
+        if ($client) {
+            $message['client'] = [
+                'id' => $client->client_id,
+                'name' => $client->client_name
+            ];
         }
 
         //determine if event is manual or m2m
-        if(strtolower(substr($event,0,6))=='doi_m_'){
-            $message['request']['manual']= true;
-            $message["event"] = str_replace("_m_","_", $message["event"]);
-        }else{
-            $message['request']['manual']= false;
+        if (strtolower(substr($event, 0, 6)) == 'doi_m_') {
+            $message['request']['manual'] = true;
+            $message["event"] = str_replace("_m_", "_", $message["event"]);
+        } else {
+            $message['request']['manual'] = false;
         }
+
 
         //determine if doi is a test doi
-        $test_check = strpos($message["doi"]["id"],'10.5072');
-        if($test_check||$test_check===0) {
+        $test_check = strpos($message["doi"]["id"], '10.5072');
+        if ($test_check || $test_check === 0) {
             $message["doi"]["production"] = false;
-        }else{
-            $message["doi"]["production"] = true;
         }
 
-        monolog($message,"doi_api", "info", true) ;
-
+        monolog($message,"doi_api", "info", true);
     }
 
 
