@@ -387,6 +387,17 @@ class Doi_api
         ];
     }
 
+    /**
+     * Return a set of result, with total value
+     * for all DOI that matches the current client
+     * Matches a `type` and `from` value
+     *
+     * @param $type
+     * @param $from
+     * @param $offset
+     * @param $limit
+     * @return array
+     */
     private function getMatchingDOIs($type, $from, $offset, $limit)
     {
         if ($type == 'url') {
@@ -396,7 +407,8 @@ class Doi_api
 
             $query = Doi::query();
             $query->where('client_id', $client->client_id)
-                ->where('url', 'LIKE', '%'.$from.'%');
+                ->whereRaw('`url` LIKE BINARY ?', ['%'.$from.'%']);
+
             return [
                 'total' => $query->count(),
                 'result' => $query->take($limit)->skip($offset)->get()
