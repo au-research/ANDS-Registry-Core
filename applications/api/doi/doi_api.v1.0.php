@@ -154,33 +154,42 @@ class Doi_api
             }
 
             if ($response_status) {
-                return $formater->format([
+                $response = [
                     'responsecode' => 'MT090',
                     'verbosemessage' => "(took " . $response_time . "ms)"
-                ]);
+                ];
+                $this->doilog($response, 'doi_status');
+                return $formater->format($response);
             } else {
-                return $formater->format([
+                $response = [
                     'responsecode' => 'MT091',
-                ]);
+                    'verbosemessage' => "(took " . $response_time . "ms)"
+                ];
+                $this->doilog($response, 'doi_status');
+                return $formater->format($response);
             }
         }
 
         // past this point, an app ID must be provided to continue
         if (!$appID) {
-            return $formater->format([
+            $response = [
                 'responsecode' => 'MT010',
-                'verbosemessage' => 'You must provide an app id to mint a doi'
-            ]);
+                'verbosemessage' => 'You must provide an app id'
+            ];
+            $this->doilog($response, 'doi_'.$method);
+            return $formater->format($response);
         }
 
         // constructing the client and checking if the client exists and authorised
         $client = $clientRepository->getByAppID($appID);
 
         if(!$client){
-            return $formater->format([
+            $response = [
                 'responsecode' => 'MT009',
-                'verbosemessage' => 'You are not authorised to use this service'
-            ]);
+                'verbosemessage' => 'You are not authorised to use this service. No client found with AppID: '.$appID
+            ];
+            $this->doilog($response, 'doi_'.$method);
+            return $formater->format($response);
         }
 
         // constructing the dataciteclient to talk with datacite services
@@ -203,6 +212,7 @@ class Doi_api
         );
 
         if ($result === false) {
+            $this->doilog($doiService->getResponse(), 'doi_'.$method, $client);
             return $formater->format($doiService->getResponse());
         }
 
@@ -652,6 +662,9 @@ class Doi_api
     private function doilog($log_response, $event = "doi_xml", $client = null)
     {
 
+        $arrayformater = new ArrayFormatter();
+        $log_response = $arrayformater->format($log_response);
+
         // set up logging message
         $message = [
             'event' => strtolower($event),
@@ -695,15 +708,17 @@ class Doi_api
         monolog($message, "doi_api", "info", true);
 
         // Insert log entry to the activity log in the database
-        $this->dois_db->insert('activity_log',
-            [
-                'activity' => strtoupper(str_replace("doi_", "", $event)),
-                'doi_id' => isset($log_response["doi"]) ? $log_response["doi"] : "",
-                'result' => strtoupper($log_response["type"]),
-                'client_id' => $client->client_id,
-                'message' => json_encode($log_response, true)
-            ]
-        );
+        if ($client) {
+            $this->dois_db->insert('activity_log',
+                [
+                    'activity' => strtoupper(str_replace("doi_", "", $event)),
+                    'doi_id' => isset($log_response["doi"]) ? $log_response["doi"] : "",
+                    'result' => strtoupper($log_response["type"]),
+                    'client_id' => $client->client_id,
+                    'message' => json_encode($log_response, true)
+                ]
+            );
+        }
     }
 
     private function _isDataCiteAlive($timeout = 5)
