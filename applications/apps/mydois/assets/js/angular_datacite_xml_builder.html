@@ -152,8 +152,8 @@
                         <input ng-readonly="readonly" type="text" placeholder="Subject Value URI" ng-model="subject._attr.valueURI._value"/>
 
                     </div>
-                    <div class="input-prepend input-append" style="display:inline-block">
-                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].subjects[0].subject, $index)"><i class="icon-remove icon-white"></i></a>
+                    <div class="input-prepend input-append">
+                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].subjects[0].subject, $index)"><i class="icon-remove icon-white"></i> Remove Subject</a>
                         </div>
 
 
@@ -281,8 +281,8 @@
                         <input type="text" placeholder="Award Title" ng-model="awardTitle._text" ng-readonly="readonly"/>
 
                     </div>
-                    <div class="input-prepend input-append"  style="display:inline-block">
-                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].fundingReferences[0].fundingReference, $index)"><i class="icon-remove icon-white"></i></a>
+                    <div class="input-prepend input-append" >
+                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].fundingReferences[0].fundingReference, $index)"><i class="icon-remove icon-white"></i> Remove Funding Reference</a>
                     </div>
 
                 </div>
@@ -339,8 +339,8 @@
                         <input ng-readonly="readonly" type="text" placeholder="Scheme URI" ng-model="relatedIdentifier._attr.schemeURI._value"/>
 
                     </div>
-                    <div class="input-prepend input-append" style="display:inline-block;">
-                        <a ng-if="!readonly" class="btn btn-warning" href="" ng-click="remove(objectModel.resource[0].relatedIdentifiers[0].relatedIdentifier, $index)"><i class="icon-remove icon-white"></i></a>
+                    <div class="input-prepend input-append">
+                        <a ng-if="!readonly" class="btn btn-warning" href="" ng-click="remove(objectModel.resource[0].relatedIdentifiers[0].relatedIdentifier, $index)"><i class="icon-remove icon-white"></i> Remove Related Identifier</a>
                     </div>
 
 
@@ -524,17 +524,20 @@
             <div class="control-group" ng-repeat="rights in objectModel.resource[0].rightsList[0].rights track by $index">
                 <label class="control-label">Rights</label>
                 <div class="controls">
-                    <div class="input-prepend input-append" style="display:inline-block;">
-                        <span class="add-on">Rights</span>
-                        <input ng-readonly="readonly" type="text" placeholder="Rights"  ng-model="rights._text"/>
-                    </div>
-                    <div class="input-prepend input-append" style="display:inline-block;">
+                    <div class="input-prepend input-append" >
                         <span class="add-on">Rights URI</span>
                         <input ng-readonly="readonly" type="text" placeholder="Rights URI" ng-model="rights._attr.rightsURI._value"/>
                     </div>
-                    <div class="input-prepend input-append" style="display:inline-block;">
-                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].rightsList[0].rights, $index)"><i class="icon-remove icon-white"></i></a>
+
+                    <div class="input-prepend input-append"  style="display:inline-block;">
+                        <span class="add-on">Rights</span>
+                        <textarea ng-model="description._text" cols="30" rows="10" ng-readonly="readonly" style="width:237px"></textarea>
                     </div>
+
+                    <div class="input-prepend input-append">
+                        <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].rightsList[0].rights, $index)"><i class="icon-remove icon-white"></i> Remove rights</a>
+                    </div>
+
                 </div>
             </div>
 

@@ -42,7 +42,7 @@
                 scope.show_recommended = true;
 
                 scope.availableOptions = {
-                    'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
+                    'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle','Other']
                 };
 
                 scope.availableOptions['contributorType'] = ['ContactPerson', 'DataCollector', 'DataCurator', 'DataManager', 'Distributor', 'Editor', 'HostingInstitution', 'Producer', 'ProjectLeader', 'ProjectManager', 'ProjectMember', 'RegistrationAgency', 'RegistrationAuthority', 'RelatedPerson', 'Researcher', 'ResearchGroup', 'RightsHolder', 'Sponsor', 'Supervisor', 'WorkPackageLeader', 'Other'];
@@ -51,7 +51,7 @@
 
                 scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf'];
 
-                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
+                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'TechnicalInfo', 'Other'];
 
                 scope.availableOptions['funderIdentifierType'] = ['ISNI', 'GRID', 'Crossref Funder ID', 'Other'];
 
@@ -409,7 +409,7 @@
                 scope.availableOptions = {
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
                 };
-                scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle'];
+                scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle','Other'];
                 scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid'];
                 scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
