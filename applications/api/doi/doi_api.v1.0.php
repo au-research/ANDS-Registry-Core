@@ -195,13 +195,16 @@ class Doi_api
         $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
 
         // authenticate the client
-        // TODO: check authenticated client
-        $doiService->authenticate(
+        $result = $doiService->authenticate(
             $appID,
             $sharedSecret,
             $this->getIPAddress(),
             $manual
         );
+
+        if ($result === false) {
+            return $formater->format($doiService->getResponse());
+        }
 
         // handles mint, update, activate and deactivate
         switch ($method) {
