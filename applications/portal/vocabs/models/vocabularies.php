@@ -726,7 +726,8 @@ class Vocabularies extends CI_Model
     public function removeVersion($vocab_id, $version_id)
     {
         $this->vocab_db = $this->load->database('vocabs', true);
-        $taskList = array('UNPUBLISH'=> 'SISSVoc',
+        $taskList = array('UNTRANSFORM' => 'ResourceMap',
+                          'UNPUBLISH'=> 'SISSVoc',
                           'UNIMPORT'=> 'Sesame',
                           'UNHARVEST' => 'File');
         $task_id = $this->createDeleteTask($vocab_id, $version_id, $taskList);
