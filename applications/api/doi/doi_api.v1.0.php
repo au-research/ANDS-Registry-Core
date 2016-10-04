@@ -132,7 +132,28 @@ class Doi_api
         if($method == 'xml'){
             if ($doi = $this->ci->input->get('doi')) {
                 $doiObject = $doiRepository->getByID($doi);
+
+                if ($doiObject == null) {
+                    $response = [
+                        'responsecode' => 'MT011',
+                        'doi' => $doi
+                    ];
+                    $this->doilog($response, 'doi_xml');
+                    return $formater->format($response);
+                }
+
+                if ($format == "json") {
+                    $response = [
+                        'responsecode' => 'MT013',
+                        'doi' => $doi,
+                        'verbosemessage' => $doiObject->datacite_xml
+                    ];
+                    $this->doilog($response, 'doi_xml');
+                    return $formater->format($response);
+                }
+
                 return $doiObject->datacite_xml;
+
             } else {
                 throw new Exception ("DOI must be provided");
             }
