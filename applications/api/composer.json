@@ -13,15 +13,7 @@
     },
     "require": {
         "illuminate/database": "5.2.*",
-        "graphaware/neo4j-php-client": "^3.3"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/au-research/ANDS-DOI-Service"
-        }
-    ],
-    "require-dev": {
-        "au-research/ANDS-DOI-Service": "dev-develop@dev"
+        "graphaware/neo4j-php-client": "^3.3",
+        "au-research/ands-doi-service": "0.1.2"
     }
 }
