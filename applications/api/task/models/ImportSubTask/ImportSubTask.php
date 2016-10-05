@@ -12,6 +12,8 @@ class ImportSubTask extends Task
     protected $requireImportedRecords = false;
     protected $requireDeletedRecords = false;
     protected $requireAffectedRecords = false;
+    protected $requireHarvestedRecords = false;
+    protected $requireHarvestedOrImportedRecords = false;
 
     public function run()
     {
@@ -25,6 +27,26 @@ class ImportSubTask extends Task
             $importedRecords = $this->parent()->getTaskData("importedRecords");
             if ($importedRecords === false || $importedRecords === null) {
                 $this->addError("Imported Records require for this task");
+                $this->setStatus("COMPLETED");
+                return;
+            }
+        }
+
+        if ($this->requireHarvestedRecords) {
+            $harvestedRecords = $this->parent()->getTaskData("harvestedRecordIDs");
+            if ($harvestedRecords === false || $harvestedRecords === null) {
+                $this->addError("Harvested Records require for this task");
+                $this->setStatus("COMPLETED");
+                return;
+            }
+        }
+        
+        if($this->requireHarvestedOrImportedRecords){
+            $importedRecords = $this->parent()->getTaskData("importedRecords");
+            $harvestedRecords = $this->parent()->getTaskData("harvestedRecordIDs");
+            if (($importedRecords === false || $importedRecords === null) &&
+                ($harvestedRecords === false || $harvestedRecords === null)) {
+                $this->addError("Imported or Harvested Records require for this task");
                 $this->setStatus("COMPLETED");
                 return;
             }

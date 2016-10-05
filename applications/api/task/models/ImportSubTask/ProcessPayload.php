@@ -25,6 +25,7 @@ class ProcessPayload extends ImportSubTask
             $processed = [];
             $registryObjects = XMLUtil::getElementsByName($xml, 'registryObject');
             foreach ($registryObjects as $registryObject) {
+                $this->parent()->incrementTaskData("recordsInFeedCount");
                 $key = trim((string) $registryObject->key);
                 if ($key == '') {
                     $this->log("Error whilst ingesting record, 'key' must have a value");
@@ -54,6 +55,8 @@ class ProcessPayload extends ImportSubTask
             $xml = $payload->getContentByStatus($this->payloadOutput);
 
             $processed = [];
+
+
             $registryObjects = XMLUtil::getElementsByName($xml, 'registryObject');
             foreach ($registryObjects as $registryObject) {
                 if ($this->checkHarvestability($registryObject) === true){
@@ -102,6 +105,7 @@ class ProcessPayload extends ImportSubTask
             ->first();
 
         if ($matchingStatusRecord !== null) {
+            $this->parent()->addTaskData("harvestedRecordIDs", $matchingStatusRecord->registry_object_id);
             $currentRecordData = $matchingStatusRecord->getCurrentData();
 
             if ($currentRecordData === null) {
@@ -115,11 +119,13 @@ class ProcessPayload extends ImportSubTask
             // check matching data source
             if ($matchingStatusRecord->data_source_id != $this->parent()->dataSourceID) {
                 $this->log("Record key:($matchingStatusRecord->key) exists in a different data source");
+                $this->parent()->incrementTaskData("recordsExistOtherDataSourceCount");
                 return false;
             }
 
             if ((string) $hash === (string) $newHash) {
                 $this->log("Record key:($matchingStatusRecord->key) already has a record data matching payload.");
+                $this->parent()->incrementTaskData("recordsNotUpdatedCount");
                 // @todo I can say something here for logging, already exists latest version
                 return false;
             } else {

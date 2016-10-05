@@ -111,6 +111,52 @@ class RegistryObjectsRepository
         return RegistryObject::where('key', $key)->where('status', $status)->first();
     }
 
+
+    /**
+     * Useful function to get record-count by data_source_id and status
+     *
+     * @param $dataSourceId
+     * @param string $status
+     * @return integer
+     */
+    public static function getCountByDataSourceIDAndStatus($dataSourceId, $status)
+    {
+        $importTask = new ImportTask();
+        $importTask->init([])->bootEloquentModels();
+
+        return  RegistryObject::where('data_source_id', $dataSourceId)->where('status', $status)->count();
+    }
+
+
+    public static function getRecordsByHarvestID($harvestId, $dataSourceId, $status = "PUBLISHED")
+    {
+        $importTask = new ImportTask();
+        $importTask->init([])->bootEloquentModels();
+
+        $registryObjects = RegistryObject::where('data_source_id', $dataSourceId)->where('status', $status)->get();
+
+        $registryObjects = $registryObjects->filter(function($obj) use ($harvestId){
+            return $obj->hasHarvestID($harvestId);
+        });
+
+        return $registryObjects;
+    }
+
+    public static function getRecordsByDifferentHarvestID($harvestId, $dataSourceId, $status = "PUBLISHED")
+    {
+        $importTask = new ImportTask();
+        $importTask->init([])->bootEloquentModels();
+
+        $registryObjects = RegistryObject::where('data_source_id', $dataSourceId)->where('status', $status)->get();
+
+        $registryObjects = $registryObjects->filter(function($obj) use ($harvestId){
+            return $obj->hasDifferentHarvestID($harvestId);
+        });
+
+        return $registryObjects;
+    }
+
+
     public static function getDraftStatusGroup()
     {
         return [

@@ -173,10 +173,10 @@ class Task
 
     public function incrementTaskData($key, $value = 1)
     {
-        if (array_key_exists($key, $this->taskData)) {
-            $this->taskData[$key] = $value;
+        if (!array_key_exists($key, $this->taskData)) {
+            $this->taskData[$key] = (integer)$value;
         } else {
-            $this->taskData[$key] = $this->taskData[$key] + $value;
+            $this->taskData[$key] = (integer)$this->taskData[$key] + (integer)$value;
         }
         return $this;
     }

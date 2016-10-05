@@ -23,4 +23,5 @@ class RecordData extends Model
         $this->data = $data;
         return $this;
     }
+    
 }

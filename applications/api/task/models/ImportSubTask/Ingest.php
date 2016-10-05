@@ -42,7 +42,7 @@ class Ingest extends ImportSubTask
         // check existing one
         if ($matchingRecord = $this->getMatchingRecord($key)) {
             $this->log("Record key:($key) exists with id:($matchingRecord->registry_object_id). Adding new current version.");
-
+            $this->parent()->incrementTaskData("recordsUpdatedCount");
             // deal with previous versions
             RecordData::where('registry_object_id', $matchingRecord->registry_object_id)
                 ->update(['current' => '']);
@@ -63,6 +63,7 @@ class Ingest extends ImportSubTask
         } elseif ($deletedRecord = $this->getDeletedRecord($key)) {
 
             $deletedRecord->status = $this->parent()->getTaskData("targetStatus");
+            $this->parent()->incrementTaskData("recordsUpdatedCount");
             $deletedRecord->save();
 
             // TODO: check if the latest record data is the same first
@@ -87,7 +88,7 @@ class Ingest extends ImportSubTask
 
         } else {
             $this->log("Record $key does not exist. Creating new record and data");
-
+            $this->parent()->incrementTaskData("recordsCreatedCount");
             //find a deleted record and reinstate it
 
             // create new record

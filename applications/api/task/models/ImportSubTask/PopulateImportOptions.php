@@ -5,6 +5,8 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\DataSource;
 
+use ANDS\Repository\RegistryObjectsRepository as Repo;
+
 class PopulateImportOptions extends ImportSubTask
 {
     public function run_task()
@@ -12,7 +14,7 @@ class PopulateImportOptions extends ImportSubTask
         $dataSource = DataSource::find($this->parent()->dataSourceID);
 
         if (!$dataSource) {
-            $this->stoppedWithError("Data Source ".$this->dataSourceID." Not Found");
+            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
 
@@ -36,14 +38,26 @@ class PopulateImportOptions extends ImportSubTask
          * @todo datasourceRecordCountBefore
          */
 
-        $this->parent()->setTaskData("recordsCreatedCount", 0);
+        // records thaqt are deleted in task by either OAI deleted or REFRESH mode
         $this->parent()->setTaskData("recordsDeletedCount", 0);
+        // all registry objects in feed that are valid
         $this->parent()->setTaskData("recordsInFeedCount", 0);
-        // calculate this $this->parent()->setTaskData("recordsIngestedCount", 0);
+        // records that exist in other datasource with the same key
+        $this->parent()->setTaskData("recordsExistOtherDataSourceCount", 0);
+        // NEW registry Objects Created
+        $this->parent()->setTaskData("recordsCreatedCount", 0);
+        // Exist Registry Objects Updated
         $this->parent()->setTaskData("recordsUpdatedCount", 0);
-        $this->parent()->setTaskData("datasourceRecordBeforeCount", 0);
+        // Existing records content already has matching content in feed
+        $this->parent()->setTaskData("recordsNotUpdatedCount", 0);
+        // Record count before harvest
+        $this->parent()->setTaskData("datasourceRecordBeforeCount",
+            Repo::getCountByDataSourceIDAndStatus($this->parent()->dataSourceID,
+            $this->parent()->getTaskData("dataSourceDefaultStatus")
+            ));
+        // record count after harvest
         $this->parent()->setTaskData("datasourceRecordAfterCount", 0);
-
+        // record count if REFRESH mode was applied (delete records from previous harvest)
         return $this;
     }
 

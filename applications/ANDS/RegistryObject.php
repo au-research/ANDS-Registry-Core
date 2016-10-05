@@ -69,4 +69,20 @@ class RegistryObject extends Model
         return RegistryObjectsRepository::isDraftStatus($this->status);
     }
 
+    public function hasHarvestID($harvestID)
+    {
+        if ($this->getRegistryObjectAttributeValue('harvest_id') == $harvestID) {
+            return true;
+        }
+        return false;
+    }
+
+    public function hasDifferentHarvestID($harvestID)
+    {
+        if ($this->getRegistryObjectAttributeValue('harvest_id') == $harvestID) {
+            return false;
+        }
+        return true;
+    }
+
 }

@@ -27,4 +27,28 @@ class DataSource extends Model
         })->first()->value;*/
     }
 
+
+    public function setDatSourceAttribute($key, $value)
+    {
+
+        if ($existingAttribute = DataSourceAttribute::where('attribute', $key)
+            ->where('data_source_id', $this->data_source_id)->first()
+        ) {
+            $existingAttribute->value = $value;
+            return $existingAttribute->save();
+        } else {
+            return RegistryObjectAttribute::create([
+                'data_source_id' => $this->data_source_id,
+                'attribute' => $key,
+                'value' => $value
+            ]);
+        }
+    }
+
+    public function getDataSourceAttribute($key)
+    {
+        return DataSourceAttribute::where('data_source_id', $this->data_source_id)
+            ->where('attribute', $key)->first();
+    }
+    
 }
