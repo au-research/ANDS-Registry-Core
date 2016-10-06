@@ -44,7 +44,7 @@ class HandleRefreshHarvest extends ImportSubTask
                 );
             if(count($recordsToDelete) < 1)
             {
-                $this->log("NO records found to delete");
+                $this->log("No records found to be deleted");
                 return;
             }
             if($this->toBeDeletedRecordCutOffRatio > ((count($recordsToDelete) / $recordCount)))

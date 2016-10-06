@@ -17,8 +17,10 @@ class ProcessDelete extends ImportSubTask
             if ($record && $record->isPublishedStatus()) {
                 $record->status = "DELETED";
                 $record->save();
+                $this->parent()->incrementTaskData("recordsDeletedCount");
             } elseif ($record && $record->isDraftStatus()) {
                 RegistryObjectsRepository::completelyEraseRecordByID($id);
+                $this->parent()->incrementTaskData("recordsDeletedCount");
             } else {
                 $this->log("Record with ID " . $id . " doesn't exist for deletion");
             }

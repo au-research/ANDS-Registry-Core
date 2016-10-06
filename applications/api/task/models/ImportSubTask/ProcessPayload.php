@@ -29,11 +29,13 @@ class ProcessPayload extends ImportSubTask
                 $key = trim((string) $registryObject->key);
                 if ($key == '') {
                     $this->log("Error whilst ingesting record, 'key' must have a value");
+                    $this->parent()->incrementTaskData("missingRegistryObjectKeyCount");
                 } elseif (!in_array($key, $keys)) {
                     $processed[] = $registryObject->saveXML();
                     $keys[] = $key;
                 } else {
                     $this->log("Ignored a record already exists in import list: " . $key);
+                    $this->parent()->incrementTaskData("duplicateKeyinFeedCount");
                 }
             }
             $xmlPayload = implode("", $processed);
@@ -89,11 +91,13 @@ class ProcessPayload extends ImportSubTask
 
         if ((string)$registryObject->originatingSource == '') {
             $this->log("Error whilst ingesting record with key " . $key . ": " . "Registry Object 'originatingSource' must have a value");
+            $this->parent()->incrementTaskData("missingOriginatingSourceCount");
             return false;
         }
 
         if ((string)$registryObject['group'] == '') {
             $this->log("Error whilst ingesting record with key " . $key . ": " .  "Registry Object '@group' must have a value");
+            $this->parent()->incrementTaskData("missingGroupAttributeCount");
             return false;
         }
 
@@ -105,7 +109,7 @@ class ProcessPayload extends ImportSubTask
             ->first();
 
         if ($matchingStatusRecord !== null) {
-            $this->parent()->addTaskData("harvestedRecordIDs", $matchingStatusRecord->registry_object_id);
+
             $currentRecordData = $matchingStatusRecord->getCurrentData();
 
             if ($currentRecordData === null) {
@@ -125,6 +129,7 @@ class ProcessPayload extends ImportSubTask
 
             if ((string) $hash === (string) $newHash) {
                 $this->log("Record key:($matchingStatusRecord->key) already has a record data matching payload.");
+                $this->parent()->addTaskData("harvestedRecordIDs", $matchingStatusRecord->registry_object_id);
                 $this->parent()->incrementTaskData("recordsNotUpdatedCount");
                 // @todo I can say something here for logging, already exists latest version
                 return false;

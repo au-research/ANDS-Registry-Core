@@ -87,6 +87,7 @@ class ValidatePayload extends ImportSubTask
                 $validated[] = $registryObject->asXML();
             } catch (Exception $e) {
                 $key = (string) $registryObject->key;
+                $this->parent()->incrementTaskData("invalidRegistryObjectsCount");
                 $this->addError("Error validating record (#$attempt) with key:" . ($key!="" ? $key : "(unknown key)") . " :". $e->getMessage());
             }
         }

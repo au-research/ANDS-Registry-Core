@@ -57,24 +57,31 @@ class FinishImport extends ImportSubTask
     public function updateDataSourceLogs($dataSource)
     {
         //append_log($log_message, $log_type = "info | error", $log_class="data_source", $harvester_error_type=NULL)
-        $selectedKeys = ["recordsDeletedCount",
-            "recordsInFeedCount",
-            "recordsExistOtherDataSourceCount",
-            "recordsCreatedCount",
-            "recordsUpdatedCount",
-            "recordsNotUpdatedCount",
-            "datasourceRecordBeforeCount",
-            "dataSourceDefaultStatus",
-            "datasourceRecordAfterCount"];
-        
-        //$status = strtoupper($this->parent()->getStatus());
+        $targetStatus = $this->parent()->getTaskData("targetStatus");
+        $selectedKeys = ["dataSourceDefaultStatus"=>"Default Import Status for Data Source",
+            "recordsInFeedCount"=>"Valid Records Received in Harvest",
+            "invalidRegistryObjectsCount"=>"Failed to Validate",
+            "duplicateKeyinFeedCount"=>"Duplicated Records",
+            "recordsExistOtherDataSourceCount"=>"Record exist in other Datasource(s)",
+            "missingRegistryObjectKeyCount"=>"Invalid due to Missing key",
+            "missingOriginatingSourceCount"=>"Invalid due to missing OriginatingSource",
+            "missingGroupAttributeCount"=>"Invalid missing group Attribute",
+            "recordsCreatedCount"=>"New Records Created",
+            "recordsUpdatedCount"=>"Records updated",
+            "recordsNotUpdatedCount"=>"Records content unchanged",
+            "recordsDeletedCount"=>"Records deleted (due to OAI or Refresh mode",
+            "datasourceRecordBeforeCount"=>"Number of ".$targetStatus." records Before Import",
+            "datasourceRecordAfterCount"=>"Number of ".$targetStatus." records After Import"];
+
         $status = 'COMPLETED';
         if ($errorList = $this->parent()->getError()) {
             $message = "IMPORT ".$status." WITH ERROR(S)" . NL;
+            $message .= "Batch ID: ".$this->parent()->batchID.NL;
             $message .= "time:".date("Y-m-d\TH:i:s\Z", time()).NL;
-            foreach ($this->parent()->taskData as $key => $val) {
-                if (in_array($key, $selectedKeys)) {
-                    $message .= $key . ":" . $val . NL;
+            foreach ($selectedKeys as $key=>$title){
+                $taskData = $this->parent()->getTaskData($key);
+                if($taskData !== 0) {
+                    $message .= $title . ": " . $taskData . NL;
                 }
             }
             ob_start();
@@ -84,10 +91,12 @@ class FinishImport extends ImportSubTask
             return;
         } else {
             $message = "IMPORT ".$status . NL;
+            $message .= "Batch ID: ".$this->parent()->batchID.NL;
             $message .= "time:".date("Y-m-d\TH:i:s\Z", time()).NL;
-            foreach ($this->parent()->taskData as $key => $val) {
-                if (in_array($key, $selectedKeys)) {
-                    $message .= $key . ":" . $val . NL;
+            foreach ($selectedKeys as $key=>$title){
+                $taskData = $this->parent()->getTaskData($key);
+                if($taskData !== 0) {
+                    $message .= $title . ":" . $taskData . NL;
                 }
             }
             $dataSource->append_log($message);
