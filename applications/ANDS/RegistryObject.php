@@ -64,6 +64,11 @@ class RegistryObject extends Model
         return RegistryObjectsRepository::isPublishedStatus($this->status);
     }
 
+    public function isManualEntered()
+    {
+        return strpos($this->getRegistryObjectAttributeValue('harvest_id') ,"MANUAL-") === 0;
+    }
+    
     public function isDraftStatus()
     {
         return RegistryObjectsRepository::isDraftStatus($this->status);
@@ -77,9 +82,12 @@ class RegistryObject extends Model
         return false;
     }
 
-    public function hasDifferentHarvestID($harvestID)
+    public function hasDifferentHarvestID($harvestID, $excludeManualEntered = true)
     {
         if ($this->getRegistryObjectAttributeValue('harvest_id') == $harvestID) {
+            return false;
+        }
+        if ($excludeManualEntered && $this->isManualEntered()) {
             return false;
         }
         return true;
