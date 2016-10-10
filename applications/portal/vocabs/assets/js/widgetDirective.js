@@ -19,11 +19,14 @@
 
                 vocabs_factory.getAllWidgetable().then(function (data) {
                     scope.vocabList = data.response.docs;
-                    // Preset the dropdown to the first vocab in the list, if any.
+                    // If desired, uncomment the following to
+                    // preset the dropdown to the first vocab in the list (if any).
+                    /*
                     if (scope.vocabList instanceof Array
                         && scope.vocabList.length > 0) {
-                        //scope.selectVocab(scope.vocabList[0]);
+                        scope.selectVocab(scope.vocabList[0]);
                     }
+                    */
                 });
 
                 // Override the Bootstrap templates defined

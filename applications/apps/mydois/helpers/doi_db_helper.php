@@ -182,19 +182,6 @@
     	$query_str = $db->update_string('doi_objects', $data, $where); 
     	$result = $db->query($query_str);
 
-    	$db->delete('doi_alternate_identifiers', array('doi_id' => $doi_id)); 
-    	$db->delete('doi_contributors', array('doi_id' => $doi_id)); 
-    	$db->delete('doi_creators', array('doi_id' => $doi_id)); 
-    	$db->delete('doi_dates', array('doi_id' => $doi_id)); 
-    	$db->delete('doi_descriptions', array('doi_id' => $doi_id)); 
-    	$db->delete('doi_formats', array('doi_id' => $doi_id)); 
-    	$db->delete('doi_related_identifiers', array('doi_id' => $doi_id)); 
-
-    	$db->delete('doi_resource_types', array('doi_id' => $doi_id)); 
-		$db->delete('doi_sizes', array('doi_id' => $doi_id)); 
-		$db->delete('doi_subjects', array('doi_id' => $doi_id));
-		$db->delete('doi_titles', array('doi_id' => $doi_id));
-
     	if($result!=1)
     	{
     		return 'Error deleting object xml';

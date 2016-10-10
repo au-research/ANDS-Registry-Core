@@ -6,10 +6,14 @@
             "ANDS\\API\\Log\\": "log",
             "ANDS\\API\\Log\\Handler\\": "log/handlers/",
             "ANDS\\API\\Log\\Indexer\\": "log/indexers/",
-            "ANDS\\API\\Task\\": "task/models"
+            "ANDS\\API\\Task\\": "task/models",
+            "ANDS\\": "../ANDS",
+            "ANDS\\API\\DOI\\": "doi"
         }
     },
     "require": {
-        "graphaware/neo4j-php-client": "^3.3"
+        "illuminate/database": "5.2.*",
+        "graphaware/neo4j-php-client": "^3.3",
+        "au-research/ands-doi-service": "0.1.*"
     }
 }

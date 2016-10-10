@@ -7,6 +7,7 @@
  */
 namespace ANDS\API;
 
+use ANDS\API\Task\ImportTask;
 use \Exception as Exception;
 
 
@@ -25,7 +26,7 @@ class Task_api
         $this->db = $this->ci->load->database('registry', true);
         require_once APP_PATH . 'vendor/autoload.php';
 
-        $this->taskManager = new \ANDS\API\Task\TaskManager($this->db, $this->ci);
+        $this->taskManager = new Task\TaskManager($this->db, $this->ci);
     }
 
     /**
@@ -90,6 +91,7 @@ class Task_api
                         $taskObject
                             ->setDb($this->db)
                             ->setMessage()
+                            ->clearTaskData()
                             ->save();
                         $task = $this->taskManager->getTask($taskObject->getId());
                     } elseif ($this->params['identifier'] == 'reschedule') {
@@ -102,6 +104,7 @@ class Task_api
                         return $this->taskManager->deleteTask($taskObject->getId());
                     }
                     if ($task['message']) $task['message'] = json_decode($task['message'], true);
+                    if (array_key_exists('data', $task)) $task['data'] = json_decode($task['data'], true);
                     $task['params'] = urldecode($task['params']);
                     return $task;
                 }
@@ -115,10 +118,14 @@ class Task_api
     }
 
     private function test(){
-        $task = new \ANDS\API\Task\FixRelationshipTask();
-        $task->params = 'class=fixRelationship&id=62506,267873';
-        $task->run_task();
-        dd($task->getMessage());
+        $task = [
+            'name' => 'Minh Pipeline Test Task',
+            'type' => 'POKE',
+            'frequency' => 'ONCE',
+            'priority' => 1,
+            'params' => 'class=import&ds_id=209&batch_id=AUTestingRecordsImport'
+        ];
+        return $this->taskManager->addTask($task);
     }
 
     /**

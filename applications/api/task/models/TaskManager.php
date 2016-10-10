@@ -166,22 +166,10 @@ class TaskManager
             $task->setStatus("STOPPED");
             $task->log("Error: " . $e->getMessage());
             $task->save();
-            $result = [
-                'id' => $task->getId(),
-                'status' => $task->getStatus(),
-                'params' => $task->getParams(),
-                'message' => $task->getMessage()
-            ];
-            return $result;
+            return $task->toArray();
         }
 
-        $result = [
-            'id' => $task->getId(),
-            'status' => $task->getStatus(),
-            'params' => $task->getParams(),
-            'message' => $task->getMessage()
-        ];
-        return $result;
+        return $task->toArray();
     }
 
     /**

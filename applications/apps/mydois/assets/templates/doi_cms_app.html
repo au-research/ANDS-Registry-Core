@@ -18,6 +18,7 @@
                 <li ng-class="{'active': vm.tab=='log'}"><a href="" ng-click="vm.tab = 'log'">Activity Log</a></li>
                 <li ng-class="{'active': vm.tab=='detail'}"><a href="" ng-click="vm.tab = 'detail'">App ID Configuration</a></li>
                 <li ng-class="{'active': vm.tab=='check'}"><a href="" ng-click="vm.tab = 'check'">Check DOI Links</a></li>
+                <li ng-class="{'active': vm.tab=='bulk'}"><a href="" ng-click="vm.tab = 'bulk'">Bulk Update</a></li>
             </ul>
         </div>
         <div class="widget-content" ng-if="vm.tab=='list'">
@@ -135,17 +136,24 @@
                 <a href="http://schema.datacite.org/meta/kernel-3.1/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
                 <div class="container-fluid" style="padding-left:0;">
                     <div class="row-fluid">
-                        <div class="span6">
+                        <div class="span12">
                             <datacite-xml-builder xml="vm.newdoixml"></datacite-xml-builder>
                         </div>
-                        <div class="span6">
-                            <pre class="prettyprint xml" ng-if="vm.newdoixml">{{ vm.formatXml(vm.stripBlankElements(vm.newdoixml)) }}</pre>
-                            <textarea ng-model="vm.newdoixml" style="width:100%" rows="10" ng-if="vm.editxml"></textarea>
-                            <a href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
-                        </div>
+
                     </div>
                 </div>
             </form>
+
+            <div class="collapse" id="viewdetails">
+                <pre class="prettyprint xml" ng-if="vm.newdoixml">{{ vm.formatXml(vm.stripBlankElements(vm.newdoixml)) }}</pre>
+                <textarea ng-model="vm.newdoixml" style="width:100%" rows="10" ng-if="vm.editxml"></textarea>
+                <a href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
+           </div>
+
+          <div>
+
+            </div>
+            <a class="btn  btn-info" data-toggle="collapse" data-target="#viewdetails">View XML &raquo;</a>
             <a href="" ng-hide="vm.loading" class="btn btn-primary" ng-click="vm.mint()">Mint</a>
             <a ng-if="vm.loading" href="" class="btn btn-primary disabled">Loading...</a>
             <a href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
@@ -153,6 +161,7 @@
                 <b>{{ vm.response.message }}</b><br>
                 {{ vm.response.verbosemessage }}
             </div>
+
         </div>
 
         <div class="widget-content" ng-if="vm.tab=='view'">
@@ -174,18 +183,20 @@
                 <a href="http://schema.datacite.org/meta/kernel-3.1/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
                 <div class="container-fluid" style="padding-left:0;" ng-if="vm.viewdoi">
                     <div class="row-fluid">
-                        <div class="span6">
-                            <datacite-xml-builder xml="vm.viewdoi.datacite_xml" readonly="vm.readonly"></datacite-xml-builder>
+                        <datacite-xml-builder xml="vm.viewdoi.datacite_xml" readonly="vm.readonly"></datacite-xml-builder>
+                        <div ng-if="vm.readonly">
+                            <pre class="prettyprint xml">{{ vm.formatXml(vm.stripBlankElements(vm.viewdoi.datacite_xml)) }}</pre>
                         </div>
-                        <div class="span6">
+                        <div class="collapse"  id="viewdetails" ng-if="!vm.readonly">
                             <pre class="prettyprint xml">{{ vm.formatXml(vm.stripBlankElements(vm.viewdoi.datacite_xml)) }}</pre>
                             <textarea ng-model="vm.viewdoi.datacite_xml" style="width:100%" rows="10" ng-if="vm.editxml"></textarea>
-                            <a ng-if="!vm.readonly" href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
+                            <a href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
                         </div>
                     </div>
                 </div>
             </form>
 
+            <a ng-if="!vm.readonly" class="btn  btn-info" data-toggle="collapse" data-target="#viewdetails">View XML &raquo;</a>
             <a ng-if="!vm.readonly" ng-hide="vm.loading" href="" class="btn btn-primary" ng-click="vm.doupdate()">Update</a>
             <a ng-if="vm.loading" href="" class="btn btn-primary disabled">Loading...</a>
             <a ng-if="!vm.readonly" href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
@@ -193,6 +204,123 @@
                 <b>{{ vm.response.message }}</b><br>
                 {{ vm.response.verbosemessage }}
             </div>
+        </div>
+
+        <div class="widget-content" ng-if="vm.tab=='bulk'">
+
+            <div class="alert alert-info">
+                Please ensure you have requested the ANDS Services team to add any new URL domains to your account before initiating a bulk URL request.
+            </div>
+
+            <form class="form" ng-submit="vm.bulkPreview()">
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">Type</span>
+                    <select ng-options="bulk.id as bulk.label for bulk in vm.bulk_types" ng-model="vm.bulk_type"></select>
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">From</span>
+                    <input type="text" ng-model="vm.bulk_from">
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">To</span>
+                    <input type="text" ng-model="vm.bulk_to">
+                </div>
+                <div class="controls" style="display:inline-block">
+                    <input type="submit" class="btn btn-default" value="Preview" style="margin-top:14px"/>
+                    <a href="" class="btn btn-primary"
+                       ng-click="vm.sendBulkRequest()"
+                       ng-if="vm.bulkPreviewResponse && vm.bulkPreviewResponse.result.length" style="margin-top:14px">
+                        Send Bulk Request
+                    </a>
+                </div>
+            </form>
+
+            <div ng-if="vm.bulkPreviewResponse">
+                <p>
+                    Showing {{ vm.bulkPreviewResponse.result.length }} of {{ vm.bulkPreviewResponse.total }} possible result(s)
+                </p>
+                <table class="table table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th style="text-align:left">DOI</th>
+                        <th style="text-align:left">From</th>
+                        <th style="text-align:left">To</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="result in vm.bulkPreviewResponse.result">
+                        <td class="word-wrap">{{ result.doi }}</td>
+                        <td>{{result.from}}</td>
+                        <td>{{result.to}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div ng-if="!vm.bulkRequestedResponse">
+                    <a href=""
+                       class="btn btn-primary"
+                       ng-if="vm.bulkPreviewResponse && vm.bulkPreviewResponse.result.length"
+                       ng-click="vm.sendBulkRequest()">
+                        Send Bulk Request
+                    </a>
+                </div>
+            </div>
+            <div class="alert alert-success" ng-if="vm.bulkRequestedResponse">
+                {{ vm.bulkRequestedResponse.message }}
+            </div>
+
+            <hr>
+            <a class="btn btn-small"
+               ng-click="vm.getBulkRequests()" ng-if="vm.bulkRequests">
+                <i class="icon icon-small icon-refresh"></i>Refresh Bulk Requests
+            </a>
+
+            <div ng-if="vm.bulkRequests" ng-repeat="bulkRequest in vm.bulkRequests">
+                <h5>Bulk Request ({{ bulkRequest.counts.PROGRESS }}% Completed) Created {{ bulkRequest.date_created }}</h5>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">Type</span>
+                    <input type="text" disabled ng-model="bulkRequest.params.type">
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">From</span>
+                    <input type="text" disabled ng-model="bulkRequest.params.from">
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">To</span>
+                    <input type="text" disabled ng-model="bulkRequest.params.to">
+                </div>
+
+                <ul class="nav nav-pills">
+                    <li ng-class="{'active': bulkRequest.activeStatus=='PENDING'}">
+                        <a href="" ng-click="vm.setActiveStatus(bulkRequest, 'PENDING')">Pending <span class="label">{{ bulkRequest.counts.PENDING }}</span></a>
+                    </li>
+                    <li ng-class="{'active': bulkRequest.activeStatus=='COMPLETED'}">
+                        <a href="" ng-click="vm.setActiveStatus(bulkRequest, 'COMPLETED')">Completed <span class="label">{{ bulkRequest.counts.COMPLETED }}</span></a>
+                    </li>
+                    <li ng-class="{'active': bulkRequest.activeStatus=='ERROR'}">
+                        <a href="" ng-click="vm.setActiveStatus(bulkRequest, 'ERROR')">Error <span class="label">{{ bulkRequest.counts.ERROR }}</span></a>
+                    </li>
+                </ul>
+                <ul class="activity-list" ng-if="bulkRequest.activeStatusList">
+                    <li ng-repeat="log in bulkRequest.activeStatusList" ng-class="{'error': log.status=='ERROR'}">
+                        <a href="" ng-click="log.show=!log.show" class="expand_log" ng-class="{'error': log.status=='ERROR'}">
+                            <i class="icon-list-alt"></i> {{ log.doi }}
+                            <span class="label">{{log.status}}</span>
+                        </a>
+                        <div class="log" ng-show="log.show">
+                            <pre>{{ log.message }}</pre>
+                        </div>
+                    </li>
+                </ul>
+                <a class="btn btn-danger btn-small"
+                   ng-if="(bulkRequest.counts.PROGRESS == 100 && !bulkRequest.deleting) || bulkRequest.status == 'COMPLETED'"
+                    ng-click="vm.removeBulk(bulkRequest)">
+                    <i class="icon icon-white icon-remove"></i>
+                    Remove Bulk Request
+                </a>
+                <hr/>
+            </div>
+
+
         </div>
 
     </div>

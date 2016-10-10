@@ -56,6 +56,6 @@ class TestDOIHelper extends UnitTest
 
     public function setUp()
     {
-        require(APPS_APP_PATH . 'mydois/helpers/doi_db_helper.php');
+        require_once APPS_APP_PATH . 'mydois/helpers/doi_db_helper.php';
     }
 }

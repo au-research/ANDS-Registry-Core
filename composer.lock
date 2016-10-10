@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.13",
+            "version": "v1.2.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "c91439a41bda3f9eec50c13118b55ad0478fb172"
+                "reference": "1f6ed13bbf89915aa5df15490b3d52721917e26e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/c91439a41bda3f9eec50c13118b55ad0478fb172",
-                "reference": "c91439a41bda3f9eec50c13118b55ad0478fb172",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/1f6ed13bbf89915aa5df15490b3d52721917e26e",
+                "reference": "1f6ed13bbf89915aa5df15490b3d52721917e26e",
                 "shasum": ""
             },
             "require": {
@@ -53,7 +53,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2016-08-09 17:10:52"
+            "time": "2016-09-26 19:30:19"
         },
         {
             "name": "monolog/monolog",

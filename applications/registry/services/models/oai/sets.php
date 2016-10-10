@@ -62,16 +62,14 @@ class Sets extends CI_Model
 		$roc = array_map(create_function('$r', 'return $r["class"];'),
 				 $query->result_array());
 
-		$query = $this->db->distinct()->select("value")
-		    ->get_where("registry_object_attributes",
-				array("attribute" => "group"));
-		$roa = array_map(create_function('$r', 'return str_replace(" ", "0x20",$r["value"]);'),
+		$query = $this->db->distinct()->select("group")->get("registry_objects");
+		$roa = array_map(create_function('$r', 'return str_replace(" ", "0x20",$r["group"]);'),
 				 $query->result_array());
 	    }
 
 	    foreach ($ds as $set)
 	    {
-		$sets[] = $this->_from_ds($set);
+		    $sets[] = $this->_from_ds($set);
 	    }
 
 	    foreach ($roc as $set)
@@ -141,9 +139,7 @@ class Sets extends CI_Model
 		}
 		break;
 	    case "class":
-		$query = $this->db->distinct()->select("class")
-		    ->get_where("registry_objects",
-				array("class" => $spec));
+		$query = $this->db->distinct()->select("class")->get_where("registry_objects", array("class" => $spec));
 		if ($query->num_rows < 0)
 		{
 		    $set = null;
@@ -155,10 +151,8 @@ class Sets extends CI_Model
 		$query->free_result();
 		break;
 	    case "group":
-		$query = $this->db->distinct()->select("value")
-		    ->get_where("registry_object_attributes",
-				array("attribute" => "group",
-				      "value" => str_replace(" ", "0x20",$spec)));
+        $query = $this->db->distinct()->select("group")
+                 ->get_where("registry_objects", array("group" => str_replace(" ", "0x20",$spec)));
 		if ($query->num_rows < 0)
 		{
 		    $set = null;
@@ -193,7 +187,7 @@ class Sets extends CI_Model
 		$split_spec = explode(':', $set->spec, 2);
 		if (count($split_spec) < 2)
 		{
-		    throw new Oai_BadArgument_Exceptions("malformed set spec '$spec'");
+		    throw new Oai_BadArgument_Exceptions("malformed set spec '$set->spec'");
 		}
 		$prefix = $split_spec[0];
 		$spec = $split_spec[1];
@@ -208,12 +202,9 @@ class Sets extends CI_Model
 					    array("data_sources.slug" => $spec));
 			break;
 		case 'group':
-			$query = $this->db->distinct()->select("registry_objects.registry_object_id")
-				->join("registry_object_attributes",
-				       "registry_object_attributes.registry_object_id = registry_objects.registry_object_id")
-				->get_where("registry_objects",
-					    array("registry_object_attributes.attribute" => "group",
-						  "registry_object_attributes.value" => str_replace("0x20"," ",$sname)));
+            $query = $this->db->distinct()->select("registry_objects.registry_object_id")
+                ->get_where("registry_objects",
+                    array("group" => str_replace("0x20"," ",$sname)));
 			break;
 		case 'class':
 			$query = $this->db->distinct()->select("registry_objects.registry_object_id")

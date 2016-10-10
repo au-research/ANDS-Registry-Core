@@ -20,7 +20,6 @@
         if ($location.search().tab) vm.tab = $location.search().tab;
 
         vm.client = client.data.client;
-
         $scope.$watch('vm.tab', function(newv){
             vm.changeTab(newv);
         });
@@ -90,6 +89,7 @@
                 vm.viewdoi = data.data;
             });
         }
+        // vm.update("10.5072/00/563978d704714");
 
         vm.mint = function() {
             $scope.$broadcast('update');
@@ -131,7 +131,7 @@
             APIDOIService.update(data).then(function(response){
                 vm.loading = false;
                 vm.response = response.response;
-                if (response.response.type!='failure' && vm.response.doi) {
+                if (vm.response.type!='failure' && vm.response.doi) {
                     vm.view(vm.response.doi, true);
                 }
             });
@@ -296,5 +296,84 @@
 
         }
 
+        // BULK Operation
+        vm.bulk_types = [{'id':'url', 'label':'URL'}];
+        vm.bulk_type = 'url';
+
+        vm.bulkPreview = function() {
+            var data = {
+                app_id : vm.client.app_id,
+                type : vm.bulk_type,
+                from: vm.bulk_from,
+                to: vm.bulk_to,
+                preview: true
+            }
+            APIDOIService.bulkRequest(data).then(function(response){
+                vm.bulkPreviewResponse = response.data;
+                console.log( vm.bulkPreviewResponse );
+            });
+        };
+
+        vm.sendBulkRequest = function() {
+            if (!confirm('Are you sure you want to send a bulk request update?' +
+                    ' This will affect ' + vm.bulkPreviewResponse.total + ' DOI(s)')
+            ) {
+                return;
+            }
+            var data = {
+                app_id : vm.client.app_id,
+                type : vm.bulk_type,
+                from: vm.bulk_from,
+                to: vm.bulk_to
+            }
+            APIDOIService.bulkRequest(data).then(function(response){
+                vm.bulkRequestedResponse = response.data;
+                vm.getBulkRequests();
+                delete vm.bulkPreviewResponse;
+            });
+        }
+
+        vm.getBulkRequests = function () {
+            delete vm.bulkRequests;
+            APIDOIService.bulk({
+                client_id: vm.client.client_id,
+                app_id: vm.client.app_id
+            }).then(function (response) {
+                vm.bulkRequests = response.data;
+                angular.forEach(vm.bulkRequests, function (bulkRequest) {
+                    bulkRequest.params = JSON.parse(bulkRequest.params);
+                    bulkRequest.paramsString = JSON.stringify(bulkRequest.params, null, 2);
+                    if (bulkRequest.counts.ERROR > 0) {
+                        vm.setActiveStatus(bulkRequest, 'ERROR');
+                    } else {
+                        vm.setActiveStatus(bulkRequest, 'PENDING');
+                    }
+                });
+            });
+        }
+        vm.getBulkRequests();
+
+        vm.setActiveStatus = function (bulkRequest, status) {
+            bulkRequest.activeStatus = status;
+            bulkRequest.activeStatusList = bulkRequest[status];
+        }
+
+        vm.removeBulk = function(bulkRequest) {
+            if (!confirm('Are you sure you want to delete this bulk request? ' +
+                    'The bulk request log is available in the activity log')
+            ) {
+                return;
+            }
+            bulkRequest.deleting = true;
+            APIDOIService.bulkRequest({
+                app_id: vm.client.app_id,
+                'delete': bulkRequest.id
+            }).then(function () {
+                vm.getBulkRequests();
+            });
+        }
+
     }
+
+
 })();

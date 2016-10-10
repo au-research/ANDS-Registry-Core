@@ -564,9 +564,12 @@ function in_array_r($needle, $haystack, $strict = false) {
     return false;
 }
 
-function dd($stuff) {
-	die(var_dump($stuff));
+if (!function_exists('dd')) {
+    function dd($stuff) {
+        die(var_dump($stuff));
+    }
 }
+
 
 /**
  * Hooking the functionality for a module
