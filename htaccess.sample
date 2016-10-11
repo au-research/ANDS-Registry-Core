@@ -7,7 +7,7 @@ RewriteRule ^services/ registry/ [R=301,L]
 
 # ANDS-specific deploy rules (not needed in third-party deployment)
 # RewriteRule ^apps/mydois/doi_(.*?)\.php api/doi/$1 [R=301,L,QSA]
-# RewriteRule ^apps/mydois/(.*)\.(.*) api/doi/$1.$2 [R=301,L,QSA]
+# RewriteRule ^apps/mydois/(.*)\.(.*) https://researchdata.ands.org.au/api/doi/$1.$2 [NC,P]
 # RewriteRule ^registry/orca/services/oai\.php registry/services/oai [R=301,L,QSA]
 
 RewriteCond $1 ^(css|img|js|less|lib|uploads|shared|images)
