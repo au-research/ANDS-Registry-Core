@@ -83,6 +83,9 @@
 
                     if (scope.vocab) {
                         var subjectValueInput = $('#sampleWidgetInput');
+                        // NB Use of Solr field sissvoc_end_point.
+                        // Must be included in the fields given in the
+                        // "fl" option. See controllers/vocabs.php/filter().
                         var sissvoc_end_point = scope.vocab.sissvoc_end_point;
 
                         if (clearField) {

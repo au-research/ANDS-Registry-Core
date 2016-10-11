@@ -126,12 +126,13 @@ class _mydois extends CI_Model
 
 	function mdsDatacentreUpdate($client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix,$client_id)
 	{
-		if($this->gDefaultBaseUrl!="https://researchdata.ands.org.au/")
-		{
-			$symbol= $this->DOIS_DATACENTRE_NAME_PREFIX.".TEST"; //make sure we only hit the test datacenter config for non production domains
-		}else{
+		//Removed check on non production domains to cater for future use of demo by clients
+	    //if($this->gDefaultBaseUrl!="https://researchdata.ands.org.au/")
+		//{
+		//	$symbol= $this->DOIS_DATACENTRE_NAME_PREFIX.".CENTRE-0"; //make sure we only hit the test datacenter config for non production domains
+		//}else{
 			$symbol= $this->DOIS_DATACENTRE_NAME_PREFIX.".".$this->DOIS_DATACENTRE_NAME_MIDDLE.$client_id;
-		}
+		//}
 
 		//create the datacite datacentre xml
 		$outxml = '<?xml version="1.0" encoding="UTF-8"?>

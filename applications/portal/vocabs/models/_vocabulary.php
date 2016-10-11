@@ -902,6 +902,15 @@ class _vocabulary
                 array_push($task_array, $publish_task);
             }
 
+            // If both import and publish are done, we also
+            // add the resources to the global IRI resolver.
+            if ($this->determineAction($version, 'import') &&
+                $this->determineAction($version, 'publish')) {
+                $publish_task = array('type' => 'TRANSFORM',
+                                      'provider_type' => 'ResourceMap');
+                array_push($task_array, $publish_task);
+            }
+
             //add task array to the task table
             $task_params = json_encode($task_array);
             $params = array(

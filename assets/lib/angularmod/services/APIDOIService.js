@@ -27,7 +27,7 @@
             },
             getDOI: function (doi, app_id) {
                 return APIService.get(
-                    'doi/'+doi,{'app_id':app_id }
+                    'doi/'+doi,{'app_id':app_id, 'request_version':'4' }
                 );
             },
             getLog: function (app_id) {
@@ -88,7 +88,7 @@
             },
             bulk: function(data) {
                 return APIService.get(
-                    'doi/bulk/'+data.client_id+'/', {'app_id':data.app_id}
+                    'doi/bulk/'+data.client_id+'/', {'app_id':data.app_id, 'status':'ERROR'}
                 );
             }
         }
