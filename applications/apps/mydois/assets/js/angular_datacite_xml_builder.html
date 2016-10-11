@@ -526,12 +526,12 @@
                 <div class="controls">
                     <div class="input-prepend input-append" >
                         <span class="add-on">Rights URI</span>
-                        <input ng-readonly="readonly" type="text" placeholder="Rights URI" ng-model="rights._attr.rightsURI._value"/>
+                        <input ng-readonly="readonly" type="text" placeholder="Rights URI" ng-model="rights._attr.rightsURI._value" class="ng-valid ng-dirty"/>
                     </div>
 
                     <div class="input-prepend input-append"  style="display:inline-block;">
                         <span class="add-on">Rights</span>
-                        <textarea ng-model="description._text" cols="30" rows="10" ng-readonly="readonly" style="width:237px"></textarea>
+                        <textarea ng-model="rights._text" cols="30" rows="10" ng-readonly="readonly" style="width:237px" class="ng-valid ng-dirty"></textarea>
                     </div>
 
                     <div class="input-prepend input-append">
