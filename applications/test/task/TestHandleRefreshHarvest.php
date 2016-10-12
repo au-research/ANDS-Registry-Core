@@ -16,7 +16,7 @@ class TestHandleRefreshHarvest extends UnitTest
 {
     /** @test **/
     private $ds_id = 210;
-    private $batch_id = "01605F72BAD0AA3779D02C116E5EA626B95A17C4";
+    private $batch_id = "DC84A4EF406713BB87D9F2687546E200456332B4";
     private $lessThanCutOff = 0.16;
     private $moreThanCutOff = 0.6;
     private $counter = 0;
