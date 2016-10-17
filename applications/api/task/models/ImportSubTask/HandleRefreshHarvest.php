@@ -49,8 +49,8 @@ class HandleRefreshHarvest extends ImportSubTask
                 $this->log("No records found to be deleted");
                 return;
             }
-            if($this->toBeDeletedRecordCutOffRatio > (($datasourceRecordBeforeCount - $afterRefreshRecordCount)
-                    / $datasourceRecordBeforeCount))
+            // the total count of the records in the datasource should not be reduced by more than 20%
+            if((1 - $this->toBeDeletedRecordCutOffRatio) <= (($afterRefreshRecordCount / $datasourceRecordBeforeCount)))
             {
                 $this->log(count($recordsToDelete)." records marked for deletion");
                 foreach($recordsToDelete as $record){

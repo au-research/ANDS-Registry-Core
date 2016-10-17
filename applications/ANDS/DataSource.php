@@ -4,7 +4,10 @@
 namespace ANDS;
 
 
+
 use Illuminate\Database\Eloquent\Model;
+use ANDS\DataSource\Harvest as Harvest;
+use ANDS\DataSource\DataSourceLog as DataSourceLog;
 
 class DataSource extends Model
 {
@@ -28,9 +31,8 @@ class DataSource extends Model
     }
 
 
-    public function setDatSourceAttribute($key, $value)
+    public function setDataSourceAttribute($key, $value)
     {
-
         if ($existingAttribute = DataSourceAttribute::where('attribute', $key)
             ->where('data_source_id', $this->data_source_id)->first()
         ) {
@@ -51,4 +53,30 @@ class DataSource extends Model
             ->where('attribute', $key)->first();
     }
     
+    public function getHarvest($harvest_id){
+        return Harvest::where('data_source_id', $this->data_source_id)->where('harvest_id', $harvest_id)->first();
+    }
+    
+    public function addHarvest($status , $next_run, $mode){
+        return Harvest::create([
+            'data_source_id' => $this->data_source_id,
+            'status' => $status,
+            'next_run' => $next_run,
+            'mode' => $mode
+        ]);
+    }
+
+    public function updateHarvest($harvest_id, $args){
+            return Harvest::where('harvest_id', $harvest_id)->update($args);
+    }
+
+    public function appendDataSourceLog($log, $type, $class, $harvest_error_type){
+        return DataSourceLog::create([
+            'data_source_id' => $this->data_source_id,
+            'log' => $log,
+            'type' => $type,
+            'class' => $class,
+            'harvester_error_type' => $harvest_error_type
+        ]);
+    }
 }

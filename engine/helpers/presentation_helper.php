@@ -350,7 +350,7 @@ function getNextHarvestDate($harvestDate, $harvestFrequency){
     $now = time();
     if($harvestFrequency =='once only' || $harvestFrequency == '')
         return null;
-    if($harvestDate)
+    if($harvestDate !== null)
         $nextHarvest = $harvestDate;
     else
         $nextHarvest = $now;
