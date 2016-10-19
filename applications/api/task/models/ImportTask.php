@@ -8,6 +8,7 @@
 namespace ANDS\API\Task;
 
 use ANDS\API\Task\ImportSubTask\ImportSubTask;
+use ANDS\DataSource\Harvest as Harvest;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use \Exception as Exception;
 
@@ -389,5 +390,10 @@ class ImportTask extends Task
         $this->batchID = $batchID;
         $this->setTaskData('batchID', $batchID);
         return $this;
+    }
+
+    public function updateImporterMessage($message)
+    {
+        Harvest::where('harvest_id', $this->harvestID)->update(['importer_message'=> $message]);
     }
 }

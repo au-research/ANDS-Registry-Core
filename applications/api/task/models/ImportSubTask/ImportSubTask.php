@@ -113,8 +113,10 @@ class ImportSubTask extends Task
 
         // log to message log as well
         $this->log(get_class($this) . "(ERROR) " . $log);
+        $this->parent()->updateImporterMessage(get_class($this) . "(ERROR) " . $log);
         return $this;
     }
+    
 
 }
 

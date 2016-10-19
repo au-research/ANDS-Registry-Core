@@ -4,7 +4,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 
 use ANDS\DataSource;
-
+use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 class PopulateImportOptions extends ImportSubTask
@@ -17,7 +17,7 @@ class PopulateImportOptions extends ImportSubTask
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-
+        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'POPULATING IMPORT OPTIONS']);
         $this->parent()->setTaskData(
             "dataSourceDefaultStatus",
             $this->getDefaultRecordStatusForDataSource($dataSource)
@@ -75,10 +75,10 @@ class PopulateImportOptions extends ImportSubTask
      */
     private function getDefaultRecordStatusForDataSource($dataSource)
     {
-        if ($dataSource->attr('qa_flag') === DB_TRUE) {
+        if ($dataSource->attr('qa_flag') == DB_TRUE) {
             return 'SUBMITTED_FOR_ASSESSMENT';
         } else {
-            if ($dataSource->attr('manual_publish') === DB_TRUE) {
+            if ($dataSource->attr('manual_publish') == DB_TRUE) {
                 return 'APPROVED';
             } else {
                 return 'PUBLISHED';

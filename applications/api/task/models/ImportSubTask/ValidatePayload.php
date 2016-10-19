@@ -4,7 +4,8 @@ namespace ANDS\API\Task\ImportSubTask;
 
 include_once("applications/registry/registry_object/models/_transforms.php");
 use ANDS\Util\XMLUtil;
-use \Transforms as Transforms;
+use ANDS\Repository\DataSourceRepository;
+use ANDS\DataSource\Harvest as Harvest;
 use \DOMDocument as DOMDocument;
 use \Exception as Exception;
 
@@ -13,15 +14,24 @@ class ValidatePayload extends ImportSubTask
     protected $requirePayload = true;
     protected $payloadSource = "unvalidated";
     protected $payloadOutput = "validated";
-
+    protected $dataSource = null;
+    protected $registryObjectReceived = 0;
     public function run_task()
     {
+
+        $this->dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
+        if (!$this->dataSource) {
+            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
+            return;
+        }
+        $this->dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'VALIDATING PAYLOADS']);
+
         foreach ($this->parent()->getPayloads() as &$payload) {
 
             // this task requires unvalidated payload
             $path = $payload->getPath();
             $xml = $payload->getContentByStatus($this->payloadSource);
-
+            $this->registryObjectReceived += XMLUtil::countElementsByName($xml, "registryObject");
             $this->log("Validation started for $path");
 
             // validate RIFCS schema
@@ -39,7 +49,7 @@ class ValidatePayload extends ImportSubTask
                 $this->addError("XML does not pass validation");
                 return;
             }
-
+            XMLUtil::countElementsByName($xml, "registryObject");
             $payload->writeContentByStatus(
                 $this->payloadOutput, XMLUtil::wrapRegistryObject($xml)
             );
@@ -88,6 +98,7 @@ class ValidatePayload extends ImportSubTask
             } catch (Exception $e) {
                 $key = (string) $registryObject->key;
                 $this->parent()->incrementTaskData("invalidRegistryObjectsCount");
+                $this->parent()->updateImporterMessage("Failed to Validate:".$this->parent()->getTaskData("invalidRegistryObjectsCount"));
                 $this->addError("Error validating record (#$attempt) with key:" . ($key!="" ? $key : "(unknown key)") . " :". $e->getMessage());
             }
         }
@@ -131,5 +142,4 @@ class ValidatePayload extends ImportSubTask
             throw new Exception("Unable to validate XML document against schema: " . NL . $error_string);
         }
     }
-
 }

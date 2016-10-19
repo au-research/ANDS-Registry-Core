@@ -4,6 +4,7 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Repository\RegistryObjectsRepository as Repo;
+use ANDS\Repository\DataSourceRepository;
 
 class IndexPortal extends ImportSubTask
 {
@@ -12,6 +13,12 @@ class IndexPortal extends ImportSubTask
     public function run_task()
     {
 
+        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
+        if (!$dataSource) {
+            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
+            return;
+        }
+        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'INDEXING PORTAL']);
         $targetStatus = $this->parent()->getTaskData('targetStatus');
         if (!Repo::isPublishedStatus($targetStatus)) {
             $this->log("Target status is ". $targetStatus.' No indexing required');
@@ -20,6 +27,7 @@ class IndexPortal extends ImportSubTask
 
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         // TODO: MAJORLY REFACTOR THIS
+        $this->parent()->updateImporterMessage("Indexing ".count($this->parent()->getTaskData("importedRecords"))." records");
         foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $index = $ro->indexable_json();

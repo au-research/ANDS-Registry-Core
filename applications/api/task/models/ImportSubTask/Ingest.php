@@ -5,6 +5,7 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
+use ANDS\Repository\DataSourceRepository;
 
 class Ingest extends ImportSubTask
 {
@@ -12,6 +13,15 @@ class Ingest extends ImportSubTask
 
     public function run_task()
     {
+
+        $ingestedRocordCount = 0;
+        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
+        if (!$dataSource) {
+            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
+            return;
+        }
+        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'INGESTING RECORDS']);
+
         foreach ($this->parent()->getPayloads() as $payload) {
             $xml = $payload->getContentByStatus('processed');
             if ($xml === null) {
@@ -22,6 +32,9 @@ class Ingest extends ImportSubTask
             foreach ($registryObjects as $registryObject) {
                 $this->insertRegistryObject($registryObject);
             }
+            $recordsCreatedCount = $this->parent()->getTaskData("recordsCreatedCount");
+            $recordsUpdatedCount = $this->parent()->getTaskData("recordsUpdatedCount");
+            $this->parent()->updateImporterMessage("Records Created: ".$recordsCreatedCount. "Records Update: ".$recordsUpdatedCount);
         }
 
         $this->handleAdvancedHarvest($payload);
@@ -56,7 +69,7 @@ class Ingest extends ImportSubTask
             );
             $this->log("Added new Version :$newVersion->id to existing record");
 
-            $matchingRecord->setRegistryObjectAttribute('modified', time());
+            $matchingRecord->setRegistryObjectAttribute('updated', time());
 
             $this->parent()->addTaskData("importedRecords", $matchingRecord->registry_object_id);
 
@@ -82,7 +95,7 @@ class Ingest extends ImportSubTask
             );
             $this->log("Added new Version:$newVersion->id and reinstated record:".$deletedRecord->registry_object_id);
 
-            $deletedRecord->setRegistryObjectAttribute('modified', time());
+            $deletedRecord->setRegistryObjectAttribute('updated', time());
 
             $this->parent()->addTaskData("importedRecords", $deletedRecord->registry_object_id);
 
@@ -98,6 +111,7 @@ class Ingest extends ImportSubTask
             $ro->status = $this->parent()->getTaskData("targetStatus");
             $ro->save();
             $ro->setRegistryObjectAttribute('created', time());
+            $ro->setRegistryObjectAttribute('updated', time());
 
             // create a new record data
             $newVersion = $this->addNewVersion(

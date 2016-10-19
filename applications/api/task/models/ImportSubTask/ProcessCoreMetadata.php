@@ -6,6 +6,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
+use ANDS\Repository\DataSourceRepository;
 
 class ProcessCoreMetadata extends ImportSubTask
 {
@@ -13,6 +14,13 @@ class ProcessCoreMetadata extends ImportSubTask
 
     public function run_task()
     {
+        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
+        if (!$dataSource) {
+            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
+            return;
+        }
+        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'PROCESSING CORE METADATA']);
+
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         if($importedRecords !== false && $importedRecords !== null) {
             foreach ($this->parent()->getTaskData("importedRecords") as $roID) {

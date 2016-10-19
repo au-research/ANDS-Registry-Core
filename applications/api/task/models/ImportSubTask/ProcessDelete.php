@@ -5,6 +5,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Repository\DataSourceRepository;
 
 class ProcessDelete extends ImportSubTask
 {
@@ -12,6 +13,13 @@ class ProcessDelete extends ImportSubTask
 
     public function run_task()
     {
+        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
+        if (!$dataSource) {
+            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
+            return;
+        }
+        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'DELETING RECORDS']);
+
         foreach ($this->parent()->getTaskData('deletedRecords') as $id) {
             $record = RegistryObject::find($id);
             if ($record && $record->isPublishedStatus()) {

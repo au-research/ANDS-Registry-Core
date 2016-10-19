@@ -168,10 +168,13 @@
 						<div class="alert alert-warning" ng-show="ds.harvest_method=='PMHHarvester' && harvester.status=='HARVESTING'">
 							Progress indication for OAI-PMH harvest is an estimate only
 						</div>
-						<div ng-show="harvester.message.message" class="alert alert-info">
+						<div ng-show="!harvester.importer_message && harvester.message.message" class="alert alert-info">
 							{{harvester.message.message}}
 						</div>
-						<div ng-show="harvester.message.error.log" class="alert alert-error">
+						<div ng-show="harvester.importer_message" class="alert alert-info">
+							{{harvester.importer_message}}
+						</div>
+						<div ng-show="!harvester.importer_message && harvester.message.error.log" class="alert alert-error">
 							{{harvester.message.error.log}}
 						</div>
 					</div>

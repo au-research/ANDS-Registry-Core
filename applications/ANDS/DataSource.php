@@ -74,6 +74,7 @@ class DataSource extends Model
         return DataSourceLog::create([
             'data_source_id' => $this->data_source_id,
             'log' => $log,
+            'date_modified' => time(),
             'type' => $type,
             'class' => $class,
             'harvester_error_type' => $harvest_error_type

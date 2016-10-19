@@ -22,11 +22,12 @@ class FinishImport extends ImportSubTask
         
 
         $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
+
         if (!$dataSource) {
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-
+        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'FINISHING IMPORT']);
         $harvestMessage = json_decode($dataSource->getHarvest($this->parent()->harvestID)->message);
         if(isset($harvestMessage->start_utc)){
             $this->harvestStarted =  $harvestMessage->start_utc;
@@ -59,7 +60,6 @@ class FinishImport extends ImportSubTask
             $this->log("Next from_date ". $this->harvestStarted);
             $dataSource->updateHarvest($this->parent()->harvestID, ['last_run'=>$this->harvestStarted]);
             $dataSource->setDataSourceAttribute("last_harvest_run_date", $this->harvestStarted);
-
         }
         else
         {
@@ -76,6 +76,7 @@ class FinishImport extends ImportSubTask
         
         if($harvestFrequency  == 'once only' || $harvestFrequency == ''){
             $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'COMPLETED']);
+            $this->parent()->updateImporterMessage("");
         }
         else {
             $nextRun = $this->getNextHarvestDate($harvestDate, $harvestFrequency);
@@ -87,6 +88,7 @@ class FinishImport extends ImportSubTask
             $dataSource->updateHarvest($this->parent()->harvestID, ['status' => 'SCHEDULED',
                 'last_run'=>$this->harvestStarted, 'next_run' => date('Y-m-d\TH:i:s.uP', $nextRun),
                 'batch_number'=>$batchNumber]);
+            $this->parent()->updateImporterMessage("Harvest rescheduled for:".date('Y-m-d\TH:i:s.uP', $nextRun));
         }
     }
 
@@ -165,4 +167,5 @@ class FinishImport extends ImportSubTask
             
         return $nextHarvest;
     }
+    
 }

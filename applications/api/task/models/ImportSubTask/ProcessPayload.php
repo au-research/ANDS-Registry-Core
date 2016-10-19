@@ -4,6 +4,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 
 use ANDS\RegistryObject;
+use ANDS\Repository\DataSourceRepository;
 use ANDS\Util\XMLUtil;
 
 class ProcessPayload extends ImportSubTask
@@ -14,6 +15,14 @@ class ProcessPayload extends ImportSubTask
 
     public function run_task()
     {
+
+        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
+        if (!$dataSource) {
+            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
+            return;
+        }
+        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'PROCESSING PAYLOADS']);
+
 
         // remove duplicates
         $keys = [];
