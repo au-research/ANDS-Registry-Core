@@ -6,6 +6,7 @@ use ANDS\RecordData;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 use ANDS\Repository\DataSourceRepository;
+use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 class Ingest extends ImportSubTask
 {
@@ -53,7 +54,7 @@ class Ingest extends ImportSubTask
         $key = trim((string) $registryObject->key);
 
         // check existing one
-        if ($matchingRecord = $this->getMatchingRecord($key)) {
+        if ($matchingRecord = Repo::getMatchingRecord($key, $this->parent()->getTaskData("targetStatus"))) {
             $this->log("Record key:($key) exists with id:($matchingRecord->registry_object_id). Adding new current version.");
             $this->parent()->incrementTaskData("recordsUpdatedCount");
             // deal with previous versions
@@ -70,10 +71,10 @@ class Ingest extends ImportSubTask
             $this->log("Added new Version :$newVersion->id to existing record");
 
             $matchingRecord->setRegistryObjectAttribute('updated', time());
-
+            $matchingRecord->status = $this->parent()->getTaskData("targetStatus");
             $this->parent()->addTaskData("importedRecords", $matchingRecord->registry_object_id);
 
-        } elseif ($deletedRecord = $this->getDeletedRecord($key)) {
+        } elseif ($deletedRecord = Repo::getDeletedRecord($key)) {
 
             $deletedRecord->status = $this->parent()->getTaskData("targetStatus");
             $this->parent()->incrementTaskData("recordsUpdatedCount");
@@ -96,7 +97,6 @@ class Ingest extends ImportSubTask
             $this->log("Added new Version:$newVersion->id and reinstated record:".$deletedRecord->registry_object_id);
 
             $deletedRecord->setRegistryObjectAttribute('updated', time());
-
             $this->parent()->addTaskData("importedRecords", $deletedRecord->registry_object_id);
 
         } else {
@@ -145,20 +145,5 @@ class Ingest extends ImportSubTask
         return $newVersion;
     }
 
-    public function getMatchingRecord($key)
-    {
-        $targetStatus = $this->parent()
-            ->getTaskData("targetStatus");
-        $matchingStatusRecords = RegistryObject::where('key', $key)
-            ->where('status', $targetStatus)->first();
-        return $matchingStatusRecords;
-    }
 
-    public function getDeletedRecord($key)
-    {
-        $deletedRecord = RegistryObject::where('key', $key)
-            ->where('status', 'DELETED')
-            ->first();
-        return $deletedRecord;
-    }
 }

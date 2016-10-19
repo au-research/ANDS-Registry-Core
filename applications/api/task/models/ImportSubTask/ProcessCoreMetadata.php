@@ -51,6 +51,7 @@ class ProcessCoreMetadata extends ImportSubTask
 
                 // TODO: record_owner on RegistryObject model and RegistryObjectAttribute (as created_who)
                 $record->record_owner = "SYSTEM";
+                $record->status = $this->parent()->getTaskData("targetStatus");
                 $record->save();
 
                 // titles and slug require the ro object
@@ -74,6 +75,7 @@ class ProcessCoreMetadata extends ImportSubTask
                 $this->log('setting harvest_id for not refreshed records: ' . $roID);
                 $record = RegistryObject::find($roID);
                 $record->setRegistryObjectAttribute('harvest_id', $this->parent()->batchID);
+                $record->status = $this->parent()->getTaskData("targetStatus");
                 $record->save();
             }
         }

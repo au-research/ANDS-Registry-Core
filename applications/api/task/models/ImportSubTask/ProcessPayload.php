@@ -5,6 +5,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
+use ANDS\Repository\RegistryObjectsRepository as Repo;
 use ANDS\Util\XMLUtil;
 
 class ProcessPayload extends ImportSubTask
@@ -110,12 +111,9 @@ class ProcessPayload extends ImportSubTask
             return false;
         }
 
-        // find the current record data belongs to the record with the same status as the dataSourceDefaultStatus
-        $targetStatus = $this->parent()
-            ->getTaskData("targetStatus");
-        $matchingStatusRecord = RegistryObject::where('key', $key)
-            ->where('status', $targetStatus)
-            ->first();
+        // find the current record data belongs to the record with the same status_group as the dataSourceDefaultStatus
+        $matchingStatusRecord = Repo::getMatchingRecord($key, $this->parent()
+            ->getTaskData("targetStatus"));
 
         if ($matchingStatusRecord !== null) {
 

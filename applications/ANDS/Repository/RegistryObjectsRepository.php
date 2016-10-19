@@ -183,5 +183,24 @@ class RegistryObjectsRepository
         return in_array($status, self::getPublishedStatusGroup());
     }
 
-
+    public static function getMatchingRecord($key, $status)
+    {
+        if(in_array($status, self::getDraftStatusGroup())){
+            $inStatus = self::getDraftStatusGroup();
+        }else{
+            $inStatus = self::getPublishedStatusGroup();
+        }
+        $matchingStatusRecords = RegistryObject::where('key', $key)
+            ->whereIn('status', $inStatus)->first();
+        return $matchingStatusRecords;
+    }
+    
+    public static function getDeletedRecord($key)
+    {
+        $deletedRecord = RegistryObject::where('key', $key)
+            ->where('status', 'DELETED')
+            ->first();
+        return $deletedRecord;
+    }
+    
 }
