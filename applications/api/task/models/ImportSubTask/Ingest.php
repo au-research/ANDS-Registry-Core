@@ -21,7 +21,7 @@ class Ingest extends ImportSubTask
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'INGESTING RECORDS']);
+        $this->parent()->updateHarvest(['status'=>'INGESTING RECORDS']);
 
         foreach ($this->parent()->getPayloads() as $payload) {
             $xml = $payload->getContentByStatus('processed');
@@ -35,7 +35,7 @@ class Ingest extends ImportSubTask
             }
             $recordsCreatedCount = $this->parent()->getTaskData("recordsCreatedCount");
             $recordsUpdatedCount = $this->parent()->getTaskData("recordsUpdatedCount");
-            $this->parent()->updateImporterMessage("Records Created: ".$recordsCreatedCount. "Records Update: ".$recordsUpdatedCount);
+            $this->parent()->updateHarvest(["importer_message" => "Records Created: ".$recordsCreatedCount. "Records Update: ".$recordsUpdatedCount]);
         }
 
         $this->handleAdvancedHarvest($payload);

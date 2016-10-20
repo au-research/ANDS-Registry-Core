@@ -22,7 +22,7 @@ class ProcessPayload extends ImportSubTask
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'PROCESSING PAYLOADS']);
+        $this->parent()->updateHarvest(['status'=>'PROCESSING PAYLOADS']);
 
 
         // remove duplicates

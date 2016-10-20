@@ -18,7 +18,7 @@ class ProcessDelete extends ImportSubTask
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'DELETING RECORDS']);
+        $this->parent()->updateHarvest(['status'=>'DELETING RECORDS']);
 
         foreach ($this->parent()->getTaskData('deletedRecords') as $id) {
             $record = RegistryObject::find($id);

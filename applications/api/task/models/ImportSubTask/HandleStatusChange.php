@@ -20,9 +20,11 @@ class HandleStatusChange extends ImportSubTask
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'HANDLING STATUS CHANGES']);
+        $this->parent()->updateHarvest(['status'=>'HANDLING STATUS CHANGES']);
         $this->log('Changing status of '.count($ids). ' records to '.$targetStatus);
-        $this->parent()->updateImporterMessage('Changing status of '.count($ids). ' records to '.$targetStatus);
+        $this->parent()->updateHarvest([
+            "importer_message" => 'Changing status of '.count($ids). ' records to '.$targetStatus
+        ]);
         foreach ($ids as $id) {
             $this->log('Processing '. $id);
             $record = RegistryObject::find($id);

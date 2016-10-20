@@ -52,11 +52,11 @@ class DataSource extends Model
         return DataSourceAttribute::where('data_source_id', $this->data_source_id)
             ->where('attribute', $key)->first();
     }
-    
+
     public function getHarvest($harvest_id){
         return Harvest::where('data_source_id', $this->data_source_id)->where('harvest_id', $harvest_id)->first();
     }
-    
+
     public function addHarvest($status , $next_run, $mode){
         return Harvest::create([
             'data_source_id' => $this->data_source_id,
@@ -64,10 +64,6 @@ class DataSource extends Model
             'next_run' => $next_run,
             'mode' => $mode
         ]);
-    }
-
-    public function updateHarvest($harvest_id, $args){
-            return Harvest::where('harvest_id', $harvest_id)->update($args);
     }
 
     public function appendDataSourceLog($log, $type, $class, $harvest_error_type){

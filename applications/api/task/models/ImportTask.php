@@ -392,8 +392,13 @@ class ImportTask extends Task
         return $this;
     }
 
-    public function updateImporterMessage($message)
+    public function updateHarvest($args)
     {
-        Harvest::where('harvest_id', $this->harvestID)->update(['importer_message'=> $message]);
+        Harvest::where('harvest_id', $this->harvestID)->update($args);
+
+        $redis = new \Predis\Client();
+        $channel = "datasource.".$this->dataSourceID.'.harvest';
+        $content = json_encode(Harvest::find($this->harvestID), true);
+        $redis->publish($channel, $content);
     }
 }

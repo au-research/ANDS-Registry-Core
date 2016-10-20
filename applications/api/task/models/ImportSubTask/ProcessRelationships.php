@@ -15,8 +15,8 @@ class ProcessRelationships extends ImportSubTask
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'PROCESSING RELATIONSHIPS']);
-        
+        $this->parent()->updateHarvest(['status'=>'PROCESSING RELATIONSHIPS']);
+
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);

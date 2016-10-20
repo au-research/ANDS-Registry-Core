@@ -314,7 +314,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			'type':'info',
 			'msg':'Saving...'
 		};
-	
+
 		$('input[name=contributor_pages]').each(function(index){
 			if($scope.ds.contributor && $scope.ds.contributor.items[index]) {
 				$scope.ds.contributor.items[index].contributor_page_key = $(this).val();
@@ -500,15 +500,20 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 	if(!$scope.timers) $scope.timers = [];
 
+
+
 	$scope.get = function(id) {
 		ds_factory.get(id).then(function(data){
 			if(data.status=='OK'){
 				$scope.ds = data.items[0];
+
+				$scope.bindSocket();
+
 				$scope.refresh_harvest_status();
 				if($scope.ds.logs && $scope.ds.logs.length > 0) $scope.ds.latest_log = $scope.ds.logs[0].id;
 				if($scope.ds.logs.length < 10) $scope.nomore = true;
 				document.title = $scope.ds.title + ' - Dashboard';
-				$scope.logTimer = $timeout($scope.get_latest_log, 1000);
+				// $scope.logTimer = $timeout($scope.get_latest_log, 1000);
 				$scope.process_logs();
 			} else {
 				$location.path('/');
@@ -522,6 +527,20 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			}
 		});
 	}
+
+	$scope.bindSocket = function() {
+
+		if (typeof socket_url == 'undefined' || socket_url == "") return;
+
+		var socket = io(socket_url);
+
+		socket.on('datasource.'+$scope.ds.id+'.harvest', function(msg){
+			var harvest = JSON.parse(msg);
+			$scope.harvester = harvest;
+			$scope.$apply();
+		});
+	}
+
 	$scope.get($routeParams.id);
 
 	$scope.process_logs = function() {
@@ -561,7 +580,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			if(!click) $scope.logTimer = $timeout($scope.get_latest_log, timeout);
 		});
 	}
-	
+
 	$scope.more_logs = function() {
 		$scope.offset = $scope.offset + 10;
 		ds_factory.get_log($scope.ds.id, $scope.offset, 10, false).then(function(data){
@@ -602,7 +621,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				if($scope.harvester.message){
 					$scope.harvester.message = $scope.harvester.message.replace(/(\r\n|\n|\r)/gm,"");
 					$scope.harvester.message = JSON.parse($scope.harvester.message);
-					$scope.harvester.importer_message = JSON.parse($scope.harvester.importer_message);
+					// $scope.harvester.importer_message = JSON.parse($scope.harvester.importer_message);
 					if($scope.harvester.status=='HARVESTING'){
 						if($scope.harvester.message.progress.total!='unknown' && $scope.harvester.message.progress.current && $scope.harvester.message.progress.total!=0) {
 							$scope.harvester.percent =  ($scope.harvester.message.progress.current * 100) / $scope.harvester.message.progress.total;
@@ -617,10 +636,10 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 					}
 				}
 			} catch (err) {
-				console.error(err);
+				console.error(err, $scope.harvester.message);
 			}
 
-			$scope.harvestTimer = $timeout($scope.refresh_harvest_status, 10000);
+			// $scope.harvestTimer = $timeout($scope.refresh_harvest_status, 10000);
 		});
 	}
 
@@ -629,8 +648,8 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		if($scope.harvestTimer) $timeout.cancel($scope.harvestTimer);
 	});
 
-	
-	
+
+
 	$scope.start_harvest = function() {
 		ds_factory.start_harvest($scope.ds.id).then(function(data) {
 			$scope.refresh_harvest_status();
@@ -764,12 +783,12 @@ function bind_plugins($scope) {
 		var dataArray = Array();
 		if(vocab == 'RIFCSClass') {
 			dataArray.push({value:'Party', subtext:'Party'});
-			dataArray.push({value:'Activity', subtext:'Activity'});			
+			dataArray.push({value:'Activity', subtext:'Activity'});
 			dataArray.push({value:'Collection', subtext:'Collection'});
 			dataArray.push({value:'Service', subtext:'Service'});
 			elem.typeahead({source:dataArray,items:16});
 	} else {
-			elem.on('narrow.vocab.ands', function(event, data) {	
+			elem.on('narrow.vocab.ands', function(event, data) {
 				$.each(data.items, function(idx, e) {
 					dataArray.push({value:e.label, subtext:e.definition});
 				});
@@ -780,6 +799,6 @@ function bind_plugins($scope) {
 			});
 			widget.vocab_widget('repository', 'rifcs1.6.1');
 			widget.vocab_widget('narrow', "http://purl.org/au-research/vocabulary/RIFCS/1.6.1/" + vocab);
-		}	 
+		}
 	});
 }

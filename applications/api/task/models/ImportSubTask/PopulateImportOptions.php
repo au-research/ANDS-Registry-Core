@@ -17,7 +17,7 @@ class PopulateImportOptions extends ImportSubTask
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'POPULATING IMPORT OPTIONS']);
+        $this->parent()->updateHarvest(['status'=>'POPULATING IMPORT OPTIONS']);
         $this->parent()->setTaskData(
             "dataSourceDefaultStatus",
             $this->getDefaultRecordStatusForDataSource($dataSource)

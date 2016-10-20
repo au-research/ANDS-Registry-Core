@@ -19,7 +19,7 @@ class ProcessCoreMetadata extends ImportSubTask
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'PROCESSING CORE METADATA']);
+        $this->parent()->updateHarvest(['status'=>'PROCESSING CORE METADATA']);
 
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         if($importedRecords !== false && $importedRecords !== null) {

@@ -40,7 +40,7 @@ class ImportSubTask extends Task
                 return;
             }
         }
-        
+
         if($this->requireHarvestedOrImportedRecords){
             $importedRecords = $this->parent()->getTaskData("importedRecords");
             $harvestedRecords = $this->parent()->getTaskData("harvestedRecordIDs");
@@ -113,10 +113,10 @@ class ImportSubTask extends Task
 
         // log to message log as well
         $this->log(get_class($this) . "(ERROR) " . $log);
-        $this->parent()->updateImporterMessage(get_class($this) . "(ERROR) " . $log);
+        $this->parent()->updateHarvest(["importer_message" => get_class($this) . "(ERROR) " . $log]);
         return $this;
     }
-    
+
 
 }
 

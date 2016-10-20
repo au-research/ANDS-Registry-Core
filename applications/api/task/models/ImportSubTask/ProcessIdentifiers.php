@@ -17,7 +17,7 @@ class ProcessIdentifiers extends ImportSubTask
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-        $dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'PROCESSING IDENTIFIERS']);
+        $this->parent()->updateHarvest(['status'=>'PROCESSING IDENTIFIERS']);
 
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         foreach ($this->parent()->getTaskData("importedRecords") as $roID) {

@@ -24,7 +24,7 @@ class ValidatePayload extends ImportSubTask
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-        $this->dataSource->updateHarvest($this->parent()->harvestID, ['status'=>'VALIDATING PAYLOADS']);
+        $this->parent()->updateHarvest(['status'=>'VALIDATING PAYLOADS']);
 
         foreach ($this->parent()->getPayloads() as &$payload) {
 
@@ -98,7 +98,7 @@ class ValidatePayload extends ImportSubTask
             } catch (Exception $e) {
                 $key = (string) $registryObject->key;
                 $this->parent()->incrementTaskData("invalidRegistryObjectsCount");
-                $this->parent()->updateImporterMessage("Failed to Validate:".$this->parent()->getTaskData("invalidRegistryObjectsCount"));
+                $this->parent()->updateHarvest(["importer_message" => "Failed to Validate:".$this->parent()->getTaskData("invalidRegistryObjectsCount")]);
                 $this->addError("Error validating record (#$attempt) with key:" . ($key!="" ? $key : "(unknown key)") . " :". $e->getMessage());
             }
         }
