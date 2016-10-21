@@ -19,9 +19,11 @@ class ProcessDelete extends ImportSubTask
                 // TODO: Refactor Repo::deleteRecord
                 $record->status = "DELETED";
                 $record->save();
+                $this->log("Record $id ($record->status) is set to DELETED");
                 $this->parent()->incrementTaskData("recordsDeletedCount");
             } elseif ($record && $record->isDraftStatus()) {
                 RegistryObjectsRepository::completelyEraseRecordByID($id);
+                $this->log("Record $id ($record->status) is set to DELETED");
                 $this->parent()->incrementTaskData("recordsDeletedCount");
             } else {
                 $this->log("Record with ID " . $id . " doesn't exist for deletion");

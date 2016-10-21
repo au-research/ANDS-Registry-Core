@@ -120,7 +120,7 @@ class FinishImport extends ImportSubTask
             "recordsCreatedCount"=>"New Records Created",
             "recordsUpdatedCount"=>"Records updated",
             "recordsNotUpdatedCount"=>"Records content unchanged",
-            "recordsDeletedCount"=>"Records deleted (due to OAI or Refresh mode",
+            "recordsDeletedCount"=>"Records deleted (due to OAI or Refresh mode)",
             "datasourceRecordBeforeCount"=>"Number of ".$targetStatus." records Before Import",
             "datasourceRecordAfterCount"=>"Number of ".$targetStatus." records After Import"
         ];
@@ -144,6 +144,7 @@ class FinishImport extends ImportSubTask
         $message = "IMPORT COMPLETED" . NL;
         $message .= "Batch ID: ".$this->parent()->batchID.NL;
         $message .= "Time: ".date("Y-m-d\TH:i:s\Z", time()).NL;
+        $message .= "TaskID: ".$this->parent()->getId();
         foreach ($selectedKeys as $key=>$title){
             $taskData = $this->parent()->getTaskData($key);
             if($taskData !== 0) {
