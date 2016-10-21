@@ -1178,15 +1178,17 @@ class Data_source extends MX_Controller {
 				$scheduled_date = date('Y-m-d H:i:s', time());
 			}
 
-			$ds->append_log(
-				'Harvest scheduled to run at '.$scheduled_date.NL.
-				'URI: '.$ds->uri.NL.
-				'Harvest Method: '.readable($ds->harvest_method).NL.
-				'Provider Type: '.$ds->provider_type.NL.
-				'Advanced Harvest Mode: '.$ds->advanced_harvest_mode.NL.
-				$incr_msg.
-				$oai_msg.NL
-			);
+			$logMessage =
+                'Harvest scheduled to run at '.$scheduled_date.NL.
+                'URI: '.$ds->uri.NL.
+                'Harvest Method: '.readable($ds->harvest_method).NL.
+                'Provider Type: '.$ds->provider_type.NL.
+                'Advanced Harvest Mode: '.$ds->advanced_harvest_mode.NL.
+                $incr_msg.
+                $oai_msg.NL
+            ;
+
+			$ds->append_log($logMessage);
 			$ds->setHarvestRequest('HARVEST', false);
 			$ds->setHarvestMessage('Harvest scheduled');
 			$ds->updateImporterMessage(array());

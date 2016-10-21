@@ -7,16 +7,10 @@ use ANDS\Repository\DataSourceRepository;
 class ProcessQualityMetadata extends ImportSubTask
 {
     protected $requireImportedRecords = true;
+    protected $title = "GATHERING METADATA QUALITY";
 
     public function run_task()
     {
-        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
-        if (!$dataSource) {
-            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
-            return;
-        }
-        $this->parent()->updateHarvest(['status'=>'GATHERING METADATA QUALITY']);
-
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);

@@ -17,60 +17,58 @@ class FinishImport extends ImportSubTask
 {
 
     private $harvestStarted;
+
+    protected $requireDataSource = true;
+    protected $title = "FINISHING IMPORT";
+
     public function run_task()
     {
+        $dataSource = $this->getDataSource();
 
+        $this->setHarvestTime();
 
-        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
-
-        if (!$dataSource) {
-            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
-            return;
-        }
-
-        $this->parent()->updateHarvest(['status'=>'FINISHING IMPORT']);
-
-        $this->parent()->updateHarvest(['status'=>'FINISHING IMPORT']);
-        $harvestMessage = json_decode($dataSource->getHarvest($this->parent()->harvestID)->message);
-        if(isset($harvestMessage->start_utc)){
-            $this->harvestStarted =  $harvestMessage->start_utc;
-        }
-        else{
-            date_default_timezone_set('UTC');
-            $this->harvestStarted =  date("Y-m-d\TH:i:s\Z", time());
-            date_default_timezone_set('Australia/Canberra');
-        }
-
-        $this->parent()->setTaskData("datasourceRecordAfterCount",
+        $this->parent()->setTaskData(
+            "datasourceRecordAfterCount",
             Repo::getCountByDataSourceIDAndStatus($this->parent()->dataSourceID,
                 $this->parent()->getTaskData("dataSourceDefaultStatus")
-            ));
+            )
+        );
 
         $this->handleAdvancedHarvest($dataSource);
-        $this->setHarvestStatus($dataSource);
         $this->updateDataSourceLogs($dataSource);
+        $this->setHarvestStatus($dataSource);
 
         return $this;
     }
 
+    private function setHarvestTime()
+    {
+        $dataSource = $this->getDataSource();
+        $harvestMessage = json_decode($dataSource->getHarvest($this->parent()->harvestID)->message);
+
+        if (isset($harvestMessage->start_utc)) {
+            $this->harvestStarted = $harvestMessage->start_utc;
+            return;
+        }
+
+        date_default_timezone_set('UTC');
+        $this->harvestStarted = date("Y-m-d\TH:i:s\Z", time());
+        date_default_timezone_set('Australia/Canberra');
+    }
+
     public function handleAdvancedHarvest($dataSource)
     {
-
         $advancedHarvestMode = $dataSource->getDataSourceAttribute("advanced_harvest_mode")->value;
 
-        if($advancedHarvestMode == 'INCREMENTAL')
-        {
+        $dataSource->setDataSourceAttribute("last_harvest_run_date",'');
+
+        if ($advancedHarvestMode == 'INCREMENTAL') {
             $this->log("Next from_date ". $this->harvestStarted);
             $this->parent()->updateHarvest(['last_run'=>$this->harvestStarted]);
             $dataSource->setDataSourceAttribute("last_harvest_run_date", $this->harvestStarted);
         }
-        else
-        {
-            $dataSource->setDataSourceAttribute("last_harvest_run_date",'');
-        }
 
         $dataSource->save();
-
     }
 
     public function setHarvestStatus($dataSource){
@@ -79,21 +77,29 @@ class FinishImport extends ImportSubTask
 
         if($harvestFrequency  == 'once only' || $harvestFrequency == ''){
             $this->parent()->updateHarvest(['status'=>'COMPLETED', "importer_message" => ""]);
+            return;
         }
-        else {
-            $nextRun = $this->getNextHarvestDate($harvestDate, $harvestFrequency);
-            $nextHarvestDate = date("Y-m-d\TH:i:s\Z", $nextRun);
-            $this->log("Harvest rescheduled to run at ". $nextHarvestDate);
-            $this->log("Next from_date ". $this->harvestStarted);
-            $dataSource->setDataSourceAttribute("last_harvest_run_date", $this->harvestStarted);
-            $batchNumber = strtoupper(sha1($nextRun));
-            $this->parent()->updateHarvest([
-                'status' => 'SCHEDULED',
-                'last_run'=>$this->harvestStarted, 'next_run' => date('Y-m-d\TH:i:s.uP', $nextRun),
-                'batch_number'=>$batchNumber,
-                'importer_message' => "Harvest rescheduled for:".date('Y-m-d\TH:i:s.uP', $nextRun)
-            ]);
-        }
+
+        $nextRun = $this->getNextHarvestDate($harvestDate, $harvestFrequency);
+        $nextHarvestDate = date("Y-m-d\TH:i:s\Z", $nextRun);
+        $this->log("Harvest rescheduled to run at ". $nextHarvestDate);
+        $this->log("Next from_date ". $this->harvestStarted);
+        $dataSource->setDataSourceAttribute("last_harvest_run_date", $this->harvestStarted);
+        $batchNumber = strtoupper(sha1($nextRun));
+
+        $dataSource->appendDataSourceLog(
+            "Harvest rescheduled for: ".date('Y-m-d\TH:i:s.uP', $nextRun). " with previous settings",
+            "info", "IMPORTER"
+        );
+
+        $this->parent()->updateHarvest([
+            'status' => 'SCHEDULED',
+            'last_run' => $this->harvestStarted,
+            'next_run' => date('Y-m-d\TH:i:s.uP', $nextRun),
+            'batch_number' => $batchNumber,
+            'importer_message' => "Harvest rescheduled for: ".date('Y-m-d\TH:i:s.uP', $nextRun)
+        ]);
+
     }
 
 
@@ -101,7 +107,8 @@ class FinishImport extends ImportSubTask
     {
         //append_log($log_message, $log_type = "info | error", $log_class="data_source", $harvester_error_type=NULL)
         $targetStatus = $this->parent()->getTaskData("targetStatus");
-        $selectedKeys = ["dataSourceDefaultStatus"=>"Default Import Status for Data Source",
+        $selectedKeys = [
+            "dataSourceDefaultStatus"=>"Default Import Status for Data Source",
             "recordsInFeedCount"=>"Valid Records Received in Harvest",
             "invalidRegistryObjectsCount"=>"Failed to Validate",
             "duplicateKeyinFeedCount"=>"Duplicated Records",
@@ -114,36 +121,37 @@ class FinishImport extends ImportSubTask
             "recordsNotUpdatedCount"=>"Records content unchanged",
             "recordsDeletedCount"=>"Records deleted (due to OAI or Refresh mode",
             "datasourceRecordBeforeCount"=>"Number of ".$targetStatus." records Before Import",
-            "datasourceRecordAfterCount"=>"Number of ".$targetStatus." records After Import"];
+            "datasourceRecordAfterCount"=>"Number of ".$targetStatus." records After Import"
+        ];
 
-        $status = 'COMPLETED';
         if ($errorList = $this->parent()->getError()) {
-            $message = "IMPORT ".$status." WITH ERROR(S)" . NL;
+            $message = "IMPORT COMPLETED WITH ERROR(S)" . NL;
             $message .= "Batch ID: ".$this->parent()->batchID.NL;
-            $message .= "time:".date("Y-m-d\TH:i:s\Z", time()).NL;
+            $message .= "Time: ".date("Y-m-d\TH:i:s\Z", time()).NL;
             foreach ($selectedKeys as $key=>$title){
                 $taskData = $this->parent()->getTaskData($key);
                 if($taskData !== 0) {
                     $message .= $title . ": " . $taskData . NL;
                 }
             }
-            ob_start();
-            var_dump($errorList);
-            $message .= ob_get_clean();
+            $message .= NL.NL. implode(NL.NL, $errorList);
+
             $dataSource->appendDataSourceLog($message, "error", "IMPORTER", "");
             return;
-        } else {
-            $message = "IMPORT ".$status . NL;
-            $message .= "Batch ID: ".$this->parent()->batchID.NL;
-            $message .= "time:".date("Y-m-d\TH:i:s\Z", time()).NL;
-            foreach ($selectedKeys as $key=>$title){
-                $taskData = $this->parent()->getTaskData($key);
-                if($taskData !== 0) {
-                    $message .= $title . ":" . $taskData . NL;
-                }
-            }
-            $dataSource->appendDataSourceLog($message, "info", "IMPORTER", "");
         }
+
+        $message = "IMPORT COMPLETED" . NL;
+        $message .= "Batch ID: ".$this->parent()->batchID.NL;
+        $message .= "Time: ".date("Y-m-d\TH:i:s\Z", time()).NL;
+        foreach ($selectedKeys as $key=>$title){
+            $taskData = $this->parent()->getTaskData($key);
+            if($taskData !== 0) {
+                $message .= $title . ":" . $taskData . NL;
+            }
+        }
+
+        $dataSource->appendDataSourceLog($message, "info", "IMPORTER", "");
+        return;
     }
 
     function getNextHarvestDate($harvestDate, $harvestFrequency){

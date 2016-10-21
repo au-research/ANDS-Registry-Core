@@ -2,22 +2,21 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
-
 use ANDS\DataSource;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 class PopulateImportOptions extends ImportSubTask
 {
+    protected $title = "POPULATING IMPORT OPTIONS";
+    protected $requireDataSource = true;
+
     public function run_task()
     {
-        $dataSource = DataSource::find($this->parent()->dataSourceID);
+        $dataSource = $this->getDataSource();
 
-        if (!$dataSource) {
-            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
-            return;
-        }
-        $this->parent()->updateHarvest(['status'=>'POPULATING IMPORT OPTIONS']);
+        $dataSource->appendDataSourceLog("Import Started", "info", "IMPORTER");
+
         $this->parent()->setTaskData(
             "dataSourceDefaultStatus",
             $this->getDefaultRecordStatusForDataSource($dataSource)
@@ -34,8 +33,6 @@ class PopulateImportOptions extends ImportSubTask
 
         /**
          * @todo datasourceHarvestMode
-         * @todo importDefaultStatus
-         * @todo datasourceRecordCountBefore
          */
 
         // records thaqt are deleted in task by either OAI deleted or REFRESH mode

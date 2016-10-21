@@ -183,15 +183,24 @@ class RegistryObjectsRepository
         return in_array($status, self::getPublishedStatusGroup());
     }
 
+    /**
+     * Return a RegistryObject instance matching given status
+     *
+     * @param string $key
+     * @param string $status
+     * @return RegistryObject
+     */
     public static function getMatchingRecord($key, $status)
     {
-        if(in_array($status, self::getDraftStatusGroup())){
+        $inStatus = self::getPublishedStatusGroup();
+
+        if (in_array($status, self::getDraftStatusGroup())) {
             $inStatus = self::getDraftStatusGroup();
-        }else{
-            $inStatus = self::getPublishedStatusGroup();
         }
+
         $matchingStatusRecords = RegistryObject::where('key', $key)
             ->whereIn('status', $inStatus)->first();
+
         return $matchingStatusRecords;
     }
     
@@ -201,6 +210,17 @@ class RegistryObjectsRepository
             ->where('status', 'DELETED')
             ->first();
         return $deletedRecord;
+    }
+
+    public static function addNewVersion($registryObjectID, $xml)
+    {
+        $newVersion = new RecordData;
+        $newVersion->current = true;
+        $newVersion->registry_object_id = $registryObjectID;
+        $newVersion->timestamp = time();
+        $newVersion->saveData($xml);
+        $newVersion->save();
+        return $newVersion;
     }
     
 }

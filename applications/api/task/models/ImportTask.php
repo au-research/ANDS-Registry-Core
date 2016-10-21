@@ -9,6 +9,7 @@ namespace ANDS\API\Task;
 
 use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use ANDS\DataSource\Harvest as Harvest;
+use ANDS\Util\NotifyUtil;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use \Exception as Exception;
 
@@ -201,7 +202,8 @@ class ImportTask extends Task
     public function getDefaultImportSubtasks()
     {
         $pipeline = [];
-        $defaultSubtasks = ["PopulateImportOptions",
+        $defaultSubtasks = [
+            "PopulateImportOptions",
             "ValidatePayload",
             "ProcessPayload",
             "Ingest",
@@ -212,8 +214,9 @@ class ImportTask extends Task
             "ProcessRelationships",
             "ProcessQualityMetadata",
             "IndexPortal",
-            "FinishImport"];
-//        $defaultSubtasks = ["PopulateImportOptions", "FinishImport"];
+            "FinishImport"
+        ];
+
         foreach ($defaultSubtasks as $subtaskName) {
             $pipeline[] = [
                 'name' => $subtaskName,
@@ -395,10 +398,9 @@ class ImportTask extends Task
     public function updateHarvest($args)
     {
         Harvest::where('harvest_id', $this->harvestID)->update($args);
-
-        $redis = new \Predis\Client();
-        $channel = "datasource.".$this->dataSourceID.'.harvest';
-        $content = json_encode(Harvest::find($this->harvestID), true);
-        $redis->publish($channel, $content);
+        NotifyUtil::notify(
+            "datasource.".$this->dataSourceID.'.harvest',
+            json_encode(Harvest::find($this->harvestID), true)
+        );
     }
 }

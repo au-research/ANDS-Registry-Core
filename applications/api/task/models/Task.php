@@ -7,6 +7,8 @@
 namespace ANDS\API\Task;
 
 
+use ANDS\Util\NotifyUtil;
+
 class Task
 {
     private $id;
@@ -226,16 +228,23 @@ class Task
 
         if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
 
-        if ($this->getId() && $this->getId() != "") {
-            $updateStatus = $this->update_db($data);
-            if (!$updateStatus) {
-                $this->log('Task data failed to update');
-            }
-            return $this;
-        } else {
+        if ($this->getId() === false || $this->getId() == "") {
             $this->log('This task does not have an ID, does not save');
             return true;
         }
+
+        $updateStatus = $this->update_db($data);
+        if (!$updateStatus) {
+            $this->log('Task data failed to update to the database');
+        }
+
+        NotifyUtil::notify(
+            $channel = "task.".$this->getId(),
+            json_encode($this->toArray(), true)
+        );
+
+        return $this;
+
     }
 
     /**

@@ -13,19 +13,20 @@ class ProcessPayload extends ImportSubTask
     protected $requirePayload = true;
     protected $payloadSource = "validated";
     protected $payloadOutput = "processed";
+    protected $title = "PROCESSING PAYLOADS";
 
     public function run_task()
     {
-
-        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
-        if (!$dataSource) {
-            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
-            return;
-        }
-        $this->parent()->updateHarvest(['status'=>'PROCESSING PAYLOADS']);
-
-
         // remove duplicates
+        $this->processDuplicateKeys();
+
+        // verify harvestability for each registryObject
+        $this->checkPayloadHarvestability();
+
+    }
+
+    private function processDuplicateKeys()
+    {
         $keys = [];
         foreach ($this->parent()->getPayloads() as &$payload) {
 
@@ -48,6 +49,7 @@ class ProcessPayload extends ImportSubTask
                     $this->parent()->incrementTaskData("duplicateKeyinFeedCount");
                 }
             }
+
             $xmlPayload = implode("", $processed);
             if ($xmlPayload) {
                 $payload->writeContentByStatus(
@@ -59,34 +61,10 @@ class ProcessPayload extends ImportSubTask
                 $this->parent()->deletePayload($path);
             }
         }
-
-        // verify harvestability for each registryObject
-        foreach ($this->parent()->getPayloads() as &$payload) {
-
-            $path = $payload->getPath();
-            $xml = $payload->getContentByStatus($this->payloadOutput);
-
-            $processed = [];
-
-
-            $registryObjects = XMLUtil::getElementsByName($xml, 'registryObject');
-            foreach ($registryObjects as $registryObject) {
-                if ($this->checkHarvestability($registryObject) === true){
-                    $processed[] = $registryObject->saveXML();
-                }
-            }
-            $xmlPayload = implode("", $processed);
-            $payload->writeContentByStatus(
-                $this->payloadOutput, XMLUtil::wrapRegistryObject($xmlPayload)
-            );
-            $this->log('Process stage 2 completed for '. $path);
-        }
-
     }
 
     /**
      * Returns whether a registryObject SimpleXML should be ingested
-     * @todo refactor into sub procedure
      *
      * @param $registryObject
      * @return bool
@@ -112,13 +90,12 @@ class ProcessPayload extends ImportSubTask
         }
 
         // find the current record data belongs to the record with the same status_group as the dataSourceDefaultStatus
-        $matchingStatusRecord = Repo::getMatchingRecord($key, $this->parent()
+        $matchingStatusRecord = Repo::getMatchingRecord(
+            $key, $this->parent()
             ->getTaskData("targetStatus"));
 
         if ($matchingStatusRecord !== null) {
-
             $currentRecordData = $matchingStatusRecord->getCurrentData();
-
             if ($currentRecordData === null) {
                 $this->log("Record key:($matchingStatusRecord->key) does not have current record data");
                 return true;
@@ -143,22 +120,36 @@ class ProcessPayload extends ImportSubTask
             } else {
                 $this->log("New record data found for $matchingStatusRecord->key, ($hash and $newHash)");
             }
-
         }
 
-
-
         return true;
-
-        // @todo move to XMLUtilTest
-        //get the key, check for existing registryObject with this key
-//        $key = XMLUtil::getElementsByXPath(
-//            XMLUtil::wrapRegistryObject(
-//                $registryObject->saveXML()),
-//                "/ro:registryObjects/ro:registryObject/ro:key"
-//        );
     }
 
+    /**
+     * @return mixed
+     */
+    public function checkPayloadHarvestability()
+    {
+        foreach ($this->parent()->getPayloads() as &$payload) {
+            $path = $payload->getPath();
+            $xml = $payload->getContentByStatus($this->payloadOutput);
+
+            $processed = [];
+
+            $registryObjects = XMLUtil::getElementsByName($xml,
+                'registryObject');
+            foreach ($registryObjects as $registryObject) {
+                if ($this->checkHarvestability($registryObject) === true) {
+                    $processed[] = $registryObject->saveXML();
+                }
+            }
+            $xmlPayload = implode("", $processed);
+            $payload->writeContentByStatus(
+                $this->payloadOutput, XMLUtil::wrapRegistryObject($xmlPayload)
+            );
+            $this->log('Process stage 2 completed for ' . $path);
+        }
+    }
 
 
 }

@@ -500,8 +500,6 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 	if(!$scope.timers) $scope.timers = [];
 
-
-
 	$scope.get = function(id) {
 		ds_factory.get(id).then(function(data){
 			if(data.status=='OK'){
@@ -537,8 +535,16 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		socket.on('datasource.'+$scope.ds.id+'.harvest', function(msg){
 			var harvest = JSON.parse(msg);
 			$scope.harvester = harvest;
+            $scope.refreshHarvesterButtons();
 			$scope.$apply();
 		});
+
+        socket.on('datasource.'+$scope.ds.id+'.log', function(msg){
+            var log = JSON.parse(msg);
+            $scope.ds.logs.unshift(log);
+            $scope.ds.latest_log = $scope.ds.logs[0].id;
+            $scope.process_logs();
+        });
 	}
 
 	$scope.get($routeParams.id);
@@ -601,20 +607,50 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		}
 	}
 
+	$scope.refreshHarvesterButtons = function() {
+	    $scope.harvester.busy = false;
+        //can_start, can_stop
+        switch ($scope.harvester.status) {
+            case 'IDLE':
+                $scope.harvester.can_start = true;
+                $scope.harvester.can_stop = false;
+                break;
+            case 'HARVESTING':
+                $scope.harvester.can_start = false;
+                $scope.harvester.can_stop = true;
+                $scope.harvester.busy = true;
+                break;
+            case 'STOPPED':
+                $scope.harvester.can_start = true;
+                $scope.harvester.can_stop = false;
+                break;
+            case 'COMPLETED':
+                $scope.harvester.can_start = true;
+                $scope.harvester.can_stop = false;
+                break;
+            case 'SCHEDULED':
+                $scope.harvester.can_start = true;
+                $scope.harvester.can_stop = true;
+                break;
+            case 'WAITING':
+                $scope.harvester.can_start = false;
+                $scope.harvester.can_stop = true;
+                $scope.harvester.busy = true;
+                break;
+            case 'IMPORTING':
+            default:
+                $scope.harvester.can_start = false;
+                $scope.harvester.can_stop = false;
+                $scope.harvester.busy = true;
+                break;
+        }
+    }
+
 	$scope.refresh_harvest_status = function() {
 		ds_factory.get_harvester_status($scope.ds.id).then(function(data){
 			$scope.harvester = data.items[0];
 
-			//can_start, can_stop
-			switch($scope.harvester.status) {
-				case 'IDLE': $scope.harvester.can_start = true; $scope.harvester.can_stop = false; break;
-				case 'HARVESTING': $scope.harvester.can_start = false; $scope.harvester.can_stop = true; break;
-				case 'IMPORTING': $scope.harvester.can_start = false; $scope.harvester.can_stop = false; break;
-				case 'STOPPED': $scope.harvester.can_start = true; $scope.harvester.can_stop = false; break;
-				case 'COMPLETED': $scope.harvester.can_start = true; $scope.harvester.can_stop = false; break;
-				case 'SCHEDULED': $scope.harvester.can_start = true; $scope.harvester.can_stop = true; break;
-				case 'WAITING': $scope.harvester.can_start = false; $scope.harvester.can_stop = true; break;
-			}
+			$scope.refreshHarvesterButtons();
 
 			//parse message
 			try {
@@ -648,12 +684,11 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		if($scope.harvestTimer) $timeout.cancel($scope.harvestTimer);
 	});
 
-
-
 	$scope.start_harvest = function() {
-		ds_factory.start_harvest($scope.ds.id).then(function(data) {
-			$scope.refresh_harvest_status();
-		});
+        ds_factory.start_harvest($scope.ds.id).then(function (data) {
+            $scope.refresh_harvest_status();
+            $scope.harvester.busy = true;
+        });
 	}
 
 	$scope.stop_harvest = function() {

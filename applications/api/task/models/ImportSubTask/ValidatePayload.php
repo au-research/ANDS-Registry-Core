@@ -14,18 +14,11 @@ class ValidatePayload extends ImportSubTask
     protected $requirePayload = true;
     protected $payloadSource = "unvalidated";
     protected $payloadOutput = "validated";
-    protected $dataSource = null;
     protected $registryObjectReceived = 0;
+    protected $title = "VALIDATING PAYLOADS";
+
     public function run_task()
     {
-
-        $this->dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
-        if (!$this->dataSource) {
-            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
-            return;
-        }
-        $this->parent()->updateHarvest(['status'=>'VALIDATING PAYLOADS']);
-
         foreach ($this->parent()->getPayloads() as &$payload) {
 
             // this task requires unvalidated payload
@@ -33,6 +26,7 @@ class ValidatePayload extends ImportSubTask
             $xml = $payload->getContentByStatus($this->payloadSource);
             $this->registryObjectReceived += XMLUtil::countElementsByName($xml, "registryObject");
             $this->log("Validation started for $path");
+            $this->parent()->updateHarvest(['importer_message'=>"Validating $path"]);
 
             // validate RIFCS schema
             try {
@@ -40,7 +34,7 @@ class ValidatePayload extends ImportSubTask
                 $xml = XMLUtil::cleanNameSpace($xml);
                 $xml = $this->validatePayloadSchema($xml);
             } catch (Exception $e) {
-                $this->addError("Validation error found: ". $e->getMessage());
+                // $this->addError("Validation error found: ". $e->getMessage());
                 $xml = $this->attemptIndividualValidation($xml);
             }
 
@@ -49,6 +43,7 @@ class ValidatePayload extends ImportSubTask
                 $this->addError("XML does not pass validation");
                 return;
             }
+
             XMLUtil::countElementsByName($xml, "registryObject");
             $payload->writeContentByStatus(
                 $this->payloadOutput, XMLUtil::wrapRegistryObject($xml)
@@ -68,7 +63,7 @@ class ValidatePayload extends ImportSubTask
      */
     public function validatePayloadSchema($xml)
     {
-        $result = $this->validateRIFCS($xml);
+        $this->validateRIFCS($xml);
         return $xml;
     }
 
@@ -98,7 +93,9 @@ class ValidatePayload extends ImportSubTask
             } catch (Exception $e) {
                 $key = (string) $registryObject->key;
                 $this->parent()->incrementTaskData("invalidRegistryObjectsCount");
-                $this->parent()->updateHarvest(["importer_message" => "Failed to Validate:".$this->parent()->getTaskData("invalidRegistryObjectsCount")]);
+                $this->parent()->updateHarvest([
+                    "importer_message" => "Failed to Validate:".$this->parent()->getTaskData("invalidRegistryObjectsCount")
+                ]);
                 $this->addError("Error validating record (#$attempt) with key:" . ($key!="" ? $key : "(unknown key)") . " :". $e->getMessage());
             }
         }
@@ -127,7 +124,9 @@ class ValidatePayload extends ImportSubTask
 
         // TODO: Does this cache in-memory?
         libxml_use_internal_errors(true);
-        $validation_status = $doc->schemaValidate(REGISTRY_APP_PATH . "registry_object/schema/registryObjects.xsd");
+        $validation_status = $doc->schemaValidate(
+            REGISTRY_APP_PATH . "registry_object/schema/registryObjects.xsd"
+        );
         if ($validation_status === true) {
             libxml_use_internal_errors(false);
             return true;

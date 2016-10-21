@@ -9,16 +9,10 @@ use ANDS\Repository\DataSourceRepository;
 class IndexPortal extends ImportSubTask
 {
     protected $requireImportedRecords = true;
+    protected $title = "INDEXING PORTAL";
 
     public function run_task()
     {
-
-        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
-        if (!$dataSource) {
-            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
-            return;
-        }
-        $this->parent()->updateHarvest(['status'=>'INDEXING PORTAL']);
         $targetStatus = $this->parent()->getTaskData('targetStatus');
         if (!Repo::isPublishedStatus($targetStatus)) {
             $this->log("Target status is ". $targetStatus.' No indexing required');
@@ -34,6 +28,8 @@ class IndexPortal extends ImportSubTask
             $ro->setMetadata('solr_doc', json_encode($index));
             $ro->sync();
         }
+
+        // TODO: unindex records in deletedRecords
 
     }
 }

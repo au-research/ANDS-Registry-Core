@@ -5,6 +5,7 @@ namespace ANDS;
 
 
 
+use ANDS\Util\NotifyUtil;
 use Illuminate\Database\Eloquent\Model;
 use ANDS\DataSource\Harvest as Harvest;
 use ANDS\DataSource\DataSourceLog as DataSourceLog;
@@ -66,14 +67,21 @@ class DataSource extends Model
         ]);
     }
 
-    public function appendDataSourceLog($log, $type, $class, $harvest_error_type){
-        return DataSourceLog::create([
+    public function appendDataSourceLog($log, $type, $class, $harvest_error_type = "") {
+        $logContent = [
             'data_source_id' => $this->data_source_id,
             'log' => $log,
             'date_modified' => time(),
             'type' => $type,
             'class' => $class,
             'harvester_error_type' => $harvest_error_type
-        ]);
+        ];
+
+        NotifyUtil::notify(
+            'datasource.'.$this->data_source_id.'.log',
+            json_encode($logContent, true)
+        );
+
+        return DataSourceLog::create($logContent);
     }
 }

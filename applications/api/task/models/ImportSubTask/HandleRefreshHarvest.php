@@ -16,68 +16,64 @@ use ANDS\RegistryObject;
 class HandleRefreshHarvest extends ImportSubTask
 {
     private $toBeDeletedRecordCutOffRatio = 0.2;
+    protected $requireDataSource = true;
+    protected $title = "REFRESHING DATASOURCE";
+
     public function run_task()
     {
-
-        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
-
-        if (!$dataSource) {
-            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
-            return;
-        }
-        $this->handleRefreshHarvest($dataSource);
-
-
-        return $this;
+        $this->handleRefreshHarvest();
     }
 
-    public function handleRefreshHarvest($dataSource)
+    public function handleRefreshHarvest()
     {
-
+        $dataSource = $this->getDataSource();
 
         $advanced_harvest_mode = $dataSource->getDataSourceAttribute("advanced_harvest_mode");
-        if($advanced_harvest_mode->value == 'REFRESH'){
-            $this->parent()->updateHarvest(['status'=>'REFRESHING DATASOURCE']);
-            $datasourceRecordBeforeCount = $this->parent()->getTaskData("datasourceRecordBeforeCount");
-            $recordCount = Repo::getCountByDataSourceIDAndStatus($this->parent()->dataSourceID,
-                $this->parent()->getTaskData("targetStatus"));
-            $recordsToDelete = Repo::getRecordsByDifferentHarvestID($this->parent()->batchID,
-                $this->parent()->dataSourceID, $this->parent()->getTaskData("targetStatus")
-                );
-            $afterRefreshRecordCount = $recordCount - count($recordsToDelete);
-            if(count($recordsToDelete) < 1)
-            {
-                $this->log("No records found to be deleted");
-                $this->parent()->updateHarvest(["importer_message" => "No records found to be deleted"]);
-                return;
-            }
-            // the total count of the records in the datasource should not be reduced by more than 20%
-            if((1 - $this->toBeDeletedRecordCutOffRatio) <= (($afterRefreshRecordCount / $datasourceRecordBeforeCount)))
-            {
-                $this->log(count($recordsToDelete)." records marked for deletion");
-                $this->parent()->updateHarvest([
-                    "importer_message" => count($recordsToDelete)." records marked for deletion"
-                ]);
-                foreach($recordsToDelete as $record){
-                    $this->parent()->addTaskData('deletedRecords', $record->registry_object_id);
-                }
-            }
-            else{
-                $this->log("Refresh is aborted");
-                $this->log("Too many (".count($recordsToDelete).") records would be removed, original count(".
-                    $datasourceRecordBeforeCount.") would be reduced more than ".
-                    ($this->toBeDeletedRecordCutOffRatio * 100)."% to result (".$afterRefreshRecordCount.")");
-                $this->parent()->updateHarvest([
-                    "importer_message" => "Refresh is aborted; Too many (".count($recordsToDelete).") records would be removed, original count(".
-                    $datasourceRecordBeforeCount.") would be reduced more than ".
-                    ($this->toBeDeletedRecordCutOffRatio * 100)."% to result (".$afterRefreshRecordCount.")"
-                ]);
-            }
-        }else{
-            $this->log("Advanced Harvest Mode is set ".$advanced_harvest_mode->value);
-            $this->parent()->updateHarvest(["importer_message" => "Advanced Harvest Mode is set ".$advanced_harvest_mode->value]);
+
+        if ($advanced_harvest_mode->value != 'REFRESH') {
+            return;
         }
+
+        $datasourceRecordBeforeCount = $this->parent()->getTaskData("datasourceRecordBeforeCount");
+        $recordCount = Repo::getCountByDataSourceIDAndStatus(
+            $this->parent()->dataSourceID,
+            $this->parent()->getTaskData("targetStatus")
+        );
+
+        $recordsToDelete = Repo::getRecordsByDifferentHarvestID(
+            $this->parent()->batchID,
+            $this->parent()->dataSourceID,
+            $this->parent()->getTaskData("targetStatus")
+        );
+
+        $afterRefreshRecordCount = $recordCount - count($recordsToDelete);
+
+        if (count($recordsToDelete) < 1) {
+            $this->log("No records found to be deleted");
+            $this->parent()->updateHarvest(["importer_message" => "No records found to be deleted"]);
+            return;
+        }
+
+        // the total count of the records in the datasource should not be reduced by more than 20%
+        if ((1 - $this->toBeDeletedRecordCutOffRatio) <= (($afterRefreshRecordCount / $datasourceRecordBeforeCount))) {
+            $this->log(count($recordsToDelete) . " records marked for deletion");
+            $this->parent()->updateHarvest([
+                "importer_message" => count($recordsToDelete) . " records marked for deletion"
+            ]);
+            foreach ($recordsToDelete as $record) {
+                $this->parent()->addTaskData('deletedRecords', $record->registry_object_id);
+            }
+            return;
+        }
+
+        $this->log("Refresh is aborted");
+        $this->log("Too many (" . count($recordsToDelete) . ") records would be removed, original count(" .
+            $datasourceRecordBeforeCount . ") would be reduced more than " .
+            ($this->toBeDeletedRecordCutOffRatio * 100) . "% to result (" . $afterRefreshRecordCount . ")");
+        $this->parent()->updateHarvest([
+            "importer_message" => "Refresh is aborted; Too many (" . count($recordsToDelete) . ") records would be removed, original count(" .
+                $datasourceRecordBeforeCount . ") would be reduced more than " .
+                ($this->toBeDeletedRecordCutOffRatio * 100) . "% to result (" . $afterRefreshRecordCount . ")"
+        ]);
     }
-
-
 }

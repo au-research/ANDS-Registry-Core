@@ -578,8 +578,19 @@ class _data_source {
      */
     function append_log($log_message, $log_type = "info", $log_class="data_source", $harvester_error_type=NULL)
     {
-        $this->db->insert("data_source_logs",
-            array("data_source_id" => $this->id, "date_modified" => time(), "type" => $log_type, "log" => $this->clean_log_message($log_message), "class" => $log_class,"harvester_error_type" => $harvester_error_type));
+        $logContent = [
+            "data_source_id" => $this->id,
+            "date_modified" => time(),
+            "type" => $log_type,
+            "log" => $this->clean_log_message($log_message),
+            "class" => $log_class,
+            "harvester_error_type" => $harvester_error_type
+        ];
+        \ANDS\Util\NotifyUtil::notify(
+            'datasource.'.$this->id.'.log',
+            json_encode($logContent, true)
+        );
+        $this->db->insert("data_source_logs",$logContent);
         return $this->db->insert_id();
     }
 
