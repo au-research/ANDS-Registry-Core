@@ -12,7 +12,9 @@ class ProcessQualityMetadata extends ImportSubTask
     public function run_task()
     {
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
-        foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
+        $importedRecords = $this->parent()->getTaskData("importedRecords");
+        foreach ($importedRecords as $index=>$roID) {
+            $this->updateProgress($index, count($importedRecords), "Processing ". $roID);
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->update_quality_metadata();
         }

@@ -24,7 +24,8 @@ class ImportSubTask extends Task
     {
         $this->parent()->updateHarvest([
             'status' => $this->title,
-            'importer_message' => ""
+            'importer_message' => "",
+            'message' => ""
         ]);
 
         if ($this->requirePayload && $this->parent()->hasPayload() === false) {
@@ -143,6 +144,19 @@ class ImportSubTask extends Task
     public function getDataSource()
     {
         return $this->dataSource;
+    }
+
+    public function updateProgress($index, $total, $message)
+    {
+        $this->parent()->updateHarvest([
+            'message' => json_encode([
+                'progress' => [
+                    'total' => $total,
+                    'current' => $index
+                ]
+            ], true),
+            'importer_message'=> $message
+        ]);
     }
 
 

@@ -37,6 +37,7 @@ class FinishImport extends ImportSubTask
         $this->handleAdvancedHarvest($dataSource);
         $this->updateDataSourceLogs($dataSource);
         $this->setHarvestStatus($dataSource);
+        $this->updateDataSourceStats($dataSource);
 
         return $this;
     }
@@ -178,6 +179,26 @@ class FinishImport extends ImportSubTask
         }
 
         return $nextHarvest;
+    }
+
+    public function updateDataSourceStats($dataSource)
+    {
+        // update count_total
+        $dataSource->setDataSourceAttribute(
+            'count_total',
+            RegistryObject::where('data_source_id', $dataSource->data_source_id)->count()
+        );
+
+        // count_$status
+        $validStatuses = ["MORE_WORK_REQUIRED", "DRAFT", "SUBMITTED_FOR_ASSESSMENT", "ASSESSMENT_IN_PROGRESS", "APPROVED", "PUBLISHED"];
+        foreach ($validStatuses as $status) {
+            $dataSource->setDataSourceAttribute(
+                'count_'.$status,
+                RegistryObject::where('data_source_id', $dataSource->data_source_id)
+                    ->where('status', $status)->count()
+            );
+        }
+
     }
 
 }

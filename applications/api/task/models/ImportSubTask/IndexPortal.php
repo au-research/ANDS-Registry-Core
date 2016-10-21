@@ -22,7 +22,9 @@ class IndexPortal extends ImportSubTask
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         // TODO: MAJORLY REFACTOR THIS
         $this->parent()->updateHarvest(["importer_message" => "Indexing ".count($this->parent()->getTaskData("importedRecords"))." records"]);
-        foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
+        $importedRecords = $this->parent()->getTaskData("importedRecords");
+        foreach ($importedRecords as $index=>$roID) {
+            $this->updateProgress($index, count($importedRecords), "Processing ". $roID);
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $index = $ro->indexable_json();
             $ro->setMetadata('solr_doc', json_encode($index));

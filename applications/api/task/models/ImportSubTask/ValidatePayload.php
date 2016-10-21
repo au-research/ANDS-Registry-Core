@@ -19,14 +19,18 @@ class ValidatePayload extends ImportSubTask
 
     public function run_task()
     {
-        foreach ($this->parent()->getPayloads() as &$payload) {
-
+        $counter = 0;
+        foreach ($this->parent()->getPayloads() as $index=>&$payload) {
+            $counter++;
             // this task requires unvalidated payload
             $path = $payload->getPath();
             $xml = $payload->getContentByStatus($this->payloadSource);
             $this->registryObjectReceived += XMLUtil::countElementsByName($xml, "registryObject");
             $this->log("Validation started for $path");
-            $this->parent()->updateHarvest(['importer_message'=>"Validating $path"]);
+            $this->parent()->updateHarvest([
+                'message' => json_encode(['progress' => ['total' => count($this->parent()->getPayloads()), 'current' => $counter]], true),
+                'importer_message'=>"Validating $path"]
+            );
 
             // validate RIFCS schema
             try {

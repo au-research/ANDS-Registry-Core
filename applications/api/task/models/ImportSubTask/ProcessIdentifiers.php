@@ -14,7 +14,9 @@ class ProcessIdentifiers extends ImportSubTask
     {
         // TODO: Refactor to RIFCS\IdentifierProvider
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
-        foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
+        $importedRecords = $this->parent()->getTaskData("importedRecords");
+        foreach ( $importedRecords as $index=>$roID) {
+            $this->updateProgress( $index, count($importedRecords), "Processing Record " . $roID );
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->processIdentifiers();
         }
