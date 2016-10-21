@@ -652,11 +652,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			$scope.harvester = data.items[0];
 
 			$scope.refreshHarvesterButtons();
-
-			//parse message
             $scope.refreshHarvesterMessage();
-
-
 
 			// $scope.harvestTimer = $timeout($scope.refresh_harvest_status, 10000);
 		});
@@ -664,7 +660,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 	$scope.refreshHarvesterMessage = function() {
 
-	    if ($scope.harvester.message == "undefined" || $scope.harvester.message == "") {
+	    if ($scope.harvester.message == "undefined" || $scope.harvester.message == "" || $scope.harvester.message == 'null') {
 	        return;
         }
 
