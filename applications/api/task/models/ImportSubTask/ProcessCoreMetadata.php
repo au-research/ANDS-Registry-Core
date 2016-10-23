@@ -33,7 +33,7 @@ class ProcessCoreMetadata extends ImportSubTask
 
         foreach ($importedRecords as $index => $roID) {
 
-            $this->updateProgress($index, count($importedRecords), "Processing ". $roID);
+            $this->updateProgress($index, count($importedRecords), "Processing (updated) ". $roID);
             $this->log('Processing (updated) record: ' . $roID);
 
             $record = RegistryObject::find($roID);
@@ -97,7 +97,7 @@ class ProcessCoreMetadata extends ImportSubTask
         }
 
         foreach ($harvestedRecords as $index=>$roID) {
-            $this->updateProgress($index, count($harvestedRecords), "Processing ". $roID);
+            $this->updateProgress($index, count($harvestedRecords), "Processing (unchanged) ". $roID);
             $this->log('Processing (unchanged) record: ' . $roID);
 
             $this->log('setting harvest_id for not refreshed records: ' . $roID);

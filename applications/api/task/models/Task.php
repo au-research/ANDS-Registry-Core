@@ -105,6 +105,9 @@ class Task
     public function log($log)
     {
         $this->message['log'][] = $log;
+        if ($this->getId()) {
+            NotifyUtil::notify('task.'.$this->getId(), $log);
+        }
         return $this;
     }
 
@@ -229,7 +232,7 @@ class Task
         if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
 
         if ($this->getId() === false || $this->getId() == "") {
-            $this->log('This task does not have an ID, does not save');
+            // $this->log('This task does not have an ID, does not save');
             return true;
         }
 
@@ -238,10 +241,10 @@ class Task
             $this->log('Task data failed to update to the database');
         }
 
-        NotifyUtil::notify(
-            $channel = "task.".$this->getId(),
-            json_encode($this->toArray(), true)
-        );
+//        NotifyUtil::notify(
+//            $channel = "task.".$this->getId(),
+//            json_encode($this->toArray(), true)
+//        );
 
         return $this;
 

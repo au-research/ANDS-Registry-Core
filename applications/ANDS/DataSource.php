@@ -20,6 +20,18 @@ class DataSource extends Model
         return $this->hasMany(DataSourceAttribute::class, "data_source_id", "data_source_id");
     }
 
+    public function attributes()
+    {
+        return $this->dataSourceAttributes()->get()->map(function($item){
+           return [$item->attribute => $item->value];
+        })->collapse();
+    }
+
+    public function harvest()
+    {
+        return $this->hasOne(Harvest::class, "data_source_id", "data_source_id");
+    }
+
     public function attr($key)
     {
         return DataSourceAttribute::where('data_source_id', $this->data_source_id)
@@ -84,4 +96,5 @@ class DataSource extends Model
 
         return DataSourceLog::create($logContent);
     }
+
 }

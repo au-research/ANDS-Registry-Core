@@ -54,7 +54,7 @@ class Data_source extends MX_Controller {
 			ds_acl_enforce($id);
 			$ds = $this->ds->getByID($id);
 			// Should look at updating stats
-			// $ds->updateStats();
+            $ds->updateStats();
 			$dataSources = array();
 			$dataSources[] = $ds;
 			// $this->benchmark->mark('code_end');

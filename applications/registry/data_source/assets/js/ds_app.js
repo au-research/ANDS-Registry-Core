@@ -5,6 +5,9 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 				if(!id) id='';
 				return $http.get(base_url+'data_source/get/'+id).then(function(response){return response.data});
 			},
+            get_task: function(id) {
+			    return $http.get(api_url+'task/'+id).then(function(response){return response.data});
+            },
 			list_files: function(id) {
 				return $http.get(base_url+'import/list_files/'+id).then(function(response){return response.data});
 			},
@@ -530,9 +533,9 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 		if (typeof socket_url == 'undefined' || socket_url == "") return;
 
-		var socket = io(socket_url);
+		$scope.socket = io(socket_url);
 
-		socket.on('datasource.'+$scope.ds.id+'.harvest', function(msg){
+        $scope.socket.on('datasource.'+$scope.ds.id+'.harvest', function(msg){
 		    try {
                 var harvest = JSON.parse(msg);
                 $scope.harvester = harvest;
@@ -544,7 +547,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
             }
 		});
 
-        socket.on('datasource.'+$scope.ds.id+'.log', function(msg){
+        $scope.socket.on('datasource.'+$scope.ds.id+'.log', function(msg){
             try {
                 var log = JSON.parse(msg);
                 $scope.ds.logs.unshift(log);
@@ -574,6 +577,17 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			});
 		}
 	}
+
+	$scope.showTask = function() {
+	    ds_factory.get_task($scope.harvester.task_id).then(function(data){
+            $scope.task = data.data;
+            $('#task_content').modal('show');
+
+            $scope.socket.on('task.'+$scope.harvester.task_id, function(msg){
+                $scope.task.message.log.push(msg);
+            });
+        });
+    }
 
 	$scope.get_latest_log = function(click) {
 		$scope.ds.refreshing = true;
@@ -673,7 +687,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
         }
 
         try {
-            $scope.harvester.message = $scope.harvester.message.replace(/(\r\n|\n|\r)/gm,"");
+            // $scope.harvester.message = $scope.harvester.message.replace(/(\r\n|\n|\r)/gm,"");
             $scope.harvester.message = JSON.parse($scope.harvester.message);
 
             if($scope.harvester.status=='HARVESTING') {
@@ -693,7 +707,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
             }
 
         } catch (err) {
-            console.error(err, $scope.harvester.message);
+            // console.error(err, $scope.harvester.message);
         }
     }
 

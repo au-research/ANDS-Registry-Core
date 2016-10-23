@@ -832,7 +832,7 @@ class _data_source {
 
         foreach ($this->_CI->ro->valid_classes AS $class)
         {
-            $this->db->where(array('data_source_id'=>$this->id, 'class'=>$class));
+            $this->db->where(array('data_source_id'=>$this->id, 'class'=>$class))->where('status !=', 'DELETED');
             $this->setAttribute("count_$class", ($this->db->count_all_results('registry_objects') ?: "0"));
         }
 
@@ -845,7 +845,7 @@ class _data_source {
         {
             // SO MUCH repetitiveness ;-(
             $this->db->join('registry_object_attributes', 'registry_object_attributes.registry_object_id = registry_objects.registry_object_id');
-            $this->db->where(array('data_source_id'=>$this->id, 'attribute'=>'quality_level', 'value'=>$level));
+            $this->db->where(array('data_source_id'=>$this->id, 'attribute'=>'quality_level', 'value'=>$level))->where('status !=', 'DELETED');
             $this->setAttribute("count_$attribute_name", ($this->db->count_all_results('registry_objects') ?: "0"));
         }
         $this->save();

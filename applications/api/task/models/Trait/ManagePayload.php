@@ -93,9 +93,10 @@ trait ManagePayload
         
         if (!is_dir($path)) {
             $path = $path . '.xml';
+            $this->log('Loading payload from file: ' . $filePath);
             $this->loadPayloadFromFile($path);
         } else {
-            $this->log('Loading payload from directory: ' . $path);
+            // $this->log('Loading payload from directory: ' . $path);
             $directory = scandir($path);
             $files = array();
             foreach ($directory as $f) {
@@ -117,7 +118,6 @@ trait ManagePayload
      */
     private function loadPayloadFromFile($filePath)
     {
-        $this->log('Loading payload from file: ' . $filePath);
         if (!is_file($filePath)) {
             $this->log('File '. $filePath. " is not accessible");
             return false;
