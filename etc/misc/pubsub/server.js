@@ -1,11 +1,6 @@
 var fs = require('fs');
 require('dotenv').config();
 
-console.log( process.env );
-
-
-
-
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
