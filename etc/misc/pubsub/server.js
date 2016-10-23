@@ -7,8 +7,8 @@ var io = require('socket.io')(http);
 
 if (process.env.MODE == "HTTPS") {
     var andscred = {
-        key: fs.readFileSync('/etc/ssl/wildcard.ands.org.au.key'),
-        cert: fs.readFileSync('/etc/ssl/wildcard.ands.org.au.pem')
+        key: fs.readFileSync(process.env.SSL_KEY),
+        cert: fs.readFileSync(process.env.SSL_CERT)
     }
     var https = require('https').Server(andscred, app);
     var io = require('socket.io')(https);
@@ -39,7 +39,7 @@ if (process.env.MODE == "HTTP") {
     });
 } else if (process.env.MODE == "HTTPS") {
     https.listen(process.env.PORT, function() {
-        console.log( 'https on process.env.PORT' );
+        console.log( 'https on '+process.env.PORT );
     });
 }
 
