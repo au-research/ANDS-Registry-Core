@@ -110,7 +110,14 @@ class Doi_api
         // getting the values from GET
         $appID = $this->ci->input->get('app_id');
         $sharedSecret = $this->ci->input->get('shared_secret');
-        $manual = $this->ci->input->get('manual');
+
+        //determine if this call has been created by a mydois user interface call
+        session_start();
+        if(isset($_SESSION['token']) && $_SESSION['token']==$this->ci->input->get('token')) {
+            $manual = true ;
+        }else{
+            $manual = false;
+        }
 
         if(!$appID && isset($_SERVER['PHP_AUTH_USER'])) {
             $appID = $_SERVER['PHP_AUTH_USER'];
