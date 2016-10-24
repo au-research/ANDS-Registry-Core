@@ -93,7 +93,7 @@ trait ManagePayload
         
         if (!is_dir($path)) {
             $path = $path . '.xml';
-            $this->log('Loading payload from file: ' . $filePath);
+            $this->log('Loading payload from file: ' . $path);
             $this->loadPayloadFromFile($path);
         } else {
             // $this->log('Loading payload from directory: ' . $path);
