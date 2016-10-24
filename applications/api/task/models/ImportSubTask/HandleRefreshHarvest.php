@@ -55,7 +55,7 @@ class HandleRefreshHarvest extends ImportSubTask
         }
 
         // the total count of the records in the datasource should not be reduced by more than 20%
-        if ((1 - $this->toBeDeletedRecordCutOffRatio) <= (($afterRefreshRecordCount / $datasourceRecordBeforeCount))) {
+        if ((1 - $this->toBeDeletedRecordCutOffRatio) < (($afterRefreshRecordCount / $datasourceRecordBeforeCount))) {
             $this->log(count($recordsToDelete) . " records marked for deletion");
             $this->parent()->updateHarvest([
                 "importer_message" => count($recordsToDelete) . " records marked for deletion"
