@@ -9,8 +9,7 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\DataSource;
-use ANDS\Repository\DataSourceRepository;
-use ANDS\DataSourceAttribute;
+use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 class FinishImport extends ImportSubTask
