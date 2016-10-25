@@ -76,8 +76,11 @@ class TestProcessPayload extends UnitTest
     {
         $populateImportTask = $importTask->getTaskByName("PopulateImportOptions");
         $populateImportTask->run();
+        $importTask->saveSubTaskData($populateImportTask);
         $validateTask = $importTask->getTaskByName("ValidatePayload");
         $validateTask->run();
+        $importTask->saveSubTaskData($validateTask);
+        $importTask->saveSubTasks();
     }
 
 }

@@ -57,7 +57,7 @@ class ImportTask extends Task
             $this->runSubTask($nextTask);
             $this->saveSubTaskData($nextTask);
         }
-         $this->saveSubTasks();
+        $this->saveSubTasks();
         return true;
     }
 

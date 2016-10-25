@@ -86,6 +86,7 @@ class TestValidatePayload extends UnitTest
             'name' => 'ImportTask',
             'params' => 'ds_id=209&batch_id=593EB384AFFE59EAEB2CADE99E39454361C1C0AC'
         ])->initialiseTask();
+
         $task = $importTask->getTaskByName("ValidatePayload");
         return $task;
     }

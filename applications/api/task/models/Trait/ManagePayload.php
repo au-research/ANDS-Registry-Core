@@ -145,6 +145,7 @@ trait ManagePayload
     public function getHarvestedPath()
     {
         $harvestedContentDir = get_config_item('harvested_contents_path');
+        $harvestedContentDir = rtrim($harvestedContentDir, '/') . '/';
         return $harvestedContentDir . $this->getTaskData('dataSourceID') . '/' . $this->getTaskData('batchID');
     }
 
