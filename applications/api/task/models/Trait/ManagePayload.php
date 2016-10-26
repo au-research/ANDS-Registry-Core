@@ -11,6 +11,7 @@ use ANDS\Payload;
 trait ManagePayload
 {
     private $payloads = [];
+    public $skipLoading = false;
 
     /**
      * @param $key
@@ -110,6 +111,12 @@ trait ManagePayload
         return $this;
     }
 
+    public function skipLoadingPayload()
+    {
+        $this->skipLoading = true;
+        return $this;
+    }
+
     /**
      * Loading a filePath into the payloads
      * TODO: need a better file accessor than file_get_contents
@@ -119,7 +126,7 @@ trait ManagePayload
     private function loadPayloadFromFile($filePath)
     {
         if (!is_file($filePath)) {
-            $this->log('File '. $filePath. " is not accessible");
+            $this->addError('File '. $filePath. " is not accessible");
             return false;
         }
 

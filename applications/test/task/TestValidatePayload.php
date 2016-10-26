@@ -5,7 +5,9 @@ namespace ANDS\Test;
 
 use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use ANDS\API\Task\ImportTask;
+use ANDS\DataSource;
 use ANDS\Payload;
+use ANDS\Repository\DataSourceRepository;
 use ANDS\Util\XMLUtil;
 
 /**
@@ -70,7 +72,30 @@ class TestValidatePayload extends UnitTest
         $task = $this->getImportTask();
         $task->parent()->setBatchID("asdfasdfafds")->loadPayload();
         $task->run();
-        $this->assertEquals(1, count($task->parent()->getError()));
+        $this->assertGreaterThanOrEqual(count($task->parent()->getError()), 1);
+    }
+
+    /** @test **/
+    public function test_it_should_handle_invalid_doc_correctly()
+    {
+        $this->ci->config->set_item('harvested_contents_path', TEST_APP_PATH . 'core/data/');
+        $dataSource = DataSourceRepository::getByKey("AUTEST1");
+        $importTask = new ImportTask;
+        $importTask->init([
+            "name" => "This import task should fail gracefully",
+            "params" => "ds_id=$dataSource->data_source_id&batch_id=Invalid_XML_Document"
+        ]);
+
+        $importTask
+            ->skipLoadingPayload()
+            ->setPayload("Invalid_XML_Document", new Payload(TEST_APP_PATH . 'core/data/Invalid_XML_Document.xml'));
+
+        $importTask->initialiseTask()->enableRunAllSubTask();
+
+        $importTask->run();
+        $this->assertEquals("STOPPED", $importTask->getStatus());
+        $this->assertContains("XML does not pass validation", $importTask->getError());
+        $this->assertTrue($importTask->hasError());
     }
 
     /**
@@ -91,6 +116,12 @@ class TestValidatePayload extends UnitTest
         return $task;
     }
 
+
+    public function setUpBeforeClass()
+    {
+        $importTask = new ImportTask();
+        $importTask->initialiseTask();
+    }
 
     public function tearDown()
     {

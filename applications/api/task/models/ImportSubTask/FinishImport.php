@@ -44,7 +44,11 @@ class FinishImport extends ImportSubTask
     private function setHarvestTime()
     {
         $dataSource = $this->getDataSource();
-        $harvestMessage = json_decode($dataSource->getHarvest($this->parent()->harvestID)->message);
+
+        $harvestMessage = null;
+        if ($harvestID = $dataSource->getHarvest($this->parent()->harvestID)) {
+            $harvestMessage = json_decode($dataSource->getHarvest($this->parent()->harvestID)->message);
+        }
 
         if (isset($harvestMessage->start_utc)) {
             $this->harvestStarted = $harvestMessage->start_utc;

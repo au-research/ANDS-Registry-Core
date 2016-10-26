@@ -61,6 +61,12 @@ class Task
         $start = microtime(true);
 
         $this->hook_start();
+
+        if ($this->getStatus() === "STOPPED") {
+            $this->log("Task is STOPPED");
+            return;
+        }
+
         $this
             ->setStatus('RUNNING')
             ->setLastRun(date('Y-m-d H:i:s', time()))
@@ -342,7 +348,7 @@ class Task
      */
     public function getId()
     {
-        return $this->id;
+        return isset($this->id) ? $this->id : null;
     }
 
     /**

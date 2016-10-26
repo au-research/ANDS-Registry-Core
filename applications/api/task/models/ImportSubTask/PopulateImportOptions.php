@@ -17,8 +17,10 @@ class PopulateImportOptions extends ImportSubTask
 
         // save the Task ID to the harvest itself
         $harvest = $dataSource->harvest()->first();
-        $harvest->task_id = $this->parent()->getId();
-        $harvest->save();
+        if ($harvest && $this->parent()->getId()) {
+            $harvest->task_id = $this->parent()->getId();
+            $harvest->save();
+        }
 
         $dataSource->appendDataSourceLog(
             "Import Started". NL. "Task ID: ".$this->parent()->getId(),
@@ -82,12 +84,13 @@ class PopulateImportOptions extends ImportSubTask
     {
         if ($dataSource->attr('qa_flag') == DB_TRUE) {
             return 'SUBMITTED_FOR_ASSESSMENT';
-        } else {
-            if ($dataSource->attr('manual_publish') == DB_TRUE) {
-                return 'APPROVED';
-            } else {
-                return 'PUBLISHED';
-            }
         }
+
+        if ($dataSource->attr('manual_publish') == DB_TRUE) {
+            return 'APPROVED';
+        }
+
+        return 'PUBLISHED';
+
     }
 }

@@ -30,6 +30,16 @@ class UnitTest
         $this->reset();
     }
 
+    public function setUpBeforeClass()
+    {
+
+    }
+
+    public function tearDownAfterClass()
+    {
+
+    }
+
     public function setUp()
     {
 
@@ -65,6 +75,7 @@ class UnitTest
         try {
             $this->ci->load->library('unit_test');
             $this->ci->unit->init();
+            $this->setUpBeforeClass();
             $testableFunctions = get_class_methods($this);
             if ($specificTestFunction && method_exists($this, $specificTestFunction)) {
                 $testableFunctions = [$specificTestFunction];
@@ -83,6 +94,7 @@ class UnitTest
                     }
                 }
             }
+            $this->tearDownAfterClass();
         } catch (\Exception $e) {
             $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
         }

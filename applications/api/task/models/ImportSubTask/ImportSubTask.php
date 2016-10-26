@@ -76,7 +76,7 @@ class ImportSubTask extends Task
 
             $dataSource = DataSource::find($this->parent()->dataSourceID);
             if (!$dataSource) {
-                $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
+                $this->parent()->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
                 return;
             }
             $this->dataSource = $dataSource;

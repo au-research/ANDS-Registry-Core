@@ -40,13 +40,16 @@ class ImportTask extends Task
     public function run_task()
     {
         $this->log('Import Task started');
+
         $this->initialiseTask();
 
         if ($this->runAll) {
             foreach ($this->getSubtasks() as $task){
-                $nextTask = $this->constructTaskObject($task);
-                $this->runSubTask($nextTask);
-                $this->saveSubTaskData($nextTask);
+                if ($this->getStatus() !== "STOPPED") {
+                    $nextTask = $this->constructTaskObject($task);
+                    $this->runSubTask($nextTask);
+                    $this->saveSubTaskData($nextTask);
+                }
             }
         } else {
             $nextTask = $this->getNextTask();
@@ -72,6 +75,10 @@ class ImportTask extends Task
 
     public function hook_end()
     {
+        if ($this->getStatus() === "STOPPED") {
+            return;
+        }
+
         if ($nextTask = $this->getNextTask()) {
             $this->setStatus("PENDING")->save();
         }
@@ -252,8 +259,11 @@ class ImportTask extends Task
         $this
             ->bootEloquentModels()
             ->loadParams()
-            ->loadSubTasks()
-            ->loadPayload();
+            ->loadSubTasks();
+
+        if ($this->skipLoading === false) {
+            $this->loadPayload();
+        }
 
         return $this;
     }

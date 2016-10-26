@@ -25,26 +25,35 @@ class ValidatePayload extends ImportSubTask
             // this task requires unvalidated payload
             $path = $payload->getPath();
             $xml = $payload->getContentByStatus($this->payloadSource);
-            $this->registryObjectReceived += XMLUtil::countElementsByName($xml, "registryObject");
-            $this->log("Validation started for $path");
-            $this->parent()->updateHarvest([
-                'message' => json_encode(['progress' => ['total' => count($this->parent()->getPayloads()), 'current' => $counter]], true),
-                'importer_message'=>"Validating $path"]
-            );
 
             // validate RIFCS schema
             try {
+                $this->log("Validation started for $path");
+                $this->parent()->updateHarvest([
+                        'message' => json_encode([
+                            'progress' => [
+                                'total' => count($this->parent()->getPayloads()),
+                                'current' => $counter
+                            ]
+                        ], true),
+                        'importer_message'=>"Validating $path"]
+                );
+                $this->registryObjectReceived += XMLUtil::countElementsByName($xml, "registryObject");
                 $xml = XMLUtil::escapeXML($xml);
                 $xml = XMLUtil::cleanNameSpace($xml);
                 $xml = $this->validatePayloadSchema($xml);
             } catch (Exception $e) {
-                // $this->addError("Validation error found: ". $e->getMessage());
-                $xml = $this->attemptIndividualValidation($xml);
+                try {
+                    $xml = $this->attemptIndividualValidation($xml);
+                } catch (Exception $e) {
+                    $this->addError("Validation error found: ". $e->getMessage());
+                    $xml = false;
+                }
             }
 
             // xml is processed individually and there's none that pass validation
             if ($xml === false) {
-                $this->addError("XML does not pass validation");
+                $this->parent()->stoppedWithError("XML does not pass validation");
                 return;
             }
 
@@ -81,8 +90,14 @@ class ValidatePayload extends ImportSubTask
     public function attemptIndividualValidation($xml)
     {
         $validated = [];
-        $sxml = XMLUtil::getSimpleXMLFromString($xml);
-        $sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
+        try {
+            $sxml = XMLUtil::getSimpleXMLFromString($xml);
+            $sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
+        } catch (Exception $e) {
+//            $this->parent()->stoppedWithError($e->getMessage());
+            throw new Exception($e->getMessage());
+            return;
+        }
 
         $attempt = 0;
         foreach($sxml->xpath('//ro:registryObject') AS $registryObject) {
