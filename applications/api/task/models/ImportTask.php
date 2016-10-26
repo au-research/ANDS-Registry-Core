@@ -8,6 +8,7 @@
 namespace ANDS\API\Task;
 
 use ANDS\API\Task\ImportSubTask\ImportSubTask;
+use ANDS\DataSource;
 use ANDS\DataSource\Harvest as Harvest;
 use ANDS\Util\NotifyUtil;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -412,5 +413,14 @@ class ImportTask extends Task
             "datasource.".$this->dataSourceID.'.harvest',
             json_encode(Harvest::find($this->harvestID), true)
         );
+    }
+
+    public function stoppedWithError($message)
+    {
+        $this->updateHarvest(['status' => 'STOPPED', 'importer_message'=> $message, 'message' => '']);
+        if ($dataSource = DataSource::find($this->dataSourceID)) {
+            $dataSource->appendDataSourceLog("IMPORT STOPPED WITH ERROR". NL . $message, "error", "IMPORTER");
+        }
+        parent::stoppedWithError($message);
     }
 }

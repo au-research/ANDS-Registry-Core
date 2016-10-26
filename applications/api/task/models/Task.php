@@ -147,7 +147,7 @@ class Task
     {
         $this
             ->setStatus("STOPPED")
-            ->log("Task stopped with error " . $error)
+            ->log("Task stopped with error: " . $error)
             ->addError($error)
             ->save();
         return $this;
