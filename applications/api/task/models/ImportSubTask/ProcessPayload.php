@@ -51,12 +51,12 @@ class ProcessPayload extends ImportSubTask
             }
 
             $xmlPayload = implode("", $processed);
-            if ($xmlPayload) {
-                $payload->writeContentByStatus(
-                    $this->payloadOutput, XMLUtil::wrapRegistryObject($xmlPayload)
-                );
-                $this->log('Process stage 1 completed for '. $path);
-            } else {
+            $payload->writeContentByStatus(
+                $this->payloadOutput, XMLUtil::wrapRegistryObject($xmlPayload)
+            );
+            $this->log('Process stage 1 completed for '. $path);
+
+            if (trim($xmlPayload) == "") {
                 $this->log("Payload $path contains no importable records");
                 $this->parent()->deletePayload($path);
             }

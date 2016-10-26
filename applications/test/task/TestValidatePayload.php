@@ -98,6 +98,28 @@ class TestValidatePayload extends UnitTest
         $this->assertTrue($importTask->hasError());
     }
 
+    /** @test **/
+    public function test_it_should_handle_no_document_correctly()
+    {
+        $this->ci->config->set_item('harvested_contents_path', TEST_APP_PATH . 'core/data/');
+        $dataSource = DataSourceRepository::getByKey("AUTEST1");
+        $importTask = new ImportTask;
+        $importTask->init([
+            "name" => "This import task should fail gracefully",
+            "params" => "ds_id=$dataSource->data_source_id&batch_id=Invalid_XML_Document"
+        ]);
+
+        $importTask
+            ->skipLoadingPayload()
+            ->setPayload("No_Document", new Payload(TEST_APP_PATH. 'core/data/No_Document.xml'));
+
+        $importTask->initialiseTask()->enableRunAllSubTask();
+
+        $importTask->run();
+
+        $this->assertFalse($importTask->hasError());
+    }
+
     /**
      * Helper
      * Return an ImportSubTask for ValidatePayload for use each test
@@ -121,6 +143,16 @@ class TestValidatePayload extends UnitTest
     {
         $importTask = new ImportTask();
         $importTask->initialiseTask();
+    }
+
+    public function tearDownAfterClass()
+    {
+        $fileToRemove = ['No_Document.xml.processed', 'No_Document.xml.validated'];
+        foreach ($fileToRemove as $file) {
+            if (file_exists(TEST_APP_PATH.'core/data/'.$file)) {
+                unlink(TEST_APP_PATH.'core/data/'.$file);
+            }
+        }
     }
 
     public function tearDown()

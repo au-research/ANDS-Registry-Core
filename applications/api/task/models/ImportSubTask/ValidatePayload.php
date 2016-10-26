@@ -57,7 +57,6 @@ class ValidatePayload extends ImportSubTask
                 return;
             }
 
-            XMLUtil::countElementsByName($xml, "registryObject");
             $payload->writeContentByStatus(
                 $this->payloadOutput, XMLUtil::wrapRegistryObject($xml)
             );
@@ -86,6 +85,7 @@ class ValidatePayload extends ImportSubTask
      *
      * @param $xml
      * @return string
+     * @throws Exception
      */
     public function attemptIndividualValidation($xml)
     {
@@ -94,7 +94,6 @@ class ValidatePayload extends ImportSubTask
             $sxml = XMLUtil::getSimpleXMLFromString($xml);
             $sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
         } catch (Exception $e) {
-//            $this->parent()->stoppedWithError($e->getMessage());
             throw new Exception($e->getMessage());
             return;
         }
