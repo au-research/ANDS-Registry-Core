@@ -20,6 +20,7 @@ class IndexPortal extends ImportSubTask
         }
 
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
+        $this->parent()->getCI()->load->library('solr');
         $this->parent()->updateHarvest(["importer_message" => "Indexing ".count($this->parent()->getTaskData("importedRecords"))." records"]);
         $importedRecords = $this->parent()->getTaskData("importedRecords");
 
@@ -30,11 +31,15 @@ class IndexPortal extends ImportSubTask
 
             // $ro->setMetadata('solr_doc', json_encode($index));
 
+            $this->log("Indexing ".$roID);
+
             $index = $ro->indexable_json();
-            $this->parent()->getCI()->solr->init()->setCore('portal')->addDoc(json_encode([$index]));
+            // TODO: Check response
+            $this->parent()->getCI()->solr->init()->setCore('portal')->add_json(json_encode([$index]));
 
             $relationIndex = $ro->getRelationshipIndex();
-            $this->parent()->getCI()->solr->init()->setCore('relations')->addDoc(json_encode([$relationIndex]));
+            // TODO: Check response
+            $this->parent()->getCI()->solr->init()->setCore('relations')->add_json(json_encode([$relationIndex]));
         }
 
         $this->parent()->getCI()->solr->init()->setCore('portal')->commit();

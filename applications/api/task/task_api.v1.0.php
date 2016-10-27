@@ -59,6 +59,9 @@ class Task_api
                 break;
             case 'exe' :
                 if ($this->params['identifier']) {
+                    if ($this->ci->input->get('subtask')) {
+                        return $this->taskManager->runTask($this->params['identifier'], $this->ci->input->get('subtask'));
+                    }
                     return $this->taskManager->runTask($this->params['identifier']);
                 } else {
                     throw new Exception("A task ID is required");
