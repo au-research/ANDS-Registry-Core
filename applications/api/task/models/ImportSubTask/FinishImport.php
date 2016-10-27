@@ -76,10 +76,10 @@ class FinishImport extends ImportSubTask
     }
 
     public function setHarvestStatus($dataSource){
-        $harvestFrequency = $dataSource->getDataSourceAttribute("harvest_frequency")->value;
-        $harvestDate = strtotime($dataSource->getDataSourceAttribute("harvest_date")->value);
+        $harvestFrequency = $dataSource->getDataSourceAttributeValue("harvest_frequency");
+        $harvestDate = strtotime($dataSource->getDataSourceAttributeValue("harvest_date"));
 
-        if($harvestFrequency  == 'once only' || $harvestFrequency == ''){
+        if($harvestFrequency  == 'once only' || $harvestFrequency == '' || $harvestFrequency == null){
             $this->parent()->updateHarvest(['status'=>'COMPLETED', "importer_message" => ""]);
             return;
         }

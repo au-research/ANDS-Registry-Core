@@ -66,6 +66,16 @@ class DataSource extends Model
             ->where('attribute', $key)->first();
     }
 
+    public function getDataSourceAttributeValue($key)
+    {
+        $attribute = $this->getDataSourceAttribute($key);
+        if ($attribute !== null) {
+            return $attribute->value;
+        }
+
+        return null;
+    }
+
     public function getHarvest($harvest_id){
         return Harvest::where('data_source_id', $this->data_source_id)->where('harvest_id', $harvest_id)->first();
     }
