@@ -52,7 +52,7 @@ class DataSource extends Model
             $existingAttribute->value = $value;
             return $existingAttribute->save();
         } else {
-            return RegistryObjectAttribute::create([
+            return DataSourceAttribute::create([
                 'data_source_id' => $this->data_source_id,
                 'attribute' => $key,
                 'value' => $value
