@@ -158,6 +158,22 @@ class UnitTest
         return $this;
     }
 
+
+    /**
+     * Assert if left and right is different
+     *
+     * @param $left
+     * @param $right
+     * @return $this
+     */
+    public function assertNotEquals($left, $right)
+    {
+        $this->getReflectorInfo();
+        $this->ci->unit->run($left, $right, $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
     /**
      * Assert object is of a right instance
      *

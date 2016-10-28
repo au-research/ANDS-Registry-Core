@@ -59,6 +59,70 @@ class TestIngestTask extends UnitTest
         $this->assertEquals('PUBLISHED', $record->status);
     }
 
+
+    /** @test **/
+    public function test_it_should_create_a_new_draft_if_softdeleted_record_existed()
+    {
+        // if we have a published record
+        $publishedRecordId = null;
+        $this->ci->config->set_item('harvested_contents_path', TEST_APP_PATH . 'core/data/');
+        $importTask = new ImportTask();
+        $importTask->init([
+            'params'=>'ds_id=209&batch_id=AUTestingRecords_ds209_10_different_records'
+        ])->setCI($this->ci)->initialiseTask();
+        $importTask->enableRunAllSubTask()->run();
+
+        // now we have a PUBLISHED record
+        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecordsjcu.edu.au/collection/enmasse/263');
+
+        $this->assertEquals('PUBLISHED', $record->status);
+        $publishedRecordId = $record->registry_object_id;
+        // schedule a processDelete task and run it
+        $importTask = new ImportTask();
+        $importTask->init([
+            'name' => 'ImportTask',
+            'params' => 'ds_id=209&batch_id=AUTestingRecords_ds209_10_different_records'
+        ])->setCI($this->ci)->initialiseTask();
+        $importTask->setTaskData('deletedRecords', [$publishedRecordId]);
+        $deleteTask = $importTask->getTaskByName("ProcessDelete");
+        $deleteTask->run();
+
+        // We shouldn't have a published record
+        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecordsjcu.edu.au/collection/enmasse/263');
+        $this->assertFalse($record);
+
+        // we should have a deleted record
+        $record = RegistryObjectsRepository::getDeletedRecord('AUTestingRecordsjcu.edu.au/collection/enmasse/263');
+        $this->assertTrue($record);
+        $this->assertEquals('DELETED', $record->status);
+        $this->assertEquals($publishedRecordId, $record->registry_object_id);
+
+        // we import the exact same record with APPROVED status
+        $importTask = new ImportTask();
+        $importTask->init([
+            'params'=>'ds_id=209&batch_id=AUTestingRecords_ds209_10_different_records&targetStatus=APPROVED'
+        ])->setCI($this->ci)->initialiseTask();
+        $importTask->enableRunAllSubTask()->run();
+
+        $record = RegistryObjectsRepository::getByKeyAndStatus('AUTestingRecordsjcu.edu.au/collection/enmasse/263', 'APPROVED');
+
+
+        $this->assertTrue($record);
+        $this->assertEquals('APPROVED', $record->status);
+
+        //$this->assertNotEquals($publishedRecordId, $record->registry_object_id);
+
+        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecordsjcu.edu.au/collection/enmasse/263');
+        $this->assertFalse($record);
+
+        $record = RegistryObjectsRepository::getDeletedRecord('AUTestingRecordsjcu.edu.au/collection/enmasse/263');
+        $this->assertTrue($record);
+        $this->assertEquals('DELETED', $record->status);
+        $this->assertEquals($publishedRecordId, $record->registry_object_id);
+    }
+
+
+
     /** @test **/
     public function test_it_should_create_a_publish_record_when_a_draft_already_exists()
     {

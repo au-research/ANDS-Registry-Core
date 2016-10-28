@@ -1,0 +1,913 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedReverseIMOS/c8266ba4-229f-321e-b93c-713089727935</key>
+    <originatingSource>
+Atlantic Oceanographic and Meteorological Laboratory (AOML)
+</originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=c8266ba4-229f-321e-b93c-713089727935
+AUTxxd3</identifier>
+      <name type="primary">
+        <namePart>(AUTestingRecords) (First LVL 2) AOML - Argo float, WMO 5903716</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:07:55</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecords3NestedReverseIMOS/6a24425c-fbb2-3591-8838-a6a56cd52ac1</key>
+        <relation type="hasPart"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=c8266ba4-229f-321e-b93c-713089727935
+</value>
+          </electronic>
+        </address>
+      </location>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full">
+This dataset contains temperature, salinity and pressure data for all profiles of the Argo float 5903716 managed by the Atlantic Oceanographic and Meteorological Laboratory (AOML). Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 5903716 was first deployed on the 2012-02-19T02:14:00 at launch location (Latitude : -65.99666595458984 ; Longitude : 173.24166870117188). The variables available for this Argo float are : Temperature, Practical Salinity and Pressure. The last location of the Argo float was transmitted on the 2012-04-16T05:35:10 at the following location (Latitude : -66.329 ; Longitude : 173.381).
+</description>
+      <coverage>
+        <spatial type="iso19139dcmiBox">
+northlimit=-65.733; southlimit=-66.37; westlimit=172.989; eastLimit=173.687; projection=WGS84
+</spatial>
+        <spatial type="text">
+northlimit=-65.733; southlimit=-66.37; westlimit=172.989; eastLimit=173.687; projection=WGS84
+</spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2012-02-19T02:14:00</date>
+          <date type="dateTo" dateFormat="W3CDTF">2012-04-16T05:35:10</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri">
+http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/aoml/5903716/catalog.html
+AUTxxd3</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement>
+Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net). Argo is a pilot programme of the Global Ocean Observing System."
+</rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri">
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=c8266ba4-229f-321e-b93c-713089727935
+AUTxxd3</identifier>
+          <title>AOML - Argo float, WMO 5903716</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart>(AUTestingRecords)
+Atlantic Oceanographic and Meteorological Laboratory (AOML)
+</namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedReverseIMOS/71bd7e16-7333-3e74-aaeb-3039b283ff14</key>
+    <originatingSource>
+Atlantic Oceanographic and Meteorological Laboratory (AOML)
+</originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=71bd7e16-7333-3e74-aaeb-3039b283ff14AUTxxd3</identifier>
+      <name type="primary">
+        <namePart>(AUTestingRecords) (Second LVL 2) (Internal RelatedInfo) AOML - Argo float, WMO 5901327</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:07:16</date>
+      </dates>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=71bd7e16-7333-3e74-aaeb-3039b283ff14
+</value>
+          </electronic>
+        </address>
+      </location>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full">
+This dataset contains temperature, salinity and pressure data for all profiles of the Argo float 5901327 managed by the Atlantic Oceanographic and Meteorological Laboratory (AOML). Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 5901327 was first deployed on the 2006-11-12T19:24:00 at launch location (Latitude : -44.9900016784668 ; Longitude : 154.8766632080078). The variables available for this Argo float are : Temperature, Practical Salinity and Pressure. The last location of the Argo float was transmitted on the 2013-03-31T02:00:43 at the following location (Latitude : -45.598 ; Longitude : -127.141).
+</description>
+      <coverage>
+        <spatial type="iso19139dcmiBox">
+northlimit=-44.746; southlimit=-55.477; westlimit=152.523; eastLimit=-123.44899999999998; projection=WGS84
+</spatial>
+        <spatial type="text">
+northlimit=-44.746; southlimit=-55.477; westlimit=152.523; eastLimit=-123.44899999999998; projection=WGS84
+</spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2006-11-12T17:45:00</date>
+          <date type="dateTo" dateFormat="W3CDTF">2013-03-31T02:00:43</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri">
+http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/aoml/5901327/catalog.html
+AUTxxd3</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement>
+Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net). Argo is a pilot programme of the Global Ocean Observing System."
+</rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri">
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=71bd7e16-7333-3e74-aaeb-3039b283ff14
+AUTxxd3</identifier>
+          <title>AOML - Argo float, WMO 5901327</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart>(AUTestingRecords)
+Atlantic Oceanographic and Meteorological Laboratory (AOML)
+</namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+      <relatedInfo type="collection">
+        <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=78748469-2dcf-4104-8f6d-64b3155e5b35AUTxxd3</identifier>
+        <relation type="isPartOf"/>
+        <title>Lvl 1</title>
+      </relatedInfo>
+    </collection>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedReverseIMOS/39692483-c45e-320f-8117-64e3d661ed05</key>
+    <originatingSource>
+Atlantic Oceanographic and Meteorological Laboratory (AOML)
+</originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=39692483-c45e-320f-8117-64e3d661ed05
+AUTxxd3</identifier>
+      <name type="primary">
+        <namePart>(AUTestingRecords) (Second LVL 3) (RelatedObject Internal) AOML - Argo float, WMO 5903813</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:08:00</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedReverseIMOS/71bd7e16-7333-3e74-aaeb-3039b283ff14</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=39692483-c45e-320f-8117-64e3d661ed05
+</value>
+          </electronic>
+        </address>
+      </location>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full">
+This dataset contains temperature, salinity and pressure data for all profiles of the Argo float 5903813 managed by the Atlantic Oceanographic and Meteorological Laboratory (AOML). Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 5903813 was first deployed on the 2011-10-27T10:00:00 at launch location (Latitude : -51.49300003051758 ; Longitude : 126.49299621582031). The variables available for this Argo float are : Temperature, Practical Salinity and Pressure. The last location of the Argo float was transmitted on the 2014-05-29T03:03:42 at the following location (Latitude : -51.133 ; Longitude : -178.563).
+</description>
+      <coverage>
+        <spatial type="iso19139dcmiBox">
+northlimit=-47.289; southlimit=-55.788; westlimit=126.493; eastLimit=-176.538; projection=WGS84
+</spatial>
+        <spatial type="text">
+northlimit=-47.289; southlimit=-55.788; westlimit=126.493; eastLimit=-176.538; projection=WGS84
+</spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2011-09-22T00:00:00</date>
+          <date type="dateTo" dateFormat="W3CDTF">2014-05-29T03:03:42</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri">
+http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/aoml/5903813/catalog.html
+AUTxxd3</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement>
+Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net). Argo is a pilot programme of the Global Ocean Observing System."
+</rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri">
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=39692483-c45e-320f-8117-64e3d661ed05
+AUTxxd3</identifier>
+          <title>AOML - Argo float, WMO 5903813</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart>(AUTestingRecords)
+Atlantic Oceanographic and Meteorological Laboratory (AOML)
+</namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsGoToData1IMOS/87c2a63c-a33e-45e0-94f9-b3fe4887f0e6</key>
+    <originatingSource>Integrated Marine Observing System (IMOS)</originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">
+http://data.aims.gov.au/metadataviewer/faces/view.xhtml?uuid=87c2a63c-a33e-45e0-94f9-b3fe4887f0e6
+AUTxsaxd3</identifier>
+      <name type="primary">
+        <namePart>(AUTestingRecords) Collection with single electronic URL and target 'directDownload'</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2010-08-13</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsGoToData1IMOS/6adcb039-d581-4296-bbb0-895f25977ef9</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url" target="directDownload">
+            <value>
+http://data.aims.gov.au/metadataviewer/faces/view.xhtml?uuid=87c2a63c-a33e-45e0-94f9-b3fe4887f0e6
+</value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsGoToData1IMOS/Bainbridge,Scott,Mr</key>
+        <relation type="pointOfContact"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsGoToData1IMOS/IntegratedMarineObservingSystem(IMOS)</key>
+        <relation type="resourceProvider"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsGoToData1IMOS/AustralianInstituteofMarineScience(AIMS)</key>
+        <relation type="pointOfContact"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">climatologyMeteorologyAtmosphere</subject>
+      <subject type="local">environment</subject>
+      <subject type="local">Oceans - Coastal Processes - Coral Reefs</subject>
+      <subject type="local">Oceans - Ocean Winds - Surface Winds</subject>
+      <subject type="local">
+Atmosphere - Atmospheric Temperature - Air Temperature
+</subject>
+      <subject type="local">
+Atmosphere - Atmospheric Pressure - Atmospheric Pressure Measurements
+</subject>
+      <subject type="local">Atmosphere - Atmospheric Water Vapor - Humidity</subject>
+      <subject type="local">Atmosphere - Atmospheric Winds - Surface Winds</subject>
+      <subject type="local">Atmosphere - Precipitation - Rain</subject>
+      <subject type="local">Data Loggers</subject>
+      <subject type="local">Thermistors</subject>
+      <subject type="local">Meteorological Instruments</subject>
+      <subject type="local">
+EARTH SCIENCES - Oceanography - Physical Oceanography
+</subject>
+      <subject type="local">
+EARTH SCIENCES - Atmospheric Sciences - Meteorology
+</subject>
+      <subject type="anzsrc-for">04</subject>
+      <subject type="anzsrc-for">0405</subject>
+      <subject type="anzsrc-for">040503</subject>
+      <subject type="anzsrc-for">0401</subject>
+      <subject type="anzsrc-for">040107</subject>
+      <description type="full">
+The 'Facility for Automated Intelligent Monitoring of Marine Systems' (FAIMMS) is a facility of the Australian 'Integrated Marine Observing System' (IMOS) project. This data set was collected by the FAIMMS Great Barrier Reef Sensor Network and contains data from the following sensor deployments: There have been 2 deployments for the Rain Duration data set. Deployment Information for Rain Duration Data Interval: From 13 Aug 2010 Through 23 Feb 2012 Deployment Comments: Lizard Island Weather Station Rain Duration in seconds for that day: Vaisala WXT520 Weather Transmitted D4210001 Deployment Location: Lizard Island Weather Station Latitude: -14.6915 - Longitude: 145.466417 Sensor Description: Vaisala WXT510/WXT520 Weather Transmitter Sensor Manufacturer: Vaisala Sensor Model: WXT510 Deployment Information for Rain Duration Data Interval: From 01 Mar 2012 Through 03 Feb 2014 Deployment Comments: added by auto deploy Deployment Location: Lizard Island Weather Station Latitude: -14.6915 - Longitude: 145.466417 Sensor Description: Vaisala WXT510/WXT520 Weather Transmitter Sensor Manufacturer: Vaisala Sensor Model: WXT510
+</description>
+      <coverage>
+        <spatial type="iso19139dcmiBox">
+northlimit=-14.6915; southlimit=-14.6915; westlimit=145.466417; eastLimit=145.466417
+</spatial>
+        <spatial type="text">
+northlimit=-14.6915; southlimit=-14.6915; westlimit=145.466417; eastLimit=145.466417
+</spatial>
+      </coverage>
+      <relatedInfo type="service">
+        <identifier type="uri">
+http://data.aims.gov.au/aimsrtds/datatool.xhtml?qc=level0&amp;channels=3497
+AUTxsaxd3</identifier>
+        <relation type="isAvailableThrough"/>
+        <title>
+Unchecked Rain Duration data from 13 Aug 2010 until 03 Feb 2014 (Raw Data)
+</title>
+      </relatedInfo>
+      <rights>
+        <licence type="CC-BY" rightsUri="http://creativecommons.org/licenses/by/2.5/au/">Creative Commons Attribution</licence>
+      </rights>
+      <rights>
+        <rightsStatement>
+The citation in a list of references is: "IMOS [year-of-data-download], [Title], [data-access-URL], accessed [date-of-access].
+</rightsStatement>
+      </rights>
+      <rights>
+        <rightsStatement>
+Any users of IMOS data are required to clearly acknowledge the source of the material in the format: "Data was sourced from the Integrated Marine Observing System (IMOS) - IMOS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy and the Super Science Initiative." If relevant, also credit other organisations involved in collection of this particular datastream (as listed in 'credit' in the metadata record).
+</rightsStatement>
+      </rights>
+      <rights>
+        <rightsStatement>
+Data, products and services from IMOS are provided "as is" without any warranty as to fitness for a particular purpose.
+</rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri">
+http://data.aims.gov.au/metadataviewer/faces/view.xhtml?uuid=87c2a63c-a33e-45e0-94f9-b3fe4887f0e6
+AUTxsaxd3</identifier>
+          <title>
+IMOS FAIMMS Sensor Network data - Lizard Island Weather Station Rain Duration - From 13 Aug 2010 To 03 Feb 2014
+</title>
+          <date type="created">2010</date>
+          <contributor>
+            <namePart>(AUTestingRecords)Integrated Marine Observing System (IMOS)</namePart>
+          </contributor>
+          <publisher>Australian Institute of Marine Science (AIMS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsGoToData1IMOS/c36fd2b3-b2ba-3e03-e044-00144f7bc0f4</key>
+    <originatingSource>
+Commonwealth Scientific and Industrial Research Organisation (CSIRO)
+</originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=c36fd2b3-b2ba-3e03-e044-00144f7bc0f4
+AUTxsaxd3</identifier>
+      <name type="primary">
+        <namePart>(AUTestingRecords) Collection with single electronic URL and electronic Title</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2004-07-27</date>
+      </dates>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=c36fd2b3-b2ba-3e03-e044-00144f7bc0f4
+</value>
+            <title>My data access page</title>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsGoToData1IMOS/MsLesleyClementson</key>
+        <relation type="pointOfContact"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsGoToData1IMOS/CSIROOceans&amp;AtmosphereFlagship-Hobart</key>
+        <relation type="pointOfContact"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Hydrosphere | Water Quality | Chlorophyll</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Chlorophyll</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Pigments</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Suspended Solids</subject>
+      <subject type="local">Oceans | Ocean Optics | Ocean Color</subject>
+      <description type="full">
+This record contains data generated from samples collected in Moreton Bay between 27 July and 02 August 2004. The data can be used for Ocean Colour sensor validation. Parameters measured are the concentration of chlorophyll and carotenoid pigments and retrieved chlorophyll a estimate, the absorption coefficient for dissolved (CDOM) particulate (a/p) and detrital or non-algal (a/d) components of the water column. 19 stations were sampled. The data was used primarily to validate ocean colour sensors MERIS, MODIS and SeaWIFs and the SST sensor AATSR. Samples were collected and analysed for pigments, total suspended solids (TSS) and absorption coefficient, dissolved and particulate. CLW deployed instruments RAMSES, AC-9, Hydroscat and Hydrorad. Source: http://www.marine.csiro.au/marq/edd_search.Browse_Citation?txtSession=9018
+</description>
+      <coverage>
+        <spatial type="iso19139dcmiBox">
+northlimit=-27.12; southlimit=-27.53; westlimit=153; eastLimit=153.6
+</spatial>
+        <spatial type="text">
+northlimit=-27.12; southlimit=-27.53; westlimit=153; eastLimit=153.6
+</spatial>
+      </coverage>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri">
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=c36fd2b3-b2ba-3e03-e044-00144f7bc0f4
+AUTxsaxd3</identifier>
+          <title>
+Moreton Bay, July 2004, HPLC Pigment and Ocean Colour Data
+</title>
+          <date type="created">2004</date>
+          <contributor>
+            <namePart>(AUTestingRecords)CSIRO Oceans &amp; Atmosphere Flagship - Hobart</namePart>
+          </contributor>
+          <publisher>
+Commonwealth Scientific and Industrial Research Organisation (CSIRO)
+</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsGoToData1IMOS/c1344979-f702-0916-e044-00144f7bc0f4</key>
+    <originatingSource>
+Commonwealth Scientific and Industrial Research Organisation (CSIRO)
+</originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=c1344979-f702-0916-e044-00144f7bc0f4
+AUTxsaxd3</identifier>
+      <name type="primary">
+        <namePart>(AUTestingRecords) Collection with relatedObject service with relation 'supports' and relation URL (service data access) </namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2008-06</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsRelatedService235--09</key>
+        <relation type="supports">
+          <url>http://www.ands.org.au</url>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsGoToData1IMOS/CSIROOceans&amp;AtmosphereFlagship-Hobart</key>
+        <relation type="pointOfContact"/>
+      </relatedObject>
+      <subject type="local">biota</subject>
+      <subject type="local">Biosphere | Aquatic Habitat | Coastal Habitat</subject>
+      <subject type="local">Biosphere | Microbiota Taxonomy | Microalgae</subject>
+      <subject type="local">Biosphere | Microbiota Taxonomy | Phytoplankton</subject>
+      <subject type="local">Biosphere | Microbiota Taxonomy | Zooplankton</subject>
+      <subject type="local">Oceans | Marine Biology | Marine Microbiota</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Organic Matter</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/Density | Salinity</subject>
+      <description type="full">
+The Australian Continuous Plankton Recorder (AusCPR) survey is a joint project of CSIRO Marine and Atmospheric Research (CMAR) and the Australian Antarctic Division (AAD) to measure plankton communities as a guide to the health of Australia's oceans. The biomass is analysed from the same segment from which the zooplankton is analysed. All the plankton is washed onto a pre-weighed filter. This is left in an oven at 60 degrees C for 24-48 hours. It is reweighed to give the dry weight. It is advised that anyone using the data should contact the project contact person. The aims of the AusCPR survey are to: * map plankton biodiversity and distribution * develop the first long-term plankton baseline for Australian waters * document plankton changes in response to climate change * provide indices for fisheries management * detect harmful algal blooms * validate satellite remote sensing * initialise and test ecosystem models Servicing and maintenance of the CPRs and analysis of the samples for the AusCPR survey will be carried out by staff based at the CMAR laboratories in Queensland and at the AAD in Hobart. The project was funded by the Integrated Marine Observing System (IMOS) and falls with the Ships of Opportunity facility. Data storage and access is planned to be interoperable with other national and international programs through the IMOS eMarine Information Infrastructure (eMII). Results from the AusCPR survey are available through the IMOS data portal: http://imos.aodn.org.au/webportal/ This data is freely available but please acknowledge all relevant parties, as detailed in acknowledgement section. Source: http://www.marine.csiro.au/marq/edd_search.Browse_Citation?txtSession=9008
+</description>
+      <coverage>
+        <spatial type="iso19139dcmiBox">
+northlimit=-10; southlimit=-65; westlimit=105; eastLimit=175; projection=WGS84
+</spatial>
+        <spatial type="text">
+northlimit=-10; southlimit=-65; westlimit=105; eastLimit=175; projection=WGS84
+</spatial>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri">
+http://imos.org.au/australiancontinuousplankton.html
+AUTxsaxd3</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>
+Australian Continuous Plankton Recorder (AusCPR) Project - Home Page
+</title>
+        <notes>
+Australian Continuous Plankton Recorder (AusCPR) Project - Home Page
+</notes>
+      </relatedInfo>
+      <relatedInfo type="website">
+        <identifier type="uri">
+http://imosmest.aodn.org.au/geonetwork/srv/en/metadata.show?uuid=c017bda3-8a03-4b41-8a07-c34c41bda1f0
+AUTxsaxd3</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>
+Link to SOOP Continuous Plankton Recorder (AusCPR) Sub-Facility metadata record
+</title>
+        <notes>
+Link to SOOP Continuous Plankton Recorder (AusCPR) Sub-Facility metadata record
+</notes>
+      </relatedInfo>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri">
+http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=c1344979-f702-0916-e044-00144f7bc0f4
+AUTxsaxd3</identifier>
+          <title>IMOS - AusCPR: Biomass (mg/m3)</title>
+          <date type="created">2008</date>
+          <contributor>
+            <namePart>(AUTestingRecords)CSIRO Oceans &amp; Atmosphere Flagship - Hobart</namePart>
+          </contributor>
+          <publisher>
+Commonwealth Scientific and Industrial Research Organisation (CSIRO)
+</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsjcu.edu.au/collection/enmasse/305</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/305AUT234.3.ods</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Collection to related to.
+          Microclimate monitoring of the Australian Wet Tropics rainforest at WU11A2 (145.04379546, -16.25913233, 1100.0m above MSL) collected by iButton Hygrochron
+        </namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/002a15b00c09129ccd990bdf1d3d6d4a
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/305/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2004-02-02T00:00:00Z</date>
+          <text>2004 - ongoing</text>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+          145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+        </spatial>
+      </coverage>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/collection/enmasse/2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasCollector"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasAssociationWith">
+          <description>Primary Contact</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/activities/15549</key>
+        <relation type="isOutputOf"/>
+      </relatedObject>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">environmental data</subject>
+      <subject type="local" xml:lang="en">microclimate</subject>
+      <subject type="anzsrc-for" xml:lang="en">050101</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960305</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+        Sensors used: - HOBO micro weather station - iButton Thermochron - iButton Hygrochron Hobo micro weather station data loggers, ibuttons and hygrobuttons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Air temperature and humidity sampling was conducted manually in relation to standardized vertebrate sampling quarterly from 2004 (ongoing). The HOBO data loggers and iButton Hygrochron were erected 1m from the ground 0.25 m squared. They were placed well within the forest out of public view and camouflage painted. Sensors associated with each logger measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity - Soil Temperature - Soil Moisture - Leaf wetness An iButton Thermochron was placed beneath a log to measure under-log temperature. This set of 3 microclimate data loggers were established at 25 sites in November 2006: Site Name AU10A2 AU1A3 AU2A2 AU4A2 AU6A2 AU8A2 BK10A2 BK12A2 BK14A2 BK16A2 CU10A2 CU12A2 CU1A1 CU2A2 CU4A2 CU6A2 CU8A2 SU10A2 SU10B2 SU350A2 SU6A2 SU8A2 WU11A2 WU13A2 WU9A2
+      </description>
+      <description type="brief" xml:lang="en">
+        Hobo micro weather station data loggers and iButton thermochrons and hygrochrons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Manual quarterly sampling of temperature and humidity has been ongoing since February 2004.
+      </description>
+      <description type="note" xml:lang="en">
+        iButton Hygrochrons were used to collect long-term microclimate data from 2006-2009 at this permanent monitoring site. The iButton Hygrochrons were erected 1m from the ground. They were placed well within the forest out of public view and camouflage painted. Sensors measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity
+      </description>
+      <rights>
+        <accessRights>
+          Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+        </accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <relatedInfo type="publication">
+        <identifier type="uri">http://dx.doi.org/10.1890/09-1069.1AUT234.3.ods</identifier>
+        <title>
+          Distributions, life history specialisation and phylogeny of the rainforest vertebrates in the Australian Wet Tropics.
+        </title>
+      </relatedInfo>
+      <relatedInfo type="party">
+        <identifier type="orcid">0000-0001-9650-1472</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Stephanie</title>
+      </relatedInfo>
+      <citationInfo>
+        <fullCitation style="Datacite">
+          Williams, Stephen (2013). Microclimate monitoring of the Australian Wet Tropics rainforest at WU11A2 (145.04379546, -16.25913233, 1100.0m above MSL) collected by iButton Hygrochron. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/305
+        </fullCitation>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  
+  
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsjcu.edu.au/collection/enmasse/326</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/326AUT234.3.ods</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Collection to related to.
+          Microclimate monitoring of the Australian Wet Tropics rainforest at WU11A2 (145.04379546, -16.25913233, 1100.0m above MSL) collected by iButton Thermochron
+        </namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/0562afb1ccedccebd55964c1375b903f
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/326/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2004-02-02T00:00:00Z</date>
+          <text>2004 - ongoing</text>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+          145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+        </spatial>
+      </coverage>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/collection/enmasse/2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasCollector"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasAssociationWith">
+          <description>Primary Contact</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/activities/15549</key>
+        <relation type="isOutputOf"/>
+      </relatedObject>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">environmental data</subject>
+      <subject type="local" xml:lang="en">microclimate</subject>
+      <subject type="anzsrc-for" xml:lang="en">050101</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960305</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+        Sensors used: - HOBO micro weather station - iButton Thermochron - iButton Hygrochron Hobo micro weather station data loggers, ibuttons and hygrobuttons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Air temperature and humidity sampling was conducted manually in relation to standardized vertebrate sampling quarterly from 2004 (ongoing). The HOBO data loggers and iButton Hygrochron were erected 1m from the ground 0.25 m squared. They were placed well within the forest out of public view and camouflage painted. Sensors associated with each logger measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity - Soil Temperature - Soil Moisture - Leaf wetness An iButton Thermochron was placed beneath a log to measure under-log temperature. This set of 3 microclimate data loggers were established at 25 sites in November 2006: Site Name AU10A2 AU1A3 AU2A2 AU4A2 AU6A2 AU8A2 BK10A2 BK12A2 BK14A2 BK16A2 CU10A2 CU12A2 CU1A1 CU2A2 CU4A2 CU6A2 CU8A2 SU10A2 SU10B2 SU350A2 SU6A2 SU8A2 WU11A2 WU13A2 WU9A2
+      </description>
+      <description type="brief" xml:lang="en">
+        Hobo micro weather station data loggers and iButton thermochrons and hygrochrons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Manual quarterly sampling of temperature and humidity has been ongoing since February 2004.
+      </description>
+      <description type="note" xml:lang="en">
+        iButton Thermochrons were used to collect long-term microclimate data from 2006-2009 at this permanent monitoring site. An iButton Thermochron was placed beneath a log to measure under-log temperature.
+      </description>
+      <rights>
+        <accessRights>
+          Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+        </accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <relatedInfo type="publication">
+        <identifier type="uri">http://dx.doi.org/10.1890/09-1069.1AUT234.3.ods</identifier>
+        <title>
+          Distributions, life history specialisation and phylogeny of the rainforest vertebrates in the Australian Wet Tropics.
+        </title>
+      </relatedInfo>
+      <relatedInfo type="party">
+        <identifier type="orcid">0000-0001-9650-1472</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Stephanie</title>
+      </relatedInfo>
+      <citationInfo>
+        <fullCitation style="Datacite">
+          Williams, Stephen (2013). Microclimate monitoring of the Australian Wet Tropics rainforest at WU11A2 (145.04379546, -16.25913233, 1100.0m above MSL) collected by iButton Thermochron. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/326
+        </fullCitation>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  
+  
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsjcu.edu.au/collection/enmasse/263</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/263AUT234.3.ods</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Collection to related to.
+          Microclimate monitoring of the Australian Wet Tropics rainforest at WU13A2 (145.00882695, -16.23531394, 1300.0m above MSL) collected by HOBO Data logger
+        </namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/cb16ea7ad19c7b2d493e750fab156062
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/263/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2004-02-02T00:00:00Z</date>
+          <text>2004 - ongoing</text>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+          145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+        </spatial>
+      </coverage>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/collection/enmasse/2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasCollector"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasAssociationWith">
+          <description>Primary Contact</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/activities/15549</key>
+        <relation type="isOutputOf"/>
+      </relatedObject>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">environmental data</subject>
+      <subject type="local" xml:lang="en">microclimate</subject>
+      <subject type="anzsrc-for" xml:lang="en">050101</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960305</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+        Sensors used: - HOBO micro weather station - iButton Thermochron - iButton Hygrochron Hobo micro weather station data loggers, ibuttons and hygrobuttons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Air temperature and humidity sampling was conducted manually in relation to standardized vertebrate sampling quarterly from 2004 (ongoing). The HOBO data loggers and iButton Hygrochron were erected 1m from the ground 0.25 m squared. They were placed well within the forest out of public view and camouflage painted. Sensors associated with each logger measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity - Soil Temperature - Soil Moisture - Leaf wetness An iButton Thermochron was placed beneath a log to measure under-log temperature. This set of 3 microclimate data loggers were established at 25 sites in November 2006: Site Name AU10A2 AU1A3 AU2A2 AU4A2 AU6A2 AU8A2 BK10A2 BK12A2 BK14A2 BK16A2 CU10A2 CU12A2 CU1A1 CU2A2 CU4A2 CU6A2 CU8A2 SU10A2 SU10B2 SU350A2 SU6A2 SU8A2 WU11A2 WU13A2 WU9A2
+      </description>
+      <description type="brief" xml:lang="en">
+        Hobo micro weather station data loggers and iButton thermochrons and hygrochrons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Manual quarterly sampling of temperature and humidity has been ongoing since February 2004.
+      </description>
+      <description type="note" xml:lang="en">
+        Hobo micro weather station data loggers were used to collect long-term microclimate data from 2006-2009 at this permanent monitoring site. The HOBO data loggers were erected 1m from the ground 0.25 m squared. They were placed well within the forest out of public view and camouflage painted. Sensors associated with each logger measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity - Soil Temperature - Soil Moisture - Leaf wetness
+      </description>
+      <rights>
+        <accessRights>
+          Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+        </accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <relatedInfo type="publication">
+        <identifier type="uri">http://dx.doi.org/10.1890/09-1069.1AUT234.3.ods</identifier>
+        <title>
+          Distributions, life history specialisation and phylogeny of the rainforest vertebrates in the Australian Wet Tropics.
+        </title>
+      </relatedInfo>
+      <relatedInfo type="party">
+        <identifier type="orcid">0000-0001-9650-1472</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Stephanie</title>
+      </relatedInfo>
+      <citationInfo>
+        <fullCitation style="Datacite">
+          Williams, Stephen (2013). Microclimate monitoring of the Australian Wet Tropics rainforest at WU13A2 (145.00882695, -16.23531394, 1300.0m above MSL) collected by HOBO Data logger. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/263
+        </fullCitation>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsjcu.edu.au/collection/enmasse/304</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/304AUT234.3.ods</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Collection to related to.
+          Microclimate monitoring of the Australian Wet Tropics rainforest at WU13A2 (145.00882695, -16.23531394, 1300.0m above MSL) collected by iButton Hygrochron
+        </namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/d75da8119ce78a57d0f312972072cb7b
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/304/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2004-02-02T00:00:00Z</date>
+          <text>2004 - ongoing</text>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+          145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+        </spatial>
+      </coverage>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/collection/enmasse/2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasCollector"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasAssociationWith">
+          <description>Primary Contact</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/activities/15549</key>
+        <relation type="isOutputOf"/>
+      </relatedObject>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">environmental data</subject>
+      <subject type="local" xml:lang="en">microclimate</subject>
+      <subject type="anzsrc-for" xml:lang="en">050101</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960305</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+        Sensors used: - HOBO micro weather station - iButton Thermochron - iButton Hygrochron Hobo micro weather station data loggers, ibuttons and hygrobuttons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Air temperature and humidity sampling was conducted manually in relation to standardized vertebrate sampling quarterly from 2004 (ongoing). The HOBO data loggers and iButton Hygrochron were erected 1m from the ground 0.25 m squared. They were placed well within the forest out of public view and camouflage painted. Sensors associated with each logger measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity - Soil Temperature - Soil Moisture - Leaf wetness An iButton Thermochron was placed beneath a log to measure under-log temperature. This set of 3 microclimate data loggers were established at 25 sites in November 2006: Site Name AU10A2 AU1A3 AU2A2 AU4A2 AU6A2 AU8A2 BK10A2 BK12A2 BK14A2 BK16A2 CU10A2 CU12A2 CU1A1 CU2A2 CU4A2 CU6A2 CU8A2 SU10A2 SU10B2 SU350A2 SU6A2 SU8A2 WU11A2 WU13A2 WU9A2
+      </description>
+      <description type="brief" xml:lang="en">
+        Hobo micro weather station data loggers and iButton thermochrons and hygrochrons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Manual quarterly sampling of temperature and humidity has been ongoing since February 2004.
+      </description>
+      <description type="note" xml:lang="en">
+        iButton Hygrochrons were used to collect long-term microclimate data from 2006-2009 at this permanent monitoring site. The iButton Hygrochrons were erected 1m from the ground. They were placed well within the forest out of public view and camouflage painted. Sensors measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity
+      </description>
+      <rights>
+        <accessRights>
+          Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+        </accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <relatedInfo type="publication">
+        <identifier type="uri">http://dx.doi.org/10.1890/09-1069.1AUT234.3.ods</identifier>
+        <title>
+          Distributions, life history specialisation and phylogeny of the rainforest vertebrates in the Australian Wet Tropics.
+        </title>
+      </relatedInfo>
+      <citationInfo>
+        <fullCitation style="Datacite">
+          Williams, Stephen (2013). Microclimate monitoring of the Australian Wet Tropics rainforest at WU13A2 (145.00882695, -16.23531394, 1300.0m above MSL) collected by iButton Hygrochron. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/304
+        </fullCitation>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  
+  
+  </registryObjects>

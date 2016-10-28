@@ -64,10 +64,14 @@ class Ingest extends ImportSubTask
             $existingRecord->status = $this->parent()->getTaskData("targetStatus");
             $this->parent()->addTaskData("importedRecords", $existingRecord->registry_object_id);
 
-        } elseif ($deletedRecord = Repo::getDeletedRecord($key)) {
-
+        } elseif (Repo::isPublishedStatus($this->parent()->getTaskData("targetStatus")) &&
+                                $deletedRecord = Repo::getDeletedRecord($key)) {
+            // deleted records should retain their record IDs only when reinstated directly to PUBLISHED status
             $deletedRecord->status = $this->parent()->getTaskData("targetStatus");
             $this->parent()->incrementTaskData("recordsUpdatedCount");
+            // can claim deleted records of different datasources
+            $deletedRecord->data_source_id = $this->parent()->dataSourceID;
+
             $deletedRecord->save();
 
             // TODO: check if the latest record data is the same first
