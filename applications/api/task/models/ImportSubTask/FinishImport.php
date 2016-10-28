@@ -29,7 +29,7 @@ class FinishImport extends ImportSubTask
         $this->parent()->setTaskData(
             "datasourceRecordAfterCount",
             Repo::getCountByDataSourceIDAndStatus($this->parent()->dataSourceID,
-                $this->parent()->getTaskData("dataSourceDefaultStatus")
+                $this->parent()->getTaskData("targetStatus")
             )
         );
 

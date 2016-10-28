@@ -60,7 +60,7 @@ class PopulateImportOptions extends ImportSubTask
         // Record count before harvest
         $this->parent()->setTaskData("datasourceRecordBeforeCount",
             Repo::getCountByDataSourceIDAndStatus($this->parent()->dataSourceID,
-            $this->parent()->getTaskData("dataSourceDefaultStatus")
+            $this->parent()->getTaskData("targetStatus")
             ));
         // record count after harvest
         $this->parent()->setTaskData("datasourceRecordAfterCount", 0);

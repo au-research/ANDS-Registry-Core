@@ -110,7 +110,7 @@ class TestIngestTask extends UnitTest
         $this->assertTrue($record);
         $this->assertEquals('APPROVED', $record->status);
 
-        //$this->assertNotEquals($publishedRecordId, $record->registry_object_id);
+        $this->assertNotEquals($publishedRecordId, $record->registry_object_id);
 
         $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecordsjcu.edu.au/collection/enmasse/263');
         $this->assertFalse($record);

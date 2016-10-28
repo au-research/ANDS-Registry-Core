@@ -169,7 +169,7 @@ class UnitTest
     public function assertNotEquals($left, $right)
     {
         $this->getReflectorInfo();
-        $this->ci->unit->run($left, $right, $this->getName(), $this->getNote());
+        $this->ci->unit->run($left != $right, 'is_true', $this->getName(), $this->getNote());
         $this->reset();
         return $this;
     }
