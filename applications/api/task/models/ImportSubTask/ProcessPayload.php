@@ -89,6 +89,15 @@ class ProcessPayload extends ImportSubTask
             return false;
         }
 
+        // check matching data source
+        $matchingStatusRecord = Repo::getNotDeletedRecordFromOtherDataSourceByKey($key, $this->parent()->dataSourceID);
+        
+        if ($matchingStatusRecord) {
+            $this->log("Record key:($matchingStatusRecord->key) exists in a different data source");
+            $this->parent()->incrementTaskData("recordsExistOtherDataSourceCount");
+            return false;
+        }
+        
         // find the current record data belongs to the record with the same status_group as the dataSourceDefaultStatus
         $matchingStatusRecord = Repo::getMatchingRecord(
             $key, $this->parent()
@@ -103,13 +112,6 @@ class ProcessPayload extends ImportSubTask
 
             $hash = $currentRecordData->hash;
             $newHash = md5(XMLUtil::wrapRegistryObject($registryObject->saveXML()));
-
-            // check matching data source
-            if ($matchingStatusRecord->data_source_id != $this->parent()->dataSourceID) {
-                $this->log("Record key:($matchingStatusRecord->key) exists in a different data source");
-                $this->parent()->incrementTaskData("recordsExistOtherDataSourceCount");
-                return false;
-            }
 
             if ((string) $hash === (string) $newHash) {
                 $this->log("Record key:($matchingStatusRecord->key) already has a record data matching payload.");

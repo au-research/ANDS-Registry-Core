@@ -203,7 +203,15 @@ class RegistryObjectsRepository
 
         return $matchingStatusRecords;
     }
-    
+
+    public static function getNotDeletedRecordFromOtherDataSourceByKey($key, $dataSourceId)
+    {
+        $matchingStatusRecords = RegistryObject::where('key', $key)->where('status', '!=', 'DELETED')
+            ->where('data_source_id', '!=', $dataSourceId)->first();
+        return $matchingStatusRecords;
+    }
+
+
     public static function getDeletedRecord($key)
     {
         $deletedRecord = RegistryObject::where('key', $key)

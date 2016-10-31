@@ -234,6 +234,29 @@ class ImportTask extends Task
         return $pipeline;
     }
 
+    /**
+     * Returns a default list of task for an Import Task
+     * Can be overwriten if required
+     *
+     * @return array
+     */
+    public function getErrorHandlingSubtasks()
+    {
+        $pipeline = [];
+        $defaultSubtasks = [
+            "PopulateImportOptions",
+            "FinishImport"
+        ];
+
+        foreach ($defaultSubtasks as $subtaskName) {
+            $pipeline[] = [
+                'name' => $subtaskName,
+                'status' => "PENDING"
+            ];
+        }
+        return $pipeline;
+    }
+
     public function setPipeline($pipeline)
     {
         switch($pipeline) {
