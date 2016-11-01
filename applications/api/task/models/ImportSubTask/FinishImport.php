@@ -87,7 +87,6 @@ class FinishImport extends ImportSubTask
 
         if($harvestFrequency  == 'once only' || $harvestFrequency == ''){
             $this->parent()->updateHarvest(['status'=>'IDLE', "importer_message" => "Harvest completed!"]);
-
             return;
         }
 
@@ -101,10 +100,14 @@ class FinishImport extends ImportSubTask
 
         $nextRunDate = date('Y-m-d H:i', $nextRun);
 
-        $dataSource->appendDataSourceLog(
-            "Harvest rescheduled for: $nextRunDate with previous settings",
-            "info", "IMPORTER"
-        );
+        // Only log reinstante if source is harvester
+        $source = $this->parent()->getTaskData('source') ? $this->parent()->getTaskData('source') : "harvester";
+        if ($source == "harvester") {
+            $dataSource->appendDataSourceLog(
+                "Harvest rescheduled for: $nextRunDate with previous settings",
+                "info", "IMPORTER"
+            );
+        }
 
         $this->parent()->updateHarvest([
             'status' => 'SCHEDULED',
@@ -127,24 +130,27 @@ class FinishImport extends ImportSubTask
         //append_log($log_message, $log_type = "info | error", $log_class="data_source", $harvester_error_type=NULL)
         $targetStatus = $this->parent()->getTaskData("targetStatus");
         $selectedKeys = [
-            "dataSourceDefaultStatus"=>"Default Import Status for Data Source",
-            "recordsInFeedCount"=>"Valid Records Received in Harvest",
-            "invalidRegistryObjectsCount"=>"Failed to Validate",
-            "duplicateKeyinFeedCount"=>"Duplicated Records",
-            "recordsExistOtherDataSourceCount"=>"Record exist in other Datasource(s)",
-            "missingRegistryObjectKeyCount"=>"Invalid due to Missing key",
-            "missingOriginatingSourceCount"=>"Invalid due to missing OriginatingSource",
-            "missingGroupAttributeCount"=>"Invalid missing group Attribute",
-            "recordsCreatedCount"=>"New Records Created",
-            "recordsUpdatedCount"=>"Records updated",
-            "recordsNotUpdatedCount"=>"Records content unchanged",
-            "recordsDeletedCount"=>"Records deleted (due to OAI or Refresh mode)",
-            "datasourceRecordBeforeCount"=>"Number of ".$targetStatus." records Before Import",
-            "datasourceRecordAfterCount"=>"Number of ".$targetStatus." records After Import"
+            "dataSourceDefaultStatus" => "Default Import Status for Data Source",
+            "recordsInFeedCount" => "Valid Records Received in Harvest",
+            "invalidRegistryObjectsCount" => "Failed to Validate",
+            "duplicateKeyinFeedCount" => "Duplicated Records",
+            "recordsExistOtherDataSourceCount" => "Record exist in other Datasource(s)",
+            "missingRegistryObjectKeyCount" => "Invalid due to Missing key",
+            "missingOriginatingSourceCount" => "Invalid due to missing OriginatingSource",
+            "missingGroupAttributeCount" => "Invalid missing group Attribute",
+            "recordsCreatedCount" => "New Records Created",
+            "recordsUpdatedCount" => "Records updated",
+            "recordsNotUpdatedCount" => "Records content unchanged",
+            "recordsDeletedCount" => "Records deleted (due to OAI or Refresh mode)",
+            "datasourceRecordBeforeCount" => "Number of " . $targetStatus . " records Before Import",
+            "datasourceRecordAfterCount" => "Number of " . $targetStatus . " records After Import",
+            "url" => "URL"
         ];
 
+        $source = $this->parent()->getTaskData("source");
+
         if ($errorList = $this->parent()->getError()) {
-            $message = "IMPORT COMPLETED WITH ERROR(S)" . NL;
+            $message = "Import from $source COMPLETED with error(s)" . NL;
             $message .= "Batch ID: ".$this->parent()->batchID.NL;
             $message .= "Time: ".date("Y-m-d\TH:i:s\Z", time()).NL;
             foreach ($selectedKeys as $key=>$title){
@@ -159,17 +165,19 @@ class FinishImport extends ImportSubTask
             return;
         }
 
-        $message = "IMPORT COMPLETED" . NL;
+        $message = "Import from $source COMPLETED" . NL;
         $message .= "Batch ID: ".$this->parent()->batchID.NL;
         $message .= "Time: ".date("Y-m-d\TH:i:s\Z", time()).NL;
         $message .= "TaskID: ".$this->parent()->getId().NL;
+
         foreach ($selectedKeys as $key=>$title){
             $taskData = $this->parent()->getTaskData($key);
-            if($taskData !== 0) {
-                $message .= $title . ":" . $taskData . NL;
+            if($taskData !== 0 && $taskData !== null && $taskData != "") {
+                $message .= $title . ": " . $taskData . NL;
             }
         }
 
+        $this->parent()->setTaskData("dataSourceLog", $message);
         $dataSource->appendDataSourceLog($message, "info", "IMPORTER", "");
         return;
     }

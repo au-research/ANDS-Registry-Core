@@ -22,8 +22,9 @@ class PopulateImportOptions extends ImportSubTask
             $harvest->save();
         }
 
+        $source = $this->parent()->getTaskData("source");
         $dataSource->appendDataSourceLog(
-            "Import Started". NL. "Task ID: ".$this->parent()->getId(),
+            "Import from $source Started". NL. "Task ID: ".$this->parent()->getId(),
             "info", "IMPORTER"
         );
 

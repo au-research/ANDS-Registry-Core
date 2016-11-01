@@ -24,7 +24,6 @@ class Data_sourcesMethod extends MethodHandler {
         	);
         }
 
-
         $ids = explode('-', $id);
 
         $this->ci->load->model('data_source/data_sources', 'ds');

@@ -32,10 +32,20 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			remove: function(id) {
 				return $http.post(base_url+'data_source/delete/', {id:id}).then(function(response){return response.data});
 			},
-			import: function(id, type, data) {
-				if(type=='path'){
-					return $http.get(base_url+'import/put/'+id+'?batch='+data.path).then(function(response){return response.data});
-				}else return $http.post(base_url+'import/put/'+id+'/'+type, {data:data}).then(function(response){return response.data});
+			import: function(data) {
+				if (data.from == "xml") {
+					return $http({
+						url: api_url + 'registry/import/',
+						method: "POST",
+						data: $.param(data),
+						headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+					}).then(function(response){return response.data});
+				}
+				return $http({
+					url: api_url + 'registry/import/',
+					method: "GET",
+					params: data
+				}).then(function(response){return response.data});
 			},
 			start_harvest: function(id) {
 				return $http.get(base_url+'data_source/trigger_harvest/'+id).then(function(response){return response.data});
@@ -797,10 +807,14 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 					}
 					break;
 			}
-			ds_factory.import($scope.ds.id, $scope.importer.type, data).then(function(data){
+
+			data.ds_id = $scope.ds.id;
+			data.from = $scope.importer.type;
+
+			ds_factory.import(data).then(function(data){
 				$scope.importer.running = false;
 				$scope.importer.result = {};
-				$scope.importer.result.message = $.trim(data.message);
+				$scope.importer.result.message = data.data.data.dataSourceLog;
 				if(data.status=='OK') {
 					$scope.importer.result.type = 'success'
 					$scope.get($scope.ds.id);
