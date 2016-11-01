@@ -438,7 +438,7 @@ class ImportTask extends Task
         );
     }
 
-    public function stoppedWithError($message)
+    public function stoppedWithError($message = "")
     {
         $this->updateHarvest(['status' => 'STOPPED', 'importer_message'=> $message, 'message' => '']);
         if ($dataSource = DataSource::find($this->dataSourceID)) {

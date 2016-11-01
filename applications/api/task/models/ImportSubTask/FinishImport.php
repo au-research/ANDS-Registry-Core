@@ -60,6 +60,12 @@ class FinishImport extends ImportSubTask
         date_default_timezone_set('Australia/Canberra');
     }
 
+    /**
+     * Check INCREMENTAL
+     * set last_harvest_run_date
+     *
+     * @param $dataSource
+     */
     public function handleAdvancedHarvest($dataSource)
     {
         $advancedHarvestMode = $dataSource->getDataSourceAttribute("advanced_harvest_mode")->value;
@@ -79,11 +85,13 @@ class FinishImport extends ImportSubTask
         $harvestFrequency = $dataSource->getDataSourceAttributeValue("harvest_frequency");
         $harvestDate = strtotime($dataSource->getDataSourceAttributeValue("harvest_date"));
 
-        if($harvestFrequency  == 'once only' || $harvestFrequency == '' || $harvestFrequency == null){
-            $this->parent()->updateHarvest(['status'=>'COMPLETED', "importer_message" => ""]);
+        if($harvestFrequency  == 'once only' || $harvestFrequency == ''){
+            $this->parent()->updateHarvest(['status'=>'IDLE', "importer_message" => "Harvest completed!"]);
+
             return;
         }
 
+        // reschedule the harvest
         $nextRun = $this->getNextHarvestDate($harvestDate, $harvestFrequency);
         $nextHarvestDate = date("Y-m-d\TH:i:s\Z", $nextRun);
         $this->log("Harvest rescheduled to run at ". $nextHarvestDate);
@@ -91,8 +99,10 @@ class FinishImport extends ImportSubTask
         $dataSource->setDataSourceAttribute("last_harvest_run_date", $this->harvestStarted);
         $batchNumber = strtoupper(sha1($nextRun));
 
+        $nextRunDate = date('Y-m-d H:i', $nextRun);
+
         $dataSource->appendDataSourceLog(
-            "Harvest rescheduled for: ".date('Y-m-d\TH:i:s.uP', $nextRun). " with previous settings",
+            "Harvest rescheduled for: $nextRunDate with previous settings",
             "info", "IMPORTER"
         );
 
@@ -101,12 +111,17 @@ class FinishImport extends ImportSubTask
             'last_run' => $this->harvestStarted,
             'next_run' => date('Y-m-d\TH:i:s.uP', $nextRun),
             'batch_number' => $batchNumber,
-            'importer_message' => "Harvest rescheduled for: ".date('Y-m-d\TH:i:s.uP', $nextRun)
+            'importer_message' => "Harvest rescheduled for: $nextRunDate"
         ]);
 
     }
 
 
+    /**
+     * Add a data_source_log
+     *
+     * @param $dataSource
+     */
     public function updateDataSourceLogs($dataSource)
     {
         //append_log($log_message, $log_type = "info | error", $log_class="data_source", $harvester_error_type=NULL)
@@ -202,6 +217,8 @@ class FinishImport extends ImportSubTask
                     ->where('status', $status)->count()
             );
         }
+
+        // TODO :update count_ql
 
     }
 
