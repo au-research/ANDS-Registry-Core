@@ -98,7 +98,7 @@ class FinishImport extends ImportSubTask
         $dataSource->setDataSourceAttribute("last_harvest_run_date", $this->harvestStarted);
         $batchNumber = strtoupper(sha1($nextRun));
 
-        $nextRunDate = date('Y-m-d H:i', $nextRun);
+        $nextRunDate = date('Y-m-d H:i:s', $nextRun);
 
         // Only log reinstante if source is harvester
         $source = $this->parent()->getTaskData('source') ? $this->parent()->getTaskData('source') : "harvester";
@@ -182,27 +182,28 @@ class FinishImport extends ImportSubTask
         return;
     }
 
-    function getNextHarvestDate($harvestDate, $harvestFrequency){
+    function getNextHarvestDate($harvestDate, $harvestFrequency)
+    {
 
         $now = time();
-        if($harvestDate !== null){
+        if ($harvestDate !== null) {
             $nextHarvest = $harvestDate;
-        }else{
+        } else {
             $nextHarvest = 0;
         }
 
-        while($nextHarvest < $now)
-        {
-            if($harvestFrequency == 'daily')
+        while ($nextHarvest < $now) {
+            if ($harvestFrequency == 'daily') {
                 $nextHarvest = strtotime('+1 day', $nextHarvest);
-            elseif($harvestFrequency == 'weekly')
+            } elseif ($harvestFrequency == 'weekly') {
                 $nextHarvest = strtotime('+1 week', $nextHarvest);
-            elseif($harvestFrequency == 'fortnightly')
+            } elseif ($harvestFrequency == 'fortnightly') {
                 $nextHarvest = strtotime('+2 week', $nextHarvest);
-            elseif($harvestFrequency == 'monthly')
+            } elseif ($harvestFrequency == 'monthly') {
                 $nextHarvest = strtotime('+1 month', $nextHarvest);
-            elseif($harvestFrequency =='hourly')
-                $nextHarvest += 60*60;
+            } elseif ($harvestFrequency == 'hourly') {
+                $nextHarvest += 60 * 60;
+            }
         }
 
         return $nextHarvest;
