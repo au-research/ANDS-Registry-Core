@@ -34,6 +34,7 @@ class ImportTask extends Task
     private $runAll = false;
 
     private $subtasks = [];
+    private $errorMode = false;
 
     /**
      * @Overwrite
@@ -140,7 +141,15 @@ class ImportTask extends Task
      */
     public function loadSubTasks()
     {
-        $subTasks = $this->getTaskData('subtasks') ?: $this->getDefaultImportSubtasks();
+
+        if($this->errorMode)
+        {
+            $subTasks = $this->getTaskData('subtasks') ?: $this->getErrorHandlingSubtasks();
+        }
+        else{
+            $subTasks = $this->getTaskData('subtasks') ?: $this->getDefaultImportSubtasks();
+        }
+
 
         /**
          * Load all the subtask as task object
@@ -396,6 +405,8 @@ class ImportTask extends Task
             $this->setTaskData($key, $value);
         }
 
+        $this->checkHarvesterMessages();
+
         return $this;
     }
 
@@ -447,8 +458,27 @@ class ImportTask extends Task
             json_encode(Harvest::find($this->harvestID), true)
         );
     }
+    
+    public function checkHarvesterMessages()
+    {
+        $harvest = Harvest::where('harvest_id', $this->harvestID)->first();
+        $message = json_decode($harvest->getMessage());
+        if(isset(json_decode($message)->error)){
+            $error = json_decode($message)->error;
+            $this->errorMode = True;
+            foreach($error as $key=>$val)
+            {
+                if ($key == 'log'){
 
-    public function stoppedWithError($message = "")
+                    $this->addError($val);
+                }
+            }
+        }
+
+    }
+
+
+    public function stoppedWithError($message)
     {
         $this->updateHarvest(['status' => 'STOPPED', 'importer_message'=> $message, 'message' => '']);
         if ($dataSource = DataSource::find($this->dataSourceID)) {
