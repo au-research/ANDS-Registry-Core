@@ -23,8 +23,12 @@ class PopulateImportOptions extends ImportSubTask
         }
 
         $source = $this->parent()->getTaskData("source");
+        $importStartMessage = ["Import from $source Started"];
+        if ($this->parent()->getId()) {
+            $importStartMessage[] = "Task ID: ". $this->parent()->getId();
+        };
         $dataSource->appendDataSourceLog(
-            "Import from $source Started". NL. "Task ID: ".$this->parent()->getId(),
+            implode(NL, $importStartMessage),
             "info", "IMPORTER"
         );
 

@@ -131,6 +131,7 @@ class FinishImport extends ImportSubTask
         $targetStatus = $this->parent()->getTaskData("targetStatus");
         $selectedKeys = [
             "dataSourceDefaultStatus" => "Default Import Status for Data Source",
+            "targetStatus" => "Target Status for Import",
             "recordsInFeedCount" => "Valid Records Received in Harvest",
             "invalidRegistryObjectsCount" => "Failed to Validate",
             "duplicateKeyinFeedCount" => "Duplicated Records",

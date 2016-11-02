@@ -271,7 +271,8 @@ class Registry_object extends MX_Controller {
                 'params' => http_build_query([
                     'ds_id' => $ro->data_source_id,
                     'batch_id' => $batchID,
-                    'targetStatus' => 'DRAFT'
+                    'targetStatus' => 'DRAFT',
+                    'source' => 'manual'
                 ])
             ])
             ->skipLoadingPayload()
