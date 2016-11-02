@@ -27,7 +27,7 @@ class Ingest extends ImportSubTask
                 $this->insertRegistryObject($registryObject);
                 $this->updateProgress(
                     $index, $total,
-                    "Processed " . trim((string) $registryObject->key. "($index/$total)")
+                    "Processed ($index/$total) " . trim((string) $registryObject->key)
                 );
             }
             $recordsCreatedCount = $this->parent()->getTaskData("recordsCreatedCount");

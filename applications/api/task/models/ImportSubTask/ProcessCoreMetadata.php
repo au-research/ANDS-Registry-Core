@@ -80,7 +80,7 @@ class ProcessCoreMetadata extends ImportSubTask
 
             // TODO manually_assessed
 
-            $this->updateProgress($index, $total, "Processed $ro->title($roID) ($index/$total)");
+            $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
             unset($ro);
         }
     }
@@ -105,7 +105,7 @@ class ProcessCoreMetadata extends ImportSubTask
                 $this->parent()->batchID);
             $record->status = $this->parent()->getTaskData("targetStatus");
             $record->save();
-            $this->updateProgress($index, $total, "Processed (unchanged) $record->title($roID) ($index/$total)");
+            $this->updateProgress($index, $total, "Processed ($index/$total) (unchanged) $record->title($roID) ");
         }
     }
 }

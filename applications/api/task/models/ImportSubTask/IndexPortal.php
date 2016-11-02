@@ -34,15 +34,15 @@ class IndexPortal extends ImportSubTask
 
             $this->log("Indexing ".$roID);
 
-            $index = $ro->indexable_json();
+            $portalIndex = $ro->indexable_json();
             // TODO: Check response
-            $this->parent()->getCI()->solr->init()->setCore('portal')->add_json(json_encode([$index]));
+            $this->parent()->getCI()->solr->init()->setCore('portal')->add_json(json_encode([$portalIndex]));
 
             $relationIndex = $ro->getRelationshipIndex();
             // TODO: Check response
             $this->parent()->getCI()->solr->init()->setCore('relations')->add_json(json_encode([$relationIndex]));
 
-            $this->updateProgress($index, $total, "Processed $ro->title($roID) ($index/$total)");
+            $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
         }
 
         $this->parent()->getCI()->solr->init()->setCore('portal')->commit();

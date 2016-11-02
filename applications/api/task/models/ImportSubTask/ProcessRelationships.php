@@ -16,7 +16,7 @@ class ProcessRelationships extends ImportSubTask
         foreach ($importedRecords as $index => $roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->addRelationships();
-            $this->updateProgress($index, $total, "Processed $ro->title($roID) ($index/$total)");
+            $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
         }
     }
 }
