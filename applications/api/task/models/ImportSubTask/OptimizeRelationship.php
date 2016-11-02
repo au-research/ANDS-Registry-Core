@@ -3,7 +3,6 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
-
 class OptimizeRelationship extends ImportSubTask
 {
     protected $requireImportedRecords = true;
