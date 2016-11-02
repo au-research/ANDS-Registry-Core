@@ -267,6 +267,15 @@ class ImportTask extends Task
                     ]
                 );
                 break;
+            case "DeletingWorkflow":
+                $this->setTaskData('subtasks',
+                    [
+                        ['name' => 'ProcessDelete', 'status' => 'PENDING']
+                        // TODO: Remove Index of affected records
+                        // TODO: FixRelationship of affected records
+                    ]
+                );
+                break;
             default:
                 $this->setTaskData('subtasks', $this->getDefaultImportSubtasks());
                 break;

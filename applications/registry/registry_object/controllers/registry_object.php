@@ -899,7 +899,99 @@ class Registry_object extends MX_Controller {
 		echo json_encode($jsondata);
 	}
 
-	function delete(){
+    function delete(){
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+
+        $this->load->model('registry_objects', 'ro');
+        $this->load->model('data_source/data_sources', 'ds');
+
+        $affected_ids = $this->input->post('affected_ids');
+
+        // select_all is the status
+        $select_all = $this->input->post('select_all');
+
+        $data_source_id = $this->input->post('data_source_id');
+        $excluded_records = $this->input->post('excluded_records') ?: [];
+
+        // capture affected_ros mainly for select_all when affected_ids does not capture all;
+        if($select_all && $select_all != "false"){
+            $filters = $this->input->post('filters');
+            $args = [
+                'sort' => isset($filters['sort']) ? $filters['sort'] : ['updated'=>'desc'],
+                'search' => isset($filters['search']) ? $filters['search'] : false,
+                'or_filter' => isset($filters['or_filter']) ? $filters['or_filter'] : false,
+                'filter' => isset($filters['filter']) ? array_merge($filters['filter'], ['status'=>$this->input->post('select_all')]) : ['status'=>$this->input->post('select_all')],
+                'data_source_id' => $data_source_id
+            ];
+            $affected_ros = $this->ro->filter_by($args, 0, 0, true);
+            $affected_ids = [];
+            if (is_array($affected_ros)) {
+                foreach ($affected_ros as $r) {
+                    if (!in_array($r->registry_object_id, $excluded_records)) {
+                        $affected_ids[] = $r->registry_object_id;
+                    }
+                }
+            }
+        }
+
+        // The affected_ids list should be good now
+        // Running delete pipeline
+        $importTask = new \ANDS\API\Task\ImportTask();
+
+        $importTask->init([
+            'name' => "Delete Pipeline",
+            'params' => http_build_query([
+                'ds_id' => $data_source_id
+            ])
+        ]);
+
+        $importTask
+            ->skipLoadingPayload()
+            ->enableRunAllSubTask()
+            ->setPipeline('DeletingWorkflow');
+
+        $importTask
+            ->setTaskData('deletedRecords', $affected_ids)
+            ->initialiseTask();
+
+        $importTask->run();
+
+        // update the stats of the records
+        $ds = $this->ds->getByID($data_source_id);
+        $ds->updateStats();
+
+        // set a background task to fix the relationship of the deleted records by removing them
+        if (sizeof($affected_ids) > 0) {
+            require_once API_APP_PATH . 'vendor/autoload.php';
+            $task = [
+                'name' => "fixRelationship of " . sizeof($affected_ids). " records",
+                'type' => 'POKE',
+                'frequency' => 'ONCE',
+                'priority' => 5,
+                'params' => http_build_query([
+                    'class' => 'fixRelationship',
+                    'type' => 'ro',
+                    'id' => join(',', $affected_ids)
+                ])
+            ];
+            $taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
+            $taskResult = $taskManager->addTask($task);
+
+            // run it immediately if the number of affected ids are low
+            if (sizeof($affected_ids < 100)) {
+                $taskManager->runTask($taskResult['id']);
+            }
+        }
+
+        echo json_encode([
+            "status" => "success"
+        ]);
+    }
+
+    // TODO: Remove after Pipeline Integration
+	function delete_deprecated(){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -915,9 +1007,7 @@ class Registry_object extends MX_Controller {
 		$this->load->model('data_source/data_sources', 'ds');
 
 
-
 		if($select_all && $select_all != "false"){
-
 			$filters = $this->input->post('filters');
 
 
