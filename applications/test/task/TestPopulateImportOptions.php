@@ -23,6 +23,7 @@ class TestPopulateImportOptions extends UnitTest
             ->initialiseTask()
             ->run();
         $taskArray = $importTask->toArray();
+        //dd($dataSource->attr('manual_publish'));
         $this->assertEquals("PUBLISHED", $taskArray["data"]["dataSourceDefaultStatus"]);
     }
 

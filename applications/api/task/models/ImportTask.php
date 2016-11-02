@@ -8,6 +8,9 @@
 namespace ANDS\API\Task;
 
 use ANDS\API\Task\ImportSubTask\ImportSubTask;
+use ANDS\DataSource;
+use ANDS\DataSource\Harvest as Harvest;
+use ANDS\Util\NotifyUtil;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use \Exception as Exception;
 
@@ -27,6 +30,7 @@ class ImportTask extends Task
 
     public $dataSourceID;
     public $batchID;
+    public $harvestID;
     private $runAll = false;
 
     private $subtasks = [];
@@ -37,13 +41,16 @@ class ImportTask extends Task
     public function run_task()
     {
         $this->log('Import Task started');
+
         $this->initialiseTask();
 
         if ($this->runAll) {
             foreach ($this->getSubtasks() as $task){
-                $nextTask = $this->constructTaskObject($task);
-                $this->runSubTask($nextTask);
-                $this->saveSubTaskData($nextTask);
+                if ($this->getStatus() !== "STOPPED") {
+                    $nextTask = $this->constructTaskObject($task);
+                    $this->runSubTask($nextTask);
+                    $this->saveSubTaskData($nextTask);
+                }
             }
         } else {
             $nextTask = $this->getNextTask();
@@ -54,7 +61,7 @@ class ImportTask extends Task
             $this->runSubTask($nextTask);
             $this->saveSubTaskData($nextTask);
         }
-         $this->saveSubTasks();
+        $this->saveSubTasks();
         return true;
     }
 
@@ -69,8 +76,12 @@ class ImportTask extends Task
 
     public function hook_end()
     {
+        if ($this->getStatus() === "STOPPED") {
+            return;
+        }
+
         if ($nextTask = $this->getNextTask()) {
-            $this->setStatus("PENDING");
+            $this->setStatus("PENDING")->save();
         }
     }
 
@@ -199,7 +210,45 @@ class ImportTask extends Task
     public function getDefaultImportSubtasks()
     {
         $pipeline = [];
-        $defaultSubtasks = ["PopulateImportOptions", "ValidatePayload", "ProcessPayload", "Ingest", "ProcessDelete", "ProcessCoreMetadata", "ProcessIdentifiers", "ProcessRelationships", "ProcessQualityMetadata", "IndexPortal"];
+        $defaultSubtasks = [
+            "PopulateImportOptions",
+            "ValidatePayload",
+            "ProcessPayload",
+            "Ingest",
+            "ProcessCoreMetadata",
+            "HandleRefreshHarvest",
+            "ProcessDelete",
+            "ProcessIdentifiers",
+            "ProcessRelationships",
+            "ProcessQualityMetadata",
+            "IndexPortal",
+            "OptimizeRelationship",
+            "FinishImport"
+        ];
+
+        foreach ($defaultSubtasks as $subtaskName) {
+            $pipeline[] = [
+                'name' => $subtaskName,
+                'status' => "PENDING"
+            ];
+        }
+        return $pipeline;
+    }
+
+    /**
+     * Returns a default list of task for an Import Task
+     * Can be overwriten if required
+     *
+     * @return array
+     */
+    public function getErrorHandlingSubtasks()
+    {
+        $pipeline = [];
+        $defaultSubtasks = [
+            "PopulateImportOptions",
+            "FinishImport"
+        ];
+
         foreach ($defaultSubtasks as $subtaskName) {
             $pipeline[] = [
                 'name' => $subtaskName,
@@ -219,6 +268,15 @@ class ImportTask extends Task
                     ]
                 );
                 break;
+            case "DeletingWorkflow":
+                $this->setTaskData('subtasks',
+                    [
+                        ['name' => 'ProcessDelete', 'status' => 'PENDING']
+                        // TODO: Remove Index of affected records
+                        // TODO: FixRelationship of affected records
+                    ]
+                );
+                break;
             default:
                 $this->setTaskData('subtasks', $this->getDefaultImportSubtasks());
                 break;
@@ -235,8 +293,11 @@ class ImportTask extends Task
         $this
             ->bootEloquentModels()
             ->loadParams()
-            ->loadSubTasks()
-            ->loadPayload();
+            ->loadSubTasks();
+
+        if ($this->skipLoading === false) {
+            $this->loadPayload();
+        }
 
         return $this;
     }
@@ -309,6 +370,7 @@ class ImportTask extends Task
 
         $this->dataSourceID = array_key_exists('ds_id', $parameters) ? $parameters['ds_id']: null;
         $this->batchID = array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null;
+        $this->harvestID = array_key_exists('harvest_id', $parameters) ? $parameters['harvest_id'] : null;
 
         $this->setTaskData(
             'dataSourceID',
@@ -318,6 +380,11 @@ class ImportTask extends Task
         $this->setTaskData(
             'batchID',
             array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null
+        );
+
+        $this->setTaskData(
+            'harvestID',
+            array_key_exists('harvest_id', $parameters) ? $parameters['harvest_id'] : null
         );
 
         if (array_key_exists('runAll', $parameters)) {
@@ -370,5 +437,23 @@ class ImportTask extends Task
         $this->batchID = $batchID;
         $this->setTaskData('batchID', $batchID);
         return $this;
+    }
+
+    public function updateHarvest($args)
+    {
+        Harvest::where('harvest_id', $this->harvestID)->update($args);
+        NotifyUtil::notify(
+            "datasource.".$this->dataSourceID.'.harvest',
+            json_encode(Harvest::find($this->harvestID), true)
+        );
+    }
+
+    public function stoppedWithError($message = "")
+    {
+        $this->updateHarvest(['status' => 'STOPPED', 'importer_message'=> $message, 'message' => '']);
+        if ($dataSource = DataSource::find($this->dataSourceID)) {
+            $dataSource->appendDataSourceLog("IMPORT STOPPED WITH ERROR". NL . $message, "error", "IMPORTER");
+        }
+        parent::stoppedWithError($message);
     }
 }

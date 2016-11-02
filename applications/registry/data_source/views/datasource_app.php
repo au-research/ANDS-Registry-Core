@@ -168,16 +168,21 @@
 						<div class="alert alert-warning" ng-show="ds.harvest_method=='PMHHarvester' && harvester.status=='HARVESTING'">
 							Progress indication for OAI-PMH harvest is an estimate only
 						</div>
-						<div ng-show="harvester.message.message" class="alert alert-info">
+						<div ng-show="!harvester.importer_message && harvester.message.message" class="alert alert-info">
 							{{harvester.message.message}}
 						</div>
-						<div ng-show="harvester.message.error.log" class="alert alert-error">
+						<div ng-show="harvester.importer_message" class="alert alert-info">
+							{{harvester.importer_message}}
+						</div>
+						<div ng-show="!harvester.importer_message && harvester.message.error.log" class="alert alert-error">
 							{{harvester.message.error.log}}
 						</div>
 					</div>
+
 					<div class="widget-content">
 						<div class="btn-group pull-right">
-							<a href="" class="btn btn-primary disabled" ng-show="harvester.status=='IMPORTING'">Importing...</a>
+
+							<a href="" class="btn btn-primary disabled" ng-show="harvester.busy">Importing...</a>
 							<a href="" class="btn btn-primary" ng-click="start_harvest()" ng-show="harvester.can_start"><i class="icon icon-white icon-download-alt"></i> Import from Harvester</a>
 							<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop && harvester.status!='SCHEDULED'"><i class="icon icon-white icon-stop"></i> Stop Harvest</a>
 							<a href="" class="btn btn-danger" ng-click="stop_harvest()" ng-show="harvester.can_stop && harvester.status=='SCHEDULED'">Cancel Scheduled Harvest</a>
@@ -189,6 +194,7 @@
 								<!--li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li-->
 							</ul>
 						</div>
+						<a href="" class="btn btn-small btn-link" ng-click="showTask()">Show Task</a>
 						<div class="clearfix"></div>
 					</div>
 				</div>
@@ -288,6 +294,16 @@
 			<a href="javascript:;" class="close" data-dismiss="modal">×</a>
 			<h3>File Content</h3>
 			<pre class="prettyprint linenums"><code class="language-xml" ng-bind="file_content"></code></pre>
+		</div>
+	</div>
+
+	<div class="modal hide" id="task_content">
+		<div class="modal-header">
+			<a href="javascript:;" class="close" data-dismiss="modal">×</a>
+			<h3>Task Content</h3>
+			<pre style="height:300px;overflow:auto;">
+<div ng-repeat="log in task.message.log | orderBy:'-'">{{ log }}</div>
+			</pre>
 		</div>
 	</div>
 

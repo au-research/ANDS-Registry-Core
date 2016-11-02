@@ -37,6 +37,8 @@ $base_url = str_replace('/apps','/registry',base_url());
         var suffix = '<?php echo url_suffix();?>';
         var internal_api_key = 'api';
         var editor = '';
+
+        var socket_url = '<?php echo $this->config->item('socket_url');?>';
         //urchin code
         <?php echo urchin_for($this->config->item('svc_urchin_id')); ?>
     </script>
@@ -179,6 +181,9 @@ $base_url = str_replace('/apps','/registry',base_url());
         <?php elseif($lib=='colorbox'):?>
             <link href="<?php echo asset_url('lib/colorbox/colorbox.css', 'base');?>" rel="stylesheet" type="text/css">
             <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
+
+        <?php elseif($lib=="socket.io"):?>
+            <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 
         <?php endif; ?>
 

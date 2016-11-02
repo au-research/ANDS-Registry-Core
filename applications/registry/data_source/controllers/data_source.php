@@ -3,12 +3,12 @@
 
 /**
  * Core Data Source controller
- * 
- * 
+ *
+ *
  * @author Ben Greenwood <ben.greenwood@ands.org.au>
  * @see ands/datasource/_data_source
  * @package ands/datasource
- * 
+ *
  */
 class Data_source extends MX_Controller {
 
@@ -21,7 +21,7 @@ class Data_source extends MX_Controller {
 		acl_enforce('REGISTRY_USER');
 		$data['title'] = 'Manage My Data Sources';
 		$data['scripts'] = array('ds_app');
-		$data['js_lib'] = array('core', 'ands_datepicker','vocab_widget','rosearch_widget', 'angular');
+		$data['js_lib'] = array('core', 'ands_datepicker','vocab_widget','rosearch_widget', 'angular', 'socket.io');
 		$this->load->view("datasource_app", $data);
 	}
 
@@ -54,7 +54,7 @@ class Data_source extends MX_Controller {
 			ds_acl_enforce($id);
 			$ds = $this->ds->getByID($id);
 			// Should look at updating stats
-			// $ds->updateStats();
+            $ds->updateStats();
 			$dataSources = array();
 			$dataSources[] = $ds;
 			// $this->benchmark->mark('code_end');
@@ -106,8 +106,8 @@ class Data_source extends MX_Controller {
 				}
 
 				//get harvester_method
-				
-				
+
+
 			}
 
 			array_push($items, $item);
@@ -185,7 +185,7 @@ class Data_source extends MX_Controller {
 
 		if(!$id) throw new Exception('ID must be specified');
 		ds_acl_enforce($id);
-	
+
 		$this->load->model("data_sources","ds");
 		$ds = $this->ds->getByID($id);
 		$logs = $ds->get_logs($offset, $limit, $logid, 'all', 'all');
@@ -197,7 +197,7 @@ class Data_source extends MX_Controller {
 	/**
 	 * get harvester status
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-	 * @param  data_source_id $id 
+	 * @param  data_source_id $id
 	 * @return json
 	 */
 	public function harvester_status($id=false) {
@@ -207,7 +207,7 @@ class Data_source extends MX_Controller {
 		set_exception_handler('json_exception_handler');
 
 		if(!$id) throw new Exception('ID must be specified');
-		
+
 		$this->load->model("data_sources","ds");
 		$ds = $this->ds->getByID($id);
 		$status = $ds->getHarvestStatus();
@@ -223,7 +223,7 @@ class Data_source extends MX_Controller {
 				array('status' => 'IDLE')
 			);
 		}
-		
+
 		echo json_encode($jsonData);
 	}
 
@@ -239,7 +239,7 @@ class Data_source extends MX_Controller {
 		set_exception_handler('json_exception_handler');
 
 		if (!$id) throw new Exception('ID must be specified');
-		
+
 		$jsonData = array();
 		$this->load->model("data_sources","ds");
 		$ds = $this->ds->getByID($id);
@@ -266,7 +266,7 @@ class Data_source extends MX_Controller {
 				}
 				array_push($items, $item);
 			}
-			
+
 			$jsonData['items'] = $items;
 			echo json_encode($jsonData);
 		}
@@ -383,7 +383,7 @@ class Data_source extends MX_Controller {
 
 			if($new_value != $ds->{$attrib} && in_array($attrib, array_keys($ds->harvesterParams))){
 			   $resetHarvest = true;
-			} 
+			}
 
 
 			if($new_value != $ds->{$attrib} && in_array($attrib, $ds->primaryRelationship)){
@@ -436,7 +436,7 @@ class Data_source extends MX_Controller {
 			$ds->append_log($e, 'error');
 			throw new Exception($e);
 		}
-		
+
 		//save the record
 		try{
 			$ds->save();
@@ -449,7 +449,7 @@ class Data_source extends MX_Controller {
 			$ds->append_log($e, 'error');
 			throw new Exception($e);
 		}
-		
+
 		//if all goes well
 		echo json_encode(
 			array(
@@ -468,12 +468,12 @@ class Data_source extends MX_Controller {
 
 	/**
 	 * Sets the slugs for all datasources
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Liz Woods
 	 * @param [
 	 * @todo ACL on which data source you have access to, error handling
-	 * @return 
+	 * @return
 	 */
 	public function setDatasourceSlugs(){
 
@@ -482,13 +482,13 @@ class Data_source extends MX_Controller {
 		foreach($dataSources as $ds){
 			$ds->setSlug($ds->title);
 			$ds->save();
-		}	
+		}
 	}
 
 	/**
 	 * Manage My Records (MMR Screen)
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @package ands/registryobject
 	 * @param data_source_id | optional
@@ -529,7 +529,7 @@ class Data_source extends MX_Controller {
 		$ids = $this->ro->getDeletedRegistryObjects(array('data_source_id'=> $data_source_id));
 		$data['record_count'] = sizeof($ids);
 		if(sizeof($ids) > 0){
-			
+
 			foreach($ids as $idx=>$ro){
 				try{
 					$deletedRecords[$ro['key']][$idx] = array('title'=>$ro['title'],'key'=>$ro['key'],'id'=>$ro['id'],'record_data'=>wrapRegistryObjects($ro['record_data']), 'deleted_date'=>timeAgo($ro['deleted']));
@@ -554,7 +554,7 @@ class Data_source extends MX_Controller {
 	 *
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @param  [int] 	$data_source_id
-	 * @return [json]   
+	 * @return [json]
 	 */
 	public function get_mmr_data($data_source_id){
 		//administrative and loading stuffs
@@ -580,7 +580,7 @@ class Data_source extends MX_Controller {
 			array_push($jsonData['valid_statuses'], 'MORE_WORK_REQUIRED', 'SUBMITTED_FOR_ASSESSMENT', 'ASSESSMENT_IN_PROGRESS');
 		}
 		if($manual_publish){
-			array_push($jsonData['valid_statuses'], 'APPROVED');	
+			array_push($jsonData['valid_statuses'], 'APPROVED');
 		}
 
 		$filters = $this->input->post('filters');
@@ -591,10 +591,10 @@ class Data_source extends MX_Controller {
 		foreach($jsonData['valid_statuses'] as $s){
 
 			//declarations
-		
+
 			$args = array();//array for filtering
-			$no_match = false; //check match on filter 
-			
+			$no_match = false; //check match on filter
+
 			$st = array('display_name'=>str_replace('_', ' ', $s), 'name'=>$s, 'menu'=>array());
 			array_push($st['menu'], array('action'=>'select_all', 'display'=>'Select All'));
 			array_push($st['menu'], array('action'=>'select', 'display'=>'Select'));
@@ -656,7 +656,7 @@ class Data_source extends MX_Controller {
 					break;
 			}
 			array_push($st['menu'], array('action'=>'delete', 'display'=>'Delete'));
-			
+
 			$args['sort'] = isset($filters['sort']) ? $filters['sort'] : array('updated'=>'desc');
 			$args['search'] = isset($filters['search']) ? $filters['search'] : false;
 			$args['or_filter'] = isset($filters['or_filter']) ? $filters['or_filter'] : false;
@@ -680,7 +680,7 @@ class Data_source extends MX_Controller {
 			if($st['count']==0) $st['noResult']=true;
 			$st['hasMore'] = ($st['count'] > $limit + $offset);
 			$st['ds_id'] = $data_source_id;
-			
+
 			$jsonData['statuses'][$s] = $st;
 		}
 		$jsonData['filters'] = $filters;
@@ -692,7 +692,7 @@ class Data_source extends MX_Controller {
 		ds_acl_enforce($this->input->post('ds_id'));
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
-		
+
 		$filters = $this->input->post('filters');
 		$args['sort'] = isset($filters['sort']) ? $filters['sort'] : array('updated'=>'desc');
 		$args['search'] = isset($filters['search']) ? $filters['search'] : false;
@@ -738,9 +738,9 @@ class Data_source extends MX_Controller {
 		if($ros){
 			foreach($ros as $r){
 				$registry_object = $r; //$this->ro->getByID($r['registry_object_id']);
-				
+
 				$item = array(
-						'id'=>$registry_object->id, 
+						'id'=>$registry_object->id,
 						'key'=>$registry_object->key,
 						'title'=>html_entity_decode($registry_object->title),
 						'status'=>$registry_object->status,
@@ -758,8 +758,8 @@ class Data_source extends MX_Controller {
 					$item['quality_level'] = $registry_object->quality_level;
 				}
 				switch($item['status']){
-					case 'DRAFT': 
-						$item['editable'] = true; 
+					case 'DRAFT':
+						$item['editable'] = true;
 						$item['advance']=true;
 						if($qa){
 							$item['connectTo']='SUBMITTED_FOR_ASSESSMENT';
@@ -771,37 +771,37 @@ class Data_source extends MX_Controller {
 							}
 						}
 					break;
-					case 'MORE_WORK_REQUIRED': 
-						$item['editable'] = true; 
+					case 'MORE_WORK_REQUIRED':
+						$item['editable'] = true;
 						$item['advance']=true;
 						$item['connectTo']='DRAFT';
 					break;
-					case 'SUBMITTED_FOR_ASSESSMENT': 
-						if($this->user->hasFunction('REGISTRY_STAFF')) { 
-							$item['advance']=true; 
+					case 'SUBMITTED_FOR_ASSESSMENT':
+						if($this->user->hasFunction('REGISTRY_STAFF')) {
+							$item['advance']=true;
 							$item['connectTo']='ASSESSMENT_IN_PROGRESS';
-						} else { 
-							$item['noMoreOptions'] = true; 
-						} 
+						} else {
+							$item['noMoreOptions'] = true;
+						}
 					break;
-					case 'ASSESSMENT_IN_PROGRESS': 
-						if($this->user->hasFunction('REGISTRY_STAFF')) { 
-							$item['advance']=true; 
+					case 'ASSESSMENT_IN_PROGRESS':
+						if($this->user->hasFunction('REGISTRY_STAFF')) {
+							$item['advance']=true;
 							if($manual_publish){
 								$item['connectTo']='APPROVED';
 							}else{
 								$item['connectTo']='PUBLISHED';
 							}
-						} else { 
-							$item['noMoreOptions'] = true; 
-						} 
+						} else {
+							$item['noMoreOptions'] = true;
+						}
 					break;
-					case 'APPROVED': 
-						$item['editable'] = true; 
+					case 'APPROVED':
+						$item['editable'] = true;
 						$item['advance']=true;
 						$item['connectTo']='PUBLISHED';
 						break;
-					case 'PUBLISHED': 
+					case 'PUBLISHED':
 						$item['editable'] = true;
 					break;
 				}
@@ -969,8 +969,8 @@ class Data_source extends MX_Controller {
 				elseif(sizeof($affected_ids)==1 && $action=='rdaview'){
 					$ro = $this->ro->getByID($affected_ids[0]);
 					$href = portal_url().$ro->slug;
-					$target = 'target="_blank"';					
-				}				
+					$target = 'target="_blank"';
+				}
 				else $href = 'javascript:;';
 				$html .='<li><a tabindex="-1" href="'.$href.'" class="op" '.$target.' action="'.$action.'" status="'.$status.'">'.$display.'</a></li>';
 			}
@@ -981,13 +981,13 @@ class Data_source extends MX_Controller {
 		}
 		$html .='</ul>';
 		echo $html;
-		
+
 	}
 
 	/**
 	 * Get a list of data sources
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @param [INT] page
 	 * @todo ACL on which data source you have access to, error handling
@@ -1041,8 +1041,8 @@ class Data_source extends MX_Controller {
 
 			array_push($items, $item);
 		}
-		
-		
+
+
 		$jsonData['items'] = array_slice($items,$offset,$limit);
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
@@ -1050,8 +1050,8 @@ class Data_source extends MX_Controller {
 
 	/**
 	 * Get a single data source
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @param [INT] Data Source ID
 	 * @todo ACL on which data source you have access to, error handling
@@ -1092,7 +1092,7 @@ class Data_source extends MX_Controller {
 		foreach($this->ro->valid_classes as $class){
 			array_push($jsonData['item']['classcounts'], array('class' => $class, 'count' =>$dataSource->getAttribute("count_$class"),'name'=>readable($class)));
 		}
-		
+
 		$harvesterStatus = $dataSource->getHarvestRequest();
 		$jsonData['item']['harvester_status'] = $harvesterStatus;
 		$jsonData = json_encode($jsonData);
@@ -1125,11 +1125,11 @@ class Data_source extends MX_Controller {
 				$ds->setAttribute($key, $value);
 			}
 			foreach($ds->extendedAttributes as $key=>$value) {
-				if(!isset($ds->attributes[$key]))			
+				if(!isset($ds->attributes[$key]))
 				$ds->setAttribute($key, $value);
-			}	
+			}
 			foreach($ds->harvesterParams as $key=>$value) {
-				if(!isset($ds->attributes[$key]))			
+				if(!isset($ds->attributes[$key]))
 				$ds->setAttribute($key, $value);
 			}
 			$ds->save();
@@ -1178,17 +1178,19 @@ class Data_source extends MX_Controller {
 				$scheduled_date = date('Y-m-d H:i:s', time());
 			}
 
-			$ds->append_log(
-				'Harvest scheduled to run at '.$scheduled_date.NL.
-				'URI: '.$ds->uri.NL.
-				'Harvest Method: '.readable($ds->harvest_method).NL.
-				'Provider Type: '.$ds->provider_type.NL.
-				'Advanced Harvest Mode: '.$ds->advanced_harvest_mode.NL.
-				$incr_msg.
-				$oai_msg.NL
-			);
+			$logMessage =
+                'Harvest scheduled to run at '.$scheduled_date.NL.
+                'URI: '.$ds->uri.NL.
+                'Harvest Method: '.readable($ds->harvest_method).NL.
+                'Provider Type: '.$ds->provider_type.NL.
+                'Advanced Harvest Mode: '.$ds->advanced_harvest_mode.NL.
+                $incr_msg.
+                $oai_msg.NL
+            ;
+
+			$ds->append_log($logMessage);
 			$ds->setHarvestRequest('HARVEST', false);
-			$ds->setHarvestMessage('Harvest scheduled');
+			// $ds->setHarvestMessage('Harvest scheduled');
 			$ds->updateImporterMessage(array());
 		} catch (Exception $e) {
 			throw new Exception($e);
@@ -1252,7 +1254,7 @@ class Data_source extends MX_Controller {
 	 * getDataSourceLogs
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @param [POST] data_source_id [POST] offset [POST] count [POST] log_id
-	 * 
+	 *
 	 * @return [json] [logs for the data source]
 	 */
 	public function getDataSourceLogs(){
@@ -1300,11 +1302,11 @@ class Data_source extends MX_Controller {
 				if(!$lastLogIdSet)
 				{
 				$jsonData['last_log_id'] = $log['id'];
-				$lastLogIdSet = true;	
+				$lastLogIdSet = true;
 				}
 				$item['date_modified'] = timeAgo($log['date_modified']);
-				$item['harvester_error_type'] = $log['harvester_error_type'];	
-				if($log['harvester_error_type'] != 'BENCHMARK_INFO' || $this->user->hasFunction(AUTH_FUNCTION_SUPERUSER))			
+				$item['harvester_error_type'] = $log['harvester_error_type'];
+				if($log['harvester_error_type'] != 'BENCHMARK_INFO' || $this->user->hasFunction(AUTH_FUNCTION_SUPERUSER))
 					array_push($items, $item);
 			}
 		}
@@ -1313,10 +1315,10 @@ class Data_source extends MX_Controller {
 
 		echo json_encode($jsonData);
 	}
-	
 
 
-	
+
+
 
 	public function cancelHarvestRequest(){
 		header('Cache-Control: no-cache, must-revalidate');
@@ -1349,12 +1351,12 @@ class Data_source extends MX_Controller {
 
 	/**
 	 * Sets the manual_publish attribute for a datasource based on the auto_publish attribute
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Liz
-	 * @param 
+	 * @param
 	 * @todo ACL on which data source you have access to, error handling, new attributes
-	 * @return 
+	 * @return
 	 */
 	public function change_auto_publish_attribute(){
 		$this->load->model("data_sources","ds");
@@ -1363,14 +1365,14 @@ class Data_source extends MX_Controller {
 		{
 			$attributes = $a_ds->attributes;
 			if(isset($attributes['auto_publish']))
-			{	
+			{
 				print("<pre>");
 				print("Auto publish = ".$attributes['auto_publish']);
 				print("</pre>");
 				print("--------------------------------------------");
 
 				if($attributes['auto_publish']=='auto_publish: f'||$attributes['auto_publish']=='auto_publish: 0')
-				{				
+				{
 					$a_ds->setAttribute('manual_publish',DB_TRUE);
 					echo "We have set manual publish to true for ds ".$a_ds->id."<br />";
 				}else{
@@ -1383,25 +1385,25 @@ class Data_source extends MX_Controller {
 			}
 			$a_ds->setAttribute('auto_publish',null);
 			$a_ds->save();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Save a data source
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @param [POST] Data Source ID [POST] attributes
 	 * @todo ACL on which data source you have access to, error handling, new attributes
-	 * @return [JSON] result of the saving [VOID] 
+	 * @return [JSON] result of the saving [VOID]
 	 */
 	public function updateDataSource(){
-		
+
 		set_exception_handler('json_exception_handler');
 		$jsonData = array();
 		$dataSource = NULL;
-		$id = NULL; 
-		
+		$id = NULL;
+
 		$jsonData['status'] = 'OK';
 		$POST = $this->input->post();
 		//print("<pre>");
@@ -1411,14 +1413,14 @@ class Data_source extends MX_Controller {
 		if (isset($POST['data_source_id'])){
 			$id = (int) $this->input->post('data_source_id');
 		}
-		
+
 		$this->load->model("data_sources","ds");
 		$this->load->model("registry_object/registry_objects", "ro");
-		
+
 		if ($id == 0) {
-			 $jsonData['status'] = "ERROR"; $jsonData['message'] = "Invalid data source ID"; 
+			 $jsonData['status'] = "ERROR"; $jsonData['message'] = "Invalid data source ID";
 		}
-		else 
+		else
 		{
 			$dataSource = $this->ds->getByID($id);
 		}
@@ -1439,28 +1441,28 @@ class Data_source extends MX_Controller {
 			$valid_attributes = array_merge($valid_attributes, array_keys($dataSource->extendedAttributes));
 			$valid_attributes = array_unique($valid_attributes);
 
-			foreach($valid_attributes as $attrib){	
+			foreach($valid_attributes as $attrib){
 				$new_value = null;
 
 				if (is_integer($attrib) && $attrib == 0)
 				{
 					continue;
 				}
-				else if (isset($POST[$attrib])){					
+				else if (isset($POST[$attrib])){
 					$new_value = trim($this->input->post($attrib));
 				}
 				else if(in_array($attrib, array_keys($dataSource->harvesterParams)))
 				{
-					$new_value = $dataSource->harvesterParams[$attrib];	
+					$new_value = $dataSource->harvesterParams[$attrib];
 				}
 				else if(in_array($attrib, $dataSource->primaryRelationship)){
-					$new_value = '';		
+					$new_value = '';
 				}
 
 
 
 				if($new_value=='true'){$new_value=DB_TRUE;}
-				if($new_value=='false'){$new_value=DB_FALSE;} 
+				if($new_value=='false'){$new_value=DB_FALSE;}
 				if($attrib == 'uri'){$providerURI = $new_value;}
 				// If primary relationships are disabled, unset all the relationship settings
 				if($this->input->post('create_primary_relationships')=='false')
@@ -1475,13 +1477,13 @@ class Data_source extends MX_Controller {
 						case 'service_rel_2':
 						case 'activity_rel_2':
 						case 'collection_rel_2':
-						case 'party_rel_2':		
+						case 'party_rel_2':
 							$new_value = '';
 							break;
 						default:
 							break;
 					}
-				
+
 				}
 
 				if($this->input->post('primary_key_2')=='')
@@ -1491,7 +1493,7 @@ class Data_source extends MX_Controller {
 						case 'service_rel_2':
 						case 'activity_rel_2':
 						case 'collection_rel_2':
-						case 'party_rel_2':		
+						case 'party_rel_2':
 							$new_value = '';
 							break;
 						default:
@@ -1505,7 +1507,7 @@ class Data_source extends MX_Controller {
 						case 'service_rel_1':
 						case 'activity_rel_1':
 						case 'collection_rel_1':
-						case 'party_rel_1':		
+						case 'party_rel_1':
 							$new_value = '';
 							break;
 						default:
@@ -1522,27 +1524,27 @@ class Data_source extends MX_Controller {
 							$new_value = '';
 							break;
 						default:
-							break;	
-					}				
-				} 
+							break;
+					}
+				}
 
 			*/
 
 				//echo $attrib." is the attribute";
 
 				if($new_value != $dataSource->{$attrib} && in_array($attrib, array_keys($dataSource->harvesterParams)))
-				{	
+				{
 				   //var_dump(array($attrib, $dataSource->{$attrib}, $new_value));
 				   $resetHarvest = true;
-				} 
+				}
 
 
 				if($new_value != $dataSource->{$attrib} && in_array($attrib, $dataSource->primaryRelationship))
 				{
 				   $resetPrimaryRelationships = true;
-				} 
-				
-				
+				}
+
+
 				//we need to check if we have turned it on or off and then change record statuses accordingly
 				if($new_value == 'f' && $attrib == 'qa_flag' && $new_value != $dataSource->{$attrib})
 				{
@@ -1553,7 +1555,7 @@ class Data_source extends MX_Controller {
 					//get all objects with submitted for assessment status for this ds and change status to the new status
 					$ros = '';
 					$ros = $this->ro->getByAttributeDatasource($dataSource->id, 'status', SUBMITTED_FOR_ASSESSMENT, true);
-					$jsonData['ros'] = $ros; 
+					$jsonData['ros'] = $ros;
 					if($ros)
 					foreach($ros as $submitted_ro)
 					{
@@ -1562,11 +1564,11 @@ class Data_source extends MX_Controller {
 						$ro->status = $newStatus;
 						$ro->save();
 
-					} 
+					}
 					//get all objects with assessment in progress status for this ds and change status to the new status
 					$roa = '';
 					$roa = $this->ro->getByAttributeDatasource($dataSource->id, 'status', ASSESSMENT_IN_PROGRESS, true);
-					$jsonData['roa'] = $roa; 					
+					$jsonData['roa'] = $roa;
 					if($roa)
 					foreach($roa as $progress_ro)
 					{
@@ -1574,24 +1576,24 @@ class Data_source extends MX_Controller {
 						$jsonData[$progress_ro->id]=$ro->status;
 						$ro->status = $newStatus;
 						$ro->save();
-					}				
+					}
 				}
 
 				//we need to check if we have turned manually publish to NO  - if so set all records of this datasource from Approved to Published
 				if($attrib == 'manual_publish' && $new_value == 'f' && $new_value != $dataSource->{$attrib})
-				{					
+				{
 					$jsonData['manual_publish'] = "changed from ".$dataSource->{$attrib}." to ".$new_value;
 					//so lets get all of the objects for this ds that have a status of "Approved" nad change the status to published
 					$jsonData['ds_id'] = $dataSource->id;
 					$rop = '';
 					$rop = $this->ro->getByAttributeDatasource($dataSource->id, 'status', APPROVED, true);
-					$jsonData['rop'] = $rop; 	
+					$jsonData['rop'] = $rop;
 					if($rop)
 					foreach($rop as $approved_ro)
 					{
 						$ro = $this->ro->getByID($approved_ro->id);
 						$ro->status = PUBLISHED;
-						$ro->save();					
+						$ro->save();
 					}
 
 				}
@@ -1603,9 +1605,9 @@ class Data_source extends MX_Controller {
 					$dataSource->{$attrib} = $new_value;
 
 				}
-				$dataSource->updateStats();	
-			}		
-	
+				$dataSource->updateStats();
+			}
+
 			$dataSource->save();
 
 			$dataSource->append_log("The data source settings were updated..." . NL . NL .
@@ -1628,12 +1630,12 @@ class Data_source extends MX_Controller {
 
 	/**
 	 * Importing (Leo's reinstate based on ... Ben's import from XML Paste)
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Ben Greenwood <ben.greenwood@anu.edu.au>
 	 * @param [POST] xml A blob of XML data to parse and import
 	 * @todo ACL on which data source you have access to, error handling
-	 * @return [JSON] result of the saving [VOID] 
+	 * @return [JSON] result of the saving [VOID]
 	 */
 	function reinstateRecordforDataSource()
 	{
@@ -1665,7 +1667,7 @@ class Data_source extends MX_Controller {
 			return;
 		}
 		try
-		{ 
+		{
 
 			$this->importer->setXML($xml);
 
@@ -1691,17 +1693,17 @@ class Data_source extends MX_Controller {
 		}
 		catch (Exception $e)
 		{
-			
+
 			$log .= "CRITICAL IMPORT ERROR [IMPORT COULD NOT CONTINUE]" . NL;
 			$log .= $e->getMessage();
 			$data_source->append_log($log, HARVEST_ERROR ,"registry_object");
 			echo json_encode(array("response"=>"failure", "message"=>"An error occured whilst importing from the specified XML", "log"=>$log));
-			return;	
-		}	
-		
-	
-		echo json_encode(array("response"=>"success", "message"=>"Import completed successfully!", "log"=>$log));	
-			
+			return;
+		}
+
+
+		echo json_encode(array("response"=>"success", "message"=>"Import completed successfully!", "log"=>$log));
+
 	}
 
 
@@ -1710,7 +1712,7 @@ class Data_source extends MX_Controller {
 		header('Content-type: application/json');
 		$jsonData = array();
 		$dataSource = NULL;
-		$id = NULL; 
+		$id = NULL;
 
 
 		$jsonData['status'] = 'OK';
@@ -1727,9 +1729,9 @@ class Data_source extends MX_Controller {
 		$this->load->model("registry_object/registry_objects", "ro");
 
 		if ($id == 0) {
-			 $jsonData['status'] = "ERROR: Invalid data source ID"; 
+			 $jsonData['status'] = "ERROR: Invalid data source ID";
 		}
-		else 
+		else
 		{
 			$dataSource = $this->ds->getByID($id);
 		}
@@ -1743,15 +1745,15 @@ class Data_source extends MX_Controller {
 			$harvestMethod = $this->input->post("harvest_method");
 			$harvestDate = $this->input->post("harvest_date");
 			$harvestFrequency = $this->input->post("harvest_frequency");
-			$advancedHarvestingMethod = $this->input->post("advanced_harvesting_mode");	
+			$advancedHarvestingMethod = $this->input->post("advanced_harvesting_mode");
 			$nextHarvest = $harvestDate;
-			$jsonData['logid'] = $dataSource->requestHarvest('','',$dataSourceURI, $providerType, $OAISet, $harvestMethod, $harvestDate, $harvestFrequency, $advancedHarvestingMethod, $nextHarvest, true);				
+			$jsonData['logid'] = $dataSource->requestHarvest('','',$dataSourceURI, $providerType, $OAISet, $harvestMethod, $harvestDate, $harvestFrequency, $advancedHarvestingMethod, $nextHarvest, true);
 		}
 
 		$jsonData = json_encode($jsonData);
-		echo $jsonData;			
+		echo $jsonData;
 	}
-	
+
 
 	public function putHarvestData()
 	{
@@ -1808,17 +1810,17 @@ class Data_source extends MX_Controller {
 					$logMsg = 'Received some new records from the OAI provider... (harvest ID: '.$harvestId.')' . NL . ' ---';
 					$logMsgErr = 'An error occurred whilst receiving records from the OAI provider... (harvest ID: '.$harvestId.')';
 				}
-			
+
 
 				if($errmsg)
 				{
 					$dataSource->append_log($logMsgErr.NL."HARVESTER RESPONDED UNEXPECTEDLY: ".$errmsg, HARVEST_ERROR, "harvester","HARVESTER_ERROR");
 					$gotErrors = true;
-					$done = 'TRUE';			
+					$done = 'TRUE';
 				}
 				else
-				{	
-					$this->load->library('importer');	
+				{
+					$this->load->library('importer');
 					$this->importer->maintainStatus(); // records which already exist are harvested into their same status
 
 					$this->load->model('data_source/data_sources', 'ds');
@@ -1853,21 +1855,21 @@ class Data_source extends MX_Controller {
 							}
 
 
-							$dataSource->append_log($logMsg.NL.$this->importer->getMessages(), HARVEST_INFO, 'oai', "HARVESTER_INFO");	
+							$dataSource->append_log($logMsg.NL.$this->importer->getMessages(), HARVEST_INFO, 'oai', "HARVESTER_INFO");
 							//}
-							
+
 							$responseType = 'success';
 						}
 						catch (Exception $e)
 						{
-							$dataSource->append_log($logMsgErr.NL."CRITICAL ERROR: " . NL . $e->getMessage() . NL . $this->importer->getErrors(), HARVEST_ERROR, 'harvester',"HARVESTER_ERROR");	
+							$dataSource->append_log($logMsgErr.NL."CRITICAL ERROR: " . NL . $e->getMessage() . NL . $this->importer->getErrors(), HARVEST_ERROR, 'harvester',"HARVESTER_ERROR");
 							$done = 'TRUE';
 						}
 					}
 					else
 					{
-						$dataSource->append_log($logMsg, HARVEST_INFO, "harvester", "HARVESTER_INFO");	
-					}	
+						$dataSource->append_log($logMsg, HARVEST_INFO, "harvester", "HARVESTER_INFO");
+					}
 				}
 				if($done == 'TRUE')
 				{
@@ -1875,11 +1877,11 @@ class Data_source extends MX_Controller {
 					if($mode == 'HARVEST')
 					{
 						if($dataSource->advanced_harvest_mode == 'REFRESH' && !$gotErrors)
-						{	
+						{
 							$deleted_and_affected_record_keys = $dataSource->deleteOldRecords($harvestId);
 							$this->importer->addToDeletedList($deleted_and_affected_record_keys['deleted_record_keys']);
 							$this->importer->addToAffectedList($deleted_and_affected_record_keys['affected_record_keys']);
-						} 
+						}
 					}
 					if ($dataSource->harvest_method != 'GET')
 					{
@@ -1895,7 +1897,7 @@ class Data_source extends MX_Controller {
 			{
 				$message = "DataSource doesn't exists";
 			}
-			
+
 		}
 		else
 		{
@@ -1911,7 +1913,7 @@ class Data_source extends MX_Controller {
 		flush(); ob_flush();
 
 		// Continue post-harvest cleanup...
-		
+
 		if ($done =='TRUE' && $mode =='HARVEST')
 		{
 			//if ($dataSource->harvest_method == 'RIF')
@@ -1932,12 +1934,12 @@ class Data_source extends MX_Controller {
 					$log_estimate = "+/- " . ceil($harvested_record_count / (60*5)) . " minutes";
 				}
 
-				$dataSource->append_log($harvested_record_count . ' records received from Provider. Ingesting them into the registry... (harvest ID: '.$harvestId.')' . NL 
+				$dataSource->append_log($harvested_record_count . ' records received from Provider. Ingesting them into the registry... (harvest ID: '.$harvestId.')' . NL
 										. "* This should take " . $log_estimate . NL . ' --- ' . NL . $dataSource->consolidateHarvestLogs($harvestId)
 										, HARVEST_INFO, "harvester", "HARVESTER_INFO");
 
 				// The importer will only get the last OAI chunk! so reindex the lot...
-				// 
+				//
 				//$dataSource->reindexAllRecords();
 				$importedIds = array();
 				foreach($importedIDList as $row){
@@ -2172,7 +2174,7 @@ class Data_source extends MX_Controller {
 		try {
 			acl_enforce(AUTH_FUNCTION_SUPERUSER);
 		} catch(Exception $e) {
-			$response['error'] = $e->getMessage(); 
+			$response['error'] = $e->getMessage();
 			echo json_encode($response);
 			exit();
 		}
@@ -2191,13 +2193,13 @@ class Data_source extends MX_Controller {
 	}
 
 	function getDataSourceReport($id){
-		
+
 		$dataSource = $this->ds->getByID($id);
 
 		// ACL enforcement
 		acl_enforce('REGISTRY_USER');
 		ds_acl_enforce((int)$id);
-		
+
 		$ids = $this->ro->getIDsByDataSourceID($id, false, 'All');
 		$report = "<h3>QUALITY REPORT FOR ".$dataSource->title."</h3>";
 		$j = 0;
@@ -2237,10 +2239,10 @@ class Data_source extends MX_Controller {
 	/**
 	 * Get published record for this ds ; AJAX data for edit data_source settings primary links
 	 *
-	 * @author Liz Woods 
+	 * @author Liz Woods
 	 * @param  [int] 	$data_source_id
 	 * @param  [string] $key
-	 * @return [json]   
+	 * @return [json]
 	 */
 	public function get_datasource_object(){
 
@@ -2260,7 +2262,7 @@ class Data_source extends MX_Controller {
 		$registry_object = $this->ro->getPublishedByKey($key);
 		if($registry_object==null||$data_source->id!=$data_source_id)
 			{$jsonData['message'] = "You must provide a published registry object key from within this data source for primary relationship.";}
-		
+
 		echo json_encode($jsonData);
 	}
 	/**
@@ -2270,5 +2272,5 @@ class Data_source extends MX_Controller {
 	{
 		parent::__construct();
 	}
-	
+
 }

@@ -7,6 +7,7 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\API\Task\ImportTask;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Repository\DataSourceRepository;
 
 class HandleStatusChange extends ImportSubTask
 {
@@ -14,7 +15,16 @@ class HandleStatusChange extends ImportSubTask
     {
         $ids = explode(',', $this->parent()->getTaskData('ro_id'));
         $targetStatus = $this->parent()->getTaskData('targetStatus');
+        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
+        if (!$dataSource) {
+            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
+            return;
+        }
+        $this->parent()->updateHarvest(['status'=>'HANDLING STATUS CHANGES']);
         $this->log('Changing status of '.count($ids). ' records to '.$targetStatus);
+        $this->parent()->updateHarvest([
+            "importer_message" => 'Changing status of '.count($ids). ' records to '.$targetStatus
+        ]);
         foreach ($ids as $id) {
             $this->log('Processing '. $id);
             $record = RegistryObject::find($id);

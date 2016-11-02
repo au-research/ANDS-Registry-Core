@@ -111,6 +111,52 @@ class RegistryObjectsRepository
         return RegistryObject::where('key', $key)->where('status', $status)->first();
     }
 
+
+    /**
+     * Useful function to get record-count by data_source_id and status
+     *
+     * @param $dataSourceId
+     * @param string $status
+     * @return integer
+     */
+    public static function getCountByDataSourceIDAndStatus($dataSourceId, $status)
+    {
+        $importTask = new ImportTask();
+        $importTask->init([])->bootEloquentModels();
+
+        return  RegistryObject::where('data_source_id', $dataSourceId)->where('status', $status)->count();
+    }
+
+
+    public static function getRecordsByHarvestID($harvestId, $dataSourceId, $status = "PUBLISHED")
+    {
+        $importTask = new ImportTask();
+        $importTask->init([])->bootEloquentModels();
+
+        $registryObjects = RegistryObject::where('data_source_id', $dataSourceId)->where('status', $status)->get();
+
+        $registryObjects = $registryObjects->filter(function($obj) use ($harvestId){
+            return $obj->hasHarvestID($harvestId);
+        });
+
+        return $registryObjects;
+    }
+
+    public static function getRecordsByDifferentHarvestID($harvestId, $dataSourceId, $status = "PUBLISHED")
+    {
+        $importTask = new ImportTask();
+        $importTask->init([])->bootEloquentModels();
+
+        $registryObjects = RegistryObject::where('data_source_id', $dataSourceId)->where('status', $status)->get();
+
+        $registryObjects = $registryObjects->filter(function($obj) use ($harvestId){
+            return $obj->hasDifferentHarvestID($harvestId);
+        });
+
+        return $registryObjects;
+    }
+
+
     public static function getDraftStatusGroup()
     {
         return [
@@ -137,5 +183,52 @@ class RegistryObjectsRepository
         return in_array($status, self::getPublishedStatusGroup());
     }
 
+    /**
+     * Return a RegistryObject instance matching given status
+     *
+     * @param string $key
+     * @param string $status
+     * @return RegistryObject
+     */
+    public static function getMatchingRecord($key, $status)
+    {
+        $inStatus = self::getPublishedStatusGroup();
 
+        if (in_array($status, self::getDraftStatusGroup())) {
+            $inStatus = self::getDraftStatusGroup();
+        }
+
+        $matchingStatusRecords = RegistryObject::where('key', $key)
+            ->whereIn('status', $inStatus)->first();
+
+        return $matchingStatusRecords;
+    }
+
+    public static function getNotDeletedRecordFromOtherDataSourceByKey($key, $dataSourceId)
+    {
+        $matchingStatusRecords = RegistryObject::where('key', $key)->where('status', '!=', 'DELETED')
+            ->where('data_source_id', '!=', $dataSourceId)->first();
+        return $matchingStatusRecords;
+    }
+
+
+    public static function getDeletedRecord($key)
+    {
+        $deletedRecord = RegistryObject::where('key', $key)
+            ->where('status', 'DELETED')
+            ->first();
+        return $deletedRecord;
+    }
+
+    public static function addNewVersion($registryObjectID, $xml)
+    {
+        $newVersion = new RecordData;
+        $newVersion->current = true;
+        $newVersion->registry_object_id = $registryObjectID;
+        $newVersion->timestamp = time();
+        $newVersion->saveData($xml);
+        $newVersion->save();
+        return $newVersion;
+    }
+    
 }

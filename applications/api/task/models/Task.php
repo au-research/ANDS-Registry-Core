@@ -7,6 +7,8 @@
 namespace ANDS\API\Task;
 
 
+use ANDS\Util\NotifyUtil;
+
 class Task
 {
     private $id;
@@ -59,6 +61,12 @@ class Task
         $start = microtime(true);
 
         $this->hook_start();
+
+        if ($this->getStatus() === "STOPPED") {
+            $this->log("Task is STOPPED");
+            return;
+        }
+
         $this
             ->setStatus('RUNNING')
             ->setLastRun(date('Y-m-d H:i:s', time()))
@@ -103,6 +111,9 @@ class Task
     public function log($log)
     {
         $this->message['log'][] = $log;
+        if ($this->getId()) {
+            NotifyUtil::notify('task.'.$this->getId(), $log);
+        }
         return $this;
     }
 
@@ -136,7 +147,7 @@ class Task
     {
         $this
             ->setStatus("STOPPED")
-            ->log("Task stopped with error " . $error)
+            ->log("Task stopped with error: " . $error)
             ->addError($error)
             ->save();
         return $this;
@@ -169,6 +180,16 @@ class Task
         } else {
             $this->taskData[$key] = [$val];
         }
+    }
+
+    public function incrementTaskData($key, $value = 1)
+    {
+        if (!array_key_exists($key, $this->taskData)) {
+            $this->taskData[$key] = (integer)$value;
+        } else {
+            $this->taskData[$key] = (integer)$this->taskData[$key] + (integer)$value;
+        }
+        return $this;
     }
 
     public function getTaskData($key)
@@ -216,16 +237,23 @@ class Task
 
         if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
 
-        if ($this->getId() && $this->getId() != "") {
-            $updateStatus = $this->update_db($data);
-            if (!$updateStatus) {
-                $this->log('Task data failed to update');
-            }
-            return $this;
-        } else {
-            $this->log('This task does not have an ID, does not save');
+        if ($this->getId() === false || $this->getId() == "") {
+            // $this->log('This task does not have an ID, does not save');
             return true;
         }
+
+        $updateStatus = $this->update_db($data);
+        if (!$updateStatus) {
+            $this->log('Task data failed to update to the database');
+        }
+
+//        NotifyUtil::notify(
+//            $channel = "task.".$this->getId(),
+//            json_encode($this->toArray(), true)
+//        );
+
+        return $this;
+
     }
 
     /**
@@ -320,7 +348,7 @@ class Task
      */
     public function getId()
     {
-        return $this->id;
+        return isset($this->id) ? $this->id : null;
     }
 
     /**

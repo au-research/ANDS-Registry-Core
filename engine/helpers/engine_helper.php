@@ -666,3 +666,9 @@ function isbot($useragent = false)
 		return false;
 	}
 }
+
+function initEloquent() {
+    require_once API_APP_PATH . 'vendor/autoload.php';
+    $importTask = new \ANDS\API\Task\ImportTask();
+    $importTask->initialiseTask();
+}

@@ -92,7 +92,7 @@ class FixRelationshipTask extends Task
      * @param $id
      * @throws Exception
      */
-    private function fixRelationshipRecord($id)
+    public function fixRelationshipRecord($id)
     {
         $this->log('Fixing Relationship for '.$id. ' memory usage: '.memory_get_usage());
         $ro = $this->ci->ro->getByID($id);
