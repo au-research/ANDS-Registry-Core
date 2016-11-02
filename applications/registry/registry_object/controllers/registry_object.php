@@ -228,7 +228,84 @@ class Registry_object extends MX_Controller {
 		echo json_encode($response);
 	}
 
-	public function save($registry_object_id){
+    /**
+     * API registry/registry_object/save/:id
+     * Updated to using the Pipeline for inserting DRAFT record
+     * Save as Draft functionality
+     *
+     * @param $registry_object_id
+     * @throws Exception
+     */
+    public function save($registry_object_id)
+    {
+        set_exception_handler('json_exception_handler');
+        $this->load->model('registry_objects', 'ro');
+        $this->load->model('data_source/data_sources', 'ds');
+
+        // capture the registry object
+        $ro = $this->ro->getByID($registry_object_id);
+        if (!$ro) {
+            throw new Exception("No registry object exists with that ID!");
+        }
+        acl_enforce('REGISTRY_USER');
+        ds_acl_enforce($ro->data_source_id);
+
+        // capture the data source
+        $ds = $this->ds->getByID($ro->data_source_id);
+
+        // prepare XML
+        $xml = $this->input->post('xml');
+        $xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
+        $xml = \ANDS\Util\XMLUtil::wrapRegistryObject($xml);
+
+        // import Task creation
+        $importTask = new \ANDS\API\Task\ImportTask();
+        $batchID = 'MANUAL-' . md5($ro->key);
+        $payloadPath = rtrim(get_config_item('harvested_contents_path')) . '/' . $ro->data_source_id . '/' . $batchID;
+        file_put_contents($payloadPath, $xml);
+
+        $importTask
+            ->setCI($this)->setDb($this->db)
+            ->init([
+                'name' => 'ARO',
+                'params' => http_build_query([
+                    'ds_id' => $ro->data_source_id,
+                    'batch_id' => $batchID,
+                    'targetStatus' => 'DRAFT'
+                ])
+            ])
+            ->skipLoadingPayload()
+            ->setPayload($ro->key, new \ANDS\Payload($payloadPath))
+            ->enableRunAllSubTask()
+            ->initialiseTask();
+
+        $importTask->run();
+
+        $errorLog = $importTask->getError();
+
+        // capture ro again and return result
+        $ro = $this->ro->getByID($registry_object_id);
+        $result = [
+            "status" => 'success',
+            "ro_status" => "DRAFT",
+            "title" => $ro->title,
+            "qa_required" => $ds->qa_flag == DB_TRUE ? true : false,
+            "data_source_id" => $ro->data_source_id,
+            "approve_required" => $ds->manual_publish == DB_TRUE ? true : false,
+            "error_count" => (int)$ro->error_count,
+            "ro_id" => $ro->id,
+            "ro_quality_level" => $ro->quality_level,
+            "ro_quality_class" => ($ro->quality_level >= 2 ? "success" : "important"),
+            "qa_$ro->quality_level" => true,
+            "message" => implode(NL, $errorLog),
+            "qa" => $ro->get_quality_text()
+        ];
+
+        echo json_encode($result);
+    }
+
+    // TODO: Remove after pipeline implementation
+	public function save_deprecated($registry_object_id){
 		set_exception_handler('json_exception_handler');
 
 		$xml = $this->input->post('xml');
@@ -246,6 +323,8 @@ class Registry_object extends MX_Controller {
 		ds_acl_enforce($ro->data_source_id);
 
 		$ds = $this->ds->getByID($ro->data_source_id);
+
+
 
 		$this->importer->forceDraft();
 

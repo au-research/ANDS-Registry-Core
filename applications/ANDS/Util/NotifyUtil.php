@@ -10,7 +10,12 @@ class NotifyUtil
 {
     public static function notify($channel, $content)
     {
-        $redis = new PredisClient();
-        return $redis->publish($channel, $content);
+        try {
+            $redis = new PredisClient();
+            $redis->ping();
+            return $redis->publish($channel, $content);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
