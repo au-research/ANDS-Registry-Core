@@ -3,8 +3,6 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
-use ANDS\API\Task\FixRelationshipTask;
-
 class ProcessRelationships extends ImportSubTask
 {
     protected $requireImportedRecords = true;
@@ -15,16 +13,10 @@ class ProcessRelationships extends ImportSubTask
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
-
-        $fixRelationshipTask = new FixRelationshipTask();
-        $fixRelationshipTask->setCi($this->parent()->getCI())->init();
-
         foreach ($importedRecords as $index => $roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
-            $fixRelationshipTask->fixRelationshipRecord($roID);
+            $ro->addRelationships();
             $this->updateProgress($index, $total, "Processed $ro->title($roID) ($index/$total)");
         }
     }
-
-
 }
