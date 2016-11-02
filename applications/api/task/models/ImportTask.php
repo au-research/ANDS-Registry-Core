@@ -222,6 +222,7 @@ class ImportTask extends Task
             "ProcessRelationships",
             "ProcessQualityMetadata",
             "IndexPortal",
+            "ProcessRelationships",
             "FinishImport"
         ];
 

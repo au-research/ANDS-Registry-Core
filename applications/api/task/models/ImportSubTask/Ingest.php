@@ -22,13 +22,13 @@ class Ingest extends ImportSubTask
                 break;
             }
             $registryObjects = XMLUtil::getElementsByName($xml, 'registryObject');
+            $total = count($registryObjects);
             foreach ($registryObjects as $index=>$registryObject) {
-                $this->updateProgress(
-                    $index,
-                    count($registryObjects),
-                    "Processing Record " . trim((string) $registryObject->key)
-                );
                 $this->insertRegistryObject($registryObject);
+                $this->updateProgress(
+                    $index, $total,
+                    "Processed " . trim((string) $registryObject->key. "($index/$total)")
+                );
             }
             $recordsCreatedCount = $this->parent()->getTaskData("recordsCreatedCount");
             $recordsUpdatedCount = $this->parent()->getTaskData("recordsUpdatedCount");

@@ -31,9 +31,8 @@ class ProcessCoreMetadata extends ImportSubTask
             return;
         }
 
+        $total = count($importedRecords);
         foreach ($importedRecords as $index => $roID) {
-
-            $this->updateProgress($index, count($importedRecords), "Processing (updated) ". $roID);
             $this->log('Processing (updated) record: ' . $roID);
 
             $record = RegistryObject::find($roID);
@@ -81,6 +80,7 @@ class ProcessCoreMetadata extends ImportSubTask
 
             // TODO manually_assessed
 
+            $this->updateProgress($index, $total, "Processed $ro->title($roID) ($index/$total)");
             unset($ro);
         }
     }
@@ -96,16 +96,16 @@ class ProcessCoreMetadata extends ImportSubTask
             return;
         }
 
-        foreach ($harvestedRecords as $index=>$roID) {
-            $this->updateProgress($index, count($harvestedRecords), "Processing (unchanged) ". $roID);
+        $total = count($harvestedRecords);
+        foreach ($harvestedRecords as $index => $roID) {
             $this->log('Processing (unchanged) record: ' . $roID);
-
             $this->log('setting harvest_id for not refreshed records: ' . $roID);
             $record = RegistryObject::find($roID);
             $record->setRegistryObjectAttribute('harvest_id',
                 $this->parent()->batchID);
             $record->status = $this->parent()->getTaskData("targetStatus");
             $record->save();
+            $this->updateProgress($index, $total, "Processed (unchanged) $record->title($roID) ($index/$total)");
         }
     }
 }

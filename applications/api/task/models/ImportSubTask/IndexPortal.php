@@ -23,10 +23,11 @@ class IndexPortal extends ImportSubTask
         $this->parent()->getCI()->load->library('solr');
         $this->parent()->updateHarvest(["importer_message" => "Indexing ".count($this->parent()->getTaskData("importedRecords"))." records"]);
         $importedRecords = $this->parent()->getTaskData("importedRecords");
+        $total = count($importedRecords);
 
         // TODO: MAJORLY REFACTOR THIS
         foreach ($importedRecords as $index=>$roID) {
-            $this->updateProgress($index, count($importedRecords), "Processing ". $roID);
+
             $ro = $this->parent()->getCI()->ro->getByID($roID);
 
             // $ro->setMetadata('solr_doc', json_encode($index));
@@ -40,6 +41,8 @@ class IndexPortal extends ImportSubTask
             $relationIndex = $ro->getRelationshipIndex();
             // TODO: Check response
             $this->parent()->getCI()->solr->init()->setCore('relations')->add_json(json_encode([$relationIndex]));
+
+            $this->updateProgress($index, $total, "Processed $ro->title($roID) ($index/$total)");
         }
 
         $this->parent()->getCI()->solr->init()->setCore('portal')->commit();

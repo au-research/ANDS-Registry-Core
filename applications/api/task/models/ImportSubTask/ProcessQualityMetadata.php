@@ -13,10 +13,11 @@ class ProcessQualityMetadata extends ImportSubTask
     {
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         $importedRecords = $this->parent()->getTaskData("importedRecords");
+        $total = count($importedRecords);
         foreach ($importedRecords as $index=>$roID) {
-            $this->updateProgress($index, count($importedRecords), "Processing ". $roID);
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->update_quality_metadata();
+            $this->updateProgress($index, $total, "Processed $ro->title($roID) ($index/$total)");
         }
     }
 }
