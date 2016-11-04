@@ -15,6 +15,7 @@ class NotifyUtil
             $redis->ping();
             return $redis->publish($channel, $content);
         } catch (\Exception $e) {
+            // log notify error
             return false;
         }
     }

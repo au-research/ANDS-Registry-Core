@@ -3,6 +3,8 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\API\Task\FixRelationshipTask;
+
 class OptimizeRelationship extends ImportSubTask
 {
     protected $requireImportedRecords = true;

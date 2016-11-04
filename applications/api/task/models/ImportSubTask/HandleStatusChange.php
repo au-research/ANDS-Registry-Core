@@ -11,20 +11,30 @@ use ANDS\Repository\DataSourceRepository;
 
 class HandleStatusChange extends ImportSubTask
 {
+    protected $title = "HANDLING STATUS CHANGES";
+
     public function run_task()
     {
         $ids = explode(',', $this->parent()->getTaskData('ro_id'));
+        if ($this->parent()->getTaskData('importedRecords')) {
+            $ids = array_merge($ids, $this->parent()->getTaskData('importedRecords'));
+        }
+        $ids = array_filter($ids, function($id){
+           return trim($id) != "";
+        });
+
         $targetStatus = $this->parent()->getTaskData('targetStatus');
         $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
         if (!$dataSource) {
             $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
             return;
         }
-        $this->parent()->updateHarvest(['status'=>'HANDLING STATUS CHANGES']);
+
         $this->log('Changing status of '.count($ids). ' records to '.$targetStatus);
         $this->parent()->updateHarvest([
             "importer_message" => 'Changing status of '.count($ids). ' records to '.$targetStatus
         ]);
+
         foreach ($ids as $id) {
             $this->log('Processing '. $id);
             $record = RegistryObject::find($id);
@@ -37,7 +47,9 @@ class HandleStatusChange extends ImportSubTask
                 } elseif(RegistryObjectsRepository::isDraftStatus($record->status)
                     && RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
                     $this->log('Publishing record '.$record->registry_object_id);
+
                     $publishedRecord = $this->publishRecord($record);
+
                     $this->log('Published Record '.$publishedRecord->registry_object_id);
 
                     //delete the draft
@@ -72,8 +84,9 @@ class HandleStatusChange extends ImportSubTask
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id='.$record->data_source_id.'&batch_id='.$batchID.'&targetStatus=PUBLISHED'
-        ])->setCI($this->parent()->getCI())->initialiseTask();
-        $importTask->enableRunAllSubTask()->run();
+        ])->setCI($this->parent()->getCI())->enableRunAllSubTask()->initialiseTask();
+
+        $importTask->run();
 
         return RegistryObjectsRepository::getPublishedByKey($record->key);
     }

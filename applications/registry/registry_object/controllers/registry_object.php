@@ -716,7 +716,131 @@ class Registry_object extends MX_Controller {
 		echo json_encode($jsonData);
 	}
 
-	function update($all = false){
+	function update($all = false)
+    {
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        $this->load->model('registry_objects', 'ro');
+        $this->load->model('data_source/data_sources', 'ds');
+
+        $dataSourceID = $this->input->post('data_source_id');
+        $ds = $this->ds->getByID($dataSourceID);
+        if (!$ds) {
+            throw new Exception("Invalid Data Source ID specified");
+        }
+        ds_acl_enforce($ds->id);
+
+        $attributes = $this->input->post('attributes');
+        $affected_ids = $this->input->post('affected_ids');
+
+        $result = [
+            'status' => 'success',
+            'error' => [],
+            'success' => [],
+            'error_count' => 0,
+            'success_count' => 0
+        ];
+
+        if($all){
+            $filters = $this->input->post('filters');
+            $excluded_records = $this->input->post('excluded_records') ?: [];
+            $args = [
+                'sort' => isset($filters['sort']) ? $filters['sort'] : ['updated'=>'desc'],
+                'search' => isset($filters['search']) ? $filters['search'] : false,
+                'or_filter' => isset($filters['or_filter']) ? $filters['or_filter'] : false,
+                'filter' => isset($filters['filter']) ? array_merge($filters['filter'], ['status'=>$this->input->post('select_all')]) : ['status'=>$this->input->post('select_all')],
+                'data_source_id' => $dataSourceID
+            ];
+            $affected_ros = $this->ro->filter_by($args, 0, 0, true);
+            $affected_ids = [];
+            if (is_array($affected_ros)) {
+                foreach ($affected_ros as $r) {
+                    if (!in_array($r->registry_object_id, $excluded_records)) {
+                        $affected_ids[] = $r->registry_object_id;
+                    }
+                }
+            }
+        }
+
+        $statusChange = false;
+        foreach ($attributes as $attr) {
+            if ($attr["name"] == "status") {
+                $statusChange = true;
+                $targetStatus = $attr['value'];
+
+                // TODO: SUBMITTED FOR ASSESSMENT (maybe in Pipeline instead)
+                continue;
+            }
+
+            foreach ($affected_ids as $id) {
+                $ro = $this->ro->getByID($id);
+                try {
+                    $ro->setAttribute($attr['name'], $attr['value']);
+                    if ($attr['name'] == 'gold_status_flag' && $attr['value'] == 't') {
+                        $ro->setAttribute('quality_level', 4);
+                    }
+                    if ($attr['name'] == 'gold_status_flag' && $attr['value'] == 'f') {
+                        $ro->update_quality_metadata();
+                    }
+                    $result['success_count']++;
+                } catch (Exception $e) {
+                    $result['status'] = 'error';
+                    $result['error'][] = $e->getMessage();
+                }
+            }
+        }
+
+        // if there's a status changed, use the handleStatusChange pipeline
+        if ($statusChange && isset($targetStatus)) {
+
+            // for ARO screen
+            $result['message_code'] = $targetStatus;
+
+            $importTask = new \ANDS\API\Task\ImportTask();
+            $importTask->init([
+                'name' => "HandleStatusChange Pipeline",
+                'params' => http_build_query([
+                    'ds_id' => $dataSourceID,
+                    'targetStatus' => $targetStatus
+                ])
+            ]);
+            $importTask
+                ->skipLoadingPayload()
+                ->enableRunAllSubTask()
+                ->setCI($this)
+                ->setDb($this->db)
+                ->setPipeline('PublishingWorkflow');
+
+            $importTask
+                ->setTaskData('importedRecords', $affected_ids)
+                ->initialiseTask();
+
+            $importTask->run();
+
+            $result['error'] = array_merge($result['error'], $importTask->getError());
+
+            // TODO: Carry success message here
+        }
+
+        // format result
+        $result['error_count'] = count($result['error']);
+        $result['error_message'] = '<ul class="error_message">';
+        foreach ($result['error'] as $error) {
+            $result['error_message'] .= "<li>$error</li>";
+        }
+        $result['error_message'] .= '</ul>';
+        $result['success_message'] = '<ul class="success_message">';
+        foreach ($result['success'] as $success) {
+            $result['success_message'] .= "<li>$success</li>";
+        }
+
+        echo json_encode($result, true);
+
+    }
+
+    // TODO: Remove After Pipeline
+	function update_deprecated($all = false){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');

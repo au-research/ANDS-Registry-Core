@@ -318,7 +318,6 @@ class Task
     public function getCI()
     {
         return $this->ci;
-        return $this;
     }
 
     /**
