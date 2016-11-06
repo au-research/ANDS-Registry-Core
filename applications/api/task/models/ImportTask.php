@@ -462,19 +462,19 @@ class ImportTask extends Task
     public function checkHarvesterMessages()
     {
         $harvest = Harvest::where('harvest_id', $this->harvestID)->first();
+        if ($harvest === null) {
+            return;
+        }
         $message = json_decode($harvest->getMessage());
         if(isset(json_decode($message)->error)){
             $error = json_decode($message)->error;
             $this->errorMode = True;
-            foreach($error as $key=>$val)
-            {
-                if ($key == 'log'){
-
+            foreach ($error as $key => $val) {
+                if ($key == 'log') {
                     $this->addError($val);
                 }
             }
         }
-
     }
 
 
