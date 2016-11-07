@@ -95,6 +95,15 @@ class XMLUtil
         return $return;
     }
 
+    public static function unwrapRegistryObject($xml)
+    {
+        if (strpos($xml, '<registryObjects') === false) {
+            return $xml;
+        }
+        $simpleXML = static::getSimpleXMLFromString(static::cleanNameSpace($xml));
+        return $simpleXML->registryObject->asXML();
+    }
+
     /**
      * Escape Ampercent and return the escaped xml
      *

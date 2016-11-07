@@ -290,6 +290,7 @@ class ImportTask extends Task
                 $this->setTaskData('subtasks',
                     [
                         ['name' => 'ProcessRelationships', 'status' => 'PENDING'],
+                        ['name' => 'IndexPortal', 'status' => 'PENDING'],
                         ['name' => 'OptimizeRelationship', 'status' => 'PENDING']
                     ]
                 );
@@ -442,6 +443,18 @@ class ImportTask extends Task
     {
         $this->subtasks = $subtasks;
         return $this;
+    }
+
+    /**
+     * Remove a specific subtask from the pipeline by name
+     *
+     * @param $name
+     */
+    public function removeSubtaskByname($name)
+    {
+        $this->subtasks = array_filter($this->subtasks, function($task) use ($name){
+           return $task['name'] !== $name;
+        });
     }
 
     /**
