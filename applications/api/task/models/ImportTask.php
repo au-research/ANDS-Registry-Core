@@ -475,22 +475,26 @@ class ImportTask extends Task
             json_encode(Harvest::find($this->harvestID), true)
         );
     }
-    
+
     public function checkHarvesterMessages()
     {
         $harvest = Harvest::where('harvest_id', $this->harvestID)->first();
         if ($harvest === null) {
             return;
         }
-        $message = json_decode($harvest->getMessage());
-        if(isset(json_decode($message)->error)){
-            $error = json_decode($message)->error;
-            $this->errorMode = True;
-            foreach ($error as $key => $val) {
-                if ($key == 'log') {
-                    $this->addError($val);
-                }
-            }
+
+        $message = json_decode($harvest->getMessage(), true);
+        if (is_string($message)) {
+            $message = json_decode($message, true);
+        }
+
+        if ($message === null) {
+            return;
+        }
+
+        if (array_key_exists('error', $message) && $message['error']['errored'] === true) {
+            $this->errorMode = true;
+            $this->addError($message['error']['log']);
         }
     }
 
