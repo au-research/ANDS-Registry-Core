@@ -278,7 +278,7 @@ class ImportTask extends Task
                 );
 
                 // error will not load payloads
-                $this->skipLoadingPayload();
+                $this->setTaskData("skipLoadingPayload", true);
                 break;
             default:
                 $this->setTaskData('subtasks', $this->getDefaultImportSubtasks());
@@ -296,8 +296,13 @@ class ImportTask extends Task
     {
         $this
             ->bootEloquentModels()
-            ->loadParams()
-            ->loadSubTasks();
+            ->loadParams();
+
+        if ($this->harvestID) {
+            $this->checkHarvesterMessages();
+        }
+
+        $this->loadSubTasks();
 
         if ($this->skipLoading === false) {
             $this->loadPayload();
@@ -398,16 +403,13 @@ class ImportTask extends Task
             $this->enableRunAllSubTask();
         }
 
-        if (array_key_exists('skipLoadingPayload', $parameters)) {
-            $this->skipLoadingPayload();
-        }
-
-
         foreach ($parameters as $key => $value) {
             $this->setTaskData($key, $value);
         }
 
-        $this->checkHarvesterMessages();
+        if ($this->getTaskData('skipLoadingPayload')) {
+            $this->skipLoadingPayload();
+        }
 
         return $this;
     }
