@@ -290,7 +290,6 @@ class ImportTask extends Task
                 $this->setTaskData('subtasks',
                     [
                         ['name' => 'ProcessRelationships', 'status' => 'PENDING'],
-                        ['name' => 'IndexPortal', 'status' => 'PENDING'],
                         ['name' => 'OptimizeRelationship', 'status' => 'PENDING']
                     ]
                 );

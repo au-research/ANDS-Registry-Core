@@ -283,6 +283,7 @@ class Task
         $task = [
             'name' => $this->getName(),
             'priority' => 5,
+            'status' => 'PENDING',
             'type' => "POKE",
             'params' => http_build_query($params),
             'message' => json_encode($this->message),
