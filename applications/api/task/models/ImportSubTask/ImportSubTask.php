@@ -25,7 +25,7 @@ class ImportSubTask extends Task
         $this->parent()->updateHarvest([
             'status' => 'IMPORT - '. $this->title,
             'importer_message' => "",
-            // 'message' => ""
+            'message' => ""
         ]);
 
         if ($this->requirePayload && $this->parent()->hasPayload() === false) {
