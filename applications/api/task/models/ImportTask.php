@@ -224,6 +224,7 @@ class ImportTask extends Task
             "ProcessQualityMetadata",
             "IndexPortal",
             "OptimizeRelationship",
+            //"HandleIncrementalHarvest",
             "FinishImport"
         ];
 
@@ -248,7 +249,7 @@ class ImportTask extends Task
             case "PublishingWorkflow":
                 $this->setTaskData('subtasks',
                     [
-                        ['name' => "HandleStatusChange", 'status' => 'PENDING']
+                        ['name' => "HandleStatusChange", 'status' => 'PENDING'],
                     ]
                 );
                 break;

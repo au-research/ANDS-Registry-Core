@@ -15,7 +15,6 @@ class ProcessCoreMetadata extends ImportSubTask
     public function run_task()
     {
         $this->processUpdatedRecords();
-        $this->processUnchangedRecords();
     }
 
     /**
@@ -85,27 +84,5 @@ class ProcessCoreMetadata extends ImportSubTask
         }
     }
 
-    /**
-     * records that didn't get update but were included in the feed also get a new harvest_id
-     */
-    public function processUnchangedRecords()
-    {
-        $harvestedRecords = $this->parent()->getTaskData("harvestedRecordIDs");
 
-        if ($harvestedRecords === false || $harvestedRecords === null) {
-            return;
-        }
-
-        $total = count($harvestedRecords);
-        foreach ($harvestedRecords as $index => $roID) {
-            $this->log('Processing (unchanged) record: ' . $roID);
-            $this->log('setting harvest_id for not refreshed records: ' . $roID);
-            $record = RegistryObject::find($roID);
-            $record->setRegistryObjectAttribute('harvest_id',
-                $this->parent()->batchID);
-            $record->status = $this->parent()->getTaskData("targetStatus");
-            $record->save();
-            $this->updateProgress($index, $total, "Processed ($index/$total) (unchanged) $record->title($roID) ");
-        }
-    }
 }

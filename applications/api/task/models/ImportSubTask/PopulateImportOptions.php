@@ -78,6 +78,17 @@ class PopulateImportOptions extends ImportSubTask
         $this->parent()->setTaskData("missingGroupAttributeCount", 0);
         $this->parent()->setTaskData("invalidRegistryObjectsCount", 0);
         // record count if REFRESH mode was applied (delete records from previous harvest)
+
+        // remove HandleRefreshHarvest subtask if the data source is not REFRESH
+        $advanced_harvest_mode = $dataSource->getDataSourceAttribute("advanced_harvest_mode");
+        if ($advanced_harvest_mode->value != 'REFRESH') {
+            $this->log("Removing HandleRefreshHarvest sub task");
+            $this->parent()->removeSubtaskByname("HandleRefreshHarvest");
+        }
+
+        // TODO: HandleIncrementalHarvest(FINISH)
+
+
         return $this;
     }
 
