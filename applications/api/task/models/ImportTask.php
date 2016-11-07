@@ -278,6 +278,7 @@ class ImportTask extends Task
                 );
 
                 // error will not load payloads
+                $this->skipLoadingPayload();
                 $this->setTaskData("skipLoadingPayload", true);
                 break;
             default:
