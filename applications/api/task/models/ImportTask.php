@@ -505,7 +505,50 @@ class ImportTask extends Task
         if ($dataSource = DataSource::find($this->dataSourceID)) {
             $dataSource->appendDataSourceLog("IMPORT STOPPED WITH ERROR". NL . $message, "error", "IMPORTER");
         }
+
+        $source = $this->getTaskData('source');
+        if ($source == 'url' || $source == 'xml') {
+            $this->setTaskData('dataSourceLog', $message.NL.$this->getDataSourceMessage());
+        }
+
         parent::stoppedWithError($message);
+    }
+
+    public function getDataSourceMessage()
+    {
+        $targetStatus = $this->getTaskData("targetStatus");
+        $selectedKeys = [
+            "dataSourceDefaultStatus" => "Default Import Status for Data Source",
+            "targetStatus" => "Target Status for Import",
+            "recordsInFeedCount" => "Valid Records Received in Harvest",
+            "invalidRegistryObjectsCount" => "Failed to Validate",
+            "duplicateKeyinFeedCount" => "Duplicated Records",
+            "recordsExistOtherDataSourceCount" => "Record exist in other Datasource(s)",
+            "missingRegistryObjectKeyCount" => "Invalid due to Missing key",
+            "missingOriginatingSourceCount" => "Invalid due to missing OriginatingSource",
+            "missingGroupAttributeCount" => "Invalid missing group Attribute",
+            "recordsCreatedCount" => "New Records Created",
+            "recordsUpdatedCount" => "Records updated",
+            "recordsNotUpdatedCount" => "Records content unchanged",
+            "recordsDeletedCount" => "Records deleted (due to OAI or Refresh mode)",
+            "datasourceRecordBeforeCount" => "Number of " . $targetStatus . " records Before Import",
+            "datasourceRecordAfterCount" => "Number of " . $targetStatus . " records After Import",
+            "url" => "URL"
+        ];
+
+        $message = [];
+        $message[] = "Batch ID: ".$this->batchID;
+        $message[] = "Time: ".date("Y-m-d\TH:i:s\Z", time());
+        $message[] = "TaskID: ".$this->getId();
+        foreach ($selectedKeys as $key => $title){
+            $taskData = $this->getTaskData($key);
+            if($taskData !== 0 && $taskData !== null && $taskData != "") {
+                $message[] = $title . ": " . $taskData;
+            }
+        }
+
+        $message = implode(NL, $message);
+        return $message;
     }
 
     /**

@@ -816,7 +816,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 				$scope.importer.result = {};
 				$scope.importer.result.message = data.data.data.dataSourceLog;
 				if(data.status=='OK') {
-					$scope.importer.result.type = 'success'
+					$scope.importer.result.type = 'success';
 					$scope.get($scope.ds.id);
 				} else {
 					$scope.importer.result.type = 'error';

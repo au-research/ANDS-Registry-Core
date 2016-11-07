@@ -127,61 +127,23 @@ class FinishImport extends ImportSubTask
      */
     public function updateDataSourceLogs($dataSource)
     {
-        //append_log($log_message, $log_type = "info | error", $log_class="data_source", $harvester_error_type=NULL)
-        $targetStatus = $this->parent()->getTaskData("targetStatus");
-        $selectedKeys = [
-            "dataSourceDefaultStatus" => "Default Import Status for Data Source",
-            "targetStatus" => "Target Status for Import",
-            "recordsInFeedCount" => "Valid Records Received in Harvest",
-            "invalidRegistryObjectsCount" => "Failed to Validate",
-            "duplicateKeyinFeedCount" => "Duplicated Records",
-            "recordsExistOtherDataSourceCount" => "Record exist in other Datasource(s)",
-            "missingRegistryObjectKeyCount" => "Invalid due to Missing key",
-            "missingOriginatingSourceCount" => "Invalid due to missing OriginatingSource",
-            "missingGroupAttributeCount" => "Invalid missing group Attribute",
-            "recordsCreatedCount" => "New Records Created",
-            "recordsUpdatedCount" => "Records updated",
-            "recordsNotUpdatedCount" => "Records content unchanged",
-            "recordsDeletedCount" => "Records deleted (due to OAI or Refresh mode)",
-            "datasourceRecordBeforeCount" => "Number of " . $targetStatus . " records Before Import",
-            "datasourceRecordAfterCount" => "Number of " . $targetStatus . " records After Import",
-            "url" => "URL"
-        ];
-
         $source = $this->parent()->getTaskData("source");
         if ($source === null) {
             $source = "harvester";
         }
 
+        // in case of error
         if ($errorList = $this->parent()->getError()) {
             $message = "Import from $source COMPLETED with error(s)" . NL;
-            $message .= "Batch ID: ".$this->parent()->batchID.NL;
-            $message .= "Time: ".date("Y-m-d\TH:i:s\Z", time()).NL;
-            $message .= "TaskID: ".$this->parent()->getId().NL;
-            foreach ($selectedKeys as $key=>$title){
-                $taskData = $this->parent()->getTaskData($key);
-                if($taskData !== 0 && $taskData !== null && $taskData != "") {
-                    $message .= $title . ": " . $taskData . NL;
-                }
-            }
-            $message .= NL.NL. implode(NL.NL, $errorList);
-
+            $message .= $this->parent()->getDataSourceMessage();
+            $this->parent()->setTaskData("dataSourceLog", $message);
             $dataSource->appendDataSourceLog($message, "error", "IMPORTER", "");
             return;
         }
 
+        // not error
         $message = "Import from $source COMPLETED" . NL;
-        $message .= "Batch ID: ".$this->parent()->batchID.NL;
-        $message .= "Time: ".date("Y-m-d\TH:i:s\Z", time()).NL;
-        $message .= "TaskID: ".$this->parent()->getId().NL;
-
-        foreach ($selectedKeys as $key=>$title){
-            $taskData = $this->parent()->getTaskData($key);
-            if($taskData !== 0 && $taskData !== null && $taskData != "") {
-                $message .= $title . ": " . $taskData . NL;
-            }
-        }
-
+        $message .= $this->parent()->getDataSourceMessage();
         $this->parent()->setTaskData("dataSourceLog", $message);
         $dataSource->appendDataSourceLog($message, "info", "IMPORTER", "");
         return;
