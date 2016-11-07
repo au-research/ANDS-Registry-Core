@@ -90,7 +90,7 @@ class ImportHandler extends Handler
                 'class' => 'import',
                 'ds_id' => $dataSource->data_source_id,
                 'batch_id' => $batchID,
-                'harvest_id' => $dataSource->harvest()->first()->harvest_id,
+                'harvest_id' => $dataSource->harvest()->first() != null ? $dataSource->harvest()->first()->harvest_id : "",
                 'source' => 'url',
                 'url' => $url
             ])

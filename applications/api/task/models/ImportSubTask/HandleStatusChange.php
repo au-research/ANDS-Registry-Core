@@ -12,6 +12,7 @@ use ANDS\Repository\DataSourceRepository;
 class HandleStatusChange extends ImportSubTask
 {
     protected $title = "HANDLING STATUS CHANGES";
+    protected $requireDataSource = true;
 
     public function run_task()
     {
@@ -24,11 +25,6 @@ class HandleStatusChange extends ImportSubTask
         });
 
         $targetStatus = $this->parent()->getTaskData('targetStatus');
-        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
-        if (!$dataSource) {
-            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
-            return;
-        }
 
         $this->log('Changing status of '.count($ids). ' records to '.$targetStatus);
         $this->parent()->updateHarvest([

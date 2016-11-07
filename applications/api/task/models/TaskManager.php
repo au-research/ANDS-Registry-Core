@@ -127,6 +127,16 @@ class TaskManager
     }
 
     /**
+     * @param $db
+     * @param $ci
+     * @return static
+     */
+    public static function create($db, $ci)
+    {
+        return new static($db, $ci);
+    }
+
+    /**
      * Get a particular task from the database
      * Returns as a mysql row
      * @param $id

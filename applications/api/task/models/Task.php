@@ -253,7 +253,47 @@ class Task
 //        );
 
         return $this;
+    }
 
+    public function sendToBackground()
+    {
+        if ($this->getId()) {
+            return;
+        }
+
+        $params = [];
+
+        if ($this instanceof ImportTask) {
+            $params['class'] = 'import';
+            $params['ds_id'] = $this->getDataSourceID();
+            if ($this->getBatchID()) {
+                $params['batch_id'] = $this->getBatchID();
+            }
+            if ($this->getHarvestID()) {
+                $params['harvest_id'] = $this->getHarvestID();
+            }
+            if ($this->skipLoading) {
+                $params['skipLoadingPayload'] = true;
+            }
+            if ($this->runAll) {
+                $params['runAll'] = true;
+            }
+        }
+
+        $task = [
+            'name' => $this->getName(),
+            'priority' => 5,
+            'type' => "POKE",
+            'params' => http_build_query($params),
+            'message' => json_encode($this->message),
+            'data' => json_encode($this->taskData),
+        ];
+
+        $taskResult = TaskManager::create($this->db, $this->ci)->addTask($task);
+
+        $this->id = $taskResult['id'];
+
+        return $this;
     }
 
     /**

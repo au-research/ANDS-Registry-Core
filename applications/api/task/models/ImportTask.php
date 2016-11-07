@@ -31,7 +31,7 @@ class ImportTask extends Task
     public $dataSourceID;
     public $batchID;
     public $harvestID;
-    private $runAll = false;
+    public $runAll = false;
 
     private $subtasks = [];
     private $errorMode = false;
@@ -290,6 +290,7 @@ class ImportTask extends Task
                 $this->setTaskData('subtasks', $this->getDefaultImportSubtasks());
                 break;
         }
+        return $this;
     }
 
     /**
@@ -377,7 +378,10 @@ class ImportTask extends Task
     {
         parse_str($this->getParams(), $parameters);
 
-        $this->dataSourceID = array_key_exists('ds_id', $parameters) ? $parameters['ds_id']: null;
+        if ($this->dataSourceID === null) {
+            $this->dataSourceID = array_key_exists('ds_id', $parameters) ? $parameters['ds_id']: null;
+        }
+
         $this->batchID = array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null;
         $this->harvestID = array_key_exists('harvest_id', $parameters) ? $parameters['harvest_id'] : null;
 
@@ -398,6 +402,10 @@ class ImportTask extends Task
 
         if (array_key_exists('runAll', $parameters)) {
             $this->enableRunAllSubTask();
+        }
+
+        if (array_key_exists('skipLoadingPayload', $parameters)) {
+            $this->skipLoadingPayload();
         }
 
 
@@ -485,5 +493,49 @@ class ImportTask extends Task
             $dataSource->appendDataSourceLog("IMPORT STOPPED WITH ERROR". NL . $message, "error", "IMPORTER");
         }
         parent::stoppedWithError($message);
+    }
+
+    /**
+     * @param mixed $dataSourceID
+     * @return ImportTask
+     */
+    public function setDataSourceID($dataSourceID)
+    {
+        $this->dataSourceID = $dataSourceID;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDataSourceID()
+    {
+        return $this->dataSourceID;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBatchID()
+    {
+        return $this->batchID;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHarvestID()
+    {
+        return $this->harvestID;
+    }
+
+    /**
+     * @param mixed $harvestID
+     * @return $this
+     */
+    public function setHarvestID($harvestID)
+    {
+        $this->harvestID = $harvestID;
+        return $this;
     }
 }

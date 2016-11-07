@@ -360,25 +360,15 @@ class Data_source extends MX_Controller {
 			if($attrib=='qa_flag' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value != $ds->{$attrib}){
 
 				$newStatus = PUBLISHED;
-				if($data['manual_publish']) $newStatus = APPROVED;
+				if ($data['manual_publish']) {
+                    $newStatus = APPROVED;
+                }
 
 				//update all submitted for assessment records to new status
-				$ros = $this->ro->getByAttributeDatasource($ds->id, 'status', SUBMITTED_FOR_ASSESSMENT, true);
-				if($ros) {
-					foreach($ros as $sro) {
-						$sro->status = $newStatus;
-						$sro->save();
-					}
-				}
+                $this->updateAllRecordsStatusMatching($ds->id, SUBMITTED_FOR_ASSESSMENT, $newStatus);
 
 				//update all assessment in progress records to new status
-				$ros = $this->ro->getByAttributeDatasource($ds->id, 'status', ASSESSMENT_IN_PROGRESS, true);
-				if($ros) {
-					foreach($ros as $sro) {
-						$sro->status = $newStatus;
-						$sro->save();
-					}
-				}
+                $this->updateAllRecordsStatusMatching($ds->id, ASSESSMENT_IN_PROGRESS, $newStatus);
 			}
 
 			if($new_value != $ds->{$attrib} && in_array($attrib, array_keys($ds->harvesterParams))){
@@ -393,13 +383,7 @@ class Data_source extends MX_Controller {
 			//detect manual_publish flag changed to false
 			if($attrib=='manual_publish' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value!=$ds->{$attrib}){
 				//publish all approved record
-				$ros = $this->ro->getByAttributeDatasource($ds->id, 'status', APPROVED, true);
-				if($ros) {
-					foreach($ros as $ro){
-						$ro->status = PUBLISHED;
-						$ro->save();
-					}
-				}
+                $this->updateAllRecordsStatusMatching($ds->id, APPROVED, PUBLISHED);
       }
       //some value are not meant to be updated
       $blocked_value = array('data_source_id', 'created', 'key');
@@ -411,7 +395,6 @@ class Data_source extends MX_Controller {
 					'value' => $new_value
 				);
 			}
-
 		}
 
 		$updated = '';
@@ -457,6 +440,54 @@ class Data_source extends MX_Controller {
 				'message' => 'Saved Success'
 			)
 		);
+	}
+
+    /**
+     * Update the status of all records that match a particular status
+     * @param $dataSourceID
+     * @param $oldStatus
+     * @param $newStatus
+     */
+    public function updateAllRecordsStatusMatching($dataSourceID, $oldStatus, $newStatus)
+    {
+        initEloquent();
+        $dataSource = \ANDS\Repository\DataSourceRepository::getByID($dataSourceID);
+
+        //TODO: check dataSource existence?
+
+        $records = \ANDS\RegistryObject::where('data_source_id', $dataSourceID)->where('status', $oldStatus);
+
+        $total = $records->count();
+
+        if ($total === 0) {
+            return;
+        }
+
+        $ids = $records->get()->pluck('registry_object_id')->toArray();
+
+        // background task
+        $importTask = new \ANDS\API\Task\ImportTask();
+        $importTask->init([
+            'name' => "Background Task for $dataSource->title($dataSourceID) Updating $total records to $newStatus",
+        ]);
+
+        $importTask->setDb($this->db)->setCI($this);
+        $importTask
+            ->skipLoadingPayload()
+            ->enableRunAllSubTask()
+            ->setTaskData("targetStatus", $newStatus)
+            ->setDataSourceID($dataSourceID)
+            ->setTaskData("importedRecords", $ids)
+            ->setPipeline("PublishingWorkflow");
+
+        $importTask->initialiseTask();
+        $importTask->sendToBackground();
+
+        $id = $importTask->getId();
+        $message =
+            "Updating $total records to $newStatus as per data source settings changes". NL.
+            "TaskID: $id";
+        $dataSource->appendDataSourceLog($message, 'info', 'IMPORTER');
 	}
 
 	/**
