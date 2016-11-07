@@ -149,14 +149,18 @@ class FinishImport extends ImportSubTask
         ];
 
         $source = $this->parent()->getTaskData("source");
+        if ($source === null) {
+            $source = "harvester";
+        }
 
         if ($errorList = $this->parent()->getError()) {
             $message = "Import from $source COMPLETED with error(s)" . NL;
             $message .= "Batch ID: ".$this->parent()->batchID.NL;
             $message .= "Time: ".date("Y-m-d\TH:i:s\Z", time()).NL;
+            $message .= "TaskID: ".$this->parent()->getId().NL;
             foreach ($selectedKeys as $key=>$title){
                 $taskData = $this->parent()->getTaskData($key);
-                if($taskData !== 0) {
+                if($taskData !== 0 && $taskData !== null && $taskData != "") {
                     $message .= $title . ": " . $taskData . NL;
                 }
             }

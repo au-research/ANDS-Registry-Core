@@ -156,7 +156,9 @@ class Task
     public function addError($log)
     {
         if (!array_key_exists('error', $this->message)) $this->message['error'] = [];
-        $this->message['error'][] = $log;
+        if (!in_array($log, $this->message['error'])) {
+            $this->message['error'][] = $log;
+        }
         return $this;
     }
 
