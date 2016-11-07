@@ -375,7 +375,6 @@ class Data_source extends MX_Controller {
 			   $resetHarvest = true;
 			}
 
-
 			if($new_value != $ds->{$attrib} && in_array($attrib, $ds->primaryRelationship)){
 			   $resetPrimaryRelationships = true;
 			}
@@ -384,7 +383,16 @@ class Data_source extends MX_Controller {
 			if($attrib=='manual_publish' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value!=$ds->{$attrib}){
 				//publish all approved record
                 $this->updateAllRecordsStatusMatching($ds->id, APPROVED, PUBLISHED);
-      }
+            }
+
+            if ($attrib == "allow_reverse_internal_links" && $new_value != $ds->{$attrib}) {
+                $resetPrimaryRelationships = true;
+            }
+
+            if ($attrib == "allow_reverse_external_links" && $new_value != $ds->{$attrib}) {
+                $resetPrimaryRelationships = true;
+            }
+
       //some value are not meant to be updated
       $blocked_value = array('data_source_id', 'created', 'key');
 			//update the actual value
@@ -413,7 +421,7 @@ class Data_source extends MX_Controller {
 			}
 
 			if($resetPrimaryRelationships) {
-				$ds->reindexAllRecords();
+                $this->updateDataSourceRelationship($ds->id);
 			}
 		} catch (Exception $e) {
 			$ds->append_log($e, 'error');
@@ -443,6 +451,52 @@ class Data_source extends MX_Controller {
 	}
 
     /**
+     * updating all PUBLISHED records relationship metadata
+     *
+     * @param $dataSourceID
+     */
+    public function updateDataSourceRelationship($dataSourceID)
+    {
+        initEloquent();
+        $dataSource = \ANDS\Repository\DataSourceRepository::getByID($dataSourceID);
+
+        // all published records
+        $records = \ANDS\RegistryObject::where('data_source_id', $dataSourceID)->where('status', PUBLISHED);
+
+        // getting the count
+        $total = $records->count();
+        if ($total === 0) {
+            return;
+        }
+
+        $ids = $records->get()->pluck('registry_object_id')->toArray();
+
+        // task initialisation
+        $importTask = new \ANDS\API\Task\ImportTask();
+        $importTask->init([
+            'name' => "Background Task for $dataSource->title($dataSourceID) Updating $total records relationship metadata",
+        ]);
+        $importTask->setDb($this->db)->setCI($this);
+        $importTask
+            ->skipLoadingPayload()
+            ->enableRunAllSubTask()
+            ->setDataSourceID($dataSourceID)
+            ->setTaskData("importedRecords", $ids)
+            ->setPipeline("UpdateRelationshipWorkflow");
+        $importTask->initialiseTask();
+
+        // sending the task to the background
+        $importTask->sendToBackground();
+
+        // returning the ID and log that
+        $id = $importTask->getId();
+        $message =
+            "Updating $total records relationship metadata as per data source settings changes". NL.
+            "TaskID: $id";
+        $dataSource->appendDataSourceLog($message, 'info', 'IMPORTER');
+	}
+
+    /**
      * Update the status of all records that match a particular status
      * @param $dataSourceID
      * @param $oldStatus
@@ -455,22 +509,23 @@ class Data_source extends MX_Controller {
 
         //TODO: check dataSource existence?
 
+        // find all records matching the oldStatus
         $records = \ANDS\RegistryObject::where('data_source_id', $dataSourceID)->where('status', $oldStatus);
 
+        // getting the count
         $total = $records->count();
-
         if ($total === 0) {
             return;
         }
 
+        // get a list of ids of the affected records
         $ids = $records->get()->pluck('registry_object_id')->toArray();
 
-        // background task
+        // task initialisation
         $importTask = new \ANDS\API\Task\ImportTask();
         $importTask->init([
             'name' => "Background Task for $dataSource->title($dataSourceID) Updating $total records to $newStatus",
         ]);
-
         $importTask->setDb($this->db)->setCI($this);
         $importTask
             ->skipLoadingPayload()
@@ -479,10 +534,12 @@ class Data_source extends MX_Controller {
             ->setDataSourceID($dataSourceID)
             ->setTaskData("importedRecords", $ids)
             ->setPipeline("PublishingWorkflow");
-
         $importTask->initialiseTask();
+
+        // sending the task to the background
         $importTask->sendToBackground();
 
+        // returning the ID and log that
         $id = $importTask->getId();
         $message =
             "Updating $total records to $newStatus as per data source settings changes". NL.

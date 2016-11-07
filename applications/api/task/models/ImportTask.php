@@ -286,6 +286,15 @@ class ImportTask extends Task
                     ]
                 );
                 break;
+            case "UpdateRelationshipWorkflow":
+                $this->setTaskData('subtasks',
+                    [
+                        ['name' => 'ProcessRelationships', 'status' => 'PENDING'],
+                        ['name' => 'IndexPortal', 'status' => 'PENDING'],
+                        ['name' => 'OptimizeRelationship', 'status' => 'PENDING']
+                    ]
+                );
+                break;
             default:
                 $this->setTaskData('subtasks', $this->getDefaultImportSubtasks());
                 break;
