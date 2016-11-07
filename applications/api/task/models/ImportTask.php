@@ -34,7 +34,6 @@ class ImportTask extends Task
     public $runAll = false;
 
     private $subtasks = [];
-    private $errorMode = false;
 
     /**
      * @Overwrite
@@ -142,14 +141,7 @@ class ImportTask extends Task
     public function loadSubTasks()
     {
 
-        if($this->errorMode)
-        {
-            $subTasks = $this->getTaskData('subtasks') ?: $this->getErrorHandlingSubtasks();
-        }
-        else{
-            $subTasks = $this->getTaskData('subtasks') ?: $this->getDefaultImportSubtasks();
-        }
-
+        $subTasks = $this->getTaskData('subtasks') ?: $this->getDefaultImportSubtasks();
 
         /**
          * Load all the subtask as task object
@@ -245,28 +237,11 @@ class ImportTask extends Task
     }
 
     /**
-     * Returns a default list of task for an Import Task
-     * Can be overwriten if required
+     * Set a respective subtasks pipeline for this importTask
      *
-     * @return array
+     * @param $pipeline
+     * @return $this
      */
-    public function getErrorHandlingSubtasks()
-    {
-        $pipeline = [];
-        $defaultSubtasks = [
-            "PopulateImportOptions",
-            "FinishImport"
-        ];
-
-        foreach ($defaultSubtasks as $subtaskName) {
-            $pipeline[] = [
-                'name' => $subtaskName,
-                'status' => "PENDING"
-            ];
-        }
-        return $pipeline;
-    }
-
     public function setPipeline($pipeline)
     {
         switch($pipeline) {
@@ -290,10 +265,20 @@ class ImportTask extends Task
                 $this->setTaskData('subtasks',
                     [
                         ['name' => 'ProcessRelationships', 'status' => 'PENDING'],
-                        // ['name' => 'IndexPortal', 'status' => 'PENDING'],
                         ['name' => 'OptimizeRelationship', 'status' => 'PENDING']
                     ]
                 );
+                break;
+            case "ErrorWorkflow":
+                $this->setTaskData('subtasks',
+                    [
+                        ['name' => 'PopulateImportOptions', 'status' => 'PENDING'],
+                        ['name' => 'FinishImport', 'status' => 'PENDING']
+                    ]
+                );
+
+                // error will not load payloads
+                $this->skipLoadingPayload();
                 break;
             default:
                 $this->setTaskData('subtasks', $this->getDefaultImportSubtasks());
@@ -505,7 +490,7 @@ class ImportTask extends Task
         }
 
         if (array_key_exists('error', $message) && $message['error']['errored'] === true) {
-            $this->errorMode = true;
+            $this->setPipeline("ErrorWorkflow");
             $this->addError($message['error']['log']);
         }
     }
