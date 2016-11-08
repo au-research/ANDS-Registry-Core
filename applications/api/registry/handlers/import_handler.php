@@ -51,12 +51,12 @@ class ImportHandler extends Handler
             return $this->importFromXML($dataSource, $params['xml']);
         }
 
+        $batchID = $params['batch_id'];
+
         $status = array_key_exists('status', $params) ? $params['status'] : null;
         if ($status === 'ERROR') {
-            // return $this->errorPipeline($dataSource);
+             return $this->errorPipeline($dataSource, $batchID);
         }
-
-        $batchID = $params['batch_id'];
 
         // get Harvest
         $harvest = $dataSource->harvest()->first();
@@ -124,6 +124,13 @@ class ImportHandler extends Handler
         return $task->toArray();
     }
 
+    /**
+     * registry/import/?ds_id={id}&from=xml
+     *
+     * @param $dataSource
+     * @param $xml
+     * @return mixed
+     */
     public function importFromXML($dataSource, $xml)
     {
         $xml = trim($xml);
@@ -139,6 +146,45 @@ class ImportHandler extends Handler
                 'class' => 'import',
                 'pipeline' => 'ManualImport',
                 'source' => 'xml',
+                'ds_id' => $dataSource->data_source_id,
+                'batch_id' => $batchID,
+                'harvest_id' => $dataSource->harvest()->first()->harvest_id
+            ])
+        ];
+
+        $taskManager = new TaskManager($this->ci->db, $this);
+        $taskCreated = $taskManager->addTask($task);
+        $task = $taskManager->getTaskObject($taskCreated);
+
+        $task
+            ->setDb($this->ci->db)
+            ->setCI($this->ci);
+
+        $task->initialiseTask()->enableRunAllSubTask();
+
+        $task->run();
+
+        return $task->toArray();
+    }
+
+    /**
+     * Execute pipeline when error is reported by the harvester
+     *
+     * @param $dataSource
+     * @param $batchID
+     * @return mixed
+     */
+    private function errorPipeline($dataSource, $batchID)
+    {
+        $task = [
+            'name' => "Harvest Error - $dataSource->title($dataSource->data_source_id)",
+            'type' => 'POKE',
+            'frequency' => 'ONCE',
+            'priority' => 2,
+            'params' => http_build_query([
+                'class' => 'import',
+                'pipeline' => 'ErrorWorkflow',
+                'source' => 'harvester',
                 'ds_id' => $dataSource->data_source_id,
                 'batch_id' => $batchID,
                 'harvest_id' => $dataSource->harvest()->first()->harvest_id
