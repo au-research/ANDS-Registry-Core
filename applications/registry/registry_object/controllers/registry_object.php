@@ -258,25 +258,24 @@ class Registry_object extends MX_Controller {
         $xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
         $xml = \ANDS\Util\XMLUtil::wrapRegistryObject($xml);
 
+        // write the xml payload to the file system
+        $batchID = 'MANUAL-ARO-' . md5($ro->key).'-'.time();
+        \ANDS\Payload::write($ds->id, $batchID, $xml);
+
         // import Task creation
         $importTask = new \ANDS\API\Task\ImportTask();
-        $batchID = 'MANUAL-' . md5($ro->key);
-        $payloadPath = rtrim(get_config_item('harvested_contents_path')) . '/' . $ro->data_source_id . '/' . $batchID;
-        file_put_contents($payloadPath, $xml);
-
         $importTask
             ->setCI($this)->setDb($this->db)
             ->init([
                 'name' => 'ARO',
                 'params' => http_build_query([
+                    'pipeline' => 'ManualEntry',
+                    'source' => 'manual',
                     'ds_id' => $ro->data_source_id,
                     'batch_id' => $batchID,
-                    'targetStatus' => 'DRAFT',
-                    'source' => 'manual'
+                    'targetStatus' => 'DRAFT'
                 ])
             ])
-            ->skipLoadingPayload()
-            ->setPayload($ro->key, new \ANDS\Payload($payloadPath))
             ->enableRunAllSubTask()
             ->initialiseTask();
 
@@ -801,6 +800,7 @@ class Registry_object extends MX_Controller {
             $importTask->init([
                 'name' => "HandleStatusChange Pipeline",
                 'params' => http_build_query([
+                    'pipeline' => 'PublishingWorkflow',
                     'ds_id' => $dataSourceID,
                     'targetStatus' => $targetStatus
                 ])
@@ -809,11 +809,10 @@ class Registry_object extends MX_Controller {
                 ->skipLoadingPayload()
                 ->enableRunAllSubTask()
                 ->setCI($this)
-                ->setDb($this->db)
-                ->setPipeline('PublishingWorkflow');
+                ->setDb($this->db);
 
             $importTask
-                ->setTaskData('importedRecords', $affected_ids)
+                ->setTaskData('affectedRecords', $affected_ids)
                 ->initialiseTask();
 
             $importTask->run();

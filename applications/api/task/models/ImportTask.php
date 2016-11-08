@@ -246,46 +246,93 @@ class ImportTask extends Task
     public function setPipeline($pipeline)
     {
         switch($pipeline) {
+            case "ManualImport":
+                $tasks = [
+                    "PopulateImportOptions",
+                    "ValidatePayload",
+                    "ProcessPayload",
+                    "Ingest",
+                    "ProcessCoreMetadata",
+                    "ProcessIdentifiers",
+                    "ProcessRelationships",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
+                    "OptimizeRelationship",
+                    "FinishImport",
+                    //"Report"
+                ];
+                break;
             case "PublishingWorkflow":
-                $this->setTaskData('subtasks',
-                    [
-                        ['name' => "HandleStatusChange", 'status' => 'PENDING'],
-                    ]
-                );
+                $tasks = [
+                    "HandleStatusChange",
+                    "ValidatePayload",
+                    "ProcessPayload",
+                    "Ingest",
+                    "ProcessCoreMetadata",
+                    "ProcessDelete",
+                    "ProcessIdentifiers",
+                    "ProcessRelationships",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
+                    "OptimizeRelationship",
+                    "FinishImport",
+                ];
                 break;
             case "DeletingWorkflow":
-                $this->setTaskData('subtasks',
-                    [
-                        ['name' => 'ProcessDelete', 'status' => 'PENDING']
-                        // TODO: Remove Index of affected records
-                        // TODO: FixRelationship of affected records
-                    ]
-                );
+                $tasks = [
+                    "ProcessDelete"
+                ];
                 break;
             case "UpdateRelationshipWorkflow":
-                $this->setTaskData('subtasks',
-                    [
-                        ['name' => 'ProcessRelationships', 'status' => 'PENDING'],
-                        ['name' => 'OptimizeRelationship', 'status' => 'PENDING']
-                    ]
-                );
+                $tasks = [
+                    "ProcessRelationships",
+                    "OptimizeRelationship"
+                ];
                 break;
             case "ErrorWorkflow":
-                $this->setTaskData('subtasks',
-                    [
-                        ['name' => 'PopulateImportOptions', 'status' => 'PENDING'],
-                        ['name' => 'FinishImport', 'status' => 'PENDING']
-                    ]
-                );
-
+                $tasks = [
+                    "PopulateImportOptions",
+                    "FinishImport",
+                    //"Report"
+                ];
                 // error will not load payloads
                 $this->skipLoadingPayload();
                 $this->setTaskData("skipLoadingPayload", true);
                 break;
+            case "default":
             default:
-                $this->setTaskData('subtasks', $this->getDefaultImportSubtasks());
+                $tasks = [
+                    "PopulateImportOptions",
+                    "ValidatePayload",
+                    "ProcessPayload",
+                    "Ingest",
+                    "ProcessCoreMetadata",
+                    "HandleRefreshHarvest",
+                    "ProcessDelete",
+                    "ProcessIdentifiers",
+                    "ProcessRelationships",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
+                    "OptimizeRelationship",
+                    //"HandleIncrementalHarvest",
+                    //"ScheduleHarvest",
+                    "FinishImport",
+                    //"Report"
+                ];
                 break;
         }
+
+        $pipelineTasks = [];
+        foreach ($tasks as $task) {
+            $pipelineTasks[] = [
+                'name' => $task,
+                'status' => "PENDING"
+            ];
+        }
+
+        $this->setTaskData('pipeline', $pipeline);
+        $this->setTaskData('subtasks', $pipelineTasks);
+
         return $this;
     }
 
@@ -411,6 +458,10 @@ class ImportTask extends Task
 
         if ($this->getTaskData('skipLoadingPayload')) {
             $this->skipLoadingPayload();
+        }
+
+        if ($this->getTaskData('pipeline') !== null) {
+            $this->setPipeline($this->getTaskData('pipeline'));
         }
 
         return $this;

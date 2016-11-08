@@ -19,8 +19,8 @@ class HandleStatusChange extends ImportSubTask
     public function run_task()
     {
         $ids = explode(',', $this->parent()->getTaskData('ro_id'));
-        if ($this->parent()->getTaskData('importedRecords')) {
-            $ids = array_merge($ids, $this->parent()->getTaskData('importedRecords'));
+        if ($this->parent()->getTaskData('affectedRecords')) {
+            $ids = array_merge($ids, $this->parent()->getTaskData('affectedRecords'));
         }
         $ids = array_filter($ids, function($id){
            return trim($id) != "";
@@ -62,19 +62,7 @@ class HandleStatusChange extends ImportSubTask
 
         if (count($recordIDsToPublished) > 0) {
             $this->publishRecords($recordIDsToPublished);
-            $this->deleteDrafts($recordIDsToPublished);
-        }
-    }
-
-    /**
-     * Delete an array of draft ids
-     *
-     * @param $ids
-     */
-    public function deleteDrafts($ids)
-    {
-        foreach ($ids as $id) {
-            RegistryObjectsRepository::completelyEraseRecordByID($id);
+            $this->setTaskData("deletedRecords", $ids);
         }
     }
 
@@ -99,31 +87,11 @@ class HandleStatusChange extends ImportSubTask
         $dataSource = $this->getDataSource();
 
         //save this to file
-        $batchID = "PUBLISH-".count($ids).'-'.time();
+        $batchID = "MANUAL-MMR-".count($ids).'-'.time();
         Payload::write($dataSource->data_source_id, $batchID, $xml);
 
-        //start a new ImportTask
-        $importTask = new ImportTask;
-        $importTask->init([
-           'name' => "Publishing ".count($ids). " records for $dataSource->title($dataSource->data_source_id)",
-            'params' => http_build_query([
-                'ds_id' => $dataSource->data_source_id,
-                'batch_id' => $batchID,
-                'targetStatus' => 'PUBLISHED',
-                'source' => 'mmr'
-            ])
-        ])->setCI($this->parent()->getCI())->enableRunAllSubTask()->initialiseTask();
-
-        // don't handle refresh harvest in this workflow
-        $importTask->removeSubtaskByname("HandleRefreshHarvest");
-
-        $importTask->run();
-
-        if ($importTask->hasError()) {
-            foreach ($importTask->getError() as $error) {
-                $this->addError($error);
-            }
-        }
+        $this->parent()->setBatchID($batchID);
+        $this->parent()->loadPayload();
     }
 
     /**

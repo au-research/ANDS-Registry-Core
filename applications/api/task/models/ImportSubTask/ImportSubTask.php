@@ -29,7 +29,7 @@ class ImportSubTask extends Task
         ]);
 
         if ($this->requirePayload && $this->parent()->hasPayload() === false) {
-            $this->addError("Payload require for this task");
+            $this->log("Payload require for this task");
             $this->setStatus("COMPLETED");
             return;
         }

@@ -16,6 +16,7 @@ class ImportHandler extends Handler
     /**
      * Handles registry/import
      * registry/import/?ds_id={id}&batch_id={batch_id}
+     * ?from={source}
      * @return array
      * @throws Exception
      */
@@ -50,6 +51,11 @@ class ImportHandler extends Handler
             return $this->importFromXML($dataSource, $params['xml']);
         }
 
+        $status = array_key_exists('status', $params) ? $params['status'] : null;
+        if ($status === 'ERROR') {
+            // return $this->errorPipeline($dataSource);
+        }
+
         $batchID = $params['batch_id'];
 
         // get Harvest
@@ -75,10 +81,17 @@ class ImportHandler extends Handler
         return $taskCreated;
     }
 
-    public function importFromUrl($dataSource, $url)
+    /**
+     * registry/import/?ds_id={id}&from=url&url={url}
+     *
+     * @param $dataSource
+     * @param $url
+     * @return mixed
+     */
+    private function importFromUrl($dataSource, $url)
     {
         $content = @file_get_contents($url);
-        $batchID = "URL-".str_slug($url);
+        $batchID = "MANUAL-URL-".str_slug($url).'-'.time();
         Payload::write($dataSource->data_source_id, $batchID, $content);
 
         $task = [
@@ -88,11 +101,11 @@ class ImportHandler extends Handler
             'priority' => 2,
             'params' => http_build_query([
                 'class' => 'import',
-                'ds_id' => $dataSource->data_source_id,
-                'batch_id' => $batchID,
-                'harvest_id' => $dataSource->harvest()->first() != null ? $dataSource->harvest()->first()->harvest_id : "",
+                'pipeline' => 'ManualImport',
                 'source' => 'url',
-                'url' => $url
+                'url' => $url,
+                'ds_id' => $dataSource->data_source_id,
+                'batch_id' => $batchID
             ])
         ];
 
@@ -114,7 +127,7 @@ class ImportHandler extends Handler
     public function importFromXML($dataSource, $xml)
     {
         $xml = trim($xml);
-        $batchID = "XML-".md5($xml);
+        $batchID = "MANUAL-XML-".md5($xml).'-'.time();
         Payload::write($dataSource->data_source_id, $batchID, $xml);
 
         $task = [
@@ -124,10 +137,11 @@ class ImportHandler extends Handler
             'priority' => 2,
             'params' => http_build_query([
                 'class' => 'import',
+                'pipeline' => 'ManualImport',
+                'source' => 'xml',
                 'ds_id' => $dataSource->data_source_id,
                 'batch_id' => $batchID,
-                'harvest_id' => $dataSource->harvest()->first()->harvest_id,
-                'source' => 'xml'
+                'harvest_id' => $dataSource->harvest()->first()->harvest_id
             ])
         ];
 
