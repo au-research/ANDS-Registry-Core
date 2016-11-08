@@ -21,37 +21,49 @@ class Slug_Extension extends ExtensionBase
 		if(!$this->ro->title) $this->ro->updateTitles();
 
 		//remove stopwords, weird characters, replace spaces with blanks and limit to 5 words slug
-		$result = strtolower($this->ro->titleWithoutCommonWords());
+        $simplifiedTitle = $this->ro->titleWithoutCommonWords();
+        $result = strtolower($simplifiedTitle);
+        if (trim($simplifiedTitle) == "") {
+            $result = strtolower($this->ro->title);
+        }
 		$result = preg_replace("/[^a-z0-9\s-]/", "", $result);
 		$result = trim(preg_replace("/[\s-]+/", " ", $result));
 		// $result = trim(substr($result, 0, self::maxLength));
-		// 
 
 		$result = explode(' ', $result);
-		if(sizeof($result) > self::maxNumWords){
-			$first_three = array_slice($result, 0, 3);
-			$last_two = array_slice($result, -2, 2, true);
-			$result = array_merge($first_three, $last_two);
-			$result = implode('-', $result);
-		} else {
-			$result = implode('-', $result);
-		}
 
+        // if the slug still consist of emptiness
+        // group-id
+        if (count($result) == 0) {
+            $result = [
+                $this->ro->group, $this->ro->id
+            ];
+        }
 
-		if($this->ro->slug != $result){
-			
-			try{
-				//the slug is different, let's change it!
-				$this->db->insert('url_mappings', array("slug"=>$result, "registry_object_id"=>$this->id, "created"=>time(), "updated"=>time()));
-				$this->ro->slug = $result;
-				$this->ro->save();
-				//update the index quickly
-				$this->ro->update_field_index('slug');
-			} catch (Exception $e) {
-				return 'Error Creating Slug'.$e->message();
-			}
-			
-		}
+        if (sizeof($result) > self::maxNumWords) {
+            $first_three = array_slice($result, 0, 3);
+            $last_two = array_slice($result, -2, 2, true);
+            $result = array_merge($first_three, $last_two);
+            $result = implode('-', $result);
+        } else {
+            $result = implode('-', $result);
+        }
+
+        if ($this->ro->slug != $result) {
+            try {
+                //the slug is different, let's change it!
+                $this->db->insert('url_mappings', array(
+                    "slug" => $result,
+                    "registry_object_id" => $this->id,
+                    "created" => time(),
+                    "updated" => time()
+                ));
+                $this->ro->slug = $result;
+                $this->ro->save();
+            } catch (Exception $e) {
+                return 'Error Creating Slug' . $e->message();
+            }
+        }
 
 		return $result;
 	}

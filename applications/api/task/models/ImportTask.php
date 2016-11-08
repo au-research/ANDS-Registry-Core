@@ -72,6 +72,7 @@ class ImportTask extends Task
                 $task = $taskObject->toArray();
             }
         }
+        $this->save();
     }
 
     public function hook_end()

@@ -823,20 +823,20 @@ class Activity_grants_extension extends ExtensionBase
         if ($solrResult
             && array_key_exists('response', $solrResult)
             && $solrResult['response']['numFound'] > 0) {
-
-            foreach ($solrResult['response']['docs'] as $doc)
-            $result[] = [
-                'registry_object_id' => $doc['to_id'],
-                'key' => $doc['to_key'],
-                'class' => $doc['to_class'],
-                'title' => $doc['to_title'],
-                'slug' => $doc['to_slug'],
-                'status' => 'PUBLISHED',
-                'relation_type' => $doc['relation'][0],
-                'origin' => $doc['relation_origin'][0],
-                'relation_description' => isset($doc['relation_description']) ? $doc['relation_description'] : "",
-                'type' => $doc['to_type']
-            ];
+            foreach ($solrResult['response']['docs'] as $doc) {
+                $result[] = [
+                    'registry_object_id' => $doc['to_id'],
+                    'key' => $doc['to_key'],
+                    'class' => $doc['to_class'],
+                    'title' => $doc['to_title'],
+                    'slug' => $doc['to_slug'],
+                    'status' => 'PUBLISHED',
+                    'relation_type' => $doc['relation'][0],
+                    'origin' => $doc['relation_origin'][0],
+                    'relation_description' => isset($doc['relation_description']) ? $doc['relation_description'] : "",
+                    'type' => $doc['to_type']
+                ];
+            }
         }
         return $result;
     }

@@ -67,6 +67,14 @@ class Task_api
                     throw new Exception("A task ID is required");
                 }
                 break;
+            case 'restart':
+                if (!$this->params['identifier']) {
+                    throw new Exception("A task ID is required");
+                }
+
+
+
+                break;
             case 'all' :
             case 'pending' :
             case 'completed' :
@@ -121,14 +129,9 @@ class Task_api
     }
 
     private function test(){
-        $task = [
-            'name' => 'Minh Pipeline Test Task',
-            'type' => 'POKE',
-            'frequency' => 'ONCE',
-            'priority' => 1,
-            'params' => 'class=import&ds_id=209&batch_id=AUTestingRecordsImport'
-        ];
-        return $this->taskManager->addTask($task);
+        $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
+        $ro = $this->ci->ro->getByID(622581);
+        dd($ro->generateSlug());
     }
 
     /**
