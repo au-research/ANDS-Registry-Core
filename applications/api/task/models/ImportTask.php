@@ -278,11 +278,6 @@ class ImportTask extends Task
                     "FinishImport",
                 ];
                 break;
-            case "DeletingWorkflow":
-                $tasks = [
-                    "ProcessDelete"
-                ];
-                break;
             case "UpdateRelationshipWorkflow":
                 $tasks = [
                     "ProcessRelationships",

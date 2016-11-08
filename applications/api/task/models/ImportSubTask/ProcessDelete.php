@@ -34,7 +34,22 @@ class ProcessDelete extends ImportSubTask
             }
         }
 
-        // TODO: remove from index all id listed here
+        $this->parent()->getCI()->load->library('solr');
+
+        $portalQuery = "";
+        $relationQuery = "";
+        foreach ($this->parent()->getTaskData('deletedRecords') as $id) {
+            $portalQuery .= " +id:$id";
+            $relationQuery .= " +from_id:$id";
+        }
+
+        $this->parent()->getCI()->solr->init()
+            ->setCore('portal')->deleteByQueryCondition($portalQuery);
+        $this->parent()->getCI()->solr->commit();
+
+        $this->parent()->getCI()->solr->init()
+            ->setCore('relations')->deleteByQueryCondition($relationQuery);
+        $this->parent()->getCI()->solr->commit();
 
     }
 }

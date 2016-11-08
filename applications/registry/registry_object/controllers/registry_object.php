@@ -1074,14 +1074,15 @@ class Registry_object extends MX_Controller {
         $importTask->init([
             'name' => "Delete Pipeline",
             'params' => http_build_query([
-                'ds_id' => $data_source_id
+                'ds_id' => $data_source_id,
+                'pipeline' => 'PublishingWorkflow'
             ])
         ]);
 
         $importTask
+            ->setCI($this)
             ->skipLoadingPayload()
-            ->enableRunAllSubTask()
-            ->setPipeline('DeletingWorkflow');
+            ->enableRunAllSubTask();
 
         $importTask
             ->setTaskData('deletedRecords', $affected_ids)
