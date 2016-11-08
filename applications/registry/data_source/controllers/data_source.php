@@ -475,14 +475,16 @@ class Data_source extends MX_Controller {
         $importTask = new \ANDS\API\Task\ImportTask();
         $importTask->init([
             'name' => "Background Task for $dataSource->title($dataSourceID) Updating $total records relationship metadata",
+            'params' => http_build_query([
+                'ds_id' => $dataSourceID,
+                'pipeline' => 'UpdateRelationshipWorkflow'
+            ])
         ]);
         $importTask->setDb($this->db)->setCI($this);
         $importTask
             ->skipLoadingPayload()
             ->enableRunAllSubTask()
-            ->setDataSourceID($dataSourceID)
-            ->setTaskData("importedRecords", $ids)
-            ->setPipeline("UpdateRelationshipWorkflow");
+            ->setTaskData("importedRecords", $ids);
         $importTask->initialiseTask();
 
         // sending the task to the background

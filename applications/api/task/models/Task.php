@@ -280,6 +280,9 @@ class Task
             if ($this->runAll) {
                 $params['runAll'] = true;
             }
+            if ($this->getTaskData('pipeline')) {
+                $params['pipeline'] = $this->getTaskData('pipeline');
+            }
         }
 
         $task = [
