@@ -145,6 +145,7 @@ class FinishImport extends ImportSubTask
         $message = "Import from $source COMPLETED" . NL;
         $message .= $this->parent()->getDataSourceMessage();
         $this->parent()->setTaskData("dataSourceLog", $message);
+
         $dataSource->appendDataSourceLog($message, "info", "IMPORTER", "");
         return;
     }

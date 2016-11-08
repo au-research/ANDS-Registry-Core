@@ -802,7 +802,8 @@ class Registry_object extends MX_Controller {
                 'params' => http_build_query([
                     'pipeline' => 'PublishingWorkflow',
                     'ds_id' => $dataSourceID,
-                    'targetStatus' => $targetStatus
+                    'targetStatus' => $targetStatus,
+                    'source' => 'manual'
                 ])
             ]);
             $importTask

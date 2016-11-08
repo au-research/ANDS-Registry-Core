@@ -534,7 +534,7 @@ class Data_source extends MX_Controller {
             ->enableRunAllSubTask()
             ->setTaskData("targetStatus", $newStatus)
             ->setDataSourceID($dataSourceID)
-            ->setTaskData("importedRecords", $ids)
+            ->setTaskData("affectedRecords", $ids)
             ->setPipeline("PublishingWorkflow");
         $importTask->initialiseTask();
 

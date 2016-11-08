@@ -586,7 +586,9 @@ class ImportTask extends Task
         $message = [];
         $message[] = "Batch ID: ".$this->batchID;
         $message[] = "Time: ".date("Y-m-d\TH:i:s\Z", time());
-        $message[] = "TaskID: ".$this->getId();
+        if ($this->getId()) {
+            $message[] = "TaskID: ".$this->getId();
+        }
         foreach ($selectedKeys as $key => $title){
             $taskData = $this->getTaskData($key);
             if($taskData !== 0 && $taskData !== null && $taskData != "") {
