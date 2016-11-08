@@ -819,6 +819,14 @@ class Registry_object extends MX_Controller {
 
             $result['error'] = array_merge($result['error'], $importTask->getError());
 
+            // works for single record publish through the line
+            // uses for ARO screen and View screen to redirect to the new record ID
+            $result['message_code'] = $targetStatus;
+            $importedRecords = $importTask->getTaskData('importedRecords');
+            if ($importedRecords && count($importedRecords) == 1) {
+                $result['new_ro_id'] = array_first($importedRecords);
+            }
+
             // TODO: Carry success message here
         }
 

@@ -17,14 +17,12 @@ class ProcessDelete extends ImportSubTask
 
     public function run_task()
     {
-        $publishedRecordsIDs = [];
         foreach ($this->parent()->getTaskData('deletedRecords') as $id) {
             $record = RegistryObject::find($id);
             if ($record && $record->isPublishedStatus()) {
                 // TODO: Refactor Repo::deleteRecord
                 $record->status = "DELETED";
                 $record->save();
-                $publishedRecordsIDs[] = $record->registry_object_id;
                 $this->log("Record $id ($record->status) is set to DELETED");
                 $this->parent()->incrementTaskData("recordsDeletedCount");
             } elseif ($record && $record->isDraftStatus()) {

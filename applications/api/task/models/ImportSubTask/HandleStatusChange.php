@@ -62,7 +62,7 @@ class HandleStatusChange extends ImportSubTask
 
         if (count($recordIDsToPublished) > 0) {
             $this->publishRecords($recordIDsToPublished);
-            $this->setTaskData("deletedRecords", $ids);
+            $this->parent()->setTaskData("deletedRecords", $ids);
         }
     }
 
