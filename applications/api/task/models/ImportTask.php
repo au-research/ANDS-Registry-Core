@@ -141,7 +141,6 @@ class ImportTask extends Task
      */
     public function loadSubTasks()
     {
-
         $subTasks = $this->getTaskData('subtasks') ?: $this->getDefaultImportSubtasks();
 
         /**
@@ -456,7 +455,7 @@ class ImportTask extends Task
             $this->skipLoadingPayload();
         }
 
-        if ($this->getTaskData('pipeline') !== null) {
+        if ($this->getTaskData('pipeline') !== null && !$this->getTaskData('subtasks')) {
             $this->setPipeline($this->getTaskData('pipeline'));
         }
 
