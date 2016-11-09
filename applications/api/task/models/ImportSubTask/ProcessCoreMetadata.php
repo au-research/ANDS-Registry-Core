@@ -70,11 +70,8 @@ class ProcessCoreMetadata extends ImportSubTask
             );
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->updateTitles();
-
-            // only update slug if the defaultStatus is PUBLISHED
-            if ($this->parent()->getTaskData('targetStatus') == "PUBLISHED") {
-                $ro->generateSlug();
-            }
+            $ro->generateSlug();
+            
             $ro->save();
 
             // TODO manually_assessed
