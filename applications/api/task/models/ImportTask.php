@@ -516,6 +516,9 @@ class ImportTask extends Task
 
     public function updateHarvest($args)
     {
+        if (!$this->harvestID) {
+            return;
+        }
         Harvest::where('harvest_id', $this->harvestID)->update($args);
         NotifyUtil::notify(
             "datasource.".$this->dataSourceID.'.harvest',
