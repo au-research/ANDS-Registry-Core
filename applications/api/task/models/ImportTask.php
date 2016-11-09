@@ -270,6 +270,7 @@ class ImportTask extends Task
                     "ProcessPayload",
                     "Ingest",
                     "ProcessCoreMetadata",
+                    "PreserveCoreMetadata",
                     "ProcessDelete",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
