@@ -828,6 +828,14 @@ class Registry_object extends MX_Controller {
                 $result['new_ro_id'] = array_first($importedRecords);
             }
 
+            // in case the data is not updated, the ID would be the same and will be in harvestedRecordIDs
+            if (count($affected_ids) == 1) {
+                $harvestedRecordIDs = $importTask->getTaskData('harvestedRecordIDs');
+                if ($harvestedRecordIDs && count($harvestedRecordIDs) == 1) {
+                    $result['new_ro_id'] = array_first($harvestedRecordIDs);
+                }
+            }
+
             // TODO: Carry success message here
         }
 
