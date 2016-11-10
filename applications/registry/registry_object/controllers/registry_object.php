@@ -1103,29 +1103,6 @@ class Registry_object extends MX_Controller {
         $ds = $this->ds->getByID($data_source_id);
         $ds->updateStats();
 
-        // set a background task to fix the relationship of the deleted records by removing them
-        if (sizeof($affected_ids) > 0) {
-            require_once API_APP_PATH . 'vendor/autoload.php';
-            $task = [
-                'name' => "fixRelationship of " . sizeof($affected_ids). " records",
-                'type' => 'POKE',
-                'frequency' => 'ONCE',
-                'priority' => 5,
-                'params' => http_build_query([
-                    'class' => 'fixRelationship',
-                    'type' => 'ro',
-                    'id' => join(',', $affected_ids)
-                ])
-            ];
-            $taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
-            $taskResult = $taskManager->addTask($task);
-
-            // run it immediately if the number of affected ids are low
-            if (sizeof($affected_ids < 100)) {
-                $taskManager->runTask($taskResult['id']);
-            }
-        }
-
         echo json_encode([
             "status" => "success"
         ]);
