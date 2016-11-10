@@ -142,7 +142,12 @@ class ImportTask extends Task
      */
     public function loadSubTasks()
     {
-        $subTasks = $this->getTaskData('subtasks') ?: $this->getDefaultImportSubtasks();
+        // does not have any subtasks
+        if (!$this->getTaskData('subtasks')) {
+            $this->setPipeline("default");
+        }
+
+        $subTasks = $this->getTaskData('subtasks');
 
         /**
          * Load all the subtask as task object
@@ -204,47 +209,12 @@ class ImportTask extends Task
     }
 
     /**
-     * Returns a default list of task for an Import Task
-     * Can be overwriten if required
-     *
-     * @return array
-     */
-    public function getDefaultImportSubtasks()
-    {
-        $pipeline = [];
-        $defaultSubtasks = [
-            "PopulateImportOptions",
-            "ValidatePayload",
-            "ProcessPayload",
-            "Ingest",
-            "ProcessCoreMetadata",
-            "HandleRefreshHarvest",
-            "ProcessDelete",
-            "ProcessIdentifiers",
-            "ProcessRelationships",
-            "ProcessQualityMetadata",
-            "IndexPortal",
-            "OptimizeRelationship",
-            //"HandleIncrementalHarvest",
-            "FinishImport"
-        ];
-
-        foreach ($defaultSubtasks as $subtaskName) {
-            $pipeline[] = [
-                'name' => $subtaskName,
-                'status' => "PENDING"
-            ];
-        }
-        return $pipeline;
-    }
-
-    /**
      * Set a respective subtasks pipeline for this importTask
      *
      * @param $pipeline
      * @return $this
      */
-    public function setPipeline($pipeline)
+    public function setPipeline($pipeline = "default")
     {
         switch($pipeline) {
             case "ManualImport":
@@ -570,6 +540,11 @@ class ImportTask extends Task
         // if this is a harvest, run FinishImportTask
         if ($this->harvestID) {
             $nextTask = $this->getTaskByName("FinishImport");
+            $nextTask->disableLoggingToDatasourceLogs();
+            $this->runSubTask($nextTask);
+            $this->saveSubTaskData($nextTask);
+
+            $nextTask = $this->getTaskByName("ScheduleHarvest");
             $this->runSubTask($nextTask);
             $this->saveSubTaskData($nextTask);
         }

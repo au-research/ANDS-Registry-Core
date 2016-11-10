@@ -16,6 +16,7 @@ class FinishImport extends ImportSubTask
 {
 
     private $harvestStarted;
+    private $addToDatasourceLog = true;
 
     protected $requireDataSource = true;
     protected $title = "FINISHING IMPORT";
@@ -31,10 +32,18 @@ class FinishImport extends ImportSubTask
             )
         );
 
-        $this->updateDataSourceLogs($dataSource);
+        if ($this->addToDatasourceLog) {
+            $this->updateDataSourceLogs($dataSource);
+        }
+
         $this->updateDataSourceStats($dataSource);
 
         return $this;
+    }
+
+    public function disableLoggingToDatasourceLogs()
+    {
+        $this->addToDatasourceLog = false;
     }
 
     /**
@@ -50,7 +59,8 @@ class FinishImport extends ImportSubTask
         }
 
         // in case of error
-        if ($errorList = $this->parent()->getError()) {
+        $noRecords = $this->parent()->getTaskData('noRecords');
+        if (count($this->parent()->getError()) > 0 && !$noRecords ) {
             $message = "Import from $source COMPLETED with error(s)" . NL;
             $message .= $this->parent()->getDataSourceMessage();
             $this->parent()->setTaskData("dataSourceLog", $message);
@@ -61,7 +71,7 @@ class FinishImport extends ImportSubTask
         // not error
         $message = "Import from $source COMPLETED" . NL;
 
-        if ($this->parent()->getTaskData("noRecords")) {
+        if ($noRecords) {
             $message = "Import from $source COMPLETED with 0 records found". NL;
         }
 
