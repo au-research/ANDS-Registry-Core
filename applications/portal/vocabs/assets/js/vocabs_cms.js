@@ -325,7 +325,6 @@
                             var chosen = $scope.choose(data['dcterms:language']);
                             $scope.vocab.language = [];
                             angular.forEach(chosen, function (lang) {
-                                if (lang.toLowerCase() == 'en') lang = 'English';
                                 $scope.vocab.language.push(lang);
                             });
                         }
