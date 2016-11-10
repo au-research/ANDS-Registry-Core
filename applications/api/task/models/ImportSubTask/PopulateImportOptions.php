@@ -71,12 +71,15 @@ class PopulateImportOptions extends ImportSubTask
             $this->parent()->getTaskData("targetStatus")
             ));
         // record count after harvest
+
+        $this->parent()->setTaskData("refreshHarvestStatust", 0);
         $this->parent()->setTaskData("datasourceRecordAfterCount", 0);
         $this->parent()->setTaskData("missingRegistryObjectKeyCount", 0);
         $this->parent()->setTaskData("duplicateKeyinFeedCount", 0);
         $this->parent()->setTaskData("missingOriginatingSourceCount", 0);
         $this->parent()->setTaskData("missingGroupAttributeCount", 0);
         $this->parent()->setTaskData("invalidRegistryObjectsCount", 0);
+
         // record count if REFRESH mode was applied (delete records from previous harvest)
 
         return $this;

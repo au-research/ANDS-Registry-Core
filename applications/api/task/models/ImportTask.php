@@ -587,6 +587,7 @@ class ImportTask extends Task
             "missingGroupAttributeCount" => "Invalid missing group Attribute",
             "recordsCreatedCount" => "New Records Created",
             "recordsUpdatedCount" => "Records updated",
+            "refreshHarvestStatus" => "Refresh Harvest Status",
             "recordsNotUpdatedCount" => "Records content unchanged",
             "recordsDeletedCount" => "Records deleted (due to OAI or Refresh mode)",
             "datasourceRecordBeforeCount" => "Number of " . $targetStatus . " records Before Import",
