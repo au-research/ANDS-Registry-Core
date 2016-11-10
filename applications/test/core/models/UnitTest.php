@@ -324,6 +324,20 @@ class UnitTest
         return $this;
     }
 
+    public function assertRegExp($pattern, $subject)
+    {
+        $this->getReflectorInfo();
+
+        if (is_array($subject)) {
+            $subject = implode(" ", $subject);
+        }
+
+        $match = preg_match($pattern, $subject);
+        $this->ci->unit->run($match > 0, 'is_true', $this->getName(), $this->getNote());
+        $this->reset();
+        return $this;
+    }
+
     /**
      * Assert that an array has a key
      *
@@ -334,7 +348,7 @@ class UnitTest
     public function assertArrayHasKey($key, $array)
     {
         $this->getReflectorInfo();
-        $this->ci->input->run(array_key_exists($key, $array), 'is_true', $this->getName(), $this->getNote());
+        $this->ci->unit->run(array_key_exists($key, $array), 'is_true', $this->getName(), $this->getNote());
         $this->reset();
         return $this;
     }
