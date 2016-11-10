@@ -555,8 +555,8 @@ class ImportTask extends Task
             $this->setTaskData('dataSourceLog', $message.NL.$this->getDataSourceMessage());
         }
 
-        // if this is a harvest, run FinishImportTask
-        if ($this->harvestID) {
+        // if this is a harvest, run FinishImportTask and then ScheduleHarvest
+        if ($source == 'harvester') {
             $nextTask = $this->getTaskByName("FinishImport");
             $nextTask->disableLoggingToDatasourceLogs();
             $this->runSubTask($nextTask);

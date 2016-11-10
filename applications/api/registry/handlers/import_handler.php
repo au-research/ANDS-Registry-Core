@@ -153,8 +153,7 @@ class ImportHandler extends Handler
                 'pipeline' => 'ManualImport',
                 'source' => 'xml',
                 'ds_id' => $dataSource->data_source_id,
-                'batch_id' => $batchID,
-                'harvest_id' => $dataSource->harvest()->first()->harvest_id
+                'batch_id' => $batchID
             ])
         ];
 
