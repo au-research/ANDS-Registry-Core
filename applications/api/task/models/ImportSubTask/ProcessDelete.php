@@ -37,10 +37,12 @@ class ProcessDelete extends ImportSubTask
         $this->parent()->getCI()->load->library('solr');
 
         $portalQuery = "";
-        $relationQuery = "";
+        $fromRelationQuery = "";
+        $toRelationQuery = "";
         foreach ($this->parent()->getTaskData('deletedRecords') as $id) {
             $portalQuery .= " +id:$id";
-            $relationQuery .= " +from_id:$id";
+            $fromRelationQuery .= " +from_id:$id";
+            $toRelationQuery .= " +to_id:$id";
         }
 
         $this->parent()->getCI()->solr->init()
@@ -48,7 +50,8 @@ class ProcessDelete extends ImportSubTask
         $this->parent()->getCI()->solr->commit();
 
         $this->parent()->getCI()->solr->init()
-            ->setCore('relations')->deleteByQueryCondition($relationQuery);
+            ->setCore('relations')->deleteByQueryCondition($fromRelationQuery);
+        $this->parent()->getCI()->solr->deleteByQueryCondition($toRelationQuery);
         $this->parent()->getCI()->solr->commit();
 
     }
