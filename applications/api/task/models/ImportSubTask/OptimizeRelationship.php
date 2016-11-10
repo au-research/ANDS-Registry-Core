@@ -4,6 +4,7 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\API\Task\FixRelationshipTask;
+use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 class OptimizeRelationship extends ImportSubTask
 {
@@ -23,7 +24,7 @@ class OptimizeRelationship extends ImportSubTask
         $total = count($importedRecords);
 
         $fixRelationshipTask = new FixRelationshipTask();
-        $fixRelationshipTask->setCi($this->parent()->getCI())->init([]);
+        $fixRelationshipTask->setCI($this->parent()->getCI())->init([]);
 
         foreach ($importedRecords as $index => $roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
