@@ -24,8 +24,6 @@ class FinishImport extends ImportSubTask
     {
         $dataSource = $this->getDataSource();
 
-        $this->setHarvestTime();
-
         $this->parent()->setTaskData(
             "datasourceRecordAfterCount",
             Repo::getCountByDataSourceIDAndStatus($this->parent()->dataSourceID,
@@ -33,92 +31,11 @@ class FinishImport extends ImportSubTask
             )
         );
 
-        $this->handleAdvancedHarvest($dataSource);
         $this->updateDataSourceLogs($dataSource);
-        $this->setHarvestStatus($dataSource);
         $this->updateDataSourceStats($dataSource);
 
         return $this;
     }
-
-    private function setHarvestTime()
-    {
-        $dataSource = $this->getDataSource();
-
-        $harvestMessage = null;
-        if ($harvestID = $dataSource->getHarvest($this->parent()->harvestID)) {
-            $harvestMessage = json_decode($dataSource->getHarvest($this->parent()->harvestID)->message);
-        }
-
-        if (isset($harvestMessage->start_utc)) {
-            $this->harvestStarted = $harvestMessage->start_utc;
-            return;
-        }
-
-        date_default_timezone_set('UTC');
-        $this->harvestStarted = date("Y-m-d\TH:i:s\Z", time());
-        date_default_timezone_set('Australia/Canberra');
-    }
-
-    /**
-     * Check INCREMENTAL
-     * set last_harvest_run_date
-     *
-     * @param $dataSource
-     */
-    public function handleAdvancedHarvest($dataSource)
-    {
-        $advancedHarvestMode = $dataSource->getDataSourceAttribute("advanced_harvest_mode")->value;
-
-        $dataSource->setDataSourceAttribute("last_harvest_run_date",'');
-
-        if ($advancedHarvestMode == 'INCREMENTAL') {
-            $this->log("Next from_date ". $this->harvestStarted);
-            $this->parent()->updateHarvest(['last_run'=>$this->harvestStarted]);
-            $dataSource->setDataSourceAttribute("last_harvest_run_date", $this->harvestStarted);
-        }
-
-        $dataSource->save();
-    }
-
-    public function setHarvestStatus($dataSource){
-        $harvestFrequency = $dataSource->getDataSourceAttributeValue("harvest_frequency");
-        $harvestDate = strtotime($dataSource->getDataSourceAttributeValue("harvest_date"));
-
-        if($harvestFrequency  == 'once only' || $harvestFrequency == ''){
-            $this->parent()->updateHarvest(['status'=>'IDLE', "importer_message" => "Harvest completed!"]);
-            return;
-        }
-
-        // reschedule the harvest
-        $nextRun = $this->getNextHarvestDate($harvestDate, $harvestFrequency);
-        $nextHarvestDate = date("Y-m-d\TH:i:s\Z", $nextRun);
-        $this->log("Harvest rescheduled to run at ". $nextHarvestDate);
-        $this->log("Next from_date ". $this->harvestStarted);
-        $dataSource->setDataSourceAttribute("last_harvest_run_date", $this->harvestStarted);
-        $batchNumber = strtoupper(sha1($nextRun));
-
-        $nextRunDate = date('Y-m-d H:i:s', $nextRun);
-
-        // Only log reinstante if source is harvester
-        $source = $this->parent()->getTaskData('source') ? $this->parent()->getTaskData('source') : "harvester";
-        if ($source == "harvester") {
-            $dataSource->appendDataSourceLog(
-                "Harvest rescheduled for: $nextRunDate with previous settings",
-                "info", "IMPORTER"
-            );
-        }
-
-        $this->parent()->updateHarvest([
-            'status' => 'SCHEDULED',
-            'last_run' => $this->harvestStarted,
-            'next_run' => date('Y-m-d\TH:i:s.uP', $nextRun),
-            'batch_number' => $batchNumber,
-            'importer_message' => "Harvest rescheduled for: $nextRunDate"
-        ]);
-
-    }
-
 
     /**
      * Add a data_source_log
@@ -143,38 +60,16 @@ class FinishImport extends ImportSubTask
 
         // not error
         $message = "Import from $source COMPLETED" . NL;
+
+        if ($this->parent()->getTaskData("noRecords")) {
+            $message = "Import from $source COMPLETED with 0 records found". NL;
+        }
+
         $message .= $this->parent()->getDataSourceMessage();
         $this->parent()->setTaskData("dataSourceLog", $message);
 
         $dataSource->appendDataSourceLog($message, "info", "IMPORTER", "");
         return;
-    }
-
-    function getNextHarvestDate($harvestDate, $harvestFrequency)
-    {
-
-        $now = time();
-        if ($harvestDate !== null) {
-            $nextHarvest = $harvestDate;
-        } else {
-            $nextHarvest = 0;
-        }
-
-        while ($nextHarvest < $now) {
-            if ($harvestFrequency == 'daily') {
-                $nextHarvest = strtotime('+1 day', $nextHarvest);
-            } elseif ($harvestFrequency == 'weekly') {
-                $nextHarvest = strtotime('+1 week', $nextHarvest);
-            } elseif ($harvestFrequency == 'fortnightly') {
-                $nextHarvest = strtotime('+2 week', $nextHarvest);
-            } elseif ($harvestFrequency == 'monthly') {
-                $nextHarvest = strtotime('+1 month', $nextHarvest);
-            } elseif ($harvestFrequency == 'hourly') {
-                $nextHarvest += 60 * 60;
-            }
-        }
-
-        return $nextHarvest;
     }
 
     public function updateDataSourceStats($dataSource)
@@ -196,7 +91,6 @@ class FinishImport extends ImportSubTask
         }
 
         // TODO :update count_ql
-
     }
 
 }

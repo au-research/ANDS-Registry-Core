@@ -260,7 +260,6 @@ class ImportTask extends Task
                     "IndexPortal",
                     "OptimizeRelationship",
                     "FinishImport",
-                    //"Report"
                 ];
                 break;
             case "PublishingWorkflow":
@@ -290,6 +289,7 @@ class ImportTask extends Task
                 $tasks = [
                     "PopulateImportOptions",
                     "FinishImport",
+                    "ScheduleHarvest"
                     //"Report"
                 ];
                 // error will not load payloads
@@ -314,6 +314,7 @@ class ImportTask extends Task
                     //"HandleIncrementalHarvest",
                     //"ScheduleHarvest",
                     "FinishImport",
+                    "ScheduleHarvest"
                     //"Report"
                 ];
                 break;
@@ -553,7 +554,10 @@ class ImportTask extends Task
 
     public function stoppedWithError($message)
     {
-        $this->updateHarvest(['status' => 'STOPPED', 'importer_message'=> $message, 'message' => '']);
+        $this->updateHarvest([
+            'importer_message'=> $message
+        ]);
+
         if ($dataSource = DataSource::find($this->dataSourceID)) {
             $dataSource->appendDataSourceLog("IMPORT STOPPED WITH ERROR". NL . $message, "error", "IMPORTER");
         }
@@ -561,6 +565,13 @@ class ImportTask extends Task
         $source = $this->getTaskData('source');
         if ($source == 'url' || $source == 'xml') {
             $this->setTaskData('dataSourceLog', $message.NL.$this->getDataSourceMessage());
+        }
+
+        // if this is a harvest, run FinishImportTask
+        if ($this->harvestID) {
+            $nextTask = $this->getTaskByName("FinishImport");
+            $this->runSubTask($nextTask);
+            $this->saveSubTaskData($nextTask);
         }
 
         parent::stoppedWithError($message);
@@ -594,12 +605,21 @@ class ImportTask extends Task
         if ($this->getId()) {
             $message[] = "TaskID: ".$this->getId();
         }
-        foreach ($selectedKeys as $key => $title){
+
+        foreach ($selectedKeys as $key => $title) {
             $taskData = $this->getTaskData($key);
             if($taskData !== 0 && $taskData !== null && $taskData != "") {
                 $message[] = $title . ": " . $taskData;
             }
         }
+
+        if ($errorList = $this->getError()) {
+            $message[] = NL."Error: ";
+            foreach ($errorList as $error) {
+                $message[] = $error;
+            }
+        }
+
 
         $message = implode(NL, $message);
         return $message;

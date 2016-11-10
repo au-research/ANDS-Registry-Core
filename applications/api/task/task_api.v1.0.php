@@ -73,7 +73,19 @@ class Task_api
                     throw new Exception("A task ID is required");
                 }
 
+                $task = $this->taskManager->getTask($this->params['identifier']);
+                $taskObject = $this->taskManager->getTaskObject($task);
+                $taskObject
+                    ->setDb($this->db)
+                    ->setStatus('PENDING')
+                    ->enableRunAllSubTask()
+                    ->setMessage()
+                    ->clearTaskData()
+                    ->save();
 
+                return $taskObject->run();
+
+                // return $this->taskManager->runTask($this->params['identifier']);
 
                 break;
             case 'all' :

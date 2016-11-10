@@ -1,5 +1,6 @@
 <?php
 namespace ANDS\API\Registry\Handler;
+use ANDS\API\Registry\Handler\errorPipeline;
 use ANDS\API\Task\TaskManager;
 use ANDS\Payload;
 use ANDS\Repository\DataSourceRepository;
@@ -54,8 +55,13 @@ class ImportHandler extends Handler
         $batchID = $params['batch_id'];
 
         $status = array_key_exists('status', $params) ? $params['status'] : null;
+
         if ($status === 'ERROR') {
              return $this->errorPipeline($dataSource, $batchID);
+        }
+
+        if ($status === "NORECORDS") {
+            return $this->errorPipeline($dataSource, $batchID, $noRecords = true);
         }
 
         // get Harvest
@@ -174,21 +180,27 @@ class ImportHandler extends Handler
      * @param $batchID
      * @return mixed
      */
-    private function errorPipeline($dataSource, $batchID)
+    private function errorPipeline($dataSource, $batchID, $noRecords = false)
     {
+        $params = [
+            'class' => 'import',
+            'pipeline' => 'ErrorWorkflow',
+            'source' => 'harvester',
+            'ds_id' => $dataSource->data_source_id,
+            'batch_id' => $batchID,
+            'harvest_id' => $dataSource->harvest()->first()->harvest_id
+        ];
+
+        if ($noRecords) {
+            $params['noRecords'] = true;
+        }
+
         $task = [
             'name' => "Harvest Error - $dataSource->title($dataSource->data_source_id)",
             'type' => 'POKE',
             'frequency' => 'ONCE',
             'priority' => 2,
-            'params' => http_build_query([
-                'class' => 'import',
-                'pipeline' => 'ErrorWorkflow',
-                'source' => 'harvester',
-                'ds_id' => $dataSource->data_source_id,
-                'batch_id' => $batchID,
-                'harvest_id' => $dataSource->harvest()->first()->harvest_id
-            ])
+            'params' => http_build_query($params)
         ];
 
         $taskManager = new TaskManager($this->ci->db, $this);
