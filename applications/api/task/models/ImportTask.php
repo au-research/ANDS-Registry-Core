@@ -99,10 +99,10 @@ class ImportTask extends Task
      */
     public function writeLog($event = "ImportCompleted")
     {
-        monolog([
+        /*monolog([
             'event' => $event,
             'data' => $this->toArray()
-        ], 'import');
+        ], 'import');*/
     }
 
     /**
