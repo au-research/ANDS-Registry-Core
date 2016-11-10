@@ -85,6 +85,24 @@ class ImportTask extends Task
         if ($nextTask = $this->getNextTask()) {
             $this->setStatus("PENDING")->save();
         }
+
+        if ($this->getStatus() == "COMPLETED") {
+            $this->writeLog("ImportCompleted");
+        }
+    }
+
+    /**
+     * Uses the global monolog functionality to write to import.log
+     * to content of this task
+     *
+     * @param string $event
+     */
+    public function writeLog($event = "ImportCompleted")
+    {
+        monolog([
+            'event' => $event,
+            'data' => $this->toArray()
+        ], 'import');
     }
 
     /**
@@ -548,6 +566,8 @@ class ImportTask extends Task
             $this->runSubTask($nextTask);
             $this->saveSubTaskData($nextTask);
         }
+
+        $this->writeLog("ImportStopped");
 
         parent::stoppedWithError($message);
     }

@@ -8,6 +8,7 @@ namespace ANDS\API\Task;
 
 
 use ANDS\Util\NotifyUtil;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class Task
 {
@@ -58,6 +59,9 @@ class Task
      */
     public function run()
     {
+        $stopwatch = new Stopwatch();
+        $stopwatch->start($this->getName());
+
         $start = microtime(true);
 
         $this->hook_start();
@@ -81,6 +85,14 @@ class Task
         } catch (Exception $e) {
             $this->stoppedWithError($e->getMessage());
         }
+
+        $event = $stopwatch->stop($this->getName());
+
+        $this->setTaskData("benchmark", [
+            'origin' => $event->getOrigin(),
+            'duration' => $event->getDuration(),
+            'memory' => $event->getMemory()
+        ]);
 
         $this->finalize($start);
         return $this;
