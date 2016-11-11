@@ -25,10 +25,10 @@ class Doi_test extends MX_Controller {
 
 		$validxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 <resource xmlns="http://datacite.org/schema/kernel-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
-    <identifier identifierType="DOI">10.5072/example</identifier>
+    <identifier identifierType="DOI">10.5072/00/mydoitest14</identifier>
     <creators>
         <creator>
-            <creatorName>B.R.Maslin</creatorName>
+            <creatorName>Elizabeth Woods</creatorName>
             <affiliation>FOA</affiliation>
         </creator>
     </creators>
@@ -59,7 +59,7 @@ class Doi_test extends MX_Controller {
 // it's invalid for v.2.1 because the affiliation element was introduced in v.3
 $invalidxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 <resource xmlns="http://datacite.org/schema/kernel-2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-2.1 http://schema.datacite.org/meta/kernel-2.1/metadata.xsd">
-    <identifier identifierType="DOI">10.5072/example</identifier>
+    <identifier identifierType="DOI">10.5072/example2</identifier>
     <creators>
         <creator>
             <creatorName>B.R.Maslin</creatorName>
@@ -95,8 +95,33 @@ $invalidxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 		$requestURI = $doiversion_service_points['test'];
 		$v1_service_url = $doiversion_service_points['v1.0'];
 
-		/* first we mint a DOI using the latest version of the CMD API*/
+//The following commented out calls are used to test the datacite client endpoint 11/11/2016
+/*
+        $response = $this->test_datacite_client_metadata($app_id,$shared_secret,$validxml);
+        print_pre($response);
 
+        $response2 = $this->test_datacite_client_doi($app_id,$shared_secret,$requestBody = "doi=10.5072/00/mydoitest14\nurl=http://devl.ands.org.au/datacitetest");
+        print_pre($response2);
+
+        $response3 = $this->test_datacite_client_delete("10.5072/00/mydoitest14",$app_id,$shared_secret);
+        print_pre($response3);
+
+        $response = $this->test_datacite_client_metadata($app_id,$shared_secret,$validxml);
+        print_pre($response);
+
+        $response4 = $this->test_datacite_client_get("10.5072/00/mydoitest14",$app_id,$shared_secret);
+        print_pre($response4);
+
+        $response5 = $this->test_datacite_client_getMetadata("10.5072/00/mydoitest14",$app_id,$shared_secret);
+        print_pre($response5);
+
+        $response6 = $this->test_datacite_client_get("",$app_id,$shared_secret);
+        print_pre($response6);
+
+        exit();
+*/
+
+        /* first we mint a DOI using the latest version of the CMD API*/
 		$testDOI = $this->test_mint($app_id,$shared_secret,$url,$requestURI,'mint','json',$validxml);
 
 		if($testDOI)
@@ -296,5 +321,101 @@ $invalidxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 		return $doi;
 
 	}
+    function test_datacite_client_metadata($app_id,$shared_secret,$postdata)
+    {
 
+        $context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($app_id.":".$shared_secret));
+
+
+        $requestURI = api_url().'doi/datacite/metadata';
+
+
+        $newch = curl_init();
+        curl_setopt($newch, CURLOPT_URL, $requestURI);
+        curl_setopt($newch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($newch, CURLOPT_POST, 1);
+        curl_setopt($newch, CURLOPT_POSTFIELDS,$postdata);
+        curl_setopt($newch, CURLOPT_HTTPHEADER,$context);
+
+        $result = curl_exec($newch);
+
+        curl_close($newch);
+
+        return $result;
+
+    }
+
+    function test_datacite_client_doi($app_id,$shared_secret,$postdata)
+    {
+
+        $context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($app_id.":".$shared_secret));
+
+        $requestURI = api_url().'doi/datacite/doi';
+
+        $newch = curl_init();
+        curl_setopt($newch, CURLOPT_URL, $requestURI);
+        curl_setopt($newch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($newch, CURLOPT_POST, 1);
+        curl_setopt($newch, CURLOPT_POSTFIELDS,$postdata);
+        curl_setopt($newch, CURLOPT_HTTPHEADER,$context);
+
+        $result = curl_exec($newch);
+
+        curl_close($newch);
+
+        return $result;
+
+    }
+    function test_datacite_client_delete($doi,$app_id,$shared_secret)
+    {
+
+        $context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($app_id.":".$shared_secret));
+        $requestURI = api_url().'doi/datacite/metadata/'.$doi;
+        $newch = curl_init();
+        curl_setopt($newch, CURLOPT_URL, $requestURI);
+        curl_setopt($newch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($newch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($newch, CURLOPT_HTTPHEADER,$context);
+
+        $result = curl_exec($newch);
+
+        curl_close($newch);
+
+        return $result;
+
+    }
+
+    function test_datacite_client_get($doi,$app_id,$shared_secret){
+        $context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($app_id.":".$shared_secret));
+        $requestURI = api_url().'doi/datacite/doi/'.$doi;
+        $newch = curl_init();
+        curl_setopt($newch, CURLOPT_URL, $requestURI);
+        curl_setopt($newch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($newch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($newch, CURLOPT_HTTPHEADER,$context);
+
+        $result = curl_exec($newch);
+
+        curl_close($newch);
+
+        return $result;
+
+    }
+
+    function test_datacite_client_getMetadata($doi,$app_id,$shared_secret){
+        $context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($app_id.":".$shared_secret));
+        $requestURI = api_url().'doi/datacite/metadata/'.$doi;
+        $newch = curl_init();
+        curl_setopt($newch, CURLOPT_URL, $requestURI);
+        curl_setopt($newch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($newch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($newch, CURLOPT_HTTPHEADER,$context);
+
+        $result = curl_exec($newch);
+
+        curl_close($newch);
+
+        return $result;
+
+    }
 }
