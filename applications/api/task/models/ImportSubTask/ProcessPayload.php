@@ -77,13 +77,13 @@ class ProcessPayload extends ImportSubTask
 
         $key = trim((string) $registryObject->key);
 
-        if ((string)$registryObject->originatingSource == '') {
+        if (trim((string)$registryObject->originatingSource) == '') {
             $this->log("Error whilst ingesting record with key " . $key . ": " . "Registry Object 'originatingSource' must have a value");
             $this->parent()->incrementTaskData("missingOriginatingSourceCount");
             return false;
         }
 
-        if ((string)$registryObject['group'] == '') {
+        if (trim((string)$registryObject['group']) == '') {
             $this->log("Error whilst ingesting record with key " . $key . ": " .  "Registry Object '@group' must have a value");
             $this->parent()->incrementTaskData("missingGroupAttributeCount");
             return false;

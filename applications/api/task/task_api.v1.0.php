@@ -8,6 +8,7 @@
 namespace ANDS\API;
 
 use ANDS\API\Task\ImportTask;
+use ANDS\RegistryObject;
 use \Exception as Exception;
 
 
@@ -67,6 +68,26 @@ class Task_api
                     throw new Exception("A task ID is required");
                 }
                 break;
+            case 'restart':
+                if (!$this->params['identifier']) {
+                    throw new Exception("A task ID is required");
+                }
+
+                $task = $this->taskManager->getTask($this->params['identifier']);
+                $taskObject = $this->taskManager->getTaskObject($task);
+                $taskObject
+                    ->setDb($this->db)
+                    ->setStatus('PENDING')
+                    ->enableRunAllSubTask()
+                    ->setMessage()
+                    ->clearTaskData()
+                    ->save();
+
+                return $taskObject->run();
+
+                // return $this->taskManager->runTask($this->params['identifier']);
+
+                break;
             case 'all' :
             case 'pending' :
             case 'completed' :
@@ -121,14 +142,18 @@ class Task_api
     }
 
     private function test(){
-        $task = [
-            'name' => 'Minh Pipeline Test Task',
-            'type' => 'POKE',
-            'frequency' => 'ONCE',
-            'priority' => 1,
-            'params' => 'class=import&ds_id=209&batch_id=AUTestingRecordsImport'
-        ];
-        return $this->taskManager->addTask($task);
+        $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
+        initEloquent();
+        $IDs = RegistryObject::where('slug', '')->orWhere('slug', '=', null)->get()->pluck('registry_object_id');
+
+        foreach($IDs as $id) {
+            $ro = $this->ci->ro->getByID($id);
+            if ($ro) {
+                $ro->generateSlug();
+            } else {
+                return "Cannot find record $id";
+            }
+        }
     }
 
     /**

@@ -8,6 +8,7 @@ namespace ANDS\API\Task;
 
 
 use ANDS\Util\NotifyUtil;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class Task
 {
@@ -58,6 +59,9 @@ class Task
      */
     public function run()
     {
+        $stopwatch = new Stopwatch();
+        $stopwatch->start($this->getName());
+
         $start = microtime(true);
 
         $this->hook_start();
@@ -81,6 +85,14 @@ class Task
         } catch (Exception $e) {
             $this->stoppedWithError($e->getMessage());
         }
+
+        $event = $stopwatch->stop($this->getName());
+
+        $this->setTaskData("benchmark", [
+            'origin' => $event->getOrigin(),
+            'duration' => $event->getDuration(),
+            'memory' => $event->getMemory()
+        ]);
 
         $this->finalize($start);
         return $this;
@@ -156,7 +168,9 @@ class Task
     public function addError($log)
     {
         if (!array_key_exists('error', $this->message)) $this->message['error'] = [];
-        $this->message['error'][] = $log;
+        if (!in_array($log, $this->message['error'])) {
+            $this->message['error'][] = $log;
+        }
         return $this;
     }
 
@@ -253,7 +267,51 @@ class Task
 //        );
 
         return $this;
+    }
 
+    public function sendToBackground()
+    {
+        if ($this->getId()) {
+            return;
+        }
+
+        $params = [];
+
+        if ($this instanceof ImportTask) {
+            $params['class'] = 'import';
+            $params['ds_id'] = $this->getDataSourceID();
+            if ($this->getBatchID()) {
+                $params['batch_id'] = $this->getBatchID();
+            }
+            if ($this->getHarvestID()) {
+                $params['harvest_id'] = $this->getHarvestID();
+            }
+            if ($this->skipLoading) {
+                $params['skipLoadingPayload'] = true;
+            }
+            if ($this->runAll) {
+                $params['runAll'] = true;
+            }
+            if ($this->getTaskData('pipeline')) {
+                $params['pipeline'] = $this->getTaskData('pipeline');
+            }
+        }
+
+        $task = [
+            'name' => $this->getName(),
+            'priority' => 5,
+            'status' => 'PENDING',
+            'type' => "POKE",
+            'params' => http_build_query($params),
+            'message' => json_encode($this->message),
+            'data' => json_encode($this->taskData),
+        ];
+
+        $taskResult = TaskManager::create($this->db, $this->ci)->addTask($task);
+
+        $this->id = $taskResult['id'];
+
+        return $this;
     }
 
     /**

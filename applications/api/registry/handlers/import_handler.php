@@ -1,5 +1,6 @@
 <?php
 namespace ANDS\API\Registry\Handler;
+use ANDS\API\Registry\Handler\errorPipeline;
 use ANDS\API\Task\TaskManager;
 use ANDS\Payload;
 use ANDS\Repository\DataSourceRepository;
@@ -16,6 +17,7 @@ class ImportHandler extends Handler
     /**
      * Handles registry/import
      * registry/import/?ds_id={id}&batch_id={batch_id}
+     * ?from={source}
      * @return array
      * @throws Exception
      */
@@ -52,6 +54,16 @@ class ImportHandler extends Handler
 
         $batchID = $params['batch_id'];
 
+        $status = array_key_exists('status', $params) ? $params['status'] : null;
+
+        if ($status === 'ERROR') {
+             return $this->errorPipeline($dataSource, $batchID);
+        }
+
+        if ($status === "NORECORDS") {
+            return $this->errorPipeline($dataSource, $batchID, $noRecords = true);
+        }
+
         // get Harvest
         $harvest = $dataSource->harvest()->first();
 
@@ -75,10 +87,17 @@ class ImportHandler extends Handler
         return $taskCreated;
     }
 
-    public function importFromUrl($dataSource, $url)
+    /**
+     * registry/import/?ds_id={id}&from=url&url={url}
+     *
+     * @param $dataSource
+     * @param $url
+     * @return mixed
+     */
+    private function importFromUrl($dataSource, $url)
     {
         $content = @file_get_contents($url);
-        $batchID = "URL-".str_slug($url);
+        $batchID = "MANUAL-URL-".str_slug($url).'-'.time();
         Payload::write($dataSource->data_source_id, $batchID, $content);
 
         $task = [
@@ -88,11 +107,11 @@ class ImportHandler extends Handler
             'priority' => 2,
             'params' => http_build_query([
                 'class' => 'import',
-                'ds_id' => $dataSource->data_source_id,
-                'batch_id' => $batchID,
-                'harvest_id' => $dataSource->harvest()->first()->harvest_id,
+                'pipeline' => 'ManualImport',
                 'source' => 'url',
-                'url' => $url
+                'url' => $url,
+                'ds_id' => $dataSource->data_source_id,
+                'batch_id' => $batchID
             ])
         ];
 
@@ -111,10 +130,17 @@ class ImportHandler extends Handler
         return $task->toArray();
     }
 
+    /**
+     * registry/import/?ds_id={id}&from=xml
+     *
+     * @param $dataSource
+     * @param $xml
+     * @return mixed
+     */
     public function importFromXML($dataSource, $xml)
     {
         $xml = trim($xml);
-        $batchID = "XML-".md5($xml);
+        $batchID = "MANUAL-XML-".md5($xml).'-'.time();
         Payload::write($dataSource->data_source_id, $batchID, $xml);
 
         $task = [
@@ -124,11 +150,56 @@ class ImportHandler extends Handler
             'priority' => 2,
             'params' => http_build_query([
                 'class' => 'import',
+                'pipeline' => 'ManualImport',
+                'source' => 'xml',
                 'ds_id' => $dataSource->data_source_id,
-                'batch_id' => $batchID,
-                'harvest_id' => $dataSource->harvest()->first()->harvest_id,
-                'source' => 'xml'
+                'batch_id' => $batchID
             ])
+        ];
+
+        $taskManager = new TaskManager($this->ci->db, $this);
+        $taskCreated = $taskManager->addTask($task);
+        $task = $taskManager->getTaskObject($taskCreated);
+
+        $task
+            ->setDb($this->ci->db)
+            ->setCI($this->ci);
+
+        $task->initialiseTask()->enableRunAllSubTask();
+
+        $task->run();
+
+        return $task->toArray();
+    }
+
+    /**
+     * Execute pipeline when error is reported by the harvester
+     *
+     * @param $dataSource
+     * @param $batchID
+     * @return mixed
+     */
+    private function errorPipeline($dataSource, $batchID, $noRecords = false)
+    {
+        $params = [
+            'class' => 'import',
+            'pipeline' => 'ErrorWorkflow',
+            'source' => 'harvester',
+            'ds_id' => $dataSource->data_source_id,
+            'batch_id' => $batchID,
+            'harvest_id' => $dataSource->harvest()->first()->harvest_id
+        ];
+
+        if ($noRecords) {
+            $params['noRecords'] = true;
+        }
+
+        $task = [
+            'name' => "Harvest Error - $dataSource->title($dataSource->data_source_id)",
+            'type' => 'POKE',
+            'frequency' => 'ONCE',
+            'priority' => 2,
+            'params' => http_build_query($params)
         ];
 
         $taskManager = new TaskManager($this->ci->db, $this);

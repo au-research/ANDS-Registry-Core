@@ -29,7 +29,7 @@ class ImportSubTask extends Task
         ]);
 
         if ($this->requirePayload && $this->parent()->hasPayload() === false) {
-            $this->addError("Payload require for this task");
+            $this->log("Payload require for this task");
             $this->setStatus("COMPLETED");
             return;
         }
@@ -73,7 +73,6 @@ class ImportSubTask extends Task
         }
 
         if ($this->requireDataSource) {
-
             $dataSource = DataSource::find($this->parent()->dataSourceID);
             if (!$dataSource) {
                 $this->parent()->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");

@@ -5,35 +5,36 @@ namespace ANDS\API\Task\ImportSubTask;
 
 
 use ANDS\API\Task\ImportTask;
+use ANDS\Payload;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Repository\DataSourceRepository;
+use ANDS\Util\XMLUtil;
 
 class HandleStatusChange extends ImportSubTask
 {
     protected $title = "HANDLING STATUS CHANGES";
+    protected $requireDataSource = true;
 
     public function run_task()
     {
         $ids = explode(',', $this->parent()->getTaskData('ro_id'));
-        if ($this->parent()->getTaskData('importedRecords')) {
-            $ids = array_merge($ids, $this->parent()->getTaskData('importedRecords'));
+        if ($this->parent()->getTaskData('affectedRecords')) {
+            $ids = array_merge($ids, $this->parent()->getTaskData('affectedRecords'));
         }
         $ids = array_filter($ids, function($id){
            return trim($id) != "";
         });
 
         $targetStatus = $this->parent()->getTaskData('targetStatus');
-        $dataSource = DataSourceRepository::getByID($this->parent()->dataSourceID);
-        if (!$dataSource) {
-            $this->stoppedWithError("Data Source ".$this->parent()->dataSourceID." Not Found");
-            return;
-        }
 
-        $this->log('Changing status of '.count($ids). ' records to '.$targetStatus);
+        $message = 'Changing status of '.count($ids). ' records to '.$targetStatus;
+        $this->log($message);
         $this->parent()->updateHarvest([
-            "importer_message" => 'Changing status of '.count($ids). ' records to '.$targetStatus
+            "importer_message" => $message
         ]);
+
+        $recordIDsToPublished = [];
 
         foreach ($ids as $id) {
             $this->log('Processing '. $id);
@@ -41,28 +42,56 @@ class HandleStatusChange extends ImportSubTask
             if ($record) {
                 if (RegistryObjectsRepository::isPublishedStatus($record->status)
                     && RegistryObjectsRepository::isDraftStatus($targetStatus)) {
+                    // from published to draft, cloning record
                     $this->log('Cloning record to DRAFT');
                     $draftRecord = $this->cloneToDraft($record, $targetStatus);
                     $this->log('DRAFT record ID:'.$draftRecord->registry_object_id.' has been created');
                 } elseif(RegistryObjectsRepository::isDraftStatus($record->status)
                     && RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
-                    $this->log('Publishing record '.$record->registry_object_id);
-
-                    $publishedRecord = $this->publishRecord($record);
-
-                    $this->log('Published Record '.$publishedRecord->registry_object_id);
-
-                    //delete the draft
-                    RegistryObjectsRepository::completelyEraseRecordByID($record->registry_object_id);
+                    // from draft to published, put in a queue to process all at once
+                    $recordIDsToPublished[] = $record->registry_object_id;
                 } else {
+                    // from draft to draft, standard status change
                     $record->status = $targetStatus;
                     $record->save();
                 }
-
             } else {
                 $this->addError("Record with ID:".$id. " not found!");
             }
         }
+
+        if (count($recordIDsToPublished) > 0) {
+            $this->publishRecords($recordIDsToPublished);
+            $this->parent()->setTaskData("deletedRecords", $ids);
+        }
+    }
+
+    /**
+     * Publish an array of records
+     * Using a sub pipeline
+     *
+     * @param $ids
+     */
+    public function publishRecords($ids)
+    {
+        $data = [];
+        foreach ($ids as $id) {
+            $record = RegistryObject::find($id);
+            $recordData = $record->getCurrentData()->data;
+            $data[] = XMLUtil::unwrapRegistryObject($recordData);
+        }
+
+        $data = trim(implode(NL, $data));
+        $xml = XMLUtil::wrapRegistryObject($data);
+
+        $dataSource = $this->getDataSource();
+
+        //save this to file
+        $batchID = "MANUAL-MMR-".count($ids).'-'.time();
+        Payload::write($dataSource->data_source_id, $batchID, $xml);
+
+        $this->parent()->setBatchID($batchID);
+        $this->parent()->loadPayload();
     }
 
     /**

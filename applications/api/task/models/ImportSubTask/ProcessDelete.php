@@ -6,6 +6,10 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
+/**
+ * Class ProcessDelete
+ * @package ANDS\API\Task\ImportSubTask
+ */
 class ProcessDelete extends ImportSubTask
 {
     protected $requireDeletedRecords = true;
@@ -23,13 +27,32 @@ class ProcessDelete extends ImportSubTask
                 $this->parent()->incrementTaskData("recordsDeletedCount");
             } elseif ($record && $record->isDraftStatus()) {
                 RegistryObjectsRepository::completelyEraseRecordByID($id);
-                $this->log("Record $id ($record->status) is set to DELETED");
-                $this->parent()->incrementTaskData("recordsDeletedCount");
+                $this->log("Record $id ($record->status) is completely DELETED");
+                // $this->parent()->incrementTaskData("recordsDeletedCount");
             } else {
                 $this->log("Record with ID " . $id . " doesn't exist for deletion");
             }
-
-            // TODO: remove from index all id listed here
         }
+
+        $this->parent()->getCI()->load->library('solr');
+
+        $portalQuery = "";
+        $fromRelationQuery = "";
+        $toRelationQuery = "";
+        foreach ($this->parent()->getTaskData('deletedRecords') as $id) {
+            $portalQuery .= " +id:$id";
+            $fromRelationQuery .= " +from_id:$id";
+            $toRelationQuery .= " +to_id:$id";
+        }
+
+        $this->parent()->getCI()->solr->init()
+            ->setCore('portal')->deleteByQueryCondition($portalQuery);
+        $this->parent()->getCI()->solr->commit();
+
+        $this->parent()->getCI()->solr->init()
+            ->setCore('relations')->deleteByQueryCondition($fromRelationQuery);
+        $this->parent()->getCI()->solr->deleteByQueryCondition($toRelationQuery);
+        $this->parent()->getCI()->solr->commit();
+
     }
 }

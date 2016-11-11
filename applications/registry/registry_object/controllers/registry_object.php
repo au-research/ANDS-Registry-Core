@@ -258,25 +258,24 @@ class Registry_object extends MX_Controller {
         $xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
         $xml = \ANDS\Util\XMLUtil::wrapRegistryObject($xml);
 
+        // write the xml payload to the file system
+        $batchID = 'MANUAL-ARO-' . md5($ro->key).'-'.time();
+        \ANDS\Payload::write($ds->id, $batchID, $xml);
+
         // import Task creation
         $importTask = new \ANDS\API\Task\ImportTask();
-        $batchID = 'MANUAL-' . md5($ro->key);
-        $payloadPath = rtrim(get_config_item('harvested_contents_path')) . '/' . $ro->data_source_id . '/' . $batchID;
-        file_put_contents($payloadPath, $xml);
-
         $importTask
             ->setCI($this)->setDb($this->db)
             ->init([
                 'name' => 'ARO',
                 'params' => http_build_query([
+                    'pipeline' => 'ManualEntry',
+                    'source' => 'manual',
                     'ds_id' => $ro->data_source_id,
                     'batch_id' => $batchID,
-                    'targetStatus' => 'DRAFT',
-                    'source' => 'manual'
+                    'targetStatus' => 'DRAFT'
                 ])
             ])
-            ->skipLoadingPayload()
-            ->setPayload($ro->key, new \ANDS\Payload($payloadPath))
             ->enableRunAllSubTask()
             ->initialiseTask();
 
@@ -801,24 +800,41 @@ class Registry_object extends MX_Controller {
             $importTask->init([
                 'name' => "HandleStatusChange Pipeline",
                 'params' => http_build_query([
+                    'pipeline' => 'PublishingWorkflow',
                     'ds_id' => $dataSourceID,
-                    'targetStatus' => $targetStatus
+                    'targetStatus' => $targetStatus,
+                    'source' => 'manual'
                 ])
             ]);
             $importTask
                 ->skipLoadingPayload()
                 ->enableRunAllSubTask()
                 ->setCI($this)
-                ->setDb($this->db)
-                ->setPipeline('PublishingWorkflow');
+                ->setDb($this->db);
 
             $importTask
-                ->setTaskData('importedRecords', $affected_ids)
+                ->setTaskData('affectedRecords', $affected_ids)
                 ->initialiseTask();
 
             $importTask->run();
 
             $result['error'] = array_merge($result['error'], $importTask->getError());
+
+            // works for single record publish through the line
+            // uses for ARO screen and View screen to redirect to the new record ID
+            $result['message_code'] = $targetStatus;
+            $importedRecords = $importTask->getTaskData('importedRecords');
+            if ($importedRecords && count($importedRecords) == 1) {
+                $result['new_ro_id'] = array_first($importedRecords);
+            }
+
+            // in case the data is not updated, the ID would be the same and will be in harvestedRecordIDs
+            if (count($affected_ids) == 1) {
+                $harvestedRecordIDs = $importTask->getTaskData('harvestedRecordIDs');
+                if ($harvestedRecordIDs && count($harvestedRecordIDs) == 1) {
+                    $result['new_ro_id'] = array_first($harvestedRecordIDs);
+                }
+            }
 
             // TODO: Carry success message here
         }
@@ -1067,14 +1083,15 @@ class Registry_object extends MX_Controller {
         $importTask->init([
             'name' => "Delete Pipeline",
             'params' => http_build_query([
-                'ds_id' => $data_source_id
+                'ds_id' => $data_source_id,
+                'pipeline' => 'PublishingWorkflow'
             ])
         ]);
 
         $importTask
+            ->setCI($this)
             ->skipLoadingPayload()
-            ->enableRunAllSubTask()
-            ->setPipeline('DeletingWorkflow');
+            ->enableRunAllSubTask();
 
         $importTask
             ->setTaskData('deletedRecords', $affected_ids)
@@ -1085,29 +1102,6 @@ class Registry_object extends MX_Controller {
         // update the stats of the records
         $ds = $this->ds->getByID($data_source_id);
         $ds->updateStats();
-
-        // set a background task to fix the relationship of the deleted records by removing them
-        if (sizeof($affected_ids) > 0) {
-            require_once API_APP_PATH . 'vendor/autoload.php';
-            $task = [
-                'name' => "fixRelationship of " . sizeof($affected_ids). " records",
-                'type' => 'POKE',
-                'frequency' => 'ONCE',
-                'priority' => 5,
-                'params' => http_build_query([
-                    'class' => 'fixRelationship',
-                    'type' => 'ro',
-                    'id' => join(',', $affected_ids)
-                ])
-            ];
-            $taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
-            $taskResult = $taskManager->addTask($task);
-
-            // run it immediately if the number of affected ids are low
-            if (sizeof($affected_ids < 100)) {
-                $taskManager->runTask($taskResult['id']);
-            }
-        }
 
         echo json_encode([
             "status" => "success"

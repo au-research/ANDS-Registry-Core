@@ -75,12 +75,12 @@ class TestProcessCoreMetadataTask extends UnitTest
         $ingestTask->run();
     }
 
-    public function setUp()
+    public function setUpBeforeClass()
     {
-
+        initEloquent();
     }
 
-    public function tearDown()
+    public function tearDownAfterClass()
     {
         RegistryObjectsRepository::completelyEraseRecord('AUTestingRecords3h-dataset-31');
         RegistryObjectsRepository::completelyEraseRecord('AUTestingRecords3h-dataset-33');
