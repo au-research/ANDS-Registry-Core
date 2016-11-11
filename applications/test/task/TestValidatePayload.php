@@ -84,6 +84,8 @@ class TestValidatePayload extends UnitTest
         $xml = $payload->getContentByStatus('validated');
         $this->assertEquals(13, XMLUtil::countElementsByName($xml, 'registryObject'));
 
+        $this->assertRegExp("/The attribute 'type' is required but missing./", $importTask->getError());
+
         // clean up after
         unlink(TEST_APP_PATH . 'core/data/209/AUTestingRecords.xml.validated');
     }
