@@ -24,6 +24,9 @@ class ProcessRelationships extends ImportSubTask
 
         // Delete all relationship from all deletedRecords
         $deletedRecords = $this->parent()->getTaskData("deletedRecords");
+        if ($deletedRecords === null || $deletedRecords === false) {
+            return;
+        }
         $total = count($deletedRecords);
         foreach ($deletedRecords as $index => $roID) {
             Relationship::where('registry_object_id', $roID)->delete();
