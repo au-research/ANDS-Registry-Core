@@ -94,11 +94,11 @@ class PopulateImportOptions extends ImportSubTask
      */
     private function getDefaultRecordStatusForDataSource($dataSource)
     {
-        if ($dataSource->attr('qa_flag') == DB_TRUE) {
+        if ($dataSource->getDataSourceAttributeValue('qa_flag') == DB_TRUE) {
             return 'SUBMITTED_FOR_ASSESSMENT';
         }
 
-        if ($dataSource->attr('manual_publish') == DB_TRUE) {
+        if ($dataSource->getDataSourceAttributeValue('manual_publish') == DB_TRUE) {
             return 'APPROVED';
         }
 

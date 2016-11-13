@@ -125,7 +125,12 @@ class ImportHandler extends Handler
 
         $task->initialiseTask()->enableRunAllSubTask();
 
-        $task->run();
+        try {
+            $task->run();
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
 
         return $task->toArray();
     }

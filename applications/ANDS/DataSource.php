@@ -32,17 +32,16 @@ class DataSource extends Model
         return $this->hasOne(Harvest::class, "data_source_id", "data_source_id");
     }
 
+    /**
+     * Alias for getDataSourceAttributeValue
+     *
+     * @param $key
+     * @return null
+     */
     public function attr($key)
     {
-        return DataSourceAttribute::where('data_source_id', $this->data_source_id)
-            ->where('attribute', $key)->first()->value;
-
-        // Alternative way to get attributes, maybe slower
-        /*return $this->dataSourceAttributes->filter(function($value) use ($key){
-            return $value->attribute == $key;
-        })->first()->value;*/
+       return $this->getDataSourceAttributeValue($key);
     }
-
 
     public function setDataSourceAttribute($key, $value)
     {
