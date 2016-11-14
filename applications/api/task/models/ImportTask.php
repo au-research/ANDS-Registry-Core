@@ -589,7 +589,7 @@ class ImportTask extends Task
             "recordsUpdatedCount" => "Records updated",
             "refreshHarvestStatus" => "Refresh Harvest Status",
             "recordsNotUpdatedCount" => "Records content unchanged",
-            "recordsDeletedCount" => "Records deleted (due to OAI or Refresh mode)",
+            "recordsDeletedCount" => "Records deleted",
             "datasourceRecordBeforeCount" => "Number of " . $targetStatus . " records Before Import",
             "datasourceRecordAfterCount" => "Number of " . $targetStatus . " records After Import",
             "url" => "URL"
