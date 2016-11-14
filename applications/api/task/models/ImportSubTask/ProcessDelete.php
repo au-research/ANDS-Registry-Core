@@ -3,6 +3,7 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\API\Task\FixRelationshipTask;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -17,7 +18,8 @@ class ProcessDelete extends ImportSubTask
 
     public function run_task()
     {
-        foreach ($this->parent()->getTaskData('deletedRecords') as $id) {
+        $deletedRecords = $this->parent()->getTaskData('deletedRecords');
+        foreach ($deletedRecords as $id) {
             $record = RegistryObject::find($id);
             if ($record && $record->isPublishedStatus()) {
                 // TODO: Refactor Repo::deleteRecord
@@ -39,12 +41,53 @@ class ProcessDelete extends ImportSubTask
         $portalQuery = "";
         $fromRelationQuery = "";
         $toRelationQuery = "";
-        foreach ($this->parent()->getTaskData('deletedRecords') as $id) {
-            $portalQuery .= " +id:$id";
-            $fromRelationQuery .= " +from_id:$id";
-            $toRelationQuery .= " +to_id:$id";
+        foreach ($deletedRecords as $id) {
+            $portalQuery .= " id:$id";
+            $fromRelationQuery .= " from_id:$id";
+            $toRelationQuery .= " to_id:$id";
         }
 
+        // Find all affected records and put the affected records to importedRecords list
+        // to be ran OptimizeRelationships on
+
+        $affectedRecordIDs = [];
+        $tos = $this->parent()->getCI()->solr->init()
+            ->setCore('relations')
+            ->setOpt('fl', 'to_id, from_id')
+            ->setOpt('q', $fromRelationQuery. $toRelationQuery)
+            ->executeSearch(true);
+
+        if ($tos['response']['numFound'] > 0) {
+            foreach ($tos['response']['docs'] as $doc) {
+                $affectedRecordIDs[] = $doc['from_id'];
+                $affectedRecordIDs[] = $doc['to_id'];
+            }
+        }
+
+        $affectedRecordIDs = array_unique($affectedRecordIDs);
+        $affectedRecordIDs = array_filter($affectedRecordIDs,
+            function($input) use ($deletedRecords) {
+                return !in_array($input, $deletedRecords);
+            }
+        );
+
+        $affectedRecordIDs = array_values($affectedRecordIDs);
+        $this->log("Size of affected records: ".count($affectedRecordIDs));
+
+        // TODO: Find a way to use OptimizeRelationship subtask instead
+        // Probably put the affectedRecordIDs to the importedRecords array instead
+        if (count($affectedRecordIDs) > 0) {
+            $this->parent()->getCI()
+                ->load->model('registry/registry_object/registry_objects', 'ro');
+            $fixRelationshipTask = new FixRelationshipTask();
+            $fixRelationshipTask->setCI($this->parent()->getCI())->init([]);
+            foreach ($affectedRecordIDs as $index => $roID) {
+                $fixRelationshipTask->fixRelationshipRecord($roID);
+                $this->log("Fixed relationship on affected record: ". $roID);
+            }
+        }
+
+        // delete from the solr index
         $this->parent()->getCI()->solr->init()
             ->setCore('portal')->deleteByQueryCondition($portalQuery);
         $this->parent()->getCI()->solr->commit();
@@ -54,5 +97,7 @@ class ProcessDelete extends ImportSubTask
         $this->parent()->getCI()->solr->deleteByQueryCondition($toRelationQuery);
         $this->parent()->getCI()->solr->commit();
 
+
     }
+
 }

@@ -230,5 +230,16 @@ class RegistryObjectsRepository
         $newVersion->save();
         return $newVersion;
     }
+
+    /**
+     * Returns a list of record ID that is affected by this record id
+     *
+     * @param $id
+     * @return array
+     */
+    public static function findAffectedRecords($id)
+    {
+        return [];
+    }
     
 }
