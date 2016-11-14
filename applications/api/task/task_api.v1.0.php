@@ -76,7 +76,8 @@ class Task_api
                 $task = $this->taskManager->getTask($this->params['identifier']);
                 $taskObject = $this->taskManager->getTaskObject($task);
                 $taskObject
-                    ->setDb($this->db)
+                    ->setCI($this->ci)
+                    ->setDb($this->ci->db)
                     ->setStatus('PENDING')
                     ->enableRunAllSubTask()
                     ->setMessage()

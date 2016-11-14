@@ -375,7 +375,11 @@ class Task
 
     public function getCI()
     {
-        return $this->ci;
+        if (isset($this->ci)) {
+            return $this->ci;
+        }
+        $ci =& get_instance();
+        return $ci;
     }
 
     /**
