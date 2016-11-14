@@ -816,6 +816,20 @@ class Registry_object extends MX_Controller {
                 ->setTaskData('affectedRecords', $affected_ids)
                 ->initialiseTask();
 
+            // send the task to background to obtain a task ID
+            $importTask->sendToBackground();
+
+            // append data source log
+            $dataSource = ANDS\DataSource::find($dataSourceID);
+            $count = count($affected_ids);
+            $importStartMessage = [
+                "Manual Status Change Started for $count records",
+                "Task ID: ". $importTask->getId()
+            ];
+            $dataSource->appendDataSourceLog(
+                implode(NL, $importStartMessage),
+                "info", "IMPORTER"
+            );
             $importTask->run();
 
             $result['error'] = array_merge($result['error'], $importTask->getError());
@@ -1047,13 +1061,13 @@ class Registry_object extends MX_Controller {
         $this->load->model('registry_objects', 'ro');
         $this->load->model('data_source/data_sources', 'ds');
 
-        $affected_ids = $this->input->post('affected_ids');
+        $affectedIDs = $this->input->post('affected_ids');
 
         // select_all is the status
         $select_all = $this->input->post('select_all');
 
-        $data_source_id = $this->input->post('data_source_id');
-        $excluded_records = $this->input->post('excluded_records') ?: [];
+        $dataSourceID = $this->input->post('data_source_id');
+        $excludedRecords = $this->input->post('excluded_records') ?: [];
 
         // capture affected_ros mainly for select_all when affected_ids does not capture all;
         if($select_all && $select_all != "false"){
@@ -1063,14 +1077,14 @@ class Registry_object extends MX_Controller {
                 'search' => isset($filters['search']) ? $filters['search'] : false,
                 'or_filter' => isset($filters['or_filter']) ? $filters['or_filter'] : false,
                 'filter' => isset($filters['filter']) ? array_merge($filters['filter'], ['status'=>$this->input->post('select_all')]) : ['status'=>$this->input->post('select_all')],
-                'data_source_id' => $data_source_id
+                'data_source_id' => $dataSourceID
             ];
             $affected_ros = $this->ro->filter_by($args, 0, 0, true);
-            $affected_ids = [];
+            $affectedIDs = [];
             if (is_array($affected_ros)) {
                 foreach ($affected_ros as $r) {
-                    if (!in_array($r->registry_object_id, $excluded_records)) {
-                        $affected_ids[] = $r->registry_object_id;
+                    if (!in_array($r->registry_object_id, $excludedRecords)) {
+                        $affectedIDs[] = $r->registry_object_id;
                     }
                 }
             }
@@ -1083,8 +1097,9 @@ class Registry_object extends MX_Controller {
         $importTask->init([
             'name' => "Delete Pipeline",
             'params' => http_build_query([
-                'ds_id' => $data_source_id,
-                'pipeline' => 'PublishingWorkflow'
+                'ds_id' => $dataSourceID,
+                'pipeline' => 'PublishingWorkflow',
+                'source' => 'manual'
             ])
         ]);
 
@@ -1094,13 +1109,30 @@ class Registry_object extends MX_Controller {
             ->enableRunAllSubTask();
 
         $importTask
-            ->setTaskData('deletedRecords', $affected_ids)
+            ->setTaskData('deletedRecords', $affectedIDs)
+            ->setCI($this)
+            ->setDb($this->db)
             ->initialiseTask();
+
+        // send the task to background to obtain a task ID
+        $importTask->sendToBackground();
+
+        // append data source log
+        $dataSource = ANDS\DataSource::find($dataSourceID);
+        $count = count($affectedIDs);
+        $importStartMessage = [
+            "Deleting $count records",
+            "Task ID: ". $importTask->getId()
+        ];
+        $dataSource->appendDataSourceLog(
+            implode(NL, $importStartMessage),
+            "info", "IMPORTER"
+        );
 
         $importTask->run();
 
         // update the stats of the records
-        $ds = $this->ds->getByID($data_source_id);
+        $ds = $this->ds->getByID($dataSourceID);
         $ds->updateStats();
 
         echo json_encode([
