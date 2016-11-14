@@ -40,12 +40,15 @@ class HandleRefreshHarvest extends ImportSubTask
         foreach ($harvestedRecords as $index => $roID) {
             $this->log('Processing (unchanged) record: ' . $roID);
             $this->log('setting harvest_id for not refreshed records: ' . $roID);
-            $record = RegistryObject::find($roID);
-            $record->setRegistryObjectAttribute('harvest_id',
-                $this->parent()->batchID);
-            $record->status = $this->parent()->getTaskData("targetStatus");
-            $record->save();
-            $this->updateProgress($index, $total, "Processed ($index/$total) (unchanged) $record->title($roID) ");
+            if ($record = RegistryObject::find($roID)) {
+                $record->setRegistryObjectAttribute('harvest_id',
+                    $this->parent()->batchID);
+                $record->status = $this->parent()->getTaskData("targetStatus");
+                $record->save();
+                $this->updateProgress($index, $total, "Processed ($index/$total) (unchanged) $record->title($roID) ");
+            } else {
+                $this->log("Unable to find RegistryObject ID: ". $roID);
+            }
         }
     }
 
