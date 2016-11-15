@@ -55,12 +55,14 @@ class HandleRefreshHarvest extends ImportSubTask
     public function handleRefreshHarvest()
     {
         $dataSource = $this->getDataSource();
-        $this->parent()->setTaskData("refreshHarvestStatus" , "blah blah");
+
         $advanced_harvest_mode = $dataSource->getDataSourceAttribute("advanced_harvest_mode");
 
         if ($advanced_harvest_mode->value != 'REFRESH') {
             return;
         }
+
+        $this->parent()->setTaskData("refreshHarvestStatus" , "set");
 
         $datasourceRecordBeforeCount = $this->parent()->getTaskData("datasourceRecordBeforeCount");
         $recordCount = Repo::getCountByDataSourceIDAndStatus(
