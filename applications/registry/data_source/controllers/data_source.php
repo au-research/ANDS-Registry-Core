@@ -416,7 +416,7 @@ class Data_source extends MX_Controller {
 
 		//harvester and primary relationships reset
 		try {
-			if($resetHarvest && ($data['uri'] != '' || $data['uri'] != 'http://')) {
+			if($resetHarvest && $data['uri'] != '' && $data['uri'] != 'http://') {
 				$this->trigger_harvest($ds->id, true);
 			}
 
