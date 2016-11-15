@@ -111,6 +111,9 @@ class Payload
     {
         $harvestedContentDir = get_config_item('harvested_contents_path');
         $harvestedContentDir = rtrim($harvestedContentDir, '/') . '/';
+        if (!is_dir($harvestedContentDir.$dataSourceID)) {
+            mkdir($harvestedContentDir.$dataSourceID);
+        }
         file_put_contents($harvestedContentDir.$dataSourceID.'/'.$batchID.'.xml', $content);
     }
 
