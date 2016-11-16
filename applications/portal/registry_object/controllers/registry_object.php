@@ -461,11 +461,16 @@ class Registry_object extends MX_Controller
                 $ro = false;
 
                 $pullback = false;
+
                 //ORCID "Pull back"
                 if ($fr->related_info_type == 'party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
                     $pullback = $this->ro->resolveIdentifier('orcid', $fr->related_object_identifier);
                     $filters = array('identifier_value' => $fr->related_object_identifier);
                     $ro = $this->ro->findRecord($filters);
+                }
+
+                if (!$ro) {
+                    $ro = $this->ro->getByID($fr->registry_object_id);
                 }
 
                 monolog(

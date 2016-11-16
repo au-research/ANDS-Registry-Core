@@ -87,6 +87,35 @@ class TestProcessDeleteTask extends UnitTest
         $this->assertNull($record);
     }
 
+    /** @test **/
+    public function test_it_should_delete_and_clean_index()
+    {
+        // given I have a set of records with links
+        $this->ci->config->set_item('harvested_contents_path', TEST_APP_PATH . 'core/data/');
+        $importTask = new ImportTask();
+        $importTask->init([
+            'name' => 'Has 10 records',
+            'params' => http_build_query([
+                'runAll' => true,
+                'ds_id' => 209,
+                'batch_id' => 'AUTestingRecords_ds209_10_different_records'
+            ])
+        ])->initialiseTask();
+
+        $importTask->run();
+
+        // should have 10 records afterwards
+        $publishedRecords = RegistryObject::where('data_source_id', 209)->where('status', 'PUBLISHED');
+        $this->assertEquals(10, $publishedRecords->count());
+
+        // when deleting a set of records
+
+
+        // all affected records should have their portal index updated
+        // to not include the index of the deleted records
+        // and all the relations in the relations core deleted
+    }
+
     /**
      * Helper
      * insert a record so it can be deleted
