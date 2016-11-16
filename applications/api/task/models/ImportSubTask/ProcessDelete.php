@@ -83,27 +83,7 @@ class ProcessDelete extends ImportSubTask
 
         // Find all affected records and put the affected records to importedRecords list
         // to be ran OptimizeRelationships on
-
-        $affectedRecordIDs = [];
-        $tos = $this->parent()->getCI()->solr->init()
-            ->setCore('relations')
-            ->setOpt('fl', 'to_id, from_id')
-            ->setOpt('q', $fromRelationQuery. $toRelationQuery)
-            ->executeSearch(true);
-
-        if ($tos['response']['numFound'] > 0) {
-            foreach ($tos['response']['docs'] as $doc) {
-                $affectedRecordIDs[] = $doc['from_id'];
-                $affectedRecordIDs[] = $doc['to_id'];
-            }
-        }
-
-        $affectedRecordIDs = array_unique($affectedRecordIDs);
-        $affectedRecordIDs = array_filter($affectedRecordIDs,
-            function($input) use ($deletedRecords) {
-                return !in_array($input, $deletedRecords);
-            }
-        );
+        $affectedRecordIDs = $this->getRelatedObjectsIDs($deletedRecords);
 
         $affectedRecordIDs = array_values($affectedRecordIDs);
         $this->log("Size of affected records: ".count($affectedRecordIDs));
@@ -131,6 +111,52 @@ class ProcessDelete extends ImportSubTask
             ->setCore('relations')
             ->deleteByQueryCondition($fromRelationQuery.$toRelationQuery);
         // $this->parent()->getCI()->solr->commit();
+    }
+
+
+    /**
+     * Returns a list of related ids given a list of ids
+     * Useful to get affected ids
+     * Using SOLR relations core
+     *
+     * @param $ids
+     * @return array
+     */
+    public function getRelatedObjectsIDs($ids)
+    {
+        $chunkSize = 300;
+
+        // chunk the ids
+        $ids = collect($ids);
+        $chunks = $ids->chunk($chunkSize);
+
+        // foreach chunk, run the query, append the result
+        $allAffectedIDs = [];
+        foreach ($chunks as $chunk) {
+            $fromRelationQuery = ' from_id:'.$chunk->implode(' from_id:');
+            $toRelationQuery = ' to_id:'.$chunk->implode(' to_id:');
+
+            $affectedRecordIDs = [];
+            $tos = $this->parent()->getCI()->solr->init()
+                ->setCore('relations')
+                ->setOpt('fl', 'to_id, from_id')
+                ->setOpt('rows', 10000)
+                ->setOpt('q', $fromRelationQuery . $toRelationQuery)
+                ->executeSearch(true);
+
+            if ($tos['response']['numFound'] > 0) {
+                foreach ($tos['response']['docs'] as $doc) {
+                    $affectedRecordIDs[] = $doc['from_id'];
+                    $affectedRecordIDs[] = $doc['to_id'];
+                }
+            }
+            $affectedRecordIDs = array_unique($affectedRecordIDs);
+            $allAffectedIDs = array_merge($allAffectedIDs, $affectedRecordIDs);
+        }
+
+        $allAffectedIDs = array_unique($allAffectedIDs);
+
+        return $allAffectedIDs;
     }
 
 

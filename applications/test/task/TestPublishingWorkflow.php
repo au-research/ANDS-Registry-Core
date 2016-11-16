@@ -4,6 +4,7 @@
 namespace ANDS\Test;
 
 
+use ANDS\API\Task\ImportSubTask\ProcessDelete;
 use ANDS\API\Task\ImportTask;
 use ANDS\Payload;
 use ANDS\RegistryObject;
@@ -92,6 +93,26 @@ class TestPublishingWorkflow extends UnitTest
         $this->assertEquals(0, RegistryObject::where('data_source_id', '209')->where('status', '!=', 'DELETED')->count());
 
         // var_dump($deleteTask->getBenchmarkData());
+    }
+
+    /** @test **/
+    public function test_it_should_be_able_to_find_all_affected_records()
+    {
+        $importTask = new ImportTask();
+        $importTask->setCI($this->ci)->initialiseTask();
+        $processDeleteTask = $importTask->getTaskByName("ProcessDelete");
+
+        $this->ci->load->library('solr');
+
+        // random
+        $ids = RegistryObject::where('status', 'PUBLISHED')
+            ->inRandomOrder()->take(2000)
+            ->pluck('registry_object_id')->toArray();
+
+        $affected = $processDeleteTask->getRelatedObjectsIDs($ids);
+
+        $this->assertTrue(count($affected) > 0);
+
     }
 
     public function setUpBeforeClass()
