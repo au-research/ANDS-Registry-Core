@@ -22,6 +22,7 @@ class ImportSubTask extends Task
 
     public function run()
     {
+
         $this->parent()->updateHarvest([
             'status' => 'IMPORT - '. $this->title,
             'importer_message' => "",

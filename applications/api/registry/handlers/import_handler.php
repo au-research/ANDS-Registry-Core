@@ -69,7 +69,7 @@ class ImportHandler extends Handler
 
         $task = [
             'name' => "HARVESTER INITIATED IMPORT - $dataSource->title($dataSource->data_source_id) - $batchID",
-            'type' => 'POKE',
+            'type' => 'PHPSHELL',
             'frequency' => 'ONCE',
             'priority' => 2,
             'params' => http_build_query([

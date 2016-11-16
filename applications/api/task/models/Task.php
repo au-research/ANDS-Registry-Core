@@ -36,7 +36,6 @@ class Task
         $this->status = isset($task['status']) ? $task['status'] : false;
         $this->priority = isset($task['priority']) ? $task['priority'] : false;
         $this->params = isset($task['params']) ? $task['params'] : false;
-
         if (isset($task['data'])) {
             $this->taskData = is_array($task['data']) ? $task['data'] : json_decode($task['data'], true);
         }

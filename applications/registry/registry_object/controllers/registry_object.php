@@ -1095,7 +1095,8 @@ class Registry_object extends MX_Controller {
         $importTask = new \ANDS\API\Task\ImportTask();
 
         $importTask->init([
-            'name' => "Delete Pipeline",
+            'name' => "Manual Delete",
+			'type' => "PHPSHELL",
             'params' => http_build_query([
                 'ds_id' => $dataSourceID,
                 'pipeline' => 'PublishingWorkflow',

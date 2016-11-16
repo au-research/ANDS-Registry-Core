@@ -100,7 +100,7 @@ class Import extends MX_Controller {
         ];
         $task = [
             'name' => 'HARVESTER INITIATED IMPORT',
-            'type' => 'POKE',
+            'type' => 'PHPSHELL',
             'frequency' => 'ONCE',
             'priority' => 2,
             'params' => http_build_query($params)
