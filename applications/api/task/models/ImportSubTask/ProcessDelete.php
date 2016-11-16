@@ -96,7 +96,11 @@ class ProcessDelete extends ImportSubTask
             $fixRelationshipTask = new FixRelationshipTask();
             $fixRelationshipTask->setCI($this->parent()->getCI())->init([]);
             foreach ($affectedRecordIDs as $index => $roID) {
-                $fixRelationshipTask->fixRelationshipRecord($roID);
+                try {
+                    $fixRelationshipTask->fixRelationshipRecord($roID);
+                } catch (\Exception $e) {
+                    $this->addError("Error whilst fixing relationship for record: $roID : $e->getMessage()");
+                }
                 $this->log("Fixed relationship on affected record: ". $roID);
             }
         }
