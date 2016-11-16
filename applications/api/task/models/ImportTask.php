@@ -51,6 +51,7 @@ class ImportTask extends Task
                     $this->runSubTask($nextTask);
                     $this->saveSubTaskData($nextTask);
                 }
+                $this->saveSubTasks();
                 $this->save();
             }
         } else {
@@ -663,5 +664,21 @@ class ImportTask extends Task
     {
         $this->harvestID = $harvestID;
         return $this;
+    }
+
+    /**
+     * Benchmark data of all subtasks
+     *
+     * @return array
+     */
+    public function getBenchmarkData()
+    {
+        $benchmark = [];
+        foreach($this->getSubtasks() as $subtask) {
+            if (array_key_exists('benchmark', $subtask['data'])) {
+                $benchmark[$subtask['name']] = $subtask['data']['benchmark'];
+            }
+        }
+        return $benchmark;
     }
 }

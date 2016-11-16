@@ -28,6 +28,11 @@ class HandleStatusChange extends ImportSubTask
 
         $targetStatus = $this->parent()->getTaskData('targetStatus');
 
+        if ($targetStatus == "" || count($ids) == 0) {
+            $this->log("Status: $targetStatus or affectedRecords size is ".count($ids). ". abort");
+            return;
+        }
+
         $message = 'Changing status of '.count($ids). ' records to '.$targetStatus;
         $this->log($message);
         $this->parent()->updateHarvest([

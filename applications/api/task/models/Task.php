@@ -91,7 +91,9 @@ class Task
         $this->setTaskData("benchmark", [
             'origin' => $event->getOrigin(),
             'duration' => $event->getDuration(),
-            'memory' => $event->getMemory()
+            'duration_seconds' => $event->getDuration() / 1000,
+            'memory' => $event->getMemory(),
+            'memory_mb' => $event->getMemory() / 1048576
         ]);
 
         $this->finalize($start);
