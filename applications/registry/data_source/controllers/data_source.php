@@ -477,6 +477,7 @@ class Data_source extends MX_Controller {
             'name' => "Background Task for $dataSource->title($dataSourceID) Updating $total records relationship metadata",
             'params' => http_build_query([
                 'ds_id' => $dataSourceID,
+                'targetStatus' => 'PUBLISHED',
                 'pipeline' => 'UpdateRelationshipWorkflow'
             ])
         ]);

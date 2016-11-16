@@ -35,20 +35,25 @@ class IndexPortal extends ImportSubTask
             $this->log("Indexing ".$roID);
 
             $portalIndex = $ro->indexable_json();
-            // TODO: Check response
-            $this->parent()->getCI()->solr->init()->setCore('portal')->add_json(json_encode([$portalIndex]));
+            if (count($portalIndex) > 0) {
+                // TODO: Check response
+                $this->parent()->getCI()->solr->init()
+                    ->setCore('portal')
+                    ->addJSONDoc(json_encode($portalIndex));
+            }
 
             $relationIndex = $ro->getRelationshipIndex();
-            // TODO: Check response
-            $this->parent()->getCI()->solr->init()->setCore('relations')->add_json(json_encode([$relationIndex]));
+            if (count($relationIndex) > 0) {
+                // TODO: Check response
+                $this->parent()->getCI()->solr->init()
+                    ->setCore('relations')
+                    ->add_json(json_encode($relationIndex));
+            }
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
         }
 
-        $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
-        $this->parent()->getCI()->solr->init()->setCore('relations')->commit();
-
-        // TODO: unindex records in deletedRecords
-
+         $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+         $this->parent()->getCI()->solr->init()->setCore('relations')->commit();
     }
 }

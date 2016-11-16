@@ -123,13 +123,15 @@ class ProcessDelete extends ImportSubTask
 
         // delete from the solr index
         $this->parent()->getCI()->solr->init()
-            ->setCore('portal')->deleteByQueryCondition($portalQuery);
-        $this->parent()->getCI()->solr->commit();
+            ->setCore('portal')
+            ->deleteByQueryCondition($portalQuery);
+        // $this->parent()->getCI()->solr->commit();
 
         $this->parent()->getCI()->solr->init()
-            ->setCore('relations')->deleteByQueryCondition($fromRelationQuery);
-        $this->parent()->getCI()->solr->deleteByQueryCondition($toRelationQuery);
-        $this->parent()->getCI()->solr->commit();
+            ->setCore('relations')
+            ->deleteByQueryCondition($fromRelationQuery.$toRelationQuery);
+        // $this->parent()->getCI()->solr->commit();
     }
+
 
 }
