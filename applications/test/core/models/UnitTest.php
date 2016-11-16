@@ -153,7 +153,10 @@ class UnitTest
     public function assertEquals($left, $right)
     {
         $this->getReflectorInfo();
-        $this->ci->unit->run($left, $right, $this->getName(), $this->getNote());
+        $this->ci->unit->run(
+            $left, $right,
+            $this->getName() . " : $left equals $right",
+            $this->getNote());
         $this->reset();
         return $this;
     }

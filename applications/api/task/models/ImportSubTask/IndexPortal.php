@@ -37,8 +37,10 @@ class IndexPortal extends ImportSubTask
             $portalIndex = $ro->indexable_json();
             if (count($portalIndex) > 0) {
                 // TODO: Check response
-                $this->parent()->getCI()->solr->init()
-                    ->setCore('portal')
+                $this->parent()->getCI()->solr->init()->setCore('portal');
+                $this->parent()->getCI()->solr
+                    ->deleteByID($roID);
+                $this->parent()->getCI()->solr
                     ->addJSONDoc(json_encode($portalIndex));
             }
 

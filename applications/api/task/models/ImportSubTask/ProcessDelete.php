@@ -91,17 +91,20 @@ class ProcessDelete extends ImportSubTask
         // TODO: Find a way to use OptimizeRelationship subtask instead
         // Probably put the affectedRecordIDs to the importedRecords array instead
         if (count($affectedRecordIDs) > 0) {
-            $this->parent()->getCI()
-                ->load->model('registry/registry_object/registry_objects', 'ro');
-            $fixRelationshipTask = new FixRelationshipTask();
-            $fixRelationshipTask->setCI($this->parent()->getCI())->init([]);
-            foreach ($affectedRecordIDs as $index => $roID) {
-                try {
-                    $fixRelationshipTask->fixRelationshipRecord($roID);
-                } catch (\Exception $e) {
-                    $this->addError("Error whilst fixing relationship for record: $roID : $e->getMessage()");
+            // index Portal this record
+            $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
+            foreach ($affectedRecordIDs as $index=>$roID) {
+                $ro = $this->parent()->getCI()->ro->getByID($roID);
+                $portalIndex = $ro->indexable_json();
+                if (count($portalIndex) > 0) {
+                    // TODO: Check response
+                    $this->parent()->getCI()->solr->init()->setCore('portal');
+                    $this->parent()->getCI()->solr
+                        ->deleteByID($roID);
+                    $this->parent()->getCI()->solr
+                        ->addJSONDoc(json_encode($portalIndex));
+                    $this->log("Indexed Affected Record Portal Index for $roID");
                 }
-                $this->log("Fixed relationship on affected record: ". $roID);
             }
         }
 
@@ -109,12 +112,12 @@ class ProcessDelete extends ImportSubTask
         $this->parent()->getCI()->solr->init()
             ->setCore('portal')
             ->deleteByQueryCondition($portalQuery);
-        // $this->parent()->getCI()->solr->commit();
+        $this->parent()->getCI()->solr->commit();
 
         $this->parent()->getCI()->solr->init()
             ->setCore('relations')
             ->deleteByQueryCondition($fromRelationQuery.$toRelationQuery);
-        // $this->parent()->getCI()->solr->commit();
+        $this->parent()->getCI()->solr->commit();
     }
 
 
@@ -129,6 +132,7 @@ class ProcessDelete extends ImportSubTask
     public function getRelatedObjectsIDs($ids)
     {
         $chunkSize = 300;
+        $this->parent()->getCI()->load->library('solr');
 
         // chunk the ids
         $ids = collect($ids);
@@ -157,6 +161,11 @@ class ProcessDelete extends ImportSubTask
             $affectedRecordIDs = array_unique($affectedRecordIDs);
             $allAffectedIDs = array_merge($allAffectedIDs, $affectedRecordIDs);
         }
+
+        $deletedIDs = $ids->toArray();
+        $allAffectedIDs = collect($allAffectedIDs)->filter(function($item) use ($deletedIDs){
+            return !in_array($item, $deletedIDs) && $item != "false" && $item !== false;
+        })->toArray();
 
         $allAffectedIDs = array_unique($allAffectedIDs);
 

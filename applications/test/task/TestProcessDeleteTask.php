@@ -109,11 +109,57 @@ class TestProcessDeleteTask extends UnitTest
         $this->assertEquals(10, $publishedRecords->count());
 
         // when deleting a set of records
+        $recordsToDelete = [
+            RegistryObjectsRepository::getPublishedByKey('AUTestingRecordsNestedReverseIMOS/71bd7e16-7333-3e74-aaeb-3039b283ff14')->registry_object_id,
+            RegistryObjectsRepository::getPublishedByKey('AUTestingRecordsjcu.edu.au/collection/enmasse/304')->registry_object_id
+        ];
 
+        // Find affected records
+        $importTask = new ImportTask();
+        $importTask->setCI($this->ci)->initialiseTask();
+        $processDeleteTask = $importTask->getTaskByName("ProcessDelete");
+        $affected = $processDeleteTask->getRelatedObjectsIDs($recordsToDelete);
+
+        // should have at least 3 affected
+        $this->assertGreaterThanOrEqual(count($affected), 3);
 
         // all affected records should have their portal index updated
-        // to not include the index of the deleted records
-        // and all the relations in the relations core deleted
+        $deleteTask = new ImportTask;
+        $deleteTask->init([
+            'params' => http_build_query([
+                'ds_id' => '209',
+                'runAll' => true,
+                'pipeline' => 'PublishingWorkflow'
+            ])
+        ])->setTaskData('deletedRecords', $recordsToDelete)
+            ->skipLoadingPayload()
+            ->setCI($this->ci)
+            ->initialiseTask();
+        $deleteTask->run();
+
+        // there must not be any related_collection_id to the deletedRecords
+        $this->ci->load->library('solr');
+        $result = $this->ci->solr->init('portal')
+            ->setOpt('q', "related_collection_id:$recordsToDelete[0] related_collection_id:$recordsToDelete[1]")
+            ->executeSearch(true);
+
+        $this->assertEquals(0, $result['response']['numFound']);
+
+        // delete all
+        $publishedRecords = RegistryObject::where('data_source_id', 209)->where('status', 'PUBLISHED')->get()->pluck('registry_object_id');
+        $deleteTask = new ImportTask;
+        $deleteTask->init([
+            'params' => http_build_query([
+                'ds_id' => '209',
+                'runAll' => true,
+                'pipeline' => 'PublishingWorkflow'
+            ])
+        ])->setTaskData('deletedRecords', $publishedRecords)
+            ->skipLoadingPayload()
+            ->setCI($this->ci)
+            ->initialiseTask();
+
+        $deleteTask->run();
     }
 
     /**
@@ -135,5 +181,24 @@ class TestProcessDeleteTask extends UnitTest
     {
         // make sure that this record is gone forever
         RegistryObjectsRepository::completelyEraseRecord("minh-test-record-pipeline");
+    }
+
+    public function tearDownAfterClass()
+    {
+        $files = [];
+        foreach (glob(TEST_APP_PATH. "core/data/209/*.processed") as $filename) {
+            $files[] = $filename;
+        }
+        foreach (glob(TEST_APP_PATH. "core/data/209/*.validated") as $filename) {
+            $files[] = $filename;
+        }
+        foreach (glob(TEST_APP_PATH. "core/data/209/MANUAL*") as $filename) {
+            $files[] = $filename;
+        }
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
     }
 }
