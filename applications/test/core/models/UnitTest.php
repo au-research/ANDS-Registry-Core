@@ -153,9 +153,19 @@ class UnitTest
     public function assertEquals($left, $right)
     {
         $this->getReflectorInfo();
+
+        $name = $this->getName();
+        if (!is_array($left) && !is_array($right)) {
+            $name .= " : $left equals $right";
+        }
+
+        if (is_array($left) && is_array($right)) {
+            $name .= "Array(".count($left).") equals Array(".count($right).")";
+        }
+
         $this->ci->unit->run(
             $left, $right,
-            $this->getName() . " : $left equals $right",
+            $name,
             $this->getNote());
         $this->reset();
         return $this;
