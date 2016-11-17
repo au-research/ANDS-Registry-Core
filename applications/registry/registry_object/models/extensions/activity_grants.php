@@ -148,6 +148,9 @@ class Activity_grants_extension extends ExtensionBase
         if (!$relatedObjects) {
             $relatedObjects = $this->ro->getAllRelatedObjects();
         }
+
+        $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
+
         foreach ($relatedObjects as $relatedObject) {
             if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                 if ($relatedObject['class'] == 'party'
@@ -179,7 +182,9 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
+            $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
             foreach ($relatedObjects as $relatedObject) {
+
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                     if ($relatedObject['class'] == 'party'
                         && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
@@ -213,7 +218,10 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
+            $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
             foreach ($relatedObjects as $relatedObject) {
+
+
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                     if ($relatedObject['class'] == 'party'
                         && $relatedObject['relation_type'] == 'isManagedBy'
@@ -268,6 +276,7 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
+            $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
             foreach ($relatedObjects as $relatedObject) {
 
                 if (isset($relatedObject['status']) && $relatedObject['status'] == PUBLISHED) {
@@ -340,7 +349,10 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
+            $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
             foreach ($relatedObjects as $relatedObject) {
+
+
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT
                     && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],'type'))) == 'person') {
                     $isValidChild = (($relatedObject['relation_type'] == 'hasPrincipalInvestigator' && $relatedObject['origin'] == 'EXPLICIT')
@@ -429,12 +441,8 @@ class Activity_grants_extension extends ExtensionBase
 
         $result = array();
         if ($relatedObjects) {
+            $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
             foreach ($relatedObjects as $relatedObject) {
-
-                // skip invalid relatedObject
-                if (!array_key_exists('relation_type', $relatedObject)) {
-                    continue;
-                }
 
                 //setting the condition
                 $isValidChild = false;
@@ -500,6 +508,8 @@ class Activity_grants_extension extends ExtensionBase
         }
 
         $result = array();
+
+        $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
 
         foreach ($relatedObjects as $relatedObject) {
 
@@ -859,6 +869,9 @@ class Activity_grants_extension extends ExtensionBase
         }
 
         $result = array();
+
+        $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
+
         foreach ($relatedObjects as $relatedObject) {
 
             if (($relatedObject['relation_type'] == 'hasOutput' && $relatedObject['origin'] == 'EXPLICIT')
@@ -991,6 +1004,25 @@ class Activity_grants_extension extends ExtensionBase
             return false;
         }
         return false;
+    }
+
+    public function filterValidRelatedObjects($relatedObjects)
+    {
+        return array_filter($relatedObjects, function($relatedObject){
+            if (!$relatedObject) {
+                return false;
+            }
+
+            if (!is_array($relatedObject)) {
+                return false;
+            }
+
+            if (!array_key_exists('relation_type', $relatedObject)) {
+                return false;
+            }
+
+            return true;
+        });
     }
 
 

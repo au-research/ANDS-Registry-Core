@@ -624,6 +624,9 @@ class Sync_extension extends ExtensionBase{
         // get only unique registry_object_id to save memory
         $temp_array = array();
         foreach ($relatedObjects as &$v) {
+            if (!$v || !array_key_exists('registry_object_id', $v)) {
+                continue;
+            }
             if (!isset($temp_array[$v['registry_object_id']])) {
                 $temp_array[$v['registry_object_id']] =& $v;
             }

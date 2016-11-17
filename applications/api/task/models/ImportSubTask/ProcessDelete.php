@@ -95,16 +95,21 @@ class ProcessDelete extends ImportSubTask
             $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
             foreach ($affectedRecordIDs as $index=>$roID) {
                 $ro = $this->parent()->getCI()->ro->getByID($roID);
-                $portalIndex = $ro->indexable_json();
-                if (count($portalIndex) > 0) {
-                    // TODO: Check response
-                    $this->parent()->getCI()->solr->init()->setCore('portal');
-                    $this->parent()->getCI()->solr
-                        ->deleteByID($roID);
-                    $this->parent()->getCI()->solr
-                        ->addJSONDoc(json_encode($portalIndex));
-                    $this->log("Indexed Affected Record Portal Index for $roID");
+                if ($ro) {
+                    $portalIndex = $ro->indexable_json();
+                    if (count($portalIndex) > 0) {
+                        // TODO: Check response
+                        $this->parent()->getCI()->solr->init()->setCore('portal');
+                        $this->parent()->getCI()->solr
+                            ->deleteByID($roID);
+                        $this->parent()->getCI()->solr
+                            ->addJSONDoc(json_encode($portalIndex));
+                        // $this->log("Indexed Affected Record Portal Index for $roID");
+                    }
+                } else {
+                    $this->log("Unable to find record $roID");
                 }
+
             }
         }
 
