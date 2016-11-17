@@ -551,7 +551,7 @@ class ImportTask extends Task
         ]);
 
         if ($dataSource = DataSource::find($this->dataSourceID)) {
-            $dataSource->appendDataSourceLog("IMPORT STOPPED WITH ERROR". NL . $message, "error", "IMPORTER");
+            $dataSource->appendDataSourceLog($this->name." Stopped with Error". NL . $message, "error", "IMPORTER");
         }
 
         $source = $this->getTaskData('source');

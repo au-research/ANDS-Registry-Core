@@ -174,10 +174,18 @@ class FixRelationshipTask extends Task
                             $reverseType = 'REVERSE_EXT';
                         }
 
+                        $relatedKey = "";
+
+                        if (array_key_exists('key', $related)) {
+                            $relatedKey = $related['key'];
+                        } elseif (array_key_exists('related_object_key', $related)) {
+                            $relatedKey = $related['related_object_key'];
+                        }
+
                         $doc = [
-                            'id' => md5($related['key'] . $ro->key),
+                            'id' => md5($relatedKey . $ro->key),
                             'from_id' => $related['registry_object_id'],
-                            'from_key' => $related['key'],
+                            'from_key' => $relatedKey,
                             'from_status' => $related['status'],
                             'from_title' => $related['title'],
                             'from_class' => $related['class'],

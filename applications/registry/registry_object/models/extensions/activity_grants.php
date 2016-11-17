@@ -1034,7 +1034,11 @@ class Activity_grants_extension extends ExtensionBase
     public function getGXPath()
     {
         $rifDom = new DOMDocument();
-        $rifDom->loadXML($this->ro->getRif());
+
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
+        $data = $record->getCurrentData()->data;
+
+        $rifDom->loadXML($data);
         $gXPath = new DOMXpath($rifDom);
         $gXPath->registerNamespace('ro', RIFCS_NAMESPACE);
         return $gXPath;
