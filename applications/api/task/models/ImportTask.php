@@ -114,11 +114,14 @@ class ImportTask extends Task
     public function runSubTask($subTask)
     {
         try {
-            $this->log("Running task". $subTask->name);
+            $this->log("Running task". $subTask->name)->save();
             $subTask->run();
         } catch (Exception $e) {
             $subTask->stoppedWithError($e->getMessage());
-            throw new Exception($e->getMessage());
+            $this->stoppedWithError($e->getMessage());
+            $this->saveSubTaskData($subTask);
+            $this->saveSubTasks();
+            // throw new Exception($e->getMessage());
         } catch (NonFatalException $e) {
             $subTask->addError($e->getMessage());
         }
