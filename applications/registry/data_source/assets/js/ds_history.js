@@ -38,7 +38,7 @@ $(function(){
 			$('div[name=resultScreen] #myModal').html('');
 			/* fire off the ajax request */
 			$.ajax({
-				url: base_url + 'data_source/reinstateRecordforDataSource', 	
+				url: base_url + 'registry_object/reinstate',
 				type: 'POST',
 				data:	{ 
 					deleted_registry_object_id: recordKey,

@@ -26,7 +26,7 @@ class PopulateImportOptions extends ImportSubTask
         if ($source === null) {
             $source = "harvester";
         }
-        $importStartMessage = ["Import from $source Started"];
+        $importStartMessage = [$this->parent()->name." Started"];
         if ($this->parent()->getId()) {
             $importStartMessage[] = "Task ID: ". $this->parent()->getId();
         };

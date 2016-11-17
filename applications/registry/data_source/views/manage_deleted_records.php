@@ -3,23 +3,22 @@
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 ?>
-
 <?php  $this->load->view('header');?>
-<input type="hidden" value="<?php echo $ds->id;?>" id="data_source_id"/>
+<input type="hidden" value="<?php echo $ds['id'];?>" id="data_source_id"/>
 <div id="content" style="margin-left:0px">
 	<div class="content-header">
-		<h1><?php echo $ds->title;?> <small>Deleted Records</small></h1>
+		<h1><?php echo $ds['title'];?> <small>Deleted Records</small></h1>
 		<ul class="nav nav-pills">
-			<li class=""><?php echo anchor('data_source/manage#!/view/'.$ds->id,'Dashboard');?></li>
-			<li class=""><?php echo anchor('data_source/manage_records/'.$ds->id,'Manage Records');?></li>
-			<li class=""><?php echo anchor('data_source/report/'.$ds->id,'Reports');?></li>
-			<li class=""><?php echo anchor('data_source/manage#!/settings/'.$ds->id,'Settings');?></li>
+			<li class=""><?php echo anchor('data_source/manage#!/view/'.$ds['id'],'Dashboard');?></li>
+			<li class=""><?php echo anchor('data_source/manage_records/'.$ds['id'],'Manage Records');?></li>
+			<li class=""><?php echo anchor('data_source/report/'.$ds['id'],'Reports');?></li>
+			<li class=""><?php echo anchor('data_source/manage#!/settings/'.$ds['id'],'Settings');?></li>
 		</ul>
 	</div>
 	<div id="breadcrumb">
 		<?php echo anchor('/', '<i class="icon-home"></i> Home', array('class'=>'tip-bottom', 'title'=>'Go to Home'))?>
 		<?php echo anchor('data_source/manage/', 'Manage My Data Sources');?>
-		<?php echo anchor('data_source/manage#!/view/'.$ds->id, $ds->title.' - Dashboard');?>
+		<?php echo anchor('data_source/manage#!/view/'.$ds['id'], $ds['title'].' - Dashboard');?>
 		<a href="#" class="current"><?php echo $title;?></a>
 	</div>
 
@@ -32,25 +31,24 @@
 					}else{
 						echo "<b>".$record_count."</b> recoverable record".($record_count!=1 ? "s" : "")." found."; 
 					}					
-				 foreach($deleted_records as $key=>$history):?>
+				 foreach($deleted_records as $history):?>
 					<div class="widget-box">
-						<div class="widget-title"><h5><?php echo 'Deleted Key: '.$key;?></h5></div>
+						<div class="widget-title"><h5><?php echo 'Deleted Key: '.$history['key'];?></h5></div>
 						<div class="widget-content nopadding">
 							<ul class="activity-list">
-								<?php foreach($history as $id=>$r):?>
+
 									<li>
 										<a style="color:#0088cc;" href="#">
-											<?php echo $r['title']." <span class='label'>(deleted on:" .$r['deleted_date'].")</span>"?>
+											<?php echo $history['title']." <span class='label'>(deleted on:" .$history['deleted_date'].")</span>"?>
 										</a>
 										<div class="more hide" style="padding:5px">
 											<div class="btn-group">
-												<?php echo "<button class='btn viewrecord' record_key='".$r['id']."'><i class='icon icon-eye-open'></i> View RIF-CS</button>";?>								
-												<?php echo "<button class='btn undelete_record' record_key='".$r['id']."'><i class='icon-download-alt'></i> Reinstate this Record</button>";?>
+												<?php echo "<button class='btn viewrecord' record_key='".$history['id']."'><i class='icon icon-eye-open'></i> View RIF-CS</button>";?>
+												<?php echo "<button class='btn undelete_record' record_key='".$history['id']."'><i class='icon-download-alt'></i> Reinstate this Record</button>";?>
 											</div>
-											<?php echo "<div class='hide' id='".$r['id']."'>".htmlentities($r['record_data'])."</div>";?>
+											<?php echo "<div class='hide' id='".$history['id']."'>".htmlentities($history['record_data'])."</div>";?>
 										</div>
 									</li>
-								<?php endforeach;?>
 							</ul>
 						</div>
 					</div>
@@ -62,7 +60,7 @@
 				  		echo '<li class="disabled"><a href="javascript:;">Previous</a></li>';
 				  	}else{
 				  		$prev = $offset - $limit;
-				  		echo '<li>'.anchor('data_source/manage_deleted_records/'.$ds->id.'/'.$prev.'/'.$limit, 'Previous').'</li>';
+				  		echo '<li>'.anchor('data_source/manage_deleted_records/'.$ds['id'].'/'.$prev.'/'.$limit, 'Previous').'</li>';
 				  	}
 				  ?>
 				  <?php
@@ -70,7 +68,7 @@
 				  		echo '<li class="disabled"><a href="javascript:;">Next</a></li>';
 				  	}else{
 				  		$next = $offset + $limit;
-				  		echo '<li>'.anchor('data_source/manage_deleted_records/'.$ds->id.'/'.$next.'/'.$limit, 'Next').'</li>';
+				  		echo '<li>'.anchor('data_source/manage_deleted_records/'.$ds['id'].'/'.$next.'/'.$limit, 'Next').'</li>';
 				  	}
 				  ?>
 				</ul>

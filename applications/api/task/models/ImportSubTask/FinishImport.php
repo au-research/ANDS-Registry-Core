@@ -61,7 +61,7 @@ class FinishImport extends ImportSubTask
         // in case of error
         $noRecords = $this->parent()->getTaskData('noRecords');
         if (count($this->parent()->getError()) > 0 && !$noRecords ) {
-            $message = $this->parent()->name . " is COMPLETED with error(s)" . NL;
+            $message = $this->parent()->name . " Completed with error(s)" . NL;
             $message .= $this->parent()->getDataSourceMessage();
             $this->parent()->setTaskData("dataSourceLog", $message);
             $dataSource->appendDataSourceLog($message, "error", "IMPORTER", "");
@@ -69,10 +69,10 @@ class FinishImport extends ImportSubTask
         }
 
         // not error
-        $message = $this->parent()->name . " is COMPLETED" . NL;
+        $message = $this->parent()->name . " Completed" . NL;
 
         if ($noRecords) {
-            $message = $this->parent()->name . " is COMPLETED with 0 records found". NL;
+            $message = $this->parent()->name . " Completed with 0 records found". NL;
         }
 
         $message .= $this->parent()->getDataSourceMessage();

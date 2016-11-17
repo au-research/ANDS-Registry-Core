@@ -1053,6 +1053,59 @@ class Registry_object extends MX_Controller {
 		echo json_encode($jsondata);
 	}
 
+
+    function reinstate(){
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        $deletedRegistryObjectID = $this->input->post('deleted_registry_object_id');
+        $dataSourceID = $this->input->post('data_source_id');
+        initEloquent();
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($deletedRegistryObjectID);
+
+        $xml = $record->getCurrentData()->data;
+        // write the xml payload to the file system
+        $batchID = 'UNDELETE-' . md5($record->key).'-'.time();
+        \ANDS\Payload::write($dataSourceID, $batchID, $xml);
+
+        // import Task creation
+        $importTask = new \ANDS\API\Task\ImportTask();
+        $importTask
+            ->setCI($this)->setDb($this->db)
+            ->init([
+                'name' => 'Reinstate',
+                'params' => http_build_query([
+                    'pipeline' => 'ManualEntry',
+                    'source' => 'manual',
+                    'ds_id' => $dataSourceID,
+                    'batch_id' => $batchID,
+                ])
+            ])
+            ->enableRunAllSubTask()
+            ->initialiseTask();
+
+        $importTask->run();
+
+        $errorLog = $importTask->getError();
+
+        // capture ro again and return result
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($deletedRegistryObjectID);
+        if($record->status != 'DELETED')
+        {
+            $result['response'] = 'success';
+            $result['message'] = "Record Reinstated as ". $record->status;
+            $result['log'] = $importTask->getMessage();
+        }
+        else{
+            $result['message'] = "Unable to Reinstate Record";
+            $result['log'] = $errorLog;
+        }
+        echo json_encode($result);
+
+    }
+    
+    
+    
     function delete(){
         set_exception_handler('json_exception_handler');
         header('Cache-Control: no-cache, must-revalidate');

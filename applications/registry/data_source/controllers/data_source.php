@@ -611,30 +611,26 @@ class Data_source extends MX_Controller {
 		$data['title'] = 'Manage Deleted Records';
 		$data['scripts'] = array('ds_history');
 		$data['js_lib'] = array('core','prettyprint');
+        $deletedRecords = array();
+        initEloquent();
+        $dataSource = \ANDS\Repository\DataSourceRepository::getByID($data_source_id);
 
-		$this->load->model("data_source/data_sources","ds");
-		$this->load->model("registry_object/registry_objects", "ro");
+        $data['ds'] = array('id'=>$dataSource->getAttribute('data_source_id'), 'title'=>$dataSource->getAttribute('title'));
 
-		$deletedRecords = array();
-		$data['ds'] = $this->ds->getByID($data_source_id);
-		$ids = $this->ro->getDeletedRegistryObjects(array('data_source_id'=> $data_source_id));
-		$data['record_count'] = sizeof($ids);
-		if(sizeof($ids) > 0){
+        $data['record_count'] = \ANDS\Repository\RegistryObjectsRepository::getCountByDataSourceIDAndStatus($data_source_id, 'DELETED');
 
-			foreach($ids as $idx=>$ro){
-				try{
-					$deletedRecords[$ro['key']][$idx] = array('title'=>$ro['title'],'key'=>$ro['key'],'id'=>$ro['id'],'record_data'=>wrapRegistryObjects($ro['record_data']), 'deleted_date'=>timeAgo($ro['deleted']));
-				}catch(Exception $e){
-					throw new Exception($e);
-				}
-				if($idx % 100 == 0){
-					unset($ro);
-					gc_collect_cycles();
-				}
-			}
+        $records = \ANDS\Repository\RegistryObjectsRepository::getRecordsByDataSourceIDAndStatus($data_source_id, 'DELETED', $offset, $limit);
+        // all deleted records
+
+		if(sizeof($records) > 0){
+            foreach($records as $record){
+                $deletedRecords[$record->key] = array('title'=>$record->title,'key'=>$record->key,
+                    'id'=>$record->registry_object_id, 'record_data'=>$record->getCurrentData()->data,
+                    'deleted_date'=>timeAgo($record->getRegistryObjectAttributeValue('updated')));
+            }
 		}
-		$data['record_count'] = sizeof($deletedRecords);
-		$data['deleted_records'] = array_slice($deletedRecords, $offset, $limit);
+
+		$data['deleted_records'] = $deletedRecords;
 		$data['offset'] = $offset;
 		$data['limit'] = $limit;
 		$this->load->view('manage_deleted_records', $data);
