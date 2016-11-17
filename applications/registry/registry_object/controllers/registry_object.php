@@ -1087,18 +1087,16 @@ class Registry_object extends MX_Controller {
         $importTask->run();
 
         $errorLog = $importTask->getError();
-
-        // capture ro again and return result
-        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($deletedRegistryObjectID);
-        if($record->status != 'DELETED')
+        
+        if($errorLog)
         {
-            $result['response'] = 'success';
-            $result['message'] = "Record Reinstated as ". $record->status;
-            $result['log'] = $importTask->getMessage();
-        }
-        else{
             $result['message'] = "Unable to Reinstate Record";
             $result['log'] = $errorLog;
+        }
+        else{
+            $result['response'] = 'success';
+            $result['message'] = "Record Reinstated as ". $importTask->getTaskData("targetStatus");
+            $result['log'] = $importTask->getMessage();
         }
         echo json_encode($result);
 
