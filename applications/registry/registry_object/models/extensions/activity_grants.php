@@ -431,6 +431,11 @@ class Activity_grants_extension extends ExtensionBase
         if ($relatedObjects) {
             foreach ($relatedObjects as $relatedObject) {
 
+                // skip invalid relatedObject
+                if (!array_key_exists('relation_type', $relatedObject)) {
+                    continue;
+                }
+
                 //setting the condition
                 $isValidChild = false;
                 if ($this->ro->class == 'party') {
