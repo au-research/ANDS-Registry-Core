@@ -67,7 +67,4 @@ class EloquentConnectionsRepository
         return $relationship->toArray();
     }
 
-
-
-
 }

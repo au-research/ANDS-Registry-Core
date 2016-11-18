@@ -3,6 +3,7 @@
 namespace ANDS\Registry;
 
 use ANDS\Registry\Relation as Relation;
+use ANDS\Repository\EloquentConnectionsRepository;
 
 class Connections {
 
@@ -115,7 +116,21 @@ class Connections {
         return $result;
     }
 
+    /**
+     * @return static
+     */
+    public static function create()
+    {
+        return static::getStandardProvider();
+    }
 
+    /**
+     * @return static
+     */
+    public static function getStandardProvider()
+    {
+        return new static(new EloquentConnectionsRepository());
+    }
 
     public function __construct($repository) {
         $this->repo = $repository;

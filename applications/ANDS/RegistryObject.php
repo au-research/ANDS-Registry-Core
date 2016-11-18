@@ -4,6 +4,7 @@
 namespace ANDS;
 
 
+use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\Metadata;
 use ANDS\Repository\RegistryObjectsRepository;
 use Illuminate\Database\Eloquent\Model;
@@ -160,6 +161,20 @@ class RegistryObject extends Model
             return false;
         }
         return true;
+    }
+
+    public function getDuplicateRecords()
+    {
+        // via identifier
+        $identifiers = Identifier::where('registry_object_id', $this->registry_object_id);
+
+        $recordIDs = Identifier::whereIn(
+            'identifier', $identifiers->get()->pluck('identifier')
+        )->get()->pluck('registry_object_id')->unique()->filter(function($item){
+            return $item != $this->registry_object_id;
+        });
+
+        return RegistryObject::whereIn('registry_object_id', $recordIDs);
     }
 
 }

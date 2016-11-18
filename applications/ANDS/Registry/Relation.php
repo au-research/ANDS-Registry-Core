@@ -2,11 +2,24 @@
 
 namespace ANDS\Registry;
 
+use ANDS\Repository\RegistryObjectsRepository;
+
+/**
+ * Class Relation
+ * @package ANDS\Registry
+ */
 class Relation
 {
 
     private $properties = [];
+    private $from = null;
+    private $to = null;
 
+    /**
+     * @param $key
+     * @param $value
+     * @return $this
+     */
     public function setProperty($key, $value)
     {
         if ($this->hasProperty($key)) {
@@ -23,6 +36,9 @@ class Relation
         return $this;
     }
 
+    /**
+     * Relation constructor.
+     */
     function __construct()
     {
 
@@ -36,11 +52,19 @@ class Relation
         return $this->properties;
     }
 
+    /**
+     * @param $prop
+     * @return null
+     */
     public function getProperty($prop)
     {
         return $this->properties[$prop] ?: null;
     }
 
+    /**
+     * @param $prop
+     * @return bool
+     */
     public function hasProperty($prop)
     {
         if (array_key_exists($prop, $this->getProperties())) {
@@ -50,6 +74,10 @@ class Relation
         }
     }
 
+    /**
+     * @param $row
+     * @return $this
+     */
     public function mergeWith($row)
     {
         foreach ($row as $key => $value) {
@@ -81,6 +109,9 @@ class Relation
         return $result;
     }
 
+    /**
+     * @return static
+     */
     public function flip()
     {
         $relation = new static;
@@ -101,5 +132,31 @@ class Relation
         }
 
         return $relation;
+    }
+
+    /**
+     * @return $this
+     */
+    public function getObjects()
+    {
+        $this->from = RegistryObjectsRepository::getRecordByID($this->getProperty('from_id'));
+        $this->to = RegistryObjectsRepository::getRecordByID($this->getProperty('to_id'));
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function from()
+    {
+        return $this->from;
+    }
+
+    /**
+     * @return null
+     */
+    public function to()
+    {
+        return $this->to;
     }
 }
