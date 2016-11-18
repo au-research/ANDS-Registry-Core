@@ -1087,17 +1087,27 @@ class Registry_object extends MX_Controller {
         $importTask->run();
 
         $errorLog = $importTask->getError();
-        
+        $message = $importTask->getMessage();
+
+        $result['response'] = 'error';
+        $result['message'] = "Unable to Reinstate Record";
+
+
         if($errorLog)
         {
-            $result['message'] = "Unable to Reinstate Record";
             $result['log'] = $errorLog;
         }
-        else{
+        elseif($importTask->getTaskData("recordsExistOtherDataSourceCount") > 0)
+        {
+            $result['log'] = "Record key:(".$record->key.NL.") exists in a different data source".NL;
+            $result['log'] .= str_replace("," , NL, implode("," , $message['log']));
+        }
+        else
+        {
             $result['response'] = 'success';
             $result['message'] = "Record Reinstated as ". $importTask->getTaskData("targetStatus");
             $result['target_status'] = $importTask->getTaskData("targetStatus");
-            $result['log'] = $importTask->getMessage();
+            $result['log'] = str_replace("," , NL, implode("," , $message['log']));
         }
         echo json_encode($result);
 

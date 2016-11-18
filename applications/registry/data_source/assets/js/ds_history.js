@@ -61,7 +61,8 @@ $(function(){
 							}
 							else
 							{
-								$('#myModal .modal-body').html("<pre>" + data.log + "</pre>");
+                                output = Mustache.render($('#import-screen-success-report-template').html(), data);
+                                $('#myModal .modal-body').html(output);
 							}
 							$('.modal-footer a').toggle();
 						}, 
