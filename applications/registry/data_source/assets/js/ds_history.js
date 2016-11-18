@@ -50,8 +50,14 @@ $(function(){
 							{
 								output = Mustache.render($('#import-screen-success-report-template').html(), data);
 								$('#myModal .modal-body').html(output);
-								deleteEntry(recordKey);
-								$('#myModal .undelete_record').hide();
+
+                                if(data.target_status == "PUBLISHED"){
+                                    deleteEntry(recordKey);
+                                }else{
+                                    removeButtons(recordKey);
+                                }
+                                $('#myModal .more').hide();
+                                $('#myModal .undelete_record').hide();
 							}
 							else
 							{
@@ -78,5 +84,11 @@ $(function(){
 			$(list).remove();
 		}
 	}
+
+    function removeButtons(recordKey){
+        var button = $('#'+recordKey);
+        var div = $('#'+recordKey).closest('.more');
+        div.remove();
+    }
 
 });

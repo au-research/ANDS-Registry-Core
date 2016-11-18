@@ -1096,6 +1096,7 @@ class Registry_object extends MX_Controller {
         else{
             $result['response'] = 'success';
             $result['message'] = "Record Reinstated as ". $importTask->getTaskData("targetStatus");
+            $result['target_status'] = $importTask->getTaskData("targetStatus");
             $result['log'] = $importTask->getMessage();
         }
         echo json_encode($result);
